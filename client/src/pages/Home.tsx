@@ -58,6 +58,9 @@ export default function Home() {
           <p className="text-xl text-muted-foreground">
             The operating system for trainers, coaches, and performance teams.
           </p>
+          <p className="text-base text-muted-foreground/80 max-w-md mx-auto">
+            Tell us what's missing from the coaching tools you use today. Your answer directly shapes what we build first.
+          </p>
           <div className="pt-4">
             <WaitlistForm />
           </div>

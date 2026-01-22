@@ -17,7 +17,9 @@ const formSchema = z.object({
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   role: z.string({ required_error: "Please select a role" }),
-  missingTechFeedback: z.string().max(500, "Maximum 500 characters").optional(),
+  missingTechFeedback: z.string()
+    .min(10, "Please tell us what's missing from the tools you use today.")
+    .max(500, "Maximum 500 characters"),
 });
 
 export default function WaitlistForm() {
@@ -181,7 +183,7 @@ export default function WaitlistForm() {
                     <FormItem>
                       <FormControl>
                         <Textarea 
-                          placeholder="Example: easier programming, better check-ins, faster documentation, better client insights, fewer apps, team collaboration…"
+                          placeholder="Example: better programming, smoother check-ins, less admin, better client insights, fewer apps, team collaboration, session notes, automation…"
                           {...field} 
                           disabled={isSubmitting}
                           maxLength={500}
@@ -189,7 +191,7 @@ export default function WaitlistForm() {
                         />
                       </FormControl>
                       <FormDescription className="text-xs text-muted-foreground/70">
-                        Optional. 1–2 sentences is perfect.
+                        Required. 1–2 sentences is perfect.
                       </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>
