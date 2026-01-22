@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import BiomarkerTicker from "@/components/BiomarkerTicker";
+import WhatItDoesSection from "@/components/WhatItDoesSection";
 import ValueProps from "@/components/ValueProps";
 import WhatIfSection from "@/components/WhatIfSection";
 import DashboardSection from "@/components/DashboardSection";
@@ -23,6 +24,8 @@ export default function Home() {
       
       <BiomarkerTicker />
       
+      <WhatItDoesSection />
+
       <ValueProps />
       
       <WhatIfSection />

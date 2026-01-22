@@ -44,6 +44,28 @@ export const content = {
     ]
   },
   
+  whatItDoes: {
+    headline: "What Xenios does.",
+    description: "A unified operating system that sits at the center of your coaching practice.",
+    cards: [
+      {
+        title: "Capture",
+        description: "Record sessions, transcribe automatically, and extract the important moments. Ingest data from wearables, labs, scans, and documents via secure connectors.",
+        icon: "Mic"
+      },
+      {
+        title: "Understand",
+        description: "Coaching analytics that identify what works and where clients stall. Turn raw data sources into clear performance vectors.",
+        icon: "Brain"
+      },
+      {
+        title: "Operate",
+        description: "One workflow hub for programming, check-ins, documentation, and communication. Eliminate tool fatigue and contextual switching.",
+        icon: "Command"
+      }
+    ]
+  },
+
   nav: {
     links: [
       { id: "included", label: "Platform" },
