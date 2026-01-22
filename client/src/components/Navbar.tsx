@@ -119,13 +119,15 @@ export default function Navbar() {
               <div className="grid grid-cols-2 gap-8">
                 <div className="flex flex-col gap-2">
                   <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Social</span>
-                  <a href="#" className="text-lg hover:underline decoration-1 underline-offset-4">Twitter</a>
-                  <a href="#" className="text-lg hover:underline decoration-1 underline-offset-4">Instagram</a>
-                  <a href="#" className="text-lg hover:underline decoration-1 underline-offset-4">LinkedIn</a>
+                  {content.contact.socials.map((social, i) => (
+                    <a key={i} href={social.url} target="_blank" rel="noopener noreferrer" className="text-lg hover:underline decoration-1 underline-offset-4">{social.label}</a>
+                  ))}
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Contact</span>
-                  <a href="mailto:hello@mono.inc" className="text-lg hover:underline decoration-1 underline-offset-4">hello@mono.inc</a>
+                  <a href={`mailto:${content.contact.email}`} className="text-lg hover:underline decoration-1 underline-offset-4">{content.contact.email}</a>
+                  <span className="text-lg text-muted-foreground">{content.contact.phone}</span>
+                  <span className="text-lg text-muted-foreground">{content.contact.location}</span>
                 </div>
               </div>
             </div>

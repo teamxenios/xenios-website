@@ -45,7 +45,7 @@ export default function Footer() {
           </div>
           <div className="flex gap-6">
             {content.footer.bottom.social.map((item, i) => (
-              <a key={i} href="#" className="hover:text-white transition-colors">{item}</a>
+              <a key={i} href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">{item.label}</a>
             ))}
           </div>
         </div>

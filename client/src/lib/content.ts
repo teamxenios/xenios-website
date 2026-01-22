@@ -1,6 +1,15 @@
 import { ShieldCheck, Zap, Brain, Activity, Heart, Globe, Layers, Users } from "lucide-react";
 
 export const content = {
+  contact: {
+    email: "team@xeniostechnology.com",
+    phone: "737-418-6381",
+    location: "Austin, Texas",
+    socials: [
+      { label: "Instagram", url: "https://www.instagram.com/officialxenios/?hl=en" },
+      { label: "LinkedIn", url: "https://www.linkedin.com/company/officialxenios" }
+    ]
+  },
   hero: {
     title: {
       line1: "The operating",
@@ -258,7 +267,10 @@ export const content = {
     bottom: {
       copyright: "© 2026 Xenios Inc. All rights reserved.",
       legal: ["Privacy Policy", "Terms of Service"],
-      social: ["TW", "IG", "LI"]
+      social: [
+        { label: "IG", url: "https://www.instagram.com/officialxenios/?hl=en" },
+        { label: "LI", url: "https://www.linkedin.com/company/officialxenios" }
+      ]
     }
   },
 

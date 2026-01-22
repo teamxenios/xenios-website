@@ -13,7 +13,7 @@ export default function FAQSection() {
           <p className="text-muted-foreground mb-8">
             {content.faq.description}
           </p>
-          <a href="mailto:support@mono.inc" className="inline-block border-b border-primary pb-1 hover:opacity-50 transition-opacity">
+          <a href={`mailto:${content.contact.email}`} className="inline-block border-b border-primary pb-1 hover:opacity-50 transition-opacity">
             Contact Support
           </a>
         </div>
