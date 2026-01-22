@@ -24,7 +24,7 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-6xl md:text-8xl font-display font-semibold tracking-tighter leading-[0.9]">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-semibold tracking-tighter leading-[0.95] text-balance">
               {content.hero.title.line1} <br />
               <span className="text-muted-foreground">{content.hero.title.line2}</span> <br />
               {content.hero.title.line3}
@@ -44,11 +44,30 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex gap-4"
+            className="flex flex-wrap gap-4"
           >
              <button onClick={() => document.getElementById('waitlist')?.scrollIntoView({behavior: 'smooth'})} className="bg-primary text-primary-foreground h-14 px-8 rounded-full text-lg font-medium hover:scale-105 transition-transform active:scale-95">
                {content.hero.cta}
              </button>
+             <button className="h-14 px-8 rounded-full text-lg font-medium border border-border bg-background hover:bg-secondary/50 transition-colors">
+               {content.hero.ctaSecondary}
+             </button>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="pt-4"
+          >
+            <p className="text-sm font-mono uppercase tracking-widest text-muted-foreground mb-4">Built for:</p>
+            <div className="flex flex-wrap gap-2">
+              {content.hero.builtFor.map((role, i) => (
+                <span key={i} className="px-3 py-1 bg-secondary/50 text-secondary-foreground text-sm font-medium rounded-full border border-border/50">
+                  {role}
+                </span>
+              ))}
+            </div>
           </motion.div>
         </motion.div>
 

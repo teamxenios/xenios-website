@@ -3,12 +3,23 @@ import { ShieldCheck, Zap, Brain, Activity, Heart, Globe, Layers, Users } from "
 export const content = {
   hero: {
     title: {
-      line1: "PROACTIVE",
-      line2: "PREVENTIVE",
-      line3: "PERFORMANCE."
+      line1: "The operating",
+      line2: "system for proactive",
+      line3: "health professionals."
     },
-    subtitle: "The next operating system for proactive and preventive health professionals. Empowering coaches and trainers with clinical-grade workflows.",
-    cta: "Request Early Access",
+    subtitle: "Xenios reduces admin work, captures coaching intelligence, and turns real sessions and client data into better decisions and better outcomes.",
+    cta: "Join the Waitlist",
+    ctaSecondary: "For Coaches",
+    builtFor: [
+      "Personal Trainers",
+      "Health Coaches", 
+      "Strength Coaches",
+      "Team Coaches",
+      "Pro Athlete Coaches",
+      "Basketball",
+      "Football",
+      "Performance Staff"
+    ],
     features: [
       {
         icon: Activity,
