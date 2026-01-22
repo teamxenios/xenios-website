@@ -10,7 +10,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 40);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -36,13 +36,18 @@ export default function Navbar() {
     <>
       <nav 
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent",
-          isScrolled ? "bg-background/80 backdrop-blur-md border-border py-4" : "bg-transparent py-6"
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out",
+          isScrolled 
+            ? "bg-background/80 backdrop-blur-md border-b border-border py-4 shadow-sm" 
+            : "bg-transparent py-8 border-b border-transparent"
         )}
       >
         <div className="container mx-auto px-6 flex items-center justify-between">
           <Link href="/">
-            <a className="text-2xl font-display font-bold tracking-tight z-50 relative">MONO.</a>
+            <a className={cn(
+              "text-2xl font-display font-bold tracking-tight z-50 relative transition-transform duration-300",
+              isScrolled ? "scale-90 origin-left" : "scale-100"
+            )}>MONO.</a>
           </Link>
           
           <div className="hidden lg:flex items-center gap-8">
@@ -50,9 +55,10 @@ export default function Navbar() {
               <button 
                 key={link.id}
                 onClick={() => scrollToSection(link.id)} 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
               >
                 {link.label}
+                <span className="absolute -bottom-1 left-0 w-0 h-px bg-foreground transition-all duration-300 group-hover:w-full"></span>
               </button>
             ))}
           </div>
@@ -63,14 +69,17 @@ export default function Navbar() {
             </button>
             <button 
               onClick={() => scrollToSection("waitlist")} 
-              className="bg-primary text-primary-foreground px-6 py-2 text-sm font-medium hover:opacity-90 transition-opacity rounded-full"
+              className={cn(
+                "px-6 py-2 text-sm font-medium transition-all duration-300 rounded-full hover:scale-105 active:scale-95",
+                isScrolled ? "bg-primary text-primary-foreground" : "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+              )}
             >
               Join Waitlist
             </button>
           </div>
 
           <button 
-            className="lg:hidden z-50 relative text-foreground"
+            className="lg:hidden z-50 relative text-foreground hover:scale-110 transition-transform"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -94,7 +103,7 @@ export default function Navbar() {
                   <button 
                     key={link.id}
                     onClick={() => scrollToSection(link.id)} 
-                    className="text-4xl font-display font-medium text-left hover:text-muted-foreground transition-colors"
+                    className="text-4xl font-display font-medium text-left hover:text-muted-foreground transition-colors hover:translate-x-2 duration-200"
                   >
                     {link.label}
                   </button>
@@ -106,7 +115,7 @@ export default function Navbar() {
               <div className="flex flex-col gap-4">
                  <button 
                   onClick={() => scrollToSection("waitlist")} 
-                  className="text-4xl font-display font-medium text-left flex items-center gap-4"
+                  className="text-4xl font-display font-medium text-left flex items-center gap-4 hover:translate-x-2 duration-200"
                 >
                   Join Waitlist <ArrowRight className="w-8 h-8" />
                 </button>
@@ -117,13 +126,13 @@ export default function Navbar() {
               <div className="grid grid-cols-2 gap-8">
                 <div className="flex flex-col gap-2">
                   <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Social</span>
-                  <a href="#" className="text-lg">Twitter</a>
-                  <a href="#" className="text-lg">Instagram</a>
-                  <a href="#" className="text-lg">LinkedIn</a>
+                  <a href="#" className="text-lg hover:underline decoration-1 underline-offset-4">Twitter</a>
+                  <a href="#" className="text-lg hover:underline decoration-1 underline-offset-4">Instagram</a>
+                  <a href="#" className="text-lg hover:underline decoration-1 underline-offset-4">LinkedIn</a>
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Contact</span>
-                  <a href="mailto:hello@mono.inc" className="text-lg">hello@mono.inc</a>
+                  <a href="mailto:hello@mono.inc" className="text-lg hover:underline decoration-1 underline-offset-4">hello@mono.inc</a>
                 </div>
               </div>
             </div>
