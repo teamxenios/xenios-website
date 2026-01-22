@@ -33,7 +33,10 @@ export default function WaitlistForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await waitlistService.submit(values);
+      const response = await waitlistService.submit({
+        ...values,
+        submissionType: "general"
+      });
       setIsSuccess(true);
       toast({
         title: "Welcome aboard",

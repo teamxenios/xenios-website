@@ -45,7 +45,10 @@ export default function CoachApplicationForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await waitlistService.submit(values);
+      const response = await waitlistService.submit({
+        ...values,
+        submissionType: "coach_partner"
+      });
       setIsSuccess(true);
       toast({
         title: "Application Received",
