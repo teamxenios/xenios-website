@@ -2,8 +2,11 @@ import { z } from "zod";
 
 export interface WaitlistSubmission {
   firstName: string;
+  lastName: string;
   email: string;
   role: string;
+  missingTechFeedback?: string;
+  sourcePage?: string;
   activeClients?: string;
   adminHours?: string;
   dataSources?: string;

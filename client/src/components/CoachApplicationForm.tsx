@@ -13,7 +13,8 @@ import { waitlistService } from "@/lib/waitlist-service";
 import { motion, AnimatePresence } from "framer-motion";
 
 const formSchema = z.object({
-  firstName: z.string().min(2, "Name must be at least 2 characters"),
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   role: z.string({ required_error: "Please select a role" }),
   activeClients: z.string().min(1, "Please specify active clients"),
@@ -32,6 +33,7 @@ export default function CoachApplicationForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: "",
+      lastName: "",
       email: "",
       role: "",
       activeClients: "",
@@ -47,6 +49,7 @@ export default function CoachApplicationForm() {
     try {
       const response = await waitlistService.submit({
         ...values,
+        sourcePage: window.location.pathname,
         submissionType: "coach_partner"
       });
       setIsSuccess(true);
@@ -108,9 +111,9 @@ export default function CoachApplicationForm() {
                     name="firstName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel>First Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Your name" {...field} />
+                          <Input placeholder="First name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -118,18 +121,32 @@ export default function CoachApplicationForm() {
                   />
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="lastName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Last Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="you@example.com" {...field} />
+                          <Input placeholder="Last name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="you@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField

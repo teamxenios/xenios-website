@@ -2,19 +2,22 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { waitlistService } from "@/lib/waitlist-service";
 import { motion, AnimatePresence } from "framer-motion";
 
 const formSchema = z.object({
-  firstName: z.string().min(2, "Name must be at least 2 characters"),
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   role: z.string({ required_error: "Please select a role" }),
+  missingTechFeedback: z.string().max(500, "Maximum 500 characters").optional(),
 });
 
 export default function WaitlistForm() {
@@ -25,7 +28,9 @@ export default function WaitlistForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: "",
+      lastName: "",
       email: "",
+      missingTechFeedback: "",
     },
   });
 
@@ -35,6 +40,7 @@ export default function WaitlistForm() {
     try {
       const response = await waitlistService.submit({
         ...values,
+        sourcePage: window.location.pathname,
         submissionType: "general"
       });
       setIsSuccess(true);
@@ -85,12 +91,12 @@ export default function WaitlistForm() {
           >
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 text-left">
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="firstName"
                     render={({ field }) => (
-                      <FormItem className="flex-1">
+                      <FormItem>
                         <FormControl>
                           <Input 
                             placeholder="First name" 
@@ -105,12 +111,12 @@ export default function WaitlistForm() {
                   />
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="lastName"
                     render={({ field }) => (
-                      <FormItem className="flex-[2]">
+                      <FormItem>
                         <FormControl>
                           <Input 
-                            placeholder="Email address" 
+                            placeholder="Last name" 
                             {...field} 
                             disabled={isSubmitting}
                             className="rounded-none border-border bg-background focus-visible:ring-0 focus-visible:border-primary h-12"
@@ -121,6 +127,25 @@ export default function WaitlistForm() {
                     )}
                   />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input 
+                          placeholder="Email address" 
+                          type="email"
+                          {...field} 
+                          disabled={isSubmitting}
+                          className="rounded-none border-border bg-background focus-visible:ring-0 focus-visible:border-primary h-12"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
@@ -136,12 +161,36 @@ export default function WaitlistForm() {
                         <SelectContent>
                           <SelectItem value="Trainer">Personal Trainer</SelectItem>
                           <SelectItem value="Health Coach">Health Coach</SelectItem>
+                          <SelectItem value="Strength Coach">Strength Coach</SelectItem>
                           <SelectItem value="Team Coach">Team Coach</SelectItem>
                           <SelectItem value="Gym Owner">Gym Owner</SelectItem>
+                          <SelectItem value="Performance Staff">Performance Staff</SelectItem>
                           <SelectItem value="Athlete">Athlete</SelectItem>
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="missingTechFeedback"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Example: easier programming, better check-ins, faster documentation, better client insights, fewer apps, team collaboration…"
+                          {...field} 
+                          disabled={isSubmitting}
+                          maxLength={500}
+                          className="rounded-none border-border bg-background focus-visible:ring-0 focus-visible:border-primary min-h-[100px] resize-none"
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-muted-foreground/70">
+                        Optional. 1–2 sentences is perfect.
+                      </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>
                   )}
