@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import CredibilityStrip from "@/components/CredibilityStrip";
 import BiomarkerTicker from "@/components/BiomarkerTicker";
 import WhatItDoesSection from "@/components/WhatItDoesSection";
 import ValueProps from "@/components/ValueProps";
@@ -22,6 +23,8 @@ export default function Home() {
 
       <HeroSection />
       
+      <CredibilityStrip />
+
       <BiomarkerTicker />
       
       <WhatItDoesSection />

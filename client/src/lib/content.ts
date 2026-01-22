@@ -43,6 +43,15 @@ export const content = {
       }
     ]
   },
+
+  credibility: {
+    statement: "Engineered for the demands of elite performance environments.",
+    items: [
+      "200+ letters of intent from elite coaches",
+      "10+ hours per week saved by reducing admin",
+      "Real coaching workflows, not generic templates"
+    ]
+  },
   
   whatItDoes: {
     headline: "What Xenios does.",
