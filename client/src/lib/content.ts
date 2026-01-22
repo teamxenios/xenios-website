@@ -1,167 +1,167 @@
-import { ShieldCheck, Zap, Brain, Activity, Heart } from "lucide-react";
+import { ShieldCheck, Zap, Brain, Activity, Heart, Globe, Layers, Users } from "lucide-react";
 
 export const content = {
   hero: {
     title: {
-      line1: "PREDICT",
-      line2: "PREVENT",
-      line3: "PROSPER."
+      line1: "PROACTIVE",
+      line2: "PREVENTIVE",
+      line3: "PERFORMANCE."
     },
-    subtitle: "The first proactive health platform that doesn't just track your data—it understands it.",
-    cta: "Start your journey",
+    subtitle: "The next operating system for proactive and preventive health professionals. Empowering coaches and trainers with clinical-grade workflows.",
+    cta: "Request Early Access",
     features: [
       {
         icon: Activity,
-        title: "Real-time Analysis",
-        text: "Continuous monitoring of 50+ biomarkers with clinical-grade accuracy."
+        title: "Clinical Grade Workflows",
+        text: "Standardize your coaching methodology with validated protocols and precise metric tracking."
       },
       {
-        icon: Heart,
-        title: "Holistic Context",
-        text: "We correlate sleep, movement, and nutrition to give you the full picture."
+        icon: Globe,
+        title: "Connected Ecosystem",
+        text: "Seamlessly aggregate data from wearables, labs, and assessment tools in one view."
       },
       {
-        icon: Zap,
-        title: "Actionable Insights",
-        text: "Don't just see the data. Know exactly what to do with it, every single day."
+        icon: Layers,
+        title: "Data Interoperability",
+        text: "Future connectivity ensuring your data flows freely between the tools you trust."
       },
       {
-        icon: Brain,
-        title: "Cognitive Load",
-        text: "Measure mental fatigue and optimize your workday for peak performance."
+        icon: Users,
+        title: "Team Management",
+        text: "Orchestrate performance for entire rosters with granular permission controls."
       }
     ]
   },
   
   nav: {
     links: [
-      { id: "included", label: "What's Included" },
-      { id: "conditions", label: "Conditions" },
-      { id: "foryou", label: "For You" },
-      { id: "forpros", label: "For Pros" },
+      { id: "included", label: "Platform" },
+      { id: "conditions", label: "Focus Areas" },
+      { id: "foryou", label: "For Coaches" },
+      { id: "forpros", label: "For Teams" },
       { id: "faq", label: "FAQ" }
     ],
     cta: "Join Waitlist"
   },
 
   ticker: [
-    { label: "Sleep Quality", value: "85", unit: "%", desc: "Deep sleep cycles optimized" },
-    { label: "HRV", value: "112", unit: "ms", desc: "Recovery index peak" },
-    { label: "Glucose", value: "98", unit: "mg/dL", desc: "Stable post-meal response" },
-    { label: "VO2 Max", value: "54", unit: "mL", desc: "Cardiovascular efficiency" },
-    { label: "Resting HR", value: "48", unit: "bpm", desc: "Athlete-level conditioning" },
-    { label: "SpO2", value: "99", unit: "%", desc: "Oxygen saturation optimal" },
-    { label: "Stress", value: "Low", unit: "lvl", desc: "Cortisol levels balanced" },
-    { label: "Sleep Quality", value: "85", unit: "%", desc: "Deep sleep cycles optimized" },
-    { label: "HRV", value: "112", unit: "ms", desc: "Recovery index peak" },
-    { label: "Glucose", value: "98", unit: "mg/dL", desc: "Stable post-meal response" },
-    { label: "VO2 Max", value: "54", unit: "mL", desc: "Cardiovascular efficiency" }
+    { label: "Recovery", value: "92", unit: "%", desc: "Readiness optimized" },
+    { label: "Load", value: "Low", unit: "vol", desc: "Training load balanced" },
+    { label: "Sleep", value: "8.2", unit: "hrs", desc: "Restoration target met" },
+    { label: "Mobility", value: "95", unit: "pts", desc: "Range of motion peak" },
+    { label: "Strength", value: "PR", unit: "kg", desc: "New baseline set" },
+    { label: "HRV", value: "112", unit: "ms", desc: "Autonomic balance" },
+    { label: "Zone 2", value: "45", unit: "min", desc: "Aerobic base building" },
+    { label: "Recovery", value: "92", unit: "%", desc: "Readiness optimized" },
+    { label: "Load", value: "Low", unit: "vol", desc: "Training load balanced" },
+    { label: "Sleep", value: "8.2", unit: "hrs", desc: "Restoration target met" },
+    { label: "Mobility", value: "95", unit: "pts", desc: "Range of motion peak" }
   ],
 
   valueProps: {
-    headline: "Intelligence,",
-    headlineAccent: "encoded.",
-    description: "We've condensed a medical lab into a seamless digital experience.",
+    headline: "The OS for",
+    headlineAccent: "prevention.",
+    description: "Built for personal trainers, strength coaches, and performance staff who demand more.",
     items: [
       {
         icon: ShieldCheck,
-        title: "Clinical Accuracy",
-        desc: "Validated against gold-standard medical equipment for reliable data you can trust."
+        title: "Validated Protocols",
+        desc: "Implement evidence-based strategies without the administrative burden."
       },
       {
         icon: Zap,
-        title: "Instant Feedback",
-        desc: "Latency-free processing means you know your body's status the moment it changes."
+        title: "Partner Integrations",
+        desc: "Connect your favorite hardware and software for a unified coaching experience."
       },
       {
         icon: Brain,
-        title: "AI Interpretation",
-        desc: "Our neural engine contextualizes data points to explain 'why' not just 'what'."
+        title: "Intelligent Insights",
+        desc: "Turn raw streams of athlete data into clear, actionable programming adjustments."
       },
       {
         icon: Activity,
-        title: "Trend Forecasting",
-        desc: "Predictive modeling helps you anticipate health dips before they become problems."
+        title: "Performance Trending",
+        desc: "Visualize long-term adaptation and prevent overtraining before it occurs."
       }
     ]
   },
 
   whatIf: {
-    headline: "What if health was...",
+    headline: "What if performance was...",
     points: [
-      { title: "Proactive, not reactive", desc: "Stop waiting for symptoms to appear." },
-      { title: "Continuous, not episodic", desc: "Health happens 24/7, not just at the doctor's office." },
-      { title: "Personalized, not generic", desc: "Guidelines based on your biology, not population averages." },
-      { title: "Transparent, not obscure", desc: "Own your data. Understand your metrics." },
-      { title: "Empowering, not intimidating", desc: "Tools that make you the expert on you." }
+      { title: "Integrated, not isolated", desc: "All your athlete data in a single, secure environment." },
+      { title: "Proactive, not reactive", desc: "Address limitations before they become injuries." },
+      { title: "Collaborative, not siloed", desc: "Keep S&C, medical, and coaching staff aligned." },
+      { title: "Continuous, not episodic", desc: "Monitor adaptation 24/7, not just during sessions." },
+      { title: "Scalable, not manual", desc: "Automate routine analysis to focus on coaching." }
     ]
   },
 
   dashboard: {
-    headline: "Your body, mapped.",
-    description: "A command center for your biology. Visualize complex metrics with elegant simplicity."
+    headline: "Your roster, visualized.",
+    description: "A command center for your entire team. Monitor compliance, readiness, and load at a glance."
   },
 
   features: [
     {
-      title: "Metabolic Flexibility",
-      desc: "Train your metabolism to switch efficiently between fuel sources. Our nutrition engine adapts to your daily activity.",
+      title: "Workflow Standardization",
+      desc: "Create and deploy custom assessment protocols across your entire organization. Ensure consistency in data collection and athlete monitoring.",
       image: "/feature-geo-1.png",
       align: "left"
     },
     {
-      title: "Circadian Synchronization",
-      desc: "Align your lifestyle with your internal clock. Get personalized recommendations for light exposure, sleep, and meal timing.",
+      title: "Future Connectivity",
+      desc: "Built for the era of connected health. We prioritize data interoperability so you can build the tech stack that fits your philosophy.",
       image: "/feature-geo-2.png",
       align: "right"
     }
   ],
 
   conditions: {
-    headline: "Conditions we track.",
+    headline: "Performance Vectors.",
     categories: [
       {
-        category: "Metabolic",
-        items: ["Insulin Resistance", "Pre-diabetes", "Obesity", "Metabolic Syndrome"]
+        category: "Metabolic Health",
+        items: ["Energy System Development", "Fuel Utilization", "Body Composition", "Metabolic Efficiency"]
       },
       {
         category: "Cardiovascular",
-        items: ["Hypertension", "Arrhythmia Monitoring", "HRV Optimization", "Endurance Training"]
+        items: ["Aerobic Capacity", "Recovery Kinetics", "HRV Trends", "Work Capacity"]
       },
       {
-        category: "Hormonal",
-        items: ["Cortisol Management", "Thyroid Health", "Cycle Tracking", "Testosterone Optimization"]
+        category: "Musculoskeletal",
+        items: ["Load Management", "Movement Quality", "Strength Symmetry", "Power Output"]
       },
       {
-        category: "Cognitive",
-        items: ["Focus & Attention", "Sleep Architecture", "Stress Resilience", "Mental Clarity"]
+        category: "Readiness",
+        items: ["Sleep Hygiene", "Stress Resilience", "Cognitive Load", "Autonomic Balance"]
       }
     ]
   },
 
   audience: {
     personal: {
-      label: "Personal",
-      headline: "Optimize Yourself",
-      description: "For biohackers, athletes, and anyone wanting to master their biology.",
+      label: "For Coaches",
+      headline: "Individual Professionals",
+      description: "For personal trainers, health coaches, and strength coaches managing private clients.",
       features: [
-        "Daily Readiness Score",
-        "Sleep Stage Analysis",
-        "Nutrition Logging",
-        "Stress Management",
-        "Community Challenges"
+        "Client Readiness Monitoring",
+        "Automated Check-ins",
+        "Program Compliance Tracking",
+        "Wearable Data Aggregation",
+        "Custom Branding"
       ]
     },
     professional: {
-      label: "Professional",
-      headline: "Empower Teams",
-      description: "For coaches, trainers, and organizations managing high-performance rosters.",
+      label: "For Teams",
+      headline: "Performance Staff",
+      description: "For basketball, football, and pro athlete coaches managing high-performance rosters.",
       features: [
-        "Coach Dashboard Access",
-        "Team Aggregate Data",
-        "Injury Risk Prediction",
-        "Training Load Management",
-        "API Export Capabilities"
+        "Roster Management",
+        "Staff Roles & Permissions",
+        "Department Interoperability",
+        "Aggregate Reporting",
+        "Secure Data Export"
       ]
     }
   },
@@ -169,52 +169,52 @@ export const content = {
   timeline: [
     {
       number: "01",
-      title: "Within Minutes",
-      items: ["• Connect your devices", "• Baseline establishment", "• Initial metabolic reading"]
+      title: "Onboard",
+      items: ["• Import client rosters", "• Connect partner integrations", "• Set baseline protocols"]
     },
     {
       number: "02",
-      title: "Within Days",
-      items: ["• Pattern recognition", "• Sleep cycle analysis", "• Stress trigger identification"]
+      title: "Monitor",
+      items: ["• Track daily readiness", "• Visualize training load", "• Identify risk factors"]
     },
     {
       number: "03",
-      title: "Within Months",
-      items: ["• Long-term trend forecasting", "• Lifestyle adaptation", "• Validated health improvement"]
+      title: "Optimize",
+      items: ["• Adjust programming", "• Improving performance outcomes", "• Scale your impact"]
     }
   ],
 
   faq: {
-    headline: "Frequently Asked.",
-    description: "Can't find the answer you're looking for? Reach out to our support team.",
+    headline: "Common Questions.",
+    description: "Learn more about the Xenios platform.",
     items: [
-      { question: "What devices are compatible?", answer: "We support Oura, Whoop, Apple Watch, Garmin, and most major continuous glucose monitors (CGMs)." },
-      { question: "Is my health data private?", answer: "Your data is encrypted end-to-end and stored in HIPAA-compliant vaults. We never sell your data to third parties." },
-      { question: "Do I need a doctor's prescription?", answer: "No. Our platform is a wellness tool. However, we can generate reports to share with your healthcare provider." },
-      { question: "How accurate are the biomarkers?", answer: "We only ingest data from clinically validated sensors. Our algorithms filter out noise to provide high-confidence metrics." },
-      { question: "Can I use this for my family?", answer: "Yes, we offer family plans that allow you to manage multiple profiles under one billing account." },
-      { question: "What is the battery impact on my phone?", answer: "Minimal. We use background fetch technologies that are optimized for efficiency." },
-      { question: "Is there a contract?", answer: "No. You can cancel your subscription at any time with no penalties." },
-      { question: "Do you offer coaching?", answer: "Yes, the Pro plan includes monthly sessions with a certified metabolic health coach." },
-      { question: "Does it work with Android?", answer: "Yes, our Android app is fully featured and supports Google Fit integration." },
-      { question: "How do I interpret the recovery score?", answer: "The recovery score aggregates HRV, sleep, and resting heart rate to give you a daily capacity percentage." }
+      { question: "Who is Xenios designed for?", answer: "Xenios is built specifically for personal trainers, health coaches, strength coaches, and team performance staff." },
+      { question: "Does it integrate with wearables?", answer: "Yes, we support partner integrations with major wearable providers to aggregate client data." },
+      { question: "Is this an EHR system?", answer: "No. Xenios is a performance management operating system, not an Electronic Health Record." },
+      { question: "Is client data secure?", answer: "Absolutely. We employ enterprise-grade security and strict permission controls for all data." },
+      { question: "Can I use it for a single team?", answer: "Yes, our team plans are scalable from small groups to professional organizations." },
+      { question: "Do you offer API access?", answer: "Yes, data interoperability is core to our mission. API access is available on Pro plans." },
+      { question: "Is there a limit on clients?", answer: "Our pricing tiers are designed to scale with your business or organization size." },
+      { question: "Can staff share access?", answer: "Yes, we support granular roles for head coaches, assistants, and support staff." },
+      { question: "Does it replace my programming tool?", answer: "Xenios is designed to work alongside your programming tools, focusing on holistic monitoring and management." },
+      { question: "How do I get started?", answer: "Request early access to join our pilot program for performance professionals." }
     ]
   },
 
   footer: {
-    tagline: "The operating system for high-performance biology. Designed in Zürich, Switzerland.",
+    tagline: "The operating system for high-performance biology. Powering the next generation of health professionals.",
     columns: {
       platform: {
         title: "Platform",
-        links: ["Features", "Science", "Integrations", "Pricing"]
+        links: ["Workflows", "Integrations", "Security", "Pricing"]
       },
       company: {
         title: "Company",
-        links: ["About", "Careers", "Blog", "Contact"]
+        links: ["About Xenios", "Careers", "Blog", "Contact"]
       }
     },
     bottom: {
-      copyright: "© 2026 Mono Inc. All rights reserved.",
+      copyright: "© 2026 Xenios Inc. All rights reserved.",
       legal: ["Privacy Policy", "Terms of Service"],
       social: ["TW", "IG", "LI"]
     }

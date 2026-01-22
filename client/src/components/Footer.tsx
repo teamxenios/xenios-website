@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-12 mb-24">
           <div className="col-span-2">
             <Link href="/">
-              <a className="text-3xl font-display font-bold tracking-tight mb-6 block">MONO.</a>
+              <a className="text-3xl font-display font-bold tracking-tight mb-6 block">XENIOS.</a>
             </Link>
             <p className="text-zinc-400 max-w-sm">
               {content.footer.tagline}

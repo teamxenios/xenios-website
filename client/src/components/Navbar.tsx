@@ -40,7 +40,7 @@ export default function Navbar() {
             <a className={cn(
               "text-2xl font-display font-bold tracking-tight z-50 relative transition-transform duration-300",
               isScrolled ? "scale-90 origin-left" : "scale-100"
-            )}>MONO.</a>
+            )}>XENIOS.</a>
           </Link>
           
           <div className="hidden lg:flex items-center gap-8">
