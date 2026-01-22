@@ -8,7 +8,9 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-12 mb-24">
           <div className="col-span-2">
             <Link href="/">
-              <a className="text-3xl font-display font-bold tracking-tight mb-6 block">XENIOS.</a>
+              <a className="block mb-6">
+                <img src="/xenios-logo-white.png" alt="XENIOS" className="h-8 w-auto invert dark:invert-0" />
+              </a>
             </Link>
             <p className="text-zinc-400 max-w-sm">
               {content.footer.tagline}

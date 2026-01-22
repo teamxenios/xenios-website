@@ -15,8 +15,11 @@ export default function HeroSection() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <section ref={containerRef} className="relative pt-32 pb-12 lg:pt-48 lg:pb-32 px-6 border-b border-border min-h-[90vh] flex items-start">
+    <section ref={containerRef} className="relative pt-32 pb-12 lg:pt-48 lg:pb-32 px-6 border-b border-border min-h-[90vh] flex items-start overflow-hidden">
        <div className="absolute inset-0 -z-10 bg-[radial-gradient(#e5e5e5_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_70%,transparent_100%)] opacity-50"></div>
+       <div className="absolute -right-32 -top-32 -z-20 opacity-[0.03] pointer-events-none">
+         <img src="/xenios-mark-outline.png" alt="" className="w-[800px] h-auto" />
+       </div>
       
       <div className="container mx-auto grid lg:grid-cols-2 gap-16 items-start relative">
         <motion.div style={{ y, opacity }} className="flex flex-col gap-8 sticky top-32">

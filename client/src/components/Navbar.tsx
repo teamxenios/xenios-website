@@ -38,9 +38,11 @@ export default function Navbar() {
         <div className="container mx-auto px-6 flex items-center justify-between">
           <Link href="/">
             <a className={cn(
-              "text-2xl font-display font-bold tracking-tight z-50 relative transition-transform duration-300",
+              "z-50 relative transition-transform duration-300 block",
               isScrolled ? "scale-90 origin-left" : "scale-100"
-            )}>XENIOS.</a>
+            )}>
+              <img src="/xenios-logo-white.png" alt="XENIOS" className="h-8 w-auto invert dark:invert-0" />
+            </a>
           </Link>
           
           <div className="hidden lg:flex items-center gap-8">
