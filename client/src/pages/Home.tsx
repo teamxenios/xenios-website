@@ -54,16 +54,13 @@ export default function Home() {
           viewport={{ once: true }}
           className="max-w-xl mx-auto space-y-8"
         >
-          <h2 className="text-5xl font-display font-semibold tracking-tighter">Ready to simplify?</h2>
+          <h2 className="text-5xl font-display font-semibold tracking-tighter">Get early access to Xenios.</h2>
           <p className="text-xl text-muted-foreground">
-            Join 10,000+ developers building the future of the web.
+            The operating system for trainers, coaches, and performance teams.
           </p>
           <div className="pt-4">
             <WaitlistForm />
           </div>
-          <p className="text-sm text-muted-foreground pt-8">
-            Free for open source. No credit card required.
-          </p>
         </motion.div>
       </Section>
 
