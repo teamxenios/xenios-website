@@ -37,8 +37,13 @@ export default function Footer() {
         </div>
         
         <div className="pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-zinc-500">
-          <div>
-            {content.footer.bottom.copyright}
+          <div className="flex flex-col gap-2">
+            <div>
+              {content.footer.bottom.copyright}
+            </div>
+            <p className="text-xs text-zinc-600">
+              Xenios is a coaching operations platform. It does not provide medical advice.
+            </p>
           </div>
           <div className="flex gap-8">
             {content.footer.bottom.legal.map((item, i) => (

@@ -239,16 +239,14 @@ export const content = {
     headline: "Common Questions.",
     description: "Learn more about the Xenios platform.",
     items: [
-      { question: "Who is Xenios designed for?", answer: "Xenios is built specifically for personal trainers, health coaches, strength coaches, and team performance staff." },
-      { question: "Does it integrate with wearables?", answer: "Yes, we support partner integrations with major wearable providers to aggregate client data." },
-      { question: "Is this an EHR system?", answer: "No. Xenios is a performance management operating system, not an Electronic Health Record." },
-      { question: "Is client data secure?", answer: "Absolutely. We employ enterprise-grade security and strict permission controls for all data." },
-      { question: "Can I use it for a single team?", answer: "Yes, our team plans are scalable from small groups to professional organizations." },
-      { question: "Do you offer API access?", answer: "Yes, data interoperability is core to our mission. API access is available on Pro plans." },
-      { question: "Is there a limit on clients?", answer: "Our pricing tiers are designed to scale with your business or organization size." },
-      { question: "Can staff share access?", answer: "Yes, we support granular roles for head coaches, assistants, and support staff." },
-      { question: "Does it replace my programming tool?", answer: "Xenios is designed to work alongside your programming tools, focusing on holistic monitoring and management." },
-      { question: "How do I get started?", answer: "Request early access to join our pilot program for performance professionals." }
+      { question: "Who is Xenios for?", answer: "Xenios is built specifically for personal trainers, health coaches, strength coaches, team performance staff, and related wellness professionals." },
+      { question: "What problems does it solve?", answer: "Xenios reduces administrative burden, centralizes fragmented client data, and provides actionable intelligence to improve coaching outcomes." },
+      { question: "What data sources can it use?", answer: "We connect with major wearables (Oura, Whoop, Garmin, Apple Health), lab providers, and can even ingest data from spreadsheets and PDF reports." },
+      { question: "How does session recording work?", answer: "Our secure mobile app records audio during sessions, automatically transcribes it, and extracts key coaching insights and action items." },
+      { question: "When does the MVP launch?", answer: "We are currently in a closed beta with select partners. The public MVP is scheduled for release in Q2 2026." },
+      { question: "How do Founding Coach Partners work?", answer: "Founding Partners get early access to the platform and direct input into the product roadmap in exchange for feedback and workflow data." },
+      { question: "Is client data secure?", answer: "Absolutely. We employ enterprise-grade security and strict permission controls for all data. You own your data." },
+      { question: "Is this an EHR system?", answer: "No. Xenios is a performance management operating system, not an Electronic Health Record." }
     ]
   },
 
