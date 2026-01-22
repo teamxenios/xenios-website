@@ -1,14 +1,15 @@
 import Section from "./Section";
+import { content } from "@/lib/content";
 
 export default function DashboardSection() {
   return (
     <Section id="foryou" className="bg-foreground text-background py-32" fullWidth>
       <div className="container mx-auto px-6 text-center mb-16">
         <h2 className="text-4xl md:text-6xl font-display font-medium tracking-tight mb-6">
-          Your body, mapped.
+          {content.dashboard.headline}
         </h2>
         <p className="text-xl text-muted-foreground/80 max-w-2xl mx-auto">
-          A command center for your biology. Visualize complex metrics with elegant simplicity.
+          {content.dashboard.description}
         </p>
       </div>
       

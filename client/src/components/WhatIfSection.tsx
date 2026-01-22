@@ -1,12 +1,5 @@
 import Section from "./Section";
-
-const POINTS = [
-  { title: "Proactive, not reactive", desc: "Stop waiting for symptoms to appear." },
-  { title: "Continuous, not episodic", desc: "Health happens 24/7, not just at the doctor's office." },
-  { title: "Personalized, not generic", desc: "Guidelines based on your biology, not population averages." },
-  { title: "Transparent, not obscure", desc: "Own your data. Understand your metrics." },
-  { title: "Empowering, not intimidating", desc: "Tools that make you the expert on you." },
-];
+import { content } from "@/lib/content";
 
 export default function WhatIfSection() {
   return (
@@ -14,10 +7,10 @@ export default function WhatIfSection() {
       <div className="grid lg:grid-cols-2 gap-16 items-center">
         <div>
           <h2 className="text-4xl md:text-5xl font-display font-medium tracking-tight mb-12">
-            What if health was...
+            {content.whatIf.headline}
           </h2>
           <div className="flex flex-col gap-8">
-            {POINTS.map((point, i) => (
+            {content.whatIf.points.map((point, i) => (
               <div key={i} className="flex gap-6 group">
                 <span className="text-xl font-mono text-muted-foreground/50 pt-1">0{i + 1}</span>
                 <div>

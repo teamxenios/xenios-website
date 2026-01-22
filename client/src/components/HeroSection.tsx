@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight, Activity, Heart, Zap } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
+import { content } from "@/lib/content";
 
 export default function HeroSection() {
   const containerRef = useRef(null);
@@ -24,9 +25,9 @@ export default function HeroSection() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-6xl md:text-8xl font-display font-semibold tracking-tighter leading-[0.9]">
-              PREDICT <br />
-              <span className="text-muted-foreground">PREVENT</span> <br />
-              PROSPER.
+              {content.hero.title.line1} <br />
+              <span className="text-muted-foreground">{content.hero.title.line2}</span> <br />
+              {content.hero.title.line3}
             </h1>
           </motion.div>
           
@@ -36,7 +37,7 @@ export default function HeroSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl md:text-2xl text-muted-foreground max-w-xl font-light leading-relaxed"
           >
-            The first proactive health platform that doesn't just track your data—it understands it.
+            {content.hero.subtitle}
           </motion.p>
           
           <motion.div 
@@ -46,36 +47,21 @@ export default function HeroSection() {
             className="flex gap-4"
           >
              <button onClick={() => document.getElementById('waitlist')?.scrollIntoView({behavior: 'smooth'})} className="bg-primary text-primary-foreground h-14 px-8 rounded-full text-lg font-medium hover:scale-105 transition-transform active:scale-95">
-               Start your journey
+               {content.hero.cta}
              </button>
           </motion.div>
         </motion.div>
 
         <div className="flex flex-col gap-4 lg:pt-32">
-          <FeatureTile 
-            icon={Activity} 
-            title="Real-time Analysis" 
-            text="Continuous monitoring of 50+ biomarkers with clinical-grade accuracy." 
-            delay={0.5}
-          />
-          <FeatureTile 
-            icon={Heart} 
-            title="Holistic Context" 
-            text="We correlate sleep, movement, and nutrition to give you the full picture." 
-            delay={0.6}
-          />
-          <FeatureTile 
-            icon={Zap} 
-            title="Actionable Insights" 
-            text="Don't just see the data. Know exactly what to do with it, every single day." 
-            delay={0.7}
-          />
-           <FeatureTile 
-            icon={Zap} 
-            title="Cognitive Load" 
-            text="Measure mental fatigue and optimize your workday for peak performance." 
-            delay={0.8}
-          />
+          {content.hero.features.map((feature, i) => (
+            <FeatureTile 
+              key={i}
+              icon={feature.icon}
+              title={feature.title} 
+              text={feature.text}
+              delay={0.5 + (i * 0.1)}
+            />
+          ))}
         </div>
       </div>
     </section>

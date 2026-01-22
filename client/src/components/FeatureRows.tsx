@@ -1,25 +1,11 @@
 import Section from "./Section";
 import { cn } from "@/lib/utils";
-
-const FEATURES = [
-  {
-    title: "Metabolic Flexibility",
-    desc: "Train your metabolism to switch efficiently between fuel sources. Our nutrition engine adapts to your daily activity.",
-    image: "/feature-geo-1.png",
-    align: "left"
-  },
-  {
-    title: "Circadian Synchronization",
-    desc: "Align your lifestyle with your internal clock. Get personalized recommendations for light exposure, sleep, and meal timing.",
-    image: "/feature-geo-2.png",
-    align: "right"
-  }
-];
+import { content } from "@/lib/content";
 
 export default function FeatureRows() {
   return (
     <div className="bg-background">
-      {FEATURES.map((feature, i) => (
+      {content.features.map((feature, i) => (
         <Section key={i} className="py-24">
           <div className={cn(
             "flex flex-col gap-16 items-center",

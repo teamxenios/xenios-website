@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { content } from "@/lib/content";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,14 +25,6 @@ export default function Navbar() {
     }
   };
 
-  const navLinks = [
-    { id: "included", label: "What's Included" },
-    { id: "conditions", label: "Conditions" },
-    { id: "foryou", label: "For You" },
-    { id: "forpros", label: "For Pros" },
-    { id: "faq", label: "FAQ" },
-  ];
-
   return (
     <>
       <nav 
@@ -51,7 +44,7 @@ export default function Navbar() {
           </Link>
           
           <div className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
+            {content.nav.links.map((link) => (
               <button 
                 key={link.id}
                 onClick={() => scrollToSection(link.id)} 
@@ -74,7 +67,7 @@ export default function Navbar() {
                 isScrolled ? "bg-primary text-primary-foreground" : "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
               )}
             >
-              Join Waitlist
+              {content.nav.cta}
             </button>
           </div>
 
@@ -99,7 +92,7 @@ export default function Navbar() {
             <div className="flex flex-col gap-8">
               <div className="flex flex-col gap-2">
                 <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Discover</span>
-                {navLinks.map((link) => (
+                {content.nav.links.map((link) => (
                   <button 
                     key={link.id}
                     onClick={() => scrollToSection(link.id)} 
@@ -117,7 +110,7 @@ export default function Navbar() {
                   onClick={() => scrollToSection("waitlist")} 
                   className="text-4xl font-display font-medium text-left flex items-center gap-4 hover:translate-x-2 duration-200"
                 >
-                  Join Waitlist <ArrowRight className="w-8 h-8" />
+                  {content.nav.cta} <ArrowRight className="w-8 h-8" />
                 </button>
               </div>
 
