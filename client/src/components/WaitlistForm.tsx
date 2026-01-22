@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { waitlistService } from "@/lib/waitlist-service";
@@ -13,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const formSchema = z.object({
   firstName: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
+  role: z.string({ required_error: "Please select a role" }),
 });
 
 export default function WaitlistForm() {
@@ -116,6 +118,31 @@ export default function WaitlistForm() {
                     )}
                   />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="rounded-none border-border bg-background focus:ring-0 focus:border-primary h-12">
+                            <SelectValue placeholder="Select your role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Trainer">Personal Trainer</SelectItem>
+                          <SelectItem value="Health Coach">Health Coach</SelectItem>
+                          <SelectItem value="Team Coach">Team Coach</SelectItem>
+                          <SelectItem value="Gym Owner">Gym Owner</SelectItem>
+                          <SelectItem value="Athlete">Athlete</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
                 
                 <Button 
                   type="submit" 
@@ -132,9 +159,14 @@ export default function WaitlistForm() {
                   )}
                 </Button>
                 
-                <p className="text-xs text-center text-muted-foreground pt-2">
-                  No spam. Unsubscribe anytime.
-                </p>
+                <div className="flex flex-col gap-1 text-center pt-2">
+                  <p className="text-xs text-muted-foreground">
+                    Get early access updates. No spam.
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/60">
+                    Your info stays private.
+                  </p>
+                </div>
               </form>
             </Form>
           </motion.div>

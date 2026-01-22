@@ -4,6 +4,12 @@ import { z } from "zod";
 export interface WaitlistSubmission {
   firstName: string;
   email: string;
+  role: string;
+  // Optional fields for coach application
+  activeClients?: string;
+  adminHours?: string;
+  dataSources?: string;
+  anonymizedDataConsent?: boolean;
 }
 
 // Define the response shape

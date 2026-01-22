@@ -4,6 +4,7 @@ import Section from "@/components/Section";
 import { content } from "@/lib/content";
 import { Check, Clock, Shield, Star, Users } from "lucide-react";
 import { motion } from "framer-motion";
+import CoachApplicationForm from "@/components/CoachApplicationForm";
 import { useLocation } from "wouter";
 
 export default function Coaches() {
@@ -107,16 +108,8 @@ export default function Coaches() {
             ))}
           </div>
 
-          <div className="mt-16 text-center" id="application-form">
-            <button 
-              onClick={() => window.open('mailto:partners@xenios.inc?subject=Founding%20Partner%20Application', '_blank')}
-              className="bg-white text-black h-14 px-12 rounded-full text-lg font-medium hover:bg-zinc-200 transition-colors w-full sm:w-auto"
-            >
-              Apply via Email
-            </button>
-            <p className="mt-4 text-sm text-zinc-500">
-              Limited spots available for the Q1 2026 cohort.
-            </p>
+          <div className="mt-16" id="application-form">
+            <CoachApplicationForm />
           </div>
         </div>
       </Section>
