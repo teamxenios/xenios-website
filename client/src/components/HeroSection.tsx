@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
 import { content } from "@/lib/content";
+import { Link } from "wouter";
 
 export default function HeroSection() {
   const containerRef = useRef(null);
@@ -49,9 +50,11 @@ export default function HeroSection() {
              <button onClick={() => document.getElementById('waitlist')?.scrollIntoView({behavior: 'smooth'})} className="bg-primary text-primary-foreground h-14 px-8 rounded-full text-lg font-medium hover:scale-105 transition-transform active:scale-95">
                {content.hero.cta}
              </button>
-             <button className="h-14 px-8 rounded-full text-lg font-medium border border-border bg-background hover:bg-secondary/50 transition-colors">
-               {content.hero.ctaSecondary}
-             </button>
+             <Link href="/coaches">
+               <button className="h-14 px-8 rounded-full text-lg font-medium border border-border bg-background hover:bg-secondary/50 transition-colors">
+                 {content.hero.ctaSecondary}
+               </button>
+             </Link>
           </motion.div>
 
           <motion.div

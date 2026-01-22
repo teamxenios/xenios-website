@@ -260,5 +260,35 @@ export const content = {
       legal: ["Privacy Policy", "Terms of Service"],
       social: ["TW", "IG", "LI"]
     }
+  },
+
+  coachesPage: {
+    hero: {
+      title: "Founding Coach Partners",
+      subtitle: "Co-build with Xenios during MVP. Shape the roadmap, get early access, and define the future of coaching technology.",
+      cta: "Apply to be a Founding Coach Partner"
+    },
+    requirements: {
+      title: "Who we're looking for",
+      items: [
+        "20+ active clients managed monthly",
+        "10+ admin hours spent weekly",
+        "Uses multiple data sources (wearables, spreadsheets, apps)"
+      ]
+    },
+    commitment: {
+      title: "Time Commitment",
+      description: "2 to 4 hours per month plus ongoing usage of the platform.",
+      note: "Only anonymized workflow samples. No private identifying client details."
+    },
+    benefits: {
+      title: "Partner Benefits",
+      items: [
+        "Lifetime free access to the platform",
+        "Priority support & direct engineering access",
+        "Private community of elite coaches",
+        "Recognition as a Founding Partner (Optional)"
+      ]
+    }
   }
 };
