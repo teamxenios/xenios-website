@@ -1,0 +1,40 @@
+Fix the scrolling KPI cards / ticker section bugs.
+
+Problem
+1) The horizontal scrolling cards pause when the user hovers or touches them.
+2) Some cards overlap each other at certain viewport widths; cards should never overlap.
+
+Requirements
+A) Do not pause the animation on hover or touch.
+- Remove any CSS like:
+  .ticker:hover { animation-play-state: paused; }
+  .track:hover { animation-play-state: paused; }
+- Remove any JS listeners that pause on mouseenter, mousemove, pointerenter, touchstart, focus, or hover states.
+- Ensure the cursor can hover the cards without affecting motion.
+
+B) Prevent overlap and make spacing consistent across breakpoints.
+- The ticker layout should be:
+  - Outer wrapper: overflow-hidden, width 100%, position relative.
+  - Inner track: display flex, flex-wrap: nowrap, gap: 16px (or use Tailwind gap-4), align-items: stretch.
+  - Each card: fixed width with responsive sizing, and MUST NOT shrink:
+    - Tailwind: w-[280px] sm:w-[320px] md:w-[360px] flex-none
+  - Add box-sizing border-box to cards if missing.
+- If you are duplicating items to create an infinite loop, ensure the track is wide enough and the duplicated list is appended correctly so there are no negative margins or absolute positioning that causes overlap.
+
+C) Make the infinite scroll robust.
+Choose ONE approach (prefer CSS keyframes):
+Option 1 (preferred): CSS animation
+- Use a track that contains two identical sequences of cards.
+- Animate translateX from 0 to -50% (or the width of one sequence) continuously.
+- Use linear timing and a stable duration (e.g. 25s–40s depending on length).
+- Example: animation: ticker 30s linear infinite;
+- Ensure the track uses will-change: transform and transform: translate3d(0,0,0) for smoother motion.
+
+D) QA checklist
+- On desktop: hovering over any card does NOT pause.
+- On mobile: tapping/scrolling does NOT pause.
+- Cards never overlap at any viewport width; they remain in a single row and are clipped by the container.
+- The animation remains smooth and continuous.
+
+Deliverable
+Update the component and its CSS/Tailwind classes accordingly and show me the exact files you changed and a brief summary of what was causing the pause and overlap.

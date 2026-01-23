@@ -37,6 +37,11 @@
     from { transform: translateX(0); }
     to { transform: translateX(-100%); }
   }
+
+  @keyframes ticker {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+  }
 }
 
 :root {
@@ -92,5 +97,9 @@ h1, h2, h3, h4, h5, h6 {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  .animate-ticker {
+    animation: ticker 35s linear infinite;
   }
 }
