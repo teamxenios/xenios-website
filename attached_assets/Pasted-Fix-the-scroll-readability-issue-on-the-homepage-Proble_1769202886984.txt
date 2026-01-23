@@ -1,0 +1,53 @@
+Fix the scroll readability issue on the homepage.
+
+Problem
+As you scroll down from the top, the “Built for” chips and surrounding hero content fade away and overlap with other sections. The result is that you cannot clearly read who the platform is for.
+
+Goal
+Make the “Built for” section and the hero message remain readable and never overlap with the next section while scrolling.
+
+Requirements
+1) Remove any scroll driven fading that affects the hero and “Built for” content
+- Search the codebase for any scroll animation logic that changes opacity, visibility, or transform for these elements:
+  - IntersectionObserver logic
+  - framer-motion “whileInView” or “animate” that lowers opacity
+  - CSS classes like: fade, fadeOut, opacity-0, opacity-20, translate-y, blur, will-change
+- The hero and “Built for” chips should not fade out as the user scrolls.
+- If there is a reveal animation, it can fade in once, but it must not fade out on further scrolling.
+
+2) Stop section overlap by fixing stacking and positioning
+- Identify any element in the hero area using position: absolute, position: fixed, or position: sticky that remains on top of later sections.
+- If the hero uses sticky positioning, limit it to the hero only and ensure it releases before the next section begins.
+- Ensure each section has a real layout height (no negative margins or collapsing containers).
+- Add clear vertical spacing between sections (padding top and bottom).
+
+3) Make the big background typography non intrusive
+If you have oversized background words (like “proactive health professionals.”) that are used as design texture:
+- Put that text in an absolutely positioned element inside the hero with:
+  - z-index: 0
+  - opacity: 0.10 to 0.18 (never lower actual content contrast)
+  - pointer-events: none
+- Put all real readable content (headline, subhead, CTAs, Built for chips) in a wrapper with:
+  - position: relative
+  - z-index: 10
+This prevents the background text from covering other sections or reducing legibility.
+
+4) Keep “Built for” readable and persistent
+- The “Built for:” label and chips should have normal text contrast and must stay readable.
+- Do not set them to very low opacity.
+- Make the chips wrap cleanly and never get hidden behind other elements.
+Implementation suggestion:
+  - Use a dedicated “BuiltFor” section directly under the hero content
+  - Give it its own background (same as page) and padding
+  - Ensure it is not inside a sticky container
+
+5) QA checklist
+- Scroll from top to mid page and back up.
+- No overlapping layers.
+- No fade out that makes “Built for” unreadable.
+- Headline, subhead, CTAs, and chips are readable at all scroll positions.
+- Mobile and desktop both work.
+
+Deliverable
+- Update the necessary components and styles.
+- Tell me which files you changed and what was causing the fade and overlap.
