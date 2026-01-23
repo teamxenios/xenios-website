@@ -150,7 +150,32 @@ export const content = {
 
   dashboard: {
     headline: "Your roster, visualized.",
-    description: "A command center for your entire team. Monitor compliance, readiness, and load at a glance."
+    description: "A command center for your entire team. Monitor compliance, readiness, and load at a glance.",
+    cards: [
+      { title: "Readiness Score", value: "87", unit: "%", trend: "+5", status: "high" },
+      { title: "HRV Trend", value: "68", unit: "ms", trend: "+12", status: "high" },
+      { title: "Training Load", value: "Moderate", unit: "", trend: "", status: "moderate" },
+      { title: "Sleep Consistency", value: "7.4", unit: "hrs", trend: "-0.3", status: "moderate" },
+      { title: "Zone 2 Minutes", value: "142", unit: "min", trend: "+18", status: "high" },
+      { title: "Recovery Status", value: "Good", unit: "", trend: "", status: "high" },
+    ],
+    chartLabels: {
+      weeks: ["Week 1", "Week 2", "Week 3", "Week 4"],
+      levels: ["Low", "Moderate", "High"],
+      comparison: ["Baseline", "Current"],
+    },
+    sidebar: [
+      { title: "Session Notes", count: 12, label: "This week" },
+      { title: "Strength Progress", count: 8, label: "PRs logged" },
+      { title: "Client Adherence", count: 94, label: "% compliance" },
+      { title: "Check-in Summary", count: 23, label: "Completed" },
+    ],
+    athletes: [
+      { name: "Alex M.", readiness: 92, status: "Ready" },
+      { name: "Jordan K.", readiness: 78, status: "Monitor" },
+      { name: "Sam T.", readiness: 85, status: "Ready" },
+      { name: "Chris L.", readiness: 64, status: "Rest" },
+    ]
   },
 
   features: [
