@@ -1,0 +1,297 @@
+You're already ahead of the curve with a live website—now it's time to connect your waitlist form to a secure backend, database, and automated email system. Below is a production-ready prompt you can paste directly into Replit to build the necessary infrastructure.
+
+---
+
+## 🚀 Replit Prompt: Build the Xenios Waitlist Backend
+
+Copy and paste the following into Replit AI:
+
+---
+
+### **Prompt for Replit AI**
+
+Build a production-ready backend for the Xenios Technologies coach waitlist form on **xeniostechnology.com**.
+
+#### 🎯 Objectives
+
+Create a secure and scalable system that:
+
+1. Captures coach waitlist submissions from the website.
+2. Stores them in a PostgreSQL database.
+3. Sends an automated confirmation email from **[team@xeniostechnology.com](mailto:team@xeniostechnology.com)**.
+4. Prevents duplicate entries.
+5. Provides an admin endpoint to view and export submissions.
+
+---
+
+## 🛠️ Tech Stack
+
+* **Backend:** Node.js with Express
+* **Database:** PostgreSQL using Prisma ORM
+* **Email Service:** Resend
+* **Validation:** Zod
+* **Environment Variables:** dotenv
+* **Security:** Helmet and CORS
+* **Deployment:** Replit Autoscale Deployment
+
+---
+
+## 📊 Database Schema
+
+Create a Prisma schema with a `Waitlist` model:
+
+```prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Waitlist {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String   @unique
+  role      String
+  message   String
+  status    String   @default("Waitlist")
+  createdAt DateTime @default(now())
+}
+```
+
+---
+
+## 📁 Project Structure
+
+```
+/xenios-waitlist
+│── prisma/
+│   └── schema.prisma
+│── src/
+│   ├── server.js
+│   ├── routes/waitlist.js
+│   └── services/email.js
+│── public/
+│   └── form.js
+│── .env.example
+│── package.json
+│── README.md
+```
+
+---
+
+## 🔧 Backend Implementation
+
+### **server.js**
+
+```javascript
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import dotenv from "dotenv";
+import waitlistRoutes from "./routes/waitlist.js";
+
+dotenv.config();
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+app.use(helmet());
+
+app.use("/api/waitlist", waitlistRoutes);
+
+app.get("/api/health", (req, res) => {
+  res.json({ status: "Xenios API is running" });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
+
+---
+
+### **routes/waitlist.js**
+
+```javascript
+import express from "express";
+import { PrismaClient } from "@prisma/client";
+import { z } from "zod";
+import sendConfirmationEmail from "../services/email.js";
+
+const router = express.Router();
+const prisma = new PrismaClient();
+
+const waitlistSchema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  email: z.string().email(),
+  role: z.string().min(1),
+  message: z.string().min(1),
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const data = waitlistSchema.parse(req.body);
+
+    const existing = await prisma.waitlist.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existing) {
+      return res.status(400).json({
+        error: "You are already on the waitlist.",
+      });
+    }
+
+    const entry = await prisma.waitlist.create({
+      data,
+    });
+
+    await sendConfirmationEmail(data);
+
+    res.status(200).json({
+      success: true,
+      message: "Successfully joined the waitlist!",
+      entry,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.get("/", async (req, res) => {
+  const entries = await prisma.waitlist.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+  res.json(entries);
+});
+
+export default router;
+```
+
+---
+
+### **services/email.js**
+
+```javascript
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export default async function sendConfirmationEmail({
+  firstName,
+  email,
+}) {
+  await resend.emails.send({
+    from: "Xenios Technologies <team@xeniostechnology.com>",
+    to: email,
+    subject: "Welcome to the Xenios Coach Waitlist 🚀",
+    html: `
+      <h2>Welcome to Xenios, ${firstName}!</h2>
+      <p>Thank you for joining the Xenios coach waitlist.</p>
+
+      <p><strong>What We're Building</strong><br>
+      The AI-native operating system for coaches, trainers, and performance teams.</p>
+
+      <p><strong>How You Can Help</strong></p>
+      <ul>
+        <li>Participate in product discovery interviews</li>
+        <li>Test early features</li>
+        <li>Join our founding coach cohort</li>
+      </ul>
+
+      <p><strong>Stay Connected</strong></p>
+      <ul>
+        <li><a href="https://www.linkedin.com/company/xenios-health">LinkedIn</a></li>
+        <li><a href="https://www.instagram.com/xenioshealth/">Instagram</a></li>
+        <li><a href="https://xenios.beehiiv.com/subscribe">Newsletter</a></li>
+        <li><a href="https://www.xeniostechnology.com">Website</a></li>
+      </ul>
+
+      <p>We're excited to build the future of coaching with you.</p>
+      <p><strong>— Team Xenios</strong></p>
+    `,
+  });
+}
+```
+
+---
+
+## 🌐 Frontend Integration
+
+Add this script to your website:
+
+```html
+<script>
+document.querySelector("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = {
+    firstName: document.querySelector('input[placeholder="First name"]').value,
+    lastName: document.querySelector('input[placeholder="Last name"]').value,
+    email: document.querySelector('input[type="email"]').value,
+    role: document.querySelector("select").value,
+    message: document.querySelector("textarea").value,
+  };
+
+  const response = await fetch("/api/waitlist", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  const result = await response.json();
+  alert(result.message || "Submission successful!");
+});
+</script>
+```
+
+---
+
+## 🔑 Environment Variables
+
+Create a `.env` file:
+
+```
+DATABASE_URL=your_postgresql_database_url
+RESEND_API_KEY=your_resend_api_key
+PORT=3000
+```
+
+---
+
+## ▶️ Deployment Commands
+
+Run the following in the Replit Shell:
+
+```bash
+npm install express cors helmet dotenv zod @prisma/client prisma resend
+npx prisma init
+npx prisma migrate dev --name init
+node src/server.js
+```
+
+---
+
+## ✅ Final Deliverables
+
+| Feature                       | Status |
+| ----------------------------- | ------ |
+| Waitlist database             | ✅      |
+| Secure backend API            | ✅      |
+| Automated confirmation emails | ✅      |
+| Duplicate prevention          | ✅      |
+| Admin data endpoint           | ✅      |
+| Production-ready deployment   | ✅      |
+
+---
+
+If you'd like, you can share your Replit project link, and I’ll tailor the frontend integration directly to your existing form fields.

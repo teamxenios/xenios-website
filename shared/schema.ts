@@ -7,7 +7,7 @@ export const waitlistSubmissions = pgTable("waitlist_submissions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
-  email: text("email").notNull(),
+  email: text("email").notNull().unique(),
   role: text("role").notNull(),
   missingTechFeedback: text("missing_tech_feedback"),
   sourcePage: text("source_page"),
@@ -16,6 +16,7 @@ export const waitlistSubmissions = pgTable("waitlist_submissions", {
   dataSources: text("data_sources"),
   anonymizedDataConsent: boolean("anonymized_data_consent"),
   submissionType: text("submission_type").notNull().$type<"general" | "coach_partner">(),
+  status: text("status").notNull().default("Waitlist"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
