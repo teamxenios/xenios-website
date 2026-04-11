@@ -1,11 +1,54 @@
 import { Resend } from "resend";
 
-function getResendClient(): Resend | null {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    return null;
+// Resend integration via Replit connector
+let connectionSettings: any;
+
+async function getCredentials() {
+  const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME;
+  const xReplitToken = process.env.REPL_IDENTITY
+    ? "repl " + process.env.REPL_IDENTITY
+    : process.env.WEB_REPL_RENEWAL
+      ? "depl " + process.env.WEB_REPL_RENEWAL
+      : null;
+
+  if (!xReplitToken) {
+    throw new Error("X-Replit-Token not found for repl/depl");
   }
-  return new Resend(apiKey);
+
+  const response = await fetch(
+    "https://" +
+      hostname +
+      "/api/v2/connection?include_secrets=true&connector_names=resend",
+    {
+      headers: {
+        Accept: "application/json",
+        "X-Replit-Token": xReplitToken,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Connector fetch failed with status ${response.status}`);
+  }
+
+  const data = await response.json();
+  connectionSettings = data.items?.[0];
+
+  if (!connectionSettings || !connectionSettings.settings.api_key) {
+    throw new Error("Resend not connected");
+  }
+  return {
+    apiKey: connectionSettings.settings.api_key,
+    fromEmail: connectionSettings.settings.from_email,
+  };
+}
+
+async function getUncachableResendClient() {
+  const { apiKey } = await getCredentials();
+  return {
+    client: new Resend(apiKey),
+    fromEmail: connectionSettings.settings.from_email,
+  };
 }
 
 export async function sendConfirmationEmail({
@@ -15,15 +58,21 @@ export async function sendConfirmationEmail({
   firstName: string;
   email: string;
 }) {
-  const resend = getResendClient();
-  if (!resend) {
-    console.warn("RESEND_API_KEY not configured — skipping confirmation email");
+  let resend: Resend;
+  let fromEmail: string;
+
+  try {
+    const result = await getUncachableResendClient();
+    resend = result.client;
+    fromEmail = result.fromEmail || "Xenios Technologies <team@xeniostechnology.com>";
+  } catch (error) {
+    console.warn("Resend not configured — skipping confirmation email:", (error as Error).message);
     return;
   }
 
   try {
     await resend.emails.send({
-      from: "Xenios Technologies <team@xeniostechnology.com>",
+      from: fromEmail,
       to: email,
       subject: "Welcome to the Xenios Coach Waitlist 🚀",
       html: `
