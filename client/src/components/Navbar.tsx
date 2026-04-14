@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useState, useEffect } from "react";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -103,6 +103,15 @@ export default function Navbar() {
                     {link.label}
                   </button>
                 ))}
+                <Link href="/careers">
+                  <a
+                    onClick={() => setIsOpen(false)}
+                    className="text-4xl font-display font-medium text-left hover:text-muted-foreground transition-colors hover:translate-x-2 duration-200"
+                    data-testid="link-nav-careers-mobile"
+                  >
+                    Careers
+                  </a>
+                </Link>
               </div>
 
               <div className="h-px bg-border w-full my-4" />
