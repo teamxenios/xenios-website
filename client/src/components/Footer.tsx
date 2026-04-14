@@ -29,9 +29,24 @@ export default function Footer() {
           <div>
             <h4 className="font-mono text-xs uppercase tracking-widest text-zinc-500 mb-6">{content.footer.columns.company.title}</h4>
             <ul className="space-y-4">
-              {content.footer.columns.company.links.map((link, i) => (
-                <li key={i}><a href="#" className="hover:text-white text-zinc-400 transition-colors">{link}</a></li>
-              ))}
+              {content.footer.columns.company.links.map((link, i) => {
+                const linkRoutes: Record<string, string> = { "Careers": "/careers", "Contact": "mailto:" + content.contact.email };
+                const href = linkRoutes[link] || "#";
+                const isExternal = href.startsWith("mailto:");
+                return (
+                  <li key={i}>
+                    {isExternal ? (
+                      <a href={href} className="hover:text-white text-zinc-400 transition-colors">{link}</a>
+                    ) : href !== "#" ? (
+                      <Link href={href}>
+                        <a className="hover:text-white text-zinc-400 transition-colors">{link}</a>
+                      </Link>
+                    ) : (
+                      <a href="#" className="hover:text-white text-zinc-400 transition-colors">{link}</a>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

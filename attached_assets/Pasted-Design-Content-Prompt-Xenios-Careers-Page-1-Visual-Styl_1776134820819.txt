@@ -1,0 +1,45 @@
+Design & Content Prompt: Xenios Careers Page
+1. Visual Style & Layout
+Aesthetic: Ultra-minimalist, "Clean Tech" SaaS style. High white space, bold typography, and a monochrome palette (True Black, Slate Gray, and Stark White).
+
+Typography: Use a heavy-weight, bold Sans-Serif for headings (e.g., Inter or Geist). Body text should be a lighter weight in dark gray for readability and hierarchy.
+
+Component Style: Use the same rounded-corner card system (20px–24px border radius) seen on the landing page for job listings. Border should be a very light gray (1px stroke).
+
+Layout: A centered or left-aligned hero section followed by a single-column or 2-column grid of open roles.
+
+2. Page Structure & Copy
+Hero Section:
+
+Headline: Join the mission to scale human performance.
+
+Subheadline: We are building the AI-agentic operating system that transforms health coaching into a scalable digital asset. Help us define the future of proactive health.
+
+Section 1: Our Philosophy (Cards)
+
+Card A: Data-Driven. We believe in clinical-grade workflows and precise metric tracking.
+
+Card B: Impact-First. We move with startup agility to solve the administrative bottleneck for world-class coaches.
+
+Card C: Remote-Native. A global team built on trust, transparency, and high-performance output.
+
+Section 2: Open Roles (Job Board Grid)
+
+Design Note: Use the "Clinical Grade Workflows" card style for these listings.
+
+Founding Engineer (Full-Stack & AI): Help us architect the core AI engine and seamless data interoperability.
+
+Director of Performance & Sport Science: Bridge the gap between elite coaching methodology and autonomous software.
+
+Fractional AI Advisor: Guide our strategic technical roadmap and LLM integration.
+
+Section 3: The "Waitlist" for Talent (Bottom CTA)
+
+Text: Don’t see a fit but want to build with us?
+
+Button: Drop your LinkedIn/Portfolio (Black pill-shaped button with white text).
+
+Implementation Tips
+The "Vibe": Since the company is in "Stealth Mode," avoid generic stock photos of offices. Instead, use minimalist, abstract icons or high-quality product mockups of the Xenios interface to maintain the high-tech feel.
+
+Button Consistency: Ensure the "Join the Team" button matches the "Join Waitlist" button from your hero section—black background, white text, and highly rounded corners.

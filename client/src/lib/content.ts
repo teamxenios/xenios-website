@@ -297,6 +297,57 @@ export const content = {
     }
   },
 
+  careersPage: {
+    hero: {
+      title: "Join the mission to scale human performance.",
+      subtitle: "We are building the AI-agentic operating system that transforms health coaching into a scalable digital asset. Help us define the future of proactive health."
+    },
+    philosophy: {
+      title: "Our Philosophy",
+      cards: [
+        {
+          title: "Data-Driven",
+          description: "We believe in clinical-grade workflows and precise metric tracking."
+        },
+        {
+          title: "Impact-First",
+          description: "We move with startup agility to solve the administrative bottleneck for world-class coaches."
+        },
+        {
+          title: "Remote-Native",
+          description: "A global team built on trust, transparency, and high-performance output."
+        }
+      ]
+    },
+    roles: {
+      title: "Open Roles",
+      positions: [
+        {
+          title: "Founding Engineer (Full-Stack & AI)",
+          description: "Help us architect the core AI engine and seamless data interoperability.",
+          type: "Engineering",
+          location: "Remote"
+        },
+        {
+          title: "Director of Performance & Sport Science",
+          description: "Bridge the gap between elite coaching methodology and autonomous software.",
+          type: "Product & Science",
+          location: "Remote"
+        },
+        {
+          title: "Fractional AI Advisor",
+          description: "Guide our strategic technical roadmap and LLM integration.",
+          type: "Advisory",
+          location: "Remote"
+        }
+      ]
+    },
+    talentCta: {
+      text: "Don't see a fit but want to build with us?",
+      button: "Drop your LinkedIn / Portfolio"
+    }
+  },
+
   coachesPage: {
     hero: {
       title: "Founding Coach Partners",

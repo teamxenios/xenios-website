@@ -35,6 +35,11 @@ shared/
 - `GET /api/waitlist` — List all submissions (admin)
 - `GET /api/health` — Health check
 
+## Pages
+- `/` — Home (marketing landing page with waitlist form)
+- `/coaches` — Founding Coach Partners application
+- `/careers` — Careers page with philosophy, open roles, and talent CTA
+
 ## Key Features
 - Two submission types: "general" waitlist and "coach_partner" application
 - Duplicate email prevention (unique constraint + application-level check)
