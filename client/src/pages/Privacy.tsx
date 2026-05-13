@@ -2,16 +2,18 @@ import PageShell from "@/components/PageShell";
 import { content } from "@/lib/content";
 
 export default function Privacy() {
-  const p = content.privacy;
+  const P = content.privacy;
   return (
     <PageShell>
-      <section className="container-x pt-16 md:pt-24 pb-24 max-w-3xl">
-        <p className="eyebrow text-ink-muted mb-8">{p.eyebrow}</p>
-        <h1 className="h1-page mb-12" data-testid="text-privacy-h1">{p.h1}</h1>
-        <div className="space-y-6 body-base text-ink-soft">
-          {p.paragraphs.map((para, i) => (
-            <p key={i} data-testid={`text-privacy-p-${i}`}>{para}</p>
-          ))}
+      <section className="bg-paper section-y" data-testid="section-privacy">
+        <div className="container-x">
+          <p className="mono-cap text-ink-mute mb-6">{P.eyebrow}</p>
+          <h1 className="display-l text-ink mb-10">{P.h1}</h1>
+          <article className="max-w-prose space-y-6">
+            {P.paragraphs.map((p, i) => (
+              <p key={i} className="body-l text-ink-2">{p}</p>
+            ))}
+          </article>
         </div>
       </section>
     </PageShell>

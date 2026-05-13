@@ -1,40 +1,53 @@
 import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
-import Counter from "@/components/Counter";
 import { content } from "@/lib/content";
 
 export default function Manifesto() {
-  const m = content.manifesto;
+  const M = content.manifesto;
   return (
     <PageShell>
-      <article className="container-x pt-16 md:pt-24 pb-20 md:pb-28 max-w-3xl">
-        <p className="eyebrow text-orange-fire mb-8">{m.eyebrow}</p>
-        <h1 className="display-md mb-16 text-balance" style={{ textTransform: "none" }} data-testid="text-manifesto-h1">
-          {m.h1}
-        </h1>
-        <div className="space-y-7 body-lg text-ink-soft">
-          {m.paragraphs.map((p, i) => (
-            <p key={i} data-testid={`text-manifesto-p-${i}`}>{p}</p>
-          ))}
+      <section className="grad grad-06-horizon" data-testid="section-manifesto-hero">
+        <div className="container-x section-y">
+          <p className="mono-cap text-paper/80 mb-8">{M.eyebrow}</p>
+          <h1 className="display-xl text-paper text-balance max-w-5xl">{M.h1}</h1>
         </div>
+      </section>
 
-        <div className="my-16 py-12 border-y-2 border-ink">
-          {m.pullQuote.map((q, i) => (
-            <p key={i} className="h3-sub italic mb-4 last:mb-0">{q}</p>
-          ))}
+      <section className="bg-paper section-y" data-testid="section-manifesto-body">
+        <div className="container-x">
+          <article className="max-w-prose mx-auto space-y-6">
+            {M.paragraphs.map((p, i) => (
+              <p key={i} className="body-l text-ink-2" data-testid={`text-manifesto-para-${i}`}>{p}</p>
+            ))}
+            <div className="rule-y py-10 my-10">
+              <p className="quote-lead text-ink">{M.bridge}</p>
+            </div>
+            {M.thesisParas.map((p, i) => (
+              <p key={i} className="body-l text-ink-2">{p}</p>
+            ))}
+            <h2 className="display-m text-ink mt-16 mb-4">{M.beliefsHeader}</h2>
+            <div className="space-y-8">
+              {M.beliefs.map((b, i) => (
+                <div key={i} data-testid={`belief-${i}`}>
+                  <p className="display-s text-ink mb-2" style={{ fontWeight: 800 }}>{b.number}</p>
+                  <p className="body-l text-ink-2">{b.body}</p>
+                </div>
+              ))}
+            </div>
+            <div className="rule-top mt-16 pt-10 space-y-4">
+              {M.closingPull.map((line, i) => (
+                <p key={i} className="quote-lead text-ink" style={{ fontWeight: 800 }}>{line}</p>
+              ))}
+            </div>
+          </article>
         </div>
+      </section>
 
-        <p className="eyebrow text-ink-muted">{m.sign}</p>
-      </article>
-
-      <section className="atmos atmos-denim" data-testid="section-manifesto-cta">
-        <div className="container-x py-20 md:py-28">
-          <h2 className="h2-section text-paper mb-8 text-balance">{m.cta.h2}</h2>
-          <div className="flex flex-col md:flex-row md:items-center gap-8">
-            <Link href="/waitlist" className="btn btn-primary btn-on-dark" data-testid="button-manifesto-cta">
-              {m.cta.button}
-            </Link>
-            <Counter suffix={m.cta.counterSuffix} variant="dark" size="sm" />
+      <section className="bg-paper-2 section-y rule-top" data-testid="section-manifesto-cta">
+        <div className="container-x text-center max-w-3xl mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link href="/waitlist" className="btn btn-primary" data-testid="button-manifesto-primary">{M.cta.primary}</Link>
+            <Link href="/#ecosystem" className="btn btn-ghost" data-testid="button-manifesto-secondary">{M.cta.secondary}</Link>
           </div>
         </div>
       </section>

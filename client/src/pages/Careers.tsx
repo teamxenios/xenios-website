@@ -1,62 +1,78 @@
 import PageShell from "@/components/PageShell";
-import AtmosCard from "@/components/AtmosCard";
 import { content } from "@/lib/content";
 
 export default function Careers() {
-  const c = content.careers;
+  const C = content.careers;
+  const DARK_PRESETS = ["grad-04-meridian", "grad-06-horizon"];
+  const mailtoOpen = `mailto:${content.contact.email}?subject=${encodeURIComponent(C.closer.subject)}`;
+
   return (
     <PageShell>
-      <section className="container-x pt-16 md:pt-24 pb-16 max-w-5xl">
-        <p className="eyebrow text-orange-fire mb-8">{c.eyebrow}</p>
-        <h1 className="h1-page mb-10 text-balance" data-testid="text-careers-h1">{c.h1}</h1>
-        <p className="body-lg text-ink-soft max-w-3xl">{c.lead}</p>
-      </section>
-
-      <section className="container-x pb-20">
-        <p className="eyebrow text-ink-muted mb-8">{c.rolesEyebrow}</p>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {c.roles.map((r, i) => {
-            const isDark = r.preset === "voltage" || r.preset === "forge";
-            const apply = `mailto:${content.contact.email}?subject=${encodeURIComponent(r.subject)}`;
-            return (
-              <AtmosCard
-                key={i}
-                preset={r.preset}
-                eyebrow={r.eyebrow}
-                title={r.title}
-                testId={`role-${i}`}
-              >
-                <p className="mb-6">{r.body}</p>
-                <a
-                  href={apply}
-                  data-testid={`link-apply-${i}`}
-                  className={`inline-flex items-center gap-2 mono-sm hover:underline underline-offset-4 ${
-                    isDark ? "text-orange-warm" : "text-orange-fire"
-                  }`}
-                >
-                  APPLY → {content.contact.email}
-                </a>
-              </AtmosCard>
-            );
-          })}
+      <section className="grad grad-04-meridian section-y" data-testid="section-careers-hero">
+        <div className="container-x">
+          <p className="mono-cap text-paper/80 mb-8">{C.eyebrow}</p>
+          <h1 className="display-l text-paper text-balance max-w-5xl">{C.h1}</h1>
+          <p className="body-l mt-8 text-paper/90 max-w-2xl">{C.sub}</p>
         </div>
       </section>
 
-      <section className="container-x pb-20 max-w-3xl rule-top pt-16">
-        <h2 className="h2-section mb-6">{c.howWeWork.h2}</h2>
-        <p className="body-lg text-ink-soft">{c.howWeWork.body}</p>
+      <section className="bg-paper section-y rule-bottom" data-testid="section-careers-how">
+        <div className="container-x">
+          <p className="mono-cap text-ink-mute mb-6">{C.howWeWork.h}</p>
+          <ul className="space-y-3 max-w-3xl">
+            {C.howWeWork.items.map((it, i) => (
+              <li key={i} className="body-l text-ink-2 flex gap-3">
+                <span className="text-pulse" aria-hidden="true">—</span>
+                <span>{it}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
 
-      <section className="container-x pb-24 max-w-3xl">
-        <h3 className="h3-sub mb-6">{c.elsewhere.h3}</h3>
-        <p className="body-lg text-ink-soft">{c.elsewhere.body}</p>
-        <a
-          href={`mailto:${content.contact.email}`}
-          className="btn btn-primary mt-8"
-          data-testid="button-careers-write"
-        >
-          Write us →
-        </a>
+      <section className="bg-paper section-y" data-testid="section-careers-roles">
+        <div className="container-x">
+          <p className="mono-cap text-ink-mute mb-10">{C.rolesEyebrow}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {C.roles.map((role) => {
+              const isDark = DARK_PRESETS.includes(role.preset);
+              const mailto = `mailto:${content.contact.email}?subject=${encodeURIComponent(role.subject)}`;
+              return (
+                <div
+                  key={role.num}
+                  className={`grad ${role.preset} card flex flex-col h-full`}
+                  data-testid={`card-role-${role.num}`}
+                >
+                  <p className={`mono-cap ${isDark ? "text-paper/80" : "text-ink-mute"}`}>{role.num} · {role.eyebrow}</p>
+                  <h3 className={`display-s mt-3 ${isDark ? "text-paper" : "text-ink"}`}>{role.title}</h3>
+                  <p className={`body-m mt-4 flex-1 ${isDark ? "text-paper/90" : "text-ink-2"}`}>{role.body}</p>
+                  <p className={`mono-label mt-4 ${isDark ? "text-paper/70" : "text-ink-mute"}`}>{role.location}</p>
+                  <p className={`mono-label mt-1 ${isDark ? "text-paper/70" : "text-ink-mute"}`}>Subject: {role.subject}</p>
+                  <a
+                    href={mailto}
+                    className={`btn ${isDark ? "btn-on-dark btn-primary" : "btn-primary"} mt-6 self-start`}
+                    data-testid={`link-apply-${role.num}`}
+                  >
+                    apply →
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-paper-2 section-y rule-top" data-testid="section-careers-closer">
+        <div className="container-x">
+          <div className="max-w-2xl">
+            <p className="display-s text-ink mb-3">{C.closer.h}</p>
+            <p className="body-l text-ink-2 mb-2">{C.closer.body}</p>
+            <p className="mono-label text-ink-mute">Subject: {C.closer.subject}</p>
+            <a href={mailtoOpen} className="btn btn-primary mt-6" data-testid="link-apply-open">
+              write us →
+            </a>
+          </div>
+        </div>
       </section>
     </PageShell>
   );

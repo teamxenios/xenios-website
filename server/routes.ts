@@ -1,9 +1,14 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { type Server } from "http";
 import { storage } from "./storage";
-import { insertWaitlistSchema } from "@shared/schema";
+import { insertWaitlistSchema, contactMessageSchema } from "@shared/schema";
 import { z } from "zod";
-import { sendConfirmationEmail, sendInternalNotification } from "./services/email";
+import {
+  sendConfirmationEmail,
+  sendInternalNotification,
+  sendContactMessage,
+  sendContactAutoReply,
+} from "./services/email";
 
 function isUniqueViolation(error: unknown): boolean {
   return (
@@ -14,12 +19,14 @@ function isUniqueViolation(error: unknown): boolean {
   );
 }
 
-// Simple in-memory IP rate limiter: 5 POSTs per IP per 10min window.
 const RL_MAX = 5;
 const RL_WINDOW_MS = 10 * 60 * 1000;
 const rlBuckets = new Map<string, { count: number; resetAt: number }>();
 function rateLimit(req: Request): boolean {
-  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
+  const ip =
+    (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+    req.socket.remoteAddress ||
+    "unknown";
   const now = Date.now();
   const b = rlBuckets.get(ip);
   if (!b || b.resetAt < now) {
@@ -42,32 +49,42 @@ function adminAuth(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
-  await storage.ensureOffsetSeeded(550).catch((e) => console.error("[seed] offset seed failed:", e));
+  await storage.ensureCounterSeeded(550).catch((e) => console.error("[seed] counter seed failed:", e));
 
   app.get("/api/health", (_req, res) => {
     res.json({ status: "Xenios API is running" });
   });
 
-  app.get("/api/waitlist/count", async (_req, res) => {
+  app.get("/api/counter", async (_req, res) => {
     try {
-      const { total } = await storage.getWaitlistCount();
+      const total = await storage.getCounterTotal();
       res.set("Cache-Control", "public, s-maxage=5, stale-while-revalidate=30");
       res.json({ count: total });
     } catch (err) {
-      console.error("[count] error:", err);
+      console.error("[counter] error:", err);
+      res.status(500).json({ count: 550 });
+    }
+  });
+  // Backward-compat alias
+  app.get("/api/waitlist/count", async (_req, res) => {
+    try {
+      const total = await storage.getCounterTotal();
+      res.set("Cache-Control", "public, s-maxage=5, stale-while-revalidate=30");
+      res.json({ count: total });
+    } catch (err) {
+      console.error("[counter] error:", err);
       res.status(500).json({ count: 550 });
     }
   });
 
   async function buildIdempotentResponse(email: string) {
     const existing = await storage.findWaitlistByEmail(email);
-    const { offset, total } = await storage.getWaitlistCount();
     if (!existing) return null;
-    const position = offset + Number(existing.position);
+    const total = await storage.getCounterTotal();
     return {
       success: true as const,
       message: "You're already on the list.",
-      position,
+      position: Number(existing.position),
       count: total,
       duplicate: true,
     };
@@ -81,57 +98,65 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       }
 
       if (!rateLimit(req)) {
-        return res.status(429).json({ success: false, message: "Too many requests. Please try again in a few minutes." });
+        return res.status(429).json({
+          success: false,
+          message: "Too many requests. Please try again in a few minutes.",
+        });
       }
 
+      // Strip non-schema fields (consent, website honeypot)
       const validated = insertWaitlistSchema.parse({
-        ...req.body,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email?.toLowerCase?.(),
+        practitionerType: req.body.practitionerType,
+        city: req.body.city,
+        country: req.body.country,
+        freeText: req.body.freeText || null,
+        howHeard: req.body.howHeard || null,
       });
 
       const idem = await buildIdempotentResponse(validated.email);
       if (idem) return res.json(idem);
 
-      const referrer = (req.headers["referer"] as string) || null;
-      const source = (req.query.utm_source as string) || null;
-      const country =
+      const ipCountry =
         (req.headers["x-vercel-ip-country"] as string) ||
         (req.headers["cf-ipcountry"] as string) ||
         null;
+      const userAgent = (req.headers["user-agent"] as string) || null;
 
-      let submission;
+      let result;
       try {
-        submission = await storage.createWaitlist(validated, { source, referrer, country });
+        result = await storage.createWaitlist(validated, { ipCountry, userAgent });
       } catch (e) {
         if (isUniqueViolation(e)) {
-          // Race: row was just inserted by another request — return idempotent success.
           const fallback = await buildIdempotentResponse(validated.email);
           if (fallback) return res.json(fallback);
         }
         throw e;
       }
 
-      const { offset, total: countAfter } = await storage.getWaitlistCount();
-      const position = offset + Number(submission.position);
+      const { signup, totalCount } = result;
 
       // Fire-and-forget emails
       Promise.allSettled([
-        sendConfirmationEmail({ email: submission.email, position, count: countAfter }),
+        sendConfirmationEmail({
+          email: signup.email,
+          firstName: signup.firstName,
+          position: Number(signup.position),
+          totalCount,
+        }),
         sendInternalNotification({
-          submission,
-          position,
-          count: countAfter,
-          referrer,
-          source,
-          country,
+          signup,
+          totalCount,
         }),
       ]).catch(() => {});
 
       res.json({
         success: true,
         message: "Successfully joined the waitlist!",
-        position,
-        count: countAfter,
+        position: Number(signup.position),
+        count: totalCount,
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -142,7 +167,10 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
         });
       }
       console.error("[waitlist] error:", error);
-      res.status(500).json({ success: false, message: "Failed to process submission. Please try again." });
+      res.status(500).json({
+        success: false,
+        message: "Failed to process submission. Please try again.",
+      });
     }
   });
 
@@ -153,6 +181,42 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     } catch (err) {
       console.error("[admin] list error:", err);
       res.status(500).json({ success: false, message: "Failed to fetch submissions" });
+    }
+  });
+
+  app.post("/api/contact", async (req, res) => {
+    try {
+      // Honeypot
+      if (typeof req.body?.website === "string" && req.body.website.length > 0) {
+        return res.json({ success: true });
+      }
+      if (!rateLimit(req)) {
+        return res.status(429).json({
+          success: false,
+          message: "Too many requests. Please try again in a few minutes.",
+        });
+      }
+      const validated = contactMessageSchema.parse(req.body);
+
+      Promise.allSettled([
+        sendContactMessage(validated),
+        sendContactAutoReply(validated),
+      ]).catch(() => {});
+
+      res.json({ success: true, message: "We have it." });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid submission data",
+          errors: error.errors,
+        });
+      }
+      console.error("[contact] error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Something broke on our side.",
+      });
     }
   });
 

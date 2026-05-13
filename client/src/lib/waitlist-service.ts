@@ -1,47 +1,48 @@
-import { z } from "zod";
-
-export interface WaitlistSubmission {
-  firstName?: string;
-  lastName?: string;
-  email: string;
-  role: string;
-  missingTechFeedback?: string;
-  sourcePage?: string;
-  activeClients?: string;
-  adminHours?: string;
-  dataSources?: string;
-  anonymizedDataConsent?: boolean;
-  submissionType: "general" | "coach_partner";
-}
+import type { InsertWaitlist } from "@shared/schema";
 
 export interface WaitlistResponse {
   success: boolean;
-  message: string;
+  message?: string;
+  position?: number;
+  count?: number;
+  duplicate?: boolean;
 }
 
 export const waitlistService = {
-  submit: async (data: WaitlistSubmission): Promise<WaitlistResponse> => {
-    try {
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to submit");
-      }
-
-      return {
-        success: true,
-        message: result.message,
-      };
-    } catch (error) {
-      throw error instanceof Error ? error : new Error("Failed to submit");
+  submit: async (data: InsertWaitlist & { website?: string }): Promise<WaitlistResponse> => {
+    const res = await fetch("/api/waitlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      const err = new Error(result.message || "Failed to submit") as Error & { status?: number };
+      err.status = res.status;
+      throw err;
     }
+    return result;
+  },
+};
+
+export interface ContactSubmission {
+  name: string;
+  email: string;
+  persona: "practitioner" | "investor" | "journalist_creator" | "integration_partner" | "candidate" | "other";
+  subject: string;
+  message: string;
+  website?: string;
+}
+
+export const contactService = {
+  submit: async (data: ContactSubmission): Promise<{ success: boolean; message?: string }> => {
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.message || "Failed to submit");
+    return result;
   },
 };

@@ -1,166 +1,138 @@
 import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
-import AtmosCard from "@/components/AtmosCard";
 import Counter from "@/components/Counter";
-import WaitlistForm from "@/components/WaitlistForm";
+import AtmosCard from "@/components/AtmosCard";
+import Constellation from "@/components/Constellation";
 import { content } from "@/lib/content";
 
 export default function Home() {
-  const c = content.home;
+  const H = content.home;
 
   return (
     <PageShell>
-      {/* HERO */}
-      <section className="container-x pt-16 md:pt-24 pb-20 md:pb-32" data-testid="section-hero">
-        <p className="eyebrow text-orange-fire mb-8">{c.hero.eyebrow}</p>
-        <h1 className="display-xl text-balance" data-testid="text-hero-h1">
-          {c.hero.h1Line1}
-          <br />
-          {c.hero.h1Line2}
-        </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 mt-12 md:mt-16 max-w-6xl">
-          <p className="body-lg text-ink-soft text-balance">{c.hero.lead}</p>
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-wrap gap-3">
+      {/* VP1 — Hero */}
+      <section className="grad grad-01-dawn" data-testid="section-hero">
+        <div className="container-x section-y">
+          <div className="max-w-5xl">
+            <p className="mono-cap text-ink-2 mb-8" data-testid="text-hero-eyebrow">{H.hero.eyebrow}</p>
+            <h1 className="display-xl text-ink text-balance" data-testid="text-hero-h1">{H.hero.h1}</h1>
+            <p className="display-s mt-10 text-ink-2 max-w-3xl" data-testid="text-hero-sub" style={{ fontWeight: 700 }}>
+              {H.hero.sub}
+            </p>
+            <div className="mt-12 flex flex-wrap items-center gap-4">
               <Link href="/waitlist" className="btn btn-primary" data-testid="button-hero-primary">
-                {c.hero.ctaPrimary}
+                {H.hero.primaryCta}
               </Link>
-              <Link href="/manifesto" className="btn btn-secondary" data-testid="button-hero-secondary">
-                {c.hero.ctaSecondary}
+              <Link href="/manifesto" className="btn btn-ghost" data-testid="button-hero-secondary">
+                {H.hero.secondaryCta}
               </Link>
             </div>
-            <Counter prefix={c.hero.counterPrefix} suffix={c.hero.counterLabel} size="md" align="left" />
+            <div className="mt-10">
+              <Counter variant="line" suffix={H.hero.counterSuffix} />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* METRICS */}
-      <section className="bg-paper-soft section-y" data-testid="section-metrics">
+      {/* VP2 top — Thesis */}
+      <section className="bg-paper section-y rule-bottom" data-testid="section-thesis">
         <div className="container-x">
-          <p className="eyebrow text-ink-muted mb-12">{c.metrics.eyebrow}</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12">
-            {c.metrics.stats.map((s, i) => (
-              <div key={i} className="border-l-2 border-ink pl-6" data-testid={`metric-${i}`}>
-                <p className="display-md tabular mb-3" style={{ textTransform: "none" }}>{s.value}</p>
-                <p className="body-base text-ink-muted">{s.label}</p>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+            <div className="md:col-span-7">
+              <p className="mono-cap text-ink-mute mb-6">{H.thesis.eyebrow}</p>
+              <h2 className="display-m text-ink text-balance" data-testid="text-thesis-h2">{H.thesis.h2}</h2>
+              <p className="body-l mt-6 text-ink-2 max-w-prose">{H.thesis.body}</p>
+              <Link href={H.thesis.inlineLinkHref} className="btn btn-ghost mt-6 inline-flex" data-testid="link-thesis-inline">
+                {H.thesis.inlineLinkLabel}
+              </Link>
+            </div>
+            <div className="md:col-span-5">
+              <div className="grad grad-02-tide rounded-lg" style={{ aspectRatio: "4/5" }} aria-hidden="true"></div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* THESIS */}
-      <section className="container-x section-y" data-testid="section-thesis">
-        <p className="eyebrow text-orange-fire mb-6">{c.thesis.eyebrow}</p>
-        <h2 className="h2-section text-balance max-w-4xl mb-16">{c.thesis.h2}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {c.thesis.cards.map((card, i) => (
-            <AtmosCard
-              key={i}
-              preset={card.preset}
-              eyebrow={card.eyebrow}
-              title={card.title}
-              testId={`card-thesis-${i}`}
-            >
-              <p>{card.body}</p>
-            </AtmosCard>
-          ))}
-        </div>
-      </section>
-
-      {/* HOW */}
-      <section className="bg-paper-soft section-y" data-testid="section-how">
+      {/* VP2-3 — Ecosystem constellation */}
+      <section id="ecosystem" className="grad grad-03-fieldwork section-y" data-testid="section-ecosystem">
         <div className="container-x">
-          <p className="eyebrow text-orange-fire mb-6">{c.how.eyebrow}</p>
-          <h2 className="h2-section text-balance max-w-4xl mb-16">{c.how.h2}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
-            {c.how.steps.map((s) => (
-              <div key={s.step} className="rule-top pt-8" data-testid={`step-${s.step}`}>
-                <p className="mono-sm text-orange-fire mb-4">STEP {s.step}</p>
-                <h3 className="h3-sub mb-3">{s.title}</h3>
-                <p className="body-base text-ink-muted">{s.body}</p>
-              </div>
-            ))}
+          <div className="max-w-3xl mb-16">
+            <p className="mono-cap text-ink-2 mb-6">{H.ecosystem.eyebrow}</p>
+            <h2 className="display-m text-ink text-balance">{H.ecosystem.h2}</h2>
+            <p className="body-l mt-6 text-ink-2">{H.ecosystem.body1}</p>
+            <p className="quote-lead mt-4 text-ink">{H.ecosystem.body2}</p>
+            <Link href={H.ecosystem.inlineLinkHref} className="btn btn-ghost mt-6 inline-flex" data-testid="link-ecosystem-inline">
+              {H.ecosystem.inlineLinkLabel}
+            </Link>
           </div>
+          <Constellation />
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section className="container-x section-y" data-testid="section-features">
-        <p className="eyebrow text-orange-fire mb-6">{c.features.eyebrow}</p>
-        <h2 className="h2-section text-balance max-w-4xl mb-16">{c.features.h2}</h2>
-        <div className="space-y-6">
-          {c.features.items.map((f, i) => (
-            <AtmosCard
-              key={i}
-              preset={f.preset}
-              eyebrow={f.eyebrow}
-              title={f.title}
-              testId={`feature-${i}`}
-            >
-              <p className="max-w-3xl">{f.body}</p>
-            </AtmosCard>
-          ))}
-        </div>
-      </section>
-
-      {/* AUDIENCE */}
-      <section className="bg-paper-soft section-y" data-testid="section-audience">
+      {/* VP3 — Built-for grid (18 tiles) */}
+      <section className="bg-paper section-y" data-testid="section-built-for">
         <div className="container-x">
-          <p className="eyebrow text-orange-fire mb-6">{c.audience.eyebrow}</p>
-          <h2 className="h2-section text-balance max-w-4xl mb-16">{c.audience.h2}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {c.audience.tiles.map((t, i) => (
-              <div
-                key={i}
-                className="bg-paper rounded-2xl p-6 rule-top border-l-2 border-orange-warm"
-                data-testid={`tile-audience-${i}`}
-              >
-                <p className="mono-sm mb-3 leading-snug">{t.label}</p>
-                <p className="body-base text-ink-muted">{t.body}</p>
-              </div>
-            ))}
+          <p className="mono-cap text-ink-mute mb-6">{H.builtFor.eyebrow}</p>
+          <h2 className="display-m text-ink text-balance max-w-4xl mb-12">{H.builtFor.h2}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {content.audienceTiles.map((t) => {
+              const isDark = t.preset === "grad-04-meridian" || t.preset === "grad-06-horizon";
+              return (
+                <div
+                  key={t.value}
+                  className={`grad ${t.preset} tile ${isDark ? "on-dark" : ""}`}
+                  data-testid={`tile-${t.value}`}
+                >
+                  <div>
+                    <div className="tile-num">{t.num}</div>
+                    <div className="tile-label">{t.label}</div>
+                  </div>
+                  <div className="tile-cap">// {t.cap}</div>
+                </div>
+              );
+            })}
           </div>
-        </div>
-      </section>
-
-      {/* TRUST */}
-      <section className="container-x section-y" data-testid="section-trust">
-        <p className="eyebrow text-orange-fire mb-6">{c.trust.eyebrow}</p>
-        <h2 className="h2-section text-balance max-w-4xl mb-8">{c.trust.h2}</h2>
-        <p className="body-lg text-ink-muted max-w-3xl mb-12">{c.trust.body}</p>
-        <div className="flex flex-wrap gap-x-8 gap-y-3 rule-top pt-8">
-          {c.trust.tags.map((t) => (
-            <span key={t} className="mono-sm text-ink-muted">{t}</span>
-          ))}
-        </div>
-      </section>
-
-      {/* TEAM TEASER */}
-      <section className="bg-paper-soft section-y" data-testid="section-team">
-        <div className="container-x">
-          <p className="eyebrow text-orange-fire mb-6">{c.team.eyebrow}</p>
-          <h2 className="h2-section text-balance max-w-4xl mb-8">{c.team.h2}</h2>
-          <p className="body-lg text-ink-muted max-w-3xl mb-10">{c.team.body}</p>
-          <Link href="/about" className="btn btn-secondary" data-testid="button-team-cta">
-            {c.team.cta}
+          <p className="body-l mt-12 text-ink-2 max-w-3xl">{H.builtFor.closing}</p>
+          <Link href={H.builtFor.inlineLinkHref} className="btn btn-ghost mt-6 inline-flex" data-testid="link-builtfor-inline">
+            {H.builtFor.inlineLinkLabel}
           </Link>
         </div>
       </section>
 
-      {/* FINAL CTA — Denim */}
-      <section className="atmos atmos-denim" data-testid="section-final-cta">
-        <div className="container-x py-24 md:py-32">
-          <p className="eyebrow text-paper/80 mb-6">{c.finalCta.eyebrow}</p>
-          <h2 className="display-md text-balance max-w-5xl mb-8 text-paper">{c.finalCta.h2}</h2>
-          <p className="body-lg text-paper/85 max-w-2xl mb-12">{c.finalCta.body}</p>
-          <WaitlistForm variant="dark" compact />
-          <div className="mt-12">
-            <Counter
-              suffix={c.finalCta.counterSuffix}
-              size="lg"
-              variant="dark"
-            />
+      {/* Trust strip */}
+      <section className="bg-paper-2 section-y rule-y" data-testid="section-trust">
+        <div className="container-x">
+          <p className="mono-cap text-ink-mute mb-6">{H.trust.eyebrow}</p>
+          <p className="quote-lead text-ink max-w-4xl text-balance">{H.trust.body}</p>
+          <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+            {H.trust.stats.map((s, i) => (
+              <span key={i} className="mono-cap text-ink-2" data-testid={`stat-${i}`}>{s}</span>
+            ))}
+          </div>
+          <Link href={H.trust.inlineLinkHref} className="btn btn-ghost mt-8 inline-flex" data-testid="link-trust-inline">
+            {H.trust.inlineLinkLabel}
+          </Link>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="grad grad-06-horizon section-y" data-testid="section-final-cta">
+        <div className="container-x">
+          <div className="max-w-5xl">
+            <p className="mono-cap text-paper/80 mb-8">{H.finalCta.eyebrow}</p>
+            <h2 className="display-l text-paper text-balance" style={{ fontWeight: 900 }}>{H.finalCta.h2}</h2>
+            <div className="mt-12 flex items-baseline gap-4 flex-wrap">
+              <Counter variant="bignum" size="lg" onDark />
+              <span className="display-s text-paper/85" style={{ fontWeight: 700 }}>{H.finalCta.counterPrefix}</span>
+            </div>
+            <div className="mt-12 flex flex-wrap items-center gap-4">
+              <Link href="/waitlist" className="btn btn-primary btn-on-dark" data-testid="button-final-primary">
+                {H.finalCta.primaryCta}
+              </Link>
+              <Link href="/contact" className="btn btn-ghost text-paper border-paper hover:border-paper" style={{ color: "var(--paper)" }} data-testid="button-final-secondary">
+                {H.finalCta.secondaryCta}
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -2,31 +2,54 @@ import PageShell from "@/components/PageShell";
 import { content } from "@/lib/content";
 
 export default function Security() {
-  const s = content.security;
+  const S = content.security;
   return (
     <PageShell>
-      <section className="container-x pt-16 md:pt-24 pb-12 max-w-4xl">
-        <p className="eyebrow text-orange-fire mb-8">{s.eyebrow}</p>
-        <h1 className="h1-page mb-10 text-balance" data-testid="text-security-h1">{s.h1}</h1>
-        <p className="body-lg text-ink-soft">{s.lead}</p>
+      <section className="grad grad-02-tide section-y" data-testid="section-security-hero">
+        <div className="container-x">
+          <p className="mono-cap text-ink-2 mb-8">{S.eyebrow}</p>
+          <h1 className="display-l text-ink text-balance max-w-4xl">{S.h1}</h1>
+        </div>
       </section>
 
-      <section className="container-x pb-24 max-w-4xl space-y-12">
-        {s.sections.map((sec, i) => (
-          <div key={i} className="rule-top pt-10" data-testid={`security-section-${i}`}>
-            <h2 className="h3-sub mb-4">{sec.h2}</h2>
-            <p className="body-base text-ink-soft">{sec.body}</p>
-          </div>
-        ))}
+      <section className="bg-paper section-y" data-testid="section-security-body">
+        <div className="container-x">
+          <article className="max-w-prose mx-auto space-y-6">
+            {S.intro.map((p, i) => (
+              <p key={i} className="body-l text-ink-2">{p}</p>
+            ))}
 
-        <div className="rule-top pt-10">
-          <a
-            href={`mailto:${content.contact.email}`}
-            className="btn btn-primary"
-            data-testid="button-security-contact"
-          >
-            Contact us → {content.contact.email}
-          </a>
+            <div className="rule-top pt-10 mt-10">
+              <p className="mono-cap text-ink-mute mb-4">{S.posture.h}</p>
+              <ul className="space-y-3">
+                {S.posture.items.map((b, i) => (
+                  <li key={i} className="body-l text-ink-2 flex gap-3">
+                    <span className="text-pulse" aria-hidden="true">—</span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="rule-top pt-10 mt-10">
+              <p className="mono-cap text-ink-mute mb-4">{S.promises.h}</p>
+              <ul className="space-y-3">
+                {S.promises.items.map((b, i) => (
+                  <li key={i} className="body-l text-ink-2 flex gap-3">
+                    <span className="text-pulse" aria-hidden="true">—</span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="rule-top pt-10 mt-10">
+              <p className="mono-cap text-ink-mute mb-4">{S.limits.h}</p>
+              <p className="body-l text-ink-2">{S.limits.body}</p>
+            </div>
+
+            <p className="quote-lead text-ink mt-12">{S.closer}</p>
+          </article>
         </div>
       </section>
     </PageShell>

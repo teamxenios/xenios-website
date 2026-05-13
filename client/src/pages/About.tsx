@@ -3,42 +3,52 @@ import PageShell from "@/components/PageShell";
 import { content } from "@/lib/content";
 
 export default function About() {
-  const a = content.about;
+  const A = content.about;
   return (
     <PageShell>
-      <section className="container-x pt-16 md:pt-24 pb-12 max-w-4xl">
-        <p className="eyebrow text-orange-fire mb-8">{a.eyebrow}</p>
-        <h1 className="display-md mb-12 text-balance" style={{ textTransform: "none" }} data-testid="text-about-h1">
-          {a.h1}
-        </h1>
-        <p className="body-lg text-ink-soft">{a.lead}</p>
+      <section className="grad grad-05-meadow section-y" data-testid="section-about-hero">
+        <div className="container-x">
+          <p className="mono-cap text-ink-2 mb-8">{A.eyebrow}</p>
+          <h1 className="display-l text-ink text-balance max-w-4xl">{A.h1}</h1>
+        </div>
       </section>
 
-      <section className="container-x pb-20 max-w-4xl space-y-16">
-        {a.sections.map((s, i) => (
-          <div key={i} data-testid={`about-section-${i}`} className="rule-top pt-12">
-            <h2 className="h2-section mb-8">{s.h2}</h2>
-            <p className="body-lg text-ink-soft mb-6">{s.body}</p>
-            {"list" in s && s.list && (
-              <ul className="space-y-3 body-base text-ink-muted">
-                {s.list.map((item, j) => (
-                  <li key={j} className="flex gap-3">
-                    <span className="text-orange-fire">—</span>
-                    <span>{item}</span>
+      <section className="bg-paper section-y" data-testid="section-about-body">
+        <div className="container-x">
+          <article className="max-w-prose mx-auto space-y-6">
+            {A.intro.map((p, i) => (
+              <p key={i} className="body-l text-ink-2">{p}</p>
+            ))}
+
+            <div className="rule-top pt-10 mt-10">
+              <p className="mono-cap text-ink-mute mb-4">{A.team.h}</p>
+              <p className="body-l text-ink-2">{A.team.body}</p>
+            </div>
+
+            <div className="rule-top pt-10 mt-10">
+              <p className="mono-cap text-ink-mute mb-4">{A.beliefs.h}</p>
+              <ul className="space-y-3">
+                {A.beliefs.items.map((b, i) => (
+                  <li key={i} className="body-l text-ink-2 flex gap-3">
+                    <span className="text-pulse" aria-hidden="true">—</span>
+                    <span>{b}</span>
                   </li>
                 ))}
               </ul>
-            )}
-          </div>
-        ))}
+            </div>
 
-        <div className="flex flex-wrap gap-4 pt-8">
-          <Link href="/careers" className="btn btn-primary" data-testid="button-about-careers">
-            See open roles →
-          </Link>
-          <a href={`mailto:${content.contact.email}`} className="btn btn-secondary" data-testid="button-about-email">
-            {content.contact.email}
-          </a>
+            <div className="rule-top pt-10 mt-10">
+              <p className="mono-cap text-ink-mute mb-4">{A.company.h}</p>
+              <p className="body-l text-ink-2">{A.company.body}</p>
+              <div className="flex flex-wrap gap-3 mt-6">
+                {A.company.links.map((l) => (
+                  <Link key={l.href} href={l.href} className="btn btn-secondary" data-testid={`link-about-${l.href.replace(/[^a-z]/g, "")}`}>
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </article>
         </div>
       </section>
     </PageShell>

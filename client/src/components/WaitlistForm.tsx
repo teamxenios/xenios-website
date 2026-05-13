@@ -1,308 +1,163 @@
 import { useState } from "react";
-import { content } from "@/lib/content";
-
-interface Props {
-  onSuccess?: (data: { position: number; count: number }) => void;
-  variant?: "light" | "dark";
-  compact?: boolean;
-}
+import { content, audienceTiles } from "@/lib/content";
+import { waitlistService } from "@/lib/waitlist-service";
+import type { PRACTITIONER_TYPE_VALUES } from "@shared/schema";
 
 const F = content.waitlistForm;
+const WL = content.waitlistPage;
 
-export default function WaitlistForm({ onSuccess, variant = "light", compact = false }: Props) {
-  const [form, setForm] = useState({
-    email: "",
-    role: "",
-    practiceName: "",
-    teamSize: "",
-    clientsActive: "",
-    toolsToday: "",
-    message: "",
-    consent: false,
-    website: "", // honeypot
-  });
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+interface FormState {
+  firstName: string;
+  lastName: string;
+  email: string;
+  practitionerType: string;
+  city: string;
+  country: string;
+  freeText: string;
+  howHeard: string;
+  consent: boolean;
+  website: string; // honeypot
+}
 
-  const update = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) =>
-    setForm((s) => ({ ...s, [key]: value }));
+const EMPTY: FormState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  practitionerType: "",
+  city: "",
+  country: "",
+  freeText: "",
+  howHeard: "",
+  consent: false,
+  website: "",
+};
 
-  const inputCls = `input-field ${variant === "dark" ? "dark" : ""}`;
-  const isDark = variant === "dark";
-  const labelCls = `eyebrow mb-2 block ${isDark ? "text-paper/70" : "text-ink-muted"}`;
+interface Props {
+  onSuccess?: (info: { position: number; count: number; email: string; firstName: string; duplicate?: boolean }) => void;
+  onDark?: boolean;
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.consent) {
-      setErrorMsg(F.consentRequired);
-      return;
-    }
-    setStatus("submitting");
-    setErrorMsg(null);
+export default function WaitlistForm({ onSuccess, onDark = false }: Props) {
+  const [form, setForm] = useState<FormState>(EMPTY);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: form.email,
-          role: form.role,
-          practiceName: form.practiceName || null,
-          teamSize: form.teamSize,
-          clientsActive: form.clientsActive,
-          toolsToday: form.toolsToday || null,
-          message: form.message || null,
-          consent: form.consent,
-          website: form.website,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.success === false) {
-        setStatus("error");
-        setErrorMsg(data?.message || F.errorGeneric);
-        return;
-      }
-      setStatus("success");
-      onSuccess?.({ position: data.position ?? 0, count: data.count ?? 0 });
-    } catch {
-      setStatus("error");
-      setErrorMsg(F.errorGeneric);
-    }
-  };
-
-  if (compact) {
-    return (
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col md:flex-row gap-3 w-full"
-        data-testid="form-waitlist-compact"
-      >
-        <input
-          type="email"
-          required
-          placeholder={F.fields.email.placeholder}
-          value={form.email}
-          onChange={(e) => update("email", e.target.value)}
-          className={`${inputCls} flex-1 md:max-w-sm`}
-          data-testid="input-email"
-        />
-        <select
-          required
-          value={form.role}
-          onChange={(e) => update("role", e.target.value)}
-          className={`${inputCls} md:max-w-[220px]`}
-          data-testid="select-role"
-        >
-          <option value="">I am a…</option>
-          {F.roleOptions.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-        <select
-          required
-          value={form.teamSize}
-          onChange={(e) => update("teamSize", e.target.value)}
-          className={`${inputCls} md:max-w-[160px]`}
-          data-testid="select-team-size"
-        >
-          <option value="">Team size</option>
-          {F.teamSizeOptions.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-        <select
-          required
-          value={form.clientsActive}
-          onChange={(e) => update("clientsActive", e.target.value)}
-          className={`${inputCls} md:max-w-[160px]`}
-          data-testid="select-clients"
-        >
-          <option value="">Active clients</option>
-          {F.clientsActiveOptions.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-        <label className={`flex items-center gap-2 text-xs ${isDark ? "text-paper/80" : "text-ink-muted"} md:hidden`}>
-          <input type="checkbox" required checked={form.consent} onChange={(e) => update("consent", e.target.checked)} />
-          {F.fields.consent.label}
-        </label>
-        <button
-          type="submit"
-          disabled={status === "submitting"}
-          className={`btn btn-primary ${isDark ? "btn-on-dark" : ""}`}
-          data-testid="button-submit"
-        >
-          {status === "submitting" ? F.submitting : F.submit}
-        </button>
-        <input
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-          value={form.website}
-          onChange={(e) => update("website", e.target.value)}
-          className="hidden"
-          aria-hidden="true"
-        />
-        <label className={`hidden md:flex items-center gap-2 text-xs ${isDark ? "text-paper/80" : "text-ink-muted"} basis-full`}>
-          <input type="checkbox" required checked={form.consent} onChange={(e) => update("consent", e.target.checked)} data-testid="checkbox-consent" />
-          {F.fields.consent.label}
-        </label>
-        {errorMsg && <p className="text-error text-sm basis-full" data-testid="text-form-error">{errorMsg}</p>}
-        {status === "success" && (
-          <p className={`${isDark ? "text-paper" : "text-ink"} text-sm basis-full`} data-testid="text-form-success">
-            You're on the list. Check your inbox.
-          </p>
-        )}
-      </form>
-    );
+  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
+    setForm((p) => ({ ...p, [key]: value }));
   }
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!form.consent) {
+      setError(F.consentRequired);
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await waitlistService.submit({
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        email: form.email.trim().toLowerCase(),
+        practitionerType: form.practitionerType as typeof PRACTITIONER_TYPE_VALUES[number],
+        city: form.city.trim(),
+        country: form.country.trim(),
+        freeText: form.freeText.trim() || null,
+        howHeard: form.howHeard.trim() || null,
+        website: form.website,
+      });
+      onSuccess?.({
+        position: res.position ?? 0,
+        count: res.count ?? 0,
+        email: form.email.trim().toLowerCase(),
+        firstName: form.firstName.trim(),
+        duplicate: res.duplicate,
+      });
+    } catch (err: any) {
+      setError(err?.message || F.errorGeneric);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const inputCls = `input-field ${onDark ? "dark" : ""}`;
+  const labelCls = `form-label ${onDark ? "dark" : ""}`;
+  const helperCls = onDark ? "text-paper/70" : "text-ink-mute";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" data-testid="form-waitlist-full">
+    <form onSubmit={handleSubmit} className="space-y-6" data-testid="form-waitlist-full" noValidate>
+      {/* Honeypot */}
+      <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", top: "auto", height: 1, width: 1, overflow: "hidden" }}>
+        <label htmlFor="wl-website">Leave this field empty</label>
+        <input id="wl-website" tabIndex={-1} autoComplete="off" type="text" value={form.website} onChange={(e) => update("website", e.target.value)} />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="wl-first" className={labelCls}>{F.fields.firstName.label}</label>
+          <input id="wl-first" type="text" required maxLength={80} placeholder={F.fields.firstName.placeholder} value={form.firstName} onChange={(e) => update("firstName", e.target.value)} className={inputCls} data-testid="input-first-name" />
+        </div>
+        <div>
+          <label htmlFor="wl-last" className={labelCls}>{F.fields.lastName.label}</label>
+          <input id="wl-last" type="text" required maxLength={80} placeholder={F.fields.lastName.placeholder} value={form.lastName} onChange={(e) => update("lastName", e.target.value)} className={inputCls} data-testid="input-last-name" />
+        </div>
+      </div>
+
       <div>
         <label htmlFor="wl-email" className={labelCls}>{F.fields.email.label}</label>
-        <input
-          id="wl-email"
-          type="email"
-          required
-          placeholder={F.fields.email.placeholder}
-          value={form.email}
-          onChange={(e) => update("email", e.target.value)}
-          className={inputCls}
-          data-testid="input-email"
-        />
+        <input id="wl-email" type="email" required placeholder={F.fields.email.placeholder} value={form.email} onChange={(e) => update("email", e.target.value)} className={inputCls} data-testid="input-email" />
+      </div>
+
+      <div>
+        <label htmlFor="wl-ptype" className={labelCls}>{F.fields.practitionerType.label}</label>
+        <select id="wl-ptype" required value={form.practitionerType} onChange={(e) => update("practitionerType", e.target.value)} className={inputCls} data-testid="select-practitioner-type">
+          <option value="">{F.fields.practitionerType.placeholder}</option>
+          {audienceTiles.map((t) => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
+          <option value="other">Other / something we missed</option>
+        </select>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="wl-role" className={labelCls}>{F.fields.role.label}</label>
-          <select
-            id="wl-role"
-            required
-            value={form.role}
-            onChange={(e) => update("role", e.target.value)}
-            className={inputCls}
-            data-testid="select-role"
-          >
-            <option value="">{F.fields.role.placeholder}</option>
-            {F.roleOptions.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
+          <label htmlFor="wl-city" className={labelCls}>{F.fields.city.label}</label>
+          <input id="wl-city" type="text" required maxLength={120} placeholder={F.fields.city.placeholder} value={form.city} onChange={(e) => update("city", e.target.value)} className={inputCls} data-testid="input-city" />
         </div>
         <div>
-          <label htmlFor="wl-practice" className={labelCls}>{F.fields.practiceName.label}</label>
-          <input
-            id="wl-practice"
-            type="text"
-            maxLength={120}
-            placeholder={F.fields.practiceName.placeholder}
-            value={form.practiceName}
-            onChange={(e) => update("practiceName", e.target.value)}
-            className={inputCls}
-            data-testid="input-practice-name"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label htmlFor="wl-team-size" className={labelCls}>{F.fields.teamSize.label}</label>
-          <select
-            id="wl-team-size"
-            required
-            value={form.teamSize}
-            onChange={(e) => update("teamSize", e.target.value)}
-            className={inputCls}
-            data-testid="select-team-size"
-          >
-            <option value="">{F.fields.teamSize.placeholder}</option>
-            {F.teamSizeOptions.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="wl-clients" className={labelCls}>{F.fields.clientsActive.label}</label>
-          <select
-            id="wl-clients"
-            required
-            value={form.clientsActive}
-            onChange={(e) => update("clientsActive", e.target.value)}
-            className={inputCls}
-            data-testid="select-clients-active"
-          >
-            <option value="">{F.fields.clientsActive.placeholder}</option>
-            {F.clientsActiveOptions.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
+          <label htmlFor="wl-country" className={labelCls}>{F.fields.country.label}</label>
+          <input id="wl-country" type="text" required maxLength={80} placeholder={F.fields.country.placeholder} value={form.country} onChange={(e) => update("country", e.target.value)} className={inputCls} data-testid="input-country" />
         </div>
       </div>
 
       <div>
-        <label htmlFor="wl-tools" className={labelCls}>{F.fields.toolsToday.label}</label>
-        <input
-          id="wl-tools"
-          type="text"
-          maxLength={300}
-          placeholder={F.fields.toolsToday.placeholder}
-          value={form.toolsToday}
-          onChange={(e) => update("toolsToday", e.target.value)}
-          className={inputCls}
-          data-testid="input-tools-today"
-        />
+        <label htmlFor="wl-freetext" className={labelCls}>{F.fields.freeText.label}</label>
+        <textarea id="wl-freetext" maxLength={800} placeholder={F.fields.freeText.placeholder} value={form.freeText} onChange={(e) => update("freeText", e.target.value)} className={`${inputCls} textarea-field`} rows={3} data-testid="textarea-free-text" />
       </div>
 
       <div>
-        <label htmlFor="wl-message" className={labelCls}>{F.fields.message.label}</label>
-        <textarea
-          id="wl-message"
-          maxLength={1000}
-          placeholder={F.fields.message.placeholder}
-          value={form.message}
-          onChange={(e) => update("message", e.target.value)}
-          className={`${inputCls} textarea-field`}
-          rows={4}
-          data-testid="textarea-message"
-        />
+        <label htmlFor="wl-howheard" className={labelCls}>{F.fields.howHeard.label}</label>
+        <input id="wl-howheard" type="text" maxLength={160} placeholder={F.fields.howHeard.placeholder} value={form.howHeard} onChange={(e) => update("howHeard", e.target.value)} className={inputCls} data-testid="input-how-heard" />
       </div>
 
-      <label className={`flex items-start gap-3 text-sm ${isDark ? "text-paper/85" : "text-ink-muted"}`}>
-        <input
-          type="checkbox"
-          required
-          checked={form.consent}
-          onChange={(e) => update("consent", e.target.checked)}
-          className="mt-1.5"
-          data-testid="checkbox-consent"
-        />
-        <span>{F.fields.consent.label}</span>
+      <label className={`flex items-start gap-3 cursor-pointer ${onDark ? "text-paper" : "text-ink-2"}`}>
+        <input type="checkbox" required checked={form.consent} onChange={(e) => update("consent", e.target.checked)} className="mt-1 w-4 h-4 accent-[var(--accent-pulse)]" data-testid="checkbox-consent" />
+        <span className="body-s">{F.fields.consent.label}</span>
       </label>
 
-      {/* Honeypot */}
-      <input
-        type="text"
-        tabIndex={-1}
-        autoComplete="off"
-        value={form.website}
-        onChange={(e) => update("website", e.target.value)}
-        className="hidden"
-        aria-hidden="true"
-      />
-
-      {errorMsg && (
-        <p className="text-error text-sm" role="alert" data-testid="text-form-error">{errorMsg}</p>
+      {error && (
+        <div className="border border-[color:var(--error)] text-[color:var(--error)] px-4 py-3 rounded body-s" data-testid="text-error">
+          {error}
+        </div>
       )}
 
-      <button
-        type="submit"
-        disabled={status === "submitting"}
-        className={`btn btn-primary ${isDark ? "btn-on-dark" : ""} w-full md:w-auto`}
-        data-testid="button-submit"
-      >
-        {status === "submitting" ? F.submitting : F.submit}
+      <button type="submit" disabled={submitting} className={`btn btn-primary ${onDark ? "btn-on-dark" : ""} w-full md:w-auto`} data-testid="button-submit">
+        {submitting ? F.submitting : F.submit}
       </button>
+
+      <p className={`body-s ${helperCls}`}>
+        {WL.trustBlock[2]}
+      </p>
     </form>
   );
 }

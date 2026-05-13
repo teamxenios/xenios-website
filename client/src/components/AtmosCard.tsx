@@ -1,9 +1,8 @@
 import type { ReactNode } from "react";
-
-export type AtmosPreset = "ember" | "aurora" | "voltage" | "forge" | "denim" | "bone";
+import type { GradientPreset } from "@/lib/content";
 
 interface Props {
-  preset: AtmosPreset;
+  preset: GradientPreset;
   eyebrow?: string;
   title?: string;
   children?: ReactNode;
@@ -11,28 +10,30 @@ interface Props {
   testId?: string;
 }
 
+const DARK_PRESETS: GradientPreset[] = ["grad-04-meridian", "grad-06-horizon"];
+
 export default function AtmosCard({ preset, eyebrow, title, children, className = "", testId }: Props) {
-  const isDark = preset === "voltage" || preset === "forge" || preset === "denim";
+  const isDark = DARK_PRESETS.includes(preset);
   return (
     <div
-      className={`atmos atmos-${preset} card ${className}`}
+      className={`grad ${preset} card ${isDark ? "deep" : ""} ${className}`}
       data-testid={testId}
       data-preset={preset}
     >
       {eyebrow && (
         <p
-          className={`eyebrow mb-6 ${isDark ? "text-orange-warm" : "text-orange-fire"}`}
+          className={`mono-cap mb-5 ${isDark ? "text-paper/80" : "text-ink-mute"}`}
           data-testid={testId ? `${testId}-eyebrow` : undefined}
         >
           {eyebrow}
         </p>
       )}
       {title && (
-        <h3 className="h3-sub mb-4" data-testid={testId ? `${testId}-title` : undefined}>
+        <h3 className={`display-s mb-4 ${isDark ? "text-paper" : "text-ink"}`} data-testid={testId ? `${testId}-title` : undefined}>
           {title}
         </h3>
       )}
-      {children && <div className="body-base opacity-90">{children}</div>}
+      {children && <div className={`body-m ${isDark ? "text-paper/90" : "text-ink-2"}`}>{children}</div>}
     </div>
   );
 }

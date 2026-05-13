@@ -1,61 +1,91 @@
-import { waitlist, waitlistOffset, type Waitlist, type InsertWaitlist } from "@shared/schema";
+import { waitlistSignups, counterState, type WaitlistSignup, type InsertWaitlist } from "@shared/schema";
 import { db } from "./db";
 import { desc, eq, sql } from "drizzle-orm";
 
 export interface RequestMeta {
-  source?: string | null;
-  referrer?: string | null;
-  country?: string | null;
+  ipCountry?: string | null;
+  userAgent?: string | null;
+}
+
+export interface CreateResult {
+  signup: WaitlistSignup;
+  totalCount: number;
 }
 
 export interface IStorage {
-  createWaitlist(submission: InsertWaitlist, meta?: RequestMeta): Promise<Waitlist>;
-  findWaitlistByEmail(email: string): Promise<Waitlist | null>;
-  getAllWaitlist(): Promise<Waitlist[]>;
-  getWaitlistCount(): Promise<{ rawCount: number; offset: number; total: number }>;
-  ensureOffsetSeeded(value?: number): Promise<void>;
+  createWaitlist(submission: InsertWaitlist, meta?: RequestMeta): Promise<CreateResult>;
+  findWaitlistByEmail(email: string): Promise<WaitlistSignup | null>;
+  getAllWaitlist(): Promise<WaitlistSignup[]>;
+  getCounterTotal(): Promise<number>;
+  ensureCounterSeeded(baseCount?: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
-  async createWaitlist(submission: InsertWaitlist, meta: RequestMeta = {}): Promise<Waitlist> {
-    const [row] = await db
-      .insert(waitlist)
-      .values({
-        ...(submission as typeof waitlist.$inferInsert),
-        source: meta.source ?? null,
-        referrer: meta.referrer ?? null,
-        country: meta.country ?? null,
-      })
-      .returning();
-    return row;
+  async ensureCounterSeeded(baseCount = 550): Promise<void> {
+    await db.insert(counterState).values({ id: 1, baseCount, signupsCount: 0 }).onConflictDoNothing();
   }
 
-  async findWaitlistByEmail(email: string): Promise<Waitlist | null> {
+  async getCounterTotal(): Promise<number> {
+    const [row] = await db.select().from(counterState).where(eq(counterState.id, 1)).limit(1);
+    if (!row) return 550;
+    return Number(row.baseCount) + Number(row.signupsCount);
+  }
+
+  async findWaitlistByEmail(email: string): Promise<WaitlistSignup | null> {
     const [row] = await db
       .select()
-      .from(waitlist)
-      .where(eq(waitlist.email, email.toLowerCase()))
+      .from(waitlistSignups)
+      .where(eq(waitlistSignups.email, email.toLowerCase()))
       .limit(1);
     return row ?? null;
   }
 
-  async getAllWaitlist(): Promise<Waitlist[]> {
-    return db.select().from(waitlist).orderBy(desc(waitlist.createdAt));
+  async getAllWaitlist(): Promise<WaitlistSignup[]> {
+    return db.select().from(waitlistSignups).orderBy(desc(waitlistSignups.createdAt));
   }
 
-  async getWaitlistCount(): Promise<{ rawCount: number; offset: number; total: number }> {
-    const [{ count }] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(waitlist);
+  async createWaitlist(submission: InsertWaitlist, meta: RequestMeta = {}): Promise<CreateResult> {
+    // Atomic: lock counter row, derive next position, insert, bump counter.
+    return await db.transaction(async (tx) => {
+      const [counterRow] = await tx
+        .select()
+        .from(counterState)
+        .where(eq(counterState.id, 1))
+        .for("update")
+        .limit(1);
 
-    const [offsetRow] = await db.select().from(waitlistOffset).where(eq(waitlistOffset.id, 1)).limit(1);
-    const offset = offsetRow?.value ?? 550;
+      const baseCount = Number(counterRow?.baseCount ?? 550);
+      const signupsCount = Number(counterRow?.signupsCount ?? 0);
+      const position = baseCount + signupsCount + 1;
 
-    return { rawCount: Number(count), offset, total: Number(count) + offset };
-  }
+      const [signup] = await tx
+        .insert(waitlistSignups)
+        .values({
+          firstName: submission.firstName,
+          lastName: submission.lastName,
+          email: submission.email,
+          practitionerType: submission.practitionerType,
+          city: submission.city,
+          country: submission.country,
+          freeText: submission.freeText ?? null,
+          howHeard: submission.howHeard ?? null,
+          position,
+          ipCountry: meta.ipCountry ?? null,
+          userAgent: meta.userAgent ?? null,
+        })
+        .returning();
 
-  async ensureOffsetSeeded(value = 550): Promise<void> {
-    await db.insert(waitlistOffset).values({ id: 1, value }).onConflictDoNothing();
+      await tx
+        .update(counterState)
+        .set({
+          signupsCount: sql`${counterState.signupsCount} + 1`,
+          updatedAt: new Date(),
+        })
+        .where(eq(counterState.id, 1));
+
+      const totalCount = baseCount + signupsCount + 1;
+      return { signup, totalCount };
+    });
   }
 }
 
