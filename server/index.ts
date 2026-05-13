@@ -51,11 +51,17 @@ app.use((req, res, next) => {
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
 
+  // Routes whose response bodies may contain PII (emails, messages, etc.)
+  // — log only status + duration, never the body.
+  const PII_PATHS = ["/api/waitlist"];
+  const isPiiPath = (p: string) =>
+    PII_PATHS.some((prefix) => p === prefix || p.startsWith(prefix + "/"));
+
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
+      if (capturedJsonResponse && !isPiiPath(path)) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
 

@@ -1,36 +1,46 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { useState } from "react";
+import PageShell from "@/components/PageShell";
 import { content } from "@/lib/content";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export default function FAQ() {
   const f = content.faq;
+  const [open, setOpen] = useState<number | null>(0);
   return (
-    <div className="min-h-screen bg-paper text-ink font-sans">
-      <Navbar />
-      <article className="container mx-auto px-6 lg:px-16 py-20 lg:py-28 max-w-3xl" data-testid="page-faq">
-        <h1 className="font-display text-5xl lg:text-6xl text-ink leading-tight mb-6" data-testid="text-faq-title">{f.h1}</h1>
-        <p className="text-mono-500 text-lg mb-14">{f.subhead}</p>
+    <PageShell>
+      <section className="container-x pt-16 md:pt-24 pb-12 max-w-4xl">
+        <p className="eyebrow text-orange-fire mb-8">{f.eyebrow}</p>
+        <h1 className="display-md mb-4 text-balance" style={{ textTransform: "none" }} data-testid="text-faq-h1">
+          {f.h1}
+        </h1>
+      </section>
 
-        <Accordion type="multiple" className="space-y-2">
-          {f.items.map((item, i) => (
-            <AccordionItem
-              key={i}
-              value={`item-${i}`}
-              className="border border-hairline rounded-xl bg-paper-elevated px-5 data-[state=open]:bg-paper-elevated"
-              data-testid={`faq-item-${i}`}
-            >
-              <AccordionTrigger className="text-left font-display text-lg lg:text-xl text-ink hover:no-underline py-5">
-                {item.q}
-              </AccordionTrigger>
-              <AccordionContent className="text-mono-500 text-[15px] leading-relaxed pb-5">
-                {item.a}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </article>
-      <Footer />
-    </div>
+      <section className="container-x pb-24 max-w-4xl">
+        <div className="rule-top">
+          {f.items.map((item, i) => {
+            const isOpen = open === i;
+            return (
+              <div key={i} className="rule-bottom" data-testid={`faq-item-${i}`}>
+                <button
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  className="w-full flex items-center justify-between gap-6 py-6 text-left hover:text-orange-fire transition-colors"
+                  data-testid={`button-faq-${i}`}
+                  aria-expanded={isOpen}
+                >
+                  <span className="h4-card">{item.q}</span>
+                  <span className={`text-2xl text-orange-fire transition-transform ${isOpen ? "rotate-45" : ""}`}>
+                    +
+                  </span>
+                </button>
+                {isOpen && (
+                  <div className="pb-8 body-base text-ink-muted max-w-3xl" data-testid={`text-faq-answer-${i}`}>
+                    {item.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </PageShell>
   );
 }

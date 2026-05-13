@@ -1,106 +1,78 @@
-import { Link } from "wouter";
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { Link, useLocation } from "wouter";
 import { content } from "@/lib/content";
+import Wordmark from "./Wordmark";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 24);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const close = () => setIsOpen(false);
+  const [open, setOpen] = useState(false);
+  const [location] = useLocation();
 
   return (
-    <>
-      <nav
-        className={cn(
-          "sticky top-0 left-0 right-0 z-40 transition-all duration-300",
-          isScrolled
-            ? "bg-paper/80 backdrop-blur-md border-b border-hairline"
-            : "bg-paper border-b border-hairline/50"
-        )}
-        data-testid="nav-main"
-      >
-        <div className="container mx-auto px-6 lg:px-16 h-[60px] lg:h-[72px] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-ink" data-testid="link-nav-home">
-            <span className="font-display text-2xl lowercase tracking-tight font-bold">xenios</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-orange" aria-hidden />
-          </Link>
+    <header className="sticky top-0 z-40 bg-paper/85 backdrop-blur-md rule-bottom" data-testid="nav-main">
+      <div className="container-x">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          <Wordmark size="md" />
 
-          <div className="hidden lg:flex items-center gap-8">
-            {content.nav.links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-mono-500 hover:text-ink transition-colors"
-                data-testid={`link-nav-${link.label.toLowerCase()}`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
+          <nav className="hidden md:flex items-center gap-6 lg:gap-10">
+            {content.nav.items.map((item) => {
+              const active = location === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  data-testid={`link-nav-${item.label.toLowerCase()}`}
+                  className={`text-[15px] tracking-[-0.005em] transition-colors ${
+                    active ? "text-ink font-semibold" : "text-ink-muted hover:text-ink"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
 
-          <div className="hidden lg:flex items-center">
-            <Link
-              href="/waitlist"
-              className="bg-orange text-ink px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[hsl(var(--orange-hover))] transition-colors active:scale-[0.98]"
-              data-testid="button-nav-cta"
-            >
-              {content.nav.cta} →
+          <div className="hidden md:flex items-center">
+            <Link href="/waitlist" data-testid="button-nav-waitlist" className="btn btn-primary">
+              {content.nav.cta}
             </Link>
           </div>
 
           <button
-            className="lg:hidden z-50 relative text-ink"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-            data-testid="button-nav-menu"
+            onClick={() => setOpen(!open)}
+            className="md:hidden p-2 -mr-2"
+            aria-label="Toggle menu"
+            data-testid="button-menu-toggle"
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            <div className="w-6 h-px bg-ink mb-1.5" />
+            <div className="w-6 h-px bg-ink mb-1.5" />
+            <div className="w-6 h-px bg-ink" />
           </button>
         </div>
-      </nav>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-paper z-40 flex flex-col px-6 pt-24 pb-8 lg:hidden"
-          >
-            <div className="flex flex-col gap-1 flex-1">
-              {content.nav.links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={close}
-                  className="text-3xl font-display font-bold text-ink py-3 border-b border-hairline"
-                  data-testid={`link-nav-mobile-${link.label.toLowerCase()}`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+        {open && (
+          <div className="md:hidden pb-6 space-y-4 rule-top pt-4" data-testid="nav-mobile">
+            {content.nav.items.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="block text-lg font-medium"
+                data-testid={`link-mobile-${item.label.toLowerCase()}`}
+              >
+                {item.label}
+              </Link>
+            ))}
             <Link
               href="/waitlist"
-              onClick={close}
-              className="bg-orange text-ink w-full text-center py-4 rounded-lg text-base font-semibold mt-8 block"
-              data-testid="button-nav-mobile-cta"
+              onClick={() => setOpen(false)}
+              className="btn btn-primary w-full"
+              data-testid="button-mobile-waitlist"
             >
-              {content.nav.cta} →
+              {content.nav.cta}
             </Link>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
-    </>
+      </div>
+    </header>
   );
 }

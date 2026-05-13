@@ -1,18 +1,19 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import PageShell from "@/components/PageShell";
 import { content } from "@/lib/content";
 
 export default function Terms() {
   const t = content.terms;
   return (
-    <div className="min-h-screen bg-paper text-ink font-sans">
-      <Navbar />
-      <article className="container mx-auto px-6 lg:px-16 py-20 lg:py-28 max-w-2xl" data-testid="page-terms">
-        <h1 className="font-display text-4xl lg:text-5xl text-ink leading-tight mb-6" data-testid="text-terms-title">{t.h1}</h1>
-        <p className="text-mono-500 leading-relaxed mb-8 text-base">{t.lede}</p>
-        <p className="text-xs text-mono-300 italic">{t.note}</p>
-      </article>
-      <Footer />
-    </div>
+    <PageShell>
+      <section className="container-x pt-16 md:pt-24 pb-24 max-w-3xl">
+        <p className="eyebrow text-ink-muted mb-8">{t.eyebrow}</p>
+        <h1 className="h1-page mb-12" data-testid="text-terms-h1">{t.h1}</h1>
+        <div className="space-y-6 body-base text-ink-soft">
+          {t.paragraphs.map((p, i) => (
+            <p key={i} data-testid={`text-terms-p-${i}`}>{p}</p>
+          ))}
+        </div>
+      </section>
+    </PageShell>
   );
 }

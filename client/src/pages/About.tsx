@@ -1,60 +1,46 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { content } from "@/lib/content";
 import { Link } from "wouter";
+import PageShell from "@/components/PageShell";
+import { content } from "@/lib/content";
 
 export default function About() {
   const a = content.about;
   return (
-    <div className="min-h-screen bg-paper text-ink font-sans">
-      <Navbar />
-      <article className="container mx-auto px-6 lg:px-16 py-20 lg:py-28 max-w-3xl" data-testid="page-about">
-        <h1 className="font-display text-5xl lg:text-6xl text-ink leading-tight mb-8" data-testid="text-about-title">{a.h1}</h1>
-        <p className="font-display text-2xl lg:text-[28px] text-mono-500 leading-snug mb-16">{a.lede}</p>
+    <PageShell>
+      <section className="container-x pt-16 md:pt-24 pb-12 max-w-4xl">
+        <p className="eyebrow text-orange-fire mb-8">{a.eyebrow}</p>
+        <h1 className="display-md mb-12 text-balance" style={{ textTransform: "none" }} data-testid="text-about-h1">
+          {a.h1}
+        </h1>
+        <p className="body-lg text-ink-soft">{a.lead}</p>
+      </section>
 
-        <div className="space-y-14">
-          {a.sections.map((s, i) => (
-            <section key={i} data-testid={`about-section-${i}`}>
-              <h2 className="font-display text-3xl text-ink mb-5">{s.heading}</h2>
-              <div className="space-y-4 text-mono-500 text-lg leading-relaxed">
-                {s.paragraphs.map((p, j) => <p key={j}>{p}</p>)}
-              </div>
-              {s.bullets && (
-                <ul className="space-y-3 mt-6">
-                  {s.bullets.map((b, j) => (
-                    <li key={j} className="flex gap-3 text-mono-500 text-[15px]">
-                      <span className="text-orange font-mono">—</span>
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {s.outro && <p className="mt-6 text-mono-500 text-lg leading-relaxed">{s.outro}</p>}
-              {s.emails && (
-                <ul className="space-y-2 mt-6 font-mono text-sm">
-                  {s.emails.map((e) => (
-                    <li key={e}>
-                      <a href={`mailto:${e}`} className="text-orange hover:underline underline-offset-4">{e}</a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          ))}
-        </div>
+      <section className="container-x pb-20 max-w-4xl space-y-16">
+        {a.sections.map((s, i) => (
+          <div key={i} data-testid={`about-section-${i}`} className="rule-top pt-12">
+            <h2 className="h2-section mb-8">{s.h2}</h2>
+            <p className="body-lg text-ink-soft mb-6">{s.body}</p>
+            {"list" in s && s.list && (
+              <ul className="space-y-3 body-base text-ink-muted">
+                {s.list.map((item, j) => (
+                  <li key={j} className="flex gap-3">
+                    <span className="text-orange-fire">—</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
 
-        <div className="mt-20 pt-10 border-t border-hairline">
-          <h3 className="font-display text-2xl text-ink mb-5">{a.cta.title}</h3>
-          <Link
-            href="/careers"
-            className="inline-flex items-center gap-2 bg-orange text-ink px-6 py-3.5 rounded-lg font-semibold hover:bg-[hsl(var(--orange-hover))] transition-colors"
-            data-testid="button-about-careers"
-          >
-            {a.cta.button} →
+        <div className="flex flex-wrap gap-4 pt-8">
+          <Link href="/careers" className="btn btn-primary" data-testid="button-about-careers">
+            See open roles →
           </Link>
+          <a href={`mailto:${content.contact.email}`} className="btn btn-secondary" data-testid="button-about-email">
+            {content.contact.email}
+          </a>
         </div>
-      </article>
-      <Footer />
-    </div>
+      </section>
+    </PageShell>
   );
 }

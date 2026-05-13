@@ -1,80 +1,77 @@
 import { Link } from "wouter";
 import { content } from "@/lib/content";
+import Wordmark from "./Wordmark";
 
 export default function Footer() {
   return (
-    <footer className="bg-ink text-mono-100 pt-20 pb-10" data-testid="footer-main">
-      <div className="container mx-auto px-6 lg:px-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
-          <div className="col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <span className="font-display text-3xl lowercase tracking-tight text-cream font-bold">xenios</span>
-              <span className="w-2 h-2 rounded-full bg-orange" aria-hidden />
-            </Link>
-            <p className="text-mono-300 max-w-xs text-sm leading-relaxed">
-              The AI-native operating system for health coaches. Built in Austin, TX.
-            </p>
+    <footer className="bg-paper rule-top" data-testid="footer-main">
+      <div className="container-x py-16 md:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div>
+            <Wordmark size="lg" asLink={false} />
+            <p className="mt-6 body-base text-ink-muted max-w-xs">{content.footer.tagline}</p>
+            <p className="mt-1 body-base text-ink-muted">{content.footer.location}</p>
           </div>
 
-          {content.footer.columns.map((col) => (
-            <div key={col.title}>
-              <h4 className="font-mono text-xs uppercase tracking-widest text-mono-300 mb-5">
-                {col.title}
-              </h4>
+          <div>
+            <p className="eyebrow text-ink-muted mb-6">SITE</p>
+            <ul className="space-y-3">
+              {content.footer.sitemap.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    data-testid={`link-footer-${item.label.toLowerCase()}`}
+                    className="text-[15px] hover:text-orange-fire transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="space-y-8">
+            <div>
+              <p className="eyebrow text-ink-muted mb-4">CONTACT</p>
+              <a
+                href={`mailto:${content.contact.email}`}
+                data-testid="link-footer-email"
+                className="text-[15px] hover:text-orange-fire transition-colors"
+              >
+                {content.contact.email}
+              </a>
+            </div>
+            <div>
+              <p className="eyebrow text-ink-muted mb-4">FOLLOW</p>
               <ul className="space-y-3">
-                {col.links.map((link) => {
-                  const isExternal = link.href.startsWith("mailto:") || link.href.startsWith("http");
-                  const isHash = link.href.includes("#");
-                  const testId = `link-footer-${link.label.toLowerCase().replace(/[^a-z]+/g, "-")}`;
-                  if (isExternal || isHash) {
-                    return (
-                      <li key={link.label}>
-                        <a
-                          href={link.href}
-                          className="text-sm text-mono-100 hover:text-orange transition-colors"
-                          data-testid={testId}
-                        >
-                          {link.label}
-                        </a>
-                      </li>
-                    );
-                  }
-                  return (
-                    <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="text-sm text-mono-100 hover:text-orange transition-colors"
-                        data-testid={testId}
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  );
-                })}
+                {content.socials.map((s) => (
+                  <li key={s.url}>
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-testid={`link-social-${s.label.split(" ")[0].toLowerCase()}`}
+                      className="text-[15px] hover:text-orange-fire transition-colors"
+                    >
+                      {s.label}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
-          ))}
+          </div>
         </div>
 
-        <div className="pt-8 border-t border-hairline-ink flex flex-col md:flex-row justify-between gap-6 text-xs text-mono-300">
-          <div className="flex flex-col gap-2">
-            <p>{content.footer.copyright}</p>
-            <p className="text-mono-300/70 max-w-md leading-relaxed">{content.footer.disclaimer}</p>
-          </div>
-          <div className="flex gap-5 items-start">
-            {content.contact.socials.map((s) => (
-              <a
-                key={s.label}
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-orange transition-colors"
-                data-testid={`link-footer-social-${s.label.toLowerCase()}`}
-              >
-                {s.label}
-              </a>
-            ))}
-          </div>
+        <div className="rule-top mt-16 pt-6 flex flex-col md:flex-row justify-between gap-4">
+          <p className="body-sm text-ink-muted" data-testid="text-copyright">
+            {content.footer.bottom}
+          </p>
+          <p className="body-sm text-ink-muted">
+            Xenios is software, not medical care. See{" "}
+            <Link href="/security" className="underline">security</Link> ·{" "}
+            <Link href="/privacy" className="underline">privacy</Link> ·{" "}
+            <Link href="/terms" className="underline">terms</Link>.
+          </p>
         </div>
       </div>
     </footer>
