@@ -1,6 +1,6 @@
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { useState, useEffect } from "react";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { content } from "@/lib/content";
@@ -10,72 +10,58 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 24);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToSection = (id: string) => {
-    setIsOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const close = () => setIsOpen(false);
 
   return (
     <>
-      <nav 
+      <nav
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out",
-          isScrolled 
-            ? "bg-background/80 backdrop-blur-md border-b border-border py-4 shadow-sm" 
-            : "bg-transparent py-8 border-b border-transparent"
+          "sticky top-0 left-0 right-0 z-40 transition-all duration-300",
+          isScrolled
+            ? "bg-paper/80 backdrop-blur-md border-b border-hairline"
+            : "bg-paper border-b border-hairline/50"
         )}
+        data-testid="nav-main"
       >
-        <div className="container mx-auto px-6 flex items-center justify-between">
-          <Link href="/">
-            <a className={cn(
-              "z-50 relative transition-transform duration-300 block",
-              isScrolled ? "scale-90 origin-left" : "scale-100"
-            )}>
-              <img src="/xenios-logo-white.png" alt="XENIOS" className="h-8 w-auto invert dark:invert-0" />
-            </a>
+        <div className="container mx-auto px-6 lg:px-16 h-[60px] lg:h-[72px] flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 text-ink" data-testid="link-nav-home">
+            <span className="font-display text-2xl lowercase tracking-tight font-bold">xenios</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-orange" aria-hidden />
           </Link>
-          
+
           <div className="hidden lg:flex items-center gap-8">
             {content.nav.links.map((link) => (
-              <button 
-                key={link.id}
-                onClick={() => scrollToSection(link.id)} 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium text-mono-500 hover:text-ink transition-colors"
+                data-testid={`link-nav-${link.label.toLowerCase()}`}
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-px bg-foreground transition-all duration-300 group-hover:w-full"></span>
-              </button>
+              </Link>
             ))}
           </div>
 
-          <div className="hidden lg:flex items-center gap-4">
-            <button className="text-sm font-medium hover:text-muted-foreground transition-colors">
-              Login
-            </button>
-            <button 
-              onClick={() => scrollToSection("waitlist")} 
-              className={cn(
-                "px-6 py-2 text-sm font-medium transition-all duration-300 rounded-full hover:scale-105 active:scale-95",
-                isScrolled ? "bg-primary text-primary-foreground" : "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-              )}
+          <div className="hidden lg:flex items-center">
+            <Link
+              href="/waitlist"
+              className="bg-orange text-ink px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[hsl(var(--orange-hover))] transition-colors active:scale-[0.98]"
+              data-testid="button-nav-cta"
             >
-              {content.nav.cta}
-            </button>
+              {content.nav.cta} →
+            </Link>
           </div>
 
-          <button 
-            className="lg:hidden z-50 relative text-foreground hover:scale-110 transition-transform"
+          <button
+            className="lg:hidden z-50 relative text-ink"
             onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            data-testid="button-nav-menu"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -84,64 +70,34 @@ export default function Navbar() {
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: "-100%" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "-100%" }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 bg-background z-40 flex flex-col justify-center px-6 lg:hidden"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-paper z-40 flex flex-col px-6 pt-24 pb-8 lg:hidden"
           >
-            <div className="flex flex-col gap-8">
-              <div className="flex flex-col gap-2">
-                <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Discover</span>
-                {content.nav.links.map((link) => (
-                  <button 
-                    key={link.id}
-                    onClick={() => scrollToSection(link.id)} 
-                    className="text-4xl font-display font-medium text-left hover:text-muted-foreground transition-colors hover:translate-x-2 duration-200"
-                  >
-                    {link.label}
-                  </button>
-                ))}
-                <Link href="/careers">
-                  <a
-                    onClick={() => setIsOpen(false)}
-                    className="text-4xl font-display font-medium text-left hover:text-muted-foreground transition-colors hover:translate-x-2 duration-200"
-                    data-testid="link-nav-careers-mobile"
-                  >
-                    Careers
-                  </a>
-                </Link>
-              </div>
-
-              <div className="h-px bg-border w-full my-4" />
-
-              <div className="flex flex-col gap-4">
-                 <button 
-                  onClick={() => scrollToSection("waitlist")} 
-                  className="text-4xl font-display font-medium text-left flex items-center gap-4 hover:translate-x-2 duration-200"
+            <div className="flex flex-col gap-1 flex-1">
+              {content.nav.links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={close}
+                  className="text-3xl font-display font-bold text-ink py-3 border-b border-hairline"
+                  data-testid={`link-nav-mobile-${link.label.toLowerCase()}`}
                 >
-                  {content.nav.cta} <ArrowRight className="w-8 h-8" />
-                </button>
-              </div>
-
-               <div className="h-px bg-border w-full my-4" />
-
-              <div className="grid grid-cols-2 gap-8">
-                <div className="flex flex-col gap-2">
-                  <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Social</span>
-                  {content.contact.socials.map((social, i) => (
-                    <a key={i} href={social.url} target="_blank" rel="noopener noreferrer" className="text-lg hover:underline decoration-1 underline-offset-4">{social.label}</a>
-                  ))}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Contact</span>
-                  <a href={`mailto:${content.contact.email}`} className="text-lg hover:underline decoration-1 underline-offset-4">{content.contact.email}</a>
-                  <span className="text-lg text-muted-foreground">{content.contact.phone}</span>
-                  <span className="text-lg text-muted-foreground">{content.contact.location}</span>
-                </div>
-              </div>
+                  {link.label}
+                </Link>
+              ))}
             </div>
+            <Link
+              href="/waitlist"
+              onClick={close}
+              className="bg-orange text-ink w-full text-center py-4 rounded-lg text-base font-semibold mt-8 block"
+              data-testid="button-nav-mobile-cta"
+            >
+              {content.nav.cta} →
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>

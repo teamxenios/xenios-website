@@ -62,7 +62,7 @@ export async function registerRoutes(
       const submission = await storage.createWaitlistSubmission(validatedData);
 
       sendConfirmationEmail({
-        firstName: submission.firstName,
+        firstName: submission.firstName ?? "there",
         email: submission.email,
       }).catch((err) => console.error("Email send error:", err));
 

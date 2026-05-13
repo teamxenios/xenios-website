@@ -2,149 +2,113 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormMessage, FormDescription } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { waitlistService } from "@/lib/waitlist-service";
 import { motion, AnimatePresence } from "framer-motion";
+import { content } from "@/lib/content";
+import { Link } from "wouter";
 
 const formSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  role: z.string({ required_error: "Please select a role" }),
-  missingTechFeedback: z.string()
-    .min(10, "Please tell us what's missing from the tools you use today.")
-    .max(500, "Maximum 500 characters"),
+  email: z.string().email("That email doesn't look right — mind double-checking?"),
+  role: z.string({ required_error: "Pick whichever's closest. \"Other\" is fine." }).min(1, "Pick whichever's closest. \"Other\" is fine."),
+  activeClients: z.string().optional(),
+  missingTechFeedback: z.string().max(1000).optional()
 });
 
-export default function WaitlistForm() {
+type FormValues = z.infer<typeof formSchema>;
+
+interface WaitlistFormProps {
+  variant?: "inline" | "page";
+}
+
+export default function WaitlistForm({ variant = "inline" }: WaitlistFormProps) {
   const { toast } = useToast();
   const [isSuccess, setIsSuccess] = useState(false);
-  
-  const form = useForm<z.infer<typeof formSchema>>({
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      missingTechFeedback: "",
-    },
+    defaultValues: { email: "", role: "", activeClients: "", missingTechFeedback: "" }
   });
 
   const { isSubmitting } = form.formState;
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormValues) {
     try {
-      const response = await waitlistService.submit({
-        ...values,
+      await waitlistService.submit({
+        email: values.email,
+        role: values.role,
+        activeClients: values.activeClients || undefined,
+        missingTechFeedback: values.missingTechFeedback || undefined,
         sourcePage: window.location.pathname,
         submissionType: "general"
       });
       setIsSuccess(true);
-      toast({
-        title: "Welcome aboard",
-        description: response.message,
-      });
       form.reset();
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Something went wrong",
-        description: error instanceof Error ? error.message : "Please try again later.",
+        title: "Something went sideways on our end.",
+        description: error instanceof Error ? error.message : "Try once more, or email hello@xeniostechnology.com."
       });
     }
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full" data-testid="waitlist-form-wrap">
       <AnimatePresence mode="wait">
         {isSuccess ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="flex flex-col items-center justify-center p-8 text-center bg-secondary/30 border border-border rounded-lg"
+            key="success"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="bg-paper-elevated border border-hairline rounded-2xl p-8 text-left"
+            data-testid="waitlist-success"
           >
-            <div className="w-12 h-12 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-display font-medium mb-2">You're on the list!</h3>
-            <p className="text-muted-foreground mb-6">
-              We'll notify you as soon as spots open up.
-            </p>
-            <Button 
-              variant="outline" 
-              onClick={() => setIsSuccess(false)}
-              className="border-border hover:bg-background"
+            <h3 className="font-display text-3xl text-ink mb-4" data-testid="text-waitlist-success-title">
+              {content.waitlistPage.successTitle}
+            </h3>
+            <p className="text-mono-500 mb-6 leading-relaxed">{content.waitlistPage.successBody}</p>
+            <Link
+              href="/manifesto"
+              className="inline-flex items-center gap-2 text-orange font-semibold hover:underline underline-offset-4"
+              data-testid="link-success-manifesto"
             >
-              Add another email
-            </Button>
+              {content.waitlistPage.successCta} →
+            </Link>
           </motion.div>
         ) : (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            key="form"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 text-left">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="firstName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input 
-                            placeholder="First name" 
-                            {...field} 
-                            disabled={isSubmitting}
-                            className="rounded-none border-border bg-background focus-visible:ring-0 focus-visible:border-primary h-12"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="lastName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input 
-                            placeholder="Last name" 
-                            {...field} 
-                            disabled={isSubmitting}
-                            className="rounded-none border-border bg-background focus-visible:ring-0 focus-visible:border-primary h-12"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 text-left">
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel className="text-mono-500 text-sm font-semibold">Email *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Email address" 
+                        <Input
+                          placeholder={content.waitlistForm.placeholders.email}
                           type="email"
-                          {...field} 
+                          {...field}
                           disabled={isSubmitting}
-                          className="rounded-none border-border bg-background focus-visible:ring-0 focus-visible:border-primary h-12"
+                          className="h-12 bg-paper-elevated border-hairline rounded-lg text-base focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-0 focus-visible:border-orange"
+                          data-testid="input-waitlist-email"
                         />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-[hsl(var(--danger))]" />
                     </FormItem>
                   )}
                 />
@@ -154,73 +118,101 @@ export default function WaitlistForm() {
                   name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormLabel className="text-mono-500 text-sm font-semibold">I am a… *</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
-                          <SelectTrigger className="rounded-none border-border bg-background focus:ring-0 focus:border-primary h-12">
-                            <SelectValue placeholder="Select your role" />
+                          <SelectTrigger
+                            className="h-12 bg-paper-elevated border-hairline rounded-lg text-base"
+                            data-testid="select-waitlist-role"
+                          >
+                            <SelectValue placeholder={content.waitlistForm.placeholders.role} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Trainer">Personal Trainer</SelectItem>
-                          <SelectItem value="Health Coach">Health Coach</SelectItem>
-                          <SelectItem value="Strength Coach">Strength Coach</SelectItem>
-                          <SelectItem value="Team Coach">Team Coach</SelectItem>
-                          <SelectItem value="Gym Owner">Gym Owner</SelectItem>
-                          <SelectItem value="Performance Staff">Performance Staff</SelectItem>
-                          <SelectItem value="Athlete">Athlete</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
+                          {content.waitlistForm.roleOptions.map((opt) => (
+                            <SelectItem key={opt} value={opt} data-testid={`option-role-${opt.toLowerCase().replace(/[^a-z]+/g, "-")}`}>
+                              {opt}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-[hsl(var(--danger))]" />
                     </FormItem>
                   )}
                 />
+
+                {variant === "page" && (
+                  <FormField
+                    control={form.control}
+                    name="activeClients"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-mono-500 text-sm font-semibold">
+                          If you're a coach, how many active clients do you currently serve? (optional)
+                        </FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger
+                              className="h-12 bg-paper-elevated border-hairline rounded-lg text-base"
+                              data-testid="select-waitlist-clients"
+                            >
+                              <SelectValue placeholder={content.waitlistForm.placeholders.clients} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {content.waitlistForm.activeClientsOptions.map((opt) => (
+                              <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <FormField
                   control={form.control}
                   name="missingTechFeedback"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel className="text-mono-500 text-sm font-semibold">
+                        Anything we should know? (optional)
+                      </FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Example: better programming, smoother check-ins, less admin, better client insights, fewer apps, team collaboration, session notes, automation…"
-                          {...field} 
+                        <Textarea
+                          placeholder={content.waitlistForm.placeholders.notes}
+                          {...field}
                           disabled={isSubmitting}
-                          maxLength={500}
-                          className="rounded-none border-border bg-background focus-visible:ring-0 focus-visible:border-primary min-h-[100px] resize-none"
+                          maxLength={1000}
+                          className="bg-paper-elevated border-hairline rounded-lg min-h-[110px] resize-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-0"
+                          data-testid="textarea-waitlist-notes"
                         />
                       </FormControl>
-                      <FormDescription className="text-xs text-muted-foreground/70">
-                        Required. 1–2 sentences is perfect.
-                      </FormDescription>
-                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-12 rounded-none font-medium text-base transition-all"
+                  className="w-full sm:w-auto h-12 px-8 bg-orange text-ink hover:bg-[hsl(var(--orange-hover))] rounded-lg font-semibold text-base"
+                  data-testid="button-waitlist-submit"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Joining...
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving…
                     </>
                   ) : (
-                    "Join Waitlist"
+                    <>{content.waitlistForm.submit} →</>
                   )}
                 </Button>
-                
-                <div className="flex flex-col gap-1 text-center pt-2">
-                  <p className="text-xs text-muted-foreground">
-                    Get early access updates. No spam.
-                  </p>
-                  <p className="text-[10px] text-muted-foreground/60">
-                    Your info stays private.
-                  </p>
-                </div>
+
+                <p className="text-xs text-mono-300 leading-relaxed pt-2">
+                  {content.waitlistForm.microcopy}{" "}
+                  <Link href="/privacy" className="underline underline-offset-2 hover:text-ink">
+                    Read our privacy policy.
+                  </Link>
+                </p>
               </form>
             </Form>
           </motion.div>

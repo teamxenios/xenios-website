@@ -3,71 +3,76 @@ import { content } from "@/lib/content";
 
 export default function Footer() {
   return (
-    <footer className="bg-foreground text-background py-24 border-t border-zinc-800">
-      <div className="container mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-12 mb-24">
+    <footer className="bg-ink text-mono-100 pt-20 pb-10" data-testid="footer-main">
+      <div className="container mx-auto px-6 lg:px-16">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
           <div className="col-span-2">
-            <Link href="/">
-              <a className="block mb-6">
-                <img src="/xenios-logo-white.png" alt="XENIOS" className="h-8 w-auto invert dark:invert-0" />
-              </a>
+            <Link href="/" className="inline-flex items-center gap-2 mb-6">
+              <span className="font-display text-3xl lowercase tracking-tight text-cream font-bold">xenios</span>
+              <span className="w-2 h-2 rounded-full bg-orange" aria-hidden />
             </Link>
-            <p className="text-zinc-400 max-w-sm">
-              {content.footer.tagline}
+            <p className="text-mono-300 max-w-xs text-sm leading-relaxed">
+              The AI-native operating system for health coaches. Built in Austin, TX.
             </p>
           </div>
-          
-          <div>
-            <h4 className="font-mono text-xs uppercase tracking-widest text-zinc-500 mb-6">{content.footer.columns.platform.title}</h4>
-            <ul className="space-y-4">
-              {content.footer.columns.platform.links.map((link, i) => (
-                <li key={i}><a href="#" className="hover:text-white text-zinc-400 transition-colors">{link}</a></li>
-              ))}
-            </ul>
-          </div>
-          
-          <div>
-            <h4 className="font-mono text-xs uppercase tracking-widest text-zinc-500 mb-6">{content.footer.columns.company.title}</h4>
-            <ul className="space-y-4">
-              {content.footer.columns.company.links.map((link, i) => {
-                const linkRoutes: Record<string, string> = { "Careers": "/careers", "Contact": "mailto:" + content.contact.email };
-                const href = linkRoutes[link] || "#";
-                const isExternal = href.startsWith("mailto:");
-                return (
-                  <li key={i}>
-                    {isExternal ? (
-                      <a href={href} className="hover:text-white text-zinc-400 transition-colors">{link}</a>
-                    ) : href !== "#" ? (
-                      <Link href={href}>
-                        <a className="hover:text-white text-zinc-400 transition-colors">{link}</a>
+
+          {content.footer.columns.map((col) => (
+            <div key={col.title}>
+              <h4 className="font-mono text-xs uppercase tracking-widest text-mono-300 mb-5">
+                {col.title}
+              </h4>
+              <ul className="space-y-3">
+                {col.links.map((link) => {
+                  const isExternal = link.href.startsWith("mailto:") || link.href.startsWith("http");
+                  const isHash = link.href.includes("#");
+                  const testId = `link-footer-${link.label.toLowerCase().replace(/[^a-z]+/g, "-")}`;
+                  if (isExternal || isHash) {
+                    return (
+                      <li key={link.label}>
+                        <a
+                          href={link.href}
+                          className="text-sm text-mono-100 hover:text-orange transition-colors"
+                          data-testid={testId}
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    );
+                  }
+                  return (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-mono-100 hover:text-orange transition-colors"
+                        data-testid={testId}
+                      >
+                        {link.label}
                       </Link>
-                    ) : (
-                      <a href="#" className="hover:text-white text-zinc-400 transition-colors">{link}</a>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </div>
-        
-        <div className="pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-zinc-500">
-          <div className="flex flex-col gap-2">
-            <div>
-              {content.footer.bottom.copyright}
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
-            <p className="text-xs text-zinc-600">
-              Xenios is a coaching operations platform. It does not provide medical advice.
-            </p>
+          ))}
+        </div>
+
+        <div className="pt-8 border-t border-hairline-ink flex flex-col md:flex-row justify-between gap-6 text-xs text-mono-300">
+          <div className="flex flex-col gap-2">
+            <p>{content.footer.copyright}</p>
+            <p className="text-mono-300/70 max-w-md leading-relaxed">{content.footer.disclaimer}</p>
           </div>
-          <div className="flex gap-8">
-            {content.footer.bottom.legal.map((item, i) => (
-              <a key={i} href="#" className="hover:text-white transition-colors">{item}</a>
-            ))}
-          </div>
-          <div className="flex gap-6">
-            {content.footer.bottom.social.map((item, i) => (
-              <a key={i} href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">{item.label}</a>
+          <div className="flex gap-5 items-start">
+            {content.contact.socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-orange transition-colors"
+                data-testid={`link-footer-social-${s.label.toLowerCase()}`}
+              >
+                {s.label}
+              </a>
             ))}
           </div>
         </div>

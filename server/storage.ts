@@ -12,7 +12,7 @@ export class DatabaseStorage implements IStorage {
   async createWaitlistSubmission(submission: InsertWaitlistSubmission): Promise<WaitlistSubmission> {
     const [result] = await db
       .insert(waitlistSubmissions)
-      .values(submission)
+      .values({ ...submission, submissionType: submission.submissionType as "general" | "coach_partner" })
       .returning();
     return result;
   }

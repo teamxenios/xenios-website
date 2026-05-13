@@ -36,9 +36,15 @@ shared/
 - `GET /api/health` — Health check
 
 ## Pages
-- `/` — Home (marketing landing page with waitlist form)
-- `/coaches` — Founding Coach Partners application
-- `/careers` — Careers page with philosophy, open roles, and talent CTA
+- `/` — Home (9 inline marketing sections)
+- `/manifesto` — The Xenios Manifesto
+- `/about` — About the company
+- `/careers` — Careers page with philosophy, open roles, talent CTA
+- `/faq` — Accordion-style FAQ
+- `/security` — Security & data practices
+- `/privacy` — Privacy policy
+- `/terms` — Terms of service
+- `/waitlist` — Standalone waitlist page (form + role selector)
 
 ## Key Features
 - Two submission types: "general" waitlist and "coach_partner" application

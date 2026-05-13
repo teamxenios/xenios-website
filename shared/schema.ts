@@ -5,8 +5,8 @@ import { z } from "zod";
 
 export const waitlistSubmissions = pgTable("waitlist_submissions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
   email: text("email").notNull().unique(),
   role: text("role").notNull(),
   missingTechFeedback: text("missing_tech_feedback"),
