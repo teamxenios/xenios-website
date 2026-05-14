@@ -1,0 +1,30 @@
+Implement this specification in full at xeniostechnology.com. The attached PDF is the authoritative build spec; treat every section as a requirement, not a suggestion. Read the entire document before writing any code.
+Stack: Next.js 14 (App Router) on Vercel, TypeScript, Tailwind CSS, Framer Motion, Resend for transactional email, Vercel KV (or Upstash Redis) for the live waitlist counter, Postgres on Neon or Supabase for waitlist storage. Self-host fonts with next/font.
+Build order:
+
+Set up the design system first: tokens, color palette, typography scale, button variants, and the <VisualSlot> component per Part 13. Use the exact CSS variables and hex values in the spec.
+Implement ScrollToTop and the Framer Motion template.tsx page transition per Part 13 before building any pages, so every route inherits them.
+Build the homepage per Part 3 with the fixed-width rotating-word component (use the exact React code in Part 13, not a re-implementation).
+Build /how-it-works, /for-coaches, /for-clients, /product next per Parts 4, 5, 6, 7.
+Build /for-practitioners and the 25 ICP pages using the template in Part 10. Generate them programmatically from a single data file so they share one template.
+Build /manifesto, /about, /careers, /waitlist, /contact, /security, /compliance, /investors, /press, /privacy, /terms, /telemedicine, /storefront, /network, /ecosystem.
+Wire the waitlist: route handler per Part 15, Resend templates from Part 14, live counter seeded at 550.
+Add JSON-LD, llms.txt, robots.txt, and sitemap.xml per Part 16.
+
+Hard rules, no exceptions:
+
+The wordmark is xenios lowercase with NO trailing period anywhere. Run grep -RIn "xenios\." app/ components/ emails/ public/ before claiming done. It must return zero hits except inside the legal entity name "Xenios Technologies, Inc." in /terms, /privacy, and the footer copyright line.
+No em dashes (—) anywhere in user-facing strings, including emails, meta titles, and sign-offs. Run grep -RIn "—" app/ components/ emails/ public/. It must return zero hits. Use commas, periods, parentheses, or restructure.
+The audience phrasing is "coaches, trainers, and practitioners" wherever the audience is addressed. Never use "practitioners" as the standalone term in marketing copy.
+Every button is either ink-ground with cream text, or cream-ground with a 1.5px ink border and ink text. No white text on cream. No white-ground buttons on cream. No invisible borders.
+Every visual slot is a real composition (gradient + typography, gradient + diagram, or gradient + product reference). No blank rectangles, no placeholder divs, no aspect-square empty boxes anywhere.
+The agent narrative on the public site is exactly two surfaces: "the xenios agent" (coach side) and "the xenios client agent" (client side). Do not list 8 named internal agents. Internal architecture stays internal.
+Drop the advisor role entirely. /careers shows five founding roles only.
+No competitor names (Trainerize, Everfit, TrueCoach, etc.) appear in public copy. Category language only.
+Every internal navigation click must scroll to the top of the destination page and trigger the page transition. Anchor links (#section) smooth-scroll and do not reset.
+The rotating hero word must have zero layout shift across all 16 entries. Test at 375px, 412px, 768px, 1024px, and 1440px viewports.
+
+Environment variables to add in Replit Secrets / Vercel: RESEND_API_KEY, RESEND_FROM, RESEND_REPLY_TO, RESEND_INTERNAL_ALERT_TO, NEXT_PUBLIC_SITE_URL, plus the database/KV connection strings per Part 15.
+DNS: Add the Resend SPF, DKIM, and DMARC records on xeniostechnology.com per Part 15. Verify the domain in the Resend dashboard before the first production send.
+Before declaring done, run all 16 sweeps in Part 17 and produce a checklist with pass/fail for each. Do not skip the cross-client email test (Gmail, Outlook, ProtonMail, iCloud, Apple Mail). Do not skip the Lighthouse and axe-core runs. The acceptance bar is Lighthouse Performance ≥ 90, Accessibility = 100, SEO = 100, and zero serious or critical axe violations on every route.
+If anything in the spec is ambiguous or appears to conflict with another section, stop and ask before writing code. Do not invent answers, do not paraphrase the spec, and do not skip pages because they look similar to other pages. Every page listed in the sitemap in Part 2 must exist and have its verbatim copy from the spec.
