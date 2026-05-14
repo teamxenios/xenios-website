@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ============================================================
-   xenios. v3 — Design tokens & primitives
+   xenios v5 — Design tokens & primitives
    Brand: cream + ink, gradient pill accent, heavy geometric sans
 ============================================================ */
 
@@ -184,7 +184,7 @@ body {
 .font-900 { font-weight: 900; }
 
 /* ============================================================
-   Wordmark (lowercase xenios + orange period)
+   Wordmark (lowercase xenios — no period, no glyph, no logotype)
 ============================================================ */
 .wordmark {
   font-family: 'Inter Tight', system-ui, sans-serif;
@@ -195,7 +195,6 @@ body {
   line-height: 1;
   display: inline-block;
 }
-.wordmark-period { color: var(--pulse); }
 
 /* ============================================================
    Container & layout

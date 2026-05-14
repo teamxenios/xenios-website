@@ -28,7 +28,7 @@ export const waitlistService = {
 export interface ContactSubmission {
   name: string;
   email: string;
-  persona: "practitioner" | "investor" | "journalist_creator" | "integration_partner" | "candidate" | "other";
+  persona: "practitioner" | "investor" | "journalist_creator" | "integration_partner" | "enterprise" | "candidate" | "other";
   subject: string;
   message: string;
   website?: string;

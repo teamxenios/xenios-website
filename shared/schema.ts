@@ -3,26 +3,33 @@ import { pgTable, text, timestamp, uuid, integer, smallint } from "drizzle-orm/p
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// v3 — aligned with PRACTITIONER_TILES in client/src/lib/content.ts
+// v5 — 25 ICPs aligned with ICP_LIST in client/src/lib/content.ts
 export const PRACTITIONER_TYPE_VALUES = [
-  "strength_coach",
-  "longevity_clinician",
-  "glp1_specialist",
-  "functional_medicine_md",
-  "registered_dietitian",
-  "nutrition_coach",
-  "sleep_coach",
-  "hormone_therapy",
-  "peptide_protocol",
+  "strength_coaches",
+  "personal_trainers",
   "sports_performance",
-  "recovery_coach",
-  "mental_performance",
-  "endurance_coach",
-  "concierge_clinician",
+  "functional_medicine",
+  "longevity_clinics",
+  "concierge_medicine",
+  "performance_labs",
+  "recovery_studios",
+  "telemedicine_startups",
+  "preventive_care",
+  "nutrition_companies",
+  "supplement_brands",
+  "athlete_brands",
   "corporate_wellness",
-  "pelvic_health_pt",
-  "pre_postnatal",
-  "health_life_coach",
+  "healthcare_systems",
+  "military",
+  "biohacking_clinics",
+  "physical_therapists",
+  "chiropractors",
+  "hormone_clinics",
+  "peptide_clinics",
+  "self_insured_employers",
+  "elite_athletes",
+  "creators",
+  "sports_agencies",
   "other",
 ] as const;
 
@@ -31,6 +38,7 @@ export const CONTACT_PERSONA_VALUES = [
   "investor",
   "journalist_creator",
   "integration_partner",
+  "enterprise",
   "candidate",
   "other",
 ] as const;

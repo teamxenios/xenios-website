@@ -1,64 +1,47 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import WaitlistForm from "@/components/WaitlistForm";
 import Counter from "@/components/Counter";
-import { content } from "@/lib/content";
+import WaitlistForm from "@/components/WaitlistForm";
+import { PAGES, content } from "@/lib/content";
 
 export default function Waitlist() {
-  const W = content.waitlistPage;
-  const [success, setSuccess] = useState<{ position: number; email: string; firstName: string; duplicate?: boolean } | null>(null);
+  const WL = content.waitlistPage;
+  const [done, setDone] = useState<{ position: number; email: string; firstName: string } | null>(null);
 
   return (
     <PageShell>
-      <SeoHead {...W.seo} />
-
-      <section className="grad grad-01-dawn section-y" data-testid="section-waitlist-hero">
+      <SeoHead title={PAGES.waitlist.title} description={PAGES.waitlist.description} canonical="/waitlist" />
+      <section className="grad grad-01-dawn section-y" data-testid="section-waitlist">
         <div className="container-x">
-          <p className="mono-cap text-ink-2 mb-8">{W.eyebrow}</p>
-          <h1 className="display-l text-ink text-balance max-w-4xl">{W.h1}</h1>
-          <p className="body-l mt-8 text-ink-2 max-w-2xl">{W.sub}</p>
-          <div className="counter-pill mt-10">
-            <span className="counter-dot" />
-            <Counter variant="line" suffix={W.counterSuffix} />
+          <p className="mono-cap text-ink-mute mb-6">{WL.eyebrow}</p>
+          <h1 className="display-l text-ink text-balance" style={{ maxWidth: "24ch" }}>{WL.headline}</h1>
+          <div className="mt-8">
+            <Counter variant="line" suffix={WL.counter} />
           </div>
-        </div>
-      </section>
-
-      <section className="bg-paper section-y" data-testid="section-waitlist-form">
-        <div className="container-x">
-          <div className="max-w-2xl mx-auto">
-            {success ? (
-              <div className="space-y-6" data-testid="waitlist-success">
-                <p className="mono-cap text-ink-mute">{W.successTitle}</p>
-                <p className="display-l text-ink">You're <span className="tabular">#{success.position}</span></p>
-                <p className="body-l text-ink-2">{W.successPositionLabel}.</p>
-                <p className="body-l text-ink-2">{W.successBody.replace("{email}", success.email)}</p>
-                <ul className="space-y-2 mt-6">
-                  {W.successLinks.map((l, i) => (
-                    <li key={i}>
-                      <a href={l.href} target="_blank" rel="noopener noreferrer" className="body-l underline underline-offset-2 hover:text-pulse" data-testid={`link-success-${i}`}>{l.label}</a>
-                    </li>
-                  ))}
-                </ul>
-                <p className="body-m text-ink-mute italic mt-6">{W.successCloser}</p>
-                {success.duplicate && (
-                  <p className="mono-cap text-ink-mute">(You were already on the list — your spot is unchanged.)</p>
-                )}
-              </div>
-            ) : (
-              <WaitlistForm onSuccess={(info) => setSuccess(info)} />
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-paper-2 section-y rule-top" data-testid="section-waitlist-trust">
-        <div className="container-x">
-          <div className="max-w-3xl space-y-3">
-            {W.trustBlock.map((line, i) => (
-              <p key={i} className="body-m text-ink-2" data-testid={`text-trust-${i}`}>{line}</p>
-            ))}
+          <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div className="lg:col-span-7">
+              {done ? (
+                <div className="card" data-testid="waitlist-success">
+                  <p className="mono-cap text-pulse">YOU'RE IN</p>
+                  <h2 className="display-m mt-3 text-ink">{WL.success.headline}</h2>
+                  <p className="body-l mt-4 text-ink-2">{WL.success.sub(done.position, done.email)}</p>
+                  <ul className="mt-6 space-y-2">
+                    {WL.success.followups.map((f, i) => <li key={i} className="body-m text-ink-2">→ {f}</li>)}
+                  </ul>
+                  <p className="body-m mt-4 text-ink-2">{WL.success.tail}</p>
+                </div>
+              ) : (
+                <WaitlistForm onSuccess={(info) => setDone({ position: info.position, email: info.email, firstName: info.firstName })} />
+              )}
+            </div>
+            <aside className="lg:col-span-5 space-y-4">
+              {WL.trustBlock.map((t, i) => (
+                <p key={i} className="body-m text-ink-2 card">{t}</p>
+              ))}
+              <Link href="/manifesto" className="btn btn-ghost inline-flex">read the manifesto →</Link>
+            </aside>
           </div>
         </div>
       </section>

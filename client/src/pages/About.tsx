@@ -1,59 +1,60 @@
 import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import { content } from "@/lib/content";
+import { PAGES } from "@/lib/content";
 
 export default function About() {
-  const A = content.about;
   return (
     <PageShell>
-      <SeoHead {...A.seo} />
-
-      <section className="grad grad-06-horizon section-y" data-testid="section-about-hero">
+      <SeoHead title={PAGES.about.title} description={PAGES.about.description} canonical="/about" />
+      <section className="grad grad-01-dawn section-y" data-testid="section-about-hero">
         <div className="container-x">
-          <p className="mono-cap text-paper/80 mb-8">{A.eyebrow}</p>
-          <h1 className="display-l text-paper text-balance max-w-5xl">{A.h1}</h1>
-          <p className="body-l mt-8 text-paper/85 max-w-2xl">{A.sub}</p>
+          <p className="mono-cap text-ink-mute mb-6">ABOUT</p>
+          <h1 className="display-xl text-ink text-balance" style={{ maxWidth: "24ch" }}>Built in Austin. Built to last.</h1>
         </div>
       </section>
 
-      <section className="bg-paper section-y" data-testid="section-about-body">
+      <section className="bg-paper section-y">
+        <div className="container-x max-w-4xl space-y-6">
+          <p className="quote-lead text-ink-2">
+            xenios is built by a team that has spent two decades shipping infrastructure into the most regulated, most consequential corners of U.S. healthcare and finance.
+          </p>
+          <p className="body-l text-ink-2">
+            Two of the team's prior companies — FinDox (acquired by Donnelley Financial Solutions) and InstaMed (acquired by JPMorgan Chase, 2019) — combined for $710M+ in enterprise outcomes. Both shipped boring layers underneath payments, compliance, and clinical data exchange — the layers that look invisible right up until they are missing.
+          </p>
+          <p className="body-l text-ink-2">
+            We are building xenios with that same standard. Pre-seed. In stealth. In Austin, Texas — which is becoming the gravitational center of proactive health in America.
+          </p>
+        </div>
+      </section>
+
+      <section className="grad grad-03-fieldwork section-y" data-testid="section-five-beliefs">
         <div className="container-x">
-          <article className="max-w-prose mx-auto space-y-6">
-            {A.paragraphs.map((p, i) => (
-              <p key={i} className="body-l text-ink-2" data-testid={`text-about-para-${i}`}>{p}</p>
+          <p className="mono-cap text-ink-mute mb-6">FIVE BELIEFS</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {[
+              ["Healthcare leverage belongs to the practitioner doing the work.", "Software should hand it to them, not extract it from them."],
+              ["This decade decides the next fifty years of human health.", "We're building infrastructure for the long arc — not the cycle."],
+              ["AI is the substrate, not the product.", "The agent acts in the practitioner's voice and judgment, or it has no place in this stack."],
+              ["The proactive health ecosystem is the most fragmented it has ever been.", "xenios is the connective tissue."],
+              ["Boring infrastructure is what wins regulated environments.", "We've shipped it before. We're shipping it again."],
+            ].map(([h, b], i) => (
+              <article key={i} className="card">
+                <p className="mono-cap text-pulse">{String(i + 1).padStart(2, "0")}</p>
+                <h3 className="h2 mt-3 text-ink">{h}</h3>
+                <p className="body-m mt-4 text-ink-2">{b}</p>
+              </article>
             ))}
-          </article>
+          </div>
         </div>
       </section>
 
-      <section className="bg-paper-2 section-y rule-y" data-testid="section-about-beliefs">
+      <section className="grad grad-06-horizon section-y">
         <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">{A.beliefsHeader}</p>
-          <ul className="space-y-5 max-w-3xl">
-            {A.beliefs.map((b, i) => (
-              <li key={i} className="quote-lead text-ink flex gap-4" data-testid={`belief-${i}`}>
-                <span className="mono-label text-pulse" style={{ minWidth: 28, marginTop: 8 }}>{String(i + 1).padStart(2, "0")}</span>
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="bg-paper section-y" data-testid="section-about-team">
-        <div className="container-x max-w-prose mx-auto">
-          <p className="mono-cap text-ink-mute mb-4">{A.teamBlock.h}</p>
-          <p className="body-l text-ink-2">{A.teamBlock.body}</p>
-        </div>
-      </section>
-
-      <section className="grad grad-04-meridian section-y" data-testid="section-about-closer">
-        <div className="container-x">
-          <h2 className="display-l text-paper text-balance max-w-4xl" style={{ fontWeight: 800 }}>{A.closer.h}</h2>
-          <div className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <Link href="/waitlist" className="btn btn-primary btn-on-dark w-full sm:w-auto" data-testid="button-about-primary">{A.closer.primary}</Link>
-            <Link href="/careers" className="btn btn-secondary btn-on-dark w-full sm:w-auto" data-testid="button-about-secondary">{A.closer.secondary}</Link>
+          <h2 className="display-l text-paper text-balance max-w-4xl">Build with us.</h2>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <Link href="/careers" className="btn btn-primary btn-on-dark">see open roles →</Link>
+            <Link href="/waitlist" className="btn btn-secondary btn-on-dark">join the waitlist</Link>
           </div>
         </div>
       </section>

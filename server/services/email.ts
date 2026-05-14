@@ -38,24 +38,31 @@ const TEAM_EMAIL = "team@xeniostechnology.com";
 const FROM_DEFAULT = `xenios <${TEAM_EMAIL}>`;
 
 const PRACTITIONER_LABELS: Record<string, string> = {
-  personal_trainer: "Personal trainer / strength coach",
-  nutritionist: "Nutritionist / registered dietitian",
-  glp1_coach: "GLP-1 / metabolic health coach",
-  longevity: "Longevity / performance specialist",
-  functional_medicine: "Functional medicine practitioner",
-  health_coach: "Health coach / wellness pro",
-  rn_rd_cashpay: "RN or RD in cash-pay practice",
-  recovery_sleep_mind: "Recovery, sleep, or mind coach",
-  biohacker_1on1: "Biohacker — 1:1 program",
-  sports_team: "Sports / team performance coach",
-  physical_therapist: "Physical therapist (cash-pay)",
-  chiropractor: "Chiropractor (wellness)",
-  concierge_md: "Concierge medicine practitioner",
-  hormone_hrt: "Hormone / HRT specialist",
-  fertility: "Fertility / reproductive wellness",
-  mental_performance: "Mental performance / executive coach",
-  recovery_studio: "Recovery / cold-plunge studio operator",
-  clinic_operator: "Independent clinic operator",
+  strength_coaches: "Strength coach",
+  personal_trainers: "Personal trainer",
+  sports_performance: "Sports performance",
+  functional_medicine: "Functional medicine",
+  longevity_clinics: "Longevity clinic",
+  concierge_medicine: "Concierge medicine",
+  performance_labs: "Performance lab",
+  recovery_studios: "Recovery studio",
+  telemedicine_startups: "Telemedicine startup",
+  preventive_care: "Preventive care system",
+  nutrition_companies: "Nutrition company",
+  supplement_brands: "Supplement brand",
+  athlete_brands: "Athlete brand",
+  corporate_wellness: "Corporate wellness",
+  healthcare_systems: "Healthcare system",
+  military: "Military optimization",
+  biohacking_clinics: "Biohacking clinic",
+  physical_therapists: "Physical therapist",
+  chiropractors: "Chiropractor",
+  hormone_clinics: "Hormone clinic",
+  peptide_clinics: "Peptide clinic",
+  self_insured_employers: "Self-insured employer",
+  elite_athletes: "Elite athlete",
+  creators: "Creator / influencer",
+  sports_agencies: "Sports agency",
   other: "Other",
 };
 
@@ -82,19 +89,15 @@ export async function sendConfirmationEmail({
     return;
   }
 
-  const subject = `You're on the xenios waitlist. (#${position})`;
+  const subject = `you're on the xenios waitlist (#${position})`;
 
   const text = `WELCOME
 
-You're in.
+you're in${firstName ? `, ${firstName}` : ""}.
 
-Hi ${firstName},
+xenios is the AI-native operating system for proactive health — the orchestration layer connecting every signal, every workflow, and every practitioner moving care upstream of disease.
 
-Thank you for joining the xenios waitlist.
-
-You are #${position} on the list. There are now ${totalCount} practitioners with us.
-
-We are opening early access in waves. Position on the waitlist decides the order. When your wave opens, you'll hear from this same address — team@xeniostechnology.com.
+You're #${position} on the waitlist. ${totalCount} practitioners are with us.
 
 —
 
@@ -103,57 +106,56 @@ WHILE YOU WAIT
 The vision shows up first on our channels. Two quick follows:
 
   → Instagram: @officialxenios — https://www.instagram.com/officialxenios/
-  → LinkedIn:  Xenios       — https://www.linkedin.com/company/officialxenios
+  → LinkedIn:  /company/officialxenios — https://www.linkedin.com/company/officialxenios
 
 —
 
 A LITTLE OF WHAT'S COMING
 
-Xenios is the operating system for the proactive health practitioner — the connective tissue between every signal in the proactive health ecosystem. Wearables, labs, GLP-1, longevity panels, recovery, nutrition, training, mental performance — every dot, one substrate, one practitioner in command.
+Eight specialized AI agents and a Conductor. Telemedicine. A branded storefront. A practitioner network with agent-to-agent referrals. A programmable health ontology. A developer platform. An enterprise tier.
 
 Every dot connected. Every hour returned. Every practitioner amplified.
 
-Coaching was never the bottleneck. Infrastructure was.
-We are building the infrastructure.
+The proactive health era starts now.
+We are building the operating system.
 
 —
 
-If you have a friend in the practice who should be on this list, forward them: https://xeniostechnology.com/waitlist
+If a friend should be on this list, forward them:
+https://xeniostechnology.com/waitlist
 
-If you want to talk to us directly, write to team@xeniostechnology.com.
+If you want to talk, reply to this email. A human reads every reply.
 
 —
-xenios.
-infrastructure for the next fifty years of human health.
-
-Austin, TX · in stealth.
+xenios
+infrastructure for the next fifty years of human health
+Austin, TX · in stealth
+team@xeniostechnology.com
 `;
 
   const html = `<div style="font-family:'Inter Tight',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:620px;margin:0 auto;padding:48px 28px;color:#0E0E0C;background:#F4EFE6;font-weight:500;">
-    <p style="font-size:28px;font-weight:900;letter-spacing:-0.025em;margin:0 0 40px;">xenios<span style="color:#FF5A1F">.</span></p>
+    <p style="font-size:28px;font-weight:900;letter-spacing:-0.04em;text-transform:lowercase;margin:0 0 40px;">xenios</p>
     <p style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6A6A62;margin:0 0 12px;">WELCOME</p>
-    <h1 style="font-size:48px;font-weight:800;letter-spacing:-0.02em;line-height:1.04;margin:0 0 28px;">You're in.</h1>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">Hi ${firstName},</p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">Thank you for joining the xenios waitlist.</p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">You are <strong style="font-weight:700;font-feature-settings:'tnum';">#${position}</strong> on the list. There are now <strong style="font-weight:700;font-feature-settings:'tnum';">${totalCount}</strong> practitioners with us.</p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 24px;">We are opening early access in waves. Position on the waitlist decides the order. When your wave opens, you'll hear from this same address — <a href="mailto:team@xeniostechnology.com" style="color:#0E0E0C;">team@xeniostechnology.com</a>.</p>
+    <h1 style="font-size:48px;font-weight:800;letter-spacing:-0.02em;line-height:1.04;margin:0 0 28px;">you're in${firstName ? `, ${firstName}` : ""}.</h1>
+    <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">xenios is the AI-native operating system for proactive health — the orchestration layer connecting every signal, every workflow, and every practitioner moving care upstream of disease.</p>
+    <p style="font-size:17px;line-height:1.55;margin:0 0 24px;">You're <strong style="font-weight:700;font-feature-settings:'tnum';">#${position}</strong> on the waitlist. <strong style="font-weight:700;font-feature-settings:'tnum';">${totalCount}</strong> practitioners are with us.</p>
     <hr style="border:none;border-top:1px solid rgba(14,14,12,0.12);margin:36px 0;" />
     <p style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6A6A62;margin:0 0 12px;">WHILE YOU WAIT</p>
     <p style="font-size:17px;line-height:1.55;margin:0 0 12px;">The vision shows up first on our channels. Two quick follows:</p>
     <p style="font-size:17px;line-height:1.55;margin:0 0 8px;">→ Instagram: <a href="https://www.instagram.com/officialxenios/" style="color:#FF5A1F;font-weight:600;">@officialxenios</a></p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 24px;">→ LinkedIn: <a href="https://www.linkedin.com/company/officialxenios" style="color:#FF5A1F;font-weight:600;">Xenios on LinkedIn</a></p>
+    <p style="font-size:17px;line-height:1.55;margin:0 0 24px;">→ LinkedIn: <a href="https://www.linkedin.com/company/officialxenios" style="color:#FF5A1F;font-weight:600;">/company/officialxenios</a></p>
     <hr style="border:none;border-top:1px solid rgba(14,14,12,0.12);margin:36px 0;" />
     <p style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6A6A62;margin:0 0 12px;">A LITTLE OF WHAT'S COMING</p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">Xenios is the operating system for the proactive health practitioner — the connective tissue between every signal in the proactive health ecosystem. Wearables, labs, GLP-1, longevity panels, recovery, nutrition, training, mental performance — every dot, one substrate, one practitioner in command.</p>
+    <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">Eight specialized AI agents and a Conductor. Telemedicine. A branded storefront. A practitioner network with agent-to-agent referrals. A programmable health ontology. A developer platform. An enterprise tier.</p>
     <p style="font-size:20px;line-height:1.3;font-weight:700;letter-spacing:-0.01em;margin:24px 0;">Every dot connected. Every hour returned. Every practitioner amplified.</p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 8px;">Coaching was never the bottleneck. Infrastructure was.</p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 24px;">We are building the infrastructure.</p>
+    <p style="font-size:17px;line-height:1.55;margin:0 0 8px;">The proactive health era starts now.</p>
+    <p style="font-size:17px;line-height:1.55;margin:0 0 24px;">We are building the operating system.</p>
     <hr style="border:none;border-top:1px solid rgba(14,14,12,0.12);margin:36px 0;" />
-    <p style="font-size:15px;line-height:1.55;margin:0 0 12px;color:#2A2A26;">If you have a friend in the practice who should be on this list, forward them: <a href="https://xeniostechnology.com/waitlist" style="color:#0E0E0C;">xeniostechnology.com/waitlist</a></p>
-    <p style="font-size:15px;line-height:1.55;margin:0 0 36px;color:#2A2A26;">If you want to talk to us directly, write to <a href="mailto:team@xeniostechnology.com" style="color:#0E0E0C;">team@xeniostechnology.com</a>.</p>
-    <p style="font-size:24px;font-weight:900;letter-spacing:-0.025em;margin:0 0 8px;">xenios<span style="color:#FF5A1F">.</span></p>
-    <p style="font-size:14px;line-height:1.55;margin:0 0 4px;color:#2A2A26;">infrastructure for the next fifty years of human health.</p>
-    <p style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.04em;color:#6A6A62;margin:16px 0 0;">Austin, TX · in stealth.</p>
+    <p style="font-size:15px;line-height:1.55;margin:0 0 12px;color:#2A2A26;">If a friend should be on this list, forward them: <a href="https://xeniostechnology.com/waitlist" style="color:#0E0E0C;">xeniostechnology.com/waitlist</a></p>
+    <p style="font-size:15px;line-height:1.55;margin:0 0 36px;color:#2A2A26;">If you want to talk, reply to this email. A human reads every reply.</p>
+    <p style="font-size:24px;font-weight:900;letter-spacing:-0.04em;text-transform:lowercase;margin:0 0 8px;">xenios</p>
+    <p style="font-size:14px;line-height:1.55;margin:0 0 4px;color:#2A2A26;">infrastructure for the next fifty years of human health</p>
+    <p style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.04em;color:#6A6A62;margin:16px 0 0;">Austin, TX · in stealth · team@xeniostechnology.com</p>
   </div>`;
 
   try {
@@ -192,21 +194,23 @@ export async function sendInternalNotification({
   const ptype = PRACTITIONER_LABELS[signup.practitionerType] ?? signup.practitionerType;
   const subject = `[WAITLIST] +1 — ${signup.firstName} ${signup.lastName} — #${signup.position} — ${ptype}`;
 
-  const text = `new waitlist signup.
+  const text = `NEW WAITLIST SIGNUP
+———————————————
 
-name:           ${signup.firstName} ${signup.lastName}
-email:          ${signup.email}
-practitioner:   ${ptype}
-location:       ${signup.city}, ${signup.country}
-position:       #${signup.position}
-total waitlist: ${totalCount}
-source:         ${signup.howHeard || "unspecified"}
+Name:           ${signup.firstName} ${signup.lastName}
+Email:          ${signup.email}
+Practitioner:   ${ptype}
+Location:       ${signup.city}, ${signup.country}
+Free text:      ${signup.freeText || "—"}
+Source:         ${signup.howHeard || "—"}
 
-what they want xenios to solve first:
-${signup.freeText || "—"}
+Position:       #${signup.position} of ${totalCount}
+Timestamp:      ${new Date().toISOString()}
+
+Reply to this email to reach them directly.
 
 —
-sent by xenios.
+xenios
 `;
 
   try {
@@ -240,6 +244,7 @@ export async function sendContactMessage(msg: ContactMessage) {
     investor: "[INVESTOR]",
     journalist_creator: "[PRESS]",
     integration_partner: "[PARTNER]",
+    enterprise: "[ENTERPRISE]",
     candidate: "[ROLE — OPEN]",
     other: "[HELLO]",
   };
@@ -260,7 +265,7 @@ message:
 ${msg.message}
 
 —
-sent by xenios contact form.
+xenios
 `;
 
   try {
@@ -296,20 +301,20 @@ Every message that hits team@xeniostechnology.com is read by a human. We reply t
 In the meantime, two quick follows:
 
   → Instagram: @officialxenios
-  → LinkedIn:  Xenios
+  → LinkedIn:  /company/officialxenios
 
 —
-xenios.
+xenios
 `;
 
   const html = `<div style="font-family:'Inter Tight',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:620px;margin:0 auto;padding:48px 28px;color:#0E0E0C;background:#F4EFE6;font-weight:500;">
-    <p style="font-size:28px;font-weight:900;letter-spacing:-0.025em;margin:0 0 32px;">xenios<span style="color:#FF5A1F">.</span></p>
+    <p style="font-size:28px;font-weight:900;letter-spacing:-0.04em;text-transform:lowercase;margin:0 0 32px;">xenios</p>
     <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">Thanks for writing.</p>
     <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">Every message that hits <a href="mailto:team@xeniostechnology.com" style="color:#0E0E0C;">team@xeniostechnology.com</a> is read by a human. We reply to every serious note inside two business days.</p>
     <p style="font-size:17px;line-height:1.55;margin:24px 0 8px;">In the meantime, two quick follows:</p>
     <p style="font-size:17px;line-height:1.55;margin:0 0 8px;">→ Instagram: <a href="https://www.instagram.com/officialxenios/" style="color:#FF5A1F;font-weight:600;">@officialxenios</a></p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 32px;">→ LinkedIn: <a href="https://www.linkedin.com/company/officialxenios" style="color:#FF5A1F;font-weight:600;">Xenios on LinkedIn</a></p>
-    <p style="font-size:20px;font-weight:900;letter-spacing:-0.025em;margin:0;">xenios<span style="color:#FF5A1F">.</span></p>
+    <p style="font-size:17px;line-height:1.55;margin:0 0 32px;">→ LinkedIn: <a href="https://www.linkedin.com/company/officialxenios" style="color:#FF5A1F;font-weight:600;">/company/officialxenios</a></p>
+    <p style="font-size:20px;font-weight:900;letter-spacing:-0.04em;text-transform:lowercase;margin:0;">xenios</p>
   </div>`;
 
   try {
@@ -317,7 +322,7 @@ xenios.
       from: fromEmail,
       to: msg.email,
       replyTo: TEAM_EMAIL,
-      subject: "We have it. — xenios",
+      subject: "we have it. — xenios",
       text,
       html,
     });

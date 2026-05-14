@@ -15,7 +15,7 @@ const SIZE: Record<NonNullable<Props["size"]>, string> = {
 export default function Wordmark({ size = "md", className = "", asLink = true }: Props) {
   const inner = (
     <span className={`wordmark ${SIZE[size]} ${className}`} data-testid="text-wordmark">
-      xenios<span className="wordmark-period">.</span>
+      xenios
     </span>
   );
   return asLink ? (

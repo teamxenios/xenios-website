@@ -1,30 +1,49 @@
-# xenios.
+# xenios
 
-> xenios. (Xenios Technologies) is the AI-native operating system for proactive and preventive health practitioners. Multi-agent. Practitioner-voiced. HIPAA-aware. Built in Austin, TX.
+> xenios (Xenios Technologies) is the AI-native operating system for proactive
+> health — the orchestration layer connecting every signal, every workflow,
+> and every practitioner moving care upstream of disease. Headquartered in
+> Austin, TX. Pre-seed. In stealth.
 
 ## Core facts
-- Product: multi-agent AI OS for health practitioners (coaches, clinicians, longevity, GLP-1, FM, RDs, recovery, mental performance)
-- Headquarters: Austin, TX, USA
+- Product: AI-native operating system for proactive health
+- Capabilities: 8 agents + Conductor · telemedicine · storefront · network · ontology · developers · enterprise
+- Heritage: from the team behind $710M+ in prior exits, including FinDox and InstaMed
+- HQ: Austin, TX, USA
 - Contact: team@xeniostechnology.com
-- Social: instagram.com/officialxenios, linkedin.com/company/officialxenios
+- Instagram: @officialxenios
+- LinkedIn: /company/officialxenios
 - Status: stealth, pre-seed, waitlist open
-- Heritage: from a team with $710M+ in prior exits, including FinDox and InstaMed
-
-## What xenios. does
-xenios. gives every proactive health practitioner a multi-agent system (eight specialized agents — Onboarding, Protocol, Check-in, Communication, Education, Outcomes, Billing, Compliance) that augments — never replaces — the practitioner. Agents work in the practitioner's voice, under their judgment, with HIPAA-aware logging and scope-of-practice guardrails. Practitioners can serve 10× to 100× the clients with 10× the depth of care.
 
 ## Ecosystem (designed to connect with — not partnerships)
-WHOOP, Oura, Apple Health, Garmin, Polar, Fitbit, Coros, Eight Sleep, Levels, Lingo (Abbott), Dexcom, Stelo, Function Health, Superpower, Inside Tracker, Marek Health, Hone, Quest, Labcorp, Ezra, Prenuvo, Neko Health, Zepbound, Wegovy, Ozempic, Mounjaro, compounded GLP-1 programs, BPC-157 protocols, semaglutide programs, tirzepatide programs, retatrutide programs, Thorne, Pure Encapsulations, Momentous, Designs for Health, Hyperice, Therabody, Plunge, Cronometer, MacroFactor, MyFitnessPal, Headspace, Calm, Othership, Open, Anthropic, OpenAI, TrueCoach exports, Trainerize exports, Stripe, Plaid.
+WHOOP · Oura · Apple Health · Garmin · Polar · Fitbit · Eight Sleep · Levels ·
+Lingo · Dexcom · Stelo · Function Health · Superpower · Inside Tracker ·
+Marek Health · Hone · Maximus · Ezra · Prenuvo · Neko Health · Cleerly ·
+Fullscript · Wellevate · Rupa Health · Thorne · Pure Encapsulations ·
+Momentous · Designs for Health · Hyperice · Therabody · Plunge · Sunlighten ·
+Cronometer · MacroFactor · Headspace · Calm · Anthropic · OpenAI ·
+Stripe · Plaid · FHIR · Surescripts.
 
 Brand names are property of their respective owners. Integration availability varies.
 
 ## Pages
 - [Home](https://xeniostechnology.com/): overview
-- [Product](https://xeniostechnology.com/product): seven capabilities, multi-agent architecture, network, revenue layer
-- [For Practitioners](https://xeniostechnology.com/for-practitioners): audience-specific tiles for 18 practice types
-- [Ecosystem](https://xeniostechnology.com/ecosystem): the 52 names across 13 clusters
-- [Network](https://xeniostechnology.com/network): agent-to-agent referrals
-- [About](https://xeniostechnology.com/about): heritage and beliefs
-- [Careers](https://xeniostechnology.com/careers): remote, Austin preferred
-- [Waitlist](https://xeniostechnology.com/waitlist): join early access
-- [Contact](https://xeniostechnology.com/contact): team@xeniostechnology.com
+- [Product](https://xeniostechnology.com/product): 12 capabilities
+- [Agents](https://xeniostechnology.com/agents): 8 + Conductor
+- [Telemedicine](https://xeniostechnology.com/telemedicine)
+- [Storefront](https://xeniostechnology.com/storefront)
+- [Network](https://xeniostechnology.com/network)
+- [Ontology](https://xeniostechnology.com/ontology)
+- [Developers](https://xeniostechnology.com/developers)
+- [Enterprise](https://xeniostechnology.com/enterprise)
+- [Ecosystem](https://xeniostechnology.com/ecosystem)
+- [For Practitioners](https://xeniostechnology.com/for-practitioners): 25 ICPs
+- [Manifesto](https://xeniostechnology.com/manifesto)
+- [About](https://xeniostechnology.com/about)
+- [Careers](https://xeniostechnology.com/careers)
+- [Waitlist](https://xeniostechnology.com/waitlist)
+- [Contact](https://xeniostechnology.com/contact)
+- [Security](https://xeniostechnology.com/security)
+- [Compliance](https://xeniostechnology.com/compliance)
+- [Investors](https://xeniostechnology.com/investors)
+- [Press](https://xeniostechnology.com/press)

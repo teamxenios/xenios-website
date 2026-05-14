@@ -1,53 +1,49 @@
-import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import EcosystemMarquee from "@/components/EcosystemMarquee";
-import { content, ECOSYSTEM_CLUSTERS } from "@/lib/content";
+import { PAGES, ECOSYSTEM_CATEGORIES, ALL_ECOSYSTEM_NAMES } from "@/lib/content";
 
 export default function Ecosystem() {
-  const E = content.ecosystem;
   return (
     <PageShell>
-      <SeoHead {...E.seo} />
-
-      <section className="grad grad-03-fieldwork section-y" data-testid="section-eco-hero">
+      <SeoHead title={PAGES.ecosystem.title} description={PAGES.ecosystem.description} canonical="/ecosystem" />
+      <section className="grad grad-02-tide section-y" data-testid="section-ecosystem-hero">
         <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-8">{E.eyebrow}</p>
-          <h1 className="display-l text-ink text-balance max-w-5xl">{E.h1}</h1>
-          <p className="body-l mt-8 text-ink-2 max-w-2xl">{E.sub}</p>
+          <p className="mono-cap text-ink-mute mb-6">ECOSYSTEM</p>
+          <h1 className="display-xl text-ink text-balance" style={{ maxWidth: "24ch" }}>
+            Designed to connect to every dot.
+          </h1>
+          <p className="body-l mt-8 text-ink-2 max-w-3xl">
+            {ALL_ECOSYSTEM_NAMES.length}+ brands across {ECOSYSTEM_CATEGORIES.length} categories of the proactive health stack. Below is the design intent.
+          </p>
         </div>
       </section>
 
-      <section className="bg-paper-2 section-y" data-testid="section-eco-marquee">
+      <section className="bg-paper-2 section-y rule-y">
         <EcosystemMarquee rows={2} />
       </section>
 
-      <section className="bg-paper section-y" data-testid="section-eco-clusters">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-10">THE FULL LIST · 13 CLUSTERS · 52 NAMES</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
-            {ECOSYSTEM_CLUSTERS.map((c, i) => (
-              <div key={c.heading} data-testid={`cluster-${i}`}>
-                <p className="mono-cap text-pulse mb-4">{String(i + 1).padStart(2, "0")} · {c.heading}</p>
-                <ul className="space-y-2">
-                  {c.names.map((n) => (
-                    <li key={n} className="body-l text-ink" style={{ fontWeight: 600 }} data-testid={`eco-name-${n.replace(/\s+/g, "-")}`}>{n}</li>
-                  ))}
-                </ul>
+      <section className="bg-paper section-y" data-testid="section-ecosystem-categories">
+        <div className="container-x space-y-10">
+          {ECOSYSTEM_CATEGORIES.map((c, i) => (
+            <article key={i} className="rule-bottom pb-8" data-testid={`category-${i}`}>
+              <p className="mono-cap text-pulse mb-3">{String(i + 1).padStart(2, "0")}</p>
+              <h2 className="h1 text-ink">{c.name}</h2>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {c.brands.map((b) => (
+                  <span key={b} className="chip" data-testid={`brand-${b.replace(/\s+/g, "-")}`}>{b}</span>
+                ))}
               </div>
-            ))}
-          </div>
-          <p className="body-s text-ink-mute mt-16 max-w-4xl" data-testid="text-eco-disclaimer">{E.disclaimer}</p>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section className="grad grad-06-horizon section-y" data-testid="section-eco-closer">
+      <section className="bg-paper section-y">
         <div className="container-x">
-          <h2 className="display-m text-paper text-balance max-w-4xl">{E.closer.h}</h2>
-          <div className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <Link href="/waitlist" className="btn btn-primary btn-on-dark w-full sm:w-auto" data-testid="button-eco-primary">{E.closer.primary}</Link>
-            <Link href="/contact" className="btn btn-secondary btn-on-dark w-full sm:w-auto" data-testid="button-eco-secondary">{E.closer.secondary}</Link>
-          </div>
+          <p className="body-s text-ink-mute max-w-3xl" data-testid="text-ecosystem-disclaimer">
+            Brand names listed above are property of their respective owners. xenios is not affiliated with any of the named platforms. Mention indicates design intent and target compatibility, not commercial partnership or endorsement. Integration availability varies by region, regulation, and third-party API access.
+          </p>
         </div>
       </section>
     </PageShell>
