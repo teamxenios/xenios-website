@@ -1,49 +1,41 @@
+import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import EcosystemMarquee from "@/components/EcosystemMarquee";
-import { PAGES, ECOSYSTEM_CATEGORIES, ALL_ECOSYSTEM_NAMES } from "@/lib/content";
+import { PAGES, ECOSYSTEM_CATEGORIES } from "@/lib/content";
 
 export default function Ecosystem() {
   return (
     <PageShell>
-      <SeoHead title={PAGES.ecosystem.title} description={PAGES.ecosystem.description} canonical="/ecosystem" />
-      <section className="grad grad-02-tide section-y" data-testid="section-ecosystem-hero">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">ECOSYSTEM</p>
-          <h1 className="display-xl text-ink text-balance" style={{ maxWidth: "24ch" }}>
-            Designed to connect to every dot.
-          </h1>
-          <p className="body-l mt-8 text-ink-2 max-w-3xl">
-            {ALL_ECOSYSTEM_NAMES.length}+ brands across {ECOSYSTEM_CATEGORIES.length} categories of the proactive health stack. Below is the design intent.
-          </p>
-        </div>
+      <SeoHead {...PAGES.ecosystem} />
+      <section className="container-x pt-24 md:pt-36 pb-16">
+        <p className="mono-cap text-ink-mute mb-6">ECOSYSTEM</p>
+        <h1 className="display-xl text-balance" style={{ maxWidth: "16ch" }}>Connected to the proactive health stack.</h1>
+        <p className="mt-8 body-l text-ink-2 max-w-[60ch]">
+          Eighteen categories of partners and integrations across wearables, labs, recovery, nutrition, supplements, and more. The xenios agent reads them all into one client record.
+        </p>
       </section>
 
-      <section className="bg-paper-2 section-y rule-y">
-        <EcosystemMarquee rows={2} />
-      </section>
-
-      <section className="bg-paper section-y" data-testid="section-ecosystem-categories">
-        <div className="container-x space-y-10">
-          {ECOSYSTEM_CATEGORIES.map((c, i) => (
-            <article key={i} className="rule-bottom pb-8" data-testid={`category-${i}`}>
-              <p className="mono-cap text-pulse mb-3">{String(i + 1).padStart(2, "0")}</p>
-              <h2 className="h1 text-ink">{c.name}</h2>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {c.brands.map((b) => (
-                  <span key={b} className="chip" data-testid={`brand-${b.replace(/\s+/g, "-")}`}>{b}</span>
-                ))}
-              </div>
-            </article>
+      <section className="container-x py-20 rule-top">
+        <p className="mono-cap text-ink-mute mb-8">CATEGORIES</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {ECOSYSTEM_CATEGORIES.map((cat) => (
+            <div key={cat} className="rule-all p-5 rounded-[10px]" data-testid={`tile-ecosystem-${cat.replace(/\W+/g, "-").toLowerCase()}`}>
+              <p className="body-l font-700">{cat}</p>
+            </div>
           ))}
         </div>
+        <p className="body-s text-ink-mute mt-10 max-w-[60ch]">
+          Specific brand integrations are announced as they ship. Brand names are property of their respective owners. Inclusion in a category does not imply a current partnership.
+        </p>
       </section>
 
-      <section className="bg-paper section-y">
+      <section className="bg-ink text-paper py-20">
         <div className="container-x">
-          <p className="body-s text-ink-mute max-w-3xl" data-testid="text-ecosystem-disclaimer">
-            Brand names listed above are property of their respective owners. xenios is not affiliated with any of the named platforms. Mention indicates design intent and target compatibility, not commercial partnership or endorsement. Integration availability varies by region, regulation, and third-party API access.
+          <h2 className="display-m text-paper mb-6 max-w-[26ch]">Build with us.</h2>
+          <p className="body-l text-paper/80 mb-6 max-w-[52ch]">
+            Brands, devices, labs, and content partners across the proactive health stack: tell us what you would integrate.
           </p>
+          <Link href="/contact" className="btn btn-primary btn-on-dark">Talk to us</Link>
         </div>
       </section>
     </PageShell>

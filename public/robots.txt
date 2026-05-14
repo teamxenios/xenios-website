@@ -1,7 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /api/
-Disallow: /admin/
 
 User-agent: GPTBot
 Allow: /
@@ -9,10 +7,16 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
+User-agent: Claude-Web
+Allow: /
+
 User-agent: PerplexityBot
 Allow: /
 
 User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
 Allow: /
 
 Sitemap: https://xeniostechnology.com/sitemap.xml

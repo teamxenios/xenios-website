@@ -1,44 +1,39 @@
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import { PAGES } from "@/lib/content";
+import { PAGES, SITE } from "@/lib/content";
 
-const SECTIONS = [
-  { num: "01", title: "HIPAA", body: "xenios is designed to support HIPAA-regulated workflows. BAAs available for covered entities and business associates. PHI logged by the Compliance Agent. Scope-of-practice enforcement per agent and per practitioner." },
-  { num: "02", title: "SOC 2 ROADMAP", body: "SOC 2 Type II is on the published roadmap. Controls are being implemented from day one with auditor-grade evidence collection." },
-  { num: "03", title: "BAA", body: "Available on request for enterprise and any practitioner operating as a covered entity. Email team@xeniostechnology.com — subject [ENTERPRISE]." },
-  { num: "04", title: "SUBPROCESSORS", body: "Stripe (payments). Resend (transactional email). Replit-managed PostgreSQL (operational data). Anthropic / OpenAI (LLM inference, no PHI in prompts without BAA). Subprocessor list will be maintained at /compliance/subprocessors." },
-  { num: "05", title: "DATA RESIDENCY", body: "U.S. hosting by default. Multi-region available for enterprise. No cross-border transfer without explicit configuration." },
-  { num: "06", title: "AUDIT TRAIL", body: "Every privileged action, every PHI access, every agent decision routed through the audit log. Exportable for compliance reviews." },
-  { num: "07", title: "EXPORT & DELETION", body: "Practitioners and clients can export and delete their data at any time. Deletion is irreversible and audited." },
-  { num: "08", title: "INCIDENT RESPONSE", body: "We disclose security incidents in line with HIPAA breach notification rules and contractual obligations. security@xeniostechnology.com." },
+const ITEMS = [
+  { name: "HIPAA-aware", body: "Architected for HIPAA from day one. PHI logging on every interaction. BAA available on request." },
+  { name: "SOC 2 (in progress)", body: "Type I targeted; Type II to follow. We will publish status as we progress." },
+  { name: "BAA", body: "Business Associate Agreement available for licensed practitioners and clinics handling PHI on the platform." },
+  { name: "State-level licensing", body: "Telemedicine and prescribing capabilities are available only where the practitioner is licensed." },
+  { name: "Data residency", body: "United States primary. International residency on the roadmap." },
+  { name: "Privacy", body: "We do not sell personal data. We do not train third-party models on practitioner or client data." },
 ];
 
 export default function Compliance() {
   return (
     <PageShell>
-      <SeoHead title={PAGES.compliance.title} description={PAGES.compliance.description} canonical="/compliance" />
-      <section className="grad grad-02-tide section-y" data-testid="section-compliance-hero">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">COMPLIANCE</p>
-          <h1 className="display-xl text-ink text-balance" style={{ maxWidth: "24ch" }}>
-            Built to be audited.
-          </h1>
-          <p className="body-l mt-8 text-ink-2 max-w-3xl">
-            HIPAA. SOC 2 roadmap. BAAs. Subprocessors. Data residency. Export and deletion. Audit on every action.
-          </p>
-        </div>
+      <SeoHead {...PAGES.compliance} />
+      <section className="container-x pt-24 md:pt-36 pb-16">
+        <p className="mono-cap text-ink-mute mb-6">COMPLIANCE</p>
+        <h1 className="display-xl text-balance" style={{ maxWidth: "18ch" }}>The posture coaches, trainers, and practitioners can build a business on.</h1>
       </section>
-
-      <section className="bg-paper section-y">
-        <div className="container-x space-y-4">
-          {SECTIONS.map((s) => (
-            <article key={s.num} className="card">
-              <p className="mono-cap text-pulse">{s.num}</p>
-              <h2 className="h2 mt-3 text-ink">{s.title}</h2>
-              <p className="body-l mt-4 text-ink-2 max-w-4xl">{s.body}</p>
-            </article>
+      <section className="container-x py-16 rule-top">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {ITEMS.map((p) => (
+            <div key={p.name} className="rule-all p-6 rounded-[12px]" data-testid={`card-${p.name.replace(/\s+/g, "-").toLowerCase()}`}>
+              <h3 className="h3 mb-2">{p.name}</h3>
+              <p className="body-m text-ink-2">{p.body}</p>
+            </div>
           ))}
         </div>
+      </section>
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-4">REQUEST DOCUMENTS</p>
+        <p className="body-l text-ink-2 max-w-[60ch]">
+          BAA, security review packets, and posture summaries available on request. Email {SITE.email} with subject prefix [Compliance].
+        </p>
       </section>
     </PageShell>
   );

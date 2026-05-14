@@ -1,89 +1,60 @@
-import { useRoute, Link } from "wouter";
+import { Link, useRoute } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import NotFound from "./not-found";
-import { ICP_LIST, ICP_DETAILS, FRAGMENTED_STACK } from "@/lib/content";
+import { ICP_BY_SLUG, SITE } from "@/lib/content";
 
 export default function IcpPage() {
   const [, params] = useRoute("/for/:slug");
-  const slug = params?.slug ?? "";
-  const meta = ICP_LIST.find((i) => i.slug === slug);
-  const detail = ICP_DETAILS[slug];
-  if (!meta || !detail) return <NotFound />;
+  const icp = params?.slug ? ICP_BY_SLUG[params.slug] : null;
+  if (!icp) return <NotFound />;
 
-  const title = `For ${meta.label} — xenios`;
-  const description = detail.display;
+  const title = `${icp.label}, xenios`;
+  const description = icp.oneLiner;
+  const path = `/for/${icp.slug}`;
 
   return (
     <PageShell>
-      <SeoHead title={title} description={description} canonical={`/for/${meta.slug}`} />
+      <SeoHead title={title} description={description} path={path} />
+      <section className="container-x pt-24 md:pt-36 pb-16">
+        <p className="mono-cap text-ink-mute mb-6">{icp.label.toUpperCase()}</p>
+        <h1 className="display-xl text-balance" style={{ maxWidth: "18ch" }}>{icp.oneLiner}</h1>
+      </section>
 
-      <section className="grad grad-01-dawn section-y" data-testid="section-icp-hero">
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-6">THE PROBLEM</p>
+        <p className="quote-lead max-w-[60ch]">{icp.problem}</p>
+      </section>
+
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-6">WHAT XENIOS DOES FOR YOU</p>
+        <ul className="space-y-3 max-w-[60ch]">
+          {icp.bullets.map((b) => (
+            <li key={b} className="body-l text-ink-2 grid grid-cols-[16px_1fr] gap-3">
+              <span className="text-pulse mt-1">→</span>
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-6">THE STACK YOU WOULD RETIRE</p>
+        <div className="flex flex-wrap gap-2">
+          {icp.replaces.map((r) => (
+            <span key={r} className="rule-all px-3 py-2 rounded-[8px] body-s text-ink-2 line-through opacity-80">{r}</span>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-ink text-paper py-20">
         <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">FOR {meta.label.toUpperCase()}</p>
-          <h1 className="display-xl text-ink text-balance" style={{ maxWidth: "26ch" }}>{detail.display}</h1>
-          <p className="body-l mt-8 text-ink-2 max-w-3xl">{meta.oneliner}</p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <Link href="/waitlist" className="btn btn-primary">join the waitlist →</Link>
-            <Link href="/product" className="btn btn-ghost">see the platform</Link>
+          <h2 className="display-m text-paper mb-6 max-w-[24ch]">Ready to put your practice on one rail?</h2>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href="/waitlist" className="btn btn-primary btn-on-dark">Join the waitlist</Link>
+            <Link href="/for-practitioners" className="btn btn-ghost-on-dark">All categories</Link>
           </div>
-        </div>
-      </section>
-
-      <section className="bg-paper section-y rule-bottom" data-testid="section-icp-stack">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">YOUR STACK TODAY</p>
-          <div className="flex flex-wrap gap-2">
-            {detail.stack.map((s) => (
-              <span key={s} className="chip" style={{ opacity: 0.7 }}>{s}</span>
-            ))}
-            {detail.stack.length < 5 && FRAGMENTED_STACK.slice(0, 5 - detail.stack.length).map((s) => (
-              <span key={`f-${s}`} className="chip" style={{ opacity: 0.5 }}>{s}</span>
-            ))}
-          </div>
-          <p className="body-l mt-8 text-ink-2 max-w-3xl">
-            xenios collapses every tile above into one operating system in your voice and under your scope.
-          </p>
-        </div>
-      </section>
-
-      <section className="grad grad-03-fieldwork section-y" data-testid="section-icp-ecosystem">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">ECOSYSTEM YOU LIVE IN</p>
-          <div className="flex flex-wrap gap-2">
-            {detail.ecosystem.map((s) => (
-              <span key={s} className="chip" data-testid={`eco-${s.replace(/\s+/g, "-")}`}>{s}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-paper section-y" data-testid="section-icp-network">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">YOUR PLACE IN THE NETWORK</p>
-          <p className="display-s text-ink max-w-4xl" style={{ fontWeight: 700 }}>{detail.network}</p>
-          <Link href="/network" className="btn btn-ghost mt-6 inline-flex">read the network page →</Link>
-        </div>
-      </section>
-
-      <section className="grad grad-05-meadow section-y" data-testid="section-icp-revenue">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">NEW REVENUE STREAMS</p>
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-4xl">
-            {detail.revenue.map((r, i) => (
-              <li key={i} className="flex items-start gap-3 body-m text-ink-2 bg-paper/60 p-4" style={{ borderRadius: 4 }}>
-                <span className="mono-label text-pulse">{String(i + 1).padStart(2, "0")}</span>
-                <span style={{ fontWeight: 600 }}>{r}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="grad grad-06-horizon section-y">
-        <div className="container-x">
-          <h2 className="display-l text-paper text-balance max-w-4xl">{`Built for ${meta.label}.`}</h2>
-          <Link href="/waitlist" className="btn btn-primary btn-on-dark mt-8 inline-flex">join the waitlist →</Link>
+          <p className="mono-cap text-paper/60 mt-8">{SITE.location}</p>
         </div>
       </section>
     </PageShell>

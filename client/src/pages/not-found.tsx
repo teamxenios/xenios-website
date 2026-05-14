@@ -6,20 +6,16 @@ import { PAGES } from "@/lib/content";
 export default function NotFound() {
   return (
     <PageShell>
-      <SeoHead title={PAGES.notFound.title} description={PAGES.notFound.description} canonical="/404" />
-      <section className="grad grad-06-horizon section-y" style={{ minHeight: "60vh" }}>
-        <div className="container-x">
-          <p className="mono-cap text-paper/70 mb-6">404</p>
-          <h1 className="display-xl text-paper text-balance" style={{ maxWidth: "20ch" }}>
-            The page you're looking for hasn't been written yet.
-          </h1>
-          <p className="body-l mt-8 text-paper/85 max-w-2xl">
-            xenios is in stealth. The site is small on purpose. Try the waitlist — that's the front door.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <Link href="/" className="btn btn-primary btn-on-dark">go home →</Link>
-            <Link href="/waitlist" className="btn btn-secondary btn-on-dark">join the waitlist</Link>
-          </div>
+      <SeoHead {...PAGES.notFound} />
+      <section className="container-x py-32 md:py-48 text-center">
+        <p className="mono-cap text-ink-mute mb-6">404</p>
+        <h1 className="display-l mb-6 max-w-[24ch] mx-auto">That page is not here.</h1>
+        <p className="body-l text-ink-2 mb-10 max-w-[44ch] mx-auto">
+          It moved, was renamed, or never existed. Let's get you back to the work.
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Link href="/" className="btn btn-primary">Home</Link>
+          <Link href="/product" className="btn btn-ghost">Product</Link>
         </div>
       </section>
     </PageShell>

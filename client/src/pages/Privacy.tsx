@@ -1,39 +1,24 @@
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import { PAGES } from "@/lib/content";
+import { PAGES, SITE } from "@/lib/content";
 
 export default function Privacy() {
   return (
     <PageShell>
-      <SeoHead title={PAGES.privacy.title} description={PAGES.privacy.description} canonical="/privacy" />
-      <section className="bg-paper section-y">
-        <div className="container-x max-w-4xl">
-          <p className="mono-cap text-ink-mute mb-6">PRIVACY</p>
-          <h1 className="display-l text-ink mb-8">Privacy on xeniostechnology.com.</h1>
-          <p className="body-l text-ink-2">
-            This page describes what xeniostechnology.com — the marketing and waitlist site — collects and how it's used. It is separate from the privacy posture of the xenios platform itself, which will be governed by a Notice of Privacy Practices and BAAs at platform launch.
-          </p>
-          <h2 className="h2 mt-12 text-ink">What we collect on this site</h2>
-          <ul className="mt-4 body-l text-ink-2 space-y-2">
-            <li>— Form submissions (waitlist and contact): the data you provide.</li>
-            <li>— Server logs (IP, user agent, timestamp, country).</li>
-            <li>— No third-party advertising trackers.</li>
-            <li>— No PHI is ever collected on this marketing site.</li>
-          </ul>
-          <h2 className="h2 mt-12 text-ink">How we use it</h2>
-          <p className="mt-4 body-l text-ink-2">
-            To respond to your request, send build updates if you opted in, and to operate this site. We do not sell your data. Ever.
-          </p>
-          <h2 className="h2 mt-12 text-ink">Subprocessors (this site)</h2>
-          <ul className="mt-4 body-l text-ink-2 space-y-2">
-            <li>— Replit (hosting, database).</li>
-            <li>— Resend (transactional email).</li>
-          </ul>
-          <h2 className="h2 mt-12 text-ink">Your rights</h2>
-          <p className="mt-4 body-l text-ink-2">
-            Email <a href="mailto:team@xeniostechnology.com" className="underline">team@xeniostechnology.com</a> to access, correct, or delete your data.
-          </p>
-          <p className="mt-12 body-s text-ink-mute">Last updated: May 2026.</p>
+      <SeoHead {...PAGES.privacy} />
+      <section className="container-x pt-24 md:pt-36 pb-16">
+        <p className="mono-cap text-ink-mute mb-6">PRIVACY</p>
+        <h1 className="display-xl text-balance" style={{ maxWidth: "20ch" }}>We send the email you would want to receive. Nothing else.</h1>
+      </section>
+      <section className="container-x py-16 rule-top">
+        <div className="space-y-6 max-w-[64ch] body-l text-ink-2">
+          <p><strong className="text-ink">Who we are.</strong> xenios is a product of Xenios Technologies, Inc., a Delaware corporation headquartered in Austin, Texas.</p>
+          <p><strong className="text-ink">What we collect.</strong> Information you give us when you join the waitlist or contact us: name, email, role, location, and anything you write in the message field. When you use the product (post-launch), we process the data your practice runs on, under the controls described in your contract and BAA.</p>
+          <p><strong className="text-ink">What we do with it.</strong> We email you about the founding cohort, product updates, and replies to your messages. We do not sell your information. We do not train third-party AI models on it.</p>
+          <p><strong className="text-ink">Your rights.</strong> You can opt out of email at any time. You can request deletion of your waitlist record by emailing {SITE.email} with the subject prefix [Privacy].</p>
+          <p><strong className="text-ink">Security.</strong> See our Security page for posture and disclosure policy.</p>
+          <p><strong className="text-ink">Updates.</strong> When this policy changes materially, we will tell the people on our list before it takes effect.</p>
+          <p className="mono-cap text-ink-mute pt-8">Last updated: May 2026</p>
         </div>
       </section>
     </PageShell>

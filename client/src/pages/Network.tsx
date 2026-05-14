@@ -1,40 +1,60 @@
 import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import { PAGES, NETWORK_BLOCKS } from "@/lib/content";
+import { PAGES } from "@/lib/content";
+
+const PILLARS = [
+  { name: "Refer between practitioners", body: "Refer between coaches, trainers, and practitioners on the network. Bring your roster. Grow without leaving the operating system." },
+  { name: "Agent-to-agent handoff", body: "When you refer, the receiving practitioner's xenios agent gets the context, scope-aware. The client experiences one continuous relationship." },
+  { name: "Revenue routing", body: "Native splits across the chain. Transparent. Auditable. Paid on time." },
+  { name: "Scope-aware guardrails", body: "The agent never refers across scope of practice without practitioner approval. Audit trail every step." },
+];
+
+const FLOW = [
+  "A strength coach wants nutrition support for an athlete preparing for a meet.",
+  "The coach taps Refer in the athlete record. The xenios agent suggests a nutritionist on the network whose voice and method fit.",
+  "The coach approves. The athlete sees a single message in their xenios client agent: \"Coach added Sarah on the nutrition side. She has your record.\"",
+  "Sarah's xenios agent receives a scope-bound context window. Nothing more.",
+  "Sarah charts, programs, and follows up. The athlete experiences one practice, two practitioners.",
+  "Revenue is routed per the agreement. The receipt is the audit trail.",
+];
 
 export default function Network() {
   return (
     <PageShell>
-      <SeoHead title={PAGES.network.title} description={PAGES.network.description} canonical="/network" />
-      <section className="grad grad-03-fieldwork section-y" data-testid="section-network-hero">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">PRACTITIONER NETWORK</p>
-          <h1 className="display-xl text-ink text-balance" style={{ maxWidth: "22ch" }}>
-            The proactive health team that finally talks to itself.
-          </h1>
-          <p className="body-l mt-8 text-ink-2 max-w-3xl">
-            Agent-to-agent referrals across coaches, clinicians, labs, and recovery operators. Scope-aware handoffs. Revenue routing.
-          </p>
-        </div>
+      <SeoHead {...PAGES.network} />
+      <section className="container-x pt-24 md:pt-36 pb-16">
+        <p className="mono-cap text-ink-mute mb-6">NETWORK</p>
+        <h1 className="display-xl text-balance" style={{ maxWidth: "16ch" }}>Coordination, not capture.</h1>
+        <p className="mt-8 body-l text-ink-2 max-w-[60ch]">
+          The proactive health team that finally talks to itself. Refer between coaches, trainers, and practitioners on the network. The xenios agent handles the handoff in your voice.
+        </p>
       </section>
-
-      <section className="bg-paper section-y" data-testid="section-network-blocks">
-        <div className="container-x space-y-6">
-          {NETWORK_BLOCKS.map((b, i) => (
-            <article key={i} className="card">
-              <p className="mono-cap text-pulse">{String(i + 1).padStart(2, "0")}</p>
-              <h2 className="h1 mt-3 text-ink">{b.title}</h2>
-              <p className="body-l mt-5 text-ink-2 max-w-4xl">{b.body}</p>
-            </article>
+      <section className="container-x py-20 rule-top">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {PILLARS.map((p) => (
+            <div key={p.name} className="rule-all p-6 rounded-[12px]" data-testid={`card-${p.name.replace(/\s+/g, "-").toLowerCase()}`}>
+              <h3 className="h3 mb-2">{p.name}</h3>
+              <p className="body-m text-ink-2">{p.body}</p>
+            </div>
           ))}
         </div>
       </section>
-
-      <section className="grad grad-06-horizon section-y">
+      <section className="container-x py-20 rule-top">
+        <h2 className="display-m mb-10 max-w-[26ch]">A six-step example.</h2>
+        <ol className="space-y-4">
+          {FLOW.map((step, i) => (
+            <li key={i} className="grid grid-cols-[40px_1fr] gap-4">
+              <span className="mono-cap text-pulse">{String(i + 1).padStart(2, "0")}</span>
+              <span className="body-l text-ink-2">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+      <section className="bg-ink text-paper py-20">
         <div className="container-x">
-          <h2 className="display-l text-paper text-balance max-w-4xl">Refer in context. Get paid in context.</h2>
-          <Link href="/waitlist" className="btn btn-primary btn-on-dark mt-8 inline-flex">join the waitlist →</Link>
+          <h2 className="display-m text-paper mb-6 max-w-[26ch]">Bring your roster. Grow without leaving.</h2>
+          <Link href="/waitlist" className="btn btn-primary btn-on-dark">Join the waitlist</Link>
         </div>
       </section>
     </PageShell>

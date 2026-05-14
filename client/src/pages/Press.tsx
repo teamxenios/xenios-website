@@ -1,47 +1,24 @@
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import { PAGES } from "@/lib/content";
+import { PAGES, SITE } from "@/lib/content";
 
 export default function Press() {
   return (
     <PageShell>
-      <SeoHead title={PAGES.press.title} description={PAGES.press.description} canonical="/press" />
-      <section className="grad grad-02-tide section-y" data-testid="section-press-hero">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">PRESS · CREATORS · INFLUENCERS</p>
-          <h1 className="display-xl text-ink text-balance" style={{ maxWidth: "26ch" }}>
-            The story we'll tell when we're ready.
-          </h1>
-          <p className="body-l mt-8 text-ink-2 max-w-3xl">
-            xenios is in stealth. We talk to journalists, creators, and influencers carefully and on the record. If you cover proactive health, longevity, performance, or the AI-in-medicine story — we want to know you.
-          </p>
-        </div>
+      <SeoHead {...PAGES.press} />
+      <section className="container-x pt-24 md:pt-36 pb-16">
+        <p className="mono-cap text-ink-mute mb-6">PRESS</p>
+        <h1 className="display-xl text-balance" style={{ maxWidth: "20ch" }}>Press, media, podcast, and creator inquiries.</h1>
       </section>
-
-      <section className="bg-paper section-y">
-        <div className="container-x max-w-4xl space-y-6">
-          <h2 className="h2 text-ink">What we'll share now</h2>
-          <ul className="space-y-2 body-l text-ink-2">
-            <li>— The category thesis (on the record).</li>
-            <li>— The platform architecture, at a high level.</li>
-            <li>— The team's prior work in regulated infrastructure.</li>
-            <li>— The Austin proactive-health gravity story.</li>
-          </ul>
-          <h2 className="h2 text-ink mt-12">What we won't share yet</h2>
-          <ul className="space-y-2 body-l text-ink-2">
-            <li>— Founder names or photos. (Stealth.)</li>
-            <li>— Customer names. (We're not yet shipping.)</li>
-            <li>— Specific funding figures. (Pre-seed.)</li>
-          </ul>
-        </div>
-      </section>
-
-      <section className="grad grad-06-horizon section-y">
-        <div className="container-x">
-          <h2 className="display-l text-paper text-balance max-w-4xl">
-            <a href="mailto:team@xeniostechnology.com?subject=%5BPRESS%5D" className="underline">team@xeniostechnology.com</a> — subject [PRESS] or [CREATOR].
-          </h2>
-        </div>
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-4">ONE-LINER</p>
+        <p className="body-l text-ink-2 max-w-[60ch] mb-8">
+          xenios is the AI-adjunct operations system for coaches, trainers, and practitioners. Built in Austin by operators behind $710M+ in prior exits.
+        </p>
+        <p className="mono-cap text-ink-mute mb-4">CONTACT</p>
+        <p className="body-l text-ink-2 max-w-[60ch]">
+          Email {SITE.email} with subject prefix [Press]. Brand assets and one-sheet on request.
+        </p>
       </section>
     </PageShell>
   );

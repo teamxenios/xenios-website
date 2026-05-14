@@ -1,49 +1,40 @@
 # xenios
 
-> xenios (Xenios Technologies) is the AI-native operating system for proactive
-> health — the orchestration layer connecting every signal, every workflow,
-> and every practitioner moving care upstream of disease. Headquartered in
-> Austin, TX. Pre-seed. In stealth.
+xenios is the AI-adjunct operations system for coaches, trainers, and practitioners.
 
-## Core facts
-- Product: AI-native operating system for proactive health
-- Capabilities: 8 agents + Conductor · telemedicine · storefront · network · ontology · developers · enterprise
-- Heritage: from the team behind $710M+ in prior exits, including FinDox and InstaMed
-- HQ: Austin, TX, USA
-- Contact: team@xeniostechnology.com
-- Instagram: @officialxenios
-- LinkedIn: /company/officialxenios
-- Status: stealth, pre-seed, waitlist open
+The xenios agent runs the back office: programs, intake, check-ins, messaging, education, billing, network, outcomes.
 
-## Ecosystem (designed to connect with — not partnerships)
-WHOOP · Oura · Apple Health · Garmin · Polar · Fitbit · Eight Sleep · Levels ·
-Lingo · Dexcom · Stelo · Function Health · Superpower · Inside Tracker ·
-Marek Health · Hone · Maximus · Ezra · Prenuvo · Neko Health · Cleerly ·
-Fullscript · Wellevate · Rupa Health · Thorne · Pure Encapsulations ·
-Momentous · Designs for Health · Hyperice · Therabody · Plunge · Sunlighten ·
-Cronometer · MacroFactor · Headspace · Calm · Anthropic · OpenAI ·
-Stripe · Plaid · FHIR · Surescripts.
+The xenios client agent is a pocket coach for the practitioner's clients, athletes, and patients. It speaks in the practitioner's voice. It hands clinical or out-of-scope items back to the practitioner, every time.
 
-Brand names are property of their respective owners. Integration availability varies.
+xenios is built by Xenios Technologies, Inc., headquartered in Austin, Texas. Founded by Alex Houston. The team comes from operators behind $710M+ in prior exits, including FinDox and InstaMed.
+
+Audience: coaches, trainers, and practitioners doing the work upstream of disease. Twenty-five categories across performance, longevity, recovery, nutrition, and clinical care.
 
 ## Pages
-- [Home](https://xeniostechnology.com/): overview
-- [Product](https://xeniostechnology.com/product): 12 capabilities
-- [Agents](https://xeniostechnology.com/agents): 8 + Conductor
-- [Telemedicine](https://xeniostechnology.com/telemedicine)
-- [Storefront](https://xeniostechnology.com/storefront)
-- [Network](https://xeniostechnology.com/network)
-- [Ontology](https://xeniostechnology.com/ontology)
-- [Developers](https://xeniostechnology.com/developers)
-- [Enterprise](https://xeniostechnology.com/enterprise)
-- [Ecosystem](https://xeniostechnology.com/ecosystem)
-- [For Practitioners](https://xeniostechnology.com/for-practitioners): 25 ICPs
-- [Manifesto](https://xeniostechnology.com/manifesto)
-- [About](https://xeniostechnology.com/about)
-- [Careers](https://xeniostechnology.com/careers)
-- [Waitlist](https://xeniostechnology.com/waitlist)
-- [Contact](https://xeniostechnology.com/contact)
-- [Security](https://xeniostechnology.com/security)
-- [Compliance](https://xeniostechnology.com/compliance)
-- [Investors](https://xeniostechnology.com/investors)
-- [Press](https://xeniostechnology.com/press)
+- /                      Home
+- /product               Product overview, capabilities, the two surfaces
+- /how-it-works          Five-step onboarding, autonomy dial
+- /for-coaches           The xenios agent, coach surface
+- /for-clients           The xenios client agent, client surface
+- /telemedicine          Optional care delivery for licensed practitioners
+- /storefront            Native commerce rail
+- /network               Refer between practitioners
+- /ecosystem             Eighteen categories of partners and integrations
+- /for-practitioners     Twenty-five practitioner categories
+- /for/[slug]            Per-category landing pages
+- /manifesto             Why we are building this
+- /about                 Heritage and founder
+- /careers               Five founding roles
+- /waitlist              Join the founding cohort
+- /contact               Talk to us
+- /security              Security posture
+- /compliance            HIPAA, SOC 2 (in progress), BAA
+- /investors             Investor information
+- /press                 Press, media, podcast inquiries
+- /privacy               Privacy policy
+- /terms                 Terms of service
+
+## Contact
+team@xeniostechnology.com
+Austin, TX
+https://xeniostechnology.com

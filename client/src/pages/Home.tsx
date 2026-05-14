@@ -3,238 +3,134 @@ import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import RotatingHero from "@/components/RotatingHero";
 import Counter from "@/components/Counter";
-import EcosystemMarquee from "@/components/EcosystemMarquee";
-import AgentDiagram from "@/components/AgentDiagram";
-import {
-  PAGES, PRACTITIONER_TILES, REVENUE_CHIPS, FAQ_QA,
-  LAYERS_5, FRAGMENTED_STACK, CAPABILITIES_12, CONDUCTOR,
-} from "@/lib/content";
-
-const TILE_GRADS = ["grad-01-dawn","grad-02-tide","grad-03-fieldwork","grad-04-meridian","grad-05-meadow","grad-06-horizon"];
+import { PAGES, SURFACES, ECOSYSTEM_CATEGORIES, ICP_LIST, REPLACES, CAPABILITIES } from "@/lib/content";
 
 export default function Home() {
   return (
     <PageShell>
-      <SeoHead title={PAGES.home.title} description={PAGES.home.description} canonical="/" />
+      <SeoHead {...PAGES.home} />
 
-      {/* 01 — HERO */}
-      <section className="grad grad-01-dawn" data-testid="section-hero">
-        <div className="container-x" style={{ paddingTop: "var(--space-hero-top)", paddingBottom: "var(--space-hero-bottom)" }}>
-          <div className="counter-pill mb-8">
-            <span className="counter-dot" />
-            <Counter variant="line" suffix="practitioners on the waitlist" />
+      {/* HERO */}
+      <section className="container-x pt-24 md:pt-36 pb-20 md:pb-32" data-testid="section-hero">
+        <p className="mono-cap text-ink-mute mb-6">FOUNDING COHORT IS OPEN</p>
+        <RotatingHero prefix="the operating system for" />
+        <p className="mt-8 body-l text-ink-2 max-w-[60ch]">
+          One inbox. One client record. One agent that drafts in your voice. One pocket coach for your clients. The AI-adjunct operations system for coaches, trainers, and practitioners.
+        </p>
+        <div className="mt-10 flex flex-wrap items-center gap-4">
+          <Link href="/waitlist" className="btn btn-primary" data-testid="button-hero-waitlist">Join the waitlist</Link>
+          <Link href="/how-it-works" className="btn btn-ghost" data-testid="button-hero-how">See how it works</Link>
+        </div>
+        <div className="mt-10">
+          <Counter variant="line" suffix="coaches, trainers, and practitioners on the waitlist" />
+        </div>
+      </section>
+
+      {/* THE TWO SURFACES */}
+      <section className="container-x py-20 md:py-32 rule-top" data-testid="section-surfaces">
+        <p className="mono-cap text-ink-mute mb-8">TWO SURFACES, ONE OPERATING SYSTEM</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          {[SURFACES.coach, SURFACES.client].map((s) => (
+            <article key={s.eyebrow} className={`surface-card grad-${s === SURFACES.coach ? "01-dawn" : "04-violet"} p-8 md:p-12 rounded-[20px]`} data-testid={`card-surface-${s.eyebrow.replace(/\s+/g, "-")}`}>
+              <p className="mono-cap text-ink-mute mb-4">{s.eyebrow}</p>
+              <h2 className="display-l text-ink mb-6">{s.title}</h2>
+              {s.body.map((p, i) => (
+                <p key={i} className="body-l text-ink-2 mb-4">{p}</p>
+              ))}
+              <Link href={s.cta.href} className="mono-cap text-pulse hover:underline mt-4 inline-block">{s.cta.label} →</Link>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* WHAT IT REPLACES */}
+      <section className="container-x py-20 md:py-32 rule-top" data-testid="section-replaces">
+        <h2 className="display-m mb-10 max-w-[24ch]">Retire the disconnected stack.</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div>
+            <p className="mono-cap text-ink-mute mb-4">YESTERDAY</p>
+            <ul className="space-y-2">
+              {REPLACES.oldLabels.map((l) => (
+                <li key={l} className="body-l text-ink-2 line-through opacity-70">{l}</li>
+              ))}
+            </ul>
           </div>
-          <RotatingHero prefix="the AI-native OS for" />
-          <p className="display-s mt-8 text-ink-2 max-w-3xl" style={{ fontWeight: 700 }}>
-            Eight specialized AI agents, one Conductor, telemedicine, branded storefront, a practitioner network, a programmable health ontology, a developer platform, an enterprise tier — on one substrate.
-          </p>
-          <p className="body-l mt-6 text-ink-2" style={{ maxWidth: "60ch" }}>
-            Built in Austin by the team behind $710M+ in prior exits, including FinDox and InstaMed.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <Link href="/waitlist" className="btn btn-primary w-full sm:w-auto" data-testid="button-hero-primary">join the waitlist →</Link>
-            <Link href="/product" className="btn btn-ghost w-full sm:w-auto" data-testid="button-hero-secondary">see the platform</Link>
+          <div>
+            <p className="mono-cap text-ink-mute mb-4">TODAY</p>
+            <ul className="space-y-2">
+              {REPLACES.newLabels.map((l) => (
+                <li key={l} className="body-l text-ink font-700">{l}</li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* 02 — CATEGORY CLAIM */}
-      <section className="bg-ink text-paper section-y" data-testid="section-category">
-        <div className="container-x">
-          <p className="mono-cap text-paper/60 mb-6">02 — CATEGORY</p>
-          <h2 className="display-l text-paper text-balance" style={{ maxWidth: "22ch" }}>
-            This is not another wellness app. This is infrastructure.
-          </h2>
-          <p className="body-l mt-8 text-paper/85 max-w-3xl">
-            Proactive health is becoming the most important category in human medicine. xenios is the operating system underneath it — connecting every signal, every workflow, and every practitioner moving care upstream of disease.
-          </p>
-        </div>
-      </section>
-
-      {/* 03 — BEFORE / AFTER */}
-      <section className="bg-paper section-y rule-bottom" data-testid="section-before-after">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">03 — THE PROBLEM, AND THE COLLAPSE</p>
-          <h2 className="display-m text-ink text-balance max-w-4xl mb-12">
-            Today, every proactive practitioner runs on a fragmented stack. Tomorrow, they run on one substrate.
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="card" style={{ borderColor: "var(--rule)" }}>
-              <p className="mono-cap text-ink-mute mb-4">BEFORE</p>
-              <div className="flex flex-wrap gap-2">
-                {FRAGMENTED_STACK.map((s) => (
-                  <span key={s} className="chip" style={{ opacity: 0.7 }} data-testid={`chip-fragment-${s.replace(/\s+/g, "-")}`}>{s}</span>
-                ))}
-              </div>
-              <p className="body-m mt-6 text-ink-mute">14 tools. Twelve tabs. Zero context.</p>
+      {/* CAPABILITIES STRIP */}
+      <section className="container-x py-20 md:py-32 rule-top" data-testid="section-capabilities">
+        <h2 className="display-m mb-10 max-w-[28ch]">One operating system for the work you actually do.</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {CAPABILITIES.map((c) => (
+            <div key={c.name} className="rule-all p-6 rounded-[12px]" data-testid={`card-capability-${c.name.replace(/\s+/g, "-").toLowerCase()}`}>
+              <h3 className="h3 mb-2">{c.name}</h3>
+              <p className="body-m text-ink-2">{c.body}</p>
             </div>
-            <div className="grad grad-04-meridian card">
-              <p className="mono-cap text-paper/70 mb-4">AFTER · xenios</p>
-              <p className="display-s text-paper" style={{ fontWeight: 800 }}>One operating system.</p>
-              <p className="body-l mt-4 text-paper/90">Eight agents + Conductor. Telemedicine. Storefront. Network. Ontology. Developers. Enterprise.</p>
-              <p className="body-m mt-6 text-paper/80">One context. One signal graph. One practitioner in command.</p>
+          ))}
+        </div>
+        <Link href="/product" className="btn btn-ghost mt-10 inline-block">See the full product</Link>
+      </section>
+
+      {/* WHO IT IS FOR (25 ICPs) */}
+      <section className="container-x py-20 md:py-32 rule-top" data-testid="section-icps">
+        <h2 className="display-m mb-10 max-w-[24ch]">Built for the people doing the work.</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {ICP_LIST.map((icp) => (
+            <Link
+              key={icp.slug}
+              href={`/for/${icp.slug}`}
+              className="rule-all p-4 rounded-[10px] hover:bg-paper-2 transition-colors"
+              data-testid={`tile-icp-${icp.slug}`}
+            >
+              <p className="body-m font-700">{icp.label}</p>
+            </Link>
+          ))}
+        </div>
+        <Link href="/for-practitioners" className="btn btn-ghost mt-10 inline-block">All practitioner categories</Link>
+      </section>
+
+      {/* ECOSYSTEM */}
+      <section className="container-x py-20 md:py-32 rule-top" data-testid="section-ecosystem">
+        <h2 className="display-m mb-4 max-w-[24ch]">Connected to the proactive health stack.</h2>
+        <p className="body-l text-ink-2 mb-10 max-w-[60ch]">Eighteen categories of partners and integrations across wearables, labs, recovery, nutrition, supplements, and more.</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {ECOSYSTEM_CATEGORIES.map((cat) => (
+            <div key={cat} className="rule-all p-4 rounded-[10px]" data-testid={`tile-ecosystem-${cat.replace(/\W+/g, "-").toLowerCase()}`}>
+              <p className="body-m font-600">{cat}</p>
             </div>
-          </div>
+          ))}
         </div>
+        <Link href="/ecosystem" className="btn btn-ghost mt-10 inline-block">Explore the ecosystem</Link>
       </section>
 
-      {/* 04 — FIVE LAYERS */}
-      <section className="grad grad-03-fieldwork section-y" data-testid="section-layers">
+      {/* HERITAGE */}
+      <section className="container-x py-20 md:py-32 rule-top" data-testid="section-heritage">
+        <p className="mono-cap text-ink-mute mb-4">HERITAGE</p>
+        <p className="quote-lead max-w-[44ch]">
+          Built in Austin by operators behind $710M+ in prior exits, including FinDox and InstaMed.
+        </p>
+        <Link href="/about" className="btn btn-ghost mt-8 inline-block">About the team</Link>
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="bg-ink text-paper py-24 md:py-32" data-testid="section-final-cta">
         <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">04 — THE FIVE LAYERS</p>
-          <h2 className="display-m text-ink text-balance max-w-4xl mb-12">
-            One substrate. Five layers. Every dot connected.
-          </h2>
-          <div className="space-y-3">
-            {LAYERS_5.map((l) => (
-              <div key={l.num} className="card flex flex-col md:flex-row md:items-start gap-4 md:gap-8" data-testid={`layer-${l.num}`}>
-                <p className="mono-cap text-pulse" style={{ minWidth: 60 }}>{l.num}</p>
-                <div className="flex-1">
-                  <h3 className="h2 text-ink">{l.name}</h3>
-                  <p className="body-l mt-3 text-ink-2">{l.body}</p>
-                  <Link href={l.href} className="btn btn-ghost mt-4 inline-flex" data-testid={`link-layer-${l.num}`}>{l.linkLabel} →</Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 05 — 8 + 1 AGENTS */}
-      <section className="grad grad-04-meridian section-y" data-testid="section-agents">
-        <div className="container-x">
-          <p className="mono-cap text-paper/70 mb-6">05 — THE FIRST AI WORKFORCE FOR PROACTIVE CARE</p>
-          <h2 className="display-m text-paper text-balance max-w-4xl mb-12">
-            Eight specialized agents. One Conductor.
-          </h2>
-          <div className="card mb-6 grad grad-06-horizon">
-            <p className="mono-cap text-paper/70">00 — THE CONDUCTOR</p>
-            <h3 className="h3 mt-3 text-paper">{CONDUCTOR.name}</h3>
-            <p className="body-l mt-4 text-paper/90">{CONDUCTOR.body}</p>
-          </div>
-          <AgentDiagram withConductor={false} />
-          <Link href="/agents" className="btn btn-secondary btn-on-dark mt-12 inline-flex">read the agent deep-dive →</Link>
-        </div>
-      </section>
-
-      {/* 06 — 25 ICP TILES */}
-      <section className="bg-paper section-y" data-testid="section-built-for">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">06 — BUILT FOR EVERY PRACTITIONER MOVING CARE UPSTREAM</p>
-          <h2 className="display-m text-ink text-balance max-w-4xl mb-12">25 archetypes. One substrate.</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {PRACTITIONER_TILES.map((t, i) => {
-              const grad = TILE_GRADS[i % TILE_GRADS.length];
-              const isDark = grad === "grad-04-meridian" || grad === "grad-06-horizon";
-              return (
-                <Link key={t.value} href={`/for/${t.value.replace(/_/g, "-")}`} className={`grad ${grad} tile ${isDark ? "on-dark" : ""}`} data-testid={`tile-${t.value}`}>
-                  <div>
-                    <p className="tile-num">{String(i + 1).padStart(2, "0")}</p>
-                    <p className="tile-label">{t.label}</p>
-                  </div>
-                  <p className="tile-cap">// {t.sub}</p>
-                </Link>
-              );
-            })}
-          </div>
-          <Link href="/for-practitioners" className="btn btn-ghost mt-10 inline-flex">see the full audience map →</Link>
-        </div>
-      </section>
-
-      {/* 07 — ECOSYSTEM */}
-      <section className="bg-paper-2 section-y rule-y" data-testid="section-ecosystem">
-        <div className="container-x mb-10">
-          <p className="mono-cap text-ink-mute mb-6">07 — THE ECOSYSTEM</p>
-          <h2 className="display-m text-ink text-balance">Designed to connect to every dot.</h2>
-          <p className="body-l mt-4 text-ink-2 max-w-2xl">
-            100+ brands across 18 categories of the proactive health stack. Wearables. Labs. Recovery. Nutrition. GLP-1 and peptides where lawful. Mental performance. Compliance. Payments. Intelligence.
+          <h2 className="display-l text-paper mb-6 max-w-[18ch]">The founding cohort is open.</h2>
+          <p className="body-l text-paper/80 mb-8 max-w-[52ch]">
+            Founder-direct onboarding. Founding pricing locked in for the life of your account. A seat in the room when we ship.
           </p>
-        </div>
-        <EcosystemMarquee rows={2} />
-        <div className="container-x mt-10">
-          <p className="body-s text-ink-mute">Brand names are property of their respective owners. Integration availability varies. Ecosystem is illustrative of design intent, not endorsements or partnerships.</p>
-          <Link href="/ecosystem" className="btn btn-ghost mt-6 inline-flex">see the full ecosystem →</Link>
-        </div>
-      </section>
-
-      {/* 08 — REVENUE CHIPS */}
-      <section className="grad grad-05-meadow section-y" data-testid="section-revenue">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">08 — NEW REVENUE STREAMS</p>
-          <h2 className="display-m text-ink text-balance max-w-4xl">Ten new ways to get paid for the work you already do.</h2>
-          <ul className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {REVENUE_CHIPS.map((c, i) => (
-              <li key={i} className="flex items-start gap-3 body-m text-ink-2 bg-paper/60 p-4" style={{ borderRadius: 4 }}>
-                <span className="mono-label text-pulse">{String(i + 1).padStart(2, "0")}</span>
-                <span style={{ fontWeight: 600 }}>{c}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* 09 — 12 CAPABILITIES TEASER */}
-      <section className="bg-paper section-y" data-testid="section-capabilities">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">09 — THE PRODUCT, IN TWELVE CAPABILITIES</p>
-          <h2 className="display-m text-ink text-balance max-w-4xl mb-12">Twelve capabilities. One stack.</h2>
-          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {CAPABILITIES_12.map((c) => (
-              <li key={c.num} className="card" data-testid={`cap-${c.num}`}>
-                <p className="mono-cap text-pulse">{c.num}</p>
-                <p className="h3 mt-3 text-ink">{c.name}</p>
-              </li>
-            ))}
-          </ul>
-          <Link href="/product" className="btn btn-ghost mt-10 inline-flex">read the full product page →</Link>
-        </div>
-      </section>
-
-      {/* 10 — HERITAGE */}
-      <section className="bg-paper-2 section-y rule-y" data-testid="section-heritage">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">10 — HERITAGE</p>
-          <h2 className="display-m text-ink text-balance max-w-5xl">From the team that built the boring layers underneath U.S. healthcare — and is now building the proactive one.</h2>
-          <p className="quote-lead text-ink-2 mt-6">
-            $710M+ in prior enterprise outcomes. Two prior companies operating inside the regulated stack: FinDox (acquired by Donnelley Financial Solutions) and InstaMed (acquired by JPMorgan Chase, 2019). Boring infrastructure shipped at scale, into environments where boring matters.
-          </p>
-          <Link href="/about" className="btn btn-ghost mt-6 inline-flex">read the founder story →</Link>
-        </div>
-      </section>
-
-      {/* 11 — FAQ */}
-      <section className="bg-paper section-y" data-testid="section-faq">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">11 — COMMON QUESTIONS</p>
-          <h2 className="display-m text-ink text-balance mb-10">Common questions.</h2>
-          <div className="max-w-4xl divide-y" style={{ borderColor: "var(--rule)" }}>
-            {FAQ_QA.map((q, i) => (
-              <details key={i} className="py-6 group" data-testid={`faq-${i}`}>
-                <summary className="cursor-pointer list-none flex items-start justify-between gap-6">
-                  <span className="h3 text-ink">{q.q}</span>
-                  <span className="text-pulse text-3xl leading-none mt-1 group-open:rotate-45 transition-transform" aria-hidden="true">+</span>
-                </summary>
-                <p className="body-l text-ink-2 mt-4">{q.a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 12 — FINAL CTA */}
-      <section className="grad grad-06-horizon section-y" data-testid="section-final-cta">
-        <div className="container-x">
-          <p className="mono-cap text-paper/70 mb-6">12 — JOIN THE WAITLIST</p>
-          <h2 className="display-l text-paper text-balance max-w-4xl" style={{ fontWeight: 800 }}>
-            Be on the list when the proactive health OS ships.
-          </h2>
-          <div className="mt-10 flex items-baseline gap-5 flex-wrap">
-            <Counter variant="bignum" size="lg" onDark />
-            <span className="display-s text-paper/85" style={{ fontWeight: 700 }}>on the waitlist · live</span>
-          </div>
-          <div className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <Link href="/waitlist" className="btn btn-primary btn-on-dark w-full sm:w-auto">join the waitlist →</Link>
-            <Link href="/manifesto" className="btn btn-secondary btn-on-dark w-full sm:w-auto">read the manifesto</Link>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href="/waitlist" className="btn btn-primary btn-on-dark" data-testid="button-final-waitlist">Join the waitlist</Link>
+            <Counter variant="line" suffix="already in line" onDark />
           </div>
         </div>
       </section>

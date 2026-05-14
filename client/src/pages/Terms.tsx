@@ -1,27 +1,25 @@
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import { PAGES } from "@/lib/content";
+import { PAGES, SITE } from "@/lib/content";
 
 export default function Terms() {
   return (
     <PageShell>
-      <SeoHead title={PAGES.terms.title} description={PAGES.terms.description} canonical="/terms" />
-      <section className="bg-paper section-y">
-        <div className="container-x max-w-4xl">
-          <p className="mono-cap text-ink-mute mb-6">TERMS</p>
-          <h1 className="display-l text-ink mb-8">Terms of service for xeniostechnology.com.</h1>
-          <p className="body-l text-ink-2">
-            These terms govern your use of the xeniostechnology.com marketing and waitlist site. Use of the xenios platform itself, when it ships, will be governed by a separate Master Services Agreement and a Business Associate Agreement where applicable.
-          </p>
-          <h2 className="h2 mt-12 text-ink">Site usage</h2>
-          <p className="mt-4 body-l text-ink-2">You agree to use this site lawfully and not to interfere with its operation. You will not attempt to circumvent rate limits, security controls, or the honeypot on our forms.</p>
-          <h2 className="h2 mt-12 text-ink">Not medical advice</h2>
-          <p className="mt-4 body-l text-ink-2">Nothing on this site is medical advice. xenios is not a medical device. Brand names referenced in the ecosystem are property of their respective owners and indicate design intent, not partnership.</p>
-          <h2 className="h2 mt-12 text-ink">No warranties</h2>
-          <p className="mt-4 body-l text-ink-2">This site is provided "as is" without warranty of any kind. To the maximum extent permitted by law, Xenios Technologies disclaims all liability arising from use of this site.</p>
-          <h2 className="h2 mt-12 text-ink">Governing law</h2>
-          <p className="mt-4 body-l text-ink-2">Texas. Disputes resolved in Travis County, Texas.</p>
-          <p className="mt-12 body-s text-ink-mute">Last updated: May 2026.</p>
+      <SeoHead {...PAGES.terms} />
+      <section className="container-x pt-24 md:pt-36 pb-16">
+        <p className="mono-cap text-ink-mute mb-6">TERMS</p>
+        <h1 className="display-xl text-balance" style={{ maxWidth: "20ch" }}>Terms of service.</h1>
+      </section>
+      <section className="container-x py-16 rule-top">
+        <div className="space-y-6 max-w-[64ch] body-l text-ink-2">
+          <p><strong className="text-ink">Acceptance.</strong> By using xeniostechnology.com or joining the waitlist, you agree to these terms.</p>
+          <p><strong className="text-ink">Marketing site.</strong> The information on this site is for general information about the xenios product and brand, and is not medical, clinical, financial, legal, or professional advice.</p>
+          <p><strong className="text-ink">Waitlist.</strong> Joining the waitlist is not a contract for service. We will follow up as the founding cohort opens.</p>
+          <p><strong className="text-ink">Product terms.</strong> Use of the xenios product (post-launch) is governed by a separate Master Service Agreement provided at onboarding.</p>
+          <p><strong className="text-ink">No warranty.</strong> The site is provided as-is. We do our best to keep it accurate and online.</p>
+          <p><strong className="text-ink">Governing law.</strong> Delaware. Disputes resolved in courts of competent jurisdiction in Austin, Texas.</p>
+          <p><strong className="text-ink">Contact.</strong> Questions: {SITE.email}, subject prefix [Legal].</p>
+          <p className="mono-cap text-ink-mute pt-8">Last updated: May 2026 · Xenios Technologies, Inc.</p>
         </div>
       </section>
     </PageShell>

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { content } from "@/lib/content";
+import { CONTACT_PAGE } from "@/lib/content";
 import { contactService, type ContactSubmission } from "@/lib/waitlist-service";
 
-const C = content.contactPage;
+const C = CONTACT_PAGE;
 
 interface Props {
   onSuccess?: () => void;
@@ -19,7 +19,6 @@ export default function ContactForm({ onSuccess }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
-  // Auto-prefix subject when persona changes
   function handlePersona(value: ContactSubmission["persona"]) {
     setPersona(value);
     const opt = C.personaOptions.find((o) => o.value === value);
@@ -87,7 +86,7 @@ export default function ContactForm({ onSuccess }: Props) {
       </div>
 
       <div>
-        <label htmlFor="cf-persona" className="form-label">I am a…</label>
+        <label htmlFor="cf-persona" className="form-label">I am a</label>
         <select id="cf-persona" required value={persona} onChange={(e) => handlePersona(e.target.value as ContactSubmission["persona"])} className="input-field" data-testid="select-contact-persona">
           <option value="">Choose one</option>
           {C.personaOptions.map((o) => (
@@ -113,7 +112,7 @@ export default function ContactForm({ onSuccess }: Props) {
       )}
 
       <button type="submit" disabled={submitting} className="btn btn-primary" data-testid="button-contact-submit">
-        {submitting ? "sending…" : "send →"}
+        {submitting ? "sending..." : "send"}
       </button>
     </form>
   );

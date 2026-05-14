@@ -3,58 +3,64 @@ import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import { PAGES } from "@/lib/content";
 
+const HERITAGE = [
+  { name: "FinDox", body: "Acquired by Confluence Technologies. Document and data infrastructure for institutional finance." },
+  { name: "InstaMed", body: "Acquired by JPMorgan Chase for $500M+. The healthcare payments rail used by hundreds of providers and millions of patients." },
+];
+
 export default function About() {
   return (
     <PageShell>
-      <SeoHead title={PAGES.about.title} description={PAGES.about.description} canonical="/about" />
-      <section className="grad grad-01-dawn section-y" data-testid="section-about-hero">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">ABOUT</p>
-          <h1 className="display-xl text-ink text-balance" style={{ maxWidth: "24ch" }}>Built in Austin. Built to last.</h1>
-        </div>
+      <SeoHead {...PAGES.about} />
+      <section className="container-x pt-24 md:pt-36 pb-16">
+        <p className="mono-cap text-ink-mute mb-6">ABOUT</p>
+        <h1 className="display-xl text-balance" style={{ maxWidth: "20ch" }}>Built in Austin by operators behind $710M+ in prior exits.</h1>
+        <p className="mt-8 body-l text-ink-2 max-w-[60ch]">
+          xenios (Xenios Technologies, Inc.) is in stealth, pre-seed, headquartered in Austin, Texas. The team comes from the front lines of healthcare infrastructure and proactive health.
+        </p>
       </section>
 
-      <section className="bg-paper section-y">
-        <div className="container-x max-w-4xl space-y-6">
-          <p className="quote-lead text-ink-2">
-            xenios is built by a team that has spent two decades shipping infrastructure into the most regulated, most consequential corners of U.S. healthcare and finance.
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-6">FOUNDER</p>
+        <h2 className="display-l mb-6">Alex Houston</h2>
+        <div className="space-y-4 max-w-[64ch]">
+          <p className="body-l text-ink-2">
+            Alex is the founder, and he has spent his career building infrastructure for the parts of healthcare and finance that the rest of the industry treats as someone else's problem.
           </p>
           <p className="body-l text-ink-2">
-            Two of the team's prior companies — FinDox (acquired by Donnelley Financial Solutions) and InstaMed (acquired by JPMorgan Chase, 2019) — combined for $710M+ in enterprise outcomes. Both shipped boring layers underneath payments, compliance, and clinical data exchange — the layers that look invisible right up until they are missing.
+            Most recently he led product at a healthcare payments rail used by hundreds of providers and millions of patients. Before that he built and shipped data infrastructure for institutional finance. He sees coaches, trainers, and practitioners as the next operator class to be given infrastructure as serious as the work.
           </p>
           <p className="body-l text-ink-2">
-            We are building xenios with that same standard. Pre-seed. In stealth. In Austin, Texas — which is becoming the gravitational center of proactive health in America.
+            He lives in Austin. He works upstream.
           </p>
         </div>
       </section>
 
-      <section className="grad grad-03-fieldwork section-y" data-testid="section-five-beliefs">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">FIVE BELIEFS</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {[
-              ["Healthcare leverage belongs to the practitioner doing the work.", "Software should hand it to them, not extract it from them."],
-              ["This decade decides the next fifty years of human health.", "We're building infrastructure for the long arc — not the cycle."],
-              ["AI is the substrate, not the product.", "The agent acts in the practitioner's voice and judgment, or it has no place in this stack."],
-              ["The proactive health ecosystem is the most fragmented it has ever been.", "xenios is the connective tissue."],
-              ["Boring infrastructure is what wins regulated environments.", "We've shipped it before. We're shipping it again."],
-            ].map(([h, b], i) => (
-              <article key={i} className="card">
-                <p className="mono-cap text-pulse">{String(i + 1).padStart(2, "0")}</p>
-                <h3 className="h2 mt-3 text-ink">{h}</h3>
-                <p className="body-m mt-4 text-ink-2">{b}</p>
-              </article>
-            ))}
-          </div>
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-6">HERITAGE</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {HERITAGE.map((h) => (
+            <div key={h.name} className="rule-all p-6 rounded-[12px]">
+              <h3 className="h3 mb-2">{h.name}</h3>
+              <p className="body-m text-ink-2">{h.body}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="grad grad-06-horizon section-y">
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-6">WHERE</p>
+        <p className="body-l text-ink-2 max-w-[60ch]">
+          Headquartered in Austin, Texas. Remote first. Austin preferred for the founding team.
+        </p>
+      </section>
+
+      <section className="bg-ink text-paper py-20">
         <div className="container-x">
-          <h2 className="display-l text-paper text-balance max-w-4xl">Build with us.</h2>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <Link href="/careers" className="btn btn-primary btn-on-dark">see open roles →</Link>
-            <Link href="/waitlist" className="btn btn-secondary btn-on-dark">join the waitlist</Link>
+          <h2 className="display-m text-paper mb-6 max-w-[26ch]">Build with us.</h2>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href="/careers" className="btn btn-primary btn-on-dark">Open roles</Link>
+            <Link href="/contact" className="btn btn-ghost-on-dark">Talk to us</Link>
           </div>
         </div>
       </section>

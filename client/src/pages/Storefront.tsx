@@ -1,57 +1,42 @@
 import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import { PAGES, STOREFRONT_BLOCKS, REVENUE_CHIPS } from "@/lib/content";
+import { PAGES } from "@/lib/content";
+
+const BLOCKS = [
+  { name: "Subscriptions", body: "Monthly, quarterly, annual. Pause, resume, prorate. Native dunning." },
+  { name: "Packages", body: "Multi-session, multi-month, cohort. Sell the work, not the hour." },
+  { name: "One-offs", body: "Single sessions, programs, evaluations, gift cards." },
+  { name: "Supplements and equipment", body: "Reorder routing, drop-ship fulfillment, HSA / FSA flagging where lawful." },
+  { name: "Affiliate splits", body: "Native splits across coaches, networks, and brand partners." },
+  { name: "Outcomes-based pricing", body: "Optional. Tie billing to adherence and result, not to seat." },
+];
 
 export default function Storefront() {
   return (
     <PageShell>
-      <SeoHead title={PAGES.storefront.title} description={PAGES.storefront.description} canonical="/storefront" />
-      <section className="grad grad-05-meadow section-y" data-testid="section-storefront-hero">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">STOREFRONT</p>
-          <h1 className="display-xl text-ink text-balance" style={{ maxWidth: "22ch" }}>
-            Every practitioner runs a storefront. Every storefront runs itself.
-          </h1>
-          <p className="body-l mt-8 text-ink-2 max-w-3xl">
-            Branded apps. Digital products. Drop-ship fulfillment. Subscriptions. Group cohorts. Outcome-based packages. The Commerce Agent runs all of it end-to-end.
-          </p>
+      <SeoHead {...PAGES.storefront} />
+      <section className="container-x pt-24 md:pt-36 pb-16">
+        <p className="mono-cap text-ink-mute mb-6">STOREFRONT</p>
+        <h1 className="display-xl text-balance" style={{ maxWidth: "16ch" }}>The commerce rail your practice deserves.</h1>
+        <p className="mt-8 body-l text-ink-2 max-w-[60ch]">
+          Native subscriptions, packages, one-offs, supplements, equipment, and gift cards. One operating system, one billing rail, one report at the end of the month.
+        </p>
+      </section>
+      <section className="container-x py-20 rule-top">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {BLOCKS.map((b) => (
+            <div key={b.name} className="rule-all p-6 rounded-[12px]" data-testid={`card-${b.name.replace(/\s+/g, "-").toLowerCase()}`}>
+              <h3 className="h3 mb-2">{b.name}</h3>
+              <p className="body-m text-ink-2">{b.body}</p>
+            </div>
+          ))}
         </div>
       </section>
-
-      <section className="bg-paper section-y" data-testid="section-storefront-blocks">
+      <section className="bg-ink text-paper py-20">
         <div className="container-x">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {STOREFRONT_BLOCKS.map((s, i) => (
-              <article key={i} className="card">
-                <p className="mono-cap text-pulse">{String(i + 1).padStart(2, "0")}</p>
-                <h3 className="h2 mt-3 text-ink">{s.title}</h3>
-                <p className="body-l mt-4 text-ink-2">{s.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="grad grad-05-meadow section-y" data-testid="section-storefront-revenue">
-        <div className="container-x">
-          <p className="mono-cap text-ink-mute mb-6">TEN NEW REVENUE STREAMS</p>
-          <h2 className="display-m text-ink text-balance max-w-4xl">Get paid for the work you already do.</h2>
-          <ul className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {REVENUE_CHIPS.map((c, i) => (
-              <li key={i} className="flex items-start gap-3 body-m text-ink-2 bg-paper/60 p-4" style={{ borderRadius: 4 }}>
-                <span className="mono-label text-pulse">{String(i + 1).padStart(2, "0")}</span>
-                <span style={{ fontWeight: 600 }}>{c}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="grad grad-06-horizon section-y">
-        <div className="container-x">
-          <h2 className="display-l text-paper text-balance max-w-4xl">Run a storefront that runs itself.</h2>
-          <Link href="/waitlist" className="btn btn-primary btn-on-dark mt-8 inline-flex">join the waitlist →</Link>
+          <h2 className="display-m text-paper mb-6 max-w-[26ch]">Sell the work, not the seat.</h2>
+          <Link href="/waitlist" className="btn btn-primary btn-on-dark">Join the waitlist</Link>
         </div>
       </section>
     </PageShell>
