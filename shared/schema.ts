@@ -3,25 +3,26 @@ import { pgTable, text, timestamp, uuid, integer, smallint } from "drizzle-orm/p
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// v3 — aligned with PRACTITIONER_TILES in client/src/lib/content.ts
 export const PRACTITIONER_TYPE_VALUES = [
-  "personal_trainer",
-  "nutritionist",
-  "glp1_coach",
-  "longevity",
-  "functional_medicine",
-  "health_coach",
-  "rn_rd_cashpay",
-  "recovery_sleep_mind",
-  "biohacker_1on1",
-  "sports_team",
-  "physical_therapist",
-  "chiropractor",
-  "concierge_md",
-  "hormone_hrt",
-  "fertility",
+  "strength_coach",
+  "longevity_clinician",
+  "glp1_specialist",
+  "functional_medicine_md",
+  "registered_dietitian",
+  "nutrition_coach",
+  "sleep_coach",
+  "hormone_therapy",
+  "peptide_protocol",
+  "sports_performance",
+  "recovery_coach",
   "mental_performance",
-  "recovery_studio",
-  "clinic_operator",
+  "endurance_coach",
+  "concierge_clinician",
+  "corporate_wellness",
+  "pelvic_health_pt",
+  "pre_postnatal",
+  "health_life_coach",
   "other",
 ] as const;
 

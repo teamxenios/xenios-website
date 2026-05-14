@@ -2,20 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-    <title>xenios. — the proactive health OS.</title>
-    <meta name="description" content="Connecting every dot in the proactive health ecosystem. Built for the practitioner. Join the waitlist." />
+    <title>xenios. — the proactive health OS</title>
+    <meta name="description" content="The AI-native operating system for proactive and preventive health practitioners. Built in Austin. Join 550+ on the waitlist." />
 
-    <meta property="og:title" content="xenios. — the proactive health OS." />
-    <meta property="og:description" content="Connecting every dot in the proactive health ecosystem. Built for the practitioner. Join the waitlist." />
+    <!-- Robots / GEO -->
+    <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+    <meta name="geo.region" content="US-TX" />
+    <meta name="geo.placename" content="Austin" />
+    <meta name="geo.position" content="30.2672;-97.7431" />
+    <meta name="ICBM" content="30.2672, -97.7431" />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="xenios." />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="website" />
+    <meta property="og:title" content="xenios. — the proactive health OS" />
+    <meta property="og:description" content="The AI-native operating system for proactive and preventive health practitioners. Built in Austin." />
+    <meta property="og:url" content="https://xeniostechnology.com/" />
     <meta property="og:image" content="https://replit.com/public/images/opengraph.png" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@replit" />
-    <meta name="twitter:title" content="xenios. — the proactive health OS." />
-    <meta name="twitter:description" content="Connecting every dot in the proactive health ecosystem. Built for the practitioner. Join the waitlist." />
+    <meta name="twitter:title" content="xenios. — the proactive health OS" />
+    <meta name="twitter:description" content="The AI-native operating system for proactive and preventive health practitioners." />
     <meta name="twitter:image" content="https://replit.com/public/images/opengraph.png" />
 
     <meta name="theme-color" content="#F4EFE6" />
@@ -25,21 +37,65 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
 
+    <!-- JSON-LD: Organization -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Organization",
+        "@id": "https://xeniostechnology.com/#org",
         "name": "Xenios Technologies",
+        "alternateName": "xenios.",
+        "url": "https://xeniostechnology.com",
         "email": "team@xeniostechnology.com",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Austin",
-          "addressRegion": "Texas",
-          "addressCountry": "US"
+        "description": "The AI-native operating system for proactive and preventive health practitioners.",
+        "areaServed": "US",
+        "foundingLocation": {
+          "@type": "Place",
+          "address": { "@type": "PostalAddress", "addressLocality": "Austin", "addressRegion": "TX", "addressCountry": "US" }
         },
         "sameAs": [
-          "https://www.instagram.com/officialxenios/",
+          "https://www.instagram.com/officialxenios",
           "https://www.linkedin.com/company/officialxenios"
+        ]
+      }
+    </script>
+
+    <!-- JSON-LD: LocalBusiness -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "@id": "https://xeniostechnology.com/#local",
+        "name": "Xenios Technologies",
+        "address": { "@type": "PostalAddress", "addressLocality": "Austin", "addressRegion": "TX", "addressCountry": "US" },
+        "geo": { "@type": "GeoCoordinates", "latitude": 30.2672, "longitude": -97.7431 },
+        "url": "https://xeniostechnology.com",
+        "priceRange": "$$"
+      }
+    </script>
+
+    <!-- JSON-LD: WebSite -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://xeniostechnology.com",
+        "name": "xenios.",
+        "publisher": { "@id": "https://xeniostechnology.com/#org" }
+      }
+    </script>
+
+    <!-- JSON-LD: FAQPage (Common Questions on /) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "What is xenios.?", "acceptedAnswer": { "@type": "Answer", "text": "xenios. (Xenios Technologies, Austin, TX) is the AI-native operating system for proactive and preventive health practitioners — a multi-agent OS that augments the practitioner instead of replacing them." } },
+          { "@type": "Question", "name": "Who is xenios. built for?", "acceptedAnswer": { "@type": "Answer", "text": "Proactive health practitioners — strength coaches, longevity clinicians, GLP-1 specialists, functional medicine MDs, registered dietitians, recovery coaches, mental performance coaches, and the rest of the proactive stack." } },
+          { "@type": "Question", "name": "How does xenios. use AI?", "acceptedAnswer": { "@type": "Answer", "text": "xenios. is a multi-agent system. Eight specialized agents — Onboarding, Protocol, Check-in, Communication, Education, Outcomes, Billing, Compliance — work in the practitioner's voice, under their judgment, with HIPAA-aware logging and scope-of-practice guardrails." } },
+          { "@type": "Question", "name": "Does xenios. integrate with wearables and labs?", "acceptedAnswer": { "@type": "Answer", "text": "xenios. is designed to connect with WHOOP, Oura, Function Health, Levels, Eight Sleep, Inside Tracker, Hone, and the wider proactive health ecosystem. Brand names are property of their respective owners; integration availability varies." } },
+          { "@type": "Question", "name": "Where is xenios. based?", "acceptedAnswer": { "@type": "Answer", "text": "Austin, Texas. All roles are remote, Austin preferred. The team comes from $710M+ in prior exits, including FinDox and InstaMed." } }
         ]
       }
     </script>

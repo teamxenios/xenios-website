@@ -1,10 +1,12 @@
 import PageShell from "@/components/PageShell";
+import SeoHead from "@/components/SeoHead";
 import { content } from "@/lib/content";
 
 export default function Terms() {
   const T = content.terms;
   return (
     <PageShell>
+      <SeoHead {...T.seo} />
       <section className="bg-paper section-y" data-testid="section-terms">
         <div className="container-x">
           <p className="mono-cap text-ink-mute mb-6">{T.eyebrow}</p>

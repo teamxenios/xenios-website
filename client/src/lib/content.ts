@@ -1,5 +1,5 @@
-// Centralized verbatim copy from Spec v2.
-// Six gradient presets: 01-dawn, 02-tide, 03-fieldwork, 04-meridian, 05-meadow, 06-horizon.
+// xenios. v3 — canonical copy
+// All copy lives here. Stealth guardrails: no team-member names, no founder photos.
 
 export type GradientPreset =
   | "grad-01-dawn"
@@ -9,699 +9,546 @@ export type GradientPreset =
   | "grad-05-meadow"
   | "grad-06-horizon";
 
-export const contact = {
-  email: "team@xeniostechnology.com",
-  instagram: "https://www.instagram.com/officialxenios/",
-  instagramHandle: "@officialxenios",
-  linkedin: "https://www.linkedin.com/company/officialxenios",
-  linkedinLabel: "Xenios on LinkedIn",
-  location: "Austin, TX",
-};
-
-export const nav = {
-  items: [
-    { href: "/product", label: "product" },
-    { href: "/manifesto", label: "manifesto" },
-    { href: "/#ecosystem", label: "ecosystem" },
-    { href: "/careers", label: "careers" },
-    { href: "/about", label: "about" },
-    { href: "/contact", label: "contact" },
-  ],
-  cta: "join the waitlist →",
-};
-
-export const ribbon = {
-  prefix: "xenios is in stealth. early access opens in waves.",
-  cta: "join the waitlist →",
-  href: "/waitlist",
-};
-
-export const socials = [
-  { label: "instagram → @officialxenios", url: contact.instagram },
-  { label: "linkedin → /company/officialxenios", url: contact.linkedin },
+export const ROTATING_ROLES = [
+  "strength coaches",
+  "longevity clinicians",
+  "GLP-1 specialists",
+  "functional medicine physicians",
+  "registered dietitians",
+  "nutrition coaches",
+  "sleep coaches",
+  "hormone therapy practitioners",
+  "peptide protocol practices",
+  "sports performance coaches",
+  "recovery coaches",
+  "mental performance coaches",
+  "concierge clinicians",
+  "corporate wellness directors",
+  "pelvic health PTs",
+  "pre/postnatal coaches",
+  "endurance coaches",
+  "health & life coaches",
 ];
 
-export const footer = {
-  tagline: "infrastructure for the next fifty years of human health.",
-  sitemap: [
-    { href: "/product", label: "product" },
-    { href: "/manifesto", label: "manifesto" },
-    { href: "/#ecosystem", label: "ecosystem" },
-    { href: "/careers", label: "careers" },
-    { href: "/about", label: "about" },
-    { href: "/contact", label: "contact" },
-    { href: "/investors", label: "investors" },
-    { href: "/partners", label: "partners" },
-    { href: "/faq", label: "faq" },
-    { href: "/security", label: "security" },
-  ],
-  bottom: "© 2026 Xenios Technologies, Inc. — Austin, TX",
-  disclaimer: "in stealth. not a medical device. not medical advice.",
-};
-
-// 18 audience tiles (built-for grid)
-export const audienceTiles = [
-  { num: "01", label: "Personal trainers & strength coaches", cap: "performance is data now", value: "personal_trainer" },
-  { num: "02", label: "Nutritionists & registered dietitians", cap: "every meal, every signal", value: "nutritionist" },
-  { num: "03", label: "GLP-1 & metabolic health coaches", cap: "protocols that personalize", value: "glp1_coach" },
-  { num: "04", label: "Longevity & performance specialists", cap: "panels, paired with practice", value: "longevity" },
-  { num: "05", label: "Functional medicine practitioners", cap: "root cause, fully connected", value: "functional_medicine" },
-  { num: "06", label: "Health coaches & wellness pros", cap: "your protocols, your voice", value: "health_coach" },
-  { num: "07", label: "RNs & RDs in cash-pay practice", cap: "clinical-grade, coach-friendly", value: "rn_rd_cashpay" },
-  { num: "08", label: "Recovery, sleep & mind coaches", cap: "every modality, one substrate", value: "recovery_sleep_mind" },
-  { num: "09", label: "Biohackers running 1:1 programs", cap: "n=1, at scale", value: "biohacker_1on1" },
-  { num: "10", label: "Sports & team performance coaches", cap: "the locker room, connected", value: "sports_team" },
-  { num: "11", label: "Physical therapists (cash-pay)", cap: "movement meets metrics", value: "physical_therapist" },
-  { num: "12", label: "Chiropractors with wellness programs", cap: "beyond the adjustment", value: "chiropractor" },
-  { num: "13", label: "Concierge medicine practitioners", cap: "care that anticipates", value: "concierge_md" },
-  { num: "14", label: "Hormone & HRT specialists", cap: "signals, panels, plans", value: "hormone_hrt" },
-  { num: "15", label: "Fertility & reproductive wellness", cap: "the long arc of health", value: "fertility" },
-  { num: "16", label: "Mental performance & executive coaches", cap: "cognition is a signal", value: "mental_performance" },
-  { num: "17", label: "Recovery & cold-plunge studio operators", cap: "throughput, with proof", value: "recovery_studio" },
-  { num: "18", label: "Independent clinic operators", cap: "the practice as platform", value: "clinic_operator" },
-] as const;
-
-// Built-for grid — gradient rotation across the 18 tiles
-const TILE_PRESETS: GradientPreset[] = [
-  "grad-01-dawn", "grad-02-tide", "grad-03-fieldwork",
-  "grad-04-meridian", "grad-05-meadow", "grad-06-horizon",
-];
-export const audienceTilesWithPresets = audienceTiles.map((t, i) => ({
-  ...t,
-  preset: TILE_PRESETS[i % TILE_PRESETS.length],
-}));
-
-// Constellation node labels (16 satellites)
-export const ecosystemNodes = [
-  "wearables",
-  "continuous glucose",
-  "lab panels",
-  "longevity markers",
-  "GLP-1 protocols",
-  "sleep & HRV",
-  "nutrition logs",
-  "training load",
-  "recovery data",
-  "supplement stacks",
-  "hormone panels",
-  "mental performance",
-  "calendars",
-  "billing",
-  "client comms",
-  "referring physicians",
+export const PRACTITIONER_TILES: { value: string; label: string; oneLiner: string; preset: GradientPreset }[] = [
+  { value: "strength_coach", label: "Strength coaches", oneLiner: "Programming, recovery, and load — running on one OS instead of three tools.", preset: "grad-01-dawn" },
+  { value: "longevity_clinician", label: "Longevity clinicians", oneLiner: "Diagnostics, panels, and protocols unified per client, longitudinally.", preset: "grad-04-meridian" },
+  { value: "glp1_specialist", label: "GLP-1 specialists", oneLiner: "Titration, side-effect tracking, and adherence with agent-managed touchpoints.", preset: "grad-02-tide" },
+  { value: "functional_medicine_md", label: "Functional medicine MDs", oneLiner: "Root-cause work with the labs and history surfaced in the practitioner's voice.", preset: "grad-05-meadow" },
+  { value: "registered_dietitian", label: "Registered dietitians", oneLiner: "Macros, CGM, food logs, and follow-up — agent-mediated, not copy-pasted.", preset: "grad-03-fieldwork" },
+  { value: "nutrition_coach", label: "Nutrition coaches", oneLiner: "Habit work scaled by the Education and Check-in Agents.", preset: "grad-06-horizon" },
+  { value: "sleep_coach", label: "Sleep coaches", oneLiner: "Oura + Eight Sleep + subjective markers, one continuous outcome view.", preset: "grad-01-dawn" },
+  { value: "hormone_therapy", label: "Hormone therapy practitioners", oneLiner: "Panels, dosing, symptom tracking — context preserved between visits.", preset: "grad-04-meridian" },
+  { value: "peptide_protocol", label: "Peptide protocol practices", oneLiner: "Protocols documented, scope-aware, jurisdictionally flagged.", preset: "grad-02-tide" },
+  { value: "sports_performance", label: "Sports performance coaches", oneLiner: "Training load, HRV, recovery — one operating picture per athlete.", preset: "grad-05-meadow" },
+  { value: "recovery_coach", label: "Recovery coaches", oneLiner: "Hyperice, Therabody, sleep, soft-tissue — handoff-ready by default.", preset: "grad-03-fieldwork" },
+  { value: "mental_performance", label: "Mental performance coaches", oneLiner: "Mindset work with the same client profile as the rest of the team.", preset: "grad-06-horizon" },
+  { value: "endurance_coach", label: "Endurance coaches", oneLiner: "Power, pace, and fueling — wired into the proactive stack.", preset: "grad-01-dawn" },
+  { value: "concierge_clinician", label: "Concierge clinicians", oneLiner: "24/7 access tier supported by always-on agents under your judgment.", preset: "grad-04-meridian" },
+  { value: "corporate_wellness", label: "Corporate wellness directors", oneLiner: "One practitioner can serve a whole company team, agent-managed.", preset: "grad-02-tide" },
+  { value: "pelvic_health_pt", label: "Pelvic health PTs", oneLiner: "Sensitive scope handled with HIPAA-aware logging and consent.", preset: "grad-05-meadow" },
+  { value: "pre_postnatal", label: "Pre/postnatal coaches", oneLiner: "Phase-aware protocols and check-ins through pregnancy and recovery.", preset: "grad-03-fieldwork" },
+  { value: "health_life_coach", label: "Health & life coaches", oneLiner: "Whole-person work without losing the data thread.", preset: "grad-06-horizon" },
 ];
 
-export const home = {
-  hero: {
-    eyebrow: "the proactive health era",
-    h1: "The proactive health OS.",
-    sub: "Connecting every dot in the proactive health ecosystem — wearables, labs, GLP-1, longevity panels, recovery, nutrition, training, and the practitioner who pulls it all together.",
-    primaryCta: "join the waitlist →",
-    secondaryCta: "read the manifesto →",
-    counterSuffix: "practitioners on the waitlist · updated in real time",
-  },
-  thesis: {
-    eyebrow: "THE THESIS",
-    h2: "Coaching was never the bottleneck. Infrastructure was.",
-    body: "The proactive health practitioner has the protocols, the science, and the relationships. What they don't have is a substrate that makes every signal talk to every other signal — and gives the hours back. Xenios is that substrate.",
-    inlineLinkLabel: "see what xenios connects →",
-    inlineLinkHref: "/#ecosystem",
-  },
-  ecosystem: {
-    eyebrow: "THE ECOSYSTEM",
-    h2: "Every signal. One practitioner.",
-    body1: "The proactive health stack is the most exciting it has ever been — and the most fragmented it has ever been. Wearables don't talk to labs. Labs don't talk to GLP-1 protocols. Protocols don't talk to calendars. Calendars don't talk to outcomes. The practitioner is the integration layer, and the practitioner is exhausted.",
-    body2: "Xenios is the connective tissue. Every dot, one substrate, one practitioner in command.",
-    inlineLinkLabel: "meet the ecosystem partners →",
-    inlineLinkHref: "/partners",
-  },
-  builtFor: {
-    eyebrow: "BUILT FOR EVERY PRACTITIONER MOVING CARE UPSTREAM",
-    h2: "If your practice is proactive, preventive, or performance-oriented — xenios is for you.",
-    closing: "If you run a proactive, preventive, or performance-oriented practice, xenios was built for you.",
-    inlineLinkLabel: "see the full picture in the manifesto →",
-    inlineLinkHref: "/manifesto",
-  },
-  trust: {
-    eyebrow: "WHO IS BUILDING THIS",
-    body: "A founding team with prior healthcare-infrastructure exits totaling $710M+ — including FinDox and InstaMed — building the operating system the practitioner economy has been waiting for.",
-    stats: ["$710M+ PRIOR EXITS", "AUSTIN HQ", "REMOTE TEAM", "PRE-SEED STEALTH"],
-    inlineLinkLabel: "more about the team and the mission →",
-    inlineLinkHref: "/about",
-  },
-  finalCta: {
-    eyebrow: "THE WAITLIST",
-    h2: "Every dot connected. Every hour returned. Every practitioner amplified. The proactive health era starts now.",
-    counterPrefix: "practitioners. and counting.",
-    primaryCta: "join the waitlist →",
-    secondaryCta: "talk to the team →",
-  },
-};
+export const AGENTS: { name: string; role: string; never: string }[] = [
+  { name: "Onboarding Agent", role: "Sends intake, pairs wearables, pulls history, schedules baseline labs.", never: "Never sets a protocol." },
+  { name: "Protocol Agent", role: "Drafts programming, nutrition frames, recovery cycles in the practitioner's documented voice.", never: "Never publishes without practitioner approval until a trust threshold is set." },
+  { name: "Check-in Agent", role: "Runs scheduled and adaptive check-ins; flags drift.", never: "Never makes clinical interpretations." },
+  { name: "Communication Agent", role: "Handles async client messages with summaries, tone-matched drafts, escalation rules.", never: "Never responds without practitioner-defined guardrails." },
+  { name: "Education Agent", role: "Pulls just-in-time micro-lessons matched to the client's protocol and current data.", never: "Never substitutes for clinician explanation." },
+  { name: "Outcomes Agent", role: "Aggregates wearable, lab, subjective, and behavior data into a longitudinal outcome view.", never: "Never diagnoses." },
+  { name: "Billing Agent", role: "Handles invoices, subscriptions, HSA/FSA tagging, dunning, refunds.", never: "Never sets pricing." },
+  { name: "Compliance Agent", role: "Logs PHI handling, enforces scope of practice, alerts on drift.", never: "Never operates outside the configured scope." },
+];
 
-export const manifesto = {
-  eyebrow: "MANIFESTO",
-  h1: "Care, finally upstream.",
-  paragraphs: [
-    "For a hundred years, \"healthcare\" has meant the system you go to after something has already gone wrong. The chart opens when the symptom arrives. The billing code requires a diagnosis. The infrastructure was built for reaction.",
-    "We are alive in the first decade where that arrangement is breaking.",
-    "A new class of practitioner has emerged — the personal trainer, the nutritionist, the GLP-1 coach, the longevity doctor, the functional medicine practitioner, the recovery operator, the concierge clinician, the executive performance coach — who does not wait for the symptom. They look at the wearable, the panel, the protocol, the program, the sleep, the meal, the mood. They move upstream. They are the most important workforce in the proactive health era.",
-    "And they are running the most important work of their lives on spreadsheets, screenshots, group chats, and stitched-together tools that were never built to talk to each other.",
-    "We think this is the largest mismatch in modern software.",
-  ],
-  bridge: "Xenios is the operating system for the proactive health practitioner.",
-  thesisParas: [
-    "The thesis is simple. Coaching was never the bottleneck. Infrastructure was. Every dot in the proactive health stack — wearables, labs, GLP-1 protocols, food logs, training programs, recovery data, mental health, longevity panels, calendars, billing, referrals, outcomes — runs on a different system. The practitioner is the integration layer. The practitioner is exhausted.",
-    "We are building the substrate where every signal becomes one client profile, every protocol becomes infinitely personalizable, every hour of admin becomes an hour of practice, and every AI agent acts with the practitioner's voice, judgment, and protocols — never replacing the human, always extending them.",
-  ],
-  beliefsHeader: "We believe four things.",
-  beliefs: [
-    {
-      number: "One.",
-      body: "The leverage in healthcare is finally being handed to the practitioner doing the work, not the platform charging the rent. We are building software that hands it to them.",
-    },
-    {
-      number: "Two.",
-      body: "This decade will decide the shape of proactive care for the next fifty years. The infrastructure that gets adopted now — by the coaches, the clinicians, the operators — becomes the infrastructure of human health by 2075. We are building for the long arc.",
-    },
-    {
-      number: "Three.",
-      body: "AI is not the product. AI is the substrate. The product is the practitioner who, with AI as their second pair of hands, can hold more clients, write better protocols, and deliver outcomes a single human could never deliver alone. The agent acts in the practitioner's voice and judgment, or it has no place in this stack.",
-    },
-    {
-      number: "Four.",
-      body: "Connecting the dots is the work. The proactive health ecosystem is the most exciting it has ever been and the most fragmented it has ever been. Xenios is the connective tissue. Every signal, every tool, every human, one substrate.",
-    },
-  ],
-  closingPull: [
-    "Every dot connected. Every hour returned. Every practitioner amplified.",
-    "The proactive health era starts now.",
-    "We are building the operating system.",
-    "Be on the list when it ships.",
-  ],
-  cta: {
-    primary: "join the waitlist →",
-    secondary: "see what xenios connects →",
-  },
-};
+export const ECOSYSTEM_CLUSTERS: { heading: string; names: string[] }[] = [
+  { heading: "Wearables & biometrics", names: ["WHOOP", "Oura", "Apple Health", "Garmin", "Polar", "Fitbit", "Coros"] },
+  { heading: "Continuous glucose & metabolic", names: ["Levels", "Lingo", "Dexcom", "Stelo", "Abbott"] },
+  { heading: "Labs & diagnostics", names: ["Function Health", "Superpower", "Inside Tracker", "Marek Health", "Hone", "Quest", "Labcorp"] },
+  { heading: "Longevity imaging & screening", names: ["Ezra", "Prenuvo", "Neko Health"] },
+  { heading: "GLP-1 & metabolic Rx", names: ["Zepbound", "Wegovy", "Ozempic", "Mounjaro", "compounded GLP-1 programs"] },
+  { heading: "Peptide & advanced protocols", names: ["BPC-157 protocols", "semaglutide programs", "tirzepatide programs", "retatrutide programs"] },
+  { heading: "Supplements", names: ["Thorne", "Pure Encapsulations", "Momentous", "Designs for Health"] },
+  { heading: "Recovery & sleep", names: ["Hyperice", "Therabody", "Plunge", "Eight Sleep"] },
+  { heading: "Nutrition tracking", names: ["Cronometer", "MacroFactor", "MyFitnessPal"] },
+  { heading: "Mental performance & mindset", names: ["Headspace", "Calm", "Othership", "Open"] },
+  { heading: "AI foundations", names: ["Anthropic", "OpenAI"] },
+  { heading: "Training context", names: ["TrueCoach exports", "Trainerize exports"] },
+  { heading: "Compliance & billing infra", names: ["Stripe", "Plaid"] },
+];
 
-export const product = {
-  eyebrow: "THE PRODUCT",
-  h1: "The operating system, in five capabilities.",
-  sub: "We are in stealth. We are not going to walk you through the whole roadmap. We will tell you what the practitioner gets in the first release — and why each piece exists.",
-  inlineLinkLabel: "join the waitlist for early access →",
-  capabilities: [
-    {
-      num: "01",
-      eyebrow: "THE LIVING CLIENT PROFILE",
-      title: "Every signal, unified.",
-      body: [
-        "Today the practitioner has the client's wearable in one app, their lab panel in a PDF, their training log in a spreadsheet, their food log in a screenshot, and their last conversation in a thread.",
-        "Xenios collapses that into one living profile. Wearable streams, lab panels, longevity markers, GLP-1 protocols, nutrition, training load, recovery, sleep, hormones, mood — all in one substrate, updated in real time, fully searchable, fully exportable, fully under the practitioner's control.",
-        "The profile is the dot the other dots connect to.",
-      ],
-      preset: "grad-01-dawn" as GradientPreset,
-    },
-    {
-      num: "02",
-      eyebrow: "THE PROTOCOL ENGINE",
-      title: "Author once. Personalize infinitely.",
-      body: [
-        "Every great practitioner has a playbook — the protocols, programs, and progressions they would run on every client if there were twenty-four hours in a day and no admin.",
-        "Xenios is where that playbook lives. Author once, in your own voice, with your own science. Personalize infinitely against the client's living profile. Update the protocol once and it propagates everywhere it lives. The playbook is yours. The leverage is finally yours.",
-      ],
-      preset: "grad-02-tide" as GradientPreset,
-    },
-    {
-      num: "03",
-      eyebrow: "THE COACH AGENT",
-      title: "Acts with your voice. Defers to your judgment.",
-      body: [
-        "The agent layer is not a replacement for the practitioner. It is the practitioner's second pair of hands.",
-        "The Coach Agent is trained on the practitioner's protocols, the client's living profile, and the practitioner's voice. It drafts the check-in. It surfaces the anomaly in last night's HRV. It writes the weekly note to the referring physician. It does not ship anything without the practitioner's sign-off.",
-        "The human is in command. Always.",
-      ],
-      preset: "grad-03-fieldwork" as GradientPreset,
-    },
-    {
-      num: "04",
-      eyebrow: "THE ECOSYSTEM CONNECTOR",
-      title: "The dots, finally talking.",
-      body: [
-        "Wearables. Continuous glucose. Lab panels. Longevity markers. GLP-1 protocols. Sleep and HRV. Nutrition logs. Training load. Recovery data. Supplement stacks. Hormone panels. Mental performance scores. Calendars. Billing. Client comms. Referring physicians.",
-        "All of it, in one substrate. Read, write, route, reconcile. The practitioner stops being the integration layer.",
-      ],
-      preset: "grad-04-meridian" as GradientPreset,
-      inlineLinkLabel: "see the ecosystem map →",
-      inlineLinkHref: "/#ecosystem",
-    },
-    {
-      num: "05",
-      eyebrow: "THE OUTCOMES LAYER",
-      title: "Proof, in the language clients and referring physicians understand.",
-      body: [
-        "Proactive care has always had a proof problem. Subjective wins are real but uncountable. Objective wins are countable but unevenly captured. Xenios closes the gap.",
-        "The Outcomes Layer turns every signal into proof — for the client, for the referring physician, for the underwriter, for the next program cohort. The practitioner stops having to explain why what they do works. The data explains.",
-      ],
-      preset: "grad-05-meadow" as GradientPreset,
-    },
-  ],
-  closer: "There is more. We will show you the rest when the door opens.",
-  ctaPrimary: "join the waitlist →",
-  ctaSecondary: "talk to the team →",
-};
+export const ALL_ECOSYSTEM_NAMES = ECOSYSTEM_CLUSTERS.flatMap((c) => c.names);
 
-export const contactPage = {
-  eyebrow: "CONTACT",
-  h1: "One inbox. Every door.",
-  sub: "We are a small team in stealth. To keep response times fast, every inbound runs through team@xeniostechnology.com — sorted by subject line. Pick the path that matches you and use the prefix in brackets.",
-  cards: [
-    {
-      num: "01",
-      title: "FOR PRACTITIONERS",
-      body: "You run a proactive, preventive, or performance-oriented practice and want early access.",
-      action: "Join the waitlist at /waitlist",
-      note: "(Already on the list? Watch for your invite email.)",
-      href: "/waitlist",
-      hrefLabel: "join the waitlist →",
-    },
-    {
-      num: "02",
-      title: "FOR INVESTORS",
-      body: "You run a fund whose thesis lives in proactive health, longevity, applied AI infrastructure, or vertical SaaS.",
-      action: "Email team@xeniostechnology.com",
-      subject: "[INVESTOR]",
-      moreHref: "/investors",
-      moreLabel: "more context →",
-    },
-    {
-      num: "03",
-      title: "FOR PRESS, INFLUENCERS & CONTENT CREATORS",
-      body: "You write, podcast, or build audience in the proactive health space and want to talk to us — on the record or off.",
-      action: "Email team@xeniostechnology.com",
-      subjectMulti: ["[PRESS] for journalists", "[CREATOR] for influencers, podcasters, creators"],
-    },
-    {
-      num: "04",
-      title: "FOR INTEGRATION PARTNERS",
-      body: "You build a wearable, a lab, a longevity panel, a CGM, a recovery device, a software tool, or any other signal in the ecosystem and want to plug into Xenios.",
-      action: "Email team@xeniostechnology.com",
-      subject: "[PARTNER]",
-      moreHref: "/partners",
-      moreLabel: "more context →",
-    },
-    {
-      num: "05",
-      title: "FOR CANDIDATES",
-      body: "You want to build the operating system with us. All roles are remote, Austin preferred.",
-      action: "See open roles at /careers",
-      subject: "[ROLE — JOB TITLE]",
-      moreHref: "/careers",
-      moreLabel: "open roles →",
-    },
-    {
-      num: "06",
-      title: "GENERAL",
-      body: "Anything else.",
-      action: "team@xeniostechnology.com",
-      subject: "[HELLO]",
-    },
-  ],
-  formEyebrow: "OR JUST WRITE US",
-  personaOptions: [
-    { value: "practitioner", label: "a practitioner", prefix: "[PRACTITIONER]" },
-    { value: "investor", label: "an investor", prefix: "[INVESTOR]" },
-    { value: "journalist_creator", label: "a journalist or creator", prefix: "[PRESS]" },
-    { value: "integration_partner", label: "a potential integration partner", prefix: "[PARTNER]" },
-    { value: "candidate", label: "a candidate", prefix: "[ROLE — OPEN]" },
-    { value: "other", label: "something else", prefix: "[HELLO]" },
-  ],
-  successTitle: "We have it.",
-  successBody: "Thanks. We read every message at team@xeniostechnology.com. Expect a reply within two business days.",
-  errorTitle: "Something broke on our side.",
-  errorBody: "Write us directly at team@xeniostechnology.com and we'll pick it up there.",
-  closer: {
-    h: "While you wait —",
-    body: "follow @officialxenios on Instagram and Xenios on LinkedIn. The vision shows up there first.",
-  },
-};
+export const REVENUE_CHIPS = [
+  "Outcome-based pricing",
+  "Recurring digital products",
+  "Agent-managed group cohorts",
+  "Transparent affiliate / device revenue",
+  "Network referral revenue",
+  "Lab & longevity reorder revenue",
+  "GLP-1 & peptide protocol revenue (where lawful)",
+  "Corporate wellness contracts",
+  "HSA / FSA-eligible cash-pay services",
+  "Concierge / 24-7 agent tier",
+];
 
-export const investors = {
-  eyebrow: "INVESTORS",
-  h1: "If your thesis lives where the puck is going, we should talk.",
-  paragraphs: [
-    "Xenios is a pre-seed company in stealth, headquartered in Austin, Texas. We are building the operating system for the proactive health practitioner — the connective tissue between every signal, tool, and human in the proactive health ecosystem.",
-    "The founding team has prior healthcare-infrastructure exits totaling $710M+, including FinDox and InstaMed.",
-    "We are not running a process. We are talking, carefully and quietly, to a small number of funds and operators whose conviction in proactive health, longevity, applied AI infrastructure, or vertical SaaS for the practitioner economy is already strong.",
-    "If that's you, write us.",
-  ],
-  inboundEyebrow: "HOW TO REACH US",
-  inboundLines: [
-    "→ team@xeniostechnology.com",
-    "→ Subject prefix: [INVESTOR]",
-    "→ Please include: fund name, thesis fit in one paragraph, recent relevant investments.",
-  ],
-  closingNote: "We reply to every serious note.",
-  whyWeExist: [
-    "Coaching was never the bottleneck. Infrastructure was.",
-    "This decade decides the shape of proactive care for the next fifty years.",
-    "We intend to be the substrate it runs on.",
-  ],
-  closer: [
-    { label: "read the manifesto →", href: "/manifesto" },
-    { label: "see the product overview →", href: "/product" },
-    { label: "meet the ecosystem →", href: "/#ecosystem" },
-  ],
-};
-
-export const partners = {
-  eyebrow: "PARTNERS",
-  h1: "The ecosystem is the product.",
-  sub: "Xenios is the connective tissue between every dot in proactive health. We can't be that alone — and we don't want to be. If you build a signal, a device, a panel, a tool, an audience, or a piece of content that lives in this space, there is a door for you here.",
-  tracks: [
-    {
-      num: "01",
-      title: "INTEGRATION PARTNERS",
-      body: [
-        "You build a wearable, a CGM, a lab panel, a longevity service, a recovery device, a training platform, a nutrition tool, a billing or scheduling system, or any other practitioner-adjacent product.",
-        "We want your signal flowing through Xenios. Practitioners want it too. The substrate is open by design.",
-      ],
-      lines: [
-        "→ team@xeniostechnology.com",
-        "→ Subject prefix: [PARTNER — INTEGRATION]",
-        "→ Please include: company, what you ship, an API or data-spec link if one exists.",
-      ],
-      preset: "grad-01-dawn" as GradientPreset,
-      subject: "[PARTNER — INTEGRATION]",
-    },
-    {
-      num: "02",
-      title: "CREATORS, PODCASTERS & WRITERS",
-      body: [
-        "You build audience in proactive health, longevity, performance, metabolic health, recovery, or the coach economy. You want early access, an honest conversation with the founders, or a co-built piece of content.",
-        "We treat creators as peers. The vision deserves to be seen.",
-      ],
-      lines: [
-        "→ team@xeniostechnology.com",
-        "→ Subject prefix: [CREATOR]",
-        "→ Please include: your platform, your audience focus, what you'd like to build.",
-      ],
-      preset: "grad-03-fieldwork" as GradientPreset,
-      subject: "[CREATOR]",
-    },
-    {
-      num: "03",
-      title: "INFLUENCERS & FRONT-OF-CAMERA PRACTITIONERS",
-      body: [
-        "You are a public-facing proactive health practitioner with a real practice and a real audience. You want to be one of the first to run your practice on Xenios and one of the first to tell the ecosystem about it.",
-        "We have a small, hand-picked early cohort. It is not a discount code program. It is a partnership.",
-      ],
-      lines: [
-        "→ team@xeniostechnology.com",
-        "→ Subject prefix: [CREATOR — PRACTITIONER]",
-      ],
-      preset: "grad-05-meadow" as GradientPreset,
-      subject: "[CREATOR — PRACTITIONER]",
-    },
-  ],
-  closerBody: "We answer every serious note inside two business days. Follow @officialxenios for the public side of this build.",
-  ctaPrimary: "join the practitioner waitlist →",
-  ctaSecondary: "read the manifesto →",
-};
-
-export const waitlistPage = {
-  eyebrow: "EARLY ACCESS",
-  h1: "Be on the list when the proactive health OS ships.",
-  sub: "We're opening early access in waves. The waitlist decides the order. Tell us a little about your practice. We do the rest.",
-  counterSuffix: "practitioners on the waitlist · updated in real time",
-  successTitle: "You're in.",
-  successPositionLabel: "on the waitlist",
-  successBody: "We just sent a confirmation to {email}. Two quick favors while you wait:",
-  successLinks: [
-    { label: "→ Follow @officialxenios on Instagram", href: contact.instagram },
-    { label: "→ Follow Xenios on LinkedIn", href: contact.linkedin },
-  ],
-  successCloser: "The vision shows up there first.",
-  trustBlock: [
-    "Built by a team with prior healthcare-infrastructure exits totaling $710M+ — including FinDox and InstaMed.",
-    "Headquartered in Austin, TX. Pre-seed. In stealth.",
-    "We don't share your email. Ever. See /security.",
-  ],
-};
-
-export const waitlistForm = {
-  fields: {
-    firstName: { label: "First name", placeholder: "First name" },
-    lastName: { label: "Last name", placeholder: "Last name" },
-    email: { label: "Email", placeholder: "you@practice.com" },
-    practitionerType: { label: "I am a…", placeholder: "Choose one" },
-    city: { label: "City", placeholder: "Austin" },
-    country: { label: "Country", placeholder: "United States" },
-    freeText: {
-      label: "What you'd most want xenios to solve first (optional)",
-      placeholder: "1–3 sentences",
-    },
-    howHeard: { label: "How did you hear about us? (optional)", placeholder: "Twitter, a friend, a podcast…" },
-    consent: {
-      label: "I'm okay receiving build updates from xenios at the email above.",
-    },
-  },
-  submit: "join the waitlist →",
-  submitting: "joining…",
-  consentRequired: "Please agree to receive build updates to continue.",
-  errorGeneric: "Something went wrong. Please try again.",
-};
-
-export const about = {
-  eyebrow: "ABOUT",
-  h1: "A small team. A long arc. One operating system.",
-  intro: [
-    "Xenios Technologies, Inc. is a pre-seed company headquartered in Austin, Texas. We are building the operating system for the proactive health practitioner — the connective tissue between every signal, tool, and human in the proactive health ecosystem.",
-    "We are in stealth because the work deserves it. We will introduce the team in full when the product opens. Until then, here is what matters.",
-  ],
-  team: {
-    h: "THE TEAM",
-    body: "A founding team with prior healthcare-infrastructure exits totaling $710M+, including FinDox and InstaMed. Operators who have shipped into clinical workflows, payment rails, and the parts of the system where mistakes are not abstract. We have been here before. We know where the bodies are buried.",
-  },
-  beliefs: {
-    h: "THE BELIEFS",
-    items: [
-      "Coaching was never the bottleneck. Infrastructure was.",
-      "This decade decides the shape of proactive care for the next fifty years.",
-      "Leverage belongs to the practitioner doing the work, not the platform charging the rent.",
-      "AI agents act with the practitioner's voice and judgment, or they have no place in this stack.",
-      "Connecting the dots is the work.",
-    ],
-  },
-  company: {
-    h: "THE COMPANY",
-    body: "Headquartered in Austin, TX. Remote team. Hiring across engineering, product, design, and partnerships. All roles remote, Austin preferred.",
-    links: [
-      { label: "see open roles →", href: "/careers" },
-      { label: "read the manifesto →", href: "/manifesto" },
-      { label: "talk to the team →", href: "/contact" },
-    ],
-  },
-};
-
-export const careers = {
-  eyebrow: "CAREERS",
-  h1: "Build the operating system for the next fifty years of human health.",
-  sub: "Five founding roles. All remote, Austin preferred. Every one of them ships into the first release. Every one of them earns equity in the substrate.",
-  howWeWork: {
-    h: "HOW WE WORK",
-    items: [
-      "Remote-first. Austin preferred for in-person sprint weeks.",
-      "Founding equity for every founding hire.",
-      "Small team. High trust. Few meetings. Long arcs.",
-      "We hire for taste, judgment, and shipping muscle.",
-      "We expect every founding hire to act like a founder, because they are one.",
-    ],
-  },
-  rolesEyebrow: "OPEN ROLES — REMOTE / AUSTIN PREFERRED",
-  roles: [
-    {
-      num: "01",
-      eyebrow: "ENGINEERING",
-      title: "Founding Senior Software Engineer",
-      body: "Architect of the substrate. Owns the core platform: client profile, protocol engine, integrations, agent runtime. Comfortable in TypeScript, Postgres, distributed systems, and writing the boring code that has to be right.",
-      location: "Remote, Austin preferred.",
-      subject: "[ROLE — SENIOR SOFTWARE ENGINEER]",
-      preset: "grad-04-meridian" as GradientPreset,
-    },
-    {
-      num: "02",
-      eyebrow: "ENGINEERING",
-      title: "Founding Product Engineer",
-      body: "Ships the surfaces practitioners actually touch. Builds, dogfoods, iterates. Lives where product, design, and engineering meet. Comfortable owning a feature end-to-end and shipping in days, not quarters.",
-      location: "Remote, Austin preferred.",
-      subject: "[ROLE — PRODUCT ENGINEER]",
-      preset: "grad-01-dawn" as GradientPreset,
-    },
-    {
-      num: "03",
-      eyebrow: "AI / ML",
-      title: "Founding AI / ML Engineer",
-      body: "Owns the agent layer. Trains, evaluates, and ships the Coach Agent and the model infrastructure behind it. Comfortable with eval rigor, retrieval pipelines, and the line between \"demo\" and \"production\" for AI in regulated-adjacent workflows.",
-      location: "Remote, Austin preferred.",
-      subject: "[ROLE — AI/ML ENGINEER]",
-      preset: "grad-02-tide" as GradientPreset,
-    },
-    {
-      num: "04",
-      eyebrow: "DESIGN",
-      title: "Founding UI / UX Designer",
-      body: "Shapes the substrate. Owns the visual system, the interaction language, and the practitioner's daily surface. Editorially literate. Comfortable in Figma and in prose. Reads design as argument.",
-      location: "Remote, Austin preferred.",
-      subject: "[ROLE — UI/UX DESIGNER]",
-      preset: "grad-05-meadow" as GradientPreset,
-    },
-    {
-      num: "05",
-      eyebrow: "PARTNERSHIPS",
-      title: "Founding Coach Partnerships Lead",
-      body: "Owns the early cohort. Recruits, onboards, and grows with the first 100 practitioners on the platform. Already lives in the proactive health world — by background, by relationships, by instinct.",
-      location: "Remote, Austin preferred.",
-      subject: "[ROLE — COACH PARTNERSHIPS]",
-      preset: "grad-03-fieldwork" as GradientPreset,
-    },
-  ],
-  closer: {
-    h: "Don't see your role but think you should be here?",
-    body: "Write us anyway.",
-    subject: "[ROLE — OPEN]",
-  },
-};
-
-export const faq = {
-  eyebrow: "FAQ",
-  h1: "Honest answers.",
-  items: [
-    {
-      q: "What is xenios?",
-      a: "The operating system for the proactive health practitioner. The connective tissue between every signal, tool, and human in the proactive health ecosystem.",
-    },
-    {
-      q: "Who is it for?",
-      a: "Anyone running a proactive, preventive, or performance-oriented practice. Personal trainers and strength coaches. Nutritionists and registered dietitians. GLP-1 and metabolic health coaches. Longevity and performance specialists. Functional medicine practitioners. Health coaches and wellness pros. RNs and RDs in cash-pay practice. Recovery, sleep, and mind coaches. Biohackers running paid 1:1 programs. Sports and team performance coaches. Physical therapists in cash-pay practice. Chiropractors with wellness programs. Concierge medicine practitioners. Hormone and HRT specialists. Fertility and reproductive wellness coaches. Mental performance and executive coaches. Recovery and cold-plunge studio operators. Independent clinic operators. Anyone moving care upstream.",
-    },
-    {
-      q: "When does it open?",
-      a: "We're opening in waves. Position on the waitlist decides the order.",
-    },
-    {
-      q: "Do I have to be in the U.S.?",
-      a: "No. The waitlist is global. Early waves prioritize practitioners in North America for pilot reasons; international waves follow quickly.",
-    },
-    {
-      q: "Is this a medical device?",
-      a: "No. Xenios is software infrastructure for practitioners. It is not a medical device. It is not medical advice. It does not diagnose, treat, cure, or prevent any disease. Practitioners using Xenios remain responsible for the clinical decisions they make.",
-    },
-    {
-      q: "Do you replace the coach with AI?",
-      a: "No. We extend the coach with AI. The Coach Agent acts with the practitioner's voice, judgment, and protocols — and never ships anything without sign-off. The human is in command.",
-    },
-    {
-      q: "Who is building this?",
-      a: "A founding team with prior healthcare-infrastructure exits totaling $710M+, including FinDox and InstaMed. We will introduce the full team when the product opens.",
-    },
-    {
-      q: "How do you handle my data and my clients' data?",
-      a: "See /security. Short version: encryption in transit and at rest, least-privilege access internally, no sale of data ever, and a posture built for HIPAA-grade workflows where the practitioner operates in them.",
-    },
-    {
-      q: "How do I join the waitlist?",
-      a: "Right here: /waitlist.",
-    },
-    {
-      q: "How do I reach the team?",
-      a: "team@xeniostechnology.com. Subject-line conventions live at /contact.",
-    },
-    {
-      q: "Is this company hiring?",
-      a: "Yes. Five founding roles, all remote, Austin preferred. /careers.",
-    },
-    {
-      q: "Are you raising?",
-      a: "We're talking, quietly. /investors.",
-    },
-  ],
-  closerLabel: "still have questions? talk to the team →",
-  closerHref: "/contact",
-};
-
-export const security = {
-  eyebrow: "SECURITY & DATA",
-  h1: "Built for the most sensitive surface in human life.",
-  intro: [
-    "The proactive health practitioner sees more about their client than any other professional in that client's life. The substrate that holds that surface has to be worthy of it.",
-    "We are building Xenios with that worthiness as a non-negotiable.",
-  ],
-  posture: {
-    h: "OUR POSTURE",
-    items: [
-      "Encryption in transit (TLS 1.2+) and at rest (AES-256).",
-      "Least-privilege access controls internally. Audit logs on every privileged action.",
-      "Cloud infrastructure on hardened, SOC 2 Type II-aligned providers.",
-      "Designed to operate in HIPAA-grade workflows where the practitioner operates in them. Practitioners running covered workflows can request a BAA in the early-access program.",
-      "Backups and recovery designed for continuity, not theater.",
-    ],
-  },
-  promises: {
-    h: "OUR PROMISES",
-    items: [
-      "We do not sell your data. Ever. Not anonymized. Not aggregated. Not as a \"research partnership.\" Never.",
-      "Practitioner-owned data stays practitioner-owned. Export is a first-class feature, not a retention trap.",
-      "Clients have a path to access, correct, and delete their own data.",
-    ],
-  },
-  limits: {
-    h: "OUR LIMITS",
-    body: "We are pre-seed. We are honest about where the formal certifications sit today and where they are going. We will publish a real trust-and-compliance page when the product opens. If you are an enterprise practitioner or operator with specific compliance needs, write us at team@xeniostechnology.com with subject prefix [SECURITY].",
-  },
-  closer: "Trust is a substrate too. We are building it the same way we are building the rest of this.",
-};
-
-export const privacy = {
-  eyebrow: "PRIVACY",
-  h1: "Privacy.",
-  paragraphs: [
-    "This boilerplate privacy statement covers the marketing site at xeniostechnology.com. We will publish a full data-protection policy when the product opens.",
-    "We collect only the information you give us — primarily, your waitlist or contact form submission. We do not sell your data. We do not share your email with third parties. We use Resend to deliver email and Replit to host this site.",
-    "We use first-party, privacy-respecting analytics only. We do not run third-party advertising trackers.",
-    "You can request that we remove your email and any personal information we hold by writing to team@xeniostechnology.com.",
-  ],
-};
-
-export const terms = {
-  eyebrow: "TERMS",
-  h1: "Terms of use.",
-  paragraphs: [
-    "This site is a marketing and waitlist surface for Xenios Technologies, Inc., a Delaware corporation headquartered in Austin, Texas. By using it you agree to use it lawfully and not to attempt to disrupt the service.",
-    "Xenios is software infrastructure for practitioners. Nothing on this site is medical advice, a medical device, or a substitute for clinical judgment.",
-    "We may update these terms as we approach product launch. The current version always lives at /terms. For questions, write team@xeniostechnology.com.",
-  ],
-};
+export const FAQ_QA: { q: string; a: string }[] = [
+  { q: "What is xenios.?", a: "xenios. (Xenios Technologies, Austin, TX) is the AI-native operating system for proactive and preventive health practitioners — a multi-agent OS that augments the practitioner instead of replacing them." },
+  { q: "Who is xenios. built for?", a: "Proactive health practitioners — strength coaches, longevity clinicians, GLP-1 specialists, functional medicine MDs, registered dietitians, recovery coaches, mental performance coaches, and the rest of the proactive stack." },
+  { q: "How does xenios. use AI?", a: "xenios. is a multi-agent system. Eight specialized agents — Onboarding, Protocol, Check-in, Communication, Education, Outcomes, Billing, Compliance — work in the practitioner's voice, under their judgment, with HIPAA-aware logging and scope-of-practice guardrails." },
+  { q: "Does xenios. integrate with wearables and labs?", a: "xenios. is designed to connect with WHOOP, Oura, Function Health, Levels, Eight Sleep, Inside Tracker, Hone, and the wider proactive health ecosystem. Brand names are property of their respective owners; integration availability varies." },
+  { q: "Where is xenios. based?", a: "Austin, Texas. All roles are remote, Austin preferred. The team comes from $710M+ in prior exits, including FinDox and InstaMed." },
+];
 
 export const content = {
-  contact,
-  nav,
-  ribbon,
-  socials,
-  footer,
-  audienceTiles: audienceTilesWithPresets,
-  ecosystemNodes,
-  home,
-  manifesto,
-  product,
-  contactPage,
-  investors,
-  partners,
-  waitlistPage,
-  waitlistForm,
-  about,
-  careers,
-  faq,
-  security,
-  privacy,
-  terms,
+  contact: {
+    email: "team@xeniostechnology.com",
+    location: "Austin, TX",
+  },
+  socials: [
+    { label: "Instagram @officialxenios", url: "https://www.instagram.com/officialxenios" },
+    { label: "LinkedIn /company/officialxenios", url: "https://www.linkedin.com/company/officialxenios" },
+  ],
+  ribbon: {
+    prefix: "xenios is in stealth. early access opens in waves.",
+    cta: "join the waitlist →",
+    href: "/waitlist",
+  },
+  nav: {
+    items: [
+      { href: "/product", label: "Product" },
+      { href: "/for-practitioners", label: "Practitioners" },
+      { href: "/ecosystem", label: "Ecosystem" },
+      { href: "/network", label: "Network" },
+      { href: "/about", label: "About" },
+      { href: "/careers", label: "Careers" },
+    ],
+    cta: "Join Waitlist",
+  },
+  footer: {
+    tagline: "the proactive health OS.",
+    bottom: "© 2026 xenios technologies · Austin, TX · stealth",
+    disclaimer: "Xenios is software, not medical care.",
+    sitemap: [
+      { href: "/", label: "Home" },
+      { href: "/product", label: "Product" },
+      { href: "/for-practitioners", label: "Practitioners" },
+      { href: "/ecosystem", label: "Ecosystem" },
+      { href: "/network", label: "Network" },
+      { href: "/about", label: "About" },
+      { href: "/careers", label: "Careers" },
+      { href: "/waitlist", label: "Waitlist" },
+      { href: "/contact", label: "Contact" },
+    ],
+    legal: [
+      { href: "/privacy", label: "privacy" },
+      { href: "/terms", label: "terms" },
+    ],
+  },
+
+  home: {
+    seo: {
+      title: "xenios. — the proactive health OS",
+      description: "The AI-native operating system for proactive and preventive health practitioners. Built in Austin. Join 550+ on the waitlist.",
+      path: "/",
+    },
+    hero: {
+      counterPill: "on the waitlist · live",
+      headlinePrefix: "xenios. is the proactive health OS for",
+      subhead: "Connecting every dot in the proactive health ecosystem.",
+      lede: "550+ practitioners already in line — from boutique strength studios to longevity clinics, GLP-1 programs, and pro-sports performance teams.",
+      primaryCta: "Join the waitlist →",
+      secondaryCta: "How it works",
+    },
+    whoEyebrow: "WHO'S SIGNING UP",
+    whoChips: [
+      "Boutique strength studios",
+      "Longevity clinics",
+      "GLP-1 programs",
+      "Functional medicine practices",
+      "Pro-sports performance teams",
+      "RDs and nutrition coaches",
+      "Concierge clinicians",
+      "Peptide protocol practices",
+    ],
+    whoSubline: "Built for the people who work with WHOOP, Oura, Function Health, Levels, Eight Sleep, and the rest of the proactive health stack.",
+    movement: {
+      eyebrow: "THE PROACTIVE HEALTH MOVEMENT",
+      h2: "The proactive health economy is the largest, fastest-growing health market on earth.",
+      paras: [
+        "The global wellness economy reached $6.3 trillion in 2023 and is projected to hit $9 trillion by 2028 (Global Wellness Institute, 2024). Cash-pay wellness, GLP-1 prescribing, longevity diagnostics, and continuous biometrics are reshaping primary care faster than any incumbent EMR can keep up.",
+        "The practitioners building this future — coaches, longevity clinicians, GLP-1 specialists, RDs, FM physicians — have been running their entire practice across a dozen disconnected tools. xenios. is the OS that finally unifies them.",
+      ],
+      stats: [
+        "$6.3T — global wellness economy in 2023 (Global Wellness Institute, 2024)",
+        "$9T — projected by 2028",
+        "$710M+ — prior exits from the team",
+      ],
+    },
+    builtFor: {
+      eyebrow: "BUILT FOR",
+      h2: "One operating system for every proactive health practitioner.",
+    },
+    ecosystem: {
+      eyebrow: "DESIGNED TO CONNECT WITH",
+      h2: "Designed to connect to every dot.",
+      sub: "xenios. is the operating system; the ecosystem is the field it plays on.",
+      disclaimer: "Brand names are property of their respective owners. xenios. is designed to connect with the proactive health ecosystem; integration availability varies by partner.",
+    },
+    multiAgent: {
+      eyebrow: "THE MULTI-AGENT OS",
+      h2: "An OS, not an app. Agents, not workflows.",
+      body: "Every practice gets a team of specialized agents that work in your voice, under your judgment, never replacing you. They onboard your clients, write protocols in your style, check in on schedule, communicate with intelligence, surface education, track outcomes, send invoices, and stay compliant — so you can serve 10x to 100x the clients with 10x the depth of care.",
+    },
+    networkBlock: {
+      eyebrow: "THE PRACTITIONER NETWORK",
+      h2: "The proactive health team that finally talks to itself.",
+      paras: [
+        "A personal trainer hands off to an RD. The RD pings a functional medicine MD for a lab review. The MD sends a longevity panel to the client's diagnostics provider. The recovery coach loops in for return-to-training.",
+        "On xenios., that handoff happens agent-to-agent — context preserved, scope respected, client experience seamless. Referral revenue routes back to the originator automatically.",
+      ],
+    },
+    threeStrip: {
+      eyebrow: "THE OS LAYER",
+      items: [
+        { num: "01", title: "Living Profile", body: "Every metric, every protocol, every conversation in one continuously updated profile.", preset: "grad-01-dawn" as GradientPreset },
+        { num: "02", title: "Protocol Engine", body: "Programming, nutrition, recovery, supplementation — written in your voice, adapted in real time.", preset: "grad-04-meridian" as GradientPreset },
+        { num: "03", title: "Outcomes Layer", body: "Biomarkers, behavior, and subjective markers tracked into measurable client outcomes.", preset: "grad-06-horizon" as GradientPreset },
+      ],
+    },
+    revenue: {
+      eyebrow: "NEW REVENUE STREAMS",
+      h2: "Growth no competitor can offer.",
+      body: "Because xenios. is the OS layer — connected to wearables, labs, GLP-1 pharmacies, supplements, and the practitioner network — every practitioner unlocks revenue lines that have been locked away inside disconnected platforms.",
+    },
+    heritage: {
+      eyebrow: "HERITAGE",
+      h2: "Built by operators behind $710M+ in prior exits — including FinDox and InstaMed.",
+      sub: "Stealth. Pre-seed. Building in Austin.",
+    },
+    finalCta: {
+      eyebrow: "EARLY ACCESS",
+      h2: "Join the proactive health OS.",
+      sub: "No spam. You'll get one email when we open early access.",
+      primary: "Join the waitlist →",
+      secondary: "Read the manifesto",
+    },
+    commonQuestions: {
+      eyebrow: "COMMON QUESTIONS",
+      h2: "Five answers, often asked.",
+    },
+  },
+
+  product: {
+    seo: {
+      title: "Product — xenios. proactive health OS",
+      description: "Multi-agent AI for coaches, clinicians, and longevity practitioners. Living profiles, protocols, ecosystem connectors, outcomes.",
+      path: "/product",
+    },
+    eyebrow: "THE PRODUCT",
+    h1: "The proactive health OS.",
+    sub: "Seven capabilities. One operating system. Eight agents under your judgment.",
+    capabilities: [
+      { num: "01", name: "Living Client Profile", line: "Every metric, every protocol, every conversation in one continuously updated profile.", preset: "grad-01-dawn" as GradientPreset },
+      { num: "02", name: "Protocol Engine", line: "Programming, nutrition, recovery, supplementation — written in your voice, adapted in real time.", preset: "grad-02-tide" as GradientPreset },
+      { num: "03", name: "Coach Agent", line: "Your AI second-in-command. Drafts check-ins, summarizes data, never replaces your judgment.", preset: "grad-03-fieldwork" as GradientPreset },
+      { num: "04", name: "Ecosystem Connector", line: "Designed to plug into wearables, labs, CGM, GLP-1, recovery, and nutrition platforms.", preset: "grad-04-meridian" as GradientPreset },
+      { num: "05", name: "Outcomes Layer", line: "Biomarkers, behavior, and subjective markers tracked into measurable client outcomes.", preset: "grad-05-meadow" as GradientPreset },
+      { num: "06", name: "The Practitioner Network", line: "Agent-to-agent referrals across the proactive health team.", preset: "grad-06-horizon" as GradientPreset },
+      { num: "07", name: "The Revenue Layer", line: "Outcome pricing, group cohorts, transparent affiliate flows, network referral revenue. (Coming after launch.)", preset: "grad-04-meridian" as GradientPreset },
+    ],
+    multiAgent: {
+      eyebrow: "MULTI-AGENT ARCHITECTURE",
+      h2: "Eight agents. One practice. Infinite leverage.",
+      principles: [
+        "Voice & judgment first — every agent loads the practitioner's voice corpus and decision rules.",
+        "HIPAA-aware — PHI flagged, encrypted, logged.",
+        "Agents talk to each other — shared context, shared client profile, no copy-paste.",
+        "Agents talk to other practitioners' agents — see the practitioner network.",
+        "100× promise — one practitioner can now serve 10× to 100× the clients with 10× the depth of care.",
+      ],
+    },
+    network: {
+      eyebrow: "THE PRACTITIONER NETWORK",
+      h2: "The proactive health team that finally talks to itself.",
+      body: "Today, a client wired into proactive health works with five-plus practitioners, none of whom share context. xenios. solves that.",
+      bullets: [
+        "Agent-mediated handoff preserves the full client profile, history, and originating protocol.",
+        "Scope-aware — each receiving agent operates only inside its practitioner's scope.",
+        "Referral revenue routes automatically back to the originator.",
+        "Network directory of xenios. practitioners filtered by modality, geography, verified credentials.",
+      ],
+      flowExample: "Trainer → RD → FM MD → longevity panel provider → recovery coach → mental performance coach. One client. One unified protocol. Six practitioners, all paid, all in context, all in their voice.",
+    },
+    revenue: {
+      eyebrow: "REVENUE LAYER (COMING AFTER LAUNCH)",
+      h2: "Growth no competitor can offer.",
+      body: "Ten new revenue lines unlocked specifically because xenios. is the OS + agent + ecosystem layer:",
+      lines: [
+        "Outcome-based pricing — charge on measurable client wins, enabled by the Outcomes Layer.",
+        "Recurring digital products — Protocol Agent generates courses, programs, content from existing protocols; sold as evergreen.",
+        "Group cohorts — one protocol, many clients, agent-managed; cohorts of 50 without losing personalization.",
+        "Transparent affiliate / device revenue — supplements, recovery, sleep — disclosed and tracked.",
+        "Network referral revenue — automatic routing when handing off to another xenios. practitioner.",
+        "Lab & longevity panel reorder revenue — recurring revenue on Function Health, Inside Tracker, Hone, Marek panels.",
+        "GLP-1 and peptide protocol revenue where legally permissible in the practitioner's jurisdiction.",
+        "Corporate wellness contracts — one practitioner serves an entire company team via the OS.",
+        "HSA / FSA-eligible cash-pay services flagged automatically by the Billing Agent.",
+        "Premium concierge tier — 24/7 agent access, white-glove, higher ARPU.",
+      ],
+      footnote: "Frame all ten as enabled by, not promised by the platform; \"coming after launch\" applies to the full Revenue Layer module.",
+    },
+    glossary: {
+      eyebrow: "GLOSSARY",
+      items: [
+        { term: "proactive health OS", def: "An operating system layer — not a workflow tool — that unifies the practitioner's clients, agents, and ecosystem connections in one continuously updated profile." },
+        { term: "agentic AI", def: "AI that takes action — drafts, schedules, summarizes, escalates — under explicit practitioner-defined guardrails, rather than answering one prompt at a time." },
+        { term: "multi-agent system", def: "Eight specialized agents (Onboarding, Protocol, Check-in, Communication, Education, Outcomes, Billing, Compliance) that share context and operate inside scope of practice." },
+        { term: "professional network", def: "Agent-to-agent handoffs between xenios. practitioners with referral revenue routed automatically back to the originator." },
+        { term: "outcomes layer", def: "Longitudinal aggregation of biomarker, behavior, and subjective data into measurable client outcomes." },
+      ],
+    },
+    closer: {
+      h: "Built for the practitioners building the next era of care.",
+      primary: "Join the waitlist →",
+      secondary: "See the ecosystem",
+    },
+  },
+
+  forPractitioners: {
+    seo: {
+      title: "Built for proactive health practitioners — xenios.",
+      description: "Strength coaches, longevity clinicians, GLP-1 specialists, RDs, FM physicians — one OS for proactive practice.",
+      path: "/for-practitioners",
+    },
+    eyebrow: "BUILT FOR",
+    h1: "Built for proactive health practitioners.",
+    sub: "Eighteen practice types. One operating system. Designed to connect with the proactive stack you already use.",
+    closer: {
+      h: "Whatever you practice, the OS speaks your modality.",
+      body: "Every audience card maps to a tailored agent persona, a curated ecosystem connector list, and a scope-of-practice guardrail set.",
+      primary: "Join the waitlist →",
+      secondary: "Read the product",
+    },
+  },
+
+  ecosystem: {
+    seo: {
+      title: "The proactive health ecosystem — xenios.",
+      description: "Designed to connect with WHOOP, Oura, Function Health, Levels, Eight Sleep, and the wider proactive health stack.",
+      path: "/ecosystem",
+    },
+    eyebrow: "THE ECOSYSTEM",
+    h1: "The proactive health ecosystem.",
+    sub: "Fifty-two names across thirteen clusters. xenios. is designed to connect with all of them.",
+    disclaimer: "Brand names are property of their respective owners. xenios. is designed to connect with the proactive health ecosystem; integration availability varies by partner. We do not claim partnership or endorsement.",
+    closer: {
+      h: "If a dot in proactive health is missing from this list, tell us.",
+      primary: "Join the waitlist →",
+      secondary: "Suggest an integration",
+    },
+  },
+
+  network: {
+    seo: {
+      title: "The practitioner network — xenios.",
+      description: "Agent-to-agent referrals across the proactive health team. Context preserved. Scope respected. Revenue routed back.",
+      path: "/network",
+    },
+    eyebrow: "THE NETWORK",
+    h1: "The proactive health team that finally talks to itself.",
+    sub: "Today, a client wired into proactive health works with five-plus practitioners — none of whom share context. xenios. solves that.",
+    pillars: [
+      { num: "01", title: "Agent-mediated handoff", body: "Full client profile, history, and originating protocol travel with the referral. No re-intake. No lost context." },
+      { num: "02", title: "Scope-aware", body: "Each receiving agent operates only inside its practitioner's scope of practice. Compliance Agent enforces it." },
+      { num: "03", title: "Referral revenue routing", body: "Revenue from a successful handoff routes automatically back to the originator. Transparent. Tracked. On every payout." },
+      { num: "04", title: "Network directory", body: "Discoverable directory of xenios. practitioners filtered by modality, geography, and verified credentials." },
+    ],
+    flow: {
+      eyebrow: "EXAMPLE FLOW",
+      h2: "One client. One unified protocol. Six practitioners.",
+      steps: [
+        "Trainer originates the client and sets the strength baseline.",
+        "RD picks up nutrition with the trainer's training load already loaded.",
+        "FM MD reviews labs the RD flagged — no second intake.",
+        "Longevity panel provider runs imaging on the MD's standing order.",
+        "Recovery coach inherits HRV trends and panel results.",
+        "Mental performance coach loops in with the full longitudinal profile.",
+      ],
+      footnote: "All paid. All in context. All in their voice.",
+    },
+    closer: {
+      h: "The handoff is the product.",
+      primary: "Join the waitlist →",
+      secondary: "See the product",
+    },
+  },
+
+  about: {
+    seo: {
+      title: "About xenios. — built in Austin",
+      description: "From the team behind $710M+ in prior exits, including FinDox and InstaMed.",
+      path: "/about",
+    },
+    eyebrow: "ABOUT",
+    h1: "Built by operators behind $710M+ in prior exits.",
+    sub: "Including FinDox and InstaMed. Stealth. Pre-seed. Building in Austin.",
+    paragraphs: [
+      "xenios. (Xenios Technologies, Austin, TX) is the AI-native operating system for proactive and preventive health practitioners. We started this because the practitioners who are actually building the future of preventive care have been running their entire practice across a dozen disconnected tools — and the tools weren't built for them.",
+      "Healthcare's incumbent stack was built for sick care, billing codes, and reactive medicine. The proactive health practitioner — the strength coach with a $400/month membership, the longevity clinic running quarterly panels, the GLP-1 program titrating across a hundred clients — has been left to stitch their own OS out of spreadsheets, group chats, and a half-dozen narrow apps.",
+      "xenios. is the OS that finally unifies them. Multi-agent. Practitioner-voiced. HIPAA-aware. Designed to connect with the proactive stack the practitioner already uses — never to replace the practitioner.",
+    ],
+    beliefsHeader: "What we believe",
+    beliefs: [
+      "Care moves upstream. The next decade of healthcare is proactive, not reactive.",
+      "The practitioner is the unit of compounding. Software augments — it doesn't replace.",
+      "Agents work for the practitioner — never around them. Voice and judgment first.",
+      "The ecosystem is the field, not the product. xenios. is the operating system.",
+      "Networks beat silos. Agent-to-agent handoffs are the future of multi-disciplinary care.",
+    ],
+    teamBlock: {
+      h: "From the team behind",
+      body: "$710M+ in prior exits including FinDox and InstaMed. We don't put founder photos on stealth sites. We don't list team names. The work speaks first.",
+    },
+    closer: {
+      h: "Stealth. Pre-seed. Building in Austin.",
+      primary: "Join the waitlist →",
+      secondary: "Open careers",
+    },
+  },
+
+  careers: {
+    seo: {
+      title: "Careers — xenios. (remote, Austin preferred)",
+      description: "Help build the operating system for proactive health. Remote, Austin preferred.",
+      path: "/careers",
+    },
+    eyebrow: "CAREERS",
+    h1: "Help build the operating system for proactive health.",
+    sub: "Remote, Austin preferred. All roles are founding. All ship product in their first month.",
+    howWeWork: {
+      h: "How we work",
+      items: [
+        "Remote-first, Austin-preferred. Quarterly in-person weeks.",
+        "Async by default; meetings are scheduled, short, and have an artifact.",
+        "Product, design, and engineering ship together — no throw-overs.",
+        "We default to writing — RFCs, decision memos, interview scorecards.",
+        "Compensation: meaningful equity + market cash. Pre-seed band.",
+      ],
+    },
+    rolesEyebrow: "OPEN ROLES",
+    roles: [
+      { num: "01", title: "Founding engineer (full-stack)", eyebrow: "ENG", body: "Own the OS layer end-to-end — from agent runtime to client UI. Build with React, TypeScript, and the multi-agent runtime.", location: "Remote · Austin preferred", subject: "[ROLE — Founding engineer]", preset: "grad-01-dawn" as GradientPreset },
+      { num: "02", title: "Founding designer (product + brand)", eyebrow: "DESIGN", body: "Carry the brand from the marketing site into the product surface. Heavy geometric sans, atmospheric gradients, editorial rigor.", location: "Remote · Austin preferred", subject: "[ROLE — Founding designer]", preset: "grad-02-tide" as GradientPreset },
+      { num: "03", title: "Agent / ML engineer", eyebrow: "ENG", body: "Design the multi-agent runtime — voice loading, scope enforcement, agent-to-agent handoff, observability.", location: "Remote · Austin preferred", subject: "[ROLE — Agent engineer]", preset: "grad-04-meridian" as GradientPreset },
+      { num: "04", title: "Founding GTM / practitioner relations", eyebrow: "GTM", body: "Run the early-access cohorts. Onboard the first hundred practices. Turn live use into product feedback.", location: "Remote · Austin preferred", subject: "[ROLE — GTM]", preset: "grad-05-meadow" as GradientPreset },
+      { num: "05", title: "Compliance & clinical operations", eyebrow: "OPS", body: "Stand up HIPAA posture, scope-of-practice guardrails, and the legal/regulatory surface across all 18 practitioner types.", location: "Remote · Austin preferred", subject: "[ROLE — Compliance]", preset: "grad-06-horizon" as GradientPreset },
+    ],
+    closer: {
+      h: "Don't see your role?",
+      body: "If you can prove you should be on the founding team, write us with a portfolio and the role you'd build for yourself.",
+      subject: "[ROLE — Open application]",
+    },
+  },
+
+  waitlistPage: {
+    seo: {
+      title: "Join the xenios. waitlist",
+      description: "Early access to the proactive health OS.",
+      path: "/waitlist",
+    },
+    eyebrow: "EARLY ACCESS",
+    h1: "Be on the list when the proactive health OS ships.",
+    sub: "We're opening early access in waves. The waitlist decides the order. Tell us a little about your practice. We do the rest.",
+    counterSuffix: "practitioners on the waitlist · updated in real time",
+    successTitle: "YOU'RE IN",
+    successPositionLabel: "on the waitlist",
+    successBody: "We sent a confirmation to {email}. We'll come back when early access opens.",
+    successLinks: [
+      { label: "Follow along on Instagram @officialxenios", href: "https://www.instagram.com/officialxenios" },
+      { label: "Connect on LinkedIn /company/officialxenios", href: "https://www.linkedin.com/company/officialxenios" },
+    ],
+    successCloser: "Tell another practitioner. The network only works if the right people show up.",
+    trustBlock: [
+      "We do not sell, share, or rent your data. We use it to decide who to onboard, in what order, and how to talk to you when early access opens.",
+      "One email per wave. You can unsubscribe with a single click.",
+      "xenios. is software, not medical care.",
+    ],
+  },
+
+  waitlistForm: {
+    submit: "Join the waitlist →",
+    submitting: "joining…",
+    consentRequired: "Please accept the privacy notice to continue.",
+    errorGeneric: "Something broke on our side. Try again in a moment.",
+    fields: {
+      firstName: { label: "First name", placeholder: "First name" },
+      lastName: { label: "Last name", placeholder: "Last name" },
+      email: { label: "Email", placeholder: "you@practice.com" },
+      practitionerType: { label: "What kind of practice?", placeholder: "Choose one" },
+      city: { label: "City", placeholder: "Austin" },
+      country: { label: "Country", placeholder: "United States" },
+      freeText: { label: "Anything you want us to know? (optional)", placeholder: "What you do, who you serve, what's broken in your stack today." },
+      howHeard: { label: "How did you hear about us? (optional)", placeholder: "A practitioner, a feed, a referral, the wind…" },
+      consent: { label: "I've read how xenios. handles waitlist data and I'm happy for you to email me when early access opens." },
+    },
+  },
+
+  contactPage: {
+    seo: {
+      title: "Contact xenios.",
+      description: "team@xeniostechnology.com — single inbox for press, partners, candidates, and practitioners.",
+      path: "/contact",
+    },
+    eyebrow: "CONTACT",
+    h1: "One inbox. One human team. Two business days.",
+    sub: "Tell us who you are. Subject lines are auto-prefixed so the right inbox label catches it.",
+    formEyebrow: "WRITE TO US",
+    cards: [
+      { num: "01", title: "Practitioners", body: "If you run a proactive practice and want early access, the waitlist is the fastest path.", href: "/waitlist", hrefLabel: "Join the waitlist →", subject: "[PRACTITIONER]" },
+      { num: "02", title: "Investors", body: "Pre-seed. Inbound only. Skip the deck request — write us with the thesis you'd want us to share back.", subject: "[INVESTOR]" },
+      { num: "03", title: "Press & creators", body: "Stealth means we're not pitching coverage yet, but we read every note and reply when there's a fit.", subject: "[PRESS]" },
+      { num: "04", title: "Integration partners", body: "If you build for the proactive stack — wearables, labs, recovery, GLP-1, supplements — we want to talk.", subject: "[PARTNER]" },
+      { num: "05", title: "Candidates", body: "All open roles live on careers. Don't see a fit? Write anyway.", href: "/careers", hrefLabel: "Open roles →", subjectMulti: ["[ROLE — Founding engineer]", "[ROLE — Founding designer]", "[ROLE — Agent engineer]", "[ROLE — GTM]", "[ROLE — Compliance]", "[ROLE — Open application]"] },
+      { num: "06", title: "Anything else", body: "If none of the above quite fit, write to us anyway. The team reads every note.", subject: "[HELLO]" },
+    ],
+    personaOptions: [
+      { value: "practitioner" as const, label: "A proactive health practitioner", prefix: "[PRACTITIONER]" },
+      { value: "investor" as const, label: "An investor", prefix: "[INVESTOR]" },
+      { value: "journalist_creator" as const, label: "A journalist or creator", prefix: "[PRESS]" },
+      { value: "integration_partner" as const, label: "An integration / brand partner", prefix: "[PARTNER]" },
+      { value: "candidate" as const, label: "A candidate for a role", prefix: "[ROLE — OPEN]" },
+      { value: "other" as const, label: "Something else", prefix: "[HELLO]" },
+    ],
+    successTitle: "we got it.",
+    successBody: "The xenios. team reads every message and comes back within two business days.",
+    closer: { h: "One inbox. One team.", body: "team@xeniostechnology.com — that's it. No DM black hole. No 12-step ticket flow." },
+  },
+
+  privacy: {
+    seo: { title: "Privacy — xenios.", description: "How xenios. handles waitlist data.", path: "/privacy" },
+    eyebrow: "LEGAL",
+    h1: "Privacy.",
+    paragraphs: [
+      "We collect what you give us through the waitlist and contact forms — first name, last name, email, practice type, city, country, and the optional fields you choose to fill in. We attach a coarse IP-derived country and a user-agent string for spam and abuse prevention.",
+      "We use this data to decide who to onboard, in what order, and how to talk to you when early access opens. We do not sell, share, or rent your data. We do not use it for advertising profiling.",
+      "Email goes through Resend. Data is stored on managed PostgreSQL inside our cloud account. Backups are encrypted at rest and in transit.",
+      "You can ask us to forget you, export your data, or unsubscribe by writing to team@xeniostechnology.com. We will action requests within fourteen days.",
+      "When the product ships and starts handling client PHI, we'll publish a separate, more substantive privacy policy that covers HIPAA posture, BAAs, sub-processors, and data residency. Until then, this site is a marketing surface and does not collect or process client PHI.",
+    ],
+  },
+
+  terms: {
+    seo: { title: "Terms — xenios.", description: "Marketing-site terms of use.", path: "/terms" },
+    eyebrow: "LEGAL",
+    h1: "Terms of use.",
+    paragraphs: [
+      "This site is a marketing surface for Xenios Technologies, a Delaware corporation operating in Austin, Texas. By using it, you agree to use it lawfully and without attempting to disrupt or compromise its security.",
+      "xenios. is software, not medical care. Nothing on this site, in our emails, in our social posts, or in any future product communication should be construed as medical advice, diagnosis, or treatment. Always consult a qualified clinician for personal health decisions.",
+      "All trademarks, logos, and brand names referenced — including but not limited to WHOOP, Oura, Function Health, Levels, Eight Sleep, Inside Tracker, Hone, Hyperice, Therabody, Plunge, Apple Health, Garmin, Polar, Fitbit, Coros, Stripe, Plaid, Anthropic, OpenAI, and others listed in the ecosystem — are the property of their respective owners. No partnership, endorsement, or sponsorship is claimed by Xenios Technologies.",
+      "Until early access opens and a master service agreement is in place, no contract is formed by joining the waitlist or contacting us.",
+      "These terms can change. We'll publish the date of the most recent version when they do.",
+    ],
+  },
 };

@@ -1,19 +1,17 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
-import Manifesto from "@/pages/Manifesto";
 import Product from "@/pages/Product";
-import Contact from "@/pages/Contact";
-import Investors from "@/pages/Investors";
-import Partners from "@/pages/Partners";
-import Waitlist from "@/pages/Waitlist";
+import ForPractitioners from "@/pages/ForPractitioners";
+import Ecosystem from "@/pages/Ecosystem";
+import Network from "@/pages/Network";
 import About from "@/pages/About";
 import Careers from "@/pages/Careers";
-import FAQ from "@/pages/FAQ";
-import Security from "@/pages/Security";
+import Waitlist from "@/pages/Waitlist";
+import Contact from "@/pages/Contact";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
 import NotFound from "@/pages/not-found";
@@ -22,18 +20,22 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/manifesto" component={Manifesto} />
       <Route path="/product" component={Product} />
-      <Route path="/contact" component={Contact} />
-      <Route path="/investors" component={Investors} />
-      <Route path="/partners" component={Partners} />
-      <Route path="/waitlist" component={Waitlist} />
+      <Route path="/for-practitioners" component={ForPractitioners} />
+      <Route path="/ecosystem" component={Ecosystem} />
+      <Route path="/network" component={Network} />
       <Route path="/about" component={About} />
       <Route path="/careers" component={Careers} />
-      <Route path="/faq" component={FAQ} />
-      <Route path="/security" component={Security} />
+      <Route path="/waitlist" component={Waitlist} />
+      <Route path="/contact" component={Contact} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
+      {/* Retired v2 routes — redirect to nearest v3 home */}
+      <Route path="/manifesto"><Redirect to="/about" /></Route>
+      <Route path="/investors"><Redirect to="/contact" /></Route>
+      <Route path="/partners"><Redirect to="/ecosystem" /></Route>
+      <Route path="/faq"><Redirect to="/product" /></Route>
+      <Route path="/security"><Redirect to="/privacy" /></Route>
       <Route component={NotFound} />
     </Switch>
   );

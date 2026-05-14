@@ -1,10 +1,12 @@
 import PageShell from "@/components/PageShell";
+import SeoHead from "@/components/SeoHead";
 import { content } from "@/lib/content";
 
 export default function Privacy() {
   const P = content.privacy;
   return (
     <PageShell>
+      <SeoHead {...P.seo} />
       <section className="bg-paper section-y" data-testid="section-privacy">
         <div className="container-x">
           <p className="mono-cap text-ink-mute mb-6">{P.eyebrow}</p>

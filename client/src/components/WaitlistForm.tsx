@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { content, audienceTiles } from "@/lib/content";
+import { content, PRACTITIONER_TILES } from "@/lib/content";
 import { waitlistService } from "@/lib/waitlist-service";
 import type { PRACTITIONER_TYPE_VALUES } from "@shared/schema";
 
@@ -112,7 +112,7 @@ export default function WaitlistForm({ onSuccess, onDark = false }: Props) {
         <label htmlFor="wl-ptype" className={labelCls}>{F.fields.practitionerType.label}</label>
         <select id="wl-ptype" required value={form.practitionerType} onChange={(e) => update("practitionerType", e.target.value)} className={inputCls} data-testid="select-practitioner-type">
           <option value="">{F.fields.practitionerType.placeholder}</option>
-          {audienceTiles.map((t) => (
+          {PRACTITIONER_TILES.map((t) => (
             <option key={t.value} value={t.value}>{t.label}</option>
           ))}
           <option value="other">Other / something we missed</option>
