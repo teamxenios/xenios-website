@@ -3,26 +3,38 @@
 @tailwind utilities;
 
 /* ============================================================
-   xenios v5 — Design tokens & primitives
-   Brand: cream + ink, gradient pill accent, heavy geometric sans
+   xenios v6 — Design tokens & primitives
+   Brand: black + white base, purple/teal/lilac secondary,
+   purple→blue→teal gradient accents, heavy geometric sans
 ============================================================ */
 
 :root {
-  /* Color */
-  --paper: #F4EFE6;
-  --paper-2: #ECE6DA;
-  --ink: #0E0E0C;
-  --ink-2: #2A2A26;
-  --ink-mute: #6B6B62;
-  --rule: rgba(14, 14, 12, 0.10);
-  --pulse: #FF5A1F;
+  /* Color — primary */
+  --paper: #FFFFFF;
+  --paper-2: #F4F4F5;
+  --ink: #0E0E0E;
+  --ink-2: #2A2A2A;
+  --ink-mute: #6B6B6B;
+  --rule: rgba(14, 14, 14, 0.10);
+
+  /* Color — accents */
+  --pulse: #7C3AED;       /* purple — primary accent */
+  --teal:  #14B8C7;       /* teal — secondary accent */
+  --lilac: #B89AFA;       /* light purple — tertiary */
   --error: #B83A1F;
 
-  /* Gradient pill stops (rotating-word hero) */
-  --pill-1: #F4B98A;
-  --pill-2: #E8836E;
-  --pill-3: #B964D4;
-  --pill-4: #5D7CFF;
+  /* Neutral ramp (deck-influenced grays) */
+  --gray-900: #1F1F1F;
+  --gray-700: #4A4A4A;
+  --gray-500: #8A8A8A;
+  --gray-300: #D9D9D9;
+  --gray-100: #EFEFEF;
+
+  /* Gradient pill stops (purple → blue → teal) */
+  --pill-1: #7C3AED;
+  --pill-2: #5B6CF0;
+  --pill-3: #3B9AE0;
+  --pill-4: #14B8C7;
 
   /* z-index scale (single source of truth) */
   --z-base: 0;
@@ -229,6 +241,10 @@ body {
 .text-ink-muted { color: var(--ink-mute); }
 .text-orange-fire { color: var(--pulse); }
 .bg-orange-fire { background-color: var(--pulse); }
+.text-teal { color: var(--teal); }
+.bg-teal { background-color: var(--teal); }
+.text-lilac { color: var(--lilac); }
+.bg-lilac { background-color: var(--lilac); }
 
 /* ============================================================
    Buttons (4px radius, no gradients, square feel)
@@ -424,12 +440,12 @@ body {
 }
 .grad > * { position: relative; z-index: var(--z-content); }
 
-.grad-01-dawn { background: radial-gradient(120% 80% at 20% 10%, #FFE4C7 0%, #F8C9A1 40%, #F4EFE6 100%); }
-.grad-02-tide { background: radial-gradient(120% 90% at 80% 20%, #DEEAF0 0%, #B7CFD8 50%, #F4EFE6 100%); }
-.grad-03-fieldwork { background: radial-gradient(110% 90% at 30% 80%, #E6E2C9 0%, #C8C496 50%, #F4EFE6 100%); }
+.grad-01-dawn { background: radial-gradient(120% 80% at 20% 10%, #E8DBFF 0%, #C7B0FB 40%, #FFFFFF 100%); }
+.grad-02-tide { background: radial-gradient(120% 90% at 80% 20%, #CFEFF4 0%, #8FD8E1 50%, #FFFFFF 100%); }
+.grad-03-fieldwork { background: radial-gradient(110% 90% at 30% 80%, #EFEFEF 0%, #BFBFBF 50%, #FFFFFF 100%); }
 .grad-04-meridian { background: radial-gradient(120% 100% at 70% 30%, #2A2940 0%, #14131F 60%, #0A0A12 100%); color: var(--paper); }
-.grad-05-meadow { background: radial-gradient(110% 90% at 25% 75%, #D9E4C8 0%, #B6C5A0 60%, #F4EFE6 100%); }
-.grad-06-horizon { background: radial-gradient(130% 100% at 80% 80%, #2E1812 0%, #16100C 60%, #0E0E0C 100%); color: var(--paper); }
+.grad-05-meadow { background: radial-gradient(110% 90% at 25% 75%, #DDEFF2 0%, #9BC9D2 60%, #FFFFFF 100%); }
+.grad-06-horizon { background: radial-gradient(130% 100% at 80% 80%, #2A1A4D 0%, #150E2A 60%, #0E0E0E 100%); color: var(--paper); }
 
 .grad.deep, .grad-04-meridian, .grad-06-horizon { color: var(--paper); }
 .grad.deep .text-ink-muted, .grad-04-meridian .text-ink-muted, .grad-06-horizon .text-ink-muted { color: rgba(244,239,230,0.7); }
