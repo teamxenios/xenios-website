@@ -1,0 +1,131 @@
+Replit Prompt — Xenios Coming Soon / Waitlist (one page)
+Goal: Replace the entire current xeniostechnology.com homepage with a single, calm, magazine-grade "coming soon + waitlist" page. No nav, no scrolling sections, no feature lists. One screen. One job: capture the email.
+The new page should pull design DNA from the attached Particular letterhead reference — a Tishman Speyer / BIG / Production / Design & Engineering Venn — and translate that aesthetic into Xenios's existing visual world.
+
+1. The design reference (what to copy structurally)
+The Particular letterhead works because of five moves. Use all five:
+
+Three overlapping pale circles forming a Venn, centered on the page. Very low opacity (~12–18%). The circle strokes/fills are soft, almost watermark.
+A label sits in the center of each circle and in the center of the intersection. Center label is the brand name — the thing the three forces converge into.
+Wordmark top-left, tiny metadata top-right (a date, an issue number, a status — typeset in monospace at ~10px, uppercase, letter-spaced).
+A single short paragraph of "manifesto" copy in the lower-left corner, monospace, tight, ~9–10px.
+Tiny corner anchors — page number / location / vertical line of running text on the right margin. Generous, almost wasteful whitespace everywhere else.
+
+Do not copy the literal blue circles or the literal Particular labels. Translate the structure into Xenios.
+
+2. Colors (lock to these — pulled from current site + pitch deck)
+Use a light/white page (not the deck's black — the public site is white, keep that). But use the deck's accent gradient as the one moment of color:
+--bg:          #FFFFFF   /* paper white */
+--ink:         #0A0A0A   /* near-black for type */
+--ink-soft:    #6B6B6B   /* metadata, captions */
+--rule:        #E5E5E5   /* hairlines */
+
+/* The Xenios gradient — same one used on the current homepage
+   on the "functional medicine doctors" pill. This is the ONLY
+   color on the page. Use it for the circles and the submit button. */
+--grad-from:   #7C3AED   /* violet */
+--grad-via:    #6366F1   /* indigo */
+--grad-to:     #06B6D4   /* cyan */
+The three overlapping circles each get the gradient, but at very low opacity (12–15%) and mix-blend-mode: multiply so where they overlap the color deepens naturally. That deepening is the visual — it's the whole point.
+
+3. Typography
+
+Headlines / wordmark: a clean grotesque. Use Inter (already in the stack) or Söhne if available. Tight tracking on the wordmark.
+The three circle labels + center label: same grotesque, all lowercase, weight 500, ~22–28px on desktop.
+All metadata, status pills, manifesto paragraph, footer: JetBrains Mono or IBM Plex Mono, uppercase, 10px, letter-spacing 0.12em, color --ink-soft.
+
+One typeface family for content, one mono for chrome. Nothing else.
+
+4. Page layout (one screen, no scroll on desktop ≥1024px)
+A single min-h-screen flex layout with these zones, exactly like the Particular sheet:
+Top bar (horizontal, ~64px tall, hairline rule beneath)
+
+Left: xenios. wordmark (lowercase, period included, weight 600)
+Right: [● LIVE] FOUNDING COHORT · MAY 2026 in mono, 10px uppercase. The ● dot is filled with the gradient and gently pulses (2s ease-in-out infinite).
+
+Center stage (takes the full remaining height, flex-centered)
+The Venn. Three circles, each ~360px diameter on desktop, arranged in the classic three-circle Venn (two on top, one centered below — or one top, two below, your call; mirror the Particular layout).
+
+Left circle label (centered inside the circle, above the intersections): coaches
+Right circle label: trainers
+Bottom circle label: practitioners
+Center label (where all three overlap): the word xenios at ~32px, weight 600, color --ink. This is the visual punchline — three professions, one operating system.
+
+Each circle: gradient fill at 14% opacity, no stroke, mix-blend-mode: multiply. Subtle 20s slow drift animation (each circle translates ±6px on a different phase) so the page breathes. Respect prefers-reduced-motion.
+Headline + waitlist (sits below the Venn, still inside the viewport)
+Centered, max-width ~580px:
+
+Eyebrow (mono, 10px, uppercase, --ink-soft, letter-spaced): THE AI-ADJUNCT OPERATIONS SYSTEM
+Headline (grotesque, 32–40px desktop / 26px mobile, weight 500, leading-tight, --ink):
+"One inbox. One client record. One agent in your voice."
+One line of sub-copy (16px, --ink-soft, leading-relaxed):
+Founding cohort is open. Founder-direct onboarding. Pricing locked for the life of your account.
+
+The form (directly under, single row on desktop, stacked on mobile, max-width 480px):
+
+Email input — borderless, with only a border-bottom: 1px solid var(--rule) that becomes the gradient on focus. Placeholder: your@email.com. No label, no box, no shadow. Just a line and a caret. Generous height (~52px).
+Submit button — pill shape, gradient fill (--grad-from → --grad-via → --grad-to), white text, weight 500, 14px, ~52px tall, ~140px wide. Label: Request access. On hover: slight scale (1.02) and the gradient shifts position.
+Success state replaces the form with a single line in mono, 12px: ▸ ON THE LIST. POSITION #{number}. WE'LL BE IN TOUCH.
+The actual submit handler should POST to whatever waitlist endpoint already exists in the Replit project (check /api/waitlist or similar — keep the existing backend, only the UI changes).
+
+Under the form, one tiny line of mono, 10px, uppercase, --ink-soft:
+● LIVE · 551 ALREADY IN LINE
+(Pull the actual count from the existing site's data if it's wired up; otherwise hardcode 551 — the number shown on the current page.)
+Footer (bottom of viewport, hairline rule above, mono 10px uppercase, --ink-soft)
+A single row, three columns:
+
+Left: XENIOS TECHNOLOGIES, INC. · DELAWARE C-CORP
+Center: AUSTIN, TX · REMOTE FIRST
+Right: TEAM@XENIOSTECHNOLOGY.COM
+
+Right margin (Particular-style vertical text — optional but nice)
+A 10px mono line rotated 90°, pinned to the right edge mid-page, color --ink-soft:
+COHORT 01 / MAY 2026 / CONFIDENTIAL
+
+5. Mobile (<768px)
+
+Top bar collapses: wordmark left, status dot + count right (no full string).
+Venn shrinks to ~240px circles, still overlapping, still the centerpiece.
+Headline drops to 26px, single column form, button full-width under the input.
+Right-margin vertical text hidden.
+Footer stacks into three centered lines.
+
+
+6. What to delete
+Remove everything currently on the page: the long manifesto, the "for you / for them" sections, the strikethrough "Retire the disconnected stack" list, the entire feature grid, the practitioner category list, the "Connected to the proactive health stack" table, the team paragraph, all of it. One page. One Venn. One form. One footer.
+Keep the existing meta tags, OG image, favicon, and any working waitlist API endpoint as-is.
+
+7. The feel — say this back to yourself before shipping
+It should feel like a piece of stationery from an architecture firm. Almost embarrassingly empty. The gradient appears in exactly two places: the three overlapping circles (faint) and the submit button (saturated). Everything else is black ink on white paper with thin mono labels in the corners. No cards, no shadows, no rounded boxes around things, no gradients on text, no "✨" emojis, no glass morphism. If it looks like a SaaS landing page, it's wrong. If it looks like a museum invitation, it's right.
+
+Paste that into Replit as-is. Want me to also draft the actual React/Tailwind component so you can drop it in directly instead of having Replit generate it from scratch?You said: make sure to have social media links etcmake sure to have social media links etc12:18 AMClaude responded: Got it — adding the social links to the prompt.Got it — adding the social links to the prompt. Here's the updated section to append (or you can swap the whole footer block):
+
+Footer (updated — replace the previous footer section)
+Footer pinned to bottom of viewport, hairline rule above (border-top: 1px solid var(--rule)), mono 10px uppercase, --ink-soft. Two rows on desktop, stacked on mobile.
+Row 1 — social + contact (centered, ~32px tall)
+A single horizontal row of links, separated by a thin middle-dot · in --ink-soft. Each link is mono 10px uppercase, letter-spacing 0.12em, color --ink-soft, no underline; on hover the text color transitions to --ink (250ms ease). Use small inline SVG icons (12px, stroke: currentColor, stroke-width: 1.5) to the left of each label — keep them line-icon style, never filled glyphs.
+Order, left to right:
+
+[icon: x/twitter]  X / TWITTER → https://x.com/xeniostech
+[icon: linkedin]  LINKEDIN → https://www.linkedin.com/company/xeniostech
+[icon: instagram]  INSTAGRAM → https://www.instagram.com/officialxenios
+[icon: github]  GITHUB → https://github.com/xeniostech (only render if the handle exists — otherwise omit)
+[icon: mail]  TEAM@XENIOSTECHNOLOGY.COM → mailto:team@xeniostechnology.com
+
+(If any of those handles don't actually exist yet, check the existing site footer for the real URLs and use those instead. Don't invent handles — pull from what's already on the live page.)
+Row 2 — legal / location (hairline rule above this row too, ~32px tall, three columns)
+
+Left: XENIOS TECHNOLOGIES, INC. · DELAWARE C-CORP
+Center: AUSTIN, TX · REMOTE FIRST
+Right: two links separated by · — PRIVACY (/privacy) and TERMS (/terms). Same hover treatment as row 1.
+
+Mobile (<768px)
+
+Row 1 collapses to icon-only (drop the text labels, keep the 12px SVG icons), centered, 24px gap between icons. The mail link stays as the icon → tap opens mail client.
+Row 2 stacks into three centered lines: company, location, then PRIVACY · TERMS on its own line.
+
+
+One more thing for the prompt — favicon + OG
+While you're touching the page, confirm the existing <link rel="icon"> and OG tags still resolve. The current OG image is https://xeniostech.replit.app/opengraph.jpg — keep it. Don't regenerate it.
+
+That's the drop-in. Want me to write the actual React + Tailwind component now so Replit doesn't have to interpret any of this? I can hand you a single .tsx file you paste in.Opus 4.7Claude is AI and 

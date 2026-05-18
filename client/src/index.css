@@ -642,3 +642,347 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   Coming Soon / Single-screen home (Particular-inspired)
+============================================================ */
+.coming-soon-root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #FFFFFF;
+  color: #0A0A0A;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cs-mono {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Top bar */
+.cs-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  border-bottom: 1px solid #E5E5E5;
+  flex-shrink: 0;
+  height: 64px;
+}
+.cs-wordmark {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: #0A0A0A;
+  text-decoration: none;
+}
+.cs-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #6B6B6B;
+  text-transform: uppercase;
+}
+.cs-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7C3AED, #6366F1 50%, #06B6D4);
+  animation: cs-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes cs-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.92); }
+}
+.cs-status-live { color: #0A0A0A; }
+
+/* Right rail vertical text */
+.cs-rail {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: right center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: #6B6B6B;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Stage */
+.cs-stage {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 32px 32px 24px;
+  position: relative;
+}
+
+/* Venn */
+.cs-venn {
+  position: relative;
+  width: 540px;
+  height: 420px;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+.cs-circle {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #7C3AED 0%, #6366F1 55%, #06B6D4 100%);
+  opacity: 0.14;
+  mix-blend-mode: multiply;
+  animation: cs-drift 20s ease-in-out infinite;
+}
+.cs-circle-1 { top: 0; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+.cs-circle-2 { bottom: 0; left: 30px; animation-delay: -6.6s; }
+.cs-circle-3 { bottom: 0; right: 30px; animation-delay: -13.3s; }
+
+@keyframes cs-drift {
+  0%, 100% { transform: translate(0, 0); }
+  25%      { transform: translate(6px, -4px); }
+  50%      { transform: translate(-4px, 4px); }
+  75%      { transform: translate(4px, 6px); }
+}
+.cs-circle-1 { animation-name: cs-drift-1; }
+.cs-circle-2 { animation-name: cs-drift-2; }
+.cs-circle-3 { animation-name: cs-drift-3; }
+@keyframes cs-drift-1 {
+  0%, 100% { transform: translateX(-50%) translate(0, 0); }
+  50%      { transform: translateX(-50%) translate(0, -6px); }
+}
+@keyframes cs-drift-2 {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-5px, 4px); }
+}
+@keyframes cs-drift-3 {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(5px, 4px); }
+}
+
+.cs-venn-label {
+  position: absolute;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 22px;
+  color: #0A0A0A;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+.cs-label-coaches      { top: 56px; left: 50%; transform: translateX(-50%); }
+.cs-label-trainers     { bottom: 56px; left: 90px; }
+.cs-label-practitioners{ bottom: 56px; right: 70px; }
+.cs-venn-center {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  color: #0A0A0A;
+  letter-spacing: -0.015em;
+  pointer-events: none;
+}
+
+/* Pitch + form */
+.cs-pitch {
+  text-align: center;
+  max-width: 580px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.cs-eyebrow {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6B6B6B;
+  margin: 0;
+}
+.cs-headline {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: clamp(26px, 3.6vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.018em;
+  color: #0A0A0A;
+  margin: 0;
+  max-width: 18ch;
+}
+.cs-sub {
+  font-size: 15px;
+  line-height: 1.55;
+  color: #6B6B6B;
+  margin: 0;
+  max-width: 52ch;
+}
+
+.cs-form {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  max-width: 480px;
+  margin-top: 4px;
+  position: relative;
+}
+.cs-input {
+  flex: 1 1 auto;
+  height: 52px;
+  border: none;
+  border-bottom: 1px solid #E5E5E5;
+  background: transparent;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 16px;
+  color: #0A0A0A;
+  padding: 0 4px;
+  outline: none;
+  border-radius: 0;
+  transition: border-color 250ms ease, border-image-source 250ms ease;
+}
+.cs-input::placeholder { color: #BFBFBF; }
+.cs-input:focus {
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, #7C3AED, #6366F1 50%, #06B6D4) 1;
+}
+.cs-submit {
+  flex: 0 0 auto;
+  height: 52px;
+  min-width: 140px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7C3AED, #6366F1 50%, #06B6D4);
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+  color: #FFFFFF;
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 250ms ease, background-position 600ms ease, opacity 250ms ease;
+}
+.cs-submit:hover:not(:disabled) {
+  transform: scale(1.02);
+  background-position: 100% 50%;
+}
+.cs-submit:disabled { opacity: 0.6; cursor: wait; }
+
+.cs-success {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #0A0A0A;
+  margin: 8px 0 0;
+}
+.cs-error {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #B83A1F;
+  margin: 0;
+}
+.cs-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6B6B6B;
+  margin: 4px 0 0;
+}
+
+/* Footer */
+.cs-footer {
+  flex-shrink: 0;
+  border-top: 1px solid #E5E5E5;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6B6B6B;
+}
+.cs-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 32px;
+  height: 36px;
+}
+.cs-footer-legal {
+  border-top: 1px solid #E5E5E5;
+  justify-content: space-between;
+}
+.cs-foot-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #6B6B6B;
+  text-decoration: none;
+  transition: color 250ms ease;
+}
+.cs-foot-link:hover { color: #0A0A0A; }
+.cs-foot-inline { display: inline; gap: 0; }
+.cs-foot-dot { color: #BFBFBF; }
+.cs-foot-col { flex: 1 1 0; }
+.cs-foot-center { text-align: center; }
+.cs-foot-right { text-align: right; }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .cs-topbar { padding: 16px 20px; height: 56px; }
+  .cs-status-full { display: none; }
+  .cs-status-sep { display: none; }
+  .cs-rail { display: none; }
+  .cs-stage { gap: 20px; padding: 20px 20px 16px; }
+  .cs-venn { width: 320px; height: 280px; }
+  .cs-circle { width: 200px; height: 200px; }
+  .cs-circle-2 { left: 10px; }
+  .cs-circle-3 { right: 10px; }
+  .cs-label-coaches { top: 36px; }
+  .cs-label-trainers { bottom: 36px; left: 30px; }
+  .cs-label-practitioners { bottom: 36px; right: 24px; }
+  .cs-venn-center { font-size: 24px; }
+  .cs-venn-label { font-size: 16px; }
+  .cs-headline { font-size: 24px; }
+  .cs-sub { font-size: 14px; }
+  .cs-form { flex-direction: column; }
+  .cs-submit { width: 100%; }
+  .cs-footer-row { padding: 12px 20px; height: auto; gap: 20px; flex-wrap: wrap; }
+  .cs-footer-social .cs-foot-text { display: none; }
+  .cs-footer-social { gap: 24px; }
+  .cs-footer-social .cs-foot-dot { display: none; }
+  .cs-footer-legal { flex-direction: column; gap: 6px; padding: 12px 20px; }
+  .cs-foot-col { flex: none; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-circle, .cs-circle-1, .cs-circle-2, .cs-circle-3 { animation: none !important; }
+  .cs-dot { animation: none !important; }
+}

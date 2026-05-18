@@ -174,6 +174,64 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
+  app.post("/api/waitlist/quick", async (req, res) => {
+    try {
+      if (typeof req.body?.website === "string" && req.body.website.length > 0) {
+        return res.json({ success: true, position: 0, count: 0 });
+      }
+      if (!rateLimit(req)) {
+        return res.status(429).json({ success: false, message: "Too many requests. Please try again in a few minutes." });
+      }
+      const emailParsed = z.string().email().max(254).toLowerCase().trim().safeParse(req.body?.email);
+      if (!emailParsed.success) {
+        return res.status(400).json({ success: false, message: "Please enter a valid email." });
+      }
+      const email = emailParsed.data;
+
+      const idem = await buildIdempotentResponse(email);
+      if (idem) return res.json(idem);
+
+      const ipCountry = (req.headers["x-vercel-ip-country"] as string) || (req.headers["cf-ipcountry"] as string) || null;
+      const userAgent = (req.headers["user-agent"] as string) || null;
+
+      const synthesized = insertWaitlistSchema.parse({
+        firstName: "Friend",
+        lastName: "—",
+        email,
+        practitionerType: "other",
+        city: "—",
+        country: "—",
+        freeText: null,
+        howHeard: "coming-soon",
+      });
+
+      let result;
+      try {
+        result = await storage.createWaitlist(synthesized, { ipCountry, userAgent });
+      } catch (e) {
+        if (isUniqueViolation(e)) {
+          const fallback = await buildIdempotentResponse(email);
+          if (fallback) return res.json(fallback);
+        }
+        throw e;
+      }
+      const { signup, totalCount } = result;
+
+      Promise.allSettled([
+        sendConfirmationEmail({ email: signup.email, firstName: signup.firstName, position: Number(signup.position), totalCount }),
+        sendInternalNotification({ signup, totalCount }),
+      ]).catch(() => {});
+
+      res.json({ success: true, position: Number(signup.position), count: totalCount });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ success: false, message: "Invalid submission." });
+      }
+      console.error("[waitlist/quick] error:", error);
+      res.status(500).json({ success: false, message: "Failed to process submission. Please try again." });
+    }
+  });
+
   app.get("/api/waitlist", adminAuth, async (_req, res) => {
     try {
       const submissions = await storage.getAllWaitlist();
