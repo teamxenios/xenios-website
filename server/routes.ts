@@ -194,14 +194,29 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const ipCountry = (req.headers["x-vercel-ip-country"] as string) || (req.headers["cf-ipcountry"] as string) || null;
       const userAgent = (req.headers["user-agent"] as string) || null;
 
+      const nameRaw = typeof req.body?.name === "string" ? req.body.name.trim().slice(0, 160) : "";
+      const [firstNameRaw, ...rest] = nameRaw.split(/\s+/);
+      const firstName = firstNameRaw || "Friend";
+      const lastName = rest.join(" ").trim() || "—";
+
+      const role = typeof req.body?.role === "string" ? req.body.role.trim().slice(0, 80) : "";
+      const practice = typeof req.body?.practice === "string" ? req.body.practice.trim().slice(0, 80) : "";
+      const about = typeof req.body?.about === "string" ? req.body.about.trim().slice(0, 600) : "";
+
+      const freeTextParts: string[] = [];
+      if (role) freeTextParts.push(`Role: ${role}`);
+      if (practice) freeTextParts.push(`Practice: ${practice}`);
+      if (about) freeTextParts.push(`About: ${about}`);
+      const freeText = freeTextParts.length ? freeTextParts.join(" | ").slice(0, 800) : null;
+
       const synthesized = insertWaitlistSchema.parse({
-        firstName: "Friend",
-        lastName: "—",
+        firstName,
+        lastName,
         email,
         practitionerType: "other",
         city: "—",
         country: "—",
-        freeText: null,
+        freeText,
         howHeard: "coming-soon",
       });
 
