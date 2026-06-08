@@ -4,105 +4,27 @@ import Footer from "@/components/Footer";
 import Wordmark from "@/components/Wordmark";
 
 const NAV_LINKS = [
-  { label: "Product", href: "#product" },
-  { label: "For Professionals", href: "#for-professionals" },
-  { label: "For Teams", href: "#for-teams" },
-  { label: "How It Works", href: "#how-it-works" },
+  { label: "The agents", href: "#agents" },
+  { label: "Who it's for", href: "#who" },
 ];
 
-const PROBLEM_TAGS = [
-  "client check-ins",
-  "program updates",
-  "food logs",
-  "wearable data",
-  "missed messages",
-  "scheduling",
-  "billing",
-  "follow-ups",
-  "progress summaries",
-  "clinical handoffs",
+const PROBLEM_LINES = [
+  "Clients need support between sessions.",
+  "Athletes need context between training days.",
+  "Patients need follow-up between visits.",
 ];
 
-const SOLUTION_CARDS = [
-  {
-    eyebrow: "Xen",
-    title: "The professional workspace.",
-    body: "One inbox, one client record, one place to see what needs your attention.",
-  },
-  {
-    eyebrow: "Athena",
-    title: "The client companion.",
-    body: "A proactive companion that supports your client between sessions, trained around your voice, standards, and methods, with you always in the loop.",
-  },
-  {
-    eyebrow: "Record",
-    title: "A connected health record.",
-    body: "Messages, notes, programs, wearable data, labs, goals, and progress in one longitudinal view.",
-  },
-  {
-    eyebrow: "Care",
-    title: "Clinical support when needed.",
-    body: "When a client reaches a medical edge, the workflow can route to a licensed clinician instead of leaving you to guess.",
-  },
-];
-
-const STEPS = [
-  {
-    num: "01",
-    title: "Bring your clients in.",
-    body: "Import clients, notes, programs, and history from your current tools.",
-  },
-  {
-    num: "02",
-    title: "Train your voice.",
-    body: "xenios learns how you communicate, what you care about, and how you coach.",
-  },
-  {
-    num: "03",
-    title: "Review what matters.",
-    body: "The AI drafts check-ins, summaries, nudges, and follow-ups. You approve before anything important goes out.",
-  },
-  {
-    num: "04",
-    title: "Support more people.",
-    body: "Your clients get more continuity. You get more time back. The relationship stays human.",
-  },
-];
-
-const SURFACES = [
-  {
-    id: "for-professionals",
-    eyebrow: "For the professional",
-    title: "A command center.",
-    body: "Messages, check-ins, programs, client status, scheduling, and decisions, all in one place.",
-  },
-  {
-    id: "for-client",
-    eyebrow: "For the client",
-    title: "A steady companion.",
-    body: "Helps them stay consistent between sessions, while keeping the named professional in the loop.",
-  },
-  {
-    id: "for-teams",
-    eyebrow: "For organizations",
-    title: "A shared system.",
-    body: "For gyms, clinics, teams, and wellness groups that need consistent client support across many professionals.",
-  },
-];
-
-const DIFFERENCE_POINTS = [
-  "One workspace for the professional",
-  "One AI companion for the client",
-  "One longitudinal health record",
-  "Human approval built in",
-  "Clinical escalation when needed",
-  "Built for proactive health, not reactive care",
-];
-
-const REVIEW_QUEUE = [
-  { client: "Maya R.", draft: "Drafted weekly check-in. Adherence is up, sleep dipped midweek." },
-  { client: "James T.", draft: "Drafted program update. Suggests lighter load after the travel week." },
-  { client: "Priya S.", draft: "Drafted follow-up. Flags a question that may need clinical review." },
+const WHO_FOR = [
+  "Personal trainers",
+  "Strength coaches",
+  "Nutritionists",
+  "Health coaches",
+  "Physical therapists",
+  "Longevity clinicians",
+  "Performance gyms",
+  "Wellness clinics",
+  "Sports teams",
+  "Corporate wellness teams",
 ];
 
 const ROLE_OPTIONS = [
@@ -110,63 +32,30 @@ const ROLE_OPTIONS = [
   "Online fitness coach",
   "Nutrition coach or dietitian",
   "Health coach",
-  "Longevity clinician",
   "Physical therapist",
-  "Sports performance coach",
-  "Gym or studio owner",
-  "Clinic or practice lead",
+  "Longevity clinician",
+  "Performance gym or sports team",
+  "Wellness clinic or organization",
   "Investor or partner",
   "Other",
 ];
 
-const BUSINESS_TYPES = [
-  "Solo professional",
-  "Studio or gym",
-  "Clinic",
-  "Performance team",
-  "Wellness organization",
-  "Other",
-];
-
-const CLIENT_COUNTS = [
-  "Just getting started",
-  "1 to 25",
-  "26 to 100",
-  "101 to 300",
-  "300 plus",
-];
-
 const INTERESTS = [
-  "Professional workspace",
-  "Client companion",
-  "Clinic or team platform",
+  "Professional agent",
+  "Client or athlete agent",
+  "Gym, clinic, or team",
   "Partnership",
-  "Investment",
 ];
 
 interface FormState {
   name: string;
   email: string;
   role: string;
-  businessType: string;
-  numberOfClients: string;
-  currentTools: string;
-  bottleneck: string;
   interestedIn: string[];
   website: string;
 }
 
-const EMPTY: FormState = {
-  name: "",
-  email: "",
-  role: "",
-  businessType: "",
-  numberOfClients: "",
-  currentTools: "",
-  bottleneck: "",
-  interestedIn: [],
-  website: "",
-};
+const EMPTY: FormState = { name: "", email: "", role: "", interestedIn: [], website: "" };
 
 type FieldErrors = Partial<Record<"name" | "email" | "role", string>>;
 
@@ -238,10 +127,6 @@ export default function Home() {
           name: form.name.trim(),
           email: form.email.trim().toLowerCase(),
           role: form.role,
-          businessType: form.businessType,
-          numberOfClients: form.numberOfClients,
-          currentTools: form.currentTools.trim(),
-          bottleneck: form.bottleneck.trim(),
           interestedIn: form.interestedIn,
           website: form.website,
         }),
@@ -263,12 +148,12 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-paper text-ink">
       <SeoHead
-        title="xenios, an AI workspace for health and performance professionals"
-        description="xenios helps coaches, clinicians, and performance professionals manage more clients through one AI-powered workspace that drafts the busywork, keeps every client record connected, and preserves the human relationship."
+        title="xenios, two AI agents for every health professional"
+        description="xenios gives every health professional two AI agents: one to help run their practice, and one to support each client or athlete between sessions. You stay in control. The relationship stays human."
         path="/"
       />
 
-      {/* Header (anchor nav) */}
+      {/* Header */}
       <header
         className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md rule-bottom"
         data-testid="nav-main"
@@ -282,7 +167,7 @@ export default function Home() {
                 <a
                   key={item.href}
                   href={item.href}
-                  data-testid={`link-nav-${item.label.replace(/\s+/g, "-").toLowerCase()}`}
+                  data-testid={`link-nav-${item.label.replace(/[^a-z]+/gi, "-").toLowerCase()}`}
                   className="text-[14px] lg:text-[15px] tracking-[-0.005em] text-ink-2 hover:text-pulse transition-colors"
                   style={{ fontWeight: 600 }}
                 >
@@ -306,174 +191,130 @@ export default function Home() {
         {/* Section 1 — Hero */}
         <section className="container-x" style={{ paddingTop: "var(--space-hero-top)", paddingBottom: "var(--space-hero-bottom)" }}>
           <p className="mono-cap text-pulse mb-6" data-testid="text-motif-hero">
-            The AI drafts. The professional approves.
+            The AI helps. The professional leads.
           </p>
-          <h1 className="display-xl text-balance" style={{ maxWidth: "18ch" }} data-testid="text-headline">
-            Serve more clients without becoming less human.
+          <h1 className="display-xl text-balance" style={{ maxWidth: "16ch" }} data-testid="text-headline">
+            Two AI agents for every health professional.
           </h1>
-          <p className="mt-8 body-l text-ink-2" style={{ maxWidth: "62ch" }}>
-            xenios gives coaches, clinicians, trainers, nutritionists, gyms, clinics, and performance teams one
-            workspace to manage clients, messages, check-ins, programs, health data, and follow-ups. The AI drafts
-            the busywork in your voice. You review, approve, and stay in control.
+          <p className="mt-8 body-l text-ink-2" style={{ maxWidth: "56ch" }}>
+            One helps you run the practice. One supports your client or athlete between sessions.
+          </p>
+          <p className="mt-6 body-m text-ink-2" style={{ maxWidth: "60ch" }}>
+            xenios is built for coaches, trainers, clinicians, nutritionists, gyms, and performance teams who manage
+            real people, real goals, and real follow-up. Your professional agent helps with the work around the
+            client. Your client agent helps each person stay supported between sessions. You stay in control. The
+            relationship stays human.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
             <a href="#waitlist" className="btn btn-primary" data-testid="button-hero-waitlist">
               Join the waitlist
             </a>
-            <a href="#how-it-works" className="btn btn-ghost" data-testid="button-hero-how">
+            <a href="#agents" className="btn btn-ghost" data-testid="button-hero-agents">
               See how it works
             </a>
           </div>
-          <p className="mt-8 mono-cap text-ink-mute" style={{ maxWidth: "60ch", lineHeight: 1.6 }}>
-            Built for proactive health professionals. Always human-approved. Never replacing the professional.
+          <p className="mt-8 mono-cap text-ink-mute">
+            Built for professionals. Not to replace them.
           </p>
         </section>
 
-        {/* Section 2 — The problem */}
+        {/* Section 2 — Problem */}
         <section className="container-x section-y rule-top">
           <p className="mono-cap text-ink-mute mb-6">The problem</p>
+          <h2 className="display-m text-balance" style={{ maxWidth: "18ch" }}>
+            The best professionals are limited by time.
+          </h2>
+          <div className="mt-8 space-y-2" data-testid="list-problem">
+            {PROBLEM_LINES.map((line) => (
+              <p key={line} className="body-l text-ink-2">{line}</p>
+            ))}
+          </div>
+          <p className="mt-8 body-l text-ink-2" style={{ maxWidth: "60ch" }}>
+            But most professionals are stuck doing everything manually: messages, check-ins, notes, updates,
+            scheduling, progress tracking, and follow-up.
+          </p>
+          <p className="mt-6 quote-lead text-ink" style={{ maxWidth: "44ch" }}>
+            The result is simple: you either stay small, or quality starts to thin.
+          </p>
+        </section>
+
+        {/* Section 3 — Two-agent product section */}
+        <section id="agents" className="container-x section-y rule-top" style={ANCHOR_OFFSET}>
+          <p className="mono-cap text-ink-mute mb-6">The product</p>
           <h2 className="display-m text-balance" style={{ maxWidth: "20ch" }}>
-            The best professionals are capped by manual work.
+            One agent for you. One agent for every client.
           </h2>
-          <p className="mt-8 body-l text-ink-2" style={{ maxWidth: "62ch" }}>
-            Every week, coaches and practitioners are buried in the same tasks. The work matters, but it does not
-            scale. As the roster grows, quality thins, clients feel less supported, and the professional becomes the
-            bottleneck.
-          </p>
-          <div className="chip-strip mt-10" data-testid="list-problem-tags">
-            {PROBLEM_TAGS.map((t) => (
-              <span key={t} className="chip" data-testid={`chip-${t.replace(/\s+/g, "-")}`}>
-                {t}
-              </span>
-            ))}
-          </div>
-          <p className="mt-8 body-s text-ink-mute" style={{ maxWidth: "62ch" }}>
-            Weekly check-ins drop from about 15 minutes per client to about 2 minutes, while the professional stays
-            in control.
-          </p>
-        </section>
 
-        {/* Section 3 — The solution */}
-        <section id="product" className="container-x section-y rule-top" style={ANCHOR_OFFSET}>
-          <p className="mono-cap text-ink-mute mb-6">The solution</p>
-          <h2 className="display-m text-balance" style={{ maxWidth: "22ch" }}>
-            One workspace for the people who keep humans healthy.
-          </h2>
-          <p className="mt-6 quote-lead text-ink-2" style={{ maxWidth: "48ch" }}>
-            xenios is the operating layer between the professional, the client, and the protocol.
-          </p>
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-            {SOLUTION_CARDS.map((c) => (
-              <article key={c.eyebrow} className="card" data-testid={`card-solution-${c.eyebrow.toLowerCase()}`}>
-                <p className="mono-cap text-pulse mb-3">{c.eyebrow}</p>
-                <h3 className="h3 mb-3">{c.title}</h3>
-                <p className="body-m text-ink-2">{c.body}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* Section 4 — How it works */}
-        <section id="how-it-works" className="container-x section-y rule-top" style={ANCHOR_OFFSET}>
-          <p className="mono-cap text-ink-mute mb-6">How it works</p>
-          <h2 className="display-m">How xenios works</h2>
-          <div className="mt-12 space-y-10">
-            {STEPS.map((s) => (
-              <div
-                key={s.num}
-                className="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4 md:gap-12 rule-bottom pb-10"
-                data-testid={`step-${s.num}`}
-              >
-                <p className="mono-cap text-pulse text-2xl font-800">{s.num}</p>
-                <div>
-                  <h3 className="display-s mb-3">{s.title}</h3>
-                  <p className="body-l text-ink-2" style={{ maxWidth: "58ch" }}>
-                    {s.body}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Review queue placeholder — reinforces the draft-and-approve motif */}
-          <div className="mt-16 card" role="img" aria-label="Example daily review queue showing AI-drafted messages with an approve action" data-testid="mockup-review-queue">
-            <div className="flex items-center justify-between rule-bottom pb-4 mb-4">
-              <p className="mono-cap text-ink-mute">Today's review queue</p>
-              <p className="mono-cap text-pulse">{REVIEW_QUEUE.length} to review</p>
+          {/* Connected-agents visual */}
+          <div className="mt-12 agent-diagram" data-testid="visual-agents" role="img" aria-label="Two agents, one for the professional and one for the client or athlete, connected through xenios">
+            <div className="agent-node card" data-testid="node-professional">
+              <p className="mono-cap text-pulse mb-2">Professional agent</p>
+              <p className="h3">Runs the work around your clients.</p>
             </div>
-            <ul className="space-y-4">
-              {REVIEW_QUEUE.map((r) => (
-                <li key={r.client} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div style={{ maxWidth: "52ch" }}>
-                    <p className="mono-label text-ink-mute mb-1">{r.client}</p>
-                    <p className="body-m text-ink-2">{r.draft}</p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0" aria-hidden="true">
-                    <span className="chip" style={{ height: 36, fontSize: 13 }}>Edit</span>
-                    <span className="btn btn-primary" style={{ height: 36, padding: "0 16px", fontSize: 13 }}>Approve</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <p className="mono-cap text-ink-mute mt-6">The AI drafts. The professional approves.</p>
+
+            <div className="agent-link" aria-hidden="true">
+              <span className="agent-line" />
+              <span className="agent-core">xenios</span>
+              <span className="agent-line" />
+            </div>
+
+            <div className="agent-node card" data-testid="node-client">
+              <p className="mono-cap text-pulse mb-2">Client or athlete agent</p>
+              <p className="h3">Supports each person between sessions.</p>
+            </div>
           </div>
+
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+            <div>
+              <p className="mono-cap text-ink-mute mb-3">Professional agent</p>
+              <p className="body-l text-ink-2">
+                Your professional agent helps manage the work around your clients. It helps prepare check-ins,
+                summarize progress, organize notes, surface what needs attention, and draft follow-ups in your voice.
+                It gives you more leverage without taking away your judgment.
+              </p>
+            </div>
+            <div>
+              <p className="mono-cap text-ink-mute mb-3">Client or athlete agent</p>
+              <p className="body-l text-ink-2">
+                Your client agent supports each person between sessions. It helps them stay consistent, remember the
+                plan, understand next steps, and feel supported when you are not physically with them. It is always
+                connected back to the professional.
+              </p>
+            </div>
+          </div>
+
+          <p className="mt-12 quote-lead text-ink">The AI helps. The professional leads.</p>
         </section>
 
-        {/* Section 5 — Product surfaces */}
-        <section id="surfaces" className="container-x section-y rule-top" style={ANCHOR_OFFSET}>
-          <p className="mono-cap text-ink-mute mb-6">Product surfaces</p>
-          <h2 className="display-m">One platform. Three surfaces.</h2>
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {SURFACES.map((s) => (
-              <article
-                key={s.id}
-                id={s.id}
-                className="card"
-                style={ANCHOR_OFFSET}
-                data-testid={`card-surface-${s.id}`}
-              >
-                <p className="mono-cap text-pulse mb-3">{s.eyebrow}</p>
-                <h3 className="h3 mb-3">{s.title}</h3>
-                <p className="body-m text-ink-2">{s.body}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* Section 6 — Why xenios is different */}
-        <section className="container-x section-y rule-top">
-          <p className="mono-cap text-ink-mute mb-6">Why xenios is different</p>
-          <h2 className="display-m text-balance" style={{ maxWidth: "24ch" }}>
-            Not another app in the stack. The layer underneath it.
+        {/* Section 4 — Who it is for */}
+        <section id="who" className="container-x section-y rule-top" style={ANCHOR_OFFSET}>
+          <p className="mono-cap text-ink-mute mb-6">Who it's for</p>
+          <h2 className="display-m text-balance" style={{ maxWidth: "20ch" }}>
+            Built for the people clients already trust.
           </h2>
-          <p className="mt-8 body-l text-ink-2" style={{ maxWidth: "64ch" }}>
-            Most tools solve one slice of the job. Workouts live in one place, messages live somewhere else, and
-            payments, notes, labs, wearables, and check-ins all sit apart. xenios brings the relationship, the data,
-            and the workflow into one system.
-          </p>
-          <ul className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4">
-            {DIFFERENCE_POINTS.map((p) => (
-              <li key={p} className="flex items-start gap-3 body-l" data-testid={`point-${p.replace(/\s+/g, "-").toLowerCase()}`}>
-                <span aria-hidden="true" className="bg-orange-fire shrink-0" style={{ width: 7, height: 7, borderRadius: 9999, marginTop: 12 }} />
-                <span className="text-ink-2">{p}</span>
+          <ul className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-4">
+            {WHO_FOR.map((w) => (
+              <li key={w} className="flex items-center gap-3 body-l text-ink-2" data-testid={`who-${w.replace(/\s+/g, "-").toLowerCase()}`}>
+                <span aria-hidden="true" className="bg-orange-fire shrink-0" style={{ width: 7, height: 7, borderRadius: 9999 }} />
+                {w}
               </li>
             ))}
           </ul>
-          <p className="mt-12 quote-lead text-ink" style={{ maxWidth: "44ch" }}>
-            Over time, xenios becomes the operating system for proactive health.
+          <p className="mt-10 body-l text-ink-2" style={{ maxWidth: "56ch" }}>
+            If you manage people, protocols, progress, and follow-up, xenios is being built for you.
           </p>
         </section>
 
-        {/* Section 7 — Waitlist */}
+        {/* Section 5 — Waitlist */}
         <section id="waitlist" className="container-x section-y rule-top" style={ANCHOR_OFFSET}>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-20 items-start">
             <div>
               <p className="mono-cap text-ink-mute mb-6">Waitlist</p>
-              <h2 className="display-m">Join the founding waitlist</h2>
+              <h2 className="display-m">Join the founding waitlist.</h2>
               <p className="mt-8 body-l text-ink-2" style={{ maxWidth: "52ch" }}>
-                We are opening xenios first to a small group of coaches, practitioners, clinics, gyms, and teams who
-                want to help shape the future of proactive health. Tell us who you serve, what tools you use today,
-                and what part of your week you most want back.
+                We are opening xenios to a small group of professionals and organizations helping shape the next layer
+                of proactive health. Join if you want to support more people, reduce admin, keep your clients engaged
+                between sessions, and use AI without losing your voice or judgment.
               </p>
               {count !== null && (
                 <p className="counter-line text-ink-2 mt-8" data-testid="text-count">
@@ -523,7 +364,7 @@ export default function Home() {
                         aria-invalid={!!errors.name}
                         data-testid="input-name"
                       />
-                      {errors.name && <p className="body-s mt-2" style={{ color: "var(--error)" }} data-testid="error-name">{errors.name}</p>}
+                      {errors.name && <p className="body-s mt-2" role="alert" aria-live="polite" style={{ color: "var(--error)" }} data-testid="error-name">{errors.name}</p>}
                     </div>
                     <div>
                       <label htmlFor="f-email" className="form-label">Email</label>
@@ -540,97 +381,31 @@ export default function Home() {
                         aria-invalid={!!errors.email}
                         data-testid="input-email"
                       />
-                      {errors.email && <p className="body-s mt-2" style={{ color: "var(--error)" }} data-testid="error-email">{errors.email}</p>}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
-                    <div>
-                      <label htmlFor="f-role" className="form-label">Role</label>
-                      <select
-                        id="f-role"
-                        value={form.role}
-                        onChange={(e) => update("role", e.target.value)}
-                        className="input-field"
-                        disabled={submitting}
-                        aria-invalid={!!errors.role}
-                        data-testid="select-role"
-                      >
-                        <option value="">Select your role</option>
-                        {ROLE_OPTIONS.map((r) => (
-                          <option key={r} value={r}>{r}</option>
-                        ))}
-                      </select>
-                      {errors.role && <p className="body-s mt-2" style={{ color: "var(--error)" }} data-testid="error-role">{errors.role}</p>}
-                    </div>
-                    <div>
-                      <label htmlFor="f-business" className="form-label">Business type</label>
-                      <select
-                        id="f-business"
-                        value={form.businessType}
-                        onChange={(e) => update("businessType", e.target.value)}
-                        className="input-field"
-                        disabled={submitting}
-                        data-testid="select-business"
-                      >
-                        <option value="">Optional</option>
-                        {BUSINESS_TYPES.map((b) => (
-                          <option key={b} value={b}>{b}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
-                    <div>
-                      <label htmlFor="f-clients" className="form-label">Number of clients</label>
-                      <select
-                        id="f-clients"
-                        value={form.numberOfClients}
-                        onChange={(e) => update("numberOfClients", e.target.value)}
-                        className="input-field"
-                        disabled={submitting}
-                        data-testid="select-clients"
-                      >
-                        <option value="">Optional</option>
-                        {CLIENT_COUNTS.map((c) => (
-                          <option key={c} value={c}>{c}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label htmlFor="f-tools" className="form-label">Current tools used</label>
-                      <input
-                        id="f-tools"
-                        type="text"
-                        maxLength={200}
-                        placeholder="Trainerize, spreadsheets, WhatsApp"
-                        value={form.currentTools}
-                        onChange={(e) => update("currentTools", e.target.value)}
-                        className="input-field"
-                        disabled={submitting}
-                        data-testid="input-tools"
-                      />
+                      {errors.email && <p className="body-s mt-2" role="alert" aria-live="polite" style={{ color: "var(--error)" }} data-testid="error-email">{errors.email}</p>}
                     </div>
                   </div>
 
                   <div className="mt-5">
-                    <label htmlFor="f-bottleneck" className="form-label">Biggest weekly bottleneck</label>
-                    <textarea
-                      id="f-bottleneck"
-                      maxLength={600}
-                      rows={3}
-                      placeholder="The part of your week you most want back"
-                      value={form.bottleneck}
-                      onChange={(e) => update("bottleneck", e.target.value)}
-                      className="input-field textarea-field"
+                    <label htmlFor="f-role" className="form-label">Role</label>
+                    <select
+                      id="f-role"
+                      value={form.role}
+                      onChange={(e) => update("role", e.target.value)}
+                      className="input-field"
                       disabled={submitting}
-                      data-testid="textarea-bottleneck"
-                    />
+                      aria-invalid={!!errors.role}
+                      data-testid="select-role"
+                    >
+                      <option value="">Select your role</option>
+                      {ROLE_OPTIONS.map((r) => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                    {errors.role && <p className="body-s mt-2" role="alert" aria-live="polite" style={{ color: "var(--error)" }} data-testid="error-role">{errors.role}</p>}
                   </div>
 
                   <fieldset className="mt-6" data-testid="group-interests">
-                    <legend className="form-label" style={{ marginBottom: 12 }}>Interested in</legend>
+                    <legend className="form-label" style={{ marginBottom: 12 }}>Interested in (optional)</legend>
                     <div className="flex flex-wrap gap-3">
                       {INTERESTS.map((opt) => {
                         const checked = form.interestedIn.includes(opt);

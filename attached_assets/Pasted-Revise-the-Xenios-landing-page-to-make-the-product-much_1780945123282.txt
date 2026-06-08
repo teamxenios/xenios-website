@@ -1,0 +1,108 @@
+Revise the Xenios landing page to make the product much simpler and shorter.
+
+The current page is too complicated. Remove sections and cards around “client inbox,” “connected client record,” and detailed workflow features. Do not explain the product as a long list of tools.
+
+The new concept should be centered around two AI agents:
+
+1. One agent for the professional
+2. One agent for the client or athlete
+
+Core positioning:
+Xenios gives every health professional two AI agents: one to help run their practice, and one to support each client between sessions.
+
+Hero:
+Two AI agents for every health professional.
+
+One helps you run the practice.
+One supports your client or athlete between sessions.
+
+Xenios is built for coaches, trainers, clinicians, nutritionists, gyms, and performance teams who manage real people, real goals, and real follow-up.
+
+Your professional agent helps with the work around the client.
+Your client agent helps each person stay supported between sessions.
+
+You stay in control.
+The relationship stays human.
+
+CTA:
+Join the waitlist
+
+Small trust line:
+Built for professionals. Not to replace them.
+
+Page structure:
+1. Hero
+2. Problem
+3. Two-agent product section
+4. Who it is for
+5. Waitlist
+
+Problem section:
+The best professionals are limited by time.
+
+Clients need support between sessions.
+Athletes need context between training days.
+Patients need follow-up between visits.
+
+But most professionals are stuck doing everything manually: messages, check-ins, notes, updates, scheduling, progress tracking, and follow-up.
+
+The result is simple: you either stay small, or quality starts to thin.
+
+Product section:
+Headline:
+One agent for you. One agent for every client.
+
+Professional Agent:
+Your professional agent helps manage the work around your clients.
+It helps prepare check-ins, summarize progress, organize notes, surface what needs attention, and draft follow-ups in your voice.
+It gives you more leverage without taking away your judgment.
+
+Client or Athlete Agent:
+Your client agent supports each person between sessions.
+It helps them stay consistent, remember the plan, understand next steps, and feel supported when you are not physically with them.
+It is always connected back to the professional.
+
+Closing line:
+The AI helps. The professional leads.
+
+Who it is for:
+Built for the people clients already trust.
+
+Personal trainers
+Strength coaches
+Nutritionists
+Health coaches
+Physical therapists
+Longevity clinicians
+Performance gyms
+Wellness clinics
+Sports teams
+Corporate wellness teams
+
+If you manage people, protocols, progress, and follow-up, Xenios is being built for you.
+
+Waitlist:
+Join the founding waitlist.
+
+We are opening Xenios to a small group of professionals and organizations helping shape the next layer of proactive health.
+
+Join if you want to support more people, reduce admin, keep your clients engaged between sessions, and use AI without losing your voice or judgment.
+
+CTA:
+Join the waitlist
+
+Design direction:
+Make the page very short, premium, and easy to understand.
+Use one main visual that shows two connected agents:
+Left side: Professional Agent
+Right side: Client or Athlete Agent
+Middle: Xenios
+
+Do not add lots of feature cards.
+Do not make it feel like a pitch deck.
+Do not use jargon.
+Do not mention fundraising.
+Do not mention GLP-1, TRT, peptides, or clinical services on the homepage.
+Do not make it sound like AI replaces the professional.
+
+The page should be clear in 5 seconds.

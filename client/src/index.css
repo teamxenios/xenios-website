@@ -638,6 +638,49 @@ body {
 /* Visible keyboard focus for chip-wrapped checkboxes (interest multi-select) */
 .interest-chip:focus-within { outline: 2px solid var(--pulse); outline-offset: 2px; }
 
+/* Connected two-agent visual (homepage) */
+.agent-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+.agent-node {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.agent-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 4px 0;
+}
+.agent-line {
+  width: 1px;
+  height: 28px;
+  background: linear-gradient(180deg, var(--pulse), var(--teal));
+}
+.agent-core {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 9999px;
+  padding: 8px 18px;
+  background: var(--paper);
+  white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .agent-diagram { flex-direction: row; align-items: stretch; gap: 0; }
+  .agent-link { flex-direction: row; padding: 0; flex: 0 0 auto; }
+  .agent-line { width: clamp(24px, 6vw, 80px); height: 1px; background: linear-gradient(90deg, var(--pulse), var(--teal)); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
