@@ -1,0 +1,227 @@
+xenios homepage rebuild — build brief for Replit
+Paste this whole document into Replit as the instruction for updating the existing xenios website.
+
+0. What this is
+This is a content and structure rebuild of the existing xenios homepage. The goal is to make a coach, clinician, gym owner, or investor understand what xenios does in about five seconds, and to convert the right visitor onto the waitlist.
+You are editing an existing site, not starting a new one.
+
+1. Critical constraints (read before anything else)
+1.1 Preserve the current design.
+Keep the current site's exact visual design: color palette, light or dark theme, typography, font weights, spacing scale, button styles, card styles, border treatments, and overall aesthetic. Do not introduce a new color, a new font, or a different look. Do not switch the site between light and dark. Reuse the existing components and styling and apply them to the revised content. If a new section needs a component that does not exist yet, build it in the same visual language as everything already on the site.
+The only things changing are: the copy, the section structure, the navigation labels, and the waitlist form. The look stays the same.
+1.2 Brand spelling and voice.
+
+The brand name is always lowercase: "xenios". Never capitalize it, even at the start of a sentence or headline.
+Never place a period directly after the brand name. Rewrite any sentence that would end on the word "xenios".
+Do not use em dashes anywhere. Use commas, periods, colons, or parentheses instead.
+Write for someone with zero industry knowledge. Plain, direct, calm, premium. No hype.
+Avoid jargon in anything above the fold: no "agentic", "data plane", "substrate", "AI-native", and no "operating system" in the hero. The phrase "operating system" can appear lower on the page, only after the reader already understands the product.
+
+1.3 Tone.
+Clear, premium, calm, trustworthy, human. Not aggressive. Never imply that AI replaces the coach. The recurring promise across the whole page is: the AI drafts, the human approves.
+
+2. Company and product context
+xenios is an AI workspace for proactive health professionals. We sell to the professional, and the professional brings their own clients.
+Who it is for: personal trainers, strength and conditioning coaches, nutritionists, health coaches, longevity clinicians, physical therapists, plus gyms, clinics, and performance teams.
+What it does: it brings client messages, check-ins, programs, notes, wearable data, progress, scheduling, and follow-ups into one workspace. The AI drafts the repetitive work in the professional's own voice. The professional reviews, approves, and stays in control. Clients get more support between sessions. Professionals get time back and can serve far more clients without losing the personal relationship.
+The four product surfaces:
+
+Xen, the professional workspace. One inbox, one client record, one place that shows what needs the professional's attention.
+Athena, the client companion. A proactive companion that supports the client between sessions, trained around the professional's voice, standards, and methods. A named human is always accountable.
+A connected client record. Messages, notes, programs, wearable data, labs, goals, and progress in one longitudinal view.
+Clinical support when needed. When a client reaches a medical edge, the workflow can route to a licensed clinician instead of leaving the professional to guess.
+
+Trust principles to surface gently: the professional is always in control, the AI is always disclosed, a named human is always accountable, and a client's record belongs to the client. These are differentiators, not fine print.
+
+3. Positioning and messaging
+Core public positioning:
+
+xenios helps health and performance professionals serve more clients without losing the personal relationship.
+
+Plain explanation that follows it:
+
+One workspace for the professional. One AI companion for the client. One shared health record that keeps coaching, data, and care connected.
+
+One-sentence explainer to reuse across the site and meta tags:
+
+xenios helps coaches, clinicians, and performance professionals manage more clients through one AI-powered workspace that drafts the busywork, keeps every client record connected, and preserves the human relationship.
+
+Language to replace:
+
+"AI-adjunct operations system" becomes "AI workspace for health and performance professionals".
+"operating system for proactive health" (in the hero) becomes "one workspace for the people who keep humans healthy". Later on the page you may say: "over time, xenios becomes the operating system for proactive health."
+"one pocket coach" becomes "a client companion between sessions". ("Pocket coach" reads like a consumer app replacing the coach, which is the opposite of the message.)
+
+Language to keep:
+
+"The AI drafts. The professional approves." This line lowers fear and explains the workflow. Use it as a repeated motif.
+
+Public vs not public. The homepage must not lead with GLP-1s, TRT, peptides, financial projections, valuation, or fundraising. Those belong in investor materials or dedicated medical landing pages with proper disclaimers. The clinical layer should appear on the homepage only as a calm line such as "clinical support when a client needs medical review." Keep the homepage focused on: professional workflow, client continuity, AI in the professional's voice, human approval, the unified client record, the waitlist, the founding cohort, and the audiences (coaches, clinicians, trainers, nutritionists, gyms, clinics, teams).
+
+4. Design and brand direction
+First rule, repeated: match the existing live site. Do not restyle.
+The brand aesthetic the current site already follows is clinical-calm: minimal, premium, generous whitespace, restrained type, one signature accent color used sparingly. New sections should feel like they were always part of the site.
+Reference brand cues (use only to keep new components consistent, never to override the live palette):
+
+A single vivid indigo/purple accent, used sparingly for emphasis and the brand mark.
+Off-white or cream for large display type and a near-black for high contrast, or whatever the live site currently uses. Do not change whichever direction is already live.
+Display type for headlines, clean sans for body, and a monospace treatment for small labels and eyebrow text, consistent with the current site.
+
+Layout and UX:
+
+Clear, single primary call to action above the fold.
+Simple product cards for the surfaces and differentiation sections.
+Lots of whitespace, generous line height, comfortable reading width.
+Fully responsive. The hero, the CTA, and the form must all work cleanly on mobile, with the primary CTA reachable without scrolling on a phone.
+Fast load. Lazy-load images below the fold.
+Accessible: semantic heading order, sufficient color contrast, visible focus states, and descriptive alt text on every mockup and image.
+
+Visual mockup placeholders (style them in the existing visual language; use clean placeholders if real screens are not ready):
+
+The professional workspace (Xen).
+The client companion (Athena).
+The connected client record.
+The daily review queue, showing the AI draft plus an approve action.
+
+
+5. Page structure with section-by-section copy
+Use this exact order. Copy below is final and follows the brand rules. Do not capitalize "xenios" and do not add em dashes.
+Section 1. Hero
+Goal: the product is understandable in five seconds.
+
+Headline: Serve more clients without becoming less human.
+Subheadline: xenios gives coaches, clinicians, trainers, nutritionists, gyms, clinics, and performance teams one workspace to manage clients, messages, check-ins, programs, health data, and follow-ups. The AI drafts the busywork in your voice. You review, approve, and stay in control.
+Primary CTA: Join the waitlist
+Secondary CTA: See how it works
+Trust line under the CTAs: Built for proactive health professionals. Always human-approved. Never replacing the professional.
+
+Section 2. The problem
+Goal: the visitor feels seen.
+
+Headline: The best professionals are capped by manual work.
+Body: Every week, coaches and practitioners are buried in the same tasks. The work matters, but it does not scale. As the roster grows, quality thins, clients feel less supported, and the professional becomes the bottleneck.
+Show the recurring tasks as a simple list or set of small tags: client check-ins, program updates, food logs, wearable data, missed messages, scheduling, billing, follow-ups, progress summaries, clinical handoffs.
+Optional supporting stat, styled subtly: weekly check-ins drop from about 15 minutes per client to about 2 minutes, while the professional stays in control.
+
+Section 3. The solution
+Goal: explain the product in plain English.
+
+Headline: One workspace for the people who keep humans healthy.
+Intro line: xenios is the operating layer between the professional, the client, and the protocol.
+Four cards:
+
+Xen, the professional workspace. One inbox, one client record, one place to see what needs your attention.
+Athena, the client companion. A proactive companion that supports your client between sessions, trained around your voice, standards, and methods, with you always in the loop.
+A connected health record. Messages, notes, programs, wearable data, labs, goals, and progress in one longitudinal view.
+Clinical support when needed. When a client reaches a medical edge, the workflow can route to a licensed clinician instead of leaving you to guess.
+
+
+
+Section 4. How it works
+Goal: make the product feel real.
+
+Headline: How xenios works
+Four steps:
+
+Bring your clients in. Import clients, notes, programs, and history from your current tools.
+Train your voice. xenios learns how you communicate, what you care about, and how you coach.
+Review what matters. The AI drafts check-ins, summaries, nudges, and follow-ups. You approve before anything important goes out.
+Support more people. Your clients get more continuity. You get more time back. The relationship stays human.
+
+
+
+Section 5. Product surfaces
+Goal: show this is not just a chatbot.
+
+Headline: One platform. Three surfaces.
+Three cards:
+
+For the professional. A command center for messages, check-ins, programs, client status, scheduling, and decisions.
+For the client. A companion that helps them stay consistent between sessions, while keeping the named professional in the loop.
+For organizations. A system for gyms, clinics, teams, and wellness groups that need consistent client support across many professionals.
+
+
+
+Section 6. Why xenios is different
+Goal: separate from Trainerize, TrueCoach, Noom, Hims, and wearable apps.
+
+Headline: Not another app in the stack. The layer underneath it.
+Body: Most tools solve one slice of the job. Workouts live in one place, messages live somewhere else, and payments, notes, labs, wearables, and check-ins all sit apart. xenios brings the relationship, the data, and the workflow into one system.
+What makes it different, as a clean list:
+
+One workspace for the professional
+One AI companion for the client
+One longitudinal health record
+Human approval built in
+Clinical escalation when needed
+Built for proactive health, not reactive care
+
+
+
+Section 7. Waitlist
+Goal: convert.
+
+Headline: Join the founding waitlist
+Copy: We are opening xenios first to a small group of coaches, practitioners, clinics, gyms, and teams who want to help shape the future of proactive health. Tell us who you serve, what tools you use today, and what part of your week you most want back.
+CTA: Join the waitlist
+Form fields and states are in section 8.
+
+Footer
+Keep the existing footer style. Include the brand mark, a short one-line descriptor, a single waitlist link, and any legal or contact links already present. Do not add fundraising or clinical product detail here.
+
+6. Navigation
+Keep the nav simple. These can be anchor links to sections on this single page for now rather than separate pages.
+
+Product
+For Professionals
+For Teams
+How It Works
+Join Waitlist (styled as the primary nav action)
+
+Avoid adding more pages right now. The goal is not to explain everything. The goal is to get the right person to say "I understand this, and I want in."
+
+7. Call to action language
+
+Use Join the waitlist as the primary CTA everywhere.
+Use See how it works as the secondary CTA in the hero (anchor to the How it works section).
+Do not use "Get started", "Sign up now", "Book a demo", or "Apply now" as the main CTA. "Join the waitlist" reads early, controlled, and serious, which is the right tone right now.
+
+
+8. Waitlist form
+Fields:
+
+Name
+Email
+Role
+Business type
+Number of clients
+Current tools used
+Biggest weekly bottleneck
+Interested in (multi-select): Professional workspace, Client companion, Clinic or team platform, Partnership, Investment
+
+Behavior and microcopy:
+
+Validate email format and required fields inline, with calm, plain error text.
+Submit button label: Join the waitlist. Show a loading state on submit.
+Success state: You are on the waitlist. We read every submission. If there is a strong fit for the founding cohort, we will reach out directly.
+Error state: Something went wrong on our end. Please try again, or email us and we will add you manually.
+Preserve whatever waitlist backend or storage the current site already uses. Do not switch providers or remove existing form handling. If the current form posts somewhere specific, keep that integration intact and only update fields and copy.
+Do not use browser localStorage or sessionStorage for submissions. Persist through the existing backend.
+
+
+9. SEO and meta
+
+Update the meta description and Open Graph and Twitter descriptions to the new positioning, for example: "xenios is the AI workspace for coaches, clinicians, trainers, nutritionists, gyms, clinics, and performance teams. One workspace, one client companion, one connected health record. 550+ on the waitlist."
+Update the page title to lead with the new plain positioning rather than "AI-adjunct operations system".
+Keep the existing Open Graph image, the Austin geo tags, and the indexing directives. If the Open Graph image still references a default Replit asset, flag it so it can be swapped for a branded image later.
+Keep the brand name lowercase in all meta values.
+
+
+10. What to deliver
+
+The updated homepage, built section by section in the order above, reusing the current design system with no visual restyle.
+The revised navigation and the updated waitlist form with all states wired up.
+A short summary of exactly what changed: which copy was replaced, which sections were added or reordered, and confirmation that the color palette, theme, and fonts were left unchanged.
+The final homepage copy in clean, plain text at the end, section by section, ready to reuse, with "xenios" lowercase throughout and no em dashes.
+
+Before you finish, double check three things: the brand name is lowercase everywhere, there are no em dashes anywhere, and no sentence ends on the word "xenios".

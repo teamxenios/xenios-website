@@ -573,7 +573,7 @@ export const content = {
     href: "/waitlist",
   },
   footer: {
-    tagline: "The AI-adjunct operations system for coaches, trainers, and practitioners.",
+    tagline: "An AI workspace for health and performance professionals.",
     location: SITE.location,
     columns: {
       product: [

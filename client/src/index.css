@@ -635,6 +635,9 @@ body {
 .hover\:text-pulse:hover { color: var(--pulse); }
 .divider-line { height: 1px; background: var(--rule); width: 100%; }
 
+/* Visible keyboard focus for chip-wrapped checkboxes (interest multi-select) */
+.interest-chip:focus-within { outline: 2px solid var(--pulse); outline-offset: 2px; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

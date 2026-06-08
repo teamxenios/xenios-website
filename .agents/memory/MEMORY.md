@@ -1,0 +1,1 @@
+- [xenios brand voice rules](brand-voice-rules.md) — lowercase always, no period after brand, no em dashes, no "operating system" above the fold; overrides stale replit.md.

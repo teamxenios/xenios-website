@@ -199,12 +199,30 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const firstName = firstNameRaw || "Friend";
       const lastName = rest.join(" ").trim() || "—";
 
-      const role = typeof req.body?.role === "string" ? req.body.role.trim().slice(0, 80) : "";
-      const practice = typeof req.body?.practice === "string" ? req.body.practice.trim().slice(0, 80) : "";
-      const about = typeof req.body?.about === "string" ? req.body.about.trim().slice(0, 600) : "";
+      const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+      const role = str(req.body?.role, 80);
+      const businessType = str(req.body?.businessType, 80);
+      const numberOfClients = str(req.body?.numberOfClients, 40);
+      const currentTools = str(req.body?.currentTools, 200);
+      const bottleneck = str(req.body?.bottleneck, 600);
+      const interestedIn = Array.isArray(req.body?.interestedIn)
+        ? req.body.interestedIn
+            .filter((x: unknown): x is string => typeof x === "string")
+            .map((s: string) => s.trim().slice(0, 60))
+            .filter(Boolean)
+            .slice(0, 8)
+        : [];
+      // Back-compat with the earlier quick form fields
+      const practice = str(req.body?.practice, 80);
+      const about = str(req.body?.about, 600);
 
       const freeTextParts: string[] = [];
       if (role) freeTextParts.push(`Role: ${role}`);
+      if (businessType) freeTextParts.push(`Business type: ${businessType}`);
+      if (numberOfClients) freeTextParts.push(`Clients: ${numberOfClients}`);
+      if (currentTools) freeTextParts.push(`Tools: ${currentTools}`);
+      if (bottleneck) freeTextParts.push(`Bottleneck: ${bottleneck}`);
+      if (interestedIn.length) freeTextParts.push(`Interested in: ${interestedIn.join(", ")}`);
       if (practice) freeTextParts.push(`Practice: ${practice}`);
       if (about) freeTextParts.push(`About: ${about}`);
       const freeText = freeTextParts.length ? freeTextParts.join(" | ").slice(0, 800) : null;

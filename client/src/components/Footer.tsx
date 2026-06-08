@@ -79,7 +79,7 @@ export default function Footer() {
 
         <div className="rule-top mt-16 pt-6 flex flex-col md:flex-row justify-between gap-4">
           <p className="mono-cap text-ink-mute" data-testid="text-copyright">
-            {content.footer.copyright} · The AI-adjunct operations system for coaches, trainers, and practitioners.
+            {content.footer.copyright} · An AI workspace for health and performance professionals.
           </p>
           <p className="mono-cap text-ink-mute">
             Austin, TX · Remote first
