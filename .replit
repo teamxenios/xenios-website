@@ -47,3 +47,6 @@ integrations = ["javascript_database:1.0.0", "resend:1.0.0"]
 [userenv.shared]
 SUPABASE_URL = "https://yvzeduaxbwgcwllhywff.supabase.co"
 ADMIN_EMAIL = "sboadu1212@gmail.com"
+SUPABASE_ANON_KEY = "sb_publishable_YfosFKBuU_5BwzSraJqzUw_sxvfo4QI"
+VITE_SUPABASE_URL = "https://yvzeduaxbwgcwllhywff.supabase.co"
+VITE_SUPABASE_ANON_KEY = "sb_publishable_YfosFKBuU_5BwzSraJqzUw_sxvfo4QI"
