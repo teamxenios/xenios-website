@@ -8,7 +8,21 @@ import {
   sendInternalNotification,
   sendContactMessage,
   sendContactAutoReply,
+  sendWaitlistConfirmationV3,
+  sendWaitlistInternalAlertV3,
+  sendLoiConfirmationV3,
+  sendLoiInternalAlertV3,
 } from "./services/email";
+import {
+  getDisplayCount,
+  upsertWaitlist,
+  setWaitlistEmailStatus,
+  insertLoi,
+  setLoiEmailStatus,
+  type WaitlistInput,
+  type LoiInput,
+} from "./supabase-store";
+import { supabaseConfigured } from "./supabase";
 
 function isUniqueViolation(error: unknown): boolean {
   return (
@@ -38,6 +52,31 @@ function rateLimit(req: Request): boolean {
   return true;
 }
 
+function clientIp(req: Request): string | null {
+  return (
+    (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+    req.socket.remoteAddress ||
+    null
+  );
+}
+
+function s(v: unknown, max: number): string | null {
+  return typeof v === "string" && v.trim() ? v.trim().slice(0, max) : null;
+}
+
+function readAttribution(body: any) {
+  return {
+    source_page: s(body?.source_page, 300),
+    landing_page: s(body?.landing_page, 300),
+    referrer_url: s(body?.referrer_url, 500),
+    utm_source: s(body?.utm_source, 200),
+    utm_medium: s(body?.utm_medium, 200),
+    utm_campaign: s(body?.utm_campaign, 200),
+    utm_content: s(body?.utm_content, 200),
+    utm_term: s(body?.utm_term, 200),
+  };
+}
+
 function adminAuth(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   const adminKey = process.env.ADMIN_API_KEY;
@@ -55,27 +94,19 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json({ status: "Xenios API is running" });
   });
 
-  app.get("/api/counter", async (_req, res) => {
+  const handleCount = async (_req: Request, res: Response) => {
     try {
-      const total = await storage.getCounterTotal();
+      const total = await getDisplayCount();
       res.set("Cache-Control", "public, s-maxage=5, stale-while-revalidate=30");
       res.json({ count: total });
     } catch (err) {
       console.error("[counter] error:", err);
-      res.status(500).json({ count: 550 });
+      res.status(500).json({ count: 556 });
     }
-  });
+  };
+  app.get("/api/counter", handleCount);
   // Backward-compat alias
-  app.get("/api/waitlist/count", async (_req, res) => {
-    try {
-      const total = await storage.getCounterTotal();
-      res.set("Cache-Control", "public, s-maxage=5, stale-while-revalidate=30");
-      res.json({ count: total });
-    } catch (err) {
-      console.error("[counter] error:", err);
-      res.status(500).json({ count: 550 });
-    }
-  });
+  app.get("/api/waitlist/count", handleCount);
 
   async function buildIdempotentResponse(email: string) {
     const existing = await storage.findWaitlistByEmail(email);
@@ -176,91 +207,99 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   app.post("/api/waitlist/quick", async (req, res) => {
     try {
+      // Honeypot
       if (typeof req.body?.website === "string" && req.body.website.length > 0) {
-        return res.json({ success: true, position: 0, count: 0 });
+        return res.json({ success: true, count: 0 });
       }
       if (!rateLimit(req)) {
         return res.status(429).json({ success: false, message: "Too many requests. Please try again in a few minutes." });
+      }
+      if (!supabaseConfigured()) {
+        return res.status(503).json({ success: false, message: "The waitlist is temporarily unavailable. Please try again shortly." });
       }
       const emailParsed = z.string().email().max(254).toLowerCase().trim().safeParse(req.body?.email);
       if (!emailParsed.success) {
         return res.status(400).json({ success: false, message: "Please enter a valid email." });
       }
-      const email = emailParsed.data;
 
-      const idem = await buildIdempotentResponse(email);
-      if (idem) return res.json(idem);
-
-      const ipCountry = (req.headers["x-vercel-ip-country"] as string) || (req.headers["cf-ipcountry"] as string) || null;
-      const userAgent = (req.headers["user-agent"] as string) || null;
-
-      const nameRaw = typeof req.body?.name === "string" ? req.body.name.trim().slice(0, 160) : "";
-      const [firstNameRaw, ...rest] = nameRaw.split(/\s+/);
-      const firstName = firstNameRaw || "Friend";
-      const lastName = rest.join(" ").trim() || "—";
-
-      const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
-      const role = str(req.body?.role, 80);
-      const businessType = str(req.body?.businessType, 80);
-      const numberOfClients = str(req.body?.numberOfClients, 40);
-      const currentTools = str(req.body?.currentTools, 200);
-      const bottleneck = str(req.body?.bottleneck, 600);
       const interestedIn = Array.isArray(req.body?.interestedIn)
         ? req.body.interestedIn
             .filter((x: unknown): x is string => typeof x === "string")
-            .map((s: string) => s.trim().slice(0, 60))
+            .map((v: string) => v.trim().slice(0, 60))
             .filter(Boolean)
             .slice(0, 8)
         : [];
-      // Back-compat with the earlier quick form fields
-      const practice = str(req.body?.practice, 80);
-      const about = str(req.body?.about, 600);
 
-      const freeTextParts: string[] = [];
-      if (role) freeTextParts.push(`Role: ${role}`);
-      if (businessType) freeTextParts.push(`Business type: ${businessType}`);
-      if (numberOfClients) freeTextParts.push(`Clients: ${numberOfClients}`);
-      if (currentTools) freeTextParts.push(`Tools: ${currentTools}`);
-      if (bottleneck) freeTextParts.push(`Bottleneck: ${bottleneck}`);
-      if (interestedIn.length) freeTextParts.push(`Interested in: ${interestedIn.join(", ")}`);
-      if (practice) freeTextParts.push(`Practice: ${practice}`);
-      if (about) freeTextParts.push(`About: ${about}`);
-      const freeText = freeTextParts.length ? freeTextParts.join(" | ").slice(0, 800) : null;
+      const input: WaitlistInput = {
+        email: emailParsed.data,
+        name: s(req.body?.name, 160),
+        role: s(req.body?.role, 80),
+        company: s(req.body?.company, 120),
+        city: s(req.body?.city, 120),
+        handle_or_url: s(req.body?.handleOrUrl ?? req.body?.handle_or_url, 200),
+        client_count: s(req.body?.clientCount ?? req.body?.client_count, 40),
+        interest: interestedIn.length ? interestedIn.join(", ") : s(req.body?.interest, 400),
+        consent: req.body?.consent === true,
+        ip: clientIp(req),
+        ...readAttribution(req.body),
+      };
 
-      const synthesized = insertWaitlistSchema.parse({
-        firstName,
-        lastName,
-        email,
-        practitionerType: "other",
-        city: "—",
-        country: "—",
-        freeText,
-        howHeard: "coming-soon",
-      });
+      // Upsert: a repeat email updates the existing row instead of duplicating.
+      const row = await upsertWaitlist(input);
+      const count = await getDisplayCount();
 
-      let result;
-      try {
-        result = await storage.createWaitlist(synthesized, { ipCountry, userAgent });
-      } catch (e) {
-        if (isUniqueViolation(e)) {
-          const fallback = await buildIdempotentResponse(email);
-          if (fallback) return res.json(fallback);
-        }
-        throw e;
-      }
-      const { signup, totalCount } = result;
+      // Email: never lose the lead — record sent/failed.
+      const confirmed = await sendWaitlistConfirmationV3({ email: row.email, name: row.name });
+      void sendWaitlistInternalAlertV3(row).catch(() => {});
+      await setWaitlistEmailStatus(row.id, confirmed ? "sent" : "failed");
 
-      Promise.allSettled([
-        sendConfirmationEmail({ email: signup.email, firstName: signup.firstName, position: Number(signup.position), totalCount }),
-        sendInternalNotification({ signup, totalCount }),
-      ]).catch(() => {});
-
-      res.json({ success: true, position: Number(signup.position), count: totalCount });
+      res.json({ success: true, count });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ success: false, message: "Invalid submission." });
-      }
       console.error("[waitlist/quick] error:", error);
+      res.status(500).json({ success: false, message: "Failed to process submission. Please try again." });
+    }
+  });
+
+  // Early-interest / LOI — keeps full history (no dedupe).
+  app.post("/api/early-interest", async (req, res) => {
+    try {
+      if (typeof req.body?.website === "string" && req.body.website.length > 0) {
+        return res.json({ success: true });
+      }
+      if (!rateLimit(req)) {
+        return res.status(429).json({ success: false, message: "Too many requests. Please try again in a few minutes." });
+      }
+      if (!supabaseConfigured()) {
+        return res.status(503).json({ success: false, message: "The form is temporarily unavailable. Please try again shortly." });
+      }
+      const emailParsed = z.string().email().max(254).toLowerCase().trim().safeParse(req.body?.email);
+      if (!emailParsed.success) {
+        return res.status(400).json({ success: false, message: "Please enter a valid email." });
+      }
+
+      const input: LoiInput = {
+        email: emailParsed.data,
+        name: s(req.body?.name, 160),
+        phone: s(req.body?.phone, 40),
+        business_name: s(req.body?.businessName ?? req.body?.business_name, 160),
+        role: s(req.body?.role, 80),
+        url_or_handle: s(req.body?.urlOrHandle ?? req.body?.url_or_handle, 200),
+        client_count: s(req.body?.clientCount ?? req.body?.client_count, 40),
+        why_interested: s(req.body?.whyInterested ?? req.body?.why_interested, 2000),
+        nonbinding_ack: (req.body?.nonbindingAck ?? req.body?.nonbinding_ack) === true,
+        ip: clientIp(req),
+        ...readAttribution(req.body),
+      };
+
+      const row = await insertLoi(input);
+
+      const confirmed = await sendLoiConfirmationV3({ email: input.email!, name: input.name });
+      void sendLoiInternalAlertV3(row).catch(() => {});
+      await setLoiEmailStatus(row.id, confirmed ? "sent" : "failed");
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("[early-interest] error:", error);
       res.status(500).json({ success: false, message: "Failed to process submission. Please try again." });
     }
   });

@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import SeoHead from "@/components/SeoHead";
 import Footer from "@/components/Footer";
 import Wordmark from "@/components/Wordmark";
+import { getAttribution } from "@/lib/attribution";
 
 const NAV_LINKS = [
   { label: "The agents", href: "#agents" },
@@ -48,7 +49,7 @@ export default function Home() {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<{ position: number } | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
   const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -111,6 +112,7 @@ export default function Home() {
           role: form.role,
           interestedIn: form.interestedIn,
           website: form.website,
+          ...getAttribution(),
         }),
       });
       const data = await res.json();
@@ -118,7 +120,7 @@ export default function Home() {
         setFormError(data.message || "Something went wrong. Please try again.");
         return;
       }
-      setSuccess({ position: data.position ?? 0 });
+      setSuccess(true);
       if (typeof data.count === "number") setCount(data.count);
     } catch {
       setFormError("Network error. Please try again.");
@@ -299,8 +301,8 @@ export default function Home() {
                 <div className="card" role="status" aria-live="polite" data-testid="text-success">
                   <p className="h3 mb-2">You're on the xenios waitlist.</p>
                   <p className="body-m text-ink-2">
-                    Position #{success.position}. We onboard coaches in small groups, so we will reach out as soon as a
-                    spot opens. Questions? Reply to team@xeniostechnology.com.
+                    Check your email for confirmation. We onboard coaches in small groups, so we will reach out as soon
+                    as a spot opens. Questions? Reply to team@xeniostechnology.com.
                   </p>
                 </div>
               ) : (
