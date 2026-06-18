@@ -25,6 +25,7 @@ import {
   updateWaitlistStatus,
   updateLoiStatus,
   listNotes,
+  listNotesByType,
   addNote,
   insertBooking,
   listVisibleConcepts,
@@ -572,7 +573,26 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const type = String(req.query.type || "waitlist");
       const rows =
         type === "loi" ? await listLoi() : type === "bookings" ? await listBookings() : await listWaitlist();
-      const csv = toCsv(rows as Record<string, any>[]);
+
+      let exportRows = rows as Record<string, any>[];
+      if (type === "waitlist" || type === "loi") {
+        const notes = await listNotesByType(type);
+        const byRecord = new Map<string, string[]>();
+        for (const n of notes) {
+          const ts = n.created_at ? `${n.created_at} ` : "";
+          const author = n.author ? `${n.author}: ` : "";
+          const line = `${ts}${author}${n.note}`.trim();
+          const list = byRecord.get(n.record_id) ?? [];
+          list.push(line);
+          byRecord.set(n.record_id, list);
+        }
+        exportRows = exportRows.map((r) => ({
+          ...r,
+          notes: (byRecord.get(String(r.id)) ?? []).join(" | "),
+        }));
+      }
+
+      const csv = toCsv(exportRows);
       res.setHeader("Content-Type", "text/csv; charset=utf-8");
       res.setHeader("Content-Disposition", `attachment; filename="xenios-${type}.csv"`);
       res.send(csv);

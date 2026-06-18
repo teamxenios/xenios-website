@@ -203,6 +203,16 @@ export async function listNotes(recordType: string, recordId: string): Promise<N
   return (data ?? []) as NoteRow[];
 }
 
+export async function listNotesByType(recordType: string): Promise<NoteRow[]> {
+  const { data, error } = await getSupabaseAdmin()
+    .from("admin_notes")
+    .select("*")
+    .eq("record_type", recordType)
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as NoteRow[];
+}
+
 export async function addNote(input: {
   record_type: string;
   record_id: string;

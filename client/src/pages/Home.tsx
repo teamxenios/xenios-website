@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import Wordmark from "@/components/Wordmark";
 import Turnstile from "@/components/Turnstile";
 import { getAttribution } from "@/lib/attribution";
-import { trackCompleteRegistration } from "@/lib/tracking";
+import { trackLead } from "@/lib/tracking";
 import { CLIENT_COUNT_OPTIONS } from "@/lib/content";
 
 const NAV_LINKS = [
@@ -133,7 +133,7 @@ export default function Home() {
         return;
       }
       setSuccess(true);
-      trackCompleteRegistration();
+      trackLead();
       if (typeof data.count === "number") setCount(data.count);
     } catch {
       setFormError("Network error. Please try again.");

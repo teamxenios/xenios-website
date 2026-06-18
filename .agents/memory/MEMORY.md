@@ -1,2 +1,3 @@
 - [Supabase integration quirks](supabase-integration.md) — Node 20 needs ws transport for supabase-js; new sb_publishable_/sb_secret_ key format; DDL must run in SQL Editor.
 - [xenios public-copy compliance](xenios-public-copy-compliance.md) — public pages must avoid telemedicine/GLP-1/peptide/clinical-prescribing terms; reword (don't delete) to keep routes/slugs/counts; keep schema+email+sitemap+llms in lockstep.
+- [Meta Pixel event mapping](meta-pixel-events.md) — waitlist=Lead, LOI=CompleteRegistration, concepts=ViewContent, booking=Schedule; don't swap.

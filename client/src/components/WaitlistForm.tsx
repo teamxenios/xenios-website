@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { content, CLIENT_COUNT_OPTIONS } from "@/lib/content";
 import { getAttribution } from "@/lib/attribution";
-import { trackCompleteRegistration } from "@/lib/tracking";
+import { trackLead } from "@/lib/tracking";
 import Turnstile from "@/components/Turnstile";
 
 const F = content.waitlistForm;
@@ -111,7 +111,7 @@ export default function WaitlistForm({ onSuccess, onDark = false }: Props) {
         setError(data.message || F.errorGeneric);
         return;
       }
-      trackCompleteRegistration();
+      trackLead();
       onSuccess?.({ count: data.count ?? 0, name: form.name.trim() });
     } catch {
       setError(F.errorGeneric);
