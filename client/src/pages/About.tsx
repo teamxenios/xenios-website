@@ -3,19 +3,26 @@ import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import { PAGES } from "@/lib/content";
 
-const HERITAGE = [
-  { name: "FinDox", body: "Acquired by Confluence Technologies. Document and data infrastructure for institutional finance." },
-  { name: "InstaMed", body: "Acquired by JPMorgan Chase for $500M+. The healthcare payments rail used by hundreds of providers and millions of patients." },
+const TEAM_LINES = [
+  "xenios is built by a small, senior team with a large bench around it.",
+  "The founder built and scaled a healthcare company through COVID, then spent a year interviewing more than two hundred coaches and clinicians before writing a single line of code.",
+  "Engineering is led by an operator who has built and exited companies across healthcare and payments, including inside a payments company acquired by a major bank, and who has architected the kind of regulated structures xenios runs on.",
+  "Clinical thinking comes from a practicing physician who has led inside major hospital systems and a national telehealth company.",
+  "Around them sits a bench across product, clinical operations, sports science, growth, and brand, with advisors in clinical informatics, applied sports science, consumer growth, and engineering.",
+  "The team's roots run deep in professional sports and elite coaching, across the NFL, NBA, and NHL, and into entertainment. Those relationships open doors no marketing budget can buy.",
+  "Our agents are built on a frontier open-source AI framework backed by some of the most respected investors in the field.",
 ];
 
 export default function About() {
   return (
     <PageShell>
       <SeoHead {...PAGES.about} />
+
+      {/* Block 1 - What xenios is (lead) */}
       <section className="container-x pt-24 md:pt-36 pb-16">
         <p className="mono-cap text-ink-mute mb-6">ABOUT</p>
         <h1 className="display-xl text-balance" style={{ maxWidth: "22ch" }}>An AI workspace for coaches.</h1>
-        <p className="mt-8 body-l text-ink-2 max-w-[60ch]">
+        <p className="mt-8 body-l text-ink-2 max-w-[60ch]" data-testid="text-about-lead">
           xenios helps coaches manage more clients without losing the human relationship. One workspace that drafts the busywork and keeps every client record connected.
         </p>
         <p className="mt-4 body-l text-ink-2 max-w-[60ch]">
@@ -23,36 +30,28 @@ export default function About() {
         </p>
       </section>
 
+      {/* Block 2 - Why we are building it */}
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-6">WHY WE ARE BUILDING IT</p>
+        <p className="body-l text-ink-2 max-w-[64ch]" data-testid="text-about-why">
+          We started from a simple belief: the trusted relationship between a coach and a client is the thing that actually changes behavior, and it does not scale, because trust does not scale. AI is the first technology that can extend that relationship without breaking it. So we are building the system that gives a coach leverage without ever replacing them.
+        </p>
+        <p className="mt-8 quote-lead text-ink">The AI drafts. The coach decides.</p>
+      </section>
+
+      {/* Block 3 - The team (background and role only, no names) */}
       <section className="container-x py-16 rule-top">
         <p className="mono-cap text-ink-mute mb-6">THE TEAM</p>
-        <h2 className="display-l mb-6">Operators who have done this before.</h2>
-        <div className="space-y-4 max-w-[64ch]">
-          <p className="body-l text-ink-2">
-            We have spent our careers building infrastructure for the parts of healthcare and finance the rest of the industry treats as someone else's problem. We see coaches as the next operator class to be given tools as serious as the work.
-          </p>
-          <p className="body-l text-ink-2">
-            We are based in Austin. We work upstream.
-          </p>
-        </div>
-      </section>
-
-      <section className="container-x py-16 rule-top">
-        <p className="mono-cap text-ink-mute mb-6">HERITAGE</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {HERITAGE.map((h) => (
-            <div key={h.name} className="rule-all p-6 rounded-[12px]">
-              <h3 className="h3 mb-2">{h.name}</h3>
-              <p className="body-m text-ink-2">{h.body}</p>
-            </div>
+        <p className="h3 text-ink mb-8 max-w-[60ch]" data-testid="text-about-team-lead">
+          We are building quietly for now, so this page stays light on names. The background behind the work does not.
+        </p>
+        <div className="space-y-5 max-w-[64ch]">
+          {TEAM_LINES.map((line, i) => (
+            <p key={i} className="body-l text-ink-2" data-testid={`text-about-team-${i}`}>
+              {line}
+            </p>
           ))}
         </div>
-      </section>
-
-      <section className="container-x py-16 rule-top">
-        <p className="mono-cap text-ink-mute mb-6">WHERE</p>
-        <p className="body-l text-ink-2 max-w-[60ch]">
-          Headquartered in Austin, Texas. Remote first. Austin preferred for the founding team.
-        </p>
       </section>
 
       <section className="bg-ink text-paper py-20">
