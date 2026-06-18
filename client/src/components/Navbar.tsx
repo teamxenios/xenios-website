@@ -82,7 +82,10 @@ export default function Navbar() {
               })}
             </nav>
 
-            <div className="hidden md:flex items-center">
+            <div className="hidden md:flex items-center gap-4">
+              <Link href={content.nav.book.href} data-testid="button-nav-book" className="text-[14px] lg:text-[15px] tracking-[-0.005em] text-ink-2 hover:text-pulse transition-colors" style={{ fontWeight: 600 }}>
+                {content.nav.book.label}
+              </Link>
               <Link href="/waitlist" data-testid="button-nav-waitlist" className="btn btn-primary" style={{ height: 44, padding: "0 18px", fontSize: 14 }}>
                 {content.nav.cta}
               </Link>
@@ -145,6 +148,14 @@ export default function Navbar() {
             ))}
           </nav>
           <div className="mt-auto pt-8">
+            <Link
+              href={content.nav.book.href}
+              onClick={() => setOpen(false)}
+              className="btn btn-ghost w-full mb-3"
+              data-testid="button-mobile-book"
+            >
+              {content.nav.book.label}
+            </Link>
             <Link
               href="/waitlist"
               onClick={() => setOpen(false)}

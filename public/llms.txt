@@ -16,7 +16,6 @@ Audience: coaches, trainers, and practitioners doing the work upstream of diseas
 - /how-it-works          Five-step onboarding, autonomy dial
 - /for-coaches           The xenios agent, coach surface
 - /for-clients           The xenios client agent, client surface
-- /telemedicine          Optional care delivery for licensed practitioners
 - /storefront            Native commerce rail
 - /network               Refer between practitioners
 - /ecosystem             Eighteen categories of partners and integrations

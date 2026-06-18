@@ -9,7 +9,6 @@ import Product from "@/pages/Product";
 import HowItWorks from "@/pages/HowItWorks";
 import ForCoaches from "@/pages/ForCoaches";
 import ForClients from "@/pages/ForClients";
-import Telemedicine from "@/pages/Telemedicine";
 import Storefront from "@/pages/Storefront";
 import Network from "@/pages/Network";
 import Ecosystem from "@/pages/Ecosystem";
@@ -26,6 +25,11 @@ import Investors from "@/pages/Investors";
 import Press from "@/pages/Press";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
+import Disclosures from "@/pages/Disclosures";
+import EarlyInterest from "@/pages/EarlyInterest";
+import Book from "@/pages/Book";
+import Concepts from "@/pages/Concepts";
+import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
 
 function ScrollToTop() {
@@ -44,7 +48,6 @@ function Router() {
       <Route path="/how-it-works" component={HowItWorks} />
       <Route path="/for-coaches" component={ForCoaches} />
       <Route path="/for-clients" component={ForClients} />
-      <Route path="/telemedicine" component={Telemedicine} />
       <Route path="/storefront" component={Storefront} />
       <Route path="/network" component={Network} />
       <Route path="/ecosystem" component={Ecosystem} />
@@ -61,7 +64,13 @@ function Router() {
       <Route path="/press" component={Press} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
+      <Route path="/disclosures" component={Disclosures} />
+      <Route path="/early-interest" component={EarlyInterest} />
+      <Route path="/book" component={Book} />
+      <Route path="/concepts" component={Concepts} />
+      <Route path="/admin" component={Admin} />
       {/* Retired routes redirect to nearest v6 home */}
+      <Route path="/telemedicine"><Redirect to="/product" /></Route>
       <Route path="/agents"><Redirect to="/product" /></Route>
       <Route path="/developers"><Redirect to="/ecosystem" /></Route>
       <Route path="/enterprise"><Redirect to="/contact" /></Route>

@@ -14,9 +14,12 @@ export default function About() {
       <SeoHead {...PAGES.about} />
       <section className="container-x pt-24 md:pt-36 pb-16">
         <p className="mono-cap text-ink-mute mb-6">ABOUT</p>
-        <h1 className="display-xl text-balance" style={{ maxWidth: "20ch" }}>Built in Austin by operators behind $710M+ in prior exits.</h1>
+        <h1 className="display-xl text-balance" style={{ maxWidth: "22ch" }}>An AI workspace for coaches.</h1>
         <p className="mt-8 body-l text-ink-2 max-w-[60ch]">
-          xenios (Xenios Technologies, Inc.) is in stealth, pre-seed, headquartered in Austin, Texas. The team comes from the front lines of healthcare infrastructure and proactive health.
+          xenios helps coaches manage more clients without losing the human relationship. One workspace that drafts the busywork and keeps every client record connected.
+        </p>
+        <p className="mt-4 body-l text-ink-2 max-w-[60ch]">
+          It is built for coaches first, with clinicians, nutritionists, and performance teams alongside them.
         </p>
       </section>
 
@@ -25,10 +28,7 @@ export default function About() {
         <h2 className="display-l mb-6">Alex Houston</h2>
         <div className="space-y-4 max-w-[64ch]">
           <p className="body-l text-ink-2">
-            Alex is the founder, and he has spent his career building infrastructure for the parts of healthcare and finance that the rest of the industry treats as someone else's problem.
-          </p>
-          <p className="body-l text-ink-2">
-            Most recently he led product at a healthcare payments rail used by hundreds of providers and millions of patients. Before that he built and shipped data infrastructure for institutional finance. He sees coaches, trainers, and practitioners as the next operator class to be given infrastructure as serious as the work.
+            Alex has spent his career building infrastructure for the parts of healthcare and finance the rest of the industry treats as someone else's problem. He sees coaches as the next operator class to be given tools as serious as the work.
           </p>
           <p className="body-l text-ink-2">
             He lives in Austin. He works upstream.

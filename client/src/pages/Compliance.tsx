@@ -6,7 +6,7 @@ const ITEMS = [
   { name: "HIPAA-aware", body: "Architected for HIPAA from day one. PHI logging on every interaction. BAA available on request." },
   { name: "SOC 2 (in progress)", body: "Type I targeted; Type II to follow. We will publish status as we progress." },
   { name: "BAA", body: "Business Associate Agreement available for licensed practitioners and clinics handling PHI on the platform." },
-  { name: "State-level licensing", body: "Telemedicine and prescribing capabilities are available only where the practitioner is licensed." },
+  { name: "Scope of practice", body: "Practitioners operate within their own scope and licensure. xenios is a workspace, not a provider of care." },
   { name: "Data residency", body: "United States primary. International residency on the roadmap." },
   { name: "Privacy", body: "We do not sell personal data. We do not train third-party models on practitioner or client data." },
 ];

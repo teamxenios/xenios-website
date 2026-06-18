@@ -4,18 +4,18 @@ import SeoHead from "@/components/SeoHead";
 import { PAGES } from "@/lib/content";
 
 const PILLARS = [
-  { name: "Refer between practitioners", body: "Refer between coaches, trainers, and practitioners on the network. Bring your roster. Grow without leaving the operating system." },
-  { name: "Agent-to-agent handoff", body: "When you refer, the receiving practitioner's xenios agent gets the context, scope-aware. The client experiences one continuous relationship." },
+  { name: "Refer between coaches", body: "and the trainers, clinicians, and practitioners on the network. Bring your roster. Grow without leaving the operating system." },
+  { name: "Agent-to-agent handoff", body: "When you refer, the receiving coach's xenios agent gets the context, scope-aware. The client experiences one continuous relationship." },
   { name: "Revenue routing", body: "Native splits across the chain. Transparent. Auditable. Paid on time." },
-  { name: "Scope-aware guardrails", body: "The agent never refers across scope of practice without practitioner approval. Audit trail every step." },
+  { name: "Scope-aware guardrails", body: "The agent never refers across scope of practice without the coach's approval. Audit trail every step." },
 ];
 
 const FLOW = [
-  "A strength coach wants nutrition support for an athlete preparing for a meet.",
-  "The coach taps Refer in the athlete record. The xenios agent suggests a nutritionist on the network whose voice and method fit.",
-  "The coach approves. The athlete sees a single message in their xenios client agent: \"Coach added Sarah on the nutrition side. She has your record.\"",
+  "A strength coach wants nutrition support for a client preparing for a meet.",
+  "The coach taps Refer in the client record. The xenios agent suggests a nutritionist on the network whose voice and method fit.",
+  "The coach approves. The client sees a single message in their xenios client agent: \"Coach added Sarah on the nutrition side. She has your record.\"",
   "Sarah's xenios agent receives a scope-bound context window. Nothing more.",
-  "Sarah charts, programs, and follows up. The athlete experiences one practice, two practitioners.",
+  "Sarah charts, programs, and follows up. The client experiences one practice, two coaches.",
   "Revenue is routed per the agreement. The receipt is the audit trail.",
 ];
 

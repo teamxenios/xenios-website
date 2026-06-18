@@ -1,8 +1,11 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import SeoHead from "@/components/SeoHead";
 import Footer from "@/components/Footer";
 import Wordmark from "@/components/Wordmark";
+import Turnstile from "@/components/Turnstile";
 import { getAttribution } from "@/lib/attribution";
+import { trackCompleteRegistration } from "@/lib/tracking";
+import { CLIENT_COUNT_OPTIONS } from "@/lib/content";
 
 const NAV_LINKS = [
   { label: "The agents", href: "#agents" },
@@ -34,13 +37,15 @@ interface FormState {
   name: string;
   email: string;
   role: string;
+  clientCount: string;
   interestedIn: string[];
+  consent: boolean;
   website: string;
 }
 
-const EMPTY: FormState = { name: "", email: "", role: "", interestedIn: [], website: "" };
+const EMPTY: FormState = { name: "", email: "", role: "", clientCount: "", interestedIn: [], consent: false, website: "" };
 
-type FieldErrors = Partial<Record<"name" | "email" | "role", string>>;
+type FieldErrors = Partial<Record<"name" | "email" | "role" | "clientCount" | "consent", string>>;
 
 const ANCHOR_OFFSET = { scrollMarginTop: 88 } as const;
 
@@ -51,6 +56,8 @@ export default function Home() {
   const [formError, setFormError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [count, setCount] = useState<number | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const onTurnstileToken = useCallback((t: string) => setTurnstileToken(t), []);
 
   useEffect(() => {
     let alive = true;
@@ -90,6 +97,8 @@ export default function Home() {
       next.email = "Please enter a valid email address.";
     }
     if (!form.role) next.role = "Please choose the role that fits best.";
+    if (!form.clientCount) next.clientCount = "Please choose how many clients you work with.";
+    if (!form.consent) next.consent = "Please confirm so we can email you about xenios.";
     return next;
   }
 
@@ -110,7 +119,10 @@ export default function Home() {
           name: form.name.trim(),
           email: form.email.trim().toLowerCase(),
           role: form.role,
+          clientCount: form.clientCount,
           interestedIn: form.interestedIn,
+          consent: form.consent,
+          turnstileToken,
           website: form.website,
           ...getAttribution(),
         }),
@@ -121,6 +133,7 @@ export default function Home() {
         return;
       }
       setSuccess(true);
+      trackCompleteRegistration();
       if (typeof data.count === "number") setCount(data.count);
     } catch {
       setFormError("Network error. Please try again.");
@@ -376,6 +389,25 @@ export default function Home() {
                     {errors.role && <p className="body-s mt-2" role="alert" aria-live="polite" style={{ color: "var(--error)" }} data-testid="error-role">{errors.role}</p>}
                   </div>
 
+                  <div className="mt-5">
+                    <label htmlFor="f-clientcount" className="form-label">Number of clients</label>
+                    <select
+                      id="f-clientcount"
+                      value={form.clientCount}
+                      onChange={(e) => update("clientCount", e.target.value)}
+                      className="input-field"
+                      disabled={submitting}
+                      aria-invalid={!!errors.clientCount}
+                      data-testid="select-client-count"
+                    >
+                      <option value="">Select a range</option>
+                      {CLIENT_COUNT_OPTIONS.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                    {errors.clientCount && <p className="body-s mt-2" role="alert" aria-live="polite" style={{ color: "var(--error)" }} data-testid="error-client-count">{errors.clientCount}</p>}
+                  </div>
+
                   <fieldset className="mt-6" data-testid="group-interests">
                     <legend className="form-label" style={{ marginBottom: 12 }}>Interested in (optional)</legend>
                     <div className="flex flex-wrap gap-3">
@@ -405,6 +437,22 @@ export default function Home() {
                       })}
                     </div>
                   </fieldset>
+
+                  <label className="flex items-start gap-3 cursor-pointer text-ink-2 mt-6" data-testid="label-consent">
+                    <input
+                      type="checkbox"
+                      checked={form.consent}
+                      onChange={(e) => update("consent", e.target.checked)}
+                      disabled={submitting}
+                      className="mt-1 w-4 h-4 accent-[var(--pulse)]"
+                      aria-invalid={!!errors.consent}
+                      data-testid="checkbox-consent"
+                    />
+                    <span className="body-s">I agree to receive email from xenios about the waitlist and the founding group. I can opt out any time.</span>
+                  </label>
+                  {errors.consent && <p className="body-s mt-2" role="alert" aria-live="polite" style={{ color: "var(--error)" }} data-testid="error-consent">{errors.consent}</p>}
+
+                  <Turnstile onToken={onTurnstileToken} />
 
                   {formError && (
                     <p className="body-s mt-5" role="alert" aria-live="assertive" style={{ color: "var(--error)" }} data-testid="text-form-error">

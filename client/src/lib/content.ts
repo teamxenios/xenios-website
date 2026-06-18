@@ -38,12 +38,12 @@ export const ROTATING_ROLES = [
   "nutritionists",
   "functional medicine doctors",
   "longevity clinicians",
-  "GLP-1 coaches",
+  "metabolic health coaches",
   "concierge physicians",
   "performance labs",
   "recovery studios",
   "hormone clinics",
-  "peptide clinics",
+  "wellness clinics",
   "biohacking clinics",
   "physical therapists",
   "chiropractors",
@@ -134,7 +134,7 @@ export const ICP_LIST: IcpEntry[] = [
     bullets: [
       "One patient record across labs, devices, programs, and visits.",
       "Outcomes layer that members and referring physicians both respect.",
-      "Optional telemedicine for licensed practitioners.",
+      "Native scheduling, memberships, and billing on one rail.",
     ],
     replaces: ["Sick-care EMR", "Patient portal", "Membership billing", "Lab portals", "Concierge messaging tool"],
   },
@@ -172,13 +172,13 @@ export const ICP_LIST: IcpEntry[] = [
     replaces: ["Booking platform", "Membership tool", "Email marketing", "Loyalty app", "Spreadsheet"],
   },
   {
-    slug: "telemedicine-startups", value: "telemedicine_startups", label: "Telemedicine startups",
-    oneLiner: "The proactive-care operations layer for telemedicine startups.",
-    problem: "Telemedicine startups built for transactions are losing the proactive-care market. The visit is no longer the unit. The relationship is.",
+    slug: "virtual-coaching", value: "virtual_coaching", label: "Virtual coaching businesses",
+    oneLiner: "The proactive-care operations layer for virtual coaching businesses.",
+    problem: "Virtual coaching businesses built for transactions are losing the proactive market. The session is no longer the unit. The relationship is.",
     bullets: [
-      "Async and live visits inside one operating system.",
-      "Programs and protocols between visits, not just visit notes.",
-      "Pocket coach on the patient side that holds the relationship.",
+      "Async and live sessions inside one operating system.",
+      "Programs and protocols between sessions, not just session notes.",
+      "Pocket coach on the client side that holds the relationship.",
     ],
     replaces: ["Visit-only EMR", "Patient portal", "Email follow-up", "Notes doc", "Disconnected billing"],
   },
@@ -299,14 +299,14 @@ export const ICP_LIST: IcpEntry[] = [
     bullets: [
       "Versioned protocols per patient, with lab review cadence built in.",
       "Patient agent that answers protocol questions in your voice.",
-      "Optional telemedicine for licensed practitioners.",
+      "Native memberships and billing on one rail.",
     ],
     replaces: ["Sick-care EMR", "Lab portal", "Patient portal", "Pharmacy email", "Spreadsheet"],
   },
   {
-    slug: "peptide-clinics", value: "peptide_clinics", label: "Peptide clinics",
-    oneLiner: "Peptide clinics with compliance, protocol, and patient engagement on one rail.",
-    problem: "Peptide clinics live in a regulatory grey zone with patients asking for clarity. The tools were built for neither.",
+    slug: "wellness-clinics", value: "wellness_clinics", label: "Wellness clinics",
+    oneLiner: "Wellness clinics with compliance, protocol, and member engagement on one rail.",
+    problem: "Wellness clinics juggle protocols and member questions on tools built for neither.",
     bullets: [
       "Versioned protocols with scope-aware guardrails.",
       "Patient agent that holds the protocol between visits.",
@@ -370,8 +370,8 @@ export const PRACTITIONER_TILES = ICP_LIST.map((i) => ({ slug: i.slug, value: i.
 export const ECOSYSTEM_CATEGORIES = [
   "Wearables and continuous biosensors",
   "Diagnostic labs and at-home testing",
-  "GLP-1 and metabolic care",
-  "Peptides and longevity protocols",
+  "Metabolic health",
+  "Longevity protocols",
   "Recovery technology",
   "Performance equipment",
   "Nutrition and meal services",
@@ -398,7 +398,6 @@ export const CAPABILITIES = [
   { name: "Billing and commerce", body: "Subscriptions, packages, one-offs, gift cards, affiliate splits, supplement and equipment storefront, all native." },
   { name: "Network and referrals", body: "Refer between coaches, trainers, and practitioners on the network. Bring your roster. Grow without leaving." },
   { name: "Outcomes", body: "Track adherence, progress, retention, and what is actually moving for each client. Report on the work, not the noise." },
-  { name: "Care delivery (post-launch)", body: "Optional telemedicine layer for licensed practitioners who want to deliver care inside xenios." },
 ];
 
 // ── REPLACEMENT NARRATIVE (Part 3 §5) ─────────────────────────────────────────
@@ -547,7 +546,7 @@ export const CONTACT_PREFIXES = [
   { prefix: "Careers: [role]", desc: "Job applications" },
   { prefix: "Security", desc: "Security and disclosure" },
   { prefix: "Compliance", desc: "BAA, SOC 2, legal" },
-  { prefix: "Telemedicine", desc: "Care delivery partnerships" },
+  { prefix: "Partnerships", desc: "Integration and partner inquiries" },
 ];
 
 // Personas used by ContactForm — drives subject prefix on server side
@@ -561,11 +560,22 @@ export const CONTACT_PERSONAS = [
   { value: "other", label: "Something else" },
 ];
 
+// ── FORM OPTIONS ──────────────────────────────────────────────────────────────
+export const CLIENT_COUNT_OPTIONS = [
+  "Just me / under 10",
+  "10 to 25",
+  "25 to 50",
+  "50 to 100",
+  "100 to 250",
+  "250+",
+] as const;
+
 // ── SHELL COPY (Navbar, Ribbon, Footer, Forms) ────────────────────────────────
 export const content = {
   nav: {
     items: NAV_ITEMS,
     cta: "Join waitlist",
+    book: { label: "Book a call", href: "/book" },
   },
   ribbon: {
     prefix: "Founding cohort is open. 550+ coaches, trainers, and practitioners on the waitlist.",
@@ -581,11 +591,13 @@ export const content = {
         { label: "How it works", href: "/how-it-works" },
         { label: "For coaches", href: "/for-coaches" },
         { label: "For clients", href: "/for-clients" },
-        { label: "Telemedicine", href: "/telemedicine" },
         { label: "Storefront", href: "/storefront" },
         { label: "Network", href: "/network" },
         { label: "Ecosystem", href: "/ecosystem" },
         { label: "For practitioners", href: "/for-practitioners" },
+        { label: "Book a call", href: "/book" },
+        { label: "Early interest", href: "/early-interest" },
+        { label: "Concepts", href: "/concepts" },
       ],
       company: [
         { label: "Manifesto", href: "/manifesto" },
@@ -603,6 +615,7 @@ export const content = {
       legal: [
         { label: "Privacy", href: "/privacy" },
         { label: "Terms", href: "/terms" },
+        { label: "Disclosures", href: "/disclosures" },
       ],
     },
     copyright: "© 2026 Xenios Technologies, Inc.",
@@ -649,18 +662,17 @@ export type Content = typeof content;
 
 // ── PER-PAGE SEO META ─────────────────────────────────────────────────────────
 export const PAGES = {
-  home: { title: "xenios, the AI-adjunct operations system", description: "The AI-adjunct operations system for coaches, trainers, and practitioners. One inbox, one client record, one agent that drafts in your voice, one pocket coach for your clients.", path: "/" },
+  home: { title: "xenios, two AI agents for every coach", description: "xenios gives coaches two AI agents. One runs the practice. One supports each client between sessions, in your voice, always disclosed as AI, always yours to approve.", path: "/" },
   product: { title: "Product, xenios", description: "One operating system for the work you actually do: programs, intake, check-ins, messaging, education, billing, network, outcomes, care.", path: "/product" },
   howItWorks: { title: "How it works, xenios", description: "Connect your stack. Teach your voice. Approve the first batch. Move the autonomy dial. The xenios agent runs the back office. The xenios client agent runs the in-between.", path: "/how-it-works" },
   forCoaches: { title: "For coaches, xenios", description: "The xenios agent is the operator you needed. Drafts your messages, builds your programs, runs your check-ins, handles your billing, in your voice.", path: "/for-coaches" },
   forClients: { title: "For clients, xenios", description: "The xenios client agent is a pocket coach that knows your program, your data, your goals, and the way your coach actually talks to you.", path: "/for-clients" },
-  telemedicine: { title: "Telemedicine, xenios", description: "Optional care delivery layer for licensed practitioners. Async, live, and in-between, on the same operating system that runs the rest of the practice.", path: "/telemedicine" },
   storefront: { title: "Storefront, xenios", description: "Native subscriptions, packages, one-offs, supplements, equipment, and gift cards. The commerce rail your practice deserves.", path: "/storefront" },
-  network: { title: "Network, xenios", description: "Refer between coaches, trainers, and practitioners on the network. Bring your roster. Grow without leaving.", path: "/network" },
+  network: { title: "xenios Network, refer between coaches", description: "Refer between coaches, and the trainers, clinicians, and practitioners on the network. The xenios agent handles the handoff in your voice.", path: "/network" },
   ecosystem: { title: "Ecosystem, xenios", description: "Eighteen categories of partners and integrations across the proactive health stack. Wearables, labs, recovery, nutrition, supplements, and more.", path: "/ecosystem" },
   forPractitioners: { title: "For practitioners, xenios", description: "Twenty-five categories of coaches, trainers, and practitioners across performance, longevity, recovery, and clinical care. Find your fit.", path: "/for-practitioners" },
   manifesto: { title: "Manifesto, xenios", description: "We build for the people doing the work upstream of disease. Coaches, trainers, and practitioners deserve infrastructure as serious as the work.", path: "/manifesto" },
-  about: { title: "About, xenios", description: "Built in Austin by operators behind $710M+ in prior exits, including FinDox and InstaMed. Founded by Alex Houston.", path: "/about" },
+  about: { title: "About xenios, an AI workspace for coaches", description: "xenios helps coaches manage more clients without losing the human relationship. One workspace that drafts the busywork and keeps every client record connected.", path: "/about" },
   careers: { title: "Careers, xenios", description: "Five founding roles. Remote first, Austin preferred. Help build the operating system for proactive health.", path: "/careers" },
   waitlist: { title: "Join the waitlist, xenios", description: "550+ coaches, trainers, and practitioners are already in line for the founding cohort.", path: "/waitlist" },
   contact: { title: "Contact, xenios", description: "Founding cohort, partnership, press, investor, careers, security, compliance. A human reads every message.", path: "/contact" },

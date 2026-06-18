@@ -7,7 +7,7 @@ import { PAGES, content } from "@/lib/content";
 
 export default function Waitlist() {
   const WL = content.waitlistPage;
-  const [done, setDone] = useState<{ position: number; firstName: string; duplicate?: boolean } | null>(null);
+  const [done, setDone] = useState<{ name: string } | null>(null);
 
   return (
     <PageShell>
@@ -26,17 +26,14 @@ export default function Waitlist() {
           <div>
             {done ? (
               <div className="space-y-4" data-testid="waitlist-success">
-                <p className="mono-cap text-pulse">YOU'RE IN{done.firstName ? `, ${done.firstName.toUpperCase()}` : ""}</p>
-                <h2 className="display-l">#{done.position} on the waitlist.</h2>
+                <p className="mono-cap text-pulse">YOU'RE IN{done.name ? `, ${done.name.toUpperCase()}` : ""}</p>
+                <h2 className="display-l">You're on the xenios waitlist.</h2>
                 <p className="body-l text-ink-2 max-w-[60ch]">
-                  A confirmation email is on its way. We will reach out as the founding cohort opens up.
+                  Check your email for confirmation. We onboard coaches in small groups, so we will reach out as soon as a spot opens.
                 </p>
-                {done.duplicate && (
-                  <p className="body-m text-ink-mute">You were already on the list. Position confirmed.</p>
-                )}
               </div>
             ) : (
-              <WaitlistForm onSuccess={(info) => setDone({ position: info.position, firstName: info.firstName, duplicate: info.duplicate })} />
+              <WaitlistForm onSuccess={(info) => setDone({ name: info.name })} />
             )}
           </div>
           <aside>

@@ -45,7 +45,7 @@ const ROLE_LABELS: Record<string, string> = {
   concierge_medicine: "Concierge medicine",
   performance_labs: "Performance lab",
   recovery_studios: "Recovery studio",
-  telemedicine_startups: "Telemedicine startup",
+  virtual_coaching: "Virtual coaching business",
   preventive_care: "Preventive care",
   nutrition_companies: "Nutrition company",
   supplement_brands: "Supplement brand",
@@ -57,7 +57,7 @@ const ROLE_LABELS: Record<string, string> = {
   physical_therapists: "Physical therapist",
   chiropractors: "Chiropractor",
   hormone_clinics: "Hormone clinic",
-  peptide_clinics: "Peptide clinic",
+  wellness_clinics: "Wellness clinic",
   self_insured_employers: "Self-insured employer",
   elite_athletes: "Elite athlete",
   creators: "Creator",
@@ -327,42 +327,26 @@ export async function sendWaitlistConfirmationV3(input: {
   }
 
   const fn = firstNameFrom(input.name);
-  const subject = "You're on the xenios waitlist.";
+  const subject = "You're on the xenios waitlist";
 
-  const text = `You're on the xenios waitlist${fn ? `, ${fn}` : ""}.
+  const text = `Hi ${fn || "there"},
 
-${V3_MOTIF}
+Thanks for joining the xenios waitlist. You're on the list.
 
-xenios gives every coach two AI agents. Xen runs your practice. Athena supports each client between sessions, in your voice, always disclosed as AI and always yours to approve.
+xenios gives coaches two AI agents. One helps run the practice. One supports each client between sessions, in your voice, always disclosed as AI.
 
-We onboard coaches in small groups, so we will reach out as soon as a spot opens.
+We onboard coaches in small groups, so we will reach out as soon as a spot opens for you. If you have a question before then, just reply to this email or write to team@xeniostechnology.com.
 
-While you wait:
-  Instagram: @officialxenios, ${IG}
-  LinkedIn: /company/officialxenios, ${LI}
-
-Reply to this email if you want to talk. A human reads every reply.
-
-xenios
-${V3_DESCRIPTOR}
-Austin, TX.
-team@xeniostechnology.com
+The xenios team
 `;
 
   const html = shell(`
-    <p style="font-size:28px;font-weight:900;letter-spacing:-0.04em;text-transform:lowercase;margin:0 0 36px;">xenios</p>
-    <p style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#B964D4;margin:0 0 12px;">${V3_MOTIF}</p>
-    <h1 style="font-size:40px;font-weight:800;letter-spacing:-0.02em;line-height:1.06;margin:0 0 28px;">You're on the xenios waitlist${fn ? `, ${fn}` : ""}.</h1>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">xenios gives every coach two AI agents. <strong style="font-weight:700;">Xen</strong> runs your practice. <strong style="font-weight:700;">Athena</strong> supports each client between sessions, in your voice, always disclosed as AI and always yours to approve.</p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 24px;">We onboard coaches in small groups, so we will reach out as soon as a spot opens.</p>
-    <hr style="border:none;border-top:1px solid rgba(14,14,12,0.12);margin:36px 0;" />
-    <p style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6A6A62;margin:0 0 12px;">WHILE YOU WAIT</p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 8px;">Instagram: <a href="${IG}" style="color:#E04F1F;font-weight:600;">@officialxenios</a></p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 24px;">LinkedIn: <a href="${LI}" style="color:#E04F1F;font-weight:600;">/company/officialxenios</a></p>
-    <p style="font-size:15px;line-height:1.55;margin:0 0 36px;color:#2A2A26;">Reply to this email if you want to talk. A human reads every reply.</p>
-    <p style="font-size:24px;font-weight:900;letter-spacing:-0.04em;text-transform:lowercase;margin:0 0 8px;">xenios</p>
-    <p style="font-size:14px;line-height:1.55;margin:0 0 4px;color:#2A2A26;">${V3_DESCRIPTOR}</p>
-    <p style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.04em;color:#6A6A62;margin:16px 0 0;">Austin, TX. team@xeniostechnology.com</p>
+    <p style="font-size:28px;font-weight:900;letter-spacing:-0.04em;text-transform:lowercase;margin:0 0 32px;">xenios</p>
+    <p style="font-size:17px;line-height:1.6;margin:0 0 16px;">Hi ${fn || "there"},</p>
+    <p style="font-size:17px;line-height:1.6;margin:0 0 16px;">Thanks for joining the xenios waitlist. You're on the list.</p>
+    <p style="font-size:17px;line-height:1.6;margin:0 0 16px;">xenios gives coaches two AI agents. One helps run the practice. One supports each client between sessions, in your voice, always disclosed as AI.</p>
+    <p style="font-size:17px;line-height:1.6;margin:0 0 24px;">We onboard coaches in small groups, so we will reach out as soon as a spot opens for you. If you have a question before then, just reply to this email or write to <a href="mailto:team@xeniostechnology.com" style="color:#E04F1F;font-weight:600;">team@xeniostechnology.com</a>.</p>
+    <p style="font-size:17px;line-height:1.6;margin:0;">The xenios team</p>
   `);
 
   try {
@@ -379,10 +363,14 @@ team@xeniostechnology.com
 export async function sendWaitlistInternalAlertV3(row: {
   name?: string | null;
   email: string;
+  phone?: string | null;
   role?: string | null;
   company?: string | null;
   city?: string | null;
+  handle_or_url?: string | null;
+  client_count?: string | null;
   interest?: string | null;
+  consent?: boolean;
   source_page?: string | null;
   landing_page?: string | null;
   referrer_url?: string | null;
@@ -403,32 +391,26 @@ export async function sendWaitlistInternalAlertV3(row: {
     return false;
   }
 
-  const subject = `New waitlist signup: ${row.name || row.email}${row.role ? ` (${row.role})` : ""}`;
-  const text = `New waitlist signup
-====================
+  const subject = `New waitlist signup: ${row.name || row.email}, ${row.role || "(no role)"}`;
+  const text = `New waitlist signup.
 
-Name:        ${row.name || "(none)"}
-Email:       ${row.email}
-Role:        ${row.role || "(none)"}
-Company:     ${row.company || "(none)"}
-City:        ${row.city || "(none)"}
-Interest:    ${row.interest || "(none)"}
+Name: ${row.name || "(none)"}
+Email: ${row.email}
+Phone: ${row.phone || "(none)"}
+Role: ${row.role || "(none)"}
+Company/gym/practice: ${row.company || "(none)"}
+City: ${row.city || "(none)"}
+Instagram/website: ${row.handle_or_url || "(none)"}
+Clients managed: ${row.client_count || "(none)"}
+Interested in: ${row.interest || "(none)"}
+Consent: ${row.consent ? "yes" : "no"}
 
-Attribution
------------
 Source page: ${row.source_page || "(none)"}
-Landing:     ${row.landing_page || "(none)"}
-Referrer:    ${row.referrer_url || "(none)"}
-utm_source:  ${row.utm_source || "(none)"}
-utm_medium:  ${row.utm_medium || "(none)"}
-utm_campaign:${row.utm_campaign || "(none)"}
-utm_content: ${row.utm_content || "(none)"}
-utm_term:    ${row.utm_term || "(none)"}
-IP:          ${row.ip || "(none)"}
-
-Time:        ${new Date().toISOString()}
-
-Reply to reach them directly.
+Landing page: ${row.landing_page || "(none)"}
+Referrer: ${row.referrer_url || "(none)"}
+UTM: ${row.utm_source || "(none)"} / ${row.utm_medium || "(none)"} / ${row.utm_campaign || "(none)"} / ${row.utm_content || "(none)"} / ${row.utm_term || "(none)"}
+Submitted: ${new Date().toISOString()}
+IP: ${row.ip || "(none)"}
 
 xenios
 `;
@@ -459,32 +441,26 @@ export async function sendLoiConfirmationV3(input: {
   }
 
   const fn = firstNameFrom(input.name);
-  const subject = "We received your interest in xenios.";
+  const subject = "We received your interest in xenios";
 
-  const text = `Thanks${fn ? `, ${fn}` : ""}.
+  const text = `Hi ${fn || "there"},
 
-We received your interest. This is non-binding. The xenios team will follow up.
+Thanks for sharing your interest in xenios. We have received it.
 
-${V3_MOTIF}
+To be clear, this is a non-binding indication of interest, not a contract and not a commitment to pay. It simply tells us you would like to be part of the early founding group of coaches.
 
-While you wait:
-  Instagram: @officialxenios, ${IG}
-  LinkedIn: /company/officialxenios, ${LI}
+Someone from our team will follow up to talk through how xenios could fit your practice. If you want to reach us first, reply here or write to team@xeniostechnology.com.
 
-xenios
-${V3_DESCRIPTOR}
-team@xeniostechnology.com
+The xenios team
 `;
 
   const html = shell(`
     <p style="font-size:28px;font-weight:900;letter-spacing:-0.04em;text-transform:lowercase;margin:0 0 32px;">xenios</p>
-    <h1 style="font-size:36px;font-weight:800;letter-spacing:-0.02em;line-height:1.05;margin:0 0 24px;">Thanks${fn ? `, ${fn}` : ""}.</h1>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">We received your interest. This is non-binding. The xenios team will follow up.</p>
-    <p style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#B964D4;margin:24px 0 24px;">${V3_MOTIF}</p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 8px;">Instagram: <a href="${IG}" style="color:#E04F1F;font-weight:600;">@officialxenios</a></p>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 32px;">LinkedIn: <a href="${LI}" style="color:#E04F1F;font-weight:600;">/company/officialxenios</a></p>
-    <p style="font-size:20px;font-weight:900;letter-spacing:-0.04em;text-transform:lowercase;margin:0 0 8px;">xenios</p>
-    <p style="font-size:13px;line-height:1.55;margin:0;color:#2A2A26;">${V3_DESCRIPTOR}</p>
+    <p style="font-size:17px;line-height:1.6;margin:0 0 16px;">Hi ${fn || "there"},</p>
+    <p style="font-size:17px;line-height:1.6;margin:0 0 16px;">Thanks for sharing your interest in xenios. We have received it.</p>
+    <p style="font-size:17px;line-height:1.6;margin:0 0 16px;">To be clear, this is a non-binding indication of interest, not a contract and not a commitment to pay. It simply tells us you would like to be part of the early founding group of coaches.</p>
+    <p style="font-size:17px;line-height:1.6;margin:0 0 24px;">Someone from our team will follow up to talk through how xenios could fit your practice. If you want to reach us first, reply here or write to <a href="mailto:team@xeniostechnology.com" style="color:#E04F1F;font-weight:600;">team@xeniostechnology.com</a>.</p>
+    <p style="font-size:17px;line-height:1.6;margin:0;">The xenios team</p>
   `);
 
   try {
@@ -507,6 +483,7 @@ export async function sendLoiInternalAlertV3(row: {
   url_or_handle?: string | null;
   client_count?: string | null;
   why_interested?: string | null;
+  nonbinding_ack?: boolean;
   source_page?: string | null;
   landing_page?: string | null;
   referrer_url?: string | null;
@@ -527,34 +504,25 @@ export async function sendLoiInternalAlertV3(row: {
     return false;
   }
 
-  const subject = `New early-interest: ${row.name || row.email || "unknown"}${row.business_name ? ` (${row.business_name})` : ""}`;
-  const text = `New early-interest / LOI submission
-===================================
+  const subject = `New early-interest submission: ${row.name || row.email || "unknown"}, ${row.business_name || "(no business)"}`;
+  const text = `New early-interest submission (non-binding).
 
-Name:         ${row.name || "(none)"}
-Email:        ${row.email || "(none)"}
-Phone:        ${row.phone || "(none)"}
-Business:     ${row.business_name || "(none)"}
-Role:         ${row.role || "(none)"}
-URL/handle:   ${row.url_or_handle || "(none)"}
-Client count: ${row.client_count || "(none)"}
+Name: ${row.name || "(none)"}
+Email: ${row.email || "(none)"}
+Phone: ${row.phone || "(none)"}
+Business name: ${row.business_name || "(none)"}
+Role: ${row.role || "(none)"}
+Website/Instagram: ${row.url_or_handle || "(none)"}
+Clients: ${row.client_count || "(none)"}
+Why interested: ${row.why_interested || "(none)"}
+Non-binding acknowledged: ${row.nonbinding_ack ? "yes" : "no"}
 
-Why interested:
-${row.why_interested || "(none)"}
-
-Attribution
------------
 Source page: ${row.source_page || "(none)"}
-Landing:     ${row.landing_page || "(none)"}
-Referrer:    ${row.referrer_url || "(none)"}
-utm_source:  ${row.utm_source || "(none)"}
-utm_medium:  ${row.utm_medium || "(none)"}
-utm_campaign:${row.utm_campaign || "(none)"}
-utm_content: ${row.utm_content || "(none)"}
-utm_term:    ${row.utm_term || "(none)"}
-IP:          ${row.ip || "(none)"}
-
-Time:        ${new Date().toISOString()}
+Landing page: ${row.landing_page || "(none)"}
+Referrer: ${row.referrer_url || "(none)"}
+UTM: ${row.utm_source || "(none)"} / ${row.utm_medium || "(none)"} / ${row.utm_campaign || "(none)"} / ${row.utm_content || "(none)"} / ${row.utm_term || "(none)"}
+Submitted: ${new Date().toISOString()}
+IP: ${row.ip || "(none)"}
 
 xenios
 `;

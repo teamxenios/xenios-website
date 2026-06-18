@@ -19,10 +19,35 @@ import {
   setWaitlistEmailStatus,
   insertLoi,
   setLoiEmailStatus,
+  listWaitlist,
+  listLoi,
+  listBookings,
+  updateWaitlistStatus,
+  updateLoiStatus,
+  listNotes,
+  addNote,
+  insertBooking,
+  listVisibleConcepts,
+  getAnalytics,
   type WaitlistInput,
   type LoiInput,
 } from "./supabase-store";
-import { supabaseConfigured } from "./supabase";
+import { supabaseConfigured, getSupabaseAnon } from "./supabase";
+import { verifyTurnstile } from "./turnstile";
+
+const WAITLIST_STATUSES = ["New", "Contacted", "Qualified", "Not a fit", "Converted", "Archived"];
+const LOI_STATUSES = ["New", "Reviewing", "Followed up", "Signed", "Not moving forward"];
+
+function toCsv(rows: Record<string, any>[]): string {
+  if (!rows.length) return "";
+  const headers = Object.keys(rows[0]);
+  const esc = (v: any) => {
+    if (v === null || v === undefined) return "";
+    const str = typeof v === "object" ? JSON.stringify(v) : String(v);
+    return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+  };
+  return [headers.join(","), ...rows.map((r) => headers.map((h) => esc(r[h])).join(","))].join("\n");
+}
 
 function isUniqueViolation(error: unknown): boolean {
   return (
@@ -85,6 +110,30 @@ function adminAuth(req: Request, res: Response, next: NextFunction) {
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
   next();
+}
+
+// Supabase-Auth admin gate: verifies the user's JWT and that the email matches
+// ADMIN_EMAIL. Used by the /admin dashboard endpoints.
+async function requireSupabaseAdmin(req: Request, res: Response, next: NextFunction) {
+  try {
+    const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
+    if (!adminEmail || !supabaseConfigured()) {
+      return res.status(503).json({ success: false, message: "Admin access not configured" });
+    }
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+    if (!token) return res.status(401).json({ success: false, message: "Unauthorized" });
+    const { data, error } = await getSupabaseAnon().auth.getUser(token);
+    if (error || !data?.user) return res.status(401).json({ success: false, message: "Unauthorized" });
+    if ((data.user.email || "").toLowerCase() !== adminEmail) {
+      return res.status(403).json({ success: false, message: "Forbidden" });
+    }
+    (req as any).adminEmail = data.user.email;
+    next();
+  } catch (err) {
+    console.error("[admin auth] error:", err);
+    res.status(401).json({ success: false, message: "Unauthorized" });
+  }
 }
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
@@ -214,6 +263,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       if (!rateLimit(req)) {
         return res.status(429).json({ success: false, message: "Too many requests. Please try again in a few minutes." });
       }
+      if (!(await verifyTurnstile(req.body?.turnstileToken, clientIp(req)))) {
+        return res.status(400).json({ success: false, message: "Verification failed. Please try again." });
+      }
       if (!supabaseConfigured()) {
         return res.status(503).json({ success: false, message: "The waitlist is temporarily unavailable. Please try again shortly." });
       }
@@ -233,6 +285,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const input: WaitlistInput = {
         email: emailParsed.data,
         name: s(req.body?.name, 160),
+        phone: s(req.body?.phone, 40),
         role: s(req.body?.role, 80),
         company: s(req.body?.company, 120),
         city: s(req.body?.city, 120),
@@ -268,6 +321,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       }
       if (!rateLimit(req)) {
         return res.status(429).json({ success: false, message: "Too many requests. Please try again in a few minutes." });
+      }
+      if (!(await verifyTurnstile(req.body?.turnstileToken, clientIp(req)))) {
+        return res.status(400).json({ success: false, message: "Verification failed. Please try again." });
       }
       if (!supabaseConfigured()) {
         return res.status(503).json({ success: false, message: "The form is temporarily unavailable. Please try again shortly." });
@@ -347,6 +403,182 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
         success: false,
         message: "Something broke on our side.",
       });
+    }
+  });
+
+  // ---- Public runtime config (safe values only; no secrets) ----
+  app.get("/api/config", (_req, res) => {
+    res.set("Cache-Control", "public, max-age=30");
+    res.json({
+      metaPixelId: process.env.META_PIXEL_ID || null,
+      turnstileSiteKey: process.env.TURNSTILE_SITE_KEY || null,
+      calendlyUrl: process.env.CALENDLY_URL || "https://calendly.com/samuel-xeniostechnology/30min",
+      supabaseUrl: process.env.SUPABASE_URL || null,
+      supabaseAnonKey: process.env.SUPABASE_ANON_KEY || null,
+    });
+  });
+
+  // ---- Public concept gallery (visible items only) ----
+  app.get("/api/concepts", async (_req, res) => {
+    try {
+      if (!supabaseConfigured()) return res.json({ success: true, data: [] });
+      const items = await listVisibleConcepts();
+      res.set("Cache-Control", "public, s-maxage=30, stale-while-revalidate=120");
+      res.json({ success: true, data: items });
+    } catch (err) {
+      console.error("[concepts] error:", err);
+      res.status(500).json({ success: false, data: [] });
+    }
+  });
+
+  // ---- Calendly webhook -> records a booking ----
+  // Guard with ?token=CALENDLY_WEBHOOK_SECRET (set on the Calendly webhook URL).
+  app.post("/api/calendly/webhook", async (req, res) => {
+    try {
+      const secret = process.env.CALENDLY_WEBHOOK_SECRET;
+      if (secret && req.query.token !== secret) {
+        return res.status(401).json({ ok: false });
+      }
+      if (!supabaseConfigured()) return res.status(200).json({ ok: true });
+      const evt = req.body?.event as string | undefined;
+      const payload = req.body?.payload ?? {};
+      const name = payload?.name ?? payload?.invitee?.name ?? null;
+      const email = payload?.email ?? payload?.invitee?.email ?? null;
+      const event_time =
+        payload?.scheduled_event?.start_time ??
+        payload?.event?.start_time ??
+        payload?.start_time ??
+        null;
+      await insertBooking({
+        name,
+        email,
+        event_time,
+        source: "calendly",
+        status: evt === "invitee.canceled" ? "canceled" : "scheduled",
+      });
+      res.json({ ok: true });
+    } catch (err) {
+      console.error("[calendly webhook] error:", err);
+      res.status(200).json({ ok: true });
+    }
+  });
+
+  // ---- Admin dashboard API (Supabase Auth JWT, email === ADMIN_EMAIL) ----
+  app.get("/api/admin/me", requireSupabaseAdmin, (req, res) => {
+    res.json({ success: true, email: (req as any).adminEmail });
+  });
+
+  app.get("/api/admin/waitlist", requireSupabaseAdmin, async (_req, res) => {
+    try {
+      res.json({ success: true, data: await listWaitlist() });
+    } catch (err) {
+      console.error("[admin/waitlist] error:", err);
+      res.status(500).json({ success: false, message: "Failed to load waitlist" });
+    }
+  });
+
+  app.get("/api/admin/loi", requireSupabaseAdmin, async (_req, res) => {
+    try {
+      res.json({ success: true, data: await listLoi() });
+    } catch (err) {
+      console.error("[admin/loi] error:", err);
+      res.status(500).json({ success: false, message: "Failed to load early interest" });
+    }
+  });
+
+  app.get("/api/admin/bookings", requireSupabaseAdmin, async (_req, res) => {
+    try {
+      res.json({ success: true, data: await listBookings() });
+    } catch (err) {
+      console.error("[admin/bookings] error:", err);
+      res.status(500).json({ success: false, message: "Failed to load bookings" });
+    }
+  });
+
+  app.get("/api/admin/analytics", requireSupabaseAdmin, async (_req, res) => {
+    try {
+      res.json({ success: true, data: await getAnalytics() });
+    } catch (err) {
+      console.error("[admin/analytics] error:", err);
+      res.status(500).json({ success: false, message: "Failed to load analytics" });
+    }
+  });
+
+  app.patch("/api/admin/waitlist/:id/status", requireSupabaseAdmin, async (req, res) => {
+    try {
+      const status = String(req.body?.status || "");
+      if (!WAITLIST_STATUSES.includes(status)) {
+        return res.status(400).json({ success: false, message: "Invalid status" });
+      }
+      await updateWaitlistStatus(String(req.params.id), status);
+      res.json({ success: true });
+    } catch (err) {
+      console.error("[admin/waitlist status] error:", err);
+      res.status(500).json({ success: false, message: "Failed to update status" });
+    }
+  });
+
+  app.patch("/api/admin/loi/:id/status", requireSupabaseAdmin, async (req, res) => {
+    try {
+      const status = String(req.body?.status || "");
+      if (!LOI_STATUSES.includes(status)) {
+        return res.status(400).json({ success: false, message: "Invalid status" });
+      }
+      await updateLoiStatus(String(req.params.id), status);
+      res.json({ success: true });
+    } catch (err) {
+      console.error("[admin/loi status] error:", err);
+      res.status(500).json({ success: false, message: "Failed to update status" });
+    }
+  });
+
+  app.get("/api/admin/notes", requireSupabaseAdmin, async (req, res) => {
+    try {
+      const recordType = String(req.query.record_type || "");
+      const recordId = String(req.query.record_id || "");
+      if (!recordType || !recordId) {
+        return res.status(400).json({ success: false, message: "record_type and record_id required" });
+      }
+      res.json({ success: true, data: await listNotes(recordType, recordId) });
+    } catch (err) {
+      console.error("[admin/notes list] error:", err);
+      res.status(500).json({ success: false, message: "Failed to load notes" });
+    }
+  });
+
+  app.post("/api/admin/notes", requireSupabaseAdmin, async (req, res) => {
+    try {
+      const record_type = String(req.body?.record_type || "");
+      const record_id = String(req.body?.record_id || "");
+      const note = String(req.body?.note || "").trim();
+      if (!record_type || !record_id || !note) {
+        return res.status(400).json({ success: false, message: "record_type, record_id and note required" });
+      }
+      const created = await addNote({
+        record_type,
+        record_id,
+        note: note.slice(0, 4000),
+        author: (req as any).adminEmail || null,
+      });
+      res.json({ success: true, data: created });
+    } catch (err) {
+      console.error("[admin/notes add] error:", err);
+      res.status(500).json({ success: false, message: "Failed to add note" });
+    }
+  });
+
+  app.get("/api/admin/export", requireSupabaseAdmin, async (req, res) => {
+    try {
+      const type = String(req.query.type || "waitlist");
+      const rows =
+        type === "loi" ? await listLoi() : type === "bookings" ? await listBookings() : await listWaitlist();
+      const csv = toCsv(rows as Record<string, any>[]);
+      res.setHeader("Content-Type", "text/csv; charset=utf-8");
+      res.setHeader("Content-Disposition", `attachment; filename="xenios-${type}.csv"`);
+      res.send(csv);
+    } catch (err) {
+      console.error("[admin/export] error:", err);
+      res.status(500).json({ success: false, message: "Failed to export" });
     }
   });
 
