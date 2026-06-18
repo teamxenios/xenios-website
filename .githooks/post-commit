@@ -1,0 +1,6 @@
+#!/bin/bash
+# Auto-sync to GitHub after every commit (checkpoint). Runs in the background and
+# never blocks or fails the commit.
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+( node "$ROOT/script/sync-github.mjs" >/tmp/github-sync.log 2>&1 & ) >/dev/null 2>&1
+exit 0

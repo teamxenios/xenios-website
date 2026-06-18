@@ -434,10 +434,16 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   // ---- Calendly webhook -> records a booking ----
   // Guard with ?token=CALENDLY_WEBHOOK_SECRET (set on the Calendly webhook URL).
+  // The secret is MANDATORY: with no secret configured the endpoint refuses to
+  // process any payload, so bookings can never be injected unauthenticated.
   app.post("/api/calendly/webhook", async (req, res) => {
     try {
       const secret = process.env.CALENDLY_WEBHOOK_SECRET;
-      if (secret && req.query.token !== secret) {
+      if (!secret) {
+        console.warn("[calendly webhook] rejected: CALENDLY_WEBHOOK_SECRET not set");
+        return res.status(503).json({ ok: false, message: "Webhook not configured" });
+      }
+      if (req.query.token !== secret) {
         return res.status(401).json({ ok: false });
       }
       if (!supabaseConfigured()) return res.status(200).json({ ok: true });
