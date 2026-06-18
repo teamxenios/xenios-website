@@ -133,6 +133,8 @@ export default function Admin() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [signingIn, setSigningIn] = useState(false);
   const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  const [resetNotice, setResetNotice] = useState<string | null>(null);
+  const [resetting, setResetting] = useState(false);
 
   const [tab, setTab] = useState<TabKey>("waitlist");
 
@@ -183,6 +185,31 @@ export default function Admin() {
     if (!supabase) return;
     await supabase.auth.signOut();
     setAdminEmail(null);
+  }
+
+  async function handleForgotPassword() {
+    if (!supabase) return;
+    setLoginError(null);
+    setResetNotice(null);
+    if (!email) {
+      setLoginError("Enter your email above, then click Forgot password.");
+      return;
+    }
+    setResetting(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/admin",
+      });
+      if (error) {
+        setLoginError(error.message || "Could not send the reset email.");
+      } else {
+        setResetNotice("If that email has an account, a password reset link is on its way.");
+      }
+    } catch (err: any) {
+      setLoginError(err?.message || "Could not send the reset email.");
+    } finally {
+      setResetting(false);
+    }
   }
 
   useEffect(() => {
@@ -248,6 +275,9 @@ export default function Admin() {
             onSubmit={handleSignIn}
             error={loginError}
             submitting={signingIn}
+            onForgotPassword={handleForgotPassword}
+            resetting={resetting}
+            resetNotice={resetNotice}
           />
         )}
 
@@ -312,6 +342,9 @@ function LoginScreen({
   onSubmit,
   error,
   submitting,
+  onForgotPassword,
+  resetting,
+  resetNotice,
 }: {
   email: string;
   password: string;
@@ -320,6 +353,9 @@ function LoginScreen({
   onSubmit: (e: React.FormEvent) => void;
   error: string | null;
   submitting: boolean;
+  onForgotPassword: () => void;
+  resetting: boolean;
+  resetNotice: string | null;
 }) {
   return (
     <form onSubmit={onSubmit} className="max-w-[40ch] space-y-6" data-testid="form-admin-login">
@@ -353,7 +389,21 @@ function LoginScreen({
           className="input-field"
           data-testid="input-admin-password"
         />
+        <button
+          type="button"
+          onClick={onForgotPassword}
+          disabled={resetting}
+          className="mt-3 bg-transparent border-0 p-0 cursor-pointer body-s underline text-ink-mute hover:text-ink disabled:opacity-60"
+          data-testid="link-forgot-password"
+        >
+          {resetting ? "Sending reset link..." : "Forgot password?"}
+        </button>
       </div>
+      {resetNotice && (
+        <div className="border border-ink/15 text-ink-2 px-4 py-3 rounded body-s" data-testid="text-reset-notice">
+          {resetNotice}
+        </div>
+      )}
       {error && (
         <div
           className="border border-[color:var(--error)] text-[color:var(--error)] px-4 py-3 rounded body-s"
