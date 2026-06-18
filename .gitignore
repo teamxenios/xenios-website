@@ -4,3 +4,21 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Environment & secrets — never commit real values
+.env
+.env.*
+!.env.example
+*.local
+secrets.json
+*.pem
+*.key
+
+# Logs
+*.log
+logs
+npm-debug.log*
+
+# Editor / OS
+.vscode
+.idea
