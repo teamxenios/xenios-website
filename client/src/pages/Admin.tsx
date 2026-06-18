@@ -136,6 +136,14 @@ export default function Admin() {
   const [resetNotice, setResetNotice] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);
 
+  // Password recovery (set new password after clicking the email link).
+  const [recoveryMode, setRecoveryMode] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [updatingPassword, setUpdatingPassword] = useState(false);
+  const [recoveryError, setRecoveryError] = useState<string | null>(null);
+  const [recoveryDone, setRecoveryDone] = useState(false);
+
   const [tab, setTab] = useState<TabKey>("waitlist");
 
   useEffect(() => {
@@ -153,9 +161,18 @@ export default function Admin() {
         setToken(data.session?.access_token ?? null);
         setAuthReady(true);
       });
-      const { data: listener } = client.auth.onAuthStateChange((_event, s) => {
+      const { data: listener } = client.auth.onAuthStateChange((event, s) => {
         setSession(!!s);
         setToken(s?.access_token ?? null);
+        if (event === "PASSWORD_RECOVERY") {
+          setRecoveryMode(true);
+          setRecoveryDone(false);
+        } else if (event === "SIGNED_OUT") {
+          setRecoveryMode(false);
+          setRecoveryError(null);
+          setNewPassword("");
+          setConfirmPassword("");
+        }
       });
       unsub = () => listener.subscription.unsubscribe();
     });
@@ -185,6 +202,45 @@ export default function Admin() {
     if (!supabase) return;
     await supabase.auth.signOut();
     setAdminEmail(null);
+  }
+
+  async function handleUpdatePassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (!supabase) return;
+    setRecoveryError(null);
+    if (newPassword.length < 8) {
+      setRecoveryError("Password must be at least 8 characters.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setRecoveryError("Passwords do not match.");
+      return;
+    }
+    setUpdatingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        setRecoveryError(error.message || "Could not update your password.");
+      } else {
+        setRecoveryDone(true);
+        setNewPassword("");
+        setConfirmPassword("");
+        // Sign out so the user re-authenticates with the new password.
+        await supabase.auth.signOut();
+      }
+    } catch (err: any) {
+      setRecoveryError(err?.message || "Could not update your password.");
+    } finally {
+      setUpdatingPassword(false);
+    }
+  }
+
+  async function handleCancelRecovery() {
+    setRecoveryError(null);
+    setNewPassword("");
+    setConfirmPassword("");
+    setRecoveryMode(false);
+    if (supabase) await supabase.auth.signOut();
   }
 
   async function handleForgotPassword() {
@@ -266,7 +322,20 @@ export default function Admin() {
           </p>
         )}
 
-        {configured && authReady && !session && (
+        {configured && authReady && recoveryMode && (
+          <SetPasswordScreen
+            newPassword={newPassword}
+            confirmPassword={confirmPassword}
+            onNewPassword={setNewPassword}
+            onConfirmPassword={setConfirmPassword}
+            onSubmit={handleUpdatePassword}
+            error={recoveryError}
+            submitting={updatingPassword}
+            onCancel={handleCancelRecovery}
+          />
+        )}
+
+        {configured && authReady && !recoveryMode && !session && (
           <LoginScreen
             email={email}
             password={password}
@@ -277,11 +346,11 @@ export default function Admin() {
             submitting={signingIn}
             onForgotPassword={handleForgotPassword}
             resetting={resetting}
-            resetNotice={resetNotice}
+            resetNotice={recoveryDone ? "Password updated. You can sign in with your new password." : resetNotice}
           />
         )}
 
-        {configured && authReady && session && token && (
+        {configured && authReady && !recoveryMode && session && token && (
           <>
             <div className="flex flex-wrap gap-2 mb-10" role="tablist">
               <TabButton id="tab-waitlist" active={tab === "waitlist"} onClick={() => setTab("waitlist")}>
@@ -420,6 +489,90 @@ function LoginScreen({
       >
         {submitting ? "Signing in..." : "Sign in"}
       </button>
+    </form>
+  );
+}
+
+function SetPasswordScreen({
+  newPassword,
+  confirmPassword,
+  onNewPassword,
+  onConfirmPassword,
+  onSubmit,
+  error,
+  submitting,
+  onCancel,
+}: {
+  newPassword: string;
+  confirmPassword: string;
+  onNewPassword: (v: string) => void;
+  onConfirmPassword: (v: string) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  error: string | null;
+  submitting: boolean;
+  onCancel: () => void;
+}) {
+  return (
+    <form onSubmit={onSubmit} className="max-w-[40ch] space-y-6" data-testid="form-set-password">
+      <h2 className="display-s">Set a new password</h2>
+      <p className="body-s text-ink-mute">Choose a new password for your admin account.</p>
+      <div>
+        <label htmlFor="new-password" className="form-label">
+          New password
+        </label>
+        <input
+          id="new-password"
+          type="password"
+          required
+          autoComplete="new-password"
+          value={newPassword}
+          onChange={(e) => onNewPassword(e.target.value)}
+          className="input-field"
+          data-testid="input-new-password"
+        />
+      </div>
+      <div>
+        <label htmlFor="confirm-password" className="form-label">
+          Confirm password
+        </label>
+        <input
+          id="confirm-password"
+          type="password"
+          required
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={(e) => onConfirmPassword(e.target.value)}
+          className="input-field"
+          data-testid="input-confirm-password"
+        />
+      </div>
+      {error && (
+        <div
+          className="border border-[color:var(--error)] text-[color:var(--error)] px-4 py-3 rounded body-s"
+          data-testid="text-recovery-error"
+        >
+          {error}
+        </div>
+      )}
+      <div className="flex items-center gap-4">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="btn btn-primary w-full md:w-auto"
+          data-testid="button-update-password"
+        >
+          {submitting ? "Updating..." : "Update password"}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={submitting}
+          className="bg-transparent border-0 p-0 cursor-pointer body-s underline text-ink-mute hover:text-ink disabled:opacity-60"
+          data-testid="link-back-to-signin"
+        >
+          Back to sign in
+        </button>
+      </div>
     </form>
   );
 }
