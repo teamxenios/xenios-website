@@ -47,7 +47,7 @@
   --z-toast: 100;
 
   /* Vertical rhythm */
-  --space-section-y: 80px;
+  --space-section-y: 52px;
   --space-block-y: 40px;
   --space-card-y: 24px;
   --space-hero-top: 96px;
@@ -66,14 +66,14 @@
 @media (min-width: 375px) { :root { --container-gutter: 20px; } }
 @media (min-width: 390px) { :root { --container-gutter: 24px; } }
 @media (min-width: 768px) {
-  :root { --container-max: 720px; --container-gutter: 28px; --space-section-y: 112px; --space-block-y: 56px; --space-card-y: 32px; --space-hero-top: 120px; --space-hero-bottom: 112px; }
+  :root { --container-max: 720px; --container-gutter: 28px; --space-section-y: 72px; --space-block-y: 56px; --space-card-y: 32px; --space-hero-top: 120px; --space-hero-bottom: 112px; }
 }
 @media (min-width: 820px) { :root { --container-max: 760px; --container-gutter: 32px; } }
 @media (min-width: 1024px) {
-  :root { --container-max: 960px; --container-gutter: 40px; --space-section-y: 144px; --space-block-y: 72px; --space-card-y: 40px; --space-hero-top: 152px; --space-hero-bottom: 144px; }
+  :root { --container-max: 960px; --container-gutter: 40px; --space-section-y: 96px; --space-block-y: 72px; --space-card-y: 40px; --space-hero-top: 152px; --space-hero-bottom: 144px; }
 }
 @media (min-width: 1280px) {
-  :root { --container-max: 1200px; --container-gutter: 48px; --space-section-y: 176px; --space-block-y: 88px; --space-hero-top: 200px; --space-hero-bottom: 176px; }
+  :root { --container-max: 1200px; --container-gutter: 48px; --space-section-y: 116px; --space-block-y: 88px; --space-hero-top: 200px; --space-hero-bottom: 176px; }
 }
 @media (min-width: 1440px) { :root { --container-max: 1320px; --container-gutter: 56px; } }
 @media (min-width: 1920px) { :root { --container-max: 1440px; --container-gutter: 64px; } }

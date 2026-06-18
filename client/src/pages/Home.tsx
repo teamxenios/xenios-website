@@ -8,41 +8,23 @@ const NAV_LINKS = [
   { label: "Who it's for", href: "#who" },
 ];
 
-const PROBLEM_LINES = [
-  "Clients need support between sessions.",
-  "Athletes need context between training days.",
-  "Patients need follow-up between visits.",
-];
-
 const WHO_FOR = [
   "Personal trainers",
-  "Strength coaches",
-  "Nutritionists",
-  "Health coaches",
+  "Strength and performance coaches",
+  "Health and longevity coaches",
+  "Nutritionists and dietitians",
   "Physical therapists",
-  "Longevity clinicians",
   "Performance gyms",
-  "Wellness clinics",
+  "Wellness and longevity clinics",
   "Sports teams",
   "Corporate wellness teams",
 ];
 
-const ROLE_OPTIONS = [
-  "Personal trainer or strength coach",
-  "Online fitness coach",
-  "Nutrition coach or dietitian",
-  "Health coach",
-  "Physical therapist",
-  "Longevity clinician",
-  "Performance gym or sports team",
-  "Wellness clinic or organization",
-  "Investor or partner",
-  "Other",
-];
+const ROLE_OPTIONS = [...WHO_FOR, "Other"];
 
 const INTERESTS = [
-  "Professional agent",
-  "Client or athlete agent",
+  "Professional agent (Xen)",
+  "Client agent (Athena)",
   "Gym, clinic, or team",
   "Partnership",
 ];
@@ -148,8 +130,8 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-paper text-ink">
       <SeoHead
-        title="xenios, two AI agents for every health professional"
-        description="xenios gives every health professional two AI agents: one to help run their practice, and one to support each client or athlete between sessions. You stay in control. The relationship stays human."
+        title="xenios: two AI agents for every coach"
+        description="xenios gives every coach two AI agents: one to run the practice, and one to support each client between sessions, in your voice, always disclosed as AI and always yours to approve."
         path="/"
       />
 
@@ -191,19 +173,17 @@ export default function Home() {
         {/* Section 1 — Hero */}
         <section className="container-x" style={{ paddingTop: "var(--space-hero-top)", paddingBottom: "var(--space-hero-bottom)" }}>
           <p className="mono-cap text-pulse mb-6" data-testid="text-motif-hero">
-            The AI helps. The professional leads.
+            The AI drafts. The coach decides.
           </p>
           <h1 className="display-xl text-balance" style={{ maxWidth: "16ch" }} data-testid="text-headline">
-            Two AI agents for every health professional.
+            Two AI agents for every coach.
           </h1>
-          <p className="mt-8 body-l text-ink-2" style={{ maxWidth: "56ch" }}>
-            One helps you run the practice. One supports your client or athlete between sessions.
+          <p className="mt-8 body-l text-ink-2" style={{ maxWidth: "60ch" }}>
+            One runs your practice. One supports each client between sessions, in your voice, always disclosed as AI,
+            always yours to approve.
           </p>
-          <p className="mt-6 body-m text-ink-2" style={{ maxWidth: "60ch" }}>
-            xenios is built for coaches, trainers, clinicians, nutritionists, gyms, and performance teams who manage
-            real people, real goals, and real follow-up. Your professional agent helps with the work around the
-            client. Your client agent helps each person stay supported between sessions. You stay in control. The
-            relationship stays human.
+          <p className="mt-6 body-m text-ink-2" style={{ maxWidth: "56ch" }}>
+            xenios is built for coaches who manage real client relationships, real goals, and real follow-up.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
             <a href="#waitlist" className="btn btn-primary" data-testid="button-hero-waitlist">
@@ -214,7 +194,7 @@ export default function Home() {
             </a>
           </div>
           <p className="mt-8 mono-cap text-ink-mute">
-            Built for professionals. Not to replace them.
+            Built for coaches. Not to replace them.
           </p>
         </section>
 
@@ -222,19 +202,11 @@ export default function Home() {
         <section className="container-x section-y rule-top">
           <p className="mono-cap text-ink-mute mb-6">The problem</p>
           <h2 className="display-m text-balance" style={{ maxWidth: "18ch" }}>
-            The best professionals are limited by time.
+            The best coaches are limited by time.
           </h2>
-          <div className="mt-8 space-y-2" data-testid="list-problem">
-            {PROBLEM_LINES.map((line) => (
-              <p key={line} className="body-l text-ink-2">{line}</p>
-            ))}
-          </div>
           <p className="mt-8 body-l text-ink-2" style={{ maxWidth: "60ch" }}>
-            But most professionals are stuck doing everything manually: messages, check-ins, notes, updates,
-            scheduling, progress tracking, and follow-up.
-          </p>
-          <p className="mt-6 quote-lead text-ink" style={{ maxWidth: "44ch" }}>
-            The result is simple: you either stay small, or quality starts to thin.
+            A great coach can only hold so many real relationships at once. And between sessions, where most of the
+            change actually happens, clients are on their own.
           </p>
         </section>
 
@@ -242,14 +214,14 @@ export default function Home() {
         <section id="agents" className="container-x section-y rule-top" style={ANCHOR_OFFSET}>
           <p className="mono-cap text-ink-mute mb-6">The product</p>
           <h2 className="display-m text-balance" style={{ maxWidth: "20ch" }}>
-            One agent for you. One agent for every client.
+            Two agents. One for you. One for each client.
           </h2>
 
           {/* Connected-agents visual */}
-          <div className="mt-12 agent-diagram" data-testid="visual-agents" role="img" aria-label="Two agents, one for the professional and one for the client or athlete, connected through xenios">
+          <div className="mt-12 agent-diagram" data-testid="visual-agents" role="img" aria-label="Two agents connected through xenios: Xen for the coach, Athena for each client.">
             <div className="agent-node card" data-testid="node-professional">
-              <p className="mono-cap text-pulse mb-2">Professional agent</p>
-              <p className="h3">Runs the work around your clients.</p>
+              <p className="mono-cap text-pulse mb-2">Xen</p>
+              <p className="h3">Runs your practice.</p>
             </div>
 
             <div className="agent-link" aria-hidden="true">
@@ -259,38 +231,36 @@ export default function Home() {
             </div>
 
             <div className="agent-node card" data-testid="node-client">
-              <p className="mono-cap text-pulse mb-2">Client or athlete agent</p>
-              <p className="h3">Supports each person between sessions.</p>
+              <p className="mono-cap text-pulse mb-2">Athena</p>
+              <p className="h3">Supports each client.</p>
             </div>
           </div>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
             <div>
-              <p className="mono-cap text-ink-mute mb-3">Professional agent</p>
+              <p className="mono-cap text-ink-mute mb-3">Xen</p>
               <p className="body-l text-ink-2">
-                Your professional agent helps manage the work around your clients. It helps prepare check-ins,
-                summarize progress, organize notes, surface what needs attention, and draft follow-ups in your voice.
-                It gives you more leverage without taking away your judgment.
+                Xen runs the practice (check-ins, programming, scheduling, notes) and surfaces only what needs your
+                judgment.
               </p>
             </div>
             <div>
-              <p className="mono-cap text-ink-mute mb-3">Client or athlete agent</p>
+              <p className="mono-cap text-ink-mute mb-3">Athena</p>
               <p className="body-l text-ink-2">
-                Your client agent supports each person between sessions. It helps them stay consistent, remember the
-                plan, understand next steps, and feel supported when you are not physically with them. It is always
-                connected back to the professional.
+                Athena keeps each client supported between sessions, in your voice. You stay in control. The
+                relationship stays human.
               </p>
             </div>
           </div>
 
-          <p className="mt-12 quote-lead text-ink">The AI helps. The professional leads.</p>
+          <p className="mt-12 quote-lead text-ink">The AI drafts. The coach decides.</p>
         </section>
 
         {/* Section 4 — Who it is for */}
         <section id="who" className="container-x section-y rule-top" style={ANCHOR_OFFSET}>
           <p className="mono-cap text-ink-mute mb-6">Who it's for</p>
           <h2 className="display-m text-balance" style={{ maxWidth: "20ch" }}>
-            Built for the people clients already trust.
+            Built for serious coaches who run real client relationships.
           </h2>
           <ul className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-4">
             {WHO_FOR.map((w) => (
@@ -312,8 +282,8 @@ export default function Home() {
               <p className="mono-cap text-ink-mute mb-6">Waitlist</p>
               <h2 className="display-m">Join the founding waitlist.</h2>
               <p className="mt-8 body-l text-ink-2" style={{ maxWidth: "52ch" }}>
-                We are opening xenios to a small group of professionals and organizations helping shape the next layer
-                of proactive health. Join if you want to support more people, reduce admin, keep your clients engaged
+                We are opening xenios to a small founding group of coaches and organizations helping shape the next
+                layer of proactive health. Join if you want to support more clients, reduce admin, keep people engaged
                 between sessions, and use AI without losing your voice or judgment.
               </p>
               {count !== null && (
@@ -327,10 +297,10 @@ export default function Home() {
             <div>
               {success ? (
                 <div className="card" role="status" aria-live="polite" data-testid="text-success">
-                  <p className="h3 mb-2">You are on the list.</p>
+                  <p className="h3 mb-2">You're on the xenios waitlist.</p>
                   <p className="body-m text-ink-2">
-                    Position #{success.position}. We will be in touch as cohorts open. Watch for a note from
-                    team@xeniostechnology.com.
+                    Position #{success.position}. We onboard coaches in small groups, so we will reach out as soon as a
+                    spot opens. Questions? Reply to team@xeniostechnology.com.
                   </p>
                 </div>
               ) : (
@@ -418,7 +388,7 @@ export default function Home() {
                               borderColor: checked ? "var(--pulse)" : "var(--ink)",
                               color: checked ? "var(--pulse)" : "var(--ink)",
                             }}
-                            data-testid={`interest-${opt.replace(/\s+/g, "-").toLowerCase()}`}
+                            data-testid={`interest-${opt.replace(/[^a-z]+/gi, "-").toLowerCase()}`}
                           >
                             <input
                               type="checkbox"
