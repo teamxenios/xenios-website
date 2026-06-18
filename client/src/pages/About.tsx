@@ -24,14 +24,14 @@ export default function About() {
       </section>
 
       <section className="container-x py-16 rule-top">
-        <p className="mono-cap text-ink-mute mb-6">FOUNDER</p>
-        <h2 className="display-l mb-6">Alex Houston</h2>
+        <p className="mono-cap text-ink-mute mb-6">THE TEAM</p>
+        <h2 className="display-l mb-6">Operators who have done this before.</h2>
         <div className="space-y-4 max-w-[64ch]">
           <p className="body-l text-ink-2">
-            Alex has spent his career building infrastructure for the parts of healthcare and finance the rest of the industry treats as someone else's problem. He sees coaches as the next operator class to be given tools as serious as the work.
+            We have spent our careers building infrastructure for the parts of healthcare and finance the rest of the industry treats as someone else's problem. We see coaches as the next operator class to be given tools as serious as the work.
           </p>
           <p className="body-l text-ink-2">
-            He lives in Austin. He works upstream.
+            We are based in Austin. We work upstream.
           </p>
         </div>
       </section>
