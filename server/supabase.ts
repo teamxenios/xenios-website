@@ -1,4 +1,9 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import ws from "ws";
+
+// Node 20 has no global WebSocket. supabase-js eagerly builds a realtime client
+// at construction, so we must supply a transport even though we never subscribe.
+const realtime = { transport: ws as unknown as typeof WebSocket };
 
 // Lazy clients: never construct at import time, so a missing key cannot crash
 // the whole server. Supabase-backed routes guard with supabaseConfigured().
@@ -23,6 +28,7 @@ export function getSupabaseAdmin(): SupabaseClient {
     }
     _admin = createClient(url(), serviceKey(), {
       auth: { persistSession: false, autoRefreshToken: false },
+      realtime,
     });
   }
   return _admin;
@@ -36,6 +42,7 @@ export function getSupabaseAnon(): SupabaseClient {
     }
     _anon = createClient(url(), anonKey(), {
       auth: { persistSession: false, autoRefreshToken: false },
+      realtime,
     });
   }
   return _anon;

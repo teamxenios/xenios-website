@@ -1,1 +1,1 @@
-- [xenios brand voice rules](brand-voice-rules.md) — lowercase always, no period after brand, no em dashes, no "operating system" above the fold; overrides stale replit.md.
+- [Supabase integration quirks](supabase-integration.md) — Node 20 needs ws transport for supabase-js; new sb_publishable_/sb_secret_ key format; DDL must run in SQL Editor.
