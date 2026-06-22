@@ -3,12 +3,25 @@ import pg from "pg";
 import * as schema from "@shared/schema";
 
 const { Pool } = pg;
+const databaseUrl = process.env.DATABASE_URL;
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
+export const pool = databaseUrl
+  ? new Pool({ connectionString: databaseUrl })
+  : null;
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle(pool, { schema });
+const unavailableDb: any = {
+  insert: async () => {
+    throw new Error("DATABASE_URL is not set. Legacy Postgres routes are unavailable.");
+  },
+  select: async () => {
+    throw new Error("DATABASE_URL is not set. Legacy Postgres routes are unavailable.");
+  },
+  update: async () => {
+    throw new Error("DATABASE_URL is not set. Legacy Postgres routes are unavailable.");
+  },
+  transaction: async () => {
+    throw new Error("DATABASE_URL is not set. Legacy Postgres routes are unavailable.");
+  },
+};
+
+export const db = databaseUrl ? drizzle(pool!, { schema }) : unavailableDb;
