@@ -16,7 +16,7 @@ import ForPractitioners from "@/pages/ForPractitioners";
 import IcpPage from "@/pages/IcpPage";
 import Manifesto from "@/pages/Manifesto";
 import About from "@/pages/About";
-import Careers from "@/pages/Careers";
+import Careers, { CareersRole } from "@/pages/Careers";
 import Waitlist from "@/pages/Waitlist";
 import Contact from "@/pages/Contact";
 import Security from "@/pages/Security";
@@ -55,6 +55,7 @@ function Router() {
       <Route path="/for/:slug" component={IcpPage} />
       <Route path="/manifesto" component={Manifesto} />
       <Route path="/about" component={About} />
+      <Route path="/careers/:slug" component={CareersRole} />
       <Route path="/careers" component={Careers} />
       <Route path="/waitlist" component={Waitlist} />
       <Route path="/contact" component={Contact} />
