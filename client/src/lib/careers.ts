@@ -56,21 +56,21 @@ export const CAREERS_ROLES: CareerRole[] = [
     ]
   },
   {
-    slug: "innovative-product-builder",
+    slug: "founding-senior-ai-software-engineer",
     group: "open",
-    title: "Innovative Product Builder",
-    tagline: "Founding engineer, own a platform module end to end",
+    title: "Founding Senior AI Software Engineer",
+    tagline: "Founding engineer, own AI-native platform modules end to end",
     type: "Contract to full-time",
     location: "Remote",
-    summary: "Own an entire platform module from problem framing to production, building with Claude Code as a core tool.",
-    applySubject: "Innovative Product Builder, xenios",
+    summary: "Own an AI-native platform module from problem framing to production, building with Claude Code as a core tool.",
+    applySubject: "Founding Senior AI Software Engineer, xenios",
     detail: [
       { kind: "paragraph", text: "xenios is building the platform that puts a coach in every client's pocket: available around the clock, sounding like the real coach, and scaling one coach's expertise to serve many more clients without losing the personal touch that makes coaching work. We are a small, fast-moving team shipping real product, not decks, not committees, not endless planning cycles." },
       { kind: "paragraph", text: "Why this matters. A great coach can only serve 20 to 40 clients before quality degrades. Scheduling, follow-ups, check-ins, program adjustments, motivation, and accountability grow with every new client. Clients need their coach early in the morning at the gym, late at night before they order takeout, and in the moments they are about to skip a workout. The coach cannot be there around the clock, but the coach's knowledge, philosophy, voice, and judgment can. We are building the system that clones that expertise into an AI that acts on the coach's behalf: drafting personalized plans, giving real-time form feedback through the phone camera, analyzing food logs, sending check-ins, encouraging clients, and escalating to the human coach when it matters." },
-      { kind: "paragraph", text: "The role. We are looking for engineers who want to own an entire platform module, from problem framing through production deployment. You will run Discovery Builds: researching the domain, building proofs of concept, turning working prototypes into specs, and shipping production software. You will also pick up well-scoped Feature Sprints and ship them fast. We follow a build-to-learn process: working prototypes are specs that run. If your instinct is to demand a detailed requirements document before you open an editor, this is not the right fit. This is not a role where someone assigns you tickets each morning. You get context, alignment on the goal, and then you run with it." },
+      { kind: "paragraph", text: "The role. We are looking for senior AI software engineers who want to own an entire platform module, from problem framing through production deployment. You will run Discovery Builds: researching the domain, building proofs of concept, turning working prototypes into specs, and shipping production software. You will also pick up well-scoped Feature Sprints and ship them fast. We follow a build-to-learn process: working prototypes are specs that run. If your instinct is to demand a detailed requirements document before you open an editor, this is not the right fit. This is not a role where someone assigns you tickets each morning. You get context, alignment on the goal, and then you run with it." },
       { kind: "heading", text: "What you will do" },
       { kind: "list", items: [
-        "Own a major platform module end to end: the agent orchestrator, the coach personality system, the client experience, the real-time form-feedback pipeline, or the communication engine. Architecture, implementation, testing, deployment, iteration.",
+        "Own a major AI-native platform module end to end: the agent orchestrator, the coach personality system, the client experience, the real-time form-feedback pipeline, or the communication engine. Architecture, implementation, testing, deployment, iteration.",
         "Run Discovery Builds: problem brief, proof of concept, domain-expert review, refined spec, production build. Test the hardest 10 percent of the problem first, then hand the proven approach to Claude Code.",
         "Ship Feature Sprints: take a brief with clear acceptance criteria and ship it in 1 to 3 days using Claude Code.",
         "Write machine-ready PRDs: working proof-of-concept code, concrete acceptance criteria, data requirements with schemas and API payloads, and a verification plan precise enough for an AI agent to execute against.",
@@ -89,7 +89,7 @@ export const CAREERS_ROLES: CareerRole[] = [
       { kind: "paragraph", text: "What you will build. xenios is an event-driven agentic platform: five input types (messages, heartbeats, crons, hooks, webhooks) feed a task queue, processed by specialized AI agents with persisting state. From the outside it looks like the coach is always there. From the inside it is a Go-native orchestrator running on Fly.io. The platform includes a coach personality system that clones a coach's voice and methodology into a structured prompt refined over time, an agent orchestrator across 12-plus specialized agents with model tiering (Haiku for triage, Sonnet for drafting, Opus for edge cases), real-time exercise form feedback via on-device pose estimation, a food-logging system powered by Claude's vision API, a multi-channel communication engine across in-app, SMS, WhatsApp, and email with a guardrail pipeline, coach and client dashboards in React and Next.js, a React Native app via Expo, and multi-tenant architecture on Supabase (PostgreSQL with pgvector) with row-level security and a full audit trail." },
       { kind: "paragraph", text: "Tech context: Go, React (Next.js), React Native (Expo), and PostgreSQL (Supabase), with integrations across Anthropic Claude, Twilio, Stripe, Recall.ai, Deepgram, MediaPipe, Apple HealthKit, Google Health Connect, and SendGrid. Backend on Fly.io, frontends on Vercel. We build with Claude Code as a primary tool for shipping production software fast, with automated quality checks in CI and a living CLAUDE.md as institutional memory. Experience building entire platforms from scratch is required, with or without AI tools." },
       { kind: "paragraph", text: "Compensation: Paid role with founding equity. Final terms set at offer based on scope and time commitment." },
-      { kind: "paragraph", text: "How to apply: Email team@xeniostechnology.com with the subject \"Innovative Product Builder, xenios\". Tell us about a platform you built from scratch: how you framed the problem, what your proof of concept looked like, how your spec evolved as you built, what you shipped, and what you would do differently. Bonus if you have built event-driven systems, worked with LLM APIs in production, or shipped AI-assisted coaching, health, or fitness products." }
+      { kind: "paragraph", text: "How to apply: Email team@xeniostechnology.com with the subject \"Founding Senior AI Software Engineer, xenios\". Tell us about a platform you built from scratch: how you framed the problem, what your proof of concept looked like, how your spec evolved as you built, what you shipped, and what you would do differently. Bonus if you have built event-driven systems, worked with LLM APIs in production, or shipped AI-assisted coaching, health, or fitness products." }
     ]
   },
   {
