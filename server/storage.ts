@@ -45,7 +45,6 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createWaitlist(submission: InsertWaitlist, meta: RequestMeta = {}): Promise<CreateResult> {
-    // Atomic: lock counter row, derive next position, insert, bump counter.
     return await db.transaction(async (tx) => {
       const [counterRow] = await tx
         .select()
@@ -89,4 +88,53 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+class FallbackStorage implements IStorage {
+  private baseCount = 550;
+  private signups: WaitlistSignup[] = [];
+
+  async ensureCounterSeeded(baseCount = 550): Promise<void> {
+    this.baseCount = baseCount;
+    console.warn("[storage] DATABASE_URL is not set. Using temporary in-memory fallback storage for legacy routes.");
+  }
+
+  async getCounterTotal(): Promise<number> {
+    return this.baseCount + this.signups.length;
+  }
+
+  async findWaitlistByEmail(email: string): Promise<WaitlistSignup | null> {
+    return this.signups.find((row) => row.email === email.toLowerCase()) ?? null;
+  }
+
+  async getAllWaitlist(): Promise<WaitlistSignup[]> {
+    return [...this.signups].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  async createWaitlist(submission: InsertWaitlist, meta: RequestMeta = {}): Promise<CreateResult> {
+    const existing = await this.findWaitlistByEmail(submission.email);
+    if (existing) return { signup: existing, totalCount: await this.getCounterTotal() };
+
+    const position = this.baseCount + this.signups.length + 1;
+    const signup = {
+      id: crypto.randomUUID(),
+      firstName: submission.firstName,
+      lastName: submission.lastName,
+      email: submission.email.toLowerCase(),
+      practitionerType: submission.practitionerType,
+      city: submission.city,
+      country: submission.country,
+      freeText: submission.freeText ?? null,
+      howHeard: submission.howHeard ?? null,
+      position,
+      ipCountry: meta.ipCountry ?? null,
+      userAgent: meta.userAgent ?? null,
+      createdAt: new Date(),
+    } as WaitlistSignup;
+
+    this.signups.push(signup);
+    return { signup, totalCount: position };
+  }
+}
+
+export const storage: IStorage = process.env.DATABASE_URL
+  ? new DatabaseStorage()
+  : new FallbackStorage();
