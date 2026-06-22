@@ -55,6 +55,7 @@ function Router() {
       <Route path="/for/:slug" component={IcpPage} />
       <Route path="/manifesto" component={Manifesto} />
       <Route path="/about" component={About} />
+      <Route path="/careers/innovative-product-builder"><Redirect to="/careers/founding-senior-ai-software-engineer" /></Route>
       <Route path="/careers/:slug" component={CareersRole} />
       <Route path="/careers" component={Careers} />
       <Route path="/waitlist" component={Waitlist} />
