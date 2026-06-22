@@ -5,6 +5,13 @@ import Wordmark from "./Wordmark";
 
 const OVERLAY_ID = "nav-mobile-overlay";
 
+const SITE_MENU_GROUPS = [
+  { label: "Product", items: content.footer.columns.product },
+  { label: "Company", items: content.footer.columns.company },
+  { label: "Resources", items: content.footer.columns.resources },
+  { label: "Legal", items: content.footer.columns.legal },
+] as const;
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
@@ -108,6 +115,30 @@ export default function Navbar() {
             </button>
           </div>
         </div>
+
+        <div className="hidden lg:block rule-top bg-paper/95" data-testid="nav-site-menu">
+          <nav className="container-x flex items-center gap-6 overflow-x-auto py-3" aria-label="All site pages">
+            {SITE_MENU_GROUPS.map((group) => (
+              <div key={group.label} className="flex items-center gap-3 shrink-0">
+                <span className="mono-cap text-ink-mute">{group.label}</span>
+                <div className="flex items-center gap-3">
+                  {group.items.map((item) => {
+                    const active = location === item.href;
+                    return (
+                      <Link
+                        key={`${group.label}-${item.href}`}
+                        href={item.href}
+                        className={`text-[12px] tracking-[-0.005em] transition-colors ${active ? "text-ink font-semibold" : "text-ink-2 hover:text-pulse"}`}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </nav>
+        </div>
       </header>
 
       {open && (
@@ -147,6 +178,27 @@ export default function Navbar() {
               </Link>
             ))}
           </nav>
+
+          <nav className="mt-8 space-y-6 pb-8" aria-label="Mobile all site pages">
+            {SITE_MENU_GROUPS.map((group) => (
+              <div key={group.label}>
+                <p className="mono-cap text-ink-mute mb-3">{group.label}</p>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                  {group.items.map((item) => (
+                    <Link
+                      key={`${group.label}-mobile-${item.href}`}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className="body-s text-ink-2 hover:text-pulse transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </nav>
+
           <div className="mt-auto pt-8">
             <Link
               href={content.nav.book.href}
