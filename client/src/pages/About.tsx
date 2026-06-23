@@ -1,65 +1,99 @@
 import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import { PAGES } from "@/lib/content";
 
-const TEAM_LINES = [
-  "xenios is built by a small, senior team with a large bench around it.",
-  "The founder built and scaled a healthcare company through COVID, then spent a year interviewing more than two hundred coaches and clinicians before writing a single line of code.",
-  "Engineering is led by an operator who has built and exited companies across healthcare and payments, including inside a payments company acquired by a major bank, and who has architected the kind of regulated structures xenios runs on.",
-  "Clinical thinking comes from a practicing physician who has led inside major hospital systems and a national telehealth company.",
-  "Around them sits a bench across product, clinical operations, sports science, growth, and brand, with advisors in clinical informatics, applied sports science, consumer growth, and engineering.",
-  "The team's roots run deep in professional sports and elite coaching, across the NFL, NBA, and NHL, and into entertainment. Those relationships open doors no marketing budget can buy.",
-  "Our agents are built on a frontier open-source AI framework backed by some of the most respected investors in the field.",
+const TEAM = [
+  { name: "Samuel Boadu", role: "Founder and CEO", body: "Samuel is building from the inside of the coaching and performance world. The founding insight is simple: client relationships change behavior, but the operating layer behind those relationships is broken." },
+  { name: "Brian Bentow", role: "CTO", body: "Brian brings senior healthcare and payments technology experience, including prior exits and the infrastructure judgment needed for sensitive workflows." },
+  { name: "Dr. Wesley Nahm, MD", role: "CMO and Medical Director", body: "Clinical leadership informs how xenios handles boundaries, health data posture, and the future clinical surface without confusing software with care." },
+];
+
+const VALUES = [
+  "Trust before automation",
+  "Client relationship preservation",
+  "Craftsmanship over theater",
+  "Clinical boundary awareness",
+  "Speed with judgment",
+  "Plain language over hype",
 ];
 
 export default function About() {
   return (
     <PageShell>
-      <SeoHead {...PAGES.about} />
+      <SeoHead
+        title="About, xenios"
+        description="Learn why xenios exists, who is building it, and how the company approaches trust, client relationships, and proactive health infrastructure."
+        path="/about"
+      />
 
-      {/* Block 1 - What xenios is (lead) */}
       <section className="container-x pt-24 md:pt-36 pb-16">
         <p className="mono-cap text-ink-mute mb-6">ABOUT</p>
-        <h1 className="display-xl text-balance" style={{ maxWidth: "22ch" }}>An AI workspace for coaches.</h1>
-        <p className="mt-8 body-l text-ink-2 max-w-[60ch]" data-testid="text-about-lead">
-          xenios helps coaches manage more clients without losing the human relationship. One workspace that drafts the busywork and keeps every client record connected.
-        </p>
-        <p className="mt-4 body-l text-ink-2 max-w-[60ch]">
-          It is built for coaches first, with clinicians, nutritionists, and performance teams alongside them.
+        <h1 className="display-xl text-balance max-w-[18ch]">The operating layer for proactive health relationships.</h1>
+        <p className="mt-8 body-l text-ink-2 max-w-[64ch]">
+          xenios exists because the trusted relationship between a professional and a client is where behavior changes, but that relationship is currently held together by messages, spreadsheets, notes, forms, and memory.
         </p>
       </section>
 
-      {/* Block 2 - Why we are building it */}
       <section className="container-x py-16 rule-top">
-        <p className="mono-cap text-ink-mute mb-6">WHY WE ARE BUILDING IT</p>
-        <p className="body-l text-ink-2 max-w-[64ch]" data-testid="text-about-why">
-          We started from a simple belief: the trusted relationship between a coach and a client is the thing that actually changes behavior, and it does not scale, because trust does not scale. AI is the first technology that can extend that relationship without breaking it. So we are building the system that gives a coach leverage without ever replacing them.
-        </p>
-        <p className="mt-8 quote-lead text-ink">The AI drafts. The coach decides.</p>
-      </section>
-
-      {/* Block 3 - The team (background and role only, no names) */}
-      <section className="container-x py-16 rule-top">
-        <p className="mono-cap text-ink-mute mb-6">THE TEAM</p>
-        <p className="h3 text-ink mb-8 max-w-[60ch]" data-testid="text-about-team-lead">
-          We are building quietly for now, so this page stays light on names. The background behind the work does not.
-        </p>
-        <div className="space-y-5 max-w-[64ch]">
-          {TEAM_LINES.map((line, i) => (
-            <p key={i} className="body-l text-ink-2" data-testid={`text-about-team-${i}`}>
-              {line}
+        <p className="mono-cap text-ink-mute mb-6">MISSION</p>
+        <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-20">
+          <h2 className="display-m max-w-[18ch]">Give great professionals more leverage without thinning the relationship.</h2>
+          <div className="space-y-5">
+            <p className="body-l text-ink-2">
+              The current tool stack fragments the client relationship. Programming lives in one place, messages in another, notes somewhere else, billing somewhere else, and follow-up in the professional's head.
             </p>
+            <p className="body-l text-ink-2">
+              AI can extend the professional when it is bounded by context, approval, and trust. The AI drafts. The coach decides.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-6">TEAM</p>
+        <h2 className="display-m max-w-[24ch] mb-10">A small team built for the problem.</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {TEAM.map((person) => (
+            <article key={person.name} className="rule-all rounded-[16px] p-6 bg-paper">
+              <h3 className="h3 mb-2">{person.name}</h3>
+              <p className="mono-cap text-pulse mb-4">{person.role}</p>
+              <p className="body-m text-ink-2">{person.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-6">MARKET THESIS</p>
+        <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-20">
+          <h2 className="display-m max-w-[20ch]">The proactive health professional is underserved by legacy tools.</h2>
+          <div className="space-y-5">
+            <p className="body-l text-ink-2">
+              Coaches, trainers, dietitians, clinicians, and performance staff are doing the work upstream of disease. Their tools were built for scheduling, notes, content, or billing. Not for the relationship itself.
+            </p>
+            <p className="body-l text-ink-2">
+              xenios is pre-seed, MVP-building, and forming the early cohort. The goal is not to pretend the company is mature. The goal is to build the right system with the right first professionals.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-x py-16 rule-top">
+        <p className="mono-cap text-ink-mute mb-6">HOW WE OPERATE</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {VALUES.map((value) => (
+            <div key={value} className="rule-all rounded-[14px] p-5 body-l text-ink-2">{value}</div>
           ))}
         </div>
       </section>
 
       <section className="bg-ink text-paper py-20">
         <div className="container-x">
-          <h2 className="display-m text-paper mb-6 max-w-[26ch]">Build with us.</h2>
-          <div className="flex flex-wrap items-center gap-4">
-            <Link href="/careers" className="btn btn-primary btn-on-dark">Open roles</Link>
-            <Link href="/contact" className="btn btn-ghost-on-dark">Talk to us</Link>
+          <h2 className="display-m text-paper mb-6 max-w-[26ch]">Build, fund, or test the next layer with us.</h2>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link href="/contact" className="btn btn-primary btn-on-dark">Contact xenios</Link>
+            <Link href="/careers" className="btn btn-ghost-on-dark">View Careers</Link>
+            <Link href="/waitlist" className="btn btn-ghost-on-dark">Request Early Access</Link>
           </div>
         </div>
       </section>
