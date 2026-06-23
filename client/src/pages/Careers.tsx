@@ -17,6 +17,20 @@ const CAREERS_SEO = {
   path: "/careers",
 };
 
+const HOW_WE_WORK = [
+  "Small team, high ownership, and direct exposure to the real problem.",
+  "Fast shipping with judgment, not performative urgency.",
+  "Taste matters. The product should feel calm, useful, and serious.",
+  "Ambiguity is part of the job. Builders here turn unclear problems into shipped systems.",
+];
+
+const THRIVES = [
+  "You like building from zero rather than polishing a finished playbook.",
+  "You care about the human relationship at the center of health and performance work.",
+  "You can move fast without making lazy claims or sloppy systems.",
+  "You want your work to matter to real professionals with real clients.",
+];
+
 function RoleCard({ role }: { role: CareerRole }) {
   return (
     <article className="rule-all p-6 md:p-8 rounded-[16px] bg-paper" data-testid={`role-${role.slug}`}>
@@ -29,12 +43,8 @@ function RoleCard({ role }: { role: CareerRole }) {
           <p className="body-s text-ink-mute mt-5">{role.location}</p>
         </div>
         <div className="flex flex-col sm:flex-row md:flex-col gap-3 md:min-w-[190px]">
-          <Link href={`/careers/${role.slug}`} className="btn btn-secondary text-center">
-            View details
-          </Link>
-          <a href={careerApplyHref(role)} className="btn btn-primary text-center" data-testid={`button-apply-${role.slug}`}>
-            Apply by email
-          </a>
+          <Link href={`/careers/${role.slug}`} className="btn btn-secondary text-center">View details</Link>
+          <a href={careerApplyHref(role)} className="btn btn-primary text-center" data-testid={`button-apply-${role.slug}`}>Apply by email</a>
         </div>
       </div>
     </article>
@@ -43,7 +53,6 @@ function RoleCard({ role }: { role: CareerRole }) {
 
 function JobPostingJsonLd({ role }: { role: CareerRole }) {
   if (role.group !== "open") return null;
-
   const json = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
@@ -62,7 +71,6 @@ function JobPostingJsonLd({ role }: { role: CareerRole }) {
     },
     jobLocationType: "TELECOMMUTE",
   };
-
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(json) }} />;
 }
 
@@ -70,9 +78,7 @@ function DetailBlocks({ role }: { role: CareerRole }) {
   return (
     <div className="space-y-6">
       {role.detail.map((block, index) => {
-        if (block.kind === "heading") {
-          return <h2 key={`${block.text}-${index}`} className="display-s pt-4">{block.text}</h2>;
-        }
+        if (block.kind === "heading") return <h2 key={`${block.text}-${index}`} className="display-s pt-4">{block.text}</h2>;
         if (block.kind === "list") {
           return (
             <ul key={`list-${index}`} className="space-y-3">
@@ -118,41 +124,21 @@ export function CareersRole() {
         <h1 className="display-xl text-balance max-w-[14ch]">{role.title}</h1>
         <p className="mt-6 body-l text-ink-2 max-w-[62ch]">{role.summary}</p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3">
-          <a href={careerApplyHref(role)} className="btn btn-primary" data-testid={`button-apply-detail-${role.slug}`}>
-            Apply by email
-          </a>
-          <a href="mailto:team@xeniostechnology.com" className="btn btn-secondary">
-            Ask a question
-          </a>
+          <a href={careerApplyHref(role)} className="btn btn-primary" data-testid={`button-apply-detail-${role.slug}`}>Apply by email</a>
+          <a href="mailto:team@xeniostechnology.com" className="btn btn-secondary">Ask a question</a>
         </div>
       </section>
 
       <section className="container-x py-12 rule-top">
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="rule-all rounded-[14px] p-5">
-            <p className="mono-cap text-ink-mute mb-2">TYPE</p>
-            <p className="body-m text-ink-2">{role.type}</p>
-          </div>
-          <div className="rule-all rounded-[14px] p-5">
-            <p className="mono-cap text-ink-mute mb-2">LOCATION</p>
-            <p className="body-m text-ink-2">{role.location}</p>
-          </div>
-          <div className="rule-all rounded-[14px] p-5">
-            <p className="mono-cap text-ink-mute mb-2">APPLY</p>
-            <p className="body-m text-ink-2">team@xeniostechnology.com</p>
-          </div>
+          <div className="rule-all rounded-[14px] p-5"><p className="mono-cap text-ink-mute mb-2">TYPE</p><p className="body-m text-ink-2">{role.type}</p></div>
+          <div className="rule-all rounded-[14px] p-5"><p className="mono-cap text-ink-mute mb-2">LOCATION</p><p className="body-m text-ink-2">{role.location}</p></div>
+          <div className="rule-all rounded-[14px] p-5"><p className="mono-cap text-ink-mute mb-2">APPLY</p><p className="body-m text-ink-2">team@xeniostechnology.com</p></div>
         </div>
       </section>
 
-      <section className="container-x py-16 rule-top">
-        <article className="max-w-[78ch]">
-          <DetailBlocks role={role} />
-        </article>
-      </section>
-
-      <section className="container-x py-12 rule-top">
-        <p className="body-s text-ink-mute max-w-[90ch]">{EQUAL_OPPORTUNITY_STATEMENT}</p>
-      </section>
+      <section className="container-x py-16 rule-top"><article className="max-w-[78ch]"><DetailBlocks role={role} /></article></section>
+      <section className="container-x py-12 rule-top"><p className="body-s text-ink-mute max-w-[90ch]">{EQUAL_OPPORTUNITY_STATEMENT}</p></section>
     </PageShell>
   );
 }
@@ -172,44 +158,47 @@ export default function Careers() {
       </section>
 
       <section className="container-x py-16 rule-top">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
+        <p className="mono-cap text-ink-mute mb-6">WHY XENIOS EXISTS</p>
+        <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-20">
+          <h2 className="display-m max-w-[20ch]">The relationship is the product. The operating layer is missing.</h2>
+          <p className="body-l text-ink-2 max-w-[62ch]">
+            Coaches and health professionals change behavior through trust, repetition, and context. Their tools scatter that context. We are building the workspace that keeps the relationship whole.
+          </p>
+        </div>
+      </section>
+
+      <section className="container-x py-16 rule-top">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           <div>
-            <p className="mono-cap text-ink-mute mb-4">OPEN ROLES</p>
-            <h2 className="display-m max-w-[18ch]">Paid founding roles.</h2>
+            <p className="mono-cap text-ink-mute mb-6">HOW WE WORK</p>
+            <div className="space-y-4">{HOW_WE_WORK.map((item) => <p key={item} className="body-l text-ink-2 grid grid-cols-[16px_1fr] gap-3"><span className="text-pulse">→</span><span>{item}</span></p>)}</div>
           </div>
+          <div>
+            <p className="mono-cap text-ink-mute mb-6">WHO THRIVES HERE</p>
+            <div className="space-y-4">{THRIVES.map((item) => <p key={item} className="body-l text-ink-2 grid grid-cols-[16px_1fr] gap-3"><span className="text-pulse">→</span><span>{item}</span></p>)}</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-x py-16 rule-top">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
+          <div><p className="mono-cap text-ink-mute mb-4">OPEN ROLES</p><h2 className="display-m max-w-[18ch]">Paid founding roles.</h2></div>
           <p className="body-m text-ink-mute max-w-[42ch]">Contract to full-time roles for people who want to shape the product, system, and company from the first real wedge.</p>
         </div>
-        <div className="space-y-6">
-          {OPEN_ROLES.map((role) => <RoleCard key={role.slug} role={role} />)}
-        </div>
+        <div className="space-y-6">{OPEN_ROLES.map((role) => <RoleCard key={role.slug} role={role} />)}</div>
       </section>
 
       <section className="container-x py-16 rule-top">
         <div className="rounded-[24px] bg-ink text-paper p-6 md:p-10">
           <p className="mono-cap text-paper/60 mb-4">FOUNDING COACH COHORT</p>
           <h2 className="display-m text-paper max-w-[20ch] mb-5">Build with the first coaches.</h2>
-          <p className="body-m text-paper/70 max-w-[60ch] mb-8">
-            This is a founding cohort with free early access, not a salaried role. It is for coaches who want to test Hercules and the Studio with real client context and shape the product before public launch.
-          </p>
+          <p className="body-m text-paper/70 max-w-[60ch] mb-8">This is a founding cohort with free early access, not a salaried role. It is for coaches who want to test Hercules and the Studio with real client context and shape the product before public launch.</p>
           <div className="space-y-6">
             {COHORT_ROLES.map((role) => (
               <article key={role.slug} className="rounded-[16px] border border-paper/20 p-6 md:p-8" data-testid={`role-${role.slug}`}>
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <p className="mono-cap text-paper/60 mb-3">{role.type}</p>
-                    <h3 className="display-s text-paper mb-2">{role.title}</h3>
-                    <p className="body-m text-paper/60 mb-4">{role.tagline}</p>
-                    <p className="body-l text-paper/80 max-w-[58ch]">{role.summary}</p>
-                    <p className="body-s text-paper/60 mt-5">{role.location}</p>
-                  </div>
-                  <div className="flex flex-col sm:flex-row md:flex-col gap-3 md:min-w-[190px]">
-                    <Link href={`/careers/${role.slug}`} className="btn btn-secondary text-center">
-                      View details
-                    </Link>
-                    <a href={careerApplyHref(role)} className="btn btn-primary btn-on-dark text-center" data-testid={`button-apply-${role.slug}`}>
-                      Apply by email
-                    </a>
-                  </div>
+                  <div><p className="mono-cap text-paper/60 mb-3">{role.type}</p><h3 className="display-s text-paper mb-2">{role.title}</h3><p className="body-m text-paper/60 mb-4">{role.tagline}</p><p className="body-l text-paper/80 max-w-[58ch]">{role.summary}</p><p className="body-s text-paper/60 mt-5">{role.location}</p></div>
+                  <div className="flex flex-col sm:flex-row md:flex-col gap-3 md:min-w-[190px]"><Link href={`/careers/${role.slug}`} className="btn btn-secondary text-center">View details</Link><a href={careerApplyHref(role)} className="btn btn-primary btn-on-dark text-center" data-testid={`button-apply-${role.slug}`}>Apply by email</a></div>
                 </div>
               </article>
             ))}
@@ -217,9 +206,7 @@ export default function Careers() {
         </div>
       </section>
 
-      <section className="container-x py-12 rule-top">
-        <p className="body-s text-ink-mute max-w-[90ch]">{EQUAL_OPPORTUNITY_STATEMENT}</p>
-      </section>
+      <section className="container-x py-12 rule-top"><p className="body-s text-ink-mute max-w-[90ch]">{EQUAL_OPPORTUNITY_STATEMENT}</p></section>
     </PageShell>
   );
 }
