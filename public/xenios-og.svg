@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#F4EFE6"/>
+  <rect x="64" y="64" width="1072" height="502" rx="34" fill="#0E0E0C"/>
+  <text x="112" y="170" fill="#F4EFE6" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">xenios</text>
+  <text x="112" y="290" fill="#F4EFE6" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="700">The AI workspace for</text>
+  <text x="112" y="370" fill="#F4EFE6" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="700">serious coaches.</text>
+  <text x="112" y="470" fill="#B8B1A6" font-family="Arial, Helvetica, sans-serif" font-size="30">One inbox. One client record. One agent that drafts in your voice.</text>
+  <circle cx="1018" cy="152" r="38" fill="#7C5CFF"/>
+</svg>
