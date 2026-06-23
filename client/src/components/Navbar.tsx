@@ -1,32 +1,38 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { content } from "@/lib/content";
+import { contactEmail, earlyAccessCta, menuGroups, navSocials, primaryNav, type NavLink } from "@/lib/nav";
 import Wordmark from "./Wordmark";
 
 const OVERLAY_ID = "nav-mobile-overlay";
 
-const SITE_MENU_GROUPS = [
-  { label: "Product", items: content.footer.columns.product },
-  { label: "Company", items: content.footer.columns.company },
-  { label: "Resources", items: content.footer.columns.resources },
-  { label: "Legal", items: content.footer.columns.legal },
-] as const;
+function SmartLink({ item, className, onClick }: { item: NavLink; className?: string; onClick?: () => void }) {
+  if (item.external) {
+    return (
+      <a href={item.href} className={className} onClick={onClick}>
+        {item.label}
+      </a>
+    );
+  }
+  return (
+    <Link href={item.href} className={className} onClick={onClick}>
+      {item.label}
+    </Link>
+  );
+}
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
-  // Body scroll lock + focus management while overlay open
   useEffect(() => {
     if (!open) return;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
-    // Move focus into overlay
-    const t = setTimeout(() => closeRef.current?.focus(), 0);
+    const t = window.setTimeout(() => closeRef.current?.focus(), 0);
 
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -35,52 +41,54 @@ export default function Navbar() {
         return;
       }
       if (e.key !== "Tab") return;
-      // Simple focus trap inside the overlay
-      const root = overlayRef.current;
+      const root = panelRef.current;
       if (!root) return;
-      const focusables = root.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      );
+      const focusables = root.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
       if (!focusables.length) return;
       const first = focusables[0];
       const last = focusables[focusables.length - 1];
       if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault(); last.focus();
+        e.preventDefault();
+        last.focus();
       } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault(); first.focus();
+        e.preventDefault();
+        first.focus();
       }
     }
+
     document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
-      clearTimeout(t);
-      // Restore focus to trigger
+      window.clearTimeout(t);
       triggerRef.current?.focus();
     };
   }, [open]);
 
-  // Close overlay on route change
-  useEffect(() => { setOpen(false); }, [location]);
+  useEffect(() => {
+    setOpen(false);
+  }, [location]);
+
+  function closeMenu() {
+    setOpen(false);
+  }
 
   return (
     <>
       <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md rule-bottom" data-testid="nav-main" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
         <div className="container-x">
-          <div className="flex items-center justify-between" style={{ minHeight: 64 }}>
+          <div className="flex items-center justify-between gap-4" style={{ minHeight: 64 }}>
             <Wordmark size="md" />
 
-            <nav className="hidden md:flex items-center gap-6 lg:gap-8" aria-label="Primary">
-              {content.nav.items.map((item) => {
+            <nav className="hidden lg:flex items-center gap-6" aria-label="Primary">
+              {primaryNav.map((item) => {
                 const active = location === item.href;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    data-testid={`link-nav-${item.label.toLowerCase()}`}
-                    className={`text-[14px] lg:text-[15px] tracking-[-0.005em] transition-colors ${
-                      active ? "text-ink font-semibold" : "text-ink-2 hover:text-pulse"
-                    }`}
+                    data-testid={`link-nav-${item.label.replace(/[^a-z]+/gi, "-").toLowerCase()}`}
+                    className={`text-[14px] tracking-[-0.005em] transition-colors ${active ? "text-ink font-semibold" : "text-ink-2 hover:text-pulse"}`}
                     style={{ fontWeight: active ? 700 : 600 }}
                   >
                     {item.label}
@@ -89,55 +97,26 @@ export default function Navbar() {
               })}
             </nav>
 
-            <div className="hidden md:flex items-center gap-4">
-              <Link href={content.nav.book.href} data-testid="button-nav-book" className="text-[14px] lg:text-[15px] tracking-[-0.005em] text-ink-2 hover:text-pulse transition-colors" style={{ fontWeight: 600 }}>
-                {content.nav.book.label}
-              </Link>
-              <Link href="/waitlist" data-testid="button-nav-waitlist" className="btn btn-primary" style={{ height: 44, padding: "0 18px", fontSize: 14 }}>
-                {content.nav.cta}
+            <div className="flex items-center gap-3">
+              <button
+                ref={triggerRef}
+                type="button"
+                onClick={() => setOpen(true)}
+                className="btn btn-ghost"
+                style={{ height: 44, padding: "0 14px", fontSize: 14 }}
+                aria-label="Open full site menu"
+                aria-expanded={open}
+                aria-controls={OVERLAY_ID}
+                data-testid="button-menu-toggle"
+              >
+                <span aria-hidden="true" className="mr-2">☰</span>
+                Menu
+              </button>
+              <Link href={earlyAccessCta.href} data-testid="button-nav-waitlist" className="btn btn-primary hidden sm:inline-flex" style={{ height: 44, padding: "0 18px", fontSize: 14 }}>
+                {earlyAccessCta.label}
               </Link>
             </div>
-
-            <button
-              ref={triggerRef}
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              className="md:hidden -mr-3"
-              style={{ width: 48, height: 48, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 5 }}
-              aria-label={open ? "Close menu" : "Open menu"}
-              aria-expanded={open}
-              aria-controls={OVERLAY_ID}
-              data-testid="button-menu-toggle"
-            >
-              <span style={{ display: "block", width: 22, height: 1.5, background: "var(--ink)", transition: "transform .2s", transform: open ? "translateY(6.5px) rotate(45deg)" : "none" }} />
-              <span style={{ display: "block", width: 22, height: 1.5, background: "var(--ink)", opacity: open ? 0 : 1, transition: "opacity .15s" }} />
-              <span style={{ display: "block", width: 22, height: 1.5, background: "var(--ink)", transition: "transform .2s", transform: open ? "translateY(-6.5px) rotate(-45deg)" : "none" }} />
-            </button>
           </div>
-        </div>
-
-        <div className="hidden lg:block rule-top bg-paper/95" data-testid="nav-site-menu">
-          <nav className="container-x flex items-center gap-6 overflow-x-auto py-3" aria-label="All site pages">
-            {SITE_MENU_GROUPS.map((group) => (
-              <div key={group.label} className="flex items-center gap-3 shrink-0">
-                <span className="mono-cap text-ink-mute">{group.label}</span>
-                <div className="flex items-center gap-3">
-                  {group.items.map((item) => {
-                    const active = location === item.href;
-                    return (
-                      <Link
-                        key={`${group.label}-${item.href}`}
-                        href={item.href}
-                        className={`text-[12px] tracking-[-0.005em] transition-colors ${active ? "text-ink font-semibold" : "text-ink-2 hover:text-pulse"}`}
-                      >
-                        {item.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </nav>
         </div>
       </header>
 
@@ -145,78 +124,72 @@ export default function Navbar() {
         <div
           ref={overlayRef}
           id={OVERLAY_ID}
-          className="nav-overlay md:hidden"
-          data-testid="nav-mobile"
+          className="nav-overlay"
+          data-testid="nav-menu-overlay"
           role="dialog"
           aria-modal="true"
           aria-label="Site navigation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeMenu();
+          }}
         >
-          <div className="flex items-center justify-between" style={{ minHeight: 48 }}>
-            <Wordmark size="md" />
-            <button
-              ref={closeRef}
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Close menu"
-              style={{ width: 48, height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}
-              data-testid="button-menu-close"
-            >
-              <span style={{ fontSize: 28, lineHeight: 1, color: "var(--ink)" }}>×</span>
-            </button>
-          </div>
-          <nav className="flex flex-col gap-1 mt-8" aria-label="Mobile primary">
-            {content.nav.items.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className="display-s py-3"
-                style={{ color: "var(--ink)" }}
-                data-testid={`link-mobile-${item.label.toLowerCase()}`}
+          <div ref={panelRef} className="min-h-full flex flex-col bg-paper text-ink px-6 py-5 md:px-10 md:py-8">
+            <div className="flex items-center justify-between gap-4 rule-bottom pb-5">
+              <Wordmark size="md" />
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={closeMenu}
+                aria-label="Close menu"
+                className="btn btn-ghost"
+                style={{ height: 44, padding: "0 14px" }}
+                data-testid="button-menu-close"
               >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+                Close
+              </button>
+            </div>
 
-          <nav className="mt-8 space-y-6 pb-8" aria-label="Mobile all site pages">
-            {SITE_MENU_GROUPS.map((group) => (
-              <div key={group.label}>
-                <p className="mono-cap text-ink-mute mb-3">{group.label}</p>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                  {group.items.map((item) => (
-                    <Link
-                      key={`${group.label}-mobile-${item.href}`}
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                      className="body-s text-ink-2 hover:text-pulse transition-colors"
-                    >
-                      {item.label}
-                    </Link>
+            <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_2fr] gap-10 lg:gap-16 py-10 flex-1">
+              <div>
+                <p className="mono-cap text-pulse mb-5">FULL SITE MENU</p>
+                <h2 className="display-l max-w-[10ch] mb-6">Find the right path.</h2>
+                <p className="body-l text-ink-2 max-w-[34ch] mb-8">
+                  Product, trust, careers, and investor pages are grouped so coaches and partners can move quickly.
+                </p>
+                <Link href={earlyAccessCta.href} onClick={closeMenu} className="btn btn-primary" data-testid="button-menu-early-access">
+                  {earlyAccessCta.label}
+                </Link>
+                <div className="mt-8 space-y-2">
+                  <a href={`mailto:${contactEmail}`} className="block body-m text-ink hover:text-pulse transition-colors">{contactEmail}</a>
+                  {navSocials.map((social) => (
+                    <a key={social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="block body-m text-ink-2 hover:text-pulse transition-colors">
+                      {social.label}
+                    </a>
                   ))}
                 </div>
               </div>
-            ))}
-          </nav>
 
-          <div className="mt-auto pt-8">
-            <Link
-              href={content.nav.book.href}
-              onClick={() => setOpen(false)}
-              className="btn btn-ghost w-full mb-3"
-              data-testid="button-mobile-book"
-            >
-              {content.nav.book.label}
-            </Link>
-            <Link
-              href="/waitlist"
-              onClick={() => setOpen(false)}
-              className="btn btn-primary w-full"
-              data-testid="button-mobile-waitlist"
-            >
-              {content.nav.cta} →
-            </Link>
-            <p className="mono-cap text-ink-mute mt-6 text-center">team@xeniostechnology.com</p>
+              <nav className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8" aria-label="Full site navigation">
+                {menuGroups.map((group) => (
+                  <section key={group.label}>
+                    <p className="mono-cap text-ink-mute mb-5">{group.label}</p>
+                    <div className="space-y-3">
+                      {group.items.map((item) => {
+                        const active = location === item.href;
+                        return (
+                          <SmartLink
+                            key={`${group.label}-${item.href}`}
+                            item={item}
+                            onClick={closeMenu}
+                            className={`block text-[15px] font-600 transition-colors ${active ? "text-pulse" : "text-ink hover:text-pulse"}`}
+                          />
+                        );
+                      })}
+                    </div>
+                  </section>
+                ))}
+              </nav>
+            </div>
           </div>
         </div>
       )}
