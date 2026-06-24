@@ -1,0 +1,1 @@
+Logo update requested by Samuel.
