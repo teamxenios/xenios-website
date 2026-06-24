@@ -49,8 +49,8 @@ export default function Home() {
   return (
     <PageShell>
       <SeoHead
-        title="xenios: AI workspace for coaches and performance professionals"
-        description="xenios is the AI workspace for serious coaches and health professionals. One inbox, one client record, one agent that drafts in your voice."
+        title="xenios | The operating system for proactive health"
+        description="The professional stays in front. Xen and Athena carry the work behind them."
         path="/"
       />
 
