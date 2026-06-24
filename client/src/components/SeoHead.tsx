@@ -7,7 +7,7 @@ interface Props {
 }
 
 const SITE = "https://xeniostechnology.com";
-const OG_IMAGE = `${SITE}/xenios-og.svg`;
+const OG_IMAGE = `${SITE}/og/xenios-og-image-v2.png`;
 
 function ensureMeta(selector: string, attrs: Record<string, string>) {
   let el = document.head.querySelector(selector) as HTMLMetaElement | null;
@@ -54,6 +54,7 @@ export default function SeoHead({ title, description, path }: Props) {
     ensureMeta('meta[property="og:image"]', { property: "og:image", content: OG_IMAGE });
     ensureMeta('meta[property="og:site_name"]', { property: "og:site_name", content: "xenios" });
     ensureMeta('meta[name="twitter:card"]', { name: "twitter:card", content: "summary_large_image" });
+    ensureMeta('meta[name="twitter:site"]', { name: "twitter:site", content: "@officialxenios" });
     ensureMeta('meta[name="twitter:title"]', { name: "twitter:title", content: title });
     ensureMeta('meta[name="twitter:description"]', { name: "twitter:description", content: description });
     ensureMeta('meta[name="twitter:image"]', { name: "twitter:image", content: OG_IMAGE });

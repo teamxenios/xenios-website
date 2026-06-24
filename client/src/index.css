@@ -196,7 +196,7 @@ body {
 .font-900 { font-weight: 900; }
 
 /* ============================================================
-   Wordmark (lowercase xenios — no period, no glyph, no logotype)
+   Wordmark (the V mark plus lowercase xenios logotype)
 ============================================================ */
 .wordmark {
   font-family: 'Inter Tight', system-ui, sans-serif;
@@ -205,7 +205,20 @@ body {
   color: var(--ink);
   text-transform: lowercase;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.34em;
+}
+
+/* the V mark, tinted with the current text color so it reads on light and dark */
+.wordmark-mark {
   display: inline-block;
+  height: 0.68em;
+  aspect-ratio: 1024 / 433;
+  flex: none;
+  background-color: currentColor;
+  -webkit-mask: url('/brand/xenios-mark-transparent.png') center / contain no-repeat;
+  mask: url('/brand/xenios-mark-transparent.png') center / contain no-repeat;
 }
 
 /* ============================================================
