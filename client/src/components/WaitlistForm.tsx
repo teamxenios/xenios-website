@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { content, CLIENT_COUNT_OPTIONS } from "@/lib/content";
 import { getAttribution } from "@/lib/attribution";
 import { trackLead } from "@/lib/tracking";
+import { setWaitlistCount } from "@/hooks/use-waitlist-count";
 import Turnstile from "@/components/Turnstile";
 
 const F = content.waitlistForm;
@@ -112,6 +113,7 @@ export default function WaitlistForm({ onSuccess, onDark = false }: Props) {
         return;
       }
       trackLead();
+      if (typeof data.count === "number") setWaitlistCount(data.count);
       onSuccess?.({ count: data.count ?? 0, name: form.name.trim() });
     } catch {
       setError(F.errorGeneric);
