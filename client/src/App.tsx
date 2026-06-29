@@ -34,9 +34,10 @@ import MvpLab from "@/pages/MvpLab";
 import ExternalRedirect from "@/components/ExternalRedirect";
 import NotFound from "@/pages/not-found";
 
-// The deployed Kairos MVP (synthetic only). Until a server-side path rewrite is wired, /kairos
-// redirects to the Vercel app; /mvps is the launcher.
-const KAIROS_APP_URL = "https://kairos-lime-one.vercel.app";
+// The deployed Kairos MVP (synthetic only), served under the xenios domain at
+// kairos.xeniostechnology.com (falls back to the Vercel URL until DNS propagates). /kairos sends
+// here; /mvps is the launcher.
+const KAIROS_APP_URL = "https://kairos.xeniostechnology.com";
 
 function ScrollToTop() {
   const [location] = useLocation();
