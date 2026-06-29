@@ -72,6 +72,15 @@ app.use((req, res, next) => {
   next();
 });
 
+// Kairos MVP lives in a separate deployment (Vercel). Forward /kairos and /kairos/* to the live
+// synthetic app so it is reachable from the xenios domain. Registered before the SPA catch-all so it
+// does not hit the marketing site's client router. The Kairos app is gated by its own demo login;
+// this changes none of the marketing site's own routes.
+app.get(/^\/kairos(?:\/.*)?$/, (req, res) => {
+  const rest = req.originalUrl.replace(/^\/kairos/, "") || "/";
+  res.redirect(302, "https://kairos-lime-one.vercel.app" + rest);
+});
+
 (async () => {
   await registerRoutes(httpServer, app);
 
