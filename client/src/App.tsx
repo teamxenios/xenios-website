@@ -30,7 +30,13 @@ import EarlyInterest from "@/pages/EarlyInterest";
 import Book from "@/pages/Book";
 import Concepts from "@/pages/Concepts";
 import Admin from "@/pages/Admin";
+import MvpLab from "@/pages/MvpLab";
+import ExternalRedirect from "@/components/ExternalRedirect";
 import NotFound from "@/pages/not-found";
+
+// The deployed Kairos MVP (synthetic only). Until a server-side path rewrite is wired, /kairos
+// redirects to the Vercel app; /mvps is the launcher.
+const KAIROS_APP_URL = "https://kairos-lime-one.vercel.app";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -71,6 +77,10 @@ function Router() {
       <Route path="/book" component={Book} />
       <Route path="/concepts" component={Concepts} />
       <Route path="/admin" component={Admin} />
+      {/* xenios MVP Lab + MVP routes */}
+      <Route path="/mvps" component={MvpLab} />
+      <Route path="/kairos">{() => <ExternalRedirect to={KAIROS_APP_URL} />}</Route>
+      <Route path="/argos"><Redirect to="/mvps" /></Route>
       {/* Retired routes redirect to nearest v6 home */}
       <Route path="/telemedicine"><Redirect to="/product" /></Route>
       <Route path="/agents"><Redirect to="/product" /></Route>
