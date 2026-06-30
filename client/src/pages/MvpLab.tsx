@@ -34,7 +34,7 @@ const MVPS: Mvp[] = [
     status: "live",
     dataMode: "Synthetic only",
     safety: "Coach-side · no sends · sensitive topics route to the coach",
-    href: "https://kairos.xeniostechnology.com",
+    href: "/kairos",
     route: "/kairos",
     owner: "xenios",
   },
