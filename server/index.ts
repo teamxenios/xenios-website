@@ -1,11 +1,27 @@
 import express, { type Request, Response, NextFunction } from "express";
 import helmet from "helmet";
+import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
 const app = express();
 const httpServer = createServer(app);
+
+// Serve the Kairos MVP in place at xeniostechnology.com/kairos by reverse-proxying to the deployed
+// Kairos app (which is built with basePath /kairos, so /kairos/_next and /kairos/api resolve there).
+// Registered FIRST, before helmet and the body parsers, so request/response streams pass through
+// untouched. Only /kairos* is proxied; the rest of the site is unaffected. Synthetic, no-send app.
+const KAIROS_TARGET = process.env.KAIROS_PROXY_TARGET || "https://kairos-lime-one.vercel.app";
+app.use(
+  createProxyMiddleware({
+    pathFilter: (path) => path === "/kairos" || path.startsWith("/kairos/"),
+    target: KAIROS_TARGET,
+    changeOrigin: true,
+    xfwd: true,
+    secure: true,
+  }),
+);
 
 declare module "http" {
   interface IncomingMessage {
