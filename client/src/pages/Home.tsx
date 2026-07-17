@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import Counter from "@/components/Counter";
+import Reveal from "@/components/Reveal";
 
 const STACK_ITEMS = [
   "Gmail",
@@ -54,7 +55,7 @@ export default function Home() {
         path="/"
       />
 
-      <section className="container-x" style={{ paddingTop: "var(--space-hero-top)", paddingBottom: "var(--space-hero-bottom)" }}>
+      <Reveal as="section" className="container-x" style={{ paddingTop: "var(--space-hero-top)", paddingBottom: "var(--space-hero-bottom)" }}>
         <p className="mono-cap text-pulse mb-6">The AI drafts. The coach decides.</p>
         <h1 className="display-xl text-balance max-w-[15ch]" data-testid="text-headline">
           The AI workspace for serious coaches.
@@ -69,9 +70,9 @@ export default function Home() {
         <div className="mt-8">
           <Counter variant="line" suffix="on the waitlist" />
         </div>
-      </section>
+      </Reveal>
 
-      <section className="container-x section-y rule-top">
+      <Reveal as="section" className="container-x section-y rule-top">
         <p className="mono-cap text-ink-mute mb-6">THE PROBLEM</p>
         <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-20 items-start">
           <div>
@@ -89,9 +90,9 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </Reveal>
 
-      <section className="container-x section-y rule-top">
+      <Reveal as="section" className="container-x section-y rule-top">
         <p className="mono-cap text-ink-mute mb-6">THE WORKSPACE</p>
         <h2 className="display-m text-balance max-w-[18ch]">One inbox. One client record. One agent that drafts in your voice.</h2>
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -107,9 +108,9 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </section>
+      </Reveal>
 
-      <section className="container-x section-y rule-top">
+      <Reveal as="section" className="container-x section-y rule-top">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
           <div>
             <p className="mono-cap text-ink-mute mb-6">CORE MODULES</p>
@@ -125,9 +126,9 @@ export default function Home() {
             </article>
           ))}
         </div>
-      </section>
+      </Reveal>
 
-      <section className="container-x section-y rule-top">
+      <Reveal as="section" className="container-x section-y rule-top">
         <p className="mono-cap text-ink-mute mb-6">WHO IT IS FOR</p>
         <h2 className="display-m text-balance max-w-[20ch]">Built for professionals who run real client relationships.</h2>
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-4">
@@ -138,9 +139,9 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </section>
+      </Reveal>
 
-      <section className="container-x section-y rule-top">
+      <Reveal as="section" className="container-x section-y rule-top">
         <p className="mono-cap text-ink-mute mb-6">WHY TRUST IT</p>
         <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-20">
           <div>
@@ -158,9 +159,9 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </Reveal>
 
-      <section className="bg-ink text-paper py-20">
+      <Reveal as="section" className="bg-ink text-paper py-20">
         <div className="container-x">
           <p className="mono-cap text-paper/60 mb-5">EARLY ACCESS</p>
           <h2 className="display-m text-paper mb-6 max-w-[22ch]">Help shape the workspace before broad release.</h2>
@@ -169,7 +170,7 @@ export default function Home() {
             <Link href="/how-it-works" className="btn btn-ghost-on-dark">See How It Works</Link>
           </div>
         </div>
-      </section>
+      </Reveal>
     </PageShell>
   );
 }
