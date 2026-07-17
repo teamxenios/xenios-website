@@ -578,7 +578,7 @@ export const content = {
     book: { label: "Book a call", href: "/book" },
   },
   ribbon: {
-    prefix: "Founding cohort is open. 550+ coaches, trainers, and practitioners on the waitlist.",
+    prefix: "Founding cohort is open.",
     cta: "Join",
     href: "/waitlist",
   },

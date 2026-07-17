@@ -22,7 +22,7 @@ export default function TopRibbon() {
             </Link>{" "}
             <span className="ml-2 opacity-90 mono-cap">
               <span className="counter-dot align-middle inline-block mr-2"></span>
-              LIVE • {count.toLocaleString()}
+              LIVE • {count.toLocaleString()} on the waitlist
             </span>
           </p>
           <button
