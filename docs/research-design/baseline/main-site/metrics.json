@@ -1,0 +1,680 @@
+[
+  {
+    "route": "/",
+    "slug": "home",
+    "requestedViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "title": "xenios | The operating system for proactive health",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "document": {
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "scrollHeight": 5569
+    },
+    "overflowCount": 1,
+    "overflow": [
+      {
+        "tag": "SPAN",
+        "className": "ml-2 opacity-90 mono-cap",
+        "text": "LIVE • 556 on the waitlist",
+        "left": 181,
+        "right": 395,
+        "width": 214
+      }
+    ],
+    "h1": {
+      "text": "The AI workspace for serious coaches.",
+      "fontSize": "40px",
+      "lineHeight": "39.2px",
+      "fontWeight": "800",
+      "width": 342,
+      "right": 366
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/product",
+    "slug": "product",
+    "requestedViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "title": "Product, xenios",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "document": {
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "scrollHeight": 5082
+    },
+    "overflowCount": 1,
+    "overflow": [
+      {
+        "tag": "SPAN",
+        "className": "ml-2 opacity-90 mono-cap",
+        "text": "LIVE • 556 on the waitlist",
+        "left": 181,
+        "right": 395,
+        "width": 214
+      }
+    ],
+    "h1": {
+      "text": "One operating system for the coach's day.",
+      "fontSize": "40px",
+      "lineHeight": "39.2px",
+      "fontWeight": "800",
+      "width": 342,
+      "right": 366
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/how-it-works",
+    "slug": "how-it-works",
+    "requestedViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "title": "How it works, xenios",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "document": {
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "scrollHeight": 3839
+    },
+    "overflowCount": 1,
+    "overflow": [
+      {
+        "tag": "SPAN",
+        "className": "ml-2 opacity-90 mono-cap",
+        "text": "LIVE • 556 on the waitlist",
+        "left": 181,
+        "right": 395,
+        "width": 214
+      }
+    ],
+    "h1": {
+      "text": "Five steps. One operating system. Your voice on every surface.",
+      "fontSize": "40px",
+      "lineHeight": "39.2px",
+      "fontWeight": "800",
+      "width": 342,
+      "right": 366
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": null
+  },
+  {
+    "route": "/for-coaches",
+    "slug": "for-coaches",
+    "requestedViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "title": "For Coaches, xenios",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "document": {
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "scrollHeight": 4551
+    },
+    "overflowCount": 1,
+    "overflow": [
+      {
+        "tag": "SPAN",
+        "className": "ml-2 opacity-90 mono-cap",
+        "text": "LIVE • 556 on the waitlist",
+        "left": 181,
+        "right": 395,
+        "width": 214
+      }
+    ],
+    "h1": {
+      "text": "Scale the relationship, not the admin.",
+      "fontSize": "40px",
+      "lineHeight": "39.2px",
+      "fontWeight": "800",
+      "width": 342,
+      "right": 366
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(42, 42, 42)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/about",
+    "slug": "about",
+    "requestedViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "title": "About, xenios",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "document": {
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "scrollHeight": 3580
+    },
+    "overflowCount": 1,
+    "overflow": [
+      {
+        "tag": "SPAN",
+        "className": "ml-2 opacity-90 mono-cap",
+        "text": "LIVE • 556 on the waitlist",
+        "left": 181,
+        "right": 395,
+        "width": 214
+      }
+    ],
+    "h1": {
+      "text": "The operating layer for proactive health relationships.",
+      "fontSize": "40px",
+      "lineHeight": "39.2px",
+      "fontWeight": "800",
+      "width": 342,
+      "right": 366
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/careers",
+    "slug": "careers",
+    "requestedViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "title": "Careers, xenios",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "document": {
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "scrollHeight": 4214
+    },
+    "overflowCount": 1,
+    "overflow": [
+      {
+        "tag": "SPAN",
+        "className": "ml-2 opacity-90 mono-cap",
+        "text": "LIVE • 556 on the waitlist",
+        "left": 181,
+        "right": 395,
+        "width": 214
+      }
+    ],
+    "h1": {
+      "text": "Build the operating system behind proactive health.",
+      "fontSize": "40px",
+      "lineHeight": "39.2px",
+      "fontWeight": "800",
+      "width": 342,
+      "right": 366
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": null
+  },
+  {
+    "route": "/",
+    "slug": "home",
+    "requestedViewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "title": "xenios | The operating system for proactive health",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "document": {
+      "clientWidth": 768,
+      "scrollWidth": 768,
+      "scrollHeight": 5497
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "The AI workspace for serious coaches.",
+      "fontSize": "58.688px",
+      "lineHeight": "57.5142px",
+      "fontWeight": "800",
+      "width": 600,
+      "right": 652
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/product",
+    "slug": "product",
+    "requestedViewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "title": "Product, xenios",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "document": {
+      "clientWidth": 768,
+      "scrollWidth": 768,
+      "scrollHeight": 4584
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "One operating system for the coach's day.",
+      "fontSize": "58.688px",
+      "lineHeight": "57.5142px",
+      "fontWeight": "800",
+      "width": 640,
+      "right": 692
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/how-it-works",
+    "slug": "how-it-works",
+    "requestedViewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "title": "How it works, xenios",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "document": {
+      "clientWidth": 768,
+      "scrollWidth": 768,
+      "scrollHeight": 3541
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "Five steps. One operating system. Your voice on every surface.",
+      "fontSize": "58.688px",
+      "lineHeight": "57.5142px",
+      "fontWeight": "800",
+      "width": 640,
+      "right": 692
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": null
+  },
+  {
+    "route": "/for-coaches",
+    "slug": "for-coaches",
+    "requestedViewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "title": "For Coaches, xenios",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "document": {
+      "clientWidth": 768,
+      "scrollWidth": 768,
+      "scrollHeight": 4230
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "Scale the relationship, not the admin.",
+      "fontSize": "58.688px",
+      "lineHeight": "57.5142px",
+      "fontWeight": "800",
+      "width": 640,
+      "right": 692
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(42, 42, 42)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/about",
+    "slug": "about",
+    "requestedViewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "title": "About, xenios",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "document": {
+      "clientWidth": 768,
+      "scrollWidth": 768,
+      "scrollHeight": 3304
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "The operating layer for proactive health relationships.",
+      "fontSize": "58.688px",
+      "lineHeight": "57.5142px",
+      "fontWeight": "800",
+      "width": 664,
+      "right": 716
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/careers",
+    "slug": "careers",
+    "requestedViewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "title": "Careers, xenios",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "document": {
+      "clientWidth": 768,
+      "scrollWidth": 768,
+      "scrollHeight": 3865
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "Build the operating system behind proactive health.",
+      "fontSize": "58.688px",
+      "lineHeight": "57.5142px",
+      "fontWeight": "800",
+      "width": 664,
+      "right": 716
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": null
+  },
+  {
+    "route": "/",
+    "slug": "home",
+    "requestedViewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "title": "xenios | The operating system for proactive health",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "document": {
+      "clientWidth": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 6762
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "The AI workspace for serious coaches.",
+      "fontSize": "103.04px",
+      "lineHeight": "100.979px",
+      "fontWeight": "800",
+      "width": 1053,
+      "right": 1169
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/product",
+    "slug": "product",
+    "requestedViewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "title": "Product, xenios",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "document": {
+      "clientWidth": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 5306
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "One operating system for the coach's day.",
+      "fontSize": "103.04px",
+      "lineHeight": "100.979px",
+      "fontWeight": "800",
+      "width": 1123,
+      "right": 1239
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/how-it-works",
+    "slug": "how-it-works",
+    "requestedViewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "title": "How it works, xenios",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "document": {
+      "clientWidth": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 4194
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "Five steps. One operating system. Your voice on every surface.",
+      "fontSize": "103.04px",
+      "lineHeight": "100.979px",
+      "fontWeight": "800",
+      "width": 1123,
+      "right": 1239
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": null
+  },
+  {
+    "route": "/for-coaches",
+    "slug": "for-coaches",
+    "requestedViewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "title": "For Coaches, xenios",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "document": {
+      "clientWidth": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 4982
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "Scale the relationship, not the admin.",
+      "fontSize": "103.04px",
+      "lineHeight": "100.979px",
+      "fontWeight": "800",
+      "width": 1123,
+      "right": 1239
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(42, 42, 42)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/about",
+    "slug": "about",
+    "requestedViewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "title": "About, xenios",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "document": {
+      "clientWidth": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 3741
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "The operating layer for proactive health relationships.",
+      "fontSize": "103.04px",
+      "lineHeight": "100.979px",
+      "fontWeight": "800",
+      "width": 1208,
+      "right": 1324
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": {
+      "color": "rgb(0, 0, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgba(0, 0, 0, 0)"
+    }
+  },
+  {
+    "route": "/careers",
+    "slug": "careers",
+    "requestedViewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "title": "Careers, xenios",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "document": {
+      "clientWidth": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 4393
+    },
+    "overflowCount": 0,
+    "overflow": [],
+    "h1": {
+      "text": "Build the operating system behind proactive health.",
+      "fontSize": "103.04px",
+      "lineHeight": "100.979px",
+      "fontWeight": "800",
+      "width": 1208,
+      "right": 1324
+    },
+    "navCtaDisplay": "flex",
+    "primaryNavDisplay": "none",
+    "ruleAllBorder": "0px none rgb(14, 14, 14)",
+    "ghostOnDark": null
+  }
+]
