@@ -1,41 +1,66 @@
 import { Link, useParams } from "wouter";
 import SeoHead from "@/components/SeoHead";
-import { normalizeReferralCode, referralApplyHref } from "@shared/research/referral-ui";
+import { REFERRAL_FEATURES_OFF, resolveInvitationRouteState } from "../referral-state";
 import { BusinessPageHero, ReferralPassport, SectionLead } from "../business-components";
 
 export default function Invite() {
   const params = useParams<{ referralCode: string }>();
-  const code = normalizeReferralCode(params.referralCode);
-  const invitationUrl = `${window.location.origin}/research/invite/${encodeURIComponent(code)}`;
-  const applyHref = referralApplyHref(code);
+  const previewMode = import.meta.env.DEV && new URLSearchParams(window.location.search).get("preview") === "1";
+  const invitation = resolveInvitationRouteState({
+    rawCode: params.referralCode,
+    features: REFERRAL_FEATURES_OFF,
+    // Fail closed. No validation endpoint is connected in PR #13.
+    serverValidatedCode: null,
+  });
+  const invalid = invitation.status === "invalid";
 
   return (
     <>
-      <SeoHead title="You were invited, xenios research" description="You were invited to a private whole-life membership. Every application is reviewed independently and an invitation never guarantees approval." path={`/research/invite/${code}`} />
+      <SeoHead title="Invitation unavailable, xenios research" description="This invitation cannot be verified. You may still apply without a referral." path="/research/invite" />
       <BusinessPageHero
-        eyebrow="Private invitation"
-        title="You were invited to xenios research."
-        lead="xenios is a private whole-life membership for people who want to better understand their health, routines, environment, goals, information, and trusted support."
-        primary={{ label: "Start the free application", href: applyHref }}
+        eyebrow={invalid ? "Invalid invitation" : "Invitation unavailable"}
+        title={invalid ? "This invitation link is not valid." : "We cannot verify this invitation."}
+        lead="A URL code is not proof of an authentic invitation. Referral attribution remains disabled until xenios connects an enabled server validation endpoint."
+        primary={{ label: "Apply without a referral", href: invitation.applicationHref }}
         secondary={{ label: "Understand membership", href: "/research/membership" }}
-        aside={<div><p className="mono-cap text-pulse">Independent review</p><p className="h3 mt-4">An invitation does not guarantee approval.</p><p className="body-s text-ink-2 mt-4">The referrer cannot see your application, influence the decision, or learn why an application is approved or declined.</p></div>}
+        aside={<div><p className="mono-cap text-pulse">Fail-closed boundary</p><p className="h3 mt-4">No referral is attached.</p><p className="body-s text-ink-2 mt-4">This page does not identify a referrer, add a code to the application, create attribution, or promise a reward.</p></div>}
       />
 
       <section className="container-x xr-section">
-        <div className="xr-referral-stage">
-          <ReferralPassport variant="applicant" reference={code ? `XR-${code}` : "XR-INVITATION"} issued="JUL 18 2026" code={code || null} invitationUrl={code ? invitationUrl : null} preview />
+        <div className="xr-two-column">
+          <div>
+            <SectionLead eyebrow="What you can do" title="Apply through the standard independent review." body="The ordinary application remains available without referral attribution. No payment is collected when you apply." />
+            <Link href="/research/apply" className="btn btn-primary mt-8">Start the free application</Link>
+          </div>
+          <article className="xr-surface xr-surface-dark" data-testid="invitation-unavailable">
+            <p className="mono-cap" style={{ color: "var(--lilac)" }}>Verification required</p>
+            <h2 className="h3 mt-4">Invitation features are not active.</h2>
+            <p className="body-s mt-4" style={{ color: "rgba(255,255,255,.74)" }}>A future server response must confirm the code, active program, attribution window, and feature state before this route can present a verified invitation.</p>
+          </article>
         </div>
       </section>
 
-      <section className="container-x xr-section">
-        <SectionLead eyebrow="What happens next" title="The invitation opens a door. The application decides fit." />
-        <div className="xr-three-column">
-          <article className="xr-surface"><p className="mono-cap text-pulse">01</p><h2 className="h3 mt-4">Apply free</h2><p className="body-s text-ink-2 mt-4">Share identity, context, goals, fit, and required acknowledgements. No payment is collected.</p></article>
-          <article className="xr-surface"><p className="mono-cap text-pulse">02</p><h2 className="h3 mt-4">Independent review</h2><p className="body-s text-ink-2 mt-4">xenios may approve, request more information, recommend another pathway, or decline.</p></article>
-          <article className="xr-surface"><p className="mono-cap text-pulse">03</p><h2 className="h3 mt-4">Choose activation</h2><p className="body-s text-ink-2 mt-4">Approved applicants may activate for $50, complete onboarding, and begin the Whole-Life Blueprint.</p></article>
-        </div>
-        <Link href={applyHref} className="btn btn-primary mt-8">Start the free application</Link>
-      </section>
+      {previewMode && (
+        <section className="container-x xr-section" data-testid="development-invitation-preview">
+          <div className="xr-disclosure mb-8">
+            <p className="mono-cap text-pulse">Development-only visual preview</p>
+            <p className="body-s text-ink-2 mt-3">Not a real invitation. No code, QR, sharing control, referrer identity, or application attribution is enabled.</p>
+          </div>
+          <div className="xr-referral-stage">
+            <ReferralPassport
+              variant="applicant"
+              reference="XR-DEVELOPMENT-SAMPLE"
+              issued="NOT ISSUED"
+              code={null}
+              invitationUrl={null}
+              preview
+              stateLabel="Development sample"
+              footerLabel="No invitation issued"
+              previewLabel="Development only · not a real invitation"
+            />
+          </div>
+        </section>
+      )}
     </>
   );
 }

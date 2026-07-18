@@ -3,31 +3,31 @@ import SeoHead from "@/components/SeoHead";
 import { BusinessPageHero, NumberedJourney, ReferralPassport, ReferralShareActions, SectionLead } from "../business-components";
 
 const QUALIFICATION = [
-  { title: "Invitation used", body: "The applicant arrives through an issued xenios invitation link." },
+  { title: "Verified invitation", body: "If enabled, the server validates an issued link before recording attribution." },
   { title: "Application completed", body: "A complete application enters the same independent review process as every other applicant." },
   { title: "Independently approved", body: "An invitation never influences the approval decision or reveals its outcome to the referrer." },
   { title: "$50 activation", body: "The approved applicant chooses to activate the membership." },
   { title: "Verification period passed", body: "Refund, dispute, duplicate, self-referral, and abuse checks are complete." },
-  { title: "Credit earned", body: "Once the program and ledger are enabled, the new member receives $10 in xenios credit and the referrer receives $15." },
+  { title: "Proposed credit", body: "If the final configurable terms are approved and enabled, the current proposal is $10 for the new member and $15 for the referrer." },
 ];
 
 export default function Referrals() {
-  const previewUrl = `${window.location.origin}/research/invite/SAMUEL-XR82`;
+  const developmentPreview = import.meta.env.DEV && new URLSearchParams(window.location.search).get("preview") === "1";
 
   return (
     <>
-      <SeoHead title="Member referrals, xenios research" description="Invite people you trust into xenios research. Rewards begin only after independent approval, activation, and verification." path="/research/referrals" />
+      <SeoHead title="Proposed member referrals, xenios research" description="A proposed member referral program. Codes, attribution, credits, QR, and sharing are not active." path="/research/referrals" />
       <BusinessPageHero
         eyebrow="Member referrals"
-        title="Your network shapes your health."
-        lead="Under the proposed program, an invited applicant must be independently approved, activate, and pass the verification period before either member receives xenios credit."
+        title="A referral program is being designed."
+        lead="Give $10, Get $15 is a configurable proposal, not an active reward. Codes, attribution, credits, QR, and sharing remain disabled while the server flags and validation contract are off."
         primary={{ label: "Apply for Membership", href: "/research/apply" }}
         secondary={{ label: "Referral dashboard", href: "/research/member/referrals" }}
         aside={(
           <div>
-            <p className="mono-cap text-pulse">Give $10. Get $15.</p>
-            <p className="h3 mt-4">Credit follows qualified activation, never an application.</p>
-            <p className="body-s text-ink-2 mt-4">Referral credits are planned and will not issue until the ledger, fraud controls, and member identity contracts are live.</p>
+            <p className="mono-cap text-pulse">Proposed · not active</p>
+            <p className="h3 mt-4">Give $10. Get $15.</p>
+            <p className="body-s text-ink-2 mt-4">Final values, eligibility, hold windows, expiry, and reversals remain configurable and require enabled ledger, identity, validation, and fraud controls.</p>
           </div>
         )}
       />
@@ -35,17 +35,27 @@ export default function Referrals() {
       <section className="container-x xr-section">
         <div className="xr-referral-stage">
           <div className="xr-referral-stage-copy">
-            <p className="mono-cap" style={{ color: "var(--lilac)" }}>Member Passport preview</p>
+            <p className="mono-cap" style={{ color: "var(--lilac)" }}>{developmentPreview ? "Development-only visual preview" : "Program preview · unavailable"}</p>
             <h2 className="display-s">Distinctly xenios. Designed to be shared.</h2>
-            <p className="body-m">This preview uses a non-production identifier. Live cards will use server-issued codes and will never encode health, application, or purchase information.</p>
+            <p className="body-m">No invitation has been issued. This visual contains no code or QR, and every sharing action is disabled until the program and server validation endpoint are enabled.</p>
           </div>
-          <ReferralPassport variant="member" reference="XR-PREVIEW-01689" issued="JUL 18 2026" memberSince="JUL 2026" code="SAMUEL-XR82" invitationUrl={previewUrl} preview />
-          <ReferralShareActions url={previewUrl} />
+          <ReferralPassport
+            variant="member"
+            reference={developmentPreview ? "XR-DEVELOPMENT-SAMPLE" : "XR-NOT-ISSUED"}
+            issued="NOT ISSUED"
+            code={null}
+            invitationUrl={null}
+            preview
+            stateLabel={developmentPreview ? "Development sample" : "Program unavailable"}
+            footerLabel="No invitation issued"
+            previewLabel={developmentPreview ? "Development only · not a real invitation" : "Program proposal · not active"}
+          />
+          <ReferralShareActions url="" disabled />
         </div>
       </section>
 
       <section className="container-x xr-section">
-        <SectionLead eyebrow="Qualification" title="A real member, not a submitted form." body="Referrals should improve fit and trust. That requires a complete qualification sequence and the same independent approval standard for everyone." />
+        <SectionLead eyebrow="Proposed qualification" title="A real member, not a submitted form." body="If the program is enabled, qualification must preserve independent review and require verified activation, an elapsed hold period, and all configured fraud checks." />
         <NumberedJourney steps={QUALIFICATION} />
       </section>
 
@@ -71,7 +81,7 @@ export default function Referrals() {
       <section className="container-x xr-section">
         <div className="xr-two-column">
           <div>
-            <SectionLead eyebrow="Privacy boundary" title="Referrers see progress, never private context." body="A referrer can see Invited, Pending, Qualified, Reward earned, or Expired. Nothing more." />
+            <SectionLead eyebrow="Privacy boundary" title="Aggregate counts, never person-level progress." body="The initial PR #12 dashboard contract is limited to aggregate visits, applications, qualified count, and credit totals. It does not expose invitation rows, identifiers, dates, or individual statuses." />
             <Link href="/research/how-your-data-is-used" className="btn btn-secondary mt-8">How data is used</Link>
           </div>
           <div className="xr-surface xr-surface-dark">

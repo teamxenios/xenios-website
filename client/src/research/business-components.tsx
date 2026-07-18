@@ -2,16 +2,8 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { Check, Copy, Mail, MessageCircle, Share2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import type { ReferralSafeStatus } from "@shared/research/referral-ui";
 
 export type ReferralPassportVariant = "applicant" | "member";
-export type ReferralActivityStatus = ReferralSafeStatus;
-
-export type ReferralActivity = {
-  id: string;
-  date: string;
-  status: ReferralActivityStatus;
-};
 
 export function BusinessPageHero({
   eyebrow,
@@ -101,11 +93,6 @@ export function CheckList({ items }: { items: string[] }) {
   );
 }
 
-export function StatusTag({ status }: { status: ReferralActivityStatus }) {
-  const slug = status.toLowerCase().replace(/\s+/g, "-");
-  return <span className={`xr-status-tag xr-status-${slug}`}>{status}</span>;
-}
-
 function safeShareUrl(value: string) {
   try {
     const parsed = new URL(value);
@@ -191,6 +178,9 @@ export function ReferralPassport({
   invitationUrl,
   memberSince,
   preview = false,
+  stateLabel,
+  footerLabel,
+  previewLabel,
 }: {
   variant: ReferralPassportVariant;
   reference: string;
@@ -199,6 +189,9 @@ export function ReferralPassport({
   invitationUrl?: string | null;
   memberSince?: string;
   preview?: boolean;
+  stateLabel?: string;
+  footerLabel?: string;
+  previewLabel?: string;
 }) {
   const qrValue = code && invitationUrl ? safeShareUrl(invitationUrl) : "";
   const active = variant === "member";
@@ -212,7 +205,7 @@ export function ReferralPassport({
           <p className="xr-passport-brand">xenios</p>
           <p className="mono-label">Research membership</p>
         </div>
-        <p className="mono-label xr-passport-state">{active ? "Active member" : "Application received"}</p>
+        <p className="mono-label xr-passport-state">{stateLabel ?? (active ? "Active member" : "Application received")}</p>
       </header>
 
       <div className="xr-passport-message">
@@ -245,37 +238,10 @@ export function ReferralPassport({
       </div>
 
       <footer className="xr-passport-footer">
-        <p className="mono-label">Invited by a xenios member</p>
+        <p className="mono-label">{footerLabel ?? "Invitation identity private"}</p>
         <p className="mono-label">No health data encoded</p>
       </footer>
-      {preview && <span className="xr-passport-preview mono-label">UI preview</span>}
+      {preview && <span className="xr-passport-preview mono-label">{previewLabel ?? "UI preview · not production"}</span>}
     </article>
-  );
-}
-
-export function ReferralActivityTable({ activities }: { activities: ReferralActivity[] }) {
-  if (activities.length === 0) {
-    return (
-      <div className="xr-empty-state">
-        <p className="mono-cap text-ink-mute">No invitations yet</p>
-        <h3 className="h3">Your first invitation starts here.</h3>
-        <p className="body-s text-ink-2">Share with people you know personally. Applications remain independent, private, and subject to review.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="xr-activity-list" role="list" aria-label="Referral activity">
-      {activities.map((activity) => (
-        <div key={activity.id} className="xr-activity-row" role="listitem">
-          <div>
-            <p className="mono-label text-ink-mute">Invitation</p>
-            <p className="body-m font-700">{activity.id}</p>
-          </div>
-          <p className="body-s text-ink-mute">{activity.date}</p>
-          <StatusTag status={activity.status} />
-        </div>
-      ))}
-    </div>
   );
 }

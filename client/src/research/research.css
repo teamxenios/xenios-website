@@ -413,45 +413,6 @@
 .xr-share-action.is-disabled { opacity: .48; cursor: not-allowed; }
 .xr-share-icon { min-width: 28px; height: 28px; display: inline-grid; place-items: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
 
-.xr-status-tag {
-  display: inline-flex;
-  width: fit-content;
-  min-height: 28px;
-  align-items: center;
-  padding: 4px 9px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  color: var(--ink-2);
-  background: var(--paper-2);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.xr-status-qualified,
-.xr-status-reward-earned { color: #276447; background: #e7f3ec; border-color: #bbdcc9; }
-.xr-status-expired { color: var(--ink-mute); }
-
-.xr-activity-list { border-top: 1px solid var(--rule); }
-.xr-activity-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
-  padding: 18px 0;
-  border-bottom: 1px solid var(--rule);
-}
-
-.xr-empty-state {
-  border: 1px dashed rgba(14,14,14,.22);
-  padding: clamp(28px, 6vw, 56px);
-  background: var(--paper-2);
-}
-.xr-empty-state h3 { margin-top: 12px; }
-.xr-empty-state .body-s { max-width: 48ch; margin-top: 12px; }
-
 .xr-kpi {
   padding: 22px;
   border-top: 1px solid var(--rule);
@@ -472,7 +433,6 @@
   .xr-share-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .xr-passport-data { grid-template-columns: minmax(0, 1fr) auto; }
   .xr-passport-qr { justify-self: end; }
-  .xr-activity-row { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 24px; }
 }
 
 @media (min-width: 720px) {

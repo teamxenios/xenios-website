@@ -1,36 +1,56 @@
 import SeoHead from "@/components/SeoHead";
-import { BusinessPageHero, ReferralActivityTable, ReferralPassport, ReferralShareActions, type ReferralActivity } from "../business-components";
+import { BusinessPageHero, ReferralPassport, ReferralShareActions, SectionLead } from "../business-components";
+import {
+  REFERRAL_FEATURES_OFF,
+  resolveAggregateDashboardPresentation,
+  type AggregateReferralDashboardInput,
+} from "../referral-state";
 
-const PREVIEW_ACTIVITY: ReferralActivity[] = [
-  { id: "INV-021", date: "Jul 18", status: "Invited" },
-  { id: "INV-018", date: "Jul 12", status: "Pending" },
-  { id: "INV-011", date: "Jun 28", status: "Qualified" },
-  { id: "INV-006", date: "Jun 03", status: "Reward earned" },
-  { id: "INV-002", date: "May 18", status: "Expired" },
-];
+const DEVELOPMENT_AGGREGATE_SAMPLE: AggregateReferralDashboardInput = {
+  enabled: true,
+  code: null,
+  counts: { visits: 8, applications: 3, qualified: 1 },
+  creditAvailableCents: 1500,
+  creditPendingCents: 1500,
+};
 
 export default function MemberReferrals() {
-  const previewMode = import.meta.env.DEV && new URLSearchParams(window.location.search).get("preview") === "1";
-  const previewUrl = `${window.location.origin}/research/invite/SAMUEL-XR82`;
-  const activities = previewMode ? PREVIEW_ACTIVITY : [];
+  const previewRequested = new URLSearchParams(window.location.search).get("preview") === "1";
+  const dashboard = resolveAggregateDashboardPresentation({
+    features: REFERRAL_FEATURES_OFF,
+    state: null,
+    isDevelopment: import.meta.env.DEV,
+    previewRequested,
+    previewState: DEVELOPMENT_AGGREGATE_SAMPLE,
+  });
+  const developmentPreview = dashboard.mode === "development-preview";
 
   return (
     <>
-      <SeoHead title="Your referrals, xenios research" description="Your privacy-safe xenios invitation link, referral activity, qualification states, and member-credit summary." path="/research/member/referrals" />
+      <SeoHead title="Referral workspace unavailable, xenios research" description="Referral tools remain unavailable until authenticated aggregate state and server validation are enabled." path="/research/member/referrals" />
       <BusinessPageHero
         eyebrow="Member referral workspace"
-        title="Invite with intention. Track only what you need."
-        lead="Your dashboard will show the invitation link, privacy-safe progress, and earned xenios credits. It will never expose someone else's application or private member information."
-        aside={<div><p className="mono-cap text-pulse">Infrastructure status</p><p className="h3 mt-4">UI ready. Member data not connected.</p><p className="body-s text-ink-2 mt-4">Claude owns authenticated member identity, referral codes, qualification, credits, expiration, and fraud controls.</p></div>}
+        title="Aggregate insight. No person-level tracking."
+        lead="The production dashboard will use authenticated aggregate counts only. Referral tools, credits, QR codes, and sharing remain disabled until the server contract and feature flags are enabled."
+        aside={<div><p className="mono-cap text-pulse">Program status</p><p className="h3 mt-4">Unavailable.</p><p className="body-s text-ink-2 mt-4">No member identity, referral code, reward, or activity is connected in this UI branch.</p></div>}
       />
 
-      <section className="container-x xr-section">
+      {developmentPreview && (
+        <section className="container-x pt-8" data-testid="development-dashboard-preview">
+          <div className="xr-disclosure">
+            <p className="mono-cap text-pulse">Development-only aggregate sample</p>
+            <p className="body-s text-ink-2 mt-3">Not production data. Counts are illustrative; credits, codes, QR, sharing, and person-level activity remain disabled.</p>
+          </div>
+        </section>
+      )}
+
+      <section className="container-x xr-section" data-referral-mode={dashboard.mode}>
         <div className="xr-metric-grid">
           {[
-            ["Visits", previewMode ? "5" : "0"],
-            ["Applications", previewMode ? "1" : "0"],
-            ["Qualified", previewMode ? "2" : "0"],
-            ["Credit available", previewMode ? "$15" : "$0"],
+            ["Visits", String(dashboard.counts.visits)],
+            ["Applications", String(dashboard.counts.applications)],
+            ["Qualified", String(dashboard.counts.qualified)],
+            ["Credit available", dashboard.creditsEnabled ? `$${(dashboard.creditAvailableCents / 100).toFixed(0)}` : "Unavailable"],
           ].map(([label, value]) => <div className="xr-kpi" key={label}><p className="mono-label text-ink-mute">{label}</p><strong className="tabular">{value}</strong></div>)}
         </div>
       </section>
@@ -38,13 +58,30 @@ export default function MemberReferrals() {
       <section className="container-x xr-section">
         <div className="xr-two-column">
           <div className="xr-referral-stage">
-            <ReferralPassport variant="member" reference={previewMode ? "XR-PREVIEW-01689" : "XR-MEMBER"} issued="JUL 18 2026" memberSince={previewMode ? "JUL 2026" : undefined} code={previewMode ? "SAMUEL-XR82" : null} invitationUrl={previewMode ? previewUrl : null} preview={previewMode} />
-            <ReferralShareActions url={previewMode ? previewUrl : ""} disabled={!previewMode} />
+            <ReferralPassport
+              variant="member"
+              reference={developmentPreview ? "XR-DEVELOPMENT-SAMPLE" : "XR-NOT-ISSUED"}
+              issued="NOT ISSUED"
+              code={null}
+              invitationUrl={null}
+              preview
+              stateLabel={developmentPreview ? "Development sample" : "Program unavailable"}
+              footerLabel="No invitation issued"
+              previewLabel={developmentPreview ? "Development only · aggregate sample" : "Program preview · not active"}
+            />
+            <ReferralShareActions url="" disabled />
           </div>
           <div>
-            <p className="mono-cap text-ink-mute mb-5">Invitation activity</p>
-            <ReferralActivityTable activities={activities} />
-            <div className="xr-disclosure mt-8"><p className="body-s text-ink-2">Production defaults to the empty state until an authenticated member contract supplies a server-issued code and privacy-safe activity. Development preview states require `?preview=1` and never call an API.</p></div>
+            <SectionLead eyebrow="Privacy boundary" title="Counts only. No invitation rows." body="The PR #12 contract exposes aggregate visits, applications, qualified count, and credit totals. It does not expose invitation identifiers, dates, identities, or person-level statuses." />
+            <div className="xr-surface xr-surface-muted mt-8">
+              <p className="mono-cap text-ink-mute">Never rendered here</p>
+              <ul className="body-s text-ink-2 mt-5 space-y-3">
+                <li>Invitation IDs or individual dates</li>
+                <li>Applicant names, contact information, or answers</li>
+                <li>Individual approval, decline, or review status</li>
+                <li>Health, Blueprint, purchase, or private member data</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>

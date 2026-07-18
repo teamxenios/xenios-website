@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { APPLICATION_INTERESTS } from "@shared/research/membership-types";
-import { normalizeReferralCode } from "@shared/research/referral-ui";
 import { PageIntro } from "../components";
 import { ReferralPassport, ReferralShareActions } from "../business-components";
 
@@ -45,13 +44,10 @@ const EMPTY: Form = {
 
 const STEPS = ["Identity", "Context", "Goals", "Acknowledgements", "Review"] as const;
 
-function initialForm(): Form {
-  const code = normalizeReferralCode(new URLSearchParams(window.location.search).get("ref"));
-  return { ...EMPTY, referralCode: code };
-}
-
 export default function Apply() {
-  const [form, setForm] = useState<Form>(initialForm);
+  // Fail closed: a URL query value is not authenticated referral context.
+  // A future server-validated handoff may populate this field securely.
+  const [form, setForm] = useState<Form>(() => ({ ...EMPTY }));
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -175,13 +171,13 @@ export default function Apply() {
           <section className="container-x xr-section">
             <div className="xr-two-column">
               <div>
-                <p className="mono-cap text-pulse">Know someone who belongs here?</p>
-                <h2 className="display-s mt-5 max-w-[16ch]">Invite two people into xenios.</h2>
+                <p className="mono-cap text-pulse">Proposed referral program</p>
+                <h2 className="display-s mt-5 max-w-[16ch]">A future way to introduce xenios.</h2>
                 <p className="body-l text-ink-2 mt-6 max-w-[56ch]">
-                  Share xenios with people who take their health, performance, and future seriously. A referral counts only after independent approval, activation, and verification.
+                  Referral tools and rewards are not active. If enabled later, attribution will require a server-validated invitation and qualification will follow independent approval, activation, and verification.
                 </p>
                 <p className="body-s text-ink-mute mt-5 max-w-[56ch]">
-                  Your unique link cannot be invented in the browser. It will be issued through a secure member contract once referral infrastructure is active.
+                  No code, QR, sharing action, or credit is available from this application result.
                 </p>
                 <div className="xr-hero-actions">
                   <Link href="/research/referrals" className="btn btn-primary">See the referral program</Link>
@@ -190,7 +186,7 @@ export default function Apply() {
                 </div>
               </div>
               <div className="xr-referral-stage">
-                <ReferralPassport variant="applicant" reference="XR-APPLICATION" issued="ISSUED SECURELY" code={null} invitationUrl={null} />
+                <ReferralPassport variant="applicant" reference="XR-APPLICATION" issued="NOT ISSUED" code={null} invitationUrl={null} stateLabel="Application received" footerLabel="No invitation issued" />
                 <ReferralShareActions url="" disabled />
               </div>
             </div>
@@ -331,8 +327,7 @@ export default function Apply() {
                   <input id="ra-ref" className={inputCls} value={form.referralSource} onChange={(e) => set("referralSource", e.target.value)} />
                 </div>
                 <div>
-                  <label htmlFor="ra-refcode" className={labelCls}>Referral name or code (optional)</label>
-                  <input id="ra-refcode" className={inputCls} value={form.referralCode} onChange={(e) => set("referralCode", e.target.value)} />
+                  <p className="body-s text-ink-mute">Referral codes are unavailable while server validation is disabled. No URL code is attached to this application.</p>
                 </div>
               </div>
             </div>
