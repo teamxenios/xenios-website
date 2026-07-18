@@ -11,15 +11,17 @@ import { useResearch } from "./core";
 const LOCAL_NAV = [
   { label: "Overview", href: "/research" },
   { label: "Membership", href: "/research/membership" },
-  { label: "Framework", href: "/research/framework" },
-  { label: "Peptides", href: "/research/peptides" },
-  { label: "Quantum", href: "/research/quantum" },
-  { label: "Supplements", href: "/research/supplements" },
+  { label: "Blueprint", href: "/research/blueprint" },
   { label: "Programs", href: "/research/programs" },
-  { label: "Quality", href: "/research/quality" },
-  { label: "Learn", href: "/research/learn" },
-  { label: "For Professionals", href: "/research/professionals" },
+  { label: "Guides", href: "/research/learn" },
+  { label: "Trust", href: "/research/trust" },
+  { label: "Referrals", href: "/research/referrals" },
+  { label: "Professionals", href: "/research/professionals" },
 ];
+
+function isActive(location: string, href: string) {
+  return href === "/research" ? location === href : location === href || location.startsWith(`${href}/`);
+}
 
 function PasswordPage() {
   const { submitPassword } = useResearch();
@@ -100,80 +102,92 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   if (gate === "locked") return <PasswordPage />;
 
   return (
-    <div>
-      <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md rule-bottom" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
+    <div className="research-root">
+      <header className="xr-header" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
         <div className="container-x">
-          <div className="flex items-center justify-between gap-4" style={{ minHeight: 60 }}>
-            <Link href="/research" className="wordmark" style={{ fontSize: 18, textDecoration: "none" }} data-testid="link-research-home">
+          <div className="xr-header-main">
+            <Link href="/research" className="wordmark xr-research-brand" data-testid="link-research-home">
               <span className="wordmark-mark" aria-hidden="true"></span>
-              xenios <span className="text-ink-mute" style={{ fontWeight: 600 }}>research</span>
+              xenios <em>research</em>
             </Link>
-            <nav className="hidden lg:flex items-center gap-5 overflow-x-auto" aria-label="Research navigation">
+            <nav className="xr-desktop-nav" aria-label="Research navigation">
               {LOCAL_NAV.map((item) => {
-                const active = location === item.href;
+                const active = isActive(location, item.href);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`text-[13px] whitespace-nowrap transition-colors ${active ? "text-ink" : "text-ink-2 hover:text-pulse"}`}
-                    style={{ fontWeight: active ? 700 : 600 }}
+                    aria-current={active ? "page" : undefined}
                   >
                     {item.label}
                   </Link>
                 );
               })}
             </nav>
-            <div className="flex items-center gap-3">
-              <Link href="/research/apply" className="btn btn-primary hidden sm:inline-flex" style={{ height: 40, padding: "0 14px", fontSize: 13 }} data-testid="link-apply-membership">
+            <div className="xr-header-actions">
+              <Link href="/research/apply" className="btn btn-primary xr-apply-link" style={{ height: 42, padding: "0 14px", fontSize: 13 }} data-testid="link-apply-membership">
                 Apply for Membership
               </Link>
-              <Link href="/research/cart" className="btn btn-ghost" style={{ height: 40, padding: "0 10px" }} aria-label={`Cart with ${count} items`} data-testid="link-research-cart">
+              <Link href="/research/cart" className="xr-cart-link" aria-label={`Cart with ${count} items`} data-testid="link-research-cart">
                 <ShoppingBag size={18} aria-hidden="true" />
                 <span className="tabular text-[13px]">{count > 0 ? count : ""}</span>
               </Link>
             </div>
           </div>
-          <nav className="lg:hidden flex items-center gap-4 overflow-x-auto pb-3 -mt-1" aria-label="Research navigation (mobile)">
-            {LOCAL_NAV.map((item) => (
-              <Link key={item.href} href={item.href} className={`text-[13px] whitespace-nowrap ${location === item.href ? "text-ink font-700" : "text-ink-2"}`}>
-                {item.label}
-              </Link>
-            ))}
+          <nav className="xr-mobile-nav" aria-label="Research navigation (mobile)">
+            {LOCAL_NAV.map((item) => {
+              const active = isActive(location, item.href);
+              return (
+                <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}>
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </header>
 
       <main>{children}</main>
 
-      <footer className="rule-top mt-16">
-        <div className="container-x py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <footer className="xr-footer">
+        <div className="container-x xr-footer-grid">
+          <div>
+            <Wordmark size="sm" />
+            <p className="mt-4 body-s text-ink-mute max-w-[42ch]">
+              A private whole-life membership in review. Research materials are not for human or veterinary use. Programs are educational and non-clinical. Ordering is not open.
+            </p>
+            <p className="mono-label text-ink-mute mt-5">Private preview · noindex</p>
+          </div>
+          <div className="xr-footer-links">
             <div>
-              <Wordmark size="sm" />
-              <p className="mt-4 body-s text-ink-mute max-w-[36ch]">
-                Research materials are not for human or veterinary use. Programs are human-led and non-clinical. Ordering is not open.
-              </p>
+              <p className="mono-cap text-ink-mute">Membership</p>
+              <Link href="/research/membership">Membership</Link>
+              <Link href="/research/membership/compare">Compare options</Link>
+              <Link href="/research/blueprint">Whole-Life Blueprint</Link>
+              <Link href="/research/referrals">Member referrals</Link>
             </div>
             <div>
-              <p className="mono-cap text-ink-mute mb-4">Policies</p>
-              <div className="space-y-2">
-                {["research-use", "shipping", "returns", "privacy", "terms"].map((slug) => (
-                  <Link key={slug} href={`/research/policies/${slug}`} className="block body-s text-ink-2 hover:text-pulse transition-colors capitalize">
-                    {slug.replace(/-/g, " ")}
-                  </Link>
-                ))}
-              </div>
+              <p className="mono-cap text-ink-mute">Trust</p>
+              <Link href="/research/trust">Trust center</Link>
+              <Link href="/research/how-your-data-is-used">How data is used</Link>
+              <Link href="/research/quality">Quality standards</Link>
+              <Link href="/research/faq">FAQ</Link>
             </div>
             <div>
-              <p className="mono-cap text-ink-mute mb-4">Access</p>
-              <div className="space-y-2">
-                <Link href="/research/access" className="block body-s text-ink-2 hover:text-pulse transition-colors">Professional access</Link>
-                <Link href="/research/wholesale" className="block body-s text-ink-2 hover:text-pulse transition-colors">Wholesale</Link>
-                <Link href="/" className="block body-s text-ink-2 hover:text-pulse transition-colors">Back to xenios</Link>
-                <button type="button" onClick={() => void logout()} className="block body-s text-ink-mute hover:text-pulse transition-colors" data-testid="button-research-logout">
-                  Log out of review access
-                </button>
-              </div>
+              <p className="mono-cap text-ink-mute">Explore</p>
+              <Link href="/research/learn">Research Guides</Link>
+              <Link href="/research/programs">Programs</Link>
+              <Link href="/research/professionals">Professionals</Link>
+              <Link href="/research/ambassadors">Ambassadors</Link>
+            </div>
+            <div>
+              <p className="mono-cap text-ink-mute">Access</p>
+              <Link href="/research/access">Request access</Link>
+              <Link href="/research/wholesale">Wholesale</Link>
+              <Link href="/">Back to xenios</Link>
+              <button type="button" onClick={() => void logout()} data-testid="button-research-logout">
+                Log out of review access
+              </button>
             </div>
           </div>
         </div>

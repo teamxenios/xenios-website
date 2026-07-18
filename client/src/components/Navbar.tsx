@@ -80,7 +80,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between gap-4" style={{ minHeight: 64 }}>
             <Wordmark size="md" />
 
-            <nav className="hidden lg:flex items-center gap-6" aria-label="Primary">
+            <nav className="site-primary-nav items-center gap-6" aria-label="Primary">
               {primaryNav.map((item) => {
                 const active = location === item.href;
                 return (
@@ -112,7 +112,7 @@ export default function Navbar() {
                 <span aria-hidden="true" className="mr-2">☰</span>
                 Menu
               </button>
-              <Link href={earlyAccessCta.href} data-testid="button-nav-waitlist" className="btn btn-primary hidden sm:inline-flex" style={{ height: 44, padding: "0 18px", fontSize: 14 }}>
+              <Link href={earlyAccessCta.href} data-testid="button-nav-waitlist" className="btn btn-primary site-nav-cta" style={{ height: 44, padding: "0 18px", fontSize: 14 }}>
                 {earlyAccessCta.label}
               </Link>
             </div>

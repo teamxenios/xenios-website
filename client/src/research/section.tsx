@@ -4,6 +4,7 @@ import { ResearchProvider } from "./core";
 import ResearchLayout from "./layout";
 import Overview from "./pages/Overview";
 import Membership from "./pages/Membership";
+import MembershipCompare from "./pages/MembershipCompare";
 import Framework from "./pages/Framework";
 import Faq from "./pages/Faq";
 import Apply from "./pages/Apply";
@@ -18,10 +19,19 @@ import BuildASystem from "./pages/BuildASystem";
 import Quality from "./pages/Quality";
 import Learn from "./pages/Learn";
 import Access from "./pages/Access";
+import Ambassadors from "./pages/Ambassadors";
+import Blueprint from "./pages/Blueprint";
+import DataUse from "./pages/DataUse";
+import Invite from "./pages/Invite";
+import MemberReferrals from "./pages/MemberReferrals";
+import Professionals from "./pages/Professionals";
+import Referrals from "./pages/Referrals";
+import Trust from "./pages/Trust";
 import Wholesale from "./pages/Wholesale";
 import CartPage from "./pages/CartPage";
 import ProductDetail from "./pages/ProductDetail";
 import PolicyPage from "./pages/PolicyPage";
+import "./research.css";
 
 // xenios research: the whole section is one lazy-loaded chunk mounted by the
 // main router at /research*. While gated, mark it noindex client-side too (the
@@ -59,6 +69,7 @@ export default function ResearchSection() {
       <ResearchLayout>
         <Switch>
           <Route path="/research" component={Overview} />
+          <Route path="/research/membership/compare" component={MembershipCompare} />
           <Route path="/research/membership" component={Membership} />
           <Route path="/research/framework" component={Framework} />
           <Route path="/research/faq" component={Faq} />
@@ -67,7 +78,14 @@ export default function ResearchSection() {
           <Route path="/research/apply/success" component={Apply} />
           <Route path="/research/apply/status" component={ApplyStatus} />
           <Route path="/research/member/welcome" component={MemberWelcome} />
-          <Route path="/research/professionals" component={Access} />
+          <Route path="/research/member/referrals" component={MemberReferrals} />
+          <Route path="/research/referrals" component={Referrals} />
+          <Route path="/research/ambassadors" component={Ambassadors} />
+          <Route path="/research/professionals" component={Professionals} />
+          <Route path="/research/trust" component={Trust} />
+          <Route path="/research/how-your-data-is-used" component={DataUse} />
+          <Route path="/research/blueprint" component={Blueprint} />
+          <Route path="/research/invite/:referralCode" component={Invite} />
           <Route path="/research/peptides" component={Peptides} />
           <Route path="/research/quantum" component={Quantum} />
           <Route path="/research/supplements" component={Supplements} />

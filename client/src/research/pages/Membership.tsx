@@ -2,18 +2,20 @@ import { Link } from "wouter";
 import { ArrowRight, Check } from "lucide-react";
 import SeoHead from "@/components/SeoHead";
 import { PageIntro } from "../components";
+import { SectionLead } from "../business-components";
 
 const MEMBERSHIP_INCLUDES = [
   "A reviewed membership application",
   "A secure member profile",
   "An in-depth whole-life onboarding",
   "A personalized Whole-Life Blueprint",
+  "A basic human quality review before delivery",
   "Access to the xenios member library",
   "Evidence and quality resources",
   "Member-only research catalog visibility where permitted",
-  "Ongoing Blueprint updates",
-  "Priority support",
-  "Early access to future xenios programs and professional pathways",
+  "Member pricing where available",
+  "Referral program access when the credit ledger launches",
+  "Initial habits, tracking, questions, and professional-support prompts",
 ];
 
 const WHO_SHOULD_APPLY = [
@@ -53,7 +55,7 @@ export default function Membership() {
       <section className="container-x" style={{ paddingTop: 8, paddingBottom: 24 }}>
         <div className="flex flex-col sm:flex-row gap-4">
           <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
-          <Link href="/research/framework" className="btn btn-ghost">Explore the framework</Link>
+          <Link href="/research/membership/compare" className="btn btn-ghost">Compare options</Link>
         </div>
       </section>
 
@@ -80,12 +82,28 @@ export default function Membership() {
             <p className="body-l text-ink-2">
               There is no fee to apply. Approved applicants pay a one-time $50 activation fee to open their membership and begin the in-depth onboarding.
             </p>
+            <p className="mt-5 body-s text-ink-mute">
+              The $50 activation is not xenios Plus and does not include unlimited human consulting, recurring Blueprint reviews, or a premium program. Those are separate proposed options with separate prices and scope.
+            </p>
             <p className="mt-6 body-s text-ink-mute">
               Membership does not guarantee access to every product, service, or professional pathway. Eligibility may depend on location, product category, documentation, and applicable requirements.
             </p>
-            <Link href="/research/apply" className="btn btn-primary mt-8">Apply for Membership</Link>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4">
+              <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
+              <Link href="/research/membership/compare" className="btn btn-secondary">Compare options</Link>
+            </div>
           </div>
         </div>
+      </section>
+
+      <section className="container-x xr-section">
+        <SectionLead eyebrow="What can follow" title="Recurring support and deeper review are optional." body="xenios is testing a $39 monthly or $390 annual Plus membership, a $199 to $399 Human Blueprint Review, and $299 to $999 premium programs. These are proposed offers, not live checkout." />
+        <div className="xr-three-column">
+          <article className="xr-surface"><p className="mono-cap text-pulse">Proposed</p><h3 className="h3 mt-4">xenios Plus</h3><p className="body-s text-ink-2 mt-4">Quarterly Blueprint refreshes, monthly check-ins, progress tools, expanded guides, member sessions, and priority support.</p></article>
+          <article className="xr-surface"><p className="mono-cap text-pulse">Proposed</p><h3 className="h3 mt-4">Human Blueprint Review</h3><p className="body-s text-ink-2 mt-4">A separately scoped deeper review by an appropriate team member or qualified professional.</p></article>
+          <article className="xr-surface"><p className="mono-cap text-pulse">Proposed</p><h3 className="h3 mt-4">Premium programs</h3><p className="body-s text-ink-2 mt-4">Human-led education and accountability around a clear member objective, separate from product sales and medical care.</p></article>
+        </div>
+        <Link href="/research/membership/compare" className="btn btn-secondary mt-8">See the complete comparison</Link>
       </section>
 
       <section className="container-x section-y rule-top">
@@ -143,7 +161,7 @@ export default function Membership() {
           </div>
           <div className="flex flex-col sm:flex-row gap-4 shrink-0">
             <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
-            <Link href="/research/quality" className="btn btn-ghost">Quality standards</Link>
+            <Link href="/research/trust" className="btn btn-ghost">Trust center</Link>
           </div>
         </div>
       </section>

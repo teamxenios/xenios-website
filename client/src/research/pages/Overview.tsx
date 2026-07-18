@@ -84,6 +84,15 @@ const ECOSYSTEM = [
   },
 ];
 
+const MEMBER_SYSTEM = [
+  { title: "Whole-Life Blueprint", href: "/research/blueprint", body: "Organize goals, constraints, routines, environment, information, and trusted support into one coherent system." },
+  { title: "Membership options", href: "/research/membership/compare", body: "See what the $50 activation includes and how proposed Plus, deeper review, and programs remain separate." },
+  { title: "Programs", href: "/research/programs", body: "Add human-led education and accountability only when the program fits the Blueprint." },
+  { title: "Member referrals", href: "/research/referrals", body: "Invite people you trust through a privacy-safe loop that rewards qualified activation, not applications." },
+  { title: "Trust center", href: "/research/trust", body: "Understand current private-preview boundaries and the controls required before broader launch." },
+  { title: "How data is used", href: "/research/how-your-data-is-used", body: "See how identity, application, Blueprint, payment, referral, and marketing responsibilities stay separated." },
+];
+
 export default function Overview() {
   const { products } = useResearch();
   const featured = products.filter((product) => product.featured).slice(0, 6);
@@ -184,6 +193,26 @@ export default function Overview() {
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
           <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
           <Link href="/research/membership" className="btn btn-secondary">About the membership</Link>
+        </div>
+      </section>
+
+      {/* The member system */}
+      <section className="container-x section-y rule-top">
+        <p className="mono-cap text-ink-mute mb-5">The member system</p>
+        <h2 className="display-s max-w-[22ch]">The $50 activation begins a relationship.</h2>
+        <p className="mt-6 body-l text-ink-2 max-w-[62ch]">
+          The Blueprint creates the foundation. Optional support, programs, eligible products, professional pathways, and referrals should follow the member's context instead of competing for attention.
+        </p>
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {MEMBER_SYSTEM.map((panel) => (
+            <Link key={panel.href} href={panel.href} className="card block hover:border-[color:var(--ink)] transition-colors">
+              <div className="flex items-start justify-between gap-4">
+                <h3 className="h3">{panel.title}</h3>
+                <ArrowUpRight size={18} aria-hidden="true" className="text-ink-mute shrink-0 mt-1" />
+              </div>
+              <p className="mt-4 body-s text-ink-2">{panel.body}</p>
+            </Link>
+          ))}
         </div>
       </section>
 

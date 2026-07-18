@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
+import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { APPLICATION_INTERESTS } from "@shared/research/membership-types";
+import { normalizeReferralCode } from "@shared/research/referral-ui";
 import { PageIntro } from "../components";
+import { ReferralPassport, ReferralShareActions } from "../business-components";
 
 // xenios research: stage-one membership application (spec section 9).
 // Four short steps, an editable review screen, then submit. No payment here,
@@ -42,8 +45,13 @@ const EMPTY: Form = {
 
 const STEPS = ["Identity", "Context", "Goals", "Acknowledgements", "Review"] as const;
 
+function initialForm(): Form {
+  const code = normalizeReferralCode(new URLSearchParams(window.location.search).get("ref"));
+  return { ...EMPTY, referralCode: code };
+}
+
 export default function Apply() {
-  const [form, setForm] = useState<Form>(EMPTY);
+  const [form, setForm] = useState<Form>(initialForm);
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -143,7 +151,7 @@ export default function Apply() {
     return (
       <>
         <SeoHead title="Application in review, xenios research" description="Your application is in review." path="/research/apply/success" />
-        <section className="container-x" style={{ paddingTop: 96, paddingBottom: 96 }}>
+        <section className="container-x" style={{ paddingTop: 96, paddingBottom: 48 }}>
           <p className="mono-cap text-pulse mb-5">{done.resubmitted ? "Update received" : "Application received"}</p>
           <h1 className="display-m max-w-[18ch]">
             {done.resubmitted ? "Your application is back in review." : "Your application is in review."}
@@ -163,6 +171,31 @@ export default function Apply() {
             </p>
           </div>
         </section>
+        {!done.resubmitted && (
+          <section className="container-x xr-section">
+            <div className="xr-two-column">
+              <div>
+                <p className="mono-cap text-pulse">Know someone who belongs here?</p>
+                <h2 className="display-s mt-5 max-w-[16ch]">Invite two people into xenios.</h2>
+                <p className="body-l text-ink-2 mt-6 max-w-[56ch]">
+                  Share xenios with people who take their health, performance, and future seriously. A referral counts only after independent approval, activation, and verification.
+                </p>
+                <p className="body-s text-ink-mute mt-5 max-w-[56ch]">
+                  Your unique link cannot be invented in the browser. It will be issued through a secure member contract once referral infrastructure is active.
+                </p>
+                <div className="xr-hero-actions">
+                  <Link href="/research/referrals" className="btn btn-primary">See the referral program</Link>
+                  <Link href="/research/apply/status" className="btn btn-secondary">View application status</Link>
+                  <Link href="/research/learn" className="btn btn-ghost">Explore Research Guides</Link>
+                </div>
+              </div>
+              <div className="xr-referral-stage">
+                <ReferralPassport variant="applicant" reference="XR-APPLICATION" issued="ISSUED SECURELY" code={null} invitationUrl={null} />
+                <ReferralShareActions url="" disabled />
+              </div>
+            </div>
+          </section>
+        )}
       </>
     );
   }

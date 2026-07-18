@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* ============================================================
    xenios v6 — Design tokens & primitives
@@ -245,6 +243,7 @@ body {
 .rule-top { border-top: 1px solid var(--rule); }
 .rule-bottom { border-bottom: 1px solid var(--rule); }
 .rule-y { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.rule-all { border: 1px solid var(--rule); }
 
 /* Color helpers */
 .bg-paper { background-color: var(--paper); }
@@ -288,6 +287,13 @@ body {
   white-space: nowrap;
 }
 .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn:focus-visible,
+.input-field:focus-visible,
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--pulse);
+  outline-offset: 3px;
+}
 /* Press feedback: scale, not translate — instant confirmation the UI heard the press. */
 .btn:active { transform: scale(0.97); }
 .btn:disabled:active { transform: none; }
@@ -331,6 +337,28 @@ body {
 .btn-on-dark.btn-secondary:hover { background: rgba(244,239,230,0.08); }
 .btn-on-dark.btn-ghost { color: var(--paper); border-color: var(--paper); }
 .btn-on-dark.btn-ghost:hover { color: var(--pulse); border-color: var(--pulse); }
+.btn-ghost-on-dark {
+  background: transparent;
+  color: var(--paper);
+  border: 1px solid transparent;
+  border-bottom-color: var(--paper);
+  border-radius: 0;
+  height: auto;
+  padding: 4px 0;
+  min-width: 0;
+}
+.btn-ghost-on-dark:hover { color: var(--lilac); border-bottom-color: var(--lilac); }
+
+/* Explicit visibility contracts are kept outside Tailwind's cascade because
+   the custom .btn primitive intentionally controls display. */
+.site-primary-nav,
+.site-nav-cta { display: none; }
+@media (min-width: 640px) {
+  .site-nav-cta { display: inline-flex; }
+}
+@media (min-width: 1024px) {
+  .site-primary-nav { display: flex; }
+}
 
 /* ============================================================
    Inputs (52→60px height, ≥17px font on iOS)
