@@ -1,7 +1,7 @@
 # Research Page Inventory
 
 **Updated:** 2026-07-18
-**Status:** Stage 1 priority-route audit complete; extended inventory pending
+**Status:** UI-002 routes claimed for implementation
 
 ## Highest-priority public routes
 
@@ -12,6 +12,16 @@
 | `/research/framework` | CODEX_UI | audited at 390; shell overflow; no redesign started |
 | `/research/faq` | CODEX_UI | audited at 390; shell overflow; no redesign started |
 | `/research/apply` | shared | Claude implementation present; audited at 390; shell overflow; backend untouched |
+| `/research/membership/compare` | CODEX_UI | UI-002: activation, Plus, Blueprint Review, and program comparison |
+| `/research/referrals` | CODEX_UI | UI-002: member referral program and qualification boundary |
+| `/research/ambassadors` | CODEX_UI | UI-002: separate approved ambassador pathway |
+| `/research/professionals` | CODEX_UI | UI-002: professional membership and partnership boundary |
+| `/research/trust` | CODEX_UI | UI-002: privacy and security commitments versus roadmap controls |
+| `/research/how-your-data-is-used` | CODEX_UI | UI-002: data separation, access, consent, and referral privacy |
+| `/research/blueprint` | CODEX_UI | UI-002: automated draft, human quality review, and paid deeper-review boundary |
+| `/research/programs` | CODEX_UI | UI-002: outcome-oriented merchandising rather than disconnected catalog |
+| `/research/invite/:referralCode` | CODEX_UI, data contract shared | UI-002 presentation; Claude owns validation and attribution |
+| `/research/member/referrals` | CODEX_UI, private contract shared | UI-002 states; Claude owns member identity, data, credits, and privacy |
 
 ## Additional public route families
 

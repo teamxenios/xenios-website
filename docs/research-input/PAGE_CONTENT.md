@@ -1,9 +1,9 @@
 # Research Page Content
 
-**Status:** draft source registry
+**Status:** active UI-002 source registry
 **Updated:** 2026-07-18
 
-No text is classified `APPROVED_EXACT` yet. The canonical V2 specification contains detailed draft copy, but Samuel has not supplied a separate approval packet in this task.
+Samuel supplied direct business, referral, privacy, positioning, and page direction on 2026-07-18. Quoted preferred copy is classified `USER_EXACT`; surrounding business recommendations remain editable direction. Visible brand styling will preserve the repository rule that `xenios` is lowercase.
 
 ## Classification key
 
@@ -13,6 +13,31 @@ No text is classified `APPROVED_EXACT` yet. The canonical V2 specification conta
 - `FACT_REQUIRES_VERIFICATION`: factual support required.
 - `CLAIM_REQUIRES_REVIEW`: legal, scientific, or regulatory review required.
 - `PLACEHOLDER`: must not ship as final.
+- `USER_EXACT`: supplied directly as preferred copy; preserve meaning and wording except lowercase brand styling and punctuation required by repository rules.
+
+# Cross-route positioning
+
+`A private whole-life health membership that helps people organize their goals, environment, routines, information, and trusted support into one coherent system.`
+
+Status: `USER_EXACT`.
+
+# Referral copy
+
+- Headline: `Invite two people into xenios.`
+- Applicant state: `Your application is being reviewed.`
+- Member message: `Your network shapes your health.`
+- Invitation landing: `You were invited to xenios research.`
+- Card message: `A better life is built through better systems.`
+- Offer: `Give $10. Get $15.`
+- Approval boundary: `Applications are reviewed independently. An invitation does not guarantee approval.`
+
+Status: `USER_EXACT`, with lowercase brand styling.
+
+# Trust copy
+
+`Your information exists to serve your Blueprint, not an advertising profile.`
+
+Status: `USER_EXACT`. Any surrounding operational claim must distinguish current behavior from planned controls.
 
 # Route: /research
 
@@ -89,3 +114,13 @@ Explain how physical, nutritional, recovery, emotional, social, environmental, o
 # Regulated product and Quantum content
 
 All health, product, supplier, quality, regulatory, composition, evidence, and access claims are `FACT_REQUIRES_VERIFICATION` or `CLAIM_REQUIRES_REVIEW` until source records and approval status are versioned.
+
+# Pricing direction
+
+- $50 activation: current post-approval one-time fee contract.
+- $39 monthly or $390 annual Plus: proposed test pricing, not live checkout.
+- $199 to $399 Human Blueprint Review: proposed range.
+- $299 to $999 programs: directional range.
+- $149 to $299 monthly professional membership: directional range.
+
+UI must label proposed and unavailable offers honestly.

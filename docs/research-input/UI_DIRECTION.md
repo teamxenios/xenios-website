@@ -1,6 +1,6 @@
 # Research UI Direction
 
-**Status:** initial packet, awaiting Samuel's references
+**Status:** active direction for UI-002
 **Updated:** 2026-07-18
 
 ## Desired feeling
@@ -29,6 +29,7 @@
 
 - Original xenios-owned editorial diagrams, whole-life visuals, and verified product renders.
 - No supplier branding, copied competitor imagery, syringes, injection imagery, bodily transformation imagery, or unlicensed assets.
+- Build the referral passport and social-share treatment as data-driven HTML, CSS, and SVG so identity, code, QR payload, and status remain controlled by the product.
 
 ## Animation direction
 
@@ -42,18 +43,24 @@
 
 ## Priority pages
 
-1. Main-site audit and shared shell
-2. `/research`
-3. `/research/membership`
-4. `/research/framework`
-5. `/research/faq`
+1. Responsive foundation and Research shell
+2. Membership and comparison
+3. Referral explanation, invitation card, invite landing, and member referral UI states
+4. Trust and data-use explanation
+5. Blueprint, programs, ambassadors, and professionals
 
-## Samuel input still needed
+## Referral visual direction
 
-- Reference URLs or screenshots
-- What to emulate and avoid in each reference
+- Black, warm white, graphite, silver, and one controlled Xenios accent.
+- Editorial hierarchy with small mono labels, meaningful reference numbers, and 4 px geometry.
+- Subtle scientific grid, registration marks, or grain created in code.
+- Clean, functional QR presentation with no sensitive payload.
+- A more restrained, system-oriented composition than the supplied Superpower example.
+- Mobile-first share controls with large targets and safe wrapping.
+- Applicant and active-member variants must feel related but materially different.
+
+## Samuel input still useful
+
 - Exact page priority
-- Approved copy and edit permissions
 - Product and editorial image ideas
-- Mobile-specific preferences
 - Animation-specific preferences

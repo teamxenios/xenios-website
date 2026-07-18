@@ -6,11 +6,11 @@
 **Published audit commit:** `e2d493a`
 **Base branch:** `feat/research-membership-premium-rebuild`
 **Base SHA:** `f9c44807fa3aa70021f27654a31c8dd8aa32a725`
-**State:** ready for Stage 1 review
+**State:** active, UI-002
 
 ## Claimed work
 
-No active implementation claim. `UI-001` is complete.
+`UI-002`: private acquisition, referral, monetization, and trust surfaces, including the scoped responsive-foundation repair.
 
 ## Completed
 
@@ -34,13 +34,21 @@ No active implementation claim. `UI-001` is complete.
 - Public Research peptide content conflicts with the repository's stealth public-copy guidance.
 - The canonical V2 specification remains outside the repository.
 
+## New user direction received
+
+- Treat Research as a private member acquisition, activation, monetization, retention, referral, and trust system.
+- Build the requested public-facing presentation inside the existing private gate.
+- Use Give $10, Get $15 after qualified activation, not application submission.
+- Build an original Xenios Member Passport and invitation experience inspired by the supplied pattern without copying Superpower.
+- Keep referral codes, identity, attribution, credits, fraud, billing, admin, analytics, and privacy enforcement in Claude's infrastructure scope.
+
 ## Routes touched
 
-None. Route inspection was read-only.
+UI-002 routes are listed in `docs/agent-coordination/claims/active/UI-002--CODEX_UI.md`; implementation has not yet been committed.
 
 ## Shared files touched
 
-Documentation under `docs/` only. No application source or shared component changed.
+The UI-002 claim includes the Research route registry, layout, components and styles, application success presentation, and the scoped Tailwind entry/missing primitive repair in `client/src/index.css`.
 
 ## Tests completed
 
@@ -64,13 +72,13 @@ Eighteen captures under `docs/research-design/baseline/main-site/`, plus `metric
 
 ## Needs from Samuel
 
-- Decide how public peptide and GLP-1 routes coexist with the existing stealth public-copy rule.
+- Review proposed pricing labels and UI previews after implementation.
 - Confirm whether the V2 specification should be committed verbatim or summarized into a maintained repository source of truth.
-- Provide approved visual references, exact copy, asset ideas, mobile preferences, and animation preferences when ready.
+- Approve final referral terms, credit expiration, milestones, and launch timing before public release.
 
 ## Integration notes
 
 - PR #9 remains open, unmerged, mergeable, and unchanged at `f9c44807` as of this update.
 - PR #10 remains a draft and targets `feat/research-membership-premium-rebuild`.
 - Membership backend, authentication, payments, onboarding, private member data, and the Whole-Life Blueprint remain Claude-owned.
-- No substantive Research redesign begins until the Stage 1 audit is reviewed and the shared blockers have owners.
+- Samuel's new direction authorizes UI-002. Research remains private and noindexed; backend and regulated publication boundaries are unchanged.

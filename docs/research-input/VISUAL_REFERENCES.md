@@ -10,7 +10,21 @@
 
 **What must not be copied:** not applicable; this is the project's own design source of truth.
 
-**Status:** local and live audit pending.
+**Status:** completed local audit at `docs/research-design/MAIN_SITE_UI_AUDIT.md`.
+
+## Reference: Superpower mobile referral screen
+
+**Source:** Samuel-provided screenshot, local attachment only
+
+**What Samuel likes:** a prestigious post-application referral moment, a shareable identity card, reference number, issued date, QR presentation, and direct mobile sharing controls.
+
+**What must not be copied:** Superpower name, orange gradient, card composition, exact spacing, message, peptide launch framing, icons, imagery, reference-number format, or wording.
+
+**Xenios interpretation:** a Member Passport or Invitation Card built from Xenios tokens, editorial type, warm white and graphite surfaces, one restrained purple accent, scientific registration marks, privacy-safe identifiers, and functional share controls.
+
+**Rights:** third-party visual reference only; do not add the screenshot to production assets or reproduce its protected design.
+
+**Status:** approved as pattern inspiration, not as an asset.
 
 ## Reference: Repository attached assets
 
@@ -22,6 +36,4 @@
 
 **Status:** not approved for production use.
 
-## External references from Samuel
-
-None supplied in this task. For every future reference, record the URL or screenshot, what Samuel likes, what must not be copied, the general pattern, and the original Xenios implementation direction.
+For every future reference, record the URL or screenshot, what Samuel likes, what must not be copied, the general pattern, and the original Xenios implementation direction.
