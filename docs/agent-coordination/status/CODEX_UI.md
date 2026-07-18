@@ -1,70 +1,48 @@
 # CODEX_UI Status
 
-**Updated:** 2026-07-18T15:50:14-05:00
+**Updated:** 2026-07-18T16:23:08-05:00
 **Mode:** local Codex desktop project with direct filesystem access
-**Repository:** `teamxenios/xenios-website`
-**Working directory:** `C:\Users\sboad\Downloads\xenios-website-codex-ui`
-**Remote:** `https://github.com/teamxenios/xenios-website.git`
-**Base branch:** `main`
-**Base SHA:** `df8e4c53fc676b2b413fa509518e73ac06194a7e`
-**Working branch:** `codex/research-ui-content`
-**Published implementation commit:** `b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6`
-**Published integration head:** `7856966a782d55aef9b1b0f9a1ac570c19c0cb5a`
-**Published contract-reconciliation commit:** `970d153d2499f6838c75471a487f58687fe0fc52`
-**Draft PR:** #13 into `main`
-**State:** UI-002 complete, Claude review requested
+**Repository:** teamxenios/xenios-website
+**Working directory:** C:\Users\sboad\Downloads\xenios-website-codex-ui
+**Remote:** https://github.com/teamxenios/xenios-website.git
+**Base branch:** main
+**Base SHA:** df8e4c53fc676b2b413fa509518e73ac06194a7e
+**Working branch:** codex/research-ui-content
+**UI-002 implementation:** b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6
+**Contract-reconciliation commit:** 970d153d2499f6838c75471a487f58687fe0fc52
+**Fail-closed correction commit:** b33f9a74f653a8c8ee2b0131a310c3480374106d
+**Draft PR:** #13 into main
+**State:** integration corrections implemented; INTEGRATION_QA re-review requested; do not merge yet
 
 ## Local visibility
 
-Codex can read Claude's physical checkout at `C:\Users\sboad\Downloads\xenios-website` because this is a local desktop session. It cannot see changes that exist only inside Claude's hidden conversation. Claude's checkout was clean at `f9c44807` during the last direct inspection, so no uncommitted Claude file changes were available to read.
+Codex is operating locally and can read both this worktree and Claude's physical checkout at C:\Users\sboad\Downloads\xenios-website. It cannot see content that exists only in Claude's hidden conversation. No Claude-owned backend, auth, admin, or Supabase source was changed by the PR #13 correction.
 
-## What shipped in UI-002
+## Current UI contract
 
-- Repaired Tailwind v4 entry behavior, missing shared primitives, narrow header containment, and responsive Research shell behavior.
-- Added an original code-native xenios Member Passport with a real QR, privacy label, applicant/member variants, and share actions.
-- Added membership comparison, referrals, invite, member-referral dashboard, Blueprint, programs, professionals, ambassadors, trust, and data-use routes.
-- Added referral attribution presentation to `/research/apply` without changing Claude's submission API or inventing a code after success.
-- Added privacy-safe referral helpers and four unit tests.
-- Kept all Research routes behind the existing password gate and `noindex` boundary.
-- Versioned four 390 x 844 implementation previews.
+- Invitation routes fail closed. A normalized URL code is not authenticity.
+- With the server validation endpoint and flags disabled, valid-looking and malformed codes render unavailable or invalid, attach no ref value, and make no referrer claim.
+- The application ignores an untrusted ref query value.
+- Production referral presentation exposes PR #12's aggregate-only dashboard boundary: visits, applications, qualified, credit available, and credit pending.
+- Production renders no invitation identifiers, individual dates, applicant identity, person-level statuses, QR, or enabled sharing.
+- Give $10, Get $15 and all qualification/reward terms are proposed and configurable while flags are off.
+- Optional samples require development mode plus preview=1 and are visibly labeled non-production. They remain aggregate-only and keep codes, credits, QR, and sharing disabled.
+- PR #12 retains ownership of shared/server referral contracts. The PR #13 adapter is client presentation code only.
 
 ## Validation
 
-- `npm run check`: only the pre-existing `server/storage.ts(48,40): TS7006` remains.
-- `npm test`: 2 files and 16 tests passed.
-- `npm run build`: passed; main JS remains 715.25 kB and triggers the existing Vite chunk warning.
-- Browser route matrix: 13 Research routes plus the main home page checked at 390 px; selected routes checked at 320, 640, 768, and 1440 px.
-- Overflow: zero document overflow in the tested viewports.
-- Browser console: zero warnings or errors in the final pass.
-- Referral default: zero activity, no QR, and all share actions disabled until a secure server contract exists.
-- Referral preview: exactly `Invited`, `Pending`, `Qualified`, `Reward earned`, and `Expired`; no private decision reason or application content.
-- Copy action: produced the exact invitation URL in the browser. Native buttons retain keyboard semantics and visible focus treatment.
+- npm test: 2 files and 18 tests passed.
+- npm run build: passed; main JS remains 715.25 kB and retains the existing Vite chunk warning.
+- npm run check: only the pre-existing server/storage.ts(48,40): TS7006 remains.
+- Focused browser QA at 390 x 844: valid-looking invitation unavailable; malformed invitation invalid; no ref links; no member-invited claim; no QR matrix; no enabled share actions; aggregate production metrics 0/0/0/Unavailable; development preview 8/3/1/Unavailable; no person-level rows; application with ref query has no referral input or prefill; zero document overflow.
 
-## Needs from Claude
+## Coordination requirements
 
-- Review PR #13 and the handoff under `docs/agent-coordination/handoffs/to-claude/`.
-- Supply authenticated referral contracts for code issuance, validation, attribution, qualification, reward ledger, expiration, and privacy-safe activity.
-- Preserve the UI-safe status vocabulary in `shared/research/referral-ui.ts`.
-- Do not expose applicant identity, application answers, health data, approval reasons, or decline reasons to referrers.
-- Resolve the pre-existing TypeScript error when working in `server/storage.ts`.
+- Before CODEX_UI starts an overlapping lane or approves a merge, read docs/agent-coordination/status/INTEGRATION_QA.md and the latest versioned INTEGRATION_QA handoff.
+- Versioned P1 findings from INTEGRATION_QA block merge until addressed and re-reviewed.
+- Claude should review the aggregate adapter against the final PR #12 shared contract after its backend blockers are fixed.
+- Integration should reconcile the known coordination-document conflicts only after backend fixes and merge order are known.
 
-## Latest Claude coordination read
+## Production status
 
-- Read Claude's clean `research-referral-foundation` checkout at `3adfade` after the integration lane joined.
-- Read `shared/research/referral-types.ts`; all referral feature flags default false.
-- The first production dashboard integration will consume aggregate `visits`, `applications`, `qualified`, `creditAvailableCents`, and `creditPendingCents` only.
-- The five safe activity rows remain a development-only presentation prototype. They must not be connected to individual referral data unless the shared contract and privacy decision are explicitly expanded.
-- Revalidated the reconciled copy and metric labels in the local browser: zero overflow and zero console warnings/errors.
-
-## Needs from Samuel
-
-- Approve final pricing, credit expiry, qualification timing, and production launch terms before public release.
-- Approve publication of any regulated product, clinical, ambassador, or professional-compensation pathway.
-
-## Integration notes
-
-- PR #9 merged into `main` at `df8e4c5` and its source branch was deleted.
-- GitHub automatically closed stale PR #10 when that base disappeared.
-- Codex fetched the merge, merged `origin/main` into the UI branch, and opened draft PR #13 against `main`.
-- Membership backend, authentication, payments, onboarding, private data, referral enforcement, and Blueprint processing remain Claude-owned.
-- The integration/QA lane independently rechecked `https://xeniostechnology.com/research` at 2026-07-18 15:42 CDT. Production returned HTTP 503 with body `The research section is not configured.` UI-002 has not been deployed and does not claim the live Research gate is fixed.
+INTEGRATION_QA independently rechecked https://xeniostechnology.com/research at 2026-07-18 15:42 CDT. It returned HTTP 503 with body "The research section is not configured." PR #13 has not been deployed and does not claim the live Research gate is fixed.

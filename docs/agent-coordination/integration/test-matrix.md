@@ -2,20 +2,18 @@
 
 **Updated:** 2026-07-18
 
-| Check | Baseline | UI-002 | Notes |
+| Check | Baseline | PR #13 corrected | Notes |
 |---|---|---|---|
-| `npm run check` | fail | fail | Only pre-existing `server/storage.ts(48,40): TS7006`, implicit `any` for `tx` |
-| `npm test` | pass | pass | Grew from 1 file and 12 tests to 2 files and 16 tests |
-| `npm run build` | pass | pass | Production bundle succeeded; main JS is 715.25 kB and retains the greater-than-500 kB warning |
-| Lint | unavailable | unavailable | No lint script in `package.json` |
-| Research routes at 390 x 844 | overflow | pass | 13 routes checked; every document matched its client width |
-| Main and Research at 320 px | fail | pass | Selected routes and `/` matched the 305 px client width; main CTA no longer escaped the header |
-| 640 CSS-pixel approximation | partial | pass | Membership comparison is intentionally one column with zero page overflow |
-| 768 and 1440 responsive states | fail | pass | Intended navigation, CTA, and grid states render at their defined breakpoints |
-| Copy invitation | not present | pass | Browser action changed to `Copied` and wrote the exact invite URL |
-| Referral privacy states | not present | pass | Production empty state plus five approved preview statuses; no private decision reason |
-| Browser console | pass | pass | Zero application warnings or errors in the final UI-002 pass |
-| Reduced motion | pass by source audit | pass by source audit | Global and Research-specific `prefers-reduced-motion` fallbacks exist |
-| Focus visibility | partial | pass by source and browser audit | Global `:focus-visible` treatment and native interactive elements are present |
+| npm run check | fail | fail | Only pre-existing server/storage.ts(48,40): TS7006 |
+| npm test | pass | pass | 2 files and 18 tests; six referral-gating cases |
+| npm run build | pass | pass | Production bundle succeeded; existing greater-than-500 kB main-chunk warning remains |
+| Invitation syntax invalid | absent | pass | Malformed code resolves invalid and never attaches ref |
+| Invitation authenticity unavailable | unsafe | pass | A valid-looking URL code resolves unavailable without enabled server validation |
+| Feature flags disabled | partial | pass | Production counts zeroed; credits, code, QR, and sharing disabled |
+| Future verified adapter case | absent | pass | Ref attaches only when flags and exact server-validated code are present |
+| Aggregate development preview | person-level | pass | Counts only; no activity, code, QR, credit, or sharing |
+| Browser at 390 x 844 | partial | pass | Zero overflow on checked corrected surfaces |
+| Application ref query | prefilled | pass | No referral input or attribution is created from the URL |
+| Production gate | fail | fail | 2026-07-18 15:42 CDT: HTTP 503, "The research section is not configured." |
 
-Commands used Node 20.19.0 and npm 10.8.2. Browser URL was `http://127.0.0.1:5000`. The local waitlist count request still returns 500 without Supabase configuration and uses its existing fallback. Four implementation previews are under `docs/research-design/previews/ui-002/`.
+Browser target was http://127.0.0.1:5000. Checked surfaces: valid-looking invite, malformed invite, development invite preview, public referrals, production member referrals, aggregate development member preview, and application with an untrusted ref query.

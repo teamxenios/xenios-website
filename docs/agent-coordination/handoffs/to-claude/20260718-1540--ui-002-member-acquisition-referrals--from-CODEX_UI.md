@@ -2,100 +2,51 @@
 
 **From:** CODEX_UI
 **To:** CLAUDE_PRIMARY
-**Date:** 2026-07-18T15:40:45-05:00
-**Implementation commit:** `b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6`
-**Integration head:** `7856966a782d55aef9b1b0f9a1ac570c19c0cb5a`
-**Contract reconciliation:** `970d153d2499f6838c75471a487f58687fe0fc52`
-**Draft PR:** #13 into `main`
-**State:** review and backend contract requested
+**Date:** 2026-07-18T16:23:08-05:00
+**Original implementation:** b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6
+**Contract reconciliation:** 970d153d2499f6838c75471a487f58687fe0fc52
+**Fail-closed correction:** b33f9a74f653a8c8ee2b0131a310c3480374106d
+**Draft PR:** #13 into main
+**State:** corrected; INTEGRATION_QA re-review requested; do not merge yet
 
-## What changed
+## Final PR #13 presentation boundary
 
-- Added responsive public presentation for membership comparison, Blueprint, programs, referrals, invite landing, member referral workspace, professionals, ambassadors, trust, and data use.
-- Added an original code-native xenios Member Passport with a valid QR and applicant/member variants.
-- Added copy, SMS, WhatsApp, X, email, and native-share actions for validated public invitation URLs.
-- Added `/research/apply?ref=CODE` prefill and a post-success referral moment without changing the submission API.
-- Repaired Tailwind v4 responsive generation, missing shared rules, focus treatment, and 320 px header containment.
-- Added `shared/research/referral-ui.ts` and four tests.
+- Invitation routes fail closed. URL normalization is syntax handling, not authenticity.
+- While invitation validation and feature flags are disabled, the route presents unavailable or invalid, identifies no referrer, attaches no ref query, and promises no reward.
+- The application does not prefill from an untrusted ref query parameter.
+- Production member presentation consumes only PR #12's aggregate ReferralDashboardState boundary. It renders no per-invitation identifier, date, identity, or status row.
+- Production QR and sharing actions remain disabled. No fake member code or executable preview link is rendered.
+- Give $10, Get $15, qualification, expiry, reversal, and reward terms are explicitly proposed and configurable while flags are off.
+- Development samples require the local development build and preview=1, display a prominent non-production label, remain aggregate-only, and keep codes, credits, QR, and sharing disabled.
+- PR #12 owns shared/server referral contracts. PR #13 removed its competing shared presentation contract and keeps its adapter under client/src/research.
 
-## Initial proposed contract
+## Backend contract request
 
-The following was Codex's initial proposal before Claude published `shared/research/referral-types.ts`:
+When PR #12's P1 findings are fixed and its shared contract is ready for integration:
 
-Authenticated member response:
+1. Provide an enabled, authenticated invitation-validation response before CODEX_UI can display a verified invitation or attach a ref value.
+2. Bind dashboard access and codes to stable authenticated member identity.
+3. Preserve the aggregate-only privacy boundary unless a separately reviewed shared-contract change explicitly expands it.
+4. Enable credits independently from referrals and only after the ledger transitions are atomic, idempotent, window-aware, and fraud checked.
+5. Return explicit feature availability so the UI can continue to fail closed.
 
-```ts
-type ReferralWorkspace = {
-  code: string;
-  invitationUrl: string;
-  reference: string;
-  issuedAt: string;
-  memberSince: string;
-  totals: {
-    invited: number;
-    pending: number;
-    qualified: number;
-    creditAvailableCents: number;
-  };
-  activity: Array<{
-    label: string;
-    status: "Invited" | "Pending" | "Qualified" | "Reward earned" | "Expired";
-    updatedLabel: string;
-  }>;
-};
-```
+## Verification
 
-Public invite response:
+- npm test: 18 of 18 passed across 2 files, including malformed, unvalidated, disabled, fully validated future-state, production-gating, and aggregate development-preview cases.
+- npm run build: passed with the existing main-bundle size warning.
+- npm run check: only pre-existing server/storage.ts(48,40): TS7006.
+- Browser at 390 x 844: unavailable and invalid invitation states, no ref links or referrer claims, no QR matrix, six disabled public share controls, aggregate-only member counts, no activity rows, no application prefill from ref, and zero document overflow.
 
-```ts
-type PublicInvitation = {
-  valid: boolean;
-  code?: string;
-  expiresAt?: string;
-};
-```
+## Integration/QA lane
 
-The public response must not include the referrer's private profile. The member response must not include the applicant's name, email, phone, application answers, health data, approval reason, or decline reason. Labels should be coarse, such as `Invitation 04`, unless the invited person separately consents to identification.
+INTEGRATION_QA is now an explicit third coordination participant. Before merging or beginning overlapping work, both CLAUDE_PRIMARY and CODEX_UI must read docs/agent-coordination/status/INTEGRATION_QA.md and the latest versioned INTEGRATION_QA handoff. Versioned P1 findings block merge until addressed and re-reviewed.
 
-## Reconciliation with Claude commit `3adfade`
-
-Codex read Claude's clean `research-referral-foundation` branch and `shared/research/referral-types.ts` after the integration lane joined. The published backend contract is authoritative once merged:
-
-- `ReferralDashboardState` exposes only aggregate `visits`, `applications`, `qualified`, `creditAvailableCents`, and `creditPendingCents`.
-- All referral feature flags default false.
-- The first production wiring must use that aggregate contract and render no individual activity rows.
-- `REFERRAL_SAFE_STATUSES` in the Codex branch is a presentation vocabulary for the development-only prototype, not a backend enum.
-- Expanding production activity beyond aggregates requires a new shared-contract decision and privacy review.
-- The referral page now labels Give $10, Get $15 as proposed and inactive until the flags, ledger, identity, and fraud controls are enabled.
-
-## Qualification and ledger requirements
-
-- Attribute the invitation before application submission and preserve it server-side.
-- Independent approval must remain unaffected by referral participation.
-- Qualify only after the referred person pays the $50 activation and passes the verification period.
-- Exclude self-referrals, duplicates, refunds, disputes, abuse, and other documented disqualifiers.
-- Credit the new member $10 and referrer $15 through an auditable, idempotent ledger.
-- Define expiry and reversal behavior before production launch.
-- Keep member referrals, ambassadors, professional partnerships, and clinical arrangements separate.
-
-## Review requests
-
-1. Review `client/src/index.css` and `client/src/components/Navbar.tsx` before any parallel shared-CSS edit.
-2. Treat the merged `shared/research/referral-types.ts` shape as authoritative for initial wiring.
-3. Preserve the empty/disabled production default until authenticated data is available.
-4. Update `docs/agent-coordination/status/CLAUDE_PRIMARY.md` and add a handoff before implementation.
-5. Let Codex review public UX after the backend contract is connected.
-
-## Validation evidence
-
-- 16 of 16 tests passed.
-- Production build passed.
-- Typecheck found only pre-existing `server/storage.ts(48,40): TS7006`.
-- No final browser console warnings/errors.
-- No overflow at 320, 390, 640, 768, or 1440 on the checked routes.
-- Production member workspace: zero rows, no QR, six disabled share actions.
-- Preview workspace: five safe statuses and no private decision reason.
+The current integration handoff also routes the exact PR #11, #12, and #15 blockers to Claude without changing any backend, admin, auth, or Supabase source.
 
 ## Production blocker
 
-The integration/QA lane independently rechecked `https://xeniostechnology.com/research` at 2026-07-18 15:42 CDT. It returned HTTP 503 with body `The research section is not configured.` This UI branch has not been deployed and does not fix or claim to fix the production gate. Deployment and environment configuration require a separate owner and validation cycle.
+INTEGRATION_QA independently rechecked https://xeniostechnology.com/research at 2026-07-18 15:42 CDT. Production still returned HTTP 503 with body "The research section is not configured." PR #13 does not fix or claim to fix that live gate.
+
+## Merge note
+
+Do not merge PR #13 until INTEGRATION_QA re-reviews b33f9a74f653a8c8ee2b0131a310c3480374106d and the final coordination head. Leave the existing route-ownership, project-state, and CLAUDE_PRIMARY-status conflicts for integration after backend fixes and merge-order review.
