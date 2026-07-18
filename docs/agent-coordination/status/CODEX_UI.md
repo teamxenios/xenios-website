@@ -1,76 +1,76 @@
 # CODEX_UI Status
 
-**Updated:** 2026-07-18T14:21:54-05:00
+**Updated:** 2026-07-18T14:53:00-05:00
 **Mode:** local
 **Branch:** `codex/research-ui-content`
-**Head SHA:** `f9c44807fa3aa70021f27654a31c8dd8aa32a725`
+**Published audit commit:** `e2d493a`
+**Base branch:** `feat/research-membership-premium-rebuild`
 **Base SHA:** `f9c44807fa3aa70021f27654a31c8dd8aa32a725`
-**State:** active
+**State:** ready for Stage 1 review
 
 ## Claimed work
 
-- `UI-001`: coordination bootstrap and main-site UI audit.
+No active implementation claim. `UI-001` is complete.
 
 ## Completed
 
-- Proved direct local access to the real Xenios checkout.
-- Verified repository, remote, branch, worktree, and exact commit.
-- Verified PR #9 is open, unmerged, and mergeable.
-- Created an isolated Codex worktree without changing Claude's checkout.
+- Proved direct local access to the real Xenios checkout and Claude's physical worktree.
+- Verified repository, remote, source branch, isolated Codex worktree, and exact commits.
+- Created and pushed the versioned coordination and research-input packet.
+- Opened draft PR #10 against PR #9's branch.
 - Read the collaboration prompt, complete V2 membership specification, PR #9 patch, and repository memory files.
+- Installed dependencies with the pinned Node 20.19.0 and npm 10.8.2 toolchain.
+- Ran typecheck, tests, production build, local server, keyboard interaction, narrow-width, zoom approximation, console, network, and overflow checks.
+- Audited all six required main-site routes at 390 x 844, 768 x 1024, and 1440 x 900.
+- Versioned 18 full-page PNGs, computed metrics, the completed design-system audit, shared-component inventory, and known issues.
+- Audited the priority Research routes at 390 px without changing their UI or backend.
 
-## In progress
+## Material findings
 
-- Versioned coordination and research-input bootstrap.
-- Main-site design-system and responsive baseline audit.
-
-## Next
-
-- Commit and push the bootstrap.
-- Open an early draft PR against `feat/research-membership-premium-rebuild` while PR #9 remains open.
-- Run baseline checks and the local development server.
-- Capture the required main-site screenshots.
+- Responsive Tailwind variants do not apply in the rendered client. Primary navigation remains hidden and responsive grids remain stacked at 1440 px.
+- `.rule-all` and `.btn-ghost-on-dark` are used but undefined.
+- The main header overflows at 320 px; the current Research shell overflows by approximately 17 px at 390 px.
+- Research duplicates the main header and footer instead of extending `PageShell`.
+- Public Research peptide content conflicts with the repository's stealth public-copy guidance.
+- The canonical V2 specification remains outside the repository.
 
 ## Routes touched
 
-None.
+None. Route inspection was read-only.
 
 ## Shared files touched
 
-Documentation under `docs/` only.
-
-## Content inputs implemented
-
-None. Canonical copy is inventoried as draft input, not shipped UI.
-
-## Visual references used
-
-None in implementation. The current main site and repository assets are queued for audit.
+Documentation under `docs/` only. No application source or shared component changed.
 
 ## Tests completed
 
-- Git repository and worktree verification only.
-- Application tests, typecheck, build, and browser QA pending.
+- `npm run check`: failed only on pre-existing `server/storage.ts(48,40): TS7006`.
+- `npm test`: passed, 12 of 12.
+- `npm run build`: passed; Vite reported a 715.09 kB main chunk warning.
+- Lint: no script exists.
+- Browser: no application console errors; local waitlist count request returned 500 without Supabase and used fallback 556.
 
 ## Screenshots completed
 
-None.
+Eighteen captures under `docs/research-design/baseline/main-site/`, plus `metrics.json`.
 
 ## Needs from Claude
 
 - Update `CLAUDE_PRIMARY.md` with current work, files, routes, contracts, and blockers.
-- Read the active Codex claim before touching public Research UI files.
+- Review `docs/research-design/MAIN_SITE_UI_AUDIT.md` and acknowledge the shared responsive-CSS findings.
+- Confirm whether Claude or Codex should claim the responsive foundation before either agent edits `index.css`, `Navbar.tsx`, `Footer.tsx`, or shared routing.
 - Review the proposed public Research versus stealth-copy decision.
 - Push any local change Codex must review.
 
 ## Needs from Samuel
 
-- Confirm how the public peptide routes coexist with the existing stealth public-copy rule.
-- Provide exact visual references, likes/dislikes, approved copy, image ideas, mobile preferences, and animation preferences.
-- Confirm whether the 128 KB V2 specification should be committed verbatim to this repository.
+- Decide how public peptide and GLP-1 routes coexist with the existing stealth public-copy rule.
+- Confirm whether the V2 specification should be committed verbatim or summarized into a maintained repository source of truth.
+- Provide approved visual references, exact copy, asset ideas, mobile preferences, and animation preferences when ready.
 
 ## Integration notes
 
-- PR #9 owns membership application backend and related public-page spine.
-- Codex will not modify backend, auth, payment, onboarding, admin, or private member systems without a handoff.
-- Shared navigation, footer, global CSS, tokens, forms, routing contracts, and CTA state require a claim and coordination first.
+- PR #9 remains open, unmerged, mergeable, and unchanged at `f9c44807` as of this update.
+- PR #10 remains a draft and targets `feat/research-membership-premium-rebuild`.
+- Membership backend, authentication, payments, onboarding, private member data, and the Whole-Life Blueprint remain Claude-owned.
+- No substantive Research redesign begins until the Stage 1 audit is reviewed and the shared blockers have owners.

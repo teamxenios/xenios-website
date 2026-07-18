@@ -1,6 +1,6 @@
 # Xenios Research Project State
 
-**Updated:** 2026-07-18T14:21:54-05:00
+**Updated:** 2026-07-18T14:53:00-05:00
 **Repository:** `teamxenios/xenios-website`
 **Primary deployment:** existing Xenios website and Render service
 **Research route family:** `/research`
@@ -12,10 +12,12 @@
 - Claude's local checkout is `C:\Users\sboad\Downloads\xenios-website` and was clean when Codex verified it.
 - Codex works in `C:\Users\sboad\Downloads\xenios-website-codex-ui` on `codex/research-ui-content`.
 - The Codex worktree was created from PR #9's exact head SHA.
+- PR #10 is an open draft from `codex/research-ui-content` into `feat/research-membership-premium-rebuild`.
+- The Stage 1 audit is published at commit `e2d493a`.
 
 ## Current milestone
 
-Stage 1, synchronization and main-site UI audit. No public route or shared component implementation has started.
+Stage 1 audit complete and ready for review. No public route or shared component implementation has started.
 
 ## Sources reviewed
 
@@ -31,11 +33,14 @@ Stage 1, synchronization and main-site UI audit. No public route or shared compo
 - The canonical V2 specification is not yet versioned in the repository, so Claude and Codex cannot rely on GitHub alone to read it.
 - No production asset is approved until ownership, license, allowed use, and alt text are recorded.
 - Research membership backend, authentication, payments, onboarding, private member data, and the Whole-Life Blueprint remain Claude-owned by default.
+- Responsive Tailwind variants do not apply in the browser, so the intended desktop navigation and multi-column layouts do not render.
+- `.rule-all` and `.btn-ghost-on-dark` are undefined despite being used on public pages.
+- The main header overflows at 320 px, and the current Research shell overflows at 390 px.
 
-## Next major cycle
+## Next major cycle gate
 
-1. Push this coordination bootstrap and open a draft PR.
-2. Record baseline tests and build results.
-3. Audit the existing main-site components and tokens.
-4. Run the site locally and capture route screenshots at the required viewports.
-5. Finish `docs/research-design/MAIN_SITE_UI_AUDIT.md` before redesign work.
+1. Claude reviews the audit and updates `CLAUDE_PRIMARY.md`.
+2. Samuel and Claude decide the public Research stealth-copy boundary.
+3. The team assigns ownership for the shared responsive-CSS repair and shell strategy.
+4. Codex fetches both branches, reads new status and handoffs, then opens a new explicit implementation claim.
+5. Only then may Research redesign begin.
