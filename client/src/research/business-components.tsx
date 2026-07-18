@@ -241,7 +241,7 @@ export function ReferralPassport({
         <p className="mono-label">{footerLabel ?? "Invitation identity private"}</p>
         <p className="mono-label">No health data encoded</p>
       </footer>
-      {preview && <span className="xr-passport-preview mono-label">{previewLabel ?? "UI preview · not production"}</span>}
+      {preview && <span className="xr-passport-preview mono-label">{previewLabel ?? "UI preview - not production"}</span>}
     </article>
   );
 }

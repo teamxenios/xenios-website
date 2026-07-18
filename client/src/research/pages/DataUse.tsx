@@ -33,7 +33,7 @@ export default function DataUse() {
 
       <section className="container-x xr-section">
         <div className="xr-two-column">
-          <article className="xr-surface xr-surface-dark"><p className="mono-cap" style={{ color: "var(--lilac)" }}>Referral privacy</p><h2 className="display-s mt-5 max-w-[16ch]">A status is enough.</h2><p className="body-m mt-6" style={{ color: "rgba(255,255,255,.74)" }}>Referrers may receive Invited, Pending, Qualified, Reward earned, or Expired. They do not receive a name by default, application content, decision reason, health interest, Blueprint, purchase, or review note.</p></article>
+          <article className="xr-surface xr-surface-dark"><p className="mono-cap" style={{ color: "var(--lilac)" }}>Referral privacy</p><h2 className="display-s mt-5 max-w-[16ch]">Aggregate counts are enough.</h2><p className="body-m mt-6" style={{ color: "rgba(255,255,255,.74)" }}>If the program is enabled, a referrer dashboard may show aggregate visits, applications, qualified count, and credit totals. It does not expose invitation-level progress, identity, application content, decision reason, health interest, Blueprint, purchase, or review note.</p></article>
           <article className="xr-surface xr-surface-muted"><p className="mono-cap text-ink-mute">Marketing boundary</p><h2 className="display-s mt-5 max-w-[16ch]">Consent is not context.</h2><p className="body-m text-ink-2 mt-6">Optional marketing consent can support email education. It does not grant a marketing platform access to whole-life onboarding answers, health interests, or private member records.</p></article>
         </div>
       </section>

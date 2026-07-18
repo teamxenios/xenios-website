@@ -88,7 +88,7 @@ const MEMBER_SYSTEM = [
   { title: "Whole-Life Blueprint", href: "/research/blueprint", body: "Organize goals, constraints, routines, environment, information, and trusted support into one coherent system." },
   { title: "Membership options", href: "/research/membership/compare", body: "See what the $50 activation includes and how proposed Plus, deeper review, and programs remain separate." },
   { title: "Programs", href: "/research/programs", body: "Add human-led education and accountability only when the program fits the Blueprint." },
-  { title: "Member referrals", href: "/research/referrals", body: "Invite people you trust through a privacy-safe loop that rewards qualified activation, not applications." },
+  { title: "Member referrals", href: "/research/referrals", body: "Preview a proposed, inactive referral loop. Codes, attribution, and rewards remain unavailable while referral flags are off." },
   { title: "Trust center", href: "/research/trust", body: "Understand current private-preview boundaries and the controls required before broader launch." },
   { title: "How data is used", href: "/research/how-your-data-is-used", body: "See how identity, application, Blueprint, payment, referral, and marketing responsibilities stay separated." },
 ];

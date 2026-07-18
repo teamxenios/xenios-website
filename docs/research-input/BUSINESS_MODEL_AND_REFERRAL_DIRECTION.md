@@ -82,8 +82,8 @@ Initial offer:
 - Applications alone never earn a reward.
 - Credits are not cash and cannot apply to clinical services.
 - Self-referrals, refunded transactions, disputed transactions, and reviewed abuse do not qualify.
-- A referrer sees only privacy-safe states: Invited, Pending, Qualified, Reward earned, or Expired.
-- A referrer never sees application answers, approval or decline reasons, health interests, Blueprint data, review notes, purchases, or private member information.
+- If the program is enabled, the initial dashboard contract exposes only aggregate visits, applications, qualified count, and credit totals.
+- A referrer never sees invitation-level progress or status, applicant identity, application answers, approval or decline reasons, health interests, Blueprint data, review notes, purchases, or private member information.
 
 Qualification journey:
 
