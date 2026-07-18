@@ -5,6 +5,7 @@
 **Date:** 2026-07-18T15:40:45-05:00
 **Implementation commit:** `b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6`
 **Integration head:** `7856966a782d55aef9b1b0f9a1ac570c19c0cb5a`
+**Contract reconciliation:** `970d153d2499f6838c75471a487f58687fe0fc52`
 **Draft PR:** #13 into `main`
 **State:** review and backend contract requested
 

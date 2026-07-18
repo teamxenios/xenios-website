@@ -2,6 +2,7 @@
 
 **Implementation:** `b72e6d1`
 **Integration head:** `7856966`
+**Contract reconciliation:** `970d153`
 **Draft PR:** #13
 
 ## Outcome

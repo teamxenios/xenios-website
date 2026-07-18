@@ -1,6 +1,6 @@
 # Xenios Research Project State
 
-**Updated:** 2026-07-18T15:44:57-05:00
+**Updated:** 2026-07-18T15:50:14-05:00
 **Repository:** `teamxenios/xenios-website`
 **Primary deployment:** existing xenios website and Render service
 **Research route family:** `/research`
@@ -14,6 +14,7 @@
 - Codex works in `C:\Users\sboad\Downloads\xenios-website-codex-ui` on `codex/research-ui-content`.
 - UI-002 implementation is published at `b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6`.
 - The Codex branch merged the current `origin/main` at `7856966a782d55aef9b1b0f9a1ac570c19c0cb5a`.
+- Codex reconciled explanatory copy and aggregate dashboard labels with Claude's unmerged `shared/research/referral-types.ts` contract at `970d153d2499f6838c75471a487f58687fe0fc52`.
 - PR #10 closed automatically when its deleted feature base disappeared.
 - PR #13 is an open draft from `codex/research-ui-content` into `main`.
 

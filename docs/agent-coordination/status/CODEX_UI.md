@@ -1,6 +1,6 @@
 # CODEX_UI Status
 
-**Updated:** 2026-07-18T15:44:57-05:00
+**Updated:** 2026-07-18T15:50:14-05:00
 **Mode:** local Codex desktop project with direct filesystem access
 **Repository:** `teamxenios/xenios-website`
 **Working directory:** `C:\Users\sboad\Downloads\xenios-website-codex-ui`
@@ -10,6 +10,7 @@
 **Working branch:** `codex/research-ui-content`
 **Published implementation commit:** `b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6`
 **Published integration head:** `7856966a782d55aef9b1b0f9a1ac570c19c0cb5a`
+**Published contract-reconciliation commit:** `970d153d2499f6838c75471a487f58687fe0fc52`
 **Draft PR:** #13 into `main`
 **State:** UI-002 complete, Claude review requested
 
@@ -53,6 +54,7 @@ Codex can read Claude's physical checkout at `C:\Users\sboad\Downloads\xenios-we
 - Read `shared/research/referral-types.ts`; all referral feature flags default false.
 - The first production dashboard integration will consume aggregate `visits`, `applications`, `qualified`, `creditAvailableCents`, and `creditPendingCents` only.
 - The five safe activity rows remain a development-only presentation prototype. They must not be connected to individual referral data unless the shared contract and privacy decision are explicitly expanded.
+- Revalidated the reconciled copy and metric labels in the local browser: zero overflow and zero console warnings/errors.
 
 ## Needs from Samuel
 
