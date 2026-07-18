@@ -114,8 +114,8 @@ function adminAuth(req: Request, res: Response, next: NextFunction) {
 }
 
 // Supabase-Auth admin gate: verifies the user's JWT and that the email matches
-// ADMIN_EMAIL. Used by the /admin dashboard endpoints.
-async function requireSupabaseAdmin(req: Request, res: Response, next: NextFunction) {
+// ADMIN_EMAIL. Used by the /admin dashboard endpoints and the research admin API.
+export async function requireSupabaseAdmin(req: Request, res: Response, next: NextFunction) {
   try {
     const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
     if (!adminEmail || !supabaseConfigured()) {

@@ -10,13 +10,15 @@ import { useResearch } from "./core";
 
 const LOCAL_NAV = [
   { label: "Overview", href: "/research" },
+  { label: "Membership", href: "/research/membership" },
+  { label: "Framework", href: "/research/framework" },
   { label: "Peptides", href: "/research/peptides" },
   { label: "Quantum", href: "/research/quantum" },
   { label: "Supplements", href: "/research/supplements" },
   { label: "Programs", href: "/research/programs" },
   { label: "Quality", href: "/research/quality" },
   { label: "Learn", href: "/research/learn" },
-  { label: "Wholesale", href: "/research/wholesale" },
+  { label: "For Professionals", href: "/research/professionals" },
 ];
 
 function PasswordPage() {
@@ -122,8 +124,8 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
               })}
             </nav>
             <div className="flex items-center gap-3">
-              <Link href="/research/access" className="btn btn-secondary hidden sm:inline-flex" style={{ height: 40, padding: "0 14px", fontSize: 13 }}>
-                Request access
+              <Link href="/research/apply" className="btn btn-primary hidden sm:inline-flex" style={{ height: 40, padding: "0 14px", fontSize: 13 }} data-testid="link-apply-membership">
+                Apply for Membership
               </Link>
               <Link href="/research/cart" className="btn btn-ghost" style={{ height: 40, padding: "0 10px" }} aria-label={`Cart with ${count} items`} data-testid="link-research-cart">
                 <ShoppingBag size={18} aria-hidden="true" />

@@ -28,12 +28,12 @@ async function getCredentials() {
   };
 }
 
-async function getResendClient() {
+export async function getResendClient() {
   const { apiKey, fromEmail } = await getCredentials();
   return { client: new Resend(apiKey), fromEmail };
 }
 
-const TEAM_EMAIL = "team@xeniostechnology.com";
+export const TEAM_EMAIL = "team@xeniostechnology.com";
 const FROM_DEFAULT = `xenios <${TEAM_EMAIL}>`;
 
 const ROLE_LABELS: Record<string, string> = {

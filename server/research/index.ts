@@ -24,7 +24,10 @@ const COOKIE_NAME = "xr_access";
 const SESSION_HOURS = 12;
 
 const password = () => process.env.RESEARCH_ACCESS_PASSWORD || "";
-const configured = () => Boolean(password());
+// Launch switch: RESEARCH_PUBLIC="true" opens the public research experience
+// without the review password. Default is the private, password-gated mode.
+export const publicMode = () => process.env.RESEARCH_PUBLIC === "true";
+const configured = () => Boolean(password()) || publicMode();
 const indexable = () => process.env.RESEARCH_INDEXABLE === "true";
 
 const researchCommerceEnabled = () => process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true";
@@ -165,7 +168,7 @@ export function registerResearchApi(app: Express) {
   // Open: gate state (never reveals anything but booleans).
   app.get("/api/research/me", (req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ configured: configured(), authed: isAuthed(req) });
+    res.json({ configured: configured(), authed: publicMode() || isAuthed(req), publicMode: publicMode() });
   });
 
   // Open: exchange the password for the signed session cookie.
@@ -189,8 +192,11 @@ export function registerResearchApi(app: Express) {
     res.json({ ok: true });
   });
 
-  // Everything below requires the session cookie.
+  // Everything below requires the session cookie, except in public launch mode
+  // (the catalog and policies become public education; ordering stays protected
+  // by the commerce flags either way).
   app.use("/api/research", (req, res, next) => {
+    if (publicMode()) return next();
     if (!isAuthed(req)) return res.status(401).json({ ok: false, message: "Access required." });
     next();
   });

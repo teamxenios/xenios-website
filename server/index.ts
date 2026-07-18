@@ -3,6 +3,7 @@ import helmet from "helmet";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
 import { researchPageGate, registerResearchApi } from "./research";
+import { registerMembershipApi } from "./research/membership";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
@@ -94,6 +95,7 @@ app.use((req, res, next) => {
 // the SPA catch-all so the gate always runs first.
 app.use(researchPageGate);
 registerResearchApi(app);
+registerMembershipApi(app);
 
 (async () => {
   await registerRoutes(httpServer, app);
