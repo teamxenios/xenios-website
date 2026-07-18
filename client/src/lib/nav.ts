@@ -15,6 +15,7 @@ export const primaryNav: NavLink[] = [
   { label: "Product", href: "/product" },
   { label: "For Coaches", href: "/for-coaches" },
   { label: "How It Works", href: "/how-it-works" },
+  { label: "Research", href: "/research" },
   { label: "Careers", href: "/careers" },
   { label: "About", href: "/about" },
 ];
@@ -31,6 +32,7 @@ export const menuGroups: NavGroup[] = [
       { label: "Network", href: "/network" },
       { label: "Ecosystem", href: "/ecosystem" },
       { label: "For Practitioners", href: "/for-practitioners" },
+      { label: "Research", href: "/research" },
       { label: "Book a Call", href: "/book" },
       { label: "Early Access", href: "/waitlist" },
       { label: "Concepts", href: "/concepts" },

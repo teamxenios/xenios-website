@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
+import { researchPageGate, registerResearchApi } from "./research";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
@@ -88,6 +89,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// xenios research: noindex + fail-closed page gate for /research*, and the
+// gated research APIs (catalog, policies, access, orders). Registered before
+// the SPA catch-all so the gate always runs first.
+app.use(researchPageGate);
+registerResearchApi(app);
+
 (async () => {
   await registerRoutes(httpServer, app);
 
@@ -123,7 +130,9 @@ app.use((req, res, next) => {
     {
       port,
       host: "0.0.0.0",
-      reusePort: true,
+      // SO_REUSEPORT is not supported on Windows (listen throws ENOTSUP), so it
+      // is enabled only elsewhere. Production (Linux) behavior is unchanged.
+      reusePort: process.platform !== "win32",
     },
     () => {
       log(`serving on port ${port}`);
