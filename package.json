@@ -15,7 +15,8 @@
     "start": "NODE_ENV=production node dist/index.cjs",
     "check": "tsc",
     "db:push": "drizzle-kit push",
-    "sync": "node script/sync-github.mjs"
+    "sync": "node script/sync-github.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -108,8 +109,11 @@
     "@types/passport-local": "^1.0.38",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@types/supertest": "^7.2.1",
     "@types/ws": "^8.5.13",
-    "drizzle-kit": "^0.31.4"
+    "drizzle-kit": "^0.31.4",
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.10"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"

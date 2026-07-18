@@ -3,6 +3,12 @@ import { Link, Route, Switch } from "wouter";
 import { ResearchProvider } from "./core";
 import ResearchLayout from "./layout";
 import Overview from "./pages/Overview";
+import Membership from "./pages/Membership";
+import Framework from "./pages/Framework";
+import Faq from "./pages/Faq";
+import Apply from "./pages/Apply";
+import ApplyStatus from "./pages/ApplyStatus";
+import MemberWelcome from "./pages/MemberWelcome";
 import Peptides from "./pages/Peptides";
 import Quantum from "./pages/Quantum";
 import Supplements from "./pages/Supplements";
@@ -53,6 +59,15 @@ export default function ResearchSection() {
       <ResearchLayout>
         <Switch>
           <Route path="/research" component={Overview} />
+          <Route path="/research/membership" component={Membership} />
+          <Route path="/research/framework" component={Framework} />
+          <Route path="/research/faq" component={Faq} />
+          <Route path="/research/apply" component={Apply} />
+          <Route path="/research/apply/review" component={Apply} />
+          <Route path="/research/apply/success" component={Apply} />
+          <Route path="/research/apply/status" component={ApplyStatus} />
+          <Route path="/research/member/welcome" component={MemberWelcome} />
+          <Route path="/research/professionals" component={Access} />
           <Route path="/research/peptides" component={Peptides} />
           <Route path="/research/quantum" component={Quantum} />
           <Route path="/research/supplements" component={Supplements} />
