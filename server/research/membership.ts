@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
 import { sessionSecretOk } from "./index";
+import { linkApplicationToAttribution } from "./referrals";
 import {
   APPLICATION_INTERESTS,
   canTransition,
@@ -304,6 +305,16 @@ export function registerMembershipApi(app: Express) {
         email: row.email,
         name: `${row.first_name} ${row.last_name}`,
         applicantType: a.applicantType,
+      }).catch(() => {});
+
+      // Referral attribution (flag-gated no-op while referrals are disabled;
+      // never affects the application itself). Self-referral is recorded as
+      // disqualified inside.
+      void linkApplicationToAttribution({
+        applicationId: row.id,
+        referralCode: a.referralCode,
+        applicantEmail: row.email,
+        landingPath: typeof req.body?.source_page === "string" ? req.body.source_page.slice(0, 300) : null,
       }).catch(() => {});
 
       // Log without PII beyond the id.
