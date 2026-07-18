@@ -3,6 +3,7 @@ import type { Express, Request } from "express";
 import { z } from "zod";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
+import { sessionSecretOk } from "./index";
 import {
   APPLICATION_INTERESTS,
   canTransition,
@@ -15,6 +16,7 @@ import {
   sendApplicationReceived,
   sendInternalApplicationAlert,
   sendMoreInformationRequested,
+  sendStatusLink,
 } from "./membership-emails";
 
 // ---------------------------------------------------------------------------
@@ -29,9 +31,17 @@ import {
 const APPROVAL_EXPIRY_DAYS = () => parseInt(process.env.RESEARCH_APPROVAL_EXPIRY_DAYS || "14", 10);
 
 // Status-link tokens: HMAC-signed, applicant-facing, reveal status only.
+// RESEARCH_SESSION_SECRET is REQUIRED in production (never derived from the
+// access password). Without it, token issuance and verification fail closed.
 function tokenKey(): Buffer {
-  const secret =
-    process.env.RESEARCH_SESSION_SECRET || `xenios-research-status:${process.env.RESEARCH_ACCESS_PASSWORD || ""}`;
+  const secret = process.env.RESEARCH_SESSION_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("RESEARCH_SESSION_SECRET is required in production");
+    }
+    // Development-only fallback; never used in production and never the password.
+    return crypto.createHash("sha256").update("xenios-research-dev-only-secret").digest();
+  }
   return crypto.createHash("sha256").update(secret).digest();
 }
 
@@ -67,6 +77,27 @@ function allowSubmit(req: Request): boolean {
   if (bucket.count >= 5) return false;
   bucket.count += 1;
   return true;
+}
+
+// Stricter limiter for status-link resends. Per-IP overuse gets an explicit
+// 429; the per-email cooldown is SILENT (generic success, nothing sent) so the
+// limiter itself cannot be used to probe whether an address has an application.
+const resendBuckets = new Map<string, { count: number; resetAt: number }>();
+const resendEmailCooldown = new Map<string, number>();
+function resendVerdict(req: Request, email: string): "ok" | "ip_limited" | "email_cooldown" {
+  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
+  const now = Date.now();
+  const bucket = resendBuckets.get(ip);
+  if (!bucket || bucket.resetAt < now) {
+    resendBuckets.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
+  } else {
+    if (bucket.count >= 3) return "ip_limited";
+    bucket.count += 1;
+  }
+  const last = resendEmailCooldown.get(email) ?? 0;
+  if (now - last < 10 * 60 * 1000) return "email_cooldown";
+  resendEmailCooldown.set(email, now);
+  return "ok";
 }
 
 const applicationSchema = z.object({
@@ -183,6 +214,15 @@ function statusView(row: ApplicationRow, memberVisibleNote: string | null): Appl
 }
 
 export function registerMembershipApi(app: Express) {
+  // Fail closed: in production without RESEARCH_SESSION_SECRET, no signed
+  // artifact can be issued or verified, so the whole membership API refuses.
+  app.use("/api/research/applications", (_req, res, next) => {
+    if (!sessionSecretOk()) {
+      return res.status(503).json({ ok: false, message: "The membership system is not configured." });
+    }
+    next();
+  });
+
   // -------------------------------------------------------------------------
   // Applicant-facing
   // -------------------------------------------------------------------------
@@ -206,32 +246,17 @@ export function registerMembershipApi(app: Express) {
 
       const existing = await getApplicationByEmail(a.email);
       if (existing) {
-        // Resubmission after a request for more information updates the record.
-        if (existing.status === "more_information_requested") {
-          const updated = await transition(
-            existing,
-            "resubmitted",
-            { type: "applicant" },
-            {
-              first_name: a.firstName,
-              last_name: a.lastName,
-              phone: a.phone || null,
-              country: a.country,
-              region: a.region || null,
-              city: a.city || null,
-              applicant_type: a.applicantType,
-              occupation: a.occupation || null,
-              organization: a.organization || null,
-              interests: a.interests,
-              goals_text: a.goalsText,
-              fit_text: a.fitText,
-            },
-            { reasonCode: "applicant_resubmitted" },
-          );
-          return res.json({ ok: true, resubmitted: true, token: makeStatusToken(updated.id), status: updated.status });
-        }
-        // Otherwise: idempotent. Do not create a duplicate; return the status.
-        return res.json({ ok: true, duplicate: true, token: makeStatusToken(existing.id), status: existing.status });
+        // PRIVACY: never reveal that an application exists, its status, or its
+        // token to the submitter. Send a fresh secure link to the address
+        // already on file, and return the same generic response as a brand-new
+        // submission. Matching an email never updates anything; updates require
+        // a valid signed status token (see /resubmit).
+        void sendStatusLink({
+          email: existing.email,
+          firstName: existing.first_name,
+          token: makeStatusToken(existing.id),
+        }).catch(() => {});
+        return res.json({ ok: true });
       }
 
       const { data, error } = await getSupabaseAdmin()
@@ -271,6 +296,8 @@ export function registerMembershipApi(app: Express) {
         reasonCode: "application_submitted",
       });
 
+      // The status token travels ONLY by email to the applicant's own address;
+      // it is never returned to the browser, logged, or stored client-side.
       const token = makeStatusToken(row.id);
       void sendApplicationReceived({ email: row.email, firstName: row.first_name, token }).catch(() => {});
       void sendInternalApplicationAlert({
@@ -281,10 +308,87 @@ export function registerMembershipApi(app: Express) {
 
       // Log without PII beyond the id.
       console.log(`[research membership] application submitted ${row.id}`);
-      res.json({ ok: true, token, status: row.status });
+      res.json({ ok: true });
     } catch (error) {
       console.error("[research membership] submit error:", error);
       res.status(500).json({ ok: false, message: "The application could not be submitted. Please try again." });
+    }
+  });
+
+  // Resend a status link. Always the same generic response, whether or not an
+  // application exists, whether or not the cooldown suppressed the send.
+  app.post("/api/research/applications/resend-link", async (req, res) => {
+    try {
+      if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
+      const parsed = z.object({ email: z.string().email().max(254).toLowerCase().trim() }).safeParse(req.body);
+      if (!parsed.success) return res.status(400).json({ ok: false, message: "Enter a valid email address." });
+      const verdict = resendVerdict(req, parsed.data.email);
+      if (verdict === "ip_limited") {
+        return res.status(429).json({ ok: false, message: "Too many requests. Please try again in a few minutes." });
+      }
+      if (verdict === "ok") {
+        const existing = await getApplicationByEmail(parsed.data.email);
+        if (existing) {
+          void sendStatusLink({
+            email: existing.email,
+            firstName: existing.first_name,
+            token: makeStatusToken(existing.id),
+          }).catch(() => {});
+        }
+      }
+      // Generic either way: existence is never confirmed or denied.
+      res.json({ ok: true, message: "If an application exists for that address, a secure status link is on its way." });
+    } catch (error) {
+      console.error("[research membership] resend error:", error);
+      res.status(500).json({ ok: false, message: "The request could not be processed." });
+    }
+  });
+
+  // Resubmit after a request for more information. Requires a VALID SIGNED
+  // status token; matching an email alone can never modify an application.
+  app.post("/api/research/applications/resubmit", async (req, res) => {
+    try {
+      if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
+      const token = typeof req.body?.token === "string" ? req.body.token : "";
+      const id = token ? readStatusToken(token) : null;
+      if (!id) return res.status(401).json({ ok: false, message: "This update link is not valid. Use the link from your email." });
+      const row = await getApplication(id);
+      if (!row) return res.status(404).json({ ok: false, message: "Application not found." });
+      if (row.status !== "more_information_requested") {
+        return res.status(409).json({ ok: false, message: "This application is not awaiting an update." });
+      }
+      const parsed = applicationSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ ok: false, message: "Please review the application form.", issues: parsed.error.flatten() });
+      }
+      const a = parsed.data;
+      // The email on file is authoritative; a submitted email is ignored.
+      const updated = await transition(
+        row,
+        "resubmitted",
+        { type: "applicant" },
+        {
+          first_name: a.firstName,
+          last_name: a.lastName,
+          phone: a.phone || null,
+          country: a.country,
+          region: a.region || null,
+          city: a.city || null,
+          applicant_type: a.applicantType,
+          occupation: a.occupation || null,
+          organization: a.organization || null,
+          interests: a.interests,
+          goals_text: a.goalsText,
+          fit_text: a.fitText,
+        },
+        { reasonCode: "applicant_resubmitted" },
+      );
+      console.log(`[research membership] application resubmitted ${updated.id}`);
+      res.json({ ok: true });
+    } catch (error: any) {
+      const code = error?.statusCode === 409 ? 409 : 500;
+      if (code !== 409) console.error("[research membership] resubmit error:", error);
+      res.status(code).json({ ok: false, message: code === 409 ? "This application is not awaiting an update." : "The update could not be submitted." });
     }
   });
 

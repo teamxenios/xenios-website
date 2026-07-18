@@ -27,17 +27,29 @@ const password = () => process.env.RESEARCH_ACCESS_PASSWORD || "";
 // Launch switch: RESEARCH_PUBLIC="true" opens the public research experience
 // without the review password. Default is the private, password-gated mode.
 export const publicMode = () => process.env.RESEARCH_PUBLIC === "true";
-const configured = () => Boolean(password()) || publicMode();
+// RESEARCH_SESSION_SECRET is REQUIRED in production for every signed artifact
+// (gate cookies, status tokens). It is never derived from the access password.
+// Without it in production, the research surface fails closed.
+export const sessionSecretOk = () =>
+  Boolean(process.env.RESEARCH_SESSION_SECRET) || process.env.NODE_ENV !== "production";
+const configured = () => (Boolean(password()) || publicMode()) && sessionSecretOk();
 const indexable = () => process.env.RESEARCH_INDEXABLE === "true";
 
 const researchCommerceEnabled = () => process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true";
 const consumerCommerceEnabled = () => process.env.NEXT_PUBLIC_CONSUMER_COMMERCE_ENABLED === "true";
 const laneEnabled = (lane: CommerceLane) => (lane === "research" ? researchCommerceEnabled() : consumerCommerceEnabled());
 
-// Signing key: dedicated secret if provided, else derived from the password so
-// the gate needs no extra required configuration. Never sent to the client.
+// Signing key. Production requires the dedicated secret (configured() already
+// fails closed without it); development falls back to a fixed dev-only string,
+// never the password. Never sent to the client.
 function signingKey(): Buffer {
-  const secret = process.env.RESEARCH_SESSION_SECRET || `xenios-research:${password()}`;
+  const secret = process.env.RESEARCH_SESSION_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("RESEARCH_SESSION_SECRET is required in production");
+    }
+    return crypto.createHash("sha256").update("xenios-research-dev-only-secret").digest();
+  }
   return crypto.createHash("sha256").update(secret).digest();
 }
 

@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { Link, useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { APPLICATION_INTERESTS } from "@shared/research/membership-types";
 import { PageIntro } from "../components";
@@ -44,13 +43,19 @@ const EMPTY: Form = {
 const STEPS = ["Identity", "Context", "Goals", "Acknowledgements", "Review"] as const;
 
 export default function Apply() {
-  const [, navigate] = useLocation();
   const [form, setForm] = useState<Form>(EMPTY);
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
-  const [done, setDone] = useState<{ token: string; duplicate?: boolean } | null>(null);
+  const [done, setDone] = useState<{ resubmitted?: boolean } | null>(null);
+
+  // Update mode: present only when the visitor arrived through their signed
+  // status link (ApplyStatus stores the token for the session). An email match
+  // alone can never update an application; the server verifies the token.
+  const updateToken = useMemo(() => {
+    try { return window.sessionStorage.getItem("xr-application-token") || ""; } catch { return ""; }
+  }, []);
 
   function set<K extends keyof Form>(key: K, value: Form[K]) {
     setForm((p) => ({ ...p, [key]: value }));
@@ -100,17 +105,26 @@ export default function Apply() {
     setSubmitting(true);
     setServerError(null);
     try {
-      const res = await fetch("/api/research/applications", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, source_page: "/research/apply" }),
-      });
+      const resubmitting = Boolean(updateToken);
+      const res = await fetch(
+        resubmitting ? "/api/research/applications/resubmit" : "/api/research/applications",
+        {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...form,
+            ...(resubmitting ? { token: updateToken } : {}),
+            source_page: "/research/apply",
+          }),
+        },
+      );
       const body = await res.json().catch(() => null);
       if (res.ok && body?.ok) {
-        setDone({ token: body.token, duplicate: body.duplicate });
-        try { window.sessionStorage.setItem("xr-application-token", body.token); } catch { /* fine */ }
+        setDone({ resubmitted: resubmitting });
         window.scrollTo({ top: 0 });
+      } else if (resubmitting && (res.status === 401 || res.status === 409)) {
+        setServerError(body?.message || "This update link is not valid. Use the most recent link from your email, or submit a new application.");
       } else {
         setServerError(body?.message || "The application could not be submitted. Please try again.");
       }
@@ -130,26 +144,23 @@ export default function Apply() {
       <>
         <SeoHead title="Application in review, xenios research" description="Your application is in review." path="/research/apply/success" />
         <section className="container-x" style={{ paddingTop: 96, paddingBottom: 96 }}>
-          <p className="mono-cap text-pulse mb-5">Application received</p>
-          <h1 className="display-m max-w-[18ch]">Your application is in review.</h1>
+          <p className="mono-cap text-pulse mb-5">{done.resubmitted ? "Update received" : "Application received"}</p>
+          <h1 className="display-m max-w-[18ch]">
+            {done.resubmitted ? "Your application is back in review." : "Your application is in review."}
+          </h1>
           <p className="mt-6 body-l text-ink-2 max-w-[62ch]">
             xenios will review your application and contact you by email. You will not be charged unless your application is approved and you choose to activate the membership.
           </p>
-          {done.duplicate && (
-            <p className="mt-4 body-m text-ink-mute max-w-[62ch]">
-              We already have an application on file for this email, so we kept the original. The status link below reflects it.
-            </p>
-          )}
           <div className="card mt-10 max-w-[480px]">
             <p className="mono-cap text-ink-mute mb-3">Status</p>
             <div className="space-y-2 body-s text-ink-2">
-              <p>Application received</p>
+              <p>{done.resubmitted ? "Update received" : "Application received"}</p>
               <p>Review pending</p>
               <p>Next update by email</p>
             </div>
-            <Link href={`/research/apply/status?token=${encodeURIComponent(done.token)}`} className="btn btn-secondary mt-6">
-              View application status
-            </Link>
+            <p className="body-s text-ink mt-6 font-700" data-testid="text-check-email">
+              Check your email for your secure status link.
+            </p>
           </div>
         </section>
       </>

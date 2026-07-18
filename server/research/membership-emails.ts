@@ -103,6 +103,23 @@ xenios`,
   );
 }
 
+// Sent to the address already on file when someone asks for a status link or
+// submits again with the same email. Deliberately generic: it works whether the
+// requester was the applicant or a stranger probing the address.
+export async function sendStatusLink(input: { email: string; firstName: string; token: string }) {
+  return send(
+    input.email,
+    "Your xenios research status link",
+    `Hi ${input.firstName},
+
+A status link for your xenios research application was requested. If this was you, use the secure link below. If it was not you, no action is needed and nothing about your application was shared.
+
+${statusUrl(input.token)}
+
+xenios`,
+  );
+}
+
 export async function sendInternalApplicationAlert(input: { email: string; name: string; applicantType: string }) {
   return send(
     TEAM_EMAIL,

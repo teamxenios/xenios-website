@@ -69,9 +69,10 @@ app.use((req, res, next) => {
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
 
-  // Routes whose response bodies may contain PII (emails, messages, etc.)
-  // — log only status + duration, never the body.
-  const PII_PATHS = ["/api/waitlist"];
+  // Routes whose response bodies may contain PII (emails, messages, tokens)
+  // — log only status + duration, never the body. All research endpoints are
+  // included so status tokens and applicant data never reach the logs.
+  const PII_PATHS = ["/api/waitlist", "/api/research", "/api/admin/research"];
   const isPiiPath = (p: string) =>
     PII_PATHS.some((prefix) => p === prefix || p.startsWith(prefix + "/"));
 

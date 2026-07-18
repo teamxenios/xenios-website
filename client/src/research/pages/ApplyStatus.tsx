@@ -23,10 +23,22 @@ const STATUS_COPY: Record<string, { title: string; body: string }> = {
 export default function ApplyStatus() {
   const [view, setView] = useState<ApplicationStatusView | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [resendEmail, setResendEmail] = useState("");
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
 
   useEffect(() => {
+    // Read the token, then immediately scrub it from the address bar so it can
+    // never leak through referrer headers, browser history sync, or analytics.
+    // It lives only in sessionStorage for this tab's session.
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("token") || window.sessionStorage.getItem("xr-application-token") || "";
+    const fromUrl = params.get("token");
+    if (fromUrl) {
+      try { window.sessionStorage.setItem("xr-application-token", fromUrl); } catch { /* fine */ }
+      window.history.replaceState({}, "", "/research/apply/status");
+    }
+    let token = "";
+    try { token = fromUrl || window.sessionStorage.getItem("xr-application-token") || ""; } catch { token = fromUrl || ""; }
     if (!token) {
       setError("This status link is not valid.");
       return;
@@ -45,6 +57,29 @@ export default function ApplyStatus() {
     };
   }, []);
 
+  async function requestNewLink() {
+    if (resending || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(resendEmail.trim())) {
+      setResendMessage("Enter a valid email address.");
+      return;
+    }
+    setResending(true);
+    setResendMessage(null);
+    try {
+      const res = await fetch("/api/research/applications/resend-link", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: resendEmail.trim().toLowerCase() }),
+      });
+      const body = await res.json().catch(() => null);
+      setResendMessage(body?.message || "If an application exists for that address, a secure status link is on its way.");
+    } catch {
+      setResendMessage("The request could not be processed. Please try again.");
+    } finally {
+      setResending(false);
+    }
+  }
+
   const copy = view ? STATUS_COPY[view.status] ?? STATUS_COPY.submitted : null;
 
   return (
@@ -53,7 +88,30 @@ export default function ApplyStatus() {
       <PageIntro eyebrow="Application status" title={copy ? copy.title : error ? "Status unavailable" : "Loading"} />
       <section className="container-x pb-20">
         <div className="max-w-[560px]">
-          {error && <p className="body-l text-ink-2">{error}</p>}
+          {error && (
+            <div>
+              <p className="body-l text-ink-2">{error}</p>
+              <div className="card mt-8">
+                <p className="mono-cap text-ink-mute mb-3">Lost your link?</p>
+                <p className="body-s text-ink-2 mb-4">
+                  Enter the email you applied with and we will send a fresh secure link to that address.
+                </p>
+                <label htmlFor="rs-email" className="form-label">Email</label>
+                <input
+                  id="rs-email"
+                  type="email"
+                  className="input-field"
+                  value={resendEmail}
+                  onChange={(e) => setResendEmail(e.target.value)}
+                  data-testid="input-resend-email"
+                />
+                {resendMessage && <p className="body-s text-ink-2 mt-3" role="status" data-testid="text-resend-message">{resendMessage}</p>}
+                <button type="button" className="btn btn-secondary mt-4" onClick={() => void requestNewLink()} disabled={resending} data-testid="button-resend-link">
+                  {resending ? "Sending" : "Send a new link"}
+                </button>
+              </div>
+            </div>
+          )}
           {view && copy && (
             <>
               <p className="body-l text-ink-2">Hi {view.firstName}. {copy.body}</p>
