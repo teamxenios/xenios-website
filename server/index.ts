@@ -130,7 +130,9 @@ registerResearchApi(app);
     {
       port,
       host: "0.0.0.0",
-      reusePort: true,
+      // SO_REUSEPORT is not supported on Windows (listen throws ENOTSUP), so it
+      // is enabled only elsewhere. Production (Linux) behavior is unchanged.
+      reusePort: process.platform !== "win32",
     },
     () => {
       log(`serving on port ${port}`);

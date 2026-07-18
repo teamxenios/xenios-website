@@ -1,4 +1,4 @@
-// xenios research — shared types (types ONLY; no product data may live in files
+// xenios research: shared types (types ONLY; no product data may live in files
 // the client imports, so the catalog itself stays server-side behind the gate).
 
 export type CommerceLane = "research" | "consumer";

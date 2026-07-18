@@ -4,7 +4,7 @@ import { ShoppingBag } from "lucide-react";
 import Wordmark from "@/components/Wordmark";
 import { useResearch } from "./core";
 
-// xenios research — section chrome. Native to the xenios design system: paper,
+// xenios research: section chrome. Native to the xenios design system: paper,
 // ink, mono-cap eyebrows, 4px geometry. The password gate renders here, so
 // every research page is behind it with one implementation.
 

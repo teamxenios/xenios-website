@@ -17,7 +17,7 @@ import CartPage from "./pages/CartPage";
 import ProductDetail from "./pages/ProductDetail";
 import PolicyPage from "./pages/PolicyPage";
 
-// xenios research — the whole section is one lazy-loaded chunk mounted by the
+// xenios research: the whole section is one lazy-loaded chunk mounted by the
 // main router at /research*. While gated, mark it noindex client-side too (the
 // server also sends X-Robots-Tag).
 

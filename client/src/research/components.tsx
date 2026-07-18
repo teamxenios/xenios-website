@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import type { Product } from "@shared/research/types";
 import { canAddToCart, formatMoney, productActionLabel, useResearch } from "./core";
 
-// xenios research — shared UI pieces, styled with the site's design tokens.
+// xenios research: shared UI pieces, styled with the site's design tokens.
 
 const STATUS_LABEL: Record<Product["status"], string> = {
   live: "Available",

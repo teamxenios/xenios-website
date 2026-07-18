@@ -90,9 +90,10 @@ function Router() {
       <Route path="/book" component={Book} />
       <Route path="/concepts" component={Concepts} />
       <Route path="/admin" component={Admin} />
-      {/* xenios research (password-gated section, own chunk) */}
+      {/* xenios research (password-gated section, own chunk). The bare path and
+          the multi-segment wildcard both mount the section's own router. */}
       <Route path="/research" component={ResearchRoutes} />
-      <Route path="/research/:rest*" component={ResearchRoutes} />
+      <Route path="/research/*" component={ResearchRoutes} />
       {/* xenios MVP Lab + MVP routes */}
       <Route path="/mvps" component={MvpLab} />
       <Route path="/kairos">{() => <ExternalRedirect to={KAIROS_APP_URL} />}</Route>

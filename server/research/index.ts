@@ -6,7 +6,7 @@ import { products } from "./products-data";
 import { policies } from "./policies-data";
 
 // ---------------------------------------------------------------------------
-// xenios research — Express gate + APIs.
+// xenios research: Express gate + APIs.
 //
 // Security model: this is a Vite SPA, so anything bundled into client JS is
 // publicly fetchable. Therefore the catalog (products, prices), policies, and

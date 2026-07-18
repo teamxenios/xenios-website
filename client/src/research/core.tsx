@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { AccessState, CartItem, CatalogResponse, CommerceFlags, CommerceLane, Policy, Product } from "@shared/research/types";
 
-// xenios research — client core. All product data comes from the gated server
+// xenios research: client core. All product data comes from the gated server
 // APIs; nothing in this bundle contains the catalog. The provider tracks the
 // gate state, loads the catalog once authed, and holds the lane-separated cart.
 

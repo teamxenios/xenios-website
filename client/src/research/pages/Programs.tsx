@@ -1,15 +1,28 @@
 import SeoHead from "@/components/SeoHead";
-import { PageIntro } from "../components";
+import { byCategory, useResearch } from "../core";
+import { NoticeBar, PageIntro, ProductGrid } from "../components";
 
-// Placeholder pending the full port from xenios-research. Content lands in the
-// same PR; this keeps the route live and the build green meanwhile.
 export default function Programs() {
+  const { products } = useResearch();
+  const items = byCategory(products, "programs");
+
   return (
     <>
-      <SeoHead title="Programs, xenios research" description="Training, nutrition, accountability, and education delivered as human-led programs with independent value." path="/research/programs" />
-      <PageIntro eyebrow="Human-led support" title="Programs" lead="Training, nutrition, accountability, and education delivered as human-led programs with independent value." />
-      <section className="container-x pb-20">
-        <p className="body-m text-ink-mute">This page is being prepared.</p>
+      <SeoHead
+        title="Programs, xenios research"
+        description="Training, nutrition, education, and accountability delivered as human-led, non-clinical programs with independent value, separate from research products."
+        path="/research/programs"
+      />
+      <PageIntro
+        eyebrow="Human-led programming"
+        title="Products matter. Structure changes what people do."
+        lead="Training, nutrition, education, and accountability programs give the xenios platform a relationship beyond a transaction."
+      />
+      <NoticeBar>
+        Programs have independent value and remain separate from research products. They are human-led and non-clinical, and they do not contain research materials or medical care.
+      </NoticeBar>
+      <section className="container-x section-y">
+        <ProductGrid products={items} />
       </section>
     </>
   );
