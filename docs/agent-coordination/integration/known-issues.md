@@ -16,3 +16,4 @@
 | Local waitlist count request returns 500 without Supabase configuration | Environment | Expected locally; fallback works |
 | Final referral terms, expiry, milestones, and launch timing are not approved | Samuel, legal/compliance | Open; UI labels terms as proposed where required |
 | PR #10 closed after PR #9's source branch was deleted | CODEX_UI | Resolved by draft PR #13 into `main` |
+| Production `/research` returns HTTP 503 with `The research section is not configured.` | Deployment/config owner | Open; independently rechecked 2026-07-18 15:42 CDT; UI-002 is local and does not fix the live gate |

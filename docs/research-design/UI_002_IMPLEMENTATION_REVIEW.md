@@ -47,3 +47,7 @@ These links inform cautious presentation language. They are not a legal opinion 
 - Final console warnings/errors: zero.
 - Checked page overflow: zero at 320, 390, 640, 768, and 1440 on the route matrix.
 - Research remains gated and noindexed.
+
+## Production status
+
+The validation above is local. The integration/QA lane independently rechecked `https://xeniostechnology.com/research` at 2026-07-18 15:42 CDT and received HTTP 503 with `The research section is not configured.` UI-002 has not been deployed and makes no claim that the live gate is fixed.

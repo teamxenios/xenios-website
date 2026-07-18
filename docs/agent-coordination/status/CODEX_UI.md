@@ -1,6 +1,6 @@
 # CODEX_UI Status
 
-**Updated:** 2026-07-18T15:40:45-05:00
+**Updated:** 2026-07-18T15:44:57-05:00
 **Mode:** local Codex desktop project with direct filesystem access
 **Repository:** `teamxenios/xenios-website`
 **Working directory:** `C:\Users\sboad\Downloads\xenios-website-codex-ui`
@@ -58,3 +58,4 @@ Codex can read Claude's physical checkout at `C:\Users\sboad\Downloads\xenios-we
 - GitHub automatically closed stale PR #10 when that base disappeared.
 - Codex fetched the merge, merged `origin/main` into the UI branch, and opened draft PR #13 against `main`.
 - Membership backend, authentication, payments, onboarding, private data, referral enforcement, and Blueprint processing remain Claude-owned.
+- The integration/QA lane independently rechecked `https://xeniostechnology.com/research` at 2026-07-18 15:42 CDT. Production returned HTTP 503 with body `The research section is not configured.` UI-002 has not been deployed and does not claim the live Research gate is fixed.

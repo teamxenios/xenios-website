@@ -81,3 +81,7 @@ The public response must not include the referrer's private profile. The member 
 - No overflow at 320, 390, 640, 768, or 1440 on the checked routes.
 - Production member workspace: zero rows, no QR, six disabled share actions.
 - Preview workspace: five safe statuses and no private decision reason.
+
+## Production blocker
+
+The integration/QA lane independently rechecked `https://xeniostechnology.com/research` at 2026-07-18 15:42 CDT. It returned HTTP 503 with body `The research section is not configured.` This UI branch has not been deployed and does not fix or claim to fix the production gate. Deployment and environment configuration require a separate owner and validation cycle.
