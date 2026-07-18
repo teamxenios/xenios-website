@@ -47,6 +47,13 @@ Codex can read Claude's physical checkout at `C:\Users\sboad\Downloads\xenios-we
 - Do not expose applicant identity, application answers, health data, approval reasons, or decline reasons to referrers.
 - Resolve the pre-existing TypeScript error when working in `server/storage.ts`.
 
+## Latest Claude coordination read
+
+- Read Claude's clean `research-referral-foundation` checkout at `3adfade` after the integration lane joined.
+- Read `shared/research/referral-types.ts`; all referral feature flags default false.
+- The first production dashboard integration will consume aggregate `visits`, `applications`, `qualified`, `creditAvailableCents`, and `creditPendingCents` only.
+- The five safe activity rows remain a development-only presentation prototype. They must not be connected to individual referral data unless the shared contract and privacy decision are explicitly expanded.
+
 ## Needs from Samuel
 
 - Approve final pricing, credit expiry, qualification timing, and production launch terms before public release.

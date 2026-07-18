@@ -27,8 +27,8 @@ export default function MemberReferrals() {
       <section className="container-x xr-section">
         <div className="xr-metric-grid">
           {[
-            ["Invitations sent", previewMode ? "5" : "0"],
-            ["Pending", previewMode ? "1" : "0"],
+            ["Visits", previewMode ? "5" : "0"],
+            ["Applications", previewMode ? "1" : "0"],
             ["Qualified", previewMode ? "2" : "0"],
             ["Credit available", previewMode ? "$15" : "$0"],
           ].map(([label, value]) => <div className="xr-kpi" key={label}><p className="mono-label text-ink-mute">{label}</p><strong className="tabular">{value}</strong></div>)}

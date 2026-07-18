@@ -15,8 +15,10 @@ The referral experience is original xenios work. It uses a graphite and warm-whi
 - $50 is a one-time activation, not a recurring membership promise.
 - Plus, Human Blueprint Review, and premium program ranges are labeled proposed and unavailable for checkout.
 - Give $10, Get $15 qualifies only after approval, activation, and verification.
+- Referral credits are explicitly proposed and inactive while Claude's feature flags remain false.
 - Invitations never guarantee approval or reveal decision reasoning.
 - Production referral UI does not fabricate a code, QR, activity, or reward.
+- Initial production dashboard wiring is aggregate-only; individual safe-status rows remain a development prototype unless the shared privacy contract expands.
 - Security, HIPAA, ambassador, professional, and clinical claims are limited to verified current facts or explicitly labeled roadmap work.
 
 ## Route evidence

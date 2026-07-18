@@ -8,7 +8,7 @@ const QUALIFICATION = [
   { title: "Independently approved", body: "An invitation never influences the approval decision or reveals its outcome to the referrer." },
   { title: "$50 activation", body: "The approved applicant chooses to activate the membership." },
   { title: "Verification period passed", body: "Refund, dispute, duplicate, self-referral, and abuse checks are complete." },
-  { title: "Credit earned", body: "The new member receives $10 in xenios credit and the referrer receives $15." },
+  { title: "Credit earned", body: "Once the program and ledger are enabled, the new member receives $10 in xenios credit and the referrer receives $15." },
 ];
 
 export default function Referrals() {
@@ -20,7 +20,7 @@ export default function Referrals() {
       <BusinessPageHero
         eyebrow="Member referrals"
         title="Your network shapes your health."
-        lead="Invite people you trust into xenios. When an invited applicant is independently approved, activates, and passes the verification period, both members receive xenios credit."
+        lead="Under the proposed program, an invited applicant must be independently approved, activate, and pass the verification period before either member receives xenios credit."
         primary={{ label: "Apply for Membership", href: "/research/apply" }}
         secondary={{ label: "Referral dashboard", href: "/research/member/referrals" }}
         aside={(
@@ -52,7 +52,7 @@ export default function Referrals() {
       <section className="container-x xr-section">
         <div className="xr-two-column">
           <article className="xr-surface">
-            <p className="mono-cap text-ink-mute">Credits can support</p>
+            <p className="mono-cap text-ink-mute">Proposed credits could support</p>
             <h2 className="h3 mt-4">The member journey.</h2>
             <ul className="body-m text-ink-2 mt-6 space-y-3">
               <li>xenios Plus</li><li>Programs</li><li>Blueprint upgrades</li><li>Eligible supplements</li><li>Eligible member purchases</li>

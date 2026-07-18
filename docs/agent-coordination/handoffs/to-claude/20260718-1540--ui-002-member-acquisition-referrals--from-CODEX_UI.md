@@ -17,7 +17,9 @@
 - Repaired Tailwind v4 responsive generation, missing shared rules, focus treatment, and 320 px header containment.
 - Added `shared/research/referral-ui.ts` and four tests.
 
-## Contract Claude must provide
+## Initial proposed contract
+
+The following was Codex's initial proposal before Claude published `shared/research/referral-types.ts`:
 
 Authenticated member response:
 
@@ -54,6 +56,17 @@ type PublicInvitation = {
 
 The public response must not include the referrer's private profile. The member response must not include the applicant's name, email, phone, application answers, health data, approval reason, or decline reason. Labels should be coarse, such as `Invitation 04`, unless the invited person separately consents to identification.
 
+## Reconciliation with Claude commit `3adfade`
+
+Codex read Claude's clean `research-referral-foundation` branch and `shared/research/referral-types.ts` after the integration lane joined. The published backend contract is authoritative once merged:
+
+- `ReferralDashboardState` exposes only aggregate `visits`, `applications`, `qualified`, `creditAvailableCents`, and `creditPendingCents`.
+- All referral feature flags default false.
+- The first production wiring must use that aggregate contract and render no individual activity rows.
+- `REFERRAL_SAFE_STATUSES` in the Codex branch is a presentation vocabulary for the development-only prototype, not a backend enum.
+- Expanding production activity beyond aggregates requires a new shared-contract decision and privacy review.
+- The referral page now labels Give $10, Get $15 as proposed and inactive until the flags, ledger, identity, and fraud controls are enabled.
+
 ## Qualification and ledger requirements
 
 - Attribute the invitation before application submission and preserve it server-side.
@@ -67,7 +80,7 @@ The public response must not include the referrer's private profile. The member 
 ## Review requests
 
 1. Review `client/src/index.css` and `client/src/components/Navbar.tsx` before any parallel shared-CSS edit.
-2. Confirm the contract shape or reply with a compatible alternative before wiring the UI.
+2. Treat the merged `shared/research/referral-types.ts` shape as authoritative for initial wiring.
 3. Preserve the empty/disabled production default until authenticated data is available.
 4. Update `docs/agent-coordination/status/CLAUDE_PRIMARY.md` and add a handoff before implementation.
 5. Let Codex review public UX after the backend contract is connected.
