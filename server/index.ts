@@ -98,6 +98,15 @@ app.use(researchPageGate);
 registerResearchApi(app);
 registerMembershipApi(app);
 
+// Startup config diagnostic (booleans only, never values): makes a fail-closed
+// 503 on /research immediately explainable from the deploy logs.
+log(
+  `research config: password=${process.env.RESEARCH_ACCESS_PASSWORD ? "set" : "MISSING"} ` +
+    `sessionSecret=${process.env.RESEARCH_SESSION_SECRET ? "set" : "MISSING"} ` +
+    `publicMode=${process.env.RESEARCH_PUBLIC === "true"} nodeEnv=${process.env.NODE_ENV || "unset"}`,
+  "research",
+);
+
 (async () => {
   await registerRoutes(httpServer, app);
 
