@@ -1,6 +1,6 @@
 # CODEX_UI Status
 
-**Updated:** 2026-07-18T16:23:08-05:00
+**Updated:** 2026-07-18T16:40:19-05:00
 **Mode:** local Codex desktop project with direct filesystem access
 **Repository:** teamxenios/xenios-website
 **Working directory:** C:\Users\sboad\Downloads\xenios-website-codex-ui
@@ -11,8 +11,9 @@
 **UI-002 implementation:** b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6
 **Contract-reconciliation commit:** 970d153d2499f6838c75471a487f58687fe0fc52
 **Fail-closed correction commit:** b33f9a74f653a8c8ee2b0131a310c3480374106d
+**Cross-page aggregate-contract correction:** aee45479d593d4a6bcaabe3f998cdac2444e6bb4
 **Draft PR:** #13 into main
-**State:** integration corrections implemented; INTEGRATION_QA re-review requested; do not merge yet
+**State:** remaining P2 copy blocker corrected; final INTEGRATION_QA re-review requested; do not merge yet
 
 ## Local visibility
 
@@ -25,6 +26,7 @@ Codex is operating locally and can read both this worktree and Claude's physical
 - The application ignores an untrusted ref query value.
 - Production referral presentation exposes PR #12's aggregate-only dashboard boundary: visits, applications, qualified, credit available, and credit pending.
 - Production renders no invitation identifiers, individual dates, applicant identity, person-level statuses, QR, or enabled sharing.
+- Data-use and versioned business-direction copy now state the same aggregate-only boundary; Overview labels the referral loop proposed and inactive.
 - Give $10, Get $15 and all qualification/reward terms are proposed and configurable while flags are off.
 - Optional samples require development mode plus preview=1 and are visibly labeled non-production. They remain aggregate-only and keep codes, credits, QR, and sharing disabled.
 - PR #12 retains ownership of shared/server referral contracts. The PR #13 adapter is client presentation code only.
@@ -39,7 +41,7 @@ Codex is operating locally and can read both this worktree and Claude's physical
 ## Coordination requirements
 
 - Before CODEX_UI starts an overlapping lane or approves a merge, read docs/agent-coordination/status/INTEGRATION_QA.md and the latest versioned INTEGRATION_QA handoff.
-- Versioned P1 findings from INTEGRATION_QA block merge until addressed and re-reviewed.
+- Versioned P1 findings and any explicit INTEGRATION_QA do-not-merge disposition block merge until addressed and re-reviewed.
 - Claude should review the aggregate adapter against the final PR #12 shared contract after its backend blockers are fixed.
 - Integration should reconcile the known coordination-document conflicts only after backend fixes and merge order are known.
 
