@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
+import ResearchApplicationsTab from "@/pages/AdminResearchTab";
 
 // Local copies of the row/summary shapes the admin API returns.
 // These mirror server/supabase-store.ts. We never import server code here.
@@ -102,7 +103,7 @@ const LOI_STATUSES = [
   "Not moving forward",
 ];
 
-type TabKey = "waitlist" | "loi" | "bookings" | "analytics";
+type TabKey = "waitlist" | "loi" | "bookings" | "analytics" | "research";
 
 function formatDate(value?: string | null): string {
   if (!value) return "";
@@ -365,12 +366,16 @@ export default function Admin() {
               <TabButton id="tab-analytics" active={tab === "analytics"} onClick={() => setTab("analytics")}>
                 Analytics
               </TabButton>
+              <TabButton id="tab-research" active={tab === "research"} onClick={() => setTab("research")}>
+                Research
+              </TabButton>
             </div>
 
             {tab === "waitlist" && <WaitlistTab token={token} />}
             {tab === "loi" && <LoiTab token={token} />}
             {tab === "bookings" && <BookingsTab token={token} />}
             {tab === "analytics" && <AnalyticsTab token={token} />}
+            {tab === "research" && <ResearchApplicationsTab token={token} />}
           </>
         )}
       </section>
