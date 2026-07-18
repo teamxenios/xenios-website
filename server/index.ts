@@ -4,6 +4,7 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
 import { researchPageGate, registerResearchApi } from "./research";
 import { registerMembershipApi } from "./research/membership";
+import { registerMemberApi } from "./research/members";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
@@ -97,6 +98,7 @@ app.use((req, res, next) => {
 app.use(researchPageGate);
 registerResearchApi(app);
 registerMembershipApi(app);
+registerMemberApi(app);
 
 (async () => {
   await registerRoutes(httpServer, app);
