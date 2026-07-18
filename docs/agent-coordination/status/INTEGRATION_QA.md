@@ -1,6 +1,6 @@
 # INTEGRATION_QA Status
 
-**Updated:** 2026-07-18T16:36:01-05:00
+**Updated:** 2026-07-18T16:43:59-05:00
 **Owner:** INTEGRATION_QA
 **Codex task:** Xenios integration and QA
 **Role:** explicit third participant alongside CLAUDE_PRIMARY and CODEX_UI
@@ -30,7 +30,7 @@ It does not own:
 |---|---|---|
 | #11 | 9cf711ee718e5f0719419cf9b2ba3a060cc110b9 | P1/P2 blockers versioned in the latest to-Claude handoff; do not merge until addressed and re-reviewed. |
 | #12 | 3adfadea78531c2cc606e54282ed308840407bd9 | P1 reward, identity, feature, and program-window blockers versioned; do not merge until addressed and re-reviewed. |
-| #13 | correction head efca312919f84953ce188a73b14ba77c9cb6246b re-reviewed | Route/dashboard mechanics pass, but a P2 cross-page privacy/feature-state copy blocker remains; do not merge until fixed and re-reviewed. |
+| #13 | final correction head edc7d7a349e279d11d7f4e68c225ce83542da9f8 re-reviewed | Cleared by INTEGRATION_QA at this exact head; may proceed through normal draft review and merge approval. |
 | #14 | 718f005b293a8e1030f26f53fafee4076676f4d0 | Environment-diagnostic lane reviewed in the production-gate context. It does not prove the live gate is fixed. |
 | #15 | 0d0814c | P1/P2 token, account-creation, expiry, authorization, and referral-identity blockers versioned; do not merge until addressed and re-reviewed. |
 
@@ -43,3 +43,4 @@ At 2026-07-18 15:42 CDT, https://xeniostechnology.com/research returned HTTP 503
 - Backend/admin/auth findings: docs/agent-coordination/handoffs/to-claude/20260718-1555--pr11-pr12-integration-blockers--from-INTEGRATION_QA.md
 - PR #13 correction evidence: docs/agent-coordination/handoffs/to-claude/20260718-1623--pr13-referral-contract-corrections--from-CODEX_UI.md
 - PR #13 review disposition: docs/agent-coordination/handoffs/to-codex/20260718-1636--pr13-correction-review--from-INTEGRATION_QA.md
+- PR #13 final clearance: docs/agent-coordination/handoffs/to-codex/20260718-1644--pr13-final-clearance--from-INTEGRATION_QA.md
