@@ -4,17 +4,15 @@
 
 | Issue | Owner | Status |
 |---|---|---|
-| Public Research product routes conflict with stealth-copy rules | Samuel, Claude, legal/compliance | Proposed decision open |
+| Research publication versus stealth-copy boundary | Samuel, Claude, legal/compliance | Accepted: private, gated, and noindexed until infrastructure and approval are complete |
 | Canonical V2 specification is outside the repository | Samuel | Open |
-| Responsive Tailwind variants do not apply; desktop navigation and grids remain collapsed | Shared, owner required | Open, blocking safe Research reuse |
-| `.rule-all` and `.btn-ghost-on-dark` are used but undefined | Shared, owner required | Open |
-| 320 px main header and waitlist ribbon overflow horizontally | Shared, owner required | Open |
-| Research header produces approximately 17 px horizontal overflow at 390 px | CODEX_UI, shared shell | Open |
-| Main-site UI audit and 18 screenshots | CODEX_UI | Complete in Stage 1 |
-| No Claude status or incoming handoff existed at bootstrap | CLAUDE_PRIMARY | Awaiting update |
-| PR #9 is open and may move during the UI audit | Both agents | Monitor before each major cycle |
-| Production asset ownership and license review has not started | CODEX_UI, Samuel | Open |
+| Responsive Tailwind variants, missing primitives, and 320 px header overflow | CODEX_UI | Resolved in `b72e6d1`; Claude regression review requested |
+| Research shell overflow at 390 px | CODEX_UI | Resolved in `b72e6d1` |
+| No Claude status or incoming handoff existed at the final pre-implementation check | CLAUDE_PRIMARY | Awaiting update |
+| Authenticated referral code, attribution, qualification, and ledger contracts do not exist | CLAUDE_PRIMARY | Open; UI safely defaults empty/disabled |
+| Production asset ownership and license review has not started | CODEX_UI, Samuel | Open for future imagery; passport is original code-native UI |
 | `npm run check` fails on pre-existing `server/storage.ts(48,40)` implicit `any` | CLAUDE_PRIMARY | Open |
-| Main production bundle is 715.09 kB and triggers the Vite chunk warning | Shared | Open, non-blocking baseline |
-| Local waitlist count request returns 500 without Supabase configuration | Environment | Expected locally; fallback count works |
-| `client/index.html` metadata and FAQ copy conflict with current brand-copy guidance | Content owner | Open |
+| Main production bundle is 715.25 kB and triggers the Vite chunk warning | Shared | Open, non-blocking baseline |
+| Local waitlist count request returns 500 without Supabase configuration | Environment | Expected locally; fallback works |
+| Final referral terms, expiry, milestones, and launch timing are not approved | Samuel, legal/compliance | Open; UI labels terms as proposed where required |
+| PR #10 closed after PR #9's source branch was deleted | CODEX_UI | Resolved by draft PR #13 into `main` |

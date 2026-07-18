@@ -1,46 +1,43 @@
 # Xenios Research Project State
 
-**Updated:** 2026-07-18T14:53:00-05:00
+**Updated:** 2026-07-18T15:40:45-05:00
 **Repository:** `teamxenios/xenios-website`
-**Primary deployment:** existing Xenios website and Render service
+**Primary deployment:** existing xenios website and Render service
 **Research route family:** `/research`
 
 ## Git state
 
-- PR #8 is merged into `origin/main` at `138e3238f0cda784a76b0b29f8082ffe87a3f813`.
-- PR #9 is open and mergeable. Its head is `feat/research-membership-premium-rebuild` at `f9c44807fa3aa70021f27654a31c8dd8aa32a725`.
-- Claude's local checkout is `C:\Users\sboad\Downloads\xenios-website` and was clean when Codex verified it.
+- PR #8 is merged into `main` at `138e3238`.
+- PR #9 merged into `main` at `df8e4c53fc676b2b413fa509518e73ac06194a7e` on 2026-07-18.
+- Claude's merged implementation head was `f9c44807fa3aa70021f27654a31c8dd8aa32a725`.
+- Claude's physical checkout is `C:\Users\sboad\Downloads\xenios-website`; it was clean when Codex last inspected it.
 - Codex works in `C:\Users\sboad\Downloads\xenios-website-codex-ui` on `codex/research-ui-content`.
-- The Codex worktree was created from PR #9's exact head SHA.
-- PR #10 is an open draft from `codex/research-ui-content` into `feat/research-membership-premium-rebuild`.
-- The Stage 1 audit is published at commit `e2d493a`.
+- UI-002 implementation is published at `b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6`.
+- The Codex branch merged the current `origin/main` at `7856966a782d55aef9b1b0f9a1ac570c19c0cb5a`.
+- PR #10 closed automatically when its deleted feature base disappeared.
+- PR #13 is an open draft from `codex/research-ui-content` into `main`.
 
 ## Current milestone
 
-Stage 1 audit complete and ready for review. No public route or shared component implementation has started.
+UI-002 is implemented, validated, pushed, and awaiting Claude and Samuel review. No deployment or regulated public launch was performed.
 
-## Sources reviewed
+## Product boundary
 
-- `XENIOS_CODEX_LOCAL_GITHUB_UI_CONTENT_COLLAB_PROMPT.md`
-- `XENIOS_RESEARCH_MEMBERSHIP_MEGA_BUILD_PROMPT_V2.md`, currently located outside the repository in Downloads
-- PR #9 metadata and complete changed-file patch
-- Repository guidance in `.agents/memory/`
+- Research is a private member acquisition, activation, monetization, retention, referral, and trust system.
+- The current public presentation remains behind the existing password gate and `noindex` until infrastructure and publication approvals are complete.
+- Give $10, Get $15 is presented only after independent approval, $50 activation, and verification.
+- Preview identifiers never call an API and are marked as UI preview data.
+- Member-referral production UI remains empty and disabled until authenticated contracts exist.
+- No referrer may receive applicant identity, application content, health information, approval reasoning, or decline reasoning.
 
-## Known constraints
+## Open infrastructure work
 
-- The main Xenios site is the design-system source of truth.
-- The existing public-copy guidance forbids peptide and GLP-1 language on public pages, while the canonical Research specification defines public peptide routes. This conflict is recorded as a proposed decision and must not be resolved implicitly.
-- The canonical V2 specification is not yet versioned in the repository, so Claude and Codex cannot rely on GitHub alone to read it.
-- No production asset is approved until ownership, license, allowed use, and alt text are recorded.
-- Research membership backend, authentication, payments, onboarding, private member data, and the Whole-Life Blueprint remain Claude-owned by default.
-- Responsive Tailwind variants do not apply in the browser, so the intended desktop navigation and multi-column layouts do not render.
-- `.rule-all` and `.btn-ghost-on-dark` are undefined despite being used on public pages.
-- The main header overflows at 320 px, and the current Research shell overflows at 390 px.
+Claude retains ownership of authentication, membership state, payments, onboarding, private Blueprint processing, referral issuance and validation, attribution, qualification, reward ledger, expiration, fraud controls, admin, analytics, consent persistence, retention, and privacy requests.
 
-## Next major cycle gate
+## Known validation state
 
-1. Claude reviews the audit and updates `CLAUDE_PRIMARY.md`.
-2. Samuel and Claude decide the public Research stealth-copy boundary.
-3. The team assigns ownership for the shared responsive-CSS repair and shell strategy.
-4. Codex fetches both branches, reads new status and handoffs, then opens a new explicit implementation claim.
-5. Only then may Research redesign begin.
+- Tests: 16 of 16 pass.
+- Build: passes.
+- Typecheck: pre-existing `server/storage.ts(48,40): TS7006` only.
+- Browser: zero final console warnings/errors and zero overflow at tested viewports.
+- Main bundle: existing greater-than-500 kB warning remains.

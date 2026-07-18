@@ -1,20 +1,17 @@
 # Shared Components
 
-**Status:** Stage 1 inventory complete
+**Status:** UI-002 implementation complete
 
-The main-site audit will record the actual component, file path, consumers, extension strategy, and risk for each shared component.
-
-| Component or file | Current consumers | Reuse strategy | Risk |
+| Component or file | Consumers | UI-002 strategy | Review risk |
 |---|---|---|---|
-| `client/src/components/PageShell.tsx` | Main public pages | Extend or parameterize for Research | Research currently has a duplicate shell |
-| `client/src/components/Navbar.tsx` | Main `PageShell` | Preserve accessible modal behavior and shared nav data | Responsive utilities fail; header overflows at 320 |
-| `client/src/components/Footer.tsx` | Main `PageShell` | Reuse navigation groups and descriptor | Responsive columns fail |
-| `client/src/components/TopRibbon.tsx` | Main `PageShell` | Decide whether Research inherits it | Ribbon text overflows narrow widths |
-| `client/src/components/Reveal.tsx` | Main public pages | Reuse with reduced-motion fallback | Needs consistent focus and motion QA around revealed controls |
-| `client/src/components/Wordmark.tsx` | Main nav/footer, Research can adopt | Reuse directly | None found in Stage 1 |
-| `client/src/index.css` | Entire client | Treat tokens as source of truth after responsive repair | Highest merge-conflict and regression risk |
-| `client/src/research/layout.tsx` | Research route family | Consolidate with or extend `PageShell` | Duplicates nav/footer and overflows at 390 |
-| `client/src/research/components.tsx` | Research pages | Retain content primitives while adopting main tokens | Must avoid a separate visual system |
-| `client/src/components/ui/button.tsx` and `card.tsx` | shadcn-style consumers | Do not mix implicitly with main custom primitives | Rounded geometry conflicts with 4 px main system |
+| `client/src/components/PageShell.tsx` | Main public pages | Preserved unchanged | None from UI-002 |
+| `client/src/components/Navbar.tsx` | Main `PageShell` | Added explicit responsive class contracts for primary nav and CTA | Claude should regression-check any pending header work |
+| `client/src/components/Footer.tsx` | Main `PageShell` | Preserved unchanged | None from UI-002 |
+| `client/src/index.css` | Entire client | Uses the Tailwind v4 import and defines missing shared rules/focus treatment | Shared file; review before parallel edits |
+| `client/src/research/layout.tsx` | Research route family | Keeps the gated Research shell but reuses main tokens, type, 4 px geometry, and button language | Future shell consolidation remains optional |
+| `client/src/research/components.tsx` | Existing Research pages | Preserved as the legacy content primitive set | Avoid mixing old inline layout with new business primitives on the same page |
+| `client/src/research/business-components.tsx` | UI-002 routes | New page hero, journey, checklist, passport, share, and safe-status primitives | Claude contracts must not bypass privacy-safe inputs |
+| `client/src/research/research.css` | Research route family | Isolated responsive shell and business-surface styles based on main tokens | Keep loaded only inside the lazy Research bundle |
+| `shared/research/referral-ui.ts` | Invite, apply, and dashboard presentation | Normalizes public codes and exports the only UI-safe status vocabulary | Treat as a shared frontend/backend presentation contract |
 
-No shared component is claimed for modification under `UI-001`; inspection is read-only.
+`UI-002` deliberately did not modify authentication, application submission APIs, payment, database, admin, or deployment components.

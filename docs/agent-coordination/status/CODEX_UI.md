@@ -1,84 +1,60 @@
 # CODEX_UI Status
 
-**Updated:** 2026-07-18T14:53:00-05:00
-**Mode:** local
-**Branch:** `codex/research-ui-content`
-**Published audit commit:** `e2d493a`
-**Base branch:** `feat/research-membership-premium-rebuild`
-**Base SHA:** `f9c44807fa3aa70021f27654a31c8dd8aa32a725`
-**State:** active, UI-002
+**Updated:** 2026-07-18T15:40:45-05:00
+**Mode:** local Codex desktop project with direct filesystem access
+**Repository:** `teamxenios/xenios-website`
+**Working directory:** `C:\Users\sboad\Downloads\xenios-website-codex-ui`
+**Remote:** `https://github.com/teamxenios/xenios-website.git`
+**Base branch:** `main`
+**Base SHA:** `df8e4c53fc676b2b413fa509518e73ac06194a7e`
+**Working branch:** `codex/research-ui-content`
+**Published implementation commit:** `b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6`
+**Published integration head:** `7856966a782d55aef9b1b0f9a1ac570c19c0cb5a`
+**Draft PR:** #13 into `main`
+**State:** UI-002 complete, Claude review requested
 
-## Claimed work
+## Local visibility
 
-`UI-002`: private acquisition, referral, monetization, and trust surfaces, including the scoped responsive-foundation repair.
+Codex can read Claude's physical checkout at `C:\Users\sboad\Downloads\xenios-website` because this is a local desktop session. It cannot see changes that exist only inside Claude's hidden conversation. Claude's checkout was clean at `f9c44807` during the last direct inspection, so no uncommitted Claude file changes were available to read.
 
-## Completed
+## What shipped in UI-002
 
-- Proved direct local access to the real Xenios checkout and Claude's physical worktree.
-- Verified repository, remote, source branch, isolated Codex worktree, and exact commits.
-- Created and pushed the versioned coordination and research-input packet.
-- Opened draft PR #10 against PR #9's branch.
-- Read the collaboration prompt, complete V2 membership specification, PR #9 patch, and repository memory files.
-- Installed dependencies with the pinned Node 20.19.0 and npm 10.8.2 toolchain.
-- Ran typecheck, tests, production build, local server, keyboard interaction, narrow-width, zoom approximation, console, network, and overflow checks.
-- Audited all six required main-site routes at 390 x 844, 768 x 1024, and 1440 x 900.
-- Versioned 18 full-page PNGs, computed metrics, the completed design-system audit, shared-component inventory, and known issues.
-- Audited the priority Research routes at 390 px without changing their UI or backend.
+- Repaired Tailwind v4 entry behavior, missing shared primitives, narrow header containment, and responsive Research shell behavior.
+- Added an original code-native xenios Member Passport with a real QR, privacy label, applicant/member variants, and share actions.
+- Added membership comparison, referrals, invite, member-referral dashboard, Blueprint, programs, professionals, ambassadors, trust, and data-use routes.
+- Added referral attribution presentation to `/research/apply` without changing Claude's submission API or inventing a code after success.
+- Added privacy-safe referral helpers and four unit tests.
+- Kept all Research routes behind the existing password gate and `noindex` boundary.
+- Versioned four 390 x 844 implementation previews.
 
-## Material findings
+## Validation
 
-- Responsive Tailwind variants do not apply in the rendered client. Primary navigation remains hidden and responsive grids remain stacked at 1440 px.
-- `.rule-all` and `.btn-ghost-on-dark` are used but undefined.
-- The main header overflows at 320 px; the current Research shell overflows by approximately 17 px at 390 px.
-- Research duplicates the main header and footer instead of extending `PageShell`.
-- Public Research peptide content conflicts with the repository's stealth public-copy guidance.
-- The canonical V2 specification remains outside the repository.
-
-## New user direction received
-
-- Treat Research as a private member acquisition, activation, monetization, retention, referral, and trust system.
-- Build the requested public-facing presentation inside the existing private gate.
-- Use Give $10, Get $15 after qualified activation, not application submission.
-- Build an original Xenios Member Passport and invitation experience inspired by the supplied pattern without copying Superpower.
-- Keep referral codes, identity, attribution, credits, fraud, billing, admin, analytics, and privacy enforcement in Claude's infrastructure scope.
-
-## Routes touched
-
-UI-002 routes are listed in `docs/agent-coordination/claims/active/UI-002--CODEX_UI.md`; implementation has not yet been committed.
-
-## Shared files touched
-
-The UI-002 claim includes the Research route registry, layout, components and styles, application success presentation, and the scoped Tailwind entry/missing primitive repair in `client/src/index.css`.
-
-## Tests completed
-
-- `npm run check`: failed only on pre-existing `server/storage.ts(48,40): TS7006`.
-- `npm test`: passed, 12 of 12.
-- `npm run build`: passed; Vite reported a 715.09 kB main chunk warning.
-- Lint: no script exists.
-- Browser: no application console errors; local waitlist count request returned 500 without Supabase and used fallback 556.
-
-## Screenshots completed
-
-Eighteen captures under `docs/research-design/baseline/main-site/`, plus `metrics.json`.
+- `npm run check`: only the pre-existing `server/storage.ts(48,40): TS7006` remains.
+- `npm test`: 2 files and 16 tests passed.
+- `npm run build`: passed; main JS remains 715.25 kB and triggers the existing Vite chunk warning.
+- Browser route matrix: 13 Research routes plus the main home page checked at 390 px; selected routes checked at 320, 640, 768, and 1440 px.
+- Overflow: zero document overflow in the tested viewports.
+- Browser console: zero warnings or errors in the final pass.
+- Referral default: zero activity, no QR, and all share actions disabled until a secure server contract exists.
+- Referral preview: exactly `Invited`, `Pending`, `Qualified`, `Reward earned`, and `Expired`; no private decision reason or application content.
+- Copy action: produced the exact invitation URL in the browser. Native buttons retain keyboard semantics and visible focus treatment.
 
 ## Needs from Claude
 
-- Update `CLAUDE_PRIMARY.md` with current work, files, routes, contracts, and blockers.
-- Review `docs/research-design/MAIN_SITE_UI_AUDIT.md` and acknowledge the shared responsive-CSS findings.
-- Confirm whether Claude or Codex should claim the responsive foundation before either agent edits `index.css`, `Navbar.tsx`, `Footer.tsx`, or shared routing.
-- Review the proposed public Research versus stealth-copy decision.
-- Push any local change Codex must review.
+- Review PR #13 and the handoff under `docs/agent-coordination/handoffs/to-claude/`.
+- Supply authenticated referral contracts for code issuance, validation, attribution, qualification, reward ledger, expiration, and privacy-safe activity.
+- Preserve the UI-safe status vocabulary in `shared/research/referral-ui.ts`.
+- Do not expose applicant identity, application answers, health data, approval reasons, or decline reasons to referrers.
+- Resolve the pre-existing TypeScript error when working in `server/storage.ts`.
 
 ## Needs from Samuel
 
-- Review proposed pricing labels and UI previews after implementation.
-- Confirm whether the V2 specification should be committed verbatim or summarized into a maintained repository source of truth.
-- Approve final referral terms, credit expiration, milestones, and launch timing before public release.
+- Approve final pricing, credit expiry, qualification timing, and production launch terms before public release.
+- Approve publication of any regulated product, clinical, ambassador, or professional-compensation pathway.
 
 ## Integration notes
 
-- PR #9 remains open, unmerged, mergeable, and unchanged at `f9c44807` as of this update.
-- PR #10 remains a draft and targets `feat/research-membership-premium-rebuild`.
-- Membership backend, authentication, payments, onboarding, private member data, and the Whole-Life Blueprint remain Claude-owned.
-- Samuel's new direction authorizes UI-002. Research remains private and noindexed; backend and regulated publication boundaries are unchanged.
+- PR #9 merged into `main` at `df8e4c5` and its source branch was deleted.
+- GitHub automatically closed stale PR #10 when that base disappeared.
+- Codex fetched the merge, merged `origin/main` into the UI branch, and opened draft PR #13 against `main`.
+- Membership backend, authentication, payments, onboarding, private data, referral enforcement, and Blueprint processing remain Claude-owned.

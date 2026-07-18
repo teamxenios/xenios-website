@@ -2,7 +2,10 @@
 
 **Owner:** CODEX_UI
 **Started:** 2026-07-18
+**Completed:** 2026-07-18
 **Base commit:** `92fa9024b0d74ffa0b16d9cf9bface69dc5de6be`
+**Implementation commit:** `b72e6d1fc0c981f4ba03d6e1d0c24ec5fa6b32d6`
+**Integration head:** `7856966a782d55aef9b1b0f9a1ac570c19c0cb5a`
 **Routes:** `/research/membership`, `/research/membership/compare`, `/research/referrals`, `/research/ambassadors`, `/research/professionals`, `/research/trust`, `/research/how-your-data-is-used`, `/research/blueprint`, `/research/programs`, `/research/invite/:referralCode`, `/research/member/referrals`, and the `/research/apply` success presentation
 **Likely files:** Research route registry, layout, shared UI components, new route components, application success presentation, Research-specific styles, the Tailwind entry directive and missing shared primitives in `client/src/index.css`, tests, and documentation
 **Shared contracts:** existing Research password gate, noindex behavior, application submission privacy, route ownership, member/referral UI data contracts, global responsive utilities
@@ -39,3 +42,14 @@
 - Trust and data-use pages separate commitments, current behavior, and roadmap controls.
 - Main and Research responsive defects in scope are repaired and regression-tested.
 - Typecheck delta, tests, build, browser console, overflow, keyboard, and reduced-motion results are recorded.
+
+## Acceptance result
+
+- All requested presentation routes and business surfaces are implemented.
+- Research remains access-controlled and noindexed.
+- No backend, auth, payment, database, admin, or deployment contract was changed.
+- Production referral state is empty and non-shareable without secure data.
+- Development preview exposes only the five approved public statuses.
+- 16 tests pass and production build succeeds.
+- Final browser pass reports zero overflow and zero console warnings/errors at the tested viewports.
+- Typecheck delta is clean; only the pre-existing `server/storage.ts(48,40): TS7006` remains.
