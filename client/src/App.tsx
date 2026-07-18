@@ -1,5 +1,5 @@
 import { Switch, Route, Redirect, useLocation } from "wouter";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -38,6 +38,18 @@ import NotFound from "@/pages/not-found";
 // kairos.xeniostechnology.com (falls back to the Vercel URL until DNS propagates). /kairos sends
 // here; /mvps is the launcher.
 const KAIROS_APP_URL = "https://kairos.xeniostechnology.com";
+
+// xenios research: the entire section is one lazy chunk so the main bundle does
+// not grow. It carries no product data; the catalog comes from gated server APIs.
+const ResearchSection = lazy(() => import("@/research/section"));
+
+function ResearchRoutes() {
+  return (
+    <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
+      <ResearchSection />
+    </Suspense>
+  );
+}
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -78,6 +90,9 @@ function Router() {
       <Route path="/book" component={Book} />
       <Route path="/concepts" component={Concepts} />
       <Route path="/admin" component={Admin} />
+      {/* xenios research (password-gated section, own chunk) */}
+      <Route path="/research" component={ResearchRoutes} />
+      <Route path="/research/:rest*" component={ResearchRoutes} />
       {/* xenios MVP Lab + MVP routes */}
       <Route path="/mvps" component={MvpLab} />
       <Route path="/kairos">{() => <ExternalRedirect to={KAIROS_APP_URL} />}</Route>
