@@ -121,6 +121,9 @@ function allowAttempt(req: Request): boolean {
 // when the gate is unconfigured. Register BEFORE the SPA catch-all.
 // ---------------------------------------------------------------------------
 export function researchPageGate(req: Request, res: Response, next: NextFunction) {
+  // The xenios homepage stays at the root domain in every mode. Research is a
+  // private, password-gated section at /research and never takes over the
+  // root (canonical decision, 2026-07-18).
   const isResearchPath = req.path === "/research" || req.path.startsWith("/research/");
   if (!isResearchPath) return next();
   if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");

@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import express from "express";
 import request from "supertest";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // ---------------------------------------------------------------------------
 // Privacy and authorization tests for the research membership application API.
@@ -15,6 +15,7 @@ const state = vi.hoisted(() => ({
   events: [] as any[],
   outbox: [] as any[],
   attempts: [] as any[],
+  members: [] as any[],
 }));
 
 const emails = vi.hoisted(() => ({
@@ -35,7 +36,9 @@ vi.mock("../supabase", () => {
           ? state.outbox
           : table === "research_notification_attempts"
             ? state.attempts
-            : state.events;
+            : table === "research_members"
+              ? state.members
+              : state.events;
     let mode: "select" | "insert" | "update" = "select";
     let insertPayload: any = null;
     let updatePayload: any = null;
@@ -164,6 +167,7 @@ beforeEach(() => {
   state.events.length = 0;
   state.outbox.length = 0;
   state.attempts.length = 0;
+  state.members.length = 0;
   vi.clearAllMocks();
 });
 
@@ -344,5 +348,103 @@ describe("resend rate limiting", () => {
     expect(real.status).toBe(200);
     expect(fake.status).toBe(200);
     expect(fake.body).toEqual(real.body);
+  });
+});
+
+describe("admin activation (interim, admin-verified, billing-flag gated)", () => {
+  // Membership is a $50 one-time activation PLUS a $25 recurring monthly
+  // membership; both must be verified before any member becomes active.
+  const BOTH_REFS = { paymentReference: "manual-check-001", subscriptionReference: "sub-check-001" };
+
+  beforeEach(() => {
+    process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED = "true";
+  });
+  afterEach(() => {
+    delete process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED;
+  });
+
+  it("fails closed when RESEARCH_MEMBERSHIP_BILLING_ENABLED is false (default)", async () => {
+    delete process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED;
+    const row = seedApplication({ status: "payment_pending" });
+    state.members.push({ id: "mem-1", application_id: row.id, auth_user_id: "auth-1", email: row.email, first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+
+    const begin = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/begin-activation`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send({});
+    expect(begin.status).toBe(503);
+
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/activate`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send(BOTH_REFS);
+    expect(res.status).toBe(503);
+    // No member activation and no referral qualification happened.
+    expect(row.status).toBe("payment_pending");
+    expect(state.members[0].status).toBe("pending_activation");
+    expect(state.events.some((e) => e.new_status === "active")).toBe(false);
+  });
+
+  it("begin-activation moves approved -> payment_pending", async () => {
+    const row = seedApplication({ status: "approved_pending_payment" });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/begin-activation`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send({});
+    expect(res.status).toBe(200);
+    expect(row.status).toBe("payment_pending");
+  });
+
+  it("activate refuses when the applicant has not claimed a member account", async () => {
+    const row = seedApplication({ status: "payment_pending" });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/activate`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send(BOTH_REFS);
+    expect(res.status).toBe(409);
+    expect(row.status).toBe("payment_pending");
+  });
+
+  it("activate flips application and member to active and fires the referral hook", async () => {
+    const row = seedApplication({ status: "payment_pending" });
+    state.members.push({ id: "mem-1", application_id: row.id, auth_user_id: "auth-1", email: row.email, first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/activate`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send(BOTH_REFS);
+    expect(res.status).toBe(200);
+    expect(row.status).toBe("active");
+    expect(state.members[0].status).toBe("active");
+    // Referrals are flag-off in this suite: the hook ran and reported disabled.
+    expect(res.body.referral.reason).toBe("referrals_disabled");
+    // The transition was audited with BOTH references, internal-only.
+    const audited = state.events.find((e) => e.new_status === "active");
+    expect(String(audited?.internal_note)).toContain("payment_reference=manual-check-001");
+    expect(String(audited?.internal_note)).toContain("subscription_reference=sub-check-001");
+  });
+
+  it("activate fails closed unless BOTH the activation payment and the monthly membership are provided", async () => {
+    const row = seedApplication({ status: "payment_pending" });
+    state.members.push({ id: "mem-1", application_id: row.id, auth_user_id: "auth-1", email: row.email, first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    for (const body of [{}, { paymentReference: "manual-check-001" }, { subscriptionReference: "sub-check-001" }]) {
+      const res = await request(makeApp())
+        .post(`/api/admin/research/applications/${row.id}/activate`)
+        .set("X-Forwarded-For", uniqueIp())
+        .send(body);
+      expect(res.status).toBe(400);
+    }
+    expect(row.status).toBe("payment_pending");
+    expect(state.members[0].status).toBe("pending_activation");
+  });
+
+  it("activate is not allowed from the wrong state", async () => {
+    const row = seedApplication({ status: "under_review" });
+    state.members.push({ id: "mem-1", application_id: row.id, auth_user_id: "auth-1", email: row.email, first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/activate`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send(BOTH_REFS);
+    expect(res.status).toBe(409);
+    expect(row.status).toBe("under_review");
   });
 });

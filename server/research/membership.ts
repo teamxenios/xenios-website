@@ -1,10 +1,11 @@
 import crypto from "crypto";
-import type { Express, Request } from "express";
+import type { Express, NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
 import { sessionSecretOk } from "./index";
-import { linkApplicationToAttribution } from "./referrals";
+import { linkApplicationToAttribution, markAttributionApproved, qualifyReferralForMembershipActivation } from "./referrals";
+import { rateLimitHit, requestIp } from "./rate-limit";
 import { enqueueNotification, runOutboxTick } from "./outbox";
 import { adminRecipients } from "../services/email-config";
 import {
@@ -67,39 +68,23 @@ export function readStatusToken(token: string): string | null {
   return id;
 }
 
-// Fixed-window rate limit for submissions (per IP).
-const buckets = new Map<string, { count: number; resetAt: number }>();
-function allowSubmit(req: Request): boolean {
-  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
-  const now = Date.now();
-  const bucket = buckets.get(ip);
-  if (!bucket || bucket.resetAt < now) {
-    buckets.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
-    return true;
-  }
-  if (bucket.count >= 5) return false;
-  bucket.count += 1;
-  return true;
+// Fixed-window rate limits, durable across instances (V3 section 71): the
+// counters live in Postgres (research_rate_limit_hit) with an in-memory
+// fallback when the database is unreachable. Email keys are hashed so no
+// address ever lands in the rate-limit table.
+function emailKey(email: string): string {
+  return crypto.createHash("sha256").update(email.toLowerCase()).digest("hex").slice(0, 32);
+}
+async function allowSubmit(req: Request): Promise<boolean> {
+  return rateLimitHit(`research-submit:${requestIp(req as any)}`, 600, 5);
 }
 
 // Stricter limiter for status-link resends. Per-IP overuse gets an explicit
 // 429; the per-email cooldown is SILENT (generic success, nothing sent) so the
 // limiter itself cannot be used to probe whether an address has an application.
-const resendBuckets = new Map<string, { count: number; resetAt: number }>();
-const resendEmailCooldown = new Map<string, number>();
-function resendVerdict(req: Request, email: string): "ok" | "ip_limited" | "email_cooldown" {
-  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
-  const now = Date.now();
-  const bucket = resendBuckets.get(ip);
-  if (!bucket || bucket.resetAt < now) {
-    resendBuckets.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
-  } else {
-    if (bucket.count >= 3) return "ip_limited";
-    bucket.count += 1;
-  }
-  const last = resendEmailCooldown.get(email) ?? 0;
-  if (now - last < 10 * 60 * 1000) return "email_cooldown";
-  resendEmailCooldown.set(email, now);
+async function resendVerdict(req: Request, email: string): Promise<"ok" | "ip_limited" | "email_cooldown"> {
+  if (!(await rateLimitHit(`research-resend-ip:${requestIp(req as any)}`, 600, 3))) return "ip_limited";
+  if (!(await rateLimitHit(`research-resend-email:${emailKey(email)}`, 600, 1))) return "email_cooldown";
   return "ok";
 }
 
@@ -259,7 +244,7 @@ export function registerMembershipApi(app: Express) {
       if (typeof req.body?.website === "string" && req.body.website.length > 0) {
         return res.json({ ok: true }); // honeypot: pretend success
       }
-      if (!allowSubmit(req)) {
+      if (!(await allowSubmit(req))) {
         return res.status(429).json({ ok: false, message: "Too many submissions. Please try again in a few minutes." });
       }
       if (!supabaseConfigured()) {
@@ -370,6 +355,7 @@ export function registerMembershipApi(app: Express) {
         referralCode: a.referralCode,
         applicantEmail: row.email,
         landingPath: typeof req.body?.source_page === "string" ? req.body.source_page.slice(0, 300) : null,
+        applicantIp: ip,
       }).catch(() => {});
 
       // Log without PII beyond the id.
@@ -388,7 +374,7 @@ export function registerMembershipApi(app: Express) {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
       const parsed = z.object({ email: z.string().email().max(254).toLowerCase().trim() }).safeParse(req.body);
       if (!parsed.success) return res.status(400).json({ ok: false, message: "Enter a valid email address." });
-      const verdict = resendVerdict(req, parsed.data.email);
+      const verdict = await resendVerdict(req, parsed.data.email);
       if (verdict === "ip_limited") {
         return res.status(429).json({ ok: false, message: "Too many requests. Please try again in a few minutes." });
       }
@@ -590,6 +576,9 @@ export function registerMembershipApi(app: Express) {
         return { reviewed_at: new Date().toISOString(), approval_expires_at: expires.toISOString() };
       },
       async (row) => {
+        // Referral visibility: the attribution (if any) advances to approved.
+        // Qualification still happens only at verified activation.
+        void markAttributionApproved(row.id).catch(() => {});
         await notify(
           {
             eventKey: `approved:${row.id}`,
@@ -609,6 +598,97 @@ export function registerMembershipApi(app: Express) {
         );
       },
     ));
+
+  // ---------------------------------------------------------------------------
+  // Activation (interim, admin-verified) behind RESEARCH_MEMBERSHIP_BILLING_ENABLED
+  // (default FALSE): while billing is off there is NO path to an active member
+  // and NO path to referral qualification. Membership is a $50 one-time
+  // activation PLUS a $25 recurring monthly membership; a member becomes
+  // active only when BOTH are verified, so activation requires both the
+  // activation payment reference and the active monthly-membership reference.
+  // Phase 5 replaces the attestations with verified Stripe webhook events.
+  // ---------------------------------------------------------------------------
+  const billingEnabled = () => process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED === "true";
+  const requireBillingEnabled = (_req: Request, res: Response, next: NextFunction) => {
+    if (!billingEnabled()) {
+      return res.status(503).json({
+        ok: false,
+        message: "Membership billing is not enabled (RESEARCH_MEMBERSHIP_BILLING_ENABLED=false). Activation is disabled until billing verification is live.",
+      });
+    }
+    next();
+  };
+
+  app.post("/api/admin/research/applications/:id/begin-activation", requireSupabaseAdmin,
+    requireBillingEnabled, adminAction("payment_pending", undefined, async () => {}));
+
+  app.post("/api/admin/research/applications/:id/activate", requireSupabaseAdmin, requireBillingEnabled, async (req, res) => {
+    try {
+      if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Not configured" });
+      const row = await getApplication(String(req.params.id));
+      if (!row) return res.status(404).json({ ok: false, message: "Not found" });
+
+      // The applicant must have claimed their account: activation binds to a member.
+      const { data: member } = await getSupabaseAdmin()
+        .from("research_members")
+        .select("*")
+        .eq("application_id", row.id)
+        .maybeSingle();
+      if (!member) {
+        return res.status(409).json({ ok: false, message: "The applicant has not created their member account yet. Ask them to use the link in their approval email first." });
+      }
+
+      const adminEmail = (req as any).adminEmail as string | undefined;
+      // Both attestations are REQUIRED (fail closed): the $50 activation
+      // payment AND the active $25 monthly membership. A single click must
+      // never mint an active member or referral credit with anything
+      // unverified behind it (V3 section 71).
+      const ref = (field: string) =>
+        typeof req.body?.[field] === "string" && req.body[field].trim()
+          ? (req.body[field].trim().slice(0, 120) as string)
+          : null;
+      const paymentReference = ref("paymentReference");
+      const subscriptionReference = ref("subscriptionReference");
+      if (!paymentReference || !subscriptionReference) {
+        return res.status(400).json({
+          ok: false,
+          message: "Activation requires BOTH references: the verified $50 activation payment (paymentReference) and the active $25 monthly membership (subscriptionReference).",
+        });
+      }
+
+      const updated = await transition(
+        row,
+        "active",
+        { type: "admin", id: adminEmail ?? "admin" },
+        {},
+        {
+          reasonCode: "admin_verified_activation",
+          internalNote: `payment_reference=${paymentReference} subscription_reference=${subscriptionReference}`,
+        },
+      );
+
+      const activatedAt = new Date();
+      await getSupabaseAdmin()
+        .from("research_members")
+        .update({ status: "active", activated_at: activatedAt.toISOString(), updated_at: activatedAt.toISOString() })
+        .eq("id", (member as any).id);
+
+      // Referral qualification: the same idempotent service a Stripe webhook
+      // will call in Phase 5. Flag-gated inside; failures never block activation.
+      const qualification = await qualifyReferralForMembershipActivation({
+        applicationId: row.id,
+        memberId: (member as any).id,
+        paymentId: paymentReference,
+        activationTimestamp: activatedAt,
+      }).catch(() => ({ qualified: false, reason: "qualification_error" }));
+
+      res.json({ ok: true, application: updated, referral: qualification });
+    } catch (error: any) {
+      const code = error?.statusCode === 409 ? 409 : 500;
+      if (code !== 409) console.error("[research membership] activate error:", error);
+      res.status(code).json({ ok: false, message: code === 409 ? error.message : "The activation failed." });
+    }
+  });
 
   app.post("/api/admin/research/applications/:id/decline", requireSupabaseAdmin,
     adminAction("declined", () => ({ reviewed_at: new Date().toISOString() }), async (row) => {

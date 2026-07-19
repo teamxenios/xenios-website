@@ -16,19 +16,19 @@ const FAQ_ITEMS: FaqItem[] = [
       "xenios research is a membership-based platform for research materials, the Quantum research category, supplements, and human-led programs. Research products are provided for legitimate nonclinical research only, and access to them runs through an application and review process rather than an open storefront.",
   },
   {
-    question: "What does the $50 fee cover?",
+    question: "What does membership cost?",
     answer:
-      "The $50 fee is a one-time membership fee, charged only after your application is approved. It covers the human review of your application and the preparation of your Whole-Life Blueprint, the educational document built from the information you share.",
+      "Membership has two parts, both starting only after your application is approved: a one-time $50 activation fee and a $25 monthly membership. The activation fee covers the human review of your application and the preparation of your Whole-Life Blueprint; the monthly membership keeps your membership, your Blueprint, and your access active. There is no annual plan.",
   },
   {
     question: "Is the application free?",
     answer:
-      "Yes. Submitting an application costs nothing. You are only asked to pay the one-time $50 membership fee after your application has been reviewed and approved. If you are not approved, you pay nothing.",
+      "Yes. Submitting an application costs nothing. Payment begins only after your application has been reviewed and approved: the one-time $50 activation fee plus the $25 monthly membership. If you are not approved, you pay nothing.",
   },
   {
-    question: "Is the fee recurring?",
+    question: "Is any of it recurring?",
     answer:
-      "No. The $50 fee is charged once, after approval. There is no subscription, no renewal, and no recurring charge attached to membership.",
+      "The $50 activation fee is charged once, after approval. The $25 membership is monthly and recurring, and you can cancel it at any time by contacting support. There is no annual commitment.",
   },
   {
     question: "Does approval guarantee product access?",
@@ -58,7 +58,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Can I cancel or delete my account?",
     answer:
-      "Yes. You can close your account at any time by contacting support. Because the membership fee is one-time rather than recurring, there is no subscription to cancel.",
+      "Yes. You can cancel the monthly membership and close your account at any time by contacting support. The one-time activation fee is not a subscription and does not renew.",
   },
   {
     question: "What are research products?",
@@ -143,7 +143,7 @@ export default function Faq() {
     <>
       <SeoHead
         title="Frequently asked questions, xenios research"
-        description="Clear answers about membership, the one-time fee, the Whole-Life Blueprint, research products, Quantum, evidence classification, quality documents, and professional applications."
+        description="Clear answers about membership, the activation fee and monthly membership, the Whole-Life Blueprint, research products, Quantum, evidence classification, quality documents, and professional applications."
         path="/research/faq"
       />
       <PageIntro
@@ -177,7 +177,7 @@ export default function Faq() {
           </div>
           <div style={{ minWidth: 0 }}>
             <p className="body-l text-ink-2 max-w-[52ch]">
-              The application is free, the review is human, and the one-time fee applies only after approval. Read how membership works, or start the application now.
+              The application is free, the review is human, and payment begins only after approval. Read how membership works, or start the application now.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-4">
               <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>

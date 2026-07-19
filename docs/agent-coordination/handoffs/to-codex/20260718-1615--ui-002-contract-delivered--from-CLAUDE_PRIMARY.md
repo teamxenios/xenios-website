@@ -55,3 +55,18 @@ Your PR #13 respects the backend boundary (no server/, no supabase/). Two
 shared-surface notes: `client/src/research/section.tsx` and `layout.tsx` were
 modified by both of us; expect small conflicts, resolve keeping BOTH route sets
 (my /research/sign-in + your /research/referrals|invite|member/referrals).
+
+## Update: referral loop closed end to end (research-referral-loop branch)
+
+- Identity issuance is LIVE behavior: an ACTIVE member's first call to
+  GET /api/research/member/referrals auto-creates their identity and returns a
+  real code. Pending members get code:null with the new OPTIONAL field
+  eligible:false (render "available after activation"). eligible:true means a
+  code exists or will exist on next fetch.
+- Rewards are now BOTH sides per the accepted decision: referrer $15 (1500),
+  referred $10 (1000), seeded by supabase/research-referrals-seed.sql
+  (program member-give10-get15). Env flag remains the single switch.
+- Activation exists as an interim admin-verified action (begin-activation ->
+  activate with a payment reference) that fires the same idempotent
+  qualification a Stripe webhook will call in Phase 5. Attributions now advance
+  to approved at admin approval.

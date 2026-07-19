@@ -41,8 +41,12 @@ AGENTS.md > current repository architecture and tests > main-site design system.
 
 ## Environment quick reference
 
-Required in production: RESEARCH_ACCESS_PASSWORD (or RESEARCH_PUBLIC=true),
-RESEARCH_SESSION_SECRET. Referral flags (all default false):
-RESEARCH_REFERRALS_ENABLED, RESEARCH_APPLICANT_INVITES_ENABLED,
+Required in production: RESEARCH_ACCESS_PASSWORD and RESEARCH_SESSION_SECRET
+(research is private by canonical decision: RESEARCH_PUBLIC and
+RESEARCH_INDEXABLE stay false). Membership economics: $50 one-time activation
+plus $25 recurring monthly membership, no annual membership; the activation
+path is gated by RESEARCH_MEMBERSHIP_BILLING_ENABLED (default false; while
+false no member activates and no referral qualifies). Referral flags (all
+default false): RESEARCH_REFERRALS_ENABLED, RESEARCH_APPLICANT_INVITES_ENABLED,
 RESEARCH_MEMBER_CREDITS_ENABLED, RESEARCH_AMBASSADORS_ENABLED,
 RESEARCH_REFERRAL_SOCIAL_CARDS_ENABLED.

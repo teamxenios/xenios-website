@@ -27,7 +27,7 @@ const WHO_SHOULD_APPLY = [
 const FAQ_PREVIEW = [
   "Is the application free?",
   "When am I charged?",
-  "Is the $50 fee recurring?",
+  "What does membership cost?",
   "How long does review take?",
   "What information is required?",
   "Is xenios medical care?",
@@ -73,12 +73,12 @@ export default function Membership() {
       <section className="container-x section-y rule-top">
         <div className="card bg-paper-2 grid grid-cols-1 lg:grid-cols-2 gap-10 items-start" style={{ padding: "clamp(28px, 5vw, 56px)" }}>
           <div style={{ minWidth: 0 }}>
-            <p className="mono-cap text-ink-mute mb-4">The fee</p>
-            <h2 className="display-s max-w-[14ch]">$50 after approval.</h2>
+            <p className="mono-cap text-ink-mute mb-4">The cost</p>
+            <h2 className="display-s max-w-[16ch]">$50 to activate, $25 a month.</h2>
           </div>
           <div style={{ minWidth: 0 }}>
             <p className="body-l text-ink-2">
-              There is no fee to apply. Approved applicants pay a one-time $50 activation fee to open their membership and begin the in-depth onboarding.
+              There is no fee to apply. Approved applicants pay a one-time $50 activation fee to open their membership and begin the in-depth onboarding, and a $25 monthly membership keeps it active. There is no annual plan, and the monthly membership can be cancelled at any time.
             </p>
             <p className="mt-6 body-s text-ink-mute">
               Membership does not guarantee access to every product, service, or professional pathway. Eligibility may depend on location, product category, documentation, and applicable requirements.

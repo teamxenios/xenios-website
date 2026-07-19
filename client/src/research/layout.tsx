@@ -19,6 +19,7 @@ const LOCAL_NAV = [
   { label: "Quality", href: "/research/quality" },
   { label: "Learn", href: "/research/learn" },
   { label: "For Professionals", href: "/research/professionals" },
+  { label: "Sign in", href: "/research/sign-in" },
 ];
 
 function PasswordPage() {

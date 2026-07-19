@@ -57,7 +57,7 @@ export async function sendApplicationApproved(input: {
 
 Your application to xenios research has been approved.
 
-The next step is to activate your membership for $50. After activation, you will complete the in-depth Whole-Life Onboarding so xenios can build a plan around your actual schedule, environment, priorities, and available resources.
+The next step is to activate your membership: a one-time $50 activation fee plus the $25 monthly membership. After activation, you will complete the in-depth Whole-Life Onboarding so xenios can build a plan around your actual schedule, environment, priorities, and available resources.
 
 Activate your membership:
 ${statusUrl(input.token)}

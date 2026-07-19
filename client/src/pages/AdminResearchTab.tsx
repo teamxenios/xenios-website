@@ -153,6 +153,157 @@ export default function ResearchApplicationsTab({ token }: { token: string }) {
           </div>
         ))}
       </div>
+
+      <ReferralFraudQueue token={token} />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Referral fraud review queue (V3 section 71). Signals flag for review, never
+// auto-penalize; every action requires an audit reason.
+// ---------------------------------------------------------------------------
+
+type FraudFlag = {
+  id: string;
+  reason: string;
+  status: string;
+  attribution_id: string | null;
+  identity_id: string | null;
+  application_id: string | null;
+  detail: string | null;
+  resolution_action: string | null;
+  resolution_reason: string | null;
+  created_at: string;
+};
+
+const FRAUD_STATUSES = ["open", "information-requested", "escalated", "resolved"] as const;
+
+function ReferralFraudQueue({ token }: { token: string }) {
+  const [status, setStatus] = useState<string>("open");
+  const [flags, setFlags] = useState<FraudFlag[]>([]);
+  const [actions, setActions] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    adminFetch<{ flags: FraudFlag[]; actions: string[] }>(token, `/api/admin/research/referral-fraud?status=${status}`)
+      .then((body) => { setFlags(body.flags); setActions(body.actions); })
+      .catch((err: any) => setError(err?.message || "Could not load the fraud queue."))
+      .finally(() => setLoading(false));
+  }, [token, status]);
+
+  useEffect(() => { load(); }, [load]);
+
+  return (
+    <section className="mt-16">
+      <p className="mono-cap text-ink-mute mb-2">Referral fraud review</p>
+      <p className="body-s text-ink-mute mb-6 max-w-[64ch]">
+        Signals flag for human review and never auto-penalize. Every action records an audit reason.
+      </p>
+      <div className="flex flex-wrap gap-2 mb-6" role="tablist" aria-label="Fraud queue status">
+        {FRAUD_STATUSES.map((s) => (
+          <button
+            key={s}
+            type="button"
+            role="tab"
+            aria-selected={status === s}
+            onClick={() => setStatus(s)}
+            className={`chip ${status === s ? "bg-ink text-paper" : "text-ink-2"}`}
+            data-testid={`tab-fraud-status-${s}`}
+          >
+            {s.replace(/-/g, " ")}
+          </button>
+        ))}
+      </div>
+      {loading && <p className="body-s text-ink-mute">Loading...</p>}
+      {error && <p className="body-s" style={{ color: "var(--error)" }}>{error}</p>}
+      {!loading && !error && flags.length === 0 && (
+        <p className="body-m text-ink-mute">Nothing in this queue.</p>
+      )}
+      <div className="space-y-4">
+        {flags.map((flag) => (
+          <FraudFlagCard key={flag.id} token={token} flag={flag} actions={actions} onChanged={load} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function FraudFlagCard({ token, flag, actions, onChanged }: { token: string; flag: FraudFlag; actions: string[]; onChanged: () => void }) {
+  const [action, setAction] = useState("");
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit() {
+    if (!action || reason.trim().length < 5 || busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await adminFetch(token, `/api/admin/research/referral-fraud/${flag.id}/action`, {
+        method: "POST",
+        body: JSON.stringify({ action, reason: reason.trim() }),
+      });
+      onChanged();
+    } catch (err: any) {
+      setError(err?.message || "The action failed.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="card" data-testid={`row-fraud-flag-${flag.id}`}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="body-m font-700">{flag.reason.replace(/-/g, " ")}</p>
+        <p className="mono-label text-ink-mute">{fmtDate(flag.created_at)}</p>
+      </div>
+      {flag.detail && <p className="body-s text-ink-2 mt-2">{flag.detail}</p>}
+      {flag.status === "resolved" ? (
+        <p className="body-s text-ink-mute mt-3">
+          Resolved: {flag.resolution_action?.replace(/-/g, " ")} ({flag.resolution_reason})
+        </p>
+      ) : (
+        <div className="flex flex-wrap items-center gap-3 mt-4">
+          <select
+            value={action}
+            onChange={(e) => setAction(e.target.value)}
+            className="input-field"
+            style={{ maxWidth: 220 }}
+            aria-label="Reviewer action"
+            data-testid={`select-fraud-action-${flag.id}`}
+          >
+            <option value="">Choose an action</option>
+            {actions.map((a) => (
+              <option key={a} value={a}>{a.replace(/-/g, " ")}</option>
+            ))}
+          </select>
+          <input
+            type="text"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Audit reason (required)"
+            className="input-field"
+            style={{ flex: 1, minWidth: 220 }}
+            aria-label="Audit reason"
+            data-testid={`input-fraud-reason-${flag.id}`}
+          />
+          <button
+            type="button"
+            onClick={() => void submit()}
+            disabled={busy || !action || reason.trim().length < 5}
+            className="btn btn-primary"
+            style={{ height: 40, padding: "0 14px", fontSize: 13 }}
+            data-testid={`button-fraud-apply-${flag.id}`}
+          >
+            {busy ? "Applying" : "Apply"}
+          </button>
+        </div>
+      )}
+      {error && <p className="body-s mt-2" style={{ color: "var(--error)" }}>{error}</p>}
     </div>
   );
 }
@@ -167,6 +318,8 @@ function ApplicationDetail({ token, id, onChanged }: { token: string; id: string
   const [declineNote, setDeclineNote] = useState("");
   const [confirmApprove, setConfirmApprove] = useState(false);
   const [confirmDecline, setConfirmDecline] = useState(false);
+  const [paymentRef, setPaymentRef] = useState("");
+  const [subscriptionRef, setSubscriptionRef] = useState("");
 
   const loadDetail = useCallback(() => {
     adminFetch<{ application: AdminApplication; events: AdminEvent[] }>(token, `/api/admin/research/applications/${id}`)
@@ -205,6 +358,8 @@ function ApplicationDetail({ token, id, onChanged }: { token: string; id: string
 
   const canBeginReview = app.status === "submitted" || app.status === "resubmitted";
   const inReview = app.status === "under_review";
+  const awaitingActivation = app.status === "approved_pending_payment";
+  const paymentPending = app.status === "payment_pending";
 
   return (
     <div className="card mt-2 bg-paper-2" data-testid={`detail-application-${app.id}`}>
@@ -324,7 +479,57 @@ function ApplicationDetail({ token, id, onChanged }: { token: string; id: string
           </div>
         )}
 
-        {!canBeginReview && !inReview && (
+        {awaitingActivation && (
+          <div className="space-y-3">
+            <p className="body-s text-ink-2">
+              Approved and waiting on activation: the $50 one-time activation plus the $25 monthly membership. When billing is enabled and the applicant has paid, begin activation.
+            </p>
+            <button type="button" className="btn btn-primary" disabled={busy} onClick={() => void act("begin-activation")} data-testid="button-begin-activation">
+              {busy ? "Working" : "Begin activation"}
+            </button>
+          </div>
+        )}
+
+        {paymentPending && (
+          <div className="space-y-3">
+            <p className="body-s text-ink-2">
+              Activation requires BOTH verified references: the $50 activation payment and the active $25 monthly membership. The applicant must have created their member account first (the link in their approval email). No member becomes active until both are verified; activation then triggers referral qualification automatically.
+            </p>
+            <div>
+              <label htmlFor={`pay-ref-${app.id}`} className="mono-label text-ink-mute">Activation payment reference (required)</label>
+              <input
+                id={`pay-ref-${app.id}`}
+                className="input-field mt-1"
+                maxLength={120}
+                placeholder="e.g. zelle-0718-SB or receipt id for the $50 activation"
+                value={paymentRef}
+                onChange={(e) => setPaymentRef(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor={`sub-ref-${app.id}`} className="mono-label text-ink-mute">Monthly membership reference (required)</label>
+              <input
+                id={`sub-ref-${app.id}`}
+                className="input-field mt-1"
+                maxLength={120}
+                placeholder="e.g. the active $25 monthly subscription id"
+                value={subscriptionRef}
+                onChange={(e) => setSubscriptionRef(e.target.value)}
+              />
+            </div>
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={busy || !paymentRef.trim() || !subscriptionRef.trim()}
+              onClick={() => void act("activate", { paymentReference: paymentRef.trim(), subscriptionReference: subscriptionRef.trim() })}
+              data-testid="button-activate-membership"
+            >
+              {busy ? "Activating" : "Mark activated"}
+            </button>
+          </div>
+        )}
+
+        {!canBeginReview && !inReview && !awaitingActivation && !paymentPending && (
           <p className="body-s text-ink-mute">
             No actions available in the {STATUS_LABEL[app.status] ?? app.status} state.
             {app.status === "more_information_requested" && " The applicant was emailed; the application returns to the queue when they resubmit."}

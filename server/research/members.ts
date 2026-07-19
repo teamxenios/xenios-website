@@ -2,7 +2,8 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { getSupabaseAdmin, getSupabaseAnon, supabaseConfigured } from "../supabase";
 import { readStatusToken } from "./membership";
-import { getLedgerBalance, referralsEnabled } from "./referrals";
+import { createReferralIdentity, getLedgerBalance, referralsEnabled } from "./referrals";
+import { rateLimitHit, requestIp } from "./rate-limit";
 import type { ReferralDashboardState } from "@shared/research/referral-types";
 
 // ---------------------------------------------------------------------------
@@ -31,19 +32,10 @@ const claimSchema = z.object({
   password: z.string().min(10).max(200),
 });
 
-// Small fixed-window limiter on claim attempts (per IP).
-const claimBuckets = new Map<string, { count: number; resetAt: number }>();
-function allowClaim(req: Request): boolean {
-  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
-  const now = Date.now();
-  const bucket = claimBuckets.get(ip);
-  if (!bucket || bucket.resetAt < now) {
-    claimBuckets.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
-    return true;
-  }
-  if (bucket.count >= 10) return false;
-  bucket.count += 1;
-  return true;
+// Small fixed-window limiter on claim attempts (per IP), durable across
+// instances via research_rate_limit_hit with an in-memory fallback.
+async function allowClaim(req: Request): Promise<boolean> {
+  return rateLimitHit(`research-claim:${requestIp(req as any)}`, 600, 10);
 }
 
 type MemberRow = {
@@ -90,7 +82,7 @@ export function registerMemberApi(app: Express) {
   app.post("/api/research/member/claim", async (req, res) => {
     try {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
-      if (!allowClaim(req)) return res.status(429).json({ ok: false, message: "Too many attempts. Try again in a few minutes." });
+      if (!(await allowClaim(req))) return res.status(429).json({ ok: false, message: "Too many attempts. Try again in a few minutes." });
       const parsed = claimSchema.safeParse(req.body);
       if (!parsed.success) {
         return res.status(400).json({ ok: false, message: "Enter the link token and a password of at least 10 characters." });
@@ -176,13 +168,36 @@ export function registerMemberApi(app: Express) {
     if (!referralsEnabled()) return res.json({ ok: true, referrals: empty });
 
     try {
-      const { data: identity } = await getSupabaseAdmin()
+      let { data: identity } = await getSupabaseAdmin()
         .from(IDENTITIES)
         .select("*")
         .eq("owner_email", member.email)
         .eq("status", "active")
         .maybeSingle();
-      if (!identity) return res.json({ ok: true, referrals: { ...empty, enabled: true } });
+
+      // Issue the member's referral identity on first eligible access. Only
+      // ACTIVE members share; pending members see "available after activation".
+      if (!identity && member.status === "active") {
+        const created = await createReferralIdentity({
+          ownerType: "member",
+          ownerId: member.id,
+          ownerEmail: member.email,
+        });
+        if (created) {
+          const { data: fresh } = await getSupabaseAdmin()
+            .from(IDENTITIES)
+            .select("*")
+            .eq("id", created.id)
+            .maybeSingle();
+          identity = fresh;
+        }
+      }
+      if (!identity) {
+        return res.json({
+          ok: true,
+          referrals: { ...empty, enabled: true, eligible: member.status === "active" },
+        });
+      }
 
       const { data: attributions } = await getSupabaseAdmin()
         .from(ATTRIBUTIONS)
@@ -204,6 +219,7 @@ export function registerMemberApi(app: Express) {
       const state: ReferralDashboardState = {
         enabled: true,
         code: (identity as any).code,
+        eligible: true,
         counts: { visits: rows.length, applications, qualified },
         creditAvailableCents: await getLedgerBalance((identity as any).owner_id),
         creditPendingCents: pending,
