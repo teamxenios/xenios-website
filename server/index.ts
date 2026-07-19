@@ -4,6 +4,9 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
 import { researchPageGate, registerResearchApi } from "./research";
 import { registerMembershipApi } from "./research/membership";
+import { registerMemberApi } from "./research/members";
+import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
+import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
@@ -97,6 +100,7 @@ app.use((req, res, next) => {
 app.use(researchPageGate);
 registerResearchApi(app);
 registerMembershipApi(app);
+registerMemberApi(app);
 
 // Startup config diagnostic (booleans only, never values): makes a fail-closed
 // 503 on /research immediately explainable from the deploy logs.
@@ -106,6 +110,11 @@ log(
     `publicMode=${process.env.RESEARCH_PUBLIC === "true"} nodeEnv=${process.env.NODE_ENV || "unset"}`,
   "research",
 );
+
+// Email provider diagnostics (booleans only) + the durable notification worker.
+registerOutboxAdmin(app);
+void logEmailStartupDiagnostics(log).catch(() => {});
+startOutboxWorker(log);
 
 (async () => {
   await registerRoutes(httpServer, app);

@@ -161,6 +161,9 @@ export default function Apply() {
             <p className="body-s text-ink mt-6 font-700" data-testid="text-check-email">
               Check your email for your secure status link.
             </p>
+            <p className="body-s text-ink-mute mt-3">
+              A secure status email should arrive within a few minutes. Check spam or promotions if you do not see it. You can request a new secure link without submitting another application.
+            </p>
           </div>
         </section>
       </>

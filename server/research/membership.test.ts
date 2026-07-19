@@ -13,6 +13,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   apps: [] as any[],
   events: [] as any[],
+  outbox: [] as any[],
+  attempts: [] as any[],
 }));
 
 const emails = vi.hoisted(() => ({
@@ -26,22 +28,38 @@ const emails = vi.hoisted(() => ({
 
 vi.mock("../supabase", () => {
   function query(table: string) {
-    const list = table === "research_applications" ? state.apps : state.events;
+    const list =
+      table === "research_applications"
+        ? state.apps
+        : table === "research_notification_outbox"
+          ? state.outbox
+          : table === "research_notification_attempts"
+            ? state.attempts
+            : state.events;
     let mode: "select" | "insert" | "update" = "select";
     let insertPayload: any = null;
     let updatePayload: any = null;
     const filters: Array<[string, any]> = [];
+    const lteFilters: Array<[string, any]> = [];
     let notNullCol: string | null = null;
     let limitN: number | null = null;
 
-    const applyFilters = (rows: any[]) => rows.filter((r) => filters.every(([c, v]) => r[c] === v));
+    const applyFilters = (rows: any[]) =>
+      rows.filter((r) => filters.every(([c, v]) => r[c] === v) && lteFilters.every(([c, v]) => r[c] <= v));
     const finish = () => {
       if (mode === "insert") {
+        if (table === "research_notification_outbox" && insertPayload?.event_key &&
+            list.some((r: any) => r.event_key === insertPayload.event_key)) {
+          return { data: null, error: { message: "duplicate key value violates unique constraint" } };
+        }
         const row = {
           id: crypto.randomUUID(),
           created_at: new Date().toISOString(),
           submitted_at: new Date().toISOString(),
           approval_expires_at: null,
+          ...(table === "research_notification_outbox"
+            ? { status: "pending", attempt_count: 0, next_attempt_at: new Date(0).toISOString() }
+            : {}),
           ...insertPayload,
         };
         list.push(row);
@@ -65,6 +83,7 @@ vi.mock("../supabase", () => {
       update: (p: any) => { mode = "update"; updatePayload = p; return api; },
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
       in: (c: string, vs: any[]) => { filters.push([c, vs[0]]); return api; },
+      lte: (c: string, v: any) => { lteFilters.push([c, v]); return api; },
       not: (c: string) => { notNullCol = c; return api; },
       order: () => api,
       limit: (n: number) => { limitN = n; return api; },
@@ -143,6 +162,8 @@ function seedApplication(overrides: Record<string, unknown> = {}) {
 beforeEach(() => {
   state.apps.length = 0;
   state.events.length = 0;
+  state.outbox.length = 0;
+  state.attempts.length = 0;
   vi.clearAllMocks();
 });
 

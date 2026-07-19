@@ -5,6 +5,8 @@ import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
 import { sessionSecretOk } from "./index";
 import { linkApplicationToAttribution } from "./referrals";
+import { enqueueNotification, runOutboxTick } from "./outbox";
+import { adminRecipients } from "../services/email-config";
 import {
   APPLICATION_INTERESTS,
   canTransition,
@@ -204,6 +206,31 @@ async function transition(
   return data as ApplicationRow;
 }
 
+// Durable-first notification: enqueue in the outbox, then drain immediately so
+// the happy path still delivers within the request. If the outbox itself is
+// unavailable, fall back to the direct send so no notification is ever ONLY
+// dependent on the queue. A failed send is retried by the worker either way.
+async function notify(
+  input: { eventKey: string; eventType: string; templateKey: string; recipient: string; applicationId?: string | null; payload?: Record<string, unknown> },
+  fallback: () => Promise<unknown>,
+) {
+  let queued = false;
+  try {
+    queued = await enqueueNotification(input);
+  } catch {
+    queued = false;
+  }
+  if (queued) {
+    try {
+      await runOutboxTick();
+    } catch {
+      /* the worker interval will retry */
+    }
+  } else {
+    void fallback().catch(() => {});
+  }
+}
+
 function statusView(row: ApplicationRow, memberVisibleNote: string | null): ApplicationStatusView {
   return {
     status: row.status,
@@ -252,11 +279,17 @@ export function registerMembershipApi(app: Express) {
         // already on file, and return the same generic response as a brand-new
         // submission. Matching an email never updates anything; updates require
         // a valid signed status token (see /resubmit).
-        void sendStatusLink({
-          email: existing.email,
-          firstName: existing.first_name,
-          token: makeStatusToken(existing.id),
-        }).catch(() => {});
+        await notify(
+          {
+            eventKey: `status-link:${existing.id}:${Math.floor(Date.now() / 600000)}`,
+            eventType: "status_link_requested_applicant",
+            templateKey: "applicant_status_link",
+            recipient: existing.email,
+            applicationId: existing.id,
+            payload: { firstName: existing.first_name },
+          },
+          () => sendStatusLink({ email: existing.email, firstName: existing.first_name, token: makeStatusToken(existing.id) }),
+        );
         return res.json({ ok: true });
       }
 
@@ -298,14 +331,36 @@ export function registerMembershipApi(app: Express) {
       });
 
       // The status token travels ONLY by email to the applicant's own address;
-      // it is never returned to the browser, logged, or stored client-side.
-      const token = makeStatusToken(row.id);
-      void sendApplicationReceived({ email: row.email, firstName: row.first_name, token }).catch(() => {});
-      void sendInternalApplicationAlert({
-        email: row.email,
-        name: `${row.first_name} ${row.last_name}`,
-        applicantType: a.applicantType,
-      }).catch(() => {});
+      // it is minted at SEND time by the outbox and never stored or returned.
+      await notify(
+        {
+          eventKey: `application-received:${row.id}`,
+          eventType: "application_received_applicant",
+          templateKey: "applicant_received",
+          recipient: row.email,
+          applicationId: row.id,
+          payload: { firstName: row.first_name },
+        },
+        () => sendApplicationReceived({ email: row.email, firstName: row.first_name, token: makeStatusToken(row.id) }),
+      );
+      for (const admin of adminRecipients()) {
+        await notify(
+          {
+            eventKey: `admin-new-application:${row.id}:${admin}`,
+            eventType: "application_received_admin",
+            templateKey: "admin_new_application",
+            recipient: admin,
+            applicationId: row.id,
+            payload: { applicantEmail: row.email, applicantName: `${row.first_name} ${row.last_name}`, applicantType: a.applicantType },
+          },
+          () =>
+            sendInternalApplicationAlert({
+              email: row.email,
+              name: `${row.first_name} ${row.last_name}`,
+              applicantType: a.applicantType,
+            }),
+        );
+      }
 
       // Referral attribution (flag-gated no-op while referrals are disabled;
       // never affects the application itself). Self-referral is recorded as
@@ -340,11 +395,17 @@ export function registerMembershipApi(app: Express) {
       if (verdict === "ok") {
         const existing = await getApplicationByEmail(parsed.data.email);
         if (existing) {
-          void sendStatusLink({
-            email: existing.email,
-            firstName: existing.first_name,
-            token: makeStatusToken(existing.id),
-          }).catch(() => {});
+          await notify(
+            {
+              eventKey: `status-link:${existing.id}:${Math.floor(Date.now() / 600000)}`,
+              eventType: "status_link_requested_applicant",
+              templateKey: "applicant_status_link",
+              recipient: existing.email,
+              applicationId: existing.id,
+              payload: { firstName: existing.first_name },
+            },
+            () => sendStatusLink({ email: existing.email, firstName: existing.first_name, token: makeStatusToken(existing.id) }),
+          );
         }
       }
       // Generic either way: existence is never confirmed or denied.
@@ -508,12 +569,17 @@ export function registerMembershipApi(app: Express) {
   app.post("/api/admin/research/applications/:id/request-info", requireSupabaseAdmin,
     adminAction("more_information_requested", undefined, async (row, body) => {
       const note = typeof body?.memberVisibleNote === "string" ? body.memberVisibleNote : null;
-      void sendMoreInformationRequested({
-        email: row.email,
-        firstName: row.first_name,
-        token: makeStatusToken(row.id),
-        note,
-      }).catch(() => {});
+      await notify(
+        {
+          eventKey: `more-info:${row.id}:${Date.now()}`,
+          eventType: "more_information_requested_applicant",
+          templateKey: "applicant_more_info",
+          recipient: row.email,
+          applicationId: row.id,
+          payload: { firstName: row.first_name, note },
+        },
+        () => sendMoreInformationRequested({ email: row.email, firstName: row.first_name, token: makeStatusToken(row.id), note }),
+      );
     }));
 
   app.post("/api/admin/research/applications/:id/approve", requireSupabaseAdmin,
@@ -524,17 +590,38 @@ export function registerMembershipApi(app: Express) {
         return { reviewed_at: new Date().toISOString(), approval_expires_at: expires.toISOString() };
       },
       async (row) => {
-        void sendApplicationApproved({
-          email: row.email,
-          firstName: row.first_name,
-          token: makeStatusToken(row.id),
-          approvalExpiresAt: new Date(row.approval_expires_at as string),
-        }).catch(() => {});
+        await notify(
+          {
+            eventKey: `approved:${row.id}`,
+            eventType: "application_approved_applicant",
+            templateKey: "applicant_approved",
+            recipient: row.email,
+            applicationId: row.id,
+            payload: { firstName: row.first_name, approvalExpiresAt: row.approval_expires_at },
+          },
+          () =>
+            sendApplicationApproved({
+              email: row.email,
+              firstName: row.first_name,
+              token: makeStatusToken(row.id),
+              approvalExpiresAt: new Date(row.approval_expires_at as string),
+            }),
+        );
       },
     ));
 
   app.post("/api/admin/research/applications/:id/decline", requireSupabaseAdmin,
     adminAction("declined", () => ({ reviewed_at: new Date().toISOString() }), async (row) => {
-      void sendApplicationDeclined({ email: row.email, firstName: row.first_name }).catch(() => {});
+      await notify(
+        {
+          eventKey: `declined:${row.id}`,
+          eventType: "application_declined_applicant",
+          templateKey: "applicant_declined",
+          recipient: row.email,
+          applicationId: row.id,
+          payload: { firstName: row.first_name },
+        },
+        () => sendApplicationDeclined({ email: row.email, firstName: row.first_name }),
+      );
     }));
 }
