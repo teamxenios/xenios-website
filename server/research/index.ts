@@ -121,6 +121,14 @@ function allowAttempt(req: Request): boolean {
 // when the gate is unconfigured. Register BEFORE the SPA catch-all.
 // ---------------------------------------------------------------------------
 export function researchPageGate(req: Request, res: Response, next: NextFunction) {
+  // Front door: once research is PUBLIC, the root domain serves the research
+  // experience as the main page (Samuel's direction, 2026-07-18; supersedes
+  // the V3 default of keeping the professional homepage at root). While the
+  // review password gate is on, the root page stays untouched so the public
+  // site never hides behind a password.
+  if (req.path === "/" && publicMode() && (req.method === "GET" || req.method === "HEAD")) {
+    return res.redirect(302, "/research");
+  }
   const isResearchPath = req.path === "/research" || req.path.startsWith("/research/");
   if (!isResearchPath) return next();
   if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");
