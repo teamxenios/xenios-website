@@ -161,29 +161,49 @@ export async function qualifyReferralForMembershipActivation(input: {
     .maybeSingle();
   if (!program) return { qualified: false, reason: "program_missing" };
 
-  // 7-9. held reward, idempotent by the activation key
-  const idempotencyKey = `referral-activation:${input.memberId}:${input.paymentId}`;
+  // 7-9. held rewards for BOTH sides (Give $10 / Get $15), each idempotent by
+  // the activation key. A webhook retry duplicates neither.
   const holdDays = (program as any).hold_days ?? 14;
   const availableAt = new Date(input.activationTimestamp.getTime() + holdDays * 24 * 60 * 60 * 1000);
-  const { error: rewardError } = await getSupabaseAdmin().from(REWARDS).insert({
-    attribution_id: attribution.id,
-    recipient_type: "referrer",
-    recipient_member_id: (identity as any).owner_id,
-    reward_type: (program as any).referrer_reward_type ?? "credit",
-    value_cents: (program as any).referrer_reward_value_cents ?? null,
-    currency: (program as any).currency ?? "usd",
-    status: "held",
-    idempotency_key: idempotencyKey,
-    qualifies_at: input.activationTimestamp.toISOString(),
-    available_at: availableAt.toISOString(),
-  });
-  if (rewardError) {
-    // unique violation on the idempotency key = already processed; anything else is a real failure
-    if (String(rewardError.message ?? "").toLowerCase().includes("duplicate")) {
-      return { qualified: false, reason: "duplicate_activation_event" };
+  const rewards: Array<Record<string, unknown>> = [
+    {
+      attribution_id: attribution.id,
+      recipient_type: "referrer",
+      recipient_member_id: (identity as any).owner_id,
+      reward_type: (program as any).referrer_reward_type ?? "credit",
+      value_cents: (program as any).referrer_reward_value_cents ?? null,
+      currency: (program as any).currency ?? "usd",
+      status: "held",
+      idempotency_key: `referral-activation:${input.memberId}:${input.paymentId}:referrer`,
+      qualifies_at: input.activationTimestamp.toISOString(),
+      available_at: availableAt.toISOString(),
+    },
+  ];
+  const referredType = (program as any).referred_reward_type ?? "none";
+  if (referredType !== "none" && (program as any).referred_reward_value_cents) {
+    rewards.push({
+      attribution_id: attribution.id,
+      recipient_type: "referred",
+      recipient_member_id: input.memberId,
+      reward_type: referredType,
+      value_cents: (program as any).referred_reward_value_cents,
+      currency: (program as any).currency ?? "usd",
+      status: "held",
+      idempotency_key: `referral-activation:${input.memberId}:${input.paymentId}:referred`,
+      qualifies_at: input.activationTimestamp.toISOString(),
+      available_at: availableAt.toISOString(),
+    });
+  }
+  for (const reward of rewards) {
+    const { error: rewardError } = await getSupabaseAdmin().from(REWARDS).insert(reward);
+    if (rewardError) {
+      // unique violation on the idempotency key = already processed; anything else is a real failure
+      if (String(rewardError.message ?? "").toLowerCase().includes("duplicate")) {
+        return { qualified: false, reason: "duplicate_activation_event" };
+      }
+      console.error("[referrals] reward insert failed:", rewardError.message);
+      return { qualified: false, reason: "reward_insert_failed" };
     }
-    console.error("[referrals] reward insert failed:", rewardError.message);
-    return { qualified: false, reason: "reward_insert_failed" };
   }
 
   // 10. audit via the attribution state machine
@@ -236,6 +256,21 @@ export async function promoteHeldRewards(now: Date): Promise<number> {
     promoted += 1;
   }
   return promoted;
+}
+
+// Advance an attribution when its application is approved (visibility only;
+// qualification still happens exclusively at verified activation).
+export async function markAttributionApproved(applicationId: string): Promise<void> {
+  try {
+    if (!referralsEnabled() || !supabaseConfigured()) return;
+    await getSupabaseAdmin()
+      .from(ATTRIBUTIONS)
+      .update({ status: "approved", updated_at: new Date().toISOString() })
+      .eq("application_id", applicationId)
+      .eq("status", "application-submitted");
+  } catch (err) {
+    console.error("[referrals] attribution approve mark failed:", err);
+  }
 }
 
 export async function getLedgerBalance(memberId: string): Promise<number> {

@@ -15,6 +15,7 @@ const state = vi.hoisted(() => ({
   events: [] as any[],
   outbox: [] as any[],
   attempts: [] as any[],
+  members: [] as any[],
 }));
 
 const emails = vi.hoisted(() => ({
@@ -35,7 +36,9 @@ vi.mock("../supabase", () => {
           ? state.outbox
           : table === "research_notification_attempts"
             ? state.attempts
-            : state.events;
+            : table === "research_members"
+              ? state.members
+              : state.events;
     let mode: "select" | "insert" | "update" = "select";
     let insertPayload: any = null;
     let updatePayload: any = null;
@@ -164,6 +167,7 @@ beforeEach(() => {
   state.events.length = 0;
   state.outbox.length = 0;
   state.attempts.length = 0;
+  state.members.length = 0;
   vi.clearAllMocks();
 });
 
@@ -344,5 +348,54 @@ describe("resend rate limiting", () => {
     expect(real.status).toBe(200);
     expect(fake.status).toBe(200);
     expect(fake.body).toEqual(real.body);
+  });
+});
+
+describe("admin activation (interim, admin-verified)", () => {
+  it("begin-activation moves approved -> payment_pending", async () => {
+    const row = seedApplication({ status: "approved_pending_payment" });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/begin-activation`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send({});
+    expect(res.status).toBe(200);
+    expect(row.status).toBe("payment_pending");
+  });
+
+  it("activate refuses when the applicant has not claimed a member account", async () => {
+    const row = seedApplication({ status: "payment_pending" });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/activate`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send({});
+    expect(res.status).toBe(409);
+    expect(row.status).toBe("payment_pending");
+  });
+
+  it("activate flips application and member to active and fires the referral hook", async () => {
+    const row = seedApplication({ status: "payment_pending" });
+    state.members.push({ id: "mem-1", application_id: row.id, auth_user_id: "auth-1", email: row.email, first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/activate`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send({ paymentReference: "manual-check-001" });
+    expect(res.status).toBe(200);
+    expect(row.status).toBe("active");
+    expect(state.members[0].status).toBe("active");
+    // Referrals are flag-off in this suite: the hook ran and reported disabled.
+    expect(res.body.referral.reason).toBe("referrals_disabled");
+    // The transition was audited with the payment reference internal-only.
+    expect(state.events.some((e) => e.new_status === "active" && String(e.internal_note).includes("manual-check-001"))).toBe(true);
+  });
+
+  it("activate is not allowed from the wrong state", async () => {
+    const row = seedApplication({ status: "under_review" });
+    state.members.push({ id: "mem-1", application_id: row.id, auth_user_id: "auth-1", email: row.email, first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/activate`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send({});
+    expect(res.status).toBe(409);
+    expect(row.status).toBe("under_review");
   });
 });

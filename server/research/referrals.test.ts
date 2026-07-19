@@ -103,7 +103,9 @@ function seedProgram(overrides: Record<string, unknown> = {}) {
     hold_days: 14,
     attribution_days: 30,
     referrer_reward_type: "credit",
-    referrer_reward_value_cents: 2500,
+    referred_reward_type: "credit",
+    referrer_reward_value_cents: 1500,
+    referred_reward_value_cents: 1000,
     currency: "usd",
     ...overrides,
   };
@@ -198,25 +200,30 @@ describe("qualification", () => {
     return { identity, applicationId };
   }
 
-  it("creates one HELD reward on activation and is idempotent per member+payment", async () => {
+  it("creates HELD rewards for BOTH sides (Give $10, Get $15) and is idempotent per member+payment", async () => {
     const { identity, applicationId } = await seedSubmittedAttribution();
     const activation = new Date();
     const first = await qualifyReferralForMembershipActivation({ applicationId, memberId: "m1", paymentId: "pay-1", activationTimestamp: activation });
     expect(first.qualified).toBe(true);
-    expect(state.tables.referral_rewards).toHaveLength(1);
-    const reward = state.tables.referral_rewards[0];
-    expect(reward.status).toBe("held");
-    expect(reward.recipient_member_id).toBe(identity.owner_id);
-    expect(reward.value_cents).toBe(2500);
-    expect(new Date(reward.available_at).getTime()).toBe(activation.getTime() + 14 * 86400000);
+    expect(state.tables.referral_rewards).toHaveLength(2);
+    const referrer = state.tables.referral_rewards.find((r) => r.recipient_type === "referrer");
+    const referred = state.tables.referral_rewards.find((r) => r.recipient_type === "referred");
+    expect(referrer.status).toBe("held");
+    expect(referrer.recipient_member_id).toBe(identity.owner_id);
+    expect(referrer.value_cents).toBe(1500);
+    expect(referrer.idempotency_key).toBe("referral-activation:m1:pay-1:referrer");
+    expect(referred.recipient_member_id).toBe("m1");
+    expect(referred.value_cents).toBe(1000);
+    expect(referred.idempotency_key).toBe("referral-activation:m1:pay-1:referred");
+    expect(new Date(referrer.available_at).getTime()).toBe(activation.getTime() + 14 * 86400000);
     expect(state.tables.referral_attributions[0].status).toBe("qualified");
 
-    // Webhook retry: same member + payment must not create a second reward.
+    // Webhook retry: same member + payment must not create ANY new reward.
     state.tables.referral_attributions[0].status = "activated"; // even if state drifted
     const retry = await qualifyReferralForMembershipActivation({ applicationId, memberId: "m1", paymentId: "pay-1", activationTimestamp: activation });
     expect(retry.qualified).toBe(false);
     expect(retry.reason).toBe("duplicate_activation_event");
-    expect(state.tables.referral_rewards).toHaveLength(1);
+    expect(state.tables.referral_rewards).toHaveLength(2);
   });
 
   it("refuses an expired attribution window", async () => {
@@ -247,18 +254,16 @@ describe("hold promotion and ledger", () => {
     await qualifyReferralForMembershipActivation({ applicationId, memberId: "m1", paymentId: "pay-1", activationTimestamp: activation });
 
     const promoted = await promoteHeldRewards(new Date());
-    expect(promoted).toBe(1);
-    expect(state.tables.referral_rewards[0].status).toBe("available");
-    expect(state.tables.member_credit_ledger).toHaveLength(1);
-    expect(state.tables.member_credit_ledger[0].entry_type).toBe("referral-earned");
-    expect(state.tables.member_credit_ledger[0].amount_cents).toBe(2500);
-    expect(state.tables.member_credit_ledger[0].balance_after_cents).toBe(2500);
-    expect(await getLedgerBalance(identity.owner_id)).toBe(2500);
+    expect(promoted).toBe(2);
+    expect(state.tables.referral_rewards.every((r) => r.status === "available")).toBe(true);
+    expect(state.tables.member_credit_ledger).toHaveLength(2);
+    expect(await getLedgerBalance(identity.owner_id)).toBe(1500);
+    expect(await getLedgerBalance("m1")).toBe(1000);
 
-    // Second run: nothing to promote, no duplicate ledger entry.
+    // Second run: nothing to promote, no duplicate ledger entries.
     const again = await promoteHeldRewards(new Date());
     expect(again).toBe(0);
-    expect(state.tables.member_credit_ledger).toHaveLength(1);
+    expect(state.tables.member_credit_ledger).toHaveLength(2);
   });
 
   it("does not promote rewards still inside the hold window", async () => {
@@ -270,7 +275,7 @@ describe("hold promotion and ledger", () => {
 
     const promoted = await promoteHeldRewards(new Date());
     expect(promoted).toBe(0);
-    expect(state.tables.referral_rewards[0].status).toBe("held");
+    expect(state.tables.referral_rewards.every((r) => r.status === "held")).toBe(true);
     expect(state.tables.member_credit_ledger).toHaveLength(0);
   });
 });
