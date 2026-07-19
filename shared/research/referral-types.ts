@@ -46,6 +46,9 @@ export type PublicReferrerView = {
 export type ReferralDashboardState = {
   enabled: boolean;
   code: string | null;
+  // Optional (additive): false while the member has not activated yet. A null
+  // code with eligible === false renders as "available after activation".
+  eligible?: boolean;
   counts: {
     visits: number;
     applications: number;

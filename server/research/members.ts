@@ -2,7 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { getSupabaseAdmin, getSupabaseAnon, supabaseConfigured } from "../supabase";
 import { readStatusToken } from "./membership";
-import { getLedgerBalance, referralsEnabled } from "./referrals";
+import { createReferralIdentity, getLedgerBalance, referralsEnabled } from "./referrals";
 import type { ReferralDashboardState } from "@shared/research/referral-types";
 
 // ---------------------------------------------------------------------------
@@ -176,13 +176,36 @@ export function registerMemberApi(app: Express) {
     if (!referralsEnabled()) return res.json({ ok: true, referrals: empty });
 
     try {
-      const { data: identity } = await getSupabaseAdmin()
+      let { data: identity } = await getSupabaseAdmin()
         .from(IDENTITIES)
         .select("*")
         .eq("owner_email", member.email)
         .eq("status", "active")
         .maybeSingle();
-      if (!identity) return res.json({ ok: true, referrals: { ...empty, enabled: true } });
+
+      // Issue the member's referral identity on first eligible access. Only
+      // ACTIVE members share; pending members see "available after activation".
+      if (!identity && member.status === "active") {
+        const created = await createReferralIdentity({
+          ownerType: "member",
+          ownerId: member.id,
+          ownerEmail: member.email,
+        });
+        if (created) {
+          const { data: fresh } = await getSupabaseAdmin()
+            .from(IDENTITIES)
+            .select("*")
+            .eq("id", created.id)
+            .maybeSingle();
+          identity = fresh;
+        }
+      }
+      if (!identity) {
+        return res.json({
+          ok: true,
+          referrals: { ...empty, enabled: true, eligible: member.status === "active" },
+        });
+      }
 
       const { data: attributions } = await getSupabaseAdmin()
         .from(ATTRIBUTIONS)
@@ -204,6 +227,7 @@ export function registerMemberApi(app: Express) {
       const state: ReferralDashboardState = {
         enabled: true,
         code: (identity as any).code,
+        eligible: true,
         counts: { visits: rows.length, applications, qualified },
         creditAvailableCents: await getLedgerBalance((identity as any).owner_id),
         creditPendingCents: pending,
