@@ -1,6 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind v4 entry. The old v3 directives (@tailwind base/components/
+   utilities) silently emitted almost nothing under Tailwind 4, so every
+   spacing utility in the codebase (mt-*, px-*, gap-*, responsive variants)
+   computed to 0px in production. This imports the v4 theme tokens and
+   utilities. PREFLIGHT IS DELIBERATELY OMITTED: the site was authored and
+   QA'd without a global reset, and introducing one now would change every
+   element's defaults. */
+@layer theme, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
 
 /* ============================================================
    xenios v6 — Design tokens & primitives
