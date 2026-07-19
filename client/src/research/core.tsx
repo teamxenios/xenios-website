@@ -58,7 +58,24 @@ export async function fetchPolicies(): Promise<Record<string, Policy> | null> {
 
 export type OrderResult = { ok: boolean; message?: string; orderId?: string; totalCents?: number };
 export async function submitOrder(payload: unknown): Promise<OrderResult> {
-  const { body } = await postJson<OrderResult>("/api/research/orders", payload);
+  // Orders are ACTIVE-member content (requireActiveMember server-side, since
+  // the gateway architecture): attach the member's Supabase JWT, mirroring
+  // loadCatalog. Without it every checkout dies at 401 before the handler.
+  let auth: Record<string, string> = {};
+  try {
+    const supabase = await getSupabaseBrowser();
+    const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token ?? null : null;
+    if (token) auth = { Authorization: "Bearer " + token };
+  } catch {
+    /* no session: the server answers 401 and the UI shows the sign-in message */
+  }
+  const res = await fetch("/api/research/orders", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json", ...auth },
+    body: JSON.stringify(payload),
+  });
+  const body = (await res.json().catch(() => null)) as OrderResult | null;
   return body ?? { ok: false, message: "The order could not be processed. Please try again." };
 }
 

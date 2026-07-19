@@ -53,9 +53,21 @@ export default function ResetPassword() {
     setError(null);
     setNotice(null);
     try {
+      // Attach the Supabase session token when one exists (e.g. a visitor who
+      // arrived from a recovery link but fell back to request mode): the
+      // member-authed prefixes accept a bearer where the review cookie is
+      // absent, so the request still reaches the endpoint.
+      let auth: Record<string, string> = {};
+      try {
+        const supabase = await getSupabaseBrowser();
+        const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token ?? null : null;
+        if (token) auth = { Authorization: "Bearer " + token };
+      } catch {
+        /* cookie path still works */
+      }
       const res = await fetch("/api/research/member/forgot-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...auth },
         credentials: "same-origin",
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
       });

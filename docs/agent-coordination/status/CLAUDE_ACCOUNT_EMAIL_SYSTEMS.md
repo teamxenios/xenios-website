@@ -1,12 +1,65 @@
 # CLAUDE_ACCOUNT_EMAIL_SYSTEMS status
 
-- Timestamp: 2026-07-19
+- Timestamp: 2026-07-19 (rebased)
 - Role: account, authentication, email, membership-state, access-control,
   notification, and operational reliability for xenios research.
 - Branch: claude/research-account-email-systems (worktree
-  xenios-research-account-email-systems), based on origin/main 8b94410
-  (the PR #22 merge). PR targets main directly; NOT stacked.
+  xenios-research-account-email-systems), REBASED onto origin/main 468466f
+  (PR #23 + #24 merged). Draft PR #25 targets main directly; NOT stacked.
 - Claim: ACCOUNT-EMAIL-SYSTEMS-001 (claims/active/).
+
+## Rebase onto 468466f (2026-07-19)
+
+Conflicts resolved exactly as the canon required:
+
+- client/src/research/section.tsx: main's PR #23 gateway route table taken
+  wholesale (minimal gateway, RequireMember member website, activation route,
+  legacy redirects); PR #25 adds ONLY the /research/reset-password route in
+  the pre-member flows (recovery must work without member auth). SignIn kept
+  main's redirect flow (active -> /research/member, else -> /research/activate)
+  plus the forgot-password link.
+- server/research/members.ts: main's member-auth architecture preserved
+  (guards live in member-auth.ts, re-exported); PR #25's claim handler
+  (purpose-scoped token, approval expiry, orphan cleanup, stranded heal,
+  concurrent tolerance, billing_state on active-claim, claim-success email)
+  and the forgot-password route integrated on top.
+- Guard unification (NO duplicate requireActiveMember): member-auth.ts now
+  owns the single requireActiveMember with the PR #25 status matrix
+  (active -> pass; pending_activation -> 403 activation_required; past_due ->
+  403 billing_past_due; paused/cancelled/closed denied; billing_state
+  enforced when RESEARCH_MEMBERSHIP_BILLING_ENABLED=true, missing state =
+  verified-legacy). Main's catalog/orders keep using it; guards.ts re-exports
+  it and registers /api/research/member/catalog. requireMember in
+  member-auth.ts gained the auth_user_id-first resolution (email fallback).
+- Preserved from main: the reward-promotion tick in server/index.ts, the
+  bearer-bypass wall, all of PR #23's access-architecture tests (passing
+  against the unified guard).
+
+Validation after rebase: typecheck clean, build green, and a 4-agent targeted
+flow audit re-traced the 15 lifecycle flows on the rebased tree: 12 pass;
+3 findings, dispositioned:
+
+1. FIXED — checkout was latently dead since the gateway merge: the client's
+   submitOrder sent no Authorization header while /api/research/orders now
+   requires an active member. Latent only because both commerce flags are
+   off. submitOrder now attaches the member's Supabase JWT (mirroring
+   loadCatalog); ResetPassword's request mode does the same so a
+   recovery-session visitor without the review cookie still reaches the
+   endpoint.
+2. DOCUMENTED + PINNED BY TEST — the merged wall's bearer-presence bypass on
+   /member/* means "Authorization: Bearer junk" reaches
+   /member/forgot-password (and /member/claim) without the review cookie.
+   Both endpoints self-defend (signed token / generic responses + rate
+   limits, no data exposure). A new composed-stack test mounts the real wall
+   with the member routes and pins all three paths (no credential -> 401;
+   cookie -> generic; junk bearer -> generic, no recovery email for unknown
+   addresses).
+3. KNOWN GAP (inherited, Codex handoff) — member sign-out clears the Supabase
+   session but nothing calls POST /api/research/logout, so the 12h xr_access
+   review cookie survives on a shared machine; the client `logout` context
+   function has zero callers. Listed in the Codex UI handoff.
+
+Final: 118 tests passing across 8 files.
 
 ## Ground truth at join (2026-07-19, audited against origin/main 8b94410)
 
@@ -112,14 +165,13 @@ is idempotent after a partial failure. Deploy notes surfaced by the review:
   (requireSupabaseAdmin single-email model untouched — do not weaken it
   before the role system exists), Supabase auth email templates/SMTP and
   redirect allowlist (Samuel's checklist).
-- After PR #23 merges: rebase, port the requireMember auth_user_id change to
-  member-auth.ts (delete/modify conflict expected in members.ts, small),
-  reconcile section.tsx/SignIn.tsx route additions, and point the catalog
-  route at requireActiveMember.
+- (DONE 2026-07-19) The post-#23 rebase: auth_user_id resolution ported to
+  member-auth.ts, section.tsx/SignIn.tsx reconciled, catalog behind the
+  unified requireActiveMember. See the rebase section above.
 
 ## Needs from Samuel (production actions; see the PR description checklist)
 
-1. Merge order: PR #23 first, then this PR (rebased).
+1. Review and merge draft PR #25 (PR #23 is already in; #25 is rebased on it).
 2. Run supabase/research-member-billing.sql (before any billing enablement).
 3. Resend: verify xeniostechnology.com domain (SPF/DKIM), set
    RESEARCH_EMAIL_FROM + RESEARCH_EMAIL_REPLY_TO on Render.

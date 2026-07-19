@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import express from "express";
 import request from "supertest";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // ---------------------------------------------------------------------------
 // Member claiming + auth + the CODEX_UI contract endpoints. The claim
@@ -156,6 +156,7 @@ process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 import { makeResearchToken, makeStatusToken } from "./membership";
 import { registerMemberApi } from "./members";
 import { registerMemberAccessApi } from "./guards";
+import { registerResearchApi } from "./index";
 
 function makeApp() {
   const app = express();
@@ -466,6 +467,54 @@ describe("active-member authorization (requireActiveMember)", () => {
       expect(res.status).toBe(200);
     } finally {
       delete process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED;
+    }
+  });
+
+  it("composed stack: forgot-password with no credential is stopped by the wall; cookie and bearer paths reach the endpoint safely", async () => {
+    process.env.RESEARCH_ACCESS_PASSWORD = "composed-test-password";
+    try {
+      const app = express();
+      app.use(express.json());
+      registerResearchApi(app); // the shared-password wall, as assembled in server/index.ts
+      registerMemberApi(app);
+      registerMemberAccessApi(app);
+
+      // No credential at all: the wall answers 401 before the endpoint.
+      const bare = await request(app)
+        .post("/api/research/member/forgot-password")
+        .set("X-Forwarded-For", uniqueIp())
+        .send({ email: "walltest-a@example.com" });
+      expect(bare.status).toBe(401);
+
+      // Review-cookie path: reaches the endpoint, generic response.
+      const access = await request(app)
+        .post("/api/research/access")
+        .set("X-Forwarded-For", uniqueIp())
+        .send({ password: "composed-test-password" });
+      expect(access.status).toBe(200);
+      const cookie = String(access.headers["set-cookie"][0]).split(";")[0];
+      const viaCookie = await request(app)
+        .post("/api/research/member/forgot-password")
+        .set("Cookie", cookie)
+        .set("X-Forwarded-For", uniqueIp())
+        .send({ email: "walltest-b@example.com" });
+      expect(viaCookie.status).toBe(200);
+      expect(viaCookie.body.ok).toBe(true);
+
+      // Bearer-presence bypass (merged gateway architecture): the wall skips
+      // /member/* when ANY bearer is present; this endpoint, like /member/claim,
+      // self-defends with generic responses and rate limits. Pin that an
+      // unknown address triggers no recovery email through this path.
+      const viaBearer = await request(app)
+        .post("/api/research/member/forgot-password")
+        .set("Authorization", "Bearer junk")
+        .set("X-Forwarded-For", uniqueIp())
+        .send({ email: "walltest-c@example.com" });
+      expect(viaBearer.status).toBe(200);
+      expect(viaBearer.body).toEqual(viaCookie.body);
+      expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
+    } finally {
+      delete process.env.RESEARCH_ACCESS_PASSWORD;
     }
   });
 
