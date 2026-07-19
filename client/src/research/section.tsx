@@ -9,6 +9,7 @@ import Faq from "./pages/Faq";
 import Apply from "./pages/Apply";
 import ApplyStatus from "./pages/ApplyStatus";
 import MemberWelcome from "./pages/MemberWelcome";
+import SignIn from "./pages/SignIn";
 import Peptides from "./pages/Peptides";
 import Quantum from "./pages/Quantum";
 import Supplements from "./pages/Supplements";
@@ -67,6 +68,7 @@ export default function ResearchSection() {
           <Route path="/research/apply/success" component={Apply} />
           <Route path="/research/apply/status" component={ApplyStatus} />
           <Route path="/research/member/welcome" component={MemberWelcome} />
+          <Route path="/research/sign-in" component={SignIn} />
           <Route path="/research/professionals" component={Access} />
           <Route path="/research/peptides" component={Peptides} />
           <Route path="/research/quantum" component={Quantum} />
