@@ -6,6 +6,7 @@ import { researchPageGate, registerResearchApi } from "./research";
 import { registerMembershipApi } from "./research/membership";
 import { registerMemberApi } from "./research/members";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
+import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
 import { createServer } from "http";
@@ -113,6 +114,7 @@ log(
 
 // Email provider diagnostics (booleans only) + the durable notification worker.
 registerOutboxAdmin(app);
+registerReferralFraudAdmin(app);
 void logEmailStartupDiagnostics(log).catch(() => {});
 startOutboxWorker(log);
 

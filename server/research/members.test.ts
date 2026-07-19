@@ -230,6 +230,32 @@ describe("CODEX_UI contracts", () => {
     expect(JSON.stringify(res.body)).not.toMatch(/@example\.com|application_id|rid-1|owner-1/);
   });
 
+  it("auto-issues a referral identity for an ACTIVE member on first dashboard access", async () => {
+    process.env.RESEARCH_REFERRALS_ENABLED = "true";
+    // active member, program present, NO identity seeded
+    const app = seedApplication();
+    state.tables.research_members.push({ id: "m1", application_id: app.id, auth_user_id: "auth-1", email: "member@example.com", first_name: "Avery", status: "active", created_at: new Date().toISOString() });
+    state.tables.referral_programs.push({ id: "p1", code: "member-v1", program_type: "member", enabled: true });
+    const res = await request(makeApp()).get("/api/research/member/referrals").set("Authorization", "Bearer good-jwt");
+    expect(res.status).toBe(200);
+    expect(res.body.referrals.enabled).toBe(true);
+    expect(res.body.referrals.eligible).toBe(true);
+    expect(res.body.referrals.code).toBeTruthy();
+    expect(state.tables.referral_identities).toHaveLength(1);
+    expect(state.tables.referral_identities[0].owner_id).toBe("m1");
+  });
+
+  it("a pending member gets no code and eligible=false", async () => {
+    process.env.RESEARCH_REFERRALS_ENABLED = "true";
+    const app = seedApplication();
+    state.tables.research_members.push({ id: "m1", application_id: app.id, auth_user_id: "auth-1", email: "member@example.com", first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const res = await request(makeApp()).get("/api/research/member/referrals").set("Authorization", "Bearer good-jwt");
+    expect(res.status).toBe(200);
+    expect(res.body.referrals.code).toBeNull();
+    expect(res.body.referrals.eligible).toBe(false);
+    expect(state.tables.referral_identities).toHaveLength(0);
+  });
+
   it("invite validation: flag off -> invalid; active code -> valid; never referrer identity", async () => {
     const identity = seedMemberWithReferrals();
     const app = makeApp();
