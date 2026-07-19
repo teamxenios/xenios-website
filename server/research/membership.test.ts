@@ -388,13 +388,25 @@ describe("admin activation (interim, admin-verified)", () => {
     expect(state.events.some((e) => e.new_status === "active" && String(e.internal_note).includes("manual-check-001"))).toBe(true);
   });
 
+  it("activate refuses without a payment reference (a click must not mint credit)", async () => {
+    const row = seedApplication({ status: "payment_pending" });
+    state.members.push({ id: "mem-1", application_id: row.id, auth_user_id: "auth-1", email: row.email, first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/activate`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send({});
+    expect(res.status).toBe(400);
+    expect(row.status).toBe("payment_pending");
+    expect(state.members[0].status).toBe("pending_activation");
+  });
+
   it("activate is not allowed from the wrong state", async () => {
     const row = seedApplication({ status: "under_review" });
     state.members.push({ id: "mem-1", application_id: row.id, auth_user_id: "auth-1", email: row.email, first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
     const res = await request(makeApp())
       .post(`/api/admin/research/applications/${row.id}/activate`)
       .set("X-Forwarded-For", uniqueIp())
-      .send({});
+      .send({ paymentReference: "manual-check-002" });
     expect(res.status).toBe(409);
     expect(row.status).toBe("under_review");
   });

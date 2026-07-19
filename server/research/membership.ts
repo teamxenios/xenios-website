@@ -5,6 +5,7 @@ import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
 import { sessionSecretOk } from "./index";
 import { linkApplicationToAttribution, markAttributionApproved, qualifyReferralForMembershipActivation } from "./referrals";
+import { rateLimitHit, requestIp } from "./rate-limit";
 import { enqueueNotification, runOutboxTick } from "./outbox";
 import { adminRecipients } from "../services/email-config";
 import {
@@ -67,39 +68,23 @@ export function readStatusToken(token: string): string | null {
   return id;
 }
 
-// Fixed-window rate limit for submissions (per IP).
-const buckets = new Map<string, { count: number; resetAt: number }>();
-function allowSubmit(req: Request): boolean {
-  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
-  const now = Date.now();
-  const bucket = buckets.get(ip);
-  if (!bucket || bucket.resetAt < now) {
-    buckets.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
-    return true;
-  }
-  if (bucket.count >= 5) return false;
-  bucket.count += 1;
-  return true;
+// Fixed-window rate limits, durable across instances (V3 section 71): the
+// counters live in Postgres (research_rate_limit_hit) with an in-memory
+// fallback when the database is unreachable. Email keys are hashed so no
+// address ever lands in the rate-limit table.
+function emailKey(email: string): string {
+  return crypto.createHash("sha256").update(email.toLowerCase()).digest("hex").slice(0, 32);
+}
+async function allowSubmit(req: Request): Promise<boolean> {
+  return rateLimitHit(`research-submit:${requestIp(req as any)}`, 600, 5);
 }
 
 // Stricter limiter for status-link resends. Per-IP overuse gets an explicit
 // 429; the per-email cooldown is SILENT (generic success, nothing sent) so the
 // limiter itself cannot be used to probe whether an address has an application.
-const resendBuckets = new Map<string, { count: number; resetAt: number }>();
-const resendEmailCooldown = new Map<string, number>();
-function resendVerdict(req: Request, email: string): "ok" | "ip_limited" | "email_cooldown" {
-  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
-  const now = Date.now();
-  const bucket = resendBuckets.get(ip);
-  if (!bucket || bucket.resetAt < now) {
-    resendBuckets.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
-  } else {
-    if (bucket.count >= 3) return "ip_limited";
-    bucket.count += 1;
-  }
-  const last = resendEmailCooldown.get(email) ?? 0;
-  if (now - last < 10 * 60 * 1000) return "email_cooldown";
-  resendEmailCooldown.set(email, now);
+async function resendVerdict(req: Request, email: string): Promise<"ok" | "ip_limited" | "email_cooldown"> {
+  if (!(await rateLimitHit(`research-resend-ip:${requestIp(req as any)}`, 600, 3))) return "ip_limited";
+  if (!(await rateLimitHit(`research-resend-email:${emailKey(email)}`, 600, 1))) return "email_cooldown";
   return "ok";
 }
 
@@ -259,7 +244,7 @@ export function registerMembershipApi(app: Express) {
       if (typeof req.body?.website === "string" && req.body.website.length > 0) {
         return res.json({ ok: true }); // honeypot: pretend success
       }
-      if (!allowSubmit(req)) {
+      if (!(await allowSubmit(req))) {
         return res.status(429).json({ ok: false, message: "Too many submissions. Please try again in a few minutes." });
       }
       if (!supabaseConfigured()) {
@@ -370,6 +355,7 @@ export function registerMembershipApi(app: Express) {
         referralCode: a.referralCode,
         applicantEmail: row.email,
         landingPath: typeof req.body?.source_page === "string" ? req.body.source_page.slice(0, 300) : null,
+        applicantIp: ip,
       }).catch(() => {});
 
       // Log without PII beyond the id.
@@ -388,7 +374,7 @@ export function registerMembershipApi(app: Express) {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
       const parsed = z.object({ email: z.string().email().max(254).toLowerCase().trim() }).safeParse(req.body);
       if (!parsed.success) return res.status(400).json({ ok: false, message: "Enter a valid email address." });
-      const verdict = resendVerdict(req, parsed.data.email);
+      const verdict = await resendVerdict(req, parsed.data.email);
       if (verdict === "ip_limited") {
         return res.status(429).json({ ok: false, message: "Too many requests. Please try again in a few minutes." });
       }
@@ -616,9 +602,9 @@ export function registerMembershipApi(app: Express) {
   // ---------------------------------------------------------------------------
   // Activation (interim, admin-verified). Until Stripe exists, the admin is the
   // payment authority: begin-activation marks payment in progress, activate
-  // records the verified payment reference, flips the application and member to
-  // active, and triggers referral qualification EXACTLY as a webhook would.
-  // The paymentId defaults to a stable manual key so retries stay idempotent.
+  // records the verified payment reference (required), flips the application
+  // and member to active, and triggers referral qualification EXACTLY as a
+  // webhook would. Retrying with the same reference stays idempotent.
   // ---------------------------------------------------------------------------
   app.post("/api/admin/research/applications/:id/begin-activation", requireSupabaseAdmin,
     adminAction("payment_pending", undefined, async () => {}));
@@ -640,10 +626,20 @@ export function registerMembershipApi(app: Express) {
       }
 
       const adminEmail = (req as any).adminEmail as string | undefined;
+      // The payment reference is the admin's attestation of the verified
+      // payment; a single click must never mint referral credit with nothing
+      // verified behind it (V3 section 71), so it is REQUIRED. Phase 5 replaces
+      // this with the Stripe payment_intent id from the verified webhook.
       const paymentReference =
         typeof req.body?.paymentReference === "string" && req.body.paymentReference.trim()
           ? req.body.paymentReference.trim().slice(0, 120)
-          : `manual:${row.id}`;
+          : null;
+      if (!paymentReference) {
+        return res.status(400).json({
+          ok: false,
+          message: "A payment reference is required to activate (what was verified and where, e.g. the transfer or receipt id).",
+        });
+      }
 
       const updated = await transition(
         row,

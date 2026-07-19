@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getSupabaseAdmin, getSupabaseAnon, supabaseConfigured } from "../supabase";
 import { readStatusToken } from "./membership";
 import { createReferralIdentity, getLedgerBalance, referralsEnabled } from "./referrals";
+import { rateLimitHit, requestIp } from "./rate-limit";
 import type { ReferralDashboardState } from "@shared/research/referral-types";
 
 // ---------------------------------------------------------------------------
@@ -31,19 +32,10 @@ const claimSchema = z.object({
   password: z.string().min(10).max(200),
 });
 
-// Small fixed-window limiter on claim attempts (per IP).
-const claimBuckets = new Map<string, { count: number; resetAt: number }>();
-function allowClaim(req: Request): boolean {
-  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
-  const now = Date.now();
-  const bucket = claimBuckets.get(ip);
-  if (!bucket || bucket.resetAt < now) {
-    claimBuckets.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
-    return true;
-  }
-  if (bucket.count >= 10) return false;
-  bucket.count += 1;
-  return true;
+// Small fixed-window limiter on claim attempts (per IP), durable across
+// instances via research_rate_limit_hit with an in-memory fallback.
+async function allowClaim(req: Request): Promise<boolean> {
+  return rateLimitHit(`research-claim:${requestIp(req as any)}`, 600, 10);
 }
 
 type MemberRow = {
@@ -90,7 +82,7 @@ export function registerMemberApi(app: Express) {
   app.post("/api/research/member/claim", async (req, res) => {
     try {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
-      if (!allowClaim(req)) return res.status(429).json({ ok: false, message: "Too many attempts. Try again in a few minutes." });
+      if (!(await allowClaim(req))) return res.status(429).json({ ok: false, message: "Too many attempts. Try again in a few minutes." });
       const parsed = claimSchema.safeParse(req.body);
       if (!parsed.success) {
         return res.status(400).json({ ok: false, message: "Enter the link token and a password of at least 10 characters." });

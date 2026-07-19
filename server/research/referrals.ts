@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
+import { canonicalizeEmail, isDisposableEmail, openFraudFlag, recordReferralEvent } from "./fraud";
 
 // ---------------------------------------------------------------------------
 // xenios research referrals: FOUNDATION ONLY (V3 sections 68-70, 84).
@@ -15,6 +16,16 @@ import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 // ---------------------------------------------------------------------------
 
 export const referralsEnabled = () => process.env.RESEARCH_REFERRALS_ENABLED === "true";
+
+// Program economics knobs (V3 section 61), env-configurable with safe defaults.
+const MAX_QUALIFIED_PER_MONTH = () => {
+  const n = Number(process.env.RESEARCH_REFERRAL_MAX_QUALIFIED_PER_MONTH);
+  return Number.isFinite(n) && n > 0 ? n : 20;
+};
+const VELOCITY_PER_DAY = () => {
+  const n = Number(process.env.RESEARCH_REFERRAL_VELOCITY_PER_DAY);
+  return Number.isFinite(n) && n > 0 ? n : 10;
+};
 
 const IDENTITIES = "referral_identities";
 const PROGRAMS = "referral_programs";
@@ -83,14 +94,65 @@ async function getIdentityByCode(code: string): Promise<any | null> {
   return data ?? null;
 }
 
+// Review signal: an identity attracting an abnormal burst of attributions is
+// flagged for a human (V3 section 71), never auto-penalized.
+async function flagUnusualVelocity(identity: any, attributionId: string): Promise<void> {
+  const { data } = await getSupabaseAdmin()
+    .from(ATTRIBUTIONS)
+    .select("id, created_at")
+    .eq("referral_identity_id", identity.id);
+  const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const recent = ((data as any[]) ?? []).filter(
+    (r) => r.created_at && new Date(r.created_at).getTime() >= dayAgo,
+  ).length;
+  if (recent > VELOCITY_PER_DAY()) {
+    await openFraudFlag({
+      reason: "unusual-velocity",
+      attributionId,
+      identityId: identity.id,
+      detail: `${recent} attributions for this identity in 24 hours`,
+    });
+  }
+}
+
+// Review signal: the applicant's IP matches the referrer's own application IP.
+// Legitimate households exist, so this FLAGS for review only (V3 section 71).
+async function flagSharedHousehold(identity: any, attributionId: string, applicantIp: string | null | undefined): Promise<void> {
+  if (!applicantIp || applicantIp === "unknown") return;
+  if (identity.owner_type !== "member") return;
+  const { data: member } = await getSupabaseAdmin()
+    .from("research_members")
+    .select("application_id")
+    .eq("id", identity.owner_id)
+    .maybeSingle();
+  const applicationId = (member as any)?.application_id;
+  if (!applicationId) return;
+  const { data: app } = await getSupabaseAdmin()
+    .from("research_applications")
+    .select("ip")
+    .eq("id", applicationId)
+    .maybeSingle();
+  if ((app as any)?.ip && (app as any).ip === applicantIp) {
+    await openFraudFlag({
+      reason: "repeated-household",
+      attributionId,
+      identityId: identity.id,
+      detail: "applicant IP matches the referrer's own application IP",
+    });
+  }
+}
+
 // Called from the application submit path. Flag-gated no-op; failures never
-// affect the application itself. Self-referral is recorded as disqualified so
-// it can never qualify later.
+// affect the application itself. Bright lines (canonical self-referral, where
+// plus-tags and gmail dot variants collapse to one identity, and disposable
+// email domains) are recorded as disqualified so they can never qualify later;
+// softer signals only open review flags.
 export async function linkApplicationToAttribution(input: {
   applicationId: string;
   referralCode: string | null | undefined;
   applicantEmail: string;
   landingPath?: string | null;
+  applicantIp?: string | null;
 }): Promise<void> {
   try {
     if (!referralsEnabled() || !supabaseConfigured()) return;
@@ -101,18 +163,39 @@ export async function linkApplicationToAttribution(input: {
     const program = await getDefaultProgram();
     if (!program) return;
 
-    const selfReferral = String(identity.owner_email).toLowerCase() === input.applicantEmail.toLowerCase();
+    const selfReferral = canonicalizeEmail(String(identity.owner_email)) === canonicalizeEmail(input.applicantEmail);
+    const disposable = !selfReferral && isDisposableEmail(input.applicantEmail);
+    const disqualificationReason = selfReferral ? "self_referral" : disposable ? "disposable_email" : null;
     const expires = new Date(Date.now() + (program.attribution_days ?? 30) * 24 * 60 * 60 * 1000);
-    const { error } = await getSupabaseAdmin().from(ATTRIBUTIONS).insert({
-      referral_identity_id: identity.id,
-      program_id: program.id,
-      application_id: input.applicationId,
-      attribution_expires_at: expires.toISOString(),
-      landing_path: input.landingPath ?? null,
-      status: selfReferral ? "disqualified" : "application-submitted",
-      disqualification_reason: selfReferral ? "self_referral" : null,
+    const { data: inserted, error } = await getSupabaseAdmin()
+      .from(ATTRIBUTIONS)
+      .insert({
+        referral_identity_id: identity.id,
+        program_id: program.id,
+        application_id: input.applicationId,
+        attribution_expires_at: expires.toISOString(),
+        landing_path: input.landingPath ?? null,
+        applicant_ip: input.applicantIp ?? null,
+        status: disqualificationReason ? "disqualified" : "application-submitted",
+        disqualification_reason: disqualificationReason,
+      })
+      .select()
+      .single();
+    if (error || !inserted) {
+      if (error) console.error("[referrals] attribution insert failed:", error.message);
+      return;
+    }
+    await recordReferralEvent({
+      eventType: disqualificationReason ? "attribution-disqualified" : "attribution-created",
+      attributionId: (inserted as any).id,
+      identityId: identity.id,
+      actorType: "system",
+      reason: disqualificationReason,
     });
-    if (error) console.error("[referrals] attribution insert failed:", error.message);
+    if (disqualificationReason) return;
+
+    await flagUnusualVelocity(identity, (inserted as any).id);
+    await flagSharedHousehold(identity, (inserted as any).id, input.applicantIp);
   } catch (err) {
     console.error("[referrals] attribution error:", err);
   }
@@ -153,7 +236,43 @@ export async function qualifyReferralForMembershipActivation(input: {
     .maybeSingle();
   if (!identity || (identity as any).status !== "active") return { qualified: false, reason: "referrer_ineligible" };
 
-  // 5. self-referral re-check (defense in depth)
+  // 4-5. referred-member eligibility + the REAL self-referral re-check
+  // (defense in depth): the activating member must not be the referrer, by
+  // member id or by canonical email. Caught here means it slipped past
+  // capture, so it is disqualified AND surfaced to the review queue.
+  const { data: activatingMember } = await getSupabaseAdmin()
+    .from("research_members")
+    .select("*")
+    .eq("id", input.memberId)
+    .maybeSingle();
+  const sameId = (identity as any).owner_id === input.memberId;
+  const sameEmail = activatingMember
+    ? canonicalizeEmail(String((activatingMember as any).email ?? "")) ===
+      canonicalizeEmail(String((identity as any).owner_email ?? ""))
+    : false;
+  if (sameId || sameEmail) {
+    await getSupabaseAdmin()
+      .from(ATTRIBUTIONS)
+      .update({ status: "disqualified", disqualification_reason: "self_referral", updated_at: new Date().toISOString() })
+      .eq("id", attribution.id);
+    await recordReferralEvent({
+      eventType: "qualification-refused",
+      attributionId: attribution.id,
+      identityId: (identity as any).id,
+      actorType: "system",
+      reason: "self_referral",
+    });
+    await openFraudFlag({
+      reason: "possible-self-referral",
+      attributionId: attribution.id,
+      identityId: (identity as any).id,
+      detail: sameId
+        ? "the activating member IS the referrer"
+        : "the activating member's email matches the referrer's canonically",
+    });
+    return { qualified: false, reason: "self_referral" };
+  }
+
   const { data: program } = await getSupabaseAdmin()
     .from(PROGRAMS)
     .select("*")
@@ -161,10 +280,25 @@ export async function qualifyReferralForMembershipActivation(input: {
     .maybeSingle();
   if (!program) return { qualified: false, reason: "program_missing" };
 
+  // 6b. monthly cap (V3 section 61, RESEARCH_REFERRAL_MAX_QUALIFIED_PER_MONTH,
+  // default 20): at or past the cap, this qualification's rewards are created
+  // for REVIEW (pending, which the promoter never touches) instead of held,
+  // and the queue gets a velocity flag. Never a silent loss, never auto-pay.
+  const { data: priorRewards } = await getSupabaseAdmin()
+    .from(REWARDS)
+    .select("recipient_type, qualifies_at")
+    .eq("recipient_member_id", (identity as any).owner_id);
+  const monthAgo = input.activationTimestamp.getTime() - 30 * 24 * 60 * 60 * 1000;
+  const priorQualified = ((priorRewards as any[]) ?? []).filter(
+    (r) => r.recipient_type === "referrer" && r.qualifies_at && new Date(r.qualifies_at).getTime() >= monthAgo,
+  ).length;
+  const atCap = priorQualified >= MAX_QUALIFIED_PER_MONTH();
+
   // 7-9. held rewards for BOTH sides (Give $10 / Get $15), each idempotent by
   // the activation key. A webhook retry duplicates neither.
   const holdDays = (program as any).hold_days ?? 14;
   const availableAt = new Date(input.activationTimestamp.getTime() + holdDays * 24 * 60 * 60 * 1000);
+  const rewardStatus = atCap ? "pending" : "held";
   const rewards: Array<Record<string, unknown>> = [
     {
       attribution_id: attribution.id,
@@ -173,7 +307,7 @@ export async function qualifyReferralForMembershipActivation(input: {
       reward_type: (program as any).referrer_reward_type ?? "credit",
       value_cents: (program as any).referrer_reward_value_cents ?? null,
       currency: (program as any).currency ?? "usd",
-      status: "held",
+      status: rewardStatus,
       idempotency_key: `referral-activation:${input.memberId}:${input.paymentId}:referrer`,
       qualifies_at: input.activationTimestamp.toISOString(),
       available_at: availableAt.toISOString(),
@@ -188,7 +322,7 @@ export async function qualifyReferralForMembershipActivation(input: {
       reward_type: referredType,
       value_cents: (program as any).referred_reward_value_cents,
       currency: (program as any).currency ?? "usd",
-      status: "held",
+      status: rewardStatus,
       idempotency_key: `referral-activation:${input.memberId}:${input.paymentId}:referred`,
       qualifies_at: input.activationTimestamp.toISOString(),
       available_at: availableAt.toISOString(),
@@ -206,11 +340,28 @@ export async function qualifyReferralForMembershipActivation(input: {
     }
   }
 
-  // 10. audit via the attribution state machine
+  // 10. audit via the attribution state machine + the append-only event trail
   await getSupabaseAdmin()
     .from(ATTRIBUTIONS)
     .update({ status: "qualified", member_id: input.memberId, updated_at: new Date().toISOString() })
     .eq("id", attribution.id);
+  await recordReferralEvent({
+    eventType: "qualification-succeeded",
+    attributionId: attribution.id,
+    identityId: (identity as any).id,
+    actorType: "system",
+    reason: atCap ? "qualified_pending_review" : "qualified",
+    detail: { paymentId: input.paymentId, rewardStatus },
+  });
+  if (atCap) {
+    await openFraudFlag({
+      reason: "unusual-velocity",
+      attributionId: attribution.id,
+      identityId: (identity as any).id,
+      detail: `monthly qualified-referral cap reached (${priorQualified} in the last 30 days); rewards created pending review`,
+    });
+    return { qualified: true, reason: "qualified_pending_review" };
+  }
 
   return { qualified: true, reason: "qualified" };
 }
