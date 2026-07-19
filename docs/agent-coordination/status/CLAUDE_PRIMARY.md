@@ -1,8 +1,15 @@
 # CLAUDE_PRIMARY status
 
-- Timestamp: 2026-07-18T21:45-05:00
+- Timestamp: 2026-07-18T22:15-05:00
 - Mode: building (V3 section 83 Then list + Samuel direct requests)
-- Branch: research-referral-fraud (stacked on research-front-door)
+- Branch: research-fraud-integration (TARGETS MAIN; supersedes the stack)
+- STRANDED-MERGE RECOVERY (second occurrence of the PR #15 failure): PRs #18,
+  #19, #20 show MERGED but merged into their stacked bases AFTER main had
+  captured those bases via #16/#17, so their content never reached main
+  (proven: security-types.ts, the activate endpoint, the front door, fraud.ts
+  all absent from origin/main; both #21 commits not ancestors of main). This
+  branch is origin/main + a clean merge of the whole remaining stack. RULE
+  GOING FORWARD: no more stacked PRs on this repo; every PR targets main.
 - Schema verified (2026-07-18): Samuel ran the combined SQL; a code-to-schema
   cross-check found zero mismatches across all 14 research tables.
   supabase/verify-research-schema.sql is the one-paste DB-side check.
@@ -35,8 +42,11 @@
   contract otherwise unchanged. See handoffs/to-codex.
 - Needs from CODEX_UI: rebase #13 after the chain merges (doc conflicts +
   section.tsx/layout.tsx route unions; LOCAL_NAV now includes Sign in).
-- Needs from Samuel: merge order #16 -> #17 -> #18 -> #19 -> #20 -> #21 ->
-  #13 (rebased); run supabase/research-referral-fraud.sql (the earlier five
-  SQLs are done and verified) and optionally verify-research-schema.sql;
-  rotate the admin password; RESEARCH_PUBLIC and RESEARCH_REFERRALS_ENABLED
-  both stay false per Samuel's direction (2026-07-18) until he flips them.
+- Migration ledger: supabase/MIGRATIONS.md (all 8 files RUN as of 2026-07-18;
+  research-referral-fraud.sql run by Samuel, three new tables confirmed).
+  DB-side checks: verify-research-schema.sql + verify-referral-fraud.sql.
+- Needs from Samuel: merge ONLY the integration PR (base main), then Codex
+  rebases #13 onto main; run verify-referral-fraud.sql once for the
+  index/column/function confirmation; rotate the admin password.
+  RESEARCH_PUBLIC and RESEARCH_REFERRALS_ENABLED both stay false per Samuel's
+  direction (2026-07-18) until he flips them.
