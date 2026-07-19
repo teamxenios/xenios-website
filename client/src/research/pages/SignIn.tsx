@@ -1,19 +1,24 @@
 import { useState, type FormEvent } from "react";
-import { Link } from "wouter";
+import { useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
+import { useResearch } from "../core";
 
 // Member sign-in (V3 sections 4.3 and 13). Auth is Supabase (same provider as
 // the rest of the site); membership itself is verified SERVER-side on every
 // protected route via /api/research/member/*. No UI-only authorization.
+// After sign-in: active members land on the private member website
+// (/research/member); approved-but-not-activated members land on the
+// activation flow only (canonical access architecture).
 
 export default function SignIn() {
+  const { refreshMember } = useResearch();
+  const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [member, setMember] = useState<{ firstName: string; status: string; applicationStatus: string | null } | null>(null);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -37,7 +42,8 @@ export default function SignIn() {
       });
       const body = await res.json().catch(() => null);
       if (res.ok && body?.ok) {
-        setMember(body.member);
+        await refreshMember();
+        navigate(body.member?.status === "active" ? "/research/member" : "/research/activate");
       } else {
         await supabase.auth.signOut();
         setError(body?.message || "No research membership is attached to this account.");
@@ -47,31 +53,6 @@ export default function SignIn() {
     } finally {
       setBusy(false);
     }
-  }
-
-  if (member) {
-    return (
-      <>
-        <SeoHead title="Member, xenios research" description="Your xenios research membership." path="/research/sign-in" />
-        <PageIntro eyebrow="Signed in" title={`Welcome back, ${member.firstName}.`} />
-        <section className="container-x pb-20">
-          <div className="max-w-[560px]">
-            <div className="card">
-              <p className="mono-label text-ink-mute">Membership status</p>
-              <p className="body-l text-ink mt-2">
-                {member.status === "active"
-                  ? "Active."
-                  : "Approved. Activation opens soon, and you will be emailed the moment it does."}
-              </p>
-            </div>
-            <div className="mt-6 flex gap-4">
-              <Link href="/research/member/welcome" className="btn btn-primary">Membership</Link>
-              <Link href="/research" className="btn btn-ghost">Back to research</Link>
-            </div>
-          </div>
-        </section>
-      </>
-    );
   }
 
   return (

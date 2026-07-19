@@ -1,8 +1,50 @@
 # CLAUDE_PRIMARY status
 
-- Timestamp: 2026-07-18T22:15-05:00
+## Agent registry and merge order (2026-07-19)
+
+- Sessions: CLAUDE_PRIMARY (this file; backend/referrals/fraud/admin),
+  CLAUDE_ACCOUNT_EMAIL_SYSTEMS (joined 2026-07-19, isolated worktree, claim
+  ACCOUNT-EMAIL-SYSTEMS-001, draft PR #25: tokens/claim/reset/outbox
+  recovery/alerts/billing-state model), CODEX_UI (PR #13, rebases last),
+  CLAUDE_ARCHITECTURE_SECURITY (announced, not yet joined).
+- Verified conflict map: #25 vs #23 conflicts in exactly TWO files
+  (client/src/research/section.tsx, server/research/members.ts); everything
+  else auto-merges. #24 is conflict-free with both.
+- MERGE ORDER: #23 -> #24 -> #25 (after its small rebase) -> #13 (rebased).
+- Cross-lane findings from the #25 audit landed in my lane: promoteHeldRewards
+  had NO caller (held rewards could never become credit) — FIXED on the #23
+  branch (5-minute promotion tick in server/index.ts, flag-gated no-op while
+  referrals are off). Approval-expiry sweep remains OPEN in my lane, queued
+  after #23 merges. SQL pending (do not run until #25 review):
+  supabase/research-member-billing.sql (#25's, drafted).
+
+## FOR CLAUDE_ARCHITECTURE_SECURITY (read before branching)
+
+The master guide (docs/research-canonical/COMPETITIVE_CODE_UI_MASTER_GUIDE_V1.md)
+was assessed against main BEFORE PR #23. Already implemented on PR #23
+(branch research-fraud-integration, base main, mergeable): the minimal
+one-viewport gateway; catalog/orders behind member auth (the shared password
+no longer unlocks products and no longer triggers a catalog fetch);
+requireActiveMember (pending members 403 on catalog/orders); member bypass of
+the shared password on exactly the member-authed endpoints; sign-in redirects
+by member status; /research/activate; member-area routes behind RequireMember;
+access-architecture tests. BRANCH ONLY AFTER PR #23 MERGES or you will
+rebuild and collide with all of it. Still yours per the guide's P0: member
+resolution by auth_user_id (currently email), atomic/compensating account
+claim, purpose-scoped single-use tokens, admin roles + MFA, CSP report-only,
+trust proxy + canonical IP helper, review-cookie path scoping, CSRF on
+cookie-authed writes. Guards live in server/research/member-auth.ts. The
+Tailwind utilities fix is PR #24 (merge in either order; proven conflict-free
+with #23). CLAUDE_PRIMARY otherwise owns backend/admin; CODEX_UI owns the
+visual member experience (see handoffs/to-codex/20260718-gateway-architecture.md).
+
+- Timestamp: 2026-07-18T23:55-05:00
 - Mode: building (V3 section 83 Then list + Samuel direct requests)
-- Branch: research-fraud-integration (TARGETS MAIN; supersedes the stack)
+- Branch: research-fraud-integration (targets main)
+- MERGED: PR #22 (2026-07-19T03:40Z) landed the stranded stack recovery, the
+  fraud controls, and the canon correction pass in main. OPEN: PR #23 (same
+  branch, base main, NOT stacked) carries the gateway architecture, which was
+  pushed minutes after the #22 merge. Merge #23, then Codex rebases #13.
 - STRANDED-MERGE RECOVERY (second occurrence of the PR #15 failure): PRs #18,
   #19, #20 show MERGED but merged into their stacked bases AFTER main had
   captured those bases via #16/#17, so their content never reached main
@@ -40,9 +82,17 @@
 - Live: /research gate UP (200). The real applicant's row is in Supabase and
   visible in the admin queue; only the notification email was lost (root cause
   fixed in #17; recover via resend-link after deploy).
-- Tests: 75 passing across 7 files (membership incl. billing-gated activation,
+- Gateway architecture (canonical, 2026-07-18): /research is a minimal
+  one-viewport private gateway (Apply for Membership + Member Login only);
+  all content lives behind member authentication at /research/member and the
+  canonical member routes; the catalog and orders APIs now require the member
+  JWT (the shared password never unlocks products); an authenticated member
+  bypasses the shared password on exactly the member-authed endpoints. See
+  handoffs/to-codex/20260718-gateway-architecture.md.
+- Tests: 81 passing across 8 files (membership incl. billing-gated activation,
   referrals incl. fraud controls, members, outbox, email-config, rate
-  limiting/fraud utils, and the root-domain invariant).
+  limiting/fraud utils, the root-domain invariant, and the access
+  architecture).
 - Contracts: ReferralDashboardState gained optional `eligible`; UI-002
   contract otherwise unchanged. See handoffs/to-codex.
 - Needs from CODEX_UI: rebase #13 after the chain merges (doc conflicts +

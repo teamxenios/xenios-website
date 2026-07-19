@@ -38,44 +38,10 @@ async function allowClaim(req: Request): Promise<boolean> {
   return rateLimitHit(`research-claim:${requestIp(req as any)}`, 600, 10);
 }
 
-type MemberRow = {
-  id: string;
-  application_id: string;
-  auth_user_id: string;
-  email: string;
-  first_name: string;
-  status: string;
-  created_at: string;
-  [key: string]: unknown;
-};
-
-async function getMemberByEmail(email: string): Promise<MemberRow | null> {
-  const { data, error } = await getSupabaseAdmin().from(MEMBERS).select("*").eq("email", email.toLowerCase()).maybeSingle();
-  if (error) return null;
-  return (data as MemberRow) ?? null;
-}
-
-// Server-side member guard: verifies the Supabase JWT and resolves the member
-// row. Never trusts hidden UI; attaches the member for downstream handlers.
-export async function requireMember(req: Request, res: Response, next: NextFunction) {
-  try {
-    if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Not configured." });
-    const header = req.headers.authorization || "";
-    const jwt = header.startsWith("Bearer ") ? header.slice(7) : "";
-    if (!jwt) return res.status(401).json({ ok: false, message: "Sign in required." });
-    const { data, error } = await getSupabaseAnon().auth.getUser(jwt);
-    if (error || !data?.user?.email) return res.status(401).json({ ok: false, message: "Sign in required." });
-    const member = await getMemberByEmail(data.user.email);
-    if (!member || member.status === "closed") {
-      return res.status(403).json({ ok: false, message: "No research membership for this account." });
-    }
-    (req as any).researchMember = member;
-    next();
-  } catch (err) {
-    console.error("[research members] auth error:", err);
-    res.status(401).json({ ok: false, message: "Sign in required." });
-  }
-}
+// The member guard and row type live in member-auth.ts (shared with the
+// member-authed research APIs); re-exported here for existing importers.
+export { requireMember } from "./member-auth";
+import { getMemberByEmail, requireMember, type MemberRow } from "./member-auth";
 
 export function registerMemberApi(app: Express) {
   // Claim: approved applicant + signed token -> auth user + member row.

@@ -1,9 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { AccessState, CartItem, CatalogResponse, CommerceFlags, CommerceLane, Policy, Product } from "@shared/research/types";
+import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 
 // xenios research: client core. All product data comes from the gated server
 // APIs; nothing in this bundle contains the catalog. The provider tracks the
-// gate state, loads the catalog once authed, and holds the lane-separated cart.
+// shared-password gate, the MEMBER session (the member's own Supabase JWT,
+// verified server-side on every member-authed API), and the cart. Access
+// architecture: the shared password unlocks the gateway and application flows
+// only; the catalog and member content require the member session, and an
+// authenticated member bypasses the shared password.
 
 export type { CartItem, CommerceFlags, CommerceLane, Policy, Product };
 
@@ -81,8 +86,19 @@ export function productActionLabel(product: Product, commerce: CommerceFlags): s
 // ---------------------------------------------------------------------------
 export type GateStatus = "checking" | "unconfigured" | "locked" | "open";
 
+export type MemberInfo = {
+  firstName: string;
+  status: string;
+  applicationStatus: string | null;
+};
+
 type ResearchContextValue = {
   gate: GateStatus;
+  member: MemberInfo | null;
+  memberToken: string | null;
+  memberChecking: boolean;
+  refreshMember: () => Promise<void>;
+  signOutMember: () => Promise<void>;
   products: Product[];
   bySlug: Map<string, Product>;
   commerce: CommerceFlags;
@@ -106,17 +122,65 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   const [gate, setGate] = useState<GateStatus>("checking");
   const [catalog, setCatalog] = useState<CatalogResponse | null>(null);
   const [items, setItems] = useState<CartItem[]>([]);
+  const [member, setMember] = useState<MemberInfo | null>(null);
+  const [memberToken, setMemberToken] = useState<string | null>(null);
+  const [memberChecking, setMemberChecking] = useState(true);
 
-  const loadCatalog = useCallback(async () => {
-    const { status, body } = await getJson<CatalogResponse>("/api/research/catalog");
-    if (status === 200 && body) {
-      setCatalog(body);
-      setGate("open");
-      return true;
+  // The member session: the member's own Supabase JWT. Membership itself is
+  // verified SERVER-side (/api/research/member/me); the client only mirrors it.
+  const refreshMember = useCallback(async () => {
+    setMemberChecking(true);
+    try {
+      const supabase = await getSupabaseBrowser();
+      const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token ?? null : null;
+      if (!token) {
+        setMember(null);
+        setMemberToken(null);
+        return;
+      }
+      const res = await fetch("/api/research/member/me", {
+        headers: { Authorization: "Bearer " + token },
+        credentials: "same-origin",
+        cache: "no-store",
+      });
+      const body = await res.json().catch(() => null);
+      if (res.ok && body?.ok) {
+        setMember(body.member as MemberInfo);
+        setMemberToken(token);
+      } else {
+        setMember(null);
+        setMemberToken(null);
+      }
+    } catch {
+      setMember(null);
+      setMemberToken(null);
+    } finally {
+      setMemberChecking(false);
     }
-    if (status === 503) setGate("unconfigured");
-    else setGate("locked");
-    return false;
+  }, []);
+
+  const signOutMember = useCallback(async () => {
+    try {
+      const supabase = await getSupabaseBrowser();
+      await supabase?.auth.signOut();
+    } catch {
+      // the local state clears regardless
+    }
+    setMember(null);
+    setMemberToken(null);
+    setCatalog(null);
+  }, []);
+
+  // The catalog is MEMBER content: it loads only with the member token, and
+  // the server enforces that (requireMember on /api/research/catalog).
+  const loadCatalog = useCallback(async (token: string) => {
+    const res = await fetch("/api/research/catalog", {
+      headers: { Authorization: "Bearer " + token },
+      credentials: "same-origin",
+      cache: "no-store",
+    });
+    const body = (await res.json().catch(() => null)) as CatalogResponse | null;
+    if (res.status === 200 && body) setCatalog(body);
   }, []);
 
   useEffect(() => {
@@ -126,15 +190,24 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
       if (!alive) return;
       if (status === 503 || (body && !body.configured)) {
         setGate("unconfigured");
+        setMemberChecking(false);
         return;
       }
-      if (body?.authed) await loadCatalog();
-      else setGate("locked");
+      setGate(body?.authed ? "open" : "locked");
+      await refreshMember();
     })();
     return () => {
       alive = false;
     };
-  }, [loadCatalog]);
+  }, [refreshMember]);
+
+  // An authenticated member bypasses the shared password, and the catalog
+  // follows the member session.
+  useEffect(() => {
+    if (!member || !memberToken) return;
+    setGate("open");
+    void loadCatalog(memberToken);
+  }, [member, memberToken, loadCatalog]);
 
   // cart persistence
   useEffect(() => {
@@ -155,12 +228,12 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
         password: passwordValue,
       });
       if (status === 200 && body?.ok) {
-        await loadCatalog();
+        setGate("open");
         return null;
       }
       return body?.message || "That password is not correct.";
     },
-    [loadCatalog],
+    [],
   );
 
   const logout = useCallback(async () => {
@@ -215,6 +288,11 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
 
   const value: ResearchContextValue = {
     gate,
+    member,
+    memberToken,
+    memberChecking,
+    refreshMember,
+    signOutMember,
     products: catalog?.products ?? [],
     bySlug,
     commerce: catalog?.commerce ?? { research: false, consumer: false },
