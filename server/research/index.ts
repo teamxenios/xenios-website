@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { CatalogResponse, CommerceLane, Product } from "@shared/research/types";
 import { products } from "./products-data";
 import { policies } from "./policies-data";
+import { requireMember } from "./member-auth";
 
 // ---------------------------------------------------------------------------
 // xenios research: Express gate + APIs.
@@ -207,16 +208,27 @@ export function registerResearchApi(app: Express) {
     res.json({ ok: true });
   });
 
-  // Everything below requires the session cookie, except in public launch mode
-  // (the catalog and policies become public education; ordering stays protected
-  // by the commerce flags either way).
+  // Access architecture (canonical): the shared password unlocks the private
+  // GATEWAY and the application/status flows only. Member content (catalog,
+  // orders, member routes) requires the member's own Supabase JWT, verified
+  // server-side by requireMember, and an authenticated member bypasses the
+  // shared password on exactly those member-authed endpoints (the Bearer
+  // token is the stronger credential; every bypassed path still enforces it).
+  // Everything else keeps the session-cookie wall.
+  const MEMBER_AUTHED_PREFIXES = ["/member", "/catalog", "/orders"];
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
+    const bearer = (req.headers.authorization ?? "").startsWith("Bearer ");
+    if (bearer && MEMBER_AUTHED_PREFIXES.some((p) => req.path === p || req.path.startsWith(p + "/"))) {
+      return next();
+    }
     if (!isAuthed(req)) return res.status(401).json({ ok: false, message: "Access required." });
     next();
   });
 
-  app.get("/api/research/catalog", (_req, res) => {
+  // The catalog is MEMBER content: the shared gateway password does not unlock
+  // products. requireMember verifies the JWT and membership server-side.
+  app.get("/api/research/catalog", requireMember, (_req, res) => {
     res.set("Cache-Control", "no-store");
     const body: CatalogResponse = {
       products,
@@ -226,12 +238,14 @@ export function registerResearchApi(app: Express) {
     res.json(body);
   });
 
+  // Policies (privacy, terms, research-use) stay behind the shared password
+  // only: the gateway footer links them and every applicant may read them.
   app.get("/api/research/policies", (_req, res) => {
     res.set("Cache-Control", "no-store");
     res.json({ policies });
   });
 
-  app.post("/api/research/orders", async (req, res) => {
+  app.post("/api/research/orders", requireMember, async (req, res) => {
     try {
       const parsed = orderRequestSchema.safeParse(req.body);
       if (!parsed.success) {

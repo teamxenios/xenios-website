@@ -40,9 +40,17 @@
 - Live: /research gate UP (200). The real applicant's row is in Supabase and
   visible in the admin queue; only the notification email was lost (root cause
   fixed in #17; recover via resend-link after deploy).
-- Tests: 75 passing across 7 files (membership incl. billing-gated activation,
+- Gateway architecture (canonical, 2026-07-18): /research is a minimal
+  one-viewport private gateway (Apply for Membership + Member Login only);
+  all content lives behind member authentication at /research/member and the
+  canonical member routes; the catalog and orders APIs now require the member
+  JWT (the shared password never unlocks products); an authenticated member
+  bypasses the shared password on exactly the member-authed endpoints. See
+  handoffs/to-codex/20260718-gateway-architecture.md.
+- Tests: 81 passing across 8 files (membership incl. billing-gated activation,
   referrals incl. fraud controls, members, outbox, email-config, rate
-  limiting/fraud utils, and the root-domain invariant).
+  limiting/fraud utils, the root-domain invariant, and the access
+  architecture).
 - Contracts: ReferralDashboardState gained optional `eligible`; UI-002
   contract otherwise unchanged. See handoffs/to-codex.
 - Needs from CODEX_UI: rebase #13 after the chain merges (doc conflicts +
