@@ -11,7 +11,16 @@ Anything not listed here as BUILT must be described as planned, not existing.
 - Research gate: RESEARCH_ACCESS_PASSWORD exchange for an HMAC-signed HttpOnly
   SameSite=Lax cookie (12h). RESEARCH_SESSION_SECRET REQUIRED in production,
   never derived from the password; without it the surface fails closed (503).
-  RESEARCH_PUBLIC=true is the explicit public-launch switch.
+  Research is PRIVATE by canonical decision: RESEARCH_PUBLIC=false and
+  RESEARCH_INDEXABLE=false stay set, the shared password opens the private
+  research introduction, and the xenios homepage stays at the root domain
+  (the root never redirects to /research).
+- Membership economics (canonical): $50 one-time activation PLUS $25 recurring
+  monthly membership. There is NO annual membership. No member becomes active
+  until BOTH the activation payment and the monthly membership are verified;
+  the activation path sits behind RESEARCH_MEMBERSHIP_BILLING_ENABLED
+  (default false), and while it is false no member can be activated and no
+  referral can qualify.
 - Application system: 12-status state machine enforced server-side with
   optimistic concurrency; append-only event audit (actor, notes, timestamps);
   admin review queue in /admin behind Supabase-JWT + ADMIN_EMAIL check

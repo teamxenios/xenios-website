@@ -27,7 +27,7 @@ const BLUEPRINT_STEPS: { title: string; body: string }[] = [
   },
   {
     title: "Activation",
-    body: "Approved applicants pay the $50 membership activation fee, and the member account is activated.",
+    body: "Approved applicants pay the $50 activation fee, the $25 monthly membership begins, and the member account is activated.",
   },
   {
     title: "Whole-life onboarding",

@@ -18,9 +18,9 @@ export default function MemberWelcome() {
       <section className="container-x pb-20">
         <div className="max-w-[560px]">
           <div className="card">
-            <p className="mono-cap text-ink-mute mb-2">One-time activation</p>
-            <p className="display-s tabular">$50</p>
-            <p className="body-s text-ink-mute mt-2">No payment was collected before approval. The fee is not recurring.</p>
+            <p className="mono-cap text-ink-mute mb-2">Membership cost</p>
+            <p className="display-s tabular">$50 activation + $25/month</p>
+            <p className="body-s text-ink-mute mt-2">No payment was collected before approval. The $50 activation is one-time; the $25 membership is monthly and can be cancelled at any time. There is no annual plan.</p>
             <div className="rule-top mt-6 pt-6">
               <p className="mono-cap text-ink-mute mb-2">Activation is opening soon</p>
               <p className="body-s text-ink-2">

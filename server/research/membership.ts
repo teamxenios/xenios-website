@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import type { Express, Request } from "express";
+import type { Express, NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
@@ -600,16 +600,29 @@ export function registerMembershipApi(app: Express) {
     ));
 
   // ---------------------------------------------------------------------------
-  // Activation (interim, admin-verified). Until Stripe exists, the admin is the
-  // payment authority: begin-activation marks payment in progress, activate
-  // records the verified payment reference (required), flips the application
-  // and member to active, and triggers referral qualification EXACTLY as a
-  // webhook would. Retrying with the same reference stays idempotent.
+  // Activation (interim, admin-verified) behind RESEARCH_MEMBERSHIP_BILLING_ENABLED
+  // (default FALSE): while billing is off there is NO path to an active member
+  // and NO path to referral qualification. Membership is a $50 one-time
+  // activation PLUS a $25 recurring monthly membership; a member becomes
+  // active only when BOTH are verified, so activation requires both the
+  // activation payment reference and the active monthly-membership reference.
+  // Phase 5 replaces the attestations with verified Stripe webhook events.
   // ---------------------------------------------------------------------------
-  app.post("/api/admin/research/applications/:id/begin-activation", requireSupabaseAdmin,
-    adminAction("payment_pending", undefined, async () => {}));
+  const billingEnabled = () => process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED === "true";
+  const requireBillingEnabled = (_req: Request, res: Response, next: NextFunction) => {
+    if (!billingEnabled()) {
+      return res.status(503).json({
+        ok: false,
+        message: "Membership billing is not enabled (RESEARCH_MEMBERSHIP_BILLING_ENABLED=false). Activation is disabled until billing verification is live.",
+      });
+    }
+    next();
+  };
 
-  app.post("/api/admin/research/applications/:id/activate", requireSupabaseAdmin, async (req, res) => {
+  app.post("/api/admin/research/applications/:id/begin-activation", requireSupabaseAdmin,
+    requireBillingEnabled, adminAction("payment_pending", undefined, async () => {}));
+
+  app.post("/api/admin/research/applications/:id/activate", requireSupabaseAdmin, requireBillingEnabled, async (req, res) => {
     try {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Not configured" });
       const row = await getApplication(String(req.params.id));
@@ -626,18 +639,20 @@ export function registerMembershipApi(app: Express) {
       }
 
       const adminEmail = (req as any).adminEmail as string | undefined;
-      // The payment reference is the admin's attestation of the verified
-      // payment; a single click must never mint referral credit with nothing
-      // verified behind it (V3 section 71), so it is REQUIRED. Phase 5 replaces
-      // this with the Stripe payment_intent id from the verified webhook.
-      const paymentReference =
-        typeof req.body?.paymentReference === "string" && req.body.paymentReference.trim()
-          ? req.body.paymentReference.trim().slice(0, 120)
+      // Both attestations are REQUIRED (fail closed): the $50 activation
+      // payment AND the active $25 monthly membership. A single click must
+      // never mint an active member or referral credit with anything
+      // unverified behind it (V3 section 71).
+      const ref = (field: string) =>
+        typeof req.body?.[field] === "string" && req.body[field].trim()
+          ? (req.body[field].trim().slice(0, 120) as string)
           : null;
-      if (!paymentReference) {
+      const paymentReference = ref("paymentReference");
+      const subscriptionReference = ref("subscriptionReference");
+      if (!paymentReference || !subscriptionReference) {
         return res.status(400).json({
           ok: false,
-          message: "A payment reference is required to activate (what was verified and where, e.g. the transfer or receipt id).",
+          message: "Activation requires BOTH references: the verified $50 activation payment (paymentReference) and the active $25 monthly membership (subscriptionReference).",
         });
       }
 
@@ -646,7 +661,10 @@ export function registerMembershipApi(app: Express) {
         "active",
         { type: "admin", id: adminEmail ?? "admin" },
         {},
-        { reasonCode: "admin_verified_activation", internalNote: `payment_reference=${paymentReference}` },
+        {
+          reasonCode: "admin_verified_activation",
+          internalNote: `payment_reference=${paymentReference} subscription_reference=${subscriptionReference}`,
+        },
       );
 
       const activatedAt = new Date();

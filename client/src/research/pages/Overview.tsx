@@ -34,7 +34,7 @@ const STEPS = [
   {
     number: "03",
     title: "Activate",
-    body: "Approved applicants activate membership for $50. No payment is collected before approval.",
+    body: "Approved applicants activate membership: $50 one-time activation plus $25 monthly. No payment is collected before approval.",
   },
   {
     number: "04",

@@ -33,7 +33,8 @@ built is planned, and its gating flag is named here.
 - Research gate: RESEARCH_ACCESS_PASSWORD exchanges for an HMAC-signed HttpOnly
   SameSite=Lax cookie (12 hours). RESEARCH_SESSION_SECRET is required in production
   and is never derived from the password; without it the surface fails closed (503).
-  RESEARCH_PUBLIC=true is the explicit public-launch switch.
+  Research is private by canonical decision: RESEARCH_PUBLIC and
+  RESEARCH_INDEXABLE stay false, and the xenios homepage stays at the root domain.
 - Application state machine: 12 statuses enforced server-side with optimistic
   concurrency and an append-only event audit (actor, notes, timestamps).
 - Status tokens: 90-day HMAC-signed tokens delivered only by email. Resubmission

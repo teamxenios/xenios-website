@@ -319,6 +319,7 @@ function ApplicationDetail({ token, id, onChanged }: { token: string; id: string
   const [confirmApprove, setConfirmApprove] = useState(false);
   const [confirmDecline, setConfirmDecline] = useState(false);
   const [paymentRef, setPaymentRef] = useState("");
+  const [subscriptionRef, setSubscriptionRef] = useState("");
 
   const loadDetail = useCallback(() => {
     adminFetch<{ application: AdminApplication; events: AdminEvent[] }>(token, `/api/admin/research/applications/${id}`)
@@ -481,7 +482,7 @@ function ApplicationDetail({ token, id, onChanged }: { token: string; id: string
         {awaitingActivation && (
           <div className="space-y-3">
             <p className="body-s text-ink-2">
-              Approved and waiting on the $50 activation. When the applicant has paid (Stripe arrives in Phase 5; until then payment is verified by you), begin activation.
+              Approved and waiting on activation: the $50 one-time activation plus the $25 monthly membership. When billing is enabled and the applicant has paid, begin activation.
             </p>
             <button type="button" className="btn btn-primary" disabled={busy} onClick={() => void act("begin-activation")} data-testid="button-begin-activation">
               {busy ? "Working" : "Begin activation"}
@@ -492,24 +493,35 @@ function ApplicationDetail({ token, id, onChanged }: { token: string; id: string
         {paymentPending && (
           <div className="space-y-3">
             <p className="body-s text-ink-2">
-              Record the verified payment to activate the membership. The applicant must have created their member account first (the link in their approval email). Activation triggers referral qualification automatically.
+              Activation requires BOTH verified references: the $50 activation payment and the active $25 monthly membership. The applicant must have created their member account first (the link in their approval email). No member becomes active until both are verified; activation then triggers referral qualification automatically.
             </p>
             <div>
-              <label htmlFor={`pay-ref-${app.id}`} className="mono-label text-ink-mute">Payment reference (optional)</label>
+              <label htmlFor={`pay-ref-${app.id}`} className="mono-label text-ink-mute">Activation payment reference (required)</label>
               <input
                 id={`pay-ref-${app.id}`}
                 className="input-field mt-1"
                 maxLength={120}
-                placeholder="e.g. zelle-0718-SB or invoice number"
+                placeholder="e.g. zelle-0718-SB or receipt id for the $50 activation"
                 value={paymentRef}
                 onChange={(e) => setPaymentRef(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor={`sub-ref-${app.id}`} className="mono-label text-ink-mute">Monthly membership reference (required)</label>
+              <input
+                id={`sub-ref-${app.id}`}
+                className="input-field mt-1"
+                maxLength={120}
+                placeholder="e.g. the active $25 monthly subscription id"
+                value={subscriptionRef}
+                onChange={(e) => setSubscriptionRef(e.target.value)}
               />
             </div>
             <button
               type="button"
               className="btn btn-primary"
-              disabled={busy}
-              onClick={() => void act("activate", paymentRef.trim() ? { paymentReference: paymentRef.trim() } : {})}
+              disabled={busy || !paymentRef.trim() || !subscriptionRef.trim()}
+              onClick={() => void act("activate", { paymentReference: paymentRef.trim(), subscriptionReference: subscriptionRef.trim() })}
               data-testid="button-activate-membership"
             >
               {busy ? "Activating" : "Mark activated"}

@@ -13,7 +13,7 @@ xenios is a Texas-based company processing Texans' personal data, so Texas consu
 
 ## 2. Current posture, honestly stated
 
-- Scale: a small private membership platform (applications, human review, $50 activation planned but commerce is currently disabled, whole-life membership). Volume is small.
+- Scale: a small private membership platform (applications, human review, a planned $50 one-time activation plus $25 monthly membership with billing currently disabled, whole-life membership). Volume is small.
 - Data: applicant identity (name, email), free-text goals and interests, membership and application status, notification records. Confidential zone. No health data, no biometrics, no ID documents, no payment data today.
 - We do not sell personal data and do not run targeted advertising.
 - Likely posture (counsel must confirm): at current scale we may sit within the small-business carve-out, but the sensitive-data rules can bite smaller businesses too, so section 4 matters regardless.
