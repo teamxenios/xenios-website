@@ -1,8 +1,18 @@
 # CLAUDE_PRIMARY status
 
-- Timestamp: 2026-07-18T21:30-05:00
+- Timestamp: 2026-07-18T21:45-05:00
 - Mode: building (V3 section 83 Then list + Samuel direct requests)
-- Branch: research-front-door (stacked on research-referral-loop)
+- Branch: research-referral-fraud (stacked on research-front-door)
+- Schema verified (2026-07-18): Samuel ran the combined SQL; a code-to-schema
+  cross-check found zero mismatches across all 14 research tables.
+  supabase/verify-research-schema.sql is the one-paste DB-side check.
+- PR #21: the V3 section 71 fraud controls (review queue with 10 reasons and
+  7 actions, canonical self-referral + disposable bright lines, monthly cap
+  to pending-review, velocity/household flags, clawback with append-only
+  reversal ledger entries, referral_events audit, durable rate limiting,
+  activation requires a payment reference). New SQL:
+  supabase/research-referral-fraud.sql. This was the stated blocker for
+  RESEARCH_REFERRALS_ENABLED; flags still stay false until Samuel flips them.
 - Completed: section 83 Immediate (all), admin queue UI (PR #11), referral
   foundation (PR #12), env diagnostic (PR #14), member auth recovery (PR #16),
   email incident fix + durable outbox (PR #17), security/identity governance +
@@ -25,9 +35,8 @@
   contract otherwise unchanged. See handoffs/to-codex.
 - Needs from CODEX_UI: rebase #13 after the chain merges (doc conflicts +
   section.tsx/layout.tsx route unions; LOCAL_NAV now includes Sign in).
-- Needs from Samuel: merge order #16 -> #17 -> #18 -> #19 -> #20 -> #13
-  (rebased); run pending SQLs (research-notification-outbox.sql,
-  research-members.sql, research-referrals.sql, research-referrals-seed.sql,
-  research-consent-covenant.sql); rotate the admin password; flip
-  RESEARCH_PUBLIC when ready for public launch (this also activates the
-  root front door); RESEARCH_REFERRALS_ENABLED only after fraud controls.
+- Needs from Samuel: merge order #16 -> #17 -> #18 -> #19 -> #20 -> #21 ->
+  #13 (rebased); run supabase/research-referral-fraud.sql (the earlier five
+  SQLs are done and verified) and optionally verify-research-schema.sql;
+  rotate the admin password; RESEARCH_PUBLIC and RESEARCH_REFERRALS_ENABLED
+  both stay false per Samuel's direction (2026-07-18) until he flips them.
