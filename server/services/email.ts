@@ -1,31 +1,17 @@
 import { Resend } from "resend";
 import type { WaitlistSignup, ContactMessage } from "@shared/schema";
+import { resolveEmailConfiguration } from "./email-config";
 
-let connectionSettings: any;
-
+// Credentials come from the shared resolver: direct env first (the production
+// path Render actually has configured), Replit connector as a legacy fallback,
+// then an explicit unavailable error. The old implementation was connector-only,
+// which silently disabled ALL email on Render.
 async function getCredentials() {
-  const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME;
-  const xReplitToken = process.env.REPL_IDENTITY
-    ? "repl " + process.env.REPL_IDENTITY
-    : process.env.WEB_REPL_RENEWAL
-      ? "depl " + process.env.WEB_REPL_RENEWAL
-      : null;
-  if (!xReplitToken) throw new Error("X-Replit-Token not found for repl/depl");
-
-  const response = await fetch(
-    "https://" + hostname + "/api/v2/connection?include_secrets=true&connector_names=resend",
-    { headers: { Accept: "application/json", "X-Replit-Token": xReplitToken } },
-  );
-  if (!response.ok) throw new Error(`Connector fetch failed with status ${response.status}`);
-  const data = await response.json();
-  connectionSettings = data.items?.[0];
-  if (!connectionSettings || !connectionSettings.settings.api_key) {
-    throw new Error("Resend not connected");
+  const config = await resolveEmailConfiguration();
+  if (config.provider === "unavailable" || !config.apiKey) {
+    throw new Error("Email provider unavailable (no RESEND_API_KEY and no Replit connector)");
   }
-  return {
-    apiKey: connectionSettings.settings.api_key,
-    fromEmail: connectionSettings.settings.from_email,
-  };
+  return { apiKey: config.apiKey, fromEmail: config.fromEmail, replyToEmail: config.replyToEmail };
 }
 
 export async function getResendClient() {

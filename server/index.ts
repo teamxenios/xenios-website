@@ -5,6 +5,8 @@ import { registerRoutes } from "./routes";
 import { researchPageGate, registerResearchApi } from "./research";
 import { registerMembershipApi } from "./research/membership";
 import { registerMemberApi } from "./research/members";
+import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
+import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
@@ -108,6 +110,11 @@ log(
     `publicMode=${process.env.RESEARCH_PUBLIC === "true"} nodeEnv=${process.env.NODE_ENV || "unset"}`,
   "research",
 );
+
+// Email provider diagnostics (booleans only) + the durable notification worker.
+registerOutboxAdmin(app);
+void logEmailStartupDiagnostics(log).catch(() => {});
+startOutboxWorker(log);
 
 (async () => {
   await registerRoutes(httpServer, app);
