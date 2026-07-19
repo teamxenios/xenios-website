@@ -15,8 +15,8 @@ async function getCredentials() {
 }
 
 export async function getResendClient() {
-  const { apiKey, fromEmail } = await getCredentials();
-  return { client: new Resend(apiKey), fromEmail };
+  const { apiKey, fromEmail, replyToEmail } = await getCredentials();
+  return { client: new Resend(apiKey), fromEmail, replyToEmail };
 }
 
 export const TEAM_EMAIL = "team@xeniostechnology.com";

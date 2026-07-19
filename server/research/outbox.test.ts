@@ -1,4 +1,6 @@
 import crypto from "crypto";
+import express from "express";
+import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ---------------------------------------------------------------------------
@@ -23,6 +25,10 @@ const emails = vi.hoisted(() => ({
   sendApplicationApproved: vi.fn(async () => true),
   sendApplicationDeclined: vi.fn(async () => true),
   sendMoreInformationRequested: vi.fn(async () => true),
+  sendResubmittedConfirmation: vi.fn(async () => true),
+  sendAccountClaimSuccess: vi.fn(async () => true),
+  sendEmailFailureAlert: vi.fn(async () => ({ ok: true, id: "resend-alert-id" })),
+  sendAdminTestEmail: vi.fn(async () => ({ ok: true, id: "resend-test-id" })),
 }));
 
 vi.mock("../supabase", () => {
@@ -31,8 +37,10 @@ vi.mock("../supabase", () => {
     let mode: "select" | "insert" | "update" = "select";
     let insertPayload: any = null;
     let updatePayload: any = null;
+    let selectCols: string | null = null;
     const filters: Array<[string, any]> = [];
     const lteFilters: Array<[string, any]> = [];
+    const ltFilters: Array<[string, any]> = [];
     let inFilter: [string, any[]] | null = null;
     let limitN: number | null = null;
     const applyFilters = (rows: any[]) =>
@@ -40,6 +48,7 @@ vi.mock("../supabase", () => {
         (r) =>
           filters.every(([c, v]) => r[c] === v) &&
           lteFilters.every(([c, v]) => r[c] <= v) &&
+          ltFilters.every(([c, v]) => r[c] != null && r[c] < v) &&
           (!inFilter || inFilter[1].includes(r[inFilter[0]])),
       );
     const finish = () => {
@@ -61,21 +70,27 @@ vi.mock("../supabase", () => {
       }
       if (mode === "update") {
         const targets = applyFilters(list);
-        if (!targets.length) return { data: null, error: { message: "no rows" } };
-        Object.assign(targets[0], updatePayload);
+        // Real Supabase does not error on zero-row updates.
+        if (!targets.length) return { data: null, error: null };
+        for (const target of targets) Object.assign(target, updatePayload);
         return { data: targets[0], error: null };
       }
       let rows = applyFilters(list);
       if (limitN != null) rows = rows.slice(0, limitN);
+      if (selectCols && selectCols !== "*") {
+        const cols = selectCols.split(",").map((c) => c.trim());
+        rows = rows.map((r) => Object.fromEntries(cols.filter((c) => c in r).map((c) => [c, r[c]])));
+      }
       return { data: rows, error: null };
     };
     const api: any = {
-      select: () => api,
+      select: (cols?: string) => { if (mode === "select") selectCols = cols ?? null; return api; },
       insert: (p: any) => { mode = "insert"; insertPayload = p; return api; },
       update: (p: any) => { mode = "update"; updatePayload = p; return api; },
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
       in: (c: string, vs: any[]) => { inFilter = [c, vs]; return api; },
       lte: (c: string, v: any) => { lteFilters.push([c, v]); return api; },
+      lt: (c: string, v: any) => { ltFilters.push([c, v]); return api; },
       order: () => api,
       limit: (n: number) => { limitN = n; return api; },
       maybeSingle: async () => { const r = finish(); const d = Array.isArray(r.data) ? r.data[0] ?? null : r.data; return { data: d, error: null }; },
@@ -100,7 +115,14 @@ vi.mock("./membership-emails", () => emails);
 
 process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 
-import { enqueueNotification, runOutboxTick } from "./outbox";
+import { enqueueNotification, registerOutboxAdmin, runOutboxTick } from "./outbox";
+
+function makeAdminApp() {
+  const app = express();
+  app.use(express.json());
+  registerOutboxAdmin(app);
+  return app;
+}
 
 function job(overrides: Record<string, unknown> = {}) {
   return {
@@ -188,5 +210,128 @@ describe("worker tick", () => {
     const result = await runOutboxTick(new Date());
     expect(result.sent).toBe(0);
     expect(state.outbox[0].status).toBe("pending");
+  });
+
+  it("reclaims a stale processing row (crashed worker) and delivers it", async () => {
+    await enqueueNotification(job());
+    state.outbox[0].status = "processing";
+    state.outbox[0].updated_at = new Date(Date.now() - 30 * 60 * 1000).toISOString(); // stale
+    const result = await runOutboxTick(new Date());
+    expect(result.sent).toBe(1);
+    expect(state.outbox[0].status).toBe("sent");
+    expect(emails.sendApplicationReceived).toHaveBeenCalledTimes(1);
+  });
+
+  it("a recently claimed processing row is NOT reclaimed", async () => {
+    await enqueueNotification(job());
+    state.outbox[0].status = "processing";
+    state.outbox[0].updated_at = new Date().toISOString(); // fresh claim by another worker
+    const result = await runOutboxTick(new Date());
+    expect(result.sent + result.retried + result.failed).toBe(0);
+    expect(state.outbox[0].status).toBe("processing");
+  });
+
+  it("permanent failure enqueues an admin failure alert (and never alerts about admin templates)", async () => {
+    state.sendMode = "throw";
+    await enqueueNotification(job());
+    const now = new Date("2026-07-18T12:00:00Z");
+    for (let i = 1; i <= 6; i++) {
+      if (state.outbox[0]) state.outbox[0].next_attempt_at = new Date(0).toISOString();
+      await runOutboxTick(now);
+    }
+    expect(state.outbox[0].status).toBe("failed_permanent");
+    const alerts = state.outbox.filter((r) => r.template_key === "admin_email_failure");
+    expect(alerts).toHaveLength(1);
+    expect(alerts[0].recipient).toBe("samuel@xeniostechnology.com");
+
+    // The alert itself delivers on the next tick.
+    state.sendMode = "ok";
+    alerts[0].next_attempt_at = new Date(0).toISOString();
+    await runOutboxTick(new Date());
+    expect(emails.sendEmailFailureAlert).toHaveBeenCalledTimes(1);
+    expect(emails.sendEmailFailureAlert.mock.calls[0][0].to).toBe("samuel@xeniostechnology.com");
+    expect(emails.sendEmailFailureAlert.mock.calls[0][0].failedTemplate).toBe("applicant_received");
+    // No alert-about-the-alert even if it had failed (admin_ prefix is excluded).
+    expect(state.outbox.filter((r) => r.template_key === "admin_email_failure")).toHaveLength(1);
+  });
+
+  it("captures the provider message id when the sender returns one", async () => {
+    emails.sendApplicationReceived.mockImplementationOnce(async () => ({ ok: true, id: "resend-msg-123" }) as any);
+    await enqueueNotification(job());
+    await runOutboxTick(new Date());
+    expect(state.outbox[0].status).toBe("sent");
+    expect(state.outbox[0].provider_message_id).toBe("resend-msg-123");
+  });
+
+  it("delivers admin alerts to the job's own recipient, not a hardcoded address", async () => {
+    await enqueueNotification(
+      job({
+        eventKey: `admin-new-application:${crypto.randomUUID()}`,
+        templateKey: "admin_new_application",
+        recipient: "second-admin@xeniostechnology.com",
+        payload: { applicantEmail: "a@example.com", applicantName: "A B", applicantType: "individual" },
+      }),
+    );
+    await runOutboxTick(new Date());
+    expect(emails.sendInternalApplicationAlert).toHaveBeenCalledTimes(1);
+    expect(emails.sendInternalApplicationAlert.mock.calls[0][0].to).toBe("second-admin@xeniostechnology.com");
+  });
+
+  it("mints tokens with the purpose decided at enqueue time", async () => {
+    await enqueueNotification(job()); // no tokenPurpose -> status
+    await enqueueNotification(
+      job({
+        eventKey: `approved:${crypto.randomUUID()}`,
+        templateKey: "applicant_approved",
+        payload: { firstName: "Jordan", tokenPurpose: "account_claim", approvalExpiresAt: new Date().toISOString() },
+      }),
+    );
+    await runOutboxTick(new Date());
+    expect(emails.sendApplicationReceived.mock.calls[0][0].token).toMatch(/^v2\.status\./);
+    expect(emails.sendApplicationApproved.mock.calls[0][0].token).toMatch(/^v2\.account_claim\./);
+  });
+});
+
+describe("admin outbox endpoints", () => {
+  it("lists messages without exposing payload contents", async () => {
+    await enqueueNotification(job({ payload: { firstName: "Secretive" } }));
+    const res = await request(makeAdminApp()).get("/api/admin/research/outbox");
+    expect(res.status).toBe(200);
+    expect(res.body.outbox).toHaveLength(1);
+    expect(res.body.outbox[0].template_key).toBe("applicant_received");
+    expect(JSON.stringify(res.body)).not.toContain("Secretive");
+  });
+
+  it("requeues a failed_permanent message and delivers it", async () => {
+    await enqueueNotification(job());
+    state.outbox[0].status = "failed_permanent";
+    state.outbox[0].attempt_count = 6;
+    const res = await request(makeAdminApp()).post(`/api/admin/research/outbox/${state.outbox[0].id}/retry`);
+    expect(res.status).toBe(200);
+    expect(state.outbox[0].status).toBe("sent");
+    expect(emails.sendApplicationReceived).toHaveBeenCalledTimes(1);
+    // The requeue is recorded as an auditable attempt row.
+    expect(state.attempts.some((a) => a.outcome === "manual-requeue")).toBe(true);
+  });
+
+  it("refuses to requeue a message that already sent", async () => {
+    await enqueueNotification(job());
+    await runOutboxTick(new Date());
+    expect(state.outbox[0].status).toBe("sent");
+    const res = await request(makeAdminApp()).post(`/api/admin/research/outbox/${state.outbox[0].id}/retry`);
+    expect(res.status).toBe(409);
+  });
+
+  it("test email: sends only to a configured admin address", async () => {
+    const app = makeAdminApp();
+    const ok = await request(app).post("/api/admin/research/test-email").send({ to: "samuel@xeniostechnology.com" });
+    expect(ok.status).toBe(200);
+    expect(ok.body.ok).toBe(true);
+    expect(ok.body.providerMessageId).toBe("resend-test-id");
+    expect(emails.sendAdminTestEmail).toHaveBeenCalledWith({ to: "samuel@xeniostechnology.com" });
+
+    const rejected = await request(app).post("/api/admin/research/test-email").send({ to: "attacker@example.com" });
+    expect(rejected.status).toBe(400);
+    expect(emails.sendAdminTestEmail).toHaveBeenCalledTimes(1);
   });
 });

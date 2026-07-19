@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
@@ -77,6 +77,9 @@ export default function SignIn() {
           <button type="submit" className="btn btn-primary" disabled={busy} data-testid="button-member-signin">
             {busy ? "Signing in" : "Sign in"}
           </button>
+          <p className="body-s text-ink-mute">
+            <Link href="/research/reset-password" className="underline" data-testid="link-forgot-password">Forgot your password?</Link>
+          </p>
           <p className="body-s text-ink-mute">
             Approved but no account yet? Use the secure link in your approval email to create one.
           </p>

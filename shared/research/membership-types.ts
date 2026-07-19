@@ -38,6 +38,41 @@ export function canTransition(from: ApplicationStatus, to: ApplicationStatus): b
   return ALLOWED_TRANSITIONS[from]?.includes(to) ?? false;
 }
 
+// Member account statuses. 'pending_activation' members reach ONLY the
+// activation flow; 'active' members reach the member website and catalog;
+// 'past_due' members reach billing recovery only; 'paused', 'cancelled', and
+// 'closed' lose protected access. past_due/cancelled require the
+// research-member-billing.sql migration before the database can store them.
+export const MEMBER_STATUSES = [
+  "pending_activation",
+  "active",
+  "past_due",
+  "paused",
+  "cancelled",
+  "closed",
+] as const;
+
+export type MemberStatus = (typeof MEMBER_STATUSES)[number];
+
+// Billing state, tracked separately from membership status. A single generic
+// "active" boolean cannot represent dunning, refunds, or disputes; membership
+// authorization requires status AND billing to agree once billing is live
+// (RESEARCH_MEMBERSHIP_BILLING_ENABLED). Stored in research_members.billing_state
+// after the research-member-billing.sql migration; a missing column or null
+// reads as 'not_started'.
+export const MEMBER_BILLING_STATES = [
+  "not_started",
+  "activation_pending",
+  "subscription_pending",
+  "active",
+  "past_due",
+  "cancelled",
+  "refunded",
+  "disputed",
+] as const;
+
+export type MemberBillingState = (typeof MEMBER_BILLING_STATES)[number];
+
 export const APPLICATION_INTERESTS = [
   "Whole-life planning",
   "Performance",

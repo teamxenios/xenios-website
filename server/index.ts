@@ -5,6 +5,7 @@ import { registerRoutes } from "./routes";
 import { researchPageGate, registerResearchApi } from "./research";
 import { registerMembershipApi } from "./research/membership";
 import { registerMemberApi } from "./research/members";
+import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { promoteHeldRewards } from "./research/referrals";
@@ -103,6 +104,7 @@ app.use(researchPageGate);
 registerResearchApi(app);
 registerMembershipApi(app);
 registerMemberApi(app);
+registerMemberAccessApi(app);
 
 // Startup config diagnostic (booleans only, never values): makes a fail-closed
 // 503 on /research immediately explainable from the deploy logs.

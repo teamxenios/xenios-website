@@ -58,9 +58,12 @@ function sign(value: string): string {
   return crypto.createHmac("sha256", signingKey()).update(value).digest("base64url");
 }
 
+// The signed payload carries a "cookie." domain label so the gate-cookie MAC
+// can never collide with the applicant status/claim token MAC, which shares
+// the same signing secret (both derive sha256(RESEARCH_SESSION_SECRET)).
 function makeToken(): string {
   const expires = Date.now() + SESSION_HOURS * 60 * 60 * 1000;
-  return `${expires}.${sign(String(expires))}`;
+  return `${expires}.${sign(`cookie.${expires}`)}`;
 }
 
 function tokenValid(token: string | undefined): boolean {
@@ -69,7 +72,7 @@ function tokenValid(token: string | undefined): boolean {
   if (dot <= 0) return false;
   const expires = token.slice(0, dot);
   const mac = token.slice(dot + 1);
-  const expected = sign(expires);
+  const expected = sign(`cookie.${expires}`);
   const a = Buffer.from(mac);
   const b = Buffer.from(expected);
   if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return false;

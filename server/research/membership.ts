@@ -20,6 +20,7 @@ import {
   sendApplicationReceived,
   sendInternalApplicationAlert,
   sendMoreInformationRequested,
+  sendResubmittedConfirmation,
   sendStatusLink,
 } from "./membership-emails";
 
@@ -49,23 +50,74 @@ function tokenKey(): Buffer {
   return crypto.createHash("sha256").update(secret).digest();
 }
 
-export function makeStatusToken(applicationId: string): string {
-  const exp = Date.now() + 90 * 24 * 60 * 60 * 1000; // 90 days
-  const payload = `${applicationId}.${exp}`;
-  const sig = crypto.createHmac("sha256", tokenKey()).update(payload).digest("base64url");
-  return `${payload}.${sig}`;
+// Token purposes (ACCOUNT-EMAIL-SYSTEMS-001): a status link must not double as
+// an account-claim credential. v2 tokens carry an explicit purpose inside the
+// signed payload; the claim endpoint accepts only 'account_claim'. The signed
+// payload starts with "v2." so the MAC domain can never collide with the gate
+// cookie MAC (which signs "cookie.<expires>") or with legacy tokens.
+export type TokenPurpose = "status" | "account_claim";
+
+const TOKEN_TTL_MS: Record<TokenPurpose, number> = {
+  status: 90 * 24 * 60 * 60 * 1000, // 90 days
+  account_claim: 14 * 24 * 60 * 60 * 1000, // matches the approval window
+};
+
+function signTokenPayload(payload: string): string {
+  return crypto.createHmac("sha256", tokenKey()).update(payload).digest("base64url");
 }
 
-export function readStatusToken(token: string): string | null {
-  const parts = token.split(".");
-  if (parts.length !== 3) return null;
-  const [id, exp, sig] = parts;
-  const expected = crypto.createHmac("sha256", tokenKey()).update(`${id}.${exp}`).digest("base64url");
-  const a = Buffer.from(sig);
+function macEqual(actual: string, expected: string): boolean {
+  const a = Buffer.from(actual);
   const b = Buffer.from(expected);
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
-  if (Number(exp) < Date.now()) return null;
-  return id;
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+export function makeResearchToken(purpose: TokenPurpose, applicationId: string): string {
+  const exp = Date.now() + TOKEN_TTL_MS[purpose];
+  const payload = `v2.${purpose}.${applicationId}.${exp}`;
+  return `${payload}.${signTokenPayload(payload)}`;
+}
+
+// Reads a token and returns the application id when the signature verifies,
+// the token is unexpired, and its purpose is in the accepted set. Legacy
+// unscoped tokens (three parts, minted before purposes existed) verify for
+// every purpose until their own 90-day expiry runs out; they stop being
+// minted with this change, so the grandfather window closes by itself.
+export function readResearchToken(token: string, accepted: TokenPurpose[]): string | null {
+  const parts = token.split(".");
+  if (parts.length === 5 && parts[0] === "v2") {
+    const [v, purpose, id, exp, sig] = parts;
+    if (!macEqual(sig, signTokenPayload(`${v}.${purpose}.${id}.${exp}`))) return null;
+    if (!accepted.includes(purpose as TokenPurpose)) return null;
+    if (Number(exp) < Date.now()) return null;
+    return id;
+  }
+  if (parts.length === 3) {
+    const [id, exp, sig] = parts;
+    if (!macEqual(sig, signTokenPayload(`${id}.${exp}`))) return null;
+    if (Number(exp) < Date.now()) return null;
+    return id;
+  }
+  return null;
+}
+
+export function makeStatusToken(applicationId: string): string {
+  return makeResearchToken("status", applicationId);
+}
+
+// Status/resubmit reads: a claim-capable token also proves status access
+// (claim implies status), so both purposes are accepted here.
+export function readStatusToken(token: string): string | null {
+  return readResearchToken(token, ["status", "account_claim"]);
+}
+
+// Which token purpose an application's emails should carry: once the
+// application is claimable, its links must be claim-capable so the approved
+// applicant can recover a lost approval email through resend-link.
+export function tokenPurposeFor(status: ApplicationStatus): TokenPurpose {
+  return status === "approved_pending_payment" || status === "payment_pending" || status === "active"
+    ? "account_claim"
+    : "status";
 }
 
 // Fixed-window rate limits, durable across instances (V3 section 71): the
@@ -271,9 +323,14 @@ export function registerMembershipApi(app: Express) {
             templateKey: "applicant_status_link",
             recipient: existing.email,
             applicationId: existing.id,
-            payload: { firstName: existing.first_name },
+            payload: { firstName: existing.first_name, tokenPurpose: tokenPurposeFor(existing.status) },
           },
-          () => sendStatusLink({ email: existing.email, firstName: existing.first_name, token: makeStatusToken(existing.id) }),
+          () =>
+            sendStatusLink({
+              email: existing.email,
+              firstName: existing.first_name,
+              token: makeResearchToken(tokenPurposeFor(existing.status), existing.id),
+            }),
         );
         return res.json({ ok: true });
       }
@@ -324,7 +381,7 @@ export function registerMembershipApi(app: Express) {
           templateKey: "applicant_received",
           recipient: row.email,
           applicationId: row.id,
-          payload: { firstName: row.first_name },
+          payload: { firstName: row.first_name, tokenPurpose: "status" },
         },
         () => sendApplicationReceived({ email: row.email, firstName: row.first_name, token: makeStatusToken(row.id) }),
       );
@@ -340,6 +397,7 @@ export function registerMembershipApi(app: Express) {
           },
           () =>
             sendInternalApplicationAlert({
+              to: admin,
               email: row.email,
               name: `${row.first_name} ${row.last_name}`,
               applicantType: a.applicantType,
@@ -388,9 +446,14 @@ export function registerMembershipApi(app: Express) {
               templateKey: "applicant_status_link",
               recipient: existing.email,
               applicationId: existing.id,
-              payload: { firstName: existing.first_name },
+              payload: { firstName: existing.first_name, tokenPurpose: tokenPurposeFor(existing.status) },
             },
-            () => sendStatusLink({ email: existing.email, firstName: existing.first_name, token: makeStatusToken(existing.id) }),
+            () =>
+              sendStatusLink({
+                email: existing.email,
+                firstName: existing.first_name,
+                token: makeResearchToken(tokenPurposeFor(existing.status), existing.id),
+              }),
           );
         }
       }
@@ -441,6 +504,51 @@ export function registerMembershipApi(app: Express) {
         },
         { reasonCode: "applicant_resubmitted" },
       );
+
+      // Confirmation to the applicant, and the internal alert that was missing
+      // before this change (a resubmission previously sat silently until an
+      // admin polled the queue).
+      await notify(
+        {
+          eventKey: `resubmitted:${updated.id}`,
+          eventType: "application_resubmitted_applicant",
+          templateKey: "applicant_resubmitted",
+          recipient: updated.email,
+          applicationId: updated.id,
+          payload: { firstName: updated.first_name, tokenPurpose: "status" },
+        },
+        () =>
+          sendResubmittedConfirmation({
+            email: updated.email,
+            firstName: updated.first_name,
+            token: makeStatusToken(updated.id),
+          }),
+      );
+      for (const admin of adminRecipients()) {
+        await notify(
+          {
+            eventKey: `admin-resubmitted:${updated.id}:${admin}`,
+            eventType: "application_resubmitted_admin",
+            templateKey: "admin_resubmitted",
+            recipient: admin,
+            applicationId: updated.id,
+            payload: {
+              applicantEmail: updated.email,
+              applicantName: `${updated.first_name} ${updated.last_name}`,
+              applicantType: (updated as any).applicant_type ?? "individual",
+              kind: "resubmitted",
+            },
+          },
+          () =>
+            sendInternalApplicationAlert({
+              to: admin,
+              email: updated.email,
+              name: `${updated.first_name} ${updated.last_name}`,
+              applicantType: (updated as any).applicant_type ?? "individual",
+              kind: "resubmitted",
+            }),
+        );
+      }
       console.log(`[research membership] application resubmitted ${updated.id}`);
       res.json({ ok: true });
     } catch (error: any) {
@@ -562,7 +670,7 @@ export function registerMembershipApi(app: Express) {
           templateKey: "applicant_more_info",
           recipient: row.email,
           applicationId: row.id,
-          payload: { firstName: row.first_name, note },
+          payload: { firstName: row.first_name, note, tokenPurpose: "status" },
         },
         () => sendMoreInformationRequested({ email: row.email, firstName: row.first_name, token: makeStatusToken(row.id), note }),
       );
@@ -586,13 +694,13 @@ export function registerMembershipApi(app: Express) {
             templateKey: "applicant_approved",
             recipient: row.email,
             applicationId: row.id,
-            payload: { firstName: row.first_name, approvalExpiresAt: row.approval_expires_at },
+            payload: { firstName: row.first_name, approvalExpiresAt: row.approval_expires_at, tokenPurpose: "account_claim" },
           },
           () =>
             sendApplicationApproved({
               email: row.email,
               firstName: row.first_name,
-              token: makeStatusToken(row.id),
+              token: makeResearchToken("account_claim", row.id),
               approvalExpiresAt: new Date(row.approval_expires_at as string),
             }),
         );
