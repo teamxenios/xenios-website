@@ -7,6 +7,7 @@ import { registerMembershipApi } from "./research/membership";
 import { registerMemberApi } from "./research/members";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
+import { promoteHeldRewards } from "./research/referrals";
 import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
 import { createServer } from "http";
@@ -115,6 +116,19 @@ log(
 // Email provider diagnostics (booleans only) + the durable notification worker.
 registerOutboxAdmin(app);
 registerReferralFraudAdmin(app);
+
+// Referral reward promotion: held rewards become available once their hold
+// window passes. Without this tick nothing ever called promoteHeldRewards, so
+// a held reward could never become credit (found by the account-email-systems
+// audit). Flag-gated inside: a no-op while RESEARCH_REFERRALS_ENABLED=false.
+const rewardPromotionTimer = setInterval(() => {
+  promoteHeldRewards(new Date())
+    .then((promoted) => {
+      if (promoted > 0) log(`promoted ${promoted} referral reward(s) past their hold window`, "referrals");
+    })
+    .catch((err) => console.error("[referrals] reward promotion tick failed:", err));
+}, 5 * 60 * 1000);
+rewardPromotionTimer.unref?.();
 void logEmailStartupDiagnostics(log).catch(() => {});
 startOutboxWorker(log);
 

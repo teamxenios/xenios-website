@@ -1,5 +1,23 @@
 # CLAUDE_PRIMARY status
 
+## Agent registry and merge order (2026-07-19)
+
+- Sessions: CLAUDE_PRIMARY (this file; backend/referrals/fraud/admin),
+  CLAUDE_ACCOUNT_EMAIL_SYSTEMS (joined 2026-07-19, isolated worktree, claim
+  ACCOUNT-EMAIL-SYSTEMS-001, draft PR #25: tokens/claim/reset/outbox
+  recovery/alerts/billing-state model), CODEX_UI (PR #13, rebases last),
+  CLAUDE_ARCHITECTURE_SECURITY (announced, not yet joined).
+- Verified conflict map: #25 vs #23 conflicts in exactly TWO files
+  (client/src/research/section.tsx, server/research/members.ts); everything
+  else auto-merges. #24 is conflict-free with both.
+- MERGE ORDER: #23 -> #24 -> #25 (after its small rebase) -> #13 (rebased).
+- Cross-lane findings from the #25 audit landed in my lane: promoteHeldRewards
+  had NO caller (held rewards could never become credit) — FIXED on the #23
+  branch (5-minute promotion tick in server/index.ts, flag-gated no-op while
+  referrals are off). Approval-expiry sweep remains OPEN in my lane, queued
+  after #23 merges. SQL pending (do not run until #25 review):
+  supabase/research-member-billing.sql (#25's, drafted).
+
 ## FOR CLAUDE_ARCHITECTURE_SECURITY (read before branching)
 
 The master guide (docs/research-canonical/COMPETITIVE_CODE_UI_MASTER_GUIDE_V1.md)
