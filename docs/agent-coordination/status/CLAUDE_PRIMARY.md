@@ -1,8 +1,12 @@
 # CLAUDE_PRIMARY status
 
-- Timestamp: 2026-07-18T22:15-05:00
+- Timestamp: 2026-07-18T23:55-05:00
 - Mode: building (V3 section 83 Then list + Samuel direct requests)
-- Branch: research-fraud-integration (TARGETS MAIN; supersedes the stack)
+- Branch: research-fraud-integration (targets main)
+- MERGED: PR #22 (2026-07-19T03:40Z) landed the stranded stack recovery, the
+  fraud controls, and the canon correction pass in main. OPEN: PR #23 (same
+  branch, base main, NOT stacked) carries the gateway architecture, which was
+  pushed minutes after the #22 merge. Merge #23, then Codex rebases #13.
 - STRANDED-MERGE RECOVERY (second occurrence of the PR #15 failure): PRs #18,
   #19, #20 show MERGED but merged into their stacked bases AFTER main had
   captured those bases via #16/#17, so their content never reached main
