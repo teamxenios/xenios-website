@@ -84,6 +84,26 @@ RESEARCH_PUBLIC, RESEARCH_INDEXABLE, RESEARCH_REFERRALS_ENABLED,
 RESEARCH_MEMBERSHIP_BILLING_ENABLED all remain false. No production flag was
 touched. No SQL was run.
 
+## Adversarial review round (2026-07-19, pre-PR)
+
+A 4-lens multi-agent review (correctness / security / PR #23 compatibility /
+test fidelity) produced 25 findings; 16 survived adversarial verification and
+were fixed or documented before the PR: billing_state is now written on
+activation and active-claim (schema-tolerant, so pre-migration deploys stay
+safe), legacy queued approval rows mint claim-capable tokens (template-keyed
+fallback), resubmission and failure-alert event keys are time-bucketed,
+the requeue endpoint refuses fresh processing rows (duplicate-send race),
+claim-token TTL tracks RESEARCH_APPROVAL_EXPIRY_DAYS (NaN-guarded),
+forgot-password sends fire-and-forget (timing enumeration), activation retry
+is idempotent after a partial failure. Deploy notes surfaced by the review:
+
+- The gate-cookie MAC domain label INVALIDATES all live xr_access sessions at
+  deploy: reviewers re-enter the shared password once. Intended.
+- Pre-#23, the emailed password-recovery link lands behind the shared-password
+  page for a visitor without a live xr_access cookie (identical to the
+  existing sign-in flow's constraint). PR #23's bearer-bypass architecture is
+  the resolution; noted for the rebase.
+
 ## Known gaps left open (deliberately out of this PR)
 
 - No approval-expiry sweep (expiry IS now enforced at claim time).

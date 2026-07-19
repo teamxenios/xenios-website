@@ -290,6 +290,48 @@ describe("worker tick", () => {
     expect(emails.sendApplicationReceived.mock.calls[0][0].token).toMatch(/^v2\.status\./);
     expect(emails.sendApplicationApproved.mock.calls[0][0].token).toMatch(/^v2\.account_claim\./);
   });
+
+  it("a legacy applicant_approved row (no tokenPurpose in payload) still mints a claim-capable token", async () => {
+    await enqueueNotification(
+      job({
+        eventKey: `approved:${crypto.randomUUID()}`,
+        templateKey: "applicant_approved",
+        payload: { firstName: "Jordan", approvalExpiresAt: new Date().toISOString() }, // pre-purpose payload shape
+      }),
+    );
+    await runOutboxTick(new Date());
+    expect(emails.sendApplicationApproved.mock.calls[0][0].token).toMatch(/^v2\.account_claim\./);
+  });
+
+  it("a provider rejection WITHOUT a throw (SDK error field) is a recorded failure, not a sent", async () => {
+    state.sendMode = "false"; // sender resolves false: provider rejected, nothing thrown
+    await enqueueNotification(job());
+    const result = await runOutboxTick(new Date());
+    expect(result.sent).toBe(0);
+    expect(result.retried).toBe(1);
+    expect(state.outbox[0].status).toBe("failed_retryable");
+    expect(state.attempts[0].outcome).toBe("failed");
+  });
+
+  it("a permanently failing ADMIN template never enqueues a failure alert (loop guard)", async () => {
+    emails.sendInternalApplicationAlert.mockImplementation(async () => { throw new Error("provider down"); });
+    await enqueueNotification(
+      job({
+        eventKey: `admin-new-application:${crypto.randomUUID()}`,
+        templateKey: "admin_new_application",
+        recipient: "samuel@xeniostechnology.com",
+        payload: { applicantEmail: "a@example.com", applicantName: "A B", applicantType: "individual" },
+      }),
+    );
+    const now = new Date("2026-07-18T12:00:00Z");
+    for (let i = 1; i <= 6; i++) {
+      state.outbox[0].next_attempt_at = new Date(0).toISOString();
+      await runOutboxTick(now);
+    }
+    emails.sendInternalApplicationAlert.mockImplementation(async () => true);
+    expect(state.outbox[0].status).toBe("failed_permanent");
+    expect(state.outbox.filter((r) => r.template_key === "admin_email_failure")).toHaveLength(0);
+  });
 });
 
 describe("admin outbox endpoints", () => {
@@ -320,6 +362,21 @@ describe("admin outbox endpoints", () => {
     expect(state.outbox[0].status).toBe("sent");
     const res = await request(makeAdminApp()).post(`/api/admin/research/outbox/${state.outbox[0].id}/retry`);
     expect(res.status).toBe(409);
+  });
+
+  it("refuses to requeue a FRESH processing row (a worker may be mid-send), allows a stale one", async () => {
+    await enqueueNotification(job());
+    state.outbox[0].status = "processing";
+    state.outbox[0].updated_at = new Date().toISOString(); // freshly claimed
+    const app = makeAdminApp();
+    const fresh = await request(app).post(`/api/admin/research/outbox/${state.outbox[0].id}/retry`);
+    expect(fresh.status).toBe(409);
+    expect(emails.sendApplicationReceived).not.toHaveBeenCalled();
+
+    state.outbox[0].updated_at = new Date(Date.now() - 30 * 60 * 1000).toISOString(); // stale claim
+    const stale = await request(app).post(`/api/admin/research/outbox/${state.outbox[0].id}/retry`);
+    expect(stale.status).toBe(200);
+    expect(state.outbox[0].status).toBe("sent");
   });
 
   it("test email: sends only to a configured admin address", async () => {

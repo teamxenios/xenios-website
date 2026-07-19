@@ -66,7 +66,14 @@ export async function enqueueNotification(input: EnqueueInput): Promise<boolean>
 async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | null; error?: string }> {
   const payload = job.payload ?? {};
   const firstName = String(payload.firstName ?? "there");
-  const purpose: TokenPurpose = payload.tokenPurpose === "account_claim" ? "account_claim" : "status";
+  // Rows enqueued before purposes existed have no payload.tokenPurpose; for
+  // those, the template is the reliable signal (an approval email must carry
+  // a claim-capable link or its "Activate your membership" button dead-ends).
+  const purpose: TokenPurpose =
+    payload.tokenPurpose === "account_claim" ||
+    (payload.tokenPurpose == null && job.template_key === "applicant_approved")
+      ? "account_claim"
+      : "status";
   const token = job.application_id ? makeResearchToken(purpose, String(job.application_id)) : "";
   try {
     let result: unknown;
@@ -166,10 +173,13 @@ async function reclaimStaleProcessing(now: Date): Promise<void> {
 // (no alert loops).
 async function alertPermanentFailure(job: any, errorSummary: string | null): Promise<void> {
   if (String(job.template_key ?? "").startsWith("admin_")) return;
+  // Bucketed so a REQUEUED job that permanently fails again alerts again
+  // (failure rounds are hours apart; the same round stays deduplicated).
+  const bucket = Math.floor(Date.now() / 600000);
   for (const admin of adminRecipients()) {
     try {
       await enqueueNotification({
-        eventKey: `email-failure:${job.id}:${admin}`,
+        eventKey: `email-failure:${job.id}:${bucket}:${admin}`,
         eventType: "notification_failed_admin",
         templateKey: "admin_email_failure",
         recipient: admin,
@@ -329,6 +339,18 @@ export function registerOutboxAdmin(app: Express) {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Not configured" });
       const adminEmail = (req as any).adminEmail as string | undefined;
       const id = String(req.params.id);
+      const { data: row } = await getSupabaseAdmin().from(OUTBOX).select("*").eq("id", id).maybeSingle();
+      if (!row || !REQUEUEABLE.includes((row as any).status)) {
+        return res.status(409).json({ ok: false, message: "Only failed or stuck messages can be requeued." });
+      }
+      // A processing row may be mid-flight in a worker; only a STALE claim is
+      // requeueable, or the requeue races the send into a duplicate email.
+      if ((row as any).status === "processing") {
+        const updatedAt = (row as any).updated_at ? Date.parse(String((row as any).updated_at)) : 0;
+        if (updatedAt >= Date.now() - STALE_PROCESSING_MINUTES * 60 * 1000) {
+          return res.status(409).json({ ok: false, message: "This message is still being processed. Try again in a few minutes." });
+        }
+      }
       const now = new Date().toISOString();
       const { data: updated, error } = await getSupabaseAdmin()
         .from(OUTBOX)
@@ -340,7 +362,7 @@ export function registerOutboxAdmin(app: Express) {
           updated_at: now,
         })
         .eq("id", id)
-        .in("status", REQUEUEABLE)
+        .eq("status", (row as any).status)
         .select()
         .single();
       if (error || !updated) {

@@ -37,7 +37,10 @@ const state = vi.hoisted(() => ({
       return { data: null, error: null };
     }),
     updateUserById: vi.fn(async (_id: string, _attrs: any) => ({ data: { user: { id: _id } }, error: null })),
-    listUsers: vi.fn(async () => ({ data: { users: state.authUsers }, error: null })),
+    listUsers: vi.fn(async ({ page, perPage }: { page: number; perPage: number }) => ({
+      data: { users: state.authUsers.slice((page - 1) * perPage, page * perPage) },
+      error: null,
+    })),
     getUser: vi.fn(async (jwt: string) =>
       jwt === "good-jwt"
         ? { data: { user: { id: "auth-1", email: "member@example.com" } }, error: null }
@@ -315,6 +318,19 @@ describe("account claiming", () => {
     expect(state.tables.research_members[0].auth_user_id).toBe("stranded-1");
   });
 
+  it("heals a stranded claim when the auth user sits beyond the first listUsers page", async () => {
+    const app = seedApplication();
+    for (let i = 0; i < 205; i += 1) state.authUsers.push({ id: `filler-${i}`, email: `filler-${i}@example.com` });
+    state.authUsers.push({ id: "stranded-deep", email: "member@example.com" }); // page 2
+    const res = await request(makeApp())
+      .post("/api/research/member/claim")
+      .set("X-Forwarded-For", uniqueIp())
+      .send({ token: claimToken(app.id), password: "fresh-password-123" });
+    expect(res.status).toBe(200);
+    expect(state.auth.listUsers.mock.calls.length).toBeGreaterThan(1);
+    expect(state.tables.research_members[0].auth_user_id).toBe("stranded-deep");
+  });
+
   it("treats a concurrent duplicate member insert as success", async () => {
     const app = seedApplication();
     state.failMemberInsertWith = "duplicate key value violates unique constraint";
@@ -437,6 +453,17 @@ describe("active-member authorization (requireActiveMember)", () => {
       const res = await request(makeApp()).get("/api/research/member/catalog").set("Authorization", "Bearer good-jwt");
       expect(res.status).toBe(403);
       expect(res.body.code).toBe("billing_past_due");
+    } finally {
+      delete process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED;
+    }
+  });
+
+  it("billing enforcement: an active pre-migration member (no billing_state column) stays allowed", async () => {
+    process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED = "true";
+    try {
+      seedMemberWithStatus("active"); // row has no billing_state key at all
+      const res = await request(makeApp()).get("/api/research/member/catalog").set("Authorization", "Bearer good-jwt");
+      expect(res.status).toBe(200);
     } finally {
       delete process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED;
     }

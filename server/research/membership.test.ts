@@ -317,6 +317,48 @@ describe("legitimate verified resubmission", () => {
     expect(emails.sendInternalApplicationAlert.mock.calls[0][0].kind).toBe("resubmitted");
     expect(emails.sendInternalApplicationAlert.mock.calls[0][0].to).toBe("samuel@xeniostechnology.com");
   });
+
+  it("a LATER resubmission cycle notifies again (event keys are bucketed, not permanent)", async () => {
+    const row = seedApplication({ email: VALID.email, status: "more_information_requested" });
+    const app = makeApp();
+    const first = await request(app)
+      .post("/api/research/applications/resubmit")
+      .set("X-Forwarded-For", uniqueIp())
+      .send({ ...VALID, token: makeStatusToken(row.id) });
+    expect(first.status).toBe(200);
+    expect(emails.sendResubmittedConfirmation).toHaveBeenCalledTimes(1);
+
+    // The admin requests information again; the applicant resubmits 11 minutes later.
+    row.status = "more_information_requested";
+    const realNow = Date.now.bind(Date);
+    const spy = vi.spyOn(Date, "now").mockImplementation(() => realNow() + 11 * 60 * 1000);
+    try {
+      const second = await request(app)
+        .post("/api/research/applications/resubmit")
+        .set("X-Forwarded-For", uniqueIp())
+        .send({ ...VALID, token: makeStatusToken(row.id) });
+      expect(second.status).toBe(200);
+      expect(emails.sendResubmittedConfirmation).toHaveBeenCalledTimes(2);
+      expect(emails.sendInternalApplicationAlert).toHaveBeenCalledTimes(2);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it("status-link emails for an APPROVED application are enqueued claim-capable", async () => {
+    const row = seedApplication({ email: VALID.email, status: "approved_pending_payment" });
+    const app = makeApp();
+    // A duplicate submission for an approved application sends a fresh link
+    // that must be able to claim (the approved applicant's recovery path).
+    const res = await request(app)
+      .post("/api/research/applications")
+      .set("X-Forwarded-For", uniqueIp())
+      .send(VALID);
+    expect(res.status).toBe(200);
+    const linkJob = state.outbox.find((j) => j.template_key === "applicant_status_link" && j.application_id === row.id);
+    expect(linkJob).toBeTruthy();
+    expect(linkJob.payload.tokenPurpose).toBe("account_claim");
+  });
 });
 
 describe("resend rate limiting", () => {
@@ -435,12 +477,28 @@ describe("admin activation (interim, admin-verified, billing-flag gated)", () =>
     expect(res.status).toBe(200);
     expect(row.status).toBe("active");
     expect(state.members[0].status).toBe("active");
+    // Admin-verified activation IS billing verification: billing_state is
+    // recorded so requireActiveMember keeps admitting the member once
+    // RESEARCH_MEMBERSHIP_BILLING_ENABLED enforcement is live.
+    expect(state.members[0].billing_state).toBe("active");
     // Referrals are flag-off in this suite: the hook ran and reported disabled.
     expect(res.body.referral.reason).toBe("referrals_disabled");
     // The transition was audited with BOTH references, internal-only.
     const audited = state.events.find((e) => e.new_status === "active");
     expect(String(audited?.internal_note)).toContain("payment_reference=manual-check-001");
     expect(String(audited?.internal_note)).toContain("subscription_reference=sub-check-001");
+  });
+
+  it("activate retry after a partial failure is idempotent (application already active)", async () => {
+    const row = seedApplication({ status: "active" }); // transition already happened
+    state.members.push({ id: "mem-1", application_id: row.id, auth_user_id: "auth-1", email: row.email, first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/activate`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send(BOTH_REFS);
+    expect(res.status).toBe(200);
+    expect(state.members[0].status).toBe("active");
+    expect(state.members[0].billing_state).toBe("active");
   });
 
   it("activate fails closed unless BOTH the activation payment and the monthly membership are provided", async () => {

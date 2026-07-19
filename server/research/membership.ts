@@ -33,7 +33,11 @@ import {
 // "activation opens soon" state until payment is configured.
 // ---------------------------------------------------------------------------
 
-const APPROVAL_EXPIRY_DAYS = () => parseInt(process.env.RESEARCH_APPROVAL_EXPIRY_DAYS || "14", 10);
+// NaN-guarded: a malformed env value must never produce an Invalid Date expiry.
+export function approvalExpiryDays(): number {
+  const n = parseInt(process.env.RESEARCH_APPROVAL_EXPIRY_DAYS || "14", 10);
+  return Number.isFinite(n) && n > 0 ? n : 14;
+}
 
 // Status-link tokens: HMAC-signed, applicant-facing, reveal status only.
 // RESEARCH_SESSION_SECRET is REQUIRED in production (never derived from the
@@ -57,10 +61,12 @@ function tokenKey(): Buffer {
 // cookie MAC (which signs "cookie.<expires>") or with legacy tokens.
 export type TokenPurpose = "status" | "account_claim";
 
-const TOKEN_TTL_MS: Record<TokenPurpose, number> = {
-  status: 90 * 24 * 60 * 60 * 1000, // 90 days
-  account_claim: 14 * 24 * 60 * 60 * 1000, // matches the approval window
-};
+const DAY_MS = 24 * 60 * 60 * 1000;
+// account_claim tracks the (configurable) approval window so a lengthened
+// approval never outlives its own claim link; never below the 14-day default.
+function tokenTtlMs(purpose: TokenPurpose): number {
+  return purpose === "status" ? 90 * DAY_MS : Math.max(approvalExpiryDays(), 14) * DAY_MS;
+}
 
 function signTokenPayload(payload: string): string {
   return crypto.createHmac("sha256", tokenKey()).update(payload).digest("base64url");
@@ -73,7 +79,7 @@ function macEqual(actual: string, expected: string): boolean {
 }
 
 export function makeResearchToken(purpose: TokenPurpose, applicationId: string): string {
-  const exp = Date.now() + TOKEN_TTL_MS[purpose];
+  const exp = Date.now() + tokenTtlMs(purpose);
   const payload = `v2.${purpose}.${applicationId}.${exp}`;
   return `${payload}.${signTokenPayload(payload)}`;
 }
@@ -508,9 +514,12 @@ export function registerMembershipApi(app: Express) {
       // Confirmation to the applicant, and the internal alert that was missing
       // before this change (a resubmission previously sat silently until an
       // admin polled the queue).
+      // Bucketed per 10 minutes: rapid double-submits stay deduplicated, but
+      // a LATER resubmission cycle (another request-info round) notifies again.
+      const resubmitBucket = Math.floor(Date.now() / 600000);
       await notify(
         {
-          eventKey: `resubmitted:${updated.id}`,
+          eventKey: `resubmitted:${updated.id}:${resubmitBucket}`,
           eventType: "application_resubmitted_applicant",
           templateKey: "applicant_resubmitted",
           recipient: updated.email,
@@ -527,7 +536,7 @@ export function registerMembershipApi(app: Express) {
       for (const admin of adminRecipients()) {
         await notify(
           {
-            eventKey: `admin-resubmitted:${updated.id}:${admin}`,
+            eventKey: `admin-resubmitted:${updated.id}:${admin}:${resubmitBucket}`,
             eventType: "application_resubmitted_admin",
             templateKey: "admin_resubmitted",
             recipient: admin,
@@ -680,7 +689,7 @@ export function registerMembershipApi(app: Express) {
     adminAction(
       "approved_pending_payment",
       () => {
-        const expires = new Date(Date.now() + APPROVAL_EXPIRY_DAYS() * 24 * 60 * 60 * 1000);
+        const expires = new Date(Date.now() + approvalExpiryDays() * DAY_MS);
         return { reviewed_at: new Date().toISOString(), approval_expires_at: expires.toISOString() };
       },
       async (row) => {
@@ -764,22 +773,47 @@ export function registerMembershipApi(app: Express) {
         });
       }
 
-      const updated = await transition(
-        row,
-        "active",
-        { type: "admin", id: adminEmail ?? "admin" },
-        {},
-        {
-          reasonCode: "admin_verified_activation",
-          internalNote: `payment_reference=${paymentReference} subscription_reference=${subscriptionReference}`,
-        },
-      );
+      // Idempotent recovery: if a previous activation attempt moved the
+      // application but failed on the member update, a retry must not 409 on
+      // the active -> active transition.
+      const updated =
+        row.status === "active"
+          ? row
+          : await transition(
+              row,
+              "active",
+              { type: "admin", id: adminEmail ?? "admin" },
+              {},
+              {
+                reasonCode: "admin_verified_activation",
+                internalNote: `payment_reference=${paymentReference} subscription_reference=${subscriptionReference}`,
+              },
+            );
 
+      // Admin-verified activation IS billing verification (both references
+      // required above), so billing_state becomes active together with the
+      // member status. Pre-migration schemas have no billing_state column;
+      // retry without it so activation never silently fails.
       const activatedAt = new Date();
-      await getSupabaseAdmin()
+      const memberPatch = {
+        status: "active",
+        activated_at: activatedAt.toISOString(),
+        updated_at: activatedAt.toISOString(),
+      };
+      let { error: memberUpdateError } = await getSupabaseAdmin()
         .from("research_members")
-        .update({ status: "active", activated_at: activatedAt.toISOString(), updated_at: activatedAt.toISOString() })
+        .update({ ...memberPatch, billing_state: "active" })
         .eq("id", (member as any).id);
+      if (memberUpdateError && /billing_state|column|schema/i.test(String(memberUpdateError.message ?? ""))) {
+        ({ error: memberUpdateError } = await getSupabaseAdmin()
+          .from("research_members")
+          .update(memberPatch)
+          .eq("id", (member as any).id));
+      }
+      if (memberUpdateError) {
+        console.error("[research membership] member activation update failed:", memberUpdateError.message);
+        return res.status(500).json({ ok: false, message: "The member record could not be activated. Retry the activation." });
+      }
 
       // Referral qualification: the same idempotent service a Stripe webhook
       // will call in Phase 5. Flag-gated inside; failures never block activation.
