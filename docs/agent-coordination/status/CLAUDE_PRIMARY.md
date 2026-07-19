@@ -1,5 +1,25 @@
 # CLAUDE_PRIMARY status
 
+## FOR CLAUDE_ARCHITECTURE_SECURITY (read before branching)
+
+The master guide (docs/research-canonical/COMPETITIVE_CODE_UI_MASTER_GUIDE_V1.md)
+was assessed against main BEFORE PR #23. Already implemented on PR #23
+(branch research-fraud-integration, base main, mergeable): the minimal
+one-viewport gateway; catalog/orders behind member auth (the shared password
+no longer unlocks products and no longer triggers a catalog fetch);
+requireActiveMember (pending members 403 on catalog/orders); member bypass of
+the shared password on exactly the member-authed endpoints; sign-in redirects
+by member status; /research/activate; member-area routes behind RequireMember;
+access-architecture tests. BRANCH ONLY AFTER PR #23 MERGES or you will
+rebuild and collide with all of it. Still yours per the guide's P0: member
+resolution by auth_user_id (currently email), atomic/compensating account
+claim, purpose-scoped single-use tokens, admin roles + MFA, CSP report-only,
+trust proxy + canonical IP helper, review-cookie path scoping, CSRF on
+cookie-authed writes. Guards live in server/research/member-auth.ts. The
+Tailwind utilities fix is PR #24 (merge in either order; proven conflict-free
+with #23). CLAUDE_PRIMARY otherwise owns backend/admin; CODEX_UI owns the
+visual member experience (see handoffs/to-codex/20260718-gateway-architecture.md).
+
 - Timestamp: 2026-07-18T23:55-05:00
 - Mode: building (V3 section 83 Then list + Samuel direct requests)
 - Branch: research-fraud-integration (targets main)

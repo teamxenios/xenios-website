@@ -119,6 +119,15 @@ describe("an authenticated member bypasses the shared password on member endpoin
     expect(res.status).toBe(403);
   });
 
+  it("a PENDING member cannot reach the catalog or orders (active membership required)", async () => {
+    state.members[0].status = "pending_activation";
+    const app = makeApp();
+    const res = await request(app).get("/api/research/catalog").set("Authorization", `Bearer ${state.goodToken}`);
+    expect(res.status).toBe(403);
+    const order = await request(app).post("/api/research/orders").set("Authorization", `Bearer ${state.goodToken}`).send({});
+    expect(order.status).toBe(403);
+  });
+
   it("a bearer token does NOT bypass the wall on non-member endpoints", async () => {
     const app = makeApp();
     // policies is cookie-walled; a bearer alone must not open it

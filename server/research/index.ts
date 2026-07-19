@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { CatalogResponse, CommerceLane, Product } from "@shared/research/types";
 import { products } from "./products-data";
 import { policies } from "./policies-data";
-import { requireMember } from "./member-auth";
+import { requireActiveMember } from "./member-auth";
 
 // ---------------------------------------------------------------------------
 // xenios research: Express gate + APIs.
@@ -226,9 +226,11 @@ export function registerResearchApi(app: Express) {
     next();
   });
 
-  // The catalog is MEMBER content: the shared gateway password does not unlock
-  // products. requireMember verifies the JWT and membership server-side.
-  app.get("/api/research/catalog", requireMember, (_req, res) => {
+  // The catalog is ACTIVE-member content: the shared gateway password does
+  // not unlock products, and neither does an approved-but-not-activated
+  // membership. requireActiveMember verifies the JWT, the membership, and
+  // the active status server-side.
+  app.get("/api/research/catalog", requireActiveMember, (_req, res) => {
     res.set("Cache-Control", "no-store");
     const body: CatalogResponse = {
       products,
@@ -245,7 +247,7 @@ export function registerResearchApi(app: Express) {
     res.json({ policies });
   });
 
-  app.post("/api/research/orders", requireMember, async (req, res) => {
+  app.post("/api/research/orders", requireActiveMember, async (req, res) => {
     try {
       const parsed = orderRequestSchema.safeParse(req.body);
       if (!parsed.success) {
