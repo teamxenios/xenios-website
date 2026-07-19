@@ -226,11 +226,18 @@ function MemberChrome({ children }: { children: ReactNode }) {
   );
 }
 
+// FOUNDER DECISION (2026-07-19): members recover their password from a fresh
+// browser WITHOUT the shared review password. Exactly this route renders
+// outside the gate, in minimal account chrome; it exposes no catalog, no
+// member navigation, and no application data. Everything else stays gated.
+const RECOVERY_PATH = "/research/reset-password";
+
 export default function ResearchLayout({ children }: { children: ReactNode }) {
   const { gate } = useResearch();
   const [location] = useLocation();
 
   if (gate === "unconfigured") return <Unconfigured />;
+  if (location === RECOVERY_PATH) return <MinimalChrome>{children}</MinimalChrome>;
   if (gate === "checking") {
     return (
       <div className="container-x" style={{ paddingTop: "var(--space-hero-top)" }}>

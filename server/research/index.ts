@@ -131,6 +131,14 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   const isResearchPath = req.path === "/research" || req.path.startsWith("/research/");
   if (!isResearchPath) return next();
   if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  // The password-recovery page (founder decision, 2026-07-19: recovery works
+  // from a fresh browser without the review password) is a sensitive account
+  // page: never cached, never indexed, never leaks a referrer.
+  if (req.path === "/research/reset-password") {
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Referrer-Policy", "no-referrer");
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  }
   if (!configured()) {
     return res
       .status(503)
@@ -219,8 +227,16 @@ export function registerResearchApi(app: Express) {
   // token is the stronger credential; every bypassed path still enforces it).
   // Everything else keeps the session-cookie wall.
   const MEMBER_AUTHED_PREFIXES = ["/member", "/catalog", "/orders"];
+  // FOUNDER DECISION (2026-07-19): password recovery must work from a fresh
+  // browser WITHOUT the shared review password. Exactly these routes bypass
+  // the wall by explicit allowlist (no credential of any kind required); the
+  // endpoint itself is enumeration-safe and rate-limited, exposes no member
+  // data, and never mints a review cookie. This does not make research
+  // public: every other route keeps its wall or member guard.
+  const OPEN_RECOVERY_PATHS = new Set(["/member/forgot-password"]);
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
+    if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
     const bearer = (req.headers.authorization ?? "").startsWith("Bearer ");
     if (bearer && MEMBER_AUTHED_PREFIXES.some((p) => req.path === p || req.path.startsWith(p + "/"))) {
       return next();

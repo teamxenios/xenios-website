@@ -1,50 +1,34 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { Link } from "wouter";
+import { useState, type FormEvent } from "react";
+import { Link, useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
+import { useResearch } from "../core";
 
-// Member password reset (ACCOUNT-EMAIL-SYSTEMS-001). Two modes on one route:
-// - No recovery session: request a reset link (server-mediated, generic
-//   response, never confirms whether an account exists).
-// - Arriving from the Supabase recovery email: set the new password.
-// The recovery redirect must be allowlisted in Supabase Auth settings
-// (SITE/research/reset-password); see the production checklist.
-
-type Mode = "request" | "recover";
+// Member password reset (founder decision, 2026-07-19): this page works from
+// a FRESH browser without the shared review password. It is a minimal
+// account-access page: email + send button + Member Login + Support, nothing
+// else — no catalog, no member navigation, no application data.
+//
+// Recovery-mode detection lives in the PROVIDER (core.tsx), which captures
+// the recovery marker synchronously before the Supabase client can consume
+// the URL hash and preserves it in context until this page consumes it. This
+// page never inspects window.location.hash itself.
 
 export default function ResetPassword() {
-  const [mode, setMode] = useState<Mode>("request");
+  const { recovery, clearRecovery } = useResearch();
+  const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
+  const [error, setError] = useState<string | null>(
+    recovery === "link_error" ? "This reset link has expired or was already used. Request a new one below." : null,
+  );
 
-  useEffect(() => {
-    let cancelled = false;
-    let unsubscribe: (() => void) | null = null;
-    (async () => {
-      const supabase = await getSupabaseBrowser();
-      if (!supabase || cancelled) return;
-      // Supabase's recovery link signs the visitor in via URL hash tokens and
-      // emits PASSWORD_RECOVERY; an existing recovery session also counts.
-      const { data: sub } = supabase.auth.onAuthStateChange((event: string) => {
-        if (event === "PASSWORD_RECOVERY" && !cancelled) setMode("recover");
-      });
-      unsubscribe = () => sub.subscription.unsubscribe();
-      const { data } = await supabase.auth.getSession();
-      if (!cancelled && data.session && window.location.hash.includes("type=recovery")) {
-        setMode("recover");
-      }
-    })();
-    return () => {
-      cancelled = true;
-      unsubscribe?.();
-    };
-  }, []);
+  const mode: "recover" | "request" = recovery === "pending" ? "recover" : "request";
 
   async function onRequest(event: FormEvent) {
     event.preventDefault();
@@ -53,21 +37,9 @@ export default function ResetPassword() {
     setError(null);
     setNotice(null);
     try {
-      // Attach the Supabase session token when one exists (e.g. a visitor who
-      // arrived from a recovery link but fell back to request mode): the
-      // member-authed prefixes accept a bearer where the review cookie is
-      // absent, so the request still reaches the endpoint.
-      let auth: Record<string, string> = {};
-      try {
-        const supabase = await getSupabaseBrowser();
-        const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token ?? null : null;
-        if (token) auth = { Authorization: "Bearer " + token };
-      } catch {
-        /* cookie path still works */
-      }
       const res = await fetch("/api/research/member/forgot-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...auth },
+        headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
       });
@@ -90,44 +62,46 @@ export default function ResetPassword() {
     setBusy(true);
     setError(null);
     try {
+      if (password.length < 10) {
+        setError("Choose a password of at least 10 characters.");
+        return;
+      }
+      if (password !== confirm) {
+        setError("The passwords do not match.");
+        return;
+      }
       const supabase = await getSupabaseBrowser();
       if (!supabase) {
         setError("Password reset is not available right now.");
         return;
       }
-      if (password.length < 10) {
-        setError("Choose a password of at least 10 characters.");
+      // The update applies only to the authenticated Supabase recovery
+      // session's own user; without a live recovery session it fails safely.
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        clearRecovery();
+        setError("This reset link has expired or was already used. Request a new one below.");
         return;
       }
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) {
-        setError(
-          updateError.message.toLowerCase().includes("expired") || updateError.message.toLowerCase().includes("session")
-            ? "This reset link has expired or was already used. Request a new one below."
-            : "The password could not be updated. Please try again.",
-        );
-        if (updateError.message.toLowerCase().includes("session")) setMode("request");
+        const msg = updateError.message.toLowerCase();
+        if (msg.includes("expired") || msg.includes("session") || msg.includes("invalid")) {
+          clearRecovery();
+          setError("This reset link has expired or was already used. Request a new one below.");
+        } else {
+          setError("The password could not be updated. Please try again.");
+        }
         return;
       }
+      clearRecovery();
       await supabase.auth.signOut();
-      setDone(true);
+      navigate("/research/sign-in");
     } catch {
       setError("The password could not be updated. Please try again.");
     } finally {
       setBusy(false);
     }
-  }
-
-  if (done) {
-    return (
-      <>
-        <SeoHead title="Password updated, xenios research" description="Your password has been updated." path="/research/reset-password" />
-        <PageIntro eyebrow="Members" title="Password updated." lead="Sign in with your email and your new password." />
-        <section className="container-x pb-20">
-          <Link href="/research/sign-in" className="btn btn-primary" data-testid="link-reset-signin">Go to sign in</Link>
-        </section>
-      </>
-    );
   }
 
   return (
@@ -171,6 +145,19 @@ export default function ResetPassword() {
               </div>
               <p className="body-s text-ink-mute" style={{ marginTop: 8 }}>At least 10 characters.</p>
             </div>
+            <div>
+              <label htmlFor="rp-confirm" className="form-label">Confirm new password</label>
+              <input
+                id="rp-confirm"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                className="input-field"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                minLength={10}
+                required
+              />
+            </div>
             {error && <p className="body-s" role="alert" style={{ color: "var(--error)" }} data-testid="text-reset-error">{error}</p>}
             <button type="submit" className="btn btn-primary" disabled={busy} data-testid="button-set-password">
               {busy ? "Updating" : "Update password"}
@@ -196,7 +183,10 @@ export default function ResetPassword() {
               {busy ? "Sending" : "Send reset link"}
             </button>
             <p className="body-s text-ink-mute">
-              Remembered it? <Link href="/research/sign-in" className="underline">Sign in</Link>.
+              <Link href="/research/sign-in" className="underline" data-testid="link-member-login">Member Login</Link>
+            </p>
+            <p className="body-s text-ink-mute">
+              Need help? <a href="mailto:research@xeniostechnology.com" className="underline" data-testid="link-reset-support">Support</a>
             </p>
           </form>
         )}

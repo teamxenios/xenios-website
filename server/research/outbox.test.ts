@@ -231,6 +231,49 @@ describe("worker tick", () => {
     expect(state.outbox[0].status).toBe("processing");
   });
 
+  it("a repeatedly crashing dispatch walks the attempt ladder and reaches failed_permanent, never reclaiming forever", async () => {
+    await enqueueNotification(job());
+    // A crash-mid-send strands the row in processing at attempt_count 5: the
+    // reclaim must count the crashed attempt (6 = cap) and go permanent.
+    state.outbox[0].status = "processing";
+    state.outbox[0].attempt_count = 5;
+    state.outbox[0].updated_at = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+    const result = await runOutboxTick(new Date());
+    expect(state.outbox[0].status).toBe("failed_permanent");
+    expect(state.outbox[0].attempt_count).toBe(6);
+    // The crashed attempt is recorded and the applicant email was NOT
+    // re-dispatched; the permanent failure alerted the admins (the alert
+    // itself delivers in the same tick).
+    expect(state.attempts.some((a) => a.outcome === "failed" && a.attempt === 6)).toBe(true);
+    expect(emails.sendApplicationReceived).not.toHaveBeenCalled();
+    expect(state.outbox.filter((r) => r.template_key === "admin_email_failure")).toHaveLength(1);
+    expect(emails.sendEmailFailureAlert).toHaveBeenCalledTimes(1);
+    expect(result.sent).toBe(1); // the admin alert, not the crashed applicant email
+  });
+
+  it("an earlier crash increments the attempt count on reclaim (no infinite loop)", async () => {
+    await enqueueNotification(job());
+    state.outbox[0].status = "processing";
+    state.outbox[0].attempt_count = 1;
+    state.outbox[0].updated_at = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+    await runOutboxTick(new Date());
+    // Reclaim counted the crashed attempt (2), then the same tick redelivered
+    // it as attempt 3.
+    expect(state.outbox[0].status).toBe("sent");
+    expect(state.outbox[0].attempt_count).toBe(3);
+    expect(state.attempts.some((a) => a.attempt === 2 && a.outcome === "failed")).toBe(true);
+  });
+
+  it("an unknown object shape from a sender is a failure, never sent", async () => {
+    emails.sendApplicationReceived.mockImplementationOnce(async () => ({ id: "looks-plausible" }) as any); // no ok:true
+    await enqueueNotification(job());
+    const result = await runOutboxTick(new Date());
+    expect(result.sent).toBe(0);
+    expect(result.retried).toBe(1);
+    expect(state.outbox[0].status).toBe("failed_retryable");
+    expect(state.outbox[0].provider_message_id ?? null).toBeNull();
+  });
+
   it("permanent failure enqueues an admin failure alert (and never alerts about admin templates)", async () => {
     state.sendMode = "throw";
     await enqueueNotification(job());

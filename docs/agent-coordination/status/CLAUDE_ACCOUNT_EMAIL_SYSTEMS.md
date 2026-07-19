@@ -157,6 +157,52 @@ is idempotent after a partial failure. Deploy notes surfaced by the review:
   existing sign-in flow's constraint). PR #23's bearer-bypass architecture is
   the resolution; noted for the rebase.
 
+## Fresh-browser password recovery (founder decision, 2026-07-19)
+
+Members recover their password from a fresh browser WITHOUT the shared review
+password. Research stays private; the bypass is a narrow, explicit allowlist:
+
+- Server wall: OPEN_RECOVERY_PATHS = exactly /api/research/member/forgot-password
+  (server/research/index.ts). No credential required there; every other route
+  keeps its wall or member guard (composed-stack tests pin catalog, member/me,
+  member/catalog, orders, policies all still 401 without credentials, and a
+  recovery-session JWT with no membership reaches no catalog/member/admin
+  surface). The endpoint never sets a cookie, stays enumeration-safe and
+  rate-limited, and sends Cache-Control: no-store + Referrer-Policy:
+  no-referrer.
+- Page: /research/reset-password renders OUTSIDE the client password gate in
+  MinimalChrome (layout.tsx RECOVERY_PATH exception) — email + Send reset
+  link + Member Login + Support only; no catalog, no member navigation, no
+  application data. researchPageGate stamps no-store / no-referrer /
+  noindex,nofollow on that path.
+- Recovery-mode architecture (fixes the confirmed HIGH defect where client
+  initialization consumed the recovery hash before the route mounted): the
+  PROVIDER captures the marker synchronously on first render — before any
+  getSupabaseBrowser() call — via shared/research/recovery.ts
+  (captureRecoveryMarker: hash check + sessionStorage persistence), also
+  subscribes to PASSWORD_RECOVERY at provider level, and holds
+  recovery: none|pending|link_error in context until ResetPassword consumes
+  it (clearRecovery). The page itself never reads window.location.hash.
+  Expired/invalid links land in request mode with an explanatory error;
+  success signs out and redirects to /research/sign-in.
+- Note on recovery sessions: a Supabase recovery session is a real session
+  for that user; the wall bypass exposes only forgot-password, and member
+  content still requires the member guards (an active member's recovery
+  session passing requireActiveMember is normal member auth, not the bypass).
+
+Email fixes in the same pass (independent-review lows): a crash-looping
+dispatch now walks the attempt ladder on reclaim (crashed attempt counts;
+failed_permanent at the cap, with the admin alert) instead of reclaiming
+forever, and a send counts as sent ONLY on an explicit success signal
+(boolean true or ok:true) — unknown object shapes are failures.
+
+Validation: 136 tests across 9 files (new: shared/research/recovery.test.ts
+state machine, fresh-browser wall-allowlist suite, crash-ladder + explicit-
+success outbox tests). Production boot smoke: bundle boots, fail-closed 503
+without config; with the gate configured, the reset page serves 200 + all
+three sensitive-flow headers to a credential-less browser, catalog 401s, and
+forgot-password passes the wall to the handler.
+
 ## Known gaps left open (deliberately out of this PR)
 
 - No approval-expiry sweep (expiry IS now enforced at claim time).

@@ -44,7 +44,9 @@ const state = vi.hoisted(() => ({
     getUser: vi.fn(async (jwt: string) =>
       jwt === "good-jwt"
         ? { data: { user: { id: "auth-1", email: "member@example.com" } }, error: null }
-        : { data: { user: null }, error: { message: "invalid" } },
+        : jwt === "recovery-jwt"
+          ? { data: { user: { id: "auth-recovery", email: "recovery@example.com" } }, error: null }
+          : { data: { user: null }, error: { message: "invalid" } },
     ),
     resetPasswordForEmail: vi.fn(async () => ({ data: {}, error: null })),
   },
@@ -156,7 +158,8 @@ process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 import { makeResearchToken, makeStatusToken } from "./membership";
 import { registerMemberApi } from "./members";
 import { registerMemberAccessApi } from "./guards";
-import { registerResearchApi } from "./index";
+import { registerResearchApi, researchPageGate } from "./index";
+import { registerOutboxAdmin } from "./outbox";
 
 function makeApp() {
   const app = express();
@@ -470,54 +473,6 @@ describe("active-member authorization (requireActiveMember)", () => {
     }
   });
 
-  it("composed stack: forgot-password with no credential is stopped by the wall; cookie and bearer paths reach the endpoint safely", async () => {
-    process.env.RESEARCH_ACCESS_PASSWORD = "composed-test-password";
-    try {
-      const app = express();
-      app.use(express.json());
-      registerResearchApi(app); // the shared-password wall, as assembled in server/index.ts
-      registerMemberApi(app);
-      registerMemberAccessApi(app);
-
-      // No credential at all: the wall answers 401 before the endpoint.
-      const bare = await request(app)
-        .post("/api/research/member/forgot-password")
-        .set("X-Forwarded-For", uniqueIp())
-        .send({ email: "walltest-a@example.com" });
-      expect(bare.status).toBe(401);
-
-      // Review-cookie path: reaches the endpoint, generic response.
-      const access = await request(app)
-        .post("/api/research/access")
-        .set("X-Forwarded-For", uniqueIp())
-        .send({ password: "composed-test-password" });
-      expect(access.status).toBe(200);
-      const cookie = String(access.headers["set-cookie"][0]).split(";")[0];
-      const viaCookie = await request(app)
-        .post("/api/research/member/forgot-password")
-        .set("Cookie", cookie)
-        .set("X-Forwarded-For", uniqueIp())
-        .send({ email: "walltest-b@example.com" });
-      expect(viaCookie.status).toBe(200);
-      expect(viaCookie.body.ok).toBe(true);
-
-      // Bearer-presence bypass (merged gateway architecture): the wall skips
-      // /member/* when ANY bearer is present; this endpoint, like /member/claim,
-      // self-defends with generic responses and rate limits. Pin that an
-      // unknown address triggers no recovery email through this path.
-      const viaBearer = await request(app)
-        .post("/api/research/member/forgot-password")
-        .set("Authorization", "Bearer junk")
-        .set("X-Forwarded-For", uniqueIp())
-        .send({ email: "walltest-c@example.com" });
-      expect(viaBearer.status).toBe(200);
-      expect(viaBearer.body).toEqual(viaCookie.body);
-      expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
-    } finally {
-      delete process.env.RESEARCH_ACCESS_PASSWORD;
-    }
-  });
-
   it("member resolution is keyed on auth_user_id, not email", async () => {
     const app = seedApplication({ email: "old-address@example.com" });
     // The member's stored email differs from the JWT email; the auth_user_id
@@ -648,5 +603,126 @@ describe("CODEX_UI contracts", () => {
 
     const unknown = await request(app).get("/api/research/invite/NOSUCHCODE1");
     expect(unknown.body.invitation).toEqual({ valid: false });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Fresh-browser password recovery (founder decision, 2026-07-19): the narrow
+// recovery flow bypasses the shared review gate by EXPLICIT allowlist; the
+// gate itself, the member guards, and the admin guard all stay intact.
+// The wall is the REAL registerResearchApi, composed exactly as in
+// server/index.ts.
+// ---------------------------------------------------------------------------
+describe("fresh-browser password recovery (wall allowlist)", () => {
+  function makeComposedApp() {
+    const app = express();
+    app.use(express.json());
+    registerResearchApi(app);
+    registerMemberApi(app);
+    registerMemberAccessApi(app);
+    registerOutboxAdmin(app); // REAL requireSupabaseAdmin (../routes is not mocked here)
+    return app;
+  }
+
+  beforeEach(() => {
+    process.env.RESEARCH_ACCESS_PASSWORD = "composed-test-password";
+  });
+  afterEach(() => {
+    delete process.env.RESEARCH_ACCESS_PASSWORD;
+  });
+
+  it("a fresh browser submits a reset request with NO credential of any kind", async () => {
+    seedApplication({ email: "fresh-a@example.com" });
+    state.tables.research_members.push({ id: crypto.randomUUID(), application_id: state.tables.research_applications[0].id, auth_user_id: crypto.randomUUID(), email: "fresh-a@example.com", first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const res = await request(makeComposedApp())
+      .post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp())
+      .send({ email: "fresh-a@example.com" });
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+    expect(state.auth.resetPasswordForEmail).toHaveBeenCalledTimes(1);
+    // Sensitive-flow headers, and the bypass never mints a review cookie.
+    expect(res.headers["cache-control"]).toContain("no-store");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["set-cookie"]).toBeUndefined();
+  });
+
+  it("unknown email from a fresh browser gets the identical generic response, no email sent", async () => {
+    seedApplication({ email: "fresh-b@example.com" });
+    state.tables.research_members.push({ id: crypto.randomUUID(), application_id: state.tables.research_applications[0].id, auth_user_id: crypto.randomUUID(), email: "fresh-b@example.com", first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const app = makeComposedApp();
+    const known = await request(app)
+      .post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp())
+      .send({ email: "fresh-b@example.com" });
+    const unknown = await request(app)
+      .post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp())
+      .send({ email: "fresh-nobody@example.com" });
+    expect(unknown.status).toBe(200);
+    expect(unknown.body).toEqual(known.body);
+    expect(state.auth.resetPasswordForEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it("the recovery allowlist stays rate-limited per IP", async () => {
+    const app = makeComposedApp();
+    const ip = uniqueIp();
+    for (let i = 0; i < 3; i += 1) {
+      const res = await request(app)
+        .post("/api/research/member/forgot-password")
+        .set("X-Forwarded-For", ip)
+        .send({ email: `fresh-rl-${i}@example.com` });
+      expect(res.status).toBe(200);
+    }
+    const fourth = await request(app)
+      .post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", ip)
+      .send({ email: "fresh-rl-3@example.com" });
+    expect(fourth.status).toBe(429);
+  });
+
+  it("the allowlist opens ONLY recovery: gateway/application-flow endpoints keep the wall", async () => {
+    const app = makeComposedApp();
+    // No credential: everything else still 401s at the wall.
+    expect((await request(app).get("/api/research/policies")).status).toBe(401);
+    expect((await request(app).get("/api/research/catalog")).status).toBe(401);
+    expect((await request(app).get("/api/research/member/me")).status).toBe(401);
+    expect((await request(app).get("/api/research/member/catalog")).status).toBe(401);
+    expect((await request(app).post("/api/research/orders").send({})).status).toBe(401);
+  });
+
+  it("a recovery session (valid JWT, no membership) reaches NO catalog, member data, or admin surface", async () => {
+    seedApplication(); // unrelated member data exists
+    state.tables.research_members.push({ id: "m1", application_id: state.tables.research_applications[0].id, auth_user_id: "auth-1", email: "member@example.com", first_name: "Avery", status: "active", created_at: new Date().toISOString() });
+    const app = makeComposedApp();
+    const bearer = { Authorization: "Bearer recovery-jwt" }; // auth-recovery: no member row
+    expect((await request(app).get("/api/research/catalog").set(bearer)).status).toBe(403);
+    expect((await request(app).get("/api/research/member/catalog").set(bearer)).status).toBe(403);
+    expect((await request(app).get("/api/research/member/me").set(bearer)).status).toBe(403);
+    // Admin surface: the REAL requireSupabaseAdmin refuses (no ADMIN_EMAIL
+    // configured here fails closed; a recovery user is never an admin).
+    const admin = await request(app).get("/api/admin/research/outbox").set(bearer);
+    expect(admin.status).toBeGreaterThanOrEqual(400);
+    expect(admin.body?.outbox).toBeUndefined();
+  });
+
+  it("the shared gate remains required for the gateway page flow, and the recovery PAGE carries the sensitive-flow headers", async () => {
+    const app = express();
+    app.use(researchPageGate);
+    app.get("/research/reset-password", (_req, res) => res.send("reset page"));
+    app.get("/research", (_req, res) => res.send("gateway"));
+
+    const reset = await request(app).get("/research/reset-password");
+    expect(reset.status).toBe(200);
+    expect(reset.headers["cache-control"]).toBe("no-store");
+    expect(reset.headers["referrer-policy"]).toBe("no-referrer");
+    expect(reset.headers["x-robots-tag"]).toBe("noindex, nofollow");
+
+    // The gateway page itself is untouched by the recovery exception: it
+    // still serves (the shared-password gate is enforced by the API wall +
+    // client layout, unchanged), and still carries noindex.
+    const gateway = await request(app).get("/research");
+    expect(gateway.status).toBe(200);
+    expect(gateway.headers["x-robots-tag"]).toBe("noindex, nofollow");
   });
 });

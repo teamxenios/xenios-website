@@ -214,6 +214,11 @@ export function registerMemberApi(app: Express) {
       ok: true,
       message: "If a member account exists for that address, a password reset email is on its way.",
     };
+    // Sensitive account flow: never cached, never leaks a referrer. This
+    // route is on the wall's explicit recovery allowlist (fresh-browser
+    // recovery, founder decision 2026-07-19) and must never set any cookie.
+    res.set("Cache-Control", "no-store");
+    res.set("Referrer-Policy", "no-referrer");
     try {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
       const parsed = z.object({ email: z.string().email().max(254).toLowerCase().trim() }).safeParse(req.body);

@@ -1,6 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { AccessState, CartItem, CatalogResponse, CommerceFlags, CommerceLane, Policy, Product } from "@shared/research/types";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
+import {
+  captureRecoveryMarker,
+  clearRecoveryMarker,
+  isRecoveryErrorHash,
+  markRecoveryFromAuthEvent,
+} from "@shared/research/recovery";
 
 // xenios research: client core. All product data comes from the gated server
 // APIs; nothing in this bundle contains the catalog. The provider tracks the
@@ -109,11 +115,18 @@ export type MemberInfo = {
   applicationStatus: string | null;
 };
 
+// Password-recovery flow state (founder decision, 2026-07-19): "pending"
+// means the visitor arrived from a valid Supabase recovery link (set-password
+// mode); "link_error" means they arrived from an expired/invalid one.
+export type RecoveryState = "none" | "pending" | "link_error";
+
 type ResearchContextValue = {
   gate: GateStatus;
   member: MemberInfo | null;
   memberToken: string | null;
   memberChecking: boolean;
+  recovery: RecoveryState;
+  clearRecovery: () => void;
   refreshMember: () => Promise<void>;
   signOutMember: () => Promise<void>;
   products: Product[];
@@ -142,6 +155,43 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   const [member, setMember] = useState<MemberInfo | null>(null);
   const [memberToken, setMemberToken] = useState<string | null>(null);
   const [memberChecking, setMemberChecking] = useState(true);
+
+  // Recovery capture MUST run synchronously on first render, BEFORE any
+  // getSupabaseBrowser() call in the effects below: client initialization
+  // consumes the recovery hash (detectSessionInUrl), and without this the
+  // /research/reset-password route mounts too late, sees nothing, and shows
+  // a legitimate member the request form. The marker also persists in
+  // sessionStorage so it survives the hash being cleared.
+  const [recovery, setRecovery] = useState<RecoveryState>(() => {
+    if (typeof window === "undefined") return "none";
+    if (captureRecoveryMarker(window.location.hash, window.sessionStorage)) return "pending";
+    if (isRecoveryErrorHash(window.location.hash)) return "link_error";
+    return "none";
+  });
+
+  const clearRecovery = useCallback(() => {
+    if (typeof window !== "undefined") clearRecoveryMarker(window.sessionStorage);
+    setRecovery("none");
+  }, []);
+
+  // Second capture path: the PASSWORD_RECOVERY auth event fires even when the
+  // hash was already consumed before this provider observed it.
+  useEffect(() => {
+    let alive = true;
+    let unsubscribe: (() => void) | null = null;
+    (async () => {
+      const supabase = await getSupabaseBrowser();
+      if (!supabase || !alive) return;
+      const { data: sub } = supabase.auth.onAuthStateChange((event: string) => {
+        if (markRecoveryFromAuthEvent(event, window.sessionStorage)) setRecovery("pending");
+      });
+      unsubscribe = () => sub.subscription.unsubscribe();
+    })();
+    return () => {
+      alive = false;
+      unsubscribe?.();
+    };
+  }, []);
 
   // The member session: the member's own Supabase JWT. Membership itself is
   // verified SERVER-side (/api/research/member/me); the client only mirrors it.
@@ -308,6 +358,8 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     member,
     memberToken,
     memberChecking,
+    recovery,
+    clearRecovery,
     refreshMember,
     signOutMember,
     products: catalog?.products ?? [],

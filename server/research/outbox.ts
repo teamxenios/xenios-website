@@ -133,9 +133,10 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
       default:
         return { ok: false, providerId: null, error: `unknown template ${job.template_key}` };
     }
-    // Senders historically return boolean; newer ones return { ok, id }.
-    const ok = result === true || (typeof result === "object" && result !== null && (result as any).ok !== false);
-    const providerId = typeof result === "object" && result !== null ? ((result as any).id ?? null) : null;
+    // A send is successful ONLY on an explicit success signal: boolean true
+    // or { ok: true }. An unknown object shape is a failure, never "sent".
+    const ok = result === true || (typeof result === "object" && result !== null && (result as any).ok === true);
+    const providerId = ok && typeof result === "object" && result !== null ? ((result as any).id ?? null) : null;
     return { ok, providerId, error: ok ? undefined : "provider send returned failure" };
   } catch (error: any) {
     return { ok: false, providerId: null, error: String(error?.message ?? "send threw").slice(0, 300) };
@@ -155,17 +156,46 @@ const STALE_PROCESSING_MINUTES = 15;
 
 async function reclaimStaleProcessing(now: Date): Promise<void> {
   const cutoff = new Date(now.getTime() - STALE_PROCESSING_MINUTES * 60 * 1000).toISOString();
-  const { error } = await getSupabaseAdmin()
+  const { data: stale, error } = await getSupabaseAdmin()
     .from(OUTBOX)
-    .update({
-      status: "failed_retryable",
-      next_attempt_at: now.toISOString(),
-      last_error_summary: "reclaimed after stale processing claim",
-      updated_at: now.toISOString(),
-    })
+    .select("*")
     .eq("status", "processing")
-    .lt("updated_at", cutoff);
-  if (error) console.error("[outbox] stale reclaim failed:", error.message);
+    .lt("updated_at", cutoff)
+    .limit(20);
+  if (error) {
+    console.error("[outbox] stale reclaim failed:", error.message);
+    return;
+  }
+  for (const job of (stale as any[]) ?? []) {
+    // The crashed claim COUNTS as an attempt: a dispatch that reliably kills
+    // the worker must walk the same backoff ladder to failed_permanent, not
+    // reclaim forever.
+    const attempt = (job.attempt_count ?? 0) + 1;
+    const permanent = attempt >= MAX_ATTEMPTS;
+    const { error: updateError } = await getSupabaseAdmin()
+      .from(OUTBOX)
+      .update({
+        status: permanent ? "failed_permanent" : "failed_retryable",
+        attempt_count: attempt,
+        next_attempt_at: permanent ? job.next_attempt_at : now.toISOString(),
+        last_attempt_at: now.toISOString(),
+        last_error_summary: "reclaimed after stale processing claim (crashed mid-send)",
+        updated_at: now.toISOString(),
+      })
+      .eq("id", job.id)
+      .eq("status", "processing");
+    if (updateError) {
+      console.error("[outbox] stale reclaim update failed:", updateError.message);
+      continue;
+    }
+    await getSupabaseAdmin().from(ATTEMPTS).insert({
+      outbox_id: job.id,
+      attempt,
+      outcome: "failed",
+      error_summary: "stale processing reclaim (crashed mid-send)",
+    });
+    if (permanent) await alertPermanentFailure(job, "reclaimed after stale processing claim (crashed mid-send)");
+  }
 }
 
 // A permanently failed notification must never be silent: alert every admin
