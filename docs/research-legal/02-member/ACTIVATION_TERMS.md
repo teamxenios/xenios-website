@@ -44,13 +44,13 @@ The charge occurs before member access begins. You never pay before you have acc
 
 ## 3. What the activation fee covers
 
-The activation fee covers the one-time work of bringing you into the Program:
+The activation fee covers only the one-time onboarding work of bringing you into the Program:
 
 - creation and activation of your member account, including security setup (password, MFA, recovery codes),
-- your mandatory assessment (due within 3 days of activation, about 10 minutes),
-- preparation of your preliminary Whole-Life Blueprint after the assessment,
-- the Founder's personal review of your initial plan during the founding phase, under the 48 elapsed-hour review commitment, and
-- delivery of your first Xenios 30 plan and Xenios 90 roadmap with their fitness and nutrition PDFs.
+- identity-linked provisioning of your member access, and
+- initiation of your assessment and Blueprint process.
+
+The mandatory assessment, the preliminary Whole-Life Blueprint, the Founder's plan review, and your Xenios 30 plans and Xenios 90 roadmap are not purchased by the activation fee. They are membership inclusions available while your membership is active, governed by the Founding Membership Agreement (XR-MEM-001) section 9.
 
 ## 4. What the activation fee is not
 
@@ -89,6 +89,7 @@ The charge, the payment method reference (tokenized, never raw card data), your 
 - [ENTITY]: confirm the legal entity that is the merchant of record for the activation charge.
 - Retention metadata: confirm the minimum retention period for payment and acceptance records under XR-POL-005.
 - Confirm that presenting these terms inside the agreements step, before checkout, satisfies point-of-sale disclosure requirements in the states identified in the jurisdiction matrix.
+- Section 3: confirm the consideration allocation between the $50 activation fee (one-time onboarding work only) and the $25 recurring fee (membership inclusions, per XR-MEM-001 section 9), because the allocation affects the refund analysis in section 5.
 
 ## Version history
 

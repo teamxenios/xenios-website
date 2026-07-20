@@ -18,7 +18,7 @@ COUNSEL REVIEW REQUIRED
 | Counsel status | Not reviewed |
 | Jurisdiction | United States, national scope; state-by-state review pending (see JURISDICTION_AND_APPLICABILITY_MATRIX); state consumer-health-data laws review pending |
 | Effective date | Not effective. Requires counsel approval and formal publication. |
-| Retention | per Retention and Deletion Schedule (XR-POL-005); minimum [COUNSEL: confirm period]; raw tracker media is deleted after successful processing per the tracker design; notice presentation records retained |
+| Retention | per Retention and Deletion Schedule (XR-POL-005); minimum [COUNSEL: confirm period]; raw tracker media deleted after verified successful processing when the member elects deletion under XR-TRK-009, otherwise retained per the member's election; notice presentation records retained |
 | Acceptance event | n/a (notice only); presentation, timestamp, and document version are logged server-side; collection itself is consented separately under XR-TRK-002, XR-TRK-003, and XR-TRK-010 |
 | Withdrawal supported | n/a for the notice itself; every underlying collection consent is revocable (see XR-TRK-002, XR-TRK-003, XR-TRK-010, and XR-TRK-012) |
 | Owner | Samuel Boadu, Founder |
@@ -163,9 +163,10 @@ media is not handled over Telegram.
 4. Records Xenios must keep by law (transaction, payment, agreement, safety, security, and
    audit records) are retained under the Retention and Deletion Schedule (XR-POL-005) even
    after deletion requests or cancellation.
-5. Cancellation ends member access immediately and you should export desired data first.
-   Privacy rights survive cancellation, and a limited non-member privacy workflow remains
-   available.
+5. Cancellation ends member access immediately; remaining paid time is forfeited with no
+   prorated refund unless applicable law requires one, subject to applicable law and counsel
+   review (see XR-MEM-004). Export desired data before confirming cancellation. Privacy
+   rights survive cancellation, and a limited non-member privacy workflow remains available.
 
 ## 11. Changes to this notice
 

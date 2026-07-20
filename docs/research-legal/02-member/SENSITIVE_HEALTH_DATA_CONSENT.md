@@ -11,18 +11,18 @@ COUNSEL REVIEW REQUIRED
 | Title | Sensitive Health Data Consent |
 | Audience | member |
 | Required member state | active member (presented before the mandatory assessment begins; re-presented before any new category of sensitive collection) |
-| Trigger | first entry into the mandatory assessment; again before optional sexual-wellness questions and before first tracker media upload |
+| Trigger | first entry into the mandatory assessment (assessment-stage umbrella consent; tracker collection and sexual-wellness data are consented under their own documents, XR-TRK-002/004/005/006 and XR-TRK-003) |
 | Route | /research/member (assessment and tracker) |
 | Version | 0.1.0-draft |
 | Status | Draft |
 | Counsel status | Not reviewed |
 | Jurisdiction | United States, national scope; state-by-state review pending (see JURISDICTION_AND_APPLICABILITY_MATRIX); state consumer-health-data laws review pending |
 | Effective date | Not effective. Requires counsel approval and formal publication. |
-| Retention | per Retention and Deletion Schedule (XR-POL-005); minimum [COUNSEL: confirm period]; raw tracker media deleted after successful processing per the tracker design |
-| Acceptance event | checkbox + timestamp + document version + member reference recorded server-side; separate consent event per category (assessment, tracker media, sexual wellness) |
+| Retention | per Retention and Deletion Schedule (XR-POL-005); minimum [COUNSEL: confirm period]; raw tracker media handled per the member's Raw Media Retention and Deletion Election (XR-TRK-009) |
+| Acceptance event | checkbox + timestamp + document version + member reference recorded server-side; records the assessment-stage consent event (tracker media and sexual-wellness data have their own separate consent events under XR-TRK-002/004/005/006 and XR-TRK-003) |
 | Withdrawal supported | yes (revocable at any time from the member privacy settings; revocation stops new collection and disables personalization that depends on the revoked category; records required by law are retained) |
 | Owner | Samuel Boadu, Founder |
-| Dependencies | XR-MEM-011, XR-MEM-013, XR-POL-005, XR-POL-009 |
+| Dependencies | XR-MEM-011, XR-MEM-013, XR-TRK-002, XR-TRK-003, XR-TRK-009, XR-POL-005, XR-POL-009 |
 | Sources | See 00-register/SOURCE_REGISTRY.md; FTC Health Breach Notification Rule materials; HHS HIPAA applicability guidance |
 | Review date | 2026-07-19 |
 
@@ -40,11 +40,15 @@ access it, how you revoke it, and what revocation costs you in personalization.
    current products, allergies and restrictions, basic safety context, budget, routine
    complexity, preferences, and 30/90-day direction.
 2. Tracker data. Manual logs, text and 60-second voice notes, progress photos (with optional
-   face blur), 60-second exercise videos, and the launch metrics built from them. Raw media
-   is deleted after successful processing.
+   face blur), 60-second exercise videos, and the launch metrics built from them. Collection
+   of tracker data is consented under its own documents (XR-TRK-002 for manual data and
+   XR-TRK-004/005/006 for media). Raw media is handled per your Raw Media Retention and
+   Deletion Election (XR-TRK-009): deleted after verified successful processing if you elect
+   deletion, otherwise retained in private storage.
 3. Optional sexual-wellness data. Questions or logs related to the Intimacy and Vitality
-   category are optional, separately consented under this same framework, and private by
-   default. Declining them never affects the rest of your membership.
+   category are optional, consented exclusively under the separate Optional Sexual-Wellness
+   Data Consent (XR-TRK-003), and private by default. Declining them never affects the rest
+   of your membership.
 4. Health context in support. Health details you volunteer through Telegram questions.
    Telegram is never the system of record, and detailed assessments, plan PDFs, raw health
    media, and payment data are not handled over Telegram.
@@ -88,8 +92,9 @@ prohibited from storing health information.
 
 ## 6. Revocation and its effect
 
-1. How to revoke. You can revoke this consent at any time in your member privacy settings,
-   per category (assessment, tracker media, sexual wellness). Revocation takes effect
+1. How to revoke. You can revoke consent at any time in your member privacy settings, per
+   category (the assessment under this consent; tracker media and sexual-wellness data under
+   their own consents, XR-TRK-002/004/005/006 and XR-TRK-003). Revocation takes effect
    prospectively.
 2. What stops. New collection in the revoked category stops. Personalization that depends on
    it degrades or stops: without assessment data there is no personalized Blueprint or plan
@@ -117,6 +122,10 @@ care (see XR-MEM-009).
   timelines and verification requirements.
 - Confirm the separate-consent treatment of sexual-wellness data meets any heightened
   state requirements for that category.
+- Confirm the single-consent-of-record allocation: this document captures the
+  assessment-stage consent only, while tracker media collection is consented under
+  XR-TRK-002/004/005/006 and sexual-wellness data exclusively under XR-TRK-003, so no
+  category has two competing consent records in the consent registry.
 - Reconcile with the earlier repository drafts docs/security/CONSENT_REGISTRY.md (the
   health_data_collection consent kind is reserved and must not be written until legal gates
   clear), docs/compliance/HIPAA_APPLICABILITY_ANALYSIS.md, and

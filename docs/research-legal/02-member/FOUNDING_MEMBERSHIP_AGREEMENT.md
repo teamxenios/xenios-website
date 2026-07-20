@@ -44,7 +44,7 @@ This Agreement is a draft. It is not effective until counsel approves it and Xen
 
 ## 3. Incorporated documents
 
-The following documents are part of this Agreement and are incorporated by reference by their document keys. You accept them in the same agreements step. If a term in an incorporated document conflicts with this Agreement on its specific subject, the incorporated document controls for that subject.
+The following documents are part of this Agreement and are incorporated by reference by their document keys. You accept XR-MEM-002, XR-MEM-004, XR-MEM-005, XR-MEM-006, and XR-MEM-026 in the same agreements step. XR-MEM-003, the $25 Recurring Membership Authorization, is presented for review in the agreements step but is authorized by its own separate checkbox at the recurring authorization step, after the activation payment, as described in section 6; it is deliberately not bundled into the acceptance of the other agreements. If a term in an incorporated document conflicts with this Agreement on its specific subject, the incorporated document controls for that subject.
 
 | Key | Document | Subject |
 | --- | --- | --- |

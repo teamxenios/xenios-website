@@ -66,7 +66,7 @@ Mitch is an independent contractor. Nothing in this Agreement creates a partners
 - XR-FUL-002 (Product Supply Schedule)
 - XR-FUL-003 (Service Level Schedule)
 - XR-FUL-004 (Quality Agreement)
-- XR-FUL-005 through XR-FUL-014, as titled in the document register (00-register), covering the remaining fulfillment subjects of this program, including inventory data feed, packaging and cold chain, order integration, data protection, security, financial settlement, insurance and company documentation, recall support, and transition.
+- XR-FUL-005 through XR-FUL-014, as titled in the document register (00-register), covering the remaining fulfillment subjects of this program, including inventory data feed, packaging and cold chain, data protection, security, financial settlement, insurance and company documentation, recall support, and transition. Order integration mechanics live in section 7 of this Agreement, XR-FUL-005 (feed delivery), and XR-FUL-006 (order flow); there is no separate order integration schedule.
 
 5.2 Order of precedence: (1) a signed amendment to this Agreement, (2) this Agreement body, (3) the Quality Agreement (XR-FUL-004) for quality and safety subjects, (4) the other schedules. [COUNSEL: confirm precedence order, especially whether the Quality Agreement should outrank the body for quality subjects.]
 
@@ -88,7 +88,7 @@ Mitch is an independent contractor. Nothing in this Agreement creates a partners
 
 7.3 For each Fulfillment Order, Mitch returns: accepted or rejected status, hold reason if held, lot assigned, tracking number, carrier, ship time, estimated delivery, any exception, and delivery confirmation.
 
-7.4 An API integration is preferred. A secure CSV exchange is acceptable during the pilot period only, over an approved secure channel. Spreadsheets through personal email are prohibited. The full field-level contract, formats, and timing live in the order integration schedule in the XR-FUL series.
+7.4 An API integration is preferred. A secure CSV exchange is acceptable during the pilot period only, over an approved secure channel. Spreadsheets through personal email are prohibited. The full field-level contract, formats, and timing live in this section 7, the Inventory and Lot Reporting Schedule (XR-FUL-005) for feed delivery, and the Storage and Shipping Schedule (XR-FUL-006) for order flow. [COUNSEL: confirm whether a dedicated Order Integration Schedule should be drafted under a new XR-FUL key instead.]
 
 7.5 Idempotency: a re-sent Fulfillment Order with the same fulfillment order ID must not produce a duplicate shipment. Mitch must treat the fulfillment order ID as the unique key.
 
@@ -100,7 +100,7 @@ Mitch is an independent contractor. Nothing in this Agreement creates a partners
 
 8.2 Xenios sells only against fed inventory. Errors in the feed that cause an oversell are Mitch's responsibility to remedy under the Service Level Schedule (XR-FUL-003) exception process.
 
-8.3 Stock in any blocked state (expired, retest overdue, quarantined, excursion pending, damaged, recalled, or documentation missing) must never be reported as available and must never be picked.
+8.3 Stock in any blocked condition (expired, retest overdue, quarantined, excursion pending, damaged, recalled, or documentation missing) must never be reported as available and must never be picked. Each blocked condition maps to an inventory state defined in the Quality Agreement (XR-FUL-004) Section 6.1.
 
 ## 9. Data protection
 
@@ -134,7 +134,7 @@ Mitch must maintain, at minimum: a named list of authorized users; multi-factor 
 
 12.3 Each SKU ships only under its approved shipping profile (ambient, controlled, refrigerated, frozen, or other; permitted carriers; maximum transit; weekend permission; signature rules; monitoring; seasonal packout). Mitch must not infer a profile from a product name.
 
-12.4 The member sees one shipping charge per order even when fulfillment is split between Mitch and Xenios. Split-shipment cost allocation between the parties is handled in the financial settlement schedule.
+12.4 By default the member sees one shipping charge per order even when fulfillment is split between Mitch and Xenios; Xenios may display an additional clearly disclosed charge at checkout. Split-shipment cost allocation between the parties is handled in the financial settlement schedule.
 
 ## 13. Financial settlement
 

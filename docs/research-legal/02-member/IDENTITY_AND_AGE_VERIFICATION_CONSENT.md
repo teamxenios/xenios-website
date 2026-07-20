@@ -85,7 +85,7 @@ verifying your identity and age for this membership.
 
 1. You may retry with corrected information. There is no formal appeal process.
 2. Persistent failure may receive technical support, but identity and age requirements cannot
-   be waived or overridden casually, including by the founder.
+   be waived or overridden by anyone, including the founder.
 3. If you do not complete verification, activation stops. You do not pay anything, because
    payment comes after verification and agreements.
 

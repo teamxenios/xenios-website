@@ -22,7 +22,7 @@ COUNSEL REVIEW REQUIRED
 | Acceptance event | checkbox at checkout + timestamp + document version + order reference + member reference recorded server-side, presented whenever delayed capture applies |
 | Withdrawal supported | Partial. The member may cancel the order before capture, which voids the authorization. A completed capture is governed by the order and refund terms, and past consent records are retained. |
 | Owner | Samuel Boadu, Founder |
-| Dependencies | XR-COM-001, XR-COM-010, XR-POL-005 |
+| Dependencies | XR-COM-001, XR-COM-002, XR-COM-010, XR-POL-005 |
 | Sources | See 00-register/SOURCE_REGISTRY.md |
 | Review date | 2026-07-19 |
 

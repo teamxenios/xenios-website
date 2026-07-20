@@ -83,8 +83,11 @@ It is not a diagnosis and produces no medical record.
 
 After the assessment, the tracker records what you choose to log: manual entries, text
 notes, voice notes up to 60 seconds, progress photos (with an optional face blur),
-exercise videos up to 60 seconds, and side-by-side comparisons. Raw media is deleted
-after successful processing. Face blur is image processing only; it is not facial
+exercise videos up to 60 seconds, and side-by-side comparisons. You choose what happens
+to raw uploaded media: if you elect raw-media deletion, the raw file is deleted after
+verified successful processing and only derived data is kept; otherwise the raw file is
+retained in private storage (see the Raw Media Retention and Deletion Election,
+XR-TRK-009). Face blur is image processing only; it is not facial
 recognition, and Xenios does not create or store biometric templates from progress
 media. Future integrations (pose estimation, HealthKit, Health Connect, Oura, WHOOP,
 professional sharing) will each require separate, specific consent before any data
@@ -138,7 +141,9 @@ Cookies are covered by the Cookie and Tracking Notice (XR-PUB-005).
 - Telegram carries only what section 2.8 allows.
 - Media (photos, voice, video) uses private storage, signed URLs, malware scanning,
   and access auditing.
-- Declining any optional consent never affects application review or plan quality.
+- Declining any optional consent never affects application review, membership standing,
+  or access to any feature or product; the only effect is that personalization cannot
+  use data you have not shared.
 
 ## 4. Why we use your data
 
@@ -181,8 +186,9 @@ Retention follows the Retention and Deletion Schedule (XR-POL-005). In general:
 account, agreement, transaction, payment, safety, security, and audit records are kept
 as long as law and legitimate program needs require; assessment and tracker data are
 kept while your membership is active and then handled per the schedule; raw uploaded
-media is deleted after successful processing; denied-application retention is a
-counsel item in XR-PUB-003. Cancellation does not erase records we must keep
+media is deleted after verified successful processing when the member elects deletion
+under XR-TRK-009, otherwise retained per the member's election; denied-application
+retention is a counsel item in XR-PUB-003. Cancellation does not erase records we must keep
 (section 10). The earlier draft docs/privacy/RETENTION_POLICY.md covers the smaller
 built system and must be reconciled with XR-POL-005.
 

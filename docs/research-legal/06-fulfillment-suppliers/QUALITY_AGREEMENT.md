@@ -46,7 +46,7 @@ The products are research products whose classification and permitted marketing 
 
 3.2 Where applicable to the product type, the lot file must also contain sterility, endotoxin, identity, and purity documents. Applicability per SKU is recorded in the Product Master Data under the Product Supply Schedule (XR-FUL-002).
 
-3.3 Stock with missing documentation is blocked: not reported as available, not reservable, not picked, not shipped. Documentation-missing is a blocked state exactly like expired or quarantined.
+3.3 Stock with missing documentation is blocked: not reported as available, not reservable, not picked, not shipped. Documentation-missing is a blocked condition handled exactly like expired or quarantined stock; the unit is held in the quality_hold state (Section 6.1) until the documentation is complete.
 
 3.4 Quality documents describe the tested lot only. Neither party may present a COA or related document as a promise of member outcomes or product performance.
 
@@ -64,13 +64,13 @@ The products are research products whose classification and permitted marketing 
 
 5.1 Picking follows First Expire, First Out (FEFO): the lot with the earliest expiry or retest date ships first. FIFO alone is not acceptable when lots have different expiry dates.
 
-5.2 The following stock must never be picked or reported as available: expired, retest overdue, quarantined, excursion pending, damaged, recalled, and documentation-missing.
+5.2 The following stock must never be picked or reported as available: expired, retest overdue, quarantined, excursion pending, damaged, recalled, and documentation-missing. These are blocked conditions; each maps to a Section 6.1 state (retest overdue and documentation-missing to quality_hold, excursion pending to temperature_hold, the others to their named states).
 
 5.3 A lot within [CONFIG: minimum remaining shelf life at shipment, pending Mitch's written answers and Xenios policy] of its expiry or retest date requires Xenios's approval before shipment.
 
 ## 6. Inventory quality states
 
-6.1 Every unit is in exactly one state at any time: available, allocated, picked, packed, shipped, quarantined, quality_hold, temperature_hold, damaged, expired, recalled, or destroyed.
+6.1 Every unit is in exactly one state at any time: available, allocated, picked, packed, shipped, quarantined, quality_hold, temperature_hold, damaged, expired, recalled, or destroyed. Blocked conditions map to states as follows: retest-overdue and documentation-missing stock is held in quality_hold, and excursion-pending stock is held in temperature_hold, until resolved.
 
 6.2 State transitions are recorded with time and actor. The daily inventory feed under XR-FUL-001 Section 8 must reflect these states truthfully; reporting blocked stock as available is a material breach.
 

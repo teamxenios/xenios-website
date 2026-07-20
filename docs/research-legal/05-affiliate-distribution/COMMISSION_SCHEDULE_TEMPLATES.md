@@ -22,7 +22,7 @@ COUNSEL REVIEW REQUIRED
 | Acceptance event | wet/electronic signature on the completed schedule as part of the partner agreement, with schedule version recorded |
 | Withdrawal supported | no (a schedule is a compensation term, not a consent; changes apply prospectively through a reissued schedule with notice) |
 | Owner | Samuel Boadu, Founder |
-| Dependencies | XR-AFF-001, XR-MEM-026, XR-AFF-008, XR-AFF-009, XR-AFF-014, XR-AFF-015, XR-POL-005 |
+| Dependencies | XR-AFF-001, XR-MEM-026, XR-AFF-008, XR-AFF-009, XR-AFF-013, XR-AFF-014, XR-AFF-015, XR-POL-005 |
 | Sources | See 00-register/SOURCE_REGISTRY.md; FTC Business Guidance Concerning Multi-Level Marketing; FTC Endorsement Guides |
 | Review date | 2026-07-19 |
 
@@ -106,7 +106,7 @@ Payout method: [CONFIG: method]
 Minimum payout threshold: [CONFIG: amount]
 ```
 
-A Research Rep schedule is valid only while the rep holds Certified or Active status. Certification requires completion of the required training modules and assessment.
+A Research Rep schedule may be signed at certification, but commissions accrue only on sales attributed while the rep holds Active status (XR-AFF-003 section 2.4). Certification requires completion of the required training modules and assessment.
 
 ### Template D: Organization Partner
 

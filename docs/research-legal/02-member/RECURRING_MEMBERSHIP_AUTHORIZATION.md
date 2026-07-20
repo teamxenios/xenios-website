@@ -10,7 +10,7 @@ COUNSEL REVIEW REQUIRED
 | Document key | XR-MEM-003 |
 | Title | $25 Recurring Membership Authorization |
 | Audience | member |
-| Required member state | approved, pre-payment (authorized during activation, after the $50 activation payment and before password and MFA setup) |
+| Required member state | approved, activation payment complete, pre-active (authorized at the recurring authorization step, after the $50 activation payment and before password and MFA setup) |
 | Trigger | recurring authorization step of the activation flow, immediately after the activation payment |
 | Route | activation flow under /research (recurring authorization step); managed afterward at the member account membership page |
 | Version | 0.1.0-draft |

@@ -12,7 +12,7 @@ COUNSEL REVIEW REQUIRED
 | Audience | member |
 | Required member state | active member |
 | Trigger | linked from XR-COM-007 and XR-COM-008; presented when a resolution is offered on a verified issue |
-| Route | /research/member/shop (order history, issue resolution flow) |
+| Route | /research/member/orders (issue resolution flow) |
 | Version | 0.1.0-draft |
 | Status | Draft |
 | Counsel status | Not reviewed |
@@ -22,7 +22,7 @@ COUNSEL REVIEW REQUIRED
 | Acceptance event | n/a (notice only); the resolution offered, the member's choice, and the policy version shown are recorded server-side |
 | Withdrawal supported | no (this is a policy notice, not a consent; a member may decline an offered resolution) |
 | Owner | Samuel Boadu, Founder |
-| Dependencies | XR-COM-007, XR-COM-008, XR-POL-005 |
+| Dependencies | XR-COM-001, XR-COM-004, XR-COM-007, XR-COM-008, XR-COM-010, XR-COM-011, XR-POL-005 |
 | Sources | See 00-register/SOURCE_REGISTRY.md; Master pack 06 (Shipping, Storage, Shelf-Life, and Fulfillment Master); Master pack 02 (Round 10 Final Founder Decisions V11); FTC Mail, Internet, or Telephone Order Merchandise Rule |
 | Review date | 2026-07-19 |
 
@@ -33,7 +33,9 @@ Loss, Incorrect Item, and Temperature Concern Policy (XR-COM-008). It applies to
 only. Membership fees, membership cancellation, and any membership-related refund questions are
 governed by the membership documents, not this policy. Ordinary returns do not exist in this
 program (see the No Ordinary Returns Policy, XR-COM-007), so this policy is the only route to a
-product refund or replacement.
+refund or replacement for a delivered-product issue. Refunds for cancelled, declined, reduced,
+or legally delayed orders are governed by the Product Order Terms (XR-COM-001), the large-order
+review and payment documents (XR-COM-010, XR-COM-011), and applicable law.
 
 ## 2. What a verified issue receives
 

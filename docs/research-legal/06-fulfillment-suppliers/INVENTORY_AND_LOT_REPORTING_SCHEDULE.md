@@ -111,7 +111,10 @@ destroyed
 
 Stock in any state other than "available" must never be reported as available. Stock that is
 expired, retest overdue, quarantined, pending excursion evaluation, damaged, recalled, or missing
-required documentation is blocked from fulfillment (see XR-FUL-006 and XR-FUL-007).
+required documentation is blocked from fulfillment (see XR-FUL-006 and XR-FUL-007). Blocked
+conditions map to the state list above: retest-overdue and documentation-missing stock is held
+in quality_hold, and excursion-pending stock in temperature_hold, per the Quality Agreement
+(XR-FUL-004) Section 6.1.
 
 ## 5. Product master data
 

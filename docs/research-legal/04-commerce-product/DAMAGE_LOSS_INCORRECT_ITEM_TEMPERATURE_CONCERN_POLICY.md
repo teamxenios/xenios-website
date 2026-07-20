@@ -12,7 +12,7 @@ COUNSEL REVIEW REQUIRED
 | Audience | member |
 | Required member state | active member |
 | Trigger | member opens a delivery issue report from order history; linked from XR-COM-007 and from order confirmation |
-| Route | /research/member/shop (order history, issue report flow) |
+| Route | /research/member/orders (issue report flow) |
 | Version | 0.1.0-draft |
 | Status | Draft |
 | Counsel status | Not reviewed |
@@ -112,8 +112,9 @@ disposition, never restocked.
 ## 6. Fraud and abuse
 
 Xenios investigates patterns of repeated claims. Manual review may apply before resolution on
-flagged accounts. This protects the member base that a private program depends on. Honest
-members lose nothing under this section.
+flagged accounts. This protects the member base that a private program depends on. This section
+is designed to affect only accounts showing verified abuse patterns; a fraud review may add
+time to resolution, but it does not change the remedies available for a verified issue.
 
 ## 7. Legal posture
 

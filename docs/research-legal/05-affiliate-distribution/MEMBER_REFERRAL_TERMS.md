@@ -22,7 +22,7 @@ COUNSEL REVIEW REQUIRED
 | Acceptance event | n/a (program-level terms; member acceptance is captured against XR-MEM-026 as checkbox + timestamp + document version + member reference, recorded server-side) |
 | Withdrawal supported | No. These are program terms. A member may stop participating at any time; credits already issued are governed by these terms and applicable law. |
 | Owner | Samuel Boadu, Founder |
-| Dependencies | XR-MEM-026, XR-AFF-002, XR-POL-005 |
+| Dependencies | XR-MEM-026, XR-AFF-002, XR-AFF-003, XR-POL-005 |
 | Sources | See 00-register/SOURCE_REGISTRY.md; FTC Endorsement Guides |
 | Review date | 2026-07-19 |
 

@@ -107,7 +107,7 @@ minus discounts
 minus excluded products
 ```
 
-8.3 Direct only. Commission is paid only on the Affiliate's own directly Attributed sales. There is no payment for recruiting other affiliates or reps, no downline, no override on another person's sales, and no inventory purchase requirement of any kind.
+8.3 Direct only. Commission is paid only on the Affiliate's own directly Attributed sales. There is no payment for recruiting other affiliates or reps, no downline, no override on another person's sales, and no inventory purchase requirement of any kind. Any affiliate tier or rank is never primarily recruitment-based; tiers may reflect eligible sales, training, compliance, answer quality, retention, and partner development.
 
 8.4 Excluded lanes. Membership fee commissions require separate written approval from Xenios [COUNSEL: whether commissioning the $50 activation or $25 recurring membership is permissible and how it must be disclosed]. Peptide and Quantum commissions are disabled until their commercial and claims lanes are approved; no commission accrues on those SKUs in the meantime, even if a sale occurs.
 
@@ -153,7 +153,7 @@ The Affiliate is an independent contractor. Nothing here creates employment, age
 
 ## 15. General
 
-15.1 This agreement, the Approved Assets terms, and the program policies it references are the entire agreement about the affiliate program. Xenios may update program policies prospectively with notice; rate and policy changes never apply retroactively to approved commissions.
+15.1 This agreement, the Approved Assets terms, and the program policies it references are the entire agreement about the affiliate program. Xenios may update program policies prospectively with notice; rate and policy changes never reduce a commission already earned in the pending, held, approved, or paid state, except through reversal for the causes stated in the commission schedule (XR-AFF-007 section 7).
 
 15.2 The Affiliate may not assign this agreement without Xenios's written consent. Xenios may assign to a successor of the business.
 

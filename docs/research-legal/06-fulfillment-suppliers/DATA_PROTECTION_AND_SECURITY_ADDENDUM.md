@@ -22,7 +22,7 @@ COUNSEL REVIEW REQUIRED
 | Acceptance event | Wet or electronic signature by an authorized representative of each party; executed copy retained by both parties. |
 | Withdrawal supported | No. Obligations end only through the termination and transition provisions of XR-FUL-001 and XR-FUL-014; data duties survive as stated in Section 12. |
 | Owner | Samuel Boadu, Founder |
-| Dependencies | XR-FUL-001, XR-FUL-005, XR-FUL-007, XR-FUL-010, XR-FUL-014, XR-POL-005, XR-POL-009 |
+| Dependencies | XR-FUL-001, XR-FUL-005, XR-FUL-010, XR-FUL-011, XR-FUL-014, XR-POL-005, XR-POL-009 |
 | Sources | See 00-register/SOURCE_REGISTRY.md; NIST digital identity guidance (MFA); FTC data security guidance |
 | Review date | 2026-07-19 |
 
@@ -91,7 +91,7 @@ If Prohibited Data reaches Mitch in error, Mitch must not use it, must notify Xe
 
 ## 7. Secure transmission
 
-7.1 Order and inventory data move over the integration defined in the order integration schedule (XR-FUL-007): API preferred, with encrypted transport (TLS). During the pilot, a secure CSV exchange over an approved encrypted channel is acceptable.
+7.1 Order and inventory data move over the integration defined under the Master Fulfillment Agreement section 7 and the Inventory and Lot Reporting Schedule (XR-FUL-005): API preferred, with encrypted transport (TLS). During the pilot, a secure CSV exchange over an approved encrypted channel is acceptable.
 
 7.2 Prohibited transmission methods: personal email accounts, spreadsheets sent through personal email, consumer messaging apps, SMS, unencrypted FTP, and any channel not approved in writing. Telegram is never used for member data between the parties.
 

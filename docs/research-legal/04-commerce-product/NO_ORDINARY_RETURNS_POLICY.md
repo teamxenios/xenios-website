@@ -12,7 +12,7 @@ COUNSEL REVIEW REQUIRED
 | Audience | member |
 | Required member state | active member |
 | Trigger | product checkout; linked from every product page, order confirmation, and order history |
-| Route | /research/member/shop (checkout and order pages) |
+| Route | /research/member/checkout and /research/member/orders |
 | Version | 0.1.0-draft |
 | Status | Draft |
 | Counsel status | Not reviewed |
