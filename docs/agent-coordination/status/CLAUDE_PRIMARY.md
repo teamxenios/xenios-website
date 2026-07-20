@@ -1,5 +1,32 @@
 # CLAUDE_PRIMARY status
 
+## Standing order + live state (2026-07-19, latest)
+
+- Samuel's standing order: keep building and fixing autonomously to the end;
+  coordinate through this tree; anything needing external keys/APIs gets
+  built behind flags/seams and finished without them.
+- PRODUCTION INCIDENT (open until Samuel's env fix): Render's
+  SUPABASE_SERVICE_ROLE_KEY holds an anon-grade key after the project's
+  migration to Supabase's new API-key format. Every server write 500s with a
+  hidden 42501 RLS violation (applications, waitlist, outbox emails) and
+  RLS reads return EMPTY (the admin queue looks empty; no data is lost).
+  Fix: put the sb_secret_ key in that Render var. PR #26 (open, base main)
+  adds a boot-time SERVICE KEY CHECK log so this can never be silent again.
+- PR #25 merge gate: at head f48bda0 the re-review-round fixes (path
+  normalizer for wouter case/percent-encoding parity, tracking TOCTOU) are
+  verified sound (161/161, clean, green, gate's own runs). STILL OUTSTANDING:
+  disposition 3's three items (MFA-laundering compensation + its
+  documentation + stale-test rename) — see handoffs/to-claude/
+  20260719-account-email-queue.md and the PR comment. Gate expects READY
+  once they land. Do not merge before.
+- PR #27 (this branch): the approval-expiry sweep (standalone
+  server/research/expiry.ts + hourly tick), closing the last open backend
+  item in my lane. Deliberately email-silent; the notification template is
+  queued for the account-email lane.
+- Handoffs written: to-claude/20260719-account-email-queue.md,
+  to-architecture-security/20260719-priorities.md (trust proxy now their
+  top item; MFA design must account for the amr-laundering finding).
+
 ## Agent registry and merge order (2026-07-19)
 
 - Sessions: CLAUDE_PRIMARY (this file; backend/referrals/fraud/admin),

@@ -8,6 +8,7 @@ import { registerMemberApi } from "./research/members";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { promoteHeldRewards } from "./research/referrals";
+import { sweepExpiredApprovals } from "./research/expiry";
 import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
 import { createServer } from "http";
@@ -129,6 +130,18 @@ const rewardPromotionTimer = setInterval(() => {
     .catch((err) => console.error("[referrals] reward promotion tick failed:", err));
 }, 5 * 60 * 1000);
 rewardPromotionTimer.unref?.();
+
+// Approval-expiry sweep: lapsed approvals (approved_pending_payment or
+// stalled payment_pending past approval_expires_at) flip to "expired" with an
+// audit event. Hourly; status-guarded so a concurrent claim/activation wins.
+const approvalExpiryTimer = setInterval(() => {
+  sweepExpiredApprovals(new Date())
+    .then((count) => {
+      if (count > 0) log(`expired ${count} lapsed approval(s)`, "research");
+    })
+    .catch((err) => console.error("[research expiry] sweep tick failed:", err));
+}, 60 * 60 * 1000);
+approvalExpiryTimer.unref?.();
 void logEmailStartupDiagnostics(log).catch(() => {});
 startOutboxWorker(log);
 
