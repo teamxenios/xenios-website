@@ -2,6 +2,7 @@ import crypto from "crypto";
 import type { Express, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import type { CatalogResponse, CommerceLane, Product } from "@shared/research/types";
+import { isResearchPath, isResearchResetPasswordPath } from "@shared/research/paths";
 import { products } from "./products-data";
 import { policies } from "./policies-data";
 import { requireActiveMember } from "./member-auth";
@@ -128,18 +129,17 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   // The xenios homepage stays at the root domain in every mode. Research is a
   // private, password-gated section at /research and never takes over the
   // root (canonical decision, 2026-07-18).
-  // Normalize case: wouter renders the research SPA for /Research/... too
-  // (its route matcher is case-insensitive), so a case-sensitive comparison
-  // here would drop noindex + the recovery-page security headers on those
-  // URLs. The root homepage stays unaffected (it never matches /research).
-  const path = req.path.toLowerCase();
-  const isResearchPath = path === "/research" || path.startsWith("/research/");
-  if (!isResearchPath) return next();
+  // Normalize exactly like the wouter router (decodeURI + lowercase, shared
+  // helper): the SPA renders the research surface for /Research/... AND
+  // /%72esearch/... too, so a raw case-sensitive comparison here would drop
+  // noindex + the recovery-page security headers on those variants. The root
+  // homepage stays unaffected (it never normalizes to /research).
+  if (!isResearchPath(req.path)) return next();
   if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");
   // The password-recovery page (founder decision, 2026-07-19: recovery works
   // from a fresh browser without the review password) is a sensitive account
   // page: never cached, never indexed, never leaks a referrer.
-  if (path === "/research/reset-password") {
+  if (isResearchResetPasswordPath(req.path)) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Referrer-Policy", "no-referrer");
     res.setHeader("X-Robots-Tag", "noindex, nofollow");

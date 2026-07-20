@@ -1,5 +1,6 @@
 import { getConfig } from "./config";
 import { isRecoveryHash } from "@shared/research/recovery";
+import { isResearchPath } from "@shared/research/paths";
 
 declare global {
   interface Window {
@@ -23,11 +24,10 @@ let initialized = false;
 // recovery flow itself uses (shared/research/recovery.ts); the hash is only
 // READ here, never stripped or mutated, so Supabase still consumes it.
 export function trackingBlockedHere(pathname: string, hash: string): boolean {
-  // wouter matches routes case-insensitively (regexparam compiles with the
-  // 'i' flag), so /Research/... renders the research surface; normalize case
-  // here or a case-variant URL slips past the block.
-  const p = pathname.toLowerCase();
-  return p === "/research" || p.startsWith("/research/") || isRecoveryHash(hash);
+  // isResearchPath normalizes exactly like the wouter router (decodeURI +
+  // lowercase), so case-variant AND percent-encoded research URLs are all
+  // blocked; the recovery-hash arm blocks a recovery landing on any path.
+  return isResearchPath(pathname) || isRecoveryHash(hash);
 }
 
 export async function initTracking(): Promise<void> {

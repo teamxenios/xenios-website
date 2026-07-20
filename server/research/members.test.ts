@@ -850,20 +850,24 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     expect(gateway.headers["x-robots-tag"]).toBe("noindex, nofollow");
   });
 
-  it("case-variant research URLs still get the security headers (wouter renders them; the gate must not miss them)", async () => {
+  it("case-variant AND percent-encoded research URLs still get the security headers (wouter renders them; the gate must not miss them)", async () => {
     const app = express();
     app.use(researchPageGate);
-    app.get("/Research/reset-password", (_req, res) => res.send("reset page"));
-    app.get("/RESEARCH/member", (_req, res) => res.send("member"));
-    app.get("/", (_req, res) => res.send("home"));
+    app.get("/{*any}", (_req, res) => res.send("spa"));
 
     const reset = await request(app).get("/Research/reset-password");
     expect(reset.headers["cache-control"]).toBe("no-store");
     expect(reset.headers["referrer-policy"]).toBe("no-referrer");
     expect(reset.headers["x-robots-tag"]).toBe("noindex, nofollow");
 
-    const member = await request(app).get("/RESEARCH/member");
-    expect(member.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    // Percent-encoded reset page: wouter decodes and renders it, so the gate
+    // must apply the sensitive-flow headers here too.
+    const encodedReset = await request(app).get("/research/%72eset-password"); // %72 = r
+    expect(encodedReset.headers["cache-control"]).toBe("no-store");
+    expect(encodedReset.headers["referrer-policy"]).toBe("no-referrer");
+
+    const encodedMember = await request(app).get("/%52esearch/member"); // %52 = R
+    expect(encodedMember.headers["x-robots-tag"]).toBe("noindex, nofollow");
 
     // The root homepage is never treated as a research path.
     const home = await request(app).get("/");

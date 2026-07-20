@@ -62,8 +62,16 @@ describe("initTracking is a no-op on the private Research surface", () => {
     expect(window.location.hash).toContain("type=recovery");
   });
 
-  it("no-op on case-variant research URLs (wouter matches case-insensitively)", async () => {
-    for (const path of ["/Research", "/RESEARCH/member", "/Research/reset-password", "/reSearch/apply"]) {
+  it("no-op on case-variant AND percent-encoded research URLs (wouter matches the decoded, case-folded path)", async () => {
+    for (const path of [
+      "/Research",
+      "/RESEARCH/member",
+      "/Research/reset-password",
+      "/reSearch/apply",
+      "/%72esearch/member", // %72 = r
+      "/%52esearch", // %52 = R
+      "/resea%72ch/apply",
+    ]) {
       setLocation(path);
       const t = await freshTracking();
       await t.initTracking();
