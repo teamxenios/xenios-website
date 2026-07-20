@@ -1,0 +1,94 @@
+// The canonical route manifest for the Supreme frontend (single source of
+// truth; a parity test asserts every manifest route is registered in the
+// section router). Legacy aliases stay registered in section.tsx but are not
+// part of the manifest.
+
+export const ACCESS_ROUTES = {
+  gateway: "/research",
+  apply: "/research/apply",
+  applicationStatus: "/research/application-status",
+  signIn: "/research/sign-in",
+  resetPassword: "/research/reset-password",
+  support: "/research/support",
+  privacy: "/research/privacy",
+  terms: "/research/terms",
+  activate: "/research/activate",
+} as const;
+
+export const MEMBER_ROUTES = {
+  home: "/research/member",
+  profile: "/research/member/profile",
+  assessment: "/research/member/assessment",
+  blueprint: "/research/member/blueprint",
+  xenios30: "/research/member/xenios-30",
+  xenios90: "/research/member/xenios-90",
+  documents: "/research/member/documents",
+  tracker: "/research/member/tracker",
+  goals: "/research/member/goals",
+  goal: "/research/member/goals/:slug",
+  products: "/research/member/products",
+  product: "/research/member/products/:slug",
+  guides: "/research/member/guides",
+  guide: "/research/member/guides/:slug",
+  orders: "/research/member/orders",
+  order: "/research/member/orders/:id",
+  subscriptions: "/research/member/subscriptions",
+  questions: "/research/member/questions",
+  referrals: "/research/member/referrals",
+  security: "/research/member/security",
+  privacy: "/research/member/privacy",
+  membership: "/research/member/membership",
+} as const;
+
+export const PARTNER_ROUTES = {
+  home: "/research/partners",
+  apply: "/research/partners/apply",
+  onboarding: "/research/partners/onboarding",
+  training: "/research/partners/training",
+  dashboard: "/research/partners/dashboard",
+  links: "/research/partners/links",
+  campaigns: "/research/partners/campaigns",
+  events: "/research/partners/events",
+  leads: "/research/partners/leads",
+  conversions: "/research/partners/conversions",
+  commissions: "/research/partners/commissions",
+  payouts: "/research/partners/payouts",
+  organizations: "/research/partners/organizations",
+  compliance: "/research/partners/compliance",
+  resources: "/research/partners/resources",
+  support: "/research/partners/support",
+  security: "/research/partners/security",
+} as const;
+
+export const ADMIN_ROUTES = {
+  home: "/admin/research",
+  applications: "/admin/research/applications",
+  application: "/admin/research/applications/:id",
+  members: "/admin/research/members",
+  member: "/admin/research/members/:id",
+  plans: "/admin/research/plans",
+  plan: "/admin/research/plans/:id",
+  products: "/admin/research/products",
+  product: "/admin/research/products/:id",
+  inventory: "/admin/research/inventory",
+  orders: "/admin/research/orders",
+  order: "/admin/research/orders/:id",
+  fulfillment: "/admin/research/fulfillment",
+  questions: "/admin/research/questions",
+  question: "/admin/research/questions/:id",
+  guides: "/admin/research/guides",
+  guide: "/admin/research/guides/:id",
+  partners: "/admin/research/partners",
+  partner: "/admin/research/partners/:id",
+  security: "/admin/research/security",
+  privacy: "/admin/research/privacy",
+  capabilities: "/admin/research/capabilities",
+  audit: "/admin/research/audit",
+} as const;
+
+export const ALL_MANIFEST_ROUTES: string[] = [
+  ...Object.values(ACCESS_ROUTES),
+  ...Object.values(MEMBER_ROUTES),
+  ...Object.values(PARTNER_ROUTES),
+  ...Object.values(ADMIN_ROUTES),
+];
