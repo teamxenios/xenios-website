@@ -28,5 +28,10 @@ export function isResearchPath(pathname: string): boolean {
 }
 
 export function isResearchResetPasswordPath(pathname: string): boolean {
-  return normalize(pathname) === "/research/reset-password";
+  // Tolerate the optional trailing slash, mirroring the wouter route pattern
+  // ^/research/reset-password/?$ — the router renders the reset page at
+  // /research/reset-password/ too, so the sensitive-page headers must apply
+  // there as well.
+  const p = normalize(pathname);
+  return p === "/research/reset-password" || p === "/research/reset-password/";
 }

@@ -47,8 +47,14 @@ describe("isResearchResetPasswordPath", () => {
     expect(isResearchResetPasswordPath("/research/%72eset-password")).toBe(true);
   });
 
+  it("tolerates the optional trailing slash (wouter route is /research/reset-password/?$)", () => {
+    expect(isResearchResetPasswordPath("/research/reset-password/")).toBe(true);
+    expect(isResearchResetPasswordPath("/Research/reset-password/")).toBe(true);
+  });
+
   it("does not match other research pages", () => {
     expect(isResearchResetPasswordPath("/research")).toBe(false);
     expect(isResearchResetPasswordPath("/research/member")).toBe(false);
+    expect(isResearchResetPasswordPath("/research/reset-password/extra")).toBe(false);
   });
 });

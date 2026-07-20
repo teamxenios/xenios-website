@@ -869,6 +869,12 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     const encodedMember = await request(app).get("/%52esearch/member"); // %52 = R
     expect(encodedMember.headers["x-robots-tag"]).toBe("noindex, nofollow");
 
+    // Trailing-slash reset page (wouter route is /research/reset-password/?$)
+    // must still carry the sensitive-flow headers.
+    const slashReset = await request(app).get("/research/reset-password/");
+    expect(slashReset.headers["cache-control"]).toBe("no-store");
+    expect(slashReset.headers["referrer-policy"]).toBe("no-referrer");
+
     // The root homepage is never treated as a research path.
     const home = await request(app).get("/");
     expect(home.status).toBe(200);
