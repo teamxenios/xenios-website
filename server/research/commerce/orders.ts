@@ -69,6 +69,12 @@ export interface OrderRecord {
   totals: OrderTotals;
   /** The authorization reference returned by the provider. Never fabricated. */
   providerReference: string | null;
+  /**
+   * The amount the provider actually authorized, as the provider reported it. A
+   * capture may never exceed this, so a total that changes after the hold is
+   * placed cannot take more than the member agreed to.
+   */
+  authorizedAmountCents?: number;
   lastIdempotencyKey: string | null;
   reviewTriggers: string[];
   createdAt: string;
@@ -235,16 +241,34 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
    * Absorbs a replay. A key already applied to this order is a no-op, and a key
    * already bound to a different order is refused rather than reused, because a
    * reused key on a new payload is how a second charge happens.
+   *
+   * `alreadyApplied` is the operation's own effect marker. A key that matches but
+   * whose effect is absent means the key was reused across two different
+   * operations, which is a conflict rather than a replay: absorbing it would
+   * report a capture that never took money as a success.
    */
   function replayCheck(
     order: OrderRecord,
     key: string,
+    alreadyApplied: (candidate: OrderRecord) => boolean,
   ): { kind: "fresh" } | { kind: "replay"; order: OrderRecord } | { kind: "conflict" } {
-    if (order.lastIdempotencyKey === key) return { kind: "replay", order };
+    if (order.lastIdempotencyKey === key) {
+      return alreadyApplied(order) ? { kind: "replay", order } : { kind: "conflict" };
+    }
     const prior = deps.repository.findByIdempotencyKey(order.memberId, key);
     if (!prior) return { kind: "fresh" };
-    if (prior.orderId === order.orderId) return { kind: "replay", order: prior };
-    return { kind: "conflict" };
+    if (prior.orderId !== order.orderId) return { kind: "conflict" };
+    return alreadyApplied(prior) ? { kind: "replay", order: prior } : { kind: "conflict" };
+  }
+
+  /** An authorization has run when the provider reference it returned is on record. */
+  function isAuthorized(candidate: OrderRecord): boolean {
+    return candidate.providerReference !== null;
+  }
+
+  /** A capture has run when the amount the provider took is on record. */
+  function isCaptured(candidate: OrderRecord): boolean {
+    return candidate.capturedAmountCents !== undefined;
   }
 
   function move(
@@ -277,10 +301,10 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
 
     const key = idempotencyKey ?? `authorize:${orderId}`;
-    const replay = replayCheck(order, key);
+    const replay = replayCheck(order, key, isAuthorized);
     if (replay.kind === "replay") return { ok: true, order: replay.order, idempotent: true };
     if (replay.kind === "conflict") {
-      return deny(["order_state_invalid"], "Idempotency key is already bound to another order.");
+      return deny(["order_state_invalid"], "Idempotency key is already bound to another action.");
     }
 
     const denials = new Denials();
@@ -290,7 +314,11 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     if (!canTransitionOrder(order.state, "payment_authorized", actor)) {
       denials.add("order_state_invalid");
     }
-    if (order.totals.totalCents <= 0) denials.add("quantity_invalid");
+    // Money is integer minor units. A fractional total is refused before it can be
+    // handed to a provider that would round it into something plausible.
+    if (!Number.isInteger(order.totals.totalCents) || order.totals.totalCents <= 0) {
+      denials.add("quantity_invalid");
+    }
     if (!denials.empty) return denied(denials, `Order ${orderId} cannot be authorized.`);
 
     const auth = await deps.payment.createAuthorization({
@@ -308,6 +336,7 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
       providerConfirmation: auth.value.providerReference,
       changes: {
         providerReference: auth.value.providerReference,
+        authorizedAmountCents: auth.value.amountCents,
         lastIdempotencyKey: key,
       },
     });
@@ -345,10 +374,10 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
 
     const key = idempotencyKey ?? `capture:${orderId}`;
-    const replay = replayCheck(order, key);
+    const replay = replayCheck(order, key, isCaptured);
     if (replay.kind === "replay") return { ok: true, order: replay.order, idempotent: true };
     if (replay.kind === "conflict") {
-      return deny(["order_state_invalid"], "Idempotency key is already bound to another order.");
+      return deny(["order_state_invalid"], "Idempotency key is already bound to another action.");
     }
 
     const denials = new Denials();
@@ -360,6 +389,18 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
       denials.add("order_state_invalid");
     }
     if (!order.providerReference) denials.add("payment_failed");
+    if (!Number.isInteger(order.totals.totalCents) || order.totals.totalCents <= 0) {
+      denials.add("quantity_invalid");
+    }
+    // A capture may never exceed the hold the member agreed to. The total is
+    // recomputed by other services, so a total that grew after the authorization
+    // is refused here rather than charged.
+    if (
+      order.authorizedAmountCents !== undefined &&
+      order.totals.totalCents > order.authorizedAmountCents
+    ) {
+      denials.add("payment_failed");
+    }
     // A held order was authorized at one moment and captured at another, which
     // only a provider that defers capture can honor.
     if (order.reviewTriggers.length > 0 && !deps.payment.supportsDeferredCapture) {

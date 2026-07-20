@@ -304,6 +304,24 @@ describe("replacement never restocks", () => {
     expect(h.payment.refundCalls).toHaveLength(0);
   });
 
+  it("refuses a replacement while commerce is disabled", () => {
+    const payment = new SpyPaymentProvider();
+    const claims = createInMemoryClaimRepository();
+    const order = deliveredOrder();
+    const orders = createInMemoryClaimOrderRepository([order]);
+    // Approve the claim while the capability is on, then take it away.
+    const enabled = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const submitted = expectClaim(enabled.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(enabled.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+
+    const disabled = createRefundService({ claims, orders, payment, commerceEnabled: false });
+    const outcome = disabled.resolveWithReplacement(submitted.claim.claimId, "adm_1", NOW);
+
+    expect(expectDenied(outcome)).toContain("commerce_disabled");
+    expect(order.state).toBe("delivered");
+    expect(claims.get(submitted.claim.claimId)?.state).toBe("approved");
+  });
+
   it("refuses a replacement for a claim that was never approved", () => {
     const h = harness();
     const claim = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
@@ -439,6 +457,76 @@ describe("refund", () => {
     expect(h.payment.refundCalls).toHaveLength(1);
     expect(h.order.refundedCents).toBe(6_000);
     expect(replay.claim.claimId).toBe(first.claim.claimId);
+  });
+
+  it("reports a misconfigured provider as a capability state, never as retryable", async () => {
+    class MisconfiguredProvider extends SpyPaymentProvider {
+      async refund(): Promise<ProviderResult<PaymentRefund>> {
+        return {
+          ok: false,
+          code: "MISCONFIGURED",
+          message: "Refund credential is absent.",
+          retryable: false,
+        };
+      }
+    }
+    const payment = new MisconfiguredProvider();
+    const claims = createInMemoryClaimRepository();
+    const order = deliveredOrder();
+    const orders = createInMemoryClaimOrderRepository([order]);
+    const service = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const submitted = expectClaim(service.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+
+    const outcome = await service.resolveWithRefund(
+      submitted.claim.claimId,
+      "adm_1",
+      12_000,
+      "key_1",
+      NOW,
+    );
+
+    // payment_failed would invite a retry that cannot succeed until the credential exists.
+    expect(expectDenied(outcome)).toEqual(["payment_disabled"]);
+    expect(claims.get(submitted.claim.claimId)?.state).toBe("approved");
+    expect(order.state).toBe("delivered");
+    expect(order.refundedCents).toBe(0);
+  });
+
+  it("never lets a provider figure understate what was refunded", async () => {
+    class UnderReportingProvider extends SpyPaymentProvider {
+      async refund(
+        reference: string,
+        amountCents: number,
+        idempotencyKey: string,
+      ): Promise<ProviderResult<PaymentRefund>> {
+        this.refundCalls.push({ reference, amountCents, idempotencyKey });
+        // A negative or short figure would inflate what is still refundable.
+        return {
+          ok: true,
+          value: { providerReference: "refund_1", refundedAmountCents: -6_000, status: "refunded" },
+        };
+      }
+    }
+    const payment = new UnderReportingProvider();
+    const claims = createInMemoryClaimRepository();
+    const order = deliveredOrder();
+    const orders = createInMemoryClaimOrderRepository([order]);
+    const service = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const submitted = expectClaim(service.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+
+    const outcome = await service.resolveWithRefund(
+      submitted.claim.claimId,
+      "adm_1",
+      6_000,
+      "key_1",
+      NOW,
+    );
+
+    expect(outcome.ok).toBe(true);
+    expect(order.refundedCents).toBe(6_000);
+    expect(order.capturedAmountCents - order.refundedCents).toBe(6_000);
   });
 
   it("refuses a refund on a claim that was never approved", async () => {

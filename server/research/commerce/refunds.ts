@@ -23,6 +23,7 @@ import {
   transitionOrder,
   type OrderState,
 } from "@shared/research/commerce";
+import type { ProviderFailureCode } from "@shared/research/capability";
 import type { LotDisposition } from "../inventory/lots";
 import type { PaymentProvider } from "../providers/payment";
 
@@ -250,6 +251,15 @@ function reasonIsAccepted(reason: string): boolean {
   return ACCEPTED_CLAIM_REASONS.indexOf(reason as ClaimReason) !== -1;
 }
 
+/**
+ * A disabled or misconfigured provider is a capability state, not a transient
+ * payment failure. Both are reported as `payment_disabled` so an operator is not
+ * invited to retry a refund that cannot succeed until the capability is fixed.
+ */
+function refundDenialCode(code: ProviderFailureCode): CommerceDenialCode {
+  return code === "DISABLED" || code === "MISCONFIGURED" ? "payment_disabled" : "payment_failed";
+}
+
 // ---------------------------------------------------------------------------
 // Service
 // ---------------------------------------------------------------------------
@@ -344,6 +354,9 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     void asOf;
     const claim = deps.claims.get(claimId);
     if (!claim) return deny("order_not_found");
+    // A replacement commits a physical shipment and moves the order to a terminal
+    // state, so it is gated on the capability exactly as a refund is.
+    if (!deps.commerceEnabled) return deny("commerce_disabled");
     if (claim.state !== "approved") return deny("order_state_invalid");
 
     const order = deps.orders.get(claim.orderId);
@@ -419,8 +432,7 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
       // A disabled provider is not a resolution. The claim stays approved and unpaid,
       // the order is untouched, and the key is not consumed so a retry after the
       // capability is enabled still works.
-      const code: CommerceDenialCode = result.code === "DISABLED" ? "payment_disabled" : "payment_failed";
-      return deny(code);
+      return deny(refundDenialCode(result.code));
     }
 
     // The order reaches `refunded` only on the reference the provider returned. An
@@ -438,9 +450,17 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     });
     if (!moved.ok) return deny("order_state_invalid");
 
+    // The provider reports what it refunded, but the ledger is ours. A figure that
+    // is not a positive integer, or that is smaller than what we asked for, would
+    // understate the total and leave room for a later over-refund, so the amount
+    // requested is the floor and the accumulator only ever moves up.
+    const reported = result.value.refundedAmountCents;
+    const applied =
+      Number.isInteger(reported) && reported > amountCents ? reported : amountCents;
+
     refundsByKey.set(replayScope, reference);
     order.state = moved.state;
-    order.refundedCents = order.refundedCents + result.value.refundedAmountCents;
+    order.refundedCents = order.refundedCents + applied;
     order.lastAppliedIdempotencyKey = idempotencyKey;
     deps.orders.save(order);
 

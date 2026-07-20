@@ -326,6 +326,92 @@ describe("idempotency", () => {
   });
 });
 
+describe("the capture is bounded by the authorization", () => {
+  it("records the amount the provider authorized, not the amount we asked for", async () => {
+    const repo = repository([order()]);
+    const service = createOrderService(deps({ repository: repo }));
+
+    const authorized = await service.authorize("ord_1", "system", NOW);
+
+    expect(authorized.ok).toBe(true);
+    if (!authorized.ok) return;
+    expect(authorized.order.authorizedAmountCents).toBe(21095);
+  });
+
+  it("refuses to capture more than was authorized when the total grows after the hold", async () => {
+    const repo = repository([order()]);
+    const payment = new TestPaymentProvider();
+    const service = createOrderService(deps({ repository: repo, payment }));
+
+    const authorized = await service.authorize("ord_1", "system", NOW);
+    expect(authorized.ok).toBe(true);
+    if (!authorized.ok) return;
+    await service.approve("ord_1", "samuel", LATER);
+
+    // Another service recomputes the totals upward after the hold is placed.
+    const held = repo.get("ord_1")!;
+    repo.save({ ...held, totals: { ...held.totals, totalCents: 210_950 } });
+
+    const result = await service.capture("ord_1", "system", LATER);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.denials).toContain("payment_failed");
+    expect(repo.get("ord_1")!.state).toBe("approved");
+    expect(repo.get("ord_1")!.capturedAmountCents).toBeUndefined();
+  });
+
+  it("still captures a total that shrank after the hold", async () => {
+    const repo = repository([order()]);
+    const service = createOrderService(deps({ repository: repo }));
+
+    await service.authorize("ord_1", "system", NOW);
+    await service.approve("ord_1", "samuel", LATER);
+    const held = repo.get("ord_1")!;
+    repo.save({ ...held, totals: { ...held.totals, totalCents: 10_000 } });
+
+    const result = await service.capture("ord_1", "system", LATER);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.order.capturedAmountCents).toBe(10_000);
+  });
+
+  it("refuses a fractional total rather than handing it to the provider", async () => {
+    const repo = repository([
+      order({ totals: { subtotalCents: 100, shippingCents: 0, storeCreditAppliedCents: 0, totalCents: 100.5 } }),
+    ]);
+    const service = createOrderService(deps({ repository: repo }));
+
+    const result = await service.authorize("ord_1", "system", NOW);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.denials).toContain("quantity_invalid");
+    expect(repo.saves).toBe(0);
+  });
+});
+
+describe("idempotency keys are not shared across operations", () => {
+  it("refuses a capture that reuses the authorize key instead of reporting a false success", async () => {
+    const repo = repository([order()]);
+    const service = createOrderService(deps({ repository: repo }));
+
+    const authorized = await service.authorize("ord_1", "system", NOW, "same_key");
+    expect(authorized.ok).toBe(true);
+    await service.approve("ord_1", "samuel", LATER);
+
+    const captured = await service.capture("ord_1", "system", LATER, "same_key");
+
+    // Absorbing this as a replay would return ok with no money captured.
+    expect(captured.ok).toBe(false);
+    if (captured.ok) return;
+    expect(captured.denials).toContain("order_state_invalid");
+    expect(repo.get("ord_1")!.state).toBe("approved");
+    expect(repo.get("ord_1")!.capturedAmountCents).toBeUndefined();
+  });
+});
+
 describe("cancellation", () => {
   it("releases the authorization and records the reason", async () => {
     const repo = repository([order()]);
