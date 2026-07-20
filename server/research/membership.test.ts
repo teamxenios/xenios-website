@@ -25,6 +25,10 @@ const emails = vi.hoisted(() => ({
   sendApplicationApproved: vi.fn(async () => true),
   sendApplicationDeclined: vi.fn(async () => true),
   sendMoreInformationRequested: vi.fn(async () => true),
+  sendResubmittedConfirmation: vi.fn(async () => true),
+  sendAccountClaimSuccess: vi.fn(async () => true),
+  sendEmailFailureAlert: vi.fn(async () => true),
+  sendAdminTestEmail: vi.fn(async () => ({ ok: true, id: "resend-test-id" })),
 }));
 
 vi.mock("../supabase", () => {
@@ -44,11 +48,17 @@ vi.mock("../supabase", () => {
     let updatePayload: any = null;
     const filters: Array<[string, any]> = [];
     const lteFilters: Array<[string, any]> = [];
+    const ltFilters: Array<[string, any]> = [];
     let notNullCol: string | null = null;
     let limitN: number | null = null;
 
     const applyFilters = (rows: any[]) =>
-      rows.filter((r) => filters.every(([c, v]) => r[c] === v) && lteFilters.every(([c, v]) => r[c] <= v));
+      rows.filter(
+        (r) =>
+          filters.every(([c, v]) => r[c] === v) &&
+          lteFilters.every(([c, v]) => r[c] <= v) &&
+          ltFilters.every(([c, v]) => r[c] != null && r[c] < v),
+      );
     const finish = () => {
       if (mode === "insert") {
         if (table === "research_notification_outbox" && insertPayload?.event_key &&
@@ -70,7 +80,9 @@ vi.mock("../supabase", () => {
       }
       if (mode === "update") {
         const targets = applyFilters(list);
-        if (!targets.length) return { data: null, error: { message: "no matching row" } };
+        // Real Supabase does not error on zero-row updates; .single() callers
+        // still see "not found" through their own branch.
+        if (!targets.length) return { data: null, error: null };
         Object.assign(targets[0], updatePayload);
         return { data: targets[0], error: null };
       }
@@ -87,6 +99,7 @@ vi.mock("../supabase", () => {
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
       in: (c: string, vs: any[]) => { filters.push([c, vs[0]]); return api; },
       lte: (c: string, v: any) => { lteFilters.push([c, v]); return api; },
+      lt: (c: string, v: any) => { ltFilters.push([c, v]); return api; },
       not: (c: string) => { notNullCol = c; return api; },
       order: () => api,
       limit: (n: number) => { limitN = n; return api; },
@@ -296,6 +309,55 @@ describe("legitimate verified resubmission", () => {
     expect(row.goals_text).toBe("updated goals after the request");
     // The transition was audited.
     expect(state.events.some((e) => e.new_status === "resubmitted" && e.application_id === row.id)).toBe(true);
+    // The applicant gets a confirmation and the admin gets a resubmission
+    // alert (previously a resubmission sat silently until the queue was polled).
+    expect(emails.sendResubmittedConfirmation).toHaveBeenCalledTimes(1);
+    expect(emails.sendResubmittedConfirmation.mock.calls[0][0].email).toBe(VALID.email);
+    expect(emails.sendInternalApplicationAlert).toHaveBeenCalledTimes(1);
+    expect(emails.sendInternalApplicationAlert.mock.calls[0][0].kind).toBe("resubmitted");
+    expect(emails.sendInternalApplicationAlert.mock.calls[0][0].to).toBe("samuel@xeniostechnology.com");
+  });
+
+  it("a LATER resubmission cycle notifies again (event keys are bucketed, not permanent)", async () => {
+    const row = seedApplication({ email: VALID.email, status: "more_information_requested" });
+    const app = makeApp();
+    const first = await request(app)
+      .post("/api/research/applications/resubmit")
+      .set("X-Forwarded-For", uniqueIp())
+      .send({ ...VALID, token: makeStatusToken(row.id) });
+    expect(first.status).toBe(200);
+    expect(emails.sendResubmittedConfirmation).toHaveBeenCalledTimes(1);
+
+    // The admin requests information again; the applicant resubmits 11 minutes later.
+    row.status = "more_information_requested";
+    const realNow = Date.now.bind(Date);
+    const spy = vi.spyOn(Date, "now").mockImplementation(() => realNow() + 11 * 60 * 1000);
+    try {
+      const second = await request(app)
+        .post("/api/research/applications/resubmit")
+        .set("X-Forwarded-For", uniqueIp())
+        .send({ ...VALID, token: makeStatusToken(row.id) });
+      expect(second.status).toBe(200);
+      expect(emails.sendResubmittedConfirmation).toHaveBeenCalledTimes(2);
+      expect(emails.sendInternalApplicationAlert).toHaveBeenCalledTimes(2);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it("status-link emails for an APPROVED application are enqueued claim-capable", async () => {
+    const row = seedApplication({ email: VALID.email, status: "approved_pending_payment" });
+    const app = makeApp();
+    // A duplicate submission for an approved application sends a fresh link
+    // that must be able to claim (the approved applicant's recovery path).
+    const res = await request(app)
+      .post("/api/research/applications")
+      .set("X-Forwarded-For", uniqueIp())
+      .send(VALID);
+    expect(res.status).toBe(200);
+    const linkJob = state.outbox.find((j) => j.template_key === "applicant_status_link" && j.application_id === row.id);
+    expect(linkJob).toBeTruthy();
+    expect(linkJob.payload.tokenPurpose).toBe("account_claim");
   });
 });
 
@@ -415,12 +477,28 @@ describe("admin activation (interim, admin-verified, billing-flag gated)", () =>
     expect(res.status).toBe(200);
     expect(row.status).toBe("active");
     expect(state.members[0].status).toBe("active");
+    // Admin-verified activation IS billing verification: billing_state is
+    // recorded so requireActiveMember keeps admitting the member once
+    // RESEARCH_MEMBERSHIP_BILLING_ENABLED enforcement is live.
+    expect(state.members[0].billing_state).toBe("active");
     // Referrals are flag-off in this suite: the hook ran and reported disabled.
     expect(res.body.referral.reason).toBe("referrals_disabled");
     // The transition was audited with BOTH references, internal-only.
     const audited = state.events.find((e) => e.new_status === "active");
     expect(String(audited?.internal_note)).toContain("payment_reference=manual-check-001");
     expect(String(audited?.internal_note)).toContain("subscription_reference=sub-check-001");
+  });
+
+  it("activate retry after a partial failure is idempotent (application already active)", async () => {
+    const row = seedApplication({ status: "active" }); // transition already happened
+    state.members.push({ id: "mem-1", application_id: row.id, auth_user_id: "auth-1", email: row.email, first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const res = await request(makeApp())
+      .post(`/api/admin/research/applications/${row.id}/activate`)
+      .set("X-Forwarded-For", uniqueIp())
+      .send(BOTH_REFS);
+    expect(res.status).toBe(200);
+    expect(state.members[0].status).toBe("active");
+    expect(state.members[0].billing_state).toBe("active");
   });
 
   it("activate fails closed unless BOTH the activation payment and the monthly membership are provided", async () => {

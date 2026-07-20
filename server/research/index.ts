@@ -2,6 +2,7 @@ import crypto from "crypto";
 import type { Express, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import type { CatalogResponse, CommerceLane, Product } from "@shared/research/types";
+import { isResearchPath, isResearchResetPasswordPath } from "@shared/research/paths";
 import { products } from "./products-data";
 import { policies } from "./policies-data";
 import { requireActiveMember } from "./member-auth";
@@ -58,9 +59,12 @@ function sign(value: string): string {
   return crypto.createHmac("sha256", signingKey()).update(value).digest("base64url");
 }
 
+// The signed payload carries a "cookie." domain label so the gate-cookie MAC
+// can never collide with the applicant status/claim token MAC, which shares
+// the same signing secret (both derive sha256(RESEARCH_SESSION_SECRET)).
 function makeToken(): string {
   const expires = Date.now() + SESSION_HOURS * 60 * 60 * 1000;
-  return `${expires}.${sign(String(expires))}`;
+  return `${expires}.${sign(`cookie.${expires}`)}`;
 }
 
 function tokenValid(token: string | undefined): boolean {
@@ -69,7 +73,7 @@ function tokenValid(token: string | undefined): boolean {
   if (dot <= 0) return false;
   const expires = token.slice(0, dot);
   const mac = token.slice(dot + 1);
-  const expected = sign(expires);
+  const expected = sign(`cookie.${expires}`);
   const a = Buffer.from(mac);
   const b = Buffer.from(expected);
   if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return false;
@@ -125,9 +129,21 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   // The xenios homepage stays at the root domain in every mode. Research is a
   // private, password-gated section at /research and never takes over the
   // root (canonical decision, 2026-07-18).
-  const isResearchPath = req.path === "/research" || req.path.startsWith("/research/");
-  if (!isResearchPath) return next();
+  // Normalize exactly like the wouter router (decodeURI + lowercase, shared
+  // helper): the SPA renders the research surface for /Research/... AND
+  // /%72esearch/... too, so a raw case-sensitive comparison here would drop
+  // noindex + the recovery-page security headers on those variants. The root
+  // homepage stays unaffected (it never normalizes to /research).
+  if (!isResearchPath(req.path)) return next();
   if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  // The password-recovery page (founder decision, 2026-07-19: recovery works
+  // from a fresh browser without the review password) is a sensitive account
+  // page: never cached, never indexed, never leaks a referrer.
+  if (isResearchResetPasswordPath(req.path)) {
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Referrer-Policy", "no-referrer");
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  }
   if (!configured()) {
     return res
       .status(503)
@@ -216,8 +232,16 @@ export function registerResearchApi(app: Express) {
   // token is the stronger credential; every bypassed path still enforces it).
   // Everything else keeps the session-cookie wall.
   const MEMBER_AUTHED_PREFIXES = ["/member", "/catalog", "/orders"];
+  // FOUNDER DECISION (2026-07-19): password recovery must work from a fresh
+  // browser WITHOUT the shared review password. Exactly these routes bypass
+  // the wall by explicit allowlist (no credential of any kind required); the
+  // endpoint itself is enumeration-safe and rate-limited, exposes no member
+  // data, and never mints a review cookie. This does not make research
+  // public: every other route keeps its wall or member guard.
+  const OPEN_RECOVERY_PATHS = new Set(["/member/forgot-password"]);
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
+    if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
     const bearer = (req.headers.authorization ?? "").startsWith("Bearer ");
     if (bearer && MEMBER_AUTHED_PREFIXES.some((p) => req.path === p || req.path.startsWith(p + "/"))) {
       return next();

@@ -10,6 +10,7 @@ import Apply from "./pages/Apply";
 import ApplyStatus from "./pages/ApplyStatus";
 import MemberWelcome from "./pages/MemberWelcome";
 import SignIn from "./pages/SignIn";
+import ResetPassword from "./pages/ResetPassword";
 import Peptides from "./pages/Peptides";
 import Quantum from "./pages/Quantum";
 import Supplements from "./pages/Supplements";
@@ -81,6 +82,7 @@ export default function ResearchSection() {
           <Route path="/research/apply/status" component={ApplyStatus} />
           <Route path="/research/application/status" component={ApplyStatus} />
           <Route path="/research/sign-in" component={SignIn} />
+          <Route path="/research/reset-password" component={ResetPassword} />
           <Route path="/research/activate" component={MemberWelcome} />
           <Route path="/research/member/welcome"><Redirect to="/research/activate" /></Route>
           <Route path="/research/policies/:policy" component={PolicyPage} />

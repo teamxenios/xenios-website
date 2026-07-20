@@ -45,7 +45,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createWaitlist(submission: InsertWaitlist, meta: RequestMeta = {}): Promise<CreateResult> {
-    return await db.transaction(async (tx) => {
+    return await db.transaction(async (tx: any) => {
       const [counterRow] = await tx
         .select()
         .from(counterState)

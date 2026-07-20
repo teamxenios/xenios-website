@@ -15,6 +15,7 @@ table in the same PR that adds or changes a migration file.
 | 6 | research-referrals-seed.sql | Seed program member-give10-get15 (1500/1000 cents) | RUN | 2026-07-18 | verify-research-schema.sql (seed row) |
 | 7 | research-consent-covenant.sql | Consent events + covenant acceptances | RUN | 2026-07-18 | verify-research-schema.sql |
 | 8 | research-referral-fraud.sql | Fraud queue, referral event audit, applicant_ip, uniqueness indexes, durable rate-limit table + function | RUN | 2026-07-18 | verify-referral-fraud.sql |
+| 9 | research-member-billing.sql | Member statuses past_due/cancelled + separate billing_state column | PENDING (not run) | — | code tolerates absence; see notes |
 
 Verification files (read-only, run any time):
 
@@ -35,3 +36,8 @@ Notes:
 - All research tables are service-role only by design: RLS enabled with no
   public policies. Adding a policy to any research table is a security
   regression; see docs/security.
+- 2026-07-19: migration 9 drafted by CLAUDE_ACCOUNT_EMAIL_SYSTEMS. It is NOT
+  run. The server code reads billing_state defensively (missing column or null
+  = 'not_started'; an already-active member without the column is treated as
+  verified-legacy), so deploys are safe in either order. Samuel runs it before
+  RESEARCH_MEMBERSHIP_BILLING_ENABLED is ever turned on.

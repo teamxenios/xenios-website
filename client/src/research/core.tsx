@@ -1,6 +1,16 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { AccessState, CartItem, CatalogResponse, CommerceFlags, CommerceLane, Policy, Product } from "@shared/research/types";
-import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
+import {
+  clearPersistedRecoverySession,
+  getSupabaseBrowser,
+  revokeRecoverySession,
+} from "@/lib/supabaseBrowser";
+import {
+  captureRecoveryMarker,
+  clearRecoveryMarker,
+  isRecoveryErrorHash,
+  markRecoveryFromAuthEvent,
+} from "@shared/research/recovery";
 
 // xenios research: client core. All product data comes from the gated server
 // APIs; nothing in this bundle contains the catalog. The provider tracks the
@@ -58,7 +68,24 @@ export async function fetchPolicies(): Promise<Record<string, Policy> | null> {
 
 export type OrderResult = { ok: boolean; message?: string; orderId?: string; totalCents?: number };
 export async function submitOrder(payload: unknown): Promise<OrderResult> {
-  const { body } = await postJson<OrderResult>("/api/research/orders", payload);
+  // Orders are ACTIVE-member content (requireActiveMember server-side, since
+  // the gateway architecture): attach the member's Supabase JWT, mirroring
+  // loadCatalog. Without it every checkout dies at 401 before the handler.
+  let auth: Record<string, string> = {};
+  try {
+    const supabase = await getSupabaseBrowser();
+    const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token ?? null : null;
+    if (token) auth = { Authorization: "Bearer " + token };
+  } catch {
+    /* no session: the server answers 401 and the UI shows the sign-in message */
+  }
+  const res = await fetch("/api/research/orders", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json", ...auth },
+    body: JSON.stringify(payload),
+  });
+  const body = (await res.json().catch(() => null)) as OrderResult | null;
   return body ?? { ok: false, message: "The order could not be processed. Please try again." };
 }
 
@@ -92,13 +119,21 @@ export type MemberInfo = {
   applicationStatus: string | null;
 };
 
+// Password-recovery flow state (founder decision, 2026-07-19): "pending"
+// means the visitor arrived from a valid Supabase recovery link (set-password
+// mode); "link_error" means they arrived from an expired/invalid one.
+export type RecoveryState = "none" | "pending" | "link_error";
+
 type ResearchContextValue = {
   gate: GateStatus;
   member: MemberInfo | null;
   memberToken: string | null;
   memberChecking: boolean;
+  recovery: RecoveryState;
+  clearRecovery: () => void;
   refreshMember: () => Promise<void>;
   signOutMember: () => Promise<void>;
+  signOutRecoverySession: (accessToken?: string | null) => Promise<void>;
   products: Product[];
   bySlug: Map<string, Product>;
   commerce: CommerceFlags;
@@ -125,6 +160,43 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   const [member, setMember] = useState<MemberInfo | null>(null);
   const [memberToken, setMemberToken] = useState<string | null>(null);
   const [memberChecking, setMemberChecking] = useState(true);
+
+  // Recovery capture MUST run synchronously on first render, BEFORE any
+  // getSupabaseBrowser() call in the effects below: client initialization
+  // consumes the recovery hash (detectSessionInUrl), and without this the
+  // /research/reset-password route mounts too late, sees nothing, and shows
+  // a legitimate member the request form. The marker also persists in
+  // sessionStorage so it survives the hash being cleared.
+  const [recovery, setRecovery] = useState<RecoveryState>(() => {
+    if (typeof window === "undefined") return "none";
+    if (captureRecoveryMarker(window.location.hash, window.sessionStorage)) return "pending";
+    if (isRecoveryErrorHash(window.location.hash)) return "link_error";
+    return "none";
+  });
+
+  const clearRecovery = useCallback(() => {
+    if (typeof window !== "undefined") clearRecoveryMarker(window.sessionStorage);
+    setRecovery("none");
+  }, []);
+
+  // Second capture path: the PASSWORD_RECOVERY auth event fires even when the
+  // hash was already consumed before this provider observed it.
+  useEffect(() => {
+    let alive = true;
+    let unsubscribe: (() => void) | null = null;
+    (async () => {
+      const supabase = await getSupabaseBrowser();
+      if (!supabase || !alive) return;
+      const { data: sub } = supabase.auth.onAuthStateChange((event: string) => {
+        if (markRecoveryFromAuthEvent(event, window.sessionStorage)) setRecovery("pending");
+      });
+      unsubscribe = () => sub.subscription.unsubscribe();
+    })();
+    return () => {
+      alive = false;
+      unsubscribe?.();
+    };
+  }, []);
 
   // The member session: the member's own Supabase JWT. Membership itself is
   // verified SERVER-side (/api/research/member/me); the client only mirrors it.
@@ -162,13 +234,27 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   const signOutMember = useCallback(async () => {
     try {
       const supabase = await getSupabaseBrowser();
-      await supabase?.auth.signOut();
+      // A member signing out of this browser must not terminate every other
+      // device session. Supabase defaults to global scope, so local is always
+      // explicit here.
+      await supabase?.auth.signOut({ scope: "local" });
     } catch {
       // the local state clears regardless
     }
     setMember(null);
     setMemberToken(null);
     setCatalog(null);
+  }, []);
+
+  const signOutRecoverySession = useCallback(async (accessToken?: string | null) => {
+    // This synchronous removal runs before the first await, so navigation or
+    // pagehide cannot strand the persisted recovery credential. The helper
+    // refuses to touch a newer password-authenticated session.
+    clearPersistedRecoverySession(accessToken);
+    setMember(null);
+    setMemberToken(null);
+    setCatalog(null);
+    if (accessToken) await revokeRecoverySession(accessToken);
   }, []);
 
   // The catalog is MEMBER content: it loads only with the member token, and
@@ -194,20 +280,31 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
         return;
       }
       setGate(body?.authed ? "open" : "locked");
+      // Recovery isolation (correction-pass blocker 2): while a recovery is
+      // pending, the provider loads NO member state — the recovery session
+      // exists only to set a new password. Member data, the catalog, and the
+      // member gate-bypass all stay untouched until recovery completes (which
+      // signs the session out) or is abandoned (also signed out).
+      if (recovery === "pending") {
+        setMemberChecking(false);
+        return;
+      }
       await refreshMember();
     })();
     return () => {
       alive = false;
     };
-  }, [refreshMember]);
+  }, [refreshMember, recovery]);
 
   // An authenticated member bypasses the shared password, and the catalog
-  // follows the member session.
+  // follows the member session. Never while a recovery is pending: a
+  // recovery-grade session must not open the gate or load the catalog.
   useEffect(() => {
+    if (recovery === "pending") return;
     if (!member || !memberToken) return;
     setGate("open");
     void loadCatalog(memberToken);
-  }, [member, memberToken, loadCatalog]);
+  }, [member, memberToken, loadCatalog, recovery]);
 
   // cart persistence
   useEffect(() => {
@@ -291,8 +388,11 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     member,
     memberToken,
     memberChecking,
+    recovery,
+    clearRecovery,
     refreshMember,
     signOutMember,
+    signOutRecoverySession,
     products: catalog?.products ?? [],
     bySlug,
     commerce: catalog?.commerce ?? { research: false, consumer: false },
