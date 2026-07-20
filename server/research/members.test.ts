@@ -166,11 +166,12 @@ vi.mock("./membership-emails", () => emails);
 
 process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 
-import { makeResearchToken, makeStatusToken } from "./membership";
+import { makeResearchToken, makeStatusToken, registerMembershipApi } from "./membership";
 import { registerMemberApi } from "./members";
 import { registerMemberAccessApi } from "./guards";
 import { registerResearchApi, researchPageGate } from "./index";
 import { registerOutboxAdmin } from "./outbox";
+import { registerReferralFraudAdmin } from "./fraud-admin";
 
 function makeApp() {
   const app = express();
@@ -658,9 +659,11 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     const app = express();
     app.use(express.json());
     registerResearchApi(app);
+    registerMembershipApi(app);
     registerMemberApi(app);
     registerMemberAccessApi(app);
     registerOutboxAdmin(app); // REAL requireSupabaseAdmin (../routes is not mocked here)
+    registerReferralFraudAdmin(app);
     return app;
   }
 
@@ -731,11 +734,11 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     expect((await request(app).post("/api/research/orders").send({})).status).toBe(401);
   });
 
-  it("a recovery session (valid JWT, no membership) reaches NO catalog, member data, or admin surface", async () => {
+  it("a legacy no-AMR session with no membership reaches NO catalog, member data, or admin surface", async () => {
     seedApplication(); // unrelated member data exists
     state.tables.research_members.push({ id: "m1", application_id: state.tables.research_applications[0].id, auth_user_id: "auth-1", email: "member@example.com", first_name: "Avery", status: "active", created_at: new Date().toISOString() });
     const app = makeComposedApp();
-    const bearer = { Authorization: "Bearer recovery-jwt" }; // auth-recovery: no member row
+    const bearer = { Authorization: "Bearer recovery-jwt" }; // valid legacy fixture, no AMR and no member row
     expect((await request(app).get("/api/research/catalog").set(bearer)).status).toBe(403);
     expect((await request(app).get("/api/research/member/catalog").set(bearer)).status).toBe(403);
     expect((await request(app).get("/api/research/member/me").set(bearer)).status).toBe(403);
@@ -767,18 +770,35 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     }
   });
 
-  it("RECOVERY-PURPOSE AUTHORIZATION: a recovery session with Samuel's ADMIN_EMAIL is denied every admin surface", async () => {
+  it("RECOVERY-PURPOSE AUTHORIZATION: a recovery session with Samuel's ADMIN_EMAIL is denied every Research admin route", async () => {
     process.env.ADMIN_EMAIL = "samuel@xeniostechnology.com";
     try {
       const composed = makeComposedApp();
       const bearer = { Authorization: `Bearer ${recoveryJwtFor("auth-samuel", "samuel@xeniostechnology.com")}` };
-      const outbox = await request(composed).get("/api/admin/research/outbox").set(bearer);
-      expect(outbox.status).toBe(403);
-      expect(JSON.stringify(outbox.body)).not.toMatch(/outbox|recipient|template/i);
-      const drain = await request(composed).post("/api/admin/research/outbox/run").set(bearer);
-      expect(drain.status).toBe(403);
-      const testEmail = await request(composed).post("/api/admin/research/test-email").set(bearer).send({ to: "samuel@xeniostechnology.com" });
-      expect(testEmail.status).toBe(403);
+      const probes = [
+        () => request(composed).get("/api/admin/research/outbox").set(bearer),
+        () => request(composed).post("/api/admin/research/outbox/run").set(bearer),
+        () => request(composed).post("/api/admin/research/outbox/00000000-0000-4000-8000-000000000001/retry").set(bearer),
+        () => request(composed).post("/api/admin/research/test-email").set(bearer).send({ to: "samuel@xeniostechnology.com" }),
+        () => request(composed).get("/api/admin/research/system-status").set(bearer),
+        () => request(composed).get("/api/admin/research/applications").set(bearer),
+        () => request(composed).get("/api/admin/research/applications/00000000-0000-4000-8000-000000000001").set(bearer),
+        () => request(composed).post("/api/admin/research/applications/00000000-0000-4000-8000-000000000001/review").set(bearer).send({}),
+        () => request(composed).post("/api/admin/research/applications/00000000-0000-4000-8000-000000000001/request-info").set(bearer).send({}),
+        () => request(composed).post("/api/admin/research/applications/00000000-0000-4000-8000-000000000001/approve").set(bearer).send({}),
+        () => request(composed).post("/api/admin/research/applications/00000000-0000-4000-8000-000000000001/begin-activation").set(bearer).send({}),
+        () => request(composed).post("/api/admin/research/applications/00000000-0000-4000-8000-000000000001/activate").set(bearer).send({}),
+        () => request(composed).post("/api/admin/research/applications/00000000-0000-4000-8000-000000000001/decline").set(bearer).send({}),
+        () => request(composed).get("/api/admin/research/referral-fraud").set(bearer),
+        () => request(composed).post("/api/admin/research/referral-fraud/00000000-0000-4000-8000-000000000001/action").set(bearer).send({}),
+        () => request(composed).post("/api/admin/research/referral-fraud/report").set(bearer).send({}),
+      ];
+      for (const probe of probes) {
+        const denied = await probe();
+        expect(denied.status).toBe(403);
+        expect(denied.body.code).toBe("recovery_session");
+        expect(JSON.stringify(denied.body)).not.toMatch(/outbox|recipient|template|application|flagId/i);
+      }
       expect(emails.sendAdminTestEmail).not.toHaveBeenCalled();
     } finally {
       delete process.env.ADMIN_EMAIL;
@@ -809,6 +829,45 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     const passwordStringAmr = makeSupabaseJwt({ sub: "auth-active", email: "member@example.com", amr: ["password"] });
     const allowed = await request(composed).get("/api/research/member/me").set("Authorization", `Bearer ${passwordStringAmr}`);
     expect(allowed.status).toBe(200);
+  });
+
+  it("RECOVERY-PURPOSE AUTHORIZATION: mixed recovery + password/MFA AMR can never launder into a member or Samuel-admin session", async () => {
+    const application = seedApplication({ status: "active" });
+    state.tables.research_members.push({ id: "m1", application_id: application.id, auth_user_id: "auth-active", email: "member@example.com", first_name: "Avery", status: "active", billing_state: "active", created_at: new Date().toISOString() });
+    const composed = makeComposedApp();
+    const mixedMemberTokens = [
+      makeSupabaseJwt({ sub: "auth-active", email: "member@example.com", amr: [{ method: "otp", timestamp: now() }, { method: "password", timestamp: now() }] }),
+      makeSupabaseJwt({ sub: "auth-active", email: "member@example.com", amr: [{ method: "recovery", timestamp: now() }, { method: "totp", timestamp: now() }] }),
+      makeSupabaseJwt({ sub: "auth-active", email: "member@example.com", amr: [{ method: "otp", timestamp: now() }, { method: "mfa/totp", timestamp: now() }] }),
+      makeSupabaseJwt({ sub: "auth-active", email: "member@example.com", amr: [{ method: "mfa/totp", timestamp: now() }] }),
+    ];
+    for (const token of mixedMemberTokens) {
+      const denied = await request(composed).get("/api/research/catalog").set("Authorization", `Bearer ${token}`);
+      expect(denied.status).toBe(403);
+      expect(denied.body.code).toBe("recovery_session");
+      expect(JSON.stringify(denied.body)).not.toMatch(/products|priceCents/i);
+    }
+
+    process.env.ADMIN_EMAIL = "samuel@xeniostechnology.com";
+    try {
+      const adminToken = makeSupabaseJwt({
+        sub: "auth-samuel",
+        email: "samuel@xeniostechnology.com",
+        amr: [{ method: "otp", timestamp: now() }, { method: "password", timestamp: now() }, { method: "mfa/totp", timestamp: now() }],
+      });
+      const denied = await request(composed).get("/api/admin/research/outbox").set("Authorization", `Bearer ${adminToken}`);
+      expect(denied.status).toBe(403);
+      expect(denied.body.code).toBe("recovery_session");
+    } finally {
+      delete process.env.ADMIN_EMAIL;
+    }
+
+    const normalMfaToken = makeSupabaseJwt({
+      sub: "auth-active",
+      email: "member@example.com",
+      amr: [{ method: "password", timestamp: now() }, { method: "mfa/totp", timestamp: now() }],
+    });
+    expect((await request(composed).get("/api/research/catalog").set("Authorization", `Bearer ${normalMfaToken}`)).status).toBe(200);
   });
 
   it("RECOVERY-PURPOSE AUTHORIZATION: ordinary password sessions still work for members and the admin", async () => {

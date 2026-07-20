@@ -10,6 +10,12 @@ declare global {
 }
 
 let initialized = false;
+const researchBoundaryKey = Symbol.for("xenios_research_document_boundary");
+
+type DocumentNavigator = {
+  assign: (url: string) => void;
+  replace: (url: string) => void;
+};
 
 // SECURITY (PR #25 correction pass, founder-confirmed): third-party tracking
 // must NEVER load on the private Research surface — the gateway, application,
@@ -28,6 +34,57 @@ export function trackingBlockedHere(pathname: string, hash: string): boolean {
   // lowercase), so case-variant AND percent-encoded research URLs are all
   // blocked; the recovery-hash arm blocks a recovery landing on any path.
   return isResearchPath(pathname) || isRecoveryHash(hash);
+}
+
+export function requiresFullDocumentNavigation(currentHref: string, targetHref: string): boolean {
+  try {
+    const current = new URL(currentHref);
+    const target = new URL(targetHref, current);
+    if (current.origin !== target.origin) return false;
+    const currentSensitive = trackingBlockedHere(current.pathname, current.hash);
+    const targetSensitive = trackingBlockedHere(target.pathname, target.hash);
+    return currentSensitive !== targetSensitive;
+  } catch {
+    return false;
+  }
+}
+
+// The marketing site and private Research surface share one React bundle.
+// Once Meta's code has executed, deleting its script tag or suppressing fbq
+// does not unload its observers. The only durable isolation boundary is a new
+// document. Intercept History API transitions that cross into or out of
+// Research (or a recovery hash) and use a full navigation before pushState can
+// expose the sensitive URL to an already-running third-party runtime.
+export function installResearchDocumentBoundary(
+  targetWindow: Window = window,
+  documentNavigator: DocumentNavigator = {
+    assign: (url) => targetWindow.location.assign(url),
+    replace: (url) => targetWindow.location.replace(url),
+  },
+): void {
+  const markedWindow = targetWindow as Window & { [researchBoundaryKey]?: boolean };
+  if (markedWindow[researchBoundaryKey]) return;
+
+  for (const method of ["pushState", "replaceState"] as const) {
+    const original = targetWindow.history[method].bind(targetWindow.history);
+    targetWindow.history[method] = ((state: unknown, unused: string, url?: string | URL | null) => {
+      if (url != null) {
+        try {
+          const target = new URL(String(url), targetWindow.location.href);
+          if (requiresFullDocumentNavigation(targetWindow.location.href, target.href)) {
+            if (method === "replaceState") documentNavigator.replace(target.href);
+            else documentNavigator.assign(target.href);
+            return;
+          }
+        } catch {
+          // Let the native History API preserve its normal validation/error.
+        }
+      }
+      return original(state, unused, url);
+    }) as History[typeof method];
+  }
+
+  Object.defineProperty(markedWindow, researchBoundaryKey, { value: true });
 }
 
 export async function initTracking(): Promise<void> {

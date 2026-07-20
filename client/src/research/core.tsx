@@ -1,6 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { AccessState, CartItem, CatalogResponse, CommerceFlags, CommerceLane, Policy, Product } from "@shared/research/types";
-import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
+import {
+  clearPersistedRecoverySession,
+  getSupabaseBrowser,
+  revokeRecoverySession,
+} from "@/lib/supabaseBrowser";
 import {
   captureRecoveryMarker,
   clearRecoveryMarker,
@@ -129,6 +133,7 @@ type ResearchContextValue = {
   clearRecovery: () => void;
   refreshMember: () => Promise<void>;
   signOutMember: () => Promise<void>;
+  signOutRecoverySession: (accessToken?: string | null) => Promise<void>;
   products: Product[];
   bySlug: Map<string, Product>;
   commerce: CommerceFlags;
@@ -229,13 +234,27 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   const signOutMember = useCallback(async () => {
     try {
       const supabase = await getSupabaseBrowser();
-      await supabase?.auth.signOut();
+      // A member signing out of this browser must not terminate every other
+      // device session. Supabase defaults to global scope, so local is always
+      // explicit here.
+      await supabase?.auth.signOut({ scope: "local" });
     } catch {
       // the local state clears regardless
     }
     setMember(null);
     setMemberToken(null);
     setCatalog(null);
+  }, []);
+
+  const signOutRecoverySession = useCallback(async (accessToken?: string | null) => {
+    // This synchronous removal runs before the first await, so navigation or
+    // pagehide cannot strand the persisted recovery credential. The helper
+    // refuses to touch a newer password-authenticated session.
+    clearPersistedRecoverySession(accessToken);
+    setMember(null);
+    setMemberToken(null);
+    setCatalog(null);
+    if (accessToken) await revokeRecoverySession(accessToken);
   }, []);
 
   // The catalog is MEMBER content: it loads only with the member token, and
@@ -373,6 +392,7 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     clearRecovery,
     refreshMember,
     signOutMember,
+    signOutRecoverySession,
     products: catalog?.products ?? [],
     bySlug,
     commerce: catalog?.commerce ?? { research: false, consumer: false },

@@ -125,4 +125,40 @@ describe("positive control and event hygiene", () => {
     t.track("Lead");
     expect(fbq).toHaveBeenCalledTimes(1);
   });
+
+  it("uses a full-document boundary before an initialized marketing runtime can enter Research", async () => {
+    const t = await freshTracking();
+    const originalPush = vi.fn();
+    const originalReplace = vi.fn();
+    const assign = vi.fn();
+    const replace = vi.fn();
+    const fakeWindow = {
+      location: { href: "https://xeniostechnology.com/concepts" },
+      history: { pushState: originalPush, replaceState: originalReplace },
+    } as unknown as Window;
+
+    t.installResearchDocumentBoundary(fakeWindow, { assign, replace });
+    fakeWindow.history.pushState({}, "", "/research/member");
+    expect(assign).toHaveBeenCalledWith("https://xeniostechnology.com/research/member");
+    expect(originalPush).not.toHaveBeenCalled();
+
+    // Recovery hashes on any path get the same new-document isolation.
+    fakeWindow.history.replaceState({}, "", "/#access_token=abc&refresh_token=def&type=recovery");
+    expect(replace).toHaveBeenCalledWith("https://xeniostechnology.com/#access_token=abc&refresh_token=def&type=recovery");
+    expect(originalReplace).not.toHaveBeenCalled();
+  });
+
+  it("keeps ordinary same-surface navigation in the SPA", async () => {
+    const t = await freshTracking();
+    const originalPush = vi.fn();
+    const assign = vi.fn();
+    const fakeWindow = {
+      location: { href: "https://xeniostechnology.com/about" },
+      history: { pushState: originalPush, replaceState: vi.fn() },
+    } as unknown as Window;
+    t.installResearchDocumentBoundary(fakeWindow, { assign, replace: vi.fn() });
+    fakeWindow.history.pushState({ from: "about" }, "", "/concepts");
+    expect(assign).not.toHaveBeenCalled();
+    expect(originalPush).toHaveBeenCalledWith({ from: "about" }, "", "/concepts");
+  });
 });

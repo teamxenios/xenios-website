@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import Wordmark from "@/components/Wordmark";
+import { isResearchResetPasswordPath } from "@shared/research/paths";
 import { useResearch } from "./core";
 
 // xenios research: section chrome. Three modes by route (canonical gateway
@@ -151,6 +152,25 @@ function MinimalChrome({ children }: { children: ReactNode }) {
   );
 }
 
+// The signed-out recovery route is intentionally more isolated than other
+// pre-member pages: static brand, recovery controls, Member Login, and Support
+// only. No gateway, policy, catalog, product, or member-navigation links.
+function RecoveryChrome({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex flex-col" style={{ minHeight: "100dvh" }}>
+      <header className="rule-bottom" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
+        <div className="container-x flex items-center" style={{ minHeight: 60 }}>
+          <div className="wordmark" style={{ fontSize: 18 }} aria-label="xenios research">
+            <span className="wordmark-mark" aria-hidden="true"></span>
+            xenios <span className="text-ink-mute" style={{ fontWeight: 600 }}>research</span>
+          </div>
+        </div>
+      </header>
+      <main className="flex-1">{children}</main>
+    </div>
+  );
+}
+
 function MemberChrome({ children }: { children: ReactNode }) {
   const { member, signOutMember } = useResearch();
   const [location, navigate] = useLocation();
@@ -230,14 +250,15 @@ function MemberChrome({ children }: { children: ReactNode }) {
 // browser WITHOUT the shared review password. Exactly this route renders
 // outside the gate, in minimal account chrome; it exposes no catalog, no
 // member navigation, and no application data. Everything else stays gated.
-const RECOVERY_PATH = "/research/reset-password";
-
 export default function ResearchLayout({ children }: { children: ReactNode }) {
   const { gate } = useResearch();
   const [location] = useLocation();
 
   if (gate === "unconfigured") return <Unconfigured />;
-  if (location === RECOVERY_PATH) return <MinimalChrome>{children}</MinimalChrome>;
+  // Use the same decoded, case-folded helper as the router, tracking guard,
+  // and server headers. Plain, trailing-slash, case, and encoded forms must
+  // all mount the isolated recovery experience outside the shared gate.
+  if (isResearchResetPasswordPath(location)) return <RecoveryChrome>{children}</RecoveryChrome>;
   if (gate === "checking") {
     return (
       <div className="container-x" style={{ paddingTop: "var(--space-hero-top)" }}>

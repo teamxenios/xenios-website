@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
-import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
+import { getSupabaseBrowser, recoveryAccessTokenFromHash } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
 
@@ -16,7 +16,7 @@ import { useResearch } from "../core";
 // page never inspects window.location.hash itself.
 
 export default function ResetPassword() {
-  const { recovery, clearRecovery, signOutMember } = useResearch();
+  const { recovery, clearRecovery, signOutRecoverySession } = useResearch();
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,17 +39,52 @@ export default function ResetPassword() {
   const wasRecoverRef = useRef(false);
   const completedRef = useRef(false);
   const cleanedRef = useRef(false);
+  // Read (but never store or remove) the provider token before the async
+  // Supabase client consumes the fragment. This closes the very-fast
+  // pagehide race while leaving Supabase's normal recovery handling intact.
+  const recoveryTokenRef = useRef<string | null>(
+    typeof window !== "undefined" && mode === "recover"
+      ? recoveryAccessTokenFromHash(window.location.hash)
+      : null,
+  );
+  const recoverySessionPromiseRef = useRef<Promise<string | null> | null>(null);
   if (mode === "recover") wasRecoverRef.current = true;
 
+  const cleanupRecoverySession = useCallback(() => {
+    if (!wasRecoverRef.current || completedRef.current || cleanedRef.current) return;
+    cleanedRef.current = true;
+    clearRecovery();
+    // This call synchronously removes a persisted recovery token before its
+    // first await. If session capture is still finishing, retry with the
+    // captured token so the provider can revoke that exact session. Neither
+    // path can remove a newer normal password session.
+    void signOutRecoverySession(recoveryTokenRef.current).catch(() => {});
+    if (!recoveryTokenRef.current) {
+      void recoverySessionPromiseRef.current?.then((token) => {
+        if (token) return signOutRecoverySession(token);
+      }).catch(() => {});
+    }
+  }, [clearRecovery, signOutRecoverySession]);
+
   useEffect(() => {
-    return () => {
-      if (!wasRecoverRef.current || completedRef.current || cleanedRef.current) return;
-      cleanedRef.current = true;
-      clearRecovery();
-      void signOutMember().catch(() => {});
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (mode !== "recover" || recoverySessionPromiseRef.current) return;
+    recoverySessionPromiseRef.current = (async () => {
+      const supabase = await getSupabaseBrowser();
+      const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token ?? null : null;
+      recoveryTokenRef.current = token;
+      return token;
+    })();
+  }, [mode]);
+
+  useEffect(() => {
+    if (mode !== "recover") return;
+    window.addEventListener("pagehide", cleanupRecoverySession);
+    return () => window.removeEventListener("pagehide", cleanupRecoverySession);
+  }, [cleanupRecoverySession, mode]);
+
+  useEffect(() => {
+    return cleanupRecoverySession;
+  }, [cleanupRecoverySession]);
 
   async function onRequest(event: FormEvent) {
     event.preventDefault();
@@ -104,12 +139,13 @@ export default function ResetPassword() {
         setError("This reset link has expired or was already used. Request a new one below.");
         return;
       }
+      const recoveryAccessToken = sessionData.session.access_token;
+      recoveryTokenRef.current = recoveryAccessToken;
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) {
         const msg = updateError.message.toLowerCase();
         if (msg.includes("expired") || msg.includes("session") || msg.includes("invalid")) {
-          clearRecovery();
-          void signOutMember().catch(() => {});
+          cleanupRecoverySession();
           setError("This reset link has expired or was already used. Request a new one below.");
         } else {
           setError("The password could not be updated. Please try again.");
@@ -122,7 +158,7 @@ export default function ResetPassword() {
       // required for any member access.
       completedRef.current = true;
       clearRecovery();
-      await signOutMember();
+      await signOutRecoverySession(recoveryAccessToken);
       navigate("/research/sign-in");
     } catch {
       setError("The password could not be updated. Please try again.");
@@ -209,14 +245,16 @@ export default function ResetPassword() {
             <button type="submit" className="btn btn-primary" disabled={busy} data-testid="button-request-reset">
               {busy ? "Sending" : "Send reset link"}
             </button>
-            <p className="body-s text-ink-mute">
-              <Link href="/research/sign-in" className="underline" data-testid="link-member-login">Member Login</Link>
-            </p>
-            <p className="body-s text-ink-mute">
-              Need help? <a href="mailto:research@xeniostechnology.com" className="underline" data-testid="link-reset-support">Support</a>
-            </p>
           </form>
         )}
+        <div className="max-w-[420px] mt-6 space-y-3">
+          <p className="body-s text-ink-mute">
+            <Link href="/research/sign-in" className="underline" data-testid="link-member-login">Member Login</Link>
+          </p>
+          <p className="body-s text-ink-mute">
+            Need help? <a href="mailto:research@xeniostechnology.com" className="underline" data-testid="link-reset-support">Support</a>
+          </p>
+        </div>
       </section>
     </>
   );

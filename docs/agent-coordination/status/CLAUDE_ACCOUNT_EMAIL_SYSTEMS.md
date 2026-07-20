@@ -270,6 +270,57 @@ tracking + client-isolation suites above. Typecheck clean, build green,
 production boot smoke green (root invariant, reset-page headers, wall
 exception, catalog/member/admin all closed without credentials).
 
+## Founder-directed final correction (CODEX, 2026-07-20)
+
+This section supersedes the correction details and validation count above for
+the next exact-head review. Starting head:
+`f48bda0befa35a9cb0abfe5dd1cb1d2b0d3e5026`.
+
+- Provider evidence: the installed `@supabase/auth-js` declares JWT `amr` as
+  `AMREntry[] | string[]` and emits `PASSWORD_RECOVERY`. The current official
+  Supabase Auth server implementation (`internal/models/sessions.go` and
+  `internal/models/factor.go`, inspected at commit
+  `971f7c1e372f7d36844ddbcdce9004d252c70095`) defines a session as recovery
+  when **any** AMR entry parses as `otp`, `magiclink`, or `recovery`.
+- Server trust model: `auth.getUser(token)` first verifies the Supabase bearer.
+  Only then does the shared member/admin guard inspect the provider-signed JWT
+  AMR. Any recovery marker wins even in a mixed array, so adding password or
+  MFA cannot launder a recovery credential. An AMR containing only an
+  additional factor is limited as well. Browser state, routes, query params,
+  and invented request headers are never trusted. Legacy tokens with no AMR
+  remain the documented compatibility residual and require the production
+  project not to strip the standard claim.
+- Admin coverage: one Samuel-email recovery bearer is now exercised against
+  every registered Research admin route (application decisions/activation,
+  outbox operations, test email, system status, and referral-fraud routes).
+  Every response is `403 recovery_session` before handler data can load.
+- Tracking boundary: Research and marketing are separate document lifetimes.
+  A History API transition that crosses `/research` or a recovery hash performs
+  a full navigation before the URL can be exposed to an already-running Meta
+  runtime. Direct Research/recovery loads continue to block initialization and
+  every tracking event. Removing a script tag is not treated as isolation.
+- Recovery cleanup: the provider token is captured synchronously without
+  mutating or persisting the hash. Abandonment removes only a recovery-purpose
+  Supabase storage record and revokes that exact session with local scope and
+  `keepalive`; it never uses default/global sign-out. Repeated cleanup is
+  idempotent, and exact-token comparison cannot erase a newer normal session.
+  A very-fast `pagehide` before async config/session lookup is covered.
+- Recovery chrome: decoded/case-folded plain, trailing-slash, case, and encoded
+  reset paths all bypass the shared password gate and render a static brand,
+  reset controls, Member Login, and Support only. No gateway, policy, catalog,
+  product, application, or member navigation is present.
+- Successful reset: password update is followed by local recovery-session
+  cleanup and `/research/sign-in`; a fresh normal sign-in is mandatory.
+- Validation at this point: 175 tests across 14 files, focused adversarial
+  suites green, typecheck green, production build green, and production boot
+  smoke green. The smoke used local dummy gate values only: `/` 200;
+  credential-free reset 200 with `no-store`, `no-referrer`, and `noindex`;
+  forgot-password reached its narrow handler and returned the expected graceful
+  provider-unconfigured 503; catalog/member 401; admin 503 fail-closed.
+  Browser QA confirmed no Meta runtime and only the permitted recovery chrome.
+- Flags stayed false. No SQL, deployment, secrets, production provider calls,
+  emails, billing, referrals, or merge actions were performed.
+
 ## Known gaps left open (deliberately out of this PR)
 
 - No approval-expiry sweep (expiry IS now enforced at claim time).

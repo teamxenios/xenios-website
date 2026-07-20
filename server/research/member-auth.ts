@@ -16,12 +16,15 @@ import { getSupabaseAdmin, getSupabaseAnon, supabaseConfigured } from "../supaba
 //   JwtPayload.amr?: AMREntry[] | string[]   (object OR RFC-8176 string form)
 // A recovery-email link is verified through GoTrue's one-time-password path
 // (amr method "otp"); a normal member sign-in uses signInWithPassword (amr
-// method "password"). We therefore classify a session as LIMITED-PURPOSE
-// (recovery-grade) when its amr claim exists and contains NO full-purpose
-// method. auth.getUser() has already proven the token authentic before the
-// claim is decoded, so the amr content is Supabase-attested, not client
-// input; sessionStorage, headers, query parameters, and route names are
-// never consulted.
+// method "password"). Supabase Auth's own Session.IsRecovery rule treats a
+// session as recovery-purpose when ANY AMR entry is otp, magiclink, or
+// recovery — even when a later password or MFA method is also present. That
+// "any recovery marker wins" rule prevents a recovery session from laundering
+// itself into a normal session by adding TOTP/MFA. We additionally require a
+// real first-factor method; second-factor-only AMR arrays are limited-purpose.
+// auth.getUser() has already proven the token authentic before the claim is
+// decoded, so the amr content is Supabase-attested, not client input;
+// sessionStorage, headers, query parameters, and route names are never used.
 //
 // Tokens WITHOUT an amr claim (older projects, custom access-token hooks
 // that strip it) are treated as normal sessions: members authenticate only
@@ -30,14 +33,19 @@ import { getSupabaseAdmin, getSupabaseAnon, supabaseConfigured } from "../supaba
 // This tolerance is documented as a residual risk in the PR.
 // ---------------------------------------------------------------------------
 
-const FULL_PURPOSE_AMR_METHODS = new Set([
+const RECOVERY_PURPOSE_AMR_METHODS = new Set([
+  "otp",
+  "magiclink",
+  "recovery",
+]);
+
+// Methods that can establish a normal session without relying on a recovery
+// link. TOTP and mfa/* deliberately do not appear here: they are additional
+// factors, not a replacement for a normal first factor.
+const NORMAL_FIRST_FACTOR_AMR_METHODS = new Set([
   "password",
   "oauth",
   "sso/saml",
-  "totp",
-  "mfa/totp",
-  "mfa/phone",
-  "mfa/webauthn",
   "web3",
   "oauth_provider/authorization_code",
 ]);
@@ -57,16 +65,18 @@ export function decodeJwtClaims(jwt: string): Record<string, unknown> | null {
 }
 
 // True when the token's amr claim marks a limited-purpose (recovery-grade)
-// session: an amr is present and no full-purpose method appears in it.
-// Handles both claim shapes the SDK documents.
+// session. Any Supabase recovery marker wins, even in a mixed AMR array; an
+// AMR array containing only additional factors is limited too. Handles both
+// claim shapes the SDK documents.
 export function isRecoveryPurposeSession(jwt: string): boolean {
   const claims = decodeJwtClaims(jwt);
   const amr = claims?.amr;
   if (!Array.isArray(amr) || amr.length === 0) return false;
-  return !amr.some((entry) => {
-    const method = typeof entry === "string" ? entry : String((entry as { method?: unknown })?.method ?? "");
-    return FULL_PURPOSE_AMR_METHODS.has(method);
-  });
+  const methods = amr.map((entry) =>
+    typeof entry === "string" ? entry : String((entry as { method?: unknown })?.method ?? ""),
+  );
+  if (methods.some((method) => RECOVERY_PURPOSE_AMR_METHODS.has(method))) return true;
+  return !methods.some((method) => NORMAL_FIRST_FACTOR_AMR_METHODS.has(method));
 }
 
 // Centralized denial used by BOTH the member guards (below) and

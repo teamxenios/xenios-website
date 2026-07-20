@@ -13,6 +13,11 @@ import { RECOVERY_MARKER_KEY } from "@shared/research/recovery";
 
 const supa = vi.hoisted(() => {
   const state = { session: null as any };
+  const recovery = {
+    hashToken: null as string | null,
+    clearPersisted: vi.fn(() => true),
+    revoke: vi.fn(async () => {}),
+  };
   const auth = {
     getSession: vi.fn(async () => ({ data: { session: state.session } })),
     onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
@@ -22,10 +27,15 @@ const supa = vi.hoisted(() => {
     }),
     updateUser: vi.fn(async () => ({ data: { user: {} }, error: null })),
   };
-  return { state, auth };
+  return { state, auth, recovery };
 });
 
-vi.mock("@/lib/supabaseBrowser", () => ({ getSupabaseBrowser: async () => ({ auth: supa.auth }) }));
+vi.mock("@/lib/supabaseBrowser", () => ({
+  getSupabaseBrowser: async () => ({ auth: supa.auth }),
+  clearPersistedRecoverySession: supa.recovery.clearPersisted,
+  revokeRecoverySession: supa.recovery.revoke,
+  recoveryAccessTokenFromHash: () => supa.recovery.hashToken,
+}));
 
 const net = vi.hoisted(() => ({ urls: [] as string[] }));
 
@@ -61,6 +71,7 @@ beforeEach(() => {
   document.body.innerHTML = "";
   net.urls.length = 0;
   supa.state.session = null;
+  supa.recovery.hashToken = null;
   vi.clearAllMocks();
   globalThis.fetch = vi.fn(async (input: any) => {
     const url = String(typeof input === "string" ? input : input?.url ?? input);
@@ -113,11 +124,40 @@ describe("reset page session hygiene", () => {
     supa.state.session = { access_token: "recovery-token" };
     const { root } = mountedRoot(<ResetPassword />);
     await flush();
-    expect(supa.auth.signOut).not.toHaveBeenCalled();
+    expect(supa.recovery.revoke).not.toHaveBeenCalled();
     act(() => root.unmount());
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(supa.auth.signOut).toHaveBeenCalledTimes(1);
+    expect(supa.recovery.clearPersisted).toHaveBeenCalledWith("recovery-token");
+    expect(supa.recovery.revoke).toHaveBeenCalledTimes(1);
+    expect(supa.recovery.revoke).toHaveBeenCalledWith("recovery-token");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
     expect(window.sessionStorage.getItem(RECOVERY_MARKER_KEY)).toBeNull();
+  });
+
+  it("pagehide clears the recovery session once before unmount can double-fire", async () => {
+    window.sessionStorage.setItem(RECOVERY_MARKER_KEY, "1");
+    supa.state.session = { access_token: "recovery-token" };
+    const { root } = mountedRoot(<ResetPassword />);
+    await flush();
+    window.dispatchEvent(new Event("pagehide"));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(supa.recovery.clearPersisted).toHaveBeenCalledWith("recovery-token");
+    expect(supa.recovery.revoke).toHaveBeenCalledTimes(1);
+    act(() => root.unmount());
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(supa.recovery.revoke).toHaveBeenCalledTimes(1);
+  });
+
+  it("very-fast pagehide uses the synchronously captured provider token before async session lookup finishes", async () => {
+    window.sessionStorage.setItem(RECOVERY_MARKER_KEY, "1");
+    supa.recovery.hashToken = "hash-recovery-token";
+    supa.auth.getSession.mockImplementationOnce(() => new Promise(() => {}));
+    const { root } = mountedRoot(<ResetPassword />);
+    window.dispatchEvent(new Event("pagehide"));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(supa.recovery.clearPersisted).toHaveBeenCalledWith("hash-recovery-token");
+    expect(supa.recovery.revoke).toHaveBeenCalledWith("hash-recovery-token");
+    act(() => root.unmount());
   });
 
   it("successful reset signs out via the canonical provider action, redirects to sign-in, and the cleanup does not double-fire", async () => {
@@ -146,7 +186,9 @@ describe("reset page session hygiene", () => {
     await flush();
 
     expect(supa.auth.updateUser).toHaveBeenCalledWith({ password: "a-brand-new-password" });
-    expect(supa.auth.signOut).toHaveBeenCalledTimes(1);
+    expect(supa.recovery.revoke).toHaveBeenCalledTimes(1);
+    expect(supa.recovery.revoke).toHaveBeenCalledWith("recovery-token");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
     expect(window.sessionStorage.getItem(RECOVERY_MARKER_KEY)).toBeNull();
     expect(window.location.pathname).toBe("/research/sign-in");
 
@@ -154,6 +196,6 @@ describe("reset page session hygiene", () => {
     // subsequent normal sign-in); the cleanup is idempotent.
     act(() => root.unmount());
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(supa.auth.signOut).toHaveBeenCalledTimes(1);
+    expect(supa.recovery.revoke).toHaveBeenCalledTimes(1);
   });
 });
