@@ -187,11 +187,18 @@ function signaturesMatch(expected: string, provided: string): boolean {
  * value is rejected outright rather than sanitized, so a caller that is about to
  * store an applicant email fails loudly at the boundary.
  */
-function assertOpaqueSubjectKey(subjectKey: string): void {
+export function isOpaqueSubjectKey(subjectKey: string): boolean {
   const value = subjectKey.trim();
-  if (value.length === 0) throw new SubjectKeyNotOpaqueError();
-  if (value.includes("@")) throw new SubjectKeyNotOpaqueError();
-  if (/\s/.test(value)) throw new SubjectKeyNotOpaqueError();
+  if (value.length === 0) return false;
+  if (value.includes("@")) return false;
+  // Every whitespace character, not just a literal space, so a tab or a newline in
+  // a pasted name cannot pass a check written for spaces alone.
+  if (/\s/.test(value)) return false;
+  return true;
+}
+
+function assertOpaqueSubjectKey(subjectKey: string): void {
+  if (!isOpaqueSubjectKey(subjectKey)) throw new SubjectKeyNotOpaqueError();
 }
 
 // ---------------------------------------------------------------------------

@@ -500,3 +500,34 @@ describe("no recursive downline", () => {
     expect(DEFAULT_PARTNER_REQUIREMENTS.agreements.length).toBe(AGREEMENT_KEYS.length);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Regression: a superseded training record is kept, not deleted
+// ---------------------------------------------------------------------------
+
+describe("recertification supersedes rather than deletes", () => {
+  it("keeps the old completion as evidence while still refusing activation on it", async () => {
+    const service = newService();
+    await onboard(service);
+    await service.activate("p1", "admin_1", T2);
+
+    const affected = await service.requireRecertification("security", "2.0.0", T2);
+    const record = affected[0];
+
+    // The record of what the partner actually took, and when, survives the change.
+    const old = record.training.filter(
+      (t) => t.moduleKey === "security" && t.moduleVersion === "1.0.0",
+    );
+    expect(old).toHaveLength(1);
+    expect(old[0].completedAt).toBe(T0.toISOString());
+
+    // And it does not satisfy the new requirement.
+    expect(outstandingTrainingFor(record, service.requirements())).toEqual([
+      { moduleKey: "security", version: "2.0.0" },
+    ]);
+    const refused = await service.activate("p1", "admin_1", T2);
+    expect(refused.ok).toBe(false);
+    if (refused.ok) return;
+    expect(refused.denials.map((d) => d.code)).toContain("training_incomplete");
+  });
+});

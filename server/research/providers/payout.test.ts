@@ -489,3 +489,59 @@ describe("buildBatch", () => {
     expect(buildBatch([], ASOF)).toEqual({ included: [], excluded: [] });
   });
 });
+
+// ---------------------------------------------------------------------------
+// Regression: the partner gate must not depend on which entry came first
+// ---------------------------------------------------------------------------
+
+describe("buildBatch partner gate is order independent", () => {
+  it("excludes the whole group when ANY entry says the partner is not active", () => {
+    const entries = [
+      entry({ ledgerId: "led_ok", amountCents: 6000 }),
+      entry({ ledgerId: "led_stale", amountCents: 6000, partnerState: "suspended" }),
+    ];
+
+    const forward = buildBatch(entries, ASOF);
+    const reverse = buildBatch(entries.slice().reverse(), ASOF);
+
+    expect(forward.included).toEqual([]);
+    expect(reverse.included).toEqual([]);
+    forward.excluded.forEach((e) => expect(e.reasons).toContain("partner_not_active"));
+    expect(forward.excluded.map((e) => e.ledgerId).sort()).toEqual(["led_ok", "led_stale"]);
+  });
+
+  it("excludes the whole group when ANY entry lacks a verified tax or payout method", () => {
+    const unverifiedTax = buildBatch(
+      [entry({ ledgerId: "a" }), entry({ ledgerId: "b", taxStatus: "submitted" })],
+      ASOF,
+    );
+    expect(unverifiedTax.included).toEqual([]);
+    expect(unverifiedTax.excluded[0].reasons).toContain("tax_status_missing");
+
+    const unverifiedMethod = buildBatch(
+      [entry({ ledgerId: "a" }), entry({ ledgerId: "b", payoutMethodStatus: "unverified" })],
+      ASOF,
+    );
+    expect(unverifiedMethod.included).toEqual([]);
+    expect(unverifiedMethod.excluded[0].reasons).toContain("payout_status_unverified");
+  });
+
+  it("still pays a group whose entries all agree", () => {
+    const batch = buildBatch(
+      [entry({ ledgerId: "a", amountCents: 3000 }), entry({ ledgerId: "b", amountCents: 3000 })],
+      ASOF,
+    );
+    expect(batch.included).toEqual([{ partnerId: "prt_1", amountCents: 6000, ledgerIds: ["a", "b"] }]);
+  });
+
+  it("does not repeat a reason once per entry", () => {
+    const batch = buildBatch(
+      [
+        entry({ ledgerId: "a", partnerState: "suspended" }),
+        entry({ ledgerId: "b", partnerState: "suspended" }),
+      ],
+      ASOF,
+    );
+    expect(batch.excluded[0].reasons).toEqual(["partner_not_active"]);
+  });
+});

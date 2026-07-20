@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
+import type { ProviderResult } from "@shared/research/capability";
 import type { CommissionContext, CommissionRate, OrderRevenueBreakdown, PartnerState } from "@shared/research/distribution";
+import type { PayoutRecord } from "../providers/payout";
 import {
   InMemoryCommissionLedgerRepository,
   createCommissionService,
@@ -53,6 +55,27 @@ function setup(partnerState: PartnerState = "active") {
 function unwrap<T>(result: CommissionResult<T>): T {
   if (!result.ok) throw new Error(`expected ok, got denials: ${result.denials.map((d) => d.code).join(",")}`);
   return result.value;
+}
+
+/** A successful payout provider result, the only evidence markPaid accepts. */
+function proof(
+  partnerId: string,
+  batchId: string,
+  overrides: Partial<PayoutRecord> = {},
+): ProviderResult<PayoutRecord> {
+  return {
+    ok: true,
+    value: {
+      providerReference: "pref_1",
+      batchId,
+      partnerId,
+      amountCents: 1000,
+      currency: "usd",
+      status: "paid",
+      ...overrides,
+    },
+    providerReference: "pref_1",
+  };
 }
 
 function codes<T>(result: CommissionResult<T>): string[] {
@@ -172,7 +195,7 @@ describe("state moves", () => {
     unwrap(await service.markPayable(entry.id, T1));
     expect((await service.balanceFor("p1")).payableCents).toBe(1000);
 
-    const paid = unwrap(await service.markPaid(entry.id, "batch_7", T2));
+    const paid = unwrap(await service.markPaid(entry.id, "batch_7", proof("p1", "batch_7"), T2));
     expect(paid.payoutBatchId).toBe("batch_7");
     expect((await service.balanceFor("p1")).paidCents).toBe(1000);
   });
@@ -181,7 +204,7 @@ describe("state moves", () => {
     const { service } = setup();
     const { entry } = unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
     // pending to paid is not a legal move.
-    expect(codes(await service.markPaid(entry.id, "batch_7", T1))).toContain("invalid_transition");
+    expect(codes(await service.markPaid(entry.id, "batch_7", proof("p1", "batch_7"), T1))).toContain("invalid_transition");
   });
 
   it("refuses to pay a partner who is no longer payable, and fails closed on an unknown one", async () => {
@@ -275,7 +298,7 @@ describe("reversal after payout", () => {
     const { entry } = unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
     unwrap(await service.approve(entry.id, "admin_1", T1));
     unwrap(await service.markPayable(entry.id, T1));
-    unwrap(await service.markPaid(entry.id, "batch_7", T1));
+    unwrap(await service.markPaid(entry.id, "batch_7", proof("p1", "batch_7"), T1));
     expect((await service.balanceFor("p1")).paidCents).toBe(1000);
 
     const reversal = unwrap(await service.reverse(entry.id, "chargeback after payout", T2));
@@ -298,7 +321,7 @@ describe("onOrderRefunded", () => {
     const { entry } = unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
     unwrap(await service.approve(entry.id, "admin_1", T1));
 
-    const written = unwrap(await service.onOrderRefunded("o1", 10_000, T2));
+    const written = unwrap(await service.onOrderRefunded("o1", 10_000, "rfnd_a", T2));
     expect(written).toHaveLength(1);
     expect(written[0].amountCents).toBe(1000);
     expect(written[0].state).toBe("reversed");
@@ -314,7 +337,7 @@ describe("onOrderRefunded", () => {
     unwrap(await service.approve(entry.id, "admin_1", T1));
 
     // Half the eligible net refunded, so half the commission goes back.
-    const written = unwrap(await service.onOrderRefunded("o1", 5_000, T2));
+    const written = unwrap(await service.onOrderRefunded("o1", 5_000, "rfnd_a", T2));
     expect(written[0].amountCents).toBe(500);
     expect(written[0].state).toBe("approved");
 
@@ -327,17 +350,19 @@ describe("onOrderRefunded", () => {
     const { service } = setup();
     unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
     // 1000 commission times 1 over 3 of the revenue is 333.33, reversed as 334.
-    const written = unwrap(await service.onOrderRefunded("o1", 3_333, T2));
+    const written = unwrap(await service.onOrderRefunded("o1", 3_333, "rfnd_a", T2));
     expect(written[0].amountCents).toBe(334);
   });
 
+  // The winner moved by a manual re-attribution, so the order carries a dead chain
+  // for p1 and a live one for p2. Only the live one is reversed.
   it("reverses each attributed partner chain on the order and skips terminal ones", async () => {
     const { service } = setup();
     const a = unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
-    unwrap(await service.accrue("p2", "o1", breakdown(), RATE, context(), T0));
-    unwrap(await service.reverse(a.entry.id, "already reversed", T1));
+    unwrap(await service.reverse(a.entry.id, "re-attributed", T1));
+    unwrap(await service.accrue("p2", "o1", breakdown(), RATE, context(), T1));
 
-    const written = unwrap(await service.onOrderRefunded("o1", 10_000, T2));
+    const written = unwrap(await service.onOrderRefunded("o1", 10_000, "rfnd_a", T2));
     expect(written).toHaveLength(1);
     expect(written[0].partnerId).toBe("p2");
   });
@@ -345,13 +370,13 @@ describe("onOrderRefunded", () => {
   it("refuses a non-positive refund", async () => {
     const { service } = setup();
     unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
-    expect(codes(await service.onOrderRefunded("o1", 0, T2))).toContain("invalid_amount");
-    expect(codes(await service.onOrderRefunded("o1", -100, T2))).toContain("invalid_amount");
+    expect(codes(await service.onOrderRefunded("o1", 0, "rfnd_a", T2))).toContain("invalid_amount");
+    expect(codes(await service.onOrderRefunded("o1", -100, "rfnd_a", T2))).toContain("invalid_amount");
   });
 
   it("does nothing for an order with no accrued commission", async () => {
     const { service } = setup();
-    expect(unwrap(await service.onOrderRefunded("unknown_order", 5_000, T2))).toHaveLength(0);
+    expect(unwrap(await service.onOrderRefunded("unknown_order", 5_000, "rfnd_a", T2))).toHaveLength(0);
   });
 });
 
@@ -407,8 +432,8 @@ describe("balances", () => {
     unwrap(await service.reverse(entry.id, "chargeback", T1));
 
     // Every later attempt is refused rather than driving the balance below zero.
-    await service.onOrderRefunded("o1", 10_000, T2);
-    await service.onOrderRefunded("o1", 10_000, T2);
+    await service.onOrderRefunded("o1", 10_000, "rfnd_a", T2);
+    await service.onOrderRefunded("o1", 10_000, "rfnd_b", T2);
 
     const balance = await service.balanceFor("p1");
     expect(balance.reversedCents).toBe(1000);
@@ -420,8 +445,8 @@ describe("balances", () => {
   it("caps a reversal at what remains after a partial reversal", async () => {
     const { service } = setup();
     unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
-    unwrap(await service.onOrderRefunded("o1", 5_000, T1));
-    unwrap(await service.onOrderRefunded("o1", 10_000, T2));
+    unwrap(await service.onOrderRefunded("o1", 5_000, "rfnd_a", T1));
+    unwrap(await service.onOrderRefunded("o1", 10_000, "rfnd_b", T2));
 
     const balance = await service.balanceFor("p1");
     // 500 then the remaining 500. Never more than the 1000 accrued.
@@ -457,5 +482,152 @@ describe("balances", () => {
       forfeitedCents: 0,
       reversedCents: 0,
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Regressions: paid without proof, double accrual, replayed refunds, floats
+// ---------------------------------------------------------------------------
+
+describe("paid requires real provider proof", () => {
+  async function payable() {
+    const { repository, service } = setup();
+    const { entry } = unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
+    unwrap(await service.approve(entry.id, "admin_1", T1));
+    unwrap(await service.markPayable(entry.id, T1));
+    return { repository, service, entry };
+  }
+
+  it("refuses to mark paid on a provider refusal", async () => {
+    const { repository, service, entry } = await payable();
+    const result = await service.markPaid(entry.id, "batch_7", {
+      ok: false,
+      code: "DISABLED",
+      message: "affiliate_payouts is not enabled.",
+      retryable: false,
+    }, T2);
+
+    expect(codes(result)).toContain("payout_proof_missing");
+    expect((await service.balanceFor("p1")).paidCents).toBe(0);
+    expect(repository.snapshot().some((e) => e.state === "paid")).toBe(false);
+  });
+
+  it("refuses a success that carries no provider reference", async () => {
+    const { service, entry } = await payable();
+    const result = await service.markPaid(
+      entry.id,
+      "batch_7",
+      proof("p1", "batch_7", { providerReference: "" }),
+      T2,
+    );
+    expect(codes(result)).toContain("payout_proof_missing");
+    expect((await service.balanceFor("p1")).payableCents).toBe(1000);
+  });
+
+  it("refuses a payout the provider has not settled yet", async () => {
+    const { service, entry } = await payable();
+    const result = await service.markPaid(
+      entry.id,
+      "batch_7",
+      proof("p1", "batch_7", { status: "pending" }),
+      T2,
+    );
+    expect(codes(result)).toContain("payout_proof_missing");
+  });
+
+  it("refuses proof issued for a different partner or a different batch", async () => {
+    const { service, entry } = await payable();
+    expect(codes(await service.markPaid(entry.id, "batch_7", proof("p_other", "batch_7"), T2))).toContain(
+      "payout_proof_mismatch",
+    );
+    expect(codes(await service.markPaid(entry.id, "batch_7", proof("p1", "batch_9"), T2))).toContain(
+      "payout_proof_mismatch",
+    );
+    expect((await service.balanceFor("p1")).paidCents).toBe(0);
+  });
+
+  it("records the provider reference on the paid entry", async () => {
+    const { service, entry } = await payable();
+    const paid = unwrap(
+      await service.markPaid(entry.id, "batch_7", proof("p1", "batch_7", { providerReference: "pref_live_1" }), T2),
+    );
+    expect(paid.providerReference).toBe("pref_live_1");
+  });
+});
+
+describe("one order pays one partner", () => {
+  it("refuses a second partner accruing on an order that already has a live commission", async () => {
+    const { repository, service } = setup();
+    unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
+
+    const result = await service.accrue("p2", "o1", breakdown(), RATE, context(), T1);
+    expect(codes(result)).toContain("order_already_attributed");
+
+    const accruals = repository.snapshot().filter((e) => e.kind === "accrual");
+    expect(accruals).toHaveLength(1);
+    expect((await service.balanceFor("p2")).pendingCents).toBe(0);
+  });
+
+  it("allows a re-attributed partner once the losing chain is fully reversed", async () => {
+    const { service } = setup();
+    const first = unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
+    unwrap(await service.reverse(first.entry.id, "re-attributed to p2", T1));
+
+    const second = unwrap(await service.accrue("p2", "o1", breakdown(), RATE, context(), T1));
+    expect(second.replayed).toBe(false);
+    expect((await service.balanceFor("p1")).pendingCents).toBe(0);
+    expect((await service.balanceFor("p2")).pendingCents).toBe(1000);
+  });
+});
+
+describe("refund replay", () => {
+  it("reverses once for a refund reference, however many times the webhook arrives", async () => {
+    const { service } = setup();
+    unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
+
+    const first = unwrap(await service.onOrderRefunded("o1", 5_000, "rfnd_same", T1));
+    const replay = unwrap(await service.onOrderRefunded("o1", 5_000, "rfnd_same", T2));
+
+    expect(first).toHaveLength(1);
+    expect(replay).toHaveLength(0);
+    const balance = await service.balanceFor("p1");
+    expect(balance.reversedCents).toBe(500);
+    expect(balance.pendingCents).toBe(500);
+  });
+
+  it("requires a refund reference and whole cents", async () => {
+    const { service } = setup();
+    unwrap(await service.accrue("p1", "o1", breakdown(), RATE, context(), T0));
+    expect(codes(await service.onOrderRefunded("o1", 5_000, "  ", T1))).toContain("missing_reason");
+    expect(codes(await service.onOrderRefunded("o1", 12.5, "rfnd_a", T1))).toContain("invalid_amount");
+  });
+});
+
+describe("money is whole cents", () => {
+  it("refuses a fractional revenue component", async () => {
+    const { repository, service } = setup();
+    const result = await service.accrue(
+      "p1",
+      "o1",
+      breakdown({ grossItemsCents: 10_000.5 }),
+      RATE,
+      context(),
+      T0,
+    );
+    expect(codes(result)).toContain("invalid_amount");
+    expect(repository.snapshot()).toHaveLength(0);
+  });
+
+  it("refuses a rate above 100 percent, which would pay more than the order earned", async () => {
+    const { service } = setup();
+    const result = await service.accrue(
+      "p1",
+      "o1",
+      breakdown(),
+      { role: "affiliate", basisPoints: 20_000 },
+      context(),
+      T0,
+    );
+    expect(codes(result)).toContain("invalid_rate");
   });
 });

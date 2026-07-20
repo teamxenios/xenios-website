@@ -784,9 +784,10 @@ export function createPartnerService(deps: PartnerServiceDeps): PartnerService {
           (t) => t.moduleKey === moduleKey && t.moduleVersion === previousVersion,
         );
         if (!hadOld) continue;
-        record.training = record.training.filter(
-          (t) => !(t.moduleKey === moduleKey && t.moduleVersion === previousVersion),
-        );
+        // The old completion is SUPERSEDED, not deleted. `completedCurrentModule`
+        // matches on the exact required version, so keeping the record cannot satisfy
+        // the new requirement, and the evidence of what the partner actually took on
+        // what date survives for audit.
         record.certifiedAt = null;
         record.certifiedByAdminId = null;
         // Suspended and quality_review partners keep their state, because a review

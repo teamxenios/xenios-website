@@ -454,7 +454,7 @@ describe("events and links", () => {
       ),
     );
 
-    const link = unwrap(service.rsvpLinkFor(event.eventId));
+    const link = unwrap(service.rsvpLinkFor(event.eventId, { kind: "admin", adminId: "admin_samuel" }));
     expect(link.channel).toBe("event");
     expect(link.campaign).toBe(campaign.campaignId);
     expect(link.url).toBe(`https://xenios.test/research/rsvp/${event.eventId}`);
@@ -463,7 +463,7 @@ describe("events and links", () => {
 
   it("refuses a link for an unknown event", () => {
     const { service } = setup();
-    const result = service.rsvpLinkFor("evt_ghost");
+    const result = service.rsvpLinkFor("evt_ghost", { kind: "admin", adminId: "admin_samuel" });
     expect(result.ok).toBe(false);
     if (result.ok) throw new Error("unreachable");
     expect(result.denials).toContain("event_not_found");
@@ -476,5 +476,60 @@ describe("events and links", () => {
     if (result.ok) throw new Error("unreachable");
     expect(result.denials).toContain("organization_not_found");
     expect(result.denials).toContain("event_invalid");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Regressions: cross-organization event read, and the opaque RSVP key
+// ---------------------------------------------------------------------------
+
+describe("event link isolation", () => {
+  it("refuses a partner an RSVP link for another organization's event", () => {
+    const { service } = setup();
+    const alpha = makeOrg(service, "Alpha Clinic", ["p_alpha"]);
+    makeOrg(service, "Beta Gym", ["p_beta"]);
+
+    const campaign = unwrap(service.createCampaign(alpha.orgId, { name: "Spring", code: "SPR" }, NOW));
+    const event = unwrap(
+      service.createEvent(alpha.orgId, { name: "Open house", startsAt: LATER.toISOString(), campaignId: campaign.campaignId }, NOW),
+    );
+
+    const foreign = service.rsvpLinkFor(event.eventId, { kind: "partner", partnerId: "p_beta" });
+    expect(foreign.ok).toBe(false);
+    if (foreign.ok) throw new Error("unreachable");
+    expect(foreign.denials).toContain("organization_forbidden");
+
+    const own = unwrap(service.rsvpLinkFor(event.eventId, { kind: "partner", partnerId: "p_alpha" }));
+    expect(own.campaign).toBe(campaign.campaignId);
+  });
+});
+
+describe("RSVP subject key stays opaque", () => {
+  function eventFor(service: ReturnType<typeof setup>["service"]) {
+    const org = makeOrg(service, "Alpha Clinic", ["p_alpha"]);
+    return unwrap(service.createEvent(org.orgId, { name: "Open house", startsAt: LATER.toISOString() }, NOW));
+  }
+
+  // A tab or a newline is whitespace too. A pasted name must not slip through a
+  // check written for the literal space character alone.
+  it("refuses a key bearing any whitespace, not just a space", () => {
+    const { service } = setup();
+    const event = eventFor(service);
+    ["Jane\tDoe", "Jane\nDoe", "Jane Doe", "Jane Doe"].forEach((key) => {
+      const result = service.recordRsvp(event.eventId, key, NOW);
+      expect(result.ok).toBe(false);
+      if (result.ok) throw new Error("unreachable");
+      expect(result.denials).toContain("rsvp_subject_not_opaque");
+    });
+  });
+
+  it("refuses an address and accepts an opaque digest", () => {
+    const { service } = setup();
+    const event = eventFor(service);
+    const address = service.recordRsvp(event.eventId, "jane@example.com", NOW);
+    expect(address.ok).toBe(false);
+
+    const opaque = unwrap(service.recordRsvp(event.eventId, "sk_9f2c1ab4", NOW));
+    expect(opaque.subjectKey).toBe("sk_9f2c1ab4");
   });
 });

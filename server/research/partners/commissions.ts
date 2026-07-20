@@ -18,6 +18,7 @@
 //   - Money is integer cents.
 //   - Fail closed, and accumulate every denial rather than returning on the first.
 
+import type { ProviderResult } from "@shared/research/capability";
 import {
   computeCommission,
   eligibleNetRevenueCents,
@@ -30,6 +31,7 @@ import {
   type OrderRevenueBreakdown,
   type PartnerState,
 } from "@shared/research/distribution";
+import { canMarkPaid, type PayoutRecord } from "../providers/payout";
 
 // ---------------------------------------------------------------------------
 // Entries
@@ -60,6 +62,16 @@ export interface CommissionLedgerEntry {
   readonly actorId: string | null;
   readonly reason: string | null;
   readonly payoutBatchId: string | null;
+  /**
+   * The payout provider's own reference for the payment that settled this entry.
+   * Set only on a paid transition, and only from a real ProviderResult.
+   */
+  readonly providerReference: string | null;
+  /**
+   * The external event that caused this entry, when one exists. A reversal carries
+   * the refund reference, so a replayed refund webhook is recognised and skipped.
+   */
+  readonly sourceReference: string | null;
   readonly createdAt: string;
 }
 
@@ -91,7 +103,10 @@ export type CommissionDenialCode =
   | "partner_not_payable"
   | "missing_actor"
   | "missing_reason"
-  | "nothing_to_reverse";
+  | "nothing_to_reverse"
+  | "order_already_attributed"
+  | "payout_proof_missing"
+  | "payout_proof_mismatch";
 
 export interface CommissionDenial {
   readonly code: CommissionDenialCode;
@@ -200,7 +215,17 @@ export interface CommissionService {
   hold(ledgerId: string, adminId: string, reason: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
   approve(ledgerId: string, adminId: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
   markPayable(ledgerId: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
-  markPaid(ledgerId: string, payoutBatchId: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
+  /**
+   * Requires the payout provider's own result. There is no path to paid from a
+   * caller's belief that money moved, so an optimistic update cannot record a
+   * payment that never left the account.
+   */
+  markPaid(
+    ledgerId: string,
+    payoutBatchId: string,
+    proof: ProviderResult<PayoutRecord>,
+    asOf: Date,
+  ): Promise<CommissionResult<CommissionLedgerEntry>>;
   reverse(ledgerId: string, reason: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
   dispute(ledgerId: string, adminId: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
   resolveDispute(
@@ -212,7 +237,17 @@ export interface CommissionService {
   ): Promise<CommissionResult<CommissionLedgerEntry>>;
   forfeit(ledgerId: string, adminId: string, reason: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
   balanceFor(partnerId: string): Promise<CommissionBalance>;
-  onOrderRefunded(orderId: string, refundedCents: number, asOf: Date): Promise<CommissionResult<readonly CommissionLedgerEntry[]>>;
+  /**
+   * `refundReference` is required, not optional. It is the provider's refund id, and
+   * a chain that already carries a reversal for it is skipped, so a replayed refund
+   * webhook cannot reverse the same commission twice.
+   */
+  onOrderRefunded(
+    orderId: string,
+    refundedCents: number,
+    refundReference: string,
+    asOf: Date,
+  ): Promise<CommissionResult<readonly CommissionLedgerEntry[]>>;
 }
 
 const TERMINAL: readonly CommissionState[] = ["reversed", "forfeited"];
@@ -268,6 +303,7 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
     reason: string | null,
     asOf: Date,
     payoutBatchId: string | null,
+    providerReference: string | null = null,
   ): Promise<CommissionResult<CommissionLedgerEntry>> {
     const resolved = await resolveHead(ledgerId);
     if (!resolved.ok) return denied(resolved.denials);
@@ -301,6 +337,8 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
       actorId,
       reason,
       payoutBatchId,
+      providerReference,
+      sourceReference: null,
       createdAt: asOf.toISOString(),
     };
     await repository.append(entry);
@@ -324,6 +362,7 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
     actorId: string | null,
     reason: string,
     asOf: Date,
+    sourceReference: string | null = null,
   ): Promise<CommissionResult<CommissionLedgerEntry>> {
     const outstanding = outstandingOf(chain);
     if (outstanding <= 0) {
@@ -358,6 +397,8 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
       actorId,
       reason,
       payoutBatchId: null,
+      providerReference: null,
+      sourceReference,
       createdAt: asOf.toISOString(),
     };
     await repository.append(entry);
@@ -386,8 +427,52 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
       if (!partnerCanEarn(ctx.partnerState)) {
         denials.push({ code: "partner_not_active", message: `Partner is ${ctx.partnerState}, not active.` });
       }
-      if (!Number.isFinite(rate.basisPoints) || rate.basisPoints < 0) {
-        denials.push({ code: "invalid_rate", message: "Commission rate must be a non-negative basis point value." });
+      // Capped at 100 percent. A rate above the eligible net revenue would pay out
+      // more than the order earned, which no configuration should be able to express.
+      if (
+        !Number.isInteger(rate.basisPoints) ||
+        rate.basisPoints < 0 ||
+        rate.basisPoints > 10_000
+      ) {
+        denials.push({
+          code: "invalid_rate",
+          message: "Commission rate must be a whole basis point value between 0 and 10000.",
+        });
+      }
+
+      // Money is integer cents. A float upstream would carry a fraction of a cent
+      // into the ledger, so it is refused at the boundary rather than rounded here.
+      const amounts: number[] = [
+        breakdown.grossItemsCents,
+        breakdown.taxCents,
+        breakdown.shippingCents,
+        breakdown.discountsCents,
+        breakdown.storeCreditAppliedCents,
+        breakdown.refundedCents,
+        breakdown.chargebackCents,
+        breakdown.ineligibleCategoryCents,
+      ];
+      if (amounts.some((value) => !Number.isInteger(value) || value < 0)) {
+        denials.push({
+          code: "invalid_amount",
+          message: "Every revenue component must be a non-negative whole number of cents.",
+        });
+      }
+
+      // One order pays ONE partner. A manual re-attribution can move the winner, but
+      // it must not leave a live accrual behind for the partner who lost it, or the
+      // order would pay twice.
+      const priorAccruals = await repository.listAccrualsByOrder(orderId);
+      for (const prior of priorAccruals) {
+        if (prior.partnerId === partnerId) continue;
+        const priorChain = await repository.listChain(prior.rootId);
+        if (outstandingOf(priorChain) > 0) {
+          denials.push({
+            code: "order_already_attributed",
+            message: `Order ${orderId} already has a live commission for partner ${prior.partnerId}.`,
+          });
+          break;
+        }
       }
 
       // Checked directly rather than read off computeCommission, which short-circuits
@@ -417,6 +502,8 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
         actorId: null,
         reason: null,
         payoutBatchId: null,
+        providerReference: null,
+        sourceReference: null,
         createdAt: asOf.toISOString(),
       };
       await repository.append(entry);
@@ -450,7 +537,7 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
       return move(ledgerId, "payable", "system", null, null, asOf, null);
     },
 
-    async markPaid(ledgerId, payoutBatchId, asOf) {
+    async markPaid(ledgerId, payoutBatchId, proof, asOf) {
       const resolved = await resolveHead(ledgerId);
       if (!resolved.ok) return denied(resolved.denials);
 
@@ -458,6 +545,31 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
       if (!payoutBatchId.trim()) {
         denials.push({ code: "missing_reason", message: "Marking paid must name the payout batch." });
       }
+
+      // The provider's own result is the only evidence accepted. A refusal, a
+      // success without a reference, and a payment still pending all fail here.
+      if (!canMarkPaid(proof)) {
+        denials.push({
+          code: "payout_proof_missing",
+          message: "Marking paid requires a successful payout provider result carrying a reference.",
+        });
+      } else {
+        // The proof must be for THIS partner, THIS batch, and THIS ledger entry, so a
+        // reference for one payment cannot be replayed to settle another.
+        if (proof.value.partnerId !== resolved.head.partnerId) {
+          denials.push({
+            code: "payout_proof_mismatch",
+            message: `Payout proof names partner ${proof.value.partnerId}, not ${resolved.head.partnerId}.`,
+          });
+        }
+        if (proof.value.batchId !== payoutBatchId) {
+          denials.push({
+            code: "payout_proof_mismatch",
+            message: `Payout proof names batch ${proof.value.batchId}, not ${payoutBatchId}.`,
+          });
+        }
+      }
+
       const state = await loadPartnerState(resolved.head.partnerId);
       if (!state || !partnerCanBePaid(state)) {
         denials.push({
@@ -466,7 +578,9 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
         });
       }
       if (denials.length > 0) return denied(denials);
-      return move(ledgerId, "paid", "system", null, null, asOf, payoutBatchId);
+
+      const reference = proof.ok ? proof.value.providerReference : null;
+      return move(ledgerId, "paid", "system", null, null, asOf, payoutBatchId, reference);
     },
 
     async reverse(ledgerId, reason, asOf) {
@@ -568,9 +682,15 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
       return balance;
     },
 
-    async onOrderRefunded(orderId, refundedCents, asOf) {
-      if (!Number.isFinite(refundedCents) || refundedCents <= 0) {
-        return denied([{ code: "invalid_amount", message: "A refund must be a positive cent amount." }]);
+    async onOrderRefunded(orderId, refundedCents, refundReference, asOf) {
+      if (!Number.isInteger(refundedCents) || refundedCents <= 0) {
+        return denied([
+          { code: "invalid_amount", message: "A refund must be a positive whole number of cents." },
+        ]);
+      }
+      const reference = refundReference.trim();
+      if (reference.length === 0) {
+        return denied([{ code: "missing_reason", message: "A refund must name its provider reference." }]);
       }
 
       const accruals = await repository.listAccrualsByOrder(orderId);
@@ -580,6 +700,8 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
       for (const accrual of accruals) {
         const chain = await repository.listChain(accrual.rootId);
         const current = chain[chain.length - 1];
+        // A replayed refund webhook must not reverse the same commission twice.
+        if (chain.some((e) => e.kind === "reversal" && e.sourceReference === reference)) continue;
         if (isTerminal(current.state)) continue;
         if (outstandingOf(chain) <= 0) continue;
 
@@ -599,6 +721,7 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
           null,
           `Order ${orderId} refunded ${refundedCents} cents.`,
           asOf,
+          reference,
         );
         if (result.ok) written.push(result.value);
         else result.denials.forEach((d) => denials.push(d));

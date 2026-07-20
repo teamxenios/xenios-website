@@ -77,7 +77,9 @@ export interface PayoutProvider {
  * a payment succeeded, so an optimistic update cannot mark money sent that never
  * left. A success without a reference is treated as not paid.
  */
-export function canMarkPaid(result: ProviderResult<PayoutRecord>): boolean {
+export type SettledPayoutResult = { ok: true; value: PayoutRecord; providerReference?: string };
+
+export function canMarkPaid(result: ProviderResult<PayoutRecord>): result is SettledPayoutResult {
   if (!result.ok) return false;
   const ref = result.value.providerReference;
   return typeof ref === "string" && ref.length > 0 && result.value.status === "paid";
@@ -435,10 +437,17 @@ export function buildBatch(entries: readonly PayoutBatchEntry[], asOf: Date): Pa
       total += Math.floor(e.amountCents);
     });
 
-    const first = partnerEntries[0];
-    const eligibility = eligibleForPayout(first.partnerState, first.taxStatus, total, MINIMUM_PAYOUT_CENTS, {
-      payoutMethodStatus: first.payoutMethodStatus,
+    // Every entry is checked, not just the first one in the list. Entries carry a
+    // snapshot of the partner, and if two snapshots disagree the batch must fail
+    // closed on the worst of them, or a payment would depend on row order.
+    const reasons: PayoutDenialReason[] = [];
+    partnerEntries.forEach((e) => {
+      const perEntry = eligibleForPayout(e.partnerState, e.taxStatus, total, MINIMUM_PAYOUT_CENTS, {
+        payoutMethodStatus: e.payoutMethodStatus,
+      });
+      perEntry.reasons.forEach((reason) => reasons.push(reason));
     });
+    const eligibility: PayoutEligibility = { ok: reasons.length === 0, reasons: dedupe(reasons) };
 
     if (!eligibility.ok) {
       partnerEntries.forEach((e) => {

@@ -21,6 +21,7 @@
 // claim the screen rejects.
 
 import type { PartnerLinkDto } from "@shared/research/commerce-api";
+import { isOpaqueSubjectKey } from "./attribution";
 import {
   partnerCanEarn,
   type CommissionState,
@@ -352,7 +353,9 @@ export interface OrganizationService {
   createCampaign(orgId: string, input: CreateCampaignInput, asOf: Date): OrganizationResult<OrganizationCampaignRecord>;
   createEvent(orgId: string, input: CreateEventInput, asOf: Date): OrganizationResult<OrganizationEventRecord>;
 
-  rsvpLinkFor(eventId: string): OrganizationResult<PartnerLinkDto>;
+  /** Takes a viewer, like every other organization read. A partner who does not
+   * represent the owning organization cannot pull its event link or campaign id. */
+  rsvpLinkFor(eventId: string, viewer: OrganizationViewer): OrganizationResult<PartnerLinkDto>;
   recordRsvp(eventId: string, subjectKey: string, asOf: Date): OrganizationResult<EventRsvpRecord>;
 
   aggregateFor(orgId: string, viewer: OrganizationViewer): OrganizationResult<OrganizationAggregate>;
@@ -507,9 +510,19 @@ export function createOrganizationService(deps: OrganizationServiceDeps): Organi
       return { ok: true, value: event };
     },
 
-    rsvpLinkFor(eventId) {
+    rsvpLinkFor(eventId, viewer) {
       const event = deps.repository.getEvent(eventId);
       if (!event) return denied(["event_not_found"], "Unknown event.");
+
+      const org = requireOrg(event.orgId);
+      if (!org) return denied(["organization_not_found"], "Unknown organization.");
+      if (viewer.kind === "partner" && !isRepresentative(org, viewer.partnerId)) {
+        return denied(
+          ["organization_forbidden"],
+          "This partner does not represent this organization.",
+        );
+      }
+
       const base = deps.rsvpBaseUrl.replace(/\/+$/, "");
       return {
         ok: true,
@@ -530,8 +543,9 @@ export function createOrganizationService(deps: OrganizationServiceDeps): Organi
 
       const key = subjectKey.trim();
       // An address or a name is not an opaque key. Refusing it here keeps a member
-      // identity out of the organization's own records.
-      if (key.length === 0 || key.indexOf("@") >= 0 || key.indexOf(" ") >= 0) {
+      // identity out of the organization's own records. The same check attribution
+      // uses, so the two surfaces cannot drift apart.
+      if (!isOpaqueSubjectKey(key)) {
         denials.push("rsvp_subject_not_opaque");
       }
       if (event && denials.length === 0) {
