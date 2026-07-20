@@ -1,5 +1,30 @@
 # xenios research: project state
 
+Updated: 2026-07-19 by CLAUDE_INTEGRATION_COORDINATOR.
+See integration/RELEASE_BOARD.md for the full release train and
+file-claims.md for one-owner-per-file assignments.
+
+## Current state (2026-07-20) — PR #25 MERGED, fleet active
+
+- origin/main = **87150f4** and includes: PR #25 (account/email/recovery
+  hardening — merge commit 87150f488c68576c6fec5f49a4957f3d122eca01), PR #26
+  (supabase service-key boot diagnostic), PR #28 (approval-expiry sweep), and
+  recovery-session-isolation hardening. Also #22/#23/#24 (fraud controls,
+  /research gateway, requireActiveMember, reward tick, Tailwind).
+- Phase 0 is CLEARED. The runtime fleet is UNLOCKED; lanes branch from
+  origin/main @ 87150f4. Active lanes: research-access-ui-rebuild (Website),
+  research-product-guide-content-now (Website 3), research-paperwork-factory-now
+  (Website 2), integration-coordinator (PowerShell/this).
+- PR #13 closed/superseded. All production flags stay false through code
+  merge; external capabilities ship behind default-false providers.
+- Do not re-implement or weaken PR #25's merged account/recovery/auth/email/
+  outbox/member-access work; extend additively. See
+  integration/RELEASE_BOARD.md and blitzscale/ for the build graph.
+
+---
+
+## Historical (pre-#25)
+
 Updated: 2026-07-18 by CLAUDE_PRIMARY
 
 Canonical spec: XENIOS_RESEARCH_CANONICAL_V3 (Samuel's V3 whole-thread prompt).
