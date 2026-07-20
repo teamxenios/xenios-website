@@ -125,8 +125,22 @@ function highestPriority(reasons: readonly CommerceDenialCode[]): CommerceDenial
   return reasons[0] ?? null;
 }
 
+/**
+ * The per-line ceiling.
+ *
+ * `Number.isInteger` is true for values like 1e21, so a whole-number check alone
+ * does not keep money in exact integer cents: a quantity that large drives
+ * `unitPriceCents * quantity` past `Number.MAX_SAFE_INTEGER`, where addition and
+ * comparison stop being exact and a total is no longer a count of cents. The stock
+ * gate happens to reject such a line today, but the arithmetic invariant must not
+ * depend on another gate standing in front of it.
+ *
+ * The bound is far above any real member order and far below the exact-integer limit.
+ */
+export const MAX_LINE_QUANTITY = 1000;
+
 function isValidQuantity(quantity: number): boolean {
-  return Number.isInteger(quantity) && quantity > 0;
+  return Number.isInteger(quantity) && quantity > 0 && quantity <= MAX_LINE_QUANTITY;
 }
 
 // ---------------------------------------------------------------------------
@@ -326,7 +340,7 @@ export function createCartService(deps: CartServiceDeps): CartService {
         return {
           ok: false,
           code: "quantity_invalid",
-          message: "Quantity must be a whole number greater than zero.",
+          message: `Quantity must be a whole number between 1 and ${MAX_LINE_QUANTITY}.`,
         };
       }
 
@@ -363,9 +377,21 @@ export function createCartService(deps: CartServiceDeps): CartService {
 
       const cart = loadCart(memberId, deps);
       const existing = cart.lines.find((line) => line.sku === req.sku);
+
+      // The bound applies to the resulting line, not just to this request, so
+      // repeated adds cannot walk a line past the ceiling one call at a time.
+      const combinedQuantity = (existing?.quantity ?? 0) + req.quantity;
+      if (!isValidQuantity(combinedQuantity)) {
+        return {
+          ok: false,
+          code: "quantity_invalid",
+          message: `A single line may hold at most ${MAX_LINE_QUANTITY} units.`,
+        };
+      }
+
       const next: StoredCartLine = {
         sku: req.sku,
-        quantity: (existing?.quantity ?? 0) + req.quantity,
+        quantity: combinedQuantity,
         purchaseMode: req.purchaseMode,
         ...(req.purchaseMode === "subscription" && req.subscriptionFrequencyDays !== undefined
           ? { subscriptionFrequencyDays: req.subscriptionFrequencyDays }
@@ -384,7 +410,7 @@ export function createCartService(deps: CartServiceDeps): CartService {
         return {
           ok: false,
           code: "quantity_invalid",
-          message: "Quantity must be a whole number greater than zero.",
+          message: `Quantity must be a whole number between 1 and ${MAX_LINE_QUANTITY}.`,
         };
       }
 

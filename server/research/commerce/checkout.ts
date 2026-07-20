@@ -140,6 +140,16 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
   const orders = new Map<string, CheckoutOrder>();
   /** Idempotency is scoped per member so two members cannot collide on one key. */
   const byIdempotencyKey = new Map<string, string>();
+  /**
+   * Submissions that have started but not finished, keyed by the same scope.
+   *
+   * A settled-order map alone does not make submit idempotent, because the key is
+   * only recorded after the first `await`. Two submissions of one key that overlap
+   * would both find the map empty and each create an order and an authorization.
+   * An in-flight entry is claimed before any await, so the second submission joins
+   * the first instead of racing it.
+   */
+  const inFlight = new Map<string, Promise<CheckoutOutcome>>();
   let counter = 0;
 
   /**
@@ -213,17 +223,48 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     return { ok: denials.empty, denials: denials.list };
   }
 
+  /**
+   * The idempotency front door. Everything before the first `await` is one
+   * uninterrupted step, so a duplicate key is resolved before any work begins.
+   */
   async function submit(
     memberId: string,
     req: CheckoutRequest,
     asOf: Date,
   ): Promise<CheckoutOutcome> {
     const idempotencyScope = `${memberId}:${req.idempotencyKey}`;
+
     const existingId = byIdempotencyKey.get(idempotencyScope);
     if (existingId) {
       return { ok: true, order: orders.get(existingId)!, idempotent: true };
     }
 
+    const running = inFlight.get(idempotencyScope);
+    if (running) {
+      const outcome = await running;
+      // A duplicate never creates a second order, so it reports the first one.
+      return outcome.ok ? { ...outcome, idempotent: true } : outcome;
+    }
+
+    // Claimed synchronously. `performSubmit` runs up to its own first await before
+    // this line, and no other submission can interleave until then.
+    const run = performSubmit(memberId, req, asOf, idempotencyScope);
+    inFlight.set(idempotencyScope, run);
+    try {
+      return await run;
+    } finally {
+      // Cleared either way. A denial creates no order, so a later retry of the same
+      // key is evaluated fresh rather than being handed a stale refusal.
+      inFlight.delete(idempotencyScope);
+    }
+  }
+
+  async function performSubmit(
+    memberId: string,
+    req: CheckoutRequest,
+    asOf: Date,
+    idempotencyScope: string,
+  ): Promise<CheckoutOutcome> {
     const { denials, cart, quote } = await evaluate(memberId, req, asOf);
     // Nothing is created, charged, or reserved on a denial. This is the live path today.
     if (!denials.empty || quote === null) {
@@ -233,10 +274,17 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     // Totals are rebuilt from the revalidated cart. A client-supplied amount is not
     // read anywhere in this function.
     const shippingCents = orderShippingTotalCents([quote]);
-    const totalCents = Math.max(
-      0,
-      cart.subtotalCents + shippingCents - cart.storeCreditAppliedCents,
-    );
+    /**
+     * The value of the order, before any credit is applied. This is the number the
+     * large-order review is assessed on.
+     *
+     * Store credit is the balance referral abuse manufactures, so allowing it to
+     * shrink the number that decides whether a human looks at an order would let a
+     * member spend their way under the review threshold. Credit reduces what is
+     * charged, never whether the order is reviewed.
+     */
+    const orderValueCents = cart.subtotalCents + shippingCents;
+    const totalCents = Math.max(0, orderValueCents - cart.storeCreditAppliedCents);
 
     const orderId = `ord_${++counter}`;
     const order: CheckoutOrder = {
@@ -264,7 +312,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     byIdempotencyKey.set(idempotencyScope, orderId);
 
     const review = evaluateLargeOrderReview({
-      totalCents,
+      totalCents: orderValueCents,
       maxUnitQuantity: cart.lines.reduce((max, line) => Math.max(max, line.quantity), 0),
       fraudFlagged: deps.isFraudFlagged?.(memberId) ?? false,
       unusualQuantityThreshold: deps.unusualQuantityThreshold,

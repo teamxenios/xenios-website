@@ -10,6 +10,7 @@ import type { InventoryLot } from "../inventory/lots";
 import {
   createCartService,
   createInMemoryCartRepository,
+  MAX_LINE_QUANTITY,
   type CartServiceDeps,
 } from "./cart";
 
@@ -339,6 +340,65 @@ describe("add denials", () => {
       if (result.ok) return;
       expect(result.code).toBe("quantity_invalid");
     }
+  });
+
+  // Regression: `Number.isInteger` is true for 1e21, so a whole-number check alone let
+  // a quantity through that drove the line total past Number.MAX_SAFE_INTEGER, where a
+  // total stops being an exact count of cents.
+  it("rejects a quantity large enough to leave exact integer cents", () => {
+    const service = createCartService(deps());
+    for (const quantity of [1e21, Number.MAX_SAFE_INTEGER, MAX_LINE_QUANTITY + 1]) {
+      const result = service.addLine(MEMBER, { sku: "P001", quantity, purchaseMode: "one_time" }, NOW);
+      expect(result.ok, `expected ${quantity} to be refused`).toBe(false);
+      if (result.ok) return;
+      expect(result.code).toBe("quantity_invalid");
+    }
+  });
+
+  it("accepts a quantity at the ceiling", () => {
+    const service = createCartService(
+      deps({ lots: [lot({ quantityAvailable: MAX_LINE_QUANTITY })] }),
+    );
+    const result = service.addLine(
+      MEMBER,
+      { sku: "P001", quantity: MAX_LINE_QUANTITY, purchaseMode: "one_time" },
+      NOW,
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(Number.isSafeInteger(result.cart.lines[0].lineTotalCents!)).toBe(true);
+    expect(Number.isSafeInteger(result.cart.subtotalCents)).toBe(true);
+  });
+
+  // The bound is on the resulting line, so repeated adds cannot walk past it.
+  it("rejects an add that would push an existing line over the ceiling", () => {
+    const service = createCartService(
+      deps({ lots: [lot({ quantityAvailable: MAX_LINE_QUANTITY })] }),
+    );
+    const first = service.addLine(
+      MEMBER,
+      { sku: "P001", quantity: MAX_LINE_QUANTITY, purchaseMode: "one_time" },
+      NOW,
+    );
+    expect(first.ok).toBe(true);
+
+    const second = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    expect(second.ok).toBe(false);
+    if (second.ok) return;
+    expect(second.code).toBe("quantity_invalid");
+
+    // The refused add left the stored line untouched.
+    expect(service.getCart(MEMBER, NOW).lines[0].quantity).toBe(MAX_LINE_QUANTITY);
+  });
+
+  it("rejects an update above the ceiling", () => {
+    const service = createCartService(deps());
+    service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+
+    const result = service.updateLine(MEMBER, "P001", MAX_LINE_QUANTITY + 1, NOW);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.code).toBe("quantity_invalid");
   });
 
   it("rejects an unknown sku", () => {

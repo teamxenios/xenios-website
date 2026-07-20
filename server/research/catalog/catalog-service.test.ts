@@ -116,6 +116,37 @@ describe("confirmed facts", () => {
     }
   });
 
+  // Shelf life, storage, and COA are not merely unconfirmed on today's records, they
+  // are outside the member shape entirely. This pins that: even when all three are
+  // CONFIRMED and would satisfy isMemberDisplayable, no member payload carries them.
+  it("never serializes shelf life, storage, or COA even when they are confirmed", () => {
+    const service = createCatalogService({
+      products: [
+        fullyConfirmedProduct({
+          facts: {
+            ...fullyConfirmedProduct().facts,
+            shelfLife: confirmed("24 months at 2 to 8 C"),
+            storage: confirmed("Refrigerate, protect from light"),
+            coa: confirmed("COA-BATCH-77"),
+          },
+        }),
+      ],
+      commerceEnabled: true,
+      quantumCommerceEnabled: true,
+    });
+
+    const detail = service.getProduct("test-confirmed")!;
+    const serialized = JSON.stringify(detail);
+    for (const leak of ["24 months at 2 to 8 C", "Refrigerate, protect from light", "COA-BATCH-77"]) {
+      expect(serialized, `member payload leaked "${leak}"`).not.toContain(leak);
+    }
+    expect(Object.keys(detail.confirmedFacts).sort()).toEqual(["composition", "format", "strength"]);
+
+    const summary = JSON.stringify(service.listProducts()[0]);
+    expect(summary).not.toContain("COA-BATCH-77");
+    expect(summary).not.toContain("Refrigerate");
+  });
+
   it("includes a fact only when it is confirmed and undisputed", () => {
     const mixed = fullyConfirmedProduct({
       facts: {

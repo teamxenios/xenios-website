@@ -371,6 +371,63 @@ describe("large-order review", () => {
     }
   });
 
+  // Regression: review used to be assessed on the total AFTER store credit, so a
+  // member could spend manufactured referral credit to drop an order under the
+  // threshold and skip the human check entirely. Credit changes what is charged,
+  // never whether the order is reviewed.
+  it("reviews on the order value, so store credit cannot buy a way under the threshold", async () => {
+    const service = createCheckoutService(
+      deps({
+        unusualQuantityThreshold: 100,
+        cart: {
+          revalidate: () =>
+            cart({
+              lines: [
+                {
+                  sku: "P001",
+                  displayName: "Product One",
+                  quantity: 3,
+                  purchaseMode: "one_time",
+                  unitPriceCents: 40000,
+                  lineTotalCents: 120000,
+                  blockedReason: null,
+                },
+              ],
+              subtotalCents: 120000,
+              storeCreditAppliedCents: 30000,
+              estimatedTotalCents: 91295,
+            }),
+        },
+      }),
+    );
+
+    const outcome = await service.submit("mem_1", request(), NOW);
+    expect(outcome.ok).toBe(true);
+    if (outcome.ok) {
+      // Charged net of the credit, but still held for review on the gross value.
+      expect(outcome.order.totalCents).toBe(91295);
+      expect(outcome.order.totalCents).toBeLessThan(LARGE_ORDER_THRESHOLD_CENTS);
+      expect(outcome.order.reviewTriggers).toContain("total_exceeds_threshold");
+      expect(outcome.order.state).toBe("manual_review");
+      expect(outcome.order.captured).toBe(false);
+    }
+  });
+
+  it("does not review an ordinary order merely because credit was applied", async () => {
+    const service = createCheckoutService(
+      deps({
+        cart: { revalidate: () => cart({ storeCreditAppliedCents: 5000, estimatedTotalCents: 16095 }) },
+      }),
+    );
+
+    const outcome = await service.submit("mem_1", request(), NOW);
+    expect(outcome.ok).toBe(true);
+    if (outcome.ok) {
+      expect(outcome.order.reviewTriggers).toEqual([]);
+      expect(outcome.order.totalCents).toBe(16095);
+    }
+  });
+
   it("holds a fraud-flagged member", async () => {
     const service = createCheckoutService(deps({ isFraudFlagged: () => true }));
     const outcome = await service.submit("mem_1", request(), NOW);
@@ -422,6 +479,65 @@ describe("idempotency", () => {
     if (first.ok && second.ok) {
       expect(second.order.orderId).not.toBe(first.order.orderId);
     }
+  });
+
+  // Regression: the key used to be recorded only after `evaluate` had awaited, so two
+  // overlapping submits both found the map empty and each created an order and an
+  // authorization. A member who double-clicked Place Order was charged twice.
+  it("creates one order and one authorization when the same key is submitted concurrently", async () => {
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+    const service = createCheckoutService(deps({ payment }));
+
+    const [first, second] = await Promise.all([
+      service.submit("mem_1", request(), NOW),
+      service.submit("mem_1", request(), NOW),
+    ]);
+
+    expect(first.ok && second.ok).toBe(true);
+    if (first.ok && second.ok) {
+      expect(second.order.orderId).toBe(first.order.orderId);
+    }
+    expect(authorize).toHaveBeenCalledTimes(1);
+  });
+
+  it("still separates concurrent submits from two members sharing one key", async () => {
+    const service = createCheckoutService(deps());
+    const [first, second] = await Promise.all([
+      service.submit("mem_1", request(), NOW),
+      service.submit("mem_2", request(), NOW),
+    ]);
+
+    expect(first.ok && second.ok).toBe(true);
+    if (first.ok && second.ok) {
+      expect(second.order.orderId).not.toBe(first.order.orderId);
+    }
+  });
+
+  // A denial creates no order, so the key must not be poisoned by the refusal.
+  it("re-evaluates a key whose concurrent submissions were all denied", async () => {
+    let outOfStock = true;
+    const service = createCheckoutService(
+      deps({
+        cart: {
+          revalidate: () =>
+            outOfStock
+              ? cart({ checkoutReady: false, blockingReasons: ["insufficient_stock"] })
+              : cart(),
+        },
+      }),
+    );
+
+    const [first, second] = await Promise.all([
+      service.submit("mem_1", request(), NOW),
+      service.submit("mem_1", request(), NOW),
+    ]);
+    expect(first.ok).toBe(false);
+    expect(second.ok).toBe(false);
+
+    outOfStock = false;
+    const retry = await service.submit("mem_1", request(), NOW);
+    expect(retry.ok).toBe(true);
   });
 });
 
