@@ -261,20 +261,31 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
         return;
       }
       setGate(body?.authed ? "open" : "locked");
+      // Recovery isolation (correction-pass blocker 2): while a recovery is
+      // pending, the provider loads NO member state — the recovery session
+      // exists only to set a new password. Member data, the catalog, and the
+      // member gate-bypass all stay untouched until recovery completes (which
+      // signs the session out) or is abandoned (also signed out).
+      if (recovery === "pending") {
+        setMemberChecking(false);
+        return;
+      }
       await refreshMember();
     })();
     return () => {
       alive = false;
     };
-  }, [refreshMember]);
+  }, [refreshMember, recovery]);
 
   // An authenticated member bypasses the shared password, and the catalog
-  // follows the member session.
+  // follows the member session. Never while a recovery is pending: a
+  // recovery-grade session must not open the gate or load the catalog.
   useEffect(() => {
+    if (recovery === "pending") return;
     if (!member || !memberToken) return;
     setGate("open");
     void loadCatalog(memberToken);
-  }, [member, memberToken, loadCatalog]);
+  }, [member, memberToken, loadCatalog, recovery]);
 
   // cart persistence
   useEffect(() => {

@@ -41,13 +41,24 @@ const state = vi.hoisted(() => ({
       data: { users: state.authUsers.slice((page - 1) * perPage, page * perPage) },
       error: null,
     })),
-    getUser: vi.fn(async (jwt: string) =>
-      jwt === "good-jwt"
-        ? { data: { user: { id: "auth-1", email: "member@example.com" } }, error: null }
-        : jwt === "recovery-jwt"
-          ? { data: { user: { id: "auth-recovery", email: "recovery@example.com" } }, error: null }
-          : { data: { user: null }, error: { message: "invalid" } },
-    ),
+    getUser: vi.fn(async (jwt: string) => {
+      if (jwt === "good-jwt") return { data: { user: { id: "auth-1", email: "member@example.com" } }, error: null };
+      if (jwt === "recovery-jwt") return { data: { user: { id: "auth-recovery", email: "recovery@example.com" } }, error: null };
+      // Realistic JWT fixtures: a three-part token whose payload carries
+      // sub/email (and amr, which the server reads from the claim itself).
+      try {
+        const parts = jwt.split(".");
+        if (parts.length === 3) {
+          const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8"));
+          if (payload?.sub && payload?.email) {
+            return { data: { user: { id: String(payload.sub), email: String(payload.email) } }, error: null };
+          }
+        }
+      } catch {
+        /* fall through */
+      }
+      return { data: { user: null }, error: { message: "invalid" } };
+    }),
     resetPasswordForEmail: vi.fn(async () => ({ data: {}, error: null })),
   },
 }));
@@ -180,6 +191,35 @@ function legacyToken(applicationId: string) {
   const sig = crypto.createHmac("sha256", key).update(`${applicationId}.${exp}`).digest("base64url");
   return `${applicationId}.${exp}.${sig}`;
 }
+
+// Realistic Supabase-shaped access-token fixture. The claim shape follows the
+// installed SDK (@supabase/auth-js types.d.ts): JwtPayload with amr as EITHER
+// AMREntry[] ({method,timestamp}) or RFC-8176 string[]; recovery links verify
+// through the one-time-password path (method "otp"), password sign-ins carry
+// "password". The signature is a dummy: the server verifies authenticity via
+// auth.getUser() (stubbed above) and then reads the amr CLAIM, which in
+// production is Supabase-signed.
+function makeSupabaseJwt(input: { sub: string; email: string; amr?: Array<{ method: string; timestamp: number } | string> }) {
+  const b64 = (obj: unknown) => Buffer.from(JSON.stringify(obj)).toString("base64url");
+  const header = { alg: "HS256", typ: "JWT" };
+  const payload = {
+    iss: "https://test.supabase.co/auth/v1",
+    sub: input.sub,
+    aud: "authenticated",
+    exp: Math.floor(Date.now() / 1000) + 3600,
+    iat: Math.floor(Date.now() / 1000),
+    email: input.email,
+    role: "authenticated",
+    aal: "aal1",
+    session_id: crypto.randomUUID(),
+    ...(input.amr ? { amr: input.amr } : {}),
+  };
+  return `${b64(header)}.${b64(payload)}.dummysig`;
+}
+
+const now = () => Math.floor(Date.now() / 1000);
+const recoveryJwtFor = (sub: string, email: string) => makeSupabaseJwt({ sub, email, amr: [{ method: "otp", timestamp: now() }] });
+const passwordJwtFor = (sub: string, email: string) => makeSupabaseJwt({ sub, email, amr: [{ method: "password", timestamp: now() }] });
 
 let ipCounter = 0;
 const uniqueIp = () => `10.8.0.${(ipCounter++ % 250) + 1}`;
@@ -704,6 +744,90 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     const admin = await request(app).get("/api/admin/research/outbox").set(bearer);
     expect(admin.status).toBeGreaterThanOrEqual(400);
     expect(admin.body?.outbox).toBeUndefined();
+  });
+
+  it("RECOVERY-PURPOSE AUTHORIZATION: a recovery session of an ACTIVE member is denied every member surface", async () => {
+    const app = seedApplication({ status: "active" });
+    state.tables.research_members.push({ id: "m1", application_id: app.id, auth_user_id: "auth-active", email: "member@example.com", first_name: "Avery", status: "active", billing_state: "active", created_at: new Date().toISOString() });
+    const composed = makeComposedApp();
+    const bearer = { Authorization: `Bearer ${recoveryJwtFor("auth-active", "member@example.com")}` };
+
+    for (const probe of [
+      () => request(composed).get("/api/research/catalog").set(bearer),
+      () => request(composed).get("/api/research/member/catalog").set(bearer),
+      () => request(composed).get("/api/research/member/me").set(bearer),
+      () => request(composed).get("/api/research/member/referrals").set(bearer),
+      () => request(composed).post("/api/research/orders").set(bearer).send({}),
+    ]) {
+      const res = await probe();
+      expect(res.status).toBe(403);
+      expect(res.body.code).toBe("recovery_session");
+      // No catalog, member, or order data leaks in the denial.
+      expect(JSON.stringify(res.body)).not.toMatch(/products|priceCents|firstName|orderId/);
+    }
+  });
+
+  it("RECOVERY-PURPOSE AUTHORIZATION: a recovery session with Samuel's ADMIN_EMAIL is denied every admin surface", async () => {
+    process.env.ADMIN_EMAIL = "samuel@xeniostechnology.com";
+    try {
+      const composed = makeComposedApp();
+      const bearer = { Authorization: `Bearer ${recoveryJwtFor("auth-samuel", "samuel@xeniostechnology.com")}` };
+      const outbox = await request(composed).get("/api/admin/research/outbox").set(bearer);
+      expect(outbox.status).toBe(403);
+      expect(JSON.stringify(outbox.body)).not.toMatch(/outbox|recipient|template/i);
+      const drain = await request(composed).post("/api/admin/research/outbox/run").set(bearer);
+      expect(drain.status).toBe(403);
+      const testEmail = await request(composed).post("/api/admin/research/test-email").set(bearer).send({ to: "samuel@xeniostechnology.com" });
+      expect(testEmail.status).toBe(403);
+      expect(emails.sendAdminTestEmail).not.toHaveBeenCalled();
+    } finally {
+      delete process.env.ADMIN_EMAIL;
+    }
+  });
+
+  it("RECOVERY-PURPOSE AUTHORIZATION: pending and approved-unpaid members are denied with a recovery session", async () => {
+    const app = seedApplication({ status: "approved_pending_payment" });
+    state.tables.research_members.push({ id: "m1", application_id: app.id, auth_user_id: "auth-pending", email: "member@example.com", first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
+    const composed = makeComposedApp();
+    const bearer = { Authorization: `Bearer ${recoveryJwtFor("auth-pending", "member@example.com")}` };
+    for (const path of ["/api/research/member/me", "/api/research/member/catalog", "/api/research/catalog"]) {
+      const res = await request(composed).get(path).set(bearer);
+      expect(res.status).toBe(403);
+      expect(res.body.code).toBe("recovery_session");
+    }
+  });
+
+  it("RECOVERY-PURPOSE AUTHORIZATION: RFC-8176 string-form amr is honored too", async () => {
+    const app = seedApplication({ status: "active" });
+    state.tables.research_members.push({ id: "m1", application_id: app.id, auth_user_id: "auth-active", email: "member@example.com", first_name: "Avery", status: "active", billing_state: "active", created_at: new Date().toISOString() });
+    const composed = makeComposedApp();
+    const recoveryStringAmr = makeSupabaseJwt({ sub: "auth-active", email: "member@example.com", amr: ["otp"] });
+    const denied = await request(composed).get("/api/research/member/me").set("Authorization", `Bearer ${recoveryStringAmr}`);
+    expect(denied.status).toBe(403);
+    expect(denied.body.code).toBe("recovery_session");
+
+    const passwordStringAmr = makeSupabaseJwt({ sub: "auth-active", email: "member@example.com", amr: ["password"] });
+    const allowed = await request(composed).get("/api/research/member/me").set("Authorization", `Bearer ${passwordStringAmr}`);
+    expect(allowed.status).toBe(200);
+  });
+
+  it("RECOVERY-PURPOSE AUTHORIZATION: ordinary password sessions still work for members and the admin", async () => {
+    const app = seedApplication({ status: "active" });
+    state.tables.research_members.push({ id: "m1", application_id: app.id, auth_user_id: "auth-active", email: "member@example.com", first_name: "Avery", status: "active", billing_state: "active", created_at: new Date().toISOString() });
+    const composed = makeComposedApp();
+    const memberBearer = { Authorization: `Bearer ${passwordJwtFor("auth-active", "member@example.com")}` };
+    expect((await request(composed).get("/api/research/member/me").set(memberBearer)).status).toBe(200);
+    expect((await request(composed).get("/api/research/catalog").set(memberBearer)).status).toBe(200);
+    expect((await request(composed).get("/api/research/member/catalog").set(memberBearer)).status).toBe(200);
+
+    process.env.ADMIN_EMAIL = "samuel@xeniostechnology.com";
+    try {
+      const adminBearer = { Authorization: `Bearer ${passwordJwtFor("auth-samuel", "samuel@xeniostechnology.com")}` };
+      const outbox = await request(composed).get("/api/admin/research/outbox").set(adminBearer);
+      expect(outbox.status).toBe(200);
+    } finally {
+      delete process.env.ADMIN_EMAIL;
+    }
   });
 
   it("the shared gate remains required for the gateway page flow, and the recovery PAGE carries the sensitive-flow headers", async () => {

@@ -34,6 +34,7 @@ import {
   type LoiInput,
 } from "./supabase-store";
 import { supabaseConfigured, getSupabaseAnon } from "./supabase";
+import { denyRecoveryPurposeSession } from "./research/member-auth";
 import { verifyTurnstile } from "./turnstile";
 
 const WAITLIST_STATUSES = ["New", "Contacted", "Qualified", "Not a fit", "Converted", "Archived"];
@@ -126,6 +127,9 @@ export async function requireSupabaseAdmin(req: Request, res: Response, next: Ne
     if (!token) return res.status(401).json({ success: false, message: "Unauthorized" });
     const { data, error } = await getSupabaseAnon().auth.getUser(token);
     if (error || !data?.user) return res.status(401).json({ success: false, message: "Unauthorized" });
+    // A password-recovery-grade session is never an admin session, even when
+    // the email matches ADMIN_EMAIL (PR #25 correction pass, blocker 3).
+    if (denyRecoveryPurposeSession(token, res)) return;
     if ((data.user.email || "").toLowerCase() !== adminEmail) {
       return res.status(403).json({ success: false, message: "Forbidden" });
     }

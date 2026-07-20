@@ -203,6 +203,53 @@ without config; with the gate configured, the reset page serves 200 + all
 three sensitive-flow headers to a credential-less browser, catalog 401s, and
 forgot-password passes the wall to the handler.
 
+## Combined recovery-security correction pass (2026-07-19, blockers 1-3)
+
+Founder-confirmed merge blockers from the independent reviews, all fixed on
+this branch (no scope broadening, flags untouched, no SQL):
+
+1. TRACKING ISOLATION: third-party tracking (Meta Pixel) never initializes
+   under /research/* nor while a recovery hash is present anywhere, and
+   track() is suppressed on the Research surface even when the pixel loaded
+   on a marketing page (SPA navigation). The guard reuses the canonical
+   isRecoveryHash helper and only READS the hash. client/src/lib/tracking.ts;
+   jsdom tests in tracking.test.ts (no script node, no fbq, no PageView, no
+   URL/hash in emitted events, positive control on /).
+2. CLIENT RECOVERY ISOLATION: while recovery is pending the provider loads
+   NO member state and NO catalog and never force-opens the gate
+   (core.tsx); abandoning /research/reset-password signs the recovery
+   session out and clears the marker (idempotent, completion-guarded so it
+   cannot race a later normal sign-in); successful reset uses the canonical
+   signOutMember, clears recovery, and redirects to /research/sign-in — a
+   fresh password sign-in is required for any member access.
+   recovery-isolation.test.tsx (jsdom + real provider/page components).
+3. SERVER RECOVERY-PURPOSE AUTHORIZATION: centralized
+   denyRecoveryPurposeSession in member-auth.ts, enforced in requireMember
+   (therefore every member/catalog/orders/referrals/billing surface) AND in
+   requireSupabaseAdmin (every admin surface incl. outbox and test-email).
+   Trust model: Supabase signs the session's Authentication Method
+   References into the access token's amr claim (SDK evidence:
+   @supabase/auth-js types — AMRMethods list, JwtPayload.amr as AMREntry[]
+   or RFC-8176 string[]); recovery links verify via the OTP path, password
+   sign-ins carry "password". After auth.getUser() proves the token
+   authentic, a session whose amr contains NO full-purpose method
+   (password/oauth/sso/mfa/web3/...) is limited-purpose and receives 403
+   code "recovery_session" — even for an active member or ADMIN_EMAIL.
+   Client state, headers, query params, and route names are never trusted.
+   Residual risk (documented): tokens with NO amr claim are treated as
+   normal sessions (legacy tolerance; members only authenticate by password
+   in this product, and the client-side sign-out closes the loop).
+
+Validation: 150 tests across 11 files (jsdom infra added as a devDependency;
+vitest now includes client tests with per-file jsdom environments). New
+adversarial coverage: recovery session of an ACTIVE member denied on
+catalog/member/orders/referrals; recovery session with Samuel's ADMIN_EMAIL
+denied on every admin endpoint; pending/approved-unpaid denied; RFC-8176
+string amr honored; ordinary password member AND admin still allowed;
+tracking + client-isolation suites above. Typecheck clean, build green,
+production boot smoke green (root invariant, reset-page headers, wall
+exception, catalog/member/admin all closed without credentials).
+
 ## Known gaps left open (deliberately out of this PR)
 
 - No approval-expiry sweep (expiry IS now enforced at claim time).

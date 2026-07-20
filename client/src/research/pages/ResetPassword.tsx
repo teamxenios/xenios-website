@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
@@ -16,7 +16,7 @@ import { useResearch } from "../core";
 // page never inspects window.location.hash itself.
 
 export default function ResetPassword() {
-  const { recovery, clearRecovery } = useResearch();
+  const { recovery, clearRecovery, signOutMember } = useResearch();
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,6 +29,27 @@ export default function ResetPassword() {
   );
 
   const mode: "recover" | "request" = recovery === "pending" ? "recover" : "request";
+
+  // Abandonment cleanup (correction-pass blocker 2): a recovery session that
+  // leaves this page without completing the reset is signed out and the
+  // recovery state cleared, so no persisted limited-purpose session survives.
+  // completedRef prevents the cleanup from racing a successful reset (which
+  // already signed out) or a subsequent normal sign-in; cleanedRef makes the
+  // cleanup idempotent.
+  const wasRecoverRef = useRef(false);
+  const completedRef = useRef(false);
+  const cleanedRef = useRef(false);
+  if (mode === "recover") wasRecoverRef.current = true;
+
+  useEffect(() => {
+    return () => {
+      if (!wasRecoverRef.current || completedRef.current || cleanedRef.current) return;
+      cleanedRef.current = true;
+      clearRecovery();
+      void signOutMember().catch(() => {});
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function onRequest(event: FormEvent) {
     event.preventDefault();
@@ -88,14 +109,20 @@ export default function ResetPassword() {
         const msg = updateError.message.toLowerCase();
         if (msg.includes("expired") || msg.includes("session") || msg.includes("invalid")) {
           clearRecovery();
+          void signOutMember().catch(() => {});
           setError("This reset link has expired or was already used. Request a new one below.");
         } else {
           setError("The password could not be updated. Please try again.");
         }
         return;
       }
+      // Successful reset: the recovery session is revoked through the
+      // provider's canonical sign-out (clears member state, token, catalog,
+      // and the Supabase session); a fresh password-authenticated sign-in is
+      // required for any member access.
+      completedRef.current = true;
       clearRecovery();
-      await supabase.auth.signOut();
+      await signOutMember();
       navigate("/research/sign-in");
     } catch {
       setError("The password could not be updated. Please try again.");
