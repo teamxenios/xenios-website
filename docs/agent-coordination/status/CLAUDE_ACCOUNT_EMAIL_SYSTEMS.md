@@ -240,7 +240,27 @@ this branch (no scope broadening, flags untouched, no SQL):
    normal sessions (legacy tolerance; members only authenticate by password
    in this product, and the client-side sign-out closes the loop).
 
-Validation: 150 tests across 11 files (jsdom infra added as a devDependency;
+### Re-review round (2026-07-19): two independent reviewer fleets on the
+correction head both returned CHANGES_REQUIRED on ONE axis only — third-party
+tracking — with server authorization, client lifecycle, and every recovery
+scenario READY. Both converged on the same tracking gaps, now fixed:
+
+- CASE-INSENSITIVE ROUTING BYPASS: wouter's matcher is case-insensitive
+  (regexparam compiles with the 'i' flag), so /Research/... renders the
+  research SPA while the case-SENSITIVE guards missed it — tracking could
+  load and the server dropped noindex + the recovery-page security headers on
+  those URLs. trackingBlockedHere and researchPageGate now lowercase the path
+  before comparison; the root homepage is unaffected. Tests: case-variant
+  tracking no-op, case-variant page-gate headers.
+- BOOT-TIME TOCTOU: initTracking checked the guard, then awaited /api/config,
+  then injected with no re-check; an in-app SPA navigation into /research
+  during that await (realistic on a cold backend) could inject the pixel
+  while physically on /research. The guard is now re-evaluated after the
+  await, immediately before injection. Test: navigation-during-await no-op.
+  (Recovery tokens were never exposed by this race — a recovery hash is on
+  the initial URL and caught by the synchronous pre-await guard.)
+
+Validation: 153 tests across 11 files (jsdom infra added as a devDependency;
 vitest now includes client tests with per-file jsdom environments). New
 adversarial coverage: recovery session of an ACTIVE member denied on
 catalog/member/orders/referrals; recovery session with Samuel's ADMIN_EMAIL

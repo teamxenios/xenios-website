@@ -61,6 +61,32 @@ describe("initTracking is a no-op on the private Research surface", () => {
     // The hash was only read, never stripped: Supabase must still consume it.
     expect(window.location.hash).toContain("type=recovery");
   });
+
+  it("no-op on case-variant research URLs (wouter matches case-insensitively)", async () => {
+    for (const path of ["/Research", "/RESEARCH/member", "/Research/reset-password", "/reSearch/apply"]) {
+      setLocation(path);
+      const t = await freshTracking();
+      await t.initTracking();
+      expect(pixelScripts()).toHaveLength(0);
+      expect(window.fbq).toBeUndefined();
+    }
+  });
+
+  it("re-checks after the config fetch: an SPA navigation into /research during the await still blocks injection", async () => {
+    setLocation("/");
+    // Config resolves only after we have navigated into research.
+    let resolveCfg: (v: any) => void = () => {};
+    cfg.value = new Promise((r) => { resolveCfg = r; }) as any;
+    // getConfig returns cfg.value; make it await the pending promise.
+    const t = await freshTracking();
+    const pending = t.initTracking();
+    setLocation("/research/member"); // user clicks the Research SPA link mid-await
+    resolveCfg({ metaPixelId: "PIXEL123" });
+    await pending;
+    expect(pixelScripts()).toHaveLength(0);
+    expect(window.fbq).toBeUndefined();
+    cfg.value = { metaPixelId: "PIXEL123" };
+  });
 });
 
 describe("positive control and event hygiene", () => {

@@ -23,7 +23,11 @@ let initialized = false;
 // recovery flow itself uses (shared/research/recovery.ts); the hash is only
 // READ here, never stripped or mutated, so Supabase still consumes it.
 export function trackingBlockedHere(pathname: string, hash: string): boolean {
-  return pathname === "/research" || pathname.startsWith("/research/") || isRecoveryHash(hash);
+  // wouter matches routes case-insensitively (regexparam compiles with the
+  // 'i' flag), so /Research/... renders the research surface; normalize case
+  // here or a case-variant URL slips past the block.
+  const p = pathname.toLowerCase();
+  return p === "/research" || p.startsWith("/research/") || isRecoveryHash(hash);
 }
 
 export async function initTracking(): Promise<void> {
@@ -31,6 +35,9 @@ export async function initTracking(): Promise<void> {
   if (trackingBlockedHere(window.location.pathname, window.location.hash)) return;
   const cfg = await getConfig();
   if (!cfg.metaPixelId) return;
+  // Re-check after the config fetch: an in-app SPA navigation into /research
+  // (or a recovery hash arriving) during the await must still block injection.
+  if (trackingBlockedHere(window.location.pathname, window.location.hash)) return;
   initialized = true;
 
   /* Meta Pixel base code */

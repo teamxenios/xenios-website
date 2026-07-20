@@ -849,4 +849,25 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     expect(gateway.status).toBe(200);
     expect(gateway.headers["x-robots-tag"]).toBe("noindex, nofollow");
   });
+
+  it("case-variant research URLs still get the security headers (wouter renders them; the gate must not miss them)", async () => {
+    const app = express();
+    app.use(researchPageGate);
+    app.get("/Research/reset-password", (_req, res) => res.send("reset page"));
+    app.get("/RESEARCH/member", (_req, res) => res.send("member"));
+    app.get("/", (_req, res) => res.send("home"));
+
+    const reset = await request(app).get("/Research/reset-password");
+    expect(reset.headers["cache-control"]).toBe("no-store");
+    expect(reset.headers["referrer-policy"]).toBe("no-referrer");
+    expect(reset.headers["x-robots-tag"]).toBe("noindex, nofollow");
+
+    const member = await request(app).get("/RESEARCH/member");
+    expect(member.headers["x-robots-tag"]).toBe("noindex, nofollow");
+
+    // The root homepage is never treated as a research path.
+    const home = await request(app).get("/");
+    expect(home.status).toBe(200);
+    expect(home.headers["x-robots-tag"]).toBeUndefined();
+  });
 });

@@ -128,13 +128,18 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   // The xenios homepage stays at the root domain in every mode. Research is a
   // private, password-gated section at /research and never takes over the
   // root (canonical decision, 2026-07-18).
-  const isResearchPath = req.path === "/research" || req.path.startsWith("/research/");
+  // Normalize case: wouter renders the research SPA for /Research/... too
+  // (its route matcher is case-insensitive), so a case-sensitive comparison
+  // here would drop noindex + the recovery-page security headers on those
+  // URLs. The root homepage stays unaffected (it never matches /research).
+  const path = req.path.toLowerCase();
+  const isResearchPath = path === "/research" || path.startsWith("/research/");
   if (!isResearchPath) return next();
   if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");
   // The password-recovery page (founder decision, 2026-07-19: recovery works
   // from a fresh browser without the review password) is a sensitive account
   // page: never cached, never indexed, never leaks a referrer.
-  if (req.path === "/research/reset-password") {
+  if (path === "/research/reset-password") {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Referrer-Policy", "no-referrer");
     res.setHeader("X-Robots-Tag", "noindex, nofollow");
