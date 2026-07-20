@@ -1,8 +1,30 @@
 # File claims — one owner per file (Integration Coordinator)
 
-Updated 2026-07-19. Prevents two sessions editing the same file. A session
-must check this before touching a path; shared files require a handoff. This
-extends integration/route-ownership.md with the full post-#25 fleet.
+Updated 2026-07-20 (post-PR-#25 merge, main @ 87150f4). Prevents two sessions
+editing the same file. A session must check this before touching a path;
+shared files require a handoff. Extends integration/route-ownership.md.
+
+## Active post-merge lane claims (authoritative)
+
+| Path glob | Owner branch / window | Notes |
+|---|---|---|
+| `client/src/research/**` presentation components, route shells, scoped styles, `*.test.tsx` UI tests | claude/research-access-ui-rebuild (Website) | UI takeover; do NOT touch server or shared contracts |
+| `docs/research-legal/**`, `docs/research-operations/document-control/**` | claude/research-paperwork-factory-now (Website 2) | DRAFT legal docs + document-control SOPs |
+| `content/research-products/**`, `content/research-guides/**`, `content/research-goals/**`, `docs/research-content/**` | claude/research-product-guide-content-now (Website 3) | product/Guide/goal content seeds |
+| `server/research/**` member-platform backend NEW modules (application, agreements, profile, assessment, blueprint, plans, documents, tracker, questions, telegram, member-admin) | Website 2 backend | extends PR #25 modules additively; NO edits to recovery/auth/outbox internals |
+| `server/research/**` commerce/distribution NEW modules (products, guides, inventory, commerce, fulfillment, referrals, affiliates, commissions) | Website 3 backend | products-data.ts owned here |
+| `docs/agent-coordination/**`, `docs/agent-coordination/blitzscale/**`, integration + release-validation scripts, shared contract barrels (coordination only) | claude/integration-coordinator (PowerShell, this) | contracts frozen here; single temporary owner for shared route registration |
+
+## Shared files (single temporary owner + explicit integration plan)
+
+`server/index.ts`, `server/routes.ts`, `server/research/index.ts` route
+registration, `shared/research/*` type barrels, `package.json` scripts,
+`client/src/App.tsx`, `client/src/research/section.tsx`/`layout.tsx`/`core.tsx`.
+Temporary owner: Integration Coordinator. A lane needing a change here posts a
+handoff; the coordinator applies it or grants a scoped, time-boxed claim. Any
+session editing outside its claim without approval is rejected at review.
+
+## Legacy detail (pre-merge fleet mapping)
 
 ## Rules
 
@@ -37,9 +59,13 @@ extends integration/route-ownership.md with the full post-#25 fleet.
 | supabase/*.sql | owning backend session drafts; NEVER run by an agent | Samuel runs; ledger in MIGRATIONS.md |
 | docs/agent-coordination/integration/**, file-claims.md | INTEGRATION_COORDINATOR | this session |
 
-## Currently claimed / in-flight
+## Currently claimed / in-flight (post-merge)
 
-- PR #25 (ACCOUNT_EMAIL_SYSTEMS): all server/research/* + shared/research/* +
-  the client research recovery surface. Locked until merged.
-- No other session may edit server/research/* or shared/research/* until #25
-  merges (would conflict). They may PREPARE new-module designs.
+- PR #25 is MERGED (merge commit 87150f4); its account/recovery/auth/email/
+  outbox/member-access code is now the shared foundation in main — extend it
+  additively, do not rewrite it.
+- `server/research/*` and `shared/research/*` are NO LONGER locked to a single
+  branch: new modules are split by lane above. Contract-level edits to the
+  shared type barrels go through the Integration Coordinator.
+- Active lanes: research-access-ui-rebuild, research-paperwork-factory-now,
+  research-product-guide-content-now, integration-coordinator.

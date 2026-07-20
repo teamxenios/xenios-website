@@ -1,43 +1,49 @@
 # CLAUDE_INTEGRATION_COORDINATOR status
 
-- Timestamp: 2026-07-19
-- Role: coordinate the parallel build sessions, prevent file overlap, and
-  hold the release train. Docs-only; touches no product code.
+- Timestamp: 2026-07-20 (post-PR-#25 merge)
+- Role: Supreme Graph Controller — repository truth, release graph, file
+  claims, shared contracts, branch monitoring, PR sequencing, integration,
+  regression, security/visual verification, deployment + rollback prep.
+  Docs/coordination + integration-scripts only; no lane feature code.
 - Branch: claude/integration-coordinator (worktree wt-integration-coordinator),
-  base origin/main 468466f. Targets main directly; not stacked.
+  rebased onto origin/main 87150f4. Targets main directly; not stacked.
 
-## Phase 0 result
+## PR #25: MERGED
 
-PR #25 independently reviewed **READY** at head f48bda0 (two reviewer fleets;
-router-normalization + server-authz + client-isolation + email axes all pass;
-161 tests / 12 files; typecheck + build + boot smoke green). Handoff to Samuel:
-review the exact head → mark ready → merge. The author does not merge.
+- Merge commit **87150f488c68576c6fec5f49a4957f3d122eca01**, reachable from
+  origin/main (now the head). The account/email/recovery/authorization/outbox/
+  active-member foundation is live in main.
+- PR #27 (this coordination PR) rebased onto the merged main; every
+  "PR #25 is blocking" statement removed; the runtime fleet is UNLOCKED.
 
-PR #13 confirmed closed/superseded (old Research architecture).
+## Active lanes (record)
 
-## Deliverables in this PR (docs only)
+- claude/research-access-ui-rebuild — Website (Research presentation / access UI)
+- claude/research-product-guide-content-now — Website 3 (products/Guides/commerce/
+  distribution backend + content)
+- claude/research-paperwork-factory-now — Website 2 (paperwork + member-platform
+  backend)
+- claude/integration-coordinator — PowerShell / this session
 
-- integration/RELEASE_BOARD.md — the release train: 19 lanes with owner,
-  dependency, credential need, and "buildable-now-without-keys" status; the
-  release gates; the external-dependency shopping list; and the
-  "what PR #25 already provides" list so no lane rebuilds it.
-- file-claims.md — one owner per file/area for the whole fleet, so no two
-  sessions edit the same path. server/research/* and shared/research/* are
-  locked to PR #25 until it merges.
-- project-state.md — refreshed to the current gate.
+## Deliverables in this update (docs only)
 
-## What is NOT done and why
+- RELEASE_BOARD.md: Phase 0 marked CLEARED (merge commit recorded), lanes
+  unlocked, active branch table.
+- file-claims.md: post-merge claims for UI takeover, paperwork, and content
+  paths; shared-file single-owner rule.
+- project-state.md: refreshed to main @ 87150f4.
+- blitzscale/ build-graph docs (GRAPH, NODES, FILE_CLAIMS, API_CONTRACTS,
+  ROUTE_MANIFEST, EXTERNAL_CAPABILITIES, STATUS, DECISIONS, INTEGRATION_PLAN,
+  RELEASE_CHECKLIST) — the programmable build graph.
 
-- No downstream code was written: every code lane must branch from the
-  post-#25 origin/main (shared rule 3); starting now would stack/diverge.
-- PR #25 not merged (Samuel's gate + rule 17).
-- No flags, no SQL, no secrets touched.
+## Constraints honored
 
-## Next action (Samuel)
+No application runtime code · no flags · no SQL · no secrets · no own-PR merge
+· not stacked · rebased cleanly (docs-only, no conflict with merged code).
 
-Merge PR #25 → confirm Render deploy → configure Resend + Supabase recovery
-redirect → run research-member-billing.sql → controlled account/email test →
-then spin up the release train from RELEASE_BOARD.md, starting with lane 1
-(Account/Identity/MFA/Security). Provide the credential shopping-list items as
-each lane reaches its live-integration step; code proceeds behind default-false
-flags until then.
+## Next
+
+Freeze shared contracts (blitzscale/API_CONTRACTS.md, ROUTE_MANIFEST.md) and
+publish to the lanes; monitor each lane's pushed milestones; stand up the
+integration branch when reviewed lane heads exist. Samuel: review PR #27 →
+merge (author does not merge own PR).

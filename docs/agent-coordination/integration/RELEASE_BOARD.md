@@ -5,33 +5,41 @@ Source of truth order: current repo + migrations > master-pack root docs >
 V2/V3 session prompts > appendices. This board is how the parallel build
 sessions coordinate; every session updates its own row after each PR.
 
-## Phase 0 gate (BLOCKING — nothing else starts until this clears)
+## Phase 0 — CLEARED. PR #25 is MERGED.
 
-PR #25 `research: harden account, email, and active-member access lifecycle`
-- Branch: `claude/research-account-email-systems`
-- Reviewed head: **f48bda0befa35a9cb0abfe5dd1cb1d2b0d3e5026** (draft, MERGEABLE)
-- Base: main @ 468466f5088692a68a769bf76ea13bcca1c91866
-- Independent review: **READY** (two fleets; router-normalization axis and
-  server-authz/client-isolation/email axes all pass; 161 tests / 12 files;
-  typecheck + build + production boot smoke green).
-- Remaining step: **Samuel reviews the exact head → marks ready → merges.**
-  The author does not merge (shared rule 17). Do NOT start any session below
-  against a base that excludes this PR.
+- PR #25 `research: harden account, email, and active-member access lifecycle`
+  **MERGED** into main. Merge commit **87150f488c68576c6fec5f49a4957f3d122eca01**.
+- origin/main is now at `87150f4`, which also includes PR #26
+  (supabase service-key boot diagnostic), PR #28 (approval-expiry sweep), and
+  the recovery-session-isolation hardening. Base site + account/email/recovery
+  foundation are live in main.
+- The full runtime fleet is **UNLOCKED**. Sessions branch from the current
+  post-#25 `origin/main` (87150f4).
 
-Superseded and closed: PR #13 (`codex/research-ui-content`) — old Research
-architecture, will not be revived (shared rule: do not revive stale PR #13).
+Closed/superseded: PR #13 (`codex/research-ui-content`).
 
-## Post-#25 base rule
+## Post-#25 base rule (now active)
 
-Every session below: `git fetch origin` → branch from the **post-#25
-origin/main** → one isolated worktree → target `main` directly → no stacked
-PRs → do not edit another session's claimed files (see file-claims.md).
+Every lane: `git fetch origin` → branch from **origin/main @ 87150f4** → one
+isolated worktree → target `main` directly → no stacked PRs → do not edit
+another session's claimed files (see file-claims.md). Do NOT re-implement or
+weaken PR #25's account, recovery, authorization, email, outbox, or
+active-member work; extend it additively.
+
+## Active lane branches (post-merge)
+
+| Branch | Window / owner | Lane |
+|---|---|---|
+| claude/research-access-ui-rebuild | Website | Research presentation / access UI |
+| claude/research-product-guide-content-now | Website 3 | products / Guides / commerce / distribution backend + content |
+| claude/research-paperwork-factory-now | Website 2 (paperwork) | legal/paperwork + member-platform backend |
+| claude/integration-coordinator | PowerShell (this) | coordination, contracts, integration, release |
 
 ## Release train (PR sequence per Integration Coordinator prompt)
 
 | # | Session (owner) | Backend/UI | Depends on | Needs external credential? | Buildable now w/o keys? |
 |---|---|---|---|---|---|
-| 0 | Account/Email/Recovery (CLAUDE_ACCOUNT_EMAIL_SYSTEMS) | backend | — | Resend domain, Supabase Auth redirect, Render env | DONE in PR #25 |
+| 0 | Account/Email/Recovery (CLAUDE_ACCOUNT_EMAIL_SYSTEMS) | backend | — | Resend domain, Supabase Auth redirect, Render env | **MERGED (PR #25 @ 87150f4)** |
 | 1 | Account/Identity/MFA/Security (04) | backend | #25 merged | Identity provider (Stripe Identity/Persona/…), MFA/passkey config | Partly — MFA/session/recovery-code logic yes; live identity provider no |
 | 2 | Application/Approval/Activation backend (05) | backend | #25, Stripe | Stripe (activation $50 + $25/mo) | Partly — state machine + attestation yes; live billing no |
 | 3 | Assessment/Blueprint/Xenios 30·90 (08/10-master) | backend | #25 | — | Yes |
