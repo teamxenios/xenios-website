@@ -340,7 +340,17 @@ describe("the capture is bounded by the authorization", () => {
 
   it("refuses to capture more than was authorized when the total grows after the hold", async () => {
     const repo = repository([order()]);
+    // A permissive provider: it would take whatever it is handed, so the refusal
+    // has to come from the service. Nothing may reach the provider at all.
     const payment = new TestPaymentProvider();
+    const captureCalls: number[] = [];
+    payment.captureAuthorization = async (ref: string, amountCents?: number) => {
+      captureCalls.push(amountCents ?? 0);
+      return {
+        ok: true as const,
+        value: { providerReference: ref, capturedAmountCents: amountCents ?? 0, status: "captured" as const },
+      };
+    };
     const service = createOrderService(deps({ repository: repo, payment }));
 
     const authorized = await service.authorize("ord_1", "system", NOW);
@@ -357,6 +367,7 @@ describe("the capture is bounded by the authorization", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.denials).toContain("payment_failed");
+    expect(captureCalls).toEqual([]);
     expect(repo.get("ord_1")!.state).toBe("approved");
     expect(repo.get("ord_1")!.capturedAmountCents).toBeUndefined();
   });

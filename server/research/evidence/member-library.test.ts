@@ -17,11 +17,13 @@ function makeRepository(options: { leaky?: boolean } = {}): LibraryRepository & 
   reads: ReadReceipt[];
   requests: TopicRequest[];
   follows: GuideFollow[];
+  listFollowersCalls: string[];
 } {
   const bookmarks: Bookmark[] = [];
   const reads: ReadReceipt[] = [];
   const requests: TopicRequest[] = [];
   const follows: GuideFollow[] = [];
+  const listFollowersCalls: string[] = [];
   const leaky = options.leaky === true;
 
   return {
@@ -29,6 +31,7 @@ function makeRepository(options: { leaky?: boolean } = {}): LibraryRepository & 
     reads,
     requests,
     follows,
+    listFollowersCalls,
     async saveBookmark(bookmark) {
       bookmarks.push(bookmark);
     },
@@ -63,7 +66,11 @@ function makeRepository(options: { leaky?: boolean } = {}): LibraryRepository & 
     async countFollowers(slug) {
       return follows.filter((row) => row.slug === slug).length;
     },
+    async hasFollower(memberId, slug) {
+      return follows.some((row) => row.memberId === memberId && row.slug === slug);
+    },
     async listFollowers(slug) {
+      listFollowersCalls.push(slug);
       return follows.filter((row) => row.slug === slug);
     },
   };
@@ -318,6 +325,37 @@ describe("topic requests", () => {
     expect(repository.requests).toHaveLength(0);
   });
 
+  it("refuses a route, a dose form, or an administration instruction the old filter missed", async () => {
+    // Regression: these all passed the original pattern set.
+    const { repository, library } = build();
+    const refused = [
+      "oral route versus topical route",
+      "how many capsules are typical",
+      "taking it every 8 hours",
+      "3 times per week versus daily",
+      "intravenous versus transdermal delivery",
+      "is a loading dose needed",
+      "should it be taken with food",
+      "what about a washout between cycles",
+      "500 units before bed",
+    ];
+
+    for (let i = 0; i < refused.length; i++) {
+      const result = await library.requestTopic("member-a", refused[i], T0);
+      expect(result, refused[i]).toEqual({ ok: false, code: "topic_not_allowed" });
+    }
+    expect(repository.requests).toHaveLength(0);
+  });
+
+  it("still accepts an ordinary research topic", async () => {
+    const { library } = build();
+    const allowed = ["sleep and recovery", "gut health", "oral health", "training for longevity"];
+    for (let i = 0; i < allowed.length; i++) {
+      const result = await library.requestTopic("member-a", allowed[i], T0);
+      expect(result.ok, allowed[i]).toBe(true);
+    }
+  });
+
   it("refuses a blank or over-long topic", async () => {
     const { library } = build();
     expect(await library.requestTopic("member-a", "   ", T0)).toEqual({ ok: false, code: "topic_invalid" });
@@ -343,6 +381,29 @@ describe("notification path", () => {
     const memberSurface = Object.keys(library).filter((key) => key !== "internal");
     expect(memberSurface).not.toContain("pendingNotifications");
     expect(JSON.stringify(await library.demandFor("coming-soon-topic"))).not.toContain("member-");
+  });
+
+  it("never reads the follower list from a member-facing method", async () => {
+    // Regression: `follow` used to call listFollowers for its idempotency check,
+    // which put every other follower's member id in scope inside a member call.
+    const { repository, library } = build();
+    await library.follow("member-a", "coming-soon-topic", T0);
+    await library.follow("member-b", "coming-soon-topic", T1);
+    await library.follow("member-b", "coming-soon-topic", T1);
+    await library.unfollow("member-a", "coming-soon-topic");
+    await library.save("member-b", "coming-soon-topic", T0);
+    await library.listSaved("member-b");
+    await library.listRead("member-b");
+    await library.listOwnRequests("member-b");
+    await library.demandFor("coming-soon-topic");
+    await library.topicDemand();
+
+    expect(repository.listFollowersCalls).toEqual([]);
+
+    // The idempotency the old implementation bought with that read still holds.
+    expect(repository.follows).toHaveLength(1);
+    await library.internal.pendingNotifications("coming-soon-topic");
+    expect(repository.listFollowersCalls).toEqual(["coming-soon-topic"]);
   });
 
   it("returns an empty notification list for an unfollowed or blank slug", async () => {

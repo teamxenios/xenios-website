@@ -114,6 +114,49 @@ function expectDenied(outcome: ClaimOutcome | ResolutionOutcome): string[] {
   return outcome.codes;
 }
 
+describe("refund idempotency survives a process restart", () => {
+  // Replay protection used to live in a per-process Map inside the service. That is
+  // not idempotency once the service restarts or a second instance handles the retry:
+  // the map is empty, the key looks new, and real money moves twice. The record now
+  // belongs to the repository, so a fresh service over the same store still refuses.
+  it("refuses a replayed refund key through a brand new service instance", async () => {
+    const payment = new SpyPaymentProvider();
+    const claims = createInMemoryClaimRepository();
+    const order = deliveredOrder();
+    const orders = createInMemoryClaimOrderRepository([order]);
+
+    const first = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const submitted = expectClaim(first.submitClaim("mem_1", claimRequest(), NOW));
+    const approved = expectClaim(
+      first.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW),
+    );
+    const refunded = await first.resolveWithRefund(
+      approved.claim.claimId,
+      "adm_1",
+      12_000,
+      "key_1",
+      NOW,
+    );
+    expect(refunded.ok).toBe(true);
+    expect(payment.refundCalls).toHaveLength(1);
+
+    // The restart: same durable store, a service that has never seen the key.
+    const second = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    await second.resolveWithRefund(approved.claim.claimId, "adm_1", 12_000, "key_1", NOW);
+
+    // The critical assertion: the provider was not asked to move money a second time.
+    expect(payment.refundCalls).toHaveLength(1);
+  });
+
+  it("records the key on the repository, not inside the service closure", () => {
+    const claims = createInMemoryClaimRepository();
+    expect(claims.hasRefundKey("anything")).toBe(false);
+    claims.recordRefundKey("scope_a", "ref_1");
+    expect(claims.hasRefundKey("scope_a")).toBe(true);
+    expect(claims.hasRefundKey("scope_b")).toBe(false);
+  });
+});
+
 describe("accepted reasons", () => {
   it("accepts exactly the five defect and handling reasons", () => {
     expect(ACCEPTED_CLAIM_REASONS.slice().sort()).toEqual(

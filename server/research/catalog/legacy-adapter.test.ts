@@ -18,9 +18,10 @@ const REVIEWED_ON = "2026-07-20";
 const adapted = adaptLegacyCatalog(LIVE_PRODUCTS, REVIEWED_ON);
 
 describe("adapting the live legacy catalog", () => {
-  it("adapts every record whose lane is determinable", () => {
-    expect(adapted.products.length).toBeGreaterThan(0);
-    expect(adapted.products.length + adapted.unmapped.length).toBe(LIVE_PRODUCTS.length);
+  // Every record is catalogued, including the ones whose lane is undecided, so nothing
+  // is silently dropped. The undecided ones are additionally listed for Samuel.
+  it("catalogues every legacy record", () => {
+    expect(adapted.products.length).toBe(LIVE_PRODUCTS.length);
   });
 
   it("assigns the founder SKUs to the 15 catalog records", () => {
@@ -40,11 +41,49 @@ describe("adapting the live legacy catalog", () => {
   });
 
   // Guessing a lane would mis-apply that lane's authorization and claims rules.
-  it("refuses to force programs into a product lane and surfaces them for a decision", () => {
-    expect(adapted.unmapped.length).toBeGreaterThan(0);
+  it("refuses to force programs into a product lane and flags them for Samuel", () => {
+    expect(adapted.unmapped.length).toBe(4);
     for (const u of adapted.unmapped) {
-      expect(u.reason).toContain("founder decision");
+      expect(u.reason).toContain("NEEDS_SAMUEL_DECISION");
     }
+  });
+
+  it("holds program records in the non_product_program lane, not a guessed one", () => {
+    const programs = adapted.products.filter((p) => p.lane === "non_product_program");
+    expect(programs).toHaveLength(4);
+    for (const p of programs) {
+      expect(p.laneDecision).toBe("needs_samuel_decision");
+      // The placeholder must never be mistaken for a real product lane.
+      expect(p.lane).not.toBe("supplement");
+      expect(p.lane).not.toBe("research_material");
+    }
+  });
+
+  // The held-open lane must block on its own, so the placeholder cannot ship as a
+  // quiet default even if every other gate on the record were later satisfied.
+  it("blocks a pending lane decision independently of every other gate", () => {
+    const program = adapted.products.find((p) => p.lane === "non_product_program")!;
+    const decision = evaluatePurchaseEligibility(program, {
+      productCommerceEnabled: true,
+      quantumCommerceEnabled: true,
+    });
+    expect(decision.purchasable).toBe(false);
+    expect(decision.blockReasons).toContain("lane_decision_pending");
+    expect(decision.blockReasons).toContain("lane_commerce_disabled");
+  });
+
+  // Both transliterations appear in the literature. Picking a canonical scientific
+  // label is a review decision, so both stay searchable and neither is promoted.
+  it("preserves both epitalon and epithalon spellings as searchable aliases", () => {
+    const p011 = adapted.products.find((p) => p.sku === "P011")!;
+    const lowered = p011.nameAliases.map((a) => a.toLowerCase());
+    expect(lowered).toContain("epitalon");
+    expect(lowered).toContain("epithalon");
+  });
+
+  it("leaves every other record without invented aliases", () => {
+    const p001 = adapted.products.find((p) => p.sku === "P001")!;
+    expect(p001.nameAliases).toEqual([]);
   });
 
   it("routes fulfillment by lane per the founder decision", () => {

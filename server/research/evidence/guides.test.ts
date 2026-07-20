@@ -5,6 +5,7 @@ import {
   createInMemoryGuideRepository,
   namedHumanReviewer,
   type AuthorKind,
+  type ClaimGrade,
   type GuideClaim,
   type GuideSection,
   type GuideService,
@@ -288,7 +289,172 @@ describe("claims are graded one at a time", () => {
   });
 });
 
+describe("five reviews means five people", () => {
+  it("refuses to let one identity sign every role and then publish", () => {
+    // Regression, and the AI publish path this closes: an automated pipeline holding
+    // a single identity used to be able to sign all five roles, mint the capability
+    // with that same id, and reach published without a second human ever involved.
+    const svc = service();
+    seedDraft(svc);
+
+    const solo = "automation-bot";
+    const recorded = REQUIRED_REVIEW_ROLES.map((role) =>
+      svc.recordReview("peptide-overview", 1, role, solo, "approved", "", T1),
+    );
+
+    expect(recorded[0].ok).toBe(true);
+    recorded.slice(1).forEach((result) => {
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.code).toBe("reviewer_mismatch");
+    });
+
+    const gate = svc.canPublish("peptide-overview");
+    expect(gate.ok).toBe(false);
+    if (!gate.ok) expect(gate.missingRoles).toEqual(REQUIRED_REVIEW_ROLES.slice(1));
+
+    const attempt = svc.publish("peptide-overview", namedHumanReviewer(solo, "human"), T2);
+    expect(attempt.ok).toBe(false);
+    expect(svc.getForMember("peptide-overview")).toEqual({ denied: "guide_not_published" });
+    expect(JSON.stringify(svc.listForMember())).not.toContain(SECRET_BODY);
+  });
+
+  it("discounts a reviewer who somehow holds two roles on one revision", () => {
+    // Defense in depth: even if such a pair reached the store, neither role counts.
+    const svc = service();
+    seedDraft(svc);
+    approveAll(svc);
+
+    const repository = createInMemoryGuideRepository();
+    const direct = createGuideService({ repository });
+    direct.createDraft("g", "G", "human", T0);
+    direct.addRevision("g", SECTIONS, [], [], "human", T0);
+    direct.submitForReview("g", T0);
+    REQUIRED_REVIEW_ROLES.forEach((role) => {
+      repository.saveReview({
+        slug: "g",
+        revision: 1,
+        role,
+        reviewerId: "one.person",
+        decision: "approved",
+        notes: "",
+        at: T1.toISOString(),
+      });
+    });
+
+    const gate = direct.canPublish("g");
+    expect(gate.ok).toBe(false);
+    if (!gate.ok) expect(gate.missingRoles).toEqual([...REQUIRED_REVIEW_ROLES]);
+  });
+});
+
+describe("a grade may not outrun its sources", () => {
+  it("refuses a human-evidence grade with no source at all", () => {
+    const svc = service();
+    svc.createDraft("peptide-overview", "Peptide Overview", "human", T0);
+    const attempt = svc.addRevision(
+      "peptide-overview",
+      SECTIONS,
+      [{ id: "bare", text: "Human work supports this.", grade: "A", sourceIds: [] }],
+      SOURCES,
+      "human",
+      T0,
+    );
+    expect(attempt.ok).toBe(false);
+    if (!attempt.ok) expect(attempt.code).toBe("claim_grade_unsupported");
+  });
+
+  it("refuses a human-evidence grade resting on a supplier page", () => {
+    const svc = service();
+    svc.createDraft("peptide-overview", "Peptide Overview", "human", T0);
+    const supplier: GuideSource = {
+      id: "sup",
+      kind: "supplier",
+      citation: "A supplier data sheet",
+      url: null,
+      verified: false,
+    };
+    (["A", "B", "C"] as const).forEach((grade) => {
+      const attempt = svc.addRevision(
+        "peptide-overview",
+        SECTIONS,
+        [{ id: `c-${grade}`, text: "Human work supports this.", grade, sourceIds: ["sup"] }],
+        [supplier],
+        "human",
+        T0,
+      );
+      expect(attempt.ok, `supplier must not support ${grade}`).toBe(false);
+    });
+  });
+
+  it("refuses a claim graded above the ceiling of the sources it cites", () => {
+    const svc = service();
+    svc.createDraft("peptide-overview", "Peptide Overview", "human", T0);
+    const weak: GuideSource[] = [
+      { id: "pre", kind: "preclinical", citation: "A bench study", url: null, verified: true },
+      { id: "trad", kind: "traditional", citation: "Traditional use", url: null, verified: false },
+      { id: "misc", kind: "other", citation: "An unclassified page", url: null, verified: false },
+    ];
+    const cases: Array<[string, ClaimGrade]> = [
+      ["pre", "C"],
+      ["trad", "D"],
+      ["misc", "F"],
+    ];
+    cases.forEach(([sourceId, grade]) => {
+      const attempt = svc.addRevision(
+        "peptide-overview",
+        SECTIONS,
+        [{ id: `c-${sourceId}`, text: "A statement.", grade, sourceIds: [sourceId] }],
+        weak,
+        "human",
+        T0,
+      );
+      expect(attempt.ok, `${sourceId} must not support ${grade}`).toBe(false);
+    });
+  });
+
+  it("still accepts a grade the cited evidence supports", () => {
+    const svc = service();
+    svc.createDraft("peptide-overview", "Peptide Overview", "human", T0);
+    const attempt = svc.addRevision(
+      "peptide-overview",
+      SECTIONS,
+      [
+        { id: "ok-b", text: "A trial examined this.", grade: "B", sourceIds: ["s1"] },
+        { id: "ok-e", text: "A supplier reports this.", grade: "E", sourceIds: ["s2"] },
+        { id: "ok-p", text: "Never shown to a member.", grade: "PROHIBITED", sourceIds: ["s2"] },
+      ],
+      SOURCES,
+      "human",
+      T0,
+    );
+    expect(attempt.ok).toBe(true);
+  });
+});
+
 describe("history is append-only", () => {
+  it("records what was live when a withdrawal clears the published pointer", () => {
+    // Regression: withdraw nulled publishedRevision and publishedAt with nothing
+    // appended in their place, so the record of what a member could read was lost.
+    const svc = service();
+    publishFully(svc);
+    svc.withdraw(
+      "peptide-overview",
+      namedHumanReviewer(FOUNDER, "human"),
+      "A source needs re-verification.",
+      T2,
+    );
+
+    const history = svc.adminGet("peptide-overview")?.guide.correctionHistory ?? [];
+    expect(history).toHaveLength(1);
+    expect(history[0].kind).toBe("withdrawal");
+    expect(history[0].revision).toBe(1);
+    expect(history[0].previouslyPublishedAt).toBe(T2.toISOString());
+
+    // The member surface is unchanged: still denied, still no revision pointer.
+    expect(svc.getForMember("peptide-overview")).toEqual({ denied: "guide_not_published" });
+    expect(svc.adminGet("peptide-overview")?.guide.publishedRevision).toBeNull();
+  });
+
   it("appends corrections without erasing earlier ones", () => {
     const svc = service();
     publishFully(svc);

@@ -96,6 +96,9 @@ export interface CartService {
 const ELIGIBILITY_TO_DENIAL: Readonly<Record<PurchaseBlockReason, CommerceDenialCode>> = {
   commerce_capability_disabled: "commerce_disabled",
   lane_commerce_disabled: "lane_not_purchasable",
+  // A held-open lane is a pending founder decision, not a member-facing distinction,
+  // so it surfaces as the ordinary not-purchasable denial.
+  lane_decision_pending: "lane_not_purchasable",
   commerce_not_approved: "product_not_purchasable",
   availability_not_purchasable: "product_not_purchasable",
   unconfirmed_commerce_critical_facts: "unconfirmed_supplier_facts",

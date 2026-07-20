@@ -77,6 +77,20 @@ export interface ClaimRepository {
   save(claim: ClaimRecord): void;
   listByMember(memberId: string): ClaimRecord[];
   listByOrder(orderId: string): ClaimRecord[];
+
+  /**
+   * Refund idempotency, owned by the repository rather than by this module.
+   *
+   * It lived in a per-process Map, which is not idempotency at all once the service
+   * restarts or runs on a second instance: the map is empty, the key looks new, and a
+   * repeated request issues a SECOND refund. Real money moves twice.
+   *
+   * Putting it on the repository makes durability the caller's responsibility and
+   * visible in the interface, so an in-memory implementation is an explicit test-only
+   * choice rather than an invisible production defect.
+   */
+  hasRefundKey(scope: string): boolean;
+  recordRefundKey(scope: string, refundReference: string): void;
   listOpen(): ClaimRecord[];
 }
 
@@ -84,8 +98,14 @@ export interface ClaimRepository {
  * The slice of an order this service needs.
  *
  * `capturedAmountCents` is what the provider actually took, not the order total, because
- * a refund is bounded by money that really moved. `refundedCents` accumulates across
- * claims so two partial refunds cannot together exceed the capture.
+ * a refund is bounded by money that really moved.
+ *
+ * `refundedCents` is carried and checked against the capture, but note that partial
+ * refunds are NOT reachable today: the first refund moves the order to a terminal
+ * refunded state, so a second is denied by the state machine before the arithmetic is
+ * consulted. The bound is therefore a second line of defence rather than the active
+ * one. If partial refunds are ever wanted, the terminal transition is what has to
+ * change, not this field.
  */
 export interface ClaimOrderView {
   orderId: string;
@@ -266,8 +286,6 @@ function refundDenialCode(code: ProviderFailureCode): CommerceDenialCode {
 
 export function createRefundService(deps: RefundServiceDeps): RefundService {
   const mintId = deps.newClaimId ?? ((sequence: number): string => `clm_${sequence}`);
-  /** Scoped per claim so two claims cannot collide on one operator-supplied key. */
-  const refundsByKey = new Map<string, string>();
   let counter = 0;
 
   function submitClaim(memberId: string, req: CreateClaimRequest, asOf: Date): ClaimOutcome {
@@ -391,7 +409,7 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     const replayScope = `${claimId}:${idempotencyKey}`;
     // A replayed key is an absorbed no-op. It never issues a second refund, and it
     // reports the claim as it already stands.
-    if (refundsByKey.has(replayScope)) {
+    if (deps.claims.hasRefundKey(replayScope)) {
       return {
         ok: true,
         claim: toClaimDto(claim),
@@ -458,7 +476,7 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     const applied =
       Number.isInteger(reported) && reported > amountCents ? reported : amountCents;
 
-    refundsByKey.set(replayScope, reference);
+    deps.claims.recordRefundKey(replayScope, reference);
     order.state = moved.state;
     order.refundedCents = order.refundedCents + applied;
     order.lastAppliedIdempotencyKey = idempotencyKey;
@@ -506,6 +524,11 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
 export function createInMemoryClaimRepository(seed: readonly ClaimRecord[] = []): ClaimRepository {
   const byId = new Map<string, ClaimRecord>();
   const order: string[] = [];
+  /**
+   * Test-only durability. A real implementation persists this alongside the claims,
+   * because losing it means a repeated refund key issues a second refund.
+   */
+  const refundKeys = new Map<string, string>();
 
   function put(claim: ClaimRecord): void {
     if (!byId.has(claim.claimId)) order.push(claim.claimId);
@@ -536,6 +559,12 @@ export function createInMemoryClaimRepository(seed: readonly ClaimRecord[] = [])
     },
     listOpen() {
       return all().filter((c) => CLOSED_CLAIM_STATES.indexOf(c.state) === -1);
+    },
+    hasRefundKey(scope) {
+      return refundKeys.has(scope);
+    },
+    recordRefundKey(scope, refundReference) {
+      refundKeys.set(scope, refundReference);
     },
   };
 }

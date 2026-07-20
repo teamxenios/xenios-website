@@ -23,6 +23,7 @@ import {
   notConfirmed,
   type CatalogProduct,
   type CommerceApprovalState,
+  type LaneDecisionState,
   type FulfillmentOwner,
   type MemberGoal,
   type ProductAvailability,
@@ -95,19 +96,36 @@ const BLEND_SLUGS = new Set([
   "semax-selank-dsip",
 ]);
 
-function mapLane(category: Product["category"]): ProductLane | null {
+/**
+ * Alternate spellings that must stay searchable.
+ *
+ * The legacy catalog slug is `epitalon-10mg`; the Guide content uses `epithalon`. Both
+ * transliterations appear in the literature. Choosing a canonical scientific label is a
+ * review decision, not an engineering one, so both spellings are preserved and neither
+ * is promoted to canonical here.
+ */
+export const LEGACY_NAME_ALIASES: Readonly<Record<string, string[]>> = {
+  "epitalon-10mg": ["Epitalon", "Epithalon", "epitalon", "epithalon"],
+};
+
+/**
+ * Maps a legacy category to a lane, plus whether that mapping is a decision.
+ *
+ * "programs" is not a supplement, a research material, Quantum, or clinical care.
+ * Forcing one of those onto it would mis-apply that lane's authorization rules, claims
+ * rules, and fulfillment owner. It gets an explicit held-open lane instead, which
+ * blocks purchase on its own so the placeholder cannot ship as a quiet default.
+ */
+function mapLane(category: Product["category"]): { lane: ProductLane; decision: LaneDecisionState } {
   switch (category) {
     case "peptides":
-      return "research_material";
+      return { lane: "research_material", decision: "decided" };
     case "supplements":
-      return "supplement";
+      return { lane: "supplement", decision: "decided" };
     case "quantum":
-      return "quantum";
-    // "programs" is not a physical product lane. It is deliberately NOT forced into
-    // one, because guessing a lane would mis-apply the lane's authorization and
-    // claims rules. It is surfaced for a founder decision instead.
+      return { lane: "quantum", decision: "decided" };
     default:
-      return null;
+      return { lane: "non_product_program", decision: "needs_samuel_decision" };
   }
 }
 
@@ -158,14 +176,15 @@ export function adaptLegacyCatalog(legacy: readonly Product[], reviewedOn: strin
   const reconciliation: AdaptedCatalog["reconciliation"] = [];
 
   for (const item of legacy) {
-    const lane = mapLane(item.category);
-    if (lane === null) {
+    const { lane, decision } = mapLane(item.category);
+    if (decision === "needs_samuel_decision") {
+      // Still catalogued, so it is visible and auditable rather than silently dropped,
+      // but recorded as an open decision and blocked from purchase by the lane itself.
       unmapped.push({
         slug: item.slug,
         name: item.name,
-        reason: `Category "${item.category}" has no product lane. A founder decision is required before it can be catalogued.`,
+        reason: `NEEDS_SAMUEL_DECISION: category "${item.category}" is not a supplement, research material, Quantum, or clinical item. Held in the non_product_program lane until Samuel decides whether it belongs in the product catalogue at all.`,
       });
-      continue;
     }
 
     const sku = LEGACY_SLUG_TO_SKU[item.slug] ?? `LEGACY-${item.slug}`;
@@ -183,6 +202,8 @@ export function adaptLegacyCatalog(legacy: readonly Product[], reviewedOn: strin
       slug: item.slug,
       displayName: item.name,
       lane,
+      laneDecision: decision,
+      nameAliases: LEGACY_NAME_ALIASES[item.slug] ?? [],
       availability: mapAvailability(item.status),
       // Nothing arrives approved. Commerce approval is a written decision.
       commerceApproval: "blocked_pending_written_approval" as CommerceApprovalState,

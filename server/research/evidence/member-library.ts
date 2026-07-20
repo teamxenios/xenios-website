@@ -111,6 +111,11 @@ export interface LibraryRepository {
   addFollower(follow: GuideFollow): Promise<void>;
   removeFollower(memberId: string, slug: string): Promise<void>;
   countFollowers(slug: string): Promise<number>;
+  /**
+   * Member-scoped existence check, so an idempotent follow never has to read the
+   * follower list. This is the only follower query a member-facing method may use.
+   */
+  hasFollower(memberId: string, slug: string): Promise<boolean>;
   /** Notification path only. Never called from a member-facing method. */
   listFollowers(slug: string): Promise<GuideFollow[]>;
 }
@@ -162,13 +167,29 @@ const MAX_TOPIC_LENGTH = 180;
  * requested topic is member-authored text that later becomes member-visible.
  */
 const DOSING_PATTERNS: readonly RegExp[] = [
+  // Units of measure, with or without a leading quantity.
   /\b\d+(\.\d+)?\s*(mg|mcg|ug|iu|ml|cc|grams?|g)\b/i,
   /\b(mg|mcg|iu|ml)\b/i,
-  /\b(dose|doses|dosing|dosage)\b/i,
+  /\b(µg|mmol|meq|nanograms?|micrograms?|milligrams?)\b/i,
+  // Countable administration units and dose forms.
+  /\b\d+(\.\d+)?\s*(units?|tablets?|capsules?|softgels?|scoops?|drops?|sprays?|puffs?)\b/i,
+  /\b(tablets?|capsules?|softgels?|lozenges?|suppositor(y|ies))\b/i,
+  // The word itself.
+  /\b(dose|doses|dosed|dosing|dosage|posology)\b/i,
+  // Frequency.
   /\b(once|twice|thrice|three times|[0-9]+x)\s+(a\s+|per\s+)?(day|daily|week|weekly)\b/i,
+  /\b\d+\s*(times|x)\s*(a\s+|per\s+)?(day|daily|week|weekly)\b/i,
   /\b(per\s+day|per\s+week|daily\s+intake)\b/i,
-  /\b(inject|injects|injecting|injection|subcutaneous|intramuscular|sublingual|intranasal)\b/i,
-  /\b(titrate|taper|loading\s+phase|stack\s+protocol)\b/i,
+  /\b(every|each)\s+(\d+\s*)?(h|hr|hrs|hours?|days?|weeks?|morning|night|evening|other\s+day)\b/i,
+  /\b(bid|tid|qid|qd|qhs|prn|q\d+h)\b/i,
+  // Route of administration.
+  /\b(inject|injects|injecting|injection|subcutaneous(ly)?|intramuscular(ly)?|sublingual(ly)?|intranasal(ly)?)\b/i,
+  /\b(orally|topically|transdermal(ly)?|intravenous(ly)?|parenteral(ly)?|inhaled|inhalation|nebuli[sz]ed|buccal(ly)?|rectal(ly)?)\b/i,
+  /\b(oral|nasal|rectal|buccal|topical|parenteral)\s+(route|routes|administration|delivery|dosing|dose)\b/i,
+  /\broutes?\s+of\s+administration\b/i,
+  // Administration instruction.
+  /\b(titrate|titration|taper|tapering|loading\s+phase|loading\s+dose|stack\s+protocol|cycle\s+length|washout)\b/i,
+  /\b(with\s+food|empty\s+stomach|before\s+bed(time)?|on\s+waking)\b/i,
 ];
 
 function containsDosing(text: string): boolean {
@@ -298,8 +319,9 @@ export function createMemberLibrary(deps: MemberLibraryDeps): MemberLibrary {
     const owner = cleanId(memberId);
     const target = cleanId(slug);
     if (!owner || !target) return;
-    const followers = await repository.listFollowers(target);
-    const already = followers.some((row) => row.memberId === owner);
+    // Scoped to the caller's own row. Reading the whole follower list here would put
+    // every other member's id in scope inside a member-facing call.
+    const already = await repository.hasFollower(owner, target);
     if (already) return;
     await repository.addFollower({ memberId: owner, slug: target, followedAt: asOf.toISOString() });
   }

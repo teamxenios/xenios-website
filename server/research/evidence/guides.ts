@@ -65,9 +65,63 @@ export type SourceKind =
   | "traditional"
   | "other";
 
-/** A retailer or vendor page is commerce, not evidence. It supports E or G only. */
-const NON_EVIDENTIARY_SOURCE_KINDS: readonly SourceKind[] = ["retailer", "vendor"];
+/**
+ * A retailer, vendor, supplier, or manufacturer page is commerce, not evidence. None
+ * of them can carry a claim past E.
+ */
+const NON_EVIDENTIARY_SOURCE_KINDS: readonly SourceKind[] = ["retailer", "vendor", "supplier"];
 const HUMAN_EVIDENCE_GRADES: readonly ClaimGrade[] = ["A", "B", "C"];
+
+/**
+ * The only source kinds that count as human evidence. A, B, and C require at least
+ * one of these, so a strong grade cannot rest on preclinical work, tradition, an
+ * unclassified page, or nothing at all.
+ */
+const HUMAN_EVIDENCE_SOURCE_KINDS: readonly SourceKind[] = [
+  "peer_reviewed",
+  "clinical_trial",
+  "regulatory",
+];
+
+/** Strength ordering. Lower is stronger. PROHIBITED sits at the bottom deliberately. */
+const GRADE_RANK: Readonly<Record<ClaimGrade, number>> = {
+  A: 1,
+  B: 2,
+  C: 3,
+  D: 4,
+  E: 5,
+  F: 6,
+  G: 7,
+  PROHIBITED: 8,
+};
+
+/**
+ * The strongest grade a single source of this kind can support.
+ *
+ * An unrecognized kind caps at G, so adding a source kind without deciding its
+ * ceiling degrades safely instead of silently permitting an A.
+ */
+function maxGradeForSourceKind(kind: SourceKind): ClaimGrade {
+  switch (kind) {
+    case "peer_reviewed":
+    case "regulatory":
+      return "A";
+    case "clinical_trial":
+      return "B";
+    case "preclinical":
+      return "D";
+    case "supplier":
+    case "retailer":
+    case "vendor":
+      return "E";
+    case "traditional":
+      return "F";
+    case "other":
+      return "G";
+    default:
+      return "G";
+  }
+}
 
 export interface GuideSection {
   heading: string;
@@ -139,6 +193,14 @@ export interface GuideCorrection {
   kind: CorrectionKind;
   note: string;
   by: string;
+  /**
+   * The revision that was live when this entry was written, carried here because
+   * `withdraw` clears the live pointer. Without it the record of what a member could
+   * once read would be destroyed rather than superseded.
+   */
+  revision: number | null;
+  /** The publication timestamp this entry supersedes, for the same reason. */
+  previouslyPublishedAt: string | null;
 }
 
 export interface GuideRecord {
@@ -321,9 +383,18 @@ function findRevision(
 /**
  * Rule four, enforced where a revision enters the system.
  *
- * A retailer or vendor page may be recorded as a source, but it cannot carry a
- * claim into the human-evidence grades. The check runs over every claim, not the
- * first failure, so an editor sees the whole problem at once.
+ * Three things are checked, and a claim fails if any one of them fails:
+ *
+ *   1. A, B, and C require at least one human-evidence source. A claim with no
+ *      resolvable source at all therefore cannot hold a human-evidence grade.
+ *   2. A commercial page cannot prop up a human-evidence grade even when it sits
+ *      beside a real one.
+ *   3. No claim may outrank the strongest ceiling among the sources it cites, so a
+ *      preclinical-only or tradition-only claim cannot be graded above its evidence.
+ *
+ * PROHIBITED is exempt from the ceiling test because it is blocked by its own rule
+ * rather than by strength. The check runs over every claim, not the first failure,
+ * so an editor sees the whole problem at once.
  */
 function unsupportedGradeClaims(
   claims: readonly GuideClaim[],
@@ -331,12 +402,37 @@ function unsupportedGradeClaims(
 ): string[] {
   const offenders: string[] = [];
   claims.forEach((claim) => {
-    if (HUMAN_EVIDENCE_GRADES.indexOf(claim.grade) === -1) return;
-    const leaning = claim.sourceIds.filter((sourceId) => {
+    if (claim.grade === "PROHIBITED") return;
+
+    const cited: GuideSource[] = [];
+    claim.sourceIds.forEach((sourceId) => {
       const source = sources.find((candidate) => candidate.id === sourceId);
-      return source !== undefined && NON_EVIDENTIARY_SOURCE_KINDS.indexOf(source.kind) !== -1;
+      if (source !== undefined) cited.push(source);
     });
-    if (leaning.length > 0) offenders.push(claim.id);
+
+    if (HUMAN_EVIDENCE_GRADES.indexOf(claim.grade) !== -1) {
+      const hasHuman = cited.some(
+        (source) => HUMAN_EVIDENCE_SOURCE_KINDS.indexOf(source.kind) !== -1,
+      );
+      if (!hasHuman) {
+        offenders.push(claim.id);
+        return;
+      }
+      const leaning = cited.some(
+        (source) => NON_EVIDENTIARY_SOURCE_KINDS.indexOf(source.kind) !== -1,
+      );
+      if (leaning) {
+        offenders.push(claim.id);
+        return;
+      }
+    }
+
+    let ceiling: ClaimGrade = "G";
+    cited.forEach((source) => {
+      const cap = maxGradeForSourceKind(source.kind);
+      if (GRADE_RANK[cap] < GRADE_RANK[ceiling]) ceiling = cap;
+    });
+    if (GRADE_RANK[claim.grade] < GRADE_RANK[ceiling]) offenders.push(claim.id);
   });
   return offenders;
 }
@@ -348,12 +444,25 @@ function unsupportedGradeClaims(
 export function createGuideService(deps: GuideServiceDeps): GuideService {
   const { repository } = deps;
 
+  /**
+   * Separation of duties.
+   *
+   * Five roles are five people. A reviewer id that appears under more than one role
+   * on the same revision counts for NONE of them, so a single actor cannot satisfy
+   * the publication gate by signing the whole ladder itself and then minting a
+   * capability with that same id.
+   */
   function approvedRoles(slug: string, revision: number): ReviewerRole[] {
     const reviews = repository.listReviews(slug, revision);
     const roles: ReviewerRole[] = [];
     reviews.forEach((review) => {
       if (review.decision !== "approved") return;
-      if (review.reviewerId.trim() === "") return;
+      const named = review.reviewerId.trim();
+      if (named === "") return;
+      const wearsAnotherHat = reviews.some(
+        (other) => other.reviewerId.trim() === named && other.role !== review.role,
+      );
+      if (wearsAnotherHat) return;
       if (roles.indexOf(review.role) === -1) roles.push(review.role);
     });
     return roles;
@@ -484,7 +593,7 @@ export function createGuideService(deps: GuideServiceDeps): GuideService {
       if (offenders.length > 0) {
         return deny(
           "claim_grade_unsupported",
-          `A retailer or vendor page cannot support a human-evidence grade: ${offenders.join(", ")}.`,
+          `A claim may not carry a grade its cited sources cannot support: ${offenders.join(", ")}.`,
         );
       }
 
@@ -530,6 +639,17 @@ export function createGuideService(deps: GuideServiceDeps): GuideService {
       const named = reviewerId.trim();
       if (named === "") {
         return deny("reviewer_mismatch", "A review must name its human reviewer.");
+      }
+      // Refused at write time as well as at count time, so the record never contains
+      // a reviewer holding two roles on one revision.
+      const alreadyAnotherRole = repository
+        .listReviews(slug, revision)
+        .some((existing) => existing.reviewerId.trim() === named && existing.role !== role);
+      if (alreadyAnotherRole) {
+        return deny(
+          "reviewer_mismatch",
+          "One reviewer may not sign more than one review role on the same revision.",
+        );
       }
       const review: GuideReview = {
         slug,
@@ -596,7 +716,14 @@ export function createGuideService(deps: GuideServiceDeps): GuideService {
         publishedRevision: null,
         publishedAt: null,
         correctionHistory: guide.correctionHistory.concat([
-          { at: stamp(asOf), kind: "withdrawal", note: reason, by: reviewerId as string },
+          {
+            at: stamp(asOf),
+            kind: "withdrawal",
+            note: reason,
+            by: reviewerId as string,
+            revision: guide.publishedRevision,
+            previouslyPublishedAt: guide.publishedAt,
+          },
         ]),
       };
       repository.save(updated);
@@ -609,7 +736,14 @@ export function createGuideService(deps: GuideServiceDeps): GuideService {
       const updated: GuideRecord = {
         ...guide,
         correctionHistory: guide.correctionHistory.concat([
-          { at: stamp(asOf), kind: "correction", note, by: reviewerId as string },
+          {
+            at: stamp(asOf),
+            kind: "correction",
+            note,
+            by: reviewerId as string,
+            revision: guide.publishedRevision,
+            previouslyPublishedAt: guide.publishedAt,
+          },
         ]),
       };
       repository.save(updated);

@@ -21,14 +21,42 @@
  * experience, but the lane governs authorization, fulfillment owner, claims
  * rules, and commerce eligibility, and it is never inferred from the client.
  */
-export type ProductLane = "supplement" | "research_material" | "quantum" | "future_clinical";
+export type ProductLane =
+  | "supplement"
+  | "research_material"
+  | "quantum"
+  | "future_clinical"
+  | "non_product_program";
 
 export const PRODUCT_LANES: readonly ProductLane[] = [
   "supplement",
   "research_material",
   "quantum",
   "future_clinical",
+  "non_product_program",
 ] as const;
+
+/**
+ * Whether the lane assignment is a decision or a placeholder.
+ *
+ * `non_product_program` exists because four legacy records (coaching and routine
+ * programs) are not supplements, research materials, Quantum, or clinical care. Forcing
+ * one of those four lanes onto them would mis-apply that lane's authorization rules,
+ * claims rules, and fulfillment owner, so the lane is held open instead.
+ *
+ * A record in `needs_samuel_decision` is never purchasable, regardless of any other
+ * gate. The placeholder must not become a quiet default that ships.
+ */
+export type LaneDecisionState = "decided" | "needs_samuel_decision";
+
+/**
+ * Lanes that cannot transact through this system at all, whatever the flags say.
+ * `future_clinical` is out of scope by canon. `non_product_program` is undecided.
+ */
+const NON_TRANSACTING_LANES: ReadonlySet<ProductLane> = new Set<ProductLane>([
+  "future_clinical",
+  "non_product_program",
+]);
 
 /** Catalog availability. Distinct from commerce eligibility, deliberately. */
 export type ProductAvailability =
@@ -223,6 +251,16 @@ export interface CatalogProduct {
   slug: string;
   displayName: string;
   lane: ProductLane;
+  /** Whether `lane` is a decision or a held-open placeholder awaiting Samuel. */
+  laneDecision: LaneDecisionState;
+  /**
+   * Alternate spellings that must remain searchable.
+   *
+   * Some compounds appear in the literature under more than one transliteration, and
+   * picking a canonical scientific label is a review decision rather than an
+   * engineering one. Both spellings stay findable until that review happens.
+   */
+  nameAliases: string[];
   availability: ProductAvailability;
   commerceApproval: CommerceApprovalState;
   fulfillmentOwner: FulfillmentOwner;
@@ -260,6 +298,7 @@ export interface CatalogProduct {
 export type PurchaseBlockReason =
   | "commerce_capability_disabled"
   | "lane_commerce_disabled"
+  | "lane_decision_pending"
   | "commerce_not_approved"
   | "availability_not_purchasable"
   | "unconfirmed_commerce_critical_facts"
@@ -295,13 +334,19 @@ export function evaluatePurchaseEligibility(
     blockReasons.push("commerce_capability_disabled");
   }
 
-  // Quantum needs its own approval on top of general commerce, and future_clinical
-  // is never purchasable through this system at all.
+  // Quantum needs its own approval on top of general commerce. The non-transacting
+  // lanes are never purchasable through this system at all.
   if (product.lane === "quantum" && !ctx.quantumCommerceEnabled) {
     blockReasons.push("lane_commerce_disabled");
   }
-  if (product.lane === "future_clinical") {
+  if (NON_TRANSACTING_LANES.has(product.lane)) {
     blockReasons.push("lane_commerce_disabled");
+  }
+
+  // A held-open lane blocks on its own, so a placeholder cannot ship as a default
+  // even if someone later marks the record's other gates as satisfied.
+  if (product.laneDecision === "needs_samuel_decision") {
+    blockReasons.push("lane_decision_pending");
   }
 
   if (product.commerceApproval !== "approved") {
