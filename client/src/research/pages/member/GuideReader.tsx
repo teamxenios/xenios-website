@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link, useParams } from "wouter";
 import { useResearch } from "../../core";
-import { apiGet, apiPost } from "../../lib/api";
+import { fetchGuide, submitGuideCorrection } from "../../adapters/guides";
 import { devFixture } from "../../lib/fixtures";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
@@ -302,11 +302,11 @@ function CorrectionForm({
     }
     setStatus("sending");
     setErrorText(undefined);
-    const endpoint = path || `/api/research/member/guides/${encodeURIComponent(slug)}/corrections`;
-    const result = await apiPost<{ ok?: boolean }>(
-      endpoint,
+    const result = await submitGuideCorrection<{ ok?: boolean }>(
+      slug,
       { section: section || undefined, message: trimmed },
       token,
+      path,
     );
     if (result.kind === "ok") {
       setStatus("sent");
@@ -433,10 +433,7 @@ export default function GuideReader() {
     }
     setMode("loading");
     setErrorMessage(undefined);
-    const result = await apiGet<GuidePayload>(
-      `/api/research/member/guides/${encodeURIComponent(slug)}`,
-      memberToken,
-    );
+    const result = await fetchGuide<GuidePayload>(slug, memberToken);
     if (result.kind === "ok") {
       const normalized = normalizeGuide(result.data);
       if (normalized) {

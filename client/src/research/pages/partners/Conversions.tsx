@@ -1,6 +1,7 @@
 import { useResearch } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchDataTable, ResearchRouteBoundary, ResearchSecureNotice } from "../../ui/kit";
+import { getPartnerConversions } from "../../adapters/partner";
 import { PARTNER_PENDING_TITLE, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
@@ -20,7 +21,7 @@ type ConversionsPayload = { rows?: ConversionAggregate[] };
 export default function Conversions() {
   const { memberToken } = useResearch();
   const { state, errorMessage, data, reload } = usePartnerResource<ConversionsPayload>(
-    "/api/research/partner/conversions",
+    getPartnerConversions,
     memberToken,
   );
 

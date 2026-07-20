@@ -11,7 +11,7 @@ import {
   ResearchStatusBadge,
   capabilityStatusOrPending,
 } from "../../ui/kit";
-import { apiGet, apiPost } from "../../lib/api";
+import { cancelMembership, getMembership } from "../../adapters/member";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { devFixture } from "../../lib/fixtures";
 
@@ -97,7 +97,7 @@ export default function MembershipPage() {
     if (!member || !memberToken) return;
     let alive = true;
     (async () => {
-      const res = await apiGet<MembershipData>("/api/research/member/membership", memberToken);
+      const res = await getMembership<MembershipData>(memberToken);
       if (!alive) return;
       if (res.kind === "ok") {
         setData(res.data);
@@ -130,7 +130,7 @@ export default function MembershipPage() {
   async function confirmCancel() {
     if (!memberToken) return;
     setCancel({ phase: "busy" });
-    const res = await apiPost<{ ok: boolean; message?: string }>("/api/research/member/cancel", { confirm: true }, memberToken);
+    const res = await cancelMembership(memberToken);
     if (res.kind === "ok") {
       setCancel({ phase: "done" });
       await refreshMember();

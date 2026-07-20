@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useResearch } from "../../core";
-import { apiGet, type ApiResult } from "../../lib/api";
+import { type ApiResult } from "../../lib/api";
+import { getXenios90Plan } from "../../adapters/member";
 import {
   fetchCapabilities,
   type CapabilityStatus,
@@ -182,7 +183,7 @@ export default function Xenios90Page() {
     setResult(null);
     const [caps, res] = await Promise.all([
       fetchCapabilities(memberToken),
-      apiGet<Xenios90Envelope>("/api/research/member/plans/xenios-90", memberToken),
+      getXenios90Plan<Xenios90Envelope>(memberToken),
     ]);
     setStatuses(caps);
     setResult(res);

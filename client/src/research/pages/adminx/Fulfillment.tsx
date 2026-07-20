@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { listFulfillment } from "../../adapters/adminOps";
 import { ResearchDataTable, ResearchStatusBadge } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
@@ -33,10 +34,7 @@ export default function Fulfillment() {
 }
 
 function FulfillmentBody({ token }: { token: string }) {
-  const resource = useAdminResource<{ ok: boolean; shipments: FulfillmentRow[] }>(
-    token,
-    "/api/admin/research/fulfillment",
-  );
+  const resource = useAdminResource<{ ok: boolean; shipments: FulfillmentRow[] }>(token, listFulfillment);
   return (
     <div className="grid gap-6">
       <AdminBoundary

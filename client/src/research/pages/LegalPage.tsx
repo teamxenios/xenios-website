@@ -98,7 +98,7 @@ export default function LegalPage({ kind }: { kind: LegalKind }) {
           )}
           {policy && (
             <article aria-label={meta.title} className="space-y-10" style={{ maxWidth: "72ch" }}>
-              {policy.sections.map((section) => (
+              {policy.sections.filter((s: { heading?: string }) => !/draft status/i.test(s.heading ?? "")).map((section) => (
                 <section key={section.heading}>
                   <h2 className="body-m font-700 mb-3">{section.heading}</h2>
                   {section.paragraphs.map((paragraph) => (

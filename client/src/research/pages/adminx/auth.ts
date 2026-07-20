@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
-import { apiGet } from "../../lib/api";
+import type { AdminLoader } from "../../adapters/adminOps";
 
 // ---------------------------------------------------------------------------
 // Admin session for /admin/research/* (Supreme build). This mirrors the
@@ -109,9 +109,14 @@ export function useAdminSession(): AdminSession {
 }
 
 // ---------------------------------------------------------------------------
-// One admin-authorized GET per surface. Normalizes every outcome into a
-// state the AdminBoundary can render honestly: a missing endpoint (404/501/
-// 503) is "unavailable", never invented data.
+// One admin-authorized GET per surface, loaded through a function from
+// adapters/adminOps (pages never spell API paths; the adapter keeps the
+// bearer discipline). Normalizes every outcome into a state the
+// AdminBoundary can render honestly: a missing endpoint (404/501/503) is
+// "unavailable", never invented data. Loaders with parameters must be
+// identity-stable per parameter value (module-level, or useCallback keyed on
+// the parameter) so the resource refetches exactly when the parameter
+// changes.
 // ---------------------------------------------------------------------------
 
 export type AdminResourceState = "loading" | "ok" | "unauthorized" | "forbidden" | "unavailable" | "error";
@@ -123,7 +128,7 @@ export interface AdminResource<T> {
   reload: () => void;
 }
 
-export function useAdminResource<T>(token: string | null, path: string): AdminResource<T> {
+export function useAdminResource<T>(token: string | null, load: AdminLoader<T>): AdminResource<T> {
   const [state, setState] = useState<AdminResourceState>("loading");
   const [data, setData] = useState<T | null>(null);
   const [message, setMessage] = useState<string | undefined>(undefined);
@@ -134,7 +139,7 @@ export function useAdminResource<T>(token: string | null, path: string): AdminRe
     let alive = true;
     setState("loading");
     setMessage(undefined);
-    void apiGet<T>(path, token).then((result) => {
+    void load(token).then((result) => {
       if (!alive) return;
       if (result.kind === "ok") {
         setData(result.data);
@@ -154,7 +159,7 @@ export function useAdminResource<T>(token: string | null, path: string): AdminRe
     return () => {
       alive = false;
     };
-  }, [token, path, nonce]);
+  }, [token, load, nonce]);
 
   const reload = useCallback(() => setNonce((n) => n + 1), []);
   return { state, data, message, reload };

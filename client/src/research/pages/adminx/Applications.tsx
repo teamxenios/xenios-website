@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "wouter";
+import { listApplications } from "../../adapters/adminOps";
 import {
   ResearchDataTable,
   ResearchFilterBar,
@@ -56,10 +57,11 @@ function ApplicationsBody({ token }: { token: string }) {
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounced(search);
 
-  const resource = useAdminResource<{ ok: boolean; applications: AdminApplication[] }>(
-    token,
-    `/api/admin/research/applications?queue=${encodeURIComponent(queue)}`,
+  const loadQueue = useCallback(
+    (t: string) => listApplications<{ ok: boolean; applications: AdminApplication[] }>(t, queue),
+    [queue],
   );
+  const resource = useAdminResource(token, loadQueue);
 
   const filtered = useMemo(() => {
     const list = resource.data?.applications ?? [];

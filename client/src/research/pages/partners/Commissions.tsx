@@ -1,6 +1,7 @@
 import { useResearch, formatMoney } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchDataTable, ResearchRouteBoundary, ResearchStatusBadge, type BadgeTone } from "../../ui/kit";
+import { getPartnerCommissions } from "../../adapters/partner";
 import { PARTNER_PENDING_TITLE, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
@@ -57,7 +58,7 @@ const VOCABULARY: Array<{ term: string; definition: string }> = [
 export default function Commissions() {
   const { memberToken } = useResearch();
   const { state, errorMessage, data, reload } = usePartnerResource<CommissionsPayload>(
-    "/api/research/partner/commissions",
+    getPartnerCommissions,
     memberToken,
   );
 

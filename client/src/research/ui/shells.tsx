@@ -1,6 +1,5 @@
 import { type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import Wordmark from "@/components/Wordmark";
 import { MEMBER_ROUTES, PARTNER_ROUTES, ADMIN_ROUTES } from "../lib/routes";
 
 // ---------------------------------------------------------------------------
@@ -172,7 +171,7 @@ export function ResearchAdminShell({
           <span className="wordmark-mark" aria-hidden="true"></span>
           xenios <span className="text-ink-mute" style={{ fontWeight: 600 }}>research ops</span>
         </Link>
-        <Wordmark size="sm" />
+        <Link href="/" className="body-s text-ink-mute" style={{ textDecoration: "none" }}>Back to site</Link>
       </div>
       <SubNav items={ADMIN_SUBNAV} label="Research operations areas" />
       <PageHeader eyebrow="Operations" title={title} lead={lead} actions={actions} />

@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import { Link, useParams } from "wouter";
+import { getPartner } from "../../adapters/adminOps";
 import { ResearchStatusBadge, ResearchTimeline } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
@@ -43,10 +45,8 @@ export default function PartnerAdminDetail() {
 }
 
 function PartnerDetailBody({ token, id }: { token: string; id: string }) {
-  const resource = useAdminResource<{ ok: boolean; partner: PartnerDetail }>(
-    token,
-    `/api/admin/research/partners/${encodeURIComponent(id)}`,
-  );
+  const loadPartner = useCallback((t: string) => getPartner<{ ok: boolean; partner: PartnerDetail }>(t, id), [id]);
+  const resource = useAdminResource(token, loadPartner);
   return (
     <AdminBoundary
       state={resource.state}

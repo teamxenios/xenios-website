@@ -2,13 +2,8 @@ import { useState, type FormEvent } from "react";
 import { useResearch } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchDataTable, ResearchRouteBoundary, ResearchStatusBadge } from "../../ui/kit";
-import {
-  PARTNER_PENDING_TITLE,
-  PARTNER_SUPPORT_EMAIL,
-  submitPartnerRequest,
-  usePartnerResource,
-  type SubmitOutcome,
-} from "./shared";
+import { getPartnerCampaigns, requestCampaign, type SubmitOutcome } from "../../adapters/partner";
+import { PARTNER_PENDING_TITLE, PARTNER_SUPPORT_EMAIL, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
 // Partner campaigns (/research/partners/campaigns). A campaign is a planned
@@ -38,7 +33,7 @@ function statusTone(status?: string | null) {
 export default function Campaigns() {
   const { memberToken } = useResearch();
   const { state, errorMessage, data, reload } = usePartnerResource<CampaignsPayload>(
-    "/api/research/partner/campaigns",
+    getPartnerCampaigns,
     memberToken,
   );
 
@@ -57,8 +52,7 @@ export default function Campaigns() {
     }
     setValidation(null);
     setOutcome({ kind: "submitting" });
-    const result = await submitPartnerRequest(
-      "/api/research/partner/campaigns/request",
+    const result = await requestCampaign(
       { name: name.trim(), timeframe: timeframe.trim(), description: description.trim() },
       memberToken,
       UNAVAILABLE_MESSAGE,

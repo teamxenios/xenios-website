@@ -1,6 +1,7 @@
 import { useResearch } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchDataTable, ResearchRouteBoundary, ResearchSecureNotice } from "../../ui/kit";
+import { getPartnerLeads } from "../../adapters/partner";
 import { PARTNER_PENDING_TITLE, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
@@ -20,10 +21,7 @@ type LeadsPayload = { rows?: LeadAggregate[] };
 
 export default function Leads() {
   const { memberToken } = useResearch();
-  const { state, errorMessage, data, reload } = usePartnerResource<LeadsPayload>(
-    "/api/research/partner/leads",
-    memberToken,
-  );
+  const { state, errorMessage, data, reload } = usePartnerResource<LeadsPayload>(getPartnerLeads, memberToken);
 
   return (
     <ResearchPartnerShell

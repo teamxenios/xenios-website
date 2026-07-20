@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import { Link, useParams } from "wouter";
+import { getOrder } from "../../adapters/adminOps";
 import { ResearchDataTable, ResearchStatusBadge, ResearchTimeline } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
@@ -42,10 +44,8 @@ export default function OrderAdminDetail() {
 }
 
 function OrderDetailBody({ token, id }: { token: string; id: string }) {
-  const resource = useAdminResource<{ ok: boolean; order: AdminOrderDetail }>(
-    token,
-    `/api/admin/research/orders/${encodeURIComponent(id)}`,
-  );
+  const loadOrder = useCallback((t: string) => getOrder<{ ok: boolean; order: AdminOrderDetail }>(t, id), [id]);
+  const resource = useAdminResource(token, loadOrder);
   return (
     <AdminBoundary
       state={resource.state}

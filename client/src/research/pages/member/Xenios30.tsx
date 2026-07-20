@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useResearch } from "../../core";
-import { apiGet, apiPost, type ApiResult } from "../../lib/api";
+import { type ApiResult } from "../../lib/api";
+import { acknowledgeXenios30, getXenios30Plan } from "../../adapters/member";
 import {
   fetchCapabilities,
   type CapabilityStatus,
@@ -169,9 +170,8 @@ function AcknowledgeCard({
   const acknowledge = useCallback(async () => {
     setBusy(true);
     setNote(null);
-    const res: ApiResult<{ ok?: boolean; acknowledgedAt?: string }> = await apiPost(
-      "/api/research/member/plans/xenios-30/acknowledge",
-      { version: plan.version ?? null },
+    const res: ApiResult<{ ok?: boolean; acknowledgedAt?: string }> = await acknowledgeXenios30(
+      plan.version ?? null,
       memberToken,
     );
     if (res.kind === "ok") {
@@ -251,7 +251,7 @@ export default function Xenios30Page() {
     setResult(null);
     const [caps, res] = await Promise.all([
       fetchCapabilities(memberToken),
-      apiGet<Xenios30Envelope>("/api/research/member/plans/xenios-30", memberToken),
+      getXenios30Plan<Xenios30Envelope>(memberToken),
     ]);
     setStatuses(caps);
     setResult(res);

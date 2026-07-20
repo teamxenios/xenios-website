@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useResearch } from "../../core";
-import { apiGet, type ApiResult } from "../../lib/api";
+import { type ApiResult } from "../../lib/api";
+import { getBlueprint } from "../../adapters/member";
 import {
   fetchCapabilities,
   type CapabilityStatus,
@@ -445,7 +446,7 @@ export default function BlueprintPage() {
     setResult(null);
     const [caps, res] = await Promise.all([
       fetchCapabilities(memberToken),
-      apiGet<BlueprintEnvelope>("/api/research/member/blueprint", memberToken),
+      getBlueprint<BlueprintEnvelope>(memberToken),
     ]);
     setStatuses(caps);
     setResult(res);

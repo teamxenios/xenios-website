@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { apiPost } from "../../lib/api";
+import { actOnReferralFlag, listPartners, listReferralFraud, reportReferralFraud } from "../../adapters/adminOps";
 import {
   ResearchDataTable,
   ResearchFilterBar,
@@ -75,7 +75,7 @@ function PartnersBody({ token }: { token: string }) {
 function PartnerRoster({ token }: { token: string }) {
   const [search, setSearch] = useState("");
   const debounced = useDebounced(search);
-  const resource = useAdminResource<{ ok: boolean; partners: PartnerRow[] }>(token, "/api/admin/research/partners");
+  const resource = useAdminResource<{ ok: boolean; partners: PartnerRow[] }>(token, listPartners);
 
   const filtered = useMemo(() => {
     const list = resource.data?.partners ?? [];
@@ -140,10 +140,11 @@ function PartnerRoster({ token }: { token: string }) {
 
 function FraudQueue({ token }: { token: string }) {
   const [status, setStatus] = useState("open");
-  const resource = useAdminResource<{ ok: boolean; flags: FraudFlag[]; actions: string[] }>(
-    token,
-    `/api/admin/research/referral-fraud?status=${encodeURIComponent(status)}`,
+  const loadFraudQueue = useCallback(
+    (t: string) => listReferralFraud<{ ok: boolean; flags: FraudFlag[]; actions: string[] }>(t, status),
+    [status],
   );
+  const resource = useAdminResource(token, loadFraudQueue);
 
   return (
     <section aria-label="Referral fraud review">
@@ -206,11 +207,7 @@ function FraudFlagCard({
     if (!action || reason.trim().length < 5 || busy) return;
     setBusy(true);
     setError(null);
-    const result = await apiPost<{ ok: boolean }>(
-      `/api/admin/research/referral-fraud/${encodeURIComponent(flag.id)}/action`,
-      { action, reason: reason.trim() },
-      token,
-    );
+    const result = await actOnReferralFlag<{ ok: boolean }>(token, flag.id, { action, reason: reason.trim() });
     setBusy(false);
     if (result.kind === "ok") {
       onChanged();
@@ -309,7 +306,7 @@ function ManualReportForm({ token, onReported }: { token: string; onReported: ()
     setMessage(null);
     const body: Record<string, unknown> = { detail: detail.trim() };
     if (applicationId.trim()) body.applicationId = applicationId.trim();
-    const result = await apiPost<{ ok: boolean; flagId: string }>("/api/admin/research/referral-fraud/report", body, token);
+    const result = await reportReferralFraud<{ ok: boolean; flagId: string }>(token, body);
     setBusy(false);
     if (result.kind === "ok") {
       setDetail("");

@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import { Link, useParams } from "wouter";
+import { getProduct } from "../../adapters/adminOps";
 import { ResearchStatusBadge, ResearchTimeline } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
@@ -44,10 +46,11 @@ export default function ProductAdminDetail() {
 }
 
 function ProductDetailBody({ token, id }: { token: string; id: string }) {
-  const resource = useAdminResource<{ ok: boolean; product: AdminProductDetail }>(
-    token,
-    `/api/admin/research/products/${encodeURIComponent(id)}`,
+  const loadProduct = useCallback(
+    (t: string) => getProduct<{ ok: boolean; product: AdminProductDetail }>(t, id),
+    [id],
   );
+  const resource = useAdminResource(token, loadProduct);
   return (
     <AdminBoundary
       state={resource.state}

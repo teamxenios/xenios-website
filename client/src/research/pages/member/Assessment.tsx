@@ -12,7 +12,8 @@ import {
   capabilityStatusOrPending,
   useDebounced,
 } from "../../ui/kit";
-import { apiGet, apiPost, type ApiResult } from "../../lib/api";
+import { type ApiResult } from "../../lib/api";
+import { getAssessment, submitAssessment } from "../../adapters/member";
 import {
   fetchCapabilities,
   type CapabilityStatus,
@@ -592,7 +593,7 @@ export default function Assessment() {
   const [serverState, setServerState] = useState<ApiResult<AssessmentServerState> | null>(null);
   useEffect(() => {
     let cancelled = false;
-    void apiGet<AssessmentServerState>("/api/research/member/assessment", memberToken).then((res) => {
+    void getAssessment<AssessmentServerState>(memberToken).then((res) => {
       if (!cancelled) setServerState(res);
     });
     return () => {
@@ -647,11 +648,7 @@ export default function Assessment() {
 
   const doSubmit = useCallback(async () => {
     setSubmit({ phase: "submitting" });
-    const res = await apiPost<{ ok?: boolean }>(
-      "/api/research/member/assessment",
-      { mode, answers },
-      memberToken,
-    );
+    const res = await submitAssessment({ mode, answers }, memberToken);
     if (res.kind === "ok") {
       // The server has the answers; the local draft has done its job.
       clearDraft();

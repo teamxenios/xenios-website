@@ -12,7 +12,7 @@ import {
   type BadgeTone,
 } from "../../ui/kit";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
-import { apiPost } from "../../lib/api";
+import { joinWaitlist as joinWaitlistRequest } from "../../adapters/commerce";
 import { MEMBER_ROUTES } from "../../lib/routes";
 
 // Member product detail (Supreme build). Every fact on this page comes from
@@ -81,7 +81,7 @@ export default function ProductPage() {
 
   const joinWaitlist = async () => {
     setWaitlist("busy");
-    const result = await apiPost<{ ok: boolean }>("/api/research/member/waitlist", { slug }, memberToken);
+    const result = await joinWaitlistRequest(slug, memberToken);
     if (result.kind === "ok") setWaitlist("joined");
     else if (result.kind === "unavailable") setWaitlist("unavailable");
     else setWaitlist("error");

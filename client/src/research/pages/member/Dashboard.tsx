@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { useResearch } from "../../core";
 import { ResearchMemberShell } from "../../ui/shells";
 import { ResearchRouteBoundary, ResearchStatusBadge, capabilityStatusOrPending } from "../../ui/kit";
-import { apiGet } from "../../lib/api";
+import { getMemberOverview } from "../../adapters/member";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { devFixture } from "../../lib/fixtures";
 import { MEMBER_ROUTES } from "../../lib/routes";
@@ -158,7 +158,7 @@ export default function MemberDashboard() {
     if (!member || !memberToken) return;
     let alive = true;
     (async () => {
-      const res = await apiGet<MemberOverview>("/api/research/member/overview", memberToken);
+      const res = await getMemberOverview<MemberOverview>(memberToken);
       if (!alive) return;
       if (res.kind === "ok") {
         setOverview(res.data);

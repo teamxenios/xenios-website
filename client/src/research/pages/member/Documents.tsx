@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useResearch } from "../../core";
-import { apiGet } from "../../lib/api";
+import { getDocuments } from "../../adapters/member";
 import { devFixture } from "../../lib/fixtures";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
@@ -112,7 +112,7 @@ export default function Documents() {
   const load = useCallback(async () => {
     setState("loading");
     setErrorMessage(undefined);
-    const result = await apiGet<DocumentsPayload>("/api/research/member/documents", memberToken);
+    const result = await getDocuments<DocumentsPayload>(memberToken);
     if (result.kind === "ok") {
       setDocuments(normalizeDocuments(result.data));
       setSource("server");

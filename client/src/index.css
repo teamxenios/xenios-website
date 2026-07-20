@@ -211,7 +211,7 @@ body {
 /* ============================================================
    Wordmark (the V mark plus lowercase xenios logotype)
 ============================================================ */
-.wordmark {
+.wordmark { text-decoration: none;
   font-family: 'Inter Tight', system-ui, sans-serif;
   font-weight: 900;
   letter-spacing: -0.04em;
@@ -1093,3 +1093,15 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .research-app * { transition: none !important; animation: none !important; }
 }
+.research-app a.chip, .research-app .card a.btn, a.chip { text-decoration: none; }
+/* Research link + shell consistency repairs (vision-review round) */
+.research-app a.chip { color: var(--ink); }
+.research-app .card a:not(.btn), .research-app main p a:not(.btn) { color: var(--pulse); }
+.ra-badge { white-space: nowrap; flex: none; }
+.ra-admin, .ra-admin * { font-family: 'Inter Tight', system-ui, -apple-system, sans-serif; }
+.ra-admin .mono-label, .ra-admin .mono-cap, .ra-admin .ra-badge { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+@media (max-width: 640px) {
+  .ra-subnav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
+  .ra-subnav-link { padding: 12px 2px; white-space: nowrap; }
+}
+a.wordmark { text-decoration: none !important; }

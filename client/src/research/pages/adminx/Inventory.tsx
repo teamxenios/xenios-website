@@ -8,6 +8,7 @@ import {
   useDebounced,
 } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
+import { listInventory } from "../../adapters/adminOps";
 import { fmtDate, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 
@@ -41,7 +42,7 @@ export default function Inventory() {
 function InventoryBody({ token }: { token: string }) {
   const [search, setSearch] = useState("");
   const debounced = useDebounced(search);
-  const resource = useAdminResource<{ ok: boolean; inventory: InventoryRow[] }>(token, "/api/admin/research/inventory");
+  const resource = useAdminResource<{ ok: boolean; inventory: InventoryRow[] }>(token, listInventory);
 
   const filtered = useMemo(() => {
     const list = resource.data?.inventory ?? [];

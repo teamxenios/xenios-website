@@ -8,7 +8,7 @@ import {
   ResearchRouteBoundary,
   ResearchStatusBadge,
 } from "../../ui/kit";
-import { apiGet } from "../../lib/api";
+import { getSecuritySessions } from "../../adapters/member";
 import { devFixture } from "../../lib/fixtures";
 import { ACCESS_ROUTES } from "../../lib/routes";
 
@@ -41,7 +41,7 @@ export default function SecurityPage() {
     if (!member || !memberToken) return;
     let alive = true;
     (async () => {
-      const res = await apiGet<{ sessions: SessionInfo[] }>("/api/research/member/security/sessions", memberToken);
+      const res = await getSecuritySessions<{ sessions: SessionInfo[] }>(memberToken);
       if (!alive) return;
       if (res.kind === "ok") {
         setSessions(res.data.sessions ?? []);

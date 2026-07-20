@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "wouter";
 import { useResearch } from "../../core";
-import { apiGet, apiPost } from "../../lib/api";
+import { fetchSubscriptions, subscriptionAction } from "../../adapters/commerce";
 import { devFixture } from "../../lib/fixtures";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { MEMBER_ROUTES } from "../../lib/routes";
@@ -349,7 +349,7 @@ export default function SubscriptionsPage() {
   const load = useCallback(async () => {
     setState("loading");
     setErrorMessage(undefined);
-    const result = await apiGet<SubscriptionsPayload>("/api/research/member/subscriptions", memberToken);
+    const result = await fetchSubscriptions<SubscriptionsPayload>(memberToken);
     if (result.kind === "ok") {
       setSubscriptions(normalizeSubscriptions(result.data));
       setSource("server");
@@ -400,11 +400,7 @@ export default function SubscriptionsPage() {
     async (subId: string, action: string, body: unknown, successText: string) => {
       setBusyId(subId);
       setNotice(null);
-      const result = await apiPost<unknown>(
-        `/api/research/member/subscriptions/${encodeURIComponent(subId)}/${action}`,
-        body,
-        memberToken,
-      );
+      const result = await subscriptionAction<unknown>(subId, action, body, memberToken);
       setBusyId(null);
       if (result.kind === "ok") {
         setNotice({ kind: "success", text: successText });

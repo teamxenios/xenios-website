@@ -11,7 +11,14 @@ import {
   ResearchStatusBadge,
   capabilityStatusOrPending,
 } from "../../ui/kit";
-import { apiGet, apiPost } from "../../lib/api";
+import { type ApiResult } from "../../lib/api";
+import {
+  getPrivacySummary,
+  requestPrivacyCorrection,
+  requestPrivacyDeletion,
+  requestPrivacyExport,
+  type PrivacyRequestResult,
+} from "../../adapters/member";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { devFixture } from "../../lib/fixtures";
 
@@ -95,7 +102,7 @@ export default function PrivacyControls() {
     if (!member || !memberToken) return;
     let alive = true;
     (async () => {
-      const res = await apiGet<PrivacySummary>("/api/research/member/privacy/summary", memberToken);
+      const res = await getPrivacySummary<PrivacySummary>(memberToken);
       if (!alive) return;
       if (res.kind === "ok") {
         setSummary(res.data);
@@ -120,13 +127,12 @@ export default function PrivacyControls() {
   }, [member, memberToken]);
 
   async function runRequest(
-    path: string,
-    body: unknown,
+    send: (token: string) => Promise<ApiResult<PrivacyRequestResult>>,
     setState: (s: RequestState) => void,
   ): Promise<void> {
     if (!memberToken) return;
     setState({ phase: "busy" });
-    const res = await apiPost<{ ok: boolean; message?: string }>(path, body, memberToken);
+    const res = await send(memberToken);
     if (res.kind === "ok") {
       setState({ phase: "done" });
     } else if (res.kind === "unavailable") {
@@ -149,7 +155,7 @@ export default function PrivacyControls() {
       return;
     }
     setCorrectionMissing(false);
-    void runRequest("/api/research/member/privacy/correction", { detail }, setCorrectionState);
+    void runRequest((token) => requestPrivacyCorrection(detail, token), setCorrectionState);
   }
 
   const mediaStatus = capabilityStatusOrPending(capabilities, "private_media");
@@ -191,7 +197,7 @@ export default function PrivacyControls() {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() => void runRequest("/api/research/member/privacy/export", {}, setExportState)}
+                  onClick={() => void runRequest((token) => requestPrivacyExport(token), setExportState)}
                   disabled={exportState.phase === "busy"}
                 >
                   {exportState.phase === "busy" ? "Requesting..." : "Request export"}
@@ -275,7 +281,7 @@ export default function PrivacyControls() {
           confirmLabel="Yes, request deletion"
           onConfirm={() => {
             setDeletionConfirming(false);
-            void runRequest("/api/research/member/privacy/deletion", {}, setDeletionState);
+            void runRequest((token) => requestPrivacyDeletion(token), setDeletionState);
           }}
           onCancel={() => setDeletionConfirming(false)}
           body={

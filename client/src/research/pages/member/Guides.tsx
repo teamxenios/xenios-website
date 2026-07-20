@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link } from "wouter";
 import { useResearch } from "../../core";
-import { apiGet, apiPost } from "../../lib/api";
+import { fetchGuides, requestGuideTopic } from "../../adapters/guides";
 import { devFixture } from "../../lib/fixtures";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
@@ -160,8 +160,7 @@ function TopicRequestForm({ token }: { token: string | null }) {
     }
     setStatus("sending");
     setMessage(undefined);
-    const result = await apiPost<{ ok?: boolean }>(
-      "/api/research/member/guide-topic-requests",
+    const result = await requestGuideTopic<{ ok?: boolean }>(
       { topic: trimmed, detail: detail.trim() || undefined },
       token,
     );
@@ -362,7 +361,7 @@ export default function Guides() {
   const load = useCallback(async () => {
     setMode("loading");
     setErrorMessage(undefined);
-    const result = await apiGet<GuidesPayload>("/api/research/member/guides", memberToken);
+    const result = await fetchGuides<GuidesPayload>(memberToken);
     if (result.kind === "ok") {
       setGuides(normalizeGuides(result.data));
       setRequested(normalizeRequested(result.data));

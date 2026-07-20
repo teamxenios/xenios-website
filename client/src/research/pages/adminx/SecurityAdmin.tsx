@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link } from "wouter";
-import { apiPost } from "../../lib/api";
+import { getSystemStatus, listOutbox, retryOutboxItem, runOutbox, sendTestEmail } from "../../adapters/adminOps";
 import {
   ResearchConfirmation,
   ResearchDataTable,
@@ -82,7 +82,7 @@ function SecurityBody({ token }: { token: string }) {
 }
 
 function SystemStatusPanel({ token }: { token: string }) {
-  const resource = useAdminResource<{ ok: boolean; system: SystemStatus }>(token, "/api/admin/research/system-status");
+  const resource = useAdminResource<{ ok: boolean; system: SystemStatus }>(token, getSystemStatus);
   return (
     <section aria-label="System status">
       <h2 className="body-l font-700 mb-4">System status</h2>
@@ -147,10 +147,11 @@ function SystemStatusPanel({ token }: { token: string }) {
 
 function OutboxPanel({ token }: { token: string }) {
   const [filter, setFilter] = useState("");
-  const resource = useAdminResource<{ ok: boolean; outbox: OutboxRow[] }>(
-    token,
-    `/api/admin/research/outbox${filter ? `?status=${encodeURIComponent(filter)}` : ""}`,
+  const loadOutbox = useCallback(
+    (t: string) => listOutbox<{ ok: boolean; outbox: OutboxRow[] }>(t, filter || undefined),
+    [filter],
   );
+  const resource = useAdminResource(token, loadOutbox);
   const [drainOpen, setDrainOpen] = useState(false);
   const [retryTarget, setRetryTarget] = useState<OutboxRow | null>(null);
   const [busy, setBusy] = useState(false);
@@ -159,11 +160,7 @@ function OutboxPanel({ token }: { token: string }) {
   const drain = async () => {
     setBusy(true);
     setMessage(null);
-    const result = await apiPost<{ ok: boolean; summary?: Record<string, number> }>(
-      "/api/admin/research/outbox/run",
-      {},
-      token,
-    );
+    const result = await runOutbox<{ ok: boolean; summary?: Record<string, number> }>(token);
     setBusy(false);
     setDrainOpen(false);
     if (result.kind === "ok") {
@@ -189,11 +186,7 @@ function OutboxPanel({ token }: { token: string }) {
     if (!retryTarget) return;
     setBusy(true);
     setMessage(null);
-    const result = await apiPost<{ ok: boolean }>(
-      `/api/admin/research/outbox/${encodeURIComponent(retryTarget.id)}/retry`,
-      {},
-      token,
-    );
+    const result = await retryOutboxItem<{ ok: boolean }>(token, retryTarget.id);
     setBusy(false);
     setRetryTarget(null);
     if (result.kind === "ok") {
@@ -323,11 +316,7 @@ function TestEmailPanel({ token }: { token: string }) {
     if (busy || !to.trim()) return;
     setBusy(true);
     setMessage(null);
-    const result = await apiPost<{ ok: boolean; message?: string }>(
-      "/api/admin/research/test-email",
-      { to: to.trim() },
-      token,
-    );
+    const result = await sendTestEmail<{ ok: boolean; message?: string }>(token, { to: to.trim() });
     setBusy(false);
     if (result.kind === "ok") {
       setMessage(result.data.message ?? "Test email handed to the provider.");

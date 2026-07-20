@@ -37,6 +37,12 @@ async function request<T>(method: string, path: string, body: unknown, token?: s
       return { kind: "forbidden", message: b?.message };
     }
     if (res.status === 404 || res.status === 501 || res.status === 503) return { kind: "unavailable" };
+    // An unpublished API path falls through to the SPA catch-all and returns
+    // the app shell as HTML with 200 (dev AND production). That is an
+    // unpublished endpoint, not an error: report unavailable so pages render
+    // their designed pending states.
+    const contentType = res.headers.get("content-type") ?? "";
+    if (res.ok && !contentType.includes("application/json")) return { kind: "unavailable" };
     const parsed = await res.json().catch(() => null);
     if (!res.ok || parsed === null) {
       return { kind: "error", message: parsed?.message ?? "Something went wrong. Please try again." };

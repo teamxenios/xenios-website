@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import { Link, useParams } from "wouter";
+import { getPlan } from "../../adapters/adminOps";
 import { ResearchStatusBadge, ResearchTimeline } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
@@ -41,10 +43,8 @@ export default function PlanDetail() {
 }
 
 function PlanDetailBody({ token, id }: { token: string; id: string }) {
-  const resource = useAdminResource<{ ok: boolean; plan: AdminPlanDetail }>(
-    token,
-    `/api/admin/research/plans/${encodeURIComponent(id)}`,
-  );
+  const loadPlan = useCallback((t: string) => getPlan<{ ok: boolean; plan: AdminPlanDetail }>(t, id), [id]);
+  const resource = useAdminResource(token, loadPlan);
   return (
     <AdminBoundary
       state={resource.state}

@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import { Link, useParams } from "wouter";
+import { getGuide } from "../../adapters/adminOps";
 import { ResearchStatusBadge, ResearchTimeline } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
@@ -41,10 +43,8 @@ export default function GuideAdminDetail() {
 }
 
 function GuideDetailBody({ token, id }: { token: string; id: string }) {
-  const resource = useAdminResource<{ ok: boolean; guide: AdminGuideDetail }>(
-    token,
-    `/api/admin/research/guides/${encodeURIComponent(id)}`,
-  );
+  const loadGuide = useCallback((t: string) => getGuide<{ ok: boolean; guide: AdminGuideDetail }>(t, id), [id]);
+  const resource = useAdminResource(token, loadGuide);
   return (
     <AdminBoundary
       state={resource.state}

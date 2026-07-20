@@ -2,6 +2,7 @@ import { useResearch } from "../../core";
 import { formatMoney } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchMetricCard, ResearchRouteBoundary, ResearchSecureNotice, ResearchTimeline } from "../../ui/kit";
+import { getPartnerDashboard } from "../../adapters/partner";
 import { usePartnerResource, type BoundaryState } from "./shared";
 
 // ---------------------------------------------------------------------------
@@ -27,7 +28,7 @@ const PENDING_SUMMARY = "Appears when tracking begins.";
 export default function Dashboard() {
   const { memberToken } = useResearch();
   const { state, errorMessage, data, reload } = usePartnerResource<DashboardPayload>(
-    "/api/research/partner/dashboard",
+    getPartnerDashboard,
     memberToken,
   );
 

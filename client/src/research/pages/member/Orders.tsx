@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { useResearch } from "../../core";
-import { apiGet } from "../../lib/api";
+import { fetchOrders } from "../../adapters/commerce";
 import { devFixture } from "../../lib/fixtures";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { MEMBER_ROUTES } from "../../lib/routes";
@@ -184,7 +184,7 @@ export default function Orders() {
   const load = useCallback(async () => {
     setState("loading");
     setErrorMessage(undefined);
-    const result = await apiGet<OrdersPayload>("/api/research/member/orders", memberToken);
+    const result = await fetchOrders<OrdersPayload>(memberToken);
     if (result.kind === "ok") {
       setOrders(normalizeOrders(result.data));
       setSource("server");

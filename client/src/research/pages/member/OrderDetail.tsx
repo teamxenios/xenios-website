@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
 import { useResearch } from "../../core";
-import { apiGet } from "../../lib/api";
+import { fetchOrder } from "../../adapters/commerce";
 import { devFixture } from "../../lib/fixtures";
 import { ACCESS_ROUTES, MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
@@ -205,10 +205,7 @@ export default function OrderDetail() {
     }
     setState("loading");
     setErrorMessage(undefined);
-    const result = await apiGet<OrderPayload>(
-      `/api/research/member/orders/${encodeURIComponent(orderId)}`,
-      memberToken,
-    );
+    const result = await fetchOrder<OrderPayload>(orderId, memberToken);
     if (result.kind === "ok") {
       const normalized = normalizeOrder(result.data);
       if (normalized) {

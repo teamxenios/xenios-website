@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "wouter";
+import { listQuestions } from "../../adapters/adminOps";
 import {
   ResearchDataTable,
   ResearchFilterBar,
@@ -56,10 +57,11 @@ function QuestionsBody({ token }: { token: string }) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const debounced = useDebounced(search);
-  const resource = useAdminResource<{ ok: boolean; questions: AdminQuestionRow[] }>(
-    token,
-    `/api/admin/research/questions?status=${encodeURIComponent(queue === "all" ? "" : queue)}`,
+  const loadQuestionsQueue = useCallback(
+    (t: string) => listQuestions<{ ok: boolean; questions: AdminQuestionRow[] }>(t, queue === "all" ? "" : queue),
+    [queue],
   );
+  const resource = useAdminResource(token, loadQuestionsQueue);
 
   const filtered = useMemo(() => {
     const list = resource.data?.questions ?? [];

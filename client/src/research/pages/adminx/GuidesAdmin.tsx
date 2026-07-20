@@ -9,6 +9,7 @@ import {
   useDebounced,
 } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
+import { listGuides } from "../../adapters/adminOps";
 import { fmtDate, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 
@@ -42,7 +43,7 @@ export default function GuidesAdmin() {
 function GuidesBody({ token }: { token: string }) {
   const [search, setSearch] = useState("");
   const debounced = useDebounced(search);
-  const resource = useAdminResource<{ ok: boolean; guides: AdminGuideRow[] }>(token, "/api/admin/research/guides");
+  const resource = useAdminResource<{ ok: boolean; guides: AdminGuideRow[] }>(token, listGuides);
 
   const filtered = useMemo(() => {
     const list = resource.data?.guides ?? [];

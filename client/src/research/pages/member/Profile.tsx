@@ -7,7 +7,8 @@ import {
   ResearchSecureNotice,
   ResearchStatusBadge,
 } from "../../ui/kit";
-import { apiGet, type ApiResult } from "../../lib/api";
+import { type ApiResult } from "../../lib/api";
+import { getProfile } from "../../adapters/member";
 import { devFixture } from "../../lib/fixtures";
 import { MEMBER_ROUTES } from "../../lib/routes";
 
@@ -348,7 +349,7 @@ export default function Profile() {
 
   const load = useCallback(async () => {
     setResult(null);
-    const res = await apiGet<ProfileResponse>("/api/research/member/profile", memberToken);
+    const res = await getProfile<ProfileResponse>(memberToken);
     setResult(res);
   }, [memberToken]);
 

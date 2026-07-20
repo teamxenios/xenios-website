@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import { Link, useParams } from "wouter";
+import { getMember } from "../../adapters/adminOps";
 import { ResearchSecureNotice, ResearchStatusBadge, ResearchTimeline } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
@@ -44,10 +46,8 @@ export default function MemberDetail() {
 }
 
 function MemberDetailBody({ token, id }: { token: string; id: string }) {
-  const resource = useAdminResource<{ ok: boolean; member: AdminMemberDetail }>(
-    token,
-    `/api/admin/research/members/${encodeURIComponent(id)}`,
-  );
+  const loadMember = useCallback((t: string) => getMember<{ ok: boolean; member: AdminMemberDetail }>(t, id), [id]);
+  const resource = useAdminResource(token, loadMember);
 
   return (
     <div className="grid gap-6">

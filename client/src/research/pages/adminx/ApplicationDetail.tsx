@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
-import { apiGet, apiPost } from "../../lib/api";
+import { getApplication, postApplicationAction } from "../../adapters/adminOps";
 import {
   ResearchConfirmation,
   ResearchEmptyState,
@@ -68,10 +68,7 @@ function DetailBody({ token, id }: { token: string; id: string }) {
 
   const load = useCallback(() => {
     setState({ kind: "loading" });
-    void apiGet<{ ok: boolean; application: AdminApplication; events: AdminEvent[] }>(
-      `/api/admin/research/applications/${encodeURIComponent(id)}`,
-      token,
-    ).then((result) => {
+    void getApplication<{ ok: boolean; application: AdminApplication; events: AdminEvent[] }>(token, id).then((result) => {
       if (result.kind === "ok") {
         setState({ kind: "ok", application: result.data.application, events: result.data.events ?? [] });
       } else if (result.kind === "unavailable") {
@@ -93,11 +90,7 @@ function DetailBody({ token, id }: { token: string; id: string }) {
       if (busy) return false;
       setBusy(true);
       setActionError(null);
-      const result = await apiPost<{ ok: boolean }>(
-        `/api/admin/research/applications/${encodeURIComponent(id)}/${path}`,
-        body ?? {},
-        token,
-      );
+      const result = await postApplicationAction<{ ok: boolean }>(token, id, path, body ?? {});
       setBusy(false);
       if (result.kind === "ok") {
         load();

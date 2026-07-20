@@ -3,6 +3,7 @@ import { useResearch } from "../../core";
 import { PARTNER_ROUTES } from "../../lib/routes";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchDocumentCard, ResearchEmptyState, ResearchRouteBoundary, ResearchStatusBadge } from "../../ui/kit";
+import { getPartnerResources } from "../../adapters/partner";
 import { PARTNER_PENDING_TITLE, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
@@ -26,7 +27,7 @@ type ResourcesPayload = { assets?: ApprovedAsset[] };
 export default function Resources() {
   const { memberToken } = useResearch();
   const { state, errorMessage, data, reload } = usePartnerResource<ResourcesPayload>(
-    "/api/research/partner/resources",
+    getPartnerResources,
     memberToken,
   );
 

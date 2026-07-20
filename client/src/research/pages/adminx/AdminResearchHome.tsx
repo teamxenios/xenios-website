@@ -1,5 +1,6 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "wouter";
+import { getSystemStatus, listApplications, listReferralFraud } from "../../adapters/adminOps";
 import { ResearchAdminShell } from "../../ui/shells";
 import {
   ResearchEmptyState,
@@ -252,16 +253,16 @@ export default function AdminResearchHome() {
   );
 }
 
+// Module-level loaders so the resource identity is stable across renders
+// (the overview always reads the full queue and the open flags).
+const loadAllApplications = (t: string) =>
+  listApplications<{ ok: boolean; applications: AdminApplication[] }>(t, "all");
+const loadOpenFraudFlags = (t: string) => listReferralFraud<{ ok: boolean; flags: Array<{ id: string }> }>(t, "open");
+
 function OverviewBody({ token }: { token: string }) {
-  const apps = useAdminResource<{ ok: boolean; applications: AdminApplication[] }>(
-    token,
-    "/api/admin/research/applications?queue=all",
-  );
-  const system = useAdminResource<{ ok: boolean; system: SystemStatus }>(token, "/api/admin/research/system-status");
-  const fraud = useAdminResource<{ ok: boolean; flags: Array<{ id: string }> }>(
-    token,
-    "/api/admin/research/referral-fraud?status=open",
-  );
+  const apps = useAdminResource(token, loadAllApplications);
+  const system = useAdminResource<{ ok: boolean; system: SystemStatus }>(token, getSystemStatus);
+  const fraud = useAdminResource(token, loadOpenFraudFlags);
 
   return (
     <div className="grid gap-8">

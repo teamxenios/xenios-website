@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatMoney, useResearch } from "../../core";
-import { apiGet } from "../../lib/api";
+import { fetchReferrals } from "../../adapters/guides";
 import {
   fetchCapabilities,
   statusFor,
@@ -97,7 +97,7 @@ export default function ReferralsUpgrade() {
   const load = useCallback(async () => {
     setPageState("loading");
     setPageError(undefined);
-    const result = await apiGet<Partial<ReferralSummary>>("/api/research/member/referrals", memberToken);
+    const result = await fetchReferrals<Partial<ReferralSummary>>(memberToken);
     if (result.kind === "ok") {
       setSummary(normalizeSummary(result.data));
       setIsFixture(false);

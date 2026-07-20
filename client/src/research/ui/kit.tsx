@@ -19,10 +19,13 @@ export function ResearchLoadingState({ label = "Loading" }: { label?: string }) 
 }
 
 export function ResearchErrorState({ message, onRetry }: { message?: string; onRetry?: () => void }) {
+  // Never repeat the heading: a message that merely restates it falls back to
+  // the actionable default line.
+  const body = message && !/^something went wrong/i.test(message.trim()) ? message : undefined;
   return (
     <div role="alert" className="ra-state" data-testid="ra-error">
       <p className="body-m font-700">Something went wrong.</p>
-      <p className="body-s text-ink-2 mt-2">{message ?? "Please try again. If it keeps happening, contact support."}</p>
+      <p className="body-s text-ink-2 mt-2">{body ?? "Please try again. If it keeps happening, contact support."}</p>
       <div className="mt-4 flex gap-3">
         {onRetry && (
           <button type="button" className="btn btn-secondary" onClick={onRetry}>
@@ -45,10 +48,76 @@ export function ResearchEmptyState({ title, body, action }: { title: string; bod
   );
 }
 
+// Distinct, intentional pending vocabularies: the same generic panel
+// everywhere reads as unfinished. Each kind carries its own eyebrow, tone,
+// and framing so a pending state feels designed, not absent.
+export type PendingKind =
+  | "not_configured"
+  | "credentials_pending"
+  | "samuel_review_pending"
+  | "coming_soon"
+  | "supplier_pending"
+  | "unavailable"
+  | "empty";
+
+const PENDING_PRESENTATION: Record<PendingKind, { eyebrow: string; tone: BadgeTone; badge: string }> = {
+  not_configured: { eyebrow: "Being configured", tone: "pending", badge: "In setup" },
+  credentials_pending: { eyebrow: "Provider connection pending", tone: "pending", badge: "Connecting" },
+  samuel_review_pending: { eyebrow: "With the review team", tone: "info", badge: "In review" },
+  coming_soon: { eyebrow: "Coming soon", tone: "info", badge: "Planned" },
+  supplier_pending: { eyebrow: "Supplier confirmation pending", tone: "warning", badge: "Awaiting documentation" },
+  unavailable: { eyebrow: "Temporarily unavailable", tone: "warning", badge: "Unavailable" },
+  empty: { eyebrow: "Nothing here yet", tone: "neutral", badge: "Empty" },
+};
+
+export function ResearchPendingPanel({
+  kind,
+  title,
+  body,
+  action,
+  testid,
+}: {
+  kind: PendingKind;
+  title?: string;
+  body: string;
+  action?: ReactNode;
+  testid?: string;
+}) {
+  const p = PENDING_PRESENTATION[kind];
+  return (
+    <section role="status" aria-live="polite" className={`card ra-pending ra-pending-${kind}`} data-testid={testid ?? `ra-pending-${kind}`}>
+      <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
+        <p className="mono-label text-ink-mute">{p.eyebrow}</p>
+        <ResearchStatusBadge label={p.badge} tone={p.tone} />
+      </div>
+      {title && <p className="body-m font-700 mt-2">{title}</p>}
+      <p className="body-s text-ink-2 mt-2 max-w-[56ch]">{body}</p>
+      {action && <div className="mt-4">{action}</div>}
+    </section>
+  );
+}
+
+function pendingKindForState(state: CapabilityStatus["state"]): PendingKind {
+  switch (state) {
+    case "pending_credentials":
+      return "credentials_pending";
+    case "pending_approval":
+      return "samuel_review_pending";
+    case "pending_supplier_data":
+      return "supplier_pending";
+    case "misconfigured":
+      return "unavailable";
+    case "disabled":
+      return "coming_soon";
+    default:
+      return "not_configured";
+  }
+}
+
 // The reusable capability boundary: enabled renders children; anything else
-// renders a calm, truthful pending panel. Member copy stays minimal; admin
-// surfaces may pass showAdminDetail to name missing configuration (names,
-// never values).
+// renders the DISTINCT pending panel for its state. Member copy stays
+// minimal; admin surfaces may pass showAdminDetail to name missing
+// configuration (names, never values).
 export function ResearchCapabilityBoundary({
   status,
   children,
@@ -59,9 +128,14 @@ export function ResearchCapabilityBoundary({
   showAdminDetail?: boolean;
 }) {
   if (status.state === "enabled") return <>{children}</>;
+  const kind = pendingKindForState(status.state);
+  const p = PENDING_PRESENTATION[kind];
   return (
-    <section role="status" aria-live="polite" className="card ra-capability" data-testid={`ra-capability-${status.capability}`}>
-      <p className="mono-label text-ink-mute">Not available yet</p>
+    <section role="status" aria-live="polite" className={`card ra-capability ra-pending-${kind}`} data-testid={`ra-capability-${status.capability}`}>
+      <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
+        <p className="mono-label text-ink-mute">{p.eyebrow}</p>
+        <ResearchStatusBadge label={p.badge} tone={p.tone} />
+      </div>
       <p className="body-m text-ink-2 mt-2 max-w-[56ch]">{status.publicMessage}</p>
       {showAdminDetail && (
         <div className="mt-3 body-s text-ink-mute">

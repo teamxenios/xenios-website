@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useResearch } from "../../core";
-import { apiPost } from "../../lib/api";
+import { logTrackerEntry, requestTrackerDeletion, requestTrackerExport } from "../../adapters/tracker";
 import {
   fetchCapabilities,
   statusFor,
@@ -238,8 +238,7 @@ function LogPanel({ token }: { token: string | null }) {
     }
     setBusy(true);
     setFeedback(null);
-    const result = await apiPost<{ logged?: boolean }>(
-      "/api/research/member/tracker/log",
+    const result = await logTrackerEntry(
       {
         sleepHours: sleep,
         energy: draft.energy,
@@ -579,11 +578,7 @@ function PrivacyPanel({ token }: { token: string | null }) {
   const requestExport = async () => {
     setExportBusy(true);
     setExportMessage(null);
-    const result = await apiPost<{ requested?: boolean }>(
-      "/api/research/member/tracker/export-request",
-      { requestedAt: new Date().toISOString() },
-      token,
-    );
+    const result = await requestTrackerExport(new Date().toISOString(), token);
     setExportBusy(false);
     if (result.kind === "ok") {
       setExportMessage("Export requested. The research team will prepare your data and contact you when it is ready.");
@@ -601,11 +596,7 @@ function PrivacyPanel({ token }: { token: string | null }) {
   const requestDeletion = async () => {
     setDeleteBusy(true);
     setDeleteMessage(null);
-    const result = await apiPost<{ requested?: boolean }>(
-      "/api/research/member/tracker/delete-request",
-      { requestedAt: new Date().toISOString() },
-      token,
-    );
+    const result = await requestTrackerDeletion(new Date().toISOString(), token);
     setDeleteBusy(false);
     setDeleteOpen(false);
     if (result.kind === "ok") {

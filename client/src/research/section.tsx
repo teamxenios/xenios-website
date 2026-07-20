@@ -25,6 +25,7 @@ import { ResearchLoadingState } from "./ui/kit";
 const Support = lazy(() => import("./pages/Support"));
 const LegalPage = lazy(() => import("./pages/LegalPage"));
 const ActivationPage = lazy(() => import("./pages/ActivationPage"));
+const DevGallery = lazy(() => import("./gallery"));
 
 // Member deep area
 const MemberDashboard = lazy(() => import("./pages/member/Dashboard"));
@@ -131,6 +132,10 @@ export default function ResearchSection() {
           <Route path="/research/privacy">{() => <L component={LegalPage} props={{ kind: "privacy" }} />}</Route>
           <Route path="/research/terms">{() => <L component={LegalPage} props={{ kind: "terms" }} />}</Route>
           <Route path="/research/policies/:policy" component={PolicyPage} />
+
+          {/* Development-only visual gallery (fixture mode; renders nothing in production builds) */}
+          <Route path="/research/__gallery/:page">{() => <L component={DevGallery} />}</Route>
+
 
           {/* The private member website */}
           <Route path="/research/member">{() => <L member component={MemberDashboard} />}</Route>

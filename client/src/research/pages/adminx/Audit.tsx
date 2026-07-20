@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { listAuditEvents } from "../../adapters/adminOps";
 import { ResearchDataTable, ResearchSecureNotice, ResearchStatusBadge } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDateTime, useAdminResource } from "./auth";
@@ -32,7 +33,7 @@ export default function Audit() {
 }
 
 function AuditBody({ token }: { token: string }) {
-  const resource = useAdminResource<{ ok: boolean; events: AuditRow[] }>(token, "/api/admin/research/audit");
+  const resource = useAdminResource<{ ok: boolean; events: AuditRow[] }>(token, listAuditEvents);
   return (
     <div className="grid gap-8">
       <AdminBoundary

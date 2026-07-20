@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, useParams } from "wouter";
-import { apiPost } from "../../lib/api";
+import { getQuestion, replyToQuestion } from "../../adapters/adminOps";
 import { ResearchSecureNotice, ResearchStatusBadge, ResearchTimeline } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, fmtDateTime, useAdminResource } from "./auth";
@@ -42,10 +42,11 @@ export default function QuestionAdminDetail() {
 }
 
 function QuestionDetailBody({ token, id }: { token: string; id: string }) {
-  const resource = useAdminResource<{ ok: boolean; question: AdminQuestionDetail }>(
-    token,
-    `/api/admin/research/questions/${encodeURIComponent(id)}`,
+  const loadQuestion = useCallback(
+    (t: string) => getQuestion<{ ok: boolean; question: AdminQuestionDetail }>(t, id),
+    [id],
   );
+  const resource = useAdminResource(token, loadQuestion);
   return (
     <div className="grid gap-6">
       <AdminBoundary
@@ -110,11 +111,7 @@ function ReplyComposer({ token, id, onSent }: { token: string; id: string; onSen
     if (busy || body.trim().length < 2) return;
     setBusy(true);
     setMessage(null);
-    const result = await apiPost<{ ok: boolean }>(
-      `/api/admin/research/questions/${encodeURIComponent(id)}/reply`,
-      { body: body.trim() },
-      token,
-    );
+    const result = await replyToQuestion<{ ok: boolean }>(token, id, { body: body.trim() });
     setBusy(false);
     if (result.kind === "ok") {
       setBody("");

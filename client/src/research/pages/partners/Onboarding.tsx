@@ -6,6 +6,7 @@ import {
   ResearchStatusBadge,
   capabilityStatusOrPending,
 } from "../../ui/kit";
+import { getPartnerOnboarding } from "../../adapters/partner";
 import {
   PARTNER_PENDING_BODY,
   PARTNER_PENDING_TITLE,
@@ -55,7 +56,7 @@ const STEPS = [
 export default function Onboarding() {
   const { memberToken } = useResearch();
   const { state, errorMessage, data, reload } = usePartnerResource<OnboardingPayload>(
-    "/api/research/partner/onboarding",
+    getPartnerOnboarding,
     memberToken,
   );
   const capabilities = usePartnerCapabilities(memberToken);

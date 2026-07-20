@@ -4,6 +4,7 @@ import { useResearch } from "../../core";
 import { PARTNER_ROUTES } from "../../lib/routes";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchRouteBoundary, ResearchSecureNotice, ResearchStatusBadge } from "../../ui/kit";
+import { getPartnerLinks } from "../../adapters/partner";
 import { usePartnerResource, type BoundaryState } from "./shared";
 
 // ---------------------------------------------------------------------------
@@ -21,10 +22,7 @@ interface LinksPayload {
 
 export default function Links() {
   const { memberToken } = useResearch();
-  const { state, errorMessage, data, reload } = usePartnerResource<LinksPayload>(
-    "/api/research/partner/links",
-    memberToken,
-  );
+  const { state, errorMessage, data, reload } = usePartnerResource<LinksPayload>(getPartnerLinks, memberToken);
   const [copied, setCopied] = useState<"link" | "code" | null>(null);
 
   const boundaryState: BoundaryState = state === "unavailable" ? "ok" : state;

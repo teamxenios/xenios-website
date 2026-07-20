@@ -18,7 +18,7 @@ import {
   type BadgeTone,
 } from "../../ui/kit";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
-import { apiPost } from "../../lib/api";
+import { joinWaitlist as joinWaitlistRequest } from "../../adapters/commerce";
 import { MEMBER_ROUTES } from "../../lib/routes";
 
 // Member catalog (Supreme build). Product data comes ONLY from the gated
@@ -131,7 +131,7 @@ export default function Products() {
 
   const joinWaitlist = async (slug: string) => {
     setWaitlist((w) => ({ ...w, [slug]: "busy" }));
-    const result = await apiPost<{ ok: boolean }>("/api/research/member/waitlist", { slug }, memberToken);
+    const result = await joinWaitlistRequest(slug, memberToken);
     if (result.kind === "ok") {
       setWaitlist((w) => ({ ...w, [slug]: "joined" }));
     } else if (result.kind === "unavailable") {

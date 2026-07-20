@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  fetchCapabilities,
-  statusFor,
-  type CapabilityStatus,
-  type ResearchCapability,
-} from "../../lib/capabilities";
+import { getResearchCapabilities } from "../../adapters/adminOps";
+import { statusFor, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { ResearchCapabilityBoundary, ResearchLoadingState, ResearchSecureNotice, ResearchStatusBadge } from "../../ui/kit";
 import { AdminScreen } from "./AdminResearchHome";
 
@@ -50,7 +46,7 @@ function CapabilitiesBody({ token }: { token: string }) {
 
   useEffect(() => {
     let alive = true;
-    void fetchCapabilities(token).then((s) => {
+    void getResearchCapabilities(token).then((s) => {
       if (alive) setStatuses(s);
     });
     return () => {

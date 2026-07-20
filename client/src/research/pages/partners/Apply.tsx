@@ -4,7 +4,8 @@ import { useResearch } from "../../core";
 import { PARTNER_ROUTES } from "../../lib/routes";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchAgreementViewer, ResearchSelectCard } from "../../ui/kit";
-import { PARTNER_SUPPORT_EMAIL, submitPartnerRequest, type SubmitOutcome } from "./shared";
+import { applyAsPartner, type SubmitOutcome } from "../../adapters/partner";
+import { PARTNER_SUPPORT_EMAIL } from "./shared";
 
 // ---------------------------------------------------------------------------
 // Partner application (/research/partners/apply). Presentation of the
@@ -61,8 +62,7 @@ export default function Apply() {
     }
     setValidation(null);
     setOutcome({ kind: "submitting" });
-    const result = await submitPartnerRequest(
-      "/api/research/partner/apply",
+    const result = await applyAsPartner(
       { name: name.trim(), email: email.trim(), audience: audience.trim(), channels: Array.from(channels) },
       memberToken,
       UNAVAILABLE_MESSAGE,

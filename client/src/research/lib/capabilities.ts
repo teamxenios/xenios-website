@@ -60,10 +60,14 @@ const PENDING: Record<ResearchCapability, string> = {
   questions: "Questions open with your active membership.",
 };
 
+const PRODUCT_GATES = new Set<ResearchCapability>([
+  "referrals", "tracker", "assessment", "blueprint", "questions", "quantum_commerce",
+]);
+
 export function pendingStatus(capability: ResearchCapability): CapabilityStatus {
   return {
     capability,
-    state: "pending_credentials",
+    state: PRODUCT_GATES.has(capability) ? "disabled" : "pending_credentials",
     publicMessage: PENDING[capability],
     checkedAt: new Date().toISOString(),
   };

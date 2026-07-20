@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useResearch } from "../../core";
-import { apiGet, apiPost } from "../../lib/api";
+import {
+  fetchQuestions,
+  fetchTelegramLink,
+  linkTelegram,
+  rateAnswer,
+  submitQuestion,
+  submitVoiceQuestion,
+  unlinkTelegram,
+} from "../../adapters/guides";
 import {
   fetchCapabilities,
   statusFor,
@@ -135,7 +143,7 @@ export default function Questions() {
   const loadQuestions = useCallback(async () => {
     setListState("loading");
     setListError(undefined);
-    const result = await apiGet<{ questions?: QuestionItem[] }>("/api/research/member/questions", memberToken);
+    const result = await fetchQuestions<{ questions?: QuestionItem[] }>(memberToken);
     if (result.kind === "ok") {
       setItems(Array.isArray(result.data.questions) ? result.data.questions : []);
       setListState("ok");
@@ -361,8 +369,7 @@ function NewQuestionForm({
     }
     setBusy(true);
     setFeedback(null);
-    const result = await apiPost<{ id?: string }>(
-      "/api/research/member/questions",
+    const result = await submitQuestion<{ id?: string }>(
       {
         subject: draft.subject.trim(),
         body: draft.body.trim(),
@@ -634,8 +641,7 @@ function VoiceRecorder({ token }: { token: string | null }) {
       setFeedback({ tone: "error", text: "The recording could not be prepared for upload. Please record again." });
       return;
     }
-    const result = await apiPost<{ id?: string }>(
-      "/api/research/member/questions/voice",
+    const result = await submitVoiceQuestion<{ id?: string }>(
       {
         audio: base64,
         mimeType: blob.type || "audio/webm",
@@ -822,11 +828,7 @@ function AnswerRating({ question, token }: { question: QuestionItem; token: stri
   const submit = async (value: number) => {
     setBusy(true);
     setMessage(null);
-    const result = await apiPost<{ saved?: boolean }>(
-      `/api/research/member/questions/${encodeURIComponent(question.id)}/rating`,
-      { rating: value },
-      token,
-    );
+    const result = await rateAnswer<{ saved?: boolean }>(question.id, { rating: value }, token);
     setBusy(false);
     if (result.kind === "ok") {
       setSavedRating(value);
@@ -935,7 +937,7 @@ function TelegramControls({ token }: { token: string | null }) {
 
   useEffect(() => {
     let alive = true;
-    void apiGet<TelegramLinkState>("/api/research/member/telegram", token).then((result) => {
+    void fetchTelegramLink<TelegramLinkState>(token).then((result) => {
       if (!alive) return;
       if (result.kind === "ok") {
         setLink({ linked: result.data.linked === true, username: result.data.username ?? null });
@@ -962,7 +964,7 @@ function TelegramControls({ token }: { token: string | null }) {
   const linkAccount = async () => {
     setBusy(true);
     setMessage(null);
-    const result = await apiPost<{ linkUrl?: string }>("/api/research/member/telegram/link", {}, token);
+    const result = await linkTelegram<{ linkUrl?: string }>(token);
     setBusy(false);
     if (result.kind === "ok") {
       if (result.data.linkUrl) {
@@ -989,7 +991,7 @@ function TelegramControls({ token }: { token: string | null }) {
   const unlinkAccount = async () => {
     setBusy(true);
     setMessage(null);
-    const result = await apiPost<{ unlinked?: boolean }>("/api/research/member/telegram/unlink", {}, token);
+    const result = await unlinkTelegram<{ unlinked?: boolean }>(token);
     setBusy(false);
     if (result.kind === "ok") {
       setLink({ linked: false });

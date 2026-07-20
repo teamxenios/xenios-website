@@ -30,7 +30,7 @@ describe("research ui kit", () => {
       </ResearchCapabilityBoundary>,
     );
     expect(pending.host.querySelector('[data-testid="live-content"]')).toBeNull();
-    expect(pending.host.textContent).toContain("Not available yet");
+    expect(pending.host.textContent).toContain("Provider connection pending");
     expect(pending.host.textContent).toContain("Membership billing opens soon");
     pending.unmount();
 

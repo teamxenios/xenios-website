@@ -1,6 +1,7 @@
 import { useResearch } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchDataTable, ResearchRouteBoundary, ResearchSecureNotice } from "../../ui/kit";
+import { getPartnerSecuritySessions } from "../../adapters/partner";
 import { PARTNER_PENDING_TITLE, PARTNER_SUPPORT_EMAIL, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
@@ -45,7 +46,7 @@ const BASICS = [
 export default function Security() {
   const { memberToken } = useResearch();
   const { state, errorMessage, data, reload } = usePartnerResource<SecurityPayload>(
-    "/api/research/partner/security/sessions",
+    getPartnerSecuritySessions,
     memberToken,
   );
 

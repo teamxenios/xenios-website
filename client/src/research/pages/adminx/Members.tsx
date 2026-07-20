@@ -10,6 +10,7 @@ import {
   useDebounced,
 } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
+import { listMembers } from "../../adapters/adminOps";
 import { fmtDate, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 
@@ -49,7 +50,7 @@ function MembersBody({ token }: { token: string }) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const debounced = useDebounced(search);
-  const resource = useAdminResource<{ ok: boolean; members: AdminMemberRow[] }>(token, "/api/admin/research/members");
+  const resource = useAdminResource<{ ok: boolean; members: AdminMemberRow[] }>(token, listMembers);
 
   const filtered = useMemo(() => {
     const list = resource.data?.members ?? [];

@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { listPrivacyRequests } from "../../adapters/adminOps";
 import { ResearchDataTable, ResearchSecureNotice, ResearchStatusBadge } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
@@ -33,10 +34,7 @@ export default function PrivacyAdmin() {
 }
 
 function PrivacyBody({ token }: { token: string }) {
-  const resource = useAdminResource<{ ok: boolean; requests: PrivacyRequestRow[] }>(
-    token,
-    "/api/admin/research/privacy/requests",
-  );
+  const resource = useAdminResource<{ ok: boolean; requests: PrivacyRequestRow[] }>(token, listPrivacyRequests);
   return (
     <div className="grid gap-8">
       <section aria-label="Privacy requests">

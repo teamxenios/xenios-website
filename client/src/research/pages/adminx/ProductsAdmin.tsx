@@ -10,6 +10,7 @@ import {
   useDebounced,
 } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
+import { listProducts } from "../../adapters/adminOps";
 import { fmtDate, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 
@@ -50,7 +51,7 @@ function ProductsBody({ token }: { token: string }) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const debounced = useDebounced(search);
-  const resource = useAdminResource<{ ok: boolean; products: AdminProductRow[] }>(token, "/api/admin/research/products");
+  const resource = useAdminResource<{ ok: boolean; products: AdminProductRow[] }>(token, listProducts);
 
   const filtered = useMemo(() => {
     const list = resource.data?.products ?? [];

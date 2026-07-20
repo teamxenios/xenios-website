@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { listPlans } from "../../adapters/adminOps";
 import { ResearchDataTable, ResearchMetricCard, ResearchStatusBadge } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
@@ -33,7 +34,7 @@ export default function Plans() {
 }
 
 function PlansBody({ token }: { token: string }) {
-  const resource = useAdminResource<{ ok: boolean; plans: AdminPlanRow[] }>(token, "/api/admin/research/plans");
+  const resource = useAdminResource<{ ok: boolean; plans: AdminPlanRow[] }>(token, listPlans);
   return (
     <div className="grid gap-8">
       <section aria-label="Standing membership terms">

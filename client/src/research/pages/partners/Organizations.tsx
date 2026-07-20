@@ -2,13 +2,8 @@ import { useState, type FormEvent } from "react";
 import { useResearch } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchDataTable, ResearchRouteBoundary, ResearchStatusBadge } from "../../ui/kit";
-import {
-  PARTNER_PENDING_TITLE,
-  PARTNER_SUPPORT_EMAIL,
-  submitPartnerRequest,
-  usePartnerResource,
-  type SubmitOutcome,
-} from "./shared";
+import { getPartnerOrganizations, requestOrganization, type SubmitOutcome } from "../../adapters/partner";
+import { PARTNER_PENDING_TITLE, PARTNER_SUPPORT_EMAIL, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
 // Organization partners (/research/partners/organizations). An organization
@@ -33,7 +28,7 @@ const UNAVAILABLE_MESSAGE =
 export default function Organizations() {
   const { memberToken } = useResearch();
   const { state, errorMessage, data, reload } = usePartnerResource<OrganizationsPayload>(
-    "/api/research/partner/organizations",
+    getPartnerOrganizations,
     memberToken,
   );
 
@@ -54,8 +49,7 @@ export default function Organizations() {
     }
     setValidation(null);
     setOutcome({ kind: "submitting" });
-    const result = await submitPartnerRequest(
-      "/api/research/partner/organizations/request",
+    const result = await requestOrganization(
       {
         organization: orgName.trim(),
         website: website.trim() || null,

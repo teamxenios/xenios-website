@@ -8,6 +8,7 @@ import {
   ResearchStatusBadge,
   capabilityStatusOrPending,
 } from "../../ui/kit";
+import { getPartnerPayouts } from "../../adapters/partner";
 import { PARTNER_PENDING_TITLE, usePartnerCapabilities, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
@@ -32,10 +33,7 @@ export default function Payouts() {
   const { memberToken } = useResearch();
   const capabilities = usePartnerCapabilities(memberToken);
   const payoutStatus = capabilityStatusOrPending(capabilities, "affiliate_payouts");
-  const { state, errorMessage, data, reload } = usePartnerResource<PayoutsPayload>(
-    "/api/research/partner/payouts",
-    memberToken,
-  );
+  const { state, errorMessage, data, reload } = usePartnerResource<PayoutsPayload>(getPartnerPayouts, memberToken);
 
   return (
     <ResearchPartnerShell

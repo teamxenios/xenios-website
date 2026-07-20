@@ -1,6 +1,7 @@
 import { useResearch } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchEmptyState, ResearchRouteBoundary, ResearchStatusBadge } from "../../ui/kit";
+import { getPartnerTraining } from "../../adapters/partner";
 import { PARTNER_PENDING_TITLE, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
@@ -42,10 +43,7 @@ const CURRICULUM = [
 
 export default function Training() {
   const { memberToken } = useResearch();
-  const { state, errorMessage, data, reload } = usePartnerResource<TrainingPayload>(
-    "/api/research/partner/training",
-    memberToken,
-  );
+  const { state, errorMessage, data, reload } = usePartnerResource<TrainingPayload>(getPartnerTraining, memberToken);
 
   const modules = data?.modules ?? [];
 
