@@ -1,0 +1,31 @@
+{
+  "inputSha": "87150f488c68576c6fec5f49a4957f3d122eca01",
+  "generated": "2026-07-20",
+  "owner": "CLAUDE_INTEGRATION_COORDINATOR",
+  "terminalStates": [
+    "DONE",
+    "DONE_BEHIND_DISABLED_PROVIDER",
+    "BLOCKED_BY_CREDENTIAL",
+    "BLOCKED_BY_EXTERNAL_APPROVAL",
+    "BLOCKED_BY_SUPPLIER_DATA",
+    "BLOCKED_BY_DEPENDENCY",
+    "NEEDS_SAMUEL_DECISION",
+    "FAILED_WITH_EVIDENCE"
+  ],
+  "nodes": [
+    { "id": "G0", "title": "foundation: contracts + capability registry + env validator", "owner": "coordinator", "deps": [], "ownedPaths": ["docs/agent-coordination/blitzscale/**", "shared/research/*"], "externalGate": null, "status": "IN_PROGRESS" },
+    { "id": "G1", "title": "private access: gateway/application/status/recovery", "owner": "main", "deps": ["G0"], "ownedPaths": ["server/research/*", "shared/research/*"], "externalGate": null, "status": "DONE" },
+    { "id": "G2", "title": "application/activation/identity/MFA", "owner": "website2", "deps": ["G0", "G1"], "ownedPaths": ["server/research/identity*", "server/research/agreements*", "server/research/activation*"], "externalGate": "identity-provider,MFA,stripe", "status": "OPEN" },
+    { "id": "G3", "title": "member profile + assessment", "owner": "website2", "deps": ["G2"], "ownedPaths": ["server/research/profile*", "server/research/assessment*"], "externalGate": null, "status": "OPEN" },
+    { "id": "G4", "title": "Blueprint + Xenios 30/90 plans", "owner": "website2", "deps": ["G3"], "ownedPaths": ["server/research/blueprint*", "server/research/plans*"], "externalGate": null, "status": "OPEN" },
+    { "id": "G5", "title": "tracker + private media + support/telegram", "owner": "website2", "deps": ["G3"], "ownedPaths": ["server/research/tracker*", "server/research/media*", "server/research/telegram*"], "externalGate": "private-storage,telegram", "status": "OPEN" },
+    { "id": "G6", "title": "catalog + Guides + content", "owner": "website3", "deps": ["G0"], "ownedPaths": ["server/research/products*", "server/research/guides*", "content/research-products/**", "content/research-guides/**", "content/research-goals/**"], "externalGate": null, "status": "OPEN" },
+    { "id": "G7", "title": "commerce + fulfillment", "owner": "website3", "deps": ["G6", "G2"], "ownedPaths": ["server/research/commerce*", "server/research/orders*", "server/research/subscriptions*", "server/research/shipping*", "server/research/fulfillment*"], "externalGate": "stripe,carriers,mitch", "status": "OPEN" },
+    { "id": "G8", "title": "referrals + affiliate distribution", "owner": "website3", "deps": ["G2"], "ownedPaths": ["server/research/referrals*", "server/research/partners*", "server/research/commissions*"], "externalGate": "payout-processor", "status": "OPEN" },
+    { "id": "G9", "title": "complete frontend", "owner": "website", "deps": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8"], "ownedPaths": ["client/src/research/**"], "externalGate": null, "status": "OPEN" },
+    { "id": "G10", "title": "Samuel administration + capability diagnostics", "owner": "website2+coordinator", "deps": ["G0"], "ownedPaths": ["client/src/pages/Admin*", "server/research/*admin*"], "externalGate": null, "status": "OPEN" },
+    { "id": "G11", "title": "integration", "owner": "coordinator", "deps": ["G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"], "ownedPaths": ["integration/**"], "externalGate": null, "status": "OPEN" },
+    { "id": "G12", "title": "security + accessibility + release", "owner": "coordinator", "deps": ["G11"], "ownedPaths": ["script/**", "docs/agent-coordination/blitzscale/**"], "externalGate": null, "status": "OPEN" },
+    { "id": "G13", "title": "deployment + rollback", "owner": "coordinator", "deps": ["G12"], "ownedPaths": ["script/**", "docs/agent-coordination/blitzscale/**"], "externalGate": "render-access", "status": "OPEN" }
+  ]
+}
