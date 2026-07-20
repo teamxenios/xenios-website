@@ -36,8 +36,8 @@ Response: `{ ok: true, overview: MemberOverview }`
 
 `MemberOverview` carries member/billing/application state, assessment summary
 (with `dueAt` = activation + 3 days), blueprint state, current plan heads,
-unacknowledged document count, open question count, `trackerUnlocked`, and one
-computed `nextAction`.
+unacknowledged document count, open question count (open = any status other
+than `completed`), `trackerUnlocked`, and one computed `nextAction`.
 
 ## 2. Member profile
 
@@ -71,15 +71,21 @@ Request: `AssessmentAutosaveRequest` (partial answers; server merges by
 current version in `message`)
 Response: `{ ok: true, lastSavedAt: string }`
 Rate limit: 30/minute per member.
+Consent gate: the Sensitive Health Data Consent (agreement key XR-MEM-012, a
+separate acceptance presented at first entry into the assessment) must be
+accepted at its current version before any answer is stored; otherwise 409
+`state_conflict` naming XR-MEM-012. The same gate applies to submission.
 
 ## 5. Assessment submission
 
 `POST /api/research/assessment/submit` — guard: requireActiveMember
 Request: `AssessmentSubmitRequest` (`confirmReviewed: true` is mandatory)
 Response: `{ ok: true, response: AssessmentResponseState, blueprintState: BlueprintState }`
-Effects: locks the response, unlocks the tracker, moves Blueprint to
-`assessment_submitted`, queues the preliminary generation, emits audit + outbox
-events. Submitting twice returns `state_conflict`.
+Effects: locks the response, unlocks the tracker, and moves Blueprint state to
+`assessment_submitted`. The submitted response row IS the Blueprint-generation
+queue entry (the Blueprint wave consumes `status = submitted` rows with no
+blueprint); review-SLA notifications fire from the SLA sweep wave. Submitting
+twice returns `state_conflict`.
 
 ## 6. Blueprint
 
@@ -221,6 +227,26 @@ Member-safe booleans ONLY (G0 contract).
 `GET /api/admin/research/capabilities` — guard: requireSupabaseAdmin
 Response: `{ ok: true, diagnostics: AdminCapabilityDiagnostic[] }`
 Names and states only; never values.
+
+## 16. Agreements (G2)
+
+`GET /api/research/agreements` — guard: requireMember (NOT requireActiveMember:
+agreements precede activation, so a pending_activation member reads and signs)
+Response: `{ ok: true, agreements: [{ key, version, title, required, trigger, status, separateConsent, acceptedVersion, reacceptanceNeeded }] }`
+Definitions are the paperwork register's activation bundle (XR-MEM-001/002/004/
+005/006/026, XR-PUB-007) plus XR-MEM-003 and the assessment-stage XR-MEM-012;
+all version `0.1.0-draft` with honest `status: "draft"` pending counsel.
+
+`POST /api/research/agreements` — guard: requireMember, plus a server-side
+status rule: only `pending_activation` and `active` members may record
+decisions (others get 409 `state_conflict`).
+Request: `{ decisions: [{ key, version, decision: "accepted" | "declined" }] }`
+Rules enforced server-side: `separateConsent` keys (XR-MEM-003, XR-MEM-012)
+must arrive as the ONLY decision in their call (bundling → `validation_failed`);
+stale versions → `state_conflict` with the current version; acceptances are
+append-only rows (sha256-hashed request metadata, never raw IP/UA); latest row
+per key wins; `reacceptanceNeeded` flips when a definition version moves past
+the accepted one.
 
 ---
 

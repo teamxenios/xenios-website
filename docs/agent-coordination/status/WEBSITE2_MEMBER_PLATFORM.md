@@ -11,8 +11,8 @@ blitzscale/FILE_CLAIMS.md. Paperwork lane closed at draft PR #30.
 
 | Milestone | State | Commit | Notes |
 | --- | --- | --- | --- |
-| M0 contract freeze | DONE | (this commit) | shared/research/member-platform.ts + contracts/MEMBER_PLATFORM_API.md |
-| Wave 1 lifecycle/agreements/profile/assessment | TODO | | draft PR opens after this wave |
+| M0 contract freeze | DONE | daee444 | shared/research/member-platform.ts + contracts/MEMBER_PLATFORM_API.md |
+| Wave 1 lifecycle/agreements/profile/assessment | DONE | (this commit) | agreements engine (9 defs incl. XR-MEM-012, append-only acceptances, separate-consent + status gates), profile (17 strict section schemas, sensitive split), assessment (initial-v1 definition, autosave, submit, 72h deadline, reminder sweep, server-side XR-MEM-012 consent gate), capabilities, overview, fixtures, notifier seam. 243/243 tests, tsc + build green. Adversarial auth review: 0 blockers, 4 minors all fixed. |
 | Wave 2 Blueprint/plans/Review Week | TODO | | |
 | Wave 3 documents/signed access | TODO | | |
 | Wave 4 tracker/private media | TODO | | |
