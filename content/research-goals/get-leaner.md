@@ -141,8 +141,8 @@ One example of why the library exists rather than a summary: tesamorelin is the 
 group with the clearest regulatory position, and that position is narrow. In the United States,
 EGRIFTA SV (tesamorelin) is indicated for the reduction of excess abdominal fat in HIV-infected
 adult patients with lipodystrophy, with an initial US approval in 2010. Its own FDA-approved
-label carries the limitation that it "is not indicated for weight loss management as it has a
-weight neutral effect," and that long-term cardiovascular safety has not been established
+label carries two limitations of use worth reading exactly as printed: "Not indicated for weight
+loss management." and "Long-term cardiovascular safety of EGRIFTA SV has not been established."
 (DailyMed label, verified 2026-07-19). A compound approved for a specific population and a
 specific finding is routinely marketed elsewhere as a general fat-loss agent. Its label says
 otherwise.
@@ -218,7 +218,9 @@ constraints, and the week you actually have rather than the week a program assum
 
 ## Sources
 
-All sources below were retrieved and verified on 2026-07-19.
+All sources below were retrieved and verified on 2026-07-19. Each one was then independently
+re-retrieved from the URL shown and confirmed to match the citation and the claim as written on
+this page, including author list, journal, year, identifiers, sample sizes, and quoted label text.
 
 1. Gardner CD, et al. Effect of Low-Fat vs Low-Carbohydrate Diet on 12-Month Weight Loss in
    Overweight Adults and the Association With Genotype Pattern or Insulin Secretion: The DIETFITS

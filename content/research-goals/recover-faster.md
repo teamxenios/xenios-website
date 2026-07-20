@@ -222,7 +222,9 @@ uncomfortable version of that answer where it applies.
 
 ## Sources
 
-All sources below were retrieved and verified on 2026-07-19.
+All sources below were retrieved and verified on 2026-07-19. Each one was then independently
+re-retrieved from the URL shown and confirmed to match the citation and the claim as written on
+this page, including author list, journal, year, identifiers, sample sizes, and population detail.
 
 1. Mah CD, Mah KE, Kezirian EJ, Dement WC. The effects of sleep extension on the athletic
    performance of collegiate basketball players. Sleep. 2011 Jul 1;34(7):943-950. PMID 21731144.

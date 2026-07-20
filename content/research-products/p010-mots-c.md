@@ -310,7 +310,8 @@ reconstructed, or inferred.
    mitochondrial-derived peptide MOTS-c is a regulator of plasma metabolites and enhances
    insulin sensitivity." Physiological Reports, 2019. DOI 10.14814/phy2.14171. VERIFIED
    2026-07-19: https://pmc.ncbi.nlm.nih.gov/articles/PMC6640593/
-   Model: C57/6NJ male diet-induced obese mice.
+   Model: C57BL/6J male diet-induced obese mice (high-fat diet). Strain designation re-verified
+   against the retrieved article 2026-07-20, correcting an earlier malformed strain string.
 2. Alser et al. "The Effect of Chronic Endurance Exercise on Serum Levels of MOTS-c and Humanin
    in Professional Athletes." Reviews in Cardiovascular Medicine, 2022. DOI
    10.31083/j.rcm2305181. VERIFIED 2026-07-19:

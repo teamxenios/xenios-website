@@ -220,8 +220,8 @@ competitor or retailer taxonomy.
 | Item | Path | Workflow state | Evidence completeness | Blocking dependency | Owner | Last reviewed |
 | --- | --- | --- | --- | --- | --- | --- |
 | Goal: Recovery and tissue repair | `content/research-goals/recovery-and-tissue-repair.md` | draft | incomplete pending human source verification | EVIDENCE-BASELINE, GAP-026 | Samuel Boadu | 2026-07-19 |
-| Goal: Immune regulation | `content/research-goals/immune-regulation.md` | draft | incomplete pending human source verification | EVIDENCE-BASELINE, GAP-026 | Samuel Boadu | 2026-07-19 |
-| Goal: Metabolic health | `content/research-goals/metabolic-health.md` | draft | incomplete pending human source verification | EVIDENCE-BASELINE, GAP-026 | Samuel Boadu | 2026-07-19 |
+| Goal: Immune regulation research | `content/research-goals/immune-regulation.md` | draft | incomplete pending human source verification | EVIDENCE-BASELINE, GAP-026 | Samuel Boadu | 2026-07-19 |
+| Goal: Metabolic health research | `content/research-goals/metabolic-health.md` | draft | incomplete pending human source verification | EVIDENCE-BASELINE, GAP-026 | Samuel Boadu | 2026-07-19 |
 | Goal: Cellular energy and mitochondrial research | `content/research-goals/cellular-energy-and-mitochondrial-research.md` | draft | incomplete pending human source verification | EVIDENCE-BASELINE, GAP-026 | Samuel Boadu | 2026-07-19 |
 | Goal: Longevity and biological aging research | `content/research-goals/longevity-and-biological-aging-research.md` | draft | incomplete pending human source verification | EVIDENCE-BASELINE, GAP-026 | Samuel Boadu | 2026-07-19 |
 | Goal: Cognitive research | `content/research-goals/cognitive-research.md` | draft | incomplete pending human source verification | EVIDENCE-BASELINE, GAP-026 | Samuel Boadu | 2026-07-19 |

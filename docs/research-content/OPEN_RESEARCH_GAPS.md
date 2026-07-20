@@ -46,7 +46,7 @@ same way: a named human obtains a written, dated, attributable source and record
 | Supplier of record | NOT CONFIRMED - see open supplier questions | Composition, ratios, specifications, stability, COA, and quality system evidence. |
 | Third-party laboratory | NOT CONFIRMED - see open supplier questions | Independent identity, purity, and sterility testing. |
 | Outside counsel | Not yet engaged for this scope | Claim surface review, regulatory classification, per-state availability. |
-| Brand partners | Momentous, Pure Encapsulations | Reseller authorization, MAP policy, account terms. |
+| Prospective brands, no relationship established | Momentous, Pure Encapsulations | Reseller authorization, MAP policy, account terms. No authorization, account, or agreed terms exist with either. See GAP-012 and GAP-013. |
 
 ## 4. Gap register
 
@@ -90,7 +90,7 @@ same way: a named human obtains a written, dated, attributable source and record
 | --- | --- | --- | --- | --- |
 | GAP-012 | Momentous reseller authorization is not established. There is no written authorization on file, no account, and no confirmed terms. | xenios may not state, imply, or display that it is authorized to resell, distribute, or sell Momentous product without written evidence. This blocks supplement commerce and blocks any brand mention that implies a relationship. | Samuel Boadu with Momentous. | S1 for any authorization statement, S1 for commerce enablement |
 | GAP-013 | Pure Encapsulations reseller authorization is not established. There is no written authorization on file, no account, and no confirmed terms. | Same as GAP-012. Displaying a brand a business is not authorized to sell creates both a partner problem and a member trust problem. | Samuel Boadu with Pure Encapsulations. | S1 for any authorization statement, S1 for commerce enablement |
-| GAP-014 | MAP (minimum advertised price) policy terms are unknown for both brand partners, including the floor, what counts as advertising, member-only pricing treatment, and enforcement. | Displaying a price below a MAP floor can end a partner relationship before it begins. Member-only pricing behind an access gate is often treated differently from public pricing, and that difference has to be confirmed rather than assumed. | Samuel Boadu with each brand partner. | S2, rising to S1 at the moment any price is displayed |
+| GAP-014 | MAP (minimum advertised price) policy terms are unknown for both prospective brands, including the floor, what counts as advertising, member-only pricing treatment, and enforcement. | Displaying a price below a MAP floor can end a prospective relationship before it begins. Member-only pricing behind an access gate is often treated differently from public pricing, and that difference has to be confirmed rather than assumed. | Samuel Boadu with each brand. | S2, rising to S1 at the moment any price is displayed |
 | GAP-021 | Fulfillment ownership is agreed in principle for roughly the first 60 days (Mitch for peptides and Quantum, xenios for supplements) but the operational record is incomplete. Who holds title, who holds inventory, who ships, who handles a return, and what happens at the end of the initial period are not documented. | Shipping estimates, return handling, and support routing all appear on member-facing surfaces and cannot be written against an undocumented arrangement. | Samuel Boadu with Mitch, in writing. | S2 |
 
 ### 4.6 Pricing and availability

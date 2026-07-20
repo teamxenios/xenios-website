@@ -135,8 +135,12 @@ any conclusions [S3].
 source supporting a cognitive claim was retrieved this session, so no cognitive claim is made here.
 [UNVERIFIED - background knowledge, requires human source check]
 
-**A caffeine or caffeine plus theanine product.** NCCIH lists coffee extracts and L-theanine among
-ingredients for which there is no compelling evidence for memory [S4].
+**A caffeine or caffeine plus theanine product.** Heavily marketed in this area. An earlier draft of
+this page attributed a memory related statement about coffee extracts and L-theanine to a federal
+source. That source was re-retrieved on 20 July 2026 and does not mention either ingredient, so the
+statement has been withdrawn rather than rephrased. No source supporting or refuting a cognitive
+claim for these ingredients was retrieved, so no claim is made here in either direction.
+[UNVERIFIED - background knowledge, requires human source check]
 
 **An iron product, only where a clinician has identified deficiency through testing.** Iron is not
 a self directed supplement. See the Feel More Energized page for the same warning stated at length.
@@ -155,7 +159,7 @@ Grades attach to individual claims, never to products or categories.
 | B vitamin supplementation improves cognition short term | PROHIBITED | NCCIH states short term supplementation has not improved cognition [S3] |
 | Curcumin supports cognitive function | G | NCCIH states evidence is too limited and inconsistent for conclusions [S3] |
 | Creatine improves cognition | G | No source retrieved this session |
-| L-theanine or coffee extract improves memory | PROHIBITED | NCCIH lists no compelling evidence for memory [S4] |
+| L-theanine or coffee extract improves memory | G | No source retrieved. The source previously cited here was re-retrieved on 20 July 2026 and does not mention either ingredient. See [S4-WITHDRAWN] |
 | A dietary supplement prevents dementia or Alzheimer's disease | PROHIBITED | NCCIH states direct evidence is lacking [S3] |
 
 ## 5. Optional research-education pathways
@@ -259,10 +263,16 @@ All sources below were retrieved this session and marked VERIFIED 2026-07-19.
   Know About Dietary Supplements and Alzheimer's Disease" (dietary supplements, cognitive function,
   dementia and Alzheimer's disease).
   https://www.nccih.nih.gov/health/tips/things-to-know-about-dietary-supplements-for-cognitive-function-dementia-and-alzheimers-disease
-- [S4] VERIFIED 2026-07-19 (search result summary only, full page not fetched). National Center for
-  Complementary and Integrative Health, "Dietary Supplements and Cognitive Function, Dementia, and
-  Alzheimer's Disease: What the Science Says."
+- [S4-WITHDRAWN] WITHDRAWN 2026-07-20. National Center for Complementary and Integrative Health,
+  "Dietary Supplements and Cognitive Function, Dementia, and Alzheimer's Disease: What the Science
+  Says."
   https://www.nccih.nih.gov/health/providers/digest/dietary-supplements-and-cognitive-function-dementia-and-alzheimers-disease-science
+  This source was cited in an earlier draft from a search result summary rather than a full page
+  fetch. The full page was retrieved on 20 July 2026. It covers Ginkgo biloba, omega-3 fatty acids,
+  vitamin E, curcumin, B vitamins, multivitamins, selenium, melatonin, and coconut oil, and it does
+  not mention L-theanine or coffee extract. The claim it was cited for has been removed from this
+  page. The entry is retained rather than deleted so the correction is auditable. Do not restore
+  this citation without an independent human check of the specific wording.
 - [S5] VERIFIED 2026-07-19. NIH Office of Dietary Supplements, Iron fact sheet for consumers, page
   updated 17 August 2023. https://ods.od.nih.gov/factsheets/Iron-Consumer/
 - [S6] VERIFIED 2026-07-19. NIH Office of Dietary Supplements, Vitamin B12 fact sheet for consumers,
@@ -270,9 +280,14 @@ All sources below were retrieved this session and marked VERIFIED 2026-07-19.
 
 ## Open gaps for this page
 
-- [S4] was retrieved as a search result summary rather than a full page fetch. A human must open the
-  page and confirm the L-theanine and coffee extract wording before publication, or the claim row
-  drops to grade G.
+- RESOLVED 2026-07-20, and worth reading as a caution. [S4] was cited in an earlier draft from a
+  search result summary. The full page was retrieved on 20 July 2026 and does not contain the
+  L-theanine or coffee extract wording attributed to it. The claim was removed, the grade row moved
+  to G, and the source entry was marked withdrawn. A targeted search for any federal source covering
+  those two ingredients and memory returned nothing citable. No cognitive claim for caffeine or
+  theanine products stands on this page.
+- No retrieved source for caffeine, L-theanine, or coffee extract and cognition, in either
+  direction. The category is described without a claim and carries the unverified label.
 - No retrieved source for attention hygiene, alcohol and next day cognition, meal regularity, or
   caffeine strategy. Those lines carry the unverified background knowledge label.
 - No retrieved source for creatine and cognition. The claim sits at grade G.
@@ -291,6 +306,11 @@ All sources below were retrieved this session and marked VERIFIED 2026-07-19.
 - No branded product, supplier, price, composition, or availability claim appears on this page.
   Those facts are NOT CONFIRMED - see open supplier questions.
 - Dosing information is intentionally excluded.
+- Source re-verification, 20 July 2026: every source on this page was independently re-retrieved in
+  a later session and each attributed claim was checked against the retrieved page. Five sources
+  held. One did not: the claim attributed to [S4] is absent from that page, so the claim was removed
+  and the source was marked withdrawn. A page is not trustworthy because a previous pass said it
+  was, so treat the withdrawn entry as the reason this check exists rather than as an exception.
 - Authorship note: this file is an AI draft at status `draft`. It has not been reviewed and it is
   not member visible. AI drafts never publish automatically. Samuel Boadu is founder reviewer and
   publisher.

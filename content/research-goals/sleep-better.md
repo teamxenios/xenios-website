@@ -292,6 +292,10 @@ All sources below were retrieved this session and marked VERIFIED 2026-07-19.
 - No branded product, supplier, price, composition, or availability claim appears on this page.
   Those facts are NOT CONFIRMED - see open supplier questions.
 - Dosing information is intentionally excluded.
+- Source re-verification, 20 July 2026: every source on this page was independently re-retrieved in
+  a later session and each attributed claim was checked against the retrieved page, including the
+  stated update dates and the negative claim that the magnesium fact sheet does not discuss sleep.
+  All four sources held. No citation on this page rests on a search result summary.
 - Authorship note: this file is an AI draft at status `draft`. It has not been reviewed and it is
   not member visible. AI drafts never publish automatically. Samuel Boadu is founder reviewer and
   publisher.

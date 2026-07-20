@@ -206,7 +206,9 @@ read on the rate of progress available to you rather than the rate available to 
 
 ## Sources
 
-All sources below were retrieved and verified on 2026-07-19.
+All sources below were retrieved and verified on 2026-07-19. Each one was then independently
+re-retrieved from the URL shown and confirmed to match the citation and the claim as written on
+this page, including author list, journal, year, identifiers, sample sizes, and quoted text.
 
 1. Morton RW, Murphy KT, McKellar SR, Schoenfeld BJ, Henselmans M, Helms E, Aragon AA, Devries MC,
    Banfield L, Krieger JW, Phillips SM. A systematic review, meta-analysis and meta-regression of
