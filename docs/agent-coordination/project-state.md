@@ -1,5 +1,26 @@
 # xenios research: project state
 
+Updated: 2026-07-19 by CLAUDE_INTEGRATION_COORDINATOR.
+See integration/RELEASE_BOARD.md for the full release train and
+file-claims.md for one-owner-per-file assignments.
+
+## Current gate (2026-07-19)
+
+- origin/main = 468466f (PRs #22, #23, #24 merged: fraud controls, canonical
+  /research gateway architecture, requireActiveMember on catalog/orders,
+  reward-promotion tick, Tailwind restore).
+- PR #25 (account/email/recovery hardening) is OPEN, draft, MERGEABLE at head
+  f48bda0, independently reviewed **READY**. It is the Phase-0 blocker: no
+  downstream session starts until Samuel reviews the exact head and merges
+  (the author does not merge). PR #13 is closed/superseded.
+- Everything below the account/email lane branches from the POST-#25
+  origin/main. Building against 468466f now would stack on or diverge from
+  #25 — forbidden. All production flags stay false through code merge.
+
+---
+
+## Historical (pre-#25)
+
 Updated: 2026-07-18 by CLAUDE_PRIMARY
 
 Canonical spec: XENIOS_RESEARCH_CANONICAL_V3 (Samuel's V3 whole-thread prompt).
