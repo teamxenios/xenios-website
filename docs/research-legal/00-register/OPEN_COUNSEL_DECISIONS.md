@@ -30,8 +30,10 @@ COUNSEL REVIEW REQUIRED
 
 This register consolidates every open counsel item raised across the Xenios Research
 document set into one numbered decision list. The 25 drafting batches produced 346 raw
-open-counsel items. This document deduplicates and clusters them into 64 consolidated
-decisions, numbered OCD-001 through OCD-064 and grouped by theme. Each raw item maps to
+open-counsel items. This document deduplicates and clusters them into 65 consolidated
+decisions, numbered OCD-001 through OCD-065 and grouped by theme (OCD-065 was added from
+a cross-lane finding by the commerce/content session, not from the 346 raw items). Each
+raw item maps to
 exactly one consolidated decision, and each consolidated decision lists the union of
 every document key its merged raw items named.
 
@@ -129,6 +131,7 @@ Count: 11 decisions at P1, 44 at P2, 9 at P3.
 | OCD-062 | Vendor risk standard operationalization | P2 | Operations |
 | OCD-063 | Service-standard framing and configurable program values | P3 | Operations |
 | OCD-064 | Standing reconciliation of pre-existing repository drafts | P2 | Operations |
+| OCD-065 | Supplier product-fact provenance (composition, strength, price, storage) | P1 | Products |
 
 ## 4. Corporate
 
@@ -1330,6 +1333,31 @@ Count: 11 decisions at P1, 44 at P2, 9 at P3.
   to XR-POL-024, XR-POL-031, XR-POL-032, XR-POL-033, XR-POL-036, plus the fourteen
   earlier files listed above. (Consolidates 15 raw items.)
 
+### OCD-065. Supplier product-fact provenance (composition, strength, price, storage)
+
+- **Priority:** P1 (blocks any per-SKU document instantiation and any commerce; a legal or
+  supplier-facing document asserting an unconfirmed composition is worse than a website
+  doing it).
+- **Decision:** The runtime catalog seed (server/research/products-data.ts, outside this
+  library) asserts per-SKU supplier facts (compositions, strengths, prices) that the
+  content session's research recorded as NOT CONFIRMED by any written supplier document;
+  for at least one blend (KLOW) even the ingredient set is unconfirmed. The commerce lane
+  has made confirmation structural (facts carry provenance and confirmation state;
+  unconfirmed facts are not member-displayable and block purchase; see
+  docs/research-commerce/COMMERCE_SUPREME_AUDIT.md on PR #31). This library deliberately
+  contains NO composition, strength, concentration, shelf-life value, or product price
+  anywhere (verified by scan on 2026-07-20; the only per-product surface is the merge-field
+  acknowledgment templates XR-COM-014 and XR-COM-016, which are gated behind XR-POL-016).
+  The rule to confirm: no per-SKU instantiation of any template, quality document,
+  supply-schedule exhibit, or Guide may assert a product fact unless it traces to a written
+  supplier document collected under the Product Supply Schedule (XR-FUL-002) and Supplier
+  Qualification Questionnaire (XR-FUL-016), confirmed by Samuel against that document. A
+  confident number with no document behind it must be recorded as an explicit gap, never
+  drafted as fact.
+- **Affected documents:** XR-COM-014, XR-COM-015, XR-COM-016, XR-COM-017, XR-FUL-002,
+  XR-FUL-004, XR-FUL-016, XR-POL-014, XR-POL-015, XR-POL-016. (Cross-lane finding from
+  the commerce/content session, 2026-07-20.)
+
 ## 14. Traceability
 
 The 346 raw open-counsel items consolidated here were produced by the 25 drafting
@@ -1345,7 +1373,7 @@ raw items from the batch outputs for the original per-document phrasing.
 
 ## Open items for counsel
 
-- Every entry OCD-001 through OCD-064 in this register is itself an open item for
+- Every entry OCD-001 through OCD-065 in this register is itself an open item for
   counsel; none is resolved.
 - [COUNSEL: confirm the P1/P2/P3 priority assignments, in particular whether any P2 lane
   decision should be promoted to P1 for the launch configuration Samuel selects.]
