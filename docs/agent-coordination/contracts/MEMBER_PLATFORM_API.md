@@ -127,8 +127,26 @@ Response: `{ ok: true, plan: Xenios90Plan | null, review: MonthlyReviewState }`
 Response: `{ ok: true, documents: PlanDocument[] }` (current + archived; member's own only)
 
 `POST /api/research/documents/:documentId/access` — guard: requireActiveMember
-Response: `{ ok: true, grant: DocumentAccessGrant }` (short-lived signed URL;
-`capability_disabled` while document rendering/storage is disabled)
+Response: `{ ok: true, grant: DocumentAccessGrant }` (short-lived signed URL,
+10-minute TTL; `capability_disabled` while document rendering/storage is
+disabled)
+
+`GET /api/research/documents/:documentId/download?exp=&sig=` — guard:
+requireActiveMember PLUS the signed grant. Additive amendment: the `signedUrl`
+returned above points here. Three independent checks must all agree, so a
+leaked URL alone is never sufficient:
+
+1. an active member session (the same guard as every member route),
+2. a valid, unexpired HMAC that binds the member id into the signature
+   (constant-time comparison),
+3. a fresh ownership re-read of the document row at use time.
+
+Every denial returns an identical `403 { ok: false, code: "not_found" }`
+regardless of which check failed, so probing distinguishes nothing. A row that
+exists and is owned but whose bytes are missing returns `404 not_found` with a
+different message, because that is an operational gap rather than a denial.
+`capability_disabled` (409) while the capability is off; no URL is ever
+fabricated in that state.
 
 `POST /api/research/documents/:documentId/acknowledge` — requireActiveMember
 Request: `DocumentAcknowledgeRequest` → `{ ok: true, acknowledgedAt: string }`
