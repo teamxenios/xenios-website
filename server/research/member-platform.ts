@@ -7,6 +7,9 @@ import { registerProfileApi } from "./profile";
 import { registerAssessmentApi } from "./assessment";
 import { registerBlueprintApi } from "./blueprint";
 import { registerPlansApi } from "./plans";
+import { registerDocumentsApi } from "./documents";
+import { registerTrackerApi } from "./tracker";
+import { registerMediaApi } from "./media";
 
 // ---------------------------------------------------------------------------
 // xenios research member platform: the ONE registration entry point for the
@@ -30,4 +33,7 @@ export function registerMemberPlatformApi(app: Express, deps: MemberPlatformDeps
   registerAssessmentApi(app, deps);
   registerBlueprintApi(app, deps);
   registerPlansApi(app, deps);
+  registerDocumentsApi(app, deps);
+  registerTrackerApi(app, deps);
+  registerMediaApi(app, deps);
 }

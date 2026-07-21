@@ -71,6 +71,15 @@ describe("registerMemberPlatformApi", () => {
     "GET /api/research/plans/xenios30",
     "POST /api/research/plans/early-change",
     "GET /api/research/plans/xenios90",
+    // wave 3
+    "GET /api/research/documents",
+    "POST /api/admin/research/documents",
+    // wave 4
+    "GET /api/research/tracker",
+    "POST /api/research/tracker",
+    "GET /api/research/media",
+    "POST /api/research/media/intent",
+    "PUT /api/research/media/retention-election",
   ];
 
   it("registers every contract route through the one entry point", () => {
@@ -86,6 +95,10 @@ describe("registerMemberPlatformApi", () => {
     expect(hasPattern("POST", "/api/admin/research/blueprints/")).toBe(true);
     expect(hasPattern("POST", "/api/research/plans/xenios30/")).toBe(true);
     expect(hasPattern("POST", "/api/admin/research/plans/")).toBe(true);
+    expect(hasPattern("POST", "/api/research/documents/")).toBe(true);
+    expect(hasPattern("GET", "/api/research/documents/")).toBe(true);
+    expect(hasPattern("POST", "/api/research/media/")).toBe(true);
+    expect(hasPattern("DELETE", "/api/research/media/")).toBe(true);
   });
 
   it("never registers anything on the frozen research index paths", () => {
