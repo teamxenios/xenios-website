@@ -51,6 +51,7 @@ function PartnerDetailBody({ token, id }: { token: string; id: string }) {
     <AdminBoundary
       state={resource.state}
       message={resource.message}
+      deniedCode={resource.deniedCode}
       onRetry={resource.reload}
       unavailableTitle="Partner records publish with the partner backend."
       unavailableBody="This account renders live when the partners admin API responds. Referral integrity flags are already reviewable from the Partners page."

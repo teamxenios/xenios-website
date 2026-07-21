@@ -49,6 +49,7 @@ function PlanDetailBody({ token, id }: { token: string; id: string }) {
     <AdminBoundary
       state={resource.state}
       message={resource.message}
+      deniedCode={resource.deniedCode}
       onRetry={resource.reload}
       unavailableTitle="Plan records publish with membership billing."
       unavailableBody="This record renders live when the billing backend connects. The standing terms ($50 one-time activation, $25 monthly, no annual plan) are listed on the Plans page."

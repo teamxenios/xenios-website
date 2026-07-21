@@ -41,6 +41,7 @@ import {
   requestCampaign,
 } from "./partner";
 import {
+  getCommerceQueues,
   getQuestion,
   listApplications,
   listMembers,
@@ -112,6 +113,23 @@ describe("partner adapter result mapping", () => {
     expect(await getPartnerCommissions("member-jwt")).toEqual({
       kind: "forbidden",
       message: "Partner grants do not exist yet.",
+    });
+  });
+
+  it("403 WITH a machine code maps to denied (routable on code)", async () => {
+    installFetch(() => jsonResponse({ ok: false, code: "partner_not_active", message: "x" }, 403));
+    expect(await getPartnerDashboard("member-jwt")).toEqual({
+      kind: "denied",
+      code: "partner_not_active",
+      message: "x",
+    });
+  });
+
+  it("200 with ok:false and a machine code maps to denied", async () => {
+    installFetch(() => jsonResponse({ ok: false, code: "commerce_disabled" }));
+    expect(await getPartnerDashboard("member-jwt")).toEqual({
+      kind: "denied",
+      code: "commerce_disabled",
     });
   });
 
@@ -235,6 +253,19 @@ describe("adminOps adapter result mapping", () => {
       "/api/admin/research/outbox?status=pending",
     ]);
     for (const call of calls) expect(call.headers["Authorization"]).toBe("Bearer admin-token");
+  });
+
+  it("getCommerceQueues GETs the frozen commerce queues path with the bearer token", async () => {
+    installFetch(() => jsonResponse({ ok: true, queues: {} }));
+    expect(await getCommerceQueues("admin-token")).toEqual({ kind: "ok", data: { ok: true, queues: {} } });
+    expect(calls[0].url).toBe("/api/admin/research/commerce/queues");
+    expect(calls[0].method).toBe("GET");
+    expect(calls[0].headers["Authorization"]).toBe("Bearer admin-token");
+  });
+
+  it("getCommerceQueues surfaces a coded 403 as denied", async () => {
+    installFetch(() => jsonResponse({ ok: false, code: "forbidden" }, 403));
+    expect(await getCommerceQueues("admin-token")).toEqual({ kind: "denied", code: "forbidden" });
   });
 
   it("actions POST to the adapter-owned paths with the JSON body and the token", async () => {

@@ -42,6 +42,7 @@ function PrivacyBody({ token }: { token: string }) {
         <AdminBoundary
           state={resource.state}
           message={resource.message}
+          deniedCode={resource.deniedCode}
           onRetry={resource.reload}
           unavailableTitle="The privacy request queue publishes with the member platform."
           unavailableBody="Member export and deletion requests currently arrive by email and are handled by a person. When the queue API responds, every request renders here with its state and resolution."

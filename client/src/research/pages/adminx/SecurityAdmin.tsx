@@ -9,6 +9,7 @@ import {
   ResearchTabs,
 } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
+import { denialPresentation } from "../../lib/denials";
 import { fmtDateTime, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 
@@ -89,6 +90,7 @@ function SystemStatusPanel({ token }: { token: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="System status is not reachable."
         unavailableBody="The system status API is not responding in this environment."
@@ -169,6 +171,10 @@ function OutboxPanel({ token }: { token: string }) {
         `Drain complete: ${s.sent ?? 0} sent, ${s.retried ?? 0} scheduled for retry, ${s.failed ?? 0} failed permanently.`,
       );
       resource.reload();
+    } else if (result.kind === "denied") {
+      // Route on the machine code; the copy is ours (lib/denials).
+      const p = denialPresentation(result.code, result.message);
+      setMessage(`${p.title} ${p.body}`);
     } else {
       setMessage(
         result.kind === "unavailable"
@@ -192,6 +198,9 @@ function OutboxPanel({ token }: { token: string }) {
     if (result.kind === "ok") {
       setMessage("Requeued. The full backoff schedule applies again and the requeue is recorded as an attempt.");
       resource.reload();
+    } else if (result.kind === "denied") {
+      const p = denialPresentation(result.code, result.message);
+      setMessage(`${p.title} ${p.body}`);
     } else {
       setMessage(
         result.kind === "unavailable"
@@ -225,6 +234,7 @@ function OutboxPanel({ token }: { token: string }) {
         <AdminBoundary
           state={resource.state}
           message={resource.message}
+          deniedCode={resource.deniedCode}
           onRetry={resource.reload}
           unavailableTitle="The outbox is not reachable."
           unavailableBody="The outbox API is not responding in this environment."
@@ -324,6 +334,9 @@ function TestEmailPanel({ token }: { token: string }) {
       setMessage("The test email endpoint is not available in this environment.");
     } else if (result.kind === "unauthorized") {
       setMessage("Your admin session has ended. Sign in again.");
+    } else if (result.kind === "denied") {
+      const p = denialPresentation(result.code, result.message);
+      setMessage(`${p.title} ${p.body}`);
     } else {
       setMessage(result.kind === "forbidden" ? result.message ?? "This action is not allowed." : result.message);
     }

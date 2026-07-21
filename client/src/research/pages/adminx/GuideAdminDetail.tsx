@@ -49,6 +49,7 @@ function GuideDetailBody({ token, id }: { token: string; id: string }) {
     <AdminBoundary
       state={resource.state}
       message={resource.message}
+      deniedCode={resource.deniedCode}
       onRetry={resource.reload}
       unavailableTitle="Guide management publishes with the member platform."
       unavailableBody="This guide record renders live when the guides admin API responds. The published member-facing version is unaffected."

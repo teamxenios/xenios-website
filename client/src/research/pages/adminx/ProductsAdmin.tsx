@@ -82,6 +82,7 @@ function ProductsBody({ token }: { token: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="Product administration publishes with the commerce backend."
         unavailableBody="Members already see the read-only catalog. Admin creation, editing, and publishing land here when the commerce backend connects; no editing controls are shown before the backend that honors them exists."

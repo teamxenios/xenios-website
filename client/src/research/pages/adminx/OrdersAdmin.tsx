@@ -106,6 +106,7 @@ function OrdersBody({ token }: { token: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="The order queue publishes with the commerce backend."
         unavailableBody="Ordering is not open to members yet, so there are no orders to show. This queue renders live the moment the commerce backend connects."

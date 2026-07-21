@@ -21,6 +21,7 @@ import {
 } from "../../adapters/member";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { devFixture } from "../../lib/fixtures";
+import { failureText } from "../../lib/denials";
 
 // ---------------------------------------------------------------------------
 // Privacy controls (/research/member/privacy). Three data rights (export,
@@ -143,7 +144,7 @@ export default function PrivacyControls() {
     } else {
       setState({
         phase: "error",
-        message: res.kind === "forbidden" ? res.message ?? "This action is not permitted." : res.message,
+        message: failureText(res, "This action is not permitted."),
       });
     }
   }

@@ -83,6 +83,7 @@ function MembersBody({ token }: { token: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="The member roster publishes with the member platform."
         unavailableBody="This page is built and renders live accounts the moment the members API responds. Until then, active memberships are visible in the Applications queue under the Active chip."

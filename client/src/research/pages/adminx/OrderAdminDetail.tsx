@@ -50,6 +50,7 @@ function OrderDetailBody({ token, id }: { token: string; id: string }) {
     <AdminBoundary
       state={resource.state}
       message={resource.message}
+      deniedCode={resource.deniedCode}
       onRetry={resource.reload}
       unavailableTitle="Order records publish with the commerce backend."
       unavailableBody="This order file renders live when the commerce backend connects. Ordering is not open to members yet."

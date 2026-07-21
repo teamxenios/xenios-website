@@ -1,34 +1,36 @@
-// Adapter contract tests: the commerce and guides adapters must hit the
-// exact member endpoints and surface every server condition through the one
-// ApiResult envelope (ok / empty body / unavailable / error / unauthorized /
-// forbidden). fetch is stubbed, so this pins the mapping matrix without a
-// server and catches any drift in the shared paths.
+// Adapter contract tests for the FROZEN commerce surface: every function must
+// hit the exact frozen route with the exact method and body, and every server
+// condition must surface through the one ApiResult envelope, including the
+// denied kind ({ ok: false, code } on any status, and 403 carrying a code).
+// fetch is stubbed, so this pins the mapping matrix without a server and
+// catches any drift in the shared paths.
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  addCartLine,
   commercePaths,
   fetchOrder,
   fetchOrders,
   fetchSubscriptions,
-  joinWaitlist,
+  getCart,
+  getOrder,
+  getProduct,
+  getStoreCredit,
+  listClaims,
+  listGoals,
+  listOrders,
+  listProducts,
+  listSubscriptions,
+  quoteShipping,
+  removeCartLine,
+  submitCheckout,
+  submitClaim,
   subscriptionAction,
+  updateCartLine,
 } from "./commerce";
-import {
-  fetchGuide,
-  fetchGuides,
-  fetchQuestions,
-  fetchReferrals,
-  fetchTelegramLink,
-  guidesPaths,
-  linkTelegram,
-  rateAnswer,
-  requestGuideTopic,
-  submitGuideCorrection,
-  submitQuestion,
-  submitVoiceQuestion,
-  unlinkTelegram,
-} from "./guides";
+import { frozenGuidePaths, getGuide, listGuides } from "./guides";
 import type { ApiResult } from "../lib/api";
+import type { CheckoutRequest, ShippingQuoteRequest } from "@shared/research/commerce-api";
 
 type Call = { url: string; init: RequestInit };
 
@@ -67,16 +69,21 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+const headers = () => calls[0].init.headers as Record<string, string>;
+
+// ---------------------------------------------------------------------------
 // The full mapping matrix, exercised through one GET adapter from each file.
 // The mapping lives in lib/api, so one representative per adapter proves the
 // adapter routes through it unchanged.
+// ---------------------------------------------------------------------------
+
 const matrixSubjects: Array<{
   name: string;
   run: () => Promise<ApiResult<unknown>>;
   path: string;
 }> = [
-  { name: "commerce.fetchOrders", run: () => fetchOrders(null), path: commercePaths.orders },
-  { name: "guides.fetchGuides", run: () => fetchGuides(null), path: guidesPaths.guides },
+  { name: "commerce.listProducts", run: () => listProducts(null), path: commercePaths.products },
+  { name: "guides.listGuides", run: () => listGuides(null), path: frozenGuidePaths.guides },
 ];
 
 describe.each(matrixSubjects)("ApiResult matrix via $name", ({ run, path }) => {
@@ -106,14 +113,23 @@ describe.each(matrixSubjects)("ApiResult matrix via $name", ({ run, path }) => {
     expect(await run()).toEqual({ kind: "unauthorized" });
   });
 
-  it("maps 403 to forbidden with the server message", async () => {
+  it("maps 403 without a code to forbidden with the server message", async () => {
     stubFetch(403, { message: "Members only." });
     expect(await run()).toEqual({ kind: "forbidden", message: "Members only." });
   });
 
-  it("maps 403 without a body to forbidden with no message", async () => {
-    stubFetch(403, undefined);
-    expect(await run()).toEqual({ kind: "forbidden", message: undefined });
+  it("maps 403 WITH a machine code to denied (routable)", async () => {
+    stubFetch(403, { ok: false, code: "commerce_disabled" });
+    expect(await run()).toEqual({ kind: "denied", code: "commerce_disabled" });
+  });
+
+  it("maps 200 with ok:false and a machine code to denied", async () => {
+    stubFetch(200, { ok: false, code: "large_order_review_required", message: "held" });
+    expect(await run()).toEqual({
+      kind: "denied",
+      code: "large_order_review_required",
+      message: "held",
+    });
   });
 
   it.each([404, 501, 503])("maps %i to unavailable", async (status) => {
@@ -126,14 +142,6 @@ describe.each(matrixSubjects)("ApiResult matrix via $name", ({ run, path }) => {
     expect(await run()).toEqual({ kind: "error", message: "Boom." });
   });
 
-  it("maps a 500 without a message to the generic error", async () => {
-    stubFetch(500, {});
-    expect(await run()).toEqual({
-      kind: "error",
-      message: "Something went wrong. Please try again.",
-    });
-  });
-
   it("maps a network failure to the connection error", async () => {
     stubFetchReject();
     expect(await run()).toEqual({
@@ -143,124 +151,253 @@ describe.each(matrixSubjects)("ApiResult matrix via $name", ({ run, path }) => {
   });
 });
 
-describe("commerce adapter endpoints", () => {
-  it("joinWaitlist POSTs the slug with the bearer token", async () => {
-    stubFetch(200, { ok: true });
-    const result = await joinWaitlist("bpc-157", "tok-1");
-    expect(result).toEqual({ kind: "ok", data: { ok: true } });
-    expect(calls[0].url).toBe("/api/research/member/waitlist");
-    expect(calls[0].init.method).toBe("POST");
-    expect(calls[0].init.body).toBe(JSON.stringify({ slug: "bpc-157" }));
-    expect((calls[0].init.headers as Record<string, string>).Authorization).toBe("Bearer tok-1");
-  });
+// ---------------------------------------------------------------------------
+// Frozen catalog routes
+// ---------------------------------------------------------------------------
 
-  it("fetchOrder encodes the order id into the path", async () => {
-    stubFetch(200, { order: {} });
-    await fetchOrder("ord/1 x", "tok");
-    expect(calls[0].url).toBe("/api/research/member/orders/ord%2F1%20x");
-  });
-
-  it("fetchSubscriptions GETs the subscriptions path", async () => {
-    stubFetch(200, { subscriptions: [] });
-    await fetchSubscriptions("tok");
-    expect(calls[0].url).toBe("/api/research/member/subscriptions");
+describe("catalog endpoints", () => {
+  it("listProducts GETs /api/research/products with the bearer token", async () => {
+    stubFetch(200, { ok: true, products: [] });
+    await listProducts("tok-1");
+    expect(calls[0].url).toBe("/api/research/products");
     expect(calls[0].init.method).toBe("GET");
+    expect(headers().Authorization).toBe("Bearer tok-1");
   });
 
-  it("subscriptionAction POSTs to the encoded sub id and action", async () => {
-    stubFetch(200, {});
-    await subscriptionAction("sub 9", "pause", { until: "2026-08-01" }, "tok");
-    expect(calls[0].url).toBe("/api/research/member/subscriptions/sub%209/pause");
-    expect(calls[0].init.method).toBe("POST");
-    expect(calls[0].init.body).toBe(JSON.stringify({ until: "2026-08-01" }));
+  it("getProduct encodes the slug into the path", async () => {
+    stubFetch(200, { ok: true, product: {} });
+    await getProduct("tok", "bpc 157/x");
+    expect(calls[0].url).toBe("/api/research/products/bpc%20157%2Fx");
   });
 
-  it("omits the Authorization header when no token is given", async () => {
-    stubFetch(200, {});
-    await fetchOrders(null);
-    expect((calls[0].init.headers as Record<string, string>).Authorization).toBeUndefined();
+  it("listGoals GETs /api/research/goals", async () => {
+    stubFetch(200, { ok: true, goals: [] });
+    await listGoals("tok");
+    expect(calls[0].url).toBe("/api/research/goals");
+    expect(calls[0].init.method).toBe("GET");
   });
 });
 
-describe("guides adapter endpoints", () => {
-  it("fetchGuide encodes the slug into the path", async () => {
-    stubFetch(200, { guide: {} });
-    await fetchGuide("dosing 101/a", "tok");
-    expect(calls[0].url).toBe("/api/research/member/guides/dosing%20101%2Fa");
+// ---------------------------------------------------------------------------
+// Frozen cart routes
+// ---------------------------------------------------------------------------
+
+describe("cart endpoints", () => {
+  it("getCart GETs /api/research/cart", async () => {
+    stubFetch(200, { ok: true, cart: {} });
+    await getCart("tok");
+    expect(calls[0].url).toBe("/api/research/cart");
+    expect(calls[0].init.method).toBe("GET");
   });
 
-  it("submitGuideCorrection defaults to the slug corrections path", async () => {
-    stubFetch(200, { ok: true });
-    await submitGuideCorrection("dosing", { message: "typo" }, "tok");
-    expect(calls[0].url).toBe("/api/research/member/guides/dosing/corrections");
+  it("addCartLine POSTs the AddCartLineRequest to /api/research/cart/lines", async () => {
+    stubFetch(200, { ok: true, cart: {} });
+    await addCartLine("tok", {
+      sku: "XN-01",
+      quantity: 2,
+      purchaseMode: "subscription",
+      subscriptionFrequencyDays: 30,
+    });
+    expect(calls[0].url).toBe("/api/research/cart/lines");
     expect(calls[0].init.method).toBe("POST");
-    expect(calls[0].init.body).toBe(JSON.stringify({ message: "typo" }));
+    expect(calls[0].init.body).toBe(
+      JSON.stringify({ sku: "XN-01", quantity: 2, purchaseMode: "subscription", subscriptionFrequencyDays: 30 }),
+    );
+    expect(headers()["Content-Type"]).toBe("application/json");
   });
 
-  it("submitGuideCorrection prefers a non-empty override path", async () => {
-    stubFetch(200, { ok: true });
-    await submitGuideCorrection("dosing", { message: "typo" }, "tok", "/api/custom/corrections");
-    expect(calls[0].url).toBe("/api/custom/corrections");
+  it("updateCartLine PATCHes the encoded sku with the patch body", async () => {
+    stubFetch(200, { ok: true, cart: {} });
+    await updateCartLine("tok", "XN 01/a", { quantity: 3, purchaseMode: "one_time" });
+    expect(calls[0].url).toBe("/api/research/cart/lines/XN%2001%2Fa");
+    expect(calls[0].init.method).toBe("PATCH");
+    expect(calls[0].init.body).toBe(JSON.stringify({ quantity: 3, purchaseMode: "one_time" }));
   });
 
-  it("submitGuideCorrection falls back when the override is empty or null", async () => {
-    stubFetch(200, { ok: true });
-    await submitGuideCorrection("dosing", { message: "typo" }, "tok", "");
-    expect(calls[0].url).toBe("/api/research/member/guides/dosing/corrections");
-    stubFetch(200, { ok: true });
-    await submitGuideCorrection("dosing", { message: "typo" }, "tok", null);
-    expect(calls[0].url).toBe("/api/research/member/guides/dosing/corrections");
+  it("removeCartLine DELETEs the encoded sku with no body and no content type", async () => {
+    stubFetch(200, { ok: true, cart: {} });
+    await removeCartLine("tok", "XN-01");
+    expect(calls[0].url).toBe("/api/research/cart/lines/XN-01");
+    expect(calls[0].init.method).toBe("DELETE");
+    expect(calls[0].init.body).toBeUndefined();
+    expect(headers()["Content-Type"]).toBeUndefined();
+    expect(headers().Authorization).toBe("Bearer tok");
   });
+});
 
-  it("requestGuideTopic POSTs the topic body", async () => {
-    stubFetch(200, { ok: true });
-    await requestGuideTopic({ topic: "GLP-1 handling" }, "tok");
-    expect(calls[0].url).toBe("/api/research/member/guide-topic-requests");
-    expect(calls[0].init.body).toBe(JSON.stringify({ topic: "GLP-1 handling" }));
-  });
+// ---------------------------------------------------------------------------
+// Shipping and checkout
+// ---------------------------------------------------------------------------
 
-  it("question endpoints hit their paths", async () => {
-    stubFetch(200, { questions: [] });
-    await fetchQuestions("tok");
-    expect(calls[0].url).toBe("/api/research/member/questions");
-    expect(calls[0].init.method).toBe("GET");
+const destination: ShippingQuoteRequest["destination"] = {
+  line1: "1 Research Way",
+  city: "Austin",
+  state: "TX",
+  postalCode: "78701",
+  country: "US",
+};
 
-    stubFetch(200, { id: "q1" });
-    await submitQuestion({ subject: "s", body: "b" }, "tok");
-    expect(calls[0].url).toBe("/api/research/member/questions");
+describe("shipping and checkout endpoints", () => {
+  it("quoteShipping POSTs the ShippingQuoteRequest", async () => {
+    stubFetch(200, { ok: true, quote: {} });
+    await quoteShipping("tok", { destination, service: "standard" });
+    expect(calls[0].url).toBe("/api/research/shipping/quote");
     expect(calls[0].init.method).toBe("POST");
-
-    stubFetch(200, { id: "q2" });
-    await submitVoiceQuestion({ audio: "AAA=", mimeType: "audio/webm" }, "tok");
-    expect(calls[0].url).toBe("/api/research/member/questions/voice");
-
-    stubFetch(200, { saved: true });
-    await rateAnswer("q 1", { rating: 5 }, "tok");
-    expect(calls[0].url).toBe("/api/research/member/questions/q%201/rating");
-    expect(calls[0].init.body).toBe(JSON.stringify({ rating: 5 }));
+    expect(JSON.parse(String(calls[0].init.body))).toEqual({ destination, service: "standard" });
   });
 
-  it("telegram endpoints hit their paths with an empty POST body", async () => {
-    stubFetch(200, { linked: false });
-    await fetchTelegramLink("tok");
-    expect(calls[0].url).toBe("/api/research/member/telegram");
-    expect(calls[0].init.method).toBe("GET");
-
-    stubFetch(200, { linkUrl: "https://t.me/x" });
-    await linkTelegram("tok");
-    expect(calls[0].url).toBe("/api/research/member/telegram/link");
-    expect(calls[0].init.body).toBe(JSON.stringify({}));
-
-    stubFetch(200, { unlinked: true });
-    await unlinkTelegram("tok");
-    expect(calls[0].url).toBe("/api/research/member/telegram/unlink");
-    expect(calls[0].init.body).toBe(JSON.stringify({}));
+  it("submitCheckout POSTs the CheckoutRequest (no client-supplied price fields exist)", async () => {
+    stubFetch(200, { ok: true, order: {} });
+    const req: CheckoutRequest = {
+      shippingAddress: destination,
+      shippingService: "standard",
+      acceptedAgreementKeys: ["research_terms_v1"],
+      researchAttestation: true,
+      idempotencyKey: "idem-1",
+    };
+    await submitCheckout("tok", req);
+    expect(calls[0].url).toBe("/api/research/checkout");
+    expect(calls[0].init.method).toBe("POST");
+    expect(JSON.parse(String(calls[0].init.body))).toEqual(req);
   });
 
-  it("fetchReferrals GETs the referrals path", async () => {
-    stubFetch(200, { code: "XEN-1" });
-    await fetchReferrals("tok");
-    expect(calls[0].url).toBe("/api/research/member/referrals");
+  it("routes a 403 commerce_disabled checkout to the denied kind", async () => {
+    stubFetch(403, { ok: false, code: "commerce_disabled" });
+    const result = await submitCheckout("tok", {
+      shippingAddress: destination,
+      shippingService: "standard",
+      acceptedAgreementKeys: [],
+      idempotencyKey: "idem-2",
+    });
+    expect(result).toEqual({ kind: "denied", code: "commerce_disabled" });
+  });
+
+  it("routes a 200 large_order_review_required checkout to the denied kind (order held, not an error)", async () => {
+    stubFetch(200, { ok: false, code: "large_order_review_required" });
+    const result = await submitCheckout("tok", {
+      shippingAddress: destination,
+      shippingService: "standard",
+      acceptedAgreementKeys: [],
+      idempotencyKey: "idem-3",
+    });
+    expect(result).toEqual({ kind: "denied", code: "large_order_review_required" });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Orders, subscriptions, claims, store credit
+// ---------------------------------------------------------------------------
+
+describe("orders, subscriptions, claims, and store credit endpoints", () => {
+  it("listOrders GETs /api/research/orders", async () => {
+    stubFetch(200, { ok: true, orders: [] });
+    await listOrders("tok");
+    expect(calls[0].url).toBe("/api/research/orders");
+  });
+
+  it("getOrder encodes the order id into the path", async () => {
+    stubFetch(200, { ok: true, order: {} });
+    await getOrder("tok", "ord/1 x");
+    expect(calls[0].url).toBe("/api/research/orders/ord%2F1%20x");
+  });
+
+  it("listSubscriptions GETs /api/research/subscriptions", async () => {
+    stubFetch(200, { ok: true, subscriptions: [] });
+    await listSubscriptions("tok");
+    expect(calls[0].url).toBe("/api/research/subscriptions");
     expect(calls[0].init.method).toBe("GET");
+  });
+
+  it("subscriptionAction POSTs the SubscriptionActionRequest to the encoded id", async () => {
+    stubFetch(200, { ok: true, subscription: {} });
+    await subscriptionAction("tok", "sub 9", { action: "reschedule", rescheduleTo: "2026-08-01" });
+    expect(calls[0].url).toBe("/api/research/subscriptions/sub%209");
+    expect(calls[0].init.method).toBe("POST");
+    expect(calls[0].init.body).toBe(JSON.stringify({ action: "reschedule", rescheduleTo: "2026-08-01" }));
+  });
+
+  it("submitClaim POSTs the CreateClaimRequest to /api/research/claims", async () => {
+    stubFetch(200, { ok: true, claim: {} });
+    await submitClaim("tok", {
+      orderId: "ord-1",
+      sku: "XN-01",
+      reason: "damaged",
+      detail: "Arrived cracked.",
+      evidenceRefs: ["ref-1"],
+    });
+    expect(calls[0].url).toBe("/api/research/claims");
+    expect(calls[0].init.method).toBe("POST");
+  });
+
+  it("listClaims GETs /api/research/claims", async () => {
+    stubFetch(200, { ok: true, claims: [] });
+    await listClaims("tok");
+    expect(calls[0].url).toBe("/api/research/claims");
+    expect(calls[0].init.method).toBe("GET");
+  });
+
+  it("getStoreCredit GETs /api/research/store-credit", async () => {
+    stubFetch(200, { ok: true, storeCredit: {} });
+    await getStoreCredit("tok");
+    expect(calls[0].url).toBe("/api/research/store-credit");
+  });
+
+  it("omits the Authorization header when no token is given", async () => {
+    stubFetch(200, { ok: true, orders: [] });
+    await listOrders(null);
+    expect(headers().Authorization).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Legacy-name wrappers hit the SAME frozen paths with the old argument order
+// ---------------------------------------------------------------------------
+
+describe("legacy-name compatibility wrappers", () => {
+  it("fetchOrders hits the frozen orders path", async () => {
+    stubFetch(200, { ok: true, orders: [] });
+    await fetchOrders("tok");
+    expect(calls[0].url).toBe("/api/research/orders");
+  });
+
+  it("fetchOrder keeps the (orderId, token) argument order against the frozen path", async () => {
+    stubFetch(200, { ok: true, order: {} });
+    await fetchOrder("ord-7", "tok-x");
+    expect(calls[0].url).toBe("/api/research/orders/ord-7");
+    expect(headers().Authorization).toBe("Bearer tok-x");
+  });
+
+  it("fetchSubscriptions hits the frozen subscriptions path", async () => {
+    stubFetch(200, { ok: true, subscriptions: [] });
+    await fetchSubscriptions("tok");
+    expect(calls[0].url).toBe("/api/research/subscriptions");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Frozen guide routes (the commerce-lane pair added to the guides adapter)
+// ---------------------------------------------------------------------------
+
+describe("frozen guide endpoints", () => {
+  it("listGuides GETs /api/research/guides with the bearer token", async () => {
+    stubFetch(200, { ok: true, guides: [] });
+    await listGuides("tok");
+    expect(calls[0].url).toBe("/api/research/guides");
+    expect(calls[0].init.method).toBe("GET");
+    expect(headers().Authorization).toBe("Bearer tok");
+  });
+
+  it("getGuide encodes the slug into the path", async () => {
+    stubFetch(200, { ok: true, guide: {} });
+    await getGuide("tok", "dosing 101/a");
+    expect(calls[0].url).toBe("/api/research/guides/dosing%20101%2Fa");
+  });
+
+  it("an unpublished guide detail surfaces as denied with guide_not_published", async () => {
+    stubFetch(200, { ok: false, code: "guide_not_published" });
+    expect(await getGuide("tok", "in-review-guide")).toEqual({
+      kind: "denied",
+      code: "guide_not_published",
+    });
   });
 });

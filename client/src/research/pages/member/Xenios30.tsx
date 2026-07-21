@@ -9,6 +9,7 @@ import {
   type ResearchCapability,
 } from "../../lib/capabilities";
 import { devFixture } from "../../lib/fixtures";
+import { failureText } from "../../lib/denials";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
@@ -183,10 +184,8 @@ function AcknowledgeCard({
       setNote("Acknowledgment is not open yet. Your plan is unaffected and nothing is wrong with your account.");
     } else if (res.kind === "unauthorized") {
       setNote("Your session has ended. Sign in again to acknowledge this plan.");
-    } else if (res.kind === "forbidden") {
-      setNote(res.message ?? "Acknowledgment needs an active membership.");
     } else {
-      setNote(res.message);
+      setNote(failureText(res, "Acknowledgment needs an active membership."));
     }
     setBusy(false);
   }, [memberToken, plan.version]);

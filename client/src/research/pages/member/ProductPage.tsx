@@ -1,362 +1,395 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
-import type { Product, ProductStatus } from "@shared/research/types";
-import { canAddToCart, formatMoney, productActionLabel, useResearch } from "../../core";
+import type { ProductDetailDto } from "@shared/research/commerce-api";
+import type { SubscriptionFrequencyDays } from "@shared/research/commerce";
+import { useResearch } from "../../core";
+import { addCartLine, getProduct } from "../../adapters/commerce";
+import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
+  ResearchDenialNotice,
   ResearchRouteBoundary,
-  ResearchCapabilityBoundary,
-  capabilityStatusOrPending,
-  ResearchEmptyState,
   ResearchStatusBadge,
-  type BadgeTone,
 } from "../../ui/kit";
-import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
-import { joinWaitlist as joinWaitlistRequest } from "../../adapters/commerce";
-import { MEMBER_ROUTES } from "../../lib/routes";
+import {
+  AVAILABILITY_META,
+  GUIDE_STATE_LABELS,
+  LANE_LABELS,
+  goalLabel,
+  priceLabel,
+} from "./commerce-presentation";
 
-// Member product detail (Supreme build). Every fact on this page comes from
-// the gated catalog product record; anything the server has not supplied
-// renders as an honest pending line, never an invented value. Quantum items
-// always present as coming soon.
+// ---------------------------------------------------------------------------
+// Member product detail (/research/member/products/:slug), rendered straight
+// from the frozen ProductDetailDto (GET /api/research/products/:slug).
+//
+// The rules baked in here, from the frozen contract:
+// - confirmedFacts is a PARTIAL map. Only present keys render. A missing key
+//   gets no row, no placeholder, and no request-this-info affordance.
+// - purchasable false renders the member-safe unavailableReason string, never
+//   a raw reason code and never a buy control.
+// - purchasable true renders the full quantity + one-time/subscription
+//   selection and adds to the real cart via POST /api/research/cart/lines,
+//   routing on the machine code. Success links to the cart.
+// ---------------------------------------------------------------------------
 
-function effectiveStatus(product: Product): ProductStatus {
-  return product.category === "quantum" ? "coming-soon" : product.status;
-}
-
-const STATUS_BADGE: Record<ProductStatus, { label: string; tone: BadgeTone }> = {
-  live: { label: "Available", tone: "success" },
-  hold: { label: "Documentation review", tone: "pending" },
-  "professional-only": { label: "Professional access", tone: "info" },
-  "request-access": { label: "Request access", tone: "neutral" },
-  "coming-soon": { label: "Coming soon", tone: "pending" },
+const FACT_ORDER = ["composition", "strength", "format"] as const;
+const FACT_LABELS: Record<(typeof FACT_ORDER)[number], string> = {
+  composition: "Composition",
+  strength: "Strength",
+  format: "Format",
 };
 
-// Case-insensitive lookup into the product's specification record.
-function specValue(product: Product, ...needles: string[]): string | null {
-  const specs = product.specifications;
-  if (!specs) return null;
-  for (const [key, value] of Object.entries(specs)) {
-    const k = key.toLowerCase();
-    if (needles.some((n) => k.includes(n))) return value;
-  }
-  return null;
+const FREQUENCIES: SubscriptionFrequencyDays[] = [30, 60, 90];
+
+type PageState =
+  | { phase: "loading" }
+  | { phase: "ok"; product: ProductDetailDto }
+  | { phase: "denied"; code: string; message?: string }
+  | { phase: "unavailable" }
+  | { phase: "unauthorized" }
+  | { phase: "error"; message?: string };
+
+type AddState =
+  | { phase: "idle" }
+  | { phase: "busy" }
+  | { phase: "added" }
+  | { phase: "denied"; code: string; message?: string }
+  | { phase: "unavailable" }
+  | { phase: "unauthorized" }
+  | { phase: "error"; message: string };
+
+function guideHref(slug: string): string {
+  return MEMBER_ROUTES.guide.replace(":slug", slug);
 }
 
-// Subscription frequencies are rendered ONLY when the server supplies them on
-// the product record; the shared type does not require the field, so the read
-// is defensive and anything malformed collapses to "none supplied".
-function subscriptionFrequencies(product: Product): string[] {
-  const raw = (product as Product & { subscriptionFrequencies?: unknown }).subscriptionFrequencies;
-  if (!Array.isArray(raw)) return [];
-  return raw.filter((f): f is string => typeof f === "string" && f.length > 0);
-}
+// The purchase panel: rendered only when the server says purchasable.
+function PurchasePanel({ product, token }: { product: ProductDetailDto; token: string | null }) {
+  const [quantity, setQuantity] = useState("1");
+  const [mode, setMode] = useState<"one_time" | "subscription">("one_time");
+  const [frequency, setFrequency] = useState<SubscriptionFrequencyDays>(30);
+  const [add, setAdd] = useState<AddState>({ phase: "idle" });
 
-type WaitlistState = "idle" | "busy" | "joined" | "unavailable" | "error";
+  const submit = async () => {
+    const q = Number(quantity);
+    if (!Number.isInteger(q) || q < 1) {
+      setAdd({ phase: "error", message: "Enter a whole quantity of at least 1." });
+      return;
+    }
+    setAdd({ phase: "busy" });
+    const result = await addCartLine(token, {
+      sku: product.sku,
+      quantity: q,
+      purchaseMode: mode,
+      ...(mode === "subscription" ? { subscriptionFrequencyDays: frequency } : {}),
+    });
+    switch (result.kind) {
+      case "ok":
+        setAdd({ phase: "added" });
+        return;
+      case "denied":
+        setAdd({ phase: "denied", code: result.code, message: result.message });
+        return;
+      case "unauthorized":
+        setAdd({ phase: "unauthorized" });
+        return;
+      case "forbidden":
+      case "unavailable":
+        setAdd({ phase: "unavailable" });
+        return;
+      case "error":
+        setAdd({ phase: "error", message: result.message });
+        return;
+    }
+  };
+
+  return (
+    <div className="card" data-testid="ra-purchase-panel">
+      <p className="mono-label text-ink-mute">Order this product</p>
+      <p className="body-s text-ink-2 mt-2">{priceLabel(product.priceCents)}</p>
+      <div className="mt-4 flex flex-wrap items-end gap-4">
+        <div>
+          <label className="form-label" htmlFor="ra-add-quantity">
+            Quantity
+          </label>
+          <input
+            id="ra-add-quantity"
+            type="number"
+            className="input-field"
+            min={1}
+            step={1}
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            style={{ width: 96 }}
+            data-testid="ra-add-quantity"
+          />
+        </div>
+        <div>
+          <label className="form-label" htmlFor="ra-add-mode">
+            Purchase
+          </label>
+          <select
+            id="ra-add-mode"
+            className="input-field"
+            value={mode}
+            onChange={(e) => setMode(e.target.value as "one_time" | "subscription")}
+            data-testid="ra-add-mode"
+          >
+            <option value="one_time">One time</option>
+            <option value="subscription">Subscription</option>
+          </select>
+        </div>
+        {mode === "subscription" && (
+          <div>
+            <label className="form-label" htmlFor="ra-add-frequency">
+              Delivery frequency
+            </label>
+            <select
+              id="ra-add-frequency"
+              className="input-field"
+              value={String(frequency)}
+              onChange={(e) => setFrequency(Number(e.target.value) as SubscriptionFrequencyDays)}
+              data-testid="ra-add-frequency"
+            >
+              {FREQUENCIES.map((f) => (
+                <option key={f} value={String(f)}>
+                  Every {f} days
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        <button
+          type="button"
+          className="btn btn-primary"
+          disabled={add.phase === "busy"}
+          onClick={() => void submit()}
+          data-testid="ra-add-to-cart"
+        >
+          {add.phase === "busy" ? "Adding..." : "Add to cart"}
+        </button>
+      </div>
+      <div className="mt-4" aria-live="polite">
+        {add.phase === "added" && (
+          <p className="body-s text-ink-2" role="status" data-testid="ra-add-success">
+            Added to your cart. <Link href={MEMBER_ROUTES.cart}>Review your cart</Link>.
+          </p>
+        )}
+        {add.phase === "denied" && <ResearchDenialNotice code={add.code} message={add.message} />}
+        {add.phase === "unavailable" && (
+          <p className="body-s text-ink-2" role="status">
+            The cart is not available right now. Nothing was added, and nothing is wrong with your account.
+          </p>
+        )}
+        {add.phase === "unauthorized" && (
+          <p className="body-s text-ink-2" role="status">
+            Your session has ended. Sign in again to add this to your cart.
+          </p>
+        )}
+        {add.phase === "error" && (
+          <p className="body-s font-700" role="alert">
+            {add.message}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function ProductPage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug ?? "";
-  const { member, memberChecking, memberToken, bySlug, commerce, email, addItem } = useResearch();
+  const { member, memberChecking, memberToken } = useResearch();
+  const [state, setState] = useState<PageState>({ phase: "loading" });
 
-  const [caps, setCaps] = useState<Map<ResearchCapability, CapabilityStatus> | null>(null);
-  const [waitlist, setWaitlist] = useState<WaitlistState>("idle");
-  const [added, setAdded] = useState(false);
+  const load = useCallback(async () => {
+    if (!slug) {
+      setState({ phase: "denied", code: "product_not_found" });
+      return;
+    }
+    setState({ phase: "loading" });
+    const result = await getProduct(memberToken, slug);
+    switch (result.kind) {
+      case "ok":
+        setState({ phase: "ok", product: result.data.product });
+        return;
+      case "denied":
+        setState({ phase: "denied", code: result.code, message: result.message });
+        return;
+      case "unauthorized":
+        setState({ phase: "unauthorized" });
+        return;
+      case "forbidden":
+      case "unavailable":
+        setState({ phase: "unavailable" });
+        return;
+      case "error":
+        setState({ phase: "error", message: result.message });
+        return;
+    }
+  }, [slug, memberToken]);
 
   useEffect(() => {
-    if (!memberToken) return;
-    let alive = true;
-    void fetchCapabilities(memberToken).then((m) => {
-      if (alive) setCaps(m);
-    });
-    return () => {
-      alive = false;
-    };
-  }, [memberToken]);
+    if (memberChecking) return;
+    void load();
+  }, [load, memberChecking]);
 
-  const product = bySlug.get(slug) ?? null;
-  const commerceStatus = capabilityStatusOrPending(caps, "product_commerce");
+  const product = state.phase === "ok" ? state.product : null;
 
-  const frequencies = useMemo(() => (product ? subscriptionFrequencies(product) : []), [product]);
+  // Only the confirmed fact keys that are actually present render. Absence is
+  // absence: no row, no placeholder, nothing to request.
+  const presentFacts = product
+    ? FACT_ORDER.filter((key): key is (typeof FACT_ORDER)[number] => {
+        const value = product.confirmedFacts[key];
+        return typeof value === "string" && value.length > 0;
+      })
+    : [];
 
-  const joinWaitlist = async () => {
-    setWaitlist("busy");
-    const result = await joinWaitlistRequest(slug, memberToken);
-    if (result.kind === "ok") setWaitlist("joined");
-    else if (result.kind === "unavailable") setWaitlist("unavailable");
-    else setWaitlist("error");
-  };
+  const availability = product ? AVAILABILITY_META[product.availability] : null;
 
-  const boundaryState: "loading" | "unauthorized" | "ok" = memberChecking ? "loading" : !member ? "unauthorized" : "ok";
-
-  const concernMailto = product
-    ? `mailto:${email}?subject=${encodeURIComponent(`Product concern: ${product.name}`)}`
-    : `mailto:${email}`;
-
-  const status = product ? effectiveStatus(product) : null;
-  const badge = status ? STATUS_BADGE[status] : null;
-  const format = product ? product.size ?? specValue(product, "format") : null;
-  const sku = product ? specValue(product, "sku") : null;
-  const storage = product ? specValue(product, "storage") : null;
-  const shipping = product ? specValue(product, "shipping", "ship") : null;
-  const purchasable = product && status ? status !== "coming-soon" && canAddToCart(product, commerce) : false;
+  const boundaryState: "loading" | "unauthorized" | "ok" | "error" | "unavailable" = memberChecking
+    ? "loading"
+    : !member
+      ? "unauthorized"
+      : state.phase === "loading"
+        ? "loading"
+        : state.phase === "unauthorized"
+          ? "unauthorized"
+          : state.phase === "error"
+            ? "error"
+            : state.phase === "unavailable"
+              ? "unavailable"
+              : "ok";
 
   return (
     <ResearchMemberShell
       eyebrow="Member catalog"
-      title={product ? product.name : "Product"}
-      lead={product?.summary}
+      title={product ? product.displayName : "Product"}
       actions={
         <Link href={MEMBER_ROUTES.products} className="btn btn-ghost">
           Back to products
         </Link>
       }
     >
-      <ResearchRouteBoundary state={boundaryState}>
-        {!product ? (
-          <ResearchEmptyState
-            title="This product is not in your catalog."
-            body="The link may be out of date, or the product may not be published to your membership yet."
-            action={
+      <ResearchRouteBoundary
+        state={boundaryState}
+        errorMessage={state.phase === "error" ? state.message : undefined}
+        onRetry={() => void load()}
+        unavailableTitle="This product page is not available yet."
+        unavailableBody="It is being prepared. Nothing is wrong with your account."
+      >
+        {state.phase === "denied" ? (
+          <div className="grid gap-4" data-testid="ra-product-denied">
+            <ResearchDenialNotice code={state.code} message={state.message} />
+            <div>
               <Link href={MEMBER_ROUTES.products} className="btn btn-primary">
                 Browse the catalog
               </Link>
-            }
-          />
+            </div>
+          </div>
         ) : (
-          <div className="grid gap-6">
-            {/* Facts: only server-supplied fields, pending lines otherwise. */}
-            <section className="card" aria-label="Product facts">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <p className="mono-label text-ink-mute">{product.eyebrow}</p>
-                  <div className="mt-2 flex flex-wrap items-center gap-3">
-                    {badge && <ResearchStatusBadge label={badge.label} tone={badge.tone} />}
-                    <span className="chip text-ink-2">{product.category}</span>
-                    {format && <span className="chip text-ink-2">{format}</span>}
-                    {sku && <span className="mono-label text-ink-mute">SKU {sku}</span>}
-                  </div>
-                </div>
-                <p className="display-s tabular">{formatMoney(product.priceCents)}</p>
-              </div>
-              {product.description.length > 0 && (
-                <div className="mt-4 grid gap-3">
-                  {product.description.map((paragraph, i) => (
-                    <p key={i} className="body-s text-ink-2 max-w-[68ch]">
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-              )}
-              {product.highlights.length > 0 && (
-                <ul className="mt-4 grid gap-2" style={{ paddingLeft: 18 }}>
-                  {product.highlights.map((highlight, i) => (
-                    <li key={i} className="body-s text-ink-2">
-                      {highlight}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-
-            {/* Ordering: a hard capability boundary. While commerce is not
-                enabled there is no cart, no buy button, nothing to click. */}
-            <section aria-label="Ordering">
-              <h2 className="mono-cap text-ink-mute">Ordering</h2>
-              <div className="mt-3 grid gap-4">
-                <ResearchCapabilityBoundary status={commerceStatus}>
-                  <div className="card">
-                    <p className="mono-label text-ink-mute">One-time purchase</p>
-                    <p className="body-s text-ink-2 mt-2">{formatMoney(product.priceCents)}</p>
-                    <div className="mt-4 flex flex-wrap items-center gap-3">
-                      {purchasable ? (
-                        <>
-                          <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={() => {
-                              addItem(product);
-                              setAdded(true);
-                            }}
-                          >
-                            {productActionLabel(product, commerce)}
-                          </button>
-                          {added && (
-                            <span role="status" aria-live="polite" className="body-s text-ink-2">
-                              Added. <Link href={MEMBER_ROUTES.orders}>Review your order</Link>.
-                            </span>
-                          )}
-                        </>
-                      ) : (
-                        <p className="body-s text-ink-2">
-                          {status === "coming-soon"
-                            ? "This product is coming soon and cannot be ordered yet."
-                            : "This product is not cleared for checkout right now. Availability is controlled product by product."}
-                        </p>
-                      )}
+          product && (
+            <div className="grid gap-6">
+              {/* Identity: lane, availability, price. */}
+              <section className="card" aria-label="Product overview">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p className="mono-label text-ink-mute">{LANE_LABELS[product.lane]}</p>
+                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                      {availability && <ResearchStatusBadge label={availability.label} tone={availability.tone} />}
+                      <span className="mono-label text-ink-mute">SKU {product.sku}</span>
                     </div>
-                  </div>
-                </ResearchCapabilityBoundary>
-
-                {frequencies.length > 0 ? (
-                  <div className="card">
-                    <p className="mono-label text-ink-mute">Subscription</p>
-                    <p className="body-s text-ink-2 mt-2">This product supports the following delivery frequencies:</p>
-                    <ul className="mt-2 grid gap-1" style={{ paddingLeft: 18 }}>
-                      {frequencies.map((f) => (
-                        <li key={f} className="body-s text-ink-2">
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                    <ResearchCapabilityBoundary status={commerceStatus}>
-                      <p className="body-s text-ink-2 mt-3">Subscription checkout opens from your order review.</p>
-                    </ResearchCapabilityBoundary>
-                  </div>
-                ) : (
-                  <div className="card" role="status">
-                    <p className="mono-label text-ink-mute">Subscription</p>
-                    <p className="body-s text-ink-2 mt-2">
-                      Subscription options for this product have not been published yet.
-                    </p>
-                  </div>
-                )}
-
-                {status === "coming-soon" && (
-                  <div className="card">
-                    <p className="mono-label text-ink-mute">Waitlist</p>
-                    {waitlist === "joined" ? (
-                      <p role="status" className="body-s text-ink-2 mt-2">
-                        You are on the waitlist. We will let you know when this opens.
-                      </p>
-                    ) : waitlist === "unavailable" ? (
-                      <p role="status" className="body-s text-ink-mute mt-2">
-                        The waitlist is not open yet. Check back soon.
-                      </p>
-                    ) : (
-                      <div className="mt-3">
-                        <button type="button" className="btn btn-secondary" disabled={waitlist === "busy"} onClick={() => void joinWaitlist()}>
-                          {waitlist === "busy" ? "Joining..." : waitlist === "error" ? "Retry joining the waitlist" : "Join the waitlist"}
-                        </button>
+                    {product.goalMappings.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2" aria-label="Goals this maps to">
+                        {product.goalMappings.map((goal) => (
+                          <span key={goal} className="chip text-ink-2">
+                            {goalLabel(goal)}
+                          </span>
+                        ))}
                       </div>
                     )}
                   </div>
-                )}
-
-                <p className="body-s text-ink-mute">
-                  Fulfillment disclosure: orders are prepared and shipped only after documentation review, and shipping
-                  details are confirmed before any order is finalized.
-                </p>
-              </div>
-            </section>
-
-            {/* Documentation status: server fields or honest pending lines. */}
-            <section className="card" aria-label="Documentation">
-              <h2 className="mono-cap text-ink-mute">Documentation</h2>
-              <dl className="mt-3 grid gap-3">
-                <div>
-                  <dt className="mono-label text-ink-mute">Guide</dt>
-                  <dd className="body-s text-ink-2 mt-1">
-                    {product.researchContext && product.researchContext.length > 0 ? "Guide available" : "documentation pending"}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="mono-label text-ink-mute">Quality documents</dt>
-                  <dd className="body-s text-ink-2 mt-1">
-                    {product.qualityNotes && product.qualityNotes.length > 0 ? "Quality documents on file" : "documentation pending"}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="mono-label text-ink-mute">Storage</dt>
-                  <dd className="body-s text-ink-2 mt-1">{storage ?? "documentation pending"}</dd>
-                </div>
-                <div>
-                  <dt className="mono-label text-ink-mute">Shipping</dt>
-                  <dd className="body-s text-ink-2 mt-1">{shipping ?? "documentation pending"}</dd>
-                </div>
-              </dl>
-            </section>
-
-            {product.specifications && Object.keys(product.specifications).length > 0 && (
-              <section className="card" aria-label="Specifications">
-                <h2 className="mono-cap text-ink-mute">Specifications</h2>
-                <dl className="mt-3 grid gap-3">
-                  {Object.entries(product.specifications).map(([key, value]) => (
-                    <div key={key}>
-                      <dt className="mono-label text-ink-mute">{key}</dt>
-                      <dd className="body-s text-ink-2 mt-1">{value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </section>
-            )}
-
-            {product.researchContext && product.researchContext.length > 0 && (
-              <section className="card" aria-label="Research context and limitations">
-                <h2 className="mono-cap text-ink-mute">Research context and limitations</h2>
-                <div className="mt-3 grid gap-3">
-                  {product.researchContext.map((paragraph, i) => (
-                    <p key={i} className="body-s text-ink-2 max-w-[68ch]">
-                      {paragraph}
-                    </p>
-                  ))}
+                  <p className="display-s tabular" data-testid="ra-product-price">
+                    {priceLabel(product.priceCents)}
+                  </p>
                 </div>
               </section>
-            )}
 
-            {product.qualityNotes && product.qualityNotes.length > 0 && (
-              <section className="card" aria-label="Quality">
-                <h2 className="mono-cap text-ink-mute">Quality</h2>
-                <ul className="mt-3 grid gap-2" style={{ paddingLeft: 18 }}>
-                  {product.qualityNotes.map((note, i) => (
-                    <li key={i} className="body-s text-ink-2">
-                      {note}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {/* Goal mappings and related areas. */}
-            <section className="card" aria-label="Goals and related areas">
-              <h2 className="mono-cap text-ink-mute">Goals this maps to</h2>
-              {product.tags.length > 0 ? (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {product.tags.map((tag) => (
-                    <span key={tag} className="chip text-ink-2">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="body-s text-ink-mute mt-3">No goal mappings have been published for this product yet.</p>
+              {/* Confirmed facts: a PARTIAL map. Only present keys render. */}
+              {presentFacts.length > 0 && (
+                <section className="card" aria-label="Confirmed facts">
+                  <h2 className="mono-cap text-ink-mute">Confirmed facts</h2>
+                  <p className="body-s text-ink-mute mt-1 max-w-[56ch]">
+                    Only facts confirmed in writing appear here.
+                  </p>
+                  <dl className="mt-3 grid gap-3">
+                    {presentFacts.map((key) => (
+                      <div key={key} data-testid={`ra-fact-${key}`}>
+                        <dt className="mono-label text-ink-mute">{FACT_LABELS[key]}</dt>
+                        <dd className="body-s text-ink-2 mt-1">{product.confirmedFacts[key]}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
               )}
-              <div className="mt-4 flex flex-wrap gap-3">
-                <Link href={MEMBER_ROUTES.goals} className="btn btn-ghost">
-                  Browse goals
-                </Link>
-                <Link href={MEMBER_ROUTES.guides} className="btn btn-ghost">
-                  Related guides
-                </Link>
-                <Link href="/research/systems" className="btn btn-ghost">
-                  Build a system
-                </Link>
-              </div>
-            </section>
 
-            <section className="card" aria-label="Support">
-              <h2 className="mono-cap text-ink-mute">Questions or concerns</h2>
-              <p className="body-s text-ink-2 mt-2 max-w-[60ch]">
-                If anything about this product looks off, or you have a question the documentation does not answer,
-                reach a person directly.
-              </p>
-              <div className="mt-4">
-                <a href={concernMailto} className="btn btn-secondary">
-                  Report a product concern
-                </a>
-              </div>
-            </section>
-          </div>
+              {/* Ordering: the buy path exists only when the server says so. */}
+              <section aria-label="Ordering">
+                <h2 className="mono-cap text-ink-mute">Ordering</h2>
+                <div className="mt-3 grid gap-4">
+                  {product.purchasable ? (
+                    <PurchasePanel product={product} token={memberToken} />
+                  ) : (
+                    <div className="card" role="status" data-testid="ra-unavailable-reason">
+                      <p className="mono-label text-ink-mute">Not orderable right now</p>
+                      <p className="body-s text-ink-2 mt-2 max-w-[60ch]">
+                        {product.unavailableReason ??
+                          "This product cannot be ordered right now. It stays listed while its checks complete."}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              {/* FAQ, straight from the record. */}
+              {product.faq.length > 0 && (
+                <section className="card" aria-label="Frequently asked questions">
+                  <h2 className="mono-cap text-ink-mute">Questions and answers</h2>
+                  <dl className="mt-3 grid gap-4">
+                    {product.faq.map((item, i) => (
+                      <div key={i}>
+                        <dt className="body-s font-700">{item.question}</dt>
+                        <dd className="body-s text-ink-2 mt-1 max-w-[64ch]">{item.answer}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
+              )}
+
+              {/* Related guides. */}
+              <section className="card" aria-label="Related guides">
+                <h2 className="mono-cap text-ink-mute">Guides</h2>
+                <p className="body-s text-ink-2 mt-2">{GUIDE_STATE_LABELS[product.guideState]}.</p>
+                {product.relatedGuideSlugs.length > 0 ? (
+                  <ul className="mt-3 flex flex-wrap gap-3" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                    {product.relatedGuideSlugs.map((guideSlug) => (
+                      <li key={guideSlug}>
+                        <Link href={guideHref(guideSlug)} className="btn btn-ghost" data-testid={`ra-related-guide-${guideSlug}`}>
+                          {guideSlug.replace(/-/g, " ")}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="mt-3">
+                    <Link href={MEMBER_ROUTES.guides} className="btn btn-ghost">
+                      Browse the Guide library
+                    </Link>
+                  </div>
+                )}
+              </section>
+            </div>
+          )
         )}
       </ResearchRouteBoundary>
     </ResearchMemberShell>

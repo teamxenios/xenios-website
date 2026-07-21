@@ -11,6 +11,7 @@
 
 import { apiGet, apiPost, type ApiResult } from "../lib/api";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../lib/capabilities";
+import type { AdminCommerceQueuesDto } from "@shared/research/commerce-api";
 
 // The shape useAdminResource loads through. Loaders with parameters are bound
 // in the page (module-level or useCallback on the parameter) so identity only
@@ -117,6 +118,13 @@ export function getQuestion<T>(token: string, id: string): Promise<ApiResult<T>>
 // matches the previous page behavior exactly.
 export function listOutbox<T>(token: string, status?: string): Promise<ApiResult<T>> {
   return apiGet<T>(`${BASE}/outbox${status ? `?status=${enc(status)}` : ""}`, token);
+}
+
+// Frozen surface (docs/research-commerce/API_CONTRACTS_COMMERCE.md): the
+// commerce operations queues (large-order review, claims, supplier fact
+// blocks, quarantined lots, partner review, commission disputes).
+export function getCommerceQueues(token: string): Promise<ApiResult<{ queues: AdminCommerceQueuesDto }>> {
+  return apiGet(`${BASE}/commerce/queues`, token);
 }
 
 // -------------------------------- actions ----------------------------------

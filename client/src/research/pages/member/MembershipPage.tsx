@@ -6,14 +6,19 @@ import {
   ResearchCapabilityBoundary,
   ResearchConfirmation,
   ResearchDataTable,
+  ResearchDenialNotice,
   ResearchEmptyState,
+  ResearchLoadingState,
   ResearchRouteBoundary,
   ResearchStatusBadge,
   capabilityStatusOrPending,
 } from "../../ui/kit";
 import { cancelMembership, getMembership } from "../../adapters/member";
+import { getStoreCredit } from "../../adapters/commerce";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
+import { denialPresentation } from "../../lib/denials";
 import { devFixture } from "../../lib/fixtures";
+import type { StoreCreditDto } from "@shared/research/commerce-api";
 
 // ---------------------------------------------------------------------------
 // Membership (/research/member/membership). The economics are fixed and
@@ -103,6 +108,10 @@ export default function MembershipPage() {
         setData(res.data);
       } else if (res.kind === "unauthorized") {
         setSessionEnded(true);
+      } else if (res.kind === "denied") {
+        // A machine denial is not "no data yet": render the page's honest
+        // empty billing states, never the development fixture.
+        setData(null);
       } else {
         setData(
           devFixture<MembershipData>(() => ({
@@ -143,6 +152,13 @@ export default function MembershipPage() {
     if (res.kind === "unauthorized") {
       setSessionEnded(true);
       setCancel({ phase: "idle" });
+      return;
+    }
+    if (res.kind === "denied") {
+      // Route on the machine code, never on the server message; the copy for
+      // every code is ours (lib/denials).
+      const p = denialPresentation(res.code, res.message);
+      setCancel({ phase: "error", message: `${p.title} ${p.body}` });
       return;
     }
     setCancel({
@@ -269,6 +285,9 @@ export default function MembershipPage() {
           </div>
         </section>
 
+        {/* Store credit: spendable and pending balances kept visibly apart. */}
+        <StoreCreditSection token={memberToken} />
+
         {/* Cancellation. The confirmation states the consequences exactly. */}
         <section aria-labelledby="ra-membership-cancel" className="mt-10 card">
           <h2 id="ra-membership-cancel" className="body-m font-700">
@@ -330,5 +349,128 @@ export default function MembershipPage() {
         />
       </ResearchRouteBoundary>
     </ResearchMemberShell>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Store credit (frozen StoreCreditDto, GET /api/research/store-credit).
+// Spendable counts approved entries only; pending, held, reversed, and
+// fraud-flagged credit is reported separately and is never spendable, so the
+// two balances render as clearly separate cards and every non-approved entry
+// is labeled "Not spendable".
+// ---------------------------------------------------------------------------
+
+type StoreCreditEntryRow = StoreCreditDto["entries"][number] & { key: string };
+
+type StoreCreditState =
+  | { kind: "loading" }
+  | { kind: "ok"; credit: StoreCreditDto }
+  | { kind: "unavailable" }
+  | { kind: "denied"; code: string; message?: string }
+  | { kind: "error"; message: string };
+
+const ENTRY_STATE_LABEL: Record<string, { label: string; tone: "success" | "pending" | "warning" | "danger" }> = {
+  approved: { label: "Spendable", tone: "success" },
+  pending: { label: "Pending review, not spendable", tone: "pending" },
+  held: { label: "Held, not spendable", tone: "warning" },
+  reversed: { label: "Reversed, not spendable", tone: "danger" },
+  fraud_flagged: { label: "Under review, not spendable", tone: "warning" },
+};
+
+function StoreCreditSection({ token }: { token: string | null }) {
+  const [state, setState] = useState<StoreCreditState>({ kind: "loading" });
+
+  useEffect(() => {
+    if (!token) return;
+    let alive = true;
+    void getStoreCredit(token).then((res) => {
+      if (!alive) return;
+      if (res.kind === "ok") setState({ kind: "ok", credit: res.data.storeCredit });
+      else if (res.kind === "denied") setState({ kind: "denied", code: res.code, message: res.message });
+      else if (res.kind === "error") setState({ kind: "error", message: res.message });
+      else setState({ kind: "unavailable" });
+    });
+    return () => {
+      alive = false;
+    };
+  }, [token]);
+
+  return (
+    <section aria-labelledby="ra-membership-credit" className="mt-10">
+      <h2 id="ra-membership-credit" className="body-m font-700">
+        Store credit
+      </h2>
+      <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
+        Referral and service credit. Only the "Available now" balance can be spent; credit pending review, held, or
+        reversed is shown separately and cannot be spent while it is still reversible.
+      </p>
+      <div className="mt-4">
+        {state.kind === "loading" && <ResearchLoadingState label="Loading store credit" />}
+        {state.kind === "unavailable" && (
+          <ResearchEmptyState
+            title="Store credit is not available yet."
+            body="Your credit balance appears here once the credit ledger is connected. Nothing is wrong with your membership."
+          />
+        )}
+        {state.kind === "denied" && <ResearchDenialNotice code={state.code} message={state.message} />}
+        {state.kind === "error" && (
+          <ResearchEmptyState title="Store credit could not be loaded." body="Please try again shortly." />
+        )}
+        {state.kind === "ok" && (
+          <>
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+              <div className="card" data-testid="ra-credit-available">
+                <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
+                  <p className="mono-label text-ink-mute">Available now</p>
+                  <ResearchStatusBadge label="Spendable" tone="success" />
+                </div>
+                <p className="display-s tabular mt-1">{formatMoney(state.credit.spendableCents)}</p>
+                <p className="body-s text-ink-2 mt-2">Approved credit you can apply at checkout.</p>
+              </div>
+              <div className="card" data-testid="ra-credit-pending">
+                <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
+                  <p className="mono-label text-ink-mute">Pending review</p>
+                  <ResearchStatusBadge label="Not spendable yet" tone="pending" />
+                </div>
+                <p className="display-s tabular mt-1">{formatMoney(state.credit.pendingCents)}</p>
+                <p className="body-s text-ink-2 mt-2">
+                  Credit still in its review window. It becomes spendable only when approved, and is not part of the
+                  available balance.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <ResearchDataTable<StoreCreditEntryRow>
+                caption="Store credit entries with amount, state, reason, and when each becomes available"
+                columns={[
+                  {
+                    key: "amount",
+                    header: "Amount",
+                    render: (e) => <span className="tabular">{formatMoney(e.amountCents)}</span>,
+                  },
+                  {
+                    key: "state",
+                    header: "State",
+                    render: (e) => {
+                      const s = ENTRY_STATE_LABEL[e.state] ?? { label: `${e.state}, not spendable`, tone: "pending" as const };
+                      return <ResearchStatusBadge label={s.label} tone={s.tone} />;
+                    },
+                  },
+                  { key: "reason", header: "Reason", render: (e) => e.reason.replace(/_/g, " ") },
+                  {
+                    key: "availableAt",
+                    header: "Available",
+                    render: (e) => (e.availableAt ? <span className="tabular">{e.availableAt}</span> : "After review"),
+                  },
+                ]}
+                rows={state.credit.entries.map((e, i) => ({ ...e, key: `${e.reason}-${e.state}-${i}` }))}
+                rowKey={(e) => e.key}
+                empty="No credit entries yet. Referral credit appears here when it is earned."
+              />
+            </div>
+          </>
+        )}
+      </div>
+    </section>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { statusFor, type CapabilityStatus, type ResearchCapability } from "../lib/capabilities";
+import { denialPresentation } from "../lib/denials";
 
 // ---------------------------------------------------------------------------
 // Research UI kit (Supreme build). Primitives every route family composes.
@@ -158,6 +159,39 @@ export function capabilityStatusOrPending(
   capability: ResearchCapability,
 ): CapabilityStatus {
   return statusFor(statuses, capability);
+}
+
+// Denial notice: one primitive turning a machine denial code into the
+// designed member copy (lib/denials owns the copy and the tone). Pending and
+// notice tones reuse the pending-panel visual pattern; error reuses the error
+// state pattern. The server message rides into denialPresentation but is
+// never the primary text.
+export function ResearchDenialNotice({ code, message }: { code: string; message?: string }) {
+  const p = denialPresentation(code, message);
+  if (p.tone === "error") {
+    return (
+      <div role="alert" className="ra-state" data-testid="ra-denial">
+        <p className="body-m font-700">{p.title}</p>
+        <p className="body-s text-ink-2 mt-2 max-w-[56ch]">{p.body}</p>
+      </div>
+    );
+  }
+  const pending = p.tone === "pending";
+  return (
+    <section
+      role="status"
+      aria-live="polite"
+      className={`card ra-pending ra-pending-${pending ? "not_configured" : "coming_soon"}`}
+      data-testid="ra-denial"
+    >
+      <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
+        <p className="mono-label text-ink-mute">{pending ? "Not open yet" : "Notice"}</p>
+        <ResearchStatusBadge label={pending ? "Pending" : "Notice"} tone={pending ? "pending" : "info"} />
+      </div>
+      <p className="body-m font-700 mt-2">{p.title}</p>
+      <p className="body-s text-ink-2 mt-2 max-w-[56ch]">{p.body}</p>
+    </section>
+  );
 }
 
 // Status badge: label + tone, never color-only (the label IS the state).

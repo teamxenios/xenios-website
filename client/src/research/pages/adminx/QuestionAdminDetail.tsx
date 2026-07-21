@@ -3,6 +3,7 @@ import { Link, useParams } from "wouter";
 import { getQuestion, replyToQuestion } from "../../adapters/adminOps";
 import { ResearchSecureNotice, ResearchStatusBadge, ResearchTimeline } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
+import { denialPresentation } from "../../lib/denials";
 import { fmtDate, fmtDateTime, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 
@@ -52,6 +53,7 @@ function QuestionDetailBody({ token, id }: { token: string; id: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="Question threads publish with the member platform."
         unavailableBody="This thread renders live when the questions API responds. Questions sent by email still reach a person in the meantime."
@@ -121,6 +123,10 @@ function ReplyComposer({ token, id, onSent }: { token: string; id: string; onSen
       setMessage("The reply endpoint is not published yet, so nothing was sent. Reply by email instead.");
     } else if (result.kind === "unauthorized") {
       setMessage("Your admin session has ended. Sign in again.");
+    } else if (result.kind === "denied") {
+      // Route on the machine code; the copy is ours (lib/denials).
+      const p = denialPresentation(result.code, result.message);
+      setMessage(`${p.title} ${p.body}`);
     } else {
       setMessage(result.kind === "forbidden" ? result.message ?? "This action is not allowed." : result.message);
     }

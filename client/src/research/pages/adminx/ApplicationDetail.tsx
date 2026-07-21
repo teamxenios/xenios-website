@@ -10,6 +10,7 @@ import {
   ResearchTimeline,
 } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
+import { denialPresentation } from "../../lib/denials";
 import { fmtDate, fmtDateTime } from "./auth";
 import { AdminScreen, APPLICATION_STATUS_LABEL, type AdminApplication } from "./AdminResearchHome";
 import { statusTone } from "./Applications";
@@ -75,6 +76,10 @@ function DetailBody({ token, id }: { token: string; id: string }) {
         setState({ kind: "unavailable" });
       } else if (result.kind === "unauthorized" || result.kind === "forbidden") {
         setState({ kind: "denied", message: result.kind === "forbidden" ? result.message : undefined });
+      } else if (result.kind === "denied") {
+        // Route on the machine code; the copy is ours (lib/denials).
+        const p = denialPresentation(result.code, result.message);
+        setState({ kind: "denied", message: `${p.title} ${p.body}` });
       } else {
         setState({ kind: "error", message: result.message });
       }
@@ -99,7 +104,10 @@ function DetailBody({ token, id }: { token: string; id: string }) {
       if (result.kind === "unauthorized") setActionError("Your admin session has ended. Sign in again.");
       else if (result.kind === "forbidden") setActionError(result.message ?? "This action is not allowed for your account.");
       else if (result.kind === "unavailable") setActionError("This action endpoint is not available in this environment.");
-      else setActionError(result.message);
+      else if (result.kind === "denied") {
+        const p = denialPresentation(result.code, result.message);
+        setActionError(`${p.title} ${p.body}`);
+      } else setActionError(result.message);
       return false;
     },
     [busy, id, token, load],

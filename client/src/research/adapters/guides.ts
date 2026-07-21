@@ -5,6 +5,7 @@
 // calls: the same ApiResult envelope, payload types supplied by the caller.
 
 import { apiGet, apiPost, type ApiResult } from "../lib/api";
+import type { GuideDetailDto, GuideSummaryDto } from "@shared/research/commerce-api";
 
 const BASE = "/api/research/member";
 
@@ -22,6 +23,25 @@ export const guidesPaths = {
   telegramUnlink: `${BASE}/telegram/unlink`,
   referrals: `${BASE}/referrals`,
 } as const;
+
+// Frozen commerce-lane guide routes (docs/research-commerce/
+// API_CONTRACTS_COMMERCE.md). Distinct from the member paths above, which stay
+// untouched. An unpublished guide appears in the list with status only and the
+// detail route answers with the guide_not_published denial code.
+export const frozenGuidePaths = {
+  guides: "/api/research/guides",
+  guide: (slug: string) => `/api/research/guides/${encodeURIComponent(slug)}`,
+} as const;
+
+/** Frozen surface: list the guide library (published and unpublished statuses). */
+export function listGuides(token: string | null): Promise<ApiResult<{ guides: GuideSummaryDto[] }>> {
+  return apiGet(frozenGuidePaths.guides, token);
+}
+
+/** Frozen surface: fetch one guide by slug (denies with guide_not_published). */
+export function getGuide(token: string | null, slug: string): Promise<ApiResult<{ guide: GuideDetailDto }>> {
+  return apiGet(frozenGuidePaths.guide(slug), token);
+}
 
 /** Fetch the member guide library. */
 export function fetchGuides<T>(token?: string | null): Promise<ApiResult<T>> {

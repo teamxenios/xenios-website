@@ -1,190 +1,238 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link, useParams } from "wouter";
+import type { ClaimDto, ClaimReason, OrderDetailDto } from "@shared/research/commerce-api";
 import { useResearch } from "../../core";
-import { fetchOrder } from "../../adapters/commerce";
-import { devFixture } from "../../lib/fixtures";
+import { getOrder, listClaims, submitClaim } from "../../adapters/commerce";
+import { denialPresentation } from "../../lib/denials";
 import { ACCESS_ROUTES, MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
   ResearchDataTable,
+  ResearchDenialNotice,
   ResearchEmptyState,
   ResearchRouteBoundary,
   ResearchSecureNotice,
   ResearchStatusBadge,
-  ResearchTimeline,
 } from "../../ui/kit";
-import { formatDate, formatMoney, orderStatusMeta } from "./Orders";
+import {
+  CLAIM_REASON_LABELS,
+  CLAIM_RESOLUTION_LABELS,
+  CLAIM_STATE_META,
+  SHIPMENT_OWNER_LABELS,
+  formatCents,
+  formatDate,
+  orderStateMeta,
+} from "./commerce-presentation";
 
 // ---------------------------------------------------------------------------
-// Member Order Detail (/research/member/orders/:id). One order, fully
-// grounded in GET /api/research/member/orders/:id: its items, its shipments
-// (split shipments stay grouped under this one order, each shipment carrying
-// its OWN status and tracking only when the server supplies it), its totals,
-// and its history. A missing field renders as pending, never as an invented
-// value; a tracking link is only ever a server-provided URL.
+// Member Order Detail (/research/member/orders/:id), driven by the frozen
+// GET /api/research/orders/:orderId (OrderDetailDto).
+//
+// Rules baked in from the frozen contract:
+// - shippingCents is ONE figure for the whole order, even when the order
+//   splits into several shipment groups. It is never summed per group.
+// - reviewReason present renders the canonical large-order pending-review
+//   banner: a calm notice (the order exists and is held), never an error.
+// - "Report an issue" submits a claim (POST /api/research/claims) with a
+//   reason from the frozen ClaimReason vocabulary, routing on the machine
+//   code; the order's existing claims render with their state and resolution.
 // ---------------------------------------------------------------------------
 
-interface OrderItem {
-  id?: string | null;
-  name: string;
-  quantity?: number | null;
-  unitCents?: number | null;
-  unitDisplay?: string | null;
-  lineCents?: number | null;
-  lineDisplay?: string | null;
-}
+type PageState =
+  | { phase: "loading" }
+  | { phase: "ok"; order: OrderDetailDto }
+  | { phase: "denied"; code: string; message?: string }
+  | { phase: "unavailable" }
+  | { phase: "unauthorized" }
+  | { phase: "error"; message?: string };
 
-interface ShipmentItem {
-  name: string;
-  quantity?: number | null;
-}
+type ClaimSubmitState =
+  | { phase: "idle" }
+  | { phase: "busy" }
+  | { phase: "sent" }
+  | { phase: "denied"; code: string; message?: string }
+  | { phase: "unavailable" }
+  | { phase: "error"; message: string };
 
-interface OrderShipment {
-  id: string;
-  label?: string | null;
-  status?: string | null;
-  carrier?: string | null;
-  trackingNumber?: string | null;
-  trackingUrl?: string | null;
-  shippedAt?: string | null;
-  deliveredAt?: string | null;
-  items?: ShipmentItem[] | null;
-}
+const CLAIM_REASONS = Object.keys(CLAIM_REASON_LABELS) as ClaimReason[];
 
-interface OrderHistoryEvent {
-  at: string;
-  title: string;
-  detail?: string;
-}
+// ---------------------------------------------------------------------------
+// Claims: report an issue with this order, and see what was already reported.
+// ---------------------------------------------------------------------------
+function ClaimsSection({
+  order,
+  token,
+  claims,
+  claimsKnown,
+  onSubmitted,
+}: {
+  order: OrderDetailDto;
+  token: string | null;
+  claims: ClaimDto[];
+  claimsKnown: boolean;
+  onSubmitted: () => void;
+}) {
+  const [sku, setSku] = useState(order.lines[0]?.sku ?? "");
+  const [reason, setReason] = useState<ClaimReason>("damaged");
+  const [detail, setDetail] = useState("");
+  const [submit, setSubmit] = useState<ClaimSubmitState>({ phase: "idle" });
 
-interface MemberOrderDetail {
-  id: string;
-  number?: string | null;
-  placedAt?: string | null;
-  status?: string | null;
-  items?: OrderItem[] | null;
-  shipments?: OrderShipment[] | null;
-  subtotalCents?: number | null;
-  subtotalDisplay?: string | null;
-  shippingCents?: number | null;
-  shippingDisplay?: string | null;
-  taxCents?: number | null;
-  taxDisplay?: string | null;
-  totalCents?: number | null;
-  totalDisplay?: string | null;
-  history?: OrderHistoryEvent[] | null;
-}
-
-type OrderPayload = { order?: MemberOrderDetail } | MemberOrderDetail;
-
-function normalizeOrder(payload: OrderPayload): MemberOrderDetail | null {
-  const order = "order" in payload && payload.order ? payload.order : (payload as MemberOrderDetail);
-  return order && order.id ? order : null;
-}
-
-// Dev-only synthetic order demonstrating a split shipment. devFixture returns
-// null in production. No tracking URL is fabricated: the fixture shows the
-// carrier and number text path, and the tracking-pending path.
-function fixtureOrder(id: string): MemberOrderDetail {
-  return {
-    id,
-    number: "XR-1042",
-    placedAt: "2026-07-12",
-    status: "partially_shipped",
-    items: [
-      { id: "i1", name: "Recovery Stack, 30 day supply", quantity: 1, unitCents: 8900, lineCents: 8900 },
-      { id: "i2", name: "Baseline Panel Kit", quantity: 1, unitCents: 9600, lineCents: 9600 },
-      { id: "i3", name: "Shaker Bottle", quantity: 2, unitCents: 1200, lineCents: 2400 },
-    ],
-    shipments: [
-      {
-        id: "s1",
-        label: "Shipment 1 of 2",
-        status: "shipped",
-        carrier: "USPS",
-        trackingNumber: "9400 1000 0000 0000 0000 01",
-        trackingUrl: null,
-        shippedAt: "2026-07-14",
-        items: [
-          { name: "Recovery Stack, 30 day supply", quantity: 1 },
-          { name: "Shaker Bottle", quantity: 2 },
-        ],
-      },
-      {
-        id: "s2",
-        label: "Shipment 2 of 2",
-        status: "processing",
-        carrier: null,
-        trackingNumber: null,
-        trackingUrl: null,
-        items: [{ name: "Baseline Panel Kit", quantity: 1 }],
-      },
-    ],
-    subtotalCents: 20900,
-    shippingCents: 500,
-    totalCents: 21400,
-    history: [
-      { at: "2026-07-14", title: "Shipment 1 of 2 shipped", detail: "USPS. Recovery Stack and Shaker Bottles." },
-      { at: "2026-07-13", title: "Samuel review complete", detail: "Order approved for fulfillment." },
-      { at: "2026-07-12", title: "Payment authorized" },
-      { at: "2026-07-12", title: "Order placed" },
-    ],
+  const send = async (event: FormEvent) => {
+    event.preventDefault();
+    const trimmed = detail.trim();
+    if (!sku) {
+      setSubmit({ phase: "error", message: "Choose the item the issue is about." });
+      return;
+    }
+    if (!trimmed) {
+      setSubmit({ phase: "error", message: "Please describe what happened." });
+      return;
+    }
+    setSubmit({ phase: "busy" });
+    const result = await submitClaim(token, {
+      orderId: order.orderId,
+      sku,
+      reason,
+      detail: trimmed,
+      evidenceRefs: [],
+    });
+    switch (result.kind) {
+      case "ok":
+        setSubmit({ phase: "sent" });
+        setDetail("");
+        onSubmitted();
+        return;
+      case "denied":
+        setSubmit({ phase: "denied", code: result.code, message: result.message });
+        return;
+      case "unauthorized":
+        setSubmit({ phase: "error", message: "Your session has ended. Sign in again to report this issue." });
+        return;
+      case "forbidden":
+      case "unavailable":
+        setSubmit({ phase: "unavailable" });
+        return;
+      case "error":
+        setSubmit({ phase: "error", message: result.message });
+        return;
+    }
   };
-}
 
-type BoundaryState = "loading" | "ok" | "error" | "unavailable" | "unauthorized";
-
-function ShipmentCard({ shipment, index, count }: { shipment: OrderShipment; index: number; count: number }) {
-  const meta = orderStatusMeta(shipment.status);
-  const heading = shipment.label ?? (count > 1 ? `Shipment ${index + 1} of ${count}` : "Shipment");
   return (
-    <section className="card" aria-label={heading}>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="mono-label text-ink-mute">{heading}</p>
-          <p className="body-s text-ink-2 mt-1">
-            {shipment.deliveredAt
-              ? `Delivered ${formatDate(shipment.deliveredAt)}.`
-              : shipment.shippedAt
-                ? `Shipped ${formatDate(shipment.shippedAt)}.`
-                : "Not shipped yet."}
-          </p>
+    <section aria-labelledby="order-claims" className="grid gap-4">
+      <h2 id="order-claims" className="body-m font-700">
+        Report an issue
+      </h2>
+
+      {claims.length > 0 && (
+        <div className="grid gap-3" data-testid="ra-order-claims">
+          {claims.map((claim) => {
+            const meta = CLAIM_STATE_META[claim.state];
+            return (
+              <div key={claim.claimId} className="card" data-testid={`ra-claim-${claim.claimId}`}>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="mono-label text-ink-mute">
+                      {CLAIM_REASON_LABELS[claim.reason]} · {claim.sku}
+                    </p>
+                    <p className="body-s text-ink-2 mt-1">Submitted {formatDate(claim.submittedAt) ?? claim.submittedAt}.</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ResearchStatusBadge label={meta.label} tone={meta.tone} />
+                    {claim.resolution && (
+                      <ResearchStatusBadge label={CLAIM_RESOLUTION_LABELS[claim.resolution]} tone="neutral" />
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-        <ResearchStatusBadge label={meta.label} tone={meta.tone} />
-      </div>
-      {shipment.items && shipment.items.length > 0 && (
-        <ul className="body-s text-ink-2 mt-3" style={{ listStyle: "none", padding: 0 }}>
-          {shipment.items.map((item, i) => (
-            <li key={i} className="mt-1">
-              {typeof item.quantity === "number" && item.quantity > 1 ? `${item.quantity} × ` : ""}
-              {item.name}
-            </li>
-          ))}
-        </ul>
       )}
-      <div className="mt-3">
-        {shipment.trackingUrl ? (
-          <a
-            href={shipment.trackingUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-secondary"
-            aria-label={`Track ${heading}${shipment.carrier ? ` with ${shipment.carrier}` : ""}`}
-          >
-            Track shipment
-          </a>
-        ) : shipment.trackingNumber ? (
-          <p className="body-s text-ink-2">
-            <span className="mono-label text-ink-mute">Tracking</span>{" "}
-            <span className="tabular">
-              {shipment.carrier ? `${shipment.carrier} · ` : ""}
-              {shipment.trackingNumber}
-            </span>
-          </p>
-        ) : (
-          <ResearchStatusBadge label="Tracking pending" tone="pending" />
-        )}
-      </div>
+      {claims.length === 0 && claimsKnown && (
+        <p className="body-s text-ink-mute">No issues have been reported on this order.</p>
+      )}
+
+      <form className="card" onSubmit={(e) => void send(e)} aria-label="Report an issue with this order">
+        <div className="grid gap-4" style={{ maxWidth: 560 }}>
+          <div>
+            <label className="form-label" htmlFor="ra-claim-sku">
+              Item
+            </label>
+            <select
+              id="ra-claim-sku"
+              className="input-field"
+              value={sku}
+              onChange={(e) => setSku(e.target.value)}
+              data-testid="ra-claim-sku"
+            >
+              {order.lines.map((line) => (
+                <option key={line.sku} value={line.sku}>
+                  {line.displayName}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="form-label" htmlFor="ra-claim-reason">
+              What happened
+            </label>
+            <select
+              id="ra-claim-reason"
+              className="input-field"
+              value={reason}
+              onChange={(e) => setReason(e.target.value as ClaimReason)}
+              data-testid="ra-claim-reason"
+            >
+              {CLAIM_REASONS.map((r) => (
+                <option key={r} value={r}>
+                  {CLAIM_REASON_LABELS[r]}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="form-label" htmlFor="ra-claim-detail">
+              Tell us more
+            </label>
+            <textarea
+              id="ra-claim-detail"
+              className="input-field"
+              rows={4}
+              value={detail}
+              onChange={(e) => setDetail(e.target.value)}
+              maxLength={2000}
+              required
+              data-testid="ra-claim-detail"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <button type="submit" className="btn btn-secondary" disabled={submit.phase === "busy"} data-testid="ra-claim-submit">
+              {submit.phase === "busy" ? "Sending..." : "Send report"}
+            </button>
+          </div>
+          <div aria-live="polite">
+            {submit.phase === "sent" && (
+              <p className="body-s text-ink-2" role="status" data-testid="ra-claim-sent">
+                Thank you. Your report is in and a person will review it. You can see its status above.
+              </p>
+            )}
+            {submit.phase === "denied" && <ResearchDenialNotice code={submit.code} message={submit.message} />}
+            {submit.phase === "unavailable" && (
+              <p className="body-s text-ink-2" role="status">
+                Issue reports are not being collected automatically yet, so your report was not sent. Email{" "}
+                <a href="mailto:research@xeniostechnology.com">research@xeniostechnology.com</a> with your order id
+                and a person will handle it.
+              </p>
+            )}
+            {submit.phase === "error" && (
+              <p className="body-s font-700" role="alert">
+                {submit.message}
+              </p>
+            )}
+          </div>
+        </div>
+      </form>
     </section>
   );
 }
@@ -193,106 +241,93 @@ export default function OrderDetail() {
   const params = useParams<{ id: string }>();
   const orderId = params?.id ? decodeURIComponent(params.id) : "";
   const { memberToken } = useResearch();
-  const [state, setState] = useState<BoundaryState>("loading");
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
-  const [order, setOrder] = useState<MemberOrderDetail | null>(null);
-  const [source, setSource] = useState<"server" | "fixture">("server");
+  const [state, setState] = useState<PageState>({ phase: "loading" });
+  const [claims, setClaims] = useState<ClaimDto[]>([]);
+  const [claimsKnown, setClaimsKnown] = useState(false);
+
+  const loadClaims = useCallback(async () => {
+    const result = await listClaims(memberToken);
+    if (result.kind === "ok") {
+      setClaims(result.data.claims.filter((c) => c.orderId === orderId));
+      setClaimsKnown(true);
+    } else {
+      // Claims are supplementary: a missing claims surface never blocks the
+      // order page, it just means no history can be shown.
+      setClaims([]);
+      setClaimsKnown(false);
+    }
+  }, [memberToken, orderId]);
 
   const load = useCallback(async () => {
     if (!orderId) {
-      setState("unavailable");
+      setState({ phase: "denied", code: "order_not_found" });
       return;
     }
-    setState("loading");
-    setErrorMessage(undefined);
-    const result = await fetchOrder<OrderPayload>(orderId, memberToken);
-    if (result.kind === "ok") {
-      const normalized = normalizeOrder(result.data);
-      if (normalized) {
-        setOrder(normalized);
-        setSource("server");
-        setState("ok");
-      } else {
-        setState("unavailable");
-      }
-      return;
+    setState({ phase: "loading" });
+    const result = await getOrder(memberToken, orderId);
+    switch (result.kind) {
+      case "ok":
+        setState({ phase: "ok", order: result.data.order });
+        void loadClaims();
+        return;
+      case "denied":
+        setState({ phase: "denied", code: result.code, message: result.message });
+        return;
+      case "unauthorized":
+        setState({ phase: "unauthorized" });
+        return;
+      case "forbidden":
+      case "unavailable":
+        setState({ phase: "unavailable" });
+        return;
+      case "error":
+        setState({ phase: "error", message: result.message });
+        return;
     }
-    if (result.kind === "unauthorized") {
-      setState("unauthorized");
-      return;
-    }
-    if (result.kind === "unavailable" || result.kind === "forbidden") {
-      const fixture = devFixture(() => fixtureOrder(orderId));
-      if (fixture) {
-        setOrder(fixture);
-        setSource("fixture");
-        setState("ok");
-      } else {
-        setState("unavailable");
-      }
-      return;
-    }
-    setErrorMessage(result.message);
-    setState("error");
-  }, [orderId, memberToken]);
+  }, [orderId, memberToken, loadClaims]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  const statusMeta = order ? orderStatusMeta(order.status) : null;
+  const order = state.phase === "ok" ? state.order : null;
+  const stateMeta = order ? orderStateMeta(order.state) : null;
+  const reviewCopy = denialPresentation("large_order_review_required");
 
-  const totalsRows: Array<{ label: string; value: string }> = [];
-  if (order) {
-    const subtotal = formatMoney(order.subtotalCents, order.subtotalDisplay);
-    const shipping = formatMoney(order.shippingCents, order.shippingDisplay);
-    const tax = formatMoney(order.taxCents, order.taxDisplay);
-    const total = formatMoney(order.totalCents, order.totalDisplay);
-    if (subtotal) totalsRows.push({ label: "Subtotal", value: subtotal });
-    if (shipping) totalsRows.push({ label: "Shipping", value: shipping });
-    if (tax) totalsRows.push({ label: "Tax", value: tax });
-    if (total) totalsRows.push({ label: "Total", value: total });
-  }
-
-  const itemColumns = [
+  const lineColumns = [
     {
       key: "item",
       header: "Item",
-      render: (item: OrderItem) => <span className="font-700">{item.name}</span>,
+      render: (line: OrderDetailDto["lines"][number]) => <span className="font-700">{line.displayName}</span>,
     },
     {
       key: "quantity",
       header: "Qty",
-      render: (item: OrderItem) => (
-        <span className="tabular">{typeof item.quantity === "number" ? item.quantity : "1"}</span>
-      ),
-    },
-    {
-      key: "unit",
-      header: "Unit price",
-      render: (item: OrderItem) => {
-        const money = formatMoney(item.unitCents, item.unitDisplay);
-        return money ? <span className="tabular">{money}</span> : <span className="text-ink-mute">Pending</span>;
-      },
+      render: (line: OrderDetailDto["lines"][number]) => <span className="tabular">{line.quantity}</span>,
     },
     {
       key: "line",
       header: "Line total",
-      render: (item: OrderItem) => {
-        const money = formatMoney(item.lineCents, item.lineDisplay);
-        return money ? <span className="tabular">{money}</span> : <span className="text-ink-mute">Pending</span>;
-      },
+      render: (line: OrderDetailDto["lines"][number]) => <span className="tabular">{formatCents(line.lineTotalCents)}</span>,
     },
   ];
 
-  const shipments = order?.shipments ?? [];
-  const supportSubject = order ? `Order ${order.number ?? order.id}` : "Order question";
+  const boundaryState: "loading" | "unauthorized" | "ok" | "error" | "unavailable" =
+    state.phase === "loading"
+      ? "loading"
+      : state.phase === "unauthorized"
+        ? "unauthorized"
+        : state.phase === "error"
+          ? "error"
+          : state.phase === "unavailable"
+            ? "unavailable"
+            : "ok";
 
   return (
     <ResearchMemberShell
       eyebrow="Member · Orders"
-      title={order ? `Order ${order.number ?? order.id}` : "Order"}
-      lead={order && order.placedAt ? `Placed ${formatDate(order.placedAt)}.` : undefined}
+      title={order ? `Order ${order.orderId}` : "Order"}
+      lead={order ? `Placed ${formatDate(order.placedAt) ?? order.placedAt}.` : undefined}
       actions={
         <Link href={MEMBER_ROUTES.orders} className="btn btn-ghost">
           All orders
@@ -300,113 +335,161 @@ export default function OrderDetail() {
       }
     >
       <ResearchRouteBoundary
-        state={state}
-        errorMessage={errorMessage}
+        state={boundaryState}
+        errorMessage={state.phase === "error" ? state.message : undefined}
         onRetry={() => void load()}
         unavailableTitle="This order is not available."
         unavailableBody="Either ordering has not opened yet, or this order id is not part of your account. Check the address, or open your orders list."
       >
-        {order && (
-          <div className="grid gap-6">
-            {source === "fixture" && (
-              <p className="mono-label text-ink-mute" role="note">
-                Development preview data. Production shows only orders recorded by the server.
-              </p>
-            )}
+        {state.phase === "denied" ? (
+          <div className="grid gap-4" data-testid="ra-order-denied">
+            <ResearchDenialNotice code={state.code} message={state.message} />
+            <div>
+              <Link href={MEMBER_ROUTES.orders} className="btn btn-primary">
+                Open your orders
+              </Link>
+            </div>
+          </div>
+        ) : (
+          order && (
+            <div className="grid gap-6">
+              {stateMeta && (
+                <div className="flex items-center gap-3">
+                  <span className="mono-label text-ink-mute">Order status</span>
+                  <ResearchStatusBadge label={stateMeta.label} tone={stateMeta.tone} />
+                </div>
+              )}
 
-            {statusMeta && (
-              <div className="flex items-center gap-3">
-                <span className="mono-label text-ink-mute">Order status</span>
-                <ResearchStatusBadge label={statusMeta.label} tone={statusMeta.tone} />
-              </div>
-            )}
+              {/* The large-order review banner: canonical calm copy, a
+                  notice (role status), never an error. */}
+              {order.reviewReason !== null && (
+                <section role="status" aria-live="polite" className="card" data-testid="ra-review-banner">
+                  <div className="flex items-center gap-3">
+                    <ResearchStatusBadge label="Pending review" tone="info" />
+                    <p className="body-s font-700">{reviewCopy.title}</p>
+                  </div>
+                  <p className="body-s text-ink-2 mt-2 max-w-[60ch]">{reviewCopy.body}</p>
+                </section>
+              )}
 
-            <section aria-label="Items in this order">
-              <h2 className="body-m font-700">Items</h2>
-              <div className="mt-3">
-                {order.items && order.items.length > 0 ? (
-                  <ResearchDataTable
-                    caption={`Items in order ${order.number ?? order.id}`}
-                    columns={itemColumns}
-                    rows={order.items}
-                    rowKey={(item) => item.id ?? item.name}
-                  />
-                ) : (
-                  <ResearchEmptyState title="Item details pending." body="The server has not published item lines for this order yet." />
-                )}
-              </div>
-            </section>
-
-            <section aria-label="Shipments for this order">
-              <h2 className="body-m font-700">Shipments</h2>
-              <p className="body-s text-ink-2 mt-1 max-w-[56ch]">
-                An order can ship in more than one package. Each shipment below carries its own status and its own
-                tracking; they all belong to this one order.
-              </p>
-              <div className="grid gap-4 mt-3">
-                {shipments.length > 0 ? (
-                  shipments.map((shipment, i) => (
-                    <ShipmentCard key={shipment.id} shipment={shipment} index={i} count={shipments.length} />
-                  ))
-                ) : (
-                  <ResearchEmptyState
-                    title="No shipments yet."
-                    body="Shipments appear here once fulfillment begins, each with its own status and tracking."
-                  />
-                )}
-              </div>
-            </section>
-
-            <section aria-label="Order totals">
-              <h2 className="body-m font-700">Totals</h2>
-              <div className="card mt-3" style={{ maxWidth: 420 }}>
-                {totalsRows.length > 0 ? (
-                  <dl>
-                    {totalsRows.map((row) => (
-                      <div key={row.label} className="flex items-center justify-between gap-4 mt-1">
-                        <dt className="body-s text-ink-2">{row.label}</dt>
-                        <dd className={`body-s tabular ${row.label === "Total" ? "font-700" : ""}`}>{row.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                ) : (
-                  <p className="body-s text-ink-mute">Totals pending. The server has not published amounts for this order.</p>
-                )}
-              </div>
-            </section>
-
-            {order.history && order.history.length > 0 && (
-              <section aria-label="Order history">
-                <h2 className="body-m font-700">History</h2>
+              <section aria-label="Items in this order">
+                <h2 className="body-m font-700">Items</h2>
                 <div className="mt-3">
-                  <ResearchTimeline items={order.history} />
+                  {order.lines.length > 0 ? (
+                    <ResearchDataTable
+                      caption={`Items in order ${order.orderId}`}
+                      columns={lineColumns}
+                      rows={order.lines}
+                      rowKey={(line) => line.sku}
+                    />
+                  ) : (
+                    <ResearchEmptyState title="Item details pending." />
+                  )}
                 </div>
               </section>
-            )}
 
-            <section aria-label="Support for this order" className="card">
-              <h2 className="body-m font-700">Need help with this order?</h2>
-              <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
-                A person answers. Include your order number and we will pick it up from there.
-              </p>
-              <div className="mt-4 flex flex-wrap gap-3">
-                <a
-                  className="btn btn-secondary"
-                  href={`mailto:research@xeniostechnology.com?subject=${encodeURIComponent(supportSubject)}`}
-                >
-                  Email support
-                </a>
-                <Link href={ACCESS_ROUTES.support} className="btn btn-ghost">
-                  Support options
-                </Link>
-              </div>
-            </section>
+              <section aria-label="Shipments for this order">
+                <h2 className="body-m font-700">Shipments</h2>
+                <p className="body-s text-ink-2 mt-1 max-w-[56ch]">
+                  An order can ship in more than one package. Each shipment carries its own status and tracking;
+                  they all belong to this one order, and shipping is charged once for the whole order.
+                </p>
+                <div className="grid gap-4 mt-3">
+                  {order.shipments.length > 0 ? (
+                    order.shipments.map((shipment, i) => (
+                      <section key={i} className="card" aria-label={`Shipment ${i + 1} of ${order.shipments.length}`}>
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <p className="mono-label text-ink-mute">
+                              Shipment {i + 1} of {order.shipments.length} · Fulfilled by {SHIPMENT_OWNER_LABELS[shipment.owner]}
+                            </p>
+                            <p className="body-s text-ink-2 mt-2">
+                              {shipment.trackingNumber ? (
+                                <>
+                                  <span className="mono-label text-ink-mute">Tracking</span>{" "}
+                                  <span className="tabular">
+                                    {shipment.carrier ? `${shipment.carrier} · ` : ""}
+                                    {shipment.trackingNumber}
+                                  </span>
+                                </>
+                              ) : (
+                                "Tracking appears here once the package is on its way."
+                              )}
+                            </p>
+                          </div>
+                          <ResearchStatusBadge label={orderStateMeta(shipment.status).label} tone={orderStateMeta(shipment.status).tone} />
+                        </div>
+                      </section>
+                    ))
+                  ) : (
+                    <ResearchEmptyState
+                      title="No shipments yet."
+                      body="Shipments appear here once fulfillment begins, each with its own status and tracking."
+                    />
+                  )}
+                </div>
+              </section>
 
-            <ResearchSecureNotice>
-              Every fact on this page comes from the order record. Tracking links are only ever the carrier URL the
-              server supplied; a shipment without one shows tracking pending.
-            </ResearchSecureNotice>
-          </div>
+              <section aria-label="Order totals">
+                <h2 className="body-m font-700">Totals</h2>
+                <div className="card mt-3" style={{ maxWidth: 420 }}>
+                  <dl>
+                    {/* ONE shipping figure per order, by rule, even across a
+                        split shipment. */}
+                    <div className="flex items-center justify-between gap-4 mt-1">
+                      <dt className="body-s text-ink-2">Shipping (once per order)</dt>
+                      <dd className="body-s tabular" data-testid="ra-shipping-total">
+                        {formatCents(order.shippingCents)}
+                      </dd>
+                    </div>
+                    {order.storeCreditAppliedCents > 0 && (
+                      <div className="flex items-center justify-between gap-4 mt-1">
+                        <dt className="body-s text-ink-2">Store credit applied</dt>
+                        <dd className="body-s tabular" data-testid="ra-store-credit-applied">
+                          -{formatCents(order.storeCreditAppliedCents)}
+                        </dd>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between gap-4 mt-1">
+                      <dt className="body-s text-ink-2">Total</dt>
+                      <dd className="body-s tabular font-700">{formatCents(order.totalCents)}</dd>
+                    </div>
+                  </dl>
+                </div>
+              </section>
+
+              <ClaimsSection
+                order={order}
+                token={memberToken}
+                claims={claims}
+                claimsKnown={claimsKnown}
+                onSubmitted={() => void loadClaims()}
+              />
+
+              <section aria-label="Support for this order" className="card">
+                <h2 className="body-m font-700">Need help with this order?</h2>
+                <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
+                  A person answers. Include your order id and we will pick it up from there.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <a
+                    className="btn btn-secondary"
+                    href={`mailto:research@xeniostechnology.com?subject=${encodeURIComponent(`Order ${order.orderId}`)}`}
+                  >
+                    Email support
+                  </a>
+                  <Link href={ACCESS_ROUTES.support} className="btn btn-ghost">
+                    Support options
+                  </Link>
+                </div>
+              </section>
+
+              <ResearchSecureNotice>
+                Every fact on this page comes from the order record. Totals are computed by the server; shipping is
+                one charge per order even when it ships in several packages.
+              </ResearchSecureNotice>
+            </div>
+          )
         )}
       </ResearchRouteBoundary>
     </ResearchMemberShell>

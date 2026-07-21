@@ -21,6 +21,7 @@ const Inventory = lazy(() => import("./pages/adminx/Inventory"));
 const OrdersAdmin = lazy(() => import("./pages/adminx/OrdersAdmin"));
 const OrderAdminDetail = lazy(() => import("./pages/adminx/OrderAdminDetail"));
 const Fulfillment = lazy(() => import("./pages/adminx/Fulfillment"));
+const CommerceQueues = lazy(() => import("./pages/adminx/CommerceQueues"));
 const QuestionsAdmin = lazy(() => import("./pages/adminx/QuestionsAdmin"));
 const QuestionAdminDetail = lazy(() => import("./pages/adminx/QuestionAdminDetail"));
 const GuidesAdmin = lazy(() => import("./pages/adminx/GuidesAdmin"));
@@ -62,6 +63,7 @@ export default function AdminResearchSection() {
       <Route path="/admin/research/orders">{() => <S><OrdersAdmin /></S>}</Route>
       <Route path="/admin/research/orders/:id">{() => <S><OrderAdminDetail /></S>}</Route>
       <Route path="/admin/research/fulfillment">{() => <S><Fulfillment /></S>}</Route>
+      <Route path="/admin/research/commerce-queues">{() => <S><CommerceQueues /></S>}</Route>
       <Route path="/admin/research/questions">{() => <S><QuestionsAdmin /></S>}</Route>
       <Route path="/admin/research/questions/:id">{() => <S><QuestionAdminDetail /></S>}</Route>
       <Route path="/admin/research/guides">{() => <S><GuidesAdmin /></S>}</Route>

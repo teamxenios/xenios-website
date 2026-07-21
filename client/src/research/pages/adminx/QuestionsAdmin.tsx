@@ -99,6 +99,7 @@ function QuestionsBody({ token }: { token: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="The question inbox publishes with the member platform."
         unavailableBody="Members see an honest pending state on their Questions page until this opens, and questions sent by email still reach a person."

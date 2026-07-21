@@ -54,6 +54,7 @@ function MemberDetailBody({ token, id }: { token: string; id: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="Member records publish with the member platform."
         unavailableBody="This page renders the account, membership, consent, and account timeline the moment the members API responds. If this member came through an application, their application file already holds the review history."

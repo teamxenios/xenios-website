@@ -65,6 +65,7 @@ function PlansBody({ token }: { token: string }) {
         <AdminBoundary
           state={resource.state}
           message={resource.message}
+          deniedCode={resource.deniedCode}
           onRetry={resource.reload}
           unavailableTitle="Plan records publish with membership billing."
           unavailableBody="When the billing backend connects, each plan renders here with its live member count and billing state. The standing terms above are already in force through the manual activation flow."

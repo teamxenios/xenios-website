@@ -55,6 +55,7 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
     <AdminBoundary
       state={resource.state}
       message={resource.message}
+      deniedCode={resource.deniedCode}
       onRetry={resource.reload}
       unavailableTitle="Product administration publishes with the commerce backend."
       unavailableBody="This record renders live when the commerce backend connects. The member-facing catalog remains read-only in the meantime."

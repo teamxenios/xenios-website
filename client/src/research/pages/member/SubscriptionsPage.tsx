@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "wouter";
+import type { SubscriptionActionRequest, SubscriptionDto } from "@shared/research/commerce-api";
+import { SUBSCRIPTION_FREQUENCIES, type SubscriptionFrequencyDays } from "@shared/research/commerce";
 import { useResearch } from "../../core";
-import { fetchSubscriptions, subscriptionAction } from "../../adapters/commerce";
-import { devFixture } from "../../lib/fixtures";
+import { listSubscriptions, subscriptionAction } from "../../adapters/commerce";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
@@ -10,188 +11,168 @@ import {
   capabilityStatusOrPending,
   ResearchCapabilityBoundary,
   ResearchConfirmation,
+  ResearchDenialNotice,
   ResearchEmptyState,
   ResearchModal,
   ResearchRouteBoundary,
   ResearchSecureNotice,
   ResearchStatusBadge,
-  type BadgeTone,
 } from "../../ui/kit";
-import { formatDate, formatMoney } from "./Orders";
+import { formatDate, frequencyLabel, subscriptionStateMeta } from "./commerce-presentation";
 
 // ---------------------------------------------------------------------------
-// Member Product Subscriptions (/research/member/subscriptions). This is the
-// PRODUCT subscription manager, deliberately distinct from membership (the
-// $50 one-time activation and $25 monthly membership live on the Membership
-// page). Every subscription fact comes from GET
-// /api/research/member/subscriptions. Every control is rendered so the
-// member can see what managing a subscription looks like, but every control
-// is DISABLED with honest copy while product_commerce is not enabled; when
-// enabled, every action posts to the server and tolerates an endpoint that
-// is not published yet (it reports "not available yet", it never pretends).
+// Member Product Subscriptions (/research/member/subscriptions), driven by the
+// frozen GET /api/research/subscriptions (SubscriptionDto) and
+// POST /api/research/subscriptions/:id (SubscriptionActionRequest).
+//
+// This is the PRODUCT subscription manager, deliberately distinct from
+// membership (the $50 one-time activation and $25 monthly membership live on
+// the Membership page).
+//
+// Rules baked in from the frozen contract:
+// - Every subscription fact is a SubscriptionDto field. Nothing is invented,
+//   and SubscriptionDto carries no price, so no money is shown here.
+// - Every control is rendered so the member can see what managing a
+//   subscription looks like, and every control is DISABLED with honest copy
+//   while product_commerce is not enabled.
+// - Every action routes on the RESULT KIND, and a denial routes on
+//   result.code through the designed copy. Message text is never branched on.
+// - An unpublished endpoint (kind "unavailable") renders the designed pending
+//   state. It is never an error, because nothing is wrong.
 // ---------------------------------------------------------------------------
-
-const SUB_STATUS_META: Record<string, { label: string; tone: BadgeTone }> = {
-  active: { label: "Active", tone: "success" },
-  paused: { label: "Paused", tone: "neutral" },
-  skip_scheduled: { label: "Skip scheduled", tone: "info" },
-  rescheduled: { label: "Rescheduled", tone: "info" },
-  payment_issue: { label: "Payment issue", tone: "warning" },
-  cancelled: { label: "Cancelled", tone: "neutral" },
-};
-
-function subStatusMeta(status?: string | null): { label: string; tone: BadgeTone } {
-  const key = (status ?? "").trim().toLowerCase().replace(/[\s-]+/g, "_");
-  if (SUB_STATUS_META[key]) return SUB_STATUS_META[key];
-  if (!key) return { label: "Status pending", tone: "pending" };
-  const label = key.replace(/_/g, " ");
-  return { label: label.charAt(0).toUpperCase() + label.slice(1), tone: "neutral" };
-}
-
-interface MemberSubscription {
-  id: string;
-  productName?: string | null;
-  status?: string | null;
-  statusDetail?: string | null;
-  frequency?: string | null;
-  frequencyDisplay?: string | null;
-  quantity?: number | null;
-  priceCents?: number | null;
-  priceDisplay?: string | null;
-  nextChargeAt?: string | null;
-  nextShipmentAt?: string | null;
-}
-
-type SubscriptionsPayload = { subscriptions?: MemberSubscription[] } | MemberSubscription[];
-
-function normalizeSubscriptions(payload: SubscriptionsPayload): MemberSubscription[] {
-  const list = Array.isArray(payload) ? payload : payload?.subscriptions ?? [];
-  return list.filter((s) => s && s.id);
-}
-
-// Dev-only synthetic subscriptions exercising the state vocabulary.
-// devFixture returns null in production, so a live member never sees these.
-function fixtureSubscriptions(): MemberSubscription[] {
-  return [
-    {
-      id: "fix-sub-1",
-      productName: "Recovery Stack, 30 day supply",
-      status: "active",
-      frequency: "monthly",
-      quantity: 1,
-      priceCents: 8900,
-      nextChargeAt: "2026-08-05",
-      nextShipmentAt: "2026-08-07",
-    },
-    {
-      id: "fix-sub-2",
-      productName: "Baseline Panel Kit",
-      status: "skip_scheduled",
-      statusDetail: "The August shipment is skipped. The next shipment resumes in September.",
-      frequency: "every_2_months",
-      quantity: 1,
-      priceCents: 9600,
-      nextChargeAt: "2026-09-02",
-      nextShipmentAt: "2026-09-04",
-    },
-    {
-      id: "fix-sub-3",
-      productName: "Hydration Formula",
-      status: "payment_issue",
-      statusDetail: "The last charge did not go through. Update your payment method to keep this subscription active.",
-      frequency: "every_2_weeks",
-      quantity: 2,
-      priceCents: 2400,
-      nextChargeAt: null,
-      nextShipmentAt: null,
-    },
-  ];
-}
-
-const FREQUENCY_OPTIONS = [
-  { value: "every_2_weeks", label: "Every 2 weeks" },
-  { value: "monthly", label: "Monthly" },
-  { value: "every_6_weeks", label: "Every 6 weeks" },
-  { value: "every_2_months", label: "Every 2 months" },
-];
-
-function frequencyLabel(sub: MemberSubscription): string | null {
-  if (sub.frequencyDisplay) return sub.frequencyDisplay;
-  const match = FREQUENCY_OPTIONS.find((o) => o.value === sub.frequency);
-  if (match) return match.label;
-  return sub.frequency ? sub.frequency.replace(/_/g, " ") : null;
-}
-
-type BoundaryState = "loading" | "ok" | "error" | "unavailable" | "unauthorized";
 
 const COMMERCE_CAPABILITY: ResearchCapability = "product_commerce";
 
 const DISABLED_CONTROLS_COPY =
   "Subscription controls unlock when ordering opens. Nothing about your account is wrong; you can see how managing a subscription will work, and no change can be made yet.";
 
-type Notice = { kind: "success" | "info" | "error"; text: string } | null;
+const NOT_SCHEDULED = "Not scheduled yet";
 
-type ConfirmAction = { sub: MemberSubscription; action: "pause" | "resume" | "skip" | "cancel" } | null;
+type PageState =
+  | { phase: "loading" }
+  | { phase: "ok"; subscriptions: SubscriptionDto[] }
+  | { phase: "denied"; code: string; message?: string }
+  | { phase: "unavailable" }
+  | { phase: "unauthorized" }
+  | { phase: "error"; message?: string };
 
+// The outcome of the last action, scoped to the subscription it was run
+// against, so a denial or a confirmation renders beside that card only.
+type ActionOutcome =
+  | { phase: "idle" }
+  | { phase: "busy"; subscriptionId: string }
+  | { phase: "done"; subscriptionId: string; text: string }
+  | { phase: "denied"; subscriptionId: string; code: string; message?: string }
+  | { phase: "unavailable"; subscriptionId: string }
+  | { phase: "error"; subscriptionId: string; message: string };
+
+// The four confirmed actions. Reschedule has its own dated modal, and the
+// frequency and quantity controls submit inline.
+type ConfirmableAction = "pause" | "resume" | "skip" | "cancel";
+
+type ConfirmTarget = { subscription: SubscriptionDto; action: ConfirmableAction } | null;
+
+const CONFIRM_COPY: Record<ConfirmableAction, { title: string; body: string; label: string; danger: boolean }> = {
+  pause: {
+    title: "Pause this subscription?",
+    body: "Charges and shipments stop until you resume. Nothing is cancelled.",
+    label: "Pause subscription",
+    danger: false,
+  },
+  resume: {
+    title: "Resume this subscription?",
+    body: "Charges and shipments continue on the subscription's schedule.",
+    label: "Resume subscription",
+    danger: false,
+  },
+  skip: {
+    title: "Skip the next shipment?",
+    body: "Only the next shipment (and its charge) is skipped. The schedule continues after it.",
+    label: "Skip next shipment",
+    danger: false,
+  },
+  cancel: {
+    title: "Cancel this subscription?",
+    body: "Future charges and shipments stop. This does not affect your membership, and you can start a new subscription any time.",
+    label: "Cancel subscription",
+    danger: true,
+  },
+};
+
+const CONFIRM_SUCCESS: Record<ConfirmableAction, string> = {
+  pause: "Subscription paused. Resume it any time.",
+  resume: "Subscription resumed.",
+  skip: "The next shipment is skipped. Your schedule continues after it.",
+  cancel: "Subscription cancelled. You can start a new one any time.",
+};
+
+// ---------------------------------------------------------------------------
 // One subscription card: facts on the left, controls beneath. Controls are
 // always rendered; `enabled` gates whether they can do anything.
+// ---------------------------------------------------------------------------
+
 function SubscriptionCard({
-  sub,
+  subscription,
   enabled,
-  busy,
+  outcome,
   onConfirm,
   onReschedule,
   onFrequency,
   onQuantity,
 }: {
-  sub: MemberSubscription;
+  subscription: SubscriptionDto;
   enabled: boolean;
-  busy: boolean;
-  onConfirm: (action: "pause" | "resume" | "skip" | "cancel") => void;
+  outcome: ActionOutcome;
+  onConfirm: (action: ConfirmableAction) => void;
   onReschedule: () => void;
-  onFrequency: (frequency: string) => void;
+  onFrequency: (frequencyDays: SubscriptionFrequencyDays) => void;
   onQuantity: (quantity: number) => void;
 }) {
-  const meta = subStatusMeta(sub.status);
-  const statusKey = (sub.status ?? "").trim().toLowerCase().replace(/[\s-]+/g, "_");
-  const cancelled = statusKey === "cancelled";
-  const paused = statusKey === "paused";
+  const meta = subscriptionStateMeta(subscription.state);
+  const cancelled = subscription.state === "cancelled";
+  const paused = subscription.state === "paused";
+  const busy = outcome.phase === "busy";
   const controlsLocked = !enabled || busy || cancelled;
-  const [frequencyDraft, setFrequencyDraft] = useState(
-    FREQUENCY_OPTIONS.some((o) => o.value === sub.frequency) ? (sub.frequency as string) : "",
-  );
-  const [quantityDraft, setQuantityDraft] = useState(
-    typeof sub.quantity === "number" && sub.quantity > 0 ? String(sub.quantity) : "1",
-  );
 
-  const price = formatMoney(sub.priceCents, sub.priceDisplay);
+  const [frequencyDraft, setFrequencyDraft] = useState(String(subscription.frequencyDays));
+  const [quantityDraft, setQuantityDraft] = useState(String(subscription.quantity));
+
+  // formatDate returns null for an absent date, so an unscheduled date says
+  // so plainly rather than borrowing a date that does not exist.
   const facts: Array<{ label: string; value: string }> = [
-    { label: "Frequency", value: frequencyLabel(sub) ?? "Pending" },
-    { label: "Quantity", value: typeof sub.quantity === "number" ? String(sub.quantity) : "Pending" },
-    { label: "Next charge", value: formatDate(sub.nextChargeAt) ?? "Pending" },
-    { label: "Next shipment", value: formatDate(sub.nextShipmentAt) ?? "Pending" },
+    { label: "Frequency", value: frequencyLabel(subscription.frequencyDays) },
+    { label: "Quantity", value: String(subscription.quantity) },
+    { label: "Next charge", value: formatDate(subscription.nextChargeAt) ?? NOT_SCHEDULED },
+    { label: "Next shipment", value: formatDate(subscription.nextShipmentAt) ?? NOT_SCHEDULED },
   ];
-  if (price) facts.push({ label: "Price per delivery", value: price });
 
   const submitFrequency = (e: FormEvent) => {
     e.preventDefault();
-    if (controlsLocked || !frequencyDraft) return;
-    onFrequency(frequencyDraft);
+    if (controlsLocked) return;
+    const days = Number(frequencyDraft);
+    const match = SUBSCRIPTION_FREQUENCIES.find((f) => f === days);
+    if (match === undefined) return;
+    onFrequency(match);
   };
+
   const submitQuantity = (e: FormEvent) => {
     e.preventDefault();
     if (controlsLocked) return;
-    const q = Number(quantityDraft);
-    if (!Number.isInteger(q) || q < 1 || q > 20) return;
-    onQuantity(q);
+    const quantity = Number(quantityDraft);
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 20) return;
+    onQuantity(quantity);
   };
 
   return (
-    <section className="card" aria-label={`Subscription: ${sub.productName ?? sub.id}`}>
+    <section
+      className="card"
+      aria-label={`Subscription: ${subscription.displayName}`}
+      data-testid={`sub-card-${subscription.subscriptionId}`}
+    >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div style={{ minWidth: 0 }}>
-          <p className="body-m font-700">{sub.productName ?? "Product subscription"}</p>
-          {sub.statusDetail && <p className="body-s text-ink-2 mt-1 max-w-[56ch]">{sub.statusDetail}</p>}
+          <p className="body-m font-700">{subscription.displayName}</p>
+          <p className="mono-label text-ink-mute mt-1">{subscription.sku}</p>
         </div>
         <ResearchStatusBadge label={meta.label} tone={meta.tone} />
       </div>
@@ -210,23 +191,21 @@ function SubscriptionCard({
           <div className="flex flex-wrap gap-6">
             <form onSubmit={submitFrequency} className="flex items-end gap-2">
               <div>
-                <label className="form-label" htmlFor={`freq-${sub.id}`}>
+                <label className="form-label" htmlFor={`freq-${subscription.subscriptionId}`}>
                   Frequency
                 </label>
                 <select
-                  id={`freq-${sub.id}`}
+                  id={`freq-${subscription.subscriptionId}`}
                   className="input-field"
                   value={frequencyDraft}
                   disabled={controlsLocked}
                   aria-disabled={controlsLocked}
+                  data-testid={`sub-frequency-${subscription.subscriptionId}`}
                   onChange={(e) => setFrequencyDraft(e.target.value)}
                 >
-                  <option value="" disabled>
-                    Choose a frequency
-                  </option>
-                  {FREQUENCY_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
+                  {SUBSCRIPTION_FREQUENCIES.map((days) => (
+                    <option key={days} value={String(days)}>
+                      {frequencyLabel(days)}
                     </option>
                   ))}
                 </select>
@@ -234,8 +213,9 @@ function SubscriptionCard({
               <button
                 type="submit"
                 className="btn btn-secondary"
-                disabled={controlsLocked || !frequencyDraft}
-                aria-disabled={controlsLocked || !frequencyDraft}
+                disabled={controlsLocked}
+                aria-disabled={controlsLocked}
+                data-testid={`sub-frequency-submit-${subscription.subscriptionId}`}
               >
                 Update frequency
               </button>
@@ -243,11 +223,11 @@ function SubscriptionCard({
 
             <form onSubmit={submitQuantity} className="flex items-end gap-2">
               <div>
-                <label className="form-label" htmlFor={`qty-${sub.id}`}>
+                <label className="form-label" htmlFor={`qty-${subscription.subscriptionId}`}>
                   Quantity
                 </label>
                 <input
-                  id={`qty-${sub.id}`}
+                  id={`qty-${subscription.subscriptionId}`}
                   className="input-field"
                   type="number"
                   min={1}
@@ -256,6 +236,7 @@ function SubscriptionCard({
                   value={quantityDraft}
                   disabled={controlsLocked}
                   aria-disabled={controlsLocked}
+                  data-testid={`sub-quantity-${subscription.subscriptionId}`}
                   onChange={(e) => setQuantityDraft(e.target.value)}
                   style={{ width: 96 }}
                 />
@@ -265,6 +246,7 @@ function SubscriptionCard({
                 className="btn btn-secondary"
                 disabled={controlsLocked}
                 aria-disabled={controlsLocked}
+                data-testid={`sub-quantity-submit-${subscription.subscriptionId}`}
               >
                 Update quantity
               </button>
@@ -278,6 +260,7 @@ function SubscriptionCard({
                 className="btn btn-secondary"
                 disabled={controlsLocked}
                 aria-disabled={controlsLocked}
+                data-testid={`sub-resume-${subscription.subscriptionId}`}
                 onClick={() => onConfirm("resume")}
               >
                 Resume
@@ -288,6 +271,7 @@ function SubscriptionCard({
                 className="btn btn-secondary"
                 disabled={controlsLocked}
                 aria-disabled={controlsLocked}
+                data-testid={`sub-pause-${subscription.subscriptionId}`}
                 onClick={() => onConfirm("pause")}
               >
                 Pause
@@ -298,6 +282,7 @@ function SubscriptionCard({
               className="btn btn-secondary"
               disabled={controlsLocked}
               aria-disabled={controlsLocked}
+              data-testid={`sub-skip-${subscription.subscriptionId}`}
               onClick={() => onConfirm("skip")}
             >
               Skip next shipment
@@ -307,6 +292,7 @@ function SubscriptionCard({
               className="btn btn-secondary"
               disabled={controlsLocked}
               aria-disabled={controlsLocked}
+              data-testid={`sub-reschedule-${subscription.subscriptionId}`}
               onClick={onReschedule}
             >
               Reschedule
@@ -316,6 +302,7 @@ function SubscriptionCard({
               className="btn btn-ghost"
               disabled={controlsLocked}
               aria-disabled={controlsLocked}
+              data-testid={`sub-cancel-${subscription.subscriptionId}`}
               onClick={() => onConfirm("cancel")}
             >
               Cancel subscription
@@ -329,57 +316,75 @@ function SubscriptionCard({
           )}
         </div>
       )}
+
+      {/* The last action's outcome for THIS subscription. A denial routes on
+          its machine code through the designed copy; an unpublished endpoint
+          reports itself honestly instead of pretending a change happened. */}
+      <div aria-live="polite" className="mt-4">
+        {outcome.phase === "done" && (
+          <p className="body-s text-ink-2" role="status" data-testid={`sub-done-${subscription.subscriptionId}`}>
+            {outcome.text}
+          </p>
+        )}
+        {outcome.phase === "denied" && <ResearchDenialNotice code={outcome.code} message={outcome.message} />}
+        {outcome.phase === "unavailable" && (
+          <p
+            className="body-s text-ink-2"
+            role="status"
+            data-testid={`sub-unavailable-${subscription.subscriptionId}`}
+          >
+            This change is not available yet. The subscription service has not opened, and nothing was changed.
+          </p>
+        )}
+        {outcome.phase === "error" && (
+          <p className="body-s font-700" role="alert" data-testid={`sub-error-${subscription.subscriptionId}`}>
+            {outcome.message}
+          </p>
+        )}
+      </div>
     </section>
   );
 }
 
+// ---------------------------------------------------------------------------
+
 export default function SubscriptionsPage() {
   const { memberToken } = useResearch();
-  const [state, setState] = useState<BoundaryState>("loading");
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
-  const [subscriptions, setSubscriptions] = useState<MemberSubscription[]>([]);
-  const [source, setSource] = useState<"server" | "fixture">("server");
+  const [state, setState] = useState<PageState>({ phase: "loading" });
   const [capabilities, setCapabilities] = useState<Map<ResearchCapability, CapabilityStatus> | null>(null);
-  const [notice, setNotice] = useState<Notice>(null);
-  const [busyId, setBusyId] = useState<string | null>(null);
-  const [confirm, setConfirm] = useState<ConfirmAction>(null);
-  const [rescheduleSub, setRescheduleSub] = useState<MemberSubscription | null>(null);
+  const [outcome, setOutcome] = useState<ActionOutcome>({ phase: "idle" });
+  const [confirm, setConfirm] = useState<ConfirmTarget>(null);
+  const [rescheduleTarget, setRescheduleTarget] = useState<SubscriptionDto | null>(null);
   const [rescheduleDate, setRescheduleDate] = useState("");
 
   const load = useCallback(async () => {
-    setState("loading");
-    setErrorMessage(undefined);
-    const result = await fetchSubscriptions<SubscriptionsPayload>(memberToken);
-    if (result.kind === "ok") {
-      setSubscriptions(normalizeSubscriptions(result.data));
-      setSource("server");
-      setState("ok");
-      return;
+    setState({ phase: "loading" });
+    const result = await listSubscriptions(memberToken);
+    switch (result.kind) {
+      case "ok":
+        setState({ phase: "ok", subscriptions: result.data.subscriptions });
+        return;
+      case "denied":
+        setState({ phase: "denied", code: result.code, message: result.message });
+        return;
+      case "unauthorized":
+        setState({ phase: "unauthorized" });
+        return;
+      case "forbidden":
+      case "unavailable":
+        setState({ phase: "unavailable" });
+        return;
+      case "error":
+        setState({ phase: "error", message: result.message });
+        return;
     }
-    if (result.kind === "unauthorized") {
-      setState("unauthorized");
-      return;
-    }
-    if (result.kind === "unavailable" || result.kind === "forbidden") {
-      const fixture = devFixture(fixtureSubscriptions);
-      if (fixture) {
-        setSubscriptions(fixture);
-        setSource("fixture");
-        setState("ok");
-      } else {
-        setState("unavailable");
-      }
-      return;
-    }
-    setErrorMessage(result.message);
-    setState("error");
   }, [memberToken]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  // Capability statuses are fetched once per page; absent registry degrades
+  // Capability statuses are fetched once per page; an absent registry degrades
   // to honest pending defaults (nothing is enabled by assumption).
   useEffect(() => {
     let cancelled = false;
@@ -394,94 +399,70 @@ export default function SubscriptionsPage() {
   const commerceStatus = capabilityStatusOrPending(capabilities, COMMERCE_CAPABILITY);
   const commerceEnabled = commerceStatus.state === "enabled";
 
-  // One unavailable-tolerant action path for every subscription change. An
-  // unpublished endpoint reports itself honestly instead of pretending.
-  const act = useCallback(
-    async (subId: string, action: string, body: unknown, successText: string) => {
-      setBusyId(subId);
-      setNotice(null);
-      const result = await subscriptionAction<unknown>(subId, action, body, memberToken);
-      setBusyId(null);
-      if (result.kind === "ok") {
-        setNotice({ kind: "success", text: successText });
-        await load();
-        return true;
+  // One action path for every subscription change. It posts the frozen
+  // SubscriptionActionRequest and routes on the result kind, never on text.
+  const run = useCallback(
+    async (subscriptionId: string, request: SubscriptionActionRequest, successText: string): Promise<boolean> => {
+      setOutcome({ phase: "busy", subscriptionId });
+      const result = await subscriptionAction(memberToken, subscriptionId, request);
+      switch (result.kind) {
+        case "ok":
+          setOutcome({ phase: "done", subscriptionId, text: successText });
+          await load();
+          return true;
+        case "denied":
+          setOutcome({ phase: "denied", subscriptionId, code: result.code, message: result.message });
+          return false;
+        case "unauthorized":
+          setOutcome({ phase: "idle" });
+          setState({ phase: "unauthorized" });
+          return false;
+        case "forbidden":
+        case "unavailable":
+          setOutcome({ phase: "unavailable", subscriptionId });
+          return false;
+        case "error":
+          setOutcome({ phase: "error", subscriptionId, message: result.message });
+          return false;
       }
-      if (result.kind === "unauthorized") {
-        setState("unauthorized");
-        return false;
-      }
-      if (result.kind === "unavailable") {
-        setNotice({
-          kind: "info",
-          text: "This change is not available yet. The subscription service has not opened; nothing was changed.",
-        });
-        return false;
-      }
-      if (result.kind === "forbidden") {
-        setNotice({ kind: "error", text: result.message ?? "That change was not allowed. Nothing was changed." });
-        return false;
-      }
-      setNotice({ kind: "error", text: result.message ?? "Something went wrong. Nothing was changed." });
-      return false;
     },
     [memberToken, load],
   );
 
   const runConfirm = async () => {
     if (!confirm) return;
-    const { sub, action } = confirm;
-    const success: Record<typeof action, string> = {
-      pause: "Subscription paused. Resume it any time.",
-      resume: "Subscription resumed.",
-      skip: "The next shipment is skipped. Your schedule continues after it.",
-      cancel: "Subscription cancelled. You can start a new one any time.",
-    };
-    await act(sub.id, action, {}, success[action]);
+    const { subscription, action } = confirm;
     setConfirm(null);
+    await run(subscription.subscriptionId, { action }, CONFIRM_SUCCESS[action]);
   };
 
   const runReschedule = async (e: FormEvent) => {
     e.preventDefault();
-    if (!rescheduleSub || !rescheduleDate) return;
-    const done = await act(
-      rescheduleSub.id,
-      "reschedule",
-      { nextShipmentAt: rescheduleDate },
+    if (!rescheduleTarget || !rescheduleDate) return;
+    const done = await run(
+      rescheduleTarget.subscriptionId,
+      { action: "reschedule", rescheduleTo: rescheduleDate },
       "The next shipment is rescheduled.",
     );
     if (done) {
-      setRescheduleSub(null);
+      setRescheduleTarget(null);
       setRescheduleDate("");
     }
   };
 
-  const confirmCopy: Record<string, { title: string; body: string; label: string; danger: boolean }> = {
-    pause: {
-      title: "Pause this subscription?",
-      body: "Charges and shipments stop until you resume. Nothing is cancelled.",
-      label: "Pause subscription",
-      danger: false,
-    },
-    resume: {
-      title: "Resume this subscription?",
-      body: "Charges and shipments continue on the subscription's schedule.",
-      label: "Resume subscription",
-      danger: false,
-    },
-    skip: {
-      title: "Skip the next shipment?",
-      body: "Only the next shipment (and its charge) is skipped. The schedule continues after it.",
-      label: "Skip next shipment",
-      danger: false,
-    },
-    cancel: {
-      title: "Cancel this subscription?",
-      body: "Future charges and shipments stop. This does not affect your membership, and you can start a new subscription any time.",
-      label: "Cancel subscription",
-      danger: true,
-    },
-  };
+  const subscriptions = state.phase === "ok" ? state.subscriptions : [];
+
+  const outcomeFor = (subscriptionId: string): ActionOutcome =>
+    outcome.phase !== "idle" && outcome.subscriptionId === subscriptionId ? outcome : { phase: "idle" };
+
+  const boundaryState: "loading" | "ok" | "error" | "unavailable" | "unauthorized" =
+    state.phase === "loading"
+      ? "loading"
+      : state.phase === "unauthorized"
+        ? "unauthorized"
+        : state.phase === "error"
+          ? "error"
+          : "ok";
 
   return (
     <ResearchMemberShell
@@ -501,24 +482,16 @@ export default function SubscriptionsPage() {
         </p>
       </div>
 
-      <div aria-live="polite">
-        {notice && (
-          <p
-            className={`body-s mb-4 ${notice.kind === "error" ? "font-700" : "text-ink-2"}`}
-            role={notice.kind === "error" ? "alert" : "status"}
-            data-testid="ra-subscriptions-notice"
-          >
-            {notice.text}
-          </p>
-        )}
-      </div>
-
       <ResearchRouteBoundary
-        state={state === "unavailable" ? "ok" : state}
-        errorMessage={errorMessage}
+        state={boundaryState}
+        errorMessage={state.phase === "error" ? state.message : undefined}
         onRetry={() => void load()}
       >
-        {state === "unavailable" ? (
+        {state.phase === "denied" ? (
+          <ResearchDenialNotice code={state.code} message={state.message} />
+        ) : state.phase === "unavailable" ? (
+          // The endpoint is not published yet. That is a pending state, not an
+          // error, so it reads as designed rather than broken.
           <div className="grid gap-6">
             <ResearchEmptyState
               title="Product subscriptions have not opened yet."
@@ -532,12 +505,6 @@ export default function SubscriptionsPage() {
           </div>
         ) : (
           <div className="grid gap-6">
-            {source === "fixture" && (
-              <p className="mono-label text-ink-mute" role="note">
-                Development preview data. Production shows only subscriptions recorded by the server.
-              </p>
-            )}
-
             {/* The capability panel: when commerce is pending it explains why
                 the controls below are locked; when enabled it confirms it. */}
             <ResearchCapabilityBoundary status={commerceStatus}>
@@ -552,21 +519,27 @@ export default function SubscriptionsPage() {
                 body="When you put a product on a recurring schedule it will appear here with its next charge and shipment dates."
               />
             ) : (
-              subscriptions.map((sub) => (
+              subscriptions.map((subscription) => (
                 <SubscriptionCard
-                  key={sub.id}
-                  sub={sub}
+                  key={subscription.subscriptionId}
+                  subscription={subscription}
                   enabled={commerceEnabled}
-                  busy={busyId === sub.id}
-                  onConfirm={(action) => setConfirm({ sub, action })}
+                  outcome={outcomeFor(subscription.subscriptionId)}
+                  onConfirm={(action) => setConfirm({ subscription, action })}
                   onReschedule={() => {
-                    setRescheduleSub(sub);
+                    setRescheduleTarget(subscription);
                     setRescheduleDate("");
                   }}
-                  onFrequency={(frequency) =>
-                    void act(sub.id, "frequency", { frequency }, "Delivery frequency updated.")
+                  onFrequency={(frequencyDays) =>
+                    void run(
+                      subscription.subscriptionId,
+                      { action: "reschedule", frequencyDays },
+                      "Delivery frequency updated.",
+                    )
                   }
-                  onQuantity={(quantity) => void act(sub.id, "quantity", { quantity }, "Quantity updated.")}
+                  onQuantity={(quantity) =>
+                    void run(subscription.subscriptionId, { action: "reschedule", quantity }, "Quantity updated.")
+                  }
                 />
               ))
             )}
@@ -581,28 +554,30 @@ export default function SubscriptionsPage() {
 
       <ResearchConfirmation
         open={confirm !== null}
-        title={confirm ? confirmCopy[confirm.action].title : ""}
+        title={confirm ? CONFIRM_COPY[confirm.action].title : ""}
         body={
           confirm ? (
             <>
-              <p className="font-700">{confirm.sub.productName ?? "Product subscription"}</p>
-              <p className="mt-2">{confirmCopy[confirm.action].body}</p>
+              <p className="font-700">{confirm.subscription.displayName}</p>
+              <p className="mt-2">{CONFIRM_COPY[confirm.action].body}</p>
             </>
           ) : null
         }
-        confirmLabel={confirm ? confirmCopy[confirm.action].label : "Confirm"}
-        danger={confirm ? confirmCopy[confirm.action].danger : false}
-        busy={confirm ? busyId === confirm.sub.id : false}
+        confirmLabel={confirm ? CONFIRM_COPY[confirm.action].label : "Confirm"}
+        danger={confirm ? CONFIRM_COPY[confirm.action].danger : false}
+        busy={
+          confirm !== null && outcome.phase === "busy" && outcome.subscriptionId === confirm.subscription.subscriptionId
+        }
         onConfirm={() => void runConfirm()}
         onCancel={() => setConfirm(null)}
       />
 
       <ResearchModal
-        open={rescheduleSub !== null}
-        title={rescheduleSub ? `Reschedule: ${rescheduleSub.productName ?? "subscription"}` : "Reschedule"}
-        onClose={() => setRescheduleSub(null)}
+        open={rescheduleTarget !== null}
+        title={rescheduleTarget ? `Reschedule: ${rescheduleTarget.displayName}` : "Reschedule"}
+        onClose={() => setRescheduleTarget(null)}
       >
-        {rescheduleSub && (
+        {rescheduleTarget && (
           <form onSubmit={(e) => void runReschedule(e)}>
             <p className="body-s text-ink-2 max-w-[48ch]">
               Choose a new date for the next shipment. Later shipments follow the subscription's frequency from
@@ -617,6 +592,7 @@ export default function SubscriptionsPage() {
                 type="date"
                 className="input-field"
                 value={rescheduleDate}
+                data-testid="ra-reschedule-date"
                 onChange={(e) => setRescheduleDate(e.target.value)}
                 required
               />
@@ -625,12 +601,13 @@ export default function SubscriptionsPage() {
               <button
                 type="submit"
                 className="btn btn-primary"
-                disabled={!rescheduleDate || busyId === rescheduleSub.id}
-                aria-disabled={!rescheduleDate || busyId === rescheduleSub.id}
+                disabled={!rescheduleDate || outcome.phase === "busy"}
+                aria-disabled={!rescheduleDate || outcome.phase === "busy"}
+                data-testid="ra-reschedule-submit"
               >
-                {busyId === rescheduleSub.id ? "Working..." : "Reschedule shipment"}
+                {outcome.phase === "busy" ? "Working..." : "Reschedule shipment"}
               </button>
-              <button type="button" className="btn btn-ghost" onClick={() => setRescheduleSub(null)}>
+              <button type="button" className="btn btn-ghost" onClick={() => setRescheduleTarget(null)}>
                 Cancel
               </button>
             </div>

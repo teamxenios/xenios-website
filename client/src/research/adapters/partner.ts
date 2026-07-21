@@ -10,6 +10,8 @@
 // ---------------------------------------------------------------------------
 
 import { apiGet, apiPost, type ApiResult } from "../lib/api";
+import { denialPresentation } from "../lib/denials";
+import type { PartnerDashboardDto, PartnerLinkDto } from "@shared/research/commerce-api";
 
 export type PartnerToken = string | null;
 
@@ -44,12 +46,15 @@ export const PARTNER_API = {
 // the endpoint. Every function is a stable module reference, safe to hand to
 // usePartnerResource directly.
 
-export function getPartnerDashboard<T>(token: PartnerToken): Promise<ApiResult<T>> {
-  return apiGet<T>(PARTNER_API.dashboard, token);
+// Frozen surface (docs/research-commerce/API_CONTRACTS_COMMERCE.md): the
+// dashboard and links payloads are typed by the authoritative contract.
+// Aggregates only; the server never puts member identity in these shapes.
+export function getPartnerDashboard(token: PartnerToken): Promise<ApiResult<{ partner: PartnerDashboardDto }>> {
+  return apiGet(PARTNER_API.dashboard, token);
 }
 
-export function getPartnerLinks<T>(token: PartnerToken): Promise<ApiResult<T>> {
-  return apiGet<T>(PARTNER_API.links, token);
+export function getPartnerLinks(token: PartnerToken): Promise<ApiResult<{ links: PartnerLinkDto[] }>> {
+  return apiGet(PARTNER_API.links, token);
 }
 
 export function getPartnerConversions<T>(token: PartnerToken): Promise<ApiResult<T>> {
@@ -127,6 +132,14 @@ export async function submitPartnerRequest(
   }
   if (result.kind === "unauthorized") {
     return { kind: "error", message: "Your session has ended. Please sign in again and retry." };
+  }
+  if (result.kind === "denied") {
+    // Route on the machine code (via the shared copy table), never on the
+    // server message. A pending-tone denial means the capability is simply
+    // not switched on, which is the honest unavailable outcome for a form.
+    const p = denialPresentation(result.code, result.message);
+    if (p.tone === "pending") return { kind: "unavailable", message: p.body };
+    return { kind: "error", message: `${p.title} ${p.body}` };
   }
   return { kind: "error", message: result.message };
 }

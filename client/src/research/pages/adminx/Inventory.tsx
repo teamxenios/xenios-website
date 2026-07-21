@@ -60,6 +60,7 @@ function InventoryBody({ token }: { token: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="Inventory publishes with the commerce backend."
         unavailableBody="Live stock counts render here when the commerce backend and fulfillment integration connect. Nothing is estimated in the meantime."

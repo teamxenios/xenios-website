@@ -30,6 +30,8 @@ export const MEMBER_ROUTES = {
   product: "/research/member/products/:slug",
   guides: "/research/member/guides",
   guide: "/research/member/guides/:slug",
+  cart: "/research/member/cart",
+  checkout: "/research/member/checkout",
   orders: "/research/member/orders",
   order: "/research/member/orders/:id",
   subscriptions: "/research/member/subscriptions",
@@ -83,6 +85,7 @@ export const ADMIN_ROUTES = {
   security: "/admin/research/security",
   privacy: "/admin/research/privacy",
   capabilities: "/admin/research/capabilities",
+  commerceQueues: "/admin/research/commerce-queues",
   audit: "/admin/research/audit",
 } as const;
 

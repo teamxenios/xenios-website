@@ -75,8 +75,18 @@ export function pendingStatus(capability: ResearchCapability): CapabilityStatus 
 
 let cache: { at: number; statuses: Map<ResearchCapability, CapabilityStatus> } | null = null;
 
-// Fetches member-visible capability statuses; safe fallback when the endpoint
-// is absent (404/older server) or errors. Never throws.
+/** Test-only: clears the 60s memo so each test observes its own fetch stub. */
+export function __resetCapabilitiesCache(): void {
+  cache = null;
+}
+
+// Fetches member-visible capability statuses from the frozen registry
+// endpoint: GET /api/research/capabilities answering
+// { ok: true, capabilities: { "<key>": { enabled: boolean } } }.
+// enabled true maps to state "enabled"; enabled false or a missing key keeps
+// the honest presentation defaults (PRODUCT_GATES read coming_soon, provider
+// capabilities read pending_credentials). An absent or failing endpoint keeps
+// the same defaults. Never throws.
 export async function fetchCapabilities(token: string | null): Promise<Map<ResearchCapability, CapabilityStatus>> {
   if (cache && Date.now() - cache.at < 60_000) return cache.statuses;
   const statuses = new Map<ResearchCapability, CapabilityStatus>();
@@ -88,8 +98,26 @@ export async function fetchCapabilities(token: string | null): Promise<Map<Resea
     });
     if (res.ok) {
       const body = await res.json().catch(() => null);
-      const list: CapabilityStatus[] = body?.data ?? body?.capabilities ?? [];
-      for (const s of list) if (s?.capability) statuses.set(s.capability, s);
+      const caps =
+        body?.ok === true && body.capabilities && typeof body.capabilities === "object"
+          ? (body.capabilities as Record<string, { enabled?: unknown }>)
+          : null;
+      if (caps) {
+        for (const key of Object.keys(caps)) {
+          if (!(key in PENDING)) continue; // unknown keys are ignored, never invented
+          if (caps[key]?.enabled === true) {
+            const capability = key as ResearchCapability;
+            statuses.set(capability, {
+              capability,
+              state: "enabled",
+              publicMessage: "Available.",
+              checkedAt: new Date().toISOString(),
+            });
+          }
+          // enabled false (or anything else): leave unset so statusFor falls
+          // back to the designed pending presentation for that capability.
+        }
+      }
     }
   } catch {
     // endpoint unreachable: fall through to pending defaults below

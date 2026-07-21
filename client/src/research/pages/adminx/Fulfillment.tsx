@@ -40,6 +40,7 @@ function FulfillmentBody({ token }: { token: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="Fulfillment publishes with the commerce backend."
         unavailableBody="The shipment pipeline renders here when orders exist and the fulfillment integration is configured. The Capabilities page names exactly what is still missing."

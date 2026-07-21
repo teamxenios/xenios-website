@@ -39,6 +39,7 @@ function AuditBody({ token }: { token: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="The unified audit view publishes with the member platform."
         unavailableBody="Auditable events are already being recorded where the surfaces are live; this page will unify them. Until then, read them at the sources listed below."

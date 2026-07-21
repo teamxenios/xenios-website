@@ -61,6 +61,7 @@ function GuidesBody({ token }: { token: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="Guide management publishes with the member platform."
         unavailableBody="Members already read published guides in their area. Draft, review, and version management land here when the guides admin API responds."

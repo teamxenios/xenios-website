@@ -11,6 +11,7 @@ import {
   useDebounced,
 } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
+import { denialPresentation } from "../../lib/denials";
 import { fmtDate, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 
@@ -94,6 +95,7 @@ function PartnerRoster({ token }: { token: string }) {
         <AdminBoundary
           state={resource.state}
           message={resource.message}
+          deniedCode={resource.deniedCode}
           onRetry={resource.reload}
           unavailableTitle="The partner roster publishes with the partner backend."
           unavailableBody="Partner accounts, links, and commission state render here when the partners admin API responds. Referral integrity review below is live today."
@@ -157,6 +159,7 @@ function FraudQueue({ token }: { token: string }) {
         <AdminBoundary
           state={resource.state}
           message={resource.message}
+          deniedCode={resource.deniedCode}
           onRetry={resource.reload}
           unavailableTitle="The fraud queue is not reachable."
           unavailableBody="The referral fraud API is not responding in this environment."
@@ -217,6 +220,10 @@ function FraudFlagCard({
       setError(result.message ?? "This action is not allowed for your account.");
     } else if (result.kind === "unavailable") {
       setError("The fraud action endpoint is not available in this environment.");
+    } else if (result.kind === "denied") {
+      // Route on the machine code; the copy is ours (lib/denials).
+      const p = denialPresentation(result.code, result.message);
+      setError(`${p.title} ${p.body}`);
     } else {
       setError(result.message);
     }
@@ -317,6 +324,9 @@ function ManualReportForm({ token, onReported }: { token: string; onReported: ()
       setMessage("The manual report endpoint is not available in this environment.");
     } else if (result.kind === "unauthorized") {
       setMessage("Your admin session has ended. Sign in again.");
+    } else if (result.kind === "denied") {
+      const p = denialPresentation(result.code, result.message);
+      setMessage(`${p.title} ${p.body}`);
     } else {
       setMessage(result.kind === "forbidden" ? result.message ?? "This action is not allowed." : result.message);
     }

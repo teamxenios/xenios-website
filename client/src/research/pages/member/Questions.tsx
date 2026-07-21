@@ -16,6 +16,7 @@ import {
   type ResearchCapability,
 } from "../../lib/capabilities";
 import { devFixture } from "../../lib/fixtures";
+import { failureText } from "../../lib/denials";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
   ResearchCapabilityBoundary,
@@ -402,7 +403,7 @@ function NewQuestionForm({
     }
     setFeedback({
       tone: "error",
-      text: result.kind === "forbidden" ? result.message ?? "This action is not allowed for your account." : result.message,
+      text: failureText(result, "That did not go through. Please try again."),
     });
   };
 
@@ -672,7 +673,7 @@ function VoiceRecorder({ token }: { token: string | null }) {
     }
     setFeedback({
       tone: "error",
-      text: result.kind === "forbidden" ? result.message ?? "This action is not allowed for your account." : result.message,
+      text: failureText(result, "That did not go through. Please try again."),
     });
   };
 
@@ -843,7 +844,7 @@ function AnswerRating({ question, token }: { question: QuestionItem; token: stri
       setMessage("Your session has ended. Sign in again to rate this answer.");
       return;
     }
-    setMessage(result.kind === "forbidden" ? result.message ?? "This action is not allowed for your account." : result.message);
+    setMessage(failureText(result, "That did not go through. Please try again."));
   };
 
   return (
@@ -982,9 +983,7 @@ function TelegramControls({ token }: { token: string | null }) {
     setMessage(
       result.kind === "unauthorized"
         ? "Your session has ended. Sign in again to link Telegram."
-        : result.kind === "forbidden"
-          ? result.message ?? "This action is not allowed for your account."
-          : result.message,
+        : failureText(result, "That did not go through. Please try again."),
     );
   };
 
@@ -1005,9 +1004,7 @@ function TelegramControls({ token }: { token: string | null }) {
     setMessage(
       result.kind === "unauthorized"
         ? "Your session has ended. Sign in again to unlink Telegram."
-        : result.kind === "forbidden"
-          ? result.message ?? "This action is not allowed for your account."
-          : result.message,
+        : failureText(result, "That did not go through. Please try again."),
     );
   };
 

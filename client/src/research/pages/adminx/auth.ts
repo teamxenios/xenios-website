@@ -119,12 +119,14 @@ export function useAdminSession(): AdminSession {
 // changes.
 // ---------------------------------------------------------------------------
 
-export type AdminResourceState = "loading" | "ok" | "unauthorized" | "forbidden" | "unavailable" | "error";
+export type AdminResourceState = "loading" | "ok" | "unauthorized" | "forbidden" | "unavailable" | "denied" | "error";
 
 export interface AdminResource<T> {
   state: AdminResourceState;
   data: T | null;
   message?: string;
+  /** Set when state is "denied": the machine code the UI routes on. */
+  deniedCode?: string;
   reload: () => void;
 }
 
@@ -132,6 +134,7 @@ export function useAdminResource<T>(token: string | null, load: AdminLoader<T>):
   const [state, setState] = useState<AdminResourceState>("loading");
   const [data, setData] = useState<T | null>(null);
   const [message, setMessage] = useState<string | undefined>(undefined);
+  const [deniedCode, setDeniedCode] = useState<string | undefined>(undefined);
   const [nonce, setNonce] = useState(0);
 
   useEffect(() => {
@@ -139,6 +142,7 @@ export function useAdminResource<T>(token: string | null, load: AdminLoader<T>):
     let alive = true;
     setState("loading");
     setMessage(undefined);
+    setDeniedCode(undefined);
     void load(token).then((result) => {
       if (!alive) return;
       if (result.kind === "ok") {
@@ -151,6 +155,11 @@ export function useAdminResource<T>(token: string | null, load: AdminLoader<T>):
         setState("forbidden");
       } else if (result.kind === "unavailable") {
         setState("unavailable");
+      } else if (result.kind === "denied") {
+        // The machine code, not the message, is what the boundary routes on.
+        setDeniedCode(result.code);
+        setMessage(result.message);
+        setState("denied");
       } else {
         setMessage(result.message);
         setState("error");
@@ -162,7 +171,7 @@ export function useAdminResource<T>(token: string | null, load: AdminLoader<T>):
   }, [token, load, nonce]);
 
   const reload = useCallback(() => setNonce((n) => n + 1), []);
-  return { state, data, message, reload };
+  return { state, data, message, deniedCode, reload };
 }
 
 // Shared date formatting for the operations surfaces.

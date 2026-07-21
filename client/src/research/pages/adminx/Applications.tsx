@@ -108,6 +108,7 @@ function ApplicationsBody({ token }: { token: string }) {
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="The application queue is not reachable."
         unavailableBody="The applications API is not responding in this environment."

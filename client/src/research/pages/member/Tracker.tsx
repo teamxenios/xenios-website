@@ -9,6 +9,7 @@ import {
   type ResearchCapability,
 } from "../../lib/capabilities";
 import { devFixture } from "../../lib/fixtures";
+import { failureText } from "../../lib/denials";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
@@ -268,7 +269,7 @@ function LogPanel({ token }: { token: string | null }) {
     }
     setFeedback({
       tone: "error",
-      text: result.kind === "forbidden" ? result.message ?? "This action is not allowed for your account." : result.message,
+      text: failureText(result, "That did not go through. Please try again."),
     });
   };
 
@@ -589,7 +590,7 @@ function PrivacyPanel({ token }: { token: string | null }) {
     } else if (result.kind === "unauthorized") {
       setExportMessage("Your session has ended. Sign in again to request an export.");
     } else {
-      setExportMessage(result.kind === "forbidden" ? result.message ?? "This action is not allowed for your account." : result.message);
+      setExportMessage(failureText(result, "The export request did not go through. Please try again."));
     }
   };
 
@@ -608,7 +609,7 @@ function PrivacyPanel({ token }: { token: string | null }) {
     } else if (result.kind === "unauthorized") {
       setDeleteMessage("Your session has ended. Sign in again to request deletion.");
     } else {
-      setDeleteMessage(result.kind === "forbidden" ? result.message ?? "This action is not allowed for your account." : result.message);
+      setDeleteMessage(failureText(result, "The deletion request did not go through. Please try again."));
     }
   };
 

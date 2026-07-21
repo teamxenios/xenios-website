@@ -25,7 +25,12 @@ import { ResearchLoadingState } from "./ui/kit";
 const Support = lazy(() => import("./pages/Support"));
 const LegalPage = lazy(() => import("./pages/LegalPage"));
 const ActivationPage = lazy(() => import("./pages/ActivationPage"));
-const DevGallery = lazy(() => import("./gallery"));
+// The dynamic import itself sits behind the DEV flag, not just the route: a
+// top-level lazy() emits the gallery chunk even when the route is compiled
+// out, so the fixture code would still ship. With import.meta.env.DEV a
+// static false in production, the whole branch is dead code and the chunk is
+// never generated.
+const DevGallery = import.meta.env.DEV ? lazy(() => import("./gallery")) : null;
 
 // Member deep area
 const MemberDashboard = lazy(() => import("./pages/member/Dashboard"));
@@ -45,6 +50,8 @@ const MemberProducts = lazy(() => import("./pages/member/Products"));
 const MemberProductPage = lazy(() => import("./pages/member/ProductPage"));
 const MemberGuides = lazy(() => import("./pages/member/Guides"));
 const GuideReader = lazy(() => import("./pages/member/GuideReader"));
+const MemberCart = lazy(() => import("./pages/member/Cart"));
+const MemberCheckout = lazy(() => import("./pages/member/Checkout"));
 const MemberOrders = lazy(() => import("./pages/member/Orders"));
 const OrderDetail = lazy(() => import("./pages/member/OrderDetail"));
 const SubscriptionsPage = lazy(() => import("./pages/member/SubscriptionsPage"));
@@ -133,8 +140,13 @@ export default function ResearchSection() {
           <Route path="/research/terms">{() => <L component={LegalPage} props={{ kind: "terms" }} />}</Route>
           <Route path="/research/policies/:policy" component={PolicyPage} />
 
-          {/* Development-only visual gallery (fixture mode; renders nothing in production builds) */}
-          <Route path="/research/__gallery/:page">{() => <L component={DevGallery} />}</Route>
+          {/* Development-only visual gallery (fixture mode). The route is
+              compiled out of production entirely: import.meta.env.DEV is a
+              static false there, so the bundler drops both the route and the
+              gallery chunk rather than shipping inert fixture code. */}
+          {DevGallery && (
+            <Route path="/research/__gallery/:page">{() => <L component={DevGallery} />}</Route>
+          )}
 
 
           {/* The private member website */}
@@ -155,6 +167,8 @@ export default function ResearchSection() {
           <Route path="/research/member/products/:slug">{() => <L member component={MemberProductPage} />}</Route>
           <Route path="/research/member/guides">{() => <L member component={MemberGuides} />}</Route>
           <Route path="/research/member/guides/:slug">{() => <L member component={GuideReader} />}</Route>
+          <Route path="/research/member/cart">{() => <L member component={MemberCart} />}</Route>
+          <Route path="/research/member/checkout">{() => <L member component={MemberCheckout} />}</Route>
           <Route path="/research/member/orders">{() => <L member component={MemberOrders} />}</Route>
           <Route path="/research/member/orders/:id">{() => <L member component={OrderDetail} />}</Route>
           <Route path="/research/member/subscriptions">{() => <L member component={SubscriptionsPage} />}</Route>
@@ -203,7 +217,7 @@ export default function ResearchSection() {
           <Route path="/research/shop"><Redirect to="/research/member/products" /></Route>
           <Route path="/research/build-a-system"><Redirect to="/research/member/goals" /></Route>
           <Route path="/research/learn"><Redirect to="/research/member/guides" /></Route>
-          <Route path="/research/cart"><Redirect to="/research/member/orders" /></Route>
+          <Route path="/research/cart"><Redirect to="/research/member/cart" /></Route>
           <Route path="/research/membership"><Redirect to="/research/member/membership" /></Route>
           <Route path="/research/framework"><Redirect to="/research/member/blueprint" /></Route>
           <Route path="/research/faq"><Redirect to="/research/support" /></Route>

@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { getSystemStatus, listApplications, listReferralFraud } from "../../adapters/adminOps";
 import { ResearchAdminShell } from "../../ui/shells";
 import {
+  ResearchDenialNotice,
   ResearchEmptyState,
   ResearchErrorState,
   ResearchLoadingState,
@@ -143,6 +144,7 @@ function AdminSignInForm({ session }: { session: AdminSession }) {
 export function AdminBoundary({
   state,
   message,
+  deniedCode,
   onRetry,
   unavailableTitle = "This surface is not published yet.",
   unavailableBody = "It publishes with the member platform and commerce backend. Nothing is wrong with your access.",
@@ -150,6 +152,8 @@ export function AdminBoundary({
 }: {
   state: AdminResourceState;
   message?: string;
+  /** The machine code when state is "denied"; UI copy routes on it, never on message. */
+  deniedCode?: string;
   onRetry?: () => void;
   unavailableTitle?: string;
   unavailableBody?: string;
@@ -172,6 +176,7 @@ export function AdminBoundary({
         body={message ?? "This account is signed in but is not authorized for research operations."}
       />
     );
+  if (state === "denied") return <ResearchDenialNotice code={deniedCode ?? "forbidden"} message={message} />;
   return <>{children}</>;
 }
 
@@ -301,6 +306,7 @@ function QueueOverview({
       <AdminBoundary
         state={resource.state}
         message={resource.message}
+        deniedCode={resource.deniedCode}
         onRetry={resource.reload}
         unavailableTitle="The application queue is not reachable."
         unavailableBody="The applications API is not responding in this environment."
@@ -414,6 +420,7 @@ function EmailDeliveryPanel({
         <AdminBoundary
           state={resource.state}
           message={resource.message}
+          deniedCode={resource.deniedCode}
           onRetry={resource.reload}
           unavailableTitle="System status is not reachable."
           unavailableBody="The system status API is not responding in this environment."
@@ -471,6 +478,7 @@ function ReferralIntegrityPanel({
         <AdminBoundary
           state={resource.state}
           message={resource.message}
+          deniedCode={resource.deniedCode}
           onRetry={resource.reload}
           unavailableTitle="The fraud queue is not reachable."
           unavailableBody="The referral fraud API is not responding in this environment."

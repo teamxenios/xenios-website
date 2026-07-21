@@ -20,6 +20,7 @@ import {
   type ResearchCapability,
 } from "../../lib/capabilities";
 import { devFixture } from "../../lib/fixtures";
+import { failureText } from "../../lib/denials";
 import { MEMBER_ROUTES } from "../../lib/routes";
 
 // ---------------------------------------------------------------------------
@@ -664,7 +665,7 @@ export default function Assessment() {
       setSubmit({ phase: "unauthorized" });
       return;
     }
-    setSubmit({ phase: "error", message: res.message });
+    setSubmit({ phase: "error", message: failureText(res, "Your assessment was not submitted. Please try again.") });
   }, [mode, answers, memberToken]);
 
   const sectionProgress = activeSections.map((s) => {

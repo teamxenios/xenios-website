@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
+import { denialPresentation } from "../../lib/denials";
 import type { PartnerLoader, PartnerToken } from "../../adapters/partner";
 
 // ---------------------------------------------------------------------------
@@ -23,11 +24,13 @@ export const PARTNER_SUPPORT_EMAIL = "research@xeniostechnology.com";
 export function usePartnerResource<T>(load: PartnerLoader<T>, token: PartnerToken) {
   const [state, setState] = useState<BoundaryState>("loading");
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+  const [denied, setDenied] = useState<{ code: string; message?: string } | null>(null);
   const [data, setData] = useState<T | null>(null);
 
   const reload = useCallback(async () => {
     setState("loading");
     setErrorMessage(undefined);
+    setDenied(null);
     const result = await load(token);
     if (result.kind === "ok") {
       setData(result.data);
@@ -42,6 +45,21 @@ export function usePartnerResource<T>(load: PartnerLoader<T>, token: PartnerToke
       setState("unavailable");
       return;
     }
+    if (result.kind === "denied") {
+      // Route on the machine code, never on the server message. Pages that
+      // design a state for a specific code read `denied` and render it; the
+      // default here maps a pending-tone denial to the honest unavailable
+      // panel and everything else to an error with our own copy.
+      setDenied({ code: result.code, message: result.message });
+      const p = denialPresentation(result.code, result.message);
+      if (p.tone === "pending") {
+        setState("unavailable");
+      } else {
+        setErrorMessage(`${p.title} ${p.body}`);
+        setState("error");
+      }
+      return;
+    }
     setErrorMessage(result.message);
     setState("error");
   }, [load, token]);
@@ -50,7 +68,7 @@ export function usePartnerResource<T>(load: PartnerLoader<T>, token: PartnerToke
     void reload();
   }, [reload]);
 
-  return { state, errorMessage, data, reload };
+  return { state, errorMessage, denied, data, reload };
 }
 
 // One capability fetch per page (the module-level cache in lib/capabilities

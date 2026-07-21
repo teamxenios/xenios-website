@@ -1,57 +1,162 @@
-// Commerce adapter: the single home for the member commerce endpoints
-// (catalog waitlist, orders, subscriptions). Pages import these functions
-// instead of spelling URL strings inline, so a path change happens in one
-// place. Behavior is identical to the previous inline calls: every function
-// returns the same ApiResult envelope from lib/api, and payload types stay
-// with the pages (passed as the generic parameter) because each page owns
-// its own normalization.
-//
-// Note: the member catalog itself (products list, product detail) comes from
-// useResearch() in core, not from these paths; this adapter covers only the
-// direct fetch paths the member commerce pages call.
+// Commerce adapter: the single home for the FROZEN member commerce endpoints
+// (catalog, goals, cart, shipping, checkout, orders, subscriptions, claims,
+// store credit). Paths and payload shapes come from
+// docs/research-commerce/API_CONTRACTS_COMMERCE.md and the authoritative types
+// in @shared/research/commerce-api; nothing here re-declares a contract type.
+// Every function returns the one ApiResult envelope from lib/api, so a denial
+// ({ ok: false, code }) always surfaces as { kind: "denied", code } for the
+// page to route on. Route on code, never on message.
 
-import { apiGet, apiPost, type ApiResult } from "../lib/api";
+import { apiDelete, apiGet, apiPatch, apiPost, type ApiResult } from "../lib/api";
+import type {
+  AddCartLineRequest,
+  CartDto,
+  CheckoutRequest,
+  ClaimDto,
+  CreateClaimRequest,
+  GoalDto,
+  OrderDetailDto,
+  OrderSummaryDto,
+  ProductDetailDto,
+  ProductSummaryDto,
+  ShippingQuoteRequest,
+  StoreCreditDto,
+  SubscriptionActionRequest,
+  SubscriptionDto,
+} from "@shared/research/commerce-api";
+import type { ShippingQuote, SubscriptionFrequencyDays } from "@shared/research/commerce";
 
-const BASE = "/api/research/member";
+export type MemberToken = string | null;
 
+const BASE = "/api/research";
+const enc = encodeURIComponent;
+
+// The frozen route table. Pages never spell URL strings; a path lives here
+// exactly once.
 export const commercePaths = {
-  waitlist: `${BASE}/waitlist`,
+  products: `${BASE}/products`,
+  product: (slug: string) => `${BASE}/products/${enc(slug)}`,
+  goals: `${BASE}/goals`,
+  cart: `${BASE}/cart`,
+  cartLines: `${BASE}/cart/lines`,
+  cartLine: (sku: string) => `${BASE}/cart/lines/${enc(sku)}`,
+  shippingQuote: `${BASE}/shipping/quote`,
+  checkout: `${BASE}/checkout`,
   orders: `${BASE}/orders`,
-  order: (orderId: string) => `${BASE}/orders/${encodeURIComponent(orderId)}`,
+  order: (orderId: string) => `${BASE}/orders/${enc(orderId)}`,
   subscriptions: `${BASE}/subscriptions`,
-  subscriptionAction: (subId: string, action: string) =>
-    `${BASE}/subscriptions/${encodeURIComponent(subId)}/${action}`,
+  subscription: (id: string) => `${BASE}/subscriptions/${enc(id)}`,
+  claims: `${BASE}/claims`,
+  storeCredit: `${BASE}/store-credit`,
 } as const;
 
-/** Join the waitlist for a product that is not yet orderable. */
-export function joinWaitlist(
-  slug: string,
-  token?: string | null,
-): Promise<ApiResult<{ ok: boolean }>> {
-  return apiPost<{ ok: boolean }>(commercePaths.waitlist, { slug }, token);
+// ------------------------------ catalog ------------------------------------
+
+export function listProducts(token: MemberToken): Promise<ApiResult<{ products: ProductSummaryDto[] }>> {
+  return apiGet(commercePaths.products, token);
 }
 
-/** Fetch the member's order history. */
-export function fetchOrders<T>(token?: string | null): Promise<ApiResult<T>> {
+export function getProduct(token: MemberToken, slug: string): Promise<ApiResult<{ product: ProductDetailDto }>> {
+  return apiGet(commercePaths.product(slug), token);
+}
+
+export function listGoals(token: MemberToken): Promise<ApiResult<{ goals: GoalDto[] }>> {
+  return apiGet(commercePaths.goals, token);
+}
+
+// -------------------------------- cart -------------------------------------
+
+export function getCart(token: MemberToken): Promise<ApiResult<{ cart: CartDto }>> {
+  return apiGet(commercePaths.cart, token);
+}
+
+export function addCartLine(token: MemberToken, req: AddCartLineRequest): Promise<ApiResult<{ cart: CartDto }>> {
+  return apiPost(commercePaths.cartLines, req, token);
+}
+
+export function updateCartLine(
+  token: MemberToken,
+  sku: string,
+  patch: {
+    quantity?: number;
+    purchaseMode?: "one_time" | "subscription";
+    subscriptionFrequencyDays?: SubscriptionFrequencyDays;
+  },
+): Promise<ApiResult<{ cart: CartDto }>> {
+  return apiPatch(commercePaths.cartLine(sku), patch, token);
+}
+
+export function removeCartLine(token: MemberToken, sku: string): Promise<ApiResult<{ cart: CartDto }>> {
+  return apiDelete(commercePaths.cartLine(sku), token);
+}
+
+// --------------------------- shipping, checkout -----------------------------
+
+export function quoteShipping(token: MemberToken, req: ShippingQuoteRequest): Promise<ApiResult<{ quote: ShippingQuote }>> {
+  return apiPost(commercePaths.shippingQuote, req, token);
+}
+
+export function submitCheckout(token: MemberToken, req: CheckoutRequest): Promise<ApiResult<{ order: OrderSummaryDto }>> {
+  return apiPost(commercePaths.checkout, req, token);
+}
+
+// ------------------------------- orders ------------------------------------
+
+export function listOrders(token: MemberToken): Promise<ApiResult<{ orders: OrderSummaryDto[] }>> {
+  return apiGet(commercePaths.orders, token);
+}
+
+export function getOrder(token: MemberToken, orderId: string): Promise<ApiResult<{ order: OrderDetailDto }>> {
+  return apiGet(commercePaths.order(orderId), token);
+}
+
+// ---------------------------- subscriptions --------------------------------
+
+export function listSubscriptions(token: MemberToken): Promise<ApiResult<{ subscriptions: SubscriptionDto[] }>> {
+  return apiGet(commercePaths.subscriptions, token);
+}
+
+export function subscriptionAction(
+  token: MemberToken,
+  id: string,
+  req: SubscriptionActionRequest,
+): Promise<ApiResult<{ subscription: SubscriptionDto }>> {
+  return apiPost(commercePaths.subscription(id), req, token);
+}
+
+// ------------------------------- claims ------------------------------------
+
+export function submitClaim(token: MemberToken, req: CreateClaimRequest): Promise<ApiResult<{ claim: ClaimDto }>> {
+  return apiPost(commercePaths.claims, req, token);
+}
+
+export function listClaims(token: MemberToken): Promise<ApiResult<{ claims: ClaimDto[] }>> {
+  return apiGet(commercePaths.claims, token);
+}
+
+// ----------------------------- store credit --------------------------------
+
+export function getStoreCredit(token: MemberToken): Promise<ApiResult<{ storeCredit: StoreCreditDto }>> {
+  return apiGet(commercePaths.storeCredit, token);
+}
+
+// ------------------------ legacy-name compatibility ------------------------
+// Pages written before the freeze import these names. They hit the SAME frozen
+// paths (the old /api/research/member/* variants are gone) and preserve the
+// old argument order and caller-supplied generics so existing call sites keep
+// meaning what they meant. New code uses the frozen functions above.
+
+/** @deprecated Use listOrders(token). */
+export function fetchOrders<T = { orders: OrderSummaryDto[] }>(token?: string | null): Promise<ApiResult<T>> {
   return apiGet<T>(commercePaths.orders, token);
 }
 
-/** Fetch one order by id. */
-export function fetchOrder<T>(orderId: string, token?: string | null): Promise<ApiResult<T>> {
+/** @deprecated Use getOrder(token, orderId). */
+export function fetchOrder<T = { order: OrderDetailDto }>(orderId: string, token?: string | null): Promise<ApiResult<T>> {
   return apiGet<T>(commercePaths.order(orderId), token);
 }
 
-/** Fetch the member's subscriptions. */
-export function fetchSubscriptions<T>(token?: string | null): Promise<ApiResult<T>> {
+/** @deprecated Use listSubscriptions(token). */
+export function fetchSubscriptions<T = { subscriptions: SubscriptionDto[] }>(token?: string | null): Promise<ApiResult<T>> {
   return apiGet<T>(commercePaths.subscriptions, token);
-}
-
-/** Run a subscription change (pause, resume, cancel, reschedule, ...). */
-export function subscriptionAction<T>(
-  subId: string,
-  action: string,
-  body: unknown,
-  token?: string | null,
-): Promise<ApiResult<T>> {
-  return apiPost<T>(commercePaths.subscriptionAction(subId, action), body, token);
 }

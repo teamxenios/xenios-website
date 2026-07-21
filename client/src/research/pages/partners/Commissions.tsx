@@ -3,6 +3,7 @@ import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchDataTable, ResearchRouteBoundary, ResearchStatusBadge, type BadgeTone } from "../../ui/kit";
 import { getPartnerCommissions } from "../../adapters/partner";
 import { PARTNER_PENDING_TITLE, usePartnerResource } from "./shared";
+import type { CommissionState } from "@shared/research/distribution";
 
 // ---------------------------------------------------------------------------
 // Partner commissions (/research/partners/commissions). The ledger of
@@ -10,24 +11,29 @@ import { PARTNER_PENDING_TITLE, usePartnerResource } from "./shared";
 // Every figure comes from the partner API; nothing is projected or implied.
 // ---------------------------------------------------------------------------
 
-type LedgerStatus = "pending" | "hold" | "payable" | "paid" | "reversed";
-
+// Field names and states align to the frozen commission vocabulary
+// (shared/research/distribution.ts CommissionState); the endpoint itself is
+// not yet published, so the payload stays page-owned but never drifts from
+// the contract's names.
 interface LedgerEntry {
   id: string;
   date: string;
   description: string;
-  amountCents: number;
-  status: LedgerStatus | string;
+  commissionCents: number;
+  state: CommissionState | string;
 }
 
 type CommissionsPayload = { entries?: LedgerEntry[] };
 
-const STATUS_TONES: Record<string, BadgeTone> = {
+const STATE_TONES: Record<CommissionState, BadgeTone> = {
   pending: "pending",
-  hold: "warning",
+  held: "warning",
+  approved: "info",
   payable: "info",
   paid: "success",
   reversed: "danger",
+  disputed: "warning",
+  forfeited: "danger",
 };
 
 const VOCABULARY: Array<{ term: string; definition: string }> = [
@@ -36,13 +42,17 @@ const VOCABULARY: Array<{ term: string; definition: string }> = [
     definition: "The referred payment settled and the commission entry was created. It has not entered the hold window yet.",
   },
   {
-    term: "Hold",
+    term: "Held",
     definition:
-      "Every new commission sits in hold through the refund window on the payment behind it. Holds protect both sides; a held commission is not spendable and not lost.",
+      "Every new commission sits held through the refund window on the payment behind it. Holds protect both sides; a held commission is not spendable and not lost.",
+  },
+  {
+    term: "Approved",
+    definition: "The hold cleared with no refund. The commission is confirmed and moves to payable.",
   },
   {
     term: "Payable",
-    definition: "The hold cleared with no refund. The amount is queued for your next payout once payout setup is complete.",
+    definition: "Confirmed and queued for your next payout once payout setup is complete.",
   },
   {
     term: "Paid",
@@ -52,6 +62,14 @@ const VOCABULARY: Array<{ term: string; definition: string }> = [
     term: "Reversed",
     definition:
       "The payment behind the commission was refunded or charged back, so the commission is reversed. If it was already paid, the reversal nets against future payable amounts.",
+  },
+  {
+    term: "Disputed",
+    definition: "Under review after a question was raised. It resolves back to approved, or to reversed or forfeited.",
+  },
+  {
+    term: "Forfeited",
+    definition: "Closed without payment after review. Forfeitures are always recorded with a reason.",
   },
 ];
 
@@ -80,20 +98,23 @@ export default function Commissions() {
             unavailableBody="Your commission ledger appears here once tracking begins. The vocabulary below is exactly how entries will be labeled."
           >
             <ResearchDataTable<LedgerEntry>
-              caption="Commission ledger entries with date, description, amount, and status"
+              caption="Commission ledger entries with date, description, commission amount, and state"
               columns={[
                 { key: "date", header: "Date", render: (r) => r.date },
                 { key: "description", header: "Description", render: (r) => r.description },
                 {
-                  key: "amount",
-                  header: "Amount",
-                  render: (r) => <span className="tabular">{formatMoney(r.amountCents)}</span>,
+                  key: "commission",
+                  header: "Commission",
+                  render: (r) => <span className="tabular">{formatMoney(r.commissionCents)}</span>,
                 },
                 {
-                  key: "status",
-                  header: "Status",
+                  key: "state",
+                  header: "State",
                   render: (r) => (
-                    <ResearchStatusBadge label={r.status} tone={STATUS_TONES[r.status] ?? "neutral"} />
+                    <ResearchStatusBadge
+                      label={r.state}
+                      tone={STATE_TONES[r.state as CommissionState] ?? "neutral"}
+                    />
                   ),
                 },
               ]}
@@ -107,7 +128,7 @@ export default function Commissions() {
 
       <section aria-labelledby="pcm-vocab" className="mt-10">
         <h2 id="pcm-vocab" className="mono-cap text-ink-mute">
-          What each status means
+          What each state means
         </h2>
         <dl className="grid gap-4 mt-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", margin: 0 }}>
           {VOCABULARY.map((v) => (
