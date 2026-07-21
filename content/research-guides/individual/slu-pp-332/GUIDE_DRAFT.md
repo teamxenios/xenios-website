@@ -5,7 +5,7 @@ compound: slu-pp-332
 status: draft
 workflow_state: draft
 owner: Samuel Boadu
-last_reviewed: 2026-07-19
+last_reviewed: 2026-07-21
 ---
 
 # SLU-PP-332
@@ -61,13 +61,17 @@ SLU-PP-332 is a **synthetic small molecule**, meaning a laboratory-made chemical
 size, as distinct from a peptide (a short chain of amino acids). This distinction matters commercially
 and is covered again under Quality and identity below.
 
-Reported chemical identity, from the Wikipedia entry retrieved 2026-07-19:
+Reported chemical identity, carried forward from a tertiary reference retrieved 2026-07-19 and **not
+re-retrieved on 2026-07-21**. Every value in this list is flagged
+**[UNVERIFIED - background knowledge, requires human source check]** and must be confirmed against a
+primary chemical registry before publication. The substance-class correction above (small molecule,
+not peptide) is not in doubt; these specific values are not yet independently confirmed.
 
-- Molecular formula: C18H14N2O2
-- Molar mass: 290.322 g/mol
-- CAS registry number: 303760-60-3
-- IUPAC chemical name: 4-Hydroxy-N-[(Z)-naphthalen-2-ylmethylideneamino]benzamide
-- Associated patent: US 8680150, assigned to Ligand Pharmaceuticals
+- Molecular formula: C18H14N2O2 [UNVERIFIED]
+- Molar mass: 290.322 g/mol [UNVERIFIED]
+- CAS registry number: 303760-60-3 [UNVERIFIED]
+- IUPAC chemical name: 4-Hydroxy-N-[(Z)-naphthalen-2-ylmethylideneamino]benzamide [UNVERIFIED]
+- Associated patent: US 8680150, assigned to Ligand Pharmaceuticals [UNVERIFIED]
 
 The "SLU" prefix reflects the compound's origin at Saint Louis University. In the scientific literature
 it is described as a **chemical probe**, meaning a tool compound used to study what a biological target
@@ -93,8 +97,9 @@ Despite the name, ERRs are distinct from the classical estrogen receptors.
    different biological targets and carry their own separate evidence and separate regulatory histories.
    Nothing said about them applies here.
 
-Source: SLU-PP-332, Wikipedia, https://en.wikipedia.org/wiki/SLU-PP-332 (verified 2026-07-19). This is a
-tertiary reference used for chemical identity only.
+Source: SLU-PP-332, Wikipedia, https://en.wikipedia.org/wiki/SLU-PP-332 (retrieved 2026-07-19, NOT
+re-fetched 2026-07-21). This is a tertiary reference used for chemical identity only, and its specific
+values carry the unverified flag noted above.
 
 ---
 
