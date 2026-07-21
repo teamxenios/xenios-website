@@ -3,7 +3,29 @@
 // backwards for members west of UTC.
 
 import { describe, expect, it } from "vitest";
-import { formatCents, formatDate, priceLabel, PRICE_NOT_CONFIRMED } from "./commerce-presentation";
+import {
+  agreementLabel,
+  formatCents,
+  formatDate,
+  priceLabel,
+  PRICE_NOT_CONFIRMED,
+} from "./commerce-presentation";
+
+describe("agreementLabel", () => {
+  it("turns an opaque key into a readable name", () => {
+    expect(agreementLabel("research_use")).toBe("Research use");
+    expect(agreementLabel("no_resale")).toBe("No resale");
+    expect(agreementLabel("research-terms-v1")).toBe("Research terms v1");
+  });
+
+  // The caller phrases it as a NAMED agreement ("I accept the X agreement"),
+  // so an unfamiliar key can never produce broken grammar.
+  it("never returns an empty label, even for an odd key", () => {
+    expect(agreementLabel("x")).toBe("X");
+    expect(agreementLabel("")).toBe("");
+    expect(agreementLabel("__")).toBe("__");
+  });
+});
 
 describe("priceLabel", () => {
   it("renders the canonical copy for an unconfirmed price, never money", () => {

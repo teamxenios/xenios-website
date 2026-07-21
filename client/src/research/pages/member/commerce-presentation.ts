@@ -31,6 +31,19 @@ export function priceLabel(priceCents: number | null): string {
   return priceCents === null ? PRICE_NOT_CONFIRMED : formatCents(priceCents);
 }
 
+/**
+ * Agreement keys arrive as opaque machine strings (research_use, no_resale)
+ * because the contract publishes no member-facing labels for them yet. Until
+ * it does, a key is shown as a readable name and always phrased as a NAMED
+ * agreement by the caller, so no key produces broken grammar. Asked upstream
+ * in WEBSITE_LANE_COMMERCE_CONSUMPTION.md.
+ */
+export function agreementLabel(key: string): string {
+  const words = key.replace(/[_-]+/g, " ").trim();
+  if (words.length === 0) return key;
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
 // A calendar date sent as a date-only string, or as an instant at exactly
 // midnight UTC, means the DAY, not a moment. Rendering those in local time
 // moves them backwards for every member west of UTC, so a charge dated the

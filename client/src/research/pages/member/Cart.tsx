@@ -11,7 +11,7 @@ import {
   ResearchRouteBoundary,
   ResearchSecureNotice,
 } from "../../ui/kit";
-import { PRICE_NOT_CONFIRMED } from "./commerce-presentation";
+import { agreementLabel, PRICE_NOT_CONFIRMED } from "./commerce-presentation";
 import type { CartDto, CartLineDto } from "@shared/research/commerce-api";
 
 // ---------------------------------------------------------------------------
@@ -185,7 +185,14 @@ export default function Cart() {
                         <p className="body-s text-ink-2 mt-1">{purchaseModeLabel(line)}</p>
                       </div>
                       <div className="text-right">
-                        <p className="body-s text-ink-2">Unit price: <span className="tabular">{money(line.unitPriceCents)}</span></p>
+                        {/* With no confirmed price, the line total already says
+                            so; a "Unit price:" row would repeat the same
+                            sentence twice in one card. */}
+                        {typeof line.unitPriceCents === "number" && (
+                          <p className="body-s text-ink-2">
+                            Unit price: <span className="tabular">{money(line.unitPriceCents)}</span>
+                          </p>
+                        )}
                         <p className="body-m font-700 tabular mt-1" data-testid="line-total">
                           {money(line.lineTotalCents)}
                         </p>
@@ -286,7 +293,7 @@ export default function Cart() {
                 <p className="body-s text-ink-2 mt-2">Checkout will ask you to accept:</p>
                 <ul className="body-s text-ink-2 mt-1">
                   {cart.requiredAgreements.map((key) => (
-                    <li key={key}>{key.replace(/_/g, " ")}</li>
+                    <li key={key}>{agreementLabel(key)}</li>
                   ))}
                 </ul>
               </section>

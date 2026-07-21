@@ -13,7 +13,7 @@ import {
   ResearchSecureNotice,
   ResearchStatusBadge,
 } from "../../ui/kit";
-import { PRICE_NOT_CONFIRMED } from "./commerce-presentation";
+import { agreementLabel, PRICE_NOT_CONFIRMED } from "./commerce-presentation";
 import type { CartDto, CheckoutRequest, OrderSummaryDto, StoreCreditDto } from "@shared/research/commerce-api";
 import type { ShippingQuote } from "@shared/research/commerce";
 
@@ -526,7 +526,7 @@ export default function Checkout() {
                       onChange={(e) => setAccepted((prev) => ({ ...prev, [key]: e.target.checked }))}
                       data-testid={`co-agree-${key}`}
                     />
-                    <span>I accept the {key.replace(/_/g, " ")}.</span>
+                    <span>I accept the {agreementLabel(key)} agreement.</span>
                   </label>
                 ))}
                 <label className="flex items-start gap-3 body-s text-ink-2">

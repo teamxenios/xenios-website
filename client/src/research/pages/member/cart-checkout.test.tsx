@@ -196,7 +196,9 @@ describe("Cart page", () => {
 
     // The agreements heads-up names what checkout will ask.
     expect(view.textContent).toContain("Checkout will ask you to accept:");
-    expect(view.textContent).toContain("research terms v1");
+    // Opaque agreement keys render as readable names, since the contract
+    // publishes no member-facing labels for them yet.
+    expect(view.textContent).toContain("Research terms v1");
   });
 
   it("renders the continue control as a link to checkout when checkoutReady is true", async () => {
