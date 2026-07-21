@@ -33,6 +33,46 @@ protection + recovery isolation, no overflow).
   review (head moved off 9ff7896). REPAIR: declare a stable milestone head for
   review; the coordinator re-reviews that exact SHA.
 
+## CROSS-CUTTING (HIGHEST PRIORITY) — frontend↔backend contract mismatch
+
+- BX.1 BLOCKER (Website + Website 2): PR #32 frontend and PR #33 member-platform
+  backend were built to DIFFERENT contracts. Independent contract-compat review
+  found ~11 endpoint mismatches: member path prefix (`/member/*` vs `/*`),
+  capability model (array-of-rich-objects vs 5-key object-map), denial `code`s
+  emitted but unread by the frontend, and per-endpoint shape/field/nesting
+  mismatches (overview, assessment, blueprint, xenios30). Missing backends:
+  tracker, documents, /member/membership, /member/cancel. RESOLUTION FROZEN in
+  CONTRACT_RECONCILIATION.md (D-PATH `/api/research/member/*`, D-CODE frontend
+  reads `code`, D-CAP capability array). Both lanes converge before any merge;
+  coordinator wires + integrated-smoke after.
+
+## PR #33 (member-platform, research-member-platform-blitz @ 578d05e)
+
+- B33.1 BLOCKER (coordinator seam): `registerMemberPlatformApi` defined but not
+  called in server/index.ts → ~18 routes don't serve at boot. Coordinator wires
+  on the integration branch AFTER contract convergence (WIRING_REGISTRY.md).
+- B33.2 BLOCKER (coordinator): `sweepAssessmentReminders` (0/24/48/72h behind
+  the 3-day deadline) defined but no boot timer schedules it. Add the setInterval
+  alongside promoteHeldRewards/sweepExpiredApprovals when wiring.
+- B33.3 (Website 2): agreements-before-PAYMENT gate unverified — the assessment
+  flow gates on XR-MEM-012, but nothing binds "$50 activation cannot proceed
+  without XR-MEM-001/002 recorded" (members.ts activation has no agreement
+  check). Wire the activation-bundle agreement gate into the activation flow.
+- B33.4 (Website 2, deferred-ok): 48h Samuel plan-review SLA is `slaDeadline:null`
+  (owned by a later SLA-sweep wave) — acceptable if tracked.
+- Strong: auth reuse (requireActiveMember/requireMember + recovery denial),
+  agreements append-only + separate-consent enforcement, assessment 3-day +
+  Blueprint gating + tracker-unlock, plans/Review Week/one-free-change, flags
+  false, no SQL, no medical claims. 310 tests / 21 files, check + build green.
+
+## PR #31 (commerce) — re-review at 9575aa2
+
+- B31.1 STILL OPEN: registrar still not wired; the new head added only 7 SQL
+  migration files (no server wiring). Guards + commerceEnabled are INJECTED
+  via CommerceGuards/CommerceDependencies but no production caller constructs
+  them → coordinator supplies them at wiring time. Correctness holds (824
+  tests / 37 files). Not ready until wired + guards/flag supplied at the seam.
+
 ## PR #30 / #29 (paperwork / content) — review queued
 
 Not yet independently reviewed this pass. Gate: no legal claim asserted as
