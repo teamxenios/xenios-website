@@ -16,6 +16,13 @@ table in the same PR that adds or changes a migration file.
 | 7 | research-consent-covenant.sql | Consent events + covenant acceptances | RUN | 2026-07-18 | verify-research-schema.sql |
 | 8 | research-referral-fraud.sql | Fraud queue, referral event audit, applicant_ip, uniqueness indexes, durable rate-limit table + function | RUN | 2026-07-18 | verify-referral-fraud.sql |
 | 9 | research-member-billing.sql | Member statuses past_due/cancelled + separate billing_state column | PENDING (not run) | — | code tolerates absence; see notes |
+| 10 | research-catalog.sql | Products, provenanced supplier facts, goal + guide links, prohibited claims, open supplier questions, supplement candidates | PENDING (not run) | — | — |
+| 11 | research-inventory-lots.sql | Lots, per-lot quality documents, excursions, FEFO allocations, lot-to-order shipment traceability | PENDING (not run) | — | — |
+| 12 | research-orders.sql | Carts, orders, order lines, state events, webhook replay events, claims, durable refund keys | PENDING (not run) | — | — |
+| 13 | research-subscriptions.sql | Product subscriptions (30/60/90) + append-only subscription events | PENDING (not run) | — | — |
+| 14 | research-fulfillment.sql | Split fulfillment orders, shipments, shipping quotes with provenance, shipping profiles | PENDING (not run) | — | — |
+| 15 | research-partners.sql | Partners, agreements, training, lifecycle, links, attribution, conversions, organizations, events, content assets, violations | PENDING (not run) | — | — |
+| 16 | research-commission-ledger.sql | Append-only commission + store-credit ledgers (UPDATE/DELETE blocked by trigger), payout batches and attempts | PENDING (not run) | — | — |
 
 Verification files (read-only, run any time):
 
@@ -41,3 +48,23 @@ Notes:
   = 'not_started'; an already-active member without the column is treated as
   verified-legacy), so deploys are safe in either order. Samuel runs it before
   RESEARCH_MEMBERSHIP_BILLING_ENABLED is ever turned on.
+- 2026-07-21: migrations 10-16 drafted by the commerce and distribution lane
+  (PR #31). NONE are run. They follow the service-role-only rule: RLS enabled,
+  zero policies. Run them in listed order, because 12 and 16 reference concepts
+  introduced by 10 and 11. Nothing in the running server queries these tables
+  yet, so there is no deploy-order hazard; the commerce services are exercised
+  entirely through injected in-memory repositories today.
+- Constraints worth knowing before running 10-16, because they will reject data
+  that older habits would have allowed:
+  - research_product_facts refuses a fact marked `confirmed` without both a value
+    and a supplier document or COA source. This is deliberate: 32 supplier facts
+    are unconfirmed and 13 disputed, so "confirmed" has to mean something at rest.
+  - research_orders refuses a payment_authorized, payment_captured, or refunded
+    row without a provider reference, refuses a capture above the authorization,
+    and refuses a refund above the capture.
+  - research_commission_ledger and research_store_credit_ledger BLOCK UPDATE and
+    DELETE via trigger. A correction must be a new row referencing the original.
+    A migration that tries to backfill by UPDATE on these tables will fail, which
+    is the intended behavior rather than a bug to work around.
+  - research_partners has no parent, sponsor, upline, or tier column, and must
+    not gain one. Recursive downline compensation is a founder-level prohibition.
