@@ -31,11 +31,25 @@ vi.mock("../supabase", () => ({
 process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 
 import { registerMemberPlatformApi } from "./member-platform";
+import { registerCapabilityApi } from "./capabilities";
+import { registerOverviewApi } from "./overview";
+import { registerAgreementsApi } from "./agreements";
+import { registerProfileApi } from "./profile";
+import { registerAssessmentApi } from "./assessment";
+import { registerBlueprintApi } from "./blueprint";
+import { registerPlansApi } from "./plans";
+import { registerDocumentsApi } from "./documents";
+import { registerTrackerApi } from "./tracker";
+import { registerMediaApi } from "./media";
+import { registerQuestionsApi } from "./questions";
+import { registerAdminQueuesApi } from "./admin-queues";
+import { registerSlaAdminApi } from "./sla";
+import { defaultDeps } from "./member-platform-deps";
 
-function registeredRoutes(): Set<string> {
+function routesOf(register: (app: any, deps?: any) => void): Set<string> {
   const app = express();
   app.use(express.json());
-  registerMemberPlatformApi(app);
+  register(app, defaultDeps());
   const found = new Set<string>();
   for (const layer of (app as any).router?.stack ?? (app as any)._router?.stack ?? []) {
     if (!layer.route) continue;
@@ -45,6 +59,32 @@ function registeredRoutes(): Set<string> {
   }
   return found;
 }
+
+function registeredRoutes(): Set<string> {
+  return routesOf((app) => registerMemberPlatformApi(app));
+}
+
+// Every module this lane owns. A module added here but not wired into
+// registerMemberPlatformApi fails the coverage test below, which is the
+// point: three separate waves shipped a module that was implemented, tested,
+// and completely unreachable because the umbrella never called it. A route
+// inventory only guards the routes someone remembered to list; this compares
+// each module against itself.
+const LANE_MODULES: Array<[string, (app: any, deps?: any) => void]> = [
+  ["capabilities", (app, deps) => registerCapabilityApi(app, () => deps.clock.now())],
+  ["overview", registerOverviewApi],
+  ["agreements", registerAgreementsApi],
+  ["profile", registerProfileApi],
+  ["assessment", registerAssessmentApi],
+  ["blueprint", registerBlueprintApi],
+  ["plans", registerPlansApi],
+  ["documents", registerDocumentsApi],
+  ["tracker", registerTrackerApi],
+  ["media", registerMediaApi],
+  ["questions", registerQuestionsApi],
+  ["admin-queues", registerAdminQueuesApi],
+  ["sla", registerSlaAdminApi],
+];
 
 describe("registerMemberPlatformApi", () => {
   // Every route the frozen contract promises, by wave. A module that exists
@@ -80,12 +120,28 @@ describe("registerMemberPlatformApi", () => {
     "GET /api/research/media",
     "POST /api/research/media/intent",
     "PUT /api/research/media/retention-election",
+    // wave 5
+    "GET /api/research/questions",
+    "POST /api/research/questions",
+    "GET /api/research/telegram",
+    "POST /api/research/telegram/link",
+    "DELETE /api/research/telegram/link",
+    "POST /api/research/telegram/webhook",
+    "POST /api/admin/research/sla/sweep",
   ];
 
   it("registers every contract route through the one entry point", () => {
     const routes = registeredRoutes();
     const missing = CONTRACT_ROUTES.filter((route) => !routes.has(route));
     expect(missing).toEqual([]);
+  });
+
+  // The structural guard: no module can be left unwired, listed or not.
+  it.each(LANE_MODULES)("wires every route of the %s module", (_name, register) => {
+    const umbrella = registeredRoutes();
+    const own = [...routesOf(register)];
+    expect(own.length).toBeGreaterThan(0);
+    expect(own.filter((route) => !umbrella.has(route))).toEqual([]);
   });
 
   it("registers parameterized member and admin routes", () => {

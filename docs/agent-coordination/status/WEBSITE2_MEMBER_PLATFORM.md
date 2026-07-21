@@ -16,7 +16,12 @@ blitzscale/FILE_CLAIMS.md. Paperwork lane closed at draft PR #30.
 | Wave 2 Blueprint/plans/Review Week | DONE | (this commit) | transparent recommendation engine (pure, explained, dosing vocabulary structurally absent, free text never echoed), blueprint state machine + Samuel review/publish/supersede, Xenios 30/90 create/publish, one-per-month early change (structural via unique constraint), Review Week calendar math. Adversarial review: 1 blocker (unwired modules) + 5 minors, all fixed; umbrella wiring now has its own regression suite. |
 | Wave 3 documents/signed access | DONE | (this commit) | renderer interface + disabled/test/real-shell, versioned document records, HMAC signed grants (10 min TTL, member id bound into the MAC, session + ownership re-read, uniform denials), acknowledgment, archive/supersede, admin create with notification. Contract amended additively to document the download door. |
 | Wave 4 tracker/private media | DONE | (this commit) | six metric domains with computed data_completeness and no composite score, assessment-gated unlock, window math; private media provider seam, upload intents with type/size/duration caps, retention elections, access audit log, quarantine, and the only-safe-copy rule enforced on every failure path. |
-| Wave 5 questions/Telegram/queues/SLA/Infinity | TODO | | |
+| Wave 5 questions/Telegram/queues/SLA/Infinity | DONE | (this commit) | questions with follow-up linkage and rating-closes-the-loop, Telegram boundary (hash-only single-use link tokens, constant-time webhook verification, a three-notice outbound allowlist plus a forbidden-class scan on every provider), 12 Samuel queues with salted opaque refs and allowlisted summaries, SLA sweeps with claim-before-emit idempotency, Infinity events built from an eight-field allowlist. Adversarial review: 3 blockers and 7 minors, all fixed. |
+
+All five waves are complete. Remaining for the integration lane: the one-line
+`registerMemberPlatformApi(app)` call in index.ts, merging
+`MEMBER_PLATFORM_TEMPLATES` into the outbox dispatch, and running migrations
+10 through 19 when Samuel approves.
 
 ## Integration facts for other lanes
 
