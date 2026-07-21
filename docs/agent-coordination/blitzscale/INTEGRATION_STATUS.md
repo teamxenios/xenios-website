@@ -4,14 +4,25 @@ Coordinator: PowerShell (Supreme Graph Controller). Integration branch
 `integration/xenios-research-supreme-blitz` off origin/main **f7d6e8c**
 (post-#25, post-#27). No feature branch merged into main yet (review gate).
 
-## Lane heads under review (2026-07-20)
+## Lane heads under review (2026-07-21, refreshed)
 
-| PR | Lane | Head | Base merge-base | Tests | check | build | verdict |
-|---|---|---|---|---|---|---|---|
-| #32 | full frontend (71 routes) | 2e5e399 | 87150f4 (STALE — pre-#27) | 189/189 (18 files) incl. route-parity | clean | green | needs rebase; deep review running |
-| #31 | commerce/distribution | 9ff7896 | main | 353/353 (22 files) | clean | green | runtime completeness TBD; do NOT mark ready |
-| #30 | paperwork (159 docs) | a257179 | (pending review) | — | — | — | queued |
-| #29 | product/Guide content | 800b160 | (pending review) | — | — | — | queued |
+| PR | Lane | Head | Tests | check | verdict |
+|---|---|---|---|---|---|
+| #33 | member-platform backend (agreements/profile/assessment/blueprint/plans/recommendation) | 578d05e | (validating) | — | registrar `registerMemberPlatformApi` NOT wired to entrypoint = coordinator seam; review in flight |
+| #32 | full frontend (71 routes) | 46ff371 | 189/18 (at prior head) | clean | REBASED onto f7d6e8c (B32.3 fixed); B32.1 error boundary STILL OPEN |
+| #31 | commerce/distribution | 9575aa2 | 824/37 | clean | now has commerce/routes.ts (registrar, not wired); re-review in flight |
+| #30 | paperwork (159 docs) | a257179 | — | — | review queued |
+| #29 | product/Guide content | 800b160 | — | — | review queued |
+
+## Cross-lane composability (2026-07-21) — CLEAN
+
+Pairwise `git merge-tree --write-tree` on the three code heads:
+frontend×commerce, frontend×member, commerce×member → **all clean, zero
+conflicts**. The registrar discipline holds (no lane edits server/index.ts;
+disjoint file sets), so integration of these heads is conflict-free — the only
+remaining step is the coordinator wiring `registerMemberPlatformApi` +
+`registerCommerceApi` into server/index.ts (which no lane touches). See
+WIRING_REGISTRY.md.
 
 ## Verified this pass
 
