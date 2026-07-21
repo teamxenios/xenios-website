@@ -8,7 +8,7 @@ Coordinator: PowerShell (Supreme Graph Controller). Integration branch
 
 | PR | Lane | Head | Tests | check | verdict |
 |---|---|---|---|---|---|
-| #33 | member-platform backend (agreements/profile/assessment/blueprint/plans/recommendation) | 578d05e | (validating) | — | registrar `registerMemberPlatformApi` NOT wired to entrypoint = coordinator seam; review in flight |
+| #33 | member-platform backend (agreements/profile/assessment/blueprint/plans/recommendation) | 578d05e | 310/21 | clean (build green) | registrar `registerMemberPlatformApi` NOT wired to entrypoint = coordinator seam; review in flight |
 | #32 | full frontend (71 routes) | 46ff371 | 189/18 (at prior head) | clean | REBASED onto f7d6e8c (B32.3 fixed); B32.1 error boundary STILL OPEN |
 | #31 | commerce/distribution | 9575aa2 | 824/37 | clean | now has commerce/routes.ts (registrar, not wired); re-review in flight |
 | #30 | paperwork (159 docs) | a257179 | — | — | review queued |
