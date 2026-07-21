@@ -1,4 +1,4 @@
----
+﻿---
 title: "KLOW: quality and documentation requirements"
 type: research-guide-quality
 compound: klow
@@ -275,4 +275,3 @@ Department of Defense consumer safety article (S07). The enforcement history not
 warning letter dated 04/01/2020 (S04).
 
 Dosing and administration information is intentionally excluded from Xenios Research Guides.
-</content>

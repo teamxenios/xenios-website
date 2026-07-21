@@ -1,4 +1,4 @@
----
+﻿---
 title: KLOW Source Plan
 type: research-guide-source-plan
 compound: klow
@@ -177,5 +177,3 @@ These are open items, not tidying. Each should be closed before publication.
 9. **Search for combination evidence again before publication**, and record the date and the
    zero result. If a study of this combination appears, the entire evidence structure of this
    Guide changes and this document set returns to the editorial gate.
-</content>
-</invoke>

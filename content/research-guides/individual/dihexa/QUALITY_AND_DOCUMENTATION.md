@@ -1,4 +1,4 @@
----
+﻿---
 title: "Dihexa: Quality and Documentation Requirements"
 type: research-guide-quality
 compound: dihexa
@@ -289,4 +289,3 @@ document should be revised and the revision recorded with a date.
 Dosing and administration information is intentionally excluded from Xenios Research Guides.
 This document is educational. It is not medical advice, it is not a supplier endorsement, and it is not
 an offer to supply anything. Xenios does not sell dihexa.
-</content>

@@ -1,4 +1,4 @@
----
+﻿---
 title: KLOW Contradictions and Divergences
 type: research-guide-contradictions
 compound: klow
@@ -182,4 +182,3 @@ This unevenness is recorded rather than smoothed over. Where a statement rests o
 reporting, the Guide says so in the sentence that makes the statement. A reviewer should close
 the gap before publication rather than accepting a uniform-looking regulatory section built on
 uneven foundations.
-</content>

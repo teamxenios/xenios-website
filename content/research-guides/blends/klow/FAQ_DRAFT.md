@@ -1,4 +1,4 @@
----
+﻿---
 title: "KLOW: questions members actually ask"
 type: research-guide-faq
 compound: klow
@@ -219,4 +219,3 @@ evidence, or read the absence of reported problems as a safety record. Those two
 the ones this Guide is built to interrupt.
 
 Dosing and administration information is intentionally excluded from Xenios Research Guides.
-</content>

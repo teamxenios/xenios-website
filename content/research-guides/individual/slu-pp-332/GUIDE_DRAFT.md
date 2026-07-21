@@ -255,8 +255,9 @@ living human being.
 
 | Source checked | What was found |
 |---|---|
-| ClinicalTrials.gov, direct API query for "SLU-PP-332", 2026-07-19 | **Zero registered studies.** No trial, no posted results, no clinical development programme in the registry. |
-| PubMed, all indexed publications for SLU-PP-332 (10 records) | **Zero human administration studies.** Mouse studies, cell-culture studies, computational work, and laboratory liver-preparation analyses. |
+| ClinicalTrials.gov, direct API query for "SLU-PP-332", 2026-07-21 | **Zero registered studies.** No trial, no posted results, no clinical development programme in the registry. Confirmed a true negative against adversarial and positive controls run the same day. |
+| PubMed, all indexed publications for SLU-PP-332, exactly 10 records, 2026-07-21 | **Zero human administration studies.** Mouse studies, cell-culture studies, computational work, and laboratory liver-preparation analyses. |
+| Systematic review literature, PMID 42024694, 2026-07-21 | A 2026 systematic review covering animal and cell models **concludes that clinical trials are needed to confirm efficacy and safety in humans**, independently corroborating the absence. |
 
 Consequently there is:
 
@@ -269,14 +270,17 @@ Consequently there is:
 
 **The one study that is most likely to be misread as human evidence.**
 
-A 2025 pilot study published in Frontiers in Physiology (PMID 40692696) enrolled 20 women undergoing hip
-surgery for osteoarthritis, grouped by self-reported activity level into an active group of 10 and an
-inactive group of 10. Human participants were enrolled, and human tissue was used.
+A 2025 pilot study published in Frontiers in Physiology (PMID 40692696) enrolled 20 inactive women
+undergoing hip surgery. Human participants were enrolled, and human tissue was used, which is why the
+study is indexed in a way that invites a human-evidence reading.
 
-**SLU-PP-332 was applied only to muscle cells grown in a laboratory from tissue removed during those
-surgeries. It was not given to any living person.** The study is an exploration of ERR targeting against
-muscle decline associated with inactivity, conducted in cultured cells. It supplies no human safety data,
-no human tolerability data, and no human effectiveness data.
+**SLU-PP-332 was applied only to primary myoblast cultures established in a laboratory from muscle tissue
+removed during those surgeries. It was not given to any living person.** The methods state that primary
+cultures of myoblasts were set up from the muscle tissue of inactive women and treated with the ERR
+agonist in culture. That was confirmed by a direct quote from the paper's own methods on 2026-07-21. The
+study is an exploration of ERR targeting against muscle decline associated with inactivity, conducted in
+cultured cells. It supplies no human safety data, no human tolerability data, and no human effectiveness
+data, and it must never be presented as human research or as a clinical trial.
 
 This is ex vivo human cell work. It is preclinical. If a member encounters a claim that SLU-PP-332 has
 been "studied in humans", this study is almost certainly what is being referenced, and the claim is
@@ -287,7 +291,8 @@ Claim grade for this study as human evidence: **D (Preclinical)**. It does not q
 Sources: ClinicalTrials.gov API query,
 https://clinicaltrials.gov/api/v2/studies?query.term=SLU-PP-332&pageSize=20 ; PubMed search results,
 https://pubmed.ncbi.nlm.nih.gov/?term=SLU-PP-332 ; PMID 40692696,
-https://pubmed.ncbi.nlm.nih.gov/40692696/ (all verified 2026-07-19)
+https://pubmed.ncbi.nlm.nih.gov/40692696/ ; PMID 42024694,
+https://pubmed.ncbi.nlm.nih.gov/42024694/ (all verified 2026-07-21)
 
 ---
 
@@ -315,21 +320,24 @@ reproduce several exercise-associated whole-body metabolic effects in those mice
 energy expenditure and increased fat burning, alongside decreased fat mass accumulation. Published in the
 Journal of Pharmacology and Experimental Therapeutics, 2024.
 Claim grade: **D (Preclinical)**.
-Note on retrieval: the abstract was obtained through a search-result summary rather than a direct fetch of
-the article page, because PubMed served a bot challenge. The publisher abstract URL is recorded.
-PMID 37739806, https://jpet.aspetjournals.org/article/S0022-3565(24)17158-3/abstract (verified 2026-07-19)
+Note on retrieval: this source was retrieved directly on 2026-07-21, upgrading the provisional status it
+carried in the prior draft. The prior session's direct fetch had been blocked by a bot challenge.
+PMID 37739806, https://pubmed.ncbi.nlm.nih.gov/37739806/ (verified 2026-07-21)
 
-**3. Cardiac effects. Mice, in a pressure-overload heart failure model.**
+**3. Cardiac effects. Mice, in a pressure-overload heart failure model, plus rat heart cells.**
 
-In a mouse model of heart failure induced by pressure overload, SLU-PP-332 and SLU-PP-915 were reported
-to improve ejection fraction (a measure of how much blood the heart pumps out with each beat), reduce
-fibrosis (scar tissue formation), and increase survival in those mice, without affecting cardiac
-enlargement, alongside increased activity of fat metabolism and mitochondrial genes. Published in
+In mice subjected to transaortic constriction, a pressure-overload model of heart failure, SLU-PP-332
+**and the chemically distinct SLU-PP-915** were reported to improve cardiac function through enhanced
+cardiac fatty acid metabolism and mitochondrial function in those mice. The work also used neonatal rat
+ventricular myocytes, which are heart muscle cells from newborn rats, in the laboratory. Published in
 Circulation, 2024.
 Claim grade: **D (Preclinical)**.
-Note on retrieval: findings come from a search-result summary of the publisher abstract page, not a direct
-full-text fetch.
-PMID 37961903, https://www.ahajournals.org/doi/10.1161/CIRCULATIONAHA.123.066542 (verified 2026-07-19)
+**The finding covers both compounds, not SLU-PP-332 alone.** That makes it especially prone to being
+reported as an SLU-PP-332 result, which it is not.
+Note on retrieval: the abstract was retrieved directly on 2026-07-21, upgrading the provisional status it
+carried in the prior draft. Full text is still not retrieved. The abstract stated dose figures, which are
+deliberately excluded from this Guide by policy and must not be reintroduced.
+PMID 37961903, https://pubmed.ncbi.nlm.nih.gov/37961903/ (verified 2026-07-21)
 
 **4. Chemistry and compound liabilities. Cultured cells only, plus computer modelling.**
 
@@ -374,14 +382,35 @@ PMID 41588687 / PMC12835572, https://pmc.ncbi.nlm.nih.gov/articles/PMC12835572/ 
 
 **8. Successor compound, and the oral bioavailability finding. Mice.**
 
-A 2026 mouse study establishes that **SLU-PP-332 lacks oral bioavailability**, which is why the chemically
-distinct successor SLU-PP-915 was developed. In mice, SLU-PP-915 was reported to match SLU-PP-332's
-aerobic performance effects when given by injection and to retain those effects when given by mouth.
-Published in the Journal of Pharmacology and Experimental Therapeutics, 2026.
+A 2026 mouse study states that **SLU-PP-332 improves aerobic performance in mice but lacks oral
+bioavailability**, and gives that as the reason the chemically distinct successor SLU-PP-915 was
+developed. Published in the Journal of Pharmacology and Experimental Therapeutics, 2026.
 Claim grade: **D (Preclinical)**, and directly relevant to the consumer context. See Contradictions below.
-Note on retrieval: the abstract was obtained through a search-result summary; a direct fetch was blocked by
-a bot challenge.
-PMID 41421047, https://jpet.aspetjournals.org/article/S0022-3565(25)40300-0/abstract (verified 2026-07-19)
+Note on retrieval: this source was retrieved directly on 2026-07-21, upgrading the provisional status it
+carried in the prior draft.
+PMID 41421047, https://pubmed.ncbi.nlm.nih.gov/41421047/ (verified 2026-07-21)
+
+**9. Kidney findings in ageing. Aged mice, plus human tissue sections examined under a microscope.**
+
+In aged mice (21 months old), a pan-ERR agonist was reported to reverse age-related albuminuria (protein
+loss into the urine), podocyte loss (loss of a specialised kidney filtering cell), mitochondrial
+dysfunction, and inflammatory markers in the kidney. Separately in the same work, human kidney tissue
+sections were examined histologically, meaning looked at under a microscope. **No person received the
+compound at any point.** Published in the American Journal of Pathology, 2023.
+Claim grade: **D (Preclinical)**.
+PMID 37717940, https://pubmed.ncbi.nlm.nih.gov/37717940/ (verified 2026-07-21)
+
+**10. Systematic review of the animal and cell literature. No human studies to review.**
+
+A 2026 systematic review in Revista Medica de Chile covering experimental studies in animals and cell
+models concludes that clinical trials are needed to confirm efficacy and safety in humans. This is the
+review literature independently confirming the central finding of this Guide: no human data exists.
+Claim grade: **D (Preclinical)**, and cited **for its conclusion only**.
+A caution for anyone reading it directly: its abstract phrases effects such as improved endurance and
+reduced body fat without always attaching the species in the same clause. That is exactly the framing this
+Guide prohibits, and it is a plausible upstream source of commercial copy that reads as human fact. Its
+effect phrasing is deliberately not quoted or paraphrased anywhere here.
+PMID 42024694, https://pubmed.ncbi.nlm.nih.gov/42024694/ (verified 2026-07-21)
 
 ---
 
@@ -389,13 +418,15 @@ PMID 41421047, https://jpet.aspetjournals.org/article/S0022-3565(25)40300-0/abst
 
 **1. Whether human evidence exists.**
 
-*Position A:* The 2025 Frontiers in Physiology pilot study is indexed in PubMed with a clinical-trial flag
-and enrolled 20 human participants. It can be cited, and marketed, as human research on SLU-PP-332.
+*Position A:* The 2025 Frontiers in Physiology pilot study enrolled 20 human participants and is indexed
+in a way that invites a human-evidence reading. It can be cited, and has been marketed, as human research
+on SLU-PP-332.
 
-*Position B:* Direct retrieval of that paper confirms SLU-PP-332 was applied exclusively to muscle cell
-cultures derived from surgical tissue. No living person received the compound.
+*Position B:* Direct retrieval of that paper confirms SLU-PP-332 was applied exclusively to primary
+myoblast cultures established from surgical tissue. No living person received the compound.
 
-*Assessment:* **RESOLVED in favour of Position B**, verified by direct retrieval of the source. This is
+*Assessment:* **RESOLVED in favour of Position B**, confirmed on 2026-07-21 by a direct quote from the
+study's own methods. This is
 ex vivo human cell work, not human administration, and it generates zero human safety or effectiveness
 evidence. This is the single most important accuracy point in this Guide and the most likely place for a
 reviewer, a marketer, or a member to go wrong.
@@ -421,17 +452,19 @@ PMID 41421047, https://jpet.aspetjournals.org/article/S0022-3565(25)40300-0/abst
 *Position A:* Vendor and affiliate pages state definitively that SLU-PP-332 is banned by WADA under class
 S4, with some specifying subsection S4.5, metabolic modulators.
 
-*Position B:* The peer-reviewed doping-control papers make only general statements. One states that WADA
-prohibits exercise mimetics and metabolic modulators as a class. The other states that non-approved
-substances exhibiting potential for performance enhancement "can be subject of" the WADA Prohibited List.
-Neither asserts current listing of this specific compound.
+*Position B:* The peer-reviewed doping-control literature makes only a general statement: that
+non-approved substances with performance-enhancing potential can be subject to the WADA Prohibited List.
+That describes a general possibility. It does not assert current listing of this specific compound.
 
-*Assessment:* **UNRESOLVED.** WADA's own Prohibited List document could not be retrieved during the
-research for this Guide, so the claim cannot be adjudicated against a primary source. The specific S4.5
-classification traces only to commercial sources and **is not stated as fact in this Guide**. What is
-solidly established is that validated detection methods now exist. The correct position for a member is
-that competitive status must be confirmed directly with WADA or with the athlete's own national
-anti-doping organisation.
+*Assessment:* **UNRESOLVED, and it stays unresolved here.** WADA's own Prohibited List landing page and
+its 2026 Prohibited List news page both returned empty content on direct fetch, on two consecutive
+research sessions, so the claim cannot be adjudicated against a primary source. **No specific
+classification, by name, class, or subsection, is stated as fact in this Guide.** A search snippet
+encountered during research described the general content of the S4 metabolic modulators class, but it
+does not name SLU-PP-332 and did not come from a retrieved WADA page, so it establishes nothing here and
+is not repeated. What is solidly established, and separate, is that validated detection methods now
+exist. The correct position for a member is that competitive status must be confirmed directly with WADA
+or with the athlete's own national anti-doping organisation.
 
 **4. What the rodent literature supports.**
 
@@ -450,16 +483,21 @@ These are limitations of the evidence, and by extension of this Guide.
 
 - **No human study of any kind exists.** Effectiveness in humans is not merely unestablished, it is
   entirely untested.
-- **The evidence base is very small.** Ten PubMed-indexed publications in total, several of which are
-  analytical chemistry papers with no biological endpoints.
-- **No systematic review or meta-analysis exists to draw on.** The literature is too young and too small
-  for one to have been written.
-- **Three publications were not retrieved in full text** for this Guide. Findings for PMID 37739806,
-  PMID 41421047, and PMID 37961903 come from search-result summaries of publisher abstract pages,
-  because direct retrieval was blocked. These are flagged individually in the text above.
-- **WADA's Prohibited List document could not be retrieved.** Both the landing page and a direct attempt
-  at the current list returned empty content. Anti-doping classification is therefore logged as
-  unresolved rather than asserted in either direction.
+- **The evidence base is very small.** Exactly ten PubMed-indexed publications in total, several of which
+  are analytical chemistry papers with no biological endpoints.
+- **No systematic review or meta-analysis of human data exists to draw on, because the human literature
+  does not exist.** The one systematic review that has been written (PMID 42024694) covers animal and
+  cell models only, and concludes that clinical trials are needed.
+- **The full text of the Circulation cardiac paper (PMID 37961903) was not retrieved.** Its abstract was,
+  directly, on 2026-07-21. The other two previously provisional sources (PMID 37739806, PMID 41421047)
+  were retrieved directly on 2026-07-21 and are no longer provisional.
+- **The chemical identity values were not re-retrieved.** Molecular formula, molar mass, CAS registry
+  number and IUPAC name were carried forward from a tertiary source and carry an unverified flag pending
+  a check against a primary chemical registry.
+- **WADA's Prohibited List document could not be retrieved, on two consecutive research sessions.** Both
+  the landing page and the 2026 Prohibited List news page returned empty content each time. Anti-doping
+  classification is therefore logged as unresolved rather than asserted in either direction. A retrieval
+  failure is evidence of neither presence nor absence on the List.
 - **Non-United States regulators were not searched.** The European Medicines Agency, the United Kingdom
   MHRA, Australia's TGA, and Health Canada were not checked for statements on this compound.
 - **No independent analytical testing of marketed product was located.** Every statement in this Guide
@@ -628,49 +666,61 @@ Dosing and administration information is intentionally excluded from Xenios Rese
 Every statement below carries the jurisdiction, the date checked, and the source URL. **Regulatory status
 changes. Everything below must be re-verified before it is relied on.**
 
-**United States, Food and Drug Administration (FDA). Checked 2026-07-19.**
+Full detail, including a verification status for every line, is in `REGULATORY_STATUS.md` in this folder.
 
-No FDA approval for any indication was found. SLU-PP-332 does not appear on FDA's 503A or 503B bulk drug
-substances compounding lists in the material retrieved, and no FDA warning letter, safety communication,
-or approval record naming SLU-PP-332 was located.
+**United States, Food and Drug Administration (FDA). Checked 2026-07-21. NOT VERIFIED.**
+
+No FDA approval for any indication was located, and no FDA warning letter or safety communication naming
+SLU-PP-332 was located, by targeted site-restricted search. The 503A compounding list page itself was not
+re-fetched on 2026-07-21; the site-restricted search was re-run and returned no FDA document naming the
+compound.
 
 **This is a negative finding from targeted searching of fda.gov, not a positive FDA statement about the
 compound.** FDA appears simply not to have addressed SLU-PP-332. An absence of a retrieved FDA document
 is not an FDA evaluation, and it is emphatically not an FDA clearance.
 https://www.fda.gov/drugs/human-drug-compounding/bulk-drug-substances-used-compounding-under-section-503a-fdc-act
 
-**United States, ClinicalTrials.gov (National Institutes of Health registry). Checked 2026-07-19.**
+**United States, ClinicalTrials.gov (National Institutes of Health registry). Checked 2026-07-21.
+VERIFIED.**
 
 A direct query of the ClinicalTrials.gov API for the term SLU-PP-332 returned **zero registered studies**.
 There is no registered clinical trial of this compound, no posted results, and therefore no clinical
 development programme in the registry.
+
+The reliability of that zero was checked adversarially in the same session. A fabricated compound
+identifier returned zero studies, a fabricated PubMed identifier returned an HTTP 404 error, and a
+positive control query for a widely studied medicine returned real registry records. Together these
+establish that the zero result here is a true negative and not a broken query.
 https://clinicaltrials.gov/api/v2/studies?query.term=SLU-PP-332&pageSize=20
 
-**Sport, World Anti-Doping Agency (WADA). Checked 2026-07-19. STATUS NOT VERIFIED.**
+**Sport, World Anti-Doping Agency (WADA). Checked 2026-07-21. STATUS NOT VERIFIED, UNRESOLVED.**
 
-Multiple vendor and affiliate pages assert that SLU-PP-332 is on the WADA Prohibited List under class S4,
-metabolic modulators. **This could not be confirmed from WADA's own Prohibited List document, which could
-not be retrieved during the research for this Guide.**
+Commercial and secondary sources circulate a specific WADA classification for this compound. **It could
+not be confirmed.** WADA's own Prohibited List landing page and its 2026 Prohibited List news page both
+returned empty content on direct fetch, on 2026-07-21 and again in the prior session. No WADA document
+naming SLU-PP-332 has ever been retrieved for this Guide.
 
-The peer-reviewed doping-control papers that were retrieved are more cautious. One states only that WADA
-prohibits exercise mimetics and metabolic modulators as a class. The companion paper states only that
-non-approved substances exhibiting potential for performance enhancement "can be subject of" the WADA
-Prohibited List, which describes a general possibility rather than a current listing.
+The peer-reviewed doping-control literature that was retrieved is more cautious. It states only that
+non-approved substances with performance-enhancing potential can be subject to the WADA Prohibited List,
+which describes a general possibility rather than a current listing of this compound.
 
-The existence of two 2026 papers developing doping-control detection methods for SLU-PP-332 indicates that
-anti-doping authorities regard it as a compound of interest.
+**No specific classification, by name, class, or subsection, is stated as fact in this Guide.** A
+retrieval failure across two sessions is evidence of neither presence nor absence on the List.
 
-**The specific S4.5 classification circulating on vendor sites is unconfirmed and is not repeated as fact
-in this Guide.** An athlete should assume competitive risk and confirm current status directly with WADA or
-with their own national anti-doping organisation.
-https://pmc.ncbi.nlm.nih.gov/articles/PMC12835572/
+What is separately and solidly established: two independent 2026 peer-reviewed papers developed
+detection methods and metabolite panels for SLU-PP-332 for doping-control purposes, both working in
+vitro. A tested athlete therefore faces real competitive exposure regardless of how the listing question
+resolves, and should confirm current status directly with WADA or with their own national anti-doping
+organisation.
+https://www.wada-ama.org/en/prohibited-list (attempted 2026-07-21, returned empty content)
+https://pubmed.ncbi.nlm.nih.gov/41688415/ (verified 2026-07-21)
 
-**Other jurisdictions. Not checked.**
+**Other jurisdictions. Not searched. Checked 2026-07-21 as not searched.**
 
 The European Medicines Agency, the United Kingdom MHRA, Australia's TGA, and Health Canada were not
-searched for statements on this compound during the research for this Guide. A search-result summary
-asserted that no European approval exists, but this was not verified against a European regulator source
-and is therefore not recorded here as a regulatory finding.
+searched for statements on this compound. **No statement about any non-US jurisdiction may be made from
+this record.** Absence of an entry here means the question was not investigated. It does not mean the
+compound is unregulated, permitted, prohibited, or approved anywhere.
 
 Xenios does not sell SLU-PP-332 and does not provide guidance on obtaining it.
 
@@ -698,8 +748,7 @@ These are the open questions. Listing them plainly is the honest position.
 - **The identity, purity, and actual content of material sold under this name.** No independent analytical
   survey of marketed product was located.
 - **The definitive current WADA Prohibited List classification.**
-- **Whether the 22 metabolites identified in liver preparations have any biological activity of their
-  own.**
+- **Whether the metabolites identified in liver preparations have any biological activity of their own.**
 
 ---
 
@@ -754,88 +803,120 @@ medical advice.
 
 ## References
 
-All sources below were retrieved on 2026-07-19 and are marked VERIFIED with the exact URL retrieved. No
-citation in this Guide was reconstructed from memory. Where a source was not independently retrieved,
-that is stated.
+Sources below carry the date they were actually retrieved. No citation in this Guide was reconstructed
+from memory. Where a source was not independently retrieved, or was carried forward from an earlier
+session without re-retrieval, that is stated.
 
 1. ClinicalTrials.gov API v2 query for SLU-PP-332. **Returned zero studies** (a negative finding,
    retrieved directly). https://clinicaltrials.gov/api/v2/studies?query.term=SLU-PP-332&pageSize=20
-   VERIFIED 2026-07-19
+   VERIFIED 2026-07-21
 
-2. PubMed search results for SLU-PP-332, 10 indexed publications. Literature database.
-   https://pubmed.ncbi.nlm.nih.gov/?term=SLU-PP-332 VERIFIED 2026-07-19
+2. PubMed search results for SLU-PP-332, exactly 10 indexed publications. Literature database.
+   https://pubmed.ncbi.nlm.nih.gov/?term=SLU-PP-332 VERIFIED 2026-07-21
 
 3. Synthetic ERRalpha/beta/gamma Agonist Induces an ERRalpha-Dependent Acute Aerobic Exercise Response and
    Enhances Exercise Capacity. ACS Chemical Biology, 2023. PMID 36988910. Primary PRECLINICAL study
    (mice, mouse muscle cell line, primary myocyte cultures). https://pubmed.ncbi.nlm.nih.gov/36988910/
-   VERIFIED 2026-07-19
+   VERIFIED 2026-07-21
 
 4. Targeting ERRs to counteract age-related muscle atrophy associated with physical inactivity: a pilot
    study. Frontiers in Physiology, 2025. PMID 40692696. **EX VIVO HUMAN CELL study, not human
-   administration.** https://pubmed.ncbi.nlm.nih.gov/40692696/ VERIFIED 2026-07-19
+   administration.** https://pubmed.ncbi.nlm.nih.gov/40692696/ VERIFIED 2026-07-21
 
 5. Chemical optimization of the exercise mimetic SLU-PP-332 enables insight into estrogen-related receptor
    signaling. International Journal of Biological Macromolecules, 2026. PMID 41850449 / PMC13112601.
-   Primary PRECLINICAL study (cultured cells and computational work only).
-   https://pmc.ncbi.nlm.nih.gov/articles/PMC13112601/ VERIFIED 2026-07-19
+   Primary PRECLINICAL study (in vitro and computational only).
+   https://pmc.ncbi.nlm.nih.gov/articles/PMC13112601/ VERIFIED 2026-07-19, carried forward, not re-fetched
+   2026-07-21
 
 6. In Vitro Metabolism and Analytical Characterization of SLU-PP-332 and SLU-PP-915. Rapid Communications
    in Mass Spectrometry, 2026. PMID 41588687 / PMC12835572. Primary PRECLINICAL study (human liver
-   preparations, doping control). https://pmc.ncbi.nlm.nih.gov/articles/PMC12835572/ VERIFIED 2026-07-19
+   preparations, doping control). https://pmc.ncbi.nlm.nih.gov/articles/PMC12835572/ VERIFIED 2026-07-19,
+   confirmed present in search results 2026-07-21
 
 7. Analysis and Identification of In Vitro Metabolites of Exercise Mimetic SLU-PP-332 for Doping-Control
-   Purposes. Drug Testing and Analysis, 2026. PMID 41688415. Primary PRECLINICAL study (laboratory
-   analysis, doping control). https://pubmed.ncbi.nlm.nih.gov/41688415/ VERIFIED 2026-07-19
+   Purposes. Drug Testing and Analysis, 2026. PMID 41688415. Primary PRECLINICAL study (in vitro, doping
+   control). https://pubmed.ncbi.nlm.nih.gov/41688415/ VERIFIED 2026-07-21
 
 8. A Synthetic ERR Agonist Alleviates Metabolic Syndrome. Journal of Pharmacology and Experimental
-   Therapeutics, 2024. PMID 37739806. Primary PRECLINICAL study (mice). **Content obtained via
-   search-result summary of the publisher abstract page, not a direct fetch.**
-   https://jpet.aspetjournals.org/article/S0022-3565(24)17158-3/abstract VERIFIED 2026-07-19
+   Therapeutics, 2024. PMID 37739806. Primary PRECLINICAL study (mice). **Retrieved directly 2026-07-21,
+   upgrading the prior draft's provisional status.** https://pubmed.ncbi.nlm.nih.gov/37739806/
+   VERIFIED 2026-07-21
 
 9. An orally active estrogen receptor-related receptor agonist, SLU-PP-915, enhances aerobic exercise
    capacity. Journal of Pharmacology and Experimental Therapeutics, 2026. PMID 41421047. Primary
-   PRECLINICAL study (mice). **Content obtained via search-result summary of the publisher abstract page,
-   not a direct fetch.** https://jpet.aspetjournals.org/article/S0022-3565(25)40300-0/abstract
-   VERIFIED 2026-07-19
+   PRECLINICAL study (mice). **Retrieved directly 2026-07-21, upgrading the prior draft's provisional
+   status.** https://pubmed.ncbi.nlm.nih.gov/41421047/ VERIFIED 2026-07-21
 
 10. Novel Pan-ERR Agonists Ameliorate Heart Failure Through Enhancing Cardiac Fatty Acid Metabolism and
-    Mitochondrial Function. Circulation, 2024. PMID 37961903 / DOI 10.1161/CIRCULATIONAHA.123.066542.
-    Primary PRECLINICAL study (mice). **Content obtained via search-result summary of the publisher
-    abstract page, not a direct full-text fetch.**
-    https://www.ahajournals.org/doi/10.1161/CIRCULATIONAHA.123.066542 VERIFIED 2026-07-19
+    Mitochondrial Function. Circulation, 2024. PMID 37961903. Primary PRECLINICAL study (mice and
+    neonatal rat ventricular myocytes). **Abstract retrieved directly 2026-07-21, upgrading the prior
+    draft's provisional status. Full text still not retrieved.** The finding covers SLU-PP-332 AND the
+    chemically distinct SLU-PP-915. https://pubmed.ncbi.nlm.nih.gov/37961903/ VERIFIED 2026-07-21
+    (abstract)
 
-11. SLU-PP-332. Wikipedia. Tertiary reference, used for chemical identity only (formula, molar mass, CAS
-    number, IUPAC name, patent assignment). https://en.wikipedia.org/wiki/SLU-PP-332 VERIFIED 2026-07-19
+11. Estrogen-Related Receptor Agonism Reverses Mitochondrial Dysfunction and Inflammation in the Aging
+    Kidney. American Journal of Pathology, 2023. PMID 37717940. Primary PRECLINICAL study (aged mice;
+    human kidney tissue sections examined histologically with no person receiving the compound).
+    **Added 2026-07-21; not enumerated in the prior draft.** https://pubmed.ncbi.nlm.nih.gov/37717940/
+    VERIFIED 2026-07-21
 
-12. Bulk Drug Substances Used in Compounding Under Section 503A of the FD&C Act. FDA. Searched;
-    SLU-PP-332 not found. Regulatory negative finding.
+12. Pharmacological Activation of ERRalpha/beta/gamma as an Exercise Mimetic, Potential Therapeutic
+    Applications. Revista Medica de Chile, 2026. PMID 42024694. **SYSTEMATIC REVIEW of animal and cell
+    models only.** Cited for its conclusion that clinical trials are needed to confirm efficacy and safety
+    in humans, and for nothing else. **Added 2026-07-21; not enumerated in the prior draft.**
+    https://pubmed.ncbi.nlm.nih.gov/42024694/ VERIFIED 2026-07-21
+
+13. SLU-PP-332. Wikipedia. Tertiary reference, used for chemical identity only. **NOT re-fetched
+    2026-07-21. The specific values carried from it (formula, molar mass, CAS number, IUPAC name, patent
+    assignment) are flagged [UNVERIFIED - background knowledge, requires human source check].**
+    https://en.wikipedia.org/wiki/SLU-PP-332 RETRIEVED 2026-07-19
+
+14. Bulk Drug Substances Used in Compounding Under Section 503A of the FD&C Act. FDA. No document naming
+    SLU-PP-332 located. Regulatory negative finding, **NOT VERIFIED**. Site-restricted search re-run
+    2026-07-21; the page itself was not re-fetched.
     https://www.fda.gov/drugs/human-drug-compounding/bulk-drug-substances-used-compounding-under-section-503a-fdc-act
-    VERIFIED 2026-07-19
 
-13. WADA Prohibited List landing page. **ATTEMPTED and FAILED. Returned empty content. Status
-    unverified, logged as a gap.** https://www.wada-ama.org/en/prohibited-list ATTEMPTED 2026-07-19
+15. WADA Prohibited List landing page. **ATTEMPTED and FAILED on two consecutive sessions. Returned empty
+    content. Status unverified, logged as a gap.** https://www.wada-ama.org/en/prohibited-list
+    ATTEMPTED 2026-07-19 and 2026-07-21
+
+16. WADA 2026 Prohibited List now in force, news page. **ATTEMPTED and FAILED. Returned empty content.**
+    https://www.wada-ama.org/en/news/wadas-2026-prohibited-list-now-force ATTEMPTED 2026-07-21
+
+17. Retrieval integrity controls, run 2026-07-21. A ClinicalTrials.gov query for a fabricated compound
+    identifier returned zero studies; a positive control query for semaglutide returned real registry
+    records; a fabricated PubMed identifier returned HTTP 404. Together these establish that the zero
+    result at reference 1 is a true negative rather than a broken retrieval path. These are controls on
+    the method and say nothing about the compound.
+    https://clinicaltrials.gov/api/v2/studies?query.term=ZZQQ-XX-99999&pageSize=5
+    https://clinicaltrials.gov/api/v2/studies?query.term=semaglutide&pageSize=3
+    https://pubmed.ncbi.nlm.nih.gov/99999999/ VERIFIED 2026-07-21
 
 **Known gaps requiring human verification before publication.**
 
-- **WADA's own Prohibited List document was not retrieved.** Both the landing page and a direct attempt at
-  the current list returned empty content. A human must retrieve the current WADA Prohibited List directly
-  and confirm whether SLU-PP-332 is named explicitly, captured by a class definition, or absent. The
-  vendor-asserted S4.5 classification must not be adopted without this check.
-- **Three publications were not retrieved in full text** (PMID 37739806, PMID 41421047, PMID 37961903).
-  Their content rests on search-result summaries plus publisher abstract URLs. The PMIDs and titles come
-  from the verified PubMed search results listing, not from memory. A human must retrieve each directly.
-- **No independent third-party analytical testing of marketed SLU-PP-332 product was located.** All
-  quality statements in this Guide are inferential from market structure rather than measured. A human
+- **WADA's own Prohibited List document has still not been retrieved,** after two consecutive sessions.
+  Both the landing page and the 2026 Prohibited List news page returned empty content each time. A human
+  must obtain the current List directly and confirm whether SLU-PP-332 is named explicitly, captured by a
+  class definition, or absent. No circulating classification may be adopted without that check. This is
+  the highest-priority open item.
+- **The chemical identity values were not re-retrieved** and carry an unverified flag. A human must
+  confirm them against a primary chemical registry, or they must be removed.
+- **The full text of PMID 37961903 was not retrieved.** Its abstract was, directly, on 2026-07-21. Note
+  that the abstract stated dose figures, which were deliberately excluded by policy and must not be
+  reintroduced at any point in the editorial chain.
+- **The FDA 503A pages were not re-fetched on 2026-07-21.** The negative finding rests on a re-run
+  site-restricted search and should be confirmed by a human opening the pages directly.
+- **No independent third-party analytical testing of marketed SLU-PP-332 product was located.** No
+  statement about what any specific marketed product contains may be made in either direction. A human
   should search again before publication.
 - **Non-United States regulators were not searched** (European Medicines Agency, MHRA, TGA, Health
-  Canada). A search-result summary asserting no European approval was not verified and is excluded.
-- **FDA searching was targeted, not exhaustive.** The negative FDA finding should be treated as the result
-  of a targeted search and re-run before publication.
-- **No systematic review or meta-analysis exists to retrieve.** The evidence base is too young and too
-  small for one to have been written.
+  Canada). No statement about those jurisdictions may be made.
+- **No systematic review or meta-analysis of human data exists to retrieve,** because the human
+  literature does not exist. The one systematic review that exists covers animal and cell models only.
 - **Deliberately excluded from this Guide by policy:** all dosing, amount, concentration, frequency, and
   administration specifics, including laboratory potency and solubility figures reported in the retrieved
-  papers.
+  papers, and the dose figures that appeared in the Circulation abstract.
 
 ---
 
@@ -844,6 +925,7 @@ that is stated.
 | Date | Version | Change | Author | Reviewer |
 |---|---|---|---|---|
 | 2026-07-19 | 0.1 | Initial draft created from the verified research record of 2026-07-19. Not published. No human review completed. All claim grades provisional. WADA status logged as unresolved rather than asserted. | AI draft, unreviewed | Pending |
+| 2026-07-21 | 0.2 | Updated from the re-run research record of 2026-07-21. Three sources upgraded from provisional to directly retrieved (PMID 37739806, PMID 37961903, PMID 41421047), and their "search-result summary" caveats removed. Two indexed publications added that the prior draft did not enumerate (PMID 37717940, aged-mouse kidney findings; PMID 42024694, a systematic review of animal and cell models). Corrected the prior claim that no systematic review exists: one does, covering animal and cell models only, and its conclusion that clinical trials are needed corroborates the central finding. Chemical identity values downgraded to UNVERIFIED because the tertiary source was not re-retrieved. FDA entry downgraded to NOT VERIFIED because the 503A page was not re-fetched. WADA entry updated to record a second consecutive retrieval failure and to remove an attribution about class-level prohibition that the retrieved papers do not support. Regulatory dates advanced to 2026-07-21. Retrieval integrity controls recorded. Central finding unchanged: zero human evidence. | AI draft, unreviewed | Pending |
 
 Corrections are added to this table and never overwrite prior entries. If a factual statement in this
 Guide is found to be wrong, the correction is recorded here with the date, what was wrong, what it was

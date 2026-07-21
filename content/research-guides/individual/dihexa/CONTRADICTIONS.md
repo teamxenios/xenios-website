@@ -1,4 +1,4 @@
----
+﻿---
 title: Dihexa Contradictions and Divergences
 type: research-guide-contradictions
 compound: dihexa
@@ -191,4 +191,3 @@ studies (S04).
 That is why the Guide states the absence of human evidence as a finding rather than as a failure to
 find. A reviewer re-running the check should re-run both controls alongside it, and should treat a
 bare zero without controls as unverified.
-</content>

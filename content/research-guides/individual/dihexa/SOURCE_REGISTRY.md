@@ -1,4 +1,4 @@
----
+﻿---
 title: Dihexa Source Registry
 type: research-guide-source-registry
 compound: dihexa
@@ -32,7 +32,7 @@ Dosing and administration information is intentionally excluded from Xenios Rese
 | ID | Title | Kind | URL | Retrieval status | Supports |
 | --- | --- | --- | --- | --- | --- |
 | S01 | ClinicalTrials.gov API v2 query for the term Dihexa, returning totalCount 0 | Trial registry, primary | https://clinicaltrials.gov/api/v2/studies?query.term=Dihexa&countTotal=true&pageSize=10&fields=NCTId,BriefTitle,OverallStatus | VERIFIED 2026-07-21 | The absence of any registered interventional or observational study of dihexa. A registry-absence finding, not an approval statement. |
-| S02 | ClinicalTrials.gov API v2 query for the term fosgonimeton, returning five studies with identifiers, phases, and statuses | Trial registry, primary | https://clinicaltrials.gov/api/v2/studies?query.term=fosgonimeton&countTotal=true&pageSize=10&fields=NCTId,BriefTitle,OverallStatus,Phase | VERIFIED 2026-07-21 | That the registered clinical programme belongs to fosgonimeton and not to dihexa. Used only as a contrast. Supports no dihexa claim of any kind. |
+| S02 | ClinicalTrials.gov API v2 query for the term fosgonimeton, returning five studies with identifiers, phases, and statuses: NCT04488419, NCT04491006, NCT04886063, NCT04831281, NCT05511558 | Trial registry, primary | https://clinicaltrials.gov/api/v2/studies?query.term=fosgonimeton&countTotal=true&pageSize=10&fields=NCTId,BriefTitle,OverallStatus,Phase | VERIFIED 2026-07-21 | That the registered clinical programme belongs to fosgonimeton and not to dihexa. Used only as a contrast, to warn a reader that searching for dihexa surfaces a different compound's trials. **Supports no dihexa claim of any kind.** The five identifiers are enumerated here so each one cited in the Guide is traceable to this retrieval rather than appearing unregistered. |
 | S03 | Adversarial control. ClinicalTrials.gov record NCT99999999, a deliberately fake identifier, returning HTTP 404 Not Found | Retrieval-path control | https://clinicaltrials.gov/api/v2/studies/NCT99999999 | CONTROL, VERIFIED 2026-07-21 | That the registry retrieval path does not fabricate records. Half of the validation of the zero result at S01. |
 | S04 | Adversarial control. ClinicalTrials.gov query for semaglutide, returning totalCount 744 with real NCT identifiers | Retrieval-path control | https://clinicaltrials.gov/api/v2/studies?query.term=semaglutide&fields=NCTId,BriefTitle&pageSize=3&countTotal=true | CONTROL, VERIFIED 2026-07-21 | That the same retrieval path returns records when records exist. The other half of the validation of the zero result at S01. |
 | S05 | PubMed E-utilities search for the term dihexa, returning 18 records, none of a clinical trial publication type | Bibliographic database, primary | https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=dihexa&retmax=50&retmode=json | VERIFIED 2026-07-21 | The size and shape of the dihexa literature. Individual findings within most of these records were not read and no claim rests on them. |
@@ -71,4 +71,3 @@ These are gaps, not sources. They are listed so that a reviewer can close them.
 | Any systematic toxicology or carcinogenicity study of dihexa, in any species | The central safety concern for this compound is oncologic, so this is the highest-value missing item | Not located. Its absence was not affirmatively confirmed; it was simply not found. |
 | An authoritative chemical registry entry for the reported CAS number | Basic identity confirmation | Not located. The number appears on vendor pages only and its digits are not reproduced in this folder. |
 | EU Clinical Trials Register, ISRCTN, WHO ICTRP, Japanese and Chinese registries | Completeness of the trial search beyond the United States | Not searched. |
-</content>

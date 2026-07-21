@@ -1,4 +1,4 @@
----
+﻿---
 title: "Dihexa Research Guide"
 type: research-guide
 compound: dihexa
@@ -851,4 +851,3 @@ Dosing and administration information is intentionally excluded from Xenios Rese
 This Guide is educational. It is not medical advice, it is not a recommendation, and it is not an
 offer to supply anything. Xenios does not sell dihexa. Decisions about your health belong with a
 qualified clinician who knows your history.
-</content>

@@ -1,4 +1,4 @@
----
+﻿---
 title: KLOW Source Registry
 type: research-guide-source-registry
 compound: klow
@@ -136,4 +136,3 @@ These are gaps, not sources.
 | The outcome of the July 23-24, 2026 advisory committee meeting | Directly changes the regulatory section | Had not occurred as of 2026-07-21. |
 | Any analytical study of material sold under any of these component names | Would allow a component-specific product quality statement | None located. |
 | EU Clinical Trials Register, ISRCTN, WHO ICTRP, and the Japanese and Chinese registries | Completeness of the trial search | Not searched in any supplied record. |
-</content>

@@ -1,7 +1,7 @@
 ---
 title: SLU-PP-332 Source Registry
 type: source-registry
-compound: SLU-PP-332
+compound: slu-pp-332
 status: draft
 workflow_state: draft
 owner: Samuel Boadu

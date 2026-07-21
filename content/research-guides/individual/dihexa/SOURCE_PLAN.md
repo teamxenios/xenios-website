@@ -1,4 +1,4 @@
----
+﻿---
 title: Dihexa Source Plan
 type: research-guide-source-plan
 compound: dihexa
@@ -142,5 +142,3 @@ These are open items, not minor tidying. Each one should be closed before public
    result is global rather than United States centred.
 9. **Re-read the ALZFORUM fosgonimeton entry** and confirm the trial outcomes recorded in this
    folder, since the fosgonimeton contrast is the single most load-bearing corrective in the Guide.
-</content>
-</invoke>

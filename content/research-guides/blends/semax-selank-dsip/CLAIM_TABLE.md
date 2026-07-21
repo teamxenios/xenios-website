@@ -1,4 +1,4 @@
----
+﻿---
 title: "Semax + Selank + DSIP: Claim Table"
 type: research-guide-claim-table
 compound: semax-selank-dsip
@@ -265,4 +265,3 @@ are actively circulating and would be plausible to a reader.
 9. No citation appears that is not present in SOURCE_REGISTRY.md.
 10. The reviewer has independently re-graded a sample of rows rather than accepting the draft
     grades.
-</content>

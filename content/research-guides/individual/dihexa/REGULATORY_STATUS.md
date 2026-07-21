@@ -1,4 +1,4 @@
----
+﻿---
 title: Dihexa Regulatory Status
 type: research-guide-regulatory-status
 compound: dihexa
@@ -170,4 +170,3 @@ approval in another, and the reverse also holds.
    becomes a finding rather than a gap.
 6. Update the dated header and the `last_reviewed` field together. A stale date on this page is itself
    a defect.
-</content>

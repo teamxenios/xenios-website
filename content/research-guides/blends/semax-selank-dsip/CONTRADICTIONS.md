@@ -1,4 +1,4 @@
----
+﻿---
 title: "Semax + Selank + DSIP: Contradictions and Divergences"
 type: research-guide-contradictions
 compound: semax-selank-dsip
@@ -243,4 +243,3 @@ One reassurance about the retrieval path itself, which is worth recording alongs
 failures: all three component searches ran an adversarial control, querying a deliberately
 fabricated identifier. In each case the fabricated record failed rather than returning content,
 while genuine records returned full records. The retrieval path was real and did not confabulate.
-</content>

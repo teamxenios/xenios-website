@@ -1,4 +1,4 @@
----
+﻿---
 title: "KLOW: Research Guide"
 type: research-guide
 compound: klow
@@ -850,4 +850,3 @@ Dosing and administration information is intentionally excluded from Xenios Rese
 | 0.2 | 2026-07-21 | Adversarial audit correction. The GHK-Cu preclinical paragraph asserted animal wound-healing findings in named species (rabbits, rats, mice, pigs) with named effects, resting on S23, a tertiary encyclopedia entry whose permitted use in SOURCE_REGISTRY.md excludes exactly those animal findings. The species and effects are removed and the point is stated as unverified. CLAIM_TABLE row KLOW-P-03 corrected to match. S23 was also listed as a source for regulatory row KLOW-R-07, which it cannot support; that attribution is removed. S23's permitted-use entry rewritten to state affirmatively what it does and does not support. | Automated audit | *(unassigned)* |
 
 Future entries are appended below this line and never overwrite a prior row.
-</content>

@@ -1,4 +1,4 @@
----
+﻿---
 title: Dihexa Claim Table
 type: research-guide-claim-table
 compound: dihexa
@@ -158,4 +158,3 @@ plausible to a reader.
 7. Every claim graded G or marked [UNVERIFIED] or [PARAPHRASE ONLY] has either been closed by a
    human check or removed.
 8. No citation appears that is not present in SOURCE_REGISTRY.md.
-</content>

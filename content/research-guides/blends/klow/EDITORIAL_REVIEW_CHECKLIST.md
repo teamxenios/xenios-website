@@ -1,4 +1,4 @@
----
+﻿---
 title: "KLOW: Editorial Review Checklist"
 type: research-guide-review-checklist
 compound: klow
@@ -359,4 +359,3 @@ This rule has no exception and cannot be waived for scheduling, availability, or
    and re-signed.
 10. **If a study of this combination appears, the entire evidence structure changes.** This
     document set returns to the gate in full rather than being amended in place.
-</content>

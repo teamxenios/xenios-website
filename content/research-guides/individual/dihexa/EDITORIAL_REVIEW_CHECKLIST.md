@@ -1,4 +1,4 @@
----
+﻿---
 title: "Dihexa: Editorial Review Checklist"
 type: research-guide-review-checklist
 compound: dihexa
@@ -293,4 +293,3 @@ personally checked the boxes in their area, not that they read a summary of them
    returns to this gate for re-verification.
 8. **Material changes restart the relevant section.** Any edit to an evidence, safety, or regulatory
    statement after sign-off requires that section to be re-checked and re-signed.
-</content>

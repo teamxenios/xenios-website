@@ -1,4 +1,4 @@
----
+﻿---
 title: KLOW Claim Table
 type: research-guide-claim-table
 compound: klow
@@ -215,4 +215,3 @@ including hedged, in a quotation, in a heading, in a table, or in an image.
 | KLOW-X-11 | Any citation, identifier, registration number, author, year, journal, or address not present in SOURCE_REGISTRY.md. | A fabricated citation is the most serious failure available in this work, because a reviewer or member may trust it. |
 | KLOW-X-12 | Any statement about TB-500, in either direction, beyond recording that no research record was supplied. | Not researched. Do not fill the gap by inference or analogy. |
 | KLOW-X-13 | Any use of LL-37 evidence to describe KLOW while the composition remains unconfirmed. | LL-37 is not among the four reported components. |
-</content>

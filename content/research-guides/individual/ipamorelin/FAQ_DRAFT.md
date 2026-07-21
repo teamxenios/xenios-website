@@ -15,6 +15,10 @@ not know", that is the answer given.
 
 Dosing and administration information is intentionally excluded from Xenios Research Guides.
 
+Every identifier referenced below (PMIDs, trial registrations) is recorded with its retrieval
+status in `SOURCE_REGISTRY.md`. Nothing is cited here that is not registered there, and a source
+marked UNVERIFIED in that registry carries no claim in this file.
+
 ---
 
 ### 1. Does it work?

@@ -1,4 +1,4 @@
----
+﻿---
 title: "Dihexa Research Guide: Frequently Asked Questions"
 type: research-guide-faq
 compound: dihexa
@@ -278,4 +278,3 @@ your own history.
 Dosing and administration information is intentionally excluded from Xenios Research Guides. This FAQ
 is educational. It is not medical advice, it is not a recommendation, and it is not an offer to supply
 anything. Xenios does not sell dihexa.
-</content>

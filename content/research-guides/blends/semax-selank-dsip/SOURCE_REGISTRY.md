@@ -1,4 +1,4 @@
----
+﻿---
 title: "Semax + Selank + DSIP: Source Registry"
 type: research-guide-source-registry
 compound: semax-selank-dsip
@@ -124,4 +124,3 @@ These are gaps, not sources. They are listed so a reviewer can close them.
 | Primary chemical registry entries confirming all three amino acid sequences | Basic identity confirmation | Not obtained for Selank. The Semax and DSIP sequences rest on tertiary sources. |
 | Any analytical study testing material sold as Semax, Selank, or DSIP, or as this blend | Would allow a product quality statement | Not located for any of the three, and certainly not for the blend. |
 | EU Clinical Trials Register, ISRCTN, WHO ICTRP, the Russian trial registry, and the Japanese and Chinese registries | Completeness of the trial search, including for the combination | Not searched, for any component or for the combination. |
-</content>

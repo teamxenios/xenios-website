@@ -1,4 +1,4 @@
----
+﻿---
 title: KLOW Regulatory Status
 type: research-guide-regulatory-status
 compound: klow
@@ -365,4 +365,3 @@ Complete before publication, and record the date of each check.
       covered the KLOW combination.
 
 Dosing and administration information is intentionally excluded from Xenios Research Guides.
-</content>

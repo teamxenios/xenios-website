@@ -13,6 +13,10 @@ last_reviewed: 2026-07-21
 Dosing and administration information is intentionally excluded from Xenios Research
 Guides.
 
+Every identifier referenced below (trial registrations, PMIDs) is recorded with its
+retrieval status in `SOURCE_REGISTRY.md`. Nothing is cited here that is not registered
+there, and a source marked UNVERIFIED in that registry carries no claim in this file.
+
 ## Does it work?
 
 There is **no completed human interventional evidence** that giving MOTS-c to a person
