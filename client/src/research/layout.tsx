@@ -15,12 +15,14 @@ import { useResearch } from "./core";
 // The shared-password gate renders here, so every research page is behind it
 // with one implementation; an authenticated member bypasses it (core.tsx).
 
+// Launch scope: Blueprint and Tracker (health programs) are deferred until
+// after launch and held out of the chrome; Cart joins the commerce launch
+// surface. Their routes stay registered and stable.
 const MEMBER_NAV = [
   { label: "Home", href: "/research/member" },
-  { label: "Blueprint", href: "/research/member/blueprint" },
-  { label: "Tracker", href: "/research/member/tracker" },
   { label: "Products", href: "/research/member/products" },
   { label: "Guides", href: "/research/member/guides" },
+  { label: "Cart", href: "/research/member/cart" },
   { label: "Orders", href: "/research/member/orders" },
   { label: "Membership", href: "/research/member/membership" },
   { label: "Profile", href: "/research/member/profile" },

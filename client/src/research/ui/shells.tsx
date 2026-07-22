@@ -46,13 +46,15 @@ export function PageHeader({ eyebrow, title, lead, actions }: { eyebrow: string;
 
 // Member family shell: header + the deep-area sub-navigation. Renders inside
 // the member chrome (layout.tsx), so it deliberately has no top bar.
+// Launch scope: the health-program areas (Blueprint, Xenios 30, Xenios 90) and
+// the health tracker are deferred until after launch. Their routes stay
+// registered and stable (no broken links, no deleted code), but they are
+// hidden from the primary navigation so the launch surface is the commerce,
+// membership, and operations platform. Restore the four entries below when the
+// health programs return to scope.
 const MEMBER_SUBNAV = [
   { href: MEMBER_ROUTES.home, label: "Home" },
-  { href: MEMBER_ROUTES.blueprint, label: "Blueprint" },
   { href: MEMBER_ROUTES.assessment, label: "Assessment" },
-  { href: MEMBER_ROUTES.xenios30, label: "Xenios 30" },
-  { href: MEMBER_ROUTES.xenios90, label: "Xenios 90" },
-  { href: MEMBER_ROUTES.tracker, label: "Tracker" },
   { href: MEMBER_ROUTES.goals, label: "Goals" },
   { href: MEMBER_ROUTES.products, label: "Products" },
   { href: MEMBER_ROUTES.guides, label: "Guides" },
