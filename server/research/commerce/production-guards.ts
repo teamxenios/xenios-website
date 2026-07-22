@@ -34,6 +34,7 @@ const PRODUCTION_FLAG_NAMES: readonly string[] = [
   "RESEARCH_MITCH_FULFILLMENT_ENABLED",
   "RESEARCH_LIVE_SHIPPING_ENABLED",
   "RESEARCH_AFFILIATE_PAYOUTS_ENABLED",
+  "RESEARCH_FOUNDING_ACTIVATION_ENABLED",
 ];
 
 export function isProductionLike(env: NodeJS.ProcessEnv = process.env): boolean {

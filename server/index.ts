@@ -11,6 +11,8 @@ import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { registerMemberPlatformApi } from "./research/member-platform";
 import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
+import { registerFoundingActivationApi } from "./research/membership-activation/routes";
+import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
 import { requireActiveMember, requireMember } from "./research/member-auth";
 import { requireSupabaseAdmin } from "./routes";
 import { promoteHeldRewards } from "./research/referrals";
@@ -136,6 +138,13 @@ registerCommerceApi(app, buildCommerceDependencies(), {
   requireActiveMember: adaptGuard(requireActiveMember),
   requireMember: adaptGuard(requireMember),
   requireAdmin: adaptGuard(requireSupabaseAdmin),
+});
+
+// Founding membership activation (three-state: capability_disabled by default,
+// not_provisioned without storage, live only when flag + storage exist).
+registerFoundingActivationApi(app, buildFoundingActivationDependencies(), {
+  requireMember: adaptGuard(requireMember),
+  requireSupabaseAdmin: adaptGuard(requireSupabaseAdmin),
 });
 
 // Startup config diagnostic (booleans only, never values): makes a fail-closed

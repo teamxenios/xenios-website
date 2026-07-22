@@ -1,0 +1,1144 @@
+import { describe, expect, it, vi } from "vitest";
+import express, { type Express, type Request, type Response } from "express";
+import request from "supertest";
+import { registerFoundingActivationApi, type FoundingActivationDependencies } from "./routes";
+import {
+  buildFoundingActivationDependencies,
+  createInMemoryChecklistStore,
+  type FoundingActivationWiring,
+} from "./production-deps";
+import { createInMemoryObligationsStore } from "./persistence/obligations-store";
+import { createInMemoryPeriodsStore } from "./persistence/periods-store";
+import { createInMemoryPaymentMethodsStore } from "./persistence/payment-methods-store";
+import { createInMemoryBridgeStore } from "./persistence/bridge-store";
+import { createInMemoryDocumentsStore, type DocumentsStore } from "./persistence/documents-store";
+import { createInMemoryIdentityStore, type IdentityStore } from "./persistence/identity-store";
+import {
+  createInMemoryLedger,
+  createInMemoryMembershipState,
+  createInMemoryReceipts,
+} from "./activation";
+import { InMemoryIdempotencyStore } from "../commerce/persistence/idempotency-store";
+import { InMemoryIdentityMediaProvider } from "./identity-documents";
+import { DOCUMENT_CATEGORY_REGISTRY, DocumentLifecycle } from "./documents";
+import { SUBMISSION_DISPLAY_CONTRACT } from "./obligations";
+import type { InstructionCipher } from "./payment-methods";
+import type { FoundingEmailEnqueueInput } from "./emails";
+
+// ---------------------------------------------------------------------------
+// The running-server harness: a REAL express app through the CANONICAL
+// registration path, exactly as server/index.ts mounts it (json body parser
+// with the rawBody verify hook, then registerFoundingActivationApi with
+// injected guards). Guards authenticate from test headers, mirroring how the
+// merged guards attach researchMember / adminEmail to the request.
+//
+// The flag lives ONLY in the injected env object; process.env is never
+// touched and no store leaves this file.
+// ---------------------------------------------------------------------------
+
+const NOW = () => new Date("2026-07-22T00:00:00Z");
+
+const LIVE_ENV: NodeJS.ProcessEnv = {
+  RESEARCH_FOUNDING_ACTIVATION_ENABLED: "true",
+  SUPABASE_URL: "https://activation.supabase.co",
+  SUPABASE_SERVICE_ROLE_KEY: "sb_secret_activation_key",
+};
+
+const MEMBER_HEADER = "x-test-member";
+const ADMIN_HEADER = "x-test-admin";
+const MEMBER_A = "member-aaaa-1111";
+const MEMBER_B = "member-bbbb-2222";
+const ADMIN_EMAIL = "samuel@admin.test";
+
+const MEMBER_EMAILS: Record<string, string> = {
+  [MEMBER_A]: "member-a@members.test",
+  [MEMBER_B]: "member-b@members.test",
+};
+
+/** The exact plaintext the string-scans hunt for. Never a real destination. */
+const PLAINTEXT_INSTRUCTIONS = "zelle-destination-PLAINTEXT-9911";
+const CIPHERTEXT_PREFIX = "testenc:";
+
+const testCipher: InstructionCipher = {
+  encrypt: (plaintext) => `${CIPHERTEXT_PREFIX}${Buffer.from(plaintext, "utf8").toString("base64")}`,
+  decrypt: (ciphertext) =>
+    Buffer.from(ciphertext.slice(CIPHERTEXT_PREFIX.length), "base64").toString("utf8"),
+};
+
+const guards = {
+  requireMember: (req: Request, res: Response, next: () => void) => {
+    const id = req.get(MEMBER_HEADER);
+    if (!id) {
+      res.status(401).json({ ok: false, message: "Sign in required." });
+      return;
+    }
+    (req as unknown as { researchMember: Record<string, unknown> }).researchMember = {
+      id,
+      email: MEMBER_EMAILS[id] ?? `${id}@members.test`,
+      status: "pending_activation",
+    };
+    next();
+  },
+  requireSupabaseAdmin: (req: Request, res: Response, next: () => void) => {
+    if (req.get(ADMIN_HEADER) !== "yes") {
+      res.status(401).json({ ok: false, message: "Unauthorized" });
+      return;
+    }
+    (req as unknown as { adminEmail: string }).adminEmail = ADMIN_EMAIL;
+    next();
+  },
+};
+
+function buildApp(deps: FoundingActivationDependencies): Express {
+  const app = express();
+  app.use(
+    express.json({
+      verify: (req, _res, buf) => {
+        (req as unknown as { rawBody: Buffer }).rawBody = buf;
+      },
+    }),
+  );
+  registerFoundingActivationApi(app, deps, guards);
+  return app;
+}
+
+interface LiveContext {
+  app: Express;
+  enqueued: FoundingEmailEnqueueInput[];
+  documentsStore: DocumentsStore;
+  identityStore: IdentityStore;
+  media: InMemoryIdentityMediaProvider;
+}
+
+function liveContext(): LiveContext {
+  const obligationsStore = createInMemoryObligationsStore();
+  const periodsStore = createInMemoryPeriodsStore();
+  const methodsStore = createInMemoryPaymentMethodsStore();
+  const bridgeStore = createInMemoryBridgeStore();
+  const documentsStore = createInMemoryDocumentsStore();
+  const identityStore = createInMemoryIdentityStore();
+  const membership = createInMemoryMembershipState();
+  const ledger = createInMemoryLedger();
+  const receipts = createInMemoryReceipts();
+  const idempotency = new InMemoryIdempotencyStore();
+  const media = new InMemoryIdentityMediaProvider();
+  const checklist = createInMemoryChecklistStore();
+  const enqueued: FoundingEmailEnqueueInput[] = [];
+  const deps = buildFoundingActivationDependencies(NOW, LIVE_ENV, {
+    resolveObligationsStore: () => obligationsStore,
+    resolvePeriodsStore: () => periodsStore,
+    resolvePaymentMethodsStore: () => methodsStore,
+    resolveBridgeStore: () => bridgeStore,
+    resolveDocumentsStore: () => documentsStore,
+    resolveIdentityStore: () => identityStore,
+    resolveMembershipWriter: () => membership,
+    resolveLedger: () => ledger,
+    resolveReceipts: () => receipts,
+    resolveIdempotencyStore: () => idempotency,
+    resolveIdentityMedia: () => media,
+    resolveEvidenceMedia: () => media,
+    resolveInstructionCipher: () => testCipher,
+    resolveChecklistStore: () => checklist,
+    memberEmail: async (memberId) => MEMBER_EMAILS[memberId] ?? null,
+    enqueueEmail: async (input) => {
+      enqueued.push(input);
+      return true;
+    },
+  });
+  return { app: buildApp(deps), enqueued, documentsStore, identityStore, media };
+}
+
+/** Publish one version of every category through the real lifecycle. */
+async function publishAllCategories(store: DocumentsStore): Promise<void> {
+  const lifecycle = new DocumentLifecycle(store, { now: NOW });
+  for (const definition of DOCUMENT_CATEGORY_REGISTRY) {
+    const draft = await lifecycle.createDraft({
+      category: definition.category,
+      semver: "1.0.0",
+      jurisdiction: "US-TX",
+      content: `Reviewed test text for ${definition.category}.`,
+    });
+    await lifecycle.setCounselReview(draft.id, "approved");
+    await lifecycle.transition(draft.id, "under_legal_review");
+    await lifecycle.transition(draft.id, "approved_for_publication");
+    await lifecycle.publish(draft.id, { publisher: "counsel-test" });
+  }
+}
+
+const METHOD_BODY = {
+  methodId: "zelle-1",
+  providerCode: "zelle",
+  memberFacingName: "Zelle",
+  adminFacingName: "Zelle business account",
+  duration: "permanent",
+  activationEligible: true,
+  renewalEligible: true,
+  settlementTime: "same day",
+  receivingLegalEntity: "Xenios Technology LLC",
+  ownershipClassification: "business",
+  receivingInstructions: PLAINTEXT_INSTRUCTIONS,
+  memoInstructions: "Include your XRM reference in the payment memo.",
+};
+
+const VERIFY_BODY = {
+  amountReceivedCents: 5000,
+  dateReceived: "2026-07-21",
+  receivingDestinationRef: "recv-acct-1",
+  methodId: "zelle-1",
+  externalRef: "ZP-1001",
+  reconciliationDate: "2026-07-22",
+  note: null,
+  confirmedReceived: true,
+  idempotencyKey: "verify-key-1",
+};
+
+/** Stand up a method (created + approved) and an active bridge, over HTTP. */
+async function provisionMethodAndBridge(app: Express): Promise<void> {
+  const created = await request(app)
+    .post("/api/admin/research/activation/methods")
+    .set(ADMIN_HEADER, "yes")
+    .send(METHOD_BODY);
+  expect(created.status).toBe(200);
+  const approved = await request(app)
+    .post("/api/admin/research/activation/methods/zelle-1/approve")
+    .set(ADMIN_HEADER, "yes")
+    .send({ complianceReviewNote: "reviewed" });
+  expect(approved.status).toBe(200);
+  const bridge = await request(app)
+    .put("/api/admin/research/activation/bridge/settings")
+    .set(ADMIN_HEADER, "yes")
+    .send({ action: "initialize", startAt: "2026-07-20T00:00:00Z", timezone: "America/Chicago" });
+  expect(bridge.status).toBe(200);
+  expect(bridge.body.phase).toBe("active");
+}
+
+// ---------------------------------------------------------------------------
+// The three states, per route group, spy-proven side-effect free
+// ---------------------------------------------------------------------------
+
+const REPRESENTATIVE_ROUTES: Array<{ method: "get" | "post" | "put"; path: string }> = [
+  { method: "get", path: "/api/research/activation/status" },
+  { method: "post", path: "/api/research/activation/identity/consent" },
+  { method: "get", path: "/api/research/activation/identity/status" },
+  { method: "get", path: "/api/research/activation/agreements" },
+  { method: "post", path: "/api/research/activation/agreements/sign" },
+  { method: "get", path: "/api/research/activation/payment/methods" },
+  { method: "post", path: "/api/research/activation/payment/select-method" },
+  { method: "post", path: "/api/research/activation/payment/report" },
+  { method: "post", path: "/api/research/activation/payment/evidence-upload-url" },
+  { method: "get", path: "/api/admin/research/activation/queue" },
+  { method: "post", path: "/api/admin/research/activation/queue/ob-1/verify" },
+  { method: "post", path: "/api/admin/research/activation/queue/ob-1/reject" },
+  { method: "get", path: "/api/admin/research/activation/bridge/settings" },
+  { method: "put", path: "/api/admin/research/activation/bridge/checklist" },
+  { method: "post", path: "/api/admin/research/activation/methods" },
+  { method: "get", path: "/api/admin/research/activation/reconciliation" },
+  { method: "get", path: "/api/admin/research/activation/identity/queue" },
+  { method: "post", path: "/api/admin/research/activation/identity/c-1/review" },
+];
+
+function refusingWiring(): {
+  wiring: Partial<FoundingActivationWiring>;
+  spies: ReturnType<typeof vi.fn>[];
+} {
+  const spies: ReturnType<typeof vi.fn>[] = [];
+  const refuse = () => {
+    const fn = vi.fn(() => {
+      throw new Error("no store or provider may be touched in this state");
+    });
+    spies.push(fn);
+    return fn;
+  };
+  const wiring = {
+    resolveObligationsStore: refuse(),
+    resolvePeriodsStore: refuse(),
+    resolvePaymentMethodsStore: refuse(),
+    resolveBridgeStore: refuse(),
+    resolveDocumentsStore: refuse(),
+    resolveIdentityStore: refuse(),
+    resolveMembershipWriter: refuse(),
+    resolveLedger: refuse(),
+    resolveReceipts: refuse(),
+    resolveIdempotencyStore: refuse(),
+    resolveIdentityMedia: refuse(),
+    resolveEvidenceMedia: refuse(),
+    resolveInstructionCipher: refuse(),
+    resolveChecklistStore: refuse(),
+  } as unknown as Partial<FoundingActivationWiring>;
+  return { wiring, spies };
+}
+
+describe("state 1: flag off, every route group answers capability_disabled", () => {
+  const { wiring, spies } = refusingWiring();
+  const app = buildApp(buildFoundingActivationDependencies(NOW, {}, wiring));
+
+  it("refuses every representative route, with no auth backend consulted", async () => {
+    for (const route of REPRESENTATIVE_ROUTES) {
+      // No auth headers on purpose: the state gate answers BEFORE the guard,
+      // so even the auth path is never touched while the flag is off.
+      const res = await request(app)[route.method](route.path).send({});
+      expect(res.status, `${route.method} ${route.path}`).toBe(503);
+      expect(res.body).toMatchObject({ ok: false, code: "capability_disabled" });
+    }
+  });
+
+  it("touched no store, provider, or resolver (spy-proven)", () => {
+    for (const spy of spies) expect(spy).not.toHaveBeenCalled();
+  });
+});
+
+describe("state 2: flag on, storage unprovisioned, every route group answers precisely", () => {
+  const { wiring, spies } = refusingWiring();
+  const app = buildApp(
+    buildFoundingActivationDependencies(NOW, { RESEARCH_FOUNDING_ACTIVATION_ENABLED: "true" }, wiring),
+  );
+
+  it("refuses every representative route with not_provisioned and no partial write", async () => {
+    for (const route of REPRESENTATIVE_ROUTES) {
+      const res = await request(app)[route.method](route.path).send({});
+      expect(res.status, `${route.method} ${route.path}`).toBe(503);
+      expect(res.body).toMatchObject({ ok: false, code: "not_provisioned" });
+    }
+  });
+
+  it("touched no store, provider, or resolver (spy-proven)", () => {
+    for (const spy of spies) expect(spy).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// State 3: authentication and the pre-auth boundary
+// ---------------------------------------------------------------------------
+
+describe("state 3: the auth boundary", () => {
+  it("refuses the payment methods endpoint pre-auth, and pre-obligation", async () => {
+    const ctx = liveContext();
+    await provisionMethodAndBridge(ctx.app);
+
+    // NEVER pre-auth: without a member session the guard answers 401 and no
+    // method detail of any kind is served.
+    const anonymous = await request(ctx.app).get("/api/research/activation/payment/methods");
+    expect(anonymous.status).toBe(401);
+    expect(JSON.stringify(anonymous.body)).not.toContain(PLAINTEXT_INSTRUCTIONS);
+    expect(JSON.stringify(anonymous.body)).not.toContain("••••");
+
+    // Authenticated but WITHOUT a created obligation: still refused.
+    const noObligation = await request(ctx.app)
+      .get("/api/research/activation/payment/methods")
+      .set(MEMBER_HEADER, MEMBER_B);
+    expect(noObligation.status).toBe(409);
+    expect(noObligation.body.code).toBe("obligation_required");
+    expect(JSON.stringify(noObligation.body)).not.toContain("••••");
+  });
+
+  it("refuses admin routes without the admin guard", async () => {
+    const ctx = liveContext();
+    const res = await request(ctx.app).get("/api/admin/research/activation/queue");
+    expect(res.status).toBe(401);
+    const asMember = await request(ctx.app)
+      .get("/api/admin/research/activation/queue")
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(asMember.status).toBe(401);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// State 3: the full happy path over HTTP, plus isolation and the string-scan
+// ---------------------------------------------------------------------------
+
+describe("state 3: the full happy path over HTTP", () => {
+  it("runs consent -> upload -> agreements -> obligation -> methods -> report -> verify -> active", async () => {
+    const ctx = liveContext();
+    await publishAllCategories(ctx.documentsStore);
+    await provisionMethodAndBridge(ctx.app);
+
+    /** Every member-visible and admin-visible body, scanned at the end. */
+    const scannedBodies: unknown[] = [];
+    const asA = (res: request.Response) => {
+      scannedBodies.push(res.body);
+      return res;
+    };
+
+    // The method create response never echoes the plaintext or ciphertext.
+    const methodList = await request(ctx.app)
+      .get("/api/admin/research/activation/methods")
+      .set(ADMIN_HEADER, "yes");
+    expect(methodList.status).toBe(200);
+    scannedBodies.push(methodList.body);
+    expect(methodList.body.methods[0].receivingInstructionsMasked).toBe("••••11");
+    expect(JSON.stringify(methodList.body)).not.toContain("receivingInstructionsEncrypted");
+
+    // Initial tracker: nothing done yet beyond account steps.
+    const initial = asA(
+      await request(ctx.app).get("/api/research/activation/status").set(MEMBER_HEADER, MEMBER_A),
+    );
+    expect(initial.status).toBe(200);
+    expect(initial.body.active).toBe(false);
+    expect(initial.body.currentStep).toBe("consents");
+    expect(initial.body.submissionContract).toBe(SUBMISSION_DISPLAY_CONTRACT);
+
+    // Identity: consent first, then the upload path.
+    const consent = asA(
+      await request(ctx.app)
+        .post("/api/research/activation/identity/consent")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send({ accepted: true, consentVersion: "icv-1" }),
+    );
+    expect(consent.status).toBe(200);
+    expect(consent.body.case.status).toBe("consent_recorded");
+
+    const uploadUrl = asA(
+      await request(ctx.app)
+        .post("/api/research/activation/identity/upload-url")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send({ contentType: "image/jpeg", contentLengthBytes: 123_456, fileName: "id-front.jpg" }),
+    );
+    expect(uploadUrl.status).toBe(200);
+    expect(uploadUrl.body.grant.uploadUrl).toContain("identity-upload");
+    // The storage path is server-only; the member grant does not carry it.
+    expect(uploadUrl.body.grant.storagePath).toBeUndefined();
+
+    const uploaded = asA(
+      await request(ctx.app)
+        .post("/api/research/activation/identity/mark-uploaded")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send({}),
+    );
+    expect(uploaded.status).toBe(200);
+    expect(uploaded.body.case.status).toBe("review_pending");
+
+    // Admin identity review: queue, audited view, manual_name_age outcome.
+    const identityQueue = await request(ctx.app)
+      .get("/api/admin/research/activation/identity/queue")
+      .set(ADMIN_HEADER, "yes");
+    expect(identityQueue.status).toBe(200);
+    expect(identityQueue.body.queue).toHaveLength(1);
+    const caseId = identityQueue.body.queue[0].caseId as string;
+    expect(identityQueue.body.queue[0].memberId).toBe(MEMBER_A);
+    expect(JSON.stringify(identityQueue.body)).not.toContain("storagePath");
+
+    const view = await request(ctx.app)
+      .get(`/api/admin/research/activation/identity/${caseId}/view`)
+      .set(ADMIN_HEADER, "yes");
+    expect(view.status).toBe(200);
+    expect(view.body.grant.signedUrl).toContain("identity-signed");
+    const auditEvents = await ctx.identityStore.listAuditEvents("xenios-research", caseId);
+    expect(auditEvents.some((event) => event.kind === "admin_viewed" && event.actorId === ADMIN_EMAIL)).toBe(true);
+
+    const review = await request(ctx.app)
+      .post(`/api/admin/research/activation/identity/${caseId}/review`)
+      .set(ADMIN_HEADER, "yes")
+      .send({
+        nameMatch: "match",
+        ageThresholdMet: true,
+        documentNotExpired: true,
+        jurisdiction: "TX",
+        licenseLast4: "1234",
+      });
+    expect(review.status).toBe(200);
+    expect(review.body.review.outcome).toBe("verified");
+    expect(review.body.review.reviewerId).toBe(ADMIN_EMAIL);
+
+    // Agreements: published versions with content + hash, signed in order.
+    const required = asA(
+      await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A),
+    );
+    expect(required.status).toBe(200);
+    expect(required.body.agreements).toHaveLength(DOCUMENT_CATEGORY_REGISTRY.length);
+    expect(required.body.satisfied).toBe(false);
+    expect(required.body.agreements[0].category).toBe("electronic_record_consent");
+    for (const agreement of required.body.agreements) {
+      expect(agreement.content.length).toBeGreaterThan(0);
+      expect(agreement.contentHash).toMatch(/^[0-9a-f]{64}$/);
+      const signed = asA(
+        await request(ctx.app)
+          .post("/api/research/activation/agreements/sign")
+          .set(MEMBER_HEADER, MEMBER_A)
+          .send({
+            documentVersionId: agreement.documentVersionId,
+            typedLegalName: "Member Aye Test",
+            fullDocumentShown: true,
+            affirmativeConsent: true,
+            separateAcknowledgment: true,
+          }),
+      );
+      expect(signed.status, agreement.category).toBe(200);
+      expect(signed.body.signature.contentHash).toBe(agreement.contentHash);
+    }
+    const afterSigning = asA(
+      await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A),
+    );
+    expect(afterSigning.body.satisfied).toBe(true);
+
+    // Durable copies.
+    const signedCopies = asA(
+      await request(ctx.app).get("/api/research/activation/agreements/signed").set(MEMBER_HEADER, MEMBER_A),
+    );
+    expect(signedCopies.status).toBe(200);
+    expect(signedCopies.body.signed).toHaveLength(DOCUMENT_CATEGORY_REGISTRY.length);
+    expect(signedCopies.body.signed[0].document.content.length).toBeGreaterThan(0);
+
+    // The obligation: created through the bridge gate.
+    const selected = asA(
+      await request(ctx.app)
+        .post("/api/research/activation/payment/select-method")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send({ methodId: "zelle-1" }),
+    );
+    expect(selected.status).toBe(200);
+    expect(selected.body.created).toBe(true);
+    const xeniosRef = selected.body.obligation.xeniosRef as string;
+    expect(xeniosRef).toMatch(/^XRM-[A-Z2-9]{8}$/);
+    expect(selected.body.obligation.status).toBe("due");
+    expect(selected.body.obligation.expectedAmountCents).toBe(5000);
+
+    const obligation = asA(
+      await request(ctx.app)
+        .get("/api/research/activation/payment/obligation")
+        .set(MEMBER_HEADER, MEMBER_A),
+    );
+    expect(obligation.status).toBe(200);
+    expect(obligation.body.obligation.xeniosRef).toBe(xeniosRef);
+    expect(obligation.body.submissionContract).toBe(SUBMISSION_DISPLAY_CONTRACT);
+
+    // Methods for the authenticated member WITH an obligation: masked only.
+    const methods = asA(
+      await request(ctx.app)
+        .get("/api/research/activation/payment/methods")
+        .set(MEMBER_HEADER, MEMBER_A),
+    );
+    expect(methods.status).toBe(200);
+    expect(methods.body.methods).toHaveLength(1);
+    expect(methods.body.methods[0].receivingInstructionsMasked).toBe("••••11");
+    expect(methods.body.methods[0].memoReference).toBe(xeniosRef);
+    expect(methods.body.memoReference).toBe(xeniosRef);
+
+    // Evidence upload through the media seam, evidence configuration.
+    const evidence = asA(
+      await request(ctx.app)
+        .post("/api/research/activation/payment/evidence-upload-url")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send({ contentType: "image/png", contentLengthBytes: 2048, fileName: "proof.png" }),
+    );
+    expect(evidence.status).toBe(200);
+    const evidenceRef = evidence.body.grant.evidenceRef as string;
+    expect(evidenceRef).toContain("payment-evidence/");
+
+    // The member's report: a report, never an activation.
+    const reported = asA(
+      await request(ctx.app)
+        .post("/api/research/activation/payment/report")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send({
+          amountCents: 5000,
+          sentDate: "2026-07-21",
+          sentTime: "14:05",
+          senderName: "Member Aye Test",
+          externalRef: "ZP-1001",
+          evidenceRef,
+          accuracyCertified: true,
+        }),
+    );
+    expect(reported.status).toBe(200);
+    expect(reported.body.obligation.status).toBe("submitted");
+
+    // Still not active: submitting does not activate.
+    const midStatus = asA(
+      await request(ctx.app).get("/api/research/activation/status").set(MEMBER_HEADER, MEMBER_A),
+    );
+    expect(midStatus.body.active).toBe(false);
+
+    // The admin queue carries the full domain record plus duplicates and
+    // prior attempts.
+    const queue = await request(ctx.app)
+      .get("/api/admin/research/activation/queue")
+      .set(ADMIN_HEADER, "yes");
+    expect(queue.status).toBe(200);
+    expect(queue.body.queue).toHaveLength(1);
+    const entry = queue.body.queue[0];
+    const obligationId = entry.obligationId as string;
+    expect(entry.humanRef).toBe(xeniosRef);
+    expect(entry.submission.senderName).toBe("Member Aye Test");
+    expect(entry.submission.accuracyCertified).toBe(true);
+    expect(entry.duplicates).toEqual([]);
+    expect(entry.priorAttempts).toBe(1);
+
+    const detail = await request(ctx.app)
+      .get(`/api/admin/research/activation/queue/${obligationId}`)
+      .set(ADMIN_HEADER, "yes");
+    expect(detail.status).toBe(200);
+    expect(detail.body.auditHistory.length).toBeGreaterThanOrEqual(2);
+    expect(detail.body.auditHistory.some((e: { action: string }) => e.action === "member_submitted")).toBe(true);
+
+    // A mismatched amount is refused before anything moves.
+    const wrongAmount = await request(ctx.app)
+      .post(`/api/admin/research/activation/queue/${obligationId}/verify`)
+      .set(ADMIN_HEADER, "yes")
+      .send({ ...VERIFY_BODY, amountReceivedCents: 4000, idempotencyKey: "verify-key-wrong" });
+    expect(wrongAmount.status).toBe(409);
+    expect(wrongAmount.body.code).toBe("amount_mismatch");
+
+    // The verification: every field, explicit confirmation, idempotency key.
+    const verified = await request(ctx.app)
+      .post(`/api/admin/research/activation/queue/${obligationId}/verify`)
+      .set(ADMIN_HEADER, "yes")
+      .send(VERIFY_BODY);
+    expect(verified.status).toBe(200);
+    expect(verified.body.replayed).toBe(false);
+    expect(verified.body.obligation.status).toBe("verified");
+    expect(verified.body.obligation.verification.confirmedReceived).toBe(true);
+    expect(verified.body.period.endsAt).toBe("2026-08-21T00:00:00.000Z");
+    expect(verified.body.renewalObligation.type).toBe("renewal_25");
+    expect(verified.body.renewalObligation.status).toBe("upcoming");
+    expect(verified.body.receipt.receiptNumber).toBe(`RCPT-${xeniosRef}`);
+    expect(verified.body.membership.status).toBe("active");
+    const periodId = verified.body.period.periodId as string;
+
+    // TWO CLICKS, ONE ACTIVATION: the same idempotency key replays the
+    // stored result; nothing activates twice.
+    const replay = await request(ctx.app)
+      .post(`/api/admin/research/activation/queue/${obligationId}/verify`)
+      .set(ADMIN_HEADER, "yes")
+      .send(VERIFY_BODY);
+    expect(replay.status).toBe(200);
+    expect(replay.body.replayed).toBe(true);
+    expect(replay.body.period.periodId).toBe(periodId);
+
+    // A second attempt with a DIFFERENT key hits the status guard.
+    const secondKey = await request(ctx.app)
+      .post(`/api/admin/research/activation/queue/${obligationId}/verify`)
+      .set(ADMIN_HEADER, "yes")
+      .send({ ...VERIFY_BODY, idempotencyKey: "verify-key-2" });
+    expect(secondKey.status).toBe(409);
+    expect(secondKey.body.code).toBe("already_verified");
+
+    // The tracker shows active with the renewal date.
+    const finalStatus = asA(
+      await request(ctx.app).get("/api/research/activation/status").set(MEMBER_HEADER, MEMBER_A),
+    );
+    expect(finalStatus.body.active).toBe(true);
+    expect(finalStatus.body.renewalDate).toBe("2026-08-21T00:00:00.000Z");
+    expect(finalStatus.body.currentStep).toBeNull();
+    for (const step of finalStatus.body.steps) {
+      expect(step.state, step.step).toBe("complete");
+    }
+
+    // The next payable obligation is the $25 renewal, due at the period end.
+    const nextObligation = asA(
+      await request(ctx.app)
+        .get("/api/research/activation/payment/obligation")
+        .set(MEMBER_HEADER, MEMBER_A),
+    );
+    expect(nextObligation.body.obligation.type).toBe("renewal_25");
+    expect(nextObligation.body.obligation.dueAt).toBe("2026-08-21T00:00:00.000Z");
+
+    // Reconciliation aggregates, JSON and CSV, no images and no references.
+    const reconciliation = await request(ctx.app)
+      .get("/api/admin/research/activation/reconciliation")
+      .set(ADMIN_HEADER, "yes");
+    expect(reconciliation.status).toBe(200);
+    expect(reconciliation.body.report.days).toEqual([
+      {
+        date: "2026-07-22",
+        count: 1,
+        totalCents: 5000,
+        byMethod: { Zelle: { count: 1, totalCents: 5000 } },
+      },
+    ]);
+    const csv = await request(ctx.app)
+      .get("/api/admin/research/activation/reconciliation?format=csv")
+      .set(ADMIN_HEADER, "yes");
+    expect(csv.status).toBe(200);
+    expect(csv.headers["content-type"]).toContain("text/csv");
+    expect(csv.text).toContain("date,method_label,verified_count,total_cents");
+    expect(csv.text).toContain("2026-07-22,Zelle,1,5000");
+    expect(csv.text).not.toContain("payment-evidence");
+    expect(csv.text).not.toContain(PLAINTEXT_INSTRUCTIONS);
+    expect(csv.text).not.toContain(MEMBER_A);
+
+    // The emails: enqueued at the right transitions, through the outbox seam,
+    // to the member's address, with no instruction material in any payload.
+    const templates = ctx.enqueued.map((row) => row.templateKey);
+    expect(templates).toContain("fm_activation_obligation_created");
+    expect(templates).toContain("fm_payment_report_received");
+    expect(templates).toContain("fm_payment_verified_receipt");
+    expect(templates).toContain("fm_membership_activated");
+    expect(templates).toContain("fm_renewal_obligation_created");
+    expect(templates).toContain("fm_identity_verified");
+    for (const row of ctx.enqueued) {
+      expect(row.recipient).toBe(MEMBER_EMAILS[MEMBER_A]);
+    }
+    expect(JSON.stringify(ctx.enqueued)).not.toContain(PLAINTEXT_INSTRUCTIONS);
+    expect(JSON.stringify(ctx.enqueued)).not.toContain(CIPHERTEXT_PREFIX);
+
+    // MEMBER ISOLATION: member B sees none of member A's state.
+    const bObligation = await request(ctx.app)
+      .get("/api/research/activation/payment/obligation")
+      .set(MEMBER_HEADER, MEMBER_B);
+    expect(bObligation.status).toBe(200);
+    expect(bObligation.body.obligation).toBeNull();
+    const bIdentity = await request(ctx.app)
+      .get("/api/research/activation/identity/status")
+      .set(MEMBER_HEADER, MEMBER_B);
+    expect(bIdentity.body.case).toBeNull();
+    const bSigned = await request(ctx.app)
+      .get("/api/research/activation/agreements/signed")
+      .set(MEMBER_HEADER, MEMBER_B);
+    expect(bSigned.body.signed).toEqual([]);
+    const bReport = await request(ctx.app)
+      .post("/api/research/activation/payment/report")
+      .set(MEMBER_HEADER, MEMBER_B)
+      .send({ amountCents: 5000, sentDate: "2026-07-21", senderName: "Bee", accuracyCertified: true });
+    expect(bReport.status).toBe(409);
+    expect(bReport.body.code).toBe("no_obligation");
+    const bStatus = await request(ctx.app)
+      .get("/api/research/activation/status")
+      .set(MEMBER_HEADER, MEMBER_B);
+    expect(bStatus.body.active).toBe(false);
+
+    // THE STRING SCAN: the receiving-instruction plaintext (and the test
+    // ciphertext prefix) appear in NO member-facing serialization, and in no
+    // admin serialization either.
+    const everything = JSON.stringify(scannedBodies);
+    expect(everything).not.toContain(PLAINTEXT_INSTRUCTIONS);
+    expect(everything).not.toContain(CIPHERTEXT_PREFIX);
+    expect(everything).toContain("••••11");
+  }, 30_000);
+});
+
+// ---------------------------------------------------------------------------
+// State 3: gates and refusals
+// ---------------------------------------------------------------------------
+
+describe("state 3: consent-first identity", () => {
+  it("never opens an upload path before consent is recorded", async () => {
+    const ctx = liveContext();
+    const res = await request(ctx.app)
+      .post("/api/research/activation/identity/upload-url")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ contentType: "image/jpeg", contentLengthBytes: 1000, fileName: "id.jpg" });
+    expect(res.status).toBe(409);
+    expect(res.body.code).toBe("consent_required");
+    expect(ctx.media.calls).toHaveLength(0);
+  });
+
+  it("rejects script-container and unlisted content types", async () => {
+    const ctx = liveContext();
+    await request(ctx.app)
+      .post("/api/research/activation/identity/consent")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ accepted: true, consentVersion: "icv-1" });
+    for (const contentType of ["image/svg+xml", "application/pdf", "text/html"]) {
+      const res = await request(ctx.app)
+        .post("/api/research/activation/identity/upload-url")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send({ contentType, contentLengthBytes: 1000, fileName: "id.jpg" });
+      expect(res.status, contentType).toBe(400);
+      expect(res.body.code).toBe("content_type_rejected");
+    }
+    expect(ctx.media.calls).toHaveLength(0);
+  });
+
+  it("declining consent is terminal for the case and collects nothing", async () => {
+    const ctx = liveContext();
+    const declined = await request(ctx.app)
+      .post("/api/research/activation/identity/consent")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ accepted: false, consentVersion: "icv-1" });
+    expect(declined.status).toBe(200);
+    expect(declined.body.case.status).toBe("consent_declined");
+    const upload = await request(ctx.app)
+      .post("/api/research/activation/identity/upload-url")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ contentType: "image/jpeg", contentLengthBytes: 1000, fileName: "id.jpg" });
+    // A declined case is not reusable; the member must consent again first.
+    expect(upload.status).toBe(409);
+    expect(ctx.media.calls).toHaveLength(0);
+  });
+});
+
+describe("state 3: signature gates", () => {
+  async function signBody(documentVersionId: string, overrides: Record<string, unknown> = {}) {
+    return {
+      documentVersionId,
+      typedLegalName: "Member Aye Test",
+      fullDocumentShown: true,
+      affirmativeConsent: true,
+      ...overrides,
+    };
+  }
+
+  it("requires the electronic-record consent before any other signature", async () => {
+    const ctx = liveContext();
+    await publishAllCategories(ctx.documentsStore);
+    const required = await request(ctx.app)
+      .get("/api/research/activation/agreements")
+      .set(MEMBER_HEADER, MEMBER_A);
+    const arbitration = required.body.agreements.find(
+      (a: { category: string }) => a.category === "founding_membership_agreement",
+    );
+    const res = await request(ctx.app)
+      .post("/api/research/activation/agreements/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(await signBody(arbitration.documentVersionId));
+    expect(res.status).toBe(409);
+    expect(res.body.code).toBe("electronic_consent_required");
+  });
+
+  it("never accepts a prechecked or defaulted consent", async () => {
+    const ctx = liveContext();
+    await publishAllCategories(ctx.documentsStore);
+    const required = await request(ctx.app)
+      .get("/api/research/activation/agreements")
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(required.body.formState).toEqual({
+      affirmativeConsent: false,
+      fullDocumentShown: false,
+      separateAcknowledgment: false,
+      typedLegalName: "",
+    });
+    const consentDoc = required.body.agreements[0];
+    const notAffirmative = await request(ctx.app)
+      .post("/api/research/activation/agreements/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(await signBody(consentDoc.documentVersionId, { affirmativeConsent: false }));
+    expect(notAffirmative.status).toBe(400);
+    expect(notAffirmative.body.code).toBe("consent_not_affirmative");
+  });
+
+  it("requires arbitration's own separate acknowledgment", async () => {
+    const ctx = liveContext();
+    await publishAllCategories(ctx.documentsStore);
+    const required = await request(ctx.app)
+      .get("/api/research/activation/agreements")
+      .set(MEMBER_HEADER, MEMBER_A);
+    const consentDoc = required.body.agreements[0];
+    await request(ctx.app)
+      .post("/api/research/activation/agreements/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(await signBody(consentDoc.documentVersionId));
+    const arbitration = required.body.agreements.find(
+      (a: { category: string }) => a.category === "arbitration_agreement",
+    );
+    expect(arbitration.requiresSeparateAcknowledgment).toBe(true);
+    const bundled = await request(ctx.app)
+      .post("/api/research/activation/agreements/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(await signBody(arbitration.documentVersionId));
+    expect(bundled.status).toBe(400);
+    expect(bundled.body.code).toBe("separate_acknowledgment_required");
+  });
+
+  it("a draft can never be signed", async () => {
+    const ctx = liveContext();
+    await publishAllCategories(ctx.documentsStore);
+    // A NEW draft of a published category: published versions stay signable,
+    // the draft is not.
+    const lifecycle = new DocumentLifecycle(ctx.documentsStore, { now: NOW });
+    const draft = await lifecycle.createDraft({
+      category: "privacy_notice",
+      semver: "2.0.0",
+      jurisdiction: "US-TX",
+      content: "Draft-only text.",
+    });
+    const required = await request(ctx.app)
+      .get("/api/research/activation/agreements")
+      .set(MEMBER_HEADER, MEMBER_A);
+    await request(ctx.app)
+      .post("/api/research/activation/agreements/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({
+        documentVersionId: required.body.agreements[0].documentVersionId,
+        typedLegalName: "Member Aye Test",
+        fullDocumentShown: true,
+        affirmativeConsent: true,
+      });
+    const res = await request(ctx.app)
+      .post("/api/research/activation/agreements/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({
+        documentVersionId: draft.id,
+        typedLegalName: "Member Aye Test",
+        fullDocumentShown: true,
+        affirmativeConsent: true,
+      });
+    expect(res.status).toBe(409);
+    expect(res.body.code).toBe("not_published");
+  });
+});
+
+describe("state 3: the bridge gate on obligation creation", () => {
+  it("refuses a new obligation after an emergency disable (sunset)", async () => {
+    const ctx = liveContext();
+    await provisionMethodAndBridge(ctx.app);
+    const disabled = await request(ctx.app)
+      .put("/api/admin/research/activation/bridge/settings")
+      .set(ADMIN_HEADER, "yes")
+      .send({ action: "emergency_disable", reason: "compliance stop" });
+    expect(disabled.status).toBe(200);
+    expect(disabled.body.phase).toBe("sunset");
+    const res = await request(ctx.app)
+      .post("/api/research/activation/payment/select-method")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ methodId: "zelle-1" });
+    expect(res.status).toBe(409);
+    expect(res.body.code).toBe("bridge_sunset");
+  });
+
+  it("refuses an unconfigured bridge fail-closed", async () => {
+    const ctx = liveContext();
+    await request(ctx.app)
+      .post("/api/admin/research/activation/methods")
+      .set(ADMIN_HEADER, "yes")
+      .send(METHOD_BODY);
+    await request(ctx.app)
+      .post("/api/admin/research/activation/methods/zelle-1/approve")
+      .set(ADMIN_HEADER, "yes")
+      .send({});
+    const res = await request(ctx.app)
+      .post("/api/research/activation/payment/select-method")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ methodId: "zelle-1" });
+    expect(res.status).toBe(409);
+    expect(res.body.code).toBe("bridge_not_configured");
+  });
+
+  it("audits an extension with reason and expiry through the domain path", async () => {
+    const ctx = liveContext();
+    await provisionMethodAndBridge(ctx.app);
+    const missingReason = await request(ctx.app)
+      .put("/api/admin/research/activation/bridge/settings")
+      .set(ADMIN_HEADER, "yes")
+      .send({ action: "extend", expiresAt: "2026-08-10T00:00:00Z" });
+    expect(missingReason.status).toBe(400);
+    const extended = await request(ctx.app)
+      .put("/api/admin/research/activation/bridge/settings")
+      .set(ADMIN_HEADER, "yes")
+      .send({ action: "extend", reason: "provider onboarding slipped", expiresAt: "2026-08-10T00:00:00Z" });
+    expect(extended.status).toBe(200);
+    expect(extended.body.event.kind).toBe("bridge_extension");
+    expect(extended.body.event.actorId).toBe(ADMIN_EMAIL);
+    expect(extended.body.effectiveEndAt).toBe("2026-08-10T00:00:00.000Z");
+    const settings = await request(ctx.app)
+      .get("/api/admin/research/activation/bridge/settings")
+      .set(ADMIN_HEADER, "yes");
+    expect(
+      settings.body.auditEvents.some((event: { kind: string }) => event.kind === "bridge_extension"),
+    ).toBe(true);
+  });
+});
+
+describe("state 3: the activation verify composes the identity and agreements gates", () => {
+  it("blocks verification until identity is verified, then until agreements are satisfied", async () => {
+    const ctx = liveContext();
+    await provisionMethodAndBridge(ctx.app);
+
+    // Obligation + report, with NO identity review and NO published paper.
+    await request(ctx.app)
+      .post("/api/research/activation/payment/select-method")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ methodId: "zelle-1" });
+    await request(ctx.app)
+      .post("/api/research/activation/payment/report")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ amountCents: 5000, sentDate: "2026-07-21", senderName: "Member Aye", accuracyCertified: true });
+    const queue = await request(ctx.app)
+      .get("/api/admin/research/activation/queue")
+      .set(ADMIN_HEADER, "yes");
+    const obligationId = queue.body.queue[0].obligationId as string;
+
+    const identityBlocked = await request(ctx.app)
+      .post(`/api/admin/research/activation/queue/${obligationId}/verify`)
+      .set(ADMIN_HEADER, "yes")
+      .send(VERIFY_BODY);
+    expect(identityBlocked.status).toBe(409);
+    expect(identityBlocked.body.code).toBe("identity_not_verified");
+
+    // Verify identity through the real flow.
+    await request(ctx.app)
+      .post("/api/research/activation/identity/consent")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ accepted: true, consentVersion: "icv-1" });
+    await request(ctx.app)
+      .post("/api/research/activation/identity/upload-url")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ contentType: "image/jpeg", contentLengthBytes: 1000, fileName: "id.jpg" });
+    await request(ctx.app)
+      .post("/api/research/activation/identity/mark-uploaded")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({});
+    const identityQueue = await request(ctx.app)
+      .get("/api/admin/research/activation/identity/queue")
+      .set(ADMIN_HEADER, "yes");
+    await request(ctx.app)
+      .post(`/api/admin/research/activation/identity/${identityQueue.body.queue[0].caseId}/review`)
+      .set(ADMIN_HEADER, "yes")
+      .send({ nameMatch: "match", ageThresholdMet: true, documentNotExpired: true, jurisdiction: "TX", licenseLast4: null });
+
+    // Identity now passes; the agreements gate still fails CLOSED because no
+    // required category has a published version (nothing to sign is not the
+    // same as signed).
+    const agreementsBlocked = await request(ctx.app)
+      .post(`/api/admin/research/activation/queue/${obligationId}/verify`)
+      .set(ADMIN_HEADER, "yes")
+      .send(VERIFY_BODY);
+    expect(agreementsBlocked.status).toBe(409);
+    expect(agreementsBlocked.body.code).toBe("agreements_unsatisfied");
+    expect(agreementsBlocked.body.message).toContain("no_published_version");
+  });
+});
+
+describe("state 3: verification wire validation", () => {
+  it("refuses a verification whose confirmation is missing or prechecked-false", async () => {
+    const ctx = liveContext();
+    const { confirmedReceived: _dropped, ...withoutConfirmation } = VERIFY_BODY;
+    const res = await request(ctx.app)
+      .post("/api/admin/research/activation/queue/ob-any/verify")
+      .set(ADMIN_HEADER, "yes")
+      .send(withoutConfirmation);
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("validation_failed");
+    expect(res.body.fieldErrors).toContain("confirmedReceived must be exactly true");
+    const falseConfirmation = await request(ctx.app)
+      .post("/api/admin/research/activation/queue/ob-any/verify")
+      .set(ADMIN_HEADER, "yes")
+      .send({ ...VERIFY_BODY, confirmedReceived: false });
+    expect(falseConfirmation.status).toBe(400);
+  });
+
+  it("requires an idempotency key at the wire", async () => {
+    const ctx = liveContext();
+    const { idempotencyKey: _dropped, ...withoutKey } = VERIFY_BODY;
+    const res = await request(ctx.app)
+      .post("/api/admin/research/activation/queue/ob-any/verify")
+      .set(ADMIN_HEADER, "yes")
+      .send(withoutKey);
+    expect(res.status).toBe(400);
+    expect(res.body.fieldErrors).toContain("idempotencyKey is required");
+  });
+
+  it("refuses a payment report whose certification is not the literal true", async () => {
+    const ctx = liveContext();
+    const res = await request(ctx.app)
+      .post("/api/research/activation/payment/report")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ amountCents: 5000, sentDate: "2026-07-21", senderName: "Aye", accuracyCertified: "yes" });
+    expect(res.status).toBe(400);
+    expect(res.body.fieldErrors).toContain("accuracyCertified must be exactly true");
+  });
+});
+
+describe("state 3: admin obligation transitions", () => {
+  it("requests info with a detail, emails the member, and lets them resubmit", async () => {
+    const ctx = liveContext();
+    await provisionMethodAndBridge(ctx.app);
+    await request(ctx.app)
+      .post("/api/research/activation/payment/select-method")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ methodId: "zelle-1" });
+    await request(ctx.app)
+      .post("/api/research/activation/payment/report")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ amountCents: 5000, sentDate: "2026-07-21", senderName: "Member Aye", accuracyCertified: true });
+    const queue = await request(ctx.app)
+      .get("/api/admin/research/activation/queue")
+      .set(ADMIN_HEADER, "yes");
+    const obligationId = queue.body.queue[0].obligationId as string;
+
+    const noDetail = await request(ctx.app)
+      .post(`/api/admin/research/activation/queue/${obligationId}/request-info`)
+      .set(ADMIN_HEADER, "yes")
+      .send({});
+    expect(noDetail.status).toBe(400);
+
+    const requested = await request(ctx.app)
+      .post(`/api/admin/research/activation/queue/${obligationId}/request-info`)
+      .set(ADMIN_HEADER, "yes")
+      .send({ detail: "Send the confirmation number from the app." });
+    expect(requested.status).toBe(200);
+    expect(requested.body.obligation.status).toBe("info_requested");
+    expect(ctx.enqueued.some((row) => row.templateKey === "fm_payment_info_requested")).toBe(true);
+
+    const resubmitted = await request(ctx.app)
+      .post("/api/research/activation/payment/report")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({
+        amountCents: 5000,
+        sentDate: "2026-07-21",
+        senderName: "Member Aye",
+        externalRef: "ZP-1002",
+        accuracyCertified: true,
+      });
+    expect(resubmitted.status).toBe(200);
+    expect(resubmitted.body.obligation.status).toBe("submitted");
+  });
+});
+
+describe("state 3: the Day 15 checklist", () => {
+  it("persists per-item state attributed to the admin", async () => {
+    const ctx = liveContext();
+    const initial = await request(ctx.app)
+      .get("/api/admin/research/activation/bridge/checklist")
+      .set(ADMIN_HEADER, "yes");
+    expect(initial.status).toBe(200);
+    expect(initial.body.items).toHaveLength(6);
+    expect(initial.body.items.every((item: { done: boolean }) => item.done === false)).toBe(true);
+
+    const unknown = await request(ctx.app)
+      .put("/api/admin/research/activation/bridge/checklist")
+      .set(ADMIN_HEADER, "yes")
+      .send({ key: "not-a-real-item", done: true });
+    expect(unknown.status).toBe(400);
+
+    const updated = await request(ctx.app)
+      .put("/api/admin/research/activation/bridge/checklist")
+      .set(ADMIN_HEADER, "yes")
+      .send({ key: "replacement_provider_selected", done: true, note: "Stripe shortlisted" });
+    expect(updated.status).toBe(200);
+    const item = updated.body.items.find(
+      (entry: { key: string }) => entry.key === "replacement_provider_selected",
+    );
+    expect(item.done).toBe(true);
+    expect(item.updatedBy).toBe(ADMIN_EMAIL);
+  });
+});
+
+describe("state 3: identity emergency delete", () => {
+  it("deletes the raw source on request and stamps the record", async () => {
+    const ctx = liveContext();
+    await request(ctx.app)
+      .post("/api/research/activation/identity/consent")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ accepted: true, consentVersion: "icv-1" });
+    await request(ctx.app)
+      .post("/api/research/activation/identity/upload-url")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ contentType: "image/jpeg", contentLengthBytes: 1000, fileName: "id.jpg" });
+    await request(ctx.app)
+      .post("/api/research/activation/identity/mark-uploaded")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({});
+    const queue = await request(ctx.app)
+      .get("/api/admin/research/activation/identity/queue")
+      .set(ADMIN_HEADER, "yes");
+    const caseId = queue.body.queue[0].caseId as string;
+
+    const deleted = await request(ctx.app)
+      .post(`/api/admin/research/activation/identity/${caseId}/emergency-delete`)
+      .set(ADMIN_HEADER, "yes")
+      .send({});
+    expect(deleted.status).toBe(200);
+    expect(deleted.body.case.status).toBe("deleted");
+    expect(deleted.body.case.rawDeletedAt).not.toBeNull();
+    expect(ctx.media.deleted).toHaveLength(1);
+    const audit = await ctx.identityStore.listAuditEvents("xenios-research", caseId);
+    expect(audit.some((event) => event.kind === "emergency_deleted")).toBe(true);
+
+    // The view URL now refuses: there is nothing left to sign.
+    const view = await request(ctx.app)
+      .get(`/api/admin/research/activation/identity/${caseId}/view`)
+      .set(ADMIN_HEADER, "yes");
+    expect(view.status).toBe(409);
+    expect(view.body.code).toBe("invalid_state");
+  });
+});
