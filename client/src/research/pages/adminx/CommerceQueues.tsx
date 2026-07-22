@@ -1,6 +1,12 @@
 import { Link } from "wouter";
-import type { ReactNode } from "react";
-import { getCommerceQueues } from "../../adapters/adminOps";
+import { useState, type ReactNode } from "react";
+import {
+  getCommerceQueues,
+  refundClaim,
+  resolveClaimWithReplacement,
+  reviewClaim,
+  type AdminClaimReviewDecision,
+} from "../../adapters/adminOps";
 import {
   ResearchDataTable,
   ResearchEmptyState,
@@ -10,6 +16,7 @@ import {
   type BadgeTone,
 } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
+import { denialPresentation } from "../../lib/denials";
 import { CLAIM_REASON_LABELS, formatCents } from "../member/commerce-presentation";
 import { fmtDateTime, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
@@ -93,9 +100,17 @@ export default function CommerceQueues() {
 
 export function CommerceQueuesBody({ token }: { token: string }) {
   const resource = useAdminResource(token, getCommerceQueues);
+  // A completed claim action reloads the queues, which unmounts the row that
+  // ran it; the confirmation lives up here so it survives the reload.
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
 
   return (
     <div className="grid gap-8">
+      {actionNotice && (
+        <p className="body-s text-ink-2" role="status" aria-live="polite" data-testid="claims-action-notice">
+          {actionNotice}
+        </p>
+      )}
       <AdminBoundary
         state={resource.state}
         message={resource.message}
@@ -104,7 +119,14 @@ export function CommerceQueuesBody({ token }: { token: string }) {
         unavailableTitle="The commerce queues publish with the commerce backend."
         unavailableBody="This endpoint is not published in this environment yet, so there is nothing waiting to show. The page renders live queues the moment it connects."
       >
-        <QueuesView queues={resource.data?.queues ?? EMPTY_QUEUES} />
+        <QueuesView
+          queues={resource.data?.queues ?? EMPTY_QUEUES}
+          token={token}
+          onChanged={(notice) => {
+            setActionNotice(notice);
+            resource.reload();
+          }}
+        />
       </AdminBoundary>
 
       <ResearchSecureNotice>
@@ -115,7 +137,15 @@ export function CommerceQueuesBody({ token }: { token: string }) {
   );
 }
 
-function QueuesView({ queues }: { queues: Queues }) {
+function QueuesView({
+  queues,
+  token,
+  onChanged,
+}: {
+  queues: Queues;
+  token: string;
+  onChanged: (notice: string) => void;
+}) {
   const counts = [
     {
       key: "largeOrderReview",
@@ -168,7 +198,7 @@ function QueuesView({ queues }: { queues: Queues }) {
       </section>
 
       <LargeOrderReviewQueue rows={queues.largeOrderReview} />
-      <ClaimsQueue rows={queues.claims} />
+      <ClaimsQueue rows={queues.claims} token={token} onChanged={onChanged} />
       <SupplierFactBlocksQueue rows={queues.supplierFactBlocks} />
       <QuarantinedLotsQueue rows={queues.quarantinedLots} />
       <PartnerReviewQueue rows={queues.partnerReview} />
@@ -258,12 +288,221 @@ function LargeOrderReviewQueue({ rows }: { rows: Queues["largeOrderReview"] }) {
   );
 }
 
-function ClaimsQueue({ rows }: { rows: Queues["claims"] }) {
+// ---------------------------------------------------------------------------
+// Claim actions. The server owns the workflow: review moves a claim between
+// its states, and money or a replacement moves ONLY on an approved claim (an
+// out-of-order action comes back as a routable denial and is rendered, never
+// hidden). The refund idempotency key is generated once per claim row and
+// rotates only after a successful refund, so a retried click cannot pay twice.
+// ---------------------------------------------------------------------------
+
+function newIdempotencyKey(): string {
+  try {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return crypto.randomUUID();
+    }
+  } catch {
+    // fall through to the manual key
+  }
+  return `idem-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+type ClaimActionOutcome =
+  | { phase: "idle" }
+  | { phase: "busy" }
+  | { phase: "done"; text: string }
+  | { phase: "denied"; code: string; message?: string }
+  | { phase: "unavailable" }
+  | { phase: "error"; message: string };
+
+function ClaimActions({
+  claimId,
+  token,
+  onChanged,
+}: {
+  claimId: string;
+  token: string;
+  onChanged: (notice: string) => void;
+}) {
+  const [outcome, setOutcome] = useState<ClaimActionOutcome>({ phase: "idle" });
+  const [refundOpen, setRefundOpen] = useState(false);
+  const [amountInput, setAmountInput] = useState("");
+  const [idempotencyKey, setIdempotencyKey] = useState<string>(() => newIdempotencyKey());
+
+  const busy = outcome.phase === "busy";
+
+  const settle = (result: { kind: string; code?: string; message?: string }, doneText: string, after?: () => void) => {
+    if (result.kind === "ok") {
+      setOutcome({ phase: "done", text: doneText });
+      after?.();
+      // The reload unmounts this row, so the confirmation is reported upward.
+      onChanged(`${claimId}: ${doneText}`);
+      return;
+    }
+    if (result.kind === "denied" && result.code) {
+      setOutcome({ phase: "denied", code: result.code, message: result.message });
+      return;
+    }
+    if (result.kind === "unavailable" || result.kind === "forbidden") {
+      setOutcome({ phase: "unavailable" });
+      return;
+    }
+    if (result.kind === "unauthorized") {
+      setOutcome({ phase: "error", message: "Your admin session has ended. Sign in again." });
+      return;
+    }
+    setOutcome({ phase: "error", message: result.message ?? "The action did not complete. Please try again." });
+  };
+
+  const review = async (decision: AdminClaimReviewDecision, doneText: string) => {
+    if (busy) return;
+    setOutcome({ phase: "busy" });
+    settle(await reviewClaim<{ ok: boolean }>(token, claimId, decision), doneText);
+  };
+
+  const refund = async () => {
+    if (busy) return;
+    const parsed = Number.parseFloat(amountInput);
+    const amountCents = Math.round(parsed * 100);
+    if (!Number.isFinite(parsed) || !Number.isInteger(amountCents) || amountCents <= 0) {
+      setOutcome({ phase: "error", message: "Enter a refund amount in dollars, greater than zero." });
+      return;
+    }
+    setOutcome({ phase: "busy" });
+    settle(
+      await refundClaim<{ ok: boolean }>(token, claimId, amountCents, idempotencyKey),
+      `Refund of ${formatCents(amountCents)} issued.`,
+      () => {
+        // Only a success rotates the key: the next refund is a new intent.
+        setIdempotencyKey(newIdempotencyKey());
+        setRefundOpen(false);
+        setAmountInput("");
+      },
+    );
+  };
+
+  const replace = async () => {
+    if (busy) return;
+    setOutcome({ phase: "busy" });
+    settle(await resolveClaimWithReplacement<{ ok: boolean }>(token, claimId), "Replacement arranged.");
+  };
+
+  return (
+    <div className="grid gap-2" data-testid={`claim-actions-${claimId}`}>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          className="btn btn-secondary"
+          disabled={busy}
+          onClick={() => void review("approved", "Claim approved. Resolve it with a refund or a replacement.")}
+          data-testid={`claim-approve-${claimId}`}
+        >
+          Approve
+        </button>
+        <button
+          type="button"
+          className="btn btn-ghost"
+          disabled={busy}
+          onClick={() => void review("declined", "Claim declined.")}
+          data-testid={`claim-deny-${claimId}`}
+        >
+          Deny
+        </button>
+        <button
+          type="button"
+          className="btn btn-ghost"
+          disabled={busy}
+          onClick={() => setRefundOpen((open) => !open)}
+          data-testid={`claim-refund-open-${claimId}`}
+        >
+          Refund...
+        </button>
+        <button
+          type="button"
+          className="btn btn-ghost"
+          disabled={busy}
+          onClick={() => void replace()}
+          data-testid={`claim-replacement-${claimId}`}
+        >
+          Send replacement
+        </button>
+      </div>
+
+      {refundOpen && (
+        <div className="flex flex-wrap items-end gap-2">
+          <div>
+            <label className="mono-label text-ink-mute" htmlFor={`claim-refund-amount-${claimId}`}>
+              Refund amount (USD)
+            </label>
+            <input
+              id={`claim-refund-amount-${claimId}`}
+              className="input-field"
+              type="number"
+              min={0.01}
+              step="0.01"
+              value={amountInput}
+              onChange={(e) => setAmountInput(e.target.value)}
+              style={{ width: 120 }}
+              data-testid={`claim-refund-amount-${claimId}`}
+            />
+          </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={busy}
+            onClick={() => void refund()}
+            data-testid={`claim-refund-submit-${claimId}`}
+          >
+            {busy ? "Working..." : "Issue refund"}
+          </button>
+        </div>
+      )}
+
+      <div aria-live="polite">
+        {outcome.phase === "done" && (
+          <p className="body-s text-ink-2" role="status" data-testid={`claim-done-${claimId}`}>
+            {outcome.text}
+          </p>
+        )}
+        {outcome.phase === "denied" &&
+          (() => {
+            // Route on the machine code; copy comes from the designed table.
+            const p = denialPresentation(outcome.code, outcome.message);
+            return (
+              <p className="body-s text-ink-2" role="status" data-testid={`claim-denied-${claimId}`}>
+                {p.title} {p.body}
+              </p>
+            );
+          })()}
+        {outcome.phase === "unavailable" && (
+          <p className="body-s text-ink-2" role="status" data-testid={`claim-unavailable-${claimId}`}>
+            This action is not published in this environment yet, so nothing changed on the claim.
+          </p>
+        )}
+        {outcome.phase === "error" && (
+          <p className="body-s font-700" role="alert" data-testid={`claim-error-${claimId}`}>
+            {outcome.message}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ClaimsQueue({
+  rows,
+  token,
+  onChanged,
+}: {
+  rows: Queues["claims"];
+  token: string;
+  onChanged: (notice: string) => void;
+}) {
   return (
     <QueueSection
       id="claims"
       title="Claims"
-      lead="Members reporting that something arrived wrong, damaged, or not at all. Each one is a person waiting on an answer."
+      lead="Members reporting that something arrived wrong, damaged, or not at all. Each one is a person waiting on an answer. Approve or deny reviews the claim; a refund or replacement resolves an approved claim, and money moves only on provider confirmation."
       count={rows.length}
     >
       {rows.length === 0 ? (
@@ -287,6 +526,11 @@ function ClaimsQueue({ rows }: { rows: Queues["claims"] }) {
             },
             { key: "reason", header: "Reason", render: (r) => CLAIM_REASON_LABELS[r.reason] ?? r.reason },
             { key: "submitted", header: "Submitted", render: (r) => fmtDateTime(r.submittedAt) || r.submittedAt },
+            {
+              key: "actions",
+              header: "Actions",
+              render: (r) => <ClaimActions claimId={r.claimId} token={token} onChanged={onChanged} />,
+            },
           ]}
           rows={rows}
           rowKey={(r) => r.claimId}

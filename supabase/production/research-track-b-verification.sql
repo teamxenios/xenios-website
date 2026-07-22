@@ -65,7 +65,9 @@ insert into _track_b_expected(table_name) values
   -- Track B additions
   ('research_idempotency_keys'),
   ('research_order_shipments'),
-  ('research_admin_queue_items');
+  ('research_admin_queue_items'),
+  ('research_lot_reservations'),
+  ('research_lot_reservation_allocations');
 
 -- 1. Every expected Track B table EXISTS. Rows here are MISSING tables (FAIL).
 select 'MISSING_TABLE' as check, e.table_name

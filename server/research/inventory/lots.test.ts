@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   allocateFefo,
   evaluateLot,
+  reservationIsExpired,
   splitByFulfillmentOwner,
   tracedShipmentsForLot,
   type InventoryLot,
+  type LotReservation,
 } from "./lots";
 
 const NOW = new Date("2026-07-20T00:00:00Z");
@@ -240,5 +242,35 @@ describe("split fulfillment", () => {
 
   it("produces no groups for an empty order", () => {
     expect(splitByFulfillmentOwner([])).toEqual([]);
+  });
+});
+
+describe("reservation expiry", () => {
+  function reservation(overrides: Partial<LotReservation> = {}): LotReservation {
+    return {
+      reservationId: "res_1",
+      memberId: "mem_1",
+      sku: "P001",
+      quantity: 2,
+      lines: [{ lotId: "LOT-1", quantity: 2 }],
+      status: "held",
+      expiresAt: "2026-07-20T00:30:00.000Z",
+      createdAt: "2026-07-20T00:00:00.000Z",
+      releasedAt: null,
+      finalizedAt: null,
+      ...overrides,
+    };
+  }
+
+  it("a held reservation is expired at and after its expiry instant", () => {
+    expect(reservationIsExpired(reservation(), new Date("2026-07-20T00:29:59Z"))).toBe(false);
+    expect(reservationIsExpired(reservation(), new Date("2026-07-20T00:30:00Z"))).toBe(true);
+    expect(reservationIsExpired(reservation(), new Date("2026-07-21T00:00:00Z"))).toBe(true);
+  });
+
+  it("only a held reservation can expire; terminal states never do", () => {
+    const past = new Date("2027-01-01T00:00:00Z");
+    expect(reservationIsExpired(reservation({ status: "released" }), past)).toBe(false);
+    expect(reservationIsExpired(reservation({ status: "finalized" }), past)).toBe(false);
   });
 });

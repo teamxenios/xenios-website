@@ -41,12 +41,17 @@ import {
   requestCampaign,
 } from "./partner";
 import {
+  answerQuestion,
   getCommerceQueues,
   getQuestion,
+  listAdminClaims,
   listApplications,
   listMembers,
   listOutbox,
   postApplicationAction,
+  refundClaim,
+  resolveClaimWithReplacement,
+  reviewClaim,
   runOutbox,
 } from "./adminOps";
 import { ResearchContext, type ResearchContextValue } from "../core";
@@ -279,6 +284,64 @@ describe("adminOps adapter result mapping", () => {
     expect(JSON.parse(calls[0].body ?? "{}")).toEqual({ note: "ok" });
     expect(calls[1]).toMatchObject({ url: "/api/admin/research/outbox/run", method: "POST" });
     expect(calls[1].headers["Authorization"]).toBe("Bearer admin-token");
+  });
+
+  it("answerQuestion POSTs the REAL answer endpoint with {answerText, status} (the /reply route never existed)", async () => {
+    installFetch(() => jsonResponse({ ok: true }));
+    await answerQuestion("admin-token", "q/1", { answerText: "Here is the plan.", status: "answer_ready" });
+    expect(calls[0]).toMatchObject({
+      url: "/api/admin/research/questions/q%2F1/answer",
+      method: "POST",
+    });
+    expect(JSON.parse(calls[0].body ?? "{}")).toEqual({ answerText: "Here is the plan.", status: "answer_ready" });
+    expect(calls[0].headers["Authorization"]).toBe("Bearer admin-token");
+  });
+
+  it("listAdminClaims GETs the admin claims path", async () => {
+    installFetch(() => jsonResponse({ ok: true, claims: [] }));
+    expect(await listAdminClaims("admin-token")).toEqual({ kind: "ok", data: { ok: true, claims: [] } });
+    expect(calls[0]).toMatchObject({ url: "/api/admin/research/claims", method: "GET" });
+  });
+
+  it("reviewClaim POSTs the decision (and only a given note) to the review path", async () => {
+    installFetch(() => jsonResponse({ ok: true }));
+    await reviewClaim("admin-token", "clm 1", "approved");
+    await reviewClaim("admin-token", "clm 1", "declined", "not covered");
+    expect(calls[0]).toMatchObject({
+      url: "/api/admin/research/claims/clm%201/review",
+      method: "POST",
+    });
+    expect(JSON.parse(calls[0].body ?? "{}")).toEqual({ decision: "approved" });
+    expect(JSON.parse(calls[1].body ?? "{}")).toEqual({ decision: "declined", note: "not covered" });
+  });
+
+  it("refundClaim POSTs integer cents plus the idempotency key to the refund path", async () => {
+    installFetch(() => jsonResponse({ ok: true }));
+    await refundClaim("admin-token", "clm-2", 4525, "idem-key-1");
+    expect(calls[0]).toMatchObject({
+      url: "/api/admin/research/claims/clm-2/refund",
+      method: "POST",
+    });
+    expect(JSON.parse(calls[0].body ?? "{}")).toEqual({ amountCents: 4525, idempotencyKey: "idem-key-1" });
+  });
+
+  it("resolveClaimWithReplacement POSTs the replacement path with an empty body", async () => {
+    installFetch(() => jsonResponse({ ok: true }));
+    await resolveClaimWithReplacement("admin-token", "clm-3");
+    expect(calls[0]).toMatchObject({
+      url: "/api/admin/research/claims/clm-3/replacement",
+      method: "POST",
+    });
+    expect(JSON.parse(calls[0].body ?? "{}")).toEqual({});
+  });
+
+  it("surfaces an out-of-order refund as the routable order_state_invalid denial", async () => {
+    installFetch(() => jsonResponse({ ok: false, code: "order_state_invalid", message: "not approved" }, 400));
+    expect(await refundClaim("admin-token", "clm-4", 100, "idem-2")).toEqual({
+      kind: "denied",
+      code: "order_state_invalid",
+      message: "not approved",
+    });
   });
 });
 

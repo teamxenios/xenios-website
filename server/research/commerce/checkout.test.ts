@@ -1,13 +1,30 @@
 import { describe, expect, it, vi } from "vitest";
 import type { CartDto, CheckoutRequest } from "@shared/research/commerce-api";
 import { LARGE_ORDER_THRESHOLD_CENTS } from "@shared/research/commerce";
+import type { InventoryLot } from "../inventory/lots";
 import { DisabledPaymentProvider, TestPaymentProvider } from "../providers/payment";
 import {
   ConfiguredRateShippingProvider,
   DisabledShippingProvider,
   type ShippingProvider,
 } from "../providers/shipping";
-import { createCheckoutService, type CheckoutDeps } from "./checkout";
+import {
+  createCheckoutService,
+  createInventoryReservationSeam,
+  type CheckoutDeps,
+  type ReservationAuditEvent,
+  type ReservationSeam,
+} from "./checkout";
+import {
+  createInMemoryInventoryLotStore,
+  type InventoryLotRepository,
+} from "./persistence/inventory-store";
+import { createInMemoryReservationStore } from "./persistence/reservations-store";
+import {
+  createInMemoryClaimOrderRepository,
+  createInMemoryClaimRepository,
+  createRefundService,
+} from "./refunds";
 
 const NOW = new Date("2026-07-20T00:00:00Z");
 
@@ -674,5 +691,524 @@ describe("shipping capability", () => {
 
     expect(outcome.ok).toBe(false);
     if (!outcome.ok) expect(outcome.denials).toContain("shipping_unavailable");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Inventory reservation seam at checkout
+// ---------------------------------------------------------------------------
+
+/** A seam that counts every call, so a test can prove exactly what ran. */
+function countingSeam(reserveOutcome?: { refusals: Array<"insufficient_stock" | "coa_missing" | "lot_expired" | "lot_recalled"> }) {
+  const calls = { reserve: 0, release: 0, finalize: 0 };
+  const released: string[][] = [];
+  const finalized: string[][] = [];
+  let seq = 0;
+  const seam: ReservationSeam = {
+    async reserve(_memberId, lines) {
+      calls.reserve += 1;
+      if (reserveOutcome) return { ok: false, refusals: reserveOutcome.refusals };
+      return { ok: true, reservationIds: lines.map(() => `rsv_${++seq}`) };
+    },
+    async release(ids) {
+      calls.release += 1;
+      released.push([...ids]);
+    },
+    async finalize(ids) {
+      calls.finalize += 1;
+      finalized.push([...ids]);
+    },
+  };
+  return { seam, calls, released, finalized };
+}
+
+describe("inventory reservation at checkout (counting seam)", () => {
+  it("reserves once on a clean submit, carries the ids, and finalizes on capture", async () => {
+    const { seam, calls, finalized } = countingSeam();
+    const service = createCheckoutService(deps({ inventory: seam }));
+    const outcome = await service.submit("mem_1", request(), NOW);
+
+    expect(outcome.ok).toBe(true);
+    if (outcome.ok) {
+      expect(outcome.order.state).toBe("payment_captured");
+      expect(outcome.order.reservationIds).toEqual(["rsv_1"]);
+    }
+    expect(calls).toEqual({ reserve: 1, release: 0, finalize: 1 });
+    expect(finalized).toEqual([["rsv_1"]]);
+  });
+
+  it("never reserves when a gate denies", async () => {
+    const { seam, calls } = countingSeam();
+    const service = createCheckoutService(deps({ inventory: seam, commerceEnabled: false }));
+    const outcome = await service.submit("mem_1", request(), NOW);
+
+    expect(outcome.ok).toBe(false);
+    expect(calls.reserve).toBe(0);
+  });
+
+  it("denies insufficient_stock with the precise lot refusals when the seam refuses, charging nothing", async () => {
+    const { seam } = countingSeam({ refusals: ["insufficient_stock", "lot_expired", "coa_missing"] });
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+    const service = createCheckoutService(deps({ inventory: seam, payment }));
+
+    const outcome = await service.submit("mem_1", request(), NOW);
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) {
+      expect(outcome.denials).toContain("insufficient_stock");
+      expect(outcome.reservationRefusals).toEqual([
+        "insufficient_stock",
+        "lot_expired",
+        "coa_missing",
+      ]);
+    }
+    expect(authorize).not.toHaveBeenCalled();
+  });
+
+  it("does not poison the idempotency key on a reservation refusal", async () => {
+    let refuse = true;
+    let seq = 0;
+    const seam: ReservationSeam = {
+      async reserve(_memberId, lines) {
+        if (refuse) return { ok: false, refusals: ["insufficient_stock"] };
+        return { ok: true, reservationIds: lines.map(() => `rsv_${++seq}`) };
+      },
+      async release() {},
+      async finalize() {},
+    };
+    const service = createCheckoutService(deps({ inventory: seam }));
+
+    expect((await service.submit("mem_1", request(), NOW)).ok).toBe(false);
+    refuse = false; // stock arrived; the same key must evaluate fresh
+    expect((await service.submit("mem_1", request(), NOW)).ok).toBe(true);
+  });
+
+  it("releases the hold when the payment authorization is refused", async () => {
+    const { seam, calls, released } = countingSeam();
+    const payment = new TestPaymentProvider();
+    vi.spyOn(payment, "createAuthorization").mockResolvedValue({
+      ok: false,
+      code: "REJECTED",
+      message: "Card declined.",
+      retryable: false,
+    });
+
+    const service = createCheckoutService(deps({ inventory: seam, payment }));
+    const outcome = await service.submit("mem_1", request(), NOW);
+
+    expect(outcome.ok).toBe(false);
+    expect(calls).toEqual({ reserve: 1, release: 1, finalize: 0 });
+    expect(released).toEqual([["rsv_1"]]);
+  });
+
+  it("an idempotent replay returns the stored order before reserve is reached", async () => {
+    const { seam, calls } = countingSeam();
+    const service = createCheckoutService(deps({ inventory: seam }));
+
+    const first = await service.submit("mem_1", request(), NOW);
+    const second = await service.submit("mem_1", request(), NOW);
+    expect(first.ok && second.ok).toBe(true);
+    if (first.ok && second.ok) {
+      expect(second.idempotent).toBe(true);
+      expect(second.order.reservationIds).toEqual(first.order.reservationIds);
+    }
+    expect(calls.reserve).toBe(1);
+  });
+
+  it("reserves once even when the same key is submitted concurrently", async () => {
+    const { seam, calls } = countingSeam();
+    const service = createCheckoutService(deps({ inventory: seam }));
+
+    const [first, second] = await Promise.all([
+      service.submit("mem_1", request(), NOW),
+      service.submit("mem_1", request(), NOW),
+    ]);
+    expect(first.ok && second.ok).toBe(true);
+    expect(calls.reserve).toBe(1);
+  });
+
+  it("keeps a review-held order's hold: no release, no finalize", async () => {
+    const { seam, calls } = countingSeam();
+    const service = createCheckoutService(
+      deps({ inventory: seam, isFraudFlagged: () => true }),
+    );
+    const outcome = await service.submit("mem_1", request(), NOW);
+
+    expect(outcome.ok).toBe(true);
+    if (outcome.ok) expect(outcome.order.state).toBe("manual_review");
+    expect(calls).toEqual({ reserve: 1, release: 0, finalize: 0 });
+  });
+
+  it("keeps the hold when the capture fails: the order waits, nothing finalized or released", async () => {
+    const { seam, calls } = countingSeam();
+    const payment = new TestPaymentProvider();
+    vi.spyOn(payment, "captureAuthorization").mockResolvedValue({
+      ok: false,
+      code: "UNAVAILABLE",
+      message: "Provider outage.",
+      retryable: true,
+    });
+
+    const service = createCheckoutService(deps({ inventory: seam, payment }));
+    const outcome = await service.submit("mem_1", request(), NOW);
+
+    expect(outcome.ok).toBe(true);
+    if (outcome.ok) expect(outcome.order.captured).toBe(false);
+    expect(calls).toEqual({ reserve: 1, release: 0, finalize: 0 });
+  });
+
+  it("records reserved and finalized audit evidence carrying the order id", async () => {
+    const events: ReservationAuditEvent[] = [];
+    const { seam } = countingSeam();
+    const service = createCheckoutService(
+      deps({ inventory: seam, reservationAudit: { record: (e) => void events.push(e) } }),
+    );
+
+    const outcome = await service.submit("mem_1", request(), NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(events.map((e) => e.type)).toEqual(["reserved", "finalized"]);
+    expect(events.every((e) => e.orderId === outcome.order.orderId)).toBe(true);
+    expect(events.every((e) => e.memberId === "mem_1")).toBe(true);
+    expect(events[0]!.reservationIds).toEqual(["rsv_1"]);
+  });
+
+  it("records a released event when the authorization is refused", async () => {
+    const events: ReservationAuditEvent[] = [];
+    const { seam } = countingSeam();
+    const payment = new TestPaymentProvider();
+    vi.spyOn(payment, "createAuthorization").mockResolvedValue({
+      ok: false,
+      code: "REJECTED",
+      message: "Card declined.",
+      retryable: false,
+    });
+    const service = createCheckoutService(
+      deps({ inventory: seam, payment, reservationAudit: { record: (e) => void events.push(e) } }),
+    );
+
+    await service.submit("mem_1", request(), NOW);
+    expect(events.map((e) => e.type)).toEqual(["reserved", "released"]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The real seam: FEFO over persisted lots
+// ---------------------------------------------------------------------------
+
+const CLEAN_DOCS = {
+  coaOnFile: true,
+  identityConfirmed: true,
+  purityConfirmed: true,
+  sterilityConfirmed: null,
+  endotoxinConfirmed: null,
+} as const;
+
+function invLot(overrides: Partial<InventoryLot> = {}): InventoryLot {
+  return {
+    lotId: "LOT-EARLY",
+    sku: "P001",
+    owner: "mitch",
+    disposition: "available",
+    quantityAvailable: 3,
+    manufacturedDate: "2026-01-01",
+    expiryDate: "2026-09-01",
+    retestDate: null,
+    shelfLifeSource: "coa",
+    documents: { ...CLEAN_DOCS },
+    excursion: "none",
+    recalled: false,
+    ...overrides,
+  };
+}
+
+async function seededStores() {
+  const lots = createInMemoryInventoryLotStore();
+  await lots.save(invLot({ lotId: "LOT-EARLY", expiryDate: "2026-09-01", quantityAvailable: 3 }));
+  await lots.save(invLot({ lotId: "LOT-LATE", expiryDate: "2027-01-01", quantityAvailable: 10 }));
+  const reservations = createInMemoryReservationStore();
+  return { lots, reservations };
+}
+
+function realSeam(
+  lots: InventoryLotRepository,
+  reservations: ReturnType<typeof createInMemoryReservationStore>,
+) {
+  let seq = 0;
+  return createInventoryReservationSeam({
+    lots,
+    reservations,
+    newReservationId: () => `rsv_${++seq}`,
+    now: () => NOW,
+  });
+}
+
+async function quantity(lots: InventoryLotRepository, lotId: string): Promise<number> {
+  return (await lots.get(lotId))!.quantityAvailable;
+}
+
+describe("createInventoryReservationSeam", () => {
+  it("allocates FEFO, splitting across lots, and decrements available stock", async () => {
+    const { lots, reservations } = await seededStores();
+    const seam = realSeam(lots, reservations);
+
+    const outcome = await seam.reserve("mem_1", [{ sku: "P001", quantity: 5 }], NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.reservationIds).toEqual(["rsv_1"]);
+    // Earliest expiry drained first, remainder from the later lot.
+    expect(await quantity(lots, "LOT-EARLY")).toBe(0);
+    expect(await quantity(lots, "LOT-LATE")).toBe(8);
+
+    const stored = await reservations.get("rsv_1");
+    expect(stored).not.toBeNull();
+    expect(stored!.status).toBe("held");
+    expect(stored!.lines).toEqual([
+      { lotId: "LOT-EARLY", quantity: 3 },
+      { lotId: "LOT-LATE", quantity: 2 },
+    ]);
+    // The hold carries the configured expiry (default 30 minutes past asOf).
+    expect(stored!.expiresAt).toBe(new Date(NOW.getTime() + 30 * 60 * 1000).toISOString());
+  });
+
+  it("release restores every reserved unit exactly once (no leak, no double restore)", async () => {
+    const { lots, reservations } = await seededStores();
+    const seam = realSeam(lots, reservations);
+
+    const outcome = await seam.reserve("mem_1", [{ sku: "P001", quantity: 5 }], NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+
+    await seam.release(outcome.reservationIds);
+    expect(await quantity(lots, "LOT-EARLY")).toBe(3);
+    expect(await quantity(lots, "LOT-LATE")).toBe(10);
+    expect((await reservations.get("rsv_1"))!.status).toBe("released");
+
+    // A repeated release must not manufacture stock.
+    await seam.release(outcome.reservationIds);
+    expect(await quantity(lots, "LOT-EARLY")).toBe(3);
+    expect(await quantity(lots, "LOT-LATE")).toBe(10);
+  });
+
+  it("finalize makes the decrement permanent and a later release restores nothing", async () => {
+    const { lots, reservations } = await seededStores();
+    const seam = realSeam(lots, reservations);
+
+    const outcome = await seam.reserve("mem_1", [{ sku: "P001", quantity: 5 }], NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+
+    await seam.finalize(outcome.reservationIds);
+    const finalized = await reservations.get("rsv_1");
+    expect(finalized!.status).toBe("finalized");
+    expect(finalized!.finalizedAt).toBe(NOW.toISOString());
+    // The settlement decrement happened at reserve time; finalize repeats nothing.
+    expect(await quantity(lots, "LOT-EARLY")).toBe(0);
+    expect(await quantity(lots, "LOT-LATE")).toBe(8);
+
+    // Settled units never come back, and a settlement replay is absorbed.
+    await seam.release(outcome.reservationIds);
+    expect(await quantity(lots, "LOT-EARLY")).toBe(0);
+    await seam.finalize(outcome.reservationIds);
+    expect(await quantity(lots, "LOT-LATE")).toBe(8);
+  });
+
+  it("refuses to finalize a released reservation", async () => {
+    const { lots, reservations } = await seededStores();
+    const seam = realSeam(lots, reservations);
+    const outcome = await seam.reserve("mem_1", [{ sku: "P001", quantity: 2 }], NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    await seam.release(outcome.reservationIds);
+    await expect(seam.finalize(outcome.reservationIds)).rejects.toThrow(/released/);
+  });
+
+  it("refuses with the precise lot codes and persists nothing", async () => {
+    const lots = createInMemoryInventoryLotStore();
+    await lots.save(
+      invLot({ lotId: "LOT-EXP", expiryDate: "2026-01-01", quantityAvailable: 5 }),
+    );
+    await lots.save(
+      invLot({ lotId: "LOT-REC", disposition: "recalled", recalled: true, quantityAvailable: 5 }),
+    );
+    await lots.save(
+      invLot({
+        lotId: "LOT-NOCOA",
+        documents: { ...CLEAN_DOCS, coaOnFile: false },
+        quantityAvailable: 5,
+      }),
+    );
+    await lots.save(invLot({ lotId: "LOT-CLEAN", quantityAvailable: 1 }));
+    const reservations = createInMemoryReservationStore();
+    const seam = realSeam(lots, reservations);
+
+    const outcome = await seam.reserve("mem_1", [{ sku: "P001", quantity: 5 }], NOW);
+    expect(outcome.ok).toBe(false);
+    if (outcome.ok) return;
+    expect(outcome.refusals).toEqual(
+      expect.arrayContaining(["insufficient_stock", "lot_expired", "lot_recalled", "coa_missing"]),
+    );
+    // Nothing was decremented and nothing was stored.
+    expect(await quantity(lots, "LOT-CLEAN")).toBe(1);
+    expect(await quantity(lots, "LOT-EXP")).toBe(5);
+    expect(await reservations.listByMember("mem_1")).toEqual([]);
+  });
+
+  it("reports insufficient_stock alone over an empty pool", async () => {
+    const lots = createInMemoryInventoryLotStore();
+    const reservations = createInMemoryReservationStore();
+    const seam = realSeam(lots, reservations);
+    const outcome = await seam.reserve("mem_1", [{ sku: "P001", quantity: 1 }], NOW);
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) expect(outcome.refusals).toEqual(["insufficient_stock"]);
+  });
+
+  it("two lines of one sku cannot claim the same units, and one refused line refuses the whole hold", async () => {
+    const { lots, reservations } = await seededStores(); // 13 units total
+    const seam = realSeam(lots, reservations);
+
+    const outcome = await seam.reserve(
+      "mem_1",
+      [
+        { sku: "P001", quantity: 8 },
+        { sku: "P001", quantity: 8 }, // only 5 remain in the working pool
+      ],
+      NOW,
+    );
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) expect(outcome.refusals).toContain("insufficient_stock");
+    // The satisfiable first line must not have leaked a partial hold.
+    expect(await quantity(lots, "LOT-EARLY")).toBe(3);
+    expect(await quantity(lots, "LOT-LATE")).toBe(10);
+    expect(await reservations.listByMember("mem_1")).toEqual([]);
+  });
+
+  it("compensates a mid-persist depletion race and reports it as insufficient stock", async () => {
+    const { lots, reservations } = await seededStores();
+    // A wrapper that lets LOT-EARLY reserve but refuses LOT-LATE, emulating a
+    // concurrent checkout draining the lot between plan and persist.
+    const racing: InventoryLotRepository = {
+      listBySku: (sku) => lots.listBySku(sku),
+      get: (lotId) => lots.get(lotId),
+      save: (lot) => lots.save(lot),
+      adjustQuantityAvailable: async (lotId, delta) => {
+        if (lotId === "LOT-LATE" && delta < 0) {
+          throw new Error("quantity adjustment for LOT-LATE would go negative: -2");
+        }
+        return lots.adjustQuantityAvailable(lotId, delta);
+      },
+    };
+    const seam = createInventoryReservationSeam({
+      lots: racing,
+      reservations,
+      newReservationId: () => "rsv_1",
+      now: () => NOW,
+    });
+
+    const outcome = await seam.reserve("mem_1", [{ sku: "P001", quantity: 5 }], NOW);
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) expect(outcome.refusals).toEqual(["insufficient_stock"]);
+    // The applied LOT-EARLY decrement was compensated: no leak.
+    expect(await quantity(lots, "LOT-EARLY")).toBe(3);
+    expect(await reservations.get("rsv_1")).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// End to end: checkout through the real seam, and the refund boundary
+// ---------------------------------------------------------------------------
+
+describe("checkout through the real seam", () => {
+  it("a captured checkout permanently consumes FEFO stock", async () => {
+    const { lots, reservations } = await seededStores();
+    const seam = realSeam(lots, reservations);
+    const service = createCheckoutService(deps({ inventory: seam }));
+
+    const outcome = await service.submit("mem_1", request(), NOW); // cart holds 2x P001
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.order.state).toBe("payment_captured");
+    expect(await quantity(lots, "LOT-EARLY")).toBe(1); // earliest expiry first
+    expect(await quantity(lots, "LOT-LATE")).toBe(10);
+    expect((await reservations.get(outcome.order.reservationIds[0]!))!.status).toBe("finalized");
+  });
+
+  it("a failed checkout restores every unit (no leak through the checkout path)", async () => {
+    const { lots, reservations } = await seededStores();
+    const seam = realSeam(lots, reservations);
+    const payment = new TestPaymentProvider();
+    vi.spyOn(payment, "createAuthorization").mockResolvedValue({
+      ok: false,
+      code: "REJECTED",
+      message: "Card declined.",
+      retryable: false,
+    });
+    const service = createCheckoutService(deps({ inventory: seam, payment }));
+
+    const outcome = await service.submit("mem_1", request(), NOW);
+    expect(outcome.ok).toBe(false);
+    expect(await quantity(lots, "LOT-EARLY")).toBe(3);
+    expect(await quantity(lots, "LOT-LATE")).toBe(10);
+    const held = await reservations.listByMember("mem_1");
+    expect(held.map((r) => r.status)).toEqual(["released"]);
+  });
+
+  it("a refund never touches the seam: shipped inventory is not restored", async () => {
+    const { lots, reservations } = await seededStores();
+    const seam = realSeam(lots, reservations);
+    const payment = new TestPaymentProvider();
+    const service = createCheckoutService(deps({ inventory: seam, payment }));
+
+    const outcome = await service.submit("mem_1", request(), NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(await quantity(lots, "LOT-EARLY")).toBe(1);
+
+    // The refund flow runs over the captured order, with the SAME payment provider.
+    const refunds = createRefundService({
+      claims: createInMemoryClaimRepository(),
+      orders: createInMemoryClaimOrderRepository([
+        {
+          orderId: outcome.order.orderId,
+          memberId: "mem_1",
+          state: "payment_captured",
+          capturedAmountCents: outcome.order.totalCents,
+          paymentReference: outcome.order.paymentReference,
+          refundedCents: 0,
+          lines: [{ sku: "P001", lotId: "LOT-EARLY" }],
+        },
+      ]),
+      payment,
+      commerceEnabled: true,
+    });
+
+    const claim = await refunds.submitClaim(
+      "mem_1",
+      {
+        orderId: outcome.order.orderId,
+        sku: "P001",
+        reason: "damaged",
+        detail: "Arrived damaged.",
+        evidenceRefs: ["ev_1"],
+      },
+      NOW,
+    );
+    expect(claim.ok).toBe(true);
+    if (!claim.ok) return;
+    expect((await refunds.reviewClaim(claim.claim.claimId, "admin_1", "approved", NOW)).ok).toBe(true);
+    const resolved = await refunds.resolveWithRefund(
+      claim.claim.claimId,
+      "admin_1",
+      outcome.order.totalCents,
+      "refund_key_1",
+      NOW,
+    );
+    expect(resolved.ok).toBe(true);
+    if (resolved.ok) expect(resolved.restockedUnits).toBe(0);
+
+    // The money moved back, the units did not: the seam was never consulted.
+    expect(await quantity(lots, "LOT-EARLY")).toBe(1);
+    expect(await quantity(lots, "LOT-LATE")).toBe(10);
+    expect((await reservations.get(outcome.order.reservationIds[0]!))!.status).toBe("finalized");
   });
 });

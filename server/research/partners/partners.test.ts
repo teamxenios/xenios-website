@@ -36,6 +36,7 @@ async function onboard(service: PartnerService, gates: Gates = {}): Promise<stri
   const applied = await service.apply(
     {
       partnerId: "p1",
+      memberId: "mem_1",
       role: "affiliate",
       legalName: "Real Name",
       contactEmail: "partner@example.com",
@@ -92,12 +93,13 @@ describe("partner application", () => {
   it("creates a partner in the application state", async () => {
     const service = newService();
     const result = await service.apply(
-      { partnerId: "p1", role: "research_rep", legalName: "A", contactEmail: "a@example.com" },
+      { partnerId: "p1", memberId: "mem_1", role: "research_rep", legalName: "A", contactEmail: "a@example.com" },
       T0,
     );
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.partner.state).toBe("application");
+    expect(result.partner.memberId).toBe("mem_1");
     expect(result.partner.certifiedAt).toBeNull();
     expect(partnerCanEarn(result.partner.state)).toBe(false);
     expect(result.partner.history.map((e) => e.type)).toEqual(["applied"]);
@@ -105,9 +107,9 @@ describe("partner application", () => {
 
   it("refuses a duplicate partner id", async () => {
     const service = newService();
-    await service.apply({ partnerId: "p1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" }, T0);
+    await service.apply({ partnerId: "p1", memberId: "mem_1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" }, T0);
     const again = await service.apply(
-      { partnerId: "p1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" },
+      { partnerId: "p1", memberId: "mem_2", role: "affiliate", legalName: "A", contactEmail: "a@x.com" },
       T0,
     );
     expect(again.ok).toBe(false);
@@ -115,9 +117,36 @@ describe("partner application", () => {
     expect(codes(again.denials)).toEqual(["partner_already_exists"]);
   });
 
+  it("refuses a second partner for the same member with a typed denial", async () => {
+    const service = newService();
+    await service.apply({ partnerId: "p1", memberId: "mem_1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" }, T0);
+    const again = await service.apply(
+      { partnerId: "p2", memberId: "mem_1", role: "research_rep", legalName: "B", contactEmail: "b@x.com" },
+      T0,
+    );
+    expect(again.ok).toBe(false);
+    if (again.ok) return;
+    expect(codes(again.denials)).toEqual(["member_already_partner"]);
+    // The first partner is untouched: refused, never overwritten.
+    const kept = await service.findByMemberId("mem_1");
+    expect(kept?.partnerId).toBe("p1");
+    expect(kept?.role).toBe("affiliate");
+  });
+
+  it("refuses an unowned partner application", async () => {
+    const service = newService();
+    const result = await service.apply(
+      { partnerId: "p1", memberId: "   ", role: "affiliate", legalName: "A", contactEmail: "a@x.com" },
+      T0,
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(codes(result.denials)).toEqual(["member_id_missing"]);
+  });
+
   it("advances the pending state to name the next unmet gate", async () => {
     const service = newService();
-    await service.apply({ partnerId: "p1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" }, T0);
+    await service.apply({ partnerId: "p1", memberId: "mem_1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" }, T0);
 
     const afterIdentity = await service.recordIdentityVerification("p1", { status: "verified" }, T0);
     expect(afterIdentity.ok && afterIdentity.partner.state).toBe("tax_status_pending");
@@ -127,6 +156,80 @@ describe("partner application", () => {
 
     const afterPayout = await service.recordPayoutStatus("p1", { status: "cleared" }, T0);
     expect(afterPayout.ok && afterPayout.partner.state).toBe("agreement_pending");
+  });
+});
+
+describe("member linkage (createPartnerForMember / findByMemberId)", () => {
+  it("creates the member's one partner and resolves it by member id", async () => {
+    const service = newService();
+    const created = await service.createPartnerForMember(
+      "mem_1",
+      { partnerId: "p1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" },
+      T0,
+    );
+    expect(created.ok).toBe(true);
+    if (!created.ok) return;
+    expect(created.partner.memberId).toBe("mem_1");
+    expect(created.partner.state).toBe("application");
+
+    const resolved = await service.findByMemberId("mem_1");
+    expect(resolved?.partnerId).toBe("p1");
+  });
+
+  it("refuses a second partner for the same member (typed refusal)", async () => {
+    const service = newService();
+    await service.createPartnerForMember(
+      "mem_1",
+      { partnerId: "p1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" },
+      T0,
+    );
+    const again = await service.createPartnerForMember(
+      "mem_1",
+      { partnerId: "p2", role: "research_rep", legalName: "B", contactEmail: "b@x.com" },
+      T0,
+    );
+    expect(again.ok).toBe(false);
+    if (again.ok) return;
+    expect(codes(again.denials)).toEqual(["member_already_partner"]);
+  });
+
+  it("creates no monetary event: onboarding produces state, never money", async () => {
+    const service = newService();
+    const created = await service.createPartnerForMember(
+      "mem_1",
+      { partnerId: "p1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" },
+      T0,
+    );
+    expect(created.ok).toBe(true);
+    if (!created.ok) return;
+    const serialized = JSON.stringify(created.partner).toLowerCase();
+    expect(serialized).not.toContain("amountcents");
+    expect(serialized).not.toContain("bonus");
+    // A brand-new partner's dashboard holds zero value everywhere.
+    const dashboard = await service.dashboardFor("p1");
+    expect(dashboard.ok).toBe(true);
+    if (!dashboard.ok) return;
+    expect(dashboard.dashboard.totalCommissionCents).toBe(0);
+    expect(dashboard.dashboard.payableCents).toBe(0);
+    expect(dashboard.dashboard.conversionCount).toBe(0);
+  });
+
+  it("resolves each member to their own partner only (tenant isolation)", async () => {
+    const repository = createInMemoryPartnerRepository();
+    const service = createPartnerService({ repository });
+    await service.createPartnerForMember(
+      "mem_a",
+      { partnerId: "p_a", role: "affiliate", legalName: "A", contactEmail: "a@x.com" },
+      T0,
+    );
+    await service.createPartnerForMember(
+      "mem_b",
+      { partnerId: "p_b", role: "affiliate", legalName: "B", contactEmail: "b@x.com" },
+      T0,
+    );
+    expect((await repository.findByMemberId("mem_a"))?.partnerId).toBe("p_a");
+    expect((await repository.findByMemberId("mem_b"))?.partnerId).toBe("p_b");
+    expect(await repository.findByMemberId("mem_c")).toBeNull();
   });
 });
 
@@ -216,7 +319,7 @@ describe("activation fails closed", () => {
 
   it("accumulates every unmet gate rather than returning on the first", async () => {
     const service = newService();
-    await service.apply({ partnerId: "p1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" }, T0);
+    await service.apply({ partnerId: "p1", memberId: "mem_1", role: "affiliate", legalName: "A", contactEmail: "a@x.com" }, T0);
     const result = await service.activate("p1", "admin_1", T2);
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -416,6 +519,8 @@ describe("partner privacy", () => {
     const applied = await service.apply(
       {
         partnerId: "p1",
+        // The record's own member linkage must not leak into the dashboard either.
+        memberId: "MARKER_MEMBER_ID",
         role: "affiliate",
         legalName: "MARKER_LEGAL_NAME",
         contactEmail: "MARKER_EMAIL",

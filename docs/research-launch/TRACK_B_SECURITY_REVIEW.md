@@ -1,10 +1,10 @@
-# Track B Security Review (Wave 26, final scan pass)
+# Track B Security Review (Wave 27, scan refresh over the final state)
 
 Date: 2026-07-22
-Scope: worktree `wt-track-b`, branch `integration/xenios-research-track-b-commerce-activation` (PR #38).
-Method: read-only scans over source, SQL, docs, and a fresh production build (`npm run build`, exit 0, client bundle written to `dist/public`, server bundle to `dist/index.cjs`). No code was modified; findings are reported, not fixed.
+Scope: worktree `wt-track-b`, branch `integration/xenios-research-track-b-commerce-activation` (PR #38, head d69cce6 plus the final working-tree waves: the mounted payment webhook route, the shipping-quote and partner-portal surfaces, the durable webhook replay guard wiring, lot reservations, and the partner member linkage).
+Method: read-only scans over source, SQL, docs, and a fresh production build (`npm run build`, exit 0, client bundle in `dist/public`, server bundle `dist/index.cjs` 414.8kb). No code was modified; findings are reported, not fixed.
 
-Overall verdict: PASS (7 of 7 checks pass). One non-blocking observation is recorded under Check 6.
+Overall verdict: PASS (7 of 7 checks pass). Two non-blocking observations are recorded, one under Check 6 (stale comments plus an orphaned resolver in `webhooks-store.ts`) and one under Check 7 (the reservation seam is built and tested but not yet wired into the live checkout composition).
 
 ---
 
@@ -16,21 +16,23 @@ Command:
 grep -rInE "sb_secret_[A-Za-z0-9]{20}|sk_live_|whsec_[A-Za-z0-9]{20,}|STRIPE_SECRET_KEY *= *['\"][A-Za-z0-9]|[0-9]{8,}:[A-Za-z0-9_-]{30,}" server client supabase docs --exclude-dir=node_modules --exclude-dir=dist
 ```
 
-Evidence (all four hits, in full):
+Evidence (all five code hits, in full; the remaining matches are this document quoting them):
 
 ```
+server/research/commerce/routes.test.ts:487:            throw new Error("SECRET_sk_live_123 leaked in an error message");
 server/research/providers/payout.test.ts:288:    const r = validatePayoutConfig({ PAYOUT_API_KEY: "sk_live_secret_value" } as NodeJS.ProcessEnv);
 server/research/providers/payout.test.ts:292:      expect(JSON.stringify(r)).not.toContain("sk_live_secret_value");
 server/research/telegram-provider.test.ts:39:const FAKE_TOKEN = "123456789:UNIT_TEST_BOT_TOKEN_MARKER_abcdefghijklmnop";
 server/research/telegram-provider.test.ts:177:    const rotated = "987654321:SOME_OTHER_TOKEN_SHAPE_zyxwvutsrqponml";
 ```
 
-Triage: every hit is a deliberately fake, secret-shaped test fixture used to prove redaction, not a credential value.
+Triage: every hit is a deliberately fake, secret-shaped test fixture used to prove redaction or non-leakage, not a credential value.
 
-- `payout.test.ts:288` constructs the literal `"sk_live_secret_value"` (not a real Stripe key shape beyond the prefix) and line 292 asserts the value never appears in the validator's output. The fixture exists to catch a leak.
-- `telegram-provider.test.ts:39` is annotated in source (lines 37-38): "A distinctive fake token. If this marker ever shows up in an error message, a log line, or an audit event, the redaction has failed." The token body is `UNIT_TEST_BOT_TOKEN_MARKER_...`; line 177's `987654321:SOME_OTHER_TOKEN_SHAPE_...` tests that the scrubber catches any token-shaped string, not just the configured one.
+- `routes.test.ts:487` (new this wave) throws the marker string `"SECRET_sk_live_123 leaked in an error message"` from a fake service inside the webhook-route test, then asserts the HTTP response never carries it. The fixture exists to prove the route's catch path does not echo provider or configuration errors.
+- `payout.test.ts:288` constructs the literal `"sk_live_secret_value"` (only the prefix is Stripe-shaped) and line 292 asserts the value never appears in the validator's output.
+- `telegram-provider.test.ts:39` is annotated in source (lines 37-38): a distinctive fake token whose appearance in any log or error means redaction failed. Line 177's second token shape tests that the scrubber catches any token-shaped string, not just the configured one.
 
-No `sb_secret_`, `whsec_`, or `STRIPE_SECRET_KEY = "<value>"` assignments matched anywhere. Environment variable NAMES (STRIPE_SECRET_KEY, PAYOUT_API_KEY, TELEGRAM_BOT_TOKEN, etc.) appear only as names, never with inline values.
+No `sb_secret_`, `whsec_`, or `STRIPE_SECRET_KEY = "<value>"` assignments matched anywhere. Environment variable NAMES (STRIPE_SECRET_KEY, PAYOUT_API_KEY, TELEGRAM_BOT_TOKEN, etc.) appear only as names, never with inline values. The remaining matches are inside this review document itself, quoting the fixtures above.
 
 Result: PASS. No real secret values in server/, client/, supabase/, or docs/.
 
@@ -38,7 +40,7 @@ Result: PASS. No real secret values in server/, client/, supabase/, or docs/.
 
 ## Check 2: Synthetic-production guard on every live-adapter factory
 
-Requirement: each live-adapter factory (payment, payout, shipping, fulfillment) and the `buildCommerceDependencies` state-3 path must call `assertNoSyntheticDataInProduction` before constructing anything live.
+Requirement: each live-adapter factory (payment, payout, shipping, fulfillment) and the `buildCommerceDependencies` state-3 path must call `assertNoSyntheticDataInProduction` before constructing anything live. This wave adds new consuming surfaces (the mounted webhook route, shipping quotes, the partner portal); all of them are downstream of these same factories and the state-3 composition, so the guard set is unchanged and re-verified.
 
 Command:
 
@@ -54,21 +56,23 @@ Call sites (guard defined at `server/research/commerce/production-guards.ts:111`
 | Payout (live) | `server/research/providers/payout.ts:1091` | In the `selected === "live"` branch, BEFORE `new RealPayoutAdapter(...)` |
 | Shipping (carrier) | `server/research/providers/shipping.ts:1077` | In the live-carrier branch after `validateCarrierShippingEnvironment`, BEFORE the carrier adapter exists |
 | Fulfillment (Mitch) | `server/research/providers/fulfillment.ts:839` | After the missing-environment early return, BEFORE the live Mitch adapter exists |
-| Composition (state 3) | `server/research/commerce/production-deps.ts:455` | First statement of `liveDependencies(...)` (line 441), which is the state-3 return of `buildCommerceDependencies` (line 676: reached only when the commerce flag is on AND the database is configured) |
+| Composition (state 3) | `server/research/commerce/production-deps.ts:659` | First statement of `liveDependencies(...)` (line 645), the state-3 return of `buildCommerceDependencies`, reached only when the commerce flag is on AND the database is configured |
 
-The composition-level call covers Supabase URL, payment/shipping provider selection, serviceable states, and the checkout agreement keys; each provider factory re-checks its own secrets. Every guard throws before any adapter or provider call exists.
+The composition-level call now also covers the partner link base URL (`production-deps.ts:671-673`, `RESEARCH_PARTNER_LINK_BASE_URL`) alongside the Supabase URL, payment/shipping provider selection, serviceable states, and the checkout agreement keys. Each provider factory re-checks its own secrets. Every guard throws before any adapter, store, or provider call exists, so the new webhook, quote, and partner surfaces cannot be composed over a synthetic-marked configuration: they only exist inside `liveDependencies`, which is behind the guard.
 
-Result: PASS. All five required call sites present and positioned before construction.
+New-surface confirmation: the webhook handler (`production-deps.ts:763-768`), the shipping quote path (`:1054-1056`), and the partner portal wiring (`:770-840`) are all constructed after line 659 inside `liveDependencies`; states 1 and 2 expose fail-closed stubs only (`webhooksFailClosed`, `production-deps.ts:310-314`, and `commerce_disabled` denials).
+
+Result: PASS. All five required call sites present and positioned before construction; the new surfaces sit strictly behind the state-3 guard.
 
 ---
 
 ## Check 3: Supplier-PII scan over client/ and dist/public
 
-Commands and exit codes (grep exit 1 = no matches):
+Commands and exit codes (grep exit 1 = no matches), all against the fresh build:
 
 ```
 grep -rInE "mitch\.clark|apexbio|Apex BioInnovations|Research Park Blvd|555-1234" client        # exit 1, no matches
-grep -rlEi  "mitch\.clark|apexbio|Apex BioInnovations|Research Park Blvd|555-1234" dist/public  # exit 1, no matches (fresh build)
+grep -rlEi  "mitch\.clark|apexbio|Apex BioInnovations|Research Park Blvd|555-1234" dist/public  # exit 1, no matches
 grep -rlin  "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884" dist/public      # exit 1, no matches
 grep -rlin  "e8ed723f" dist/public                                                              # exit 1, no matches (prefix check)
 ```
@@ -83,6 +87,7 @@ grep -rli "mitch.clark|apexbio|apex bio" --exclude-dir=node_modules --exclude-di
   ./docs/research-commerce/PURCHASE_ELIGIBILITY_FINAL.md
   ./docs/research-commerce/signed-supplier-master-facts.json
   ./docs/research-commerce/SIGNED_SUPPLIER_MASTER_INTAKE.md
+  ./docs/research-launch/TRACK_B_SECURITY_REVIEW.md   (this document)
 ```
 
 Result: PASS. No supplier PII and no signed-master SHA in the client source or the shipped client bundle.
@@ -91,15 +96,16 @@ Result: PASS. No supplier PII and no signed-master SHA in the client source or t
 
 ## Check 4: Client-bundle scan of dist/public
 
-Fresh build first: `npm run build` completed (vite client build "built in 9.21s"; esbuild server bundle `dist/index.cjs 392.3kb`). All scans below are over `dist/public` only, which is the browser-served output.
+Fresh build first: `npm run build` completed (vite client build "built in 6.23s"; esbuild server bundle `dist/index.cjs 414.8kb`). All scans below are over `dist/public` only, which is the browser-served output.
 
 Commands and exit codes:
 
 ```
-grep -rn  "dev-gallery-fixture-token" dist/public   # exit 1, absent
-grep -rlin "dev-gallery|DevGallery"   dist/public   # no matches, the whole gallery module is compiled out
-grep -rEn "COA-P0[0-9]{2}-LOT"        dist/public   # exit 1, absent
-grep -rn  "MITCH_TEST_"               dist/public   # exit 1, absent
+grep -rn  "dev-gallery-fixture-token" dist/public       # exit 1, absent
+grep -rlin "dev-gallery|DevGallery"   dist/public       # exit 1, the whole gallery module is compiled out
+grep -rEn "COA-P0[0-9]{2}-LOT"        dist/public       # exit 1, absent
+grep -rn  "MITCH_TEST_"               dist/public       # exit 1, absent
+grep -rn  "whsec_|sk_live_|STRIPE_SECRET" dist/public   # exit 1, absent (secret shapes never reach the bundle)
 ```
 
 Negative controls confirming the scans would catch a leak:
@@ -108,76 +114,81 @@ Negative controls confirming the scans would catch a leak:
 - COA lot ids (`COA-P001-LOT-0824A` ... `COA-P003-LOT-0824D`) exist in repo docs/source and are absent from the bundle.
 - `MITCH_TEST_` markers exist in `server/research/commerce/production-guards.ts` and `server/research/providers/fulfillment.ts` (server-side only) and are absent from the client bundle.
 
-Result: PASS. No fixture token, no dev gallery, no COA lot ids, no Mitch sandbox markers in the shipped client bundle.
+Result: PASS. No fixture token, no dev gallery, no COA lot ids, no Mitch sandbox markers, no secret shapes in the shipped client bundle.
 
 ---
 
-## Check 5: Tenant isolation in server/research/commerce/persistence/
+## Check 5: Tenant isolation, including every NEW route
 
-Method: every `.select(...)` chain in the eleven `*-store.ts` files was extracted and each read of a member/partner-tenant table checked for an owner-scoped `.eq` filter.
+### 5a. New HTTP surfaces (routes.ts, all registered in `registerCommerceApi`, mounted live at `server/index.ts:135`)
 
-Owner-scoped reads (evidence, file:line of the filter):
+The provider webhook route is signature-gated, not member-gated, BY DESIGN, and that design was verified:
 
-- `cart-store.ts:131` carts by `member_id`; `:151` cart lines by `cart_id` (the cart id is resolved from `member_id` first).
-- `orders-store.ts:471` and `:483` orders by `member_id`; `:404` and `:413` lines/shipments by `order_id` of an already-loaded order.
-- `claims-store.ts:263` claims by `member_id`; `:269` by `order_id`.
-- `store-credit-store.ts:489` ledger by `member_id`; `:547` single entry by `id` AND `member_id` together (double filter).
-- `subscriptions-store.ts:244` by `member_id`; `:259` events by `subscription_id`.
-- `commissions-store.ts:286,318,668` by `partner_id`; `:348,688` by `order_id`/`batch_id`.
-- `partners-store.ts:226,237` referral codes by `code`/`partner_id`; `:351` by `subject_key`.
-- `idempotency-store.ts:133` by `scope` AND `key` (scope encodes the tenant).
-- `inventory-store.ts` reads lots by `sku`/`lot_id`; inventory is global stock, not a tenant table.
+- `POST /api/research/webhooks/payment` (`routes.ts:661-692`) carries no member guard; the in-source comment (`:654-660`) states the gate is the signature over the exact raw bytes. The handler refuses an absent signature before anything else (`webhooks.ts:192`), and verification runs over the captured raw body (`rawBodyOf`, `routes.ts:279-284`, reading the `req.rawBody` buffer set by the app-level `express.json` verify hook at `server/index.ts:52-58`, or the route-level `express.raw` buffer). Nothing from the body or the signature is logged or echoed: the route returns only `{ok, applied, eventId}` or `{ok:false, code}`, the catch path returns a bare `webhook_error` (`:686-690`), and the server's response-body logger suppresses bodies for every `/api/research` path (`server/index.ts:87`). The webhook can only move an order through `transitionOrder` with the event id as idempotency key (`webhooks.ts:159-183`); it has no read access to member fields (the `WebhookOrder` projection, `webhooks.ts:34-41`, deliberately excludes member id, totals, and lines).
 
-By-primary-id reads and their ownership enforcement (the store reads by id; the service layer verifies the owner before returning anything):
+Partner portal routes are member-scoped, never partner-id-addressable:
 
-- `orders-store.ts:424` `get(orderId)` has no member filter; `server/research/commerce/orders.ts:480` enforces `if (order.memberId !== memberId) return null` on the member-facing path.
-- `subscriptions-store.ts:230` `get(subscriptionId)`; `server/research/commerce/subscriptions.ts:284-287` (`getOwned`) enforces `if (record.memberId !== memberId) return null` for member reads. The direct-by-id calls at `subscriptions.ts:447,471,485,529` are lifecycle/renewal paths taking an `Actor`, not member request paths.
-- Same pattern in `refunds.ts:310` and `:499` (order and claim ownership checked before use).
+- `GET /partner/me`, `GET /partner/dashboard`, `POST /partner/apply`, `GET /partner/links` (`routes.ts:552-604`) all resolve the partner FROM the authenticated member (`deps.partners.findByMemberId(memberId)` under `withSubject`, which fails closed with 403 when there is no subject, `routes.ts:252-261`). No handler accepts a partner id from the request (in-source contract at `routes.ts:549-550`); `dashboardFor`/`listLinks` receive the partner id only after that resolution. The durable store reads by member: `partners-store.ts:604-605` (`.eq("member_id", memberId)`); links are read `.eq("partner_id", ...)` (`:246`). The partner response shape is built by explicit construction (`linkToSelfSource`, `production-deps.ts:791-807`, and `toPartnerSelfView`, `member-linkage.ts:176-194`), which structurally omits legal name, contact email, member id, internal notes, admin ids, and lifecycle history, so those fields are write-only through the member surface. The dashboard stats source (`createLedgerPartnerStatsSource`, `member-linkage.ts:96-147`) derives aggregates from the append-only commission ledger via `listByPartner` and rebuilds each conversion through `toPartnerVisibleConversion`; the snapshot type has no member field, so another member's identity has no path into a partner dashboard.
 
-Cross-tenant reads, all documented admin-only:
+Other new member surfaces are subject-scoped the same way:
 
-- `orders-store.ts:492` `listAll()` selects all orders with no filter. Documented admin-only in the interface (`orders.ts:100-102`: "Admin-only cross-member listing. The review queue has no single member.") and in the store header (`orders-store.ts:386-389`: "listAll is the one deliberate admin cross-member path"). Sole caller is `adminLargeOrderQueue` (`orders.ts:486`).
-- `claims-store.ts:277` `listOpen()` selects claims across members. Documented in-line (`claims-store.ts:274-276`: "Admin-wide (no tenant scope, by contract)").
-- `admin-queues-store.ts:687` reads the admin queue tables (`allQueueItems`), which are operator tables, not member-tenant tables.
+- `POST /shipping/quote` (`routes.ts:607-618`), `POST /subscriptions` (create, `:621-637`), `GET /claims/:claimId` (`:640-652`) all run under `withSubject`; claim detail enforces ownership beneath (`claims.getForMember`), and a foreign claim is indistinguishable from a missing one (404, `:644-648`).
 
-Result: PASS. Every member/partner tenant read is owner-filtered at the store or ownership-checked at the service layer; the listAll-style admin paths are explicitly documented as admin-only.
+Admin routes are admin-guarded, all six: `GET /api/admin/research/commerce/queues`, `GET /api/admin/research/claims`, `POST .../claims/:claimId/review|refund|replacement`, `POST .../partners/:partnerId/review` (`routes.ts:695-776`) each take the injected `admin` guard (the merged `requireSupabaseAdmin`, `server/index.ts:138`). Admin attribution comes from the guard-attached verified email, never the request body (`adminIdOf`, `routes.ts:268-271`).
+
+### 5b. New persistence surfaces
+
+- `reservations-store.ts`: `listByMember` filters `.eq("member_id", memberId)` (`:230`); `get(reservationId)` reads by the unguessable business id (`rsv_<uuid>`) and is called only inside the checkout reservation seam, which is not member-addressable over HTTP (no reservation route exists; verified by the route enumeration above). A row whose status the domain does not define is dropped rather than half-acted on (`rowToReservation`, `:105-125`), failing closed.
+- `partners-store.ts` (extended this wave): partner rows and links are insert plus member/partner-scoped reads only; zero `.update()`/`.delete()` in the file. The one-partner-per-member rule is backed by the DB unique constraint and surfaces as a typed `MemberAlreadyPartner` denial (`production-deps.ts:828-837`).
+- Prior-wave store evidence (carts, orders, claims, store credit, subscriptions, commissions, idempotency) re-checked and unchanged: every member/partner tenant read is owner-filtered at the store or ownership-checked at the service layer (`orders.ts:480` `memberId` check; `subscriptions.ts` `getOwned`; `refunds.ts` order/claim ownership), and the cross-tenant reads (`orders-store.ts listAll`, `claims-store.ts listOpen`, admin queues) remain documented admin-only with their sole callers behind the admin guard.
+
+Result: PASS. The webhook route's gate is the signature (verified, with no member data exposed on that surface); every partner route resolves the partner from the authenticated member; every admin route is admin-guarded; the new stores are owner-scoped.
 
 ---
 
-## Check 6: Provider replay protection
+## Check 6: Provider replay protection (the webhook route is now real HTTP)
 
-Signature verification includes timestamp tolerance on all three rails (HMAC-SHA256 over `${t}.${rawBody}`, constant-time compare, absolute skew window):
+The previous review recorded one observation: the durable replay guard existed but no webhook HTTP route was mounted and the event-store interface was synchronous. This wave closes that loop, and the closure was verified end to end:
 
-- Stripe: `server/research/providers/payment.ts:354-355` (`STRIPE_WEBHOOK_TOLERANCE_SECONDS = 300`), enforced at `payment.ts:388` (`if (Math.abs(nowMs / 1000 - timestamp) > toleranceSeconds) return "stale"`), wired into the adapter at `payment.ts:815,821`.
-- Mitch fulfillment: `server/research/providers/fulfillment.ts:351` (`MITCH_WEBHOOK_TOLERANCE_SECONDS = 300`), enforced at `fulfillment.ts:662-664` (absolute skew both directions), timestamp bound into the MAC at `fulfillment.ts:358-360` so an old body cannot be re-timestamped.
-- Shipping carrier: `server/research/providers/shipping.ts:365` (`SHIPPING_WEBHOOK_TOLERANCE_SECONDS = 300`), the live `CarrierShippingAdapter.verifyDeliveryEvent` reuses `verifyStripeSignature` with the tolerance at `shipping.ts:913-918` and rejects `stale` at `:922-929`. (The `"test-signature"` string equality at `shipping.ts:239` is inside `TestShippingProvider`, the offline test double, not the live adapter.)
+Signature plus timestamp, before anything else:
 
-Webhook event dedup relies on the DB unique constraint:
+- The route refuses an absent signature without consulting the provider, the store, or any order (`webhooks.ts:192`); verification runs before the replay check, so a forged body can never burn a real event id (`webhooks.ts:8-11, 194-197`).
+- Stripe rail: HMAC-SHA256 over `${t}.${rawBody}`, constant-time compare, absolute skew window `STRIPE_WEBHOOK_TOLERANCE_SECONDS = 300` (`payment.ts:355`), staleness enforced at `payment.ts:388`, wired into the adapter at `payment.ts:810-820`.
+- Mitch fulfillment rail: `MITCH_WEBHOOK_TOLERANCE_SECONDS = 300` (`fulfillment.ts:351`), absolute skew both directions (`fulfillment.ts:662-664`), timestamp bound into the MAC (`fulfillment.ts:358-360`).
+- Shipping carrier rail: `SHIPPING_WEBHOOK_TOLERANCE_SECONDS = 300` (`shipping.ts:365`), live adapter reuses `verifyStripeSignature` and rejects `stale` (`shipping.ts:913-929`).
 
-- SQL: `supabase/production/research-track-b-commerce.sql:443-451`, `constraint research_provider_webhook_events_unique unique (provider_name, event_id)`, with the header comment "Webhook replay protection. UNIQUE is the whole point."
-- Store: `server/research/commerce/persistence/webhooks-store.ts:233-261` (`createSupabaseWebhookReplayGuard`): `seen()` answers from the database (`.eq("provider_name",...).eq("event_id",...)`, line 240-242) and `record()` inserts and absorbs exactly the unique-violation code (line 252-259), so the constraint, not application memory, is the guard.
+Durable DB dedup, now WIRED:
 
-Non-blocking observation (reported, not fixed, per this wave's mandate): the durable guard is built but not yet wired into the webhook pipeline. `WebhookEventStore` in `server/research/commerce/webhooks.ts:43-45` is still synchronous, so `resolveWebhookEventStore` (`webhooks-store.ts:182-187`) returns the in-memory store, as documented in the module header (`webhooks-store.ts:17-28`). This is not currently exploitable: no commerce provider webhook HTTP route is mounted anywhere in live code (`createWebhookHandler` is constructed only in tests; the only `app.post` webhook routes in the server are the Telegram and Calendly ones, outside commerce), so the surface fails closed. Before any provider webhook endpoint is mounted, the event-store interface must be async-converted and `createSupabaseWebhookReplayGuard` wired in, exactly as the module comment prescribes.
+- `WebhookEventStore` is async-capable (`webhooks.ts:51-54`: `seen` returns `boolean | Promise<boolean>`, `record` carries the event type the durable table requires; every handler call site awaits).
+- `resolveDurableWebhookEventStore` (`production-deps.ts:197-205`) adapts `createSupabaseWebhookReplayGuard` behind that interface and is the default wiring (`:250`); `liveDependencies` resolves it (`:686`) and hands it to `createWebhookHandler` (`:763-768`), so in state 3 (which always has the database) whether an event was seen is answered by the DATABASE.
+- SQL: `supabase/production/research-track-b-commerce.sql:451`, `constraint research_provider_webhook_events_unique unique (provider_name, event_id)`. The guard's `record()` inserts and absorbs exactly the unique-violation code 23505 (`webhooks-store.ts:248-259`), so the constraint, not application memory, is the guard, and a racing double-record collapses to one row.
+- Order of operations in the handler: verify, then `seen` (replay acknowledged with `applied:false`), then `record`, then apply (`webhooks.ts:202-233`), with the event id doubling as the transition idempotency key so even a record-then-crash redelivery is absorbed by `transitionOrder`.
+- Failure direction: a store error throws, the route's catch returns 500 (`routes.ts:686-690`), and the provider retries. Fail closed, retry later, never apply unverified.
+- States 1 and 2 (flag off, or no database): `webhooksFailClosed` (`production-deps.ts:310-314`) answers `capability_disabled`, which the route maps to 503 (`routes.ts:684`), structurally side-effect free.
 
-Result: PASS (with the wiring observation above recorded for the mounting wave).
+Non-blocking observation (reported, not fixed, per this wave's mandate): `webhooks-store.ts` carries stale documentation from before the wiring wave. Its module header (lines 17-28) and the comment blocks at lines 171-187 and 198-202 still state that `WebhookEventStore` is synchronous and that the durable guard "is not wired into the running handler", both of which are no longer true. Worse, the exported `resolveWebhookEventStore()` (`webhooks-store.ts:182-187`) still returns the in-memory store and now has NO production caller (only a test references it); a future integrator reaching for that obvious resolver name would silently get process-memory replay protection instead of the database guard. Recommend deleting or redirecting that export and refreshing the comments in the next code wave.
+
+Result: PASS. The mounted route enforces signature, timestamp tolerance, and database-backed dedup in the correct order; the prior wave's wiring gap is closed. One stale-comment/orphaned-export observation recorded above.
 
 ---
 
-## Check 7: Append-only ledgers
+## Check 7: Append-only ledgers, including the new reservation/allocation tables
 
-Store scan for mutations on ledger tables:
+Store scan for mutations:
 
 ```
-grep -n ".update(|.delete(" persistence/{commissions,store-credit,orders,subscriptions,webhooks}-store.ts
+grep -nE ".update\(|.delete\(" persistence/{commissions,store-credit,orders,subscriptions,webhooks,reservations,partners}-store.ts
 ```
 
-- `commissions-store.ts`: zero `.update()`/`.delete()`. Writes are inserts only (`:295` commission entries, `:640` payout batches, `:675` payout attempts).
-- `store-credit-store.ts`: zero `.update()`/`.delete()`. Ledger writes are inserts only (`:503`).
-- `subscriptions-store.ts`: zero `.update()`/`.delete()` on the events ledger; events are insert-only (`:254`). The `.upsert` at `:239` is the subscription HEADER (current state), not the event ledger.
-- `orders-store.ts`: state events are insert-only (`:464-465` into `research_order_state_events`; the row type comment at `:150` says "Append only"). The `.delete()` calls at `:441` (lines) and `:451` (shipments) are on the current-state child tables, replaced wholesale on save by design (`:440` "Lines are current-state, not a ledger"), not on the events ledger. The header `.upsert` at `:437` is current state.
-- `webhooks-store.ts`: the `.update()` at `:158` is the webhook ORDER projection (current state), not the event dedup table; webhook events are insert-only (`:250-252`).
+- `commissions-store.ts`: zero `.update()`/`.delete()`. Inserts only (`:295` commission entries, `:640` payout batches, `:675` payout attempts).
+- `store-credit-store.ts`: zero `.update()`/`.delete()`. Ledger inserts only (`:503`).
+- `subscriptions-store.ts`: events are insert-only; the header `.upsert` is current state, not the ledger.
+- `orders-store.ts`: state events are insert-only into `research_order_state_events`; the `.delete()` calls at `:441`/`:451` are the current-state lines/shipments replaced wholesale on save, by documented design, not the events ledger.
+- `webhooks-store.ts`: the `.update()` at `:156-159` is the webhook ORDER projection (a narrow UPDATE of current order state keyed by the id the verified handler passes); webhook events are insert-only through the durable guard (`:249-252`).
+- `partners-store.ts` (new surfaces): zero `.update()`/`.delete()`; partner rows, links, and attribution touches are inserts with scoped reads.
+- `reservations-store.ts` (new): the header `.upsert` (`:210`) and the allocation-line `.delete()` plus `.insert()` (`:217-222`) are CURRENT STATE by explicit design, not a ledger. A reservation's status legitimately moves (held to released or finalized) and its lines are replaced together so two generations can never interleave (the `research_order_shipments` pattern, documented at `:20-23` and `:158-164`).
 
-Database enforcement, `supabase/production/research-track-b-commerce.sql`: one shared trigger function `public.research_ledger_is_append_only()` (line 1050) raises an exception on any UPDATE or DELETE, attached as BEFORE UPDATE OR DELETE FOR EACH ROW by four triggers:
+Database enforcement, `supabase/production/research-track-b-commerce.sql`: the shared trigger function `public.research_ledger_is_append_only()` (line 1050) raises on any UPDATE or DELETE, attached BEFORE UPDATE OR DELETE FOR EACH ROW by four triggers:
 
 | Trigger | Table | SQL line |
 | --- | --- | --- |
@@ -186,22 +197,32 @@ Database enforcement, `supabase/production/research-track-b-commerce.sql`: one s
 | `research_order_state_events_no_update` | `public.research_order_state_events` | 1324 |
 | `research_subscription_events_no_update` | `public.research_subscription_events` | 1329 |
 
-So even a hand-run statement or a buggy migration cannot rewrite ledger history; corrections must be new rows.
+New reservation tables (`supabase/research-track-b-fidelity.sql`, this wave): `research_lot_reservations` (header) and `research_lot_reservation_allocations` (FEFO lines). These are deliberately NOT append-only ledgers, and the DDL says so and constrains the mutability instead: status is CHECK-constrained to `held | released | finalized`, a terminal state must carry its timestamp (`research_lot_reservations_released_has_date`, `..._finalized_has_date`), quantities must be positive, allocation lines are uniquely sequenced per reservation (`unique (reservation_id, seq)`) and reference the migration-21 lot table by its unique business `lot_id`. RLS is enabled on both tables (fidelity SQL, final two statements), and the server-only service-role client is the sole writer. Reservation audit evidence is designed to flow through the checkout `reservationAudit` seam (`checkout.ts:88-98, 398-404`) precisely because the append-only order state trail is `transitionOrder`-mediated and owned elsewhere.
 
-Result: PASS. No application update/delete paths on any ledger table, and the database blocks them independently via the four triggers.
+Minor note for the record: migration 21's `research_lot_allocations` (SQL line 295) is described as the append-only ORDER allocation history but carries no append-only trigger; no application code writes to it today (repo-wide grep: only comments reference it), so nothing can currently violate it, but the trigger should accompany its first writer.
+
+Non-blocking observation (reported, not fixed): the reservation capability is complete and tested at every layer (DDL, `reservations-store.ts`, the `createInventoryReservationSeam` FEFO seam with all-or-nothing planning and mid-persist compensation, `checkout.ts:594` onward) but is NOT yet wired into the live composition: `liveDependencies`' `createCheckoutService` call (`production-deps.ts:727-744`) passes no `inventory` or `reservationAudit` dependency, and `resolveReservationStore` has no production caller. The failure direction is safe (live checkout simply takes no durable lot hold, exactly as before this wave), but the wiring wave should inject the seam, and this document flags it so the gap is not mistaken for coverage.
+
+Result: PASS. No application update/delete paths on any ledger table, the four DB triggers block them independently, and the new reservation tables are correctly modeled as constrained current state rather than falsely labeled ledgers.
 
 ---
+
+## Verification of this review's own claims
+
+- `npm run build`: exit 0 (vite client "built in 6.23s", server bundle `dist/index.cjs 414.8kb`); all Check 3/4 scans ran against this fresh `dist/public`.
+- `npm run check` (tsc): exit 0, zero errors.
+- Touched-surface test suites, all green: `npx vitest run` over routes, webhooks, production-wiring, reservations-store, webhooks-store, member-linkage, partners-store, checkout, inventory lots, and partners tests: 10 files, 314 tests, 314 passed.
 
 ## Summary
 
 | # | Check | Result |
 | --- | --- | --- |
-| 1 | Secret scan (server/client/supabase/docs) | PASS (4 hits, all fake redaction-test fixtures) |
-| 2 | Synthetic-production guard on live factories + state 3 | PASS (5 call sites, all before construction) |
+| 1 | Secret scan (server/client/supabase/docs) | PASS (5 hits, all fake redaction/leak-test fixtures) |
+| 2 | Synthetic-production guard on live factories + state 3 | PASS (5 call sites; new surfaces all behind the state-3 guard) |
 | 3 | Supplier PII / signed-master SHA out of client + bundle | PASS |
-| 4 | Client bundle free of fixture token, COA ids, MITCH_TEST_ | PASS |
-| 5 | Tenant isolation in persistence stores | PASS (admin paths documented) |
-| 6 | Provider replay protection (DB dedup + timestamp tolerance) | PASS, one non-blocking wiring observation |
-| 7 | Append-only ledgers (stores + SQL triggers) | PASS |
+| 4 | Client bundle free of fixture token, COA ids, MITCH_TEST_, secret shapes | PASS |
+| 5 | Tenant isolation incl. new webhook/partner/admin routes and new stores | PASS (webhook signature-gated by design; partner routes member-resolved; admin routes admin-guarded) |
+| 6 | Provider replay: HTTP route with signature + timestamp + DB dedup | PASS (prior wiring gap closed; one stale-comment/orphaned-export observation) |
+| 7 | Append-only ledgers incl. new reservation/allocation tables | PASS (reservation tables are constrained current state by design; reservation seam not yet wired, flagged) |
 
-Verdict: PASS. One observation for a later wave: async-convert `WebhookEventStore` and wire `createSupabaseWebhookReplayGuard` before mounting any provider webhook route (no such route is mounted today, so the surface currently fails closed).
+Verdict: PASS. Two observations for the next code wave: (1) refresh or remove the stale `resolveWebhookEventStore` export and its outdated comments in `server/research/commerce/persistence/webhooks-store.ts` so nobody wires in-memory replay protection by accident; (2) inject the built reservation seam (`createInventoryReservationSeam` over `resolveReservationStore`) into `liveDependencies`' checkout composition, plus an append-only trigger on `research_lot_allocations` before its first writer lands.

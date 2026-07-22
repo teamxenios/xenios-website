@@ -204,3 +204,33 @@ export const CLAIM_RESOLUTION_LABELS: Record<Exclude<ClaimDto["resolution"], nul
   partial_refund: "Partial refund",
   none: "No adjustment",
 };
+
+/**
+ * What each claim state means for the member, phrased as what happens next.
+ * Rendered beneath the badges on the order page so a refund request is never
+ * just a machine word. States and resolutions come from the frozen ClaimDto.
+ */
+export const CLAIM_STATE_NOTES: Record<ClaimDto["state"], string> = {
+  submitted: "Received. A person will review this report.",
+  under_review: "A person is reviewing this report now.",
+  information_requested:
+    "We need a little more information from you. Email research@xeniostechnology.com with your order id and the details.",
+  approved: "Approved. A refund or replacement is being arranged, and the outcome will appear here.",
+  declined: "After review, no adjustment is being made on this report.",
+  resolved: "Resolved.",
+};
+
+export const CLAIM_RESOLUTION_NOTES: Record<Exclude<ClaimDto["resolution"], null>, string> = {
+  replacement: "A replacement is being shipped to you at no charge.",
+  refund: "A refund was issued to your original payment method.",
+  partial_refund: "A partial refund was issued to your original payment method.",
+  none: "The report closed with no adjustment.",
+};
+
+/** The single note line for a claim: the resolution's, once one exists. */
+export function claimNote(claim: Pick<ClaimDto, "state" | "resolution">): string {
+  if (claim.resolution !== null && claim.state === "resolved") {
+    return CLAIM_RESOLUTION_NOTES[claim.resolution];
+  }
+  return CLAIM_STATE_NOTES[claim.state] ?? "";
+}

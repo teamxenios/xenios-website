@@ -7,14 +7,21 @@ import {
   createInMemoryAttributionConversionStore,
   createInMemoryAttributionTouchStore,
   createInMemoryPartnerLinkStore,
+  createInMemoryPartnerMemberStore,
   createSupabaseAttributionTouchStore,
   createSupabasePartnerLinkStore,
+  createSupabasePartnerMemberStore,
   DuplicatePartnerLinkCode,
   linkRowToStoredLink,
+  MemberAlreadyPartner,
+  partnerMemberRowToLink,
   storedLinkToRow,
   touchRowToAttributionTouch,
+  type AsyncPartnerMemberStore,
   type AttributionTouchRow,
+  type NewPartnerMemberRecord,
   type PartnerLinkRow,
+  type PartnerMemberRow,
 } from "./partners-store";
 
 // ---------------------------------------------------------------------------
@@ -306,6 +313,13 @@ function fakeSupabase(): { client: SupabaseClient; tables: Map<string, Record<st
         ) {
           return { data: null, error: { code: "23505", message: "duplicate key" } };
         }
+        // research_partners keeps member_id UNIQUE; one member, one partner.
+        if (
+          table === "research_partners" &&
+          rowsFor(table).some((r) => r.member_id === row.member_id)
+        ) {
+          return { data: null, error: { code: "23505", message: "duplicate key" } };
+        }
         rowsFor(table).push({ ...row });
       }
       return { data: null, error: null };
@@ -438,5 +452,146 @@ describe("createSupabaseAttributionTouchStore (fake client)", () => {
       setByAdminId: "admin_3",
     });
     expect((await store.touchesFor("subj_1"))[0].setByAdminId).toBe("admin_3");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Pure row mapping: partner member linkage
+// ---------------------------------------------------------------------------
+
+describe("partnerMemberRowToLink", () => {
+  const row = (overrides: Partial<PartnerMemberRow> = {}): PartnerMemberRow => ({
+    id: "p1",
+    member_id: "mem_1",
+    role: "affiliate",
+    state: "application",
+    certified_at: null,
+    activated_at: null,
+    ...overrides,
+  });
+
+  it("maps a partner row to a PartnerMemberLink", () => {
+    expect(partnerMemberRowToLink(row())).toEqual({
+      partnerId: "p1",
+      memberId: "mem_1",
+      role: "affiliate",
+      state: "application",
+      certifiedAt: null,
+      activatedAt: null,
+    });
+  });
+
+  it("carries certification and activation timestamps through", () => {
+    const mapped = partnerMemberRowToLink(
+      row({ state: "active", certified_at: "2026-01-01T00:00:00.000Z", activated_at: "2026-01-02T00:00:00.000Z" }),
+    );
+    expect(mapped?.certifiedAt).toBe("2026-01-01T00:00:00.000Z");
+    expect(mapped?.activatedAt).toBe("2026-01-02T00:00:00.000Z");
+  });
+
+  it("drops a row with an unknown role or state rather than guessing", () => {
+    expect(partnerMemberRowToLink(row({ role: "regional_director" }))).toBeNull();
+    expect(partnerMemberRowToLink(row({ state: "shadow_banned" }))).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Partner member linkage stores (in-memory reference + fake Supabase client)
+// ---------------------------------------------------------------------------
+
+const newPartner = (
+  memberId: string,
+  partnerId: string,
+): NewPartnerMemberRecord => ({
+  partnerId,
+  memberId,
+  role: "affiliate",
+  legalName: "A Name",
+  contactEmail: "a@example.com",
+  appliedAt: "2026-01-01T00:00:00.000Z",
+});
+
+/** The behavioral contract both implementations must satisfy identically. */
+function memberStoreContract(name: string, makeStore: () => AsyncPartnerMemberStore): void {
+  describe(name, () => {
+    it("returns null for a member with no partner", async () => {
+      expect(await makeStore().findByMemberId("mem_none")).toBeNull();
+    });
+
+    it("creates the member's one partner and finds it by member id", async () => {
+      const store = makeStore();
+      const created = await store.createPartnerForMember(newPartner("mem_1", "p1"));
+      expect(created).toEqual({
+        partnerId: "p1",
+        memberId: "mem_1",
+        role: "affiliate",
+        state: "application",
+        certifiedAt: null,
+        activatedAt: null,
+      });
+      expect(await store.findByMemberId("mem_1")).toEqual(created);
+    });
+
+    it("rejects a second partner for the same member and keeps the first", async () => {
+      const store = makeStore();
+      await store.createPartnerForMember(newPartner("mem_1", "p1"));
+      await expect(
+        store.createPartnerForMember(newPartner("mem_1", "p2")),
+      ).rejects.toBeInstanceOf(MemberAlreadyPartner);
+      expect((await store.findByMemberId("mem_1"))!.partnerId).toBe("p1");
+    });
+
+    it("keeps two members' partners separate (tenant isolation)", async () => {
+      const store = makeStore();
+      await store.createPartnerForMember(newPartner("mem_1", "p1"));
+      await store.createPartnerForMember(newPartner("mem_2", "p2"));
+      expect((await store.findByMemberId("mem_1"))!.partnerId).toBe("p1");
+      expect((await store.findByMemberId("mem_2"))!.partnerId).toBe("p2");
+    });
+  });
+}
+
+memberStoreContract("createInMemoryPartnerMemberStore", () => createInMemoryPartnerMemberStore());
+memberStoreContract("createSupabasePartnerMemberStore (fake client)", () =>
+  createSupabasePartnerMemberStore(fakeSupabase().client),
+);
+
+describe("createSupabasePartnerMemberStore specifics", () => {
+  it("does not let a caller mutate stored state through a returned reference", async () => {
+    const store = createInMemoryPartnerMemberStore();
+    await store.createPartnerForMember(newPartner("mem_1", "p1"));
+    const loaded = await store.findByMemberId("mem_1");
+    loaded!.partnerId = "p_hijack";
+    expect((await store.findByMemberId("mem_1"))!.partnerId).toBe("p1");
+  });
+
+  it("persists the schema's NOT NULL columns without reading them back", async () => {
+    const { client, tables } = fakeSupabase();
+    const store = createSupabasePartnerMemberStore(client);
+    await store.createPartnerForMember(newPartner("mem_1", "p1"));
+    const row = tables.get("research_partners")![0];
+    expect(row.legal_name).toBe("A Name");
+    expect(row.contact_email).toBe("a@example.com");
+    expect(row.state).toBe("application");
+    // The linkage read carries neither administrative column.
+    const link = await store.findByMemberId("mem_1");
+    expect(JSON.stringify(link)).not.toContain("A Name");
+    expect(JSON.stringify(link)).not.toContain("a@example.com");
+  });
+
+  it("drops a persisted row with a foreign role rather than trusting it", async () => {
+    const { client, tables } = fakeSupabase();
+    const store = createSupabasePartnerMemberStore(client);
+    tables.set("research_partners", [
+      {
+        id: "p1",
+        member_id: "mem_1",
+        role: "regional_director",
+        state: "application",
+        certified_at: null,
+        activated_at: null,
+      },
+    ]);
+    expect(await store.findByMemberId("mem_1")).toBeNull();
   });
 });

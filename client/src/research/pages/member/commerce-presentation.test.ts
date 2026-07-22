@@ -5,11 +5,15 @@
 import { describe, expect, it } from "vitest";
 import {
   agreementLabel,
+  claimNote,
+  CLAIM_RESOLUTION_NOTES,
+  CLAIM_STATE_NOTES,
   formatCents,
   formatDate,
   priceLabel,
   PRICE_NOT_CONFIRMED,
 } from "./commerce-presentation";
+import type { ClaimDto } from "@shared/research/commerce-api";
 
 describe("agreementLabel", () => {
   it("turns an opaque key into a readable name", () => {
@@ -69,5 +73,39 @@ describe("formatDate", () => {
 
   it("passes through an unparseable value instead of showing Invalid Date", () => {
     expect(formatDate("not a date")).toBe("not a date");
+  });
+});
+
+describe("claimNote (the member refund-request lifecycle)", () => {
+  const claim = (state: ClaimDto["state"], resolution: ClaimDto["resolution"] = null) => ({ state, resolution });
+
+  it("covers every wire state with a plain what-happens-next sentence", () => {
+    const states: Array<ClaimDto["state"]> = [
+      "submitted",
+      "under_review",
+      "information_requested",
+      "approved",
+      "declined",
+      "resolved",
+    ];
+    for (const state of states) {
+      expect(CLAIM_STATE_NOTES[state].length).toBeGreaterThan(5);
+      expect(claimNote(claim(state))).toBe(CLAIM_STATE_NOTES[state]);
+    }
+  });
+
+  it("tells an approved member a refund or replacement is being arranged", () => {
+    expect(claimNote(claim("approved"))).toContain("refund or replacement");
+  });
+
+  it("prefers the resolution note once a resolved claim carries one", () => {
+    expect(claimNote(claim("resolved", "refund"))).toBe(CLAIM_RESOLUTION_NOTES.refund);
+    expect(claimNote(claim("resolved", "partial_refund"))).toBe(CLAIM_RESOLUTION_NOTES.partial_refund);
+    expect(claimNote(claim("resolved", "replacement"))).toBe(CLAIM_RESOLUTION_NOTES.replacement);
+    expect(claimNote(claim("resolved", "none"))).toBe(CLAIM_RESOLUTION_NOTES.none);
+  });
+
+  it("does not borrow a resolution note before the claim is resolved", () => {
+    expect(claimNote(claim("approved", "refund"))).toBe(CLAIM_STATE_NOTES.approved);
   });
 });

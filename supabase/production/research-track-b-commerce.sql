@@ -1146,8 +1146,6 @@ alter table public.research_idempotency_keys enable row level security;
 
 -- --------------------------------------------------------------------------
 -- TRACK B ADDITION: research-track-b-fidelity.sql  (waves 14+15 schema fidelity)
--- --------------------------------------------------------------------------
-
 -- xenios research Track B schema fidelity (waves 14+15). DRAFT, NOT RUN as of 2026-07-22.
 -- Run once in the Supabase SQL Editor. Safe to re-run (create-if-not-exists and
 -- add-column-if-not-exists only; NO destructive DDL). RLS enabled, no public
@@ -1214,6 +1212,66 @@ alter table public.research_commission_ledger add column if not exists kind text
   check (kind is null or kind in ('accrual', 'transition', 'reversal'));
 
 -- --------------------------------------------------------------------------
+-- Inventory reservations (Gap 4: reservation + FEFO allocation in checkout)
+-- --------------------------------------------------------------------------
+-- Migration 21 defines research_lot_allocations as the append-only ORDER
+-- allocation history (lot uuid + order uuid). A checkout reservation is
+-- created BEFORE an order row exists and carries the member, a status, and an
+-- expiry, none of which that table can store, so reservations get their own
+-- pair of tables here. Persisted by
+-- server/research/commerce/persistence/reservations-store.ts; created and
+-- settled by the ReservationSeam in server/research/commerce/checkout.ts.
+--
+-- Model: the hold IS the decrement. reserve lowers
+-- research_inventory_lots.quantity_available, release raises it back, and
+-- finalize marks the hold permanent without touching quantity again.
+
+-- The reservation header: one row per reserved checkout line.
+create table if not exists public.research_lot_reservations (
+  id              uuid primary key default gen_random_uuid(),
+  -- The business id the service generates and the checkout order carries.
+  reservation_id  text not null unique,
+  member_id       uuid not null,
+  sku             text not null,
+  quantity        integer not null check (quantity > 0),
+  status          text not null default 'held'
+                    check (status in ('held','released','finalized')),
+  -- A still-held reservation past this instant may be swept back to the shelf.
+  expires_at      timestamptz not null,
+  created_at      timestamptz not null default now(),
+  released_at     timestamptz,
+  finalized_at    timestamptz,
+  -- A terminal state carries its timestamp; held carries neither.
+  constraint research_lot_reservations_released_has_date
+    check (status <> 'released' or released_at is not null),
+  constraint research_lot_reservations_finalized_has_date
+    check (status <> 'finalized' or finalized_at is not null)
+);
+create index if not exists research_lot_reservations_member_idx
+  on public.research_lot_reservations (member_id);
+-- The sweeper's hot path: held reservations by expiry.
+create index if not exists research_lot_reservations_expiry_idx
+  on public.research_lot_reservations (expires_at)
+  where status = 'held';
+
+-- The lot-level FEFO allocation lines a reservation pinned. lot_id is the
+-- BUSINESS lot id (research_inventory_lots.lot_id is unique per migration 21),
+-- matching what the domain and the inventory store key by. seq preserves the
+-- allocation order; lines are replaced together on save.
+create table if not exists public.research_lot_reservation_allocations (
+  id              uuid primary key default gen_random_uuid(),
+  reservation_id  uuid not null references public.research_lot_reservations (id) on delete cascade,
+  seq             integer not null check (seq >= 0),
+  lot_id          text not null references public.research_inventory_lots (lot_id),
+  quantity        integer not null check (quantity > 0),
+  constraint research_lot_reservation_allocations_unique_seq unique (reservation_id, seq)
+);
+create index if not exists research_lot_reservation_allocations_lot_idx
+  on public.research_lot_reservation_allocations (lot_id);
+
+alter table public.research_lot_reservations            enable row level security;
+alter table public.research_lot_reservation_allocations enable row level security;
+
 -- TRACK B COMPLETION 1: research_admin_queue_items  (persisted admin queue)
 -- --------------------------------------------------------------------------
 

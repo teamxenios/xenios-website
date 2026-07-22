@@ -20,12 +20,15 @@
 // existing in-memory reference and a documented, itemized deferral, because the
 // canon forbids inventing business facts or dropping audited history to force a
 // mapping. Concretely:
-//   - Partner records: research_partners requires member_id (NOT NULL UNIQUE), a
-//     field the current PartnerRecord model does not carry at all; and the shipped
-//     lifecycle-event table is keyed by (from_state, to_state, actor_id NOT NULL)
-//     while the domain PartnerLifecycleEvent is keyed by a typed `type` with a
-//     nullable actorId. A faithful round trip is impossible without a schema and
-//     domain reconciliation, so this store fails safe to the in-memory reference.
+//   - Partner records: PartnerRecord now carries memberId (GAP 5a), matching
+//     research_partners.member_id (NOT NULL UNIQUE), and the MEMBER LINKAGE surface
+//     (create one partner per member + findByMemberId) is durably backed below
+//     (AsyncPartnerMemberStore). The FULL record still cannot round-trip: the
+//     shipped lifecycle-event table is keyed by (from_state, to_state, actor_id
+//     NOT NULL) while the domain PartnerLifecycleEvent is keyed by a typed `type`
+//     with a nullable actorId, and the identity/tax/payout status vocabularies
+//     diverge (identity_verified boolean vs a four-state status). So the full
+//     repository still fails safe to the in-memory reference.
 //   - Attribution conversions: research_attribution_conversions carries
 //     (order_id, partner_id, subject_key, model) but not the AttributionRecord
 //     provenance (channel, setByAdminId, overrideReason), so a stored record could
@@ -41,7 +44,13 @@
 // save bridge behind the commerce flag.
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { AttributionChannel, AttributionTouch } from "@shared/research/distribution";
+import {
+  PARTNER_ROLES,
+  type AttributionChannel,
+  type AttributionTouch,
+  type PartnerRole,
+  type PartnerState,
+} from "@shared/research/distribution";
 import {
   createInMemoryPartnerRepository,
   type PartnerRepository,
@@ -420,15 +429,207 @@ export function resolveAttributionConversionStore(): AsyncAttributionConversionS
 }
 
 // ===========================================================================
+// Partner member linkage (research_partners) - the GAP 5a durable surface
+// ===========================================================================
+
+const RESEARCH_PARTNERS = "research_partners";
+
+/** The partner states the schema's check constraint admits; identical to the
+ * domain PartnerState union, validated on the way out rather than cast. */
+const PARTNER_STATES: readonly PartnerState[] = [
+  "application",
+  "identity_verification_pending",
+  "tax_status_pending",
+  "payout_status_pending",
+  "agreement_pending",
+  "training_pending",
+  "certification_pending",
+  "active",
+  "quality_review",
+  "suspended",
+  "terminated",
+];
+
+function asPartnerRole(value: string): PartnerRole | null {
+  return (PARTNER_ROLES as readonly string[]).includes(value) ? (value as PartnerRole) : null;
+}
+
+function asPartnerState(value: string): PartnerState | null {
+  return (PARTNER_STATES as readonly string[]).includes(value) ? (value as PartnerState) : null;
+}
+
+/** A research_partners row, only the columns the linkage surface reads. */
+export interface PartnerMemberRow {
+  id: string;
+  member_id: string;
+  role: string;
+  state: string;
+  certified_at: string | null;
+  activated_at: string | null;
+}
+
+/**
+ * The member-linkage view of one partner. Deliberately narrow: legal name,
+ * contact email, and internal notes are administrative columns and are not read
+ * back here, so this shape cannot carry them anywhere.
+ */
+export interface PartnerMemberLink {
+  partnerId: string;
+  memberId: string;
+  role: PartnerRole;
+  state: PartnerState;
+  certifiedAt: string | null;
+  activatedAt: string | null;
+}
+
+/**
+ * Map a persisted partner row to a PartnerMemberLink. Returns null when the role
+ * or state is not a value the domain defines, so a corrupt or foreign row is
+ * dropped rather than trusted (the same discipline as the channel guards above).
+ */
+export function partnerMemberRowToLink(row: PartnerMemberRow): PartnerMemberLink | null {
+  const role = asPartnerRole(row.role);
+  const state = asPartnerState(row.state);
+  if (role === null || state === null) return null;
+  return {
+    partnerId: row.id,
+    memberId: row.member_id,
+    role,
+    state,
+    certifiedAt: row.certified_at ?? null,
+    activatedAt: row.activated_at ?? null,
+  };
+}
+
+/** What onboarding persists. legalName and contactEmail satisfy the schema's NOT
+ * NULL columns; they are written here and never read back through this store. */
+export interface NewPartnerMemberRecord {
+  partnerId: string;
+  memberId: string;
+  role: PartnerRole;
+  legalName: string;
+  contactEmail: string;
+  appliedAt: string;
+}
+
+/**
+ * Raised when a member who already owns a partner tries to create another. The
+ * member id is the ownership identity, and research_partners keeps it UNIQUE, so
+ * a second create is REJECTED rather than overwritten: one member, one partner,
+ * under concurrency and not only in application code.
+ */
+export class MemberAlreadyPartner extends Error {
+  constructor(memberId: string) {
+    super(`Member ${memberId} already owns a partner account; a second is never created.`);
+    this.name = "MemberAlreadyPartner";
+  }
+}
+
+/**
+ * The async storage seam for the partner-member linkage. Create + read only:
+ * lifecycle state moves belong to the partner service, not to this store, so
+ * there is no update path here that could bypass the activation gates.
+ */
+export interface AsyncPartnerMemberStore {
+  /** Insert the member's ONE partner. A duplicate member throws MemberAlreadyPartner. */
+  createPartnerForMember(record: NewPartnerMemberRecord): Promise<PartnerMemberLink>;
+  findByMemberId(memberId: string): Promise<PartnerMemberLink | null>;
+}
+
+export function createInMemoryPartnerMemberStore(): AsyncPartnerMemberStore {
+  const byMember = new Map<string, PartnerMemberLink>();
+  const clone = (link: PartnerMemberLink): PartnerMemberLink => ({ ...link });
+  return {
+    async createPartnerForMember(record) {
+      // Never an overwrite: the DB keeps member_id UNIQUE, so the reference
+      // rejects a duplicate identically.
+      if (byMember.has(record.memberId)) throw new MemberAlreadyPartner(record.memberId);
+      const link: PartnerMemberLink = {
+        partnerId: record.partnerId,
+        memberId: record.memberId,
+        role: record.role,
+        state: "application",
+        certifiedAt: null,
+        activatedAt: null,
+      };
+      byMember.set(record.memberId, link);
+      return clone(link);
+    },
+    async findByMemberId(memberId) {
+      const link = byMember.get(memberId);
+      return link ? clone(link) : null;
+    },
+  };
+}
+
+/**
+ * Supabase-backed member linkage store. Reads are scoped by the member id the
+ * caller passes (the authenticated subject) and never by a partner id, so one
+ * member's partner can never be resolved under another member's identity.
+ */
+export function createSupabasePartnerMemberStore(
+  client: SupabaseClient = getSupabaseAdmin(),
+): AsyncPartnerMemberStore {
+  return {
+    async createPartnerForMember(record) {
+      const ins = await client.from(RESEARCH_PARTNERS).insert({
+        id: record.partnerId,
+        member_id: record.memberId,
+        role: record.role,
+        state: "application",
+        legal_name: record.legalName,
+        contact_email: record.contactEmail,
+        applied_at: record.appliedAt,
+        updated_at: record.appliedAt,
+      });
+      if (ins.error) {
+        // The UNIQUE constraint on member_id is the guarantee; surface it as the
+        // same typed error the in-memory reference raises.
+        if (ins.error.code === UNIQUE_VIOLATION) throw new MemberAlreadyPartner(record.memberId);
+        throw new Error(`partner create failed: ${ins.error.message}`);
+      }
+      return {
+        partnerId: record.partnerId,
+        memberId: record.memberId,
+        role: record.role,
+        state: "application",
+        certifiedAt: null,
+        activatedAt: null,
+      };
+    },
+
+    async findByMemberId(memberId) {
+      const found = await client
+        .from(RESEARCH_PARTNERS)
+        .select("id, member_id, role, state, certified_at, activated_at")
+        .eq("member_id", memberId)
+        .maybeSingle();
+      if (found.error) throw new Error(`partner member lookup failed: ${found.error.message}`);
+      if (!found.data) return null;
+      return partnerMemberRowToLink(found.data as PartnerMemberRow);
+    },
+  };
+}
+
+export function resolvePartnerMemberStore(): AsyncPartnerMemberStore {
+  return supabaseConfigured()
+    ? createSupabasePartnerMemberStore()
+    : createInMemoryPartnerMemberStore();
+}
+
+// ===========================================================================
 // Partner records and organizations - resolvers with a documented deferral
 // ===========================================================================
 
 /**
- * PartnerRepository is already async, so the store IS the interface. The Supabase
- * branch is deferred (not stubbed): research_partners requires a member_id the
- * PartnerRecord model does not carry, and the lifecycle-event table shape diverges
- * from the typed PartnerLifecycleEvent, so a faithful mapping needs a schema and
- * domain reconciliation. Until then this fails safe to the in-memory reference,
+ * PartnerRepository is already async, so the store IS the interface. The domain
+ * model now carries memberId and findByMemberId (GAP 5a), and the in-memory
+ * reference implements both, so the member linkage is real here; the durable
+ * linkage surface is AsyncPartnerMemberStore above. The FULL-record Supabase
+ * branch stays deferred (not stubbed): the lifecycle-event table shape diverges
+ * from the typed PartnerLifecycleEvent and the clearance-status vocabularies
+ * differ, so a faithful whole-record mapping still needs a schema and domain
+ * reconciliation. Until then this fails safe to the in-memory reference,
  * which keeps the service's behavior identical and leaves commerce failing closed.
  */
 export function resolvePartnerRepository(seed: readonly PartnerRecord[] = []): PartnerRepository {

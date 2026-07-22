@@ -9,10 +9,12 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   addCartLine,
   commercePaths,
+  createSubscription,
   fetchOrder,
   fetchOrders,
   fetchSubscriptions,
   getCart,
+  getClaim,
   getOrder,
   getProduct,
   getStoreCredit,
@@ -314,6 +316,38 @@ describe("orders, subscriptions, claims, and store credit endpoints", () => {
     expect(calls[0].url).toBe("/api/research/subscriptions/sub%209");
     expect(calls[0].init.method).toBe("POST");
     expect(calls[0].init.body).toBe(JSON.stringify({ action: "reschedule", rescheduleTo: "2026-08-01" }));
+  });
+
+  it("createSubscription POSTs the exact wire shape to /api/research/subscriptions", async () => {
+    stubFetch(200, { ok: true, subscription: {} });
+    await createSubscription("tok", {
+      sku: "XN-01",
+      quantity: 2,
+      frequencyDays: 60,
+      priceVersion: "cents-6900",
+    });
+    expect(calls[0].url).toBe("/api/research/subscriptions");
+    expect(calls[0].init.method).toBe("POST");
+    expect(JSON.parse(String(calls[0].init.body))).toEqual({
+      sku: "XN-01",
+      quantity: 2,
+      frequencyDays: 60,
+      priceVersion: "cents-6900",
+    });
+  });
+
+  it("routes a subscription_action_invalid create to the denied kind", async () => {
+    stubFetch(400, { ok: false, code: "subscription_action_invalid", message: "not eligible" });
+    expect(
+      await createSubscription("tok", { sku: "XN-01", quantity: 1, frequencyDays: 30, priceVersion: "cents-1" }),
+    ).toEqual({ kind: "denied", code: "subscription_action_invalid", message: "not eligible" });
+  });
+
+  it("getClaim encodes the claim id into the frozen claim detail path", async () => {
+    stubFetch(200, { ok: true, claim: {} });
+    await getClaim("tok", "clm/7 x");
+    expect(calls[0].url).toBe("/api/research/claims/clm%2F7%20x");
+    expect(calls[0].init.method).toBe("GET");
   });
 
   it("submitClaim POSTs the CreateClaimRequest to /api/research/claims", async () => {

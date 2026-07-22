@@ -14,6 +14,7 @@
 // Nothing here marks an order paid on its own: every advance goes through
 // `transitionOrder`, which requires a provider reference for a paid state.
 
+import { randomUUID } from "node:crypto";
 import type { CartDto, CheckoutRequest, CommerceDenialCode } from "@shared/research/commerce-api";
 import {
   evaluateLargeOrderReview,
@@ -23,8 +24,16 @@ import {
   type OrderState,
   type ShippingQuote,
 } from "@shared/research/commerce";
+import {
+  allocateFefo,
+  type AllocationLine,
+  type InventoryLot,
+  type LotEvaluation,
+} from "../inventory/lots";
 import type { PaymentProvider } from "../providers/payment";
 import type { ShippingProvider } from "../providers/shipping";
+import type { InventoryLotRepository } from "./persistence/inventory-store";
+import type { ReservationRepository } from "./persistence/reservations-store";
 
 /**
  * A configured package weight so a quote can be requested at all. It is a shipping
@@ -32,6 +41,63 @@ import type { ShippingProvider } from "../providers/shipping";
  * overrides it.
  */
 export const DEFAULT_PACKAGE_WEIGHT_GRAMS = 500;
+
+// ---------------------------------------------------------------------------
+// Inventory reservation seam
+// ---------------------------------------------------------------------------
+
+/**
+ * Why a reservation was refused. `insufficient_stock` is the member-facing
+ * denial; the lot-precise codes reuse the exact names the subscription renewal
+ * gate already established (RenewalRefusalCode in subscriptions.ts), so an
+ * operator sees one vocabulary for "this lot cannot ship" everywhere.
+ */
+export type ReservationRefusalCode =
+  | "insufficient_stock"
+  | "coa_missing"
+  | "lot_expired"
+  | "lot_recalled";
+
+export interface ReservationLineRequest {
+  sku: string;
+  quantity: number;
+}
+
+export type ReserveOutcome =
+  | { ok: true; reservationIds: string[] }
+  | { ok: false; refusals: ReservationRefusalCode[] };
+
+/**
+ * The inventory hold around a checkout. `reserve` pins real lots (FEFO) and
+ * decrements their available quantity so no concurrent checkout can sell the
+ * same units; `release` restores the hold when the checkout fails; `finalize`
+ * makes the decrement permanent on settlement. All-or-nothing per call: a
+ * refusal reserves nothing.
+ */
+export interface ReservationSeam {
+  reserve(
+    memberId: string,
+    lines: readonly ReservationLineRequest[],
+    asOf: Date,
+  ): Promise<ReserveOutcome>;
+  release(reservationIds: readonly string[]): Promise<void>;
+  finalize(reservationIds: readonly string[]): Promise<void>;
+}
+
+/**
+ * One reservation audit event. The append-only order state trail
+ * (research_order_state_events) has no metadata column and its writer lives in
+ * orders-store.ts (owned elsewhere), so reservation evidence goes through this
+ * injected recorder rather than a new audit system. The production wave that
+ * wires the seam decides where these land.
+ */
+export interface ReservationAuditEvent {
+  type: "reserved" | "released" | "finalized";
+  orderId: string;
+  memberId: string;
+  reservationIds: string[];
+  at: string;
+}
 
 export interface CheckoutDeps {
   cart: { revalidate(memberId: string, asOf: Date): Promise<CartDto> };
@@ -58,6 +124,17 @@ export interface CheckoutDeps {
    */
   storeCredit?: {
     recordSpend(memberId: string, amountCents: number, orderId: string, asOf: Date): Promise<void>;
+  };
+  /**
+   * The inventory reservation seam. When present, a clean submit reserves real
+   * lot stock (FEFO) BEFORE any money moves, releases it when the payment is
+   * refused, and finalizes it on capture. Absent (the default, and today's
+   * production wiring) nothing changes: no stock is held, exactly as before.
+   */
+  inventory?: ReservationSeam;
+  /** Where reservation audit evidence goes. Absent means no recording. */
+  reservationAudit?: {
+    record(event: ReservationAuditEvent): Promise<void> | void;
   };
 }
 
@@ -86,11 +163,21 @@ export interface CheckoutOrder {
   captured: boolean;
   reviewTriggers: LargeOrderTrigger[];
   idempotencyKey: string;
+  /** The inventory holds backing this order. Empty when no seam is wired. */
+  reservationIds: string[];
 }
 
 export type CheckoutOutcome =
   | { ok: true; order: CheckoutOrder; idempotent: boolean }
-  | { ok: false; denials: CommerceDenialCode[] };
+  | {
+      ok: false;
+      denials: CommerceDenialCode[];
+      /**
+       * Present only when the reservation seam refused: the lot-precise
+       * operator codes behind the member-facing `insufficient_stock` denial.
+       */
+      reservationRefusals?: ReservationRefusalCode[];
+    };
 
 export interface CheckoutService {
   validate(memberId: string, req: CheckoutRequest, asOf: Date): Promise<CheckoutValidation>;
@@ -162,7 +249,6 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
    * the first instead of racing it.
    */
   const inFlight = new Map<string, Promise<CheckoutOutcome>>();
-  let counter = 0;
 
   /**
    * Probes the payment provider without side effects. A provider that cannot take a
@@ -283,6 +369,48 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       return { ok: false, denials: denials.list };
     }
 
+    /**
+     * The inventory hold, taken only after every gate has passed and BEFORE any
+     * money moves. A refusal reserves nothing (the seam is all-or-nothing) and
+     * creates no order, so the idempotency key stays clean for a retry once
+     * stock exists. The member sees `insufficient_stock`; the precise lot-level
+     * refusals ride alongside for the operator queue.
+     */
+    let reservationIds: string[] = [];
+    if (deps.inventory) {
+      const reserved = await deps.inventory.reserve(
+        memberId,
+        cart.lines.map((line) => ({ sku: line.sku, quantity: line.quantity })),
+        asOf,
+      );
+      if (!reserved.ok) {
+        return {
+          ok: false,
+          denials: ["insufficient_stock"],
+          reservationRefusals: reserved.refusals,
+        };
+      }
+      reservationIds = reserved.reservationIds;
+    }
+
+    const audit = async (type: ReservationAuditEvent["type"], orderId: string): Promise<void> => {
+      if (!deps.reservationAudit || reservationIds.length === 0) return;
+      await deps.reservationAudit.record({
+        type,
+        orderId,
+        memberId,
+        reservationIds: [...reservationIds],
+        at: asOf.toISOString(),
+      });
+    };
+
+    /** The compensation for a checkout that dies after the hold was taken. */
+    const releaseReservations = async (orderId: string): Promise<void> => {
+      if (!deps.inventory || reservationIds.length === 0) return;
+      await deps.inventory.release(reservationIds);
+      await audit("released", orderId);
+    };
+
     // Totals are rebuilt from the revalidated cart. A client-supplied amount is not
     // read anywhere in this function.
     const shippingCents = orderShippingTotalCents([quote]);
@@ -298,7 +426,11 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     const orderValueCents = cart.subtotalCents + shippingCents;
     const totalCents = Math.max(0, orderValueCents - cart.storeCreditAppliedCents);
 
-    const orderId = `ord_${++counter}`;
+    // Globally unique, not a per-process counter: two service instances over
+    // one durable repository (a restart, or a second app instance) must never
+    // mint the same order id, because a colliding id lets a later save
+    // silently overwrite another instance's projected order.
+    const orderId = `ord_${randomUUID()}`;
     const order: CheckoutOrder = {
       orderId,
       memberId,
@@ -314,14 +446,19 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       captured: false,
       reviewTriggers: [],
       idempotencyKey: req.idempotencyKey,
+      reservationIds,
     };
 
     const opened = transitionOrder({ from: order.state, to: "checkout_pending", actor: "system" });
-    if (!opened.ok) return { ok: false, denials: ["order_state_invalid"] };
+    if (!opened.ok) {
+      await releaseReservations(orderId);
+      return { ok: false, denials: ["order_state_invalid"] };
+    }
     order.state = opened.state;
 
     orders.set(orderId, order);
     byIdempotencyKey.set(idempotencyScope, orderId);
+    await audit("reserved", orderId);
 
     const review = evaluateLargeOrderReview({
       totalCents: orderValueCents,
@@ -371,6 +508,9 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       idempotencyKey: req.idempotencyKey,
     });
     if (!auth.ok) {
+      // The hold is returned to the shelf: no payment, no reservation. This is
+      // the leak test's path, and the release must restore every unit reserved.
+      await releaseReservations(orderId);
       const cancelled = transitionOrder({ from: order.state, to: "cancelled", actor: "system" });
       if (cancelled.ok) order.state = cancelled.state;
       return { ok: false, denials: ["payment_failed"] };
@@ -406,10 +546,190 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     if (captured.ok) {
       order.state = captured.state;
       order.captured = true;
+      // Settlement: the reserve-time decrement becomes permanent. The units are
+      // sold, so a later release (or refund) must never put them back.
+      if (deps.inventory && reservationIds.length > 0) {
+        await deps.inventory.finalize(reservationIds);
+        await audit("finalized", orderId);
+      }
     }
 
     return { ok: true, order, idempotent: false };
   }
 
   return { validate, submit };
+}
+
+// ---------------------------------------------------------------------------
+// The real reservation seam: FEFO over persisted lots
+// ---------------------------------------------------------------------------
+
+/** How long a hold lives before a sweeper may return it to the shelf. */
+export const DEFAULT_RESERVATION_HOLD_MINUTES = 30;
+
+export interface InventoryReservationSeamDeps {
+  lots: InventoryLotRepository;
+  reservations: ReservationRepository;
+  /** Hold lifetime written onto every reservation. */
+  holdMinutes?: number;
+  /** Injected for tests; defaults to a UUID so ids are database-compatible. */
+  newReservationId?: () => string;
+  /** Clock for settlement timestamps; reserve stamps use the caller's asOf. */
+  now?: () => Date;
+}
+
+/**
+ * Builds the ReservationSeam over the persisted lot and reservation stores.
+ *
+ * Model: the hold IS the decrement. `reserve` lowers each allocated lot's
+ * quantity_available immediately (a hold that does not decrement is not a hold
+ * under concurrency, per inventory-store.ts), `release` raises it back, and
+ * `finalize` marks the allocations final WITHOUT touching quantity again: the
+ * settlement decrement already happened at reserve time and finalizing makes
+ * it permanent rather than double-counting it.
+ *
+ * `reserve` is all-or-nothing across every requested line. Allocation is
+ * planned entirely in memory first (a working copy is decremented so two lines
+ * of one sku cannot claim the same units), and only a fully satisfiable plan
+ * is persisted. A mid-persist failure compensates what it applied, so a
+ * refused or failed reserve never leaks a partial hold.
+ */
+export function createInventoryReservationSeam(deps: InventoryReservationSeamDeps): ReservationSeam {
+  const holdMinutes = deps.holdMinutes ?? DEFAULT_RESERVATION_HOLD_MINUTES;
+  const newId = deps.newReservationId ?? (() => `rsv_${randomUUID()}`);
+  const now = deps.now ?? (() => new Date());
+
+  /**
+   * Mines the precise lot-level refusals out of a failed allocation, using the
+   * exact vocabulary subscriptions.ts established. Only a FAILED allocation
+   * reaches here: while clean lots can satisfy the quantity, a bad lot
+   * elsewhere in the pool is FEFO's problem, not a refusal.
+   */
+  function preciseRefusals(
+    pool: readonly InventoryLot[],
+    rejected: readonly LotEvaluation[],
+    into: ReservationRefusalCode[],
+  ): void {
+    const push = (code: ReservationRefusalCode): void => {
+      if (!into.includes(code)) into.push(code);
+    };
+    push("insufficient_stock");
+    for (const evaluation of rejected) {
+      if (evaluation.blockReasons.includes("expired")) push("lot_expired");
+      if (evaluation.blockReasons.includes("recalled")) push("lot_recalled");
+      if (evaluation.blockReasons.includes("documentation_missing")) {
+        const lot = pool.find((l) => l.lotId === evaluation.lotId);
+        if (lot && !lot.documents.coaOnFile) push("coa_missing");
+      }
+    }
+  }
+
+  return {
+    async reserve(memberId, lines, asOf) {
+      // Plan phase, entirely in memory. listBySku returns defensive copies, so
+      // decrementing the working pool never touches stored state.
+      const pools = new Map<string, InventoryLot[]>();
+      const refusals: ReservationRefusalCode[] = [];
+      const planned: Array<{ sku: string; quantity: number; allocation: AllocationLine[] }> = [];
+
+      for (const line of lines) {
+        let pool = pools.get(line.sku);
+        if (!pool) {
+          pool = await deps.lots.listBySku(line.sku);
+          pools.set(line.sku, pool);
+        }
+        const result = allocateFefo(pool, line.sku, line.quantity, asOf);
+        if (!result.ok) {
+          // Accumulate across lines (the operator sees the complete picture),
+          // and keep planning nothing: one refused line refuses the whole hold.
+          preciseRefusals(pool, result.rejected, refusals);
+          continue;
+        }
+        for (const alloc of result.lines) {
+          const lot = pool.find((l) => l.lotId === alloc.lotId)!;
+          lot.quantityAvailable -= alloc.quantity;
+        }
+        planned.push({ sku: line.sku, quantity: line.quantity, allocation: result.lines });
+      }
+
+      if (refusals.length > 0) return { ok: false, refusals };
+
+      // Persist phase: decrement the real lots, compensating on any failure so
+      // a half-applied hold cannot survive.
+      const applied: AllocationLine[] = [];
+      try {
+        for (const plan of planned) {
+          for (const alloc of plan.allocation) {
+            await deps.lots.adjustQuantityAvailable(alloc.lotId, -alloc.quantity);
+            applied.push(alloc);
+          }
+        }
+
+        const reservationIds: string[] = [];
+        const expiresAt = new Date(asOf.getTime() + holdMinutes * 60 * 1000).toISOString();
+        for (const plan of planned) {
+          const reservationId = newId();
+          await deps.reservations.save({
+            reservationId,
+            memberId,
+            sku: plan.sku,
+            quantity: plan.quantity,
+            lines: plan.allocation.map((line) => ({ ...line })),
+            status: "held",
+            expiresAt,
+            createdAt: asOf.toISOString(),
+            releasedAt: null,
+            finalizedAt: null,
+          });
+          reservationIds.push(reservationId);
+        }
+        return { ok: true, reservationIds };
+      } catch (error) {
+        for (const alloc of applied) {
+          await deps.lots.adjustQuantityAvailable(alloc.lotId, alloc.quantity);
+        }
+        // A concurrent depletion surfaces as the store's refusal to go
+        // negative: that is an out-of-stock race, reported as such.
+        if (error instanceof Error && /negative/.test(error.message)) {
+          return { ok: false, refusals: ["insufficient_stock"] };
+        }
+        throw error;
+      }
+    },
+
+    async release(reservationIds) {
+      for (const reservationId of reservationIds) {
+        const reservation = await deps.reservations.get(reservationId);
+        // Idempotent: only a HELD reservation restores stock. A repeated
+        // release, or a release after finalize, must never double-restore.
+        if (!reservation || reservation.status !== "held") continue;
+        for (const line of reservation.lines) {
+          await deps.lots.adjustQuantityAvailable(line.lotId, line.quantity);
+        }
+        await deps.reservations.save({
+          ...reservation,
+          status: "released",
+          releasedAt: now().toISOString(),
+        });
+      }
+    },
+
+    async finalize(reservationIds) {
+      for (const reservationId of reservationIds) {
+        const reservation = await deps.reservations.get(reservationId);
+        if (!reservation) throw new Error(`reservation not found: ${reservationId}`);
+        if (reservation.status === "finalized") continue; // settlement replay
+        if (reservation.status === "released") {
+          // Released stock is back on the shelf; settling it now would ship
+          // units the hold no longer owns. Surface loudly.
+          throw new Error(`reservation ${reservationId} was released and cannot be finalized`);
+        }
+        await deps.reservations.save({
+          ...reservation,
+          status: "finalized",
+          finalizedAt: now().toISOString(),
+        });
+      }
+    },
+  };
 }

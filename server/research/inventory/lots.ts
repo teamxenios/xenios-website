@@ -228,6 +228,59 @@ export function allocateFefo(
 }
 
 // ---------------------------------------------------------------------------
+// Reservations
+// ---------------------------------------------------------------------------
+
+/**
+ * A reservation moves through exactly three states. `held` is the only state in
+ * which the stock decrement is provisional: `released` restores it, `finalized`
+ * makes it permanent. There is no path back from either terminal state.
+ */
+export type ReservationStatus = "held" | "released" | "finalized";
+
+export const RESERVATION_STATUSES: readonly ReservationStatus[] = [
+  "held",
+  "released",
+  "finalized",
+] as const;
+
+/**
+ * A lot-level hold created at checkout, one per requested (sku, quantity) line.
+ *
+ * `lines` is the FEFO allocation the hold pinned: which lots, how much from
+ * each, in allocation order. The hold decrements `quantityAvailable` at
+ * reserve time (a hold that does not decrement is not a hold under
+ * concurrency), so a release must restore exactly these lines and a
+ * finalization must restore none of them.
+ */
+export interface LotReservation {
+  reservationId: string;
+  memberId: string;
+  sku: string;
+  quantity: number;
+  lines: AllocationLine[];
+  status: ReservationStatus;
+  /** ISO timestamp after which a still-held reservation may be swept back. */
+  expiresAt: string;
+  createdAt: string;
+  releasedAt: string | null;
+  finalizedAt: string | null;
+}
+
+/**
+ * Whether a reservation's hold has lapsed. Only a HELD reservation can expire:
+ * released stock is already back, and finalized stock is already sold, so
+ * neither is the sweeper's business.
+ */
+export function reservationIsExpired(
+  reservation: Pick<LotReservation, "status" | "expiresAt">,
+  asOf: Date,
+): boolean {
+  if (reservation.status !== "held") return false;
+  return new Date(reservation.expiresAt).getTime() <= asOf.getTime();
+}
+
+// ---------------------------------------------------------------------------
 // Recall traceability
 // ---------------------------------------------------------------------------
 

@@ -127,6 +127,11 @@ export function getCommerceQueues(token: string): Promise<ApiResult<{ queues: Ad
   return apiGet(`${BASE}/commerce/queues`, token);
 }
 
+// The open member claims, as the admin claim workflow sees them.
+export function listAdminClaims<T>(token: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${BASE}/claims`, token);
+}
+
 // -------------------------------- actions ----------------------------------
 
 // The application review verbs (approve, decline, request-information, and
@@ -148,8 +153,58 @@ export function actOnReferralFlag<T>(token: string, flagId: string, body: unknow
   return apiPost<T>(`${BASE}/referral-fraud/${enc(flagId)}/action`, body, token);
 }
 
-export function replyToQuestion<T>(token: string, id: string, body: unknown): Promise<ApiResult<T>> {
-  return apiPost<T>(`${BASE}/questions/${enc(id)}/reply`, body, token);
+/**
+ * The real answer endpoint (POST /api/admin/research/questions/:id/answer).
+ * The wire shape is the server's answerSchema exactly: answerText plus the
+ * status the answer moves the question into. There is no "/reply" route on
+ * the server; the old name pointed at one that never existed.
+ */
+export interface AdminQuestionAnswer {
+  answerText: string;
+  status: "answer_ready" | "more_information_needed";
+}
+
+export function answerQuestion<T>(token: string, id: string, body: AdminQuestionAnswer): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/questions/${enc(id)}/answer`, body, token);
+}
+
+// ----------------------- claim review and resolution ------------------------
+// The admin claim workflow (POST /api/admin/research/claims/:claimId/...).
+// Wire decisions come from the server's CLAIM_REVIEW_WIRE_DECISIONS; anything
+// else is refused at the boundary, so the type here lists exactly those four.
+
+export type AdminClaimReviewDecision = "under_review" | "information_requested" | "approved" | "declined";
+
+export function reviewClaim<T>(
+  token: string,
+  claimId: string,
+  decision: AdminClaimReviewDecision,
+  note?: string,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(
+    `${BASE}/claims/${enc(claimId)}/review`,
+    { decision, ...(note !== undefined ? { note } : {}) },
+    token,
+  );
+}
+
+/**
+ * Money moves only through this call, and only with a positive integer amount
+ * in cents plus an idempotency key, so a retried click can never refund twice.
+ * The server additionally requires the claim to be approved first.
+ */
+export function refundClaim<T>(
+  token: string,
+  claimId: string,
+  amountCents: number,
+  idempotencyKey: string,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/claims/${enc(claimId)}/refund`, { amountCents, idempotencyKey }, token);
+}
+
+/** Resolves an approved claim with a replacement shipment instead of money. */
+export function resolveClaimWithReplacement<T>(token: string, claimId: string): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/claims/${enc(claimId)}/replacement`, {}, token);
 }
 
 export function runOutbox<T>(token: string): Promise<ApiResult<T>> {

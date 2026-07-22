@@ -1,16 +1,18 @@
-// Wave 24: the running-server acceptance harness.
+// Wave 24+: the running-server acceptance harness.
 //
 // Builds a REAL express app through the CANONICAL registration path, exactly as
-// server/index.ts does: registerCommerceApi(app, buildCommerceDependencies(now,
-// env, wiring), guards), followed by the same error handler and the same JSON
+// server/index.ts does: the json body parser with the SAME rawBody-capturing
+// verify hook, registerCommerceApi(app, buildCommerceDependencies(now, env,
+// wiring), guards), followed by the same error handler and the same JSON
 // /api 404 tail. Nothing here re-implements a route or a service; the only
 // doubles are the injected seams the production wiring already declares:
 //
 //   - the commerce flag is TRUE only inside the injected env object
 //     (process.env is never mutated),
-//   - every store resolves to its in-memory implementation via the wiring table,
-//   - payment and shipping resolve to the Test providers (never available in a
-//     production process by their own constructor guard),
+//   - every store resolves to its in-memory implementation via the wiring table
+//     (including the reservation store the wired checkout seam persists to),
+//   - payment, shipping, and fulfillment resolve to the Test providers (never
+//     available in a production process by their own constructor guard),
 //   - guards authenticate a fake member from a test header, mirroring how the
 //     merged guards attach `researchMember` to the request.
 //
@@ -18,7 +20,13 @@
 // unmistakably non-production data. That is safe here BECAUSE they enter
 // through the wiring table, not through configuration: the production guard
 // scans the configuration values, and a synthetic marker in an env value would
-// (correctly) refuse to compose.
+// (correctly) refuse to compose. The suite proves exactly that with a poisoned
+// env (see the synthetic-guard tests).
+//
+// Process-restart support: buildAcceptanceContext({ reuseStoresFrom }) builds a
+// SECOND app instance (fresh buildCommerceDependencies, therefore fresh
+// in-process service state) over the SAME wiring stores and providers, which is
+// what surviving a restart means for the durable layer.
 
 import express, { type Express, type NextFunction, type Request, type Response } from "express";
 import { registerCommerceApi, type CommerceGuards } from "./routes";
@@ -39,16 +47,30 @@ import {
   type AdminQueuesRepository,
 } from "./persistence/admin-queues-store";
 import {
+  createInMemoryReservationStore,
+  type ReservationRepository,
+} from "./persistence/reservations-store";
+import {
+  createInMemoryPartnerLinkStore,
+  createInMemoryPartnerMemberStore,
+  type AsyncPartnerLinkStore,
+  type AsyncPartnerMemberStore,
+} from "./persistence/partners-store";
+import { createInMemoryCommissionLedgerStore } from "./persistence/commissions-store";
+import type { CommissionLedgerRepository } from "../partners/commissions";
+import {
   createInMemoryClaimOrderRepository,
   createInMemoryClaimRepository,
   type ClaimOrderRepository,
   type ClaimRepository,
 } from "./refunds";
 import type { SubscriptionRepository } from "./subscriptions";
+import { createInMemoryWebhookEventStore, type WebhookEventStore } from "./webhooks";
 import { TestPaymentProvider, type CreateAuthorizationInput } from "../providers/payment";
 import { TestShippingProvider } from "../providers/shipping";
-import type { CatalogProduct, ProvenancedFact } from "@shared/research/catalog";
+import { TestMitchProvider } from "../providers/fulfillment";
 import type { CheckoutRequest } from "@shared/research/commerce-api";
+import type { CatalogProduct, ProvenancedFact } from "@shared/research/catalog";
 import type { InventoryLot } from "../inventory/lots";
 
 // ---------------------------------------------------------------------------
@@ -85,6 +107,9 @@ export function acceptanceEnv(): NodeJS.ProcessEnv {
     RESEARCH_SERVICEABLE_STATES: "TX,CA",
   };
 }
+
+/** The serviceable states the env above configures, for compositions that need them. */
+export const ACCEPTANCE_SERVICEABLE_STATES = ["TX", "CA"];
 
 // ---------------------------------------------------------------------------
 // Catalog fixtures, unmistakably synthetic by label
@@ -178,17 +203,31 @@ export function releasedLot(overrides: Partial<InventoryLot> = {}): InventoryLot
 
 // ---------------------------------------------------------------------------
 // A payment provider that counts its consequential calls, so the suite can
-// assert "no second authorization" and "no provider call past the cap" rather
-// than inferring them. Behavior is entirely the canonical TestPaymentProvider.
+// assert "no second authorization", "no second capture", and "no provider call
+// past the cap" rather than inferring them. Behavior is entirely the canonical
+// TestPaymentProvider.
 // ---------------------------------------------------------------------------
 
 export class CountingPaymentProvider extends TestPaymentProvider {
   authorizationCalls = 0;
+  captureCalls = 0;
+  captureSuccesses = 0;
   refundCalls = 0;
+  /** Every DISTINCT provider reference an authorization has ever produced. */
+  readonly authorizationRefs = new Set<string>();
 
   override async createAuthorization(input: CreateAuthorizationInput) {
     this.authorizationCalls += 1;
-    return super.createAuthorization(input);
+    const result = await super.createAuthorization(input);
+    if (result.ok) this.authorizationRefs.add(result.value.providerReference);
+    return result;
+  }
+
+  override async captureAuthorization(ref: string, amountCents?: number) {
+    this.captureCalls += 1;
+    const result = await super.captureAuthorization(ref, amountCents);
+    if (result.ok) this.captureSuccesses += 1;
+    return result;
   }
 
   override async refund(ref: string, amountCents: number, idempotencyKey: string) {
@@ -235,14 +274,23 @@ export interface AcceptanceContext {
   app: Express;
   payment: CountingPaymentProvider;
   shipping: TestShippingProvider;
+  /** The fulfillment partner double the webhook handler composition uses; its
+   * `submitted` array records exactly what a transmission would send. */
+  fulfillment: TestMitchProvider;
   cartStore: AsyncCartStore;
   orderRepository: AsyncOrderStore;
   lotStore: InventoryLotRepository;
+  /** The durable reservation store the wired checkout seam persists holds to. */
+  reservations: ReservationRepository;
   creditLedger: StoreCreditLedgerRepository;
   subscriptionStore: SubscriptionRepository;
   claimRepository: ClaimRepository;
   claimOrderRepository: ClaimOrderRepository;
   adminQueuesStore: AdminQueuesRepository;
+  webhookEventStore: WebhookEventStore;
+  partnerMemberStore: AsyncPartnerMemberStore;
+  partnerLinkStore: AsyncPartnerLinkStore;
+  commissionLedger: CommissionLedgerRepository;
   env: NodeJS.ProcessEnv;
 }
 
@@ -251,27 +299,48 @@ export interface AcceptanceOptions {
   products?: CatalogProduct[];
   /** Lots seeded into the wiring table's inventory store. Default: one released lot. */
   lots?: InventoryLot[];
+  /** Environment override, for proving composition-time guards. Never process.env. */
+  env?: NodeJS.ProcessEnv;
+  /**
+   * Build THIS app over ANOTHER context's stores and providers: a fresh
+   * buildCommerceDependencies (fresh in-process service state, i.e. a process
+   * restart) over the same durable layer. `products`, `lots`, and `env` are
+   * taken from the reused context and must not be passed alongside.
+   */
+  reuseStoresFrom?: AcceptanceContext;
 }
 
 export async function buildAcceptanceContext(
   options: AcceptanceOptions = {},
 ): Promise<AcceptanceContext> {
-  const cartStore = createInMemoryCartStore();
-  const orderRepository = createInMemoryOrderStore();
-  const lotStore = createInMemoryInventoryLotStore();
-  const creditLedger = createInMemoryStoreCreditLedgerStore();
-  const subscriptionStore = createInMemorySubscriptionStore();
-  const adminQueuesStore = createInMemoryAdminQueuesStore();
-  const claimRepository = createInMemoryClaimRepository();
-  const claimOrderRepository = createInMemoryClaimOrderRepository();
-  const payment = new CountingPaymentProvider();
-  const shipping = new TestShippingProvider();
+  const reused = options.reuseStoresFrom;
 
-  for (const lot of options.lots ?? [releasedLot()]) {
-    await lotStore.save(lot);
+  const cartStore = reused ? reused.cartStore : createInMemoryCartStore();
+  const orderRepository = reused ? reused.orderRepository : createInMemoryOrderStore();
+  const lotStore = reused ? reused.lotStore : createInMemoryInventoryLotStore();
+  const reservations = reused ? reused.reservations : createInMemoryReservationStore();
+  const creditLedger = reused ? reused.creditLedger : createInMemoryStoreCreditLedgerStore();
+  const subscriptionStore = reused ? reused.subscriptionStore : createInMemorySubscriptionStore();
+  const adminQueuesStore = reused ? reused.adminQueuesStore : createInMemoryAdminQueuesStore();
+  const claimRepository = reused ? reused.claimRepository : createInMemoryClaimRepository();
+  const claimOrderRepository = reused
+    ? reused.claimOrderRepository
+    : createInMemoryClaimOrderRepository();
+  const webhookEventStore = reused ? reused.webhookEventStore : createInMemoryWebhookEventStore();
+  const partnerMemberStore = reused ? reused.partnerMemberStore : createInMemoryPartnerMemberStore();
+  const partnerLinkStore = reused ? reused.partnerLinkStore : createInMemoryPartnerLinkStore();
+  const commissionLedger = reused ? reused.commissionLedger : createInMemoryCommissionLedgerStore();
+  const payment = reused ? reused.payment : new CountingPaymentProvider();
+  const shipping = reused ? reused.shipping : new TestShippingProvider();
+  const fulfillment = reused ? reused.fulfillment : new TestMitchProvider();
+
+  if (!reused) {
+    for (const lot of options.lots ?? [releasedLot()]) {
+      await lotStore.save(lot);
+    }
   }
 
-  const env = acceptanceEnv();
+  const env = reused ? reused.env : options.env ?? acceptanceEnv();
   const deps = buildCommerceDependencies(NOW, env, {
     catalogProducts: options.products ?? [acceptanceProduct(), ineligibleProduct()],
     resolveCartStore: () => cartStore,
@@ -279,17 +348,32 @@ export async function buildAcceptanceContext(
     resolveClaimRepository: () => claimRepository,
     resolveClaimOrderRepository: () => claimOrderRepository,
     resolveInventoryLotStore: () => lotStore,
+    resolveReservationStore: () => reservations,
     resolveStoreCreditLedgerStore: () => creditLedger,
     resolveSubscriptionRepository: () => subscriptionStore,
     resolveAdminQueuesStore: () => adminQueuesStore,
+    resolveWebhookEventStore: () => webhookEventStore,
+    resolvePartnerMemberStore: () => partnerMemberStore,
+    resolvePartnerLinkStore: () => partnerLinkStore,
+    resolveCommissionLedgerStore: () => commissionLedger,
     resolvePaymentProvider: () => payment,
     resolveShippingProvider: () => shipping,
+    resolveFulfillmentProvider: () => fulfillment,
     isMembershipActive: async () => true,
     hasEffectiveAgreement: async () => true,
   });
 
   const app = express();
-  app.use(express.json());
+  // The SAME body pipeline server/index.ts installs: json parsing with the
+  // rawBody-capturing verify hook, so the webhook route verifies the signature
+  // over the exact bytes the provider signed, not a re-serialization.
+  app.use(
+    express.json({
+      verify: (req, _res, buf) => {
+        (req as unknown as { rawBody?: Buffer }).rawBody = buf;
+      },
+    }),
+  );
   registerCommerceApi(app, deps, testGuards());
 
   // The same tail server/index.ts installs: the JSON error handler, then the
@@ -311,14 +395,20 @@ export async function buildAcceptanceContext(
     app,
     payment,
     shipping,
+    fulfillment,
     cartStore,
     orderRepository,
     lotStore,
+    reservations,
     creditLedger,
     subscriptionStore,
     claimRepository,
     claimOrderRepository,
     adminQueuesStore,
+    webhookEventStore,
+    partnerMemberStore,
+    partnerLinkStore,
+    commissionLedger,
     env,
   };
 }

@@ -3,7 +3,7 @@ import { Link, useParams } from "wouter";
 import type { ProductDetailDto } from "@shared/research/commerce-api";
 import type { SubscriptionFrequencyDays } from "@shared/research/commerce";
 import { useResearch } from "../../core";
-import { addCartLine, getProduct } from "../../adapters/commerce";
+import { addCartLine, createSubscription, getProduct } from "../../adapters/commerce";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
@@ -54,6 +54,7 @@ type AddState =
   | { phase: "idle" }
   | { phase: "busy" }
   | { phase: "added" }
+  | { phase: "subscribed"; subscriptionId: string }
   | { phase: "denied"; code: string; message?: string }
   | { phase: "unavailable" }
   | { phase: "unauthorized" }
@@ -63,6 +64,16 @@ function guideHref(slug: string): string {
   return MEMBER_ROUTES.guide.replace(":slug", slug);
 }
 
+/**
+ * The price version this page presented, recorded on a direct subscription
+ * create so the server knows exactly what the member saw. The catalog DTO
+ * carries the confirmed price in cents (or null while unconfirmed); the
+ * version string states that fact rather than inventing a price identifier.
+ */
+export function presentedPriceVersion(priceCents: number | null): string {
+  return priceCents === null ? "price-unconfirmed" : `cents-${priceCents}`;
+}
+
 // The purchase panel: rendered only when the server says purchasable.
 function PurchasePanel({ product, token }: { product: ProductDetailDto; token: string | null }) {
   const [quantity, setQuantity] = useState("1");
@@ -70,12 +81,18 @@ function PurchasePanel({ product, token }: { product: ProductDetailDto; token: s
   const [frequency, setFrequency] = useState<SubscriptionFrequencyDays>(30);
   const [add, setAdd] = useState<AddState>({ phase: "idle" });
 
-  const submit = async () => {
+  const validQuantity = (): number | null => {
     const q = Number(quantity);
     if (!Number.isInteger(q) || q < 1) {
       setAdd({ phase: "error", message: "Enter a whole quantity of at least 1." });
-      return;
+      return null;
     }
+    return q;
+  };
+
+  const submit = async () => {
+    const q = validQuantity();
+    if (q === null) return;
     setAdd({ phase: "busy" });
     const result = await addCartLine(token, {
       sku: product.sku,
@@ -86,6 +103,39 @@ function PurchasePanel({ product, token }: { product: ProductDetailDto; token: s
     switch (result.kind) {
       case "ok":
         setAdd({ phase: "added" });
+        return;
+      case "denied":
+        setAdd({ phase: "denied", code: result.code, message: result.message });
+        return;
+      case "unauthorized":
+        setAdd({ phase: "unauthorized" });
+        return;
+      case "forbidden":
+      case "unavailable":
+        setAdd({ phase: "unavailable" });
+        return;
+      case "error":
+        setAdd({ phase: "error", message: result.message });
+        return;
+    }
+  };
+
+  // The direct create path (POST /api/research/subscriptions): the server
+  // shape exactly, including the price version this page presented. The
+  // subscription starts pending and never charges out of creation alone.
+  const subscribeNow = async () => {
+    const q = validQuantity();
+    if (q === null) return;
+    setAdd({ phase: "busy" });
+    const result = await createSubscription(token, {
+      sku: product.sku,
+      quantity: q,
+      frequencyDays: frequency,
+      priceVersion: presentedPriceVersion(product.priceCents),
+    });
+    switch (result.kind) {
+      case "ok":
+        setAdd({ phase: "subscribed", subscriptionId: result.data.subscription.subscriptionId });
         return;
       case "denied":
         setAdd({ phase: "denied", code: result.code, message: result.message });
@@ -166,13 +216,36 @@ function PurchasePanel({ product, token }: { product: ProductDetailDto; token: s
           onClick={() => void submit()}
           data-testid="ra-add-to-cart"
         >
-          {add.phase === "busy" ? "Adding..." : "Add to cart"}
+          {add.phase === "busy" ? "Working..." : "Add to cart"}
         </button>
+        {mode === "subscription" && (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            disabled={add.phase === "busy"}
+            onClick={() => void subscribeNow()}
+            data-testid="ra-subscribe-now"
+          >
+            {add.phase === "busy" ? "Working..." : "Start subscription"}
+          </button>
+        )}
       </div>
+      {mode === "subscription" && (
+        <p className="body-s text-ink-mute mt-2 max-w-[56ch]">
+          "Start subscription" creates the subscription directly. It begins pending and nothing is charged until it
+          is confirmed; you can manage it from your subscriptions page.
+        </p>
+      )}
       <div className="mt-4" aria-live="polite">
         {add.phase === "added" && (
           <p className="body-s text-ink-2" role="status" data-testid="ra-add-success">
             Added to your cart. <Link href={MEMBER_ROUTES.cart}>Review your cart</Link>.
+          </p>
+        )}
+        {add.phase === "subscribed" && (
+          <p className="body-s text-ink-2" role="status" data-testid="ra-subscribe-success">
+            Subscription created. It is pending and nothing has been charged.{" "}
+            <Link href={MEMBER_ROUTES.subscriptions}>Manage your subscriptions</Link>.
           </p>
         )}
         {add.phase === "denied" && <ResearchDenialNotice code={add.code} message={add.message} />}

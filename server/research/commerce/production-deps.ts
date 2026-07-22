@@ -1,19 +1,43 @@
-import type { CommerceDependencies } from "./routes";
+import { randomUUID } from "node:crypto";
+import type {
+  CommerceDependencies,
+  CreateSubscriptionWireInput,
+  PartnerApplyWireInput,
+  PartnerReviewWireDecision,
+  PartnerSelfSource,
+} from "./routes";
 import type { CatalogProduct } from "@shared/research/catalog";
-import type { CommerceDenialCode } from "@shared/research/commerce-api";
+import type {
+  CommerceDenialCode,
+  PartnerDashboardDto,
+  PartnerLinkDto,
+  ShippingQuoteRequest,
+} from "@shared/research/commerce-api";
 import type { InventoryLot } from "../inventory/lots";
 import { products as legacyProducts } from "../products-data";
 import { adaptLegacyCatalog } from "../catalog/legacy-adapter";
 import { createCatalogService, type CatalogService } from "../catalog/catalog-service";
 import { createCartService, type CartService } from "./cart";
-import { createCheckoutService, type CheckoutOrder, type CheckoutService } from "./checkout";
-import { createOrderService, type OrderRecord, type OrderRepository } from "./orders";
+import {
+  createCheckoutService,
+  createInventoryReservationSeam,
+  DEFAULT_PACKAGE_WEIGHT_GRAMS,
+  type CheckoutOrder,
+  type CheckoutService,
+} from "./checkout";
+import {
+  createOrderService,
+  type OrderRecord,
+  type OrderRepository,
+  type OrderResult,
+} from "./orders";
 import {
   createRefundService,
   type ClaimOrderRepository,
   type ClaimRepository,
 } from "./refunds";
 import { createSubscriptionService, type SubscriptionRepository } from "./subscriptions";
+import type { SubscriptionFrequencyDays } from "@shared/research/commerce";
 import { assertNoSyntheticDataInProduction } from "./production-guards";
 import { resolveCartStore, type AsyncCartStore } from "./persistence/cart-store";
 import { resolveOrderRepository } from "./persistence/orders-store";
@@ -27,10 +51,37 @@ import {
 } from "./persistence/store-credit-store";
 import { resolveSubscriptionRepository } from "./persistence/subscriptions-store";
 import { resolveAdminQueuesStore, type AdminQueuesRepository } from "./persistence/admin-queues-store";
+import {
+  resolveReservationStore,
+  type ReservationRepository,
+} from "./persistence/reservations-store";
+import {
+  createWebhookHandler,
+  createInMemoryWebhookEventStore,
+  type WebhookEventStore,
+  type WebhookOrder,
+  type WebhookOrderStore,
+} from "./webhooks";
+import { createSupabaseWebhookReplayGuard } from "./persistence/webhooks-store";
+import {
+  resolvePartnerLinkStore,
+  resolvePartnerMemberStore,
+  MemberAlreadyPartner,
+  type AsyncPartnerLinkStore,
+  type AsyncPartnerMemberStore,
+} from "./persistence/partners-store";
+import { resolveCommissionLedgerStore } from "./persistence/commissions-store";
+import type { CommissionLedgerRepository } from "../partners/commissions";
+import { createLedgerPartnerStatsSource } from "../partners/member-linkage";
+import type { ClaimRecord, RefundService } from "./refunds";
 import { resolvePaymentProvider, type PaymentProvider } from "../providers/payment";
 import { resolveShippingProvider, type ShippingProvider } from "../providers/shipping";
+import {
+  resolveFulfillmentProvider,
+  type FulfillmentProvider,
+} from "../providers/fulfillment";
 import { hasAcceptedCurrent } from "../agreements";
-import { getSupabaseAdmin } from "../../supabase";
+import { getSupabaseAdmin, supabaseConfigured } from "../../supabase";
 
 // ---------------------------------------------------------------------------
 // Production commerce dependencies (integration lane): the three-state composition.
@@ -139,11 +190,46 @@ export interface CommerceWiring {
   resolveStoreCreditLedgerStore(): StoreCreditLedgerRepository;
   resolveSubscriptionRepository(): SubscriptionRepository;
   resolveAdminQueuesStore(): AdminQueuesRepository;
+  /**
+   * The durable lot-reservation store behind checkout's inventory hold
+   * (DB-backed when the database is configured). State 3 composes
+   * createInventoryReservationSeam over this store and the resolved lot store,
+   * so a checkout reserves real FEFO stock before any money moves.
+   */
+  resolveReservationStore(): ReservationRepository;
+  /** The durable webhook replay guard (DB-backed when the database is configured). */
+  resolveWebhookEventStore(): WebhookEventStore;
+  resolvePartnerMemberStore(): AsyncPartnerMemberStore;
+  resolvePartnerLinkStore(): AsyncPartnerLinkStore;
+  resolveCommissionLedgerStore(): CommissionLedgerRepository;
   resolvePaymentProvider(env: NodeJS.ProcessEnv): PaymentProvider;
   resolveShippingProvider(env: NodeJS.ProcessEnv): ShippingProvider;
+  /**
+   * The fulfillment partner adapter for the inbound status webhook. The env
+   * default resolves DisabledMitchProvider unless RESEARCH_MITCH_FULFILLMENT_ENABLED
+   * is "true", so an unconfigured deployment refuses fulfillment events with a
+   * precise capability denial rather than guessing.
+   */
+  resolveFulfillmentProvider(env: NodeJS.ProcessEnv): FulfillmentProvider;
   /** Renewal-gate seams (subscriptions.evaluateRenewal only; not on the HTTP path). */
   isMembershipActive(memberId: string): Promise<boolean>;
   hasEffectiveAgreement(memberId: string, agreementKey: string): Promise<boolean>;
+}
+
+/**
+ * The durable webhook replay guard behind the (now async-capable) event-store
+ * interface. Whether an event was seen is answered by the DATABASE via the
+ * UNIQUE (provider_name, event_id) constraint; without a configured database the
+ * in-memory reference stands in (and state 3 always has the database).
+ */
+function resolveDurableWebhookEventStore(): WebhookEventStore {
+  if (!supabaseConfigured()) return createInMemoryWebhookEventStore();
+  const guard = createSupabaseWebhookReplayGuard();
+  return {
+    seen: (providerName, eventId) => guard.seen(providerName, eventId),
+    record: (providerName, eventId, at, eventType) =>
+      guard.record(providerName, eventId, eventType ?? "unrecognized", at),
+  };
 }
 
 /**
@@ -189,8 +275,14 @@ function defaultWiring(): CommerceWiring {
     resolveStoreCreditLedgerStore,
     resolveSubscriptionRepository,
     resolveAdminQueuesStore,
+    resolveReservationStore,
+    resolveWebhookEventStore: resolveDurableWebhookEventStore,
+    resolvePartnerMemberStore,
+    resolvePartnerLinkStore,
+    resolveCommissionLedgerStore,
     resolvePaymentProvider,
     resolveShippingProvider,
+    resolveFulfillmentProvider,
     isMembershipActive: memberIsActiveInDatabase,
     hasEffectiveAgreement: memberHasAcceptedCurrentAgreement,
   };
@@ -219,20 +311,50 @@ function guidesDependency(): CommerceDependencies["guides"] {
   };
 }
 
-// The partner surface stays fail-closed in every state, with the reason
-// documented once here rather than implied: the domain PartnerRecord carries
-// no member linkage (research_partners.member_id exists in the schema but not
-// in the domain model), and resolvePartnerRepository is an in-memory-only
-// documented deferral pending that schema-domain reconciliation. Every partner
-// route resolves through findByMemberId first, so the honest composition is
-// the whole surface closed rather than half-wired.
-// TODO(track-b): wire the partner surface once the partners domain carries the
-// member linkage and a durable partner repository exists.
-function partnersFailClosed(): CommerceDependencies["partners"] {
+// The partner surface fails closed in states 1 and 2 (reads empty-safe, writes
+// refused with the state's denial). The REAL member-linked composition exists
+// only in state 3, where the durable partner-member store, the link store, and
+// the commission ledger are resolved.
+function partnersFailClosed(denial: { ok: false; code: CommerceDenialCode }): CommerceDependencies["partners"] {
   return {
     findByMemberId: () => Promise.resolve(null),
-    dashboardFor: (partnerId) => Promise.resolve({ partnerId, provisioned: false }),
+    dashboardFor: (partner) => Promise.resolve({ partnerId: partner.partnerId, provisioned: false }),
     listLinks: () => Promise.resolve([]),
+    applyForMember: () => Promise.resolve(denial),
+  };
+}
+
+/** The admin partner review surface in states 1 and 2: refused, nothing touched. */
+function partnerAdminFailClosed(denial: { ok: false; code: CommerceDenialCode }): CommerceDependencies["partnerAdmin"] {
+  return {
+    review: () => Promise.resolve(denial),
+  };
+}
+
+/**
+ * The webhook surface while the capability is not ready. The event is refused as
+ * capability_disabled (a 503 at the route, so the provider retries once the
+ * capability exists) and NOTHING is constructed: no provider, no store, no
+ * verification attempt, so states 1 and 2 stay structurally side-effect free.
+ */
+function webhooksFailClosed(): CommerceDependencies["webhooks"] {
+  const refused = () =>
+    Promise.resolve({ ok: false as const, code: "capability_disabled" as const });
+  return {
+    handlePayment: refused,
+    handleFulfillment: refused,
+  };
+}
+
+/** The admin order lifecycle in states 1 and 2: refused, nothing touched. */
+function ordersAdminFailClosed(denial: {
+  ok: false;
+  code: CommerceDenialCode;
+}): CommerceDependencies["ordersAdmin"] {
+  return {
+    approve: () => Promise.resolve(denial),
+    capture: () => Promise.resolve(denial),
+    cancel: () => Promise.resolve(denial),
   };
 }
 
@@ -263,15 +385,29 @@ function disabledDependencies(
     subscriptions: {
       listForMember: () => Promise.resolve([]),
       apply: () => Promise.resolve(DISABLED),
+      create: () => Promise.resolve(DISABLED),
     },
     claims: {
       submitClaim: () => Promise.resolve(DISABLED),
       listForMember: () => Promise.resolve([]),
+      getForMember: () => Promise.resolve(null),
+    },
+    claimsAdmin: {
+      listOpen: () => Promise.resolve([]),
+      review: () => Promise.resolve(DISABLED),
+      refund: () => Promise.resolve(DISABLED),
+      replacement: () => Promise.resolve(DISABLED),
     },
     storeCredit: {
       forMember: (memberId) => Promise.resolve({ owner: memberId, balanceCents: 0, entries: [] }),
     },
-    partners: partnersFailClosed(),
+    partners: partnersFailClosed(DISABLED),
+    partnerAdmin: partnerAdminFailClosed(DISABLED),
+    ordersAdmin: ordersAdminFailClosed(DISABLED),
+    webhooks: webhooksFailClosed(),
+    shippingQuotes: {
+      quoteFor: () => Promise.resolve(DISABLED),
+    },
     capabilities: {
       memberVisible: () => ({
         product_commerce: { enabled: false },
@@ -329,15 +465,29 @@ function unprovisionedDependencies(
     subscriptions: {
       listForMember: () => Promise.resolve([]),
       apply: () => Promise.resolve(storageDenial),
+      create: () => Promise.resolve(storageDenial),
     },
     claims: {
       submitClaim: () => Promise.resolve({ ok: false as const, codes: ["capability_disabled"] as CommerceDenialCode[] }),
       listForMember: () => Promise.resolve([]),
+      getForMember: () => Promise.resolve(null),
+    },
+    claimsAdmin: {
+      listOpen: () => Promise.resolve([]),
+      review: () => Promise.resolve(storageDenial),
+      refund: () => Promise.resolve(storageDenial),
+      replacement: () => Promise.resolve(storageDenial),
     },
     storeCredit: {
       forMember: (memberId) => Promise.resolve({ owner: memberId, balanceCents: 0, entries: [] }),
     },
-    partners: partnersFailClosed(),
+    partners: partnersFailClosed(storageDenial),
+    partnerAdmin: partnerAdminFailClosed(storageDenial),
+    ordersAdmin: ordersAdminFailClosed(storageDenial),
+    webhooks: webhooksFailClosed(),
+    shippingQuotes: {
+      quoteFor: () => Promise.resolve(storageDenial),
+    },
     capabilities: {
       // A flag without a backing capability is not commerce. Members are told
       // the truth: nothing here is operable.
@@ -357,6 +507,197 @@ function unprovisionedDependencies(
 // STATE 3 adapters (thin, documented; the services and stores are owned
 // elsewhere and are not modified).
 // ---------------------------------------------------------------------------
+
+/** How long a member-facing shipping quote stands before it must be re-requested. */
+export const SHIPPING_QUOTE_TTL_MINUTES = 15;
+
+/**
+ * Ambient versus temperature-controlled, decided from the product profiles of
+ * the cart and FAIL-SAFE in the cold direction: an unknown product, an
+ * unconfirmed storage fact, or a storage instruction that names refrigeration
+ * or freezing means the order is treated as cold chain, so an ambient promise
+ * is never made about goods whose storage is not confirmed ambient.
+ */
+export function cartTemperatureProfile(
+  products: ReadonlyArray<CatalogProduct | undefined>,
+): "ambient" | "cold_chain" {
+  for (const product of products) {
+    if (!product) return "cold_chain";
+    const storage = product.facts.storage;
+    if (storage.confirmation !== "confirmed") return "cold_chain";
+    if (/refriger|freez|frozen|cold[\s-]?chain|2\s*(?:-|–|to)\s*8/i.test(String(storage.value))) {
+      return "cold_chain";
+    }
+  }
+  return "ambient";
+}
+
+/**
+ * The webhook's narrow order projection over the SAME repository checkout
+ * writes and the member order history reads, so a webhook-advanced state is
+ * immediately visible everywhere. Save is read-modify-write of only the fields
+ * a webhook owns: state, the payment reference (forward only), and the
+ * transition idempotency key. A capture amount is never written here; that
+ * column belongs to the payment path.
+ */
+export function webhookOrderStoreOverOrders(repository: OrderRepository): WebhookOrderStore {
+  const CAPTURED_STATES = new Set([
+    "payment_captured",
+    "processing",
+    "partially_fulfilled",
+    "fulfilled",
+    "delivered",
+    "refunded",
+    "replaced",
+  ]);
+  return {
+    async get(orderId): Promise<WebhookOrder | undefined> {
+      const record = await repository.get(orderId);
+      if (!record) return undefined;
+      const order: WebhookOrder = {
+        orderId: record.orderId,
+        state: record.state,
+        paymentReference: record.providerReference,
+        captured: record.capturedAmountCents !== undefined || CAPTURED_STATES.has(record.state),
+      };
+      if (record.lastIdempotencyKey !== null) order.lastWebhookEventId = record.lastIdempotencyKey;
+      return order;
+    },
+    async save(order): Promise<void> {
+      const record = await repository.get(order.orderId);
+      if (!record) throw new Error(`webhook order save failed: no order ${order.orderId}`);
+      record.state = order.state;
+      record.providerReference = order.paymentReference;
+      record.lastIdempotencyKey = order.lastWebhookEventId ?? record.lastIdempotencyKey;
+      // A verified fulfillment event's shipment status and tracking land on the
+      // order's shipment records, so the member sees the carrier's tracking
+      // number the moment the partner reports it. The status always advances;
+      // tracking is written only when the event actually carried one, so a
+      // later status-only event never erases a known tracking number.
+      if (order.shipmentUpdate) {
+        for (const shipment of record.shipments ?? []) {
+          shipment.status = order.shipmentUpdate.status;
+          if (order.shipmentUpdate.trackingNumber !== null) {
+            shipment.trackingNumber = order.shipmentUpdate.trackingNumber;
+          }
+          if (order.shipmentUpdate.carrier !== null) {
+            shipment.carrier = order.shipmentUpdate.carrier;
+          }
+        }
+      }
+      await repository.save(record);
+    },
+  };
+}
+
+/**
+ * The admin claim view, by explicit construction. Wider than the member DTO
+ * (an admin reviews evidence and notes) but still a named projection, so a
+ * field added to ClaimRecord later cannot reach the wire by default.
+ */
+export function toAdminClaimView(record: ClaimRecord): {
+  claimId: string;
+  orderId: string;
+  memberId: string;
+  sku: string;
+  lotId: string | null;
+  reason: ClaimRecord["reason"];
+  state: ClaimRecord["state"];
+  resolution: ClaimRecord["resolution"];
+  evidenceRefs: string[];
+  submittedAt: string;
+  reviewedBy: string | null;
+  notes: string;
+} {
+  return {
+    claimId: record.claimId,
+    orderId: record.orderId,
+    memberId: record.memberId,
+    sku: record.sku,
+    lotId: record.lotId,
+    reason: record.reason,
+    state: record.state,
+    resolution: record.resolution,
+    evidenceRefs: record.evidenceRefs.slice(),
+    submittedAt: record.submittedAt,
+    reviewedBy: record.reviewedBy,
+    notes: record.notes,
+  };
+}
+
+/**
+ * The admin order view, by explicit construction (the toAdminClaimView
+ * discipline). Wider than the member DTO on purpose: an admin reviewing a held
+ * order needs the provider reference, the review triggers, and the money
+ * columns. Still a named projection, so a field added to OrderRecord later
+ * cannot reach the wire by default.
+ */
+export function toAdminOrderView(record: OrderRecord): {
+  orderId: string;
+  memberId: string;
+  state: string;
+  lines: Array<{ sku: string; displayName: string; quantity: number; lineTotalCents: number }>;
+  totals: OrderRecord["totals"];
+  providerReference: string | null;
+  authorizedAmountCents: number | null;
+  capturedAmountCents: number | null;
+  reviewTriggers: string[];
+  approvedBy: string | null;
+  approvedAt: string | null;
+  cancellationReason: string | null;
+  authorizationReleaseFailed: boolean;
+  shipments: Array<{ owner: "mitch" | "xenios"; status: string; trackingNumber: string | null; carrier: string | null }>;
+  createdAt: string;
+  updatedAt: string;
+} {
+  return {
+    orderId: record.orderId,
+    memberId: record.memberId,
+    state: record.state,
+    lines: record.lines.map((line) => ({
+      sku: line.sku,
+      displayName: line.displayName,
+      quantity: line.quantity,
+      lineTotalCents: line.lineTotalCents,
+    })),
+    totals: { ...record.totals },
+    providerReference: record.providerReference,
+    authorizedAmountCents: record.authorizedAmountCents ?? null,
+    capturedAmountCents: record.capturedAmountCents ?? null,
+    reviewTriggers: record.reviewTriggers.slice(),
+    approvedBy: record.approvedBy ?? null,
+    approvedAt: record.approvedAt ?? null,
+    cancellationReason: record.cancellationReason ?? null,
+    authorizationReleaseFailed: record.authorizationReleaseFailed ?? false,
+    shipments: (record.shipments ?? []).map((s) => ({
+      owner: s.owner,
+      status: s.status,
+      trackingNumber: s.trackingNumber,
+      carrier: s.carrier,
+    })),
+    createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+  };
+}
+
+/**
+ * Maps the order service's discriminated result onto the wire relay's shape:
+ * a success carries the explicit admin view, a denial keeps its machine codes
+ * (leading code first) so the admin UI can route on them.
+ */
+function adminOrderResult(result: OrderResult):
+  | { ok: true; order: ReturnType<typeof toAdminOrderView> }
+  | { ok: false; code: CommerceDenialCode; codes: CommerceDenialCode[]; message: string } {
+  if (!result.ok) {
+    return {
+      ok: false as const,
+      code: result.denials[0] ?? "forbidden",
+      codes: result.denials,
+      message: result.message,
+    };
+  }
+  return { ok: true as const, order: toAdminOrderView(result.order) };
+}
 
 /** Mirrors the ledger's own expiry rule (store-credit-store spendableCentsOf). */
 function ledgerRecordExpired(record: StoreCreditLedgerRecord, asOf: Date): boolean {
@@ -434,6 +775,35 @@ function toMemberOrderConfirmation(order: CheckoutOrder): {
   };
 }
 
+/**
+ * The same member-safe confirmation, built from the DURABLE OrderRecord for a
+ * replayed idempotency key that outlived the process which settled it. Explicit
+ * construction again: the record's provider reference, review triggers, and
+ * idempotency key have no field to travel in. The record's CURRENT state and
+ * shipments are reported (an admin or provider may have advanced them), which
+ * is the truth a replaying member should see.
+ */
+function orderRecordToMemberConfirmation(record: OrderRecord): {
+  orderId: string;
+  state: string;
+  placedAt: string;
+  totalCents: number;
+  shipments: Array<{ owner: "mitch" | "xenios"; status: string; trackingNumber: string | null; carrier: string | null }>;
+} {
+  return {
+    orderId: record.orderId,
+    state: record.state,
+    placedAt: record.createdAt,
+    totalCents: record.totals.totalCents,
+    shipments: (record.shipments ?? []).map((shipment) => ({
+      owner: shipment.owner,
+      status: shipment.status,
+      trackingNumber: shipment.trackingNumber,
+      carrier: shipment.carrier,
+    })),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // STATE 3: flag on, database configured. The real composition.
 // ---------------------------------------------------------------------------
@@ -464,6 +834,9 @@ function liveDependencies(
         serviceableStates: serviceableStates.join(","),
         requiredAgreementKeys: CHECKOUT_REQUIRED_AGREEMENT_KEYS.join(","),
       },
+      partner: {
+        linkBaseUrl: env.RESEARCH_PARTNER_LINK_BASE_URL ?? "https://xeniostechnology.com",
+      },
     },
     env,
   );
@@ -476,8 +849,30 @@ function liveDependencies(
   const creditLedger = wiring.resolveStoreCreditLedgerStore();
   const subscriptionRepository = wiring.resolveSubscriptionRepository();
   const adminQueuesStore = wiring.resolveAdminQueuesStore();
+  const reservationStore = wiring.resolveReservationStore();
+  const webhookEventStore = wiring.resolveWebhookEventStore();
+  const partnerMemberStore = wiring.resolvePartnerMemberStore();
+  const partnerLinkStore = wiring.resolvePartnerLinkStore();
+  const commissionLedger = wiring.resolveCommissionLedgerStore();
   const payment = wiring.resolvePaymentProvider(env);
   const shipping = wiring.resolveShippingProvider(env);
+  const fulfillment = wiring.resolveFulfillmentProvider(env);
+
+  /**
+   * The inventory hold around a checkout: the CANONICAL seam checkout.ts
+   * declares, over the SAME lot store the cart evaluates and the durable
+   * reservation store. A clean submit reserves real FEFO stock (the decrement
+   * IS the hold) before any money moves, releases it when the payment is
+   * refused, and finalizes it on immediate capture. No reservationAudit
+   * recorder is wired: the durable reservation rows themselves (status plus
+   * released/finalized timestamps) are the evidence trail until an audit
+   * destination exists, which is reported rather than invented.
+   */
+  const inventoryReservations = createInventoryReservationSeam({
+    lots: lotStore,
+    reservations: reservationStore,
+    now,
+  });
 
   const catalogBySku = new Map<string, CatalogProduct>(products.map((p) => [p.sku, p]));
 
@@ -509,10 +904,13 @@ function liveDependencies(
 
   // One checkout service per process, exactly per createCheckoutService's
   // existing dependency shape. Its request idempotency is the service's own
-  // in-process guarantee; the durable IdempotencyStore cannot be injected
-  // without changing checkout.ts (owned elsewhere), which is reported rather
-  // than forced. Store credit spends are recorded on the ledger the moment a
-  // reduced-amount charge exists, so the same credit cannot fund two orders.
+  // in-process guarantee, and the COMPOSITION extends it across instances: the
+  // submit adapter below consults the durable order projection
+  // (findByIdempotencyKey) before invoking the service, so a replayed key
+  // whose order already settled is answered from the durable record on a
+  // fresh process too. Store credit spends are recorded on the ledger the
+  // moment a reduced-amount charge exists, so the same credit cannot fund two
+  // orders.
   const checkoutService: CheckoutService = createCheckoutService({
     cart: {
       revalidate: async (memberId, asOf) => (await cartServiceFor(memberId, asOf)).revalidate(memberId, asOf),
@@ -530,6 +928,7 @@ function liveDependencies(
         await creditLedger.spend(memberId, amountCents, orderId, asOf);
       },
     },
+    inventory: inventoryReservations,
   });
 
   const orderService = createOrderService({
@@ -538,12 +937,188 @@ function liveDependencies(
     commerceEnabled: true,
   });
 
-  const refundService = createRefundService({
+  const refundService: RefundService = createRefundService({
     claims: claimRepository,
     orders: claimOrderRepository,
     payment,
     commerceEnabled: true,
   });
+
+  // The provider webhook handler, over the SAME order repository checkout writes
+  // (through the narrow projection) and the durable replay guard, so a verified
+  // event advances the order every surface reads and a replayed delivery is
+  // absorbed by the database, not by process memory. The fulfillment provider
+  // rides the same handler, so a partner status webhook is signature-gated and
+  // replay-guarded identically to a payment event.
+  const webhookHandler = createWebhookHandler({
+    store: webhookEventStore,
+    payment,
+    fulfillment,
+    orders: webhookOrderStoreOverOrders(orderRepository),
+    commerceEnabled: true,
+  });
+
+  // ----- the partner portal (member-linked, aggregates only) -----------------
+
+  const partnerStats = createLedgerPartnerStatsSource({ ledger: commissionLedger });
+  const linkBaseUrl = (env.RESEARCH_PARTNER_LINK_BASE_URL ?? "https://xeniostechnology.com").replace(/\/+$/, "");
+
+  function partnerLinkDto(link: { code: string; channel: PartnerLinkDto["channel"]; campaign: string | null }): PartnerLinkDto {
+    return {
+      code: link.code,
+      url: `${linkBaseUrl}/r/${link.code}`,
+      channel: link.channel,
+      campaign: link.campaign,
+      qrSvgPath: null,
+    };
+  }
+
+  /**
+   * The durable linkage row as the route layer's self source. Training and
+   * agreement completions are honestly EMPTY here: the durable partner store
+   * carries identity, role, and lifecycle state only, and this surface reports
+   * what is stored rather than inventing progress.
+   */
+  function linkToSelfSource(link: {
+    partnerId: string;
+    role: PartnerSelfSource["role"];
+    state: PartnerSelfSource["state"];
+    certifiedAt: string | null;
+    activatedAt: string | null;
+  }): PartnerSelfSource {
+    return {
+      partnerId: link.partnerId,
+      role: link.role,
+      state: link.state,
+      certifiedAt: link.certifiedAt,
+      activatedAt: link.activatedAt,
+      training: [],
+      agreements: [],
+    };
+  }
+
+  const partners: CommerceDependencies["partners"] = {
+    async findByMemberId(memberId) {
+      const link = await partnerMemberStore.findByMemberId(memberId);
+      return link ? linkToSelfSource(link) : null;
+    },
+
+    async applyForMember(memberId: string, input: PartnerApplyWireInput, asOf: Date) {
+      try {
+        const link = await partnerMemberStore.createPartnerForMember({
+          partnerId: `prt_${randomUUID()}`,
+          memberId,
+          role: input.role,
+          legalName: input.legalName,
+          contactEmail: input.contactEmail,
+          appliedAt: asOf.toISOString(),
+        });
+        // The response is the same explicit self shape every partner read uses;
+        // the legal name and contact email are write-only through this store.
+        return { ok: true as const, partner: linkToSelfSource(link) };
+      } catch (error) {
+        if (error instanceof MemberAlreadyPartner) {
+          // One member, one partner. The store's UNIQUE constraint is the
+          // authority; this is its typed surface.
+          return {
+            ok: false as const,
+            code: "forbidden" as const,
+            message: "This member already owns a partner account.",
+          };
+        }
+        throw error;
+      }
+    },
+
+    /**
+     * Aggregates only, from the append-only commission ledger. The stats source
+     * is aggregate-shaped by type and each conversion is rebuilt by explicit
+     * construction, so no member identity has a field to travel in.
+     */
+    async dashboardFor(partner) {
+      const stats = await partnerStats.statsFor(partner.partnerId);
+      const dashboard: PartnerDashboardDto = {
+        partnerId: partner.partnerId,
+        role: partner.role,
+        state: partner.state,
+        leadCount: stats.leadCount,
+        conversionCount: stats.conversionCount,
+        totalCommissionCents: stats.totalCommissionCents,
+        payableCents: stats.payableCents,
+        conversions: stats.conversions.map((c) => ({
+          attributedAt: c.attributedAt,
+          eligibleNetCents: c.eligibleNetCents,
+          commissionCents: c.commissionCents,
+          state: c.state,
+        })),
+        // The durable store does not carry training completions yet, so nothing
+        // is reported as outstanding rather than everything being guessed at.
+        outstandingTraining: [],
+      };
+      return dashboard;
+    },
+
+    async listLinks(partnerId) {
+      const links = await partnerLinkStore.listLinks(partnerId);
+      return links.map((link) => partnerLinkDto(link));
+    },
+  };
+
+  // ----- the member shipping quote -------------------------------------------
+
+  async function shippingQuoteFor(memberId: string, req: ShippingQuoteRequest, asOf: Date): Promise<unknown> {
+    // The quote is for THIS member's cart: temperature profile and existence
+    // both come from what they are actually buying.
+    const stored = await cartStore.load(memberId);
+    const lines = stored?.lines ?? [];
+    if (lines.length === 0) {
+      return {
+        ok: false as const,
+        code: "cart_empty" as const,
+        message: "A shipping quote is computed for the cart, and the cart is empty.",
+      };
+    }
+
+    // Address validation through the shipping provider. A structural rejection
+    // is the member's problem (address_invalid); a provider that cannot
+    // validate at all is a capability state (shipping_unavailable).
+    const validated = await shipping.validateAddress(req.destination);
+    if (!validated.ok) {
+      if (validated.code === "DISABLED" || validated.code === "MISCONFIGURED") {
+        return {
+          ok: false as const,
+          code: "shipping_unavailable" as const,
+          message: "Shipping is not available right now.",
+        };
+      }
+      return { ok: false as const, code: "address_invalid" as const, message: validated.message };
+    }
+
+    const profile = cartTemperatureProfile(lines.map((line) => catalogBySku.get(line.sku)));
+    const quoted = await shipping.quote({
+      destination: validated.value.normalized,
+      service: req.service,
+      // The same configured package weight checkout quotes with, so the quote a
+      // member sees is the quote checkout charges.
+      weightGrams: DEFAULT_PACKAGE_WEIGHT_GRAMS,
+      temperatureControlled: profile === "cold_chain" || req.service === "temperature_controlled",
+    });
+    if (!quoted.ok) {
+      // Disabled, misconfigured, or refused: every one is a precise refusal to
+      // quote, never an invented number. The provider's member-safe message is
+      // carried; its failure code is not.
+      return {
+        ok: false as const,
+        code: "shipping_unavailable" as const,
+        message: quoted.message,
+      };
+    }
+    return {
+      ok: true as const,
+      quote: quoted.value,
+      expiresAt: new Date(asOf.getTime() + SHIPPING_QUOTE_TTL_MINUTES * 60 * 1000).toISOString(),
+    };
+  }
 
   const subscriptionService = createSubscriptionService({
     repository: subscriptionRepository,
@@ -579,6 +1154,22 @@ function liveDependencies(
     },
     checkout: {
       submit: async (memberId, req, asOf) => {
+        // THE CROSS-INSTANCE REPLAY GATE. The service's idempotency map lives
+        // in process memory, so after a restart (or on a second instance over
+        // the same database) a replayed key would re-run settlement projection
+        // and save over a durable record an admin or provider may have
+        // advanced since. The durable order projection is therefore consulted
+        // FIRST: a key that already projected an order for THIS member answers
+        // with that order's current truth, runs no service, touches no
+        // provider, and saves nothing. (A key the member reused across two
+        // different operations resolves to the order it is already bound to,
+        // never to a second charge, which is the safe direction.)
+        if (typeof req?.idempotencyKey === "string" && req.idempotencyKey.length > 0) {
+          const settled = await orderRepository.findByIdempotencyKey(memberId, req.idempotencyKey);
+          if (settled) {
+            return { ok: true as const, order: orderRecordToMemberConfirmation(settled) };
+          }
+        }
         const outcome = await checkoutService.submit(memberId, req, asOf);
         if (!outcome.ok) {
           // Nothing was created, charged, or reserved on a denial (the
@@ -604,10 +1195,42 @@ function liveDependencies(
       listForMember: (memberId) => subscriptionService.listForMember(memberId),
       apply: (memberId, subscriptionId, req, asOf) =>
         subscriptionService.apply(memberId, subscriptionId, req, asOf),
+      // The full gate chain is the service's create: catalog existence,
+      // capability, quantity bound, frequency set, per-SKU subscription
+      // eligibility. A created subscription is PENDING and never charges out
+      // of creation alone.
+      create: (memberId, input: CreateSubscriptionWireInput, asOf) =>
+        subscriptionService.create(
+          memberId,
+          {
+            sku: input.sku,
+            quantity: input.quantity,
+            // The wire layer guaranteed a number; the service's isFrequency gate
+            // refuses anything outside the published set at runtime.
+            frequencyDays: input.frequencyDays as SubscriptionFrequencyDays,
+            priceVersion: input.priceVersion,
+            paymentProviderReference: input.paymentProviderReference ?? null,
+            shippingAddressRef: input.shippingAddressRef ?? null,
+          },
+          asOf,
+        ),
     },
     claims: {
       submitClaim: (memberId, req, asOf) => refundService.submitClaim(memberId, req, asOf),
       listForMember: (memberId) => refundService.listForMember(memberId),
+      getForMember: (memberId, claimId) => refundService.getForMember(memberId, claimId),
+    },
+    claimsAdmin: {
+      listOpen: async () => (await refundService.listOpenForAdmin()).map(toAdminClaimView),
+      review: (claimId, adminId, decision, asOf, note) =>
+        refundService.reviewClaim(claimId, adminId, decision, asOf, note),
+      // Provider proof is enforced by the service: the order reaches refunded
+      // only on the reference the provider returned, and a replayed key is
+      // absorbed without a second refund.
+      refund: (claimId, adminId, amountCents, idempotencyKey, asOf) =>
+        refundService.resolveWithRefund(claimId, adminId, amountCents, idempotencyKey, asOf),
+      replacement: (claimId, adminId, asOf) =>
+        refundService.resolveWithReplacement(claimId, adminId, asOf),
     },
     storeCredit: {
       // The wire DTO (spendableCents, pendingCents, entries) plus the legacy
@@ -618,7 +1241,53 @@ function liveDependencies(
         return { owner: memberId, balanceCents: dto.spendableCents, ...dto };
       },
     },
-    partners: partnersFailClosed(),
+    partners,
+    partnerAdmin: {
+      // DELIBERATELY still capability_disabled, and precisely why (reviewed for
+      // the lifecycle wave rather than papered over here):
+      //   1. The durable member-linkage store (AsyncPartnerMemberStore) is
+      //      create + read ONLY by design, so a lifecycle move cannot bypass
+      //      the activation gates the partner service owns. Adding an update
+      //      path there to make this route answer would gut that guarantee.
+      //   2. The partner service that DOES own the gates has no durable
+      //      repository: the shipped lifecycle-event table cannot round-trip
+      //      the typed PartnerLifecycleEvent (see partners-store.ts), so
+      //      resolvePartnerRepository fails safe to an in-memory reference.
+      //      Reviewing through it would report a state change that evaporates
+      //      on restart and never reaches the durable row every member-facing
+      //      partner read resolves, which is worse than refusing.
+      // So the admin review refuses precisely rather than pretending a state
+      // changed. Registering the surface now means the wire contract and guard
+      // are already proven when the durable gate-checked lifecycle path lands.
+      review: async (_partnerId: string, _adminId: string, _decision: PartnerReviewWireDecision, _asOf: Date) => ({
+        ok: false as const,
+        code: "capability_disabled" as const,
+        message: "Partner lifecycle review is not provisioned yet. Nothing was changed.",
+      }),
+    },
+    ordersAdmin: {
+      // The canonical order service over the SAME wiring repository and payment
+      // provider checkout writes through. Approve is Samuel's decision and is
+      // attributed to the guard-verified admin; capture then runs as the SYSTEM
+      // acting on the provider's capture result (the transition table admits no
+      // admin actor for approved -> payment_captured, by design: money moves
+      // only on provider proof); cancel is an admin action carrying its reason
+      // and releasing an uncaptured authorization through the service.
+      approve: async (orderId: string, adminId: string, asOf: Date) =>
+        adminOrderResult(await orderService.approve(orderId, adminId, asOf)),
+      capture: async (orderId: string, _adminId: string, asOf: Date) =>
+        adminOrderResult(await orderService.capture(orderId, "system", asOf)),
+      cancel: async (orderId: string, _adminId: string, reason: string, asOf: Date) =>
+        adminOrderResult(await orderService.cancel(orderId, "admin", reason, asOf)),
+    },
+    webhooks: {
+      handlePayment: (rawBody, signature, asOf) => webhookHandler.handlePayment(rawBody, signature, asOf),
+      handleFulfillment: (rawBody, signature, asOf) =>
+        webhookHandler.handleFulfillment(rawBody, signature, asOf),
+    },
+    shippingQuotes: {
+      quoteFor: (memberId, req, asOf) => shippingQuoteFor(memberId, req, asOf),
+    },
     capabilities: {
       memberVisible: () => ({
         product_commerce: { enabled: true },

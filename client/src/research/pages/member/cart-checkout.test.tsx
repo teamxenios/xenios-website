@@ -370,6 +370,85 @@ describe("Checkout page", () => {
     expect(byTestId<HTMLButtonElement>(view, "co-submit").disabled).toBe(false);
   });
 
+  it("quotes shipping through the live POST /api/research/shipping/quote with the entered address", async () => {
+    const calls = stubFetch([
+      { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: readyCart } },
+      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+      {
+        method: "POST",
+        path: "/api/research/shipping/quote",
+        status: 200,
+        body: {
+          ok: true,
+          quote: {
+            service: "expedited_2day",
+            amountCents: 2450,
+            estimatedDeliveryRange: { earliestDays: 2, latestDays: 3 },
+            disclosure: "Quoted for this address and service.",
+          },
+        },
+      },
+    ]);
+    const view = await renderPage(<Checkout />);
+
+    // The quote control is honestly disabled until the address is complete.
+    expect(byTestId<HTMLButtonElement>(view, "co-quote").disabled).toBe(true);
+
+    await act(async () => {
+      setValue(byTestId<HTMLInputElement>(view, "co-line1"), "1 Research Way");
+      setValue(byTestId<HTMLInputElement>(view, "co-city"), "Austin");
+      setValue(byTestId<HTMLInputElement>(view, "co-state"), "TX");
+      setValue(byTestId<HTMLInputElement>(view, "co-postal"), "78701");
+      setValue(byTestId<HTMLSelectElement>(view, "co-service"), "expedited_2day");
+    });
+    expect(byTestId<HTMLButtonElement>(view, "co-quote").disabled).toBe(false);
+
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "co-quote").click();
+    });
+
+    const quoteCall = calls.find((c) => c.url === "/api/research/shipping/quote");
+    expect(quoteCall).toBeTruthy();
+    expect(JSON.parse(String(quoteCall!.init?.body))).toEqual({
+      destination: { line1: "1 Research Way", city: "Austin", state: "TX", postalCode: "78701", country: "US" },
+      service: "expedited_2day",
+    });
+
+    const result = byTestId(view, "co-quote-result");
+    expect(result.textContent).toContain("$24.50");
+    expect(result.textContent).toContain("Estimated 2 to 3 days.");
+    expect(result.textContent).toContain("Quoted for this address and service.");
+  });
+
+  it("routes a denied quote (address_invalid) through the designed denial copy", async () => {
+    stubFetch([
+      { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: readyCart } },
+      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+      {
+        method: "POST",
+        path: "/api/research/shipping/quote",
+        status: 400,
+        body: { ok: false, code: "address_invalid", message: "raw server text" },
+      },
+    ]);
+    const view = await renderPage(<Checkout />);
+
+    await act(async () => {
+      setValue(byTestId<HTMLInputElement>(view, "co-line1"), "1 Research Way");
+      setValue(byTestId<HTMLInputElement>(view, "co-city"), "Austin");
+      setValue(byTestId<HTMLInputElement>(view, "co-state"), "ZZ");
+      setValue(byTestId<HTMLInputElement>(view, "co-postal"), "00000");
+    });
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "co-quote").click();
+    });
+
+    const denial = view.querySelector('[data-testid="ra-denial"]');
+    expect(denial).toBeTruthy();
+    expect(view.textContent).not.toContain("raw server text");
+    expect(view.querySelector('[data-testid="co-quote-result"]')).toBeNull();
+  });
+
   it("surfaces store credit with the canonical labels and bounds the applied amount", async () => {
     stubFetch([
       { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: readyCart } },
