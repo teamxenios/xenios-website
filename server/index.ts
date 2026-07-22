@@ -8,6 +8,7 @@ import { registerMemberApi } from "./research/members";
 import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
+import { registerMemberPlatformApi } from "./research/member-platform";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
 import { logEmailStartupDiagnostics } from "./services/email-config";
@@ -106,6 +107,13 @@ registerResearchApi(app);
 registerMembershipApi(app);
 registerMemberApi(app);
 registerMemberAccessApi(app);
+// Member platform (G2-G5 + G10): agreements, profile, assessment, Blueprint,
+// plans, documents, tracker, private media, questions, Telegram, Samuel
+// queues, SLA. Every external capability defaults to a truthful disabled
+// state, so this is safe to register before any provider credential exists.
+// This is the one-line wiring the member-platform lane deliberately left for
+// the integration session (it never edits this file itself).
+registerMemberPlatformApi(app);
 
 // Startup config diagnostic (booleans only, never values): makes a fail-closed
 // 503 on /research immediately explainable from the deploy logs.

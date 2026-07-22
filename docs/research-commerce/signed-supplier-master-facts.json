@@ -1,0 +1,3855 @@
+{
+  "schema": "xenios-research-signed-supplier-master-facts/v1",
+  "generated": "2026-07-21",
+  "supplier": "Apex BioInnovations LLC (DBA Apex Peptide Sciences)",
+  "sourceDocument": {
+    "id": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+    "sha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884",
+    "pageCount": 36,
+    "internalReference": "APS-2026-Q3-047",
+    "effectiveDate": "2026-07-21"
+  },
+  "importRules": {
+    "deterministic": true,
+    "idempotent": true,
+    "appendOnlyHistory": true,
+    "coaCrossAssignmentGuard": "A COA/lot ID is bound to exactly one SKU; the loader must reject any COA or lot reused across SKUs.",
+    "applyPolicy": "This import is NOT auto-applied to the live catalog. Non-COA facts land as supplier_reported (visible to Samuel, not members). Promotion to confirmed (member-displayable) requires (a) actual COA delivery and (b) a founder/counsel decision confirming document execution."
+  },
+  "attachmentState": {
+    "secureIntakePresent": false,
+    "attachmentsExpected": 65,
+    "attachmentsFound": 0,
+    "attachmentsVerified": 0,
+    "allReferencedNotFound": true
+  },
+  "facts": [
+    {
+      "sku": "P001",
+      "factKey": "displayName",
+      "exactValue": "BPC-157 + TB-500 Research Blend",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 4,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P001",
+      "factKey": "composition",
+      "exactValue": "BPC-157 (15 amino acids, MW 1499.8); TB-500 (synthetic fragment of Thymosin beta-4, 43 amino acids, MW 4963.6)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 4,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P001",
+      "factKey": "strength",
+      "exactValue": "5 mg BPC-157 / 5 mg TB-500 (10 mg total per vial)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 4,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "15 mg / 15 mg",
+      "conflictHistory": [
+        {
+          "value": "15 mg / 15 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P001",
+      "factKey": "format",
+      "exactValue": "Lyophilised sterile powder; 3 mL borosilicate glass vial with rubber stopper and flip-off seal",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 4,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P001",
+      "factKey": "priceCents",
+      "exactValue": 8999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 4,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 33999,
+      "conflictHistory": [
+        {
+          "value": 33999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P001",
+      "factKey": "storage",
+      "exactValue": "Store lyophilised at -20C +/-5C. Protect from light, moisture, and repeated freeze-thaw.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 4,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P001",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture when stored at -20C. Retest at 18 months per stability protocol.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 4,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P001",
+      "factKey": "shippingProfile",
+      "exactValue": "Ship on dry ice. Maintain -20C throughout transit. Validated insulated shipper with temperature logger.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 4,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P001",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 4,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P001",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 2,450 vials available",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 5,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P001",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P001-LOT-0824A",
+        "COA-P001-LOT-0824B"
+      ],
+      "referencedLots": [
+        "0824A",
+        "0824B"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P002",
+      "factKey": "displayName",
+      "exactValue": "Glow Blend - BPC-157 / TB-500 / GHK-Cu",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 6,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P002",
+      "factKey": "composition",
+      "exactValue": "BPC-157 (15 aa); TB-500 (43 aa); GHK-Cu (copper peptide, glycyl-L-histidyl-L-lysine-Cu complex)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 6,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P002",
+      "factKey": "strength",
+      "exactValue": "GHK-Cu 50 mg; BPC-157 10 mg; TB-500 10 mg (70 mg total per vial)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 6,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "10 mg / 10 mg / 50 mg",
+      "conflictHistory": [
+        {
+          "value": "10 mg / 10 mg / 50 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P002",
+      "factKey": "format",
+      "exactValue": "Lyophilised sterile powder; 5 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 6,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P002",
+      "factKey": "priceCents",
+      "exactValue": 12999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 6,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 34999,
+      "conflictHistory": [
+        {
+          "value": 34999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P002",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; desiccated and protected from light.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 6,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P002",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture. Retest at 18 months.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 6,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P002",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 6,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P002",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 6,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P002",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 1,800 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 7,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P002",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P002-LOT-0824C"
+      ],
+      "referencedLots": [
+        "0824C"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P003",
+      "factKey": "displayName",
+      "exactValue": "KLOW Peptide Stack",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 8,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P003",
+      "factKey": "composition",
+      "exactValue": "GHK-Cu; BPC-157; TB-500; KPV (Lys-Pro-Val, a tripeptide derived from alpha-MSH)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 8,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "TB-500, BPC-157, GHK-Cu, KPV",
+      "conflictHistory": [
+        {
+          "value": "TB-500, BPC-157, GHK-Cu, KPV",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P003",
+      "factKey": "strength",
+      "exactValue": "GHK-Cu 50 mg; BPC-157 10 mg; TB-500 10 mg; KPV 10 mg (80 mg total)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 8,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "5 mg / 5 mg / 10 mg / 5 mg",
+      "conflictHistory": [
+        {
+          "value": "5 mg / 5 mg / 10 mg / 5 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P003",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 5 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 8,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P003",
+      "factKey": "priceCents",
+      "exactValue": 14999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 8,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 33999,
+      "conflictHistory": [
+        {
+          "value": 33999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P003",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; dry and dark.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 8,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P003",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 8,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P003",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 8,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P003",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 8,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P003",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 1,200 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 9,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P003",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P003-LOT-0824D"
+      ],
+      "referencedLots": [
+        "0824D"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P004",
+      "factKey": "displayName",
+      "exactValue": "Immune Support Peptide Blend",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 10,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P004",
+      "factKey": "composition",
+      "exactValue": "Thymosin Alpha-1 (28 aa, MW 3108.4); KPV (tripeptide); LL-37 (cathelicidin-derived AMP, 37 aa, MW 4493.3)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 10,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P004",
+      "factKey": "strength",
+      "exactValue": "Talpha1 5 mg; KPV 5 mg; LL-37 5 mg (15 mg total)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 10,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "5 mg / 5 mg / 5 mg",
+      "conflictHistory": [
+        {
+          "value": "5 mg / 5 mg / 5 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P004",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 3 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 10,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P004",
+      "factKey": "priceCents",
+      "exactValue": 15999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 10,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 38999,
+      "conflictHistory": [
+        {
+          "value": 38999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P004",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; desiccated.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 10,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P004",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 10,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P004",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 10,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P004",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 10,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P004",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 950 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 11,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P004",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P004-LOT-0824E"
+      ],
+      "referencedLots": [
+        "0824E"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P005",
+      "factKey": "displayName",
+      "exactValue": "CJC-1295 / IpaMorelin GH Blend",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 12,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P005",
+      "factKey": "composition",
+      "exactValue": "CJC-1295 (synthetic GHRH analog with DAC, 30 aa, MW 3644.3); IpaMorelin (synthetic GH secretagogue, 5 aa, MW 711.9)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 12,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P005",
+      "factKey": "strength",
+      "exactValue": "CJC-1295 5 mg; IpaMorelin 5 mg (10 mg total)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 12,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "5 mg / 5 mg",
+      "conflictHistory": [
+        {
+          "value": "5 mg / 5 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P005",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 3 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 12,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P005",
+      "factKey": "priceCents",
+      "exactValue": 9999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 12,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 15999,
+      "conflictHistory": [
+        {
+          "value": 15999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P005",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; dry and protected from light.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 12,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P005",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 12,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P005",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 12,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P005",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 12,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P005",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 2,100 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 13,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P005",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P005-LOT-0824F"
+      ],
+      "referencedLots": [
+        "0824F"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P006",
+      "factKey": "displayName",
+      "exactValue": "PT-141 (Bremelanotide)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 14,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P006",
+      "factKey": "composition",
+      "exactValue": "PT-141 (synthetic cyclic heptapeptide, melanocortin-4 receptor agonist, MW 1025.2)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 14,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P006",
+      "factKey": "strength",
+      "exactValue": "10 mg per vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 14,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "10 mg",
+      "conflictHistory": [
+        {
+          "value": "10 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P006",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 3 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 14,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P006",
+      "factKey": "priceCents",
+      "exactValue": 7999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 14,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 11999,
+      "conflictHistory": [
+        {
+          "value": 11999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P006",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; protect from moisture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 14,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P006",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 14,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P006",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 14,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P006",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 14,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P006",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 3,200 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 15,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P006",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P006-LOT-0824G"
+      ],
+      "referencedLots": [
+        "0824G"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P007",
+      "factKey": "displayName",
+      "exactValue": "Tesamorelin",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 16,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P007",
+      "factKey": "composition",
+      "exactValue": "Tesamorelin (stabilised 44-aa GHRH analog, MW 5135.9)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 16,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P007",
+      "factKey": "strength",
+      "exactValue": "5 mg per vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 16,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "10 mg",
+      "conflictHistory": [
+        {
+          "value": "10 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P007",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 3 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 16,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P007",
+      "factKey": "priceCents",
+      "exactValue": 14999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 16,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 20999,
+      "conflictHistory": [
+        {
+          "value": 20999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P007",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; desiccated.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 16,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P007",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 16,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P007",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 16,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P007",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 16,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P007",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 680 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 17,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P007",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P007-LOT-0824H"
+      ],
+      "referencedLots": [
+        "0824H"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P008",
+      "factKey": "displayName",
+      "exactValue": "Gonadorelin",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 18,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P008",
+      "factKey": "composition",
+      "exactValue": "Gonadorelin (synthetic GnRH decapeptide, MW 1182.3)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 18,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P008",
+      "factKey": "strength",
+      "exactValue": "2 mg per vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 18,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "5 mg",
+      "conflictHistory": [
+        {
+          "value": "5 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P008",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 3 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 18,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P008",
+      "factKey": "priceCents",
+      "exactValue": 6999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 18,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 12999,
+      "conflictHistory": [
+        {
+          "value": 12999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P008",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; protect from light.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 18,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P008",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 18,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P008",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 18,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P008",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 18,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P008",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 1,500 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 19,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P008",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P008-LOT-0824I"
+      ],
+      "referencedLots": [
+        "0824I"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P009",
+      "factKey": "displayName",
+      "exactValue": "NAD+ (Nicotinamide Adenine Dinucleotide)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 20,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P009",
+      "factKey": "composition",
+      "exactValue": "NAD+ (beta-Nicotinamide adenine dinucleotide, coenzyme, not a peptide; MW 663.4)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 20,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P009",
+      "factKey": "strength",
+      "exactValue": "100 mg per vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 20,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "500 mg",
+      "conflictHistory": [
+        {
+          "value": "500 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P009",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 3 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 20,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P009",
+      "factKey": "priceCents",
+      "exactValue": 5999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 20,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 15999,
+      "conflictHistory": [
+        {
+          "value": 15999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P009",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; desiccated and protected from light.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 20,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P009",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 20,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P009",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 20,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P009",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 20,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P009",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 4,000 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 21,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P009",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P009-LOT-0824J"
+      ],
+      "referencedLots": [
+        "0824J"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P010",
+      "factKey": "displayName",
+      "exactValue": "MOTS-C",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 22,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P010",
+      "factKey": "composition",
+      "exactValue": "MOTS-C (mitochondrial-derived 16-aa peptide, MW 2174.6)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 22,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P010",
+      "factKey": "strength",
+      "exactValue": "5 mg per vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 22,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "10 mg",
+      "conflictHistory": [
+        {
+          "value": "10 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P010",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 3 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 22,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P010",
+      "factKey": "priceCents",
+      "exactValue": 11999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 22,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 13999,
+      "conflictHistory": [
+        {
+          "value": 13999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P010",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; desiccated.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 22,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P010",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 22,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P010",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 22,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P010",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 22,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P010",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 840 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 23,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P010",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P010-LOT-0824K"
+      ],
+      "referencedLots": [
+        "0824K"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P011",
+      "factKey": "displayName",
+      "exactValue": "Epithalon (Epitalon)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 24,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P011",
+      "factKey": "composition",
+      "exactValue": "Epithalon (synthetic tetrapeptide Ala-Glu-Asp-Gly, MW 390.4)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 24,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P011",
+      "factKey": "strength",
+      "exactValue": "5 mg per vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 24,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "10 mg",
+      "conflictHistory": [
+        {
+          "value": "10 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P011",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 3 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 24,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P011",
+      "factKey": "priceCents",
+      "exactValue": 13999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 24,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 12999,
+      "conflictHistory": [
+        {
+          "value": 12999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P011",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; dry and dark.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 24,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P011",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 24,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P011",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 24,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P011",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 24,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P011",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 1,050 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 25,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P011",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P011-LOT-0824L"
+      ],
+      "referencedLots": [
+        "0824L"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P012",
+      "factKey": "displayName",
+      "exactValue": "SS-31 (Elamipretide / MTP-131)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 26,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P012",
+      "factKey": "composition",
+      "exactValue": "SS-31 (mitochondria-targeted peptide antioxidant, 6 aa, MW 699.9)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 26,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P012",
+      "factKey": "strength",
+      "exactValue": "5 mg per vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 26,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "10 mg",
+      "conflictHistory": [
+        {
+          "value": "10 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P012",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 3 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 26,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P012",
+      "factKey": "priceCents",
+      "exactValue": 16999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 26,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 22999,
+      "conflictHistory": [
+        {
+          "value": 22999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P012",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; desiccated.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 26,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P012",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 26,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P012",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 26,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P012",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 26,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P012",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 510 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 27,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P012",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P012-LOT-0824M"
+      ],
+      "referencedLots": [
+        "0824M"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P013",
+      "factKey": "displayName",
+      "exactValue": "SLU-PP-332 Capsules",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 28,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P013",
+      "factKey": "composition",
+      "exactValue": "SLU-PP-332 (synthetic small-molecule ERR alpha/beta/gamma agonist, not a peptide; MW 412.5)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 28,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P013",
+      "factKey": "strength",
+      "exactValue": "1500 mcg per capsule",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 28,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "250 mcg x 100",
+      "conflictHistory": [
+        {
+          "value": "250 mcg x 100",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P013",
+      "factKey": "format",
+      "exactValue": "60 capsules per HDPE bottle with induction seal",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 28,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P013",
+      "factKey": "priceCents",
+      "exactValue": 8999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 28,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 25999,
+      "conflictHistory": [
+        {
+          "value": 25999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P013",
+      "factKey": "storage",
+      "exactValue": "Store at 15-25C in a dry place, away from direct light.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 28,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P013",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 28,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P013",
+      "factKey": "shippingProfile",
+      "exactValue": "Ambient shipping. No dry ice required.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 28,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P013",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 28,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P013",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 1,100 bottles",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 29,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P013",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P013-LOT-0824N"
+      ],
+      "referencedLots": [
+        "0824N"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P014",
+      "factKey": "displayName",
+      "exactValue": "Dihexa Capsules",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 30,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P014",
+      "factKey": "composition",
+      "exactValue": "Dihexa (orally active angiotensin IV analog oligopeptide, MW 518.7)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 30,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P014",
+      "factKey": "strength",
+      "exactValue": "10 mg per capsule",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 30,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "10 mg x 60",
+      "conflictHistory": [
+        {
+          "value": "10 mg x 60",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P014",
+      "factKey": "format",
+      "exactValue": "30 capsules per HDPE bottle",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 30,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P014",
+      "factKey": "priceCents",
+      "exactValue": 9999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 30,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 29999,
+      "conflictHistory": [
+        {
+          "value": 29999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P014",
+      "factKey": "storage",
+      "exactValue": "15-25C; dry and away from light.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 30,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P014",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 30,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P014",
+      "factKey": "shippingProfile",
+      "exactValue": "Ambient. No special temperature control.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 30,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P014",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 30,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P014",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 780 bottles",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 31,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P014",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P014-LOT-0824O"
+      ],
+      "referencedLots": [
+        "0824O"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P015",
+      "factKey": "displayName",
+      "exactValue": "Neuropeptide Cognition Blend",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 32,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P015",
+      "factKey": "composition",
+      "exactValue": "Semax (synthetic ACTH analog, 7 aa, MW 814.0); Selank (synthetic tuftsin analog, 7 aa, MW 813.9); DSIP (Delta-Sleep Inducing Peptide, 9 aa, MW 1103.2)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 32,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "Semax, Selank, DSIP",
+      "conflictHistory": [
+        {
+          "value": "Semax, Selank, DSIP",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P015",
+      "factKey": "strength",
+      "exactValue": "Semax 5 mg; Selank 5 mg; DSIP 5 mg (15 mg total)",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 32,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": "10 mg / 10 mg / 2 mg",
+      "conflictHistory": [
+        {
+          "value": "10 mg / 10 mg / 2 mg",
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P015",
+      "factKey": "format",
+      "exactValue": "Lyophilised powder; 3 mL glass vial",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 32,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P015",
+      "factKey": "priceCents",
+      "exactValue": 14999,
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 32,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "corrected_by_supplier",
+      "memberDisplayable": false,
+      "previousValue": 25999,
+      "conflictHistory": [
+        {
+          "value": 25999,
+          "source": "legacy_catalog_file: server/research/products-data.ts",
+          "status": "superseded_unverified_legacy"
+        }
+      ]
+    },
+    {
+      "sku": "P015",
+      "factKey": "storage",
+      "exactValue": "-20C +/-5C; desiccated and protected from light.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 32,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P015",
+      "factKey": "shelfLife",
+      "exactValue": "24 months from manufacture.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 32,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P015",
+      "factKey": "shippingProfile",
+      "exactValue": "Dry ice; maintain -20C.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 32,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P015",
+      "factKey": "fulfillmentOwner",
+      "exactValue": "Apex Fulfillment - Austin, TX. Orders processed within 1 business day.",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 32,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P015",
+      "factKey": "inventoryReported",
+      "exactValue": "In stock - 620 vials",
+      "confirmation": "supplier_reported",
+      "source": {
+        "kind": "supplier_document",
+        "reference": "SIGNED-SUPPLIER-MASTER-APS-2026-Q3-047",
+        "recordedAt": "2026-07-21",
+        "pdfPage": 33,
+        "pdfSha256": "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884"
+      },
+      "effectiveDate": "2026-07-21",
+      "signedBy": "Mitch Clark (MC)",
+      "reconciliationStatus": "confirmed_by_signed_supplier_master",
+      "memberDisplayable": false
+    },
+    {
+      "sku": "P015",
+      "factKey": "coa",
+      "exactValue": null,
+      "confirmation": "not_confirmed",
+      "source": {
+        "kind": "none"
+      },
+      "referencedCoaIds": [
+        "COA-P015-LOT-0824P"
+      ],
+      "referencedLots": [
+        "0824P"
+      ],
+      "reconciliationStatus": "referenced_not_found",
+      "conflictNote": "Product sheet marks 'Actual COA attached', but the actual COA file is not present in intake and page 3 of the signed PDF states the COA files were not included. conflict_inside_package.",
+      "memberDisplayable": false
+    }
+  ],
+  "attachments": [
+    {
+      "documentId": "SPEC-P001-v3",
+      "sku": "P001",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P001-v2",
+      "sku": "P001",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P001-v1",
+      "sku": "P001",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P001-LOT-0824A",
+      "sku": "P001",
+      "type": "COA",
+      "lot": "0824A",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "COA-P001-LOT-0824B",
+      "sku": "P001",
+      "type": "COA",
+      "lot": "0824B",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P002-v2",
+      "sku": "P002",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P002-v1",
+      "sku": "P002",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P002-v1",
+      "sku": "P002",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P002-LOT-0824C",
+      "sku": "P002",
+      "type": "COA",
+      "lot": "0824C",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P003-v1",
+      "sku": "P003",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P003-v1",
+      "sku": "P003",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P003-v1",
+      "sku": "P003",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P003-LOT-0824D",
+      "sku": "P003",
+      "type": "COA",
+      "lot": "0824D",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P004-v2",
+      "sku": "P004",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P004-v1",
+      "sku": "P004",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P004-v1",
+      "sku": "P004",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P004-LOT-0824E",
+      "sku": "P004",
+      "type": "COA",
+      "lot": "0824E",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P005-v2",
+      "sku": "P005",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P005-v1",
+      "sku": "P005",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P005-v1",
+      "sku": "P005",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P005-LOT-0824F",
+      "sku": "P005",
+      "type": "COA",
+      "lot": "0824F",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P006-v1",
+      "sku": "P006",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P006-v1",
+      "sku": "P006",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P006-v1",
+      "sku": "P006",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P006-LOT-0824G",
+      "sku": "P006",
+      "type": "COA",
+      "lot": "0824G",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P007-v2",
+      "sku": "P007",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P007-v1",
+      "sku": "P007",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P007-v1",
+      "sku": "P007",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P007-LOT-0824H",
+      "sku": "P007",
+      "type": "COA",
+      "lot": "0824H",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P008-v1",
+      "sku": "P008",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P008-v1",
+      "sku": "P008",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P008-v1",
+      "sku": "P008",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P008-LOT-0824I",
+      "sku": "P008",
+      "type": "COA",
+      "lot": "0824I",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P009-v2",
+      "sku": "P009",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P009-v1",
+      "sku": "P009",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P009-v1",
+      "sku": "P009",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P009-LOT-0824J",
+      "sku": "P009",
+      "type": "COA",
+      "lot": "0824J",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P010-v1",
+      "sku": "P010",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P010-v1",
+      "sku": "P010",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P010-v1",
+      "sku": "P010",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P010-LOT-0824K",
+      "sku": "P010",
+      "type": "COA",
+      "lot": "0824K",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P011-v1",
+      "sku": "P011",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P011-v1",
+      "sku": "P011",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P011-v1",
+      "sku": "P011",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P011-LOT-0824L",
+      "sku": "P011",
+      "type": "COA",
+      "lot": "0824L",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P012-v1",
+      "sku": "P012",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P012-v1",
+      "sku": "P012",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P012-v1",
+      "sku": "P012",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P012-LOT-0824M",
+      "sku": "P012",
+      "type": "COA",
+      "lot": "0824M",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P013-v2",
+      "sku": "P013",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P013-v1",
+      "sku": "P013",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P013-v1",
+      "sku": "P013",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P013-LOT-0824N",
+      "sku": "P013",
+      "type": "COA",
+      "lot": "0824N",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P014-v1",
+      "sku": "P014",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P014-v1",
+      "sku": "P014",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P014-v1",
+      "sku": "P014",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P014-LOT-0824O",
+      "sku": "P014",
+      "type": "COA",
+      "lot": "0824O",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "SPEC-P015-v1",
+      "sku": "P015",
+      "type": "supplier specification",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "STORAGE-P015-v1",
+      "sku": "P015",
+      "type": "storage profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "SHIP-P015-v1",
+      "sku": "P015",
+      "type": "shipping profile",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "No file present in secure intake; index lists Secure Channel delivery but no attachment accompanies the package."
+    },
+    {
+      "documentId": "COA-P015-LOT-0824P",
+      "sku": "P015",
+      "type": "COA",
+      "lot": "0824P",
+      "state": "referenced_not_found",
+      "reason": "Actual COA file not present in intake. Cannot verify. COA-backed facts (purity, sterility, endotoxin, assay, manufacturing/expiry) not established."
+    },
+    {
+      "documentId": "PRICE-SCHEDULE-2026-Q3",
+      "sku": "All",
+      "type": "price schedule",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "Listed in Appendix B as Secure Channel delivery, but no file present in intake. Confidential; excluded from public docs."
+    },
+    {
+      "documentId": "RECALL-CONTACT-v2",
+      "sku": "All",
+      "type": "recall contact sheet",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "Listed in Appendix B as Secure Channel delivery, but no file present in intake."
+    },
+    {
+      "documentId": "INVENTORY-STATEMENT-2026-07",
+      "sku": "All",
+      "type": "inventory statement",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "Listed in Appendix B as Secure Channel delivery, but no file present in intake."
+    },
+    {
+      "documentId": "FULFILLMENT-SLA-v1",
+      "sku": "All",
+      "type": "fulfillment schedule",
+      "lot": null,
+      "state": "referenced_not_found",
+      "reason": "Listed in Appendix B as Secure Channel delivery, but no file present in intake."
+    }
+  ],
+  "perSkuEligibility": [
+    {
+      "sku": "P001",
+      "name": "BPC-157 + TB-500 Research Blend",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 5,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P002",
+      "name": "Glow Blend - BPC-157 / TB-500 / GHK-Cu",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P003",
+      "name": "KLOW Peptide Stack",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P004",
+      "name": "Immune Support Peptide Blend",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P005",
+      "name": "CJC-1295 / IpaMorelin GH Blend",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P006",
+      "name": "PT-141 (Bremelanotide)",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P007",
+      "name": "Tesamorelin",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P008",
+      "name": "Gonadorelin",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P009",
+      "name": "NAD+ (Nicotinamide Adenine Dinucleotide)",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P010",
+      "name": "MOTS-C",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P011",
+      "name": "Epithalon (Epitalon)",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P012",
+      "name": "SS-31 (Elamipretide / MTP-131)",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P013",
+      "name": "SLU-PP-332 Capsules",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P014",
+      "name": "Dihexa Capsules",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    },
+    {
+      "sku": "P015",
+      "name": "Neuropeptide Cognition Blend",
+      "signedFactsRecorded": true,
+      "coaState": "referenced_not_found",
+      "attachmentsVerified": 0,
+      "attachmentsReferenced": 4,
+      "purchaseEligible": false,
+      "blockReasons": [
+        "unconfirmed_commerce_critical_facts (coa)",
+        "quality_documentation_incomplete (no COA on file)",
+        "commerce_capability_disabled (flags false)",
+        "commerce_not_approved (no written product-commerce approval)"
+      ]
+    }
+  ]
+}

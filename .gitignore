@@ -10,9 +10,21 @@ vite.config.ts.*
 .env.*
 !.env.example
 *.local
+*.local.*
 secrets.json
 *.pem
 *.key
+
+# Confidential supplier package — signed masters, COAs, and quality documents
+# are a confidential business record and must never enter the repository. They
+# live only in the local secure intake store (XENIOS_SUPPLIER_SECURE_INTAKE/).
+# Public docs may carry document IDs and hashes, never the files themselves.
+*.pdf
+XENIOS_SUPPLIER_SECURE_INTAKE/
+**/coa/
+**/signed-master/
+supplier-*.pdf
+COA-*.pdf
 
 # Logs
 *.log
