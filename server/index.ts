@@ -8,6 +8,11 @@ import { registerMemberApi } from "./research/members";
 import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
+import { registerMemberPlatformApi } from "./research/member-platform";
+import { registerCommerceApi } from "./research/commerce/routes";
+import { buildCommerceDependencies } from "./research/commerce/production-deps";
+import { requireActiveMember, requireMember } from "./research/member-auth";
+import { requireSupabaseAdmin } from "./routes";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
 import { logEmailStartupDiagnostics } from "./services/email-config";
@@ -106,6 +111,32 @@ registerResearchApi(app);
 registerMembershipApi(app);
 registerMemberApi(app);
 registerMemberAccessApi(app);
+// Member platform (G2-G5 + G10): agreements, profile, assessment, Blueprint,
+// plans, documents, tracker, private media, questions, Telegram, Samuel
+// queues, SLA. Every external capability defaults to a truthful disabled
+// state, so this is safe to register before any provider credential exists.
+// This is the one-line wiring the member-platform lane deliberately left for
+// the integration session (it never edits this file itself).
+registerMemberPlatformApi(app);
+// Commerce surface (G6-G8): catalog and goal reads are live and provenance-
+// gated; every stateful surface (cart writes, checkout, orders, subscriptions,
+// claims, partners) fails closed with commerce_disabled until the production
+// repository layer and a payment provider are wired and the commerce flag is
+// turned on. Guards are the merged ones, injected: no parallel auth.
+// The merged guards use the Express NextFunction signature and may return a
+// Response; the commerce lane's injected-guard type is the simpler
+// (req, res, next: () => void) => void | Promise<void>. This adapter bridges
+// the two without changing behavior: same guard, awaited, return discarded.
+const adaptGuard =
+  (guard: (req: Request, res: Response, next: NextFunction) => unknown) =>
+  async (req: Request, res: Response, next: () => void): Promise<void> => {
+    await guard(req, res, next as unknown as NextFunction);
+  };
+registerCommerceApi(app, buildCommerceDependencies(), {
+  requireActiveMember: adaptGuard(requireActiveMember),
+  requireMember: adaptGuard(requireMember),
+  requireAdmin: adaptGuard(requireSupabaseAdmin),
+});
 
 // Startup config diagnostic (booleans only, never values): makes a fail-closed
 // 503 on /research immediately explainable from the deploy logs.
@@ -161,6 +192,16 @@ startOutboxWorker(log);
     }
 
     return res.status(status).json({ message });
+  });
+
+  // API 404 guard: any /api request that reached here matched no registered
+  // route, so it must return a JSON 404 and NOT fall through to the SPA
+  // catch-all below (which would answer an unknown API path with index.html at
+  // status 200, masking a wrong path as success). Placed after every real API
+  // route (module-load registrations + registerRoutes) and before serveStatic /
+  // vite, so it never shadows a real endpoint and covers both prod and dev.
+  app.use("/api/{*rest}", (_req: Request, res: Response) => {
+    res.status(404).json({ message: "Not Found" });
   });
 
   // importantly only setup vite in development and after
