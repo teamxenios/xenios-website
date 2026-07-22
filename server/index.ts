@@ -9,6 +9,10 @@ import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { registerMemberPlatformApi } from "./research/member-platform";
+import { registerCommerceApi } from "./research/commerce/routes";
+import { buildCommerceDependencies } from "./research/commerce/production-deps";
+import { requireActiveMember, requireMember } from "./research/member-auth";
+import { requireSupabaseAdmin } from "./routes";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
 import { logEmailStartupDiagnostics } from "./services/email-config";
@@ -114,6 +118,25 @@ registerMemberAccessApi(app);
 // This is the one-line wiring the member-platform lane deliberately left for
 // the integration session (it never edits this file itself).
 registerMemberPlatformApi(app);
+// Commerce surface (G6-G8): catalog and goal reads are live and provenance-
+// gated; every stateful surface (cart writes, checkout, orders, subscriptions,
+// claims, partners) fails closed with commerce_disabled until the production
+// repository layer and a payment provider are wired and the commerce flag is
+// turned on. Guards are the merged ones, injected: no parallel auth.
+// The merged guards use the Express NextFunction signature and may return a
+// Response; the commerce lane's injected-guard type is the simpler
+// (req, res, next: () => void) => void | Promise<void>. This adapter bridges
+// the two without changing behavior: same guard, awaited, return discarded.
+const adaptGuard =
+  (guard: (req: Request, res: Response, next: NextFunction) => unknown) =>
+  async (req: Request, res: Response, next: () => void): Promise<void> => {
+    await guard(req, res, next as unknown as NextFunction);
+  };
+registerCommerceApi(app, buildCommerceDependencies(), {
+  requireActiveMember: adaptGuard(requireActiveMember),
+  requireMember: adaptGuard(requireMember),
+  requireAdmin: adaptGuard(requireSupabaseAdmin),
+});
 
 // Startup config diagnostic (booleans only, never values): makes a fail-closed
 // 503 on /research immediately explainable from the deploy logs.

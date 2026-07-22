@@ -15,6 +15,7 @@ import {
   sendStatusLink,
 } from "./membership-emails";
 import { makeResearchToken, type TokenPurpose } from "./membership";
+import { MEMBER_PLATFORM_TEMPLATES } from "./member-platform-emails";
 
 // ---------------------------------------------------------------------------
 // Durable notification outbox (Mega 1 sections 3-4). Every notification is a
@@ -130,8 +131,19 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
           errorSummary: typeof payload.errorSummary === "string" ? payload.errorSummary : null,
         });
         break;
-      default:
+      default: {
+        // Member-platform templates share this ONE durable dispatch path. The
+        // member-platform notifier direct-sends first and enqueues only as a
+        // fallback, so this branch is the durable retry for those keys. No
+        // second email system: the template functions live in
+        // member-platform-emails.ts and are invoked here.
+        const memberTemplate = MEMBER_PLATFORM_TEMPLATES[job.template_key as keyof typeof MEMBER_PLATFORM_TEMPLATES];
+        if (memberTemplate) {
+          const ok = await memberTemplate({ recipient: job.recipient, payload });
+          return { ok, providerId: null, error: ok ? undefined : "provider send returned failure" };
+        }
         return { ok: false, providerId: null, error: `unknown template ${job.template_key}` };
+      }
     }
     // A send is successful ONLY on an explicit success signal: boolean true
     // or { ok: true }. An unknown object shape is a failure, never "sent".
