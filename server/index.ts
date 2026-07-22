@@ -194,6 +194,16 @@ startOutboxWorker(log);
     return res.status(status).json({ message });
   });
 
+  // API 404 guard: any /api request that reached here matched no registered
+  // route, so it must return a JSON 404 and NOT fall through to the SPA
+  // catch-all below (which would answer an unknown API path with index.html at
+  // status 200, masking a wrong path as success). Placed after every real API
+  // route (module-load registrations + registerRoutes) and before serveStatic /
+  // vite, so it never shadows a real endpoint and covers both prod and dev.
+  app.use("/api/{*rest}", (_req: Request, res: Response) => {
+    res.status(404).json({ message: "Not Found" });
+  });
+
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
