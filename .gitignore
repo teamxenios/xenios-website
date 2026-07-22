@@ -22,3 +22,12 @@ npm-debug.log*
 # Editor / OS
 .vscode
 .idea
+
+# Confidential supplier intake: never commit the signed PDF, COAs, specs,
+# price schedules, signatures, or any extracted confidential text. These live
+# only in the local secure intake area outside the repo.
+XENIOS_SUPPLIER_SECURE_INTAKE/
+**/*.local.txt
+**/*.local.json
+signed-supplier-master.pdf
+*SUPPLIER_PRODUCT_FACT_VERIFICATION*.pdf
