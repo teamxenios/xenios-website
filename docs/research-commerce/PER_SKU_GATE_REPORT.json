@@ -1,0 +1,1374 @@
+{
+  "schema": "xenios-research-per-sku-gate-report/v1",
+  "generated": "2026-07-21",
+  "eligibleSkus": [],
+  "blockedSkus": [
+    "P001",
+    "P002",
+    "P003",
+    "P004",
+    "P005",
+    "P006",
+    "P007",
+    "P008",
+    "P009",
+    "P010",
+    "P011",
+    "P012",
+    "P013",
+    "P014",
+    "P015"
+  ],
+  "skus": [
+    {
+      "sku": "P001",
+      "name": "BPC-157 + TB-500 Research Blend",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824A, 0824B referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P002",
+      "name": "Glow Blend - BPC-157 / TB-500 / GHK-Cu",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824C referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P003",
+      "name": "KLOW Peptide Stack",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824D referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P004",
+      "name": "Immune Support Peptide Blend",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824E referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P005",
+      "name": "CJC-1295 / IpaMorelin GH Blend",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824F referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P006",
+      "name": "PT-141 (Bremelanotide)",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824G referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P007",
+      "name": "Tesamorelin",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824H referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P008",
+      "name": "Gonadorelin",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824I referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P009",
+      "name": "NAD+ (Nicotinamide Adenine Dinucleotide)",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824J referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P010",
+      "name": "MOTS-C",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824K referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P011",
+      "name": "Epithalon (Epitalon)",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824L referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P012",
+      "name": "SS-31 (Elamipretide / MTP-131)",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824M referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P013",
+      "name": "SLU-PP-332 Capsules",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824N referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P014",
+      "name": "Dihexa Capsules",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "confirmed_by_signed_master"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824O referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    },
+    {
+      "sku": "P015",
+      "name": "Neuropeptide Cognition Blend",
+      "eligible": false,
+      "failingGates": [
+        "coa",
+        "payment",
+        "agreements",
+        "feature_flag",
+        "admin_release"
+      ],
+      "gates": {
+        "supplier_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex BioInnovations LLC; document execution (typed initials, placeholder signature) pending founder/counsel confirmation"
+        },
+        "product_identity": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "composition": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "strength": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier"
+        },
+        "format": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "size": {
+          "state": "SUPPLIER_STATED",
+          "note": "signed master"
+        },
+        "price": {
+          "state": "SUPPLIER_STATED",
+          "note": "corrected_by_supplier; not member-displayable until promoted to confirmed"
+        },
+        "storage": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only"
+        },
+        "shelf_life": {
+          "state": "SUPPLIER_STATED",
+          "note": "statement only; no stability study on file"
+        },
+        "inventory": {
+          "state": "SUPPLIER_STATED",
+          "note": "reported figure, not a live stock feed"
+        },
+        "active_lot": {
+          "state": "REFERENCED_ONLY",
+          "note": "lot(s) 0824P referenced; no lot record on file"
+        },
+        "coa": {
+          "state": "FAIL",
+          "note": "referenced_not_found: actual COA file absent; COA-backed facts (purity, sterility, endotoxin, assay, manufacture/expiry) not established"
+        },
+        "recall": {
+          "state": "NOT_ESTABLISHED",
+          "note": "RECALL-CONTACT-v2 referenced, absent"
+        },
+        "shipping": {
+          "state": "SUPPLIER_STATED",
+          "note": "profile stated; packout validation record not on file"
+        },
+        "fulfillment": {
+          "state": "SUPPLIER_STATED",
+          "note": "Apex Fulfillment stated; not operationally connected"
+        },
+        "payment": {
+          "state": "FAIL",
+          "note": "no payment processor configured; PAYMENTS_PROVIDER/STRIPE_* absent"
+        },
+        "agreements": {
+          "state": "FAIL",
+          "note": "commerce/product acknowledgment agreements are drafts pending counsel (PR #30)"
+        },
+        "feature_flag": {
+          "state": "FAIL",
+          "note": "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED=false"
+        },
+        "admin_release": {
+          "state": "FAIL",
+          "note": "SKU not admin-released by Samuel"
+        }
+      }
+    }
+  ]
+}
