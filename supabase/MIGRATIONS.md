@@ -26,6 +26,13 @@ table in the same PR that adds or changes a migration file.
 | 17 | research-media.sql | Private media records, retention elections, access audit log | PENDING (not run) | — | member-platform lane |
 | 18 | research-questions.sql | Member questions and Telegram link tokens (hash only) | PENDING (not run) | — | member-platform lane |
 | 19 | research-sla-events.sql | SLA escalation ledger; the unique key is the idempotency guarantee | PENDING (not run) | — | member-platform lane |
+| 20 | research-catalog.sql | Products, provenanced supplier facts, goal + guide links, prohibited claims, open supplier questions, supplement candidates | PENDING (not run) | — | commerce lane |
+| 21 | research-inventory-lots.sql | Lots, per-lot quality documents, excursions, FEFO allocations, lot-to-order shipment traceability | PENDING (not run) | — | commerce lane |
+| 22 | research-orders.sql | Carts, orders, order lines, state events, webhook replay events, claims, durable refund keys | PENDING (not run) | — | commerce lane |
+| 23 | research-subscriptions.sql | Product subscriptions (30/60/90) + append-only subscription events | PENDING (not run) | — | commerce lane |
+| 24 | research-fulfillment.sql | Split fulfillment orders, shipments, shipping quotes with provenance, shipping profiles | PENDING (not run) | — | commerce lane |
+| 25 | research-partners.sql | Partners, agreements, training, lifecycle, links, attribution, conversions, organizations, events, content assets, violations | PENDING (not run) | — | commerce lane |
+| 26 | research-commission-ledger.sql | Append-only commission + store-credit ledgers (UPDATE/DELETE blocked by trigger), payout batches and attempts | PENDING (not run) | — | commerce lane |
 
 Verification files (read-only, run any time):
 
@@ -62,3 +69,29 @@ Notes:
   (kind, subject_id, phase) constraint for escalation idempotency, and
   research-questions.sql relies on a partial unique index to keep one active
   Telegram link per chat, so neither should be edited to relax a constraint.
+- 2026-07-21: migrations 20-26 drafted by the commerce and distribution lane
+  (PR #31; renumbered from 10-16 on integration to sit after the member-platform
+  migrations). NONE are run. They follow the service-role-only rule: RLS enabled,
+  zero policies. Run them in listed order, because 22 and 26 reference concepts
+  introduced by 20 and 21. Nothing in the running server queries these tables
+  yet, so there is no deploy-order hazard; the commerce services are exercised
+  entirely through injected in-memory repositories today.
+- Constraints worth knowing before running 20-26, because they will reject data
+  that older habits would have allowed:
+  - research_product_facts refuses a fact marked `confirmed` without both a value
+    and a supplier document or COA source. This is deliberate and is exactly the
+    control that keeps the signed-but-unattached supplier package (see
+    docs/research-commerce/PURCHASE_ELIGIBILITY_FINAL.md) from unlocking commerce
+    on COA-backed facts.
+  - research_orders refuses a payment_authorized, payment_captured, or refunded
+    row without a provider reference, refuses a capture above the authorization,
+    and refuses a refund above the capture.
+  - research_commission_ledger and research_store_credit_ledger BLOCK UPDATE and
+    DELETE via trigger. A correction must be a new row referencing the original.
+    A migration that tries to backfill by UPDATE on these tables will fail, which
+    is the intended behavior rather than a bug to work around.
+  - research_partners has no parent, sponsor, upline, or tier column, and must
+    not gain one. Recursive downline compensation is a founder-level prohibition.
+- The global order in this ledger is the integration order. The authoritative
+  ordered run script for a production apply is
+  docs/research-launch/FULL_PRODUCTION_MIGRATION_MANIFEST.md.
