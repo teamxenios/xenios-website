@@ -81,9 +81,12 @@ order is not a hazard.
 
 - Static scan: PASS (idempotency, RLS present, zero policies, no destructive
   DDL) across all 26 files.
-- A live dry-run against a scratch Postgres was NOT performed in this session;
-  it is a recommended pre-apply step for the PENDING files and is the one item
-  that needs a database Samuel controls. It is not a code blocker.
+- Live scratch-Postgres dry-run: PASS. All 26 migrations applied in order to a
+  throwaway PostgreSQL 16 with 0 failures; 69 research tables created, all
+  RLS-enabled, 0 policies; the append-only ledger triggers physically reject
+  UPDATE and DELETE; and an idempotent re-apply of the full-production bundle
+  returned 0 errors. Full detail in `MIGRATION_DRY_RUN_REPORT.md`. Applying the
+  reviewed SQL to the production Supabase project remains Samuel's action.
 
 ## Production readiness
 
