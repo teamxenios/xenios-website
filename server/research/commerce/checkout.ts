@@ -34,7 +34,7 @@ import type { ShippingProvider } from "../providers/shipping";
 export const DEFAULT_PACKAGE_WEIGHT_GRAMS = 500;
 
 export interface CheckoutDeps {
-  cart: { revalidate(memberId: string, asOf: Date): CartDto };
+  cart: { revalidate(memberId: string, asOf: Date): Promise<CartDto> };
   payment: PaymentProvider;
   shipping: ShippingProvider;
   commerceEnabled: boolean;
@@ -165,7 +165,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
 
   async function evaluate(memberId: string, req: CheckoutRequest, asOf: Date): Promise<Evaluation> {
     const denials = new Denials();
-    const cart = deps.cart.revalidate(memberId, asOf);
+    const cart = await deps.cart.revalidate(memberId, asOf);
 
     if (!deps.commerceEnabled) denials.add("commerce_disabled");
 

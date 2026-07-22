@@ -131,18 +131,18 @@ class RecordingEventStore implements WebhookEventStore {
 }
 
 function orderStore(initial: WebhookOrder[]): {
-  get(orderId: string): WebhookOrder | undefined;
-  save(order: WebhookOrder): void;
+  get(orderId: string): Promise<WebhookOrder | undefined>;
+  save(order: WebhookOrder): Promise<void>;
   saves: number;
 } {
   const rows = new Map<string, WebhookOrder>();
   initial.forEach((row) => rows.set(row.orderId, row));
   return {
     saves: 0,
-    get(orderId: string) {
+    async get(orderId: string) {
       return rows.get(orderId);
     },
-    save(order: WebhookOrder) {
+    async save(order: WebhookOrder) {
       rows.set(order.orderId, order);
       this.saves += 1;
     },
@@ -184,7 +184,7 @@ describe("payment webhooks", () => {
     const result = await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW);
 
     expect(result).toEqual({ ok: true, applied: true, eventId: "evt_1" });
-    const order = orders.get("ord_1")!;
+    const order = (await orders.get("ord_1"))!;
     expect(order.state).toBe("payment_captured");
     expect(order.captured).toBe(true);
     expect(order.paymentReference).toBe("auth_1");
@@ -198,8 +198,8 @@ describe("payment webhooks", () => {
     const result = await handler.handlePayment(body, GOOD_SIGNATURE, NOW);
 
     expect(result).toEqual({ ok: true, applied: false, eventId: "evt_2" });
-    expect(orders.get("ord_1")!.state).toBe("approved");
-    expect(orders.get("ord_1")!.captured).toBe(false);
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
+    expect((await orders.get("ord_1"))!.captured).toBe(false);
   });
 
   it("rejects an unsigned body and never records it as seen", async () => {
@@ -210,13 +210,13 @@ describe("payment webhooks", () => {
     const forged = await handler.handlePayment(captureBody(), undefined, NOW);
     expect(forged).toEqual({ ok: false, code: "invalid_signature" });
     expect(store.calls).toEqual([]);
-    expect(orders.get("ord_1")!.state).toBe("approved");
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
 
     // The genuine event carrying the SAME id still applies, so a forged body
     // cannot burn an event id to suppress the real one.
     const genuine = await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW);
     expect(genuine).toEqual({ ok: true, applied: true, eventId: "evt_1" });
-    expect(orders.get("ord_1")!.state).toBe("payment_captured");
+    expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
   });
 
   it("rejects a wrongly signed body without touching the store", async () => {
@@ -252,12 +252,12 @@ describe("payment webhooks", () => {
 
     const first = await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW);
     expect(first).toEqual({ ok: true, applied: true, eventId: "evt_1" });
-    expect(orders.get("ord_1")!.state).toBe("payment_captured");
+    expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
     const savesAfterFirst = orders.saves;
 
     const replay = await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW);
     expect(replay).toEqual({ ok: true, applied: false, eventId: "evt_1" });
-    expect(orders.get("ord_1")!.state).toBe("payment_captured");
+    expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
     expect(orders.saves).toBe(savesAfterFirst);
     expect(store.calls).toEqual(["seen:evt_1", "record:evt_1", "seen:evt_1"]);
   });
@@ -309,7 +309,7 @@ describe("payment webhooks", () => {
     const result = await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW);
 
     expect(result).toEqual({ ok: true, applied: false, eventId: "evt_1" });
-    expect(orders.get("ord_1")!.state).toBe("approved");
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
     // Not recorded, because nothing happened. A redelivery after commerce is
     // enabled is a first application, not a second.
     expect(store.calls).toEqual(["seen:evt_1"]);
@@ -323,7 +323,7 @@ describe("payment webhooks", () => {
     const result = await handler.handlePayment(body, GOOD_SIGNATURE, NOW);
 
     expect(result).toEqual({ ok: true, applied: false, eventId: "evt_4" });
-    expect(orders.get("ord_1")!.state).toBe("approved");
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
   });
 
   it("does not move an order along a transition a webhook may not drive", async () => {
@@ -342,7 +342,7 @@ describe("payment webhooks", () => {
     const result = await handler.handlePayment(body, GOOD_SIGNATURE, NOW);
 
     expect(result).toEqual({ ok: true, applied: false, eventId: "evt_5" });
-    expect(orders.get("ord_1")!.state).toBe("payment_captured");
+    expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
   });
 });
 
@@ -366,7 +366,7 @@ describe("fulfillment webhooks", () => {
     const result = await handler.handleFulfillment(deliveredBody(), GOOD_SIGNATURE, NOW);
 
     expect(result).toEqual({ ok: true, applied: true, eventId: "ff_evt_1" });
-    expect(orders.get("ord_1")!.state).toBe("delivered");
+    expect((await orders.get("ord_1"))!.state).toBe("delivered");
   });
 
   it("never carries a payment reference from a fulfillment partner", async () => {
@@ -377,8 +377,8 @@ describe("fulfillment webhooks", () => {
 
     await handler.handleFulfillment(deliveredBody(), GOOD_SIGNATURE, NOW);
 
-    expect(orders.get("ord_1")!.paymentReference).toBeNull();
-    expect(orders.get("ord_1")!.captured).toBe(false);
+    expect((await orders.get("ord_1"))!.paymentReference).toBeNull();
+    expect((await orders.get("ord_1"))!.captured).toBe(false);
   });
 
   it("rejects an unsigned fulfillment body without touching the store", async () => {
@@ -401,7 +401,7 @@ describe("fulfillment webhooks", () => {
     const replay = await handler.handleFulfillment(deliveredBody(), GOOD_SIGNATURE, NOW);
 
     expect(replay).toEqual({ ok: true, applied: false, eventId: "ff_evt_1" });
-    expect(orders.get("ord_1")!.state).toBe("delivered");
+    expect((await orders.get("ord_1"))!.state).toBe("delivered");
   });
 
   it("derives a stable event id when the partner sends none", async () => {

@@ -94,12 +94,12 @@ export interface OrderRecord {
 }
 
 export interface OrderRepository {
-  get(orderId: string): OrderRecord | null;
-  save(order: OrderRecord): void;
-  listByMember(memberId: string): OrderRecord[];
-  findByIdempotencyKey(memberId: string, key: string): OrderRecord | null;
+  get(orderId: string): Promise<OrderRecord | null>;
+  save(order: OrderRecord): Promise<void>;
+  listByMember(memberId: string): Promise<OrderRecord[]>;
+  findByIdempotencyKey(memberId: string, key: string): Promise<OrderRecord | null>;
   /** Admin-only cross-member listing. The review queue has no single member. */
-  listAll(): OrderRecord[];
+  listAll(): Promise<OrderRecord[]>;
 }
 
 export interface OrderServiceDeps {
@@ -132,12 +132,12 @@ export interface OrderService {
   approve(orderId: string, adminId: string, asOf: Date): Promise<OrderResult>;
   capture(orderId: string, actor: Actor, asOf: Date, idempotencyKey?: string): Promise<OrderResult>;
   cancel(orderId: string, actor: Actor, reason: string, asOf: Date): Promise<OrderResult>;
-  beginProcessing(orderId: string, actor: Actor, asOf: Date): OrderResult;
-  markFulfilled(orderId: string, actor: Actor, asOf: Date, evidence?: string): OrderResult;
-  markDelivered(orderId: string, actor: Actor, asOf: Date, evidence?: string): OrderResult;
-  listForMember(memberId: string): OrderSummaryDto[];
-  getForMember(memberId: string, orderId: string): OrderDetailDto | null;
-  adminLargeOrderQueue(): LargeOrderQueueEntry[];
+  beginProcessing(orderId: string, actor: Actor, asOf: Date): Promise<OrderResult>;
+  markFulfilled(orderId: string, actor: Actor, asOf: Date, evidence?: string): Promise<OrderResult>;
+  markDelivered(orderId: string, actor: Actor, asOf: Date, evidence?: string): Promise<OrderResult>;
+  listForMember(memberId: string): Promise<OrderSummaryDto[]>;
+  getForMember(memberId: string, orderId: string): Promise<OrderDetailDto | null>;
+  adminLargeOrderQueue(): Promise<LargeOrderQueueEntry[]>;
 }
 
 // ---------------------------------------------------------------------------
@@ -231,9 +231,9 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
    * Writes a new revision rather than mutating the caller's object, so a denial
    * later in the same call cannot leave a half-applied record behind.
    */
-  function persist(order: OrderRecord, changes: Partial<OrderRecord>, asOf: Date): OrderRecord {
+  async function persist(order: OrderRecord, changes: Partial<OrderRecord>, asOf: Date): Promise<OrderRecord> {
     const next: OrderRecord = { ...order, ...changes, updatedAt: asOf.toISOString() };
-    deps.repository.save(next);
+    await deps.repository.save(next);
     return next;
   }
 
@@ -247,15 +247,15 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
    * operations, which is a conflict rather than a replay: absorbing it would
    * report a capture that never took money as a success.
    */
-  function replayCheck(
+  async function replayCheck(
     order: OrderRecord,
     key: string,
     alreadyApplied: (candidate: OrderRecord) => boolean,
-  ): { kind: "fresh" } | { kind: "replay"; order: OrderRecord } | { kind: "conflict" } {
+  ): Promise<{ kind: "fresh" } | { kind: "replay"; order: OrderRecord } | { kind: "conflict" }> {
     if (order.lastIdempotencyKey === key) {
       return alreadyApplied(order) ? { kind: "replay", order } : { kind: "conflict" };
     }
-    const prior = deps.repository.findByIdempotencyKey(order.memberId, key);
+    const prior = await deps.repository.findByIdempotencyKey(order.memberId, key);
     if (!prior) return { kind: "fresh" };
     if (prior.orderId !== order.orderId) return { kind: "conflict" };
     return alreadyApplied(prior) ? { kind: "replay", order: prior } : { kind: "conflict" };
@@ -271,13 +271,13 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     return candidate.capturedAmountCents !== undefined;
   }
 
-  function move(
+  async function move(
     order: OrderRecord,
     to: OrderState,
     actor: Actor,
     asOf: Date,
     options: { providerConfirmation?: string; changes?: Partial<OrderRecord> } = {},
-  ): OrderResult {
+  ): Promise<OrderResult> {
     const result = transitionOrder({
       from: order.state,
       to,
@@ -287,7 +287,7 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     if (!result.ok) {
       return deny(["order_state_invalid"], result.message);
     }
-    const saved = persist(order, { ...options.changes, state: result.state }, asOf);
+    const saved = await persist(order, { ...options.changes, state: result.state }, asOf);
     return { ok: true, order: saved, idempotent: false };
   }
 
@@ -297,11 +297,11 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     asOf: Date,
     idempotencyKey?: string,
   ): Promise<OrderResult> {
-    const order = deps.repository.get(orderId);
+    const order = await deps.repository.get(orderId);
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
 
     const key = idempotencyKey ?? `authorize:${orderId}`;
-    const replay = replayCheck(order, key, isAuthorized);
+    const replay = await replayCheck(order, key, isAuthorized);
     if (replay.kind === "replay") return { ok: true, order: replay.order, idempotent: true };
     if (replay.kind === "conflict") {
       return deny(["order_state_invalid"], "Idempotency key is already bound to another action.");
@@ -332,7 +332,7 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
       return deny(paymentDenials(auth.code), auth.message);
     }
 
-    const authorized = move(order, "payment_authorized", actor, asOf, {
+    const authorized = await move(order, "payment_authorized", actor, asOf, {
       providerConfirmation: auth.value.providerReference,
       changes: {
         providerReference: auth.value.providerReference,
@@ -356,7 +356,7 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
   }
 
   async function approve(orderId: string, adminId: string, asOf: Date): Promise<OrderResult> {
-    const order = deps.repository.get(orderId);
+    const order = await deps.repository.get(orderId);
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
 
     return move(order, "approved", "admin", asOf, {
@@ -370,11 +370,11 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     asOf: Date,
     idempotencyKey?: string,
   ): Promise<OrderResult> {
-    const order = deps.repository.get(orderId);
+    const order = await deps.repository.get(orderId);
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
 
     const key = idempotencyKey ?? `capture:${orderId}`;
-    const replay = replayCheck(order, key, isCaptured);
+    const replay = await replayCheck(order, key, isCaptured);
     if (replay.kind === "replay") return { ok: true, order: replay.order, idempotent: true };
     if (replay.kind === "conflict") {
       return deny(["order_state_invalid"], "Idempotency key is already bound to another action.");
@@ -430,7 +430,7 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     reason: string,
     asOf: Date,
   ): Promise<OrderResult> {
-    const order = deps.repository.get(orderId);
+    const order = await deps.repository.get(orderId);
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
 
     if (!canTransitionOrder(order.state, "cancelled", actor)) {
@@ -449,42 +449,41 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     });
   }
 
-  function beginProcessing(orderId: string, actor: Actor, asOf: Date): OrderResult {
-    const order = deps.repository.get(orderId);
+  async function beginProcessing(orderId: string, actor: Actor, asOf: Date): Promise<OrderResult> {
+    const order = await deps.repository.get(orderId);
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
     return move(order, "processing", actor, asOf);
   }
 
-  function markFulfilled(orderId: string, actor: Actor, asOf: Date, evidence?: string): OrderResult {
-    const order = deps.repository.get(orderId);
+  async function markFulfilled(orderId: string, actor: Actor, asOf: Date, evidence?: string): Promise<OrderResult> {
+    const order = await deps.repository.get(orderId);
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
     return move(order, "fulfilled", actor, asOf, { providerConfirmation: evidence });
   }
 
-  function markDelivered(orderId: string, actor: Actor, asOf: Date, evidence?: string): OrderResult {
-    const order = deps.repository.get(orderId);
+  async function markDelivered(orderId: string, actor: Actor, asOf: Date, evidence?: string): Promise<OrderResult> {
+    const order = await deps.repository.get(orderId);
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
     return move(order, "delivered", actor, asOf, { providerConfirmation: evidence });
   }
 
-  function listForMember(memberId: string): OrderSummaryDto[] {
-    return deps.repository
-      .listByMember(memberId)
+  async function listForMember(memberId: string): Promise<OrderSummaryDto[]> {
+    return (await deps.repository.listByMember(memberId))
       .filter((order) => order.memberId === memberId)
       .map(toSummary);
   }
 
-  function getForMember(memberId: string, orderId: string): OrderDetailDto | null {
-    const order = deps.repository.get(orderId);
+  async function getForMember(memberId: string, orderId: string): Promise<OrderDetailDto | null> {
+    const order = await deps.repository.get(orderId);
     if (!order) return null;
     // Ownership is the gate. Another member's order does not exist to this caller.
     if (order.memberId !== memberId) return null;
     return toDetail(order);
   }
 
-  function adminLargeOrderQueue(): LargeOrderQueueEntry[] {
+  async function adminLargeOrderQueue(): Promise<LargeOrderQueueEntry[]> {
     const held: LargeOrderQueueEntry[] = [];
-    deps.repository.listAll().forEach((order) => {
+    (await deps.repository.listAll()).forEach((order) => {
       if (order.state !== "manual_review") return;
       held.push({
         orderId: order.orderId,

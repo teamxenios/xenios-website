@@ -54,37 +54,37 @@ export function buildCommerceDependencies(now: () => Date = () => new Date()): C
     // evidence-to-commerce DTO adapter is the next content-integration step, so
     // the member guide surface reads empty rather than presenting unmapped data.
     guides: {
-      listForMember: () => [],
-      getForMember: () => null,
+      listForMember: () => Promise.resolve([]),
+      getForMember: () => Promise.resolve(null),
     },
     cart: {
-      getCart: (memberId) => ({ owner: memberId, lines: [], commerceEnabled: false }),
-      addLine: () => DISABLED,
-      updateLine: () => DISABLED,
-      removeLine: () => DISABLED,
+      getCart: (memberId) => Promise.resolve({ owner: memberId, lines: [], commerceEnabled: false }),
+      addLine: () => Promise.resolve(DISABLED),
+      updateLine: () => Promise.resolve(DISABLED),
+      removeLine: () => Promise.resolve(DISABLED),
     },
     checkout: {
       submit: async () => DISABLED,
     },
     orders: {
-      listForMember: () => [],
-      getForMember: () => null,
+      listForMember: () => Promise.resolve([]),
+      getForMember: () => Promise.resolve(null),
     },
     subscriptions: {
-      listForMember: () => [],
-      apply: () => DISABLED,
+      listForMember: () => Promise.resolve([]),
+      apply: () => Promise.resolve(DISABLED),
     },
     claims: {
-      submitClaim: () => DISABLED,
-      listForMember: () => [],
+      submitClaim: () => Promise.resolve(DISABLED),
+      listForMember: () => Promise.resolve([]),
     },
     storeCredit: {
-      forMember: (memberId) => ({ owner: memberId, balanceCents: 0, entries: [] }),
+      forMember: (memberId) => Promise.resolve({ owner: memberId, balanceCents: 0, entries: [] }),
     },
     partners: {
-      findByMemberId: () => null,
-      dashboardFor: (partnerId) => ({ partnerId, provisioned: false }),
-      listLinks: () => [],
+      findByMemberId: () => Promise.resolve(null),
+      dashboardFor: (partnerId) => Promise.resolve({ partnerId, provisioned: false }),
+      listLinks: () => Promise.resolve([]),
     },
     capabilities: {
       memberVisible: () => ({
@@ -93,7 +93,7 @@ export function buildCommerceDependencies(now: () => Date = () => new Date()): C
       }),
     },
     adminQueues: {
-      commerce: () => ({ provisioned: false, items: [] }),
+      commerce: () => Promise.resolve({ provisioned: false, items: [] }),
     },
     now,
   };

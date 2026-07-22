@@ -95,7 +95,7 @@ describe("gate accumulation", () => {
       deps({
         commerceEnabled: false,
         cart: {
-          revalidate: () =>
+          revalidate: async () =>
             cart({
               lines: [],
               checkoutReady: false,
@@ -143,7 +143,7 @@ describe("gate accumulation", () => {
     const service = createCheckoutService(
       deps({
         cart: {
-          revalidate: () =>
+          revalidate: async () =>
             cart({
               checkoutReady: false,
               blockingReasons: ["cart_revalidation_failed", "quantity_invalid"],
@@ -161,7 +161,7 @@ describe("gate accumulation", () => {
     const service = createCheckoutService(
       deps({
         cart: {
-          revalidate: () =>
+          revalidate: async () =>
             cart({
               lines: [
                 {
@@ -213,7 +213,7 @@ describe("gate accumulation", () => {
 
 describe("submit", () => {
   it("reserves nothing and reads no client price when a gate fails", async () => {
-    const revalidate = vi.fn(() => cart({ checkoutReady: false, blockingReasons: ["insufficient_stock"] }));
+    const revalidate = vi.fn(async () => cart({ checkoutReady: false, blockingReasons: ["insufficient_stock"] }));
     const payment = new TestPaymentProvider();
     const authorize = vi.spyOn(payment, "createAuthorization");
     const shipping = new ConfiguredRateShippingProvider();
@@ -243,7 +243,7 @@ describe("submit", () => {
     const service = createCheckoutService(
       deps({
         cart: {
-          revalidate: () =>
+          revalidate: async () =>
             cart({
               shipmentGroups: [
                 { owner: "mitch", skus: ["P001"] },
@@ -343,7 +343,7 @@ describe("large-order review", () => {
     const service = createCheckoutService(
       deps({
         cart: {
-          revalidate: () =>
+          revalidate: async () =>
             cart({
               lines: [
                 {
@@ -380,7 +380,7 @@ describe("large-order review", () => {
       deps({
         unusualQuantityThreshold: 100,
         cart: {
-          revalidate: () =>
+          revalidate: async () =>
             cart({
               lines: [
                 {
@@ -520,7 +520,7 @@ describe("idempotency", () => {
     const service = createCheckoutService(
       deps({
         cart: {
-          revalidate: () =>
+          revalidate: async () =>
             outOfStock
               ? cart({ checkoutReady: false, blockingReasons: ["insufficient_stock"] })
               : cart(),

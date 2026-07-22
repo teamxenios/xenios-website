@@ -14,18 +14,19 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { SubscriptionFrequencyDays } from "@shared/research/commerce";
 import { SUBSCRIPTION_FREQUENCIES } from "@shared/research/commerce";
-import type { StoredCart, StoredCartLine } from "../cart";
+import type { CartRepository, StoredCart, StoredCartLine } from "../cart";
 import { getSupabaseAdmin, supabaseConfigured } from "../../../supabase";
 
 // ---------------------------------------------------------------------------
-// The async storage interface. The bridge (later wave) loads through this,
-// runs the sync CartService against an in-memory repository, then saves back.
+// The async storage interface. Now that the cart SERVICE seam is itself async,
+// the CartRepository interface (../cart) is byte-for-byte this store's shape:
+// load returns Promise<StoredCart | null>, save returns Promise<void>. So the
+// store IS a CartRepository, and this alias keeps a single source of truth
+// rather than a second interface that could drift. The bridge (later wave)
+// loads through this, runs the CartService against it, then saves back.
 // ---------------------------------------------------------------------------
 
-export interface AsyncCartStore {
-  load(memberId: string): Promise<StoredCart | null>;
-  save(memberId: string, cart: StoredCart): Promise<void>;
-}
+export type AsyncCartStore = CartRepository;
 
 // ---------------------------------------------------------------------------
 // Row mapping (pure, fully tested). All row-shape knowledge lives here, so the

@@ -46,8 +46,8 @@ export interface WebhookEventStore {
 }
 
 export interface WebhookOrderStore {
-  get(orderId: string): WebhookOrder | undefined;
-  save(order: WebhookOrder): void;
+  get(orderId: string): Promise<WebhookOrder | undefined>;
+  save(order: WebhookOrder): Promise<void>;
 }
 
 export interface WebhookDeps {
@@ -148,12 +148,12 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
    * denied transition is not an error to report upward: the event was genuine and
    * the provider must stop retrying, so it is acknowledged with applied false.
    */
-  function applyTransition(
+  async function applyTransition(
     order: WebhookOrder,
     to: OrderState,
     eventId: string,
     providerConfirmation: string | undefined,
-  ): boolean {
+  ): Promise<boolean> {
     const result = transitionOrder({
       from: order.state,
       to,
@@ -170,7 +170,7 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     if (providerConfirmation && !order.paymentReference) {
       order.paymentReference = providerConfirmation;
     }
-    deps.orders.save(order);
+    await deps.orders.save(order);
     return true;
   }
 
@@ -212,12 +212,12 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     const orderId = readString(body, "orderId");
     if (!orderId) return { ok: false, code: "malformed" };
 
-    const order = deps.orders.get(orderId);
+    const order = await deps.orders.get(orderId);
     if (!order) return { ok: false, code: "unknown_order" };
 
     // Step 3. Record, then apply.
     deps.store.record(providerName, eventId, asOf);
-    const applied = applyTransition(order, target, eventId, providerReference);
+    const applied = await applyTransition(order, target, eventId, providerReference);
     return { ok: true, applied, eventId };
   }
 
@@ -263,11 +263,11 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     // The fulfillment order id is the order key. A partner never supplies a payment
     // reference, so no provider confirmation is carried from this surface, which is
     // why a fulfillment event can never reach a paid state.
-    const order = deps.orders.get(update.fulfillmentOrderId);
+    const order = await deps.orders.get(update.fulfillmentOrderId);
     if (!order) return { ok: false, code: "unknown_order" };
 
     deps.store.record(providerName, eventId, asOf);
-    const applied = applyTransition(order, target, eventId, undefined);
+    const applied = await applyTransition(order, target, eventId, undefined);
     return { ok: true, applied, eventId };
   }
 

@@ -51,44 +51,44 @@ export interface CommerceDependencies {
     listGoals(): GoalDto[];
   };
   guides: {
-    listForMember(): GuideSummaryDto[];
-    getForMember(slug: string): GuideDetailDto | { denied: "guide_not_published" } | null;
+    listForMember(): Promise<GuideSummaryDto[]>;
+    getForMember(slug: string): Promise<GuideDetailDto | { denied: "guide_not_published" } | null>;
   };
   cart: {
-    getCart(memberId: string, asOf: Date): unknown;
-    addLine(memberId: string, req: AddCartLineRequest, asOf: Date): unknown;
-    updateLine(memberId: string, sku: string, quantity: number, asOf: Date): unknown;
-    removeLine(memberId: string, sku: string, asOf: Date): unknown;
+    getCart(memberId: string, asOf: Date): Promise<unknown>;
+    addLine(memberId: string, req: AddCartLineRequest, asOf: Date): Promise<unknown>;
+    updateLine(memberId: string, sku: string, quantity: number, asOf: Date): Promise<unknown>;
+    removeLine(memberId: string, sku: string, asOf: Date): Promise<unknown>;
   };
   checkout: {
     submit(memberId: string, req: CheckoutRequest, asOf: Date): Promise<unknown>;
   };
   orders: {
-    listForMember(memberId: string): unknown[];
-    getForMember(memberId: string, orderId: string): unknown | null;
+    listForMember(memberId: string): Promise<unknown[]>;
+    getForMember(memberId: string, orderId: string): Promise<unknown | null>;
   };
   subscriptions: {
-    listForMember(memberId: string): unknown[];
-    apply(memberId: string, subscriptionId: string, req: SubscriptionActionRequest, asOf: Date): unknown;
+    listForMember(memberId: string): Promise<unknown[]>;
+    apply(memberId: string, subscriptionId: string, req: SubscriptionActionRequest, asOf: Date): Promise<unknown>;
   };
   claims: {
-    submitClaim(memberId: string, req: CreateClaimRequest, asOf: Date): unknown;
-    listForMember(memberId: string): unknown[];
+    submitClaim(memberId: string, req: CreateClaimRequest, asOf: Date): Promise<unknown>;
+    listForMember(memberId: string): Promise<unknown[]>;
   };
   storeCredit: {
-    forMember(memberId: string): unknown;
+    forMember(memberId: string): Promise<unknown>;
   };
   partners: {
     /** Resolves the partner owned by this member, or null. Never takes a partner id. */
-    findByMemberId(memberId: string): PartnerSelfSource | null;
-    dashboardFor(partnerId: string): unknown;
-    listLinks(partnerId: string): PartnerLinkDto[];
+    findByMemberId(memberId: string): Promise<PartnerSelfSource | null>;
+    dashboardFor(partnerId: string): Promise<unknown>;
+    listLinks(partnerId: string): Promise<PartnerLinkDto[]>;
   };
   capabilities: {
     memberVisible(): Record<string, MemberCapabilityStatus>;
   };
   adminQueues: {
-    commerce(): unknown;
+    commerce(): Promise<unknown>;
   };
   /** Injected so handlers are deterministic under test. */
   now(): Date;
@@ -240,12 +240,12 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
     ok(res, { goals: deps.catalog.listGoals() });
   });
 
-  app.get("/api/research/guides", active, (_req, res) => {
-    ok(res, { guides: deps.guides.listForMember() });
+  app.get("/api/research/guides", active, async (_req, res) => {
+    ok(res, { guides: await deps.guides.listForMember() });
   });
 
-  app.get("/api/research/guides/:slug", active, (req, res) => {
-    const guide = deps.guides.getForMember(String(req.params.slug));
+  app.get("/api/research/guides/:slug", active, async (req, res) => {
+    const guide = await deps.guides.getForMember(String(req.params.slug));
     if (guide === null) {
       deny(res, 404, "guide_not_found");
       return;
@@ -263,17 +263,17 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   app.get(
     "/api/research/cart",
     active,
-    withSubject((memberId, _req, res) => {
-      ok(res, { cart: deps.cart.getCart(memberId, deps.now()) });
+    withSubject(async (memberId, _req, res) => {
+      ok(res, { cart: await deps.cart.getCart(memberId, deps.now()) });
     }),
   );
 
   app.post(
     "/api/research/cart/lines",
     active,
-    withSubject((memberId, req, res) => {
+    withSubject(async (memberId, req, res) => {
       const body = req.body as AddCartLineRequest;
-      const result = deps.cart.addLine(memberId, body, deps.now());
+      const result = await deps.cart.addLine(memberId, body, deps.now());
       relay(res, result, "cart");
     }),
   );
@@ -281,9 +281,9 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   app.patch(
     "/api/research/cart/lines/:sku",
     active,
-    withSubject((memberId, req, res) => {
+    withSubject(async (memberId, req, res) => {
       const quantity = Number((req.body as { quantity?: unknown })?.quantity);
-      const result = deps.cart.updateLine(memberId, String(req.params.sku), quantity, deps.now());
+      const result = await deps.cart.updateLine(memberId, String(req.params.sku), quantity, deps.now());
       relay(res, result, "cart");
     }),
   );
@@ -291,8 +291,8 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   app.delete(
     "/api/research/cart/lines/:sku",
     active,
-    withSubject((memberId, req, res) => {
-      const result = deps.cart.removeLine(memberId, String(req.params.sku), deps.now());
+    withSubject(async (memberId, req, res) => {
+      const result = await deps.cart.removeLine(memberId, String(req.params.sku), deps.now());
       relay(res, result, "cart");
     }),
   );
@@ -310,18 +310,18 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   app.get(
     "/api/research/orders",
     active,
-    withSubject((memberId, _req, res) => {
-      ok(res, { orders: deps.orders.listForMember(memberId) });
+    withSubject(async (memberId, _req, res) => {
+      ok(res, { orders: await deps.orders.listForMember(memberId) });
     }),
   );
 
   app.get(
     "/api/research/orders/:orderId",
     active,
-    withSubject((memberId, req, res) => {
+    withSubject(async (memberId, req, res) => {
       // The service enforces ownership; a foreign order returns null and 404s here,
       // so a probe cannot distinguish another member's order from a missing one.
-      const order = deps.orders.getForMember(memberId, String(req.params.orderId));
+      const order = await deps.orders.getForMember(memberId, String(req.params.orderId));
       if (!order) {
         deny(res, 404, "order_not_found");
         return;
@@ -333,16 +333,16 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   app.get(
     "/api/research/subscriptions",
     active,
-    withSubject((memberId, _req, res) => {
-      ok(res, { subscriptions: deps.subscriptions.listForMember(memberId) });
+    withSubject(async (memberId, _req, res) => {
+      ok(res, { subscriptions: await deps.subscriptions.listForMember(memberId) });
     }),
   );
 
   app.post(
     "/api/research/subscriptions/:subscriptionId",
     active,
-    withSubject((memberId, req, res) => {
-      const result = deps.subscriptions.apply(
+    withSubject(async (memberId, req, res) => {
+      const result = await deps.subscriptions.apply(
         memberId,
         String(req.params.subscriptionId),
         req.body as SubscriptionActionRequest,
@@ -355,8 +355,8 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   app.post(
     "/api/research/claims",
     active,
-    withSubject((memberId, req, res) => {
-      const result = deps.claims.submitClaim(memberId, req.body as CreateClaimRequest, deps.now());
+    withSubject(async (memberId, req, res) => {
+      const result = await deps.claims.submitClaim(memberId, req.body as CreateClaimRequest, deps.now());
       relay(res, result, "claim");
     }),
   );
@@ -364,16 +364,16 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   app.get(
     "/api/research/claims",
     active,
-    withSubject((memberId, _req, res) => {
-      ok(res, { claims: deps.claims.listForMember(memberId) });
+    withSubject(async (memberId, _req, res) => {
+      ok(res, { claims: await deps.claims.listForMember(memberId) });
     }),
   );
 
   app.get(
     "/api/research/store-credit",
     active,
-    withSubject((memberId, _req, res) => {
-      ok(res, { storeCredit: deps.storeCredit.forMember(memberId) });
+    withSubject(async (memberId, _req, res) => {
+      ok(res, { storeCredit: await deps.storeCredit.forMember(memberId) });
     }),
   );
 
@@ -385,8 +385,8 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   app.get(
     "/api/research/partner/me",
     member,
-    withSubject((memberId, _req, res) => {
-      const partner = deps.partners.findByMemberId(memberId);
+    withSubject(async (memberId, _req, res) => {
+      const partner = await deps.partners.findByMemberId(memberId);
       if (!partner) {
         deny(res, 404, "partner_not_found");
         return;
@@ -398,32 +398,32 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   app.get(
     "/api/research/partner/dashboard",
     member,
-    withSubject((memberId, _req, res) => {
-      const partner = deps.partners.findByMemberId(memberId);
+    withSubject(async (memberId, _req, res) => {
+      const partner = await deps.partners.findByMemberId(memberId);
       if (!partner) {
         deny(res, 404, "partner_not_found");
         return;
       }
-      ok(res, { partner: deps.partners.dashboardFor(partner.partnerId) });
+      ok(res, { partner: await deps.partners.dashboardFor(partner.partnerId) });
     }),
   );
 
   app.get(
     "/api/research/partner/links",
     member,
-    withSubject((memberId, _req, res) => {
-      const partner = deps.partners.findByMemberId(memberId);
+    withSubject(async (memberId, _req, res) => {
+      const partner = await deps.partners.findByMemberId(memberId);
       if (!partner) {
         deny(res, 404, "partner_not_found");
         return;
       }
-      ok(res, { links: deps.partners.listLinks(partner.partnerId) });
+      ok(res, { links: await deps.partners.listLinks(partner.partnerId) });
     }),
   );
 
   // ---- G10 admin ------------------------------------------------------------
-  app.get("/api/admin/research/commerce/queues", admin, (_req, res) => {
-    ok(res, { queues: deps.adminQueues.commerce() });
+  app.get("/api/admin/research/commerce/queues", admin, async (_req, res) => {
+    ok(res, { queues: await deps.adminQueues.commerce() });
   });
 }
 

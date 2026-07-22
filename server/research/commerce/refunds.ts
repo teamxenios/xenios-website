@@ -73,10 +73,10 @@ export interface ClaimRecord {
 }
 
 export interface ClaimRepository {
-  get(claimId: string): ClaimRecord | null;
-  save(claim: ClaimRecord): void;
-  listByMember(memberId: string): ClaimRecord[];
-  listByOrder(orderId: string): ClaimRecord[];
+  get(claimId: string): Promise<ClaimRecord | null>;
+  save(claim: ClaimRecord): Promise<void>;
+  listByMember(memberId: string): Promise<ClaimRecord[]>;
+  listByOrder(orderId: string): Promise<ClaimRecord[]>;
 
   /**
    * Refund idempotency, owned by the repository rather than by this module.
@@ -89,9 +89,9 @@ export interface ClaimRepository {
    * visible in the interface, so an in-memory implementation is an explicit test-only
    * choice rather than an invisible production defect.
    */
-  hasRefundKey(scope: string): boolean;
-  recordRefundKey(scope: string, refundReference: string): void;
-  listOpen(): ClaimRecord[];
+  hasRefundKey(scope: string): Promise<boolean>;
+  recordRefundKey(scope: string, refundReference: string): Promise<void>;
+  listOpen(): Promise<ClaimRecord[]>;
 }
 
 /**
@@ -121,8 +121,8 @@ export interface ClaimOrderView {
 }
 
 export interface ClaimOrderRepository {
-  get(orderId: string): ClaimOrderView | null;
-  save(order: ClaimOrderView): void;
+  get(orderId: string): Promise<ClaimOrderView | null>;
+  save(order: ClaimOrderView): Promise<void>;
 }
 
 export interface RefundServiceDeps {
@@ -154,15 +154,15 @@ export interface ResolutionSuccess {
 export type ResolutionOutcome = ResolutionSuccess | ClaimDenial;
 
 export interface RefundService {
-  submitClaim(memberId: string, req: CreateClaimRequest, asOf: Date): ClaimOutcome;
+  submitClaim(memberId: string, req: CreateClaimRequest, asOf: Date): Promise<ClaimOutcome>;
   reviewClaim(
     claimId: string,
     adminId: string,
     decision: ClaimReviewDecision,
     asOf: Date,
     note?: string,
-  ): ClaimOutcome;
-  resolveWithReplacement(claimId: string, adminId: string, asOf: Date): ResolutionOutcome;
+  ): Promise<ClaimOutcome>;
+  resolveWithReplacement(claimId: string, adminId: string, asOf: Date): Promise<ResolutionOutcome>;
   resolveWithRefund(
     claimId: string,
     adminId: string,
@@ -170,9 +170,9 @@ export interface RefundService {
     idempotencyKey: string,
     asOf: Date,
   ): Promise<ResolutionOutcome>;
-  listForMember(memberId: string): ClaimDto[];
-  getForMember(memberId: string, claimId: string): ClaimDto | null;
-  listOpenForAdmin(): ClaimRecord[];
+  listForMember(memberId: string): Promise<ClaimDto[]>;
+  getForMember(memberId: string, claimId: string): Promise<ClaimDto | null>;
+  listOpenForAdmin(): Promise<ClaimRecord[]>;
 }
 
 // ---------------------------------------------------------------------------
@@ -288,7 +288,7 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
   const mintId = deps.newClaimId ?? ((sequence: number): string => `clm_${sequence}`);
   let counter = 0;
 
-  function submitClaim(memberId: string, req: CreateClaimRequest, asOf: Date): ClaimOutcome {
+  async function submitClaim(memberId: string, req: CreateClaimRequest, asOf: Date): Promise<ClaimOutcome> {
     const denials = new Denials();
 
     if (!deps.commerceEnabled) denials.add("commerce_disabled");
@@ -299,7 +299,7 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
 
     if (!req.evidenceRefs.every(evidenceRefIsOpaque)) denials.add("forbidden");
 
-    const order = deps.orders.get(req.orderId);
+    const order = await deps.orders.get(req.orderId);
     if (!order) {
       denials.add("order_not_found");
       return { ok: false, codes: denials.list };
@@ -319,9 +319,7 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     if (!denials.empty) return { ok: false, codes: denials.list };
 
     // Idempotency: a member who taps submit twice gets the claim they already have.
-    const open = deps.claims
-      .listByOrder(req.orderId)
-      .find(
+    const open = (await deps.claims.listByOrder(req.orderId)).find(
         (c) =>
           c.sku === req.sku &&
           c.reason === req.reason &&
@@ -343,19 +341,19 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
       reviewedBy: null,
       notes: req.detail,
     };
-    deps.claims.save(record);
+    await deps.claims.save(record);
     return { ok: true, claim: toClaimDto(record) };
   }
 
-  function reviewClaim(
+  async function reviewClaim(
     claimId: string,
     adminId: string,
     decision: ClaimReviewDecision,
     asOf: Date,
     note?: string,
-  ): ClaimOutcome {
+  ): Promise<ClaimOutcome> {
     void asOf;
-    const claim = deps.claims.get(claimId);
+    const claim = await deps.claims.get(claimId);
     if (!claim) return deny("order_not_found");
 
     const legal = CLAIM_REVIEW_TRANSITIONS.some((t) => t.from === claim.state && t.to === decision);
@@ -364,31 +362,31 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     claim.state = decision;
     claim.reviewedBy = adminId;
     if (note !== undefined) claim.notes = note;
-    deps.claims.save(claim);
+    await deps.claims.save(claim);
     return { ok: true, claim: toClaimDto(claim) };
   }
 
-  function resolveWithReplacement(claimId: string, adminId: string, asOf: Date): ResolutionOutcome {
+  async function resolveWithReplacement(claimId: string, adminId: string, asOf: Date): Promise<ResolutionOutcome> {
     void asOf;
-    const claim = deps.claims.get(claimId);
+    const claim = await deps.claims.get(claimId);
     if (!claim) return deny("order_not_found");
     // A replacement commits a physical shipment and moves the order to a terminal
     // state, so it is gated on the capability exactly as a refund is.
     if (!deps.commerceEnabled) return deny("commerce_disabled");
     if (claim.state !== "approved") return deny("order_state_invalid");
 
-    const order = deps.orders.get(claim.orderId);
+    const order = await deps.orders.get(claim.orderId);
     if (!order) return deny("order_not_found");
 
     const moved = transitionOrder({ from: order.state, to: "replaced", actor: "admin" });
     if (!moved.ok) return deny("order_state_invalid");
     order.state = moved.state;
-    deps.orders.save(order);
+    await deps.orders.save(order);
 
     claim.state = "resolved";
     claim.resolution = "replacement";
     claim.reviewedBy = adminId;
-    deps.claims.save(claim);
+    await deps.claims.save(claim);
 
     // The replaced unit is destroyed, not restocked. Its chain of custody is broken and
     // no inventory quantity is touched anywhere in this function.
@@ -403,13 +401,13 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     asOf: Date,
   ): Promise<ResolutionOutcome> {
     void asOf;
-    const claim = deps.claims.get(claimId);
+    const claim = await deps.claims.get(claimId);
     if (!claim) return deny("order_not_found");
 
     const replayScope = `${claimId}:${idempotencyKey}`;
     // A replayed key is an absorbed no-op. It never issues a second refund, and it
     // reports the claim as it already stands.
-    if (deps.claims.hasRefundKey(replayScope)) {
+    if (await deps.claims.hasRefundKey(replayScope)) {
       return {
         ok: true,
         claim: toClaimDto(claim),
@@ -420,7 +418,7 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
 
     if (claim.state !== "approved") return deny("order_state_invalid");
 
-    const order = deps.orders.get(claim.orderId);
+    const order = await deps.orders.get(claim.orderId);
     if (!order) return deny("order_not_found");
 
     const denials = new Denials();
@@ -476,33 +474,33 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     const applied =
       Number.isInteger(reported) && reported > amountCents ? reported : amountCents;
 
-    deps.claims.recordRefundKey(replayScope, reference);
+    await deps.claims.recordRefundKey(replayScope, reference);
     order.state = moved.state;
     order.refundedCents = order.refundedCents + applied;
     order.lastAppliedIdempotencyKey = idempotencyKey;
-    deps.orders.save(order);
+    await deps.orders.save(order);
 
     claim.state = "resolved";
     claim.resolution = order.refundedCents >= order.capturedAmountCents ? "refund" : "partial_refund";
     claim.reviewedBy = adminId;
-    deps.claims.save(claim);
+    await deps.claims.save(claim);
 
     // A refunded unit is destroyed for the same reason a replaced one is.
     return { ok: true, claim: toClaimDto(claim), restockedUnits: 0, returnedLotDisposition: "destroyed" };
   }
 
-  function listForMember(memberId: string): ClaimDto[] {
-    return deps.claims.listByMember(memberId).map(toClaimDto);
+  async function listForMember(memberId: string): Promise<ClaimDto[]> {
+    return (await deps.claims.listByMember(memberId)).map(toClaimDto);
   }
 
-  function getForMember(memberId: string, claimId: string): ClaimDto | null {
-    const claim = deps.claims.get(claimId);
+  async function getForMember(memberId: string, claimId: string): Promise<ClaimDto | null> {
+    const claim = await deps.claims.get(claimId);
     // A cross-member read is indistinguishable from a missing claim.
     if (!claim || claim.memberId !== memberId) return null;
     return toClaimDto(claim);
   }
 
-  function listOpenForAdmin(): ClaimRecord[] {
+  async function listOpenForAdmin(): Promise<ClaimRecord[]> {
     return deps.claims.listOpen();
   }
 
@@ -547,23 +545,25 @@ export function createInMemoryClaimRepository(seed: readonly ClaimRecord[] = [])
   }
 
   return {
-    get(claimId) {
+    async get(claimId) {
       return byId.get(claimId) ?? null;
     },
-    save: put,
-    listByMember(memberId) {
+    async save(claim) {
+      put(claim);
+    },
+    async listByMember(memberId) {
       return all().filter((c) => c.memberId === memberId);
     },
-    listByOrder(orderId) {
+    async listByOrder(orderId) {
       return all().filter((c) => c.orderId === orderId);
     },
-    listOpen() {
+    async listOpen() {
       return all().filter((c) => CLOSED_CLAIM_STATES.indexOf(c.state) === -1);
     },
-    hasRefundKey(scope) {
+    async hasRefundKey(scope) {
       return refundKeys.has(scope);
     },
-    recordRefundKey(scope, refundReference) {
+    async recordRefundKey(scope, refundReference) {
       refundKeys.set(scope, refundReference);
     },
   };
@@ -575,10 +575,10 @@ export function createInMemoryClaimOrderRepository(
   const byId = new Map<string, ClaimOrderView>();
   seed.forEach((order) => byId.set(order.orderId, order));
   return {
-    get(orderId) {
+    async get(orderId) {
       return byId.get(orderId) ?? null;
     },
-    save(order) {
+    async save(order) {
       byId.set(order.orderId, order);
     },
   };

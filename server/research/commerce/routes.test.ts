@@ -64,25 +64,25 @@ const PARTNER_SOURCE: PartnerSelfSource = {
 function deps(overrides: Partial<CommerceDependencies> = {}): CommerceDependencies {
   return {
     catalog: { listProducts: () => [], getProduct: () => null, listGoals: () => [] },
-    guides: { listForMember: () => [], getForMember: () => null },
+    guides: { listForMember: async () => [], getForMember: async () => null },
     cart: {
-      getCart: (memberId) => ({ owner: memberId }),
-      addLine: () => ({ ok: true, cart: {} }),
-      updateLine: () => ({ ok: true, cart: {} }),
-      removeLine: () => ({ ok: true, cart: {} }),
+      getCart: async (memberId) => ({ owner: memberId }),
+      addLine: async () => ({ ok: true, cart: {} }),
+      updateLine: async () => ({ ok: true, cart: {} }),
+      removeLine: async () => ({ ok: true, cart: {} }),
     },
     checkout: { submit: async () => ({ ok: false, code: "commerce_disabled" }) },
-    orders: { listForMember: (memberId) => [{ owner: memberId }], getForMember: () => null },
-    subscriptions: { listForMember: () => [], apply: () => ({ ok: true }) },
-    claims: { submitClaim: () => ({ ok: true, claim: {} }), listForMember: () => [] },
-    storeCredit: { forMember: (memberId) => ({ owner: memberId }) },
+    orders: { listForMember: async (memberId) => [{ owner: memberId }], getForMember: async () => null },
+    subscriptions: { listForMember: async () => [], apply: async () => ({ ok: true }) },
+    claims: { submitClaim: async () => ({ ok: true, claim: {} }), listForMember: async () => [] },
+    storeCredit: { forMember: async (memberId) => ({ owner: memberId }) },
     partners: {
-      findByMemberId: (memberId) => (memberId === "mem_1" ? PARTNER_SOURCE : null),
-      dashboardFor: (partnerId) => ({ partnerId }),
-      listLinks: () => [],
+      findByMemberId: async (memberId) => (memberId === "mem_1" ? PARTNER_SOURCE : null),
+      dashboardFor: async (partnerId) => ({ partnerId }),
+      listLinks: async () => [],
     },
     capabilities: { memberVisible: () => ({ product_commerce: { enabled: false } }) },
-    adminQueues: { commerce: () => ({}) },
+    adminQueues: { commerce: async () => ({}) },
     now: () => new Date("2026-07-21T00:00:00Z"),
     ...overrides,
   };
@@ -271,12 +271,12 @@ describe("partner routes resolve the partner from the member", () => {
     const routes = build(
       deps({
         partners: {
-          findByMemberId: () => PARTNER_SOURCE,
-          dashboardFor: (partnerId) => {
+          findByMemberId: async () => PARTNER_SOURCE,
+          dashboardFor: async (partnerId) => {
             seen.push(partnerId);
             return { partnerId };
           },
-          listLinks: () => [],
+          listLinks: async () => [],
         },
       }),
     );
@@ -295,7 +295,7 @@ describe("partner routes resolve the partner from the member", () => {
 describe("guide denial", () => {
   it("denies an unpublished Guide instead of partially rendering it", async () => {
     const routes = build(
-      deps({ guides: { listForMember: () => [], getForMember: () => ({ denied: "guide_not_published" }) } }),
+      deps({ guides: { listForMember: async () => [], getForMember: async () => ({ denied: "guide_not_published" }) } }),
     );
     const { res, captured } = fakeRes();
     await route(routes, "get", "/api/research/guides/:slug").handler(
