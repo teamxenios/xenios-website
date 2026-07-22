@@ -42,11 +42,22 @@ const KAIROS_APP_URL = "https://kairos.xeniostechnology.com";
 // xenios research: the entire section is one lazy chunk so the main bundle does
 // not grow. It carries no product data; the catalog comes from gated server APIs.
 const ResearchSection = lazy(() => import("@/research/section"));
+// Research operations (Samuel admin presentation) — its own lazy chunk at
+// /admin/research*. Presentation only; all authority is server-side.
+const AdminResearchSection = lazy(() => import("@/research/adminx-section"));
 
 function ResearchRoutes() {
   return (
     <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
       <ResearchSection />
+    </Suspense>
+  );
+}
+
+function AdminResearchRoutes() {
+  return (
+    <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
+      <AdminResearchSection />
     </Suspense>
   );
 }
@@ -90,6 +101,9 @@ function Router() {
       <Route path="/book" component={Book} />
       <Route path="/concepts" component={Concepts} />
       <Route path="/admin" component={Admin} />
+      {/* Research operations family (Samuel admin presentation, own chunk). */}
+      <Route path="/admin/research" component={AdminResearchRoutes} />
+      <Route path="/admin/research/*" component={AdminResearchRoutes} />
       {/* xenios research (password-gated section, own chunk). The bare path and
           the multi-segment wildcard both mount the section's own router. */}
       <Route path="/research" component={ResearchRoutes} />

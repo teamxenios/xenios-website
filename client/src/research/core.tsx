@@ -151,6 +151,10 @@ type ResearchContextValue = {
 };
 
 const ResearchContext = createContext<ResearchContextValue | null>(null);
+// Exported for the DEVELOPMENT-ONLY gallery provider override (gallery.tsx);
+// production builds render the gallery as an empty state and never use this.
+export { ResearchContext };
+export type { ResearchContextValue };
 const STORAGE_KEY = "xenios-research-cart-v1";
 
 export function ResearchProvider({ children }: { children: ReactNode }) {

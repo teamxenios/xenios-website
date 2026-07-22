@@ -188,7 +188,7 @@ export default function Apply() {
           {/* progress */}
           <ol className="flex flex-wrap gap-2 mb-10" aria-label="Application progress">
             {STEPS.map((label, i) => (
-              <li key={label} className={`chip ${i === step ? "bg-ink text-paper" : i < step ? "text-ink" : "text-ink-mute"}`} aria-current={i === step ? "step" : undefined} style={{ height: 32, fontSize: 12 }}>
+              <li key={label} className={`chip ${i === step ? "ra-chip-selected" : i < step ? "text-ink" : "text-ink-mute"}`} aria-current={i === step ? "step" : undefined} style={{ height: 32, fontSize: 12 }}>
                 {i + 1}. {label}
               </li>
             ))}
@@ -252,7 +252,7 @@ export default function Apply() {
                 <p className={labelCls}>Are you applying as an individual or a professional?</p>
                 <div className="flex gap-3 mt-2">
                   {(["individual", "professional"] as const).map((t) => (
-                    <button key={t} type="button" onClick={() => set("applicantType", t)} className={`chip ${form.applicantType === t ? "bg-ink text-paper" : "text-ink-2"}`} aria-pressed={form.applicantType === t}>
+                    <button key={t} type="button" onClick={() => set("applicantType", t)} className={`chip ${form.applicantType === t ? "ra-chip-selected" : "text-ink-2"}`} aria-pressed={form.applicantType === t}>
                       {t === "individual" ? "Individual" : "Professional"}
                     </button>
                   ))}
@@ -272,7 +272,7 @@ export default function Apply() {
                   {APPLICATION_INTERESTS.map((interest) => {
                     const on = form.interests.includes(interest);
                     return (
-                      <button key={interest} type="button" onClick={() => set("interests", on ? form.interests.filter((i) => i !== interest) : [...form.interests, interest])} className={`chip ${on ? "bg-ink text-paper" : "text-ink-2"}`} aria-pressed={on} style={{ height: 34, fontSize: 13 }}>
+                      <button key={interest} type="button" onClick={() => set("interests", on ? form.interests.filter((i) => i !== interest) : [...form.interests, interest])} className={`chip ${on ? "ra-chip-selected" : "text-ink-2"}`} aria-pressed={on} style={{ height: 34, fontSize: 13 }}>
                         {interest}
                       </button>
                     );

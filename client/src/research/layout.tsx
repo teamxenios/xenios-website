@@ -17,13 +17,13 @@ import { useResearch } from "./core";
 
 const MEMBER_NAV = [
   { label: "Home", href: "/research/member" },
-  { label: "Products", href: "/research/products" },
-  { label: "Systems", href: "/research/systems" },
-  { label: "Guides", href: "/research/guides" },
-  { label: "Orders", href: "/research/orders" },
-  { label: "Subscriptions", href: "/research/subscriptions" },
-  { label: "Referrals", href: "/research/referrals" },
-  { label: "Profile", href: "/research/profile" },
+  { label: "Blueprint", href: "/research/member/blueprint" },
+  { label: "Tracker", href: "/research/member/tracker" },
+  { label: "Products", href: "/research/member/products" },
+  { label: "Guides", href: "/research/member/guides" },
+  { label: "Orders", href: "/research/member/orders" },
+  { label: "Membership", href: "/research/member/membership" },
+  { label: "Profile", href: "/research/member/profile" },
 ];
 
 // Routes that belong to the member area (member chrome + RequireMember in
