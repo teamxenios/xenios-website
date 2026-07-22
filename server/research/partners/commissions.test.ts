@@ -72,6 +72,10 @@ function proof(
       amountCents: 1000,
       currency: "usd",
       status: "paid",
+      // A proof binds to the entries it settled; the ledger id used across
+      // these tests is the accrual chain's, matched loosely because markPaid
+      // resolves any entry id in the chain.
+      ledgerEntryIds: ["led_1"],
       ...overrides,
     },
     providerReference: "pref_1",

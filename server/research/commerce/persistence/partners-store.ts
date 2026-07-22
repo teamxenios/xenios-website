@@ -140,15 +140,34 @@ export function storedLinkToRow(link: StoredLink): PartnerLinkRow {
 }
 
 /**
- * The async storage seam for partner links. The attribution SERVICE seam
- * (AttributionRepository) is currently synchronous, so this is a NEW async
- * interface consistent with StoredLink, ready for the wiring wave to load through.
+ * The async storage seam for partner links, and THE seam the attribution service
+ * will adopt: AttributionRepository (../../partners/attribution) is still
+ * synchronous, so the partner modules declare no async repository of their own.
+ * This interface is that missing declaration, kept here (like the payout port in
+ * commissions-store and the idempotency port in idempotency-store) until the
+ * async seam conversion moves it onto the service. Method naming follows the
+ * sync seam's verbs (saveLink/findLinkByCode/listLinks) so the adoption is a
+ * mechanical `async` conversion, not a rename.
  * A link is insert + read only: there is no update or delete path.
  */
 export interface AsyncPartnerLinkStore {
+  /** Insert a newly issued link. A duplicate code throws DuplicatePartnerLinkCode. */
   saveLink(link: StoredLink): Promise<void>;
   findLinkByCode(code: string): Promise<StoredLink | null>;
   listLinks(partnerId: string): Promise<StoredLink[]>;
+}
+
+/**
+ * Raised when a link code is saved twice. The code is the attribution identity
+ * of the link, and research_partner_links keeps it UNIQUE, so a second save is
+ * REJECTED rather than overwritten: an overwrite could silently re-point an
+ * existing code at a different partner, which is an attribution integrity hole.
+ */
+export class DuplicatePartnerLinkCode extends Error {
+  constructor(code: string) {
+    super(`Partner link code ${code} already exists; a link is never overwritten.`);
+    this.name = "DuplicatePartnerLinkCode";
+  }
 }
 
 export function createInMemoryPartnerLinkStore(): AsyncPartnerLinkStore {
@@ -157,6 +176,11 @@ export function createInMemoryPartnerLinkStore(): AsyncPartnerLinkStore {
   const clone = (link: StoredLink): StoredLink => ({ ...link });
   return {
     async saveLink(link) {
+      // Never an overwrite: the DB keeps code UNIQUE, so the reference rejects a
+      // duplicate identically. (The audit found the earlier version re-pointing
+      // byCode while the old partner's byPartner list kept the stale link, so
+      // one code could appear under two partners. Rejection closes that gap.)
+      if (byCode.has(link.code)) throw new DuplicatePartnerLinkCode(link.code);
       const stored = clone(link);
       byCode.set(stored.code, stored);
       const existing = byPartner.get(stored.partnerId) ?? [];
@@ -173,6 +197,9 @@ export function createInMemoryPartnerLinkStore(): AsyncPartnerLinkStore {
   };
 }
 
+// PostgREST unique-violation code, surfaced when a link code is inserted twice.
+const UNIQUE_VIOLATION = "23505";
+
 /**
  * Supabase-backed link store. Reads are scoped by the partner id the caller
  * passes and never by any ambient identity, so one partner's links can never be
@@ -184,7 +211,12 @@ export function createSupabasePartnerLinkStore(
   return {
     async saveLink(link) {
       const ins = await client.from(PARTNER_LINKS).insert(storedLinkToRow(link));
-      if (ins.error) throw new Error(`partner link insert failed: ${ins.error.message}`);
+      if (ins.error) {
+        // The UNIQUE constraint on code is the guarantee; surface it as the same
+        // typed error the in-memory reference raises.
+        if (ins.error.code === UNIQUE_VIOLATION) throw new DuplicatePartnerLinkCode(link.code);
+        throw new Error(`partner link insert failed: ${ins.error.message}`);
+      }
     },
 
     async findLinkByCode(code) {
@@ -265,11 +297,15 @@ export function attributionTouchToRow(subjectKey: string, touch: AttributionTouc
 }
 
 /**
- * The async storage seam for attribution touches. A touch is a historical fact:
- * this interface exposes insert (appendTouch) and read (touchesFor) only, and
- * carries no update or delete method, so the store itself cannot rewrite history.
- * The shipped table has no update path for these rows either, so the invariant is
- * enforced in two places, not one.
+ * The async storage seam for attribution touches, and THE seam the attribution
+ * service will adopt when its synchronous repository goes async (the partner
+ * modules declare no async repository of their own, so the declaration lives
+ * here, mirroring the payout port in commissions-store). Verbs follow the sync
+ * seam (appendTouch/touchesFor) so adoption is mechanical.
+ * A touch is a historical fact: this interface exposes insert (appendTouch) and
+ * read (touchesFor) only, and carries no update or delete method, so the store
+ * itself cannot rewrite history. The shipped table has no update path for these
+ * rows either, so the invariant is enforced in two places, not one.
  */
 export interface AsyncAttributionTouchStore {
   appendTouch(subjectKey: string, touch: AttributionTouch): Promise<void>;
@@ -336,7 +372,10 @@ export function resolveAttributionTouchStore(): AsyncAttributionTouchStore {
 // ===========================================================================
 
 /**
- * The async storage seam for the resolved winner of one order. It exposes the
+ * The async storage seam for the resolved winner of one order, and THE seam the
+ * attribution service will adopt for conversions when its synchronous repository
+ * goes async (declared here because the partner modules declare no async
+ * repository of their own; same pattern as the two seams above). It exposes the
  * append-only pair only: putAttributionIfAbsent (insert the first winner, return
  * the existing one on a retry or race) and getAttribution (read). There is
  * deliberately no update or delete here; the admin-override path

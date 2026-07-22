@@ -41,26 +41,31 @@ function aClaim(overrides: Partial<ClaimRecord> = {}): ClaimRecord {
 // Pure row mapping
 // ---------------------------------------------------------------------------
 
+function aClaimRow(overrides: Partial<ClaimRow> = {}): ClaimRow {
+  return {
+    id: "clm_1",
+    order_id: "ord_1",
+    member_id: "mem_1",
+    sku: "P001",
+    lot_id: "LOT-9",
+    reason: "damaged",
+    state: "submitted",
+    resolution: null,
+    evidence_refs: ["ref-a", "ref-b"],
+    reviewed_by: null,
+    submitted_at: "2026-07-20T00:00:00.000Z",
+    notes: "",
+    ...overrides,
+  };
+}
+
 describe("claimRowToRecord", () => {
   it("maps a submitted claim row", () => {
-    const row: ClaimRow = {
-      id: "clm_1",
-      order_id: "ord_1",
-      member_id: "mem_1",
-      sku: "P001",
-      lot_id: "LOT-9",
-      reason: "damaged",
-      state: "submitted",
-      resolution: null,
-      evidence_refs: ["ref-a", "ref-b"],
-      reviewed_by: null,
-      submitted_at: "2026-07-20T00:00:00.000Z",
-    };
-    expect(claimRowToRecord(row)).toEqual(aClaim());
+    expect(claimRowToRecord(aClaimRow())).toEqual(aClaim());
   });
 
-  it("defaults a null lot, null evidence, and null resolution safely", () => {
-    const row: ClaimRow = {
+  it("defaults a null lot, null evidence, null resolution, and null notes safely", () => {
+    const row = aClaimRow({
       id: "clm_2",
       order_id: "ord_2",
       member_id: "mem_2",
@@ -72,7 +77,8 @@ describe("claimRowToRecord", () => {
       evidence_refs: null,
       reviewed_by: "admin_7",
       submitted_at: "2026-07-19T00:00:00.000Z",
-    };
+      notes: null, // a row predating the fidelity migration
+    });
     expect(claimRowToRecord(row)).toEqual({
       claimId: "clm_2",
       orderId: "ord_2",
@@ -88,10 +94,16 @@ describe("claimRowToRecord", () => {
       notes: "",
     });
   });
+
+  it("drops a row with an unknown reason, state, or resolution rather than guessing", () => {
+    expect(claimRowToRecord(aClaimRow({ reason: "buyer_remorse" }))).toBeNull();
+    expect(claimRowToRecord(aClaimRow({ state: "escalated_to_legal" }))).toBeNull();
+    expect(claimRowToRecord(aClaimRow({ resolution: "store_credit" }))).toBeNull();
+  });
 });
 
 describe("claimRecordToRow", () => {
-  it("projects the persistable columns and drops notes (no column for it)", () => {
+  it("projects the persistable columns including notes (fidelity migration column)", () => {
     const record = aClaim({ notes: "operator only detail", resolution: "replacement", state: "approved", reviewedBy: "admin_3" });
     expect(claimRecordToRow(record)).toEqual({
       id: "clm_1",
@@ -105,13 +117,13 @@ describe("claimRecordToRow", () => {
       evidence_refs: ["ref-a", "ref-b"],
       reviewed_by: "admin_3",
       submitted_at: "2026-07-20T00:00:00.000Z",
+      notes: "operator only detail",
     });
   });
 
-  it("round-trips a record through row and back, minus the unpersistable notes", () => {
+  it("round-trips a record through row and back exactly, notes included", () => {
     const record = aClaim({ notes: "lost in transit" });
-    const back = claimRowToRecord(claimRecordToRow(record));
-    expect(back).toEqual({ ...record, notes: "" });
+    expect(claimRowToRecord(claimRecordToRow(record))).toEqual(record);
   });
 });
 
@@ -342,12 +354,38 @@ describe("createSupabaseClaimRepository (fake client)", () => {
     expect(await repo.get("nope")).toBeNull();
   });
 
-  it("saves then loads a claim round-trip (notes not persisted)", async () => {
+  it("saves then loads a claim round-trip EXACTLY, matching the in-memory reference", async () => {
     const { client } = fakeSupabase();
     const repo = createSupabaseClaimRepository(client);
-    const record = aClaim({ notes: "member detail" });
+    const record = aClaim({ notes: "member detail", lotId: "LOT-9", reviewedBy: "admin_2" });
     await repo.save(record);
-    expect(await repo.get("clm_1")).toEqual({ ...record, notes: "" });
+
+    const reference = createInMemoryClaimRepository();
+    await reference.save(record);
+
+    // The fidelity migration adds the notes column, so the Supabase round trip
+    // now matches the in-memory reference field for field, notes included.
+    expect(await repo.get("clm_1")).toEqual(record);
+    expect(await repo.get("clm_1")).toEqual(await reference.get("clm_1"));
+  });
+
+  it("get drops a stored row that carries an unknown enum value (drop, never guess)", async () => {
+    const { client, db } = fakeSupabase();
+    const repo = createSupabaseClaimRepository(client);
+    await repo.save(aClaim());
+    db.claims.set("clm_1", { ...db.claims.get("clm_1")!, state: "escalated_to_legal" });
+    expect(await repo.get("clm_1")).toBeNull();
+  });
+
+  it("lists drop an unknown-enum row while keeping the valid rows", async () => {
+    const { client, db } = fakeSupabase();
+    const repo = createSupabaseClaimRepository(client);
+    await repo.save(aClaim({ claimId: "clm_ok" }));
+    await repo.save(aClaim({ claimId: "clm_bad" }));
+    db.claims.set("clm_bad", { ...db.claims.get("clm_bad")!, reason: "buyer_remorse" });
+    expect((await repo.listByMember("mem_1")).map((c) => c.claimId)).toEqual(["clm_ok"]);
+    expect((await repo.listByOrder("ord_1")).map((c) => c.claimId)).toEqual(["clm_ok"]);
+    expect((await repo.listOpen()).map((c) => c.claimId)).toEqual(["clm_ok"]);
   });
 
   it("save updates an existing claim in place rather than duplicating", async () => {

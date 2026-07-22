@@ -60,6 +60,35 @@ export interface CommissionLedgerRow {
   actor_type: string;
   actor_id: string | null;
   created_at: string;
+  /**
+   * The entry kind the service wrote (Track B fidelity migration). Nullable:
+   * a pre-migration row carries null and falls back to positional derivation
+   * on read. Storing it means a transition or reversal written in the same
+   * created_at millisecond as the accrual can never make the accrual read
+   * back as something else and corrupt the partner's outstanding balance.
+   */
+  kind: string | null;
+}
+
+const COMMISSION_COLUMNS =
+  "id, partner_id, order_id, state, eligible_net_cents, basis_points, amount_cents, reverses_ledger_id, source_reference, payout_batch_id, payout_reference, actor_type, actor_id, created_at, kind";
+
+const COMMISSION_KINDS: readonly CommissionEntryKind[] = ["accrual", "transition", "reversal"];
+
+/** The row's stored kind when it is a known one, else null (positional fallback). */
+function storedKind(row: CommissionLedgerRow): CommissionEntryKind | null {
+  return row.kind !== null && (COMMISSION_KINDS as readonly string[]).includes(row.kind)
+    ? (row.kind as CommissionEntryKind)
+    : null;
+}
+
+/**
+ * The chain's accrual row: the row STORED as the accrual when the column
+ * exists, else the oldest row (the pre-migration positional rule).
+ */
+function accrualRowOf(chainRows: readonly CommissionLedgerRow[]): CommissionLedgerRow {
+  const sorted = [...chainRows].sort(compareCommissionRows);
+  return sorted.find((row) => storedKind(row) === "accrual") ?? sorted[0];
 }
 
 /**
@@ -82,9 +111,10 @@ export function effectiveBasisPoints(amountCents: number, eligibleNetCents: numb
 /**
  * Map a domain entry to an insertable row.
  *
- * KNOWN SCHEMA GAP: migration 26 has no column for `kind`, `rootId`,
- * `previousEntryId`, or `reason`. The first three are reconstructed losslessly
- * on read (see chainRowsToEntries), so nothing is lost there. `reason` (free
+ * `kind` is persisted directly (Track B fidelity migration), so read-back never
+ * reinterprets a money row from its sort position. KNOWN SCHEMA GAP: there is
+ * still no column for `rootId`, `previousEntryId`, or `reason`. The first two
+ * are reconstructed losslessly on read (see chainRowsToEntries). `reason` (free
  * text, audit-only, never read by the repository contract) is NOT persisted by
  * this schema; a follow-up migration adding a `reason text` column would close
  * that fidelity gap. No money value is dropped: amounts, states, and references
@@ -101,7 +131,7 @@ export function commissionEntryToRow(entry: CommissionLedgerEntry): CommissionLe
     amount_cents: entry.amountCents,
     // The DB constraint allows reverses_ledger_id only when state is 'reversed'
     // (a full reversal). A partial reversal keeps the chain live, so it carries
-    // no target here; kind is still recovered from position + amount on read.
+    // no target here; its kind is stored in the kind column regardless.
     reverses_ledger_id: entry.kind === "reversal" && entry.state === "reversed" ? entry.rootId : null,
     source_reference: entry.sourceReference,
     payout_batch_id: entry.payoutBatchId,
@@ -109,12 +139,38 @@ export function commissionEntryToRow(entry: CommissionLedgerEntry): CommissionLe
     actor_type: entry.actor,
     actor_id: entry.actorId,
     created_at: entry.createdAt,
+    kind: entry.kind,
   };
 }
 
 /**
+ * Every commission state the domain defines (shared/research/distribution.ts).
+ * A ledger row whose state is not one of these cannot be interpreted, and a
+ * money ledger is never guessed at: silently dropping the row would corrupt the
+ * chain reconstruction (kind is derived from position, so a dropped accrual
+ * would make a reversal read as an accrual) and change balances. So an unknown
+ * state THROWS, loudly, instead of dropping or guessing.
+ */
+const COMMISSION_STATES: readonly CommissionState[] = [
+  "pending",
+  "held",
+  "approved",
+  "payable",
+  "paid",
+  "reversed",
+  "disputed",
+  "forfeited",
+];
+
+function asCommissionState(value: string): CommissionState {
+  if ((COMMISSION_STATES as readonly string[]).includes(value)) return value as CommissionState;
+  throw new Error(`commission ledger row carries an unknown state: ${value}`);
+}
+
+/**
  * Map one row back to a domain entry, given the chain-derived fields the schema
- * does not store directly.
+ * does not store directly. Throws on an unknown state (see asCommissionState):
+ * a money row that cannot be interpreted must fail loudly, never silently.
  */
 export function rowToCommissionEntry(
   row: CommissionLedgerRow,
@@ -129,7 +185,7 @@ export function rowToCommissionEntry(
     orderId: row.order_id,
     amountCents: row.amount_cents,
     eligibleNetCents: row.eligible_net_cents,
-    state: row.state as CommissionState,
+    state: asCommissionState(row.state),
     actor: (row.actor_type === "admin" ? "admin" : "system") as "admin" | "system",
     actorId: row.actor_id,
     // Not carried by migration 26 (see commissionEntryToRow). Never read by the
@@ -142,10 +198,20 @@ export function rowToCommissionEntry(
   };
 }
 
-/** Oldest first, deterministic. Callers advance the clock, so created_at is monotonic per chain. */
+/**
+ * Oldest first, deterministic. created_at is usually monotonic per chain, but
+ * two rows written by one handler can share a millisecond, so within a tied
+ * timestamp the stored accrual sorts FIRST (it is always the chain's oldest
+ * row) and the remaining tie breaks on id. Without the kind-aware rank, a
+ * random-UUID tiebreak could place a same-ms transition at index 0 and make
+ * the real accrual read back as a reversal.
+ */
 function compareCommissionRows(a: CommissionLedgerRow, b: CommissionLedgerRow): number {
   if (a.created_at < b.created_at) return -1;
   if (a.created_at > b.created_at) return 1;
+  const rankA = storedKind(a) === "accrual" ? 0 : 1;
+  const rankB = storedKind(b) === "accrual" ? 0 : 1;
+  if (rankA !== rankB) return rankA - rankB;
   if (a.id < b.id) return -1;
   if (a.id > b.id) return 1;
   return 0;
@@ -156,22 +222,26 @@ function compareCommissionRows(a: CommissionLedgerRow, b: CommissionLedgerRow): 
  *
  * The chain is every row sharing (partner_id, order_id): one order pays one
  * partner and there is at most one accrual per (partner, order), so this set is
- * exactly one chain. Ordered oldest first, the first row is the accrual, and
- * each later row is a reversal when it moves money (amount > 0) or a transition
- * when it does not (amount = 0). rootId is the accrual's id; previousEntryId is
- * the immediately preceding row. This is the exact inverse of how the service
- * writes a chain, so the round trip is lossless for every field the contract
- * reads.
+ * exactly one chain. Each row's kind is read back from the stored kind column
+ * (Track B fidelity migration), so a money row is never reinterpreted by its
+ * sort position; only a pre-migration row (kind null) falls back to the
+ * positional rule (first row accrual, amount > 0 reversal, else transition).
+ * rootId is the stored accrual's id (falling back to the oldest row);
+ * previousEntryId is the immediately preceding row. This is the exact inverse
+ * of how the service writes a chain, so the round trip is lossless for every
+ * field the contract reads.
  */
 export function chainRowsToEntries(rows: readonly CommissionLedgerRow[]): CommissionLedgerEntry[] {
   const sorted = [...rows].sort(compareCommissionRows);
   if (sorted.length === 0) return [];
-  const rootId = sorted[0].id;
+  const rootId = (sorted.find((row) => storedKind(row) === "accrual") ?? sorted[0]).id;
   return sorted.map((row, index) => {
-    let kind: CommissionEntryKind;
-    if (index === 0) kind = "accrual";
-    else if (row.amount_cents > 0) kind = "reversal";
-    else kind = "transition";
+    let kind = storedKind(row);
+    if (kind === null) {
+      if (index === 0) kind = "accrual";
+      else if (row.amount_cents > 0) kind = "reversal";
+      else kind = "transition";
+    }
     return rowToCommissionEntry(row, {
       rootId,
       previousEntryId: index === 0 ? null : sorted[index - 1].id,
@@ -202,9 +272,7 @@ export function createSupabaseCommissionLedgerStore(
   async function rowById(entryId: string): Promise<CommissionLedgerRow | null> {
     const found = await client
       .from(COMMISSION_TABLE)
-      .select(
-        "id, partner_id, order_id, state, eligible_net_cents, basis_points, amount_cents, reverses_ledger_id, source_reference, payout_batch_id, payout_reference, actor_type, actor_id, created_at",
-      )
+      .select(COMMISSION_COLUMNS)
       .eq("id", entryId)
       .maybeSingle();
     if (found.error) throw new Error(`commission entry load failed: ${found.error.message}`);
@@ -214,9 +282,7 @@ export function createSupabaseCommissionLedgerStore(
   async function chainRowsFor(partnerId: string, orderId: string): Promise<CommissionLedgerRow[]> {
     const res = await client
       .from(COMMISSION_TABLE)
-      .select(
-        "id, partner_id, order_id, state, eligible_net_cents, basis_points, amount_cents, reverses_ledger_id, source_reference, payout_batch_id, payout_reference, actor_type, actor_id, created_at",
-      )
+      .select(COMMISSION_COLUMNS)
       .eq("partner_id", partnerId)
       .eq("order_id", orderId)
       .order("created_at", { ascending: true });
@@ -248,9 +314,7 @@ export function createSupabaseCommissionLedgerStore(
     async listByPartner(partnerId) {
       const res = await client
         .from(COMMISSION_TABLE)
-        .select(
-          "id, partner_id, order_id, state, eligible_net_cents, basis_points, amount_cents, reverses_ledger_id, source_reference, payout_batch_id, payout_reference, actor_type, actor_id, created_at",
-        )
+        .select(COMMISSION_COLUMNS)
         .eq("partner_id", partnerId)
         .order("created_at", { ascending: true });
       if (res.error) throw new Error(`commission partner load failed: ${res.error.message}`);
@@ -280,15 +344,14 @@ export function createSupabaseCommissionLedgerStore(
     async listAccrualsByOrder(orderId) {
       const res = await client
         .from(COMMISSION_TABLE)
-        .select(
-          "id, partner_id, order_id, state, eligible_net_cents, basis_points, amount_cents, reverses_ledger_id, source_reference, payout_batch_id, payout_reference, actor_type, actor_id, created_at",
-        )
+        .select(COMMISSION_COLUMNS)
         .eq("order_id", orderId)
         .order("created_at", { ascending: true });
       if (res.error) throw new Error(`commission order load failed: ${res.error.message}`);
       const rows = ((res.data ?? []) as CommissionLedgerRow[]).slice();
 
-      // The accrual is the earliest row of each (partner, order) chain.
+      // The accrual is the row stored as one (falling back to the earliest for
+      // pre-migration chains) of each (partner, order) chain.
       const byPartner = new Map<string, CommissionLedgerRow[]>();
       for (const row of rows) {
         const bucket = byPartner.get(row.partner_id);
@@ -297,7 +360,7 @@ export function createSupabaseCommissionLedgerStore(
       }
       const accruals: CommissionLedgerEntry[] = [];
       byPartner.forEach((chainRows) => {
-        const first = [...chainRows].sort(compareCommissionRows)[0];
+        const first = accrualRowOf(chainRows);
         accruals.push(rowToCommissionEntry(first, { rootId: first.id, previousEntryId: null, kind: "accrual" }));
       });
       accruals.sort((a, b) => (a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0));
@@ -307,7 +370,7 @@ export function createSupabaseCommissionLedgerStore(
     async findAccrual(partnerId, orderId) {
       const chain = await chainRowsFor(partnerId, orderId);
       if (chain.length === 0) return null;
-      const first = [...chain].sort(compareCommissionRows)[0];
+      const first = accrualRowOf(chain);
       return rowToCommissionEntry(first, { rootId: first.id, previousEntryId: null, kind: "accrual" });
     },
   };
@@ -348,6 +411,37 @@ export type PayoutAttemptOutcome =
   | "retryable"
   | "permanent_failure"
   | "settled";
+
+// Payout rows are money history too, so the same never-guess rule applies on
+// read: a state or outcome outside the known sets throws rather than being
+// cast through and silently mis-driving a later payout decision.
+const PAYOUT_BATCH_STATES: readonly PayoutBatchState[] = [
+  "built",
+  "submitted",
+  "settled",
+  "failed",
+  "cancelled",
+];
+const PAYOUT_ATTEMPT_OUTCOMES: readonly PayoutAttemptOutcome[] = [
+  "disabled",
+  "misconfigured",
+  "rejected",
+  "retryable",
+  "permanent_failure",
+  "settled",
+];
+
+function asPayoutBatchState(value: string): PayoutBatchState {
+  if ((PAYOUT_BATCH_STATES as readonly string[]).includes(value)) return value as PayoutBatchState;
+  throw new Error(`payout batch row carries an unknown state: ${value}`);
+}
+
+function asPayoutAttemptOutcome(value: string): PayoutAttemptOutcome {
+  if ((PAYOUT_ATTEMPT_OUTCOMES as readonly string[]).includes(value)) {
+    return value as PayoutAttemptOutcome;
+  }
+  throw new Error(`payout attempt row carries an unknown outcome: ${value}`);
+}
 
 export interface PayoutBatchRecord {
   id: string;
@@ -412,7 +506,7 @@ export function payoutBatchRowToRecord(row: PayoutBatchRow): PayoutBatchRecord {
     id: row.id,
     partnerId: row.partner_id,
     totalCents: row.total_cents,
-    state: row.state as PayoutBatchState,
+    state: asPayoutBatchState(row.state),
     providerName: row.provider_name,
     providerReference: row.provider_reference,
     excludedReasons: [...(row.excluded_reasons ?? [])],
@@ -437,7 +531,7 @@ export function payoutAttemptRowToRecord(row: PayoutAttemptRow): PayoutAttemptRe
     id: row.id,
     batchId: row.batch_id,
     attemptNo: row.attempt_no,
-    outcome: row.outcome as PayoutAttemptOutcome,
+    outcome: asPayoutAttemptOutcome(row.outcome),
     providerCode: row.provider_code,
     attemptedAt: row.attempted_at,
   };
@@ -449,6 +543,7 @@ export function payoutAttemptRowToRecord(row: PayoutAttemptRow): PayoutAttemptRe
  * with the next attempt_no, which the DB keeps unique per batch.
  */
 export interface PayoutLedgerRepository {
+  /** Record a newly built batch. A duplicate id throws DuplicatePayoutBatch. */
   recordBatch(batch: PayoutBatchRecord): Promise<void>;
   getBatch(batchId: string): Promise<PayoutBatchRecord | null>;
   /** Batches for one partner, oldest first. Scoped strictly to the given partner. */
@@ -467,6 +562,19 @@ export class DuplicatePayoutAttempt extends Error {
 }
 
 /**
+ * Raised when a batch id is recorded twice. A batch row is the immutable record
+ * of what was built, so a second record under the same id is REJECTED, never an
+ * overwrite: durably the primary key raises it, and the in-memory reference
+ * raises the same error so the two implementations cannot diverge.
+ */
+export class DuplicatePayoutBatch extends Error {
+  constructor(batchId: string) {
+    super(`Payout batch ${batchId} already exists; a batch is never overwritten.`);
+    this.name = "DuplicatePayoutBatch";
+  }
+}
+
+/**
  * In-memory reference. Correct within one process and the double used by tests.
  * It models the DB's UNIQUE (batch_id, attempt_no) so duplicate attempts fail
  * the same way they would durably. Copies on the way in and out.
@@ -479,6 +587,10 @@ export function createInMemoryPayoutLedgerStore(): PayoutLedgerRepository {
 
   return {
     async recordBatch(batch) {
+      // Never an overwrite: durably the primary key rejects a duplicate id, so
+      // the reference rejects it identically (the audit found this map silently
+      // replacing an existing batch, which the database would never allow).
+      if (batches.has(batch.id)) throw new DuplicatePayoutBatch(batch.id);
       batches.set(batch.id, cloneBatch(batch));
     },
     async getBatch(batchId) {
@@ -526,7 +638,12 @@ export function createSupabasePayoutLedgerStore(
   return {
     async recordBatch(batch) {
       const ins = await client.from(PAYOUT_BATCHES_TABLE).insert(payoutBatchRecordToRow(batch));
-      if (ins.error) throw new Error(`payout batch record failed: ${ins.error.message}`);
+      if (ins.error) {
+        // The primary key is the guarantee: a duplicate id is rejected by the
+        // database, surfaced as the same typed error the reference raises.
+        if (ins.error.code === PG_UNIQUE_VIOLATION) throw new DuplicatePayoutBatch(batch.id);
+        throw new Error(`payout batch record failed: ${ins.error.message}`);
+      }
     },
 
     async getBatch(batchId) {

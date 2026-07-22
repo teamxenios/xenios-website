@@ -8,11 +8,15 @@ import {
   lineRowsToOrderLines,
   orderToHeaderRow,
   orderToLineRows,
+  orderToShipmentRows,
   orderToStateEventRow,
   resolveFulfillmentOwner,
+  shipmentRowsToRecords,
   type OrderHeaderRow,
   type OrderLineInsert,
   type OrderLineRow,
+  type OrderShipmentInsert,
+  type OrderShipmentRow,
   type OrderStateEventInsert,
 } from "./orders-store";
 
@@ -127,11 +131,68 @@ describe("header row mapping round-trip", () => {
     expect(back.providerReference).toBe("auth_1");
   });
 
-  it("omits the amount keys when the columns are null", () => {
+  it("omits the optional keys when the columns are null", () => {
     const headerRow: OrderHeaderRow = { ...orderToHeaderRow(order()), checkout_idempotency_key: null };
     const back = headerRowToOrder(headerRow, []);
     expect("authorizedAmountCents" in back).toBe(false);
     expect("capturedAmountCents" in back).toBe(false);
+    expect("approvedBy" in back).toBe(false);
+    expect("approvedAt" in back).toBe(false);
+    expect("cancellationReason" in back).toBe(false);
+    expect("authorizationReleaseFailed" in back).toBe(false);
+    expect("shipments" in back).toBe(false);
+  });
+
+  it("round-trips approval and cancellation evidence, including an explicit false", () => {
+    const rec = order({
+      state: "cancelled",
+      approvedBy: "admin_4",
+      approvedAt: LATER,
+      cancellationReason: "member requested",
+      // False is a real recorded outcome (the release succeeded); it must come
+      // back as false, never be swallowed into an absent key.
+      authorizationReleaseFailed: false,
+    });
+    const headerRow: OrderHeaderRow = { ...orderToHeaderRow(rec), checkout_idempotency_key: null };
+    expect(headerRowToOrder(headerRow, orderToLineRows(rec.orderId, rec))).toEqual(rec);
+  });
+
+  it("throws on a state the state machine does not define rather than casting through", () => {
+    const headerRow: OrderHeaderRow = {
+      ...orderToHeaderRow(order()),
+      checkout_idempotency_key: null,
+      state: "quantum_superposition",
+    };
+    expect(() => headerRowToOrder(headerRow, [])).toThrow(/unknown state/);
+  });
+});
+
+describe("shipment row mapping", () => {
+  const shipments = [
+    { owner: "mitch" as const, status: "shipped", trackingNumber: "TRK-1", carrier: "UPS" },
+    { owner: "xenios" as const, status: "pending", trackingNumber: null, carrier: null },
+  ];
+
+  it("round-trips shipments through rows, preserving array order via seq", () => {
+    const rows = orderToShipmentRows("ord_1", order({ shipments }));
+    expect(rows).toEqual<OrderShipmentInsert[]>([
+      { order_id: "ord_1", seq: 0, owner: "mitch", status: "shipped", tracking_number: "TRK-1", carrier: "UPS" },
+      { order_id: "ord_1", seq: 1, owner: "xenios", status: "pending", tracking_number: null, carrier: null },
+    ]);
+    expect(shipmentRowsToRecords(rows)).toEqual(shipments);
+  });
+
+  it("reorders by seq on read and drops a row with an owner the domain does not define", () => {
+    const rows: OrderShipmentRow[] = [
+      { seq: 1, owner: "xenios", status: "pending", tracking_number: null, carrier: null },
+      { seq: 0, owner: "mitch", status: "shipped", tracking_number: "TRK-1", carrier: "UPS" },
+      { seq: 2, owner: "dropshipper_x", status: "shipped", tracking_number: null, carrier: null },
+    ];
+    expect(shipmentRowsToRecords(rows)).toEqual(shipments);
+  });
+
+  it("maps no shipments to no rows", () => {
+    expect(orderToShipmentRows("ord_1", order())).toEqual([]);
   });
 });
 
@@ -201,20 +262,23 @@ describe("createInMemoryOrderStore", () => {
 
 /**
  * A minimal fake of the supabase-js fluent client covering exactly the calls the
- * order store makes across three tables. Orders and lines are backed by plain
- * maps so a save then load round-trips; state events are an append-only array so
- * the ledger behavior can be asserted directly. The maps are exposed for seeding
- * rows the domain cannot write (a checkout_idempotency_key set by checkout).
+ * order store makes across four tables. Orders, lines, and shipments are backed
+ * by plain maps so a save then load round-trips; state events are an append-only
+ * array so the ledger behavior can be asserted directly. The maps are exposed
+ * for seeding rows the domain cannot write (a checkout_idempotency_key set by
+ * checkout).
  */
 function fakeSupabase(): {
   client: SupabaseClient;
   orders: Map<string, OrderHeaderRow>;
   lines: Map<string, OrderLineRow[]>;
+  shipments: Map<string, OrderShipmentRow[]>;
   events: OrderStateEventInsert[];
   deletes: number;
 } {
   const orders = new Map<string, OrderHeaderRow>();
   const lines = new Map<string, OrderLineRow[]>();
+  const shipments = new Map<string, OrderShipmentRow[]>();
   const events: OrderStateEventInsert[] = [];
   const counters = { deletes: 0 };
 
@@ -272,6 +336,29 @@ function fakeSupabase(): {
           return { data: null, error: null };
         }
       }
+      if (table === "research_order_shipments") {
+        const orderId = String(state.filters.order_id ?? "");
+        if (state.op === "select") return { data: shipments.get(orderId) ?? [], error: null };
+        if (state.op === "delete") {
+          shipments.set(orderId, []);
+          return { data: null, error: null };
+        }
+        if (state.op === "insert") {
+          const rows = state.payload as OrderShipmentInsert[];
+          for (const r of rows) {
+            const arr = shipments.get(r.order_id) ?? [];
+            arr.push({
+              seq: r.seq,
+              owner: r.owner,
+              status: r.status,
+              tracking_number: r.tracking_number,
+              carrier: r.carrier,
+            });
+            shipments.set(r.order_id, arr);
+          }
+          return { data: null, error: null };
+        }
+      }
       if (table === "research_order_state_events") {
         if (state.op === "insert") {
           events.push(state.payload as OrderStateEventInsert);
@@ -320,7 +407,7 @@ function fakeSupabase(): {
   }
 
   const client = { from: (table: string) => builder(table) } as unknown as SupabaseClient;
-  return { client, orders, lines, events, get deletes() { return counters.deletes; } };
+  return { client, orders, lines, shipments, events, get deletes() { return counters.deletes; } };
 }
 
 describe("createSupabaseOrderStore (fake client)", () => {
@@ -340,6 +427,66 @@ describe("createSupabaseOrderStore (fake client)", () => {
     });
     await store.save(rec);
     expect(await store.get("ord_1")).toEqual(rec);
+  });
+
+  it("round-trips shipments and approval evidence exactly, matching the in-memory reference", async () => {
+    const rec = order({
+      state: "approved",
+      providerReference: "auth_1",
+      authorizedAmountCents: 21095,
+      approvedBy: "admin_4",
+      approvedAt: LATER,
+      shipments: [
+        { owner: "mitch", status: "shipped", trackingNumber: "TRK-1", carrier: "UPS" },
+        { owner: "xenios", status: "pending", trackingNumber: null, carrier: null },
+      ],
+    });
+
+    const { client } = fakeSupabase();
+    const store = createSupabaseOrderStore(client);
+    await store.save(rec);
+
+    const reference = createInMemoryOrderStore();
+    await reference.save(rec);
+
+    // The fidelity migration closed the audit's dropped-field gap: the durable
+    // round trip now matches the in-memory reference field for field.
+    expect(await store.get("ord_1")).toEqual(rec);
+    expect(await store.get("ord_1")).toEqual(await reference.get("ord_1"));
+  });
+
+  it("round-trips a cancellation with its reason and release outcome", async () => {
+    const rec = order({
+      state: "cancelled",
+      cancellationReason: "member requested",
+      authorizationReleaseFailed: true,
+    });
+    const { client } = fakeSupabase();
+    const store = createSupabaseOrderStore(client);
+    await store.save(rec);
+    const back = await store.get("ord_1");
+    expect(back!.cancellationReason).toBe("member requested");
+    expect(back!.authorizationReleaseFailed).toBe(true);
+    expect(back).toEqual(rec);
+  });
+
+  it("replaces the shipments on save rather than appending, and clears them when unset", async () => {
+    const { client, shipments } = fakeSupabase();
+    const store = createSupabaseOrderStore(client);
+    await store.save(
+      order({ shipments: [{ owner: "mitch", status: "shipped", trackingNumber: "TRK-1", carrier: "UPS" }] }),
+    );
+    await store.save(
+      order({ shipments: [{ owner: "xenios", status: "delivered", trackingNumber: "TRK-2", carrier: "USPS" }] }),
+    );
+    expect((await store.get("ord_1"))!.shipments).toEqual([
+      { owner: "xenios", status: "delivered", trackingNumber: "TRK-2", carrier: "USPS" },
+    ]);
+    // A record saved with no shipments clears the child rows: the read matches
+    // the in-memory reference (an absent key), not a stale earlier generation.
+    await store.save(order());
+    expect(shipments.get("ord_1")).toEqual([]);
+    expect("shipments" in (await store.get("ord_1"))!).toBe(false);
   });
 
   it("replaces the lines on save rather than appending", async () => {

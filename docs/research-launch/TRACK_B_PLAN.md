@@ -129,3 +129,88 @@ No flag flipped, no payment taken, no production SQL run, no real credential
 used, no SKU made purchasable. Activation stays externally gated on delivered
 COAs (0 of 65 today), a credentialed payment processor, effective agreements,
 and per-SKU admin release.
+
+## Findings and repairs log (waves 14+15 audit closure)
+
+Six minor findings from the wave 14 persistence audit, each closed with a code
+repair and a regression test, plus the wave 15 schema fidelity work. All in
+`server/research/commerce/persistence/`; nothing here flips a flag, runs SQL, or
+enables commerce.
+
+1. **Payout batch overwrite (commissions-store).** The in-memory
+   `recordBatch` silently replaced an existing batch by id, which the durable
+   primary key would never allow. Repair: a duplicate id now throws the new
+   typed `DuplicatePayoutBatch` in BOTH implementations (the Supabase store maps
+   the 23505 unique violation to the same error), so a batch is never
+   overwritten. Tests: duplicate rejection plus proof the recorded totals
+   survive, against the reference and the fake client.
+2. **Unguarded claim enum casts (claims-store).** `claimRowToRecord` cast
+   `reason`/`state`/`resolution` straight from the row. Repair: the mapper now
+   validates each against the exact domain sets and returns null for an unknown
+   value, and every read path drops such a row (cart-store's drop-not-guess
+   discipline); `get` returns null, lists exclude the row while keeping valid
+   ones. Tests: per-column drop cases plus list/get behavior.
+3. **Recall timestamp drift (inventory-store).** `inventoryLotToRow` stamped
+   `recalled_at` with the current clock on every re-save of an already-recalled
+   lot, so the traceability record of WHEN the recall happened drifted. Repair:
+   the save path reads the stored `recalled_at` first and the mapper preserves
+   it (`existingRecalledAt` wins over `now`); the clock is used only by the save
+   that first flips the lot to recalled, and clearing the recall clears the
+   date. Tests: pure-mapper cases and a two-save fake-client scenario proving
+   the original date survives a later operational save.
+4. **Partners-store seam reconciliation.** The three async interfaces it
+   declared (`AsyncPartnerLinkStore`, `AsyncAttributionTouchStore`,
+   `AsyncAttributionConversionStore`) are KEPT and now documented in-file as THE
+   seams the partner services adopt when the synchronous AttributionRepository
+   goes async (the partner modules declare no async repository of their own;
+   same pattern as the payout port in commissions-store). Verbs mirror the sync
+   seam so adoption is a mechanical async conversion. The audit's real gap was
+   found and fixed here too: the in-memory `saveLink` overwrote `byCode` on a
+   duplicate code while the old partner's listing kept the stale link, so one
+   code could appear under two partners (an attribution integrity hole the DB's
+   UNIQUE code makes impossible). Repair: duplicate codes now throw the typed
+   `DuplicatePartnerLinkCode` in both implementations. Tests: rejection plus
+   proof the original owner and listings are untouched.
+5. **Unguarded order state cast (orders-store).** `headerRowToOrder` cast
+   `state` from the row. An order holds money, so dropping it silently could
+   hide it from the review queue or let it be re-created; repair: an unknown
+   state THROWS. Test: the throw case.
+6. **Unguarded money-ledger casts (commissions-store).** Commission entry
+   state, payout batch state, and payout attempt outcome were cast from rows.
+   Dropping a commission row silently would corrupt chain reconstruction (kind
+   is derived from position, so a dropped accrual makes a reversal read as an
+   accrual) and change balances; repair: unknown values THROW in
+   `rowToCommissionEntry` (and therefore `chainRowsToEntries`),
+   `payoutBatchRowToRecord`, and `payoutAttemptRowToRecord`. Tests: each throw
+   case. Order shipments (below) got the same guard in the drop direction, since
+   a shipment row is not money.
+
+### Wave 15 schema fidelity
+
+The wave 14 audit found the orders store DROPPING OrderRecord fields on the
+durable round trip (`shipments`, `approvedBy`, `approvedAt`,
+`cancellationReason`, `authorizationReleaseFailed`) and the claims store
+dropping `notes`, while the in-memory references kept them. Closed by:
+
+- **`supabase/research-track-b-fidelity.sql`** (NEW, idempotent, no destructive
+  DDL, RLS consistent with siblings; DRAFT and NOT RUN, like every Track B
+  migration): adds nullable `approved_by text`, `approved_at timestamptz`,
+  `cancellation_reason text`, `authorization_release_failed boolean` to
+  `research_orders`; adds `notes text` to `research_claims`; and creates the
+  typed child table `research_order_shipments` (order_id FK, seq with
+  UNIQUE(order_id, seq), owner CHECK in mitch/xenios, status, tracking_number,
+  carrier) rather than dumping the structured shipment shape into an untyped
+  json column. NOTE: `supabase/MIGRATIONS.md` is owned by another lane in this
+  wave; this file still needs its ledger row there before any production run.
+- **orders-store**: the four columns and the shipments child table now persist
+  and round-trip; shipments are current-state (replaced together on save,
+  ordered by seq), a null column reads back as the absent optional key, and an
+  explicit `authorizationReleaseFailed: false` survives as false. Round-trip
+  equality tests prove the Supabase store (via the fake client) now matches the
+  in-memory reference exactly, including replace-and-clear semantics.
+- **claims-store**: `notes` persists to its own column and round-trips exactly
+  (a pre-migration null reads as ""); the Supabase-versus-reference equality
+  test now compares the full record with no carve-out.
+
+Verification: 132 tests across the five store test files, green; `tsc --noEmit`
+clean.

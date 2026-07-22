@@ -9,6 +9,14 @@
 // The guard refuses, loudly and before any provider call or database write,
 // when a configuration value or fixture payload carries a synthetic marker and
 // either NODE_ENV=production or a production capability flag is enabled.
+//
+// WIRED CHOKEPOINTS: every live provider resolver calls
+// assertNoSyntheticDataInProduction on the configuration it is about to
+// construct with, BEFORE the adapter exists: payment (resolvePaymentProvider),
+// payout (resolvePayoutProvider), shipping (resolveShippingProvider), and
+// fulfillment (createMitchFulfillmentProvider). A live adapter therefore
+// cannot come into being over a synthetic profile in a production-like
+// process. Each wiring is covered by that provider's own resolver tests.
 
 /** The unmistakable markers every synthetic fixture must carry. */
 export const SYNTHETIC_MARKERS: readonly string[] = [

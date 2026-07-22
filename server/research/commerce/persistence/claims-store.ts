@@ -45,7 +45,7 @@ const ORDERS = "research_orders";
 const ORDER_LINES = "research_order_lines";
 
 const CLAIM_COLS =
-  "id, order_id, member_id, sku, lot_id, reason, state, resolution, evidence_refs, reviewed_by, submitted_at";
+  "id, order_id, member_id, sku, lot_id, reason, state, resolution, evidence_refs, reviewed_by, submitted_at, notes";
 const ORDER_COLS =
   "id, member_id, state, captured_amount_cents, payment_reference, refunded_cents, last_idempotency_key";
 
@@ -72,21 +72,51 @@ export interface ClaimRow {
   evidence_refs: string[] | null;
   reviewed_by: string | null;
   submitted_at: string;
+  /** Operator notes. Nullable so a row predating the fidelity migration reads "". */
+  notes: string | null;
 }
 
+// The exact enum sets the domain defines. A persisted value is validated against
+// these on the way out rather than cast, so a row written by some future path
+// with an unexpected value is DROPPED rather than silently trusted (cart-store's
+// drop-not-guess discipline). The DB check constraints make such a row nearly
+// impossible, so this guard is the second lock on the same door.
+const CLAIM_REASONS: readonly ClaimReason[] = [
+  "damaged",
+  "lost",
+  "incorrect",
+  "missing",
+  "temperature_concern",
+];
+const CLAIM_STATES: readonly ClaimState[] = [
+  "submitted",
+  "under_review",
+  "information_requested",
+  "approved",
+  "declined",
+  "resolved",
+];
+const CLAIM_RESOLUTIONS: readonly NonNullable<ClaimResolution>[] = [
+  "replacement",
+  "refund",
+  "partial_refund",
+  "none",
+];
+
 /**
- * Map a persisted claim row to a ClaimRecord.
- *
- * SCHEMA GAP, noted on purpose: research_claims has no column for the claim's
- * operator `notes` (the member's submitted detail, or a reviewer note). It cannot
- * be persisted here, so a record read back from Supabase carries notes as "". The
- * wire DTO never exposed notes (see toClaimDto), so this changes no client-facing
- * behavior, but an admin listing open claims loses the note text. Adding a `notes
- * text` column to research_claims (a migration, out of this file's scope) is the
- * fix; until then the in-memory reference keeps notes and the Supabase store does
- * not.
+ * Map a persisted claim row to a ClaimRecord, or null when the row cannot be a
+ * shape this system wrote: an unknown reason, state, or resolution is dropped
+ * rather than guessed, because a claim surfaced under an invented state could
+ * move a refund decision it never earned. `notes` reads back from its column
+ * (added by supabase/research-track-b-fidelity.sql); a pre-migration null reads
+ * as the empty string the record type requires.
  */
-export function claimRowToRecord(row: ClaimRow): ClaimRecord {
+export function claimRowToRecord(row: ClaimRow): ClaimRecord | null {
+  if (!(CLAIM_REASONS as readonly string[]).includes(row.reason)) return null;
+  if (!(CLAIM_STATES as readonly string[]).includes(row.state)) return null;
+  if (row.resolution !== null && !(CLAIM_RESOLUTIONS as readonly string[]).includes(row.resolution)) {
+    return null;
+  }
   return {
     claimId: row.id,
     orderId: row.order_id,
@@ -99,15 +129,15 @@ export function claimRowToRecord(row: ClaimRow): ClaimRecord {
     evidenceRefs: row.evidence_refs ?? [],
     submittedAt: row.submitted_at,
     reviewedBy: row.reviewed_by ?? null,
-    notes: "",
+    notes: row.notes ?? "",
   };
 }
 
 /**
  * Map a ClaimRecord to an insertable/upsertable research_claims row. Pure and
  * deterministic (no clock): the impl adds updated_at at write time so this stays
- * testable. `notes` has no destination column and is intentionally dropped (see
- * claimRowToRecord).
+ * testable. `notes` now persists to its own column, so the record round-trips
+ * exactly and the in-memory reference and this store can no longer diverge on it.
  */
 export function claimRecordToRow(record: ClaimRecord): ClaimRow {
   return {
@@ -122,6 +152,7 @@ export function claimRecordToRow(record: ClaimRecord): ClaimRow {
     evidence_refs: record.evidenceRefs.slice(),
     reviewed_by: record.reviewedBy,
     submitted_at: record.submittedAt,
+    notes: record.notes,
   };
 }
 
@@ -203,6 +234,16 @@ export { createInMemoryClaimRepository, createInMemoryClaimOrderRepository };
 // fake client; the real client is the default.
 // ---------------------------------------------------------------------------
 
+/** Map rows to records, dropping any row the guard refuses (drop, never guess). */
+function claimRowsToRecords(rows: readonly ClaimRow[]): ClaimRecord[] {
+  const records: ClaimRecord[] = [];
+  for (const row of rows) {
+    const record = claimRowToRecord(row);
+    if (record) records.push(record);
+  }
+  return records;
+}
+
 export function createSupabaseClaimRepository(client: SupabaseClient = getSupabaseAdmin()): ClaimRepository {
   return {
     async get(claimId) {
@@ -221,13 +262,13 @@ export function createSupabaseClaimRepository(client: SupabaseClient = getSupaba
       // Tenant scope: the member id is the only filter, taken from the argument.
       const res = await client.from(CLAIMS).select(CLAIM_COLS).eq("member_id", memberId);
       if (res.error) throw new Error(`claims by member failed: ${res.error.message}`);
-      return ((res.data ?? []) as ClaimRow[]).map(claimRowToRecord);
+      return claimRowsToRecords((res.data ?? []) as ClaimRow[]);
     },
 
     async listByOrder(orderId) {
       const res = await client.from(CLAIMS).select(CLAIM_COLS).eq("order_id", orderId);
       if (res.error) throw new Error(`claims by order failed: ${res.error.message}`);
-      return ((res.data ?? []) as ClaimRow[]).map(claimRowToRecord);
+      return claimRowsToRecords((res.data ?? []) as ClaimRow[]);
     },
 
     async listOpen() {
@@ -235,7 +276,7 @@ export function createSupabaseClaimRepository(client: SupabaseClient = getSupaba
       // or declined. The DB is the source of truth for "closed".
       const res = await client.from(CLAIMS).select(CLAIM_COLS).not("state", "in", "(resolved,declined)");
       if (res.error) throw new Error(`open claims failed: ${res.error.message}`);
-      return ((res.data ?? []) as ClaimRow[]).map(claimRowToRecord);
+      return claimRowsToRecords((res.data ?? []) as ClaimRow[]);
     },
 
     async hasRefundKey(scope) {

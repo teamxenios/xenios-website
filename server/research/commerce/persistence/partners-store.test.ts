@@ -9,6 +9,7 @@ import {
   createInMemoryPartnerLinkStore,
   createSupabaseAttributionTouchStore,
   createSupabasePartnerLinkStore,
+  DuplicatePartnerLinkCode,
   linkRowToStoredLink,
   storedLinkToRow,
   touchRowToAttributionTouch,
@@ -175,6 +176,20 @@ describe("createInMemoryPartnerLinkStore", () => {
     loaded!.partnerId = "partner_hijack";
     expect((await store.findLinkByCode("code_a"))!.partnerId).toBe("partner_1");
   });
+
+  it("rejects a duplicate code and never re-points it at another partner", async () => {
+    const store = createInMemoryPartnerLinkStore();
+    await store.saveLink(link("partner_1", "code_a"));
+    // The audit finding: the earlier version overwrote byCode while partner_1's
+    // listing kept the stale link, so one code appeared under two partners. The
+    // DB keeps code UNIQUE, so the reference now rejects identically.
+    await expect(store.saveLink(link("partner_2", "code_a"))).rejects.toBeInstanceOf(
+      DuplicatePartnerLinkCode,
+    );
+    expect((await store.findLinkByCode("code_a"))!.partnerId).toBe("partner_1");
+    expect(await store.listLinks("partner_1")).toHaveLength(1);
+    expect(await store.listLinks("partner_2")).toHaveLength(0);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -280,10 +295,19 @@ function fakeSupabase(): { client: SupabaseClient; tables: Map<string, Record<st
       return out;
     };
 
-    const insertResult = (): { data: null; error: null } => {
+    const insertResult = (): { data: null; error: { code: string; message: string } | null } => {
       const payload = state.payload;
       const list = Array.isArray(payload) ? payload : payload ? [payload] : [];
-      for (const row of list) rowsFor(table).push({ ...row });
+      for (const row of list) {
+        // research_partner_links keeps code UNIQUE; a duplicate is a 23505.
+        if (
+          table === "research_partner_links" &&
+          rowsFor(table).some((r) => r.code === row.code)
+        ) {
+          return { data: null, error: { code: "23505", message: "duplicate key" } };
+        }
+        rowsFor(table).push({ ...row });
+      }
       return { data: null, error: null };
     };
 
@@ -361,6 +385,16 @@ describe("createSupabasePartnerLinkStore (fake client)", () => {
     expect(await store.listLinks("partner_2")).toEqual([
       link("partner_2", "code_other", "2026-01-15T00:00:00.000Z"),
     ]);
+  });
+
+  it("surfaces the DB unique violation on a duplicate code as DuplicatePartnerLinkCode", async () => {
+    const { client } = fakeSupabase();
+    const store = createSupabasePartnerLinkStore(client);
+    await store.saveLink(link("partner_1", "code_a", "2026-01-01T00:00:00.000Z"));
+    await expect(
+      store.saveLink(link("partner_2", "code_a", "2026-01-02T00:00:00.000Z")),
+    ).rejects.toBeInstanceOf(DuplicatePartnerLinkCode);
+    expect((await store.findLinkByCode("code_a"))!.partnerId).toBe("partner_1");
   });
 });
 

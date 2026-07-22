@@ -9,6 +9,7 @@ import {
   createSupabaseCommissionLedgerStore,
   createSupabasePayoutLedgerStore,
   DuplicatePayoutAttempt,
+  DuplicatePayoutBatch,
   effectiveBasisPoints,
   payoutAttemptRecordToRow,
   payoutAttemptRowToRecord,
@@ -163,6 +164,41 @@ describe("chainRowsToEntries", () => {
   it("returns an empty chain for no rows", () => {
     expect(chainRowsToEntries([])).toEqual([]);
   });
+
+  it("keeps the accrual the accrual when a transition shares its created_at millisecond", () => {
+    // The transition's id ("a2") sorts BEFORE the accrual's id ("e1") on the
+    // id tiebreak, which is exactly the case position-only derivation misread:
+    // the amount-0 transition landed at index 0 as the "accrual" and the real
+    // accrual read back as a reversal, zeroing the partner's outstanding.
+    const sameMsTransition = { ...transition, id: "a2", createdAt: accrual.createdAt };
+    const rows = [sameMsTransition, accrual].map(commissionEntryToRow);
+    const entries = chainRowsToEntries(rows);
+    expect(entries.map((e) => e.id)).toEqual(["e1", "a2"]);
+    expect(entries.map((e) => e.kind)).toEqual(["accrual", "transition"]);
+    expect(entries.map((e) => e.rootId)).toEqual(["e1", "e1"]);
+    // outstandingOf math over the reconstruction: accrued 1000, reversed 0.
+    const accrued = entries.filter((e) => e.kind === "accrual").reduce((s, e) => s + e.amountCents, 0);
+    const reversed = entries.filter((e) => e.kind === "reversal").reduce((s, e) => s + e.amountCents, 0);
+    expect(accrued).toBe(1000);
+    expect(reversed).toBe(0);
+  });
+
+  it("keeps a same-millisecond reversal a reversal rather than promoting it to the accrual", () => {
+    const sameMsReversal = { ...partialReversal, id: "a3", createdAt: accrual.createdAt, previousEntryId: "e1" };
+    const rows = [sameMsReversal, accrual].map(commissionEntryToRow);
+    const entries = chainRowsToEntries(rows);
+    expect(entries.map((e) => e.kind)).toEqual(["accrual", "reversal"]);
+    expect(entries.map((e) => e.rootId)).toEqual(["e1", "e1"]);
+  });
+
+  it("falls back to positional derivation for pre-migration rows carrying no kind", () => {
+    const rows = [accrual, transition, partialReversal, fullReversal]
+      .map(commissionEntryToRow)
+      .map((row) => ({ ...row, kind: null }));
+    const entries = chainRowsToEntries(rows);
+    expect(entries.map((e) => e.kind)).toEqual(["accrual", "transition", "reversal", "reversal"]);
+    expect(entries.map((e) => e.rootId)).toEqual(["e1", "e1", "e1", "e1"]);
+  });
 });
 
 describe("rowToCommissionEntry", () => {
@@ -172,6 +208,16 @@ describe("rowToCommissionEntry", () => {
       ...accrual,
       reason: null,
     });
+  });
+
+  it("throws on a state the domain does not define, never guessing on a money row", () => {
+    const row: CommissionLedgerRow = { ...commissionEntryToRow(accrual), state: "laundering" };
+    expect(() =>
+      rowToCommissionEntry(row, { rootId: "e1", previousEntryId: null, kind: "accrual" }),
+    ).toThrow(/unknown state/);
+    // The chain reconstruction inherits the same refusal: dropping the row
+    // silently would shift kind derivation and corrupt balances.
+    expect(() => chainRowsToEntries([row])).toThrow(/unknown state/);
   });
 });
 
@@ -222,6 +268,12 @@ function fakeSupabase(): {
               (r) => r.batch_id === item.batch_id && r.attempt_no === item.attempt_no,
             );
             if (dup) {
+              return Promise.resolve({ data: null, error: { code: "23505", message: "duplicate key" } });
+            }
+          }
+          if (table === "research_payout_batches") {
+            // The primary key: a duplicate batch id is a unique violation.
+            if (rows.some((r) => r.id === item.id)) {
               return Promise.resolve({ data: null, error: { code: "23505", message: "duplicate key" } });
             }
           }
@@ -391,6 +443,15 @@ describe("payout mappers", () => {
     delete (row as { excluded_reasons?: string[] }).excluded_reasons;
     expect(payoutBatchRowToRecord(row).excludedReasons).toEqual([]);
   });
+
+  it("throws on an unknown batch state or attempt outcome rather than casting through", () => {
+    expect(() => payoutBatchRowToRecord({ ...payoutBatchRecordToRow(batch), state: "vanished" })).toThrow(
+      /unknown state/,
+    );
+    expect(() =>
+      payoutAttemptRowToRecord({ ...payoutAttemptRecordToRow(attempt), outcome: "maybe" }),
+    ).toThrow(/unknown outcome/);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -425,6 +486,17 @@ describe("createInMemoryPayoutLedgerStore", () => {
     (loaded!.excludedReasons as string[]).push("tampered");
     expect((await store.getBatch("batch_1"))!.excludedReasons).toEqual(["below_minimum"]);
   });
+
+  it("rejects a duplicate batch id and never overwrites the recorded batch", async () => {
+    const store = createInMemoryPayoutLedgerStore();
+    await store.recordBatch(batch);
+    // The audit finding: this used to silently replace the stored batch, which
+    // durable storage (the primary key) would never allow. Now it rejects.
+    await expect(store.recordBatch({ ...batch, totalCents: 999999 })).rejects.toBeInstanceOf(
+      DuplicatePayoutBatch,
+    );
+    expect((await store.getBatch("batch_1"))!.totalCents).toBe(12500);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -453,6 +525,16 @@ describe("createSupabasePayoutLedgerStore (fake client)", () => {
     await expect(store.recordAttempt({ ...attempt, id: "attempt_dup" })).rejects.toBeInstanceOf(
       DuplicatePayoutAttempt,
     );
+  });
+
+  it("surfaces a duplicate batch id as a DuplicatePayoutBatch, matching the reference", async () => {
+    const { client } = fakeSupabase();
+    const store = createSupabasePayoutLedgerStore(client);
+    await store.recordBatch(batch);
+    await expect(store.recordBatch({ ...batch, totalCents: 999999 })).rejects.toBeInstanceOf(
+      DuplicatePayoutBatch,
+    );
+    expect((await store.getBatch("batch_1"))!.totalCents).toBe(12500);
   });
 
   it("never updates or deletes a batch or attempt, and exposes no such method", async () => {

@@ -117,6 +117,19 @@ describe("inventoryLotToRow", () => {
     const row = inventoryLotToRow(lot({ expiryDate: null }), "2026-07-19T00:00:00.000Z");
     expect(row.expiry_date).toBeNull();
   });
+
+  it("preserves the stored recall date on a re-save instead of stamping the clock", () => {
+    const recalled = lot({ recalled: true, disposition: "recalled" });
+    // The lot was recalled at t1; a later save (now = t2) must keep t1.
+    const row = inventoryLotToRow(recalled, "2026-07-20T00:00:00.000Z", "2026-07-19T12:00:00.000Z");
+    expect(row.recalled_at).toBe("2026-07-19T12:00:00.000Z");
+    // The stored date only applies while the lot is recalled; clearing the
+    // recall clears the date, and a fresh recall stamps the current save.
+    expect(inventoryLotToRow(lot(), "2026-07-20T00:00:00.000Z", "2026-07-19T12:00:00.000Z").recalled_at).toBeNull();
+    expect(inventoryLotToRow(recalled, "2026-07-20T00:00:00.000Z", null).recalled_at).toBe(
+      "2026-07-20T00:00:00.000Z",
+    );
+  });
 });
 
 describe("lotRowToInventoryLot", () => {
@@ -125,6 +138,15 @@ describe("lotRowToInventoryLot", () => {
     const row = { id: "u1", ...inventoryLotToRow(original, "2026-07-19T00:00:00.000Z") } as LotRow;
     const docRow = qualityDocumentsToRow("u1", original.documents);
     expect(lotRowToInventoryLot(row, docRow)).toEqual(original);
+  });
+
+  it("drops a row whose enum columns the domain does not define (cannot earn the right to ship)", () => {
+    const base = { id: "u1", ...inventoryLotToRow(lot(), "2026-07-19T00:00:00.000Z") } as LotRow;
+    const docRow = qualityDocumentsToRow("u1", CLEAN_DOCS);
+    expect(lotRowToInventoryLot({ ...base, disposition: "teleported" }, docRow)).toBeNull();
+    expect(lotRowToInventoryLot({ ...base, owner: "somebody" }, docRow)).toBeNull();
+    expect(lotRowToInventoryLot({ ...base, excursion: "unknowable" }, docRow)).toBeNull();
+    expect(lotRowToInventoryLot({ ...base, shelf_life_source: "vibes" }, docRow)).toBeNull();
   });
 });
 
@@ -365,5 +387,31 @@ describe("createSupabaseInventoryLotStore (fake client)", () => {
     const { client } = fakeSupabase();
     const store = createSupabaseInventoryLotStore(client);
     await expect(store.adjustQuantityAvailable("MISSING", 1)).rejects.toThrow(/not found/);
+  });
+
+  it("preserves the original recall timestamp across re-saves of a recalled lot", async () => {
+    const { client, lots } = fakeSupabase();
+    let currentNow = "2026-07-19T00:00:00.000Z";
+    const store = createSupabaseInventoryLotStore(client, () => currentNow);
+    const recalled = lot({ lotId: "LOT-R", recalled: true, disposition: "recalled" });
+
+    await store.save(recalled); // the save that flips the lot to recalled
+    expect(lots.get("LOT-R")!.recalled_at).toBe("2026-07-19T00:00:00.000Z");
+
+    // A later operational re-save (say a quantity correction) must NOT advance
+    // the recall date: WHEN the recall happened is traceability history.
+    currentNow = "2026-07-21T09:30:00.000Z";
+    await store.save({ ...recalled, quantityAvailable: 0 });
+    expect(lots.get("LOT-R")!.recalled_at).toBe("2026-07-19T00:00:00.000Z");
+  });
+
+  it("drops an unknown-enum lot row from listBySku so it can never be allocated", async () => {
+    const { client, lots } = fakeSupabase();
+    const store = createSupabaseInventoryLotStore(client, () => "2026-07-19T00:00:00.000Z");
+    await store.save(lot({ lotId: "LOT-1", sku: "P001" }));
+    await store.save(lot({ lotId: "LOT-2", sku: "P001" }));
+    lots.set("LOT-2", { ...lots.get("LOT-2")!, disposition: "teleported" });
+    expect((await store.listBySku("P001")).map((l) => l.lotId)).toEqual(["LOT-1"]);
+    expect(await store.get("LOT-2")).toBeNull();
   });
 });

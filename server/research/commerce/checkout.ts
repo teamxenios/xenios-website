@@ -47,6 +47,18 @@ export interface CheckoutDeps {
   unusualQuantityThreshold?: number;
   /** Fraud signal owned elsewhere. Absent means no signal, never means cleared. */
   isFraudFlagged?: (memberId: string) => boolean;
+  /**
+   * The store-credit ledger seam. When present, checkout RECORDS the credit an
+   * order consumed (a negative ledger row) the moment the payment is
+   * authorized at the reduced amount, so the same credit cannot be applied
+   * again on the next order. Absent (the default, and today's production
+   * wiring, where the balance is stubbed to zero) nothing changes. A recording
+   * failure propagates: an order must not proceed on a discount the ledger
+   * refused to debit.
+   */
+  storeCredit?: {
+    recordSpend(memberId: string, amountCents: number, orderId: string, asOf: Date): Promise<void>;
+  };
 }
 
 export interface CheckoutValidation {
@@ -319,6 +331,17 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     });
     order.reviewTriggers = review.triggers;
 
+    /**
+     * Records the credit this order consumed, once the charge exists at the
+     * reduced amount. The applied credit funded part of this order, so the
+     * ledger must show it leaving; without this row the same balance would
+     * apply again on every later order.
+     */
+    const recordAppliedCredit = async (): Promise<void> => {
+      if (!deps.storeCredit || order.storeCreditAppliedCents <= 0) return;
+      await deps.storeCredit.recordSpend(memberId, order.storeCreditAppliedCents, orderId, asOf);
+    };
+
     if (review.requiresReview) {
       // A held order, not an error. Authorize only where the funds can be released
       // again without a capture, and never capture while Samuel has not decided.
@@ -330,7 +353,10 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
           memberId,
           idempotencyKey: req.idempotencyKey,
         });
-        if (auth.ok) order.paymentReference = auth.value.providerReference;
+        if (auth.ok) {
+          order.paymentReference = auth.value.providerReference;
+          await recordAppliedCredit();
+        }
       }
       const held = transitionOrder({ from: order.state, to: "manual_review", actor: "system" });
       if (held.ok) order.state = held.state;
@@ -350,6 +376,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       return { ok: false, denials: ["payment_failed"] };
     }
     order.paymentReference = auth.value.providerReference;
+    await recordAppliedCredit();
 
     const authorized = transitionOrder({
       from: order.state,

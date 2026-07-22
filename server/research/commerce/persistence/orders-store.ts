@@ -7,40 +7,48 @@
 // platform's Supabase pattern (getSupabaseAdmin().from(table)) and never
 // inventing a second data system.
 //
-// One order is three shapes on disk:
-//   - research_orders            one header row (current state).
-//   - research_order_lines       its line items (replaced together on save).
-//   - research_order_state_events  an APPEND-ONLY trail of state transitions.
+// One order is four shapes on disk:
+//   - research_orders             one header row (current state).
+//   - research_order_lines        its line items (replaced together on save).
+//   - research_order_shipments    its shipments (replaced together on save).
+//   - research_order_state_events an APPEND-ONLY trail of state transitions.
 //
 // The state-events table is a ledger. This store only ever INSERTs and reads
 // it, never updates or deletes a row, and the database enforces the same by
-// having no update path wired here. The header and its lines are current-state,
-// not a ledger, so a save replaces the lines and upserts the header.
+// having no update path wired here. The header, its lines, and its shipments
+// are current-state, not a ledger, so a save replaces the child rows and
+// upserts the header.
 //
 // Building this does NOT enable commerce. Transactions stay gated by the
 // commerce flag and per-SKU eligibility; this is the layer they will persist
 // through once activated, so resolveOrderRepository() falls back to an in-memory
 // double whenever Supabase is not configured rather than half-persisting.
 //
-// Schema gaps worth naming (the domain OrderRecord is wider than the current
-// three tables). These are inserted best-effort or dropped, never invented:
+// Schema notes (the fidelity gaps the wave 14 audit named are CLOSED by
+// supabase/research-track-b-fidelity.sql; what remains is derived, never invented):
 //   - research_order_lines requires unit_price_cents and fulfillment_owner, which
 //     OrderLineRecord does not carry. unit_price_cents is derived from the line
 //     total and quantity (the implied per-unit price, not read back into the
 //     domain). fulfillment_owner is taken from the order's shipment owner when it
 //     is unambiguous, else it falls back to "xenios"; neither column is read back.
-//   - research_orders has no column for shipments, approvedBy, approvedAt,
-//     cancellationReason, or authorizationReleaseFailed, so those optional
-//     OrderRecord fields are not persisted by this schema version and come back
-//     absent after a round trip. Adding those columns (or a metadata jsonb) is a
-//     follow-up before those fields can survive persistence.
+//   - approved_by, approved_at, cancellation_reason, and
+//     authorization_release_failed are real nullable columns now, so those
+//     optional OrderRecord fields round-trip. A null column reads back as the
+//     absent key (the shape the in-memory reference stores when the service
+//     never set the field); an explicit null is normalized to absent, which every
+//     `?? null` read treats identically.
+//   - shipments persist to the typed child table research_order_shipments (one
+//     row per shipment, ordered by seq), NOT to an untyped json column, so the
+//     database can hold the owner check and the rows stay queryable.
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { OrderState } from "@shared/research/commerce";
+import { ORDER_STATES } from "@shared/research/commerce";
 import type {
   OrderLineRecord,
   OrderRecord,
   OrderRepository,
+  OrderShipmentRecord,
 } from "../orders";
 import { getSupabaseAdmin, supabaseConfigured } from "../../../supabase";
 
@@ -76,6 +84,10 @@ export interface OrderHeaderRow {
   checkout_idempotency_key: string | null;
   last_idempotency_key: string | null;
   review_triggers: string[] | null;
+  approved_by: string | null;
+  approved_at: string | null;
+  cancellation_reason: string | null;
+  authorization_release_failed: boolean | null;
   created_at: string;
   updated_at: string;
 }
@@ -96,6 +108,10 @@ export interface OrderHeaderInsert {
   payment_reference: string | null;
   last_idempotency_key: string | null;
   review_triggers: string[];
+  approved_by: string | null;
+  approved_at: string | null;
+  cancellation_reason: string | null;
+  authorization_release_failed: boolean | null;
   created_at: string;
   updated_at: string;
 }
@@ -112,6 +128,22 @@ export interface OrderLineRow {
 
 /** An insertable research_order_lines row, scoped to its order. */
 export interface OrderLineInsert extends OrderLineRow {
+  order_id: string;
+}
+
+/** A research_order_shipments row, the columns this store maps. Shipments are
+ * current-state (like lines), replaced together on save and ordered by seq so
+ * the domain array order survives the round trip. */
+export interface OrderShipmentRow {
+  seq: number;
+  owner: string;
+  status: string;
+  tracking_number: string | null;
+  carrier: string | null;
+}
+
+/** An insertable research_order_shipments row, scoped to its order. */
+export interface OrderShipmentInsert extends OrderShipmentRow {
   order_id: string;
 }
 
@@ -174,10 +206,52 @@ export function orderToLineRows(orderId: string, order: OrderRecord): OrderLineI
   }));
 }
 
-/** Map a header row plus its line rows to the domain OrderRecord. Optional
- * amount columns are omitted from the record when null, so a round trip matches
- * the in-memory reference under a value comparison. */
-export function headerRowToOrder(row: OrderHeaderRow, lineRows: readonly OrderLineRow[]): OrderRecord {
+/** Map persisted shipment rows to the domain shipments, in seq order. A row
+ * whose owner the domain does not define is dropped rather than guessed (the DB
+ * check makes one nearly impossible; this is the second lock). */
+export function shipmentRowsToRecords(rows: readonly OrderShipmentRow[]): OrderShipmentRecord[] {
+  const records: OrderShipmentRecord[] = [];
+  for (const row of [...rows].sort((a, b) => a.seq - b.seq)) {
+    if (row.owner !== "mitch" && row.owner !== "xenios") continue;
+    records.push({
+      owner: row.owner,
+      status: row.status,
+      trackingNumber: row.tracking_number,
+      carrier: row.carrier,
+    });
+  }
+  return records;
+}
+
+/** Map the domain shipments to insertable rows for an order id, seq preserving
+ * the array order so the round trip is exact. */
+export function orderToShipmentRows(orderId: string, order: OrderRecord): OrderShipmentInsert[] {
+  return (order.shipments ?? []).map((shipment, index) => ({
+    order_id: orderId,
+    seq: index,
+    owner: shipment.owner,
+    status: shipment.status,
+    tracking_number: shipment.trackingNumber,
+    carrier: shipment.carrier,
+  }));
+}
+
+/**
+ * Map a header row plus its line and shipment rows to the domain OrderRecord.
+ * Optional columns are omitted from the record when null, so a round trip
+ * matches the in-memory reference under a value comparison. A header whose
+ * state is not one this system's state machine defines THROWS rather than being
+ * cast through or silently dropped: an order holds money, so an uninterpretable
+ * one must fail loudly, never vanish from a review queue or be re-creatable.
+ */
+export function headerRowToOrder(
+  row: OrderHeaderRow,
+  lineRows: readonly OrderLineRow[],
+  shipmentRows: readonly OrderShipmentRow[] = [],
+): OrderRecord {
+  if (!(ORDER_STATES as readonly string[]).includes(row.state)) {
+    throw new Error(`order ${row.id} carries an unknown state: ${row.state}`);
+  }
   const record: OrderRecord = {
     orderId: row.id,
     memberId: row.member_id,
@@ -201,12 +275,28 @@ export function headerRowToOrder(row: OrderHeaderRow, lineRows: readonly OrderLi
   if (row.captured_amount_cents !== null && row.captured_amount_cents !== undefined) {
     record.capturedAmountCents = row.captured_amount_cents;
   }
+  if (shipmentRows.length > 0) {
+    record.shipments = shipmentRowsToRecords(shipmentRows);
+  }
+  if (row.approved_by !== null && row.approved_by !== undefined) {
+    record.approvedBy = row.approved_by;
+  }
+  if (row.approved_at !== null && row.approved_at !== undefined) {
+    record.approvedAt = row.approved_at;
+  }
+  if (row.cancellation_reason !== null && row.cancellation_reason !== undefined) {
+    record.cancellationReason = row.cancellation_reason;
+  }
+  if (row.authorization_release_failed !== null && row.authorization_release_failed !== undefined) {
+    record.authorizationReleaseFailed = row.authorization_release_failed;
+  }
   return record;
 }
 
 /** Map the domain OrderRecord to an insertable header row. Checkout-owned
  * (checkout_idempotency_key) and DB-defaulted (refunded_cents, placed_at)
- * columns are left untouched rather than fabricated here. */
+ * columns are left untouched rather than fabricated here. An absent optional
+ * field writes null; a null column reads back as the absent key. */
 export function orderToHeaderRow(order: OrderRecord): OrderHeaderInsert {
   return {
     id: order.orderId,
@@ -221,6 +311,10 @@ export function orderToHeaderRow(order: OrderRecord): OrderHeaderInsert {
     payment_reference: order.providerReference,
     last_idempotency_key: order.lastIdempotencyKey,
     review_triggers: order.reviewTriggers,
+    approved_by: order.approvedBy ?? null,
+    approved_at: order.approvedAt ?? null,
+    cancellation_reason: order.cancellationReason ?? null,
+    authorization_release_failed: order.authorizationReleaseFailed ?? null,
     created_at: order.createdAt,
     updated_at: order.updatedAt,
   };
@@ -297,6 +391,7 @@ export function createInMemoryOrderStore(seed: readonly OrderRecord[] = []): Asy
 
 const ORDERS = "research_orders";
 const LINES = "research_order_lines";
+const SHIPMENTS = "research_order_shipments";
 const EVENTS = "research_order_state_events";
 
 export function createSupabaseOrderStore(
@@ -311,8 +406,17 @@ export function createSupabaseOrderStore(
     return (res.data ?? []) as OrderLineRow[];
   }
 
+  async function loadShipments(orderId: string): Promise<OrderShipmentRow[]> {
+    const res = await client
+      .from(SHIPMENTS)
+      .select("seq, owner, status, tracking_number, carrier")
+      .eq("order_id", orderId);
+    if (res.error) throw new Error(`order shipments load failed: ${res.error.message}`);
+    return (res.data ?? []) as OrderShipmentRow[];
+  }
+
   async function hydrate(header: OrderHeaderRow): Promise<OrderRecord> {
-    return headerRowToOrder(header, await loadLines(header.id));
+    return headerRowToOrder(header, await loadLines(header.id), await loadShipments(header.id));
   }
 
   return {
@@ -340,6 +444,18 @@ export function createSupabaseOrderStore(
       if (lineRows.length > 0) {
         const ins = await client.from(LINES).insert(lineRows);
         if (ins.error) throw new Error(`order lines insert failed: ${ins.error.message}`);
+      }
+
+      // Shipments are current-state too, replaced the same way, so a record
+      // whose shipments changed (or were never set) persists exactly.
+      const delShipments = await client.from(SHIPMENTS).delete().eq("order_id", order.orderId);
+      if (delShipments.error) {
+        throw new Error(`order shipments clear failed: ${delShipments.error.message}`);
+      }
+      const shipmentRows = orderToShipmentRows(order.orderId, order);
+      if (shipmentRows.length > 0) {
+        const ins = await client.from(SHIPMENTS).insert(shipmentRows);
+        if (ins.error) throw new Error(`order shipments insert failed: ${ins.error.message}`);
       }
 
       // Append-only: insert the transition, never update or delete a prior event.

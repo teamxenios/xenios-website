@@ -33,9 +33,9 @@ import type {
   ExcursionState,
   FulfillmentOwner,
   InventoryLot,
-  LotDisposition,
   QualityDocuments,
 } from "../../inventory/lots";
+import { LOT_DISPOSITIONS } from "../../inventory/lots";
 import { getSupabaseAdmin, supabaseConfigured } from "../../../supabase";
 
 // ---------------------------------------------------------------------------
@@ -137,16 +137,37 @@ export function qualityDocumentsToRow(
   };
 }
 
-/** Map a lot row plus its documents row to a full InventoryLot. */
+// The exact enum sets the domain defines, validated on the way out rather than
+// cast. A lot row carrying a value outside these sets cannot be evaluated by
+// lots.ts, and "unknown data is never acceptable data": the row is DROPPED, so
+// an uninterpretable lot can never be allocated or shipped (fails closed).
+const FULFILLMENT_OWNERS: readonly FulfillmentOwner[] = ["mitch", "xenios"];
+const EXCURSION_STATES: readonly ExcursionState[] = ["none", "pending_review", "cleared", "rejected"];
+const SHELF_LIFE_SOURCES: readonly InventoryLot["shelfLifeSource"][] = [
+  "supplier_document",
+  "coa",
+  "not_confirmed",
+];
+
+/**
+ * Map a lot row plus its documents row to a full InventoryLot, or null when any
+ * enum column carries a value the domain does not define. A dropped lot is
+ * invisible to FEFO and to `get`, which is the safe direction: a lot that cannot
+ * be interpreted has not earned the right to ship.
+ */
 export function lotRowToInventoryLot(
   row: LotRow,
   docRow: LotQualityDocumentRow | null,
-): InventoryLot {
+): InventoryLot | null {
+  if (!(FULFILLMENT_OWNERS as readonly string[]).includes(row.owner)) return null;
+  if (!(LOT_DISPOSITIONS as readonly string[]).includes(row.disposition)) return null;
+  if (!(EXCURSION_STATES as readonly string[]).includes(row.excursion)) return null;
+  if (!(SHELF_LIFE_SOURCES as readonly string[]).includes(row.shelf_life_source)) return null;
   return {
     lotId: row.lot_id,
     sku: row.sku,
     owner: row.owner as FulfillmentOwner,
-    disposition: row.disposition as LotDisposition,
+    disposition: row.disposition as InventoryLot["disposition"],
     quantityAvailable: row.quantity_available,
     manufacturedDate: row.manufactured_date,
     expiryDate: row.expiry_date,
@@ -160,11 +181,18 @@ export function lotRowToInventoryLot(
 
 /**
  * Map an InventoryLot to an upsertable lot row keyed by lot_id. `now` is injected so
- * the mapper stays pure and deterministic. recalled_at is set to `now` for a recalled
- * lot and null otherwise, satisfying the DB constraint that a recalled lot carries a
- * date. The uuid id is left to the database.
+ * the mapper stays pure and deterministic. recalled_at satisfies the DB constraint
+ * that a recalled lot carries a date, and it records WHEN the recall happened, so a
+ * re-save of an already-recalled lot must never advance it: `existingRecalledAt`
+ * (the stored value, when the impl has one) wins over `now`, and `now` is used only
+ * for the save that first flips the lot to recalled. A lot saved back as not
+ * recalled clears the date. The uuid id is left to the database.
  */
-export function inventoryLotToRow(lot: InventoryLot, now: string): LotRow {
+export function inventoryLotToRow(
+  lot: InventoryLot,
+  now: string,
+  existingRecalledAt: string | null = null,
+): LotRow {
   return {
     lot_id: lot.lotId,
     sku: lot.sku,
@@ -177,7 +205,7 @@ export function inventoryLotToRow(lot: InventoryLot, now: string): LotRow {
     shelf_life_source: lot.shelfLifeSource,
     excursion: lot.excursion,
     recalled: lot.recalled,
-    recalled_at: lot.recalled ? now : null,
+    recalled_at: lot.recalled ? existingRecalledAt ?? now : null,
   };
 }
 
@@ -269,9 +297,13 @@ export function createSupabaseInventoryLotStore(
       const rows = (res.data ?? []) as LotRow[];
       const uuids = rows.map((r) => r.id).filter((id): id is string => typeof id === "string");
       const docs = await documentsByLotUuids(uuids);
-      return rows.map((row) =>
-        lotRowToInventoryLot(row, row.id ? docs.get(row.id) ?? null : null),
-      );
+      const lots: InventoryLot[] = [];
+      for (const row of rows) {
+        const lot = lotRowToInventoryLot(row, row.id ? docs.get(row.id) ?? null : null);
+        // A row the guard refuses is dropped: it cannot be allocated from.
+        if (lot) lots.push(lot);
+      }
+      return lots;
     },
 
     async get(lotId) {
@@ -284,7 +316,20 @@ export function createSupabaseInventoryLotStore(
     },
 
     async save(lot) {
-      const lotRow = inventoryLotToRow(lot, now());
+      // Read the stored recall timestamp first so a re-save of an already-recalled
+      // lot preserves WHEN the recall happened instead of stamping the current
+      // clock over the original date (the traceability record must not drift).
+      const prior = await client
+        .from(LOTS)
+        .select("recalled_at")
+        .eq("lot_id", lot.lotId)
+        .maybeSingle();
+      if (prior.error) throw new Error(`lot recall date load failed: ${prior.error.message}`);
+      const existingRecalledAt = prior.data
+        ? ((prior.data as { recalled_at: string | null }).recalled_at ?? null)
+        : null;
+
+      const lotRow = inventoryLotToRow(lot, now(), existingRecalledAt);
       const upserted = await client
         .from(LOTS)
         .upsert(lotRow, { onConflict: "lot_id" })

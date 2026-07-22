@@ -440,6 +440,103 @@ describe("large-order review", () => {
   });
 });
 
+describe("store credit is consumed, not reusable", () => {
+  function spendRecorder() {
+    const spends: Array<{ memberId: string; amountCents: number; orderId: string }> = [];
+    return {
+      spends,
+      storeCredit: {
+        async recordSpend(memberId: string, amountCents: number, orderId: string) {
+          spends.push({ memberId, amountCents, orderId });
+        },
+      },
+    };
+  }
+
+  it("records the applied credit against the order once the payment authorizes", async () => {
+    const { spends, storeCredit } = spendRecorder();
+    const service = createCheckoutService(
+      deps({
+        cart: { revalidate: () => cart({ storeCreditAppliedCents: 5000, estimatedTotalCents: 16095 }) },
+        storeCredit,
+      }),
+    );
+
+    const outcome = await service.submit("mem_1", request(), NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(spends).toEqual([{ memberId: "mem_1", amountCents: 5000, orderId: outcome.order.orderId }]);
+  });
+
+  it("records nothing when no credit was applied, and nothing when the authorization fails", async () => {
+    const clean = spendRecorder();
+    const noCredit = createCheckoutService(deps({ storeCredit: clean.storeCredit }));
+    expect((await noCredit.submit("mem_1", request(), NOW)).ok).toBe(true);
+    expect(clean.spends).toEqual([]);
+
+    const failed = spendRecorder();
+    const failing = createCheckoutService(
+      deps({
+        cart: { revalidate: () => cart({ storeCreditAppliedCents: 5000, estimatedTotalCents: 16095 }) },
+        payment: new DisabledPaymentProvider(),
+        storeCredit: failed.storeCredit,
+      }),
+    );
+    const outcome = await failing.submit("mem_1", request(), NOW);
+    expect(outcome.ok).toBe(false); // payment gate refuses; no order, no charge
+    expect(failed.spends).toEqual([]); // and no credit consumed
+  });
+
+  it("does not double-record the spend on an idempotent duplicate submit", async () => {
+    const { spends, storeCredit } = spendRecorder();
+    const service = createCheckoutService(
+      deps({
+        cart: { revalidate: () => cart({ storeCreditAppliedCents: 5000, estimatedTotalCents: 16095 }) },
+        storeCredit,
+      }),
+    );
+
+    const first = await service.submit("mem_1", request(), NOW);
+    const second = await service.submit("mem_1", request(), NOW);
+    expect(first.ok && second.ok).toBe(true);
+    expect(spends).toHaveLength(1);
+  });
+
+  it("records the spend for a review-held order too, since its authorization is net of credit", async () => {
+    const { spends, storeCredit } = spendRecorder();
+    const service = createCheckoutService(
+      deps({
+        cart: {
+          revalidate: () =>
+            cart({
+              lines: [
+                {
+                  sku: "P001",
+                  displayName: "Product One",
+                  quantity: 10,
+                  purchaseMode: "one_time",
+                  unitPriceCents: 9900,
+                  lineTotalCents: 99000,
+                  blockedReason: null,
+                },
+              ],
+              subtotalCents: 99000,
+              storeCreditAppliedCents: 9000,
+              estimatedTotalCents: 91295,
+            }),
+        },
+        storeCredit,
+      }),
+    );
+
+    const outcome = await service.submit("mem_1", request(), NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.order.state).toBe("manual_review");
+    expect(spends).toEqual([{ memberId: "mem_1", amountCents: 9000, orderId: outcome.order.orderId }]);
+  });
+});
+
 describe("idempotency", () => {
   it("returns the same order for a repeated key instead of creating a second", async () => {
     const payment = new TestPaymentProvider();
