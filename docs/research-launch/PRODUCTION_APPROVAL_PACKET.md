@@ -15,7 +15,13 @@ which stays gated until real COAs and a payment provider arrive.
 2. **Deploy** that exact SHA on Render. Confirm the deployed SHA matches.
 3. **Apply Supabase migrations 10-19** (member platform), the exact ordered
    sequence in `FULL_PRODUCTION_MIGRATION_MANIFEST.md`. All idempotent, RLS-on,
-   no policies. Paste into the Supabase SQL Editor after your review.
+   no policies. Paste into the Supabase SQL Editor after your review. The full
+   pending set (9-26) is pre-concatenated, ready to paste, at
+   `supabase/production/research-full-production.sql`; run
+   `supabase/production/research-production-verification.sql` afterward (every
+   check should return zero rows). The RLS posture (enabled + zero policies =
+   service-role-only, correct) is explained in
+   `supabase/production/research-production-rollback-notes.md`.
 4. **Confirm** `RESEARCH_PUBLIC=false` and `RESEARCH_INDEXABLE=false` remain
    set. Do NOT enable commerce.
 5. **Post-deploy smoke**: load `/research` (gateway renders, non-indexed),
@@ -53,6 +59,12 @@ SKUs are purchase-eligible. This is a supplier-delivery blocker, not a code
 blocker. When the files arrive, drop them into the
 `XENIOS_SUPPLIER_SECURE_INTAKE/` subfolders and re-run the attachment
 verification; eligibility recomputes per SKU with no code change.
+
+The full 19-gate matrix for every SKU is machine-readable at
+`docs/research-commerce/PER_SKU_GATE_REPORT.json`. Each SKU fails five gates
+independently (coa, payment, agreements, feature_flag, admin_release), so no SKU
+is blocked merely because another's documents are missing; each must clear its
+own gates.
 
 ## Rollback
 
