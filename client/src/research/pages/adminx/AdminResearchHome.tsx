@@ -504,25 +504,25 @@ function CommercePlaceholders() {
   const placeholders: Array<{ label: string; body: string; href: string; linkLabel: string }> = [
     {
       label: "Revenue",
-      body: "Publishes with the commerce backend. No revenue figure is shown until real order data exists.",
+      body: "Turns on with the commerce switch. No revenue figure is shown until real order data exists.",
       href: ADMIN_ROUTES.orders,
       linkLabel: "Orders",
     },
     {
       label: "Orders",
-      body: "Publishes with the commerce backend. The order queue is ready and renders live data when it connects.",
+      body: "The order queue is built; it renders live data once commerce is switched on.",
       href: ADMIN_ROUTES.orders,
       linkLabel: "Orders",
     },
     {
       label: "Subscriptions",
-      body: "Publishes with membership billing. The $25 monthly memberships will be listed here.",
+      body: "Turns on with membership billing. The $25 monthly memberships will be listed here.",
       href: ADMIN_ROUTES.members,
       linkLabel: "Members",
     },
     {
       label: "High-risk review",
-      body: "Publishes with the member platform. Items needing senior review will surface here, never auto-actioned.",
+      body: "The review queues are built; items needing senior review surface here, never auto-actioned.",
       href: ADMIN_ROUTES.security,
       linkLabel: "Security",
     },
