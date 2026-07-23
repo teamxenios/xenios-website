@@ -26,8 +26,8 @@ import { formatDate, frequencyLabel, subscriptionStateMeta } from "./commerce-pr
 // POST /api/research/subscriptions/:id (SubscriptionActionRequest).
 //
 // This is the PRODUCT subscription manager, deliberately distinct from
-// membership (the $50 one-time activation and $25 monthly membership live on
-// the Membership page).
+// membership (the Founding Membership, $50 at activation including the
+// first 30 days, lives on the Membership page).
 //
 // Rules baked in from the frozen contract:
 // - Every subscription fact is a SubscriptionDto field. Nothing is invented,
@@ -473,8 +473,8 @@ export default function SubscriptionsPage() {
       <div className="card mb-6">
         <p className="mono-label text-ink-mute">Product subscriptions, not membership</p>
         <p className="body-s text-ink-2 mt-2 max-w-[58ch]">
-          This page manages recurring product deliveries only. Your membership ($50 one-time activation, then $25
-          monthly) is separate and is managed on the{" "}
+          This page manages recurring product deliveries only. Your Founding Membership ($50 at activation
+          including your first 30 days, then $25 per additional 30-day period) is separate and is managed on the{" "}
           <Link href={MEMBER_ROUTES.membership} className="font-700">
             Membership page
           </Link>

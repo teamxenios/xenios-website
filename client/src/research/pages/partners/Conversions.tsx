@@ -28,7 +28,7 @@ export default function Conversions() {
   return (
     <ResearchPartnerShell
       title="Conversions"
-      lead="Aggregate counts of memberships activated from your referrals, by period. An activation is the $50 one-time start of a membership that then bills $25 monthly."
+      lead="Aggregate counts of memberships activated from your referrals, by period. An activation is the verified $50 start of a membership, which includes the member's first 30 days."
     >
       <div className="mb-6">
         <ResearchSecureNotice>

@@ -16,6 +16,12 @@ import {
 } from "./membership-emails";
 import { makeResearchToken, type TokenPurpose } from "./membership";
 import { MEMBER_PLATFORM_TEMPLATES } from "./member-platform-emails";
+import { getResendClient } from "../services/email";
+import {
+  FOUNDING_EMAIL_TEMPLATES,
+  assertEmailPayloadSafe,
+  type FoundingEmailTemplate,
+} from "./membership-activation/emails";
 
 // ---------------------------------------------------------------------------
 // Durable notification outbox (Mega 1 sections 3-4). Every notification is a
@@ -59,6 +65,95 @@ export async function enqueueNotification(input: EnqueueInput): Promise<boolean>
     return false;
   }
   return true;
+}
+
+// ---------------------------------------------------------------------------
+// Founding-membership (fm_*) renderers. The 24 activation templates live as
+// DATA in membership-activation/emails.ts; this registration is the one place
+// that data becomes a subject and a body. The payload is re-checked against
+// the forbidden-key patterns AT RENDER TIME, so receiving instructions have no
+// path into a sent email even if a row was inserted by hand: the member gets
+// the method label and the XRM memo reference only, and the destination stays
+// inside the authenticated portal.
+// ---------------------------------------------------------------------------
+
+const FOUNDING_TEMPLATES_BY_KEY: ReadonlyMap<string, FoundingEmailTemplate> = new Map(
+  FOUNDING_EMAIL_TEMPLATES.map((template) => [template.key, template]),
+);
+
+export const RESEARCH_SENDER_DEFAULT = "Xenios Research <research@xeniostechnology.com>";
+export const RESEARCH_REPLY_TO_DEFAULT = "research@xeniostechnology.com";
+
+const FOUNDING_EMAIL_SIGNOFF = "Xenios Research\nresearch@xeniostechnology.com";
+
+// ISO-8601 payload values read as instants and render human-readable;
+// everything else (amounts, references, labels) is inserted as-is.
+function formatTemplateValue(value: unknown): string {
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) {
+    const parsed = Date.parse(value);
+    if (Number.isFinite(parsed)) return new Date(parsed).toUTCString();
+  }
+  return value == null ? "" : String(value);
+}
+
+function fillPlaceholders(line: string, payload: Record<string, unknown>): string {
+  return line.replace(/\{\{\s*(\w+)\s*\}\}/g, (_match, key: string) =>
+    key in payload ? formatTemplateValue(payload[key]) : "",
+  );
+}
+
+/**
+ * Render one fm_* template to subject + text, or null when the key is not a
+ * founding template (the caller falls through to the other dispatch branches,
+ * so unknown-template retry behavior for non-fm keys is untouched). Throws
+ * EmailPayloadRefused when the payload smells like receiving instructions.
+ */
+export function renderFoundingEmail(
+  templateKey: string,
+  payload: Record<string, unknown>,
+): { subject: string; text: string } | null {
+  const template = FOUNDING_TEMPLATES_BY_KEY.get(templateKey);
+  if (!template) return null;
+  assertEmailPayloadSafe(payload);
+  const subject = fillPlaceholders(template.subject, payload);
+  const body = template.bodyLines.map((line) => fillPlaceholders(line, payload)).join("\n\n");
+  return { subject, text: `${body}\n\n${FOUNDING_EMAIL_SIGNOFF}` };
+}
+
+// Sender and reply-to per config: the research overrides win, else the spec
+// identity Xenios Research <research@xeniostechnology.com>. The generic site
+// sender (team@) is deliberately NOT a fallback for founding-membership mail.
+export async function sendFoundingEmail(input: {
+  to: string;
+  subject: string;
+  text: string;
+}): Promise<{ ok: boolean; providerId: string | null; error?: string }> {
+  try {
+    const r = await getResendClient();
+    const from = process.env.RESEARCH_EMAIL_FROM?.trim() || RESEARCH_SENDER_DEFAULT;
+    const replyTo = process.env.RESEARCH_EMAIL_REPLY_TO?.trim() || RESEARCH_REPLY_TO_DEFAULT;
+    const { data, error } = await r.client.emails.send({
+      from,
+      to: input.to,
+      subject: input.subject,
+      text: input.text,
+      replyTo,
+    });
+    if (error) {
+      return {
+        ok: false,
+        providerId: null,
+        error: String((error as { message?: string }).message ?? "provider rejected send").slice(0, 300),
+      };
+    }
+    return { ok: true, providerId: (data as { id?: string } | null)?.id ?? null };
+  } catch (err) {
+    return {
+      ok: false,
+      providerId: null,
+      error: String(err instanceof Error ? err.message : "send threw").slice(0, 300),
+    };
+  }
 }
 
 // Template dispatch at SEND time. Fresh tokens are minted here, never stored.
@@ -132,6 +227,18 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
         });
         break;
       default: {
+        // Founding-membership (fm_*) templates render from the emails.ts data
+        // catalog and send with the research identity. A payload that smells
+        // like receiving instructions throws EmailPayloadRefused, which the
+        // outer catch records as a failure: it never sends.
+        const founding = renderFoundingEmail(job.template_key, payload);
+        if (founding) {
+          return await sendFoundingEmail({
+            to: job.recipient,
+            subject: founding.subject,
+            text: founding.text,
+          });
+        }
         // Member-platform templates share this ONE durable dispatch path. The
         // member-platform notifier direct-sends first and enqueues only as a
         // fallback, so this branch is the durable retry for those keys. No

@@ -32,6 +32,10 @@ const SecurityAdmin = lazy(() => import("./pages/adminx/SecurityAdmin"));
 const PrivacyAdmin = lazy(() => import("./pages/adminx/PrivacyAdmin"));
 const Capabilities = lazy(() => import("./pages/adminx/Capabilities"));
 const Audit = lazy(() => import("./pages/adminx/Audit"));
+const ActivationQueue = lazy(() => import("./pages/adminx/ActivationQueue"));
+const ActivationBridge = lazy(() => import("./pages/adminx/ActivationBridge"));
+const ActivationChecklist = lazy(() => import("./pages/adminx/ActivationChecklist"));
+const ActivationReconciliation = lazy(() => import("./pages/adminx/ActivationReconciliation"));
 
 function NotFound() {
   return (
@@ -73,6 +77,10 @@ export default function AdminResearchSection() {
       <Route path="/admin/research/security">{() => <S><SecurityAdmin /></S>}</Route>
       <Route path="/admin/research/privacy">{() => <S><PrivacyAdmin /></S>}</Route>
       <Route path="/admin/research/capabilities">{() => <S><Capabilities /></S>}</Route>
+      <Route path="/admin/research/activation-queue">{() => <S><ActivationQueue /></S>}</Route>
+      <Route path="/admin/research/activation-bridge">{() => <S><ActivationBridge /></S>}</Route>
+      <Route path="/admin/research/activation-checklist">{() => <S><ActivationChecklist /></S>}</Route>
+      <Route path="/admin/research/activation-reconciliation">{() => <S><ActivationReconciliation /></S>}</Route>
       <Route path="/admin/research/audit">{() => <S><Audit /></S>}</Route>
       <Route component={NotFound} />
     </Switch>

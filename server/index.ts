@@ -17,6 +17,7 @@ import { requireActiveMember, requireMember } from "./research/member-auth";
 import { requireSupabaseAdmin } from "./routes";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
+import { runProductionFoundingSchedulerTick } from "./research/membership-activation/scheduler";
 import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
 import { createServer } from "http";
@@ -184,6 +185,32 @@ const approvalExpiryTimer = setInterval(() => {
     .catch((err) => console.error("[research expiry] sweep tick failed:", err));
 }, 60 * 60 * 1000);
 approvalExpiryTimer.unref?.();
+
+// Founding-membership scheduler: the renewal overdue/grace/suspension sweep,
+// due renewal notices, suspension/reinstatement emails, and the identity
+// raw-source retention deletions. Hourly; the flag and storage are read at
+// tick time inside the runner, so this is a no-op until
+// RESEARCH_FOUNDING_ACTIVATION_ENABLED is true, and every enqueue rides the
+// durable outbox with deterministic event keys (a repeated tick sends nothing
+// twice).
+const foundingSchedulerTimer = setInterval(() => {
+  runProductionFoundingSchedulerTick(new Date())
+    .then((summary) => {
+      if (
+        summary.ran &&
+        (summary.scheduleAdvanced > 0 ||
+          summary.renewalNoticesEnqueued > 0 ||
+          summary.identityRawDeletions > 0)
+      ) {
+        log(
+          `founding scheduler: advanced ${summary.scheduleAdvanced}, notices ${summary.renewalNoticesEnqueued}, identity deletions ${summary.identityRawDeletions}`,
+          "research",
+        );
+      }
+    })
+    .catch((err) => console.error("[founding scheduler] tick failed:", err));
+}, 60 * 60 * 1000);
+foundingSchedulerTimer.unref?.();
 void logEmailStartupDiagnostics(log).catch(() => {});
 startOutboxWorker(log);
 

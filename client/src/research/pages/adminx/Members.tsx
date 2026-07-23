@@ -111,7 +111,7 @@ function MembersBody({ token }: { token: string }) {
                 />
               ),
             },
-            { key: "plan", header: "Plan", render: (m) => m.plan ?? "Monthly, $25" },
+            { key: "plan", header: "Plan", render: (m) => m.plan ?? "Founding Membership" },
             { key: "activated", header: "Activated", render: (m) => fmtDate(m.activated_at) },
             { key: "seen", header: "Last sign-in", render: (m) => fmtDate(m.last_sign_in_at) },
           ]}
@@ -125,8 +125,8 @@ function MembersBody({ token }: { token: string }) {
       <div className="card">
         <p className="mono-label text-ink-mute">Where members come from</p>
         <p className="body-s text-ink-2 mt-2 max-w-[64ch]">
-          Membership is application-first: every account here started as an approved application with both references
-          verified (the $50 one-time activation and the $25 monthly membership).
+          Membership is application-first: every account here started as an approved application whose $50
+          activation payment (including the first 30 days of membership) was verified by a person.
         </p>
         <Link href={ADMIN_ROUTES.applications} className="body-s underline text-ink-mute mt-3 inline-block">
           Open the application queue

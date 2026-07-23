@@ -77,7 +77,7 @@ function MemberDetailBody({ token, id }: { token: string; id: string }) {
                 <div className="grid gap-x-8 gap-y-3 mt-5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
                   <div>
                     <p className="mono-label text-ink-mute">Plan</p>
-                    <p className="body-s mt-1">{m.plan ?? "Monthly, $25"}</p>
+                    <p className="body-s mt-1">{m.plan ?? "Founding Membership"}</p>
                   </div>
                   <div>
                     <p className="mono-label text-ink-mute">Activated</p>

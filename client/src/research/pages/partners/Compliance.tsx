@@ -23,7 +23,7 @@ type CompliancePayload = { submissions?: ContentSubmission[] };
 
 const APPROVED_RULES = [
   "Describe the program factually: an application-gated, education-first research membership.",
-  "State pricing exactly as it is: $50 one time to activate, then $25 monthly, no annual plans.",
+  "State pricing exactly as it is: $50 at activation including the first 30 days, then $25 per additional 30-day period, no annual plans, and never $25 at activation.",
   "Use materials from the approved library word for word, or submit your own version for review first.",
   "Disclose the rep relationship in every share, visibly, in the share itself.",
   "Speak from your own experience as an educator or community builder, without outcome promises of any kind.",

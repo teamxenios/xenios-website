@@ -14,7 +14,7 @@ import { AdminScreen } from "./AdminResearchHome";
 
 const ALL_CAPABILITIES: Array<{ capability: ResearchCapability; label: string; owns: string }> = [
   { capability: "transactional_email", label: "Transactional email", owns: "Application, approval, and activation emails" },
-  { capability: "membership_billing", label: "Membership billing", owns: "The $50 activation and the $25 monthly membership" },
+  { capability: "membership_billing", label: "Membership billing", owns: "The $50 activation (first 30 days included) and the $25 thirty-day renewals" },
   { capability: "product_commerce", label: "Product commerce", owns: "Member ordering against the catalog" },
   { capability: "identity_verification", label: "Identity verification", owns: "Member identity checks" },
   { capability: "telegram_support", label: "Telegram support", owns: "The support channel behind member questions" },

@@ -9,7 +9,7 @@
 // to render (never invented data, never client-side authority).
 // ---------------------------------------------------------------------------
 
-import { apiGet, apiPost, type ApiResult } from "../lib/api";
+import { apiGet, apiPost, apiPut, type ApiResult } from "../lib/api";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../lib/capabilities";
 import type { AdminCommerceQueuesDto } from "@shared/research/commerce-api";
 
@@ -217,6 +217,170 @@ export function retryOutboxItem<T>(token: string, id: string): Promise<ApiResult
 
 export function sendTestEmail<T>(token: string, body: unknown): Promise<ApiResult<T>> {
   return apiPost<T>(`${BASE}/test-email`, body, token);
+}
+
+// ------------------- founding activation (payment bridge) -------------------
+// The /api/admin/research/activation/* surface (wire shapes frozen by
+// server/research/membership-activation/routes.ts). Verification is the one
+// money-moving call: it requires every field, the literal confirmedReceived
+// true, and an idempotency key, so a retried click can never activate twice.
+
+const ACTIVATION = `${BASE}/activation`;
+
+export const ACTIVATION_QUEUE_ACTIONS = [
+  "reject",
+  "request-info",
+  "mismatch",
+  "duplicate",
+  "reversed",
+  "refunded",
+  "cancel",
+] as const;
+export type ActivationQueueAction = (typeof ACTIVATION_QUEUE_ACTIONS)[number];
+
+export interface ActivationVerifyInput {
+  amountReceivedCents: number;
+  dateReceived: string;
+  receivingDestinationRef: string;
+  methodId: string;
+  externalRef: string | null;
+  reconciliationDate: string;
+  note: string | null;
+  /** The explicit confirmation; the wire refuses anything but literal true. */
+  confirmedReceived: true;
+  idempotencyKey: string;
+}
+
+export function getActivationQueue<T>(token: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${ACTIVATION}/queue`, token);
+}
+
+export function getActivationDetail<T>(token: string, obligationId: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${ACTIVATION}/queue/${enc(obligationId)}`, token);
+}
+
+export function verifyActivationPayment<T>(
+  token: string,
+  obligationId: string,
+  body: ActivationVerifyInput,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(`${ACTIVATION}/queue/${enc(obligationId)}/verify`, body, token);
+}
+
+export function actOnActivationObligation<T>(
+  token: string,
+  obligationId: string,
+  action: ActivationQueueAction,
+  detail: string,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(`${ACTIVATION}/queue/${enc(obligationId)}/${action}`, { detail }, token);
+}
+
+export function migrateActivationObligation<T>(
+  token: string,
+  obligationId: string,
+  methodId: string,
+  phase: string,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(`${ACTIVATION}/queue/${enc(obligationId)}/migrate`, { methodId, phase }, token);
+}
+
+export function getActivationBridgeSettings<T>(token: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${ACTIVATION}/bridge/settings`, token);
+}
+
+export function updateActivationBridgeSettings<T>(token: string, body: unknown): Promise<ApiResult<T>> {
+  return apiPut<T>(`${ACTIVATION}/bridge/settings`, body, token);
+}
+
+export function getActivationChecklist<T>(token: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${ACTIVATION}/bridge/checklist`, token);
+}
+
+export function updateActivationChecklist<T>(
+  token: string,
+  key: string,
+  done: boolean,
+  note: string | null,
+): Promise<ApiResult<T>> {
+  return apiPut<T>(`${ACTIVATION}/bridge/checklist`, { key, done, note }, token);
+}
+
+export function listActivationMethods<T>(token: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${ACTIVATION}/methods`, token);
+}
+
+/** Plaintext receiving instructions travel ONLY here, over the authenticated
+ * admin route; the server encrypts them at rest and never echoes them. */
+export function createActivationMethod<T>(token: string, body: unknown): Promise<ApiResult<T>> {
+  return apiPost<T>(`${ACTIVATION}/methods`, body, token);
+}
+
+export function approveActivationMethod<T>(
+  token: string,
+  methodId: string,
+  complianceReviewNote?: string,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(
+    `${ACTIVATION}/methods/${enc(methodId)}/approve`,
+    complianceReviewNote !== undefined ? { complianceReviewNote } : {},
+    token,
+  );
+}
+
+export function disableActivationMethod<T>(token: string, methodId: string, reason: string): Promise<ApiResult<T>> {
+  return apiPost<T>(`${ACTIVATION}/methods/${enc(methodId)}/disable`, { reason }, token);
+}
+
+export function getActivationReconciliation<T>(token: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${ACTIVATION}/reconciliation`, token);
+}
+
+/** The CSV export is text, not the JSON envelope; null on any failure. */
+export async function fetchActivationReconciliationCsv(token: string): Promise<string | null> {
+  try {
+    const res = await fetch(`${ACTIVATION}/reconciliation?format=csv`, {
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: { Authorization: "Bearer " + token },
+    });
+    if (!res.ok) return null;
+    const type = res.headers.get("content-type") ?? "";
+    if (!type.includes("text/csv")) return null;
+    return await res.text();
+  } catch {
+    return null;
+  }
+}
+
+export function getActivationIdentityQueue<T>(token: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${ACTIVATION}/identity/queue`, token);
+}
+
+/** Every grant is audited server-side BEFORE the signed URL exists. */
+export function getActivationIdentityViewUrl<T>(token: string, caseId: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${ACTIVATION}/identity/${enc(caseId)}/view`, token);
+}
+
+export interface ActivationIdentityReviewInput {
+  nameMatch: "match" | "mismatch";
+  ageThresholdMet: boolean;
+  documentNotExpired: boolean;
+  jurisdiction: string | null;
+  licenseLast4: string | null;
+  rejectionCategory?: string;
+}
+
+export function submitActivationIdentityReview<T>(
+  token: string,
+  caseId: string,
+  findings: ActivationIdentityReviewInput,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(`${ACTIVATION}/identity/${enc(caseId)}/review`, findings, token);
+}
+
+export function activationIdentityEmergencyDelete<T>(token: string, caseId: string): Promise<ApiResult<T>> {
+  return apiPost<T>(`${ACTIVATION}/identity/${enc(caseId)}/emergency-delete`, {}, token);
 }
 
 // ------------------------- capability registry read -------------------------

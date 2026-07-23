@@ -30,6 +30,10 @@ export async function apiPatch<T>(path: string, body: unknown, token?: string | 
   return request<T>("PATCH", path, body, token);
 }
 
+export async function apiPut<T>(path: string, body: unknown, token?: string | null): Promise<ApiResult<T>> {
+  return request<T>("PUT", path, body, token);
+}
+
 // DELETE sends no body unless one is explicitly given.
 export async function apiDelete<T>(path: string, token?: string | null, body?: unknown): Promise<ApiResult<T>> {
   return request<T>("DELETE", path, body, token);

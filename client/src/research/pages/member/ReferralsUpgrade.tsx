@@ -220,8 +220,8 @@ function ReferralProgram({ summary, isFixture }: { summary: ReferralSummary; isF
             If a membership is refunded during the hold, the associated credit is reversed instead of released.
           </li>
           <li className="body-s text-ink-2">
-            Membership is a one-time $50 activation and $25 monthly. There is no annual plan, and your invitation
-            changes neither price.
+            Membership is $50 at activation, including the first 30 days, then $25 per additional 30-day
+            period. There is no annual plan, and your invitation changes neither price.
           </li>
         </ul>
       </section>

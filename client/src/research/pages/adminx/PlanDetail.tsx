@@ -52,7 +52,7 @@ function PlanDetailBody({ token, id }: { token: string; id: string }) {
       deniedCode={resource.deniedCode}
       onRetry={resource.reload}
       unavailableTitle="Plan records publish with membership billing."
-      unavailableBody="This record renders live when the billing backend connects. The standing terms ($50 one-time activation, $25 monthly, no annual plan) are listed on the Plans page."
+      unavailableBody="This record renders live when the billing backend connects. The standing terms ($50 due at activation including the first 30 days, then $25 per additional 30-day period, no annual plan) are listed on the Plans page."
     >
       {(() => {
         const p = resource.data?.plan;
