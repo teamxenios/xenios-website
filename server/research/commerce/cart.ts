@@ -63,8 +63,8 @@ export interface StoredCart {
 }
 
 export interface CartRepository {
-  load(memberId: string): StoredCart | null;
-  save(memberId: string, cart: StoredCart): void;
+  load(memberId: string): Promise<StoredCart | null>;
+  save(memberId: string, cart: StoredCart): Promise<void>;
 }
 
 export interface CartServiceDeps {
@@ -82,11 +82,11 @@ export type CartDenial = { ok: false; code: CommerceDenialCode; message: string 
 export type CartMutation = { ok: true; cart: CartDto } | CartDenial;
 
 export interface CartService {
-  getCart(memberId: string, asOf: Date): CartDto;
-  addLine(memberId: string, req: AddCartLineRequest, asOf: Date): CartMutation;
-  updateLine(memberId: string, sku: string, quantity: number, asOf: Date): CartMutation;
-  removeLine(memberId: string, sku: string, asOf: Date): CartDto;
-  revalidate(memberId: string, asOf: Date): CartDto;
+  getCart(memberId: string, asOf: Date): Promise<CartDto>;
+  addLine(memberId: string, req: AddCartLineRequest, asOf: Date): Promise<CartMutation>;
+  updateLine(memberId: string, sku: string, quantity: number, asOf: Date): Promise<CartMutation>;
+  removeLine(memberId: string, sku: string, asOf: Date): Promise<CartDto>;
+  revalidate(memberId: string, asOf: Date): Promise<CartDto>;
 }
 
 // ---------------------------------------------------------------------------
@@ -314,8 +314,8 @@ function buildCart(memberId: string, stored: StoredCart, deps: CartServiceDeps, 
   };
 }
 
-function loadCart(memberId: string, deps: CartServiceDeps): StoredCart {
-  const existing = deps.repository.load(memberId);
+async function loadCart(memberId: string, deps: CartServiceDeps): Promise<StoredCart> {
+  const existing = await deps.repository.load(memberId);
   return existing ? { lines: [...existing.lines] } : { lines: [] };
 }
 
@@ -324,8 +324,8 @@ function loadCart(memberId: string, deps: CartServiceDeps): StoredCart {
 // ---------------------------------------------------------------------------
 
 export function createCartService(deps: CartServiceDeps): CartService {
-  function read(memberId: string, asOf: Date): CartDto {
-    return buildCart(memberId, loadCart(memberId, deps), deps, asOf);
+  async function read(memberId: string, asOf: Date): Promise<CartDto> {
+    return buildCart(memberId, await loadCart(memberId, deps), deps, asOf);
   }
 
   return {
@@ -338,7 +338,7 @@ export function createCartService(deps: CartServiceDeps): CartService {
      * ineligible or out of stock is still admitted and surfaced as a blocked line,
      * because both conditions vary with time and revalidation is what catches them.
      */
-    addLine(memberId, req, asOf) {
+    async addLine(memberId, req, asOf) {
       if (!isValidQuantity(req.quantity)) {
         return {
           ok: false,
@@ -378,7 +378,7 @@ export function createCartService(deps: CartServiceDeps): CartService {
         }
       }
 
-      const cart = loadCart(memberId, deps);
+      const cart = await loadCart(memberId, deps);
       const existing = cart.lines.find((line) => line.sku === req.sku);
 
       // The bound applies to the resulting line, not just to this request, so
@@ -404,11 +404,11 @@ export function createCartService(deps: CartServiceDeps): CartService {
         ? cart.lines.map((line) => (line.sku === req.sku ? next : line))
         : [...cart.lines, next];
 
-      deps.repository.save(memberId, cart);
+      await deps.repository.save(memberId, cart);
       return { ok: true, cart: buildCart(memberId, cart, deps, asOf) };
     },
 
-    updateLine(memberId, sku, quantity, asOf) {
+    async updateLine(memberId, sku, quantity, asOf) {
       if (!isValidQuantity(quantity)) {
         return {
           ok: false,
@@ -417,20 +417,20 @@ export function createCartService(deps: CartServiceDeps): CartService {
         };
       }
 
-      const cart = loadCart(memberId, deps);
+      const cart = await loadCart(memberId, deps);
       if (!cart.lines.some((line) => line.sku === sku)) {
         return { ok: false, code: "product_not_found", message: `${sku} is not in the cart.` };
       }
 
       cart.lines = cart.lines.map((line) => (line.sku === sku ? { ...line, quantity } : line));
-      deps.repository.save(memberId, cart);
+      await deps.repository.save(memberId, cart);
       return { ok: true, cart: buildCart(memberId, cart, deps, asOf) };
     },
 
-    removeLine(memberId, sku, asOf) {
-      const cart = loadCart(memberId, deps);
+    async removeLine(memberId, sku, asOf) {
+      const cart = await loadCart(memberId, deps);
       cart.lines = cart.lines.filter((line) => line.sku !== sku);
-      deps.repository.save(memberId, cart);
+      await deps.repository.save(memberId, cart);
       return buildCart(memberId, cart, deps, asOf);
     },
 
@@ -444,11 +444,11 @@ export function createCartService(deps: CartServiceDeps): CartService {
 export function createInMemoryCartRepository(): CartRepository {
   const carts = new Map<string, StoredCart>();
   return {
-    load(memberId) {
+    async load(memberId) {
       const cart = carts.get(memberId);
       return cart ? { lines: cart.lines.map((line) => ({ ...line })) } : null;
     },
-    save(memberId, cart) {
+    async save(memberId, cart) {
       carts.set(memberId, { lines: cart.lines.map((line) => ({ ...line })) });
     },
   };

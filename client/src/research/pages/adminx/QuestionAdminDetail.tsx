@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { Link, useParams } from "wouter";
-import { getQuestion, replyToQuestion } from "../../adapters/adminOps";
+import { answerQuestion, getQuestion, type AdminQuestionAnswer } from "../../adapters/adminOps";
 import { ResearchSecureNotice, ResearchStatusBadge, ResearchTimeline } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { denialPresentation } from "../../lib/denials";
@@ -48,8 +48,16 @@ function QuestionDetailBody({ token, id }: { token: string; id: string }) {
     [id],
   );
   const resource = useAdminResource(token, loadQuestion);
+  // A sent answer reloads the thread, which unmounts the composer; the
+  // confirmation lives up here so it survives the reload.
+  const [sentNotice, setSentNotice] = useState<string | null>(null);
   return (
     <div className="grid gap-6">
+      {sentNotice && (
+        <p className="body-s text-ink-2" role="status" aria-live="polite" data-testid="question-answer-sent">
+          {sentNotice}
+        </p>
+      )}
       <AdminBoundary
         state={resource.state}
         message={resource.message}
@@ -90,7 +98,14 @@ function QuestionDetailBody({ token, id }: { token: string; id: string }) {
                   }))}
                 />
               </section>
-              <ReplyComposer token={token} id={id} onSent={resource.reload} />
+              <ReplyComposer
+                token={token}
+                id={id}
+                onSent={(notice) => {
+                  setSentNotice(notice);
+                  resource.reload();
+                }}
+              />
             </>
           );
         })()}
@@ -104,8 +119,9 @@ function QuestionDetailBody({ token, id }: { token: string; id: string }) {
   );
 }
 
-function ReplyComposer({ token, id, onSent }: { token: string; id: string; onSent: () => void }) {
+function ReplyComposer({ token, id, onSent }: { token: string; id: string; onSent: (notice: string) => void }) {
   const [body, setBody] = useState("");
+  const [status, setStatus] = useState<AdminQuestionAnswer["status"]>("answer_ready");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -113,14 +129,16 @@ function ReplyComposer({ token, id, onSent }: { token: string; id: string; onSen
     if (busy || body.trim().length < 2) return;
     setBusy(true);
     setMessage(null);
-    const result = await replyToQuestion<{ ok: boolean }>(token, id, { body: body.trim() });
+    // The real wire shape: answerText plus the status this answer moves the
+    // question into (POST /api/admin/research/questions/:id/answer).
+    const result = await answerQuestion<{ ok: boolean }>(token, id, { answerText: body.trim(), status });
     setBusy(false);
     if (result.kind === "ok") {
       setBody("");
-      setMessage("Reply sent.");
-      onSent();
+      // The reload unmounts this composer, so the confirmation goes upward.
+      onSent(status === "answer_ready" ? "Answer sent." : "Sent; the member is asked for more information.");
     } else if (result.kind === "unavailable") {
-      setMessage("The reply endpoint is not published yet, so nothing was sent. Reply by email instead.");
+      setMessage("The answer endpoint is not published yet, so nothing was sent. Reply by email instead.");
     } else if (result.kind === "unauthorized") {
       setMessage("Your admin session has ended. Sign in again.");
     } else if (result.kind === "denied") {
@@ -135,7 +153,7 @@ function ReplyComposer({ token, id, onSent }: { token: string; id: string; onSen
   return (
     <section className="card" aria-label="Reply">
       <label htmlFor="question-reply" className="form-label">
-        Reply as the research team
+        Answer as the research team
       </label>
       <textarea
         id="question-reply"
@@ -144,15 +162,37 @@ function ReplyComposer({ token, id, onSent }: { token: string; id: string; onSen
         value={body}
         onChange={(e) => setBody(e.target.value)}
         placeholder="Plain answer, from a person. No health claims."
+        data-testid="question-answer-text"
       />
+      <div className="mt-3" style={{ maxWidth: 320 }}>
+        <label htmlFor="question-answer-status" className="form-label">
+          What this answer does
+        </label>
+        <select
+          id="question-answer-status"
+          className="input-field"
+          value={status}
+          onChange={(e) => setStatus(e.target.value as AdminQuestionAnswer["status"])}
+          data-testid="question-answer-status"
+        >
+          <option value="answer_ready">Answer is ready for the member</option>
+          <option value="more_information_needed">Ask the member for more information</option>
+        </select>
+      </div>
       {message && (
         <p className="body-s text-ink-2 mt-3" role="status" aria-live="polite">
           {message}
         </p>
       )}
       <div className="mt-4">
-        <button type="button" className="btn btn-primary" disabled={busy || body.trim().length < 2} onClick={() => void send()}>
-          {busy ? "Sending..." : "Send reply"}
+        <button
+          type="button"
+          className="btn btn-primary"
+          disabled={busy || body.trim().length < 2}
+          onClick={() => void send()}
+          data-testid="question-answer-send"
+        >
+          {busy ? "Sending..." : "Send answer"}
         </button>
       </div>
     </section>

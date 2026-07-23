@@ -103,9 +103,9 @@ function expectClaim(outcome: ClaimOutcome): Extract<ClaimOutcome, { ok: true }>
   return outcome;
 }
 
-function approvedClaim(h: Harness, req: CreateClaimRequest = claimRequest()): string {
-  const submitted = expectClaim(h.service.submitClaim("mem_1", req, NOW));
-  const reviewed = expectClaim(h.service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+async function approvedClaim(h: Harness, req: CreateClaimRequest = claimRequest()): Promise<string> {
+  const submitted = expectClaim(await h.service.submitClaim("mem_1", req, NOW));
+  const reviewed = expectClaim(await h.service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
   return reviewed.claim.claimId;
 }
 
@@ -126,9 +126,9 @@ describe("refund idempotency survives a process restart", () => {
     const orders = createInMemoryClaimOrderRepository([order]);
 
     const first = createRefundService({ claims, orders, payment, commerceEnabled: true });
-    const submitted = expectClaim(first.submitClaim("mem_1", claimRequest(), NOW));
+    const submitted = expectClaim(await first.submitClaim("mem_1", claimRequest(), NOW));
     const approved = expectClaim(
-      first.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW),
+      await first.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW),
     );
     const refunded = await first.resolveWithRefund(
       approved.claim.claimId,
@@ -148,12 +148,12 @@ describe("refund idempotency survives a process restart", () => {
     expect(payment.refundCalls).toHaveLength(1);
   });
 
-  it("records the key on the repository, not inside the service closure", () => {
+  it("records the key on the repository, not inside the service closure", async () => {
     const claims = createInMemoryClaimRepository();
-    expect(claims.hasRefundKey("anything")).toBe(false);
-    claims.recordRefundKey("scope_a", "ref_1");
-    expect(claims.hasRefundKey("scope_a")).toBe(true);
-    expect(claims.hasRefundKey("scope_b")).toBe(false);
+    expect(await claims.hasRefundKey("anything")).toBe(false);
+    await claims.recordRefundKey("scope_a", "ref_1");
+    expect(await claims.hasRefundKey("scope_a")).toBe(true);
+    expect(await claims.hasRefundKey("scope_b")).toBe(false);
   });
 });
 
@@ -164,20 +164,20 @@ describe("accepted reasons", () => {
     );
   });
 
-  it("refuses a change-of-mind claim, because there are no ordinary returns", () => {
+  it("refuses a change-of-mind claim, because there are no ordinary returns", async () => {
     const h = harness();
-    const outcome = h.service.submitClaim(
+    const outcome = await h.service.submitClaim(
       "mem_1",
       claimRequest({ reason: "changed_mind" as never }),
       NOW,
     );
     expect(expectDenied(outcome)).toContain("forbidden");
-    expect(h.claims.listOpen()).toHaveLength(0);
+    expect(await h.claims.listOpen()).toHaveLength(0);
   });
 
-  it("refuses an unopened-package claim the same way", () => {
+  it("refuses an unopened-package claim the same way", async () => {
     const h = harness();
-    const outcome = h.service.submitClaim(
+    const outcome = await h.service.submitClaim(
       "mem_1",
       claimRequest({ reason: "unopened_package" as never }),
       NOW,
@@ -185,66 +185,66 @@ describe("accepted reasons", () => {
     expect(expectDenied(outcome)).toContain("forbidden");
   });
 
-  it("accepts each enumerated reason", () => {
-    ACCEPTED_CLAIM_REASONS.forEach((reason) => {
+  it("accepts each enumerated reason", async () => {
+    for (const reason of ACCEPTED_CLAIM_REASONS) {
       const h = harness();
-      const outcome = h.service.submitClaim("mem_1", claimRequest({ reason }), NOW);
+      const outcome = await h.service.submitClaim("mem_1", claimRequest({ reason }), NOW);
       expect(expectClaim(outcome).claim.reason).toBe(reason);
-    });
+    }
   });
 });
 
 describe("submitting a claim", () => {
-  it("records a submitted claim against the member's own order", () => {
+  it("records a submitted claim against the member's own order", async () => {
     const h = harness();
-    const claim = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
+    const claim = expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
     expect(claim.state).toBe("submitted");
     expect(claim.resolution).toBeNull();
     expect(claim.submittedAt).toBe(NOW.toISOString());
   });
 
-  it("never serializes member id, lot, evidence, or notes to the wire shape", () => {
+  it("never serializes member id, lot, evidence, or notes to the wire shape", async () => {
     const h = harness();
-    const claim = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
+    const claim = expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
     expect(Object.keys(claim).sort()).toEqual(
       ["claimId", "orderId", "reason", "resolution", "sku", "state", "submittedAt"].sort(),
     );
   });
 
-  it("refuses a claim against another member's order without confirming it exists", () => {
+  it("refuses a claim against another member's order without confirming it exists", async () => {
     const h = harness();
-    const outcome = h.service.submitClaim("mem_2", claimRequest(), NOW);
+    const outcome = await h.service.submitClaim("mem_2", claimRequest(), NOW);
     expect(expectDenied(outcome)).toEqual(["order_not_found"]);
   });
 
-  it("refuses an unknown order", () => {
+  it("refuses an unknown order", async () => {
     const h = harness();
-    const outcome = h.service.submitClaim("mem_1", claimRequest({ orderId: "ord_missing" }), NOW);
+    const outcome = await h.service.submitClaim("mem_1", claimRequest({ orderId: "ord_missing" }), NOW);
     expect(expectDenied(outcome)).toContain("order_not_found");
   });
 
-  it("refuses a sku that is not on the order", () => {
+  it("refuses a sku that is not on the order", async () => {
     const h = harness();
-    const outcome = h.service.submitClaim("mem_1", claimRequest({ sku: "SKU-Z" }), NOW);
+    const outcome = await h.service.submitClaim("mem_1", claimRequest({ sku: "SKU-Z" }), NOW);
     expect(expectDenied(outcome)).toContain("product_not_found");
   });
 
-  it("refuses an order that never reached the member", () => {
+  it("refuses an order that never reached the member", async () => {
     const h = harness({ state: "checkout_pending" });
-    const outcome = h.service.submitClaim("mem_1", claimRequest(), NOW);
+    const outcome = await h.service.submitClaim("mem_1", claimRequest(), NOW);
     expect(expectDenied(outcome)).toContain("order_state_invalid");
   });
 
-  it("refuses evidence that carries a url or a data uri", () => {
+  it("refuses evidence that carries a url or a data uri", async () => {
     const h = harness();
-    const urlOutcome = h.service.submitClaim(
+    const urlOutcome = await h.service.submitClaim(
       "mem_1",
       claimRequest({ evidenceRefs: ["https://private.example.com/vial.jpg"] }),
       NOW,
     );
     expect(expectDenied(urlOutcome)).toContain("forbidden");
 
-    const dataOutcome = h.service.submitClaim(
+    const dataOutcome = await h.service.submitClaim(
       "mem_1",
       claimRequest({ evidenceRefs: ["data:image/png;base64,AAAA"] }),
       NOW,
@@ -252,10 +252,10 @@ describe("submitting a claim", () => {
     expect(expectDenied(dataOutcome)).toContain("forbidden");
   });
 
-  it("accumulates every reason rather than stopping at the first", () => {
+  it("accumulates every reason rather than stopping at the first", async () => {
     const h = harness({ state: "checkout_pending" });
     const codes = expectDenied(
-      h.service.submitClaim(
+      await h.service.submitClaim(
         "mem_1",
         claimRequest({ reason: "changed_mind" as never, sku: "SKU-Z", evidenceRefs: ["http://x/y"] }),
         NOW,
@@ -266,70 +266,70 @@ describe("submitting a claim", () => {
     expect(codes).toContain("product_not_found");
   });
 
-  it("refuses while commerce is disabled", () => {
+  it("refuses while commerce is disabled", async () => {
     const h = harness({}, false);
-    expect(expectDenied(h.service.submitClaim("mem_1", claimRequest(), NOW))).toContain(
+    expect(expectDenied(await h.service.submitClaim("mem_1", claimRequest(), NOW))).toContain(
       "commerce_disabled",
     );
   });
 
-  it("absorbs a duplicate submit rather than opening a second claim", () => {
+  it("absorbs a duplicate submit rather than opening a second claim", async () => {
     const h = harness();
-    const first = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
-    const second = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
+    const first = expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
+    const second = expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
     expect(second.claimId).toBe(first.claimId);
-    expect(h.claims.listByOrder("ord_1")).toHaveLength(1);
+    expect(await h.claims.listByOrder("ord_1")).toHaveLength(1);
   });
 });
 
 describe("member reads", () => {
-  it("returns null for another member's claim", () => {
+  it("returns null for another member's claim", async () => {
     const h = harness();
-    const claim = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
-    expect(h.service.getForMember("mem_1", claim.claimId)).not.toBeNull();
-    expect(h.service.getForMember("mem_2", claim.claimId)).toBeNull();
+    const claim = expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
+    expect(await h.service.getForMember("mem_1", claim.claimId)).not.toBeNull();
+    expect(await h.service.getForMember("mem_2", claim.claimId)).toBeNull();
   });
 
-  it("lists only the member's own claims", () => {
+  it("lists only the member's own claims", async () => {
     const h = harness();
-    expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW));
-    expect(h.service.listForMember("mem_1")).toHaveLength(1);
-    expect(h.service.listForMember("mem_2")).toHaveLength(0);
+    expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW));
+    expect(await h.service.listForMember("mem_1")).toHaveLength(1);
+    expect(await h.service.listForMember("mem_2")).toHaveLength(0);
   });
 });
 
 describe("review", () => {
-  it("moves submitted to approved and records the reviewer", () => {
+  it("moves submitted to approved and records the reviewer", async () => {
     const h = harness();
-    const claim = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
-    const reviewed = expectClaim(h.service.reviewClaim(claim.claimId, "adm_1", "approved", NOW));
+    const claim = expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
+    const reviewed = expectClaim(await h.service.reviewClaim(claim.claimId, "adm_1", "approved", NOW));
     expect(reviewed.claim.state).toBe("approved");
-    expect(h.claims.get(claim.claimId)?.reviewedBy).toBe("adm_1");
+    expect((await h.claims.get(claim.claimId))?.reviewedBy).toBe("adm_1");
   });
 
-  it("refuses to review a declined claim again", () => {
+  it("refuses to review a declined claim again", async () => {
     const h = harness();
-    const claim = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
-    expectClaim(h.service.reviewClaim(claim.claimId, "adm_1", "declined", NOW));
-    expect(expectDenied(h.service.reviewClaim(claim.claimId, "adm_1", "approved", NOW))).toContain(
+    const claim = expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
+    expectClaim(await h.service.reviewClaim(claim.claimId, "adm_1", "declined", NOW));
+    expect(expectDenied(await h.service.reviewClaim(claim.claimId, "adm_1", "approved", NOW))).toContain(
       "order_state_invalid",
     );
   });
 
-  it("drops a closed claim off the admin queue", () => {
+  it("drops a closed claim off the admin queue", async () => {
     const h = harness();
-    const claim = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
-    expect(h.service.listOpenForAdmin()).toHaveLength(1);
-    expectClaim(h.service.reviewClaim(claim.claimId, "adm_1", "declined", NOW));
-    expect(h.service.listOpenForAdmin()).toHaveLength(0);
+    const claim = expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
+    expect(await h.service.listOpenForAdmin()).toHaveLength(1);
+    expectClaim(await h.service.reviewClaim(claim.claimId, "adm_1", "declined", NOW));
+    expect(await h.service.listOpenForAdmin()).toHaveLength(0);
   });
 });
 
 describe("replacement never restocks", () => {
-  it("resolves with a replacement and destroys the returned unit", () => {
+  it("resolves with a replacement and destroys the returned unit", async () => {
     const h = harness();
-    const claimId = approvedClaim(h);
-    const outcome = h.service.resolveWithReplacement(claimId, "adm_1", NOW);
+    const claimId = await approvedClaim(h);
+    const outcome = await h.service.resolveWithReplacement(claimId, "adm_1", NOW);
     if (!outcome.ok) throw new Error("expected a resolution");
     expect(outcome.claim.state).toBe("resolved");
     expect(outcome.claim.resolution).toBe("replacement");
@@ -339,44 +339,44 @@ describe("replacement never restocks", () => {
     expect(outcome.returnedLotDisposition).not.toBe("available");
   });
 
-  it("moves the order to replaced without any provider call", () => {
+  it("moves the order to replaced without any provider call", async () => {
     const h = harness();
-    const claimId = approvedClaim(h);
-    h.service.resolveWithReplacement(claimId, "adm_1", NOW);
+    const claimId = await approvedClaim(h);
+    await h.service.resolveWithReplacement(claimId, "adm_1", NOW);
     expect(h.order.state).toBe("replaced");
     expect(h.payment.refundCalls).toHaveLength(0);
   });
 
-  it("refuses a replacement while commerce is disabled", () => {
+  it("refuses a replacement while commerce is disabled", async () => {
     const payment = new SpyPaymentProvider();
     const claims = createInMemoryClaimRepository();
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
     // Approve the claim while the capability is on, then take it away.
     const enabled = createRefundService({ claims, orders, payment, commerceEnabled: true });
-    const submitted = expectClaim(enabled.submitClaim("mem_1", claimRequest(), NOW));
-    expectClaim(enabled.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+    const submitted = expectClaim(await enabled.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(await enabled.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
 
     const disabled = createRefundService({ claims, orders, payment, commerceEnabled: false });
-    const outcome = disabled.resolveWithReplacement(submitted.claim.claimId, "adm_1", NOW);
+    const outcome = await disabled.resolveWithReplacement(submitted.claim.claimId, "adm_1", NOW);
 
     expect(expectDenied(outcome)).toContain("commerce_disabled");
     expect(order.state).toBe("delivered");
-    expect(claims.get(submitted.claim.claimId)?.state).toBe("approved");
+    expect((await claims.get(submitted.claim.claimId))?.state).toBe("approved");
   });
 
-  it("refuses a replacement for a claim that was never approved", () => {
+  it("refuses a replacement for a claim that was never approved", async () => {
     const h = harness();
-    const claim = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
-    expect(expectDenied(h.service.resolveWithReplacement(claim.claimId, "adm_1", NOW))).toContain(
+    const claim = expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
+    expect(expectDenied(await h.service.resolveWithReplacement(claim.claimId, "adm_1", NOW))).toContain(
       "order_state_invalid",
     );
   });
 
-  it("refuses a replacement the order cannot legally record", () => {
+  it("refuses a replacement the order cannot legally record", async () => {
     const h = harness({ state: "processing" });
-    const claimId = approvedClaim(h);
-    expect(expectDenied(h.service.resolveWithReplacement(claimId, "adm_1", NOW))).toContain(
+    const claimId = await approvedClaim(h);
+    expect(expectDenied(await h.service.resolveWithReplacement(claimId, "adm_1", NOW))).toContain(
       "order_state_invalid",
     );
     expect(h.order.state).toBe("processing");
@@ -386,7 +386,7 @@ describe("replacement never restocks", () => {
 describe("refund", () => {
   it("refunds through the provider and carries its reference into the transition", async () => {
     const h = harness();
-    const claimId = approvedClaim(h);
+    const claimId = await approvedClaim(h);
     const outcome = await h.service.resolveWithRefund(claimId, "adm_1", 12_000, "key_1", NOW);
     if (!outcome.ok) throw new Error("expected a resolution");
     expect(outcome.claim.resolution).toBe("refund");
@@ -399,7 +399,7 @@ describe("refund", () => {
 
   it("marks a smaller refund as partial", async () => {
     const h = harness();
-    const claimId = approvedClaim(h);
+    const claimId = await approvedClaim(h);
     const outcome = await h.service.resolveWithRefund(claimId, "adm_1", 4_000, "key_1", NOW);
     if (!outcome.ok) throw new Error("expected a resolution");
     expect(outcome.claim.resolution).toBe("partial_refund");
@@ -408,7 +408,7 @@ describe("refund", () => {
 
   it("never restocks on a refund either", async () => {
     const h = harness();
-    const claimId = approvedClaim(h);
+    const claimId = await approvedClaim(h);
     const outcome = await h.service.resolveWithRefund(claimId, "adm_1", 12_000, "key_1", NOW);
     if (!outcome.ok) throw new Error("expected a resolution");
     expect(outcome.restockedUnits).toBe(0);
@@ -417,7 +417,7 @@ describe("refund", () => {
 
   it("refuses a refund above the captured amount without calling the provider", async () => {
     const h = harness();
-    const claimId = approvedClaim(h);
+    const claimId = await approvedClaim(h);
     const outcome = await h.service.resolveWithRefund(claimId, "adm_1", 12_001, "key_1", NOW);
     expect(expectDenied(outcome)).toContain("payment_failed");
     expect(h.payment.refundCalls).toHaveLength(0);
@@ -426,7 +426,7 @@ describe("refund", () => {
 
   it("bounds the second partial refund by what is left of the capture", async () => {
     const h = harness();
-    const first = approvedClaim(h);
+    const first = await approvedClaim(h);
     await h.service.resolveWithRefund(first, "adm_1", 10_000, "key_1", NOW);
     // The order is terminal after a refund, so a further refund is refused outright.
     const second = await h.service.resolveWithRefund(first, "adm_1", 5_000, "key_2", NOW);
@@ -437,7 +437,7 @@ describe("refund", () => {
 
   it("refuses a fractional amount", async () => {
     const h = harness();
-    const claimId = approvedClaim(h);
+    const claimId = await approvedClaim(h);
     const outcome = await h.service.resolveWithRefund(claimId, "adm_1", 12.5, "key_1", NOW);
     expect(expectDenied(outcome)).toContain("payment_failed");
     expect(h.payment.refundCalls).toHaveLength(0);
@@ -445,7 +445,7 @@ describe("refund", () => {
 
   it("refuses a zero or negative amount", async () => {
     const h = harness();
-    const claimId = approvedClaim(h);
+    const claimId = await approvedClaim(h);
     expect(expectDenied(await h.service.resolveWithRefund(claimId, "adm_1", 0, "k", NOW))).toContain(
       "payment_failed",
     );
@@ -457,7 +457,7 @@ describe("refund", () => {
 
   it("refuses when the order carries no provider reference", async () => {
     const h = harness({ paymentReference: null, capturedAmountCents: 0 });
-    const claimId = approvedClaim(h);
+    const claimId = await approvedClaim(h);
     const outcome = await h.service.resolveWithRefund(claimId, "adm_1", 1_000, "key_1", NOW);
     expect(expectDenied(outcome)).toContain("payment_failed");
     expect(h.payment.refundCalls).toHaveLength(0);
@@ -473,8 +473,8 @@ describe("refund", () => {
       payment: new DisabledPaymentProvider(),
       commerceEnabled: true,
     });
-    const submitted = expectClaim(service.submitClaim("mem_1", claimRequest(), NOW));
-    expectClaim(service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+    const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
 
     const outcome = await service.resolveWithRefund(
       submitted.claim.claimId,
@@ -485,15 +485,15 @@ describe("refund", () => {
     );
     expect(expectDenied(outcome)).toEqual(["payment_disabled"]);
     // Approved but unpaid is the honest state. Nothing is resolved and nothing moved.
-    expect(claims.get(submitted.claim.claimId)?.state).toBe("approved");
-    expect(claims.get(submitted.claim.claimId)?.resolution).toBeNull();
+    expect((await claims.get(submitted.claim.claimId))?.state).toBe("approved");
+    expect((await claims.get(submitted.claim.claimId))?.resolution).toBeNull();
     expect(order.state).toBe("delivered");
     expect(order.refundedCents).toBe(0);
   });
 
   it("issues one refund for a repeated idempotency key", async () => {
     const h = harness();
-    const claimId = approvedClaim(h);
+    const claimId = await approvedClaim(h);
     const first = await h.service.resolveWithRefund(claimId, "adm_1", 6_000, "key_1", NOW);
     const replay = await h.service.resolveWithRefund(claimId, "adm_1", 6_000, "key_1", NOW);
     if (!first.ok || !replay.ok) throw new Error("expected both to be absorbed as resolutions");
@@ -518,8 +518,8 @@ describe("refund", () => {
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
     const service = createRefundService({ claims, orders, payment, commerceEnabled: true });
-    const submitted = expectClaim(service.submitClaim("mem_1", claimRequest(), NOW));
-    expectClaim(service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+    const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
 
     const outcome = await service.resolveWithRefund(
       submitted.claim.claimId,
@@ -531,7 +531,7 @@ describe("refund", () => {
 
     // payment_failed would invite a retry that cannot succeed until the credential exists.
     expect(expectDenied(outcome)).toEqual(["payment_disabled"]);
-    expect(claims.get(submitted.claim.claimId)?.state).toBe("approved");
+    expect((await claims.get(submitted.claim.claimId))?.state).toBe("approved");
     expect(order.state).toBe("delivered");
     expect(order.refundedCents).toBe(0);
   });
@@ -556,8 +556,8 @@ describe("refund", () => {
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
     const service = createRefundService({ claims, orders, payment, commerceEnabled: true });
-    const submitted = expectClaim(service.submitClaim("mem_1", claimRequest(), NOW));
-    expectClaim(service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+    const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
 
     const outcome = await service.resolveWithRefund(
       submitted.claim.claimId,
@@ -574,7 +574,7 @@ describe("refund", () => {
 
   it("refuses a refund on a claim that was never approved", async () => {
     const h = harness();
-    const claim = expectClaim(h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
+    const claim = expectClaim(await h.service.submitClaim("mem_1", claimRequest(), NOW)).claim;
     const outcome = await h.service.resolveWithRefund(claim.claimId, "adm_1", 1_000, "key_1", NOW);
     expect(expectDenied(outcome)).toContain("order_state_invalid");
     expect(h.payment.refundCalls).toHaveLength(0);
@@ -582,7 +582,7 @@ describe("refund", () => {
 
   it("refuses when the order state cannot record a refund", async () => {
     const h = harness({ state: "processing" });
-    const claimId = approvedClaim(h);
+    const claimId = await approvedClaim(h);
     const outcome = await h.service.resolveWithRefund(claimId, "adm_1", 1_000, "key_1", NOW);
     expect(expectDenied(outcome)).toContain("order_state_invalid");
     expect(h.payment.refundCalls).toHaveLength(0);

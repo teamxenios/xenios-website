@@ -18,17 +18,17 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "What does membership cost?",
     answer:
-      "Membership has two parts, both starting only after your application is approved: a one-time $50 activation fee and a $25 monthly membership. The activation fee covers the human review of your application and the preparation of your Whole-Life Blueprint; the monthly membership keeps your membership, your Blueprint, and your access active. There is no annual plan.",
+      "There is one Founding Membership, and payment starts only after your application is approved: $50 is due at activation, and it includes your activation and your first 30 days of membership. After that, membership is $25 for each additional 30-day period. Your first renewal date is calculated when your activation payment is verified. There is no annual plan.",
   },
   {
     question: "Is the application free?",
     answer:
-      "Yes. Submitting an application costs nothing. Payment begins only after your application has been reviewed and approved: the one-time $50 activation fee plus the $25 monthly membership. If you are not approved, you pay nothing.",
+      "Yes. Submitting an application costs nothing. Payment begins only after your application has been reviewed and approved: $50 due at activation, which includes your first 30 days of membership. If you are not approved, you pay nothing.",
   },
   {
     question: "Is any of it recurring?",
     answer:
-      "The $50 activation fee is charged once, after approval. The $25 membership is monthly and recurring, and you can cancel it at any time by contacting support. There is no annual commitment.",
+      "Nothing recurs automatically. The $50 activation payment is made once and covers your first 30 days. Each additional 30-day period is $25, and you initiate that renewal payment yourself; nothing is charged automatically, and there is no annual commitment.",
   },
   {
     question: "Does approval guarantee product access?",
@@ -58,7 +58,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Can I cancel or delete my account?",
     answer:
-      "Yes. You can cancel the monthly membership and close your account at any time by contacting support. The one-time activation fee is not a subscription and does not renew.",
+      "Yes. You can close your account at any time by contacting support, and because renewals are member-initiated, simply not renewing ends your membership at the end of the period you have paid for. Nothing renews automatically.",
   },
   {
     question: "What are research products?",
@@ -143,7 +143,7 @@ export default function Faq() {
     <>
       <SeoHead
         title="Frequently asked questions, xenios research"
-        description="Clear answers about membership, the activation fee and monthly membership, the Whole-Life Blueprint, research products, Quantum, evidence classification, quality documents, and professional applications."
+        description="Clear answers about the Founding Membership and its activation, the Whole-Life Blueprint, research products, Quantum, evidence classification, quality documents, and professional applications."
         path="/research/faq"
       />
       <PageIntro

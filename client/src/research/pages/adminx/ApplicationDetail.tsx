@@ -19,8 +19,9 @@ import { statusTone } from "./Applications";
 // /admin/research/applications/:id, the full application file. Mirrors the
 // state machine the server enforces: begin review, request information,
 // approve (confirmed), decline (confirmed, internal note), begin activation,
-// and the dual-reference activation ($50 activation payment AND the active
-// $25 monthly membership, both required). Every action posts to the real
+// and activation. The canonical economics: $50 due at activation, which
+// includes the first 30 days of membership; then $25 per additional 30-day
+// period; nothing else is due at activation. Every action posts to the real
 // admin API and re-reads the file; the timeline renders the audit events the
 // server returns.
 // ---------------------------------------------------------------------------
@@ -305,7 +306,8 @@ function ActionsPanel({
               <>
                 <p>
                   Approving sends the approval email immediately and starts the approval window (default 14 days). The
-                  activation fee is $50.00, one time, and membership is $25.00 monthly.
+                  Founding Membership is $50.00 due at activation, which includes the first 30 days; then $25.00 per
+                  additional 30-day period.
                 </p>
               </>
             }
@@ -362,8 +364,9 @@ function ActionsPanel({
       {awaitingActivation && (
         <div className="grid gap-3">
           <p className="body-s text-ink-2 max-w-[64ch]">
-            Approved and waiting on activation: the $50 one-time activation plus the $25 monthly membership. When the
-            applicant has paid, begin activation to record the references.
+            Approved and waiting on activation: $50 due at activation, which includes the first 30 days of
+            membership. Nothing else is due today. When the applicant has paid, begin activation to record the
+            references.
           </p>
           <div>
             <button type="button" className="btn btn-primary" disabled={busy} onClick={() => void act("begin-activation")} data-testid="button-begin-activation">
@@ -376,9 +379,10 @@ function ActionsPanel({
       {paymentPending && (
         <div className="grid gap-4">
           <p className="body-s text-ink-2 max-w-[64ch]">
-            Activation requires BOTH verified references: the $50 activation payment and the active $25 monthly
-            membership. The applicant must have created their member account first (the link in their approval email). No
-            member becomes active until both are verified; activation then triggers referral qualification automatically.
+            Activation requires the verified $50 activation payment (it includes the first 30 days; no $25 is due at
+            activation) plus the membership record reference. The applicant must have created their member account
+            first (the link in their approval email). No member becomes active until verification completes;
+            activation then triggers referral qualification automatically.
           </p>
           <div>
             <label htmlFor="app-payment-ref" className="form-label">
@@ -388,20 +392,20 @@ function ActionsPanel({
               id="app-payment-ref"
               className="input-field"
               maxLength={120}
-              placeholder="e.g. a receipt id for the $50 activation"
+              placeholder="e.g. a receipt id for the verified $50 activation payment"
               value={paymentRef}
               onChange={(e) => setPaymentRef(e.target.value)}
             />
           </div>
           <div>
             <label htmlFor="app-subscription-ref" className="form-label">
-              Monthly membership reference (required)
+              Membership record reference (required)
             </label>
             <input
               id="app-subscription-ref"
               className="input-field"
               maxLength={120}
-              placeholder="e.g. the active $25 monthly subscription id"
+              placeholder="e.g. the member's membership record id"
               value={subscriptionRef}
               onChange={(e) => setSubscriptionRef(e.target.value)}
             />

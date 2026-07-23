@@ -5,15 +5,17 @@ import { capabilityEnabled } from "./capabilities";
 // xenios research member platform: the Telegram provider seam (Website 2 lane,
 // Wave 5).
 //
-// Nothing in this file talks to a network. The provider is the ONE place that
-// knows about bot tokens, chat references, and the webhook secret, so a
-// disabled or unconfigured capability can never mint a fake token, invent a
-// verified webhook, or quietly send a message.
+// The provider is the ONE place that knows about bot tokens, chat references,
+// and the webhook secret, so a disabled or unconfigured capability can never
+// mint a fake token, invent a verified webhook, or quietly send a message.
+// The only network path in this file is the production transport inside
+// TelegramBotProvider, and it is an injected seam: tests always drive an
+// in-memory transport and never touch a wire.
 //
 // Selection is capability-driven (selectTelegramProvider):
 //   telegram_support off  -> DisabledTelegramProvider (every call refuses)
 //   NODE_ENV === "test"   -> TestTelegramProvider (deterministic, in memory)
-//   otherwise             -> TelegramBotProvider (the real adapter shell)
+//   otherwise             -> TelegramBotProvider (the real Bot API adapter)
 //
 // HARD RULE, encoded here and enforced on EVERY provider:
 // Telegram is never the system of record, and nothing sensitive ever leaves
@@ -31,14 +33,17 @@ import { capabilityEnabled } from "./capabilities";
 // ---------------------------------------------------------------------------
 
 // DISABLED: the capability is off. NOT_CONFIGURED: bot token or webhook secret
-// missing. UNSAFE_CONTENT: the outbound guard refused the text. PROVIDER_ERROR:
-// the adapter itself failed. The service maps the first two to
-// capability_disabled (truthful) and never retries an UNSAFE_CONTENT refusal.
+// missing. UNSAFE_CONTENT: the outbound guard refused the text. RATE_LIMITED:
+// the per-chat budget (ours or Telegram's own 429) refused the send for now.
+// PROVIDER_ERROR: the adapter itself failed, including the outage cooldown.
+// The service maps the first two to capability_disabled (truthful) and never
+// retries an UNSAFE_CONTENT refusal.
 export type TelegramProviderErrorCode =
   | "DISABLED"
   | "NOT_CONFIGURED"
   | "UNSAFE_CONTENT"
   | "UNVERIFIED"
+  | "RATE_LIMITED"
   | "PROVIDER_ERROR";
 
 export type ProviderResult<T> =
@@ -247,7 +252,7 @@ export class TestTelegramProvider implements TelegramProvider {
 export const testTelegramProvider = new TestTelegramProvider();
 
 // ---------------------------------------------------------------------------
-// The real bot adapter (SHELL)
+// The real bot adapter
 // ---------------------------------------------------------------------------
 
 export class TelegramNotConfigured extends Error {
@@ -265,33 +270,310 @@ export function missingTelegramEnv(): string[] {
   return REQUIRED_ENV.filter((name) => !process.env[name]);
 }
 
-// The seam where the Bot API send call gets wired. sendMessage is deliberately
-// inert: it throws TelegramNotConfigured without a token and a secret, and
-// returns a truthful PROVIDER_ERROR once configured, because the HTTP adapter
-// body is a later wave. It performs no network I/O, so no message can reach a
-// member's phone by accident before that wave lands.
+// ---------------------------------------------------------------------------
+// The injected transport (the only place bytes leave for the Bot API)
+// ---------------------------------------------------------------------------
+
+// The transport receives the token as an argument and uses it once, in the
+// request URL. It is never logged, never stored on the provider, and never
+// part of any error message this module produces (see redactBotToken).
+export type TelegramSendRequest = { botToken: string; chatRef: string; text: string };
+export type TelegramTransportResult = { status: number; body: unknown };
+export type TelegramTransport = (request: TelegramSendRequest) => Promise<TelegramTransportResult>;
+
+export const TELEGRAM_API_BASE = "https://api.telegram.org";
+const TRANSPORT_TIMEOUT_MS = 10_000;
+
+// The production transport: one bounded HTTP POST, no retries here. Retry
+// discipline belongs to the provider's outage state, not to the wire call, so
+// a Telegram outage can never turn one notice into a storm of requests.
+const fetchTelegramTransport: TelegramTransport = async ({ botToken, chatRef, text }) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TRANSPORT_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${TELEGRAM_API_BASE}/bot${botToken}/sendMessage`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ chat_id: chatRef, text, disable_web_page_preview: true }),
+      signal: controller.signal,
+    });
+    const body = (await response.json().catch(() => null)) as unknown;
+    return { status: response.status, body };
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
+// Any string that is about to travel into a log or an error message passes
+// through here first. The configured token is stripped, and so is anything
+// shaped like a bot token, so a rotated or mistyped token cannot leak through
+// a transport error either.
+export function redactBotToken(message: string): string {
+  let out = String(message);
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (token && token.length > 0) out = out.split(token).join("[redacted]");
+  // No word boundaries: in a Bot API URL the token follows "/bot" directly,
+  // so a \b would fail to anchor and the token would slip through.
+  out = out.replace(/\d{6,12}:[A-Za-z0-9_-]{20,}/g, "[redacted]");
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Per-chat send budget (token bucket, injected clock)
+// ---------------------------------------------------------------------------
+
+// Telegram allows roughly one message per second per chat. Notices are rare,
+// so a small burst with a one-per-second refill keeps every legitimate flow
+// unthrottled while a runaway loop is stopped at the provider.
+export const TELEGRAM_SEND_BUCKET_CAPACITY = 3;
+export const TELEGRAM_SEND_REFILL_PER_SECOND = 1;
+
+// Bounded memory: beyond this many distinct chats, the oldest bucket is
+// dropped. A dropped bucket refills to full, which only ever errs toward
+// allowing a send, never toward wrongly refusing one.
+const MAX_TRACKED_CHATS = 10_000;
+
+export class ChatSendLimiter {
+  private readonly buckets = new Map<string, { tokens: number; lastMs: number }>();
+
+  constructor(
+    private readonly capacity: number = TELEGRAM_SEND_BUCKET_CAPACITY,
+    private readonly refillPerSecond: number = TELEGRAM_SEND_REFILL_PER_SECOND,
+  ) {}
+
+  tryTake(chatRef: string, nowMs: number): boolean {
+    let bucket = this.buckets.get(chatRef);
+    if (!bucket) {
+      if (this.buckets.size >= MAX_TRACKED_CHATS) {
+        const oldest = this.buckets.keys().next().value;
+        if (oldest !== undefined) this.buckets.delete(oldest);
+      }
+      bucket = { tokens: this.capacity, lastMs: nowMs };
+      this.buckets.set(chatRef, bucket);
+    } else {
+      const elapsedSeconds = Math.max(0, nowMs - bucket.lastMs) / 1000;
+      bucket.tokens = Math.min(this.capacity, bucket.tokens + elapsedSeconds * this.refillPerSecond);
+      bucket.lastMs = nowMs;
+    }
+    if (bucket.tokens < 1) return false;
+    bucket.tokens -= 1;
+    return true;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Audit events (injected recorder; structurally unable to leak)
+// ---------------------------------------------------------------------------
+
+// The event type has NO field for message text and NO field for the token, so
+// an audit sink cannot receive either even by mistake. Violations are labels.
+export type TelegramAuditEvent = {
+  type:
+    | "send_ok"
+    | "send_refused_unsafe"
+    | "send_rate_limited"
+    | "send_suppressed_outage"
+    | "send_failed";
+  chatRef: string;
+  code: TelegramProviderErrorCode | null;
+  violations: string[];
+  atMs: number;
+};
+export type TelegramAuditRecorder = (event: TelegramAuditEvent) => void;
+
+// ---------------------------------------------------------------------------
+// Outage state (bounded, no retry storm)
+// ---------------------------------------------------------------------------
+
+// After this many consecutive transport failures the provider stops calling
+// the wire at all for the cooldown window and refuses truthfully instead.
+// Sends are notices, so dropping one during an outage is the correct trade;
+// the durable record is already in the database.
+export const TELEGRAM_OUTAGE_THRESHOLD = 3;
+export const TELEGRAM_OUTAGE_COOLDOWN_MS = 30_000;
+
+// The complete retry metadata, bounded by construction: two numbers and a
+// counter, never a queue of failed payloads.
+export type TelegramOutageState = {
+  consecutiveFailures: number;
+  lastFailureAtMs: number | null;
+  suppressedUntilMs: number | null;
+};
+
+export type TelegramBotProviderOptions = {
+  transport?: TelegramTransport;
+  nowMs?: () => number;
+  audit?: TelegramAuditRecorder;
+  limiter?: ChatSendLimiter;
+  outageThreshold?: number;
+  outageCooldownMs?: number;
+};
+
+// The real Bot API adapter. sendMessage is wired over the injected transport;
+// the token comes from the environment per call and is never stored, logged,
+// or echoed. Order of the gates: content guard (unsafe text is refused as
+// unsafe whatever the deployment state says), configuration, outage cooldown,
+// per-chat budget, then exactly ONE transport call with no in-call retry.
 //
-// verifyWebhook is REAL here, and deliberately so. It is a pure constant-time
-// comparison against the configured secret, needs no network, and is the one
-// thing that must work correctly the moment a bot exists: an unverified
-// webhook is refused before the route reads a single byte of the body.
+// verifyWebhook is untouched: a pure constant-time comparison against the
+// configured secret, refusing before the route reads a single byte of body.
 export class TelegramBotProvider implements TelegramProvider {
+  private readonly transport: TelegramTransport;
+  private readonly nowMs: () => number;
+  private readonly audit: TelegramAuditRecorder | null;
+  private readonly limiter: ChatSendLimiter;
+  private readonly outageThreshold: number;
+  private readonly outageCooldownMs: number;
+  private readonly outage: TelegramOutageState = {
+    consecutiveFailures: 0,
+    lastFailureAtMs: null,
+    suppressedUntilMs: null,
+  };
+
+  constructor(options: TelegramBotProviderOptions = {}) {
+    this.transport = options.transport ?? fetchTelegramTransport;
+    this.nowMs = options.nowMs ?? (() => Date.now());
+    this.audit = options.audit ?? null;
+    this.limiter = options.limiter ?? new ChatSendLimiter();
+    this.outageThreshold = options.outageThreshold ?? TELEGRAM_OUTAGE_THRESHOLD;
+    this.outageCooldownMs = options.outageCooldownMs ?? TELEGRAM_OUTAGE_COOLDOWN_MS;
+  }
+
+  outageState(): TelegramOutageState {
+    return { ...this.outage };
+  }
+
   private requireConfig() {
     const missing = missingTelegramEnv();
     if (missing.length > 0) throw new TelegramNotConfigured(missing);
   }
 
+  // A recorder failure never breaks a send; the audit is evidence, not a gate.
+  private record(event: TelegramAuditEvent) {
+    if (!this.audit) return;
+    try {
+      this.audit(event);
+    } catch {
+      // swallowed on purpose
+    }
+  }
+
+  private transportFailed(
+    chatRef: string,
+    atMs: number,
+    detail: string,
+  ): ProviderResult<{ providerMessageId: string }> {
+    this.outage.consecutiveFailures += 1;
+    this.outage.lastFailureAtMs = atMs;
+    if (this.outage.consecutiveFailures >= this.outageThreshold) {
+      this.outage.suppressedUntilMs = atMs + this.outageCooldownMs;
+    }
+    this.record({ type: "send_failed", chatRef, code: "PROVIDER_ERROR", violations: [], atMs });
+    return { ok: false, code: "PROVIDER_ERROR", message: redactBotToken(detail) };
+  }
+
   async sendMessage(input: SendMessageInput): Promise<ProviderResult<{ providerMessageId: string }>> {
+    const atMs = this.nowMs();
+
     // The content guard runs BEFORE the configuration check, so an unsafe
     // message is refused as unsafe whatever the deployment state says.
     const refusal = refuseUnsafeOutbound(input.text);
-    if (refusal) return refusal;
+    if (refusal) {
+      this.record({
+        type: "send_refused_unsafe",
+        chatRef: input.chatRef,
+        code: "UNSAFE_CONTENT",
+        violations: scanOutboundText(input.text).violations,
+        atMs,
+      });
+      return refusal;
+    }
     this.requireConfig();
-    return {
-      ok: false,
-      code: "PROVIDER_ERROR",
-      message: "The Telegram Bot API adapter is not wired yet (sendMessage).",
-    };
+    const botToken = process.env.TELEGRAM_BOT_TOKEN as string;
+
+    // The outage cooldown: refuse without touching the wire, so a Telegram
+    // outage is one failure per notice, never a storm of retries.
+    if (this.outage.suppressedUntilMs !== null && atMs < this.outage.suppressedUntilMs) {
+      this.record({
+        type: "send_suppressed_outage",
+        chatRef: input.chatRef,
+        code: "PROVIDER_ERROR",
+        violations: [],
+        atMs,
+      });
+      return {
+        ok: false,
+        code: "PROVIDER_ERROR",
+        message: "Telegram transport is in a failure cooldown; the send was not attempted.",
+      };
+    }
+
+    if (!this.limiter.tryTake(input.chatRef, atMs)) {
+      this.record({
+        type: "send_rate_limited",
+        chatRef: input.chatRef,
+        code: "RATE_LIMITED",
+        violations: [],
+        atMs,
+      });
+      return {
+        ok: false,
+        code: "RATE_LIMITED",
+        message: "Sends to this chat are briefly rate limited; the notice was not sent.",
+      };
+    }
+
+    let result: TelegramTransportResult;
+    try {
+      result = await this.transport({ botToken, chatRef: input.chatRef, text: input.text });
+    } catch (err) {
+      return this.transportFailed(
+        input.chatRef,
+        atMs,
+        `Telegram send failed in transport: ${err instanceof Error ? err.message : "transport threw"}`,
+      );
+    }
+
+    // Telegram's own throttle is a rate limit, not an outage: the service is
+    // up and answering. Bounded retry metadata only (a single number of
+    // seconds, when Telegram provides one).
+    if (result.status === 429) {
+      const retryAfterRaw = (result.body as { parameters?: { retry_after?: unknown } } | null)
+        ?.parameters?.retry_after;
+      const retryAfter =
+        typeof retryAfterRaw === "number" && Number.isFinite(retryAfterRaw)
+          ? Math.max(0, Math.min(3600, Math.floor(retryAfterRaw)))
+          : null;
+      this.record({
+        type: "send_rate_limited",
+        chatRef: input.chatRef,
+        code: "RATE_LIMITED",
+        violations: [],
+        atMs,
+      });
+      return {
+        ok: false,
+        code: "RATE_LIMITED",
+        message: `Telegram throttled this chat${retryAfter !== null ? ` (retry after ~${retryAfter}s)` : ""}; the notice was not sent.`,
+      };
+    }
+
+    // Only the STATUS travels into the error message. The response body is
+    // never echoed: it is not ours and could carry anything.
+    if (result.status < 200 || result.status >= 300) {
+      return this.transportFailed(input.chatRef, atMs, `Telegram send failed (HTTP ${result.status}).`);
+    }
+
+    const body = result.body as { ok?: unknown; result?: { message_id?: unknown } } | null;
+    const messageId = body?.ok === true ? body.result?.message_id : undefined;
+    if (typeof messageId !== "number" && typeof messageId !== "string") {
+      return this.transportFailed(input.chatRef, atMs, "Telegram returned an unrecognized response shape.");
+    }
+
+    this.outage.consecutiveFailures = 0;
+    this.outage.suppressedUntilMs = null;
+    this.record({ type: "send_ok", chatRef: input.chatRef, code: null, violations: [], atMs });
+    return { ok: true, value: { providerMessageId: String(messageId) } };
   }
 
   verifyWebhook(input: VerifyWebhookInput): ProviderResult<{ verified: true }> {

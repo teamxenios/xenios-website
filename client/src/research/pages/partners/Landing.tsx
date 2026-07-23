@@ -92,7 +92,7 @@ export default function Landing() {
           What members pay
         </h2>
         <div className="card mt-4" style={{ maxWidth: 640 }}>
-          <p className="body-m font-700">Membership is $50 one time to activate, then $25 monthly.</p>
+          <p className="body-m font-700">Membership is $50 at activation, including the first 30 days, then $25 per additional 30-day period.</p>
           <p className="body-s text-ink-2 mt-2">
             There are no annual plans and no other pricing. Reps never set, discount, or change pricing, and commission
             terms are published inside the partner portal before anything is shared.

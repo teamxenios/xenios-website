@@ -28,6 +28,19 @@ import type { PaymentProvider } from "../providers/payment";
 import type { FulfillmentProvider } from "../providers/fulfillment";
 
 /**
+ * The shipment fields a VERIFIED fulfillment event carries. Glue only: the
+ * handler attaches this to the order it is about to save, and the composed
+ * order store decides how it lands on the durable shipment records. It is set
+ * exclusively from a signature-verified FulfillmentStatusUpdate, never from an
+ * unverified body.
+ */
+export interface WebhookShipmentUpdate {
+  status: string;
+  trackingNumber: string | null;
+  carrier: string | null;
+}
+
+/**
  * The order fields a webhook may read or move. Deliberately narrow: a webhook has
  * no business reading a member id, a total, or a line.
  */
@@ -38,16 +51,30 @@ export interface WebhookOrder {
   captured: boolean;
   /** Set to the event id that last moved this order, for transition idempotency. */
   lastWebhookEventId?: string;
+  /**
+   * Present only while an APPLYING fulfillment event is being saved: the
+   * status and tracking the partner reported, for the store to project onto
+   * the order's shipment records. Payment events never set it.
+   */
+  shipmentUpdate?: WebhookShipmentUpdate;
 }
 
+/**
+ * The replay guard. The signatures accept a synchronous OR a promised answer so
+ * the durable database-backed guard (persistence/webhooks-store.ts, which must
+ * await the UNIQUE-constraint insert) satisfies the same interface as the
+ * in-memory reference; every call site awaits, which is a no-op on a plain
+ * boolean. `record` carries the event type because the durable table requires
+ * one; the in-memory reference is free to ignore it.
+ */
 export interface WebhookEventStore {
-  seen(providerName: string, eventId: string): boolean;
-  record(providerName: string, eventId: string, at: Date): void;
+  seen(providerName: string, eventId: string): boolean | Promise<boolean>;
+  record(providerName: string, eventId: string, at: Date, eventType?: string): void | Promise<void>;
 }
 
 export interface WebhookOrderStore {
-  get(orderId: string): WebhookOrder | undefined;
-  save(order: WebhookOrder): void;
+  get(orderId: string): Promise<WebhookOrder | undefined>;
+  save(order: WebhookOrder): Promise<void>;
 }
 
 export interface WebhookDeps {
@@ -148,12 +175,12 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
    * denied transition is not an error to report upward: the event was genuine and
    * the provider must stop retrying, so it is acknowledged with applied false.
    */
-  function applyTransition(
+  async function applyTransition(
     order: WebhookOrder,
     to: OrderState,
     eventId: string,
     providerConfirmation: string | undefined,
-  ): boolean {
+  ): Promise<boolean> {
     const result = transitionOrder({
       from: order.state,
       to,
@@ -170,7 +197,7 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     if (providerConfirmation && !order.paymentReference) {
       order.paymentReference = providerConfirmation;
     }
-    deps.orders.save(order);
+    await deps.orders.save(order);
     return true;
   }
 
@@ -192,7 +219,7 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     const providerName = deps.payment.name;
 
     // Step 2. Replay, before any effect and before the event is recorded.
-    if (deps.store.seen(providerName, eventId)) {
+    if (await deps.store.seen(providerName, eventId)) {
       return { ok: true, applied: false, eventId };
     }
 
@@ -205,6 +232,10 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
 
     const target = PAYMENT_EVENT_STATES[eventType];
     if (!target) {
+      // Unrecognized event types are RECORDED and acknowledged as a no-op: the
+      // verified event happened and belongs in the trail, and recording it means
+      // a redelivery is absorbed as a replay, but nothing is guessed at.
+      await deps.store.record(providerName, eventId, asOf, eventType);
       return { ok: true, applied: false, eventId };
     }
 
@@ -212,12 +243,12 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     const orderId = readString(body, "orderId");
     if (!orderId) return { ok: false, code: "malformed" };
 
-    const order = deps.orders.get(orderId);
+    const order = await deps.orders.get(orderId);
     if (!order) return { ok: false, code: "unknown_order" };
 
     // Step 3. Record, then apply.
-    deps.store.record(providerName, eventId, asOf);
-    const applied = applyTransition(order, target, eventId, providerReference);
+    await deps.store.record(providerName, eventId, asOf, eventType);
+    const applied = await applyTransition(order, target, eventId, providerReference);
     return { ok: true, applied, eventId };
   }
 
@@ -247,7 +278,7 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
       `${update.fulfillmentOrderId}:${update.status}:${update.trackingNumber ?? ""}`;
     const providerName = fulfillment.name;
 
-    if (deps.store.seen(providerName, eventId)) {
+    if (await deps.store.seen(providerName, eventId)) {
       return { ok: true, applied: false, eventId };
     }
 
@@ -257,17 +288,29 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
 
     const target = FULFILLMENT_STATUS_STATES[update.status];
     if (!target) {
+      // Same rule as the payment rail: recorded, acknowledged, nothing guessed.
+      await deps.store.record(providerName, eventId, asOf, update.status);
       return { ok: true, applied: false, eventId };
     }
 
     // The fulfillment order id is the order key. A partner never supplies a payment
     // reference, so no provider confirmation is carried from this surface, which is
     // why a fulfillment event can never reach a paid state.
-    const order = deps.orders.get(update.fulfillmentOrderId);
+    const order = await deps.orders.get(update.fulfillmentOrderId);
     if (!order) return { ok: false, code: "unknown_order" };
 
-    deps.store.record(providerName, eventId, asOf);
-    const applied = applyTransition(order, target, eventId, undefined);
+    // The verified event's shipment status and tracking ride the save, so the
+    // member-visible shipment records advance with the order state. Attached
+    // only here (after verification), and only persisted when the transition
+    // actually applies, so a replayed or refused event changes no tracking.
+    order.shipmentUpdate = {
+      status: update.status,
+      trackingNumber: update.trackingNumber ?? null,
+      carrier: update.carrier ?? null,
+    };
+
+    await deps.store.record(providerName, eventId, asOf, update.status);
+    const applied = await applyTransition(order, target, eventId, undefined);
     return { ok: true, applied, eventId };
   }
 

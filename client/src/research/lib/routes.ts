@@ -40,6 +40,7 @@ export const MEMBER_ROUTES = {
   security: "/research/member/security",
   privacy: "/research/member/privacy",
   membership: "/research/member/membership",
+  documentCenter: "/research/member/documents-center",
 } as const;
 
 export const PARTNER_ROUTES = {
@@ -86,6 +87,12 @@ export const ADMIN_ROUTES = {
   privacy: "/admin/research/privacy",
   capabilities: "/admin/research/capabilities",
   commerceQueues: "/admin/research/commerce-queues",
+  activationQueue: "/admin/research/activation-queue",
+  activationBridge: "/admin/research/activation-bridge",
+  activationChecklist: "/admin/research/activation-checklist",
+  activationReconciliation: "/admin/research/activation-reconciliation",
+  activationReadiness: "/admin/research/activation-readiness",
+  esignDocuments: "/admin/research/esign",
   audit: "/admin/research/audit",
 } as const;
 

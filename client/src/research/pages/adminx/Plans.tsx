@@ -7,9 +7,10 @@ import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 
 // ---------------------------------------------------------------------------
 // /admin/research/plans: membership plan administration. The standing terms
-// are fixed and stated here as fact ($50 one-time activation, $25 monthly,
-// no annual plan); live plan rows and billing state publish with membership
-// billing.
+// are fixed and stated here as fact: ONE Founding Membership, $50 due at
+// activation including the first 30 days, then $25 per additional 30-day
+// period, no annual plan, no $25 at activation. Live plan rows and billing
+// state publish with membership billing.
 // ---------------------------------------------------------------------------
 
 type AdminPlanRow = {
@@ -41,14 +42,14 @@ function PlansBody({ token }: { token: string }) {
         <h2 className="body-l font-700 mb-4">Standing terms</h2>
         <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
           <ResearchMetricCard
-            label="Activation"
-            value="$50"
-            summary="One-time activation fee, paid once at approval. Required before any membership becomes active."
+            label="Founding Membership"
+            value="$50 due today"
+            summary="Includes the activation and first 30 days of membership. Verified by a person before anything activates."
           />
           <ResearchMetricCard
-            label="Membership"
-            value="$25 / month"
-            summary="The single monthly membership. There is no annual plan."
+            label="After the first 30 days"
+            value="$25 / 30 days"
+            summary="Each additional 30-day membership period. Member-initiated; nothing is due at activation and there is no annual plan."
           />
         </div>
         <p className="body-s text-ink-mute mt-4 max-w-[64ch]">

@@ -43,6 +43,7 @@ const BlueprintPage = lazy(() => import("./pages/member/Blueprint"));
 const Xenios30Page = lazy(() => import("./pages/member/Xenios30"));
 const Xenios90Page = lazy(() => import("./pages/member/Xenios90"));
 const MemberDocuments = lazy(() => import("./pages/member/Documents"));
+const MemberDocumentCenter = lazy(() => import("./pages/member/DocumentCenter"));
 const MemberTracker = lazy(() => import("./pages/member/Tracker"));
 const Goals = lazy(() => import("./pages/member/Goals"));
 const GoalDetail = lazy(() => import("./pages/member/GoalDetail"));
@@ -160,6 +161,7 @@ export default function ResearchSection() {
           <Route path="/research/member/xenios-30">{() => <L member component={Xenios30Page} />}</Route>
           <Route path="/research/member/xenios-90">{() => <L member component={Xenios90Page} />}</Route>
           <Route path="/research/member/documents">{() => <L member component={MemberDocuments} />}</Route>
+          <Route path="/research/member/documents-center">{() => <L member component={MemberDocumentCenter} />}</Route>
           <Route path="/research/member/tracker">{() => <L member component={MemberTracker} />}</Route>
           <Route path="/research/member/goals">{() => <L member component={Goals} />}</Route>
           <Route path="/research/member/goals/:slug">{() => <L member component={GoalDetail} />}</Route>

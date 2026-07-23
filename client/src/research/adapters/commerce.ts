@@ -47,6 +47,7 @@ export const commercePaths = {
   subscriptions: `${BASE}/subscriptions`,
   subscription: (id: string) => `${BASE}/subscriptions/${enc(id)}`,
   claims: `${BASE}/claims`,
+  claim: (claimId: string) => `${BASE}/claims/${enc(claimId)}`,
   storeCredit: `${BASE}/store-credit`,
 } as const;
 
@@ -124,6 +125,29 @@ export function subscriptionAction(
   return apiPost(commercePaths.subscription(id), req, token);
 }
 
+/**
+ * The wire shape of POST /api/research/subscriptions (subscription creation).
+ * Mirrors the server's CreateSubscriptionWireInput exactly: the server refuses
+ * a body without a SKU, a quantity, a frequency, and the price version the
+ * member was shown. There is no client-supplied price amount anywhere in it.
+ */
+export interface CreateSubscriptionRequest {
+  sku: string;
+  quantity: number;
+  frequencyDays: SubscriptionFrequencyDays;
+  /** The price version presented to the member at creation time. */
+  priceVersion: string;
+  paymentProviderReference?: string | null;
+  shippingAddressRef?: string | null;
+}
+
+export function createSubscription(
+  token: MemberToken,
+  req: CreateSubscriptionRequest,
+): Promise<ApiResult<{ subscription: SubscriptionDto }>> {
+  return apiPost(commercePaths.subscriptions, req, token);
+}
+
 // ------------------------------- claims ------------------------------------
 
 export function submitClaim(token: MemberToken, req: CreateClaimRequest): Promise<ApiResult<{ claim: ClaimDto }>> {
@@ -132,6 +156,12 @@ export function submitClaim(token: MemberToken, req: CreateClaimRequest): Promis
 
 export function listClaims(token: MemberToken): Promise<ApiResult<{ claims: ClaimDto[] }>> {
   return apiGet(commercePaths.claims, token);
+}
+
+// Ownership is enforced by the server: another member's claim reads as a 404,
+// indistinguishable from a missing one, so nothing here can probe.
+export function getClaim(token: MemberToken, claimId: string): Promise<ApiResult<{ claim: ClaimDto }>> {
+  return apiGet(commercePaths.claim(claimId), token);
 }
 
 // ----------------------------- store credit --------------------------------

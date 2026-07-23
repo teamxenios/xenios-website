@@ -68,7 +68,7 @@ describe("production commerce dependencies", () => {
 
   it("fails every stateful surface closed with commerce_disabled", async () => {
     const asOf = new Date("2026-07-21T00:00:00Z");
-    expect(deps.cart.addLine("mem_1", { sku: "P001", quantity: 1, purchaseMode: "one_time" }, asOf)).toEqual({
+    expect(await deps.cart.addLine("mem_1", { sku: "P001", quantity: 1, purchaseMode: "one_time" }, asOf)).toEqual({
       ok: false,
       code: "commerce_disabled",
     });
@@ -76,13 +76,13 @@ describe("production commerce dependencies", () => {
       ok: false,
       code: "commerce_disabled",
     });
-    expect(deps.subscriptions.apply("mem_1", "sub_1", { action: "pause" } as never, asOf)).toEqual({
+    expect(await deps.subscriptions.apply("mem_1", "sub_1", { action: "pause" } as never, asOf)).toEqual({
       ok: false,
       code: "commerce_disabled",
     });
-    expect(deps.claims.submitClaim("mem_1", {} as never, asOf)).toEqual({ ok: false, code: "commerce_disabled" });
+    expect(await deps.claims.submitClaim("mem_1", {} as never, asOf)).toEqual({ ok: false, code: "commerce_disabled" });
     // Reads return empty, never another member's data.
-    expect(deps.orders.listForMember("mem_1")).toEqual([]);
-    expect(deps.partners.findByMemberId("mem_1")).toBeNull();
+    expect(await deps.orders.listForMember("mem_1")).toEqual([]);
+    expect(await deps.partners.findByMemberId("mem_1")).toBeNull();
   });
 });

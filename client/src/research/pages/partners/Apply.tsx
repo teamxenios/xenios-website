@@ -11,8 +11,12 @@ import { PARTNER_SUPPORT_EMAIL } from "./shared";
 // Partner application (/research/partners/apply). Presentation of the
 // application form: name, email, audience description, channels (multi
 // select), and the partner agreement shown in pending state (acceptance
-// happens during onboarding, not here). Submission posts to the partner API
-// and is unavailable-tolerant: if the endpoint is not live, the page says so
+// happens during onboarding, not here). Submission posts the LIVE wire shape
+// (POST /api/research/partner/apply: role, legalName, contactEmail; this page
+// applies as a Research Rep). The audience and channel answers ride along for
+// the reviewer's context; the server's contract fields are the three above.
+// The endpoint requires a signed-in member, and the flow stays
+// unavailable-tolerant: if the endpoint is not live, the page says so
 // honestly (nothing was submitted) and offers the email path.
 // ---------------------------------------------------------------------------
 
@@ -61,9 +65,28 @@ export default function Apply() {
       return;
     }
     setValidation(null);
+    // The apply endpoint is member-scoped (one partner per member), so an
+    // unauthenticated submit cannot succeed. Say so before sending anything.
+    if (!memberToken) {
+      setOutcome({
+        kind: "error",
+        message:
+          "Applying requires a signed-in member account. Sign in and submit again, or email the team with your application.",
+      });
+      return;
+    }
     setOutcome({ kind: "submitting" });
+    // The server's PartnerApplyWireInput: role, legalName, contactEmail. This
+    // page is the Research Rep application, so the role is fixed here; the
+    // audience and channel answers are carried alongside for review context.
     const result = await applyAsPartner(
-      { name: name.trim(), email: email.trim(), audience: audience.trim(), channels: Array.from(channels) },
+      {
+        role: "research_rep",
+        legalName: name.trim(),
+        contactEmail: email.trim(),
+        audience: audience.trim(),
+        channels: Array.from(channels),
+      },
       memberToken,
       UNAVAILABLE_MESSAGE,
     );

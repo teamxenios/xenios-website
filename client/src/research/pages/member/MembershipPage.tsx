@@ -22,8 +22,10 @@ import type { StoreCreditDto } from "@shared/research/commerce-api";
 
 // ---------------------------------------------------------------------------
 // Membership (/research/member/membership). The economics are fixed and
-// public inside the member area: a $50 one-time activation and $25 monthly.
-// There is no annual plan. Everything transactional (next charge, payment
+// public inside the member area: ONE Founding Membership, $50 due at
+// activation (including the first 30 days), then $25 for each additional
+// 30-day period. There is no annual plan and no $25 due at activation.
+// Everything transactional (renewal date, payment
 // history, cancellation) renders ONLY from server data; when the contract is
 // not published the page shows honest unavailable states, never invented
 // billing facts.
@@ -119,8 +121,8 @@ export default function MembershipPage() {
             startedAt: "2026-06-02",
             nextChargeAt: "2026-08-02",
             payments: [
-              { id: "pay_2", at: "2026-07-02", label: "Monthly membership", amountCents: 2500, status: "Paid" },
-              { id: "pay_1", at: "2026-06-02", label: "One-time activation", amountCents: 5000, status: "Paid" },
+              { id: "pay_2", at: "2026-07-02", label: "30-day renewal", amountCents: 2500, status: "Paid" },
+              { id: "pay_1", at: "2026-06-02", label: "Activation (includes first 30 days)", amountCents: 5000, status: "Paid" },
             ],
           })),
         );
@@ -182,22 +184,22 @@ export default function MembershipPage() {
       lead="Your plan, your payment history, your agreements, and how to leave."
     >
       <ResearchRouteBoundary state={state}>
-        {/* The monthly membership card. Fixed economics; live facts only when supplied. */}
+        {/* The Founding Membership card. Fixed economics; live facts only when supplied. */}
         <section aria-labelledby="ra-membership-plan" className="card">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="ra-membership-plan" className="body-m font-700">
-              Monthly membership
+              Founding Membership
             </h2>
             {member && <ResearchStatusBadge label={member.status} tone={member.status === "active" ? "success" : "neutral"} />}
           </div>
           <dl className="mt-4 grid gap-3">
             <div className="flex items-baseline justify-between gap-4">
-              <dt className="body-s text-ink-2">Membership</dt>
-              <dd className="body-m tabular">{formatMoney(2500)} per month</dd>
+              <dt className="body-s text-ink-2">Activation (includes your first 30 days)</dt>
+              <dd className="body-m tabular">{formatMoney(5000)} once</dd>
             </div>
             <div className="flex items-baseline justify-between gap-4">
-              <dt className="body-s text-ink-2">Activation</dt>
-              <dd className="body-m tabular">{formatMoney(5000)} one time</dd>
+              <dt className="body-s text-ink-2">Each additional 30-day period after that</dt>
+              <dd className="body-m tabular">{formatMoney(2500)}</dd>
             </div>
             {data?.startedAt && (
               <div className="flex items-baseline justify-between gap-4">
@@ -207,13 +209,15 @@ export default function MembershipPage() {
             )}
             {data?.nextChargeAt && (
               <div className="flex items-baseline justify-between gap-4">
-                <dt className="body-s text-ink-2">Next charge</dt>
+                <dt className="body-s text-ink-2">Next renewal due</dt>
                 <dd className="body-m tabular">{data.nextChargeAt}</dd>
               </div>
             )}
           </dl>
           <p className="body-s text-ink-mute mt-4">
-            There is no annual plan. The activation fee is paid once, when your membership starts.
+            There is no annual plan. The $50 activation is paid once and includes your first 30 days; your
+            first renewal date is calculated when your activation payment is verified, and you initiate each
+            renewal yourself.
           </p>
         </section>
 
@@ -256,7 +260,7 @@ export default function MembershipPage() {
             ) : (
               <ResearchEmptyState
                 title="Payment history is not available yet."
-                body="Your $50 activation and monthly payments will appear here once billing records are connected. Nothing is wrong with your membership."
+                body="Your activation and renewal payments will appear here once billing records are connected. Nothing is wrong with your membership."
               />
             )}
           </div>

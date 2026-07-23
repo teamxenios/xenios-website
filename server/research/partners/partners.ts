@@ -186,6 +186,13 @@ export interface PartnerLifecycleEvent {
  */
 export interface PartnerRecord {
   partnerId: string;
+  /**
+   * The member who owns this partner account, aligned to the shipped schema
+   * (research_partners.member_id, NOT NULL UNIQUE). One member owns at most one
+   * partner, and every partner is owned by exactly one member; routes resolve the
+   * partner FROM the authenticated member, never from a client-supplied partner id.
+   */
+  memberId: string;
   role: PartnerRole;
   state: PartnerState;
   legalName: string;
@@ -216,6 +223,8 @@ export interface PartnerRecord {
 export type PartnerDenialCode =
   | "partner_not_found"
   | "partner_already_exists"
+  | "member_already_partner"
+  | "member_id_missing"
   | "partner_terminated"
   | "identity_not_verified"
   | "tax_not_cleared"
@@ -254,6 +263,12 @@ function denial(code: PartnerDenialCode, message: string, subject: string | null
 
 export interface PartnerRepository {
   get(partnerId: string): Promise<PartnerRecord | null>;
+  /**
+   * The member-linkage read. Resolves the ONE partner a member owns, or null.
+   * This is the only entry point the member-facing surface uses, so a member can
+   * never address a partner record they do not own.
+   */
+  findByMemberId(memberId: string): Promise<PartnerRecord | null>;
   save(record: PartnerRecord): Promise<void>;
   list(): Promise<PartnerRecord[]>;
 }
@@ -264,6 +279,15 @@ export function createInMemoryPartnerRepository(seed: readonly PartnerRecord[] =
   return {
     async get(partnerId) {
       return rows.get(partnerId) ?? null;
+    },
+    async findByMemberId(memberId) {
+      // Scan rather than index so save() can never leave a member index stale.
+      // The map is small in memory; the durable store indexes member_id UNIQUE.
+      let found: PartnerRecord | null = null;
+      rows.forEach((record) => {
+        if (found === null && record.memberId === memberId) found = record;
+      });
+      return found;
     },
     async save(record) {
       rows.set(record.partnerId, record);
@@ -405,11 +429,17 @@ function nextPendingState(record: PartnerRecord, requirements: PartnerRequiremen
 
 export interface PartnerApplicationInput {
   partnerId?: string;
+  /** The owning member. Required: a partner account cannot exist unowned. */
+  memberId: string;
   role: PartnerRole;
   legalName: string;
   contactEmail: string;
   internalNotes?: string;
 }
+
+/** The member-scoped onboarding input. The member id arrives as its own argument
+ * (from the authenticated subject), never inside the free-form input. */
+export type PartnerOnboardingInput = Omit<PartnerApplicationInput, "memberId">;
 
 export interface IdentityVerificationResult {
   status: VerificationStatus;
@@ -424,6 +454,21 @@ export interface ClearanceResult {
 
 export interface PartnerService {
   apply(input: PartnerApplicationInput, asOf: Date): Promise<PartnerResult>;
+  /**
+   * Member-scoped onboarding: creates the ONE partner a member may own. The
+   * member id comes from the authenticated subject, so it is a separate argument
+   * rather than a field a caller could copy from a request body. A member who
+   * already owns a partner receives a typed refusal (member_already_partner);
+   * the durable store backs the same rule with the DB UNIQUE on member_id.
+   * Onboarding produces state, never money: no ledger entry is written here.
+   */
+  createPartnerForMember(
+    memberId: string,
+    input: PartnerOnboardingInput,
+    asOf: Date,
+  ): Promise<PartnerResult>;
+  /** Resolves the partner a member owns, or null. Never takes a partner id. */
+  findByMemberId(memberId: string): Promise<PartnerRecord | null>;
   recordIdentityVerification(
     partnerId: string,
     result: IdentityVerificationResult,
@@ -510,20 +555,30 @@ export function createPartnerService(deps: PartnerServiceDeps): PartnerService {
     return Array.isArray(value);
   }
 
-  return {
-    requirements(): PartnerRequirements {
-      return { agreements: requirements.agreements.slice(), trainingModules: requirements.trainingModules.slice() };
-    },
-
-    async apply(input: PartnerApplicationInput, asOf: Date): Promise<PartnerResult> {
+  async function apply(input: PartnerApplicationInput, asOf: Date): Promise<PartnerResult> {
       const partnerId = input.partnerId ?? generateId();
+      const memberId = input.memberId.trim();
+      // Every refusal is accumulated, matching the activation gates' discipline.
+      const denials: PartnerDenial[] = [];
+      if (memberId.length === 0) {
+        denials.push(denial("member_id_missing", "A partner account must be owned by a member.", null));
+      }
       const existing = await repository.get(partnerId);
       if (existing) {
-        return { ok: false, denials: [denial("partner_already_exists", `Partner ${partnerId} exists.`, partnerId)] };
+        denials.push(denial("partner_already_exists", `Partner ${partnerId} exists.`, partnerId));
       }
+      // One member owns at most one partner. The in-memory check mirrors the
+      // durable store's UNIQUE(member_id); both refuse, neither overwrites.
+      if (memberId.length > 0 && (await repository.findByMemberId(memberId))) {
+        denials.push(
+          denial("member_already_partner", "This member already owns a partner account.", null),
+        );
+      }
+      if (denials.length > 0) return { ok: false, denials };
       const at = asOf.toISOString();
       const record: PartnerRecord = {
         partnerId,
+        memberId,
         role: input.role,
         state: "application",
         legalName: input.legalName,
@@ -545,6 +600,27 @@ export function createPartnerService(deps: PartnerServiceDeps): PartnerService {
       log(record, "applied", asOf, null, input.role);
       await repository.save(record);
       return { ok: true, partner: record };
+  }
+
+  return {
+    requirements(): PartnerRequirements {
+      return { agreements: requirements.agreements.slice(), trainingModules: requirements.trainingModules.slice() };
+    },
+
+    apply,
+
+    async createPartnerForMember(
+      memberId: string,
+      input: PartnerOnboardingInput,
+      asOf: Date,
+    ): Promise<PartnerResult> {
+      // Delegates to apply, which carries the one-partner-per-member refusal, so
+      // there is exactly one code path that creates a partner record.
+      return apply({ ...input, memberId }, asOf);
+    },
+
+    async findByMemberId(memberId: string): Promise<PartnerRecord | null> {
+      return repository.findByMemberId(memberId);
     },
 
     async recordIdentityVerification(

@@ -107,14 +107,12 @@ function deriveNextStep(overview: MemberOverview | null, assessmentStatus: Capab
 // Progressive disclosure: three compact groups, in the canonical order.
 const AREA_GROUPS: Array<{ heading: string; links: Array<{ href: string; label: string }> }> = [
   {
-    heading: "Your plan",
-    links: [
-      { href: MEMBER_ROUTES.blueprint, label: "Blueprint" },
-      { href: MEMBER_ROUTES.xenios30, label: "Xenios 30" },
-      { href: MEMBER_ROUTES.xenios90, label: "Xenios 90" },
-      { href: MEMBER_ROUTES.tracker, label: "Tracker" },
-      { href: MEMBER_ROUTES.goals, label: "Goals" },
-    ],
+    // Launch scope: the health programs (Blueprint, Xenios 30/90) and the
+    // tracker are deferred until after launch, so their links are held out of
+    // the dashboard. Goals stays (it is catalog navigation). Restore the four
+    // program links when the health programs return to scope.
+    heading: "Your goals",
+    links: [{ href: MEMBER_ROUTES.goals, label: "Goals" }],
   },
   {
     heading: "Products and orders",

@@ -66,7 +66,7 @@ export function Subscriptions() {
       <PageIntro
         eyebrow="Membership"
         title="Your membership."
-        lead="Membership is a one-time $50 activation plus a $25 monthly membership. There is no annual plan."
+        lead="The Founding Membership is $50 due at activation, including your first 30 days, then $25 for each additional 30-day period. There is no annual plan."
       />
       <section className="container-x pb-20">
         <div className="max-w-[560px] space-y-4">
@@ -77,7 +77,7 @@ export function Subscriptions() {
           <div className="card">
             <p className="mono-label text-ink-mute">Billing</p>
             <p className="body-s text-ink-2 mt-2">
-              Online billing management is being finalized. To update or cancel your monthly membership, contact support and a person will handle it.
+              Online billing management is being finalized. To ask about your membership or a renewal, contact support and a person will handle it.
             </p>
             <a href="mailto:research@xeniostechnology.com" className="btn btn-secondary mt-5">Contact support</a>
           </div>

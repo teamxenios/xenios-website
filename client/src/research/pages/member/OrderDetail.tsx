@@ -19,6 +19,7 @@ import {
   CLAIM_RESOLUTION_LABELS,
   CLAIM_STATE_META,
   SHIPMENT_OWNER_LABELS,
+  claimNote,
   formatCents,
   formatDate,
   orderStateMeta,
@@ -128,6 +129,7 @@ function ClaimsSection({
         <div className="grid gap-3" data-testid="ra-order-claims">
           {claims.map((claim) => {
             const meta = CLAIM_STATE_META[claim.state];
+            const note = claimNote(claim);
             return (
               <div key={claim.claimId} className="card" data-testid={`ra-claim-${claim.claimId}`}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -144,6 +146,13 @@ function ClaimsSection({
                     )}
                   </div>
                 </div>
+                {/* What this state means for the member: the refund-request
+                    lifecycle in plain words, straight from the wire state. */}
+                {note && (
+                  <p className="body-s text-ink-mute mt-2 max-w-[60ch]" data-testid={`ra-claim-note-${claim.claimId}`}>
+                    {note}
+                  </p>
+                )}
               </div>
             );
           })}

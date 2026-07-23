@@ -35,28 +35,29 @@ function order(overrides: Partial<OrderRecord> = {}): OrderRecord {
 function repository(seed: OrderRecord[] = []): OrderRepository & { saves: number } {
   const rows = new Map<string, OrderRecord>();
   seed.forEach((o) => rows.set(o.orderId, o));
+  const all = (): OrderRecord[] => {
+    const out: OrderRecord[] = [];
+    rows.forEach((value) => out.push(value));
+    return out;
+  };
   const repo = {
     saves: 0,
-    get(orderId: string): OrderRecord | null {
+    async get(orderId: string): Promise<OrderRecord | null> {
       return rows.get(orderId) ?? null;
     },
-    save(o: OrderRecord): void {
+    async save(o: OrderRecord): Promise<void> {
       repo.saves += 1;
       rows.set(o.orderId, o);
     },
-    listByMember(memberId: string): OrderRecord[] {
-      return repo.listAll().filter((o) => o.memberId === memberId);
+    async listByMember(memberId: string): Promise<OrderRecord[]> {
+      return all().filter((o) => o.memberId === memberId);
     },
-    findByIdempotencyKey(memberId: string, key: string): OrderRecord | null {
-      const hit = repo
-        .listAll()
-        .find((o) => o.memberId === memberId && o.lastIdempotencyKey === key);
+    async findByIdempotencyKey(memberId: string, key: string): Promise<OrderRecord | null> {
+      const hit = all().find((o) => o.memberId === memberId && o.lastIdempotencyKey === key);
       return hit ?? null;
     },
-    listAll(): OrderRecord[] {
-      const out: OrderRecord[] = [];
-      rows.forEach((value) => out.push(value));
-      return out;
+    async listAll(): Promise<OrderRecord[]> {
+      return all();
     },
   };
   return repo;
@@ -97,7 +98,7 @@ describe("order authorization", () => {
     expect(result.order.providerReference).not.toBeNull();
     expect(result.order.capturedAmountCents).toBeUndefined();
 
-    expect(service.adminLargeOrderQueue()).toEqual([
+    expect(await service.adminLargeOrderQueue()).toEqual([
       {
         orderId: "ord_1",
         totalCents: 21095,
@@ -117,7 +118,7 @@ describe("order authorization", () => {
     if (result.ok) return;
     expect(result.denials).toContain("commerce_disabled");
     expect(repo.saves).toBe(0);
-    expect(repo.get("ord_1")!.state).toBe("checkout_pending");
+    expect((await repo.get("ord_1"))!.state).toBe("checkout_pending");
   });
 
   it("refuses an unknown order", async () => {
@@ -176,7 +177,7 @@ describe("delayed capture", () => {
     if (result.ok) return;
     expect(result.denials).toContain("order_state_invalid");
     expect(repo.saves).toBe(0);
-    expect(repo.get("ord_1")!.state).toBe("manual_review");
+    expect((await repo.get("ord_1"))!.state).toBe("manual_review");
   });
 
   it("refuses a capture with no prior authorization", async () => {
@@ -189,7 +190,7 @@ describe("delayed capture", () => {
     if (result.ok) return;
     expect(result.denials).toContain("payment_failed");
     expect(repo.saves).toBe(0);
-    expect(repo.get("ord_1")!.state).toBe("approved");
+    expect((await repo.get("ord_1"))!.state).toBe("approved");
   });
 
   it("refuses a held order when the provider cannot defer capture", async () => {
@@ -209,7 +210,7 @@ describe("delayed capture", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.denials).toContain("capability_disabled");
-    expect(repo.get("ord_1")!.state).toBe("approved");
+    expect((await repo.get("ord_1"))!.state).toBe("approved");
   });
 
   it("refuses to capture a cancelled order", async () => {
@@ -226,8 +227,8 @@ describe("delayed capture", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.denials).toContain("order_state_invalid");
-    expect(repo.get("ord_1")!.state).toBe("cancelled");
-    expect(repo.get("ord_1")!.capturedAmountCents).toBeUndefined();
+    expect((await repo.get("ord_1"))!.state).toBe("cancelled");
+    expect((await repo.get("ord_1"))!.capturedAmountCents).toBeUndefined();
   });
 });
 
@@ -244,8 +245,8 @@ describe("a disabled provider", () => {
     if (result.ok) return;
     expect(result.denials).toEqual(["capability_disabled", "payment_disabled"]);
     expect(repo.saves).toBe(0);
-    expect(repo.get("ord_1")!.state).toBe("checkout_pending");
-    expect(repo.get("ord_1")!.providerReference).toBeNull();
+    expect((await repo.get("ord_1"))!.state).toBe("checkout_pending");
+    expect((await repo.get("ord_1"))!.providerReference).toBeNull();
   });
 
   it("never produces a paid state on capture", async () => {
@@ -259,8 +260,8 @@ describe("a disabled provider", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.denials).toEqual(["capability_disabled", "payment_disabled"]);
-    expect(repo.get("ord_1")!.state).toBe("approved");
-    expect(repo.get("ord_1")!.capturedAmountCents).toBeUndefined();
+    expect((await repo.get("ord_1"))!.state).toBe("approved");
+    expect((await repo.get("ord_1"))!.capturedAmountCents).toBeUndefined();
   });
 });
 
@@ -296,7 +297,7 @@ describe("idempotency", () => {
     });
     expect(auth.ok).toBe(true);
     if (!auth.ok) return;
-    repo.save({ ...repo.get("ord_1")!, providerReference: auth.value.providerReference });
+    await repo.save({ ...(await repo.get("ord_1"))!, providerReference: auth.value.providerReference });
     const savesBefore = repo.saves;
 
     const first = await service.capture("ord_1", "system", NOW, "cap_a");
@@ -322,7 +323,7 @@ describe("idempotency", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.denials).toContain("order_state_invalid");
-    expect(repo.get("ord_2")!.state).toBe("checkout_pending");
+    expect((await repo.get("ord_2"))!.state).toBe("checkout_pending");
   });
 });
 
@@ -359,8 +360,8 @@ describe("the capture is bounded by the authorization", () => {
     await service.approve("ord_1", "samuel", LATER);
 
     // Another service recomputes the totals upward after the hold is placed.
-    const held = repo.get("ord_1")!;
-    repo.save({ ...held, totals: { ...held.totals, totalCents: 210_950 } });
+    const held = (await repo.get("ord_1"))!;
+    await repo.save({ ...held, totals: { ...held.totals, totalCents: 210_950 } });
 
     const result = await service.capture("ord_1", "system", LATER);
 
@@ -368,8 +369,8 @@ describe("the capture is bounded by the authorization", () => {
     if (result.ok) return;
     expect(result.denials).toContain("payment_failed");
     expect(captureCalls).toEqual([]);
-    expect(repo.get("ord_1")!.state).toBe("approved");
-    expect(repo.get("ord_1")!.capturedAmountCents).toBeUndefined();
+    expect((await repo.get("ord_1"))!.state).toBe("approved");
+    expect((await repo.get("ord_1"))!.capturedAmountCents).toBeUndefined();
   });
 
   it("still captures a total that shrank after the hold", async () => {
@@ -378,8 +379,8 @@ describe("the capture is bounded by the authorization", () => {
 
     await service.authorize("ord_1", "system", NOW);
     await service.approve("ord_1", "samuel", LATER);
-    const held = repo.get("ord_1")!;
-    repo.save({ ...held, totals: { ...held.totals, totalCents: 10_000 } });
+    const held = (await repo.get("ord_1"))!;
+    await repo.save({ ...held, totals: { ...held.totals, totalCents: 10_000 } });
 
     const result = await service.capture("ord_1", "system", LATER);
 
@@ -418,8 +419,8 @@ describe("idempotency keys are not shared across operations", () => {
     expect(captured.ok).toBe(false);
     if (captured.ok) return;
     expect(captured.denials).toContain("order_state_invalid");
-    expect(repo.get("ord_1")!.state).toBe("approved");
-    expect(repo.get("ord_1")!.capturedAmountCents).toBeUndefined();
+    expect((await repo.get("ord_1"))!.state).toBe("approved");
+    expect((await repo.get("ord_1"))!.capturedAmountCents).toBeUndefined();
   });
 });
 
@@ -469,51 +470,51 @@ describe("fulfillment evidence", () => {
     const repo = repository([order({ state: "payment_captured" })]);
     const service = createOrderService(deps({ repository: repo }));
 
-    expect(service.beginProcessing("ord_1", "system", NOW).ok).toBe(true);
-    expect(service.markFulfilled("ord_1", "system", NOW).ok).toBe(true);
-    const delivered = service.markDelivered("ord_1", "provider_webhook", LATER, "carrier_evt_1");
+    expect((await service.beginProcessing("ord_1", "system", NOW)).ok).toBe(true);
+    expect((await service.markFulfilled("ord_1", "system", NOW)).ok).toBe(true);
+    const delivered = await service.markDelivered("ord_1", "provider_webhook", LATER, "carrier_evt_1");
 
     expect(delivered.ok).toBe(true);
     if (!delivered.ok) return;
     expect(delivered.order.state).toBe("delivered");
   });
 
-  it("refuses to mark an unfulfilled order delivered", () => {
+  it("refuses to mark an unfulfilled order delivered", async () => {
     const repo = repository([order({ state: "payment_captured" })]);
     const service = createOrderService(deps({ repository: repo }));
 
-    const result = service.markDelivered("ord_1", "system", NOW);
+    const result = await service.markDelivered("ord_1", "system", NOW);
 
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.denials).toEqual(["order_state_invalid"]);
-    expect(repo.get("ord_1")!.state).toBe("payment_captured");
+    expect((await repo.get("ord_1"))!.state).toBe("payment_captured");
   });
 });
 
 describe("member reads", () => {
-  it("returns null for an order belonging to another member", () => {
+  it("returns null for an order belonging to another member", async () => {
     const repo = repository([order({ orderId: "ord_1", memberId: "mem_1" })]);
     const service = createOrderService(deps({ repository: repo }));
 
-    expect(service.getForMember("mem_1", "ord_1")).not.toBeNull();
-    expect(service.getForMember("mem_2", "ord_1")).toBeNull();
-    expect(service.getForMember("mem_2", "ord_missing")).toBeNull();
+    expect(await service.getForMember("mem_1", "ord_1")).not.toBeNull();
+    expect(await service.getForMember("mem_2", "ord_1")).toBeNull();
+    expect(await service.getForMember("mem_2", "ord_missing")).toBeNull();
   });
 
-  it("lists only the calling member's orders", () => {
+  it("lists only the calling member's orders", async () => {
     const repo = repository([
       order({ orderId: "ord_1", memberId: "mem_1" }),
       order({ orderId: "ord_2", memberId: "mem_2" }),
     ]);
     const service = createOrderService(deps({ repository: repo }));
 
-    const list = service.listForMember("mem_1");
+    const list = await service.listForMember("mem_1");
 
     expect(list.map((o) => o.orderId)).toEqual(["ord_1"]);
   });
 
-  it("serializes the detail view without operator fields", () => {
+  it("serializes the detail view without operator fields", async () => {
     const repo = repository([
       order({
         providerReference: "test_auth_1",
@@ -524,7 +525,7 @@ describe("member reads", () => {
     ]);
     const service = createOrderService(deps({ repository: repo }));
 
-    const detail = service.getForMember("mem_1", "ord_1")!;
+    const detail = (await service.getForMember("mem_1", "ord_1"))!;
 
     expect(detail.reviewReason).toBe("fraud_rule");
     expect(detail.totalCents).toBe(21095);

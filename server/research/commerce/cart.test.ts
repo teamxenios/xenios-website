@@ -108,9 +108,9 @@ function deps(overrides: Partial<CartServiceDeps> = {}): CartServiceDeps {
 }
 
 describe("cart reads", () => {
-  it("reports an empty cart as blocked rather than ready", () => {
+  it("reports an empty cart as blocked rather than ready", async () => {
     const service = createCartService(deps());
-    const cart = service.getCart(MEMBER, NOW);
+    const cart = await service.getCart(MEMBER, NOW);
 
     expect(cart.lines).toEqual([]);
     expect(cart.checkoutReady).toBe(false);
@@ -119,9 +119,9 @@ describe("cart reads", () => {
     expect(cart.shippingCents).toBe(0);
   });
 
-  it("computes totals from the catalog for a clean line", () => {
+  it("computes totals from the catalog for a clean line", async () => {
     const service = createCartService(deps());
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 2, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 2, purchaseMode: "one_time" }, NOW);
 
     expect(added.ok).toBe(true);
     if (!added.ok) return;
@@ -137,13 +137,13 @@ describe("cart reads", () => {
 });
 
 describe("unconfirmed supplier facts", () => {
-  it("never marks a cart with an unconfirmed price as checkout ready", () => {
+  it("never marks a cart with an unconfirmed price as checkout ready", async () => {
     const unpriced = product({
       facts: { ...product().facts, priceCents: notConfirmed<number>() },
     });
     const service = createCartService(deps({ catalog: new Map([["P001", unpriced]]) }));
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
 
@@ -156,7 +156,7 @@ describe("unconfirmed supplier facts", () => {
     expect(added.cart.blockingReasons).toContain("unconfirmed_supplier_facts");
   });
 
-  it("blocks a disputed price even when a value is present", () => {
+  it("blocks a disputed price even when a value is present", async () => {
     const disputed = product({
       facts: {
         ...product().facts,
@@ -170,7 +170,7 @@ describe("unconfirmed supplier facts", () => {
     });
     const service = createCartService(deps({ catalog: new Map([["P001", disputed]]) }));
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.lines[0].unitPriceCents).toBeNull();
@@ -179,40 +179,40 @@ describe("unconfirmed supplier facts", () => {
 });
 
 describe("stock", () => {
-  it("blocks a line whose only lot is expired", () => {
+  it("blocks a line whose only lot is expired", async () => {
     const service = createCartService(deps({ lots: [lot({ expiryDate: "2026-01-01" })] }));
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.lines[0].blockedReason).toBe("insufficient_stock");
     expect(added.cart.checkoutReady).toBe(false);
   });
 
-  it("does not count a quarantined lot toward available stock", () => {
+  it("does not count a quarantined lot toward available stock", async () => {
     const service = createCartService(
       deps({ lots: [lot({ disposition: "quarantined", quantityAvailable: 50 })] }),
     );
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.lines[0].blockedReason).toBe("insufficient_stock");
   });
 
-  it("blocks a lot with an unknown expiry", () => {
+  it("blocks a lot with an unknown expiry", async () => {
     const service = createCartService(deps({ lots: [lot({ expiryDate: null })] }));
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.lines[0].blockedReason).toBe("insufficient_stock");
   });
 
-  it("blocks when the requested quantity exceeds allocatable stock", () => {
+  it("blocks when the requested quantity exceeds allocatable stock", async () => {
     const service = createCartService(deps({ lots: [lot({ quantityAvailable: 3 })] }));
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 4, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 4, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.lines[0].blockedReason).toBe("insufficient_stock");
@@ -220,49 +220,49 @@ describe("stock", () => {
 });
 
 describe("revalidation", () => {
-  it("flips a previously valid line to blocked once its lot expires", () => {
+  it("flips a previously valid line to blocked once its lot expires", async () => {
     const service = createCartService(deps({ lots: [lot({ expiryDate: "2026-08-01" })] }));
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.checkoutReady).toBe(true);
 
-    const later = service.revalidate(MEMBER, new Date("2026-09-01T00:00:00Z"));
+    const later = await service.revalidate(MEMBER, new Date("2026-09-01T00:00:00Z"));
     expect(later.lines[0].blockedReason).toBe("insufficient_stock");
     expect(later.checkoutReady).toBe(false);
   });
 
-  it("flips a line to blocked when the product leaves purchasable availability", () => {
+  it("flips a line to blocked when the product leaves purchasable availability", async () => {
     const catalog = new Map([["P001", product()]]);
     const service = createCartService(deps({ catalog }));
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.checkoutReady).toBe(true);
 
     catalog.set("P001", product({ availability: "out_of_stock" }));
-    const revalidated = service.revalidate(MEMBER, NOW);
+    const revalidated = await service.revalidate(MEMBER, NOW);
     expect(revalidated.lines[0].blockedReason).toBe("product_not_purchasable");
     expect(revalidated.checkoutReady).toBe(false);
   });
 });
 
 describe("store credit", () => {
-  it("never applies more credit than the subtotal", () => {
+  it("never applies more credit than the subtotal", async () => {
     const service = createCartService(
       deps({ storeCredit: [credit({ amountCents: 500_000 })] }),
     );
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.storeCreditAppliedCents).toBe(9900);
     expect(added.cart.estimatedTotalCents).toBe(STANDARD_SHIPPING_CENTS);
   });
 
-  it("counts only approved entries", () => {
+  it("counts only approved entries", async () => {
     const service = createCartService(
       deps({
         storeCredit: [
@@ -275,24 +275,24 @@ describe("store credit", () => {
       }),
     );
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.storeCreditAppliedCents).toBe(1000);
   });
 
-  it("ignores another member's credit", () => {
+  it("ignores another member's credit", async () => {
     const service = createCartService(
       deps({ storeCredit: [credit({ memberId: "member-2", amountCents: 5000 })] }),
     );
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.storeCreditAppliedCents).toBe(0);
   });
 
-  it("never drives a total below zero on an unpriced cart", () => {
+  it("never drives a total below zero on an unpriced cart", async () => {
     const unpriced = product({ facts: { ...product().facts, priceCents: notConfirmed<number>() } });
     const service = createCartService(
       deps({
@@ -301,7 +301,7 @@ describe("store credit", () => {
       }),
     );
 
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.storeCreditAppliedCents).toBe(0);
@@ -310,7 +310,7 @@ describe("store credit", () => {
 });
 
 describe("shipping", () => {
-  it("charges shipping once across a two-owner split", () => {
+  it("charges shipping once across a two-owner split", async () => {
     const catalog = new Map([
       ["P001", product()],
       ["P002", product({ sku: "P002", slug: "p002", displayName: "Product Two", fulfillmentOwner: "xenios" })],
@@ -319,8 +319,8 @@ describe("shipping", () => {
       deps({ catalog, lots: [lot(), lot({ lotId: "LOT-2", sku: "P002", owner: "xenios" })] }),
     );
 
-    service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
-    const added = service.addLine(MEMBER, { sku: "P002", quantity: 1, purchaseMode: "one_time" }, NOW);
+    await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P002", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
 
@@ -332,10 +332,10 @@ describe("shipping", () => {
 });
 
 describe("add denials", () => {
-  it("rejects zero, negative, and fractional quantities", () => {
+  it("rejects zero, negative, and fractional quantities", async () => {
     const service = createCartService(deps());
     for (const quantity of [0, -1, 1.5]) {
-      const result = service.addLine(MEMBER, { sku: "P001", quantity, purchaseMode: "one_time" }, NOW);
+      const result = await service.addLine(MEMBER, { sku: "P001", quantity, purchaseMode: "one_time" }, NOW);
       expect(result.ok).toBe(false);
       if (result.ok) return;
       expect(result.code).toBe("quantity_invalid");
@@ -345,21 +345,21 @@ describe("add denials", () => {
   // Regression: `Number.isInteger` is true for 1e21, so a whole-number check alone let
   // a quantity through that drove the line total past Number.MAX_SAFE_INTEGER, where a
   // total stops being an exact count of cents.
-  it("rejects a quantity large enough to leave exact integer cents", () => {
+  it("rejects a quantity large enough to leave exact integer cents", async () => {
     const service = createCartService(deps());
     for (const quantity of [1e21, Number.MAX_SAFE_INTEGER, MAX_LINE_QUANTITY + 1]) {
-      const result = service.addLine(MEMBER, { sku: "P001", quantity, purchaseMode: "one_time" }, NOW);
+      const result = await service.addLine(MEMBER, { sku: "P001", quantity, purchaseMode: "one_time" }, NOW);
       expect(result.ok, `expected ${quantity} to be refused`).toBe(false);
       if (result.ok) return;
       expect(result.code).toBe("quantity_invalid");
     }
   });
 
-  it("accepts a quantity at the ceiling", () => {
+  it("accepts a quantity at the ceiling", async () => {
     const service = createCartService(
       deps({ lots: [lot({ quantityAvailable: MAX_LINE_QUANTITY })] }),
     );
-    const result = service.addLine(
+    const result = await service.addLine(
       MEMBER,
       { sku: "P001", quantity: MAX_LINE_QUANTITY, purchaseMode: "one_time" },
       NOW,
@@ -371,63 +371,63 @@ describe("add denials", () => {
   });
 
   // The bound is on the resulting line, so repeated adds cannot walk past it.
-  it("rejects an add that would push an existing line over the ceiling", () => {
+  it("rejects an add that would push an existing line over the ceiling", async () => {
     const service = createCartService(
       deps({ lots: [lot({ quantityAvailable: MAX_LINE_QUANTITY })] }),
     );
-    const first = service.addLine(
+    const first = await service.addLine(
       MEMBER,
       { sku: "P001", quantity: MAX_LINE_QUANTITY, purchaseMode: "one_time" },
       NOW,
     );
     expect(first.ok).toBe(true);
 
-    const second = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const second = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(second.ok).toBe(false);
     if (second.ok) return;
     expect(second.code).toBe("quantity_invalid");
 
     // The refused add left the stored line untouched.
-    expect(service.getCart(MEMBER, NOW).lines[0].quantity).toBe(MAX_LINE_QUANTITY);
+    expect((await service.getCart(MEMBER, NOW)).lines[0].quantity).toBe(MAX_LINE_QUANTITY);
   });
 
-  it("rejects an update above the ceiling", () => {
+  it("rejects an update above the ceiling", async () => {
     const service = createCartService(deps());
-    service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
 
-    const result = service.updateLine(MEMBER, "P001", MAX_LINE_QUANTITY + 1, NOW);
+    const result = await service.updateLine(MEMBER, "P001", MAX_LINE_QUANTITY + 1, NOW);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.code).toBe("quantity_invalid");
   });
 
-  it("rejects an unknown sku", () => {
+  it("rejects an unknown sku", async () => {
     const service = createCartService(deps());
-    const result = service.addLine(MEMBER, { sku: "NOPE", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const result = await service.addLine(MEMBER, { sku: "NOPE", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.code).toBe("product_not_found");
   });
 
-  it("rejects every add while product commerce is disabled", () => {
+  it("rejects every add while product commerce is disabled", async () => {
     const service = createCartService(deps({ commerceEnabled: false }));
-    const result = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const result = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.code).toBe("commerce_disabled");
   });
 
-  it("rejects a subscription with no frequency", () => {
+  it("rejects a subscription with no frequency", async () => {
     const service = createCartService(deps());
-    const result = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "subscription" }, NOW);
+    const result = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "subscription" }, NOW);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.code).toBe("subscription_action_invalid");
   });
 
-  it("rejects a subscription frequency outside the allowed set", () => {
+  it("rejects a subscription frequency outside the allowed set", async () => {
     const service = createCartService(deps());
-    const result = service.addLine(
+    const result = await service.addLine(
       MEMBER,
       // A client could post any number, so the value is checked against the contract.
       { sku: "P001", quantity: 1, purchaseMode: "subscription", subscriptionFrequencyDays: 45 as 30 },
@@ -438,11 +438,11 @@ describe("add denials", () => {
     expect(result.code).toBe("subscription_action_invalid");
   });
 
-  it("rejects a subscription on a product that is not subscription eligible", () => {
+  it("rejects a subscription on a product that is not subscription eligible", async () => {
     const service = createCartService(
       deps({ catalog: new Map([["P001", product({ subscriptionEligible: false })]]) }),
     );
-    const result = service.addLine(
+    const result = await service.addLine(
       MEMBER,
       { sku: "P001", quantity: 1, purchaseMode: "subscription", subscriptionFrequencyDays: 30 },
       NOW,
@@ -452,9 +452,9 @@ describe("add denials", () => {
     expect(result.code).toBe("subscription_action_invalid");
   });
 
-  it("accepts a valid subscription selection", () => {
+  it("accepts a valid subscription selection", async () => {
     const service = createCartService(deps());
-    const result = service.addLine(
+    const result = await service.addLine(
       MEMBER,
       { sku: "P001", quantity: 1, purchaseMode: "subscription", subscriptionFrequencyDays: 60 },
       NOW,
@@ -468,35 +468,35 @@ describe("add denials", () => {
 });
 
 describe("lane gating", () => {
-  it("blocks a quantum line while quantum commerce is off", () => {
+  it("blocks a quantum line while quantum commerce is off", async () => {
     const service = createCartService(
       deps({ catalog: new Map([["P001", product({ lane: "quantum" })]]) }),
     );
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.lines[0].blockedReason).toBe("lane_not_purchasable");
     expect(added.cart.checkoutReady).toBe(false);
   });
 
-  it("blocks a future clinical line even when every capability is on", () => {
+  it("blocks a future clinical line even when every capability is on", async () => {
     const service = createCartService(
       deps({
         catalog: new Map([["P001", product({ lane: "future_clinical" })]]),
         quantumCommerceEnabled: true,
       }),
     );
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.lines[0].blockedReason).toBe("lane_not_purchasable");
   });
 
-  it("blocks a product with no assigned fulfillment owner", () => {
+  it("blocks a product with no assigned fulfillment owner", async () => {
     const service = createCartService(
       deps({ catalog: new Map([["P001", product({ fulfillmentOwner: "not_assigned" })]]) }),
     );
-    const added = service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
     expect(added.ok).toBe(true);
     if (!added.ok) return;
     expect(added.cart.lines[0].blockedReason).toBe("product_not_purchasable");
@@ -505,52 +505,52 @@ describe("lane gating", () => {
 });
 
 describe("update and remove", () => {
-  it("rejects an invalid update quantity", () => {
+  it("rejects an invalid update quantity", async () => {
     const service = createCartService(deps());
-    service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
 
-    const result = service.updateLine(MEMBER, "P001", 0, NOW);
+    const result = await service.updateLine(MEMBER, "P001", 0, NOW);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.code).toBe("quantity_invalid");
   });
 
-  it("rejects an update to a sku that is not in the cart", () => {
+  it("rejects an update to a sku that is not in the cart", async () => {
     const service = createCartService(deps());
-    const result = service.updateLine(MEMBER, "P001", 2, NOW);
+    const result = await service.updateLine(MEMBER, "P001", 2, NOW);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.code).toBe("product_not_found");
   });
 
-  it("recomputes totals on update", () => {
+  it("recomputes totals on update", async () => {
     const service = createCartService(deps());
-    service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
 
-    const result = service.updateLine(MEMBER, "P001", 3, NOW);
+    const result = await service.updateLine(MEMBER, "P001", 3, NOW);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.cart.lines[0].quantity).toBe(3);
     expect(result.cart.subtotalCents).toBe(29700);
   });
 
-  it("removes a line and tolerates removing one that is absent", () => {
+  it("removes a line and tolerates removing one that is absent", async () => {
     const service = createCartService(deps());
-    service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
 
-    const afterRemove = service.removeLine(MEMBER, "P001", NOW);
+    const afterRemove = await service.removeLine(MEMBER, "P001", NOW);
     expect(afterRemove.lines).toEqual([]);
     expect(afterRemove.blockingReasons).toContain("cart_empty");
 
-    const again = service.removeLine(MEMBER, "P001", NOW);
+    const again = await service.removeLine(MEMBER, "P001", NOW);
     expect(again.lines).toEqual([]);
   });
 
-  it("keeps carts separate per member", () => {
+  it("keeps carts separate per member", async () => {
     const service = createCartService(deps());
-    service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
 
-    expect(service.getCart("member-2", NOW).lines).toEqual([]);
-    expect(service.getCart(MEMBER, NOW).lines).toHaveLength(1);
+    expect((await service.getCart("member-2", NOW)).lines).toEqual([]);
+    expect((await service.getCart(MEMBER, NOW)).lines).toHaveLength(1);
   });
 });

@@ -25,7 +25,7 @@ type TrainingPayload = { modules?: TrainingModule[]; certified?: boolean | null 
 const CURRICULUM = [
   {
     title: "The program, honestly",
-    body: "What Xenios Research is, what membership costs ($50 one-time activation, then $25 monthly), and what a rep's role is and is not.",
+    body: "What Xenios Research is, what membership costs ($50 at activation including the first 30 days, then $25 per additional 30-day period), and what a rep's role is and is not.",
   },
   {
     title: "Compliance rules",

@@ -1,0 +1,257 @@
+{
+  "package_version": "1.0",
+  "effective_date": "2026-07-22",
+  "generated_at_utc": "2026-07-23T00:05:45.070945+00:00",
+  "files": [
+    {
+      "path": "Xenios_Research_Legal_Package_Master_FINAL.docx",
+      "sha256": "c86ef6eeac6c65428f0a963d2545a36da9b582471f64acc734533dac4b4dbcc7",
+      "bytes": 64643
+    },
+    {
+      "path": "Xenios_Research_Legal_Package_Master_FINAL.md",
+      "sha256": "fd53c4babaf3411370360fe1fd6d33a7577457054370f060511aa081b64f4101",
+      "bytes": 85344
+    },
+    {
+      "path": "approval_records/APPROVAL_RECORD_INDEX.md",
+      "sha256": "3e116fcb1811fdce16e679959cf61a847347b92a29c79365dad7721151936ed8",
+      "bytes": 422
+    },
+    {
+      "path": "approval_records/Xenios Research Final.pdf",
+      "sha256": "72585e96a3e1836958195f02d67c4596ddbd0d1c019d2e2f57266a8cccce0fc5",
+      "bytes": 81517
+    },
+    {
+      "path": "approval_records/Xenios Research \u2014 Final Legal Approval and Release Letter .docx",
+      "sha256": "5c0534dc7d49ba89e1e6d58fc2db572ae2a56a2cc95e777cc391dce699be2fba",
+      "bytes": 323075
+    },
+    {
+      "path": "internal_policies/01_manual_identity_review_sop.md",
+      "sha256": "d2db7fd499daba8cea6f5045355a8b7ed285406beb6f95496833978e149cc5ad",
+      "bytes": 1320
+    },
+    {
+      "path": "internal_policies/02_id_retention_deletion_sop.md",
+      "sha256": "2ccf153e929cd52e4f10b996cc032c8fe2567bb8e4b0f891e8c8c9f37cbf909f",
+      "bytes": 1171
+    },
+    {
+      "path": "internal_policies/03_manual_payment_verification_sop.md",
+      "sha256": "cc797faa5bcadd4d4fb5b41148395c2824cda9a35ea84d331f2745e3ff4dc55f",
+      "bytes": 1175
+    },
+    {
+      "path": "internal_policies/04_daily_payment_reconciliation_sop.md",
+      "sha256": "43ff417d694575afbb1bec6b31b4e6ea0cf054f284a005cd8d6258b6339420f7",
+      "bytes": 1090
+    },
+    {
+      "path": "internal_policies/05_refund_approval_sop.md",
+      "sha256": "d47803cb53cba8382f4f8b270e7d3ab841aec7066fc72e3848b02aa39fd76afb",
+      "bytes": 1005
+    },
+    {
+      "path": "internal_policies/06_payment_reversal_sop.md",
+      "sha256": "b9991ca8f3d012a4bc8d9f7a59226b6286eb3f2957320d6aea69ac645f08024e",
+      "bytes": 1003
+    },
+    {
+      "path": "internal_policies/07_confidential_information_access_policy.md",
+      "sha256": "4320b9f52a4eb6f3c0a6e2d8963ca091be4225d78a9976277fea9c7794d095b6",
+      "bytes": 1012
+    },
+    {
+      "path": "internal_policies/08_admin_access_mfa_policy.md",
+      "sha256": "2c668947b463d557dcd53a0c5a9b859d6551ac512f097772c90980eabaed8743",
+      "bytes": 1007
+    },
+    {
+      "path": "internal_policies/09_incident_breach_response_plan.md",
+      "sha256": "32b71743742bb3f107cf402fe6a9d28af0e0473f3f60bfb6647c8b31ff09fa85",
+      "bytes": 1104
+    },
+    {
+      "path": "internal_policies/10_records_retention_schedule.md",
+      "sha256": "be94c293dd211e3be5f6573996632869c2d13cf0ac1dffdda7c41a8808ee942a",
+      "bytes": 1092
+    },
+    {
+      "path": "internal_policies/11_member_suspension_termination_sop.md",
+      "sha256": "62a1032c86cd9d8bc9809579eab02686fc5210309e2c5f26ea64324a26cb9a10",
+      "bytes": 1117
+    },
+    {
+      "path": "internal_policies/12_agreement_publication_version_control_sop.md",
+      "sha256": "0f391e2a7398c167b1c210ccfa6a1ad72f2a236e81237e883157087cb793cd73",
+      "bytes": 977
+    },
+    {
+      "path": "internal_policies/13_day15_payment_migration_sop.md",
+      "sha256": "153e455cdf515705d63601b5422dec7234500e430ae4abec72f3995366aa5edc",
+      "bytes": 1185
+    },
+    {
+      "path": "internal_policies/14_payment_provider_disclosure_checklist.md",
+      "sha256": "82cf3bb38f9e83cc445b0776bbc2f60834d3f27a1e88e41740807f83f33e660c",
+      "bytes": 1068
+    },
+    {
+      "path": "internal_policies/15_bank_compliance_response_checklist.md",
+      "sha256": "963f1fd4736afc333b01c0367157e5d0a2c1632b482b65b52b588a889b7201d1",
+      "bytes": 1083
+    },
+    {
+      "path": "internal_policies/16_customer_complaint_escalation.md",
+      "sha256": "c7359bd3404ab37dcb571a15d3cfc1fbde7c822b3bdaa82bbbfde7cbccf2b7ca",
+      "bytes": 1038
+    },
+    {
+      "path": "internal_policies/17_product_release_coa_checklist.md",
+      "sha256": "1d925cfa614f6b9b737ceb94d9ab2dc5f5355ce5e6a861ffb9334f4b714f7867",
+      "bytes": 1029
+    },
+    {
+      "path": "internal_policies/18_fulfillment_handoff_sop.md",
+      "sha256": "c8e13de03f9a57ca10b770001f1626b59ef4085d2c2582da910c3d50d01a6249",
+      "bytes": 1073
+    },
+    {
+      "path": "member_facing/01_electronic_records_signature_consent.md",
+      "sha256": "53ddd31dd3a17e23887be600cf5a3ecf9b6fb993fe30a41d76a36b51506d735d",
+      "bytes": 3613
+    },
+    {
+      "path": "member_facing/02_privacy_policy.md",
+      "sha256": "ead5a38b6b38e6580137538d66861058847db0eadab91acef89733e6a6f8aa4c",
+      "bytes": 4759
+    },
+    {
+      "path": "member_facing/03_identity_driver_license_consent.md",
+      "sha256": "c3ef088fead444b3c951fd5feba1bc1e86e0a6d5eb697a1d8bc3d5e061d48d8a",
+      "bytes": 3503
+    },
+    {
+      "path": "member_facing/04_founding_membership_agreement.md",
+      "sha256": "1d1faf488cf712bafe06f1c3c51a6b6a9d7c75627ef1a07029d002787e704e3b",
+      "bytes": 4720
+    },
+    {
+      "path": "member_facing/05_private_membership_confidentiality_nda.md",
+      "sha256": "9b5975629f1c1f782916142bfe606f3c7b07697faac9fc0fc95e1a6fb5c09dde",
+      "bytes": 3478
+    },
+    {
+      "path": "member_facing/06_research_use_acceptable_use.md",
+      "sha256": "91fe4676b819ac6d1dd283c9301945e1a23a7504ae33ecc741f97c9b7e42bc5c",
+      "bytes": 3245
+    },
+    {
+      "path": "member_facing/07_no_medical_advice_assumption_risk.md",
+      "sha256": "8143232f19795ae680b34d0c0c60813b93d8f54400e3f69c00920e44812ff9b9",
+      "bytes": 2727
+    },
+    {
+      "path": "member_facing/08_arbitration_class_jury_waiver.md",
+      "sha256": "50ec962c87b197cdb1b201ff9441ddb264f90ba51290213918790abe0478c806",
+      "bytes": 5247
+    },
+    {
+      "path": "member_facing/09_manual_payment_verification_terms.md",
+      "sha256": "5ae9900f95e696298531bc85d119f24ab3df5a4f3856b9c3831b642304da05de",
+      "bytes": 3534
+    },
+    {
+      "path": "member_facing/10_membership_renewal_policy.md",
+      "sha256": "cb77a4a905073b3018c136fcfdeb0e5d2982f6fa20f886e1cc0813b29c64c7ae",
+      "bytes": 2821
+    },
+    {
+      "path": "member_facing/11_cancellation_refund_policy.md",
+      "sha256": "7ac1c45263baf9f92a83ed00afd16e10ffb8083db5a8205762160ebfe370ef7e",
+      "bytes": 3138
+    },
+    {
+      "path": "member_facing/12_website_terms_of_use.md",
+      "sha256": "80b9ba55f6e864448779ed41987e981e385aa47eec09776393380acbb04dc8f1",
+      "bytes": 2723
+    },
+    {
+      "path": "member_facing/13_product_purchase_terms.md",
+      "sha256": "3888a8a1165d7b191b7be69a913a0d9882b60e7817b394e7d6a462b88631ce7c",
+      "bytes": 3272
+    },
+    {
+      "path": "member_facing/14_shipping_claims_replacement.md",
+      "sha256": "4e5add6645c4d1e882857c8c692a0b2bd3444e242851ed14dc1e0d49358ad836",
+      "bytes": 2924
+    },
+    {
+      "path": "member_facing/15_payment_evidence_upload_consent.md",
+      "sha256": "06e5fcc80c7c3c5ac2541f61b607a99a2f37fa7eb1f979e7760b4a7423b57f2c",
+      "bytes": 2318
+    },
+    {
+      "path": "member_facing/16_cookie_tracking_notice.md",
+      "sha256": "1f9752b7d9d3d24535ecb956e7a97db18543f374281ef9b135874974de8e4b5e",
+      "bytes": 2217
+    },
+    {
+      "path": "member_facing/17_release_waiver_covenant_indemnification.md",
+      "sha256": "ddaefbeb591b49f7ec170cf731ca7de13f490c0af74249d2eb72a5161d4db226",
+      "bytes": 4684
+    },
+    {
+      "path": "supporting/DEFINED_TERMS_GLOSSARY.md",
+      "sha256": "c03078952ed554e7d1fadb73d5616178a9dec9c95aada9996712ebbfaed30b0a",
+      "bytes": 1388
+    },
+    {
+      "path": "supporting/DOCUMENT_DEPENDENCY_MAP.md",
+      "sha256": "ffb943eacb3882a7e9ef9d9feafe50e570f44f6200ca23b2c26dba04fcc95518",
+      "bytes": 932
+    },
+    {
+      "path": "supporting/ENGINEERING_IMPLEMENTATION_NOTES.md",
+      "sha256": "ff74765852a446d93d5a27e1da9eb5671e94d556d123b50ce2f00dc913da43a2",
+      "bytes": 1398
+    },
+    {
+      "path": "supporting/FINAL_BUSINESS_TERMS_SCHEDULE.md",
+      "sha256": "3d5a3ff7bfae18a727f65013b6f8fec8dc1dd1d5ea27113704715d347565e1bc",
+      "bytes": 1764
+    },
+    {
+      "path": "supporting/LEGAL_RESEARCH_NOTES.md",
+      "sha256": "ac4da5d846029b4fdd558bb2da7d457d2b71054548a79bac9213f9bd26eed570",
+      "bytes": 2352
+    },
+    {
+      "path": "supporting/MEMBER_SIGNING_SEQUENCE.md",
+      "sha256": "5d7d52d26dd5b08cf3fd20a8729a4ec296a379b1485876b2be689e67a9dfc8b4",
+      "bytes": 1310
+    },
+    {
+      "path": "supporting/README_START_HERE.md",
+      "sha256": "81451fafe355828f816e2f7b43ffd5686160dd32d2af75ac5379ffb24bf049e4",
+      "bytes": 1887
+    },
+    {
+      "path": "supporting/STATE_LAW_ISSUE_CHECKLIST.md",
+      "sha256": "7306de725e54311023f36d8833bf91e796fc13166eccf797274fd8c06ed54ca9",
+      "bytes": 810
+    },
+    {
+      "path": "supporting/VERSIONING_TABLE.md",
+      "sha256": "38b20dde9111a30f7d59adafdbf2fdf6553123b21cf158fbfda308945b29a588",
+      "bytes": 644
+    },
+    {
+      "path": "supporting/website_integration_manifest.json",
+      "sha256": "2ff67f9c7bf9fac1840b3767f5441d65c8a1e1012cd84f2c4a4fc3566adaf600",
+      "bytes": 6543
+    }
+  ]
+}

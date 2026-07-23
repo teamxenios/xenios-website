@@ -1,0 +1,141 @@
+// ---------------------------------------------------------------------------
+// Persistent idempotency store (Track B, commerce activation).
+//
+// The commerce schema (migration 22) states the principle this file implements:
+// "idempotency enforced only in application code is not idempotency under
+// concurrency". The current checkout uses per-process Maps, which stop being
+// idempotent the moment the service restarts or a second instance handles a
+// retried request. This store is the durable replacement seam.
+//
+// Two implementations behind one port:
+//   - InMemoryIdempotencyStore: the reference. Correct within one process
+//     (in-flight de-duplication + settled results). Used by tests and as the
+//     safe default while the commerce tables are not provisioned.
+//   - SupabaseIdempotencyStore: durable and concurrency-safe across instances,
+//     relying on the DATABASE unique constraint (scope, key), not on app locks.
+//
+// Building this does NOT enable commerce. Transactions remain gated by
+// NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED and per-SKU eligibility. This is the
+// persistence layer those gated operations will use once activated.
+// ---------------------------------------------------------------------------
+
+export interface IdempotencyOutcome<T> {
+  /** The result of the first successful execution for this (scope, key). */
+  value: T;
+  /** True when this call returned a previously stored result instead of running `produce`. */
+  replayed: boolean;
+}
+
+export interface IdempotencyStore {
+  /**
+   * Run `produce` at most once per (scope, key). The first call executes and
+   * persists the outcome; later calls with the same (scope, key) return the
+   * stored outcome without running `produce` again. `scope` namespaces keys
+   * (e.g. a member id) so two callers cannot collide on one raw key.
+   *
+   * A failed `produce` (rejection) is NOT stored, so the operation stays
+   * retryable. Concurrent calls for the same (scope, key) share one execution.
+   */
+  once<T>(scope: string, key: string, produce: () => Promise<T>): Promise<IdempotencyOutcome<T>>;
+}
+
+// NUL is not valid in the scope/key text, so it is an unambiguous delimiter.
+const joinId = (scope: string, key: string): string => `${scope}\u0000${key}`;
+
+export class InMemoryIdempotencyStore implements IdempotencyStore {
+  private readonly settled = new Map<string, unknown>();
+  private readonly inFlight = new Map<string, Promise<unknown>>();
+
+  async once<T>(scope: string, key: string, produce: () => Promise<T>): Promise<IdempotencyOutcome<T>> {
+    const id = joinId(scope, key);
+
+    if (this.settled.has(id)) {
+      return { value: this.settled.get(id) as T, replayed: true };
+    }
+    const pending = this.inFlight.get(id);
+    if (pending) {
+      // Share the single in-flight execution; both callers see the same result.
+      return { value: (await pending) as T, replayed: true };
+    }
+
+    const run = produce();
+    this.inFlight.set(id, run);
+    try {
+      const value = await run;
+      this.settled.set(id, value); // settle only on success -> failures stay retryable
+      return { value, replayed: false };
+    } finally {
+      this.inFlight.delete(id);
+    }
+  }
+}
+
+// --- Supabase-backed implementation -----------------------------------------
+// Durable across restarts and instances. Concurrency safety comes from the
+// UNIQUE (scope, key) constraint on public.research_idempotency_keys, not from
+// an application lock. Table ships in supabase/research-idempotency-keys.sql
+// (Track B migration); until it is provisioned and commerce is configured, the
+// factory below falls back to the in-memory reference so nothing half-works.
+
+const UNIQUE_VIOLATION = "23505";
+
+export interface IdempotencyRow {
+  from(table: string): {
+    insert(row: Record<string, unknown>): { select(): Promise<{ error: { code?: string } | null }> };
+    select(cols: string): {
+      eq(col: string, val: string): {
+        eq(col: string, val: string): {
+          maybeSingle(): Promise<{ data: { result: unknown } | null; error: unknown }>;
+        };
+      };
+    };
+    update(row: Record<string, unknown>): {
+      eq(col: string, val: string): { eq(col: string, val: string): Promise<{ error: unknown }> };
+    };
+  };
+}
+
+export class SupabaseIdempotencyStore implements IdempotencyStore {
+  private static readonly TABLE = "research_idempotency_keys";
+
+  constructor(
+    private readonly client: IdempotencyRow,
+    private readonly pollDelayMs = 50,
+    private readonly maxPolls = 40,
+    private readonly sleep: (ms: number) => Promise<void> = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms)),
+  ) {}
+
+  async once<T>(scope: string, key: string, produce: () => Promise<T>): Promise<IdempotencyOutcome<T>> {
+    const table = SupabaseIdempotencyStore.TABLE;
+
+    // Reserve the (scope, key). The DB unique constraint makes exactly one
+    // reservation win under concurrency.
+    const reserve = await this.client.from(table).insert({ scope, key, result: null }).select();
+    if (reserve.error && reserve.error.code !== UNIQUE_VIOLATION) {
+      throw new Error(`idempotency reserve failed: ${reserve.error.code ?? "unknown"}`);
+    }
+
+    if (!reserve.error) {
+      // We own the reservation: run once and persist the result.
+      const value = await produce();
+      const update = await this.client
+        .from(table)
+        .update({ result: value as unknown })
+        .eq("scope", scope)
+        .eq("key", key);
+      if (update.error) throw new Error("idempotency result persist failed");
+      return { value, replayed: false };
+    }
+
+    // Someone else reserved it. Wait for their result to land.
+    for (let attempt = 0; attempt < this.maxPolls; attempt++) {
+      const row = await this.client.from(table).select("result").eq("scope", scope).eq("key", key).maybeSingle();
+      if (row.data && row.data.result !== null && row.data.result !== undefined) {
+        return { value: row.data.result as T, replayed: true };
+      }
+      await this.sleep(this.pollDelayMs);
+    }
+    throw new Error("idempotency wait timed out (concurrent producer did not settle)");
+  }
+}

@@ -439,7 +439,7 @@ function ApplicationDetail({ token, id, onChanged }: { token: string; id: string
               ) : (
                 <div className="card w-full">
                   <p className="body-s text-ink-2 mb-3">
-                    Approve this application? Activation fee: <strong>$50.00, one-time</strong>. The approval email goes out immediately and the approval window starts now (default 14 days).
+                    Approve this application? The Founding Membership is <strong>$50.00 due at activation, including the first 30 days</strong>. The approval email goes out immediately and the approval window starts now (default 14 days).
                   </p>
                   <div className="flex gap-3">
                     <button type="button" className="btn btn-primary" disabled={busy} onClick={() => void act("approve")} data-testid="button-approve-confirm">
@@ -482,7 +482,7 @@ function ApplicationDetail({ token, id, onChanged }: { token: string; id: string
         {awaitingActivation && (
           <div className="space-y-3">
             <p className="body-s text-ink-2">
-              Approved and waiting on activation: the $50 one-time activation plus the $25 monthly membership. When billing is enabled and the applicant has paid, begin activation.
+              Approved and waiting on activation: $50 due at activation, which includes the first 30 days of membership. Nothing else is due today. When billing is enabled and the applicant has paid, begin activation.
             </p>
             <button type="button" className="btn btn-primary" disabled={busy} onClick={() => void act("begin-activation")} data-testid="button-begin-activation">
               {busy ? "Working" : "Begin activation"}
@@ -493,7 +493,7 @@ function ApplicationDetail({ token, id, onChanged }: { token: string; id: string
         {paymentPending && (
           <div className="space-y-3">
             <p className="body-s text-ink-2">
-              Activation requires BOTH verified references: the $50 activation payment and the active $25 monthly membership. The applicant must have created their member account first (the link in their approval email). No member becomes active until both are verified; activation then triggers referral qualification automatically.
+              Activation requires the verified $50 activation payment (it includes the first 30 days; no $25 is due at activation) plus the membership record reference. The applicant must have created their member account first (the link in their approval email). No member becomes active until verification completes; activation then triggers referral qualification automatically.
             </p>
             <div>
               <label htmlFor={`pay-ref-${app.id}`} className="mono-label text-ink-mute">Activation payment reference (required)</label>
@@ -501,18 +501,18 @@ function ApplicationDetail({ token, id, onChanged }: { token: string; id: string
                 id={`pay-ref-${app.id}`}
                 className="input-field mt-1"
                 maxLength={120}
-                placeholder="e.g. zelle-0718-SB or receipt id for the $50 activation"
+                placeholder="e.g. zelle-0718-SB or receipt id for the verified $50 activation payment"
                 value={paymentRef}
                 onChange={(e) => setPaymentRef(e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor={`sub-ref-${app.id}`} className="mono-label text-ink-mute">Monthly membership reference (required)</label>
+              <label htmlFor={`sub-ref-${app.id}`} className="mono-label text-ink-mute">Membership record reference (required)</label>
               <input
                 id={`sub-ref-${app.id}`}
                 className="input-field mt-1"
                 maxLength={120}
-                placeholder="e.g. the active $25 monthly subscription id"
+                placeholder="e.g. the member's membership record id"
                 value={subscriptionRef}
                 onChange={(e) => setSubscriptionRef(e.target.value)}
               />

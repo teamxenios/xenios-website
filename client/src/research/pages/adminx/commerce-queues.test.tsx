@@ -51,16 +51,37 @@ afterEach(() => {
 
 // The queues endpoint is the only response a test varies. /api/admin/me is a
 // display-only identity read the session hook makes; it never grants anything.
-function stubFetch(status: number, body: unknown, contentType = "application/json") {
+// Claim action tests add POST routes (method + path) and read back the calls.
+type ActionRoute = { method: string; path: string; status: number; body: unknown };
+type RecordedCall = { url: string; method: string; body: string | undefined };
+
+function stubFetch(
+  status: number,
+  body: unknown,
+  contentType = "application/json",
+  actions: ActionRoute[] = [],
+): RecordedCall[] {
+  const calls: RecordedCall[] = [];
   vi.stubGlobal(
     "fetch",
-    vi.fn(async (url: string) => {
+    vi.fn(async (url: string, init?: RequestInit) => {
+      const method = (init?.method ?? "GET").toUpperCase();
+      calls.push({ url: String(url), method, body: typeof init?.body === "string" ? init.body : undefined });
       if (String(url).startsWith("/api/admin/me")) {
         return {
           status: 200,
           ok: true,
           headers: new Headers({ "content-type": "application/json" }),
           json: async () => ({ success: true, email: "founder@xeniostechnology.com" }),
+        };
+      }
+      const action = actions.find((r) => r.method === method && r.path === String(url));
+      if (action) {
+        return {
+          status: action.status,
+          ok: action.status >= 200 && action.status < 300,
+          headers: new Headers({ "content-type": "application/json" }),
+          json: async () => action.body,
         };
       }
       if (String(url) === QUEUES_PATH) {
@@ -74,6 +95,7 @@ function stubFetch(status: number, body: unknown, contentType = "application/jso
       throw new TypeError(`unstubbed fetch: ${url}`);
     }),
   );
+  return calls;
 }
 
 async function renderPage(node: ReactNode): Promise<HTMLDivElement> {
@@ -259,5 +281,150 @@ describe("CommerceQueues", () => {
     stubFetch(404, { ok: false });
     const view = await renderPage(<CommerceQueues />);
     expect(byTestId(view, "ra-empty").textContent).toContain("publish with the commerce backend");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Claim actions: the admin refund workflow against the live endpoints.
+// ---------------------------------------------------------------------------
+
+describe("CommerceQueues claim actions", () => {
+  it("approve posts the review decision and reloads the queues", async () => {
+    const calls = stubFetch(200, { ok: true, queues: fullQueues }, "application/json", [
+      { method: "POST", path: "/api/admin/research/claims/clm_77/review", status: 200, body: { ok: true } },
+    ]);
+    const view = await renderPage(<CommerceQueues />);
+
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "claim-approve-clm_77").click();
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    const post = calls.find((c) => c.method === "POST");
+    expect(post?.url).toBe("/api/admin/research/claims/clm_77/review");
+    expect(JSON.parse(post?.body ?? "{}")).toEqual({ decision: "approved" });
+    // The confirmation survives the reload (it lives above the boundary).
+    expect(byTestId(view, "claims-action-notice").textContent).toContain("clm_77: Claim approved");
+    // The queues reloaded after the change (a second GET of the queues path).
+    expect(calls.filter((c) => c.method === "GET" && c.url === QUEUES_PATH).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("deny posts the declined decision", async () => {
+    const calls = stubFetch(200, { ok: true, queues: fullQueues }, "application/json", [
+      { method: "POST", path: "/api/admin/research/claims/clm_78/review", status: 200, body: { ok: true } },
+    ]);
+    const view = await renderPage(<CommerceQueues />);
+
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "claim-deny-clm_78").click();
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    const post = calls.find((c) => c.method === "POST");
+    expect(post?.url).toBe("/api/admin/research/claims/clm_78/review");
+    expect(JSON.parse(post?.body ?? "{}")).toEqual({ decision: "declined" });
+    expect(byTestId(view, "claims-action-notice").textContent).toContain("clm_78: Claim declined");
+  });
+
+  it("refund posts integer cents plus an idempotency key, and a retry after failure reuses the same key", async () => {
+    // The refund route is dynamic: the first attempt fails (500), the second
+    // succeeds, so the retry-key discipline is observable.
+    let refundStatus = 500;
+    const dynamicCalls = stubFetch(200, { ok: true, queues: fullQueues }, "application/json", [
+      {
+        method: "POST",
+        path: "/api/admin/research/claims/clm_77/refund",
+        get status() {
+          return refundStatus;
+        },
+        get body() {
+          return refundStatus === 200 ? { ok: true } : { message: "provider down" };
+        },
+      } as unknown as ActionRoute,
+    ]);
+    const view = await renderPage(<CommerceQueues />);
+
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "claim-refund-open-clm_77").click();
+    });
+    const amount = byTestId<HTMLInputElement>(view, "claim-refund-amount-clm_77");
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!;
+      setter.call(amount, "45.25");
+      amount.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    // First attempt fails (500): an error renders, nothing pretends success.
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "claim-refund-submit-clm_77").click();
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect(byTestId(view, "claim-error-clm_77").textContent).toContain("provider down");
+
+    // Second attempt succeeds and must carry the SAME idempotency key.
+    refundStatus = 200;
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "claim-refund-submit-clm_77").click();
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    const posts = dynamicCalls.filter((c) => c.method === "POST");
+    expect(posts).toHaveLength(2);
+    const first = JSON.parse(posts[0].body ?? "{}");
+    const second = JSON.parse(posts[1].body ?? "{}");
+    expect(first.amountCents).toBe(4525);
+    expect(Number.isInteger(first.amountCents)).toBe(true);
+    expect(typeof first.idempotencyKey).toBe("string");
+    expect(second.idempotencyKey).toBe(first.idempotencyKey);
+    expect(byTestId(view, "claims-action-notice").textContent).toContain("Refund of $45.25 issued.");
+  });
+
+  it("replacement posts the replacement path, and an out-of-order action renders the designed denial copy", async () => {
+    const calls = stubFetch(200, { ok: true, queues: fullQueues }, "application/json", [
+      {
+        method: "POST",
+        path: "/api/admin/research/claims/clm_78/replacement",
+        status: 400,
+        body: { ok: false, code: "order_state_invalid", message: "raw server text" },
+      },
+    ]);
+    const view = await renderPage(<CommerceQueues />);
+
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "claim-replacement-clm_78").click();
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    const post = calls.find((c) => c.method === "POST");
+    expect(post?.url).toBe("/api/admin/research/claims/clm_78/replacement");
+    // Designed copy on the machine code, never the raw server message.
+    const denied = byTestId(view, "claim-denied-clm_78");
+    expect(denied.textContent).toContain("That change is not available for this order.");
+    expect(denied.textContent).not.toContain("raw server text");
+  });
+
+  it("refuses a non-positive refund amount before any request is made", async () => {
+    const calls = stubFetch(200, { ok: true, queues: fullQueues });
+    const view = await renderPage(<CommerceQueues />);
+
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "claim-refund-open-clm_77").click();
+    });
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "claim-refund-submit-clm_77").click();
+    });
+
+    expect(byTestId(view, "claim-error-clm_77").textContent).toContain("greater than zero");
+    expect(calls.filter((c) => c.method === "POST")).toHaveLength(0);
   });
 });

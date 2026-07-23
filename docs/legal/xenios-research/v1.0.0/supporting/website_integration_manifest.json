@@ -1,0 +1,205 @@
+{
+  "package": "Xenios Research Legal and Operating Package",
+  "version": "1.0",
+  "effective_date": "2026-07-22",
+  "documents": [
+    {
+      "document_id": "XR-LEGAL-01",
+      "filename": "01_electronic_records_signature_consent.md",
+      "title": "Electronic Records and Signature Consent",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 1,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-02",
+      "filename": "02_privacy_policy.md",
+      "title": "Privacy Policy",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 2,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-03",
+      "filename": "03_identity_driver_license_consent.md",
+      "title": "Identity Verification and Government ID Consent",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 3,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-04",
+      "filename": "04_founding_membership_agreement.md",
+      "title": "Founding Membership Agreement",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 4,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-05",
+      "filename": "05_private_membership_confidentiality_nda.md",
+      "title": "Private Membership Confidentiality and Nondisclosure Agreement",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 5,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-06",
+      "filename": "06_research_use_acceptable_use.md",
+      "title": "Research Use and Acceptable Use Agreement",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 6,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-07",
+      "filename": "07_no_medical_advice_assumption_risk.md",
+      "title": "No-Medical-Advice and Assumption-of-Risk Acknowledgment",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 7,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-08",
+      "filename": "08_arbitration_class_jury_waiver.md",
+      "title": "Individual Arbitration, Class-Action Waiver and Jury-Trial Waiver",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 8,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": true,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-17",
+      "filename": "17_release_waiver_covenant_indemnification.md",
+      "title": "Release, Waiver, Covenant Not to Sue, Limitation of Liability and Indemnification",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 9,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": true,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-09",
+      "filename": "09_manual_payment_verification_terms.md",
+      "title": "Manual Payment and Verification Terms",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 10,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-10",
+      "filename": "10_membership_renewal_policy.md",
+      "title": "Membership Renewal Policy",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 11,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-11",
+      "filename": "11_cancellation_refund_policy.md",
+      "title": "Cancellation and Refund Policy",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 12,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-12",
+      "filename": "12_website_terms_of_use.md",
+      "title": "Website Terms of Use",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 13,
+      "stage": "activation",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-15",
+      "filename": "15_payment_evidence_upload_consent.md",
+      "title": "Payment Evidence Upload Consent",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 14,
+      "stage": "payment_evidence_upload",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-13",
+      "filename": "13_product_purchase_terms.md",
+      "title": "Product Purchase Terms",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 15,
+      "stage": "product_checkout",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-14",
+      "filename": "14_shipping_claims_replacement.md",
+      "title": "Shipping, Claims and Replacement Policy",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 16,
+      "stage": "product_checkout",
+      "separate_conspicuous_acceptance": false,
+      "required": true
+    },
+    {
+      "document_id": "XR-LEGAL-16",
+      "filename": "16_cookie_tracking_notice.md",
+      "title": "Cookie and Tracking Notice",
+      "version": "1.0",
+      "effective_date": "2026-07-22",
+      "signing_order": 17,
+      "stage": "cookie_notice",
+      "separate_conspicuous_acceptance": false,
+      "required": false
+    }
+  ],
+  "commercial_terms": {
+    "activation_amount_cents": 5000,
+    "activation_includes_days": 30,
+    "renewal_amount_cents": 2500,
+    "renewal_period_days": 30,
+    "grace_period_days": 5,
+    "raw_id_retention_days_after_review": 7,
+    "payment_evidence_retention_days_after_reconciliation": 30,
+    "member_mfa_required_initially": false,
+    "admin_payment_verification_required": true
+  }
+}
