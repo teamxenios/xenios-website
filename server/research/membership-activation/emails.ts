@@ -57,13 +57,19 @@ export type FoundingEmailEnqueue = (input: FoundingEmailEnqueueInput) => Promise
 export interface FoundingEmailTemplate {
   key: string;
   subject: string;
-  /** Member-facing body copy, line by line, as data for the renderer wave. */
+  /** Body copy, line by line, as data for the renderer wave. */
   bodyLines: readonly string[];
-  audience: "member";
+  /** Who the email is for. Admin-audience templates go to Samuel's records
+   * address (RESEARCH_ADMIN_RECORDS_EMAIL), never to a member. */
+  audience: "member" | "admin";
 }
 
 function template(key: string, subject: string, bodyLines: readonly string[]): FoundingEmailTemplate {
   return { key, subject, bodyLines, audience: "member" };
+}
+
+function adminTemplate(key: string, subject: string, bodyLines: readonly string[]): FoundingEmailTemplate {
+  return { key, subject, bodyLines, audience: "admin" };
 }
 
 const PORTAL_LINE = "Sign in to your member portal for the details and next steps.";
@@ -144,6 +150,35 @@ const LIFECYCLE_TEMPLATES: readonly FoundingEmailTemplate[] = [
     "We could not complete your identity check: {{rejectionCategory}}.",
     "You can try again from your member portal. Your uploaded document is deleted on schedule either way.",
   ]),
+  // E-signature (OpenSign) member moments. The signing itself happens through
+  // the provider's secure link; a completion is confirmed server-side, never by
+  // the member's browser returning.
+  template("fm_esign_signing_ready", "Your membership agreement is ready to sign", [
+    "Your {{documentTitle}} is ready for your signature.",
+    "Open your member portal to read the full document and sign it securely.",
+    PORTAL_LINE,
+  ]),
+  template("fm_esign_completed_member", "Your signed {{documentTitle}} is ready", [
+    "You signed {{documentTitle}} (version {{version}}) on {{signedAt}}.",
+    "A signed copy and the completion certificate are saved to your member portal.",
+    PORTAL_LINE,
+  ]),
+];
+
+/**
+ * Admin-audience templates: they go to Samuel's records address, never to a
+ * member. They carry integrity facts (member, document, version, timestamp,
+ * hashes) and a link into the AUTHENTICATED admin document center, never a raw
+ * storage URL. Government IDs and payment-evidence images are never attached or
+ * linked here; those stay behind their own authenticated admin views.
+ */
+const ADMIN_TEMPLATES: readonly FoundingEmailTemplate[] = [
+  adminTemplate("fm_admin_esign_completed", "A member completed a legal signing packet", [
+    "{{memberName}} ({{memberId}}) completed {{documentTitle}} version {{version}} on {{completedAt}}.",
+    "Signed document hash {{signedPdfHash}}. Certificate hash {{certificateHash}}.",
+    "Review and download the signed copy in the admin document center: {{adminLink}}",
+    "Sign in as an administrator first; the download links are short lived and authorized.",
+  ]),
 ];
 
 /** The renewal notice bodies, one per notice key renewals.ts defines. */
@@ -185,10 +220,14 @@ const NOTICE_TEMPLATES: readonly FoundingEmailTemplate[] = renewalNoticeSchedule
   return template(notice.template, subject, [...body, NO_AUTOMATIC_BILLING_CONTRACT]);
 });
 
-/** The complete catalog: 17 lifecycle templates + 7 renewal notices = 24. */
+/**
+ * The complete catalog: 19 lifecycle templates (17 activation moments + 2
+ * e-sign member moments) + 7 renewal notices + 1 admin records template = 27.
+ */
 export const FOUNDING_EMAIL_TEMPLATES: readonly FoundingEmailTemplate[] = [
   ...LIFECYCLE_TEMPLATES,
   ...NOTICE_TEMPLATES,
+  ...ADMIN_TEMPLATES,
 ];
 
 export const FOUNDING_EMAIL_TEMPLATE_KEYS: readonly string[] = FOUNDING_EMAIL_TEMPLATES.map((t) => t.key);

@@ -287,8 +287,19 @@ export interface ArchiveRecordStore {
   listByMember(memberId: string): Promise<readonly ArchiveRecord[]>;
 }
 
-/** Combined store surface the e-sign services depend on. */
-export type EsignStore = SigningRequestStore & TemplateMappingStore & ArchiveRecordStore;
+/**
+ * Combined store surface the e-sign services depend on. Composed of three
+ * named facets rather than an intersection: the request and archive facets
+ * both carry insert/update/getById/listByMember over different record types,
+ * so an intersection would collide and lose archive-by-member listing (needed
+ * by the admin document center and the member packet ZIP). Named facets keep
+ * each method distinct and reachable.
+ */
+export interface EsignStore {
+  requests: SigningRequestStore;
+  templates: TemplateMappingStore;
+  archive: ArchiveRecordStore;
+}
 
 // --- Private media port for completed documents (mirrors IdentityMediaPort) -
 

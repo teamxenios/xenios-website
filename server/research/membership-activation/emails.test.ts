@@ -14,19 +14,24 @@ import { NO_AUTOMATIC_BILLING_CONTRACT, renewalNoticeSchedule } from "./renewals
 import { createObligation } from "./obligations";
 
 // ---------------------------------------------------------------------------
-// The 24-template catalog
+// The 27-template catalog
 // ---------------------------------------------------------------------------
 
 describe("the founding email catalog", () => {
-  it("carries exactly the 24 spec templates, unique, all fm_-prefixed, member audience", () => {
-    expect(FOUNDING_EMAIL_TEMPLATES).toHaveLength(24);
-    expect(new Set(FOUNDING_EMAIL_TEMPLATE_KEYS).size).toBe(24);
+  it("carries exactly the 27 spec templates, unique, all fm_-prefixed", () => {
+    expect(FOUNDING_EMAIL_TEMPLATES).toHaveLength(27);
+    expect(new Set(FOUNDING_EMAIL_TEMPLATE_KEYS).size).toBe(27);
     for (const template of FOUNDING_EMAIL_TEMPLATES) {
       expect(template.key.startsWith("fm_")).toBe(true);
-      expect(template.audience).toBe("member");
+      expect(["member", "admin"]).toContain(template.audience);
       expect(template.subject.length).toBeGreaterThan(0);
       expect(template.bodyLines.length).toBeGreaterThan(0);
     }
+  });
+
+  it("keeps admin-audience templates to exactly the records notifications", () => {
+    const admin = FOUNDING_EMAIL_TEMPLATES.filter((t) => t.audience === "admin");
+    expect(admin.map((t) => t.key)).toEqual(["fm_admin_esign_completed"]);
   });
 
   it("includes every renewal notice template the renewals.ts schedule defines", () => {
