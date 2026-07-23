@@ -110,6 +110,7 @@ import {
   newSignatureFormState,
   type EsignAcceptance,
   type SignatureRecord,
+  type SignaturesStore,
 } from "./signatures";
 import {
   DEFAULT_IDENTITY_UPLOAD_CONFIG,
@@ -177,12 +178,14 @@ import {
   type EsignMediaPort,
   type EsignProvider,
   type EsignStore,
+  type NativeCommitFn,
   type PdfGenerator,
   type SigningRequestRecord,
 } from "./esign/contracts";
 import { resolveEsignProvider } from "./esign/provider";
 import { resolveEsignStore } from "./esign/persistence/esign-store";
 import { NativeEsignService } from "./esign/native";
+import { resolveNativeCommit } from "./esign/native-commit";
 import { XeniosPdfGenerator } from "./esign/pdf";
 import {
   InMemoryEsignMediaProvider,
@@ -580,6 +583,13 @@ export interface FoundingActivationWiring {
   resolveEsignMedia?: () => EsignMediaPort;
   /** The signed-PDF + certificate generator for the NATIVE (embedded) path. */
   resolveEsignPdfGenerator?: () => PdfGenerator;
+  /**
+   * The NATIVE atomic-commit seam: the single database transaction that inserts
+   * the legal signature, transitions the request to completed, and upserts the
+   * archive (a Supabase RPC in production, an in-memory equivalent otherwise).
+   * Optional so a test injects a failing commit to prove no signature persists.
+   */
+  resolveEsignNativeCommit?: (signatures: SignaturesStore, esign: EsignStore) => NativeCommitFn;
   /** Where the admin records copy of an e-sign completion notice is sent. */
   adminRecordsEmail?: string;
 }
@@ -1034,6 +1044,15 @@ function buildLiveServices(
   // archive; it is enabled by RESEARCH_ESIGN_ENABLED alone (it needs no OpenSign
   // credential), so it can run independently of the OpenSign provider.
   const nativeEsignEnabled = env.RESEARCH_ESIGN_ENABLED === "true";
+  // The atomic commit: the Supabase RPC in production, an in-memory equivalent
+  // over the signatures + esign stores otherwise. `documents` is the signatures
+  // backing store (it implements SignaturesStore). This is the ONLY place a
+  // native SignatureRecord is inserted, and it commits with the request
+  // transition + archive as one transaction.
+  const nativeCommit: NativeCommitFn = (wiring.resolveEsignNativeCommit ?? resolveNativeCommit)(
+    documents,
+    esignStore,
+  );
   const nativeEsignService = new NativeEsignService(
     {
       store: esignStore,
@@ -1041,6 +1060,7 @@ function buildLiveServices(
       lifecycle: documentLifecycle,
       signatures,
       pdf: (wiring.resolveEsignPdfGenerator ?? (() => new XeniosPdfGenerator()))(),
+      commit: nativeCommit,
     },
     { now },
   );

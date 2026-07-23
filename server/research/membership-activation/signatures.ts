@@ -128,6 +128,11 @@ export type SignResult =
   | { ok: true; signature: SignatureRecord; replayed: boolean }
   | { ok: false; code: SignFailureCode };
 
+/** The result of validating + building a signature without inserting it. */
+export type PrepareResult =
+  | { ok: true; record: SignatureRecord; existing: SignatureRecord | null }
+  | { ok: false; code: SignFailureCode };
+
 export interface SignatureServiceOptions {
   now?: () => Date;
   newId?: () => string;
@@ -160,14 +165,21 @@ export class SignatureService {
     this.newId = options.newId ?? (() => crypto.randomUUID());
   }
 
-  async sign(input: SignDocumentInput, options: SignOptions = {}): Promise<SignResult> {
+  /**
+   * Validate every legal guard and BUILD the signature record, WITHOUT
+   * inserting it. This is the whole guard set (published-only, fullDocumentShown,
+   * affirmativeConsent, electronic-record-consent-first, separate acknowledgment,
+   * legal name, member identity); it is not weakened or duplicated. The native
+   * path calls this so the signature INSERT can happen atomically with the
+   * request completion in a single database transaction (SignatureService never
+   * inserts a native signature outside that transaction). `sign()` also uses it.
+   */
+  async prepare(input: SignDocumentInput): Promise<PrepareResult> {
     const version = await this.store.getVersion(input.documentVersionId);
     if (!version) return { ok: false, code: "version_not_found" };
 
-    // A DRAFT CAN NEVER BE SIGNED. Neither can under_legal_review, approved,
-    // scheduled, superseded, archived, or withdrawn text: published only.
+    // A DRAFT CAN NEVER BE SIGNED. Published only.
     if (version.status !== "published") return { ok: false, code: "not_published" };
-
     if (input.fullDocumentShown !== true) return { ok: false, code: "full_document_not_shown" };
     if (input.affirmativeConsent !== true) return { ok: false, code: "consent_not_affirmative" };
 
@@ -184,16 +196,12 @@ export class SignatureService {
       electronicConsentVersionId = consent.documentVersionId;
     }
 
-    // Registry-flagged categories carry their own acknowledgment; nothing
-    // else may claim one.
     const definition = categoryDefinitionFor(version.category);
     if (definition.requiresSeparateAcknowledgment && input.separateAcknowledgment !== true) {
       return { ok: false, code: "separate_acknowledgment_required" };
     }
 
     const existing = await this.store.getSignature(input.memberId, version.id);
-    if (existing) return { ok: true, signature: existing, replayed: true };
-
     const record: SignatureRecord = {
       id: this.newId(),
       memberId: input.memberId,
@@ -210,27 +218,31 @@ export class SignatureService {
       userAgentHash: input.userAgent ? sha256Hex(input.userAgent) : null,
       signedAt: this.now().toISOString(),
     };
+    return { ok: true, record, existing: existing ?? null };
+  }
 
-    // Atomic-completion hook: everything the caller needs durable BEFORE the
-    // signature counts (native signed PDF + certificate + evidence record). If
-    // it throws, the signature is never inserted, so a partial-evidence failure
-    // leaves the agreement unsigned and the gate unadvanced. The error
-    // propagates to the caller unchanged.
+  async sign(input: SignDocumentInput, options: SignOptions = {}): Promise<SignResult> {
+    const prep = await this.prepare(input);
+    if (!prep.ok) return prep;
+    if (prep.existing) return { ok: true, signature: prep.existing, replayed: true };
+
+    // Atomic-completion hook (kept for the OpenSign path): a throw here leaves
+    // the signature uninserted. The NATIVE path does NOT use this; it inserts
+    // the signature inside its own atomic commit (see esign/native-commit.ts).
     if (options.beforeCommit) {
-      await options.beforeCommit(record);
+      await options.beforeCommit(prep.record);
     }
 
     try {
-      await this.store.insertSignature(record);
+      await this.store.insertSignature(prep.record);
     } catch (error) {
       if (error instanceof DuplicateSignature) {
-        // Two racing submits: the database unique constraint let one in.
-        const winner = await this.store.getSignature(input.memberId, version.id);
+        const winner = await this.store.getSignature(input.memberId, prep.record.documentVersionId);
         if (winner) return { ok: true, signature: winner, replayed: true };
       }
       return { ok: false, code: "storage_error" };
     }
-    return { ok: true, signature: record, replayed: false };
+    return { ok: true, signature: prep.record, replayed: false };
   }
 
   /**

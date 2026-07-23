@@ -144,6 +144,48 @@ export interface PdfGenerator {
   generateCompletionCertificatePdf(input: CompletionCertificatePdfInput): Promise<Buffer>;
 }
 
+// --- Native atomic commit (the final legal transaction) --------------------
+// The native completion commits FOUR database effects in ONE transaction (a
+// Supabase RPC in production, an equivalent in-memory function in tests):
+//   1. verify the request (member, exact version, exact idempotency key, state
+//      evidence_stored, signed-PDF + certificate refs and hashes present),
+//   2. insert the immutable legal SignatureRecord,
+//   3. transition the request to completed (signing_link_status = completed,
+//      native_completion_state = completed, signed_at + completed_at set,
+//      xenios_acceptance_event_ids bound to the signature id),
+//   4. insert/upsert the archive record.
+// All four commit or roll back together. Storage uploads happen BEFORE this and
+// stay outside the transaction (evidence_stored is non-activating). A failed
+// commit leaves NO SignatureRecord and the request not completed, so the
+// activation gate never advances on uncommitted evidence.
+
+export type NativeCommitCode =
+  | "request_missing"
+  | "member_mismatch"
+  | "version_mismatch"
+  | "request_not_evidence_stored"
+  | "evidence_incomplete"
+  | "commit_error";
+
+export interface NativeCommitInput {
+  /** The built, NOT-yet-inserted legal signature (from SignatureService.prepare). */
+  signature: import("../signatures").SignatureRecord;
+  memberId: string;
+  documentVersionId: string;
+  idempotencyKey: string;
+  /** The request in its completed shape (state completed, signature id bound). */
+  completedRequest: SigningRequestRecord;
+  /** The archive record to insert on completion. */
+  archive: ArchiveRecord;
+}
+
+export type NativeCommitResult =
+  | { ok: true; signature: import("../signatures").SignatureRecord; replayed: boolean }
+  | { ok: false; code: NativeCommitCode };
+
+/** The injected atomic-commit seam (Supabase RPC in production). */
+export type NativeCommitFn = (input: NativeCommitInput) => Promise<NativeCommitResult>;
+
 // --- Template + widget specification ---------------------------------------
 
 export const ESIGN_WIDGET_TYPES = [

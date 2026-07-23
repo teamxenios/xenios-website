@@ -6,7 +6,15 @@ import { registerFoundingActivationApi, type FoundingActivationDependencies } fr
 import { DisabledEsignProvider } from "./esign/provider";
 import { createInMemoryEsignStore } from "./esign/persistence/esign-store";
 import { InMemoryEsignMediaProvider } from "./esign/archive";
-import type { EsignProvider, EsignStore, EsignWebhookEvent, PdfGenerator } from "./esign/contracts";
+import { createInMemoryNativeCommit } from "./esign/native-commit";
+import type {
+  EsignProvider,
+  EsignStore,
+  EsignWebhookEvent,
+  NativeCommitFn,
+  PdfGenerator,
+} from "./esign/contracts";
+import type { SignaturesStore } from "./signatures";
 import {
   buildFoundingActivationDependencies,
   createInMemoryChecklistStore,
@@ -224,7 +232,14 @@ const fakePdfGenerator: PdfGenerator = {
     Buffer.from(`CERT ${input.signingRequestId} ${input.signedPdfSha256}`, "utf8"),
 };
 
-function liveContext(opts: { esignProvider?: EsignProvider; esignEnabled?: boolean } = {}): LiveContext {
+function liveContext(
+  opts: {
+    esignProvider?: EsignProvider;
+    esignEnabled?: boolean;
+    /** Override the native atomic-commit seam (e.g. a failing RPC/transaction). */
+    esignNativeCommit?: FoundingActivationWiring["resolveEsignNativeCommit"];
+  } = {},
+): LiveContext {
   const obligationsStore = createInMemoryObligationsStore();
   const periodsStore = createInMemoryPeriodsStore();
   const methodsStore = createInMemoryPaymentMethodsStore();
@@ -273,6 +288,7 @@ function liveContext(opts: { esignProvider?: EsignProvider; esignEnabled?: boole
     resolveEsignStore: () => esignStore,
     resolveEsignMedia: () => esignMedia,
     resolveEsignPdfGenerator: () => fakePdfGenerator,
+    ...(opts.esignNativeCommit ? { resolveEsignNativeCommit: opts.esignNativeCommit } : {}),
     adminRecordsEmail: ADMIN_RECORDS_EMAIL,
   });
   return {
@@ -2105,5 +2121,128 @@ describe("state 3: native embedded e-signature", () => {
     await publishAllCategories(on.documentsStore);
     const statusOn = await request(on.app).get("/api/research/activation/status").set(MEMBER_HEADER, MEMBER_A);
     expect(statusOn.body.embeddedEsignEnabled).toBe(true);
+  });
+
+  // A native atomic-commit (the final legal transaction / RPC) that always fails
+  // without writing. No signature may persist.
+  const failingNativeCommit: (s: SignaturesStore, e: EsignStore) => NativeCommitFn = () => async () => ({
+    ok: false,
+    code: "commit_error",
+  });
+
+  it("#3-#6 a native atomic-commit failure blocks activation, is undownloadable, and never presents as completed", async () => {
+    const ctx = liveContext({ esignEnabled: true, esignNativeCommit: failingNativeCommit });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const res = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { idempotencyKey: "commit-fail" }));
+    // The route reports a failure, never a completion.
+    expect(res.status).toBeGreaterThanOrEqual(400);
+    expect(res.body.status).not.toBe("completed");
+
+    // #3 activation is blocked: the consent category never became signed.
+    const list = await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A);
+    expect(list.body.satisfied).toBe(false);
+    expect(list.body.agreements[0].signed).toBe(false);
+    // No legal signature exists for the version.
+    expect(await ctx.documentsStore.getSignature(MEMBER_A, consent.documentVersionId)).toBeNull();
+
+    // The evidence request exists but is marked for cleanup, never completed.
+    const failed = (await ctx.esignStore.requests.listByMember(MEMBER_A)).find(
+      (r) => r.idempotencyKey === "commit-fail",
+    );
+    expect(failed?.nativeCompletionState).toBe("failed_cleanup_required");
+    expect(failed?.signingLinkStatus).not.toBe("completed");
+    const requestId = failed!.id;
+
+    // #4 the member cannot download it.
+    const memberDl = await request(ctx.app)
+      .get(`/api/research/activation/esign/documents/${requestId}/download?which=signed`)
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(memberDl.status).toBeGreaterThanOrEqual(400);
+
+    // #5 an admin cannot download it.
+    const adminDl = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/request/${requestId}/download?which=signed`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDl.status).toBeGreaterThanOrEqual(400);
+
+    // #6 it is not presented as completed anywhere, and no archive row exists.
+    const docs = await request(ctx.app).get("/api/research/activation/esign/documents").set(MEMBER_HEADER, MEMBER_A);
+    expect(docs.body.documents.some((d: { requestId: string }) => d.requestId === requestId)).toBe(false);
+    const adminDocs = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/member/${MEMBER_A}`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDocs.body.requests.some((r: { requestId: string }) => r.requestId === requestId)).toBe(false);
+    expect(
+      (await ctx.esignStore.archive.listByMember(MEMBER_A)).some(
+        (a) => a.documentVersionId === consent.documentVersionId,
+      ),
+    ).toBe(false);
+  });
+
+  it("#7 a retry after a native atomic-commit failure completes exactly one signature and one request", async () => {
+    let failNext = true;
+    const commit: (s: SignaturesStore, e: EsignStore) => NativeCommitFn = (sig, esign) => {
+      const real = createInMemoryNativeCommit(sig, esign);
+      return async (input) => (failNext ? { ok: false, code: "commit_error" } : real(input));
+    };
+    const ctx = liveContext({ esignEnabled: true, esignNativeCommit: commit });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const first = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { idempotencyKey: "retry-commit" }));
+    expect(first.status).toBeGreaterThanOrEqual(400);
+    expect(await ctx.documentsStore.getSignature(MEMBER_A, consent.documentVersionId)).toBeNull();
+
+    failNext = false;
+    const second = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { idempotencyKey: "retry-commit" }));
+    expect(second.status).toBe(200);
+    expect(second.body.status).toBe("completed");
+
+    // Exactly one signature and one request for this version.
+    const sigs = (await ctx.documentsStore.listSignaturesForMember(MEMBER_A)).filter(
+      (s) => s.documentVersionId === consent.documentVersionId,
+    );
+    expect(sigs).toHaveLength(1);
+    const reqs = (await ctx.esignStore.requests.listByMember(MEMBER_A)).filter(
+      (r) => r.xeniosDocumentVersionIds[0] === consent.documentVersionId,
+    );
+    expect(reqs).toHaveLength(1);
+    expect(reqs[0].nativeCompletionState).toBe("completed");
+  });
+
+  it("#8 concurrent native submissions produce exactly one completed transaction", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const body = nativeSignBody(consent.documentVersionId, { idempotencyKey: "concurrent-http" });
+    const [a, b] = await Promise.all([
+      request(ctx.app).post("/api/research/activation/esign/native/sign").set(MEMBER_HEADER, MEMBER_A).send(body),
+      request(ctx.app).post("/api/research/activation/esign/native/sign").set(MEMBER_HEADER, MEMBER_A).send(body),
+    ]);
+    expect(a.status).toBe(200);
+    expect(b.status).toBe(200);
+    // Exactly one signature, one request, one archive for this version.
+    const sigs = (await ctx.documentsStore.listSignaturesForMember(MEMBER_A)).filter(
+      (s) => s.documentVersionId === consent.documentVersionId,
+    );
+    expect(sigs).toHaveLength(1);
+    const reqs = (await ctx.esignStore.requests.listByMember(MEMBER_A)).filter(
+      (r) => r.xeniosDocumentVersionIds[0] === consent.documentVersionId,
+    );
+    expect(reqs).toHaveLength(1);
+    expect(reqs[0].nativeCompletionState).toBe("completed");
+    const archive = (await ctx.esignStore.archive.listByMember(MEMBER_A)).filter(
+      (ar) => ar.documentVersionId === consent.documentVersionId,
+    );
+    expect(archive).toHaveLength(1);
   });
 });

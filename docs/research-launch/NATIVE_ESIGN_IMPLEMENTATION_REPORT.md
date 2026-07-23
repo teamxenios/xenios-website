@@ -32,7 +32,7 @@ libraries.
   writes the durable signing-request + archive records the document centers
   read. The native signature satisfies the SAME activation gate as before.
 
-### Completion state machine (not claimed fully atomic)
+### Completion state machine (atomic: one transaction for the legal commit)
 
 A native signing request moves through an explicit state machine:
 `preparing` -> `evidence_stored` -> `completed`, or -> `failed_cleanup_required`
@@ -41,44 +41,51 @@ signed in the member interface, appear in the document center, or produce a
 member or admin download URL. This is enforced in code: the member and admin
 document views and the download route all gate on the completed state (native
 requests require `nativeCompletionState === "completed"`), and the activation
-gate reads the legal `SignatureRecord`, which is inserted only at the completion
-step.
+gate reads the legal `SignatureRecord`, which is inserted only inside the atomic
+completion transaction.
 
 The order per signing request:
 
-1. every legal guard in `SignatureService` (never duplicated or weakened),
+1. every legal guard in `SignatureService.prepare()` (never duplicated or
+   weakened), which BUILDS the signature record but does NOT insert it,
 2. signed-PDF generation,
 3. completion-certificate generation,
 4. both private uploads,
 5. the request is persisted as `evidence_stored` (a durable, NON-activating
    recoverable record: the signed PDF is uploaded but no legal signature yet),
-6. the legal `SignatureRecord` is inserted (the commit point),
-7. the request is transitioned `evidence_stored -> completed`, binding the
-   version, hashes, refs, and the signature id, and the archive projection is
-   written.
+6. THE ATOMIC COMMIT: a single database transaction that (a) re-verifies the
+   evidence_stored request (member, exact version, exact idempotency key, refs +
+   hashes present), (b) inserts the immutable legal `SignatureRecord`, (c)
+   transitions the request `evidence_stored -> completed` binding signed_at,
+   completed_at, and the signature id, and (d) upserts the archive projection.
 
-Steps 2-5 run inside a `SignatureService.sign(..., { beforeCommit })` hook, so
-the signature (step 6) is inserted only after they succeed; if any of them
-fails, the signature is never inserted and the agreement stays unsigned. A
-failure at step 6 (the final signature insert) leaves the request in
-`evidence_stored` with no signature, then marks it `failed_cleanup_required` so
-the uploaded objects can be swept; the agreement is unsigned, activation is
-blocked, the request is never presented as completed, no download URL is issued,
-and no archive entry exists (the archive is written only at step 7). A retry
-reuses the evidence and converges to exactly one completed signature and request.
+Steps 2-5 run before the commit; the signature is NOT inserted by any of them.
+If any of steps 2-5 fails, no signature exists and the agreement stays unsigned.
+Step 6 is the ONLY place a native `SignatureRecord` is inserted, and it is done
+in ONE transaction together with the request completion and the archive, so all
+four effects commit or roll back together. Consequently a native `SignatureRecord`
+can NEVER exist unless its matching request is `completed`. A failure of the
+commit leaves no signature, the request not completed, the agreement unsigned,
+activation blocked, no member or admin download, and no completed archive; the
+evidence request is then marked `failed_cleanup_required` so the uploaded objects
+can be swept. A retry reuses the evidence and converges to exactly one completed
+signature and request.
 
-HONESTY ABOUT ATOMICITY. The legal `SignatureRecord` (step 6) and the request
-completion transition (step 7) are two writes across two stores (the signatures
-table and the esign-requests table); they are NOT performed in one PostgreSQL
-transaction or Supabase RPC, so this flow is NOT described as fully atomic. What
-the state machine guarantees is that no NON-completed state is ever presented as
-completed, and that a failure before or at the signature commit leaves no
-completed state. If the completion transition (step 7) fails after the signature
-commits, the request stays `evidence_stored` and is reconciled to `completed` on
-the next call (the replay path detects the existing signature and finalizes the
-request) or by a sweeper; the agreement is legally signed either way. Making
-steps 6 and 7 a single transaction would require a Supabase RPC over both tables
-and is the documented path to a fully atomic claim.
+ATOMICITY. The four database effects of step 6 (verify, insert signature,
+complete request, upsert archive) are one transaction. In production this is a
+Supabase RPC, `public.research_fm_native_esign_commit`
+(`supabase/research-fm-esign-native.sql`): a `plpgsql` `security definer`
+function that runs in the caller's transaction, locks the request row `FOR
+UPDATE` (so concurrent commits serialize and exactly one performs the
+transition), and RAISEs (rolling everything back) on any genuine failure while
+returning a structured `{ok:false, code}` with no writes on a verification
+failure. In tests and non-Supabase runs an in-memory `NativeCommitFn` provides
+the identical all-or-nothing semantics. The signatures table stays append-only
+and its published + content-hash trigger and unique (member, version) constraint
+still apply inside the transaction (defense in depth). The Supabase Storage
+uploads (step 4) remain OUTSIDE the transaction; that is acceptable because
+`evidence_stored` is non-activating (an orphaned upload never counts, and is
+swept via `failed_cleanup_required`).
 
 Idempotency: the signing-request id is derived deterministically from
 (member, idempotency key), so a retry upserts the same row rather than orphaning
@@ -120,16 +127,26 @@ New (server):
   certificate. Pure over inputs; no env, no network, no secret.
 - `server/research/membership-activation/esign/native.ts` (+ `.test.ts`) —
   `NativeEsignService.completeNativeSignature`.
+- `server/research/membership-activation/esign/native-commit.ts`
+  (+ `.test.ts`) — the atomic-commit seam: `createSupabaseNativeCommit` (the RPC
+  caller) and `createInMemoryNativeCommit` (the identical all-or-nothing
+  semantics for tests / non-Supabase), plus `resolveNativeCommit`.
 
 Changed (server):
 - `server/research/membership-activation/esign/contracts.ts` — additive:
   `esign_document` / `esign_packet` modes (opensign_* kept), `isNativeMode`,
-  `XENIOS_NATIVE_PROVIDER`, native signature-evidence + input types, and the
-  injected `PdfGenerator` seam.
+  `XENIOS_NATIVE_PROVIDER`, native signature-evidence + input types, the injected
+  `PdfGenerator` seam, the `NATIVE_COMPLETION_STATES` machine, and the
+  `NativeCommitFn` / `NativeCommitInput` / `NativeCommitResult` atomic-commit types.
+- `server/research/membership-activation/signatures.ts` — additive `prepare()`
+  that runs every legal guard and BUILDS the signature record without inserting
+  it, so the native path can insert it inside the atomic commit (`sign()` is a
+  thin wrapper over `prepare()`; the clickwrap gate is unchanged).
 - `server/research/membership-activation/production-deps.ts` — constructs the
-  native service, wires the PDF generator, adds `esign.nativeSign` and the
-  member-scoped `esign.documentDownloadUrl`, and enables the native path by
-  `RESEARCH_ESIGN_ENABLED` alone.
+  native service, wires the PDF generator and the atomic commit (Supabase RPC
+  when configured, in-memory otherwise, injectable via `resolveEsignNativeCommit`),
+  adds `esign.nativeSign` and the member-scoped `esign.documentDownloadUrl`, and
+  enables the native path by `RESEARCH_ESIGN_ENABLED` alone.
 - `server/research/membership-activation/routes.ts` (+ `.test.ts`) — the two
   native routes and their wire validation.
 
@@ -138,7 +155,10 @@ New / changed (SQL):
   modes (fresh installs).
 - `supabase/research-fm-esign-native.sql` — additive migration for an
   already-applied database: widens the `mode` check constraint to the native
-  modes. No destructive DDL, safe to rerun, RLS unchanged.
+  modes, adds the `native_completion_state` column + check, and adds the atomic
+  completion RPC `public.research_fm_native_esign_commit` (`security definer`,
+  service-role only, `FOR UPDATE`-serialized, transactional). No destructive DDL,
+  safe to rerun, RLS unchanged, no secret in the function or its result.
 
 New / changed (client):
 - `client/src/research/pages/member/EmbeddedAgreementSigner.tsx` (+ `.test.tsx`)
@@ -193,20 +213,37 @@ and `research_fm_esign_archive`.
 
 ## Tests and results
 
-- Full suite: **2943 passed / 124 files** (0 failures, 0 skips).
+- Full suite: **2958 passed / 125 files** (0 failures, 0 skips).
 - Typecheck (`npm run check`): **0 errors**. Build (`npm run build`): **success**.
 - Dependency license check: pdf-lib (MIT), react-signature-canvas (Apache-2.0),
   and their transitive deps are all permissive; no GPL/AGPL anywhere.
 - Secret scan of the diff vs `main`: clean; the native modules read no env, make
-  no network call, and reference no OpenSign credential.
-- Atomic-completion coverage (this correction): PDF-generation failure,
-  certificate-generation failure, signed-PDF storage failure, certificate
-  storage failure, request-record failure, and the FINAL SignatureRecord insert
-  failure each leave the agreement unsigned; the final-insert-failure test also
-  proves the request is not completed, is marked `failed_cleanup_required`, is
-  not listed, and is not downloadable, that a retry converges to exactly one
-  completed signature and request, and that the gate reads the committed
-  signature (not merely uploaded evidence).
+  no network call, and reference no OpenSign credential; the SQL RPC carries no
+  secret in its body, parameters, or result.
+- Atomic-commit coverage (this correction). The commit's own guard branches are
+  unit-tested (`native-commit.test.ts`: request_missing, member_mismatch,
+  version_mismatch, request_not_evidence_stored, evidence_incomplete each write
+  nothing; the happy commit lands signature + completed request + one archive;
+  idempotent replay; serialized concurrency). The 10 required scenarios:
+  1. an RPC/transaction failure inserts no signature (native service + route).
+  2. it leaves the request not completed (`failed_cleanup_required`).
+  3. activation remains blocked after the failure (route: agreements unsatisfied,
+     consent not signed, no `SignatureRecord`).
+  4. the member download route refuses it (route: >=400).
+  5. the admin download route refuses it (route: >=400).
+  6. it is never presented as completed (member docs, admin center) and no
+     archive row exists.
+  7. a retry after a commit failure completes exactly one signature and one
+     request (native service + route).
+  8. concurrent retries produce exactly one completed transaction (native
+     service + route: one signature, one request, one archive).
+  9. no native `SignatureRecord` can satisfy activation unless its matching
+     request is completed (invariant asserted over both a success and a failure).
+  10. existing clickwrap (AgreementSignCard) signatures still satisfy the gate
+      and are not broken by the native-evidence rule.
+  The earlier pre-commit failure paths (PDF-generation, certificate-generation,
+  signed-PDF storage, certificate storage, request-record) remain covered and
+  each leave the agreement unsigned.
 - New coverage against the 16 required scenarios:
   1. typed signature completes without leaving the flow (native service +
      routes) — yes.

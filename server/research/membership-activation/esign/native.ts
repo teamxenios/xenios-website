@@ -6,18 +6,28 @@
 // authenticated submission IS the completion.
 //
 // ATOMIC COMPLETION. A native agreement counts as signed (and satisfies the
-// activation gate) ONLY when all of the following have succeeded, in order:
+// activation gate) ONLY when the final legal commit succeeds. The flow, in
+// order:
 //   1. every legal guard in SignatureService (never duplicated or weakened),
+//      which BUILDS the signature record WITHOUT inserting it (prepare()),
 //   2. signed-PDF generation,
 //   3. completion-certificate generation,
 //   4. both private uploads,
-//   5. the durable signing-request evidence record is persisted,
-//   6. the legal SignatureRecord is inserted LAST.
-// The SignatureRecord is what the gate reads, and it is written LAST through
-// SignatureService's beforeCommit hook: if any earlier step fails, the
-// signature is never inserted, so the agreement stays unsigned and the gate
-// does not advance. The archive row is a post-signature recoverable projection
-// (the request record already holds the refs + hashes).
+//   5. the durable signing-request evidence record is persisted in state
+//      `evidence_stored` (NON-activating: never shown as signed, never
+//      downloadable, never counts at the gate),
+//   6. THE ATOMIC COMMIT (a single database transaction, a Supabase RPC in
+//      production): it inserts the legal SignatureRecord, transitions the
+//      request evidence_stored -> completed, and upserts the archive record, ALL
+//      OR NOTHING.
+// The SignatureRecord is what the gate reads, and it is inserted ONLY inside
+// step 6's transaction, together with the completion transition. So a native
+// SignatureRecord can never exist unless its matching request is `completed`:
+// if the commit fails, no signature is inserted, the request is not completed,
+// the agreement stays unsigned, and the gate does not advance. The uploaded
+// objects (step 4) are outside the transaction (acceptable: evidence_stored is
+// non-activating) and are marked failed_cleanup_required on a commit failure so
+// a sweeper can delete the orphans.
 //
 // IDEMPOTENCY. The signing-request id is DERIVED from (member, idempotency key),
 // so a retry upserts the same row rather than orphaning a new one, and the
@@ -32,11 +42,12 @@
 
 import crypto from "crypto";
 import { DocumentLifecycle, categoryDefinitionFor } from "../documents";
-import { SignatureService, type SignFailureCode } from "../signatures";
+import { SignatureService, type SignFailureCode, type SignatureRecord } from "../signatures";
 import {
   XENIOS_NATIVE_PROVIDER,
   type ArchiveRecord,
   type CompleteNativeSignatureInput,
+  type NativeCommitFn,
   type EsignMediaPort,
   type EsignStore,
   type PdfGenerator,
@@ -72,18 +83,6 @@ export type NativeSignResult =
     }
   | { ok: false; code: NativeSignFailureCode; message?: string };
 
-/** Thrown from inside the atomic beforeCommit so the signature is never
- * inserted; the caller maps it to a precise result code. */
-class NativeEvidenceError extends Error {
-  constructor(
-    public readonly code: NativeSignFailureCode,
-    message: string,
-  ) {
-    super(message);
-    this.name = "NativeEvidenceError";
-  }
-}
-
 export interface NativeEsignServiceOptions {
   now?: () => Date;
   newId?: () => string;
@@ -95,6 +94,13 @@ export interface NativeEsignServiceDeps {
   lifecycle: DocumentLifecycle;
   signatures: SignatureService;
   pdf: PdfGenerator;
+  /**
+   * The atomic-commit seam: inserts the legal signature, transitions the
+   * request to completed, and upserts the archive as ONE database transaction
+   * (a Supabase RPC in production, an in-memory equivalent in tests). This is
+   * the ONLY place a native SignatureRecord is inserted.
+   */
+  commit: NativeCommitFn;
 }
 
 export class NativeEsignService {
@@ -110,7 +116,7 @@ export class NativeEsignService {
   }
 
   async completeNativeSignature(input: CompleteNativeSignatureInput): Promise<NativeSignResult> {
-    const { store, media, lifecycle, signatures, pdf } = this.deps;
+    const { store, media, lifecycle, signatures, pdf, commit } = this.deps;
     const memberId = input.memberId;
     const documentVersionId = input.document.documentVersionId;
     const idempotencyKey = input.idempotencyKey;
@@ -137,209 +143,221 @@ export class NativeEsignService {
     }
 
     const requestId = deterministicRequestId(memberId, idempotencyKey);
-    let builtRequest: SigningRequestRecord | undefined;
-    let signedPdfHash = "";
-    let certificateHash = "";
 
+    // (1) EVERY legal guard, and BUILD the signature record WITHOUT inserting
+    // it. The insert happens only inside the atomic commit below.
+    const prep = await signatures.prepare({
+      memberId,
+      documentVersionId,
+      typedLegalName,
+      fullDocumentShown: input.document.fullDocumentShown,
+      affirmativeConsent: input.document.affirmativeConsent,
+      separateAcknowledgment: input.document.separateAcknowledgment,
+      ip: input.ip ?? null,
+      userAgent: input.userAgent ?? null,
+    });
+    if (!prep.ok) return { ok: false, code: prep.code };
+
+    // REPLAY: the signature already exists (a prior native completion, or a
+    // clickwrap AgreementSignCard signature). The evidence is never
+    // regenerated; return the completed native request if there is one.
+    if (prep.existing) {
+      return this.replayCompleted(memberId, documentVersionId, idempotencyKey, prep.existing, requestId, input.signerEmail);
+    }
+
+    const signature = prep.record;
+
+    const version = await lifecycle.getVersion(documentVersionId);
+    if (!version) return { ok: false, code: "version_not_found" };
+    const requiresSeparateAck = categoryDefinitionFor(version.category).requiresSeparateAcknowledgment;
+
+    // (2) signed PDF
+    let signedPdf: Buffer;
     try {
-      const signResult = await signatures.sign(
-        {
-          memberId,
-          documentVersionId,
-          typedLegalName,
-          fullDocumentShown: input.document.fullDocumentShown,
-          affirmativeConsent: input.document.affirmativeConsent,
-          separateAcknowledgment: input.document.separateAcknowledgment,
-          ip: input.ip ?? null,
-          userAgent: input.userAgent ?? null,
-        },
-        {
-          // Runs after every legal guard passes and the signature record is
-          // built, but BEFORE it is inserted. Any throw here leaves the
-          // agreement unsigned.
-          beforeCommit: async (signature) => {
-            const version = await lifecycle.getVersion(signature.documentVersionId);
-            if (!version) {
-              throw new NativeEvidenceError("version_not_found", "The document version could not be resolved.");
-            }
-            const requiresSeparateAck = categoryDefinitionFor(version.category).requiresSeparateAcknowledgment;
+      signedPdf = await pdf.generateSignedAgreementPdf({
+        agreementTitle: version.title,
+        agreementContent: version.content,
+        semver: version.semver,
+        documentVersionId: version.id,
+        sourceContentHash: version.contentHash,
+        typedLegalName,
+        signatureMethod: input.evidence.method,
+        drawnPngBase64: drawnBytes ? drawnBytes.toString("base64") : null,
+        signedAt: signature.signedAt,
+        separateAcknowledgment: requiresSeparateAck && signature.separateAcknowledgment,
+        signingRequestId: requestId,
+      });
+    } catch {
+      return { ok: false, code: "pdf_generation_error", message: "The signed document could not be generated." };
+    }
+    const signedPdfHash = sha256Hex(signedPdf);
 
-            // (2) signed PDF
-            let signedPdf: Buffer;
-            try {
-              signedPdf = await pdf.generateSignedAgreementPdf({
-                agreementTitle: version.title,
-                agreementContent: version.content,
-                semver: version.semver,
-                documentVersionId: version.id,
-                sourceContentHash: version.contentHash,
-                typedLegalName,
-                signatureMethod: input.evidence.method,
-                drawnPngBase64: drawnBytes ? drawnBytes.toString("base64") : null,
-                signedAt: signature.signedAt,
-                separateAcknowledgment: requiresSeparateAck && signature.separateAcknowledgment,
-                signingRequestId: requestId,
-              });
-            } catch {
-              throw new NativeEvidenceError("pdf_generation_error", "The signed document could not be generated.");
-            }
-            signedPdfHash = sha256Hex(signedPdf);
-
-            // (3) completion certificate
-            let certificate: Buffer;
-            try {
-              certificate = await pdf.generateCompletionCertificatePdf({
-                memberId,
-                signerEmail: input.signerEmail,
-                documents: [
-                  { title: version.title, documentVersionId: version.id, contentHash: version.contentHash },
-                ],
-                signingRequestId: requestId,
-                signedAt: signature.signedAt,
-                ipHash: signature.ipHash,
-                userAgentHash: signature.userAgentHash,
-                signatureMethod: input.evidence.method,
-                signedPdfSha256: signedPdfHash,
-              });
-            } catch {
-              throw new NativeEvidenceError(
-                "certificate_generation_error",
-                "The completion certificate could not be generated.",
-              );
-            }
-            certificateHash = sha256Hex(certificate);
-
-            // (4) both private uploads (xenios-owned hashes)
-            let ingest;
-            try {
-              ingest = await ingestCompletedDocuments({
-                memberId,
-                packetOrDocumentId: version.id,
-                version: version.semver,
-                signedPdf: { bytes: signedPdf, contentType: "application/pdf" },
-                certificate: { bytes: certificate, contentType: "application/pdf" },
-                media,
-                provider: XENIOS_NATIVE_PROVIDER,
-                completedAt: signature.signedAt,
-              });
-            } catch {
-              throw new NativeEvidenceError("storage_error", "The signed document could not be stored.");
-            }
-
-            // (5) the durable EVIDENCE record, in state `evidence_stored`. This
-            // is NON-activating: signingLinkStatus is not `completed`, so it is
-            // never shown as signed, never downloadable, and never counts at the
-            // gate. It is keyed deterministically so a retry upserts the same row
-            // (no orphan) and a same-key race admits exactly one. Written BEFORE
-            // the signature: if this fails, the signature is never inserted.
-            const nowIso = this.now().toISOString();
-            const evidence: SigningRequestRecord = {
-              id: requestId,
-              memberId,
-              packetOrDocumentId: version.id,
-              mode: "esign_document",
-              provider: XENIOS_NATIVE_PROVIDER,
-              providerTemplateId: null,
-              providerTemplateVersion: null,
-              providerDocumentId: null,
-              xeniosDocumentVersionIds: [version.id],
-              sourceContentHashes: [version.contentHash],
-              signerIdentifier: input.signerEmail,
-              signingLinkStatus: "created",
-              nativeCompletionState: "evidence_stored",
-              viewedAt: null,
-              signedAt: null,
-              completedAt: null,
-              declinedAt: null,
-              expiredAt: null,
-              signedPdfRef: ingest.signedPdfRef,
-              certificateRef: ingest.certificateRef,
-              signedPdfHash: ingest.signedPdfHash,
-              certificateHash: ingest.certificateHash,
-              verifiedEventIds: [],
-              providerEventHistory: [
-                { eventId: `native:${requestId}:evidence`, type: "created", occurredAt: nowIso, recordedAt: nowIso },
-              ],
-              xeniosAcceptanceEventIds: [],
-              idempotencyKey,
-              createdAt: nowIso,
-              updatedAt: nowIso,
-            };
-            builtRequest = await upsertRequestRecord(store, evidence, memberId, idempotencyKey);
-          },
-        },
-      );
-
-      if (!signResult.ok) {
-        // A guard failure (builtRequest undefined, nothing uploaded) OR the
-        // final signature insert failed (builtRequest is evidence_stored, and
-        // the uploaded objects are now orphans). In the latter case mark the
-        // request failed_cleanup_required so a sweeper can delete the objects.
-        // Either way the agreement stays UNSIGNED and the gate does not advance.
-        if (builtRequest) await this.markFailedCleanup(builtRequest);
-        return { ok: false, code: signResult.code };
-      }
-
-      // The legal signature committed. The COMPLETION TRANSITION flips the
-      // request evidence_stored -> completed, binding the version, hashes, refs,
-      // and the signature id, then writes the archive projection. Only after
-      // this does the agreement present as signed. (This transition and the
-      // signature insert are two writes across two stores, not one database
-      // transaction, so the flow is NOT claimed to be fully atomic; a transition
-      // failure leaves the request in evidence_stored and is reconciled on the
-      // next call. See the implementation report.)
-      const signature = signResult.signature;
-      if (!builtRequest) {
-        // Replay: the signature pre-existed, so beforeCommit did not run.
-        const prior = await this.findNativeRequestFor(memberId, documentVersionId, idempotencyKey);
-        if (prior && prior.nativeCompletionState !== "completed") {
-          const done = await this.finalizeCompleted(prior, signature);
-          return {
-            ok: true,
-            request: done,
-            replayed: true,
-            signedPdfHash: done.signedPdfHash ?? "",
-            certificateHash: done.certificateHash ?? "",
-          };
-        }
-        return {
-          ok: true,
-          request:
-            prior ??
-            replayShell(requestId, memberId, documentVersionId, signature.signedAt, idempotencyKey, input.signerEmail, this.now().toISOString()),
-          replayed: true,
-          signedPdfHash: prior?.signedPdfHash ?? "",
-          certificateHash: prior?.certificateHash ?? "",
-        };
-      }
-
-      const completed = await this.finalizeCompleted(builtRequest, signature);
+    // (3) completion certificate
+    let certificate: Buffer;
+    try {
+      certificate = await pdf.generateCompletionCertificatePdf({
+        memberId,
+        signerEmail: input.signerEmail,
+        documents: [{ title: version.title, documentVersionId: version.id, contentHash: version.contentHash }],
+        signingRequestId: requestId,
+        signedAt: signature.signedAt,
+        ipHash: signature.ipHash,
+        userAgentHash: signature.userAgentHash,
+        signatureMethod: input.evidence.method,
+        signedPdfSha256: signedPdfHash,
+      });
+    } catch {
       return {
-        ok: true,
-        request: completed,
-        replayed: signResult.replayed,
-        signedPdfHash,
-        certificateHash,
+        ok: false,
+        code: "certificate_generation_error",
+        message: "The completion certificate could not be generated.",
       };
+    }
+    const certificateHash = sha256Hex(certificate);
+
+    // (4) both private uploads (xenios-owned hashes). OUTSIDE the transaction.
+    let ingest;
+    try {
+      ingest = await ingestCompletedDocuments({
+        memberId,
+        packetOrDocumentId: version.id,
+        version: version.semver,
+        signedPdf: { bytes: signedPdf, contentType: "application/pdf" },
+        certificate: { bytes: certificate, contentType: "application/pdf" },
+        media,
+        provider: XENIOS_NATIVE_PROVIDER,
+        completedAt: signature.signedAt,
+      });
+    } catch {
+      return { ok: false, code: "storage_error", message: "The signed document could not be stored." };
+    }
+
+    // (5) the durable EVIDENCE record, in state `evidence_stored`. NON-activating
+    // (signingLinkStatus is not `completed`), so it is never shown as signed,
+    // never downloadable, and never counts at the gate. Keyed deterministically
+    // so a retry upserts the same row (no orphan) and a same-key race admits
+    // exactly one. Written BEFORE the commit; the signature is NOT inserted here.
+    const nowIso = this.now().toISOString();
+    const evidence: SigningRequestRecord = {
+      id: requestId,
+      memberId,
+      packetOrDocumentId: version.id,
+      mode: "esign_document",
+      provider: XENIOS_NATIVE_PROVIDER,
+      providerTemplateId: null,
+      providerTemplateVersion: null,
+      providerDocumentId: null,
+      xeniosDocumentVersionIds: [version.id],
+      sourceContentHashes: [version.contentHash],
+      signerIdentifier: input.signerEmail,
+      signingLinkStatus: "created",
+      nativeCompletionState: "evidence_stored",
+      viewedAt: null,
+      signedAt: null,
+      completedAt: null,
+      declinedAt: null,
+      expiredAt: null,
+      signedPdfRef: ingest.signedPdfRef,
+      certificateRef: ingest.certificateRef,
+      signedPdfHash: ingest.signedPdfHash,
+      certificateHash: ingest.certificateHash,
+      verifiedEventIds: [],
+      providerEventHistory: [
+        { eventId: `native:${requestId}:evidence`, type: "created", occurredAt: nowIso, recordedAt: nowIso },
+      ],
+      xeniosAcceptanceEventIds: [],
+      idempotencyKey,
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    };
+    let builtRequest: SigningRequestRecord;
+    try {
+      builtRequest = await upsertRequestRecord(store, evidence, memberId, idempotencyKey);
     } catch (err) {
-      if (err instanceof NativeEvidenceError) {
-        // beforeCommit failed (pdf/cert/upload/evidence-persist). If an evidence
-        // row was written, mark it for cleanup; the agreement is unsigned.
-        if (builtRequest) await this.markFailedCleanup(builtRequest).catch(() => {});
-        return { ok: false, code: err.code, message: err.message };
-      }
+      if (err instanceof NativeEvidenceError) return { ok: false, code: err.code, message: err.message };
       throw err;
     }
+
+    // (6) THE ATOMIC COMMIT. Insert the signature, transition the request to
+    // completed, and upsert the archive as ONE transaction. On failure: NO
+    // signature exists, the request is not completed, the evidence is marked for
+    // cleanup, the agreement stays unsigned, and the gate does not advance.
+    const completedRequest = this.completedShape(builtRequest, signature, this.now().toISOString());
+    const archive = this.archiveShape(completedRequest);
+    const committed = await commit({
+      signature,
+      memberId,
+      documentVersionId,
+      idempotencyKey,
+      completedRequest,
+      archive,
+    });
+    if (!committed.ok) {
+      await this.markFailedCleanup(builtRequest);
+      // Every atomic-commit failure surfaces as a storage error: the signature
+      // did not commit, so from the member's side the completion could not be
+      // stored. The specific NativeCommitCode is for server logs, never leaked.
+      return { ok: false, code: "storage_error", message: "The signature could not be committed." };
+    }
+
+    // The request bound to the signature that actually committed (a concurrent
+    // winner may differ from this call's built record).
+    const finalRequest =
+      committed.signature.id === signature.id
+        ? completedRequest
+        : { ...completedRequest, xeniosAcceptanceEventIds: [committed.signature.id] };
+    return {
+      ok: true,
+      request: finalRequest,
+      replayed: committed.replayed,
+      signedPdfHash,
+      certificateHash,
+    };
   }
 
-  /** The completion transition: evidence_stored -> completed, binding the
-   * signature and refs, then the archive projection. */
-  private async finalizeCompleted(
+  /**
+   * Replay for an already-existing signature. If a completed native request is
+   * on file, return it. A signature with no completed native request means the
+   * agreement was signed off the native path (clickwrap); the agreement is
+   * signed, there is simply no native signed-PDF to point at.
+   */
+  private async replayCompleted(
+    memberId: string,
+    documentVersionId: string,
+    idempotencyKey: string,
+    signature: SignatureRecord,
+    requestId: string,
+    signerEmail: string,
+  ): Promise<NativeSignResult> {
+    const prior = await this.findNativeRequestFor(memberId, documentVersionId, idempotencyKey);
+    if (prior && prior.nativeCompletionState === "completed") {
+      return {
+        ok: true,
+        request: prior,
+        replayed: true,
+        signedPdfHash: prior.signedPdfHash ?? "",
+        certificateHash: prior.certificateHash ?? "",
+      };
+    }
+    return {
+      ok: true,
+      request:
+        prior ??
+        replayShell(requestId, memberId, documentVersionId, signature.signedAt, idempotencyKey, signerEmail, this.now().toISOString()),
+      replayed: true,
+      signedPdfHash: prior?.signedPdfHash ?? "",
+      certificateHash: prior?.certificateHash ?? "",
+    };
+  }
+
+  /** Build the completed-request shape (state completed, signature id bound)
+   * that the atomic commit persists. Pure: no store write. */
+  private completedShape(
     evidence: SigningRequestRecord,
     signature: { id: string; signedAt: string },
-  ): Promise<SigningRequestRecord> {
-    const nowIso = this.now().toISOString();
-    const completed: SigningRequestRecord = {
+    nowIso: string,
+  ): SigningRequestRecord {
+    return {
       ...evidence,
       signingLinkStatus: "completed",
       nativeCompletionState: "completed",
@@ -352,43 +370,12 @@ export class NativeEsignService {
       ],
       updatedAt: nowIso,
     };
-    await this.deps.store.requests.update(completed);
-    await this.persistArchiveBestEffort(completed);
-    return completed;
   }
 
-  /** Mark an evidence record's uploaded objects for cleanup after the signature
-   * commit failed. The state is the durable cleanup marker a sweeper reads. */
-  private async markFailedCleanup(evidence: SigningRequestRecord): Promise<void> {
-    try {
-      await this.deps.store.requests.update({
-        ...evidence,
-        nativeCompletionState: "failed_cleanup_required",
-        updatedAt: this.now().toISOString(),
-      });
-    } catch {
-      // best effort; the request already carries a non-completed state
-    }
-  }
-
-  /** Find the completed native request for this member+version (by key first,
-   * else any native request for the version). */
-  private async findNativeRequestFor(
-    memberId: string,
-    documentVersionId: string,
-    idempotencyKey: string,
-  ): Promise<SigningRequestRecord | undefined> {
-    const byKey = await this.deps.store.requests.getByIdempotencyKey(memberId, idempotencyKey);
-    if (byKey && byKey.xeniosDocumentVersionIds[0] === documentVersionId) return byKey;
-    const all = await this.deps.store.requests.listByMember(memberId);
-    return all.find(
-      (r) => r.provider === XENIOS_NATIVE_PROVIDER && r.xeniosDocumentVersionIds[0] === documentVersionId,
-    );
-  }
-
-  private async persistArchiveBestEffort(request: SigningRequestRecord): Promise<void> {
+  /** Build the archive projection the atomic commit inserts. Pure: no store write. */
+  private archiveShape(request: SigningRequestRecord): ArchiveRecord {
     const nowIso = this.now().toISOString();
-    const archiveRecord: ArchiveRecord = {
+    return {
       id: this.newId(),
       memberId: request.memberId,
       packetOrDocumentId: request.packetOrDocumentId,
@@ -410,17 +397,48 @@ export class NativeEsignService {
       createdAt: nowIso,
       updatedAt: nowIso,
     };
+  }
+
+  /** Mark an evidence record's uploaded objects for cleanup after the atomic
+   * commit failed. The state is the durable cleanup marker a sweeper reads. The
+   * agreement is unsigned and the gate is not advanced. */
+  private async markFailedCleanup(evidence: SigningRequestRecord): Promise<void> {
     try {
-      // Idempotent: skip if an archive row for this request's document already
-      // exists (a retry after the signature committed).
-      const existing = await this.deps.store.archive.listByMember(request.memberId);
-      if (existing.some((a) => a.signedPdfHash === request.signedPdfHash && a.documentVersionId === archiveRecord.documentVersionId)) {
-        return;
-      }
-      await this.deps.store.archive.insert(archiveRecord);
+      await this.deps.store.requests.update({
+        ...evidence,
+        nativeCompletionState: "failed_cleanup_required",
+        updatedAt: this.now().toISOString(),
+      });
     } catch {
-      // Non-fatal by design; the signing request is the source of truth.
+      // best effort; the request already carries a non-completed state
     }
+  }
+
+  /** Find the native request for this member+version (by key first, else any
+   * native request for the version). */
+  private async findNativeRequestFor(
+    memberId: string,
+    documentVersionId: string,
+    idempotencyKey: string,
+  ): Promise<SigningRequestRecord | undefined> {
+    const byKey = await this.deps.store.requests.getByIdempotencyKey(memberId, idempotencyKey);
+    if (byKey && byKey.xeniosDocumentVersionIds[0] === documentVersionId) return byKey;
+    const all = await this.deps.store.requests.listByMember(memberId);
+    return all.find(
+      (r) => r.provider === XENIOS_NATIVE_PROVIDER && r.xeniosDocumentVersionIds[0] === documentVersionId,
+    );
+  }
+}
+
+/** Thrown from inside evidence persistence so the caller maps it to a precise
+ * result code without inserting a signature. */
+class NativeEvidenceError extends Error {
+  constructor(
+    public readonly code: NativeSignFailureCode,
+    message: string,
+  ) {
+    super(message);
+    this.name = "NativeEvidenceError";
   }
 }
 
@@ -434,7 +452,7 @@ function deterministicRequestId(memberId: string, idempotencyKey: string): strin
  * Persist the signing-request evidence row idempotently and race-tolerantly.
  * A prior row (retry) is updated; a concurrent racer that inserted first is
  * detected by re-fetching after a failed insert and updated instead. A genuine
- * store outage (no row appears) throws so the signature is never inserted.
+ * store outage (no row appears) throws so the commit never runs.
  */
 async function upsertRequestRecord(
   store: EsignStore,
@@ -444,6 +462,8 @@ async function upsertRequestRecord(
 ): Promise<SigningRequestRecord> {
   const prior = await store.requests.getByIdempotencyKey(memberId, idempotencyKey);
   if (prior) {
+    // A prior row that already completed must NOT be reopened to evidence_stored.
+    if (prior.nativeCompletionState === "completed") return prior;
     await store.requests.update({ ...request, id: prior.id, createdAt: prior.createdAt });
     return { ...request, id: prior.id, createdAt: prior.createdAt };
   }
@@ -456,10 +476,12 @@ async function upsertRequestRecord(
     // reconcile to it; otherwise the store genuinely failed.
     const winner = await store.requests.getByIdempotencyKey(memberId, idempotencyKey);
     if (winner) {
-      try {
-        await store.requests.update({ ...request, id: winner.id, createdAt: winner.createdAt });
-      } catch {
-        // best effort; the winner row already carries this document's evidence
+      if (winner.nativeCompletionState !== "completed") {
+        try {
+          await store.requests.update({ ...request, id: winner.id, createdAt: winner.createdAt });
+        } catch {
+          // best effort; the winner row already carries this document's evidence
+        }
       }
       return { ...request, id: winner.id, createdAt: winner.createdAt };
     }

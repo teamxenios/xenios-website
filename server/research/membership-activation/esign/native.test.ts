@@ -5,7 +5,15 @@ import { createInMemoryDocumentsStore, type DocumentsStore } from "../persistenc
 import { InMemoryEsignMediaProvider } from "./archive";
 import { createInMemoryEsignStore } from "./persistence/esign-store";
 import { NativeEsignService, validateDrawnPng } from "./native";
-import type { CompleteNativeSignatureInput, EsignMediaPort, EsignStore, PdfGenerator } from "./contracts";
+import { createInMemoryNativeCommit } from "./native-commit";
+import type {
+  CompleteNativeSignatureInput,
+  EsignMediaPort,
+  EsignStore,
+  NativeCommitFn,
+  PdfGenerator,
+} from "./contracts";
+import type { SignaturesStore } from "../signatures";
 
 const NOW = () => new Date("2026-07-23T12:00:00.000Z");
 const MEMBER = "11111111-1111-4111-8111-111111111111";
@@ -27,6 +35,8 @@ interface BuildOpts {
   pdf?: PdfGenerator;
   media?: EsignMediaPort;
   store?: EsignStore;
+  /** Override the atomic-commit seam (e.g. a failing commit for the RPC-failure tests). */
+  commit?: (signatures: SignaturesStore, esign: EsignStore) => NativeCommitFn;
 }
 
 function build(opts: BuildOpts = {}) {
@@ -37,9 +47,10 @@ function build(opts: BuildOpts = {}) {
   const signatures = new SignatureService(documentsStore, { now: NOW, newId: () => `sig-${++s}` });
   const store = opts.store ?? createInMemoryEsignStore();
   const media = opts.media ?? new InMemoryEsignMediaProvider();
+  const commit = (opts.commit ?? createInMemoryNativeCommit)(documentsStore, store);
   let r = 0;
   const service = new NativeEsignService(
-    { store, media, lifecycle, signatures, pdf: opts.pdf ?? fakePdf },
+    { store, media, lifecycle, signatures, pdf: opts.pdf ?? fakePdf, commit },
     { now: NOW, newId: () => `arc-${++r}` },
   );
   return { documentsStore, lifecycle, signatures, store, media, service };
@@ -202,7 +213,14 @@ describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the ag
     await consentFirst(healthy.lifecycle, healthy.service);
     const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
     const failing = new NativeEsignService(
-      { store: healthy.store, media: healthy.media, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf },
+      {
+        store: healthy.store,
+        media: healthy.media,
+        lifecycle: healthy.lifecycle,
+        signatures: healthy.signatures,
+        pdf,
+        commit: createInMemoryNativeCommit(healthy.documentsStore, healthy.store),
+      },
       { now: NOW },
     );
     const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
@@ -222,7 +240,14 @@ describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the ag
     await consentFirst(healthy.lifecycle, healthy.service);
     const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
     const failing = new NativeEsignService(
-      { store: healthy.store, media: failingMedia, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf: fakePdf },
+      {
+        store: healthy.store,
+        media: failingMedia,
+        lifecycle: healthy.lifecycle,
+        signatures: healthy.signatures,
+        pdf: fakePdf,
+        commit: createInMemoryNativeCommit(healthy.documentsStore, healthy.store),
+      },
       { now: NOW },
     );
     const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
@@ -247,7 +272,14 @@ describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the ag
     await consentFirst(healthy.lifecycle, healthy.service);
     const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
     const failing = new NativeEsignService(
-      { store: healthy.store, media, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf: fakePdf },
+      {
+        store: healthy.store,
+        media,
+        lifecycle: healthy.lifecycle,
+        signatures: healthy.signatures,
+        pdf: fakePdf,
+        commit: createInMemoryNativeCommit(healthy.documentsStore, healthy.store),
+      },
       { now: NOW },
     );
     const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
@@ -261,7 +293,14 @@ describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the ag
     await consentFirst(healthy.lifecycle, healthy.service);
     const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
     const failing = new NativeEsignService(
-      { store: healthy.store, media: healthy.media, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf },
+      {
+        store: healthy.store,
+        media: healthy.media,
+        lifecycle: healthy.lifecycle,
+        signatures: healthy.signatures,
+        pdf,
+        commit: createInMemoryNativeCommit(healthy.documentsStore, healthy.store),
+      },
       { now: NOW },
     );
     const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
@@ -273,8 +312,16 @@ describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the ag
     const healthy = build();
     await consentFirst(healthy.lifecycle, healthy.service);
     const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
+    const brokenStore = failingRequestStore();
     const failing = new NativeEsignService(
-      { store: failingRequestStore(), media: healthy.media, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf: fakePdf },
+      {
+        store: brokenStore,
+        media: healthy.media,
+        lifecycle: healthy.lifecycle,
+        signatures: healthy.signatures,
+        pdf: fakePdf,
+        commit: createInMemoryNativeCommit(healthy.documentsStore, brokenStore),
+      },
       { now: NOW },
     );
     const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
@@ -295,13 +342,21 @@ describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the ag
     // Sign the consent on a HEALTHY service so the agreement clears the
     // electronic-consent-first guard.
     const healthy = new NativeEsignService(
-      { store, media, lifecycle, signatures: new SignatureService(documentsStore, { now: NOW }), pdf: fakePdf },
+      {
+        store,
+        media,
+        lifecycle,
+        signatures: new SignatureService(documentsStore, { now: NOW }),
+        pdf: fakePdf,
+        commit: createInMemoryNativeCommit(documentsStore, store),
+      },
       { now: NOW },
     );
     await healthy.completeNativeSignature(signInput({ documentVersionId: consent.id, idempotencyKey: "c" }));
 
-    // The failing service shares the same version/signature store but its
-    // insertSignature throws (the final commit fails).
+    // The failing service shares the same stores, but the ATOMIC COMMIT's
+    // signature insert throws (the final legal transaction fails). No signature
+    // may persist; the evidence is marked for cleanup.
     const failingDocsStore = {
       ...documentsStore,
       insertSignature: async () => {
@@ -309,7 +364,14 @@ describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the ag
       },
     };
     const failing = new NativeEsignService(
-      { store, media, lifecycle, signatures: new SignatureService(failingDocsStore, { now: NOW }), pdf: fakePdf },
+      {
+        store,
+        media,
+        lifecycle,
+        signatures: new SignatureService(documentsStore, { now: NOW }),
+        pdf: fakePdf,
+        commit: createInMemoryNativeCommit(failingDocsStore, store),
+      },
       { now: NOW },
     );
     const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id, idempotencyKey: "k" }));
@@ -366,7 +428,14 @@ describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the ag
     await consentFirst(healthy.lifecycle, healthy.service);
     const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
     const svc = new NativeEsignService(
-      { store: healthy.store, media: healthy.media, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf },
+      {
+        store: healthy.store,
+        media: healthy.media,
+        lifecycle: healthy.lifecycle,
+        signatures: healthy.signatures,
+        pdf,
+        commit: createInMemoryNativeCommit(healthy.documentsStore, healthy.store),
+      },
       { now: NOW },
     );
     const first = await svc.completeNativeSignature(signInput({ documentVersionId: agreement.id, idempotencyKey: "retry" }));
@@ -396,6 +465,135 @@ describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the ag
     expect(reqs).toHaveLength(1);
     const sigCount = (await documentsStore.listSignaturesForMember(MEMBER)).filter((s) => s.documentVersionId === agreement.id);
     expect(sigCount).toHaveLength(1);
+  });
+});
+
+describe("NativeEsignService: ATOMIC COMMIT (the final legal transaction)", () => {
+  // A commit that always fails WITHOUT writing (simulates an RPC / transaction
+  // failure). The signature must never persist.
+  const failingCommit: (s: SignaturesStore, e: EsignStore) => NativeCommitFn = () => async () => ({
+    ok: false,
+    code: "commit_error",
+  });
+
+  it("#1 a transaction failure inserts NO signature", async () => {
+    // Consent must be signed first, so use a healthy service for consent, then a
+    // failing-commit service for the agreement over the SAME stores.
+    const healthy = build();
+    await consentFirst(healthy.lifecycle, healthy.service);
+    const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
+    const failing = new NativeEsignService(
+      {
+        store: healthy.store,
+        media: healthy.media,
+        lifecycle: healthy.lifecycle,
+        signatures: healthy.signatures,
+        pdf: fakePdf,
+        commit: failingCommit(healthy.documentsStore, healthy.store),
+      },
+      { now: NOW },
+    );
+    const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id, idempotencyKey: "fail" }));
+    expect(res.ok).toBe(false);
+    expect(await healthy.documentsStore.getSignature(MEMBER, agreement.id)).toBeNull();
+  });
+
+  it("#2 a transaction failure leaves the request NOT completed (marked for cleanup), evidence uploaded", async () => {
+    const healthy = build();
+    await consentFirst(healthy.lifecycle, healthy.service);
+    const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
+    const failing = new NativeEsignService(
+      {
+        store: healthy.store,
+        media: healthy.media,
+        lifecycle: healthy.lifecycle,
+        signatures: healthy.signatures,
+        pdf: fakePdf,
+        commit: failingCommit(healthy.documentsStore, healthy.store),
+      },
+      { now: NOW },
+    );
+    await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id, idempotencyKey: "fail2" }));
+    const req = await healthy.store.requests.getByIdempotencyKey(MEMBER, "fail2");
+    expect(req).not.toBeNull();
+    expect(req?.nativeCompletionState).toBe("failed_cleanup_required");
+    expect(req?.signingLinkStatus).not.toBe("completed");
+    expect(req?.signedPdfRef).toBeTruthy(); // evidence WAS uploaded, but never counts
+    // No archive projection presents THIS agreement as a completed record.
+    const archived = (await healthy.store.archive.listByMember(MEMBER)).filter(
+      (a) => a.documentVersionId === agreement.id,
+    );
+    expect(archived).toHaveLength(0);
+  });
+
+  it("#9 a native signature exists IFF its native request is completed (both a success and a failure)", async () => {
+    const { lifecycle, service, store, documentsStore, signatures } = build();
+    await consentFirst(lifecycle, service);
+
+    // Success: the signature exists AND the native request is completed.
+    const good = await publish(lifecycle, "founding_membership_agreement");
+    const okRes = await service.completeNativeSignature(signInput({ documentVersionId: good.id, idempotencyKey: "good" }));
+    expect(okRes.ok).toBe(true);
+    const goodSig = await documentsStore.getSignature(MEMBER, good.id);
+    const goodReq = await store.requests.getByIdempotencyKey(MEMBER, "good");
+    expect(goodSig).not.toBeNull();
+    expect(goodReq?.nativeCompletionState).toBe("completed");
+
+    // Failure over a separate service+version: NO signature, request not completed.
+    const bad = await publish(lifecycle, "privacy_notice");
+    const failing = new NativeEsignService(
+      {
+        store,
+        media: new InMemoryEsignMediaProvider(),
+        lifecycle,
+        signatures,
+        pdf: fakePdf,
+        commit: failingCommit(documentsStore, store),
+      },
+      { now: NOW },
+    );
+    await failing.completeNativeSignature(signInput({ documentVersionId: bad.id, idempotencyKey: "bad" }));
+    expect(await documentsStore.getSignature(MEMBER, bad.id)).toBeNull();
+    const badReq = await store.requests.getByIdempotencyKey(MEMBER, "bad");
+    expect(badReq?.nativeCompletionState).not.toBe("completed");
+
+    // The invariant: EVERY native request holding a completed state has a
+    // matching signature, and no signature exists for a non-completed request.
+    for (const r of await store.requests.listByMember(MEMBER)) {
+      const versionId = r.xeniosDocumentVersionIds[0];
+      const sig = await documentsStore.getSignature(MEMBER, versionId);
+      if (sig) expect(r.nativeCompletionState).toBe("completed");
+      if (r.nativeCompletionState !== "completed") expect(sig).toBeNull();
+    }
+  });
+
+  it("#10 existing clickwrap (AgreementSignCard) signatures still satisfy the gate; the native-evidence rule does not break them", async () => {
+    const { lifecycle, signatures } = build();
+    const consent = await publish(lifecycle, "electronic_record_consent");
+    const agreement = await publish(lifecycle, "founding_membership_agreement");
+    // Sign both through the clickwrap SignatureService.sign() path (no native
+    // request, no PDF): this is what AgreementSignCard uses.
+    const c = await signatures.sign({
+      memberId: MEMBER,
+      documentVersionId: consent.id,
+      typedLegalName: "Member Test",
+      fullDocumentShown: true,
+      affirmativeConsent: true,
+    });
+    const a = await signatures.sign({
+      memberId: MEMBER,
+      documentVersionId: agreement.id,
+      typedLegalName: "Member Test",
+      fullDocumentShown: true,
+      affirmativeConsent: true,
+    });
+    expect(c.ok && a.ok).toBe(true);
+    const gate = await signatures.requiredAgreementsSatisfied(MEMBER);
+    // These two clickwrap-signed categories are NOT blocking (the gate still
+    // blocks on the OTHER unpublished required categories, which is expected).
+    const blockingCategories = gate.blocking.map((b) => b.category);
+    expect(blockingCategories).not.toContain("electronic_record_consent");
+    expect(blockingCategories).not.toContain("founding_membership_agreement");
   });
 });
 
