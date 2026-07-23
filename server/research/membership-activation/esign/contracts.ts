@@ -32,14 +32,116 @@ export const SIGNING_MODES = [
   "view_only_public_policy",
   "clickwrap_acceptance",
   "typed_signature",
+  // OpenSign (external provider) modes. Kept for backward compatibility so any
+  // historical record continues to deserialize; the native modes below are the
+  // path the embedded Xenios signer uses.
   "opensign_document",
   "opensign_packet",
+  // Native Xenios e-signature modes: signing happens embedded in the Xenios
+  // page, no external provider, no redirect, no webhook. The authenticated
+  // submission IS the completion.
+  "esign_document",
+  "esign_packet",
 ] as const;
 export type SigningMode = (typeof SIGNING_MODES)[number];
 
-/** The two modes that route through an external e-signature provider. */
+/** The two modes that route through an EXTERNAL e-signature provider (OpenSign). */
 export function isProviderBackedMode(mode: SigningMode): boolean {
   return mode === "opensign_document" || mode === "opensign_packet";
+}
+
+/** The two NATIVE Xenios modes: signed in-page, no external provider. */
+export function isNativeMode(mode: SigningMode): boolean {
+  return mode === "esign_document" || mode === "esign_packet";
+}
+
+/** The provider value stamped on native (embedded Xenios) signing records. */
+export const XENIOS_NATIVE_PROVIDER = "xenios_native";
+
+// --- Native (embedded) signing --------------------------------------------
+// The native path reuses the agreement engine for the legal record and the
+// archive pipeline for the signed PDF + certificate. There is no remote
+// session, no signing URL, and no webhook: the member signs inside the Xenios
+// page and the authenticated POST is the completion.
+
+export const NATIVE_SIGNATURE_METHODS = ["typed", "drawn"] as const;
+export type NativeSignatureMethod = (typeof NATIVE_SIGNATURE_METHODS)[number];
+
+/** The signature evidence a member submits from the embedded signer. */
+export interface NativeSignatureEvidence {
+  method: NativeSignatureMethod;
+  /** The typed legal name (always required, both methods). */
+  typedLegalName: string;
+  /**
+   * For a DRAWN signature: a base64-encoded PNG of the signature strokes (the
+   * `data:image/png;base64,` prefix is accepted and stripped). Null for typed.
+   */
+  drawnPngBase64: string | null;
+}
+
+/** One document a native signing request covers, resolved to its published version. */
+export interface NativeSigningDocumentInput {
+  documentVersionId: string;
+  fullDocumentShown: boolean;
+  affirmativeConsent: boolean;
+  /** Required true only where the category demands its own separate acknowledgment. */
+  separateAcknowledgment?: boolean;
+}
+
+/** A member's submission to complete a native signature for one document. */
+export interface CompleteNativeSignatureInput {
+  /** The authenticated member id (server-supplied context, never from the body). */
+  memberId: string;
+  signerEmail: string;
+  document: NativeSigningDocumentInput;
+  evidence: NativeSignatureEvidence;
+  /** Idempotency key so a retry replays instead of minting a second record. */
+  idempotencyKey: string;
+  ip?: string | null;
+  userAgent?: string | null;
+}
+
+// --- PDF + completion certificate generation (native path) ----------------
+// The generator is an injected seam so the native signing service is unit
+// tested without a real PDF engine, and so the real pdf-lib implementation is
+// swappable. NO secret, key, or token ever enters a generated document.
+
+/** Everything the signed-agreement PDF renders. */
+export interface SignedAgreementPdfInput {
+  agreementTitle: string;
+  /** The exact published agreement content that was shown and signed. */
+  agreementContent: string;
+  semver: string;
+  documentVersionId: string;
+  sourceContentHash: string;
+  typedLegalName: string;
+  signatureMethod: NativeSignatureMethod;
+  /** The drawn signature PNG (base64, no data-uri prefix), or null for typed. */
+  drawnPngBase64: string | null;
+  signedAt: string;
+  /** Whether this document required (and received) a separate acknowledgment. */
+  separateAcknowledgment: boolean;
+  signingRequestId: string;
+}
+
+/** Everything the completion certificate renders. */
+export interface CompletionCertificatePdfInput {
+  memberId: string;
+  signerEmail: string;
+  documents: ReadonlyArray<{ title: string; documentVersionId: string; contentHash: string }>;
+  signingRequestId: string;
+  signedAt: string;
+  /** IP and user agent are stored only as sha-256 hashes, never raw. */
+  ipHash: string | null;
+  userAgentHash: string | null;
+  signatureMethod: NativeSignatureMethod;
+  /** The sha-256 of the final signed PDF this certificate attests. */
+  signedPdfSha256: string;
+}
+
+export interface PdfGenerator {
+  generateSignedAgreementPdf(input: SignedAgreementPdfInput): Promise<Buffer>;
+  generateCompletionCertificatePdf(input: CompletionCertificatePdfInput): Promise<Buffer>;
 }
 
 // --- Template + widget specification ---------------------------------------
