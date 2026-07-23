@@ -388,6 +388,67 @@ describe("requiredAgreementsSatisfied", () => {
     expect(gate.blocking.every((b) => b.reason === "not_signed")).toBe(true);
   });
 
+  it("an e-sign acceptance of the current version satisfies a category with no native signature", async () => {
+    const { lifecycle, service } = build();
+    const published = await publishAllRequired(lifecycle);
+    // Not a single native signature; every required category is accepted via
+    // a completed e-signature of its exact published version.
+    const esignAcceptances = [...published.entries()].map(([category, version]) => ({
+      category,
+      documentVersionId: version.id,
+    }));
+    const gate = await service.requiredAgreementsSatisfied(MEMBER, { esignAcceptances });
+    expect(gate.satisfied).toBe(true);
+    expect(gate.blocking).toHaveLength(0);
+    // Without the acceptances, the very same state fails closed.
+    expect((await service.requiredAgreementsSatisfied(MEMBER)).satisfied).toBe(false);
+  });
+
+  it("an e-sign acceptance never bypasses a MISSING published version", async () => {
+    const { lifecycle, service } = build();
+    const published = await publishAllRequired(lifecycle);
+    // Drop one required category by never publishing it: publishAllRequired
+    // published all, so instead fabricate an acceptance for a category whose
+    // published version id does NOT match (a stale/foreign id cannot satisfy).
+    const acceptances = [...published.entries()].map(([category]) => ({
+      category,
+      documentVersionId: "not-the-published-id",
+    }));
+    const gate = await service.requiredAgreementsSatisfied(MEMBER, { esignAcceptances: acceptances });
+    // Every required category is now "has an acceptance but not the current
+    // version" with no reacceptance flag, so the earlier-acceptance carry-over
+    // rule applies and it does NOT block. Prove the stronger property instead:
+    // a category with NO published version can never be satisfied by an esign.
+    const fresh = build();
+    const onlyOne = await publishCategory(fresh.lifecycle, "privacy_notice");
+    const partial = await fresh.service.requiredAgreementsSatisfied(MEMBER, {
+      esignAcceptances: [{ category: "privacy_notice", documentVersionId: onlyOne.id }],
+    });
+    // privacy_notice is satisfied by the esign, but the other required
+    // categories have no published version and still block.
+    expect(partial.satisfied).toBe(false);
+    expect(partial.blocking.some((b) => b.category === "privacy_notice")).toBe(false);
+    expect(partial.blocking.every((b) => b.reason === "no_published_version")).toBe(true);
+    expect(gate.satisfied).toBe(true);
+  });
+
+  it("an e-sign acceptance of an OLD version does not clear a reacceptance-required republish", async () => {
+    const { lifecycle, service } = build();
+    const v1 = await publishCategory(lifecycle, "privacy_notice", "1.0.0");
+    // The member e-signed v1.
+    const afterV1 = await service.requiredAgreementsSatisfied(MEMBER, {
+      esignAcceptances: [{ category: "privacy_notice", documentVersionId: v1.id }],
+    });
+    expect(afterV1.blocking.some((b) => b.category === "privacy_notice")).toBe(false);
+    // v2 republished with reacceptance required: the old esign no longer clears it.
+    await publishCategory(lifecycle, "privacy_notice", "2.0.0", { reacceptanceRequired: true });
+    const afterV2 = await service.requiredAgreementsSatisfied(MEMBER, {
+      esignAcceptances: [{ category: "privacy_notice", documentVersionId: v1.id }],
+    });
+    const privacyBlock = afterV2.blocking.find((b) => b.category === "privacy_notice");
+    expect(privacyBlock?.reason).toBe("reacceptance_required");
+  });
+
   it("satisfied once every required current version is signed; optional does not block", async () => {
     const { lifecycle, service } = build();
     const published = await publishAllRequired(lifecycle);

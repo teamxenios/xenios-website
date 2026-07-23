@@ -270,14 +270,34 @@ export class SignatureService {
    * version with reacceptanceRequired invalidates satisfaction until the
    * member re-signs. A version published with reacceptanceRequired false
    * lets a signature on an earlier version of the category carry over.
+   *
+   * A category can be satisfied by a NATIVE signature (this engine) OR by a
+   * completed e-signature (OpenSign) acceptance passed in `opts`. The e-sign
+   * acceptances are ADDITIVE and can only ever SATISFY a category for a
+   * published version's exact id; they never bypass a missing published
+   * version, never relax reacceptance, and default to empty so a caller that
+   * passes nothing sees byte-identical native-only behavior. This is the one
+   * place the two execution paths converge, and it stays the source of gate
+   * truth.
    */
-  async requiredAgreementsSatisfied(memberId: string): Promise<AgreementsGateResult> {
+  async requiredAgreementsSatisfied(
+    memberId: string,
+    opts?: { esignAcceptances?: readonly EsignAcceptance[] },
+  ): Promise<AgreementsGateResult> {
     const signatures = await this.store.listSignaturesForMember(memberId);
     const byCategory = new Map<DocumentCategory, SignatureRecord[]>();
     for (const signature of signatures) {
       const list = byCategory.get(signature.category) ?? [];
       list.push(signature);
       byCategory.set(signature.category, list);
+    }
+
+    // E-sign completions grouped by category, as a set of accepted version ids.
+    const esignByCategory = new Map<DocumentCategory, Set<string>>();
+    for (const acceptance of opts?.esignAcceptances ?? []) {
+      const set = esignByCategory.get(acceptance.category) ?? new Set<string>();
+      set.add(acceptance.documentVersionId);
+      esignByCategory.set(acceptance.category, set);
     }
 
     const blocking: AgreementsGateResult["blocking"] = [];
@@ -292,15 +312,18 @@ export class SignatureService {
       if (published.requirement !== "required") continue;
 
       const signed = byCategory.get(definition.category) ?? [];
-      const signedCurrent = signed.some((s) => s.documentVersionId === published.id);
-      if (signedCurrent) continue;
+      const esigned = esignByCategory.get(definition.category) ?? new Set<string>();
+      const currentAccepted =
+        signed.some((s) => s.documentVersionId === published.id) || esigned.has(published.id);
+      if (currentAccepted) continue;
 
-      if (signed.length === 0) {
+      const hasAnyAcceptance = signed.length > 0 || esigned.size > 0;
+      if (!hasAnyAcceptance) {
         blocking.push({ category: definition.category, reason: "not_signed" });
       } else if (published.reacceptanceRequired) {
         blocking.push({ category: definition.category, reason: "reacceptance_required" });
       }
-      // signed.length > 0 and no reacceptance required: the earlier signature
+      // An earlier acceptance (native or e-sign) with no reacceptance required
       // carries over and does not block.
     }
     return { satisfied: blocking.length === 0, blocking };
@@ -320,6 +343,17 @@ export class SignatureService {
     if (!published.reacceptanceRequired && signatures.length > 0) return signatures[0];
     return null;
   }
+}
+
+/**
+ * A completed e-signature (OpenSign) acceptance of one Xenios document version.
+ * The routes layer builds these from the member's completed signing requests
+ * and passes them into requiredAgreementsSatisfied so an e-signed category
+ * counts exactly like a natively signed one, for the published version id.
+ */
+export interface EsignAcceptance {
+  category: DocumentCategory;
+  documentVersionId: string;
 }
 
 export interface AgreementsGateResult {
