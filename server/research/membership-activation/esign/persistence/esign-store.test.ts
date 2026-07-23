@@ -56,6 +56,7 @@ function request(overrides: Partial<SigningRequestRecord> = {}): SigningRequestR
     verifiedEventIds: [],
     providerEventHistory: [],
     xeniosAcceptanceEventIds: [],
+    nativeCompletionState: null,
     idempotencyKey: "idem-1",
     createdAt: NOW,
     updatedAt: NOW,

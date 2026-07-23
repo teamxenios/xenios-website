@@ -133,6 +133,19 @@ export interface SignatureServiceOptions {
   newId?: () => string;
 }
 
+/**
+ * Per-call sign options. `beforeCommit` runs AFTER every legal guard passes
+ * and the signature record is built, but BEFORE the record is inserted. If it
+ * throws, the signature is NOT persisted, so a caller can make the
+ * gate-satisfying signature atomic with its own durable side effects (native
+ * signed-PDF + certificate + evidence record): the signature only counts once
+ * everything before it has succeeded. This never relaxes a legal guard; it only
+ * defers the commit.
+ */
+export interface SignOptions {
+  beforeCommit?: (record: SignatureRecord) => Promise<void>;
+}
+
 export type SignaturesBackingStore = DocumentVersionsStore & SignaturesStore;
 
 export class SignatureService {
@@ -147,7 +160,7 @@ export class SignatureService {
     this.newId = options.newId ?? (() => crypto.randomUUID());
   }
 
-  async sign(input: SignDocumentInput): Promise<SignResult> {
+  async sign(input: SignDocumentInput, options: SignOptions = {}): Promise<SignResult> {
     const version = await this.store.getVersion(input.documentVersionId);
     if (!version) return { ok: false, code: "version_not_found" };
 
@@ -197,6 +210,15 @@ export class SignatureService {
       userAgentHash: input.userAgent ? sha256Hex(input.userAgent) : null,
       signedAt: this.now().toISOString(),
     };
+
+    // Atomic-completion hook: everything the caller needs durable BEFORE the
+    // signature counts (native signed PDF + certificate + evidence record). If
+    // it throws, the signature is never inserted, so a partial-evidence failure
+    // leaves the agreement unsigned and the gate unadvanced. The error
+    // propagates to the caller unchanged.
+    if (options.beforeCommit) {
+      await options.beforeCommit(record);
+    }
 
     try {
       await this.store.insertSignature(record);

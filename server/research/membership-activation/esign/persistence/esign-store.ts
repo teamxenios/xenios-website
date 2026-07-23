@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdmin, supabaseConfigured } from "../../../../supabase";
 import {
   ESIGN_EVENT_TYPES,
+  NATIVE_COMPLETION_STATES,
   SIGNING_MODES,
   type ArchiveRecord,
   type ArchiveAccessClassification,
@@ -134,6 +135,7 @@ export interface SigningRequestRow {
   verified_event_ids: unknown;
   provider_event_history: unknown;
   xenios_acceptance_event_ids: unknown;
+  native_completion_state: string | null;
   idempotency_key: string;
   created_at: string;
   updated_at: string;
@@ -144,7 +146,7 @@ const REQUEST_COLUMNS =
   "provider_template_version, provider_document_id, xenios_document_version_ids, source_content_hashes, " +
   "signer_identifier, signing_link_status, viewed_at, signed_at, completed_at, declined_at, expired_at, " +
   "signed_pdf_ref, certificate_ref, signed_pdf_hash, certificate_hash, verified_event_ids, " +
-  "provider_event_history, xenios_acceptance_event_ids, idempotency_key, created_at, updated_at";
+  "provider_event_history, xenios_acceptance_event_ids, native_completion_state, idempotency_key, created_at, updated_at";
 
 export function requestToRow(record: SigningRequestRecord): SigningRequestRow {
   return {
@@ -173,6 +175,7 @@ export function requestToRow(record: SigningRequestRecord): SigningRequestRow {
     verified_event_ids: [...record.verifiedEventIds],
     provider_event_history: record.providerEventHistory.map((entry) => ({ ...entry })),
     xenios_acceptance_event_ids: [...record.xeniosAcceptanceEventIds],
+    native_completion_state: record.nativeCompletionState ?? null,
     idempotency_key: record.idempotencyKey,
     created_at: record.createdAt,
     updated_at: record.updatedAt,
@@ -189,6 +192,8 @@ export function rowToRequest(row: SigningRequestRow): SigningRequestRecord | nul
   const acceptance = stringArray(row.xenios_acceptance_event_ids);
   const history = eventHistory(row.provider_event_history);
   if (!versionIds || !hashes || !verified || !acceptance || !history) return null;
+  const nativeState = row.native_completion_state;
+  if (nativeState !== null && !(NATIVE_COMPLETION_STATES as readonly string[]).includes(nativeState)) return null;
   return {
     id: row.id,
     memberId: row.member_id,
@@ -214,6 +219,7 @@ export function rowToRequest(row: SigningRequestRow): SigningRequestRecord | nul
     verifiedEventIds: verified,
     providerEventHistory: history,
     xeniosAcceptanceEventIds: acceptance,
+    nativeCompletionState: (nativeState as SigningRequestRecord["nativeCompletionState"]) ?? null,
     idempotencyKey: row.idempotency_key,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

@@ -318,11 +318,28 @@ export interface SigningRequestRecord {
   providerEventHistory: readonly ProviderEventLogEntry[];
   /** Xenios signature/acceptance record ids created on completion. */
   xeniosAcceptanceEventIds: readonly string[];
+  /**
+   * The NATIVE completion state machine (null for OpenSign requests). Only
+   * `completed` may satisfy the activation gate, appear as signed, appear in the
+   * document center, or produce a download URL. `evidence_stored` is a durable,
+   * NON-activating recoverable record (the signed PDF + certificate are uploaded
+   * but the legal signature has not been inserted yet). `failed_cleanup_required`
+   * marks uploaded objects whose signature commit failed for cleanup.
+   */
+  nativeCompletionState?: NativeCompletionState | null;
   /** Idempotency key so a refresh/retry never mints a duplicate request. */
   idempotencyKey: string;
   createdAt: string;
   updatedAt: string;
 }
+
+export const NATIVE_COMPLETION_STATES = [
+  "preparing",
+  "evidence_stored",
+  "completed",
+  "failed_cleanup_required",
+] as const;
+export type NativeCompletionState = (typeof NATIVE_COMPLETION_STATES)[number];
 
 /** A provisioned provider template mapped to exact Xenios versions. */
 export interface TemplateMappingRecord {

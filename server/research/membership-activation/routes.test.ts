@@ -190,7 +190,11 @@ const guards = {
 function buildApp(deps: FoundingActivationDependencies): Express {
   const app = express();
   app.use(
+    // Mirror server/index.ts: an explicit 2mb limit that admits a native drawn
+    // signature (capped tighter at the route) and rejects a genuinely oversized
+    // body with 413.
     express.json({
+      limit: "2mb",
       verify: (req, _res, buf) => {
         (req as unknown as { rawBody: Buffer }).rawBody = buf;
       },
@@ -1948,5 +1952,124 @@ describe("state 3: native embedded e-signature", () => {
       .send(nativeSignBody(consent.documentVersionId, { affirmativeConsent: false }));
     expect(res.status).toBe(400);
     expect(res.body.code).toBe("consent_not_affirmative");
+  });
+
+  it("validates the drawn signature: malformed, non-PNG, and oversized are precise 400s", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const drawn = (drawnPngBase64: string) =>
+      nativeSignBody(consent.documentVersionId, { signatureMethod: "drawn", drawnPngBase64 });
+
+    const malformed = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(drawn("not!!!base64###"));
+    expect(malformed.status).toBe(400);
+    expect(malformed.body.code).toBe("signature_invalid");
+
+    // Valid base64 of non-PNG bytes.
+    const jpeg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(40)]).toString("base64");
+    const notPng = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(drawn(jpeg));
+    expect(notPng.status).toBe(400);
+    expect(notPng.body.code).toBe("signature_invalid");
+
+    // A well-formed PNG header but 1.1MB decoded: over the 1MB cap, under the
+    // 2mb body limit, so it reaches the route and is refused as too large.
+    const bigPng = Buffer.concat([
+      Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      Buffer.alloc(1_100_000),
+    ]).toString("base64");
+    const tooBig = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(drawn(bigPng));
+    expect(tooBig.status).toBe(400);
+    expect(tooBig.body.code).toBe("signature_too_large");
+
+    // Nothing was signed by any of the refused attempts.
+    const list = await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A);
+    expect(list.body.agreements[0].signed).toBe(false);
+  });
+
+  it("binds an idempotency key to its document: reuse for another document is a 409 conflict", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const list = await agreementsList(ctx, MEMBER_A);
+    const consent = list[0];
+    const other = list[1];
+    const first = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { idempotencyKey: "shared-key" }));
+    expect(first.status).toBe(200);
+    const clash = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(other.documentVersionId, { idempotencyKey: "shared-key" }));
+    expect(clash.status).toBe(409);
+    expect(clash.body.code).toBe("idempotency_conflict");
+  });
+
+  it("never lists or issues a download for a native evidence_stored (not completed) request", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const now = "2026-07-23T12:00:00.000Z";
+    // An evidence_stored request: the signed PDF is uploaded but the legal
+    // signature never committed. It must be invisible and non-downloadable.
+    await ctx.esignStore.requests.insert({
+      id: "native_evidence_1",
+      memberId: MEMBER_A,
+      packetOrDocumentId: "ver-x",
+      mode: "esign_document",
+      provider: "xenios_native",
+      providerTemplateId: null,
+      providerTemplateVersion: null,
+      providerDocumentId: null,
+      xeniosDocumentVersionIds: ["ver-x"],
+      sourceContentHashes: ["a".repeat(64)],
+      signerIdentifier: MEMBER_EMAILS[MEMBER_A],
+      signingLinkStatus: "created",
+      nativeCompletionState: "evidence_stored",
+      viewedAt: null,
+      signedAt: null,
+      completedAt: null,
+      declinedAt: null,
+      expiredAt: null,
+      signedPdfRef: "esign/member-a/ver-x/signed.pdf",
+      certificateRef: "esign/member-a/ver-x/certificate.pdf",
+      signedPdfHash: "b".repeat(64),
+      certificateHash: "c".repeat(64),
+      verifiedEventIds: [],
+      providerEventHistory: [],
+      xeniosAcceptanceEventIds: [],
+      idempotencyKey: "evidence-key",
+      createdAt: now,
+      updatedAt: now,
+    });
+    // Not downloadable.
+    const dl = await request(ctx.app)
+      .get("/api/research/activation/esign/documents/native_evidence_1/download?which=signed")
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(dl.status).toBe(409);
+    expect(dl.body.code).toBe("invalid_state");
+    // Not listed as a member document.
+    const docs = await request(ctx.app).get("/api/research/activation/esign/documents").set(MEMBER_HEADER, MEMBER_A);
+    expect(docs.body.documents.some((d: { requestId: string }) => d.requestId === "native_evidence_1")).toBe(false);
+  });
+
+  it("the activation status reports the embedded-signer capability from the flag", async () => {
+    const off = liveContext();
+    await publishAllCategories(off.documentsStore);
+    const statusOff = await request(off.app).get("/api/research/activation/status").set(MEMBER_HEADER, MEMBER_A);
+    expect(statusOff.body.embeddedEsignEnabled).toBe(false);
+
+    const on = liveContext({ esignEnabled: true });
+    await publishAllCategories(on.documentsStore);
+    const statusOn = await request(on.app).get("/api/research/activation/status").set(MEMBER_HEADER, MEMBER_A);
+    expect(statusOn.body.embeddedEsignEnabled).toBe(true);
   });
 });

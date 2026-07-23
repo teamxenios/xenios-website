@@ -343,6 +343,8 @@ const CONFLICT_CODES = new Set([
   "method_not_renewal_eligible",
   "not_accepting_new_activation_payments",
   "not_accepting_existing_obligation_payments",
+  // A native idempotency key already bound to a different document.
+  "idempotency_conflict",
 ]);
 
 const UNAVAILABLE_CODES = new Set(["capability_disabled", "not_provisioned", "cipher_not_configured"]);
@@ -352,7 +354,19 @@ function statusForCode(code: string): number {
   if (NOT_FOUND_CODES.has(code)) return 404;
   if (CONFLICT_CODES.has(code)) return 409;
   if (code === "not_permitted" || code === "forbidden") return 403;
-  if (code === "provider_error" || code === "storage_error" || code === "internal_error") return 500;
+  if (
+    code === "provider_error" ||
+    code === "storage_error" ||
+    code === "internal_error" ||
+    // Native evidence generation failures are server-side and retryable.
+    code === "pdf_generation_error" ||
+    code === "certificate_generation_error"
+  ) {
+    return 500;
+  }
+  // Everything else (incl. the drawn-signature validation codes
+  // signature_invalid / signature_too_large / signature_dimensions /
+  // signature_evidence_required) is a precise 400.
   return 400;
 }
 

@@ -3,23 +3,31 @@
 //
 // The member signs every agreement inside the Xenios activation page. There is
 // no external provider, no signing URL, no webhook, and no redirect: the
-// authenticated submission IS the completion. This service is orchestration
-// over pieces that already exist and are already tested:
+// authenticated submission IS the completion.
 //
-//   - SignatureService records the LEGAL signature and enforces every guard
-//     (published-only, fullDocumentShown, affirmativeConsent, electronic
-//     consent first, separate acknowledgment, append-only, idempotent replay,
-//     sha-256-hashed IP/UA, typed legal name). It stays the source of legal
-//     truth; this service never bypasses it.
-//   - PdfGenerator renders the signed agreement PDF and the completion
-//     certificate (injected, so this is unit-tested without a PDF engine).
-//   - The archive pipeline (ingestCompletedDocuments) hashes and stores both
-//     files privately, and the esign store keeps the durable signing-request +
-//     archive records the document centers read.
+// ATOMIC COMPLETION. A native agreement counts as signed (and satisfies the
+// activation gate) ONLY when all of the following have succeeded, in order:
+//   1. every legal guard in SignatureService (never duplicated or weakened),
+//   2. signed-PDF generation,
+//   3. completion-certificate generation,
+//   4. both private uploads,
+//   5. the durable signing-request evidence record is persisted,
+//   6. the legal SignatureRecord is inserted LAST.
+// The SignatureRecord is what the gate reads, and it is written LAST through
+// SignatureService's beforeCommit hook: if any earlier step fails, the
+// signature is never inserted, so the agreement stays unsigned and the gate
+// does not advance. The archive row is a post-signature recoverable projection
+// (the request record already holds the refs + hashes).
+//
+// IDEMPOTENCY. The signing-request id is DERIVED from (member, idempotency key),
+// so a retry upserts the same row rather than orphaning a new one, and the
+// signature's own (member, version) uniqueness admits exactly one signature. An
+// idempotency key is bound to its document version: reusing it for a different
+// document is a conflict, not a replay.
 //
 // The identity is ALWAYS the server-supplied member context; a member id is
 // never read from a request body. Nothing here reads a secret, touches the
-// network, or logs evidence.
+// network, or logs the signature payload.
 // ---------------------------------------------------------------------------
 
 import crypto from "crypto";
@@ -36,13 +44,23 @@ import {
 } from "./contracts";
 import { ingestCompletedDocuments, sha256Hex } from "./archive";
 
-/** The native signing failure codes (a superset of the signature codes). */
+/** Maximum decoded size of a drawn-signature PNG. A trimmed canvas signature is
+ * a few KB; this bounds a hostile payload well above any real one. */
+export const MAX_DRAWN_SIGNATURE_BYTES = 1 * 1024 * 1024;
+/** Maximum drawn-signature image dimensions (a signature strip, not a photo). */
+export const MAX_DRAWN_SIGNATURE_WIDTH = 2000;
+export const MAX_DRAWN_SIGNATURE_HEIGHT = 1000;
+
 export type NativeSignFailureCode =
   | SignFailureCode
   | "capability_disabled"
   | "signature_evidence_required"
+  | "signature_invalid"
+  | "signature_too_large"
+  | "signature_dimensions"
   | "pdf_generation_error"
-  | "storage_error";
+  | "certificate_generation_error"
+  | "idempotency_conflict";
 
 export type NativeSignResult =
   | {
@@ -54,15 +72,23 @@ export type NativeSignResult =
     }
   | { ok: false; code: NativeSignFailureCode; message?: string };
 
+/** Thrown from inside the atomic beforeCommit so the signature is never
+ * inserted; the caller maps it to a precise result code. */
+class NativeEvidenceError extends Error {
+  constructor(
+    public readonly code: NativeSignFailureCode,
+    message: string,
+  ) {
+    super(message);
+    this.name = "NativeEvidenceError";
+  }
+}
+
 export interface NativeEsignServiceOptions {
   now?: () => Date;
   newId?: () => string;
 }
 
-/**
- * The pieces the native service composes. The store is the composed esign
- * store ({ requests, templates, archive }); media is the private bucket port.
- */
 export interface NativeEsignServiceDeps {
   store: EsignStore;
   media: EsignMediaPort;
@@ -83,192 +109,299 @@ export class NativeEsignService {
     this.newId = options.newId ?? (() => crypto.randomUUID());
   }
 
-  /**
-   * Complete a native signature for ONE document. Idempotent by
-   * (memberId, idempotencyKey): a retry returns the existing request instead
-   * of minting a second one or a second signed PDF.
-   */
   async completeNativeSignature(input: CompleteNativeSignatureInput): Promise<NativeSignResult> {
     const { store, media, lifecycle, signatures, pdf } = this.deps;
+    const memberId = input.memberId;
+    const documentVersionId = input.document.documentVersionId;
+    const idempotencyKey = input.idempotencyKey;
 
-    // Idempotent replay: a completed request for this key already exists.
-    const existing = await store.requests.getByIdempotencyKey(input.memberId, input.idempotencyKey);
-    if (existing) {
+    // Idempotency INTENT BINDING: a key that already named a different document
+    // is a conflict, never a replay of the first document.
+    const existingByKey = await store.requests.getByIdempotencyKey(memberId, idempotencyKey);
+    if (existingByKey && existingByKey.xeniosDocumentVersionIds[0] !== documentVersionId) {
       return {
-        ok: true,
-        request: existing,
-        replayed: true,
-        signedPdfHash: existing.signedPdfHash ?? "",
-        certificateHash: existing.certificateHash ?? "",
+        ok: false,
+        code: "idempotency_conflict",
+        message: "This idempotency key was already used for a different document.",
       };
     }
 
-    // Evidence discipline: a legal name is always required; a drawn signature
-    // must carry its PNG. The typed method needs no image (the typed legal name
-    // is the signature representation).
+    // Evidence-input validation (before any legal write).
     const typedLegalName = (input.evidence.typedLegalName ?? "").trim();
-    if (typedLegalName.length < 2) {
-      return { ok: false, code: "legal_name_required" };
-    }
-    if (input.evidence.method === "drawn" && !hasDrawnEvidence(input.evidence.drawnPngBase64)) {
-      return { ok: false, code: "signature_evidence_required", message: "A drawn signature is required." };
-    }
-
-    // Record the LEGAL signature through the existing engine. This is where
-    // every guard lives; the native path adds evidence, it never relaxes a rule.
-    const signResult = await signatures.sign({
-      memberId: input.memberId,
-      documentVersionId: input.document.documentVersionId,
-      typedLegalName,
-      fullDocumentShown: input.document.fullDocumentShown,
-      affirmativeConsent: input.document.affirmativeConsent,
-      separateAcknowledgment: input.document.separateAcknowledgment,
-      ip: input.ip ?? null,
-      userAgent: input.userAgent ?? null,
-    });
-    if (!signResult.ok) {
-      return { ok: false, code: signResult.code };
-    }
-    const signature = signResult.signature;
-
-    // The published version (the signature bound to it; it exists).
-    const version = await lifecycle.getVersion(signature.documentVersionId);
-    if (!version) {
-      return { ok: false, code: "version_not_found" };
-    }
-    const requiresSeparateAck = categoryDefinitionFor(version.category).requiresSeparateAcknowledgment;
-
-    const requestId = this.newId();
-
-    // Generate the signed PDF, hash it, then generate the certificate that
-    // attests that hash, then hash the certificate. The signed PDF's own hash
-    // cannot live inside itself, so the certificate carries it.
-    let signedPdf: Buffer;
-    let certificate: Buffer;
-    try {
-      signedPdf = await pdf.generateSignedAgreementPdf({
-        agreementTitle: version.title,
-        agreementContent: version.content,
-        semver: version.semver,
-        documentVersionId: version.id,
-        sourceContentHash: version.contentHash,
-        typedLegalName,
-        signatureMethod: input.evidence.method,
-        drawnPngBase64: normalizePng(input.evidence.drawnPngBase64),
-        signedAt: signature.signedAt,
-        separateAcknowledgment: requiresSeparateAck && signature.separateAcknowledgment,
-        signingRequestId: requestId,
-      });
-      const signedPdfSha256 = sha256Hex(signedPdf);
-      certificate = await pdf.generateCompletionCertificatePdf({
-        memberId: input.memberId,
-        signerEmail: input.signerEmail,
-        documents: [
-          { title: version.title, documentVersionId: version.id, contentHash: version.contentHash },
-        ],
-        signingRequestId: requestId,
-        signedAt: signature.signedAt,
-        ipHash: signature.ipHash,
-        userAgentHash: signature.userAgentHash,
-        signatureMethod: input.evidence.method,
-        signedPdfSha256,
-      });
-    } catch {
-      // The legal signature is already durably recorded; only the PDF evidence
-      // failed. Report it so the caller can retry; nothing partial is stored.
-      return { ok: false, code: "pdf_generation_error", message: "The signed document could not be generated." };
+    if (typedLegalName.length < 2) return { ok: false, code: "legal_name_required" };
+    let drawnBytes: Buffer | null = null;
+    if (input.evidence.method === "drawn") {
+      const png = validateDrawnPng(input.evidence.drawnPngBase64 ?? "");
+      if (!png.ok) return { ok: false, code: png.code, message: png.message };
+      drawnBytes = png.bytes;
     }
 
-    // Store both privately and take back the refs + hashes (xenios-owned).
-    const completedAt = signature.signedAt;
-    let ingest;
-    try {
-      ingest = await ingestCompletedDocuments({
-        memberId: input.memberId,
-        packetOrDocumentId: version.id,
-        version: version.semver,
-        signedPdf: { bytes: signedPdf, contentType: "application/pdf" },
-        certificate: { bytes: certificate, contentType: "application/pdf" },
-        media,
-        provider: XENIOS_NATIVE_PROVIDER,
-        completedAt,
-      });
-    } catch {
-      return { ok: false, code: "storage_error", message: "The signed document could not be stored." };
-    }
-
-    const nowIso = this.now().toISOString();
-    const request: SigningRequestRecord = {
-      id: requestId,
-      memberId: input.memberId,
-      packetOrDocumentId: version.id,
-      mode: "esign_document",
-      provider: XENIOS_NATIVE_PROVIDER,
-      providerTemplateId: null,
-      providerTemplateVersion: null,
-      // Native has no external provider document. The record is found by id,
-      // idempotency key, and member; providerDocumentId stays null (the partial
-      // unique index permits many nulls).
-      providerDocumentId: null,
-      xeniosDocumentVersionIds: [version.id],
-      sourceContentHashes: [version.contentHash],
-      signerIdentifier: input.signerEmail,
-      signingLinkStatus: "completed",
-      viewedAt: null,
-      signedAt: signature.signedAt,
-      completedAt,
-      declinedAt: null,
-      expiredAt: null,
-      signedPdfRef: ingest.signedPdfRef,
-      certificateRef: ingest.certificateRef,
-      signedPdfHash: ingest.signedPdfHash,
-      certificateHash: ingest.certificateHash,
-      verifiedEventIds: [],
-      providerEventHistory: [
-        { eventId: `native:${requestId}`, type: "completed", occurredAt: completedAt, recordedAt: nowIso },
-      ],
-      // The native completion IS recorded as the acceptance; the underlying
-      // native SignatureRecord already satisfies the agreement gate directly.
-      xeniosAcceptanceEventIds: [signature.id],
-      idempotencyKey: input.idempotencyKey,
-      createdAt: nowIso,
-      updatedAt: nowIso,
-    };
+    const requestId = deterministicRequestId(memberId, idempotencyKey);
+    let builtRequest: SigningRequestRecord | undefined;
+    let signedPdfHash = "";
+    let certificateHash = "";
 
     try {
-      await store.requests.insert(request);
-    } catch {
-      // A racing duplicate lost the unique (member, idempotency_key) race: the
-      // winner is authoritative. Return it as a replay.
-      const winner = await store.requests.getByIdempotencyKey(input.memberId, input.idempotencyKey);
-      if (winner) {
+      const signResult = await signatures.sign(
+        {
+          memberId,
+          documentVersionId,
+          typedLegalName,
+          fullDocumentShown: input.document.fullDocumentShown,
+          affirmativeConsent: input.document.affirmativeConsent,
+          separateAcknowledgment: input.document.separateAcknowledgment,
+          ip: input.ip ?? null,
+          userAgent: input.userAgent ?? null,
+        },
+        {
+          // Runs after every legal guard passes and the signature record is
+          // built, but BEFORE it is inserted. Any throw here leaves the
+          // agreement unsigned.
+          beforeCommit: async (signature) => {
+            const version = await lifecycle.getVersion(signature.documentVersionId);
+            if (!version) {
+              throw new NativeEvidenceError("version_not_found", "The document version could not be resolved.");
+            }
+            const requiresSeparateAck = categoryDefinitionFor(version.category).requiresSeparateAcknowledgment;
+
+            // (2) signed PDF
+            let signedPdf: Buffer;
+            try {
+              signedPdf = await pdf.generateSignedAgreementPdf({
+                agreementTitle: version.title,
+                agreementContent: version.content,
+                semver: version.semver,
+                documentVersionId: version.id,
+                sourceContentHash: version.contentHash,
+                typedLegalName,
+                signatureMethod: input.evidence.method,
+                drawnPngBase64: drawnBytes ? drawnBytes.toString("base64") : null,
+                signedAt: signature.signedAt,
+                separateAcknowledgment: requiresSeparateAck && signature.separateAcknowledgment,
+                signingRequestId: requestId,
+              });
+            } catch {
+              throw new NativeEvidenceError("pdf_generation_error", "The signed document could not be generated.");
+            }
+            signedPdfHash = sha256Hex(signedPdf);
+
+            // (3) completion certificate
+            let certificate: Buffer;
+            try {
+              certificate = await pdf.generateCompletionCertificatePdf({
+                memberId,
+                signerEmail: input.signerEmail,
+                documents: [
+                  { title: version.title, documentVersionId: version.id, contentHash: version.contentHash },
+                ],
+                signingRequestId: requestId,
+                signedAt: signature.signedAt,
+                ipHash: signature.ipHash,
+                userAgentHash: signature.userAgentHash,
+                signatureMethod: input.evidence.method,
+                signedPdfSha256: signedPdfHash,
+              });
+            } catch {
+              throw new NativeEvidenceError(
+                "certificate_generation_error",
+                "The completion certificate could not be generated.",
+              );
+            }
+            certificateHash = sha256Hex(certificate);
+
+            // (4) both private uploads (xenios-owned hashes)
+            let ingest;
+            try {
+              ingest = await ingestCompletedDocuments({
+                memberId,
+                packetOrDocumentId: version.id,
+                version: version.semver,
+                signedPdf: { bytes: signedPdf, contentType: "application/pdf" },
+                certificate: { bytes: certificate, contentType: "application/pdf" },
+                media,
+                provider: XENIOS_NATIVE_PROVIDER,
+                completedAt: signature.signedAt,
+              });
+            } catch {
+              throw new NativeEvidenceError("storage_error", "The signed document could not be stored.");
+            }
+
+            // (5) the durable EVIDENCE record, in state `evidence_stored`. This
+            // is NON-activating: signingLinkStatus is not `completed`, so it is
+            // never shown as signed, never downloadable, and never counts at the
+            // gate. It is keyed deterministically so a retry upserts the same row
+            // (no orphan) and a same-key race admits exactly one. Written BEFORE
+            // the signature: if this fails, the signature is never inserted.
+            const nowIso = this.now().toISOString();
+            const evidence: SigningRequestRecord = {
+              id: requestId,
+              memberId,
+              packetOrDocumentId: version.id,
+              mode: "esign_document",
+              provider: XENIOS_NATIVE_PROVIDER,
+              providerTemplateId: null,
+              providerTemplateVersion: null,
+              providerDocumentId: null,
+              xeniosDocumentVersionIds: [version.id],
+              sourceContentHashes: [version.contentHash],
+              signerIdentifier: input.signerEmail,
+              signingLinkStatus: "created",
+              nativeCompletionState: "evidence_stored",
+              viewedAt: null,
+              signedAt: null,
+              completedAt: null,
+              declinedAt: null,
+              expiredAt: null,
+              signedPdfRef: ingest.signedPdfRef,
+              certificateRef: ingest.certificateRef,
+              signedPdfHash: ingest.signedPdfHash,
+              certificateHash: ingest.certificateHash,
+              verifiedEventIds: [],
+              providerEventHistory: [
+                { eventId: `native:${requestId}:evidence`, type: "created", occurredAt: nowIso, recordedAt: nowIso },
+              ],
+              xeniosAcceptanceEventIds: [],
+              idempotencyKey,
+              createdAt: nowIso,
+              updatedAt: nowIso,
+            };
+            builtRequest = await upsertRequestRecord(store, evidence, memberId, idempotencyKey);
+          },
+        },
+      );
+
+      if (!signResult.ok) {
+        // A guard failure (builtRequest undefined, nothing uploaded) OR the
+        // final signature insert failed (builtRequest is evidence_stored, and
+        // the uploaded objects are now orphans). In the latter case mark the
+        // request failed_cleanup_required so a sweeper can delete the objects.
+        // Either way the agreement stays UNSIGNED and the gate does not advance.
+        if (builtRequest) await this.markFailedCleanup(builtRequest);
+        return { ok: false, code: signResult.code };
+      }
+
+      // The legal signature committed. The COMPLETION TRANSITION flips the
+      // request evidence_stored -> completed, binding the version, hashes, refs,
+      // and the signature id, then writes the archive projection. Only after
+      // this does the agreement present as signed. (This transition and the
+      // signature insert are two writes across two stores, not one database
+      // transaction, so the flow is NOT claimed to be fully atomic; a transition
+      // failure leaves the request in evidence_stored and is reconciled on the
+      // next call. See the implementation report.)
+      const signature = signResult.signature;
+      if (!builtRequest) {
+        // Replay: the signature pre-existed, so beforeCommit did not run.
+        const prior = await this.findNativeRequestFor(memberId, documentVersionId, idempotencyKey);
+        if (prior && prior.nativeCompletionState !== "completed") {
+          const done = await this.finalizeCompleted(prior, signature);
+          return {
+            ok: true,
+            request: done,
+            replayed: true,
+            signedPdfHash: done.signedPdfHash ?? "",
+            certificateHash: done.certificateHash ?? "",
+          };
+        }
         return {
           ok: true,
-          request: winner,
+          request:
+            prior ??
+            replayShell(requestId, memberId, documentVersionId, signature.signedAt, idempotencyKey, input.signerEmail, this.now().toISOString()),
           replayed: true,
-          signedPdfHash: winner.signedPdfHash ?? "",
-          certificateHash: winner.certificateHash ?? "",
+          signedPdfHash: prior?.signedPdfHash ?? "",
+          certificateHash: prior?.certificateHash ?? "",
         };
       }
-      return { ok: false, code: "storage_error", message: "The signing record could not be stored." };
-    }
 
-    // The archive row the document centers read. A failure here is non-fatal:
-    // the signing-request row already carries the refs and hashes.
+      const completed = await this.finalizeCompleted(builtRequest, signature);
+      return {
+        ok: true,
+        request: completed,
+        replayed: signResult.replayed,
+        signedPdfHash,
+        certificateHash,
+      };
+    } catch (err) {
+      if (err instanceof NativeEvidenceError) {
+        // beforeCommit failed (pdf/cert/upload/evidence-persist). If an evidence
+        // row was written, mark it for cleanup; the agreement is unsigned.
+        if (builtRequest) await this.markFailedCleanup(builtRequest).catch(() => {});
+        return { ok: false, code: err.code, message: err.message };
+      }
+      throw err;
+    }
+  }
+
+  /** The completion transition: evidence_stored -> completed, binding the
+   * signature and refs, then the archive projection. */
+  private async finalizeCompleted(
+    evidence: SigningRequestRecord,
+    signature: { id: string; signedAt: string },
+  ): Promise<SigningRequestRecord> {
+    const nowIso = this.now().toISOString();
+    const completed: SigningRequestRecord = {
+      ...evidence,
+      signingLinkStatus: "completed",
+      nativeCompletionState: "completed",
+      signedAt: signature.signedAt,
+      completedAt: signature.signedAt,
+      xeniosAcceptanceEventIds: [signature.id],
+      providerEventHistory: [
+        ...evidence.providerEventHistory,
+        { eventId: `native:${evidence.id}:completed`, type: "completed", occurredAt: signature.signedAt, recordedAt: nowIso },
+      ],
+      updatedAt: nowIso,
+    };
+    await this.deps.store.requests.update(completed);
+    await this.persistArchiveBestEffort(completed);
+    return completed;
+  }
+
+  /** Mark an evidence record's uploaded objects for cleanup after the signature
+   * commit failed. The state is the durable cleanup marker a sweeper reads. */
+  private async markFailedCleanup(evidence: SigningRequestRecord): Promise<void> {
+    try {
+      await this.deps.store.requests.update({
+        ...evidence,
+        nativeCompletionState: "failed_cleanup_required",
+        updatedAt: this.now().toISOString(),
+      });
+    } catch {
+      // best effort; the request already carries a non-completed state
+    }
+  }
+
+  /** Find the completed native request for this member+version (by key first,
+   * else any native request for the version). */
+  private async findNativeRequestFor(
+    memberId: string,
+    documentVersionId: string,
+    idempotencyKey: string,
+  ): Promise<SigningRequestRecord | undefined> {
+    const byKey = await this.deps.store.requests.getByIdempotencyKey(memberId, idempotencyKey);
+    if (byKey && byKey.xeniosDocumentVersionIds[0] === documentVersionId) return byKey;
+    const all = await this.deps.store.requests.listByMember(memberId);
+    return all.find(
+      (r) => r.provider === XENIOS_NATIVE_PROVIDER && r.xeniosDocumentVersionIds[0] === documentVersionId,
+    );
+  }
+
+  private async persistArchiveBestEffort(request: SigningRequestRecord): Promise<void> {
+    const nowIso = this.now().toISOString();
     const archiveRecord: ArchiveRecord = {
       id: this.newId(),
-      memberId: input.memberId,
-      packetOrDocumentId: version.id,
-      documentVersionId: version.id,
-      provider: XENIOS_NATIVE_PROVIDER,
+      memberId: request.memberId,
+      packetOrDocumentId: request.packetOrDocumentId,
+      documentVersionId: request.xeniosDocumentVersionIds[0] ?? null,
+      provider: request.provider,
       providerDocumentId: null,
-      signedPdfRef: ingest.signedPdfRef,
-      signedPdfHash: ingest.signedPdfHash,
-      certificateRef: ingest.certificateRef,
-      certificateHash: ingest.certificateHash,
-      xeniosSourceHash: version.contentHash,
-      signerEmail: input.signerEmail,
-      completedAt,
+      signedPdfRef: request.signedPdfRef,
+      signedPdfHash: request.signedPdfHash,
+      certificateRef: request.certificateRef,
+      certificateHash: request.certificateHash,
+      xeniosSourceHash: request.sourceContentHashes[0] ?? null,
+      signerEmail: request.signerIdentifier,
+      completedAt: request.completedAt,
       retentionClass: "legal_records",
       accessClassification: "member_and_admin",
       archiveStatus: "stored",
@@ -278,28 +411,144 @@ export class NativeEsignService {
       updatedAt: nowIso,
     };
     try {
-      await store.archive.insert(archiveRecord);
+      // Idempotent: skip if an archive row for this request's document already
+      // exists (a retry after the signature committed).
+      const existing = await this.deps.store.archive.listByMember(request.memberId);
+      if (existing.some((a) => a.signedPdfHash === request.signedPdfHash && a.documentVersionId === archiveRecord.documentVersionId)) {
+        return;
+      }
+      await this.deps.store.archive.insert(archiveRecord);
     } catch {
       // Non-fatal by design; the signing request is the source of truth.
     }
-
-    return {
-      ok: true,
-      request,
-      replayed: signResult.replayed,
-      signedPdfHash: ingest.signedPdfHash,
-      certificateHash: ingest.certificateHash,
-    };
   }
 }
 
-/** True when a drawn-signature payload carries actual PNG bytes. */
-function hasDrawnEvidence(drawnPngBase64: string | null): boolean {
-  return normalizePng(drawnPngBase64).length > 0;
+/** Deterministic request id from (member, idempotency key): a retry produces the
+ * same id, so it upserts one row rather than orphaning a new one. */
+function deterministicRequestId(memberId: string, idempotencyKey: string): string {
+  return "native_" + sha256Hex(Buffer.from(`${memberId}:${idempotencyKey}`, "utf8")).slice(0, 32);
 }
 
-/** Strip an optional data-uri prefix and whitespace from a base64 PNG. */
-function normalizePng(drawnPngBase64: string | null): string {
-  if (!drawnPngBase64) return "";
-  return drawnPngBase64.replace(/^data:image\/png;base64,/, "").trim();
+/**
+ * Persist the signing-request evidence row idempotently and race-tolerantly.
+ * A prior row (retry) is updated; a concurrent racer that inserted first is
+ * detected by re-fetching after a failed insert and updated instead. A genuine
+ * store outage (no row appears) throws so the signature is never inserted.
+ */
+async function upsertRequestRecord(
+  store: EsignStore,
+  request: SigningRequestRecord,
+  memberId: string,
+  idempotencyKey: string,
+): Promise<SigningRequestRecord> {
+  const prior = await store.requests.getByIdempotencyKey(memberId, idempotencyKey);
+  if (prior) {
+    await store.requests.update({ ...request, id: prior.id, createdAt: prior.createdAt });
+    return { ...request, id: prior.id, createdAt: prior.createdAt };
+  }
+  try {
+    await store.requests.insert(request);
+    return request;
+  } catch {
+    // Either a concurrent racer inserted this (member, idempotencyKey) first, or
+    // the store is down. Re-fetch: if the row now exists it was the race, so
+    // reconcile to it; otherwise the store genuinely failed.
+    const winner = await store.requests.getByIdempotencyKey(memberId, idempotencyKey);
+    if (winner) {
+      try {
+        await store.requests.update({ ...request, id: winner.id, createdAt: winner.createdAt });
+      } catch {
+        // best effort; the winner row already carries this document's evidence
+      }
+      return { ...request, id: winner.id, createdAt: winner.createdAt };
+    }
+    throw new NativeEvidenceError("storage_error", "The signing record could not be stored.");
+  }
+}
+
+/** A minimal completed-request view for a replay where the signature exists but
+ * was created outside the native path (e.g. clickwrap): the agreement is signed,
+ * there is simply no native PDF to point at. */
+function replayShell(
+  requestId: string,
+  memberId: string,
+  documentVersionId: string,
+  signedAt: string,
+  idempotencyKey: string,
+  signerEmail: string,
+  nowIso: string,
+): SigningRequestRecord {
+  return {
+    id: requestId,
+    memberId,
+    packetOrDocumentId: documentVersionId,
+    mode: "esign_document",
+    provider: XENIOS_NATIVE_PROVIDER,
+    providerTemplateId: null,
+    providerTemplateVersion: null,
+    providerDocumentId: null,
+    xeniosDocumentVersionIds: [documentVersionId],
+    sourceContentHashes: [],
+    signerIdentifier: signerEmail,
+    signingLinkStatus: "completed",
+    nativeCompletionState: "completed",
+    viewedAt: null,
+    signedAt,
+    completedAt: signedAt,
+    declinedAt: null,
+    expiredAt: null,
+    signedPdfRef: null,
+    certificateRef: null,
+    signedPdfHash: null,
+    certificateHash: null,
+    verifiedEventIds: [],
+    providerEventHistory: [],
+    xeniosAcceptanceEventIds: [],
+    idempotencyKey,
+    createdAt: nowIso,
+    updatedAt: nowIso,
+  };
+}
+
+/** The 8-byte PNG signature. */
+const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+
+/**
+ * Validate a drawn-signature payload server-side: strict base64, real PNG bytes,
+ * a bounded decoded size, and bounded image dimensions. Refuses precisely; the
+ * caller never logs the payload.
+ */
+export function validateDrawnPng(
+  raw: string,
+): { ok: true; bytes: Buffer } | { ok: false; code: NativeSignFailureCode; message: string } {
+  const cleaned = raw.replace(/^data:image\/png;base64,/, "").trim();
+  if (cleaned.length === 0) {
+    return { ok: false, code: "signature_evidence_required", message: "A drawn signature is required." };
+  }
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(cleaned) || cleaned.length % 4 !== 0) {
+    return { ok: false, code: "signature_invalid", message: "The signature image is not valid base64." };
+  }
+  const bytes = Buffer.from(cleaned, "base64");
+  if (bytes.length === 0) {
+    return { ok: false, code: "signature_invalid", message: "The signature image is empty." };
+  }
+  if (bytes.length > MAX_DRAWN_SIGNATURE_BYTES) {
+    return { ok: false, code: "signature_too_large", message: "The signature image is too large." };
+  }
+  if (bytes.length < 24 || !bytes.subarray(0, 8).equals(PNG_MAGIC)) {
+    return { ok: false, code: "signature_invalid", message: "The signature image is not a PNG." };
+  }
+  // IHDR is the first chunk: width at byte offset 16, height at 20 (big-endian).
+  const width = bytes.readUInt32BE(16);
+  const height = bytes.readUInt32BE(20);
+  if (
+    width === 0 ||
+    height === 0 ||
+    width > MAX_DRAWN_SIGNATURE_WIDTH ||
+    height > MAX_DRAWN_SIGNATURE_HEIGHT
+  ) {
+    return { ok: false, code: "signature_dimensions", message: "The signature image dimensions are out of range." };
+  }
+  return { ok: true, bytes };
 }

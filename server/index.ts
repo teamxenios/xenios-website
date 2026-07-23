@@ -54,6 +54,10 @@ app.use(
 
 app.use(
   express.json({
+    // Explicit limit. A native drawn-signature is a small trimmed-canvas PNG
+    // (capped at 1MB decoded server-side, ~1.37MB base64); 2mb accommodates it
+    // with headroom while still rejecting a genuinely oversized body with 413.
+    limit: "2mb",
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     },

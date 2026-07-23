@@ -84,6 +84,10 @@ create table if not exists public.research_fm_esign_requests (
   verified_event_ids           jsonb not null default '[]'::jsonb,
   provider_event_history       jsonb not null default '[]'::jsonb,
   xenios_acceptance_event_ids  jsonb not null default '[]'::jsonb,
+  -- Native completion state machine (null for OpenSign rows). Only 'completed'
+  -- is presented as a signed legal record.
+  native_completion_state      text check (native_completion_state is null or native_completion_state in (
+                                 'preparing','evidence_stored','completed','failed_cleanup_required')),
   idempotency_key              text not null,
   created_at                   timestamptz not null default now(),
   updated_at                   timestamptz not null default now(),

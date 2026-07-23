@@ -172,6 +172,7 @@ import { getSupabaseAdmin, supabaseConfigured } from "../../supabase";
 import { enqueueNotification } from "../outbox";
 import { enqueueFoundingEmail, type FoundingEmailEnqueue } from "./emails";
 import {
+  XENIOS_NATIVE_PROVIDER,
   type ArchiveRecord,
   type EsignMediaPort,
   type EsignProvider,
@@ -811,6 +812,20 @@ function formatCents(cents: number): string {
 // signed URL. Integrity hashes DO travel (they are the point of the record).
 // ---------------------------------------------------------------------------
 
+/**
+ * A signing request is presentable as a signed legal record ONLY when it is
+ * genuinely completed. A native request requires nativeCompletionState
+ * `completed` (its evidence_stored / failed_cleanup_required states have the
+ * signed PDF uploaded but no committed legal signature, so they must never be
+ * shown or downloaded); an OpenSign request uses its completed link status.
+ */
+function isPresentableCompleted(record: SigningRequestRecord): boolean {
+  if (record.provider === XENIOS_NATIVE_PROVIDER) {
+    return record.nativeCompletionState === "completed";
+  }
+  return record.signingLinkStatus === "completed";
+}
+
 /** What a MEMBER may see about one of their signing requests. */
 function memberEsignRequestView(record: SigningRequestRecord): Record<string, unknown> {
   return {
@@ -1409,6 +1424,11 @@ function buildLiveServices(
       activatedAt: membershipState.activatedAt,
       renewalDate: latestPeriod?.endsAt ?? null,
       submissionContract: SUBMISSION_DISPLAY_CONTRACT,
+      // Whether the NATIVE embedded signer is available. The agreements page
+      // reads this to choose the embedded signer vs the native clickwrap
+      // AgreementSignCard immediately, with no failed signing attempt. When it
+      // flips back to false, the page falls back on the next load.
+      embeddedEsignEnabled: nativeEsignEnabled,
     };
   }
 
@@ -1454,7 +1474,11 @@ function buildLiveServices(
         // (embedded) path is enabled: both write into the same request store.
         if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
         const requests = await esignStore.requests.listByMember(member.memberId);
-        return { ok: true, documents: requests.map(memberEsignRequestView) };
+        // ONLY completed requests are presented. A native evidence_stored or
+        // failed_cleanup_required row (evidence uploaded but the legal signature
+        // not committed) is never shown as a signed document.
+        const completed = requests.filter((r) => isPresentableCompleted(r));
+        return { ok: true, documents: completed.map(memberEsignRequestView) };
       },
 
       // The NATIVE (embedded) signing completion. The authenticated member
@@ -1508,6 +1532,11 @@ function buildLiveServices(
         if (!record || record.memberId !== member.memberId) {
           // Same denial for absent and not-yours, so ownership is not probeable.
           return { ok: false, code: "not_found", message: "No signing request with that id." };
+        }
+        // No download for a native record that is not COMPLETED (evidence_stored
+        // or failed_cleanup_required): the legal signature has not committed.
+        if (!isPresentableCompleted(record)) {
+          return { ok: false, code: "invalid_state", message: "This document is not completed." };
         }
         const ref = which === "certificate" ? record.certificateRef : record.signedPdfRef;
         if (!ref) {
@@ -2842,9 +2871,13 @@ function buildLiveServices(
 
       // ---- e-signature document center -------------------------------------
       async esignMemberDocuments(memberId) {
-        if (!esignProvider.isLive) return esignDisabled();
+        if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
         const requests = await esignStore.requests.listByMember(memberId);
-        const completed = requests.filter((record) => record.signingLinkStatus === "completed");
+        // Only genuinely completed requests are presented; a native
+        // evidence_stored / failed_cleanup_required row is never a completed
+        // legal record. The archive is written only on completion, so it
+        // carries no non-completed rows.
+        const completed = requests.filter((record) => isPresentableCompleted(record));
         const archive = await esignStore.archive.listByMember(memberId);
         return {
           ok: true,

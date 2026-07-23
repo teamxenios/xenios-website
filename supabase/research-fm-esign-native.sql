@@ -35,6 +35,19 @@ alter table public.research_fm_esign_templates
     'opensign_document','opensign_packet',
     'esign_document','esign_packet'));
 
+-- Native completion state machine. Additive, nullable (null for OpenSign rows).
+-- Only 'completed' is ever presented as a signed legal record; 'evidence_stored'
+-- is a durable non-activating recoverable record; 'failed_cleanup_required'
+-- marks uploaded objects for cleanup after a signature commit failed.
+alter table public.research_fm_esign_requests
+  add column if not exists native_completion_state text;
+alter table public.research_fm_esign_requests
+  drop constraint if exists research_fm_esign_requests_native_state_check;
+alter table public.research_fm_esign_requests
+  add constraint research_fm_esign_requests_native_state_check
+  check (native_completion_state is null or native_completion_state in (
+    'preparing','evidence_stored','completed','failed_cleanup_required'));
+
 -- NOTE: native signed PDFs + completion certificates live in the SAME private
 -- bucket the OpenSign path uses (RESEARCH_ESIGN_BUCKET), created in the Storage
 -- dashboard, not by SQL. No new table is required for the native path: it reuses

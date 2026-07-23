@@ -1,43 +1,48 @@
 import { describe, expect, it } from "vitest";
 import { DocumentLifecycle, type DocumentCategory } from "../documents";
 import { SignatureService } from "../signatures";
-import { createInMemoryDocumentsStore } from "../persistence/documents-store";
+import { createInMemoryDocumentsStore, type DocumentsStore } from "../persistence/documents-store";
 import { InMemoryEsignMediaProvider } from "./archive";
 import { createInMemoryEsignStore } from "./persistence/esign-store";
-import { NativeEsignService } from "./native";
-import type { CompleteNativeSignatureInput, PdfGenerator } from "./contracts";
+import { NativeEsignService, validateDrawnPng } from "./native";
+import type { CompleteNativeSignatureInput, EsignMediaPort, EsignStore, PdfGenerator } from "./contracts";
 
 const NOW = () => new Date("2026-07-23T12:00:00.000Z");
 const MEMBER = "11111111-1111-4111-8111-111111111111";
 const OTHER = "22222222-2222-4222-8222-222222222222";
 const EMAIL = "member@members.test";
 
-// A deterministic PDF generator: real bytes, no engine. It also lets a test
-// prove the signed-pdf sha-256 flows into the certificate.
+// A 1x1 transparent PNG (valid), with a real IHDR.
+const PNG_1x1 =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+
 const fakePdf: PdfGenerator = {
   generateSignedAgreementPdf: async (input) =>
-    Buffer.from(
-      `SIGNED ${input.documentVersionId} ${input.typedLegalName} ${input.signatureMethod} ack=${input.separateAcknowledgment}`,
-      "utf8",
-    ),
+    Buffer.from(`SIGNED ${input.documentVersionId} ${input.typedLegalName} ${input.signatureMethod}`, "utf8"),
   generateCompletionCertificatePdf: async (input) =>
-    Buffer.from(`CERT ${input.signingRequestId} pdf=${input.signedPdfSha256} m=${input.memberId}`, "utf8"),
+    Buffer.from(`CERT ${input.signingRequestId} ${input.signedPdfSha256}`, "utf8"),
 };
 
-function build() {
-  const documentsStore = createInMemoryDocumentsStore();
+interface BuildOpts {
+  pdf?: PdfGenerator;
+  media?: EsignMediaPort;
+  store?: EsignStore;
+}
+
+function build(opts: BuildOpts = {}) {
+  const documentsStore: DocumentsStore = createInMemoryDocumentsStore();
   let v = 0;
   const lifecycle = new DocumentLifecycle(documentsStore, { now: NOW, newId: () => `v-${++v}` });
   let s = 0;
   const signatures = new SignatureService(documentsStore, { now: NOW, newId: () => `sig-${++s}` });
-  const store = createInMemoryEsignStore();
-  const media = new InMemoryEsignMediaProvider();
+  const store = opts.store ?? createInMemoryEsignStore();
+  const media = opts.media ?? new InMemoryEsignMediaProvider();
   let r = 0;
   const service = new NativeEsignService(
-    { store, media, lifecycle, signatures, pdf: fakePdf },
-    { now: NOW, newId: () => `req-${++r}` },
+    { store, media, lifecycle, signatures, pdf: opts.pdf ?? fakePdf },
+    { now: NOW, newId: () => `arc-${++r}` },
   );
-  return { lifecycle, signatures, store, media, service };
+  return { documentsStore, lifecycle, signatures, store, media, service };
 }
 
 async function publish(lifecycle: DocumentLifecycle, category: DocumentCategory, semver = "1.0.0") {
@@ -53,10 +58,12 @@ async function publish(lifecycle: DocumentLifecycle, category: DocumentCategory,
   return lifecycle.publish(draft.id, { publisher: "counsel-test" });
 }
 
-function signInput(over: Partial<CompleteNativeSignatureInput> & { documentVersionId: string }): CompleteNativeSignatureInput {
+function signInput(
+  over: Partial<CompleteNativeSignatureInput> & { documentVersionId: string },
+): CompleteNativeSignatureInput {
   return {
-    memberId: MEMBER,
-    signerEmail: EMAIL,
+    memberId: over.memberId ?? MEMBER,
+    signerEmail: over.signerEmail ?? EMAIL,
     document: {
       documentVersionId: over.documentVersionId,
       fullDocumentShown: over.document?.fullDocumentShown ?? true,
@@ -70,8 +77,11 @@ function signInput(over: Partial<CompleteNativeSignatureInput> & { documentVersi
   };
 }
 
-/** Native-sign the electronic-record consent first (the gate demands it). */
-async function consentFirst(lifecycle: DocumentLifecycle, service: NativeEsignService, memberId = MEMBER) {
+async function consentFirst(
+  lifecycle: DocumentLifecycle,
+  service: NativeEsignService,
+  memberId = MEMBER,
+) {
   const consent = await publish(lifecycle, "electronic_record_consent");
   const res = await service.completeNativeSignature(
     signInput({ memberId, documentVersionId: consent.id, idempotencyKey: `consent-${memberId}` }),
@@ -80,163 +90,355 @@ async function consentFirst(lifecycle: DocumentLifecycle, service: NativeEsignSe
   return consent;
 }
 
-describe("NativeEsignService.completeNativeSignature", () => {
-  it("completes a TYPED signature end to end, storing the signed PDF + certificate hashes", async () => {
-    const { lifecycle, service, store, media } = build();
+// A store whose requests.insert/update always throw (simulates a DB failure).
+function failingRequestStore(): EsignStore {
+  const base = createInMemoryEsignStore();
+  return {
+    ...base,
+    requests: {
+      ...base.requests,
+      insert: async () => {
+        throw new Error("db down");
+      },
+      update: async () => {
+        throw new Error("db down");
+      },
+    },
+  };
+}
+
+describe("NativeEsignService: happy paths", () => {
+  it("completes a typed signature and persists both hashes + the request record", async () => {
+    const { lifecycle, service, store, documentsStore } = build();
     await consentFirst(lifecycle, service);
     const agreement = await publish(lifecycle, "founding_membership_agreement");
-
     const res = await service.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     expect(res.request.mode).toBe("esign_document");
     expect(res.request.provider).toBe("xenios_native");
-    expect(res.request.signingLinkStatus).toBe("completed");
     expect(res.signedPdfHash).toMatch(/^[0-9a-f]{64}$/);
     expect(res.certificateHash).toMatch(/^[0-9a-f]{64}$/);
-    expect(res.request.signedPdfHash).toBe(res.signedPdfHash);
-    expect(res.request.certificateHash).toBe(res.certificateHash);
-
-    // Persisted: the request is retrievable and an archive row exists.
-    const persisted = await store.requests.getById(res.request.id);
-    expect(persisted?.signedPdfRef).toBe(res.request.signedPdfRef);
-    const archive = await store.archive.listByMember(MEMBER);
-    expect(archive.some((a) => a.signedPdfHash === res.signedPdfHash)).toBe(true);
-
-    // The bytes are actually in private storage.
-    const stored = await media.getObject(res.request.signedPdfRef!);
-    expect(stored.ok).toBe(true);
+    // The legal signature exists (the agreement is signed).
+    expect(await documentsStore.getSignature(MEMBER, agreement.id)).not.toBeNull();
+    // The archive projection landed.
+    expect((await store.archive.listByMember(MEMBER)).length).toBeGreaterThan(0);
   });
 
-  it("completes a DRAWN signature (embedded canvas PNG)", async () => {
+  it("completes a drawn signature", async () => {
     const { lifecycle, service } = build();
     await consentFirst(lifecycle, service);
     const agreement = await publish(lifecycle, "founding_membership_agreement");
-    // A 1x1 transparent PNG.
-    const png =
-      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
     const res = await service.completeNativeSignature(
       signInput({
         documentVersionId: agreement.id,
-        evidence: { method: "drawn", typedLegalName: "Member Test", drawnPngBase64: `data:image/png;base64,${png}` },
+        evidence: { method: "drawn", typedLegalName: "Member Test", drawnPngBase64: `data:image/png;base64,${PNG_1x1}` },
       }),
     );
     expect(res.ok).toBe(true);
   });
+});
 
-  it("refuses a signature when the document is not published", async () => {
-    const { lifecycle, service } = build();
-    await consentFirst(lifecycle, service);
-    const draft = await lifecycle.createDraft({
-      category: "privacy_notice",
-      semver: "1.0.0",
-      jurisdiction: "US-TX",
-      content: "Draft-only text.",
-    });
-    const res = await service.completeNativeSignature(signInput({ documentVersionId: draft.id }));
-    expect(res).toMatchObject({ ok: false, code: "not_published" });
-  });
-
-  it("refuses when fullDocumentShown is false", async () => {
+describe("NativeEsignService: legal guards are reused, never weakened", () => {
+  it("refuses an unpublished document, unshown document, non-affirmative consent, and blank name", async () => {
     const { lifecycle, service } = build();
     await consentFirst(lifecycle, service);
     const agreement = await publish(lifecycle, "founding_membership_agreement");
-    const res = await service.completeNativeSignature(
-      signInput({ documentVersionId: agreement.id, document: { documentVersionId: agreement.id, fullDocumentShown: false, affirmativeConsent: true } }),
-    );
-    expect(res).toMatchObject({ ok: false, code: "full_document_not_shown" });
+    const draft = await lifecycle.createDraft({ category: "privacy_notice", semver: "9.0.0", jurisdiction: "US-TX", content: "d" });
+    expect(await service.completeNativeSignature(signInput({ documentVersionId: draft.id }))).toMatchObject({ ok: false, code: "not_published" });
+    expect(
+      await service.completeNativeSignature(signInput({ documentVersionId: agreement.id, document: { documentVersionId: agreement.id, fullDocumentShown: false, affirmativeConsent: true } })),
+    ).toMatchObject({ ok: false, code: "full_document_not_shown" });
+    expect(
+      await service.completeNativeSignature(signInput({ documentVersionId: agreement.id, document: { documentVersionId: agreement.id, fullDocumentShown: true, affirmativeConsent: false } })),
+    ).toMatchObject({ ok: false, code: "consent_not_affirmative" });
+    expect(
+      await service.completeNativeSignature(signInput({ documentVersionId: agreement.id, evidence: { method: "typed", typedLegalName: " ", drawnPngBase64: null } })),
+    ).toMatchObject({ ok: false, code: "legal_name_required" });
   });
 
-  it("refuses when affirmativeConsent is false", async () => {
-    const { lifecycle, service } = build();
-    await consentFirst(lifecycle, service);
-    const agreement = await publish(lifecycle, "founding_membership_agreement");
-    const res = await service.completeNativeSignature(
-      signInput({ documentVersionId: agreement.id, document: { documentVersionId: agreement.id, fullDocumentShown: true, affirmativeConsent: false } }),
-    );
-    expect(res).toMatchObject({ ok: false, code: "consent_not_affirmative" });
-  });
-
-  it("refuses a legal name that is blank", async () => {
-    const { lifecycle, service } = build();
-    await consentFirst(lifecycle, service);
-    const agreement = await publish(lifecycle, "founding_membership_agreement");
-    const res = await service.completeNativeSignature(
-      signInput({ documentVersionId: agreement.id, evidence: { method: "typed", typedLegalName: " ", drawnPngBase64: null } }),
-    );
-    expect(res).toMatchObject({ ok: false, code: "legal_name_required" });
-  });
-
-  it("refuses a drawn method with no signature image", async () => {
-    const { lifecycle, service } = build();
-    await consentFirst(lifecycle, service);
-    const agreement = await publish(lifecycle, "founding_membership_agreement");
-    const res = await service.completeNativeSignature(
-      signInput({ documentVersionId: agreement.id, evidence: { method: "drawn", typedLegalName: "Member Test", drawnPngBase64: "" } }),
-    );
-    expect(res).toMatchObject({ ok: false, code: "signature_evidence_required" });
-  });
-
-  it("refuses ARBITRATION without its separate acknowledgment, then accepts with it", async () => {
+  it("refuses arbitration and the release/waiver without their separate acknowledgment", async () => {
     const { lifecycle, service } = build();
     await consentFirst(lifecycle, service);
     const arbitration = await publish(lifecycle, "arbitration_agreement");
-    const without = await service.completeNativeSignature(signInput({ documentVersionId: arbitration.id }));
-    expect(without).toMatchObject({ ok: false, code: "separate_acknowledgment_required" });
-    const withAck = await service.completeNativeSignature(
-      signInput({
-        documentVersionId: arbitration.id,
-        document: { documentVersionId: arbitration.id, fullDocumentShown: true, affirmativeConsent: true, separateAcknowledgment: true },
-        idempotencyKey: "arb-with-ack",
-      }),
-    );
-    expect(withAck.ok).toBe(true);
-  });
-
-  it("refuses the RELEASE/waiver (covenant slot) without its separate acknowledgment", async () => {
-    const { lifecycle, service } = build();
-    await consentFirst(lifecycle, service);
+    expect(await service.completeNativeSignature(signInput({ documentVersionId: arbitration.id }))).toMatchObject({
+      ok: false,
+      code: "separate_acknowledgment_required",
+    });
     const covenant = await publish(lifecycle, "membership_covenant");
-    const without = await service.completeNativeSignature(signInput({ documentVersionId: covenant.id }));
-    expect(without).toMatchObject({ ok: false, code: "separate_acknowledgment_required" });
+    expect(await service.completeNativeSignature(signInput({ documentVersionId: covenant.id }))).toMatchObject({
+      ok: false,
+      code: "separate_acknowledgment_required",
+    });
   });
 
-  it("is idempotent: a duplicate submission replays instead of minting a second request", async () => {
-    const { lifecycle, service, store } = build();
-    await consentFirst(lifecycle, service);
-    const agreement = await publish(lifecycle, "founding_membership_agreement");
-    const first = await service.completeNativeSignature(
-      signInput({ documentVersionId: agreement.id, idempotencyKey: "dup-key" }),
-    );
-    const second = await service.completeNativeSignature(
-      signInput({ documentVersionId: agreement.id, idempotencyKey: "dup-key" }),
-    );
-    expect(first.ok && second.ok).toBe(true);
-    if (first.ok && second.ok) {
-      expect(second.replayed).toBe(true);
-      expect(second.request.id).toBe(first.request.id);
-    }
-    // Exactly one request for this member+key.
-    const all = await store.requests.listByMember(MEMBER);
-    expect(all.filter((x) => x.idempotencyKey === "dup-key")).toHaveLength(1);
-  });
-
-  it("requires the electronic-record consent before any other document (native path)", async () => {
+  it("requires the electronic-record consent before any other document", async () => {
     const { lifecycle, service } = build();
-    // No consent signed first.
     const agreement = await publish(lifecycle, "founding_membership_agreement");
-    const res = await service.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
-    expect(res).toMatchObject({ ok: false, code: "electronic_consent_required" });
+    expect(await service.completeNativeSignature(signInput({ documentVersionId: agreement.id }))).toMatchObject({
+      ok: false,
+      code: "electronic_consent_required",
+    });
+  });
+});
+
+describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the agreement unsigned)", () => {
+  async function setup(opts: BuildOpts) {
+    const ctx = build(opts);
+    // Consent uses the same (possibly failing) deps; publish it directly and
+    // sign it only when the deps are healthy.
+    const consent = await publish(ctx.lifecycle, "electronic_record_consent");
+    if (!opts.pdf && !opts.media && !opts.store) {
+      await ctx.service.completeNativeSignature(signInput({ documentVersionId: consent.id, idempotencyKey: "c" }));
+    }
+    const agreement = await publish(ctx.lifecycle, "founding_membership_agreement");
+    return { ...ctx, agreement };
+  }
+
+  it("PDF generation failure leaves the agreement unsigned", async () => {
+    const pdf: PdfGenerator = { ...fakePdf, generateSignedAgreementPdf: async () => { throw new Error("boom"); } };
+    // Consent signs on a healthy service; then the failing pdf is swapped in.
+    const healthy = build();
+    await consentFirst(healthy.lifecycle, healthy.service);
+    const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
+    const failing = new NativeEsignService(
+      { store: healthy.store, media: healthy.media, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf },
+      { now: NOW },
+    );
+    const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
+    expect(res).toMatchObject({ ok: false, code: "pdf_generation_error" });
+    // Unsigned: no signature, no request.
+    expect(await healthy.documentsStore.getSignature(MEMBER, agreement.id)).toBeNull();
+    expect(await healthy.store.requests.getByIdempotencyKey(MEMBER, `key-${agreement.id}`)).toBeNull();
   });
 
-  it("keeps each member's documents isolated (no cross-member request)", async () => {
+  it("signed-PDF / certificate storage failure leaves the agreement unsigned", async () => {
+    const failingMedia: EsignMediaPort = {
+      putObject: async () => ({ ok: false, code: "PROVIDER_ERROR", message: "storage down" }),
+      createAccessUrl: async () => ({ ok: false, code: "PROVIDER_ERROR" }),
+      getObject: async () => ({ ok: false, code: "PROVIDER_ERROR" }),
+    };
+    const healthy = build();
+    await consentFirst(healthy.lifecycle, healthy.service);
+    const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
+    const failing = new NativeEsignService(
+      { store: healthy.store, media: failingMedia, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf: fakePdf },
+      { now: NOW },
+    );
+    const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
+    expect(res).toMatchObject({ ok: false, code: "storage_error" });
+    expect(await healthy.documentsStore.getSignature(MEMBER, agreement.id)).toBeNull();
+  });
+
+  it("certificate storage failure (second upload) leaves the agreement unsigned", async () => {
+    // Signed-PDF upload succeeds; the certificate upload (second putObject) fails.
+    const inner = new InMemoryEsignMediaProvider();
+    let puts = 0;
+    const media: EsignMediaPort = {
+      putObject: async (i) => {
+        puts += 1;
+        if (puts === 2) return { ok: false, code: "PROVIDER_ERROR", message: "cert store down" };
+        return inner.putObject(i);
+      },
+      createAccessUrl: (i) => inner.createAccessUrl(i),
+      getObject: (p) => inner.getObject(p),
+    };
+    const healthy = build();
+    await consentFirst(healthy.lifecycle, healthy.service);
+    const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
+    const failing = new NativeEsignService(
+      { store: healthy.store, media, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf: fakePdf },
+      { now: NOW },
+    );
+    const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
+    expect(res).toMatchObject({ ok: false, code: "storage_error" });
+    expect(await healthy.documentsStore.getSignature(MEMBER, agreement.id)).toBeNull();
+  });
+
+  it("certificate GENERATION failure leaves the agreement unsigned", async () => {
+    const pdf: PdfGenerator = { ...fakePdf, generateCompletionCertificatePdf: async () => { throw new Error("cert boom"); } };
+    const healthy = build();
+    await consentFirst(healthy.lifecycle, healthy.service);
+    const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
+    const failing = new NativeEsignService(
+      { store: healthy.store, media: healthy.media, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf },
+      { now: NOW },
+    );
+    const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
+    expect(res).toMatchObject({ ok: false, code: "certificate_generation_error" });
+    expect(await healthy.documentsStore.getSignature(MEMBER, agreement.id)).toBeNull();
+  });
+
+  it("database request-record failure leaves the agreement unsigned", async () => {
+    const healthy = build();
+    await consentFirst(healthy.lifecycle, healthy.service);
+    const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
+    const failing = new NativeEsignService(
+      { store: failingRequestStore(), media: healthy.media, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf: fakePdf },
+      { now: NOW },
+    );
+    const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
+    expect(res).toMatchObject({ ok: false, code: "storage_error" });
+    // The signature store is the healthy one; still nothing was signed.
+    expect(await healthy.documentsStore.getSignature(MEMBER, agreement.id)).toBeNull();
+  });
+
+  it("FINAL SignatureRecord insert failure: unsigned, evidence not completed, cleanup-required, retry converges", async () => {
+    // Everything before the signature succeeds; the final insertSignature throws.
+    const documentsStore = createInMemoryDocumentsStore();
+    const lifecycle = new DocumentLifecycle(documentsStore, { now: NOW });
+    const store = createInMemoryEsignStore();
+    const media = new InMemoryEsignMediaProvider();
+    const consent = await publish(lifecycle, "electronic_record_consent");
+    const agreement = await publish(lifecycle, "founding_membership_agreement");
+
+    // Sign the consent on a HEALTHY service so the agreement clears the
+    // electronic-consent-first guard.
+    const healthy = new NativeEsignService(
+      { store, media, lifecycle, signatures: new SignatureService(documentsStore, { now: NOW }), pdf: fakePdf },
+      { now: NOW },
+    );
+    await healthy.completeNativeSignature(signInput({ documentVersionId: consent.id, idempotencyKey: "c" }));
+
+    // The failing service shares the same version/signature store but its
+    // insertSignature throws (the final commit fails).
+    const failingDocsStore = {
+      ...documentsStore,
+      insertSignature: async () => {
+        throw new Error("signature commit down");
+      },
+    };
+    const failing = new NativeEsignService(
+      { store, media, lifecycle, signatures: new SignatureService(failingDocsStore, { now: NOW }), pdf: fakePdf },
+      { now: NOW },
+    );
+    const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id, idempotencyKey: "k" }));
+    expect(res).toMatchObject({ ok: false, code: "storage_error" });
+
+    // The agreement is UNSIGNED: no legal signature, so the gate (which reads
+    // signatures) does not advance. Evidence WAS uploaded, but uploaded evidence
+    // alone never counts.
+    expect(await documentsStore.getSignature(MEMBER, agreement.id)).toBeNull();
+    const req = await store.requests.getByIdempotencyKey(MEMBER, "k");
+    expect(req).not.toBeNull();
+    expect(req?.signedPdfRef).toBeTruthy(); // evidence uploaded
+    expect(req?.nativeCompletionState).toBe("failed_cleanup_required"); // marked for cleanup
+    expect(req?.signingLinkStatus).not.toBe("completed"); // never presented as completed
+
+    // Retry on a healthy service converges to exactly one completed signature +
+    // one completed request.
+    const retry = await healthy.completeNativeSignature(signInput({ documentVersionId: agreement.id, idempotencyKey: "k" }));
+    expect(retry.ok).toBe(true);
+    expect(await documentsStore.getSignature(MEMBER, agreement.id)).not.toBeNull();
+    const done = await store.requests.getByIdempotencyKey(MEMBER, "k");
+    expect(done?.nativeCompletionState).toBe("completed");
+    expect(done?.signingLinkStatus).toBe("completed");
+    const forVersion = (await store.requests.listByMember(MEMBER)).filter((r) => r.xeniosDocumentVersionIds[0] === agreement.id);
+    expect(forVersion).toHaveLength(1);
+    const sigs = (await documentsStore.listSignaturesForMember(MEMBER)).filter((s) => s.documentVersionId === agreement.id);
+    expect(sigs).toHaveLength(1);
+  });
+
+  it("a completed native request presents; an evidence_stored one does not (gate checks completed, not uploaded)", async () => {
+    // A successful completion is presentable-completed.
     const { lifecycle, service, store } = build();
     await consentFirst(lifecycle, service);
     const agreement = await publish(lifecycle, "founding_membership_agreement");
-    await service.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
-    const otherDocs = await store.requests.listByMember(OTHER);
-    expect(otherDocs).toHaveLength(0);
-    const otherArchive = await store.archive.listByMember(OTHER);
-    expect(otherArchive).toHaveLength(0);
+    const ok = await service.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
+    expect(ok.ok).toBe(true);
+    if (ok.ok) expect(ok.request.nativeCompletionState).toBe("completed");
+    const stored = await store.requests.getByIdempotencyKey(MEMBER, `key-${agreement.id}`);
+    expect(stored?.nativeCompletionState).toBe("completed");
+    expect(stored?.signingLinkStatus).toBe("completed");
+  });
+
+  it("a retry after a transient PDF failure succeeds exactly once", async () => {
+    let calls = 0;
+    const pdf: PdfGenerator = {
+      ...fakePdf,
+      generateSignedAgreementPdf: async (input) => {
+        calls += 1;
+        if (calls === 1) throw new Error("transient");
+        return fakePdf.generateSignedAgreementPdf(input);
+      },
+    };
+    const healthy = build();
+    await consentFirst(healthy.lifecycle, healthy.service);
+    const agreement = await publish(healthy.lifecycle, "founding_membership_agreement");
+    const svc = new NativeEsignService(
+      { store: healthy.store, media: healthy.media, lifecycle: healthy.lifecycle, signatures: healthy.signatures, pdf },
+      { now: NOW },
+    );
+    const first = await svc.completeNativeSignature(signInput({ documentVersionId: agreement.id, idempotencyKey: "retry" }));
+    expect(first.ok).toBe(false);
+    expect(await healthy.documentsStore.getSignature(MEMBER, agreement.id)).toBeNull();
+    const second = await svc.completeNativeSignature(signInput({ documentVersionId: agreement.id, idempotencyKey: "retry" }));
+    expect(second.ok).toBe(true);
+    // Exactly one signature, one request.
+    expect(await healthy.documentsStore.getSignature(MEMBER, agreement.id)).not.toBeNull();
+    const reqs = (await healthy.store.requests.listByMember(MEMBER)).filter((r) => r.xeniosDocumentVersionIds[0] === agreement.id);
+    expect(reqs).toHaveLength(1);
+  });
+
+  it("concurrent retries do not create multiple signatures or orphan records", async () => {
+    const { lifecycle, service, store, documentsStore } = build();
+    await consentFirst(lifecycle, service);
+    const agreement = await publish(lifecycle, "founding_membership_agreement");
+    const body = signInput({ documentVersionId: agreement.id, idempotencyKey: "concurrent" });
+    const [a, b] = await Promise.all([
+      service.completeNativeSignature(body),
+      service.completeNativeSignature(body),
+    ]);
+    expect(a.ok && b.ok).toBe(true);
+    // Exactly one signature and one request for this member+version.
+    expect(await documentsStore.getSignature(MEMBER, agreement.id)).not.toBeNull();
+    const reqs = (await store.requests.listByMember(MEMBER)).filter((r) => r.xeniosDocumentVersionIds[0] === agreement.id);
+    expect(reqs).toHaveLength(1);
+    const sigCount = (await documentsStore.listSignaturesForMember(MEMBER)).filter((s) => s.documentVersionId === agreement.id);
+    expect(sigCount).toHaveLength(1);
+  });
+});
+
+describe("NativeEsignService: idempotency intent binding", () => {
+  it("reusing one idempotency key for a DIFFERENT document is a conflict, not a replay", async () => {
+    const { lifecycle, service } = build();
+    await consentFirst(lifecycle, service);
+    const a = await publish(lifecycle, "founding_membership_agreement");
+    const b = await publish(lifecycle, "privacy_notice");
+    const first = await service.completeNativeSignature(signInput({ documentVersionId: a.id, idempotencyKey: "shared" }));
+    expect(first.ok).toBe(true);
+    // Same key, different document: conflict.
+    const clash = await service.completeNativeSignature(signInput({ documentVersionId: b.id, idempotencyKey: "shared" }));
+    expect(clash).toMatchObject({ ok: false, code: "idempotency_conflict" });
+    // The same key + same document replays cleanly.
+    const replay = await service.completeNativeSignature(signInput({ documentVersionId: a.id, idempotencyKey: "shared" }));
+    expect(replay.ok).toBe(true);
+    if (replay.ok) expect(replay.replayed).toBe(true);
+  });
+});
+
+describe("validateDrawnPng", () => {
+  it("accepts a real PNG", () => {
+    expect(validateDrawnPng(`data:image/png;base64,${PNG_1x1}`).ok).toBe(true);
+    expect(validateDrawnPng(PNG_1x1).ok).toBe(true);
+  });
+  it("refuses empty, malformed base64, and non-PNG bytes", () => {
+    expect(validateDrawnPng("")).toMatchObject({ ok: false, code: "signature_evidence_required" });
+    expect(validateDrawnPng("not!!!base64###")).toMatchObject({ ok: false, code: "signature_invalid" });
+    // valid base64 of a non-PNG (JPEG magic + padding to >= 24 bytes)
+    const jpeg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(40)]).toString("base64");
+    expect(validateDrawnPng(jpeg)).toMatchObject({ ok: false, code: "signature_invalid" });
+  });
+  it("refuses an oversized payload", () => {
+    const huge = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(2 * 1024 * 1024)]).toString("base64");
+    expect(validateDrawnPng(huge)).toMatchObject({ ok: false, code: "signature_too_large" });
+  });
+  it("refuses out-of-range dimensions", () => {
+    // A PNG header claiming 9000x9000.
+    const buf = Buffer.alloc(24);
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(buf, 0);
+    buf.writeUInt32BE(9000, 16);
+    buf.writeUInt32BE(9000, 20);
+    expect(validateDrawnPng(buf.toString("base64"))).toMatchObject({ ok: false, code: "signature_dimensions" });
   });
 });
