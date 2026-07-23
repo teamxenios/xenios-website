@@ -104,8 +104,13 @@ import {
   type BridgeSettings,
   type ReplacementProviderStatus,
 } from "./bridge";
-import { DOCUMENT_CATEGORY_REGISTRY } from "./documents";
-import { SignatureService, newSignatureFormState, type SignatureRecord } from "./signatures";
+import { DOCUMENT_CATEGORY_REGISTRY, DocumentLifecycle } from "./documents";
+import {
+  SignatureService,
+  newSignatureFormState,
+  type EsignAcceptance,
+  type SignatureRecord,
+} from "./signatures";
 import {
   DEFAULT_IDENTITY_UPLOAD_CONFIG,
   IDENTITY_APPLICANT_GUIDANCE,
@@ -166,6 +171,29 @@ import {
 import { getSupabaseAdmin, supabaseConfigured } from "../../supabase";
 import { enqueueNotification } from "../outbox";
 import { enqueueFoundingEmail, type FoundingEmailEnqueue } from "./emails";
+import {
+  type ArchiveRecord,
+  type EsignMediaPort,
+  type EsignProvider,
+  type EsignStore,
+  type SigningRequestRecord,
+} from "./esign/contracts";
+import { resolveEsignProvider } from "./esign/provider";
+import { resolveEsignStore } from "./esign/persistence/esign-store";
+import {
+  InMemoryEsignMediaProvider,
+  RESEARCH_ESIGN_BUCKET,
+  SupabaseEsignMediaProvider,
+  buildMemberPacketZip,
+  esignSignedPdfPath,
+  ingestCompletedDocuments,
+  missingEsignMediaEnv,
+} from "./esign/archive";
+import {
+  EsignService,
+  type CreateSigningSessionFailure,
+  type ProcessWebhookFailure,
+} from "./esign/signing";
 
 // ---------------------------------------------------------------------------
 // Environment reads (all against the injected env, decided per build)
@@ -539,9 +567,18 @@ export interface FoundingActivationWiring {
   enqueueEmail: FoundingEmailEnqueue;
   identityUploadConfig?: IdentityUploadConfig;
   evidenceUploadConfig?: IdentityUploadConfig;
+  /** The e-signature provider (OpenSign), the store, and the completed-document
+   * media port. Optional so a test injects fakes; defaultWiring supplies the
+   * real resolvers, which stay disabled/in-memory until the flag and the
+   * OpenSign configuration are both present. */
+  resolveEsignProvider?: () => EsignProvider;
+  resolveEsignStore?: () => EsignStore;
+  resolveEsignMedia?: () => EsignMediaPort;
+  /** Where the admin records copy of an e-sign completion notice is sent. */
+  adminRecordsEmail?: string;
 }
 
-function defaultWiring(): FoundingActivationWiring {
+function defaultWiring(env: NodeJS.ProcessEnv): FoundingActivationWiring {
   return {
     resolveObligationsStore,
     resolvePeriodsStore,
@@ -564,6 +601,18 @@ function defaultWiring(): FoundingActivationWiring {
       supabaseConfigured() ? createSupabaseChecklistStore() : createInMemoryChecklistStore(),
     memberEmail: lookupMemberEmail,
     enqueueEmail: enqueueNotification,
+    // E-signature resolvers. The provider is Disabled unless the flag AND the
+    // OpenSign configuration are both present (resolveEsignProvider decides);
+    // the store falls back to in-memory until Supabase is configured; the media
+    // port is Supabase only when its bucket env is present, else in-memory. None
+    // of these touch the network at resolution time.
+    resolveEsignProvider: () => resolveEsignProvider(env),
+    resolveEsignStore: () => resolveEsignStore(),
+    resolveEsignMedia: () =>
+      missingEsignMediaEnv(env).length === 0
+        ? new SupabaseEsignMediaProvider()
+        : new InMemoryEsignMediaProvider(),
+    adminRecordsEmail: env.RESEARCH_ADMIN_RECORDS_EMAIL ?? "samuel@xeniostechnology.com",
   };
 }
 
@@ -748,6 +797,94 @@ function formatCents(cents: number): string {
 }
 
 // ---------------------------------------------------------------------------
+// E-signature serializations. The storage refs (signedPdfRef / certificateRef)
+// are NEVER serialized: the signed document and certificate are reached only
+// through the audited, admin-guarded download route that mints a short-lived
+// signed URL. Integrity hashes DO travel (they are the point of the record).
+// ---------------------------------------------------------------------------
+
+/** What a MEMBER may see about one of their signing requests. */
+function memberEsignRequestView(record: SigningRequestRecord): Record<string, unknown> {
+  return {
+    requestId: record.id,
+    mode: record.mode,
+    status: record.signingLinkStatus,
+    documentVersionIds: [...record.xeniosDocumentVersionIds],
+    signedPdfHash: record.signedPdfHash,
+    certificateHash: record.certificateHash,
+    completedAt: record.completedAt,
+    createdAt: record.createdAt,
+  };
+}
+
+/** The admin view of a signing request. No storage ref; access to the document
+ * is only through the download route. */
+function adminEsignRequestView(record: SigningRequestRecord): Record<string, unknown> {
+  return {
+    requestId: record.id,
+    memberId: record.memberId,
+    mode: record.mode,
+    provider: record.provider,
+    providerDocumentId: record.providerDocumentId,
+    status: record.signingLinkStatus,
+    documentVersionIds: [...record.xeniosDocumentVersionIds],
+    signedPdfHash: record.signedPdfHash,
+    certificateHash: record.certificateHash,
+    completedAt: record.completedAt,
+    createdAt: record.createdAt,
+  };
+}
+
+/** The admin view of an archive record. No storage ref either. */
+function adminEsignArchiveView(record: ArchiveRecord): Record<string, unknown> {
+  return {
+    archiveId: record.id,
+    memberId: record.memberId,
+    packetOrDocumentId: record.packetOrDocumentId,
+    documentVersionId: record.documentVersionId,
+    provider: record.provider,
+    providerDocumentId: record.providerDocumentId,
+    signedPdfHash: record.signedPdfHash,
+    certificateHash: record.certificateHash,
+    xeniosSourceHash: record.xeniosSourceHash,
+    completedAt: record.completedAt,
+    archiveStatus: record.archiveStatus,
+    accessClassification: record.accessClassification,
+    createdAt: record.createdAt,
+  };
+}
+
+/** Map a signing-session domain failure to a precise wire denial. */
+function esignSessionDenial(code: CreateSigningSessionFailure): { code: string; message: string } {
+  switch (code) {
+    case "no_versions":
+      return { code: "validation_failed", message: "At least one document version is required." };
+    case "mode_not_provider_backed":
+      return { code: "mode_not_supported", message: "That signing mode is not backed by a provider." };
+    case "version_not_published":
+      return { code: "not_published", message: "A requested document version is not published." };
+    case "template_drift":
+      return { code: "template_drift", message: "The document text changed; a new template is required." };
+    case "provider_error":
+      return { code: "provider_error", message: "The e-signature provider could not complete the request." };
+  }
+}
+
+/** Map a webhook-processing failure to a non-2xx status for the provider. */
+function esignWebhookStatus(code: ProcessWebhookFailure): number {
+  switch (code) {
+    case "unknown_document":
+      return 404;
+    case "unverified_completion":
+      return 422;
+    case "provider_error":
+      return 502;
+    case "ingest_failed":
+      return 500;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // The live composition
 // ---------------------------------------------------------------------------
 
@@ -800,6 +937,168 @@ function buildLiveServices(
   const tenant = IDENTITY_DEFAULT_TENANT;
 
   const signatures = new SignatureService(documents, { now });
+
+  // ---- e-signature (OpenSign) composition ----------------------------------
+  // The provider is EXECUTION ONLY; the agreement engine above stays the source
+  // of legal truth. A completion advances the gate only through a VERIFIED
+  // webhook (never a browser redirect), and the signed document + certificate
+  // are ingested into xenios' own private storage.
+  const documentLifecycle = new DocumentLifecycle(documents, { now });
+  const esignProvider = (wiring.resolveEsignProvider ?? (() => resolveEsignProvider(env)))();
+  const esignStore = (wiring.resolveEsignStore ?? resolveEsignStore)();
+  const esignMedia = (wiring.resolveEsignMedia ?? (() => new InMemoryEsignMediaProvider()))();
+  const adminRecordsEmail =
+    wiring.adminRecordsEmail ?? env.RESEARCH_ADMIN_RECORDS_EMAIL ?? "samuel@xeniostechnology.com";
+
+  const esignService = new EsignService({
+    store: esignStore,
+    provider: esignProvider,
+    media: esignMedia,
+    lifecycle: documentLifecycle,
+    signatures,
+    now,
+    // Ingest completions through the archive module so xenios holds its own
+    // hashed copy of the signed pdf + certificate + metadata under the legal
+    // record hierarchy (not the signing service's default flat path).
+    ingestCompleted: async (input) => {
+      const version = input.xeniosDocumentVersionIds[0] ?? input.packetOrDocumentId;
+      if (input.certificateFile) {
+        const result = await ingestCompletedDocuments({
+          memberId: input.memberId,
+          packetOrDocumentId: input.packetOrDocumentId,
+          version,
+          signedPdf: input.signedFile,
+          certificate: input.certificateFile,
+          media: esignMedia,
+          provider: esignProvider.name,
+          completedAt: input.completedAt,
+        });
+        return {
+          signedPdfRef: result.signedPdfRef,
+          signedPdfHash: result.signedPdfHash,
+          certificateRef: result.certificateRef,
+          certificateHash: result.certificateHash,
+        };
+      }
+      // A completion with no certificate: store the signed pdf alone at the same
+      // archive path, still hashed by xenios. Nothing partially succeeds.
+      const signedPdfRef = esignSignedPdfPath(input.memberId, input.packetOrDocumentId, version);
+      const put = await esignMedia.putObject({
+        storagePath: signedPdfRef,
+        bytes: input.signedFile.bytes,
+        contentType: input.signedFile.contentType ?? "application/pdf",
+      });
+      if (!put.ok) throw new Error("signed document store failed");
+      return {
+        signedPdfRef,
+        signedPdfHash: crypto.createHash("sha256").update(input.signedFile.bytes).digest("hex"),
+        certificateRef: null,
+        certificateHash: null,
+      };
+    },
+  });
+
+  /** The three-state refusal every esign SERVICE returns when the provider is
+   * not live (founding activation on, but e-signature off). */
+  function esignDisabled(): ServiceResult {
+    return { ok: false, code: "capability_disabled", message: "E-signature is not enabled." };
+  }
+
+  /** The member's completed e-sign acceptances, mapped to the (category,
+   * publishedVersionId) shape the agreements gate reads. A completed request's
+   * versions are resolved through the lifecycle so a stale version is skipped
+   * rather than counted. Empty when the provider is not live. */
+  async function esignAcceptancesFor(memberId: string): Promise<EsignAcceptance[]> {
+    if (!esignProvider.isLive) return [];
+    const requests = await esignStore.requests.listByMember(memberId);
+    const acceptances: EsignAcceptance[] = [];
+    for (const record of requests) {
+      if (record.signingLinkStatus !== "completed") continue;
+      for (const versionId of record.xeniosDocumentVersionIds) {
+        const version = await documentLifecycle.getVersion(versionId);
+        if (!version) continue;
+        acceptances.push({ category: version.category, documentVersionId: version.id });
+      }
+    }
+    return acceptances;
+  }
+
+  /** Best-effort document title + version for an esign notification. */
+  async function esignDocumentMeta(
+    versionIds: readonly string[],
+  ): Promise<{ title: string; version: string }> {
+    if (versionIds.length === 1) {
+      const version = await documentLifecycle.getVersion(versionIds[0]);
+      if (version) return { title: version.title, version: version.semver };
+    }
+    return { title: `activation packet (${versionIds.length} documents)`, version: "packet" };
+  }
+
+  /** Enqueue the member + admin completion notices. Failures are swallowed by
+   * notify(), so a notification can never block a webhook. NO storage ref, no
+   * signed URL, and no evidence content travels in either payload. */
+  async function sendEsignCompletionNotices(
+    record: SigningRequestRecord,
+    subjectId: string,
+  ): Promise<void> {
+    const meta = await esignDocumentMeta(record.xeniosDocumentVersionIds);
+    await notify("fm_esign_completed_member", await recipientFor(record.memberId), subjectId, {
+      documentTitle: meta.title,
+      version: meta.version,
+      signedAt: record.completedAt,
+    });
+    await notify("fm_admin_esign_completed", adminRecordsEmail, subjectId, {
+      memberName: record.memberId,
+      memberId: record.memberId,
+      documentTitle: meta.title,
+      version: meta.version,
+      completedAt: record.completedAt,
+      signedPdfHash: record.signedPdfHash,
+      certificateHash: record.certificateHash,
+      // A path into the AUTHENTICATED admin document center, never a raw URL.
+      adminLink: `/admin/research/activation/esign/member/${record.memberId}`,
+    });
+  }
+
+  /** Persist an archive record for a freshly-completed signing request, so the
+   * admin document center and the member packet ZIP have a first-class row to
+   * read. Idempotent by construction: only a newly-applied completion calls it. */
+  async function recordEsignArchive(record: SigningRequestRecord): Promise<void> {
+    const nowIso = now().toISOString();
+    const archiveRecord: ArchiveRecord = {
+      id: newId(),
+      memberId: record.memberId,
+      packetOrDocumentId: record.packetOrDocumentId,
+      documentVersionId:
+        record.xeniosDocumentVersionIds.length === 1 ? record.xeniosDocumentVersionIds[0] : null,
+      provider: record.provider,
+      providerDocumentId: record.providerDocumentId,
+      signedPdfRef: record.signedPdfRef,
+      signedPdfHash: record.signedPdfHash,
+      certificateRef: record.certificateRef,
+      certificateHash: record.certificateHash,
+      xeniosSourceHash: record.sourceContentHashes[0] ?? null,
+      signerEmail: record.signerIdentifier,
+      completedAt: record.completedAt,
+      retentionClass: "legal_records",
+      accessClassification: "member_and_admin",
+      archiveStatus: "stored",
+      emailDeliveryStatus: "sent",
+      localExportStatus: "not_exported",
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    };
+    try {
+      await esignStore.archive.insert(archiveRecord);
+    } catch (error) {
+      // A failed archive-row write must not fail the webhook; the durable
+      // signing request already carries the refs + hashes.
+      console.error(
+        "[founding-activation] esign archive insert failed:",
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
 
   // BOTH verification services over the SAME stores, so an activation and its
   // renewals share one money spine, one membership state, and one idempotency
@@ -924,7 +1223,9 @@ function buildLiveServices(
             : "The manual identity review has not verified this member yet.",
       };
     }
-    const agreementsGate = await signatures.requiredAgreementsSatisfied(memberId);
+    const agreementsGate = await signatures.requiredAgreementsSatisfied(memberId, {
+      esignAcceptances: await esignAcceptancesFor(memberId),
+    });
     if (!agreementsGate.satisfied) {
       return {
         code: "agreements_unsatisfied",
@@ -1076,6 +1377,84 @@ function buildLiveServices(
 
   return {
     status: statusView,
+
+    esign: {
+      async startSession(member, input) {
+        if (!esignProvider.isLive) return esignDisabled();
+        const result = await esignService.createSigningSession({
+          memberId: member.memberId,
+          signerEmail: member.email,
+          mode: input.mode,
+          xeniosDocumentVersionIds: input.documentVersionIds,
+          idempotencyKey: input.idempotencyKey,
+        });
+        if (!result.ok) {
+          const denial = esignSessionDenial(result.code);
+          return { ok: false, code: denial.code, message: denial.message };
+        }
+        // On a fresh provider-backed session (not an idempotent replay), let the
+        // member know the signing link is ready. The signing URL itself is
+        // provider-ephemeral and returned inline, never emailed.
+        if (!result.idempotentReplay) {
+          const meta = await esignDocumentMeta(result.request.xeniosDocumentVersionIds);
+          await notify("fm_esign_signing_ready", await recipientFor(member.memberId), result.request.id, {
+            documentTitle: meta.title,
+          });
+        }
+        return {
+          ok: true,
+          requestId: result.request.id,
+          providerDocumentId: result.request.providerDocumentId,
+          status: result.request.signingLinkStatus,
+          signingUrl: result.signingUrl,
+          idempotentReplay: result.idempotentReplay,
+        };
+      },
+      async documents(member) {
+        if (!esignProvider.isLive) return esignDisabled();
+        const requests = await esignStore.requests.listByMember(member.memberId);
+        return { ok: true, documents: requests.map(memberEsignRequestView) };
+      },
+    },
+
+    // The provider webhook: the ONLY thing that advances an e-sign acceptance,
+    // processed server-side, deduplicated by provider event id. Returns a bare
+    // { status, body } the route relays; it never throws to the route.
+    async esignWebhook(rawBody, signatureHeader, nowMs) {
+      if (!esignProvider.isLive) {
+        return { status: 503, body: { ok: false, code: "capability_disabled" } };
+      }
+      const verified = esignProvider.verifyWebhook(rawBody, signatureHeader, nowMs);
+      if (!verified.ok) {
+        return { status: 400, body: { ok: false, code: verified.code } };
+      }
+      let result;
+      try {
+        result = await esignService.processWebhookEvent(verified.event);
+      } catch (error) {
+        // Never log the raw body or the signature.
+        console.error(
+          "[founding-activation] esign webhook processing failed:",
+          error instanceof Error ? error.message : "unknown",
+        );
+        return { status: 500, body: { ok: false, code: "internal_error" } };
+      }
+      if (!result.ok) {
+        return { status: esignWebhookStatus(result.code), body: { ok: false, code: result.code } };
+      }
+      // A newly-applied completion: archive the record and notify. A replay
+      // (applied:false) is a no-op here, so nothing double-archives or re-emails.
+      if (result.applied && result.status === "completed") {
+        const record = await esignStore.requests.getByProviderDocumentId(
+          verified.event.providerDocumentId,
+        );
+        if (record) {
+          await recordEsignArchive(record);
+          await sendEsignCompletionNotices(record, record.id);
+        }
+      }
+      return { status: 200, body: { ok: true, applied: result.applied, status: result.status } };
+    },
 
     identity: {
       async consent(member, input) {
@@ -1575,7 +1954,9 @@ function buildLiveServices(
                   : "The manual identity review has not verified this member yet.",
             };
           }
-          const agreementsGate = await signatures.requiredAgreementsSatisfied(record.memberId);
+          const agreementsGate = await signatures.requiredAgreementsSatisfied(record.memberId, {
+            esignAcceptances: await esignAcceptancesFor(record.memberId),
+          });
           if (!agreementsGate.satisfied) {
             return {
               ok: false,
@@ -2144,6 +2525,82 @@ function buildLiveServices(
         });
         areas.push({ area: "day15", title: "Day 15 exits", items: day15Items });
 
+        // E-SIGNATURE (OpenSign). Presence booleans and variable NAMES only,
+        // never a value: the OpenSign token and webhook secret never serialize.
+        const esignSandboxConfigured = present("OPENSIGN_BASE_URL") && present("OPENSIGN_API_TOKEN");
+        const esignWebhookSecretPresent = present("OPENSIGN_WEBHOOK_SECRET");
+        const esignBucketPresent = present(RESEARCH_ESIGN_BUCKET);
+        areas.push({
+          area: "esign",
+          title: "E-signature (OpenSign)",
+          items: [
+            {
+              key: "provider_adapter",
+              label: "OpenSign provider adapter and signing domain wired",
+              state: "code_ready",
+              detail:
+                "The provider adapter, signing service, archive, and persistence are built and tested; the gate advances only on a verified webhook.",
+            },
+            {
+              key: "sandbox_configured",
+              label: "OpenSign endpoint and token configured",
+              state: esignSandboxConfigured ? "code_ready" : "configuration_missing",
+              detail: `OPENSIGN_BASE_URL present: ${present("OPENSIGN_BASE_URL")}. OPENSIGN_API_TOKEN present: ${present("OPENSIGN_API_TOKEN")}.`,
+            },
+            {
+              key: "webhook_secret",
+              label: "Webhook signing secret present",
+              state: esignWebhookSecretPresent ? "code_ready" : "configuration_missing",
+              detail: `OPENSIGN_WEBHOOK_SECRET present: ${esignWebhookSecretPresent}.`,
+            },
+            {
+              key: "webhook_verification",
+              label: "Webhook signature verification",
+              state: "production_test_missing",
+              detail: "No production webhook has been verified in this environment yet.",
+            },
+            {
+              key: "template_provisioning",
+              label: "Provider template provisioning",
+              state: "production_test_missing",
+              detail: "No production template has been provisioned against the live provider yet.",
+            },
+            {
+              key: "completed_ingestion",
+              label: "Completed-document ingestion",
+              state: "production_test_missing",
+              detail: "No production completion has been ingested into the archive yet.",
+            },
+            {
+              key: "member_document_center",
+              label: "Member signing surface",
+              state: "code_ready",
+              detail:
+                "The member session and documents routes are wired behind the three-state gate and the member guard.",
+            },
+            {
+              key: "admin_notification",
+              label: "Admin completion notification",
+              state: "code_ready",
+              detail:
+                "A verified completion notifies the member and the records address with integrity facts and an authenticated admin link, never a raw storage URL.",
+            },
+            {
+              key: "secure_archive",
+              label: "Private archive bucket configured",
+              state: esignBucketPresent ? "code_ready" : "configuration_missing",
+              detail: `${RESEARCH_ESIGN_BUCKET} present: ${esignBucketPresent}.`,
+            },
+            {
+              key: "local_export",
+              label: "Member packet export",
+              state: "code_ready",
+              detail:
+                "The packet ZIP builder assembles the signed agreements and certificates only; raw identity and payment evidence are excluded by default.",
+            },
+          ],
+        });
+
         return { ok: true, generatedAt: at.toISOString(), areas };
       },
 
@@ -2252,6 +2709,62 @@ function buildLiveServices(
         await identityStore.saveCase(result.value.kase);
         if (result.value.review) await identityStore.saveReview(result.value.review);
         return { ok: true, case: adminIdentityCaseView(result.value.kase) };
+      },
+
+      // ---- e-signature document center -------------------------------------
+      async esignMemberDocuments(memberId) {
+        if (!esignProvider.isLive) return esignDisabled();
+        const requests = await esignStore.requests.listByMember(memberId);
+        const completed = requests.filter((record) => record.signingLinkStatus === "completed");
+        const archive = await esignStore.archive.listByMember(memberId);
+        return {
+          ok: true,
+          memberId,
+          requests: completed.map(adminEsignRequestView),
+          archive: archive.map(adminEsignArchiveView),
+        };
+      },
+
+      // A short-lived signed download URL for the signed document or the
+      // certificate. Admin-guarded (the route) and never a public URL; the
+      // storage ref never leaves this method.
+      async esignDownloadUrl(admin, requestId, which) {
+        if (!esignProvider.isLive) return esignDisabled();
+        void admin;
+        const record = await esignStore.requests.getById(requestId);
+        if (!record) return { ok: false, code: "not_found", message: "No signing request with that id." };
+        const ref = which === "certificate" ? record.certificateRef : record.signedPdfRef;
+        if (!ref) {
+          return { ok: false, code: "invalid_state", message: `No ${which} document is stored for this request.` };
+        }
+        const grant = await esignMedia.createAccessUrl({
+          storagePath: ref,
+          expiresInSeconds: IDENTITY_ADMIN_ACCESS_TTL_SECONDS,
+          now: now(),
+        });
+        if (!grant.ok) {
+          return { ok: false, code: "provider_error", message: "E-signature storage refused the access URL." };
+        }
+        return { ok: true, which, grant: grant.value };
+      },
+
+      async esignPacketZip(memberId) {
+        const records = esignProvider.isLive ? await esignStore.archive.listByMember(memberId) : [];
+        // Signed agreements + completion certificates only; raw identity and
+        // payment evidence are excluded by default (they live in other buckets).
+        return buildMemberPacketZip({ records, media: esignMedia, include: {} });
+      },
+
+      async esignResendNotification(admin, requestId) {
+        if (!esignProvider.isLive) return esignDisabled();
+        void admin;
+        const record = await esignStore.requests.getById(requestId);
+        if (!record) return { ok: false, code: "not_found", message: "No signing request with that id." };
+        if (record.signingLinkStatus !== "completed" || !record.completedAt) {
+          return { ok: false, code: "invalid_state", message: "That signing request is not completed." };
+        }
+        await sendEsignCompletionNotices(record, `${record.id}:resend`);
+        return { ok: true, resent: true, requestId: record.id };
       },
     },
   };
@@ -2448,6 +2961,6 @@ export function buildFoundingActivationDependencies(
     env,
   );
 
-  const resolved: FoundingActivationWiring = { ...defaultWiring(), ...wiring };
+  const resolved: FoundingActivationWiring = { ...defaultWiring(env), ...wiring };
   return { state: "live", services: buildLiveServices(now, resolved, env) };
 }

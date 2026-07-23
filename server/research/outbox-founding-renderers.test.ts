@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 // ---------------------------------------------------------------------------
 // Founding-membership (fm_*) renderer registration in the outbox dispatch:
-// the 24 emails.ts data templates become subject + body here, and NOTHING
+// the 27 emails.ts data templates become subject + body here, and NOTHING
 // resembling a receiving instruction can travel into a rendered email. The
 // heavyweight route modules the outbox imports are mocked exactly as
 // outbox.test.ts mocks them; the renderer itself is pure.
@@ -94,7 +94,7 @@ describe("renderFoundingEmail: no instruction material, ever", () => {
     }
   });
 
-  it("string-scan across all 24 rendered outputs: no instruction material, no unresolved placeholders", () => {
+  it("string-scan across all 27 rendered outputs: no instruction material, no unresolved placeholders", () => {
     const benign = {
       xeniosRef: "XRM-TESTREF4",
       dueAt: "2026-08-18T00:00:00.000Z",
@@ -105,8 +105,18 @@ describe("renderFoundingEmail: no instruction material, ever", () => {
       amount: "$25.00",
       methodLabel: "Manual bridge method",
       rejectionCategory: "unreadable",
+      // e-sign member + admin template variables.
+      documentTitle: "Founding Membership Agreement",
+      version: "1.0.0",
+      signedAt: "2026-07-19T00:00:00.000Z",
+      completedAt: "2026-07-19T00:00:00.000Z",
+      memberName: "Member Aye Test",
+      memberId: "member-aaaa-1111",
+      signedPdfHash: "a".repeat(64),
+      certificateHash: "b".repeat(64),
+      adminLink: "/admin/research/activation/esign/member/member-aaaa-1111",
     };
-    expect(FOUNDING_EMAIL_TEMPLATE_KEYS).toHaveLength(24);
+    expect(FOUNDING_EMAIL_TEMPLATE_KEYS).toHaveLength(27);
     for (const key of FOUNDING_EMAIL_TEMPLATE_KEYS) {
       const rendered = renderFoundingEmail(key, benign);
       expect(rendered).not.toBeNull();

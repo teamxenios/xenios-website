@@ -1,7 +1,12 @@
+import crypto from "crypto";
 import { describe, expect, it, vi } from "vitest";
 import express, { type Express, type Request, type Response } from "express";
 import request from "supertest";
 import { registerFoundingActivationApi, type FoundingActivationDependencies } from "./routes";
+import { DisabledEsignProvider } from "./esign/provider";
+import { createInMemoryEsignStore } from "./esign/persistence/esign-store";
+import { InMemoryEsignMediaProvider } from "./esign/archive";
+import type { EsignProvider, EsignStore, EsignWebhookEvent } from "./esign/contracts";
 import {
   buildFoundingActivationDependencies,
   createInMemoryChecklistStore,
@@ -59,6 +64,99 @@ const MEMBER_EMAILS: Record<string, string> = {
 const PLAINTEXT_INSTRUCTIONS = "zelle-destination-PLAINTEXT-9911";
 const CIPHERTEXT_PREFIX = "testenc:";
 
+/** The records address the admin e-sign completion notice is sent to. */
+const ADMIN_RECORDS_EMAIL = "records@xenios.test";
+
+/** A known test secret so the signed-vs-unsigned webhook check is genuine. */
+const ESIGN_WEBHOOK_SECRET = "test-esign-webhook-secret-value";
+
+function esignSignature(rawBody: string): string {
+  return crypto.createHmac("sha256", ESIGN_WEBHOOK_SECRET).update(rawBody, "utf8").digest("hex");
+}
+
+/**
+ * A fake LIVE OpenSign provider: it provisions, sessions, and fetches like the
+ * real one, and its verifyWebhook does a REAL HMAC-SHA256 check against the test
+ * secret, so the signed-vs-unsigned test is genuine. createSigningSession is
+ * counted so a test can prove idempotency; fetchCompletedFile is counted so a
+ * test can prove a rejected webhook never ingests.
+ */
+function fakeLiveEsignProvider() {
+  const counts = { provisionTemplate: 0, createSigningSession: 0, fetchCompletedFile: 0 };
+  let docCounter = 0;
+  const provider: EsignProvider = {
+    name: "opensign",
+    isLive: true,
+    async provisionTemplate(spec) {
+      counts.provisionTemplate += 1;
+      return {
+        ok: true,
+        value: { providerTemplateId: `ptid-${spec.templateKey}`, providerTemplateVersion: "1" },
+      };
+    },
+    async createSigningSession() {
+      counts.createSigningSession += 1;
+      docCounter += 1;
+      return {
+        ok: true,
+        value: {
+          providerDocumentId: `pdoc-${docCounter}`,
+          signingUrl: `https://sign.example/${docCounter}`,
+          expiresAt: null,
+        },
+      };
+    },
+    async fetchCompletedFile(input) {
+      counts.fetchCompletedFile += 1;
+      return { ok: true, value: { bytes: Buffer.from(`pdf:${input.fileUrl}`), contentType: "application/pdf" } };
+    },
+    verifyWebhook(rawBody, signatureHeader) {
+      if (!signatureHeader || signatureHeader !== esignSignature(rawBody)) {
+        return { ok: false, code: "invalid_signature" };
+      }
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(rawBody);
+      } catch {
+        return { ok: false, code: "malformed" };
+      }
+      return { ok: true, event: parsed as EsignWebhookEvent };
+    },
+  };
+  return { provider, counts };
+}
+
+let esignEventCounter = 0;
+
+/** A completed-signing webhook event body for one provider document. */
+function completedWebhookBody(
+  providerDocumentId: string,
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> {
+  esignEventCounter += 1;
+  return {
+    eventId: `evt-${esignEventCounter}`,
+    type: "completed",
+    providerDocumentId,
+    signedFileUrl: `https://provider.example/${providerDocumentId}/signed.pdf`,
+    certificateUrl: `https://provider.example/${providerDocumentId}/certificate.pdf`,
+    signerEmail: MEMBER_EMAILS[MEMBER_A],
+    externalReference: providerDocumentId,
+    occurredAt: "2026-07-22T00:00:00.000Z",
+    ...overrides,
+  };
+}
+
+/** POST a webhook body with a signature (correct by default). */
+function postEsignWebhook(app: Express, body: Record<string, unknown>, signature?: string) {
+  const raw = JSON.stringify(body);
+  return request(app)
+    .post("/api/research/webhooks/esign")
+    .set("Content-Type", "application/json")
+    .set("x-webhook-signature", signature ?? esignSignature(raw))
+    .send(raw);
+}
+
 const testCipher: InstructionCipher = {
   encrypt: (plaintext) => `${CIPHERTEXT_PREFIX}${Buffer.from(plaintext, "utf8").toString("base64")}`,
   decrypt: (ciphertext) =>
@@ -108,9 +206,12 @@ interface LiveContext {
   documentsStore: DocumentsStore;
   identityStore: IdentityStore;
   media: InMemoryIdentityMediaProvider;
+  esignStore: EsignStore;
+  esignMedia: InMemoryEsignMediaProvider;
+  esignCounts: { provisionTemplate: number; createSigningSession: number; fetchCompletedFile: number };
 }
 
-function liveContext(): LiveContext {
+function liveContext(opts: { esignProvider?: EsignProvider } = {}): LiveContext {
   const obligationsStore = createInMemoryObligationsStore();
   const periodsStore = createInMemoryPeriodsStore();
   const methodsStore = createInMemoryPaymentMethodsStore();
@@ -124,6 +225,15 @@ function liveContext(): LiveContext {
   const media = new InMemoryIdentityMediaProvider();
   const checklist = createInMemoryChecklistStore();
   const enqueued: FoundingEmailEnqueueInput[] = [];
+  const esignStore = createInMemoryEsignStore();
+  const esignMedia = new InMemoryEsignMediaProvider();
+  // Default to a fake LIVE provider; a test may inject a Disabled one instead.
+  const esignBits = opts.esignProvider
+    ? {
+        provider: opts.esignProvider,
+        counts: { provisionTemplate: 0, createSigningSession: 0, fetchCompletedFile: 0 },
+      }
+    : fakeLiveEsignProvider();
   const deps = buildFoundingActivationDependencies(NOW, LIVE_ENV, {
     resolveObligationsStore: () => obligationsStore,
     resolvePeriodsStore: () => periodsStore,
@@ -144,8 +254,21 @@ function liveContext(): LiveContext {
       enqueued.push(input);
       return true;
     },
+    resolveEsignProvider: () => esignBits.provider,
+    resolveEsignStore: () => esignStore,
+    resolveEsignMedia: () => esignMedia,
+    adminRecordsEmail: ADMIN_RECORDS_EMAIL,
   });
-  return { app: buildApp(deps), enqueued, documentsStore, identityStore, media };
+  return {
+    app: buildApp(deps),
+    enqueued,
+    documentsStore,
+    identityStore,
+    media,
+    esignStore,
+    esignMedia,
+    esignCounts: esignBits.counts,
+  };
 }
 
 /** Publish one version of every category through the real lifecycle. */
@@ -289,6 +412,11 @@ const REPRESENTATIVE_ROUTES: Array<{ method: "get" | "post" | "put"; path: strin
   { method: "get", path: "/api/admin/research/activation/readiness" },
   { method: "get", path: "/api/admin/research/activation/identity/queue" },
   { method: "post", path: "/api/admin/research/activation/identity/c-1/review" },
+  // E-signature: a member route, the unguarded webhook, and an admin route are
+  // all behind the three-state gate first.
+  { method: "post", path: "/api/research/activation/esign/session" },
+  { method: "post", path: "/api/research/webhooks/esign" },
+  { method: "get", path: "/api/admin/research/activation/esign/member/m-1" },
 ];
 
 function refusingWiring(): {
@@ -1288,6 +1416,7 @@ describe("state 3: the go-live readiness report", () => {
       "email",
       "membership",
       "day15",
+      "esign",
     ]);
     for (const area of before.body.areas) {
       expect(area.items.length).toBeGreaterThan(0);
@@ -1318,6 +1447,15 @@ describe("state 3: the go-live readiness report", () => {
     expect(itemOf(before.body, "day15", "provider_account_approved").state).toBe(
       "external_approval_missing",
     );
+    // E-signature: the code is ready, the OpenSign configuration is not present
+    // in LIVE_ENV, and the production tests have not run.
+    expect(itemOf(before.body, "esign", "provider_adapter").state).toBe("code_ready");
+    expect(itemOf(before.body, "esign", "sandbox_configured").state).toBe("configuration_missing");
+    expect(itemOf(before.body, "esign", "webhook_secret").state).toBe("configuration_missing");
+    expect(itemOf(before.body, "esign", "webhook_verification").state).toBe("production_test_missing");
+    expect(itemOf(before.body, "esign", "member_document_center").state).toBe("code_ready");
+    expect(itemOf(before.body, "esign", "secure_archive").state).toBe("configuration_missing");
+    expect(itemOf(before.body, "esign", "local_export").state).toBe("code_ready");
 
     // Provision the registry, the bridge, and the papers; record an owner on
     // one Day 15 item. The report moves, truthfully, item by item.
@@ -1391,5 +1529,260 @@ describe("state 3: identity emergency delete", () => {
       .set(ADMIN_HEADER, "yes");
     expect(view.status).toBe(409);
     expect(view.body.code).toBe("invalid_state");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// State 3: e-signature (OpenSign), the gate advances only on a verified webhook
+// ---------------------------------------------------------------------------
+
+describe("state 3: e-signature", () => {
+  /** Verify identity through the real flow WITHOUT signing any native agreement,
+   * so the only way to satisfy the agreements gate is an e-sign completion. */
+  async function verifyIdentityOnly(ctx: LiveContext, member: string): Promise<void> {
+    await request(ctx.app)
+      .post("/api/research/activation/identity/consent")
+      .set(MEMBER_HEADER, member)
+      .send({ accepted: true, consentVersion: "icv-1" });
+    await request(ctx.app)
+      .post("/api/research/activation/identity/upload-url")
+      .set(MEMBER_HEADER, member)
+      .send({ contentType: "image/jpeg", contentLengthBytes: 1000, fileName: "id.jpg" });
+    await request(ctx.app)
+      .post("/api/research/activation/identity/mark-uploaded")
+      .set(MEMBER_HEADER, member)
+      .send({});
+    const q = await request(ctx.app)
+      .get("/api/admin/research/activation/identity/queue")
+      .set(ADMIN_HEADER, "yes");
+    const caseId = q.body.queue.find((c: { memberId: string }) => c.memberId === member).caseId as string;
+    await request(ctx.app)
+      .post(`/api/admin/research/activation/identity/${caseId}/review`)
+      .set(ADMIN_HEADER, "yes")
+      .send({ nameMatch: "match", ageThresholdMet: true, documentNotExpired: true, jurisdiction: "TX", licenseLast4: null });
+  }
+
+  async function requiredAgreements(ctx: LiveContext, member: string) {
+    const res = await request(ctx.app)
+      .get("/api/research/activation/agreements")
+      .set(MEMBER_HEADER, member);
+    return (res.body.agreements as Array<{ category: string; documentVersionId: string; requirement: string }>).filter(
+      (a) => a.requirement === "required",
+    );
+  }
+
+  it("returns capability_disabled when the provider is not live", async () => {
+    const ctx = liveContext({ esignProvider: new DisabledEsignProvider() });
+    const res = await request(ctx.app)
+      .post("/api/research/activation/esign/session")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ mode: "opensign_document", documentVersionIds: ["v-anything"], idempotencyKey: "k-1" });
+    expect(res.status).toBe(503);
+    expect(res.body.code).toBe("capability_disabled");
+
+    // The webhook is precisely capability_disabled too (not byte-silent, since
+    // founding activation is on; the three-state gate has already passed).
+    const hook = await postEsignWebhook(ctx.app, completedWebhookBody("pdoc-x"));
+    expect(hook.status).toBe(503);
+    expect(hook.body.code).toBe("capability_disabled");
+  });
+
+  it("creates a signing session and is idempotent on the same key", async () => {
+    const ctx = liveContext();
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await requiredAgreements(ctx, MEMBER_A);
+
+    const first = await request(ctx.app)
+      .post("/api/research/activation/esign/session")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ mode: "opensign_document", documentVersionIds: [consent.documentVersionId], idempotencyKey: "idem-1" });
+    expect(first.status).toBe(200);
+    expect(first.body.signingUrl).toContain("https://sign.example/");
+    const providerDocumentId = first.body.providerDocumentId as string;
+    expect(providerDocumentId).toBeTruthy();
+
+    const second = await request(ctx.app)
+      .post("/api/research/activation/esign/session")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ mode: "opensign_document", documentVersionIds: [consent.documentVersionId], idempotencyKey: "idem-1" });
+    expect(second.status).toBe(200);
+    expect(second.body.idempotentReplay).toBe(true);
+    expect(second.body.providerDocumentId).toBe(providerDocumentId);
+    // The provider was hit exactly once: the replay never mints a second doc.
+    expect(ctx.esignCounts.createSigningSession).toBe(1);
+  });
+
+  it("advances the agreements gate ONLY after a verified completion webhook", async () => {
+    const ctx = liveContext();
+    await provisionMethodAndBridge(ctx.app);
+    await publishAllCategories(ctx.documentsStore);
+    await verifyIdentityOnly(ctx, MEMBER_A);
+
+    const required = await requiredAgreements(ctx, MEMBER_A);
+    expect(required.length).toBeGreaterThan(0);
+
+    // Start an e-sign session for every required category.
+    const sessions: Array<{ category: string; providerDocumentId: string }> = [];
+    for (const agreement of required) {
+      const res = await request(ctx.app)
+        .post("/api/research/activation/esign/session")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send({
+          mode: "opensign_document",
+          documentVersionIds: [agreement.documentVersionId],
+          idempotencyKey: `idem-${agreement.category}`,
+        });
+      expect(res.status, agreement.category).toBe(200);
+      sessions.push({ category: agreement.category, providerDocumentId: res.body.providerDocumentId });
+    }
+
+    // REDIRECT ONLY (no webhook): the gate does NOT advance.
+    const beforeWebhooks = await request(ctx.app)
+      .post("/api/research/activation/payment/select-method")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ methodId: "zelle-1" });
+    expect(beforeWebhooks.status).toBe(409);
+    expect(beforeWebhooks.body.code).toBe("agreements_unsatisfied");
+
+    // A correctly-signed completion webhook for each provider document.
+    for (const session of sessions) {
+      const hook = await postEsignWebhook(ctx.app, completedWebhookBody(session.providerDocumentId));
+      expect(hook.status).toBe(200);
+      expect(hook.body.applied).toBe(true);
+      expect(hook.body.status).toBe("completed");
+    }
+
+    // The e-sign acceptances now satisfy the SAME agreements gate: select-method
+    // succeeds and mints the $50 obligation, without a single native signature.
+    const afterWebhooks = await request(ctx.app)
+      .post("/api/research/activation/payment/select-method")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ methodId: "zelle-1" });
+    expect(afterWebhooks.status).toBe(200);
+    expect(afterWebhooks.body.created).toBe(true);
+  }, 30_000);
+
+  it("rejects a wrong-signature webhook and never ingests or advances", async () => {
+    const ctx = liveContext();
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await requiredAgreements(ctx, MEMBER_A);
+    const started = await request(ctx.app)
+      .post("/api/research/activation/esign/session")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ mode: "opensign_document", documentVersionIds: [consent.documentVersionId], idempotencyKey: "idem-bad" });
+    const providerDocumentId = started.body.providerDocumentId as string;
+
+    const bad = await postEsignWebhook(ctx.app, completedWebhookBody(providerDocumentId), "deadbeef00");
+    expect(bad.status).not.toBe(200);
+    expect(bad.body.code).toBe("invalid_signature");
+    // The completed file was never fetched, so nothing ingested.
+    expect(ctx.esignCounts.fetchCompletedFile).toBe(0);
+
+    // No completed request, no archive: the gate never saw a completion.
+    const docs = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/member/${MEMBER_A}`)
+      .set(ADMIN_HEADER, "yes");
+    expect(docs.body.requests).toEqual([]);
+    expect(docs.body.archive).toEqual([]);
+  });
+
+  it("is idempotent on a duplicate webhook eventId", async () => {
+    const ctx = liveContext();
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await requiredAgreements(ctx, MEMBER_A);
+    const started = await request(ctx.app)
+      .post("/api/research/activation/esign/session")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ mode: "opensign_document", documentVersionIds: [consent.documentVersionId], idempotencyKey: "idem-dup" });
+    const providerDocumentId = started.body.providerDocumentId as string;
+
+    const event = completedWebhookBody(providerDocumentId); // fixed eventId
+    const firstHook = await postEsignWebhook(ctx.app, event);
+    expect(firstHook.status).toBe(200);
+    expect(firstHook.body.applied).toBe(true);
+    const fetchesAfterFirst = ctx.esignCounts.fetchCompletedFile;
+
+    // The SAME event id again: applied:false, and no second ingest.
+    const secondHook = await postEsignWebhook(ctx.app, event);
+    expect(secondHook.status).toBe(200);
+    expect(secondHook.body.applied).toBe(false);
+    expect(ctx.esignCounts.fetchCompletedFile).toBe(fetchesAfterFirst);
+  });
+
+  it("gives the admin a document center, downloads, a packet zip, and a resend", async () => {
+    const ctx = liveContext();
+    await publishAllCategories(ctx.documentsStore);
+    await verifyIdentityOnly(ctx, MEMBER_A);
+    const required = await requiredAgreements(ctx, MEMBER_A);
+
+    for (const agreement of required) {
+      const started = await request(ctx.app)
+        .post("/api/research/activation/esign/session")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send({
+          mode: "opensign_document",
+          documentVersionIds: [agreement.documentVersionId],
+          idempotencyKey: `idem-admin-${agreement.category}`,
+        });
+      await postEsignWebhook(ctx.app, completedWebhookBody(started.body.providerDocumentId));
+    }
+
+    // The admin document center lists completed requests AND archive records.
+    const list = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/member/${MEMBER_A}`)
+      .set(ADMIN_HEADER, "yes");
+    expect(list.status).toBe(200);
+    expect(list.body.requests.length).toBe(required.length);
+    expect(list.body.archive.length).toBe(required.length);
+    const requestId = list.body.requests[0].requestId as string;
+    // The list never carries a storage ref.
+    expect(JSON.stringify(list.body)).not.toContain("research-member-records");
+
+    // A short-lived signed download URL for the signed document and the cert.
+    const dl = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/request/${requestId}/download`)
+      .set(ADMIN_HEADER, "yes");
+    expect(dl.status).toBe(200);
+    expect(dl.body.grant.signedUrl).toContain("esign-signed");
+    const dlCert = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/request/${requestId}/download?which=certificate`)
+      .set(ADMIN_HEADER, "yes");
+    expect(dlCert.status).toBe(200);
+    expect(dlCert.body.which).toBe("certificate");
+
+    // The member packet as a zip.
+    const zip = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/member/${MEMBER_A}/packet.zip`)
+      .set(ADMIN_HEADER, "yes");
+    expect(zip.status).toBe(200);
+    expect(zip.headers["content-type"]).toContain("application/zip");
+    expect(zip.headers["content-disposition"]).toContain(`member-${MEMBER_A}-packet.zip`);
+
+    // Resend re-enqueues BOTH the member and the admin-records completion notice.
+    ctx.enqueued.length = 0;
+    const resend = await request(ctx.app)
+      .post(`/api/admin/research/activation/esign/request/${requestId}/resend`)
+      .set(ADMIN_HEADER, "yes")
+      .send({});
+    expect(resend.status).toBe(200);
+    const keys = ctx.enqueued.map((row) => row.templateKey);
+    expect(keys).toContain("fm_esign_completed_member");
+    expect(keys).toContain("fm_admin_esign_completed");
+    const adminNotice = ctx.enqueued.find((row) => row.templateKey === "fm_admin_esign_completed");
+    expect(adminNotice?.recipient).toBe(ADMIN_RECORDS_EMAIL);
+    // No raw storage URL, signed URL, or evidence content in any payload.
+    const scan = JSON.stringify(ctx.enqueued);
+    expect(scan).not.toContain("research-member-records");
+    expect(scan).not.toContain("esign-signed");
+    expect(scan).not.toContain("provider.example");
+  }, 30_000);
+
+  it("guards the packet filename member id against header injection", async () => {
+    const ctx = liveContext();
+    const res = await request(ctx.app)
+      .get("/api/admin/research/activation/esign/member/bad%20id%22/packet.zip")
+      .set(ADMIN_HEADER, "yes");
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("validation_failed");
   });
 });

@@ -29,6 +29,7 @@
 // ---------------------------------------------------------------------------
 
 import type { Express, Request, Response } from "express";
+import { SIGNING_MODES, type SigningMode } from "./esign/contracts";
 import { FoundingActivationError } from "./obligations";
 import { PaymentMethodInvalid, CipherNotConfigured, CiphertextInvalid } from "./payment-methods";
 import { BridgeSettingsInvalid } from "./bridge";
@@ -146,6 +147,23 @@ export interface UploadUrlWire {
 export interface FoundingActivationServices {
   /** The full server-computed activation step tracker. */
   status(member: MemberContext): Promise<ServiceResult>;
+  /** E-signature (OpenSign): the member starts a signing session and lists their
+   * signing requests. Both refuse with capability_disabled when the provider is
+   * off (founding activation on, e-signature off). */
+  esign: {
+    startSession(
+      member: MemberContext,
+      input: { mode: SigningMode; documentVersionIds: string[]; idempotencyKey: string },
+    ): Promise<ServiceResult>;
+    documents(member: MemberContext): Promise<ServiceResult>;
+  };
+  /** The provider webhook: the ONLY thing that advances an e-sign acceptance.
+   * Returns a bare { status, body } the route relays; never throws to the route. */
+  esignWebhook(
+    rawBody: string,
+    signatureHeader: string | null,
+    nowMs: number,
+  ): Promise<{ status: number; body: Record<string, unknown> }>;
   identity: {
     consent(member: MemberContext, input: { accepted: boolean; consentVersion: string }): Promise<ServiceResult>;
     uploadUrl(member: MemberContext, input: UploadUrlWire): Promise<ServiceResult>;
@@ -195,6 +213,15 @@ export interface FoundingActivationServices {
     identityViewUrl(admin: AdminContext, caseId: string): Promise<ServiceResult>;
     identityReview(admin: AdminContext, caseId: string, findings: Record<string, unknown>): Promise<ServiceResult>;
     identityEmergencyDelete(admin: AdminContext, caseId: string): Promise<ServiceResult>;
+    // ---- e-signature document center ----
+    esignMemberDocuments(memberId: string): Promise<ServiceResult>;
+    esignDownloadUrl(
+      admin: AdminContext,
+      requestId: string,
+      which: "signed" | "certificate",
+    ): Promise<ServiceResult>;
+    esignPacketZip(memberId: string): Promise<Buffer>;
+    esignResendNotification(admin: AdminContext, requestId: string): Promise<ServiceResult>;
   };
 }
 
@@ -672,6 +699,72 @@ export function registerFoundingActivationApi(
     }),
   );
 
+  // ---- member: e-signature -------------------------------------------------
+  app.post(
+    "/api/research/activation/esign/session",
+    stateGate,
+    member,
+    memberRoute(async (svc, ctx, req, res) => {
+      const body = (req.body ?? {}) as Record<string, unknown>;
+      const mode = body.mode;
+      const documentVersionIds = body.documentVersionIds;
+      const idempotencyKey = body.idempotencyKey;
+      if (
+        typeof mode !== "string" ||
+        !(SIGNING_MODES as readonly string[]).includes(mode) ||
+        !Array.isArray(documentVersionIds) ||
+        documentVersionIds.length === 0 ||
+        !documentVersionIds.every((value) => isNonEmptyString(value)) ||
+        !isNonEmptyString(idempotencyKey)
+      ) {
+        deny(
+          res,
+          400,
+          "validation_failed",
+          "A signing session needs a supported mode, at least one documentVersionId, and an idempotencyKey.",
+        );
+        return;
+      }
+      relay(
+        res,
+        await svc.esign.startSession(ctx, {
+          mode: mode as SigningMode,
+          documentVersionIds: documentVersionIds as string[],
+          idempotencyKey: idempotencyKey.trim(),
+        }),
+      );
+    }),
+  );
+
+  app.get(
+    "/api/research/activation/esign/documents",
+    stateGate,
+    member,
+    memberRoute(async (svc, ctx, _req, res) => relay(res, await svc.esign.documents(ctx))),
+  );
+
+  // ---- e-signature: provider webhook (stateGate only; NO member/admin guard) --
+  // The raw request bytes captured by the app-level express.json verify hook are
+  // the exact input the HMAC verifies. The raw body and the signature are NEVER
+  // logged. Completion is processed here, server-side; a browser redirect is not.
+  app.post("/api/research/webhooks/esign", stateGate, async (req: Request, res: Response) => {
+    try {
+      const raw =
+        (req as unknown as { rawBody?: Buffer }).rawBody?.toString("utf8") ??
+        JSON.stringify(req.body ?? {});
+      const signature = typeof req.get === "function" ? (req.get("x-webhook-signature") ?? null) : null;
+      const result = await services().esignWebhook(raw, signature, Date.now());
+      secure(res).status(result.status).json(result.body);
+    } catch (error) {
+      // Never surface the raw body or the signature.
+      console.error(
+        "[founding-activation] esign webhook route failed:",
+        error instanceof Error ? error.message : "unknown",
+      );
+      deny(res, 500, "internal_error", "The webhook could not be processed.");
+    }
+  });
+
   // ---- admin: the payment verification queue -------------------------------
   app.get(
     "/api/admin/research/activation/queue",
@@ -886,6 +979,55 @@ export function registerFoundingActivationApi(
     admin,
     adminRoute(async (svc, ctx, req, res) =>
       relay(res, await svc.admin.identityEmergencyDelete(ctx, String(req.params.caseId))),
+    ),
+  );
+
+  // ---- admin: the e-signature document center ------------------------------
+  app.get(
+    "/api/admin/research/activation/esign/member/:memberId",
+    stateGate,
+    admin,
+    adminRoute(async (svc, _ctx, req, res) =>
+      relay(res, await svc.admin.esignMemberDocuments(String(req.params.memberId))),
+    ),
+  );
+
+  app.get(
+    "/api/admin/research/activation/esign/request/:requestId/download",
+    stateGate,
+    admin,
+    adminRoute(async (svc, ctx, req, res) => {
+      const which = String(req.query?.which ?? "signed") === "certificate" ? "certificate" : "signed";
+      relay(res, await svc.admin.esignDownloadUrl(ctx, String(req.params.requestId), which));
+    }),
+  );
+
+  // The signed member packet as a .zip. The memberId is guarded against header
+  // injection before it reaches the Content-Disposition filename.
+  app.get(
+    "/api/admin/research/activation/esign/member/:memberId/packet.zip",
+    stateGate,
+    admin,
+    adminRoute(async (svc, _ctx, req, res) => {
+      const memberId = String(req.params.memberId);
+      if (!/^[A-Za-z0-9._-]+$/.test(memberId)) {
+        deny(res, 400, "validation_failed", "That member id is not valid for a packet download.");
+        return;
+      }
+      const buf = await svc.admin.esignPacketZip(memberId);
+      secure(res)
+        .type("application/zip")
+        .set("Content-Disposition", `attachment; filename="member-${memberId}-packet.zip"`)
+        .send(buf);
+    }),
+  );
+
+  app.post(
+    "/api/admin/research/activation/esign/request/:requestId/resend",
+    stateGate,
+    admin,
+    adminRoute(async (svc, ctx, req, res) =>
+      relay(res, await svc.admin.esignResendNotification(ctx, String(req.params.requestId))),
     ),
   );
 }
