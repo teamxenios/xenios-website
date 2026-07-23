@@ -1282,7 +1282,12 @@ function buildLiveServices(
     const latestPeriod = await periods.latestForMember(member.memberId);
     const review = await latestCompletedReview(member.memberId);
     const identityCase = await latestIdentityCase(member.memberId);
-    const agreementsGate = await signatures.requiredAgreementsSatisfied(member.memberId);
+    // Compose the SAME esign acceptances the authoritative gates use, so an
+    // e-signed member's progress reads correctly here instead of showing a
+    // completed agreement as still outstanding.
+    const agreementsGate = await signatures.requiredAgreementsSatisfied(member.memberId, {
+      esignAcceptances: await esignAcceptancesFor(member.memberId),
+    });
 
     // The electronic-record consent, on its own step (it gates every other
     // signature), computed against the published version.
@@ -1609,13 +1614,20 @@ function buildLiveServices(
     agreements: {
       async required(member) {
         const sigs = await memberSignatures(member.memberId);
+        // The additive e-sign acceptances, so a category signed through
+        // OpenSign reads as signed here exactly as it satisfies the gate.
+        const esignAcceptances = await esignAcceptancesFor(member.memberId);
+        const esignVersionIds = new Set(esignAcceptances.map((a) => a.documentVersionId));
+        const esignCategories = new Set(esignAcceptances.map((a) => a.category));
         const list: Record<string, unknown>[] = [];
         for (const definition of DOCUMENT_CATEGORY_REGISTRY) {
           const published = await documents.getPublished(definition.category);
           if (!published) continue; // published versions only
-          const signedCurrent = sigs.some((s) => s.documentVersionId === published.id);
+          const signedCurrent =
+            sigs.some((s) => s.documentVersionId === published.id) || esignVersionIds.has(published.id);
           const carriedOver =
-            !published.reacceptanceRequired && sigs.some((s) => s.category === definition.category);
+            !published.reacceptanceRequired &&
+            (sigs.some((s) => s.category === definition.category) || esignCategories.has(definition.category));
           list.push({
             category: published.category,
             title: published.title,
@@ -1632,7 +1644,9 @@ function buildLiveServices(
             signedCurrentVersion: signedCurrent,
           });
         }
-        const gate = await signatures.requiredAgreementsSatisfied(member.memberId);
+        const gate = await signatures.requiredAgreementsSatisfied(member.memberId, {
+          esignAcceptances,
+        });
         return {
           ok: true,
           agreements: list,
