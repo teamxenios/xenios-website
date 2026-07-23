@@ -668,7 +668,8 @@ function IdentityBody({
 
 // ---------------------------------------------------------------------------
 // Agreements: full documents shown scrollable, typed-name signatures,
-// nothing ever prechecked, arbitration acknowledged separately.
+// nothing ever prechecked, registry-flagged documents (arbitration and the
+// release waiver) acknowledged separately.
 // ---------------------------------------------------------------------------
 
 type AgreementsState =
@@ -866,9 +867,9 @@ function AgreementSignCard({
                 data-testid={`agreement-ack-${agreement.category}`}
               />
               <span>
-                I separately acknowledge the arbitration provisions, including how disputes are resolved and
-                what I am agreeing to give up. This acknowledgment is its own choice, not part of the checkbox
-                above.
+                I separately acknowledge this document's provisions, including how disputes are resolved and
+                any rights I am agreeing to give up. This acknowledgment is its own choice, not part of the
+                checkbox above.
               </span>
             </label>
           )}

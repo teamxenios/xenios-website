@@ -240,10 +240,11 @@ describe("electronic-record consent ordering", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Arbitration: its own separate acknowledgment
+// Separate acknowledgment (arbitration, and the covenant slot carrying the
+// package's release document)
 // ---------------------------------------------------------------------------
 
-describe("arbitration separate acknowledgment", () => {
+describe("separate acknowledgment", () => {
   it("refuses arbitration without the separate acknowledgment flag", async () => {
     const { lifecycle, service } = build();
     await withElectronicConsent(lifecycle, service);
@@ -254,6 +255,19 @@ describe("arbitration separate acknowledgment", () => {
       signInput({ documentVersionId: arbitration.id, separateAcknowledgment: false }),
     );
     expect(withFalse).toEqual({ ok: false, code: "separate_acknowledgment_required" });
+  });
+
+  it("refuses the covenant slot (the release document) without its own acknowledgment", async () => {
+    const { lifecycle, service } = build();
+    await withElectronicConsent(lifecycle, service);
+    const covenant = await publishCategory(lifecycle, "membership_covenant");
+    const without = await service.sign(signInput({ documentVersionId: covenant.id }));
+    expect(without).toEqual({ ok: false, code: "separate_acknowledgment_required" });
+    const withAck = await service.sign(
+      signInput({ documentVersionId: covenant.id, separateAcknowledgment: true }),
+    );
+    if (!withAck.ok) throw new Error("expected ok");
+    expect(withAck.signature.separateAcknowledgment).toBe(true);
   });
 
   it("records the separate acknowledgment on the arbitration signature", async () => {
@@ -267,12 +281,12 @@ describe("arbitration separate acknowledgment", () => {
     expect(result.signature.separateAcknowledgment).toBe(true);
   });
 
-  it("never records a stray separate acknowledgment on a non-arbitration signature", async () => {
+  it("never records a stray separate acknowledgment on an unflagged category's signature", async () => {
     const { lifecycle, service } = build();
     await withElectronicConsent(lifecycle, service);
-    const covenant = await publishCategory(lifecycle, "membership_covenant");
+    const privacy = await publishCategory(lifecycle, "privacy_notice");
     const result = await service.sign(
-      signInput({ documentVersionId: covenant.id, separateAcknowledgment: true }),
+      signInput({ documentVersionId: privacy.id, separateAcknowledgment: true }),
     );
     if (!result.ok) throw new Error("expected ok");
     expect(result.signature.separateAcknowledgment).toBe(false);
@@ -336,16 +350,20 @@ async function signAllRequired(
   published: Map<DocumentCategory, DocumentVersionRecord>,
   memberId = MEMBER,
 ) {
-  // Order matters: e-record consent first, arbitration with its own flag.
+  // Order matters: e-record consent first, registry-flagged categories with
+  // their own acknowledgment flag.
   const consent = published.get("electronic_record_consent")!;
   expect((await service.sign(signInput({ memberId, documentVersionId: consent.id }))).ok).toBe(true);
+  const flagged = new Set(
+    DOCUMENT_CATEGORY_REGISTRY.filter((d) => d.requiresSeparateAcknowledgment).map((d) => d.category),
+  );
   for (const [category, version] of published) {
     if (category === "electronic_record_consent") continue;
     const result = await service.sign(
       signInput({
         memberId,
         documentVersionId: version.id,
-        separateAcknowledgment: category === "arbitration_agreement" ? true : undefined,
+        separateAcknowledgment: flagged.has(category) ? true : undefined,
       }),
     );
     expect(result.ok).toBe(true);

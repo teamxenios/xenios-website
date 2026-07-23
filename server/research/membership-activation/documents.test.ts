@@ -75,9 +75,9 @@ describe("document category registry", () => {
     expect(new Set(DOCUMENT_CATEGORY_REGISTRY.map((d) => d.category)).size).toBe(16);
   });
 
-  it("flags arbitration, and only arbitration, as requiring its own separate acknowledgment", () => {
+  it("flags exactly arbitration and the covenant slot (the package's release document) for separate acknowledgment", () => {
     const flagged = DOCUMENT_CATEGORY_REGISTRY.filter((d) => d.requiresSeparateAcknowledgment);
-    expect(flagged.map((d) => d.category)).toEqual(["arbitration_agreement"]);
+    expect(flagged.map((d) => d.category)).toEqual(["membership_covenant", "arbitration_agreement"]);
   });
 
   it("binds the electronic-record consent to the first activation step", () => {
@@ -168,7 +168,9 @@ describe("createDraft", () => {
     const arbitration = await draftFor(lifecycle, "arbitration_agreement");
     expect(arbitration.requiresSeparateAcknowledgment).toBe(true);
     const covenant = await draftFor(lifecycle, "membership_covenant");
-    expect(covenant.requiresSeparateAcknowledgment).toBe(false);
+    expect(covenant.requiresSeparateAcknowledgment).toBe(true);
+    const privacy = await draftFor(lifecycle, "privacy_notice");
+    expect(privacy.requiresSeparateAcknowledgment).toBe(false);
   });
 
   it("refuses a non-semver version, empty content, and empty jurisdiction", async () => {

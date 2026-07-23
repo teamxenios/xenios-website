@@ -82,8 +82,10 @@ export interface DocumentCategoryDefinition {
   /** The activation step where a required category must be satisfied. */
   activationStep: ActivationStep | null;
   /**
-   * True only for the arbitration category: its signature must carry its own
-   * separate acknowledgment flag, never bundled into a general consent.
+   * True where the paper demands its own separate acknowledgment, never
+   * bundled into a general consent: arbitration, and the membership covenant
+   * slot (which carries the package's release and waiver document, XR-LEGAL-17,
+   * with its required separate conspicuous acceptance).
    */
   requiresSeparateAcknowledgment: boolean;
   /** Link into the existing agreements engine where a key exists, else null. */
@@ -137,8 +139,13 @@ export const DOCUMENT_CATEGORY_REGISTRY: readonly DocumentCategoryDefinition[] =
   categoryDefinition(5, "immediate_cancellation_acknowledgment", "Immediate Cancellation Acknowledgment", {
     agreementKey: "XR-MEM-004",
   }),
+  // The covenant slot carries the legal package's release, waiver, covenant
+  // not to sue, limitation of liability and indemnification (XR-LEGAL-17),
+  // which the package requires to be accepted with its own separate
+  // conspicuous acknowledgment (like arbitration, never bundled).
   categoryDefinition(6, "membership_covenant", "Membership Covenant", {
     agreementKey: "XR-MEM-005",
+    separateAck: true,
   }),
   categoryDefinition(7, "confidentiality_covenant", "Private Membership Confidentiality Covenant", {
     agreementKey: "XR-MEM-006",
@@ -255,7 +262,7 @@ export interface DocumentVersionRecord {
    * versions: every member must re-sign before the gate passes again.
    */
   reacceptanceRequired: boolean;
-  /** Mirrored from the category registry; true only for arbitration. */
+  /** Mirrored from the category registry (arbitration and the covenant slot). */
   requiresSeparateAcknowledgment: boolean;
   /** The id of the version this one superseded at publish, if any. */
   supersededVersionId: string | null;

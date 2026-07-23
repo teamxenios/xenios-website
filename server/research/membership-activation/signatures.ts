@@ -20,8 +20,10 @@ import {
 //   - Affirmative consent is never prechecked: the blank form state this
 //     module exports carries false, and sign() requires the literal true.
 //   - The electronic-record consent must be signed before any other document.
-//   - Arbitration requires its own separate acknowledgment flag; it is never
-//     bundled into a general consent.
+//   - Categories the registry flags (arbitration, and the covenant slot that
+//     carries the package's release and waiver document) require their own
+//     separate acknowledgment flag; it is never bundled into a general
+//     consent.
 //   - There is NO admin signing path. The only signer identity a signature
 //     can carry is the member the record belongs to; no input field exists
 //     for signing on someone's behalf, and none may be added.
@@ -47,7 +49,7 @@ export interface SignatureRecord {
   fullDocumentShown: true;
   /** The affirmative, never-prechecked consent action. */
   affirmativeConsent: true;
-  /** True only on arbitration signatures (its own acknowledgment step). */
+  /** True only where the registry requires it (its own acknowledgment step). */
   separateAcknowledgment: boolean;
   /**
    * The electronic-record consent version in force for this signature. For
@@ -105,7 +107,7 @@ export interface SignDocumentInput {
   fullDocumentShown: boolean;
   /** Must be the literal true: an affirmative act, never a default. */
   affirmativeConsent: boolean;
-  /** Required true for arbitration; ignored (recorded false) elsewhere. */
+  /** Required true where the registry flags it; ignored (recorded false) elsewhere. */
   separateAcknowledgment?: boolean;
   ip?: string | null;
   userAgent?: string | null;
@@ -168,7 +170,8 @@ export class SignatureService {
       electronicConsentVersionId = consent.documentVersionId;
     }
 
-    // Arbitration carries its own acknowledgment; nothing else may claim one.
+    // Registry-flagged categories carry their own acknowledgment; nothing
+    // else may claim one.
     const definition = categoryDefinitionFor(version.category);
     if (definition.requiresSeparateAcknowledgment && input.separateAcknowledgment !== true) {
       return { ok: false, code: "separate_acknowledgment_required" };
