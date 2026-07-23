@@ -37,6 +37,7 @@ const ActivationBridge = lazy(() => import("./pages/adminx/ActivationBridge"));
 const ActivationChecklist = lazy(() => import("./pages/adminx/ActivationChecklist"));
 const ActivationReconciliation = lazy(() => import("./pages/adminx/ActivationReconciliation"));
 const ActivationReadiness = lazy(() => import("./pages/adminx/ActivationReadiness"));
+const EsignDocuments = lazy(() => import("./pages/adminx/EsignDocuments"));
 
 function NotFound() {
   return (
@@ -83,6 +84,7 @@ export default function AdminResearchSection() {
       <Route path="/admin/research/activation-checklist">{() => <S><ActivationChecklist /></S>}</Route>
       <Route path="/admin/research/activation-reconciliation">{() => <S><ActivationReconciliation /></S>}</Route>
       <Route path="/admin/research/activation-readiness">{() => <S><ActivationReadiness /></S>}</Route>
+      <Route path="/admin/research/esign">{() => <S><EsignDocuments /></S>}</Route>
       <Route path="/admin/research/audit">{() => <S><Audit /></S>}</Route>
       <Route component={NotFound} />
     </Switch>
