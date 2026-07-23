@@ -193,7 +193,7 @@ and `research_fm_esign_archive`.
 
 ## Tests and results
 
-- Full suite: **2942 passed / 124 files** (0 failures, 0 skips).
+- Full suite: **2943 passed / 124 files** (0 failures, 0 skips).
 - Typecheck (`npm run check`): **0 errors**. Build (`npm run build`): **success**.
 - Dependency license check: pdf-lib (MIT), react-signature-canvas (Apache-2.0),
   and their transitive deps are all permissive; no GPL/AGPL anywhere.

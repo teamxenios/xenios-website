@@ -2891,10 +2891,16 @@ function buildLiveServices(
       // certificate. Admin-guarded (the route) and never a public URL; the
       // storage ref never leaves this method.
       async esignDownloadUrl(admin, requestId, which) {
-        if (!esignProvider.isLive) return esignDisabled();
+        if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
         void admin;
         const record = await esignStore.requests.getById(requestId);
         if (!record) return { ok: false, code: "not_found", message: "No signing request with that id." };
+        // Only a genuinely completed request is a downloadable legal record; a
+        // native evidence_stored / failed_cleanup_required row (uploaded but
+        // uncommitted) is never downloadable, for the admin as for the member.
+        if (!isPresentableCompleted(record)) {
+          return { ok: false, code: "invalid_state", message: "This document is not completed." };
+        }
         const ref = which === "certificate" ? record.certificateRef : record.signedPdfRef;
         if (!ref) {
           return { ok: false, code: "invalid_state", message: `No ${which} document is stored for this request.` };
@@ -2911,18 +2917,22 @@ function buildLiveServices(
       },
 
       async esignPacketZip(memberId) {
-        const records = esignProvider.isLive ? await esignStore.archive.listByMember(memberId) : [];
+        // The archive holds only completed records (it is written at completion),
+        // and the packet builder reads it. Available when EITHER OpenSign or the
+        // native path is enabled.
+        const records =
+          esignProvider.isLive || nativeEsignEnabled ? await esignStore.archive.listByMember(memberId) : [];
         // Signed agreements + completion certificates only; raw identity and
         // payment evidence are excluded by default (they live in other buckets).
         return buildMemberPacketZip({ records, media: esignMedia, include: {} });
       },
 
       async esignResendNotification(admin, requestId) {
-        if (!esignProvider.isLive) return esignDisabled();
+        if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
         void admin;
         const record = await esignStore.requests.getById(requestId);
         if (!record) return { ok: false, code: "not_found", message: "No signing request with that id." };
-        if (record.signingLinkStatus !== "completed" || !record.completedAt) {
+        if (!isPresentableCompleted(record) || !record.completedAt) {
           return { ok: false, code: "invalid_state", message: "That signing request is not completed." };
         }
         await sendEsignCompletionNotices(record, `${record.id}:resend`);

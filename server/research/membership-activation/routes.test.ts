@@ -1876,6 +1876,30 @@ describe("state 3: native embedded e-signature", () => {
     expect(session.status).toBe(503);
   });
 
+  it("admin can view + download a COMPLETED native record in a native-only deployment (OpenSign off)", async () => {
+    const ctx = liveContext({ esignProvider: new DisabledEsignProvider(), esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const signed = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId));
+    expect(signed.status).toBe(200);
+    const requestId = signed.body.requestId as string;
+    // Admin document center lists it even though OpenSign is disabled.
+    const adminDocs = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/member/${MEMBER_A}`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDocs.status).toBe(200);
+    expect(adminDocs.body.requests.some((r: { requestId: string }) => r.requestId === requestId)).toBe(true);
+    // Admin download of the completed record works.
+    const adminDl = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/request/${requestId}/download?which=signed`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDl.status).toBe(200);
+    expect(adminDl.body.grant.signedUrl).toBeTruthy();
+  });
+
   it("completes a native signature and lists it in the member document endpoint", async () => {
     const ctx = liveContext({ esignEnabled: true });
     await publishAllCategories(ctx.documentsStore);
@@ -2050,15 +2074,25 @@ describe("state 3: native embedded e-signature", () => {
       createdAt: now,
       updatedAt: now,
     });
-    // Not downloadable.
+    // Not downloadable by the member.
     const dl = await request(ctx.app)
       .get("/api/research/activation/esign/documents/native_evidence_1/download?which=signed")
       .set(MEMBER_HEADER, MEMBER_A);
     expect(dl.status).toBe(409);
     expect(dl.body.code).toBe("invalid_state");
-    // Not listed as a member document.
+    // Not downloadable by an ADMIN either (the admin route gates on completion).
+    const adminDl = await request(ctx.app)
+      .get("/api/admin/research/activation/esign/request/native_evidence_1/download?which=signed")
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDl.status).toBe(409);
+    expect(adminDl.body.code).toBe("invalid_state");
+    // Not listed as a member document, and not in the admin document center.
     const docs = await request(ctx.app).get("/api/research/activation/esign/documents").set(MEMBER_HEADER, MEMBER_A);
     expect(docs.body.documents.some((d: { requestId: string }) => d.requestId === "native_evidence_1")).toBe(false);
+    const adminDocs = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/member/${MEMBER_A}`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDocs.body.requests.some((r: { requestId: string }) => r.requestId === "native_evidence_1")).toBe(false);
   });
 
   it("the activation status reports the embedded-signer capability from the flag", async () => {
