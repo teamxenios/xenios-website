@@ -330,7 +330,7 @@ function ActivationStepper({
       ) : (
         <>
           <IdentitySection token={token} reload={reload} />
-          <AgreementsSection token={token} reload={reload} />
+          <AgreementsSection token={token} embeddedEsignEnabled={status.embeddedEsignEnabled} reload={reload} />
           <PaymentSection token={token} reload={reload} />
         </>
       )}
@@ -681,10 +681,20 @@ type AgreementsState =
 
 // The native, in-page signer is the primary agreements-step experience: the
 // member reviews and signs every required agreement without leaving the page.
-// AgreementSignCard is kept intact below as a fallback renderer.
-const USE_EMBEDDED_SIGNER = true;
+// Whether it is available is the SERVER's call, carried on the activation
+// status as embeddedEsignEnabled and read on every render (so a flag rollback
+// takes effect on the next status fetch). AgreementSignCard is the fallback
+// renderer when the capability is off; it stays intact below.
 
-function AgreementsSection({ token, reload }: { token: string | null; reload: () => void }) {
+function AgreementsSection({
+  token,
+  embeddedEsignEnabled,
+  reload,
+}: {
+  token: string | null;
+  embeddedEsignEnabled: boolean;
+  reload: () => void;
+}) {
   const [state, setState] = useState<AgreementsState>({ kind: "loading" });
   const [localNonce, setLocalNonce] = useState(0);
   const refresh = useCallback(() => setLocalNonce((n) => n + 1), []);
@@ -731,7 +741,7 @@ function AgreementsSection({ token, reload }: { token: string | null; reload: ()
         )}
         {state.kind === "ok" &&
           state.agreements.length > 0 &&
-          (USE_EMBEDDED_SIGNER ? (
+          (embeddedEsignEnabled ? (
             <EmbeddedAgreementSigner
               agreements={state.agreements}
               token={token}

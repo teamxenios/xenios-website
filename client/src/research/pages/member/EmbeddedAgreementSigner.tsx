@@ -197,7 +197,17 @@ function AgreementStep({
     const pad = padRef.current;
     if (!pad) return null;
     if (typeof pad.isEmpty === "function" && pad.isEmpty()) return null;
-    const dataUrl = pad.toDataURL("image/png");
+    // Prefer the TRIMMED canvas: it crops the surrounding whitespace so the
+    // payload is a small signature strip, not the full pad. getTrimmedCanvas is
+    // absent in some react-signature-canvas versions, so guard it and fall back
+    // to the untrimmed export.
+    let dataUrl: string;
+    const getTrimmed = (pad as { getTrimmedCanvas?: () => HTMLCanvasElement }).getTrimmedCanvas;
+    if (typeof getTrimmed === "function") {
+      dataUrl = getTrimmed.call(pad).toDataURL("image/png");
+    } else {
+      dataUrl = pad.toDataURL("image/png");
+    }
     const marker = "base64,";
     const at = dataUrl.indexOf(marker);
     return at >= 0 ? dataUrl.slice(at + marker.length) : dataUrl;
@@ -248,6 +258,21 @@ function AgreementStep({
       }
       if (res.code === "electronic_consent_required") {
         setError("Sign the electronic records consent first; it makes the other documents signable.");
+        return;
+      }
+      // The server's drawn-signature validation codes, each mapped to a calm,
+      // recoverable member message (the form stays open so the member can clear
+      // and sign again). The raw payload is never shown.
+      if (res.code === "signature_invalid") {
+        setError("That signature image could not be read. Please clear and sign again.");
+        return;
+      }
+      if (res.code === "signature_too_large" || res.code === "signature_dimensions") {
+        setError("That signature is too large. Please clear and sign again.");
+        return;
+      }
+      if (res.code === "idempotency_conflict") {
+        setError("This form was already used for another document. Please reload and try again.");
         return;
       }
       setError(res.message ?? "This document cannot be signed right now. Please try again.");

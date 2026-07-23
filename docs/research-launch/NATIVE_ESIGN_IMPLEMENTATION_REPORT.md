@@ -1,8 +1,12 @@
 # Native embedded e-signature: implementation report
 
-Branch: `feature/native-embedded-esign` (off `65c9cc5`, the release candidate).
-Head: `9e98eec`. Status: complete on the feature branch. **Not merged, not
-deployed, no production flag enabled, no production SQL run, no secret created.**
+Branch: `feature/native-embedded-esign-main`, based directly on current `main`.
+The branch contains only the native e-signature implementation (its diff against
+`main` is the native files, not any prior PR history). The exact final commit SHA
+is supplied in the draft pull request and the final handoff, not embedded here.
+Status: complete on the feature branch. **Not merged, not deployed, no production
+flag enabled, no production SQL run, no secret created, no Render or production
+Supabase change.**
 
 ## Primary outcome (met)
 
@@ -27,6 +31,86 @@ libraries.
   certificate, hashes both, stores them in the existing private bucket, and
   writes the durable signing-request + archive records the document centers
   read. The native signature satisfies the SAME activation gate as before.
+
+### Completion state machine (not claimed fully atomic)
+
+A native signing request moves through an explicit state machine:
+`preparing` -> `evidence_stored` -> `completed`, or -> `failed_cleanup_required`
+on a commit failure. ONLY `completed` may satisfy the activation gate, appear as
+signed in the member interface, appear in the document center, or produce a
+member or admin download URL. This is enforced in code: the member and admin
+document views and the download route all gate on the completed state (native
+requests require `nativeCompletionState === "completed"`), and the activation
+gate reads the legal `SignatureRecord`, which is inserted only at the completion
+step.
+
+The order per signing request:
+
+1. every legal guard in `SignatureService` (never duplicated or weakened),
+2. signed-PDF generation,
+3. completion-certificate generation,
+4. both private uploads,
+5. the request is persisted as `evidence_stored` (a durable, NON-activating
+   recoverable record: the signed PDF is uploaded but no legal signature yet),
+6. the legal `SignatureRecord` is inserted (the commit point),
+7. the request is transitioned `evidence_stored -> completed`, binding the
+   version, hashes, refs, and the signature id, and the archive projection is
+   written.
+
+Steps 2-5 run inside a `SignatureService.sign(..., { beforeCommit })` hook, so
+the signature (step 6) is inserted only after they succeed; if any of them
+fails, the signature is never inserted and the agreement stays unsigned. A
+failure at step 6 (the final signature insert) leaves the request in
+`evidence_stored` with no signature, then marks it `failed_cleanup_required` so
+the uploaded objects can be swept; the agreement is unsigned, activation is
+blocked, the request is never presented as completed, no download URL is issued,
+and no archive entry exists (the archive is written only at step 7). A retry
+reuses the evidence and converges to exactly one completed signature and request.
+
+HONESTY ABOUT ATOMICITY. The legal `SignatureRecord` (step 6) and the request
+completion transition (step 7) are two writes across two stores (the signatures
+table and the esign-requests table); they are NOT performed in one PostgreSQL
+transaction or Supabase RPC, so this flow is NOT described as fully atomic. What
+the state machine guarantees is that no NON-completed state is ever presented as
+completed, and that a failure before or at the signature commit leaves no
+completed state. If the completion transition (step 7) fails after the signature
+commits, the request stays `evidence_stored` and is reconciled to `completed` on
+the next call (the replay path detects the existing signature and finalizes the
+request) or by a sweeper; the agreement is legally signed either way. Making
+steps 6 and 7 a single transaction would require a Supabase RPC over both tables
+and is the documented path to a fully atomic claim.
+
+Idempotency: the signing-request id is derived deterministically from
+(member, idempotency key), so a retry upserts the same row rather than orphaning
+a new one; the signature's own (member, version) uniqueness admits exactly one
+signature; and a concurrent same-key racer is reconciled to the winner's row.
+An idempotency key is bound to its document version: reusing it for a different
+document returns a 409 conflict, never a replay of the first document.
+
+Orphan cleanup: on a signature-commit failure the request is marked
+`failed_cleanup_required`; the uploaded signed-PDF and certificate objects are
+durably marked for cleanup by that state (a sweeper deletes objects for requests
+stuck in it), and a retry reuses the same deterministic storage paths so it
+overwrites rather than multiplies.
+
+### Feature-flag fallback
+
+The activation status (`GET /api/research/activation/status`) reports
+`embeddedEsignEnabled`, computed from `RESEARCH_ESIGN_ENABLED`. The agreements
+page reads it and renders the embedded signer when true or the existing
+`AgreementSignCard` (native clickwrap) path when false, decided from the fetched
+status BEFORE any signing attempt. A rollback of the flag takes effect on the
+next status load; already-signed agreements stay readable in either path.
+
+### Drawn-signature validation and request limits
+
+The drawn signature is a trimmed-canvas PNG. The server validates it: strict
+base64, real PNG magic bytes, a decoded-size cap (1 MB), and image-dimension
+bounds (2000x1000); a malformed, non-PNG, or oversized payload is refused with a
+precise 400 (`signature_invalid` / `signature_too_large` / `signature_dimensions`)
+and the payload is never logged. The JSON body limit is set explicitly to 2 MB
+(server/index.ts), which admits the permitted payload with headroom while still
+rejecting a genuinely oversized request with 413.
 
 ## Files changed
 
@@ -109,8 +193,20 @@ and `research_fm_esign_archive`.
 
 ## Tests and results
 
-- Full suite: **2923 passed / 124 files** (0 failures, 0 skips).
+- Full suite: **2942 passed / 124 files** (0 failures, 0 skips).
 - Typecheck (`npm run check`): **0 errors**. Build (`npm run build`): **success**.
+- Dependency license check: pdf-lib (MIT), react-signature-canvas (Apache-2.0),
+  and their transitive deps are all permissive; no GPL/AGPL anywhere.
+- Secret scan of the diff vs `main`: clean; the native modules read no env, make
+  no network call, and reference no OpenSign credential.
+- Atomic-completion coverage (this correction): PDF-generation failure,
+  certificate-generation failure, signed-PDF storage failure, certificate
+  storage failure, request-record failure, and the FINAL SignatureRecord insert
+  failure each leave the agreement unsigned; the final-insert-failure test also
+  proves the request is not completed, is marked `failed_cleanup_required`, is
+  not listed, and is not downloadable, that a retry converges to exactly one
+  completed signature and request, and that the gate reads the committed
+  signature (not merely uploaded evidence).
 - New coverage against the 16 required scenarios:
   1. typed signature completes without leaving the flow (native service +
      routes) — yes.
@@ -166,9 +262,11 @@ and `research_fm_esign_archive`.
   rendered PDF of each real agreement during QA.
 - `RESEARCH_ESIGN_BUCKET` must be created PRIVATE before enabling the flag in
   any real environment; the in-memory provider is dev/test only.
-- Reusing the OpenSign archive record shape means a native archive-row write
-  that fails is non-fatal (the signing-request row carries the refs and hashes;
-  the document endpoints read both). Documented, not a data-loss path.
+- The native archive row is a post-signature recoverable projection: it is
+  written only after the signature has committed (so an archive-write failure
+  cannot leave an activation-satisfying signature without evidence), and the
+  signing-request row already carries the refs and hashes. A failed archive
+  write is therefore non-fatal and recoverable, not a data-loss path.
 
 ## Manual QA instructions
 
@@ -199,14 +297,19 @@ and `research_fm_esign_archive`.
 ## Rollback sequence
 
 - Set `RESEARCH_ESIGN_ENABLED=false`: the native endpoints immediately fail
-  closed and the activation flow falls back to the existing native
-  `AgreementSignCard` path; no code rollback needed.
+  closed AND the activation status reports `embeddedEsignEnabled: false`, so the
+  agreements page renders the existing native `AgreementSignCard` clickwrap path
+  on the next load, with no failed signing attempt required. Already-signed
+  agreements remain readable. No code rollback is needed for the flag rollback.
 - The SQL migration only widened a check constraint; it stores no data of its
-  own and leaves existing rows intact. If a full revert is ever required, narrow
-  the mode check back to the five prior modes only after confirming no row uses
-  a native mode (query `research_fm_esign_requests` for `mode in
-  ('esign_document','esign_packet')`).
-- Revert the two feature commits to remove the code.
+  own and leaves existing rows intact. It does NOT need to be reverted to
+  disable the feature (the flag does that). If a full schema revert is ever
+  required, narrow the mode check back to the five prior modes only after
+  confirming no row uses a native mode (query `research_fm_esign_requests` for
+  `mode in ('esign_document','esign_packet')`); this is optional and unrelated
+  to turning the feature off.
+- To remove the code, revert the feature commits on the branch (nothing has been
+  merged to `main`).
 
 ## Verdict
 

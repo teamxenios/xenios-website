@@ -34,7 +34,12 @@ vi.mock("react-signature-canvas", async () => {
       this._drawn = false;
     }
     toDataURL() {
-      return "data:image/png;base64,MOCKDRAWNPNG==";
+      return "data:image/png;base64,UNTRIMMEDPNG==";
+    }
+    // The component prefers the TRIMMED canvas; return a distinct data URL so a
+    // test can prove the trimmed export (not the raw pad) is what ships.
+    getTrimmedCanvas() {
+      return { toDataURL: () => "data:image/png;base64,TRIMMEDPNG==" } as unknown as HTMLCanvasElement;
     }
     _simulateDraw = () => {
       this._drawn = true;
@@ -284,7 +289,9 @@ describe("EmbeddedAgreementSigner", () => {
     expect(post).toBeTruthy();
     const wire = JSON.parse(post!.body ?? "{}");
     expect(wire.signatureMethod).toBe("drawn");
-    expect(wire.drawnPngBase64).toBe("MOCKDRAWNPNG==");
+    // The TRIMMED canvas is exported (not the raw pad), with the data-uri
+    // prefix stripped, keeping the payload small.
+    expect(wire.drawnPngBase64).toBe("TRIMMEDPNG==");
     expect(wire.drawnPngBase64).not.toBeNull();
   });
 
@@ -351,5 +358,65 @@ describe("EmbeddedAgreementSigner", () => {
     // Calm: no error alert, no raw code shown.
     expect(view.querySelector('[data-testid="embedded-error"]')).toBeNull();
     expect(view.textContent).not.toContain("capability_disabled");
+  });
+
+  // A denied response with a typed method, so the sign path is the simplest to
+  // exercise. Each returns the calm member message for its validation code and
+  // KEEPS the form (the member can clear and retry); the raw code never shows.
+  async function signTypedAndExpectError(
+    body: unknown,
+    expectedMessage: string,
+    status = 400,
+  ): Promise<void> {
+    stubSign(() => ({ status, body }));
+    const view = await renderSigner([mkAgreement({})]);
+    const cat = "electronic_record_consent";
+
+    await act(async () => {
+      setInputValue(byTestId<HTMLInputElement>(view, `embedded-name-${cat}`), "Sam Member");
+      byTestId<HTMLInputElement>(view, `embedded-reviewed-${cat}`).click();
+      byTestId<HTMLInputElement>(view, `embedded-accept-${cat}`).click();
+    });
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, `embedded-sign-${cat}`).click();
+    });
+    await flush();
+
+    expect(byTestId(view, "embedded-error").textContent).toBe(expectedMessage);
+    // Recoverable: the form (and its sign button) stay, no honest-off panel.
+    expect(view.querySelector(`[data-testid="embedded-sign-${cat}"]`)).not.toBeNull();
+    expect(view.querySelector('[data-testid="embedded-signer-not-enabled"]')).toBeNull();
+    // No raw machine code is ever dumped to the member.
+    const raw = (body as { code?: string }).code ?? "";
+    expect(view.textContent).not.toContain(raw);
+  }
+
+  it("shows a calm, recoverable message for signature_invalid", async () => {
+    await signTypedAndExpectError(
+      { ok: false, code: "signature_invalid", message: "the signature image is not a png" },
+      "That signature image could not be read. Please clear and sign again.",
+    );
+  });
+
+  it("shows a calm, recoverable message for signature_too_large", async () => {
+    await signTypedAndExpectError(
+      { ok: false, code: "signature_too_large", message: "the signature image is too large" },
+      "That signature is too large. Please clear and sign again.",
+    );
+  });
+
+  it("shows a calm, recoverable message for signature_dimensions", async () => {
+    await signTypedAndExpectError(
+      { ok: false, code: "signature_dimensions", message: "the signature image dimensions are out of range" },
+      "That signature is too large. Please clear and sign again.",
+    );
+  });
+
+  it("shows a reload message for idempotency_conflict (409)", async () => {
+    await signTypedAndExpectError(
+      { ok: false, code: "idempotency_conflict", message: "this idempotency key was already used" },
+      "This form was already used for another document. Please reload and try again.",
+      409,
+    );
   });
 });

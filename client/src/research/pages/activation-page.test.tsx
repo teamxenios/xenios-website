@@ -360,3 +360,121 @@ describe("ActivationPage payment step", () => {
     expect(wire.sentDate).toBe("2026-07-21");
   });
 });
+
+// ---------------------------------------------------------------------------
+// Agreements step: the embedded-signer vs AgreementSignCard choice is driven
+// ENTIRELY by the server's status.embeddedEsignEnabled, read on every render.
+// (Release blocker #2: the page must not hardcode the native signer.)
+// ---------------------------------------------------------------------------
+
+function agreementFixture(over: Record<string, unknown> = {}) {
+  return {
+    category: "membership_terms",
+    title: "Membership Terms",
+    documentVersionId: "dv-a1",
+    semver: "1.0.0",
+    requirement: "required",
+    activationStep: 1,
+    requiresSeparateAcknowledgment: false,
+    jurisdiction: "US",
+    effectiveDate: "2026-01-01",
+    content: "MEMBERSHIP TERMS FULL TEXT.",
+    contentHash: "hash-a1",
+    signed: false,
+    signedCurrentVersion: false,
+    ...over,
+  };
+}
+
+/** Stub the activation reads, with GET status answering embeddedEsignEnabled
+ * from a per-call sequence (the last entry repeats) so a reload can flip the
+ * flag, and GET agreements answering a fixed list. */
+function stubToggleApi(opts: { statusSeq: boolean[]; agreements: unknown[]; satisfied?: boolean }): RecordedCall[] {
+  const calls: RecordedCall[] = [];
+  let statusCall = 0;
+  const agreementsBody = {
+    ok: true,
+    agreements: opts.agreements,
+    satisfied: opts.satisfied ?? false,
+    blocking: [],
+    formState: AGREEMENTS_BODY.formState,
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string, init?: RequestInit) => {
+      const method = (init?.method ?? "GET").toUpperCase();
+      const u = String(url);
+      calls.push({ url: u, method, body: typeof init?.body === "string" ? init.body : undefined });
+      if (method === "GET" && u === "/api/research/activation/status") {
+        const idx = Math.min(statusCall, opts.statusSeq.length - 1);
+        statusCall += 1;
+        return jsonResponse(200, { ...STATUS_BODY, embeddedEsignEnabled: opts.statusSeq[idx] });
+      }
+      if (method === "GET" && u === "/api/research/activation/identity/status") return jsonResponse(200, IDENTITY_BODY);
+      if (method === "GET" && u === "/api/research/activation/agreements") return jsonResponse(200, agreementsBody);
+      if (method === "GET" && u === "/api/research/activation/payment/obligation") return jsonResponse(200, OBLIGATION_BODY);
+      if (method === "GET" && u === "/api/research/activation/payment/methods") return jsonResponse(200, METHODS_BODY);
+      throw new TypeError(`unstubbed fetch: ${method} ${u}`);
+    }),
+  );
+  return calls;
+}
+
+async function extraFlush(times = 4) {
+  for (let i = 0; i < times; i += 1) {
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+  }
+}
+
+describe("ActivationPage agreements step toggle", () => {
+  it("renders the embedded signer when the server enables it", async () => {
+    stubToggleApi({ statusSeq: [true], agreements: [agreementFixture()] });
+    const view = await renderPage();
+
+    expect(view.querySelector('[data-testid="embedded-signer"]')).not.toBeNull();
+    expect(byTestId(view, "embedded-progress").textContent).toBe("Agreement 1 of 1");
+    // The fallback card path is NOT rendered.
+    expect(view.querySelector('[data-testid="agreement-membership_terms"]')).toBeNull();
+  });
+
+  it("renders the AgreementSignCard path when the server disables it", async () => {
+    stubToggleApi({ statusSeq: [false], agreements: [agreementFixture()] });
+    const view = await renderPage();
+
+    // The per-document card path, with its own sign control, is what renders.
+    expect(view.querySelector('[data-testid="agreement-membership_terms"]')).not.toBeNull();
+    expect(view.querySelector('[data-testid="agreement-sign-membership_terms"]')).not.toBeNull();
+    // The native embedded signer is absent.
+    expect(view.querySelector('[data-testid="embedded-signer"]')).toBeNull();
+    expect(view.querySelector('[data-testid="embedded-progress"]')).toBeNull();
+  });
+
+  it("falls back to the card path after a reload flips the flag off (rollback)", async () => {
+    // First status enables the embedded signer; the already-signed agreement
+    // makes the signer complete on mount, which calls reload. The second status
+    // fetch has the flag rolled back off, so the step re-renders the card path
+    // (proving the choice reads the CURRENT status, not a one-time value).
+    stubToggleApi({ statusSeq: [true, false], agreements: [agreementFixture({ signed: true })], satisfied: true });
+    const view = await renderPage();
+    await extraFlush();
+
+    expect(view.querySelector('[data-testid="embedded-signer"]')).toBeNull();
+    expect(view.querySelector('[data-testid="embedded-signer-complete"]')).toBeNull();
+    expect(view.querySelector('[data-testid="agreement-membership_terms"]')).not.toBeNull();
+  });
+
+  it("keeps an already-signed agreement readable in the card path after rollback", async () => {
+    stubToggleApi({ statusSeq: [false], agreements: [agreementFixture({ signed: true })], satisfied: true });
+    const view = await renderPage();
+
+    const card = byTestId(view, "agreement-membership_terms");
+    // The signed state is shown, and the full document stays readable.
+    expect(card.textContent).toContain("Signed");
+    expect(view.querySelector('[data-testid="agreement-content-membership_terms"]')).not.toBeNull();
+    expect(byTestId(view, "agreement-content-membership_terms").textContent).toContain("MEMBERSHIP TERMS FULL TEXT.");
+    // Nothing about the toggle re-opens a sign form for an already-signed doc.
+    expect(view.querySelector('[data-testid="agreement-sign-membership_terms"]')).toBeNull();
+  });
+});
