@@ -144,6 +144,20 @@ export interface UploadUrlWire {
   fileName: string;
 }
 
+/** The member's native (embedded) signing submission for ONE document. The
+ * member id is NEVER part of this body; it comes from the authenticated
+ * context. */
+export interface NativeSignWire {
+  documentVersionId: string;
+  fullDocumentShown: boolean;
+  affirmativeConsent: boolean;
+  separateAcknowledgment?: boolean;
+  signatureMethod: "typed" | "drawn";
+  typedLegalName: string;
+  drawnPngBase64: string | null;
+  idempotencyKey: string;
+}
+
 export interface FoundingActivationServices {
   /** The full server-computed activation step tracker. */
   status(member: MemberContext): Promise<ServiceResult>;
@@ -156,6 +170,15 @@ export interface FoundingActivationServices {
       input: { mode: SigningMode; documentVersionIds: string[]; idempotencyKey: string },
     ): Promise<ServiceResult>;
     documents(member: MemberContext): Promise<ServiceResult>;
+    /** NATIVE (embedded) signing: complete one document's signature in-page.
+     * The member context is the identity; the body carries no member id. */
+    nativeSign(member: MemberContext, input: NativeSignWire): Promise<ServiceResult>;
+    /** A member's OWN signed document or certificate, as a short-lived URL. */
+    documentDownloadUrl(
+      member: MemberContext,
+      requestId: string,
+      which: "signed" | "certificate",
+    ): Promise<ServiceResult>;
   };
   /** The provider webhook: the ONLY thing that advances an e-sign acceptance.
    * Returns a bare { status, body } the route relays; never throws to the route. */
@@ -416,6 +439,28 @@ function parseSignWire(body: unknown): SignAgreementWire | null {
     ...(record.separateAcknowledgment !== undefined
       ? { separateAcknowledgment: record.separateAcknowledgment }
       : {}),
+  };
+}
+
+function parseNativeSignWire(body: unknown): NativeSignWire | null {
+  const r = (body ?? {}) as Record<string, unknown>;
+  if (!isNonEmptyString(r.documentVersionId)) return null;
+  if (typeof r.fullDocumentShown !== "boolean") return null;
+  if (typeof r.affirmativeConsent !== "boolean") return null;
+  if (r.separateAcknowledgment !== undefined && typeof r.separateAcknowledgment !== "boolean") return null;
+  if (r.signatureMethod !== "typed" && r.signatureMethod !== "drawn") return null;
+  if (typeof r.typedLegalName !== "string") return null;
+  if (r.drawnPngBase64 !== null && typeof r.drawnPngBase64 !== "string") return null;
+  if (!isNonEmptyString(r.idempotencyKey)) return null;
+  return {
+    documentVersionId: r.documentVersionId,
+    fullDocumentShown: r.fullDocumentShown,
+    affirmativeConsent: r.affirmativeConsent,
+    ...(r.separateAcknowledgment !== undefined ? { separateAcknowledgment: r.separateAcknowledgment } : {}),
+    signatureMethod: r.signatureMethod,
+    typedLegalName: r.typedLegalName,
+    drawnPngBase64: (r.drawnPngBase64 as string | null) ?? null,
+    idempotencyKey: r.idempotencyKey,
   };
 }
 
@@ -741,6 +786,38 @@ export function registerFoundingActivationApi(
     stateGate,
     member,
     memberRoute(async (svc, ctx, _req, res) => relay(res, await svc.esign.documents(ctx))),
+  );
+
+  // ---- member: NATIVE (embedded) signing ----------------------------------
+  // The member signs in-page; the authenticated context is the only identity.
+  app.post(
+    "/api/research/activation/esign/native/sign",
+    stateGate,
+    member,
+    memberRoute(async (svc, ctx, req, res) => {
+      const wire = parseNativeSignWire(req.body);
+      if (!wire) {
+        deny(
+          res,
+          400,
+          "validation_failed",
+          "A native signature needs a documentVersionId, boolean review/consent flags, a signatureMethod, a typed legal name, and an idempotencyKey.",
+        );
+        return;
+      }
+      relay(res, await svc.esign.nativeSign(ctx, wire));
+    }),
+  );
+
+  // A member's OWN signed document or certificate as a short-lived signed URL.
+  app.get(
+    "/api/research/activation/esign/documents/:requestId/download",
+    stateGate,
+    member,
+    memberRoute(async (svc, ctx, req, res) => {
+      const which = req.query.which === "certificate" ? "certificate" : "signed";
+      relay(res, await svc.esign.documentDownloadUrl(ctx, String(req.params.requestId), which));
+    }),
   );
 
   // ---- e-signature: provider webhook (stateGate only; NO member/admin guard) --

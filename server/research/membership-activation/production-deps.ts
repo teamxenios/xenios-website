@@ -176,10 +176,13 @@ import {
   type EsignMediaPort,
   type EsignProvider,
   type EsignStore,
+  type PdfGenerator,
   type SigningRequestRecord,
 } from "./esign/contracts";
 import { resolveEsignProvider } from "./esign/provider";
 import { resolveEsignStore } from "./esign/persistence/esign-store";
+import { NativeEsignService } from "./esign/native";
+import { XeniosPdfGenerator } from "./esign/pdf";
 import {
   InMemoryEsignMediaProvider,
   RESEARCH_ESIGN_BUCKET,
@@ -574,6 +577,8 @@ export interface FoundingActivationWiring {
   resolveEsignProvider?: () => EsignProvider;
   resolveEsignStore?: () => EsignStore;
   resolveEsignMedia?: () => EsignMediaPort;
+  /** The signed-PDF + certificate generator for the NATIVE (embedded) path. */
+  resolveEsignPdfGenerator?: () => PdfGenerator;
   /** Where the admin records copy of an e-sign completion notice is sent. */
   adminRecordsEmail?: string;
 }
@@ -612,6 +617,9 @@ function defaultWiring(env: NodeJS.ProcessEnv): FoundingActivationWiring {
       missingEsignMediaEnv(env).length === 0
         ? new SupabaseEsignMediaProvider()
         : new InMemoryEsignMediaProvider(),
+    // The native signed-PDF + certificate generator (pdf-lib). No network, no
+    // secret, no external service; it renders locally from the published text.
+    resolveEsignPdfGenerator: () => new XeniosPdfGenerator(),
     adminRecordsEmail: env.RESEARCH_ADMIN_RECORDS_EMAIL ?? "samuel@xeniostechnology.com",
   };
 }
@@ -1003,6 +1011,24 @@ function buildLiveServices(
       };
     },
   });
+
+  // ---- native (embedded) e-signature composition ---------------------------
+  // No external provider, no OpenSign account, no webhook: the member signs in
+  // the Xenios page and the authenticated POST is the completion. The native
+  // path reuses the SAME agreement engine (every guard) and the SAME private
+  // archive; it is enabled by RESEARCH_ESIGN_ENABLED alone (it needs no OpenSign
+  // credential), so it can run independently of the OpenSign provider.
+  const nativeEsignEnabled = env.RESEARCH_ESIGN_ENABLED === "true";
+  const nativeEsignService = new NativeEsignService(
+    {
+      store: esignStore,
+      media: esignMedia,
+      lifecycle: documentLifecycle,
+      signatures,
+      pdf: (wiring.resolveEsignPdfGenerator ?? (() => new XeniosPdfGenerator()))(),
+    },
+    { now },
+  );
 
   /** The three-state refusal every esign SERVICE returns when the provider is
    * not live (founding activation on, but e-signature off). */
@@ -1424,9 +1450,78 @@ function buildLiveServices(
         };
       },
       async documents(member) {
-        if (!esignProvider.isLive) return esignDisabled();
+        // Available when EITHER the OpenSign provider is live OR the native
+        // (embedded) path is enabled: both write into the same request store.
+        if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
         const requests = await esignStore.requests.listByMember(member.memberId);
         return { ok: true, documents: requests.map(memberEsignRequestView) };
+      },
+
+      // The NATIVE (embedded) signing completion. The authenticated member
+      // context is the ONLY identity; the memberId is never taken from the
+      // body. Reuses the agreement engine for the legal record (every guard)
+      // and the archive for the signed PDF + certificate.
+      async nativeSign(member, input) {
+        if (!nativeEsignEnabled) return esignDisabled();
+        const result = await nativeEsignService.completeNativeSignature({
+          memberId: member.memberId,
+          signerEmail: member.email,
+          document: {
+            documentVersionId: input.documentVersionId,
+            fullDocumentShown: input.fullDocumentShown,
+            affirmativeConsent: input.affirmativeConsent,
+            separateAcknowledgment: input.separateAcknowledgment,
+          },
+          evidence: {
+            method: input.signatureMethod,
+            typedLegalName: input.typedLegalName,
+            drawnPngBase64: input.drawnPngBase64 ?? null,
+          },
+          idempotencyKey: input.idempotencyKey,
+          ip: member.ip,
+          userAgent: member.userAgent,
+        });
+        if (!result.ok) return { ok: false, code: result.code, message: result.message };
+        // A fresh completion (not a replay) notifies the member and Samuel's
+        // records address; a replay never re-sends.
+        if (!result.replayed) {
+          await sendEsignCompletionNotices(result.request, result.request.id);
+        }
+        return {
+          ok: true,
+          requestId: result.request.id,
+          documentVersionId: input.documentVersionId,
+          signedAt: result.request.signedAt,
+          status: result.request.signingLinkStatus,
+          replayed: result.replayed,
+          signedPdfHash: result.signedPdfHash,
+          certificateHash: result.certificateHash,
+        };
+      },
+
+      // A member's OWN signed document or certificate, as a short-lived signed
+      // URL. Ownership is enforced: a member can never reach another member's
+      // document.
+      async documentDownloadUrl(member, requestId, which) {
+        if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
+        const record = await esignStore.requests.getById(requestId);
+        if (!record || record.memberId !== member.memberId) {
+          // Same denial for absent and not-yours, so ownership is not probeable.
+          return { ok: false, code: "not_found", message: "No signing request with that id." };
+        }
+        const ref = which === "certificate" ? record.certificateRef : record.signedPdfRef;
+        if (!ref) {
+          return { ok: false, code: "invalid_state", message: `No ${which} document is stored for this request.` };
+        }
+        const grant = await esignMedia.createAccessUrl({
+          storagePath: ref,
+          expiresInSeconds: IDENTITY_ADMIN_ACCESS_TTL_SECONDS,
+          now: now(),
+        });
+        if (!grant.ok) {
+          return { ok: false, code: "provider_error", message: "E-signature storage refused the access URL." };
+        }
+        return { ok: true, which, grant: grant.value };
       },
     },
 
