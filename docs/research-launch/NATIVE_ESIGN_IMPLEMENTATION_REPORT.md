@@ -71,6 +71,24 @@ evidence request is then marked `failed_cleanup_required` so the uploaded object
 can be swept. A retry reuses the evidence and converges to exactly one completed
 signature and request.
 
+INDEPENDENT BINDING (step 6a, in the database). The transaction does NOT trust
+that the caller aligned the signature payload with the request. Under the row
+lock, BEFORE any write, it binds the signature to be inserted to the exact locked
+request and refuses with a precise code (writing nothing) if any of these do not
+hold: the signature's member equals the acting member (`member_mismatch`); the
+signature's `document_version_id` equals both the requested version and the
+locked request's version (`signature_version_mismatch`); the signature's
+`content_hash` equals the request's source content hash (`signature_hash_mismatch`);
+the request is a native (`request_provider_mismatch`) `esign_document`
+(`request_mode_mismatch`) request; and the consent flags are exactly true
+(`signature_consent_invalid`). This closes a path where a malformed internal call
+could have completed request A while inserting a valid signature for a different
+published document B. The signature id and `signed_at` are the authoritative
+scalar parameters `p_signature_id` / `p_signed_at` (the redundant JSON copies were
+removed), so there is a single source for each and no id/timestamp mismatch is
+possible. The in-memory commit enforces the identical binding, so the tests
+exercise the same semantics.
+
 ATOMICITY. The four database effects of step 6 (verify, insert signature,
 complete request, upsert archive) are one transaction. In production this is a
 Supabase RPC, `public.research_fm_native_esign_commit`
@@ -213,13 +231,22 @@ and `research_fm_esign_archive`.
 
 ## Tests and results
 
-- Full suite: **2958 passed / 125 files** (0 failures, 0 skips).
+- Full suite: **2966 passed / 125 files** (0 failures, 0 skips).
 - Typecheck (`npm run check`): **0 errors**. Build (`npm run build`): **success**.
 - Dependency license check: pdf-lib (MIT), react-signature-canvas (Apache-2.0),
   and their transitive deps are all permissive; no GPL/AGPL anywhere.
 - Secret scan of the diff vs `main`: clean; the native modules read no env, make
   no network call, and reference no OpenSign credential; the SQL RPC carries no
   secret in its body, parameters, or result.
+- Independent-binding coverage: the commit's own binding guards are unit-tested
+  (`native-commit.test.ts`): a signature for another document
+  (`signature_version_mismatch`), a mismatched content hash
+  (`signature_hash_mismatch`), a non-native request (`request_provider_mismatch`),
+  a non-`esign_document` request (`request_mode_mismatch`), and unconsented
+  flags (`signature_consent_invalid`) each write nothing (no signature for either
+  document, no archive, request not completed); the RPC payload omits `id` and
+  `signed_at` (asserted); and a route-level binding refusal
+  (`signature_version_mismatch`) blocks activation and every download.
 - Atomic-commit coverage (this correction). The commit's own guard branches are
   unit-tested (`native-commit.test.ts`: request_missing, member_mismatch,
   version_mismatch, request_not_evidence_stored, evidence_incomplete each write

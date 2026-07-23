@@ -63,8 +63,12 @@ alter table public.research_fm_esign_requests
 -- The native completion commits FOUR effects in ONE transaction (this function
 -- body runs inside the caller's transaction; any RAISE rolls all of it back):
 --   1. verify the evidence_stored request (member, exact version, exact
---      idempotency key, refs + hashes present), locked FOR UPDATE so concurrent
---      commits serialize and exactly one performs the transition,
+--      idempotency key, refs + hashes present) AND independently BIND the
+--      signature to be inserted to that exact locked request (its member,
+--      document version, and content hash must match the request; the request
+--      must be a native esign_document request; consent flags must be true),
+--      locked FOR UPDATE so concurrent commits serialize and exactly one
+--      performs the transition,
 --   2. insert the immutable legal signature (the append-only signatures table's
 --      published + content-hash trigger and unique (member, version) still apply),
 --   3. transition the request evidence_stored -> completed, binding signed_at,
@@ -78,8 +82,13 @@ alter table public.research_fm_esign_requests
 --
 -- SECURITY: service-role only (execute revoked from public/anon/authenticated).
 -- The acting member id is a server-supplied parameter and is re-verified against
--- the request here; no client-supplied identity is trusted. No secret enters this
--- function, its parameters, or its result. Idempotent: create-or-replace.
+-- the request here; no client-supplied identity is trusted, and the transaction
+-- NEVER trusts that the caller aligned the signature payload with the request:
+-- it binds them here, in the database, under the row lock. The signature id and
+-- signed_at are the authoritative scalar parameters p_signature_id / p_signed_at
+-- (single source, not taken from the JSON), so no id/timestamp mismatch is
+-- possible. No secret enters this function, its parameters, or its result.
+-- Idempotent: create-or-replace.
 create or replace function public.research_fm_native_esign_commit(
   p_member_id text,
   p_document_version_id text,
@@ -126,6 +135,36 @@ begin
 
   if (v_req.xenios_document_version_ids ->> 0) is distinct from p_document_version_id then
     return jsonb_build_object('ok', false, 'code', 'version_mismatch');
+  end if;
+
+  -- INDEPENDENT BINDING. The transaction binds the signature it is about to
+  -- insert to the EXACT locked request; it never trusts that the caller aligned
+  -- the fields. Each check fires BEFORE any write, so a malformed internal call
+  -- (request A paired with a signature for document B, a mismatched content
+  -- hash, a non-native or non-esign_document request, or an unconsented
+  -- signature) writes nothing. The signature id and signed_at are NOT taken from
+  -- the JSON at all; they are the authoritative scalar parameters p_signature_id
+  -- and p_signed_at (single source, no mismatch possible).
+  if (p_signature ->> 'document_version_id') is distinct from p_document_version_id
+     or (p_signature ->> 'document_version_id') is distinct from (v_req.xenios_document_version_ids ->> 0) then
+    return jsonb_build_object('ok', false, 'code', 'signature_version_mismatch');
+  end if;
+
+  if (p_signature ->> 'content_hash') is distinct from (v_req.source_content_hashes ->> 0) then
+    return jsonb_build_object('ok', false, 'code', 'signature_hash_mismatch');
+  end if;
+
+  if v_req.provider is distinct from 'xenios_native' then
+    return jsonb_build_object('ok', false, 'code', 'request_provider_mismatch');
+  end if;
+
+  if v_req.mode is distinct from 'esign_document' then
+    return jsonb_build_object('ok', false, 'code', 'request_mode_mismatch');
+  end if;
+
+  if (p_signature ->> 'full_document_shown')::boolean is distinct from true
+     or (p_signature ->> 'affirmative_consent')::boolean is distinct from true then
+    return jsonb_build_object('ok', false, 'code', 'signature_consent_invalid');
   end if;
 
   if v_req.native_completion_state is distinct from 'evidence_stored' then

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createInMemoryDocumentsStore } from "../persistence/documents-store";
 import { createInMemoryEsignStore } from "./persistence/esign-store";
-import { createInMemoryNativeCommit } from "./native-commit";
+import { createInMemoryNativeCommit, createSupabaseNativeCommit } from "./native-commit";
 import type { ArchiveRecord, NativeCommitInput, SigningRequestRecord } from "./contracts";
 import type { SignatureRecord } from "../signatures";
 
@@ -15,10 +15,15 @@ import type { SignatureRecord } from "../signatures";
 const MEMBER = "11111111-1111-4111-8111-111111111111";
 const OTHER = "22222222-2222-4222-8222-222222222222";
 const VERSION = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+const OTHER_VERSION = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 const EMAIL = "member@members.test";
 const KEY = "idem-key-1";
 const REQ_ID = "native_req_1";
 const NOW = "2026-07-23T12:00:00.000Z";
+// The signed document's content hash. In the real flow the request's
+// sourceContentHashes[0] and the signature's contentHash are BOTH the version's
+// content hash, so they are equal; the fixtures mirror that.
+const CONTENT_HASH = "a".repeat(64);
 
 function evidenceRequest(over: Partial<SigningRequestRecord> = {}): SigningRequestRecord {
   return {
@@ -31,7 +36,7 @@ function evidenceRequest(over: Partial<SigningRequestRecord> = {}): SigningReque
     providerTemplateVersion: null,
     providerDocumentId: null,
     xeniosDocumentVersionIds: [VERSION],
-    sourceContentHashes: ["a".repeat(64)],
+    sourceContentHashes: [CONTENT_HASH],
     signerIdentifier: EMAIL,
     signingLinkStatus: "created",
     nativeCompletionState: "evidence_stored",
@@ -61,7 +66,7 @@ function signature(over: Partial<SignatureRecord> = {}): SignatureRecord {
     documentVersionId: VERSION,
     category: "founding_membership_agreement",
     semver: "1.0.0",
-    contentHash: "d".repeat(64),
+    contentHash: CONTENT_HASH,
     typedLegalName: "Member Test",
     fullDocumentShown: true,
     affirmativeConsent: true,
@@ -172,6 +177,116 @@ describe("createInMemoryNativeCommit: verification branches (nothing is written)
     const res = await commit(input);
     expect(res).toEqual({ ok: false, code: "evidence_incomplete" });
     expect(await docs.getSignature(MEMBER, VERSION)).toBeNull();
+  });
+});
+
+describe("createInMemoryNativeCommit: independent signature<->request binding (nothing is written)", () => {
+  // Every case: the commit refuses BEFORE any write, so there is no signature
+  // for either document, no archive, and the request never completes.
+  async function refuse(mutate: (i: NativeCommitInput) => NativeCommitInput, code: string) {
+    const { commit, input, docs, esign } = await fixture();
+    const res = await commit(mutate(input));
+    expect(res).toEqual({ ok: false, code });
+    expect(await docs.getSignature(MEMBER, VERSION)).toBeNull();
+    expect(await docs.getSignature(MEMBER, OTHER_VERSION)).toBeNull();
+    expect(await esign.archive.listByMember(MEMBER)).toHaveLength(0);
+    const req = await esign.requests.getById(REQ_ID);
+    expect(req?.nativeCompletionState).not.toBe("completed");
+    expect(req?.signingLinkStatus).not.toBe("completed");
+  }
+
+  it("#1 request for version A + signature payload for version B: writes nothing", async () => {
+    await refuse(
+      (i) => ({ ...i, signature: { ...i.signature, documentVersionId: OTHER_VERSION } }),
+      "signature_version_mismatch",
+    );
+  });
+
+  it("#2 request source hash A + signature content hash B: writes nothing", async () => {
+    await refuse(
+      (i) => ({ ...i, signature: { ...i.signature, contentHash: "f".repeat(64) } }),
+      "signature_hash_mismatch",
+    );
+  });
+
+  it("#3 a non-xenios_native request: writes nothing", async () => {
+    // Re-fixture with a provider-mismatched request.
+    const docs = createInMemoryDocumentsStore();
+    const esign = createInMemoryEsignStore();
+    await esign.requests.insert(evidenceRequest({ provider: "opensign" }));
+    const commit = createInMemoryNativeCommit(docs, esign);
+    const sig = signature();
+    const res = await commit({
+      signature: sig,
+      memberId: MEMBER,
+      documentVersionId: VERSION,
+      idempotencyKey: KEY,
+      completedRequest: completedFrom(evidenceRequest({ provider: "opensign" }), sig),
+      archive: archiveFrom(evidenceRequest()),
+    });
+    expect(res).toEqual({ ok: false, code: "request_provider_mismatch" });
+    expect(await docs.getSignature(MEMBER, VERSION)).toBeNull();
+    expect(await esign.archive.listByMember(MEMBER)).toHaveLength(0);
+  });
+
+  it("#4 a non-esign_document request: writes nothing", async () => {
+    const docs = createInMemoryDocumentsStore();
+    const esign = createInMemoryEsignStore();
+    await esign.requests.insert(evidenceRequest({ mode: "opensign_document" }));
+    const commit = createInMemoryNativeCommit(docs, esign);
+    const sig = signature();
+    const res = await commit({
+      signature: sig,
+      memberId: MEMBER,
+      documentVersionId: VERSION,
+      idempotencyKey: KEY,
+      completedRequest: completedFrom(evidenceRequest({ mode: "opensign_document" }), sig),
+      archive: archiveFrom(evidenceRequest()),
+    });
+    expect(res).toEqual({ ok: false, code: "request_mode_mismatch" });
+    expect(await docs.getSignature(MEMBER, VERSION)).toBeNull();
+    expect(await esign.archive.listByMember(MEMBER)).toHaveLength(0);
+  });
+
+  it("#5 full_document_shown not exactly true: writes nothing", async () => {
+    await refuse(
+      (i) => ({ ...i, signature: { ...i.signature, fullDocumentShown: false as unknown as true } }),
+      "signature_consent_invalid",
+    );
+  });
+
+  it("#6 affirmative_consent not exactly true: writes nothing", async () => {
+    await refuse(
+      (i) => ({ ...i, signature: { ...i.signature, affirmativeConsent: false as unknown as true } }),
+      "signature_consent_invalid",
+    );
+  });
+
+  // #7 (signature id) and #8 (signed_at) mismatch cannot occur: the signature id
+  // and signed_at have a SINGLE authoritative source (the scalar parameters
+  // p_signature_id / p_signed_at in the RPC; input.signature in-memory). The
+  // redundant JSON copies were removed, so there is no second value to diverge.
+  it("#7/#8 the RPC payload omits id + signed_at; they are the authoritative scalar params", async () => {
+    let captured: Record<string, unknown> | undefined;
+    const fakeClient = {
+      rpc: async (_fn: string, params: Record<string, unknown>) => {
+        captured = params;
+        return { data: { ok: true, replayed: false }, error: null };
+      },
+    };
+    const commit = createSupabaseNativeCommit(fakeClient);
+    const { input } = await fixture();
+    const res = await commit(input);
+    expect(res.ok).toBe(true);
+    const payload = captured!.p_signature as Record<string, unknown>;
+    // The signature JSON carries neither id nor signed_at, so no divergent copy
+    // exists to mismatch the authoritative parameters.
+    expect("id" in payload).toBe(false);
+    expect("signed_at" in payload).toBe(false);
+    expect(captured!.p_signature_id).toBe(input.signature.id);
+    expect(captured!.p_signed_at).toBe(input.signature.signedAt);
+    // The RPC is called by its exact name.
+    expect(captured).toBeTruthy();
   });
 });
 

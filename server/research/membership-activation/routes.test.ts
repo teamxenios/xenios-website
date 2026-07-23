@@ -2183,6 +2183,46 @@ describe("state 3: native embedded e-signature", () => {
     ).toBe(false);
   });
 
+  it("#9 a binding refusal (signature bound to another document) blocks activation and every download", async () => {
+    // The atomic commit independently rejects a signature that is not bound to
+    // the locked request. At the route this behaves like any commit refusal:
+    // nothing is signed, nothing is downloadable, nothing presents as completed.
+    const bindingRefusal: (s: SignaturesStore, e: EsignStore) => NativeCommitFn = () => async () => ({
+      ok: false,
+      code: "signature_version_mismatch",
+    });
+    const ctx = liveContext({ esignEnabled: true, esignNativeCommit: bindingRefusal });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const res = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { idempotencyKey: "binding-fail" }));
+    expect(res.status).toBeGreaterThanOrEqual(400);
+    expect(res.body.status).not.toBe("completed");
+    // No signature for the requested version (nor any other).
+    expect(await ctx.documentsStore.getSignature(MEMBER_A, consent.documentVersionId)).toBeNull();
+    // Activation blocked.
+    const list = await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A);
+    expect(list.body.satisfied).toBe(false);
+    expect(list.body.agreements[0].signed).toBe(false);
+    // Request marked for cleanup, never completed; no archive.
+    const failed = (await ctx.esignStore.requests.listByMember(MEMBER_A)).find(
+      (r) => r.idempotencyKey === "binding-fail",
+    );
+    expect(failed?.nativeCompletionState).toBe("failed_cleanup_required");
+    const requestId = failed!.id;
+    const memberDl = await request(ctx.app)
+      .get(`/api/research/activation/esign/documents/${requestId}/download?which=signed`)
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(memberDl.status).toBeGreaterThanOrEqual(400);
+    const adminDl = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/request/${requestId}/download?which=signed`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDl.status).toBeGreaterThanOrEqual(400);
+    expect((await ctx.esignStore.archive.listByMember(MEMBER_A)).length).toBe(0);
+  });
+
   it("#7 a retry after a native atomic-commit failure completes exactly one signature and one request", async () => {
     let failNext = true;
     const commit: (s: SignaturesStore, e: EsignStore) => NativeCommitFn = (sig, esign) => {

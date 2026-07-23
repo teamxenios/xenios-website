@@ -165,6 +165,14 @@ export type NativeCommitCode =
   | "version_mismatch"
   | "request_not_evidence_stored"
   | "evidence_incomplete"
+  // The transaction independently binds the signature to the exact locked
+  // request; it never trusts the caller's field alignment. These fire BEFORE
+  // any write when the signature payload does not match the locked request.
+  | "signature_version_mismatch"
+  | "signature_hash_mismatch"
+  | "request_provider_mismatch"
+  | "request_mode_mismatch"
+  | "signature_consent_invalid"
   | "commit_error";
 
 export interface NativeCommitInput {

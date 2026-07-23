@@ -53,11 +53,19 @@ export function createInMemoryNativeCommit(signatures: SignaturesStore, esign: E
   const run = async (input: NativeCommitInput): Promise<NativeCommitResult> => {
     const req = await esign.requests.getById(input.completedRequest.id);
     if (!req) return { ok: false, code: "request_missing" };
-    if (req.memberId !== input.memberId) return { ok: false, code: "member_mismatch" };
+    const sig = input.signature;
+
+    // Identity: the request AND the signature payload must belong to the acting
+    // member; the request must be the one named by (member, idempotency key) for
+    // the requested version.
+    if (req.memberId !== input.memberId || sig.memberId !== input.memberId) {
+      return { ok: false, code: "member_mismatch" };
+    }
     if (req.idempotencyKey !== input.idempotencyKey) return { ok: false, code: "commit_error" };
     if (req.xeniosDocumentVersionIds[0] !== input.documentVersionId) {
       return { ok: false, code: "version_mismatch" };
     }
+
     if (req.nativeCompletionState === "completed") {
       // Already committed (a prior attempt or a concurrent winner): replay with
       // the existing signature. No second insert, no second archive row.
@@ -65,7 +73,29 @@ export function createInMemoryNativeCommit(signatures: SignaturesStore, esign: E
       if (existing) return { ok: true, signature: existing, replayed: true };
       // completed row but no signature is an impossible state under this commit;
       // fall through and (re)insert so the two agree.
-    } else if (req.nativeCompletionState !== "evidence_stored") {
+    }
+
+    // The transaction INDEPENDENTLY binds the signature to be inserted to the
+    // exact locked request; it never trusts that the caller aligned the fields.
+    // A malformed call that pairs request A with a signature for document B (or
+    // a mismatched content hash, a non-native request, or an unconsented
+    // signature) writes NOTHING.
+    if (
+      sig.documentVersionId !== input.documentVersionId ||
+      sig.documentVersionId !== req.xeniosDocumentVersionIds[0]
+    ) {
+      return { ok: false, code: "signature_version_mismatch" };
+    }
+    if (sig.contentHash !== req.sourceContentHashes[0]) {
+      return { ok: false, code: "signature_hash_mismatch" };
+    }
+    if (req.provider !== "xenios_native") return { ok: false, code: "request_provider_mismatch" };
+    if (req.mode !== "esign_document") return { ok: false, code: "request_mode_mismatch" };
+    if (sig.fullDocumentShown !== true || sig.affirmativeConsent !== true) {
+      return { ok: false, code: "signature_consent_invalid" };
+    }
+
+    if (req.nativeCompletionState !== "completed" && req.nativeCompletionState !== "evidence_stored") {
       return { ok: false, code: "request_not_evidence_stored" };
     }
     if (!req.signedPdfRef || !req.certificateRef || !req.signedPdfHash || !req.certificateHash) {
@@ -103,10 +133,16 @@ export function createInMemoryNativeCommit(signatures: SignaturesStore, esign: E
   };
 }
 
-/** Row shape helpers for the RPC payload (snake_case, matching the SQL). */
+/**
+ * Row shape for the RPC payload (snake_case, matching the SQL). The signature
+ * ID and signed-at are DELIBERATELY omitted: they are passed as the authoritative
+ * scalar parameters `p_signature_id` and `p_signed_at`, so there is a single
+ * source for each and no possibility of an id/timestamp mismatch inside the
+ * payload. Every field here is re-verified against the locked request by the RPC
+ * before any write.
+ */
 function signatureRow(signature: NativeCommitInput["signature"]): Record<string, unknown> {
   return {
-    id: signature.id,
     member_id: signature.memberId,
     document_version_id: signature.documentVersionId,
     category: signature.category,
@@ -119,7 +155,6 @@ function signatureRow(signature: NativeCommitInput["signature"]): Record<string,
     electronic_consent_version_id: signature.electronicConsentVersionId,
     ip_hash: signature.ipHash,
     user_agent_hash: signature.userAgentHash,
-    signed_at: signature.signedAt,
   };
 }
 
