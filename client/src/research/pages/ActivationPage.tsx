@@ -14,6 +14,7 @@ import {
   type BadgeTone,
 } from "../ui/kit";
 import { ACCESS_ROUTES } from "../lib/routes";
+import EmbeddedAgreementSigner from "./member/EmbeddedAgreementSigner";
 import {
   getActivationStatus,
   getIdentityStatus,
@@ -678,6 +679,11 @@ type AgreementsState =
   | { kind: "error"; message?: string }
   | { kind: "ok"; agreements: AgreementDto[]; satisfied: boolean };
 
+// The native, in-page signer is the primary agreements-step experience: the
+// member reviews and signs every required agreement without leaving the page.
+// AgreementSignCard is kept intact below as a fallback renderer.
+const USE_EMBEDDED_SIGNER = true;
+
 function AgreementsSection({ token, reload }: { token: string | null; reload: () => void }) {
   const [state, setState] = useState<AgreementsState>({ kind: "loading" });
   const [localNonce, setLocalNonce] = useState(0);
@@ -724,16 +730,28 @@ function AgreementsSection({ token, reload }: { token: string | null; reload: ()
           />
         )}
         {state.kind === "ok" &&
-          state.agreements.map((agreement) => (
-            <AgreementSignCard
-              key={agreement.documentVersionId}
-              agreement={agreement}
+          state.agreements.length > 0 &&
+          (USE_EMBEDDED_SIGNER ? (
+            <EmbeddedAgreementSigner
+              agreements={state.agreements}
               token={token}
-              onSigned={() => {
+              onAllComplete={() => {
                 refresh();
                 reload();
               }}
             />
+          ) : (
+            state.agreements.map((agreement) => (
+              <AgreementSignCard
+                key={agreement.documentVersionId}
+                agreement={agreement}
+                token={token}
+                onSigned={() => {
+                  refresh();
+                  reload();
+                }}
+              />
+            ))
           ))}
         {state.kind === "ok" && state.satisfied && (
           <div className="flex items-center gap-3">

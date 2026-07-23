@@ -154,6 +154,52 @@ export interface EsignResendResult {
   requestId: string;
 }
 
+// --------------------------- native embedded sign --------------------------
+// The native lane signs an agreement WITHOUT leaving the activation page: no
+// new tab, no redirect, no iframe, no external login. The member reads the
+// full published text in the page, checks the required acknowledgments (never
+// prechecked), types their legal name, and either types or draws a signature.
+// The server stamps the authoritative signedAt; the client never invents one.
+
+/** How the member produced their signature. */
+export type NativeSignatureMethod = "typed" | "drawn";
+
+/** The body POSTed to native/sign. Every boolean the server requires to be
+ * exactly true (fullDocumentShown, affirmativeConsent, and, when required,
+ * separateAcknowledgment) rides as the member's own affirmative act; a
+ * defaulted value cannot reach here because the UI never prechecks. */
+export interface NativeSignInput {
+  documentVersionId: string;
+  /** True only because the UI truly rendered the full document text. */
+  fullDocumentShown: boolean;
+  /** The member's own affirmative acceptance of the specific terms. */
+  affirmativeConsent: boolean;
+  /** Required for registry-flagged documents (arbitration, release/waiver). */
+  separateAcknowledgment?: boolean;
+  signatureMethod: NativeSignatureMethod;
+  /** The typed legal name; also the rendered signature in the "typed" method. */
+  typedLegalName: string;
+  /** The drawn signature PNG bytes as base64 (no data URI prefix), or null
+   * when the method is "typed". */
+  drawnPngBase64: string | null;
+  /** Stable per attempt so a retry replays instead of double-signing. */
+  idempotencyKey: string;
+}
+
+/** The success shape of a native sign. The server is authoritative for
+ * signedAt, the request id, and the archive hashes. `replayed` is true when
+ * an idempotent retry matched an existing signature. */
+export interface NativeSignResult {
+  ok: true;
+  requestId: string;
+  documentVersionId: string;
+  signedAt: string;
+  replayed: boolean;
+  status: SigningLinkStatus;
+  signedPdfHash: string | null;
+  certificateHash: string | null;
+}
+
 // --------------------------------- member ----------------------------------
 
 /** Start (or idempotently replay) a signing session. The signing URL comes
@@ -168,6 +214,31 @@ export function startEsignSession(
 /** The member's own signing requests (required, pending, and completed). */
 export function getEsignDocuments(token: string | null): Promise<ApiResult<MemberEsignDocumentsResult>> {
   return apiGet<MemberEsignDocumentsResult>(`${MEMBER_BASE}/documents`, token);
+}
+
+/** Sign one agreement natively, in the page. On success the signed copy is
+ * archived to the member's document center; a failure comes back as an honest
+ * ApiResult (denied with a machine code, or unavailable when the capability is
+ * off) for the signer to render, never a fabricated success. */
+export function signNativeAgreement(
+  token: string | null,
+  input: NativeSignInput,
+): Promise<ApiResult<NativeSignResult>> {
+  return apiPost<NativeSignResult>(`${MEMBER_BASE}/native/sign`, input, token);
+}
+
+/** A short-lived signed download URL for the member's OWN signed document or
+ * certificate. The server audits the grant before it exists; the storage ref
+ * never travels, only an ephemeral signed URL the browser opens. */
+export function getMemberEsignDownloadUrl(
+  token: string | null,
+  requestId: string,
+  which: EsignDownloadWhich,
+): Promise<ApiResult<EsignDownloadResult>> {
+  return apiGet<EsignDownloadResult>(
+    `${MEMBER_BASE}/documents/${enc(requestId)}/download?which=${enc(which)}`,
+    token,
+  );
 }
 
 // ---------------------------------- admin ----------------------------------
