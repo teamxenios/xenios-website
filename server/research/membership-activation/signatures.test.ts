@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   DOCUMENT_CATEGORY_REGISTRY,
   DocumentLifecycle,
+  LEGACY_CATEGORY_MAPPING,
   PLACEHOLDER_MARKER,
   sha256Hex,
   type DocumentCategory,
@@ -371,13 +372,23 @@ async function signAllRequired(
 }
 
 describe("requiredAgreementsSatisfied", () => {
-  it("fails closed when nothing is published: every required category blocks", async () => {
+  it("fails closed when nothing is published: every CANONICAL required category blocks", async () => {
     const { service } = build();
     const gate = await service.requiredAgreementsSatisfied(MEMBER);
     expect(gate.satisfied).toBe(false);
-    const required = DOCUMENT_CATEGORY_REGISTRY.filter((d) => d.defaultRequirement === "required");
-    expect(gate.blocking).toHaveLength(required.length);
+    // The canonical required set: registry-required minus the legacy aliases
+    // and the deferred health-data consent (none of which is a final-package
+    // document, so none blocks activation).
+    const canonicalRequired = DOCUMENT_CATEGORY_REGISTRY.filter(
+      (d) => d.defaultRequirement === "required" && !LEGACY_CATEGORY_MAPPING[d.category],
+    );
+    expect(gate.blocking).toHaveLength(canonicalRequired.length);
     expect(gate.blocking.every((b) => b.reason === "no_published_version")).toBe(true);
+    // The three legacy categories are never in the blocking set.
+    const blocked = gate.blocking.map((b) => b.category);
+    expect(blocked).not.toContain("activation_terms");
+    expect(blocked).not.toContain("no_guarantee_acknowledgment");
+    expect(blocked).not.toContain("sensitive_health_data_consent");
   });
 
   it("required published but unsigned blocks activation", async () => {
@@ -495,6 +506,94 @@ describe("requiredAgreementsSatisfied", () => {
     await publishCategory(lifecycle, "privacy_notice", "1.1.0", { reacceptanceRequired: false });
     const gate = await service.requiredAgreementsSatisfied(MEMBER);
     expect(gate.satisfied).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The canonical package required set (FINAL AGREEMENT-GATE CORRECTION)
+// ---------------------------------------------------------------------------
+
+/** Publish only the CANONICAL final-package required categories: registry-
+ * required minus the legacy aliases and the deferred health-data consent. */
+async function publishCanonicalRequired(lifecycle: DocumentLifecycle) {
+  const published = new Map<DocumentCategory, DocumentVersionRecord>();
+  for (const definition of DOCUMENT_CATEGORY_REGISTRY) {
+    if (definition.defaultRequirement !== "required") continue;
+    if (LEGACY_CATEGORY_MAPPING[definition.category]) continue; // skip aliases + deferred
+    published.set(definition.category, await publishCategory(lifecycle, definition.category));
+  }
+  return published;
+}
+
+describe("canonical package required set (legacy mapping)", () => {
+  it("maps exactly the three legacy categories, and none of them is a direct required document", () => {
+    expect(Object.keys(LEGACY_CATEGORY_MAPPING).sort()).toEqual(
+      ["activation_terms", "no_guarantee_acknowledgment", "sensitive_health_data_consent"].sort(),
+    );
+    expect(LEGACY_CATEGORY_MAPPING.activation_terms).toEqual({
+      kind: "alias",
+      satisfiedByCategory: "founding_membership_agreement",
+      finalDocumentTitle: "Founding Membership Agreement",
+    });
+    expect(LEGACY_CATEGORY_MAPPING.no_guarantee_acknowledgment).toEqual({
+      kind: "alias",
+      satisfiedByCategory: "assumption_of_risk_acknowledgment",
+      finalDocumentTitle: "No-Medical-Advice and Assumption-of-Risk Acknowledgment",
+    });
+    expect(LEGACY_CATEGORY_MAPPING.sensitive_health_data_consent).toEqual({
+      kind: "deferred_until_flag",
+      flag: "healthDataCollectionEnabled",
+    });
+  });
+
+  it("is SATISFIED by the canonical package set alone, with no legacy-category document at all", async () => {
+    const { lifecycle, service } = build();
+    const published = await publishCanonicalRequired(lifecycle);
+    await signAllRequired(service, published);
+    // Not one of activation_terms / no_guarantee_acknowledgment /
+    // sensitive_health_data_consent was ever published or signed.
+    const gate = await service.requiredAgreementsSatisfied(MEMBER);
+    expect(gate.satisfied).toBe(true);
+    expect(gate.blocking).toHaveLength(0);
+  });
+
+  it("never lists a legacy alias category as a blocker, even with nothing signed", async () => {
+    const { service } = build();
+    const gate = await service.requiredAgreementsSatisfied(MEMBER);
+    const blockedCategories = gate.blocking.map((b) => b.category);
+    expect(blockedCategories).not.toContain("activation_terms");
+    expect(blockedCategories).not.toContain("no_guarantee_acknowledgment");
+  });
+
+  it("does NOT require sensitive-health-data consent when health-data collection is disabled (default)", async () => {
+    const { lifecycle, service } = build();
+    const published = await publishCanonicalRequired(lifecycle);
+    await signAllRequired(service, published);
+    // Default: no health-data flag. The gate passes without a health-data consent.
+    const gate = await service.requiredAgreementsSatisfied(MEMBER);
+    expect(gate.satisfied).toBe(true);
+    expect(gate.blocking.map((b) => b.category)).not.toContain("sensitive_health_data_consent");
+    // Explicit false is identical.
+    const explicit = await service.requiredAgreementsSatisfied(MEMBER, {
+      healthDataCollectionEnabled: false,
+    });
+    expect(explicit.satisfied).toBe(true);
+  });
+
+  it("REQUIRES sensitive-health-data consent once health-data collection is enabled", async () => {
+    const { lifecycle, service } = build();
+    const published = await publishCanonicalRequired(lifecycle);
+    await signAllRequired(service, published);
+    // The same fully-signed canonical state now fails closed, because the
+    // future health-data feature gate makes the consent required and no such
+    // document is published.
+    const gate = await service.requiredAgreementsSatisfied(MEMBER, {
+      healthDataCollectionEnabled: true,
+    });
+    expect(gate.satisfied).toBe(false);
+    expect(gate.blocking).toEqual([
+      { category: "sensitive_health_data_consent", reason: "no_published_version" },
+    ]);
   });
 });
 

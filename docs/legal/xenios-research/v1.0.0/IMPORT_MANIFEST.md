@@ -130,19 +130,28 @@ at position 9, and files 15, 13, 14, 16 sign at positions 14 to 17.
 | 16 | `member_facing/14_shipping_claims_replacement.md` | XR-LEGAL-14 | none, additional required document | At or before first product checkout and again after material revision |
 | 17 | `member_facing/16_cookie_tracking_notice.md` | XR-LEGAL-16 | none, additional optional document | Notice and consent where required by deployed cookies |
 
-## Registry categories the package leaves without a document
+## Registry categories the package leaves without a standalone document
 
-These four categories keep only their placeholder drafts. The package provides no
-standalone document for them; nothing was invented:
+These legacy categories have no standalone document in the final package. Nothing was
+invented or merged; the FINAL AGREEMENT-GATE CORRECTION resolved them through the
+documented `LEGACY_CATEGORY_MAPPING` (server/research/membership-activation/documents.ts),
+so the activation required set is built from the canonical package signing sequence:
 
-- `activation_terms`: the $50 activation terms appear inside the Founding Membership
-  Agreement, not as a separate paper.
-- `no_guarantee_acknowledgment`: the no-guaranteed-outcome language appears inside
-  document 07, not as a separate paper.
-- `sensitive_health_data_consent`: no such document exists in the package.
-- `referral_store_credit_terms`: no such document exists in the package.
+- `activation_terms`: the $50 activation terms live INSIDE the Founding Membership
+  Agreement (XR-LEGAL-04). Mapped as an ALIAS satisfied by signing that document. The
+  separate Manual Payment and Verification Terms, Membership Renewal Policy, Cancellation
+  and Refund Policy, and Website Terms remain INDEPENDENTLY required by their own
+  categories; nothing is merged into document 04.
+- `no_guarantee_acknowledgment`: the approved "No Guaranteed Outcome" provision lives
+  inside the No-Medical-Advice and Assumption-of-Risk Acknowledgment (XR-LEGAL-07). Mapped
+  as an ALIAS satisfied by signing that document.
+- `sensitive_health_data_consent`: the package has no such document, and the initial
+  activation workflow collects no health data, so it is DEFERRED out of the initial
+  required set behind a future health-data-collection feature gate. The category and its
+  capability are preserved; it becomes required before Xenios collects any sensitive
+  health or biometric data.
+- `referral_store_credit_terms`: optional in the registry; it never blocked activation.
 
-Because the activation gate fails closed on required categories with no published
-version, the three required categories above will keep blocking activation until they
-receive counsel text or the registry is revised. That decision belongs to the
-documents domain owners, not to this import.
+The activation gate still fails closed on any canonical required category with no
+published version. The three legacy categories above no longer block activation, because
+none of them is a standalone final-package document.

@@ -3,6 +3,7 @@ import {
   categoryDefinitionFor,
   sha256Hex,
   DOCUMENT_CATEGORY_REGISTRY,
+  LEGACY_CATEGORY_MAPPING,
   type DocumentCategory,
   type DocumentVersionRecord,
   type DocumentVersionsStore,
@@ -279,10 +280,19 @@ export class SignatureService {
    * passes nothing sees byte-identical native-only behavior. This is the one
    * place the two execution paths converge, and it stays the source of gate
    * truth.
+   *
+   * The REQUIRED SET is built from the canonical final-package signing
+   * sequence via LEGACY_CATEGORY_MAPPING (documents.ts). A legacy ALIAS
+   * category (its terms live inside another category's final document) never
+   * blocks on its own; its final-document category is independently required
+   * and checked. A DEFERRED category (sensitive-health-data consent) is not in
+   * the initial required set and blocks only when `healthDataCollectionEnabled`
+   * is true, so activation is never blocked by a document the final package
+   * does not contain.
    */
   async requiredAgreementsSatisfied(
     memberId: string,
-    opts?: { esignAcceptances?: readonly EsignAcceptance[] },
+    opts?: { esignAcceptances?: readonly EsignAcceptance[]; healthDataCollectionEnabled?: boolean },
   ): Promise<AgreementsGateResult> {
     const signatures = await this.store.listSignaturesForMember(memberId);
     const byCategory = new Map<DocumentCategory, SignatureRecord[]>();
@@ -300,8 +310,20 @@ export class SignatureService {
       esignByCategory.set(acceptance.category, set);
     }
 
+    const healthDataEnabled = opts?.healthDataCollectionEnabled === true;
     const blocking: AgreementsGateResult["blocking"] = [];
     for (const definition of DOCUMENT_CATEGORY_REGISTRY) {
+      const resolution = LEGACY_CATEGORY_MAPPING[definition.category];
+      // Legacy alias: its terms live inside another category's final document,
+      // which is itself in the required set and checked directly. The alias
+      // never blocks on its own and never needs its own published version.
+      if (resolution?.kind === "alias") continue;
+      // Deferred (sensitive-health-data consent): outside the initial required
+      // set. It becomes a normal required category ONLY when health-data
+      // collection is enabled, at which point a missing published version
+      // blocks exactly as any other required category would.
+      if (resolution?.kind === "deferred_until_flag" && !healthDataEnabled) continue;
+
       const published = await this.store.getPublished(definition.category);
       if (!published) {
         if (definition.defaultRequirement === "required") {

@@ -183,6 +183,66 @@ export function categoryDefinitionFor(category: DocumentCategory): DocumentCateg
   return definition;
 }
 
+// ---------------------------------------------------------------------------
+// Legacy-category-to-final-document mapping (FINAL AGREEMENT-GATE CORRECTION)
+// ---------------------------------------------------------------------------
+//
+// The canonical source of the activation required set is the FINAL legal
+// package's signing sequence. Three legacy registry categories predate the
+// final package and have no standalone document in it. They resolve as below,
+// WITHOUT inventing or editing any legal text and WITHOUT merging documents.
+// The categories themselves are PRESERVED (historical signatures on them stay
+// valid records, and the technical capability remains) — only how the gate
+// treats them changes.
+
+/** How a legacy registry category resolves against the final package. */
+export type LegacyCategoryResolution =
+  | {
+      /** Satisfied by signing another category's final-package document. */
+      kind: "alias";
+      satisfiedByCategory: DocumentCategory;
+      finalDocumentTitle: string;
+    }
+  | {
+      /** Not in the INITIAL activation required set; gated behind a future flag. */
+      kind: "deferred_until_flag";
+      flag: "healthDataCollectionEnabled";
+    };
+
+export const LEGACY_CATEGORY_MAPPING: Readonly<Partial<Record<DocumentCategory, LegacyCategoryResolution>>> = {
+  // The $50 activation terms live INSIDE the Founding Membership Agreement
+  // (XR-LEGAL-04). Signing that document satisfies this category. The separate
+  // Manual Payment and Verification Terms, Membership Renewal Policy,
+  // Cancellation and Refund Policy, and Website Terms remain INDEPENDENTLY
+  // required by their own categories; nothing is merged into document 04.
+  activation_terms: {
+    kind: "alias",
+    satisfiedByCategory: "founding_membership_agreement",
+    finalDocumentTitle: "Founding Membership Agreement",
+  },
+  // The approved "No Guaranteed Outcome" provision lives inside the
+  // No-Medical-Advice and Assumption-of-Risk Acknowledgment (XR-LEGAL-07).
+  // Signing that document satisfies this legacy semantic requirement.
+  no_guarantee_acknowledgment: {
+    kind: "alias",
+    satisfiedByCategory: "assumption_of_risk_acknowledgment",
+    finalDocumentTitle: "No-Medical-Advice and Assumption-of-Risk Acknowledgment",
+  },
+  // The final package has NO standalone sensitive-health-data consent, and the
+  // initial activation workflow collects no health data, so this is NOT in the
+  // initial activation required set. The category and capability are preserved
+  // behind a future health-data-collection feature gate; it becomes required
+  // before Xenios collects any sensitive health or biometric data.
+  sensitive_health_data_consent: {
+    kind: "deferred_until_flag",
+    flag: "healthDataCollectionEnabled",
+  },
+};
+
+export function legacyResolutionFor(category: DocumentCategory): LegacyCategoryResolution | undefined {
+  return LEGACY_CATEGORY_MAPPING[category];
+}
+
 /**
  * Every agreementKey the registry links must exist in the agreements engine,
  * so the two registers cannot silently drift. Checked at module load.

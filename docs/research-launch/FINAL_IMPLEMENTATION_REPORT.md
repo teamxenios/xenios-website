@@ -15,8 +15,8 @@ off); the native agreement engine remains the launch signing path.
 
 | Verdict | Status |
 | --- | --- |
-| CODE READINESS | READY (Founding Membership + OpenSign integration; 2869 tests, 0 type errors, build success, both SQL bundles green on live scratch Postgres, two adversarial audits at 0 confirmed majors) |
-| MEMBERSHIP ACTIVATION READINESS | NOT READY (three required agreement categories have no counsel document; publication, production configuration, and the Samuel-executed controlled test are outstanding) |
+| CODE READINESS | READY, subject to final CI status (Founding Membership + OpenSign integration + canonical legacy-category mapping; 2874 tests, 0 type errors, build success, both SQL bundles green on live scratch Postgres, two adversarial audits at 0 confirmed majors) |
+| MEMBERSHIP ACTIVATION READINESS | NOT READY FOR PRODUCTION only because production configuration, publication, and Samuel's controlled live test remain outstanding. No legal document is a blocker: the activation required set is built from the canonical final-package signing sequence (section 9). |
 | PRODUCTION CONFIGURATION READINESS | NOT READY (no production secrets, buckets, bridge settings, methods, or email configuration exist yet; production SQL not applied; and, if OpenSign is used, no OpenSign account/credentials yet) |
 | PRODUCT COMMERCE READINESS | NOT READY (0 of 65 referenced COA files exist on disk; commerce stays behind its kill switch) |
 
@@ -192,15 +192,27 @@ summarized, or improved. No DRAFT file was used.
   (position 8) and the release, waiver, covenant not to sue, limitation of liability and
   indemnification (position 9, registered under the covenant slot). Signing without the
   separate acknowledgment returns `separate_acknowledgment_required`.
-- HONEST BLOCKER: three registry categories that the activation gate requires have NO
-  standalone document in the counsel package: `activation_terms`,
-  `no_guarantee_acknowledgment`, and `sensitive_health_data_consent`
-  (`referral_store_credit_terms` is also unmapped but optional, so it does not block).
-  The gate fails closed, so activation cannot complete until Samuel and counsel either
-  supply those three documents or approve re-mapping (the package embeds activation
-  terms inside document 04 and no-guarantee language inside document 07; adopting that
-  mapping is a counsel decision, not an engineering one, and was deliberately not made
-  silently). This is the single largest membership-activation blocker.
+- LEGACY-CATEGORY MAPPING (FINAL AGREEMENT-GATE CORRECTION): the activation required set
+  is built exclusively from the canonical final-package signing sequence. Three legacy
+  registry categories have no standalone document in the package and resolve through a
+  documented `LEGACY_CATEGORY_MAPPING` (documents.ts), without inventing, editing, or
+  merging any legal text:
+  - `activation_terms` is an ALIAS satisfied by signing the Founding Membership Agreement
+    (XR-LEGAL-04), which carries the $50 activation terms. The separate Manual Payment and
+    Verification Terms, Membership Renewal Policy, Cancellation and Refund Policy, and
+    Website Terms remain INDEPENDENTLY required by their own categories; nothing is merged.
+  - `no_guarantee_acknowledgment` is an ALIAS satisfied by signing the No-Medical-Advice
+    and Assumption-of-Risk Acknowledgment (XR-LEGAL-07), which carries the approved "No
+    Guaranteed Outcome" provision.
+  - `sensitive_health_data_consent` is DEFERRED out of the initial required set (the
+    package has no such document and the initial workflow collects no health data). The
+    category and its capability are preserved behind a future health-data-collection
+    feature gate (`RESEARCH_HEALTH_DATA_ENABLED`); it becomes required, and blocks until
+    published and signed, before Xenios collects any sensitive health or biometric data.
+  The gate still fails closed on any canonical required category with no published
+  version. No missing legal document blocks activation. Historical registry records and
+  the categories themselves are preserved. Proven by `signatures.test.ts` (the mappings,
+  satisfied by the canonical set alone, not-required-when-disabled, required-when-enabled).
 
 ## 10. Identity model and retention flow
 
@@ -378,7 +390,7 @@ short-lived signed URLs with every access audited.
 
 ## 23. Test results (final independent run at head)
 
-- `npx vitest run`: **121 files, 2869 tests, all passed** (0 failures, 0 skips).
+- `npx vitest run`: **121 files, 2874 tests, all passed** (0 failures, 0 skips).
 - `npm run check` (tsc): **0 errors**.
 - `npm run build`: success (vite client bundle plus `dist/index.cjs`, 616.7kb).
 - The Founding Membership base run at `b7fd026` was 114 files / 2754 tests; the OpenSign
@@ -486,17 +498,21 @@ release states). Membership activation is code-complete independently of this ga
 
 ## 28. Remaining external blockers
 
-1. Counsel: the three missing required agreement documents (or an approved re-mapping),
-   section 9. Blocks all activation.
-2. Samuel: publish the registered legal versions through the controlled release path
-   (registration stopped at approved_for_publication by design).
-3. Samuel: production environment configuration (section 21 matrix) on Render, plus
-   Supabase buckets and the encryption key.
-4. Samuel: apply the Track B and FM SQL bundles to production Supabase (after Track A).
-5. Samuel: bridge settings (start/end/timezone) and at least one approved receiving
-   method entered through the admin interface.
-6. Email: Resend domain verification and a production test send.
-7. The Samuel-executed controlled live-activation test (section 29).
+No legal document is a blocker: the activation required set is built from the canonical
+final-package signing sequence and the three legacy categories resolve via the documented
+mapping (section 9). The remaining items are production configuration and operational
+steps, all Samuel's:
+
+1. Publish the registered legal versions through the controlled release path (registration
+   stopped at approved_for_publication by design).
+2. Production environment configuration (section 21 matrix) on Render, plus Supabase
+   private buckets and the encryption key.
+3. Apply the Track B and FM SQL bundles to production Supabase (after Track A).
+4. Bridge settings (start/end/timezone) and at least one approved receiving method entered
+   through the admin interface.
+5. Email: Resend domain verification and a production test send.
+6. The Samuel-executed controlled live-activation test (section 29).
+7. If OpenSign is used: an OpenSign account + credentials + the private `RESEARCH_ESIGN_BUCKET`.
 8. Product commerce only: real COA files, lot mapping, provider credentials, Mitch live
    configuration per the worksheet.
 
@@ -591,29 +607,31 @@ release states). Membership activation is code-complete independently of this ga
 
 ## 34. Evidence-based verdicts
 
-**CODE READINESS: READY.** Every gate passed independently at the final head: 2869
-tests across 121 files (0 failures, 0 skips), 0 type errors, production build success,
-both SQL bundles green on live scratch Postgres (the FM bundle 41/41 with 18 tables), and
-two independent adversarial audits (the release tree and the OpenSign integration) at 0
-confirmed majors. The directive's model (the $50-includes-30-days pricing, the bridge, the
-state machine, identity, agreements, verification, idempotent activation, renewals, Day 15)
-plus the OpenSign e-signature execution provider (webhook-gated completion, private-storage
-ingestion, member + admin document centers) is implemented and enforced in code and database
+**CODE READINESS: READY, subject to final CI status.** Every gate passed independently at
+the final head: 2874 tests across 121 files (0 failures, 0 skips), 0 type errors, production
+build success, both SQL bundles green on live scratch Postgres (the FM bundle 41/41 with 18
+tables), and two independent adversarial audits (the release tree and the OpenSign
+integration) at 0 confirmed majors. The directive's model (the $50-includes-30-days pricing,
+the bridge, the state machine, identity, agreements, verification, idempotent activation,
+renewals, Day 15) plus the OpenSign e-signature execution provider and the canonical
+legacy-category mapping (section 9) are implemented and enforced in code and database
 constraints, with OpenSign inert by default.
 
-**MEMBERSHIP ACTIVATION READINESS: NOT READY.** Blockers: the three required agreement
-categories with no counsel document (fails closed at the gate), publication of the
-registered versions, production configuration, applied production SQL, and the
-Samuel-executed controlled live test. Every blocker is external configuration or a
-Samuel/counsel decision; none is missing code.
+**MEMBERSHIP ACTIVATION READINESS: NOT READY FOR PRODUCTION** only because production
+configuration, publication, and Samuel's controlled live test remain outstanding. No missing
+legal document is a blocker: the activation required set is built from the canonical
+final-package signing sequence, and the three legacy categories resolve via the documented
+mapping (section 9). Every remaining item is external configuration or an operational step,
+none is missing code.
 
-**PRODUCTION CONFIGURATION READINESS: NOT READY.** No production secret, bucket,
-bridge setting, receiving method, or email configuration exists yet; production SQL is
-not applied. The readiness page tracks each item in the four-state vocabulary.
+**PRODUCTION CONFIGURATION READINESS: NOT READY** until Supabase storage (private buckets),
+encryption keys, email (Resend domain + test send), bridge methods, the applied production
+SQL, and the controlled production test are completed. The readiness page tracks each item in
+the four-state vocabulary.
 
-**PRODUCT COMMERCE READINESS: NOT READY.** 0 of 65 COA files on disk; 0 of 15 SKUs
-purchase-eligible; commerce remains behind its kill switch. This does not block
-membership activation.
+**PRODUCT COMMERCE READINESS: NOT READY** at 0 of 65 actual COA files on disk; 0 of 15 SKUs
+purchase-eligible; commerce remains behind its kill switch. This does not block membership
+activation.
 
 No merge, production deployment, or production SQL occurred, and none will without
 Samuel's explicit approval.

@@ -104,7 +104,7 @@ import {
   type BridgeSettings,
   type ReplacementProviderStatus,
 } from "./bridge";
-import { DOCUMENT_CATEGORY_REGISTRY, DocumentLifecycle } from "./documents";
+import { DOCUMENT_CATEGORY_REGISTRY, DocumentLifecycle, LEGACY_CATEGORY_MAPPING } from "./documents";
 import {
   SignatureService,
   newSignatureFormState,
@@ -936,6 +936,12 @@ function buildLiveServices(
   const evidenceConfig = wiring.evidenceUploadConfig ?? EVIDENCE_UPLOAD_CONFIG;
   const tenant = IDENTITY_DEFAULT_TENANT;
 
+  // Sensitive-health-data consent is deferred out of the initial activation
+  // required set; it becomes required only when health-data collection is
+  // enabled. Default OFF, so the initial workflow (which collects no health
+  // data) is never blocked by a consent the final legal package does not carry.
+  const healthDataCollectionEnabled = env.RESEARCH_HEALTH_DATA_ENABLED === "true";
+
   const signatures = new SignatureService(documents, { now });
 
   // ---- e-signature (OpenSign) composition ----------------------------------
@@ -1225,6 +1231,7 @@ function buildLiveServices(
     }
     const agreementsGate = await signatures.requiredAgreementsSatisfied(memberId, {
       esignAcceptances: await esignAcceptancesFor(memberId),
+      healthDataCollectionEnabled,
     });
     if (!agreementsGate.satisfied) {
       return {
@@ -1287,6 +1294,7 @@ function buildLiveServices(
     // completed agreement as still outstanding.
     const agreementsGate = await signatures.requiredAgreementsSatisfied(member.memberId, {
       esignAcceptances: await esignAcceptancesFor(member.memberId),
+      healthDataCollectionEnabled,
     });
 
     // The electronic-record consent, on its own step (it gates every other
@@ -1646,6 +1654,7 @@ function buildLiveServices(
         }
         const gate = await signatures.requiredAgreementsSatisfied(member.memberId, {
           esignAcceptances,
+          healthDataCollectionEnabled,
         });
         return {
           ok: true,
@@ -1970,6 +1979,7 @@ function buildLiveServices(
           }
           const agreementsGate = await signatures.requiredAgreementsSatisfied(record.memberId, {
             esignAcceptances: await esignAcceptancesFor(record.memberId),
+            healthDataCollectionEnabled,
           });
           if (!agreementsGate.satisfied) {
             return {
@@ -2330,10 +2340,20 @@ function buildLiveServices(
           typeof env[name] === "string" && (env[name] as string).trim().length > 0;
         const areas: ReadinessArea[] = [];
 
-        // LEGAL, from the documents registry only.
-        const requiredCategories = DOCUMENT_CATEGORY_REGISTRY.filter(
-          (definition) => definition.defaultRequirement === "required",
-        );
+        // LEGAL, from the documents registry only. The required set is the
+        // CANONICAL final-package set: registry-required categories minus the
+        // legacy aliases (satisfied by another category's final document) and
+        // the deferred sensitive-health-data consent (out of the initial set
+        // unless health-data collection is enabled). So the readiness never
+        // reports a legacy category with no final-package document as an
+        // outstanding counsel blocker.
+        const requiredCategories = DOCUMENT_CATEGORY_REGISTRY.filter((definition) => {
+          if (definition.defaultRequirement !== "required") return false;
+          const resolution = LEGACY_CATEGORY_MAPPING[definition.category];
+          if (resolution?.kind === "alias") return false;
+          if (resolution?.kind === "deferred_until_flag" && !healthDataCollectionEnabled) return false;
+          return true;
+        });
         let approvedCount = 0;
         let publishedCount = 0;
         const unapprovedCategories: string[] = [];
