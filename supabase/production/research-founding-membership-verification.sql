@@ -7,7 +7,7 @@
 -- resolve. Read-only apart from session-local temporary tables.
 -- ==========================================================================
 
--- The exact set of tables the FM bundle creates (15).
+-- The exact set of tables the FM bundle creates (18).
 create temporary table if not exists _fm_expected(table_name text);
 truncate _fm_expected;
 insert into _fm_expected(table_name) values
@@ -30,7 +30,11 @@ insert into _fm_expected(table_name) values
   ('research_fm_document_versions'),
   ('research_fm_document_signatures'),
   -- Section 5: the Day 15 checklist
-  ('research_fm_bridge_checklist');
+  ('research_fm_bridge_checklist'),
+  -- Section 6: e-signature integration (OpenSign)
+  ('research_fm_esign_templates'),
+  ('research_fm_esign_requests'),
+  ('research_fm_esign_archive');
 
 -- 1. Every expected FM table EXISTS. Rows here are MISSING tables (FAIL).
 select 'MISSING_TABLE' as check, e.table_name
@@ -70,7 +74,10 @@ insert into _fm_expected_triggers(table_name, trigger_name) values
   ('research_fm_document_signatures',     'research_fm_signature_requires_published'),
   ('research_fm_document_signatures',     'research_fm_signatures_no_update'),
   ('research_fm_document_signatures',     'research_fm_signatures_no_delete'),
-  ('research_fm_bridge_checklist',        'research_fm_checklist_touch');
+  ('research_fm_bridge_checklist',        'research_fm_checklist_touch'),
+  ('research_fm_esign_templates',         'research_fm_esign_templates_touch'),
+  ('research_fm_esign_requests',          'research_fm_esign_requests_touch'),
+  ('research_fm_esign_archive',           'research_fm_esign_archive_touch');
 select 'MISSING_APPEND_ONLY_TRIGGER' as check, e.table_name, e.trigger_name
 from _fm_expected_triggers e
 where not exists (
@@ -104,7 +111,11 @@ insert into _fm_expected_uniques(index_name) values
   ('research_fm_versions_unique_semver'),
   ('research_fm_versions_one_published_per_category'),
   ('research_fm_signatures_once'),
-  ('research_fm_identity_reviews_case_idx');
+  ('research_fm_identity_reviews_case_idx'),
+  -- E-sign: no duplicate provider document per request intent, and one
+  -- provider document maps to exactly one request.
+  ('research_fm_esign_requests_idem_unique'),
+  ('research_fm_esign_requests_provider_doc_unique');
 select 'MISSING_UNIQUE' as check, e.index_name
 from _fm_expected_uniques e
 where not exists (
