@@ -336,6 +336,12 @@ export function getActivationReconciliation<T>(token: string): Promise<ApiResult
   return apiGet<T>(`${ACTIVATION}/reconciliation`, token);
 }
 
+/** The go-live readiness report: four-state vocabulary per item, and the
+ * server never places a secret value in it (presence booleans only). */
+export function getActivationReadiness<T>(token: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${ACTIVATION}/readiness`, token);
+}
+
 /** The CSV export is text, not the JSON envelope; null on any failure. */
 export async function fetchActivationReconciliationCsv(token: string): Promise<string | null> {
   try {

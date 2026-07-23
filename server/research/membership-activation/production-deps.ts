@@ -43,6 +43,8 @@ import type {
   FoundingActivationDependencies,
   FoundingActivationServices,
   MemberContext,
+  ReadinessArea,
+  ReadinessItem,
   ReportPaymentWire,
   ServiceResult,
   SignAgreementWire,
@@ -775,7 +777,11 @@ const IDENTITY_QUEUE_STATUSES: ReadonlySet<string> = new Set([
   "under_review",
 ]);
 
-function buildLiveServices(now: () => Date, wiring: FoundingActivationWiring): FoundingActivationServices {
+function buildLiveServices(
+  now: () => Date,
+  wiring: FoundingActivationWiring,
+  env: NodeJS.ProcessEnv,
+): FoundingActivationServices {
   const obligations = wiring.resolveObligationsStore();
   const periods = wiring.resolvePeriodsStore();
   const methods = wiring.resolvePaymentMethodsStore();
@@ -1267,31 +1273,74 @@ function buildLiveServices(now: () => Date, wiring: FoundingActivationWiring): F
     },
 
     payment: {
-      // Authenticated members WITH a created obligation only; the pre-auth
-      // and no-obligation surfaces never see a method's payable details.
+      // Authenticated members only, masked instructions only. With a payable
+      // obligation the list is scoped to its purpose and carries the memo
+      // reference. BEFORE any obligation exists, the member must pass the
+      // same preconditions select-method's flow enforces (the verified
+      // identity gate and the satisfied agreements gate); then the list opens
+      // so a first-time member can actually choose a method, with each
+      // method's activation eligibility computed by the bridge creation gate.
+      // Members before those gates still get the precise denial, and the
+      // pre-auth surface never reaches this service at all.
       async methods(member) {
+        const at = now();
         const payable = await currentPayableObligation(member.memberId);
-        if (!payable) {
+        if (payable) {
+          const purposeEligible = (record: PaymentMethodRecord) =>
+            payable.type === "activation_50" ? record.activationEligible : record.renewalEligible;
+          const usable = (await methods.list()).filter(
+            (record) => isMethodUsableAt(record, at) && purposeEligible(record),
+          );
           return {
-            ok: false,
-            code: "obligation_required",
-            message: "Select a payment method to create your obligation first.",
+            ok: true,
+            methods: usable.map((record) => ({
+              ...toAuthenticatedMemberMethod(record),
+              // The memo the member must include so the payment matches them.
+              memoReference: payable.humanRef,
+            })),
+            memoReference: payable.humanRef,
+            submissionContract: SUBMISSION_DISPLAY_CONTRACT,
           };
         }
-        const at = now();
-        const purposeEligible = (record: PaymentMethodRecord) =>
-          payable.type === "activation_50" ? record.activationEligible : record.renewalEligible;
-        const usable = (await methods.list()).filter(
-          (record) => isMethodUsableAt(record, at) && purposeEligible(record),
+
+        // Pre-obligation: the chooser's list, behind the activation gates.
+        const identityGate = identityActivationGate(await latestCompletedReview(member.memberId));
+        if (identityGate.blocked) {
+          return {
+            ok: false,
+            code: identityGate.reason,
+            message:
+              identityGate.reason === "identity_rejected"
+                ? "The identity review did not pass; payment methods stay sealed."
+                : "The manual identity review has not verified this member yet.",
+          };
+        }
+        const agreementsGate = await signatures.requiredAgreementsSatisfied(member.memberId);
+        if (!agreementsGate.satisfied) {
+          return {
+            ok: false,
+            code: "agreements_unsatisfied",
+            message: `Required agreements are not satisfied: ${agreementsGate.blocking
+              .map((b) => `${b.category} (${b.reason})`)
+              .join(", ")}`,
+          };
+        }
+        const settings = await bridge.getSettings();
+        const listable = (await methods.list()).filter(
+          (record) => isMethodUsableAt(record, at) && record.activationEligible,
         );
         return {
           ok: true,
-          methods: usable.map((record) => ({
+          methods: listable.map((record) => ({
             ...toAuthenticatedMemberMethod(record),
-            // The memo the member must include so the payment matches them.
-            memoReference: payable.humanRef,
+            // Whether select-method would accept this method right now,
+            // straight from the bridge creation gate (purpose: activation).
+            activationEligibleNow: settings
+              ? canCreateObligationWith(record, settings, at, "activation").allowed
+              : false,
           })),
-          memoReference: payable.humanRef,
+          // No obligation yet, so there is no memo reference to cite.
+          memoReference: null,
           submissionContract: SUBMISSION_DISPLAY_CONTRACT,
         };
       },
@@ -1856,6 +1905,230 @@ function buildLiveServices(now: () => Date, wiring: FoundingActivationWiring): F
         return lines.join("\n") + "\n";
       },
 
+      // The go-live readiness report. Every item sits in exactly one of the
+      // four READINESS_STATES; no secret value ever serializes (environment
+      // checks report presence booleans and variable NAMES only, and details
+      // are counts and static citations). A final legal package discovered on
+      // disk is NOT this server's concern: legal readiness is reported from
+      // the documents registry alone.
+      async readiness() {
+        const at = now();
+        const present = (name: string): boolean =>
+          typeof env[name] === "string" && (env[name] as string).trim().length > 0;
+        const areas: ReadinessArea[] = [];
+
+        // LEGAL, from the documents registry only.
+        const requiredCategories = DOCUMENT_CATEGORY_REGISTRY.filter(
+          (definition) => definition.defaultRequirement === "required",
+        );
+        let approvedCount = 0;
+        let publishedCount = 0;
+        const unapprovedCategories: string[] = [];
+        for (const definition of requiredCategories) {
+          const versions = await documents.listVersions(definition.category);
+          const hasApproved = versions.some(
+            (version) =>
+              version.counselReview === "approved" &&
+              version.status !== "withdrawn" &&
+              version.status !== "archived",
+          );
+          if (hasApproved) approvedCount += 1;
+          else unapprovedCategories.push(definition.category);
+          if (await documents.getPublished(definition.category)) publishedCount += 1;
+        }
+        const sequenceConfigured = requiredCategories.every(
+          (definition) => definition.activationStep !== null,
+        );
+        areas.push({
+          area: "legal",
+          title: "Legal documents",
+          items: [
+            {
+              key: "approved_versions",
+              label: "Counsel-approved versions present per required category",
+              state: approvedCount === requiredCategories.length ? "code_ready" : "external_approval_missing",
+              detail:
+                approvedCount === requiredCategories.length
+                  ? `All ${requiredCategories.length} required categories carry a counsel-approved version in the registry.`
+                  : `${approvedCount} of ${requiredCategories.length} required categories carry a counsel-approved version. Awaiting counsel: ${unapprovedCategories.join(", ")}.`,
+            },
+            {
+              key: "signing_sequence",
+              label: "Signing sequence configured",
+              state: sequenceConfigured ? "code_ready" : "configuration_missing",
+              detail: sequenceConfigured
+                ? "Every required category is bound to an activation step and ordering in the typed registry (documents.ts)."
+                : "One or more required categories has no activation step configured.",
+            },
+            {
+              key: "publication_status",
+              label: "Publication status",
+              state:
+                publishedCount === requiredCategories.length
+                  ? "code_ready"
+                  : approvedCount === requiredCategories.length
+                    ? "configuration_missing"
+                    : "external_approval_missing",
+              detail: `${publishedCount} of ${requiredCategories.length} required categories have a published version.`,
+            },
+          ],
+        });
+
+        // IDENTITY.
+        const identityEnv = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "RESEARCH_IDENTITY_BUCKET"];
+        const identityMissing = identityEnv.filter((name) => !present(name));
+        areas.push({
+          area: "identity",
+          title: "Identity verification",
+          items: [
+            {
+              key: "storage_configured",
+              label: "Identity document storage configured",
+              state: identityMissing.length === 0 ? "code_ready" : "configuration_missing",
+              detail:
+                identityMissing.length === 0
+                  ? "All identity storage environment variables are present."
+                  : `Missing environment variables: ${identityMissing.join(", ")}.`,
+            },
+            {
+              key: "retention_worker",
+              label: "Raw-source retention worker wired",
+              state: "code_ready",
+              detail:
+                "The hourly production scheduler tick (registered in server/index.ts) runs the raw-source retention deletion sweep.",
+            },
+            {
+              key: "deletion_test",
+              label: "Production deletion test",
+              state: "production_test_missing",
+              detail: "No production deletion run has been recorded in this environment yet.",
+            },
+          ],
+        });
+
+        // PAYMENTS.
+        const bridgeSettings = await bridge.getSettings();
+        const enabledApprovedMethods = (await methods.list()).filter(
+          (record) =>
+            record.enabled && record.disabledReason === null && record.approvalStatus === "approved",
+        ).length;
+        areas.push({
+          area: "payments",
+          title: "Payments",
+          items: [
+            {
+              key: "bridge_configured",
+              label: "Bridge settings row present",
+              state: bridgeSettings ? "code_ready" : "configuration_missing",
+              detail: bridgeSettings
+                ? `The bridge is configured; phase is ${bridgePhase(at, bridgeSettings)}.`
+                : "No bridge settings row exists yet; initialize the bridge.",
+            },
+            {
+              key: "methods_configured",
+              label: "Enabled approved payment methods",
+              state: enabledApprovedMethods > 0 ? "code_ready" : "configuration_missing",
+              detail: `${enabledApprovedMethods} enabled approved method(s) in the registry.`,
+            },
+            {
+              key: "cipher_key_present",
+              label: "Instruction encryption key present",
+              state: present("PAYMENT_INSTRUCTIONS_ENC_KEY") ? "code_ready" : "configuration_missing",
+              detail: `PAYMENT_INSTRUCTIONS_ENC_KEY present: ${present("PAYMENT_INSTRUCTIONS_ENC_KEY")}.`,
+            },
+            {
+              key: "verification_idempotency",
+              label: "Verification idempotency",
+              state: "code_ready",
+              detail:
+                "Replay-safe verification is enforced by the idempotency store and proven by the queue tests (a repeated key replays, a new key hits the status guard).",
+            },
+          ],
+        });
+
+        // EMAIL. Presence booleans only, never a value.
+        const resendKeyPresent = present("RESEND_API_KEY");
+        const fromEmailPresent = present("FROM_EMAIL");
+        areas.push({
+          area: "email",
+          title: "Email",
+          items: [
+            {
+              key: "resend_configured",
+              label: "Resend environment configured",
+              state: resendKeyPresent && fromEmailPresent ? "code_ready" : "configuration_missing",
+              detail: `RESEND_API_KEY present: ${resendKeyPresent}. FROM_EMAIL present: ${fromEmailPresent}.`,
+            },
+            {
+              key: "domain_verification",
+              label: "Sending domain verification",
+              state: "external_approval_missing",
+              detail:
+                "Domain verification is confirmed at the email provider, outside this system; it cannot be asserted from code.",
+            },
+            {
+              key: "test_send",
+              label: "Production test send",
+              state: "production_test_missing",
+              detail: "No production test send has been recorded in this environment yet.",
+            },
+          ],
+        });
+
+        // MEMBERSHIP.
+        areas.push({
+          area: "membership",
+          title: "Membership model",
+          items: [
+            {
+              key: "pricing_model",
+              label: "$50 activation includes the 30 day founding period",
+              state: "code_ready",
+              detail:
+                "The database check constraint research_fm_obligations_amount_matches_type binds activation_50 to exactly 5000 cents (funding the 30 day founding period) and renewal_25 to exactly 2500 cents.",
+            },
+            {
+              key: "portal_gate",
+              label: "Portal gate",
+              state: "code_ready",
+              detail:
+                "Activation verification composes the identity and agreements gates, and the member portal unlocks only through a verified payment.",
+            },
+          ],
+        });
+
+        // DAY 15: owner fields straight from the checklist store, plus the
+        // scheduled sunset from the bridge settings.
+        const checklistState = await checklistStore.get();
+        const day15Items: ReadinessItem[] = DAY15_CHECKLIST_ITEMS.map((item) => {
+          const entry = checklistState[item.key];
+          const done = entry?.done === true;
+          return {
+            key: item.key,
+            label: item.label,
+            state: done
+              ? "code_ready"
+              : item.key === "provider_account_approved"
+                ? "external_approval_missing"
+                : "configuration_missing",
+            detail: entry?.updatedBy
+              ? `Owner: ${entry.updatedBy}${entry.updatedAt ? ` (updated ${entry.updatedAt})` : ""}.`
+              : "No owner recorded yet.",
+          };
+        });
+        day15Items.push({
+          key: "sunset_scheduled",
+          label: "Bridge sunset scheduled",
+          state: bridgeSettings?.endAt ? "code_ready" : "configuration_missing",
+          detail: bridgeSettings?.endAt
+            ? `The bridge end is scheduled for ${effectiveEndAt(bridgeSettings)}.`
+            : "The bridge has no end instant yet; initializing the bridge schedules the sunset.",
+        });
+        areas.push({ area: "day15", title: "Day 15 exits", items: day15Items });
+
+        return { ok: true, generatedAt: at.toISOString(), areas };
+      },
+
       async identityQueue() {
         const cases = (await identityStore.listCasesWithRawSource(tenant)).filter((kase) =>
           IDENTITY_QUEUE_STATUSES.has(kase.status),
@@ -2158,5 +2431,5 @@ export function buildFoundingActivationDependencies(
   );
 
   const resolved: FoundingActivationWiring = { ...defaultWiring(), ...wiring };
-  return { state: "live", services: buildLiveServices(now, resolved) };
+  return { state: "live", services: buildLiveServices(now, resolved, env) };
 }

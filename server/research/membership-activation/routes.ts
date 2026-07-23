@@ -63,6 +63,32 @@ export interface AdminContext {
   userAgent: string | null;
 }
 
+/**
+ * The go-live readiness vocabulary: every item in the admin readiness report
+ * is in exactly one of these four states, and the report never carries a
+ * secret value (env checks report presence booleans and variable names only).
+ */
+export const READINESS_STATES = [
+  "code_ready",
+  "configuration_missing",
+  "external_approval_missing",
+  "production_test_missing",
+] as const;
+export type ReadinessItemState = (typeof READINESS_STATES)[number];
+
+export interface ReadinessItem {
+  key: string;
+  label: string;
+  state: ReadinessItemState;
+  detail: string | null;
+}
+
+export interface ReadinessArea {
+  area: string;
+  title: string;
+  items: ReadinessItem[];
+}
+
 export const ADMIN_OBLIGATION_ACTIONS = [
   "reject",
   "request-info",
@@ -164,6 +190,7 @@ export interface FoundingActivationServices {
     updateChecklist(admin: AdminContext, key: string, done: boolean, note: string | null): Promise<ServiceResult>;
     reconciliation(): Promise<ServiceResult>;
     reconciliationCsv(): Promise<string>;
+    readiness(): Promise<ServiceResult>;
     identityQueue(): Promise<ServiceResult>;
     identityViewUrl(admin: AdminContext, caseId: string): Promise<ServiceResult>;
     identityReview(admin: AdminContext, caseId: string, findings: Record<string, unknown>): Promise<ServiceResult>;
@@ -814,6 +841,17 @@ export function registerFoundingActivationApi(
       }
       relay(res, await svc.admin.reconciliation());
     }),
+  );
+
+  // ---- admin: the go-live readiness report ---------------------------------
+  // Four-state vocabulary per item (READINESS_STATES); no secret value ever
+  // serializes: environment checks report presence booleans and variable
+  // names only, and the details are counts and static citations.
+  app.get(
+    "/api/admin/research/activation/readiness",
+    stateGate,
+    admin,
+    adminRoute(async (svc, _ctx, _req, res) => relay(res, await svc.admin.readiness())),
   );
 
   // ---- admin: identity review ----------------------------------------------

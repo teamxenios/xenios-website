@@ -233,6 +233,7 @@ const REPRESENTATIVE_ROUTES: Array<{ method: "get" | "post" | "put"; path: strin
   { method: "put", path: "/api/admin/research/activation/bridge/checklist" },
   { method: "post", path: "/api/admin/research/activation/methods" },
   { method: "get", path: "/api/admin/research/activation/reconciliation" },
+  { method: "get", path: "/api/admin/research/activation/readiness" },
   { method: "get", path: "/api/admin/research/activation/identity/queue" },
   { method: "post", path: "/api/admin/research/activation/identity/c-1/review" },
 ];
@@ -311,7 +312,7 @@ describe("state 2: flag on, storage unprovisioned, every route group answers pre
 // ---------------------------------------------------------------------------
 
 describe("state 3: the auth boundary", () => {
-  it("refuses the payment methods endpoint pre-auth, and pre-obligation", async () => {
+  it("refuses the payment methods endpoint pre-auth, and before the activation gates", async () => {
     const ctx = liveContext();
     await provisionMethodAndBridge(ctx.app);
 
@@ -322,13 +323,44 @@ describe("state 3: the auth boundary", () => {
     expect(JSON.stringify(anonymous.body)).not.toContain(PLAINTEXT_INSTRUCTIONS);
     expect(JSON.stringify(anonymous.body)).not.toContain("••••");
 
-    // Authenticated but WITHOUT a created obligation: still refused.
-    const noObligation = await request(ctx.app)
+    // Authenticated but with NO obligation and NO verified identity: the
+    // precise identity denial, and still no method detail of any kind.
+    const noIdentity = await request(ctx.app)
       .get("/api/research/activation/payment/methods")
       .set(MEMBER_HEADER, MEMBER_B);
-    expect(noObligation.status).toBe(409);
-    expect(noObligation.body.code).toBe("obligation_required");
-    expect(JSON.stringify(noObligation.body)).not.toContain("••••");
+    expect(noIdentity.status).toBe(409);
+    expect(noIdentity.body.code).toBe("identity_not_verified");
+    expect(JSON.stringify(noIdentity.body)).not.toContain("••••");
+
+    // Identity verified through the real flow, but agreements NOT satisfied
+    // (no published paper): the precise agreements denial, still no methods.
+    await request(ctx.app)
+      .post("/api/research/activation/identity/consent")
+      .set(MEMBER_HEADER, MEMBER_B)
+      .send({ accepted: true, consentVersion: "icv-1" });
+    await request(ctx.app)
+      .post("/api/research/activation/identity/upload-url")
+      .set(MEMBER_HEADER, MEMBER_B)
+      .send({ contentType: "image/jpeg", contentLengthBytes: 1000, fileName: "id.jpg" });
+    await request(ctx.app)
+      .post("/api/research/activation/identity/mark-uploaded")
+      .set(MEMBER_HEADER, MEMBER_B)
+      .send({});
+    const identityQueue = await request(ctx.app)
+      .get("/api/admin/research/activation/identity/queue")
+      .set(ADMIN_HEADER, "yes");
+    await request(ctx.app)
+      .post(`/api/admin/research/activation/identity/${identityQueue.body.queue[0].caseId}/review`)
+      .set(ADMIN_HEADER, "yes")
+      .send({ nameMatch: "match", ageThresholdMet: true, documentNotExpired: true, jurisdiction: "TX", licenseLast4: null });
+
+    const noAgreements = await request(ctx.app)
+      .get("/api/research/activation/payment/methods")
+      .set(MEMBER_HEADER, MEMBER_B);
+    expect(noAgreements.status).toBe(409);
+    expect(noAgreements.body.code).toBe("agreements_unsatisfied");
+    expect(JSON.stringify(noAgreements.body)).not.toContain("••••");
+    expect(JSON.stringify(noAgreements.body)).not.toContain(PLAINTEXT_INSTRUCTIONS);
   });
 
   it("refuses admin routes without the admin guard", async () => {
@@ -477,6 +509,22 @@ describe("state 3: the full happy path over HTTP", () => {
     expect(signedCopies.status).toBe(200);
     expect(signedCopies.body.signed).toHaveLength(DOCUMENT_CATEGORY_REGISTRY.length);
     expect(signedCopies.body.signed[0].document.content.length).toBeGreaterThan(0);
+
+    // Methods BEFORE any obligation exists: the identity and agreements gates
+    // both pass, so the first-time member can actually choose. Masked
+    // instructions only, no memo reference yet, and each method carries its
+    // activation eligibility from the bridge creation gate.
+    const preMethods = asA(
+      await request(ctx.app)
+        .get("/api/research/activation/payment/methods")
+        .set(MEMBER_HEADER, MEMBER_A),
+    );
+    expect(preMethods.status).toBe(200);
+    expect(preMethods.body.methods).toHaveLength(1);
+    expect(preMethods.body.methods[0].receivingInstructionsMasked).toBe("••••11");
+    expect(preMethods.body.methods[0].activationEligibleNow).toBe(true);
+    expect(preMethods.body.methods[0].memoReference).toBeUndefined();
+    expect(preMethods.body.memoReference).toBeNull();
 
     // The obligation: created through the bridge gate.
     const selected = asA(
@@ -1100,6 +1148,108 @@ describe("state 3: the Day 15 checklist", () => {
     );
     expect(item.done).toBe(true);
     expect(item.updatedBy).toBe(ADMIN_EMAIL);
+  });
+});
+
+describe("state 3: the go-live readiness report", () => {
+  const READINESS_PATH = "/api/admin/research/activation/readiness";
+  const STATES = [
+    "code_ready",
+    "configuration_missing",
+    "external_approval_missing",
+    "production_test_missing",
+  ];
+
+  function itemOf(body: any, area: string, key: string): { state: string; detail: string | null } {
+    const found = body.areas
+      .find((a: { area: string }) => a.area === area)
+      ?.items.find((i: { key: string }) => i.key === key);
+    expect(found, `${area}.${key}`).toBeDefined();
+    return found;
+  }
+
+  it("is admin-guarded and reports the four-state vocabulary without any secret value", async () => {
+    const ctx = liveContext();
+
+    // Admin-guarded: no session and a member session both refuse.
+    const anonymous = await request(ctx.app).get(READINESS_PATH);
+    expect(anonymous.status).toBe(401);
+    const asMember = await request(ctx.app).get(READINESS_PATH).set(MEMBER_HEADER, MEMBER_A);
+    expect(asMember.status).toBe(401);
+
+    // Unprovisioned environment: every gap is named in the vocabulary.
+    const before = await request(ctx.app).get(READINESS_PATH).set(ADMIN_HEADER, "yes");
+    expect(before.status).toBe(200);
+    expect(before.body.areas.map((a: { area: string }) => a.area)).toEqual([
+      "legal",
+      "identity",
+      "payments",
+      "email",
+      "membership",
+      "day15",
+    ]);
+    for (const area of before.body.areas) {
+      expect(area.items.length).toBeGreaterThan(0);
+      for (const item of area.items) {
+        expect(STATES, `${area.area}.${item.key}`).toContain(item.state);
+      }
+    }
+    expect(itemOf(before.body, "legal", "approved_versions").state).toBe("external_approval_missing");
+    expect(itemOf(before.body, "legal", "signing_sequence").state).toBe("code_ready");
+    expect(itemOf(before.body, "legal", "publication_status").state).toBe("external_approval_missing");
+    // LIVE_ENV has no RESEARCH_IDENTITY_BUCKET, cipher key, or Resend key.
+    expect(itemOf(before.body, "identity", "storage_configured").state).toBe("configuration_missing");
+    expect(itemOf(before.body, "identity", "retention_worker").state).toBe("code_ready");
+    expect(itemOf(before.body, "identity", "deletion_test").state).toBe("production_test_missing");
+    expect(itemOf(before.body, "payments", "bridge_configured").state).toBe("configuration_missing");
+    expect(itemOf(before.body, "payments", "methods_configured").state).toBe("configuration_missing");
+    expect(itemOf(before.body, "payments", "cipher_key_present").state).toBe("configuration_missing");
+    expect(itemOf(before.body, "payments", "verification_idempotency").state).toBe("code_ready");
+    expect(itemOf(before.body, "email", "resend_configured").state).toBe("configuration_missing");
+    expect(itemOf(before.body, "email", "domain_verification").state).toBe("external_approval_missing");
+    expect(itemOf(before.body, "email", "test_send").state).toBe("production_test_missing");
+    // The membership model is code, and the report cites the DB constraint.
+    const pricing = itemOf(before.body, "membership", "pricing_model");
+    expect(pricing.state).toBe("code_ready");
+    expect(pricing.detail).toContain("research_fm_obligations_amount_matches_type");
+    expect(itemOf(before.body, "membership", "portal_gate").state).toBe("code_ready");
+    expect(itemOf(before.body, "day15", "sunset_scheduled").state).toBe("configuration_missing");
+    expect(itemOf(before.body, "day15", "provider_account_approved").state).toBe(
+      "external_approval_missing",
+    );
+
+    // Provision the registry, the bridge, and the papers; record an owner on
+    // one Day 15 item. The report moves, truthfully, item by item.
+    await publishAllCategories(ctx.documentsStore);
+    await provisionMethodAndBridge(ctx.app);
+    await request(ctx.app)
+      .put("/api/admin/research/activation/bridge/checklist")
+      .set(ADMIN_HEADER, "yes")
+      .send({ key: "replacement_provider_selected", done: true, note: "Stripe shortlisted" });
+
+    const after = await request(ctx.app).get(READINESS_PATH).set(ADMIN_HEADER, "yes");
+    expect(after.status).toBe(200);
+    expect(itemOf(after.body, "legal", "approved_versions").state).toBe("code_ready");
+    expect(itemOf(after.body, "legal", "publication_status").state).toBe("code_ready");
+    expect(itemOf(after.body, "payments", "bridge_configured").state).toBe("code_ready");
+    expect(itemOf(after.body, "payments", "methods_configured").state).toBe("code_ready");
+    expect(itemOf(after.body, "payments", "methods_configured").detail).toContain("1 enabled approved");
+    // The env did not change: presence booleans stay false, values never leak.
+    expect(itemOf(after.body, "payments", "cipher_key_present").state).toBe("configuration_missing");
+    expect(itemOf(after.body, "day15", "sunset_scheduled").state).toBe("code_ready");
+    const owned = itemOf(after.body, "day15", "replacement_provider_selected");
+    expect(owned.state).toBe("code_ready");
+    expect(owned.detail).toContain(ADMIN_EMAIL);
+
+    // NO SECRET VALUE, EVER: not the receiving instructions (plaintext or
+    // ciphertext), not the service key, and no masked-instruction fragment.
+    for (const body of [before.body, after.body]) {
+      const s = JSON.stringify(body);
+      expect(s).not.toContain(PLAINTEXT_INSTRUCTIONS);
+      expect(s).not.toContain(CIPHERTEXT_PREFIX);
+      expect(s).not.toContain(LIVE_ENV.SUPABASE_SERVICE_ROLE_KEY as string);
+      expect(s).not.toContain("••••");
+    }
   });
 });
 

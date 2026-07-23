@@ -152,6 +152,7 @@ const ADMIN_SUBNAV = [
   { href: ADMIN_ROUTES.activationBridge, label: "Bridge" },
   { href: ADMIN_ROUTES.activationChecklist, label: "Day 15" },
   { href: ADMIN_ROUTES.activationReconciliation, label: "Reconciliation" },
+  { href: ADMIN_ROUTES.activationReadiness, label: "Readiness" },
   { href: ADMIN_ROUTES.questions, label: "Questions" },
   { href: ADMIN_ROUTES.guides, label: "Guides" },
   { href: ADMIN_ROUTES.partners, label: "Partners" },

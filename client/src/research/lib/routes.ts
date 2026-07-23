@@ -90,6 +90,7 @@ export const ADMIN_ROUTES = {
   activationBridge: "/admin/research/activation-bridge",
   activationChecklist: "/admin/research/activation-checklist",
   activationReconciliation: "/admin/research/activation-reconciliation",
+  activationReadiness: "/admin/research/activation-readiness",
   audit: "/admin/research/audit",
 } as const;
 
