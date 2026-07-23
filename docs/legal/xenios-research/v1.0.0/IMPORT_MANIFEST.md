@@ -120,7 +120,7 @@ at position 9, and files 15, 13, 14, 16 sign at positions 14 to 17.
 | 6 | `member_facing/06_research_use_acceptable_use.md` | XR-LEGAL-06 | `research_education_disclaimer` | |
 | 7 | `member_facing/07_no_medical_advice_assumption_risk.md` | XR-LEGAL-07 | `assumption_of_risk_acknowledgment` | Also carries the package's no-guaranteed-outcome language |
 | 8 | `member_facing/08_arbitration_class_jury_waiver.md` | XR-LEGAL-08 | `arbitration_agreement` | Separate conspicuous acceptance (registry flag set) |
-| 9 | `member_facing/17_release_waiver_covenant_indemnification.md` | XR-LEGAL-17 | `membership_covenant` | Separate conspicuous acceptance REQUIRED BY THE PACKAGE; the registry reserves its separate-acknowledgment flag for arbitration alone, so the authoritative flag lives in the import module's sequence and provenance notes |
+| 9 | `member_facing/17_release_waiver_covenant_indemnification.md` | XR-LEGAL-17 | `membership_covenant` | Separate conspicuous acceptance REQUIRED BY THE PACKAGE; the registry flags the `membership_covenant` category with `requiresSeparateAcknowledgment`, so the domain ENFORCES the separate acknowledgment at signing exactly as for arbitration (the package flag is also carried in the import sequence and provenance notes) |
 | 10 | `member_facing/09_manual_payment_verification_terms.md` | XR-LEGAL-09 | `manual_payment_bridge_terms` | |
 | 11 | `member_facing/10_membership_renewal_policy.md` | XR-LEGAL-10 | `recurring_membership_authorization` | Manual renewal terms; the document authorizes no automatic charge |
 | 12 | `member_facing/11_cancellation_refund_policy.md` | XR-LEGAL-11 | `immediate_cancellation_acknowledgment` | |

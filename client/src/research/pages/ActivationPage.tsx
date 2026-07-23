@@ -763,6 +763,13 @@ function AgreementSignCard({
 
   const needsAck = agreement.requiresSeparateAcknowledgment;
   const ready = typedLegalName.trim().length > 0 && affirmativeConsent && (!needsAck || separateAcknowledgment);
+  // The separate acknowledgment is required for two documents; the sentence
+  // names what each one asks the member to acknowledge, so it never reads as
+  // arbitration-only copy pasted onto the release.
+  const ackLabel =
+    agreement.category === "arbitration_agreement"
+      ? "I separately acknowledge the arbitration provisions, including how disputes are resolved and the court and jury rights I am agreeing to give up. This acknowledgment is its own choice, not part of the checkbox above."
+      : "I separately acknowledge this release and waiver, including the claims I am giving up and the liability limits I am agreeing to. This acknowledgment is its own choice, not part of the checkbox above.";
 
   async function sign() {
     setBusy(true);
@@ -866,11 +873,7 @@ function AgreementSignCard({
                 onChange={(e) => setSeparateAcknowledgment(e.target.checked)}
                 data-testid={`agreement-ack-${agreement.category}`}
               />
-              <span>
-                I separately acknowledge this document's provisions, including how disputes are resolved and
-                any rights I am agreeing to give up. This acknowledgment is its own choice, not part of the
-                checkbox above.
-              </span>
+              <span>{ackLabel}</span>
             </label>
           )}
           <div>

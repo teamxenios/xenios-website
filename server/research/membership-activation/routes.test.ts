@@ -192,6 +192,59 @@ const VERIFY_BODY = {
   idempotencyKey: "verify-key-1",
 };
 
+/**
+ * Drive a member all the way through the identity review and every required
+ * agreement, over HTTP, so both activation gates (verified identity + satisfied
+ * agreements) pass. select-method enforces exactly these gates before it will
+ * mint the $50 obligation, so any test that needs an obligation must run this
+ * first (the happy-path test does the same steps inline).
+ */
+async function completeIdentityAndAgreements(
+  ctx: LiveContext,
+  member: string = MEMBER_A,
+): Promise<void> {
+  await publishAllCategories(ctx.documentsStore);
+  // Identity: consent -> upload -> mark uploaded -> admin verifies.
+  await request(ctx.app)
+    .post("/api/research/activation/identity/consent")
+    .set(MEMBER_HEADER, member)
+    .send({ accepted: true, consentVersion: "icv-1" });
+  await request(ctx.app)
+    .post("/api/research/activation/identity/upload-url")
+    .set(MEMBER_HEADER, member)
+    .send({ contentType: "image/jpeg", contentLengthBytes: 1000, fileName: "id.jpg" });
+  await request(ctx.app)
+    .post("/api/research/activation/identity/mark-uploaded")
+    .set(MEMBER_HEADER, member)
+    .send({});
+  const identityQueue = await request(ctx.app)
+    .get("/api/admin/research/activation/identity/queue")
+    .set(ADMIN_HEADER, "yes");
+  const caseId = identityQueue.body.queue.find(
+    (c: { memberId: string }) => c.memberId === member,
+  ).caseId as string;
+  await request(ctx.app)
+    .post(`/api/admin/research/activation/identity/${caseId}/review`)
+    .set(ADMIN_HEADER, "yes")
+    .send({ nameMatch: "match", ageThresholdMet: true, documentNotExpired: true, jurisdiction: "TX", licenseLast4: null });
+  // Agreements: sign every published category in the returned order.
+  const required = await request(ctx.app)
+    .get("/api/research/activation/agreements")
+    .set(MEMBER_HEADER, member);
+  for (const agreement of required.body.agreements) {
+    await request(ctx.app)
+      .post("/api/research/activation/agreements/sign")
+      .set(MEMBER_HEADER, member)
+      .send({
+        documentVersionId: agreement.documentVersionId,
+        typedLegalName: "Member Aye Test",
+        fullDocumentShown: true,
+        affirmativeConsent: true,
+        separateAcknowledgment: true,
+      });
+  }
+}
+
 /** Stand up a method (created + approved) and an active bridge, over HTTP. */
 async function provisionMethodAndBridge(app: Express): Promise<void> {
   const created = await request(app)
@@ -919,6 +972,7 @@ describe("state 3: the bridge gate on obligation creation", () => {
   it("refuses a new obligation after an emergency disable (sunset)", async () => {
     const ctx = liveContext();
     await provisionMethodAndBridge(ctx.app);
+    await completeIdentityAndAgreements(ctx);
     const disabled = await request(ctx.app)
       .put("/api/admin/research/activation/bridge/settings")
       .set(ADMIN_HEADER, "yes")
@@ -943,6 +997,9 @@ describe("state 3: the bridge gate on obligation creation", () => {
       .post("/api/admin/research/activation/methods/zelle-1/approve")
       .set(ADMIN_HEADER, "yes")
       .send({});
+    // The member has cleared identity + agreements, so the ONLY thing left to
+    // fail is the unconfigured bridge.
+    await completeIdentityAndAgreements(ctx);
     const res = await request(ctx.app)
       .post("/api/research/activation/payment/select-method")
       .set(MEMBER_HEADER, MEMBER_A)
@@ -976,33 +1033,25 @@ describe("state 3: the bridge gate on obligation creation", () => {
   });
 });
 
-describe("state 3: the activation verify composes the identity and agreements gates", () => {
-  it("blocks verification until identity is verified, then until agreements are satisfied", async () => {
+describe("state 3: select-method composes the identity and agreements gates", () => {
+  it("refuses to mint an obligation until identity is verified, then until agreements are satisfied", async () => {
     const ctx = liveContext();
     await provisionMethodAndBridge(ctx.app);
 
-    // Obligation + report, with NO identity review and NO published paper.
-    await request(ctx.app)
+    // No identity review, no signed papers: select-method fails closed on the
+    // identity gate. NO obligation is created.
+    const noIdentity = await request(ctx.app)
       .post("/api/research/activation/payment/select-method")
       .set(MEMBER_HEADER, MEMBER_A)
       .send({ methodId: "zelle-1" });
-    await request(ctx.app)
-      .post("/api/research/activation/payment/report")
-      .set(MEMBER_HEADER, MEMBER_A)
-      .send({ amountCents: 5000, sentDate: "2026-07-21", senderName: "Member Aye", accuracyCertified: true });
-    const queue = await request(ctx.app)
-      .get("/api/admin/research/activation/queue")
-      .set(ADMIN_HEADER, "yes");
-    const obligationId = queue.body.queue[0].obligationId as string;
+    expect(noIdentity.status).toBe(409);
+    expect(noIdentity.body.code).toBe("identity_not_verified");
+    const afterIdentityBlock = await request(ctx.app)
+      .get("/api/research/activation/payment/obligation")
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(afterIdentityBlock.body.obligation).toBeNull();
 
-    const identityBlocked = await request(ctx.app)
-      .post(`/api/admin/research/activation/queue/${obligationId}/verify`)
-      .set(ADMIN_HEADER, "yes")
-      .send(VERIFY_BODY);
-    expect(identityBlocked.status).toBe(409);
-    expect(identityBlocked.body.code).toBe("identity_not_verified");
-
-    // Verify identity through the real flow.
+    // Verify identity through the real flow, but publish and sign NOTHING.
     await request(ctx.app)
       .post("/api/research/activation/identity/consent")
       .set(MEMBER_HEADER, MEMBER_A)
@@ -1023,16 +1072,67 @@ describe("state 3: the activation verify composes the identity and agreements ga
       .set(ADMIN_HEADER, "yes")
       .send({ nameMatch: "match", ageThresholdMet: true, documentNotExpired: true, jurisdiction: "TX", licenseLast4: null });
 
-    // Identity now passes; the agreements gate still fails CLOSED because no
-    // required category has a published version (nothing to sign is not the
-    // same as signed).
-    const agreementsBlocked = await request(ctx.app)
+    // Identity now passes; select-method still fails CLOSED on the agreements
+    // gate because no required category has a published version (nothing to
+    // sign is not the same as signed). Still no obligation.
+    const noAgreements = await request(ctx.app)
+      .post("/api/research/activation/payment/select-method")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ methodId: "zelle-1" });
+    expect(noAgreements.status).toBe(409);
+    expect(noAgreements.body.code).toBe("agreements_unsatisfied");
+    expect(noAgreements.body.message).toContain("no_published_version");
+    const afterAgreementsBlock = await request(ctx.app)
+      .get("/api/research/activation/payment/obligation")
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(afterAgreementsBlock.body.obligation).toBeNull();
+  });
+});
+
+describe("state 3: the activation verify re-composes the gates as defense in depth", () => {
+  it("blocks verification when agreements lapse into reacceptance AFTER the obligation was minted", async () => {
+    const ctx = liveContext();
+    await provisionMethodAndBridge(ctx.app);
+    // The member clears both gates and mints an obligation the legitimate way.
+    await completeIdentityAndAgreements(ctx);
+    const selected = await request(ctx.app)
+      .post("/api/research/activation/payment/select-method")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ methodId: "zelle-1" });
+    expect(selected.status).toBe(200);
+    await request(ctx.app)
+      .post("/api/research/activation/payment/report")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ amountCents: 5000, sentDate: "2026-07-21", senderName: "Member Aye", accuracyCertified: true });
+    const queue = await request(ctx.app)
+      .get("/api/admin/research/activation/queue")
+      .set(ADMIN_HEADER, "yes");
+    const obligationId = queue.body.queue[0].obligationId as string;
+
+    // A new mandatory version of a required category is published AFTER the
+    // obligation exists: the agreements gate now fails closed again. The verify
+    // path re-composes the gate, so activation cannot slip through on a stale
+    // obligation whose agreements have since lapsed.
+    const lifecycle = new DocumentLifecycle(ctx.documentsStore, { now: NOW });
+    const draft = await lifecycle.createDraft({
+      category: "privacy_notice",
+      semver: "2.0.0",
+      jurisdiction: "US-TX",
+      content: "Materially revised privacy notice requiring reacceptance.",
+      reacceptanceRequired: true,
+    });
+    await lifecycle.setCounselReview(draft.id, "approved");
+    await lifecycle.transition(draft.id, "under_legal_review");
+    await lifecycle.transition(draft.id, "approved_for_publication");
+    await lifecycle.publish(draft.id, { publisher: "counsel-test" });
+
+    const blocked = await request(ctx.app)
       .post(`/api/admin/research/activation/queue/${obligationId}/verify`)
       .set(ADMIN_HEADER, "yes")
       .send(VERIFY_BODY);
-    expect(agreementsBlocked.status).toBe(409);
-    expect(agreementsBlocked.body.code).toBe("agreements_unsatisfied");
-    expect(agreementsBlocked.body.message).toContain("no_published_version");
+    expect(blocked.status).toBe(409);
+    expect(blocked.body.code).toBe("agreements_unsatisfied");
+    expect(blocked.body.message).toContain("reacceptance_required");
   });
 });
 
@@ -1080,6 +1180,7 @@ describe("state 3: admin obligation transitions", () => {
   it("requests info with a detail, emails the member, and lets them resubmit", async () => {
     const ctx = liveContext();
     await provisionMethodAndBridge(ctx.app);
+    await completeIdentityAndAgreements(ctx);
     await request(ctx.app)
       .post("/api/research/activation/payment/select-method")
       .set(MEMBER_HEADER, MEMBER_A)

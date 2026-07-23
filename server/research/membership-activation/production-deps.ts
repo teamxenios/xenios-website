@@ -904,6 +904,38 @@ function buildLiveServices(
     return reviews.sort((a, b) => a.completedAt.localeCompare(b.completedAt))[reviews.length - 1];
   }
 
+  // The activation preconditions the payment surface must hold, evaluated
+  // server-side from durable state: the identity review must have verified the
+  // member, and every required agreement must be satisfied. Both the
+  // pre-obligation method list AND the mutating select-method (which mints the
+  // $50 obligation) run this, so the obligation can never be created for an
+  // unverified or unsigned member. Returns null when clear, else the precise
+  // denial to return to the caller.
+  async function activationGatesDenial(
+    memberId: string,
+  ): Promise<{ code: string; message: string } | null> {
+    const identityGate = identityActivationGate(await latestCompletedReview(memberId));
+    if (identityGate.blocked) {
+      return {
+        code: identityGate.reason,
+        message:
+          identityGate.reason === "identity_rejected"
+            ? "The identity review did not pass; payment methods stay sealed."
+            : "The manual identity review has not verified this member yet.",
+      };
+    }
+    const agreementsGate = await signatures.requiredAgreementsSatisfied(memberId);
+    if (!agreementsGate.satisfied) {
+      return {
+        code: "agreements_unsatisfied",
+        message: `Required agreements are not satisfied: ${agreementsGate.blocking
+          .map((b) => `${b.category} (${b.reason})`)
+          .join(", ")}`,
+      };
+    }
+    return null;
+  }
+
   async function appendIdentityAudit(
     kase: IdentityDocumentCase,
     kind:
@@ -1304,27 +1336,8 @@ function buildLiveServices(
         }
 
         // Pre-obligation: the chooser's list, behind the activation gates.
-        const identityGate = identityActivationGate(await latestCompletedReview(member.memberId));
-        if (identityGate.blocked) {
-          return {
-            ok: false,
-            code: identityGate.reason,
-            message:
-              identityGate.reason === "identity_rejected"
-                ? "The identity review did not pass; payment methods stay sealed."
-                : "The manual identity review has not verified this member yet.",
-          };
-        }
-        const agreementsGate = await signatures.requiredAgreementsSatisfied(member.memberId);
-        if (!agreementsGate.satisfied) {
-          return {
-            ok: false,
-            code: "agreements_unsatisfied",
-            message: `Required agreements are not satisfied: ${agreementsGate.blocking
-              .map((b) => `${b.category} (${b.reason})`)
-              .join(", ")}`,
-          };
-        }
+        const denial = await activationGatesDenial(member.memberId);
+        if (denial) return { ok: false, code: denial.code, message: denial.message };
         const settings = await bridge.getSettings();
         const listable = (await methods.list()).filter(
           (record) => isMethodUsableAt(record, at) && record.activationEligible,
@@ -1346,6 +1359,11 @@ function buildLiveServices(
       },
 
       async selectMethod(member, methodId) {
+        // The SAME activation gates the pre-obligation list enforces, now on
+        // the mutating path: an unverified or unsigned member can never mint a
+        // $50 obligation, no matter how they reach select-method.
+        const denial = await activationGatesDenial(member.memberId);
+        if (denial) return { ok: false, code: denial.code, message: denial.message };
         const record = await methods.get(methodId);
         if (!record) return { ok: false, code: "method_not_found", message: "No payment method with that id." };
         const settings = await bridge.getSettings();
