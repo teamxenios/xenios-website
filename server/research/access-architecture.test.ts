@@ -47,6 +47,7 @@ vi.mock("../supabase", () => ({
 }));
 
 import { registerResearchApi } from "./index";
+import { requireMember } from "./member-auth";
 
 const ENV_KEYS = ["RESEARCH_ACCESS_PASSWORD", "RESEARCH_SESSION_SECRET", "RESEARCH_PUBLIC"];
 const saved: Record<string, string | undefined> = {};
@@ -55,6 +56,12 @@ function makeApp() {
   const app = express();
   app.use(express.json());
   registerResearchApi(app);
+  // Registered after the shared research middleware, matching production.
+  // The real activation implementation applies the same member guard before
+  // every member activation handler.
+  app.get("/api/research/activation/status", requireMember, (_req, res) => {
+    res.json({ ok: true, status: "pending_activation" });
+  });
   return app;
 }
 
@@ -99,6 +106,24 @@ describe("the shared password does not unlock member content", () => {
 });
 
 describe("an authenticated member bypasses the shared password on member endpoints only", () => {
+  it("lets a pending member's valid password token reach activation status without a gateway cookie", async () => {
+    state.members[0].status = "pending_activation";
+    const app = makeApp();
+    const res = await request(app)
+      .get("/api/research/activation/status")
+      .set("Authorization", `Bearer ${state.goodToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe("pending_activation");
+  });
+
+  it("still rejects a junk bearer token on activation status", async () => {
+    const app = makeApp();
+    const res = await request(app)
+      .get("/api/research/activation/status")
+      .set("Authorization", "Bearer junk");
+    expect(res.status).toBe(401);
+  });
+
   it("catalog with a valid member token and NO cookie is served", async () => {
     const app = makeApp();
     const res = await request(app).get("/api/research/catalog").set("Authorization", `Bearer ${state.goodToken}`);

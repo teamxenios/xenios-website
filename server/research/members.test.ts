@@ -44,6 +44,15 @@ const state = vi.hoisted(() => ({
     getUser: vi.fn(async (jwt: string) => {
       if (jwt === "good-jwt") return { data: { user: { id: "auth-1", email: "member@example.com" } }, error: null };
       if (jwt === "recovery-jwt") return { data: { user: { id: "auth-recovery", email: "recovery@example.com" } }, error: null };
+      if (jwt === "invalid-kid-jwt") {
+        return {
+          data: { user: null },
+          error: {
+            message: "Invalid JWT: unrecognized JWT signing key identifier sensitive-kid-value",
+            status: 401,
+          },
+        };
+      }
       // Realistic JWT fixtures: a three-part token whose payload carries
       // sub/email (and amr, which the server reads from the claim itself).
       try {
@@ -170,6 +179,7 @@ import { makeResearchToken, makeStatusToken, registerMembershipApi } from "./mem
 import { registerMemberApi } from "./members";
 import { registerMemberAccessApi } from "./guards";
 import { registerResearchApi, researchPageGate } from "./index";
+import { requireMember } from "./member-auth";
 import { registerOutboxAdmin } from "./outbox";
 import { registerReferralFraudAdmin } from "./fraud-admin";
 
@@ -547,6 +557,25 @@ describe("member session guard", () => {
     expect((await request(app).get("/api/research/member/me").set("Authorization", "Bearer bad-jwt")).status).toBe(401);
   });
 
+  it("fails closed on an unrecognized signing key with useful sanitized logging", async () => {
+    seedMember();
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const res = await request(makeApp())
+        .get("/api/research/member/me")
+        .set("Authorization", "Bearer invalid-kid-jwt");
+      expect(res.status).toBe(401);
+      expect(res.body).toEqual({ ok: false, message: "Sign in required." });
+      expect(warning).toHaveBeenCalledWith(
+        "[research members] auth verification rejected: signing_key_not_recognized status=401",
+      );
+      expect(JSON.stringify(warning.mock.calls)).not.toContain("sensitive-kid-value");
+      expect(JSON.stringify(warning.mock.calls)).not.toContain("invalid-kid-jwt");
+    } finally {
+      warning.mockRestore();
+    }
+  });
+
   it("403 when the auth user has no membership", async () => {
     // valid jwt but no member row
     const res = await request(makeApp()).get("/api/research/member/me").set("Authorization", "Bearer good-jwt");
@@ -662,6 +691,9 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     registerMembershipApi(app);
     registerMemberApi(app);
     registerMemberAccessApi(app);
+    app.get("/api/research/activation/status", requireMember, (_req, res) => {
+      res.json({ ok: true, status: "pending_activation" });
+    });
     registerOutboxAdmin(app); // REAL requireSupabaseAdmin (../routes is not mocked here)
     registerReferralFraudAdmin(app);
     return app;
@@ -760,6 +792,7 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
       () => request(composed).get("/api/research/member/catalog").set(bearer),
       () => request(composed).get("/api/research/member/me").set(bearer),
       () => request(composed).get("/api/research/member/referrals").set(bearer),
+      () => request(composed).get("/api/research/activation/status").set(bearer),
       () => request(composed).post("/api/research/orders").set(bearer).send({}),
     ]) {
       const res = await probe();
@@ -810,7 +843,12 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     state.tables.research_members.push({ id: "m1", application_id: app.id, auth_user_id: "auth-pending", email: "member@example.com", first_name: "Avery", status: "pending_activation", created_at: new Date().toISOString() });
     const composed = makeComposedApp();
     const bearer = { Authorization: `Bearer ${recoveryJwtFor("auth-pending", "member@example.com")}` };
-    for (const path of ["/api/research/member/me", "/api/research/member/catalog", "/api/research/catalog"]) {
+    for (const path of [
+      "/api/research/member/me",
+      "/api/research/member/catalog",
+      "/api/research/catalog",
+      "/api/research/activation/status",
+    ]) {
       const res = await request(composed).get(path).set(bearer);
       expect(res.status).toBe(403);
       expect(res.body.code).toBe("recovery_session");
@@ -878,6 +916,7 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     expect((await request(composed).get("/api/research/member/me").set(memberBearer)).status).toBe(200);
     expect((await request(composed).get("/api/research/catalog").set(memberBearer)).status).toBe(200);
     expect((await request(composed).get("/api/research/member/catalog").set(memberBearer)).status).toBe(200);
+    expect((await request(composed).get("/api/research/activation/status").set(memberBearer)).status).toBe(200);
 
     process.env.ADMIN_EMAIL = "samuel@xeniostechnology.com";
     try {

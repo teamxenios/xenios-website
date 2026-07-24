@@ -231,7 +231,7 @@ export function registerResearchApi(app: Express) {
   // shared password on exactly those member-authed endpoints (the Bearer
   // token is the stronger credential; every bypassed path still enforces it).
   // Everything else keeps the session-cookie wall.
-  const MEMBER_AUTHED_PREFIXES = ["/member", "/catalog", "/orders"];
+  const MEMBER_AUTHED_PREFIXES = ["/member", "/activation", "/catalog", "/orders"];
   // FOUNDER DECISION (2026-07-19): password recovery must work from a fresh
   // browser WITHOUT the shared review password. Exactly these routes bypass
   // the wall by explicit allowlist (no credential of any kind required); the
