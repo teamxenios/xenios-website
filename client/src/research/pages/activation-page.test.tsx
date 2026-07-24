@@ -38,13 +38,15 @@ afterEach(() => {
 
 // Only the fields the page reads; the rest of the provider surface is
 // irrelevant here (test-only cast, same pattern as persona-states.test.tsx).
-function fixtureContext(): ResearchContextValue {
+function fixtureContext(overrides: Partial<ResearchContextValue> = {}): ResearchContextValue {
   return {
     gate: "open",
     member: { firstName: "Sam", status: "pending_activation", applicationStatus: "approved" },
     memberToken: "member-jwt",
     memberChecking: false,
+    memberSessionStatus: "authenticated",
     recovery: "none",
+    ...overrides,
   } as ResearchContextValue;
 }
 
@@ -181,14 +183,14 @@ function stubActivationApi(
   return calls;
 }
 
-async function renderPage(): Promise<HTMLDivElement> {
+async function renderPage(overrides: Partial<ResearchContextValue> = {}): Promise<HTMLDivElement> {
   window.history.pushState({}, "", "/research/activate");
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
   await act(async () => {
     root!.render(
-      <ResearchContext.Provider value={fixtureContext()}>
+      <ResearchContext.Provider value={fixtureContext(overrides)}>
         <ActivationPage />
       </ResearchContext.Provider>,
     );
@@ -219,6 +221,40 @@ function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, value: str
 }
 
 // ---------------------------------------------------------------------------
+
+describe("ActivationPage session boundary", () => {
+  it("shows normal sign-in actions without approval-link or application-status instructions", async () => {
+    const view = await renderPage({
+      member: null,
+      memberToken: null,
+      memberChecking: false,
+      memberSessionStatus: "signed_out",
+    });
+    const body = text(view);
+    expect(body).toContain("Sign in to continue your activation.");
+    expect(body).toContain(
+      "Sign in with the email and password connected to your Xenios Research account to continue where you left off.",
+    );
+    expect(body).not.toContain("approval email");
+    expect(body).not.toContain("Application status");
+    const links = Array.from(view.querySelectorAll("a"));
+    expect(links.find((link) => link.textContent?.trim() === "Sign in")?.getAttribute("href"))
+      .toBe("/research/sign-in?returnTo=%2Fresearch%2Factivate");
+    expect(links.find((link) => link.textContent?.trim() === "Forgot password")?.getAttribute("href"))
+      .toBe("/research/reset-password");
+  });
+
+  it("does not flash the signed-out panel while the provider is checking", async () => {
+    const view = await renderPage({
+      member: null,
+      memberToken: null,
+      memberChecking: true,
+      memberSessionStatus: "checking",
+    });
+    expect(text(view)).toContain("Loading your activation");
+    expect(text(view)).not.toContain("Sign in to continue your activation.");
+  });
+});
 
 describe("ActivationPage canonical pricing", () => {
   it("renders the canonical Founding Membership pricing block verbatim", async () => {
