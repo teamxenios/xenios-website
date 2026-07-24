@@ -5,6 +5,7 @@ import {
   createInMemoryMembershipState,
   createInMemoryReceipts,
   portalUnlocked,
+  type AtomicActivationCommitFn,
   type AdminVerificationInput,
 } from "./activation";
 import {
@@ -468,5 +469,114 @@ describe("createActivationService wiring", () => {
     await expect(service.verifyPayment(ADMIN, "no-such-id", verification(), "key-1")).rejects.toBeInstanceOf(
       FoundingActivationError,
     );
+  });
+
+  it("rejects a mismatched payment method and impossible calendar dates before any write", async () => {
+    const { service } = makeService();
+    const submitted = await submittedActivation(service);
+    await expect(
+      service.verifyPayment(ADMIN, submitted.obligationId, verification({ methodId: "another-method" }), "key-method"),
+    ).rejects.toMatchObject({ code: "method_mismatch" });
+    await expect(
+      service.verifyPayment(ADMIN, submitted.obligationId, verification({ dateReceived: "2026-02-31" }), "key-date"),
+    ).rejects.toMatchObject({ code: "validation_failed" });
+    expect((await service.stores.membership.getState("member-1")).status).toBe("pending_activation");
+    expect(await service.stores.ledger.listByMember("member-1")).toEqual([]);
+    expect(await service.stores.periods.listByMember("member-1")).toEqual([]);
+  });
+
+  it("uses the injected atomic commit, rehydrates its result, and preserves same-key replay", async () => {
+    const obligations = createInMemoryObligationsStore();
+    const periods = createInMemoryPeriodsStore();
+    const membership = createInMemoryMembershipState();
+    const ledger = createInMemoryLedger();
+    const receipts = createInMemoryReceipts();
+    const shared = { obligations, periods, membership, ledger, receipts, now: () => new Date(NOW) };
+    const databaseTransaction = createActivationService(shared);
+    const submitted = await submittedActivation(databaseTransaction);
+    let calls = 0;
+    const atomicCommit: AtomicActivationCommitFn = async (input) => {
+      calls += 1;
+      try {
+        const result = await databaseTransaction.verifyPayment(
+          input.admin,
+          input.obligationId,
+          input.fields,
+          input.idempotencyKey,
+        );
+        return {
+          ok: true,
+          replayed: result.replayed,
+          obligationId: result.obligation.obligationId,
+          periodId: result.period.periodId,
+          renewalObligationId: result.renewalObligation.obligationId,
+          receiptId: result.receipt.receiptId,
+          ledgerEntryId: result.ledgerEntryId,
+          effectiveAt: result.portalUnlock.effectiveAt,
+        };
+      } catch (error) {
+        if (error instanceof FoundingActivationError) {
+          return { ok: false, code: error.code };
+        }
+        return { ok: false, code: "commit_failed" };
+      }
+    };
+    const legacyIdempotency = {
+      once: async () => {
+        throw new Error("legacy idempotency store must not be used by the atomic path");
+      },
+    };
+    const service = createActivationService({
+      ...shared,
+      atomicCommit,
+      idempotency: legacyIdempotency,
+    });
+
+    const first = await service.verifyPayment(ADMIN, submitted.obligationId, verification(), "atomic-key");
+    const replay = await service.verifyPayment(ADMIN, submitted.obligationId, verification(), "atomic-key");
+    expect(first.replayed).toBe(false);
+    expect(replay.replayed).toBe(true);
+    expect(calls).toBe(2);
+    expect(await ledger.listByObligation(submitted.obligationId)).toHaveLength(1);
+    expect(await periods.listByMember("member-1")).toHaveLength(1);
+    expect(await obligations.listByMember("member-1")).toHaveLength(2);
+
+    await expect(
+      service.verifyPayment(ADMIN, submitted.obligationId, verification(), "different-key"),
+    ).rejects.toMatchObject({ code: "already_verified" });
+  });
+
+  it("does not fall back to legacy writes when the atomic commit refuses", async () => {
+    const obligations = createInMemoryObligationsStore();
+    const periods = createInMemoryPeriodsStore();
+    const membership = createInMemoryMembershipState();
+    const ledger = createInMemoryLedger();
+    const receipts = createInMemoryReceipts();
+    const seed = createActivationService({
+      obligations,
+      periods,
+      membership,
+      ledger,
+      receipts,
+      now: () => new Date(NOW),
+    });
+    const submitted = await submittedActivation(seed);
+    const service = createActivationService({
+      obligations,
+      periods,
+      membership,
+      ledger,
+      receipts,
+      atomicCommit: async () => ({ ok: false, code: "commit_failed" }),
+      now: () => new Date(NOW),
+    });
+    await expect(
+      service.verifyPayment(ADMIN, submitted.obligationId, verification(), "atomic-fail"),
+    ).rejects.toMatchObject({ code: "commit_failed" });
+    expect((await obligations.get(submitted.obligationId))?.status).toBe("submitted");
+    expect((await membership.getState("member-1")).status).toBe("pending_activation");
+    expect(await ledger.listByMember("member-1")).toEqual([]);
+    expect(await periods.listByMember("member-1")).toEqual([]);
+    expect(await receipts.findByObligation(submitted.obligationId)).toBeNull();
   });
 });

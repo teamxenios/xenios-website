@@ -79,6 +79,7 @@ import {
   type ReceiptIssuer,
   type ReceiptRecord,
 } from "./activation";
+import { createSupabaseActivationCommit } from "./activation-commit";
 import { createRenewalService } from "./renewals";
 import {
   MANUAL_EXTERNAL_PAYMENT,
@@ -1182,6 +1183,9 @@ function buildLiveServices(
     ledger,
     receipts,
     idempotency,
+    // Unlike renewals, initial activation changes financial and membership
+    // state. Production must cross a single database transaction boundary.
+    atomicCommit: supabaseConfigured() ? createSupabaseActivationCommit() : undefined,
     now,
   });
   const renewalService = createRenewalService({
@@ -2107,8 +2111,13 @@ function buildLiveServices(
       },
 
       async verify(admin, obligationId, fields: VerifyWire, idempotencyKey) {
-        const record = await obligations.get(obligationId);
+        // The admin UI normally posts the internal UUID, but the external XRM
+        // reference is also a supported, unambiguous operator identifier.
+        const record =
+          (await obligations.get(obligationId)) ??
+          (obligationId.startsWith("XRM-") ? await obligations.findByHumanRef(obligationId) : null);
         if (!record) return { ok: false, code: "not_found", message: "No obligation with that id." };
+        const resolvedObligationId = record.obligationId;
         const identity = adminIdentityOf(admin);
 
         if (record.type === "activation_50") {
@@ -2139,7 +2148,12 @@ function buildLiveServices(
                 .join(", ")}`,
             };
           }
-          const result = await activationService.verifyPayment(identity, obligationId, fields, idempotencyKey);
+          const result = await activationService.verifyPayment(
+            identity,
+            resolvedObligationId,
+            fields,
+            idempotencyKey,
+          );
           const recipient = await recipientFor(record.memberId);
           await notify("fm_payment_verified_receipt", recipient, record.obligationId, {
             xeniosRef: result.obligation.humanRef,

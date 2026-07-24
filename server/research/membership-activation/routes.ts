@@ -358,6 +358,8 @@ function statusForCode(code: string): number {
     code === "provider_error" ||
     code === "storage_error" ||
     code === "internal_error" ||
+    code === "commit_failed" ||
+    code === "commit_state_uncertain" ||
     // Native evidence generation failures are server-side and retryable.
     code === "pdf_generation_error" ||
     code === "certificate_generation_error"

@@ -270,4 +270,84 @@ describe("ActivationQueue", () => {
     expect(post?.url).toBe("/api/admin/research/activation/queue/ob-1/reject");
     expect(JSON.parse(post?.body ?? "{}")).toEqual({ detail: "Amount could not be located." });
   });
+
+  it("shows a safe actionable message when the atomic commit fails", async () => {
+    stubFetch([
+      {
+        method: "POST",
+        path: "/api/admin/research/activation/queue/ob-1/verify",
+        status: 500,
+        body: {
+          ok: false,
+          code: "commit_failed",
+          message: "The verification could not be committed. No records were changed.",
+        },
+      },
+    ]);
+    const view = await renderPage();
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, `verify-open-${REF}`).click();
+    });
+    await act(async () => {
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-amount-${REF}`), "50.00");
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-date-${REF}`), "2026-07-24");
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-destination-${REF}`), "checked-account");
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-reconciliation-${REF}`), "2026-07-24");
+      byTestId<HTMLInputElement>(view, `verify-confirm-${REF}`).click();
+    });
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, `verify-submit-${REF}`).click();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect(text(view)).toContain("The verification could not be committed. No records were changed.");
+    expect(text(view)).not.toContain("private database");
+  });
+
+  it("rejects malformed or over-precise dollar input instead of rounding it to $50", async () => {
+    const calls = stubFetch();
+    const view = await renderPage();
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, `verify-open-${REF}`).click();
+    });
+    await act(async () => {
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-date-${REF}`), "2026-07-24");
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-destination-${REF}`), "checked-account");
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-reconciliation-${REF}`), "2026-07-24");
+      byTestId<HTMLInputElement>(view, `verify-confirm-${REF}`).click();
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-amount-${REF}`), "49.999");
+    });
+    expect(byTestId<HTMLButtonElement>(view, `verify-submit-${REF}`).disabled).toBe(true);
+    await act(async () => {
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-amount-${REF}`), "50abc");
+    });
+    expect(byTestId<HTMLButtonElement>(view, `verify-submit-${REF}`).disabled).toBe(true);
+    expect(calls.filter((call) => call.method === "POST")).toHaveLength(0);
+  });
+
+  it("surfaces an expired admin session before denied-code handling", async () => {
+    stubFetch([
+      {
+        method: "POST",
+        path: "/api/admin/research/activation/queue/ob-1/verify",
+        status: 401,
+        body: { ok: false, code: "unauthorized", message: "Unauthorized" },
+      },
+    ]);
+    const view = await renderPage();
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, `verify-open-${REF}`).click();
+    });
+    await act(async () => {
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-amount-${REF}`), "50.00");
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-date-${REF}`), "2026-07-24");
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-destination-${REF}`), "checked-account");
+      setInputValue(byTestId<HTMLInputElement>(view, `verify-reconciliation-${REF}`), "2026-07-24");
+      byTestId<HTMLInputElement>(view, `verify-confirm-${REF}`).click();
+    });
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, `verify-submit-${REF}`).click();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect(text(view)).toContain("Session expired. Sign in again.");
+  });
 });
