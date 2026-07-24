@@ -179,6 +179,7 @@ import {
   type EsignProvider,
   type EsignStore,
   type NativeCommitFn,
+  type NativeClaimFn,
   type PdfGenerator,
   type SigningRequestRecord,
 } from "./esign/contracts";
@@ -186,6 +187,7 @@ import { resolveEsignProvider } from "./esign/provider";
 import { resolveEsignStore } from "./esign/persistence/esign-store";
 import { NativeEsignService } from "./esign/native";
 import { resolveNativeCommit } from "./esign/native-commit";
+import { resolveNativeClaim } from "./esign/native-claim";
 import { XeniosPdfGenerator } from "./esign/pdf";
 import {
   InMemoryEsignMediaProvider,
@@ -590,6 +592,7 @@ export interface FoundingActivationWiring {
    * Optional so a test injects a failing commit to prove no signature persists.
    */
   resolveEsignNativeCommit?: (signatures: SignaturesStore, esign: EsignStore) => NativeCommitFn;
+  resolveEsignNativeClaim?: (esign: EsignStore) => NativeClaimFn;
   /** Where the admin records copy of an e-sign completion notice is sent. */
   adminRecordsEmail?: string;
 }
@@ -1053,6 +1056,7 @@ function buildLiveServices(
     documents,
     esignStore,
   );
+  const nativeClaim: NativeClaimFn = (wiring.resolveEsignNativeClaim ?? resolveNativeClaim)(esignStore);
   const nativeEsignService = new NativeEsignService(
     {
       store: esignStore,
@@ -1061,6 +1065,7 @@ function buildLiveServices(
       signatures,
       pdf: (wiring.resolveEsignPdfGenerator ?? (() => new XeniosPdfGenerator()))(),
       commit: nativeCommit,
+      claim: nativeClaim,
     },
     { now },
   );

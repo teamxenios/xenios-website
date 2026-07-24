@@ -62,6 +62,12 @@ export function createInMemoryNativeCommit(signatures: SignaturesStore, esign: E
       return { ok: false, code: "member_mismatch" };
     }
     if (req.idempotencyKey !== input.idempotencyKey) return { ok: false, code: "commit_error" };
+    const requestId = input.requestId ?? input.completedRequest.id;
+    const attemptId = input.nativeAttemptId ?? input.completedRequest.nativeAttemptId;
+    const intentHash = input.nativeIntentHash ?? input.completedRequest.nativeIntentHash;
+    if (req.id !== requestId) return { ok: false, code: "request_missing" };
+    if (attemptId && req.nativeAttemptId !== attemptId) return { ok: false, code: "attempt_mismatch" };
+    if (intentHash && req.nativeIntentHash !== intentHash) return { ok: false, code: "intent_mismatch" };
     if (req.xeniosDocumentVersionIds[0] !== input.documentVersionId) {
       return { ok: false, code: "version_mismatch" };
     }
@@ -102,19 +108,17 @@ export function createInMemoryNativeCommit(signatures: SignaturesStore, esign: E
       return { ok: false, code: "evidence_incomplete" };
     }
 
+    // A standing legal signature may belong to another native request (or the
+    // clickwrap path). Never attach this attempt's PDF/archive to that signature.
+    const standing = await signatures.getSignature(input.memberId, input.documentVersionId);
+    if (standing) return { ok: false, code: "signature_already_committed" };
+
     // The atomic effects. Signature first (unique member+version).
     try {
       await signatures.insertSignature(input.signature);
     } catch (error) {
       if (error instanceof DuplicateSignature) {
-        // A signature already exists (belt-and-suspenders under serialization).
-        // The existing signature stands; bind the request + archive to it.
-        const winner = await signatures.getSignature(input.memberId, input.documentVersionId);
-        if (winner) {
-          await esign.requests.update({ ...input.completedRequest, xeniosAcceptanceEventIds: [winner.id] });
-          await upsertArchive(esign, input.archive);
-          return { ok: true, signature: winner, replayed: true };
-        }
+        return { ok: false, code: "signature_already_committed" };
       }
       return { ok: false, code: "commit_error" };
     }
@@ -176,6 +180,9 @@ export function createSupabaseNativeCommit(
         p_member_id: input.memberId,
         p_document_version_id: input.documentVersionId,
         p_idempotency_key: input.idempotencyKey,
+        p_request_id: input.requestId,
+        p_attempt_id: input.nativeAttemptId,
+        p_intent_hash: input.nativeIntentHash,
         p_signature: signatureRow(input.signature),
         p_signed_at: input.signature.signedAt,
         p_signature_id: input.signature.id,

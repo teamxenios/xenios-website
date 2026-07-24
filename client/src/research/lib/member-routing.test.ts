@@ -14,6 +14,10 @@ describe("safeResearchReturnTo", () => {
     "/research/../admin",
     "/research/member/../../admin",
     "/research%2fmember",
+    "/research/member/%2e%2e/admin",
+    "/research/member/%252e%252e/%252e%252e/admin/research",
+    "/research/member/welcome",
+    "/research/member/not-a-real-route",
   ])("rejects unsafe or privileged destinations: %s", (value) => {
     expect(safeResearchReturnTo(value)).toBeNull();
   });
@@ -21,6 +25,8 @@ describe("safeResearchReturnTo", () => {
   it("allows canonical Research member paths", () => {
     expect(safeResearchReturnTo("/research/member/security?from=sign-in"))
       .toBe("/research/member/security?from=sign-in");
+    expect(safeResearchReturnTo("/research/member/orders/order_123"))
+      .toBe("/research/member/orders/order_123");
     expect(safeResearchReturnTo("/research/activate")).toBe("/research/activate");
   });
 });

@@ -5,16 +5,29 @@ import { createRoot, type Root } from "react-dom/client";
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
-const auth = vi.hoisted(() => ({
-  signInWithPassword: vi.fn(async () => ({
-    data: { session: { access_token: "password-session-token" } },
-    error: null,
-  })),
-  signOut: vi.fn(async () => ({ error: null })),
-}));
+const supa = vi.hoisted(() => {
+  const state = { currentToken: "password-session-token" as string | null };
+  const auth = {
+    signInWithPassword: vi.fn(async () => {
+      state.currentToken = "password-session-token";
+      return {
+        data: { session: { access_token: "password-session-token" } },
+        error: null,
+      };
+    }),
+    getSession: vi.fn(async () => ({
+      data: { session: state.currentToken ? { access_token: state.currentToken } : null },
+    })),
+    signOut: vi.fn(async () => {
+      state.currentToken = null;
+      return { error: null };
+    }),
+  };
+  return { state, auth };
+});
 
 vi.mock("@/lib/supabaseBrowser", () => ({
-  getSupabaseBrowser: async () => ({ auth }),
+  getSupabaseBrowser: async () => ({ auth: supa.auth }),
 }));
 
 import { ResearchContext, type MemberInfo, type ResearchContextValue } from "../core";
@@ -80,6 +93,7 @@ function submit() {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  supa.state.currentToken = "password-session-token";
 });
 
 afterEach(() => {
@@ -120,6 +134,36 @@ describe("member sign-in", () => {
     await renderSignIn(establish);
     submit();
     await flush();
+    expect(window.location.pathname).toBe("/research/member");
+  });
+
+  it("retains and verifies a newer refreshed token when the submitted token becomes stale", async () => {
+    let resolveSubmitted!: (member: MemberInfo | null) => void;
+    const submitted = new Promise<MemberInfo | null>((resolve) => {
+      resolveSubmitted = resolve;
+    });
+    const establish = vi.fn((token: string) => {
+      if (token === "password-session-token") return submitted;
+      return Promise.resolve({
+        firstName: "Avery",
+        status: "active",
+        applicationStatus: "active",
+      });
+    });
+    await renderSignIn(establish);
+    submit();
+    await flush(1);
+
+    supa.state.currentToken = "refreshed-password-token";
+    await act(async () => {
+      resolveSubmitted(null);
+      await submitted;
+    });
+    await flush();
+
+    expect(establish).toHaveBeenNthCalledWith(1, "password-session-token");
+    expect(establish).toHaveBeenNthCalledWith(2, "refreshed-password-token");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
     expect(window.location.pathname).toBe("/research/member");
   });
 

@@ -172,6 +172,8 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   const memberRef = useRef<MemberInfo | null>(null);
   const memberTokenRef = useRef<string | null>(null);
   const verificationGenerationRef = useRef(0);
+  const authEventGenerationRef = useRef(0);
+  const catalogGenerationRef = useRef(0);
   const verificationInFlightRef = useRef<{
     token: string;
     promise: Promise<MemberInfo | null>;
@@ -200,6 +202,7 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
 
   const clearMemberState = useCallback((status: Exclude<MemberSessionStatus, "checking" | "authenticated">) => {
     verificationGenerationRef.current += 1;
+    catalogGenerationRef.current += 1;
     memberRef.current = null;
     memberTokenRef.current = null;
     setMember(null);
@@ -235,13 +238,14 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
         if (generation !== verificationGenerationRef.current) return null;
         if (res.ok && body?.ok && body.member) {
           const verifiedMember = body.member as MemberInfo;
+          catalogGenerationRef.current += 1;
           memberRef.current = verifiedMember;
           memberTokenRef.current = accessToken;
           setMember(verifiedMember);
           setMemberToken(accessToken);
           setMemberSessionStatus("authenticated");
           setGate("open");
-          if (verifiedMember.status !== "active") setCatalog(null);
+          setCatalog(null);
           return verifiedMember;
         }
         clearMemberState("verification_failed");
@@ -312,6 +316,7 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
       const supabase = await getSupabaseBrowser();
       if (!supabase || !alive) return;
       const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+        const eventGeneration = ++authEventGenerationRef.current;
         if (markRecoveryFromAuthEvent(event, window.sessionStorage)) {
           recoveryRef.current = "pending";
           setRecovery("pending");
@@ -330,15 +335,17 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
         ) {
           // Supabase advises against awaiting other auth calls inside this
           // callback; establish on the next microtask instead.
-          void Promise.resolve().then(() =>
-            establishMemberSession(session.access_token, event === "USER_UPDATED"),
-          );
+          void Promise.resolve().then(() => {
+            if (!alive || eventGeneration !== authEventGenerationRef.current) return null;
+            return establishMemberSession(session.access_token, event === "USER_UPDATED");
+          });
         }
       });
       unsubscribe = () => sub.subscription.unsubscribe();
     })();
     return () => {
       alive = false;
+      authEventGenerationRef.current += 1;
       unsubscribe?.();
     };
   }, [clearMemberState, establishMemberSession]);
@@ -346,13 +353,27 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   // The catalog is MEMBER content: it loads only with the member token, and
   // the server enforces that (requireMember on /api/research/catalog).
   const loadCatalog = useCallback(async (token: string) => {
-    const res = await fetch("/api/research/catalog", {
-      headers: { Authorization: "Bearer " + token },
-      credentials: "same-origin",
-      cache: "no-store",
-    });
-    const body = (await res.json().catch(() => null)) as CatalogResponse | null;
-    if (res.status === 200 && body) setCatalog(body);
+    const generation = ++catalogGenerationRef.current;
+    try {
+      const res = await fetch("/api/research/catalog", {
+        headers: { Authorization: "Bearer " + token },
+        credentials: "same-origin",
+        cache: "no-store",
+      });
+      const body = (await res.json().catch(() => null)) as CatalogResponse | null;
+      if (
+        generation === catalogGenerationRef.current &&
+        memberTokenRef.current === token &&
+        memberRef.current?.status === "active" &&
+        res.status === 200 &&
+        body
+      ) {
+        setCatalog(body);
+      }
+    } catch {
+      // A catalog failure cannot change the verified member session. The
+      // current account simply keeps the fail-closed empty catalog.
+    }
   }, []);
 
   useEffect(() => {
@@ -365,17 +386,21 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
         setMemberSessionStatus("signed_out");
         return;
       }
-      setGate(memberRef.current || body?.authed ? "open" : "locked");
       // Recovery isolation (correction-pass blocker 2): while a recovery is
       // pending, the provider loads NO member state — the recovery session
       // exists only to set a new password. Member data, the catalog, and the
       // member gate-bypass all stay untouched until recovery completes (which
       // signs the session out) or is abandoned (also signed out).
       if (recovery === "pending") {
+        setGate(body?.authed ? "open" : "locked");
         setMemberSessionStatus("signed_out");
         return;
       }
       await refreshMember();
+      if (!alive) return;
+      // Do not flash the shared review-password form while a persisted member
+      // session is still being verified. Only decide the gate after hydration.
+      setGate(memberRef.current || body?.authed ? "open" : "locked");
     })();
     return () => {
       alive = false;

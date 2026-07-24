@@ -37,12 +37,30 @@ export default function SignIn() {
         setError("That email and password combination is not correct.");
         return;
       }
-      const verifiedMember = await establishMemberSession(data.session.access_token);
+      const submittedToken = data.session.access_token;
+      let verifiedMember = await establishMemberSession(submittedToken);
+      if (!verifiedMember) {
+        // TOKEN_REFRESHED may supersede the exact token returned by
+        // signInWithPassword while its verification is in flight. Verify and
+        // retain that newer provider session; never let the stale request sign
+        // it out.
+        const currentToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
+        if (currentToken && currentToken !== submittedToken) {
+          verifiedMember = await establishMemberSession(currentToken);
+          if (!verifiedMember) {
+            setError("Your session changed while signing in. Please try again.");
+            return;
+          }
+        }
+      }
       if (verifiedMember) {
         const returnTo = safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
         navigate(memberDestination(verifiedMember, returnTo));
       } else {
-        await supabase.auth.signOut({ scope: "local" });
+        const currentToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
+        if (!currentToken || currentToken === submittedToken) {
+          await supabase.auth.signOut({ scope: "local" });
+        }
         setError("No research membership is attached to this account.");
       }
     } catch {

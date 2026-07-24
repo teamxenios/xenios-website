@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { act } from "react";
+import { act, StrictMode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { RECOVERY_MARKER_KEY } from "@shared/research/recovery";
 
@@ -52,13 +52,15 @@ import { ResearchProvider, useResearch } from "./core";
 import ResetPassword from "./pages/ResetPassword";
 
 function MemberProbe() {
-  const { member, memberToken, memberSessionStatus } = useResearch();
+  const { gate, member, memberToken, memberSessionStatus, products } = useResearch();
   return (
     <output
       data-testid="member-probe"
+      data-gate={gate}
       data-member={member?.firstName ?? ""}
       data-token={memberToken ?? ""}
       data-status={memberSessionStatus}
+      data-products={products.length}
     />
   );
 }
@@ -71,12 +73,13 @@ async function flush(rounds = 6) {
   }
 }
 
-function mountedRoot(children: React.ReactNode): { root: Root; container: HTMLElement } {
+function mountedRoot(children: React.ReactNode, strict = false): { root: Root; container: HTMLElement } {
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
   act(() => {
-    root.render(<ResearchProvider>{children}</ResearchProvider>);
+    const view = <ResearchProvider>{children}</ResearchProvider>;
+    root.render(strict ? <StrictMode>{view}</StrictMode> : view);
   });
   return { root, container };
 }
@@ -200,6 +203,174 @@ describe("provider recovery isolation", () => {
     expect(probe.dataset.member).toBe("");
     expect(probe.dataset.token).toBe("");
     expect(probe.dataset.status).toBe("signed_out");
+    expect(probe.dataset.products).toBe("0");
+    act(() => root.unmount());
+  });
+
+  it("same-tick SIGNED_IN then SIGNED_OUT cannot restore the older queued event, including Strict Mode", async () => {
+    const { root, container } = mountedRoot(<MemberProbe />, true);
+    await flush();
+    net.urls.length = 0;
+    act(() => {
+      supa.listener.current?.("SIGNED_IN", { access_token: "queued-password-token" });
+      supa.listener.current?.("SIGNED_OUT", null);
+    });
+    await flush();
+    const probe = container.querySelector('[data-testid="member-probe"]') as HTMLOutputElement;
+    expect(probe.dataset.member).toBe("");
+    expect(probe.dataset.token).toBe("");
+    expect(probe.dataset.status).toBe("signed_out");
+    expect(net.urls.some((url) => url.includes("/api/research/member/me"))).toBe(false);
+    act(() => root.unmount());
+  });
+
+  it("keeps the gate in checking state until a persisted member session finishes verification", async () => {
+    let resolveMember!: (response: Response) => void;
+    const pendingMember = new Promise<Response>((resolve) => {
+      resolveMember = resolve;
+    });
+    supa.state.session = { access_token: "persisted-password-token" };
+    globalThis.fetch = vi.fn(async (input: any) => {
+      const url = String(typeof input === "string" ? input : input?.url ?? input);
+      if (url === "/api/research/me") {
+        return jsonResponse({ configured: true, authed: false, publicMode: false });
+      }
+      if (url === "/api/research/member/me") return pendingMember;
+      return jsonResponse({ ok: true });
+    }) as any;
+    const { root, container } = mountedRoot(<MemberProbe />);
+    await flush(2);
+    let probe = container.querySelector('[data-testid="member-probe"]') as HTMLOutputElement;
+    expect(probe.dataset.gate).toBe("checking");
+    expect(probe.dataset.status).toBe("checking");
+    await act(async () => {
+      resolveMember(jsonResponse({
+        ok: true,
+        member: { firstName: "Avery", status: "active", applicationStatus: "active" },
+      }));
+      await pendingMember;
+    });
+    await flush();
+    probe = container.querySelector('[data-testid="member-probe"]') as HTMLOutputElement;
+    expect(probe.dataset.gate).toBe("open");
+    expect(probe.dataset.status).toBe("authenticated");
+    act(() => root.unmount());
+  });
+
+  it("an older member verification cannot overwrite a newer refreshed JWT", async () => {
+    let resolveOld!: (response: Response) => void;
+    const oldResponse = new Promise<Response>((resolve) => {
+      resolveOld = resolve;
+    });
+    supa.state.session = { access_token: "old-password-token" };
+    globalThis.fetch = vi.fn(async (input: any, init?: RequestInit) => {
+      const url = String(typeof input === "string" ? input : input?.url ?? input);
+      if (url === "/api/research/me") {
+        return jsonResponse({ configured: true, authed: false, publicMode: false });
+      }
+      if (url === "/api/research/member/me") {
+        const authorization = new Headers(init?.headers).get("Authorization");
+        if (authorization === "Bearer old-password-token") return oldResponse;
+        return jsonResponse({
+          ok: true,
+          member: { firstName: "New", status: "active", applicationStatus: "active" },
+        });
+      }
+      if (url === "/api/research/catalog") {
+        return jsonResponse({ products: [], commerce: { research: false, consumer: false } });
+      }
+      return jsonResponse({ ok: true });
+    }) as any;
+    const { root, container } = mountedRoot(<MemberProbe />);
+    await flush(2);
+    act(() => {
+      supa.listener.current?.("TOKEN_REFRESHED", { access_token: "new-password-token" });
+    });
+    await flush();
+    await act(async () => {
+      resolveOld(jsonResponse({
+        ok: true,
+        member: { firstName: "Old", status: "active", applicationStatus: "active" },
+      }));
+      await oldResponse;
+    });
+    await flush();
+    const probe = container.querySelector('[data-testid="member-probe"]') as HTMLOutputElement;
+    expect(probe.dataset.member).toBe("New");
+    expect(probe.dataset.token).toBe("new-password-token");
+    act(() => root.unmount());
+  });
+
+  it("sign-out during verification remains signed out after the request finishes", async () => {
+    let resolveMember!: (response: Response) => void;
+    const pendingMember = new Promise<Response>((resolve) => {
+      resolveMember = resolve;
+    });
+    supa.state.session = { access_token: "in-flight-password-token" };
+    globalThis.fetch = vi.fn(async (input: any) => {
+      const url = String(typeof input === "string" ? input : input?.url ?? input);
+      if (url === "/api/research/me") {
+        return jsonResponse({ configured: true, authed: false, publicMode: false });
+      }
+      if (url === "/api/research/member/me") return pendingMember;
+      return jsonResponse({ ok: true });
+    }) as any;
+    const { root, container } = mountedRoot(<MemberProbe />);
+    await flush(2);
+    act(() => {
+      supa.listener.current?.("SIGNED_OUT", null);
+    });
+    await act(async () => {
+      resolveMember(jsonResponse({
+        ok: true,
+        member: { firstName: "Late", status: "active", applicationStatus: "active" },
+      }));
+      await pendingMember;
+    });
+    await flush();
+    const probe = container.querySelector('[data-testid="member-probe"]') as HTMLOutputElement;
+    expect(probe.dataset.member).toBe("");
+    expect(probe.dataset.token).toBe("");
+    expect(probe.dataset.status).toBe("signed_out");
+    act(() => root.unmount());
+  });
+
+  it("a delayed catalog response cannot repopulate member-only state after SIGNED_OUT", async () => {
+    let resolveCatalog!: (response: Response) => void;
+    const pendingCatalog = new Promise<Response>((resolve) => {
+      resolveCatalog = resolve;
+    });
+    supa.state.session = { access_token: "active-password-token" };
+    globalThis.fetch = vi.fn(async (input: any) => {
+      const url = String(typeof input === "string" ? input : input?.url ?? input);
+      if (url === "/api/research/me") {
+        return jsonResponse({ configured: true, authed: false, publicMode: false });
+      }
+      if (url === "/api/research/member/me") {
+        return jsonResponse({
+          ok: true,
+          member: { firstName: "Avery", status: "active", applicationStatus: "active" },
+        });
+      }
+      if (url === "/api/research/catalog") return pendingCatalog;
+      return jsonResponse({ ok: true });
+    }) as any;
+    const { root, container } = mountedRoot(<MemberProbe />);
+    await flush(3);
+    act(() => {
+      supa.listener.current?.("SIGNED_OUT", null);
+    });
+    await act(async () => {
+      resolveCatalog(jsonResponse({
+        products: [{ slug: "private-product" }],
+        commerce: { research: false, consumer: false },
+      }));
+      await pendingCatalog;
+    });
+    await flush();
+    const probe = container.querySelector('[data-testid="member-probe"]') as HTMLOutputElement;
+    expect(probe.dataset.products).toBe("0");
+    expect(probe.dataset.status).toBe("signed_out");
     act(() => root.unmount());
   });
 
@@ -256,6 +427,17 @@ describe("reset page session hygiene", () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(supa.recovery.clearPersisted).toHaveBeenCalledWith("hash-recovery-token");
     expect(supa.recovery.revoke).toHaveBeenCalledWith("hash-recovery-token");
+    act(() => root.unmount());
+  });
+
+  it("never captures or revokes a newer normal password session as recovery cleanup", async () => {
+    window.sessionStorage.setItem(RECOVERY_MARKER_KEY, "1");
+    supa.state.session = { access_token: "newer-normal-password-token" };
+    const { root } = mountedRoot(<ResetPassword />);
+    await flush();
+    window.dispatchEvent(new Event("pagehide"));
+    await flush();
+    expect(supa.recovery.revoke).not.toHaveBeenCalledWith("newer-normal-password-token");
     act(() => root.unmount());
   });
 

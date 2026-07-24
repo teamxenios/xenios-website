@@ -4,8 +4,9 @@ import { SignatureService } from "../signatures";
 import { createInMemoryDocumentsStore, type DocumentsStore } from "../persistence/documents-store";
 import { InMemoryEsignMediaProvider } from "./archive";
 import { createInMemoryEsignStore } from "./persistence/esign-store";
-import { NativeEsignService, validateDrawnPng } from "./native";
+import { NativeEsignService, deterministicRequestId, validateDrawnPng } from "./native";
 import { createInMemoryNativeCommit } from "./native-commit";
+import { createInMemoryNativeClaim } from "./native-claim";
 import type {
   CompleteNativeSignatureInput,
   EsignMediaPort,
@@ -225,9 +226,11 @@ describe("NativeEsignService: ATOMIC COMPLETION (a partial failure leaves the ag
     );
     const res = await failing.completeNativeSignature(signInput({ documentVersionId: agreement.id }));
     expect(res).toMatchObject({ ok: false, code: "pdf_generation_error" });
-    // Unsigned: no signature, no request.
+    // Unsigned: no signature; the pre-storage claim is durably retryable.
     expect(await healthy.documentsStore.getSignature(MEMBER, agreement.id)).toBeNull();
-    expect(await healthy.store.requests.getByIdempotencyKey(MEMBER, `key-${agreement.id}`)).toBeNull();
+    expect(await healthy.store.requests.getByIdempotencyKey(MEMBER, `key-${agreement.id}`)).toMatchObject({
+      nativeCompletionState: "failed_cleanup_required",
+    });
   });
 
   it("signed-PDF / certificate storage failure leaves the agreement unsigned", async () => {
@@ -613,6 +616,96 @@ describe("NativeEsignService: idempotency intent binding", () => {
     expect(replay.ok).toBe(true);
     if (replay.ok) expect(replay.replayed).toBe(true);
   });
+});
+
+describe("NativeEsignService: hardened attempt ownership", () => {
+  it("derives a valid deterministic UUID request id", () => {
+    const first = deterministicRequestId(MEMBER, "stable-key");
+    expect(first).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    expect(deterministicRequestId(MEMBER, "stable-key")).toBe(first);
+  });
+
+  it("treats an ambiguous RPC response as success when the database committed", async () => {
+    const ctx = build({
+      commit: (documents, store) => {
+        const real = createInMemoryNativeCommit(documents, store);
+        return async (input) => {
+          await real(input);
+          return { ok: false, code: "commit_error" };
+        };
+      },
+    });
+    await consentFirst(ctx.lifecycle, ctx.service);
+    const agreement = await publish(ctx.lifecycle, "founding_membership_agreement");
+    const result = await ctx.service.completeNativeSignature(
+      signInput({ documentVersionId: agreement.id, idempotencyKey: "ambiguous" }),
+    );
+    expect(result).toMatchObject({ ok: true, replayed: true });
+    expect((await ctx.store.requests.getById(result.ok ? result.request.id : ""))?.nativeCompletionState).toBe("completed");
+  });
+
+  it("serializes different idempotency keys for the same member and version", async () => {
+    const ctx = build();
+    await consentFirst(ctx.lifecycle, ctx.service);
+    const agreement = await publish(ctx.lifecycle, "founding_membership_agreement");
+    const [first, second] = await Promise.all([
+      ctx.service.completeNativeSignature(signInput({ documentVersionId: agreement.id, idempotencyKey: "intent-a" })),
+      ctx.service.completeNativeSignature(signInput({ documentVersionId: agreement.id, idempotencyKey: "intent-b" })),
+    ]);
+    expect(first.ok && second.ok).toBe(true);
+    const requests = (await ctx.store.requests.listByMember(MEMBER)).filter(
+      (request) => request.xeniosDocumentVersionIds[0] === agreement.id,
+    );
+    expect(requests).toHaveLength(1);
+    expect(await ctx.documentsStore.getSignature(MEMBER, agreement.id)).not.toBeNull();
+  });
+
+  it.each(["preparing", "evidence_stored"] as const)(
+    "reclaims an expired %s attempt after a process interruption",
+    async (state) => {
+      const store = createInMemoryEsignStore();
+      const claim = createInMemoryNativeClaim(store);
+      const base = {
+        requestId: "11111111-1111-5111-8111-111111111111",
+        nativeAttemptId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        nativeIntentHash: "a".repeat(64),
+        memberId: MEMBER,
+        documentVersionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        sourceContentHash: "b".repeat(64),
+        idempotencyKey: "lease-key",
+        signerIdentifier: EMAIL,
+        createdAt: "2026-07-23T12:00:00.000Z",
+        attemptExpiresAt: "2026-07-23T12:01:00.000Z",
+      };
+      expect(await claim(base)).toMatchObject({ ok: true, claimed: true });
+      if (state === "evidence_stored") {
+        const preparing = await store.requests.getById(base.requestId);
+        expect(preparing).not.toBeNull();
+        await store.requests.storeNativeEvidence({
+          ...preparing!,
+          nativeCompletionState: "evidence_stored",
+          signedPdfRef: "legal/old/signed.pdf",
+          certificateRef: "legal/old/cert.pdf",
+          signedPdfHash: "c".repeat(64),
+          certificateHash: "d".repeat(64),
+        });
+      }
+
+      const reclaimed = await claim({
+        ...base,
+        nativeAttemptId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        createdAt: "2026-07-23T12:02:00.000Z",
+        attemptExpiresAt: "2026-07-23T12:17:00.000Z",
+      });
+      expect(reclaimed).toMatchObject({ ok: true, claimed: true, requestId: base.requestId });
+      expect(await store.requests.getById(base.requestId)).toMatchObject({
+        nativeCompletionState: "preparing",
+        nativeAttemptId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        signedPdfRef: null,
+        certificateRef: null,
+      });
+    },
+  );
 });
 
 describe("validateDrawnPng", () => {

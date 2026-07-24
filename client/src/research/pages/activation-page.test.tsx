@@ -46,6 +46,7 @@ function fixtureContext(overrides: Partial<ResearchContextValue> = {}): Research
     memberChecking: false,
     memberSessionStatus: "authenticated",
     recovery: "none",
+    refreshMember: vi.fn(async () => {}),
     ...overrides,
   } as ResearchContextValue;
 }
@@ -253,6 +254,53 @@ describe("ActivationPage session boundary", () => {
     });
     expect(text(view)).toContain("Loading your activation");
     expect(text(view)).not.toContain("Sign in to continue your activation.");
+  });
+
+  it("removes private activation progress immediately when the member signs out", async () => {
+    stubActivationApi();
+    const view = await renderPage();
+    expect(view.querySelector('[data-testid="activation-steps"]')).toBeTruthy();
+
+    act(() => {
+      root!.render(
+        <ResearchContext.Provider
+          value={fixtureContext({
+            member: null,
+            memberToken: null,
+            memberChecking: false,
+            memberSessionStatus: "signed_out",
+          })}
+        >
+          <ActivationPage />
+        </ResearchContext.Provider>,
+      );
+    });
+
+    expect(view.querySelector('[data-testid="activation-steps"]')).toBeNull();
+    expect(text(view)).toContain("Sign in to continue your activation.");
+  });
+
+  it("fails closed while activation state for a new member token is loading", async () => {
+    stubActivationApi();
+    const view = await renderPage();
+    expect(view.querySelector('[data-testid="activation-steps"]')).toBeTruthy();
+
+    vi.stubGlobal("fetch", vi.fn(() => new Promise(() => undefined)));
+    act(() => {
+      root!.render(
+        <ResearchContext.Provider
+          value={fixtureContext({
+            member: { firstName: "Other", status: "pending_activation", applicationStatus: "approved" },
+            memberToken: "member-jwt-b",
+          })}
+        >
+          <ActivationPage />
+        </ResearchContext.Provider>,
+      );
+    });
+
+    expect(view.querySelector('[data-testid="activation-steps"]')).toBeNull();
+    expect(text(view)).toContain("Loading your activation");
   });
 });
 
