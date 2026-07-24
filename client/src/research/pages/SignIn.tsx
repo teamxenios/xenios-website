@@ -4,6 +4,7 @@ import SeoHead from "@/components/SeoHead";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
+import { memberDestination, safeResearchReturnTo } from "../lib/member-routing";
 
 // Member sign-in (V3 sections 4.3 and 13). Auth is Supabase (same provider as
 // the rest of the site); membership itself is verified SERVER-side on every
@@ -13,7 +14,7 @@ import { useResearch } from "../core";
 // activation flow only (canonical access architecture).
 
 export default function SignIn() {
-  const { refreshMember } = useResearch();
+  const { establishMemberSession } = useResearch();
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,17 +37,13 @@ export default function SignIn() {
         setError("That email and password combination is not correct.");
         return;
       }
-      const res = await fetch("/api/research/member/me", {
-        headers: { Authorization: "Bearer " + data.session.access_token },
-        credentials: "same-origin",
-      });
-      const body = await res.json().catch(() => null);
-      if (res.ok && body?.ok) {
-        await refreshMember();
-        navigate(body.member?.status === "active" ? "/research/member" : "/research/activate");
+      const verifiedMember = await establishMemberSession(data.session.access_token);
+      if (verifiedMember) {
+        const returnTo = safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
+        navigate(memberDestination(verifiedMember, returnTo));
       } else {
-        await supabase.auth.signOut();
-        setError(body?.message || "No research membership is attached to this account.");
+        await supabase.auth.signOut({ scope: "local" });
+        setError("No research membership is attached to this account.");
       }
     } catch {
       setError("Sign-in failed. Please try again.");
@@ -61,7 +58,7 @@ export default function SignIn() {
       <PageIntro
         eyebrow="Members"
         title="Sign in."
-        lead="Member accounts open after an application is approved and claimed through the secure link in your email."
+        lead="Use the email and password connected to your Xenios Research account. Your approval link is only used once when you first create your account."
       />
       <section className="container-x pb-20">
         <form onSubmit={onSubmit} className="max-w-[420px] space-y-5" data-testid="form-member-signin">
@@ -81,7 +78,7 @@ export default function SignIn() {
             <Link href="/research/reset-password" className="underline" data-testid="link-forgot-password">Forgot your password?</Link>
           </p>
           <p className="body-s text-ink-mute">
-            Approved but no account yet? Use the secure link in your approval email to create one.
+            Returning members do not need another approval email. If you have not created your account yet, use the one-time claim link in your approval email.
           </p>
         </form>
       </section>

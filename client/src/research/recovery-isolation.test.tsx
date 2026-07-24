@@ -13,6 +13,7 @@ import { RECOVERY_MARKER_KEY } from "@shared/research/recovery";
 
 const supa = vi.hoisted(() => {
   const state = { session: null as any };
+  const listener = { current: null as null | ((event: string, session: any) => void) };
   const recovery = {
     hashToken: null as string | null,
     clearPersisted: vi.fn(() => true),
@@ -20,14 +21,17 @@ const supa = vi.hoisted(() => {
   };
   const auth = {
     getSession: vi.fn(async () => ({ data: { session: state.session } })),
-    onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
+    onAuthStateChange: vi.fn((callback: (event: string, session: any) => void) => {
+      listener.current = callback;
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
+    }),
     signOut: vi.fn(async () => {
       state.session = null;
       return { error: null };
     }),
     updateUser: vi.fn(async () => ({ data: { user: {} }, error: null })),
   };
-  return { state, auth, recovery };
+  return { state, auth, recovery, listener };
 });
 
 vi.mock("@/lib/supabaseBrowser", () => ({
@@ -35,6 +39,7 @@ vi.mock("@/lib/supabaseBrowser", () => ({
   clearPersistedRecoverySession: supa.recovery.clearPersisted,
   revokeRecoverySession: supa.recovery.revoke,
   recoveryAccessTokenFromHash: () => supa.recovery.hashToken,
+  isRecoveryAccessToken: (token: string) => token.includes("recovery"),
 }));
 
 const net = vi.hoisted(() => ({ urls: [] as string[] }));
@@ -43,8 +48,20 @@ function jsonResponse(body: unknown, status = 200) {
   return { ok: status >= 200 && status < 300, status, json: async () => body } as Response;
 }
 
-import { ResearchProvider } from "./core";
+import { ResearchProvider, useResearch } from "./core";
 import ResetPassword from "./pages/ResetPassword";
+
+function MemberProbe() {
+  const { member, memberToken, memberSessionStatus } = useResearch();
+  return (
+    <output
+      data-testid="member-probe"
+      data-member={member?.firstName ?? ""}
+      data-token={memberToken ?? ""}
+      data-status={memberSessionStatus}
+    />
+  );
+}
 
 async function flush(rounds = 6) {
   for (let i = 0; i < rounds; i += 1) {
@@ -71,6 +88,7 @@ beforeEach(() => {
   document.body.innerHTML = "";
   net.urls.length = 0;
   supa.state.session = null;
+  supa.listener.current = null;
   supa.recovery.hashToken = null;
   vi.clearAllMocks();
   globalThis.fetch = vi.fn(async (input: any) => {
@@ -114,6 +132,87 @@ describe("provider recovery isolation", () => {
     await flush();
     expect(net.urls.some((u) => u.includes("/api/research/member/me"))).toBe(true);
     expect(net.urls.some((u) => u.includes("/api/research/catalog"))).toBe(true);
+    act(() => root.unmount());
+  });
+
+  it("restores a verified member from an existing password session after a page refresh", async () => {
+    supa.state.session = { access_token: "existing-password-token" };
+    window.history.replaceState(null, "", "/research/activate");
+    const { root, container } = mountedRoot(<MemberProbe />);
+    await flush();
+    const probe = container.querySelector('[data-testid="member-probe"]') as HTMLOutputElement;
+    expect(probe.dataset.member).toBe("Avery");
+    expect(probe.dataset.token).toBe("existing-password-token");
+    expect(probe.dataset.status).toBe("authenticated");
+    act(() => root.unmount());
+  });
+
+  it("reverifies TOKEN_REFRESHED and replaces the usable member JWT", async () => {
+    supa.state.session = { access_token: "initial-password-token" };
+    const { root, container } = mountedRoot(<MemberProbe />);
+    await flush();
+    act(() => {
+      supa.listener.current?.("TOKEN_REFRESHED", { access_token: "refreshed-password-token" });
+    });
+    await flush();
+    const probe = container.querySelector('[data-testid="member-probe"]') as HTMLOutputElement;
+    expect(probe.dataset.token).toBe("refreshed-password-token");
+    expect(net.urls.filter((u) => u.includes("/api/research/member/me"))).toHaveLength(2);
+    act(() => root.unmount());
+  });
+
+  it("hydrates a normal SIGNED_IN session through server verification", async () => {
+    const { root, container } = mountedRoot(<MemberProbe />);
+    await flush();
+    act(() => {
+      supa.listener.current?.("SIGNED_IN", { access_token: "new-password-token" });
+    });
+    await flush();
+    const probe = container.querySelector('[data-testid="member-probe"]') as HTMLOutputElement;
+    expect(probe.dataset.member).toBe("Avery");
+    expect(probe.dataset.token).toBe("new-password-token");
+    expect(probe.dataset.status).toBe("authenticated");
+    act(() => root.unmount());
+  });
+
+  it("reverifies USER_UPDATED even when Supabase keeps the same access token", async () => {
+    supa.state.session = { access_token: "existing-password-token" };
+    const { root } = mountedRoot(<MemberProbe />);
+    await flush();
+    const before = net.urls.filter((u) => u.includes("/api/research/member/me")).length;
+    act(() => {
+      supa.listener.current?.("USER_UPDATED", { access_token: "existing-password-token" });
+    });
+    await flush();
+    expect(net.urls.filter((u) => u.includes("/api/research/member/me"))).toHaveLength(before + 1);
+    act(() => root.unmount());
+  });
+
+  it("SIGNED_OUT clears verified member state and the member token", async () => {
+    supa.state.session = { access_token: "existing-password-token" };
+    const { root, container } = mountedRoot(<MemberProbe />);
+    await flush();
+    act(() => {
+      supa.listener.current?.("SIGNED_OUT", null);
+    });
+    await flush();
+    const probe = container.querySelector('[data-testid="member-probe"]') as HTMLOutputElement;
+    expect(probe.dataset.member).toBe("");
+    expect(probe.dataset.token).toBe("");
+    expect(probe.dataset.status).toBe("signed_out");
+    act(() => root.unmount());
+  });
+
+  it("never hydrates a recovery-purpose token delivered by a normal auth event", async () => {
+    const { root } = mountedRoot(<MemberProbe />);
+    await flush();
+    net.urls.length = 0;
+    act(() => {
+      supa.listener.current?.("SIGNED_IN", { access_token: "recovery-purpose-token" });
+    });
+    await flush();
+    expect(net.urls.some((u) => u.includes("/api/research/member/me"))).toBe(false);
+    expect(net.urls.some((u) => u.includes("/api/research/catalog"))).toBe(false);
     act(() => root.unmount());
   });
 });

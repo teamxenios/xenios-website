@@ -1,8 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { AccessState, CartItem, CatalogResponse, CommerceFlags, CommerceLane, Policy, Product } from "@shared/research/types";
 import {
   clearPersistedRecoverySession,
   getSupabaseBrowser,
+  isRecoveryAccessToken,
   revokeRecoverySession,
 } from "@/lib/supabaseBrowser";
 import {
@@ -123,14 +124,17 @@ export type MemberInfo = {
 // means the visitor arrived from a valid Supabase recovery link (set-password
 // mode); "link_error" means they arrived from an expired/invalid one.
 export type RecoveryState = "none" | "pending" | "link_error";
+export type MemberSessionStatus = "checking" | "authenticated" | "signed_out" | "verification_failed";
 
 type ResearchContextValue = {
   gate: GateStatus;
   member: MemberInfo | null;
   memberToken: string | null;
   memberChecking: boolean;
+  memberSessionStatus: MemberSessionStatus;
   recovery: RecoveryState;
   clearRecovery: () => void;
+  establishMemberSession: (accessToken: string) => Promise<MemberInfo | null>;
   refreshMember: () => Promise<void>;
   signOutMember: () => Promise<void>;
   signOutRecoverySession: (accessToken?: string | null) => Promise<void>;
@@ -163,7 +167,15 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [member, setMember] = useState<MemberInfo | null>(null);
   const [memberToken, setMemberToken] = useState<string | null>(null);
-  const [memberChecking, setMemberChecking] = useState(true);
+  const [memberSessionStatus, setMemberSessionStatus] = useState<MemberSessionStatus>("checking");
+  const memberChecking = memberSessionStatus === "checking";
+  const memberRef = useRef<MemberInfo | null>(null);
+  const memberTokenRef = useRef<string | null>(null);
+  const verificationGenerationRef = useRef(0);
+  const verificationInFlightRef = useRef<{
+    token: string;
+    promise: Promise<MemberInfo | null>;
+  } | null>(null);
 
   // Recovery capture MUST run synchronously on first render, BEFORE any
   // getSupabaseBrowser() call in the effects below: client initialization
@@ -177,63 +189,96 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     if (isRecoveryErrorHash(window.location.hash)) return "link_error";
     return "none";
   });
+  const recoveryRef = useRef(recovery);
+  recoveryRef.current = recovery;
 
   const clearRecovery = useCallback(() => {
     if (typeof window !== "undefined") clearRecoveryMarker(window.sessionStorage);
+    recoveryRef.current = "none";
     setRecovery("none");
   }, []);
 
-  // Second capture path: the PASSWORD_RECOVERY auth event fires even when the
-  // hash was already consumed before this provider observed it.
-  useEffect(() => {
-    let alive = true;
-    let unsubscribe: (() => void) | null = null;
-    (async () => {
-      const supabase = await getSupabaseBrowser();
-      if (!supabase || !alive) return;
-      const { data: sub } = supabase.auth.onAuthStateChange((event: string) => {
-        if (markRecoveryFromAuthEvent(event, window.sessionStorage)) setRecovery("pending");
-      });
-      unsubscribe = () => sub.subscription.unsubscribe();
-    })();
-    return () => {
-      alive = false;
-      unsubscribe?.();
-    };
+  const clearMemberState = useCallback((status: Exclude<MemberSessionStatus, "checking" | "authenticated">) => {
+    verificationGenerationRef.current += 1;
+    memberRef.current = null;
+    memberTokenRef.current = null;
+    setMember(null);
+    setMemberToken(null);
+    setCatalog(null);
+    setMemberSessionStatus(status);
   }, []);
 
   // The member session: the member's own Supabase JWT. Membership itself is
   // verified SERVER-side (/api/research/member/me); the client only mirrors it.
+  // This is the single deterministic establishment path used by initial
+  // hydration, auth lifecycle events, and the sign-in form.
+  const establishMemberSession = useCallback((accessToken: string, forceVerification = false): Promise<MemberInfo | null> => {
+    if (!accessToken || recoveryRef.current === "pending" || isRecoveryAccessToken(accessToken)) {
+      return Promise.resolve(null);
+    }
+    if (!forceVerification && memberTokenRef.current === accessToken && memberRef.current) {
+      return Promise.resolve(memberRef.current);
+    }
+    const existing = verificationInFlightRef.current;
+    if (existing?.token === accessToken) return existing.promise;
+
+    const generation = ++verificationGenerationRef.current;
+    setMemberSessionStatus("checking");
+    const promise = (async (): Promise<MemberInfo | null> => {
+      try {
+        const res = await fetch("/api/research/member/me", {
+          headers: { Authorization: "Bearer " + accessToken },
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        const body = await res.json().catch(() => null);
+        if (generation !== verificationGenerationRef.current) return null;
+        if (res.ok && body?.ok && body.member) {
+          const verifiedMember = body.member as MemberInfo;
+          memberRef.current = verifiedMember;
+          memberTokenRef.current = accessToken;
+          setMember(verifiedMember);
+          setMemberToken(accessToken);
+          setMemberSessionStatus("authenticated");
+          setGate("open");
+          if (verifiedMember.status !== "active") setCatalog(null);
+          return verifiedMember;
+        }
+        clearMemberState("verification_failed");
+        return null;
+      } catch {
+        if (generation === verificationGenerationRef.current) {
+          clearMemberState("verification_failed");
+        }
+        return null;
+      }
+    })();
+    verificationInFlightRef.current = { token: accessToken, promise };
+    void promise.finally(() => {
+      if (verificationInFlightRef.current?.promise === promise) {
+        verificationInFlightRef.current = null;
+      }
+    });
+    return promise;
+  }, [clearMemberState]);
+
   const refreshMember = useCallback(async () => {
-    setMemberChecking(true);
+    if (recoveryRef.current === "pending") {
+      clearMemberState("signed_out");
+      return;
+    }
     try {
       const supabase = await getSupabaseBrowser();
       const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token ?? null : null;
       if (!token) {
-        setMember(null);
-        setMemberToken(null);
+        clearMemberState("signed_out");
         return;
       }
-      const res = await fetch("/api/research/member/me", {
-        headers: { Authorization: "Bearer " + token },
-        credentials: "same-origin",
-        cache: "no-store",
-      });
-      const body = await res.json().catch(() => null);
-      if (res.ok && body?.ok) {
-        setMember(body.member as MemberInfo);
-        setMemberToken(token);
-      } else {
-        setMember(null);
-        setMemberToken(null);
-      }
+      await establishMemberSession(token, true);
     } catch {
-      setMember(null);
-      setMemberToken(null);
-    } finally {
-      setMemberChecking(false);
+      clearMemberState("verification_failed");
     }
-  }, []);
+  }, [clearMemberState, establishMemberSession]);
 
   const signOutMember = useCallback(async () => {
     try {
@@ -245,21 +290,58 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     } catch {
       // the local state clears regardless
     }
-    setMember(null);
-    setMemberToken(null);
-    setCatalog(null);
-  }, []);
+    clearMemberState("signed_out");
+  }, [clearMemberState]);
 
   const signOutRecoverySession = useCallback(async (accessToken?: string | null) => {
     // This synchronous removal runs before the first await, so navigation or
     // pagehide cannot strand the persisted recovery credential. The helper
     // refuses to touch a newer password-authenticated session.
     clearPersistedRecoverySession(accessToken);
-    setMember(null);
-    setMemberToken(null);
-    setCatalog(null);
+    clearMemberState("signed_out");
     if (accessToken) await revokeRecoverySession(accessToken);
-  }, []);
+  }, [clearMemberState]);
+
+  // Keep verified member state synchronized with Supabase. Recovery events
+  // are handled first and can never enter the normal member establishment
+  // path, even when Supabase emits SIGNED_IN or USER_UPDATED around them.
+  useEffect(() => {
+    let alive = true;
+    let unsubscribe: (() => void) | null = null;
+    void (async () => {
+      const supabase = await getSupabaseBrowser();
+      if (!supabase || !alive) return;
+      const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+        if (markRecoveryFromAuthEvent(event, window.sessionStorage)) {
+          recoveryRef.current = "pending";
+          setRecovery("pending");
+          clearMemberState("signed_out");
+          return;
+        }
+        if (event === "SIGNED_OUT") {
+          clearMemberState("signed_out");
+          return;
+        }
+        if (
+          (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED") &&
+          session?.access_token &&
+          recoveryRef.current !== "pending" &&
+          !isRecoveryAccessToken(session.access_token)
+        ) {
+          // Supabase advises against awaiting other auth calls inside this
+          // callback; establish on the next microtask instead.
+          void Promise.resolve().then(() =>
+            establishMemberSession(session.access_token, event === "USER_UPDATED"),
+          );
+        }
+      });
+      unsubscribe = () => sub.subscription.unsubscribe();
+    })();
+    return () => {
+      alive = false;
+      unsubscribe?.();
+    };
+  }, [clearMemberState, establishMemberSession]);
 
   // The catalog is MEMBER content: it loads only with the member token, and
   // the server enforces that (requireMember on /api/research/catalog).
@@ -280,17 +362,17 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
       if (!alive) return;
       if (status === 503 || (body && !body.configured)) {
         setGate("unconfigured");
-        setMemberChecking(false);
+        setMemberSessionStatus("signed_out");
         return;
       }
-      setGate(body?.authed ? "open" : "locked");
+      setGate(memberRef.current || body?.authed ? "open" : "locked");
       // Recovery isolation (correction-pass blocker 2): while a recovery is
       // pending, the provider loads NO member state — the recovery session
       // exists only to set a new password. Member data, the catalog, and the
       // member gate-bypass all stay untouched until recovery completes (which
       // signs the session out) or is abandoned (also signed out).
       if (recovery === "pending") {
-        setMemberChecking(false);
+        setMemberSessionStatus("signed_out");
         return;
       }
       await refreshMember();
@@ -307,7 +389,11 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     if (recovery === "pending") return;
     if (!member || !memberToken) return;
     setGate("open");
-    void loadCatalog(memberToken);
+    if (member.status === "active") {
+      void loadCatalog(memberToken);
+    } else {
+      setCatalog(null);
+    }
   }, [member, memberToken, loadCatalog, recovery]);
 
   // cart persistence
@@ -392,8 +478,10 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     member,
     memberToken,
     memberChecking,
+    memberSessionStatus,
     recovery,
     clearRecovery,
+    establishMemberSession,
     refreshMember,
     signOutMember,
     signOutRecoverySession,

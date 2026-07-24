@@ -173,15 +173,22 @@ type PageState =
   | { kind: "ok"; status: ActivationStatusDto };
 
 export default function ActivationPage() {
-  const { member, memberChecking, memberToken } = useResearch();
+  const { member, memberChecking, memberSessionStatus, memberToken } = useResearch();
   const [page, setPage] = useState<PageState>({ kind: "loading" });
   const [nonce, setNonce] = useState(0);
   const reload = useCallback(() => setNonce((n) => n + 1), []);
 
   useEffect(() => {
-    if (memberChecking) return;
+    if (memberChecking) {
+      setPage({ kind: "loading" });
+      return;
+    }
     if (!memberToken) {
-      setPage({ kind: "signed_out" });
+      setPage(
+        memberSessionStatus === "verification_failed"
+          ? { kind: "error", message: "We could not verify your member session. Please sign in again." }
+          : { kind: "signed_out" },
+      );
       return;
     }
     let alive = true;
@@ -189,7 +196,9 @@ export default function ActivationPage() {
       if (!alive) return;
       if (res.kind === "ok") setPage({ kind: "ok", status: res.data });
       else if (res.kind === "unavailable") setPage({ kind: "not_open" });
-      else if (res.kind === "unauthorized") setPage({ kind: "signed_out" });
+      else if (res.kind === "unauthorized") {
+        setPage({ kind: "error", message: "We could not verify your member session. Please sign in again." });
+      }
       else if (res.kind === "denied") setPage({ kind: "denied", code: res.code, message: res.message });
       else if (res.kind === "error") setPage({ kind: "error", message: res.message });
       else setPage({ kind: "error", message: res.message });
@@ -197,7 +206,7 @@ export default function ActivationPage() {
     return () => {
       alive = false;
     };
-  }, [memberChecking, memberToken, nonce]);
+  }, [memberChecking, memberSessionStatus, memberToken, nonce]);
 
   return (
     <>
@@ -218,14 +227,17 @@ export default function ActivationPage() {
             <FoundingPricingBlock />
             <ResearchEmptyState
               title="Sign in to continue your activation."
-              body="Approved but no account? Use the secure link in your approval email. It opens your status page, where you create your account and choose your own password."
+              body="Sign in with the email and password connected to your Xenios Research account to continue where you left off."
               action={
                 <div className="flex flex-wrap gap-3">
-                  <Link href={ACCESS_ROUTES.signIn} className="btn btn-primary">
-                    Member Login
+                  <Link
+                    href={`${ACCESS_ROUTES.signIn}?returnTo=${encodeURIComponent(ACCESS_ROUTES.activate)}`}
+                    className="btn btn-primary"
+                  >
+                    Sign in
                   </Link>
-                  <Link href={ACCESS_ROUTES.applicationStatus} className="btn btn-secondary">
-                    Application status
+                  <Link href={ACCESS_ROUTES.resetPassword} className="btn btn-secondary">
+                    Forgot password
                   </Link>
                 </div>
               }
