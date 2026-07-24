@@ -189,7 +189,23 @@ export async function requireMember(req: Request, res: Response, next: NextFunct
     const jwt = header.startsWith("Bearer ") ? header.slice(7) : "";
     if (!jwt) return res.status(401).json({ ok: false, message: "Sign in required." });
     const { data, error } = await getSupabaseAnon().auth.getUser(jwt);
-    if (error || !data?.user?.email) return res.status(401).json({ ok: false, message: "Sign in required." });
+    if (error || !data?.user?.email) {
+      const detail = error as { message?: unknown; status?: unknown } | null;
+      const message = typeof detail?.message === "string" ? detail.message.toLowerCase() : "";
+      const reason =
+        message.includes("signing key") || message.includes("jwt kid")
+          ? "signing_key_not_recognized"
+          : message.includes("expired")
+            ? "token_expired"
+            : error
+              ? "token_rejected"
+              : "auth_user_missing";
+      const status = typeof detail?.status === "number" ? ` status=${detail.status}` : "";
+      // Deliberately exclude the JWT, user identity, raw provider message, and
+      // signing-key identifier while retaining an actionable failure class.
+      console.warn(`[research members] auth verification rejected: ${reason}${status}`);
+      return res.status(401).json({ ok: false, message: "Sign in required." });
+    }
     // Purpose check BEFORE member lookup: a recovery-grade session is denied
     // even when it maps to an active member (correction-pass blocker 3).
     if (denyRecoveryPurposeSession(jwt, res)) return;
