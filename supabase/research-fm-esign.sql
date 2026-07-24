@@ -38,7 +38,8 @@ create table if not exists public.research_fm_esign_templates (
   provider_template_version    text not null,
   mode                         text not null check (mode in (
                                  'view_only_public_policy','clickwrap_acceptance',
-                                 'typed_signature','opensign_document','opensign_packet')),
+                                 'typed_signature','opensign_document','opensign_packet',
+                                 'esign_document','esign_packet')),
   xenios_document_version_ids  jsonb not null default '[]'::jsonb,
   source_content_hashes        jsonb not null default '[]'::jsonb,
   provisioning_status          text not null default 'provisioned' check (provisioning_status in (
@@ -60,7 +61,8 @@ create table if not exists public.research_fm_esign_requests (
   packet_or_document_id        text not null,
   mode                         text not null check (mode in (
                                  'view_only_public_policy','clickwrap_acceptance',
-                                 'typed_signature','opensign_document','opensign_packet')),
+                                 'typed_signature','opensign_document','opensign_packet',
+                                 'esign_document','esign_packet')),
   provider                     text not null,
   provider_template_id         text,
   provider_template_version    text,
@@ -82,6 +84,10 @@ create table if not exists public.research_fm_esign_requests (
   verified_event_ids           jsonb not null default '[]'::jsonb,
   provider_event_history       jsonb not null default '[]'::jsonb,
   xenios_acceptance_event_ids  jsonb not null default '[]'::jsonb,
+  -- Native completion state machine (null for OpenSign rows). Only 'completed'
+  -- is presented as a signed legal record.
+  native_completion_state      text check (native_completion_state is null or native_completion_state in (
+                                 'preparing','evidence_stored','completed','failed_cleanup_required')),
   idempotency_key              text not null,
   created_at                   timestamptz not null default now(),
   updated_at                   timestamptz not null default now(),

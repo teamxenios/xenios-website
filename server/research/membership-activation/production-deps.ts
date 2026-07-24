@@ -110,6 +110,7 @@ import {
   newSignatureFormState,
   type EsignAcceptance,
   type SignatureRecord,
+  type SignaturesStore,
 } from "./signatures";
 import {
   DEFAULT_IDENTITY_UPLOAD_CONFIG,
@@ -172,14 +173,20 @@ import { getSupabaseAdmin, supabaseConfigured } from "../../supabase";
 import { enqueueNotification } from "../outbox";
 import { enqueueFoundingEmail, type FoundingEmailEnqueue } from "./emails";
 import {
+  XENIOS_NATIVE_PROVIDER,
   type ArchiveRecord,
   type EsignMediaPort,
   type EsignProvider,
   type EsignStore,
+  type NativeCommitFn,
+  type PdfGenerator,
   type SigningRequestRecord,
 } from "./esign/contracts";
 import { resolveEsignProvider } from "./esign/provider";
 import { resolveEsignStore } from "./esign/persistence/esign-store";
+import { NativeEsignService } from "./esign/native";
+import { resolveNativeCommit } from "./esign/native-commit";
+import { XeniosPdfGenerator } from "./esign/pdf";
 import {
   InMemoryEsignMediaProvider,
   RESEARCH_ESIGN_BUCKET,
@@ -574,6 +581,15 @@ export interface FoundingActivationWiring {
   resolveEsignProvider?: () => EsignProvider;
   resolveEsignStore?: () => EsignStore;
   resolveEsignMedia?: () => EsignMediaPort;
+  /** The signed-PDF + certificate generator for the NATIVE (embedded) path. */
+  resolveEsignPdfGenerator?: () => PdfGenerator;
+  /**
+   * The NATIVE atomic-commit seam: the single database transaction that inserts
+   * the legal signature, transitions the request to completed, and upserts the
+   * archive (a Supabase RPC in production, an in-memory equivalent otherwise).
+   * Optional so a test injects a failing commit to prove no signature persists.
+   */
+  resolveEsignNativeCommit?: (signatures: SignaturesStore, esign: EsignStore) => NativeCommitFn;
   /** Where the admin records copy of an e-sign completion notice is sent. */
   adminRecordsEmail?: string;
 }
@@ -612,6 +628,9 @@ function defaultWiring(env: NodeJS.ProcessEnv): FoundingActivationWiring {
       missingEsignMediaEnv(env).length === 0
         ? new SupabaseEsignMediaProvider()
         : new InMemoryEsignMediaProvider(),
+    // The native signed-PDF + certificate generator (pdf-lib). No network, no
+    // secret, no external service; it renders locally from the published text.
+    resolveEsignPdfGenerator: () => new XeniosPdfGenerator(),
     adminRecordsEmail: env.RESEARCH_ADMIN_RECORDS_EMAIL ?? "samuel@xeniostechnology.com",
   };
 }
@@ -802,6 +821,20 @@ function formatCents(cents: number): string {
 // through the audited, admin-guarded download route that mints a short-lived
 // signed URL. Integrity hashes DO travel (they are the point of the record).
 // ---------------------------------------------------------------------------
+
+/**
+ * A signing request is presentable as a signed legal record ONLY when it is
+ * genuinely completed. A native request requires nativeCompletionState
+ * `completed` (its evidence_stored / failed_cleanup_required states have the
+ * signed PDF uploaded but no committed legal signature, so they must never be
+ * shown or downloaded); an OpenSign request uses its completed link status.
+ */
+function isPresentableCompleted(record: SigningRequestRecord): boolean {
+  if (record.provider === XENIOS_NATIVE_PROVIDER) {
+    return record.nativeCompletionState === "completed";
+  }
+  return record.signingLinkStatus === "completed";
+}
 
 /** What a MEMBER may see about one of their signing requests. */
 function memberEsignRequestView(record: SigningRequestRecord): Record<string, unknown> {
@@ -1003,6 +1036,34 @@ function buildLiveServices(
       };
     },
   });
+
+  // ---- native (embedded) e-signature composition ---------------------------
+  // No external provider, no OpenSign account, no webhook: the member signs in
+  // the Xenios page and the authenticated POST is the completion. The native
+  // path reuses the SAME agreement engine (every guard) and the SAME private
+  // archive; it is enabled by RESEARCH_ESIGN_ENABLED alone (it needs no OpenSign
+  // credential), so it can run independently of the OpenSign provider.
+  const nativeEsignEnabled = env.RESEARCH_ESIGN_ENABLED === "true";
+  // The atomic commit: the Supabase RPC in production, an in-memory equivalent
+  // over the signatures + esign stores otherwise. `documents` is the signatures
+  // backing store (it implements SignaturesStore). This is the ONLY place a
+  // native SignatureRecord is inserted, and it commits with the request
+  // transition + archive as one transaction.
+  const nativeCommit: NativeCommitFn = (wiring.resolveEsignNativeCommit ?? resolveNativeCommit)(
+    documents,
+    esignStore,
+  );
+  const nativeEsignService = new NativeEsignService(
+    {
+      store: esignStore,
+      media: esignMedia,
+      lifecycle: documentLifecycle,
+      signatures,
+      pdf: (wiring.resolveEsignPdfGenerator ?? (() => new XeniosPdfGenerator()))(),
+      commit: nativeCommit,
+    },
+    { now },
+  );
 
   /** The three-state refusal every esign SERVICE returns when the provider is
    * not live (founding activation on, but e-signature off). */
@@ -1383,6 +1444,11 @@ function buildLiveServices(
       activatedAt: membershipState.activatedAt,
       renewalDate: latestPeriod?.endsAt ?? null,
       submissionContract: SUBMISSION_DISPLAY_CONTRACT,
+      // Whether the NATIVE embedded signer is available. The agreements page
+      // reads this to choose the embedded signer vs the native clickwrap
+      // AgreementSignCard immediately, with no failed signing attempt. When it
+      // flips back to false, the page falls back on the next load.
+      embeddedEsignEnabled: nativeEsignEnabled,
     };
   }
 
@@ -1424,9 +1490,87 @@ function buildLiveServices(
         };
       },
       async documents(member) {
-        if (!esignProvider.isLive) return esignDisabled();
+        // Available when EITHER the OpenSign provider is live OR the native
+        // (embedded) path is enabled: both write into the same request store.
+        if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
         const requests = await esignStore.requests.listByMember(member.memberId);
-        return { ok: true, documents: requests.map(memberEsignRequestView) };
+        // ONLY completed requests are presented. A native evidence_stored or
+        // failed_cleanup_required row (evidence uploaded but the legal signature
+        // not committed) is never shown as a signed document.
+        const completed = requests.filter((r) => isPresentableCompleted(r));
+        return { ok: true, documents: completed.map(memberEsignRequestView) };
+      },
+
+      // The NATIVE (embedded) signing completion. The authenticated member
+      // context is the ONLY identity; the memberId is never taken from the
+      // body. Reuses the agreement engine for the legal record (every guard)
+      // and the archive for the signed PDF + certificate.
+      async nativeSign(member, input) {
+        if (!nativeEsignEnabled) return esignDisabled();
+        const result = await nativeEsignService.completeNativeSignature({
+          memberId: member.memberId,
+          signerEmail: member.email,
+          document: {
+            documentVersionId: input.documentVersionId,
+            fullDocumentShown: input.fullDocumentShown,
+            affirmativeConsent: input.affirmativeConsent,
+            separateAcknowledgment: input.separateAcknowledgment,
+          },
+          evidence: {
+            method: input.signatureMethod,
+            typedLegalName: input.typedLegalName,
+            drawnPngBase64: input.drawnPngBase64 ?? null,
+          },
+          idempotencyKey: input.idempotencyKey,
+          ip: member.ip,
+          userAgent: member.userAgent,
+        });
+        if (!result.ok) return { ok: false, code: result.code, message: result.message };
+        // A fresh completion (not a replay) notifies the member and Samuel's
+        // records address; a replay never re-sends.
+        if (!result.replayed) {
+          await sendEsignCompletionNotices(result.request, result.request.id);
+        }
+        return {
+          ok: true,
+          requestId: result.request.id,
+          documentVersionId: input.documentVersionId,
+          signedAt: result.request.signedAt,
+          status: result.request.signingLinkStatus,
+          replayed: result.replayed,
+          signedPdfHash: result.signedPdfHash,
+          certificateHash: result.certificateHash,
+        };
+      },
+
+      // A member's OWN signed document or certificate, as a short-lived signed
+      // URL. Ownership is enforced: a member can never reach another member's
+      // document.
+      async documentDownloadUrl(member, requestId, which) {
+        if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
+        const record = await esignStore.requests.getById(requestId);
+        if (!record || record.memberId !== member.memberId) {
+          // Same denial for absent and not-yours, so ownership is not probeable.
+          return { ok: false, code: "not_found", message: "No signing request with that id." };
+        }
+        // No download for a native record that is not COMPLETED (evidence_stored
+        // or failed_cleanup_required): the legal signature has not committed.
+        if (!isPresentableCompleted(record)) {
+          return { ok: false, code: "invalid_state", message: "This document is not completed." };
+        }
+        const ref = which === "certificate" ? record.certificateRef : record.signedPdfRef;
+        if (!ref) {
+          return { ok: false, code: "invalid_state", message: `No ${which} document is stored for this request.` };
+        }
+        const grant = await esignMedia.createAccessUrl({
+          storagePath: ref,
+          expiresInSeconds: IDENTITY_ADMIN_ACCESS_TTL_SECONDS,
+          now: now(),
+        });
+        if (!grant.ok) {
+          return { ok: false, code: "provider_error", message: "E-signature storage refused the access URL." };
+        }
+        return { ok: true, which, grant: grant.value };
       },
     },
 
@@ -2747,9 +2891,13 @@ function buildLiveServices(
 
       // ---- e-signature document center -------------------------------------
       async esignMemberDocuments(memberId) {
-        if (!esignProvider.isLive) return esignDisabled();
+        if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
         const requests = await esignStore.requests.listByMember(memberId);
-        const completed = requests.filter((record) => record.signingLinkStatus === "completed");
+        // Only genuinely completed requests are presented; a native
+        // evidence_stored / failed_cleanup_required row is never a completed
+        // legal record. The archive is written only on completion, so it
+        // carries no non-completed rows.
+        const completed = requests.filter((record) => isPresentableCompleted(record));
         const archive = await esignStore.archive.listByMember(memberId);
         return {
           ok: true,
@@ -2763,10 +2911,16 @@ function buildLiveServices(
       // certificate. Admin-guarded (the route) and never a public URL; the
       // storage ref never leaves this method.
       async esignDownloadUrl(admin, requestId, which) {
-        if (!esignProvider.isLive) return esignDisabled();
+        if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
         void admin;
         const record = await esignStore.requests.getById(requestId);
         if (!record) return { ok: false, code: "not_found", message: "No signing request with that id." };
+        // Only a genuinely completed request is a downloadable legal record; a
+        // native evidence_stored / failed_cleanup_required row (uploaded but
+        // uncommitted) is never downloadable, for the admin as for the member.
+        if (!isPresentableCompleted(record)) {
+          return { ok: false, code: "invalid_state", message: "This document is not completed." };
+        }
         const ref = which === "certificate" ? record.certificateRef : record.signedPdfRef;
         if (!ref) {
           return { ok: false, code: "invalid_state", message: `No ${which} document is stored for this request.` };
@@ -2783,18 +2937,22 @@ function buildLiveServices(
       },
 
       async esignPacketZip(memberId) {
-        const records = esignProvider.isLive ? await esignStore.archive.listByMember(memberId) : [];
+        // The archive holds only completed records (it is written at completion),
+        // and the packet builder reads it. Available when EITHER OpenSign or the
+        // native path is enabled.
+        const records =
+          esignProvider.isLive || nativeEsignEnabled ? await esignStore.archive.listByMember(memberId) : [];
         // Signed agreements + completion certificates only; raw identity and
         // payment evidence are excluded by default (they live in other buckets).
         return buildMemberPacketZip({ records, media: esignMedia, include: {} });
       },
 
       async esignResendNotification(admin, requestId) {
-        if (!esignProvider.isLive) return esignDisabled();
+        if (!esignProvider.isLive && !nativeEsignEnabled) return esignDisabled();
         void admin;
         const record = await esignStore.requests.getById(requestId);
         if (!record) return { ok: false, code: "not_found", message: "No signing request with that id." };
-        if (record.signingLinkStatus !== "completed" || !record.completedAt) {
+        if (!isPresentableCompleted(record) || !record.completedAt) {
           return { ok: false, code: "invalid_state", message: "That signing request is not completed." };
         }
         await sendEsignCompletionNotices(record, `${record.id}:resend`);

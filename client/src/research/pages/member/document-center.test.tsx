@@ -171,8 +171,52 @@ describe("Member document center", () => {
     expect(done.textContent).toContain("Signed on Jul 20, 2026.");
     expect(view.querySelector('[data-testid="esign-open-signing-req-done"]')).toBeNull();
 
+    // The completed request offers the member download actions.
+    expect(view.querySelector('[data-testid="esign-download-signed-req-done"]')).not.toBeNull();
+    expect(view.querySelector('[data-testid="esign-download-certificate-req-done"]')).not.toBeNull();
+    // The pending request has no download actions (nothing archived yet).
+    expect(view.querySelector('[data-testid="esign-download-signed-req-pending"]')).toBeNull();
+
     // No false "signed" state on the pending request.
     expect(byTestId(view, "esign-request-req-pending").textContent).not.toContain("Signed on");
+  });
+
+  it("mints a short-lived signed URL and opens it when a member downloads", async () => {
+    const DOWNLOAD_SIGNED = `${ESIGN_PATH}/req-done/download?which=signed`;
+    stubFetch([
+      { method: "GET", path: SIGNED_PATH, status: 200, body: { ok: true, signed: [] } },
+      { method: "GET", path: ESIGN_PATH, status: 200, body: { ok: true, documents: [COMPLETED_REQUEST] } },
+      {
+        method: "GET",
+        path: DOWNLOAD_SIGNED,
+        status: 200,
+        body: {
+          ok: true,
+          which: "signed",
+          grant: { signedUrl: "https://files.example/signed/abc?token=xyz", expiresAt: "2026-07-23T13:00:00.000Z" },
+        },
+      },
+    ]);
+    const opened: Array<string | undefined> = [];
+    vi.stubGlobal("open", vi.fn((url?: string) => {
+      opened.push(url);
+      return null;
+    }));
+
+    const view = await renderPage(<DocumentCenter />);
+    const btn = byTestId<HTMLButtonElement>(view, "esign-download-signed-req-done");
+    await act(async () => {
+      btn.click();
+    });
+    for (let i = 0; i < 4; i += 1) {
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+    }
+
+    // The ephemeral signed URL was opened; the raw storage ref never rendered.
+    expect(opened).toContain("https://files.example/signed/abc?token=xyz");
+    expect(view.textContent).not.toContain("files.example");
   });
 
   it("renders the calm empty state when both endpoints are disabled", async () => {

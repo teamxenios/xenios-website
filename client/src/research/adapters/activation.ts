@@ -34,6 +34,12 @@ export interface ActivationStatusDto {
   renewalDate: string | null;
   /** The server's verbatim submission contract; render it, never rewrite it. */
   submissionContract: string;
+  /** When true, native in-page signing is available and the agreements step
+   * renders the embedded signer; when false (or absent on an older server),
+   * the step renders the existing per-document AgreementSignCard path. The
+   * server owns this capability; the page never hardcodes it. Normalized to a
+   * real boolean by getActivationStatus, defaulting to false (fail safe). */
+  embeddedEsignEnabled: boolean;
 }
 
 export interface IdentityCaseDto {
@@ -187,8 +193,15 @@ export interface UploadUrlInput {
 
 // --------------------------------- reads -----------------------------------
 
-export function getActivationStatus(token: string | null): Promise<ApiResult<ActivationStatusDto>> {
-  return apiGet<ActivationStatusDto>(`${BASE}/status`, token);
+export async function getActivationStatus(token: string | null): Promise<ApiResult<ActivationStatusDto>> {
+  const res = await apiGet<ActivationStatusDto>(`${BASE}/status`, token);
+  if (res.kind === "ok") {
+    // An older server may omit embeddedEsignEnabled entirely. Coerce it to a
+    // real boolean here, defaulting to false, so the page fails safe to the
+    // existing AgreementSignCard path rather than reading undefined.
+    return { kind: "ok", data: { ...res.data, embeddedEsignEnabled: res.data.embeddedEsignEnabled === true } };
+  }
+  return res;
 }
 
 export function getIdentityStatus(token: string | null): Promise<ApiResult<IdentityStatusDto>> {

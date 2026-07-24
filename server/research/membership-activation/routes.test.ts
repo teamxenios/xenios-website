@@ -6,7 +6,15 @@ import { registerFoundingActivationApi, type FoundingActivationDependencies } fr
 import { DisabledEsignProvider } from "./esign/provider";
 import { createInMemoryEsignStore } from "./esign/persistence/esign-store";
 import { InMemoryEsignMediaProvider } from "./esign/archive";
-import type { EsignProvider, EsignStore, EsignWebhookEvent } from "./esign/contracts";
+import { createInMemoryNativeCommit } from "./esign/native-commit";
+import type {
+  EsignProvider,
+  EsignStore,
+  EsignWebhookEvent,
+  NativeCommitFn,
+  PdfGenerator,
+} from "./esign/contracts";
+import type { SignaturesStore } from "./signatures";
 import {
   buildFoundingActivationDependencies,
   createInMemoryChecklistStore,
@@ -190,7 +198,11 @@ const guards = {
 function buildApp(deps: FoundingActivationDependencies): Express {
   const app = express();
   app.use(
+    // Mirror server/index.ts: an explicit 2mb limit that admits a native drawn
+    // signature (capped tighter at the route) and rejects a genuinely oversized
+    // body with 413.
     express.json({
+      limit: "2mb",
       verify: (req, _res, buf) => {
         (req as unknown as { rawBody: Buffer }).rawBody = buf;
       },
@@ -211,7 +223,23 @@ interface LiveContext {
   esignCounts: { provisionTemplate: number; createSigningSession: number; fetchCompletedFile: number };
 }
 
-function liveContext(opts: { esignProvider?: EsignProvider } = {}): LiveContext {
+/** A deterministic PDF generator for the native tests (no pdf-lib in the hot
+ * path; real bytes so hashes are stable). */
+const fakePdfGenerator: PdfGenerator = {
+  generateSignedAgreementPdf: async (input) =>
+    Buffer.from(`SIGNED ${input.documentVersionId} ${input.typedLegalName} ${input.signatureMethod}`, "utf8"),
+  generateCompletionCertificatePdf: async (input) =>
+    Buffer.from(`CERT ${input.signingRequestId} ${input.signedPdfSha256}`, "utf8"),
+};
+
+function liveContext(
+  opts: {
+    esignProvider?: EsignProvider;
+    esignEnabled?: boolean;
+    /** Override the native atomic-commit seam (e.g. a failing RPC/transaction). */
+    esignNativeCommit?: FoundingActivationWiring["resolveEsignNativeCommit"];
+  } = {},
+): LiveContext {
   const obligationsStore = createInMemoryObligationsStore();
   const periodsStore = createInMemoryPeriodsStore();
   const methodsStore = createInMemoryPaymentMethodsStore();
@@ -234,7 +262,9 @@ function liveContext(opts: { esignProvider?: EsignProvider } = {}): LiveContext 
         counts: { provisionTemplate: 0, createSigningSession: 0, fetchCompletedFile: 0 },
       }
     : fakeLiveEsignProvider();
-  const deps = buildFoundingActivationDependencies(NOW, LIVE_ENV, {
+  // The native (embedded) path is enabled by RESEARCH_ESIGN_ENABLED alone.
+  const env = opts.esignEnabled ? { ...LIVE_ENV, RESEARCH_ESIGN_ENABLED: "true" } : LIVE_ENV;
+  const deps = buildFoundingActivationDependencies(NOW, env, {
     resolveObligationsStore: () => obligationsStore,
     resolvePeriodsStore: () => periodsStore,
     resolvePaymentMethodsStore: () => methodsStore,
@@ -257,6 +287,8 @@ function liveContext(opts: { esignProvider?: EsignProvider } = {}): LiveContext 
     resolveEsignProvider: () => esignBits.provider,
     resolveEsignStore: () => esignStore,
     resolveEsignMedia: () => esignMedia,
+    resolveEsignPdfGenerator: () => fakePdfGenerator,
+    ...(opts.esignNativeCommit ? { resolveEsignNativeCommit: opts.esignNativeCommit } : {}),
     adminRecordsEmail: ADMIN_RECORDS_EMAIL,
   });
   return {
@@ -415,6 +447,7 @@ const REPRESENTATIVE_ROUTES: Array<{ method: "get" | "post" | "put"; path: strin
   // E-signature: a member route, the unguarded webhook, and an admin route are
   // all behind the three-state gate first.
   { method: "post", path: "/api/research/activation/esign/session" },
+  { method: "post", path: "/api/research/activation/esign/native/sign" },
   { method: "post", path: "/api/research/webhooks/esign" },
   { method: "get", path: "/api/admin/research/activation/esign/member/m-1" },
 ];
@@ -1784,5 +1817,472 @@ describe("state 3: e-signature", () => {
       .set(ADMIN_HEADER, "yes");
     expect(res.status).toBe(400);
     expect(res.body.code).toBe("validation_failed");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Native (embedded) e-signature: the member signs in-page, no OpenSign.
+// ---------------------------------------------------------------------------
+
+describe("state 3: native embedded e-signature", () => {
+  function nativeSignBody(documentVersionId: string, over: Record<string, unknown> = {}) {
+    return {
+      documentVersionId,
+      fullDocumentShown: true,
+      affirmativeConsent: true,
+      separateAcknowledgment: true,
+      signatureMethod: "typed",
+      typedLegalName: "Member Aye Test",
+      drawnPngBase64: null,
+      idempotencyKey: `native:${documentVersionId}`,
+      ...over,
+    };
+  }
+
+  async function agreementsList(ctx: LiveContext, member: string) {
+    const res = await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, member);
+    return res.body.agreements as Array<{ documentVersionId: string; category: string }>;
+  }
+
+  /** Native-sign every required agreement in the returned (consent-first) order. */
+  async function nativeSignAll(ctx: LiveContext, member: string) {
+    for (const agreement of await agreementsList(ctx, member)) {
+      const res = await request(ctx.app)
+        .post("/api/research/activation/esign/native/sign")
+        .set(MEMBER_HEADER, member)
+        .send(nativeSignBody(agreement.documentVersionId));
+      expect(res.status, agreement.category).toBe(200);
+    }
+  }
+
+  it("RESEARCH_ESIGN_ENABLED off: the native sign route fails closed (capability_disabled)", async () => {
+    const ctx = liveContext(); // esign NOT enabled
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const res = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId));
+    expect(res.status).toBe(503);
+    expect(res.body.code).toBe("capability_disabled");
+  });
+
+  it("native runs INDEPENDENTLY of OpenSign: enabled with the provider Disabled and no OpenSign credential", async () => {
+    // OpenSign provider disabled, native enabled: the native path still works,
+    // and the OpenSign session path is never touched (no external call).
+    const ctx = liveContext({ esignProvider: new DisabledEsignProvider(), esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const res = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId));
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe("completed");
+    expect(res.body.signedPdfHash).toMatch(/^[0-9a-f]{64}$/);
+    expect(res.body.certificateHash).toMatch(/^[0-9a-f]{64}$/);
+    // The OpenSign session was never created (native is fully local).
+    expect(ctx.esignCounts.createSigningSession).toBe(0);
+    // The OpenSign session route itself refuses (capability_disabled), proving
+    // native and OpenSign are independent.
+    const session = await request(ctx.app)
+      .post("/api/research/activation/esign/session")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send({ mode: "opensign_document", documentVersionIds: [consent.documentVersionId], idempotencyKey: "os-1" });
+    expect(session.status).toBe(503);
+  });
+
+  it("admin can view + download a COMPLETED native record in a native-only deployment (OpenSign off)", async () => {
+    const ctx = liveContext({ esignProvider: new DisabledEsignProvider(), esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const signed = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId));
+    expect(signed.status).toBe(200);
+    const requestId = signed.body.requestId as string;
+    // Admin document center lists it even though OpenSign is disabled.
+    const adminDocs = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/member/${MEMBER_A}`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDocs.status).toBe(200);
+    expect(adminDocs.body.requests.some((r: { requestId: string }) => r.requestId === requestId)).toBe(true);
+    // Admin download of the completed record works.
+    const adminDl = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/request/${requestId}/download?which=signed`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDl.status).toBe(200);
+    expect(adminDl.body.grant.signedUrl).toBeTruthy();
+  });
+
+  it("completes a native signature and lists it in the member document endpoint", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const signed = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId));
+    expect(signed.status).toBe(200);
+    const requestId = signed.body.requestId as string;
+
+    const docs = await request(ctx.app).get("/api/research/activation/esign/documents").set(MEMBER_HEADER, MEMBER_A);
+    expect(docs.status).toBe(200);
+    expect(docs.body.documents.some((d: { requestId: string; mode: string }) => d.requestId === requestId && d.mode === "esign_document")).toBe(true);
+
+    // A duplicate submission replays (idempotent), no second record.
+    const replay = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId));
+    expect(replay.status).toBe(200);
+    expect(replay.body.requestId).toBe(requestId);
+  });
+
+  it("a member can download only their OWN signed document", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const signed = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId));
+    const requestId = signed.body.requestId as string;
+
+    const mine = await request(ctx.app)
+      .get(`/api/research/activation/esign/documents/${requestId}/download?which=signed`)
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(mine.status).toBe(200);
+    expect(mine.body.grant.signedUrl).toBeTruthy();
+
+    // Member B cannot reach member A's document (ownership is not probeable).
+    const theirs = await request(ctx.app)
+      .get(`/api/research/activation/esign/documents/${requestId}/download?which=signed`)
+      .set(MEMBER_HEADER, MEMBER_B);
+    expect(theirs.status).toBe(404);
+  });
+
+  it("the agreement gate does not advance until ALL required agreements are natively signed", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const list = await agreementsList(ctx, MEMBER_A);
+
+    // Sign only the electronic-record consent: the gate is not satisfied yet.
+    await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(list[0].documentVersionId));
+    const partial = await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A);
+    expect(partial.body.satisfied).toBe(false);
+
+    // Sign the rest: the SAME gate is now satisfied by the native signatures.
+    await nativeSignAll(ctx, MEMBER_A);
+    const full = await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A);
+    expect(full.body.satisfied).toBe(true);
+  });
+
+  it("refuses a native signature that is not affirmatively consented", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const res = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { affirmativeConsent: false }));
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("consent_not_affirmative");
+  });
+
+  it("validates the drawn signature: malformed, non-PNG, and oversized are precise 400s", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const drawn = (drawnPngBase64: string) =>
+      nativeSignBody(consent.documentVersionId, { signatureMethod: "drawn", drawnPngBase64 });
+
+    const malformed = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(drawn("not!!!base64###"));
+    expect(malformed.status).toBe(400);
+    expect(malformed.body.code).toBe("signature_invalid");
+
+    // Valid base64 of non-PNG bytes.
+    const jpeg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(40)]).toString("base64");
+    const notPng = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(drawn(jpeg));
+    expect(notPng.status).toBe(400);
+    expect(notPng.body.code).toBe("signature_invalid");
+
+    // A well-formed PNG header but 1.1MB decoded: over the 1MB cap, under the
+    // 2mb body limit, so it reaches the route and is refused as too large.
+    const bigPng = Buffer.concat([
+      Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      Buffer.alloc(1_100_000),
+    ]).toString("base64");
+    const tooBig = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(drawn(bigPng));
+    expect(tooBig.status).toBe(400);
+    expect(tooBig.body.code).toBe("signature_too_large");
+
+    // Nothing was signed by any of the refused attempts.
+    const list = await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A);
+    expect(list.body.agreements[0].signed).toBe(false);
+  });
+
+  it("binds an idempotency key to its document: reuse for another document is a 409 conflict", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const list = await agreementsList(ctx, MEMBER_A);
+    const consent = list[0];
+    const other = list[1];
+    const first = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { idempotencyKey: "shared-key" }));
+    expect(first.status).toBe(200);
+    const clash = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(other.documentVersionId, { idempotencyKey: "shared-key" }));
+    expect(clash.status).toBe(409);
+    expect(clash.body.code).toBe("idempotency_conflict");
+  });
+
+  it("never lists or issues a download for a native evidence_stored (not completed) request", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const now = "2026-07-23T12:00:00.000Z";
+    // An evidence_stored request: the signed PDF is uploaded but the legal
+    // signature never committed. It must be invisible and non-downloadable.
+    await ctx.esignStore.requests.insert({
+      id: "native_evidence_1",
+      memberId: MEMBER_A,
+      packetOrDocumentId: "ver-x",
+      mode: "esign_document",
+      provider: "xenios_native",
+      providerTemplateId: null,
+      providerTemplateVersion: null,
+      providerDocumentId: null,
+      xeniosDocumentVersionIds: ["ver-x"],
+      sourceContentHashes: ["a".repeat(64)],
+      signerIdentifier: MEMBER_EMAILS[MEMBER_A],
+      signingLinkStatus: "created",
+      nativeCompletionState: "evidence_stored",
+      viewedAt: null,
+      signedAt: null,
+      completedAt: null,
+      declinedAt: null,
+      expiredAt: null,
+      signedPdfRef: "esign/member-a/ver-x/signed.pdf",
+      certificateRef: "esign/member-a/ver-x/certificate.pdf",
+      signedPdfHash: "b".repeat(64),
+      certificateHash: "c".repeat(64),
+      verifiedEventIds: [],
+      providerEventHistory: [],
+      xeniosAcceptanceEventIds: [],
+      idempotencyKey: "evidence-key",
+      createdAt: now,
+      updatedAt: now,
+    });
+    // Not downloadable by the member.
+    const dl = await request(ctx.app)
+      .get("/api/research/activation/esign/documents/native_evidence_1/download?which=signed")
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(dl.status).toBe(409);
+    expect(dl.body.code).toBe("invalid_state");
+    // Not downloadable by an ADMIN either (the admin route gates on completion).
+    const adminDl = await request(ctx.app)
+      .get("/api/admin/research/activation/esign/request/native_evidence_1/download?which=signed")
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDl.status).toBe(409);
+    expect(adminDl.body.code).toBe("invalid_state");
+    // Not listed as a member document, and not in the admin document center.
+    const docs = await request(ctx.app).get("/api/research/activation/esign/documents").set(MEMBER_HEADER, MEMBER_A);
+    expect(docs.body.documents.some((d: { requestId: string }) => d.requestId === "native_evidence_1")).toBe(false);
+    const adminDocs = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/member/${MEMBER_A}`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDocs.body.requests.some((r: { requestId: string }) => r.requestId === "native_evidence_1")).toBe(false);
+  });
+
+  it("the activation status reports the embedded-signer capability from the flag", async () => {
+    const off = liveContext();
+    await publishAllCategories(off.documentsStore);
+    const statusOff = await request(off.app).get("/api/research/activation/status").set(MEMBER_HEADER, MEMBER_A);
+    expect(statusOff.body.embeddedEsignEnabled).toBe(false);
+
+    const on = liveContext({ esignEnabled: true });
+    await publishAllCategories(on.documentsStore);
+    const statusOn = await request(on.app).get("/api/research/activation/status").set(MEMBER_HEADER, MEMBER_A);
+    expect(statusOn.body.embeddedEsignEnabled).toBe(true);
+  });
+
+  // A native atomic-commit (the final legal transaction / RPC) that always fails
+  // without writing. No signature may persist.
+  const failingNativeCommit: (s: SignaturesStore, e: EsignStore) => NativeCommitFn = () => async () => ({
+    ok: false,
+    code: "commit_error",
+  });
+
+  it("#3-#6 a native atomic-commit failure blocks activation, is undownloadable, and never presents as completed", async () => {
+    const ctx = liveContext({ esignEnabled: true, esignNativeCommit: failingNativeCommit });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const res = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { idempotencyKey: "commit-fail" }));
+    // The route reports a failure, never a completion.
+    expect(res.status).toBeGreaterThanOrEqual(400);
+    expect(res.body.status).not.toBe("completed");
+
+    // #3 activation is blocked: the consent category never became signed.
+    const list = await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A);
+    expect(list.body.satisfied).toBe(false);
+    expect(list.body.agreements[0].signed).toBe(false);
+    // No legal signature exists for the version.
+    expect(await ctx.documentsStore.getSignature(MEMBER_A, consent.documentVersionId)).toBeNull();
+
+    // The evidence request exists but is marked for cleanup, never completed.
+    const failed = (await ctx.esignStore.requests.listByMember(MEMBER_A)).find(
+      (r) => r.idempotencyKey === "commit-fail",
+    );
+    expect(failed?.nativeCompletionState).toBe("failed_cleanup_required");
+    expect(failed?.signingLinkStatus).not.toBe("completed");
+    const requestId = failed!.id;
+
+    // #4 the member cannot download it.
+    const memberDl = await request(ctx.app)
+      .get(`/api/research/activation/esign/documents/${requestId}/download?which=signed`)
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(memberDl.status).toBeGreaterThanOrEqual(400);
+
+    // #5 an admin cannot download it.
+    const adminDl = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/request/${requestId}/download?which=signed`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDl.status).toBeGreaterThanOrEqual(400);
+
+    // #6 it is not presented as completed anywhere, and no archive row exists.
+    const docs = await request(ctx.app).get("/api/research/activation/esign/documents").set(MEMBER_HEADER, MEMBER_A);
+    expect(docs.body.documents.some((d: { requestId: string }) => d.requestId === requestId)).toBe(false);
+    const adminDocs = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/member/${MEMBER_A}`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDocs.body.requests.some((r: { requestId: string }) => r.requestId === requestId)).toBe(false);
+    expect(
+      (await ctx.esignStore.archive.listByMember(MEMBER_A)).some(
+        (a) => a.documentVersionId === consent.documentVersionId,
+      ),
+    ).toBe(false);
+  });
+
+  it("#9 a binding refusal (signature bound to another document) blocks activation and every download", async () => {
+    // The atomic commit independently rejects a signature that is not bound to
+    // the locked request. At the route this behaves like any commit refusal:
+    // nothing is signed, nothing is downloadable, nothing presents as completed.
+    const bindingRefusal: (s: SignaturesStore, e: EsignStore) => NativeCommitFn = () => async () => ({
+      ok: false,
+      code: "signature_version_mismatch",
+    });
+    const ctx = liveContext({ esignEnabled: true, esignNativeCommit: bindingRefusal });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const res = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { idempotencyKey: "binding-fail" }));
+    expect(res.status).toBeGreaterThanOrEqual(400);
+    expect(res.body.status).not.toBe("completed");
+    // No signature for the requested version (nor any other).
+    expect(await ctx.documentsStore.getSignature(MEMBER_A, consent.documentVersionId)).toBeNull();
+    // Activation blocked.
+    const list = await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A);
+    expect(list.body.satisfied).toBe(false);
+    expect(list.body.agreements[0].signed).toBe(false);
+    // Request marked for cleanup, never completed; no archive.
+    const failed = (await ctx.esignStore.requests.listByMember(MEMBER_A)).find(
+      (r) => r.idempotencyKey === "binding-fail",
+    );
+    expect(failed?.nativeCompletionState).toBe("failed_cleanup_required");
+    const requestId = failed!.id;
+    const memberDl = await request(ctx.app)
+      .get(`/api/research/activation/esign/documents/${requestId}/download?which=signed`)
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(memberDl.status).toBeGreaterThanOrEqual(400);
+    const adminDl = await request(ctx.app)
+      .get(`/api/admin/research/activation/esign/request/${requestId}/download?which=signed`)
+      .set(ADMIN_HEADER, "yes");
+    expect(adminDl.status).toBeGreaterThanOrEqual(400);
+    expect((await ctx.esignStore.archive.listByMember(MEMBER_A)).length).toBe(0);
+  });
+
+  it("#7 a retry after a native atomic-commit failure completes exactly one signature and one request", async () => {
+    let failNext = true;
+    const commit: (s: SignaturesStore, e: EsignStore) => NativeCommitFn = (sig, esign) => {
+      const real = createInMemoryNativeCommit(sig, esign);
+      return async (input) => (failNext ? { ok: false, code: "commit_error" } : real(input));
+    };
+    const ctx = liveContext({ esignEnabled: true, esignNativeCommit: commit });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const first = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { idempotencyKey: "retry-commit" }));
+    expect(first.status).toBeGreaterThanOrEqual(400);
+    expect(await ctx.documentsStore.getSignature(MEMBER_A, consent.documentVersionId)).toBeNull();
+
+    failNext = false;
+    const second = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(consent.documentVersionId, { idempotencyKey: "retry-commit" }));
+    expect(second.status).toBe(200);
+    expect(second.body.status).toBe("completed");
+
+    // Exactly one signature and one request for this version.
+    const sigs = (await ctx.documentsStore.listSignaturesForMember(MEMBER_A)).filter(
+      (s) => s.documentVersionId === consent.documentVersionId,
+    );
+    expect(sigs).toHaveLength(1);
+    const reqs = (await ctx.esignStore.requests.listByMember(MEMBER_A)).filter(
+      (r) => r.xeniosDocumentVersionIds[0] === consent.documentVersionId,
+    );
+    expect(reqs).toHaveLength(1);
+    expect(reqs[0].nativeCompletionState).toBe("completed");
+  });
+
+  it("#8 concurrent native submissions produce exactly one completed transaction", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const [consent] = await agreementsList(ctx, MEMBER_A);
+    const body = nativeSignBody(consent.documentVersionId, { idempotencyKey: "concurrent-http" });
+    const [a, b] = await Promise.all([
+      request(ctx.app).post("/api/research/activation/esign/native/sign").set(MEMBER_HEADER, MEMBER_A).send(body),
+      request(ctx.app).post("/api/research/activation/esign/native/sign").set(MEMBER_HEADER, MEMBER_A).send(body),
+    ]);
+    expect(a.status).toBe(200);
+    expect(b.status).toBe(200);
+    // Exactly one signature, one request, one archive for this version.
+    const sigs = (await ctx.documentsStore.listSignaturesForMember(MEMBER_A)).filter(
+      (s) => s.documentVersionId === consent.documentVersionId,
+    );
+    expect(sigs).toHaveLength(1);
+    const reqs = (await ctx.esignStore.requests.listByMember(MEMBER_A)).filter(
+      (r) => r.xeniosDocumentVersionIds[0] === consent.documentVersionId,
+    );
+    expect(reqs).toHaveLength(1);
+    expect(reqs[0].nativeCompletionState).toBe("completed");
+    const archive = (await ctx.esignStore.archive.listByMember(MEMBER_A)).filter(
+      (ar) => ar.documentVersionId === consent.documentVersionId,
+    );
+    expect(archive).toHaveLength(1);
   });
 });

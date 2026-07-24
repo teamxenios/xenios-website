@@ -5,7 +5,9 @@ import { ResearchEmptyState, ResearchRouteBoundary, ResearchStatusBadge, type Ba
 import { listSignedAgreements, type SignedAgreementDto } from "../../adapters/activation";
 import {
   getEsignDocuments,
+  getMemberEsignDownloadUrl,
   isProviderBackedMode,
+  type EsignDownloadWhich,
   type MemberEsignRequest,
   type SigningLinkStatus,
   type SigningMode,
@@ -111,7 +113,7 @@ export default function DocumentCenter() {
           />
         ) : (
           <div className="grid gap-10">
-            <EsignSection requests={requests} />
+            <EsignSection requests={requests} token={memberToken} />
             <SignedAgreementsSection signed={signed} />
           </div>
         )}
@@ -120,21 +122,21 @@ export default function DocumentCenter() {
   );
 }
 
-function EsignSection({ requests }: { requests: MemberEsignRequest[] }) {
+function EsignSection({ requests, token }: { requests: MemberEsignRequest[]; token: string | null }) {
   if (requests.length === 0) return null;
   return (
     <section aria-label="E-signature requests">
       <h2 className="body-l font-700 mb-4">E-signature requests</h2>
       <div className="grid gap-4">
         {requests.map((request) => (
-          <EsignRequestRow key={request.requestId} request={request} />
+          <EsignRequestRow key={request.requestId} request={request} token={token} />
         ))}
       </div>
     </section>
   );
 }
 
-function EsignRequestRow({ request }: { request: MemberEsignRequest }) {
+function EsignRequestRow({ request, token }: { request: MemberEsignRequest; token: string | null }) {
   const presentation = STATUS_PRESENTATION[request.status] ?? {
     label: request.status,
     tone: "neutral" as BadgeTone,
@@ -157,6 +159,8 @@ function EsignRequestRow({ request }: { request: MemberEsignRequest }) {
         </div>
         <ResearchStatusBadge label={presentation.label} tone={presentation.tone} />
       </div>
+
+      {isCompleted && <EsignDownloadActions requestId={request.requestId} token={token} />}
 
       {canOpenSigning && (
         <div className="grid gap-2">
@@ -184,6 +188,62 @@ function EsignRequestRow({ request }: { request: MemberEsignRequest }) {
         </p>
       )}
     </article>
+  );
+}
+
+// A completed native e-sign request has an archived signed PDF and a signing
+// certificate. Each download mints a short-lived signed URL on demand; the
+// browser opens that ephemeral URL. The raw storage ref is never rendered.
+function EsignDownloadActions({ requestId, token }: { requestId: string; token: string | null }) {
+  const [busy, setBusy] = useState<EsignDownloadWhich | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function download(which: EsignDownloadWhich) {
+    setBusy(which);
+    setError(null);
+    const res = await getMemberEsignDownloadUrl(token, requestId, which);
+    setBusy(null);
+    if (res.kind === "ok") {
+      window.open(res.data.grant.signedUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    setError(
+      res.kind === "error" || res.kind === "denied"
+        ? (res.message ?? "That download could not be prepared. Please try again.")
+        : "That download could not be prepared. Please try again.",
+    );
+  }
+
+  return (
+    <div className="grid gap-2">
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          className="btn btn-secondary"
+          style={{ minHeight: 44 }}
+          disabled={busy !== null}
+          onClick={() => void download("signed")}
+          data-testid={`esign-download-signed-${requestId}`}
+        >
+          {busy === "signed" ? "Preparing..." : "Download signed PDF"}
+        </button>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          style={{ minHeight: 44 }}
+          disabled={busy !== null}
+          onClick={() => void download("certificate")}
+          data-testid={`esign-download-certificate-${requestId}`}
+        >
+          {busy === "certificate" ? "Preparing..." : "Download certificate"}
+        </button>
+      </div>
+      {error && (
+        <p className="body-s" role="alert" style={{ color: "var(--error)" }}>
+          {error}
+        </p>
+      )}
+    </div>
   );
 }
 
