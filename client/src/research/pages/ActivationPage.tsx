@@ -173,31 +173,66 @@ type PageState =
   | { kind: "ok"; status: ActivationStatusDto };
 
 export default function ActivationPage() {
-  const { member, memberChecking, memberToken } = useResearch();
+  const { member, memberChecking, memberSessionStatus, memberToken, refreshMember } = useResearch();
   const [page, setPage] = useState<PageState>({ kind: "loading" });
+  const [pageToken, setPageToken] = useState<string | null>(null);
   const [nonce, setNonce] = useState(0);
   const reload = useCallback(() => setNonce((n) => n + 1), []);
 
   useEffect(() => {
-    if (memberChecking) return;
+    if (memberChecking) {
+      setPage({ kind: "loading" });
+      return;
+    }
     if (!memberToken) {
-      setPage({ kind: "signed_out" });
+      setPage(
+        memberSessionStatus === "verification_failed"
+          ? { kind: "error", message: "We could not verify your member session. Please sign in again." }
+          : { kind: "signed_out" },
+      );
       return;
     }
     let alive = true;
     void getActivationStatus(memberToken).then((res) => {
       if (!alive) return;
-      if (res.kind === "ok") setPage({ kind: "ok", status: res.data });
-      else if (res.kind === "unavailable") setPage({ kind: "not_open" });
-      else if (res.kind === "unauthorized") setPage({ kind: "signed_out" });
-      else if (res.kind === "denied") setPage({ kind: "denied", code: res.code, message: res.message });
-      else if (res.kind === "error") setPage({ kind: "error", message: res.message });
-      else setPage({ kind: "error", message: res.message });
+      if (res.kind === "ok") {
+        setPageToken(memberToken);
+        setPage({ kind: "ok", status: res.data });
+        if (res.data.active && member?.status !== "active") {
+          void refreshMember();
+        }
+      }
+      else if (res.kind === "unavailable") {
+        setPageToken(memberToken);
+        setPage({ kind: "not_open" });
+      }
+      else if (res.kind === "unauthorized") {
+        setPageToken(memberToken);
+        setPage({ kind: "error", message: "We could not verify your member session. Please sign in again." });
+      }
+      else if (res.kind === "denied") {
+        setPageToken(memberToken);
+        setPage({ kind: "denied", code: res.code, message: res.message });
+      }
+      else {
+        setPageToken(memberToken);
+        setPage({ kind: "error", message: res.message });
+      }
     });
     return () => {
       alive = false;
     };
-  }, [memberChecking, memberToken, nonce]);
+  }, [member?.status, memberChecking, memberSessionStatus, memberToken, nonce, refreshMember]);
+
+  const renderedPage: PageState = memberChecking
+    ? { kind: "loading" }
+    : !memberToken
+      ? memberSessionStatus === "verification_failed"
+        ? { kind: "error", message: "We could not verify your member session. Please sign in again." }
+        : { kind: "signed_out" }
+      : pageToken === memberToken
+        ? page
+        : { kind: "loading" };
 
   return (
     <>
@@ -211,21 +246,24 @@ export default function ActivationPage() {
         title="You have been approved."
         lead="Activate your Founding Membership to open the in-depth onboarding and begin building your Whole-Life Blueprint."
       >
-        {page.kind === "loading" && <ResearchLoadingState label="Loading your activation" />}
+        {renderedPage.kind === "loading" && <ResearchLoadingState label="Loading your activation" />}
 
-        {page.kind === "signed_out" && (
+        {renderedPage.kind === "signed_out" && (
           <div className="grid gap-6">
             <FoundingPricingBlock />
             <ResearchEmptyState
               title="Sign in to continue your activation."
-              body="Approved but no account? Use the secure link in your approval email. It opens your status page, where you create your account and choose your own password."
+              body="Sign in with the email and password connected to your Xenios Research account to continue where you left off."
               action={
                 <div className="flex flex-wrap gap-3">
-                  <Link href={ACCESS_ROUTES.signIn} className="btn btn-primary">
-                    Member Login
+                  <Link
+                    href={`${ACCESS_ROUTES.signIn}?returnTo=${encodeURIComponent(ACCESS_ROUTES.activate)}`}
+                    className="btn btn-primary"
+                  >
+                    Sign in
                   </Link>
-                  <Link href={ACCESS_ROUTES.applicationStatus} className="btn btn-secondary">
-                    Application status
+                  <Link href={ACCESS_ROUTES.resetPassword} className="btn btn-secondary">
+                    Forgot password
                   </Link>
                 </div>
               }
@@ -233,7 +271,7 @@ export default function ActivationPage() {
           </div>
         )}
 
-        {page.kind === "not_open" && (
+        {renderedPage.kind === "not_open" && (
           <div className="grid gap-6">
             <FoundingPricingBlock />
             <ResearchPendingPanel
@@ -245,12 +283,12 @@ export default function ActivationPage() {
           </div>
         )}
 
-        {page.kind === "denied" && <ResearchDenialNotice code={page.code} message={page.message} />}
-        {page.kind === "error" && <ResearchErrorState message={page.message} onRetry={reload} />}
+        {renderedPage.kind === "denied" && <ResearchDenialNotice code={renderedPage.code} message={renderedPage.message} />}
+        {renderedPage.kind === "error" && <ResearchErrorState message={renderedPage.message} onRetry={reload} />}
 
-        {page.kind === "ok" && (
+        {renderedPage.kind === "ok" && (
           <ActivationStepper
-            status={page.status}
+            status={renderedPage.status}
             token={memberToken}
             memberFirstName={member?.firstName ?? null}
             reload={reload}

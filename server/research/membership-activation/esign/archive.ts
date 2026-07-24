@@ -81,26 +81,50 @@ function safeSegment(value: string, label: string): string {
   return value;
 }
 
-function legalVersionBase(memberId: string, packetOrDocumentId: string, version: string): string {
-  return [
+function legalVersionBase(
+  memberId: string,
+  packetOrDocumentId: string,
+  version: string,
+  attempt?: { requestId: string; attemptId: string },
+): string {
+  const parts = [
     ESIGN_RECORD_ROOT,
     safeSegment(memberId, "member id"),
     "legal",
     safeSegment(packetOrDocumentId, "packet or document id"),
     safeSegment(version, "version"),
-  ].join("/");
+  ];
+  if (attempt) {
+    parts.push("attempts", safeSegment(attempt.requestId, "request id"), safeSegment(attempt.attemptId, "attempt id"));
+  }
+  return parts.join("/");
 }
 
-export function esignSignedPdfPath(memberId: string, packetOrDocumentId: string, version: string): string {
-  return `${legalVersionBase(memberId, packetOrDocumentId, version)}/signed.pdf`;
+export function esignSignedPdfPath(
+  memberId: string,
+  packetOrDocumentId: string,
+  version: string,
+  attempt?: { requestId: string; attemptId: string },
+): string {
+  return `${legalVersionBase(memberId, packetOrDocumentId, version, attempt)}/signed.pdf`;
 }
 
-export function esignCertificatePath(memberId: string, packetOrDocumentId: string, version: string): string {
-  return `${legalVersionBase(memberId, packetOrDocumentId, version)}/completion-certificate.pdf`;
+export function esignCertificatePath(
+  memberId: string,
+  packetOrDocumentId: string,
+  version: string,
+  attempt?: { requestId: string; attemptId: string },
+): string {
+  return `${legalVersionBase(memberId, packetOrDocumentId, version, attempt)}/completion-certificate.pdf`;
 }
 
-export function esignMetadataPath(memberId: string, packetOrDocumentId: string, version: string): string {
-  return `${legalVersionBase(memberId, packetOrDocumentId, version)}/metadata.json`;
+export function esignMetadataPath(
+  memberId: string,
+  packetOrDocumentId: string,
+  version: string,
+  attempt?: { requestId: string; attemptId: string },
+): string {
+  return `${legalVersionBase(memberId, packetOrDocumentId, version, attempt)}/metadata.json`;
 }
 
 // ---------------------------------------------------------------------------
@@ -135,9 +159,13 @@ export class InMemoryEsignMediaProvider implements EsignMediaPort {
     storagePath: string;
     bytes: Buffer;
     contentType: string;
+    allowOverwrite?: boolean;
   }): Promise<EsignProviderResult<EsignUploadGrant>> {
     this.calls.push({ method: "putObject", storagePath: input.storagePath });
     if (!isSafeStoragePath(input.storagePath)) return refusedUnsafePath();
+    if (input.allowOverwrite === false && this.objects.has(input.storagePath)) {
+      return { ok: false, code: "REFUSED", message: "Immutable legal evidence already exists at that path." };
+    }
     // Copy the bytes so a later mutation of the caller's buffer cannot alter the
     // stored object.
     this.objects.set(input.storagePath, {
@@ -248,12 +276,13 @@ export class SupabaseEsignMediaProvider implements EsignMediaPort {
     storagePath: string;
     bytes: Buffer;
     contentType: string;
+    allowOverwrite?: boolean;
   }): Promise<EsignProviderResult<EsignUploadGrant>> {
     if (!isSafeStoragePath(input.storagePath)) return refusedUnsafePath();
     try {
       const { data, error } = await this.bucket().upload(input.storagePath, input.bytes, {
         contentType: input.contentType,
-        upsert: true,
+        upsert: input.allowOverwrite !== false,
       });
       if (error || !data) return this.failed("upload", error?.message);
       return { ok: true, value: { storagePath: input.storagePath, bytesWritten: input.bytes.length } };
@@ -317,6 +346,9 @@ export interface IngestCompletedDocumentsInput {
   media: EsignMediaPort;
   provider: string;
   completedAt: string;
+  /** Isolates native attempts so a loser can never overwrite a winner's bytes. */
+  attempt?: { requestId: string; attemptId: string };
+  allowOverwrite?: boolean;
 }
 
 export interface IngestCompletedDocumentsResult {
@@ -336,9 +368,9 @@ export interface IngestCompletedDocumentsResult {
 export async function ingestCompletedDocuments(
   input: IngestCompletedDocumentsInput,
 ): Promise<IngestCompletedDocumentsResult> {
-  const signedPdfRef = esignSignedPdfPath(input.memberId, input.packetOrDocumentId, input.version);
-  const certificateRef = esignCertificatePath(input.memberId, input.packetOrDocumentId, input.version);
-  const metadataRef = esignMetadataPath(input.memberId, input.packetOrDocumentId, input.version);
+  const signedPdfRef = esignSignedPdfPath(input.memberId, input.packetOrDocumentId, input.version, input.attempt);
+  const certificateRef = esignCertificatePath(input.memberId, input.packetOrDocumentId, input.version, input.attempt);
+  const metadataRef = esignMetadataPath(input.memberId, input.packetOrDocumentId, input.version, input.attempt);
 
   const signedPdfHash = sha256Hex(input.signedPdf.bytes);
   const certificateHash = sha256Hex(input.certificate.bytes);
@@ -368,6 +400,7 @@ export async function ingestCompletedDocuments(
     storagePath: signedPdfRef,
     bytes: input.signedPdf.bytes,
     contentType: input.signedPdf.contentType ?? "application/pdf",
+    allowOverwrite: input.allowOverwrite,
   });
   if (!storedSigned.ok) {
     throw new EsignArchiveError(`Could not store the signed document: ${storedSigned.message ?? storedSigned.code}`);
@@ -377,6 +410,7 @@ export async function ingestCompletedDocuments(
     storagePath: certificateRef,
     bytes: input.certificate.bytes,
     contentType: input.certificate.contentType ?? "application/pdf",
+    allowOverwrite: input.allowOverwrite,
   });
   if (!storedCertificate.ok) {
     throw new EsignArchiveError(
@@ -388,6 +422,7 @@ export async function ingestCompletedDocuments(
     storagePath: metadataRef,
     bytes: metadataBytes,
     contentType: "application/json",
+    allowOverwrite: input.allowOverwrite,
   });
   if (!storedMetadata.ok) {
     throw new EsignArchiveError(

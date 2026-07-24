@@ -38,8 +38,8 @@ function fixtureContext(member: MemberInfo | null, memberChecking = false): Rese
   } as ResearchContextValue;
 }
 
-function renderGate(value: ResearchContextValue) {
-  window.history.replaceState(null, "", "/research/member");
+function renderGate(value: ResearchContextValue, path = "/research/member") {
+  window.history.replaceState(null, "", path);
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
@@ -59,7 +59,15 @@ describe("member persona states (RequireMember)", () => {
   it("redirects a signed-out visitor to sign-in and renders no member content", () => {
     const view = renderGate(fixtureContext(null));
     expect(window.location.pathname).toBe("/research/sign-in");
+    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe("/research/member");
     expect(view.querySelector('[data-testid="member-content"]')).toBeNull();
+  });
+
+  it("preserves a safe protected deep link through sign-in", () => {
+    renderGate(fixtureContext(null), "/research/member/security?from=expired-session");
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(new URLSearchParams(window.location.search).get("returnTo"))
+      .toBe("/research/member/security?from=expired-session");
   });
 
   it("redirects a pending_activation member to the activation flow", () => {

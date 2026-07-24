@@ -189,6 +189,31 @@ describe("ingestCompletedDocuments", () => {
     }
   });
 
+  it("isolates native attempts and refuses immutable evidence overwrites", async () => {
+    const media = new InMemoryEsignMediaProvider();
+    const base = {
+      memberId: "member-1",
+      packetOrDocumentId: "packet-1",
+      version: "v1",
+      signedPdf: file("winner"),
+      certificate: file("winner-cert"),
+      media,
+      provider: "xenios_native",
+      completedAt: NOW.toISOString(),
+      attempt: { requestId: "11111111-1111-5111-8111-111111111111", attemptId: "attempt-1" },
+      allowOverwrite: false,
+    };
+    const winner = await ingestCompletedDocuments(base);
+    expect(winner.signedPdfRef).toContain("/attempts/11111111-1111-5111-8111-111111111111/attempt-1/");
+    await expect(ingestCompletedDocuments({ ...base, signedPdf: file("loser") })).rejects.toThrow(
+      "Immutable legal evidence already exists",
+    );
+    expect((await media.getObject(winner.signedPdfRef))).toMatchObject({
+      ok: true,
+      value: { bytes: Buffer.from("winner") },
+    });
+  });
+
   it("throws when an unsafe member id would build an unsafe path", async () => {
     const media = new InMemoryEsignMediaProvider();
     await expect(

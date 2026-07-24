@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
-import { getSupabaseBrowser, recoveryAccessTokenFromHash } from "@/lib/supabaseBrowser";
+import {
+  getSupabaseBrowser,
+  isRecoveryAccessToken,
+  recoveryAccessTokenFromHash,
+} from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
 
@@ -71,8 +75,10 @@ export default function ResetPassword() {
     recoverySessionPromiseRef.current = (async () => {
       const supabase = await getSupabaseBrowser();
       const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token ?? null : null;
-      recoveryTokenRef.current = token;
-      return token;
+      if (!recoveryTokenRef.current && token && isRecoveryAccessToken(token)) {
+        recoveryTokenRef.current = token;
+      }
+      return recoveryTokenRef.current;
     })();
   }, [mode]);
 
@@ -140,6 +146,14 @@ export default function ResetPassword() {
         return;
       }
       const recoveryAccessToken = sessionData.session.access_token;
+      if (
+        recoveryTokenRef.current !== recoveryAccessToken &&
+        !isRecoveryAccessToken(recoveryAccessToken)
+      ) {
+        clearRecovery();
+        setError("This reset link has expired or was already used. Request a new one below.");
+        return;
+      }
       recoveryTokenRef.current = recoveryAccessToken;
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) {

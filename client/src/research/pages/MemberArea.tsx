@@ -1,8 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, Redirect } from "wouter";
+import { Link, Redirect, useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { PageIntro } from "../components";
 import { useResearch } from "./../core";
+import { safeResearchReturnTo } from "../lib/member-routing";
 
 // The private member area (canonical architecture): everything here requires
 // the member's own sign-in, verified server-side on every API call. The
@@ -13,6 +14,7 @@ import { useResearch } from "./../core";
 // access only the activation flow.
 export function RequireMember({ children }: { children: ReactNode }) {
   const { member, memberChecking } = useResearch();
+  const [location] = useLocation();
   if (memberChecking) {
     return (
       <div className="container-x" style={{ paddingTop: "var(--space-hero-top)" }}>
@@ -20,7 +22,16 @@ export function RequireMember({ children }: { children: ReactNode }) {
       </div>
     );
   }
-  if (!member) return <Redirect to="/research/sign-in" />;
+  if (!member) {
+    const returnTo = safeResearchReturnTo(
+      typeof window === "undefined" ? location : `${window.location.pathname}${window.location.search}`,
+    );
+    return (
+      <Redirect
+        to={returnTo ? `/research/sign-in?returnTo=${encodeURIComponent(returnTo)}` : "/research/sign-in"}
+      />
+    );
+  }
   if (member.status !== "active") return <Redirect to="/research/activate" />;
   return <>{children}</>;
 }

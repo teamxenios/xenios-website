@@ -248,10 +248,18 @@ function MemberChrome({ children }: { children: ReactNode }) {
   );
 }
 
-// FOUNDER DECISION (2026-07-19): members recover their password from a fresh
-// browser WITHOUT the shared review password. Exactly this route renders
-// outside the gate, in minimal account chrome; it exposes no catalog, no
-// member navigation, and no application data. Everything else stays gated.
+function isResearchSignInPath(path: string): boolean {
+  try {
+    const rawPath = path.split(/[?#]/, 1)[0];
+    return decodeURIComponent(rawPath).replace(/\/+$/, "").toLowerCase() === "/research/sign-in";
+  } catch {
+    return false;
+  }
+}
+
+// Account access works from a fresh browser WITHOUT the shared review
+// password. Sign-in and password recovery render in isolated account chrome;
+// neither route exposes catalog, application, or member data.
 export default function ResearchLayout({ children }: { children: ReactNode }) {
   const { gate } = useResearch();
   const [location] = useLocation();
@@ -260,7 +268,9 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   // Use the same decoded, case-folded helper as the router, tracking guard,
   // and server headers. Plain, trailing-slash, case, and encoded forms must
   // all mount the isolated recovery experience outside the shared gate.
-  if (isResearchResetPasswordPath(location)) return <RecoveryChrome>{children}</RecoveryChrome>;
+  if (isResearchResetPasswordPath(location) || isResearchSignInPath(location)) {
+    return <RecoveryChrome>{children}</RecoveryChrome>;
+  }
   if (gate === "checking") {
     return (
       <div className="container-x" style={{ paddingTop: "var(--space-hero-top)" }}>

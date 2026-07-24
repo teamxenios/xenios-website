@@ -19,6 +19,8 @@ const OTHER_VERSION = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 const EMAIL = "member@members.test";
 const KEY = "idem-key-1";
 const REQ_ID = "native_req_1";
+const ATTEMPT_ID = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
+const INTENT_HASH = "d".repeat(64);
 const NOW = "2026-07-23T12:00:00.000Z";
 // The signed document's content hash. In the real flow the request's
 // sourceContentHashes[0] and the signature's contentHash are BOTH the version's
@@ -40,6 +42,8 @@ function evidenceRequest(over: Partial<SigningRequestRecord> = {}): SigningReque
     signerIdentifier: EMAIL,
     signingLinkStatus: "created",
     nativeCompletionState: "evidence_stored",
+    nativeAttemptId: ATTEMPT_ID,
+    nativeIntentHash: INTENT_HASH,
     viewedAt: null,
     signedAt: null,
     completedAt: null,
@@ -127,6 +131,9 @@ async function fixture(reqOver: Partial<SigningRequestRecord> = {}) {
     memberId: MEMBER,
     documentVersionId: VERSION,
     idempotencyKey: KEY,
+    requestId: req.id,
+    nativeAttemptId: ATTEMPT_ID,
+    nativeIntentHash: INTENT_HASH,
     completedRequest: completedFrom(req, sig),
     archive: archiveFrom(req),
   };
@@ -144,6 +151,9 @@ describe("createInMemoryNativeCommit: verification branches (nothing is written)
       memberId: MEMBER,
       documentVersionId: VERSION,
       idempotencyKey: KEY,
+      requestId: REQ_ID,
+      nativeAttemptId: ATTEMPT_ID,
+      nativeIntentHash: INTENT_HASH,
       completedRequest: completedFrom(evidenceRequest(), sig),
       archive: archiveFrom(evidenceRequest()),
     });

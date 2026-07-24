@@ -61,9 +61,10 @@ describe("recovery route chrome isolation", () => {
     expect(view.textContent).not.toContain("Terms");
   });
 
-  it("keeps non-recovery pre-member pages behind the shared password gate", () => {
+  it("mounts member password sign-in outside the shared gate in isolated account chrome", () => {
     const view = renderAt("/research/sign-in");
-    expect(view.querySelector('[data-testid="recovery-content"]')).toBeNull();
-    expect(view.querySelector('[data-testid="form-research-access"]')).toBeTruthy();
+    expect(view.querySelector('[data-testid="recovery-content"]')).toBeTruthy();
+    expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
+    expect(view.querySelector('a[href="/research"]')).toBeNull();
   });
 });

@@ -136,6 +136,9 @@ export interface SigningRequestRow {
   provider_event_history: unknown;
   xenios_acceptance_event_ids: unknown;
   native_completion_state: string | null;
+  native_intent_hash: string | null;
+  native_attempt_id: string | null;
+  native_attempt_expires_at: string | null;
   idempotency_key: string;
   created_at: string;
   updated_at: string;
@@ -146,7 +149,8 @@ const REQUEST_COLUMNS =
   "provider_template_version, provider_document_id, xenios_document_version_ids, source_content_hashes, " +
   "signer_identifier, signing_link_status, viewed_at, signed_at, completed_at, declined_at, expired_at, " +
   "signed_pdf_ref, certificate_ref, signed_pdf_hash, certificate_hash, verified_event_ids, " +
-  "provider_event_history, xenios_acceptance_event_ids, native_completion_state, idempotency_key, created_at, updated_at";
+  "provider_event_history, xenios_acceptance_event_ids, native_completion_state, native_intent_hash, " +
+  "native_attempt_id, native_attempt_expires_at, idempotency_key, created_at, updated_at";
 
 export function requestToRow(record: SigningRequestRecord): SigningRequestRow {
   return {
@@ -176,6 +180,9 @@ export function requestToRow(record: SigningRequestRecord): SigningRequestRow {
     provider_event_history: record.providerEventHistory.map((entry) => ({ ...entry })),
     xenios_acceptance_event_ids: [...record.xeniosAcceptanceEventIds],
     native_completion_state: record.nativeCompletionState ?? null,
+    native_intent_hash: record.nativeIntentHash ?? null,
+    native_attempt_id: record.nativeAttemptId ?? null,
+    native_attempt_expires_at: record.nativeAttemptExpiresAt ?? null,
     idempotency_key: record.idempotencyKey,
     created_at: record.createdAt,
     updated_at: record.updatedAt,
@@ -220,6 +227,9 @@ export function rowToRequest(row: SigningRequestRow): SigningRequestRecord | nul
     providerEventHistory: history,
     xeniosAcceptanceEventIds: acceptance,
     nativeCompletionState: (nativeState as SigningRequestRecord["nativeCompletionState"]) ?? null,
+    ...(row.native_intent_hash ? { nativeIntentHash: row.native_intent_hash } : {}),
+    ...(row.native_attempt_id ? { nativeAttemptId: row.native_attempt_id } : {}),
+    ...(row.native_attempt_expires_at ? { nativeAttemptExpiresAt: row.native_attempt_expires_at } : {}),
     idempotencyKey: row.idempotency_key,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -419,6 +429,28 @@ export function createInMemoryEsignStore(): EsignStore {
         .sort(byCreatedThenId)
         .map(clone);
     },
+    async storeNativeEvidence(record) {
+      const found = requestRows.get(record.id);
+      if (
+        !found ||
+        found.nativeCompletionState !== "preparing" ||
+        found.nativeAttemptId !== record.nativeAttemptId ||
+        found.nativeIntentHash !== record.nativeIntentHash
+      ) return false;
+      requestRows.set(record.id, clone(record));
+      return true;
+    },
+    async markNativeAttemptFailed(record) {
+      const found = requestRows.get(record.id);
+      if (
+        !found ||
+        found.nativeCompletionState === "completed" ||
+        found.nativeAttemptId !== record.nativeAttemptId ||
+        found.nativeIntentHash !== record.nativeIntentHash
+      ) return false;
+      requestRows.set(record.id, clone(record));
+      return true;
+    },
   };
 
   const templates: TemplateMappingStore = {
@@ -536,6 +568,32 @@ export function createSupabaseEsignStore(client: SupabaseClient = getSupabaseAdm
         .map(rowToRequest)
         .filter((r): r is SigningRequestRecord => r !== null)
         .sort(byCreatedThenId);
+    },
+    async storeNativeEvidence(record) {
+      const upd = await client
+        .from(REQUESTS_TABLE)
+        .update(requestToRow(record))
+        .eq("id", record.id)
+        .eq("native_completion_state", "preparing")
+        .eq("native_attempt_id", record.nativeAttemptId)
+        .eq("native_intent_hash", record.nativeIntentHash)
+        .select("id")
+        .maybeSingle();
+      if (upd.error) throw new Error(`native evidence update failed: ${upd.error.message}`);
+      return Boolean(upd.data);
+    },
+    async markNativeAttemptFailed(record) {
+      const upd = await client
+        .from(REQUESTS_TABLE)
+        .update(requestToRow(record))
+        .eq("id", record.id)
+        .eq("native_attempt_id", record.nativeAttemptId)
+        .eq("native_intent_hash", record.nativeIntentHash)
+        .in("native_completion_state", ["preparing", "evidence_stored"])
+        .select("id")
+        .maybeSingle();
+      if (upd.error) throw new Error(`native cleanup marker update failed: ${upd.error.message}`);
+      return Boolean(upd.data);
     },
   };
 

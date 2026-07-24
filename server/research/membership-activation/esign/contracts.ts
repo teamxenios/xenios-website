@@ -173,6 +173,9 @@ export type NativeCommitCode =
   | "request_provider_mismatch"
   | "request_mode_mismatch"
   | "signature_consent_invalid"
+  | "attempt_mismatch"
+  | "intent_mismatch"
+  | "signature_already_committed"
   | "commit_error";
 
 export interface NativeCommitInput {
@@ -181,6 +184,9 @@ export interface NativeCommitInput {
   memberId: string;
   documentVersionId: string;
   idempotencyKey: string;
+  requestId: string;
+  nativeAttemptId: string;
+  nativeIntentHash: string;
   /** The request in its completed shape (state completed, signature id bound). */
   completedRequest: SigningRequestRecord;
   /** The archive record to insert on completion. */
@@ -193,6 +199,26 @@ export type NativeCommitResult =
 
 /** The injected atomic-commit seam (Supabase RPC in production). */
 export type NativeCommitFn = (input: NativeCommitInput) => Promise<NativeCommitResult>;
+
+export interface NativeClaimInput {
+  requestId: string;
+  nativeAttemptId: string;
+  nativeIntentHash: string;
+  memberId: string;
+  documentVersionId: string;
+  sourceContentHash: string;
+  idempotencyKey: string;
+  signerIdentifier: string;
+  createdAt: string;
+  attemptExpiresAt: string;
+}
+
+export type NativeClaimResult =
+  | { ok: true; claimed: true; requestId: string; createdAt: string }
+  | { ok: true; claimed: false; code: "already_completed"; requestId: string; createdAt: string }
+  | { ok: false; code: "idempotency_conflict" | "in_progress" | "claim_error" };
+
+export type NativeClaimFn = (input: NativeClaimInput) => Promise<NativeClaimResult>;
 
 // --- Template + widget specification ---------------------------------------
 
@@ -377,6 +403,10 @@ export interface SigningRequestRecord {
    * marks uploaded objects whose signature commit failed for cleanup.
    */
   nativeCompletionState?: NativeCompletionState | null;
+  /** Canonical legal intent and the isolated storage/commit attempt. Native only. */
+  nativeIntentHash?: string | null;
+  nativeAttemptId?: string | null;
+  nativeAttemptExpiresAt?: string | null;
   /** Idempotency key so a refresh/retry never mints a duplicate request. */
   idempotencyKey: string;
   createdAt: string;
@@ -441,6 +471,10 @@ export interface SigningRequestStore {
   getByProviderDocumentId(providerDocumentId: string): Promise<SigningRequestRecord | null>;
   getByIdempotencyKey(memberId: string, idempotencyKey: string): Promise<SigningRequestRecord | null>;
   listByMember(memberId: string): Promise<readonly SigningRequestRecord[]>;
+  /** Compare-and-set preparing -> evidence_stored for the exact native attempt. */
+  storeNativeEvidence(record: SigningRequestRecord): Promise<boolean>;
+  /** Compare-and-set an unfinished exact native attempt to cleanup-required. */
+  markNativeAttemptFailed(record: SigningRequestRecord): Promise<boolean>;
 }
 
 export interface TemplateMappingStore {
@@ -488,6 +522,8 @@ export interface EsignMediaPort {
     storagePath: string;
     bytes: Buffer;
     contentType: string;
+    /** Native legal evidence is immutable and must never overwrite an object. */
+    allowOverwrite?: boolean;
   }): Promise<EsignProviderResult<EsignUploadGrant>>;
   /** Short-lived, admin-authorized signed download URL. */
   createAccessUrl(input: {

@@ -47,6 +47,7 @@ import {
   XENIOS_NATIVE_PROVIDER,
   type ArchiveRecord,
   type CompleteNativeSignatureInput,
+  type NativeClaimFn,
   type NativeCommitFn,
   type EsignMediaPort,
   type EsignStore,
@@ -54,6 +55,7 @@ import {
   type SigningRequestRecord,
 } from "./contracts";
 import { ingestCompletedDocuments, sha256Hex } from "./archive";
+import { createInMemoryNativeClaim } from "./native-claim";
 
 /** Maximum decoded size of a drawn-signature PNG. A trimmed canvas signature is
  * a few KB; this bounds a hostile payload well above any real one. */
@@ -86,6 +88,7 @@ export type NativeSignResult =
 export interface NativeEsignServiceOptions {
   now?: () => Date;
   newId?: () => string;
+  newAttemptId?: () => string;
 }
 
 export interface NativeEsignServiceDeps {
@@ -101,11 +104,15 @@ export interface NativeEsignServiceDeps {
    * the ONLY place a native SignatureRecord is inserted.
    */
   commit: NativeCommitFn;
+  /** Database-backed claim happens before PDF generation or storage writes. */
+  claim?: NativeClaimFn;
 }
 
 export class NativeEsignService {
   private readonly now: () => Date;
   private readonly newId: () => string;
+  private readonly newAttemptId: () => string;
+  private readonly claim: NativeClaimFn;
 
   constructor(
     private readonly deps: NativeEsignServiceDeps,
@@ -113,6 +120,8 @@ export class NativeEsignService {
   ) {
     this.now = options.now ?? (() => new Date());
     this.newId = options.newId ?? (() => crypto.randomUUID());
+    this.newAttemptId = options.newAttemptId ?? (() => crypto.randomUUID());
+    this.claim = deps.claim ?? createInMemoryNativeClaim(deps.store);
   }
 
   async completeNativeSignature(input: CompleteNativeSignatureInput): Promise<NativeSignResult> {
@@ -142,7 +151,7 @@ export class NativeEsignService {
       drawnBytes = png.bytes;
     }
 
-    const requestId = deterministicRequestId(memberId, idempotencyKey);
+    let requestId = deterministicRequestId(memberId, idempotencyKey);
 
     // (1) EVERY legal guard, and BUILD the signature record WITHOUT inserting
     // it. The insert happens only inside the atomic commit below.
@@ -170,6 +179,58 @@ export class NativeEsignService {
     const version = await lifecycle.getVersion(documentVersionId);
     if (!version) return { ok: false, code: "version_not_found" };
     const requiresSeparateAck = categoryDefinitionFor(version.category).requiresSeparateAcknowledgment;
+    const nativeAttemptId = this.newAttemptId();
+    const nativeIntentHash = nativeIntentHashFor(input, version.contentHash, typedLegalName, drawnBytes);
+    const claimedAt = this.now().toISOString();
+    const attemptExpiresAt = new Date(new Date(claimedAt).getTime() + 15 * 60 * 1000).toISOString();
+    let claimed;
+    try {
+      claimed = await this.claim({
+        requestId,
+        nativeAttemptId,
+        nativeIntentHash,
+        memberId,
+        documentVersionId,
+        sourceContentHash: version.contentHash,
+        idempotencyKey,
+        signerIdentifier: input.signerEmail,
+        createdAt: claimedAt,
+        attemptExpiresAt,
+      });
+    } catch {
+      return { ok: false, code: "storage_error", message: "The signing record could not be claimed." };
+    }
+    if (!claimed.ok) {
+      if (claimed.code === "in_progress") {
+        const winner = await this.waitForCompleted(memberId, documentVersionId);
+        if (winner) {
+          return {
+            ok: true,
+            request: winner,
+            replayed: true,
+            signedPdfHash: winner.signedPdfHash ?? "",
+            certificateHash: winner.certificateHash ?? "",
+          };
+        }
+      }
+      return claimed.code === "idempotency_conflict"
+        ? { ok: false, code: "idempotency_conflict" }
+        : { ok: false, code: "storage_error", message: "This agreement is already being processed." };
+    }
+    requestId = claimed.requestId;
+    if (!claimed.claimed) {
+      const completed = await store.requests.getById(requestId);
+      if (completed?.nativeCompletionState === "completed") {
+        return {
+          ok: true,
+          request: completed,
+          replayed: true,
+          signedPdfHash: completed.signedPdfHash ?? "",
+          certificateHash: completed.certificateHash ?? "",
+        };
+      }
+      return { ok: false, code: "storage_error", message: "The completed signing record could not be loaded." };
+    }
 
     // (2) signed PDF
     let signedPdf: Buffer;
@@ -188,6 +249,7 @@ export class NativeEsignService {
         signingRequestId: requestId,
       });
     } catch {
+      await this.markClaimFailed(requestId, nativeAttemptId, nativeIntentHash);
       return { ok: false, code: "pdf_generation_error", message: "The signed document could not be generated." };
     }
     const signedPdfHash = sha256Hex(signedPdf);
@@ -207,6 +269,7 @@ export class NativeEsignService {
         signedPdfSha256: signedPdfHash,
       });
     } catch {
+      await this.markClaimFailed(requestId, nativeAttemptId, nativeIntentHash);
       return {
         ok: false,
         code: "certificate_generation_error",
@@ -227,8 +290,11 @@ export class NativeEsignService {
         media,
         provider: XENIOS_NATIVE_PROVIDER,
         completedAt: signature.signedAt,
+        attempt: { requestId, attemptId: nativeAttemptId },
+        allowOverwrite: false,
       });
     } catch {
+      await this.markClaimFailed(requestId, nativeAttemptId, nativeIntentHash);
       return { ok: false, code: "storage_error", message: "The signed document could not be stored." };
     }
 
@@ -252,6 +318,9 @@ export class NativeEsignService {
       signerIdentifier: input.signerEmail,
       signingLinkStatus: "created",
       nativeCompletionState: "evidence_stored",
+      nativeIntentHash,
+      nativeAttemptId,
+      nativeAttemptExpiresAt: attemptExpiresAt,
       viewedAt: null,
       signedAt: null,
       completedAt: null,
@@ -267,16 +336,20 @@ export class NativeEsignService {
       ],
       xeniosAcceptanceEventIds: [],
       idempotencyKey,
-      createdAt: nowIso,
+      createdAt: claimed.createdAt,
       updatedAt: nowIso,
     };
-    let builtRequest: SigningRequestRecord;
+    let evidenceStored = false;
     try {
-      builtRequest = await upsertRequestRecord(store, evidence, memberId, idempotencyKey);
-    } catch (err) {
-      if (err instanceof NativeEvidenceError) return { ok: false, code: err.code, message: err.message };
-      throw err;
+      evidenceStored = await store.requests.storeNativeEvidence(evidence);
+    } catch {
+      evidenceStored = false;
     }
+    if (!evidenceStored) {
+      await this.markFailedCleanup(evidence);
+      return { ok: false, code: "storage_error", message: "The signing record could not be stored." };
+    }
+    const builtRequest = evidence;
 
     // (6) THE ATOMIC COMMIT. Insert the signature, transition the request to
     // completed, and upsert the archive as ONE transaction. On failure: NO
@@ -289,10 +362,29 @@ export class NativeEsignService {
       memberId,
       documentVersionId,
       idempotencyKey,
+      requestId,
+      nativeAttemptId,
+      nativeIntentHash,
       completedRequest,
       archive,
     });
     if (!committed.ok) {
+      // An RPC response can be lost after PostgreSQL committed. The database is
+      // authoritative: completed wins, and must never be downgraded to cleanup.
+      const authoritative = await store.requests.getById(requestId);
+      if (
+        authoritative?.nativeCompletionState === "completed" &&
+        authoritative.nativeAttemptId === nativeAttemptId &&
+        authoritative.nativeIntentHash === nativeIntentHash
+      ) {
+        return {
+          ok: true,
+          request: authoritative,
+          replayed: true,
+          signedPdfHash: authoritative.signedPdfHash ?? signedPdfHash,
+          certificateHash: authoritative.certificateHash ?? certificateHash,
+        };
+      }
       await this.markFailedCleanup(builtRequest);
       // Every atomic-commit failure surfaces as a storage error: the signature
       // did not commit, so from the member's side the completion could not be
@@ -342,11 +434,10 @@ export class NativeEsignService {
     return {
       ok: true,
       request:
-        prior ??
         replayShell(requestId, memberId, documentVersionId, signature.signedAt, idempotencyKey, signerEmail, this.now().toISOString()),
       replayed: true,
-      signedPdfHash: prior?.signedPdfHash ?? "",
-      certificateHash: prior?.certificateHash ?? "",
+      signedPdfHash: "",
+      certificateHash: "",
     };
   }
 
@@ -404,7 +495,7 @@ export class NativeEsignService {
    * agreement is unsigned and the gate is not advanced. */
   private async markFailedCleanup(evidence: SigningRequestRecord): Promise<void> {
     try {
-      await this.deps.store.requests.update({
+      await this.deps.store.requests.markNativeAttemptFailed({
         ...evidence,
         nativeCompletionState: "failed_cleanup_required",
         updatedAt: this.now().toISOString(),
@@ -412,6 +503,36 @@ export class NativeEsignService {
     } catch {
       // best effort; the request already carries a non-completed state
     }
+  }
+
+  private async markClaimFailed(requestId: string, attemptId: string, intentHash: string): Promise<void> {
+    try {
+      const request = await this.deps.store.requests.getById(requestId);
+      if (!request) return;
+      await this.deps.store.requests.markNativeAttemptFailed({
+        ...request,
+        nativeAttemptId: attemptId,
+        nativeIntentHash: intentHash,
+        nativeCompletionState: "failed_cleanup_required",
+        updatedAt: this.now().toISOString(),
+      });
+    } catch {
+      // Best effort; the live-attempt uniqueness still prevents a second writer.
+    }
+  }
+
+  private async waitForCompleted(memberId: string, documentVersionId: string): Promise<SigningRequestRecord | null> {
+    for (let attempt = 0; attempt < 40; attempt += 1) {
+      const completed = (await this.deps.store.requests.listByMember(memberId)).find(
+        (request) =>
+          request.provider === XENIOS_NATIVE_PROVIDER &&
+          request.xeniosDocumentVersionIds[0] === documentVersionId &&
+          request.nativeCompletionState === "completed",
+      );
+      if (completed) return completed;
+      await new Promise<void>((resolve) => setTimeout(resolve, 25));
+    }
+    return null;
   }
 
   /** Find the native request for this member+version (by key first, else any
@@ -425,68 +546,40 @@ export class NativeEsignService {
     if (byKey && byKey.xeniosDocumentVersionIds[0] === documentVersionId) return byKey;
     const all = await this.deps.store.requests.listByMember(memberId);
     return all.find(
-      (r) => r.provider === XENIOS_NATIVE_PROVIDER && r.xeniosDocumentVersionIds[0] === documentVersionId,
+      (r) =>
+        r.provider === XENIOS_NATIVE_PROVIDER &&
+        r.xeniosDocumentVersionIds[0] === documentVersionId &&
+        r.nativeCompletionState === "completed",
     );
-  }
-}
-
-/** Thrown from inside evidence persistence so the caller maps it to a precise
- * result code without inserting a signature. */
-class NativeEvidenceError extends Error {
-  constructor(
-    public readonly code: NativeSignFailureCode,
-    message: string,
-  ) {
-    super(message);
-    this.name = "NativeEvidenceError";
   }
 }
 
 /** Deterministic request id from (member, idempotency key): a retry produces the
  * same id, so it upserts one row rather than orphaning a new one. */
-function deterministicRequestId(memberId: string, idempotencyKey: string): string {
-  return "native_" + sha256Hex(Buffer.from(`${memberId}:${idempotencyKey}`, "utf8")).slice(0, 32);
+export function deterministicRequestId(memberId: string, idempotencyKey: string): string {
+  const hex = sha256Hex(Buffer.from(`${memberId}:${idempotencyKey}`, "utf8")).slice(0, 32).split("");
+  hex[12] = "5";
+  hex[16] = ((parseInt(hex[16]!, 16) & 0x3) | 0x8).toString(16);
+  const value = hex.join("");
+  return `${value.slice(0, 8)}-${value.slice(8, 12)}-${value.slice(12, 16)}-${value.slice(16, 20)}-${value.slice(20)}`;
 }
 
-/**
- * Persist the signing-request evidence row idempotently and race-tolerantly.
- * A prior row (retry) is updated; a concurrent racer that inserted first is
- * detected by re-fetching after a failed insert and updated instead. A genuine
- * store outage (no row appears) throws so the commit never runs.
- */
-async function upsertRequestRecord(
-  store: EsignStore,
-  request: SigningRequestRecord,
-  memberId: string,
-  idempotencyKey: string,
-): Promise<SigningRequestRecord> {
-  const prior = await store.requests.getByIdempotencyKey(memberId, idempotencyKey);
-  if (prior) {
-    // A prior row that already completed must NOT be reopened to evidence_stored.
-    if (prior.nativeCompletionState === "completed") return prior;
-    await store.requests.update({ ...request, id: prior.id, createdAt: prior.createdAt });
-    return { ...request, id: prior.id, createdAt: prior.createdAt };
-  }
-  try {
-    await store.requests.insert(request);
-    return request;
-  } catch {
-    // Either a concurrent racer inserted this (member, idempotencyKey) first, or
-    // the store is down. Re-fetch: if the row now exists it was the race, so
-    // reconcile to it; otherwise the store genuinely failed.
-    const winner = await store.requests.getByIdempotencyKey(memberId, idempotencyKey);
-    if (winner) {
-      if (winner.nativeCompletionState !== "completed") {
-        try {
-          await store.requests.update({ ...request, id: winner.id, createdAt: winner.createdAt });
-        } catch {
-          // best effort; the winner row already carries this document's evidence
-        }
-      }
-      return { ...request, id: winner.id, createdAt: winner.createdAt };
-    }
-    throw new NativeEvidenceError("storage_error", "The signing record could not be stored.");
-  }
+function nativeIntentHashFor(
+  input: CompleteNativeSignatureInput,
+  sourceContentHash: string,
+  typedLegalName: string,
+  drawnBytes: Buffer | null,
+): string {
+  return sha256Hex(Buffer.from(JSON.stringify({
+    documentVersionId: input.document.documentVersionId,
+    sourceContentHash,
+    typedLegalName,
+    method: input.evidence.method,
+    drawnHash: drawnBytes ? sha256Hex(drawnBytes) : null,
+    fullDocumentShown: input.document.fullDocumentShown,
+    affirmativeConsent: input.document.affirmativeConsent,
+    separateAcknowledgment: input.document.separateAcknowledgment === true,
+  }), "utf8"));
 }
 
 /** A minimal completed-request view for a replay where the signature exists but

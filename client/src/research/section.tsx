@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, type ComponentType, type ReactNode } from "react";
 import { Link, Redirect, Route, Switch } from "wouter";
-import { ResearchProvider } from "./core";
+import { ResearchProvider, useResearch } from "./core";
 import ResearchLayout from "./layout";
 import Gateway from "./pages/Gateway";
 import Apply from "./pages/Apply";
@@ -31,6 +31,13 @@ const ActivationPage = lazy(() => import("./pages/ActivationPage"));
 // static false in production, the whole branch is dead code and the chunk is
 // never generated.
 const DevGallery = import.meta.env.DEV ? lazy(() => import("./gallery")) : null;
+
+export function LegacyMemberWelcome() {
+  const { member, memberChecking } = useResearch();
+  if (memberChecking) return <ResearchLoadingState label="Checking your membership" />;
+  if (!member) return <Redirect to="/research/sign-in" />;
+  return <Redirect to={member.status === "active" ? "/research/member" : "/research/activate"} />;
+}
 
 // Member deep area
 const MemberDashboard = lazy(() => import("./pages/member/Dashboard"));
@@ -135,7 +142,7 @@ export default function ResearchSection() {
           <Route path="/research/sign-in" component={SignIn} />
           <Route path="/research/reset-password" component={ResetPassword} />
           <Route path="/research/activate">{() => <L component={ActivationPage} />}</Route>
-          <Route path="/research/member/welcome"><Redirect to="/research/activate" /></Route>
+          <Route path="/research/member/welcome" component={LegacyMemberWelcome} />
           <Route path="/research/support">{() => <L component={Support} />}</Route>
           <Route path="/research/privacy">{() => <L component={LegalPage} props={{ kind: "privacy" }} />}</Route>
           <Route path="/research/terms">{() => <L component={LegalPage} props={{ kind: "terms" }} />}</Route>
