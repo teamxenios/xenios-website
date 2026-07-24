@@ -365,6 +365,9 @@ export type FoundingActivationErrorCode =
   | "not_found"
   | "already_verified"
   | "amount_mismatch"
+  | "method_mismatch"
+  | "commit_failed"
+  | "commit_state_uncertain"
   | "already_exists"
   | "already_extended";
 
@@ -640,16 +643,23 @@ export function canVerify(role: string): boolean {
 
 export function validateVerification(verification: AdminVerification): string[] {
   const errors: string[] = [];
+  const validDateOnly = (value: string): boolean => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const parsed = new Date(`${value}T00:00:00.000Z`);
+    return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+  };
   if (!Number.isInteger(verification.amountReceivedCents) || verification.amountReceivedCents <= 0) {
     errors.push("amountReceivedCents must be a positive integer");
   }
-  if (!verification.dateReceived) errors.push("dateReceived is required");
+  if (!validDateOnly(verification.dateReceived)) errors.push("dateReceived must be a valid YYYY-MM-DD date");
   if (!verification.receivingDestinationRef) errors.push("receivingDestinationRef is required");
   if (!verification.methodId) errors.push("methodId is required");
   if (verification.externalRef !== null && typeof verification.externalRef !== "string") {
     errors.push("externalRef must be a string or explicitly null");
   }
-  if (!verification.reconciliationDate) errors.push("reconciliationDate is required");
+  if (!validDateOnly(verification.reconciliationDate)) {
+    errors.push("reconciliationDate must be a valid YYYY-MM-DD date");
+  }
   if (verification.note !== null && typeof verification.note !== "string") {
     errors.push("note must be a string or explicitly null");
   }

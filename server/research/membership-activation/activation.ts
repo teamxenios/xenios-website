@@ -40,7 +40,10 @@ import {
   findDuplicateExternalRefs,
   migrateObligationMethod,
   newId,
+  newHumanRef,
   recordMemberSubmission,
+  sha256Hex,
+  snapshotCurrentAgreements,
   transitionObligation,
   validateVerification,
   type AdminIdentity,
@@ -224,6 +227,47 @@ export interface ActivationResult {
   replayed: boolean;
 }
 
+export interface AtomicActivationCommitInput {
+  admin: AdminIdentity;
+  obligationId: string;
+  fields: AdminVerificationInput;
+  idempotencyKey: string;
+  verifiedAt: string;
+  renewalHumanRef: string;
+  renewalAgreements: ObligationRecord["agreements"];
+  ipHash: string | null;
+  userAgentHash: string | null;
+}
+
+export type AtomicActivationCommitResult =
+  | {
+      ok: true;
+      replayed: boolean;
+      obligationId: string;
+      periodId: string;
+      renewalObligationId: string;
+      receiptId: string;
+      ledgerEntryId: string;
+      effectiveAt: string;
+    }
+  | {
+      ok: false;
+      code:
+        | "not_found"
+        | "already_verified"
+        | "illegal_transition"
+        | "validation_failed"
+        | "amount_mismatch"
+        | "method_mismatch"
+        | "not_permitted"
+        | "commit_failed"
+        | "commit_state_uncertain";
+    };
+
+export type AtomicActivationCommitFn = (
+  input: AtomicActivationCommitInput,
+) => Promise<AtomicActivationCommitResult>;
+
 export interface ActivationServiceDeps {
   obligations?: ObligationsStore;
   periods?: PeriodsStore;
@@ -232,6 +276,7 @@ export interface ActivationServiceDeps {
   receipts?: ReceiptIssuer;
   idempotency?: IdempotencyStore;
   tx?: TransactionRunner;
+  atomicCommit?: AtomicActivationCommitFn;
   now?: () => Date;
 }
 
@@ -262,6 +307,7 @@ export function createActivationService(deps: ActivationServiceDeps = {}) {
   const receipts = deps.receipts ?? createInMemoryReceipts();
   const idempotency = deps.idempotency ?? new InMemoryIdempotencyStore();
   const tx = deps.tx ?? sequentialTransactionRunner;
+  const atomicCommit = deps.atomicCommit;
   const now = deps.now ?? (() => new Date());
 
   async function mustLoad(obligationId: string): Promise<ObligationRecord> {
@@ -356,6 +402,110 @@ export function createActivationService(deps: ActivationServiceDeps = {}) {
       if (!idempotencyKey) {
         throw new FoundingActivationError("validation_failed", "An idempotency key is required.");
       }
+      if (atomicCommit) {
+        const record = await mustLoad(obligationId);
+        if (record.type !== "activation_50") {
+          throw new FoundingActivationError(
+            "validation_failed",
+            "This obligation is a renewal; verify it through the renewal service.",
+          );
+        }
+        const at = now();
+        const verification: AdminVerification = { ...fields, verifiedAt: at.toISOString() };
+        const errors = validateVerification(verification);
+        if (errors.length > 0) {
+          throw new FoundingActivationError(
+            "validation_failed",
+            "The verification is incomplete; every field and the explicit confirmation are required.",
+            errors,
+          );
+        }
+        if (verification.amountReceivedCents !== record.expectedAmountCents) {
+          throw new FoundingActivationError(
+            "amount_mismatch",
+            "The amount received does not match the amount due; record a mismatch instead of verifying.",
+          );
+        }
+        if (
+          verification.methodId !== record.method.methodId ||
+          verification.methodId !== record.submission?.methodId
+        ) {
+          throw new FoundingActivationError(
+            "method_mismatch",
+            "The received method does not match the submitted activation obligation.",
+          );
+        }
+
+        const committed = await atomicCommit({
+          admin,
+          obligationId,
+          fields,
+          idempotencyKey,
+          verifiedAt: at.toISOString(),
+          renewalHumanRef: newHumanRef(),
+          renewalAgreements: snapshotCurrentAgreements(at),
+          ipHash: admin.ip ? sha256Hex(admin.ip) : null,
+          userAgentHash: admin.userAgent ? sha256Hex(admin.userAgent) : null,
+        });
+        if (!committed.ok) {
+          const messages: Record<
+            Extract<AtomicActivationCommitResult, { ok: false }>["code"],
+            string
+          > = {
+            not_found: "No obligation with that id.",
+            already_verified: "This payment was already verified.",
+            illegal_transition: "The payment report is no longer awaiting verification.",
+            validation_failed: "The verification fields were refused.",
+            amount_mismatch: "The amount received does not match the amount due.",
+            method_mismatch: "The received method does not match the submitted activation obligation.",
+            not_permitted: "Only an authorized administrator may verify payment.",
+            commit_failed: "The verification could not be committed. No records were changed.",
+            commit_state_uncertain:
+              "The verification result could not be confirmed. Reload the queue before trying again.",
+          };
+          throw new FoundingActivationError(committed.code, messages[committed.code]);
+        }
+
+        let obligation: ObligationRecord | null;
+        let period: MembershipPeriodRecord | null;
+        let renewalObligation: ObligationRecord | null;
+        let receipt: ReceiptRecord | null;
+        let ledgerEntries: LedgerEntry[];
+        let membershipState: MembershipState;
+        try {
+          [obligation, period, renewalObligation, receipt, ledgerEntries, membershipState] =
+            await Promise.all([
+              obligations.get(committed.obligationId),
+              periods.get(committed.periodId),
+              obligations.get(committed.renewalObligationId),
+              receipts.findByObligation(committed.obligationId),
+              ledger.listByObligation(committed.obligationId),
+              membership.getState(record.memberId),
+            ]);
+        } catch {
+          throw new FoundingActivationError(
+            "commit_state_uncertain",
+            "The verification result could not be confirmed. Reload the queue before trying again.",
+          );
+        }
+        const ledgerEntry = ledgerEntries.find((entry) => entry.entryId === committed.ledgerEntryId);
+        if (!obligation || !period || !renewalObligation || !receipt || !ledgerEntry) {
+          throw new FoundingActivationError(
+            "commit_state_uncertain",
+            "The verification result could not be confirmed. Reload the queue before trying again.",
+          );
+        }
+        return {
+          obligation,
+          period,
+          renewalObligation,
+          receipt,
+          ledgerEntryId: ledgerEntry.entryId,
+          portalUnlock: { memberId: record.memberId, effectiveAt: committed.effectiveAt },
+          membership: membershipState,
+          replayed: committed.replayed,
+        };
+      }
       const outcome = await idempotency.once(
         `fm_activation_verify:${obligationId}`,
         idempotencyKey,
@@ -393,6 +543,15 @@ export function createActivationService(deps: ActivationServiceDeps = {}) {
             throw new FoundingActivationError(
               "amount_mismatch",
               "The amount received does not match the amount due; record a mismatch instead of verifying.",
+            );
+          }
+          if (
+            verification.methodId !== record.method.methodId ||
+            verification.methodId !== record.submission?.methodId
+          ) {
+            throw new FoundingActivationError(
+              "method_mismatch",
+              "The received method does not match the submitted activation obligation.",
             );
           }
 

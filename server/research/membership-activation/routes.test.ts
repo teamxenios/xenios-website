@@ -842,7 +842,7 @@ describe("state 3: the full happy path over HTTP", () => {
 
     // The verification: every field, explicit confirmation, idempotency key.
     const verified = await request(ctx.app)
-      .post(`/api/admin/research/activation/queue/${obligationId}/verify`)
+      .post(`/api/admin/research/activation/queue/${xeniosRef}/verify`)
       .set(ADMIN_HEADER, "yes")
       .send(VERIFY_BODY);
     expect(verified.status).toBe(200);

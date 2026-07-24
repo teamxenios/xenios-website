@@ -396,9 +396,13 @@ function VerifyDialog({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const amountCents = Math.round(Number.parseFloat(amount || "0") * 100);
+  const amountMatch = amount.trim().match(/^(\d+)(?:\.(\d{1,2}))?$/);
+  const amountCents = amountMatch
+    ? Number(amountMatch[1]) * 100 + Number((amountMatch[2] ?? "").padEnd(2, "0"))
+    : null;
   const ready =
-    Number.isInteger(amountCents) &&
+    amountCents !== null &&
+    Number.isSafeInteger(amountCents) &&
     amountCents > 0 &&
     dateReceived.trim().length > 0 &&
     receivingDestinationRef.trim().length > 0 &&
@@ -416,7 +420,7 @@ function VerifyDialog({
       membership?: { status: string };
       period?: { endsAt: string };
     }>(token, entry.obligationId, {
-      amountReceivedCents: amountCents,
+       amountReceivedCents: amountCents!,
       dateReceived: dateReceived.trim(),
       receivingDestinationRef: receivingDestinationRef.trim(),
       methodId: methodId.trim(),
@@ -433,15 +437,29 @@ function VerifyDialog({
       );
       return;
     }
+    if (res.kind === "unauthorized" || res.kind === "forbidden") {
+      setError("Session expired. Sign in again.");
+      return;
+    }
     if (res.kind === "denied") {
       setError(
-        res.code === "amount_mismatch"
+        res.code === "already_verified"
+            ? "The payment was already verified. Reload the queue to see its current state."
+            : res.code === "illegal_transition"
+              ? "The payment report is no longer awaiting verification."
+              : res.code === "amount_mismatch"
           ? "The amount received does not match the expected amount. Nothing moved; use Mark mismatch if the member sent the wrong amount."
-          : res.code === "identity_not_verified"
-            ? "The manual identity review has not verified this member yet. Complete it below first."
-            : res.code === "agreements_unsatisfied"
-              ? "The member's required agreements are not satisfied yet."
-              : (res.message ?? "The verification was refused."),
+                : res.code === "method_mismatch"
+                  ? "The selected payment method does not match the submitted report."
+                  : res.code === "commit_failed"
+                    ? "The verification could not be committed. No records were changed."
+                    : res.code === "commit_state_uncertain"
+                      ? "The verification result could not be confirmed. Reload the queue before trying again."
+                      : res.code === "identity_not_verified"
+                        ? "The manual identity review has not verified this member yet. Complete it below first."
+                        : res.code === "agreements_unsatisfied"
+                          ? "The member's required agreements are not satisfied yet."
+                          : (res.message ?? "The verification was refused."),
       );
       return;
     }
