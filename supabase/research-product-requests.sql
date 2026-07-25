@@ -131,6 +131,17 @@ create table if not exists public.research_product_request_events (
   unique (request_id, dedupe_key)
 );
 
+-- Browser roles must never receive direct table access. The application server
+-- is the sole data plane and uses the service role after its own member/admin
+-- authorization checks. RLS remains enabled as a second, fail-closed boundary.
+revoke all privileges on table
+  public.research_product_demand_candidates,
+  public.research_product_requests,
+  public.research_product_request_files,
+  public.research_product_request_storage_cleanup,
+  public.research_product_request_events
+from public, anon, authenticated;
+
 create or replace function public.research_reject_product_request_event_mutation()
 returns trigger
 language plpgsql
@@ -139,6 +150,9 @@ begin
   raise exception 'research_product_request_events is append-only';
 end;
 $$;
+
+revoke all on function public.research_reject_product_request_event_mutation()
+from public, anon, authenticated;
 
 drop trigger if exists research_product_request_events_append_only
   on public.research_product_request_events;
