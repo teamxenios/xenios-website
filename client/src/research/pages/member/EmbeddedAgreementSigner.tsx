@@ -27,6 +27,8 @@ export interface EmbeddedAgreementSignerProps {
   token: string | null;
   /** Called once, when every required agreement has been signed. */
   onAllComplete: () => void;
+  /** Consent is its own authoritative workflow step; reload as soon as it lands. */
+  autoAdvanceAfterSign?: boolean;
 }
 
 /** A stable per-attempt token so a retry replays instead of double-signing. */
@@ -56,6 +58,7 @@ export default function EmbeddedAgreementSigner({
   agreements,
   token,
   onAllComplete,
+  autoAdvanceAfterSign = false,
 }: EmbeddedAgreementSignerProps) {
   const total = agreements.length;
 
@@ -130,6 +133,7 @@ export default function EmbeddedAgreementSigner({
         total={total}
         hasNext={hasNext}
         token={token}
+        autoAdvanceAfterSign={autoAdvanceAfterSign}
         onSigned={() => handleSigned(current.documentVersionId)}
         onCapabilityDisabled={() => setNotEnabled(true)}
       />
@@ -147,6 +151,7 @@ function AgreementStep({
   total,
   hasNext,
   token,
+  autoAdvanceAfterSign,
   onSigned,
   onCapabilityDisabled,
 }: {
@@ -155,6 +160,7 @@ function AgreementStep({
   total: number;
   hasNext: boolean;
   token: string | null;
+  autoAdvanceAfterSign: boolean;
   onSigned: () => void;
   onCapabilityDisabled: () => void;
 }) {
@@ -242,6 +248,10 @@ function AgreementStep({
 
     // A replay returns ok with replayed:true; both are success.
     if (res.kind === "ok") {
+      if (autoAdvanceAfterSign) {
+        onSigned();
+        return;
+      }
       setSigned(true);
       return;
     }

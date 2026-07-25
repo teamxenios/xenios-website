@@ -22,6 +22,7 @@ import {
   assertEmailPayloadSafe,
   type FoundingEmailTemplate,
 } from "./membership-activation/emails";
+import { runAgreementPackageReconciler } from "./agreement-package-reconciliation";
 
 // ---------------------------------------------------------------------------
 // Durable notification outbox (Mega 1 sections 3-4). Every notification is a
@@ -85,6 +86,15 @@ export const RESEARCH_SENDER_DEFAULT = "Xenios Research <research@xeniostechnolo
 export const RESEARCH_REPLY_TO_DEFAULT = "research@xeniostechnology.com";
 
 const FOUNDING_EMAIL_SIGNOFF = "Xenios Research\nresearch@xeniostechnology.com";
+const SITE_URL_DEFAULT = "https://xeniostechnology.com";
+
+/** Historical per-document notices are deliberately retired. Keeping their
+ * templates readable lets an already-queued row finish without retrying
+ * forever, but dispatch acknowledges it without contacting the provider. */
+export const SUPPRESSED_PER_DOCUMENT_AGREEMENT_TEMPLATES: ReadonlySet<string> = new Set([
+  "fm_esign_completed_member",
+  "fm_admin_esign_completed",
+]);
 
 // ISO-8601 payload values read as instants and render human-readable;
 // everything else (amounts, references, labels) is inserted as-is.
@@ -102,6 +112,26 @@ function fillPlaceholders(line: string, payload: Record<string, unknown>): strin
   );
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function safeAccountActionUrl(path: string): string {
+  let base = SITE_URL_DEFAULT;
+  try {
+    const configured = new URL(process.env.SITE_URL?.trim() || SITE_URL_DEFAULT);
+    if (configured.protocol === "https:") base = configured.origin;
+  } catch {
+    // A malformed deployment override cannot put an untrusted link in email.
+  }
+  return new URL(path, `${base}/`).toString();
+}
+
 /**
  * Render one fm_* template to subject + text, or null when the key is not a
  * founding template (the caller falls through to the other dispatch branches,
@@ -111,13 +141,26 @@ function fillPlaceholders(line: string, payload: Record<string, unknown>): strin
 export function renderFoundingEmail(
   templateKey: string,
   payload: Record<string, unknown>,
-): { subject: string; text: string } | null {
+): { subject: string; text: string; html?: string } | null {
   const template = FOUNDING_TEMPLATES_BY_KEY.get(templateKey);
   if (!template) return null;
   assertEmailPayloadSafe(payload);
   const subject = fillPlaceholders(template.subject, payload);
   const body = template.bodyLines.map((line) => fillPlaceholders(line, payload)).join("\n\n");
-  return { subject, text: `${body}\n\n${FOUNDING_EMAIL_SIGNOFF}` };
+  if (!template.action) return { subject, text: `${body}\n\n${FOUNDING_EMAIL_SIGNOFF}` };
+
+  const actionUrl = safeAccountActionUrl(template.action.path);
+  const text = `${body}\n\n${template.action.label}: ${actionUrl}\n\n${FOUNDING_EMAIL_SIGNOFF}`;
+  const paragraphs = template.bodyLines
+    .map((line) => `<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(fillPlaceholders(line, payload)).replace(/\n/g, "<br>")}</p>`)
+    .join("");
+  const html =
+    `<div style="font-family:Arial,sans-serif;color:#171717;max-width:620px;margin:0 auto;">` +
+    `${paragraphs}` +
+    `<p style="margin:24px 0;"><a href="${escapeHtml(actionUrl)}" style="display:inline-block;background:#171717;color:#fff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;">${escapeHtml(template.action.label)}</a></p>` +
+    `<p style="margin:24px 0 0;color:#5f5f5f;line-height:1.5;">Xenios Research<br>research@xeniostechnology.com</p>` +
+    `</div>`;
+  return { subject, text, html };
 }
 
 // Sender and reply-to per config: the research overrides win, else the spec
@@ -127,18 +170,24 @@ export async function sendFoundingEmail(input: {
   to: string;
   subject: string;
   text: string;
+  html?: string;
+  idempotencyKey?: string;
 }): Promise<{ ok: boolean; providerId: string | null; error?: string }> {
   try {
     const r = await getResendClient();
     const from = process.env.RESEARCH_EMAIL_FROM?.trim() || RESEARCH_SENDER_DEFAULT;
     const replyTo = process.env.RESEARCH_EMAIL_REPLY_TO?.trim() || RESEARCH_REPLY_TO_DEFAULT;
-    const { data, error } = await r.client.emails.send({
+    const message = {
       from,
       to: input.to,
       subject: input.subject,
       text: input.text,
+      ...(input.html ? { html: input.html } : {}),
       replyTo,
-    });
+    };
+    const { data, error } = input.idempotencyKey
+      ? await r.client.emails.send(message, { idempotencyKey: input.idempotencyKey })
+      : await r.client.emails.send(message);
     if (error) {
       return {
         ok: false,
@@ -227,6 +276,9 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
         });
         break;
       default: {
+        if (SUPPRESSED_PER_DOCUMENT_AGREEMENT_TEMPLATES.has(job.template_key)) {
+          return { ok: true, providerId: null };
+        }
         // Founding-membership (fm_*) templates render from the emails.ts data
         // catalog and send with the research identity. A payload that smells
         // like receiving instructions throws EmailPayloadRefused, which the
@@ -237,6 +289,10 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
             to: job.recipient,
             subject: founding.subject,
             text: founding.text,
+            html: founding.html,
+            // Resend deduplicates a reclaimed job after a process crash between
+            // provider acceptance and the local status='sent' update.
+            idempotencyKey: String(job.event_key),
           });
         }
         // Member-platform templates share this ONE durable dispatch path. The
@@ -351,6 +407,18 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
   const result = { sent: 0, retried: 0, failed: 0 };
   if (!supabaseConfigured()) return result;
 
+  // Materialize any agreement-package candidates captured atomically with a
+  // legal acceptance before claiming email jobs. This is restart-safe.
+  try {
+    await runAgreementPackageReconciler();
+  } catch (error) {
+    // A legal-package reconciliation fault must remain visible, but it must
+    // not starve unrelated due notification jobs.
+    console.error(
+      "[outbox] agreement package reconciliation failed:",
+      error instanceof Error ? error.message : "unknown",
+    );
+  }
   await reclaimStaleProcessing(now);
 
   const { data: due, error } = await getSupabaseAdmin()

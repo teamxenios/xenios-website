@@ -1,24 +1,24 @@
-import { getResendClient, TEAM_EMAIL } from "../services/email";
+import { getResendClient } from "../services/email";
 
 // xenios research membership lifecycle emails (Phase 4 set).
 // Tone per spec: calm, direct, premium, no emojis, no urgency. Every send is
 // best-effort: a missing Resend configuration must never fail the API call.
 //
 // Sender identity: the canonical member-facing sender is
-// research@xeniostechnology.com. RESEARCH_EMAIL_FROM overrides it; a
-// configured FROM_EMAIL (the site-wide sender) is honored next so existing
-// deployments keep their verified sender until Samuel switches.
+// research@xeniostechnology.com. Research-specific overrides are allowed, but
+// the unrelated site-wide sender is never a fallback for Research mail.
 
 const SITE = process.env.SITE_URL || "https://xeniostechnology.com";
 const RESEARCH_FROM_DEFAULT = "Xenios Research <research@xeniostechnology.com>";
+const RESEARCH_REPLY_TO_DEFAULT = "research@xeniostechnology.com";
 
 export type SendResult = { ok: boolean; id: string | null; errorCode?: string | null };
 
 async function send(to: string, subject: string, text: string): Promise<SendResult> {
   try {
     const r = await getResendClient();
-    const from = process.env.RESEARCH_EMAIL_FROM?.trim() || r.fromEmail || RESEARCH_FROM_DEFAULT;
-    const replyTo = process.env.RESEARCH_EMAIL_REPLY_TO?.trim() || r.replyToEmail || undefined;
+    const from = process.env.RESEARCH_EMAIL_FROM?.trim() || RESEARCH_FROM_DEFAULT;
+    const replyTo = process.env.RESEARCH_EMAIL_REPLY_TO?.trim() || RESEARCH_REPLY_TO_DEFAULT;
     // The Resend SDK reports API rejections via the error field WITHOUT
     // throwing; treating a non-throw as success recorded provider failures
     // as "sent". Inspect the result.
@@ -27,7 +27,7 @@ async function send(to: string, subject: string, text: string): Promise<SendResu
       to,
       subject,
       text,
-      ...(replyTo ? { replyTo } : {}),
+      replyTo,
     });
     if (error) {
       console.warn("[research emails] provider rejected send:", (error as any)?.message ?? "unknown error");
@@ -139,9 +139,8 @@ xenios`,
 }
 
 // Internal admin alert. The recipient comes from the caller (the outbox job's
-// recipient column, fanned out per configured admin); TEAM_EMAIL is only the
-// last-resort fallback. Hardcoding the recipient here previously sent every
-// alert to team@ regardless of ADMIN_EMAIL / RESEARCH_NOTIFICATION_EMAILS.
+// recipient column, fanned out per configured admin); the canonical Research
+// inbox is only the last-resort fallback.
 export async function sendInternalApplicationAlert(input: {
   to?: string;
   email: string;
@@ -151,7 +150,7 @@ export async function sendInternalApplicationAlert(input: {
 }) {
   const resubmitted = input.kind === "resubmitted";
   return send(
-    input.to || TEAM_EMAIL,
+    input.to || RESEARCH_REPLY_TO_DEFAULT,
     resubmitted
       ? `Research application resubmitted: ${input.name}`
       : `New research membership application: ${input.name}`,

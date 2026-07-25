@@ -3,7 +3,9 @@ import {
   EmailPayloadRefused,
   FOUNDING_EMAIL_TEMPLATES,
   FOUNDING_EMAIL_TEMPLATE_KEYS,
+  agreementPackageEmailEventKey,
   assertEmailPayloadSafe,
+  enqueueAgreementPackageEmail,
   enqueueDueRenewalNotices,
   enqueueFoundingEmail,
   foundingEmailEventKey,
@@ -14,13 +16,13 @@ import { NO_AUTOMATIC_BILLING_CONTRACT, renewalNoticeSchedule } from "./renewals
 import { createObligation } from "./obligations";
 
 // ---------------------------------------------------------------------------
-// The 27-template catalog
+// The 29-template catalog
 // ---------------------------------------------------------------------------
 
 describe("the founding email catalog", () => {
-  it("carries exactly the 27 spec templates, unique, all fm_-prefixed", () => {
-    expect(FOUNDING_EMAIL_TEMPLATES).toHaveLength(27);
-    expect(new Set(FOUNDING_EMAIL_TEMPLATE_KEYS).size).toBe(27);
+  it("carries exactly the 29 registered templates, unique, all fm_-prefixed", () => {
+    expect(FOUNDING_EMAIL_TEMPLATES).toHaveLength(29);
+    expect(new Set(FOUNDING_EMAIL_TEMPLATE_KEYS).size).toBe(29);
     for (const template of FOUNDING_EMAIL_TEMPLATES) {
       expect(template.key.startsWith("fm_")).toBe(true);
       expect(["member", "admin"]).toContain(template.audience);
@@ -29,9 +31,12 @@ describe("the founding email catalog", () => {
     }
   });
 
-  it("keeps admin-audience templates to exactly the records notifications", () => {
+  it("keeps admin-audience templates to the historical and consolidated records notifications", () => {
     const admin = FOUNDING_EMAIL_TEMPLATES.filter((t) => t.audience === "admin");
-    expect(admin.map((t) => t.key)).toEqual(["fm_admin_esign_completed"]);
+    expect(admin.map((t) => t.key)).toEqual([
+      "fm_admin_esign_completed",
+      "fm_admin_agreement_package_completed",
+    ]);
   });
 
   it("includes every renewal notice template the renewals.ts schedule defines", () => {
@@ -106,6 +111,45 @@ describe("assertEmailPayloadSafe", () => {
         subjectId: "ob-1",
       }),
     ).rejects.toThrow("Unknown founding email template");
+  });
+});
+
+describe("required-agreement package completion email identity", () => {
+  it("derives the exact stable key per member, package version, and audience", () => {
+    expect(agreementPackageEmailEventKey("member", "member-1", "package-v2")).toBe(
+      "research_agreement_package_completed_member:member-1:package-v2",
+    );
+    expect(agreementPackageEmailEventKey("admin", "member-1", "package-v2")).toBe(
+      "research_agreement_package_completed_admin:member-1:package-v2",
+    );
+  });
+
+  it("enqueues only the consolidated template and preserves the stable key on replay", async () => {
+    const rows: FoundingEmailEnqueueInput[] = [];
+    const enqueue = async (input: FoundingEmailEnqueueInput) => {
+      rows.push(input);
+      return true;
+    };
+    const input = {
+      audience: "member" as const,
+      memberId: "member-1",
+      packageVersion: "package-v2",
+      recipient: "member@example.test",
+      payload: {
+        completedAt: "2026-07-25T19:00:00.000Z",
+        agreementList: "• Research Agreement — version 2.0.0",
+      },
+    };
+    await enqueueAgreementPackageEmail(enqueue, input);
+    await enqueueAgreementPackageEmail(enqueue, input);
+    expect(rows).toHaveLength(2);
+    expect(rows[0]).toEqual(rows[1]);
+    expect(rows[0]).toMatchObject({
+      eventKey: "research_agreement_package_completed_member:member-1:package-v2",
+      eventType: "research_agreement_package_completed",
+      templateKey: "fm_agreement_package_completed_member",
+    });
+    expect(JSON.stringify(rows[0].payload)).not.toMatch(/storage|payment|memberId|hash/i);
   });
 });
 

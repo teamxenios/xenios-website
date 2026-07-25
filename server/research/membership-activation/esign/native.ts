@@ -483,7 +483,9 @@ export class NativeEsignService {
       retentionClass: "legal_records",
       accessClassification: "member_and_admin",
       archiveStatus: "stored",
-      emailDeliveryStatus: "pending",
+      // Individual-document mail is intentionally retired. Package-complete
+      // notification is owned by the activation composition after commit.
+      emailDeliveryStatus: "skipped",
       localExportStatus: "not_exported",
       createdAt: nowIso,
       updatedAt: nowIso,

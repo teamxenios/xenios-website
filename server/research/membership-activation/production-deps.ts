@@ -172,7 +172,11 @@ import {
 } from "../media-provider";
 import { getSupabaseAdmin, supabaseConfigured } from "../../supabase";
 import { enqueueNotification } from "../outbox";
-import { enqueueFoundingEmail, type FoundingEmailEnqueue } from "./emails";
+import { registerAgreementPackageReconciler } from "../agreement-package-reconciliation";
+import {
+  enqueueFoundingEmail,
+  type FoundingEmailEnqueue,
+} from "./emails";
 import {
   XENIOS_NATIVE_PROVIDER,
   type ArchiveRecord,
@@ -1086,6 +1090,9 @@ function buildLiveServices(
     const requests = await esignStore.requests.listByMember(memberId);
     const acceptances: EsignAcceptance[] = [];
     for (const record of requests) {
+      // Native completion atomically writes the immutable signature row used
+      // by this same gate. Do not count the request projection a second time.
+      if (record.provider === XENIOS_NATIVE_PROVIDER) continue;
       if (record.signingLinkStatus !== "completed") continue;
       for (const versionId of record.xeniosDocumentVersionIds) {
         const version = await documentLifecycle.getVersion(versionId);
@@ -1096,41 +1103,510 @@ function buildLiveServices(
     return acceptances;
   }
 
-  /** Best-effort document title + version for an esign notification. */
-  async function esignDocumentMeta(
-    versionIds: readonly string[],
-  ): Promise<{ title: string; version: string }> {
-    if (versionIds.length === 1) {
-      const version = await documentLifecycle.getVersion(versionIds[0]);
-      if (version) return { title: version.title, version: version.semver };
-    }
-    return { title: `activation packet (${versionIds.length} documents)`, version: "packet" };
+  type AgreementPackageState = {
+    satisfied: boolean;
+    packageVersion: string;
+    agreementList: string;
+  };
+
+  type AgreementAcceptanceExclusion =
+    | { sourceKind: "signature"; sourceId: string }
+    | { sourceKind: "provider_completion"; sourceId: string };
+
+  type AgreementPublicationSnapshot = Array<{
+    category: string;
+    id: string;
+    title: string;
+    semver: string;
+    contentHash: string;
+    requirement: "required" | "optional";
+    reacceptanceRequired: boolean;
+  }>;
+
+  type AgreementAcceptanceScope = {
+    knownCandidateSources: ReadonlySet<string>;
+    allowedCandidateSources: ReadonlySet<string>;
+  };
+
+  function candidateSourceKey(sourceKind: string, sourceId: string): string {
+    return `${sourceKind}:${sourceId}`;
   }
 
-  /** Enqueue the member + admin completion notices. Failures are swallowed by
-   * notify(), so a notification can never block a webhook. NO storage ref, no
-   * signed URL, and no evidence content travels in either payload. */
-  async function sendEsignCompletionNotices(
-    record: SigningRequestRecord,
-    subjectId: string,
+  function parsePublicationSnapshot(value: unknown): AgreementPublicationSnapshot | null {
+    if (!Array.isArray(value)) return null;
+    const parsed: AgreementPublicationSnapshot = [];
+    for (const row of value) {
+      if (!row || typeof row !== "object") return null;
+      const item = row as Record<string, unknown>;
+      if (
+        typeof item.category !== "string" ||
+        typeof item.id !== "string" ||
+        typeof item.title !== "string" ||
+        typeof item.semver !== "string" ||
+        typeof item.contentHash !== "string" ||
+        (item.requirement !== "required" && item.requirement !== "optional") ||
+        typeof item.reacceptanceRequired !== "boolean"
+      ) {
+        return null;
+      }
+      parsed.push({
+        category: item.category,
+        id: item.id,
+        title: item.title,
+        semver: item.semver,
+        contentHash: item.contentHash,
+        requirement: item.requirement,
+        reacceptanceRequired: item.reacceptanceRequired,
+      });
+    }
+    return parsed;
+  }
+
+  /** Best-effort display metadata for the separate "signing link ready" email. */
+  async function esignDocumentMeta(
+    versionIds: readonly string[],
+  ): Promise<{ title: string }> {
+    if (versionIds.length === 1) {
+      const version = await documentLifecycle.getVersion(versionIds[0]);
+      if (version) return { title: version.title };
+    }
+    return { title: `activation packet (${versionIds.length} documents)` };
+  }
+
+  /**
+   * Resolve the exact accepted version satisfying every current required
+   * category. For non-reaccepting publications this deliberately names the
+   * older version the member actually accepted.
+   *
+   * Excluding one durable acceptance reconstructs the gate immediately before
+   * it, so the worker can prove a real incomplete -> complete transition.
+   */
+  async function agreementPackageState(
+    memberId: string,
+    options: {
+      exclude?: AgreementAcceptanceExclusion;
+      publicationSnapshot?: AgreementPublicationSnapshot;
+      acceptanceScope?: AgreementAcceptanceScope;
+    } = {},
+  ): Promise<AgreementPackageState> {
+    type AcceptedDocument = {
+      acceptedAt: string;
+      document: {
+        category: string;
+        id: string;
+        title: string;
+        semver: string;
+        contentHash: string;
+      };
+    };
+    const acceptedByCategory = new Map<string, AcceptedDocument[]>();
+    const remember = (accepted: AcceptedDocument) => {
+      const list = acceptedByCategory.get(accepted.document.category) ?? [];
+      list.push(accepted);
+      acceptedByCategory.set(accepted.document.category, list);
+    };
+
+    for (const entry of await signatures.listSignedDocuments(memberId)) {
+      const sourceKey = candidateSourceKey("signature", entry.signature.id);
+      if (
+        options.acceptanceScope?.knownCandidateSources.has(sourceKey) &&
+        !options.acceptanceScope.allowedCandidateSources.has(sourceKey)
+      ) {
+        continue;
+      }
+      if (options.exclude?.sourceKind === "signature" && entry.signature.id === options.exclude.sourceId) continue;
+      if (!entry.document) continue;
+      remember({ acceptedAt: entry.signature.signedAt, document: entry.document });
+    }
+
+    if (esignProvider.isLive) {
+      for (const record of await esignStore.requests.listByMember(memberId)) {
+        if (record.provider === XENIOS_NATIVE_PROVIDER) continue;
+        if (record.signingLinkStatus !== "completed") continue;
+        const sourceKey = candidateSourceKey("provider_completion", record.id);
+        if (
+          options.acceptanceScope?.knownCandidateSources.has(sourceKey) &&
+          !options.acceptanceScope.allowedCandidateSources.has(sourceKey)
+        ) {
+          continue;
+        }
+        if (
+          options.exclude?.sourceKind === "provider_completion" &&
+          record.id === options.exclude.sourceId
+        ) {
+          continue;
+        }
+        for (const versionId of record.xeniosDocumentVersionIds) {
+          const version = await documentLifecycle.getVersion(versionId);
+          if (!version) continue;
+          remember({
+            acceptedAt: record.completedAt ?? record.signedAt ?? record.updatedAt,
+            document: version,
+          });
+        }
+      }
+    }
+
+    const packageDocuments: Array<AcceptedDocument["document"]> = [];
+    let satisfied = true;
+    const publishedByCategory = new Map(
+      (options.publicationSnapshot ?? []).map((document) => [document.category, document]),
+    );
+    for (const definition of DOCUMENT_CATEGORY_REGISTRY) {
+      const resolution = LEGACY_CATEGORY_MAPPING[definition.category];
+      if (resolution?.kind === "alias") continue;
+      if (resolution?.kind === "deferred_until_flag" && !healthDataCollectionEnabled) continue;
+      const published = options.publicationSnapshot
+        ? publishedByCategory.get(definition.category) ?? null
+        : await documents.getPublished(definition.category);
+      if (!published) {
+        if (definition.defaultRequirement === "required") satisfied = false;
+        continue;
+      }
+      if (published.requirement !== "required") continue;
+
+      const accepted = (acceptedByCategory.get(definition.category) ?? []).sort((a, b) =>
+        b.acceptedAt.localeCompare(a.acceptedAt),
+      );
+      const exact = accepted.find((entry) => entry.document.id === published.id);
+      const satisfying = exact ?? (!published.reacceptanceRequired ? accepted[0] : undefined);
+      if (!satisfying) {
+        satisfied = false;
+        continue;
+      }
+      packageDocuments.push(satisfying.document);
+    }
+    const packageVersion = crypto
+      .createHash("sha256")
+      .update(
+        packageDocuments
+          .map((document) => `${document.category}:${document.id}:${document.contentHash}`)
+          .join("|"),
+        "utf8",
+      )
+      .digest("hex")
+      .slice(0, 24);
+    return {
+      satisfied,
+      packageVersion,
+      agreementList: packageDocuments
+        .map((document) => `• ${document.title} — version ${document.semver}`)
+        .join("\n"),
+    };
+  }
+
+  /**
+   * Evaluate a candidate from one strict SQL snapshot. Any malformed or
+   * incomplete context throws, leaving the durable candidate pending. Later
+   * acceptances are excluded by the candidate timeline, so only the actual
+   * final acceptance can prove the transition and supply its timestamp.
+   */
+  function strictCandidateTransition(value: unknown): {
+    memberId: string;
+    candidateId: string;
+    completedAt: string;
+    after: AgreementPackageState;
+    before: AgreementPackageState;
+  } {
+    if (!value || typeof value !== "object") throw new Error("candidate context missing");
+    const context = value as Record<string, unknown>;
+    const candidate = context.candidate as Record<string, unknown> | null;
+    if (
+      !candidate ||
+      typeof candidate.id !== "string" ||
+      typeof candidate.memberId !== "string" ||
+      typeof candidate.sourceKind !== "string" ||
+      typeof candidate.sourceId !== "string" ||
+      typeof candidate.completedAt !== "string"
+    ) {
+      throw new Error("candidate context invalid");
+    }
+    const publicationSnapshot = parsePublicationSnapshot(candidate.publicationSnapshot);
+    if (!publicationSnapshot) throw new Error("candidate publication snapshot invalid");
+    if (!Array.isArray(context.timeline)) throw new Error("candidate timeline invalid");
+    const timeline = context.timeline.map((row) => {
+      if (!row || typeof row !== "object") throw new Error("candidate timeline row invalid");
+      const item = row as Record<string, unknown>;
+      if (
+        typeof item.id !== "string" ||
+        typeof item.sourceKind !== "string" ||
+        typeof item.sourceId !== "string"
+      ) {
+        throw new Error("candidate timeline row invalid");
+      }
+      return {
+        id: item.id,
+        sourceKind: item.sourceKind,
+        sourceId: item.sourceId,
+      };
+    });
+    const currentIndex = timeline.findIndex((entry) => entry.id === candidate.id);
+    if (currentIndex < 0) throw new Error("candidate missing from timeline");
+    const knownSources = new Set(
+      timeline.map((entry) => candidateSourceKey(entry.sourceKind, entry.sourceId)),
+    );
+    const allowedSources = new Set(
+      timeline
+        .slice(0, currentIndex + 1)
+        .map((entry) => candidateSourceKey(entry.sourceKind, entry.sourceId)),
+    );
+    if (!Array.isArray(context.versions)) throw new Error("candidate versions invalid");
+    const versions = new Map<string, AgreementPublicationSnapshot[number]>();
+    for (const row of context.versions) {
+      if (!row || typeof row !== "object") throw new Error("candidate version row invalid");
+      const item = row as Record<string, unknown>;
+      if (
+        typeof item.id !== "string" ||
+        typeof item.category !== "string" ||
+        typeof item.title !== "string" ||
+        typeof item.semver !== "string" ||
+        typeof item.contentHash !== "string"
+      ) {
+        throw new Error("candidate version row invalid");
+      }
+      versions.set(item.id, {
+        id: item.id,
+        category: item.category,
+        title: item.title,
+        semver: item.semver,
+        contentHash: item.contentHash,
+        requirement: "required",
+        reacceptanceRequired: false,
+      });
+    }
+    type StrictAcceptance = {
+      sourceKind: "signature" | "provider_completion";
+      sourceId: string;
+      versionId: string;
+      acceptedAt: string;
+    };
+    const acceptances: StrictAcceptance[] = [];
+    if (!Array.isArray(context.signatures)) throw new Error("candidate signatures invalid");
+    for (const row of context.signatures) {
+      if (!row || typeof row !== "object") throw new Error("candidate signature row invalid");
+      const item = row as Record<string, unknown>;
+      if (
+        typeof item.sourceId !== "string" ||
+        typeof item.versionId !== "string" ||
+        typeof item.acceptedAt !== "string"
+      ) {
+        throw new Error("candidate signature row invalid");
+      }
+      acceptances.push({
+        sourceKind: "signature",
+        sourceId: item.sourceId,
+        versionId: item.versionId,
+        acceptedAt: item.acceptedAt,
+      });
+    }
+    if (!Array.isArray(context.providerCompletions)) {
+      throw new Error("candidate provider completions invalid");
+    }
+    for (const row of context.providerCompletions) {
+      if (!row || typeof row !== "object") throw new Error("candidate provider row invalid");
+      const item = row as Record<string, unknown>;
+      if (
+        typeof item.sourceId !== "string" ||
+        typeof item.acceptedAt !== "string" ||
+        !Array.isArray(item.versionIds) ||
+        item.versionIds.some((id) => typeof id !== "string")
+      ) {
+        throw new Error("candidate provider row invalid");
+      }
+      for (const versionId of item.versionIds as string[]) {
+        acceptances.push({
+          sourceKind: "provider_completion",
+          sourceId: item.sourceId,
+          versionId,
+          acceptedAt: item.acceptedAt,
+        });
+      }
+    }
+
+    const evaluate = (excludeCurrent: boolean): AgreementPackageState => {
+      const acceptedByCategory = new Map<
+        string,
+        Array<{ acceptedAt: string; document: AgreementPublicationSnapshot[number] }>
+      >();
+      for (const acceptance of acceptances) {
+        const sourceKey = candidateSourceKey(acceptance.sourceKind, acceptance.sourceId);
+        if (knownSources.has(sourceKey) && !allowedSources.has(sourceKey)) continue;
+        if (
+          excludeCurrent &&
+          acceptance.sourceKind === candidate.sourceKind &&
+          acceptance.sourceId === candidate.sourceId
+        ) {
+          continue;
+        }
+        const version = versions.get(acceptance.versionId);
+        if (!version) throw new Error("accepted document metadata missing");
+        const list = acceptedByCategory.get(version.category) ?? [];
+        list.push({ acceptedAt: acceptance.acceptedAt, document: version });
+        acceptedByCategory.set(version.category, list);
+      }
+      const publishedByCategory = new Map(
+        publicationSnapshot.map((document) => [document.category, document]),
+      );
+      const selected: AgreementPublicationSnapshot = [];
+      let satisfied = true;
+      for (const definition of DOCUMENT_CATEGORY_REGISTRY) {
+        const resolution = LEGACY_CATEGORY_MAPPING[definition.category];
+        if (resolution?.kind === "alias") continue;
+        if (resolution?.kind === "deferred_until_flag" && !healthDataCollectionEnabled) continue;
+        const published = publishedByCategory.get(definition.category);
+        if (!published) {
+          if (definition.defaultRequirement === "required") satisfied = false;
+          continue;
+        }
+        if (published.requirement !== "required") continue;
+        const accepted = (acceptedByCategory.get(definition.category) ?? []).sort((a, b) =>
+          b.acceptedAt.localeCompare(a.acceptedAt),
+        );
+        const exact = accepted.find((entry) => entry.document.id === published.id);
+        const satisfying = exact ?? (!published.reacceptanceRequired ? accepted[0] : undefined);
+        if (!satisfying) {
+          satisfied = false;
+          continue;
+        }
+        selected.push(satisfying.document);
+      }
+      return {
+        satisfied,
+        packageVersion: crypto
+          .createHash("sha256")
+          .update(
+            selected
+              .map((document) => `${document.category}:${document.id}:${document.contentHash}`)
+              .join("|"),
+            "utf8",
+          )
+          .digest("hex")
+          .slice(0, 24),
+        agreementList: selected
+          .map((document) => `• ${document.title} — version ${document.semver}`)
+          .join("\n"),
+      };
+    };
+    return {
+      memberId: candidate.memberId,
+      candidateId: candidate.id,
+      completedAt: candidate.completedAt,
+      after: evaluate(false),
+      before: evaluate(true),
+    };
+  }
+
+  /**
+   * In-memory/test composition seam. Production uses the trigger-backed
+   * candidate reconciler below so notification intent is atomic with the legal
+   * acceptance.
+   */
+  async function sendAgreementPackageCompletion(
+    memberId: string,
+    before: AgreementPackageState,
+    completedAt: string | null,
   ): Promise<void> {
-    const meta = await esignDocumentMeta(record.xeniosDocumentVersionIds);
-    await notify("fm_esign_completed_member", await recipientFor(record.memberId), subjectId, {
-      documentTitle: meta.title,
-      version: meta.version,
-      signedAt: record.completedAt,
+    const after = await agreementPackageState(memberId);
+    if (!after.satisfied) return;
+    if (before.satisfied) return;
+    const payload = {
+      completedAt: completedAt ?? now().toISOString(),
+      agreementList: after.agreementList,
+    };
+    const memberRecipient = await recipientFor(memberId);
+    if (!memberRecipient) return;
+    const memberQueued = await wiring.enqueueEmail({
+      eventKey: `research_agreement_package_completed_member:${memberId}:${after.packageVersion}`,
+      eventType: "research_agreement_package_completed",
+      templateKey: "fm_agreement_package_completed_member",
+      recipient: memberRecipient,
+      payload,
     });
-    await notify("fm_admin_esign_completed", adminRecordsEmail, subjectId, {
-      memberName: record.memberId,
-      memberId: record.memberId,
-      documentTitle: meta.title,
-      version: meta.version,
-      completedAt: record.completedAt,
-      signedPdfHash: record.signedPdfHash,
-      certificateHash: record.certificateHash,
-      // A path into the AUTHENTICATED admin document center, never a raw URL.
-      adminLink: `/admin/research/activation/esign/member/${record.memberId}`,
+    const adminQueued = await wiring.enqueueEmail({
+      eventKey: `research_agreement_package_completed_admin:${memberId}:${after.packageVersion}`,
+      eventType: "research_agreement_package_completed",
+      templateKey: "fm_admin_agreement_package_completed",
+      recipient: adminRecordsEmail,
+      payload,
     });
+    if (!memberQueued || !adminQueued) throw new Error("agreement package email enqueue refused");
+  }
+
+  async function reconcileAgreementPackageCandidates(): Promise<void> {
+    const { data: candidates, error } = await getSupabaseAdmin()
+      .from("research_fm_agreement_email_candidates")
+      .select("id")
+      .eq("status", "pending")
+      .order("created_at", { ascending: true })
+      .limit(20);
+    if (error) {
+      console.error("[founding-activation] agreement email reconciliation unavailable:", error.message);
+      return;
+    }
+    for (const candidate of candidates ?? []) {
+      const { data: rawContext, error: contextError } = await getSupabaseAdmin().rpc(
+        "research_fm_agreement_email_candidate_context",
+        { p_candidate_id: candidate.id },
+      );
+      if (contextError) {
+        console.error(
+          "[founding-activation] agreement email candidate context unavailable:",
+          contextError.message,
+        );
+        continue;
+      }
+      let transition;
+      try {
+        transition = strictCandidateTransition(rawContext);
+      } catch (error) {
+        console.error(
+          "[founding-activation] agreement email candidate context refused:",
+          error instanceof Error ? error.message : "unknown",
+        );
+        continue;
+      }
+      if (!transition.after.satisfied) {
+        // The strict context RPC succeeded and the as-of state is complete,
+        // so this is affirmative proof that the candidate was only a partial
+        // acceptance. Read/malformed failures returned above and stay pending.
+        await getSupabaseAdmin().rpc("research_fm_ignore_agreement_email_candidate", {
+          p_candidate_id: candidate.id,
+        });
+        continue;
+      }
+      if (transition.before.satisfied) {
+        await getSupabaseAdmin().rpc("research_fm_ignore_agreement_email_candidate", {
+          p_candidate_id: candidate.id,
+        });
+        continue;
+      }
+      const memberRecipient = await recipientFor(transition.memberId);
+      if (!memberRecipient) continue;
+      const { error: completeError } = await getSupabaseAdmin().rpc(
+        "research_fm_complete_agreement_email_candidate",
+        {
+          p_candidate_id: transition.candidateId,
+          p_package_version: transition.after.packageVersion,
+          p_member_recipient: memberRecipient,
+          p_admin_recipient: adminRecordsEmail,
+          p_payload: {
+            completedAt: transition.completedAt,
+            agreementList: transition.after.agreementList,
+          },
+        },
+      );
+      if (completeError) {
+        console.error(
+          "[founding-activation] agreement email candidate remains pending:",
+          completeError.message,
+        );
+      }
+    }
+  }
+
+  const durableAgreementEmails = wiring.enqueueEmail === enqueueNotification;
+  if (durableAgreementEmails) {
+    registerAgreementPackageReconciler(reconcileAgreementPackageCandidates);
   }
 
   /** Persist an archive record for a freshly-completed signing request, so the
@@ -1156,7 +1632,9 @@ function buildLiveServices(
       retentionClass: "legal_records",
       accessClassification: "member_and_admin",
       archiveStatus: "stored",
-      emailDeliveryStatus: "sent",
+      // Individual documents no longer emit mail. Delivery is owned by the
+      // consolidated required-package transition.
+      emailDeliveryStatus: "skipped",
       localExportStatus: "not_exported",
       createdAt: nowIso,
       updatedAt: nowIso,
@@ -1516,6 +1994,7 @@ function buildLiveServices(
       // and the archive for the signed PDF + certificate.
       async nativeSign(member, input) {
         if (!nativeEsignEnabled) return esignDisabled();
+        const beforePackage = await agreementPackageState(member.memberId);
         const result = await nativeEsignService.completeNativeSignature({
           memberId: member.memberId,
           signerEmail: member.email,
@@ -1535,10 +2014,18 @@ function buildLiveServices(
           userAgent: member.userAgent,
         });
         if (!result.ok) return { ok: false, code: result.code, message: result.message };
-        // A fresh completion (not a replay) notifies the member and Samuel's
-        // records address; a replay never re-sends.
+        // Only the fresh transition from an incomplete required package to a
+        // complete one queues the consolidated member + administrator notices.
         if (!result.replayed) {
-          await sendEsignCompletionNotices(result.request, result.request.id);
+          if (durableAgreementEmails) {
+            await reconcileAgreementPackageCandidates();
+          } else {
+            await sendAgreementPackageCompletion(
+              member.memberId,
+              beforePackage,
+              result.request.completedAt ?? result.request.signedAt,
+            );
+          }
         }
         return {
           ok: true,
@@ -1594,6 +2081,12 @@ function buildLiveServices(
       if (!verified.ok) {
         return { status: 400, body: { ok: false, code: verified.code } };
       }
+      const beforeRecord = await esignStore.requests.getByProviderDocumentId(
+        verified.event.providerDocumentId,
+      );
+      const beforePackage = beforeRecord
+        ? await agreementPackageState(beforeRecord.memberId)
+        : null;
       let result;
       try {
         result = await esignService.processWebhookEvent(verified.event);
@@ -1608,7 +2101,8 @@ function buildLiveServices(
       if (!result.ok) {
         return { status: esignWebhookStatus(result.code), body: { ok: false, code: result.code } };
       }
-      // A newly-applied completion: archive the record and notify. A replay
+      // A newly-applied completion: archive the record and evaluate the
+      // package transition. A replay
       // (applied:false) is a no-op here, so nothing double-archives or re-emails.
       if (result.applied && result.status === "completed") {
         const record = await esignStore.requests.getByProviderDocumentId(
@@ -1616,7 +2110,19 @@ function buildLiveServices(
         );
         if (record) {
           await recordEsignArchive(record);
-          await sendEsignCompletionNotices(record, record.id);
+          if (durableAgreementEmails) {
+            await reconcileAgreementPackageCandidates();
+          } else {
+            await sendAgreementPackageCompletion(
+              record.memberId,
+              beforePackage ?? {
+                satisfied: false,
+                packageVersion: "",
+                agreementList: "",
+              },
+              record.completedAt ?? record.signedAt,
+            );
+          }
         }
       }
       return { status: 200, body: { ok: true, applied: result.applied, status: result.status } };
@@ -1820,6 +2326,7 @@ function buildLiveServices(
       },
 
       async sign(member, input: SignAgreementWire) {
+        const beforePackage = await agreementPackageState(member.memberId);
         const result = await signatures.sign({
           memberId: member.memberId,
           documentVersionId: input.documentVersionId,
@@ -1831,6 +2338,17 @@ function buildLiveServices(
           userAgent: member.userAgent,
         });
         if (!result.ok) return { ok: false, code: result.code };
+        if (!result.replayed) {
+          if (durableAgreementEmails) {
+            await reconcileAgreementPackageCandidates();
+          } else {
+            await sendAgreementPackageCompletion(
+              member.memberId,
+              beforePackage,
+              result.signature.signedAt,
+            );
+          }
+        }
         return { ok: true, replayed: result.replayed, signature: signatureView(result.signature) };
       },
 
@@ -2644,16 +3162,23 @@ function buildLiveServices(
 
         // EMAIL. Presence booleans only, never a value.
         const resendKeyPresent = present("RESEND_API_KEY");
-        const fromEmailPresent = present("FROM_EMAIL");
+        const researchFromPresent = present("RESEARCH_EMAIL_FROM");
+        const researchReplyToPresent = present("RESEARCH_EMAIL_REPLY_TO");
         areas.push({
           area: "email",
           title: "Email",
           items: [
             {
               key: "resend_configured",
-              label: "Resend environment configured",
-              state: resendKeyPresent && fromEmailPresent ? "code_ready" : "configuration_missing",
-              detail: `RESEND_API_KEY present: ${resendKeyPresent}. FROM_EMAIL present: ${fromEmailPresent}.`,
+              label: "Research email environment configured",
+              state:
+                resendKeyPresent && researchFromPresent && researchReplyToPresent
+                  ? "code_ready"
+                  : "configuration_missing",
+              detail:
+                `RESEND_API_KEY present: ${resendKeyPresent}. ` +
+                `RESEARCH_EMAIL_FROM present: ${researchFromPresent}. ` +
+                `RESEARCH_EMAIL_REPLY_TO present: ${researchReplyToPresent}.`,
             },
             {
               key: "domain_verification",
@@ -2974,8 +3499,11 @@ function buildLiveServices(
         if (!isPresentableCompleted(record) || !record.completedAt) {
           return { ok: false, code: "invalid_state", message: "That signing request is not completed." };
         }
-        await sendEsignCompletionNotices(record, `${record.id}:resend`);
-        return { ok: true, resent: true, requestId: record.id };
+        // Recovery only drains durable transition candidates captured at the
+        // legal commit. It never derives a new completion event from current
+        // publication state.
+        if (durableAgreementEmails) await reconcileAgreementPackageCandidates();
+        return { ok: true, resent: false, requestId: record.id };
       },
     },
   };
