@@ -101,7 +101,9 @@ function productRecord(product: CatalogProduct, at: string): ProductRecord {
     displayName: product.displayName,
     family,
     templateClass: templateForFamily(family),
-    searchAliases: [...new Set([product.sku, product.slug, ...product.nameAliases])],
+    searchAliases: Array.from(
+      new Set([product.sku, product.slug, ...product.nameAliases]),
+    ),
     sourceLane: product.lane,
     adminEditable: true,
     createdAt: at,
@@ -219,4 +221,3 @@ export function searchProductMaster(
       .includes(normalized);
   });
 }
-

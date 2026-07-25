@@ -163,7 +163,9 @@ function urgency(
 }
 
 function unique(values: Array<string | null>): string[] {
-  return [...new Set(values.filter((value): value is string => Boolean(value)))].sort();
+  return Array.from(
+    new Set(values.filter((value): value is string => Boolean(value))),
+  ).sort();
 }
 
 export function aggregateProductDemand(
@@ -176,7 +178,7 @@ export function aggregateProductDemand(
     const key = `${signal.category}|${normalized}|${brand}`;
     groups.set(key, [...(groups.get(key) ?? []), signal]);
   }
-  return [...groups.entries()].map(([key, rows]) => {
+  return Array.from(groups.entries()).map(([key, rows]) => {
     const sorted = [...rows].sort((a, b) => a.requestedAt.localeCompare(b.requestedAt));
     const frequency: ProductDemandCandidate["frequency"] = {
       one_time: 0,
@@ -185,7 +187,11 @@ export function aggregateProductDemand(
       not_sure: 0,
       not_provided: 0,
     };
-    for (const row of rows) frequency[row.frequency ?? "not_provided"] += 1;
+    for (const row of rows) {
+      const frequencyKey: ProductRequestFrequency | "not_provided" =
+        row.frequency ?? "not_provided";
+      frequency[frequencyKey] += 1;
+    }
     return {
       candidateId: `candidate_${crypto.createHash("sha256").update(key).digest("hex").slice(0, 20)}`,
       normalizedCandidate: normalizeDemandName(rows[0].productName),
@@ -224,4 +230,3 @@ export function toMemberDemandSummary(
     status: candidate.status,
   };
 }
-

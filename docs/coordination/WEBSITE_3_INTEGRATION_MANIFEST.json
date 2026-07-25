@@ -1,0 +1,72 @@
+{
+  "session": "Website 3 — Products, Diagnostics & Member Commerce",
+  "branch": "feature/website-3-products-diagnostics",
+  "base_sha": "a486b889503a8f9d42f86c4666e808af6c5e852c",
+  "deploy": false,
+  "merge": false,
+  "server_entrypoint": "server/research/products-diagnostics/index.ts",
+  "server_registration_export": "registerProductsDiagnosticsApi",
+  "client_entrypoint": "client/src/research/products-diagnostics/index.ts",
+  "shared_files_not_modified": [
+    "server/index.ts",
+    "server/routes.ts",
+    "server/research/index.ts",
+    "client/src/App.tsx",
+    "client/src/research/section.tsx",
+    "client/src/research/layout.tsx",
+    "client/src/research/core.tsx",
+    "shared/research/*",
+    "supabase/production/*"
+  ],
+  "member_routes": [
+    "GET /api/research/product-platform",
+    "POST /api/research/products/:sku/certificates/access",
+    "GET /api/research/metabolic-pathways",
+    "POST /api/research/metabolic-interest",
+    "GET /api/research/diagnostics/superpower",
+    "GET /api/research/diagnostics/biomarker",
+    "POST /api/research/diagnostics/biomarker/report-upload"
+  ],
+  "admin_routes": [
+    "GET /api/admin/research/metabolic-pathways",
+    "PUT /api/admin/research/metabolic-pathways/:pathwayId",
+    "GET /api/admin/research/superpower-offer",
+    "PUT /api/admin/research/superpower-offer"
+  ],
+  "required_guards": {
+    "member": "requireActiveMember",
+    "admin": "requireSupabaseAdmin"
+  },
+  "authoritative_reuse": [
+    "shared/research/catalog.ts",
+    "server/research/catalog/legacy-adapter.ts",
+    "server/research/product-requests.ts",
+    "server/research/commerce/*",
+    "server/research/member-auth.ts",
+    "server/research/outbox.ts",
+    "server/research/media.ts",
+    "server/services/email-config.ts"
+  ],
+  "production_tables_required": [
+    "research_product_lots",
+    "research_product_certificates",
+    "research_certificate_access_audit",
+    "research_metabolic_pathways",
+    "research_metabolic_interests",
+    "research_superpower_offers",
+    "research_biomarker_records",
+    "research_product_content"
+  ],
+  "private_buckets_required": [
+    "RESEARCH_COA_BUCKET",
+    "RESEARCH_BIOMARKER_REPORTS_BUCKET"
+  ],
+  "validation": {
+    "test_files": 142,
+    "tests_passed": 2936,
+    "typecheck": "passed",
+    "build": "passed",
+    "screenshots": "blocked_in_app_browser_webview_attach"
+  }
+}
+
