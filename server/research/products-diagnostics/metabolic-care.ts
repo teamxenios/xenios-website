@@ -108,12 +108,12 @@ export class MetabolicPathwayRepository {
   );
 
   listPublic(): PublicMetabolicPathway[] {
-    return [...this.pathways.values()].map(toPublicMetabolicPathway);
+    return Array.from(this.pathways.values()).map(toPublicMetabolicPathway);
   }
 
   searchAdmin(query: string): MetabolicPathwayConfig[] {
     const normalized = query.trim().toLowerCase();
-    return [...this.pathways.values()]
+    return Array.from(this.pathways.values())
       .filter((pathway) =>
         [
           pathway.publicName,
@@ -237,4 +237,3 @@ export class MetabolicInterestService {
     return { created: true, record };
   }
 }
-
