@@ -1,0 +1,39 @@
+# xenios
+
+xenios is the AI-adjunct operations system for coaches, trainers, and practitioners.
+
+The xenios agent runs the back office: programs, intake, check-ins, messaging, education, billing, network, outcomes.
+
+The xenios client agent is a pocket coach for the practitioner's clients, athletes, and patients. It speaks in the practitioner's voice. It hands clinical or out-of-scope items back to the practitioner, every time.
+
+xenios is built by Xenios Technologies, Inc., headquartered in Austin, Texas. Founded by Alex Houston. The team comes from operators behind $710M+ in prior exits, including FinDox and InstaMed.
+
+Audience: coaches, trainers, and practitioners doing the work upstream of disease. Twenty-five categories across performance, longevity, recovery, nutrition, and clinical care.
+
+## Pages
+- /                      Home
+- /product               Product overview, capabilities, the two surfaces
+- /how-it-works          Five-step onboarding, autonomy dial
+- /for-coaches           The xenios agent, coach surface
+- /for-clients           The xenios client agent, client surface
+- /storefront            Native commerce rail
+- /network               Refer between practitioners
+- /ecosystem             Eighteen categories of partners and integrations
+- /for-practitioners     Twenty-five practitioner categories
+- /for/[slug]            Per-category landing pages
+- /manifesto             Why we are building this
+- /about                 Heritage and founder
+- /careers               Five founding roles
+- /waitlist              Join the founding cohort
+- /contact               Talk to us
+- /security              Security posture
+- /compliance            HIPAA, SOC 2 (in progress), BAA
+- /investors             Investor information
+- /press                 Press, media, podcast inquiries
+- /privacy               Privacy policy
+- /terms                 Terms of service
+
+## Contact
+team@xeniostechnology.com
+Austin, TX
+https://xeniostechnology.com
