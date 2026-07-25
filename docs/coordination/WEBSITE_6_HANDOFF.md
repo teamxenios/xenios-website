@@ -1,31 +1,63 @@
-# Website 6 handoff — final QA, accessibility, and test automation
+# Website 6 handoff - final QA, accessibility, and test automation
 
-1. **Session:** Website 6 — Final QA, Accessibility & Test Automation
-2. **Owner:** Codex QA lane
-3. **Repository:** `teamxenios/xenios-website`
-4. **Branch:** `test/website-6-final-qa`
-5. **Base at start:** `a486b88` (`main`, 2026-07-25)
-6. **Command Center:** https://github.com/teamxenios/xenios-website/issues/44
-7. **Scope:** QA tooling, route/persona coverage, browser/mobile/accessibility, privacy/leak checks, performance/SEO, migrations/RLS, smoke and synthetic monitoring
-8. **Out of scope:** Feature implementation, merge, deployment, production mutation
-9. **Current wave:** Wave 1 — inventory
-10. **Working tree:** Isolated QA worktree; pre-existing user changes in another worktree were not touched
-11. **Route inventory:** In progress
-12. **Persona matrix:** In progress
-13. **Browser journeys:** Pending
-14. **Accessibility/mobile:** Pending
-15. **Forms/uploads/states:** Pending
-16. **Auth/authorization/privacy:** Pending
-17. **Notification idempotency:** Existing domain tests discovered; cross-cutting coverage pending
-18. **Migrations/RLS:** Production migration ledger discovered; disposable PostgreSQL verification pending
-19. **Performance/SEO:** Budgets and automated checks pending
-20. **Leak/secret scans:** Pending
-21. **Parallel PR review:** Blocked on inputs — no open Website 1, 3, 4, or 5 PRs existed at registration
-22. **Validation:** Focused groups pending; full `npm test`, `npm run check`, and `npm run build` will run once at branch readiness
-23. **Release state:** Not ready; draft PR not yet opened; nothing merged or deployed
+1. **Session:** Website 6 - Final QA, Accessibility & Test Automation
+2. **Feature domain:** Cross-cutting release QA, accessibility, responsive behavior,
+   test automation, migration verification, security/leak gates, performance, SEO,
+   monitoring, production smoke, and UI consistency.
+3. **Starting branch:** `test/website-6-final-qa`
+4. **Starting SHA:** `a486b889503a8f9d42f86c4666e808af6c5e852c`
+5. **Release base:** production `main` at
+   `48cb57250c1ec54fe8714e59fa1071a9eb27f867`
+6. **Final branch:** `test/website-6-final-qa`
+7. **Final head SHA:** use the frozen PR head posted to Command Center #44.
+8. **PR URL:** use the Website 6 PR posted to Command Center #44.
+9. **Merge SHA:** pending Website 2.
+10. **Migration applied:** Website 6 adds no production migration. The exact
+    35-file production sequence passes in disposable PostgreSQL 16 after rebasing
+    onto the merged Website 2 fix.
+11. **Render deployment ID:** pending Website 2.
+12. **Deployed SHA:** pending Website 2.
+13. **Live routes:** current production desktop shell and `/api/health` respond;
+    the Website 6 fixes are not live until Website 2 merges and Render deploys.
+14. **Production database result:** production ledger is on `main`; disposable
+    verification reports 93/93 Research tables with RLS, zero policies, and no
+    anon/authenticated table grants. No production mutation was performed here.
+15. **Production smoke result:** baseline read-only smoke passed health, homepage,
+    `robots.txt`, sitemap, Research noindex, unauthenticated member boundary, and
+    JSON API 404 on 2026-07-25 after production `main` advanced.
+16. **Mobile result:** local 320/375/430/tablet/desktop matrix passes after fixing
+    the global hidden-button cascade and TopRibbon shrink behavior. Current live
+    production reproduced 431px content at a 320px viewport before this release.
+17. **Accessibility result:** serious/critical axe scans pass on `/`, `/product`,
+    `/waitlist`, `/contact`, `/privacy`, and `/careers`; keyboard focus, labels,
+    invalid state, target spacing, reduced motion, and horizontal overflow are
+    covered.
+18. **Authorization result:** existing server authorization suites pass; browser
+    expired-session/concurrent-tab recovery passes; route inventory keeps server
+    guards authoritative.
+19. **Logs result:** live browser inspection found no console errors. Render and
+    Supabase post-deploy log review remains Website 2 coordinated.
+20. **Exact blockers:** 16 partner adapter endpoints still lack registered server
+    routes; PR #46 and PR #47 are awaiting Xenios UI consistency revisions; PR #48
+    remains draft integration work; post-deploy live smoke and logs are pending.
+21. **Validation:** 132 files / 3,077 tests passed before the coordinated rebase;
+    104 tests covering the rebased production-main changes passed afterward;
+    typecheck, build, built-asset budgets, source/bundle leak scan, UI consistency
+    budget, and disposable migration gate pass. Browser evidence is 94 unchanged
+    passing tests plus the corrected auth-return test passing independently.
+22. **Evidence:** `docs/qa/`, generated 412-record route inventory, five reviewed
+    UI screenshots, Playwright reports, and Command Center #44 comments.
+23. **Rollback:** revert the focused Website 6 commit(s). No production data,
+    capability, provider, migration, or environment value was changed.
 
-## Resume point
+Website 2 remains the sole merge/deployment coordinator. Website 6 must verify
+the deployed SHA, live 320px behavior, contrast, logs, and smoke checks after
+the Website 6 release.
 
-Continue from Wave 1 inventory in the isolated `test/website-6-final-qa`
-worktree. Recheck Command Center issue #44 and open PRs before final evidence.
+PRODUCTION STATUS:
 
+NOT YET MERGED
+
+UI CONSISTENCY STATUS:
+
+NEEDS REVISION

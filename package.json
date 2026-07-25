@@ -21,11 +21,13 @@
     "qa:routes:check": "node script/qa-route-inventory.mjs --check",
     "qa:browser": "playwright test",
     "qa:browser:desktop": "playwright test --project=chromium-desktop",
+    "qa:evidence": "node script/qa-capture-ui-evidence.mjs",
     "qa:leaks": "node script/qa-leak-scan.mjs",
     "qa:performance": "node script/qa-performance-budget.mjs",
+    "qa:ui": "node script/qa-ui-consistency.mjs",
     "qa:migrations": "node script/qa-migration-verify.mjs",
     "qa:smoke": "node script/qa-production-smoke.mjs",
-    "qa:release": "npm run qa:routes:check && npm run qa:leaks && npm run qa:migrations && npm run qa:browser"
+    "qa:release": "npm run qa:routes:check && npm run qa:ui && npm run qa:leaks && npm run qa:migrations && npm run qa:browser"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

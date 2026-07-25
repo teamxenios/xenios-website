@@ -7,6 +7,7 @@
 | Browser journeys | Public sitemap smoke, Research dev-gallery states, redirects, Care-disabled check | Fixtures are test-only and never count as production completion |
 | Mobile/reflow | Playwright 320/375/430/tablet/desktop projects | Horizontal overflow and target-spacing failures block |
 | Keyboard/accessibility | Focus, labels, invalid state, axe WCAG 2.2 AA scans | Critical/serious violations block |
+| Xenios UI consistency | `qa-ui-consistency.mjs` freezes palette/font/framework/shadow/radius/button-system metrics | Any new visual system, raw-color growth, external font, or duplicate UI framework requires Website 2 review |
 | Forms | Application form labels/required validation plus existing application, claim, login/reset, assessment, commerce, partner, profile, inventory/fulfillment domain tests | A visible form with no registered server route is a parity failure |
 | Uploads/private Storage | Existing identity, media, documents, e-sign, product-request provider and route tests; migration bucket/grant checks | MIME/size/path/member isolation remain server-authoritative |
 | Loading/empty/error/retry/disabled | Research gallery state scans plus existing component/route tests | Honest unavailable is acceptable; invented success is not |
