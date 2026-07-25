@@ -918,8 +918,8 @@ describe("state 3: the full happy path over HTTP", () => {
     expect(csv.text).not.toContain(PLAINTEXT_INSTRUCTIONS);
     expect(csv.text).not.toContain(MEMBER_A);
 
-    // The emails: enqueued at the right transitions, through the outbox seam,
-    // to the member's address, with no instruction material in any payload.
+    // The emails: enqueued at the right transitions through the outbox seam.
+    // Only the consolidated package administrator copy goes to records.
     const templates = ctx.enqueued.map((row) => row.templateKey);
     expect(templates).toContain("fm_activation_obligation_created");
     expect(templates).toContain("fm_payment_report_received");
@@ -928,7 +928,11 @@ describe("state 3: the full happy path over HTTP", () => {
     expect(templates).toContain("fm_renewal_obligation_created");
     expect(templates).toContain("fm_identity_verified");
     for (const row of ctx.enqueued) {
-      expect(row.recipient).toBe(MEMBER_EMAILS[MEMBER_A]);
+      expect(row.recipient).toBe(
+        row.templateKey === "fm_admin_agreement_package_completed"
+          ? ADMIN_RECORDS_EMAIL
+          : MEMBER_EMAILS[MEMBER_A],
+      );
     }
     expect(JSON.stringify(ctx.enqueued)).not.toContain(PLAINTEXT_INSTRUCTIONS);
     expect(JSON.stringify(ctx.enqueued)).not.toContain(CIPHERTEXT_PREFIX);
@@ -1126,6 +1130,82 @@ describe("state 3: signature gates", () => {
       });
     expect(res.status).toBe(409);
     expect(res.body.code).toBe("not_published");
+  });
+
+  it("queues one consolidated pair only on package completion, and a new pair for a required reacceptance version", async () => {
+    const ctx = liveContext();
+    await publishAllCategories(ctx.documentsStore);
+    const listed = await request(ctx.app)
+      .get("/api/research/activation/agreements")
+      .set(MEMBER_HEADER, MEMBER_A);
+
+    let firstSatisfiedAt = -1;
+    for (const [index, agreement] of listed.body.agreements.entries()) {
+      const signed = await request(ctx.app)
+        .post("/api/research/activation/agreements/sign")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send(
+          await signBody(agreement.documentVersionId, {
+            separateAcknowledgment: true,
+          }),
+        );
+      expect(signed.status, agreement.category).toBe(200);
+      const state = await request(ctx.app)
+        .get("/api/research/activation/agreements")
+        .set(MEMBER_HEADER, MEMBER_A);
+      const packageRows = ctx.enqueued.filter((row) =>
+        row.templateKey.includes("agreement_package_completed"),
+      );
+      if (!state.body.satisfied) {
+        expect(packageRows, agreement.category).toHaveLength(0);
+      } else if (firstSatisfiedAt === -1) {
+        firstSatisfiedAt = index;
+        expect(packageRows.map((row) => row.templateKey).sort()).toEqual([
+          "fm_admin_agreement_package_completed",
+          "fm_agreement_package_completed_member",
+        ]);
+      } else {
+        // Optional/deferred signatures after the gate do not create a new package.
+        expect(packageRows).toHaveLength(2);
+      }
+    }
+    expect(firstSatisfiedAt).toBeGreaterThan(0);
+    const firstKeys = ctx.enqueued
+      .filter((row) => row.templateKey.includes("agreement_package_completed"))
+      .map((row) => row.eventKey)
+      .sort();
+
+    const lifecycle = new DocumentLifecycle(ctx.documentsStore, { now: NOW });
+    const revised = await lifecycle.createDraft({
+      category: "privacy_notice",
+      semver: "2.0.0",
+      jurisdiction: "US-TX",
+      content: "Materially revised privacy notice requiring reacceptance.",
+      reacceptanceRequired: true,
+    });
+    await lifecycle.setCounselReview(revised.id, "approved");
+    await lifecycle.transition(revised.id, "under_legal_review");
+    await lifecycle.transition(revised.id, "approved_for_publication");
+    await lifecycle.publish(revised.id, { publisher: "counsel-test" });
+    const lapsed = await request(ctx.app)
+      .get("/api/research/activation/agreements")
+      .set(MEMBER_HEADER, MEMBER_A);
+    expect(lapsed.body.satisfied).toBe(false);
+
+    const reaccepted = await request(ctx.app)
+      .post("/api/research/activation/agreements/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(await signBody(revised.id, { separateAcknowledgment: true }));
+    expect(reaccepted.status).toBe(200);
+    const allPackageRows = ctx.enqueued.filter((row) =>
+      row.templateKey.includes("agreement_package_completed"),
+    );
+    expect(allPackageRows).toHaveLength(4);
+    const secondKeys = allPackageRows.slice(2).map((row) => row.eventKey).sort();
+    expect(secondKeys).not.toEqual(firstKeys);
+    expect(new Set(allPackageRows.map((row) => row.eventKey)).size).toBe(4);
+    expect(ctx.enqueued.some((row) => row.templateKey === "fm_esign_completed_member")).toBe(false);
+    expect(ctx.enqueued.some((row) => row.templateKey === "fm_admin_esign_completed")).toBe(false);
   });
 });
 
@@ -1740,6 +1820,9 @@ describe("state 3: e-signature", () => {
     expect(secondHook.status).toBe(200);
     expect(secondHook.body.applied).toBe(false);
     expect(ctx.esignCounts.fetchCompletedFile).toBe(fetchesAfterFirst);
+    expect(
+      ctx.enqueued.filter((row) => row.templateKey.includes("agreement_package_completed")),
+    ).toHaveLength(0);
   });
 
   it("gives the admin a document center, downloads, a packet zip, and a resend", async () => {
@@ -1759,6 +1842,17 @@ describe("state 3: e-signature", () => {
         });
       await postEsignWebhook(ctx.app, completedWebhookBody(started.body.providerDocumentId));
     }
+
+    const initialPackageRows = ctx.enqueued.filter((row) =>
+      row.templateKey.includes("agreement_package_completed"),
+    );
+    expect(initialPackageRows.map((row) => row.templateKey).sort()).toEqual([
+      "fm_admin_agreement_package_completed",
+      "fm_agreement_package_completed_member",
+    ]);
+    expect(ctx.enqueued.some((row) => row.templateKey === "fm_esign_completed_member")).toBe(false);
+    expect(ctx.enqueued.some((row) => row.templateKey === "fm_admin_esign_completed")).toBe(false);
+    const initialPackageKeys = initialPackageRows.map((row) => row.eventKey).sort();
 
     // The admin document center lists completed requests AND archive records.
     const list = await request(ctx.app)
@@ -1791,20 +1885,25 @@ describe("state 3: e-signature", () => {
     expect(zip.headers["content-type"]).toContain("application/zip");
     expect(zip.headers["content-disposition"]).toContain(`member-${MEMBER_A}-packet.zip`);
 
-    // Resend re-enqueues BOTH the member and the admin-records completion notice.
+    // Recovery ensures BOTH consolidated jobs with the SAME package identities.
+    // The durable outbox unique key makes this a no-op when they already exist.
     ctx.enqueued.length = 0;
     const resend = await request(ctx.app)
       .post(`/api/admin/research/activation/esign/request/${requestId}/resend`)
       .set(ADMIN_HEADER, "yes")
       .send({});
     expect(resend.status).toBe(200);
-    const keys = ctx.enqueued.map((row) => row.templateKey);
-    expect(keys).toContain("fm_esign_completed_member");
-    expect(keys).toContain("fm_admin_esign_completed");
-    const adminNotice = ctx.enqueued.find((row) => row.templateKey === "fm_admin_esign_completed");
+    // Admin recovery only drains a durable transition candidate in production;
+    // it never fabricates a package event from current publication state.
+    expect(resend.body.resent).toBe(false);
+    expect(ctx.enqueued).toEqual([]);
+    expect(initialPackageRows.map((row) => row.eventKey).sort()).toEqual(initialPackageKeys);
+    const adminNotice = initialPackageRows.find(
+      (row) => row.templateKey === "fm_admin_agreement_package_completed",
+    );
     expect(adminNotice?.recipient).toBe(ADMIN_RECORDS_EMAIL);
     // No raw storage URL, signed URL, or evidence content in any payload.
-    const scan = JSON.stringify(ctx.enqueued);
+    const scan = JSON.stringify(initialPackageRows);
     expect(scan).not.toContain("research-member-records");
     expect(scan).not.toContain("esign-signed");
     expect(scan).not.toContain("provider.example");
@@ -1980,6 +2079,57 @@ describe("state 3: native embedded e-signature", () => {
     await nativeSignAll(ctx, MEMBER_A);
     const full = await request(ctx.app).get("/api/research/activation/agreements").set(MEMBER_HEADER, MEMBER_A);
     expect(full.body.satisfied).toBe(true);
+  });
+
+  it("native completion queues the consolidated pair once and a replay queues nothing", async () => {
+    const ctx = liveContext({ esignEnabled: true });
+    await publishAllCategories(ctx.documentsStore);
+    const list = await agreementsList(ctx, MEMBER_A);
+    let completionDocumentId = "";
+
+    for (const agreement of list) {
+      const beforeCount = ctx.enqueued.filter((row) =>
+        row.templateKey.includes("agreement_package_completed"),
+      ).length;
+      const signed = await request(ctx.app)
+        .post("/api/research/activation/esign/native/sign")
+        .set(MEMBER_HEADER, MEMBER_A)
+        .send(nativeSignBody(agreement.documentVersionId));
+      expect(signed.status).toBe(200);
+      const state = await request(ctx.app)
+        .get("/api/research/activation/agreements")
+        .set(MEMBER_HEADER, MEMBER_A);
+      const afterCount = ctx.enqueued.filter((row) =>
+        row.templateKey.includes("agreement_package_completed"),
+      ).length;
+      if (state.body.satisfied && !completionDocumentId) {
+        completionDocumentId = agreement.documentVersionId;
+        expect(beforeCount).toBe(0);
+        expect(afterCount).toBe(2);
+      } else if (!state.body.satisfied) {
+        expect(afterCount).toBe(0);
+      } else {
+        expect(afterCount).toBe(2);
+      }
+    }
+
+    const beforeReplay = ctx.enqueued.length;
+    const replay = await request(ctx.app)
+      .post("/api/research/activation/esign/native/sign")
+      .set(MEMBER_HEADER, MEMBER_A)
+      .send(nativeSignBody(completionDocumentId));
+    expect(replay.status).toBe(200);
+    expect(replay.body.replayed).toBe(true);
+    expect(ctx.enqueued).toHaveLength(beforeReplay);
+    expect(
+      ctx.enqueued
+        .filter((row) => row.templateKey.includes("agreement_package_completed"))
+        .map((row) => row.templateKey)
+        .sort(),
+    ).toEqual([
+      "fm_admin_agreement_package_completed",
+      "fm_agreement_package_completed_member",
+    ]);
   });
 
   it("refuses a native signature that is not affirmatively consented", async () => {
