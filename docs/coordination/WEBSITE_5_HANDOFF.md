@@ -53,3 +53,12 @@ review. Eligibility accepts only verified signals and coverage policy supplied
 by the server. Intake ships with a `partner_defined` placeholder rather than
 invented questions. Appointments carry no fabricated provider. Final review
 decisions reject automation/AI actors and require the assigned human clinician.
+
+## Wave 3 notes
+
+`server/care/pharmacy.ts` authorizes instruction access only when the requesting
+patient, signed prescription, accepted pharmacy assignment, formulation,
+concentration, instruction binding, and current version match exactly.
+Instruction kinds stay separate. Patient supply drafts are created only after
+that gate and contain the required field names with every value `null`; no
+generic retailer, product, dose, or direction is seeded.
