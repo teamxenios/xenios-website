@@ -54,6 +54,8 @@ export interface FulfillmentNote {
 
 export interface FulfillmentWorkOrder {
   id: string;
+  /** Internal ownership key. Never serialized to the Mitch queue. */
+  memberRef: string;
   orderReference: string;
   recipientInitials: string;
   destinationZone: string;
@@ -94,6 +96,18 @@ export interface MitchQueueRow {
   itemCount: number;
   openExceptionCount: number;
   version: number;
+}
+
+export interface MemberOrderTracking {
+  orderReference: string;
+  fulfillmentState: string;
+  shipmentState: string;
+  carrier: string | null;
+  service: string | null;
+  tracking: string | null;
+  shippedAt: string | null;
+  deliveredAt: string | null;
+  updatedAt: string;
 }
 
 export type FulfillmentFailureCode =
@@ -137,8 +151,25 @@ export class FulfillmentService {
     return work ? copy(work) : null;
   }
 
+  trackingForMember(orderId: string, memberRef: string): MemberOrderTracking | null {
+    const work = this.work.get(orderId);
+    if (!work || work.memberRef !== memberRef) return null;
+    return {
+      orderReference: work.orderReference,
+      fulfillmentState: work.aggregate.states.fulfillment,
+      shipmentState: work.aggregate.states.shipment,
+      carrier: work.shipment?.carrier ?? null,
+      service: work.shipment?.service ?? null,
+      tracking: work.shipment?.tracking ?? null,
+      shippedAt: work.shipment?.shippedAt ?? null,
+      deliveredAt: work.shipment?.deliveredAt ?? null,
+      updatedAt: work.updatedAt,
+    };
+  }
+
   create(input: {
     id: string;
+    memberRef: string;
     orderReference: string;
     recipientInitials: string;
     destinationZone: string;
@@ -159,8 +190,13 @@ export class FulfillmentService {
     if (!input.items.length || input.items.some((item) => !item.itemId || !item.sku || !Number.isInteger(item.quantity) || item.quantity <= 0)) {
       return this.failure("invalid_input", "At least one valid fulfillment item is required.");
     }
-    if (!input.recipientInitials.trim() || !input.destinationZone.trim() || Number.isNaN(Date.parse(input.dueAt))) {
-      return this.failure("invalid_input", "Recipient initials, destination zone, and due date are required.");
+    if (
+      !input.memberRef.trim() ||
+      !input.recipientInitials.trim() ||
+      !input.destinationZone.trim() ||
+      Number.isNaN(Date.parse(input.dueAt))
+    ) {
+      return this.failure("invalid_input", "Member reference, recipient initials, destination zone, and due date are required.");
     }
 
     let aggregate = copy(input.aggregate);
@@ -192,6 +228,7 @@ export class FulfillmentService {
     const now = input.occurredAt.toISOString();
     const value: FulfillmentWorkOrder = {
       id: input.id,
+      memberRef: input.memberRef,
       orderReference: input.orderReference,
       recipientInitials: input.recipientInitials.trim(),
       destinationZone: input.destinationZone.trim(),

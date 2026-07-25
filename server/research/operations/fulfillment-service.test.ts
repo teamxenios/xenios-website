@@ -47,6 +47,7 @@ describe("Mitch fulfillment portal service", () => {
     unwrap(
       service.create({
         id: "ful-1",
+        memberRef: "member-1",
         orderReference: "XR-1042",
         recipientInitials: "A. R.",
         destinationZone: "TX-3",
@@ -150,6 +151,16 @@ describe("Mitch fulfillment portal service", () => {
     for (const forbidden of ["email", "phone", "health", "commission", "affiliate", "payment"]) {
       expect(serialized).not.toContain(forbidden);
     }
+  });
+
+  it("returns order tracking only to the owning member reference", () => {
+    expect(service.trackingForMember("ful-1", "member-2")).toBeNull();
+    expect(service.trackingForMember("ful-1", "member-1")).toMatchObject({
+      orderReference: "XR-1042",
+      fulfillmentState: "awaiting_acknowledgement",
+      shipmentState: "not_created",
+      tracking: null,
+    });
   });
 
   it("supports acknowledgment, expected date, note, assistance, escalation, and exception actions with audit", () => {
