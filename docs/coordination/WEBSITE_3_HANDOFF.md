@@ -18,7 +18,8 @@ Website 3 — Products, Diagnostics & Member Commerce.
 
 ## 5. Head
 
-Record the final Wave 6 commit and draft PR in the Command Center after push.
+The release candidate is tracked in PR #47. Use the PR head SHA as the frozen
+Website 3 integration SHA after this production-directive amendment is pushed.
 
 ## 6. Domain
 
@@ -30,9 +31,12 @@ diagnostics email intents.
 
 ## 7. Delivery status
 
-Domain implementation is complete and isolated. It is not deployed. Shared
-route registration, shared UI route registration, production migrations, and
-production provider construction remain coordinator-owned integration work.
+Domain implementation is complete, pushed, and ready for review. It is not yet
+merged or deployed. Shared route registration, shared UI route registration,
+production migrations, and production provider construction remain
+coordinator-owned integration work. Website 2 is the sole final merge and
+Render deployment coordinator; Website 3 remains responsible for review fixes
+and live verification after Website 2 releases the integration.
 
 ## 8. Checkpoint commits
 
@@ -251,7 +255,12 @@ route integration.
 - Do not enable product commerce, Superpower affiliate access, or biomarker
   uploads from client state.
 - Do not publish the internal GLP-3 alias.
-- Do not deploy this branch. The user explicitly prohibited deployment.
-- Release coordinator must run the integrated browser matrix after applying
-  shared route and migration work.
-
+- The universal production directive supersedes the former no-deploy
+  instruction. Completed and approved Website 3 work must reach the production
+  Render service and live Xenios website.
+- Website 2 alone controls final merge sequencing and Render deployment.
+  Website 3 must not independently merge or trigger a competing deployment.
+- Website 2 must run the integrated browser matrix after applying shared route,
+  provider, and migration work. Website 3 must then verify its affected live
+  routes, role restrictions, persistence, mobile behavior, accessibility, and
+  relevant production logs before reporting `LIVE`.
