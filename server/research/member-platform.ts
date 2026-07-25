@@ -13,6 +13,7 @@ import { registerMediaApi } from "./media";
 import { registerQuestionsApi } from "./questions";
 import { registerAdminQueuesApi } from "./admin-queues";
 import { registerSlaAdminApi } from "./sla";
+import { registerProductRequestApi } from "./product-requests";
 
 // ---------------------------------------------------------------------------
 // xenios research member platform: the ONE registration entry point for the
@@ -42,4 +43,5 @@ export function registerMemberPlatformApi(app: Express, deps: MemberPlatformDeps
   registerQuestionsApi(app, deps);
   registerAdminQueuesApi(app, deps);
   registerSlaAdminApi(app, deps);
+  registerProductRequestApi(app);
 }

@@ -21,6 +21,7 @@ import { useResearch } from "./core";
 const MEMBER_NAV = [
   { label: "Home", href: "/research/member" },
   { label: "Products", href: "/research/member/products" },
+  { label: "Requests", href: "/research/member/product-requests" },
   { label: "Guides", href: "/research/member/guides" },
   { label: "Cart", href: "/research/member/cart" },
   { label: "Orders", href: "/research/member/orders" },
