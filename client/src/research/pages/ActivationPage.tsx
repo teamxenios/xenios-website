@@ -323,6 +323,14 @@ function ActivationStepper({
   reload: () => void;
 }) {
   const current = status.currentStep;
+  const currentRecord = status.steps.find((step) => step.step === current) ?? null;
+  const showAgreements = current === "consents" || current === "agreements";
+  const showIdentity = current === "identity";
+  const showPayment =
+    current === "obligation" ||
+    current === "payment" ||
+    current === "verification" ||
+    current === "active";
   return (
     <div className="grid gap-8">
       {/* The tracker: every step, its honest state, and where the member is. */}
@@ -366,16 +374,42 @@ function ActivationStepper({
       {status.active ? (
         <ActivePanel status={status} />
       ) : (
-        <>
-          <IdentitySection token={token} reload={reload} />
-          <AgreementsSection token={token} embeddedEsignEnabled={status.embeddedEsignEnabled} reload={reload} />
-          <PaymentSection token={token} reload={reload} />
-        </>
+        <div className="grid gap-6" data-testid="activation-current-step">
+          <section className="card" aria-live="polite">
+            <p className="mono-label text-ink-mute">Your next step</p>
+            <p className="body-m font-700 mt-1">
+              {current ? (STEP_LABELS[current] ?? current) : "We are checking your progress"}
+            </p>
+            {currentRecord?.detail && (
+              <p className="body-s text-ink-2 mt-2 max-w-[56ch]">{currentRecord.detail}</p>
+            )}
+          </section>
+
+          {showIdentity && <IdentitySection token={token} reload={reload} />}
+          {showAgreements && (
+            <AgreementsSection
+              token={token}
+              embeddedEsignEnabled={status.embeddedEsignEnabled}
+              workflowStep={current === "consents" ? "consents" : "agreements"}
+              reload={reload}
+            />
+          )}
+          {showPayment && <PaymentSection token={token} reload={reload} />}
+          {!showIdentity && !showAgreements && !showPayment && (
+            <ResearchPendingPanel
+              kind="samuel_review_pending"
+              title="This step is being confirmed."
+              body="Your progress is saved. Check again here; you do not need another email link to continue."
+              testid="activation-step-waiting"
+            />
+          )}
+        </div>
       )}
 
       <ResearchSecureNotice>
         Xenios never asks for card details, passwords, or your Social Security number by email. Every payment
-        is verified by a person before your membership changes.
+        is verified by a person before your membership changes. For help, contact
+        {" "}research@xeniostechnology.com.
       </ResearchSecureNotice>
     </div>
   );
@@ -727,15 +761,29 @@ type AgreementsState =
 function AgreementsSection({
   token,
   embeddedEsignEnabled,
+  workflowStep,
   reload,
 }: {
   token: string | null;
   embeddedEsignEnabled: boolean;
+  workflowStep: "consents" | "agreements";
   reload: () => void;
 }) {
   const [state, setState] = useState<AgreementsState>({ kind: "loading" });
   const [localNonce, setLocalNonce] = useState(0);
   const refresh = useCallback(() => setLocalNonce((n) => n + 1), []);
+  const requiredAgreements =
+    state.kind === "ok"
+      ? state.agreements.filter(
+          (agreement) =>
+            agreement.requirement === "required" &&
+            (workflowStep === "consents"
+              ? agreement.category === "electronic_record_consent"
+              : agreement.category !== "electronic_record_consent"),
+        )
+      : [];
+  const signedRequired = requiredAgreements.filter((agreement) => agreement.signed).length;
+  const nextUnsignedRequired = requiredAgreements.find((agreement) => !agreement.signed) ?? null;
 
   useEffect(() => {
     if (!token) return;
@@ -756,11 +804,12 @@ function AgreementsSection({
   return (
     <section aria-labelledby="ra-activate-agreements" data-testid="activation-agreements">
       <h2 id="ra-activate-agreements" className="body-m font-700">
-        Agreements
+        {workflowStep === "consents" ? "Electronic records consent" : "Agreements"}
       </h2>
       <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
-        Read each document in full and sign it with your typed legal name. Nothing is accepted on your behalf,
-        and nothing is prechecked. The electronic records consent comes first; it makes the rest signable.
+        {workflowStep === "consents"
+          ? "Read the electronic records consent in full and sign it with your typed legal name. The identity step follows before the remaining agreement package."
+          : "Read each document in full and sign it with your typed legal name. Nothing is accepted on your behalf, and nothing is prechecked."}
       </p>
       <div className="mt-4 grid gap-4">
         {state.kind === "loading" && <ResearchLoadingState label="Loading agreements" />}
@@ -778,31 +827,44 @@ function AgreementsSection({
           />
         )}
         {state.kind === "ok" &&
-          state.agreements.length > 0 &&
+          requiredAgreements.length > 0 &&
           (embeddedEsignEnabled ? (
             <EmbeddedAgreementSigner
-              agreements={state.agreements}
+              agreements={requiredAgreements}
               token={token}
+              autoAdvanceAfterSign={workflowStep === "consents"}
               onAllComplete={() => {
                 refresh();
                 reload();
               }}
             />
           ) : (
-            state.agreements.map((agreement) => (
+            nextUnsignedRequired && (
               <AgreementSignCard
-                key={agreement.documentVersionId}
-                agreement={agreement}
+                key={nextUnsignedRequired.documentVersionId}
+                agreement={nextUnsignedRequired}
                 token={token}
                 onSigned={() => {
                   refresh();
                   reload();
                 }}
               />
-            ))
+            )
           ))}
+        {state.kind === "ok" && requiredAgreements.length > 0 && !state.satisfied && (
+          <p className="body-s text-ink-mute" data-testid="agreement-package-progress">
+            Agreement package: {signedRequired} of {requiredAgreements.length} required agreements complete.
+            Only your next agreement is shown.
+          </p>
+        )}
         {state.kind === "ok" && state.satisfied && (
-          <div className="flex items-center gap-3">
+          <div className="card flex flex-wrap items-center justify-between gap-3" data-testid="agreement-package-complete">
+            <div>
+              <p className="body-m font-700">Agreement package complete</p>
+              <p className="body-s text-ink-2 mt-1">
+                {signedRequired} required agreements are signed. Copies and certificates are in your Document Center.
+              </p>
+            </div>
             <ResearchStatusBadge label="All required agreements signed" tone="success" />
           </div>
         )}
@@ -1021,7 +1083,9 @@ function PaymentSection({ token, reload }: { token: string | null; reload: () =>
         Payment
       </h2>
       <div className="mt-4 grid gap-4">
-        <FoundingPricingBlock />
+        {(state.kind !== "ok" ||
+          !state.obligation ||
+          SUBMITTABLE.has(state.obligation.status)) && <FoundingPricingBlock />}
         {state.kind === "loading" && <ResearchLoadingState label="Loading payment status" />}
         {state.kind === "unavailable" && (
           <ResearchEmptyState
@@ -1202,9 +1266,9 @@ function PaymentBody({
             <p className="body-s text-ink-2 mt-2">{selectedMethod.mobileInstructions}</p>
           )}
           <p className="body-s text-ink-mute mt-3 max-w-[56ch]">
-            The destination above is shown masked for your security. The full receiving details arrive in your
-            payment step only through this method's own app or the instructions Xenios sends you; support will
-            never ask you to send funds anywhere else.
+            The destination above is shown masked for your security. Full receiving details are available only
+            inside this authenticated payment step or the payment method's own app; they are never sent by email.
+            Support will never ask you to send funds anywhere else.
           </p>
           <div className="mt-4" role="note" data-testid="payment-duplicate-warning">
             <p className="body-s font-700">Send exactly one payment.</p>

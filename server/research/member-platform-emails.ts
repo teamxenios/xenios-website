@@ -19,6 +19,7 @@ const MEMBER_AREA_URL = () =>
   `${process.env.APPLICATION_BASE_URL || "https://xeniostechnology.com"}/research/member`;
 
 const RESEARCH_FROM_DEFAULT = "Xenios Research <research@xeniostechnology.com>";
+const RESEARCH_REPLY_TO_DEFAULT = "research@xeniostechnology.com";
 
 // Same best-effort send as membership-emails.ts: missing Resend configuration
 // never throws into the request path; the notifier seam treats false as
@@ -26,14 +27,14 @@ const RESEARCH_FROM_DEFAULT = "Xenios Research <research@xeniostechnology.com>";
 async function sendEmail(input: { to: string; subject: string; text: string }): Promise<boolean> {
   try {
     const r = await getResendClient();
-    const from = process.env.RESEARCH_EMAIL_FROM?.trim() || r.fromEmail || RESEARCH_FROM_DEFAULT;
-    const replyTo = process.env.RESEARCH_EMAIL_REPLY_TO?.trim() || r.replyToEmail || undefined;
+    const from = process.env.RESEARCH_EMAIL_FROM?.trim() || RESEARCH_FROM_DEFAULT;
+    const replyTo = process.env.RESEARCH_EMAIL_REPLY_TO?.trim() || RESEARCH_REPLY_TO_DEFAULT;
     const { error } = await r.client.emails.send({
       from,
       to: input.to,
       subject: input.subject,
       text: input.text,
-      ...(replyTo ? { replyTo } : {}),
+      replyTo,
     });
     if (error) {
       console.warn("[member-platform emails] provider rejected send:", (error as { message?: string })?.message ?? "unknown error");
