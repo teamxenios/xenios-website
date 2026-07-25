@@ -38,3 +38,4 @@ export * from "./access";
 export * from "./capability";
 export * from "./clinical";
 export * from "./pharmacy";
+export * from "./communications";

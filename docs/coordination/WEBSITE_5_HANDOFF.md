@@ -62,3 +62,12 @@ concentration, instruction binding, and current version match exactly.
 Instruction kinds stay separate. Patient supply drafts are created only after
 that gate and contain the required field names with every value `null`; no
 generic retailer, product, dose, or direction is seeded.
+
+## Wave 4 notes
+
+Lab shares require a current patient consent and exact clinician/lab-reviewer
+recipient; revocation closes the share. Clinical messages can exist only in the
+Care portal—email and Telegram are notification-only. Adverse events carry
+urgency, explicit clinician and pharmacy routing, escalation/closure rules, and
+an audit requirement. Audit helpers accept metadata only. Clinical value events
+are categorically ineligible for affiliate compensation.

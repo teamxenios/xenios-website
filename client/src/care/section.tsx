@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { CareCapabilityStatus } from "@shared/care/contracts";
+import { CARE_EMERGENCY_BOUNDARY } from "@shared/care/communications";
 import "./styles.css";
 
 const preparation = [
@@ -86,8 +87,7 @@ export default function CareSection() {
         <p className="care-eyebrow">Emergency boundary</p>
         <h2 id="emergency-title">This site is not emergency care.</h2>
         <p>
-          If you may be experiencing a medical emergency, contact local emergency services now.
-          Do not wait for a message or response from Xenios.
+          {CARE_EMERGENCY_BOUNDARY}
         </p>
       </section>
     </main>
