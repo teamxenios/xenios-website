@@ -55,6 +55,8 @@ const MemberTracker = lazy(() => import("./pages/member/Tracker"));
 const Goals = lazy(() => import("./pages/member/Goals"));
 const GoalDetail = lazy(() => import("./pages/member/GoalDetail"));
 const MemberProducts = lazy(() => import("./pages/member/Products"));
+const ProductRequests = lazy(() => import("./pages/member/ProductRequests"));
+const NewProductRequest = lazy(() => import("./pages/member/NewProductRequest"));
 const MemberProductPage = lazy(() => import("./pages/member/ProductPage"));
 const MemberGuides = lazy(() => import("./pages/member/Guides"));
 const GuideReader = lazy(() => import("./pages/member/GuideReader"));
@@ -174,6 +176,8 @@ export default function ResearchSection() {
           <Route path="/research/member/goals/:slug">{() => <L member component={GoalDetail} />}</Route>
           <Route path="/research/member/products">{() => <L member component={MemberProducts} />}</Route>
           <Route path="/research/member/products/:slug">{() => <L member component={MemberProductPage} />}</Route>
+          <Route path="/research/member/product-requests/new">{() => <L member component={NewProductRequest} />}</Route>
+          <Route path="/research/member/product-requests">{() => <L member component={ProductRequests} />}</Route>
           <Route path="/research/member/guides">{() => <L member component={MemberGuides} />}</Route>
           <Route path="/research/member/guides/:slug">{() => <L member component={GuideReader} />}</Route>
           <Route path="/research/member/cart">{() => <L member component={MemberCart} />}</Route>

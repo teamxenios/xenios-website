@@ -203,12 +203,20 @@ export default function Products() {
                 />
               ) : visible.length === 0 ? (
                 <ResearchEmptyState
-                  title="No matches."
-                  body="Try a different search term."
+                  title="We do not currently have that product in the catalog."
+                  body="You can ask the research team to evaluate it. A request is a demand signal, not an order or availability promise."
                   action={
-                    <button type="button" className="btn btn-secondary" onClick={() => setQuery("")}>
-                      Clear search
-                    </button>
+                    <span className="flex flex-wrap gap-3">
+                      <Link
+                        href={`${MEMBER_ROUTES.newProductRequest}?product=${encodeURIComponent(query.trim())}`}
+                        className="btn btn-primary"
+                      >
+                        Request this product
+                      </Link>
+                      <button type="button" className="btn btn-secondary" onClick={() => setQuery("")}>
+                        Clear search
+                      </button>
+                    </span>
                   }
                 />
               ) : (
@@ -221,10 +229,18 @@ export default function Products() {
             </section>
 
             <div className="card mt-8 flex flex-wrap items-center justify-between gap-4" aria-label="Related areas">
-              <p className="body-s text-ink-2">Guides explain the documentation and evidence behind the catalog.</p>
-              <Link href={MEMBER_ROUTES.guides} className="btn btn-ghost">
-                Browse the Guides
-              </Link>
+              <div>
+                <p className="body-s text-ink-2">Cannot find a research product or supplement?</p>
+                <p className="body-s text-ink-mute mt-1">Submit a private request for the team to evaluate.</p>
+              </div>
+              <span className="flex flex-wrap gap-3">
+                <Link href={MEMBER_ROUTES.newProductRequest} className="btn btn-secondary">
+                  Request a product
+                </Link>
+                <Link href={MEMBER_ROUTES.guides} className="btn btn-ghost">
+                  Browse the Guides
+                </Link>
+              </span>
             </div>
           </>
         )}

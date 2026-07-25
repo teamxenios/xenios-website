@@ -94,6 +94,41 @@ async function questionAnswerReady(input: TemplateInput): Promise<boolean> {
   });
 }
 
+async function productRequestReceived(input: TemplateInput): Promise<boolean> {
+  const reference = typeof input.payload.reference === "string" ? input.payload.reference : "your request";
+  const productName =
+    typeof input.payload.productName === "string" && input.payload.productName.trim()
+      ? ` for ${input.payload.productName.trim()}`
+      : "";
+  return sendEmail({
+    to: input.recipient,
+    subject: "Your Xenios Research product request was received",
+    text:
+      `Hi ${firstName(input.payload)},\n\n` +
+      `We received product request ${reference}${productName}. A request is a demand signal for review; it does not create a ` +
+      `product, order, price, approval, inventory, or availability promise.\n\n` +
+      `Review it here: ${MEMBER_AREA_URL()}/product-requests\n\n` +
+      `Xenios Research\nresearch@xeniostechnology.com`,
+  });
+}
+
+async function productRequestUpdated(input: TemplateInput): Promise<boolean> {
+  const reference = typeof input.payload.reference === "string" ? input.payload.reference : "your request";
+  const productName =
+    typeof input.payload.productName === "string" && input.payload.productName.trim()
+      ? ` for ${input.payload.productName.trim()}`
+      : "";
+  return sendEmail({
+    to: input.recipient,
+    subject: "Your Xenios Research product request has an update",
+    text:
+      `Hi ${firstName(input.payload)},\n\n` +
+      `There is a meaningful update on product request ${reference}${productName}. Open your private member area to read it:\n\n` +
+      `${MEMBER_AREA_URL()}/product-requests\n\n` +
+      `Xenios Research\nresearch@xeniostechnology.com`,
+  });
+}
+
 async function planPublished(input: TemplateInput): Promise<boolean> {
   const label = typeof input.payload.monthLabel === "string" ? ` for ${input.payload.monthLabel}` : "";
   return sendEmail({
@@ -125,6 +160,8 @@ export const MEMBER_PLATFORM_TEMPLATES = {
   member_assessment_due: assessmentDue,
   member_document_ready: documentReady,
   member_question_answer_ready: questionAnswerReady,
+  member_product_request_received: productRequestReceived,
+  member_product_request_updated: productRequestUpdated,
   member_plan_published: planPublished,
   admin_sla_alert: adminSlaAlert,
 } as const satisfies Record<string, TemplateSender>;
