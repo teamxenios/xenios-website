@@ -32,7 +32,7 @@ export interface CertificateAccessAudit {
     certificateId: string;
     lotId: string;
     accessedAt: string;
-    outcome: "granted" | "denied";
+    outcome: "attempted" | "granted" | "denied";
     reason: string;
   }): Promise<void>;
 }
@@ -142,9 +142,11 @@ export class ExactLotCertificateService {
       );
     }
 
-    // Audit before minting a signed URL. A provider failure still leaves an
-    // evidence trail that access was attempted.
-    await this.audit.record({ ...auditBase, outcome: "granted", reason: "exact_lot_match" });
+    await this.audit.record({
+      ...auditBase,
+      outcome: "attempted",
+      reason: "exact_lot_match",
+    });
     const grant = await this.provider.createSignedReadUrl({
       storageKey: certificate.privateStorageKey,
       memberId: input.actor.memberId,
@@ -163,6 +165,12 @@ export class ExactLotCertificateService {
         "Private certificate access is not available right now. Try again later.",
       );
     }
+    await this.audit.record({
+      ...auditBase,
+      auditId: crypto.randomUUID(),
+      outcome: "granted",
+      reason: "signed_url_minted",
+    });
 
     return {
       ok: true,
@@ -174,4 +182,3 @@ export class ExactLotCertificateService {
     };
   }
 }
-

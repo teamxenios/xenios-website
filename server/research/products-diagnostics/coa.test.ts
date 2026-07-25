@@ -79,11 +79,25 @@ describe("exact-lot certificate access", () => {
       lotCode: "LOT-ALPHA",
       notice: COA_LIMITATION_NOTICE,
     });
-    expect(audit.events[0]).toMatchObject({
+    expect(audit.events).toEqual([
+      expect.objectContaining({
+        certificateId: "certificate_001",
+        lotId: "lot_001",
+        outcome: "attempted",
+        reason: "exact_lot_match",
+      }),
+      expect.objectContaining({
+        certificateId: "certificate_001",
+        lotId: "lot_001",
+        outcome: "granted",
+        reason: "signed_url_minted",
+      }),
+    ]);
+    expect(audit.events[1]).toMatchObject({
       certificateId: "certificate_001",
       lotId: "lot_001",
       outcome: "granted",
-      reason: "exact_lot_match",
+      reason: "signed_url_minted",
     });
   });
 
@@ -128,12 +142,13 @@ describe("exact-lot certificate access", () => {
   });
 
   it("fails closed when private signed access is disabled", async () => {
+    const audit = new MemoryCertificateAudit();
     const service = new ExactLotCertificateService(
       [variant],
       [lot],
       [certificate],
       new DisabledPrivateCertificateProvider(),
-      new MemoryCertificateAudit(),
+      audit,
     );
     await expect(
       service.requestAccess({
@@ -142,6 +157,12 @@ describe("exact-lot certificate access", () => {
         lotCode: "LOT-ALPHA",
       }),
     ).resolves.toMatchObject({ ok: false, code: "private_access_unavailable" });
+    expect(audit.events.map((event) => event.outcome)).toEqual([
+      "attempted",
+      "denied",
+    ]);
+    expect(audit.events).not.toContainEqual(
+      expect.objectContaining({ outcome: "granted" }),
+    );
   });
 });
-

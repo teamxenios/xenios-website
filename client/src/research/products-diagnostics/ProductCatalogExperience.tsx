@@ -8,6 +8,7 @@ import {
   Search,
   ShieldCheck,
 } from "lucide-react";
+import { productRequestHref } from "../../../../server/research/products-diagnostics/product-request-sources";
 
 export const PRODUCT_FAMILY_OPTIONS = [
   ["all_products", "All Products"],
@@ -62,14 +63,6 @@ export type ProductDetailView = ProductCardView & {
   relatedProducts: ProductCardView[];
 };
 
-const REQUEST_PATH = "/research/member/product-requests/new";
-
-function requestPath(source: string, product?: string): string {
-  const params = new URLSearchParams({ source });
-  if (product?.trim()) params.set("product", product.trim());
-  return `${REQUEST_PATH}?${params.toString()}`;
-}
-
 function StatusPill({ label }: { label: ProductCardView["statusLabel"] }) {
   const positive = label === "Available";
   return (
@@ -121,7 +114,7 @@ export function ProductCatalogExperience({ products }: { products: ProductCardVi
               documentation, inventory, and commerce gates are all confirmed.
             </p>
           </div>
-          <Link href={requestPath("catalog_hero")} className="btn btn-primary w-full justify-center">
+          <Link href={productRequestHref("products")} className="btn btn-primary w-full justify-center">
             Request a product <ArrowRight aria-hidden="true" size={16} />
           </Link>
         </div>
@@ -166,7 +159,7 @@ export function ProductCatalogExperience({ products }: { products: ProductCardVi
             availability promise, or clinical recommendation.
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
-            <Link href={requestPath("catalog_empty_search", query)} className="btn btn-primary">
+            <Link href={productRequestHref("empty_search", query)} className="btn btn-primary">
               Request this product
             </Link>
             <button type="button" className="btn btn-secondary" onClick={() => setQuery("")}>
@@ -238,7 +231,7 @@ export function ProductDetailExperience({ product }: { product: ProductDetailVie
         <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
           <StatusPill label={product.statusLabel} />
           <p className="mt-4 text-sm leading-6 text-slate-600">{product.summary}</p>
-          <Link href={requestPath("product_detail", product.displayName)} className="btn btn-primary mt-5 w-full justify-center">
+          <Link href={productRequestHref("products", product.displayName)} className="btn btn-primary mt-5 w-full justify-center">
             Request an alternative
           </Link>
         </aside>
@@ -338,7 +331,7 @@ export function ProductDetailExperience({ product }: { product: ProductDetailVie
                 inventory, availability promise, or clinical recommendation.
               </p>
             </div>
-            <Link href={requestPath("product_alternative", product.displayName)} className="btn btn-primary shrink-0">
+            <Link href={productRequestHref("products", product.displayName)} className="btn btn-primary shrink-0">
               Start request <CheckCircle2 size={16} aria-hidden="true" />
             </Link>
           </div>
@@ -347,4 +340,3 @@ export function ProductDetailExperience({ product }: { product: ProductDetailVie
     </article>
   );
 }
-

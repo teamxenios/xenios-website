@@ -1,4 +1,18 @@
 import crypto from "crypto";
+import { Website3ValidationError } from "./errors";
+
+export const US_STATE_CODES = [
+  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+  "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+  "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+  "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
+  "DC",
+] as const;
+export type UsStateCode = (typeof US_STATE_CODES)[number];
+
+const US_STATE_CODE_SET = new Set<string>(US_STATE_CODES);
+const MAX_IDEMPOTENCY_KEY_LENGTH = 160;
 
 export const METABOLIC_GOAL_CATEGORIES = [
   "general_metabolic_health",
@@ -127,7 +141,7 @@ export class MetabolicPathwayRepository {
       .map((pathway) => structuredClone(pathway));
   }
 
-  update(
+  async update(
     pathwayId: MetabolicPathwayConfig["pathwayId"],
     patch: Partial<
       Pick<
@@ -137,9 +151,9 @@ export class MetabolicPathwayRepository {
     >,
     actor: string,
     at: string,
-  ): MetabolicPathwayConfig {
+  ): Promise<MetabolicPathwayConfig> {
     const current = this.pathways.get(pathwayId);
-    if (!current) throw new Error("Metabolic pathway not found");
+    if (!current) throw new Website3ValidationError("Metabolic pathway not found");
     const next: MetabolicPathwayConfig = {
       ...current,
       ...structuredClone(patch),
@@ -157,7 +171,7 @@ export interface MetabolicInterestRecord {
   interestId: string;
   memberId: string;
   pathwayId: MetabolicPathwayConfig["pathwayId"];
-  currentState: string;
+  currentState: UsStateCode;
   generalGoalCategory: MetabolicGoalCategory;
   preferredContact: PreferredContactMethod;
   interestDate: string;
@@ -193,8 +207,8 @@ export class MemoryMetabolicInterestStore implements MetabolicInterestStore {
 
 export type JoinMetabolicInterestInput = Omit<
   MetabolicInterestRecord,
-  "interestId" | "memberId" | "createdAt"
->;
+  "interestId" | "memberId" | "createdAt" | "currentState"
+> & { currentState: string };
 
 export class MetabolicInterestService {
   constructor(
@@ -206,31 +220,52 @@ export class MetabolicInterestService {
     memberId: string,
     input: JoinMetabolicInterestInput,
   ): Promise<{ created: boolean; record: MetabolicInterestRecord }> {
-    if (!/^[A-Z]{2}$/.test(input.currentState)) {
-      throw new Error("currentState must be a two-letter US state code");
+    const idempotencyKey = input.idempotencyKey.trim();
+    if (
+      idempotencyKey.length === 0 ||
+      idempotencyKey.length > MAX_IDEMPOTENCY_KEY_LENGTH
+    ) {
+      throw new Website3ValidationError(
+        `idempotencyKey must contain 1-${MAX_IDEMPOTENCY_KEY_LENGTH} characters`,
+      );
+    }
+    if (!US_STATE_CODE_SET.has(input.currentState)) {
+      throw new Website3ValidationError("currentState must be a valid US state code");
     }
     if (!METABOLIC_GOAL_CATEGORIES.includes(input.generalGoalCategory)) {
-      throw new Error("generalGoalCategory is invalid");
+      throw new Website3ValidationError("generalGoalCategory is invalid");
     }
     if (!PREFERRED_CONTACT_METHODS.includes(input.preferredContact)) {
-      throw new Error("preferredContact is invalid");
+      throw new Website3ValidationError("preferredContact is invalid");
     }
     if (!DEFAULT_METABOLIC_PATHWAYS.some((pathway) => pathway.pathwayId === input.pathwayId)) {
-      throw new Error("pathwayId is invalid");
+      throw new Website3ValidationError("pathwayId is invalid");
     }
-    const existing = await this.store.findByIdempotency(memberId, input.idempotencyKey);
+    const interestDate = input.interestDate.trim();
+    const parsedInterestDate = new Date(`${interestDate}T00:00:00.000Z`);
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(interestDate) ||
+      Number.isNaN(parsedInterestDate.getTime()) ||
+      parsedInterestDate.toISOString().slice(0, 10) !== interestDate ||
+      interestDate > this.now().toISOString().slice(0, 10)
+    ) {
+      throw new Website3ValidationError(
+        "interestDate must be a valid, non-future YYYY-MM-DD date",
+      );
+    }
+    const existing = await this.store.findByIdempotency(memberId, idempotencyKey);
     if (existing) return { created: false, record: existing };
 
     const record: MetabolicInterestRecord = {
       interestId: crypto.randomUUID(),
       memberId,
       pathwayId: input.pathwayId,
-      currentState: input.currentState,
+      currentState: input.currentState as UsStateCode,
       generalGoalCategory: input.generalGoalCategory,
       preferredContact: input.preferredContact,
-      interestDate: input.interestDate,
+      interestDate,
       attributionSource: input.attributionSource.slice(0, 120),
-      idempotencyKey: input.idempotencyKey,
+      idempotencyKey,
       createdAt: this.now().toISOString(),
     };
     await this.store.save(record);

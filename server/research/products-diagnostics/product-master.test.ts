@@ -54,7 +54,7 @@ describe("Website 3 product master", () => {
     const source = [
       catalogProduct({ sku: "P001", slug: "alpha", displayName: "Alpha Research Vial" }),
     ];
-    const master = buildProductMaster(source, "2026-07-25T12:00:00.000Z");
+    const master = buildProductMaster(source, "2026-07-25T12:00:00.000Z", []);
 
     expect(Object.keys(master).sort()).toEqual(
       ["products", "variants", "lots", "certificates", "media", "content", "commerce"].sort(),
@@ -98,7 +98,7 @@ describe("Website 3 product master", () => {
 
   it("never promotes unconfirmed price or review states to Available", () => {
     const source = catalogProduct({ sku: "P001", slug: "alpha", displayName: "Alpha" });
-    const master = buildProductMaster([source], "2026-07-25T12:00:00.000Z");
+    const master = buildProductMaster([source], "2026-07-25T12:00:00.000Z", []);
     expect(truthStateForCatalogProduct(source)).toBe("under_review");
     expect(master.commerce[0]).toMatchObject({
       priceCents: null,
@@ -107,10 +107,43 @@ describe("Website 3 product master", () => {
     });
   });
 
+  it("uses the canonical commerce decision instead of catalog approval alone", () => {
+    const source = catalogProduct({
+      sku: "P001",
+      slug: "alpha",
+      displayName: "Alpha",
+      availability: "in_stock",
+      commerceApproval: "approved",
+    });
+    const disabled = buildProductMaster(
+      [source],
+      "2026-07-25T12:00:00.000Z",
+      [{ sku: "P001", purchasable: false, priceCents: 4900 }],
+    );
+    expect(disabled.commerce[0]).toMatchObject({
+      truthState: "available",
+      priceCents: 4900,
+      purchasable: false,
+    });
+    expect(disabled.commerce[0].checkoutMessage).not.toBeNull();
+
+    const enabled = buildProductMaster(
+      [source],
+      "2026-07-25T12:00:00.000Z",
+      [{ sku: "P001", purchasable: true, priceCents: 4900 }],
+    );
+    expect(enabled.commerce[0]).toMatchObject({
+      truthState: "available",
+      priceCents: 4900,
+      purchasable: true,
+    });
+  });
+
   it("publishes all requested family filters, including empty families, without fake products", () => {
     const master = buildProductMaster(
       [catalogProduct({ sku: "P001", slug: "alpha", displayName: "Alpha" })],
       "2026-07-25T12:00:00.000Z",
+      [],
     );
     const summaries = summarizeFamilies(master);
     expect(summaries.map((entry) => entry.family)).toEqual(["all_products", ...PRODUCT_FAMILIES]);
@@ -134,6 +167,7 @@ describe("Website 3 product master", () => {
         }),
       ],
       "2026-07-25T12:00:00.000Z",
+      [],
     );
     expect(searchProductMaster(master, "epithalon").map((product) => product.slug)).toEqual([
       "epitalon-10mg",
@@ -143,4 +177,3 @@ describe("Website 3 product master", () => {
     ]);
   });
 });
-

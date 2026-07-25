@@ -1,6 +1,6 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import request from "supertest";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { notConfirmed, type CatalogProduct } from "@shared/research/catalog";
 import {
   DisabledPrivateCertificateProvider,
@@ -17,6 +17,7 @@ import {
   DisabledBiomarkerUploadProvider,
   MemoryBiomarkerStore,
   SuperpowerOfferRepository,
+  type BiomarkerUploadProvider,
 } from "./diagnostics";
 import { buildProductMaster } from "./product-master";
 import {
@@ -68,7 +69,11 @@ function admin(req: Request, _res: Response, next: NextFunction) {
 }
 
 function dependencies(): Website3ApiDependencies {
-  const productMaster = buildProductMaster([source], "2026-07-25T12:00:00.000Z");
+  const productMaster = buildProductMaster(
+    [source],
+    "2026-07-25T12:00:00.000Z",
+    [{ sku: source.sku, purchasable: false, priceCents: null }],
+  );
   return {
     productMaster,
     certificates: new ExactLotCertificateService(
@@ -90,11 +95,13 @@ function dependencies(): Website3ApiDependencies {
 
 describe("Website 3 route registration", () => {
   let app: express.Express;
+  let deps: Website3ApiDependencies;
 
   beforeEach(() => {
     app = express();
     app.use(express.json());
-    registerProductsDiagnosticsApi(app, dependencies(), {
+    deps = dependencies();
+    registerProductsDiagnosticsApi(app, deps, {
       requireActiveMember: active,
       requireAdmin: admin,
     });
@@ -160,6 +167,56 @@ describe("Website 3 route registration", () => {
     });
   });
 
+  it("confirms a biomarker report only after private object verification", async () => {
+    const provider: BiomarkerUploadProvider = {
+      async createPrivateUpload() {
+        return {
+          ok: true,
+          uploadUrl: "https://signed.example/upload",
+          expiresAt: "2026-07-25T12:10:00.000Z",
+        };
+      },
+      async verifyPrivateUpload() {
+        return { ok: true };
+      },
+    };
+    deps.biomarkers = new BiomarkerService(
+      new MemoryBiomarkerStore(),
+      provider,
+      () => new Date("2026-07-25T12:00:00.000Z"),
+    );
+    const isolated = express();
+    isolated.use(express.json());
+    registerProductsDiagnosticsApi(isolated, deps, {
+      requireActiveMember: active,
+      requireAdmin: admin,
+    });
+
+    const prepared = await request(isolated)
+      .post("/api/research/diagnostics/biomarker/report-upload")
+      .send({
+        filename: "report.pdf",
+        contentType: "application/pdf",
+        sizeBytes: 100,
+        consentAccepted: true,
+        consentVersion: "v1",
+      });
+    expect(prepared.status).toBe(201);
+    expect(prepared.body.biomarker).toMatchObject({
+      state: "not_started",
+      reportFilename: null,
+    });
+
+    const confirmed = await request(isolated)
+      .post("/api/research/diagnostics/biomarker/report-upload/confirm")
+      .send({ uploadId: prepared.body.uploadId });
+    expect(confirmed.status).toBe(200);
+    expect(confirmed.body.biomarker).toMatchObject({
+      state: "report_uploaded",
+      reportFilename: "report.pdf",
+    });
+  });
+
   it("requires an exact lot for a certificate", async () => {
     const response = await request(app)
       .post("/api/research/products/P001/certificates/access")
@@ -178,5 +235,32 @@ describe("Website 3 route registration", () => {
       "GLP-3 placeholder",
     );
   });
-});
 
+  it("does not report pathway success when durable persistence rejects", async () => {
+    vi.spyOn(deps.pathways, "update").mockRejectedValue(
+      new Error("database unavailable"),
+    );
+    const response = await request(app)
+      .put("/api/admin/research/metabolic-pathways/glp_1_pathway")
+      .send({ publicStatus: "Available" });
+    expect(response.status).toBe(503);
+    expect(response.body).toMatchObject({
+      ok: false,
+      code: "persistence_failed",
+    });
+  });
+
+  it("does not report Superpower success when durable persistence rejects", async () => {
+    vi.spyOn(deps.superpower, "update").mockRejectedValue(
+      new Error("database unavailable"),
+    );
+    const response = await request(app)
+      .put("/api/admin/research/superpower-offer")
+      .send({ status: "paused" });
+    expect(response.status).toBe(503);
+    expect(response.body).toMatchObject({
+      ok: false,
+      code: "persistence_failed",
+    });
+  });
+});

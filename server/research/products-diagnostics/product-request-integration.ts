@@ -9,28 +9,13 @@ import {
   normalizeDemandName,
   validateSubmittedProductUrl,
 } from "../product-requests";
+import type { ProductRequestEntryPoint } from "./product-request-sources";
 
-export const PRODUCT_REQUEST_ENTRY_POINTS = [
-  "empty_search",
-  "products",
-  "blends",
-  "supplements",
-  "programs",
-  "quantum",
-  "diagnostics",
-  "glp_cards",
-  "support",
-] as const;
-export type ProductRequestEntryPoint = (typeof PRODUCT_REQUEST_ENTRY_POINTS)[number];
-
-export function productRequestHref(
-  source: ProductRequestEntryPoint,
-  productName?: string,
-): string {
-  const params = new URLSearchParams({ source });
-  if (productName?.trim()) params.set("product", productName.trim());
-  return `/research/member/product-requests/new?${params.toString()}`;
-}
+export {
+  PRODUCT_REQUEST_ENTRY_POINTS,
+  productRequestHref,
+} from "./product-request-sources";
+export type { ProductRequestEntryPoint } from "./product-request-sources";
 
 export interface Website3ProductRequestForm {
   productName: string;

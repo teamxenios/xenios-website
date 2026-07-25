@@ -12,6 +12,12 @@ import {
   type ProductTruthState,
 } from "./model";
 
+export interface CanonicalCommerceReadiness {
+  sku: string;
+  purchasable: boolean;
+  priceCents: number | null;
+}
+
 function stableId(prefix: string, value: string): string {
   return `${prefix}_${value.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}`;
 }
@@ -111,13 +117,18 @@ function productRecord(product: CatalogProduct, at: string): ProductRecord {
   };
 }
 
-function commerceRecord(product: CatalogProduct, productId: string, at: string): ProductCommerceRecord {
-  const price =
-    product.facts.priceCents.confirmation === "confirmed" &&
-    !product.facts.priceCents.conflictNote
-      ? product.facts.priceCents.value
-      : null;
+function commerceRecord(
+  product: CatalogProduct,
+  productId: string,
+  at: string,
+  readiness: CanonicalCommerceReadiness | undefined,
+): ProductCommerceRecord {
   const truthState = truthStateForCatalogProduct(product);
+  const price = readiness?.priceCents ?? null;
+  const purchasable =
+    readiness?.purchasable === true &&
+    truthState === "available" &&
+    price !== null;
   return {
     commerceId: stableId("commerce", product.sku),
     productId,
@@ -126,9 +137,9 @@ function commerceRecord(product: CatalogProduct, productId: string, at: string):
     sourceApproval: product.commerceApproval,
     priceCents: price,
     inventoryVisible: truthState === "available" || truthState === "out_of_stock",
-    purchasable: truthState === "available" && price !== null,
+    purchasable,
     checkoutMessage:
-      truthState === "available"
+      purchasable
         ? null
         : "This listing is informational until its current review and commerce gates are complete.",
     createdAt: at,
@@ -141,9 +152,14 @@ function commerceRecord(product: CatalogProduct, productId: string, at: string):
  * CatalogProduct records. It does not create a second product catalog and it does
  * not promote unverified legacy facts.
  */
-export function buildProductMaster(catalog: readonly CatalogProduct[], at: string): ProductMaster {
+export function buildProductMaster(
+  catalog: readonly CatalogProduct[],
+  at: string,
+  canonicalCommerce: readonly CanonicalCommerceReadiness[],
+): ProductMaster {
   const products = catalog.map((item) => productRecord(item, at));
   const bySku = new Map(catalog.map((item) => [item.sku, item]));
+  const commerceBySku = new Map(canonicalCommerce.map((item) => [item.sku, item]));
 
   return {
     products,
@@ -182,7 +198,12 @@ export function buildProductMaster(catalog: readonly CatalogProduct[], at: strin
     commerce: products.map((product) => {
       const source = bySku.get(product.searchAliases[0]);
       if (!source) throw new Error(`Catalog source missing for ${product.productId}`);
-      return commerceRecord(source, product.productId, at);
+      return commerceRecord(
+        source,
+        product.productId,
+        at,
+        commerceBySku.get(source.sku),
+      );
     }),
   };
 }

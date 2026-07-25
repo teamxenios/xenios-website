@@ -8,6 +8,7 @@ import {
   type ProductCardView,
   type ProductDetailView,
 } from "./ProductCatalogExperience";
+import { PRODUCT_REQUEST_ENTRY_POINTS } from "../../../../server/research/products-diagnostics/product-request-sources";
 
 const card: ProductCardView = {
   slug: "alpha",
@@ -73,5 +74,25 @@ describe("Website 3 product experience", () => {
       "A reported purity result does not establish sterility, safety, potency, or suitability for human use.",
     );
     expect(html).toContain("Specifications are pending documentation review.");
+  });
+
+  it("renders only product-request sources accepted by the shared contract", () => {
+    const catalogHtml = renderToStaticMarkup(
+      <ProductCatalogExperience products={[]} />,
+    );
+    const detailHtml = renderToStaticMarkup(
+      <ProductDetailExperience product={detail} />,
+    );
+    const renderedSources = Array.from(
+      `${catalogHtml}${detailHtml}`.matchAll(/source=([^&"]+)/g),
+      (match) => decodeURIComponent(match[1]),
+    );
+    expect(renderedSources.length).toBeGreaterThanOrEqual(4);
+    for (const source of renderedSources) {
+      expect(PRODUCT_REQUEST_ENTRY_POINTS).toContain(source);
+    }
+    expect(new Set(renderedSources)).toEqual(
+      new Set(["products", "empty_search"]),
+    );
   });
 });
