@@ -45,6 +45,7 @@ const ResearchSection = lazy(() => import("@/research/section"));
 // Research operations (Samuel admin presentation) — its own lazy chunk at
 // /admin/research*. Presentation only; all authority is server-side.
 const AdminResearchSection = lazy(() => import("@/research/adminx-section"));
+const CareSection = lazy(() => import("@/care/section"));
 
 function ResearchRoutes() {
   return (
@@ -58,6 +59,14 @@ function AdminResearchRoutes() {
   return (
     <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
       <AdminResearchSection />
+    </Suspense>
+  );
+}
+
+function CareRoutes() {
+  return (
+    <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
+      <CareSection />
     </Suspense>
   );
 }
@@ -108,6 +117,9 @@ function Router() {
           the multi-segment wildcard both mount the section's own router. */}
       <Route path="/research" component={ResearchRoutes} />
       <Route path="/research/*" component={ResearchRoutes} />
+      {/* Care is a separate, disabled-by-default clinical rail and lazy chunk. */}
+      <Route path="/care" component={CareRoutes} />
+      <Route path="/care/*" component={CareRoutes} />
       {/* xenios MVP Lab + MVP routes */}
       <Route path="/mvps" component={MvpLab} />
       <Route path="/kairos">{() => <ExternalRedirect to={KAIROS_APP_URL} />}</Route>

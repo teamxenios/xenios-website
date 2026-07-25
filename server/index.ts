@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
+import { carePageGate, registerCareApi } from "./care";
 import { researchPageGate, registerResearchApi } from "./research";
 import { registerMembershipApi } from "./research/membership";
 import { registerMemberApi } from "./research/members";
@@ -91,7 +92,7 @@ app.use((req, res, next) => {
   // Routes whose response bodies may contain PII (emails, messages, tokens)
   // — log only status + duration, never the body. All research endpoints are
   // included so status tokens and applicant data never reach the logs.
-  const PII_PATHS = ["/api/waitlist", "/api/research", "/api/admin/research"];
+  const PII_PATHS = ["/api/waitlist", "/api/research", "/api/admin/research", "/api/care"];
   const isPiiPath = (p: string) =>
     PII_PATHS.some((prefix) => p === prefix || p.startsWith(prefix + "/"));
 
@@ -114,6 +115,8 @@ app.use((req, res, next) => {
 // gated research APIs (catalog, policies, access, orders). Registered before
 // the SPA catch-all so the gate always runs first.
 app.use(researchPageGate);
+app.use(carePageGate);
+registerCareApi(app);
 registerResearchApi(app);
 registerMembershipApi(app);
 registerMemberApi(app);
