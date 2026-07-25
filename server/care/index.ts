@@ -1,6 +1,5 @@
 import type { Express, NextFunction, Request, Response } from "express";
 import { CARE_ROUTE_CONTRACTS } from "@shared/care/contracts";
-import { careCapabilityStatus } from "./capability";
 import {
   requireCarePermission,
   unconfiguredCareAccessDependencies,
@@ -20,9 +19,9 @@ export function registerCareApi(
   app: Express,
   deps: CareAccessDependencies = unconfiguredCareAccessDependencies(),
 ) {
-  app.get(CARE_ROUTE_CONTRACTS.status, (_req, res) => {
+  app.get(CARE_ROUTE_CONTRACTS.status, async (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ ok: true, capability: careCapabilityStatus() });
+    res.json({ ok: true, capability: await deps.loadCapabilityStatus() });
   });
 
   // This probe proves the server-side role boundary without creating a
@@ -36,3 +35,4 @@ export function registerCareApi(
 
 export * from "./access";
 export * from "./capability";
+export * from "./production-deps";

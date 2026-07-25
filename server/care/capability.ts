@@ -1,5 +1,4 @@
 import {
-  CARE_CAPABILITY_STATES,
   type CareCapabilityState,
   type CareCapabilityStatus,
 } from "@shared/care/contracts";
@@ -16,26 +15,10 @@ const PUBLIC_MESSAGES: Readonly<Record<CareCapabilityState, string>> = {
   enabled: "Care is available in supported locations.",
 };
 
-export function readCareCapabilityState(env: NodeJS.ProcessEnv = process.env): CareCapabilityState {
-  const requested = env.CARE_CAPABILITY_STATE;
-  if (
-    requested &&
-    (CARE_CAPABILITY_STATES as readonly string[]).includes(requested) &&
-    requested !== "enabled"
-  ) {
-    return requested as CareCapabilityState;
-  }
-  if (requested === "enabled" && env.CARE_ENABLE_APPROVED === "true") {
-    return "enabled";
-  }
-  return "disabled";
-}
-
-export function careCapabilityStatus(
-  env: NodeJS.ProcessEnv = process.env,
+export function careCapabilityStatusForState(
+  state: CareCapabilityState,
   now: Date = new Date(),
 ): CareCapabilityStatus {
-  const state = readCareCapabilityState(env);
   return {
     rail: "care",
     state,

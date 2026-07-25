@@ -4,12 +4,21 @@ import {
   type CarePermission,
   type CarePrincipal,
 } from "@shared/care/contracts";
-import { careCapabilityStatus } from "./capability";
+import type { CareCapabilityStatus } from "@shared/care/contracts";
 
 export type ResolveCarePrincipal = (req: Request) => Promise<CarePrincipal | null>;
 
+export interface CareAccessDecision {
+  actorSubjectId: string | null;
+  permission: CarePermission;
+  outcome: "allowed" | "unauthenticated" | "forbidden";
+  occurredAt: string;
+}
+
 export interface CareAccessDependencies {
+  loadCapabilityStatus: () => Promise<CareCapabilityStatus>;
   resolvePrincipal: ResolveCarePrincipal;
+  recordAccessDecision: (decision: CareAccessDecision) => Promise<void>;
 }
 
 export function requireCarePermission(
@@ -17,22 +26,41 @@ export function requireCarePermission(
   deps: CareAccessDependencies,
 ) {
   return async (req: Request, res: Response, next: NextFunction) => {
-    if (!careCapabilityStatus().enabled) {
+    const capability = await deps.loadCapabilityStatus();
+    if (!capability.enabled) {
       return res.status(503).json({
         ok: false,
         code: "care_disabled",
-        message: careCapabilityStatus().publicMessage,
+        message: capability.publicMessage,
       });
     }
 
     const principal = await deps.resolvePrincipal(req);
     if (!principal) {
+      await deps.recordAccessDecision({
+        actorSubjectId: null,
+        permission,
+        outcome: "unauthenticated",
+        occurredAt: new Date().toISOString(),
+      });
       return res.status(401).json({ ok: false, code: "care_auth_required" });
     }
     if (!hasCarePermission(principal, permission)) {
+      await deps.recordAccessDecision({
+        actorSubjectId: principal.subjectId,
+        permission,
+        outcome: "forbidden",
+        occurredAt: new Date().toISOString(),
+      });
       return res.status(403).json({ ok: false, code: "care_forbidden" });
     }
 
+    await deps.recordAccessDecision({
+      actorSubjectId: principal.subjectId,
+      permission,
+      outcome: "allowed",
+      occurredAt: new Date().toISOString(),
+    });
     res.locals.carePrincipal = principal;
     next();
   };
@@ -40,6 +68,14 @@ export function requireCarePermission(
 
 export function unconfiguredCareAccessDependencies(): CareAccessDependencies {
   return {
+    loadCapabilityStatus: async () => ({
+      rail: "care",
+      state: "disabled",
+      enabled: false,
+      publicMessage: "Care is being prepared.",
+      checkedAt: new Date().toISOString(),
+    }),
     resolvePrincipal: async () => null,
+    recordAccessDecision: async () => undefined,
   };
 }
