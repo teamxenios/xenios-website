@@ -1,0 +1,20 @@
+{
+  "webVitals": {
+    "lcpMs": 2500,
+    "lcpLocalLabMs": 4000,
+    "inpMs": 200,
+    "cls": 0.1
+  },
+  "assets": {
+    "initialJsGzipBytes": 358400,
+    "routeJsGzipBytes": 184320,
+    "imageBytes": 307200
+  },
+  "apiP95Ms": {
+    "default": 750,
+    "catalog": 900,
+    "memberHome": 900,
+    "assessment": 900,
+    "adminQueues": 1200
+  }
+}

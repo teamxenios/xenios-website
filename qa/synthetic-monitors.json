@@ -1,0 +1,14 @@
+{
+  "intervalSeconds": 300,
+  "timeoutMs": 10000,
+  "checks": [
+    { "name": "health", "path": "/api/health", "status": 200, "contains": "Xenios API is running" },
+    { "name": "homepage", "path": "/", "status": 200, "contains": "<title>" },
+    { "name": "robots", "path": "/robots.txt", "status": 200, "contains": "Sitemap:" },
+    { "name": "sitemap", "path": "/sitemap.xml", "status": 200, "contains": "xeniostechnology.com" },
+    { "name": "research-noindex", "path": "/research", "status": [200, 503], "header": { "x-robots-tag": "noindex" } },
+    { "name": "private-api-denied", "path": "/api/research/member/me", "status": [401, 503] },
+    { "name": "unknown-api-json-404", "path": "/api/website-6-synthetic-not-found", "status": 404, "header": { "content-type": "application/json" } }
+  ]
+}
+

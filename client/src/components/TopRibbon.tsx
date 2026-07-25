@@ -11,7 +11,7 @@ export default function TopRibbon() {
     <div className="bg-ink text-paper" data-testid="ribbon-top" role="region" aria-label="Site announcement">
       <div className="container-x">
         <div className="flex items-center justify-between gap-3 py-2 text-[12px] tabular">
-          <p className="truncate font-medium">
+          <p className="truncate min-w-0 font-medium">
             <span className="opacity-90">{content.ribbon.prefix}</span>{" "}
             <Link
               href={content.ribbon.href}
