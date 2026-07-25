@@ -15,6 +15,24 @@ describe("Care PR 1 migration", () => {
     expect(sql).not.toMatch(/\b(drop table|truncate|delete from)\b/i);
   });
 
+  it("allows re-grant after revocation but forbids two active grants", () => {
+    expect(sql).not.toMatch(/unique\s*\(\s*user_id\s*,\s*role\s*\)/i);
+    expect(sql).toMatch(
+      /create unique index if not exists care_roles_user_active_idx[\s\S]*where revoked_at is null/i,
+    );
+
+    const lifecycle = readFileSync(
+      resolve(
+        __dirname,
+        "../../supabase/tests/care-access-foundation-lifecycle.test.sql",
+      ),
+      "utf8",
+    );
+    expect(lifecycle).toContain("grant -> revoke -> re-grant lifecycle proof failed");
+    expect(lifecycle).toContain("when unique_violation");
+    expect(lifecycle).toContain("rollback;");
+  });
+
   it("forces RLS and removes public and anonymous table authority", () => {
     expect(sql.match(/enable row level security/g)).toHaveLength(3);
     expect(sql.match(/force row level security/g)).toHaveLength(3);

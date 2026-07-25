@@ -46,8 +46,7 @@ create table if not exists public.care_role_assignments (
   granted_by uuid not null references auth.users(id),
   granted_at timestamptz not null default now(),
   revoked_at timestamptz null,
-  check (revoked_at is null or revoked_at >= granted_at),
-  unique (user_id, role)
+  check (revoked_at is null or revoked_at >= granted_at)
 );
 
 -- Authentication/authorization metadata only. No request body, token,
@@ -76,7 +75,7 @@ create table if not exists public.care_access_audit (
   occurred_at timestamptz not null default now()
 );
 
-create index if not exists care_roles_user_active_idx
+create unique index if not exists care_roles_user_active_idx
   on public.care_role_assignments (user_id, role)
   where revoked_at is null;
 

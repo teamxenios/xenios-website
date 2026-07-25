@@ -6,17 +6,17 @@
 - Feature domain: Care rail separation, Care roles and authorization, and a
   truthful public Pending shell
 - Base branch/SHA: `main` at
-  `a486b889503a8f9d42f86c4666e808af6c5e852c`
+  `48cb57250c1ec54fe8714e59fa1071a9eb27f867`
 - Feature branch: `feature/website-5-care-foundation`
 - Pull request: `https://github.com/teamxenios/xenios-website/pull/46`
 - Full seven-PR staging snapshot:
   `feature/website-5-care-sequence-staging` at
   `1a8dbf8172df37ab7a5941fd340305c00d962c81`
 
-PR #46 is intentionally PR 1 only. The former head `1a8dbf8` is not
-mergeable. Later intake, clinician, pharmacy, instruction, supply, labs,
-messaging, and adverse-event work remains preserved only on the staging branch
-for focused follow-on PRs.
+PR #46 is intentionally PR 1 only. The former broad head `1a8dbf8` and
+superseded review head `a002fed` are not mergeable. Later intake, clinician,
+pharmacy, instruction, supply, labs, messaging, and adverse-event work remains
+preserved only on the staging branch for focused follow-on PRs.
 
 ## Included and excluded
 
@@ -31,8 +31,12 @@ Included:
   server can report `enabled`.
 - Supabase JWT verification, active Care-role lookup, and metadata-only access
   decision audit.
-- A polished responsive `/care` Pending shell with no form, clinical action,
-  provider claim, availability claim, price, product, or launch date.
+- A polished responsive `/care` Pending shell using the existing Xenios
+  `PageShell`, global header/footer, typography, tokens, buttons, cards, rules,
+  and responsive utilities, with no form, clinical action, provider claim,
+  availability claim, price, product, or launch date.
+- Explicit fail-closed status loading and retryable error states, plus
+  decorative card numbering using the accessible existing purple token.
 - A minimal additive migration for capability, role assignment, access audit,
   RLS, grants, constraints, indexes, and rollback notes.
 
@@ -79,6 +83,26 @@ Add alongside the `/research` routes:
 <Route path="/care/*" component={CareRoutes} />
 ```
 
+### Shared mobile header correction
+
+Required 375px evidence exposed a pre-existing global header overflow on current
+`main`: the later `.btn` rule overrides Navbar's `hidden` utility, so the
+desktop `Request Early Access` action remains visible below `sm` and extends the
+document from 360px to 435px. PR #46 does not edit the shared Navbar.
+
+Website 2 should change this existing class in `client/src/components/Navbar.tsx`:
+
+```tsx
+// Current
+className="btn btn-primary hidden sm:inline-flex"
+
+// Corrected
+className="btn btn-primary !hidden sm:!inline-flex"
+```
+
+With that shared correction present, browser verification measured equal
+`scrollWidth` and `clientWidth` at 320px, 375px, and 430px.
+
 ### `server/index.ts`
 
 Add:
@@ -118,8 +142,9 @@ Creates only:
 The migration is additive and repeatable, inserts only the canonical disabled
 capability row, forces RLS on all three tables, removes public/anonymous table
 authority, permits security-admin-only reads of roles and access audit, and
-provides no authenticated write policy. It creates no clinical or Research
-record.
+provides no authenticated write policy. Active role grants use a partial unique
+index, so grant → revoke → re-grant creates a new lifecycle row while two
+simultaneous active grants fail. It creates no clinical or Research record.
 
 Approved application order:
 
@@ -148,14 +173,19 @@ For this Pending release, keep both Care enable flags unset or not equal to
 
 ## Validation at frozen-head preparation
 
-- Focused Care/shared/client tests: 6 files, 20 tests passed.
-- Repository-wide `npm test`: 138 files, 3,097 tests passed.
+- Focused Care/shared/client tests: 6 files, 24 tests passed.
+- Repository-wide `npm test`: 141 files, 3,121 tests passed.
 - `npm run check`: passed.
 - `npm run build`: passed.
 - `git diff --check`: passed.
 - Disposable Postgres migration dry-run: applied twice with
   `ON_ERROR_STOP=1`; one canonical `care:disabled` row remained, all three
   expected tables existed, and all three reported RLS plus forced RLS.
+- Disposable role lifecycle proof: grant → revoke → re-grant passed, a second
+  simultaneous active grant raised `unique_violation`, and the test transaction
+  rolled back to zero role rows.
+- Card numbering: decorative with `aria-hidden="true"` and the retained visual
+  Xenios purple token measures 5.70:1 against the white card background.
 - Locked-file isolation: final base-to-head diff contains no
   `client/src/App.tsx` or `server/index.ts` edit.
 - Production migration: not applied by Website 5; Website 2 owns coordinated
@@ -163,6 +193,43 @@ For this Pending release, keep both Care enable flags unset or not equal to
 - Live/mobile/accessibility smoke: pending Website 2 integration and Render
   deployment because the route and server wiring are intentionally excluded
   from this PR.
+
+## UI consistency evidence
+
+The production home page and local global UI system were used as the visual
+baseline. The Care shell now uses `PageShell` rather than a duplicate header,
+and reuses `container-x`, `display-m`, `display-s`, `body-l`, `body-m`,
+`mono-cap`, `mono-label`, `text-pulse`, `text-ink-2`, `text-ink-mute`, `btn`,
+`btn-primary`, `btn-secondary`, `btn-ghost`, `card`, and `rule-*`.
+
+Removed from the earlier shell:
+
+- Care-only mint/green palette
+- radial gradient
+- Georgia typography
+- custom 16–18px rounding
+- custom shadow
+- duplicate Care wordmark/header
+- separate Care button, card, status, and spacing systems
+
+Browser evidence captured:
+
+- Production baseline at desktop.
+- Care loading at desktop with `aria-busy=true`.
+- Care authoritative `disabled` state at desktop.
+- Care unavailable/error state with one labeled retry action at desktop.
+- Care unavailable/error state at 375px.
+- Overflow checks at 320px, 375px, and 430px with the shared Navbar correction
+  above; `scrollWidth === clientWidth` at every width.
+- Computed Care surface: white background, graphite text, Inter Tight headings,
+  JetBrains Mono labels, restrained `--pulse` emphasis, thin borders, no
+  gradient, and no shell shadow.
+
+There is no populated or empty clinical-data state in PR 1 because this release
+creates no clinical records or workflow. The truthful authoritative disabled
+state is the approved Pending production surface.
+
+UI CONSISTENCY STATUS: MATCHES EXISTING XENIOS
 
 ## Production verification
 

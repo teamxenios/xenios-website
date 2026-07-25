@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { Link } from "wouter";
+import PageShell from "@/components/PageShell";
+import SeoHead from "@/components/SeoHead";
 import type { CareCapabilityStatus } from "@shared/care/contracts";
-import "./styles.css";
 
 const preparation = [
   ["Eligibility", "Location, state coverage, identity, consent"],
@@ -11,85 +13,147 @@ const preparation = [
   ["Support", "Secure support and adverse-event routing"],
 ] as const;
 
-const fallback: CareCapabilityStatus = {
-  rail: "care",
-  state: "disabled",
-  enabled: false,
-  publicMessage: "Care is being prepared.",
-  checkedAt: "",
-};
+type StatusLoadState =
+  | { kind: "loading" }
+  | { kind: "ready"; status: CareCapabilityStatus }
+  | { kind: "error" };
 
 export default function CareSection() {
-  const [status, setStatus] = useState<CareCapabilityStatus>(fallback);
+  const [loadState, setLoadState] = useState<StatusLoadState>({ kind: "loading" });
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
+    setLoadState({ kind: "loading" });
     fetch("/api/care/status", { cache: "no-store", signal: controller.signal })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((body) => {
-        if (body?.capability?.rail === "care") setStatus(body.capability);
+      .then((response) => {
+        if (!response.ok) throw new Error("care_status_unavailable");
+        return response.json();
       })
-      .catch(() => undefined);
+      .then((body) => {
+        if (body?.capability?.rail !== "care") {
+          throw new Error("care_status_invalid");
+        }
+        setLoadState({ kind: "ready", status: body.capability });
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setLoadState({ kind: "error" });
+      });
     return () => controller.abort();
-  }, []);
+  }, [loadAttempt]);
 
   return (
-    <main className="care-shell">
-      <header className="care-header">
-        <a className="care-wordmark" href="/" aria-label="Xenios home">XENIOS</a>
-        <span className="care-rail">Care foundation</span>
-      </header>
+    <PageShell>
+      <SeoHead
+        title="Care, xenios"
+        description="Xenios Care is a future clinician-led experience that remains unavailable while its clinical and operational foundations are prepared."
+        path="/care"
+      />
 
-      <section className="care-hero" aria-labelledby="care-title">
-        <div>
-          <p className="care-eyebrow">A separate clinical rail</p>
-          <h1 id="care-title">Care is being prepared with the right boundaries in place.</h1>
-          <p className="care-lede">
+      <section className="container-x pt-24 md:pt-36 pb-16" aria-labelledby="care-title">
+        <p className="mono-cap text-pulse mb-6">CARE · PENDING</p>
+        <h1 id="care-title" className="display-m text-balance max-w-[18ch]">
+          Care is being prepared with the right boundaries in place.
+        </h1>
+        <p className="mt-8 body-l text-ink-2 max-w-[64ch]">
             Xenios Care is a future clinician-led experience. It is separate from Research,
             Diagnostics, and Lifestyle, and it will remain unavailable until coverage,
             credentials, clinical partners, pharmacy readiness, content, and quality review are complete.
-          </p>
+        </p>
+        <div className="mt-8 flex flex-col sm:flex-row gap-4">
+          <Link href="/contact" className="btn btn-primary">Ask about Care</Link>
+          <Link href="/privacy" className="btn btn-ghost">Read our privacy approach</Link>
         </div>
-        <aside className="care-status" aria-live="polite">
-          <span className="care-status-dot" aria-hidden="true" />
-          <div>
-            <strong>{status.publicMessage}</strong>
-            <span>Current state: {status.state.replaceAll("_", " ")}</span>
+      </section>
+
+      <section className="container-x pb-16" aria-label="Current Care status">
+        <aside
+          className="card max-w-[720px]"
+          style={{ borderLeftColor: "var(--pulse)", borderLeftWidth: 3 }}
+          aria-live="polite"
+          aria-busy={loadState.kind === "loading"}
+        >
+          <div className="flex items-start gap-3">
+            <span className="counter-dot mt-2 flex-none" aria-hidden="true" />
+            {loadState.kind === "loading" && (
+              <div>
+                <p className="mono-label text-pulse mb-2">CHECKING STATUS</p>
+                <strong className="body-l">Checking Care status…</strong>
+                <p className="body-s text-ink-mute mt-2">
+                  Care remains unavailable while status is confirmed.
+                </p>
+              </div>
+            )}
+            {loadState.kind === "error" && (
+              <div>
+                <p className="mono-label text-pulse mb-2">STATUS UNAVAILABLE</p>
+                <strong className="body-l">Care status is temporarily unavailable.</strong>
+                <p className="body-s text-ink-mute mt-2">
+                  Care remains unavailable. No clinical service has been enabled.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-secondary mt-5"
+                  onClick={() => setLoadAttempt((attempt) => attempt + 1)}
+                >
+                  Try again
+                </button>
+              </div>
+            )}
+            {loadState.kind === "ready" && (
+              <div>
+                <p className="mono-label text-pulse mb-2">CURRENT STATUS</p>
+                <strong className="body-l">{loadState.status.publicMessage}</strong>
+                <p className="mono-label text-ink-mute mt-3">
+                  {loadState.status.state.replaceAll("_", " ")}
+                </p>
+              </div>
+            )}
           </div>
         </aside>
       </section>
 
-      <section className="care-boundary" aria-label="Clinical boundary">
-        <span>Research does not unlock Care.</span>
-        <span>No treatment, prescription, or medical advice is available here.</span>
-        <span>Availability will depend on your physical location.</span>
+      <section className="container-x py-10 rule-y" aria-label="Clinical boundary">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+          <p className="body-m text-ink-2">Research does not unlock Care.</p>
+          <p className="body-m text-ink-2">
+            No treatment, prescription, or medical advice is available here.
+          </p>
+          <p className="body-m text-ink-2">
+            Availability will depend on your physical location.
+          </p>
+        </div>
       </section>
 
-      <section className="care-grid" aria-labelledby="preparation-title">
-        <div className="care-grid-heading">
-          <p className="care-eyebrow">Foundation in progress</p>
-          <h2 id="preparation-title">Designed to fail closed.</h2>
-        </div>
-        <div className="care-cards">
+      <section className="container-x py-16 md:py-20" aria-labelledby="preparation-title">
+        <p className="mono-cap text-ink-mute mb-6">FOUNDATION IN PROGRESS</p>
+        <h2 id="preparation-title" className="display-s max-w-[18ch]">
+          Designed to fail closed.
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
           {preparation.map(([title, detail], index) => (
-            <article className="care-card" key={title}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <h3>{title}</h3>
-              <p>{detail}</p>
-              <small>Not yet available</small>
+            <article className="card flex flex-col" key={title}>
+              <span className="tile-num text-pulse" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h3 className="h3 mt-8 mb-3">{title}</h3>
+              <p className="body-m text-ink-2">{detail}</p>
+              <p className="mono-label text-ink-mute mt-8">NOT YET AVAILABLE</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="care-emergency" aria-labelledby="emergency-title">
-        <p className="care-eyebrow">Emergency boundary</p>
-        <h2 id="emergency-title">This site is not emergency care.</h2>
-        <p>
+      <section className="container-x py-16 rule-top" aria-labelledby="emergency-title">
+        <p className="mono-cap text-pulse mb-6">EMERGENCY BOUNDARY</p>
+        <h2 id="emergency-title" className="display-s max-w-[18ch]">
+          This site is not emergency care.
+        </h2>
+        <p className="mt-6 body-l text-ink-2 max-w-[60ch]">
           If you may be experiencing a medical emergency, contact local emergency services now.
           Do not wait for a message or response from Xenios.
         </p>
       </section>
-    </main>
+    </PageShell>
   );
 }
