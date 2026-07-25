@@ -36,3 +36,4 @@ export function registerCareApi(
 
 export * from "./access";
 export * from "./capability";
+export * from "./clinical";

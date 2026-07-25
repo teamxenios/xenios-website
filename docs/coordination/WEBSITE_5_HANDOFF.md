@@ -44,3 +44,12 @@ directions, or live integrations are included.
 - No email or Telegram clinical record.
 - No trainer, Mitch, fulfillment, affiliate, or general Research-admin access.
 - No deployment or merge from this branch.
+
+## Wave 2 notes
+
+`server/care/clinical.ts` contains pure, server-owned policy functions for
+eligibility, intake creation, appointment transitions, and assigned-clinician
+review. Eligibility accepts only verified signals and coverage policy supplied
+by the server. Intake ships with a `partner_defined` placeholder rather than
+invented questions. Appointments carry no fabricated provider. Final review
+decisions reject automation/AI actors and require the assigned human clinician.
