@@ -71,3 +71,11 @@ Care portal—email and Telegram are notification-only. Adverse events carry
 urgency, explicit clinician and pharmacy routing, escalation/closure rules, and
 an audit requirement. Audit helpers accept metadata only. Clinical value events
 are categorically ineligible for affiliate compensation.
+
+## Wave 5 notes
+
+`supabase/care-foundation.sql` provides additive Care-only tables, constraints,
+indexes, default-disabled capability state, forced RLS, authenticated ownership
+policies, revoked public access, audit records, and rollback notes. The full
+privacy review is in `docs/care/PRIVACY_REVIEW.md`. No migration has been
+applied and no deployment has occurred.
