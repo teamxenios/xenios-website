@@ -70,10 +70,11 @@ original 1-26 base bundle:
 | FM-4 | research-fm-esign-native-attempt-lease.sql | RUN 2026-07-24 | FM-3 |
 | FM-5 | research-idempotency-keys.sql | RUN 2026-07-24 | base Research schema |
 | FM-6 | research-fm-activation-verify-atomic.sql | RUN 2026-07-24 | FM-1 + FM-5 |
+| FM-7 | research-agreement-package-notifications.sql | RUN 2026-07-25 (`20260725225920`) | FM-1 + migration 3 |
 | 27 | research-product-requests.sql | RUN 2026-07-25 | migrations 1-19 |
 | 28 | research-product-requests-hardening.sql | RUN 2026-07-25 | 27 |
 | 29 | research-product-requests-function-hardening.sql | RUN 2026-07-25 | 27 |
-| 30 | research-security-definer-grants-hardening.sql | PENDING review/apply | independent privilege hardening |
+| 30 | research-security-definer-grants-hardening.sql | RUN 2026-07-25 (`20260725231517`) | independent privilege hardening |
 
 The exact FM-1 apply date is not in the managed migration-history stream, so
 the manifest records verified presence instead of inventing a timestamp.
@@ -117,6 +118,11 @@ presence of FM or Product Request objects.
   verified the billing column/constraint plus every expected member-platform
   table, with RLS on and zero Research policies. The original application date
   is not present in the managed migration-history stream.
+- FM-7 and migration 30 are present in managed production migration history.
+  Post-apply verification confirmed FM-7 RLS/grants/triggers and confirmed that
+  PUBLIC, `anon`, and `authenticated` cannot execute the internal
+  `public.rls_auto_enable()` event-trigger helper. The Supabase security advisor
+  no longer reports that security-definer privilege finding.
 - PENDING migrations for commerce (20-26) are schema-ready but commerce stays
   disabled until: the production commerce dependency layer is wired (see the
   provider readiness doc), a payment processor is approved, and per-SKU purchase

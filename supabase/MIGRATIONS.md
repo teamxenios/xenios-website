@@ -36,7 +36,7 @@ table in the same PR that adds or changes a migration file.
 | 27 | research-product-requests.sql | Private member product requests, demand candidates, private attachments, append-only events, and atomic request/status functions | RUN | 2026-07-25 | Supabase migration + production schema checks |
 | 28 | research-product-requests-hardening.sql | Remove Supabase default direct table grants from anonymous and authenticated browser roles | RUN | 2026-07-25 | zero browser-role table grants |
 | 29 | research-product-requests-function-hardening.sql | Remove default browser-role execution from the append-only event trigger helper | RUN | 2026-07-25 | zero browser-role Product Request function grants |
-| 30 | research-security-definer-grants-hardening.sql | Remove unnecessary PUBLIC/anon/authenticated execution from the internal RLS event-trigger helper | PENDING (review before final release) | — | Supabase security advisor + explicit privilege check |
+| 30 | research-security-definer-grants-hardening.sql | Remove unnecessary PUBLIC/anon/authenticated execution from the internal RLS event-trigger helper | RUN | 2026-07-25 | managed migration `20260725231517`; advisor + explicit privilege check |
 
 Founding-membership operational migrations use a separate dependency chain.
 Production presence and managed migration history were reconciled on
@@ -50,6 +50,7 @@ Production presence and managed migration history were reconciled on
 | FM-4 | research-fm-esign-native-attempt-lease.sql | RUN 2026-07-24 | managed migration `20260724171056` |
 | FM-5 | research-idempotency-keys.sql | RUN 2026-07-24 | managed migration `20260724185842` |
 | FM-6 | research-fm-activation-verify-atomic.sql | RUN 2026-07-24 | managed migration `20260724185858` |
+| FM-7 | research-agreement-package-notifications.sql | RUN 2026-07-25 | managed migration `20260725225920`; RLS/grants/triggers verified |
 
 FM-2 through FM-4 require FM-1. FM-6 requires FM-5. Applying schema does
 not enable the founding-activation or e-signature capabilities.
@@ -109,6 +110,12 @@ Notes:
     is the intended behavior rather than a bug to work around.
   - research_partners has no parent, sponsor, upline, or tier column, and must
     not gain one. Recursive downline compensation is a founder-level prohibition.
+- 2026-07-25: FM-7 was applied for the communications/client-experience
+  release. Migration 30 was applied after an idempotent disposable PostgreSQL
+  dry run. Production verification confirmed that `public.rls_auto_enable()`
+  retains its pinned `pg_catalog` search path and enabled event trigger while
+  PUBLIC, `anon`, and `authenticated` no longer have execute privilege. The
+  corresponding Supabase security-advisor finding is cleared.
 - The global order in this ledger is the integration order. The authoritative
   ordered run script for a production apply is
   docs/research-launch/FULL_PRODUCTION_MIGRATION_MANIFEST.md.
