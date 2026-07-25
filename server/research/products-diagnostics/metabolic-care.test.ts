@@ -68,9 +68,9 @@ describe("pending metabolic pathways", () => {
     expect(JSON.stringify(repository.listPublic())).not.toContain("GLP-3");
   });
 
-  it("allows every public field and link to be updated after clinician review", () => {
+  it("allows every public field and link to be updated after clinician review", async () => {
     const repository = new MetabolicPathwayRepository();
-    const next = repository.update(
+    const next = await repository.update(
       "glp_1_pathway",
       {
         publicName: "Updated clinician pathway",
@@ -126,5 +126,40 @@ describe("pending metabolic pathways", () => {
       ].sort(),
     );
   });
-});
 
+  it.each([
+    [{ idempotencyKey: "" }, "idempotencyKey"],
+    [{ idempotencyKey: "x".repeat(161) }, "idempotencyKey"],
+    [{ currentState: "ZZ" }, "currentState"],
+    [{ interestDate: "2026-02-30" }, "interestDate"],
+    [{ interestDate: "2026-07-26" }, "interestDate"],
+  ])("rejects invalid interest input before persistence lookup", async (patch, message) => {
+    let lookups = 0;
+    const store = {
+      async findByIdempotency() {
+        lookups += 1;
+        return null;
+      },
+      async save() {
+        throw new Error("save should not run");
+      },
+    };
+    const service = new MetabolicInterestService(
+      store,
+      () => new Date("2026-07-25T12:00:00.000Z"),
+    );
+    await expect(
+      service.join("member_1", {
+        pathwayId: "glp_1_pathway",
+        currentState: "IL",
+        generalGoalCategory: "care_pathway_updates",
+        preferredContact: "email",
+        interestDate: "2026-07-25",
+        attributionSource: "metabolic_card",
+        idempotencyKey: "interest-key-123456",
+        ...patch,
+      }),
+    ).rejects.toThrow(message);
+    expect(lookups).toBe(0);
+  });
+});

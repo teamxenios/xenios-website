@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { Website3ValidationError } from "./errors";
 
 export const SUPERPOWER_RESEARCH_BOUNDARY =
   "Bloodwork and diagnostic services are separate from Research products. Test results do not validate a Research product, establish its quality, or make it suitable for human use.";
@@ -94,7 +95,7 @@ export class SuperpowerOfferRepository {
     return structuredClone(this.offer);
   }
 
-  update(
+  async update(
     patch: Partial<
       Pick<
         SuperpowerOfferConfig,
@@ -112,9 +113,11 @@ export class SuperpowerOfferRepository {
     >,
     actor: string,
     at: string,
-  ): SuperpowerOfferConfig {
+  ): Promise<SuperpowerOfferConfig> {
     if (patch.affiliate?.enabled && !patch.affiliate.url?.startsWith("https://")) {
-      throw new Error("An enabled affiliate offer requires an HTTPS URL.");
+      throw new Website3ValidationError(
+        "An enabled affiliate offer requires an HTTPS URL.",
+      );
     }
     this.offer = {
       ...this.offer,
@@ -201,26 +204,82 @@ export interface BiomarkerUploadProvider {
     | { ok: true; uploadUrl: string; expiresAt: string }
     | { ok: false; code: "disabled" | "not_configured" | "unavailable" }
   >;
+  verifyPrivateUpload(input: {
+    memberId: string;
+    storageKey: string;
+    contentType: "application/pdf" | "image/jpeg" | "image/png";
+    sizeBytes: number;
+  }): Promise<
+    | { ok: true }
+    | {
+        ok: false;
+        code: "disabled" | "not_configured" | "unavailable" | "object_missing" | "object_mismatch";
+      }
+  >;
 }
 
 export class DisabledBiomarkerUploadProvider implements BiomarkerUploadProvider {
   async createPrivateUpload(): Promise<{ ok: false; code: "disabled" }> {
     return { ok: false, code: "disabled" };
   }
+  async verifyPrivateUpload(): Promise<{ ok: false; code: "disabled" }> {
+    return { ok: false, code: "disabled" };
+  }
+}
+
+export interface BiomarkerPendingUpload {
+  uploadId: string;
+  memberId: string;
+  state: "pending";
+  storageKey: string;
+  filename: string;
+  contentType: "application/pdf" | "image/jpeg" | "image/png";
+  sizeBytes: number;
+  consentVersion: string;
+  consentedAt: string;
+  expiresAt: string;
+  createdAt: string;
 }
 
 export interface BiomarkerStore {
   get(memberId: string): Promise<BiomarkerRecord | null>;
   save(record: BiomarkerRecord): Promise<void>;
+  getPendingUpload(
+    memberId: string,
+    uploadId: string,
+  ): Promise<BiomarkerPendingUpload | null>;
+  savePendingUpload(upload: BiomarkerPendingUpload): Promise<void>;
+  commitVerifiedUpload(input: {
+    pending: BiomarkerPendingUpload;
+    record: BiomarkerRecord;
+  }): Promise<void>;
 }
 
 export class MemoryBiomarkerStore implements BiomarkerStore {
   readonly records = new Map<string, BiomarkerRecord>();
+  readonly pendingUploads = new Map<string, BiomarkerPendingUpload>();
   async get(memberId: string): Promise<BiomarkerRecord | null> {
     return structuredClone(this.records.get(memberId) ?? null);
   }
   async save(record: BiomarkerRecord): Promise<void> {
     this.records.set(record.memberId, structuredClone(record));
+  }
+  async getPendingUpload(
+    memberId: string,
+    uploadId: string,
+  ): Promise<BiomarkerPendingUpload | null> {
+    const pending = this.pendingUploads.get(uploadId);
+    return pending?.memberId === memberId ? structuredClone(pending) : null;
+  }
+  async savePendingUpload(upload: BiomarkerPendingUpload): Promise<void> {
+    this.pendingUploads.set(upload.uploadId, structuredClone(upload));
+  }
+  async commitVerifiedUpload(input: {
+    pending: BiomarkerPendingUpload;
+    record: BiomarkerRecord;
+  }): Promise<void> {
+    this.records.set(input.record.memberId, structuredClone(input.record));
+    this.pendingUploads.delete(input.pending.uploadId);
   }
 }
 
@@ -271,7 +330,13 @@ export class BiomarkerService {
     consentAccepted: boolean;
     consentVersion: string;
   }): Promise<
-    | { ok: true; uploadUrl: string; expiresAt: string; record: BiomarkerRecord }
+    | {
+        ok: true;
+        uploadId: string;
+        uploadUrl: string;
+        expiresAt: string;
+        record: BiomarkerRecord;
+      }
     | {
         ok: false;
         code:
@@ -306,17 +371,78 @@ export class BiomarkerService {
 
     const current = await this.getOrCreate(input.memberId);
     const at = this.now().toISOString();
+    const pending: BiomarkerPendingUpload = {
+      uploadId: crypto.randomUUID(),
+      memberId: input.memberId,
+      state: "pending",
+      storageKey,
+      filename: safeFilename,
+      contentType: input.contentType,
+      sizeBytes: input.sizeBytes,
+      consentVersion: input.consentVersion,
+      consentedAt: at,
+      expiresAt: grant.expiresAt,
+      createdAt: at,
+    };
+    await this.store.savePendingUpload(pending);
+    return {
+      ok: true,
+      uploadId: pending.uploadId,
+      uploadUrl: grant.uploadUrl,
+      expiresAt: grant.expiresAt,
+      record: current,
+    };
+  }
+
+  async confirmReportUpload(input: {
+    memberId: string;
+    activeMember: boolean;
+    uploadId: string;
+  }): Promise<
+    | { ok: true; record: BiomarkerRecord }
+    | {
+        ok: false;
+        code:
+          | "membership_required"
+          | "upload_not_found"
+          | "upload_not_verified"
+          | "state_conflict";
+      }
+  > {
+    if (!input.activeMember) return { ok: false, code: "membership_required" };
+    const uploadId = input.uploadId.trim();
+    if (!uploadId) return { ok: false, code: "upload_not_found" };
+    const pending = await this.store.getPendingUpload(input.memberId, uploadId);
+    if (!pending) return { ok: false, code: "upload_not_found" };
+    if (pending.expiresAt <= this.now().toISOString()) {
+      return { ok: false, code: "upload_not_verified" };
+    }
+
+    const verified = await this.uploadProvider.verifyPrivateUpload({
+      memberId: input.memberId,
+      storageKey: pending.storageKey,
+      contentType: pending.contentType,
+      sizeBytes: pending.sizeBytes,
+    });
+    if (!verified.ok) return { ok: false, code: "upload_not_verified" };
+
+    const current = await this.getOrCreate(input.memberId);
+    if (
+      current.state !== "not_started" &&
+      !canTransitionBiomarkerState(current.state, "report_uploaded")
+    ) {
+      return { ok: false, code: "state_conflict" };
+    }
     const record: BiomarkerRecord = {
       ...current,
       state: "report_uploaded",
-      reportStorageKey: storageKey,
-      reportFilename: safeFilename,
-      consentVersion: input.consentVersion,
-      consentedAt: at,
-      updatedAt: at,
+      reportStorageKey: pending.storageKey,
+      reportFilename: pending.filename,
+      consentVersion: pending.consentVersion,
+      consentedAt: pending.consentedAt,
+      updatedAt: this.now().toISOString(),
     };
-    await this.store.save(record);
-    return { ok: true, uploadUrl: grant.uploadUrl, expiresAt: grant.expiresAt, record };
+    await this.store.commitVerifiedUpload({ pending, record });
+    return { ok: true, record };
   }
 }
-

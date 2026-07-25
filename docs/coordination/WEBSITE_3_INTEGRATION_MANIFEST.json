@@ -2,8 +2,14 @@
   "session": "Website 3 — Products, Diagnostics & Member Commerce",
   "branch": "feature/website-3-products-diagnostics",
   "base_sha": "a486b889503a8f9d42f86c4666e808af6c5e852c",
-  "deploy": false,
-  "merge": false,
+  "production_delivery_required": true,
+  "release_authority": {
+    "merge_owner": "Website 2",
+    "render_deployment_owner": "Website 2",
+    "website_3_may_merge": false,
+    "website_3_may_deploy": false,
+    "website_3_must_verify_live_after_release": true
+  },
   "server_entrypoint": "server/research/products-diagnostics/index.ts",
   "server_registration_export": "registerProductsDiagnosticsApi",
   "client_entrypoint": "client/src/research/products-diagnostics/index.ts",
@@ -25,7 +31,8 @@
     "POST /api/research/metabolic-interest",
     "GET /api/research/diagnostics/superpower",
     "GET /api/research/diagnostics/biomarker",
-    "POST /api/research/diagnostics/biomarker/report-upload"
+    "POST /api/research/diagnostics/biomarker/report-upload",
+    "POST /api/research/diagnostics/biomarker/report-upload/confirm"
   ],
   "admin_routes": [
     "GET /api/admin/research/metabolic-pathways",
@@ -55,6 +62,7 @@
     "research_metabolic_interests",
     "research_superpower_offers",
     "research_biomarker_records",
+    "research_biomarker_uploads",
     "research_product_content"
   ],
   "private_buckets_required": [
@@ -62,11 +70,15 @@
     "RESEARCH_BIOMARKER_REPORTS_BUCKET"
   ],
   "validation": {
-    "test_files": 142,
-    "tests_passed": 2936,
+    "focused_test_files": 10,
+    "focused_tests_passed": 62,
+    "complete_test_files": 142,
+    "complete_tests_passed": 3139,
     "typecheck": "passed",
-    "build": "passed",
-    "screenshots": "blocked_in_app_browser_webview_attach"
+    "build": "passed_with_existing_large_chunk_warning",
+    "desktop_evidence": "docs/coordination/evidence/website3-catalog-desktop-1440.png",
+    "mobile_320_evidence": "docs/coordination/evidence/website3-catalog-mobile-320.png",
+    "keyboard_focus_evidence": "docs/coordination/evidence/website3-catalog-keyboard-focus-320.png",
+    "evidence_report": "docs/coordination/evidence/WEBSITE_3_UI_EVIDENCE.md"
   }
 }
-

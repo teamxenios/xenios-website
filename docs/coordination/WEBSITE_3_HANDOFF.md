@@ -76,7 +76,9 @@ from the existing authoritative catalog and production persistence/providers:
 
 1. Adapt `server/research/products-data.ts` with the existing
    `adaptLegacyCatalog`.
-2. Pass the adapted `CatalogProduct[]` to `buildProductMaster`.
+2. Pass the adapted `CatalogProduct[]` and the existing canonical
+   `CatalogService.listProducts()` readiness DTOs to `buildProductMaster`.
+   Website 3 never derives `purchasable` from catalog approval or price alone.
 3. Construct `ExactLotCertificateService` with persisted variant, lot, and
    certificate rows, a private signed-read provider, and an audit recorder.
 4. Construct `MetabolicInterestService` with a Supabase-backed
@@ -86,7 +88,10 @@ from the existing authoritative catalog and production persistence/providers:
    before returning success; the included in-memory repositories are
    deterministic development/test providers, not production persistence.
 6. Construct `BiomarkerService` with a Supabase-backed `BiomarkerStore` and
-   private signed-upload provider.
+   private signed-upload provider. The provider must verify the private object
+   before the confirmation route transitions a record to `report_uploaded`.
+7. Implement pathway and Superpower repository mutations as awaited durable
+   writes. Persistence failure must reject and must never produce a 200 response.
 
 ## 11. Routes exported
 
@@ -99,6 +104,7 @@ Member routes, all behind `requireActiveMember`:
 - `GET /api/research/diagnostics/superpower`
 - `GET /api/research/diagnostics/biomarker`
 - `POST /api/research/diagnostics/biomarker/report-upload`
+- `POST /api/research/diagnostics/biomarker/report-upload/confirm`
 
 Admin routes, all behind `requireSupabaseAdmin`:
 
@@ -171,6 +177,10 @@ idempotency, event history, emails, and admin queue remain authoritative.
 Submitted URLs are never fetched. Member demand summaries use an explicit
 allowlist and expose no requester ids or sources.
 
+The member UI and server adapter import one browser-safe Website 3 source
+contract from `product-request-sources.ts`. Every rendered source is in the
+server-accepted `PRODUCT_REQUEST_ENTRY_POINTS` vocabulary.
+
 ## 18. Communications
 
 Ten idempotent intent types are exported from `communications.ts`:
@@ -205,6 +215,11 @@ review migrations for:
   effective/verification dates, updated actor/time.
 - `research_biomarker_records`: member id, state, partner reference, private
   report key/filename, consent version/time, updated time; unique member id.
+- `research_biomarker_uploads`: upload id, member id, pending state, private
+  storage key, filename, content type, expected size, consent version/time,
+  expiry, created time; unique upload id. Confirmation must verify object
+  existence and metadata, then atomically update the member record and consume
+  the pending upload.
 - `research_product_content`: product id, section, state, heading/body,
   updated actor/time; unique `(product_id, section)`.
 
@@ -227,9 +242,7 @@ are admin data and stay null until enabled.
 ## 21. Validation
 
 - Focused Website 3 and reused-system suites: green.
-- Complete repository suite split into four equivalent Vitest batches because
-  the single `npm test` process exceeded the execution ceiling twice:
-  142 test files, 2,936 tests, all passed.
+- Complete `npm test`: 142 test files, 3,139 tests, all passed.
 - `npm run check`: passed.
 - `npm run build`: passed.
 - Production build retains the repository's existing large-chunk warning; no
@@ -242,11 +255,21 @@ selects / buttons, `aria-live`, `aria-pressed`, `aria-current`, visible focus
 through the existing design system, horizontal filter overflow, `min-w-0`, and
 single-column defaults that reflow at 320 px.
 
-An isolated local preview was created for desktop and 320 px screenshots, but
-the in-app browser could not attach its webview after the documented recovery
-steps. No screenshot is claimed. The temporary preview harness was removed.
-The release/QA lane should capture desktop and 320 px screenshots after shared
-route integration.
+The corrected head was rendered through the in-app browser using the real
+Website 3 React component and repository styles. Evidence is committed under
+`docs/coordination/evidence/`:
+
+- `website3-catalog-desktop-1440.png`
+- `website3-catalog-mobile-320.png`
+- `website3-catalog-keyboard-focus-320.png`
+- `WEBSITE_3_UI_EVIDENCE.md`
+
+The desktop and 320 px document widths matched their scroll widths, so no
+page-level horizontal overflow was present. The product-family row retains an
+intentional horizontal scroller. The DOM accessibility tree exposed semantic
+headings, a named searchbox, pressed-state buttons, and descriptive links; the
+focused searchbox displayed a visible focus border. Website 2 / QA should still
+repeat the matrix after shared route integration and on the live site.
 
 ## 23. Risks, blockers, and release rule
 

@@ -33,16 +33,16 @@ describe("Superpower Diagnostics", () => {
     });
   });
 
-  it("requires an explicit enabled HTTPS affiliate configuration", () => {
+  it("requires an explicit enabled HTTPS affiliate configuration", async () => {
     const repository = new SuperpowerOfferRepository();
-    expect(() =>
+    await expect(
       repository.update(
         { affiliate: { enabled: true, url: "http://example.com" } },
         "admin@example.com",
         "2026-07-25T12:00:00.000Z",
       ),
-    ).toThrow("HTTPS");
-    repository.update(
+    ).rejects.toThrow("HTTPS");
+    await repository.update(
       {
         status: "available",
         affiliate: { enabled: true, url: "https://partner.example/offer" },
@@ -110,6 +110,10 @@ describe("Biomarker Center", () => {
           expiresAt: "2026-07-25T12:10:00.000Z",
         };
       },
+      async verifyPrivateUpload(input) {
+        expect(input.storageKey).not.toContain("member_private_1");
+        return { ok: true };
+      },
     };
     const store = new MemoryBiomarkerStore();
     const service = new BiomarkerService(
@@ -128,9 +132,109 @@ describe("Biomarker Center", () => {
     });
     expect(result).toMatchObject({
       ok: true,
+      record: { state: "not_started", reportFilename: null },
+    });
+    if (!result.ok) throw new Error("expected upload grant");
+    expect(store.pendingUploads.get(result.uploadId)).toMatchObject({
+      state: "pending",
+      filename: "report.pdf",
+    });
+    expect(store.records.get("member_private_1")).toMatchObject({
+      state: "not_started",
+      reportStorageKey: null,
+    });
+
+    const confirmed = await service.confirmReportUpload({
+      memberId: "member_private_1",
+      activeMember: true,
+      uploadId: result.uploadId,
+    });
+    expect(confirmed).toMatchObject({
+      ok: true,
       record: { state: "report_uploaded", reportFilename: "report.pdf" },
     });
+    expect(store.pendingUploads.size).toBe(0);
     expect(JSON.stringify(result)).not.toContain("interpretation");
+  });
+
+  it("does not overwrite a prior report when a later upload is abandoned", async () => {
+    const provider: BiomarkerUploadProvider = {
+      async createPrivateUpload() {
+        return {
+          ok: true,
+          uploadUrl: "https://signed.example/upload",
+          expiresAt: "2026-07-25T12:10:00.000Z",
+        };
+      },
+      async verifyPrivateUpload() {
+        return { ok: true };
+      },
+    };
+    const store = new MemoryBiomarkerStore();
+    store.records.set("member_1", {
+      biomarkerRecordId: "record_1",
+      memberId: "member_1",
+      state: "report_uploaded",
+      partnerReference: null,
+      reportStorageKey: "biomarker-reports/existing.pdf",
+      reportFilename: "existing.pdf",
+      consentVersion: "v1",
+      consentedAt: "2026-07-24T12:00:00.000Z",
+      updatedAt: "2026-07-24T12:00:00.000Z",
+    });
+    const service = new BiomarkerService(store, provider);
+    const pending = await service.createReportUpload({
+      memberId: "member_1",
+      activeMember: true,
+      filename: "replacement.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 200,
+      consentAccepted: true,
+      consentVersion: "v2",
+    });
+    expect(pending.ok).toBe(true);
+    expect(await store.get("member_1")).toMatchObject({
+      reportStorageKey: "biomarker-reports/existing.pdf",
+      reportFilename: "existing.pdf",
+    });
+  });
+
+  it("refuses confirmation when private object verification fails", async () => {
+    const provider: BiomarkerUploadProvider = {
+      async createPrivateUpload() {
+        return {
+          ok: true,
+          uploadUrl: "https://signed.example/upload",
+          expiresAt: "2026-07-25T12:10:00.000Z",
+        };
+      },
+      async verifyPrivateUpload() {
+        return { ok: false, code: "object_missing" };
+      },
+    };
+    const store = new MemoryBiomarkerStore();
+    const service = new BiomarkerService(store, provider);
+    const pending = await service.createReportUpload({
+      memberId: "member_1",
+      activeMember: true,
+      filename: "report.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 200,
+      consentAccepted: true,
+      consentVersion: "v1",
+    });
+    if (!pending.ok) throw new Error("expected upload grant");
+    await expect(
+      service.confirmReportUpload({
+        memberId: "member_1",
+        activeMember: true,
+        uploadId: pending.uploadId,
+      }),
+    ).resolves.toEqual({ ok: false, code: "upload_not_verified" });
+    expect(await store.get("member_1")).toMatchObject({
+      state: "not_started",
+      reportStorageKey: null,
+    });
   });
 });
 
@@ -193,4 +297,3 @@ describe("communications, storage, and support", () => {
     );
   });
 });
-

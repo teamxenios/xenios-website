@@ -17,6 +17,7 @@ import {
   STORAGE_AND_ORGANIZATION_ACCESSORIES,
   SUPPORT_CENTER_CATEGORIES,
 } from "./support-and-storage";
+import { Website3ValidationError } from "./errors";
 
 type Guard = (req: Request, res: Response, next: NextFunction) => void | Promise<void>;
 
@@ -51,6 +52,18 @@ function noStore(res: Response): void {
 
 function validation(res: Response, message: string): void {
   res.status(400).json({ ok: false, code: "validation_failed", message });
+}
+
+function mutationFailure(res: Response, error: unknown): void {
+  if (error instanceof Website3ValidationError) {
+    validation(res, error.message);
+    return;
+  }
+  res.status(503).json({
+    ok: false,
+    code: "persistence_failed",
+    message: "The update could not be saved. No successful update was reported.",
+  });
 }
 
 function publicBiomarker(record: Awaited<ReturnType<BiomarkerService["getOrCreate"]>>) {
@@ -182,6 +195,7 @@ export function registerProductsDiagnosticsApi(
       result.ok
         ? {
             ok: true,
+            uploadId: result.uploadId,
             uploadUrl: result.uploadUrl,
             expiresAt: result.expiresAt,
             biomarker: publicBiomarker(result.record),
@@ -190,16 +204,41 @@ export function registerProductsDiagnosticsApi(
     );
   });
 
+  app.post(
+    "/api/research/diagnostics/biomarker/report-upload/confirm",
+    active,
+    async (req, res) => {
+      noStore(res);
+      const id = memberId(req);
+      if (!id) return res.status(401).json({ ok: false, code: "membership_required" });
+      const result = await deps.biomarkers.confirmReportUpload({
+        memberId: id,
+        activeMember: true,
+        uploadId: String(req.body?.uploadId ?? ""),
+      });
+      const status = result.ok
+        ? 200
+        : result.code === "upload_not_found"
+          ? 404
+          : 409;
+      res.status(status).json(
+        result.ok
+          ? { ok: true, biomarker: publicBiomarker(result.record) }
+          : result,
+      );
+    },
+  );
+
   app.get("/api/admin/research/metabolic-pathways", admin, (req, res) => {
     noStore(res);
     const query = typeof req.query.q === "string" ? req.query.q : "";
     res.json({ ok: true, pathways: deps.pathways.searchAdmin(query) });
   });
 
-  app.put("/api/admin/research/metabolic-pathways/:pathwayId", admin, (req, res) => {
+  app.put("/api/admin/research/metabolic-pathways/:pathwayId", admin, async (req, res) => {
     noStore(res);
     try {
-      const pathway = deps.pathways.update(
+      const pathway = await deps.pathways.update(
         String(req.params.pathwayId) as MetabolicPathwayConfig["pathwayId"],
         req.body ?? {},
         (req as ResearchRequest).adminEmail ?? "admin",
@@ -207,7 +246,7 @@ export function registerProductsDiagnosticsApi(
       );
       res.json({ ok: true, pathway });
     } catch (error) {
-      validation(res, (error as Error).message);
+      mutationFailure(res, error);
     }
   });
 
@@ -216,18 +255,17 @@ export function registerProductsDiagnosticsApi(
     res.json({ ok: true, offer: deps.superpower.readAdmin() });
   });
 
-  app.put("/api/admin/research/superpower-offer", admin, (req, res) => {
+  app.put("/api/admin/research/superpower-offer", admin, async (req, res) => {
     noStore(res);
     try {
-      const offer = deps.superpower.update(
+      const offer = await deps.superpower.update(
         req.body ?? {},
         (req as ResearchRequest).adminEmail ?? "admin",
         new Date().toISOString(),
       );
       res.json({ ok: true, offer });
     } catch (error) {
-      validation(res, (error as Error).message);
+      mutationFailure(res, error);
     }
   });
 }
-
