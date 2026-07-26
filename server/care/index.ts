@@ -54,6 +54,8 @@ export * from "./intake";
 export * from "./intake-repository";
 export * from "./intake-routes";
 export * from "./instructions";
+export * from "./instruction-repository";
+export * from "./instruction-routes";
 export * from "./production-deps";
 export * from "./prescriptions";
 export * from "./prescription-repository";
