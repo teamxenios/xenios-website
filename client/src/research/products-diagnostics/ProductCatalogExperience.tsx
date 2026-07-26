@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { productRequestHref } from "@shared/research/product-request-sources";
@@ -303,6 +303,21 @@ export function ProductCatalogExperience({
           Product status and documentation are shown from approved records. A listing does not imply
           clinical suitability or availability outside its stated gate.
         </ResearchSecureNotice>
+
+        <section className="mt-8 pt-7" style={{ borderTop: "1px solid var(--rule)" }} aria-labelledby="website3-related-areas">
+          <h2 id="website3-related-areas" className="body-l font-700">Related member areas</h2>
+          <p className="body-s text-ink-2 mt-2 max-w-[64ch]">
+            Review truthful Pending pathways, diagnostics, product documentation, and neutral storage resources.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link href="/research/member/supplements" className="btn btn-secondary">Supplements</Link>
+            <Link href="/research/member/diagnostics" className="btn btn-secondary">Diagnostics</Link>
+            <Link href="/research/member/metabolic-care" className="btn btn-secondary">Metabolic pathways</Link>
+            <Link href="/research/member/education" className="btn btn-ghost">Product documentation</Link>
+            <Link href="/research/member/storage" className="btn btn-ghost">Storage resources</Link>
+            <Link href="/research/member/support" className="btn btn-ghost">Support Center</Link>
+          </div>
+        </section>
       </ResearchRouteBoundary>
     </ResearchMemberShell>
   );
@@ -351,13 +366,90 @@ function DetailSection({
   );
 }
 
+function CertificateAccessPanel({
+  onRequest,
+}: {
+  onRequest: (lotCode: string) => Promise<string>;
+}) {
+  const [lotCode, setLotCode] = useState("");
+  const [phase, setPhase] = useState<
+    | { kind: "idle" }
+    | { kind: "loading" }
+    | { kind: "ready"; signedUrl: string }
+    | { kind: "error" }
+  >({ kind: "idle" });
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    const normalized = lotCode.trim();
+    if (!normalized) return;
+    setPhase({ kind: "loading" });
+    try {
+      const signedUrl = await onRequest(normalized);
+      setPhase({ kind: "ready", signedUrl });
+    } catch {
+      setPhase({ kind: "error" });
+    }
+  };
+
+  return (
+    <form className="card mt-4" onSubmit={(event) => void submit(event)}>
+      <label className="grid gap-2" htmlFor="website3-lot-code">
+        <span className="form-label">Exact lot code</span>
+        <input
+          id="website3-lot-code"
+          className="input-field"
+          value={lotCode}
+          onChange={(event) => setLotCode(event.target.value)}
+          autoComplete="off"
+          maxLength={120}
+          required
+        />
+      </label>
+      <button
+        type="submit"
+        className="btn btn-secondary mt-4"
+        disabled={phase.kind === "loading" || !lotCode.trim()}
+      >
+        {phase.kind === "loading" ? "Checking exact lot..." : "Request certificate access"}
+      </button>
+      <div className="body-s mt-3" aria-live="polite">
+        {phase.kind === "ready" && (
+          <p role="status">
+            Exact-lot certificate verified.{" "}
+            <a
+              href={phase.signedUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="font-700"
+            >
+              Open the private certificate
+            </a>
+            .
+          </p>
+        )}
+        {phase.kind === "error" && (
+          <p role="alert">
+            No accessible certificate was verified for that exact lot. Check the
+            lot code or try again later.
+          </p>
+        )}
+      </div>
+    </form>
+  );
+}
+
 export function ProductDetailExperience({
   product,
+  ordering,
+  onCertificateRequest,
   state = "ok",
   errorMessage,
   onRetry,
 }: {
   product: ProductDetailView;
+  ordering?: ReactNode;
+  onCertificateRequest?: (lotCode: string) => Promise<string>;
   state?: Website3SurfaceState;
   errorMessage?: string;
   onRetry?: () => void;
@@ -403,6 +495,7 @@ export function ProductDetailExperience({
         <div className="mt-4">
           <DetailSection title="Overview">
             <p>{product.summary}</p>
+            {ordering && <div className="mt-5">{ordering}</div>}
           </DetailSection>
 
           <DetailSection title="Specifications">
@@ -429,6 +522,16 @@ export function ProductDetailExperience({
               Certificates are private, signed, and linked only to the exact lot code on the product.
               Documentation pending is shown when an exact-lot document is not on file.
             </p>
+            {onCertificateRequest ? (
+              <CertificateAccessPanel onRequest={onCertificateRequest} />
+            ) : (
+              <div className="mt-4">
+                <ResearchPendingPanel
+                  kind="supplier_pending"
+                  body="An exact-lot certificate action is unavailable until a verified lot record is present."
+                />
+              </div>
+            )}
             <div className="mt-4">
               <ResearchPendingPanel
                 kind="supplier_pending"

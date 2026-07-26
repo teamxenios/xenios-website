@@ -128,8 +128,12 @@ presence of FM or Product Request objects.
   `research_lot_quality_documents`; it does not create parallel product, lot,
   auth, notification, or Storage architectures. Its disposable PostgreSQL 16
   gate passed two consecutive applies plus RLS/grant, private-bucket,
-  append-only audit, and atomic biomarker-confirmation verification. It remains
-  unapplied until Website 3 integration review passes.
+  append-only audit, and atomic biomarker-confirmation verification. Website 3
+  frozen head `877ebfff75452f47b3b185e9879a0dcf156e0ef7` and the focused
+  Website 2 integration have passed their current review gates. The migration
+  remains unapplied until Release Train 0 is released, the final Train 1
+  integrated browser/build gates pass, and production pre-apply counts are
+  recorded.
 - PENDING migrations for commerce (20-26) are schema-ready but commerce stays
   disabled until: the production commerce dependency layer is wired (see the
   provider readiness doc), a payment processor is approved, and per-SKU purchase

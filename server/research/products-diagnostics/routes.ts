@@ -38,6 +38,10 @@ export interface Website3Guards {
 }
 
 export interface Website3ApiDependencies {
+  capabilities: {
+    certificateAccess: boolean;
+    biomarkerReportUpload: boolean;
+  };
   productMaster: ProductMaster;
   certificates: {
     requestAccess(input: {
@@ -96,7 +100,10 @@ export interface Website3ApiDependencies {
           | "priceCents"
           | "priceEffectiveDate"
           | "lastVerificationDate"
+          | "lastReviewedDate"
+          | "verifiedPriceDate"
           | "disclosure"
+          | "interest"
           | "affiliate"
         >
       >,
@@ -167,6 +174,10 @@ export function registerProductsDiagnosticsApi(
     try {
       res.json({
         ok: true,
+        capabilities: {
+          certificateAccess: deps.capabilities.certificateAccess,
+          biomarkerReportUpload: deps.capabilities.biomarkerReportUpload,
+        },
         families: summarizeFamilies(deps.productMaster),
         products: deps.productMaster.products.map((product) => {
           const commerce = deps.productMaster.commerce.find(
@@ -265,7 +276,11 @@ export function registerProductsDiagnosticsApi(
     const id = memberId(req);
     if (!id) return res.status(401).json({ ok: false, code: "membership_required" });
     try {
-      res.json({ ok: true, biomarker: publicBiomarker(await deps.biomarkers.getOrCreate(id)) });
+      res.json({
+        ok: true,
+        reportUploadEnabled: deps.capabilities.biomarkerReportUpload,
+        biomarker: publicBiomarker(await deps.biomarkers.getOrCreate(id)),
+      });
     } catch (error) {
       mutationFailure(res, error);
     }

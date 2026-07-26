@@ -4,20 +4,26 @@ import type { ProductDetailDto } from "@shared/research/commerce-api";
 import type { SubscriptionFrequencyDays } from "@shared/research/commerce";
 import { useResearch } from "../../core";
 import { addCartLine, createSubscription, getProduct } from "../../adapters/commerce";
+import {
+  getProductPlatform,
+  requestCertificateAccess,
+  type ProductPlatformProduct,
+  type ProductPlatformResponse,
+  type ProductTruthState,
+} from "../../adapters/products-diagnostics";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
+import { ResearchDenialNotice } from "../../ui/kit";
 import {
-  ResearchDenialNotice,
-  ResearchRouteBoundary,
-  ResearchStatusBadge,
-} from "../../ui/kit";
-import {
-  AVAILABILITY_META,
   GUIDE_STATE_LABELS,
-  LANE_LABELS,
-  goalLabel,
   priceLabel,
 } from "./commerce-presentation";
+import {
+  ProductDetailExperience,
+  type ProductCardView,
+  type ProductDetailView,
+  type Website3SurfaceState,
+} from "../../products-diagnostics";
 
 // ---------------------------------------------------------------------------
 // Member product detail (/research/member/products/:slug), rendered straight
@@ -44,7 +50,12 @@ const FREQUENCIES: SubscriptionFrequencyDays[] = [30, 60, 90];
 
 type PageState =
   | { phase: "loading" }
-  | { phase: "ok"; product: ProductDetailDto }
+  | {
+      phase: "ok";
+      product: ProductDetailDto;
+      platform: ProductPlatformResponse;
+      platformProduct: ProductPlatformProduct;
+    }
   | { phase: "denied"; code: string; message?: string }
   | { phase: "unavailable" }
   | { phase: "unauthorized" }
@@ -59,10 +70,6 @@ type AddState =
   | { phase: "unavailable" }
   | { phase: "unauthorized" }
   | { phase: "error"; message: string };
-
-function guideHref(slug: string): string {
-  return MEMBER_ROUTES.guide.replace(":slug", slug);
-}
 
 /**
  * The price version this page presented, recorded on a direct subscription
@@ -269,6 +276,112 @@ function PurchasePanel({ product, token }: { product: ProductDetailDto; token: s
   );
 }
 
+const STATUS_LABELS: Record<
+  ProductTruthState,
+  ProductCardView["statusLabel"]
+> = {
+  available: "Available",
+  request_access: "Request access",
+  coming_soon: "Coming soon",
+  documentation_pending: "Documentation pending",
+  out_of_stock: "Out of stock",
+  under_review: "Under review",
+  clinician_pathway_pending: "Clinician pathway pending",
+  not_currently_offered: "Not currently offered",
+};
+
+const EMPTY_PRODUCT_DETAIL: ProductDetailView = {
+  slug: "",
+  displayName: "Product",
+  family: "research_vials",
+  familyLabel: "Product",
+  statusLabel: "Under review",
+  summary: "The current product record is being loaded.",
+  priceLabel: null,
+  templateClass: "research_material",
+  specifications: [],
+  researchInformation: [],
+  storageAndHandling: null,
+  shippingAndReturns: null,
+  documentation: [],
+  relatedProducts: [],
+};
+
+function currentPrice(cents: number | null): string | null {
+  return cents === null ? null : priceLabel(cents);
+}
+
+function familyLabel(
+  platform: ProductPlatformResponse,
+  product: ProductPlatformProduct,
+): string {
+  return (
+    platform.families.find((family) => family.family === product.family)?.label ??
+    product.family.replaceAll("_", " ")
+  );
+}
+
+function relatedCard(
+  platform: ProductPlatformResponse,
+  product: ProductPlatformProduct,
+): ProductCardView {
+  const statusLabel = STATUS_LABELS[product.truthState];
+  return {
+    slug: product.slug,
+    displayName: product.displayName,
+    family: product.family,
+    familyLabel: familyLabel(platform, product),
+    statusLabel,
+    summary: `${statusLabel} catalog record.`,
+    priceLabel: currentPrice(product.priceCents),
+    aliases: product.searchAliases,
+  };
+}
+
+function detailView(state: Extract<PageState, { phase: "ok" }>): ProductDetailView {
+  const { product, platform, platformProduct } = state;
+  const statusLabel = STATUS_LABELS[platformProduct.truthState];
+  const specifications = FACT_ORDER.flatMap((key) => {
+    const value = product.confirmedFacts[key];
+    return typeof value === "string" && value.length > 0
+      ? [{ label: FACT_LABELS[key], value }]
+      : [];
+  });
+  return {
+    slug: product.slug,
+    displayName: product.displayName,
+    family: platformProduct.family,
+    familyLabel: familyLabel(platform, platformProduct),
+    statusLabel,
+    summary:
+      product.unavailableReason ??
+      `${statusLabel} catalog record. Only confirmed facts and current server-authoritative availability are shown.`,
+    priceLabel: currentPrice(product.priceCents),
+    aliases: platformProduct.searchAliases,
+    templateClass: platformProduct.templateClass,
+    specifications,
+    researchInformation: product.faq.map(
+      (item) => `${item.question}: ${item.answer}`,
+    ),
+    storageAndHandling: null,
+    shippingAndReturns: null,
+    documentation: [
+      {
+        label: "Related research guide",
+        state: GUIDE_STATE_LABELS[product.guideState],
+      },
+    ],
+    relatedProducts: platform.products
+      .filter(
+        (candidate) =>
+          candidate.family === platformProduct.family &&
+          candidate.slug !== platformProduct.slug,
+      )
+      .slice(0, 3)
+      .map((candidate) => relatedCard(platform, candidate)),
+  };
+}
+
 export default function ProductPage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug ?? "";
@@ -281,11 +394,35 @@ export default function ProductPage() {
       return;
     }
     setState({ phase: "loading" });
-    const result = await getProduct(memberToken, slug);
+    const [result, platformResult] = await Promise.all([
+      getProduct(memberToken, slug),
+      getProductPlatform(memberToken),
+    ]);
     switch (result.kind) {
-      case "ok":
-        setState({ phase: "ok", product: result.data.product });
+      case "ok": {
+        if (platformResult.kind !== "ok") {
+          if (platformResult.kind === "error") {
+            setState({ phase: "error", message: platformResult.message });
+          } else {
+            setState({ phase: "unavailable" });
+          }
+          return;
+        }
+        const platformProduct = platformResult.data.products.find(
+          (candidate) => candidate.slug === result.data.product.slug,
+        );
+        if (!platformProduct) {
+          setState({ phase: "unavailable" });
+          return;
+        }
+        setState({
+          phase: "ok",
+          product: result.data.product,
+          platform: platformResult.data,
+          platformProduct,
+        });
         return;
+      }
       case "denied":
         setState({ phase: "denied", code: result.code, message: result.message });
         return;
@@ -307,164 +444,68 @@ export default function ProductPage() {
     void load();
   }, [load, memberChecking]);
 
+  if (state.phase === "denied") {
+    return (
+      <ResearchMemberShell eyebrow="Member catalog" title="Product">
+        <div className="grid gap-4" data-testid="ra-product-denied">
+          <ResearchDenialNotice code={state.code} message={state.message} />
+          <div>
+            <Link href={MEMBER_ROUTES.products} className="btn btn-primary">
+              Browse the catalog
+            </Link>
+          </div>
+        </div>
+      </ResearchMemberShell>
+    );
+  }
+
+  const surfaceState: Website3SurfaceState =
+    memberChecking || state.phase === "loading"
+      ? "loading"
+      : !member ||
+          state.phase === "unauthorized" ||
+          state.phase === "unavailable"
+        ? "unavailable"
+        : state.phase === "error"
+          ? "error"
+          : "ok";
   const product = state.phase === "ok" ? state.product : null;
+  const view = state.phase === "ok" ? detailView(state) : EMPTY_PRODUCT_DETAIL;
+  const ordering =
+    product && product.purchasable ? (
+      <PurchasePanel product={product} token={memberToken} />
+    ) : product ? (
+      <div className="card" role="status" data-testid="ra-unavailable-reason">
+        <p className="mono-label text-ink-mute">Not orderable right now</p>
+        <p className="body-s text-ink-2 mt-2 max-w-[60ch]">
+          {product.unavailableReason ??
+            "This product cannot be ordered right now. It stays listed while its checks complete."}
+        </p>
+      </div>
+    ) : undefined;
 
-  // Only the confirmed fact keys that are actually present render. Absence is
-  // absence: no row, no placeholder, nothing to request.
-  const presentFacts = product
-    ? FACT_ORDER.filter((key): key is (typeof FACT_ORDER)[number] => {
-        const value = product.confirmedFacts[key];
-        return typeof value === "string" && value.length > 0;
-      })
-    : [];
-
-  const availability = product ? AVAILABILITY_META[product.availability] : null;
-
-  const boundaryState: "loading" | "unauthorized" | "ok" | "error" | "unavailable" = memberChecking
-    ? "loading"
-    : !member
-      ? "unauthorized"
-      : state.phase === "loading"
-        ? "loading"
-        : state.phase === "unauthorized"
-          ? "unauthorized"
-          : state.phase === "error"
-            ? "error"
-            : state.phase === "unavailable"
-              ? "unavailable"
-              : "ok";
+  const requestCertificate = product
+    && state.phase === "ok"
+    && state.platform.capabilities.certificateAccess
+    ? async (lotCode: string) => {
+        const result = await requestCertificateAccess(
+          memberToken,
+          product.sku,
+          lotCode,
+        );
+        if (result.kind !== "ok") throw new Error("certificate_not_available");
+        return result.data.signedUrl;
+      }
+    : undefined;
 
   return (
-    <ResearchMemberShell
-      eyebrow="Member catalog"
-      title={product ? product.displayName : "Product"}
-      actions={
-        <Link href={MEMBER_ROUTES.products} className="btn btn-ghost">
-          Back to products
-        </Link>
-      }
-    >
-      <ResearchRouteBoundary
-        state={boundaryState}
-        errorMessage={state.phase === "error" ? state.message : undefined}
-        onRetry={() => void load()}
-        unavailableTitle="This product page is not available yet."
-        unavailableBody="It is being prepared. Nothing is wrong with your account."
-      >
-        {state.phase === "denied" ? (
-          <div className="grid gap-4" data-testid="ra-product-denied">
-            <ResearchDenialNotice code={state.code} message={state.message} />
-            <div>
-              <Link href={MEMBER_ROUTES.products} className="btn btn-primary">
-                Browse the catalog
-              </Link>
-            </div>
-          </div>
-        ) : (
-          product && (
-            <div className="grid gap-6">
-              {/* Identity: lane, availability, price. */}
-              <section className="card" aria-label="Product overview">
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div>
-                    <p className="mono-label text-ink-mute">{LANE_LABELS[product.lane]}</p>
-                    <div className="mt-2 flex flex-wrap items-center gap-3">
-                      {availability && <ResearchStatusBadge label={availability.label} tone={availability.tone} />}
-                      <span className="mono-label text-ink-mute">SKU {product.sku}</span>
-                    </div>
-                    {product.goalMappings.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-2" aria-label="Goals this maps to">
-                        {product.goalMappings.map((goal) => (
-                          <span key={goal} className="chip text-ink-2">
-                            {goalLabel(goal)}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <p className="display-s tabular" data-testid="ra-product-price">
-                    {priceLabel(product.priceCents)}
-                  </p>
-                </div>
-              </section>
-
-              {/* Confirmed facts: a PARTIAL map. Only present keys render. */}
-              {presentFacts.length > 0 && (
-                <section className="card" aria-label="Confirmed facts">
-                  <h2 className="mono-cap text-ink-mute">Confirmed facts</h2>
-                  <p className="body-s text-ink-mute mt-1 max-w-[56ch]">
-                    Only facts confirmed in writing appear here.
-                  </p>
-                  <dl className="mt-3 grid gap-3">
-                    {presentFacts.map((key) => (
-                      <div key={key} data-testid={`ra-fact-${key}`}>
-                        <dt className="mono-label text-ink-mute">{FACT_LABELS[key]}</dt>
-                        <dd className="body-s text-ink-2 mt-1">{product.confirmedFacts[key]}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </section>
-              )}
-
-              {/* Ordering: the buy path exists only when the server says so. */}
-              <section aria-label="Ordering">
-                <h2 className="mono-cap text-ink-mute">Ordering</h2>
-                <div className="mt-3 grid gap-4">
-                  {product.purchasable ? (
-                    <PurchasePanel product={product} token={memberToken} />
-                  ) : (
-                    <div className="card" role="status" data-testid="ra-unavailable-reason">
-                      <p className="mono-label text-ink-mute">Not orderable right now</p>
-                      <p className="body-s text-ink-2 mt-2 max-w-[60ch]">
-                        {product.unavailableReason ??
-                          "This product cannot be ordered right now. It stays listed while its checks complete."}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </section>
-
-              {/* FAQ, straight from the record. */}
-              {product.faq.length > 0 && (
-                <section className="card" aria-label="Frequently asked questions">
-                  <h2 className="mono-cap text-ink-mute">Questions and answers</h2>
-                  <dl className="mt-3 grid gap-4">
-                    {product.faq.map((item, i) => (
-                      <div key={i}>
-                        <dt className="body-s font-700">{item.question}</dt>
-                        <dd className="body-s text-ink-2 mt-1 max-w-[64ch]">{item.answer}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </section>
-              )}
-
-              {/* Related guides. */}
-              <section className="card" aria-label="Related guides">
-                <h2 className="mono-cap text-ink-mute">Guides</h2>
-                <p className="body-s text-ink-2 mt-2">{GUIDE_STATE_LABELS[product.guideState]}.</p>
-                {product.relatedGuideSlugs.length > 0 ? (
-                  <ul className="mt-3 flex flex-wrap gap-3" style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                    {product.relatedGuideSlugs.map((guideSlug) => (
-                      <li key={guideSlug}>
-                        <Link href={guideHref(guideSlug)} className="btn btn-ghost" data-testid={`ra-related-guide-${guideSlug}`}>
-                          {guideSlug.replace(/-/g, " ")}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="mt-3">
-                    <Link href={MEMBER_ROUTES.guides} className="btn btn-ghost">
-                      Browse the Guide library
-                    </Link>
-                  </div>
-                )}
-              </section>
-            </div>
-          )
-        )}
-      </ResearchRouteBoundary>
-    </ResearchMemberShell>
+    <ProductDetailExperience
+      product={view}
+      ordering={ordering}
+      onCertificateRequest={requestCertificate}
+      state={surfaceState}
+      errorMessage={state.phase === "error" ? state.message : undefined}
+      onRetry={() => void load()}
+    />
   );
 }

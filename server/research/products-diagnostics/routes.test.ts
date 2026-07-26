@@ -76,6 +76,10 @@ function dependencies(): Website3ApiDependencies {
     [{ sku: source.sku, purchasable: false, priceCents: null }],
   );
   return {
+    capabilities: {
+      certificateAccess: false,
+      biomarkerReportUpload: false,
+    },
     productMaster,
     certificates: new ExactLotCertificateService(
       productMaster.variants,
@@ -120,6 +124,10 @@ describe("Website 3 route registration", () => {
     });
     expect(response.body.products[0]).not.toHaveProperty("lots");
     expect(response.body.families).toHaveLength(10);
+    expect(response.body.capabilities).toEqual({
+      certificateAccess: false,
+      biomarkerReportUpload: false,
+    });
   });
 
   it("returns all metabolic cards publicly without the internal alias", async () => {
@@ -176,6 +184,10 @@ describe("Website 3 route registration", () => {
       status: "coming_soon",
       affiliateUrl: null,
     });
+    const biomarker = await request(app).get(
+      "/api/research/diagnostics/biomarker",
+    );
+    expect(biomarker.body.reportUploadEnabled).toBe(false);
     const upload = await request(app)
       .post("/api/research/diagnostics/biomarker/report-upload")
       .send({

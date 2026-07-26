@@ -55,6 +55,36 @@ const MemberTracker = lazy(() => import("./pages/member/Tracker"));
 const Goals = lazy(() => import("./pages/member/Goals"));
 const GoalDetail = lazy(() => import("./pages/member/GoalDetail"));
 const MemberProducts = lazy(() => import("./pages/member/Products"));
+const MemberSupplements = lazy(() =>
+  import("./pages/member/Website3Surfaces").then((module) => ({
+    default: module.MemberSupplements,
+  })),
+);
+const MemberMetabolicCare = lazy(() =>
+  import("./pages/member/Website3Surfaces").then((module) => ({
+    default: module.MemberMetabolicCare,
+  })),
+);
+const MemberDiagnostics = lazy(() =>
+  import("./pages/member/Website3Surfaces").then((module) => ({
+    default: module.MemberDiagnostics,
+  })),
+);
+const MemberStorageAndOrganization = lazy(() =>
+  import("./pages/member/Website3Surfaces").then((module) => ({
+    default: module.MemberStorageAndOrganization,
+  })),
+);
+const MemberResearchEducation = lazy(() =>
+  import("./pages/member/Website3Surfaces").then((module) => ({
+    default: module.MemberResearchEducation,
+  })),
+);
+const MemberSupportCenter = lazy(() =>
+  import("./pages/member/Website3Surfaces").then((module) => ({
+    default: module.MemberSupportCenter,
+  })),
+);
 const ProductRequests = lazy(() => import("./pages/member/ProductRequests"));
 const NewProductRequest = lazy(() => import("./pages/member/NewProductRequest"));
 const MemberProductPage = lazy(() => import("./pages/member/ProductPage"));
@@ -176,6 +206,12 @@ export default function ResearchSection() {
           <Route path="/research/member/goals/:slug">{() => <L member component={GoalDetail} />}</Route>
           <Route path="/research/member/products">{() => <L member component={MemberProducts} />}</Route>
           <Route path="/research/member/products/:slug">{() => <L member component={MemberProductPage} />}</Route>
+          <Route path="/research/member/supplements">{() => <L member component={MemberSupplements} />}</Route>
+          <Route path="/research/member/metabolic-care">{() => <L member component={MemberMetabolicCare} />}</Route>
+          <Route path="/research/member/diagnostics">{() => <L member component={MemberDiagnostics} />}</Route>
+          <Route path="/research/member/storage">{() => <L member component={MemberStorageAndOrganization} />}</Route>
+          <Route path="/research/member/education">{() => <L member component={MemberResearchEducation} />}</Route>
+          <Route path="/research/member/support">{() => <L member component={MemberSupportCenter} />}</Route>
           <Route path="/research/member/product-requests/new">{() => <L member component={NewProductRequest} />}</Route>
           <Route path="/research/member/product-requests">{() => <L member component={ProductRequests} />}</Route>
           <Route path="/research/member/guides">{() => <L member component={MemberGuides} />}</Route>

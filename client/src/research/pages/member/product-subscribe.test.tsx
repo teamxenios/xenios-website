@@ -50,7 +50,11 @@ function stubFetch(routes: StubRoute[]): RecordedCall[] {
     vi.fn(async (url: string, init?: RequestInit) => {
       calls.push({ url, init });
       const method = (init?.method ?? "GET").toUpperCase();
-      const route = routes.find((r) => r.method === method && r.path === url);
+      const route =
+        routes.find((r) => r.method === method && r.path === url) ??
+        (method === PLATFORM_ROUTE.method && url === PLATFORM_ROUTE.path
+          ? PLATFORM_ROUTE
+          : undefined);
       if (!route) throw new TypeError(`unstubbed fetch: ${method} ${url}`);
       return {
         status: route.status,
@@ -114,6 +118,40 @@ const PRODUCT_ROUTE: StubRoute = {
   path: "/api/research/products/xn-01",
   status: 200,
   body: { ok: true, product },
+};
+
+const PLATFORM_ROUTE: StubRoute = {
+  method: "GET",
+  path: "/api/research/product-platform",
+  status: 200,
+  body: {
+    ok: true,
+    capabilities: {
+      certificateAccess: false,
+      biomarkerReportUpload: false,
+    },
+    families: [
+      { family: "all_products", label: "All products", productCount: 1 },
+      { family: "supplements", label: "Supplements", productCount: 1 },
+    ],
+    products: [
+      {
+        productId: "product-xn-01",
+        slug: "xn-01",
+        displayName: "Peptide A",
+        family: "supplements",
+        templateClass: "supplement",
+        searchAliases: ["XN-01"],
+        truthState: "available",
+        priceCents: 6900,
+        purchasable: true,
+      },
+    ],
+    supplements: [],
+    storageAndOrganization: { accessories: [], boundary: "Boundary" },
+    supportCategories: [],
+    education: { topics: [], storageSources: [], boundary: "Boundary" },
+  },
 };
 
 describe("presentedPriceVersion", () => {

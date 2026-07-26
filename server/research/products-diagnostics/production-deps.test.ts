@@ -4,7 +4,9 @@ import { describe, expect, it, vi } from "vitest";
 import {
   SupabaseBiomarkerUploadProvider,
   SupabasePrivateCertificateProvider,
+  SupabaseSupplementPlaceholderRepository,
 } from "./production-deps";
+import { DEFAULT_SUPPLEMENT_PLACEHOLDERS } from "./supplements";
 
 describe("Website 3 production migration", () => {
   const sql = readFileSync(
@@ -176,5 +178,78 @@ describe("Website 3 private Storage providers", () => {
       "lots/lot-1/coa.pdf",
       300,
     );
+  });
+});
+
+describe("Website 3 supplement production repository", () => {
+  function database(error: { message: string } | null = null) {
+    const rows = DEFAULT_SUPPLEMENT_PLACEHOLDERS.map((row) => ({
+      placeholder_id: row.placeholderId,
+      category: row.category,
+      label: row.label,
+      status: row.status,
+      description: row.description,
+      channel_metadata: row.channelMetadata,
+      launch_interest_href: row.launchInterestHref,
+      updated_at: row.updatedAt,
+      updated_by: row.updatedBy,
+    }));
+    const upsert = vi.fn(async () => ({ error }));
+    return {
+      db: {
+        from: vi.fn(() => ({
+          select: vi.fn(() => ({
+            order: vi.fn(async () => ({ data: rows, error: null })),
+          })),
+          upsert,
+        })),
+      } as never,
+      upsert,
+    };
+  }
+
+  it("hydrates public placeholders while withholding partner metadata", async () => {
+    const { db } = database();
+    const repository = new SupabaseSupplementPlaceholderRepository(db);
+    const rows = await repository.listPublic();
+
+    expect(rows).toHaveLength(4);
+    expect(rows[0]).not.toHaveProperty("updatedBy");
+    expect(rows[0].channelMetadata.affiliate).toEqual({
+      configured: false,
+    });
+  });
+
+  it("validates and persists an administrator update before returning success", async () => {
+    const { db, upsert } = database();
+    const repository = new SupabaseSupplementPlaceholderRepository(db);
+    const updated = await repository.update(
+      "foundational",
+      { label: "Foundational supplements in review" },
+      "admin@example.com",
+      "2026-07-25T20:00:00.000Z",
+    );
+
+    expect(updated.label).toBe("Foundational supplements in review");
+    expect(upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: "foundational",
+        label: "Foundational supplements in review",
+        updated_by: "admin@example.com",
+      }),
+      { onConflict: "category" },
+    );
+  });
+
+  it("rejects the update when durable persistence rejects", async () => {
+    const { db } = database({ message: "unavailable" });
+    const repository = new SupabaseSupplementPlaceholderRepository(db);
+
+    await expect(repository.update(
+      "performance",
+      { label: "Performance supplements in review" },
+      "admin@example.com",
+      "2026-07-25T20:00:00.000Z",
+    )).rejects.toThrow("website3_supplement_write_failed");
   });
 });

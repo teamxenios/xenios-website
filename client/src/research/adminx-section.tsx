@@ -16,6 +16,7 @@ const MemberDetail = lazy(() => import("./pages/adminx/MemberDetail"));
 const Plans = lazy(() => import("./pages/adminx/Plans"));
 const PlanDetail = lazy(() => import("./pages/adminx/PlanDetail"));
 const ProductsAdmin = lazy(() => import("./pages/adminx/ProductsAdmin"));
+const Website3Configuration = lazy(() => import("./pages/adminx/Website3Configuration"));
 const ProductRequestsAdmin = lazy(() => import("./pages/adminx/ProductRequestsAdmin"));
 const ProductRequestAdminDetail = lazy(() => import("./pages/adminx/ProductRequestAdminDetail"));
 const ProductAdminDetail = lazy(() => import("./pages/adminx/ProductAdminDetail"));
@@ -67,6 +68,7 @@ export default function AdminResearchSection() {
       <Route path="/admin/research/plans/:id">{() => <S><PlanDetail /></S>}</Route>
       <Route path="/admin/research/products">{() => <S><ProductsAdmin /></S>}</Route>
       <Route path="/admin/research/products/:id">{() => <S><ProductAdminDetail /></S>}</Route>
+      <Route path="/admin/research/product-configuration">{() => <S><Website3Configuration /></S>}</Route>
       <Route path="/admin/research/product-requests">{() => <S><ProductRequestsAdmin /></S>}</Route>
       <Route path="/admin/research/product-requests/:id">{() => <S><ProductRequestAdminDetail /></S>}</Route>
       <Route path="/admin/research/inventory">{() => <S><Inventory /></S>}</Route>

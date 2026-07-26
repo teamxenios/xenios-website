@@ -433,7 +433,20 @@ function superpowerFromRow(row: Record<string, unknown>): SuperpowerOfferConfig 
       typeof row.price_effective_date === "string" ? row.price_effective_date : null,
     lastVerificationDate:
       typeof row.last_verification_date === "string" ? row.last_verification_date : null,
+    lastReviewedDate:
+      typeof row.last_reviewed_date === "string"
+        ? row.last_reviewed_date
+        : null,
+    verifiedPriceDate:
+      typeof row.verified_price_date === "string"
+        ? row.verified_price_date
+        : null,
     disclosure: String(row.disclosure),
+    interest: {
+      enabled: row.interest_enabled === true,
+      href:
+        typeof row.interest_href === "string" ? row.interest_href : null,
+    },
     affiliate: {
       enabled: row.affiliate_enabled === true,
       url: typeof row.affiliate_url === "string" ? row.affiliate_url : null,
@@ -473,9 +486,19 @@ function validateSuperpower(offer: SuperpowerOfferConfig): void {
   }
   if (
     !validDateOrNull(offer.priceEffectiveDate) ||
-    !validDateOrNull(offer.lastVerificationDate)
+    !validDateOrNull(offer.lastVerificationDate) ||
+    !validDateOrNull(offer.lastReviewedDate) ||
+    !validDateOrNull(offer.verifiedPriceDate)
   ) {
     throw new Website3ValidationError("Superpower dates must use YYYY-MM-DD or null");
+  }
+  if (
+    offer.interest.enabled &&
+    !offer.interest.href?.startsWith("/research/")
+  ) {
+    throw new Website3ValidationError(
+      "An enabled interest action must stay inside the Research member area.",
+    );
   }
   if (
     offer.affiliate.enabled &&
@@ -518,7 +541,10 @@ export class SupabaseSuperpowerOfferRepository {
         | "priceCents"
         | "priceEffectiveDate"
         | "lastVerificationDate"
+        | "lastReviewedDate"
+        | "verifiedPriceDate"
         | "disclosure"
+        | "interest"
         | "affiliate"
       >
     >,
@@ -529,6 +555,7 @@ export class SupabaseSuperpowerOfferRepository {
     const next: SuperpowerOfferConfig = {
       ...current,
       ...patch,
+      interest: patch.interest ? { ...patch.interest } : current.interest,
       affiliate: patch.affiliate ? { ...patch.affiliate } : current.affiliate,
       offerId: current.offerId,
       adminEditable: true,
@@ -548,7 +575,11 @@ export class SupabaseSuperpowerOfferRepository {
         price_cents: next.priceCents,
         price_effective_date: next.priceEffectiveDate,
         last_verification_date: next.lastVerificationDate,
+        last_reviewed_date: next.lastReviewedDate,
+        verified_price_date: next.verifiedPriceDate,
         disclosure: next.disclosure.trim(),
+        interest_enabled: next.interest.enabled,
+        interest_href: next.interest.href,
         affiliate_enabled: next.affiliate.enabled,
         affiliate_url: next.affiliate.url,
         updated_at: next.updatedAt,
@@ -945,6 +976,16 @@ export function buildWebsite3ProductionDependencies(
   env: NodeJS.ProcessEnv = process.env,
 ): Website3ApiDependencies {
   const productMaster = productMasterForProduction(env);
+  const capabilities = {
+    certificateAccess:
+      supabaseConfigured() &&
+      env.RESEARCH_COA_ACCESS_ENABLED === "true" &&
+      Boolean(env.RESEARCH_COA_BUCKET),
+    biomarkerReportUpload:
+      supabaseConfigured() &&
+      env.RESEARCH_BIOMARKER_UPLOAD_ENABLED === "true" &&
+      Boolean(env.RESEARCH_BIOMARKER_REPORTS_BUCKET),
+  };
   if (!supabaseConfigured()) {
     const pathways = new (class {
       async listPublic() {
@@ -958,6 +999,7 @@ export function buildWebsite3ProductionDependencies(
       }
     })();
     return {
+      capabilities,
       productMaster,
       certificates: {
         requestAccess: (input) =>
@@ -1010,6 +1052,7 @@ export function buildWebsite3ProductionDependencies(
 
   const db = getSupabaseAdmin();
   return {
+    capabilities,
     productMaster,
     certificates: buildCertificateAccessService(
       productMaster,

@@ -77,6 +77,25 @@ describe("Website 3 product experience", () => {
     expect(html).toContain("Specifications are pending documentation review.");
   });
 
+  it("renders an exact-lot private certificate action only when the production adapter is wired", () => {
+    const unavailable = renderToStaticMarkup(
+      <ProductDetailExperience product={detail} />,
+    );
+    const wired = renderToStaticMarkup(
+      <ProductDetailExperience
+        product={detail}
+        onCertificateRequest={async () => "https://signed.example/certificate"}
+      />,
+    );
+
+    expect(unavailable).toContain(
+      "An exact-lot certificate action is unavailable",
+    );
+    expect(wired).toContain("Exact lot code");
+    expect(wired).toContain("Request certificate access");
+    expect(wired).not.toContain("signed.example");
+  });
+
   it("renders only product-request sources accepted by the shared contract", () => {
     const catalogHtml = renderToStaticMarkup(
       <ProductCatalogExperience products={[]} />,

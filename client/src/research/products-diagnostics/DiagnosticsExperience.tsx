@@ -201,6 +201,11 @@ export function BiomarkerCenter({
           <p className="body-s text-ink-2 mt-2">
             PDF, JPEG, or PNG up to 15 MB. Files use private storage and short-lived signed access.
           </p>
+          {!onUpload && (
+            <p className="body-s text-ink-mute mt-3" role="status">
+              Private report upload is not enabled yet.
+            </p>
+          )}
           <label className="grid gap-2 mt-5">
             <span className="form-label">Report file</span>
             <input
@@ -258,12 +263,14 @@ export function BiomarkerCenter({
 export function DiagnosticsMemberHome({
   offer,
   biomarker,
+  onUpload,
   state = "ok",
   errorMessage,
   onRetry,
 }: {
   offer: SuperpowerOfferView;
   biomarker: BiomarkerStateView;
+  onUpload?: (input: { file: File; consentAccepted: boolean }) => Promise<void>;
   state?: Website3SurfaceState;
   errorMessage?: string;
   onRetry?: () => void;
@@ -286,7 +293,7 @@ export function DiagnosticsMemberHome({
         </ResearchSecureNotice>
         <div className="mt-6">
           <SuperpowerDiagnostics offer={offer} />
-          <BiomarkerCenter record={biomarker} />
+          <BiomarkerCenter record={biomarker} onUpload={onUpload} />
         </div>
       </ResearchRouteBoundary>
     </ResearchMemberShell>

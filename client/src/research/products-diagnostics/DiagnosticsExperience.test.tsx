@@ -64,6 +64,7 @@ describe("diagnostics member experience", () => {
     }
     expect(html).toContain("I consent to storing this report privately");
     expect(html).toContain("does not create an automated medical interpretation");
+    expect(html).toContain("Private report upload is not enabled yet.");
   });
 
   it("states that diagnostics does not validate Research products", () => {

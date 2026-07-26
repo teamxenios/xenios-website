@@ -194,11 +194,22 @@ create table if not exists public.research_superpower_offers (
   price_cents integer check (price_cents is null or price_cents >= 0),
   price_effective_date date,
   last_verification_date date,
+  last_reviewed_date date,
+  verified_price_date date,
   disclosure text not null,
+  interest_enabled boolean not null default false,
+  interest_href text,
   affiliate_enabled boolean not null default false,
   affiliate_url text,
   updated_at timestamptz not null default now(),
   updated_by text,
+  constraint research_superpower_interest_href_check check (
+    interest_enabled = false
+    or (
+      interest_href is not null
+      and interest_href like '/research/%'
+    )
+  ),
   check (
     affiliate_enabled = false
     or (
@@ -209,6 +220,35 @@ create table if not exists public.research_superpower_offers (
   )
 );
 
+alter table public.research_superpower_offers
+  add column if not exists last_reviewed_date date;
+alter table public.research_superpower_offers
+  add column if not exists verified_price_date date;
+alter table public.research_superpower_offers
+  add column if not exists interest_enabled boolean not null default false;
+alter table public.research_superpower_offers
+  add column if not exists interest_href text;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'research_superpower_interest_href_check'
+      and conrelid = 'public.research_superpower_offers'::regclass
+  ) then
+    alter table public.research_superpower_offers
+      add constraint research_superpower_interest_href_check check (
+        interest_enabled = false
+        or (
+          interest_href is not null
+          and interest_href like '/research/%'
+        )
+      );
+  end if;
+end;
+$$;
+
 insert into public.research_superpower_offers (
   offer_id,
   label,
@@ -216,6 +256,8 @@ insert into public.research_superpower_offers (
   status,
   availability,
   disclosure,
+  interest_enabled,
+  interest_href,
   affiliate_enabled
 )
 values (
@@ -225,6 +267,8 @@ values (
   'coming_soon',
   'Not currently enabled',
   'If an affiliate relationship is enabled later, Xenios may receive compensation. No affiliate link is active today.',
+  true,
+  '/research/member/product-requests/new?source=diagnostics',
   false
 )
 on conflict (offer_id) do nothing;
