@@ -53,6 +53,7 @@ export * from "./eligibility-routes";
 export * from "./intake";
 export * from "./intake-repository";
 export * from "./intake-routes";
+export * from "./instructions";
 export * from "./production-deps";
 export * from "./prescriptions";
 export * from "./prescription-repository";
