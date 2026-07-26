@@ -68,6 +68,21 @@ export const PRODUCT_MEDIA_STATES = [
   "rejected",
   "archived",
 ] as const;
+export const PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS = [
+  { key: "products.sku", domain: "products", recordType: "product" },
+  { key: "products.family", domain: "products", recordType: "product" },
+  {
+    key: "product_content.primary_image",
+    domain: "product_content",
+    recordType: "product",
+  },
+  {
+    key: "product_content.storage_information",
+    domain: "product_content",
+    recordType: "product",
+  },
+] as const;
+
 
 export type ProductMediaState = (typeof PRODUCT_MEDIA_STATES)[number];
 

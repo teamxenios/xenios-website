@@ -194,6 +194,17 @@ try {
     "0",
   );
   expectScalar(
+    "browser/public roles cannot execute lifecycle or immutability triggers",
+    `select count(*)::text
+       from information_schema.routine_privileges
+      where routine_schema = 'public'
+        and routine_name in (
+          'research_product_variant_lifecycle_guard',
+          'research_product_price_history_immutable'
+        )
+        and grantee in ('PUBLIC','anon','authenticated');`,
+    "0",
+  );  expectScalar(
     "service role has the exact 48 table privileges required by 12 domain tables",
     `select count(*)::text from information_schema.role_table_grants
       where table_schema = 'public'
@@ -237,7 +248,7 @@ try {
   );
 
   requireOk(
-    "service role creates product, duplicate draft, variant, and v1 price",
+    "service role creates product, duplicate draft, and inactive draft variant",
     psql(`
       set role service_role;
       select public.research_admin_create_product(
@@ -257,12 +268,70 @@ try {
         'admin@example.invalid',
         '2026-07-26T14:32:00Z'
       );
+      reset role;
+    `),
+  );
+  expectScalar(
+    "new variants are inactive drafts",
+    `select status || ':' || active::text
+       from public.research_product_variants where sku='DRY-A-01';`,
+    "draft:false",
+  );
+  expectRejected(
+    "direct service-role update cannot skip variant review",
+    `set role service_role;
+     update public.research_product_variants
+        set status='approved', active=true
+      where sku='DRY-A-01';`,
+    /invalid variant state transition/i,
+  );
+  expectRejected(
+    "draft variant cannot skip review and activate",
+    `set role service_role;
+     select public.research_admin_update_product_variant(
+       (select id from public.research_products where sku='DRY-A'),
+       (select id from public.research_product_variants where sku='DRY-A-01'),
+       '{"status":"approved","active":true}',
+       'reviewer@example.invalid', now()
+     );`,
+    /invalid variant state transition/i,
+  );
+  expectRejected(
+    "unreviewed variant cannot receive pricing",
+    `set role service_role;
+     select public.research_admin_create_product_price(
+       (select id from public.research_products where sku='DRY-A'),
+       jsonb_build_object(
+         'variantId',(select id from public.research_product_variants where sku='DRY-A-01'),
+         'audience','retail','amountCents',10000,'currency','USD',
+         'effectiveAt','2026-07-26T14:34:00Z'
+       ),
+       'admin@example.invalid', now()
+     );`,
+    /approved active variant not found/i,
+  );
+  expectScalar(
+    "rejected variant and price bypasses leave lifecycle and history unchanged",
+    `select v.status || ':' || v.active::text || ':' ||
+       (select count(*)::text from public.research_product_prices)
+       from public.research_product_variants v where v.sku='DRY-A-01';`,
+    "draft:false:0",
+  );
+  requireOk(
+    "reviewed variant activates before v1 price is created and approved",
+    psql(`
+      set role service_role;
       select public.research_admin_update_product_variant(
         (select id from public.research_products where sku = 'DRY-A'),
         (select id from public.research_product_variants where sku = 'DRY-A-01'),
-        '{"status":"approved"}',
-        'reviewer@example.invalid',
-        '2026-07-26T14:33:00Z'
+        '{"status":"in_review","active":false}',
+        'reviewer@example.invalid','2026-07-26T14:33:00Z'
+      );
+      select public.research_admin_update_product_variant(
+        (select id from public.research_products where sku = 'DRY-A'),
+        (select id from public.research_product_variants where sku = 'DRY-A-01'),
+        '{"status":"approved","active":true}',
+        'reviewer@example.invalid','2026-07-26T14:33:30Z'
       );
       select public.research_admin_create_product_price(
         (select id from public.research_products where sku = 'DRY-A'),
@@ -271,14 +340,12 @@ try {
           'audience','retail','amountCents',10000,'currency','USD',
           'effectiveAt','2026-07-26T14:34:00Z'
         ),
-        'admin@example.invalid',
-        '2026-07-26T14:34:00Z'
+        'admin@example.invalid','2026-07-26T14:34:00Z'
       );
       select public.research_admin_approve_product_price(
         (select id from public.research_products where sku = 'DRY-A'),
         (select id from public.research_product_prices where version = 1),
-        'reviewer@example.invalid',
-        '2026-07-26T14:35:00Z'
+        'reviewer@example.invalid','2026-07-26T14:35:00Z'
       );
       reset role;
     `),
@@ -344,8 +411,29 @@ try {
     "1=superseded,2=approved,3=active",
   );
 
+  expectRejected(
+    "service-role code cannot rewrite price economic history",
+    `set role service_role;
+     update public.research_product_prices
+        set amount_cents = 1, version = 99
+      where version = 1;`,
+    /economic history is immutable/i,
+  );
+  expectRejected(
+    "service-role code cannot delete price history",
+    `set role service_role;
+     delete from public.research_product_prices where version = 1;`,
+    /append-only/i,
+  );
+  expectScalar(
+    "rejected price mutations preserve all economic versions",
+    `select string_agg(version::text || '=' || amount_cents::text, ',' order by version)
+       from public.research_product_prices;`,
+    "1=10000,2=11000,3=10500",
+  );
+
   requireOk(
-    "media metadata moves through upload, review, approval, and ordering",
+    "media upload preparation creates only pending metadata",
     psql(`
       set role service_role;
       select id from public.research_admin_prepare_product_media(
@@ -353,6 +441,44 @@ try {
         '{"kind":"primary_image","filename":"dry.png","contentType":"image/png","sizeBytes":8,"altText":"Dry product","sortOrder":2}',
         'admin@example.invalid','2026-07-26T14:40:00Z'
       );
+      reset role;
+    `),
+  );
+  expectRejected(
+    "pending media cannot bypass object confirmation into review",
+    `set role service_role;
+     select public.research_admin_update_product_media(
+       (select id from public.research_products where sku='DRY-A'),
+       (select id from public.research_product_media),
+       'in_review','Bypass attempt',1,'',
+       'admin@example.invalid',now()
+     );`,
+    /invalid media state transition/i,
+  );
+  expectRejected(
+    "pending media cannot bypass object confirmation into approval",
+    `set role service_role;
+     select public.research_admin_update_product_media(
+       (select id from public.research_products where sku='DRY-A'),
+       (select id from public.research_product_media),
+       'approved','Bypass attempt',1,'',
+       'admin@example.invalid',now()
+     );`,
+    /invalid media state transition/i,
+  );
+  expectScalar(
+    "rejected media bypasses preserve pending state, version, and audit count",
+    `select m.state || ':' || m.version::text || ':' ||
+       (select count(*)::text from public.research_product_admin_audit a
+         where a.entity_type='media')
+       from public.research_product_media m;`,
+    "pending_upload:1:1",
+  );
+  requireOk(
+    "media metadata moves through upload, review, approval, and ordering",
+    psql(`
+      set role service_role;
+
       select public.research_admin_confirm_product_media(
         (select id from public.research_products where sku = 'DRY-A'),
         (select id from public.research_product_media),
@@ -370,6 +496,12 @@ try {
         'approved','Dry product front view',0,'',
         'reviewer@example.invalid','2026-07-26T14:43:00Z'
       );
+      select public.research_admin_update_product_media(
+        (select id from public.research_products where sku = 'DRY-A'),
+        (select id from public.research_product_media),
+        'approved','Dry product approved view',3,'',
+        'reviewer@example.invalid','2026-07-26T14:44:00Z'
+      );
       reset role;
     `),
   );
@@ -377,7 +509,7 @@ try {
     "approved media retains metadata and final order",
     `select state || ':' || alt_text || ':' || sort_order::text
        from public.research_product_media;`,
-    "approved:Dry product front view:0",
+    "approved:Dry product approved view:3",
   );
 
   expectRejected(

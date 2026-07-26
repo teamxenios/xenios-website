@@ -13,7 +13,7 @@ Frozen head: use the commit containing this file and verify it against the PR he
 - Retail, member, professional, wholesale, and compare-at price version history with effective dates and immutable version numbers.
 - Private product media prepare/upload/verify, metadata, ordering, review, approval, rejection, and archive.
 - Append-only product administration audit history.
-- Canonical required-input release gate reuse; empty, rejected, and expired canonical inputs fail closed.
+- Canonical required-input release gate reuse; exact product identity, record set, domain manifest/hash/count, launch state, rejected/expired values, and blocking counts all fail closed unless current and complete.
 - Server-only non-PII Product/Operations readiness projection.
 
 No product, variant, SKU, price, media, lot, COA, inventory, order, role, or production row was created by this release unit.
@@ -23,6 +23,9 @@ No product, variant, SKU, price, media, lot, COA, inventory, order, role, or pro
 `20260726143000_research_product_control_center.sql`
 
 - Four new tables: `research_product_variants`, `research_product_prices`, `research_product_media`, `research_product_admin_audit`.
+- DB-enforced variant lifecycle requires inactive drafts, reviewed approval transitions, and approved/active state before price creation or approval.
+- Price economic fields/version history are immutable and deletes are rejected, including direct service-role table mutation.
+- Generic media updates cannot move `pending_upload` into review or approval; only the object-verifying confirmation path can establish uploaded state.
 - Additive columns on canonical `research_products` and `research_product_content`.
 - Twelve affected canonical/new product tables have enabled and forced RLS.
 - Anon/authenticated table grants: 0.
@@ -32,7 +35,7 @@ No product, variant, SKU, price, media, lot, COA, inventory, order, role, or pro
 - Private Storage bucket: `research-product-media-production`.
 - Migration creates zero domain rows.
 
-Disposable PostgreSQL 16 proof: migration applied twice; product/duplicate/variant/price/media lifecycle passed; cross-role and cross-product mutation failed; service-role audit update failed; superuser-only disposable rollback left zero domain rows. Verifier: `scripts/product-control-dryrun.mjs`.
+Disposable PostgreSQL 16 proof: migration applied twice; product/duplicate/variant/price/media lifecycle passed; pending-media review/approval bypasses failed without mutation; direct service-role price UPDATE/DELETE and draft-to-approved variant bypasses failed; unreviewed pricing failed; cross-role and cross-product mutation failed; service-role audit update failed; superuser-only disposable rollback left zero domain rows. Verifier: `scripts/product-control-dryrun.mjs`.
 
 Rollback for an unpopulated failed release: remove the isolated private bucket, 11 Product Control RPCs, append-only trigger/function, four new tables, and only the columns introduced by this migration. For any populated environment, preserve audit/history and use an additive corrective migration; do not drop or rewrite production records.
 
@@ -42,7 +45,7 @@ Import `registerProductAdminApi` from `server/research/products-diagnostics/prod
 
 - `SupabaseProductAdminRepository` — `server/research/products-diagnostics/product-admin-production.ts`
 - `productAdminIdempotency` — same file; consumes the canonical commerce idempotency store
-- `productReleaseGateFromRequiredInputs` — same file; consumes canonical required-input rows and fails closed on an empty item set
+- `productReleaseGateFromRequiredInputs` — same file; consumes the exact product record set plus canonical domain manifest/hash/count/readiness and fails closed on any mismatch
 
 Do not register a browser/service-role bypass or a parallel readiness model.
 
@@ -88,12 +91,14 @@ Exports `ProductCommerceReadinessProjection` and `ProductCommerceReadinessReader
 
 ## Verification
 
-- Focused: 4 files / 16 tests passed.
-- Full: 189 files / 3,485 tests passed before the final fail-closed adapter regression; rerun at frozen checkpoint recorded in PR checks.
+- Focused: 4 files / 19 tests passed.
+- Full: 190 files / 3,491 tests passed with one worker; no assertion or worker errors.
+- Isolated activation regression: 1 file / 17 tests passed after the first parallel full run encountered a Windows worker-start timeout.
+- Canonical readiness regressions cover empty, truncated, same-count replacement, stale manifest, inconsistent counts, wrong product identity, rejected/expired, and exact-current success.
 - Typecheck: passed.
 - Production build: passed; existing chunk-size warning only.
-- Disposable migration/security verifier: 27/27 passed.
-- `git diff --check`: required immediately before freeze.
+- Disposable migration/security verifier: 41/41 passed.
+- `git diff --check`: passed immediately before freeze.
 
 ## Locked shared files preserved
 

@@ -112,7 +112,7 @@ function repository() {
               shippingClass: input.shippingClass ?? null,
               memberEligible: input.memberEligible ?? false,
               status: "draft",
-              active: true,
+              active: false,
               sortOrder: input.sortOrder ?? 0,
               createdAt: "2026-07-26T12:00:00Z",
               updatedAt: "2026-07-26T12:00:00Z",
@@ -274,6 +274,39 @@ describe("ProductAdminService", () => {
       "admin@example.invalid",
       "2026-07-26T12:00:00Z",
     );
+  });
+
+  it("rejects active or archived variant states without explicit safe lifecycle fields", async () => {
+    const { service: subject, repo } = service();
+
+    expect(() =>
+      subject.updateVariant(
+        "product-1",
+        "variant-1",
+        { active: true },
+        "admin@example.invalid",
+        "variant-active-1",
+      ),
+    ).toThrow(ProductAdminValidationError);
+    expect(() =>
+      subject.updateVariant(
+        "product-1",
+        "variant-1",
+        { status: "archived" },
+        "admin@example.invalid",
+        "variant-archive-1",
+      ),
+    ).toThrow(ProductAdminValidationError);
+    await expect(
+      subject.updateVariant(
+        "product-1",
+        "variant-1",
+        { status: "approved", active: true },
+        "admin@example.invalid",
+        "variant-review-1",
+      ),
+    ).resolves.toBeDefined();
+    expect(repo.updateVariant).toHaveBeenCalledTimes(1);
   });
 
   it("rejects negative prices and invalid effective windows", async () => {

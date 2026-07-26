@@ -68,7 +68,7 @@ create table if not exists public.research_product_variants (
   member_eligible boolean not null default false,
   status text not null default 'draft'
     check (status in ('draft','in_review','approved','archived')),
-  active boolean not null default true,
+  active boolean not null default false,
   sort_order integer not null default 0 check (sort_order >= 0),
   version integer not null default 1 check (version > 0),
   created_by text not null,
@@ -77,6 +77,56 @@ create table if not exists public.research_product_variants (
   updated_at timestamptz not null default now(),
   unique (product_id, id)
 );
+alter table public.research_product_variants
+  alter column active set default false;
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'research_product_variants_active_requires_approval'
+      and conrelid = 'public.research_product_variants'::regclass
+  ) then
+    alter table public.research_product_variants
+      add constraint research_product_variants_active_requires_approval
+      check (not active or status = 'approved');
+  end if;
+end $$;
+
+create or replace function public.research_product_variant_lifecycle_guard()
+returns trigger
+language plpgsql
+set search_path = pg_catalog
+as $$
+begin
+  if new.active and new.status <> 'approved' then
+    raise exception 'only approved variants may be active';
+  end if;
+  if tg_op = 'INSERT' then
+    if new.status <> 'draft' or new.active then
+      raise exception 'new variants must be inactive drafts';
+    end if;
+    return new;
+  end if;
+  if not (
+    new.status = old.status
+    or (old.status = 'draft' and new.status in ('in_review','archived'))
+    or (old.status = 'in_review' and new.status in ('draft','approved','archived'))
+    or (old.status = 'approved' and new.status = 'archived')
+    or (old.status = 'archived' and new.status = 'draft')
+  ) then
+    raise exception 'invalid variant state transition: % -> %',
+      old.status, new.status;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists research_product_variants_lifecycle_guard
+  on public.research_product_variants;
+create trigger research_product_variants_lifecycle_guard
+before insert or update on public.research_product_variants
+for each row execute function public.research_product_variant_lifecycle_guard();
+
 create index if not exists research_product_variants_product_sort_idx
   on public.research_product_variants(product_id, sort_order, created_at);
 
@@ -107,6 +157,39 @@ create index if not exists research_product_prices_variant_history_idx
 create unique index if not exists research_product_prices_one_active_idx
   on public.research_product_prices(variant_id, audience)
   where status = 'active';
+create or replace function public.research_product_price_history_immutable()
+returns trigger
+language plpgsql
+set search_path = pg_catalog
+as $$
+begin
+  if tg_op = 'DELETE' then
+    raise exception 'research product price history is append-only';
+  end if;
+  if new.id is distinct from old.id
+     or new.product_id is distinct from old.product_id
+     or new.variant_id is distinct from old.variant_id
+     or new.audience is distinct from old.audience
+     or new.amount_cents is distinct from old.amount_cents
+     or new.currency is distinct from old.currency
+     or new.effective_at is distinct from old.effective_at
+     or new.expires_at is distinct from old.expires_at
+     or new.approval_note is distinct from old.approval_note
+     or new.version is distinct from old.version
+     or new.created_by is distinct from old.created_by
+     or new.created_at is distinct from old.created_at then
+    raise exception 'research product price economic history is immutable';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists research_product_prices_history_immutable
+  on public.research_product_prices;
+create trigger research_product_prices_history_immutable
+before update or delete on public.research_product_prices
+for each row execute function public.research_product_price_history_immutable();
+
 
 create table if not exists public.research_product_media (
   id uuid primary key default gen_random_uuid(),
@@ -478,11 +561,42 @@ language plpgsql
 security definer
 set search_path = pg_catalog
 as $$
-declare v_before jsonb;
+declare
+  v_before jsonb;
+  v_before_status text;
+  v_before_active boolean;
+  v_target_status text;
+  v_target_active boolean;
 begin
-  select to_jsonb(v) into v_before from public.research_product_variants v
-  where id = p_variant_id and product_id = p_product_id for update;
+  select to_jsonb(v), v.status, v.active
+  into v_before, v_before_status, v_before_active
+  from public.research_product_variants v
+  where id = p_variant_id and product_id = p_product_id
+  for update;
   if v_before is null then raise exception 'variant not found'; end if;
+
+  v_target_status := case
+    when p_input ? 'status' then p_input->>'status'
+    else v_before_status
+  end;
+  v_target_active := case
+    when p_input ? 'active' then (p_input->>'active')::boolean
+    else v_before_active
+  end;
+  if v_target_active and v_target_status <> 'approved' then
+    raise exception 'only approved variants may be active';
+  end if;
+  if not (
+    v_target_status = v_before_status
+    or (v_before_status = 'draft' and v_target_status in ('in_review','archived'))
+    or (v_before_status = 'in_review' and v_target_status in ('draft','approved','archived'))
+    or (v_before_status = 'approved' and v_target_status = 'archived')
+    or (v_before_status = 'archived' and v_target_status = 'draft')
+  ) then
+    raise exception 'invalid variant state transition: % -> %',
+      v_before_status, v_target_status;
+  end if;
+
   update public.research_product_variants set
     sku = case when p_input ? 'sku' then upper(p_input->>'sku') else sku end,
     catalog_number = case when p_input ? 'catalogNumber' then nullif(p_input->>'catalogNumber','') else catalog_number end,
@@ -494,8 +608,8 @@ begin
     shipping_class = case when p_input ? 'shippingClass' then nullif(p_input->>'shippingClass','') else shipping_class end,
     member_eligible = case when p_input ? 'memberEligible' then (p_input->>'memberEligible')::boolean else member_eligible end,
     sort_order = case when p_input ? 'sortOrder' then (p_input->>'sortOrder')::integer else sort_order end,
-    status = case when p_input ? 'status' then p_input->>'status' else status end,
-    active = case when p_input ? 'active' then (p_input->>'active')::boolean else active end,
+    status = v_target_status,
+    active = v_target_active,
     version = version + 1,
     updated_by = p_actor,
     updated_at = p_at
@@ -509,7 +623,6 @@ begin
   return p_product_id;
 end;
 $$;
-
 create or replace function public.research_admin_create_product_price(
   p_product_id uuid,
   p_input jsonb,
@@ -528,8 +641,9 @@ declare
   v_version integer;
 begin
   perform 1 from public.research_product_variants
-  where id = v_variant and product_id = p_product_id and active;
-  if not found then raise exception 'active variant not found'; end if;
+  where id = v_variant and product_id = p_product_id
+    and status = 'approved' and active;
+  if not found then raise exception 'approved active variant not found'; end if;
   perform pg_advisory_xact_lock(
     hashtextextended(v_variant::text || ':' || v_audience, 0)
   );
@@ -572,6 +686,10 @@ begin
   where id = p_price_id and product_id = p_product_id and status = 'draft'
   for update;
   if not found then raise exception 'draft price not found'; end if;
+  perform 1 from public.research_product_variants
+  where id = v_price.variant_id and product_id = p_product_id
+    and status = 'approved' and active;
+  if not found then raise exception 'approved active variant not found'; end if;
   if v_price.effective_at <= p_at then
     update public.research_product_prices
     set status = 'superseded', updated_at = p_at
@@ -666,19 +784,38 @@ language plpgsql
 security definer
 set search_path = pg_catalog
 as $$
+declare
+  v_before_state text;
 begin
-  if p_state = 'approved' then
-    perform 1 from public.research_product_media
-    where id = p_media_id and product_id = p_product_id
-      and state in ('uploaded','in_review');
-    if not found then raise exception 'media is not reviewable'; end if;
+  select state into v_before_state
+  from public.research_product_media
+  where id = p_media_id and product_id = p_product_id
+  for update;
+  if not found then raise exception 'media not found'; end if;
+
+  if not (
+    (v_before_state = 'pending_upload' and p_state = 'archived')
+    or (v_before_state = 'uploaded' and p_state in ('in_review','archived'))
+    or (v_before_state = 'in_review' and p_state in ('in_review','approved','rejected','archived'))
+    or (v_before_state = 'rejected' and p_state in ('rejected','in_review','archived'))
+    or (v_before_state = 'approved' and p_state in ('approved','archived'))
+    or (v_before_state = 'archived' and p_state = 'archived')
+  ) then
+    raise exception 'invalid media state transition: % -> %',
+      v_before_state, p_state;
   end if;
   update public.research_product_media set
     state = p_state,
     alt_text = p_alt_text,
     sort_order = p_sort_order,
-    approved_by = case when p_state = 'approved' then p_actor else approved_by end,
-    approved_at = case when p_state = 'approved' then p_at else approved_at end,
+    approved_by = case
+      when p_state = 'approved' and v_before_state <> 'approved' then p_actor
+      else approved_by
+    end,
+    approved_at = case
+      when p_state = 'approved' and v_before_state <> 'approved' then p_at
+      else approved_at
+    end,
     rejection_reason = case when p_state = 'rejected' then p_reason else null end,
     updated_by = p_actor,
     updated_at = p_at,
@@ -723,6 +860,10 @@ begin
 end $$;
 
 revoke all on function public.research_product_admin_audit_append_only()
+  from public, anon, authenticated;
+revoke all on function public.research_product_price_history_immutable()
+  from public, anon, authenticated;
+revoke all on function public.research_product_variant_lifecycle_guard()
   from public, anon, authenticated;
 revoke all on function public.research_admin_create_product(jsonb,text,timestamptz)
   from public, anon, authenticated;

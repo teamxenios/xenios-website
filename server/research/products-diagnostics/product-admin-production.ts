@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
 import { getSupabaseAdmin } from "../../supabase";
 import type {
   AdminProductContent,
@@ -121,7 +122,7 @@ function variantRow(row: Record<string, unknown>): AdminProductVariant {
     shippingClass: rowNullableText(row.shipping_class),
     memberEligible: rowBoolean(row.member_eligible),
     status: rowText(row.status, "draft") as AdminProductVariant["status"],
-    active: rowBoolean(row.active, true),
+    active: rowBoolean(row.active),
     sortOrder: rowNumber(row.sort_order),
     createdAt: rowText(row.created_at),
     updatedAt: rowText(row.updated_at),
@@ -699,26 +700,82 @@ export function productReleaseGateFromRequiredInputs(
     async evaluate(productId: string) {
       const { data, error } = await db
         .from(REQUIRED_INPUT_TABLE)
-        .select("key,current_state,blocking_level")
+        .select(
+          "key,domain,record_type,record_id,current_state,blocking_level",
+        )
         .eq("record_id", productId);
       if (error) dbFailure("evaluate product release", error);
-      const rows = Array.isArray(data) ? data : [];
-      const blockingKeys = rows
-        .filter((row: any) => {
-          const state = row.current_state;
-          return (
-            state !== "verified" &&
-            state !== "not_applicable" &&
-            state !== "superseded" &&
-            row.blocking_level !== "informational"
-          );
-        })
-        .map((row: any) => String(row.key));
-      if (rows.length === 0) blockingKeys.push("product.required_inputs");
+      const rows = (Array.isArray(data) ? data : []).filter(
+        (row: any) => row.current_state !== "superseded",
+      );
+      const expected = PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS;
+      const expectedKeys = new Set<string>(
+        expected.map((binding) => binding.key),
+      );
+      const blockingKeys: string[] = [];
+
+      for (const binding of expected) {
+        const matches = rows.filter(
+          (row: any) =>
+            row.key === binding.key &&
+            row.domain === binding.domain &&
+            row.record_type === binding.recordType &&
+            row.record_id === productId,
+        );
+        if (matches.length !== 1) {
+          blockingKeys.push(binding.key);
+          continue;
+        }
+        const row = matches[0];
+        if (
+          row.current_state !== "verified" &&
+          row.current_state !== "not_applicable"
+        ) {
+          blockingKeys.push(binding.key);
+        }
+      }
+
+      if (
+        rows.length !== expected.length ||
+        rows.some((row: any) => !expectedKeys.has(String(row.key)))
+      ) {
+        blockingKeys.push("product.required_inputs.record_set");
+      }
+
+      const domains = Array.from(
+        new Set<string>(expected.map((binding) => binding.domain)),
+      );
+      const readinessResults = await Promise.all(
+        domains.map((domain) =>
+          db.rpc("research_domain_readiness", { p_domain: domain }),
+        ),
+      );
+      readinessResults.forEach((result: any, index) => {
+        if (result.error) dbFailure("evaluate product manifest", result.error);
+        const readiness = result.data ?? {};
+        const manifestCurrent =
+          readiness.domain === domains[index] &&
+          readiness.manifestApproved === true &&
+          readiness.softwareComplete === true &&
+          readiness.publicEnabled === true &&
+          readiness.launchStatus === "public_enabled" &&
+          readiness.realInputsRequired === false &&
+          Number(readiness.expectedInputCount) > 0 &&
+          Number(readiness.actualInputCount) ===
+            Number(readiness.expectedInputCount) &&
+          Number(readiness.blockingInputCount) === 0 &&
+          Array.isArray(readiness.blockingKeys) &&
+          readiness.blockingKeys.length === 0;
+        if (!manifestCurrent) {
+          blockingKeys.push(`product.required_inputs.manifest:${domains[index]}`);
+        }
+      });
+
+      const uniqueBlockingKeys = Array.from(new Set(blockingKeys));
       return {
-        displayReady: blockingKeys.length === 0,
+        displayReady: uniqueBlockingKeys.length === 0,
         commerceReady: false,
-        blockingKeys,
+        blockingKeys: uniqueBlockingKeys,
       };
     },
   };

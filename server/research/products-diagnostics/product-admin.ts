@@ -476,6 +476,16 @@ function normalizeVariantUpdate(
     );
   }
   if (input.active !== undefined) result.active = input.active === true;
+  if (result.active === true && result.status !== "approved") {
+    throw new ProductAdminValidationError(
+      "active variants must explicitly enter the approved state",
+    );
+  }
+  if (result.status === "archived" && result.active !== false) {
+    throw new ProductAdminValidationError(
+      "archived variants must explicitly be inactive",
+    );
+  }
   if (Object.keys(result).length === 0) {
     throw new ProductAdminValidationError("at least one variant field is required");
   }
