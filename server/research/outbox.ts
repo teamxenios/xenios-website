@@ -23,6 +23,7 @@ import {
   type FoundingEmailTemplate,
 } from "./membership-activation/emails";
 import { runAgreementPackageReconciler } from "./agreement-package-reconciliation";
+import { renderProductDiagnosticOutboxEmail } from "./products-diagnostics/communications";
 
 // ---------------------------------------------------------------------------
 // Durable notification outbox (Mega 1 sections 3-4). Every notification is a
@@ -304,6 +305,18 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
         if (memberTemplate) {
           const ok = await memberTemplate({ recipient: job.recipient, payload });
           return { ok, providerId: null, error: ok ? undefined : "provider send returned failure" };
+        }
+        const productDiagnostic = renderProductDiagnosticOutboxEmail(
+          job.template_key,
+          payload,
+        );
+        if (productDiagnostic) {
+          return await sendFoundingEmail({
+            to: job.recipient,
+            subject: productDiagnostic.subject,
+            text: productDiagnostic.text,
+            idempotencyKey: String(job.event_key),
+          });
         }
         return { ok: false, providerId: null, error: `unknown template ${job.template_key}` };
       }

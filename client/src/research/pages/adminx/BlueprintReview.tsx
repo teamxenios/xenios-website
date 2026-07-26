@@ -26,6 +26,12 @@ type PlanBrief = {
   clarificationQuestions: string[];
   unansweredImportantFields: string[];
   safetyFlags: string[];
+  biomarkerSummary: {
+    state: string;
+    stateLabel: string;
+    followUpNeeded: boolean;
+    updatedAt: string;
+  } | null;
   createdAt: string;
 };
 
@@ -178,6 +184,36 @@ function BlueprintReviewBody({ token }: { token: string }) {
                 Review this structured brief, not raw answers. Safety flags require human judgment and never
                 authorize diagnosis, dosing, or treatment.
               </ResearchSecureNotice>
+
+              {brief.biomarkerSummary && (
+                <div className="card">
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div>
+                      <h3 className="body-m font-700">Biomarker follow-up context</h3>
+                      <p className="body-s text-ink-2 mt-2">
+                        {brief.biomarkerSummary.stateLabel}. Updated{" "}
+                        {new Date(brief.biomarkerSummary.updatedAt).toLocaleDateString()}.
+                      </p>
+                    </div>
+                    <ResearchStatusBadge
+                      label={
+                        brief.biomarkerSummary.followUpNeeded
+                          ? "follow-up needed"
+                          : brief.biomarkerSummary.state.replaceAll("_", " ")
+                      }
+                      tone={
+                        brief.biomarkerSummary.followUpNeeded
+                          ? "pending"
+                          : "neutral"
+                      }
+                    />
+                  </div>
+                  <p className="body-s text-ink-mute mt-3">
+                    This minimum-necessary status excludes reports, results,
+                    Storage references, partner records, and consent data.
+                  </p>
+                </div>
+              )}
 
               <div className="card">
                 <h3 className="body-m font-700">Draft recommendations</h3>

@@ -75,6 +75,7 @@ original 1-26 base bundle:
 | 28 | research-product-requests-hardening.sql | RUN 2026-07-25 | 27 |
 | 29 | research-product-requests-function-hardening.sql | RUN 2026-07-25 | 27 |
 | 30 | research-security-definer-grants-hardening.sql | RUN 2026-07-25 (`20260725231517`) | independent privilege hardening |
+| 31 | research-products-diagnostics.sql | PENDING review/apply | 4 + 20 + 21 |
 
 The exact FM-1 apply date is not in the managed migration-history stream, so
 the manifest records verified presence instead of inventing a timestamp.
@@ -123,6 +124,16 @@ presence of FM or Product Request objects.
   PUBLIC, `anon`, and `authenticated` cannot execute the internal
   `public.rls_auto_enable()` event-trigger helper. The Supabase security advisor
   no longer reports that security-definer privilege finding.
+- Migration 31 reuses `research_products`, `research_inventory_lots`, and
+  `research_lot_quality_documents`; it does not create parallel product, lot,
+  auth, notification, or Storage architectures. Its disposable PostgreSQL 16
+  gate passed two consecutive applies plus RLS/grant, private-bucket,
+  append-only audit, and atomic biomarker-confirmation verification. Website 3
+  frozen head `877ebfff75452f47b3b185e9879a0dcf156e0ef7` and the focused
+  Website 2 integration have passed their current review gates. The migration
+  remains unapplied until Release Train 0 is released, the final Train 1
+  integrated browser/build gates pass, and production pre-apply counts are
+  recorded.
 - PENDING migrations for commerce (20-26) are schema-ready but commerce stays
   disabled until: the production commerce dependency layer is wired (see the
   provider readiness doc), a payment processor is approved, and per-SKU purchase

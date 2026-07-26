@@ -633,6 +633,9 @@ export function registerBlueprintApi(app: Express, deps: MemberPlatformDeps) {
         return res.status(500).json({ ok: false, message: "The review access could not be audited." });
       }
       const member = await fetchMemberById(row.member_id);
+      const biomarker = deps.getTrainerSafeBiomarkerSummary
+        ? await deps.getTrainerSafeBiomarkerSummary(row.member_id)
+        : null;
       res.json({
         ok: true,
         planBrief: {
@@ -647,6 +650,14 @@ export function registerBlueprintApi(app: Express, deps: MemberPlatformDeps) {
           clarificationQuestions: row.content.questionsForReview ?? [],
           unansweredImportantFields: row.content.unansweredImportantFields ?? [],
           safetyFlags: row.content.safetyFlags ?? [],
+          biomarkerSummary: biomarker
+            ? {
+                state: biomarker.state,
+                stateLabel: biomarker.stateLabel,
+                followUpNeeded: biomarker.followUpNeeded,
+                updatedAt: biomarker.updatedAt,
+              }
+            : null,
           createdAt: row.created_at,
         },
       });

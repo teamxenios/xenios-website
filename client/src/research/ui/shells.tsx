@@ -147,6 +147,7 @@ const ADMIN_SUBNAV = [
   { href: ADMIN_ROUTES.plans, label: "Plans" },
   { href: ADMIN_ROUTES.blueprintReview, label: "Plan review" },
   { href: ADMIN_ROUTES.products, label: "Products" },
+  { href: ADMIN_ROUTES.productConfiguration, label: "Product config" },
   { href: ADMIN_ROUTES.productRequests, label: "Product requests" },
   { href: ADMIN_ROUTES.inventory, label: "Inventory" },
   { href: ADMIN_ROUTES.orders, label: "Orders" },

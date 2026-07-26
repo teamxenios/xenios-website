@@ -24,6 +24,8 @@ diagnostic; it does not disclose the value.
 |---|---|---|
 | Assessment, plans, questions | Supabase foundation; server capability registry | Client fallback must not disable a working server implementation |
 | Product requests | `RESEARCH_PRODUCT_REQUESTS_BUCKET`, `RESEARCH_PRODUCT_REQUEST_ADMIN_EMAILS` | Bucket private; admin allow-list required; grants hardened |
+| Biomarker reports | `RESEARCH_BIOMARKER_REPORTS_BUCKET`, `RESEARCH_BIOMARKER_UPLOAD_ENABLED` | Private bucket + atomic confirmation required; disabled until migration/provider/live privacy smoke pass |
+| Exact-lot COA access | `RESEARCH_COA_BUCKET`, `RESEARCH_COA_ACCESS_ENABLED` | Private bucket; data-gated and disabled until an approved exact-lot document exists |
 | Affiliate portal | `RESEARCH_AFFILIATE_COMMISSIONS_ENABLED`; payout execution remains separate | UI presence is not payout readiness |
 | Fulfillment portal | `RESEARCH_MITCH_FULFILLMENT_ENABLED` plus Mitch provider names below | Fail closed until provider readiness is confirmed |
 | Document rendering | `RESEARCH_DOCUMENT_RENDERING_ENABLED` | Requires verified private storage path |
@@ -35,7 +37,7 @@ diagnostic; it does not disclose the value.
 | Email | Names in Production foundation | configured |
 | SMS | No canonical provider contract or environment names | blocked / not live |
 | Telegram | `RESEARCH_TELEGRAM_ENABLED`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | verify; default disabled |
-| Superpower | No canonical provider contract or environment names | blocked / not live |
+| Superpower | Server-authoritative database configuration; no external provider credential or approved affiliate URL | Coming Soon; affiliate access disabled |
 | Shipping | `RESEARCH_LIVE_SHIPPING_ENABLED`, `SHIPPING_PROVIDER`, `SHIPPING_API_BASE_URL`, `SHIPPING_API_AUTH_HEADER`, `SHIPPING_API_KEY`, `SHIPPING_WEBHOOK_SECRET`, optional `SHIPPING_TEMPERATURE_CONTROLLED_VALIDATED`, emergency `RESEARCH_SHIPPING_DISABLED` | default disabled |
 | Payment | `RESEARCH_MEMBERSHIP_BILLING_ENABLED` or product-commerce gate; `PAYMENTS_PROVIDER`; provider credentials; Stripe path uses `STRIPE_PRICE_RESEARCH_ACTIVATION` and `STRIPE_PRICE_RESEARCH_MEMBERSHIP` | default disabled |
 | Telehealth | No canonical provider contract or environment names | blocked / not live |
@@ -50,7 +52,8 @@ diagnostic; it does not disclose the value.
 | Capability | Required evidence | Starting status |
 |---|---|---|
 | Product commerce | Commerce migrations 20–26, product eligibility, payment, shipping, fulfillment, legal approvals | blocked; migrations absent |
-| Lot-specific COAs | Inventory/lot schema plus verified lot document records | blocked |
+| Lot-specific COAs | Commerce migrations 20-21 plus migration 31 and verified lot document records | blocked; no approved lot document data |
+| Biomarker uploads | Migration 31, private bucket, server flag, consent version, object metadata/signature verification | pending production migration/privacy smoke |
 | Supplements | Supplier-approved formula, facts panel, price, testing, and claims evidence | placeholders only |
 | Clinician-guided metabolic pathways | Approved clinical model, boundaries, and provider seams | placeholder only |
 | Care state coverage | Disabled-by-default Care architecture plus reviewed state eligibility data | not registered / not live |
