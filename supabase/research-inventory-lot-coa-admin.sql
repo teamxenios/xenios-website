@@ -1163,14 +1163,14 @@ grant execute on function public.research_manage_lot_quality_document(
   uuid, text, jsonb, bigint, text, text, text, timestamptz
 ) to service_role;
 
-revoke update, delete on table public.research_inventory_lots from service_role;
-revoke update, delete on table public.research_lot_quality_documents from service_role;
-revoke insert, update, delete on table public.research_lot_allocations from service_role;
-revoke insert, update, delete on table public.research_inventory_movements from service_role;
-revoke insert, update, delete on table public.research_inventory_lot_events from service_role;
-revoke update, delete on table public.research_lot_quality_tests from service_role;
-revoke insert, update, delete on table public.research_lot_quality_events from service_role;
-revoke insert, update, delete on table public.research_lot_quality_access_events from service_role;
+revoke all privileges on table public.research_inventory_lots from service_role;
+revoke all privileges on table public.research_lot_quality_documents from service_role;
+revoke all privileges on table public.research_lot_allocations from service_role;
+revoke all privileges on table public.research_inventory_movements from service_role;
+revoke all privileges on table public.research_inventory_lot_events from service_role;
+revoke all privileges on table public.research_lot_quality_tests from service_role;
+revoke all privileges on table public.research_lot_quality_events from service_role;
+revoke all privileges on table public.research_lot_quality_access_events from service_role;
 
 -- The service role reads canonical state, inserts new lot/document/test records,
 -- and executes the security-definer commands above. Quantity, disposition,

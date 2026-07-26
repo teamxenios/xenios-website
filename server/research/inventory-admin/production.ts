@@ -11,15 +11,13 @@ import type {
   LotQualityTestAdmin,
 } from "@shared/research/inventory-admin";
 import { getSupabaseAdmin } from "../../supabase";
+import type { ProductCommerceReadinessReader } from "../products-diagnostics/product-commerce-readiness";
 
 const COA_BUCKET = process.env.RESEARCH_COA_BUCKET ?? "research-coa-production";
 const COA_MAX_BYTES = 20 * 1024 * 1024;
 
 type Db = SupabaseClient;
 type Row = Record<string, any>;
-export type AcceptedProductCommerceReadinessReader = {
-  getForVariant(variantId: string): Promise<unknown>;
-};
 
 
 export class InventoryAdminPersistenceError extends Error {
@@ -141,7 +139,7 @@ export type QualityReviewCommand = {
 export class SupabaseInventoryLotAdminRepository {
   constructor(
     private readonly db: Db = getSupabaseAdmin(),
-    private readonly productReadiness?: AcceptedProductCommerceReadinessReader,
+    private readonly productReadiness?: ProductCommerceReadinessReader,
   ) {}
 
   private async assertCanonicalProductVariantReady(lotId: string): Promise<void> {
@@ -551,7 +549,7 @@ export class SupabaseLotQualityAdminRepository {
 }
 
 export function buildInventoryLotAdminProductionDependencies(
-  productReadiness?: AcceptedProductCommerceReadinessReader,
+  productReadiness?: ProductCommerceReadinessReader,
 ) {
   return {
     inventory: new SupabaseInventoryLotAdminRepository(

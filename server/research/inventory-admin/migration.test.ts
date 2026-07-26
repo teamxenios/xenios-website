@@ -84,7 +84,9 @@ describe("Website 4 canonical inventory/lot/COA schema delta", () => {
     expect(sql).toContain("to service_role");
     expect(sql).toContain("research_lot_quality_document_command_only");
     expect(sql).toContain("quality records may change only through a reviewed quality command");
-    expect(sql).toContain("revoke update, delete on table public.research_lot_quality_documents");
+    expect(sql).toContain(
+      "revoke all privileges on table public.research_lot_quality_documents from service_role",
+    );
     expect(sql).not.toContain(
       "grant select, insert, update on table public.research_lot_quality_documents",
     );

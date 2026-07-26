@@ -31,8 +31,25 @@ begin
     raise exception 'service_role must not directly update lot counts';
   end if;
   if has_table_privilege('service_role', 'public.research_lot_quality_documents', 'update')
-     or has_table_privilege('service_role', 'public.research_lot_quality_documents', 'delete') then
+     or has_table_privilege('service_role', 'public.research_lot_quality_documents', 'delete')
+     or has_table_privilege('service_role', 'public.research_lot_quality_documents', 'truncate')
+     or has_table_privilege('service_role', 'public.research_lot_quality_documents', 'trigger') then
     raise exception 'service_role must not directly rewrite or delete COA metadata';
+  end if;
+  if exists (
+    select 1
+      from information_schema.role_table_grants as g
+     where g.grantee = 'service_role'
+       and g.table_schema = 'public'
+       and g.table_name in (
+         'research_inventory_lots', 'research_lot_quality_documents',
+         'research_lot_allocations', 'research_inventory_movements',
+         'research_inventory_lot_events', 'research_lot_quality_tests',
+         'research_lot_quality_events', 'research_lot_quality_access_events'
+       )
+       and g.privilege_type not in ('SELECT', 'INSERT')
+  ) then
+    raise exception 'service_role retains a table privilege outside the reviewed allowlist';
   end if;
   if has_table_privilege('service_role', 'public.research_lot_quality_access_events', 'insert') then
     raise exception 'service_role must not bypass the private access audit RPC';

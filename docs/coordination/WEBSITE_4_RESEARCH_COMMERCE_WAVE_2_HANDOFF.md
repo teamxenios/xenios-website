@@ -3,10 +3,12 @@
 ## Frozen scope
 
 - Branch: `feature/website-4-research-commerce-wave-2-inventory-lots`
-- Base: `6e4944674cfdfb33a8fd5685c031c7ac7c86fdb4`
+- Base: `f4de7f371177beaa2f4de7eb2e7b6a88d7378a19`
 - Domain: Inventory, lots, and private exact-lot COA administration only
 - Production mutation: none
-- Website 3 product seam: Website 6-accepted PR #78 head `dd58ccf1fa7919f78838a60aaf66cdee48b73993`
+- Website 3 product seam: canonical Product Control on main
+  `f4de7f371177beaa2f4de7eb2e7b6a88d7378a19`, sourced from Website 6-accepted
+  PR #78 head `dd58ccf1fa7919f78838a60aaf66cdee48b73993`
 - Website 3 contract: `server/research/products-diagnostics/product-commerce-readiness.ts`
 
 ## Completed
@@ -40,7 +42,7 @@ Register `registerInventoryLotAdminApi` from
 `server/research/inventory-admin/routes.ts` with
 `buildInventoryLotAdminProductionDependencies(productReadiness)` from
 `server/research/inventory-admin/production.ts`. The injected reader must be the
-accepted PR #78 `ProductCommerceReadinessReader`; do not query Product Control
+canonical main `ProductCommerceReadinessReader`; do not query Product Control
 admin tables directly. Compose the post-Product-Control SQL implementation of
 `research_inventory_product_variant_ready` during Website 2 integration. The
 standalone migration deliberately returns false.
@@ -76,7 +78,7 @@ migration ledger, and deployment manifests remain Website 2-owned and unchanged.
 
 ## Product boundary
 
-Consume only the accepted `ProductCommerceReadinessReader` and
+Consume only the canonical `ProductCommerceReadinessReader` and
 `ProductCommerceReadinessProjection` from Website 3's server-only seam.
 Website 4 remains authoritative for location, lot, quantity, inventory disposition,
 COA operational state, and allocation readiness. The repository performs an exact
@@ -107,15 +109,20 @@ directly, copy Product Control files, or create another product model.
 ## Validation evidence
 
 - Focused tests: 2 files, 13 tests passed.
-- Full tests: 188 files, 3,485 tests passed.
+- Full tests: 195 files, 3,543 tests passed.
 - TypeScript check: passed.
 - Production build: passed.
+- Machine-readable release manifest:
+  `docs/coordination/WEBSITE_4_WAVE_2_RELEASE_MANIFEST.json`.
 - Disposable database: apply twice passed.
 - Database proof covered exact product/variant/SKU rejection; movement arithmetic;
   concurrent replay for all three command families; idempotency conflicts; direct
   published-metadata and test-mutation rejection; all-test fail-closed semantics;
   immutable actor/purpose access audit before signing; append-only history; forced
   RLS/grants; expiry/recall/quarantine gates; rollback; and zero residual rows.
+- Exact disposable privilege snapshot: 8 forced-RLS tables, 0 browser table
+  grants, 11 service-role table privileges, 8 reviewed RPC execute privileges,
+  and no service-role table privilege outside the explicit SELECT/INSERT allowlist.
 - 1440px: no clipped elements; one main landmark and one page heading; all nine
   quality fieldsets render; minimum visible control height 60px.
 - 375px: `scrollWidth === clientWidth` (360px scrollbar-adjusted), no clipped or
