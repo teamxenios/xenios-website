@@ -1,5 +1,77 @@
 # Website 2 release-manager handoff
 
+## Current checkpoint — Care PR3 appointment/clinician integration
+
+- Session: Website 2 — Release Manager
+- Branch: `integration/care-pr3-production`
+- Base/current production main:
+  `9209df12275c1de3ac76883d5a5173be707bee28`
+- Accepted Care PR2 source/base:
+  `54f9bd8d8834de9a8e57fc911665627af36f09ed`
+- Accepted Care PR3 source:
+  `71da91c458907eaf4f627488e5de35cddf82c04a`
+- Rejected PR3 heads: `0218e23b0d4ef1bf6d2e7a4bfef78ab23d3b131c`
+  and `fcc91987586b6f20a88c3467f63fc26202d91f27`
+- Care PR1 migration: `20260726064113 care_access_foundation`
+- Care PR2 migration: `20260726080248 care_eligibility_intake`
+- Production status: NOT YET MERGED
+
+This focused unit integrates only accepted Care PR3 appointment, assignment,
+provider-neutral scheduling, reminder, private telehealth-reference, and
+human-clinician review foundations after live Care PR2. Care remains disabled.
+No medical group, clinician, license, supported state, provider, patient,
+appointment, consent, seed, role, approval, or external action is created.
+
+Shared integration:
+
+- registers `buildCareAppointmentRepository()` and
+  `registerCareAppointmentApi(...)` after accepted Care PR1/PR2 dependencies
+  and before API/SPA fallbacks;
+- registers `/care/appointments` before the broad `/care/*` route using the
+  existing lazy/Suspense route pattern;
+- preserves the global `/api/care` no-store/no-cache/noindex middleware and
+  `/care/*` no-store/noindex/no-referrer page gate;
+- preserves the accepted exact domain semantics for current consent/state
+  serialization, same-clinician readiness, due scheduled no-show, human-only
+  review, and one-main/H1 rendering;
+- resolves only the expected migration-ledger conflict by retaining applied
+  Care PR1/PR2 versions and adding Care PR3 as Pending.
+
+Production assets:
+
+- migration: `supabase/care-appointments-clinician.sql`;
+- lifecycle: `supabase/tests/care-appointments-clinician-lifecycle.test.sql`;
+- verification: `supabase/verify-care-appointments-clinician.sql`;
+- rollback:
+  `supabase/production/care-appointments-clinician-rollback-notes.md`.
+
+Current focused integration validation:
+
+- nine Care server/client/integration files, 33 tests passed;
+- full suite: 181 files, 3,439 tests passed;
+- `npm run check` and `npm run build` passed;
+- `git diff --check` passed;
+- fresh PostgreSQL 16 applied Care PR1, PR2, and PR3 twice with
+  `ON_ERROR_STOP=1`;
+- all three lifecycle scripts and all three read-only verification scripts
+  passed;
+- disposable verification confirmed 28/28 total Care tables forced RLS, zero
+  browser grants, the reviewed service-role RPC posture, zero Care
+  roles/audits/patients/appointments/reviews/auth users, and the canonical
+  disabled capability;
+- production-schema inspection, exact-head Website 6 integration review,
+  production migration, merge, Render deployment, and live smoke remain
+  pending.
+
+Release boundary:
+
+- do not apply the PR3 migration or merge/deploy until Website 6 accepts the
+  final Website 2 integration SHA;
+- keep Care disabled and create no role, seed, operational, or external-action
+  record;
+- PR4–7 remain held until PR3 completes migration, deployment, and post-deploy
+  QA.
+
 ## Current checkpoint — Care PR2 eligibility/intake production release
 
 - Session: Website 2 — Release Manager

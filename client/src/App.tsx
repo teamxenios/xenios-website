@@ -48,6 +48,7 @@ const AdminResearchSection = lazy(() => import("@/research/adminx-section"));
 const CareSection = lazy(() => import("@/care/section"));
 const CareEligibility = lazy(() => import("@/care/EligibilityPendingPage"));
 const CareConsent = lazy(() => import("@/care/CareConsentPendingPage"));
+const CareAppointments = lazy(() => import("@/care/CareAppointmentsPage"));
 
 function ResearchRoutes() {
   return (
@@ -85,6 +86,14 @@ function CareConsentRoutes() {
   return (
     <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
       <CareConsent />
+    </Suspense>
+  );
+}
+
+function CareAppointmentRoutes() {
+  return (
+    <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
+      <CareAppointments />
     </Suspense>
   );
 }
@@ -137,6 +146,7 @@ function Router() {
       <Route path="/research/*" component={ResearchRoutes} />
       <Route path="/care/eligibility" component={CareEligibilityRoutes} />
       <Route path="/care/consent" component={CareConsentRoutes} />
+      <Route path="/care/appointments" component={CareAppointmentRoutes} />
       <Route path="/care" component={CareRoutes} />
       <Route path="/care/*" component={CareRoutes} />
       {/* xenios MVP Lab + MVP routes */}

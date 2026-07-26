@@ -28,11 +28,13 @@ import {
 } from "./research/required-inputs";
 import { registerAssessmentRequiredInputPlanApi } from "./research/assessment-required-inputs";
 import {
+  buildCareAppointmentRepository,
   buildCareEligibilityRepository,
   buildCareIntakeRepository,
   buildCareProductionDependencies,
   carePageGate,
   registerCareApi,
+  registerCareAppointmentApi,
   registerCareEligibilityApi,
   registerCareIntakeApi,
 } from "./care";
@@ -141,9 +143,11 @@ app.use(carePageGate);
 const careAccess = buildCareProductionDependencies();
 const careEligibility = buildCareEligibilityRepository();
 const careIntake = buildCareIntakeRepository();
+const careAppointments = buildCareAppointmentRepository();
 registerCareApi(app, careAccess);
 registerCareEligibilityApi(app, careAccess, careEligibility);
 registerCareIntakeApi(app, careAccess, careEligibility, careIntake);
+registerCareAppointmentApi(app, careAccess, careAppointments);
 registerMembershipApi(app);
 registerMemberApi(app);
 registerMemberAccessApi(app);
