@@ -19,7 +19,7 @@ order; Samuel pastes it into the Supabase SQL Editor after review.
 
 ## Status legend
 
-- RUN: applied and verified in production (migrations 1-8).
+- RUN: applied and verified in production (migrations 1-19).
 - PENDING: drafted, reviewed here, not yet run.
 
 ## Ordered manifest
@@ -34,17 +34,17 @@ order; Samuel pastes it into the Supabase SQL Editor after review.
 | 6 | research-referrals-seed.sql | Seed referral program | RUN | 0 | n/a | 0 | none |
 | 7 | research-consent-covenant.sql | Consent events + covenant | RUN | 2 | yes | 0 | none |
 | 8 | research-referral-fraud.sql | Fraud queue + rate-limit fn | RUN | 3 | yes | 0 | none |
-| 9 | research-member-billing.sql | Billing state column | PENDING | 0* | n/a | 0 | membership billing flag |
-| 10 | research-agreements.sql | Agreement acceptances (append-only) | PENDING | 1 | yes | 0 | none |
-| 11 | research-member-profile.sql | Profile sections | PENDING | 1 | yes | 0 | none |
-| 12 | research-assessment.sql | Assessment responses | PENDING | 1 | yes | 0 | none |
-| 13 | research-blueprint.sql | Blueprints (state machine) | PENDING | 1 | yes | 0 | none |
-| 14 | research-plans.sql | Xenios 30/90 + plan changes | PENDING | 3 | yes | 0 | none |
-| 15 | research-documents.sql | Plan documents | PENDING | 1 | yes | 0 | document rendering/storage |
-| 16 | research-tracker.sql | Tracker observations | PENDING | 1 | yes | 0 | none |
-| 17 | research-media.sql | Private media + access log | PENDING | 3 | yes | 0 | private media storage |
-| 18 | research-questions.sql | Questions + Telegram links | PENDING | 2 | yes | 0 | Telegram for inbound |
-| 19 | research-sla-events.sql | SLA escalation ledger | PENDING | 1 | yes | 0 | Infinity for emit |
+| 9 | research-member-billing.sql | Billing state column | RUN | 0* | n/a | 0 | membership billing flag |
+| 10 | research-agreements.sql | Agreement acceptances (append-only) | RUN | 1 | yes | 0 | none |
+| 11 | research-member-profile.sql | Profile sections | RUN | 1 | yes | 0 | none |
+| 12 | research-assessment.sql | Assessment responses | RUN | 1 | yes | 0 | none |
+| 13 | research-blueprint.sql | Blueprints (state machine) | RUN | 1 | yes | 0 | none |
+| 14 | research-plans.sql | Xenios 30/90 + plan changes | RUN | 3 | yes | 0 | none |
+| 15 | research-documents.sql | Plan documents | RUN | 1 | yes | 0 | document rendering/storage |
+| 16 | research-tracker.sql | Tracker observations | RUN | 1 | yes | 0 | none |
+| 17 | research-media.sql | Private media + access log | RUN | 3 | yes | 0 | private media storage |
+| 18 | research-questions.sql | Questions + Telegram links | RUN | 2 | yes | 0 | Telegram for inbound |
+| 19 | research-sla-events.sql | SLA escalation ledger | RUN | 1 | yes | 0 | Infinity for emit |
 | 20 | research-catalog.sql | Products + provenanced facts | PENDING | 7 | yes | 0 | commerce flag |
 | 21 | research-inventory-lots.sql | Lots, quality docs, FEFO | PENDING | 5 | yes | 0 | commerce flag |
 | 22 | research-orders.sql | Carts, orders, refunds | PENDING | 8 | yes | 0 | payment provider + commerce flag |
@@ -56,6 +56,30 @@ order; Samuel pastes it into the Supabase SQL Editor after review.
 *Migration 9 alters `research_members` (adds `billing_state`, widens status
 check); no new table. The server reads `billing_state` defensively, so apply
 order is not a hazard.
+
+## Applied post-base operational sequence
+
+These migrations are already present in production and sit outside the
+original 1-26 base bundle:
+
+| Order | File | Production status | Dependency |
+| --- | --- | --- | --- |
+| FM-1 | production/research-founding-membership.sql | RUN; presence verified 2026-07-25 | migrations 1-19 |
+| FM-2 | research-fm-esign-native.sql | RUN 2026-07-24 | FM-1 |
+| FM-3 | research-fm-esign-native-hardening.sql | RUN 2026-07-24 | FM-2 |
+| FM-4 | research-fm-esign-native-attempt-lease.sql | RUN 2026-07-24 | FM-3 |
+| FM-5 | research-idempotency-keys.sql | RUN 2026-07-24 | base Research schema |
+| FM-6 | research-fm-activation-verify-atomic.sql | RUN 2026-07-24 | FM-1 + FM-5 |
+| FM-7 | research-agreement-package-notifications.sql | RUN 2026-07-25 (`20260725225920`) | FM-1 + migration 3 |
+| 27 | research-product-requests.sql | RUN 2026-07-25 | migrations 1-19 |
+| 28 | research-product-requests-hardening.sql | RUN 2026-07-25 | 27 |
+| 29 | research-product-requests-function-hardening.sql | RUN 2026-07-25 | 27 |
+| 30 | research-security-definer-grants-hardening.sql | RUN 2026-07-25 (`20260725231517`) | independent privilege hardening |
+
+The exact FM-1 apply date is not in the managed migration-history stream, so
+the manifest records verified presence instead of inventing a timestamp.
+Commerce migrations 20-26 remain absent and must not be implied by the
+presence of FM or Product Request objects.
 
 ## Dependency order notes
 
@@ -90,8 +114,15 @@ order is not a hazard.
 
 ## Production readiness
 
-- PENDING migrations for the member platform (10-19) are production-ready to run
-  whenever Samuel approves the member platform, independent of commerce.
+- Migrations 9-19 are present in production. Release discovery on 2026-07-25
+  verified the billing column/constraint plus every expected member-platform
+  table, with RLS on and zero Research policies. The original application date
+  is not present in the managed migration-history stream.
+- FM-7 and migration 30 are present in managed production migration history.
+  Post-apply verification confirmed FM-7 RLS/grants/triggers and confirmed that
+  PUBLIC, `anon`, and `authenticated` cannot execute the internal
+  `public.rls_auto_enable()` event-trigger helper. The Supabase security advisor
+  no longer reports that security-definer privilege finding.
 - PENDING migrations for commerce (20-26) are schema-ready but commerce stays
   disabled until: the production commerce dependency layer is wired (see the
   provider readiness doc), a payment processor is approved, and per-SKU purchase

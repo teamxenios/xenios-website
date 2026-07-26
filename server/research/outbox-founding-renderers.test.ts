@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 // ---------------------------------------------------------------------------
 // Founding-membership (fm_*) renderer registration in the outbox dispatch:
-// the 27 emails.ts data templates become subject + body here, and NOTHING
+// the registered emails.ts data templates become subject + body here, and NOTHING
 // resembling a receiving instruction can travel into a rendered email. The
 // heavyweight route modules the outbox imports are mocked exactly as
 // outbox.test.ts mocks them; the renderer itself is pure.
@@ -37,6 +37,7 @@ vi.mock("./membership-emails", () => ({
 import {
   RESEARCH_REPLY_TO_DEFAULT,
   RESEARCH_SENDER_DEFAULT,
+  SUPPRESSED_PER_DOCUMENT_AGREEMENT_TEMPLATES,
   renderFoundingEmail,
   sendFoundingEmail,
 } from "./outbox";
@@ -47,6 +48,15 @@ import {
 import { NO_AUTOMATIC_BILLING_CONTRACT } from "./membership-activation/renewals";
 
 describe("renderFoundingEmail: representative keys", () => {
+  it("retires both legacy per-document completion jobs before provider dispatch", () => {
+    expect([...SUPPRESSED_PER_DOCUMENT_AGREEMENT_TEMPLATES].sort()).toEqual([
+      "fm_admin_esign_completed",
+      "fm_esign_completed_member",
+    ]);
+    expect(SUPPRESSED_PER_DOCUMENT_AGREEMENT_TEMPLATES.has("fm_agreement_package_completed_member")).toBe(false);
+    expect(SUPPRESSED_PER_DOCUMENT_AGREEMENT_TEMPLATES.has("fm_admin_agreement_package_completed")).toBe(false);
+  });
+
   it("renders the activation-created email with the reference substituted and the portal-only destination line", () => {
     const rendered = renderFoundingEmail("fm_activation_obligation_created", {
       xeniosRef: "XRM-TESTREF1",
@@ -80,6 +90,29 @@ describe("renderFoundingEmail: representative keys", () => {
     expect(rendered!.text).toContain(new Date("2026-08-18T00:00:00.000Z").toUTCString());
     expect(rendered!.text).not.toContain("2026-08-18T00:00:00.000Z");
   });
+
+  it("renders the consolidated member completion with one authenticated account action and no activation claim", () => {
+    const rendered = renderFoundingEmail("fm_agreement_package_completed_member", {
+      completedAt: "2026-07-25T19:00:00.000Z",
+      agreementList: "• Research Agreement — version 2.0.0",
+    });
+    expect(rendered!.subject).toBe("Your Xenios Research agreements are complete");
+    expect(rendered!.text).toContain("does not mean payment has been verified or membership is active");
+    expect(rendered!.text).toContain("• Research Agreement — version 2.0.0");
+    expect(rendered!.html).toContain("https://xeniostechnology.com/research/activate");
+    expect(rendered!.html).not.toMatch(/token|storage|evidence/i);
+  });
+
+  it("renders the consolidated admin completion without member identifiers or evidence", () => {
+    const rendered = renderFoundingEmail("fm_admin_agreement_package_completed", {
+      completedAt: "2026-07-25T19:00:00.000Z",
+      agreementList: "• Research Agreement — version 2.0.0",
+    });
+    const output = `${rendered!.subject}\n${rendered!.text}\n${rendered!.html}`;
+    expect(rendered!.subject).toBe("Research member completed all required agreements");
+    expect(output).toContain("https://xeniostechnology.com/admin/research/activation-queue");
+    expect(output).not.toMatch(/member-\d|signedPdfHash|certificateHash|storage/i);
+  });
 });
 
 describe("renderFoundingEmail: no instruction material, ever", () => {
@@ -94,7 +127,7 @@ describe("renderFoundingEmail: no instruction material, ever", () => {
     }
   });
 
-  it("string-scan across all 27 rendered outputs: no instruction material, no unresolved placeholders", () => {
+  it("string-scans every rendered output: no instruction material and no unresolved placeholders", () => {
     const benign = {
       xeniosRef: "XRM-TESTREF4",
       dueAt: "2026-08-18T00:00:00.000Z",
@@ -115,8 +148,9 @@ describe("renderFoundingEmail: no instruction material, ever", () => {
       signedPdfHash: "a".repeat(64),
       certificateHash: "b".repeat(64),
       adminLink: "/admin/research/activation/esign/member/member-aaaa-1111",
+      agreementList: "• Research Agreement — version 1.0.0",
     };
-    expect(FOUNDING_EMAIL_TEMPLATE_KEYS).toHaveLength(27);
+    expect(FOUNDING_EMAIL_TEMPLATE_KEYS).toHaveLength(29);
     for (const key of FOUNDING_EMAIL_TEMPLATE_KEYS) {
       const rendered = renderFoundingEmail(key, benign);
       expect(rendered).not.toBeNull();
@@ -187,5 +221,19 @@ describe("sendFoundingEmail sender identity", () => {
       if (previousReplyTo !== undefined) process.env.RESEARCH_EMAIL_REPLY_TO = previousReplyTo;
       else delete process.env.RESEARCH_EMAIL_REPLY_TO;
     }
+  });
+
+  it("passes the durable event key to Resend for provider-side replay deduplication", async () => {
+    resend.send.mockClear();
+    await sendFoundingEmail({
+      to: "member@example.test",
+      subject: "Subject",
+      text: "Body",
+      idempotencyKey: "research_agreement_package_completed_member:member:package",
+    });
+    expect(resend.send).toHaveBeenCalledWith(
+      expect.objectContaining({ to: "member@example.test" }),
+      { idempotencyKey: "research_agreement_package_completed_member:member:package" },
+    );
   });
 });

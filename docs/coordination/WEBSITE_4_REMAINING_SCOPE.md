@@ -45,7 +45,7 @@ Branch for Website 4 work: `feature/website-4-operations-affiliates`. Production
 
 | Task ID | Requirement | Exact files | Acceptance test | Production result | Dependencies | Status |
 |---|---|---|---|---|---|---|
-| W4-3A-CRM | CRM mutations/history | `server/research/operations/routes.ts`, `production-deps.ts`, `crm-service.ts`, `supabase/research-operations-affiliates.sql`, operations UI | role denial, stale version, replay, append-only event, refresh persistence | Admin can operate CRM live | migration 30 | READY |
+| W4-3A-CRM | CRM mutations/history | `server/research/operations/routes.ts`, `production-deps.ts`, `crm-service.ts`, `supabase/research-operations-affiliates.sql`, operations UI | role denial, stale version, replay, append-only event, refresh persistence | Admin can operate CRM live | migration 31 | READY |
 | W4-3A-TASKS | Operations task queue | same route/deps/schema area plus `OperationsCommandCenter.tsx` | assign/transition/replay/foreign-role/mobile tests | Durable task queue live | Website 2 route wiring | READY |
 | W4-3A-INVENTORY | Production inventory commands | `routes.ts`, `production-deps.ts`, migration/verification/SQL test | receipt/release/return/damage/quarantine/correction/reconcile, no negative stock, no replay duplicate | Full audited inventory lifecycle | canonical commerce + allocation bridge | BLOCKED ON BRIDGE FOR RESERVE/RELEASE; OTHER COMMANDS READY |
 | W4-3A-NOTIFY | Website 4 outbox producers | operations services/routes + canonical outbox adapter | safe payload, dedupe, retry, provider-disabled, one send | Real in-app/email; SMS/Telegram truthful Pending | Website 2 canonical worker | READY |
@@ -53,7 +53,7 @@ Branch for Website 4 work: `feature/website-4-operations-affiliates`. Production
 | W4-3B-ASSETS | Storage/compliance review | operations partner portal adapter/schema/routes | unapproved/expired/private object denial; signed URL expiry | Approved resources downloadable privately | production Storage bucket/policy | READY AFTER STORAGE CONFIG |
 | W4-3B-PAYOUT | Statement/threshold/batch builder | commission/payout services and production adapter | threshold, duplicate-entry refusal, append-only proof | Statements and batches live; execution Pending | approved payout provider for execution only | READY |
 | W4-3B-LAWRENCE | Versioned Lawrence admin configuration | commission engine, routes, production deps, schema | named approver/version; no hardcoded economics | Configurable profile live, economics Pending | approved final agreement | READY |
-| W4-3C-PIPELINE | Required professional stages/actions | `professional-accounts.ts`, routes, production deps, schema, UI, tests | full pipeline, stale/replay/audit, disposable SQL | Complete professional pipeline live | migration 30 | COMPLETE_NOT_INTEGRATED |
+| W4-3C-PIPELINE | Required professional stages/actions | `professional-accounts.ts`, routes, production deps, schema, UI, tests | full pipeline, stale/replay/audit, disposable SQL | Complete professional pipeline live | migration 31 | COMPLETE_NOT_INTEGRATED |
 | W4-UI-MATRIX | Remaining 320/keyboard/zoom/state evidence | operations pages/CSS/tests/evidence | 320, 375, 1440, keyboard, 200%, all states, no overflow | Xenios-consistent live portals | shared route wiring for integrated shell | READY |
 
 PRODUCTION STATUS: NOT YET MERGED

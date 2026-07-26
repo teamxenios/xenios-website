@@ -122,19 +122,31 @@ end;
 $$;
 
 do $$
+declare
+  previous_claim regprocedure := to_regprocedure(
+    'public.research_fm_native_esign_claim(uuid,uuid,text,text,text,text,text,text,timestamp with time zone)'
+  );
 begin
   revoke all on function public.research_fm_native_esign_claim(uuid, uuid, text, text, text, text, text, text, timestamptz, timestamptz) from public;
-  revoke all on function public.research_fm_native_esign_claim(uuid, uuid, text, text, text, text, text, text, timestamptz) from public;
+  if previous_claim is not null then
+    execute format('revoke all on function %s from public', previous_claim);
+  end if;
   if exists (select 1 from pg_roles where rolname = 'anon') then
     revoke all on function public.research_fm_native_esign_claim(uuid, uuid, text, text, text, text, text, text, timestamptz, timestamptz) from anon;
-    revoke all on function public.research_fm_native_esign_claim(uuid, uuid, text, text, text, text, text, text, timestamptz) from anon;
+    if previous_claim is not null then
+      execute format('revoke all on function %s from anon', previous_claim);
+    end if;
   end if;
   if exists (select 1 from pg_roles where rolname = 'authenticated') then
     revoke all on function public.research_fm_native_esign_claim(uuid, uuid, text, text, text, text, text, text, timestamptz, timestamptz) from authenticated;
-    revoke all on function public.research_fm_native_esign_claim(uuid, uuid, text, text, text, text, text, text, timestamptz) from authenticated;
+    if previous_claim is not null then
+      execute format('revoke all on function %s from authenticated', previous_claim);
+    end if;
   end if;
   if exists (select 1 from pg_roles where rolname = 'service_role') then
-    revoke all on function public.research_fm_native_esign_claim(uuid, uuid, text, text, text, text, text, text, timestamptz) from service_role;
+    if previous_claim is not null then
+      execute format('revoke all on function %s from service_role', previous_claim);
+    end if;
     grant execute on function public.research_fm_native_esign_claim(uuid, uuid, text, text, text, text, text, text, timestamptz, timestamptz) to service_role;
   end if;
 end $$;

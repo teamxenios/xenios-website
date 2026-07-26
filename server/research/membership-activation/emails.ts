@@ -6,8 +6,8 @@
 // through the one existing enqueue function, never a second email system. This
 // module owns:
 //
-//   - the 24 template keys of the activation spec (17 lifecycle moments plus
-//     the 7 renewal notices renewals.ts defines as data), with the
+//   - the activation lifecycle templates plus the 7 renewal notices
+//     renewals.ts defines as data, with the
 //     member-facing subject and body copy carried as DATA so the renderer
 //     wave consumes one source of truth,
 //   - the mapping from the renewals.ts notice schedule to concrete, dated
@@ -51,7 +51,7 @@ export interface FoundingEmailEnqueueInput {
 export type FoundingEmailEnqueue = (input: FoundingEmailEnqueueInput) => Promise<boolean>;
 
 // ---------------------------------------------------------------------------
-// The 24 templates
+// The templates
 // ---------------------------------------------------------------------------
 
 export interface FoundingEmailTemplate {
@@ -62,20 +62,33 @@ export interface FoundingEmailTemplate {
   /** Who the email is for. Admin-audience templates go to Samuel's records
    * address (RESEARCH_ADMIN_RECORDS_EMAIL), never to a member. */
   audience: "member" | "admin";
+  /** Optional authenticated product destination rendered as a single email
+   * button. It is a stable account route, never a token or Storage URL. */
+  action?: { label: string; path: string };
 }
 
-function template(key: string, subject: string, bodyLines: readonly string[]): FoundingEmailTemplate {
-  return { key, subject, bodyLines, audience: "member" };
+function template(
+  key: string,
+  subject: string,
+  bodyLines: readonly string[],
+  action?: FoundingEmailTemplate["action"],
+): FoundingEmailTemplate {
+  return { key, subject, bodyLines, audience: "member", action };
 }
 
-function adminTemplate(key: string, subject: string, bodyLines: readonly string[]): FoundingEmailTemplate {
-  return { key, subject, bodyLines, audience: "admin" };
+function adminTemplate(
+  key: string,
+  subject: string,
+  bodyLines: readonly string[],
+  action?: FoundingEmailTemplate["action"],
+): FoundingEmailTemplate {
+  return { key, subject, bodyLines, audience: "admin", action };
 }
 
 const PORTAL_LINE = "Sign in to your member portal for the details and next steps.";
 
 /**
- * The 17 lifecycle templates. Amounts, references, and method LABELS are
+ * Lifecycle templates. Amounts, references, and method LABELS are
  * payload variables; no body line ever carries a payment destination.
  */
 const LIFECYCLE_TEMPLATES: readonly FoundingEmailTemplate[] = [
@@ -163,22 +176,42 @@ const LIFECYCLE_TEMPLATES: readonly FoundingEmailTemplate[] = [
     "A signed copy and the completion certificate are saved to your member portal.",
     PORTAL_LINE,
   ]),
+  template(
+    "fm_agreement_package_completed_member",
+    "Your Xenios Research agreements are complete",
+    [
+      "All agreements currently required for activation were completed on {{completedAt}}.",
+      "Completed package:\n{{agreementList}}",
+      "Continue activation to complete any remaining identity or payment steps. This message does not mean payment has been verified or membership is active.",
+      "Your signed documents and completion certificates remain available through your secure account.",
+    ],
+    { label: "Continue activation", path: "/research/activate" },
+  ),
 ];
 
 /**
  * Admin-audience templates: they go to Samuel's records address, never to a
- * member. They carry integrity facts (member, document, version, timestamp,
- * hashes) and a link into the AUTHENTICATED admin document center, never a raw
- * storage URL. Government IDs and payment-evidence images are never attached or
- * linked here; those stay behind their own authenticated admin views.
+ * member. The legacy per-document key remains registered only so already
+ * queued rows can be retired without becoming unknown jobs. New package mail
+ * contains no member identifiers, hashes, raw storage URL, identity file, or
+ * payment evidence.
  */
 const ADMIN_TEMPLATES: readonly FoundingEmailTemplate[] = [
-  adminTemplate("fm_admin_esign_completed", "A member completed a legal signing packet", [
-    "{{memberName}} ({{memberId}}) completed {{documentTitle}} version {{version}} on {{completedAt}}.",
-    "Signed document hash {{signedPdfHash}}. Certificate hash {{certificateHash}}.",
-    "Review and download the signed copy in the admin document center: {{adminLink}}",
-    "Sign in as an administrator first; the download links are short lived and authorized.",
+  adminTemplate("fm_admin_esign_completed", "A legal signing record was completed", [
+    "This retired per-document notification is available only for historical outbox compatibility.",
+    "Review signing records from the authenticated administrator document center.",
   ]),
+  adminTemplate(
+    "fm_admin_agreement_package_completed",
+    "Research member completed all required agreements",
+    [
+      "A Research member completed the currently required agreement package on {{completedAt}}.",
+      "Completed package:\n{{agreementList}}",
+      "The member's next operational step is the next incomplete item shown in the secure activation record.",
+      "Signed documents, identity files, tokens, payment evidence, and internal identifiers are not included in this email.",
+    ],
+    { label: "Open activation records", path: "/admin/research/activation-queue" },
+  ),
 ];
 
 /** The renewal notice bodies, one per notice key renewals.ts defines. */
@@ -221,8 +254,9 @@ const NOTICE_TEMPLATES: readonly FoundingEmailTemplate[] = renewalNoticeSchedule
 });
 
 /**
- * The complete catalog: 19 lifecycle templates (17 activation moments + 2
- * e-sign member moments) + 7 renewal notices + 1 admin records template = 27.
+ * The complete catalog: the historical per-document templates remain
+ * renderable so a pre-deployment outbox row can be retired safely, but new
+ * signing flows enqueue only the consolidated member/admin package templates.
  */
 export const FOUNDING_EMAIL_TEMPLATES: readonly FoundingEmailTemplate[] = [
   ...LIFECYCLE_TEMPLATES,
@@ -286,6 +320,47 @@ export const FOUNDING_EMAIL_EVENT_TYPE = "founding_membership_activation";
  * cannot enqueue a second copy because the outbox event_key is unique. */
 export function foundingEmailEventKey(templateKey: string, subjectId: string): string {
   return `fm:${templateKey}:${subjectId}`;
+}
+
+export type AgreementPackageAudience = "member" | "admin";
+
+/** Exact durable identity of the completed required-agreement package. */
+export function agreementPackageEmailEventKey(
+  audience: AgreementPackageAudience,
+  memberId: string,
+  packageVersion: string,
+): string {
+  return `research_agreement_package_completed_${audience}:${memberId}:${packageVersion}`;
+}
+
+/**
+ * Enqueue one consolidated package-complete email. The exact event key is
+ * stable across route replay, webhook redelivery, refresh, and restart; the
+ * outbox's unique event_key is the final exactly-once boundary.
+ */
+export async function enqueueAgreementPackageEmail(
+  enqueue: FoundingEmailEnqueue,
+  input: {
+    audience: AgreementPackageAudience;
+    memberId: string;
+    packageVersion: string;
+    recipient: string;
+    payload: Record<string, unknown>;
+  },
+): Promise<boolean> {
+  assertEmailPayloadSafe(input.payload);
+  const templateKey =
+    input.audience === "member"
+      ? "fm_agreement_package_completed_member"
+      : "fm_admin_agreement_package_completed";
+  foundingEmailTemplate(templateKey);
+  return enqueue({
+    eventKey: agreementPackageEmailEventKey(input.audience, input.memberId, input.packageVersion),
+    eventType: "research_agreement_package_completed",
+    templateKey,
+    recipient: input.recipient,
+    payload: input.payload,
+  });
 }
 
 /**

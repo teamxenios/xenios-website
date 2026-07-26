@@ -356,6 +356,21 @@ describe("ActivationPage canonical pricing", () => {
 });
 
 describe("ActivationPage payment step", () => {
+  it("returns to the authoritative unfinished step and renders only its primary workflow", async () => {
+    const calls = stubActivationApi();
+    const view = await renderPage();
+
+    const current = byTestId(view, "activation-current-step");
+    expect(current.textContent).toContain("Your next step");
+    expect(current.textContent).toContain("Payment");
+    expect(view.querySelector('[data-testid="activation-payment"]')).not.toBeNull();
+    expect(view.querySelector('[data-testid="activation-identity"]')).toBeNull();
+    expect(view.querySelector('[data-testid="activation-agreements"]')).toBeNull();
+    expect(calls.some((call) => call.url === "/api/research/activation/identity/status")).toBe(false);
+    expect(calls.some((call) => call.url === "/api/research/activation/agreements")).toBe(false);
+    expect(text(view)).toContain("research@xeniostechnology.com");
+  });
+
   it("renders masked-only receiving instructions with the no-activation sentence and the duplicate warning", async () => {
     stubActivationApi();
     const view = await renderPage();
@@ -473,7 +488,12 @@ function agreementFixture(over: Record<string, unknown> = {}) {
 /** Stub the activation reads, with GET status answering embeddedEsignEnabled
  * from a per-call sequence (the last entry repeats) so a reload can flip the
  * flag, and GET agreements answering a fixed list. */
-function stubToggleApi(opts: { statusSeq: boolean[]; agreements: unknown[]; satisfied?: boolean }): RecordedCall[] {
+function stubToggleApi(opts: {
+  statusSeq: boolean[];
+  agreements: unknown[];
+  satisfied?: boolean;
+  currentStepSeq?: Array<"consents" | "identity" | "agreements">;
+}): RecordedCall[] {
   const calls: RecordedCall[] = [];
   let statusCall = 0;
   const agreementsBody = {
@@ -492,7 +512,25 @@ function stubToggleApi(opts: { statusSeq: boolean[]; agreements: unknown[]; sati
       if (method === "GET" && u === "/api/research/activation/status") {
         const idx = Math.min(statusCall, opts.statusSeq.length - 1);
         statusCall += 1;
-        return jsonResponse(200, { ...STATUS_BODY, embeddedEsignEnabled: opts.statusSeq[idx] });
+        return jsonResponse(200, {
+          ...STATUS_BODY,
+          currentStep:
+            opts.currentStepSeq?.[Math.min(idx, opts.currentStepSeq.length - 1)] ?? "agreements",
+          embeddedEsignEnabled: opts.statusSeq[idx],
+        });
+      }
+      if (method === "POST" && u === "/api/research/activation/esign/native/sign") {
+        const wire = JSON.parse(typeof init?.body === "string" ? init.body : "{}");
+        return jsonResponse(200, {
+          ok: true,
+          requestId: "native-request",
+          documentVersionId: wire.documentVersionId,
+          signedAt: "2026-07-25T20:00:00.000Z",
+          replayed: false,
+          status: "completed",
+          signedPdfHash: "signed-hash",
+          certificateHash: "certificate-hash",
+        });
       }
       if (method === "GET" && u === "/api/research/activation/identity/status") return jsonResponse(200, IDENTITY_BODY);
       if (method === "GET" && u === "/api/research/activation/agreements") return jsonResponse(200, agreementsBody);
@@ -513,6 +551,47 @@ async function extraFlush(times = 4) {
 }
 
 describe("ActivationPage agreements step toggle", () => {
+  it("shows only consent, then returns to the authoritative identity step before other agreements", async () => {
+    stubToggleApi({
+      statusSeq: [true, true],
+      currentStepSeq: ["consents", "identity"],
+      agreements: [
+        agreementFixture({
+          category: "electronic_record_consent",
+          title: "Electronic Records Consent",
+          documentVersionId: "dv-consent",
+          content: "ELECTRONIC RECORDS CONSENT FULL TEXT.",
+        }),
+        agreementFixture({
+          category: "membership_terms",
+          title: "Membership Terms",
+          documentVersionId: "dv-terms",
+          activationStep: 2,
+        }),
+      ],
+    });
+    const view = await renderPage();
+
+    expect(byTestId(view, "embedded-progress").textContent).toBe("Agreement 1 of 1");
+    expect(text(view)).toContain("Electronic Records Consent");
+    expect(text(view)).not.toContain("MEMBERSHIP TERMS FULL TEXT.");
+
+    const cat = "electronic_record_consent";
+    await act(async () => {
+      setInputValue(byTestId<HTMLInputElement>(view, `embedded-name-${cat}`), "Sam Member");
+      byTestId<HTMLInputElement>(view, `embedded-reviewed-${cat}`).click();
+      byTestId<HTMLInputElement>(view, `embedded-accept-${cat}`).click();
+    });
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, `embedded-sign-${cat}`).click();
+    });
+    await extraFlush();
+
+    expect(view.querySelector('[data-testid="embedded-signer"]')).toBeNull();
+    expect(text(view)).toContain("Identity verification");
+    expect(text(view)).not.toContain("MEMBERSHIP TERMS FULL TEXT.");
+  });
+
   it("renders the embedded signer when the server enables it", async () => {
     stubToggleApi({ statusSeq: [true], agreements: [agreementFixture()] });
     const view = await renderPage();
@@ -535,7 +614,7 @@ describe("ActivationPage agreements step toggle", () => {
     expect(view.querySelector('[data-testid="embedded-progress"]')).toBeNull();
   });
 
-  it("falls back to the card path after a reload flips the flag off (rollback)", async () => {
+  it("honors a reload that flips the flag off without reopening a completed package", async () => {
     // First status enables the embedded signer; the already-signed agreement
     // makes the signer complete on mount, which calls reload. The second status
     // fetch has the flag rolled back off, so the step re-renders the card path
@@ -546,19 +625,41 @@ describe("ActivationPage agreements step toggle", () => {
 
     expect(view.querySelector('[data-testid="embedded-signer"]')).toBeNull();
     expect(view.querySelector('[data-testid="embedded-signer-complete"]')).toBeNull();
-    expect(view.querySelector('[data-testid="agreement-membership_terms"]')).not.toBeNull();
+    expect(view.querySelector('[data-testid="agreement-membership_terms"]')).toBeNull();
+    expect(view.querySelector('[data-testid="agreement-package-complete"]')).not.toBeNull();
   });
 
-  it("keeps an already-signed agreement readable in the card path after rollback", async () => {
+  it("keeps optional documents outside the required activation package", async () => {
+    stubToggleApi({
+      statusSeq: [true],
+      agreements: [
+        agreementFixture(),
+        agreementFixture({
+          category: "optional_reference",
+          title: "Optional Reference",
+          documentVersionId: "dv-optional",
+          activationStep: 2,
+          requirement: "optional",
+        }),
+      ],
+    });
+    const view = await renderPage();
+
+    expect(byTestId(view, "embedded-progress").textContent).toBe("Agreement 1 of 1");
+    expect(text(view)).not.toContain("Optional Reference");
+    expect(byTestId(view, "agreement-package-progress").textContent).toContain(
+      "0 of 1 required agreements complete",
+    );
+  });
+
+  it("summarizes an already-complete package instead of rendering a stack of signed cards", async () => {
     stubToggleApi({ statusSeq: [false], agreements: [agreementFixture({ signed: true })], satisfied: true });
     const view = await renderPage();
 
-    const card = byTestId(view, "agreement-membership_terms");
-    // The signed state is shown, and the full document stays readable.
-    expect(card.textContent).toContain("Signed");
-    expect(view.querySelector('[data-testid="agreement-content-membership_terms"]')).not.toBeNull();
-    expect(byTestId(view, "agreement-content-membership_terms").textContent).toContain("MEMBERSHIP TERMS FULL TEXT.");
-    // Nothing about the toggle re-opens a sign form for an already-signed doc.
+    const summary = byTestId(view, "agreement-package-complete");
+    expect(summary.textContent).toContain("Agreement package complete");
+    expect(summary.textContent).toContain("Copies and certificates are in your Document Center.");
+    expect(view.querySelector('[data-testid="agreement-membership_terms"]')).toBeNull();
     expect(view.querySelector('[data-testid="agreement-sign-membership_terms"]')).toBeNull();
   });
 });

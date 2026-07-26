@@ -20,6 +20,7 @@ import { sweepExpiredApprovals } from "./research/expiry";
 import { runProductionFoundingSchedulerTick } from "./research/membership-activation/scheduler";
 import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
+import { shouldLogApiResponseBody } from "./request-logging";
 import { createServer } from "http";
 
 const app = express();
@@ -88,18 +89,14 @@ app.use((req, res, next) => {
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
 
-  // Routes whose response bodies may contain PII (emails, messages, tokens)
-  // — log only status + duration, never the body. All research endpoints are
-  // included so status tokens and applicant data never reach the logs.
-  const PII_PATHS = ["/api/waitlist", "/api/research", "/api/admin/research"];
-  const isPiiPath = (p: string) =>
-    PII_PATHS.some((prefix) => p === prefix || p.startsWith(prefix + "/"));
-
+  // Response bodies are private by default. Only deliberately small,
+  // non-sensitive diagnostics may be rendered into request logs, so current
+  // and future member/admin/config routes cannot leak through a missed prefix.
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse && !isPiiPath(path)) {
+      if (capturedJsonResponse && shouldLogApiResponseBody(path)) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
 
