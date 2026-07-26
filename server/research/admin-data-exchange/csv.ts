@@ -223,7 +223,10 @@ function decodeUtf8(
   try {
     return {
       ok: true,
-      text: new TextDecoder("utf-8", { fatal: true }).decode(input),
+      text: new TextDecoder("utf-8", {
+        fatal: true,
+        ignoreBOM: true,
+      }).decode(input),
       bytes: input,
     };
   } catch {

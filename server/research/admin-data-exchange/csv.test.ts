@@ -47,19 +47,21 @@ describe("Research administration CSV parsing", () => {
     });
   });
 
-  it("accepts LF input and an optional leading UTF-8 BOM", () => {
-    const accepted = parseAdminCsv(
+  it("accepts LF input and explicitly handles a leading UTF-8 BOM", () => {
+    const bomBytes = new TextEncoder().encode(
       "\uFEFFSKU,Product Name\nA-1,Alpha\n",
-      schema,
     );
-    expect(accepted.ok).toBe(true);
-
-    const rejected = parseAdminCsv(
-      "\uFEFFSKU,Product Name\nA-1,Alpha\n",
-      schema,
-      { allowBom: false },
-    );
-    expect(errorCodes(rejected)).toEqual(["bom_not_allowed"]);
+    expect(parseAdminCsv(bomBytes, schema).ok).toBe(true);
+    expect(
+      errorCodes(parseAdminCsv(bomBytes, schema, { allowBom: false })),
+    ).toEqual(["bom_not_allowed"]);
+    expect(
+      errorCodes(
+        parseAdminCsv("\uFEFFSKU,Product Name\nA-1,Alpha\n", schema, {
+          allowBom: false,
+        }),
+      ),
+    ).toEqual(["bom_not_allowed"]);
   });
 
   it("rejects invalid UTF-8 without exposing decoder or input content", () => {
