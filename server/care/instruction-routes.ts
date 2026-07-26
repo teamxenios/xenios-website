@@ -60,6 +60,8 @@ const supplySourceBody = z.object({
   relationshipReference: z.string().trim().min(1).max(1000).nullable(),
   supportReference: z.string().trim().min(1).max(1000).nullable(),
   verificationState: z.enum(CARE_SUPPLY_SOURCE_VERIFICATION_STATES),
+  expectedVersion: version,
+  idempotencyKey: key,
 }).strict();
 const replacementActionBody = z.object({
   expectedVersion: version,

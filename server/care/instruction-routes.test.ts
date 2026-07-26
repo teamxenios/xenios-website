@@ -40,6 +40,8 @@ const kit: CareSupplyKit = {
   id: KIT, patientId: PATIENT, prescriptionId: PRESCRIPTION, status: "released",
   productSpecificDevice: "verified device",
   verifiedSupplierReference: "verified supplier",
+  supplySourceVerificationState: "verified",
+  supplySourceVerifiedAt: stamp,
   replacementCadence: "verified cadence", version: 1,
   supersedesSupplyKitId: null, releasedAt: stamp, createdAt: stamp, updatedAt: stamp,
 };
@@ -54,6 +56,7 @@ const supplySource: CareSupplySource = {
   supportReference: "verified support",
   verificationState: "verified",
   verifiedAt: stamp,
+  version: 1,
   createdAt: stamp,
   updatedAt: stamp,
 };
@@ -189,11 +192,28 @@ describe("Care PR5 instruction and supply routes", () => {
         relationshipReference: "verified relationship",
         supportReference: "verified support",
         verificationState: "verified",
+        expectedVersion: 0,
+        idempotencyKey: "supply-source-1",
       });
     expect(response.status).toBe(201);
     expect(repository.saveSupplySource).toHaveBeenCalledWith(
-      expect.objectContaining({ adminUserId: ADMIN }),
+      expect.objectContaining({
+        adminUserId: ADMIN,
+        expectedVersion: 0,
+        idempotencyKey: "supply-source-1",
+      }),
     );
+    const missingConcurrency = await request(app)
+      .post("/api/care/supplies/admin/sources")
+      .send({
+        supplySourceId: SOURCE,
+        legalName: "verified source",
+        relationshipReference: "verified relationship",
+        supportReference: "verified support",
+        verificationState: "verified",
+      });
+    expect(missingConcurrency.status).toBe(400);
+    expect(repository.saveSupplySource).toHaveBeenCalledTimes(1);
   });
 
   it("returns stable safe 503 without repository error text", async () => {

@@ -29,15 +29,27 @@ remains DO NOT REVIEW / MERGE / APPLY / INTEGRATE / DEPLOY.
   patient-specific instruction release.
 - Draft, assigned-human-clinician release, acknowledgment, version,
   supersession, optimistic concurrency, and idempotency lifecycle.
+- Every protected read, mutation, and replay revalidates the exact current
+  consent and supported-state context before returning a record.
+- Replays are actor-, record-, version-, action-, and semantic-input-bound;
+  changed payloads, cross-patient identifiers, revoked coverage, and
+  cross-pharmacy actors fail without mutation or protected-record return.
 - Released instructions require a signed prescription, exact patient and
   prescription binding, current verified sources, and the assigned human
   clinician. AI and automation cannot release instructions.
 - Verified supply-source seam, released patient instruction prerequisite,
   product-specific device, replacement cadence, kit version/release, patient
   replacement request, and assigned-pharmacy replacement queue/action.
+- Replacement reads and actions revalidate the exact current prescription,
+  instruction, supply source, eligible assigned order, pharmacy, operator,
+  consent, and state chain at use time.
+- Supply-source verification is optimistic-versioned and actor-idempotent,
+  follows guarded state transitions, and records immutable input/result
+  history. Expired, rejected, superseded, and missing relationships never
+  project as verified.
 - No RPC or route invokes shipping, pharmacy, supplier, clinician, laboratory,
   messaging, or other external actions.
-- Eleven additive tables have forced RLS and no browser table/RPC grants.
+- Twelve additive tables have forced RLS and no browser table/RPC grants.
 - Instruction sources, source links, instruction events, acknowledgments,
   supply-kit events, and replacement events are database-enforced append-only.
   Supply-source configuration changes are fully audited.
@@ -66,6 +78,7 @@ remains DO NOT REVIEW / MERGE / APPLY / INTEGRATE / DEPLOY.
 - `server/care/instructions.ts`
 - `server/care/instructions.test.ts`
 - `server/care/instruction-repository.ts`
+- `server/care/instruction-repository.test.ts`
 - `server/care/instruction-routes.ts`
 - `server/care/instruction-routes.test.ts`
 - `server/care/index.ts`
@@ -95,7 +108,7 @@ remains DO NOT REVIEW / MERGE / APPLY / INTEGRATE / DEPLOY.
 - `POST /api/care/supplies/pharmacy/replacements/:replacementId/action` —
   assigned pharmacy operator
 - `POST /api/care/supplies/admin/sources` — audited clinical-admin supply-source
-  entry, review, and verification
+  entry, review, and verification with expected version and idempotency key
 - `POST /api/care/supplies/admin/kits` — clinical administrator
 - `POST /api/care/supplies/admin/kits/:supplyKitId/release` —
   clinical administrator
@@ -171,13 +184,14 @@ Care-5 adds:
 4. `care_instruction_events`
 5. `care_instruction_acknowledgments`
 6. `care_supply_sources`
-7. `care_supply_configuration_audit`
-8. `care_supply_kits`
-9. `care_supply_kit_events`
-10. `care_supply_replacements`
-11. `care_supply_replacement_events`
+7. `care_supply_source_events`
+8. `care_supply_configuration_audit`
+9. `care_supply_kits`
+10. `care_supply_kit_events`
+11. `care_supply_replacements`
+12. `care_supply_replacement_events`
 
-All eleven have enabled and forced RLS. `public`, `anon`, and `authenticated`
+All twelve have enabled and forced RLS. `public`, `anon`, and `authenticated`
 receive no table or RPC access. Rollback is capability-off plus code rollback;
 additive clinical tables and audit history must remain until retention/legal
 owners approve any later disposition.
@@ -186,14 +200,14 @@ owners approve any later disposition.
 
 - Exact corrected ancestry: merge base is accepted Care PR 4 source head
   `0ff2352120544f436c005959e1593465353f15bb`.
-- Scope parity: the original and corrected PR 5 deltas contain the same 22
-  files; all 18 additive implementation, test, migration, UI, and evidence
-  blobs are byte-for-byte unchanged; the `server/care/index.ts`,
-  `supabase/MIGRATIONS.md`, and remaining-scope deltas are identical.
+- Scope isolation: the ancestry-corrected 22-file PR5 unit remains intact; the
+  five bounded Website 6 corrections modify only PR5 instruction/supply
+  schema, repository, routes, types, UI, and tests, plus one adjacent
+  repository regression file. No PR6/PR7 or shared canonical model is added.
 - Locked-file isolation: no delta in `client/src/App.tsx`, `server/index.ts`, or
   navigation files.
-- Focused: 3 files / 16 tests passed.
-- Full repository: 165 files / 3,254 tests passed.
+- Focused: 4 files / 21 tests passed.
+- Full repository: 166 files / 3,259 tests passed.
 - `npm run check`: passed.
 - `npm run build`: passed; existing Vite large-chunk advisory only.
 - `git diff --check`: passed.
@@ -201,11 +215,16 @@ owners approve any later disposition.
   - Care 1–5 migrations applied in order and all five applied a second time
     with `ON_ERROR_STOP=1`;
   - all five lifecycle proofs completed and rolled back;
-  - 49/49 total Care tables and 11/11 Care-5 tables have enabled + forced RLS;
+  - 50/50 total Care tables and 12/12 Care-5 tables have enabled + forced RLS;
   - Care-5 browser table grants: zero;
   - Care-5 browser routine grants: zero;
-  - nine reviewed Care-5 service-role RPC grants were present;
-  - cross-patient instruction/replacement actions rejected;
+  - twelve reviewed Care-5 service-role RPC grants were present;
+  - state-disabled and consent-revoked/superseded actions and replays rejected;
+  - changed-input, cross-patient, cross-pharmacy, and revoked-role replays
+    rejected without row/version/history changes;
+  - expired source relationships blocked replacement progress;
+  - stale supply-source writes lost, exact replays wrote once, and guarded
+    source transitions preserved immutable audit history;
   - instruction and replacement histories reject UPDATE and DELETE;
   - capability remained `care:disabled`;
   - zero disposable auth users, roles, access audits, instructions, supply

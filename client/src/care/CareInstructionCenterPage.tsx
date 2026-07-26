@@ -254,6 +254,9 @@ export default function CareInstructionCenterPage() {
               <p className="mono-label text-pulse mb-3">VERIFIED SUPPLY DETAILS</p>
               <div className="grid grid-cols-1 gap-4">
                 {state.supplyKits.map((kit) => {
+                  const supplierVerified =
+                    kit.supplySourceVerificationState === "verified" &&
+                    Boolean(kit.verifiedSupplierReference);
                   const openReplacement = state.replacements.find(
                     (replacement) =>
                       replacement.supplyKitId === kit.id &&
@@ -264,15 +267,28 @@ export default function CareInstructionCenterPage() {
                       <h3 className="h3">{kit.productSpecificDevice}</h3>
                       <dl className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <div>
-                          <dt className="mono-label text-ink-mute">VERIFIED SUPPLY SOURCE</dt>
-                          <dd className="body-m mt-2">{kit.verifiedSupplierReference}</dd>
+                          <dt className="mono-label text-ink-mute">
+                            {supplierVerified
+                              ? "VERIFIED SUPPLY SOURCE"
+                              : "VERIFIED SUPPLY SOURCE REQUIRED"}
+                          </dt>
+                          <dd className="body-m mt-2">
+                            {supplierVerified
+                              ? kit.verifiedSupplierReference
+                              : "The supply relationship is not currently verified. Replacement actions remain unavailable."}
+                          </dd>
                         </div>
                         <div>
                           <dt className="mono-label text-ink-mute">REPLACEMENT CADENCE</dt>
                           <dd className="body-m mt-2">{kit.replacementCadence}</dd>
                         </div>
                       </dl>
-                      {openReplacement ? (
+                      {!supplierVerified ? (
+                        <p className="body-m text-ink-2 mt-6" role="status">
+                          Supply replacement unavailable until the exact source
+                          relationship is verified.
+                        </p>
+                      ) : openReplacement ? (
                         <p className="body-m text-ink-2 mt-6">
                           Replacement status: {openReplacement.status}.
                         </p>

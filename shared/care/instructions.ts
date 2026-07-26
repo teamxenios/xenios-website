@@ -83,6 +83,8 @@ export interface CareSupplyKit {
   status: CareSupplyKitStatus;
   productSpecificDevice: string | null;
   verifiedSupplierReference: string | null;
+  supplySourceVerificationState: CareSupplySourceVerificationState;
+  supplySourceVerifiedAt: string | null;
   replacementCadence: string | null;
   version: number;
   supersedesSupplyKitId: CareRecordId | null;
@@ -110,6 +112,7 @@ export interface CareSupplySource {
   supportReference: string | null;
   verificationState: CareSupplySourceVerificationState;
   verifiedAt: string | null;
+  version: number;
   createdAt: string;
   updatedAt: string;
 }

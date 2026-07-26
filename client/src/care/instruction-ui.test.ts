@@ -16,6 +16,11 @@ describe("Care PR5 final Xenios UI states", () => {
     expect(center).toContain("General education is never substituted");
     expect(center).toContain("Acknowledge this version");
     expect(center).toContain("Request a replacement");
+    expect(center).toContain("VERIFIED SUPPLY SOURCE REQUIRED");
+    expect(center).toContain(
+      'kit.supplySourceVerificationState === "verified"',
+    );
+    expect(center).toContain("Supply replacement unavailable");
     expect(center).toContain("overflow-x-clip");
     expect(center).not.toMatch(/amazon|generic syringe|sample instruction|fake supplier/i);
   });

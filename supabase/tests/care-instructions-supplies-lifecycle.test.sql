@@ -17,7 +17,8 @@ insert into auth.users (id) values
   ('50000000-0000-4000-8000-000000000002'), -- other patient
   ('50000000-0000-4000-8000-000000000003'), -- clinician
   ('50000000-0000-4000-8000-000000000004'), -- clinical admin
-  ('50000000-0000-4000-8000-000000000005')  -- pharmacy operator
+  ('50000000-0000-4000-8000-000000000005'), -- assigned pharmacy operator
+  ('50000000-0000-4000-8000-000000000006')  -- other-pharmacy operator
 on conflict (id) do nothing;
 
 insert into public.care_role_assignments (user_id,role,granted_by) values
@@ -25,7 +26,8 @@ insert into public.care_role_assignments (user_id,role,granted_by) values
   ('50000000-0000-4000-8000-000000000002','care_patient','50000000-0000-4000-8000-000000000004'),
   ('50000000-0000-4000-8000-000000000003','clinician','50000000-0000-4000-8000-000000000004'),
   ('50000000-0000-4000-8000-000000000004','clinical_admin','50000000-0000-4000-8000-000000000004'),
-  ('50000000-0000-4000-8000-000000000005','pharmacy_operations','50000000-0000-4000-8000-000000000004');
+  ('50000000-0000-4000-8000-000000000005','pharmacy_operations','50000000-0000-4000-8000-000000000004'),
+  ('50000000-0000-4000-8000-000000000006','pharmacy_operations','50000000-0000-4000-8000-000000000004');
 
 insert into public.care_patients (id,user_id,identity_state,identity_verified_at) values
   ('51000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001','verified','2026-07-25T18:00:00Z'),
@@ -127,12 +129,34 @@ insert into public.care_pharmacies
    support_contact_reference,verification_state,verified_by,verified_at)
 values ('5e000000-0000-4000-8000-000000000001','Disposable pharmacy','Disposable address',
   'disposable-agreement','disposable-integration','disposable-support','verified',
+  '50000000-0000-4000-8000-000000000004','2026-07-25T19:42:00Z'),
+  ('5e000000-0000-4000-8000-000000000002','Other disposable pharmacy','Disposable address',
+  'other-disposable-agreement','other-disposable-integration','other-disposable-support','verified',
   '50000000-0000-4000-8000-000000000004','2026-07-25T19:42:00Z');
 insert into public.care_pharmacy_operators
   (id,pharmacy_id,user_id,active,verified_by,verified_at)
 values ('5f000000-0000-4000-8000-000000000001','5e000000-0000-4000-8000-000000000001',
   '50000000-0000-4000-8000-000000000005',true,
+  '50000000-0000-4000-8000-000000000004','2026-07-25T19:42:00Z'),
+  ('5f000000-0000-4000-8000-000000000002','5e000000-0000-4000-8000-000000000002',
+  '50000000-0000-4000-8000-000000000006',true,
   '50000000-0000-4000-8000-000000000004','2026-07-25T19:42:00Z');
+insert into public.care_pharmacy_licenses
+  (id,pharmacy_id,state_code,license_number,expires_at,evidence_reference,
+   verification_state,verified_by,verified_at)
+values ('5f100000-0000-4000-8000-000000000001','5e000000-0000-4000-8000-000000000001',
+  'IL','DISPOSABLE-PHARMACY-ONLY','2027-07-25T19:42:00Z',
+  'disposable-pharmacy-license','verified',
+  '50000000-0000-4000-8000-000000000004','2026-07-25T19:42:00Z');
+insert into public.care_pharmacy_state_coverage
+  (id,pharmacy_id,state_code,dispensing_scope_reference,
+   shipping_coverage_reference,instruction_source_reference,
+   supply_source_reference,active,verified_by,verified_at,expires_at)
+values ('5f200000-0000-4000-8000-000000000001','5e000000-0000-4000-8000-000000000001',
+  'IL','disposable-dispensing','disposable-shipping',
+  'disposable-instruction-source','disposable-supply-source',true,
+  '50000000-0000-4000-8000-000000000004','2026-07-25T19:42:00Z',
+  '2027-07-25T19:42:00Z');
 insert into public.care_pharmacy_orders
   (id,patient_id,prescription_id,assigned_pharmacy_id,patient_state_code,status,
    clarification_open,version,assignment_idempotency_key,created_at,updated_at)
@@ -217,17 +241,106 @@ select public.care_create_patient_instruction_draft(
   (select id from public.care_instruction_sources where kind='manufacturer_material'),
   null,'pr5-instruction-draft','2026-07-25T19:51:00Z'
 );
+do $$
+declare
+  instruction_count bigint;
+  event_count bigint;
+begin
+  select count(*) into instruction_count from public.care_patient_instructions;
+  select count(*) into event_count from public.care_instruction_events;
+  begin
+    perform public.care_create_patient_instruction_draft(
+      '51000000-0000-4000-8000-000000000001',
+      '5d000000-0000-4000-8000-000000000001',
+      '50000000-0000-4000-8000-000000000003',
+      'Changed replay must fail',
+      (select id from public.care_instruction_sources where kind='pharmacy_label'),
+      (select id from public.care_instruction_sources where kind='pharmacy_information'),
+      (select id from public.care_instruction_sources where kind='clinician_direction'),
+      (select id from public.care_instruction_sources where kind='manufacturer_material'),
+      null,'pr5-instruction-draft','2026-07-25T19:52:00Z'
+    );
+    raise exception 'changed instruction replay was accepted';
+  exception when check_violation then null;
+  end;
+  if (select count(*) from public.care_patient_instructions) <> instruction_count
+    or (select count(*) from public.care_instruction_events) <> event_count
+  then raise exception 'changed instruction replay mutated history'; end if;
+end;
+$$;
 select public.care_create_patient_instruction_draft(
   '51000000-0000-4000-8000-000000000001',
   '5d000000-0000-4000-8000-000000000001',
   '50000000-0000-4000-8000-000000000003',
-  'Ignored replay',
+  'Disposable patient-specific instruction content',
   (select id from public.care_instruction_sources where kind='pharmacy_label'),
   (select id from public.care_instruction_sources where kind='pharmacy_information'),
   (select id from public.care_instruction_sources where kind='clinician_direction'),
   (select id from public.care_instruction_sources where kind='manufacturer_material'),
   null,'pr5-instruction-draft','2026-07-25T19:52:00Z'
 );
+update public.care_supported_states
+set service_coverage_active=false
+where state_code='IL';
+do $$
+declare before_count bigint;
+begin
+  select count(*) into before_count from public.care_patient_instructions;
+  begin
+    perform public.care_create_patient_instruction_draft(
+      '51000000-0000-4000-8000-000000000001',
+      '5d000000-0000-4000-8000-000000000001',
+      '50000000-0000-4000-8000-000000000003',
+      'Blocked after state disablement',
+      (select id from public.care_instruction_sources where kind='pharmacy_label'),
+      (select id from public.care_instruction_sources where kind='pharmacy_information'),
+      (select id from public.care_instruction_sources where kind='clinician_direction'),
+      (select id from public.care_instruction_sources where kind='manufacturer_material'),
+      null,'pr5-state-disabled-draft','2026-07-25T19:52:30Z'
+    );
+    raise exception 'state-disabled instruction draft was accepted';
+  exception when check_violation then null;
+  end;
+  if (select count(*) from public.care_patient_instructions) <> before_count
+  then raise exception 'state-disabled draft mutated instruction history'; end if;
+end;
+$$;
+update public.care_supported_states
+set service_coverage_active=true
+where state_code='IL';
+update public.care_clinician_state_coverage
+set active=false
+where id='53000000-0000-4000-8000-000000000001';
+do $$
+declare
+  instruction_count bigint;
+  event_count bigint;
+begin
+  select count(*) into instruction_count from public.care_patient_instructions;
+  select count(*) into event_count from public.care_instruction_events;
+  begin
+    perform public.care_create_patient_instruction_draft(
+      '51000000-0000-4000-8000-000000000001',
+      '5d000000-0000-4000-8000-000000000001',
+      '50000000-0000-4000-8000-000000000003',
+      'Disposable patient-specific instruction content',
+      (select id from public.care_instruction_sources where kind='pharmacy_label'),
+      (select id from public.care_instruction_sources where kind='pharmacy_information'),
+      (select id from public.care_instruction_sources where kind='clinician_direction'),
+      (select id from public.care_instruction_sources where kind='manufacturer_material'),
+      null,'pr5-instruction-draft','2026-07-25T19:52:40Z'
+    );
+    raise exception 'revoked clinician-coverage replay was accepted';
+  exception when insufficient_privilege then null;
+  end;
+  if (select count(*) from public.care_patient_instructions) <> instruction_count
+    or (select count(*) from public.care_instruction_events) <> event_count
+  then raise exception 'revoked clinician replay mutated instruction history'; end if;
+end;
+$$;
+update public.care_clinician_state_coverage
+set active=true
+where id='53000000-0000-4000-8000-000000000001';
 select public.care_release_patient_instruction(
   (select id from public.care_patient_instructions),
   '50000000-0000-4000-8000-000000000003',0,
@@ -250,7 +363,8 @@ begin
     perform public.care_save_supply_source(
       null,'Unauthorized supply source','unauthorized-relationship',
       'unauthorized-support','verified',
-      '50000000-0000-4000-8000-000000000003','2026-07-25T19:55:00Z'
+      '50000000-0000-4000-8000-000000000003',0,
+      'pr5-unauthorized-source','2026-07-25T19:55:00Z'
     );
     raise exception 'non-admin supply-source verification was accepted';
   exception when insufficient_privilege then null;
@@ -261,8 +375,30 @@ $$;
 select public.care_save_supply_source(
   null,'Disposable supply source','disposable-relationship',
   'disposable-support','verified',
-  '50000000-0000-4000-8000-000000000004','2026-07-25T19:56:00Z'
+  '50000000-0000-4000-8000-000000000004',0,
+  'pr5-supply-source','2026-07-25T19:56:00Z'
 );
+select public.care_save_supply_source(
+  null,'Disposable supply source','disposable-relationship',
+  'disposable-support','verified',
+  '50000000-0000-4000-8000-000000000004',0,
+  'pr5-supply-source','2026-07-25T19:56:00Z'
+);
+
+do $$
+begin
+  begin
+    perform public.care_save_supply_source(
+      null,'Changed replay source','disposable-relationship',
+      'disposable-support','verified',
+      '50000000-0000-4000-8000-000000000004',0,
+      'pr5-supply-source','2026-07-25T19:56:00Z'
+    );
+    raise exception 'changed supply-source replay was accepted';
+  exception when check_violation then null;
+  end;
+end;
+$$;
 
 select public.care_create_supply_kit(
   '51000000-0000-4000-8000-000000000001',
@@ -303,6 +439,64 @@ select public.care_request_supply_replacement(
   '51000000-0000-4000-8000-000000000001',
   'pr5-replacement','2026-07-25T20:01:00Z'
 );
+select public.care_save_supply_source(
+  (select id from public.care_supply_sources),
+  'Disposable supply source','disposable-relationship','disposable-support',
+  'expired','50000000-0000-4000-8000-000000000004',1,
+  'pr5-supply-source-expire','2026-07-25T20:01:10Z'
+);
+select public.care_save_supply_source(
+  (select id from public.care_supply_sources),
+  'Disposable supply source','disposable-relationship','disposable-support',
+  'expired','50000000-0000-4000-8000-000000000004',1,
+  'pr5-supply-source-expire','2026-07-25T20:01:10Z'
+);
+do $$
+declare
+  replacement_status text;
+  replacement_version integer;
+  event_count bigint;
+begin
+  select status,version into replacement_status,replacement_version
+  from public.care_supply_replacements;
+  select count(*) into event_count from public.care_supply_replacement_events;
+  begin
+    perform public.care_apply_supply_replacement_action(
+      (select id from public.care_supply_replacements),
+      '50000000-0000-4000-8000-000000000005',0,'approve',
+      'pr5-expired-source-approve','2026-07-25T20:01:20Z'
+    );
+    raise exception 'expired supply source allowed replacement approval';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_save_supply_source(
+      (select id from public.care_supply_sources),
+      'Stale overwrite','disposable-relationship','disposable-support',
+      'entered','50000000-0000-4000-8000-000000000004',1,
+      'pr5-supply-source-stale','2026-07-25T20:01:30Z'
+    );
+    raise exception 'stale supply-source overwrite was accepted';
+  exception when check_violation then null;
+  end;
+  if (select status from public.care_supply_replacements) <> replacement_status
+    or (select version from public.care_supply_replacements) <> replacement_version
+    or (select count(*) from public.care_supply_replacement_events) <> event_count
+  then raise exception 'expired-chain rejection mutated replacement history'; end if;
+end;
+$$;
+select public.care_save_supply_source(
+  (select id from public.care_supply_sources),
+  'Disposable supply source','disposable-relationship','disposable-support',
+  'entered','50000000-0000-4000-8000-000000000004',2,
+  'pr5-supply-source-renew','2026-07-25T20:01:40Z'
+);
+select public.care_save_supply_source(
+  (select id from public.care_supply_sources),
+  'Disposable supply source','disposable-relationship','disposable-support',
+  'verified','50000000-0000-4000-8000-000000000004',3,
+  'pr5-supply-source-reverify','2026-07-25T20:01:50Z'
+);
 select public.care_apply_supply_replacement_action(
   (select id from public.care_supply_replacements),
   '50000000-0000-4000-8000-000000000005',0,'approve',
@@ -310,9 +504,143 @@ select public.care_apply_supply_replacement_action(
 );
 select public.care_apply_supply_replacement_action(
   (select id from public.care_supply_replacements),
+  '50000000-0000-4000-8000-000000000005',0,'approve',
+  'pr5-replacement-approve','2026-07-25T20:02:01Z'
+);
+do $$
+begin
+  begin
+    perform public.care_apply_supply_replacement_action(
+      (select id from public.care_supply_replacements),
+      '50000000-0000-4000-8000-000000000005',0,'fulfill',
+      'pr5-replacement-approve','2026-07-25T20:02:02Z'
+    );
+    raise exception 'changed replacement replay was accepted';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_apply_supply_replacement_action(
+      (select id from public.care_supply_replacements),
+      '50000000-0000-4000-8000-000000000006',0,'approve',
+      'pr5-replacement-approve','2026-07-25T20:02:02Z'
+    );
+    raise exception 'cross-pharmacy replacement replay was accepted';
+  exception when insufficient_privilege then null;
+  end;
+end;
+$$;
+update public.care_role_assignments
+set revoked_at=clock_timestamp()
+where user_id='50000000-0000-4000-8000-000000000005'
+  and role='pharmacy_operations' and revoked_at is null;
+do $$
+begin
+  begin
+    perform public.care_apply_supply_replacement_action(
+      (select id from public.care_supply_replacements),
+      '50000000-0000-4000-8000-000000000005',0,'approve',
+      'pr5-replacement-approve','2026-07-25T20:02:04Z'
+    );
+    raise exception 'revoked operator replay was accepted';
+  exception when insufficient_privilege then null;
+  end;
+end;
+$$;
+insert into public.care_role_assignments (user_id,role,granted_by)
+values ('50000000-0000-4000-8000-000000000005','pharmacy_operations',
+  '50000000-0000-4000-8000-000000000004');
+select public.care_apply_supply_replacement_action(
+  (select id from public.care_supply_replacements),
   '50000000-0000-4000-8000-000000000005',1,'fulfill',
   'pr5-replacement-fulfill','2026-07-25T20:03:00Z'
 );
+
+select public.care_create_patient_instruction_draft(
+  '51000000-0000-4000-8000-000000000001',
+  '5d000000-0000-4000-8000-000000000001',
+  '50000000-0000-4000-8000-000000000003',
+  'Disposable replacement instruction content',
+  (select id from public.care_instruction_sources where kind='pharmacy_label'),
+  (select id from public.care_instruction_sources where kind='pharmacy_information'),
+  (select id from public.care_instruction_sources where kind='clinician_direction'),
+  (select id from public.care_instruction_sources where kind='manufacturer_material'),
+  (select id from public.care_patient_instructions where status='released'),
+  'pr5-second-instruction','2026-07-25T20:03:10Z'
+);
+select public.care_release_patient_instruction(
+  (select id from public.care_patient_instructions where status='draft'),
+  '50000000-0000-4000-8000-000000000003',0,
+  'pr5-second-release','2026-07-25T20:03:20Z'
+);
+do $$
+begin
+  begin
+    perform public.care_acknowledge_patient_instruction(
+      (select id from public.care_patient_instructions where status='released'),
+      '51000000-0000-4000-8000-000000000001',1,
+      'pr5-instruction-ack','2026-07-25T20:03:30Z'
+    );
+    raise exception 'unrelated instruction acknowledgment replay was accepted';
+  exception when check_violation then null;
+  end;
+end;
+$$;
+
+do $$
+declare
+  replacement_status text;
+  replacement_version integer;
+  event_count bigint;
+begin
+  select status,version into replacement_status,replacement_version
+  from public.care_supply_replacements;
+  select count(*) into event_count from public.care_supply_replacement_events;
+  begin
+    insert into public.care_consent_events
+      (id,patient_id,document_id,kind,document_version,action,idempotency_key,occurred_at)
+    values ('55000000-0000-4000-8000-000000000003',
+      '51000000-0000-4000-8000-000000000001',
+      '54000000-0000-4000-8000-000000000001','telehealth','pr5-v1',
+      'revoked','pr5-consent-revoke','2026-07-25T20:03:40Z');
+    begin
+      perform public.care_apply_supply_replacement_action(
+        (select id from public.care_supply_replacements),
+        '50000000-0000-4000-8000-000000000005',1,'fulfill',
+        'pr5-replacement-fulfill','2026-07-25T20:03:50Z'
+      );
+      raise exception 'revoked-consent replacement replay was accepted';
+    exception when check_violation then null;
+    end;
+    if (select status from public.care_supply_replacements) <> replacement_status
+      or (select version from public.care_supply_replacements) <> replacement_version
+      or (select count(*) from public.care_supply_replacement_events) <> event_count
+    then raise exception 'revoked-consent replay mutated replacement history'; end if;
+    raise exception 'rollback_revocation_probe' using errcode='ZX001';
+  exception when sqlstate 'ZX001' then null;
+  end;
+
+  begin
+    update public.care_consent_documents
+    set status='superseded',superseded_at='2026-07-25T20:04:00Z'
+    where id='54000000-0000-4000-8000-000000000002';
+    begin
+      perform public.care_apply_supply_replacement_action(
+        (select id from public.care_supply_replacements),
+        '50000000-0000-4000-8000-000000000005',1,'fulfill',
+        'pr5-replacement-fulfill','2026-07-25T20:04:10Z'
+      );
+      raise exception 'superseded-consent replacement replay was accepted';
+    exception when check_violation then null;
+    end;
+    if (select status from public.care_supply_replacements) <> replacement_status
+      or (select version from public.care_supply_replacements) <> replacement_version
+      or (select count(*) from public.care_supply_replacement_events) <> event_count
+    then raise exception 'superseded-consent replay mutated replacement history'; end if;
+    raise exception 'rollback_supersession_probe' using errcode='ZX002';
+  exception when sqlstate 'ZX002' then null;
+  end;
+end;
+$$;
 
 do $$
 begin
@@ -343,6 +671,16 @@ begin
   exception when sqlstate '55000' then null;
   end;
   begin
+    update public.care_supply_source_events set verification_state='rejected';
+    raise exception 'supply-source idempotency history update was accepted';
+  exception when sqlstate '55000' then null;
+  end;
+  begin
+    delete from public.care_supply_source_events;
+    raise exception 'supply-source idempotency history delete was accepted';
+  exception when sqlstate '55000' then null;
+  end;
+  begin
     delete from public.care_supply_configuration_audit;
     raise exception 'supply configuration audit delete was accepted';
   exception when sqlstate '55000' then null;
@@ -352,10 +690,11 @@ begin
     raise exception 'replacement event history update was accepted';
   exception when sqlstate '55000' then null;
   end;
-  if (select count(*) from public.care_patient_instructions) <> 1
+  if (select count(*) from public.care_patient_instructions) <> 2
     or (select count(*) from public.care_instruction_acknowledgments) <> 1
     or (select count(*) from public.care_supply_kits) <> 1
     or (select count(*) from public.care_supply_replacements) <> 1
+    or (select count(*) from public.care_supply_source_events) <> 4
   then raise exception 'PR5 idempotency proof failed'; end if;
   if (select status <> 'fulfilled' from public.care_supply_replacements)
   then raise exception 'replacement lifecycle proof failed'; end if;
@@ -367,11 +706,12 @@ begin
       'care_instruction_sources','care_patient_instructions',
       'care_instruction_source_links','care_instruction_events',
       'care_instruction_acknowledgments','care_supply_sources',
-      'care_supply_configuration_audit','care_supply_kits',
+      'care_supply_source_events','care_supply_configuration_audit',
+      'care_supply_kits',
       'care_supply_kit_events','care_supply_replacements',
       'care_supply_replacement_events'
     ) and c.relrowsecurity and c.relforcerowsecurity
-  ) <> 11 then raise exception 'PR5 forced RLS proof failed'; end if;
+  ) <> 12 then raise exception 'PR5 forced RLS proof failed'; end if;
 end;
 $$;
 
@@ -382,6 +722,7 @@ begin
   if exists (select 1 from public.care_instruction_sources)
     or exists (select 1 from public.care_patient_instructions)
     or exists (select 1 from public.care_supply_sources)
+    or exists (select 1 from public.care_supply_source_events)
     or exists (select 1 from public.care_supply_kits)
     or exists (select 1 from public.care_supply_replacements)
   then raise exception 'PR5 disposable rows survived rollback'; end if;

@@ -82,6 +82,13 @@ retained above as the pre-implementation comparison.
 
 ## Care PR 5 reconciliation checkpoint
 
+The corrected candidate also closes Website 6's five bounded lifecycle
+findings: current consent/state enforcement on protected reads and writes,
+exact actor/input-bound replay authorization, exact replacement-chain
+revalidation, state-first supply-source projection, and optimistic
+version/idempotency/transition guards with immutable configuration history.
+Care remains disabled and no real or seed clinical facts were added.
+
 | Requirement | Original assignment | Current implementation | Live production state | Classification | Remaining work | Owner | Release train |
 |---|---|---|---|---|---|---|---|
 | Exact-source patient instruction, release, versioning, acknowledgment, and supersession | Care PR 5 instruction center, with pharmacy label/information, clinician direction, manufacturer material, and general education kept separate. | Complete additive persistence, assigned-human-clinician release, current verified source binding, patient acknowledgment, optimistic versions, idempotency, append-only histories, production repository/routes, and final patient UI on `feature/website-5-care-instructions-supplies`. General education is never accepted as patient-specific direction. | Not integrated; Care remains disabled and no real instruction content exists. | COMPLETE_NOT_INTEGRATED | Exact files: `shared/care/instructions.ts`, `server/care/instructions.ts`, `server/care/instruction-repository.ts`, `server/care/instruction-routes.ts`, `client/src/care/CareInstructionCenterPage.tsx`, `supabase/care-instructions-supplies.sql`. Acceptance passed: cross-patient, wrong-role, automation/AI, general-education substitution, stale-version, history-mutation, apply-twice, and rollback proofs. Website 2 must apply migrations/register routes; verified patient-specific sources remain real inputs. | Website 5 complete; Website 2 integration; clinical/pharmacy owners provide real inputs | RELEASE TRAIN 2 / Care PR 5 |

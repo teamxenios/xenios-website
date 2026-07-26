@@ -128,7 +128,10 @@ export function releaseCareSupplyKit(input: {
   if (!input.supplyKit.productSpecificDevice?.trim()) {
     return { allowed: false, reason: "product_specific_device_required" };
   }
-  if (!input.supplyKit.verifiedSupplierReference?.trim()) {
+  if (
+    input.supplyKit.supplySourceVerificationState !== "verified" ||
+    !input.supplyKit.verifiedSupplierReference?.trim()
+  ) {
     return { allowed: false, reason: "verified_supplier_required" };
   }
   if (!input.supplyKit.replacementCadence?.trim()) {

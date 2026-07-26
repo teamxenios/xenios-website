@@ -60,8 +60,11 @@ function asInstruction(row: Row): CarePatientInstruction {
   };
 }
 
-function asKit(row: Row): CareSupplyKit {
+export function mapCareSupplyKitRow(row: Row): CareSupplyKit {
   const source = (row.care_supply_sources ?? {}) as Row;
+  const verificationState =
+    (source.verification_state ??
+      "missing") as CareSupplySourceVerificationState;
   return {
     id: asId(row.id),
     patientId: asId(row.patient_id),
@@ -71,8 +74,15 @@ function asKit(row: Row): CareSupplyKit {
       ? String(row.product_specific_device)
       : null,
     verifiedSupplierReference:
-      source.relationship_reference && row.status !== "draft"
+      verificationState === "verified" &&
+      source.relationship_reference &&
+      row.status !== "draft"
         ? String(source.relationship_reference)
+        : null,
+    supplySourceVerificationState: verificationState,
+    supplySourceVerifiedAt:
+      verificationState === "verified" && source.verified_at
+        ? String(source.verified_at)
         : null,
     replacementCadence: row.replacement_cadence
       ? String(row.replacement_cadence)
@@ -110,6 +120,7 @@ function asSupplySource(row: Row): CareSupplySource {
     verificationState:
       row.verification_state as CareSupplySourceVerificationState,
     verifiedAt: row.verified_at ? String(row.verified_at) : null,
+    version: Number(row.version),
     createdAt: String(row.created_at),
     updatedAt: String(row.updated_at),
   };
@@ -118,7 +129,7 @@ function asSupplySource(row: Row): CareSupplySource {
 const INSTRUCTION_COLUMNS =
   "id,patient_id,prescription_id,status,instruction_content,version,supersedes_instruction_id,released_at,created_at,updated_at,care_instruction_source_links(source_id),care_instruction_acknowledgments(instruction_version)";
 const KIT_COLUMNS =
-  "id,patient_id,prescription_id,status,product_specific_device,replacement_cadence,version,supersedes_supply_kit_id,released_at,created_at,updated_at,care_supply_sources(relationship_reference)";
+  "id,patient_id,prescription_id,status,product_specific_device,replacement_cadence,version,supersedes_supply_kit_id,released_at,created_at,updated_at,care_supply_sources(relationship_reference,verification_state,verified_at)";
 const REPLACEMENT_COLUMNS =
   "id,supply_kit_id,patient_id,status,version,created_at,updated_at";
 
@@ -135,6 +146,8 @@ export interface CareInstructionRepository {
     supportReference: string | null;
     verificationState: CareSupplySourceVerificationState;
     adminUserId: string;
+    expectedVersion: number;
+    idempotencyKey: string;
     occurredAt: string;
   }): Promise<CareSupplySource>;
   createSource(input: {
@@ -212,6 +225,31 @@ export interface CareInstructionRepository {
 
 export function buildCareInstructionRepository(): CareInstructionRepository {
   const admin = getSupabaseAdmin();
+  const contextCurrent = async (
+    patientId: CareRecordId,
+    prescriptionId: CareRecordId,
+  ) => {
+    const result = await admin.rpc("care_instruction_context_current", {
+      p_patient_id: patientId,
+      p_prescription_id: prescriptionId,
+    });
+    throwOnError(result.error, "care_instruction_context_lookup_failed");
+    return result.data === true;
+  };
+  const replacementContextCurrent = async (
+    replacementId: CareRecordId,
+    patientId: CareRecordId | null,
+    operatorUserId: string | null,
+  ) => {
+    const result = await admin.rpc("care_supply_replacement_context_current", {
+      p_replacement_id: replacementId,
+      p_patient_id: patientId,
+      p_operator_user_id: operatorUserId,
+      p_as_of: new Date().toISOString(),
+    });
+    throwOnError(result.error, "care_supply_replacement_context_lookup_failed");
+    return result.data === true;
+  };
   const rpcInstruction = async (
     name: string,
     args: Record<string, unknown>,
@@ -225,7 +263,11 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
       .eq("id", row.id)
       .single();
     throwOnError(related.error, "care_instruction_lookup_failed");
-    return asInstruction(related.data as Row);
+    const instruction = asInstruction(related.data as Row);
+    if (!(await contextCurrent(instruction.patientId, instruction.prescriptionId))) {
+      throw new Error("care_instruction_context_unavailable");
+    }
+    return instruction;
   };
   return {
     async listPatientInstructions(patientId) {
@@ -236,7 +278,13 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         .neq("status", "draft")
         .order("created_at", { ascending: false });
       throwOnError(error, "care_instruction_lookup_failed");
-      return (data ?? []).map((row) => asInstruction(row as Row));
+      const rows = (data ?? []).map((row) => row as Row);
+      const current = await Promise.all(
+        rows.map((row) =>
+          contextCurrent(asId(row.patient_id), asId(row.prescription_id)),
+        ),
+      );
+      return rows.filter((_row, index) => current[index]).map(asInstruction);
     },
     async listPatientSupplyKits(patientId) {
       const { data, error } = await admin
@@ -246,7 +294,15 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         .neq("status", "draft")
         .order("created_at", { ascending: false });
       throwOnError(error, "care_supply_kit_lookup_failed");
-      return (data ?? []).map((row) => asKit(row as Row));
+      const rows = (data ?? []).map((row) => row as Row);
+      const current = await Promise.all(
+        rows.map((row) =>
+          contextCurrent(asId(row.patient_id), asId(row.prescription_id)),
+        ),
+      );
+      return rows
+        .filter((_row, index) => current[index])
+        .map(mapCareSupplyKitRow);
     },
     async listPatientReplacements(patientId) {
       const { data, error } = await admin
@@ -255,7 +311,13 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         .eq("patient_id", patientId)
         .order("created_at", { ascending: false });
       throwOnError(error, "care_supply_replacement_lookup_failed");
-      return (data ?? []).map((row) => asReplacement(row as Row));
+      const rows = (data ?? []).map((row) => row as Row);
+      const current = await Promise.all(
+        rows.map((row) =>
+          replacementContextCurrent(asId(row.id), patientId, null),
+        ),
+      );
+      return rows.filter((_row, index) => current[index]).map(asReplacement);
     },
     async listAssignedReplacements(operatorUserId) {
       const operators = await admin
@@ -287,7 +349,13 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         .in("supply_kit_id", kitIds)
         .order("updated_at", { ascending: false });
       throwOnError(replacements.error, "care_supply_replacement_lookup_failed");
-      return (replacements.data ?? []).map((row) => asReplacement(row as Row));
+      const rows = (replacements.data ?? []).map((row) => row as Row);
+      const current = await Promise.all(
+        rows.map((row) =>
+          replacementContextCurrent(asId(row.id), null, operatorUserId),
+        ),
+      );
+      return rows.filter((_row, index) => current[index]).map(asReplacement);
     },
     async loadReadiness(prescriptionId) {
       const sources = prescriptionId
@@ -340,7 +408,15 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         p_occurred_at: input.occurredAt,
       });
       throwOnError(error, "care_instruction_source_write_failed");
-      return asSource(data as Row);
+      const source = asSource(data as Row);
+      if (
+        source.patientId &&
+        source.prescriptionId &&
+        !(await contextCurrent(source.patientId, source.prescriptionId))
+      ) {
+        throw new Error("care_instruction_context_unavailable");
+      }
+      return source;
     },
     createInstructionDraft: (input) =>
       rpcInstruction("care_create_patient_instruction_draft", {
@@ -386,7 +462,11 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         p_occurred_at: input.occurredAt,
       });
       throwOnError(error, "care_supply_kit_write_failed");
-      return asKit(data as Row);
+      const kit = mapCareSupplyKitRow(data as Row);
+      if (!(await contextCurrent(kit.patientId, kit.prescriptionId))) {
+        throw new Error("care_instruction_context_unavailable");
+      }
+      return kit;
     },
     async saveSupplySource(input) {
       const { data, error } = await admin.rpc("care_save_supply_source", {
@@ -396,6 +476,8 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         p_support_reference: input.supportReference,
         p_verification_state: input.verificationState,
         p_admin_user_id: input.adminUserId,
+        p_expected_version: input.expectedVersion,
+        p_idempotency_key: input.idempotencyKey,
         p_occurred_at: input.occurredAt,
       });
       throwOnError(error, "care_supply_source_write_failed");
@@ -410,7 +492,11 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         p_occurred_at: input.occurredAt,
       });
       throwOnError(error, "care_supply_kit_write_failed");
-      return asKit(data as Row);
+      const kit = mapCareSupplyKitRow(data as Row);
+      if (!(await contextCurrent(kit.patientId, kit.prescriptionId))) {
+        throw new Error("care_instruction_context_unavailable");
+      }
+      return kit;
     },
     async requestReplacement(input) {
       const { data, error } = await admin.rpc("care_request_supply_replacement", {
@@ -420,7 +506,17 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         p_occurred_at: input.occurredAt,
       });
       throwOnError(error, "care_supply_replacement_write_failed");
-      return asReplacement(data as Row);
+      const replacement = asReplacement(data as Row);
+      if (
+        !(await replacementContextCurrent(
+          replacement.id,
+          input.patientId,
+          null,
+        ))
+      ) {
+        throw new Error("care_supply_replacement_context_unavailable");
+      }
+      return replacement;
     },
     async applyReplacementAction(input) {
       const { data, error } = await admin.rpc("care_apply_supply_replacement_action", {
@@ -432,7 +528,17 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         p_occurred_at: input.occurredAt,
       });
       throwOnError(error, "care_supply_replacement_write_failed");
-      return asReplacement(data as Row);
+      const replacement = asReplacement(data as Row);
+      if (
+        !(await replacementContextCurrent(
+          replacement.id,
+          null,
+          input.actorUserId,
+        ))
+      ) {
+        throw new Error("care_supply_replacement_context_unavailable");
+      }
+      return replacement;
     },
   };
 }
