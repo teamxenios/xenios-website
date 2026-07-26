@@ -6,6 +6,7 @@ import type {
 } from "@shared/care/prescriptions";
 import {
   evaluateCarePrescriptionReadiness,
+  resolveCarePharmacyClarification,
   signCarePrescription,
   transitionCarePharmacyOrder,
 } from "./prescriptions";
@@ -143,6 +144,59 @@ describe("Care PR 4 pharmacy boundary", () => {
         actor,
       }),
     ).toEqual({ allowed: false, reason: "clarification_open" });
+  });
+
+  it("does not let a pharmacy operator self-clear an open clarification", () => {
+    expect(
+      transitionCarePharmacyOrder({
+        order: {
+          ...order,
+          status: "clarification_requested",
+          clarificationOpen: true,
+        },
+        next: "received",
+        actor,
+      }),
+    ).toEqual({ allowed: false, reason: "invalid_pharmacy_transition" });
+  });
+
+  it("requires the assigned clinician or a clinical admin to resolve clarification", () => {
+    const openOrder = {
+      ...order,
+      status: "clarification_requested" as const,
+      clarificationOpen: true,
+    };
+    for (const actor of [
+      { subjectId: "patient-1", kind: "care_patient" as const },
+      { subjectId: "operator-1", kind: "pharmacy_operator" as const },
+      { subjectId: "clinician-2", kind: "human_clinician" as const },
+    ]) {
+      expect(
+        resolveCarePharmacyClarification({
+          order: openOrder,
+          prescribingClinicianUserId: "clinician-1",
+          actor,
+          resolutionReference: "private-response-reference",
+        }),
+      ).toEqual({
+        allowed: false,
+        reason: "assigned_clinician_or_admin_required",
+      });
+    }
+    expect(
+      resolveCarePharmacyClarification({
+        order: openOrder,
+        prescribingClinicianUserId: "clinician-1",
+        actor: {
+          subjectId: "clinician-1",
+          kind: "human_clinician",
+        },
+        resolutionReference: "private-response-reference",
+      }),
+    ).toMatchObject({
+      allowed: true,
+      order: { status: "received", clarificationOpen: false, version: 3 },
+    });
   });
 
   it("requires a tracking reference before shipment", () => {

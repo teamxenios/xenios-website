@@ -18,6 +18,8 @@ parallel cross-domain pre-launch/required-input model.
 The superseded PR 4 head
 `604ed05c54ca29063302433aa2c816a68b197424`, stacked on superseded PR 3
 `fcc91987586b6f20a88c3467f63fc26202d91f27`, remains prohibited.
+Rejected five-HIGH head
+`bb5b320471832c69571511d36815306159506b17` also remains prohibited.
 
 ## Completed scope
 
@@ -34,6 +36,15 @@ The superseded PR 4 head
   reference.
 - Cross-patient, wrong-clinician, wrong-pharmacy, inactive-role, expired
   coverage, stale-version, and replay controls.
+- Every mutation and replay revalidates exact current telehealth/privacy
+  consent, active supported state, actor, ownership, role, and coverage.
+- Idempotent replay requires action/input equivalence and never authorizes from
+  an idempotency key alone.
+- Readiness is calculated from one exact clinician, pharmacy, state, and
+  prescription workflow context through a server-authoritative RPC.
+- Clarification remains open until the assigned clinician or a clinical
+  administrator records a private response reference; a pharmacy operator
+  cannot self-clear it.
 - Append-only prescription source/event, pharmacy order event, and
   configuration-audit histories.
 - Ten new forced-RLS tables with no browser grants; all writes use service-role
@@ -66,11 +77,13 @@ The superseded PR 4 head
 - `server/care/prescription-repository.ts`
 - `server/care/prescription-routes.ts`
 - `server/care/prescription-routes.test.ts`
+- `server/care/prescription-repository.test.ts`
 - `server/care/index.ts`
 - `client/src/care/CarePrescriptionsPage.tsx`
 - `client/src/care/CarePharmacyOrdersPage.tsx`
 - `client/src/care/CarePharmacyReadinessPanel.tsx`
 - `client/src/care/prescription-ui.test.ts`
+- `client/src/care/prescription-landmarks.test.tsx`
 - `supabase/care-prescription-pharmacy.sql`
 - `supabase/tests/care-prescription-pharmacy-lifecycle.test.sql`
 - `supabase/MIGRATIONS.md`
@@ -84,6 +97,10 @@ The superseded PR 4 head
 - `POST /api/care/prescriptions/:id/sign` — assigned human clinician
 - `GET /api/care/pharmacy/orders` — assigned pharmacy operator only
 - `POST /api/care/pharmacy/orders/:id/action` — assigned pharmacy operator
+- `POST /api/care/prescriptions/pharmacy-orders/:id/clarification/resolve` —
+  assigned human clinician
+- `POST /api/care/pharmacy/admin/orders/:id/clarification/resolve` — clinical
+  administrator
 - `GET /api/care/pharmacy/admin/readiness` — clinical administrator
 - `POST /api/care/pharmacy/admin/prescriptions/:id/assign` — clinical
   administrator
@@ -156,10 +173,13 @@ The PR4 migration adds:
 10. `care_pharmacy_order_events`
 
 All ten have enabled and forced RLS. `public`, `anon`, and `authenticated`
-receive no table or RPC access. Configuration changes are audited; clinical
-source and workflow histories reject UPDATE and DELETE. Rollback is
-capability-off plus code rollback; additive tables must be retained until
-retention/legal owners approve any later data disposition.
+receive no table or RPC access. Seven reviewed service-role RPCs cover exact
+readiness, prescription/pharmacy mutation, and clinician/admin clarification
+resolution. Replay events persist the original expected version for input
+equivalence. Configuration changes are audited; clinical source and workflow
+histories reject UPDATE and DELETE. Rollback is capability-off plus code
+rollback; additive tables must be retained until retention/legal owners approve
+any later data disposition.
 
 ## Validation
 
@@ -168,18 +188,20 @@ Current branch-ready validation:
 - Exact corrected ancestry: merge base is accepted Care PR 3 source head
   `71da91c458907eaf4f627488e5de35cddf82c04a`.
 - Accepted PR 3 implementation and correction blobs remain unchanged.
-- PR 4 retains the original bounded prescription/pharmacy domain delta and
-  contains no Website 2 locked shared registration files.
+- PR 4 retains the bounded prescription/pharmacy domain and contains no Website
+  2 locked shared registration files.
 - Superseded PR 4 head
   `604ed05c54ca29063302433aa2c816a68b197424` remains prohibited.
-- Focused PR 4 tests: 3 files / 16 tests passed.
-- Full repository tests: 160 files / 3,221 tests passed.
+- Rejected head `bb5b320471832c69571511d36815306159506b17`
+  remains prohibited.
+- Focused PR 4 tests: 5 files / 32 tests passed.
+- Full repository result: 162 files / 3,237 tests passed.
 - `npm run check`: passed.
 - `npm run build`: passed; existing Vite large-chunk advisory only.
 - `git diff --check`: passed.
-- Scope parity: the original and corrected PR 4 file sets are identical; every
-  implementation, test, migration, and evidence blob is byte-for-byte
-  unchanged. Only this handoff records the corrected ancestry and validation.
+- Scope isolation: the accepted PR 3 base remains exact; the correction changes
+  only PR 4 prescription/pharmacy SQL, repository/routes/domain/UI, focused
+  tests, and this evidence/handoff.
 - Locked-file isolation: no delta in `client/src/App.tsx`, `server/index.ts`, or
   navigation files.
 - Disposable PostgreSQL 16:
@@ -189,13 +211,14 @@ Current branch-ready validation:
   - 38/38 total Care tables and 10/10 PR 4 tables have enabled and forced RLS.
   - PR 4 browser table grants: zero.
   - PR 4 browser routine grants: zero.
-  - Five reviewed PR 4 service-role RPC grants were present.
+  - Seven reviewed PR 4 service-role RPC grants were present.
   - Capability remained `care:disabled`.
   - Zero disposable auth users, roles, access audits, or PR 4 rows remained.
 - Lifecycle proof covers no seeds, cross-patient rejection, assigned human
-  clinician, verified content, idempotent draft/sign, assigned verified
-  pharmacy/state/operator, clarification blocking, immutable source/events,
-  and rollback.
+  clinician, verified content, current consent/state before mutation and replay,
+  actor/input-equivalent idempotency, exact-entity readiness isolation, assigned
+  verified pharmacy/state/operator, clinician/admin clarification resolution,
+  immutable source/events, and rollback.
 - Final UI evidence: `docs/care/evidence/PR4_UI_EVIDENCE.md`.
 
 ## Exact external blockers

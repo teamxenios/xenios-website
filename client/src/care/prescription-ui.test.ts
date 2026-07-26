@@ -14,6 +14,7 @@ describe("Care PR4 final Xenios UI states", () => {
     expect(page).toContain("No prescription is recorded.");
     expect(page).toContain("Try again");
     expect(page).toContain("aria-live=\"polite\"");
+    expect(page).not.toContain("<main");
     expect(page).not.toMatch(/demo|sample prescription|fake pharmacy/i);
   });
   it("uses exact Care required-input labels without inventing clinical facts", () => {
@@ -26,7 +27,11 @@ describe("Care PR4 final Xenios UI states", () => {
     expect(pharmacy).toContain("Authorized pharmacy access is required.");
     expect(pharmacy).toContain("No orders are assigned.");
     expect(pharmacy).toContain("PRIVATE TRACKING REFERENCE");
+    expect(pharmacy).toContain("CLARIFICATION REQUEST REFERENCE");
+    expect(pharmacy).toContain("CLINICIAN RESPONSE REQUIRED");
+    expect(pharmacy).toContain("Request clarification");
     expect(pharmacy).toContain("Nothing was changed.");
+    expect(pharmacy).not.toContain("<main");
     expect(pharmacy).not.toMatch(/demo pharmacy|sample order|fake patient/i);
   });
 });

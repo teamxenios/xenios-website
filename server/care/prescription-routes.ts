@@ -39,6 +39,11 @@ const actionBody = z.object({
   trackingReference: z.string().trim().min(1).max(500).nullable().default(null),
   idempotencyKey: key,
 }).strict();
+const clarificationResolutionBody = z.object({
+  expectedVersion: version,
+  resolutionReference: z.string().trim().min(1).max(500),
+  idempotencyKey: key,
+}).strict();
 
 const principal = (res: Response) =>
   (res.locals.carePrincipal as CarePrincipal | undefined) ?? null;
@@ -52,6 +57,28 @@ export function registerCarePrescriptionApi(
   repository: CarePrescriptionRepository,
   now: () => Date = () => new Date(),
 ) {
+  const resolveClarification = async (req: Request, res: Response) => {
+    res.set("Cache-Control", "no-store");
+    const parsed = clarificationResolutionBody.safeParse(req.body);
+    const orderId = uuid.safeParse(req.params.orderId);
+    const resolverUserId = principal(res)?.subjectId;
+    if (!parsed.success || !orderId.success) return invalid(res);
+    if (!resolverUserId) return safe(res);
+    try {
+      return res.json({
+        ok: true,
+        order: await repository.resolveClarification({
+          orderId: orderId.data as CareRecordId,
+          resolverUserId,
+          ...parsed.data,
+          occurredAt: now().toISOString(),
+        }),
+      });
+    } catch {
+      return safe(res);
+    }
+  };
+
   app.get(
     CARE_ROUTE_CONTRACTS.prescriptions,
     requireCarePermission("care:read_self", access),
@@ -177,11 +204,25 @@ export function registerCarePrescriptionApi(
         typeof req.query.stateCode === "string" && /^[A-Z]{2}$/.test(req.query.stateCode)
           ? req.query.stateCode
           : null;
+      const clinicianUserId = uuid.safeParse(req.query.clinicianUserId);
+      const pharmacyId = uuid.safeParse(req.query.pharmacyId);
+      const prescriptionId = uuid.safeParse(req.query.prescriptionId);
       try {
         return res.json({
           ok: true,
           readiness: evaluateCarePrescriptionReadiness(
-            await repository.loadReadiness(stateCode),
+            await repository.loadReadiness({
+              stateCode,
+              clinicianUserId: clinicianUserId.success
+                ? clinicianUserId.data
+                : null,
+              pharmacyId: pharmacyId.success
+                ? (pharmacyId.data as CareRecordId)
+                : null,
+              prescriptionId: prescriptionId.success
+                ? (prescriptionId.data as CareRecordId)
+                : null,
+            }),
           ),
         });
       } catch {
@@ -215,5 +256,17 @@ export function registerCarePrescriptionApi(
         return safe(res);
       }
     },
+  );
+
+  app.post(
+    `${CARE_ROUTE_CONTRACTS.prescriptions}/pharmacy-orders/:orderId/clarification/resolve`,
+    requireCarePermission("care:prescribe_assigned", access),
+    resolveClarification,
+  );
+
+  app.post(
+    `${CARE_ROUTE_CONTRACTS.pharmacy}/admin/orders/:orderId/clarification/resolve`,
+    requireCarePermission("care:administer", access),
+    resolveClarification,
   );
 }

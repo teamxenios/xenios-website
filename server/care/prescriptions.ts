@@ -114,7 +114,7 @@ const transitions: Readonly<
 > = {
   pending_pharmacy: ["received", "rejected", "cancelled"],
   received: ["clarification_requested", "accepted", "rejected", "cancelled"],
-  clarification_requested: ["received", "rejected", "cancelled"],
+  clarification_requested: [],
   accepted: ["clarification_requested", "dispensed", "cancelled"],
   rejected: [],
   dispensed: ["shipped"],
@@ -158,8 +158,63 @@ export function transitionCarePharmacyOrder(input: {
     order: {
       ...input.order,
       status: input.next,
-      clarificationOpen: input.next === "clarification_requested",
+      clarificationOpen:
+        input.next === "clarification_requested"
+          ? true
+          : input.order.clarificationOpen,
       trackingReferencePresent,
+      version: input.order.version + 1,
+    },
+  };
+}
+
+export type CareClarificationResolutionGate =
+  | { allowed: true; order: CarePharmacyOrder }
+  | {
+      allowed: false;
+      reason:
+        | "assigned_clinician_or_admin_required"
+        | "open_clarification_required"
+        | "resolution_reference_required";
+    };
+
+export function resolveCarePharmacyClarification(input: {
+  order: CarePharmacyOrder;
+  prescribingClinicianUserId: string;
+  actor: {
+    subjectId: string;
+    kind:
+      | "human_clinician"
+      | "clinical_admin"
+      | "care_patient"
+      | "pharmacy_operator";
+  };
+  resolutionReference: string;
+}): CareClarificationResolutionGate {
+  const authorized =
+    input.actor.kind === "clinical_admin"
+    || (
+      input.actor.kind === "human_clinician"
+      && input.actor.subjectId === input.prescribingClinicianUserId
+    );
+  if (!authorized) {
+    return { allowed: false, reason: "assigned_clinician_or_admin_required" };
+  }
+  if (
+    input.order.status !== "clarification_requested"
+    || !input.order.clarificationOpen
+  ) {
+    return { allowed: false, reason: "open_clarification_required" };
+  }
+  if (!input.resolutionReference.trim()) {
+    return { allowed: false, reason: "resolution_reference_required" };
+  }
+  return {
+    allowed: true,
+    order: {
+      ...input.order,
+      status: "received",
+      clarificationOpen: false,
       version: input.order.version + 1,
     },
   };

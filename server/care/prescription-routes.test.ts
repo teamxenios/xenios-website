@@ -62,6 +62,11 @@ function repo(overrides: Partial<CarePrescriptionRepository> = {}): CarePrescrip
     sign: vi.fn(async () => ({ ...prescription, status: "signed" })),
     assignPharmacy: vi.fn(async () => order),
     pharmacyAction: vi.fn(async () => ({ ...order, status: "received" })),
+    resolveClarification: vi.fn(async () => ({
+      ...order,
+      status: "received",
+      clarificationOpen: false,
+    })),
     ...overrides,
   };
 }
@@ -114,6 +119,44 @@ describe("Care PR4 prescription and pharmacy routes", () => {
       .send({ pharmacyId: PHARMACY, idempotencyKey: "assign-key-1" });
     expect(response.status).toBe(200);
     expect(repository.assignPharmacy).toHaveBeenCalledWith(expect.objectContaining({ adminUserId: ADMIN }));
+  });
+  it("binds clarification resolution to the authorized clinician or clinical admin", async () => {
+    for (const [role, subjectId, path] of [
+      [
+        "clinician",
+        CLINICIAN,
+        `/api/care/prescriptions/pharmacy-orders/${ORDER}/clarification/resolve`,
+      ],
+      [
+        "clinical_admin",
+        ADMIN,
+        `/api/care/pharmacy/admin/orders/${ORDER}/clarification/resolve`,
+      ],
+    ] as const) {
+      const { app, repository } = appFor(role, subjectId);
+      const response = await request(app).post(path).send({
+        expectedVersion: 2,
+        resolutionReference: "private-clinical-response-reference",
+        idempotencyKey: `resolve-${role}`,
+      });
+      expect(response.status).toBe(200);
+      expect(repository.resolveClarification).toHaveBeenCalledWith(
+        expect.objectContaining({ resolverUserId: subjectId }),
+      );
+    }
+  });
+  it("passes exact readiness identifiers without aggregating unrelated records", async () => {
+    const { app, repository } = appFor("clinical_admin", ADMIN);
+    const response = await request(app).get(
+      `/api/care/pharmacy/admin/readiness?stateCode=IL&clinicianUserId=${CLINICIAN}&pharmacyId=${PHARMACY}&prescriptionId=${PRESCRIPTION}`,
+    );
+    expect(response.status).toBe(200);
+    expect(repository.loadReadiness).toHaveBeenCalledWith({
+      stateCode: "IL",
+      clinicianUserId: CLINICIAN,
+      pharmacyId: PHARMACY,
+      prescriptionId: PRESCRIPTION,
+    });
   });
   it("returns stable safe 503 JSON and no adapter text", async () => {
     const { app } = appFor("care_patient", "patient-user", repo({

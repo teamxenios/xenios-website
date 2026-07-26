@@ -16,7 +16,9 @@ insert into auth.users (id) values
   ('40000000-0000-4000-8000-000000000002'),
   ('40000000-0000-4000-8000-000000000003'),
   ('40000000-0000-4000-8000-000000000004'),
-  ('40000000-0000-4000-8000-000000000005')
+  ('40000000-0000-4000-8000-000000000005'),
+  ('40000000-0000-4000-8000-000000000006'),
+  ('40000000-0000-4000-8000-000000000007')
 on conflict (id) do nothing;
 
 insert into public.care_role_assignments (user_id, role, granted_by) values
@@ -24,7 +26,9 @@ insert into public.care_role_assignments (user_id, role, granted_by) values
   ('40000000-0000-4000-8000-000000000002','care_patient','40000000-0000-4000-8000-000000000004'),
   ('40000000-0000-4000-8000-000000000003','clinician','40000000-0000-4000-8000-000000000004'),
   ('40000000-0000-4000-8000-000000000004','clinical_admin','40000000-0000-4000-8000-000000000004'),
-  ('40000000-0000-4000-8000-000000000005','pharmacy_operations','40000000-0000-4000-8000-000000000004');
+  ('40000000-0000-4000-8000-000000000005','pharmacy_operations','40000000-0000-4000-8000-000000000004'),
+  ('40000000-0000-4000-8000-000000000006','clinician','40000000-0000-4000-8000-000000000004'),
+  ('40000000-0000-4000-8000-000000000007','pharmacy_operations','40000000-0000-4000-8000-000000000004');
 
 insert into public.care_patients (id,user_id,identity_state,identity_verified_at) values
   ('41000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000001','verified','2026-07-25T18:00:00Z'),
@@ -103,6 +107,12 @@ insert into public.care_pharmacies
 values ('4c000000-0000-4000-8000-000000000001','Disposable pharmacy','Disposable address',
   'disposable-agreement','disposable-integration','disposable-support','verified',
   '40000000-0000-4000-8000-000000000004','2026-07-25T19:40:00Z');
+insert into public.care_pharmacies
+  (id,legal_name,legal_address,agreement_reference,integration_reference,support_contact_reference,
+   verification_state,verified_by,verified_at)
+values ('4c000000-0000-4000-8000-000000000002','Second disposable pharmacy','Disposable address',
+  'disposable-agreement-two','disposable-integration-two','disposable-support-two','verified',
+  '40000000-0000-4000-8000-000000000004','2026-07-25T19:40:00Z');
 insert into public.care_pharmacy_licenses
   (id,pharmacy_id,state_code,license_number,expires_at,evidence_reference,
    verification_state,verified_by,verified_at)
@@ -120,6 +130,48 @@ insert into public.care_pharmacy_operators
 values ('4f000000-0000-4000-8000-000000000001','4c000000-0000-4000-8000-000000000001',
   '40000000-0000-4000-8000-000000000005',true,
   '40000000-0000-4000-8000-000000000004','2026-07-25T19:40:00Z');
+
+do $$
+declare
+  exact_facts jsonb;
+  disjoint_facts jsonb;
+  expired_facts jsonb;
+begin
+  exact_facts := public.care_prescription_readiness(
+    '40000000-0000-4000-8000-000000000003',
+    '4c000000-0000-4000-8000-000000000001',
+    'IL',null,'2026-07-25T19:41:00Z'
+  );
+  if not (exact_facts->>'medical_group_verified')::boolean
+    or not (exact_facts->>'clinician_coverage_verified')::boolean
+    or not (exact_facts->>'pharmacy_partner_verified')::boolean
+    or not (exact_facts->>'pharmacy_license_verified')::boolean
+    or not (exact_facts->>'pharmacy_state_coverage_verified')::boolean
+    or (exact_facts->>'patient_specific_content_verified')::boolean
+  then raise exception 'exact readiness facts were not scoped correctly'; end if;
+
+  disjoint_facts := public.care_prescription_readiness(
+    '40000000-0000-4000-8000-000000000006',
+    '4c000000-0000-4000-8000-000000000002',
+    'IL',null,'2026-07-25T19:41:00Z'
+  );
+  if (disjoint_facts->>'medical_group_verified')::boolean
+    or (disjoint_facts->>'clinician_coverage_verified')::boolean
+    or (disjoint_facts->>'pharmacy_license_verified')::boolean
+    or (disjoint_facts->>'pharmacy_state_coverage_verified')::boolean
+  then raise exception 'disjoint readiness facts were combined'; end if;
+
+  expired_facts := public.care_prescription_readiness(
+    '40000000-0000-4000-8000-000000000003',
+    '4c000000-0000-4000-8000-000000000001',
+    'IL',null,'2028-07-25T19:41:00Z'
+  );
+  if (expired_facts->>'clinician_coverage_verified')::boolean
+    or (expired_facts->>'pharmacy_license_verified')::boolean
+    or (expired_facts->>'pharmacy_state_coverage_verified')::boolean
+  then raise exception 'expired readiness facts remained operational'; end if;
+end;
+$$;
 
 do $$
 begin
@@ -150,9 +202,39 @@ select public.care_create_prescription_draft(
   '41000000-0000-4000-8000-000000000001',
   '4b000000-0000-4000-8000-000000000001',
   '40000000-0000-4000-8000-000000000003',
-  'Ignored replay','Ignored replay','Ignored replay','Ignored replay','Ignored replay',9,null,
+  'Disposable formulation','Disposable concentration','Disposable route',
+  'Disposable quantity','Disposable patient-specific directions',0,null,
   'pr4-draft','2026-07-25T19:46:00Z'
 );
+
+do $$
+begin
+  begin
+    perform public.care_create_prescription_draft(
+      '41000000-0000-4000-8000-000000000001',
+      '4b000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000003',
+      'Mismatched replay','Disposable concentration','Disposable route',
+      'Disposable quantity','Disposable patient-specific directions',0,null,
+      'pr4-draft','2026-07-25T19:47:00Z'
+    );
+    raise exception 'mismatched draft replay was accepted';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_create_prescription_draft(
+      '41000000-0000-4000-8000-000000000001',
+      '4b000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000006',
+      'Disposable formulation','Disposable concentration','Disposable route',
+      'Disposable quantity','Disposable patient-specific directions',0,null,
+      'pr4-draft','2026-07-25T19:47:00Z'
+    );
+    raise exception 'cross-clinician draft replay was accepted';
+  exception when check_violation then null;
+  end;
+end;
+$$;
 
 select public.care_sign_prescription(
   (select id from public.care_prescriptions where create_idempotency_key='pr4-draft'),
@@ -163,12 +245,86 @@ select public.care_sign_prescription(
   '40000000-0000-4000-8000-000000000003',0,'pr4-sign','2026-07-25T19:51:00Z'
 );
 
+do $$
+declare prescription_id uuid := (
+  select id from public.care_prescriptions where create_idempotency_key='pr4-draft'
+);
+begin
+  begin
+    perform public.care_sign_prescription(
+      prescription_id,'40000000-0000-4000-8000-000000000003',1,
+      'pr4-sign','2026-07-25T19:52:00Z'
+    );
+    raise exception 'mismatched sign replay was accepted';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_sign_prescription(
+      prescription_id,'40000000-0000-4000-8000-000000000006',0,
+      'pr4-sign','2026-07-25T19:52:00Z'
+    );
+    raise exception 'cross-clinician sign replay was accepted';
+  exception when check_violation then null;
+  end;
+end;
+$$;
+
+do $$
+declare facts jsonb;
+begin
+  facts := public.care_prescription_readiness(
+    '40000000-0000-4000-8000-000000000003',
+    '4c000000-0000-4000-8000-000000000001',
+    'IL',
+    (select id from public.care_prescriptions where create_idempotency_key='pr4-draft'),
+    '2026-07-25T19:53:00Z'
+  );
+  if exists (
+    select 1
+    from jsonb_each_text(facts) fact
+    where fact.value <> 'true'
+  ) then raise exception 'one exact complete workflow did not clear readiness facts'; end if;
+end;
+$$;
+
 select public.care_assign_pharmacy_order(
   (select id from public.care_prescriptions where create_idempotency_key='pr4-draft'),
   '4c000000-0000-4000-8000-000000000001',
   '40000000-0000-4000-8000-000000000004',
   'pr4-assign','2026-07-25T19:55:00Z'
 );
+select public.care_assign_pharmacy_order(
+  (select id from public.care_prescriptions where create_idempotency_key='pr4-draft'),
+  '4c000000-0000-4000-8000-000000000001',
+  '40000000-0000-4000-8000-000000000004',
+  'pr4-assign','2026-07-25T19:56:00Z'
+);
+
+do $$
+declare prescription_id uuid := (
+  select id from public.care_prescriptions where create_idempotency_key='pr4-draft'
+);
+begin
+  begin
+    perform public.care_assign_pharmacy_order(
+      prescription_id,'4c000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000001',
+      'pr4-assign','2026-07-25T19:57:00Z'
+    );
+    raise exception 'non-admin assignment replay was accepted';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform public.care_assign_pharmacy_order(
+      prescription_id,'4c000000-0000-4000-8000-000000000099',
+      '40000000-0000-4000-8000-000000000004',
+      'pr4-assign','2026-07-25T19:57:00Z'
+    );
+    raise exception 'cross-pharmacy assignment replay was accepted';
+  exception when check_violation then null;
+  end;
+end;
+$$;
 
 select public.care_apply_pharmacy_order_action(
   (select id from public.care_pharmacy_orders),
@@ -181,6 +337,11 @@ select public.care_apply_pharmacy_order_action(
   'disposable-private-clarification-reference',null,
   'pr4-clarification','2026-07-25T20:01:00Z'
 );
+select public.care_apply_pharmacy_order_action(
+  (select id from public.care_pharmacy_orders),
+  '40000000-0000-4000-8000-000000000005',0,'receive',null,null,
+  'pr4-receive','2026-07-25T20:01:30Z'
+);
 
 do $$
 declare order_id uuid := (select id from public.care_pharmacy_orders);
@@ -191,6 +352,38 @@ begin
       'pr4-blocked-dispense','2026-07-25T20:02:00Z'
     );
     raise exception 'dispense with open clarification was accepted';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_apply_pharmacy_order_action(
+      order_id,'40000000-0000-4000-8000-000000000005',2,'receive',null,null,
+      'pr4-operator-self-clear','2026-07-25T20:02:00Z'
+    );
+    raise exception 'operator self-cleared clarification by receipt';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_apply_pharmacy_order_action(
+      order_id,'40000000-0000-4000-8000-000000000005',2,'accept',null,null,
+      'pr4-operator-accept-open','2026-07-25T20:02:00Z'
+    );
+    raise exception 'operator accepted an open clarification';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_apply_pharmacy_order_action(
+      order_id,'40000000-0000-4000-8000-000000000007',0,'receive',null,null,
+      'pr4-receive','2026-07-25T20:02:00Z'
+    );
+    raise exception 'cross-operator replay was accepted';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform public.care_apply_pharmacy_order_action(
+      order_id,'40000000-0000-4000-8000-000000000005',0,'accept',null,null,
+      'pr4-receive','2026-07-25T20:02:00Z'
+    );
+    raise exception 'mismatched action replay was accepted';
   exception when check_violation then null;
   end;
   begin
@@ -223,6 +416,272 @@ begin
       'care_prescription_events','care_pharmacy_orders','care_pharmacy_order_events'
     ) and c.relrowsecurity and c.relforcerowsecurity
   ) <> 10 then raise exception 'forced RLS proof failed'; end if;
+end;
+$$;
+
+do $$
+declare order_id uuid := (select id from public.care_pharmacy_orders);
+begin
+  begin
+    perform public.care_resolve_pharmacy_clarification(
+      order_id,'40000000-0000-4000-8000-000000000001',2,
+      'private-patient-response','pr4-patient-resolve','2026-07-25T20:03:00Z'
+    );
+    raise exception 'patient clarification resolution was accepted';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform public.care_resolve_pharmacy_clarification(
+      order_id,'40000000-0000-4000-8000-000000000006',2,
+      'private-other-clinician-response','pr4-other-resolve','2026-07-25T20:03:00Z'
+    );
+    raise exception 'other clinician clarification resolution was accepted';
+  exception when insufficient_privilege then null;
+  end;
+end;
+$$;
+
+select public.care_resolve_pharmacy_clarification(
+  (select id from public.care_pharmacy_orders),
+  '40000000-0000-4000-8000-000000000003',2,
+  'private-assigned-clinician-response','pr4-clinician-resolve',
+  '2026-07-25T20:04:00Z'
+);
+select public.care_resolve_pharmacy_clarification(
+  (select id from public.care_pharmacy_orders),
+  '40000000-0000-4000-8000-000000000003',2,
+  'private-assigned-clinician-response','pr4-clinician-resolve',
+  '2026-07-25T20:04:30Z'
+);
+
+do $$
+begin
+  begin
+    perform public.care_resolve_pharmacy_clarification(
+      (select id from public.care_pharmacy_orders),
+      '40000000-0000-4000-8000-000000000003',2,
+      'mismatched-response','pr4-clinician-resolve','2026-07-25T20:04:30Z'
+    );
+    raise exception 'mismatched clarification replay was accepted';
+  exception when check_violation then null;
+  end;
+end;
+$$;
+
+select public.care_apply_pharmacy_order_action(
+  (select id from public.care_pharmacy_orders),
+  '40000000-0000-4000-8000-000000000005',3,'accept',null,null,
+  'pr4-accept-one','2026-07-25T20:05:00Z'
+);
+select public.care_apply_pharmacy_order_action(
+  (select id from public.care_pharmacy_orders),
+  '40000000-0000-4000-8000-000000000005',4,'request_clarification',
+  'second-private-question',null,'pr4-clarification-two','2026-07-25T20:06:00Z'
+);
+select public.care_resolve_pharmacy_clarification(
+  (select id from public.care_pharmacy_orders),
+  '40000000-0000-4000-8000-000000000004',5,
+  'private-admin-response','pr4-admin-resolve','2026-07-25T20:07:00Z'
+);
+select public.care_apply_pharmacy_order_action(
+  (select id from public.care_pharmacy_orders),
+  '40000000-0000-4000-8000-000000000005',6,'accept',null,null,
+  'pr4-accept-two','2026-07-25T20:08:00Z'
+);
+select public.care_apply_pharmacy_order_action(
+  (select id from public.care_pharmacy_orders),
+  '40000000-0000-4000-8000-000000000005',7,'dispense',null,null,
+  'pr4-dispense','2026-07-25T20:09:00Z'
+);
+
+select public.care_create_prescription_draft(
+  '41000000-0000-4000-8000-000000000001',
+  '4b000000-0000-4000-8000-000000000001',
+  '40000000-0000-4000-8000-000000000003',
+  'Second disposable formulation','Second disposable concentration',
+  'Second disposable route','Second disposable quantity',
+  'Second disposable patient-specific directions',0,null,
+  'pr4-stale-sign-draft','2026-07-25T20:10:00Z'
+);
+
+create or replace function pg_temp.assert_pr4_current_context_blocks()
+returns void
+language plpgsql
+as $$
+declare
+  original_prescription_id uuid := (
+    select id from public.care_prescriptions
+    where create_idempotency_key = 'pr4-draft'
+  );
+  draft_prescription_id uuid := (
+    select id from public.care_prescriptions
+    where create_idempotency_key = 'pr4-stale-sign-draft'
+  );
+  order_id uuid := (select id from public.care_pharmacy_orders);
+begin
+  begin
+    perform public.care_create_prescription_draft(
+      '41000000-0000-4000-8000-000000000001',
+      '4b000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000003',
+      'Blocked formulation','Blocked concentration','Blocked route',
+      'Blocked quantity','Blocked directions',0,null,
+      'pr4-blocked-new-draft','2026-07-25T20:11:00Z'
+    );
+    raise exception 'stale context accepted a new draft';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_create_prescription_draft(
+      '41000000-0000-4000-8000-000000000001',
+      '4b000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000003',
+      'Disposable formulation','Disposable concentration','Disposable route',
+      'Disposable quantity','Disposable patient-specific directions',0,null,
+      'pr4-draft','2026-07-25T20:11:00Z'
+    );
+    raise exception 'stale context accepted a draft replay';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_sign_prescription(
+      draft_prescription_id,'40000000-0000-4000-8000-000000000003',0,
+      'pr4-blocked-new-sign','2026-07-25T20:11:00Z'
+    );
+    raise exception 'stale context accepted a new sign';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_sign_prescription(
+      original_prescription_id,'40000000-0000-4000-8000-000000000003',0,
+      'pr4-sign','2026-07-25T20:11:00Z'
+    );
+    raise exception 'stale context accepted a sign replay';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_assign_pharmacy_order(
+      original_prescription_id,'4c000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000004',
+      'pr4-blocked-new-assign','2026-07-25T20:11:00Z'
+    );
+    raise exception 'stale context accepted a new assignment';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_assign_pharmacy_order(
+      original_prescription_id,'4c000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000004',
+      'pr4-assign','2026-07-25T20:11:00Z'
+    );
+    raise exception 'stale context accepted an assignment replay';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_apply_pharmacy_order_action(
+      order_id,'40000000-0000-4000-8000-000000000005',8,'ship',null,
+      'private-blocked-tracking','pr4-blocked-new-action',
+      '2026-07-25T20:11:00Z'
+    );
+    raise exception 'stale context accepted a new pharmacy action';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_apply_pharmacy_order_action(
+      order_id,'40000000-0000-4000-8000-000000000005',0,'receive',null,null,
+      'pr4-receive','2026-07-25T20:11:00Z'
+    );
+    raise exception 'stale context accepted an action replay';
+  exception when check_violation then null;
+  end;
+
+  if (select count(*) from public.care_prescriptions) <> 2
+    or (select count(*) from public.care_prescription_content_sources) <> 2
+    or (select count(*) from public.care_prescription_events) <> 3
+    or (select count(*) from public.care_pharmacy_orders) <> 1
+    or (select count(*) from public.care_pharmacy_order_events) <> 9
+    or (select version from public.care_pharmacy_orders where id = order_id) <> 8
+    or (select status from public.care_pharmacy_orders where id = order_id) <> 'dispensed'
+  then raise exception 'stale-context rejection mutated PR4 state'; end if;
+end;
+$$;
+
+do $$
+begin
+  begin
+    insert into public.care_consent_events (
+      patient_id,document_id,kind,document_version,action,
+      idempotency_key,occurred_at
+    ) values (
+      '41000000-0000-4000-8000-000000000001',
+      '44000000-0000-4000-8000-000000000001',
+      'telehealth','pr4-v1','revoked','pr4-telehealth-revoked',
+      '2026-07-25T20:12:00Z'
+    );
+    perform pg_temp.assert_pr4_current_context_blocks();
+    raise exception 'rollback-telehealth-revocation';
+  exception when raise_exception then
+    if sqlerrm <> 'rollback-telehealth-revocation' then raise; end if;
+  end;
+  begin
+    insert into public.care_consent_events (
+      patient_id,document_id,kind,document_version,action,
+      idempotency_key,occurred_at
+    ) values (
+      '41000000-0000-4000-8000-000000000001',
+      '44000000-0000-4000-8000-000000000002',
+      'privacy_notice','pr4-v1','revoked','pr4-privacy-revoked',
+      '2026-07-25T20:12:00Z'
+    );
+    perform pg_temp.assert_pr4_current_context_blocks();
+    raise exception 'rollback-privacy-revocation';
+  exception when raise_exception then
+    if sqlerrm <> 'rollback-privacy-revocation' then raise; end if;
+  end;
+  begin
+    update public.care_consent_documents
+    set status = 'superseded',
+        superseded_at = '2026-07-25T20:12:00Z'
+    where id = '44000000-0000-4000-8000-000000000001';
+    insert into public.care_consent_documents (
+      kind,version,content_hash,status,approved_by,approved_at,effective_at
+    ) values (
+      'telehealth','pr4-v2','sha256:pr4-t2','approved',
+      '40000000-0000-4000-8000-000000000004',
+      '2026-07-25T20:12:00Z','2026-07-25T20:12:00Z'
+    );
+    perform pg_temp.assert_pr4_current_context_blocks();
+    raise exception 'rollback-telehealth-supersession';
+  exception when raise_exception then
+    if sqlerrm <> 'rollback-telehealth-supersession' then raise; end if;
+  end;
+  begin
+    update public.care_consent_documents
+    set status = 'superseded',
+        superseded_at = '2026-07-25T20:12:00Z'
+    where id = '44000000-0000-4000-8000-000000000002';
+    insert into public.care_consent_documents (
+      kind,version,content_hash,status,approved_by,approved_at,effective_at
+    ) values (
+      'privacy_notice','pr4-v2','sha256:pr4-p2','approved',
+      '40000000-0000-4000-8000-000000000004',
+      '2026-07-25T20:12:00Z','2026-07-25T20:12:00Z'
+    );
+    perform pg_temp.assert_pr4_current_context_blocks();
+    raise exception 'rollback-privacy-supersession';
+  exception when raise_exception then
+    if sqlerrm <> 'rollback-privacy-supersession' then raise; end if;
+  end;
+  begin
+    update public.care_supported_states
+    set supported_state_active = false,
+        service_coverage_active = false
+    where state_code = 'IL';
+    perform pg_temp.assert_pr4_current_context_blocks();
+    raise exception 'rollback-state-deactivation';
+  exception when raise_exception then
+    if sqlerrm <> 'rollback-state-deactivation' then raise; end if;
+  end;
 end;
 $$;
 

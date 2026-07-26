@@ -28,13 +28,28 @@ const actionCopy: Record<CarePrescriptionRequiredInputLabel, string> = {
   "CARE ACTIVATION APPROVAL REQUIRED": "Complete the server-authoritative Care release review.",
 };
 
-export default function CarePharmacyReadinessPanel({ stateCode }: { stateCode?: string }) {
+export default function CarePharmacyReadinessPanel({
+  stateCode,
+  clinicianUserId,
+  pharmacyId,
+  prescriptionId,
+}: {
+  stateCode?: string;
+  clinicianUserId?: string;
+  pharmacyId?: string;
+  prescriptionId?: string;
+}) {
   const [state, setState] = useState<State>({ kind: "loading" });
   const load = useCallback(async () => {
     setState({ kind: "loading" });
     try {
-      const query = stateCode ? `?stateCode=${encodeURIComponent(stateCode)}` : "";
-      const response = await careApiFetch(`/api/care/pharmacy/admin/readiness${query}`);
+      const query = new URLSearchParams();
+      if (stateCode) query.set("stateCode", stateCode);
+      if (clinicianUserId) query.set("clinicianUserId", clinicianUserId);
+      if (pharmacyId) query.set("pharmacyId", pharmacyId);
+      if (prescriptionId) query.set("prescriptionId", prescriptionId);
+      const suffix = query.size ? `?${query.toString()}` : "";
+      const response = await careApiFetch(`/api/care/pharmacy/admin/readiness${suffix}`);
       const body = await response.json().catch(() => ({}));
       if (response.status === 401 || response.status === 403) return setState({ kind: "forbidden" });
       if (!response.ok || body?.ok !== true || !body.readiness) throw new Error("unavailable");
@@ -42,7 +57,7 @@ export default function CarePharmacyReadinessPanel({ stateCode }: { stateCode?: 
     } catch {
       setState({ kind: "error" });
     }
-  }, [stateCode]);
+  }, [clinicianUserId, pharmacyId, prescriptionId, stateCode]);
   useEffect(() => void load(), [load]);
 
   return (

@@ -192,6 +192,7 @@ create table if not exists public.care_prescription_events (
   action text not null check (action in ('drafted', 'signed', 'superseded', 'cancelled')),
   from_status text null,
   to_status text not null,
+  expected_version integer not null default 0 check (expected_version >= 0),
   idempotency_key text not null check (length(idempotency_key) between 8 and 128),
   occurred_at timestamptz not null,
   unique (prescription_id, idempotency_key)
@@ -224,16 +225,34 @@ create table if not exists public.care_pharmacy_order_events (
   pharmacy_order_id uuid not null references public.care_pharmacy_orders(id) on delete cascade,
   patient_id uuid not null references public.care_patients(id) on delete cascade,
   actor_user_id uuid not null references auth.users(id),
-  actor_kind text not null check (actor_kind in ('clinical_admin', 'pharmacy_operator')),
+  actor_kind text not null check (actor_kind in (
+    'clinical_admin', 'human_clinician', 'pharmacy_operator'
+  )),
   action text not null,
   from_status text null,
   to_status text not null,
   clarification_reference text null,
   tracking_reference text null,
+  expected_version integer not null default 0 check (expected_version >= 0),
   idempotency_key text not null check (length(idempotency_key) between 8 and 128),
   occurred_at timestamptz not null,
   unique (pharmacy_order_id, idempotency_key)
 );
+
+alter table public.care_pharmacy_order_events
+  drop constraint if exists care_pharmacy_order_events_actor_kind_check;
+alter table public.care_pharmacy_order_events
+  add constraint care_pharmacy_order_events_actor_kind_check
+  check (actor_kind in (
+    'clinical_admin', 'human_clinician', 'pharmacy_operator'
+  ));
+
+alter table public.care_prescription_events
+  add column if not exists expected_version integer not null default 0
+  check (expected_version >= 0);
+alter table public.care_pharmacy_order_events
+  add column if not exists expected_version integer not null default 0
+  check (expected_version >= 0);
 
 create or replace function public.care_audit_pharmacy_configuration()
 returns trigger
@@ -333,6 +352,139 @@ as $$
   );
 $$;
 
+create or replace function public.care_prescription_context_current(
+  p_patient_id uuid,
+  p_appointment_id uuid
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  appointment_row public.care_appointments%rowtype;
+begin
+  select * into appointment_row
+  from public.care_appointments
+  where id = p_appointment_id
+    and patient_id = p_patient_id
+  for share;
+  if not found then return false; end if;
+
+  return public.care_appointment_consents_current(
+    appointment_row.intake_id,
+    p_patient_id
+  ) and public.care_supported_state_current(
+    appointment_row.patient_state_code
+  );
+end;
+$$;
+
+create or replace function public.care_prescription_readiness(
+  p_clinician_user_id uuid,
+  p_pharmacy_id uuid,
+  p_state_code text,
+  p_prescription_id uuid,
+  p_as_of timestamptz default now()
+)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select jsonb_build_object(
+    'medical_group_verified',
+    p_clinician_user_id is not null and exists (
+      select 1
+      from public.care_clinician_profiles profile
+      join public.care_medical_groups medical_group
+        on medical_group.id = profile.medical_group_id
+       and medical_group.verification_state = 'verified'
+      where profile.clinician_user_id = p_clinician_user_id
+        and profile.verification_state = 'verified'
+    ),
+    'clinician_coverage_verified',
+    p_clinician_user_id is not null
+      and p_state_code is not null
+      and public.care_clinician_ready(
+        p_clinician_user_id,
+        p_state_code,
+        p_as_of
+      ),
+    'patient_specific_content_verified',
+    p_prescription_id is not null
+      and p_clinician_user_id is not null
+      and exists (
+        select 1
+        from public.care_prescriptions prescription
+        join public.care_prescription_content_sources source
+          on source.id = prescription.verified_content_source_id
+         and source.patient_id = prescription.patient_id
+         and source.appointment_id = prescription.appointment_id
+         and source.clinician_review_id = prescription.clinician_review_id
+         and source.clinician_user_id = prescription.prescribing_clinician_user_id
+        where prescription.id = p_prescription_id
+          and prescription.prescribing_clinician_user_id = p_clinician_user_id
+      ),
+    'pharmacy_partner_verified',
+    p_pharmacy_id is not null and exists (
+      select 1 from public.care_pharmacies pharmacy
+      where pharmacy.id = p_pharmacy_id
+        and pharmacy.verification_state = 'verified'
+    ),
+    'pharmacy_identity_verified',
+    p_pharmacy_id is not null and exists (
+      select 1 from public.care_pharmacies pharmacy
+      where pharmacy.id = p_pharmacy_id
+        and pharmacy.verification_state = 'verified'
+        and nullif(trim(pharmacy.legal_name), '') is not null
+        and nullif(trim(pharmacy.legal_address), '') is not null
+    ),
+    'pharmacy_license_verified',
+    p_pharmacy_id is not null
+      and p_state_code is not null
+      and exists (
+        select 1 from public.care_pharmacy_licenses license
+        where license.pharmacy_id = p_pharmacy_id
+          and license.state_code = p_state_code
+          and license.verification_state = 'verified'
+          and license.expires_at > p_as_of
+      ),
+    'pharmacy_state_coverage_verified',
+    p_pharmacy_id is not null
+      and p_state_code is not null
+      and exists (
+        select 1 from public.care_pharmacy_state_coverage coverage
+        where coverage.pharmacy_id = p_pharmacy_id
+          and coverage.state_code = p_state_code
+          and coverage.active
+          and (coverage.expires_at is null or coverage.expires_at > p_as_of)
+      ),
+    'pharmacy_agreement_verified',
+    p_pharmacy_id is not null and exists (
+      select 1 from public.care_pharmacies pharmacy
+      where pharmacy.id = p_pharmacy_id
+        and pharmacy.verification_state = 'verified'
+        and nullif(trim(pharmacy.agreement_reference), '') is not null
+    ),
+    'pharmacy_integration_verified',
+    p_pharmacy_id is not null and exists (
+      select 1 from public.care_pharmacies pharmacy
+      where pharmacy.id = p_pharmacy_id
+        and pharmacy.verification_state = 'verified'
+        and nullif(trim(pharmacy.integration_reference), '') is not null
+    ),
+    'pharmacy_support_verified',
+    p_pharmacy_id is not null and exists (
+      select 1 from public.care_pharmacies pharmacy
+      where pharmacy.id = p_pharmacy_id
+        and pharmacy.verification_state = 'verified'
+        and nullif(trim(pharmacy.support_contact_reference), '') is not null
+    )
+  );
+$$;
+
 create or replace function public.care_create_prescription_draft(
   p_patient_id uuid,
   p_review_id uuid,
@@ -354,27 +506,30 @@ set search_path = ''
 as $$
 declare
   review_row public.care_clinician_reviews%rowtype;
+  appointment_row public.care_appointments%rowtype;
   source_row public.care_prescription_content_sources%rowtype;
   prescription_row public.care_prescriptions%rowtype;
 begin
-  select * into prescription_row from public.care_prescriptions
-  where prescribing_clinician_user_id = p_clinician_user_id
-    and create_idempotency_key = p_idempotency_key;
-  if found then return prescription_row; end if;
-
   select * into review_row from public.care_clinician_reviews
   where id = p_review_id and patient_id = p_patient_id
     and assigned_clinician_user_id = p_clinician_user_id
     and status = 'decided' and final_decision = 'approved'
-    and final_decision_source = 'human_clinician';
+    and final_decision_source = 'human_clinician'
+  for share;
   if not found then raise exception 'care_approved_human_review_required' using errcode = '23514'; end if;
-  if not exists (
-    select 1 from public.care_appointments appointment
-    where appointment.id = review_row.appointment_id
-      and appointment.patient_id = p_patient_id
-      and appointment.assigned_clinician_user_id = p_clinician_user_id
-      and appointment.status = 'completed'
-  ) then raise exception 'care_completed_assigned_appointment_required' using errcode = '23514'; end if;
+
+  select * into appointment_row
+  from public.care_appointments
+  where id = review_row.appointment_id
+    and patient_id = p_patient_id
+    and assigned_clinician_user_id = p_clinician_user_id
+    and status = 'completed'
+  for share;
+  if not found then raise exception 'care_completed_assigned_appointment_required' using errcode = '23514'; end if;
+  if not public.care_prescription_context_current(
+    p_patient_id,
+    appointment_row.id
+  ) then raise exception 'care_current_consent_and_state_required' using errcode = '23514'; end if;
   if not public.care_clinician_ready(p_clinician_user_id, review_row.patient_state_code, p_occurred_at)
   then raise exception 'care_current_clinician_coverage_required' using errcode = '23514'; end if;
   if exists (
@@ -389,6 +544,35 @@ begin
       and prior.prescribing_clinician_user_id = p_clinician_user_id
       and prior.status = 'signed'
   ) then raise exception 'care_valid_supersession_target_required' using errcode = '23514'; end if;
+
+  select * into prescription_row
+  from public.care_prescriptions
+  where prescribing_clinician_user_id = p_clinician_user_id
+    and create_idempotency_key = p_idempotency_key
+  for update;
+  if found then
+    select * into source_row
+    from public.care_prescription_content_sources
+    where id = prescription_row.verified_content_source_id
+      and patient_id = p_patient_id
+      and appointment_id = appointment_row.id
+      and clinician_review_id = p_review_id
+      and clinician_user_id = p_clinician_user_id
+    for share;
+    if not found
+      or prescription_row.patient_id <> p_patient_id
+      or prescription_row.appointment_id <> appointment_row.id
+      or prescription_row.clinician_review_id <> p_review_id
+      or prescription_row.supersedes_prescription_id is distinct from p_supersedes_prescription_id
+      or source_row.formulation <> trim(p_formulation)
+      or source_row.concentration <> trim(p_concentration)
+      or source_row.route <> trim(p_route)
+      or source_row.quantity <> trim(p_quantity)
+      or source_row.directions <> trim(p_directions)
+      or source_row.refills <> p_refills
+    then raise exception 'care_prescription_replay_mismatch' using errcode = '23514'; end if;
+    return prescription_row;
+  end if;
 
   insert into public.care_prescription_content_sources (
     patient_id, appointment_id, clinician_review_id, clinician_user_id,
@@ -413,10 +597,10 @@ begin
 
   insert into public.care_prescription_events (
     prescription_id, patient_id, actor_user_id, actor_kind, action,
-    to_status, idempotency_key, occurred_at
+    to_status, expected_version, idempotency_key, occurred_at
   ) values (
     prescription_row.id, p_patient_id, p_clinician_user_id,
-    'human_clinician', 'drafted', 'draft', p_idempotency_key, p_occurred_at
+    'human_clinician', 'drafted', 'draft', 0, p_idempotency_key, p_occurred_at
   );
   return prescription_row;
 end;
@@ -436,19 +620,13 @@ set search_path = ''
 as $$
 declare
   prescription_row public.care_prescriptions%rowtype;
+  appointment_row public.care_appointments%rowtype;
+  replay_event public.care_prescription_events%rowtype;
   state_code text;
 begin
-  if exists (
-    select 1 from public.care_prescription_events
-    where prescription_id = p_prescription_id and idempotency_key = p_idempotency_key
-  ) then
-    select * into prescription_row from public.care_prescriptions where id = p_prescription_id;
-    return prescription_row;
-  end if;
   select prescription.*
     into prescription_row
   from public.care_prescriptions prescription
-  join public.care_clinician_reviews review on review.id = prescription.clinician_review_id
   join public.care_prescription_content_sources source
     on source.id = prescription.verified_content_source_id
     and source.patient_id = prescription.patient_id
@@ -456,15 +634,47 @@ begin
     and source.clinician_review_id = prescription.clinician_review_id
     and source.clinician_user_id = prescription.prescribing_clinician_user_id
   where prescription.id = p_prescription_id
-    and prescription.prescribing_clinician_user_id = p_clinician_user_id
-    and prescription.status = 'draft'
-    and prescription.version = p_expected_version;
+  for update of prescription;
   if not found then raise exception 'care_signable_assigned_prescription_required' using errcode = '23514'; end if;
-  select patient_state_code into state_code
-    from public.care_clinician_reviews
-    where id = prescription_row.clinician_review_id;
+  if prescription_row.prescribing_clinician_user_id <> p_clinician_user_id
+  then raise exception 'care_signable_assigned_prescription_required' using errcode = '23514'; end if;
+
+  select * into appointment_row
+  from public.care_appointments
+  where id = prescription_row.appointment_id
+    and patient_id = prescription_row.patient_id
+    and assigned_clinician_user_id = p_clinician_user_id
+    and status = 'completed'
+  for share;
+  if not found then raise exception 'care_completed_assigned_appointment_required' using errcode = '23514'; end if;
+  if not public.care_prescription_context_current(
+    prescription_row.patient_id,
+    appointment_row.id
+  ) then raise exception 'care_current_consent_and_state_required' using errcode = '23514'; end if;
+  state_code := appointment_row.patient_state_code;
   if not public.care_clinician_ready(p_clinician_user_id, state_code, p_occurred_at)
   then raise exception 'care_current_clinician_coverage_required' using errcode = '23514'; end if;
+
+  select * into replay_event
+  from public.care_prescription_events
+  where prescription_id = p_prescription_id
+    and idempotency_key = p_idempotency_key
+  for share;
+  if found then
+    if replay_event.actor_user_id <> p_clinician_user_id
+      or replay_event.actor_kind <> 'human_clinician'
+      or replay_event.action <> 'signed'
+      or replay_event.from_status <> 'draft'
+      or replay_event.to_status <> 'signed'
+      or replay_event.expected_version <> p_expected_version
+      or prescription_row.status <> 'signed'
+    then raise exception 'care_prescription_replay_mismatch' using errcode = '23514'; end if;
+    return prescription_row;
+  end if;
+
+  if prescription_row.status <> 'draft'
+    or prescription_row.version <> p_expected_version
+  then raise exception 'care_signable_assigned_prescription_required' using errcode = '23514'; end if;
 
   if prescription_row.supersedes_prescription_id is not null then
     update public.care_prescriptions
@@ -472,11 +682,11 @@ begin
       where id = prescription_row.supersedes_prescription_id and status = 'signed';
     insert into public.care_prescription_events (
       prescription_id, patient_id, actor_user_id, actor_kind, action,
-      from_status, to_status, idempotency_key, occurred_at
+      from_status, to_status, expected_version, idempotency_key, occurred_at
     ) values (
       prescription_row.supersedes_prescription_id, prescription_row.patient_id,
       p_clinician_user_id, 'human_clinician', 'superseded', 'signed',
-      'superseded', p_idempotency_key || ':prior', p_occurred_at
+      'superseded', p_expected_version, p_idempotency_key || ':prior', p_occurred_at
     );
   end if;
   update public.care_prescriptions
@@ -486,10 +696,11 @@ begin
     returning * into prescription_row;
   insert into public.care_prescription_events (
     prescription_id, patient_id, actor_user_id, actor_kind, action,
-    from_status, to_status, idempotency_key, occurred_at
+    from_status, to_status, expected_version, idempotency_key, occurred_at
   ) values (
     prescription_row.id, prescription_row.patient_id, p_clinician_user_id,
-    'human_clinician', 'signed', 'draft', 'signed', p_idempotency_key, p_occurred_at
+    'human_clinician', 'signed', 'draft', 'signed', p_expected_version,
+    p_idempotency_key, p_occurred_at
   );
   return prescription_row;
 end;
@@ -509,13 +720,11 @@ set search_path = ''
 as $$
 declare
   prescription_row public.care_prescriptions%rowtype;
+  appointment_row public.care_appointments%rowtype;
   order_row public.care_pharmacy_orders%rowtype;
+  replay_event public.care_pharmacy_order_events%rowtype;
   state_code text;
 begin
-  select * into order_row from public.care_pharmacy_orders
-    where assigned_pharmacy_id = p_pharmacy_id
-      and assignment_idempotency_key = p_idempotency_key;
-  if found then return order_row; end if;
   if not exists (
     select 1 from public.care_role_assignments
     where user_id = p_admin_user_id and role = 'clinical_admin' and revoked_at is null
@@ -524,13 +733,49 @@ begin
     into prescription_row
   from public.care_prescriptions prescription
   join public.care_appointments appointment on appointment.id = prescription.appointment_id
-  where prescription.id = p_prescription_id and prescription.status = 'signed';
+  where prescription.id = p_prescription_id
+  for update of prescription;
   if not found then raise exception 'care_signed_prescription_required' using errcode = '23514'; end if;
-  select patient_state_code into state_code
-    from public.care_appointments
-    where id = prescription_row.appointment_id;
+  if prescription_row.status <> 'signed'
+  then raise exception 'care_signed_prescription_required' using errcode = '23514'; end if;
+
+  select * into appointment_row
+  from public.care_appointments
+  where id = prescription_row.appointment_id
+    and patient_id = prescription_row.patient_id
+  for share;
+  if not found then raise exception 'care_prescription_appointment_required' using errcode = '23514'; end if;
+  if not public.care_prescription_context_current(
+    prescription_row.patient_id,
+    appointment_row.id
+  ) then raise exception 'care_current_consent_and_state_required' using errcode = '23514'; end if;
+  state_code := appointment_row.patient_state_code;
   if not public.care_pharmacy_ready(p_pharmacy_id, state_code, p_occurred_at)
   then raise exception 'care_verified_pharmacy_coverage_required' using errcode = '23514'; end if;
+
+  select * into order_row
+  from public.care_pharmacy_orders
+  where prescription_id = p_prescription_id
+  for update;
+  if found then
+    select * into replay_event
+    from public.care_pharmacy_order_events
+    where pharmacy_order_id = order_row.id
+      and idempotency_key = p_idempotency_key
+    for share;
+    if not found
+      or order_row.patient_id <> prescription_row.patient_id
+      or order_row.assigned_pharmacy_id <> p_pharmacy_id
+      or order_row.patient_state_code <> state_code
+      or order_row.assignment_idempotency_key <> p_idempotency_key
+      or replay_event.actor_user_id <> p_admin_user_id
+      or replay_event.actor_kind <> 'clinical_admin'
+      or replay_event.action <> 'assigned'
+      or replay_event.to_status <> 'pending_pharmacy'
+    then raise exception 'care_pharmacy_assignment_replay_mismatch' using errcode = '23514'; end if;
+    return order_row;
+  end if;
+
   insert into public.care_pharmacy_orders (
     patient_id, prescription_id, assigned_pharmacy_id, patient_state_code,
     assignment_idempotency_key, created_at, updated_at
@@ -540,10 +785,10 @@ begin
   ) returning * into order_row;
   insert into public.care_pharmacy_order_events (
     pharmacy_order_id, patient_id, actor_user_id, actor_kind, action,
-    to_status, idempotency_key, occurred_at
+    to_status, expected_version, idempotency_key, occurred_at
   ) values (
     order_row.id, order_row.patient_id, p_admin_user_id, 'clinical_admin',
-    'assigned', 'pending_pharmacy', p_idempotency_key, p_occurred_at
+    'assigned', 'pending_pharmacy', 0, p_idempotency_key, p_occurred_at
   );
   return order_row;
 end;
@@ -566,18 +811,37 @@ set search_path = ''
 as $$
 declare
   order_row public.care_pharmacy_orders%rowtype;
+  prescription_row public.care_prescriptions%rowtype;
+  appointment_row public.care_appointments%rowtype;
+  replay_event public.care_pharmacy_order_events%rowtype;
   next_status text;
+  prior_status text;
 begin
-  if exists (
-    select 1 from public.care_pharmacy_order_events
-    where pharmacy_order_id = p_order_id and idempotency_key = p_idempotency_key
-  ) then
-    select * into order_row from public.care_pharmacy_orders where id = p_order_id;
-    return order_row;
-  end if;
-  select * into order_row from public.care_pharmacy_orders
-  where id = p_order_id and version = p_expected_version;
+  select * into order_row
+  from public.care_pharmacy_orders
+  where id = p_order_id
+  for update;
   if not found then raise exception 'care_current_pharmacy_order_required' using errcode = '23514'; end if;
+
+  select * into prescription_row
+  from public.care_prescriptions
+  where id = order_row.prescription_id
+    and patient_id = order_row.patient_id
+  for share;
+  if not found then raise exception 'care_signed_prescription_required' using errcode = '23514'; end if;
+
+  select * into appointment_row
+  from public.care_appointments
+  where id = prescription_row.appointment_id
+    and patient_id = order_row.patient_id
+    and patient_state_code = order_row.patient_state_code
+  for share;
+  if not found then raise exception 'care_prescription_appointment_required' using errcode = '23514'; end if;
+  if not public.care_prescription_context_current(
+    order_row.patient_id,
+    appointment_row.id
+  ) then raise exception 'care_current_consent_and_state_required' using errcode = '23514'; end if;
+
   if not exists (
     select 1
     from public.care_pharmacy_operators operator
@@ -592,6 +856,26 @@ begin
   if not public.care_pharmacy_ready(order_row.assigned_pharmacy_id, order_row.patient_state_code, p_occurred_at)
   then raise exception 'care_current_pharmacy_coverage_required' using errcode = '23514'; end if;
 
+  select * into replay_event
+  from public.care_pharmacy_order_events
+  where pharmacy_order_id = p_order_id
+    and idempotency_key = p_idempotency_key
+  for share;
+  if found then
+    if replay_event.actor_user_id <> p_operator_user_id
+      or replay_event.actor_kind <> 'pharmacy_operator'
+      or replay_event.action <> p_action
+      or replay_event.clarification_reference is distinct from nullif(trim(p_clarification_reference), '')
+      or replay_event.tracking_reference is distinct from nullif(trim(p_tracking_reference), '')
+      or replay_event.expected_version <> p_expected_version
+    then raise exception 'care_pharmacy_action_replay_mismatch' using errcode = '23514'; end if;
+    return order_row;
+  end if;
+
+  if order_row.version <> p_expected_version
+  then raise exception 'care_current_pharmacy_order_required' using errcode = '23514'; end if;
+
+  prior_status := order_row.status;
   next_status := case p_action
     when 'receive' then 'received'
     when 'request_clarification' then 'clarification_requested'
@@ -605,7 +889,6 @@ begin
   if next_status is null or not (
     (order_row.status = 'pending_pharmacy' and next_status in ('received','rejected','cancelled'))
     or (order_row.status = 'received' and next_status in ('clarification_requested','accepted','rejected','cancelled'))
-    or (order_row.status = 'clarification_requested' and next_status in ('received','rejected','cancelled'))
     or (order_row.status = 'accepted' and next_status in ('clarification_requested','dispensed','cancelled'))
     or (order_row.status = 'dispensed' and next_status = 'shipped')
     or (order_row.status = 'shipped' and next_status = 'delivered')
@@ -619,7 +902,10 @@ begin
 
   update public.care_pharmacy_orders set
     status = next_status,
-    clarification_open = (next_status = 'clarification_requested'),
+    clarification_open = case
+      when next_status = 'clarification_requested' then true
+      else clarification_open
+    end,
     tracking_reference = case when next_status = 'shipped' then trim(p_tracking_reference) else tracking_reference end,
     version = version + 1,
     updated_at = p_occurred_at
@@ -627,14 +913,128 @@ begin
   insert into public.care_pharmacy_order_events (
     pharmacy_order_id, patient_id, actor_user_id, actor_kind, action,
     from_status, to_status, clarification_reference, tracking_reference,
-    idempotency_key, occurred_at
+    expected_version, idempotency_key, occurred_at
   ) values (
     order_row.id, order_row.patient_id, p_operator_user_id, 'pharmacy_operator',
-    p_action, case p_action
-      when 'receive' then case when order_row.status = 'received' then 'clarification_requested' else 'pending_pharmacy' end
-      else null end,
+    p_action, prior_status,
     next_status, nullif(trim(p_clarification_reference), ''),
-    nullif(trim(p_tracking_reference), ''), p_idempotency_key, p_occurred_at
+    nullif(trim(p_tracking_reference), ''), p_expected_version,
+    p_idempotency_key, p_occurred_at
+  );
+  return order_row;
+end;
+$$;
+
+create or replace function public.care_resolve_pharmacy_clarification(
+  p_order_id uuid,
+  p_resolver_user_id uuid,
+  p_expected_version integer,
+  p_resolution_reference text,
+  p_idempotency_key text,
+  p_occurred_at timestamptz
+)
+returns public.care_pharmacy_orders
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  order_row public.care_pharmacy_orders%rowtype;
+  prescription_row public.care_prescriptions%rowtype;
+  appointment_row public.care_appointments%rowtype;
+  replay_event public.care_pharmacy_order_events%rowtype;
+  resolver_kind text;
+begin
+  select * into order_row
+  from public.care_pharmacy_orders
+  where id = p_order_id
+  for update;
+  if not found then raise exception 'care_current_pharmacy_order_required' using errcode = '23514'; end if;
+
+  select * into prescription_row
+  from public.care_prescriptions
+  where id = order_row.prescription_id
+    and patient_id = order_row.patient_id
+    and status = 'signed'
+  for share;
+  if not found then raise exception 'care_signed_prescription_required' using errcode = '23514'; end if;
+
+  select * into appointment_row
+  from public.care_appointments
+  where id = prescription_row.appointment_id
+    and patient_id = order_row.patient_id
+    and patient_state_code = order_row.patient_state_code
+  for share;
+  if not found then raise exception 'care_prescription_appointment_required' using errcode = '23514'; end if;
+  if not public.care_prescription_context_current(
+    order_row.patient_id,
+    appointment_row.id
+  ) then raise exception 'care_current_consent_and_state_required' using errcode = '23514'; end if;
+
+  if p_resolver_user_id = prescription_row.prescribing_clinician_user_id
+    and public.care_clinician_ready(
+      p_resolver_user_id,
+      order_row.patient_state_code,
+      p_occurred_at
+    )
+  then
+    resolver_kind := 'human_clinician';
+  elsif exists (
+    select 1
+    from public.care_role_assignments assignment
+    where assignment.user_id = p_resolver_user_id
+      and assignment.role = 'clinical_admin'
+      and assignment.revoked_at is null
+  ) then
+    resolver_kind := 'clinical_admin';
+  else
+    raise exception 'care_clarification_resolver_required' using errcode = '42501';
+  end if;
+
+  select * into replay_event
+  from public.care_pharmacy_order_events
+  where pharmacy_order_id = p_order_id
+    and idempotency_key = p_idempotency_key
+  for share;
+  if found then
+    if replay_event.actor_user_id <> p_resolver_user_id
+      or replay_event.actor_kind <> resolver_kind
+      or replay_event.action <> 'clarification_resolved'
+      or replay_event.from_status <> 'clarification_requested'
+      or replay_event.to_status <> 'received'
+      or replay_event.clarification_reference is distinct from nullif(trim(p_resolution_reference), '')
+      or replay_event.expected_version <> p_expected_version
+      or order_row.status <> 'received'
+      or order_row.clarification_open
+    then raise exception 'care_clarification_replay_mismatch' using errcode = '23514'; end if;
+    return order_row;
+  end if;
+
+  if order_row.status <> 'clarification_requested'
+    or not order_row.clarification_open
+    or order_row.version <> p_expected_version
+  then raise exception 'care_open_clarification_required' using errcode = '23514'; end if;
+  if nullif(trim(p_resolution_reference), '') is null
+  then raise exception 'care_clarification_resolution_reference_required' using errcode = '23514'; end if;
+
+  update public.care_pharmacy_orders
+  set status = 'received',
+      clarification_open = false,
+      version = version + 1,
+      updated_at = p_occurred_at
+  where id = p_order_id
+  returning * into order_row;
+
+  insert into public.care_pharmacy_order_events (
+    pharmacy_order_id, patient_id, actor_user_id, actor_kind, action,
+    from_status, to_status, clarification_reference, expected_version,
+    idempotency_key,
+    occurred_at
+  ) values (
+    order_row.id, order_row.patient_id, p_resolver_user_id, resolver_kind,
+    'clarification_resolved', 'clarification_requested', 'received',
+    trim(p_resolution_reference), p_expected_version, p_idempotency_key,
+    p_occurred_at
   );
   return order_row;
 end;
@@ -660,16 +1060,21 @@ $$;
 
 revoke all on function public.care_audit_pharmacy_configuration() from public, anon, authenticated;
 revoke all on function public.care_pharmacy_ready(uuid, text, timestamptz) from public, anon, authenticated;
+revoke all on function public.care_prescription_context_current(uuid, uuid) from public, anon, authenticated;
+revoke all on function public.care_prescription_readiness(uuid, uuid, text, uuid, timestamptz) from public, anon, authenticated;
 revoke all on function public.care_create_prescription_draft(uuid, uuid, uuid, text, text, text, text, text, integer, uuid, text, timestamptz) from public, anon, authenticated;
 revoke all on function public.care_sign_prescription(uuid, uuid, integer, text, timestamptz) from public, anon, authenticated;
 revoke all on function public.care_assign_pharmacy_order(uuid, uuid, uuid, text, timestamptz) from public, anon, authenticated;
 revoke all on function public.care_apply_pharmacy_order_action(uuid, uuid, integer, text, text, text, text, timestamptz) from public, anon, authenticated;
+revoke all on function public.care_resolve_pharmacy_clarification(uuid, uuid, integer, text, text, timestamptz) from public, anon, authenticated;
 
 grant execute on function public.care_pharmacy_ready(uuid, text, timestamptz) to service_role;
+grant execute on function public.care_prescription_readiness(uuid, uuid, text, uuid, timestamptz) to service_role;
 grant execute on function public.care_create_prescription_draft(uuid, uuid, uuid, text, text, text, text, text, integer, uuid, text, timestamptz) to service_role;
 grant execute on function public.care_sign_prescription(uuid, uuid, integer, text, timestamptz) to service_role;
 grant execute on function public.care_assign_pharmacy_order(uuid, uuid, uuid, text, timestamptz) to service_role;
 grant execute on function public.care_apply_pharmacy_order_action(uuid, uuid, integer, text, text, text, text, timestamptz) to service_role;
+grant execute on function public.care_resolve_pharmacy_clarification(uuid, uuid, integer, text, text, timestamptz) to service_role;
 
 insert into public.care_capabilities (capability_key, state)
 values ('care', 'disabled')

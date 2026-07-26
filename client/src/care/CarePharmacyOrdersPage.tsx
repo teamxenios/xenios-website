@@ -14,7 +14,6 @@ type State =
 const nextAction: Partial<Record<CarePharmacyOrder["status"], CarePharmacyAction>> = {
   pending_pharmacy: "receive",
   received: "accept",
-  clarification_requested: "receive",
   accepted: "dispense",
   dispensed: "ship",
   shipped: "deliver",
@@ -77,7 +76,7 @@ export default function CarePharmacyOrdersPage() {
   return (
     <PageShell>
       <SeoHead title="Care pharmacy, xenios" description="Restricted Care pharmacy workflow." path="/care/pharmacy" />
-      <main className="container-x pt-24 md:pt-36 pb-20" id="main-content">
+      <div className="container-x pt-24 md:pt-36 pb-20" id="main-content">
         <p className="mono-cap text-pulse mb-6">CARE · PHARMACY</p>
         <h1 className="display-m max-w-[18ch]">One verified action at a time.</h1>
         <p className="body-l text-ink-2 mt-8 max-w-[64ch]">This queue is restricted to verified operators at the assigned pharmacy. It exposes only the records required for that assignment.</p>
@@ -92,6 +91,9 @@ export default function CarePharmacyOrdersPage() {
               {state.orders.map((order) => {
                 const action = nextAction[order.status];
                 const needsReference = action === "ship";
+                const canRequestClarification =
+                  order.status === "received" || order.status === "accepted";
+                const reference = references[order.id]?.trim() ?? "";
                 return (
                   <article className="card" key={order.id}>
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -105,14 +107,23 @@ export default function CarePharmacyOrdersPage() {
                       <div><dt className="mono-label text-ink-mute">QUANTITY</dt><dd className="body-m mt-2">{order.prescriptionContent.quantity}</dd></div>
                       <div className="sm:col-span-2"><dt className="mono-label text-ink-mute">DIRECTIONS</dt><dd className="body-m mt-2 whitespace-pre-wrap">{order.prescriptionContent.directions}</dd></div>
                     </dl>}
-                    {action && <div className="rule-top mt-6 pt-6">
-                      {needsReference && <label className="block max-w-[520px]">
-                        <span className="mono-label text-ink">PRIVATE TRACKING REFERENCE</span>
+                    {order.status === "clarification_requested" && (
+                      <div className="rule-top mt-6 pt-6">
+                        <p className="mono-label text-ink">CLINICIAN RESPONSE REQUIRED</p>
+                        <p className="body-m text-ink-2 mt-3">This clarification remains open until the assigned clinician or a clinical administrator records a private resolution reference.</p>
+                      </div>
+                    )}
+                    {(action || canRequestClarification) && <div className="rule-top mt-6 pt-6">
+                      {(needsReference || canRequestClarification) && <label className="block max-w-[520px]">
+                        <span className="mono-label text-ink">{needsReference ? "PRIVATE TRACKING REFERENCE" : "CLARIFICATION REQUEST REFERENCE"}</span>
                         <input className="input mt-3 w-full" value={references[order.id] ?? ""} onChange={(event) => setReferences((current) => ({ ...current, [order.id]: event.target.value }))} required />
                       </label>}
-                      <button type="button" className="btn btn-primary mt-5" disabled={busyOrder === order.id || (needsReference && !references[order.id]?.trim())} onClick={() => void apply(order, action)}>
+                      {action && <button type="button" className="btn btn-primary mt-5" disabled={busyOrder === order.id || (needsReference && !reference)} onClick={() => void apply(order, action)}>
                         {busyOrder === order.id ? "Saving…" : actionLabel[action]}
-                      </button>
+                      </button>}
+                      {canRequestClarification && <button type="button" className="btn btn-secondary mt-5 sm:ml-3" disabled={busyOrder === order.id || !reference} onClick={() => void apply(order, "request_clarification")}>
+                        Request clarification
+                      </button>}
                     </div>}
                   </article>
                 );
@@ -120,7 +131,7 @@ export default function CarePharmacyOrdersPage() {
             </div>
           )}
         </section>
-      </main>
+      </div>
     </PageShell>
   );
 }

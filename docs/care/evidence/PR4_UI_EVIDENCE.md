@@ -42,6 +42,11 @@ from an authorized patient-owned server response.
 - Populated values originate only from authorized patient-owned API records.
 - Semantic headings, `aria-live`, `aria-busy`, labeled definition lists,
   visible text actions, and single-column mobile reflow are present.
+- Routed Wouter + `PageShell` regression proves exactly one `<main>`, one
+  `<h1>`, and the retained `#main-content` focus target on both PR4 routes
+  across populated, empty, disabled, error, 320px, 375px, and reflow labels.
+- Pharmacy clarification is a secondary action with a required private
+  reference; the primary workflow action remains visually dominant.
 - No independent Care branding, palette, gradient, duplicate header, new
   typography, or custom button system was introduced.
 

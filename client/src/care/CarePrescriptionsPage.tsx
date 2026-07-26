@@ -47,7 +47,7 @@ export default function CarePrescriptionsPage() {
         description="Private prescription status in the separate Xenios Care pathway."
         path="/care/prescriptions"
       />
-      <main className="container-x pt-24 md:pt-36 pb-20" id="main-content">
+      <div className="container-x pt-24 md:pt-36 pb-20" id="main-content">
         <p className="mono-cap text-pulse mb-6">CARE · PRESCRIPTIONS</p>
         <h1 className="display-m max-w-[18ch]">Your clinician remains the source of every prescription.</h1>
         <p className="body-l text-ink-2 mt-8 max-w-[64ch]">
@@ -117,7 +117,7 @@ export default function CarePrescriptionsPage() {
             </div>
           )}
         </section>
-      </main>
+      </div>
     </PageShell>
   );
 }

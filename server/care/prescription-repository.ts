@@ -12,7 +12,12 @@ type Row = Record<string, unknown>;
 export interface CarePrescriptionRepository {
   listPatientPrescriptions(patientId: CareRecordId): Promise<CarePrescription[]>;
   listAssignedPharmacyOrders(operatorUserId: string): Promise<CarePharmacyOrder[]>;
-  loadReadiness(stateCode: string | null): Promise<CarePrescriptionReadinessFacts>;
+  loadReadiness(input: {
+    stateCode: string | null;
+    clinicianUserId: string | null;
+    pharmacyId: CareRecordId | null;
+    prescriptionId: CareRecordId | null;
+  }): Promise<CarePrescriptionReadinessFacts>;
   createDraft(input: {
     patientId: CareRecordId;
     reviewId: CareRecordId;
@@ -48,6 +53,14 @@ export interface CarePrescriptionRepository {
     action: CarePharmacyAction;
     clarificationReference: string | null;
     trackingReference: string | null;
+    idempotencyKey: string;
+    occurredAt: string;
+  }): Promise<CarePharmacyOrder>;
+  resolveClarification(input: {
+    orderId: CareRecordId;
+    resolverUserId: string;
+    expectedVersion: number;
+    resolutionReference: string;
     idempotencyKey: string;
     occurredAt: string;
   }): Promise<CarePharmacyOrder>;
@@ -161,34 +174,34 @@ export function buildCarePrescriptionRepository(): CarePrescriptionRepository {
       throwOnError(error, "care_pharmacy_order_lookup_failed");
       return (data ?? []).map((row) => asOrder(row as Row));
     },
-    async loadReadiness(stateCode) {
+    async loadReadiness(input) {
       const now = new Date().toISOString();
-      const [groups, clinicians, pharmacies, licenses, coverage] = await Promise.all([
-        admin.from("care_medical_groups").select("id").eq("verification_state", "verified").limit(1),
-        admin.from("care_clinician_profiles").select("clinician_user_id").eq("verification_state", "verified").limit(1),
-        admin.from("care_pharmacies").select("id").eq("verification_state", "verified").limit(1),
-        stateCode
-          ? admin.from("care_pharmacy_licenses").select("id").eq("state_code", stateCode).eq("verification_state", "verified").gt("expires_at", now).limit(1)
-          : Promise.resolve({ data: [], error: null }),
-        stateCode
-          ? admin.from("care_pharmacy_state_coverage").select("id").eq("state_code", stateCode).eq("active", true).limit(1)
-          : Promise.resolve({ data: [], error: null }),
-      ]);
-      for (const result of [groups, clinicians, pharmacies, licenses, coverage]) {
-        throwOnError(result.error, "care_prescription_readiness_lookup_failed");
-      }
-      const pharmacy = Boolean(pharmacies.data?.length);
+      const { data, error } = await admin.rpc("care_prescription_readiness", {
+        p_clinician_user_id: input.clinicianUserId,
+        p_pharmacy_id: input.pharmacyId,
+        p_state_code: input.stateCode,
+        p_prescription_id: input.prescriptionId,
+        p_as_of: now,
+      });
+      throwOnError(error, "care_prescription_readiness_lookup_failed");
+      const facts = (data ?? {}) as Row;
       return {
-        medicalGroupVerified: Boolean(groups.data?.length),
-        clinicianCoverageVerified: Boolean(clinicians.data?.length),
-        patientSpecificContentVerified: false,
-        pharmacyPartnerVerified: pharmacy,
-        pharmacyIdentityVerified: pharmacy,
-        pharmacyLicenseVerified: Boolean(licenses.data?.length),
-        pharmacyStateCoverageVerified: Boolean(coverage.data?.length),
-        pharmacyAgreementVerified: pharmacy,
-        pharmacyIntegrationVerified: pharmacy,
-        pharmacySupportVerified: pharmacy,
+        medicalGroupVerified: Boolean(facts.medical_group_verified),
+        clinicianCoverageVerified: Boolean(facts.clinician_coverage_verified),
+        patientSpecificContentVerified: Boolean(
+          facts.patient_specific_content_verified,
+        ),
+        pharmacyPartnerVerified: Boolean(facts.pharmacy_partner_verified),
+        pharmacyIdentityVerified: Boolean(facts.pharmacy_identity_verified),
+        pharmacyLicenseVerified: Boolean(facts.pharmacy_license_verified),
+        pharmacyStateCoverageVerified: Boolean(
+          facts.pharmacy_state_coverage_verified,
+        ),
+        pharmacyAgreementVerified: Boolean(facts.pharmacy_agreement_verified),
+        pharmacyIntegrationVerified: Boolean(
+          facts.pharmacy_integration_verified,
+        ),
+        pharmacySupportVerified: Boolean(facts.pharmacy_support_verified),
         publicActivationApproved: false,
       };
     },
@@ -259,6 +272,21 @@ export function buildCarePrescriptionRepository(): CarePrescriptionRepository {
         p_occurred_at: input.occurredAt,
       });
       throwOnError(error, "care_pharmacy_order_write_failed");
+      return asOrder(data as Row);
+    },
+    async resolveClarification(input) {
+      const { data, error } = await admin.rpc(
+        "care_resolve_pharmacy_clarification",
+        {
+          p_order_id: input.orderId,
+          p_resolver_user_id: input.resolverUserId,
+          p_expected_version: input.expectedVersion,
+          p_resolution_reference: input.resolutionReference,
+          p_idempotency_key: input.idempotencyKey,
+          p_occurred_at: input.occurredAt,
+        },
+      );
+      throwOnError(error, "care_clarification_resolution_failed");
       return asOrder(data as Row);
     },
   };
