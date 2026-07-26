@@ -77,7 +77,11 @@ original 1-26 base bundle:
 | 30 | research-security-definer-grants-hardening.sql | RUN 2026-07-25 (`20260725231517`) | independent privilege hardening |
 | 31 | research-products-diagnostics.sql | RUN 2026-07-25 | 4 + 20 + 21 |
 | 32 | research-prelaunch-foundation.sql | RUN 2026-07-25 (`canonical_prelaunch_foundation`) | Supabase Auth + admin boundary |
-| 33 | research-required-input-readiness.sql | PENDING independent review/apply | 32 |
+| 33 | research-required-input-readiness.sql | RUN 2026-07-26 (`20260726045307 canonical_required_input_readiness`) | 32 |
+| 34 | care-access-foundation.sql | RUN 2026-07-26 (`20260726064113 care_access_foundation`) | Supabase Auth |
+| 35 | care-eligibility-intake.sql | RUN 2026-07-26 (`20260726080248 care_eligibility_intake`) | 34 |
+| 36 | care-appointments-clinician.sql | RUN 2026-07-26 (`20260726093600 care_appointments_clinician`) | 34 + 35 |
+| 37 | care-prescription-pharmacy.sql | PENDING reviewed PR4 integration/apply | 34 + 35 + 36 |
 
 The exact FM-1 apply date is not in the managed migration-history stream, so
 the manifest records verified presence instead of inventing a timestamp.
@@ -136,11 +140,18 @@ presence of FM or Product Request objects.
 - Migration 32 is applied as `canonical_prelaunch_foundation`. It contains only
   the disabled internal-build settings row; production has zero pre-launch
   role, namespace, access-audit, and external-action-capture rows.
-- Migration 33 remains pending independent review. Its disposable PostgreSQL
-  16 proof applies twice, exercises the complete required-input and launch
-  lifecycle, rejects secret values and premature public enablement, preserves
-  append-only audit, verifies 4/4 forced RLS and zero browser grants, and rolls
-  all lifecycle rows back to zero.
+- Migration 33 is applied as `canonical_required_input_readiness`. Production
+  has zero required-input and domain-launch rows; the browser cannot bypass the
+  server-authoritative readiness and independent-review boundaries.
+- Care migrations 34-36 are applied in order. Care remains canonically
+  disabled, the deployed tables use forced RLS and reviewed grants, and
+  production has zero Care roles, audits, patients, appointments, reviews, or
+  other operational Care rows.
+- Care migration 37 remains pending exact integration review and production
+  application. Its disposable PostgreSQL 16 proof must apply Care PR1-4 twice,
+  run every lifecycle and read-only verifier, confirm 38/38 Care tables forced
+  RLS, zero PR4 browser grants/policies, seven reviewed PR4 service RPC grants,
+  zero PR4 rows, and the disabled capability before production apply.
 - PENDING migrations for commerce (20-26) are schema-ready but commerce stays
   disabled until: the production commerce dependency layer is wired (see the
   provider readiness doc), a payment processor is approved, and per-SKU purchase
