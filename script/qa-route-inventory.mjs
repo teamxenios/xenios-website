@@ -249,6 +249,8 @@ const adapterAllowlist = new Set([
   "/api/admin/research/activation/esign",
   "/api/research/member",
   "/api/research/member/tracker",
+  "/api/admin/research/operations",
+  "/api/operations/mitch",
 ]);
 const missingAdapterRoutes = clientApiReferences.filter((reference) => {
   if (adapterAllowlist.has(reference.normalized)) return false;
