@@ -2,6 +2,7 @@ import express from "express";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import type { CareRecordId } from "@shared/care/contracts";
+import type { CareEligibilityContext } from "@shared/care/eligibility";
 import type { CareIntakeDefinition } from "@shared/care/intake";
 import type { CareAccessDependencies } from "./access";
 import type { CareEligibilityRepository } from "./eligibility-repository";
@@ -39,11 +40,13 @@ function access(): CareAccessDependencies {
   };
 }
 
-function eligibilityRepository(): CareEligibilityRepository {
+function eligibilityContext(): CareEligibilityContext {
   const event = (
     kind: "telehealth" | "privacy_notice",
   ) => ({
-    id: `${kind}-event` as CareRecordId,
+    id: (kind === "privacy_notice"
+      ? "privacy-event"
+      : "telehealth-event") as CareRecordId,
     patientId,
     documentId: `${kind}-document` as CareRecordId,
     kind,
@@ -52,60 +55,66 @@ function eligibilityRepository(): CareEligibilityRepository {
     occurredAt: "2026-07-25T19:00:00.000Z",
   });
   return {
-    loadContext: vi.fn(async () => ({
+    patientId,
+    capabilityEnabled: true,
+    location: {
+      id: "location-1" as CareRecordId,
       patientId,
-      capabilityEnabled: true,
-      location: {
-        id: "location-1" as CareRecordId,
-        patientId,
-        stateCode: "IL",
-        source: "patient_attestation",
-        attestedAt: "2026-07-25T18:00:00.000Z",
-        supersedesLocationId: null,
-      },
-      identity: {
-        patientId,
-        state: "verified",
-        verifiedAt: "2026-07-25T18:00:00.000Z",
-      },
-      coverage: {
-        stateCode: "IL",
-        supportedStateActive: true,
-        serviceCoverageActive: true,
-        waitlistEnabled: false,
-        activeClinicianCount: 1,
-      },
-      telehealthConsent: {
+      stateCode: "IL",
+      source: "patient_attestation",
+      attestedAt: "2026-07-25T18:00:00.000Z",
+      supersedesLocationId: null,
+    },
+    identity: {
+      patientId,
+      state: "verified",
+      verifiedAt: "2026-07-25T18:00:00.000Z",
+    },
+    coverage: {
+      stateCode: "IL",
+      supportedStateActive: true,
+      serviceCoverageActive: true,
+      waitlistEnabled: false,
+      activeClinicianCount: 1,
+    },
+    telehealthConsent: {
+      kind: "telehealth",
+      requiredDocument: {
+        id: "telehealth-document" as CareRecordId,
         kind: "telehealth",
-        requiredDocument: {
-          id: "telehealth-document" as CareRecordId,
-          kind: "telehealth",
-          version: "approved-v1",
-          contentHash: "sha256:approved",
-          status: "approved",
-          approvedAt: "2026-07-25T18:00:00.000Z",
-          effectiveAt: "2026-07-25T18:00:00.000Z",
-        },
-        activeEvent: event("telehealth"),
-        satisfied: true,
-        reason: "active",
+        version: "approved-v1",
+        contentHash: "sha256:approved",
+        status: "approved",
+        approvedAt: "2026-07-25T18:00:00.000Z",
+        effectiveAt: "2026-07-25T18:00:00.000Z",
       },
-      privacyConsent: {
+      activeEvent: event("telehealth"),
+      satisfied: true,
+      reason: "active",
+    },
+    privacyConsent: {
+      kind: "privacy_notice",
+      requiredDocument: {
+        id: "privacy_notice-document" as CareRecordId,
         kind: "privacy_notice",
-        requiredDocument: {
-          id: "privacy_notice-document" as CareRecordId,
-          kind: "privacy_notice",
-          version: "approved-v1",
-          contentHash: "sha256:approved",
-          status: "approved",
-          approvedAt: "2026-07-25T18:00:00.000Z",
-          effectiveAt: "2026-07-25T18:00:00.000Z",
-        },
-        activeEvent: event("privacy_notice"),
-        satisfied: true,
-        reason: "active",
+        version: "approved-v1",
+        contentHash: "sha256:approved",
+        status: "approved",
+        approvedAt: "2026-07-25T18:00:00.000Z",
+        effectiveAt: "2026-07-25T18:00:00.000Z",
       },
-    })),
+      activeEvent: event("privacy_notice"),
+      satisfied: true,
+      reason: "active",
+    },
+  };
+}
+
+function eligibilityRepository(
+  context: CareEligibilityContext = eligibilityContext(),
+): CareEligibilityRepository {
+  return {
+    loadContext: vi.fn(async () => context),
     recordLocation: vi.fn(),
     recordEligibilityDecision: vi.fn(async () => undefined),
     changeWaitlist: vi.fn(),
@@ -177,13 +186,16 @@ function intakeRepository(
   };
 }
 
-function app(intakes: CareIntakeRepository) {
+function app(
+  intakes: CareIntakeRepository,
+  eligibility: CareEligibilityRepository = eligibilityRepository(),
+) {
   const instance = express();
   instance.use(express.json());
   registerCareIntakeApi(
     instance,
     access(),
-    eligibilityRepository(),
+    eligibility,
     intakes,
     () => new Date("2026-07-25T20:00:00.000Z"),
   );
@@ -301,6 +313,110 @@ describe("Care PR 2 intake routes", () => {
     expect(response.status).toBe(409);
     expect(response.body.code).toBe("care_intake_incomplete");
     expect(repo.submit).not.toHaveBeenCalled();
+  });
+
+  it.each(["telehealthConsent", "privacyConsent"] as const)(
+    "blocks autosave and submit after a later %s revocation",
+    async (consentKey) => {
+      const current = eligibilityContext();
+      const revoked = {
+        ...current,
+        [consentKey]: {
+          ...current[consentKey],
+          activeEvent: null,
+          satisfied: false,
+          reason: "revoked" as const,
+        },
+      };
+      const repo = intakeRepository();
+      const instance = app(repo, eligibilityRepository(revoked));
+
+      const autosave = await request(instance)
+        .patch(`/api/care/intake/${intakeId}/autosave`)
+        .send({
+          expectedVersion: 1,
+          responses: { approved_field: "value" },
+          idempotencyKey: `revoked-${consentKey}-save`,
+        });
+      const submit = await request(instance)
+        .post(`/api/care/intake/${intakeId}/submit`)
+        .send({
+          expectedVersion: 1,
+          idempotencyKey: `revoked-${consentKey}-submit`,
+        });
+
+      expect(autosave.status).toBe(409);
+      expect(autosave.body.code).toBe("care_intake_consent_required");
+      expect(submit.status).toBe(409);
+      expect(submit.body.code).toBe("care_intake_consent_required");
+      expect(repo.autosave).not.toHaveBeenCalled();
+      expect(repo.submit).not.toHaveBeenCalled();
+    },
+  );
+
+  it("blocks autosave and submit after the required privacy notice is superseded", async () => {
+    const current = eligibilityContext();
+    const superseded = {
+      ...current,
+      privacyConsent: {
+        ...current.privacyConsent,
+        requiredDocument: {
+          ...current.privacyConsent.requiredDocument!,
+          id: "privacy_notice-document-v2" as CareRecordId,
+          version: "approved-v2",
+        },
+        activeEvent: null,
+        satisfied: false,
+        reason: "wrong_version" as const,
+      },
+    };
+    const repo = intakeRepository();
+    const instance = app(repo, eligibilityRepository(superseded));
+
+    const autosave = await request(instance)
+      .patch(`/api/care/intake/${intakeId}/autosave`)
+      .send({
+        expectedVersion: 1,
+        responses: { approved_field: "value" },
+        idempotencyKey: "superseded-privacy-save",
+      });
+    const submit = await request(instance)
+      .post(`/api/care/intake/${intakeId}/submit`)
+      .send({
+        expectedVersion: 1,
+        idempotencyKey: "superseded-privacy-submit",
+      });
+
+    expect(autosave.status).toBe(409);
+    expect(autosave.body.code).toBe("care_intake_consent_required");
+    expect(submit.status).toBe(409);
+    expect(submit.body.code).toBe("care_intake_consent_required");
+    expect(repo.autosave).not.toHaveBeenCalled();
+    expect(repo.submit).not.toHaveBeenCalled();
+  });
+
+  it("continues autosave and submit only while both exact bound grants are current", async () => {
+    const repo = intakeRepository();
+    const instance = app(repo);
+
+    const autosave = await request(instance)
+      .patch(`/api/care/intake/${intakeId}/autosave`)
+      .send({
+        expectedVersion: 1,
+        responses: { approved_field: "value" },
+        idempotencyKey: "current-consent-save",
+      });
+    const submit = await request(instance)
+      .post(`/api/care/intake/${intakeId}/submit`)
+      .send({
+        expectedVersion: 1,
+        idempotencyKey: "current-consent-submit",
+      });
+
+    expect(autosave.status).toBe(200);
+    expect(submit.status).toBe(200);
+    expect(repo.autosave).toHaveBeenCalledTimes(1);
+    expect(repo.submit).toHaveBeenCalledTimes(1);
   });
 
   it("returns stable safe 503 JSON for repository failures", async () => {

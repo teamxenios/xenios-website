@@ -114,4 +114,33 @@ describe("Care PR 2 migration posture", () => {
     expect(lifecycle).toContain("stale-version autosave was accepted");
     expect(lifecycle.trimEnd()).toMatch(/rollback;$/);
   });
+
+  it("revalidates exact current consent inside both intake transition RPCs", () => {
+    expect(
+      migration.match(/raise exception 'care_intake_consent_required'/g),
+    ).toHaveLength(4);
+    expect(
+      migration.match(
+        /order by latest\.occurred_at desc, latest\.id desc/g,
+      ),
+    ).toHaveLength(4);
+    expect(lifecycle).toContain(
+      "autosave after consent revocation was accepted",
+    );
+    expect(lifecycle).toContain(
+      "submit after consent revocation was accepted",
+    );
+    expect(lifecycle).toContain(
+      "autosave after consent supersession was accepted",
+    );
+    expect(lifecycle).toContain(
+      "submit after consent supersession was accepted",
+    );
+    expect(lifecycle).toContain(
+      "revocation changed intake version or status",
+    );
+    expect(lifecycle).toContain(
+      "supersession changed intake version or status",
+    );
+  });
 });

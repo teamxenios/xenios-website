@@ -231,7 +231,10 @@ Current branch-ready validation:
 - Scope parity: the 42-file PR 2 name/status delta is identical to rejected old
   head `0f44cdeb4c04b61e585363690655192ec3295e25`; no shared locked file was
   added.
-- Focused Care/client/migration tests: 9 files / 49 tests passed.
+- Rejected consent-lifecycle head
+  `8e3df03173e9d7ed6a351883da3ecac1a595d46f` is superseded and must not be
+  reviewed or merged.
+- Focused Care/client/migration tests: 9 files / 54 tests passed.
 - `npm run check`: passed.
 - Fresh disposable PostgreSQL 16: corrected PR 1 migration applied, PR 2
   migration applied twice with `ON_ERROR_STOP=1`.
@@ -255,6 +258,12 @@ Current branch-ready validation:
   - intake-revision UPDATE and DELETE rejected
   - approved intake definition content mutation/delete rejected
   - autosave and submit required the draft's exact approved definition
+  - autosave and submit required both bound consent events to remain the latest
+    same-patient grants for the exact currently approved document versions
+  - later telehealth revocation blocked autosave and submit without changing
+    revision count, intake version, or status
+  - required privacy-notice supersession blocked autosave and submit without
+    changing revision count, intake version, or status
   - submission replay was idempotent
   - transaction rolled back to zero patient, state, consent, definition, and
     intake fixture rows

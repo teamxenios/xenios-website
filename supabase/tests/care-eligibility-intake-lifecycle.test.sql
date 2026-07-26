@@ -40,6 +40,12 @@ values
     '20000000-0000-0000-0000-000000000004',
     'verified',
     '2026-07-25T18:00:00Z'
+  ),
+  (
+    '21000000-0000-0000-0000-000000000003',
+    '20000000-0000-0000-0000-000000000003',
+    'verified',
+    '2026-07-25T18:00:00Z'
   );
 
 insert into public.care_patient_locations (
@@ -258,6 +264,36 @@ values
     'granted',
     'other-telehealth-1',
     '2026-07-25T18:42:00Z'
+  ),
+  (
+    '24000000-0000-0000-0000-000000000004',
+    '21000000-0000-0000-0000-000000000002',
+    '23000000-0000-0000-0000-000000000002',
+    'privacy_notice',
+    'test-approved-v1',
+    'granted',
+    'other-privacy-1',
+    '2026-07-25T18:43:00Z'
+  ),
+  (
+    '24000000-0000-0000-0000-000000000005',
+    '21000000-0000-0000-0000-000000000003',
+    '23000000-0000-0000-0000-000000000001',
+    'telehealth',
+    'test-approved-v1',
+    'granted',
+    'supersession-telehealth-1',
+    '2026-07-25T18:44:00Z'
+  ),
+  (
+    '24000000-0000-0000-0000-000000000006',
+    '21000000-0000-0000-0000-000000000003',
+    '23000000-0000-0000-0000-000000000002',
+    'privacy_notice',
+    'test-approved-v1',
+    'granted',
+    'supersession-privacy-1',
+    '2026-07-25T18:45:00Z'
   );
 
 do $$
@@ -536,6 +572,199 @@ begin
       and submit_idempotency_key = 'intake-submit-key-1'
   ) then
     raise exception 'intake submit/replay proof failed';
+  end if;
+end;
+$$;
+
+-- Two additional drafts prove that consent freshness is enforced by the
+-- database independently of the HTTP preflight. Both begin with exact current
+-- grants and successfully autosave once before their consent state changes.
+insert into public.care_intakes (
+  id,
+  patient_id,
+  definition_id,
+  definition_version,
+  telehealth_consent_event_id,
+  privacy_consent_event_id,
+  start_idempotency_key,
+  created_at
+)
+values
+  (
+    '26000000-0000-0000-0000-000000000002',
+    '21000000-0000-0000-0000-000000000002',
+    '25000000-0000-0000-0000-000000000001',
+    'test-definition-v1',
+    '24000000-0000-0000-0000-000000000003',
+    '24000000-0000-0000-0000-000000000004',
+    'revocation-intake-start',
+    '2026-07-25T19:07:00Z'
+  ),
+  (
+    '26000000-0000-0000-0000-000000000003',
+    '21000000-0000-0000-0000-000000000003',
+    '25000000-0000-0000-0000-000000000001',
+    'test-definition-v1',
+    '24000000-0000-0000-0000-000000000005',
+    '24000000-0000-0000-0000-000000000006',
+    'supersession-intake-start',
+    '2026-07-25T19:07:30Z'
+  );
+
+select public.care_intake_autosave(
+  '26000000-0000-0000-0000-000000000002',
+  '21000000-0000-0000-0000-000000000002',
+  0,
+  '{"approved_test_field":"current consent"}'::jsonb,
+  'revocation-current-save',
+  '2026-07-25T19:08:00Z'
+);
+
+select public.care_intake_autosave(
+  '26000000-0000-0000-0000-000000000003',
+  '21000000-0000-0000-0000-000000000003',
+  0,
+  '{"approved_test_field":"current consent"}'::jsonb,
+  'supersession-current-save',
+  '2026-07-25T19:08:30Z'
+);
+
+insert into public.care_consent_events (
+  id,
+  patient_id,
+  document_id,
+  kind,
+  document_version,
+  action,
+  idempotency_key,
+  occurred_at
+)
+values (
+  '24000000-0000-0000-0000-000000000007',
+  '21000000-0000-0000-0000-000000000002',
+  '23000000-0000-0000-0000-000000000001',
+  'telehealth',
+  'test-approved-v1',
+  'revoked',
+  'revocation-telehealth-later',
+  '2026-07-25T19:09:00Z'
+);
+
+do $$
+begin
+  begin
+    perform public.care_intake_autosave(
+      '26000000-0000-0000-0000-000000000002',
+      '21000000-0000-0000-0000-000000000002',
+      1,
+      '{"approved_test_field":"must not persist"}'::jsonb,
+      'revoked-consent-save',
+      '2026-07-25T19:09:30Z'
+    );
+    raise exception 'autosave after consent revocation was accepted';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_intake_submit(
+      '26000000-0000-0000-0000-000000000002',
+      '21000000-0000-0000-0000-000000000002',
+      1,
+      'revoked-consent-submit',
+      '2026-07-25T19:10:00Z'
+    );
+    raise exception 'submit after consent revocation was accepted';
+  exception when check_violation then null;
+  end;
+  if (
+    select count(*)
+    from public.care_intake_revisions
+    where intake_id = '26000000-0000-0000-0000-000000000002'
+  ) <> 1 then
+    raise exception 'revocation changed intake revision history';
+  end if;
+  if not exists (
+    select 1
+    from public.care_intakes
+    where id = '26000000-0000-0000-0000-000000000002'
+      and version = 1
+      and status = 'draft'
+      and submit_idempotency_key is null
+  ) then
+    raise exception 'revocation changed intake version or status';
+  end if;
+end;
+$$;
+
+insert into public.care_consent_documents (
+  id,
+  kind,
+  version,
+  content_hash,
+  status
+)
+values (
+  '23000000-0000-0000-0000-000000000003',
+  'privacy_notice',
+  'test-approved-v2',
+  'sha256:test-privacy-approved-v2',
+  'draft'
+);
+
+update public.care_consent_documents
+set
+  status = 'superseded',
+  superseded_at = '2026-07-25T19:10:30Z'
+where id = '23000000-0000-0000-0000-000000000002';
+
+update public.care_consent_documents
+set
+  status = 'approved',
+  approved_by = '20000000-0000-0000-0000-000000000003',
+  approved_at = '2026-07-25T19:11:00Z',
+  effective_at = '2026-07-25T19:11:00Z'
+where id = '23000000-0000-0000-0000-000000000003';
+
+do $$
+begin
+  begin
+    perform public.care_intake_autosave(
+      '26000000-0000-0000-0000-000000000003',
+      '21000000-0000-0000-0000-000000000003',
+      1,
+      '{"approved_test_field":"must not persist"}'::jsonb,
+      'superseded-consent-save',
+      '2026-07-25T19:11:30Z'
+    );
+    raise exception 'autosave after consent supersession was accepted';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_intake_submit(
+      '26000000-0000-0000-0000-000000000003',
+      '21000000-0000-0000-0000-000000000003',
+      1,
+      'superseded-consent-submit',
+      '2026-07-25T19:12:00Z'
+    );
+    raise exception 'submit after consent supersession was accepted';
+  exception when check_violation then null;
+  end;
+  if (
+    select count(*)
+    from public.care_intake_revisions
+    where intake_id = '26000000-0000-0000-0000-000000000003'
+  ) <> 1 then
+    raise exception 'supersession changed intake revision history';
+  end if;
+  if not exists (
+    select 1
+    from public.care_intakes
+    where id = '26000000-0000-0000-0000-000000000003'
+      and version = 1
+      and status = 'draft'
+      and submit_idempotency_key is null
+  ) then
+    raise exception 'supersession changed intake version or status';
   end if;
 end;
 $$;

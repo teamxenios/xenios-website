@@ -616,14 +616,6 @@ declare
   intake_row public.care_intakes%rowtype;
   revision_row public.care_intake_revisions%rowtype;
 begin
-  select * into revision_row
-  from public.care_intake_revisions
-  where patient_id = p_patient_id
-    and idempotency_key = p_idempotency_key;
-  if found then
-    return revision_row;
-  end if;
-
   select * into intake_row
   from public.care_intakes
   where id = p_intake_id
@@ -635,6 +627,67 @@ begin
     raise exception 'care_intake_not_editable'
       using errcode = '42501';
   end if;
+  if not exists (
+    select 1
+    from public.care_consent_events event
+    join public.care_consent_documents document
+      on document.id = event.document_id
+     and document.kind = event.kind
+     and document.version = event.document_version
+    where event.id = intake_row.telehealth_consent_event_id
+      and event.patient_id = p_patient_id
+      and event.kind = 'telehealth'
+      and event.action = 'granted'
+      and document.status = 'approved'
+      and document.approved_at is not null
+      and document.effective_at is not null
+      and event.id = (
+        select latest.id
+        from public.care_consent_events latest
+        where latest.patient_id = p_patient_id
+          and latest.kind = 'telehealth'
+        order by latest.occurred_at desc, latest.id desc
+        limit 1
+      )
+  ) then
+    raise exception 'care_intake_consent_required'
+      using errcode = '23514';
+  end if;
+  if not exists (
+    select 1
+    from public.care_consent_events event
+    join public.care_consent_documents document
+      on document.id = event.document_id
+     and document.kind = event.kind
+     and document.version = event.document_version
+    where event.id = intake_row.privacy_consent_event_id
+      and event.patient_id = p_patient_id
+      and event.kind = 'privacy_notice'
+      and event.action = 'granted'
+      and document.status = 'approved'
+      and document.approved_at is not null
+      and document.effective_at is not null
+      and event.id = (
+        select latest.id
+        from public.care_consent_events latest
+        where latest.patient_id = p_patient_id
+          and latest.kind = 'privacy_notice'
+        order by latest.occurred_at desc, latest.id desc
+        limit 1
+      )
+  ) then
+    raise exception 'care_intake_consent_required'
+      using errcode = '23514';
+  end if;
+
+  select * into revision_row
+  from public.care_intake_revisions
+  where patient_id = p_patient_id
+    and idempotency_key = p_idempotency_key;
+  if found then
+    return revision_row;
+  end if;
+
   if intake_row.version <> p_expected_version then
     raise exception 'care_intake_version_conflict'
       using errcode = '40001';
@@ -703,6 +756,58 @@ begin
   if not found or intake_row.patient_id <> p_patient_id then
     raise exception 'care_intake_not_found'
       using errcode = '42501';
+  end if;
+  if not exists (
+    select 1
+    from public.care_consent_events event
+    join public.care_consent_documents document
+      on document.id = event.document_id
+     and document.kind = event.kind
+     and document.version = event.document_version
+    where event.id = intake_row.telehealth_consent_event_id
+      and event.patient_id = p_patient_id
+      and event.kind = 'telehealth'
+      and event.action = 'granted'
+      and document.status = 'approved'
+      and document.approved_at is not null
+      and document.effective_at is not null
+      and event.id = (
+        select latest.id
+        from public.care_consent_events latest
+        where latest.patient_id = p_patient_id
+          and latest.kind = 'telehealth'
+        order by latest.occurred_at desc, latest.id desc
+        limit 1
+      )
+  ) then
+    raise exception 'care_intake_consent_required'
+      using errcode = '23514';
+  end if;
+  if not exists (
+    select 1
+    from public.care_consent_events event
+    join public.care_consent_documents document
+      on document.id = event.document_id
+     and document.kind = event.kind
+     and document.version = event.document_version
+    where event.id = intake_row.privacy_consent_event_id
+      and event.patient_id = p_patient_id
+      and event.kind = 'privacy_notice'
+      and event.action = 'granted'
+      and document.status = 'approved'
+      and document.approved_at is not null
+      and document.effective_at is not null
+      and event.id = (
+        select latest.id
+        from public.care_consent_events latest
+        where latest.patient_id = p_patient_id
+          and latest.kind = 'privacy_notice'
+        order by latest.occurred_at desc, latest.id desc
+        limit 1
+      )
+  ) then
+    raise exception 'care_intake_consent_required'
+      using errcode = '23514';
   end if;
   if intake_row.status = 'submitted'
     and intake_row.submit_idempotency_key = p_idempotency_key then

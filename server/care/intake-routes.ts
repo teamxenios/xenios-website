@@ -5,7 +5,11 @@ import {
   type CarePrincipal,
   type CareRecordId,
 } from "@shared/care/contracts";
-import type { CareIntakeResponseValue } from "@shared/care/intake";
+import type { CareEligibilityContext } from "@shared/care/eligibility";
+import type {
+  CareClinicalIntake,
+  CareIntakeResponseValue,
+} from "@shared/care/intake";
 import {
   requireCarePermission,
   sendCareTemporarilyUnavailable,
@@ -48,6 +52,45 @@ function patientId(res: Response): CareRecordId | null {
 
 function invalid(res: Response, code = "care_invalid_request") {
   return res.status(400).json({ ok: false, code });
+}
+
+function hasCurrentIntakeConsentBindings(
+  intake: CareClinicalIntake,
+  context: CareEligibilityContext,
+): boolean {
+  const matches = (
+    status: CareEligibilityContext["telehealthConsent"],
+    kind: "telehealth" | "privacy_notice",
+    boundEventId: CareRecordId,
+  ) =>
+    status.kind === kind &&
+    status.satisfied &&
+    status.requiredDocument?.kind === kind &&
+    status.activeEvent?.id === boundEventId &&
+    status.activeEvent.patientId === intake.patientId &&
+    status.activeEvent.documentId === status.requiredDocument.id &&
+    status.activeEvent.documentVersion === status.requiredDocument.version;
+
+  return (
+    context.patientId === intake.patientId &&
+    matches(
+      context.telehealthConsent,
+      "telehealth",
+      intake.telehealthConsentEventId,
+    ) &&
+    matches(
+      context.privacyConsent,
+      "privacy_notice",
+      intake.privacyConsentEventId,
+    )
+  );
+}
+
+function consentRequired(res: Response) {
+  return res.status(409).json({
+    ok: false,
+    code: "care_intake_consent_required",
+  });
 }
 
 export function registerCareIntakeApi(
@@ -141,9 +184,10 @@ export function registerCareIntakeApi(
       const id = patientId(res);
       if (!id) return sendCareTemporarilyUnavailable(res);
       try {
-        const [intake, definition] = await Promise.all([
+        const [intake, definition, context] = await Promise.all([
           intakeRepository.loadCurrentIntake(id),
           intakeRepository.loadApprovedDefinition(),
+          eligibilityRepository.loadContext(id, true),
         ]);
         if (
           !intake ||
@@ -156,6 +200,9 @@ export function registerCareIntakeApi(
             ok: false,
             code: "care_intake_definition_unavailable",
           });
+        }
+        if (!hasCurrentIntakeConsentBindings(intake, context)) {
+          return consentRequired(res);
         }
         const validation = validateCareIntakeResponses(
           definition,
@@ -191,10 +238,11 @@ export function registerCareIntakeApi(
       if (!id) return sendCareTemporarilyUnavailable(res);
       const intakeId = req.params.intakeId as CareRecordId;
       try {
-        const [currentIntake, definition, revision] = await Promise.all([
+        const [currentIntake, definition, revision, context] = await Promise.all([
           intakeRepository.loadCurrentIntake(id),
           intakeRepository.loadApprovedDefinition(),
           intakeRepository.loadLatestRevision(id, intakeId),
+          eligibilityRepository.loadContext(id, true),
         ]);
         if (
           !currentIntake ||
@@ -208,6 +256,9 @@ export function registerCareIntakeApi(
             ok: false,
             code: "care_intake_incomplete",
           });
+        }
+        if (!hasCurrentIntakeConsentBindings(currentIntake, context)) {
+          return consentRequired(res);
         }
         const validation = validateCareIntakeResponses(
           definition,
