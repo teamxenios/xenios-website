@@ -483,11 +483,14 @@ async function collectIdentityStatus(ctx: CollectContext): Promise<QueueRecord[]
 async function collectAssessmentDue(ctx: CollectContext): Promise<QueueRecord[]> {
   const responses = await readTable(ASSESSMENT_RESPONSES_TABLE, (query) =>
     query
-      .eq("definition_id", INITIAL_ASSESSMENT_DEFINITION.definitionId)
       .eq("mode", INITIAL_ASSESSMENT_DEFINITION.mode),
   );
   const byMember = new Map<string, Row>();
-  for (const row of responses) byMember.set(String(row.member_id ?? ""), row);
+  for (const row of responses) {
+    const memberId = String(row.member_id ?? "");
+    const existing = byMember.get(memberId);
+    if (!existing || row.status === "submitted") byMember.set(memberId, row);
+  }
 
   const records: QueueRecord[] = [];
   for (const member of ctx.members) {

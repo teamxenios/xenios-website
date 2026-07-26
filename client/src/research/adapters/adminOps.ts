@@ -93,6 +93,14 @@ export function getPlan<T>(token: string, id: string): Promise<ApiResult<T>> {
   return apiGet<T>(`${BASE}/plans/${enc(id)}`, token);
 }
 
+export function listBlueprintReview<T>(token: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${BASE}/blueprints`, token);
+}
+
+export function getBlueprintReview<T>(token: string, blueprintId: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${BASE}/blueprints/${enc(blueprintId)}`, token);
+}
+
 export function listPrivacyRequests<T>(token: string): Promise<ApiResult<T>> {
   return apiGet<T>(`${BASE}/privacy/requests`, token);
 }
@@ -217,6 +225,17 @@ export function retryOutboxItem<T>(token: string, id: string): Promise<ApiResult
 
 export function sendTestEmail<T>(token: string, body: unknown): Promise<ApiResult<T>> {
   return apiPost<T>(`${BASE}/test-email`, body, token);
+}
+
+export function reviewBlueprint<T>(
+  token: string,
+  blueprintId: string,
+  body:
+    | { action: "approve_and_publish"; comment?: string }
+    | { action: "request_information"; memberVisibleMessage: string; internalNote?: string }
+    | { action: "revise"; internalNote: string },
+): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/blueprints/${enc(blueprintId)}/review`, body, token);
 }
 
 // ------------------- founding activation (payment bridge) -------------------

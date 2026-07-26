@@ -64,6 +64,11 @@ export const defaultNotifier: MemberPlatformNotifier = {
 export interface MemberPlatformDeps {
   clock: Clock;
   notifier: MemberPlatformNotifier;
+  // Optional test/integration seam for the post-submission private Blueprint
+  // job. Production leaves this undefined and uses the canonical module.
+  generateBlueprintFromAssessment?: (
+    memberId: string,
+  ) => Promise<{ ok: boolean; state?: string }>;
 }
 
 export function defaultDeps(): MemberPlatformDeps {

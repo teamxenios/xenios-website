@@ -182,7 +182,12 @@ export async function requireActiveMember(req: Request, res: Response, next: Nex
 // UI; attaches the member for downstream handlers. The stable identity link
 // is the Auth user id (email can change); the email lookup remains only as a
 // legacy fallback.
-export async function requireMember(req: Request, res: Response, next: NextFunction) {
+async function resolveResearchMember(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  allowClosed: boolean,
+) {
   try {
     if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Not configured." });
     const header = req.headers.authorization || "";
@@ -210,7 +215,7 @@ export async function requireMember(req: Request, res: Response, next: NextFunct
     // even when it maps to an active member (correction-pass blocker 3).
     if (denyRecoveryPurposeSession(jwt, res)) return;
     const member = (await getMemberByAuthUserId(data.user.id)) ?? (await getMemberByEmail(data.user.email));
-    if (!member || member.status === "closed") {
+    if (!member || (!allowClosed && member.status === "closed")) {
       return res.status(403).json({ ok: false, message: "No research membership for this account." });
     }
     (req as any).researchMember = member;
@@ -219,4 +224,16 @@ export async function requireMember(req: Request, res: Response, next: NextFunct
     console.error("[research members] auth error:", err);
     res.status(401).json({ ok: false, message: "Sign in required." });
   }
+}
+
+export async function requireMember(req: Request, res: Response, next: NextFunction) {
+  return resolveResearchMember(req, res, next, false);
+}
+
+// Privacy-rights endpoints may need to append a withdrawal after membership
+// closure. This guard still requires a valid non-recovery Supabase session
+// and resolves the same subject-owned member row; it only relaxes the active
+// lifecycle check and must not protect ordinary member content.
+export async function requireResearchSubject(req: Request, res: Response, next: NextFunction) {
+  return resolveResearchMember(req, res, next, true);
 }

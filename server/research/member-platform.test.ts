@@ -12,6 +12,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("./member-auth", () => ({
   requireActiveMember: (_req: any, _res: any, next: any) => next(),
   requireMember: (_req: any, _res: any, next: any) => next(),
+  requireResearchSubject: (_req: any, _res: any, next: any) => next(),
 }));
 
 vi.mock("../routes", () => ({

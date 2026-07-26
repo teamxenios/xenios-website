@@ -16,6 +16,8 @@ const state = vi.hoisted(() => ({
   blueprints: [] as any[],
   responses: [] as any[],
   members: [] as any[],
+  audits: [] as any[],
+  plans: [] as any[],
 }));
 
 const auth = vi.hoisted(() => ({
@@ -30,6 +32,8 @@ vi.mock("../supabase", () => {
     if (name === "research_blueprints") return state.blueprints;
     if (name === "research_assessment_responses") return state.responses;
     if (name === "research_members") return state.members;
+    if (name === "research_plan_review_audit_events") return state.audits;
+    if (name === "research_xenios30_plans") return state.plans;
     throw new Error(`unexpected table in test: ${name}`);
   }
   function query(table: string) {
@@ -95,7 +99,80 @@ vi.mock("../supabase", () => {
   }
   return {
     supabaseConfigured: () => true,
-    getSupabaseAdmin: () => ({ from: query }),
+    getSupabaseAdmin: () => ({
+      from: query,
+      rpc: async (name: string, params: any) => {
+        if (name !== "publish_research_blueprint") {
+          return { data: null, error: { message: `unexpected rpc: ${name}` } };
+        }
+        const target = state.blueprints.find((row) => row.id === params.p_blueprint_id);
+        if (!target || target.state !== "samuel_review") return { data: [], error: null };
+        for (const sibling of state.blueprints) {
+          if (sibling.member_id !== target.member_id || sibling.id === target.id) continue;
+          if (sibling.state === "published") sibling.state = "updated";
+          if (sibling.state === "updated" && sibling.superseded_by_version == null) {
+            sibling.superseded_by_version = target.version;
+          }
+          sibling.updated_at = params.p_published_at;
+        }
+        Object.assign(target, {
+          state: "published",
+          published_at: params.p_published_at,
+          reviewed_by: params.p_reviewed_by,
+          ...(params.p_review_comment ? { review_comment: params.p_review_comment } : {}),
+          superseded_by_version: null,
+          updated_at: params.p_published_at,
+        });
+        const monthLabel = String(params.p_published_at).slice(0, 7);
+        for (const plan of state.plans) {
+          if (
+            plan.member_id === target.member_id &&
+            plan.month_label === monthLabel &&
+            ["draft", "samuel_review"].includes(plan.state) &&
+            plan.source_blueprint_id !== target.id
+          ) {
+            plan.state = "archived";
+          }
+        }
+        const targetPlan = state.plans.find(
+          (plan) =>
+            plan.source_blueprint_id === target.id &&
+            plan.month_label === monthLabel &&
+            ["draft", "samuel_review", "archived"].includes(plan.state),
+        );
+        if (targetPlan) {
+          Object.assign(targetPlan, {
+            state: "samuel_review",
+            content: {
+              sourceBlueprintId: target.id,
+              fitnessDraft: (target.content.recommendations ?? []).filter((item: any) => item.kind === "fitness_program"),
+              nutritionDraft: (target.content.recommendations ?? []).filter((item: any) => item.kind === "nutrition_program"),
+            },
+          });
+        } else {
+          state.plans.push({
+            id: crypto.randomUUID(),
+            member_id: target.member_id,
+            month_label: monthLabel,
+            version:
+              Math.max(
+                0,
+                ...state.plans
+                  .filter((plan) => plan.member_id === target.member_id && plan.month_label === monthLabel)
+                  .map((plan) => Number(plan.version) || 0),
+              ) + 1,
+            state: "samuel_review",
+            content: {
+              sourceBlueprintId: target.id,
+              fitnessDraft: (target.content.recommendations ?? []).filter((item: any) => item.kind === "fitness_program"),
+              nutritionDraft: (target.content.recommendations ?? []).filter((item: any) => item.kind === "nutrition_program"),
+            },
+            source_blueprint_id: target.id,
+          });
+        }
+        return { data: [target], error: null };
+      },
+    }),
     getSupabaseAnon: () => { throw new Error("not used in tests"); },
   };
 });
@@ -124,6 +201,7 @@ vi.mock("../routes", () => ({
 }));
 
 process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
+process.env.ADMIN_EMAIL = "admin@example.com";
 
 import { recommend, type RecommendationInput } from "./recommendation";
 import { canTransition, registerBlueprintApi } from "./blueprint";
@@ -271,6 +349,7 @@ function seedBlueprint(overrides: Record<string, any> = {}) {
     reviewed_by: null,
     review_comment: null,
     member_visible_message: null,
+    assigned_reviewer_email: "admin@example.com",
     published_at: null,
     superseded_by_version: null,
     member_acknowledged_at: null,
@@ -298,6 +377,8 @@ beforeEach(() => {
   state.blueprints.length = 0;
   state.responses.length = 0;
   state.members.length = 0;
+  state.audits.length = 0;
+  state.plans.length = 0;
   auth.current = MEMBER_A;
   auth.deny = null;
   admin.allow = true;
@@ -379,6 +460,28 @@ describe("recommendation engine", () => {
     const capped = recommend(answersWith({ routine_capacity: "minimal" }));
     const cappedFitness = capped.recommendations.find((item) => item.kind === "fitness_program")!;
     expect(cappedFitness.title).toBe("Foundation Strength 3-Day");
+  });
+
+  it("uses v2 availability and structure without assigning more training days than the member has", () => {
+    const oneDay = recommend(
+      answersWith({
+        routine_capacity: null,
+        training_days_available: 1,
+        plan_structure: "detailed",
+      }),
+    );
+    expect(oneDay.recommendations.find((item) => item.kind === "fitness_program")?.title)
+      .toBe("Foundation Movement 1-Day");
+
+    const minimal = recommend(
+      answersWith({
+        routine_capacity: null,
+        training_days_available: 5,
+        plan_structure: "minimal",
+      }),
+    );
+    expect(minimal.recommendations.find((item) => item.kind === "fitness_program")?.title)
+      .toBe("Foundation Strength 3-Day");
   });
 
   it("safety flags push product and supplement items to needs_samuel_review with review questions", () => {
@@ -678,6 +781,36 @@ describe("GET /api/admin/research/blueprints", () => {
   });
 });
 
+describe("GET /api/admin/research/blueprints/:blueprintId", () => {
+  it("returns the structured plan brief without raw answers and audits the access", async () => {
+    state.members.push({ ...MEMBER_A });
+    seedSubmission(MEMBER_A.id, { ...BASE_ANSWERS, goal_meaning: "RAW_PRIVATE_ANSWER" });
+    const row = seedBlueprint({
+      content: {
+        ...draftContent(),
+        unansweredImportantFields: ["coaching_style"],
+        safetyFlags: ["activity_restriction"],
+      },
+    });
+
+    const res = await request(makeApp()).get(`/api/admin/research/blueprints/${row.id}`);
+    expect(res.status).toBe(200);
+    expect(res.body.planBrief.memberFirstName).toBe("Ava");
+    expect(res.body.planBrief.safetyFlags).toEqual(["activity_restriction"]);
+    expect(JSON.stringify(res.body)).not.toContain("RAW_PRIVATE_ANSWER");
+    expect(state.audits).toHaveLength(1);
+    expect(state.audits[0].action).toBe("plan_brief_viewed");
+    expect(JSON.stringify(state.audits[0])).not.toContain(DRAFT_MARKER);
+  });
+
+  it("hides a brief assigned to a different reviewer and writes no audit event", async () => {
+    const row = seedBlueprint({ assigned_reviewer_email: "other@example.com" });
+    const res = await request(makeApp()).get(`/api/admin/research/blueprints/${row.id}`);
+    expect(res.status).toBe(404);
+    expect(state.audits).toHaveLength(0);
+  });
+});
+
 describe("generation", () => {
   it("consumes the submitted assessment, creates version 1 in samuel_review, and is idempotent", async () => {
     state.members.push({ ...MEMBER_A });
@@ -746,6 +879,11 @@ describe("review actions", () => {
     expect(state.blueprints[0].published_at).toBe(new Date(nowMs).toISOString());
     expect(state.blueprints[0].reviewed_by).toBe("Samuel");
     expect(state.blueprints[0].review_comment).toBe("reviewed and sound");
+    expect(state.plans).toHaveLength(1);
+    expect(state.plans[0].source_blueprint_id).toBe(row.id);
+    expect(state.plans[0].state).toBe("samuel_review");
+    expect(state.plans[0].content.fitnessDraft).toEqual([]);
+    expect(state.plans[0].content.nutritionDraft).toEqual([]);
 
     expect(notifications).toHaveLength(1);
     expect(notifications[0].templateKey).toBe("member_plan_published");
@@ -761,6 +899,7 @@ describe("review actions", () => {
     expect(again.status).toBe(409);
     expect(again.body.code).toBe("state_conflict");
     expect(notifications).toHaveLength(1);
+    expect(state.plans).toHaveLength(1);
   });
 
   it("request_information stores the member message and internal note in the right places", async () => {
@@ -832,7 +971,7 @@ describe("review actions", () => {
     expect(missing.body.code).toBe("not_found");
   });
 
-  it("publishing a new version supersedes the old one and the member sees only the new", async () => {
+  it("does not regenerate a published submission into another Blueprint", async () => {
     state.members.push({ ...MEMBER_A });
     seedSubmission(MEMBER_A.id);
     const app = makeApp();
@@ -846,30 +985,76 @@ describe("review actions", () => {
       .send({ action: "approve_and_publish" });
     expect(state.blueprints[0].state).toBe("published");
 
-    // Version 2: the published v1 is no longer in review, so generation
-    // creates the next version from the same submission.
+    // The immutable submission remains linked to its published Blueprint.
     nowMs = T0 + 5 * DAY;
-    const gen2 = await request(app)
+    const again = await request(app)
       .post("/api/admin/research/blueprints/generate")
       .send({ memberId: MEMBER_A.id });
-    expect(gen2.body.version).toBe(2);
-    expect(gen2.body.created).toBe(true);
-
-    const publish2 = await request(app)
-      .post(`/api/admin/research/blueprints/${gen2.body.blueprintId}/review`)
-      .send({ action: "approve_and_publish" });
-    expect(publish2.status).toBe(200);
-
-    const v1 = state.blueprints.find((r: any) => r.version === 1)!;
-    const v2 = state.blueprints.find((r: any) => r.version === 2)!;
-    expect(v1.state).toBe("updated");
-    expect(v1.superseded_by_version).toBe(2);
-    expect(v2.state).toBe("published");
+    expect(again.status).toBe(200);
+    expect(again.body.created).toBe(false);
+    expect(again.body.version).toBe(1);
+    expect(state.blueprints).toHaveLength(1);
+    expect(state.plans).toHaveLength(1);
 
     const memberView = await request(app).get("/api/research/blueprint");
     expect(memberView.body.state).toBe("published");
-    expect(memberView.body.blueprint.version).toBe(2);
-    expect(notifications).toHaveLength(2);
+    expect(memberView.body.blueprint.version).toBe(1);
+    expect(notifications).toHaveLength(1);
+  });
+
+  it("archives the previous active plan draft when a distinct later Blueprint publishes in the same month", async () => {
+    const first = seedBlueprint({ state: "samuel_review", version: 1, assessment_response_id: crypto.randomUUID() });
+    const second = seedBlueprint({ state: "samuel_review", version: 2, assessment_response_id: crypto.randomUUID() });
+    const app = makeApp();
+
+    await request(app)
+      .post(`/api/admin/research/blueprints/${first.id}/review`)
+      .send({ action: "approve_and_publish" });
+    await request(app)
+      .post(`/api/admin/research/blueprints/${second.id}/review`)
+      .send({ action: "approve_and_publish" });
+
+    expect(state.plans).toHaveLength(2);
+    expect(state.plans.filter((plan) => plan.state === "samuel_review")).toHaveLength(1);
+    expect(state.plans.find((plan) => plan.source_blueprint_id === first.id)?.state).toBe("archived");
+    expect(state.plans.find((plan) => plan.source_blueprint_id === second.id)?.state).toBe("samuel_review");
+
+    Object.assign(first, { state: "samuel_review" });
+    await request(app)
+      .post(`/api/admin/research/blueprints/${first.id}/review`)
+      .send({ action: "approve_and_publish" });
+    expect(state.plans).toHaveLength(2);
+    expect(state.plans.filter((plan) => plan.state === "samuel_review")).toHaveLength(1);
+    expect(state.plans.find((plan) => plan.source_blueprint_id === first.id)?.state).toBe("samuel_review");
+    expect(state.plans.find((plan) => plan.source_blueprint_id === second.id)?.state).toBe("archived");
+
+    const publishedFirstPlan = state.plans.find((plan) => plan.source_blueprint_id === first.id)!;
+    Object.assign(publishedFirstPlan, {
+      state: "published",
+      reviewed_by: "Samuel",
+      published_at: new Date(nowMs).toISOString(),
+      member_acknowledged_at: new Date(nowMs).toISOString(),
+    });
+    Object.assign(second, { state: "samuel_review" });
+    await request(app)
+      .post(`/api/admin/research/blueprints/${second.id}/review`)
+      .send({ action: "approve_and_publish" });
+    Object.assign(first, { state: "samuel_review" });
+    await request(app)
+      .post(`/api/admin/research/blueprints/${first.id}/review`)
+      .send({ action: "approve_and_publish" });
+
+    expect(publishedFirstPlan).toMatchObject({
+      state: "published",
+      reviewed_by: "Samuel",
+      member_acknowledged_at: new Date(nowMs).toISOString(),
+    });
+    expect(state.plans.filter((plan) => plan.state === "samuel_review")).toHaveLength(1);
+    expect(
+      state.plans.filter(
+        (plan) => plan.source_blueprint_id === first.id && plan.state === "samuel_review",
+      ),
+    ).toHaveLength(1);
   });
 });
 
@@ -932,5 +1117,9 @@ describe("wave 2 review regressions", () => {
     expect(older.state).toBe("published");
     expect(newer.state).toBe("updated");
     expect(newer.superseded_by_version).toBe(1);
+
+    const memberView = await request(makeApp()).get("/api/research/blueprint");
+    expect(memberView.body.blueprint.version).toBe(1);
+    expect(memberView.body.state).toBe("published");
   });
 });

@@ -55,6 +55,7 @@ export const MEMBER_PLATFORM_CAPABILITIES = [
   "telegram_support",
   "infinity_events",
   "document_rendering",
+  "assessment",
 ] as const;
 export type MemberPlatformCapability = (typeof MEMBER_PLATFORM_CAPABILITIES)[number];
 
@@ -83,7 +84,15 @@ export type MemberOverview = {
   billingState: MemberBillingState;
   applicationStatus: ApplicationStatus;
   assessment: AssessmentStatusSummary;
-  blueprint: { state: BlueprintState; updatedAt: string | null };
+  monthlyCheckIn: {
+    cycleKey: string;
+    status: "not_started" | "in_progress" | "submitted";
+  };
+  blueprint: {
+    state: BlueprintState;
+    updatedAt: string | null;
+    requiresAcknowledgment: boolean;
+  };
   currentXenios30: { planId: string; monthLabel: string; state: PlanPublicationState } | null;
   currentXenios90: { planId: string; phase: Xenios90Phase; state: PlanPublicationState } | null;
   unacknowledgedDocuments: number;
@@ -181,6 +190,8 @@ export type AssessmentQuestion = {
   kind: AssessmentQuestionKind;
   prompt: string;
   required: boolean;
+  helpText?: string;
+  placeholder?: string;
   options?: { value: string; label: string }[];
   min?: number;
   max?: number;
@@ -193,7 +204,9 @@ export type AssessmentQuestion = {
 export type AssessmentSection = {
   id: string;
   title: string;
+  description?: string;
   order: number;
+  sensitive?: boolean;
   questions: AssessmentQuestion[];
 };
 
@@ -213,6 +226,9 @@ export type AssessmentAnswer = {
 export type AssessmentAutosaveRequest = {
   definitionId: string;
   definitionVersion: number;
+  mode: AssessmentMode;
+  expectedCycleKey: string;
+  expectedRevision: number;
   answers: AssessmentAnswer[]; // partial set; server merges by questionId
   clientSavedAt: string;
 };
@@ -222,7 +238,9 @@ export type AssessmentResponseState = {
   definitionId: string;
   definitionVersion: number;
   mode: AssessmentMode;
+  cycleKey: string;
   status: "not_started" | "in_progress" | "submitted";
+  revision: number;
   answers: AssessmentAnswer[];
   startedAt: string | null;
   lastSavedAt: string | null;
@@ -240,6 +258,9 @@ export type AssessmentStatusSummary = {
 export type AssessmentSubmitRequest = {
   definitionId: string;
   definitionVersion: number;
+  mode: AssessmentMode;
+  expectedCycleKey: string;
+  expectedRevision: number;
   confirmReviewed: true; // member confirmed the review-before-submit screen
 };
 
@@ -300,6 +321,8 @@ export type BlueprintView = {
   topPriorities: [string, string, string] | string[];
   recommendations: RecommendationItem[];
   questionsForReview: string[]; // items the engine flagged for Samuel
+  unansweredImportantFields?: string[];
+  safetyFlags?: string[];
   confidence: "low" | "medium" | "high";
   reviewedBy: string | null; // display name only; server enforces identity
   publishedAt: string | null;

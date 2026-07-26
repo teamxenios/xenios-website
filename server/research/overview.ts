@@ -10,7 +10,7 @@ import {
 import { requireActiveMember, type MemberRow } from "./member-auth";
 import { getSupabaseAdmin } from "../supabase";
 import type { MemberPlatformDeps } from "./member-platform-deps";
-import { assessmentStatusForMember } from "./assessment";
+import { assessmentStatusForMember, monthlyCheckInStatusForMember } from "./assessment";
 
 // ---------------------------------------------------------------------------
 // xenios research member platform: member overview (dashboard head).
@@ -88,25 +88,46 @@ export function registerOverviewApi(app: Express, deps: MemberPlatformDeps) {
     const member = (req as { researchMember?: MemberRow }).researchMember;
     if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
 
-    const assessment = await assessmentStatusForMember(member, deps.clock.now());
-    const [unacknowledgedDocuments, openQuestions, blueprintHead, x30Head, x90Head] = await Promise.all([
+    const now = deps.clock.now();
+    const assessment = await assessmentStatusForMember(member, now);
+    const [
+      monthlyCheckIn,
+      unacknowledgedDocuments,
+      openQuestions,
+      blueprintNewest,
+      blueprintPublished,
+      x30Head,
+      x90Head,
+    ] = await Promise.all([
+      monthlyCheckInStatusForMember(member.id, now),
       countSafe("research_plan_documents", member.id, { acknowledged_at: null, status: "current" }),
       // Open = anything not completed; the questions wave owns the vocabulary.
       countSafe("research_member_questions", member.id, {}, { status: "completed" }),
       headSafe("research_blueprints", member.id, "version"),
+      headSafe("research_blueprints", member.id, "version", { state: "published" }),
       headSafe("research_xenios30_plans", member.id, "published_at", { state: "published" }),
       headSafe("research_xenios90_plans", member.id, "published_at", { state: "published" }),
     ]);
 
-    // Blueprint head state wins over the assessment-derived placeholder.
+    const blueprintReviewHead =
+      blueprintNewest &&
+      typeof blueprintNewest.state === "string" &&
+      ["preliminary", "samuel_review", "more_information_needed"].includes(blueprintNewest.state)
+        ? blueprintNewest
+        : null;
+
+    // An active review state wins for messaging, while current member content
+    // and acknowledgment always come from the sole published row.
     const blueprintState =
-      blueprintHead && typeof blueprintHead.state === "string" && BLUEPRINT_STATE_SET.has(blueprintHead.state)
-        ? (blueprintHead.state as MemberOverview["blueprint"]["state"])
+      blueprintReviewHead && BLUEPRINT_STATE_SET.has(String(blueprintReviewHead.state))
+        ? (blueprintReviewHead.state as MemberOverview["blueprint"]["state"])
+        : blueprintPublished
+          ? "published"
         : assessment.status === "submitted"
           ? "assessment_submitted"
           : "assessment_due";
     const blueprintUnacknowledged =
-      blueprintHead?.state === "published" && blueprintHead.member_acknowledged_at == null;
+      blueprintPublished?.state === "published" && blueprintPublished.member_acknowledged_at == null;
 
     const trackerUnlocked = assessment.status === "submitted";
     const nextAction: MemberOverview["nextAction"] =
@@ -114,6 +135,9 @@ export function registerOverviewApi(app: Express, deps: MemberPlatformDeps) {
         ? { key: "complete_assessment", label: "Complete your assessment", dueAt: assessment.dueAt }
         : blueprintUnacknowledged
           ? { key: "review_blueprint", label: "Review your Blueprint", dueAt: null }
+          : blueprintPublished &&
+              monthlyCheckIn.status !== "submitted"
+            ? { key: "monthly_check_in", label: "Complete your monthly check-in", dueAt: null }
           : unacknowledgedDocuments > 0
             ? { key: "acknowledge_document", label: "Review your new documents", dueAt: null }
             : { key: "none", label: "You are up to date", dueAt: null };
@@ -125,9 +149,14 @@ export function registerOverviewApi(app: Express, deps: MemberPlatformDeps) {
       billingState: narrowBillingState(member.billing_state),
       applicationStatus: "active",
       assessment,
+      monthlyCheckIn,
       blueprint: {
         state: blueprintState,
-        updatedAt: typeof blueprintHead?.updated_at === "string" ? blueprintHead.updated_at : null,
+        updatedAt:
+          typeof (blueprintReviewHead ?? blueprintPublished)?.updated_at === "string"
+            ? ((blueprintReviewHead ?? blueprintPublished)?.updated_at as string)
+            : null,
+        requiresAcknowledgment: blueprintUnacknowledged,
       },
       currentXenios30:
         x30Head && typeof x30Head.id === "string" && typeof x30Head.month_label === "string"

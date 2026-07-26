@@ -2,7 +2,7 @@ import crypto from "crypto";
 import type { Express, Request, Response } from "express";
 import { z } from "zod";
 import { getSupabaseAdmin } from "../supabase";
-import { requireMember, type MemberRow } from "./member-auth";
+import { requireMember, requireResearchSubject, type MemberRow } from "./member-auth";
 import { rateLimitHit, requestIp } from "./rate-limit";
 import type { MemberPlatformDeps } from "./member-platform-deps";
 
@@ -38,10 +38,11 @@ export type AgreementDefinition = {
   title: string;
   required: boolean;
   trigger: AgreementTrigger;
-  status: "draft";
-  effectiveDate: null;
+  status: "draft" | "published";
+  effectiveDate: string | null;
   supersedes: null;
   separateConsent: boolean;
+  content: string | null;
   contentHash: string;
 };
 
@@ -73,6 +74,7 @@ function draftDefinition(
     effectiveDate: null,
     supersedes: null,
     separateConsent: options.separateConsent === true,
+    content: null,
     contentHash: agreementContentHash(key, DRAFT_VERSION),
   };
 }
@@ -100,6 +102,28 @@ const AGREEMENT_KEYS = AGREEMENT_DEFINITIONS.map((d) => d.key) as [string, ...st
 
 export function listDefinitions(trigger?: AgreementTrigger): AgreementDefinition[] {
   return AGREEMENT_DEFINITIONS.filter((d) => (trigger ? d.trigger === trigger : true));
+}
+
+export function agreementDefinition(key: string): AgreementDefinition | null {
+  return DEFINITIONS_BY_KEY.get(key) ?? null;
+}
+
+// Health-adjacent assessment answers remain prohibited until both the
+// explicit production flag and a counsel-approved, immutable consent text are
+// present. Draft metadata and key@version placeholder hashes never satisfy
+// this gate.
+export function healthAssessmentCollectionReady(
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  const definition = agreementDefinition("XR-MEM-012");
+  return (
+    env.RESEARCH_HEALTH_DATA_ENABLED === "true" &&
+    definition?.status === "published" &&
+    typeof definition.effectiveDate === "string" &&
+    typeof definition.content === "string" &&
+    definition.content.trim().length > 0 &&
+    definition.contentHash === sha256Hex(definition.content)
+  );
 }
 
 // True when the member's latest decision for the key is an acceptance of the
@@ -172,6 +196,7 @@ export type AgreementDecisionInput = {
   key: string;
   version: string;
   decision: AgreementDecision;
+  contentHash?: string;
 };
 
 export type AcceptanceMeta = {
@@ -183,7 +208,16 @@ export type AcceptanceMeta = {
 
 export type RecordAcceptancesResult =
   | { ok: true; recorded: number }
-  | { ok: false; code: "unknown_key" | "version_mismatch" | "separate_consent_bundled" | "storage_error"; key?: string };
+  | {
+      ok: false;
+      code:
+        | "unknown_key"
+        | "version_mismatch"
+        | "content_hash_mismatch"
+        | "separate_consent_bundled"
+        | "storage_error";
+      key?: string;
+    };
 
 export async function recordAcceptances(
   subjectType: AgreementSubjectType,
@@ -196,6 +230,9 @@ export async function recordAcceptances(
     if (!definition) return { ok: false, code: "unknown_key", key: decision.key };
     if (decision.version !== definition.version) {
       return { ok: false, code: "version_mismatch", key: decision.key };
+    }
+    if (decision.contentHash !== undefined && decision.contentHash !== definition.contentHash) {
+      return { ok: false, code: "content_hash_mismatch", key: decision.key };
     }
     // Separate-consent rule, enforced at the service so no caller can bundle:
     // a separate-consent agreement must be the ONLY decision in its call.
@@ -216,7 +253,7 @@ export async function recordAcceptances(
       subject_id: subjectId,
       agreement_key: decision.key,
       agreement_version: decision.version,
-      content_hash: agreementContentHash(decision.key, decision.version),
+      content_hash: decision.contentHash ?? DEFINITIONS_BY_KEY.get(decision.key)!.contentHash,
       decision: decision.decision,
       ip_hash: ipHash,
       user_agent_hash: userAgentHash,
@@ -235,6 +272,7 @@ const decisionSchema = z.object({
   key: z.enum(AGREEMENT_KEYS),
   version: z.string().min(1).max(64),
   decision: z.enum(["accepted", "declined"]),
+  contentHash: z.string().regex(/^[a-f0-9]{64}$/).optional(),
 });
 
 const acceptBodySchema = z.object({
@@ -262,8 +300,11 @@ type AgreementView = {
   title: string;
   required: boolean;
   trigger: AgreementTrigger;
-  status: "draft";
+  status: "draft" | "published";
+  effectiveDate: string | null;
   separateConsent: boolean;
+  content: string | null;
+  contentHash: string;
   acceptedVersion: string | null;
   reacceptanceNeeded: boolean;
 };
@@ -280,7 +321,10 @@ async function agreementViewsForMember(memberId: string): Promise<AgreementView[
       required: definition.required,
       trigger: definition.trigger,
       status: definition.status,
+      effectiveDate: definition.effectiveDate,
       separateConsent: definition.separateConsent,
+      content: definition.content,
+      contentHash: definition.contentHash,
       acceptedVersion: entry?.acceptedVersion ?? null,
       reacceptanceNeeded: entry?.reacceptanceNeeded ?? false,
     };
@@ -290,13 +334,69 @@ async function agreementViewsForMember(memberId: string): Promise<AgreementView[
 export function registerAgreementsApi(app: Express, deps: MemberPlatformDeps) {
   // requireMember, NOT requireActiveMember: agreements precede activation, so
   // a pending_activation member must be able to read and sign them.
-  app.get("/api/research/agreements", requireMember, async (req: Request, res: Response) => {
+  app.get("/api/research/agreements", requireResearchSubject, async (req: Request, res: Response) => {
     setResponseHeaders(res);
     const member = (req as { researchMember?: MemberRow }).researchMember;
     if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
     const agreements = await agreementViewsForMember(member.id);
     res.json({ ok: true, agreements });
   });
+
+  // Withdrawal is intentionally independent of current publication, feature
+  // readiness, and membership billing state. It appends a decline against the
+  // exact accepted version/hash already on record; it cannot create a new
+  // acceptance or rewrite history.
+  app.post(
+    "/api/research/agreements/XR-MEM-012/withdraw",
+    requireResearchSubject,
+    async (req: Request, res: Response) => {
+      setResponseHeaders(res);
+      const member = (req as { researchMember?: MemberRow }).researchMember;
+      if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
+
+      const allowed = await rateLimitHit(`research:agreements-withdraw:${member.id}`, 3600, 30);
+      if (!allowed) return res.status(429).json({ ok: false, code: "rate_limited" });
+
+      const { data, error } = await getSupabaseAdmin()
+        .from(ACCEPTANCES_TABLE)
+        .select("agreement_version, content_hash, decision, created_at")
+        .eq("subject_type", "member")
+        .eq("subject_id", member.id)
+        .eq("agreement_key", "XR-MEM-012")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) {
+        return res.status(500).json({ ok: false, message: "Consent status could not be loaded." });
+      }
+      const latest = data as {
+        agreement_version?: string;
+        content_hash?: string;
+        decision?: string;
+      } | null;
+      if (latest?.decision === "accepted") {
+        const { error: insertError } = await getSupabaseAdmin().from(ACCEPTANCES_TABLE).insert({
+          subject_type: "member",
+          subject_id: member.id,
+          agreement_key: "XR-MEM-012",
+          agreement_version: latest.agreement_version,
+          content_hash: latest.content_hash,
+          decision: "declined",
+          ip_hash: requestIp(req) ? sha256Hex(requestIp(req)) : null,
+          user_agent_hash:
+            typeof req.headers["user-agent"] === "string"
+              ? sha256Hex(req.headers["user-agent"])
+              : null,
+          created_at: deps.clock.now().toISOString(),
+        });
+        if (insertError) {
+          return res.status(500).json({ ok: false, message: "Consent could not be withdrawn." });
+        }
+      }
+      const agreements = await agreementViewsForMember(member.id);
+      return res.json({ ok: true, agreements });
+    },
+  );
 
   app.post("/api/research/agreements", requireMember, async (req: Request, res: Response) => {
     setResponseHeaders(res);
@@ -366,6 +466,24 @@ export function registerAgreementsApi(app: Express, deps: MemberPlatformDeps) {
           ok: false,
           code: "state_conflict",
           message: `${decision.key} current version is ${definition.version}`,
+        });
+      }
+      if (
+        decision.key === "XR-MEM-012" &&
+        decision.decision === "accepted" &&
+        decision.contentHash !== definition.contentHash
+      ) {
+        return res.status(409).json({
+          ok: false,
+          code: "state_conflict",
+          message: "The consent document changed before acceptance. Reload and review the current text.",
+        });
+      }
+      if (decision.key === "XR-MEM-012" && !healthAssessmentCollectionReady()) {
+        return res.status(409).json({
+          ok: false,
+          code: "health_data_collection_pending",
+          message: "Sensitive health data consent is pending final approval and cannot be recorded.",
         });
       }
     }

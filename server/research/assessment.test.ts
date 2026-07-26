@@ -30,6 +30,7 @@ const rl = vi.hoisted(() => ({
 // XR-MEM-012 before any answer is stored. Default granted; the gate tests
 // flip it off.
 const consent = vi.hoisted(() => ({ accepted: true }));
+const legalGate = vi.hoisted(() => ({ ready: true }));
 
 vi.mock("../supabase", () => {
   function query(table: string) {
@@ -55,7 +56,8 @@ vi.mock("../supabase", () => {
             (r: any) =>
               r.member_id === insertPayload.member_id &&
               r.definition_id === insertPayload.definition_id &&
-              r.mode === insertPayload.mode,
+              r.mode === insertPayload.mode &&
+              (r.cycle_key ?? "initial") === (insertPayload.cycle_key ?? "initial"),
           )
         ) {
           return { data: null, error: { message: "duplicate key value violates unique constraint" } };
@@ -130,6 +132,7 @@ vi.mock("./agreements", () => ({
   hasAcceptedCurrent: vi.fn(async (_memberId: string, key: string) =>
     key === "XR-MEM-012" ? consent.accepted : false,
   ),
+  healthAssessmentCollectionReady: vi.fn(() => legalGate.ready),
 }));
 
 process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
@@ -137,7 +140,10 @@ process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 import {
   assessmentStatusForMember,
   INITIAL_ASSESSMENT_DEFINITION,
+  INITIAL_ASSESSMENT_V1_DEFINITION,
+  MONTHLY_CHECK_IN_DEFINITION,
   listAssessmentQuestions,
+  monthlyCheckInStatusForMember,
   registerAssessmentApi,
 } from "./assessment";
 import { sweepAssessmentReminders } from "./assessment-reminders";
@@ -154,6 +160,7 @@ let notifications: any[] = [];
 function makeDeps(): MemberPlatformDeps {
   return {
     clock: { now: () => new Date(nowMs) },
+    generateBlueprintFromAssessment: vi.fn(async () => ({ ok: true, state: "samuel_review" })),
     notifier: {
       notify: vi.fn(async (input: any) => {
         notifications.push(input);
@@ -224,16 +231,28 @@ function fullAnswers(overrides: Record<string, unknown> = {}) {
   return answers;
 }
 
-function autosaveBody(answers: any[], version = 1) {
+function autosaveBody(answers: any[], version = 2) {
   return {
-    definitionId: "initial-v1",
+    definitionId: "initial-v2",
     definitionVersion: version,
+    mode: "initial",
+    expectedCycleKey: "initial",
+    expectedRevision: rowFor(auth.current?.id)?.revision ?? 0,
     answers,
     clientSavedAt: new Date(nowMs).toISOString(),
   };
 }
 
-const SUBMIT_BODY = { definitionId: "initial-v1", definitionVersion: 1, confirmReviewed: true };
+const SUBMIT_BODY = {
+  definitionId: "initial-v2",
+  definitionVersion: 2,
+  mode: "initial",
+  expectedCycleKey: "initial",
+  get expectedRevision() {
+    return rowFor(auth.current?.id)?.revision ?? 0;
+  },
+  confirmReviewed: true,
+};
 
 beforeEach(() => {
   state.responses.length = 0;
@@ -243,6 +262,7 @@ beforeEach(() => {
   rl.allow = true;
   rl.calls.length = 0;
   consent.accepted = true;
+  legalGate.ready = true;
   nowMs = T0;
   notifications = [];
   deps = makeDeps();
@@ -252,32 +272,30 @@ beforeEach(() => {
 describe("definition integrity", () => {
   const questions = INITIAL_ASSESSMENT_DEFINITION.sections.flatMap((s) => s.questions);
 
+  it("preserves the historical v1 definition while v2 is current", () => {
+    expect(INITIAL_ASSESSMENT_V1_DEFINITION.definitionId).toBe("initial-v1");
+    expect(INITIAL_ASSESSMENT_V1_DEFINITION.version).toBe(1);
+    expect(INITIAL_ASSESSMENT_DEFINITION.definitionId).toBe("initial-v2");
+  });
+
   it("has the canon sections in order and a sane question count", () => {
-    expect(INITIAL_ASSESSMENT_DEFINITION.definitionId).toBe("initial-v1");
-    expect(INITIAL_ASSESSMENT_DEFINITION.version).toBe(1);
+    expect(INITIAL_ASSESSMENT_DEFINITION.definitionId).toBe("initial-v2");
+    expect(INITIAL_ASSESSMENT_DEFINITION.version).toBe(2);
     expect(INITIAL_ASSESSMENT_DEFINITION.mode).toBe("initial");
-    expect(INITIAL_ASSESSMENT_DEFINITION.targetMinutes).toBe(10);
+    expect(INITIAL_ASSESSMENT_DEFINITION.targetMinutes).toBe(8);
     expect(INITIAL_ASSESSMENT_DEFINITION.sections.map((s) => s.id)).toEqual([
-      "goals",
-      "body_and_routine",
-      "fitness",
-      "nutrition",
-      "sleep",
-      "energy",
-      "stress",
-      "current_products",
-      "allergies_and_restrictions",
-      "basic_safety_context",
-      "budget",
-      "routine_complexity",
-      "preferences",
-      "direction_30_90",
+      "direction",
+      "schedule",
+      "training_baseline",
+      "nutrition_baseline",
+      "recovery_lifestyle",
+      "personalization_review",
     ]);
     expect(INITIAL_ASSESSMENT_DEFINITION.sections.map((s) => s.order)).toEqual(
       INITIAL_ASSESSMENT_DEFINITION.sections.map((_, i) => i + 1),
     );
     expect(questions.length).toBeGreaterThanOrEqual(30);
-    expect(questions.length).toBeLessThanOrEqual(38);
+    expect(questions.length).toBeLessThanOrEqual(40);
     // Ids are unique and every question belongs to its declared section.
     expect(new Set(questions.map((q) => q.id)).size).toBe(questions.length);
     for (const section of INITIAL_ASSESSMENT_DEFINITION.sections) {
@@ -305,7 +323,7 @@ describe("definition integrity", () => {
   });
 
   it("carries the consent reference where the health questions begin", () => {
-    const bodySection = INITIAL_ASSESSMENT_DEFINITION.sections.find((s) => s.id === "body_and_routine")!;
+    const bodySection = INITIAL_ASSESSMENT_DEFINITION.sections.find((s) => s.id === "training_baseline")!;
     expect(bodySection.questions[0].consentRef).toBe("XR-MEM-012");
   });
 
@@ -319,8 +337,22 @@ describe("definition integrity", () => {
       }
     }
     // Safety context stays structured: choices only, no free-text symptom capture.
-    const safety = INITIAL_ASSESSMENT_DEFINITION.sections.find((s) => s.id === "basic_safety_context")!;
-    for (const q of safety.questions) expect(q.kind).toBe("single_choice");
+    const safety = listAssessmentQuestions().filter((q) =>
+      ["clinician_care_flag", "activity_restriction_flag", "pregnancy_flag"].includes(q.id),
+    );
+    for (const q of safety) expect(q.kind).toBe("single_choice");
+  });
+
+  it("keeps the live intake bounded and publishes a separate monthly definition", () => {
+    const required = questions.filter((question) => question.required);
+    const adaptive = questions.filter((question) => question.showWhen?.length);
+    const shortText = questions.filter((question) => question.kind === "short_text");
+    expect(required.length).toBeGreaterThanOrEqual(18);
+    expect(required.length).toBeLessThanOrEqual(22);
+    expect(adaptive.length).toBeLessThanOrEqual(6);
+    expect(shortText.length).toBeLessThanOrEqual(3);
+    expect(MONTHLY_CHECK_IN_DEFINITION.mode).toBe("monthly_check_in");
+    expect(MONTHLY_CHECK_IN_DEFINITION.targetMinutes).toBeLessThanOrEqual(3);
   });
 });
 
@@ -331,7 +363,7 @@ describe("GET /api/research/assessment", () => {
     expect(res.status).toBe(200);
     expect(res.headers["cache-control"]).toBe("no-store");
     expect(res.headers["referrer-policy"]).toBe("no-referrer");
-    expect(res.body.definition.definitionId).toBe("initial-v1");
+    expect(res.body.definition.definitionId).toBe("initial-v2");
     expect(res.body.response.status).toBe("in_progress");
     expect(res.body.response.startedAt).toBe(new Date(T0).toISOString());
     expect(res.body.status).toEqual({
@@ -351,16 +383,94 @@ describe("GET /api/research/assessment", () => {
     expect(res.body.code).toBe("activation_required");
     expect(state.responses).toHaveLength(0);
   });
+
+  it("preserves a submitted initial-v1 row as complete instead of issuing a blank v2 repeat", async () => {
+    state.responses.push({
+      id: crypto.randomUUID(),
+      member_id: MEMBER_A.id,
+      definition_id: "initial-v1",
+      definition_version: 1,
+      mode: "initial",
+      cycle_key: "initial",
+      status: "submitted",
+      revision: 2,
+      answers: { primary_goal: "strength" },
+      started_at: new Date(T0).toISOString(),
+      last_saved_at: new Date(T0).toISOString(),
+      submitted_at: new Date(T0 + HOUR).toISOString(),
+      reminders_sent: 0,
+    });
+    const res = await request(makeApp()).get("/api/research/assessment");
+    expect(res.status).toBe(200);
+    expect(res.body.definition.definitionId).toBe("initial-v1");
+    expect(res.body.response.status).toBe("submitted");
+    expect(res.body.status.status).toBe("submitted");
+    expect(state.responses).toHaveLength(1);
+  });
+
+  it("serves a separate monthly definition and starts a new UTC cycle each month", async () => {
+    const app = makeApp();
+    const july = await request(app).get("/api/research/assessment?mode=monthly_check_in");
+    expect(july.status).toBe(200);
+    expect(july.body.definition.definitionId).toBe("monthly-check-in-v1");
+    expect(july.body.response.cycleKey).toBe("2026-07");
+
+    nowMs = Date.parse("2026-08-01T00:00:00.000Z");
+    const august = await request(app).get("/api/research/assessment?mode=monthly_check_in");
+    expect(august.status).toBe(200);
+    expect(august.body.response.cycleKey).toBe("2026-08");
+    expect(state.responses.filter((row) => row.mode === "monthly_check_in")).toHaveLength(2);
+  });
+
+  it("rejects a monthly save from a tab whose displayed cycle has rolled over", async () => {
+    const app = makeApp();
+    const july = await request(app).get("/api/research/assessment?mode=monthly_check_in");
+    expect(july.body.response.cycleKey).toBe("2026-07");
+
+    nowMs = Date.parse("2026-08-01T00:00:00.000Z");
+    const stale = await request(app)
+      .post("/api/research/assessment/responses")
+      .send({
+        definitionId: "monthly-check-in-v1",
+        definitionVersion: 1,
+        mode: "monthly_check_in",
+        expectedCycleKey: "2026-07",
+        expectedRevision: 0,
+        answers: [{ questionId: "progress_score", value: 8 }],
+        clientSavedAt: new Date(nowMs).toISOString(),
+      });
+    expect(stale.status).toBe(409);
+    expect(stale.body.code).toBe("state_conflict");
+    expect(state.responses.filter((row) => row.cycle_key === "2026-08")).toHaveLength(0);
+  });
 });
 
 describe("autosave", () => {
+  it("rejects a stale tab revision without overwriting newer server answers", async () => {
+    const app = makeApp();
+    const first = await request(app)
+      .post("/api/research/assessment/responses")
+      .send(autosaveBody([{ questionId: "primary_goal", value: "strength" }]));
+    expect(first.status).toBe(200);
+
+    const stale = await request(app)
+      .post("/api/research/assessment/responses")
+      .send({
+        ...autosaveBody([{ questionId: "primary_goal", value: "endurance" }]),
+        expectedRevision: 0,
+      });
+    expect(stale.status).toBe(409);
+    expect(stale.body.code).toBe("state_conflict");
+    expect(rowFor(MEMBER_A.id).answers.primary_goal).toBe("strength");
+  });
+
   it("merges partial saves by questionId into one member-scoped row", async () => {
     const app = makeApp();
     const first = await request(app)
       .post("/api/research/assessment/responses")
       .send(autosaveBody([{ questionId: "primary_goal", value: "strength" }]));
     expect(first.status).toBe(200);
-    expect(first.body).toEqual({ ok: true, lastSavedAt: new Date(T0).toISOString() });
+    expect(first.body).toEqual({ ok: true, lastSavedAt: new Date(T0).toISOString(), revision: 1 });
 
     nowMs = T0 + 5 * 60 * 1000;
     const second = await request(app)
@@ -416,10 +526,10 @@ describe("autosave", () => {
   it("a stale definition version is a state_conflict carrying the current version", async () => {
     const res = await request(makeApp())
       .post("/api/research/assessment/responses")
-      .send(autosaveBody([{ questionId: "primary_goal", value: "strength" }], 2));
+      .send(autosaveBody([{ questionId: "primary_goal", value: "strength" }], 999));
     expect(res.status).toBe(409);
     expect(res.body.code).toBe("state_conflict");
-    expect(res.body.message).toContain("version 1");
+    expect(res.body.message).toContain("version 2");
     expect(state.responses).toHaveLength(0);
   });
 
@@ -511,7 +621,7 @@ describe("submit", () => {
     nowMs = T0 + 2 * HOUR;
     const res = await request(app).post("/api/research/assessment/submit").send(SUBMIT_BODY);
     expect(res.status).toBe(200);
-    expect(res.body.blueprintState).toBe("assessment_submitted");
+    expect(res.body.blueprintState).toBe("samuel_review");
     expect(res.body.response.status).toBe("submitted");
     expect(res.body.response.submittedAt).toBe(new Date(nowMs).toISOString());
 
@@ -542,13 +652,43 @@ describe("submit", () => {
     await saveAll(app);
     const res = await request(app)
       .post("/api/research/assessment/submit")
-      .send({ ...SUBMIT_BODY, definitionVersion: 2 });
+      .send({ ...SUBMIT_BODY, definitionVersion: 999 });
     expect(res.status).toBe(409);
     expect(res.body.code).toBe("state_conflict");
   });
 });
 
 describe("deadline math", () => {
+  it("reports the current UTC monthly check-in without creating a response", async () => {
+    const before = await monthlyCheckInStatusForMember(
+      MEMBER_A.id,
+      new Date("2026-07-31T23:59:59.999Z"),
+    );
+    expect(before).toEqual({ cycleKey: "2026-07", status: "not_started" });
+    expect(state.responses).toHaveLength(0);
+
+    state.responses.push({
+      id: crypto.randomUUID(),
+      member_id: MEMBER_A.id,
+      definition_id: MONTHLY_CHECK_IN_DEFINITION.definitionId,
+      definition_version: MONTHLY_CHECK_IN_DEFINITION.version,
+      mode: "monthly_check_in",
+      cycle_key: "2026-08",
+      status: "in_progress",
+      revision: 0,
+      answers: {},
+      started_at: "2026-08-01T00:00:00.000Z",
+      last_saved_at: null,
+      submitted_at: null,
+      reminders_sent: 0,
+    });
+    const after = await monthlyCheckInStatusForMember(
+      MEMBER_A.id,
+      new Date("2026-08-01T00:00:00.000Z"),
+    );
+    expect(after).toEqual({ cycleKey: "2026-08", status: "in_progress" });
+  });
+
   it("dueAt is activation plus 72 hours and overdue flips only after it, only unsubmitted", async () => {
     const before = await assessmentStatusForMember(MEMBER_A as any, new Date(T0 + 71 * HOUR));
     expect(before.dueAt).toBe(DUE_ISO);
@@ -562,8 +702,8 @@ describe("deadline math", () => {
     state.responses.push({
       id: crypto.randomUUID(),
       member_id: MEMBER_A.id,
-      definition_id: "initial-v1",
-      definition_version: 1,
+      definition_id: "initial-v2",
+      definition_version: 2,
       mode: "initial",
       status: "submitted",
       answers: {},
@@ -645,8 +785,8 @@ describe("reminder sweep", () => {
     state.responses.push({
       id: crypto.randomUUID(),
       member_id: MEMBER_A.id,
-      definition_id: "initial-v1",
-      definition_version: 1,
+      definition_id: "initial-v2",
+      definition_version: 2,
       mode: "initial",
       status: "submitted",
       answers: {},
@@ -679,11 +819,45 @@ describe("reminder sweep", () => {
 });
 
 describe("the sensitive health data consent gate (XR-MEM-012)", () => {
+  it.each([
+    ["get", "/api/research/assessment"],
+    ["post", "/api/research/assessment/responses"],
+    ["post", "/api/research/assessment/submit"],
+  ] as const)("keeps %s %s unavailable and stores nothing until the legal gate is ready", async (method, path) => {
+    legalGate.ready = false;
+    const call = request(makeApp())[method](path);
+    const res = method === "get"
+      ? await call
+      : await call.send(
+          path.endsWith("/responses")
+            ? {
+                definitionId: "initial-v2",
+                definitionVersion: 2,
+                mode: "initial",
+                expectedCycleKey: "initial",
+                expectedRevision: 0,
+                answers: [{ questionId: "primary_goal", value: "strength" }],
+                clientSavedAt: new Date(T0).toISOString(),
+              }
+            : {
+                definitionId: "initial-v2",
+                definitionVersion: 2,
+                mode: "initial",
+                expectedCycleKey: "initial",
+                expectedRevision: 0,
+                confirmReviewed: true,
+              },
+        );
+    expect(res.status).toBe(503);
+    expect(res.body.code).toBe("health_data_collection_pending");
+    expect(state.responses).toHaveLength(0);
+  });
+
   it("refuses autosave without the accepted current consent, storing nothing", async () => {
     consent.accepted = false;
     const res = await request(makeApp())
       .post("/api/research/assessment/responses")
-      .send({ definitionId: "initial-v1", definitionVersion: 1, answers: [{ questionId: "primary_goal", value: "recover_faster" }], clientSavedAt: new Date(T0).toISOString() });
+      .send({ definitionId: "initial-v2", definitionVersion: 2, mode: "initial", expectedCycleKey: "initial", expectedRevision: 0, answers: [{ questionId: "primary_goal", value: "strength" }], clientSavedAt: new Date(T0).toISOString() });
     expect(res.status).toBe(409);
     expect(res.body.code).toBe("state_conflict");
     expect(res.body.message).toContain("XR-MEM-012");
@@ -694,7 +868,7 @@ describe("the sensitive health data consent gate (XR-MEM-012)", () => {
     consent.accepted = false;
     const res = await request(makeApp())
       .post("/api/research/assessment/submit")
-      .send({ definitionId: "initial-v1", definitionVersion: 1, confirmReviewed: true });
+      .send({ definitionId: "initial-v2", definitionVersion: 2, mode: "initial", expectedCycleKey: "initial", expectedRevision: 0, confirmReviewed: true });
     expect(res.status).toBe(409);
     expect(res.body.code).toBe("state_conflict");
     expect(res.body.message).toContain("XR-MEM-012");

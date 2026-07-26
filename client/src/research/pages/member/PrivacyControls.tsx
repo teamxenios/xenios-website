@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useResearch } from "../../core";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
@@ -14,9 +14,12 @@ import {
 import { type ApiResult } from "../../lib/api";
 import {
   getPrivacySummary,
+  getResearchAgreements,
   requestPrivacyCorrection,
   requestPrivacyDeletion,
   requestPrivacyExport,
+  withdrawResearchAgreement,
+  type AgreementView,
   type PrivacyRequestResult,
 } from "../../adapters/member";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
@@ -88,6 +91,10 @@ export default function PrivacyControls() {
   const [correctionMissing, setCorrectionMissing] = useState(false);
   const [deletionState, setDeletionState] = useState<RequestState>({ phase: "idle" });
   const [deletionConfirming, setDeletionConfirming] = useState(false);
+  const [healthConsent, setHealthConsent] = useState<AgreementView | null>(null);
+  const [healthConsentLoad, setHealthConsentLoad] = useState<"loading" | "ok" | "error">("loading");
+  const [withdrawState, setWithdrawState] = useState<RequestState>({ phase: "idle" });
+  const [withdrawConfirming, setWithdrawConfirming] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -126,6 +133,52 @@ export default function PrivacyControls() {
       alive = false;
     };
   }, [member, memberToken]);
+
+  const loadHealthConsent = useCallback(async () => {
+    if (!memberToken) return;
+    setHealthConsentLoad("loading");
+    const res = await getResearchAgreements(memberToken);
+    if (res.kind === "ok") {
+      setHealthConsent(res.data.agreements.find((agreement) => agreement.key === "XR-MEM-012") ?? null);
+      setHealthConsentLoad("ok");
+    } else if (res.kind === "unauthorized") {
+      setSessionEnded(true);
+      setHealthConsentLoad("error");
+    } else {
+      setHealthConsentLoad("error");
+    }
+  }, [memberToken]);
+
+  useEffect(() => {
+    if (!member || !memberToken) return;
+    void loadHealthConsent();
+  }, [loadHealthConsent, member, memberToken]);
+
+  async function withdrawHealthConsent(): Promise<void> {
+    if (!memberToken || !healthConsent) return;
+    setWithdrawConfirming(false);
+    setWithdrawState({ phase: "busy" });
+    const res = await withdrawResearchAgreement("XR-MEM-012", memberToken);
+    if (res.kind === "ok") {
+      setHealthConsent(
+        res.data.agreements.find((agreement) => agreement.key === "XR-MEM-012") ?? {
+          ...healthConsent,
+          acceptedVersion: null,
+        },
+      );
+      setWithdrawState({ phase: "done" });
+    } else if (res.kind === "unavailable") {
+      setWithdrawState({ phase: "unavailable" });
+    } else if (res.kind === "unauthorized") {
+      setSessionEnded(true);
+      setWithdrawState({ phase: "idle" });
+    } else {
+      setWithdrawState({
+        phase: "error",
+        message: failureText(res, "Consent could not be withdrawn. Please try again."),
+      });
+    }
+  }
 
   async function runRequest(
     send: (token: string) => Promise<ApiResult<PrivacyRequestResult>>,
@@ -275,6 +328,22 @@ export default function PrivacyControls() {
         </section>
 
         <ResearchConfirmation
+          open={withdrawConfirming || withdrawState.phase === "busy"}
+          title="Withdraw sensitive-data consent?"
+          danger
+          busy={withdrawState.phase === "busy"}
+          confirmLabel="Yes, withdraw consent"
+          onConfirm={() => void withdrawHealthConsent()}
+          onCancel={() => setWithdrawConfirming(false)}
+          body={
+            <p>
+              New assessment collection and personalization that depends on this consent will stop.
+              Records that Xenios must retain are not deleted by this action.
+            </p>
+          }
+        />
+
+        <ResearchConfirmation
           open={deletionConfirming || deletionState.phase === "busy"}
           title="Request deletion of your data?"
           danger
@@ -303,6 +372,63 @@ export default function PrivacyControls() {
             Consent summary
           </h2>
           <div className="mt-4">
+            {healthConsentLoad === "loading" ? (
+              <p role="status" className="body-s text-ink-mute">
+                Loading sensitive-data consent status...
+              </p>
+            ) : healthConsentLoad === "error" ? (
+              <div className="card mb-5">
+                <p role="alert" className="body-s text-ink-2">
+                  Sensitive-data consent status could not be loaded. No consent setting was changed.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-secondary mt-3"
+                  onClick={() => void loadHealthConsent()}
+                >
+                  Try again
+                </button>
+              </div>
+            ) : healthConsent ? (
+              <div className="card mb-5">
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <div>
+                    <p className="body-m font-700">{healthConsent.title}</p>
+                    <p className="body-s text-ink-2 mt-1">
+                      {healthConsent.acceptedVersion
+                        ? "Granted. You may withdraw this consent at any time."
+                        : healthConsent.status !== "published"
+                          ? "Pending final privacy and consent approval. Health assessment collection remains off."
+                          : "Not granted. No new health assessment answers may be collected."}
+                    </p>
+                  </div>
+                  <ResearchStatusBadge
+                    label={
+                      healthConsent.acceptedVersion
+                        ? "Granted"
+                        : healthConsent.status !== "published"
+                          ? "Pending"
+                          : "Not granted"
+                    }
+                    tone={healthConsent.acceptedVersion ? "success" : "neutral"}
+                  />
+                </div>
+                {healthConsent.acceptedVersion && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary mt-4"
+                    onClick={() => setWithdrawConfirming(true)}
+                    disabled={withdrawState.phase === "busy"}
+                  >
+                    Withdraw sensitive-data consent
+                  </button>
+                )}
+                <RequestStatusMessage
+                  state={withdrawState}
+                  doneMessage="Consent was withdrawn. New assessment collection and dependent personalization are now stopped."
+                />
+              </div>
+            ) : null}
             {consents && consents.length > 0 ? (
               <ResearchDataTable<ConsentRecord>
                 caption="Consents on record for your account"
