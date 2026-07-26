@@ -1145,6 +1145,9 @@ body {
   gap: 2px;
   padding-top: 6px;
 }
+.ra-admin-nav-group:not([open]) > .ra-admin-nav-links {
+  display: none;
+}
 .ra-admin-nav-link {
   min-height: 40px;
   display: flex;
