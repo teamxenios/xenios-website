@@ -122,8 +122,6 @@ import {
 } from "./care";
 ```
 
-Add `"/api/care"` to `PII_PATHS`.
-
 Before the generic API 404 and SPA catch-all, add:
 
 ```ts
@@ -152,6 +150,9 @@ authority, permits security-admin-only reads of roles and access audit, and
 provides no authenticated write policy. Active role grants use a partial unique
 index, so grant → revoke → re-grant creates a new lifecycle row while two
 simultaneous active grants fail. It creates no clinical or Research record.
+The access-audit table is database-enforced append-only through an idempotent
+fixed-search-path trigger; committed SQL proves INSERT succeeds while UPDATE
+and DELETE both fail.
 
 Approved application order:
 
@@ -180,8 +181,8 @@ For this Pending release, keep both Care enable flags unset or not equal to
 
 ## Validation at frozen-head preparation
 
-- Focused Care/shared/client tests: 6 files, 24 tests passed.
-- Repository-wide `npm test`: 141 files, 3,121 tests passed.
+- Focused Care/shared/client tests: 6 files, 29 tests passed.
+- Repository-wide `npm test`: 141 files, 3,126 tests passed.
 - `npm run check`: passed.
 - `npm run build`: passed.
 - `git diff --check`: passed.
@@ -190,11 +191,18 @@ For this Pending release, keep both Care enable flags unset or not equal to
   expected tables existed, and all three reported RLS plus forced RLS.
 - Disposable role lifecycle proof: grant → revoke → re-grant passed, a second
   simultaneous active grant raised `unique_violation`, and the test transaction
-  rolled back to zero role rows.
+  rolled back to zero role rows. The same proof inserted an access-audit row,
+  rejected UPDATE and DELETE with SQLSTATE `55000`, retained the original row,
+  and rolled back to zero audit rows.
+- Care dependency failures: status, authentication/role, and access-audit
+  failures return only stable `503 care_temporarily_unavailable` JSON. Adapter
+  error text is not exposed, and a failed allowed-decision audit never invokes
+  the protected handler.
 - Card numbering: decorative with `aria-hidden="true"` and the retained visual
   Xenios purple token measures 5.70:1 against the white card background.
 - Locked-file isolation: final base-to-head diff contains no
-  `client/src/App.tsx` or `server/index.ts` edit.
+  `client/src/App.tsx`, `server/index.ts`, or
+  `client/src/components/Navbar.tsx` edit.
 - Production migration: not applied by Website 5; Website 2 owns coordinated
   production migration and release.
 - Live/mobile/accessibility smoke: pending Website 2 integration and Render
@@ -240,6 +248,21 @@ Browser evidence captured:
 - Computed Care surface: white background, graphite text, Inter Tight headings,
   JetBrains Mono labels, restrained `--pulse` emphasis, thin borders, no
   gradient, and no shell shadow.
+
+Viewable artifacts are committed under `docs/care/evidence/`:
+
+- `PR1_UI_EVIDENCE.md`
+- `care-pr1-desktop-loading.jpg`
+- `care-pr1-desktop-disabled.jpg`
+- `care-pr1-desktop-error.jpg`
+- `care-pr1-mobile-375-error.jpg`
+- `care-pr1-mobile-320-error.jpg`
+- `care-pr1-zoom-200-reflow-equivalent.jpg`
+
+The 640px reflow artifact is the standards-equivalent CSS width for a 1280px
+viewport at 200% zoom. The available browser surface does not expose persistent
+native page zoom, so Website 6 must repeat native 200% zoom on the integrated
+candidate; the handoff does not claim that post-integration gate has passed.
 
 There is no populated or empty clinical-data state in PR 1 because this release
 creates no clinical records or workflow. The truthful authoritative disabled

@@ -61,4 +61,37 @@ describe("Care Pending shell", () => {
     expect(source).not.toMatch(/\b(available nationwide|all 50 states|launches? on)\b/i);
     expect(source).not.toMatch(/\b(our clinicians|our pharmacy|partner pharmacy)\b/i);
   });
+
+  it("commits viewable desktop, mobile, and zoom-reflow evidence", () => {
+    const evidenceDirectory = resolve(
+      __dirname,
+      "../../../docs/care/evidence",
+    );
+    const artifacts = [
+      "care-pr1-desktop-loading.jpg",
+      "care-pr1-desktop-disabled.jpg",
+      "care-pr1-desktop-error.jpg",
+      "care-pr1-mobile-375-error.jpg",
+      "care-pr1-mobile-320-error.jpg",
+      "care-pr1-zoom-200-reflow-equivalent.jpg",
+    ];
+
+    for (const artifact of artifacts) {
+      const image = readFileSync(resolve(evidenceDirectory, artifact));
+      expect([...image.subarray(0, 3)]).toEqual([0xff, 0xd8, 0xff]);
+      expect(image.length).toBeGreaterThan(10_000);
+    }
+
+    const evidence = readFileSync(
+      resolve(evidenceDirectory, "PR1_UI_EVIDENCE.md"),
+      "utf8",
+    );
+    expect(evidence).toContain("1440 × 900");
+    expect(evidence).toContain("375 × 812");
+    expect(evidence).toContain("320 × 640");
+    expect(evidence).toContain("200% reflow equivalent");
+    expect(evidence).toContain(
+      "Website 6 must still repeat native 200% browser zoom",
+    );
+  });
 });

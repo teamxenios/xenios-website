@@ -82,6 +82,26 @@ create unique index if not exists care_roles_user_active_idx
 create index if not exists care_access_audit_time_idx
   on public.care_access_audit (occurred_at desc);
 
+create or replace function public.care_reject_access_audit_mutation()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  raise exception 'care_access_audit_append_only'
+    using errcode = '55000';
+end;
+$$;
+
+revoke all on function public.care_reject_access_audit_mutation()
+  from public, anon, authenticated;
+
+drop trigger if exists care_access_audit_append_only
+  on public.care_access_audit;
+create trigger care_access_audit_append_only
+before update or delete on public.care_access_audit
+for each row execute function public.care_reject_access_audit_mutation();
+
 create or replace function public.care_has_role(required_roles text[])
 returns boolean
 language sql
@@ -135,6 +155,8 @@ create policy care_security_access_audit_read
 -- Rollback (manual and intentionally not executed):
 -- 1. Set public.care_capabilities.state to 'disabled' and remove Care wiring.
 -- 2. Preserve care_access_audit under the approved retention process.
--- 3. Drop the two read policies, then public.care_has_role(text[]).
--- 4. Drop care_access_audit, care_role_assignments, and care_capabilities.
--- 5. Do not cascade into auth or research objects.
+-- 3. Drop the two read policies and care_access_audit_append_only trigger.
+-- 4. Drop public.care_reject_access_audit_mutation(), then
+--    public.care_has_role(text[]).
+-- 5. Drop care_access_audit, care_role_assignments, and care_capabilities.
+-- 6. Do not cascade into auth or research objects.

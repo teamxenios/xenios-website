@@ -79,4 +79,62 @@ begin
 end;
 $$;
 
+insert into public.care_access_audit (
+  actor_user_id,
+  permission,
+  outcome
+)
+values (
+  '10000000-0000-0000-0000-000000000001',
+  'care:security_audit',
+  'allowed'
+);
+
+do $$
+declare
+  audit_id bigint;
+begin
+  select id
+  into audit_id
+  from public.care_access_audit
+  where actor_user_id = '10000000-0000-0000-0000-000000000001'
+    and permission = 'care:security_audit'
+    and outcome = 'allowed'
+  order by id desc
+  limit 1;
+
+  if audit_id is null then
+    raise exception 'care access audit insert proof failed';
+  end if;
+
+  begin
+    update public.care_access_audit
+    set outcome = 'forbidden'
+    where id = audit_id;
+    raise exception 'care access audit update was accepted';
+  exception
+    when sqlstate '55000' then
+      null;
+  end;
+
+  begin
+    delete from public.care_access_audit
+    where id = audit_id;
+    raise exception 'care access audit delete was accepted';
+  exception
+    when sqlstate '55000' then
+      null;
+  end;
+
+  if not exists (
+    select 1
+    from public.care_access_audit
+    where id = audit_id
+      and outcome = 'allowed'
+  ) then
+    raise exception 'care access audit append-only proof failed';
+  end if;
+end;
+$$;
+
 rollback;

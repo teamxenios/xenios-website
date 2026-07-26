@@ -40,6 +40,26 @@ describe("Care access boundary", () => {
     });
   });
 
+  it("returns stable safe JSON when capability status lookup fails", async () => {
+    const response = await request(
+      appFor(dependencies({
+        loadCapabilityStatus: vi.fn(async () => {
+          throw new Error("care_capability_lookup_failed");
+        }),
+      })),
+    ).get("/api/care/status");
+
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({
+      ok: false,
+      code: "care_temporarily_unavailable",
+      message: "Care status is temporarily unavailable.",
+    });
+    expect(JSON.stringify(response.body)).not.toContain(
+      "care_capability_lookup_failed",
+    );
+  });
+
   it("does not authenticate or audit a protected request while Care is disabled", async () => {
     const resolvePrincipal = vi.fn(async () => null);
     const recordAccessDecision = vi.fn(async () => undefined);
@@ -109,5 +129,42 @@ describe("Care access boundary", () => {
       permission: "care:security_audit",
       outcome: "allowed",
     }));
+  });
+
+  it("fails safely when authentication or role lookup rejects", async () => {
+    const response = await request(
+      appFor(dependencies({
+        resolvePrincipal: vi.fn(async () => {
+          throw new Error("care_role_lookup_failed");
+        }),
+      })),
+    ).get("/api/care/audit/access");
+
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({
+      ok: false,
+      code: "care_temporarily_unavailable",
+      message: "Care status is temporarily unavailable.",
+    });
+    expect(JSON.stringify(response.body)).not.toContain("care_role_lookup_failed");
+  });
+
+  it("never authorizes when the allowed-decision audit write fails", async () => {
+    const response = await request(
+      appFor(dependencies({
+        recordAccessDecision: vi.fn(async () => {
+          throw new Error("care_access_audit_failed");
+        }),
+      })),
+    ).get("/api/care/audit/access");
+
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({
+      ok: false,
+      code: "care_temporarily_unavailable",
+      message: "Care status is temporarily unavailable.",
+    });
+    expect(JSON.stringify(response.body)).not.toContain("care_access_audit_failed");
+    expect(response.body).not.toEqual({ ok: true });
   });
 });

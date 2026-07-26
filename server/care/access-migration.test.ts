@@ -40,6 +40,27 @@ describe("Care PR 1 migration", () => {
     expect(sql).not.toMatch(/\bgrant\b[^;]*\bto\s+(public|anon)\b/i);
   });
 
+  it("makes access audit database-enforced append-only", () => {
+    expect(sql).toMatch(
+      /create or replace function public\.care_reject_access_audit_mutation\(\)[\s\S]*set search_path = ''/i,
+    );
+    expect(sql).toMatch(
+      /create trigger care_access_audit_append_only[\s\S]*before update or delete on public\.care_access_audit/i,
+    );
+
+    const lifecycle = readFileSync(
+      resolve(
+        __dirname,
+        "../../supabase/tests/care-access-foundation-lifecycle.test.sql",
+      ),
+      "utf8",
+    );
+    expect(lifecycle).toContain("care access audit insert proof failed");
+    expect(lifecycle).toContain("care access audit update was accepted");
+    expect(lifecycle).toContain("care access audit delete was accepted");
+    expect(lifecycle.match(/when sqlstate '55000'/g)).toHaveLength(2);
+  });
+
   it("does not establish clinical records or a Research linkage", () => {
     expect(sql).not.toMatch(/create table if not exists public\.care_(patients|clinicians|prescriptions|pharmacy|instructions|supplies)/i);
     expect(sql).not.toMatch(/references\s+public\.research_/i);
