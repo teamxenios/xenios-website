@@ -329,6 +329,26 @@ describe("Website 3 route registration", () => {
     expect(incomplete.status).toBe(400);
     expect(incomplete.body.code).toBe("validation_failed");
 
+    const disabledAffiliate = await request(app)
+      .put("/api/admin/research/superpower-offer")
+      .send({
+        status: "available",
+        availability: "Available to eligible members",
+        collectionMethod: "At-home collection",
+        priceCents: 19900,
+        priceEffectiveDate: "2026-08-01",
+        lastVerificationDate: "2026-07-25",
+        lastReviewedDate: "2026-07-25",
+        verifiedPriceDate: "2026-07-25",
+        interest: {
+          enabled: true,
+          href: "/research/member/product-requests/new?source=diagnostics",
+        },
+        affiliate: { enabled: false, url: null },
+      });
+    expect(disabledAffiliate.status).toBe(400);
+    expect(disabledAffiliate.body.code).toBe("validation_failed");
+
     const complete = await request(app)
       .put("/api/admin/research/superpower-offer")
       .send({

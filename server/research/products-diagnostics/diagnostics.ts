@@ -166,10 +166,12 @@ export function validateSuperpowerOffer(
       !offer.priceEffectiveDate ||
       !offer.lastVerificationDate ||
       !offer.lastReviewedDate ||
-      !offer.verifiedPriceDate)
+      !offer.verifiedPriceDate ||
+      !offer.affiliate.enabled ||
+      !offer.affiliate.url?.startsWith("https://"))
   ) {
     throw new Website3ValidationError(
-      "An available Superpower offer requires collection, price, effective-date, verification, and review metadata.",
+      "An available Superpower offer requires collection, price, effective-date, verification, review, and an enabled HTTPS affiliate offer.",
     );
   }
 }
