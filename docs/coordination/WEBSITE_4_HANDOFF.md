@@ -26,7 +26,7 @@
 24. **Release sequence:** Apply canonical commerce migrations → confirm allocation bridge → apply Website 4 migration → register production guards/dependencies/routes → run integrated checks → merge → Render deploy → live role-based smoke test → logs/database verification.
 25. **Route parity:** All 16 formerly missing partner endpoints now have literal authenticated server registrations, owner-scoped durable adapters, and parity tests. See `docs/coordination/WEBSITE_4_ROUTE_PARITY.md`.
 26. **Newly finished missing scope:** Production-backed operational CRM commands/timeline, durable assigned operations tasks, partner campaign/event/organization/compliance intake, aggregate partner reports, hashed partner session history, and the complete prospect → discovery → diligence → commercial review → agreement → active/paused/closed professional pipeline.
-27. **Validation:** `npm test` passed 145 files / 3,159 tests; `npm run check` passed; `npm run build` passed; focused Website 4 tests and disposable migration tests passed.
+27. **Validation:** `npm test` passed 148 files / 3,183 tests; `npm run check` passed; `npm run build` passed; focused Website 4 tests and disposable migration tests passed.
 28. **Remaining scope:** The exhaustive classification and exact continuation packets are in `docs/coordination/WEBSITE_4_REMAINING_SCOPE.md`.
 29. **Production smoke:** Pending Website 2 merge and Render deployment. Website 4 remains available for review fixes and will verify the released routes.
 
