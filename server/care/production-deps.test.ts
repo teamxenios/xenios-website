@@ -11,6 +11,7 @@ function adapters(
   return {
     authenticate: vi.fn(async () => ({ id: "user-1" })),
     loadActiveRoles: vi.fn(async () => ["care_patient"]),
+    loadPatientId: vi.fn(async () => "patient-1"),
     loadCapability: vi.fn(async () => ({
       state: "disabled",
       approved_by: null,
@@ -25,6 +26,14 @@ function requestWithAuthorization(value?: string): Request {
   return {
     headers: value ? { authorization: value } : {},
   } as Request;
+}
+
+function tokenWithAmr(methods: string[]): string {
+  return [
+    Buffer.from(JSON.stringify({ alg: "none" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ amr: methods })).toString("base64url"),
+    "signature",
+  ].join(".");
 }
 
 describe("Care production dependencies", () => {
@@ -103,7 +112,30 @@ describe("Care production dependencies", () => {
     ).resolves.toBeNull();
     await expect(
       deps.resolvePrincipal(requestWithAuthorization("Bearer valid")),
-    ).resolves.toEqual({ subjectId: "user-1", roles: ["care_patient"] });
+    ).resolves.toEqual({
+      subjectId: "user-1",
+      roles: ["care_patient"],
+      patientId: "patient-1",
+    });
     expect(authenticate).toHaveBeenCalledWith("valid");
+  });
+
+  it("rejects a provider-verified password-recovery-purpose session", async () => {
+    const recoveryToken = tokenWithAmr(["otp"]);
+    const loadActiveRoles = vi.fn(async () => ["care_patient"]);
+    const deps = createCareProductionDependencies(
+      adapters({
+        authenticate: vi.fn(async () => ({ id: "user-1" })),
+        loadActiveRoles,
+      }),
+      {},
+    );
+
+    await expect(
+      deps.resolvePrincipal(
+        requestWithAuthorization(`Bearer ${recoveryToken}`),
+      ),
+    ).resolves.toBeNull();
+    expect(loadActiveRoles).not.toHaveBeenCalled();
   });
 });
