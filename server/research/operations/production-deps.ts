@@ -17,6 +17,11 @@ import type {
 } from "./fulfillment-service";
 import type { OutboxNotification, NotificationStatus } from "./notification-outbox";
 import type { OperationsDashboardInput } from "./operations-dashboard";
+import type {
+  OperationsTask,
+  OperationsTaskResult,
+  OperationsTaskStatus,
+} from "./operations-tasks";
 import {
   DEFAULT_PROFESSIONAL_ECONOMIC_TERMS,
   PROFESSIONAL_PROGRAMS,
@@ -36,6 +41,25 @@ import type { OperationsActor, OperationsOrderState, PaymentState } from "./stat
 
 type DbError = { message: string };
 type DbResult<T> = { data: T | null; error: DbError | null };
+
+function operationsTask(row: Record<string, unknown>): OperationsTask {
+  return {
+    id: String(row.id),
+    title: String(row.title),
+    description: row.description ? String(row.description) : null,
+    status: String(row.status) as OperationsTask["status"],
+    priority: String(row.priority) as OperationsTask["priority"],
+    assignedTo: row.assigned_to ? String(row.assigned_to) : null,
+    sourceType: row.source_type ? String(row.source_type) : null,
+    sourceId: row.source_id ? String(row.source_id) : null,
+    dueAt: row.due_at ? String(row.due_at) : null,
+    version: Number(row.version),
+    createdBy: String(row.created_by),
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at),
+    completedAt: row.completed_at ? String(row.completed_at) : null,
+  };
+}
 
 function fail<T>(code: FulfillmentFailureCode, message: string): FulfillmentResult<T> {
   return { ok: false, code, message };
@@ -1160,6 +1184,108 @@ export function buildOperationsProductionDependencies(
             updatedAt: row.updated_at,
           }));
         return { ok: true, value: contacts, idempotent: true };
+      },
+    },
+    tasks: {
+      async list(_actor, status?: OperationsTaskStatus): Promise<OperationsTaskResult<OperationsTask[]>> {
+        let query = client
+          .from("research_operations_tasks")
+          .select(
+            "id, title, description, status, priority, assigned_to, source_type, source_id, due_at, version, created_by, created_at, updated_at, completed_at",
+          )
+          .order("priority", { ascending: false })
+          .order("created_at", { ascending: true });
+        if (status) query = query.eq("status", status);
+        const result = await query;
+        if (result.error) throw new Error(`operations task load failed: ${result.error.message}`);
+        return {
+          ok: true,
+          value: ((result.data ?? []) as Array<Record<string, unknown>>).map(operationsTask),
+          idempotent: true,
+        };
+      },
+      async create(input): Promise<OperationsTaskResult<OperationsTask>> {
+        const result = await client.rpc("research_operations_apply_task_command", {
+          p_task_id: input.id || null,
+          p_action: "create",
+          p_expected_version: null,
+          p_actor_id: input.actor.id,
+          p_actor_role: input.actor.role,
+          p_idempotency_key: input.idempotencyKey,
+          p_payload: {
+            title: input.title,
+            description: input.description ?? null,
+            priority: input.priority ?? "normal",
+            assignedTo: input.assignedTo ?? null,
+            sourceType: input.sourceType ?? null,
+            sourceId: input.sourceId ?? null,
+            dueAt: input.dueAt ?? null,
+          },
+          p_occurred_at: input.occurredAt.toISOString(),
+        });
+        if (result.error) throw new Error(`operations task create failed: ${result.error.message}`);
+        const rpc = result.data as {
+          ok?: boolean;
+          taskId?: string;
+          idempotent?: boolean;
+          code?: string;
+          message?: string;
+        };
+        if (!rpc.ok || !rpc.taskId) {
+          return {
+            ok: false,
+            code: (rpc.code ?? "invalid_input") as Extract<OperationsTaskResult<never>, { ok: false }>["code"],
+            message: rpc.message ?? "Task creation refused.",
+          };
+        }
+        const loaded = await client
+          .from("research_operations_tasks")
+          .select(
+            "id, title, description, status, priority, assigned_to, source_type, source_id, due_at, version, created_by, created_at, updated_at, completed_at",
+          )
+          .eq("id", rpc.taskId)
+          .single();
+        if (loaded.error || !loaded.data) throw new Error(`operations task reload failed: ${loaded.error?.message ?? "missing row"}`);
+        return { ok: true, value: operationsTask(loaded.data as Record<string, unknown>), idempotent: rpc.idempotent === true };
+      },
+      async transition(input): Promise<OperationsTaskResult<OperationsTask>> {
+        const result = await client.rpc("research_operations_apply_task_command", {
+          p_task_id: input.taskId,
+          p_action: "transition",
+          p_expected_version: input.expectedVersion,
+          p_actor_id: input.actor.id,
+          p_actor_role: input.actor.role,
+          p_idempotency_key: input.idempotencyKey,
+          p_payload: {
+            to: input.to,
+            ...(input.assignedTo !== undefined ? { assignedTo: input.assignedTo } : {}),
+          },
+          p_occurred_at: input.occurredAt.toISOString(),
+        });
+        if (result.error) throw new Error(`operations task transition failed: ${result.error.message}`);
+        const rpc = result.data as {
+          ok?: boolean;
+          taskId?: string;
+          idempotent?: boolean;
+          code?: string;
+          message?: string;
+        };
+        if (!rpc.ok || !rpc.taskId) {
+          return {
+            ok: false,
+            code: (rpc.code ?? "invalid_input") as Extract<OperationsTaskResult<never>, { ok: false }>["code"],
+            message: rpc.message ?? "Task transition refused.",
+          };
+        }
+        const loaded = await client
+          .from("research_operations_tasks")
+          .select(
+            "id, title, description, status, priority, assigned_to, source_type, source_id, due_at, version, created_by, created_at, updated_at, completed_at",
+          )
+          .eq("id", rpc.taskId)
+          .single();
+        if (loaded.error || !loaded.data) throw new Error(`operations task reload failed: ${loaded.error?.message ?? "missing row"}`);
+        return { ok: true, value: operationsTask(loaded.data as Record<string, unknown>), idempotent: rpc.idempotent === true };
       },
     },
     outbox: {

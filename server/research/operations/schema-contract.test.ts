@@ -43,6 +43,7 @@ describe("operations additive schema contract", () => {
       "research_operations_inventory_append_only",
       "research_operations_audit_append_only",
       "research_operations_crm_events_append_only",
+      "research_operations_task_events_append_only",
       "research_partner_metric_events_append_only",
       "research_partner_portal_request_events_append_only",
       "research_professional_audit_append_only",
@@ -92,6 +93,14 @@ describe("operations additive schema contract", () => {
     ]) {
       expect(sql).toContain(key);
     }
+  });
+
+  it("persists assigned operations tasks with optimistic concurrency and replay protection", () => {
+    expect(sql).toContain("create table if not exists public.research_operations_tasks");
+    expect(sql).toContain("create table if not exists public.research_operations_task_events");
+    expect(sql).toContain("research_operations_apply_task_command");
+    expect(sql).toContain("task.version <> p_expected_version");
+    expect(sql).toContain("prior.command_hash <> command_hash");
   });
 
   it("persists the complete professional commercial pipeline with an atomic transition RPC", () => {

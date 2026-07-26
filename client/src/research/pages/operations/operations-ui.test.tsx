@@ -50,6 +50,17 @@ describe("operations UI states and accessibility", () => {
             href: "/exceptions/exc-1",
           },
         ]}
+        tasks={[
+          {
+            id: "task-1",
+            title: "Review fulfillment shortage",
+            status: "in_progress",
+            priority: "urgent",
+            assignedTo: "Operations",
+            dueLabel: "Today",
+            href: "/research/admin/operations/tasks/task-1",
+          },
+        ]}
         generatedAt="2026-07-25T16:00:00.000Z"
         priorityHref="/mitch?queue=overdue"
       />,
@@ -59,6 +70,8 @@ describe("operations UI states and accessibility", () => {
     expect(view.querySelector('a[aria-label="Low inventory: 4"]')?.getAttribute("href")).toBe("/inventory?queue=low");
     expect(view.querySelector('input[placeholder*="Inventory"]')).not.toBeNull();
     expect(view.textContent).toContain("Samuel decision");
+    expect(view.textContent).toContain("Review fulfillment shortage");
+    expect(view.querySelector('a[href="/research/admin/operations/tasks/task-1"]')).not.toBeNull();
   });
 
   it("renders loading, error, empty, and filtered-empty states without blank screens", () => {

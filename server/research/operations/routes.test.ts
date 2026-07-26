@@ -6,6 +6,7 @@ import { CrmService } from "./crm-service";
 import { FulfillmentService } from "./fulfillment-service";
 import { InventoryLedger } from "./inventory-ledger";
 import { InMemoryOutboxRepository, NotificationOutbox } from "./notification-outbox";
+import { OperationsTaskService } from "./operations-tasks";
 import { ProfessionalAccountService } from "./professional-accounts";
 import { registerOperationsApi, type OperationsRouteDeps, type OperationsRouteRequest } from "./routes";
 import { newOperationsAggregate, type OperationsActor, type OperationsRole } from "./state-machines";
@@ -72,6 +73,7 @@ describe("operations integration-ready routes", () => {
         submit: async (kind) => ({ ok: true, message: `${kind} received`, idempotent: false }),
       },
       crm: new CrmService(),
+      tasks: new OperationsTaskService(),
       outbox: new NotificationOutbox(new InMemoryOutboxRepository(), {}),
       dashboard: () => ({
         generatedAt: NOW.toISOString(),
@@ -262,5 +264,64 @@ describe("operations integration-ready routes", () => {
       expect(response.body.value.state, stage).toBe(stage);
       version += 1;
     }
+  });
+
+  it("persists an assigned operations task and refuses stale or replay-conflicting transitions", async () => {
+    const created = await request(app)
+      .post("/api/admin/research/operations/tasks")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "task-create")
+      .send({
+        id: "task-1",
+        title: "Review fulfillment shortage",
+        priority: "urgent",
+        assignedTo: "operations@example.com",
+      });
+    expect(created.status).toBe(200);
+    expect(created.body.value).toMatchObject({ id: "task-1", status: "open", version: 1 });
+
+    const transitioned = await request(app)
+      .post("/api/admin/research/operations/tasks/task-1/transition")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "task-start")
+      .send({ to: "in_progress", expectedVersion: 1 });
+    expect(transitioned.status).toBe(200);
+    expect(transitioned.body.value).toMatchObject({ status: "in_progress", version: 2 });
+
+    const replay = await request(app)
+      .post("/api/admin/research/operations/tasks/task-1/transition")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "task-start")
+      .send({ to: "in_progress", expectedVersion: 1 });
+    expect(replay.status).toBe(200);
+    expect(replay.body.idempotent).toBe(true);
+
+    const conflict = await request(app)
+      .post("/api/admin/research/operations/tasks/task-1/transition")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "task-start")
+      .send({ to: "completed", expectedVersion: 2 });
+    expect(conflict.status).toBe(400);
+    expect(conflict.body.code).toBe("idempotency_conflict");
+
+    const stale = await request(app)
+      .post("/api/admin/research/operations/tasks/task-1/transition")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "task-stale")
+      .send({ to: "completed", expectedVersion: 1 });
+    expect(stale.status).toBe(409);
+    expect(stale.body.code).toBe("stale_write");
+
+    const list = await request(app)
+      .get("/api/admin/research/operations/tasks?status=in_progress")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel");
+    expect(list.status).toBe(200);
+    expect(list.body.value).toHaveLength(1);
   });
 });

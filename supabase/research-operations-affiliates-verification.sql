@@ -26,6 +26,8 @@ from unnest(array[
   'public.research_fulfillment_exceptions',
   'public.research_fulfillment_notes',
   'public.research_operations_crm_contacts',
+  'public.research_operations_tasks',
+  'public.research_operations_task_events',
   'public.research_professional_accounts'
 ]) as required(name)
 order by required.name;
@@ -47,6 +49,8 @@ where n.nspname = 'public'
     'research_fulfillment_notes',
     'research_operations_crm_contacts',
     'research_operations_crm_events',
+    'research_operations_tasks',
+    'research_operations_task_events',
     'research_commission_policies',
     'research_lawrence_partner_models',
     'research_partner_metric_events',
@@ -76,6 +80,8 @@ where table_schema = 'public'
     'research_fulfillment_notes',
     'research_operations_crm_contacts',
     'research_operations_crm_events',
+    'research_operations_tasks',
+    'research_operations_task_events',
     'research_commission_policies',
     'research_lawrence_partner_models',
     'research_partner_metric_events',
@@ -98,6 +104,7 @@ from information_schema.role_routine_grants
 where routine_schema = 'public'
   and routine_name in (
     'research_operations_apply_fulfillment_command',
+    'research_operations_apply_task_command',
     'research_operations_submit_partner_request',
     'research_operations_apply_professional_account',
     'research_operations_transition_professional_account'

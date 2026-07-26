@@ -295,4 +295,80 @@ begin
 end
 $$;
 
+do $$
+declare
+  result jsonb;
+  task_uuid uuid := '00000000-0000-0000-0000-000000000480';
+  event_count bigint;
+  task_status text;
+  task_version bigint;
+begin
+  result := public.research_operations_apply_task_command(
+    task_uuid,
+    'create',
+    null,
+    'admin@example.com',
+    'admin',
+    'w4-task-create',
+    jsonb_build_object(
+      'title', 'Resolve fulfillment shortage',
+      'priority', 'urgent',
+      'assignedTo', 'operations@example.com'
+    ),
+    '2026-07-25T22:00:00Z'
+  );
+  if not (result->>'ok')::boolean or (result->>'idempotent')::boolean then
+    raise exception 'task creation failed: %', result;
+  end if;
+
+  result := public.research_operations_apply_task_command(
+    task_uuid,
+    'transition',
+    1,
+    'admin@example.com',
+    'admin',
+    'w4-task-start',
+    '{"to":"in_progress"}'::jsonb,
+    '2026-07-25T22:01:00Z'
+  );
+  if not (result->>'ok')::boolean then raise exception 'task transition failed: %', result; end if;
+
+  result := public.research_operations_apply_task_command(
+    task_uuid,
+    'transition',
+    1,
+    'admin@example.com',
+    'admin',
+    'w4-task-start',
+    '{"to":"in_progress"}'::jsonb,
+    '2026-07-25T22:01:00Z'
+  );
+  if not (result->>'ok')::boolean or not (result->>'idempotent')::boolean then
+    raise exception 'task replay was not idempotent: %', result;
+  end if;
+
+  result := public.research_operations_apply_task_command(
+    task_uuid,
+    'transition',
+    1,
+    'admin@example.com',
+    'admin',
+    'w4-task-stale',
+    '{"to":"completed"}'::jsonb,
+    '2026-07-25T22:02:00Z'
+  );
+  if (result->>'code') <> 'stale_write' then raise exception 'stale task write was not refused: %', result; end if;
+
+  select status, version into task_status, task_version
+  from public.research_operations_tasks
+  where id = task_uuid;
+  select count(*) into event_count
+  from public.research_operations_task_events
+  where task_id = task_uuid;
+  if task_status <> 'in_progress' or task_version <> 2 or event_count <> 2 then
+    raise exception 'unexpected task state/version/events: %/%/%', task_status, task_version, event_count;
+  end if;
+end
+$$;
+
 rollback;

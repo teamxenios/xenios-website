@@ -252,6 +252,53 @@ create table if not exists public.research_operations_crm_events (
 create index if not exists research_operations_crm_events_contact_idx
   on public.research_operations_crm_events (contact_id, occurred_at);
 
+-- Assigned operational work is durable and separately auditable. Tasks hold
+-- operational references only; customer, clinical, and payment payloads do not
+-- belong in this queue.
+create table if not exists public.research_operations_tasks (
+  id uuid primary key default gen_random_uuid(),
+  title text not null check (length(trim(title)) > 0),
+  description text,
+  status text not null default 'open'
+    check (status in ('open','in_progress','blocked','completed','cancelled')),
+  priority text not null default 'normal'
+    check (priority in ('normal','urgent','samuel_decision')),
+  assigned_to text,
+  source_type text,
+  source_id text,
+  due_at timestamptz,
+  version bigint not null default 1 check (version > 0),
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  completed_at timestamptz,
+  check ((source_type is null) = (source_id is null)),
+  check ((status in ('completed','cancelled')) = (completed_at is not null))
+);
+create index if not exists research_operations_tasks_queue_idx
+  on public.research_operations_tasks (status, priority, due_at, created_at);
+create index if not exists research_operations_tasks_assignee_idx
+  on public.research_operations_tasks (assigned_to, status, updated_at desc)
+  where assigned_to is not null;
+
+create table if not exists public.research_operations_task_events (
+  id uuid primary key default gen_random_uuid(),
+  task_id uuid not null
+    references public.research_operations_tasks (id) on delete cascade,
+  from_status text,
+  to_status text not null
+    check (to_status in ('open','in_progress','blocked','completed','cancelled')),
+  assigned_to text,
+  actor_id text not null,
+  actor_role text not null
+    check (actor_role in ('admin','operations_manager','finance','system')),
+  idempotency_key text not null unique,
+  command_hash text not null check (length(command_hash) = 64),
+  occurred_at timestamptz not null default now()
+);
+create index if not exists research_operations_task_events_task_idx
+  on public.research_operations_task_events (task_id, occurred_at);
+
 -- Immutable commission policy snapshots refer to the canonical partner and
 -- canonical append-only commission ledger. Rates are never hard-coded in code.
 create table if not exists public.research_commission_policies (
@@ -530,6 +577,12 @@ drop trigger if exists research_operations_crm_events_append_only
   on public.research_operations_crm_events;
 create trigger research_operations_crm_events_append_only
 before update or delete on public.research_operations_crm_events
+for each row execute function public.research_operations_refuse_mutation();
+
+drop trigger if exists research_operations_task_events_append_only
+  on public.research_operations_task_events;
+create trigger research_operations_task_events_append_only
+before update or delete on public.research_operations_task_events
 for each row execute function public.research_operations_refuse_mutation();
 
 drop trigger if exists research_professional_audit_append_only
@@ -965,6 +1018,168 @@ exception
 end
 $$;
 
+-- Atomic operations task creation and transition. The append-only event owns
+-- the idempotency key and command fingerprint, so replays are safe and a reused
+-- key with different input fails closed.
+create or replace function public.research_operations_apply_task_command(
+  p_task_id uuid,
+  p_action text,
+  p_expected_version bigint,
+  p_actor_id text,
+  p_actor_role text,
+  p_idempotency_key text,
+  p_payload jsonb default '{}'::jsonb,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  task public.research_operations_tasks%rowtype;
+  prior public.research_operations_task_events%rowtype;
+  command_hash text;
+  next_status text;
+  previous_status text;
+begin
+  if p_actor_role not in ('admin','operations_manager','finance','system') then
+    return jsonb_build_object('ok', false, 'code', 'forbidden', 'message', 'This role cannot change operations tasks.');
+  end if;
+  if length(trim(coalesce(p_actor_id, ''))) = 0
+     or length(trim(coalesce(p_idempotency_key, ''))) = 0
+     or p_action not in ('create','transition') then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'A valid task command is required.');
+  end if;
+
+  command_hash := encode(
+    extensions.digest(
+      convert_to(
+        concat_ws(
+          '|',
+          p_action,
+          coalesce(p_task_id::text, ''),
+          coalesce(p_expected_version::text, ''),
+          p_actor_id,
+          p_actor_role,
+          coalesce(p_payload, '{}'::jsonb)::text
+        ),
+        'utf8'
+      ),
+      'sha256'
+    ),
+    'hex'
+  );
+
+  select * into prior
+  from public.research_operations_task_events
+  where idempotency_key = p_idempotency_key;
+  if found then
+    if prior.command_hash <> command_hash then
+      return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'That idempotency key belongs to another task command.');
+    end if;
+    return jsonb_build_object('ok', true, 'idempotent', true, 'taskId', prior.task_id);
+  end if;
+
+  if p_action = 'create' then
+    if length(trim(coalesce(p_payload->>'title', ''))) = 0
+       or coalesce(p_payload->>'priority', 'normal') not in ('normal','urgent','samuel_decision') then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Task title and priority are invalid.');
+    end if;
+    if
+      (nullif(trim(coalesce(p_payload->>'sourceType', '')), '') is null)
+      <>
+      (nullif(trim(coalesce(p_payload->>'sourceId', '')), '') is null)
+    then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Task source type and id must be supplied together.');
+    end if;
+
+    insert into public.research_operations_tasks (
+      id, title, description, priority, assigned_to, source_type, source_id,
+      due_at, created_by, created_at, updated_at
+    )
+    values (
+      coalesce(p_task_id, gen_random_uuid()),
+      trim(p_payload->>'title'),
+      nullif(trim(coalesce(p_payload->>'description', '')), ''),
+      coalesce(p_payload->>'priority', 'normal'),
+      nullif(trim(coalesce(p_payload->>'assignedTo', '')), ''),
+      nullif(trim(coalesce(p_payload->>'sourceType', '')), ''),
+      nullif(trim(coalesce(p_payload->>'sourceId', '')), ''),
+      nullif(p_payload->>'dueAt', '')::timestamptz,
+      p_actor_id,
+      p_occurred_at,
+      p_occurred_at
+    )
+    returning * into task;
+
+    insert into public.research_operations_task_events (
+      task_id, from_status, to_status, assigned_to, actor_id, actor_role,
+      idempotency_key, command_hash, occurred_at
+    )
+    values (
+      task.id, null, 'open', task.assigned_to, p_actor_id, p_actor_role,
+      p_idempotency_key, command_hash, p_occurred_at
+    );
+    return jsonb_build_object('ok', true, 'idempotent', false, 'taskId', task.id);
+  end if;
+
+  if p_task_id is null or p_expected_version is null then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Task id and expected version are required.');
+  end if;
+  select * into task
+  from public.research_operations_tasks
+  where id = p_task_id
+  for update;
+  if not found then
+    return jsonb_build_object('ok', false, 'code', 'not_found', 'message', 'Operations task not found.');
+  end if;
+  if task.version <> p_expected_version then
+    return jsonb_build_object('ok', false, 'code', 'stale_write', 'message', 'The task changed; reload it.');
+  end if;
+  next_status := p_payload->>'to';
+  previous_status := task.status;
+  if next_status not in ('open','in_progress','blocked','completed','cancelled')
+     or task.status in ('completed','cancelled')
+     or next_status = task.status then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'That task transition is not allowed.');
+  end if;
+
+  update public.research_operations_tasks
+  set
+    status = next_status,
+    assigned_to = case
+      when p_payload ? 'assignedTo' then nullif(trim(coalesce(p_payload->>'assignedTo', '')), '')
+      else assigned_to
+    end,
+    version = version + 1,
+    updated_at = p_occurred_at,
+    completed_at = case
+      when next_status in ('completed','cancelled') then p_occurred_at
+      else null
+    end
+  where id = task.id
+  returning * into task;
+
+  insert into public.research_operations_task_events (
+    task_id, from_status, to_status, assigned_to, actor_id, actor_role,
+    idempotency_key, command_hash, occurred_at
+  )
+  values (
+    task.id, previous_status,
+    next_status, task.assigned_to, p_actor_id, p_actor_role,
+    p_idempotency_key, command_hash, p_occurred_at
+  );
+
+  return jsonb_build_object('ok', true, 'idempotent', false, 'taskId', task.id);
+exception
+  when invalid_text_representation or datetime_field_overflow then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'The task command contains an invalid identifier or date.');
+  when unique_violation then
+    return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'A conflicting task command already exists.');
+end
+$$;
+
 -- Atomic partner request intake for campaign, event, organization, and
 -- compliance forms. Replays return the original request.
 create or replace function public.research_operations_submit_partner_request(
@@ -1258,6 +1473,8 @@ begin
     'research_fulfillment_notes',
     'research_operations_crm_contacts',
     'research_operations_crm_events',
+    'research_operations_tasks',
+    'research_operations_task_events',
     'research_commission_policies',
     'research_lawrence_partner_models',
     'research_partner_metric_events',
@@ -1291,6 +1508,12 @@ revoke all on function public.research_operations_apply_fulfillment_command(
 ) from public, anon, authenticated;
 grant execute on function public.research_operations_apply_fulfillment_command(
   uuid, text, bigint, text, uuid, text, jsonb, timestamptz
+) to service_role;
+revoke all on function public.research_operations_apply_task_command(
+  uuid, text, bigint, text, text, text, jsonb, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.research_operations_apply_task_command(
+  uuid, text, bigint, text, text, text, jsonb, timestamptz
 ) to service_role;
 revoke all on function public.research_operations_submit_partner_request(
   uuid, text, text, jsonb, text, timestamptz

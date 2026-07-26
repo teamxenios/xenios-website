@@ -5,6 +5,12 @@ import type { FulfillmentService, MitchQueue } from "./fulfillment-service";
 import type { NotificationOutbox, NotificationStatus } from "./notification-outbox";
 import type { OperationsDashboardInput } from "./operations-dashboard";
 import { buildOperationsDashboard } from "./operations-dashboard";
+import type {
+  OperationsTaskPriority,
+  OperationsTaskResult,
+  OperationsTaskStatus,
+  OperationsTask,
+} from "./operations-tasks";
 import type { ProfessionalAccountService, ProfessionalLifecycle, ProfessionalProgram } from "./professional-accounts";
 import type { OperationsActor } from "./state-machines";
 
@@ -44,6 +50,32 @@ export interface OperationsCrmPort {
 
 export interface OperationsOutboxPort {
   list: AsyncCompatibleMethod<NotificationOutbox["list"]>;
+}
+
+export interface OperationsTasksPort {
+  list(actor: OperationsActor, status?: OperationsTaskStatus): Awaitable<OperationsTaskResult<OperationsTask[]>>;
+  create(input: {
+    id: string;
+    title: string;
+    description?: string | null;
+    priority?: OperationsTaskPriority;
+    assignedTo?: string | null;
+    sourceType?: string | null;
+    sourceId?: string | null;
+    dueAt?: string | null;
+    actor: OperationsActor;
+    idempotencyKey: string;
+    occurredAt: Date;
+  }): Awaitable<OperationsTaskResult<OperationsTask>>;
+  transition(input: {
+    taskId: string;
+    to: OperationsTaskStatus;
+    assignedTo?: string | null;
+    expectedVersion: number;
+    actor: OperationsActor;
+    idempotencyKey: string;
+    occurredAt: Date;
+  }): Awaitable<OperationsTaskResult<OperationsTask>>;
 }
 
 export type PartnerPortalSurface =
@@ -98,6 +130,7 @@ export interface OperationsRouteDeps {
   professionals: OperationsProfessionalPort;
   partnerPortal: OperationsPartnerPortalPort;
   crm: OperationsCrmPort;
+  tasks: OperationsTasksPort;
   outbox: OperationsOutboxPort;
   dashboard(): Promise<OperationsDashboardInput> | OperationsDashboardInput;
   now(): Date;
@@ -455,6 +488,65 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     if (!acting) return;
     relay(res, await deps.crm.list(acting, undefined, typeof req.query.search === "string" ? req.query.search : undefined));
   });
+
+  app.get("/api/admin/research/operations/tasks", admin, async (req: OperationsRouteRequest, res) => {
+    noStore(res);
+    const acting = actor(req, deps, res);
+    if (!acting) return;
+    const status =
+      typeof req.query.status === "string" ? (req.query.status as OperationsTaskStatus) : undefined;
+    relay(res, await deps.tasks.list(acting, status));
+  });
+
+  app.post("/api/admin/research/operations/tasks", admin, async (req: OperationsRouteRequest, res) => {
+    const acting = actor(req, deps, res);
+    const idempotencyKey = key(req);
+    const body = req.body as Record<string, unknown>;
+    if (!acting || !idempotencyKey) {
+      if (!idempotencyKey) {
+        res.status(400).json({ ok: false, code: "invalid_input", message: "Idempotency-Key is required." });
+      }
+      return;
+    }
+    relay(
+      res,
+      await deps.tasks.create({
+        id: String(body.id ?? ""),
+        title: String(body.title ?? ""),
+        description: typeof body.description === "string" ? body.description : null,
+        priority: String(body.priority ?? "normal") as OperationsTaskPriority,
+        assignedTo: typeof body.assignedTo === "string" ? body.assignedTo : null,
+        sourceType: typeof body.sourceType === "string" ? body.sourceType : null,
+        sourceId: typeof body.sourceId === "string" ? body.sourceId : null,
+        dueAt: typeof body.dueAt === "string" ? body.dueAt : null,
+        actor: acting,
+        idempotencyKey,
+        occurredAt: deps.now(),
+      }),
+    );
+  });
+
+  app.post(
+    "/api/admin/research/operations/tasks/:taskId/transition",
+    admin,
+    async (req: OperationsRouteRequest, res) => {
+      const acting = actor(req, deps, res);
+      const command = requireCommand(req, res);
+      const body = req.body as Record<string, unknown>;
+      if (!acting || !command) return;
+      relay(
+        res,
+        await deps.tasks.transition({
+          taskId: String(req.params.taskId),
+          to: String(body.to) as OperationsTaskStatus,
+          assignedTo: typeof body.assignedTo === "string" ? body.assignedTo : undefined,
+          ...command,
+          actor: acting,
+          occurredAt: deps.now(),
+        }),
+      );
+    },
+  );
 
   app.get("/api/admin/research/operations/outbox", admin, async (req, res) => {
     noStore(res);

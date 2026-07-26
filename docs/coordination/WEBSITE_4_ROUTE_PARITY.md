@@ -23,6 +23,9 @@ All routes below are server registered on the Website 4 branch. Shared registrat
 | POST | `/api/research/professional-accounts/apply` | same | public intake | no privileged ownership | atomic professional-account RPC | route + SQL behavior tests | enable after migration |
 | GET | `/api/admin/research/professional-accounts` | same | verified admin | admin scope | Website 4 professional tables | route tests | enable after migration/wiring |
 | GET | `/api/admin/research/operations/crm` | same | verified admin | admin scope | Website 4 CRM tables | route tests | enable after migration/wiring |
+| GET | `/api/admin/research/operations/tasks` | same | verified admin | admin scope | Website 4 task/event tables | route + SQL behavior tests | enable after migration 31/wiring |
+| POST | `/api/admin/research/operations/tasks` | same | verified admin | admin scope | atomic task RPC + append-only event | route + SQL behavior tests | enable after migration 31/wiring |
+| POST | `/api/admin/research/operations/tasks/:taskId/transition` | same | verified admin | admin scope | atomic task RPC + optimistic concurrency | route + SQL behavior tests | enable after migration 31/wiring |
 | GET | `/api/admin/research/operations/outbox` | same | verified admin | admin scope | canonical notification outbox | route tests | enable after migration/wiring |
 
 ## Partner adapter

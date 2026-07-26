@@ -18,9 +18,20 @@ export interface OperationsExceptionRow {
   href: string;
 }
 
+export interface OperationsTaskRow {
+  id: string;
+  title: string;
+  status: "open" | "in_progress" | "blocked" | "completed" | "cancelled";
+  priority: "normal" | "urgent" | "samuel_decision";
+  assignedTo: string | null;
+  dueLabel: string | null;
+  href: string;
+}
+
 export function OperationsCommandCenter({
   metrics,
   exceptions,
+  tasks = [],
   generatedAt,
   priorityHref,
   loading = false,
@@ -29,6 +40,7 @@ export function OperationsCommandCenter({
 }: {
   metrics: OperationsUiMetric[];
   exceptions: OperationsExceptionRow[];
+  tasks?: OperationsTaskRow[];
   generatedAt: string;
   priorityHref: string;
   loading?: boolean;
@@ -121,6 +133,55 @@ export function OperationsCommandCenter({
                 <p>No queues match this filter.</p>
               </section>
             )}
+
+            <section className="ops-section" aria-labelledby="task-heading">
+              <div className="ops-section-head">
+                <div>
+                  <p className="ops-kicker">Assigned work</p>
+                  <h2 id="task-heading" className="ops-section-title">Operations tasks</h2>
+                </div>
+                <a href="/research/admin/operations/tasks" className="ops-card-link">
+                  Manage tasks →
+                </a>
+              </div>
+              {tasks.length ? (
+                <div className="ops-table-wrap">
+                  <table className="ops-table">
+                    <caption className="sr-only">Open operations tasks</caption>
+                    <thead>
+                      <tr>
+                        <th>Task</th>
+                        <th>Owner</th>
+                        <th>Due</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tasks.map((task) => (
+                        <tr key={task.id}>
+                          <td data-label="Task"><strong>{task.title}</strong></td>
+                          <td data-label="Owner">{task.assignedTo ?? "Unassigned"}</td>
+                          <td data-label="Due">{task.dueLabel ?? "No due date"}</td>
+                          <td data-label="Status">
+                            <span
+                              className={`ra-badge ops-status ${
+                                task.priority === "normal" ? "ra-badge-warning" : "ra-badge-danger"
+                              }`}
+                            >
+                              {task.status.replace("_", " ")}
+                            </span>
+                          </td>
+                          <td data-label="Action"><a className="ops-card-link" href={task.href}>Open →</a></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="ops-state"><p>No open operations tasks.</p></div>
+              )}
+            </section>
 
             <section className="ops-section" aria-labelledby="exception-heading">
               <div className="ops-section-head">
