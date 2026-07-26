@@ -20,8 +20,14 @@ export function registerCareApi(
   app: Express,
   deps: CareAccessDependencies = unconfiguredCareAccessDependencies(),
 ) {
-  app.get(CARE_ROUTE_CONTRACTS.status, async (_req, res) => {
+  app.use("/api/care", (_req, res, next) => {
     res.set("Cache-Control", "no-store");
+    res.set("Pragma", "no-cache");
+    res.set("X-Robots-Tag", "noindex, nofollow");
+    next();
+  });
+
+  app.get(CARE_ROUTE_CONTRACTS.status, async (_req, res) => {
     try {
       res.json({ ok: true, capability: await deps.loadCapabilityStatus() });
     } catch {
@@ -40,4 +46,13 @@ export function registerCareApi(
 
 export * from "./access";
 export * from "./capability";
+export * from "./consent";
+export * from "./consent-repository";
+export * from "./eligibility";
+export * from "./eligibility-repository";
+export * from "./eligibility-routes";
+export * from "./intake";
+export * from "./intake-repository";
+export * from "./intake-routes";
 export * from "./production-deps";
+export * from "./waitlist";

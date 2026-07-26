@@ -16,6 +16,7 @@ import type {
   CareAccessDependencies,
 } from "./access";
 import { careCapabilityStatusForState } from "./capability";
+import { isRecoveryPurposeSession } from "../research/member-auth";
 
 export interface CareCapabilityRow {
   state: string;
@@ -26,6 +27,7 @@ export interface CareCapabilityRow {
 export interface CareProductionAdapters {
   authenticate: (token: string) => Promise<{ id: string } | null>;
   loadActiveRoles: (userId: string) => Promise<readonly string[]>;
+  loadPatientId: (userId: string) => Promise<string | null>;
   loadCapability: () => Promise<CareCapabilityRow | null>;
   writeAccessAudit: (decision: CareAccessDecision) => Promise<void>;
 }
@@ -68,8 +70,17 @@ export function createCareProductionDependencies(
       if (!token) return null;
       const user = await adapters.authenticate(token);
       if (!user) return null;
-      const roles = (await adapters.loadActiveRoles(user.id)).filter(isCareRole) as CareRole[];
-      const principal: CarePrincipal = { subjectId: user.id, roles };
+      if (isRecoveryPurposeSession(token)) return null;
+      const [storedRoles, patientId] = await Promise.all([
+        adapters.loadActiveRoles(user.id),
+        adapters.loadPatientId(user.id),
+      ]);
+      const roles = storedRoles.filter(isCareRole) as CareRole[];
+      const principal: CarePrincipal = {
+        subjectId: user.id,
+        roles,
+        ...(patientId ? { patientId } : {}),
+      };
       return principal;
     },
     recordAccessDecision: adapters.writeAccessAudit,
@@ -83,6 +94,7 @@ export function buildCareProductionDependencies(
     return createCareProductionDependencies({
       authenticate: async () => null,
       loadActiveRoles: async () => [],
+      loadPatientId: async () => null,
       loadCapability: async () => null,
       writeAccessAudit: async () => undefined,
     }, env);
@@ -103,6 +115,15 @@ export function buildCareProductionDependencies(
         .is("revoked_at", null);
       if (error) throw new Error("care_role_lookup_failed");
       return (data ?? []).map((row) => String(row.role));
+    },
+    loadPatientId: async (userId) => {
+      const { data, error } = await admin
+        .from("care_patients")
+        .select("id")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (error) throw new Error("care_patient_lookup_failed");
+      return data?.id ? String(data.id) : null;
     },
     loadCapability: async () => {
       const { data, error } = await admin

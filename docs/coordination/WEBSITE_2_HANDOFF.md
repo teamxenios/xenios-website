@@ -1,66 +1,78 @@
 # Website 2 release-manager handoff
 
-## Current checkpoint — required-input/readiness contract
+## Current checkpoint — Care PR2 eligibility/intake production integration
 
 - Session: Website 2 — Release Manager
-- Branch: `integration/required-input-readiness`
-- Base/deployed main: `3859e799abb9a7a307b13ca1e8a6a5d252abbc5e`
-- Base Render deployment: `dep-d9inc8vaqgkc7395fvr0` (Live)
-- Dependency: canonical pre-launch contract, migration, and signed-out smoke are
-  live; production has no pre-launch role or seed namespace
+- Branch: `integration/care-pr2-production`
+- Base/deployed main: `45450eb947b8b96b1717989d915e7ecadd3f9c3d`
+- Care PR1 application merge: `c09e6fe756ed924736baf603950c944f1ace619c`
+- Accepted Care PR1 source: `6791656667eee7bdfa9605eb5e0bd869bbde5077`
+- Accepted Care PR2 source: `54f9bd8d8834de9a8e57fc911665627af36f09ed`
+- Rejected PR2 heads: `8e3df03173e9d7ed6a351883da3ecac1a595d46f`
+  and `0f44cdeb4c04b61e585363690655192ec3295e25`
+- Care PR1 migration: `20260726064113 care_access_foundation`
+- Current base Render deployment: `dep-d9iqsaeq1p3s73flol2g` (Live)
 - Production status: NOT YET MERGED
 
-This focused unit implements the canonical required-input object, append-only
-review workflow, exact administrator form links, readiness manifests,
-domain-specific scorecards, and database-authoritative launch switches.
+This focused unit integrates only accepted Care PR2 eligibility, consent, and
+versioned-intake foundations after the live Care PR1 boundary. Care remains
+disabled and no state, clinician, consent document, intake definition, patient,
+role, seed, or clinical record is created.
 
 Migration:
 
-- `supabase/research-required-input-readiness.sql`
-- creates four forced-RLS governance tables;
-- grants no browser table/function authority;
-- inserts no required input, launch control, role, namespace, seed, product,
-  financial, clinical, or other operational row;
-- rejects external-secret values, requires explicit sensitive-reference
-  classification, and accepts only uppercase configuration-name references;
-- uses persisted pre-launch roles and immutable Supabase user IDs rather than
-  the singleton administrator email;
-- requires entry, review, and a different reviewer before `verified`,
-  `rejected`, or `not_applicable`;
-- computes the canonical manifest hash server-side and blocks
-  `public_enabled` unless software, recomputed hash, exact count, and every
-  blocking input agree.
+- `supabase/care-eligibility-intake.sql`
+- applies only after the live `care-access-foundation.sql`;
+- creates 13 additive forced-RLS Care tables;
+- grants no browser table mutation authority;
+- seeds no state, clinician, consent copy, intake definition, patient, or
+  operational record;
+- keeps the canonical Care capability disabled;
+- enforces current exact consent again at HTTP autosave/submit and inside both
+  locked SQL RPCs;
+- rejects stale, revoked, or superseded bindings before replay or mutation.
 
 Routes:
 
-- `GET /api/admin/research/required-inputs`
-- `POST /api/admin/research/required-inputs`
-- `POST /api/admin/research/required-inputs/:id/transition`
-- `GET /api/admin/research/readiness/:domain`
-- `PUT /api/admin/research/readiness/:domain/manifest`
-- `POST /api/admin/research/readiness/:domain/transition`
-- `/admin/research/required-inputs`
+- `GET /api/care/eligibility`
+- `POST /api/care/eligibility/location`
+- `POST /api/care/eligibility/waitlist`
+- `POST /api/care/consents`
+- `GET /api/care/intake`
+- `POST /api/care/intake`
+- `PATCH /api/care/intake/:intakeId/autosave`
+- `POST /api/care/intake/:intakeId/submit`
+- `/care/eligibility`
+- `/care/consent`
 
-Current corrected validation:
+Current integration validation:
 
-- focused pre-launch/server/UI tests: 33 passed;
-- full suite: 155 files, 3,294 tests passed;
-- typecheck and production build pass (existing large-chunk advisory only);
-- migration applies twice in disposable PostgreSQL 16;
-- lifecycle proves `recordId`/`record_id` alias-parity secret rejection,
-  reference-only configuration-name storage,
-  independent verification/rejection, premature-public and stale same-count
-  manifest rejection, recomputed approved launch, append-only audit, 4/4
-  forced RLS, zero browser grants, and rollback to zero rows.
+- focused Care integration/server/client tests: 11 files, 62 tests passed;
+- full suite: 173 files, 3,408 tests passed;
+- typecheck, diff check, and production build passed;
+- accepted PR1 and PR2 migrations each applied twice in disposable PostgreSQL
+  16;
+- committed consent/intake lifecycle passed, including later revocation and
+  required-notice supersession with no mutation;
+- read-only verification confirmed 13 PR2 tables, 16 total Care tables,
+  16 forced-RLS tables, zero browser grants, zero Care role/patient/consent/
+  intake rows, and the canonical disabled capability;
+- shared registration applies no-store/no-cache/noindex headers to every
+  `/api/care` response before focused handlers.
 
 Remaining:
 
-- preserve the refreshed desktop/375/320/keyboard evidence and obtain the
-  independent native 200%-zoom result;
-- freeze and obtain renewed Website 6 review of the corrected exact SHA;
-- only after acceptance, inspect production, apply migration, merge, deploy,
-  verify zero-row baseline and signed-out admin gate, and return the exact
-  contract SHA to domain owners.
+- commit and push the exact Website 2 integration candidate;
+- obtain Website 6 exact-SHA review of the integrated route, privacy, migration,
+  rollback, and responsive boundary;
+- inspect production, preserve record-count invariants, and apply only the
+  reviewed PR2 migration;
+- merge and deploy through Render;
+- verify health, disabled Care APIs, truthful `/care/eligibility` and
+  `/care/consent`, production RLS/grants/zero rows, desktop/375/320, keyboard,
+  accessibility, and logs;
+- only after the PR2 production gate passes, request a corrected-base PR3
+  candidate. PR3–7 remain held.
 
 Queued but not mixed into this candidate:
 
@@ -68,10 +80,9 @@ Queued but not mixed into this candidate:
   `1ee36a3d6d492cb3da8d8d0fe23c9653085951b2` (QA queued, not reviewed);
 - PR #62 Website 3 pre-launch application at
   `7cbc7a4e3bf309db9b44359a20bea8922ab27e00`;
-- Care PRs #46 → #56 → #59 → #63 → #65 in stacked migration order; #65 is
-  frozen at `8fbe05a68f06104959ee73c77343142185ed9c12` and queued, not reviewed;
-  Care PR6 has restarted separately from that exact PR5 head and is not yet a
-  frozen candidate; PR7 remains held;
+- Care PR3–6 remain held because their frozen heads were stacked on superseded
+  ancestors; PR7 has not started and requires a Website 2-owned post-contract
+  base after the accepted stack is integrated;
 - Website 4 Train 3A at
   `d162f1eafe249be57e9d23c87c65d99f1efdbc89`.
 

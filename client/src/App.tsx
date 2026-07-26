@@ -46,6 +46,8 @@ const ResearchSection = lazy(() => import("@/research/section"));
 // /admin/research*. Presentation only; all authority is server-side.
 const AdminResearchSection = lazy(() => import("@/research/adminx-section"));
 const CareSection = lazy(() => import("@/care/section"));
+const CareEligibility = lazy(() => import("@/care/EligibilityPendingPage"));
+const CareConsent = lazy(() => import("@/care/CareConsentPendingPage"));
 
 function ResearchRoutes() {
   return (
@@ -67,6 +69,22 @@ function CareRoutes() {
   return (
     <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
       <CareSection />
+    </Suspense>
+  );
+}
+
+function CareEligibilityRoutes() {
+  return (
+    <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
+      <CareEligibility />
+    </Suspense>
+  );
+}
+
+function CareConsentRoutes() {
+  return (
+    <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
+      <CareConsent />
     </Suspense>
   );
 }
@@ -117,6 +135,8 @@ function Router() {
           the multi-segment wildcard both mount the section's own router. */}
       <Route path="/research" component={ResearchRoutes} />
       <Route path="/research/*" component={ResearchRoutes} />
+      <Route path="/care/eligibility" component={CareEligibilityRoutes} />
+      <Route path="/care/consent" component={CareConsentRoutes} />
       <Route path="/care" component={CareRoutes} />
       <Route path="/care/*" component={CareRoutes} />
       {/* xenios MVP Lab + MVP routes */}
