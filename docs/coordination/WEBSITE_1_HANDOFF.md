@@ -3,8 +3,11 @@
 - Branch: `feature/research-live-assessment-and-plan-intake`
 - Starting branch head: `57c48ef45c9824e6ac9d68a39f33acf9fd659108`
 - Production/base main: `48cb57250c1ec54fe8714e59fa1071a9eb27f867`
-- Final SHA: to be filled after commit/rebase
-- Status: production-ready candidate pending Website 2 integration
+- Approved feature head: `534e8ab6895f67fba1b3cb83ca7ad4017d09036a`
+- Feature merge SHA: `9dad933d37cbd84430487c77f6ea421e7ff2cf75`
+- Shared wiring/production SHA: `68ee5d612df7d0452091ff0dfd2062d433943066`
+- Render deployment: `dep-d9ilv150kf9s73bmj44g`
+- Status: deployed and verified at the signed-out boundary; externally gated
 
 ## Completed
 
@@ -22,7 +25,7 @@
 ## Migration
 
 - File: `supabase/research-assessment-v2.sql`
-- Additive/idempotent; production application is Website 2 only.
+- Additive/idempotent; applied to production by Website 2 as `release_train_0_research_assessment_v2`.
 - Adds response revision/cycle, reviewer assignment, source Blueprint linkage, append-only review audit, partial unique invariants, and service-role-only publish RPC.
 - Dry run: `node scripts/assessment-v2-dryrun.mjs` — 28/28.
 - Apply order: after canonical assessment, Blueprint, and plan tables; before application deployment enables the new code.
@@ -57,3 +60,5 @@
 ## External blocker
 
 XR-MEM-012 is intentionally still a draft without approved content. Until approval and explicit configuration exist, the live Assessment must show a truthful unavailable/pending state and store no health-adjacent answers.
+
+Authenticated member/admin persistence smoke is also pending because no authorized production Research session was available. No account or workflow record was fabricated for release evidence.
