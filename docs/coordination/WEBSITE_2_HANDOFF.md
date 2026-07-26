@@ -21,12 +21,15 @@ Migration:
 - grants no browser table/function authority;
 - inserts no required input, launch control, role, namespace, seed, product,
   financial, clinical, or other operational row;
-- rejects external-secret values and accepts only uppercase configuration-name
-  references;
-- requires entry, review, and a different verifier before `verified` or
-  `not_applicable`;
-- blocks `public_enabled` unless software, hash-bound manifest, exact count,
-  and every blocking input agree.
+- rejects external-secret values, requires explicit sensitive-reference
+  classification, and accepts only uppercase configuration-name references;
+- uses persisted pre-launch roles and immutable Supabase user IDs rather than
+  the singleton administrator email;
+- requires entry, review, and a different reviewer before `verified`,
+  `rejected`, or `not_applicable`;
+- computes the canonical manifest hash server-side and blocks
+  `public_enabled` unless software, recomputed hash, exact count, and every
+  blocking input agree.
 
 Routes:
 
@@ -38,20 +41,21 @@ Routes:
 - `POST /api/admin/research/readiness/:domain/transition`
 - `/admin/research/required-inputs`
 
-Current validation:
+Current corrected validation:
 
-- focused server/UI tests: 16 passed;
-- full suite: 155 files, 3,288 tests passed;
+- focused pre-launch/server/UI tests: 30 passed;
+- full suite: 155 files, 3,291 tests passed;
 - typecheck and production build pass (existing large-chunk advisory only);
 - migration applies twice in disposable PostgreSQL 16;
-- lifecycle proves secret rejection, independent review, premature-public
-  rejection, approved launch, append-only audit, 4/4 forced RLS, zero browser
-  grants, and rollback to zero rows.
+- lifecycle proves semantic secret rejection, reference-only storage,
+  independent verification/rejection, premature-public and stale same-count
+  manifest rejection, recomputed approved launch, append-only audit, 4/4
+  forced RLS, zero browser grants, and rollback to zero rows.
 
 Remaining:
 
-- capture desktop/375/320/keyboard/200%-zoom evidence;
-- freeze, push, open focused PR, and obtain Website 6 independent review;
+- refresh desktop/375/320/keyboard/200%-zoom evidence on the corrected head;
+- freeze and obtain renewed Website 6 review of the corrected exact SHA;
 - only after acceptance, inspect production, apply migration, merge, deploy,
   verify zero-row baseline and signed-out admin gate, and return the exact
   contract SHA to domain owners.
@@ -62,7 +66,10 @@ Queued but not mixed into this candidate:
   `1ee36a3d6d492cb3da8d8d0fe23c9653085951b2` (QA queued, not reviewed);
 - PR #62 Website 3 pre-launch application at
   `7cbc7a4e3bf309db9b44359a20bea8922ab27e00`;
-- Care PRs #46 → #56 → #59 → #63 in stacked migration order;
+- Care PRs #46 → #56 → #59 → #63 → #65 in stacked migration order; #65 is
+  frozen at `8fbe05a68f06104959ee73c77343142185ed9c12` and queued, not reviewed;
+  Care PR6 has restarted separately from that exact PR5 head and is not yet a
+  frozen candidate; PR7 remains held;
 - Website 4 Train 3A at
   `d162f1eafe249be57e9d23c87c65d99f1efdbc89`.
 

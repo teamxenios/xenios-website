@@ -135,6 +135,7 @@ async function resolveDataContext(
 export function buildPrelaunchGuard(
   deps: PrelaunchDependencies,
   allowedRoles?: readonly PrelaunchRole[],
+  options: { allowSeedContext?: boolean } = {},
 ) {
   return async function requirePrelaunchAccess(
     req: Request,
@@ -165,7 +166,9 @@ export function buildPrelaunchGuard(
     try {
       const [roles, dataContext] = await Promise.all([
         deps.repository.getActiveRoles(user.id, now),
-        resolveDataContext(deps.repository, namespace),
+        namespace && options.allowSeedContext === false
+          ? Promise.resolve(null)
+          : resolveDataContext(deps.repository, namespace),
       ]);
       const role =
         roles.find((candidate) => !allowedRoles || allowedRoles.includes(candidate)) ??
@@ -173,9 +176,11 @@ export function buildPrelaunchGuard(
       const allowed = role !== null && dataContext !== null;
       await deps.repository.appendAccessAudit({
         authUserId: user.id,
-        routeGroup: req.path.startsWith("/api/internal")
-          ? req.path.slice(0, 200)
-          : "/api/internal",
+        routeGroup:
+          req.path.startsWith("/api/internal") ||
+          req.path.startsWith("/api/admin/research")
+            ? req.path.slice(0, 200)
+            : "/api/internal",
         role,
         decision: allowed ? "allowed" : "denied",
         reasonCode:
@@ -208,8 +213,14 @@ export function buildPrelaunchGuard(
         ),
         launchStatus: settings.launchStatus,
       };
-      (req as Request & { prelaunchAccess?: PrelaunchAccessStatus }).prelaunchAccess =
-        status;
+      (
+        req as Request & {
+          prelaunchAccess?: PrelaunchAccessStatus;
+          prelaunchActorId?: string;
+        }
+      ).prelaunchAccess = status;
+      (req as Request & { prelaunchActorId?: string }).prelaunchActorId =
+        user.id;
       return next();
     } catch {
       return res.status(503).json({ ok: false, code: "prelaunch_access_unavailable" });

@@ -40,6 +40,8 @@ create table if not exists public.research_required_inputs (
     check (jsonb_typeof(evidence_required) = 'array'),
   entry_mode text not null default 'direct'
     check (entry_mode in ('direct', 'record_reference', 'external_secret')),
+  value_sensitivity text not null default 'ordinary'
+    check (value_sensitivity in ('ordinary', 'sensitive_reference')),
   entered_value jsonb,
   external_reference_name text,
   entered_by text,
@@ -69,9 +71,22 @@ create table if not exists public.research_required_inputs (
     ),
   constraint research_required_input_sensitive_reference_only
     check (
-      lower(key || ' ' || field_path || ' ' || label)
-        !~ '(credential|secret|password|(^|[._ -])token([._ -]|$)|api[_ -]?key)'
-      or entry_mode = 'external_secret'
+      (
+        value_sensitivity = 'sensitive_reference'
+        and entry_mode = 'external_secret'
+      )
+      or
+      (
+        value_sensitivity = 'ordinary'
+        and entry_mode <> 'external_secret'
+        and lower(
+          concat_ws(
+            ' ', key, domain, label, description, why_required, record_type,
+            field_path, verification_method, evidence_required::text,
+            public_launch_impact, next_action, admin_entry_href
+          )
+        ) !~ '(^|[^a-z0-9])(secret|credentials?|password|token|api[._ :-]*key|private[._ :-]*key|access[._ :-]*key|client[._ :-]*secret|signing[._ :-]*key)([^a-z0-9]|$)'
+      )
     ),
   constraint research_required_input_entry_complete
     check (
@@ -190,9 +205,53 @@ create trigger research_domain_launch_audit_no_mutation
 before update or delete on public.research_domain_launch_audit
 for each row execute function public.research_reject_governance_audit_mutation();
 
+create or replace function public.research_required_input_manifest_hash(
+  p_domain text
+)
+returns text
+language sql
+stable
+security definer
+set search_path = pg_catalog
+as $$
+  select encode(
+    sha256(
+      convert_to(
+        coalesce(
+          jsonb_agg(
+            jsonb_build_object(
+              'id', id,
+              'key', key,
+              'blockingLevel', blocking_level,
+              'responsibleRole', responsible_role,
+              'entryMode', entry_mode,
+              'valueSensitivity', value_sensitivity,
+              'recordType', record_type,
+              'recordId', record_id,
+              'fieldPath', field_path,
+              'verificationMethod', verification_method,
+              'evidenceRequired', evidence_required,
+              'publicLaunchImpact', public_launch_impact,
+              'version', version
+            )
+            order by key, id
+          )::text,
+          '[]'
+        ),
+        'UTF8'
+      )
+    ),
+    'hex'
+  )
+  from public.research_required_inputs
+  where domain = p_domain
+    and current_state <> 'superseded'
+$$;
+
 create or replace function public.research_define_required_input(
   p_definition jsonb,
   p_actor text,
+  p_actor_roles text[],
   p_now timestamptz
 )
 returns public.research_required_inputs
@@ -202,11 +261,29 @@ set search_path = pg_catalog
 as $$
 declare
   v_item public.research_required_inputs;
+  v_responsible_role text := p_definition->>'responsibleRole';
 begin
+  if p_actor_roles is null
+     or exists (
+       select 1
+       from unnest(p_actor_roles) as role_name
+       where role_name not in (
+         'super_admin', 'internal_team', 'product_admin', 'operations_admin',
+         'clinical_admin', 'approved_internal_reviewer'
+       )
+     )
+     or not (
+       p_actor_roles && array['super_admin', 'internal_team']
+       or v_responsible_role = any(p_actor_roles)
+     ) then
+    raise exception 'governance_role_required';
+  end if;
+
   insert into public.research_required_inputs (
     key, domain, label, description, why_required, record_type, record_id,
     field_path, blocking_level, responsible_role, verification_method,
-    evidence_required, entry_mode, public_launch_impact, next_action,
+    evidence_required, entry_mode, value_sensitivity,
+    public_launch_impact, next_action,
     admin_entry_href, created_by, created_at, updated_at
   ) values (
     p_definition->>'key',
@@ -222,6 +299,7 @@ begin
     p_definition->>'verificationMethod',
     coalesce(p_definition->'evidenceRequired', '[]'::jsonb),
     p_definition->>'entryMode',
+    p_definition->>'valueSensitivity',
     p_definition->>'publicLaunchImpact',
     p_definition->>'nextAction',
     p_definition->>'adminEntryHref',
@@ -252,6 +330,7 @@ create or replace function public.research_transition_required_input(
   p_expected_version integer,
   p_target_state text,
   p_actor text,
+  p_actor_roles text[],
   p_reason text,
   p_entered_value jsonb,
   p_external_reference_name text,
@@ -272,6 +351,30 @@ begin
   where id = p_id and version = p_expected_version
   for update;
   if not found then raise exception 'state_conflict'; end if;
+
+  if p_actor_roles is null
+     or exists (
+       select 1
+       from unnest(p_actor_roles) as role_name
+       where role_name not in (
+         'super_admin', 'internal_team', 'product_admin', 'operations_admin',
+         'clinical_admin', 'approved_internal_reviewer'
+       )
+     ) then
+    raise exception 'governance_role_required';
+  end if;
+  if p_target_state in ('verified', 'rejected', 'not_applicable') then
+    if not (
+      p_actor_roles && array['super_admin', 'approved_internal_reviewer']
+    ) then
+      raise exception 'independent_reviewer_role_required';
+    end if;
+  elsif not (
+    p_actor_roles && array['super_admin', 'internal_team']
+    or v_before.responsible_role = any(p_actor_roles)
+  ) then
+    raise exception 'responsible_role_required';
+  end if;
 
   v_allowed := case v_before.current_state
     when 'missing' then p_target_state in ('entered', 'superseded')
@@ -301,7 +404,7 @@ begin
       raise exception 'secret_reference_name_invalid';
     end if;
   end if;
-  if p_target_state in ('verified', 'not_applicable')
+  if p_target_state in ('verified', 'rejected', 'not_applicable')
      and v_before.entered_by = p_actor then
     raise exception 'independent_verifier_required';
   end if;
@@ -367,6 +470,7 @@ declare
   v_actual integer;
   v_blocking integer;
   v_keys jsonb;
+  v_current_manifest_hash text;
 begin
   select * into v_control
   from public.research_domain_launch_controls
@@ -391,6 +495,8 @@ begin
   into v_actual, v_blocking, v_keys
   from public.research_required_inputs
   where domain = p_domain;
+  v_current_manifest_hash :=
+    public.research_required_input_manifest_hash(p_domain);
 
   return jsonb_build_object(
     'domain', v_control.domain,
@@ -398,7 +504,10 @@ begin
     'softwareComplete', v_control.software_complete,
     'realInputsRequired', v_blocking > 0,
     'publicEnabled', v_control.launch_status = 'public_enabled',
-    'manifestApproved', v_control.manifest_hash is not null,
+    'manifestApproved',
+      v_control.manifest_hash is not null
+      and v_control.manifest_hash = v_current_manifest_hash
+      and coalesce(v_control.expected_input_count, 0) = v_actual,
     'expectedInputCount', coalesce(v_control.expected_input_count, 0),
     'actualInputCount', v_actual,
     'blockingInputCount', v_blocking,
@@ -412,10 +521,10 @@ create or replace function public.research_set_readiness_manifest(
   p_domain text,
   p_expected_version integer,
   p_manifest_version integer,
-  p_manifest_hash text,
   p_expected_input_count integer,
   p_software_complete boolean,
   p_actor text,
+  p_actor_roles text[],
   p_reason text,
   p_now timestamptz
 )
@@ -426,7 +535,22 @@ set search_path = pg_catalog
 as $$
 declare
   v_before public.research_domain_launch_controls;
+  v_manifest_hash text;
+  v_actual_input_count integer;
 begin
+  if p_actor_roles is null
+     or not (p_actor_roles && array['super_admin', 'internal_team']) then
+    raise exception 'release_role_required';
+  end if;
+  select count(*) into v_actual_input_count
+  from public.research_required_inputs
+  where domain = p_domain and current_state <> 'superseded';
+  if v_actual_input_count < 1
+     or v_actual_input_count <> p_expected_input_count then
+    raise exception 'manifest_count_mismatch';
+  end if;
+  v_manifest_hash := public.research_required_input_manifest_hash(p_domain);
+
   select * into v_before
   from public.research_domain_launch_controls
   where domain = p_domain
@@ -440,13 +564,13 @@ begin
       manifest_approved_at, version, updated_by, updated_reason, updated_at
     ) values (
       p_domain, 'internal_build', p_software_complete, p_manifest_version,
-      p_manifest_hash, p_expected_input_count, p_actor, p_now, 1,
+      v_manifest_hash, p_expected_input_count, p_actor, p_now, 1,
       p_actor, p_reason, p_now
     );
     insert into public.research_domain_launch_audit (
       domain, from_status, to_status, actor, reason, manifest_hash, occurred_at
     ) values (
-      p_domain, null, 'internal_build', p_actor, p_reason, p_manifest_hash, p_now
+      p_domain, null, 'internal_build', p_actor, p_reason, v_manifest_hash, p_now
     );
   else
     if v_before.version <> p_expected_version then raise exception 'state_conflict'; end if;
@@ -454,7 +578,7 @@ begin
     update public.research_domain_launch_controls
     set software_complete = p_software_complete,
         manifest_version = p_manifest_version,
-        manifest_hash = p_manifest_hash,
+        manifest_hash = v_manifest_hash,
         expected_input_count = p_expected_input_count,
         manifest_approved_by = p_actor,
         manifest_approved_at = p_now,
@@ -469,7 +593,7 @@ begin
       domain, from_status, to_status, actor, reason, manifest_hash, occurred_at
     ) values (
       p_domain, v_before.launch_status, v_before.launch_status,
-      p_actor, p_reason, p_manifest_hash, p_now
+      p_actor, p_reason, v_manifest_hash, p_now
     );
   end if;
   return public.research_domain_readiness(p_domain);
@@ -481,6 +605,7 @@ create or replace function public.research_transition_launch_status(
   p_expected_version integer,
   p_target_status text,
   p_actor text,
+  p_actor_roles text[],
   p_reason text,
   p_now timestamptz
 )
@@ -492,8 +617,14 @@ as $$
 declare
   v_before public.research_domain_launch_controls;
   v_readiness jsonb;
+  v_current_manifest_hash text;
   v_allowed boolean := false;
 begin
+  if p_actor_roles is null
+     or not (p_actor_roles && array['super_admin', 'internal_team']) then
+    raise exception 'release_role_required';
+  end if;
+
   select * into v_before
   from public.research_domain_launch_controls
   where domain = p_domain and version = p_expected_version
@@ -518,8 +649,11 @@ begin
 
   if p_target_status = 'public_enabled' then
     v_readiness := public.research_domain_readiness(p_domain);
+    v_current_manifest_hash :=
+      public.research_required_input_manifest_hash(p_domain);
     if not v_before.software_complete
        or v_before.manifest_hash is null
+       or v_before.manifest_hash <> v_current_manifest_hash
        or (v_readiness->>'expectedInputCount')::integer < 1
        or (v_readiness->>'actualInputCount')::integer
           <> (v_readiness->>'expectedInputCount')::integer
@@ -565,32 +699,40 @@ revoke all on table public.research_domain_launch_audit from public, anon, authe
 
 revoke all on function public.research_reject_governance_audit_mutation()
   from public, anon, authenticated;
-revoke all on function public.research_define_required_input(jsonb, text, timestamptz)
+revoke all on function public.research_required_input_manifest_hash(text)
+  from public, anon, authenticated;
+revoke all on function public.research_define_required_input(
+  jsonb, text, text[], timestamptz
+)
   from public, anon, authenticated;
 revoke all on function public.research_transition_required_input(
-  uuid, integer, text, text, text, jsonb, text, timestamptz
+  uuid, integer, text, text, text[], text, jsonb, text, timestamptz
 ) from public, anon, authenticated;
 revoke all on function public.research_domain_readiness(text)
   from public, anon, authenticated;
 revoke all on function public.research_set_readiness_manifest(
-  text, integer, integer, text, integer, boolean, text, text, timestamptz
+  text, integer, integer, integer, boolean, text, text[], text, timestamptz
 ) from public, anon, authenticated;
 revoke all on function public.research_transition_launch_status(
-  text, integer, text, text, text, timestamptz
+  text, integer, text, text, text[], text, timestamptz
 ) from public, anon, authenticated;
 
-grant execute on function public.research_define_required_input(jsonb, text, timestamptz)
+grant execute on function public.research_required_input_manifest_hash(text)
+  to service_role;
+grant execute on function public.research_define_required_input(
+  jsonb, text, text[], timestamptz
+)
   to service_role;
 grant execute on function public.research_transition_required_input(
-  uuid, integer, text, text, text, jsonb, text, timestamptz
+  uuid, integer, text, text, text[], text, jsonb, text, timestamptz
 ) to service_role;
 grant execute on function public.research_domain_readiness(text)
   to service_role;
 grant execute on function public.research_set_readiness_manifest(
-  text, integer, integer, text, integer, boolean, text, text, timestamptz
+  text, integer, integer, integer, boolean, text, text[], text, timestamptz
 ) to service_role;
 grant execute on function public.research_transition_launch_status(
-  text, integer, text, text, text, timestamptz
+  text, integer, text, text, text[], text, timestamptz
 ) to service_role;
 
 commit;

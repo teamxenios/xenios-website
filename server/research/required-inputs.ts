@@ -10,6 +10,7 @@ import {
   isRequiredInputBlockingLevel,
   isRequiredInputEntryMode,
   isRequiredInputState,
+  isRequiredInputValueSensitivity,
   valueMayBeStored,
   type DomainReadiness,
   type RequiredInput,
@@ -20,29 +21,85 @@ import {
 import { getSupabaseAdmin } from "../supabase";
 
 type Db = ReturnType<typeof getSupabaseAdmin>;
+type GovernanceActor = {
+  id: string;
+  roles: PrelaunchRole[];
+};
 
-const definitionSchema = z.object({
-  key: z.string().trim().regex(/^[a-z0-9][a-z0-9_.:-]{2,199}$/),
-  domain: z.string().trim().regex(/^[a-z0-9][a-z0-9_-]{2,63}$/),
-  label: z.string().trim().min(3).max(200),
-  description: z.string().trim().min(3).max(1000),
-  whyRequired: z.string().trim().min(3).max(1000),
-  recordType: z.string().trim().min(2).max(100),
-  recordId: z.string().trim().min(1).max(200).nullable().optional(),
-  fieldPath: z.string().trim().min(1).max(300),
-  blockingLevel: z.string().refine(isRequiredInputBlockingLevel),
-  responsibleRole: z.string().refine(isPrelaunchRole),
-  verificationMethod: z.string().trim().min(3).max(1000),
-  evidenceRequired: z.array(z.string().trim().min(1).max(200)).max(30),
-  entryMode: z.string().refine(isRequiredInputEntryMode),
-  publicLaunchImpact: z.string().trim().min(3).max(1000),
-  nextAction: z.string().trim().min(3).max(500),
-  adminEntryHref: z
-    .string()
-    .trim()
-    .max(500)
-    .regex(/^\/admin\/[A-Za-z0-9/_?=&.:%-]+$/),
-});
+const SENSITIVE_DEFINITION_PATTERN =
+  /(^|[^a-z0-9])(secret|credentials?|password|token|api[\s_.:-]*key|private[\s_.:-]*key|access[\s_.:-]*key|client[\s_.:-]*secret|signing[\s_.:-]*key)([^a-z0-9]|$)/i;
+
+function definitionContainsSensitiveSemantics(
+  value: Record<string, unknown>,
+): boolean {
+  const semanticValues = [
+    value.key,
+    value.domain,
+    value.label,
+    value.description,
+    value.whyRequired,
+    value.recordType,
+    value.fieldPath,
+    value.verificationMethod,
+    value.publicLaunchImpact,
+    value.nextAction,
+    value.adminEntryHref,
+    ...(Array.isArray(value.evidenceRequired) ? value.evidenceRequired : []),
+  ];
+  return semanticValues.some(
+    (part) =>
+      typeof part === "string" && SENSITIVE_DEFINITION_PATTERN.test(part),
+  );
+}
+
+const definitionSchema = z
+  .object({
+    key: z.string().trim().regex(/^[a-z0-9][a-z0-9_.:-]{2,199}$/),
+    domain: z.string().trim().regex(/^[a-z0-9][a-z0-9_-]{2,63}$/),
+    label: z.string().trim().min(3).max(200),
+    description: z.string().trim().min(3).max(1000),
+    whyRequired: z.string().trim().min(3).max(1000),
+    recordType: z.string().trim().min(2).max(100),
+    recordId: z.string().trim().min(1).max(200).nullable().optional(),
+    fieldPath: z.string().trim().min(1).max(300),
+    blockingLevel: z.string().refine(isRequiredInputBlockingLevel),
+    responsibleRole: z.string().refine(isPrelaunchRole),
+    verificationMethod: z.string().trim().min(3).max(1000),
+    evidenceRequired: z.array(z.string().trim().min(1).max(200)).max(30),
+    entryMode: z.string().refine(isRequiredInputEntryMode),
+    valueSensitivity: z
+      .string()
+      .refine(isRequiredInputValueSensitivity),
+    publicLaunchImpact: z.string().trim().min(3).max(1000),
+    nextAction: z.string().trim().min(3).max(500),
+    adminEntryHref: z
+      .string()
+      .trim()
+      .max(500)
+      .regex(/^\/admin\/[A-Za-z0-9/_?=&.:%-]+$/),
+  })
+  .superRefine((value, ctx) => {
+    const sensitive =
+      value.valueSensitivity === "sensitive_reference" ||
+      definitionContainsSensitiveSemantics(value);
+    if (sensitive && value.entryMode !== "external_secret") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["entryMode"],
+        message: "Sensitive values must use external-secret references.",
+      });
+    }
+    if (
+      value.entryMode === "external_secret" &&
+      value.valueSensitivity !== "sensitive_reference"
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["valueSensitivity"],
+        message: "External-secret entries must be classified as sensitive.",
+      });
+    }
+  });
 
 const transitionSchema = z
   .object({
@@ -68,7 +125,6 @@ const transitionSchema = z
 const manifestSchema = z.object({
   expectedVersion: z.number().int().nonnegative(),
   manifestVersion: z.number().int().positive(),
-  manifestHash: z.string().regex(/^[a-f0-9]{64}$/),
   expectedInputCount: z.number().int().positive(),
   softwareComplete: z.boolean(),
   reason: z.string().trim().min(3).max(1000),
@@ -85,10 +141,17 @@ function noStore(res: Response) {
   res.set("Referrer-Policy", "no-referrer");
 }
 
-function adminActor(req: Request): string {
-  return String(
-    (req as Request & { adminEmail?: string }).adminEmail ?? "research_admin",
-  );
+function governanceActor(req: Request): GovernanceActor {
+  const actorId = (req as Request & { prelaunchActorId?: string })
+    .prelaunchActorId;
+  const roles =
+    (req as Request & {
+      prelaunchAccess?: { roles?: PrelaunchRole[] };
+    }).prelaunchAccess?.roles ?? [];
+  if (!actorId || roles.length === 0) {
+    throw new Error("governance_actor_unavailable");
+  }
+  return { id: actorId, roles };
 }
 
 function routeParam(value: string | string[]): string {
@@ -130,6 +193,7 @@ function rowToInput(
       ? row.evidence_required.map(String)
       : [],
     entryMode: row.entry_mode,
+    valueSensitivity: row.value_sensitivity,
     enteredValue:
       row.entry_mode === "external_secret" ? null : (row.entered_value ?? null),
     externalReferenceName: row.external_reference_name
@@ -206,10 +270,14 @@ export function buildRequiredInputProductionRepository(db: Db = getSupabaseAdmin
       );
     },
 
-    async define(input: z.infer<typeof definitionSchema>, actor: string) {
+    async define(
+      input: z.infer<typeof definitionSchema>,
+      actor: GovernanceActor,
+    ) {
       const { data, error } = await db.rpc("research_define_required_input", {
         p_definition: input,
-        p_actor: actor,
+        p_actor: actor.id,
+        p_actor_roles: actor.roles,
         p_now: new Date().toISOString(),
       });
       if (error) throw error;
@@ -219,7 +287,7 @@ export function buildRequiredInputProductionRepository(db: Db = getSupabaseAdmin
     async transition(
       id: string,
       input: z.infer<typeof transitionSchema>,
-      actor: string,
+      actor: GovernanceActor,
     ) {
       const existing = await db
         .from("research_required_inputs")
@@ -241,7 +309,8 @@ export function buildRequiredInputProductionRepository(db: Db = getSupabaseAdmin
         p_id: id,
         p_expected_version: input.expectedVersion,
         p_target_state: input.targetState,
-        p_actor: actor,
+        p_actor: actor.id,
+        p_actor_roles: actor.roles,
         p_reason: input.reason,
         p_entered_value:
           existing.data.entry_mode === "external_secret"
@@ -257,16 +326,16 @@ export function buildRequiredInputProductionRepository(db: Db = getSupabaseAdmin
     async setManifest(
       domain: string,
       input: z.infer<typeof manifestSchema>,
-      actor: string,
+      actor: GovernanceActor,
     ) {
       const { data, error } = await db.rpc("research_set_readiness_manifest", {
         p_domain: domain,
         p_expected_version: input.expectedVersion,
         p_manifest_version: input.manifestVersion,
-        p_manifest_hash: input.manifestHash,
         p_expected_input_count: input.expectedInputCount,
         p_software_complete: input.softwareComplete,
-        p_actor: actor,
+        p_actor: actor.id,
+        p_actor_roles: actor.roles,
         p_reason: input.reason,
         p_now: new Date().toISOString(),
       });
@@ -303,13 +372,14 @@ export function buildRequiredInputProductionRepository(db: Db = getSupabaseAdmin
     async transitionLaunch(
       domain: string,
       input: z.infer<typeof launchSchema>,
-      actor: string,
+      actor: GovernanceActor,
     ) {
       const { data, error } = await db.rpc("research_transition_launch_status", {
         p_domain: domain,
         p_expected_version: input.expectedVersion,
         p_target_status: input.targetStatus,
-        p_actor: actor,
+        p_actor: actor.id,
+        p_actor_roles: actor.roles,
         p_reason: input.reason,
         p_now: new Date().toISOString(),
       });
@@ -323,14 +393,27 @@ export type RequiredInputRepository = ReturnType<
   typeof buildRequiredInputProductionRepository
 >;
 
+type GovernanceGuard = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => unknown;
+
+export type RequiredInputGuards = {
+  read: GovernanceGuard;
+  edit: GovernanceGuard;
+  review: GovernanceGuard;
+  release: GovernanceGuard;
+};
+
 export function registerRequiredInputApi(
   app: Express,
   repository: RequiredInputRepository,
-  requireAdmin: (req: Request, res: Response, next: NextFunction) => unknown,
+  guards: RequiredInputGuards,
 ) {
   app.get(
     "/api/admin/research/required-inputs",
-    requireAdmin,
+    guards.read,
     async (req, res) => {
       noStore(res);
       try {
@@ -359,7 +442,7 @@ export function registerRequiredInputApi(
 
   app.post(
     "/api/admin/research/required-inputs",
-    requireAdmin,
+    guards.edit,
     async (req, res) => {
       noStore(res);
       const parsed = definitionSchema.safeParse(req.body);
@@ -368,7 +451,7 @@ export function registerRequiredInputApi(
       try {
         return res.status(201).json({
           ok: true,
-          item: await repository.define(parsed.data, adminActor(req)),
+          item: await repository.define(parsed.data, governanceActor(req)),
         });
       } catch {
         return res
@@ -380,7 +463,16 @@ export function registerRequiredInputApi(
 
   app.post(
     "/api/admin/research/required-inputs/:id/transition",
-    requireAdmin,
+    (req, res, next) => {
+      const reviewerStates: RequiredInputState[] = [
+        "verified",
+        "rejected",
+        "not_applicable",
+      ];
+      return reviewerStates.includes(req.body?.targetState)
+        ? guards.review(req, res, next)
+        : guards.edit(req, res, next);
+    },
     async (req, res) => {
       noStore(res);
       const id = z.string().uuid().safeParse(req.params.id);
@@ -393,7 +485,7 @@ export function registerRequiredInputApi(
           item: await repository.transition(
             id.data,
             parsed.data,
-            adminActor(req),
+            governanceActor(req),
           ),
         });
       } catch {
@@ -406,7 +498,7 @@ export function registerRequiredInputApi(
 
   app.put(
     "/api/admin/research/readiness/:domain/manifest",
-    requireAdmin,
+    guards.release,
     async (req, res) => {
       noStore(res);
       const routeDomain = routeParam(req.params.domain);
@@ -423,7 +515,7 @@ export function registerRequiredInputApi(
           readiness: await repository.setManifest(
             domain.data,
             parsed.data,
-            adminActor(req),
+            governanceActor(req),
           ),
         });
       } catch {
@@ -436,7 +528,7 @@ export function registerRequiredInputApi(
 
   app.get(
     "/api/admin/research/readiness/:domain",
-    requireAdmin,
+    guards.read,
     async (req, res) => {
       noStore(res);
       const domain = routeParam(req.params.domain);
@@ -457,7 +549,7 @@ export function registerRequiredInputApi(
 
   app.post(
     "/api/admin/research/readiness/:domain/transition",
-    requireAdmin,
+    guards.release,
     async (req, res) => {
       noStore(res);
       const routeDomain = routeParam(req.params.domain);
@@ -474,7 +566,7 @@ export function registerRequiredInputApi(
           readiness: await repository.transitionLaunch(
             domain.data,
             parsed.data,
-            adminActor(req),
+            governanceActor(req),
           ),
         });
       } catch {

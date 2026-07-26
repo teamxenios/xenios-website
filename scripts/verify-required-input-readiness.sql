@@ -26,11 +26,13 @@ begin
       'verificationMethod', 'Product administrator review.',
       'evidenceRequired', jsonb_build_array('Approved price record', 'Effective date'),
       'entryMode', 'direct',
+      'valueSensitivity', 'ordinary',
       'publicLaunchImpact', 'Product commerce remains unavailable.',
       'nextAction', 'Enter and approve the price.',
       'adminEntryHref', '/admin/research/products'
     ),
     'release@example.test',
+    array['super_admin', 'product_admin'],
     '2026-07-26T01:00:00Z'
   );
 
@@ -50,17 +52,53 @@ begin
       'verificationMethod', 'Presence and provider account review without revealing a value.',
       'evidenceRequired', jsonb_build_array('Configuration name', 'Provider approval'),
       'entryMode', 'external_secret',
+      'valueSensitivity', 'sensitive_reference',
       'publicLaunchImpact', 'Checkout remains unavailable.',
       'nextAction', 'Configure and verify the approved payment credential.',
       'adminEntryHref', '/admin/research/required-inputs'
     ),
     'release@example.test',
+    array['super_admin'],
     '2026-07-26T01:01:00Z'
   );
 
   begin
+    perform public.research_define_required_input(
+      jsonb_build_object(
+        'key', 'environment.provider_configuration',
+        'domain', 'environment',
+        'label', 'PROVIDER CONFIGURATION REQUIRED',
+        'description', 'Configure the provider before launch.',
+        'whyRequired', 'The provider cannot operate without configuration.',
+        'recordType', 'api_credentials',
+        'recordId', null,
+        'fieldPath', 'provider.configuration',
+        'blockingLevel', 'blocks_provider_activation',
+        'responsibleRole', 'super_admin',
+        'verificationMethod', 'Administrator review.',
+        'evidenceRequired', jsonb_build_array('Configuration approval'),
+        'entryMode', 'direct',
+        'valueSensitivity', 'ordinary',
+        'publicLaunchImpact', 'Provider activation remains blocked.',
+        'nextAction', 'Configure the approved provider.',
+        'adminEntryHref', '/admin/research/required-inputs'
+      ),
+      'release@example.test',
+      array['super_admin'],
+      '2026-07-26T01:01:30Z'
+    );
+    raise exception 'sensitive direct definition was accepted';
+  exception
+    when check_violation then
+      if sqlerrm not like '%research_required_input_sensitive_reference_only%' then
+        raise;
+      end if;
+  end;
+
+  begin
     perform public.research_transition_required_input(
       v_secret.id, 1, 'entered', 'release@example.test',
+      array['super_admin'],
       'Credential attempted with a raw value.', '"must-not-store"'::jsonb,
       'PAYMENT_PROVIDER_KEY', '2026-07-26T01:02:00Z'
     );
@@ -73,25 +111,29 @@ begin
   select * into v_direct
   from public.research_transition_required_input(
     v_direct.id, 1, 'entered', 'product@example.test',
+    array['product_admin'],
     'Approved price record entered.', '"149.00 USD"'::jsonb, null,
     '2026-07-26T01:03:00Z'
   );
   select * into v_direct
   from public.research_transition_required_input(
     v_direct.id, 2, 'under_review', 'reviewer@example.test',
+    array['product_admin'],
     'Price and effective date are under review.', null, null,
     '2026-07-26T01:04:00Z'
   );
   select * into v_direct
   from public.research_transition_required_input(
     v_direct.id, 3, 'verified', 'reviewer@example.test',
+    array['approved_internal_reviewer'],
     'Price record and effective date verified.', null, null,
     '2026-07-26T01:05:00Z'
   );
 
   v_readiness := public.research_set_readiness_manifest(
-    'products', 0, 1, repeat('a', 64), 2, true,
-    'release@example.test', 'Reviewed products readiness manifest.',
+    'products', 0, 1, 2, true,
+    'release@example.test', array['super_admin'],
+    'Reviewed products readiness manifest.',
     '2026-07-26T01:06:00Z'
   );
   if (v_readiness->>'blockingInputCount')::integer <> 1 then
@@ -100,24 +142,29 @@ begin
 
   perform public.research_transition_launch_status(
     'products', 1, 'internal_review', 'release@example.test',
+    array['super_admin'],
     'Software and manifest entered internal review.', '2026-07-26T01:07:00Z'
   );
   perform public.research_transition_launch_status(
     'products', 2, 'ready_for_real_data', 'release@example.test',
+    array['super_admin'],
     'Internal review completed.', '2026-07-26T01:08:00Z'
   );
   perform public.research_transition_launch_status(
     'products', 3, 'real_data_entered', 'release@example.test',
+    array['super_admin'],
     'Reviewed product price entered.', '2026-07-26T01:09:00Z'
   );
   perform public.research_transition_launch_status(
     'products', 4, 'release_review', 'release@example.test',
+    array['super_admin'],
     'Release candidate entered final review.', '2026-07-26T01:10:00Z'
   );
 
   begin
     perform public.research_transition_launch_status(
       'products', 5, 'public_enabled', 'release@example.test',
+      array['super_admin'],
       'Attempted before every blocking fact passed.', '2026-07-26T01:11:00Z'
     );
     raise exception 'public enablement bypassed a blocking input';
@@ -129,25 +176,120 @@ begin
   select * into v_secret
   from public.research_transition_required_input(
     v_secret.id, 1, 'entered', 'release@example.test',
+    array['super_admin'],
     'Approved configuration name entered without exposing its value.',
     null, 'PAYMENT_PROVIDER_KEY', '2026-07-26T01:12:00Z'
   );
   select * into v_secret
   from public.research_transition_required_input(
     v_secret.id, 2, 'under_review', 'release@example.test',
+    array['super_admin'],
     'Configuration applicability entered independent review.',
     null, null, '2026-07-26T01:12:30Z'
   );
+  begin
+    perform public.research_transition_required_input(
+      v_secret.id, 3, 'rejected', 'release@example.test',
+      array['super_admin'],
+      'The entry actor attempted to reject the same submitted fact.',
+      null, null, '2026-07-26T01:12:45Z'
+    );
+    raise exception 'same actor rejection was accepted';
+  exception
+    when others then
+      if sqlerrm not like '%independent_verifier_required%' then raise; end if;
+  end;
   select * into v_secret
   from public.research_transition_required_input(
     v_secret.id, 3, 'not_applicable', 'reviewer@example.test',
+    array['approved_internal_reviewer'],
     'Payment credentials are not applicable to this non-transaction release.',
     null, null, '2026-07-26T01:13:00Z'
   );
 
+  -- Replacing one resolved definition with another keeps the active count at
+  -- two but must invalidate the prior canonical manifest hash.
+  select * into v_direct
+  from public.research_transition_required_input(
+    v_direct.id, 4, 'superseded', 'product@example.test',
+    array['product_admin'],
+    'The prior price fact was superseded by a new reviewed definition.',
+    null, null, '2026-07-26T01:13:10Z'
+  );
+  select * into v_direct
+  from public.research_define_required_input(
+    jsonb_build_object(
+      'key', 'products.variant.retail_price.v2',
+      'domain', 'products',
+      'label', 'CURRENT RETAIL PRICE REQUIRED',
+      'description', 'Current approved price for the exact product variant.',
+      'whyRequired', 'Commerce cannot publish without the current approved price.',
+      'recordType', 'product_variant',
+      'recordId', null,
+      'fieldPath', 'pricing.current_retail',
+      'blockingLevel', 'blocks_transaction',
+      'responsibleRole', 'product_admin',
+      'verificationMethod', 'Product administrator and independent reviewer.',
+      'evidenceRequired', jsonb_build_array('Current approved price record', 'Effective date'),
+      'entryMode', 'direct',
+      'valueSensitivity', 'ordinary',
+      'publicLaunchImpact', 'Product commerce remains unavailable.',
+      'nextAction', 'Enter and approve the current price.',
+      'adminEntryHref', '/admin/research/products'
+    ),
+    'product@example.test',
+    array['product_admin'],
+    '2026-07-26T01:13:15Z'
+  );
+  select * into v_direct
+  from public.research_transition_required_input(
+    v_direct.id, 1, 'entered', 'product@example.test',
+    array['product_admin'],
+    'Current approved price entered.', '"149.00 USD"'::jsonb, null,
+    '2026-07-26T01:13:20Z'
+  );
+  select * into v_direct
+  from public.research_transition_required_input(
+    v_direct.id, 2, 'under_review', 'product@example.test',
+    array['product_admin'],
+    'Current price entered independent review.', null, null,
+    '2026-07-26T01:13:25Z'
+  );
+  select * into v_direct
+  from public.research_transition_required_input(
+    v_direct.id, 3, 'verified', 'reviewer@example.test',
+    array['approved_internal_reviewer'],
+    'Current price and effective date independently verified.', null, null,
+    '2026-07-26T01:13:30Z'
+  );
+
+  begin
+    perform public.research_transition_launch_status(
+      'products', 5, 'public_enabled', 'release@example.test',
+      array['super_admin'],
+      'Attempted with a stale same-count manifest.',
+      '2026-07-26T01:13:35Z'
+    );
+    raise exception 'stale same-count manifest reached public enabled';
+  exception
+    when others then
+      if sqlerrm not like '%readiness_blocked%' then raise; end if;
+  end;
+
+  v_readiness := public.research_set_readiness_manifest(
+    'products', 5, 2, 2, true,
+    'release@example.test', array['super_admin'],
+    'Approved the recomputed replacement manifest.',
+    '2026-07-26T01:13:40Z'
+  );
+  if not (v_readiness->>'manifestApproved')::boolean then
+    raise exception 'recomputed manifest was not approved';
+  end if;
+
   v_readiness := public.research_transition_launch_status(
-    'products', 5, 'public_enabled', 'release@example.test',
-    'Every manifest-bound blocking input passed review.',
+    'products', 6, 'public_enabled', 'release@example.test',
+    array['super_admin'],
+    'Every exact manifest-bound blocking input passed review.',
     '2026-07-26T01:14:00Z'
   );
   if v_readiness->>'launchStatus' <> 'public_enabled'
@@ -230,6 +372,7 @@ where specific_schema = 'public'
   and routine_name in (
     'research_define_required_input',
     'research_transition_required_input',
+    'research_required_input_manifest_hash',
     'research_domain_readiness',
     'research_set_readiness_manifest',
     'research_transition_launch_status'

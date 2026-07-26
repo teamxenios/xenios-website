@@ -1,4 +1,8 @@
-import express from "express";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import request from "supertest";
@@ -12,6 +16,7 @@ import {
   type DomainReadiness,
   type RequiredInput,
 } from "@shared/research/required-inputs";
+import type { PrelaunchRole } from "@shared/research/prelaunch";
 
 const INPUT: RequiredInput = {
   id: "077ff55c-8787-4713-9802-1e7d697ac967",
@@ -29,6 +34,7 @@ const INPUT: RequiredInput = {
   verificationMethod: "Product administrator review.",
   evidenceRequired: ["Approved price record", "Effective date"],
   entryMode: "record_reference",
+  valueSensitivity: "ordinary",
   enteredValue: null,
   externalReferenceName: null,
   enteredBy: null,
@@ -57,6 +63,26 @@ const READINESS: DomainReadiness = {
   version: 2,
 };
 
+const EDITOR_ID = "11111111-1111-4111-8111-111111111111";
+const REVIEWER_ID = "22222222-2222-4222-8222-222222222222";
+
+function governanceGuard(id: string, roles: PrelaunchRole[]) {
+  return (req: Request, _res: Response, next: NextFunction) => {
+    (
+      req as Request & {
+        prelaunchActorId: string;
+        prelaunchAccess: { roles: PrelaunchRole[] };
+      }
+    ).prelaunchActorId = id;
+    (
+      req as Request & {
+        prelaunchAccess: { roles: PrelaunchRole[] };
+      }
+    ).prelaunchAccess = { roles };
+    next();
+  };
+}
+
 function harness() {
   const repository = {
     list: vi.fn(async () => [INPUT]),
@@ -73,10 +99,11 @@ function harness() {
   } satisfies RequiredInputRepository;
   const app = express();
   app.use(express.json());
-  registerRequiredInputApi(app, repository, (req, _res, next) => {
-    (req as typeof req & { adminEmail: string }).adminEmail =
-      "release@example.test";
-    next();
+  registerRequiredInputApi(app, repository, {
+    read: governanceGuard(EDITOR_ID, ["internal_team"]),
+    edit: governanceGuard(EDITOR_ID, ["product_admin"]),
+    review: governanceGuard(REVIEWER_ID, ["approved_internal_reviewer"]),
+    release: governanceGuard(EDITOR_ID, ["internal_team"]),
   });
   return { app, repository };
 }
@@ -86,9 +113,14 @@ describe("required-input and readiness APIs", () => {
     const { repository } = harness();
     const app = express();
     app.use(express.json());
-    registerRequiredInputApi(app, repository, (_req, res) =>
-      res.status(401).json({ ok: false, code: "sign_in_required" }),
-    );
+    const denied = (_req: Request, res: Response) =>
+      res.status(401).json({ ok: false, code: "sign_in_required" });
+    registerRequiredInputApi(app, repository, {
+      read: denied,
+      edit: denied,
+      review: denied,
+      release: denied,
+    });
 
     const response = await request(app).get(
       "/api/admin/research/required-inputs",
@@ -149,7 +181,28 @@ describe("required-input and readiness APIs", () => {
         expectedVersion: 1,
         targetState: "entered",
       }),
-      "release@example.test",
+      { id: EDITOR_ID, roles: ["product_admin"] },
+    );
+  });
+
+  it("routes independent resolution through a distinct persisted reviewer actor", async () => {
+    const { app, repository } = harness();
+    const response = await request(app)
+      .post(`/api/admin/research/required-inputs/${INPUT.id}/transition`)
+      .send({
+        expectedVersion: 2,
+        targetState: "rejected",
+        reason: "The submitted evidence does not verify the required fact.",
+      });
+
+    expect(response.status).toBe(200);
+    expect(repository.transition).toHaveBeenCalledWith(
+      INPUT.id,
+      expect.objectContaining({ targetState: "rejected" }),
+      {
+        id: REVIEWER_ID,
+        roles: ["approved_internal_reviewer"],
+      },
     );
   });
 
@@ -189,8 +242,36 @@ describe("required-input and readiness APIs", () => {
     expect(repository.transitionLaunch).toHaveBeenCalledWith(
       "products",
       expect.objectContaining({ targetStatus: "ready_for_real_data" }),
-      "release@example.test",
+      { id: EDITOR_ID, roles: ["internal_team"] },
     );
+  });
+
+  it("rejects credential semantics unless the definition is reference-only", async () => {
+    const { app, repository } = harness();
+    const response = await request(app)
+      .post("/api/admin/research/required-inputs")
+      .send({
+        key: "environment.provider_configuration",
+        domain: "environment",
+        label: "PROVIDER CONFIGURATION REQUIRED",
+        description: "Configure the provider before launch.",
+        whyRequired: "The provider cannot operate without configuration.",
+        recordType: "api_credentials",
+        recordId: null,
+        fieldPath: "provider.configuration",
+        blockingLevel: "blocks_provider_activation",
+        responsibleRole: "super_admin",
+        verificationMethod: "Administrator review.",
+        evidenceRequired: ["Configuration approval"],
+        entryMode: "direct",
+        valueSensitivity: "ordinary",
+        publicLaunchImpact: "Provider activation remains blocked.",
+        nextAction: "Configure the approved provider.",
+        adminEntryHref: "/admin/research/required-inputs",
+      });
+
+    expect(response.status).toBe(400);
+    expect(repository.define).not.toHaveBeenCalled();
   });
 });
 
@@ -231,6 +312,11 @@ describe("required-input readiness migration posture", () => {
   it("fails public enablement closed on manifest, count, or blocking inputs", () => {
     expect(sql).toContain("if p_target_status = 'public_enabled'");
     expect(sql).toContain("v_before.manifest_hash is null");
+    expect(sql).toContain(
+      "v_before.manifest_hash <> v_current_manifest_hash",
+    );
+    expect(sql).toContain("research_required_input_manifest_hash");
+    expect(sql).not.toContain("p_manifest_hash text");
     expect(sql).toContain("<> (v_readiness->>'expectedInputCount')::integer");
     expect(sql).toContain(
       "(v_readiness->>'blockingInputCount')::integer <> 0",
@@ -244,6 +330,8 @@ describe("required-input readiness migration posture", () => {
     expect(sql).toContain("secret_value_forbidden");
     expect(sql).toContain("secret_reference_name_invalid");
     expect(sql).toContain("research_required_input_sensitive_reference_only");
+    expect(sql).toContain("value_sensitivity");
+    expect(sql).toContain("record_type");
   });
 
   it("requires review and an independent verifier before resolution", () => {
@@ -251,5 +339,10 @@ describe("required-input readiness migration posture", () => {
       "when 'under_review' then p_target_state in ('verified', 'rejected', 'not_applicable')",
     );
     expect(sql).toContain("independent_verifier_required");
+    expect(sql).toContain(
+      "p_target_state in ('verified', 'rejected', 'not_applicable')",
+    );
+    expect(sql).toContain("approved_internal_reviewer");
+    expect(sql).toContain("p_actor_roles");
   });
 });

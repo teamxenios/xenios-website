@@ -16,9 +16,11 @@ import {
 import {
   REQUIRED_INPUT_BLOCKING_LEVELS,
   REQUIRED_INPUT_ENTRY_MODES,
+  REQUIRED_INPUT_VALUE_SENSITIVITIES,
   type RequiredInput,
   type RequiredInputBlockingLevel,
   type RequiredInputEntryMode,
+  type RequiredInputValueSensitivity,
   type RequiredInputState,
   type RequiredInputSummary,
   type DomainReadiness,
@@ -312,7 +314,6 @@ function ManifestForm({
   const [domain, setDomain] = useState("");
   const [expectedVersion, setExpectedVersion] = useState("0");
   const [manifestVersion, setManifestVersion] = useState("1");
-  const [manifestHash, setManifestHash] = useState("");
   const [expectedInputCount, setExpectedInputCount] = useState("");
   const [softwareComplete, setSoftwareComplete] = useState(false);
   const [reason, setReason] = useState("");
@@ -326,7 +327,6 @@ function ManifestForm({
     const result = await setReadinessManifest<{ ok: true }>(token, domain, {
       expectedVersion: Number(expectedVersion),
       manifestVersion: Number(manifestVersion),
-      manifestHash,
       expectedInputCount: Number(expectedInputCount),
       softwareComplete,
       reason,
@@ -337,7 +337,7 @@ function ManifestForm({
       return;
     }
     setNotice(
-      "The manifest was rejected. Confirm the reviewed SHA-256 hash, expected count, and current domain version.",
+      "The manifest was rejected. Confirm the expected count, current domain version, and your release role. The server computes the canonical SHA-256 from the active definitions.",
     );
   }
 
@@ -373,13 +373,12 @@ function ManifestForm({
           onChange={setExpectedInputCount}
         />
       </div>
-      <TextField
-        id="manifest-hash"
-        label="Reviewed manifest SHA-256"
-        value={manifestHash}
-        onChange={setManifestHash}
-        hint="64 lowercase hexadecimal characters. This binds the release review to an exact manifest."
-      />
+      <ResearchSecureNotice>
+        <strong>Server-computed manifest.</strong> The canonical SHA-256 is
+        computed from the active definitions and stored at approval. It is
+        recomputed before public enablement, so a changed or replaced input
+        invalidates the prior manifest.
+      </ResearchSecureNotice>
       <TextArea
         id="manifest-reason"
         label="Approval reason"
@@ -535,6 +534,7 @@ type DefinitionDraft = {
   verificationMethod: string;
   evidenceRequired: string;
   entryMode: RequiredInputEntryMode;
+  valueSensitivity: RequiredInputValueSensitivity;
   publicLaunchImpact: string;
   nextAction: string;
   adminEntryHref: string;
@@ -554,6 +554,7 @@ const EMPTY_DEFINITION: DefinitionDraft = {
   verificationMethod: "",
   evidenceRequired: "",
   entryMode: "record_reference",
+  valueSensitivity: "ordinary",
   publicLaunchImpact: "",
   nextAction: "",
   adminEntryHref: "",
@@ -722,6 +723,18 @@ function DefineInputForm({
                 field("entryMode", value as RequiredInputEntryMode)
               }
             />
+            <SelectField
+              id="required-value-sensitivity"
+              label="Value sensitivity"
+              value={draft.valueSensitivity}
+              options={REQUIRED_INPUT_VALUE_SENSITIVITIES}
+              onChange={(value) =>
+                field(
+                  "valueSensitivity",
+                  value as RequiredInputValueSensitivity,
+                )
+              }
+            />
           </div>
           <TextArea
             id="required-verification"
@@ -838,6 +851,11 @@ function RequiredInputCard({
       >
         <Detail label="Blocks" value={readable(item.blockingLevel)} />
         <Detail label="Responsible role" value={readable(item.responsibleRole)} />
+        <Detail label="Entry mode" value={readable(item.entryMode)} />
+        <Detail
+          label="Value sensitivity"
+          value={readable(item.valueSensitivity)}
+        />
         <Detail label="Verification" value={item.verificationMethod} />
         <Detail label="Next action" value={item.nextAction} />
         <Detail label="Public impact" value={item.publicLaunchImpact} />

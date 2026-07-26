@@ -17,15 +17,18 @@ role or namespace, seed a database, or perform an external action.
 - Existing `ResearchAdminShell`, typography, palette, borders, buttons, badges,
   metrics, and spacing are reused.
 - Software completion and real-input readiness are visually distinct.
+- The manifest form exposes no caller-supplied hash; it explains that the
+  canonical SHA-256 is computed and revalidated by the server.
+- The definition form exposes the explicit value-sensitivity classification.
 - The exact missing fact occupies the final operational location.
 - No credential value or public-facing technical detail is rendered.
-- Document width was 1425 CSS pixels inside a 1440px viewport.
+- Document and viewport widths were both 1440 CSS pixels.
 
 ## Mobile — 375px
 
 ![Required Inputs at 375px](required-inputs-mobile-375.png)
 
-- Document width was 360 CSS pixels inside a 375px viewport.
+- Document and viewport widths were both 375 CSS pixels.
 - The existing admin subnavigation remains a labeled controlled horizontal
   region; the document itself has no horizontal overflow.
 - Metrics and forms become one column.
@@ -34,7 +37,7 @@ role or namespace, seed a database, or perform an external action.
 
 ![Required Inputs at 320px](required-inputs-mobile-320.png)
 
-- Document width was 305 CSS pixels inside a 320px viewport.
+- Document and viewport widths were both 320 CSS pixels.
 - No page-level horizontal overflow.
 - Workflow buttons measured 52px high; the shared admin sign-out action was
   corrected to a 44px minimum target.
@@ -49,8 +52,8 @@ role or namespace, seed a database, or perform an external action.
 - Every form control has a programmatic label.
 - External-secret entry is labeled `Secret configuration name` and explicitly
   says never to paste a credential value.
-- The 720px CSS viewport (1440px desktop at 200% reflow equivalent) had a
-  705px document width, no page overflow, and 44–56px action targets.
+- The prior 720px CSS viewport reflow-equivalent check had no page overflow;
+  the corrected 320px capture has 44–52px action targets.
 - Browser console: zero warning/error entries.
 - Native browser 200% zoom remains an explicit Website 6 integrated-candidate
   verification gate.

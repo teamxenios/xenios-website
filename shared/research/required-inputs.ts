@@ -32,6 +32,13 @@ export const REQUIRED_INPUT_ENTRY_MODES = [
 export type RequiredInputEntryMode =
   (typeof REQUIRED_INPUT_ENTRY_MODES)[number];
 
+export const REQUIRED_INPUT_VALUE_SENSITIVITIES = [
+  "ordinary",
+  "sensitive_reference",
+] as const;
+export type RequiredInputValueSensitivity =
+  (typeof REQUIRED_INPUT_VALUE_SENSITIVITIES)[number];
+
 export type RequiredInputAuditEvent = {
   id: string;
   fromState: RequiredInputState | null;
@@ -57,6 +64,7 @@ export type RequiredInput = {
   verificationMethod: string;
   evidenceRequired: string[];
   entryMode: RequiredInputEntryMode;
+  valueSensitivity: RequiredInputValueSensitivity;
   enteredValue: unknown | null;
   externalReferenceName: string | null;
   enteredBy: string | null;
@@ -122,6 +130,15 @@ export function isRequiredInputEntryMode(
   return (
     typeof value === "string" &&
     (REQUIRED_INPUT_ENTRY_MODES as readonly string[]).includes(value)
+  );
+}
+
+export function isRequiredInputValueSensitivity(
+  value: unknown,
+): value is RequiredInputValueSensitivity {
+  return (
+    typeof value === "string" &&
+    (REQUIRED_INPUT_VALUE_SENSITIVITIES as readonly string[]).includes(value)
   );
 }
 

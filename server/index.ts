@@ -18,6 +18,7 @@ import {
   toTrainerSafeBiomarkerSummary,
 } from "./research/products-diagnostics";
 import {
+  buildPrelaunchGuard,
   buildPrelaunchProductionDependencies,
   registerPrelaunchApi,
 } from "./research/prelaunch";
@@ -181,15 +182,46 @@ registerProductsDiagnosticsApi(
 // persisted active role, validates an optional seed namespace, and commits an
 // access-audit record before the protected handler runs. No namespace or role
 // is seeded by application startup.
-registerPrelaunchApi(
-  app,
-  buildPrelaunchProductionDependencies(),
-  requireSupabaseAdmin,
-);
+const prelaunchDependencies = buildPrelaunchProductionDependencies();
+registerPrelaunchApi(app, prelaunchDependencies, requireSupabaseAdmin);
 registerRequiredInputApi(
   app,
   buildRequiredInputProductionRepository(),
-  requireSupabaseAdmin,
+  {
+    read: buildPrelaunchGuard(
+      prelaunchDependencies,
+      [
+        "super_admin",
+        "internal_team",
+        "product_admin",
+        "operations_admin",
+        "clinical_admin",
+        "approved_internal_reviewer",
+      ],
+      { allowSeedContext: false },
+    ),
+    edit: buildPrelaunchGuard(
+      prelaunchDependencies,
+      [
+        "super_admin",
+        "internal_team",
+        "product_admin",
+        "operations_admin",
+        "clinical_admin",
+      ],
+      { allowSeedContext: false },
+    ),
+    review: buildPrelaunchGuard(
+      prelaunchDependencies,
+      ["super_admin", "approved_internal_reviewer"],
+      { allowSeedContext: false },
+    ),
+    release: buildPrelaunchGuard(
+      prelaunchDependencies,
+      ["super_admin", "internal_team"],
+      { allowSeedContext: false },
+    ),
+  },
 );
 
 // Founding membership activation (three-state: capability_disabled by default,

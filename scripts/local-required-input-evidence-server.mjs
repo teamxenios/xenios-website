@@ -64,6 +64,7 @@ const item = {
     "Presence and provider account review without revealing a value.",
   evidenceRequired: ["Configuration name", "Provider approval"],
   entryMode: "external_secret",
+  valueSensitivity: "sensitive_reference",
   enteredValue: null,
   externalReferenceName: null,
   enteredBy: null,

@@ -38,6 +38,7 @@ const INPUT: RequiredInput = {
   verificationMethod: "Presence and provider account review.",
   evidenceRequired: ["Configuration name", "Provider approval"],
   entryMode: "external_secret",
+  valueSensitivity: "sensitive_reference",
   enteredValue: null,
   externalReferenceName: null,
   enteredBy: null,

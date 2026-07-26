@@ -25,7 +25,8 @@ The shared type is `shared/research/required-inputs.ts`. Every item records:
 - current state and blocking level;
 - responsible pre-launch role;
 - verification method and evidence list;
-- direct, record-reference, or external-secret entry mode;
+- direct, record-reference, or external-secret entry mode plus an explicit
+  ordinary/sensitive-reference classification;
 - entry/review metadata, public launch impact, and next action;
 - optimistic version and append-only audit history.
 
@@ -33,23 +34,27 @@ Allowed states are `missing`, `entered`, `under_review`, `verified`, `rejected`,
 `expired`, `superseded`, and `not_applicable`.
 
 An input cannot move directly from `missing` to `verified` or
-`not_applicable`. It must be entered, submitted for review, and resolved by a
-different actor. Rejected or expired facts become blocking again. Audit records
-reject UPDATE and DELETE.
+`not_applicable`. It must be entered, submitted for review, and verified,
+rejected, or marked not applicable by a different immutable Supabase user ID.
+Rejected or expired facts become blocking again. Audit records reject UPDATE
+and DELETE.
 
 ## Secret boundary
 
 `external_secret` inputs never store or return a value. They store only an
-uppercase configuration name such as `PAYMENT_PROVIDER_KEY`. The API, database
-constraint, transition function, UI, and migration lifecycle all enforce that
-boundary. Secret values remain in the approved environment-management system.
+uppercase configuration name such as `PAYMENT_PROVIDER_KEY`. Every definition
+has an explicit value-sensitivity classification, and the API/database also
+inspect all semantic definition fields so a record such as `api_credentials`
+cannot be misclassified as direct storage. Secret values remain in the
+approved environment-management system.
 
 ## Readiness manifests
 
 Each domain launch control binds review to:
 
 - a positive manifest version;
-- a 64-character lowercase SHA-256 manifest hash;
+- a server-computed 64-character lowercase SHA-256 over the canonical active
+  definition serialization;
 - an exact expected required-input count;
 - explicit software-complete state;
 - administrator, time, reason, and optimistic version.
@@ -68,7 +73,7 @@ The canonical sequence is:
 requests a transition. The server function refuses `public_enabled` unless:
 
 1. software is marked complete;
-2. an approved manifest hash exists;
+2. the stored manifest hash exactly matches a fresh server recomputation;
 3. expected input count is positive;
 4. actual non-superseded input count exactly matches the manifest;
 5. every non-informational input is `verified` or reviewed
@@ -78,7 +83,12 @@ No domain is created or enabled by the migration.
 
 ## Admin routes
 
-All routes reuse the existing verified Supabase administrator boundary:
+All routes use the deployed persisted pre-launch role registry and immutable
+verified Supabase `auth_user_id`; seed context is prohibited. Reads allow the
+approved governance roles, definition/entry requires the responsible domain
+role or an elevated internal role, resolution requires
+`approved_internal_reviewer` or a distinct `super_admin`, and manifest/launch
+changes require `super_admin` or `internal_team`:
 
 - `GET /api/admin/research/required-inputs`
 - `POST /api/admin/research/required-inputs`
@@ -103,14 +113,15 @@ primary action per workflow.
 
 All four tables use forced RLS, have no policies, and revoke table authority
 from `public`, `anon`, and `authenticated`. Only the service role may execute
-the five reviewed governance functions. The migration inserts no required
+the six reviewed governance functions. The migration inserts no required
 input, manifest, role, namespace, provider, product, member, financial,
 clinical, or other operational record.
 
 The disposable PostgreSQL 16 proof applies the migration twice, proves secret
-value rejection, exact state sequence, independent verification, blocked and
-successful public transitions, append-only audit, 4/4 forced RLS, zero browser
-table/function grants, and transaction rollback to zero rows.
+value rejection, explicit sensitive-definition rejection, exact state
+sequence, independent verification/rejection, stale same-count manifest
+rejection, recomputed-manifest launch, append-only audit, 4/4 forced RLS, zero
+browser table/function grants, and transaction rollback to zero rows.
 
 ## Domain adoption rule
 
