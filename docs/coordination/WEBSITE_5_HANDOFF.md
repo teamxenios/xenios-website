@@ -7,14 +7,18 @@
   service eligibility, non-clinical waitlist, identity state, versioned Care
   consent, and independently versioned clinical-intake foundation
 - Stacked base: accepted Care PR 1 head
-  `e1c5117ff0a671312f0f703c80a5690214c5c81c`
+  `6791656667eee7bdfa9605eb5e0bd869bbde5077`
 - Feature branch: `feature/website-5-care-eligibility-intake`
-- Pull request: recorded after this branch is pushed
+- Pull request: `https://github.com/teamxenios/xenios-website/pull/56`
 - Final frozen SHA: recorded in the PR and issue #44 after this committed
   handoff is pushed
 
-Care PR 1 remains frozen and unchanged at its accepted exact SHA. This branch
-is PR 2 only. It does not contain appointments, clinician decisions,
+Care PR 1 is live from application merge
+`c09e6fe756ed924736baf603950c944f1ace619c`; the current docs-only production
+successor is `45450eb947b8b96b1717989d915e7ecadd3f9c3d`. This branch is PR 2
+only and is rebased from the rejected/superseded PR 1 head
+`e1c5117ff0a671312f0f703c80a5690214c5c81c` onto the accepted corrected PR 1
+head above. It does not contain appointments, clinician decisions,
 prescriptions, pharmacy workflow, instructions, supplies, labs, secure
 messaging, or adverse-event workflow.
 
@@ -222,10 +226,15 @@ not change the canonical PR 1 capability row from `disabled`.
 
 Current branch-ready validation:
 
+- Exact corrected ancestry: merge base is accepted Care PR 1
+  `6791656667eee7bdfa9605eb5e0bd869bbde5077`.
+- Scope parity: the 42-file PR 2 name/status delta is identical to rejected old
+  head `0f44cdeb4c04b61e585363690655192ec3295e25`; no shared locked file was
+  added.
 - Focused Care/client/migration tests: 9 files / 49 tests passed.
 - `npm run check`: passed.
-- Disposable PostgreSQL 16: PR 1 migration applied, PR 2 migration applied
-  twice with `ON_ERROR_STOP=1`.
+- Fresh disposable PostgreSQL 16: corrected PR 1 migration applied, PR 2
+  migration applied twice with `ON_ERROR_STOP=1`.
 - SQL lifecycle passed:
   - no state, consent document, or intake definition existed after migration
   - location UPDATE and DELETE rejected
@@ -255,6 +264,13 @@ Current branch-ready validation:
 - Full repository tests: 149 files / 3,171 tests passed.
 - `npm run check`: passed.
 - `npm run build`: passed (existing Vite large-chunk advisory only).
+- Live PR 1 read-only verification passed at current production identity
+  `45450eb947b8b96b1717989d915e7ecadd3f9c3d` /
+  `dep-d9iqsaeq1p3s73flol2g`: health and Care status returned 200, Care
+  remained disabled/Pending, 1440/375/320 layouts had no horizontal overflow,
+  keyboard menu focus/Escape/focus-return passed, browser console errors and
+  warnings were zero, and recent Supabase `care_capabilities` reads returned
+  200. No account, role, record, or production configuration was mutated.
 
 ## UI evidence
 
@@ -307,8 +323,8 @@ After Website 2 accepts this frozen PR 2 unit:
 
 1. Keep PR 2 unchanged.
 2. Remain available for PR 1/2 integration corrections and live Pending smoke.
-3. Create the next focused Care PR for appointment and clinician workflow
-   foundation.
-4. Reuse only the relevant stable staging work; do not create a mega-diff.
+3. Keep PRs 3–7 held and do not amend them as part of this ancestry correction.
+4. Website 2 retains serialized migration, shared wiring, merge, deployment,
+   and production verification.
 
 PRODUCTION STATUS: NOT YET MERGED
