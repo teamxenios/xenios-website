@@ -8,4 +8,5 @@ export * from "./diagnostics";
 export * from "./communications";
 export * from "./support-and-storage";
 export * from "./routes";
+export * from "./production-deps";
 

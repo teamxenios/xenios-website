@@ -46,7 +46,7 @@ export interface SupplementPlaceholder
   channelMetadata: Record<FutureSupplementChannel, { configured: boolean }>;
 }
 
-const CHANNELS: readonly FutureSupplementChannel[] = [
+export const SUPPLEMENT_CHANNELS: readonly FutureSupplementChannel[] = [
   "affiliate",
   "wholesale",
   "professional_dispensary",
@@ -67,7 +67,7 @@ const descriptions: Record<SupplementPlaceholderCategory, string> = {
 
 function channelMetadata(): SupplementPlaceholderConfig["channelMetadata"] {
   return Object.fromEntries(
-    CHANNELS.map((channel) => [
+    SUPPLEMENT_CHANNELS.map((channel) => [
       channel,
       { configured: false, partnerReference: null, publicUrl: null },
     ]),
@@ -105,7 +105,7 @@ export function toPublicSupplementPlaceholder(
   return {
     ...publicConfig,
     channelMetadata: Object.fromEntries(
-      CHANNELS.map((channel) => [
+      SUPPLEMENT_CHANNELS.map((channel) => [
         channel,
         { configured: privateChannels[channel].configured },
       ]),
@@ -117,13 +117,17 @@ export const SUPPLEMENT_PLACEHOLDERS: readonly SupplementPlaceholder[] =
   DEFAULT_SUPPLEMENT_PLACEHOLDERS.map(toPublicSupplementPlaceholder);
 
 export class SupplementPlaceholderRepository {
-  private rows = DEFAULT_SUPPLEMENT_PLACEHOLDERS.map((row) => structuredClone(row));
+  private rows: SupplementPlaceholderConfig[];
 
   constructor(
     private readonly persist: (
       row: SupplementPlaceholderConfig,
     ) => Promise<void> = async () => undefined,
-  ) {}
+    initialRows: readonly SupplementPlaceholderConfig[] =
+      DEFAULT_SUPPLEMENT_PLACEHOLDERS,
+  ) {
+    this.rows = initialRows.map((row) => structuredClone(row));
+  }
 
   listPublic(): SupplementPlaceholder[] {
     return this.rows.map(toPublicSupplementPlaceholder);
@@ -161,7 +165,7 @@ export class SupplementPlaceholderRepository {
       );
     }
     if (patch.channelMetadata) {
-      for (const channel of CHANNELS) {
+      for (const channel of SUPPLEMENT_CHANNELS) {
         const config = patch.channelMetadata[channel];
         if (!config) {
           throw new Website3ValidationError(`Missing ${channel} channel configuration.`);

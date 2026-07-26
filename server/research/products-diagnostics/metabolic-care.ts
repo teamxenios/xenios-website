@@ -182,7 +182,9 @@ export interface MetabolicInterestRecord {
 
 export interface MetabolicInterestStore {
   findByIdempotency(memberId: string, idempotencyKey: string): Promise<MetabolicInterestRecord | null>;
-  save(record: MetabolicInterestRecord): Promise<void>;
+  createOrGet(
+    record: MetabolicInterestRecord,
+  ): Promise<{ created: boolean; record: MetabolicInterestRecord }>;
 }
 
 export class MemoryMetabolicInterestStore implements MetabolicInterestStore {
@@ -200,8 +202,16 @@ export class MemoryMetabolicInterestStore implements MetabolicInterestStore {
     );
   }
 
-  async save(record: MetabolicInterestRecord): Promise<void> {
+  async createOrGet(
+    record: MetabolicInterestRecord,
+  ): Promise<{ created: boolean; record: MetabolicInterestRecord }> {
+    const existing = await this.findByIdempotency(
+      record.memberId,
+      record.idempotencyKey,
+    );
+    if (existing) return { created: false, record: structuredClone(existing) };
     this.records.push(structuredClone(record));
+    return { created: true, record: structuredClone(record) };
   }
 }
 
@@ -268,7 +278,6 @@ export class MetabolicInterestService {
       idempotencyKey,
       createdAt: this.now().toISOString(),
     };
-    await this.store.save(record);
-    return { created: true, record };
+    return this.store.createOrGet(record);
   }
 }

@@ -305,6 +305,7 @@ export interface BiomarkerPendingUpload {
 
 export interface BiomarkerStore {
   get(memberId: string): Promise<BiomarkerRecord | null>;
+  createIfAbsent(record: BiomarkerRecord): Promise<BiomarkerRecord>;
   save(record: BiomarkerRecord): Promise<void>;
   getPendingUpload(
     memberId: string,
@@ -322,6 +323,12 @@ export class MemoryBiomarkerStore implements BiomarkerStore {
   readonly pendingUploads = new Map<string, BiomarkerPendingUpload>();
   async get(memberId: string): Promise<BiomarkerRecord | null> {
     return structuredClone(this.records.get(memberId) ?? null);
+  }
+  async createIfAbsent(record: BiomarkerRecord): Promise<BiomarkerRecord> {
+    const existing = this.records.get(record.memberId);
+    if (existing) return structuredClone(existing);
+    this.records.set(record.memberId, structuredClone(record));
+    return structuredClone(record);
   }
   async save(record: BiomarkerRecord): Promise<void> {
     this.records.set(record.memberId, structuredClone(record));
@@ -366,8 +373,7 @@ export class BiomarkerService {
       consentedAt: null,
       updatedAt: this.now().toISOString(),
     };
-    await this.store.save(record);
-    return record;
+    return this.store.createIfAbsent(record);
   }
 
   async transition(
@@ -409,13 +415,27 @@ export class BiomarkerService {
       }
   > {
     if (!input.activeMember) return { ok: false, code: "membership_required" };
-    if (!input.consentAccepted || !input.consentVersion.trim()) {
+    const consentVersion = input.consentVersion.trim();
+    if (
+      !input.consentAccepted ||
+      !consentVersion ||
+      consentVersion.length > 120
+    ) {
       return { ok: false, code: "consent_required" };
     }
-    if (input.sizeBytes <= 0 || input.sizeBytes > 15 * 1024 * 1024) {
+    if (
+      !Number.isInteger(input.sizeBytes) ||
+      input.sizeBytes <= 0 ||
+      input.sizeBytes > 15 * 1024 * 1024
+    ) {
       return { ok: false, code: "file_invalid" };
     }
-    const safeFilename = input.filename.replace(/^.*[\\/]/, "").replace(/[^A-Za-z0-9._-]/g, "_");
+    const safeFilename = input.filename
+      .replace(/^.*[\\/]/, "")
+      .replace(/[^A-Za-z0-9._-]/g, "_")
+      .replace(/^[._-]+|[._-]+$/g, "")
+      .slice(0, 180);
+    if (!safeFilename) return { ok: false, code: "file_invalid" };
     const memberPartition = crypto
       .createHash("sha256")
       .update(input.memberId)
@@ -441,7 +461,7 @@ export class BiomarkerService {
       filename: safeFilename,
       contentType: input.contentType,
       sizeBytes: input.sizeBytes,
-      consentVersion: input.consentVersion,
+      consentVersion,
       consentedAt: at,
       expiresAt: grant.expiresAt,
       createdAt: at,
