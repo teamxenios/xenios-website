@@ -30,6 +30,7 @@ const METHODS: Record<string, "get" | "post"> = {
   compliance: "get",
   complianceSubmissions: "post",
   onboarding: "get",
+  agreementAccept: "post",
   securitySessions: "get",
 };
 
@@ -40,7 +41,7 @@ describe("partner adapter/server route parity", () => {
       (match) => ({ key: match[1], path: match[2] }),
     ).filter((entry) => entry.path.startsWith("/api/research/partner/"));
 
-    expect(entries).toHaveLength(19);
+    expect(entries).toHaveLength(20);
     for (const entry of entries) {
       const method = METHODS[entry.key];
       expect(method, `method inventory for ${entry.key}`).toBeDefined();
@@ -52,11 +53,11 @@ describe("partner adapter/server route parity", () => {
     }
   });
 
-  it("keeps the 16 Website 4 partner routes literal for generated inventories", () => {
+  it("keeps the Website 4 partner routes literal for generated inventories", () => {
     const website4Paths = Array.from(
-      registered.matchAll(/app\.(?:get|post)\("([^"]+)"(?:,|\))/g),
+      registered.matchAll(/app\.(?:get|post)\(\s*"([^"]+)"(?:,|\))/g),
       (match) => match[1],
     ).filter((path) => path.startsWith("/api/research/partner/"));
-    expect(new Set(website4Paths).size).toBeGreaterThanOrEqual(16);
+    expect(new Set(website4Paths).size).toBeGreaterThanOrEqual(17);
   });
 });

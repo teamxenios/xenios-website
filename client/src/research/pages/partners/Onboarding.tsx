@@ -1,12 +1,14 @@
+import { useRef, useState } from "react";
 import { useResearch } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
 import {
   ResearchCapabilityBoundary,
   ResearchRouteBoundary,
+  ResearchSecureNotice,
   ResearchStatusBadge,
   capabilityStatusOrPending,
 } from "../../ui/kit";
-import { getPartnerOnboarding } from "../../adapters/partner";
+import { acceptPartnerAgreement, getPartnerOnboarding } from "../../adapters/partner";
 import {
   PARTNER_PENDING_BODY,
   PARTNER_PENDING_TITLE,
@@ -26,7 +28,11 @@ interface AgreementItem {
   id: string;
   title: string;
   version?: string | null;
+  content?: string | null;
+  contentHash?: string | null;
+  required?: boolean | null;
   acknowledged?: boolean | null;
+  acceptedAt?: string | null;
 }
 
 interface OnboardingPayload {
@@ -111,24 +117,24 @@ export default function Onboarding() {
             <div className="card mt-4">
               <p className="mono-label text-ink-mute">Agreements checklist</p>
               {(data?.agreements ?? []).length === 0 ? (
-                <p className="body-s text-ink-2 mt-2">
-                  No agreements have been presented yet. They appear here when onboarding reaches that step.
-                </p>
+                <div className="mt-2">
+                  <p className="body-m font-700">Partner agreement not published</p>
+                  <p className="body-s text-ink-2 mt-1">
+                    The complete agreement must be published before you can review or accept it. Your account cannot
+                    become active while this requirement is unresolved.
+                  </p>
+                </div>
               ) : (
-                <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="mt-2 grid gap-3">
+                <div className="mt-4 grid gap-5">
                   {(data?.agreements ?? []).map((a) => (
-                    <li key={a.id} className="flex flex-wrap items-center justify-between gap-3">
-                      <span className="body-s">
-                        {a.title}
-                        {a.version ? ` (v${a.version})` : ""}
-                      </span>
-                      <ResearchStatusBadge
-                        label={a.acknowledged ? "Accepted" : "Awaiting acceptance"}
-                        tone={a.acknowledged ? "success" : "warning"}
-                      />
-                    </li>
+                    <PartnerAgreementCard
+                      key={a.id}
+                      agreement={a}
+                      token={memberToken}
+                      onAccepted={() => void reload()}
+                    />
                   ))}
-                </ul>
+                </div>
               )}
             </div>
           </ResearchRouteBoundary>
@@ -157,3 +163,133 @@ export default function Onboarding() {
     </ResearchPartnerShell>
   );
 }
+
+function PartnerAgreementCard({
+  agreement,
+  token,
+  onAccepted,
+}: {
+  agreement: AgreementItem;
+  token: string | null;
+  onAccepted: () => void;
+}) {
+  const [affirmed, setAffirmed] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const idempotencyKey = useRef(
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${agreement.id}-${Date.now().toString(36)}`,
+  );
+  const complete =
+    Boolean(agreement.content?.trim()) &&
+    Boolean(agreement.contentHash?.match(/^[0-9a-f]{64}$/)) &&
+    Boolean(agreement.version?.trim());
+
+  const accept = async () => {
+    if (!affirmed || !complete || busy || !agreement.contentHash) return;
+    setBusy(true);
+    setMessage(null);
+    const result = await acceptPartnerAgreement(
+      agreement.id,
+      agreement.contentHash,
+      idempotencyKey.current,
+      token,
+    );
+    setBusy(false);
+    if (result.kind === "ok") {
+      setMessage(result.data.message ?? "Agreement accepted.");
+      onAccepted();
+      return;
+    }
+    if (result.kind === "unauthorized") {
+      setMessage("Your session has ended. Sign in again before accepting this agreement.");
+      return;
+    }
+    if (result.kind === "denied") {
+      setMessage("The agreement changed or cannot be accepted yet. Reload and review the current version.");
+      return;
+    }
+    if (result.kind === "forbidden" || result.kind === "unavailable") {
+      setMessage("Agreement acceptance is not available for this account yet.");
+      return;
+    }
+    setMessage(result.message);
+  };
+
+  return (
+    <section
+      aria-label={`${agreement.title} agreement`}
+      data-testid={`partner-agreement-${agreement.id}`}
+      style={{ borderTop: "1px solid var(--ra-border, var(--rule))", paddingTop: 20 }}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="body-m font-700">{agreement.title}</p>
+          <p className="body-s text-ink-mute mt-1">
+            Version {agreement.version}
+            {agreement.required === false ? " · Optional" : " · Required"}
+          </p>
+        </div>
+        <ResearchStatusBadge
+          label={agreement.acknowledged ? "Accepted" : "Awaiting acceptance"}
+          tone={agreement.acknowledged ? "success" : "warning"}
+        />
+      </div>
+
+      {complete ? (
+        <div
+          className="ra-agreement-body body-s text-ink-2 mt-4"
+          tabIndex={0}
+          aria-label={`${agreement.title}, full text`}
+          data-testid={`partner-agreement-content-${agreement.id}`}
+          style={{ whiteSpace: "pre-wrap", maxHeight: 360, overflowY: "auto" }}
+        >
+          {agreement.content}
+        </div>
+      ) : (
+        <div className="mt-4">
+          <ResearchSecureNotice>
+            Complete agreement text and integrity evidence are required before acceptance can open.
+          </ResearchSecureNotice>
+        </div>
+      )}
+
+      {!agreement.acknowledged && complete && (
+        <div className="mt-4">
+          <label className="flex items-start gap-3 body-s" htmlFor={`partner-agreement-accept-${agreement.id}`}>
+            <input
+              id={`partner-agreement-accept-${agreement.id}`}
+              type="checkbox"
+              checked={affirmed}
+              onChange={(event) => setAffirmed(event.target.checked)}
+            />
+            <span>I reviewed the complete agreement and accept this version.</span>
+          </label>
+          <button
+            type="button"
+            className="btn btn-primary mt-4"
+            disabled={!affirmed || busy}
+            onClick={() => void accept()}
+          >
+            {busy ? "Saving acceptance..." : "Accept agreement"}
+          </button>
+        </div>
+      )}
+
+      {agreement.acknowledged && agreement.acceptedAt && (
+        <p className="body-s text-ink-mute mt-3">
+          Accepted {new Date(agreement.acceptedAt).toLocaleDateString("en-US")}. The accepted version remains in the
+          audit record.
+        </p>
+      )}
+      {message && (
+        <p className="body-s mt-3" role="status">
+          {message}
+        </p>
+      )}
+    </section>
+  );
+}
+
+export { PartnerAgreementCard };

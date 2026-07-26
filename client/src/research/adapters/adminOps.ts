@@ -85,6 +85,10 @@ export function getPartner<T>(token: string, id: string): Promise<ApiResult<T>> 
   return apiGet<T>(`${BASE}/partners/${enc(id)}`, token);
 }
 
+export function listPartnerAgreementVersions<T>(token: string): Promise<ApiResult<T>> {
+  return apiGet<T>(`${BASE}/partner-agreements`, token);
+}
+
 export function listPlans<T>(token: string): Promise<ApiResult<T>> {
   return apiGet<T>(`${BASE}/plans`, token);
 }
@@ -217,6 +221,19 @@ export function retryOutboxItem<T>(token: string, id: string): Promise<ApiResult
 
 export function sendTestEmail<T>(token: string, body: unknown): Promise<ApiResult<T>> {
   return apiPost<T>(`${BASE}/test-email`, body, token);
+}
+
+export function publishAffiliateTerms<T>(
+  token: string,
+  input: {
+    agreementVersion: string;
+    title: string;
+    content: string;
+    required: boolean;
+    idempotencyKey: string;
+  },
+): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/partner-agreements/affiliate-terms/publish`, input, token);
 }
 
 // ------------------- founding activation (payment bridge) -------------------

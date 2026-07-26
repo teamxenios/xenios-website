@@ -47,6 +47,9 @@ describe("operations additive schema contract", () => {
       "research_operations_task_events_append_only",
       "research_partner_metric_events_append_only",
       "research_partner_portal_request_events_append_only",
+      "research_partner_agreement_versions_append_only",
+      "research_partner_agreement_events_append_only",
+      "research_partner_agreements_append_only",
       "research_professional_audit_append_only",
     ]) {
       expect(sql).toContain(trigger);
@@ -139,5 +142,21 @@ describe("operations additive schema contract", () => {
     }
     expect(sql).toContain("research_operations_transition_professional_account");
     expect(sql).toContain("account.version <> p_expected_version");
+  });
+
+  it("publishes immutable partner terms and blocks activation until the current version is accepted", () => {
+    for (const table of [
+      "research_partner_agreement_versions",
+      "research_partner_agreement_heads",
+      "research_partner_agreement_events",
+    ]) {
+      expect(sql).toContain(`create table if not exists public.${table}`);
+    }
+    expect(sql).toContain("research_operations_publish_partner_agreement");
+    expect(sql).toContain("research_operations_accept_partner_agreement");
+    expect(sql).toContain("research_operations_partner_terms_ready");
+    expect(sql).toContain("AFFILIATE AGREEMENT REQUIRED");
+    expect(sql).toContain("member.auth_user_id::text = trim(p_actor_id)");
+    expect(sql).toContain("accepted.content_hash = version.content_hash");
   });
 });

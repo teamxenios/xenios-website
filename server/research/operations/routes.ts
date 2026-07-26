@@ -138,6 +138,39 @@ export interface OperationsPartnerPortalPort {
     body: unknown,
     occurredAt: Date,
   ): Awaitable<{ ok: boolean; message?: string; code?: string; idempotent?: boolean }>;
+  acceptAgreement(input: {
+    authUserId: string;
+    agreementVersionId: string;
+    expectedContentHash: string;
+    idempotencyKey: string;
+    occurredAt: Date;
+  }): Awaitable<{
+    ok: boolean;
+    message?: string;
+    code?: string;
+    idempotent?: boolean;
+    agreementVersionId?: string;
+  }>;
+  listAgreementVersions(): Awaitable<{
+    ok: true;
+    agreements: Array<Record<string, unknown>>;
+  }>;
+  publishAgreement(input: {
+    agreementVersion: string;
+    title: string;
+    content: string;
+    required: boolean;
+    actor: OperationsActor;
+    idempotencyKey: string;
+    occurredAt: Date;
+  }): Awaitable<{
+    ok: boolean;
+    message?: string;
+    code?: string;
+    idempotent?: boolean;
+    agreementVersionId?: string;
+    contentHash?: string;
+  }>;
 }
 
 export interface OperationsRouteRequest extends Request {
@@ -732,6 +765,45 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     res.json({ ok: true, notifications: await deps.outbox.list(status) });
   });
 
+  app.get("/api/admin/research/partner-agreements", admin, async (_req, res) => {
+    noStore(res);
+    try {
+      res.json(await deps.partnerPortal.listAgreementVersions());
+    } catch (error) {
+      console.error("[research partner] agreement admin load failed:", error);
+      res.status(500).json({ ok: false, code: "internal_error", message: "Unable to load partner agreements." });
+    }
+  });
+
+  app.post(
+    "/api/admin/research/partner-agreements/affiliate-terms/publish",
+    admin,
+    async (req: OperationsRouteRequest, res) => {
+      noStore(res);
+      const acting = actor(req, deps, res);
+      const idempotencyKey = key(req);
+      const body = req.body as Record<string, unknown>;
+      if (!acting || !idempotencyKey) {
+        if (!idempotencyKey) {
+          res.status(400).json({ ok: false, code: "invalid_input", message: "Idempotency-Key is required." });
+        }
+        return;
+      }
+      relay(
+        res,
+        await deps.partnerPortal.publishAgreement({
+          agreementVersion: String(body.agreementVersion ?? ""),
+          title: String(body.title ?? ""),
+          content: String(body.content ?? ""),
+          required: body.required !== false,
+          actor: acting,
+          idempotencyKey,
+          occurredAt: deps.now(),
+        }),
+      );
+    },
+  );
+
   const partnerRead =
     (surface: PartnerPortalSurface) => async (req: OperationsRouteRequest, res: Response) => {
       noStore(res);
@@ -763,8 +835,7 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
       }
     };
 
-  // These are the 16 literal adapter paths that previously had no server
-  // registration. Literal calls keep generated route inventories authoritative.
+  // Literal calls keep generated route inventories authoritative.
   app.get("/api/research/partner/conversions", affiliate, partnerRead("conversions"));
   app.get("/api/research/partner/leads", affiliate, partnerRead("leads"));
   app.get("/api/research/partner/commissions", affiliate, partnerRead("commissions"));
@@ -780,6 +851,45 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
   app.get("/api/research/partner/compliance", affiliate, partnerRead("compliance"));
   app.post("/api/research/partner/compliance/submissions", affiliate, partnerSubmit("compliance"));
   app.get("/api/research/partner/onboarding", affiliate, partnerRead("onboarding"));
+  app.post(
+    "/api/research/partner/agreements/:agreementVersionId/accept",
+    affiliate,
+    async (req: OperationsRouteRequest, res) => {
+      noStore(res);
+      const acting = actor(req, deps, res);
+      const idempotencyKey = key(req);
+      const body = req.body as Record<string, unknown>;
+      if (!acting || !idempotencyKey) {
+        if (!idempotencyKey) {
+          res.status(400).json({ ok: false, code: "invalid_input", message: "Idempotency-Key is required." });
+        }
+        return;
+      }
+      if (body.affirmation !== true || typeof body.contentHash !== "string") {
+        res.status(400).json({
+          ok: false,
+          code: "invalid_input",
+          message: "Review the complete current agreement and confirm acceptance.",
+        });
+        return;
+      }
+      try {
+        relay(
+          res,
+          await deps.partnerPortal.acceptAgreement({
+            authUserId: acting.id,
+            agreementVersionId: String(req.params.agreementVersionId),
+            expectedContentHash: body.contentHash,
+            idempotencyKey,
+            occurredAt: deps.now(),
+          }),
+        );
+      } catch (error) {
+        console.error("[research partner] agreement acceptance failed:", error);
+        res.status(500).json({ ok: false, code: "internal_error", message: "Unable to accept this agreement." });
+      }
+    },
+  );
   app.get("/api/research/partner/security/sessions", affiliate, partnerRead("security_sessions"));
 }
 

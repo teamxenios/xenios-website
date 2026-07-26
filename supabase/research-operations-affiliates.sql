@@ -28,6 +28,7 @@ begin
     'public.research_lot_allocations',
     'public.research_lot_shipments',
     'public.research_partners',
+    'public.research_partner_agreements',
     'public.research_partner_links',
     'public.research_attribution_conversions',
     'public.research_commission_ledger',
@@ -60,6 +61,16 @@ alter table public.research_attribution_conversions
   add column if not exists idempotency_key text;
 create unique index if not exists research_attribution_conversions_idempotency_idx
   on public.research_attribution_conversions (idempotency_key)
+  where idempotency_key is not null;
+
+-- Canonical acceptance evidence remains in research_partner_agreements. These
+-- additive columns name the authenticated actor and make a retried acceptance
+-- replay-safe without changing any existing evidence.
+alter table public.research_partner_agreements
+  add column if not exists actor_id text,
+  add column if not exists idempotency_key text;
+create unique index if not exists research_partner_agreements_idempotency_idx
+  on public.research_partner_agreements (partner_id, idempotency_key)
   where idempotency_key is not null;
 
 do $$
@@ -347,6 +358,47 @@ create table if not exists public.research_lawrence_partner_models (
   unique (model_key, version)
 );
 
+-- Published partner agreements are immutable version records. The separate
+-- head row is the only mutable pointer, so publishing a replacement never
+-- edits or deletes the content a partner previously accepted.
+create table if not exists public.research_partner_agreement_versions (
+  id uuid primary key default gen_random_uuid(),
+  agreement_key text not null check (length(trim(agreement_key)) > 0),
+  agreement_version text not null check (length(trim(agreement_version)) > 0),
+  title text not null check (length(trim(title)) > 0),
+  content text not null check (length(trim(content)) >= 100),
+  content_hash text not null check (content_hash ~ '^[0-9a-f]{64}$'),
+  created_by_admin_id text not null check (length(trim(created_by_admin_id)) > 0),
+  published_at timestamptz not null,
+  unique (agreement_key, agreement_version)
+);
+
+create table if not exists public.research_partner_agreement_heads (
+  agreement_key text primary key check (length(trim(agreement_key)) > 0),
+  agreement_version_id uuid not null unique
+    references public.research_partner_agreement_versions (id),
+  required boolean not null default true,
+  version bigint not null default 1 check (version > 0),
+  updated_by_admin_id text not null check (length(trim(updated_by_admin_id)) > 0),
+  updated_at timestamptz not null
+);
+
+create table if not exists public.research_partner_agreement_events (
+  id uuid primary key default gen_random_uuid(),
+  agreement_key text not null check (length(trim(agreement_key)) > 0),
+  agreement_version_id uuid not null
+    references public.research_partner_agreement_versions (id),
+  partner_id uuid references public.research_partners (id) on delete cascade,
+  kind text not null check (kind in ('published','accepted')),
+  actor_id text not null check (length(trim(actor_id)) > 0),
+  actor_role text not null check (actor_role in ('admin','operations_manager','affiliate')),
+  idempotency_key text not null unique,
+  command_hash text not null check (command_hash ~ '^[0-9a-f]{64}$'),
+  occurred_at timestamptz not null
+);
+create index if not exists research_partner_agreement_events_partner_idx
+  on public.research_partner_agreement_events (partner_id, occurred_at);
+
 -- Durable facts not represented by the canonical attribution/commission
 -- tables. Subject keys are opaque; no applicant/member identity is stored.
 create table if not exists public.research_partner_metric_events (
@@ -626,6 +678,82 @@ drop trigger if exists research_partner_portal_request_events_append_only
 create trigger research_partner_portal_request_events_append_only
 before update or delete on public.research_partner_portal_request_events
 for each row execute function public.research_operations_refuse_mutation();
+
+drop trigger if exists research_partner_agreement_versions_append_only
+  on public.research_partner_agreement_versions;
+create trigger research_partner_agreement_versions_append_only
+before update or delete on public.research_partner_agreement_versions
+for each row execute function public.research_operations_refuse_mutation();
+
+drop trigger if exists research_partner_agreement_events_append_only
+  on public.research_partner_agreement_events;
+create trigger research_partner_agreement_events_append_only
+before update or delete on public.research_partner_agreement_events
+for each row execute function public.research_operations_refuse_mutation();
+
+drop trigger if exists research_partner_agreements_append_only
+  on public.research_partner_agreements;
+create trigger research_partner_agreements_append_only
+before update or delete on public.research_partner_agreements
+for each row execute function public.research_operations_refuse_mutation();
+
+create or replace function public.research_operations_partner_terms_ready(
+  p_partner_id uuid
+)
+returns boolean
+language sql
+stable
+security invoker
+set search_path = ''
+as $$
+  select
+    exists (
+      select 1
+      from public.research_partner_agreement_heads head
+      where head.agreement_key = 'affiliate_terms'
+        and head.required = true
+    )
+    and not exists (
+      select 1
+      from public.research_partner_agreement_heads head
+      join public.research_partner_agreement_versions version
+        on version.id = head.agreement_version_id
+      where head.required = true
+        and not exists (
+          select 1
+          from public.research_partner_agreements accepted
+          where accepted.partner_id = p_partner_id
+            and accepted.agreement_key = version.agreement_key
+            and accepted.agreement_version = version.agreement_version
+            and accepted.content_hash = version.content_hash
+            and accepted.decision = 'accepted'
+        )
+    );
+$$;
+
+create or replace function public.research_operations_require_partner_terms_before_activation()
+returns trigger
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+begin
+  if new.state = 'active'
+     and (tg_op = 'INSERT' or old.state is distinct from 'active')
+     and not public.research_operations_partner_terms_ready(new.id) then
+    raise exception using
+      errcode = 'check_violation',
+      message = 'AFFILIATE AGREEMENT REQUIRED';
+  end if;
+  return new;
+end
+$$;
+
+drop trigger if exists research_partners_require_current_terms
+  on public.research_partners;
+create trigger research_partners_require_current_terms
+before insert or update of state on public.research_partners
+for each row execute function public.research_operations_require_partner_terms_before_activation();
 
 -- One safe producer for Website 4 operational alerts. In-app alerts are
 -- immediately durable/delivered rows. Email is queued only for administrators
@@ -1764,6 +1892,356 @@ exception
 end
 $$;
 
+-- Publish one immutable agreement version and atomically advance its current
+-- pointer. Full legal text is required; this function never invents or seeds
+-- an agreement. A retry with the same idempotency key returns the first result.
+create or replace function public.research_operations_publish_partner_agreement(
+  p_agreement_key text,
+  p_agreement_version text,
+  p_title text,
+  p_content text,
+  p_required boolean,
+  p_actor_id text,
+  p_actor_role text,
+  p_idempotency_key text,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  version_row public.research_partner_agreement_versions%rowtype;
+  prior public.research_partner_agreement_events%rowtype;
+  content_hash text;
+  command_hash text;
+begin
+  if p_actor_role not in ('admin','operations_manager')
+     or length(trim(coalesce(p_actor_id, ''))) = 0
+     or length(trim(coalesce(p_agreement_key, ''))) = 0
+     or length(trim(coalesce(p_agreement_version, ''))) = 0
+     or length(trim(coalesce(p_title, ''))) = 0
+     or length(trim(coalesce(p_content, ''))) < 100
+     or length(trim(coalesce(p_idempotency_key, ''))) = 0 then
+    return jsonb_build_object(
+      'ok', false,
+      'code', 'invalid_input',
+      'message', 'A named administrator, version, title, and complete agreement text are required.'
+    );
+  end if;
+
+  content_hash := encode(extensions.digest(trim(p_content), 'sha256'), 'hex');
+  command_hash := encode(
+    extensions.digest(
+      concat_ws(
+        '|',
+        trim(p_agreement_key),
+        trim(p_agreement_version),
+        trim(p_title),
+        content_hash,
+        p_required::text,
+        trim(p_actor_id),
+        p_actor_role
+      ),
+      'sha256'
+    ),
+    'hex'
+  );
+
+  select * into prior
+  from public.research_partner_agreement_events
+  where idempotency_key = trim(p_idempotency_key);
+  if found then
+    if prior.command_hash <> command_hash or prior.kind <> 'published' then
+      return jsonb_build_object(
+        'ok', false,
+        'code', 'idempotency_conflict',
+        'message', 'That idempotency key was already used for another agreement command.'
+      );
+    end if;
+    return jsonb_build_object(
+      'ok', true,
+      'idempotent', true,
+      'agreementVersionId', prior.agreement_version_id
+    );
+  end if;
+
+  perform pg_advisory_xact_lock(hashtext(trim(p_agreement_key)));
+
+  select * into version_row
+  from public.research_partner_agreement_versions
+  where agreement_key = trim(p_agreement_key)
+    and agreement_version = trim(p_agreement_version);
+
+  if found and (
+    version_row.content_hash <> content_hash
+    or version_row.title <> trim(p_title)
+  ) then
+    return jsonb_build_object(
+      'ok', false,
+      'code', 'version_conflict',
+      'message', 'That agreement version already identifies different published content.'
+    );
+  end if;
+
+  if not found then
+    insert into public.research_partner_agreement_versions (
+      agreement_key,
+      agreement_version,
+      title,
+      content,
+      content_hash,
+      created_by_admin_id,
+      published_at
+    )
+    values (
+      trim(p_agreement_key),
+      trim(p_agreement_version),
+      trim(p_title),
+      trim(p_content),
+      content_hash,
+      trim(p_actor_id),
+      p_occurred_at
+    )
+    returning * into version_row;
+  end if;
+
+  insert into public.research_partner_agreement_heads (
+    agreement_key,
+    agreement_version_id,
+    required,
+    version,
+    updated_by_admin_id,
+    updated_at
+  )
+  values (
+    trim(p_agreement_key),
+    version_row.id,
+    p_required,
+    1,
+    trim(p_actor_id),
+    p_occurred_at
+  )
+  on conflict (agreement_key) do update
+  set agreement_version_id = excluded.agreement_version_id,
+      required = excluded.required,
+      version = public.research_partner_agreement_heads.version + 1,
+      updated_by_admin_id = excluded.updated_by_admin_id,
+      updated_at = excluded.updated_at;
+
+  insert into public.research_partner_agreement_events (
+    agreement_key,
+    agreement_version_id,
+    partner_id,
+    kind,
+    actor_id,
+    actor_role,
+    idempotency_key,
+    command_hash,
+    occurred_at
+  )
+  values (
+    version_row.agreement_key,
+    version_row.id,
+    null,
+    'published',
+    trim(p_actor_id),
+    p_actor_role,
+    trim(p_idempotency_key),
+    command_hash,
+    p_occurred_at
+  );
+
+  return jsonb_build_object(
+    'ok', true,
+    'idempotent', false,
+    'agreementVersionId', version_row.id,
+    'contentHash', version_row.content_hash
+  );
+exception
+  when unique_violation then
+    return jsonb_build_object(
+      'ok', false,
+      'code', 'idempotency_conflict',
+      'message', 'A conflicting agreement publication already exists.'
+    );
+end
+$$;
+
+-- An acceptance is valid only for the current immutable version and exact
+-- content hash. The actor must own the partner account through the canonical
+-- research member mapping; a client-supplied partner id cannot cross accounts.
+create or replace function public.research_operations_accept_partner_agreement(
+  p_partner_id uuid,
+  p_agreement_version_id uuid,
+  p_expected_content_hash text,
+  p_actor_id text,
+  p_idempotency_key text,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  version_row public.research_partner_agreement_versions%rowtype;
+  prior public.research_partner_agreement_events%rowtype;
+  accepted public.research_partner_agreements%rowtype;
+  command_hash text;
+begin
+  if length(trim(coalesce(p_actor_id, ''))) = 0
+     or length(trim(coalesce(p_idempotency_key, ''))) = 0
+     or coalesce(p_expected_content_hash, '') !~ '^[0-9a-f]{64}$' then
+    return jsonb_build_object(
+      'ok', false,
+      'code', 'invalid_input',
+      'message', 'The current agreement and an idempotency key are required.'
+    );
+  end if;
+
+  if not exists (
+    select 1
+    from public.research_partners partner
+    join public.research_members member on member.id = partner.member_id
+    where partner.id = p_partner_id
+      and member.auth_user_id::text = trim(p_actor_id)
+      and partner.state <> 'terminated'
+  ) then
+    return jsonb_build_object(
+      'ok', false,
+      'code', 'forbidden',
+      'message', 'This agreement does not belong to the authenticated partner.'
+    );
+  end if;
+
+  select version.* into version_row
+  from public.research_partner_agreement_heads head
+  join public.research_partner_agreement_versions version
+    on version.id = head.agreement_version_id
+  where head.agreement_version_id = p_agreement_version_id;
+
+  if not found or version_row.content_hash <> p_expected_content_hash then
+    return jsonb_build_object(
+      'ok', false,
+      'code', 'stale_write',
+      'message', 'The agreement changed. Reload and review the current version.'
+    );
+  end if;
+
+  command_hash := encode(
+    extensions.digest(
+      concat_ws(
+        '|',
+        p_partner_id::text,
+        version_row.id::text,
+        version_row.content_hash,
+        trim(p_actor_id)
+      ),
+      'sha256'
+    ),
+    'hex'
+  );
+
+  select * into prior
+  from public.research_partner_agreement_events
+  where idempotency_key = trim(p_idempotency_key);
+  if found then
+    if prior.command_hash <> command_hash or prior.kind <> 'accepted' then
+      return jsonb_build_object(
+        'ok', false,
+        'code', 'idempotency_conflict',
+        'message', 'That idempotency key was already used for another agreement command.'
+      );
+    end if;
+    return jsonb_build_object(
+      'ok', true,
+      'idempotent', true,
+      'agreementVersionId', prior.agreement_version_id
+    );
+  end if;
+
+  select * into accepted
+  from public.research_partner_agreements
+  where partner_id = p_partner_id
+    and agreement_key = version_row.agreement_key
+    and agreement_version = version_row.agreement_version;
+  if found then
+    if accepted.decision <> 'accepted'
+       or accepted.content_hash <> version_row.content_hash then
+      return jsonb_build_object(
+        'ok', false,
+        'code', 'agreement_required',
+        'message', 'The current agreement still requires acceptance.'
+      );
+    end if;
+    return jsonb_build_object(
+      'ok', true,
+      'idempotent', true,
+      'agreementVersionId', version_row.id
+    );
+  end if;
+
+  insert into public.research_partner_agreements (
+    partner_id,
+    agreement_key,
+    agreement_version,
+    content_hash,
+    decision,
+    decided_at,
+    actor_id,
+    idempotency_key
+  )
+  values (
+    p_partner_id,
+    version_row.agreement_key,
+    version_row.agreement_version,
+    version_row.content_hash,
+    'accepted',
+    p_occurred_at,
+    trim(p_actor_id),
+    trim(p_idempotency_key)
+  );
+
+  insert into public.research_partner_agreement_events (
+    agreement_key,
+    agreement_version_id,
+    partner_id,
+    kind,
+    actor_id,
+    actor_role,
+    idempotency_key,
+    command_hash,
+    occurred_at
+  )
+  values (
+    version_row.agreement_key,
+    version_row.id,
+    p_partner_id,
+    'accepted',
+    trim(p_actor_id),
+    'affiliate',
+    trim(p_idempotency_key),
+    command_hash,
+    p_occurred_at
+  );
+
+  return jsonb_build_object(
+    'ok', true,
+    'idempotent', false,
+    'agreementVersionId', version_row.id
+  );
+exception
+  when unique_violation then
+    return jsonb_build_object(
+      'ok', false,
+      'code', 'idempotency_conflict',
+      'message', 'A conflicting agreement acceptance already exists.'
+    );
+end
+$$;
+
 create or replace function public.research_operations_apply_professional_account(
   p_account_type text,
   p_organization_name text,
@@ -1992,6 +2470,9 @@ begin
     'research_operations_task_events',
     'research_commission_policies',
     'research_lawrence_partner_models',
+    'research_partner_agreement_versions',
+    'research_partner_agreement_heads',
+    'research_partner_agreement_events',
     'research_partner_metric_events',
     'research_partner_portal_requests',
     'research_partner_portal_request_events',
@@ -2010,14 +2491,20 @@ $$;
 
 -- Canonical tables touched by Website 4 remain inaccessible to browsers.
 revoke all on table public.research_inventory_lots from anon, authenticated;
+revoke all on table public.research_partner_agreements from anon, authenticated;
 revoke all on table public.research_partner_links from anon, authenticated;
 revoke all on table public.research_attribution_conversions from anon, authenticated;
+grant select, insert, update, delete on table public.research_partner_agreements to service_role;
 
 -- Functions are trigger-only in this migration. Application mutations are
 -- performed through the server's service-role adapter with optimistic
 -- concurrency and database uniqueness constraints. No public EXECUTE remains.
 revoke all on function public.research_operations_bootstrap_work_order() from public, anon, authenticated;
 revoke all on function public.research_operations_refuse_mutation() from public, anon, authenticated;
+revoke all on function public.research_operations_partner_terms_ready(uuid) from public, anon, authenticated;
+grant execute on function public.research_operations_partner_terms_ready(uuid) to service_role;
+revoke all on function public.research_operations_require_partner_terms_before_activation()
+  from public, anon, authenticated;
 revoke all on function public.research_operations_enqueue_alert(
   text, text, text, text, text, timestamptz
 ) from public, anon, authenticated;
@@ -2053,6 +2540,18 @@ revoke all on function public.research_operations_submit_partner_request(
 ) from public, anon, authenticated;
 grant execute on function public.research_operations_submit_partner_request(
   uuid, text, text, jsonb, text, timestamptz
+) to service_role;
+revoke all on function public.research_operations_publish_partner_agreement(
+  text, text, text, text, boolean, text, text, text, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.research_operations_publish_partner_agreement(
+  text, text, text, text, boolean, text, text, text, timestamptz
+) to service_role;
+revoke all on function public.research_operations_accept_partner_agreement(
+  uuid, uuid, text, text, text, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.research_operations_accept_partner_agreement(
+  uuid, uuid, text, text, text, timestamptz
 ) to service_role;
 revoke all on function public.research_operations_apply_professional_account(
   text, text, text, text[], jsonb, text, timestamptz

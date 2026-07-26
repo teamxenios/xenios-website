@@ -549,6 +549,14 @@ async function partnerForAuth(client: SupabaseClient, authUserId: string) {
   );
 }
 
+async function partnerTermsReady(client: SupabaseClient, partnerId: string): Promise<boolean> {
+  const result = await client.rpc("research_operations_partner_terms_ready", {
+    p_partner_id: partnerId,
+  });
+  if (result.error) throw new Error(`partner terms readiness failed: ${result.error.message}`);
+  return result.data === true;
+}
+
 function affiliateLink(row: { id: string; code: string; campaign: string | null; created_at: string }, base: string): AffiliateLink {
   return {
     id: row.id,
@@ -567,6 +575,13 @@ async function affiliateDashboard(
   const partner = await partnerForAuth(client, authUserId);
   if (!partner || !["active", "quality_review", "suspended"].includes(partner.state)) {
     return { ok: false, code: "login_refused", message: "No available affiliate account is linked to this login." };
+  }
+  if (!(await partnerTermsReady(client, partner.id))) {
+    return {
+      ok: false,
+      code: "agreement_required",
+      message: "The current partner agreement requires acceptance before the affiliate workspace can open.",
+    };
   }
   const [linksResult, touchesResult, conversionsResult, ledgerResult, payoutsResult, metricEventsResult] = await Promise.all([
     client
@@ -989,12 +1004,50 @@ async function partnerPortalRead(
   }
 
   if (surface === "onboarding") {
-    const agreements = await client
-      .from("research_partner_agreements")
-      .select("id, agreement_key, agreement_version, decision")
-      .eq("partner_id", partner.id)
-      .order("decided_at", { ascending: false });
-    if (agreements.error) throw new Error(`partner onboarding load failed: ${agreements.error.message}`);
+    const [heads, accepted] = await Promise.all([
+      client
+        .from("research_partner_agreement_heads")
+        .select("agreement_key, agreement_version_id, required, version, updated_at")
+        .order("updated_at", { ascending: true }),
+      client
+        .from("research_partner_agreements")
+        .select("id, agreement_key, agreement_version, content_hash, decision, decided_at")
+        .eq("partner_id", partner.id),
+    ]);
+    if (heads.error) throw new Error(`partner agreement heads load failed: ${heads.error.message}`);
+    if (accepted.error) throw new Error(`partner agreement evidence load failed: ${accepted.error.message}`);
+    const headRows = (heads.data ?? []) as Array<{
+      agreement_key: string;
+      agreement_version_id: string;
+      required: boolean;
+      version: number;
+      updated_at: string;
+    }>;
+    const versionIds = headRows.map((row) => row.agreement_version_id);
+    const versions = versionIds.length
+      ? await client
+          .from("research_partner_agreement_versions")
+          .select("id, agreement_key, agreement_version, title, content, content_hash, published_at")
+          .in("id", versionIds)
+      : { data: [], error: null };
+    if (versions.error) throw new Error(`partner agreement versions load failed: ${versions.error.message}`);
+    const acceptedRows = (accepted.data ?? []) as Array<{
+      id: string;
+      agreement_key: string;
+      agreement_version: string;
+      content_hash: string;
+      decision: string;
+      decided_at: string;
+    }>;
+    const versionRows = (versions.data ?? []) as Array<{
+      id: string;
+      agreement_key: string;
+      agreement_version: string;
+      title: string;
+      content: string;
+      content_hash: string;
+      published_at: string;
+    }>;
     return {
       verification: {
         state: partner.state,
@@ -1003,17 +1056,30 @@ async function partnerPortalRead(
             ? "Partner account is active."
             : "Partner onboarding remains pending until every server-authoritative gate is complete.",
       },
-      agreements: ((agreements.data ?? []) as Array<{
-        id: string;
-        agreement_key: string;
-        agreement_version: string;
-        decision: string;
-      }>).map((row) => ({
-        id: row.id,
-        title: row.agreement_key.replaceAll("_", " "),
-        version: row.agreement_version,
-        acknowledged: row.decision === "accepted",
-      })),
+      agreements: headRows.flatMap((head) => {
+        const version = versionRows.find((row) => row.id === head.agreement_version_id);
+        if (!version) return [];
+        const evidence = acceptedRows.find(
+          (row) =>
+            row.agreement_key === version.agreement_key &&
+            row.agreement_version === version.agreement_version &&
+            row.content_hash === version.content_hash &&
+            row.decision === "accepted",
+        );
+        return [
+          {
+            id: version.id,
+            title: version.title,
+            version: version.agreement_version,
+            content: version.content,
+            contentHash: version.content_hash,
+            required: head.required,
+            acknowledged: Boolean(evidence),
+            acceptedAt: evidence?.decided_at ?? null,
+            publishedAt: version.published_at,
+          },
+        ];
+      }),
     };
   }
 
@@ -1093,6 +1159,13 @@ export function buildOperationsProductionDependencies(
         if (!partner) return { ok: false, code: "not_found", message: "Affiliate not found." };
         if (partner.state !== "active") {
           return { ok: false, code: "invalid_state", message: "Affiliate must be active to issue links." };
+        }
+        if (!(await partnerTermsReady(client, partner.id))) {
+          return {
+            ok: false,
+            code: "agreement_required",
+            message: "Accept the current required partner agreement before issuing links.",
+          };
         }
         const existing = await client
           .from("research_partner_links")
@@ -1233,6 +1306,128 @@ export function buildOperationsProductionDependencies(
         partnerPortalRead(client, authUserId, surface, currentSessionKey),
       submit: (kind, authUserId, body, occurredAt) =>
         submitPartnerPortalRequest(client, authUserId, kind, body, occurredAt),
+      async acceptAgreement(input) {
+        const partner = await partnerForAuth(client, input.authUserId);
+        if (!partner) return { ok: false, code: "not_found", message: "Partner account not found." };
+        const result = await client.rpc("research_operations_accept_partner_agreement", {
+          p_partner_id: partner.id,
+          p_agreement_version_id: input.agreementVersionId,
+          p_expected_content_hash: input.expectedContentHash,
+          p_actor_id: input.authUserId,
+          p_idempotency_key: input.idempotencyKey,
+          p_occurred_at: input.occurredAt.toISOString(),
+        });
+        if (result.error) throw new Error(`partner agreement acceptance failed: ${result.error.message}`);
+        const value = result.data as {
+          ok?: boolean;
+          idempotent?: boolean;
+          code?: string;
+          message?: string;
+          agreementVersionId?: string;
+        };
+        return value.ok
+          ? {
+              ok: true,
+              idempotent: value.idempotent === true,
+              agreementVersionId: value.agreementVersionId,
+              message: value.idempotent
+                ? "This agreement was already accepted."
+                : "Agreement accepted. Your immutable acceptance record is saved.",
+            }
+          : {
+              ok: false,
+              code: value.code ?? "invalid_input",
+              message: value.message ?? "Agreement acceptance refused.",
+            };
+      },
+      async listAgreementVersions() {
+        const [versions, heads] = await Promise.all([
+          client
+            .from("research_partner_agreement_versions")
+            .select(
+              "id, agreement_key, agreement_version, title, content, content_hash, created_by_admin_id, published_at",
+            )
+            .order("published_at", { ascending: false }),
+          client
+            .from("research_partner_agreement_heads")
+            .select("agreement_key, agreement_version_id, required, version, updated_by_admin_id, updated_at"),
+        ]);
+        if (versions.error) throw new Error(`partner agreement versions load failed: ${versions.error.message}`);
+        if (heads.error) throw new Error(`partner agreement heads load failed: ${heads.error.message}`);
+        const headByKey = new Map(
+          ((heads.data ?? []) as Array<{
+            agreement_key: string;
+            agreement_version_id: string;
+            required: boolean;
+            version: number;
+            updated_by_admin_id: string;
+            updated_at: string;
+          }>).map((row) => [row.agreement_key, row]),
+        );
+        return {
+          ok: true as const,
+          agreements: ((versions.data ?? []) as Array<{
+            id: string;
+            agreement_key: string;
+            agreement_version: string;
+            title: string;
+            content: string;
+            content_hash: string;
+            created_by_admin_id: string;
+            published_at: string;
+          }>).map((row) => {
+            const head = headByKey.get(row.agreement_key);
+            return {
+              id: row.id,
+              title: row.title,
+              agreementVersion: row.agreement_version,
+              content: row.content,
+              contentHash: row.content_hash,
+              publishedAt: row.published_at,
+              publishedBy: row.created_by_admin_id,
+              current: head?.agreement_version_id === row.id,
+              required: head?.agreement_version_id === row.id ? head.required : false,
+            };
+          }),
+        };
+      },
+      async publishAgreement(input) {
+        const result = await client.rpc("research_operations_publish_partner_agreement", {
+          p_agreement_key: "affiliate_terms",
+          p_agreement_version: input.agreementVersion,
+          p_title: input.title,
+          p_content: input.content,
+          p_required: input.required,
+          p_actor_id: input.actor.id,
+          p_actor_role: input.actor.role,
+          p_idempotency_key: input.idempotencyKey,
+          p_occurred_at: input.occurredAt.toISOString(),
+        });
+        if (result.error) throw new Error(`partner agreement publication failed: ${result.error.message}`);
+        const value = result.data as {
+          ok?: boolean;
+          idempotent?: boolean;
+          code?: string;
+          message?: string;
+          agreementVersionId?: string;
+          contentHash?: string;
+        };
+        return value.ok
+          ? {
+              ok: true,
+              idempotent: value.idempotent === true,
+              agreementVersionId: value.agreementVersionId,
+              contentHash: value.contentHash,
+              message: value.idempotent
+                ? "This agreement version was already published."
+                : "The partner agreement version is now current.",
+            }
+          : {
+              ok: false,
+              code: value.code ?? "invalid_input",
+              message: value.message ?? "Agreement publication refused.",
+            };
+      },
     },
     crm: {
       async get(contactId, _actor): Promise<CrmResult<{ contact: CrmContact; timeline: CrmEvent[] }>> {
