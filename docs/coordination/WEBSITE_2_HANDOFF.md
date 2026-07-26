@@ -1,5 +1,62 @@
 # Website 2 release-manager handoff
 
+## Current checkpoint — Product Control integration candidate
+
+- Session: Website 2 — Release Manager
+- Integration branch: `integration/research-commerce-wave1-product-control`
+- Base production main: `ac324cb12f16da9322ff224e78c08210d039c7b2`
+- Accepted Product Control source:
+  `dd58ccf1fa7919f78838a60aaf66cdee48b73993`
+- Rejected source heads: `639148302364bb191103b6f3deb7d1571dcac0be`
+  and `7817f4857e6429fec0051168ab9a2fc08847b8e4`
+- Source migration:
+  `supabase/migrations/20260726143000_research_product_control_center.sql`
+- Canonical migration raw Git-blob SHA-256:
+  `b1589eb24405d4700206d25541b647479afee34c2cd05422da70df2179876203`
+- Production status: NOT YET MERGED; primary migration applied as managed
+  migration `20260726214102 research_product_control_center`; application
+  deployment remains held for reviewed privilege convergence
+
+This integration preserves the accepted Product Control domain blobs and adds
+only Website 2-owned composition and release evidence:
+
+- registers `/api/admin/research/products` and its detail/mutation routes
+  before API/SPA fallbacks with the existing server admin guard;
+- composes the reviewed Supabase repository, canonical per-product
+  required-input readiness gate, and durable database idempotency store;
+- keeps routes registered when persistence is unavailable so they fail closed
+  with stable redacted 503 JSON instead of a JSON 404;
+- preserves existing `/admin/research/products` and
+  `/admin/research/products/:id` client routes and grouped admin navigation;
+- records migration order 38, a read-only production verifier, and additive
+  rollback/recovery notes.
+
+Immediate post-apply verification found the production Supabase environment
+retained pre-existing/default service-role `TRUNCATE`, `REFERENCES`, and
+`TRIGGER` privileges, yielding 69 privileges instead of the reviewed 33. The
+row-preserving migration
+`supabase/migrations/20260726214500_research_product_control_center_privilege_hardening.sql`
+revokes only those three excess privilege types across the 12 Product Control
+tables. It must pass exact-SHA Website 6 review and production verification
+before merge or Render deployment.
+
+Release invariants:
+
+- five command-managed tables remain service-role SELECT-only; all mutations
+  use the 11 reviewed fixed-search-path SECURITY DEFINER RPCs;
+- browser roles retain zero Product Control table/RPC grants;
+- no product, variant, price, media, required-input, role, seed, launch-control,
+  inventory, lot, COA, order, or Care row is created;
+- public commerce remains fail-closed; Care remains disabled and hidden;
+- production migration, merge, and Render deployment remain prohibited until
+  Website 6 accepts the exact two-parent integration SHA.
+
+Post-deploy handoff must include the exact integration/merge/deployed SHAs,
+Render deployment ID/status, managed migration timestamp/name, immediate
+pre/post-apply counts, RLS/grant/RPC verification, health/auth/privacy/browser
+smoke, Render/Supabase error posture, and the rollback identity in
+`supabase/production/research-product-control-center-rollback-notes.md`.
+
 ## Current checkpoint — Care PR4 integration candidate
 
 - Session: Website 2 — Release Manager

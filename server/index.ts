@@ -17,6 +17,9 @@ import {
   registerProductsDiagnosticsApi,
   toTrainerSafeBiomarkerSummary,
 } from "./research/products-diagnostics";
+import { ProductAdminService } from "./research/products-diagnostics/product-admin";
+import { buildProductAdminProductionService } from "./research/products-diagnostics/product-admin-integration";
+import { registerProductAdminApi } from "./research/products-diagnostics/product-admin-routes";
 import {
   buildPrelaunchGuard,
   buildPrelaunchProductionDependencies,
@@ -201,6 +204,17 @@ registerProductsDiagnosticsApi(
     requireAdmin: requireSupabaseAdmin,
   },
 );
+
+// Product Control Center. The shared registration is always present before the
+// API/SPA fallbacks. Missing persistence fails closed with stable JSON; when
+// configured, every mutation uses the reviewed SECURITY DEFINER command RPCs,
+// durable idempotency, and canonical required-input readiness.
+const productAdminService: ProductAdminService =
+  buildProductAdminProductionService();
+registerProductAdminApi(app, {
+  service: productAdminService,
+  requireAdmin: requireSupabaseAdmin,
+});
 
 // Canonical private pre-launch access. This is server-authoritative and has no
 // client-only bypass: every internal request verifies Supabase Auth, resolves a

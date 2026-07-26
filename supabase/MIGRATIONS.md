@@ -41,6 +41,11 @@ table in the same PR that adds or changes a migration file.
 | 32 | research-prelaunch-foundation.sql | Canonical private roles, seed-origin namespaces, provider modes, access audit, and external-action capture | RUN | 2026-07-25 | managed migration `canonical_prelaunch_foundation`; 5/5 forced RLS, zero browser grants, zero roles/namespaces/audits/captures |
 | 33 | research-required-input-readiness.sql | Canonical required-input register, append-only review audit, readiness manifests, and server launch switches | RUN | 2026-07-26 | managed migration `20260726045307 canonical_required_input_readiness`; forced-RLS/browser-grant/zero-row verification |
 | 34 | care-access-foundation.sql | Disabled-by-default Care capability, Care-only roles, and metadata-only access audit | RUN | 2026-07-26 | managed migration `20260726064113 care_access_foundation`; one disabled capability, 3/3 forced RLS, zero browser mutation grants, zero role/audit rows |
+| 35 | care-eligibility-intake.sql | Care location, eligibility, consent, privacy, waitlist, and versioned intake foundation | RUN | 2026-07-26 | managed migration `20260726080248 care_eligibility_intake`; 13/13 PR2 tables forced RLS, zero browser grants/rows, Care disabled |
+| 36 | care-appointments-clinician.sql | Provider-neutral appointments, exact clinician readiness, reminders, check-in, and human review | RUN | 2026-07-26 | managed migration `20260726093600 care_appointments_clinician`; 12/12 PR3 tables forced RLS, zero browser grants/rows, Care disabled |
+| 37 | care-prescription-pharmacy.sql | Human-clinician prescription and verified pharmacy/order lifecycle foundation | RUN | 2026-07-26 | managed migration `20260726112848 care_prescription_pharmacy`; 10/10 PR4 tables forced RLS, zero browser grants/rows, Care disabled |
+| 38 | migrations/20260726143000_research_product_control_center.sql | Product, variant, effective-dated price, private media, immutable audit, and exact readiness administration | RUN | 2026-07-26 | managed migration `20260726214102 research_product_control_center`; post-apply verification found Supabase pre-existing/default `TRUNCATE`, `REFERENCES`, and `TRIGGER` grants requiring migration 39 before application deployment |
+| 39 | migrations/20260726214500_research_product_control_center_privilege_hardening.sql | Converge Product Control service-role grants to the reviewed exact 33-privilege boundary | PENDING (not run) | — | row-preserving/idempotent; revokes only `TRUNCATE`, `REFERENCES`, and `TRIGGER` from the 12 Product Control tables |
 
 Founding-membership operational migrations use a separate dependency chain.
 Production presence and managed migration history were reconciled on
@@ -130,7 +135,7 @@ services:
 | Care-1 | `care-access-foundation.sql` | Care capability, roles, access audit, forced RLS | RUN (`20260726064113 care_access_foundation`) |
 | Care-2 | `care-eligibility-intake.sql` | Patient identity seam, location, state/clinician coverage, append-only consent/waitlist/eligibility history, and versioned intake foundation | RUN (`20260726080248 care_eligibility_intake`) |
 | Care-3 | `care-appointments-clinician.sql` | Verified medical-group/clinician/provider readiness, appointment/reminder lifecycle, private telehealth references, assignment history, and human-clinician review | RUN (`20260726093600 care_appointments_clinician`) |
-| Care-4 | `care-prescription-pharmacy.sql` | Patient-specific human-clinician prescription source/signing/supersession plus verified pharmacy, license, state coverage, operator, clarification, dispense, and shipment foundations | PENDING (stacked after Care-3; not yet applied) |
+| Care-4 | `care-prescription-pharmacy.sql` | Patient-specific human-clinician prescription source/signing/supersession plus verified pharmacy, license, state coverage, operator, clarification, dispense, and shipment foundations | RUN (`20260726112848 care_prescription_pharmacy`) |
 
 Care-2, Care-3, and Care-4 seed no state, clinician, medical group, provider,
 consent document, intake definition, medical question, patient, appointment,
