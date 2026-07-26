@@ -128,8 +128,9 @@ services:
 | Care-3 | `care-appointments-clinician.sql` | Verified medical-group/clinician/provider readiness, appointment/reminder lifecycle, private telehealth references, assignment history, and human-clinician review | PENDING (stacked after Care-2; not yet applied) |
 | Care-4 | `care-prescription-pharmacy.sql` | Patient-specific human-clinician prescription source/signing/supersession plus verified pharmacy, license, state coverage, operator, clarification, dispense, and shipment foundations | PENDING (stacked after Care-3; not yet applied) |
 | Care-5 | `care-instructions-supplies.sql` | Exact-source patient instruction release/acknowledgment plus verified product-specific supply kit and replacement lifecycle | PENDING (stacked after Care-4; not yet applied) |
+| Care-6 | `care-comms-safety.sql` | Patient/assigned-clinician private messaging, provider-neutral laboratory reference metadata, and adverse-event/quality-issue history | PENDING (stacked after Care-5; not yet applied) |
 
-Care-2 through Care-5 seed no state, clinician, medical group, provider, consent
+Care-2 through Care-6 seed no state, clinician, medical group, provider, consent
 document, intake definition, medical question, patient, appointment, pharmacy,
 product, price, pharmacy, prescription, instruction, shipment, or availability record. No migration can make the
 canonical Care capability live. Each Care migration must be applied only after
