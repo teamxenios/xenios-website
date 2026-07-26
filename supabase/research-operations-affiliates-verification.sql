@@ -19,6 +19,7 @@ from unnest(array[
   'public.research_fulfillment_work_orders',
   'public.research_operations_audit_events',
   'public.research_operations_inventory_movements',
+  'public.research_operations_inventory_commands',
   'public.research_partner_metric_events',
   'public.research_partner_portal_requests',
   'public.research_partner_portal_request_events',
@@ -45,6 +46,7 @@ where n.nspname = 'public'
     'research_fulfillment_work_orders',
     'research_operations_audit_events',
     'research_operations_inventory_movements',
+    'research_operations_inventory_commands',
     'research_fulfillment_exceptions',
     'research_fulfillment_notes',
     'research_operations_crm_contacts',
@@ -76,6 +78,7 @@ where table_schema = 'public'
     'research_fulfillment_work_orders',
     'research_operations_audit_events',
     'research_operations_inventory_movements',
+    'research_operations_inventory_commands',
     'research_fulfillment_exceptions',
     'research_fulfillment_notes',
     'research_operations_crm_contacts',
@@ -104,6 +107,8 @@ from information_schema.role_routine_grants
 where routine_schema = 'public'
   and routine_name in (
     'research_operations_apply_fulfillment_command',
+    'research_operations_enqueue_alert',
+    'research_operations_apply_inventory_command',
     'research_operations_apply_crm_command',
     'research_operations_apply_task_command',
     'research_operations_submit_partner_request',

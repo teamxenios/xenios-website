@@ -75,6 +75,24 @@ function crmContact(row: Record<string, unknown>): CrmContact {
   };
 }
 
+function inventoryLotDto(row: Record<string, unknown>): Record<string, unknown> {
+  return {
+    id: String(row.id),
+    lotId: String(row.lot_id),
+    sku: String(row.sku),
+    owner: String(row.owner),
+    disposition: String(row.disposition),
+    quantityAvailable: Number(row.quantity_available),
+    version: Number(row.version),
+    expiryDate: row.expiry_date ? String(row.expiry_date) : null,
+    retestDate: row.retest_date ? String(row.retest_date) : null,
+    shelfLifeSource: String(row.shelf_life_source),
+    excursion: String(row.excursion),
+    recalled: row.recalled === true,
+    updatedAt: String(row.updated_at),
+  };
+}
+
 async function loadCrmContact(client: SupabaseClient, contactId: string): Promise<CrmContact | null> {
   const result = await client
     .from("research_operations_crm_contacts")
@@ -489,6 +507,11 @@ function createSupabaseFulfillmentPort(client: SupabaseClient): OperationsFulfil
         kind: input.kind,
         severity: input.severity,
         detail: input.detail,
+      }),
+    resolveException: (input) =>
+      command("resolve_exception", input, {
+        exceptionId: input.exceptionId,
+        resolution: input.resolution,
       }),
     addNote: (input) =>
       command("note", input, {
@@ -1418,6 +1441,70 @@ export function buildOperationsProductionDependencies(
           .single();
         if (loaded.error || !loaded.data) throw new Error(`operations task reload failed: ${loaded.error?.message ?? "missing row"}`);
         return { ok: true, value: operationsTask(loaded.data as Record<string, unknown>), idempotent: rpc.idempotent === true };
+      },
+    },
+    inventory: {
+      async list() {
+        const result = await client
+          .from("research_inventory_lots")
+          .select(
+            "id, lot_id, sku, owner, disposition, quantity_available, version, expiry_date, retest_date, shelf_life_source, excursion, recalled, updated_at",
+          )
+          .order("updated_at", { ascending: false })
+          .limit(500);
+        if (result.error) throw new Error(`operations inventory load failed: ${result.error.message}`);
+        return {
+          ok: true as const,
+          lots: ((result.data ?? []) as Array<Record<string, unknown>>).map(inventoryLotDto),
+        };
+      },
+      async command(input) {
+        const result = await client.rpc("research_operations_apply_inventory_command", {
+          p_lot_id: input.lotId,
+          p_action: input.action,
+          p_expected_version: input.expectedVersion,
+          p_actor_id: input.actor.id,
+          p_actor_role: input.actor.role,
+          p_idempotency_key: input.idempotencyKey,
+          p_payload: {
+            ...(input.quantity !== undefined ? { quantity: input.quantity } : {}),
+            ...(input.onHandDelta !== undefined ? { onHandDelta: input.onHandDelta } : {}),
+            ...(input.reason !== undefined ? { reason: input.reason } : {}),
+            ...(input.allocationId !== undefined ? { allocationId: input.allocationId } : {}),
+            ...(input.orderId !== undefined ? { orderId: input.orderId } : {}),
+          },
+          p_occurred_at: input.occurredAt.toISOString(),
+        });
+        if (result.error) throw new Error(`operations inventory command failed: ${result.error.message}`);
+        const rpc = result.data as {
+          ok?: boolean;
+          code?: string;
+          message?: string;
+          idempotent?: boolean;
+          lotId?: string;
+        };
+        if (!rpc.ok || !rpc.lotId) {
+          return {
+            ok: false,
+            code: rpc.code ?? "invalid_input",
+            message: rpc.message ?? "Inventory command refused.",
+          };
+        }
+        const loaded = await client
+          .from("research_inventory_lots")
+          .select(
+            "id, lot_id, sku, owner, disposition, quantity_available, version, expiry_date, retest_date, shelf_life_source, excursion, recalled, updated_at",
+          )
+          .eq("id", rpc.lotId)
+          .single();
+        if (loaded.error || !loaded.data) {
+          throw new Error(`operations inventory reload failed: ${loaded.error?.message ?? "missing lot"}`);
+        }
+        return {
+          ok: true,
+          idempotent: rpc.idempotent === true,
+          lot: inventoryLotDto(loaded.data as Record<string, unknown>),
+        };
       },
     },
     outbox: {

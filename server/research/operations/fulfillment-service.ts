@@ -556,6 +556,31 @@ export class FulfillmentService {
     });
   }
 
+  resolveException(input: {
+    orderId: string;
+    exceptionId: string;
+    expectedVersion: number;
+    resolution: string;
+    actor: OperationsActor;
+    idempotencyKey: string;
+    occurredAt: Date;
+  }): FulfillmentResult<FulfillmentWorkOrder> {
+    if (!roleCan(input.actor.role, "exceptions:manage")) {
+      return this.failure("forbidden", "This role cannot resolve fulfillment exceptions.");
+    }
+    if (!input.resolution.trim()) return this.failure("invalid_input", "A resolution is required.");
+    const work = this.work.get(input.orderId);
+    if (!work) return this.failure("not_found", "Fulfillment order not found.");
+    const exception = work.exceptions.find(
+      (candidate) => candidate.id === input.exceptionId && candidate.status === "open",
+    );
+    if (!exception) return this.failure("not_found", "Open fulfillment exception not found.");
+    return this.metadataWrite(input, "fulfillment.exception_resolved", () => {
+      exception.status = "resolved";
+      exception.resolvedAt = input.occurredAt.toISOString();
+    });
+  }
+
   addNote(input: {
     orderId: string;
     expectedVersion: number;

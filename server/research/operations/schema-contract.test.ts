@@ -41,6 +41,7 @@ describe("operations additive schema contract", () => {
   it("makes operational evidence append-only", () => {
     for (const trigger of [
       "research_operations_inventory_append_only",
+      "research_operations_inventory_commands_append_only",
       "research_operations_audit_append_only",
       "research_operations_crm_events_append_only",
       "research_operations_task_events_append_only",
@@ -55,13 +56,34 @@ describe("operations additive schema contract", () => {
   it("uses the one canonical notification outbox", () => {
     expect(sql).toContain("'public.research_notification_outbox'");
     expect(sql).not.toContain("create table if not exists public.research_operations_notification_outbox");
+    expect(sql).toContain("research_operations_enqueue_alert");
+    expect(sql).toContain("'admin_operations_alert'");
+    expect(sql).toContain("preference.immediate->>'operations'");
+    expect(sql).not.toContain("(preference.immediate->>'operations')::boolean");
   });
 
   it("never double-decrements inventory during allocation or shipping", () => {
-    expect(sql).toContain("movement_kind in ('allocate','release','ship') and on_hand_delta = 0");
+    expect(sql).toContain("movement_kind in ('allocate','release','ship','quarantine') and on_hand_delta = 0");
     expect(sql).toContain("'ship',");
     expect(sql).toContain("      0,");
     expect(sql).not.toMatch(/quantity_available\s*=\s*quantity_available\s*-/);
+  });
+
+  it("implements the complete versioned inventory lifecycle and refuses negative balances", () => {
+    expect(sql).toContain("create table if not exists public.research_operations_inventory_commands");
+    expect(sql).toContain("research_operations_apply_inventory_command");
+    for (const action of ["receipt", "release", "return", "damage", "quarantine", "correction", "reconcile"]) {
+      expect(sql).toContain(`'${action}'`);
+    }
+    expect(sql).toContain("lot.quantity_available + input_delta < 0");
+    expect(sql).toContain("'insufficient_available'");
+    expect(sql).toContain("allocation.released_at is not null");
+  });
+
+  it("resolves a shortage without fabricating a shipment or inventory movement", () => {
+    expect(sql).toContain("'resolve_exception'");
+    expect(sql).toContain("status = 'resolved'");
+    expect(sql).toContain("resolution = trim(p_payload->>'resolution')");
   });
 
   it("atomically checks staff role, version, idempotency, exact lot, and quality evidence", () => {

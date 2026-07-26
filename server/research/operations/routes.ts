@@ -30,6 +30,7 @@ export interface OperationsFulfillmentPort {
   addShippingLabel: AsyncCompatibleMethod<FulfillmentService["addShippingLabel"]>;
   ship: AsyncCompatibleMethod<FulfillmentService["ship"]>;
   reportException: AsyncCompatibleMethod<FulfillmentService["reportException"]>;
+  resolveException: AsyncCompatibleMethod<FulfillmentService["resolveException"]>;
   addNote: AsyncCompatibleMethod<FulfillmentService["addNote"]>;
 }
 
@@ -81,6 +82,32 @@ export interface OperationsTasksPort {
     idempotencyKey: string;
     occurredAt: Date;
   }): Awaitable<OperationsTaskResult<OperationsTask>>;
+}
+
+export type OperationsInventoryAction =
+  | "receipt"
+  | "release"
+  | "return"
+  | "damage"
+  | "quarantine"
+  | "correction"
+  | "reconcile";
+
+export interface OperationsInventoryPort {
+  list(): Awaitable<{ ok: true; lots: Array<Record<string, unknown>> }>;
+  command(input: {
+    lotId: string;
+    action: OperationsInventoryAction;
+    expectedVersion: number;
+    actor: OperationsActor;
+    idempotencyKey: string;
+    quantity?: number;
+    onHandDelta?: number;
+    reason?: string;
+    allocationId?: string;
+    orderId?: string;
+    occurredAt: Date;
+  }): Awaitable<{ ok: boolean; code?: string; message?: string; idempotent?: boolean; lot?: Record<string, unknown> }>;
 }
 
 export type PartnerPortalSurface =
@@ -136,6 +163,7 @@ export interface OperationsRouteDeps {
   partnerPortal: OperationsPartnerPortalPort;
   crm: OperationsCrmPort;
   tasks: OperationsTasksPort;
+  inventory: OperationsInventoryPort;
   outbox: OperationsOutboxPort;
   dashboard(): Promise<OperationsDashboardInput> | OperationsDashboardInput;
   now(): Date;
@@ -384,6 +412,27 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
       }),
     );
   });
+
+  app.post(
+    "/api/operations/mitch/orders/:orderId/exceptions/:exceptionId/resolve",
+    logistics,
+    async (req: OperationsRouteRequest, res) => {
+      const command = requireCommand(req, res);
+      const acting = actor(req, deps, res);
+      if (!command || !acting) return;
+      relay(
+        res,
+        await deps.fulfillment.resolveException({
+          orderId: String(req.params.orderId),
+          exceptionId: String(req.params.exceptionId),
+          resolution: String((req.body as Record<string, unknown>).resolution ?? ""),
+          ...command,
+          actor: acting,
+          occurredAt: deps.now(),
+        }),
+      );
+    },
+  );
 
   app.post("/api/operations/mitch/orders/:orderId/note", logistics, async (req: OperationsRouteRequest, res) => {
     const command = requireCommand(req, res);
@@ -640,6 +689,37 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
           assignedTo: typeof body.assignedTo === "string" ? body.assignedTo : undefined,
           ...command,
           actor: acting,
+          occurredAt: deps.now(),
+        }),
+      );
+    },
+  );
+
+  app.get("/api/admin/research/operations/inventory/lots", admin, async (_req, res) => {
+    noStore(res);
+    res.json(await deps.inventory.list());
+  });
+
+  app.post(
+    "/api/admin/research/operations/inventory/lots/:lotId/commands",
+    admin,
+    async (req: OperationsRouteRequest, res) => {
+      const acting = actor(req, deps, res);
+      const command = requireCommand(req, res);
+      const body = req.body as Record<string, unknown>;
+      if (!acting || !command) return;
+      relay(
+        res,
+        await deps.inventory.command({
+          lotId: String(req.params.lotId),
+          action: String(body.action ?? "") as OperationsInventoryAction,
+          ...command,
+          actor: acting,
+          quantity: Number.isInteger(body.quantity) ? Number(body.quantity) : undefined,
+          onHandDelta: Number.isInteger(body.onHandDelta) ? Number(body.onHandDelta) : undefined,
+          reason: typeof body.reason === "string" ? body.reason : undefined,
+          allocationId: typeof body.allocationId === "string" ? body.allocationId : undefined,
+          orderId: typeof body.orderId === "string" ? body.orderId : undefined,
           occurredAt: deps.now(),
         }),
       );

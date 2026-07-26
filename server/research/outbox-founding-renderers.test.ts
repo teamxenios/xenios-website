@@ -39,6 +39,7 @@ import {
   RESEARCH_SENDER_DEFAULT,
   SUPPRESSED_PER_DOCUMENT_AGREEMENT_TEMPLATES,
   renderFoundingEmail,
+  renderOperationsAlertEmail,
   sendFoundingEmail,
 } from "./outbox";
 import {
@@ -235,5 +236,38 @@ describe("sendFoundingEmail sender identity", () => {
       expect.objectContaining({ to: "member@example.test" }),
       { idempotencyKey: "research_agreement_package_completed_member:member:package" },
     );
+  });
+});
+
+describe("operations alert renderer", () => {
+  it("renders only a protected operations action with no private order detail", () => {
+    const rendered = renderOperationsAlertEmail({
+      title: "Fulfillment exception needs review.",
+      summary: "An authorized operator recorded a fulfillment exception.",
+      actionUrl: "/operations/mitch?queue=exceptions",
+    });
+    expect(rendered.subject).toBe("Xenios operations — Fulfillment exception needs review.");
+    expect(rendered.text).toContain(
+      "https://xeniostechnology.com/operations/mitch?queue=exceptions",
+    );
+    expect(rendered.text).not.toMatch(/recipient|address|payment|patient|prescription/i);
+  });
+
+  it("refuses non-operations destinations and sensitive payload keys", () => {
+    expect(() =>
+      renderOperationsAlertEmail({
+        title: "Review",
+        summary: "Open the queue.",
+        actionUrl: "/admin/research",
+      }),
+    ).toThrow("Invalid operations alert payload.");
+    expect(() =>
+      renderOperationsAlertEmail({
+        title: "Review",
+        summary: "Open the queue.",
+        actionUrl: "/operations/mitch",
+        patientName: "Sensitive canary",
+      }),
+    ).toThrow(EmailPayloadRefused);
   });
 });

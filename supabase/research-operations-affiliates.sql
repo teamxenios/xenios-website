@@ -128,7 +128,7 @@ create table if not exists public.research_operations_audit_events (
   aggregate_version bigint not null check (aggregate_version >= 0),
   actor_id text not null,
   actor_role text not null
-    check (actor_role in ('operations_manager','finance','mitch','logistics','system','provider')),
+    check (actor_role in ('admin','operations_manager','finance','mitch','logistics','system','provider')),
   action text not null,
   idempotency_key text not null,
   command_hash text not null check (length(command_hash) = 64),
@@ -146,26 +146,27 @@ create index if not exists research_operations_audit_timeline_idx
 create table if not exists public.research_operations_inventory_movements (
   id uuid primary key default gen_random_uuid(),
   lot_id uuid not null references public.research_inventory_lots (id),
-  order_id uuid not null references public.research_orders (id),
+  order_id uuid references public.research_orders (id),
   fulfillment_line_id uuid references public.research_fulfillment_lines (id),
   movement_kind text not null
-    check (movement_kind in ('receipt','allocate','release','ship','return','damage','correction','reconcile')),
-  quantity integer not null check (quantity > 0),
+    check (movement_kind in ('receipt','allocate','release','ship','return','damage','quarantine','correction','reconcile')),
+  quantity integer not null check (quantity >= 0),
   on_hand_delta integer not null,
   actor_id text not null,
   actor_role text not null
-    check (actor_role in ('operations_manager','finance','mitch','logistics','system','provider')),
+    check (actor_role in ('admin','operations_manager','finance','mitch','logistics','system','provider')),
   reason text,
   idempotency_key text not null unique,
   occurred_at timestamptz not null default now(),
   check (
-    (movement_kind in ('allocate','release','ship') and on_hand_delta = 0)
+    (movement_kind in ('allocate','release','ship','quarantine') and on_hand_delta = 0)
     or (movement_kind in ('receipt','return') and on_hand_delta = quantity)
     or (movement_kind = 'damage' and on_hand_delta = -quantity)
     or movement_kind in ('correction','reconcile')
   ),
+  check (movement_kind = 'quarantine' or quantity > 0),
   check (
-    movement_kind not in ('release','damage','correction','reconcile')
+    movement_kind not in ('release','return','damage','quarantine','correction','reconcile')
     or length(trim(coalesce(reason, ''))) > 0
   )
 );
@@ -176,6 +177,22 @@ create index if not exists research_operations_movements_order_idx
 create index if not exists research_operations_movements_line_idx
   on public.research_operations_inventory_movements (fulfillment_line_id)
   where fulfillment_line_id is not null;
+
+create table if not exists public.research_operations_inventory_commands (
+  id uuid primary key default gen_random_uuid(),
+  lot_id uuid not null references public.research_inventory_lots (id),
+  action text not null
+    check (action in ('receipt','release','return','damage','quarantine','correction','reconcile')),
+  actor_id text not null,
+  actor_role text not null
+    check (actor_role in ('admin','operations_manager','logistics','system')),
+  idempotency_key text not null unique,
+  command_hash text not null check (length(command_hash) = 64),
+  resulting_version bigint not null check (resulting_version > 0),
+  occurred_at timestamptz not null default now()
+);
+create index if not exists research_operations_inventory_commands_lot_idx
+  on public.research_operations_inventory_commands (lot_id, occurred_at);
 
 create table if not exists public.research_fulfillment_exceptions (
   id uuid primary key default gen_random_uuid(),
@@ -574,6 +591,12 @@ create trigger research_operations_inventory_append_only
 before update or delete on public.research_operations_inventory_movements
 for each row execute function public.research_operations_refuse_mutation();
 
+drop trigger if exists research_operations_inventory_commands_append_only
+  on public.research_operations_inventory_commands;
+create trigger research_operations_inventory_commands_append_only
+before update or delete on public.research_operations_inventory_commands
+for each row execute function public.research_operations_refuse_mutation();
+
 drop trigger if exists research_operations_crm_events_append_only
   on public.research_operations_crm_events;
 create trigger research_operations_crm_events_append_only
@@ -604,6 +627,72 @@ create trigger research_partner_portal_request_events_append_only
 before update or delete on public.research_partner_portal_request_events
 for each row execute function public.research_operations_refuse_mutation();
 
+-- One safe producer for Website 4 operational alerts. In-app alerts are
+-- immediately durable/delivered rows. Email is queued only for administrators
+-- who explicitly enable the `operations` immediate preference. No customer,
+-- clinical, shipping-address, or payment detail enters the payload.
+create or replace function public.research_operations_enqueue_alert(
+  p_event_key text,
+  p_event_type text,
+  p_title text,
+  p_summary text,
+  p_action_url text,
+  p_occurred_at timestamptz default now()
+)
+returns void
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+begin
+  if length(trim(coalesce(p_event_key, ''))) = 0
+     or length(trim(coalesce(p_event_type, ''))) = 0
+     or length(trim(coalesce(p_title, ''))) = 0
+     or length(trim(coalesce(p_summary, ''))) = 0
+     or p_action_url !~ '^/operations/' then
+    raise exception 'invalid operations alert';
+  end if;
+
+  insert into public.research_notification_outbox (
+    event_key, event_type, channel, recipient, template_key, payload, status,
+    next_attempt_at, created_at, updated_at, completed_at
+  )
+  values (
+    'operations:in_app:' || p_event_key,
+    p_event_type,
+    'in_app',
+    'operations',
+    'admin_operations_alert',
+    jsonb_build_object('title', trim(p_title), 'summary', trim(p_summary), 'actionUrl', p_action_url),
+    'delivered',
+    p_occurred_at,
+    p_occurred_at,
+    p_occurred_at,
+    p_occurred_at
+  )
+  on conflict (event_key) do nothing;
+
+  insert into public.research_notification_outbox (
+    event_key, event_type, channel, recipient, template_key, payload,
+    next_attempt_at, created_at, updated_at
+  )
+  select
+    'operations:email:' || p_event_key || ':' ||
+      encode(extensions.digest(convert_to(lower(preference.admin_email), 'utf8'), 'sha256'), 'hex'),
+    p_event_type,
+    'email',
+    preference.admin_email,
+    'admin_operations_alert',
+    jsonb_build_object('title', trim(p_title), 'summary', trim(p_summary), 'actionUrl', p_action_url),
+    p_occurred_at,
+    p_occurred_at,
+    p_occurred_at
+  from public.research_admin_notification_preferences preference
+  where lower(coalesce(preference.immediate->>'operations', 'false')) = 'true'
+  on conflict (event_key) do nothing;
+end
+$$;
+
 -- Atomic fulfillment command boundary. The staff assignment, optimistic
 -- version check, idempotency record, canonical state update, exact-lot
 -- traceability, and operational projection update commit together.
@@ -628,6 +717,7 @@ declare
   line public.research_fulfillment_lines%rowtype;
   lot public.research_inventory_lots%rowtype;
   quality public.research_lot_quality_documents%rowtype;
+  fulfillment_exception public.research_fulfillment_exceptions%rowtype;
   existing public.research_operations_audit_events%rowtype;
   command_hash text;
   shipment_uuid uuid;
@@ -639,7 +729,7 @@ begin
   if p_expected_version is null or p_expected_version < 0 then
     return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'A non-negative expectedVersion is required.');
   end if;
-  if p_action not in ('acknowledge','set_expected_date','allocate_exact','begin_picking','pack','add_label','ship','exception','note') then
+  if p_action not in ('acknowledge','set_expected_date','allocate_exact','begin_picking','pack','add_label','ship','exception','resolve_exception','note') then
     return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Unknown fulfillment command.');
   end if;
   if p_actor_role not in ('operations_manager','mitch','logistics') or not exists (
@@ -953,6 +1043,39 @@ begin
       else work.shipment_state
     end;
 
+  elsif p_action = 'resolve_exception' then
+    if nullif(p_payload->>'exceptionId', '') is null
+       or nullif(trim(p_payload->>'resolution'), '') is null then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Exception id and resolution are required.');
+    end if;
+    select * into fulfillment_exception
+    from public.research_fulfillment_exceptions
+    where id = (p_payload->>'exceptionId')::uuid
+      and fulfillment_order_id = p_fulfillment_order_id
+      and status = 'open'
+    for update;
+    if not found then
+      return jsonb_build_object('ok', false, 'code', 'not_found', 'message', 'Open fulfillment exception not found.');
+    end if;
+    update public.research_fulfillment_exceptions
+    set
+      status = 'resolved',
+      resolved_by = p_actor_id::text,
+      resolved_at = p_occurred_at,
+      resolution = trim(p_payload->>'resolution')
+    where id = fulfillment_exception.id;
+    if not exists (
+      select 1 from public.research_fulfillment_exceptions
+      where fulfillment_order_id = p_fulfillment_order_id
+        and status = 'open'
+        and id <> fulfillment_exception.id
+    ) and work.fulfillment_state = 'exception' then
+      work.fulfillment_state := 'acknowledged';
+      update public.research_fulfillment_orders
+        set state = 'accepted', updated_at = p_occurred_at
+        where id = p_fulfillment_order_id;
+    end if;
+
   elsif p_action = 'note' then
     if nullif(trim(p_payload->>'text'), '') is null then
       return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'A note is required.');
@@ -1003,6 +1126,36 @@ begin
     p_occurred_at
   );
 
+  if p_action = 'exception' then
+    perform public.research_operations_enqueue_alert(
+      p_idempotency_key, 'operations.fulfillment_exception',
+      'Fulfillment exception needs review.',
+      'An authorized operator recorded a fulfillment exception. Open the protected queue for details.',
+      '/operations/mitch?queue=exceptions', p_occurred_at
+    );
+  elsif p_action = 'resolve_exception' then
+    perform public.research_operations_enqueue_alert(
+      p_idempotency_key, 'operations.fulfillment_exception_resolved',
+      'Fulfillment exception resolved.',
+      'An authorized operator resolved an exception. Review the protected work order if follow-up is needed.',
+      '/operations/mitch?queue=exceptions', p_occurred_at
+    );
+  elsif p_action = 'ship' then
+    perform public.research_operations_enqueue_alert(
+      p_idempotency_key, 'operations.fulfillment_shipped',
+      'Fulfillment shipment recorded.',
+      'A shipment passed exact-lot checks and was recorded in the protected fulfillment queue.',
+      '/operations/mitch?queue=shipped_today', p_occurred_at
+    );
+  elsif p_action = 'note' and coalesce((p_payload->>'escalation')::boolean, false) then
+    perform public.research_operations_enqueue_alert(
+      p_idempotency_key, 'operations.fulfillment_escalation',
+      'Fulfillment escalation needs review.',
+      'An authorized operator requested assistance. Open the protected decision queue for details.',
+      '/operations/mitch?queue=samuel_decisions', p_occurred_at
+    );
+  end if;
+
   return jsonb_build_object(
     'ok', true,
     'idempotent', false,
@@ -1016,6 +1169,204 @@ exception
     return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'The command violates an operations data constraint.');
   when unique_violation then
     return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'A conflicting command already exists.');
+end
+$$;
+
+-- Atomic production inventory lifecycle over the canonical lot/allocation
+-- tables. Every command is versioned, replay-safe, append-only audited, and
+-- refuses a negative available balance.
+create or replace function public.research_operations_apply_inventory_command(
+  p_lot_id uuid,
+  p_action text,
+  p_expected_version bigint,
+  p_actor_id text,
+  p_actor_role text,
+  p_idempotency_key text,
+  p_payload jsonb default '{}'::jsonb,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  lot public.research_inventory_lots%rowtype;
+  allocation public.research_lot_allocations%rowtype;
+  prior public.research_operations_inventory_commands%rowtype;
+  command_hash text;
+  input_quantity integer;
+  input_delta integer;
+  movement_order_id uuid;
+  movement_reason text;
+begin
+  if p_action not in ('receipt','release','return','damage','quarantine','correction','reconcile')
+     or p_actor_role not in ('admin','operations_manager','logistics','system')
+     or length(trim(coalesce(p_actor_id, ''))) = 0
+     or length(trim(coalesce(p_idempotency_key, ''))) = 0
+     or p_expected_version is null or p_expected_version < 0 then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'A valid authorized inventory command is required.');
+  end if;
+
+  command_hash := encode(
+    extensions.digest(
+      convert_to(
+        concat_ws(
+          '|', p_lot_id::text, p_action, p_expected_version::text,
+          p_actor_id, p_actor_role, coalesce(p_payload, '{}'::jsonb)::text
+        ),
+        'utf8'
+      ),
+      'sha256'
+    ),
+    'hex'
+  );
+
+  select * into prior
+  from public.research_operations_inventory_commands
+  where idempotency_key = p_idempotency_key;
+  if found then
+    if prior.command_hash <> command_hash then
+      return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'That idempotency key belongs to another inventory command.');
+    end if;
+    return jsonb_build_object('ok', true, 'idempotent', true, 'lotId', prior.lot_id, 'version', prior.resulting_version);
+  end if;
+
+  select * into lot
+  from public.research_inventory_lots
+  where id = p_lot_id
+  for update;
+  if not found then
+    return jsonb_build_object('ok', false, 'code', 'lot_not_found', 'message', 'Inventory lot not found.');
+  end if;
+  if lot.version <> p_expected_version then
+    return jsonb_build_object('ok', false, 'code', 'lot_stale', 'message', 'The inventory lot changed; reload it.');
+  end if;
+
+  input_quantity := nullif(p_payload->>'quantity', '')::integer;
+  input_delta := nullif(p_payload->>'onHandDelta', '')::integer;
+  movement_reason := nullif(trim(coalesce(p_payload->>'reason', '')), '');
+  movement_order_id := nullif(p_payload->>'orderId', '')::uuid;
+
+  if p_action = 'release' then
+    if nullif(p_payload->>'allocationId', '') is null or movement_reason is null then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Allocation id and release reason are required.');
+    end if;
+    select * into allocation
+    from public.research_lot_allocations
+    where id = (p_payload->>'allocationId')::uuid
+      and lot_id = lot.id
+    for update;
+    if not found or allocation.released_at is not null then
+      return jsonb_build_object('ok', false, 'code', 'allocation_not_found', 'message', 'No active canonical allocation exists for this lot.');
+    end if;
+    if exists (
+      select 1
+      from public.research_lot_shipments shipment
+      where shipment.lot_id = lot.id
+        and shipment.order_id = allocation.order_id
+    ) then
+      return jsonb_build_object('ok', false, 'code', 'invalid_state', 'message', 'A shipped allocation cannot be released.');
+    end if;
+    input_quantity := allocation.quantity;
+    movement_order_id := allocation.order_id;
+    update public.research_lot_allocations
+      set released_at = p_occurred_at
+      where id = allocation.id;
+    lot.quantity_available := lot.quantity_available + input_quantity;
+    input_delta := 0;
+
+  elsif p_action = 'return' then
+    if input_quantity is null or input_quantity <= 0 or movement_reason is null or movement_order_id is null then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Return quantity, order, and reason are required.');
+    end if;
+    if not exists (
+      select 1 from public.research_lot_shipments
+      where lot_id = lot.id and order_id = movement_order_id
+    ) then
+      return jsonb_build_object('ok', false, 'code', 'allocation_not_found', 'message', 'No shipped traceability record proves this return.');
+    end if;
+    lot.quantity_available := lot.quantity_available + input_quantity;
+    input_delta := input_quantity;
+
+  elsif p_action = 'receipt' then
+    if input_quantity is null or input_quantity <= 0 then
+      return jsonb_build_object('ok', false, 'code', 'invalid_quantity', 'message', 'Receipt quantity must be a positive integer.');
+    end if;
+    lot.quantity_available := lot.quantity_available + input_quantity;
+    input_delta := input_quantity;
+
+  elsif p_action = 'damage' then
+    if input_quantity is null or input_quantity <= 0 or movement_reason is null then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Damage quantity and reason are required.');
+    end if;
+    input_delta := -input_quantity;
+    if lot.quantity_available + input_delta < 0 then
+      return jsonb_build_object('ok', false, 'code', 'insufficient_available', 'message', 'Damage would make available inventory negative.');
+    end if;
+    lot.quantity_available := lot.quantity_available + input_delta;
+
+  elsif p_action = 'quarantine' then
+    if movement_reason is null then
+      return jsonb_build_object('ok', false, 'code', 'reason_required', 'message', 'A quarantine reason is required.');
+    end if;
+    input_quantity := lot.quantity_available;
+    input_delta := 0;
+    lot.disposition := 'quarantined';
+
+  else
+    if input_quantity is null or input_quantity <= 0 or input_delta is null or movement_reason is null then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Adjustment quantity, delta, and signed reason are required.');
+    end if;
+    if lot.quantity_available + input_delta < 0 then
+      return jsonb_build_object('ok', false, 'code', 'insufficient_available', 'message', 'Adjustment would make available inventory negative.');
+    end if;
+    lot.quantity_available := lot.quantity_available + input_delta;
+  end if;
+
+  lot.version := lot.version + 1;
+  lot.updated_at := p_occurred_at;
+  update public.research_inventory_lots
+  set
+    quantity_available = lot.quantity_available,
+    disposition = lot.disposition,
+    version = lot.version,
+    updated_at = lot.updated_at
+  where id = lot.id;
+
+  insert into public.research_operations_inventory_movements (
+    lot_id, order_id, movement_kind, quantity, on_hand_delta, actor_id,
+    actor_role, reason, idempotency_key, occurred_at
+  )
+  values (
+    lot.id, movement_order_id, p_action, input_quantity, input_delta,
+    p_actor_id, p_actor_role, movement_reason, p_idempotency_key, p_occurred_at
+  );
+
+  insert into public.research_operations_inventory_commands (
+    lot_id, action, actor_id, actor_role, idempotency_key, command_hash,
+    resulting_version, occurred_at
+  )
+  values (
+    lot.id, p_action, p_actor_id, p_actor_role, p_idempotency_key, command_hash,
+    lot.version, p_occurred_at
+  );
+
+  if p_action in ('damage','quarantine','correction','reconcile') then
+    perform public.research_operations_enqueue_alert(
+      p_idempotency_key, 'operations.inventory_' || p_action,
+      'Inventory action needs review.',
+      'An authorized inventory command was recorded. Open the protected inventory queue for details.',
+      '/operations/inventory', p_occurred_at
+    );
+  end if;
+
+  return jsonb_build_object('ok', true, 'idempotent', false, 'lotId', lot.id, 'version', lot.version);
+exception
+  when invalid_text_representation or datetime_field_overflow then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'The inventory command contains an invalid identifier, number, or date.');
+  when unique_violation then
+    return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'A conflicting inventory command already exists.');
 end
 $$;
 
@@ -1632,6 +1983,7 @@ begin
     'research_fulfillment_work_orders',
     'research_operations_audit_events',
     'research_operations_inventory_movements',
+    'research_operations_inventory_commands',
     'research_fulfillment_exceptions',
     'research_fulfillment_notes',
     'research_operations_crm_contacts',
@@ -1666,11 +2018,23 @@ revoke all on table public.research_attribution_conversions from anon, authentic
 -- concurrency and database uniqueness constraints. No public EXECUTE remains.
 revoke all on function public.research_operations_bootstrap_work_order() from public, anon, authenticated;
 revoke all on function public.research_operations_refuse_mutation() from public, anon, authenticated;
+revoke all on function public.research_operations_enqueue_alert(
+  text, text, text, text, text, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.research_operations_enqueue_alert(
+  text, text, text, text, text, timestamptz
+) to service_role;
 revoke all on function public.research_operations_apply_fulfillment_command(
   uuid, text, bigint, text, uuid, text, jsonb, timestamptz
 ) from public, anon, authenticated;
 grant execute on function public.research_operations_apply_fulfillment_command(
   uuid, text, bigint, text, uuid, text, jsonb, timestamptz
+) to service_role;
+revoke all on function public.research_operations_apply_inventory_command(
+  uuid, text, bigint, text, text, text, jsonb, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.research_operations_apply_inventory_command(
+  uuid, text, bigint, text, text, text, jsonb, timestamptz
 ) to service_role;
 revoke all on function public.research_operations_apply_crm_command(
   uuid, text, bigint, text, text, text, jsonb, timestamptz

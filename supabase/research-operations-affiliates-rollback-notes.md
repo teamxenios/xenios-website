@@ -12,7 +12,7 @@ Website 4 is additive over the canonical commerce schema. A rollback must preser
 
 ## Database posture
 
-Do not drop Website 4 tables or functions during an incident. Do not update or delete append-only audit or movement evidence. If a function must be disabled temporarily, revoke its `service_role` execution grant in a reviewed corrective migration and restore it with a later reviewed migration.
+Do not drop Website 4 tables or functions during an incident. Do not update or delete append-only audit or movement evidence. If a function must be disabled temporarily, revoke its `service_role` execution grant in a reviewed corrective migration and restore it with a later reviewed migration. Preserve `research_operations_inventory_commands`, `research_operations_inventory_movements`, fulfillment exception history, and canonical outbox rows; corrections must append evidence rather than rewrite it.
 
 Any schema rollback must be authored as a new migration after inspecting live dependencies and record counts. Never reverse canonical migrations 20–26 as part of a Website 4 rollback.
 

@@ -125,7 +125,10 @@ Notes:
   docs/research-launch/FULL_PRODUCTION_MIGRATION_MANIFEST.md.
 - 2026-07-25: migration 31 was dry-run twice after migrations 1–26 in a
   disposable PostgreSQL 16 database. Its behavior test completed an exact-lot
-  acknowledge-to-ship flow, verified idempotent replay and no double inventory
-  decrement, and verified professional-account replay and clinical-economics
-  refusal. It is NOT run in production. Website 2 must first confirm migrations
-  20–26 and the checkout-to-`research_lot_allocations` bridge.
+  acknowledge-to-ship flow; verified the receipt, release, return, damage,
+  quarantine, correction, and reconciliation lifecycle; refused negative stock
+  and shipped-allocation release; resolved a shortage without fabricating
+  inventory or shipment evidence; verified canonical outbox dedupe/privacy and
+  admin preference gating; and retained the partner, CRM, task, and professional
+  replay/security checks. It is NOT run in production. Website 2 must first
+  confirm migrations 20–26 and the checkout-to-`research_lot_allocations` bridge.

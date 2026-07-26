@@ -18,6 +18,7 @@ import { makeResearchToken, type TokenPurpose } from "./membership";
 import { MEMBER_PLATFORM_TEMPLATES } from "./member-platform-emails";
 import { getResendClient } from "../services/email";
 import {
+  EmailPayloadRefused,
   FOUNDING_EMAIL_TEMPLATES,
   assertEmailPayloadSafe,
   type FoundingEmailTemplate,
@@ -205,6 +206,28 @@ export async function sendFoundingEmail(input: {
   }
 }
 
+export function renderOperationsAlertEmail(payload: Record<string, unknown>): {
+  subject: string;
+  text: string;
+} {
+  assertEmailPayloadSafe(payload);
+  const extraKeys = Object.keys(payload).filter(
+    (key) => !["title", "summary", "actionUrl"].includes(key),
+  );
+  if (extraKeys.length > 0) throw new EmailPayloadRefused(extraKeys);
+  const title = String(payload.title ?? "").trim();
+  const summary = String(payload.summary ?? "").trim();
+  const actionPath = String(payload.actionUrl ?? "").trim();
+  if (!title || !summary || !/^\/operations\/[a-z0-9/?=&_-]*$/i.test(actionPath)) {
+    throw new Error("Invalid operations alert payload.");
+  }
+  const actionUrl = safeAccountActionUrl(actionPath);
+  return {
+    subject: `Xenios operations — ${title}`,
+    text: `${summary}\n\nOpen the protected operations queue: ${actionUrl}\n\n${FOUNDING_EMAIL_SIGNOFF}`,
+  };
+}
+
 // Template dispatch at SEND time. Fresh tokens are minted here, never stored.
 // The token PURPOSE is decided at enqueue time (payload.tokenPurpose) so a
 // pre-approval status link can never carry an account-claim credential.
@@ -275,6 +298,15 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
           errorSummary: typeof payload.errorSummary === "string" ? payload.errorSummary : null,
         });
         break;
+      case "admin_operations_alert": {
+        const rendered = renderOperationsAlertEmail(payload);
+        return await sendFoundingEmail({
+          to: job.recipient,
+          subject: rendered.subject,
+          text: rendered.text,
+          idempotencyKey: String(job.event_key),
+        });
+      }
       default: {
         if (SUPPRESSED_PER_DOCUMENT_AGREEMENT_TEMPLATES.has(job.template_key)) {
           return { ok: true, providerId: null };

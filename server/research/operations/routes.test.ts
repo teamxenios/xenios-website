@@ -29,9 +29,10 @@ function roleGuard(...allowed: OperationsRole[]): RequestHandler {
 describe("operations integration-ready routes", () => {
   let deps: OperationsRouteDeps;
   let app: express.Express;
+  let fulfillment: FulfillmentService;
 
   beforeEach(() => {
-    const fulfillment = new FulfillmentService(new InventoryLedger());
+    fulfillment = new FulfillmentService(new InventoryLedger());
     const created = fulfillment.create({
       id: "ful-1",
       memberRef: "member-1",
@@ -74,6 +75,18 @@ describe("operations integration-ready routes", () => {
       },
       crm: new CrmService(),
       tasks: new OperationsTaskService(),
+      inventory: {
+        list: async () => ({ ok: true, lots: [] }),
+        command: async (input) => ({
+          ok: true,
+          idempotent: false,
+          lot: {
+            id: input.lotId,
+            version: input.expectedVersion + 1,
+            quantityAvailable: input.action === "damage" ? 8 : 10,
+          },
+        }),
+      },
       outbox: new NotificationOutbox(new InMemoryOutboxRepository(), {}),
       dashboard: () => ({
         generatedAt: NOW.toISOString(),
@@ -387,5 +400,55 @@ describe("operations integration-ready routes", () => {
       "note",
       "order_linked",
     ]);
+  });
+
+  it("protects the production inventory lifecycle and requires a versioned idempotent command", async () => {
+    expect((await request(app).get("/api/admin/research/operations/inventory/lots")).status).toBe(403);
+    const missing = await request(app)
+      .post("/api/admin/research/operations/inventory/lots/00000000-0000-0000-0000-000000000420/commands")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .send({ action: "damage", quantity: 2, reason: "Damaged in handling" });
+    expect(missing.status).toBe(400);
+
+    const applied = await request(app)
+      .post("/api/admin/research/operations/inventory/lots/00000000-0000-0000-0000-000000000420/commands")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "inventory-damage")
+      .send({ action: "damage", quantity: 2, reason: "Damaged in handling", expectedVersion: 1 });
+    expect(applied.status).toBe(200);
+    expect(applied.body.lot).toMatchObject({ version: 2, quantityAvailable: 8 });
+  });
+
+  it("opens and resolves a shortage without mutating inventory or shipment state", async () => {
+    const beforeMovements = fulfillment.inventory.listMovements();
+    const startingVersion = fulfillment.get("ful-1")!.aggregate.version;
+    const opened = await request(app)
+      .post("/api/operations/mitch/orders/ful-1/exception")
+      .set("x-role", "mitch")
+      .set("x-actor-id", "mitch")
+      .set("Idempotency-Key", "shortage-open")
+      .send({
+        kind: "shortage",
+        severity: "urgent",
+        detail: "Exact allocated quantity is unavailable.",
+        expectedVersion: startingVersion,
+      });
+    expect(opened.status).toBe(200);
+    const exceptionId = opened.body.value.exceptions[0].id;
+    const openedVersion = opened.body.value.aggregate.version;
+    expect(opened.body.value.aggregate.states.shipment).toBe("not_created");
+
+    const resolved = await request(app)
+      .post(`/api/operations/mitch/orders/ful-1/exceptions/${exceptionId}/resolve`)
+      .set("x-role", "mitch")
+      .set("x-actor-id", "mitch")
+      .set("Idempotency-Key", "shortage-resolve")
+      .send({ resolution: "Replacement lot requested.", expectedVersion: openedVersion });
+    expect(resolved.status).toBe(200);
+    expect(resolved.body.value.exceptions[0].status).toBe("resolved");
+    expect(resolved.body.value.aggregate.states.shipment).toBe("not_created");
+    expect(fulfillment.inventory.listMovements()).toEqual(beforeMovements);
   });
 });
