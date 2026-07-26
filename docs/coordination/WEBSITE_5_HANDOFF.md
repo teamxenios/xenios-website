@@ -172,15 +172,26 @@ Current branch-ready validation:
   contains no Website 2 locked shared registration files.
 - Superseded PR 4 head
   `604ed05c54ca29063302433aa2c816a68b197424` remains prohibited.
-- Focused, full, typecheck, build, diff, and PostgreSQL proof results are
-  recorded after the corrected ancestry is validated.
+- Focused PR 4 tests: 3 files / 16 tests passed.
+- Full repository tests: 160 files / 3,221 tests passed.
+- `npm run check`: passed.
+- `npm run build`: passed; existing Vite large-chunk advisory only.
+- `git diff --check`: passed.
+- Scope parity: the original and corrected PR 4 file sets are identical; every
+  implementation, test, migration, and evidence blob is byte-for-byte
+  unchanged. Only this handoff records the corrected ancestry and validation.
+- Locked-file isolation: no delta in `client/src/App.tsx`, `server/index.ts`, or
+  navigation files.
 - Disposable PostgreSQL 16:
   - Care 1–4 applied in order.
   - All four migrations applied twice with `ON_ERROR_STOP=1`.
   - PR 1–4 lifecycle proofs completed and rolled back.
-  - 10/10 PR4 tables have enabled and forced RLS.
-  - capability remained `care:disabled`.
-  - zero PR1–4 disposable rows survived rollback.
+  - 38/38 total Care tables and 10/10 PR 4 tables have enabled and forced RLS.
+  - PR 4 browser table grants: zero.
+  - PR 4 browser routine grants: zero.
+  - Five reviewed PR 4 service-role RPC grants were present.
+  - Capability remained `care:disabled`.
+  - Zero disposable auth users, roles, access audits, or PR 4 rows remained.
 - Lifecycle proof covers no seeds, cross-patient rejection, assigned human
   clinician, verified content, idempotent draft/sign, assigned verified
   pharmacy/state/operator, clarification blocking, immutable source/events,
