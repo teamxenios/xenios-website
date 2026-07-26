@@ -21,6 +21,10 @@ import {
   buildPrelaunchProductionDependencies,
   registerPrelaunchApi,
 } from "./research/prelaunch";
+import {
+  buildAssessmentPrelaunchProductionRepository,
+  registerAssessmentPrelaunchApi,
+} from "./research/assessment-prelaunch";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
 import { requireActiveMember, requireMember } from "./research/member-auth";
@@ -177,10 +181,12 @@ registerProductsDiagnosticsApi(
 // persisted active role, validates an optional seed namespace, and commits an
 // access-audit record before the protected handler runs. No namespace or role
 // is seeded by application startup.
-registerPrelaunchApi(
+const prelaunchDependencies = buildPrelaunchProductionDependencies();
+registerPrelaunchApi(app, prelaunchDependencies, requireSupabaseAdmin);
+registerAssessmentPrelaunchApi(
   app,
-  buildPrelaunchProductionDependencies(),
-  requireSupabaseAdmin,
+  buildAssessmentPrelaunchProductionRepository(),
+  prelaunchDependencies,
 );
 
 // Founding membership activation (three-state: capability_disabled by default,
