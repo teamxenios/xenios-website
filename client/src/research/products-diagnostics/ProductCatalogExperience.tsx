@@ -2,6 +2,7 @@ import { useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { productRequestHref } from "@shared/research/product-request-sources";
+import type { RequiredInput } from "@shared/research/required-inputs";
 import { ResearchMemberShell } from "../ui/shells";
 import {
   ResearchEmptyState,
@@ -14,6 +15,10 @@ import {
   ResearchTabs,
   type BadgeTone,
 } from "../ui/kit";
+import {
+  Website3RequiredInputNotice,
+  Website3RequiredInputValue,
+} from "./RequiredInputState";
 
 export const PRODUCT_FAMILY_OPTIONS = [
   ["all_products", "All products"],
@@ -81,11 +86,13 @@ function ProductCard({
   compared,
   compareDisabled,
   onToggleCompare,
+  requiredInputs,
 }: {
   product: ProductCardView;
   compared: boolean;
   compareDisabled: boolean;
   onToggleCompare: () => void;
+  requiredInputs?: readonly RequiredInput[];
 }) {
   return (
     <li className="card" data-testid={`website3-product-${product.slug}`}>
@@ -101,6 +108,14 @@ function ProductCard({
           <ResearchStatusBadge label={product.statusLabel} tone={statusTone(product.statusLabel)} />
           {product.priceLabel ? (
             <p className="body-s tabular text-ink-2">{product.priceLabel}</p>
+          ) : requiredInputs ? (
+            <p className="body-s text-ink-2">
+              <Website3RequiredInputValue
+                value={null}
+                slot="retailPrice"
+                items={requiredInputs}
+              />
+            </p>
           ) : (
             <p className="body-s text-ink-mute">Pricing not confirmed</p>
           )}
@@ -179,12 +194,14 @@ export function ProductCatalogExperience({
   errorMessage,
   onRetry,
   initialFamily = "all_products",
+  requiredInputs,
 }: {
   products: ProductCardView[];
   state?: Website3SurfaceState;
   errorMessage?: string;
   onRetry?: () => void;
   initialFamily?: ProductFamilyFilter;
+  requiredInputs?: readonly RequiredInput[];
 }) {
   const [query, setQuery] = useState("");
   const [family, setFamily] = useState<ProductFamilyFilter>(initialFamily);
@@ -293,6 +310,7 @@ export function ProductCatalogExperience({
                   compared={comparedSlugs.includes(product.slug)}
                   compareDisabled={comparedSlugs.length >= 3}
                   onToggleCompare={() => toggleCompare(product.slug)}
+                  requiredInputs={requiredInputs}
                 />
               ))}
             </ul>
@@ -446,6 +464,7 @@ export function ProductDetailExperience({
   state = "ok",
   errorMessage,
   onRetry,
+  requiredInputs,
 }: {
   product: ProductDetailView;
   ordering?: ReactNode;
@@ -453,6 +472,7 @@ export function ProductDetailExperience({
   state?: Website3SurfaceState;
   errorMessage?: string;
   onRetry?: () => void;
+  requiredInputs?: readonly RequiredInput[];
 }) {
   return (
     <ResearchMemberShell
@@ -479,7 +499,17 @@ export function ProductDetailExperience({
               <p className="body-s text-ink-2 mt-3 max-w-[60ch]">{product.summary}</p>
             </div>
             <p className="body-m tabular">
-              {product.priceLabel ?? "Pricing not confirmed"}
+              {product.priceLabel ?? (
+                requiredInputs ? (
+                  <Website3RequiredInputValue
+                    value={null}
+                    slot="retailPrice"
+                    items={requiredInputs}
+                  />
+                ) : (
+                  "Pricing not confirmed"
+                )
+              )}
             </p>
           </div>
         </div>
@@ -524,6 +554,25 @@ export function ProductDetailExperience({
             </p>
             {onCertificateRequest ? (
               <CertificateAccessPanel onRequest={onCertificateRequest} />
+            ) : requiredInputs ? (
+              <div className="grid gap-4 mt-4 sm:grid-cols-2">
+                <Website3RequiredInputNotice
+                  slot="activeLot"
+                  items={requiredInputs}
+                />
+                <Website3RequiredInputNotice
+                  slot="coaFile"
+                  items={requiredInputs}
+                />
+                <Website3RequiredInputNotice
+                  slot="exactLotMatch"
+                  items={requiredInputs}
+                />
+                <Website3RequiredInputNotice
+                  slot="qualityReview"
+                  items={requiredInputs}
+                />
+              </div>
             ) : (
               <div className="mt-4">
                 <ResearchPendingPanel
@@ -551,7 +600,16 @@ export function ProductDetailExperience({
           </DetailSection>
 
           <DetailSection title="Storage and Handling">
-            <p>{product.storageAndHandling ?? "Storage documentation is pending."}</p>
+            {product.storageAndHandling ? (
+              <p>{product.storageAndHandling}</p>
+            ) : requiredInputs ? (
+              <Website3RequiredInputNotice
+                slot="storageInformation"
+                items={requiredInputs}
+              />
+            ) : (
+              <p>Storage documentation is pending.</p>
+            )}
           </DetailSection>
 
           <DetailSection title="Shipping and Returns">

@@ -1,10 +1,14 @@
 import { useCallback } from "react";
 import { Link, useParams } from "wouter";
-import { getProduct } from "../../adapters/adminOps";
+import { getProduct, listRequiredInputs } from "../../adapters/adminOps";
 import { ResearchStatusBadge, ResearchTimeline } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import {
+  Website3RequiredInputNotice,
+  Website3RequiredInputValue,
+} from "../../products-diagnostics/RequiredInputState";
 
 // ---------------------------------------------------------------------------
 // /admin/research/products/:id, one product from the operations side.
@@ -51,6 +55,7 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
     [id],
   );
   const resource = useAdminResource(token, loadProduct);
+  const requiredInputs = useAdminResource(token, listRequiredInputs);
   return (
     <AdminBoundary
       state={resource.state}
@@ -76,21 +81,79 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
               {p.description && <p className="body-s text-ink-2 mt-4 max-w-[64ch]">{p.description}</p>}
               <div className="grid gap-x-8 gap-y-3 mt-5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
                 <div>
+                  <p className="mono-label text-ink-mute">SKU</p>
+                  <p className="body-s mt-1">
+                    <Website3RequiredInputValue
+                      value={p.sku}
+                      slot="productSku"
+                      items={requiredInputs.data?.items}
+                      recordId={p.id}
+                    />
+                  </p>
+                </div>
+                <div>
                   <p className="mono-label text-ink-mute">Price</p>
-                  <p className="body-s mt-1">{p.price_cents == null ? "Not set" : `$${(p.price_cents / 100).toFixed(2)}`}</p>
+                  <p className="body-s mt-1">
+                    <Website3RequiredInputValue
+                      value={
+                        p.price_cents == null
+                          ? null
+                          : `$${(p.price_cents / 100).toFixed(2)}`
+                      }
+                      slot="retailPrice"
+                      items={requiredInputs.data?.items}
+                      recordId={p.id}
+                    />
+                  </p>
                 </div>
                 <div>
                   <p className="mono-label text-ink-mute">Category</p>
-                  <p className="body-s mt-1">{p.category ?? "Not set"}</p>
+                  <p className="body-s mt-1">
+                    <Website3RequiredInputValue
+                      value={p.category}
+                      slot="productFamily"
+                      items={requiredInputs.data?.items}
+                      recordId={p.id}
+                    />
+                  </p>
                 </div>
                 <div>
                   <p className="mono-label text-ink-mute">On hand</p>
-                  <p className="body-s mt-1">{p.inventory_on_hand == null ? "Not reported" : p.inventory_on_hand}</p>
+                  <p className="body-s mt-1">
+                    <Website3RequiredInputValue
+                      value={p.inventory_on_hand}
+                      slot="availableInventory"
+                      items={requiredInputs.data?.items}
+                      recordId={p.id}
+                    />
+                  </p>
                 </div>
                 <div>
                   <p className="mono-label text-ink-mute">Updated</p>
                   <p className="body-s mt-1">{fmtDate(p.updated_at) || "Not recorded"}</p>
                 </div>
+              </div>
+              <div className="grid gap-4 mt-6 sm:grid-cols-2">
+                <Website3RequiredInputNotice
+                  slot="activeLot"
+                  items={requiredInputs.data?.items}
+                  recordId={p.id}
+                />
+                <Website3RequiredInputNotice
+                  slot="coaFile"
+                  items={requiredInputs.data?.items}
+                  recordId={p.id}
+                />
+                <Website3RequiredInputNotice
+                  slot="exactLotMatch"
+                  items={requiredInputs.data?.items}
+                  recordId={p.id}
+                />
+                <Website3RequiredInputNotice
+                  slot="commerceRelease"
+                  items={requiredInputs.data?.items}
+                  recordId={p.id}
+                />
               </div>
               <div className="mt-4">
                 <Link href={ADMIN_ROUTES.inventory} className="body-s underline text-ink-mute">

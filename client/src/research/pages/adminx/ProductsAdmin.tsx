@@ -10,9 +10,10 @@ import {
   useDebounced,
 } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
-import { listProducts } from "../../adapters/adminOps";
+import { listProducts, listRequiredInputs } from "../../adapters/adminOps";
 import { fmtDate, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import { Website3RequiredInputValue } from "../../products-diagnostics/RequiredInputState";
 
 // ---------------------------------------------------------------------------
 // /admin/research/products: catalog administration. The member-facing catalog
@@ -52,6 +53,7 @@ function ProductsBody({ token }: { token: string }) {
   const [page, setPage] = useState(1);
   const debounced = useDebounced(search);
   const resource = useAdminResource<{ ok: boolean; products: AdminProductRow[] }>(token, listProducts);
+  const requiredInputs = useAdminResource(token, listRequiredInputs);
 
   const filtered = useMemo(() => {
     const list = resource.data?.products ?? [];
@@ -99,7 +101,18 @@ function ProductsBody({ token }: { token: string }) {
                 </Link>
               ),
             },
-            { key: "sku", header: "SKU", render: (p) => p.sku ?? "" },
+            {
+              key: "sku",
+              header: "SKU",
+              render: (p) => (
+                <Website3RequiredInputValue
+                  value={p.sku}
+                  slot="productSku"
+                  items={requiredInputs.data?.items}
+                  recordId={p.id}
+                />
+              ),
+            },
             { key: "category", header: "Category", render: (p) => p.category ?? "" },
             {
               key: "status",
@@ -111,7 +124,18 @@ function ProductsBody({ token }: { token: string }) {
             {
               key: "price",
               header: "Price",
-              render: (p) => (p.price_cents == null ? "" : `$${(p.price_cents / 100).toFixed(2)}`),
+              render: (p) => (
+                <Website3RequiredInputValue
+                  value={
+                    p.price_cents == null
+                      ? null
+                      : `$${(p.price_cents / 100).toFixed(2)}`
+                  }
+                  slot="retailPrice"
+                  items={requiredInputs.data?.items}
+                  recordId={p.id}
+                />
+              ),
             },
             { key: "updated", header: "Updated", render: (p) => fmtDate(p.updated_at) },
           ]}
