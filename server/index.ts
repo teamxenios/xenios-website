@@ -27,6 +27,11 @@ import {
   registerRequiredInputApi,
 } from "./research/required-inputs";
 import { registerAssessmentRequiredInputPlanApi } from "./research/assessment-required-inputs";
+import {
+  buildCareProductionDependencies,
+  carePageGate,
+  registerCareApi,
+} from "./care";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
 import { requireActiveMember, requireMember } from "./research/member-auth";
@@ -128,6 +133,8 @@ app.use((req, res, next) => {
 // the SPA catch-all so the gate always runs first.
 app.use(researchPageGate);
 registerResearchApi(app);
+app.use(carePageGate);
+registerCareApi(app, buildCareProductionDependencies());
 registerMembershipApi(app);
 registerMemberApi(app);
 registerMemberAccessApi(app);
