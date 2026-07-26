@@ -1,18 +1,21 @@
 # Website 2 release-manager handoff
 
-## Current checkpoint — Care PR2 eligibility/intake production integration
+## Current checkpoint — Care PR2 eligibility/intake production release
 
 - Session: Website 2 — Release Manager
 - Branch: `integration/care-pr2-production`
-- Base/deployed main: `45450eb947b8b96b1717989d915e7ecadd3f9c3d`
+- Application merge/deployed main: `e6c8fff2db6fc0fb6201180e3d3463e05eb84ff1`
 - Care PR1 application merge: `c09e6fe756ed924736baf603950c944f1ace619c`
 - Accepted Care PR1 source: `6791656667eee7bdfa9605eb5e0bd869bbde5077`
 - Accepted Care PR2 source: `54f9bd8d8834de9a8e57fc911665627af36f09ed`
 - Rejected PR2 heads: `8e3df03173e9d7ed6a351883da3ecac1a595d46f`
   and `0f44cdeb4c04b61e585363690655192ec3295e25`
 - Care PR1 migration: `20260726064113 care_access_foundation`
-- Current base Render deployment: `dep-d9iqsaeq1p3s73flol2g` (Live)
-- Production status: NOT YET MERGED
+- Care PR2 migration: `20260726080248 care_eligibility_intake`
+- Care PR2 integration PR: `#71`
+- Accepted integration head: `cd8e05798e086fd45fa864464f89e4a2ad683797`
+- Render deployment: `dep-d9iruuf41pts73aomu0g` (Live)
+- Production status: SOFTWARE LIVE — REAL INPUTS REQUIRED (CARE DISABLED)
 
 This focused unit integrates only accepted Care PR2 eligibility, consent, and
 versioned-intake foundations after the live Care PR1 boundary. Care remains
@@ -60,19 +63,28 @@ Current integration validation:
 - shared registration applies no-store/no-cache/noindex headers to every
   `/api/care` response before focused handlers.
 
+Production result:
+
+- Website 6 accepted exact integration head
+  `cd8e05798e086fd45fa864464f89e4a2ad683797`;
+- PR #71 merged as `e6c8fff2db6fc0fb6201180e3d3463e05eb84ff1`;
+- migration `20260726080248 care_eligibility_intake` was applied after Care PR1;
+- Render deployment `dep-d9iruuf41pts73aomu0g` reached Live at the merge SHA;
+- health, disabled Care APIs, truthful `/care/eligibility` and `/care/consent`,
+  no-store/noindex headers, desktop/375/320 layout, landmark count, keyboard
+  focus return, console, Render logs, and Supabase logs passed;
+- production verification confirmed 13/13 PR2 tables forced RLS, zero browser
+  table/routine grants, exactly three service-role RPC grants, zero PR2 rows,
+  zero Care roles/audits, and the canonical disabled capability;
+- no account, patient, consent, intake, seed, role, approval, or external action
+  was fabricated or created.
+
 Remaining:
 
-- commit and push the exact Website 2 integration candidate;
-- obtain Website 6 exact-SHA review of the integrated route, privacy, migration,
-  rollback, and responsive boundary;
-- inspect production, preserve record-count invariants, and apply only the
-  reviewed PR2 migration;
-- merge and deploy through Render;
-- verify health, disabled Care APIs, truthful `/care/eligibility` and
-  `/care/consent`, production RLS/grants/zero rows, desktop/375/320, keyboard,
-  accessibility, and logs;
-- only after the PR2 production gate passes, request a corrected-base PR3
-  candidate. PR3–7 remain held.
+- Website 6 accepted the read-only post-deploy gate with no blocker/high at
+  https://github.com/teamxenios/xenios-website/issues/44#issuecomment-5082689237;
+- request a corrected-base PR3 candidate. Existing PR3–6 heads and PR7 remain
+  held until Website 2 authorizes each exact next boundary.
 
 Queued but not mixed into this candidate:
 
