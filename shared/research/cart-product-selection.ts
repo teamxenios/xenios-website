@@ -3,15 +3,35 @@ import type {
   AdminProductPrice,
   AdminProductSummary,
   AdminProductVariant,
-  PriceAudience,
 } from "./product-admin";
 import type { DomainReadiness, RequiredInput } from "./required-inputs";
+
+export const CART_PURCHASE_AUDIENCES = [
+  "retail",
+  "member",
+  "professional",
+  "wholesale",
+] as const;
+
+export type CartPurchaseAudience =
+  (typeof CART_PURCHASE_AUDIENCES)[number];
 
 export type CartProductSelectionRequest = {
   productId: string;
   variantId: string;
-  audience: PriceAudience;
+  audience: CartPurchaseAudience;
   currency: string;
+  evaluatedAt: string;
+};
+
+/**
+ * The future authenticated integration resolves this fact from the server-side
+ * member/account tier. A requested browser audience is never authorization.
+ */
+export type CartAudienceEligibility = {
+  audience: CartPurchaseAudience;
+  state: "authorized" | "unauthorized";
+  sourceVersion: string;
   evaluatedAt: string;
 };
 
@@ -35,6 +55,7 @@ export type CartProductSelectionSource = {
   media: readonly AdminProductMedia[];
   requiredInputs: readonly RequiredInput[];
   readiness: readonly DomainReadiness[];
+  audienceEligibility: CartAudienceEligibility | null;
   inventoryEligibility: CartInventoryEligibility | null;
 };
 
@@ -47,11 +68,15 @@ export const CART_PRODUCT_SELECTION_FAILURE_CODES = [
   "product_hidden",
   "product_commerce_unapproved",
   "product_unavailable",
+  "audience_eligibility_missing",
+  "audience_identity_mismatch",
+  "audience_unauthorized",
   "variant_missing",
   "variant_ambiguous",
   "variant_product_mismatch",
   "variant_unapproved",
   "variant_inactive",
+  "member_variant_ineligible",
   "variant_sku_missing",
   "price_missing",
   "price_currency_mismatch",
@@ -76,7 +101,8 @@ export type CartProductSelection = {
   productId: string;
   variantId: string;
   sku: string;
-  audience: PriceAudience;
+  audience: CartPurchaseAudience;
+  audienceEligibility: CartAudienceEligibility & { state: "authorized" };
   price: {
     id: string;
     amountCents: number;
@@ -96,7 +122,9 @@ export type CartProductSelection = {
     inputVersions: Array<{ id: string; version: number }>;
     domainVersions: Array<{ domain: string; version: number }>;
   };
-  inventoryEligibility: CartInventoryEligibility & { state: "eligible" };
+  inventoryEligibility: Omit<CartInventoryEligibility, "reason"> & {
+    state: "eligible";
+  };
   evaluatedAt: string;
 };
 

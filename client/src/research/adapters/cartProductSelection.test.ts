@@ -8,6 +8,12 @@ const valid = {
     variantId: "variant-a",
     sku: "SKU-A",
     audience: "member",
+    audienceEligibility: {
+      audience: "member",
+      state: "authorized",
+      sourceVersion: "account-tier-v1",
+      evaluatedAt: "2026-07-26T22:00:00.000Z",
+    },
     price: {
       id: "price-a",
       amountCents: 14900,
@@ -36,7 +42,6 @@ const valid = {
       productId: "product-a",
       variantId: "variant-a",
       state: "eligible",
-      reason: null,
       sourceVersion: "inventory-v1",
       evaluatedAt: "2026-07-26T22:00:00.000Z",
     },
@@ -99,6 +104,57 @@ describe("cart product selection client adapter", () => {
     ).toEqual({ ok: false, code: "price_stale" });
   });
 
+  it("rejects stale inventory and temporally invalid price projections", () => {
+    expect(
+      adaptCartProductSelection({
+        ...valid,
+        selection: {
+          ...valid.selection,
+          inventoryEligibility: {
+            ...valid.selection.inventoryEligibility,
+            evaluatedAt: "2026-07-25T22:00:00.000Z",
+          },
+        },
+      }),
+    ).toEqual({ ok: false, code: "invalid_projection" });
+
+    expect(
+      adaptCartProductSelection({
+        ...valid,
+        selection: {
+          ...valid.selection,
+          price: {
+            ...valid.selection.price,
+            effectiveAt: "2026-07-27T00:00:00.000Z",
+          },
+        },
+      }),
+    ).toEqual({ ok: false, code: "invalid_projection" });
+
+    expect(
+      adaptCartProductSelection({
+        ...valid,
+        selection: {
+          ...valid.selection,
+          price: {
+            ...valid.selection.price,
+            expiresAt: "2026-07-26T21:59:59.999Z",
+          },
+        },
+      }),
+    ).toEqual({ ok: false, code: "invalid_projection" });
+
+    expect(
+      adaptCartProductSelection({
+        ...valid,
+        selection: {
+          ...valid.selection,
+          evaluatedAt: "2026-02-30T22:00:00.000Z",
+        },
+      }),
+    ).toEqual({ ok: false, code: "invalid_projection" });
+  });
+
   it("removes fields outside the browser-safe contract", () => {
     const result = adaptCartProductSelection({
       ...valid,
@@ -109,11 +165,16 @@ describe("cart product selection client adapter", () => {
           ...valid.selection.canonicalReadiness,
           enteredValue: "must-not-reach-browser",
         },
+        inventoryEligibility: {
+          ...valid.selection.inventoryEligibility,
+          reason: "lot LOT-1 at warehouse 9, quantity 4, provider internal",
+        },
       },
     });
 
-    expect(result).toEqual(valid);
+    expect(result).toEqual({ ok: false, code: "invalid_projection" });
     expect(JSON.stringify(result)).not.toContain("privateStorageKey");
     expect(JSON.stringify(result)).not.toContain("enteredValue");
+    expect(JSON.stringify(result)).not.toContain("LOT-1");
   });
 });

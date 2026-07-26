@@ -4,12 +4,14 @@ import {
   type AdminProductPrice,
 } from "@shared/research/product-admin";
 import type {
+  CartAudienceEligibility,
   CartProductSelection,
   CartProductSelectionFailureCode,
   CartProductSelectionRequest,
   CartProductSelectionResult,
   CartProductSelectionSource,
 } from "@shared/research/cart-product-selection";
+import { CART_PURCHASE_AUDIENCES } from "@shared/research/cart-product-selection";
 import type { DomainReadiness, RequiredInput } from "@shared/research/required-inputs";
 
 const REQUIRED_DOMAINS = Array.from(
@@ -21,9 +23,16 @@ function blocked(code: CartProductSelectionFailureCode): CartProductSelectionRes
 }
 
 function exactIso(value: string): number | null {
-  if (!value.trim()) return null;
+  if (
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)
+  ) {
+    return null;
+  }
   const milliseconds = Date.parse(value);
-  return Number.isFinite(milliseconds) ? milliseconds : null;
+  return Number.isFinite(milliseconds) &&
+    new Date(milliseconds).toISOString() === value
+    ? milliseconds
+    : null;
 }
 
 function exactOne<T>(
@@ -116,6 +125,7 @@ function exactRequiredInputs(
   );
 
   const inputs: RequiredInput[] = [];
+  const ids = new Set<string>();
   for (const binding of PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS) {
     const matches = active.filter(
       (input) =>
@@ -126,10 +136,15 @@ function exactRequiredInputs(
     );
     if (
       matches.length !== 1 ||
-      !["verified", "not_applicable"].includes(matches[0].currentState)
+      !["verified", "not_applicable"].includes(matches[0].currentState) ||
+      !matches[0].id.trim() ||
+      !Number.isInteger(matches[0].version) ||
+      matches[0].version <= 0 ||
+      ids.has(matches[0].id)
     ) {
       return blocked("required_inputs_incomplete");
     }
+    ids.add(matches[0].id);
     inputs.push(matches[0]);
   }
 
@@ -158,7 +173,10 @@ function exactDomainReadiness(
       item.expectedInputCount <= 0 ||
       item.actualInputCount !== item.expectedInputCount ||
       item.blockingInputCount !== 0 ||
-      item.blockingKeys.length !== 0
+      item.blockingKeys.length !== 0 ||
+      !item.domain.trim() ||
+      !Number.isInteger(item.version) ||
+      item.version <= 0
     ) {
       return blocked("readiness_incomplete");
     }
@@ -177,6 +195,9 @@ export function selectCartProduct(
     !request.variantId.trim() ||
     !request.currency.trim() ||
     request.currency !== request.currency.toUpperCase() ||
+    !(CART_PURCHASE_AUDIENCES as readonly string[]).includes(
+      request.audience,
+    ) ||
     evaluatedAt === null
   ) {
     return blocked("invalid_request");
@@ -199,6 +220,22 @@ export function selectCartProduct(
     return blocked("product_unavailable");
   }
 
+  const audienceEligibility: CartAudienceEligibility | null =
+    source.audienceEligibility;
+  if (audienceEligibility === null) {
+    return blocked("audience_eligibility_missing");
+  }
+  if (audienceEligibility.audience !== request.audience) {
+    return blocked("audience_identity_mismatch");
+  }
+  if (
+    audienceEligibility.state !== "authorized" ||
+    !audienceEligibility.sourceVersion.trim() ||
+    exactIso(audienceEligibility.evaluatedAt) !== evaluatedAt
+  ) {
+    return blocked("audience_unauthorized");
+  }
+
   const variantMatch = exactOne(
     source.variants,
     (variant) => variant.id === request.variantId,
@@ -209,6 +246,9 @@ export function selectCartProduct(
   if (variant.productId !== product.id) return blocked("variant_product_mismatch");
   if (variant.status !== "approved") return blocked("variant_unapproved");
   if (!variant.active) return blocked("variant_inactive");
+  if (request.audience === "member" && !variant.memberEligible) {
+    return blocked("member_variant_ineligible");
+  }
   if (!variant.sku.trim()) return blocked("variant_sku_missing");
 
   const priceResult = activePrice(source.prices, request, evaluatedAt);
@@ -230,6 +270,7 @@ export function selectCartProduct(
   }
   if (
     inventory.state !== "eligible" ||
+    inventory.reason !== null ||
     !inventory.sourceVersion.trim() ||
     exactIso(inventory.evaluatedAt) !== evaluatedAt
   ) {
@@ -241,6 +282,12 @@ export function selectCartProduct(
     variantId: variant.id,
     sku: variant.sku,
     audience: request.audience,
+    audienceEligibility: {
+      audience: audienceEligibility.audience,
+      state: "authorized",
+      sourceVersion: audienceEligibility.sourceVersion,
+      evaluatedAt: audienceEligibility.evaluatedAt,
+    },
     price: {
       id: priceResult.price.id,
       amountCents: priceResult.price.amountCents,
@@ -264,7 +311,13 @@ export function selectCartProduct(
         .map(({ domain, version }) => ({ domain, version }))
         .sort((a, b) => a.domain.localeCompare(b.domain)),
     },
-    inventoryEligibility: { ...inventory, state: "eligible" },
+    inventoryEligibility: {
+      productId: inventory.productId,
+      variantId: inventory.variantId,
+      state: "eligible",
+      sourceVersion: inventory.sourceVersion,
+      evaluatedAt: inventory.evaluatedAt,
+    },
     evaluatedAt: request.evaluatedAt,
   };
   return { ok: true, selection };

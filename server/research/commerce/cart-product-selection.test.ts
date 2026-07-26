@@ -149,6 +149,12 @@ function source(): CartProductSelectionSource {
     ],
     requiredInputs: requiredInputs(),
     readiness: [readiness("product_content"), readiness("products")],
+    audienceEligibility: {
+      audience: "member",
+      state: "authorized",
+      sourceVersion: "account-tier-v1",
+      evaluatedAt: AT,
+    },
     inventoryEligibility: {
       productId: "product-a",
       variantId: "variant-a",
@@ -258,6 +264,43 @@ describe("Website 3 cart product selection", () => {
     },
   );
 
+  it("requires a purchase-only, server-authorized audience and member eligibility", () => {
+    const memberIneligible = source();
+    memberIneligible.variants[0] = {
+      ...memberIneligible.variants[0],
+      memberEligible: false,
+    };
+    expect(selectCartProduct(request, memberIneligible)).toEqual({
+      ok: false,
+      code: "member_variant_ineligible",
+    });
+
+    const compareAt = {
+      ...request,
+      audience: "compare_at",
+    } as unknown as CartProductSelectionRequest;
+    expect(selectCartProduct(compareAt, source())).toEqual({
+      ok: false,
+      code: "invalid_request",
+    });
+
+    for (const audience of ["professional", "wholesale"] as const) {
+      const unauthorized = source();
+      unauthorized.audienceEligibility = {
+        audience,
+        state: "unauthorized",
+        sourceVersion: "account-tier-v1",
+        evaluatedAt: AT,
+      };
+      expect(
+        selectCartProduct(
+          { ...request, audience },
+          unauthorized,
+        ),
+      ).toEqual({ ok: false, code: "audience_unauthorized" });
+    }
+  });
+
   it("rejects unapproved, future, expired, and ambiguous prices", () => {
     const unapproved = source();
     unapproved.prices[0] = {
@@ -323,6 +366,59 @@ describe("Website 3 cart product selection", () => {
     });
   });
 
+  it("requires revalidatable canonical input and readiness identities", () => {
+    const invalidInputs = [
+      (inputs: RequiredInput[]) => {
+        inputs[0] = { ...inputs[0], id: "" };
+      },
+      (inputs: RequiredInput[]) => {
+        inputs[1] = { ...inputs[1], id: inputs[0].id };
+      },
+      (inputs: RequiredInput[]) => {
+        inputs[0] = { ...inputs[0], version: 0 };
+      },
+      (inputs: RequiredInput[]) => {
+        inputs[0] = { ...inputs[0], version: -1 };
+      },
+      (inputs: RequiredInput[]) => {
+        inputs[0] = { ...inputs[0], version: 1.5 };
+      },
+    ];
+    for (const corrupt of invalidInputs) {
+      const value = source();
+      const inputs = [...value.requiredInputs];
+      corrupt(inputs);
+      value.requiredInputs = inputs;
+      expect(selectCartProduct(request, value)).toEqual({
+        ok: false,
+        code: "required_inputs_incomplete",
+      });
+    }
+
+    const blankDomain = source();
+    blankDomain.readiness[0] = { ...blankDomain.readiness[0], domain: "" };
+    expect(selectCartProduct(request, blankDomain)).toEqual({
+      ok: false,
+      code: "readiness_incomplete",
+    });
+
+    const duplicateDomain = source();
+    duplicateDomain.readiness.push({ ...duplicateDomain.readiness[0] });
+    expect(selectCartProduct(request, duplicateDomain)).toEqual({
+      ok: false,
+      code: "readiness_incomplete",
+    });
+
+    for (const version of [0, -1, 1.5]) {
+      const value = source();
+      value.readiness[0] = { ...value.readiness[0], version };
+      expect(selectCartProduct(request, value)).toEqual({
+        ok: false,
+        code: "readiness_incomplete",
+      });
+    }
+  });
+
   it("requires exact injected inventory identity and eligibility", () => {
     const crossProduct = source();
     crossProduct.inventoryEligibility = {
@@ -341,6 +437,16 @@ describe("Website 3 cart product selection", () => {
       reason: "No eligible inventory.",
     };
     expect(selectCartProduct(request, unavailable)).toEqual({
+      ok: false,
+      code: "inventory_unavailable",
+    });
+
+    const leaking = source();
+    leaking.inventoryEligibility = {
+      ...leaking.inventoryEligibility!,
+      reason: "lot LOT-1 at internal location 42, quantity 9, provider secret",
+    };
+    expect(selectCartProduct(request, leaking)).toEqual({
       ok: false,
       code: "inventory_unavailable",
     });
