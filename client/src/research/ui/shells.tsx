@@ -270,7 +270,7 @@ function AdminNavGroup({
         <span>{group.label}</span>
         <span className="ra-admin-nav-indicator" aria-hidden="true" />
       </summary>
-      <div className="ra-admin-nav-links">
+      <div className="ra-admin-nav-links" hidden={!open}>
         {group.items.map((item) => (
           <AdminNavLink key={item.href} item={item} location={location} />
         ))}

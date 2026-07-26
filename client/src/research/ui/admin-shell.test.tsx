@@ -91,8 +91,10 @@ describe("ResearchAdminShell grouped navigation", () => {
     )!;
     const summary = commerce.querySelector("summary")!;
     const currentLink = commerce.querySelector('[aria-current="page"]') as HTMLElement;
+    const links = commerce.querySelector(".ra-admin-nav-links") as HTMLDivElement;
 
     expect(commerce.open).toBe(true);
+    expect(links.hidden).toBe(false);
     currentLink.focus();
     expect(document.activeElement).toBe(currentLink);
 
@@ -103,6 +105,7 @@ describe("ResearchAdminShell grouped navigation", () => {
     });
 
     expect(commerce.open).toBe(false);
+    expect(links.hidden).toBe(true);
     expect(document.activeElement).toBe(summary);
     view.unmount();
   });
