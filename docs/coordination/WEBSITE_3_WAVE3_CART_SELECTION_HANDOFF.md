@@ -36,6 +36,11 @@ no private Storage key, free-form inventory reason, required-input value, audit 
 inventory quantity, lot, reservation, order, member, payment, shipment, or
 provider data.
 
+The server accepts strictly validated RFC3339/PostgreSQL `timestamptz` values,
+including numeric offsets and PostgreSQL microsecond precision, compares their
+instants, and normalizes every timestamp in the browser projection to canonical
+`.sssZ`. Impossible calendar dates and invalid offsets fail closed.
+
 ## Integration boundary
 
 Website 2 owns any future route registration, shared wiring, merge, and release.
@@ -44,8 +49,8 @@ result as an injected typed fact and does not read or model operations tables.
 
 ## Validation
 
-- focused server/client regressions: 2 files / 16 tests passed
-- complete suite: 195 files / 3,546 tests passed
+- focused server/client regressions: 2 files / 20 tests passed
+- complete suite: 195 files / 3,550 tests passed
 - TypeScript check: passed
 - production build: passed (existing chunk-size warning only)
 - diff check: passed

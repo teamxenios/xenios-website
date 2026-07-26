@@ -340,6 +340,56 @@ describe("Website 3 cart product selection", () => {
     });
   });
 
+  it("accepts PostgreSQL timestamptz forms, compares instants, and normalizes the projection", () => {
+    const value = source();
+    value.prices[0] = {
+      ...value.prices[0],
+      effectiveAt: "2026-07-01T00:00:00.123456+00:00",
+      expiresAt: "2026-08-01T01:02:03.654321+00:00",
+    };
+    value.audienceEligibility = {
+      ...value.audienceEligibility!,
+      evaluatedAt: "2026-07-27T00:00:00+02:00",
+    };
+    value.inventoryEligibility = {
+      ...value.inventoryEligibility!,
+      evaluatedAt: "2026-07-26T18:00:00-04:00",
+    };
+
+    expect(
+      selectCartProduct(
+        { ...request, evaluatedAt: "2026-07-26T22:00:00+00:00" },
+        value,
+      ),
+    ).toMatchObject({
+      ok: true,
+      selection: {
+        price: {
+          effectiveAt: "2026-07-01T00:00:00.123Z",
+          expiresAt: "2026-08-01T01:02:03.654Z",
+        },
+        audienceEligibility: {
+          evaluatedAt: "2026-07-26T22:00:00.000Z",
+        },
+        inventoryEligibility: {
+          evaluatedAt: "2026-07-26T22:00:00.000Z",
+        },
+        evaluatedAt: "2026-07-26T22:00:00.000Z",
+      },
+    });
+  });
+
+  it.each([
+    "2026-02-30T22:00:00+00:00",
+    "2026-07-26T22:00:00+24:00",
+    "2026-07-26T22:00:00+00:60",
+  ])("rejects invalid RFC3339/PostgreSQL timestamp %s", (evaluatedAt) => {
+    expect(selectCartProduct({ ...request, evaluatedAt }, source())).toEqual({
+      ok: false,
+      code: "invalid_request",
+    });
+  });
+
   it("requires the exact per-product canonical input set and current manifests", () => {
     const wrongRecord = source();
     wrongRecord.requiredInputs = requiredInputs("product-b");

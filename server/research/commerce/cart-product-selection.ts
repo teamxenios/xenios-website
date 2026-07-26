@@ -22,17 +22,55 @@ function blocked(code: CartProductSelectionFailureCode): CartProductSelectionRes
   return { ok: false, code };
 }
 
-function exactIso(value: string): number | null {
+function strictTimestamp(value: string): number | null {
+  const match =
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,6}))?(Z|[+-]\d{2}:\d{2})$/.exec(
+      value,
+    );
+  if (match === null) return null;
+
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText, , zone] =
+    match;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+  const second = Number(secondText);
+  const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const daysInMonth = [
+    31,
+    leapYear ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+  ];
   if (
-    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > daysInMonth[month - 1] ||
+    hour > 23 ||
+    minute > 59 ||
+    second > 59
   ) {
     return null;
   }
+  if (zone !== "Z") {
+    const offsetHour = Number(zone.slice(1, 3));
+    const offsetMinute = Number(zone.slice(4, 6));
+    if (offsetHour > 23 || offsetMinute > 59) return null;
+  }
+
   const milliseconds = Date.parse(value);
-  return Number.isFinite(milliseconds) &&
-    new Date(milliseconds).toISOString() === value
-    ? milliseconds
-    : null;
+  return Number.isFinite(milliseconds) ? milliseconds : null;
 }
 
 function exactOne<T>(
@@ -47,7 +85,13 @@ function activePrice(
   prices: readonly AdminProductPrice[],
   request: CartProductSelectionRequest,
   evaluatedAt: number,
-): CartProductSelectionResult | { price: AdminProductPrice } {
+):
+  | CartProductSelectionResult
+  | {
+      price: AdminProductPrice;
+      effectiveAt: number;
+      expiresAt: number | null;
+    } {
   const identityMatches = prices.filter(
     (price) =>
       price.productId === request.productId &&
@@ -67,9 +111,9 @@ function activePrice(
   if (approved.length === 0) return blocked("price_unapproved");
 
   const current = approved.filter((price) => {
-    const effectiveAt = exactIso(price.effectiveAt);
+    const effectiveAt = strictTimestamp(price.effectiveAt);
     const expiresAt =
-      price.expiresAt === null ? null : exactIso(price.expiresAt);
+      price.expiresAt === null ? null : strictTimestamp(price.expiresAt);
     return (
       effectiveAt !== null &&
       effectiveAt <= evaluatedAt &&
@@ -90,7 +134,12 @@ function activePrice(
   ) {
     return blocked("price_unapproved");
   }
-  return { price };
+  return {
+    price,
+    effectiveAt: strictTimestamp(price.effectiveAt)!,
+    expiresAt:
+      price.expiresAt === null ? null : strictTimestamp(price.expiresAt)!,
+  };
 }
 
 function approvedPrimaryMedia(
@@ -189,7 +238,7 @@ export function selectCartProduct(
   request: CartProductSelectionRequest,
   source: CartProductSelectionSource,
 ): CartProductSelectionResult {
-  const evaluatedAt = exactIso(request.evaluatedAt);
+  const evaluatedAt = strictTimestamp(request.evaluatedAt);
   if (
     !request.productId.trim() ||
     !request.variantId.trim() ||
@@ -231,7 +280,7 @@ export function selectCartProduct(
   if (
     audienceEligibility.state !== "authorized" ||
     !audienceEligibility.sourceVersion.trim() ||
-    exactIso(audienceEligibility.evaluatedAt) !== evaluatedAt
+    strictTimestamp(audienceEligibility.evaluatedAt) !== evaluatedAt
   ) {
     return blocked("audience_unauthorized");
   }
@@ -272,7 +321,7 @@ export function selectCartProduct(
     inventory.state !== "eligible" ||
     inventory.reason !== null ||
     !inventory.sourceVersion.trim() ||
-    exactIso(inventory.evaluatedAt) !== evaluatedAt
+    strictTimestamp(inventory.evaluatedAt) !== evaluatedAt
   ) {
     return blocked("inventory_unavailable");
   }
@@ -286,14 +335,17 @@ export function selectCartProduct(
       audience: audienceEligibility.audience,
       state: "authorized",
       sourceVersion: audienceEligibility.sourceVersion,
-      evaluatedAt: audienceEligibility.evaluatedAt,
+      evaluatedAt: new Date(evaluatedAt).toISOString(),
     },
     price: {
       id: priceResult.price.id,
       amountCents: priceResult.price.amountCents,
       currency: priceResult.price.currency,
-      effectiveAt: priceResult.price.effectiveAt,
-      expiresAt: priceResult.price.expiresAt,
+      effectiveAt: new Date(priceResult.effectiveAt).toISOString(),
+      expiresAt:
+        priceResult.expiresAt === null
+          ? null
+          : new Date(priceResult.expiresAt).toISOString(),
       version: priceResult.price.version,
     },
     media: {
@@ -316,9 +368,9 @@ export function selectCartProduct(
       variantId: inventory.variantId,
       state: "eligible",
       sourceVersion: inventory.sourceVersion,
-      evaluatedAt: inventory.evaluatedAt,
+      evaluatedAt: new Date(evaluatedAt).toISOString(),
     },
-    evaluatedAt: request.evaluatedAt,
+    evaluatedAt: new Date(evaluatedAt).toISOString(),
   };
   return { ok: true, selection };
 }
