@@ -4,10 +4,11 @@
 
 - Session: Website 2 — Release Manager
 - Branch: `integration/website-3-production-v2`
-- Production base: `main` at `48cb57250c1ec54fe8714e59fa1071a9eb27f867`
+- Repository base: `main` at `357785bb7efea3ce65036e2468eb856920aff5d2`
+- Current deployed production SHA: `68ee5d612df7d0452091ff0dfd2062d433943066`
 - Website 3 source candidate: PR #47 at `877ebfff75452f47b3b185e9879a0dcf156e0ef7`
-- Validated integration code checkpoint: `92f8a6b`
-- Release train: 1, held behind Assessment Release Train 0
+- Validated integration application checkpoint: `bb2f875`
+- Release train: 1; Assessment Release Train 0 is deployed and its external activation gates remain preserved
 - Production status: NOT YET MERGED
 
 ## Completed at this checkpoint
@@ -20,6 +21,11 @@
 - Registered member routes for supplements, metabolic pathways, diagnostics, storage, education, and support without crowding primary navigation.
 - Registered guarded administrator configuration for approved Pending public copy.
 - Preserved truthful Pending states and disabled external-provider actions.
+- Corrected every education link to the registered member education route and a matching in-page anchor.
+- Added all five supplement channel records to the production admin adapter and populated form, including persistence/reload coverage and public redaction.
+- Added the complete Superpower collection, price, review, interest, and affiliate contract to the admin adapter and form. `available` now fails closed unless the offer has complete metadata and an enabled HTTPS affiliate action.
+- Connected all ten Website 3 communication templates to the canonical durable Research outbox. The live product-request received/update events exercise that adapter; event-key replay remains deduplicated and payloads are allowlisted at enqueue and dispatch.
+- Added the exact four-field trainer-safe biomarker projection to the existing authorized Train 0 Plan Brief. Ordinary member sessions are denied before the provider is called, and viewing context does not create a biomarker record.
 
 ## Migration
 
@@ -42,7 +48,7 @@ Disposable PostgreSQL verification:
 - Confirmed 4 canonical supplement placeholder rows.
 - Confirmed Superpower interest is internal and affiliate activation remains disabled.
 
-Production migration is intentionally not applied. Release Train 0 must be integrated, migrated, deployed, and smoke-tested first.
+Production migration is intentionally not applied yet. Release Train 0 is complete; production schema inspection, canonical dependency application, and final candidate review remain required before this migration is applied.
 
 ## Routes
 
@@ -83,21 +89,19 @@ Admin UI:
 
 ## Validation
 
-- Focused Website 3 integration: 12 files, 77 tests passed.
-- Full `npm test`: 150 files, 3,193 tests passed.
+- Independent Website 3 review: all five original integration gaps accepted; two final narrow activation/form regressions corrected.
+- Final full `npm test`: 152 files, 3,261 tests passed.
 - `npm run check`: passed.
 - `npm run build`: passed with the existing large-chunk warning.
 - `git diff --check`: passed.
-- Disposable migration apply-twice/RLS/grant verification: passed.
+- Disposable migration applied twice with `ON_ERROR_STOP=1`: passed.
+- Migration verification: 8/8 expected tables, 8/8 forced RLS, zero `anon`/`authenticated` table grants, four canonical supplement placeholder rows, and Superpower still `coming_soon` with affiliate disabled.
 
 ## Remaining release work
 
-- Take the frozen Assessment Release Train 0 handoff first.
-- Review and integrate Assessment shared routes, repositories, migrations, and UI.
-- Apply and verify the Assessment production migration.
-- Merge, deploy through Render, confirm deployed SHA, and complete live Assessment persona/persistence/mobile/accessibility/log smoke tests.
-- Rebase this Website 3 integration onto the resulting production `main`.
-- Run conflict, focused, full, browser, mobile, accessibility, authorization, and pre-apply production-schema checks.
+- Push the corrected candidate, require green GitHub test/typecheck/build checks, and obtain Website 3 re-review of the exact head.
+- Inspect the production schema and record baseline counts/invariants for the canonical catalog, inventory-lot, quality-document, and live Product Request tables.
+- Run integrated signed-out/wrong-role and available authorized persona browser checks without fabricating an account or record.
 - Apply the Website 3 migration only after its canonical dependencies.
 - Merge/deploy/smoke Release Train 1 and notify Website 3 for feature-owner live verification.
 
