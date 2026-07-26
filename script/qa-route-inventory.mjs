@@ -3,9 +3,12 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const root = process.env.QA_REPO_ROOT
+  ? path.resolve(process.env.QA_REPO_ROOT)
+  : path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outputDir = path.join(root, "docs", "qa", "generated");
 const checkOnly = process.argv.includes("--check");
+const readOnly = process.env.QA_ROUTE_READ_ONLY === "1";
 
 function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -274,7 +277,7 @@ const protectedApiWithoutVisibleGuard = serverRoutes.filter((route) => {
     route.path === "/api/research/catalog" ||
     route.path === "/api/research/orders";
   if (!protectedRoute) return false;
-  return !/(requireSupabaseAdmin|requireProductRequestAdmin|requireActiveMember|requireMember|\badmin\b|\bactive\b)/.test(
+  return !/(requireSupabaseAdmin|requireProductRequestAdmin|requireResearchSubject|requireActiveMember|requireMember|\badmin\b|\bactive\b)/.test(
     route.guardSnippet,
   );
 });
@@ -342,7 +345,7 @@ const markdown = markdownFor(report);
 const jsonFile = path.join(outputDir, "route-inventory.json");
 const markdownFile = path.join(outputDir, "route-inventory.md");
 
-if (checkOnly) {
+if (checkOnly || readOnly) {
   const failures = Object.entries(report.gates).filter(([, items]) => items.length > 0);
   if (failures.length) {
     for (const [name, items] of failures) {
@@ -351,7 +354,11 @@ if (checkOnly) {
     }
     process.exitCode = 1;
   }
-  if (!fs.existsSync(jsonFile) || !fs.existsSync(markdownFile)) {
+  if (readOnly) {
+    console.log(
+      `Read-only route inventory: ${report.summary.total} records; ${failures.length} failing gate groups.`,
+    );
+  } else if (!fs.existsSync(jsonFile) || !fs.existsSync(markdownFile)) {
     console.error("Generated route inventory is missing. Run npm run qa:routes.");
     process.exitCode = 1;
   } else {

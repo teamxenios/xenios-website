@@ -84,6 +84,68 @@
   and route wiring, and authenticated production persistence smoke.
 - Candidate QA verdict: **PASS; PRODUCTION INTEGRATION GATE CLOSED**.
 
+## Release Train 1 - integrated candidate and production
+
+- PR #53 exact candidate:
+  `81d9a837a2ddfc13d708c7176e5464c388efa881`.
+- Production merge/deployed SHA:
+  `2cccbc0f7242172512ffa92f2137dd10c2b0294c`.
+- Render deployment `dep-d9imnjhoagis7389s5dg` is `live` at the exact merge
+  SHA. GitHub test, typecheck, and build checks pass.
+- Integration-only tests: 7 files, 94/94 passed, covering Products/Diagnostics
+  adapters and route registration, active-member/admin authorization,
+  production repositories, admin save/remount persistence, Blueprint biomarker
+  isolation, and outbox behavior. PR #47's already-green domain evidence was
+  not rerun.
+- Read-only route inventory: 436 records. Train 1 contributes zero
+  adapter/server mismatches. The gate remains intentionally red only for the
+  16 Website 4 partner endpoints absent from this Train 1 integration.
+- The route scanner now recognizes `requireResearchSubject` on
+  `/api/research/member/me`, removing a static-heuristic false positive without
+  allowlisting the route.
+- Disposable PostgreSQL 16 applied the canonical 35-file dependency sequence,
+  then applied `research-products-diagnostics.sql` twice. Verification returned
+  8/8 expected tables with forced RLS, zero browser table grants, zero browser
+  grants to the security-definer biomarker-confirmation RPC, 4 supplement rows,
+  3 metabolic pathway rows, and 1 disabled Superpower row.
+- Production build passed with the existing large-chunk warning. Leak scan
+  passed for 1,093 tracked files and 107 client artifacts.
+- UI-system budgets passed: raw colors 91/91, gradients 14/14, shadows 2/2,
+  font declarations 43/43, large radii 6/6, button selectors 23/27, no
+  prohibited UI framework, and no unauthorized external font import.
+- Candidate and live production-bundle browser checks covered
+  `/research/member/products`, `/research/member/diagnostics`,
+  `/research/member/supplements`, `/research/member/metabolic-care`, and
+  `/admin/research/product-configuration`.
+- At 1440, 375, 320, and 720-CSS-pixel reflow, tested routes had no page-level
+  overflow. Inputs were labeled, headings were present, the access/password
+  focus state visibly switched to the Xenios purple border, signed-out and
+  unconfigured states were truthful, no Demo/Sample/Prototype wording appeared,
+  and no browser warning/error was captured.
+- Non-mutating production smoke passed 7/7. The member session probe and seven
+  Train 1 APIs reject signed-out requests with 401.
+- Production Supabase verification: 8/8 expected tables exist with forced RLS;
+  browser table/RPC grants are zero; `research-coa-production` and
+  `research-biomarker-reports-production` are private; operational member
+  records for this train remain zero; the Superpower affiliate is not active.
+- Recent post-deploy Supabase API logs show successful 200 responses. Website 3
+  is responsible for the authenticated member/admin persistence smoke with
+  authorized sessions.
+- Low shared-shell follow-up: the existing Research access gate has no `<main>`
+  landmark. It retains an H1 and labeled form, exposes no protected content, and
+  is not a Train 1 regression.
+- Production verdict: **LIVE; INDEPENDENT READ-ONLY QA PASS**.
+
+## Queued future exact targets
+
+- Website 4 Release Train 3A checkpoint
+  `d162f1eafe249be57e9d23c87c65d99f1efdbc89` will not be rerun until Website 2
+  publishes its integrated 3A SHA.
+- The canonical internal pre-launch gate, seed-origin separation,
+  required-input model, readiness validators, and launch switches remain
+  Website 2-owned follow-on scope. Website 6 will test them only at a frozen
+  integrated SHA.
+
 ## Pre-release live baseline
 
 - `https://xeniostechnology.com` loaded on desktop with a canonical URL, semantic

@@ -2,9 +2,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const scriptRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const root = process.env.QA_REPO_ROOT
+  ? path.resolve(process.env.QA_REPO_ROOT)
+  : scriptRoot;
 const clientRoot = path.join(root, "client", "src");
-const baselinePath = path.join(root, "qa", "ui-consistency-baseline.json");
+const baselinePath = path.join(scriptRoot, "qa", "ui-consistency-baseline.json");
 const baseline = JSON.parse(fs.readFileSync(baselinePath, "utf8"));
 
 function walk(directory) {
