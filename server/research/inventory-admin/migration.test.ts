@@ -1,0 +1,84 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, expect, it } from "vitest";
+
+const sql = readFileSync(
+  resolve(__dirname, "../../../supabase/research-inventory-lot-coa-admin.sql"),
+  "utf8",
+);
+
+describe("Website 4 canonical inventory/lot/COA schema delta", () => {
+  it("extends canonical commerce records and creates no parallel operations tables", () => {
+    expect(sql).toContain("alter table public.research_inventory_lots");
+    expect(sql).toContain("alter table public.research_lot_quality_documents");
+    expect(sql).toContain("create table if not exists public.research_inventory_movements");
+    expect(sql).not.toMatch(/research_operations_/i);
+    expect(sql).not.toMatch(/create table if not exists public\.research_product/i);
+  });
+
+  it("makes quantities command-driven, versioned, idempotent, and append-only", () => {
+    expect(sql).toContain("research_inventory_lots_quantity_invariant");
+    expect(sql).toContain("research_apply_inventory_movement");
+    expect(sql).toContain("inventory lot version conflict");
+    expect(sql).toContain("idempotency key was reused");
+    expect(sql).toContain("research_inventory_movements_no_update");
+    expect(sql).toContain("before update or delete");
+    expect(sql).toContain("reconcile is an explicit available-quantity delta");
+    expect(sql).toContain("adjust is an explicit available-quantity delta");
+    expect(sql).toContain("inventory quantities may change only through an atomic movement command");
+    expect(sql).toContain("research_inventory_lots_quantity_command_only");
+  });
+
+  it("fails allocation closed for blocked dates, disposition, and exact-lot quality", () => {
+    expect(sql).toContain("research_lot_is_allocatable");
+    expect(sql).toContain("l.disposition = 'available'");
+    expect(sql).toContain("l.expiry_date > p_as_of::date");
+    expect(sql).toContain("l.product_id is not null");
+    expect(sql).toContain("l.variant_id is not null");
+    expect(sql).toContain("d.published_at is not null");
+    expect(sql).toContain("d.coa_on_file = true");
+    for (const test of ["identity", "assay", "purity", "chain_of_custody"]) {
+      expect(sql).toContain(`'${test}'`);
+    }
+  });
+
+  it("models missing test states without treating absence as passing", () => {
+    for (const state of [
+      "not_provided",
+      "not_tested",
+      "not_applicable",
+      "under_review",
+      "passed",
+      "failed",
+    ]) {
+      expect(sql).toContain(`'${state}'`);
+    }
+    expect(sql).toContain("required exact-lot quality tests are not approved");
+  });
+
+  it("forces RLS, removes browser grants, and restricts private Storage references", () => {
+    for (const table of [
+      "research_inventory_lots",
+      "research_lot_quality_documents",
+      "research_lot_allocations",
+      "research_inventory_movements",
+      "research_inventory_lot_events",
+      "research_lot_quality_tests",
+      "research_lot_quality_events",
+    ]) {
+      expect(sql).toContain(`alter table public.${table} force row level security`);
+      expect(sql).toMatch(
+        new RegExp(`revoke all on table public\\.${table}\\s+from public, anon, authenticated`, "i"),
+      );
+    }
+    expect(sql).toContain("bucket_id = 'research-coa-production'");
+    expect(sql).toContain("private_storage_key like 'lots/%'");
+    expect(sql).toContain("content_type = 'application/pdf'");
+    expect(sql).toContain("grant select, insert on table public.research_inventory_lots");
+    expect(sql).not.toContain("grant select, insert, update, delete on table public.research_inventory_lots");
+    expect(sql).toContain("grant execute on function public.research_apply_inventory_movement");
+    expect(sql).toContain("to service_role");
+    expect(sql).toContain("research_lot_quality_document_command_only");
+    expect(sql).toContain("quality state may change only through a reviewed quality command");
+  });
+});
