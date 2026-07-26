@@ -64,3 +64,38 @@ policies designed for exactly that path. No such path exists today.
   schema makes the tables exist; it does not turn on commerce, billing, or any
   provider.
 - Does NOT touch secrets, RLS policies, or existing data.
+
+## Release Train 1: products and diagnostics
+
+`supabase/research-products-diagnostics.sql` is additive and must be applied
+only after the canonical catalog and inventory-lot migrations. It extends
+`research_lot_quality_documents`; it does not create a second product, lot, or
+certificate architecture.
+
+Before applying:
+
+- record the current production main SHA and Render deployment ID;
+- record counts for `research_products`, `research_inventory_lots`, and
+  `research_lot_quality_documents`;
+- confirm the two private bucket ids do not refer to an unrelated workload;
+- run the migration twice in disposable PostgreSQL with `ON_ERROR_STOP=1`;
+- run the Website 3 section of `research-production-verification.sql`.
+
+Routine rollback is code-first:
+
+1. Keep `RESEARCH_COA_ACCESS_ENABLED` and
+   `RESEARCH_BIOMARKER_UPLOAD_ENABLED` unset or not `true`.
+2. Revert the focused Train 1 code merge and redeploy the recorded prior SHA.
+3. Leave the additive tables, columns, audit history, and private objects in
+   place. Older code does not use them.
+4. Preserve `research_certificate_access_audit`; it is intentionally
+   append-only.
+5. Record the incident, failed deployment, correction SHA, and smoke evidence
+   in issue #44.
+
+Do not drop the tables, delete audit events, empty buckets, or remove canonical
+lot-document columns during a routine rollback. A permanent teardown requires
+a separate reviewed migration, a verified backup and object-retention plan,
+and explicit authorization. If an uploaded biomarker object fails signature or
+metadata verification, the production provider removes only that rejected
+object before any report reference is committed.

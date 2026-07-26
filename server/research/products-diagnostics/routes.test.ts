@@ -145,6 +145,29 @@ describe("Website 3 route registration", () => {
     expect(JSON.stringify(first.body)).not.toContain("member_1");
   });
 
+  it("does not report interest success when durable persistence rejects", async () => {
+    vi.spyOn(deps.interests, "join").mockRejectedValue(
+      new Error("database unavailable"),
+    );
+    const response = await request(app)
+      .post("/api/research/metabolic-interest")
+      .send({
+        pathwayId: "glp_1_pathway",
+        currentState: "IL",
+        generalGoalCategory: "care_pathway_updates",
+        preferredContact: "email",
+        interestDate: "2026-07-25",
+        attributionSource: "glp_cards",
+        idempotencyKey: "interest-key-123456",
+      });
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({
+      ok: false,
+      code: "persistence_failed",
+      message: "The update could not be saved. No successful update was reported.",
+    });
+  });
+
   it("keeps Superpower disabled and Biomarker upload private-provider gated", async () => {
     const offer = await request(app).get("/api/research/diagnostics/superpower");
     expect(offer.body.offer).toMatchObject({
@@ -165,6 +188,21 @@ describe("Website 3 route registration", () => {
       ok: false,
       code: "private_upload_unavailable",
     });
+  });
+
+  it("returns a safe failure when biomarker persistence rejects", async () => {
+    vi.spyOn(deps.biomarkers, "getOrCreate").mockRejectedValue(
+      new Error("database unavailable"),
+    );
+    const response = await request(app).get(
+      "/api/research/diagnostics/biomarker",
+    );
+    expect(response.status).toBe(503);
+    expect(response.body).toMatchObject({
+      ok: false,
+      code: "persistence_failed",
+    });
+    expect(JSON.stringify(response.body)).not.toContain("database unavailable");
   });
 
   it("confirms a biomarker report only after private object verification", async () => {

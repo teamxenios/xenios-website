@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   BIOMARKER_STATES,
   BiomarkerService,
@@ -97,6 +97,40 @@ describe("Biomarker Center", () => {
         consentVersion: "biomarker-upload-v1",
       }),
     ).resolves.toEqual({ ok: false, code: "private_upload_unavailable" });
+  });
+
+  it("rejects malformed upload metadata before minting a private grant", async () => {
+    const createPrivateUpload = vi.fn(async () => ({
+      ok: true as const,
+      uploadUrl: "https://signed.example/upload",
+      expiresAt: "2026-07-25T12:10:00.000Z",
+    }));
+    const service = new BiomarkerService(
+      new MemoryBiomarkerStore(),
+      {
+        createPrivateUpload,
+        verifyPrivateUpload: vi.fn(async () => ({ ok: true as const })),
+      },
+    );
+    const base = {
+      memberId: "member_1",
+      activeMember: true,
+      contentType: "application/pdf" as const,
+      consentAccepted: true,
+      consentVersion: "biomarker-upload-v1",
+    };
+
+    await expect(service.createReportUpload({
+      ...base,
+      filename: "report.pdf",
+      sizeBytes: Number.NaN,
+    })).resolves.toEqual({ ok: false, code: "file_invalid" });
+    await expect(service.createReportUpload({
+      ...base,
+      filename: "../..",
+      sizeBytes: 200,
+    })).resolves.toEqual({ ok: false, code: "file_invalid" });
+    expect(createPrivateUpload).not.toHaveBeenCalled();
   });
 
   it("partitions a successful private upload by a hash, never raw member id", async () => {

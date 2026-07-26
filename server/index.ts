@@ -11,6 +11,10 @@ import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { registerMemberPlatformApi } from "./research/member-platform";
 import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
+import {
+  buildWebsite3ProductionDependencies,
+  registerProductsDiagnosticsApi,
+} from "./research/products-diagnostics";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
 import { requireActiveMember, requireMember } from "./research/member-auth";
@@ -141,6 +145,19 @@ registerCommerceApi(app, buildCommerceDependencies(), {
   requireMember: adaptGuard(requireMember),
   requireAdmin: adaptGuard(requireSupabaseAdmin),
 });
+
+// Website 3 products and diagnostics. Uses the same active-member/admin guards,
+// canonical catalog readiness, canonical lot/quality tables, private Supabase
+// Storage, and durable production repositories. External/data-gated surfaces
+// remain server-authoritatively unavailable until their real gates pass.
+registerProductsDiagnosticsApi(
+  app,
+  buildWebsite3ProductionDependencies(),
+  {
+    requireActiveMember,
+    requireAdmin: requireSupabaseAdmin,
+  },
+);
 
 // Founding membership activation (three-state: capability_disabled by default,
 // not_provisioned without storage, live only when flag + storage exist).

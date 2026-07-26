@@ -37,6 +37,7 @@ table in the same PR that adds or changes a migration file.
 | 28 | research-product-requests-hardening.sql | Remove Supabase default direct table grants from anonymous and authenticated browser roles | RUN | 2026-07-25 | zero browser-role table grants |
 | 29 | research-product-requests-function-hardening.sql | Remove default browser-role execution from the append-only event trigger helper | RUN | 2026-07-25 | zero browser-role Product Request function grants |
 | 30 | research-security-definer-grants-hardening.sql | Remove unnecessary PUBLIC/anon/authenticated execution from the internal RLS event-trigger helper | RUN | 2026-07-25 | managed migration `20260725231517`; advisor + explicit privilege check |
+| 31 | research-products-diagnostics.sql | Extend canonical lots/quality documents; persist metabolic pathways/interests, Superpower configuration, biomarker uploads/records, product content, private buckets, and append-only certificate access audit | PENDING (not run) | — | apply after 20-21; disposable PostgreSQL apply-twice/atomic/RLS/grant gate passed |
 
 Founding-membership operational migrations use a separate dependency chain.
 Production presence and managed migration history were reconciled on

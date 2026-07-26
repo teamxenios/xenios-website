@@ -1,15 +1,19 @@
 import type { Express, NextFunction, Request, Response } from "express";
 import type { ProductMaster } from "./model";
 import { summarizeFamilies } from "./product-master";
-import type { ExactLotCertificateService } from "./coa";
+import type {
+  CertificateAccessActor,
+  CertificateAccessResult,
+} from "./coa";
 import type {
   MetabolicInterestService,
   MetabolicPathwayConfig,
-  MetabolicPathwayRepository,
+  PublicMetabolicPathway,
 } from "./metabolic-care";
 import type {
   BiomarkerService,
-  SuperpowerOfferRepository,
+  PublicSuperpowerOffer,
+  SuperpowerOfferConfig,
 } from "./diagnostics";
 import { SUPPLEMENT_PLACEHOLDERS } from "./supplements";
 import {
@@ -19,7 +23,7 @@ import {
 } from "./support-and-storage";
 import { Website3ValidationError } from "./errors";
 
-type Guard = (req: Request, res: Response, next: NextFunction) => void | Promise<void>;
+type Guard = (req: Request, res: Response, next: NextFunction) => unknown;
 
 export interface Website3Guards {
   requireActiveMember: Guard;
@@ -28,10 +32,52 @@ export interface Website3Guards {
 
 export interface Website3ApiDependencies {
   productMaster: ProductMaster;
-  certificates: ExactLotCertificateService;
-  pathways: MetabolicPathwayRepository;
+  certificates: {
+    requestAccess(input: {
+      actor: CertificateAccessActor;
+      sku: string;
+      lotCode: string;
+    }): Promise<CertificateAccessResult>;
+  };
+  pathways: {
+    listPublic(): PublicMetabolicPathway[] | Promise<PublicMetabolicPathway[]>;
+    searchAdmin(query: string): MetabolicPathwayConfig[] | Promise<MetabolicPathwayConfig[]>;
+    update(
+      pathwayId: MetabolicPathwayConfig["pathwayId"],
+      patch: Partial<
+        Pick<
+          MetabolicPathwayConfig,
+          "publicName" | "publicStatus" | "publicCopy" | "actions" | "internalSearchAliases"
+        >
+      >,
+      actor: string,
+      at: string,
+    ): Promise<MetabolicPathwayConfig>;
+  };
   interests: MetabolicInterestService;
-  superpower: SuperpowerOfferRepository;
+  superpower: {
+    readPublic(): PublicSuperpowerOffer | Promise<PublicSuperpowerOffer>;
+    readAdmin(): SuperpowerOfferConfig | Promise<SuperpowerOfferConfig>;
+    update(
+      patch: Partial<
+        Pick<
+          SuperpowerOfferConfig,
+          | "label"
+          | "summary"
+          | "status"
+          | "availability"
+          | "collectionMethod"
+          | "priceCents"
+          | "priceEffectiveDate"
+          | "lastVerificationDate"
+          | "disclosure"
+          | "affiliate"
+        >
+      >,
+      actor: string,
+      at: string,
+    ): Promise<SuperpowerOfferConfig>;
+  };
   biomarkers: BiomarkerService;
 }
 
@@ -121,17 +167,25 @@ export function registerProductsDiagnosticsApi(
     if (!id) return res.status(401).json({ ok: false, code: "membership_required" });
     const lotCode = typeof req.body?.lotCode === "string" ? req.body.lotCode.trim() : "";
     if (!lotCode) return validation(res, "lotCode is required");
-    const result = await deps.certificates.requestAccess({
-      actor: { memberId: id, active: true },
-      sku: String(req.params.sku),
-      lotCode,
-    });
-    res.status(result.ok ? 200 : result.code === "lot_not_found" ? 404 : 409).json(result);
+    try {
+      const result = await deps.certificates.requestAccess({
+        actor: { memberId: id, active: true },
+        sku: String(req.params.sku),
+        lotCode,
+      });
+      res.status(result.ok ? 200 : result.code === "lot_not_found" ? 404 : 409).json(result);
+    } catch (error) {
+      mutationFailure(res, error);
+    }
   });
 
-  app.get("/api/research/metabolic-pathways", active, (_req, res) => {
+  app.get("/api/research/metabolic-pathways", active, async (_req, res) => {
     noStore(res);
-    res.json({ ok: true, pathways: deps.pathways.listPublic() });
+    try {
+      res.json({ ok: true, pathways: await deps.pathways.listPublic() });
+    } catch (error) {
+      mutationFailure(res, error);
+    }
   });
 
   app.post("/api/research/metabolic-interest", active, async (req, res) => {
@@ -158,20 +212,28 @@ export function registerProductsDiagnosticsApi(
         },
       });
     } catch (error) {
-      validation(res, (error as Error).message);
+      mutationFailure(res, error);
     }
   });
 
-  app.get("/api/research/diagnostics/superpower", active, (_req, res) => {
+  app.get("/api/research/diagnostics/superpower", active, async (_req, res) => {
     noStore(res);
-    res.json({ ok: true, offer: deps.superpower.readPublic() });
+    try {
+      res.json({ ok: true, offer: await deps.superpower.readPublic() });
+    } catch (error) {
+      mutationFailure(res, error);
+    }
   });
 
   app.get("/api/research/diagnostics/biomarker", active, async (req, res) => {
     noStore(res);
     const id = memberId(req);
     if (!id) return res.status(401).json({ ok: false, code: "membership_required" });
-    res.json({ ok: true, biomarker: publicBiomarker(await deps.biomarkers.getOrCreate(id)) });
+    try {
+      res.json({ ok: true, biomarker: publicBiomarker(await deps.biomarkers.getOrCreate(id)) });
+    } catch (error) {
+      mutationFailure(res, error);
+    }
   });
 
   app.post("/api/research/diagnostics/biomarker/report-upload", active, async (req, res) => {
@@ -182,26 +244,30 @@ export function registerProductsDiagnosticsApi(
     if (!["application/pdf", "image/jpeg", "image/png"].includes(contentType)) {
       return validation(res, "contentType must be PDF, JPEG, or PNG");
     }
-    const result = await deps.biomarkers.createReportUpload({
-      memberId: id,
-      activeMember: true,
-      filename: String(req.body?.filename ?? ""),
-      contentType,
-      sizeBytes: Number(req.body?.sizeBytes),
-      consentAccepted: req.body?.consentAccepted === true,
-      consentVersion: String(req.body?.consentVersion ?? ""),
-    });
-    res.status(result.ok ? 201 : 409).json(
-      result.ok
-        ? {
-            ok: true,
-            uploadId: result.uploadId,
-            uploadUrl: result.uploadUrl,
-            expiresAt: result.expiresAt,
-            biomarker: publicBiomarker(result.record),
-          }
-        : result,
-    );
+    try {
+      const result = await deps.biomarkers.createReportUpload({
+        memberId: id,
+        activeMember: true,
+        filename: String(req.body?.filename ?? ""),
+        contentType,
+        sizeBytes: Number(req.body?.sizeBytes),
+        consentAccepted: req.body?.consentAccepted === true,
+        consentVersion: String(req.body?.consentVersion ?? ""),
+      });
+      res.status(result.ok ? 201 : 409).json(
+        result.ok
+          ? {
+              ok: true,
+              uploadId: result.uploadId,
+              uploadUrl: result.uploadUrl,
+              expiresAt: result.expiresAt,
+              biomarker: publicBiomarker(result.record),
+            }
+          : result,
+      );
+    } catch (error) {
+      mutationFailure(res, error);
+    }
   });
 
   app.post(
@@ -211,28 +277,36 @@ export function registerProductsDiagnosticsApi(
       noStore(res);
       const id = memberId(req);
       if (!id) return res.status(401).json({ ok: false, code: "membership_required" });
-      const result = await deps.biomarkers.confirmReportUpload({
-        memberId: id,
-        activeMember: true,
-        uploadId: String(req.body?.uploadId ?? ""),
-      });
-      const status = result.ok
-        ? 200
-        : result.code === "upload_not_found"
-          ? 404
-          : 409;
-      res.status(status).json(
-        result.ok
-          ? { ok: true, biomarker: publicBiomarker(result.record) }
-          : result,
-      );
+      try {
+        const result = await deps.biomarkers.confirmReportUpload({
+          memberId: id,
+          activeMember: true,
+          uploadId: String(req.body?.uploadId ?? ""),
+        });
+        const status = result.ok
+          ? 200
+          : result.code === "upload_not_found"
+            ? 404
+            : 409;
+        res.status(status).json(
+          result.ok
+            ? { ok: true, biomarker: publicBiomarker(result.record) }
+            : result,
+        );
+      } catch (error) {
+        mutationFailure(res, error);
+      }
     },
   );
 
-  app.get("/api/admin/research/metabolic-pathways", admin, (req, res) => {
+  app.get("/api/admin/research/metabolic-pathways", admin, async (req, res) => {
     noStore(res);
     const query = typeof req.query.q === "string" ? req.query.q : "";
-    res.json({ ok: true, pathways: deps.pathways.searchAdmin(query) });
+    try {
+      res.json({ ok: true, pathways: await deps.pathways.searchAdmin(query) });
+    } catch (error) {
+      mutationFailure(res, error);
+    }
   });
 
   app.put("/api/admin/research/metabolic-pathways/:pathwayId", admin, async (req, res) => {
@@ -250,9 +324,13 @@ export function registerProductsDiagnosticsApi(
     }
   });
 
-  app.get("/api/admin/research/superpower-offer", admin, (_req, res) => {
+  app.get("/api/admin/research/superpower-offer", admin, async (_req, res) => {
     noStore(res);
-    res.json({ ok: true, offer: deps.superpower.readAdmin() });
+    try {
+      res.json({ ok: true, offer: await deps.superpower.readAdmin() });
+    } catch (error) {
+      mutationFailure(res, error);
+    }
   });
 
   app.put("/api/admin/research/superpower-offer", admin, async (req, res) => {
