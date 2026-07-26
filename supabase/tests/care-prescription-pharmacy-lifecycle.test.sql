@@ -532,7 +532,10 @@ declare
   );
   original_order_id uuid := (select id from public.care_pharmacy_orders);
   replacement_prescription_id uuid;
+  successor_prescription_id uuid;
   replacement_order_id uuid;
+  clarification_order_id uuid;
+  clarification_event_count_before bigint;
   prescription_count_before bigint := (select count(*) from public.care_prescriptions);
   prescription_event_count_before bigint := (select count(*) from public.care_prescription_events);
   order_count_before bigint := (select count(*) from public.care_pharmacy_orders);
@@ -675,6 +678,200 @@ begin
     raise exception 'rollback-superseded-order-delivery-proof';
   exception when raise_exception then
     if sqlerrm <> 'rollback-superseded-order-delivery-proof' then raise; end if;
+  end;
+
+  begin
+    select id into replacement_prescription_id
+    from public.care_create_prescription_draft(
+      '41000000-0000-4000-8000-000000000001',
+      '4b000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000003',
+      'Clarification replacement formulation','Clarification replacement concentration',
+      'Clarification replacement route','Clarification replacement quantity',
+      'Clarification replacement patient-specific directions',0,
+      original_prescription_id,
+      'pr4-clarification-replacement-draft','2026-07-25T20:10:00Z'
+    );
+    perform public.care_sign_prescription(
+      replacement_prescription_id,
+      '40000000-0000-4000-8000-000000000003',
+      0,
+      'pr4-clarification-replacement-sign',
+      '2026-07-25T20:10:10Z'
+    );
+    select id into clarification_order_id
+    from public.care_assign_pharmacy_order(
+      replacement_prescription_id,
+      '4c000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000004',
+      'pr4-clarification-replacement-assign',
+      '2026-07-25T20:10:20Z'
+    );
+    perform public.care_apply_pharmacy_order_action(
+      clarification_order_id,'40000000-0000-4000-8000-000000000005',
+      0,'receive',null,null,
+      'pr4-superseded-clarification-receive','2026-07-25T20:10:30Z'
+    );
+    perform public.care_apply_pharmacy_order_action(
+      clarification_order_id,'40000000-0000-4000-8000-000000000005',
+      1,'request_clarification','private-superseded-question',null,
+      'pr4-superseded-clarification-request','2026-07-25T20:10:40Z'
+    );
+
+    select id into successor_prescription_id
+    from public.care_create_prescription_draft(
+      '41000000-0000-4000-8000-000000000001',
+      '4b000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000003',
+      'Clarification successor formulation','Clarification successor concentration',
+      'Clarification successor route','Clarification successor quantity',
+      'Clarification successor patient-specific directions',0,
+      replacement_prescription_id,
+      'pr4-clarification-successor-draft','2026-07-25T20:10:50Z'
+    );
+    perform public.care_sign_prescription(
+      successor_prescription_id,
+      '40000000-0000-4000-8000-000000000003',
+      0,
+      'pr4-clarification-successor-sign',
+      '2026-07-25T20:11:00Z'
+    );
+    if (select status from public.care_prescriptions where id = replacement_prescription_id) <> 'superseded'
+      or (select status from public.care_pharmacy_orders where id = clarification_order_id) <> 'clarification_requested'
+      or (select version from public.care_pharmacy_orders where id = clarification_order_id) <> 2
+    then raise exception 'clarification supersession setup failed'; end if;
+    clarification_event_count_before := (
+      select count(*) from public.care_pharmacy_order_events
+      where pharmacy_order_id = clarification_order_id
+    );
+
+    begin
+      perform public.care_resolve_pharmacy_clarification(
+        clarification_order_id,
+        '40000000-0000-4000-8000-000000000003',
+        2,
+        'private-stale-resolution',
+        'pr4-stale-clarification-resolution',
+        '2026-07-25T20:11:10Z'
+      );
+      raise exception 'superseded clarification resolution was accepted';
+    exception when check_violation then
+      if sqlerrm <> 'care_signed_prescription_required' then raise; end if;
+    end;
+    perform pg_temp.assert_superseded_order_action_blocked(
+      clarification_order_id,2,'receive',null,null,
+      'pr4-superseded-clarification-new-receive'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      clarification_order_id,2,'accept',null,null,
+      'pr4-superseded-clarification-new-accept'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      clarification_order_id,2,'dispense',null,null,
+      'pr4-superseded-clarification-new-dispense'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      clarification_order_id,2,'ship',null,'private-stale-tracking',
+      'pr4-superseded-clarification-new-ship'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      clarification_order_id,0,'receive',null,null,
+      'pr4-superseded-clarification-receive'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      clarification_order_id,1,'request_clarification',
+      'private-superseded-question',null,
+      'pr4-superseded-clarification-request'
+    );
+    begin
+      perform public.care_apply_pharmacy_order_action(
+        clarification_order_id,
+        '40000000-0000-4000-8000-000000000005',
+        2,'reject',null,null,
+        'pr4-superseded-clarification-reject',
+        '2026-07-25T20:11:20Z'
+      );
+      raise exception 'noncanonical clarification rejection was accepted';
+    exception when check_violation then
+      if sqlerrm <> 'care_invalid_pharmacy_transition' then raise; end if;
+    end;
+    begin
+      perform public.care_apply_pharmacy_order_action(
+        clarification_order_id,
+        '40000000-0000-4000-8000-000000000007',
+        2,'cancel',null,null,
+        'pr4-superseded-clarification-cancel',
+        '2026-07-25T20:11:20Z'
+      );
+      raise exception 'cross-pharmacy actor cancelled superseded clarification';
+    exception when insufficient_privilege then null;
+    end;
+
+    if (select status from public.care_pharmacy_orders where id = clarification_order_id) <> 'clarification_requested'
+      or (select version from public.care_pharmacy_orders where id = clarification_order_id) <> 2
+      or (
+        select count(*) from public.care_pharmacy_order_events
+        where pharmacy_order_id = clarification_order_id
+      ) <> clarification_event_count_before
+    then raise exception 'blocked clarification actions mutated the order'; end if;
+
+    perform public.care_apply_pharmacy_order_action(
+      clarification_order_id,
+      '40000000-0000-4000-8000-000000000005',
+      2,'cancel',null,null,
+      'pr4-superseded-clarification-cancel',
+      '2026-07-25T20:11:30Z'
+    );
+    perform public.care_apply_pharmacy_order_action(
+      clarification_order_id,
+      '40000000-0000-4000-8000-000000000005',
+      2,'cancel',null,null,
+      'pr4-superseded-clarification-cancel',
+      '2026-07-25T20:11:31Z'
+    );
+    begin
+      perform public.care_apply_pharmacy_order_action(
+        clarification_order_id,
+        '40000000-0000-4000-8000-000000000005',
+        2,'reject',null,null,
+        'pr4-superseded-clarification-cancel',
+        '2026-07-25T20:11:32Z'
+      );
+      raise exception 'mismatched terminal replay was accepted';
+    exception when check_violation then
+      if sqlerrm <> 'care_pharmacy_action_replay_mismatch' then raise; end if;
+    end;
+    begin
+      perform public.care_apply_pharmacy_order_action(
+        clarification_order_id,
+        '40000000-0000-4000-8000-000000000007',
+        2,'cancel',null,null,
+        'pr4-superseded-clarification-cancel',
+        '2026-07-25T20:11:32Z'
+      );
+      raise exception 'cross-pharmacy terminal replay was accepted';
+    exception when insufficient_privilege then null;
+    end;
+    if (select status from public.care_pharmacy_orders where id = clarification_order_id) <> 'cancelled'
+      or (select version from public.care_pharmacy_orders where id = clarification_order_id) <> 3
+      or (
+        select count(*) from public.care_pharmacy_order_events
+        where pharmacy_order_id = clarification_order_id
+      ) <> clarification_event_count_before + 1
+      or not exists (
+        select 1 from public.care_pharmacy_order_events
+        where pharmacy_order_id = clarification_order_id
+          and action = 'cancel'
+          and from_status = 'clarification_requested'
+          and to_status = 'cancelled'
+          and actor_user_id = '40000000-0000-4000-8000-000000000005'
+          and idempotency_key = 'pr4-superseded-clarification-cancel'
+      )
+    then raise exception 'terminal clarification cancellation audit proof failed'; end if;
+
+    raise exception 'rollback-superseded-clarification-cancellation-proof';
+  exception when raise_exception then
+    if sqlerrm <> 'rollback-superseded-clarification-cancellation-proof' then raise; end if;
   end;
 
   if (select status from public.care_prescriptions where id = original_prescription_id) <> 'signed'

@@ -893,6 +893,7 @@ begin
   if next_status is null or not (
     (order_row.status = 'pending_pharmacy' and next_status in ('received','rejected','cancelled'))
     or (order_row.status = 'received' and next_status in ('clarification_requested','accepted','rejected','cancelled'))
+    or (order_row.status = 'clarification_requested' and next_status = 'cancelled')
     or (order_row.status = 'accepted' and next_status in ('clarification_requested','dispensed','cancelled'))
     or (order_row.status = 'dispensed' and next_status in ('shipped','cancelled'))
     or (order_row.status = 'shipped' and next_status = 'delivered')

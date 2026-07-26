@@ -114,10 +114,10 @@ const transitions: Readonly<
 > = {
   pending_pharmacy: ["received", "rejected", "cancelled"],
   received: ["clarification_requested", "accepted", "rejected", "cancelled"],
-  clarification_requested: [],
+  clarification_requested: ["cancelled"],
   accepted: ["clarification_requested", "dispensed", "cancelled"],
   rejected: [],
-  dispensed: ["shipped"],
+  dispensed: ["shipped", "cancelled"],
   shipped: ["delivered"],
   delivered: [],
   cancelled: [],

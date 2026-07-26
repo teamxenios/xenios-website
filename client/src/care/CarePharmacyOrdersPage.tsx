@@ -14,6 +14,7 @@ type State =
 const nextAction: Partial<Record<CarePharmacyOrder["status"], CarePharmacyAction>> = {
   pending_pharmacy: "receive",
   received: "accept",
+  clarification_requested: "cancel",
   accepted: "dispense",
   dispensed: "ship",
   shipped: "deliver",
@@ -111,6 +112,7 @@ export default function CarePharmacyOrdersPage() {
                       <div className="rule-top mt-6 pt-6">
                         <p className="mono-label text-ink">CLINICIAN RESPONSE REQUIRED</p>
                         <p className="body-m text-ink-2 mt-3">This clarification remains open until the assigned clinician or a clinical administrator records a private resolution reference.</p>
+                        <p className="body-m text-ink-2 mt-3">The assigned pharmacy may cancel the order without resolving or advancing the clinical workflow.</p>
                       </div>
                     )}
                     {(action || canRequestClarification) && <div className="rule-top mt-6 pt-6">

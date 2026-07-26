@@ -160,6 +160,35 @@ describe("Care PR 4 pharmacy boundary", () => {
     ).toEqual({ allowed: false, reason: "invalid_pharmacy_transition" });
   });
 
+  it("permits only the terminal cancellation escape from open clarification", () => {
+    const openOrder = {
+      ...order,
+      status: "clarification_requested" as const,
+      clarificationOpen: true,
+    };
+    expect(
+      transitionCarePharmacyOrder({
+        order: openOrder,
+        next: "cancelled",
+        actor,
+      }),
+    ).toMatchObject({
+      allowed: true,
+      order: {
+        status: "cancelled",
+        clarificationOpen: true,
+        version: 3,
+      },
+    });
+    expect(
+      transitionCarePharmacyOrder({
+        order: openOrder,
+        next: "accepted",
+        actor,
+      }),
+    ).toEqual({ allowed: false, reason: "invalid_pharmacy_transition" });
+  });
+
   it("requires the assigned clinician or a clinical admin to resolve clarification", () => {
     const openOrder = {
       ...order,

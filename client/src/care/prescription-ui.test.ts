@@ -30,6 +30,8 @@ describe("Care PR4 final Xenios UI states", () => {
     expect(pharmacy).toContain("CLARIFICATION REQUEST REFERENCE");
     expect(pharmacy).toContain("CLINICIAN RESPONSE REQUIRED");
     expect(pharmacy).toContain("Request clarification");
+    expect(pharmacy).toContain('clarification_requested: "cancel"');
+    expect(pharmacy).toContain("Cancel order");
     expect(pharmacy).toContain("Nothing was changed.");
     expect(pharmacy).not.toContain("<main");
     expect(pharmacy).not.toMatch(/demo pharmacy|sample order|fake patient/i);
