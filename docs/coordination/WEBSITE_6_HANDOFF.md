@@ -105,6 +105,23 @@
   https://github.com/teamxenios/xenios-website/issues/44#issuecomment-5081358506
 - Release Train 0 production status: **PARTIALLY LIVE**.
 
+## Release Train 1 candidate evidence
+
+- PR #47 frozen head:
+  `877ebfff75452f47b3b185e9879a0dcf156e0ef7`.
+- 76/76 focused tests pass.
+- 14/14 exported Website 3 routes are present behind injected member/admin
+  guards; zero new Website 3 adapter mismatches.
+- 20/20 independent browser checks pass for populated/error/unavailable states,
+  keyboard focus, WCAG A/AA, contrast, touch targets, sensitive browser state,
+  and overflow across desktop/320/375/430/tablet.
+- A 720-CSS-pixel reflow check representing 200% zoom on 1440px passes.
+- Production build, leak scan, and Xenios UI consistency budgets pass.
+- No migration exists in PR #47 by design. Production migrations, canonical
+  repositories, RLS, private Storage/providers, shared wiring, and authenticated
+  persistence smoke remain Website 2-owned integration gates.
+- Candidate verdict: **PASS; NOT YET MERGED**.
+
 Website 2 remains the sole merge/deployment coordinator. Website 6 must verify
 the deployed SHA, live 320px behavior, contrast, logs, and smoke checks after
 the Website 6 release.

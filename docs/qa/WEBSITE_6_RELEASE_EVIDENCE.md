@@ -33,8 +33,11 @@
 - Website 4 candidate `6dba785b649a8b729d74d2691ac7d46b2a64e4f6`
   resolves all 16 partner adapter registrations. The generated inventory reports
   zero missing adapter routes, and 49/49 focused adapter/route tests pass.
-- PR #46 and PR #47 require Website 2-approved Xenios visual revisions and new
-  frozen heads before Website 6 cross-PR visual verification.
+- PR #47 exact frozen head `877ebfff75452f47b3b185e9879a0dcf156e0ef7`
+  passes Website 6's domain-candidate QA. Production integration remains gated
+  on Website 2-owned persistence, migrations, private providers/storage,
+  shared registration, and authenticated smoke.
+- PR #46 still requires its next coordinated frozen-head verification.
 - PR #48 remains draft and requires production wiring and persona smoke tests.
 
 ## Release Train 0 — Assessment
@@ -59,6 +62,27 @@
   because no authorized production session was available; no identity or record
   was fabricated.
 - Production status: **PARTIALLY LIVE**.
+
+## Release Train 1 — Website 3 frozen candidate
+
+- PR #47 exact candidate:
+  `877ebfff75452f47b3b185e9879a0dcf156e0ef7`.
+- Focused product/diagnostics routes and UI: 12 files, 76/76 tests passed.
+- Route contract: 14/14 exported member/admin routes are present behind the
+  injected active-member/admin guards; zero new Website 3 adapter mismatches.
+  The 16 unrelated partner mismatches on the candidate's older base are already
+  resolved by Website 4 candidate `6dba785b649a8b729d74d2691ac7d46b2a64e4f6`.
+- UI matrix: 20/20 populated, error, unavailable, keyboard, overflow, touch
+  target, browser-state privacy, and WCAG A/AA checks passed across desktop,
+  320, 375, 430, and tablet. A separate 720-CSS-pixel reflow check representing
+  200% zoom on a 1440px layout also passed.
+- Production build, 1,084-file/101-artifact leak scan, and Xenios UI consistency
+  budgets passed.
+- PR #47 correctly contains no production migration or shared application
+  registration. Website 2 must supply and verify the reviewed canonical
+  migrations, Supabase repositories/RLS, private Storage providers, capability
+  and route wiring, and authenticated production persistence smoke.
+- Candidate QA verdict: **PASS; PRODUCTION INTEGRATION GATE CLOSED**.
 
 ## Pre-release live baseline
 
