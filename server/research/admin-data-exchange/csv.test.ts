@@ -78,6 +78,27 @@ describe("Research administration CSV parsing", () => {
     });
   });
 
+  it.each(["\uD800", "\uDC00"])(
+    "rejects ill-formed string input without normalizing %j",
+    (loneSurrogate) => {
+      const result = parseAdminCsv(
+        `SKU,Product Name\r\nA-1,${loneSurrogate}\r\n`,
+        schema,
+      );
+      expect(result).toEqual({
+        ok: false,
+        errors: [
+          {
+            code: "invalid_utf8",
+            scope: "file",
+            message: "CSV input must be valid UTF-8.",
+          },
+        ],
+      });
+      expect(JSON.stringify(result)).not.toContain("�");
+    },
+  );
+
   it.each([
     ["duplicate_header", "SKU,SKU\r\nA-1,Alpha\r\n"],
     ["missing_required_header", "SKU,Notes\r\nA-1,Safe\r\n"],
@@ -240,6 +261,40 @@ describe("Research administration CSV serialization", () => {
     expect(parseAdminCsv(serialized.bytes, schema)).toMatchObject({
       ok: true,
       records: [{ sku: "A-1", name: "Alpha", notes: "π" }],
+    });
+  });
+
+  it.each(["\uD800", "\uDC00"])(
+    "rejects ill-formed field output with redacted coordinates for %j",
+    (loneSurrogate) => {
+      const result = serializeAdminCsv(
+        [{ sku: "A-1", name: loneSurrogate }],
+        schema,
+      );
+      expect(result).toMatchObject({
+        ok: false,
+        errors: [
+          {
+            code: "invalid_field_value",
+            scope: "field",
+            row: 2,
+            column: 2,
+            field: "name",
+          },
+        ],
+      });
+      expect(JSON.stringify(result)).not.toContain("�");
+    },
+  );
+
+  it("round-trips a valid astral surrogate pair without replacement", () => {
+    const record = { sku: "A-1", name: "Astral 🙂", notes: "" };
+    const serialized = serializeAdminCsv([record], schema);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) return;
+    expect(parseAdminCsv(serialized.bytes, schema)).toMatchObject({
+      ok: true,
+      records: [record],
     });
   });
 

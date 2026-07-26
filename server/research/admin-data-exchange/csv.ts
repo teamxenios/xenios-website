@@ -87,6 +87,8 @@ function validateSchema<TKey extends string>(
       headers.has(column.header) ||
       keys.has(column.key) ||
       isFormulaRisk(column.header) ||
+      !isWellFormedUnicode(column.header) ||
+      !isWellFormedUnicode(column.key) ||
       containsProhibitedControl(column.header) ||
       containsProhibitedControl(column.key)
     ) {
@@ -96,6 +98,20 @@ function validateSchema<TKey extends string>(
     keys.add(column.key);
   }
   return [];
+}
+
+function isWellFormedUnicode(value: string): boolean {
+  for (let index = 0; index < value.length; index += 1) {
+    const unit = value.charCodeAt(index);
+    if (unit >= 0xd800 && unit <= 0xdbff) {
+      const next = value.charCodeAt(index + 1);
+      if (!(next >= 0xdc00 && next <= 0xdfff)) return false;
+      index += 1;
+    } else if (unit >= 0xdc00 && unit <= 0xdfff) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function containsProhibitedControl(value: string): boolean {
@@ -218,6 +234,7 @@ function decodeUtf8(
   input: Uint8Array | string,
 ): { ok: true; text: string; bytes: Uint8Array } | { ok: false } {
   if (typeof input === "string") {
+    if (!isWellFormedUnicode(input)) return { ok: false };
     return { ok: true, text: input, bytes: new TextEncoder().encode(input) };
   }
   try {
@@ -250,6 +267,17 @@ export function parseAdminCsv<TKey extends string>(
   ];
   if (configurationErrors.length) {
     return { ok: false, errors: configurationErrors };
+  }
+
+  if (
+    options.allowBom === false &&
+    typeof input !== "string" &&
+    input.length >= 3 &&
+    input[0] === 0xef &&
+    input[1] === 0xbb &&
+    input[2] === 0xbf
+  ) {
+    return { ok: false, errors: [error("bom_not_allowed", "file")] };
   }
 
   const decoded = decodeUtf8(input);
@@ -379,7 +407,7 @@ function serializedValue(
     return { ok: false };
   }
   const text = String(value);
-  if (containsProhibitedControl(text)) {
+  if (!isWellFormedUnicode(text) || containsProhibitedControl(text)) {
     return { ok: false };
   }
   return { ok: true, value: isFormulaRisk(text) ? `'${text}` : text };
