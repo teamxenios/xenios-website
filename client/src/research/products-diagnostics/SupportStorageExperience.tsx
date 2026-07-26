@@ -172,7 +172,11 @@ export function ResearchEducationCenter({
           ) : (
             <ul className="mt-4 grid list-none gap-4 p-0 lg:grid-cols-3">
               {topics.map((topic) => (
-                <li key={topic.topicId} className="card flex flex-col">
+                <li
+                  key={topic.topicId}
+                  id={topic.topicId}
+                  className="card flex flex-col scroll-mt-24"
+                >
                   <h3 className="body-m font-700">{topic.label}</h3>
                   <p className="body-s text-ink-2 mt-2 flex-1">{topic.summary}</p>
                   <Link href={topic.href} className="btn btn-secondary mt-4">

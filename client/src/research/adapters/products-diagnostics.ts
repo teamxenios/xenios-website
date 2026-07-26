@@ -146,6 +146,18 @@ export interface AdminSupplementPlaceholder {
   description: string;
   launchInterestHref: string;
   status: "coming_soon";
+  channelMetadata: Record<
+    | "affiliate"
+    | "wholesale"
+    | "professional_dispensary"
+    | "partner_fulfilled"
+    | "private_label",
+    {
+      configured: boolean;
+      partnerReference: string | null;
+      publicUrl: string | null;
+    }
+  >;
   adminEditable: true;
   updatedAt: string;
   updatedBy: string | null;
@@ -320,7 +332,7 @@ export function updateAdminSupplementPlaceholder(
   category: string,
   patch: Pick<
     AdminSupplementPlaceholder,
-    "label" | "description" | "launchInterestHref"
+    "label" | "description" | "channelMetadata" | "launchInterestHref"
   >,
 ): Promise<ApiResult<{ ok: true; supplement: AdminSupplementPlaceholder }>> {
   return apiPut(paths.adminSupplement(category), patch, token);
@@ -336,7 +348,19 @@ export function updateAdminSuperpowerOffer(
   token: string,
   patch: Pick<
     AdminSuperpowerOffer,
-    "label" | "summary" | "status" | "availability" | "disclosure"
+    | "label"
+    | "summary"
+    | "status"
+    | "availability"
+    | "collectionMethod"
+    | "priceCents"
+    | "priceEffectiveDate"
+    | "lastVerificationDate"
+    | "lastReviewedDate"
+    | "verifiedPriceDate"
+    | "disclosure"
+    | "interest"
+    | "affiliate"
   >,
 ): Promise<ApiResult<{ ok: true; offer: AdminSuperpowerOffer }>> {
   return apiPut(paths.adminSuperpower, patch, token);

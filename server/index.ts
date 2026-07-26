@@ -9,11 +9,13 @@ import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { registerMemberPlatformApi } from "./research/member-platform";
+import { defaultDeps as defaultMemberPlatformDeps } from "./research/member-platform-deps";
 import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
 import {
   buildWebsite3ProductionDependencies,
   registerProductsDiagnosticsApi,
+  toTrainerSafeBiomarkerSummary,
 } from "./research/products-diagnostics";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
@@ -125,7 +127,14 @@ registerMemberAccessApi(app);
 // state, so this is safe to register before any provider credential exists.
 // This is the one-line wiring the member-platform lane deliberately left for
 // the integration session (it never edits this file itself).
-registerMemberPlatformApi(app);
+const website3Dependencies = buildWebsite3ProductionDependencies();
+registerMemberPlatformApi(app, {
+  ...defaultMemberPlatformDeps(),
+  getTrainerSafeBiomarkerSummary: async (memberId) => {
+    const record = await website3Dependencies.biomarkers.getExisting(memberId);
+    return record ? toTrainerSafeBiomarkerSummary(record) : null;
+  },
+});
 // Commerce surface (G6-G8): catalog and goal reads are live and provenance-
 // gated; every stateful surface (cart writes, checkout, orders, subscriptions,
 // claims, partners) fails closed with commerce_disabled until the production
@@ -152,7 +161,7 @@ registerCommerceApi(app, buildCommerceDependencies(), {
 // remain server-authoritatively unavailable until their real gates pass.
 registerProductsDiagnosticsApi(
   app,
-  buildWebsite3ProductionDependencies(),
+  website3Dependencies,
   {
     requireActiveMember,
     requireAdmin: requireSupabaseAdmin,

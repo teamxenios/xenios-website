@@ -6,12 +6,34 @@ import {
   updateAdminMetabolicPathway,
   updateAdminSupplementPlaceholder,
   updateAdminSuperpowerOffer,
+  type AdminSupplementPlaceholder,
 } from "../../adapters/products-diagnostics";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../../ui/kit";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 import { useAdminResource } from "./auth";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
+type SupplementChannel = keyof AdminSupplementPlaceholder["channelMetadata"];
+
+const SUPPLEMENT_CHANNELS: readonly SupplementChannel[] = [
+  "affiliate",
+  "wholesale",
+  "professional_dispensary",
+  "partner_fulfilled",
+  "private_label",
+];
+
+function optionalText(form: FormData, name: string): string | null {
+  const value = String(form.get(name) ?? "").trim();
+  return value || null;
+}
+
+function optionalInteger(form: FormData, name: string): number | null {
+  const value = optionalText(form, name);
+  if (value === null) return null;
+  const parsed = Number(value);
+  return Number.isInteger(parsed) ? parsed : Number.NaN;
+}
 
 function ManagedForm({
   title,
@@ -53,19 +75,37 @@ function Field({
   name,
   value,
   multiline = false,
+  required = true,
+  type = "text",
+  min,
 }: {
   label: string;
   name: string;
   value: string;
   multiline?: boolean;
+  required?: boolean;
+  type?: "text" | "url" | "date" | "number";
+  min?: number;
 }) {
   return (
     <label className="grid gap-2">
       <span className="form-label">{label}</span>
       {multiline ? (
-        <textarea className="input-field min-h-28" name={name} defaultValue={value} required />
+        <textarea
+          className="input-field min-h-28"
+          name={name}
+          defaultValue={value}
+          required={required}
+        />
       ) : (
-        <input className="input-field" name={name} defaultValue={value} required />
+        <input
+          className="input-field"
+          name={name}
+          defaultValue={value}
+          required={required}
+          type={type}
+          min={min}
+        />
       )}
     </label>
   );
@@ -153,6 +193,19 @@ function ConfigurationBody({ token }: { token: string }) {
                       label: String(form.get("label") ?? ""),
                       description: String(form.get("description") ?? ""),
                       launchInterestHref: String(form.get("launchInterestHref") ?? ""),
+                      channelMetadata: Object.fromEntries(
+                        SUPPLEMENT_CHANNELS.map((channel) => [
+                          channel,
+                          {
+                            configured: form.get(`${channel}Configured`) === "on",
+                            partnerReference: optionalText(
+                              form,
+                              `${channel}PartnerReference`,
+                            ),
+                            publicUrl: optionalText(form, `${channel}PublicUrl`),
+                          },
+                        ]),
+                      ) as AdminSupplementPlaceholder["channelMetadata"],
                     });
                     if (result.kind === "ok") supplements.reload();
                     return result.kind === "ok";
@@ -161,6 +214,42 @@ function ConfigurationBody({ token }: { token: string }) {
                   <Field label="Public label" name="label" value={supplement.label} />
                   <Field label="Public explanation" name="description" value={supplement.description} multiline />
                   <Field label="Interest route" name="launchInterestHref" value={supplement.launchInterestHref} />
+                  <fieldset className="grid gap-4 border-0 p-0">
+                    <legend className="form-label">Future channel readiness</legend>
+                    {SUPPLEMENT_CHANNELS.map((channel) => {
+                      const metadata = supplement.channelMetadata[channel];
+                      const label = channel.replaceAll("_", " ");
+                      return (
+                        <div
+                          key={channel}
+                          className="grid gap-3 border-t pt-4"
+                          style={{ borderColor: "var(--rule)" }}
+                        >
+                          <label className="flex min-h-11 items-center gap-3 body-s font-700">
+                            <input
+                              type="checkbox"
+                              name={`${channel}Configured`}
+                              defaultChecked={metadata.configured}
+                            />
+                            {label} configured
+                          </label>
+                          <Field
+                            label={`${label} partner reference`}
+                            name={`${channel}PartnerReference`}
+                            value={metadata.partnerReference ?? ""}
+                            required={false}
+                          />
+                          <Field
+                            label={`${label} public HTTPS URL`}
+                            name={`${channel}PublicUrl`}
+                            value={metadata.publicUrl ?? ""}
+                            required={false}
+                            type="url"
+                          />
+                        </div>
+                      );
+                    })}
+                  </fieldset>
                 </ManagedForm>
               ))}
             </div>
@@ -189,7 +278,21 @@ function ConfigurationBody({ token }: { token: string }) {
                     summary: String(form.get("summary") ?? ""),
                     status: String(form.get("status") ?? "") as typeof superpower.data.offer.status,
                     availability: String(form.get("availability") ?? ""),
+                    collectionMethod: optionalText(form, "collectionMethod"),
+                    priceCents: optionalInteger(form, "priceCents"),
+                    priceEffectiveDate: optionalText(form, "priceEffectiveDate"),
+                    lastVerificationDate: optionalText(form, "lastVerificationDate"),
+                    lastReviewedDate: optionalText(form, "lastReviewedDate"),
+                    verifiedPriceDate: optionalText(form, "verifiedPriceDate"),
                     disclosure: String(form.get("disclosure") ?? ""),
+                    interest: {
+                      enabled: form.get("interestEnabled") === "on",
+                      href: optionalText(form, "interestHref"),
+                    },
+                    affiliate: {
+                      enabled: form.get("affiliateEnabled") === "on",
+                      url: optionalText(form, "affiliateUrl"),
+                    },
                   });
                   if (result.kind === "ok") superpower.reload();
                   return result.kind === "ok";
@@ -201,12 +304,89 @@ function ConfigurationBody({ token }: { token: string }) {
                   <span className="form-label">Public status</span>
                   <select className="input-field" name="status" defaultValue={superpower.data.offer.status}>
                     <option value="coming_soon">Coming soon</option>
+                    <option value="available">Available</option>
                     <option value="paused">Paused</option>
                     <option value="unavailable">Unavailable</option>
                   </select>
                 </label>
                 <Field label="Availability explanation" name="availability" value={superpower.data.offer.availability} />
+                <Field
+                  label="Collection method"
+                  name="collectionMethod"
+                  value={superpower.data.offer.collectionMethod ?? ""}
+                  required={false}
+                />
+                <Field
+                  label="Price in cents"
+                  name="priceCents"
+                  value={superpower.data.offer.priceCents?.toString() ?? ""}
+                  required={false}
+                  type="number"
+                  min={0}
+                />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field
+                    label="Price effective date"
+                    name="priceEffectiveDate"
+                    value={superpower.data.offer.priceEffectiveDate ?? ""}
+                    required={false}
+                    type="date"
+                  />
+                  <Field
+                    label="Last price verification"
+                    name="verifiedPriceDate"
+                    value={superpower.data.offer.verifiedPriceDate ?? ""}
+                    required={false}
+                    type="date"
+                  />
+                  <Field
+                    label="Last offer verification"
+                    name="lastVerificationDate"
+                    value={superpower.data.offer.lastVerificationDate ?? ""}
+                    required={false}
+                    type="date"
+                  />
+                  <Field
+                    label="Last reviewed"
+                    name="lastReviewedDate"
+                    value={superpower.data.offer.lastReviewedDate ?? ""}
+                    required={false}
+                    type="date"
+                  />
+                </div>
                 <Field label="Affiliate disclosure" name="disclosure" value={superpower.data.offer.disclosure} multiline />
+                <fieldset className="grid gap-4 border-0 p-0">
+                  <legend className="form-label">Member and affiliate actions</legend>
+                  <label className="flex min-h-11 items-center gap-3 body-s font-700">
+                    <input
+                      type="checkbox"
+                      name="interestEnabled"
+                      defaultChecked={superpower.data.offer.interest.enabled}
+                    />
+                    Interest action enabled
+                  </label>
+                  <Field
+                    label="Interest route"
+                    name="interestHref"
+                    value={superpower.data.offer.interest.href ?? ""}
+                    required={false}
+                  />
+                  <label className="flex min-h-11 items-center gap-3 body-s font-700">
+                    <input
+                      type="checkbox"
+                      name="affiliateEnabled"
+                      defaultChecked={superpower.data.offer.affiliate.enabled}
+                    />
+                    Affiliate offer enabled
+                  </label>
+                  <Field
+                    label="Affiliate HTTPS URL"
+                    name="affiliateUrl"
+                    value={superpower.data.offer.affiliate.url ?? ""}
+                    required={false}
+                    type="url"
+                  />
+                </fieldset>
               </ManagedForm>
             )}
           </AdminBoundary>

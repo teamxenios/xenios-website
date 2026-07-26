@@ -21,6 +21,7 @@ import {
   type PublicSuperpowerOffer,
   type SuperpowerOfferConfig,
   toPublicSuperpowerOffer,
+  validateSuperpowerOffer,
 } from "./diagnostics";
 import {
   DEFAULT_METABOLIC_PATHWAYS,
@@ -457,59 +458,6 @@ function superpowerFromRow(row: Record<string, unknown>): SuperpowerOfferConfig 
   };
 }
 
-function validDateOrNull(value: unknown): boolean {
-  if (value === null) return true;
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-  const date = new Date(`${value}T00:00:00.000Z`);
-  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
-}
-
-function validateSuperpower(offer: SuperpowerOfferConfig): void {
-  if (!["coming_soon", "available", "paused", "unavailable"].includes(offer.status)) {
-    throw new Website3ValidationError("Superpower status is invalid");
-  }
-  for (const [name, value, max] of [
-    ["label", offer.label, 160],
-    ["summary", offer.summary, 2000],
-    ["availability", offer.availability, 500],
-    ["disclosure", offer.disclosure, 2000],
-  ] as const) {
-    if (!value.trim() || value.length > max) {
-      throw new Website3ValidationError(`${name} must contain 1-${max} characters`);
-    }
-  }
-  if (
-    offer.priceCents !== null &&
-    (!Number.isInteger(offer.priceCents) || offer.priceCents < 0)
-  ) {
-    throw new Website3ValidationError("priceCents must be a non-negative integer or null");
-  }
-  if (
-    !validDateOrNull(offer.priceEffectiveDate) ||
-    !validDateOrNull(offer.lastVerificationDate) ||
-    !validDateOrNull(offer.lastReviewedDate) ||
-    !validDateOrNull(offer.verifiedPriceDate)
-  ) {
-    throw new Website3ValidationError("Superpower dates must use YYYY-MM-DD or null");
-  }
-  if (
-    offer.interest.enabled &&
-    !offer.interest.href?.startsWith("/research/")
-  ) {
-    throw new Website3ValidationError(
-      "An enabled interest action must stay inside the Research member area.",
-    );
-  }
-  if (
-    offer.affiliate.enabled &&
-    (offer.status !== "available" || !offer.affiliate.url?.startsWith("https://"))
-  ) {
-    throw new Website3ValidationError(
-      "An enabled affiliate offer requires available status and an HTTPS URL.",
-    );
-  }
-}
-
 export class SupabaseSuperpowerOfferRepository {
   constructor(private readonly db: DbClient = getSupabaseAdmin()) {}
 
@@ -562,7 +510,7 @@ export class SupabaseSuperpowerOfferRepository {
       updatedAt: at,
       updatedBy: actor,
     };
-    validateSuperpower(next);
+    validateSuperpowerOffer(next);
     const { data, error } = await this.db
       .from("research_superpower_offers")
       .upsert({

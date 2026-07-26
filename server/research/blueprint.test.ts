@@ -792,12 +792,28 @@ describe("GET /api/admin/research/blueprints/:blueprintId", () => {
         safetyFlags: ["activity_restriction"],
       },
     });
+    deps.getTrainerSafeBiomarkerSummary = vi.fn(async () => ({
+      state: "follow_up_due",
+      stateLabel: "Follow-up due",
+      followUpNeeded: true,
+      updatedAt: "2026-07-25T12:00:00.000Z",
+      reportStorageKey: "private/report.pdf",
+      laboratoryResult: "must-not-leak",
+    })) as MemberPlatformDeps["getTrainerSafeBiomarkerSummary"];
 
     const res = await request(makeApp()).get(`/api/admin/research/blueprints/${row.id}`);
     expect(res.status).toBe(200);
     expect(res.body.planBrief.memberFirstName).toBe("Ava");
     expect(res.body.planBrief.safetyFlags).toEqual(["activity_restriction"]);
+    expect(res.body.planBrief.biomarkerSummary).toEqual({
+      state: "follow_up_due",
+      stateLabel: "Follow-up due",
+      followUpNeeded: true,
+      updatedAt: "2026-07-25T12:00:00.000Z",
+    });
     expect(JSON.stringify(res.body)).not.toContain("RAW_PRIVATE_ANSWER");
+    expect(JSON.stringify(res.body)).not.toContain("private/report.pdf");
+    expect(JSON.stringify(res.body)).not.toContain("must-not-leak");
     expect(state.audits).toHaveLength(1);
     expect(state.audits[0].action).toBe("plan_brief_viewed");
     expect(JSON.stringify(state.audits[0])).not.toContain(DRAFT_MARKER);
@@ -807,6 +823,22 @@ describe("GET /api/admin/research/blueprints/:blueprintId", () => {
     const row = seedBlueprint({ assigned_reviewer_email: "other@example.com" });
     const res = await request(makeApp()).get(`/api/admin/research/blueprints/${row.id}`);
     expect(res.status).toBe(404);
+    expect(state.audits).toHaveLength(0);
+  });
+
+  it("denies a member session before reading trainer-safe biomarker context", async () => {
+    const row = seedBlueprint();
+    const projection = vi.fn(async () => null);
+    deps.getTrainerSafeBiomarkerSummary = projection;
+    admin.allow = false;
+
+    const res = await request(makeApp()).get(
+      `/api/admin/research/blueprints/${row.id}`,
+    );
+
+    expect(res.status).toBe(403);
+    expect(res.body.code).toBe("admin_required");
+    expect(projection).not.toHaveBeenCalled();
     expect(state.audits).toHaveLength(0);
   });
 });

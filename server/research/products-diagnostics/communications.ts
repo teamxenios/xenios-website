@@ -16,6 +16,7 @@ export const PRODUCT_DIAGNOSTIC_EMAIL_EVENTS = [
 ] as const;
 export type ProductDiagnosticEmailEvent =
   (typeof PRODUCT_DIAGNOSTIC_EMAIL_EVENTS)[number];
+export const PRODUCT_DIAGNOSTIC_TEMPLATE_PREFIX = "product_diagnostic:";
 
 const PAYLOAD_ALLOWLIST: Record<ProductDiagnosticEmailEvent, readonly string[]> = {
   order_confirmation: ["firstName", "orderReference", "memberAreaUrl"],
@@ -59,7 +60,7 @@ export class MemoryProductDiagnosticEmailStore
   }
 }
 
-function safePayload(
+export function safeProductDiagnosticPayload(
   eventType: ProductDiagnosticEmailEvent,
   payload: Record<string, unknown>,
 ): Record<string, string> {
@@ -131,6 +132,24 @@ function render(
   };
 }
 
+export function productDiagnosticTemplateKey(
+  eventType: ProductDiagnosticEmailEvent,
+): string {
+  return `${PRODUCT_DIAGNOSTIC_TEMPLATE_PREFIX}${eventType}`;
+}
+
+export function renderProductDiagnosticOutboxEmail(
+  templateKey: string,
+  payload: Record<string, unknown>,
+): { subject: string; text: string } | null {
+  if (!templateKey.startsWith(PRODUCT_DIAGNOSTIC_TEMPLATE_PREFIX)) return null;
+  const eventType = templateKey.slice(
+    PRODUCT_DIAGNOSTIC_TEMPLATE_PREFIX.length,
+  ) as ProductDiagnosticEmailEvent;
+  if (!PRODUCT_DIAGNOSTIC_EMAIL_EVENTS.includes(eventType)) return null;
+  return render(eventType, safeProductDiagnosticPayload(eventType, payload));
+}
+
 export class ProductDiagnosticEmailService {
   constructor(
     private readonly store: ProductDiagnosticEmailStore,
@@ -145,7 +164,7 @@ export class ProductDiagnosticEmailService {
   }): Promise<{ created: boolean; intent: ProductDiagnosticEmailIntent }> {
     const existing = await this.store.get(input.eventKey);
     if (existing) return { created: false, intent: existing };
-    const payload = safePayload(input.eventType, input.payload);
+    const payload = safeProductDiagnosticPayload(input.eventType, input.payload);
     const message = render(input.eventType, payload);
     const intent: ProductDiagnosticEmailIntent = {
       eventKey: input.eventKey,

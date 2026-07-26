@@ -22,6 +22,7 @@ import { getSupabaseAdmin } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
 import { requireActiveMember, type MemberRow } from "./member-auth";
 import { enqueueNotification, runOutboxTick } from "./outbox";
+import { enqueueProductDiagnosticEmail } from "./products-diagnostics/outbox-adapter";
 import { products } from "./products-data";
 
 const REQUESTS = "research_product_requests";
@@ -517,16 +518,18 @@ async function queueMemberNotification(input: {
   member: MemberRow;
   request: RequestRow;
 }): Promise<void> {
-  const queued = await enqueueNotification({
+  const queued = await enqueueProductDiagnosticEmail({
     eventKey: input.eventKey,
-    eventType: input.eventType,
-    templateKey: input.templateKey,
+    eventType:
+      input.templateKey === "member_product_request_received"
+        ? "product_request_confirmation"
+        : "product_request_update",
     recipient: input.member.email,
     payload: {
       firstName: input.member.first_name,
-      reference: input.request.reference,
-      productName: input.request.product_name,
-      status: input.request.status,
+      requestReference: input.request.reference,
+      memberAreaUrl:
+        "https://xeniostechnology.com/research/member/product-requests",
     },
   });
   if (queued) void runOutboxTick().catch(() => undefined);

@@ -83,6 +83,17 @@ describe("Superpower Diagnostics", () => {
 });
 
 describe("Biomarker Center", () => {
+  it("reads trainer context without creating a biomarker record", async () => {
+    const store = new MemoryBiomarkerStore();
+    const service = new BiomarkerService(
+      store,
+      new DisabledBiomarkerUploadProvider(),
+    );
+
+    await expect(service.getExisting("member_1")).resolves.toBeNull();
+    expect(store.records.size).toBe(0);
+  });
+
   it("creates a trainer-safe status summary without report or consent details", () => {
     const summary = toTrainerSafeBiomarkerSummary({
       biomarkerRecordId: "record_private",

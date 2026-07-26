@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   getAdminMetabolicPathways,
+  updateAdminSupplementPlaceholder,
+  updateAdminSuperpowerOffer,
   getProductPlatform,
   requestCertificateAccess,
   updateAdminMetabolicPathway,
@@ -168,6 +170,49 @@ describe("Website 3 member production adapter", () => {
       headers: expect.objectContaining({
         Authorization: "Bearer admin-token",
       }),
+    });
+  });
+
+  it("sends complete supplement-channel and Superpower activation contracts", async () => {
+    const fetchMock = vi.fn(async () => json({ ok: true }));
+    vi.stubGlobal("fetch", fetchMock);
+    const channelMetadata = {
+      affiliate: { configured: true, partnerReference: "partner-1", publicUrl: "https://partner.example" },
+      wholesale: { configured: false, partnerReference: null, publicUrl: null },
+      professional_dispensary: { configured: false, partnerReference: null, publicUrl: null },
+      partner_fulfilled: { configured: false, partnerReference: null, publicUrl: null },
+      private_label: { configured: false, partnerReference: null, publicUrl: null },
+    } as const;
+
+    await updateAdminSupplementPlaceholder("admin-token", "foundational", {
+      label: "Foundational supplements",
+      description: "Reviewed placeholder.",
+      launchInterestHref: "/research/member/product-requests/new",
+      channelMetadata,
+    });
+    await updateAdminSuperpowerOffer("admin-token", {
+      label: "Superpower Diagnostics",
+      summary: "Approved offer summary.",
+      status: "available",
+      availability: "Available to eligible members",
+      collectionMethod: "At-home collection",
+      priceCents: 19900,
+      priceEffectiveDate: "2026-08-01",
+      lastVerificationDate: "2026-07-25",
+      lastReviewedDate: "2026-07-25",
+      verifiedPriceDate: "2026-07-25",
+      disclosure: "Xenios may receive compensation.",
+      interest: { enabled: true, href: "/research/member/product-requests/new" },
+      affiliate: { enabled: true, url: "https://partner.example/offer" },
+    });
+
+    expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toMatchObject({
+      channelMetadata,
+    });
+    expect(JSON.parse(String(fetchMock.mock.calls[1][1]?.body))).toMatchObject({
+      status: "available",
+      priceCents: 19900,
+      affiliate: { enabled: true, url: "https://partner.example/offer" },
     });
   });
 });

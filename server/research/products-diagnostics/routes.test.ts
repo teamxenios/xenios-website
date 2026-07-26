@@ -128,6 +128,12 @@ describe("Website 3 route registration", () => {
       certificateAccess: false,
       biomarkerReportUpload: false,
     });
+    for (const topic of response.body.education.topics) {
+      expect(topic.href).toMatch(
+        /^\/research\/member\/education#[a-z0-9-]+$/,
+      );
+      expect(topic.href.endsWith(`#${topic.topicId}`)).toBe(true);
+    }
   });
 
   it("returns all metabolic cards publicly without the internal alias", async () => {
@@ -316,10 +322,62 @@ describe("Website 3 route registration", () => {
     });
   });
 
+  it("rejects an incomplete Superpower activation and persists a complete HTTPS offer", async () => {
+    const incomplete = await request(app)
+      .put("/api/admin/research/superpower-offer")
+      .send({ status: "available" });
+    expect(incomplete.status).toBe(400);
+    expect(incomplete.body.code).toBe("validation_failed");
+
+    const complete = await request(app)
+      .put("/api/admin/research/superpower-offer")
+      .send({
+        status: "available",
+        availability: "Available to eligible members",
+        collectionMethod: "At-home collection",
+        priceCents: 19900,
+        priceEffectiveDate: "2026-08-01",
+        lastVerificationDate: "2026-07-25",
+        lastReviewedDate: "2026-07-25",
+        verifiedPriceDate: "2026-07-25",
+        interest: {
+          enabled: true,
+          href: "/research/member/product-requests/new?source=diagnostics",
+        },
+        affiliate: {
+          enabled: true,
+          url: "https://partner.example/superpower",
+        },
+      });
+    expect(complete.status).toBe(200);
+    expect(complete.body.offer).toMatchObject({
+      status: "available",
+      collectionMethod: "At-home collection",
+      priceCents: 19900,
+      affiliate: {
+        enabled: true,
+        url: "https://partner.example/superpower",
+      },
+    });
+  });
+
   it("lets administrators edit supplement placeholders without publishing partner references", async () => {
     const updated = await request(app)
       .put("/api/admin/research/supplement-placeholders/foundational")
-      .send({ label: "Foundational supplements under review" });
+      .send({
+        label: "Foundational supplements under review",
+        channelMetadata: {
+          affiliate: {
+            configured: true,
+            partnerReference: "partner-confidential",
+            publicUrl: "https://partner.example",
+          },
+          wholesale: { configured: false, partnerReference: null, publicUrl: null },
+          professional_dispensary: { configured: false, partnerReference: null, publicUrl: null },
+          partner_fulfilled: { configured: false, partnerReference: null, publicUrl: null },
+          private_label: { configured: false, partnerReference: null, publicUrl: null },
+        },
+      });
     expect(updated.status).toBe(200);
     expect(updated.body.supplement).toMatchObject({
       category: "foundational",
@@ -331,6 +389,12 @@ describe("Website 3 route registration", () => {
     const platform = await request(app).get("/api/research/product-platform");
     expect(platform.body.supplements).toHaveLength(4);
     expect(platform.body.supplements[0]).not.toHaveProperty("updatedBy");
+    expect(platform.body.supplements[0].channelMetadata.affiliate).toEqual({
+      configured: true,
+    });
+    expect(JSON.stringify(platform.body.supplements[0])).not.toContain(
+      "partner-confidential",
+    );
   });
 
   it("does not report supplement success when durable persistence rejects", async () => {

@@ -26,10 +26,10 @@ describe("Website 3 support and education experiences", () => {
         boundary="No human-use instructions."
         topics={[
           {
-            topicId: "coa",
+            topicId: "coa-scope",
             label: "How COAs work",
             summary: "Exact-lot documents only.",
-            href: "/research/education/certificates",
+            href: "/research/member/education#coa-scope",
           },
         ]}
         storageSources={[
@@ -49,6 +49,9 @@ describe("Website 3 support and education experiences", () => {
     }
     expect(education).toContain("Storage information sources");
     expect(education).toContain("No human-use instructions");
+    expect(education).toContain('id="coa-scope"');
+    expect(education).toContain('href="/research/member/education#coa-scope"');
+    expect(education).not.toContain('href="/research/education/');
   });
 
   it("renders a truthful empty education state", () => {

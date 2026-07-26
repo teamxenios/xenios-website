@@ -31,6 +31,10 @@ const emails = vi.hoisted(() => ({
   sendAdminTestEmail: vi.fn(async () => ({ ok: true, id: "resend-test-id" })),
 }));
 
+const resend = vi.hoisted(() => ({
+  send: vi.fn(async () => ({ data: { id: "resend-product-id" }, error: null })),
+}));
+
 vi.mock("../supabase", () => {
   function query(table: string) {
     const list = table === "research_notification_attempts" ? state.attempts : state.outbox;
@@ -112,10 +116,16 @@ vi.mock("../supabase", () => {
 
 vi.mock("../routes", () => ({ requireSupabaseAdmin: (_r: any, _s: any, next: any) => next() }));
 vi.mock("./membership-emails", () => emails);
+vi.mock("../services/email", () => ({
+  getResendClient: async () => ({
+    client: { emails: { send: resend.send } },
+  }),
+}));
 
 process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 
 import { enqueueNotification, registerOutboxAdmin, runOutboxTick } from "./outbox";
+import { enqueueProductDiagnosticEmail } from "./products-diagnostics/outbox-adapter";
 
 function makeAdminApp() {
   const app = express();
@@ -154,6 +164,46 @@ describe("enqueue", () => {
   it("never stores a status token in the payload", async () => {
     await enqueueNotification(job());
     expect(JSON.stringify(state.outbox[0].payload)).not.toMatch(/token/i);
+  });
+
+  it("deduplicates Website 3 intents and stores only their allowlisted payload", async () => {
+    const input = {
+      eventKey: "product-request:request-1:received",
+      eventType: "product_request_confirmation" as const,
+      recipient: "member@example.com",
+      payload: {
+        firstName: "Sam",
+        requestReference: "XPR-1001",
+        memberAreaUrl:
+          "https://xeniostechnology.com/research/member/product-requests",
+        diagnosis: "must-not-be-stored",
+        laboratoryResult: "must-not-be-stored",
+      },
+    };
+    expect(await enqueueProductDiagnosticEmail(input)).toBe(true);
+    expect(await enqueueProductDiagnosticEmail(input)).toBe(true);
+    expect(state.outbox).toHaveLength(1);
+    expect(state.outbox[0]).toMatchObject({
+      event_key: input.eventKey,
+      template_key: "product_diagnostic:product_request_confirmation",
+      payload: {
+        firstName: "Sam",
+        requestReference: "XPR-1001",
+      },
+    });
+    expect(JSON.stringify(state.outbox[0])).not.toContain("must-not-be-stored");
+
+    const result = await runOutboxTick(new Date());
+    expect(result.sent).toBe(1);
+    expect(resend.send).toHaveBeenCalledTimes(1);
+    expect(resend.send.mock.calls[0][0]).toMatchObject({
+      to: "member@example.com",
+      subject: "Your product request was received",
+      replyTo: "research@xeniostechnology.com",
+    });
+    expect(JSON.stringify(resend.send.mock.calls[0][0])).not.toContain(
+      "must-not-be-stored",
+    );
   });
 });
 

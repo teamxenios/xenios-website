@@ -41,21 +41,21 @@ export const RESEARCH_EDUCATION_TOPICS = [
     label: "Understanding product status",
     summary:
       "Learn what available, request access, documentation pending, under review, and unavailable mean.",
-    href: "/research/education/product-status",
+    href: "/research/member/education#product-status",
   },
   {
     topicId: "coa-scope",
     label: "How lot-specific COAs work",
     summary:
       "A certificate applies only to its exact verified lot. Missing or mismatched documents fail closed.",
-    href: "/research/education/certificates",
+    href: "/research/member/education#coa-scope",
   },
   {
     topicId: "research-boundary",
     label: "Research information boundary",
     summary:
       "Research documentation describes records and handling boundaries; it does not provide human-use instructions.",
-    href: "/research/education/research-boundary",
+    href: "/research/member/education#research-boundary",
   },
 ] as const;
 

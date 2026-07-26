@@ -69,6 +69,16 @@ export interface MemberPlatformDeps {
   generateBlueprintFromAssessment?: (
     memberId: string,
   ) => Promise<{ ok: boolean; state?: string }>;
+  // Optional minimum-necessary Website 3 projection for the authorized
+  // human Plan Brief. The route serializes only these four fields.
+  getTrainerSafeBiomarkerSummary?: (
+    memberId: string,
+  ) => Promise<{
+    state: string;
+    stateLabel: string;
+    followUpNeeded: boolean;
+    updatedAt: string;
+  } | null>;
 }
 
 export function defaultDeps(): MemberPlatformDeps {
