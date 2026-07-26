@@ -129,10 +129,14 @@ services:
 |---|---|---|---|
 | Care-1 | `care-access-foundation.sql` | Care capability, roles, access audit, forced RLS | RUN (`20260726064113 care_access_foundation`) |
 | Care-2 | `care-eligibility-intake.sql` | Patient identity seam, location, state/clinician coverage, append-only consent/waitlist/eligibility history, and versioned intake foundation | RUN (`20260726080248 care_eligibility_intake`) |
+| Care-3 | `care-appointments-clinician.sql` | Verified medical-group/clinician/provider readiness, appointment/reminder lifecycle, private telehealth references, assignment history, and human-clinician review | PENDING (stacked after Care-2; not yet applied) |
 
-Care-2 seeds no state, clinician, consent document, intake definition, medical
-question, patient, pharmacy, product, price, or availability record. It cannot
-make the canonical Care capability live.
+Care-2 and Care-3 seed no state, clinician, medical group, provider, consent
+document, intake definition, medical question, patient, appointment, pharmacy,
+product, price, or availability record. Neither migration can make the
+canonical Care capability live. Care-3 must be applied only after Care-1 and
+Care-2, and Website 2 must integrate the canonical pre-launch gate and required
+input model before any private seed-data workflow is authorized.
 - 2026-07-26: Care PR2 was applied as managed migration
   `20260726080248 care_eligibility_intake` after Care PR1. Production
   verification found all 13 PR2 tables forced RLS, zero browser table or

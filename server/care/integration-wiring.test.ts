@@ -23,6 +23,9 @@ describe("Care shared integration wiring", () => {
     const intakeRegistration = serverSource.indexOf(
       "registerCareIntakeApi(app, careAccess, careEligibility, careIntake)",
     );
+    const appointmentRegistration = serverSource.indexOf(
+      "registerCareAppointmentApi(app, careAccess, careAppointments)",
+    );
     const apiFallback = serverSource.indexOf('app.use("/api/{*rest}"');
     const productionSpa = serverSource.indexOf("serveStatic(app)");
     const developmentSpa = serverSource.indexOf("setupVite(");
@@ -31,8 +34,10 @@ describe("Care shared integration wiring", () => {
     expect(registration).toBeGreaterThan(-1);
     expect(eligibilityRegistration).toBeGreaterThan(registration);
     expect(intakeRegistration).toBeGreaterThan(eligibilityRegistration);
+    expect(appointmentRegistration).toBeGreaterThan(intakeRegistration);
     expect(registration).toBeLessThan(apiFallback);
     expect(intakeRegistration).toBeLessThan(apiFallback);
+    expect(appointmentRegistration).toBeLessThan(apiFallback);
     expect(registration).toBeLessThan(productionSpa);
     expect(registration).toBeLessThan(developmentSpa);
   });
@@ -47,18 +52,25 @@ describe("Care shared integration wiring", () => {
     expect(appSource).toContain(
       'const CareConsent = lazy(() => import("@/care/CareConsentPendingPage"))',
     );
+    expect(appSource).toContain(
+      'const CareAppointments = lazy(() => import("@/care/CareAppointmentsPage"))',
+    );
     const eligibilityRoute = appSource.indexOf(
       '<Route path="/care/eligibility" component={CareEligibilityRoutes} />',
     );
     const consentRoute = appSource.indexOf(
       '<Route path="/care/consent" component={CareConsentRoutes} />',
     );
+    const appointmentRoute = appSource.indexOf(
+      '<Route path="/care/appointments" component={CareAppointmentRoutes} />',
+    );
     const broadRoute = appSource.indexOf(
       '<Route path="/care/*" component={CareRoutes} />',
     );
     expect(eligibilityRoute).toBeGreaterThan(-1);
     expect(consentRoute).toBeGreaterThan(eligibilityRoute);
-    expect(broadRoute).toBeGreaterThan(consentRoute);
+    expect(appointmentRoute).toBeGreaterThan(consentRoute);
+    expect(broadRoute).toBeGreaterThan(appointmentRoute);
     expect(appSource).toContain(
       '<Route path="/care" component={CareRoutes} />',
     );
