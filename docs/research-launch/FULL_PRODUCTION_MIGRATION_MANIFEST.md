@@ -81,7 +81,9 @@ original 1-26 base bundle:
 | 34 | care-access-foundation.sql | RUN 2026-07-26 (`20260726064113 care_access_foundation`) | Supabase Auth |
 | 35 | care-eligibility-intake.sql | RUN 2026-07-26 (`20260726080248 care_eligibility_intake`) | 34 |
 | 36 | care-appointments-clinician.sql | RUN 2026-07-26 (`20260726093600 care_appointments_clinician`) | 34 + 35 |
-| 37 | care-prescription-pharmacy.sql | PENDING reviewed PR4 integration/apply | 34 + 35 + 36 |
+| 37 | care-prescription-pharmacy.sql | RUN 2026-07-26 (`20260726112848 care_prescription_pharmacy`) | 34 + 35 + 36 |
+| 38 | migrations/20260726143000_research_product_control_center.sql | RUN 2026-07-26 (`20260726214102 research_product_control_center`) | 20 + 21 + 31 + 33 |
+| 39 | migrations/20260726214500_research_product_control_center_privilege_hardening.sql | PENDING exact production grant convergence before Product Control application deploy | 38 |
 
 The exact FM-1 apply date is not in the managed migration-history stream, so
 the manifest records verified presence instead of inventing a timestamp.
@@ -147,11 +149,16 @@ presence of FM or Product Request objects.
   disabled, the deployed tables use forced RLS and reviewed grants, and
   production has zero Care roles, audits, patients, appointments, reviews, or
   other operational Care rows.
-- Care migration 37 remains pending exact integration review and production
-  application. Its disposable PostgreSQL 16 proof must apply Care PR1-4 twice,
-  run every lifecycle and read-only verifier, confirm 38/38 Care tables forced
-  RLS, zero PR4 browser grants/policies, seven reviewed PR4 service RPC grants,
-  zero PR4 rows, and the disabled capability before production apply.
+- Care migration 37 is applied. Production verification confirmed 38/38 Care
+  tables forced RLS, zero PR4 browser grants/policies, seven reviewed PR4
+  service RPC grants, zero PR4/role/audit rows, and the disabled capability.
+- Product Control migration 38 is applied as managed migration
+  `20260726214102 research_product_control_center`. It added no product, price,
+  media, seed, launch, or Care rows and cannot enable public commerce.
+  Production-specific pre-existing/default service-role grants left
+  `TRUNCATE`, `REFERENCES`, and `TRIGGER` privileges beyond the reviewed
+  33-privilege boundary. Migration 39 must converge those grants before the
+  Product Control application is merged or deployed.
 - PENDING migrations for commerce (20-26) are schema-ready but commerce stays
   disabled until: the production commerce dependency layer is wired (see the
   provider readiness doc), a payment processor is approved, and per-SKU purchase
