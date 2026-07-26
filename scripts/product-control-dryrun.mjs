@@ -204,8 +204,9 @@ try {
         )
         and grantee in ('PUBLIC','anon','authenticated');`,
     "0",
-  );  expectScalar(
-    "service role has the exact 48 table privileges required by 12 domain tables",
+  );
+  expectScalar(
+    "service role has the exact 33 table privileges required by the RPC-only boundary",
     `select count(*)::text from information_schema.role_table_grants
       where table_schema = 'public'
         and table_name in (
@@ -218,7 +219,38 @@ try {
         )
         and grantee = 'service_role'
         and privilege_type in ('SELECT','INSERT','UPDATE','DELETE');`,
-    "48",
+    "33",
+  );
+  expectScalar(
+    "five command-managed tables expose SELECT and zero direct mutation privileges",
+    `select concat_ws(':',
+       count(*) filter (where privilege_type = 'SELECT'),
+       count(*) filter (where privilege_type in ('INSERT','UPDATE','DELETE'))
+     )
+     from information_schema.role_table_grants
+     where table_schema = 'public'
+       and table_name in (
+         'research_products','research_product_variants',
+         'research_product_prices','research_product_media',
+         'research_product_admin_audit'
+       )
+       and grantee = 'service_role';`,
+    "5:0",
+  );
+  expectScalar(
+    "seven legacy support tables retain their exact 28 repository privileges",
+    `select count(*)::text
+     from information_schema.role_table_grants
+     where table_schema = 'public'
+       and table_name in (
+         'research_product_facts','research_product_goals',
+         'research_product_guide_links','research_product_prohibited_claims',
+         'research_product_open_questions','research_supplement_candidates',
+         'research_product_content'
+       )
+       and grantee = 'service_role'
+       and privilege_type in ('SELECT','INSERT','UPDATE','DELETE');`,
+    "28",
   );
   expectScalar(
     "service role alone receives the 11 Product Control RPC grants",
@@ -278,12 +310,58 @@ try {
     "draft:false",
   );
   expectRejected(
-    "direct service-role update cannot skip variant review",
+    "service role cannot insert products outside command RPCs",
+    `set role service_role;
+     insert into public.research_products (sku) values ('DIRECT-PRODUCT');`,
+    /permission denied/i,
+  );
+  expectRejected(
+    "service role cannot publish products outside the readiness command",
+    `set role service_role;
+     update public.research_products
+        set admin_status='published', visibility_state='public', active_state=true
+      where sku='DRY-A';`,
+    /permission denied/i,
+  );
+  expectRejected(
+    "service role cannot delete products outside command RPCs",
+    `set role service_role;
+     delete from public.research_products where sku='DRY-A';`,
+    /permission denied/i,
+  );
+  expectScalar(
+    "rejected product DML preserves lifecycle, version, and command audit",
+    `select p.admin_status || ':' || p.visibility_state || ':' ||
+       p.active_state::text || ':' || p.version::text || ':' ||
+       (select count(*)::text from public.research_product_admin_audit a
+         where a.product_id=p.id and a.entity_type='product')
+       from public.research_products p where p.sku='DRY-A';`,
+    "draft:hidden:true:1:1",
+  );
+  expectRejected(
+    "service role cannot insert variants outside command RPCs",
+    `set role service_role;
+     insert into public.research_product_variants (
+       product_id, sku, label, created_by, updated_by
+     ) values (
+       (select id from public.research_products where sku='DRY-A'),
+       'DIRECT-VARIANT', 'Direct', 'direct', 'direct'
+     );`,
+    /permission denied/i,
+  );
+  expectRejected(
+    "service role cannot update variants outside command RPCs",
     `set role service_role;
      update public.research_product_variants
         set status='approved', active=true
       where sku='DRY-A-01';`,
-    /invalid variant state transition/i,
+    /permission denied/i,
+  );
+  expectRejected(
+    "service role cannot delete variants outside command RPCs",
+    `set role service_role;
+     delete from public.research_product_variants where sku='DRY-A-01';`,
+    /permission denied/i,
   );
   expectRejected(
     "draft variant cannot skip review and activate",
@@ -412,18 +490,39 @@ try {
   );
 
   expectRejected(
-    "service-role code cannot rewrite price economic history",
+    "service role cannot insert price history outside command RPCs",
+    `set role service_role;
+     insert into public.research_product_prices (
+       product_id, variant_id, audience, amount_cents, currency,
+       effective_at, status, version, created_by
+     ) values (
+       (select id from public.research_products where sku='DRY-A'),
+       (select id from public.research_product_variants where sku='DRY-A-01'),
+       'member', 1, 'USD', now(), 'active', 1, 'direct'
+     );`,
+    /permission denied/i,
+  );
+  expectRejected(
+    "service role cannot activate price history outside command RPCs",
+    `set role service_role;
+     update public.research_product_prices
+        set status = 'active'
+      where version = 2;`,
+    /permission denied/i,
+  );
+  expectRejected(
+    "service role cannot rewrite price economic history",
     `set role service_role;
      update public.research_product_prices
         set amount_cents = 1, version = 99
       where version = 1;`,
-    /economic history is immutable/i,
+    /permission denied/i,
   );
   expectRejected(
-    "service-role code cannot delete price history",
+    "service role cannot delete price history outside command RPCs",
     `set role service_role;
      delete from public.research_product_prices where version = 1;`,
-    /append-only/i,
+    /permission denied/i,
   );
   expectScalar(
     "rejected price mutations preserve all economic versions",
@@ -443,6 +542,33 @@ try {
       );
       reset role;
     `),
+  );
+  expectRejected(
+    "service role cannot insert media outside the verified-object command",
+    `set role service_role;
+     insert into public.research_product_media (
+       product_id, kind, storage_key, filename, content_type,
+       size_bytes, alt_text, created_by, updated_by
+     ) values (
+       (select id from public.research_products where sku='DRY-A'),
+       'gallery_image', 'direct/object.png', 'object.png', 'image/png',
+       8, 'Direct object', 'direct', 'direct'
+     );`,
+    /permission denied/i,
+  );
+  expectRejected(
+    "service role cannot advance or rewrite pending media directly",
+    `set role service_role;
+     update public.research_product_media
+        set state='approved', alt_text='Bypassed object confirmation', sort_order=99
+      where state='pending_upload';`,
+    /permission denied/i,
+  );
+  expectRejected(
+    "service role cannot delete pending media outside command RPCs",
+    `set role service_role;
+     delete from public.research_product_media where state='pending_upload';`,
+    /permission denied/i,
   );
   expectRejected(
     "pending media cannot bypass object confirmation into review",
@@ -511,6 +637,39 @@ try {
        from public.research_product_media;`,
     "approved:Dry product approved view:3",
   );
+  expectScalar(
+    "verified media commands append one confirmation audit and every versioned change",
+    `select m.version::text || ':' ||
+       (select count(*)::text from public.research_product_admin_audit a
+         where a.entity_type='media') || ':' ||
+       (select count(*)::text from public.research_product_admin_audit a
+         where a.entity_type='media' and a.action='media_upload_confirmed')
+       from public.research_product_media m;`,
+    "5:5:1",
+  );
+
+  requireOk(
+    "reviewed product transition command publishes and audits once",
+    psql(`
+      set role service_role;
+      select public.research_admin_transition_product(
+        (select id from public.research_products where sku='DRY-A'),
+        'published', true, 'public',
+        'reviewer@example.invalid', '2026-07-26T14:45:00Z',
+        'Canonical manifest/hash/count and zero-blocker gate passed'
+      );
+      reset role;
+    `),
+  );
+  expectScalar(
+    "product command preserves versioning and exactly one publication audit",
+    `select p.admin_status || ':' || p.visibility_state || ':' ||
+       p.active_state::text || ':' || p.version::text || ':' ||
+       (select count(*)::text from public.research_product_admin_audit a
+         where a.product_id=p.id and a.action='published')
+       from public.research_products p where p.sku='DRY-A';`,
+    "published:public:true:2:1",
+  );
 
   expectRejected(
     "authenticated browser cannot create products",
@@ -539,10 +698,35 @@ try {
     /variant not found/i,
   );
   expectRejected(
-    "audit history is immutable even to service-role application code",
+    "service role cannot insert audit history outside command RPCs",
+    `set role service_role;
+     insert into public.research_product_admin_audit (
+       product_id, entity_type, action, actor
+     ) values (
+       (select id from public.research_products where sku='DRY-A'),
+       'product', 'forged', 'direct'
+     );`,
+    /permission denied/i,
+  );
+  expectRejected(
+    "service role cannot update audit history outside command RPCs",
     `set role service_role;
      update public.research_product_admin_audit set action='rewritten';`,
-    /append-only/i,
+    /permission denied/i,
+  );
+  expectRejected(
+    "service role cannot delete audit history outside command RPCs",
+    `set role service_role;
+     delete from public.research_product_admin_audit;`,
+    /permission denied/i,
+  );
+  expectScalar(
+    "service role retains read access to RPC-appended audit history",
+    `set role service_role;
+     select (count(*) > 0)::text
+       from public.research_product_admin_audit
+      where actor in ('admin@example.invalid','reviewer@example.invalid');`,
+    "true",
   );
 
   requireOk(

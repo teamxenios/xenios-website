@@ -859,6 +859,18 @@ begin
   end loop;
 end $$;
 
+-- The five command-managed Product Control tables are readable by the server
+-- role, but every mutation must pass through the reviewed SECURITY DEFINER
+-- command functions below. The seven legacy support tables retain their
+-- existing server-role DML grants for compatibility with current repositories.
+revoke insert, update, delete on table
+  public.research_products,
+  public.research_product_variants,
+  public.research_product_prices,
+  public.research_product_media,
+  public.research_product_admin_audit
+from service_role;
+
 revoke all on function public.research_product_admin_audit_append_only()
   from public, anon, authenticated;
 revoke all on function public.research_product_price_history_immutable()

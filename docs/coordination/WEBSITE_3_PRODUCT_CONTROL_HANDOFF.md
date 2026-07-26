@@ -26,16 +26,17 @@ No product, variant, SKU, price, media, lot, COA, inventory, order, role, or pro
 - DB-enforced variant lifecycle requires inactive drafts, reviewed approval transitions, and approved/active state before price creation or approval.
 - Price economic fields/version history are immutable and deletes are rejected, including direct service-role table mutation.
 - Generic media updates cannot move `pending_upload` into review or approval; only the object-verifying confirmation path can establish uploaded state.
+- `research_products`, variants, prices, media, and administration audit retain server-role read access but reject direct server-role INSERT/UPDATE/DELETE; their 11 fixed-search-path `SECURITY DEFINER` commands are the only mutation path.
 - Additive columns on canonical `research_products` and `research_product_content`.
 - Twelve affected canonical/new product tables have enabled and forced RLS.
 - Anon/authenticated table grants: 0.
 - Anon/authenticated Product Control RPC grants: 0.
-- Service-role domain table privileges: 48 (SELECT/INSERT/UPDATE/DELETE across 12 tables).
+- Service-role domain table privileges: exactly 33 (SELECT on all 12 tables plus existing DML on only the seven legacy support tables).
 - Service-role Product Control RPC grants: 11.
 - Private Storage bucket: `research-product-media-production`.
 - Migration creates zero domain rows.
 
-Disposable PostgreSQL 16 proof: migration applied twice; product/duplicate/variant/price/media lifecycle passed; pending-media review/approval bypasses failed without mutation; direct service-role price UPDATE/DELETE and draft-to-approved variant bypasses failed; unreviewed pricing failed; cross-role and cross-product mutation failed; service-role audit update failed; superuser-only disposable rollback left zero domain rows. Verifier: `scripts/product-control-dryrun.mjs`.
+Disposable PostgreSQL 16 proof: migration applied twice; 60/60 checks passed; all five command-managed tables rejected direct service-role INSERT/UPDATE/DELETE; product publication, reviewed variant activation, versioned pricing, verified media confirmation/review/approval, and audit append all passed through command RPCs; exact privilege counts, forced RLS, zero browser grants, zero migration-created rows, and rollback-zero passed. Verifier: `scripts/product-control-dryrun.mjs`.
 
 Rollback for an unpopulated failed release: remove the isolated private bucket, 11 Product Control RPCs, append-only trigger/function, four new tables, and only the columns introduced by this migration. For any populated environment, preserve audit/history and use an additive corrective migration; do not drop or rewrite production records.
 
@@ -97,7 +98,7 @@ Exports `ProductCommerceReadinessProjection` and `ProductCommerceReadinessReader
 - Canonical readiness regressions cover empty, truncated, same-count replacement, stale manifest, inconsistent counts, wrong product identity, rejected/expired, and exact-current success.
 - Typecheck: passed.
 - Production build: passed; existing chunk-size warning only.
-- Disposable migration/security verifier: 41/41 passed.
+- Disposable migration/security verifier: 60/60 passed.
 - `git diff --check`: passed immediately before freeze.
 
 ## Locked shared files preserved
