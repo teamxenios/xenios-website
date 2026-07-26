@@ -7,6 +7,7 @@ import type {
 import { MEMBER_PLATFORM_CAPABILITIES } from "@shared/research/member-platform";
 import { requireActiveMember } from "./member-auth";
 import { requireSupabaseAdmin } from "../routes";
+import { healthAssessmentCollectionReady } from "./agreements";
 
 // ---------------------------------------------------------------------------
 // xenios research member platform: capability registry (G0 contract).
@@ -20,6 +21,8 @@ import { requireSupabaseAdmin } from "../routes";
 type CapabilityDefinition = {
   requiredEnv: string[];
   missingApprovals: string[];
+  dynamicMissingApprovals?: () => string[];
+  enabled?: () => boolean;
   flagEnv?: string; // additional explicit opt-in flag, default false
 };
 
@@ -49,6 +52,16 @@ const DEFINITIONS: Record<MemberPlatformCapability, CapabilityDefinition> = {
     missingApprovals: [],
     flagEnv: "RESEARCH_DOCUMENT_RENDERING_ENABLED",
   },
+  assessment: {
+    requiredEnv: [],
+    missingApprovals: [],
+    dynamicMissingApprovals: () =>
+      healthAssessmentCollectionReady()
+        ? []
+        : ["counsel-approved immutable XR-MEM-012 consent"],
+    flagEnv: "RESEARCH_HEALTH_DATA_ENABLED",
+    enabled: healthAssessmentCollectionReady,
+  },
 };
 
 function missingEnv(definition: CapabilityDefinition): string[] {
@@ -62,7 +75,9 @@ function flagOn(definition: CapabilityDefinition): boolean {
 
 export function capabilityEnabled(capability: MemberPlatformCapability): boolean {
   const definition = DEFINITIONS[capability];
-  return flagOn(definition) && missingEnv(definition).length === 0;
+  return definition.enabled
+    ? definition.enabled()
+    : flagOn(definition) && missingEnv(definition).length === 0;
 }
 
 export function memberCapabilities(): MemberCapabilitiesPayload["capabilities"] {
@@ -77,20 +92,22 @@ export function adminCapabilityDiagnostics(now: Date): AdminCapabilityDiagnostic
   return MEMBER_PLATFORM_CAPABILITIES.map((capability) => {
     const definition = DEFINITIONS[capability];
     const missing = missingEnv(definition);
+    const missingApprovals =
+      definition.dynamicMissingApprovals?.() ?? definition.missingApprovals;
     const state: AdminCapabilityDiagnostic["state"] = capabilityEnabled(capability)
       ? "enabled"
       : !flagOn(definition)
         ? "disabled"
         : missing.length > 0
           ? "pending_credentials"
-          : definition.missingApprovals.length > 0
+          : missingApprovals.length > 0
             ? "pending_approval"
             : "misconfigured";
     return {
       capability,
       state,
       missingEnvironmentVariables: missing, // names only, never values
-      missingApprovals: definition.missingApprovals,
+      missingApprovals,
       checkedAt: now.toISOString(),
     };
   });

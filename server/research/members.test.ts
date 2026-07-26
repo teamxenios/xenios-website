@@ -589,6 +589,17 @@ describe("member session guard", () => {
     expect(res.body.member.firstName).toBe("Avery");
     expect(res.body.member.applicationStatus).toBe("approved_pending_payment");
   });
+
+  it("keeps a closed subject session available for privacy rights without reopening member content", async () => {
+    const application = seedMember();
+    state.tables.research_members[0].status = "closed";
+    const res = await request(makeApp())
+      .get("/api/research/member/me")
+      .set("Authorization", "Bearer good-jwt");
+    expect(res.status).toBe(200);
+    expect(res.body.member.status).toBe("closed");
+    expect(res.body.member.applicationStatus).toBe(application.status);
+  });
 });
 
 describe("CODEX_UI contracts", () => {

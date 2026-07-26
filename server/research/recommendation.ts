@@ -43,6 +43,8 @@ export type RecommendationOutput = {
   topPriorities: string[]; // always exactly three
   recommendations: RecommendationItem[];
   questionsForReview: string[]; // items flagged for Samuel's personal review
+  unansweredImportantFields: string[];
+  safetyFlags: string[];
   confidence: RecommendationConfidence;
 };
 
@@ -121,6 +123,8 @@ const SIGNAL_QUESTION_IDS = [
   "monthly_budget",
   "budget_priority",
   "routine_capacity",
+  "training_days_available",
+  "plan_structure",
 ] as const;
 
 function computeConfidence(answers: Record<string, AnswerValue>): RecommendationConfidence {
@@ -194,10 +198,20 @@ export function recommend(input: RecommendationInput): RecommendationOutput {
   const activityRestricted = str(answers, "activity_restriction_flag") === "yes";
   const pregnancyFlag = str(answers, "pregnancy_flag") === "yes";
   const anySafetyFlag = clinicianCare || activityRestricted || pregnancyFlag;
+  const safetyFlags = [
+    ...(clinicianCare ? ["clinician_care"] : []),
+    ...(activityRestricted ? ["activity_restriction"] : []),
+    ...(pregnancyFlag ? ["pregnancy_or_nursing"] : []),
+    ...(hasInjuries ? ["injury_or_limitation"] : []),
+    ...(hasAllergies ? ["allergy_or_intolerance"] : []),
+  ];
 
   const monthlyBudget = str(answers, "monthly_budget");
   const budgetPriority = str(answers, "budget_priority");
-  const routineCapacity = str(answers, "routine_capacity");
+  // v2 renamed routine_capacity to plan_structure and made actual weekly
+  // availability explicit. Keep the old key for already-submitted v1 rows.
+  const routineCapacity = str(answers, "plan_structure") ?? str(answers, "routine_capacity");
+  const trainingDaysAvailable = num(answers, "training_days_available");
 
   const recommendations: RecommendationItem[] = [];
   const questionsForReview: string[] = [];
@@ -255,7 +269,13 @@ export function recommend(input: RecommendationInput): RecommendationOutput {
   // prescription detail; the plan documents carry the actual sessions)
   // -------------------------------------------------------------------------
 
-  const fitnessSignals = answeredOf(answers, ["training_frequency", "primary_goal", "routine_capacity"]);
+  const fitnessSignals = answeredOf(answers, [
+    "training_frequency",
+    "primary_goal",
+    "routine_capacity",
+    "training_days_available",
+    "plan_structure",
+  ]);
   if (fitnessSignals.length > 0) {
     let program: string;
     if (trainingFrequency === "none") {
@@ -277,6 +297,15 @@ export function recommend(input: RecommendationInput): RecommendationOutput {
     // Minimal routine capacity caps the assignment at a three-day shape.
     if (routineCapacity === "minimal" && (program.includes("4-Day") || program.includes("5-Day"))) {
       program = "Foundation Strength 3-Day";
+    }
+    if (trainingDaysAvailable !== null) {
+      if (trainingDaysAvailable <= 1) program = "Foundation Movement 1-Day";
+      else if (trainingDaysAvailable === 2 && !program.includes("2-Day")) program = "Foundation Movement 2-Day";
+      else if (trainingDaysAvailable === 3 && (program.includes("4-Day") || program.includes("5-Day"))) {
+        program = "Balanced Training 3-Day";
+      } else if (trainingDaysAvailable === 4 && program.includes("5-Day")) {
+        program = "Strength Builder 4-Day";
+      }
     }
     const fitnessFlagged = hasInjuries || activityRestricted;
     recommendations.push({
@@ -306,7 +335,13 @@ export function recommend(input: RecommendationInput): RecommendationOutput {
   // -------------------------------------------------------------------------
 
   const eatingPattern = str(answers, "eating_pattern");
-  const nutritionSignals = answeredOf(answers, ["eating_pattern", "primary_goal", "budget_priority", "routine_capacity"]);
+  const nutritionSignals = answeredOf(answers, [
+    "eating_pattern",
+    "primary_goal",
+    "budget_priority",
+    "routine_capacity",
+    "plan_structure",
+  ]);
   if (nutritionSignals.length > 0) {
     let framework: string;
     if (routineCapacity === "minimal" || eatingPattern === "no_pattern" || eatingPattern === "loosely_structured") {
@@ -514,13 +549,18 @@ export function recommend(input: RecommendationInput): RecommendationOutput {
   priorityCandidates.push("Keep the routine simple enough to sustain");
   priorityCandidates.push("Build the habit of a weekly review");
   const topPriorities = Array.from(new Set(priorityCandidates)).slice(0, 3);
+  const unansweredImportantFields = SIGNAL_QUESTION_IDS.filter(
+    (id) => answeredOf(answers, [id]).length === 0,
+  );
 
   return {
     primaryGoal,
     secondaryGoals: dedupedSecondary,
     topPriorities,
     recommendations,
-    questionsForReview,
+    questionsForReview: Array.from(new Set(questionsForReview)),
+    unansweredImportantFields,
+    safetyFlags,
     confidence: computeConfidence(answers),
   };
 }

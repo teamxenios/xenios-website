@@ -32,7 +32,13 @@ export function RequireMember({ children }: { children: ReactNode }) {
       />
     );
   }
-  if (member.status !== "active") return <Redirect to="/research/activate" />;
+  if (member.status !== "active") {
+    // A verified former or paused member keeps access only to the privacy
+    // rights surface so consent can be withdrawn. All ordinary member
+    // content remains behind active status.
+    if (location === "/research/member/privacy") return <>{children}</>;
+    return <Redirect to="/research/activate" />;
+  }
   return <>{children}</>;
 }
 

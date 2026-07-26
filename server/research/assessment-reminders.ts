@@ -3,6 +3,7 @@ import type { MemberPlatformDeps } from "./member-platform-deps";
 import {
   ASSESSMENT_DUE_HOURS,
   ASSESSMENT_RESPONSES_TABLE,
+  fetchInitialResponseRow,
   getOrCreateResponse,
 } from "./assessment";
 
@@ -74,6 +75,9 @@ export async function sweepAssessmentReminders(deps: MemberPlatformDeps): Promis
 
       const milestone = latestPassedMilestone(activatedAt, now);
       if (milestone === null) continue;
+
+      const completed = await fetchInitialResponseRow(member.id);
+      if (completed?.status === "submitted") continue;
 
       // The response row tracks reminders; creating it here (opened=false)
       // never stamps started_at, so "started" still means the member opened it.

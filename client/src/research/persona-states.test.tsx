@@ -85,6 +85,30 @@ describe("member persona states (RequireMember)", () => {
     expect(view.textContent).toContain("private member content");
   });
 
+  it.each(["paused", "past_due", "closed"])(
+    "allows a %s subject to reach only the privacy-rights surface",
+    (status) => {
+      const privacy = renderGate(
+        fixtureContext({ firstName: "Sam", status, applicationStatus: null }),
+        "/research/member/privacy",
+      );
+      expect(window.location.pathname).toBe("/research/member/privacy");
+      expect(privacy.querySelector('[data-testid="member-content"]')).toBeTruthy();
+
+      act(() => root!.unmount());
+      container?.remove();
+      root = null;
+      container = null;
+
+      const ordinary = renderGate(
+        fixtureContext({ firstName: "Sam", status, applicationStatus: null }),
+        "/research/member",
+      );
+      expect(window.location.pathname).toBe("/research/activate");
+      expect(ordinary.querySelector('[data-testid="member-content"]')).toBeNull();
+    },
+  );
+
   it("shows the quiet checking state (no redirect, no content) while the session is verified", () => {
     const view = renderGate(fixtureContext(null, true));
     expect(window.location.pathname).toBe("/research/member");

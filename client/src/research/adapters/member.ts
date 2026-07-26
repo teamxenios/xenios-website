@@ -7,6 +7,10 @@
 // change: these are the exact calls the pages previously made inline.
 
 import { apiGet, apiPost, type ApiResult } from "../lib/api";
+import type {
+  AssessmentAutosaveRequest,
+  AssessmentSubmitRequest,
+} from "@shared/research/member-platform";
 
 const BASE = "/api/research/member";
 
@@ -64,14 +68,84 @@ export function getProfile<T>(token?: string | null): Promise<ApiResult<T>> {
 // --- Assessment ------------------------------------------------------------
 
 export function getAssessment<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/assessment`, token);
+  return apiGet<T>("/api/research/assessment", token);
+}
+
+export function getAssessmentMode<T>(
+  mode: "initial" | "monthly_check_in",
+  token?: string | null,
+): Promise<ApiResult<T>> {
+  return apiGet<T>(`/api/research/assessment?mode=${encodeURIComponent(mode)}`, token);
+}
+
+export function saveAssessment(
+  body: AssessmentAutosaveRequest,
+  token?: string | null,
+): Promise<ApiResult<{ ok: boolean; lastSavedAt: string; revision: number }>> {
+  return apiPost<{ ok: boolean; lastSavedAt: string; revision: number }>(
+    "/api/research/assessment/responses",
+    body,
+    token,
+  );
 }
 
 export function submitAssessment(
-  body: { mode: string; answers: unknown },
+  body: AssessmentSubmitRequest,
   token?: string | null,
-): Promise<ApiResult<{ ok?: boolean }>> {
-  return apiPost<{ ok?: boolean }>(`${BASE}/assessment`, body, token);
+): Promise<ApiResult<{ ok: boolean; blueprintState?: string }>> {
+  return apiPost<{ ok: boolean; blueprintState?: string }>("/api/research/assessment/submit", body, token);
+}
+
+export type AgreementView = {
+  key: string;
+  version: string;
+  title: string;
+  status: "draft" | "published";
+  effectiveDate: string | null;
+  content: string | null;
+  contentHash: string;
+  acceptedVersion: string | null;
+  reacceptanceNeeded: boolean;
+};
+
+export function getResearchAgreements(
+  token?: string | null,
+): Promise<ApiResult<{ ok: boolean; agreements: AgreementView[] }>> {
+  return apiGet<{ ok: boolean; agreements: AgreementView[] }>("/api/research/agreements", token);
+}
+
+export function decideResearchAgreement(
+  key: "XR-MEM-012",
+  version: string,
+  decision: "accepted" | "declined",
+  contentHash: string,
+  token?: string | null,
+): Promise<ApiResult<{ ok: boolean; agreements: AgreementView[] }>> {
+  return apiPost<{ ok: boolean; agreements: AgreementView[] }>(
+    "/api/research/agreements",
+    { decisions: [{ key, version, decision, contentHash }] },
+    token,
+  );
+}
+
+export function acceptResearchAgreement(
+  key: "XR-MEM-012",
+  version: string,
+  contentHash: string,
+  token?: string | null,
+): Promise<ApiResult<{ ok: boolean; agreements: AgreementView[] }>> {
+  return decideResearchAgreement(key, version, "accepted", contentHash, token);
+}
+
+export function withdrawResearchAgreement(
+  key: "XR-MEM-012",
+  token?: string | null,
+): Promise<ApiResult<{ ok: boolean; agreements: AgreementView[] }>> {
+  return apiPost<{ ok: boolean; agreements: AgreementView[] }>(
+    `/api/research/agreements/${key}/withdraw`,
+    {},
+    token,
+  );
 }
 
 // --- Blueprint -------------------------------------------------------------
