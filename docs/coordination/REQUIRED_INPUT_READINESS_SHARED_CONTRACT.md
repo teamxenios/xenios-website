@@ -45,8 +45,10 @@ and DELETE.
 uppercase configuration name such as `PAYMENT_PROVIDER_KEY`. Every definition
 has an explicit value-sensitivity classification, and the API/database also
 inspect all semantic definition fields so a record such as `api_credentials`
-cannot be misclassified as direct storage. Secret values remain in the
-approved environment-management system.
+cannot be misclassified as direct storage. `recordId` and `record_id` are
+normalized to the same canonical identifier before sensitivity enforcement;
+conflicting aliases fail closed. Secret values remain in the approved
+environment-management system.
 
 ## Readiness manifests
 

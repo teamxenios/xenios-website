@@ -43,18 +43,20 @@ Routes:
 
 Current corrected validation:
 
-- focused pre-launch/server/UI tests: 30 passed;
-- full suite: 155 files, 3,291 tests passed;
+- focused pre-launch/server/UI tests: 33 passed;
+- full suite: 155 files, 3,294 tests passed;
 - typecheck and production build pass (existing large-chunk advisory only);
 - migration applies twice in disposable PostgreSQL 16;
-- lifecycle proves semantic secret rejection, reference-only storage,
+- lifecycle proves `recordId`/`record_id` alias-parity secret rejection,
+  reference-only configuration-name storage,
   independent verification/rejection, premature-public and stale same-count
   manifest rejection, recomputed approved launch, append-only audit, 4/4
   forced RLS, zero browser grants, and rollback to zero rows.
 
 Remaining:
 
-- refresh desktop/375/320/keyboard/200%-zoom evidence on the corrected head;
+- preserve the refreshed desktop/375/320/keyboard evidence and obtain the
+  independent native 200%-zoom result;
 - freeze and obtain renewed Website 6 review of the corrected exact SHA;
 - only after acceptance, inspect production, apply migration, merge, deploy,
   verify zero-row baseline and signed-out admin gate, and return the exact

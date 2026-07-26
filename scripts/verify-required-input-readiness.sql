@@ -9,6 +9,8 @@ declare
   v_readiness jsonb;
   v_input_audit uuid;
   v_launch_audit uuid;
+  v_alias text;
+  v_alias_sensitive public.research_required_inputs;
 begin
   select * into v_direct
   from public.research_define_required_input(
@@ -94,6 +96,85 @@ begin
         raise;
       end if;
   end;
+
+  foreach v_alias in array array['recordId', 'record_id']
+  loop
+    begin
+      perform public.research_define_required_input(
+        jsonb_build_object(
+          'key', 'environment.provider_record',
+          'domain', 'environment',
+          'label', 'PROVIDER RECORD REQUIRED',
+          'description', 'Configure the provider record before launch.',
+          'whyRequired', 'The provider cannot operate without its reviewed record.',
+          'recordType', 'environment_configuration',
+          v_alias, 'payment_api_credentials',
+          'fieldPath', 'provider.configuration',
+          'blockingLevel', 'blocks_provider_activation',
+          'responsibleRole', 'super_admin',
+          'verificationMethod', 'Administrator review.',
+          'evidenceRequired', jsonb_build_array('Configuration approval'),
+          'entryMode', 'direct',
+          'valueSensitivity', 'ordinary',
+          'publicLaunchImpact', 'Provider activation remains blocked.',
+          'nextAction', 'Configure the approved provider.',
+          'adminEntryHref', '/admin/research/required-inputs'
+        ),
+        'release@example.test',
+        array['super_admin'],
+        '2026-07-26T01:01:35Z'
+      );
+      raise exception 'sensitive direct % definition was accepted', v_alias;
+    exception
+      when check_violation then
+        if sqlerrm not like '%research_required_input_sensitive_reference_only%' then
+          raise;
+        end if;
+    end;
+  end loop;
+
+  select * into v_alias_sensitive
+  from public.research_define_required_input(
+    jsonb_build_object(
+      'key', 'environment.provider_record.reference',
+      'domain', 'environment',
+      'label', 'PROVIDER RECORD REFERENCE REQUIRED',
+      'description', 'Configure the provider record reference before launch.',
+      'whyRequired', 'The provider cannot operate without its reviewed reference.',
+      'recordType', 'environment_configuration',
+      'record_id', 'payment_api_credentials',
+      'fieldPath', 'provider.configuration_reference',
+      'blockingLevel', 'blocks_provider_activation',
+      'responsibleRole', 'super_admin',
+      'verificationMethod', 'Administrator review.',
+      'evidenceRequired', jsonb_build_array('Configuration approval'),
+      'entryMode', 'external_secret',
+      'valueSensitivity', 'sensitive_reference',
+      'publicLaunchImpact', 'Provider activation remains blocked.',
+      'nextAction', 'Configure the approved provider reference.',
+      'adminEntryHref', '/admin/research/required-inputs'
+    ),
+    'release@example.test',
+    array['super_admin'],
+    '2026-07-26T01:01:40Z'
+  );
+  select * into v_alias_sensitive
+  from public.research_transition_required_input(
+    v_alias_sensitive.id, 1, 'entered', 'release@example.test',
+    array['super_admin'],
+    'Approved configuration name entered without exposing its value.',
+    null, 'PAYMENT_PROVIDER_KEY', '2026-07-26T01:01:45Z'
+  );
+  if v_alias_sensitive.entered_value is not null
+     or v_alias_sensitive.external_reference_name <> 'PAYMENT_PROVIDER_KEY' then
+    raise exception 'alias-normalized sensitive reference stored an unsafe value';
+  end if;
+  perform public.research_transition_required_input(
+    v_alias_sensitive.id, 2, 'superseded', 'release@example.test',
+    array['super_admin'],
+    'Alias-normalization verification record retired.',
+    null, null, '2026-07-26T01:01:50Z'
+  );
 
   begin
     perform public.research_transition_required_input(

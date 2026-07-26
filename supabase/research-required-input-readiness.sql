@@ -82,7 +82,7 @@ create table if not exists public.research_required_inputs (
         and lower(
           concat_ws(
             ' ', key, domain, label, description, why_required, record_type,
-            field_path, verification_method, evidence_required::text,
+            record_id, field_path, verification_method, evidence_required::text,
             public_launch_impact, next_action, admin_entry_href
           )
         ) !~ '(^|[^a-z0-9])(secret|credentials?|password|token|api[._ :-]*key|private[._ :-]*key|access[._ :-]*key|client[._ :-]*secret|signing[._ :-]*key)([^a-z0-9]|$)'
@@ -262,7 +262,19 @@ as $$
 declare
   v_item public.research_required_inputs;
   v_responsible_role text := p_definition->>'responsibleRole';
+  v_record_id text;
 begin
+  if p_definition ? 'recordId'
+     and p_definition ? 'record_id'
+     and (p_definition->>'recordId')
+       is distinct from (p_definition->>'record_id') then
+    raise exception 'definition_alias_conflict';
+  end if;
+  v_record_id := nullif(
+    coalesce(p_definition->>'recordId', p_definition->>'record_id'),
+    ''
+  );
+
   if p_actor_roles is null
      or exists (
        select 1
@@ -292,7 +304,7 @@ begin
     p_definition->>'description',
     p_definition->>'whyRequired',
     p_definition->>'recordType',
-    nullif(p_definition->>'recordId', ''),
+    v_record_id,
     p_definition->>'fieldPath',
     p_definition->>'blockingLevel',
     p_definition->>'responsibleRole',

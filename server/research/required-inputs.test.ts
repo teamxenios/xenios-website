@@ -273,6 +273,37 @@ describe("required-input and readiness APIs", () => {
     expect(response.status).toBe(400);
     expect(repository.define).not.toHaveBeenCalled();
   });
+
+  it.each(["recordId", "record_id"] as const)(
+    "normalizes and rejects credential semantics supplied through %s",
+    async (recordIdAlias) => {
+      const { app, repository } = harness();
+      const response = await request(app)
+        .post("/api/admin/research/required-inputs")
+        .send({
+          key: `environment.provider_record.${recordIdAlias}`,
+          domain: "environment",
+          label: "PROVIDER RECORD REQUIRED",
+          description: "Configure the provider record before launch.",
+          whyRequired: "The provider cannot operate without its reviewed record.",
+          recordType: "environment_configuration",
+          [recordIdAlias]: "payment_api_credentials",
+          fieldPath: "provider.configuration",
+          blockingLevel: "blocks_provider_activation",
+          responsibleRole: "super_admin",
+          verificationMethod: "Administrator review.",
+          evidenceRequired: ["Configuration approval"],
+          entryMode: "direct",
+          valueSensitivity: "ordinary",
+          publicLaunchImpact: "Provider activation remains blocked.",
+          nextAction: "Configure the approved provider.",
+          adminEntryHref: "/admin/research/required-inputs",
+        });
+
+      expect(response.status).toBe(400);
+      expect(repository.define).not.toHaveBeenCalled();
+    },
+  );
 });
 
 describe("required-input readiness migration posture", () => {
@@ -332,6 +363,16 @@ describe("required-input readiness migration posture", () => {
     expect(sql).toContain("research_required_input_sensitive_reference_only");
     expect(sql).toContain("value_sensitivity");
     expect(sql).toContain("record_type");
+  });
+
+  it("normalizes recordId aliases before applying the table sensitivity policy", () => {
+    expect(sql).toContain("p_definition ? 'recordId'");
+    expect(sql).toContain("p_definition ? 'record_id'");
+    expect(sql).toContain("p_definition->>'recordId'");
+    expect(sql).toContain("p_definition->>'record_id'");
+    expect(sql).toMatch(
+      /record_type,\s*record_id,\s*field_path,\s*verification_method/,
+    );
   });
 
   it("requires review and an independent verifier before resolution", () => {

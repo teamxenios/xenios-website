@@ -39,6 +39,7 @@ function definitionContainsSensitiveSemantics(
     value.description,
     value.whyRequired,
     value.recordType,
+    value.recordId,
     value.fieldPath,
     value.verificationMethod,
     value.publicLaunchImpact,
@@ -52,8 +53,28 @@ function definitionContainsSensitiveSemantics(
   );
 }
 
-const definitionSchema = z
-  .object({
+function normalizeRequiredInputDefinitionAliases(input: unknown): unknown {
+  if (!input || typeof input !== "object" || Array.isArray(input)) return input;
+  const value = { ...(input as Record<string, unknown>) };
+  const hasCamelCase = Object.prototype.hasOwnProperty.call(value, "recordId");
+  const hasSnakeCase = Object.prototype.hasOwnProperty.call(value, "record_id");
+  if (
+    hasCamelCase &&
+    hasSnakeCase &&
+    value.recordId !== value.record_id
+  ) {
+    value.recordId = 0;
+  } else if (!hasCamelCase && hasSnakeCase) {
+    value.recordId = value.record_id;
+  }
+  delete value.record_id;
+  return value;
+}
+
+const definitionSchema = z.preprocess(
+  normalizeRequiredInputDefinitionAliases,
+  z
+    .object({
     key: z.string().trim().regex(/^[a-z0-9][a-z0-9_.:-]{2,199}$/),
     domain: z.string().trim().regex(/^[a-z0-9][a-z0-9_-]{2,63}$/),
     label: z.string().trim().min(3).max(200),
@@ -77,29 +98,30 @@ const definitionSchema = z
       .trim()
       .max(500)
       .regex(/^\/admin\/[A-Za-z0-9/_?=&.:%-]+$/),
-  })
-  .superRefine((value, ctx) => {
-    const sensitive =
-      value.valueSensitivity === "sensitive_reference" ||
-      definitionContainsSensitiveSemantics(value);
-    if (sensitive && value.entryMode !== "external_secret") {
-      ctx.addIssue({
-        code: "custom",
-        path: ["entryMode"],
-        message: "Sensitive values must use external-secret references.",
-      });
-    }
-    if (
-      value.entryMode === "external_secret" &&
-      value.valueSensitivity !== "sensitive_reference"
-    ) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["valueSensitivity"],
-        message: "External-secret entries must be classified as sensitive.",
-      });
-    }
-  });
+    })
+    .superRefine((value, ctx) => {
+      const sensitive =
+        value.valueSensitivity === "sensitive_reference" ||
+        definitionContainsSensitiveSemantics(value);
+      if (sensitive && value.entryMode !== "external_secret") {
+        ctx.addIssue({
+          code: "custom",
+          path: ["entryMode"],
+          message: "Sensitive values must use external-secret references.",
+        });
+      }
+      if (
+        value.entryMode === "external_secret" &&
+        value.valueSensitivity !== "sensitive_reference"
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["valueSensitivity"],
+          message: "External-secret entries must be classified as sensitive.",
+        });
+      }
+    }),
+);
 
 const transitionSchema = z
   .object({
