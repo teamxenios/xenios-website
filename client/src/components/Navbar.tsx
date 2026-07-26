@@ -112,7 +112,7 @@ export default function Navbar() {
                 <span aria-hidden="true" className="mr-2">☰</span>
                 Menu
               </button>
-              <Link href={earlyAccessCta.href} data-testid="button-nav-waitlist" className="btn btn-primary hidden sm:inline-flex" style={{ height: 44, padding: "0 18px", fontSize: 14 }}>
+              <Link href={earlyAccessCta.href} data-testid="button-nav-waitlist" className="btn btn-primary !hidden sm:!inline-flex" style={{ height: 44, padding: "0 18px", fontSize: 14 }}>
                 {earlyAccessCta.label}
               </Link>
             </div>
