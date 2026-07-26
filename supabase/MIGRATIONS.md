@@ -128,11 +128,16 @@ services:
 | Order | File | Purpose | Status |
 |---|---|---|---|
 | Care-1 | `care-access-foundation.sql` | Care capability, roles, access audit, forced RLS | RUN (`20260726064113 care_access_foundation`) |
-| Care-2 | `care-eligibility-intake.sql` | Patient identity seam, location, state/clinician coverage, append-only consent/waitlist/eligibility history, and versioned intake foundation | PENDING (stacked after Care-1; not yet applied) |
+| Care-2 | `care-eligibility-intake.sql` | Patient identity seam, location, state/clinician coverage, append-only consent/waitlist/eligibility history, and versioned intake foundation | RUN (`20260726080248 care_eligibility_intake`) |
 
 Care-2 seeds no state, clinician, consent document, intake definition, medical
 question, patient, pharmacy, product, price, or availability record. It cannot
 make the canonical Care capability live.
+- 2026-07-26: Care PR2 was applied as managed migration
+  `20260726080248 care_eligibility_intake` after Care PR1. Production
+  verification found all 13 PR2 tables forced RLS, zero browser table or
+  routine grants, exactly three service-role RPC grants, zero PR2 rows, and the
+  canonical Care capability still disabled.
 - The global order in this ledger is the integration order. The authoritative
   ordered run script for a production apply is
   docs/research-launch/FULL_PRODUCTION_MIGRATION_MANIFEST.md.
