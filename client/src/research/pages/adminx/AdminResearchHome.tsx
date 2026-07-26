@@ -55,7 +55,13 @@ export function AdminScreen({
                 {session.email}
               </span>
             )}
-            <button type="button" className="btn btn-ghost" onClick={() => void session.signOut()} data-testid="button-adminx-signout">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              style={{ minHeight: 44 }}
+              onClick={() => void session.signOut()}
+              data-testid="button-adminx-signout"
+            >
               Sign out
             </button>
             {actions}

@@ -38,6 +38,8 @@ table in the same PR that adds or changes a migration file.
 | 29 | research-product-requests-function-hardening.sql | Remove default browser-role execution from the append-only event trigger helper | RUN | 2026-07-25 | zero browser-role Product Request function grants |
 | 30 | research-security-definer-grants-hardening.sql | Remove unnecessary PUBLIC/anon/authenticated execution from the internal RLS event-trigger helper | RUN | 2026-07-25 | managed migration `20260725231517`; advisor + explicit privilege check |
 | 31 | research-products-diagnostics.sql | Extend canonical lots/quality documents; persist supplement placeholders, metabolic pathways/interests, Superpower configuration, biomarker uploads/records, product content, private buckets, and append-only certificate access audit | RUN | 2026-07-25 | managed migration `release_train_1_research_products_diagnostics`; forced-RLS/browser-grant/private-bucket/RPC/count verification |
+| 32 | research-prelaunch-foundation.sql | Canonical private roles, seed-origin namespaces, provider modes, access audit, and external-action capture | RUN | 2026-07-25 | managed migration `canonical_prelaunch_foundation`; 5/5 forced RLS, zero browser grants, zero roles/namespaces/audits/captures |
+| 33 | research-required-input-readiness.sql | Canonical required-input register, append-only review audit, readiness manifests, and server launch switches | PENDING (not run) | — | disposable PostgreSQL apply-twice/lifecycle proof; independent review required |
 
 Founding-membership operational migrations use a separate dependency chain.
 Production presence and managed migration history were reconciled on
@@ -128,8 +130,10 @@ Notes:
   expected tables, the Website 3 forced-RLS/browser-grant/private-bucket/RPC
   posture, zero fabricated product/lot/COA/biomarker records, and unchanged
   existing record-count invariants.
-- `research-prelaunch-foundation.sql` is a PENDING focused follow-on migration.
-  It creates the canonical disabled pre-launch settings, role assignments, seed
-  namespace registry, append-only access audit, and append-only external-action
-  capture. It creates no role or seed namespace. Production application is
-  prohibited until the focused branch is reviewed, frozen, and accepted.
+- `research-prelaunch-foundation.sql` was applied as managed migration
+  `canonical_prelaunch_foundation`. Production verification found the canonical
+  disabled settings row, 5/5 forced-RLS tables, zero browser grants, and zero
+  roles, namespaces, access audits, or external-action captures.
+- `research-required-input-readiness.sql` is a PENDING focused migration. It
+  creates no input or launch-control row. Production application is prohibited
+  until an exact frozen candidate passes independent review.

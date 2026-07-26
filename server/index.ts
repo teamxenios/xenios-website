@@ -21,6 +21,10 @@ import {
   buildPrelaunchProductionDependencies,
   registerPrelaunchApi,
 } from "./research/prelaunch";
+import {
+  buildRequiredInputProductionRepository,
+  registerRequiredInputApi,
+} from "./research/required-inputs";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
 import { requireActiveMember, requireMember } from "./research/member-auth";
@@ -180,6 +184,11 @@ registerProductsDiagnosticsApi(
 registerPrelaunchApi(
   app,
   buildPrelaunchProductionDependencies(),
+  requireSupabaseAdmin,
+);
+registerRequiredInputApi(
+  app,
+  buildRequiredInputProductionRepository(),
   requireSupabaseAdmin,
 );
 

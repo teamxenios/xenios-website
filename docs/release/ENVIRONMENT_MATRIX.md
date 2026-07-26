@@ -29,7 +29,8 @@ diagnostic; it does not disclose the value.
 | Affiliate portal | `RESEARCH_AFFILIATE_COMMISSIONS_ENABLED`; payout execution remains separate | UI presence is not payout readiness |
 | Fulfillment portal | `RESEARCH_MITCH_FULFILLMENT_ENABLED` plus Mitch provider names below | Fail closed until provider readiness is confirmed |
 | Document rendering | `RESEARCH_DOCUMENT_RENDERING_ENABLED` | Requires verified private storage path |
-| Private pre-launch | Canonical Supabase settings/roles/seed namespaces; no client flag | Foundation candidate defaults to `internal_build` + provider `disabled`; no role or namespace is seeded |
+| Private pre-launch | Canonical Supabase settings/roles/seed namespaces; no client flag | Live at `internal_build` + provider `disabled`; no role or namespace exists |
+| Required-input readiness | Canonical Supabase governance tables; no client or environment launch flag | Candidate is database-authoritative; creates no domain/input/launch row and cannot store external-secret values |
 
 ## External provider-backed capabilities
 

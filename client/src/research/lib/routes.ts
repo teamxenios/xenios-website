@@ -98,6 +98,7 @@ export const ADMIN_ROUTES = {
   security: "/admin/research/security",
   privacy: "/admin/research/privacy",
   capabilities: "/admin/research/capabilities",
+  requiredInputs: "/admin/research/required-inputs",
   commerceQueues: "/admin/research/commerce-queues",
   activationQueue: "/admin/research/activation-queue",
   activationBridge: "/admin/research/activation-bridge",
