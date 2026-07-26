@@ -72,6 +72,20 @@ describe("operations integration-ready routes", () => {
       partnerPortal: {
         read: async (surface) => ({ surface, rows: [] }),
         submit: async (kind) => ({ ok: true, message: `${kind} received`, idempotent: false }),
+        acceptAgreement: async (input) => ({
+          ok: true,
+          message: "Agreement accepted.",
+          idempotent: false,
+          agreementVersionId: input.agreementVersionId,
+        }),
+        listAgreementVersions: async () => ({ ok: true, agreements: [] }),
+        publishAgreement: async () => ({
+          ok: true,
+          message: "Agreement published.",
+          idempotent: false,
+          agreementVersionId: "version-1",
+          contentHash: "a".repeat(64),
+        }),
       },
       crm: new CrmService(),
       tasks: new OperationsTaskService(),
@@ -205,7 +219,7 @@ describe("operations integration-ready routes", () => {
     expect(response.body.code).toBe("clinical_economics_refused");
   });
 
-  it("registers all 16 partner adapter endpoints behind partner ownership", async () => {
+  it("registers every partner adapter endpoint behind partner ownership", async () => {
     const reads = [
       "conversions",
       "leads",
@@ -245,6 +259,64 @@ describe("operations integration-ready routes", () => {
         .send({ example: true });
       expect(response.status, path).toBe(202);
     }
+
+    expect(
+      (
+        await request(app)
+          .post("/api/research/partner/agreements/version-1/accept")
+          .send({ affirmation: true, contentHash: "a".repeat(64), idempotencyKey: "accept-1" })
+      ).status,
+    ).toBe(403);
+    const missingAffirmation = await request(app)
+      .post("/api/research/partner/agreements/version-1/accept")
+      .set("x-role", "affiliate")
+      .set("x-actor-id", "partner-auth-user")
+      .send({ contentHash: "a".repeat(64), idempotencyKey: "accept-1" });
+    expect(missingAffirmation.status).toBe(400);
+    const accepted = await request(app)
+      .post("/api/research/partner/agreements/version-1/accept")
+      .set("x-role", "affiliate")
+      .set("x-actor-id", "partner-auth-user")
+      .set("Idempotency-Key", "accept-1")
+      .send({ affirmation: true, contentHash: "a".repeat(64) });
+    expect(accepted.status).toBe(200);
+    expect(accepted.body.agreementVersionId).toBe("version-1");
+  });
+
+  it("keeps agreement publication admin-only and idempotency-keyed", async () => {
+    expect((await request(app).get("/api/admin/research/partner-agreements")).status).toBe(403);
+    const list = await request(app)
+      .get("/api/admin/research/partner-agreements")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel");
+    expect(list.status).toBe(200);
+    expect(list.body.agreements).toEqual([]);
+
+    const missingKey = await request(app)
+      .post("/api/admin/research/partner-agreements/affiliate-terms/publish")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .send({
+        agreementVersion: "2026.1",
+        title: "Affiliate Terms",
+        content: "Complete approved agreement text. ".repeat(5),
+        required: true,
+      });
+    expect(missingKey.status).toBe(400);
+
+    const published = await request(app)
+      .post("/api/admin/research/partner-agreements/affiliate-terms/publish")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "publish-1")
+      .send({
+        agreementVersion: "2026.1",
+        title: "Affiliate Terms",
+        content: "Complete approved agreement text. ".repeat(5),
+        required: true,
+      });
+    expect(published.status).toBe(200);
+    expect(published.body.agreementVersionId).toBe("version-1");
   });
 
   it("runs the required professional prospect-to-active pipeline with versioned agreement", async () => {

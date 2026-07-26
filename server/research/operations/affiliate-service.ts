@@ -127,6 +127,7 @@ export type AffiliateResult<T> =
         | "invalid_invitation"
         | "already_claimed"
         | "login_refused"
+        | "agreement_required"
         | "link_secret_missing"
         | "invalid_code"
         | "subject_not_opaque"

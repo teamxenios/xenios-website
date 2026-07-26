@@ -35,10 +35,12 @@ All routes below are server registered on the Website 4 branch. Shared registrat
 | POST | `/api/admin/research/operations/tasks` | same | verified admin | admin scope | atomic task RPC + append-only event | route + SQL behavior tests | enable after migration 31/wiring |
 | POST | `/api/admin/research/operations/tasks/:taskId/transition` | same | verified admin | admin scope | atomic task RPC + optimistic concurrency | route + SQL behavior tests | enable after migration 31/wiring |
 | GET | `/api/admin/research/operations/outbox` | same | verified admin | admin scope | canonical notification outbox | route tests | enable after migration/wiring |
+| GET | `/api/admin/research/partner-agreements` | same | verified admin | admin scope | immutable agreement versions + current head | route/schema/SQL behavior tests | enable after migration/wiring |
+| POST | `/api/admin/research/partner-agreements/affiliate-terms/publish` | same | verified named admin | admin scope + idempotency | immutable version + audited current pointer | route/schema/SQL behavior tests | enable after migration/wiring |
 
 ## Partner adapter
 
-The first three rows are owned by canonical commerce registration. The remaining 16 were the reported parity blocker and are now registered literally in Website 4.
+The first three rows are owned by canonical commerce registration. Website 4 registers the original 16-route parity repair plus the focused versioned-agreement acceptance route.
 
 | Method | Client path | Server registration | Authentication / role | Partner ownership | Repository / persistence | Test | Enabled state |
 |---|---|---|---|---|---|---|---|
@@ -60,6 +62,7 @@ The first three rows are owned by canonical commerce registration. The remaining
 | GET | `/api/research/partner/compliance` | operations routes | same | same | private partner portal requests | route parity tests | enable after migration/wiring |
 | POST | `/api/research/partner/compliance/submissions` | operations routes | same | same | atomic idempotent partner request RPC | route + SQL behavior tests | enable after migration/wiring |
 | GET | `/api/research/partner/onboarding` | operations routes | same | same | canonical partner gates and agreements | route parity tests | enable after migration/wiring |
+| POST | `/api/research/partner/agreements/:agreementVersionId/accept` | operations routes | verified non-terminated partner | member → partner resolved server-side; version id cannot select another owner | exact current immutable version/hash + append-only acceptance/audit | route parity, route, UI, schema, SQL behavior tests | enable after migration/wiring; stale/wrong-hash acceptance is refused |
 | GET | `/api/research/partner/security/sessions` | operations routes | same | same | hashed verified-session records; no raw token/IP | route parity tests | enable after migration/wiring |
 
 ROUTE PARITY STATUS: 0 ENABLED CLIENT ENDPOINTS WITHOUT SERVER REGISTRATION ON THIS BRANCH

@@ -1,6 +1,13 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { actOnReferralFlag, listPartners, listReferralFraud, reportReferralFraud } from "../../adapters/adminOps";
+import {
+  actOnReferralFlag,
+  listPartnerAgreementVersions,
+  listPartners,
+  listReferralFraud,
+  publishAffiliateTerms,
+  reportReferralFraud,
+} from "../../adapters/adminOps";
 import {
   ResearchDataTable,
   ResearchFilterBar,
@@ -67,9 +74,198 @@ export default function PartnersAdmin() {
 function PartnersBody({ token }: { token: string }) {
   return (
     <div className="grid gap-10">
+      <PartnerAgreementManager token={token} />
       <PartnerRoster token={token} />
       <FraudQueue token={token} />
     </div>
+  );
+}
+
+type PartnerAgreementVersion = {
+  id: string;
+  title: string;
+  agreementVersion: string;
+  contentHash: string;
+  publishedAt: string;
+  publishedBy: string;
+  current: boolean;
+  required: boolean;
+};
+
+function PartnerAgreementManager({ token }: { token: string }) {
+  const resource = useAdminResource<{ ok: true; agreements: PartnerAgreementVersion[] }>(
+    token,
+    listPartnerAgreementVersions,
+  );
+  const [title, setTitle] = useState("");
+  const [version, setVersion] = useState("");
+  const [content, setContent] = useState("");
+  const [required, setRequired] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const current = (resource.data?.agreements ?? []).find((agreement) => agreement.current) ?? null;
+  const ready = title.trim().length > 0 && version.trim().length > 0 && content.trim().length >= 100;
+
+  const publish = async () => {
+    if (!ready || busy) return;
+    setBusy(true);
+    setMessage(null);
+    const idempotencyKey =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `affiliate-terms-${Date.now().toString(36)}`;
+    const result = await publishAffiliateTerms<{ ok: boolean; message?: string }>(token, {
+      agreementVersion: version.trim(),
+      title: title.trim(),
+      content: content.trim(),
+      required,
+      idempotencyKey,
+    });
+    setBusy(false);
+    if (result.kind === "ok") {
+      setMessage(result.data.message ?? "The agreement version is current.");
+      setTitle("");
+      setVersion("");
+      setContent("");
+      resource.reload();
+      return;
+    }
+    if (result.kind === "unauthorized") {
+      setMessage("Your admin session has ended. Sign in again before publishing.");
+      return;
+    }
+    if (result.kind === "forbidden") {
+      setMessage("Your account is not authorized to publish partner agreements.");
+      return;
+    }
+    if (result.kind === "denied") {
+      const presentation = denialPresentation(result.code, result.message);
+      setMessage(`${presentation.title} ${presentation.body}`);
+      return;
+    }
+    if (result.kind === "unavailable") {
+      setMessage("Partner agreement management is not available in this environment.");
+      return;
+    }
+    setMessage(result.message);
+  };
+
+  return (
+    <section aria-labelledby="partner-agreement-admin">
+      <h2 id="partner-agreement-admin" className="body-l font-700">
+        Partner agreement
+      </h2>
+      <p className="body-s text-ink-mute mt-2 max-w-[64ch]">
+        Publish the complete approved terms partners must review. Each version is immutable; publishing a replacement
+        keeps every earlier acceptance in the audit record.
+      </p>
+      <div className="mt-4">
+        <AdminBoundary
+          state={resource.state}
+          message={resource.message}
+          deniedCode={resource.deniedCode}
+          onRetry={resource.reload}
+          unavailableTitle="Partner agreement management is not reachable."
+          unavailableBody="No agreement can be published or accepted until the production agreement service is available."
+        >
+          <div className="card">
+            {current ? (
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="mono-label text-ink-mute">Current version</p>
+                  <p className="body-m font-700 mt-1">
+                    {current.title} · {current.agreementVersion}
+                  </p>
+                  <p className="body-s text-ink-mute mt-1">
+                    Published {fmtDate(current.publishedAt)} by {current.publishedBy}
+                  </p>
+                </div>
+                <ResearchStatusBadge label={current.required ? "Required" : "Optional"} tone="neutral" />
+              </div>
+            ) : (
+              <div>
+                <p className="body-m font-700">AFFILIATE AGREEMENT REQUIRED</p>
+                <p className="body-s text-ink-2 mt-1">
+                  Publish the approved full agreement before a partner can activate or issue a link.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <form
+            className="card mt-4 grid gap-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void publish();
+            }}
+          >
+            <div>
+              <label htmlFor="affiliate-terms-title" className="form-label">
+                Agreement title
+              </label>
+              <input
+                id="affiliate-terms-title"
+                className="input-field"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                autoComplete="off"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="affiliate-terms-version" className="form-label">
+                Agreement version
+              </label>
+              <input
+                id="affiliate-terms-version"
+                className="input-field"
+                value={version}
+                onChange={(event) => setVersion(event.target.value)}
+                placeholder="For example, 2026.1"
+                autoComplete="off"
+                required
+              />
+              <p className="body-s text-ink-mute mt-1">A published version identifier cannot be reused for different text.</p>
+            </div>
+            <div>
+              <label htmlFor="affiliate-terms-content" className="form-label">
+                Complete agreement text
+              </label>
+              <textarea
+                id="affiliate-terms-content"
+                className="input-field"
+                value={content}
+                onChange={(event) => setContent(event.target.value)}
+                rows={12}
+                required
+              />
+              <p className="body-s text-ink-mute mt-1">
+                Enter the approved full text. At least 100 characters are required; summaries cannot be accepted.
+              </p>
+            </div>
+            <label className="flex items-start gap-3 body-s" htmlFor="affiliate-terms-required">
+              <input
+                id="affiliate-terms-required"
+                type="checkbox"
+                checked={required}
+                onChange={(event) => setRequired(event.target.checked)}
+              />
+              <span>Require acceptance before partner activation and link issuance.</span>
+            </label>
+            <div>
+              <button type="submit" className="btn btn-primary" disabled={!ready || busy}>
+                {busy ? "Publishing..." : "Publish agreement version"}
+              </button>
+            </div>
+            {message && (
+              <p className="body-s" role="status">
+                {message}
+              </p>
+            )}
+          </form>
+        </AdminBoundary>
+      </div>
+    </section>
   );
 }
 

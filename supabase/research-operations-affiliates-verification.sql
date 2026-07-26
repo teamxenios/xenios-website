@@ -20,6 +20,9 @@ from unnest(array[
   'public.research_operations_audit_events',
   'public.research_operations_inventory_movements',
   'public.research_operations_inventory_commands',
+  'public.research_partner_agreement_versions',
+  'public.research_partner_agreement_heads',
+  'public.research_partner_agreement_events',
   'public.research_partner_metric_events',
   'public.research_partner_portal_requests',
   'public.research_partner_portal_request_events',
@@ -55,6 +58,9 @@ where n.nspname = 'public'
     'research_operations_task_events',
     'research_commission_policies',
     'research_lawrence_partner_models',
+    'research_partner_agreement_versions',
+    'research_partner_agreement_heads',
+    'research_partner_agreement_events',
     'research_partner_metric_events',
     'research_partner_portal_requests',
     'research_partner_portal_request_events',
@@ -87,6 +93,9 @@ where table_schema = 'public'
     'research_operations_task_events',
     'research_commission_policies',
     'research_lawrence_partner_models',
+    'research_partner_agreement_versions',
+    'research_partner_agreement_heads',
+    'research_partner_agreement_events',
     'research_partner_metric_events',
     'research_partner_portal_requests',
     'research_partner_portal_request_events',
@@ -112,6 +121,9 @@ where routine_schema = 'public'
     'research_operations_apply_crm_command',
     'research_operations_apply_task_command',
     'research_operations_submit_partner_request',
+    'research_operations_partner_terms_ready',
+    'research_operations_publish_partner_agreement',
+    'research_operations_accept_partner_agreement',
     'research_operations_apply_professional_account',
     'research_operations_transition_professional_account'
   )
@@ -163,3 +175,24 @@ from public.research_operations_inventory_movements
 where movement_kind in ('allocate', 'ship')
   and on_hand_delta <> 0;
 -- Expected: zero rows.
+
+-- 9. Every current agreement pointer must resolve to immutable content.
+select
+  head.agreement_key,
+  head.agreement_version_id
+from public.research_partner_agreement_heads head
+left join public.research_partner_agreement_versions version
+  on version.id = head.agreement_version_id
+where version.id is null;
+-- Expected: zero rows.
+
+-- 10. An active affiliate that has not accepted the current required version
+-- must remain blocked from workspace/link issuance and requires remediation
+-- before the affiliate capability is publicly enabled.
+select
+  partner.id,
+  'AFFILIATE AGREEMENT REQUIRED' as required_input
+from public.research_partners partner
+where partner.state = 'active'
+  and not public.research_operations_partner_terms_ready(partner.id);
+-- Expected before affiliate launch: zero rows.

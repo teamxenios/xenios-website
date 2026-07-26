@@ -38,6 +38,7 @@ export const PARTNER_API = {
   compliance: "/api/research/partner/compliance",
   complianceSubmissions: "/api/research/partner/compliance/submissions",
   onboarding: "/api/research/partner/onboarding",
+  agreementAccept: "/api/research/partner/agreements/:agreementVersionId/accept",
   securitySessions: "/api/research/partner/security/sessions",
 } as const;
 
@@ -103,6 +104,19 @@ export function getPartnerOnboarding<T>(token: PartnerToken): Promise<ApiResult<
 
 export function getPartnerSecuritySessions<T>(token: PartnerToken): Promise<ApiResult<T>> {
   return apiGet<T>(PARTNER_API.securitySessions, token);
+}
+
+export function acceptPartnerAgreement(
+  agreementVersionId: string,
+  contentHash: string,
+  idempotencyKey: string,
+  token: PartnerToken,
+): Promise<ApiResult<{ ok: boolean; message?: string; idempotent?: boolean; agreementVersionId?: string }>> {
+  const path = PARTNER_API.agreementAccept.replace(
+    ":agreementVersionId",
+    encodeURIComponent(agreementVersionId),
+  );
+  return apiPost(path, { contentHash, affirmation: true, idempotencyKey }, token);
 }
 
 // --------------------------- submissions (POST) ----------------------------

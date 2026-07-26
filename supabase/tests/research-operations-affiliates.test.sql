@@ -14,6 +14,31 @@ values (
   true
 );
 
+insert into public.research_applications (
+  id, email, first_name, last_name, country, age_confirmed, status
+)
+values (
+  '00000000-0000-0000-0000-000000000404',
+  'website-four-partner@example.com',
+  'Website',
+  'Four',
+  'US',
+  true,
+  'active'
+);
+
+insert into public.research_members (
+  id, application_id, auth_user_id, email, first_name, status
+)
+values (
+  '00000000-0000-0000-0000-000000000403',
+  '00000000-0000-0000-0000-000000000404',
+  '00000000-0000-0000-0000-000000000405',
+  'website-four-partner@example.com',
+  'Website',
+  'active'
+);
+
 insert into public.research_partners (
   id, member_id, role, state, legal_name, contact_email
 )
@@ -774,6 +799,135 @@ begin
   where task_id = task_uuid;
   if task_status <> 'in_progress' or task_version <> 2 or event_count <> 2 then
     raise exception 'unexpected task state/version/events: %/%/%', task_status, task_version, event_count;
+  end if;
+end
+$$;
+
+-- Partner terms are real administrator-entered content, immutable by version,
+-- owner-accepted with exact-hash evidence, and required before activation.
+do $$
+declare
+  result jsonb;
+  version_id uuid;
+  content_hash text;
+  mutation_refused boolean := false;
+  activation_refused boolean := false;
+begin
+  result := public.research_operations_publish_partner_agreement(
+    'affiliate_terms',
+    '2026.1',
+    'Website Four Affiliate Terms',
+    repeat(
+      'This approved test agreement defines attribution, disclosure, commission holds, reversals, payout review, and termination. ',
+      2
+    ),
+    true,
+    'admin@example.com',
+    'admin',
+    'w4-affiliate-terms-publish',
+    '2026-07-25T22:30:00Z'
+  );
+  if not (result->>'ok')::boolean or (result->>'idempotent')::boolean then
+    raise exception 'agreement publication failed: %', result;
+  end if;
+  version_id := (result->>'agreementVersionId')::uuid;
+  content_hash := result->>'contentHash';
+
+  result := public.research_operations_publish_partner_agreement(
+    'affiliate_terms',
+    '2026.1',
+    'Website Four Affiliate Terms',
+    repeat(
+      'This approved test agreement defines attribution, disclosure, commission holds, reversals, payout review, and termination. ',
+      2
+    ),
+    true,
+    'admin@example.com',
+    'admin',
+    'w4-affiliate-terms-publish',
+    '2026-07-25T22:30:00Z'
+  );
+  if not (result->>'ok')::boolean or not (result->>'idempotent')::boolean then
+    raise exception 'agreement publication replay was not idempotent: %', result;
+  end if;
+
+  update public.research_partners
+  set identity_verified = true,
+      tax_status = 'verified',
+      payout_status = 'verified',
+      certified_at = '2026-07-25T22:31:00Z',
+      certified_by_admin_id = 'admin@example.com',
+      activated_at = '2026-07-25T22:31:00Z',
+      activated_by_admin_id = 'admin@example.com'
+  where id = '00000000-0000-0000-0000-000000000402';
+
+  begin
+    update public.research_partners
+    set state = 'active'
+    where id = '00000000-0000-0000-0000-000000000402';
+  exception
+    when check_violation then
+      activation_refused := sqlerrm = 'AFFILIATE AGREEMENT REQUIRED';
+  end;
+  if not activation_refused then
+    raise exception 'activation did not fail closed before agreement acceptance';
+  end if;
+
+  result := public.research_operations_accept_partner_agreement(
+    '00000000-0000-0000-0000-000000000402',
+    version_id,
+    repeat('0', 64),
+    '00000000-0000-0000-0000-000000000405',
+    'w4-affiliate-terms-stale',
+    '2026-07-25T22:32:00Z'
+  );
+  if (result->>'code') <> 'stale_write' then
+    raise exception 'wrong agreement hash was not refused: %', result;
+  end if;
+
+  result := public.research_operations_accept_partner_agreement(
+    '00000000-0000-0000-0000-000000000402',
+    version_id,
+    content_hash,
+    '00000000-0000-0000-0000-000000000405',
+    'w4-affiliate-terms-accept',
+    '2026-07-25T22:33:00Z'
+  );
+  if not (result->>'ok')::boolean or (result->>'idempotent')::boolean then
+    raise exception 'agreement acceptance failed: %', result;
+  end if;
+
+  result := public.research_operations_accept_partner_agreement(
+    '00000000-0000-0000-0000-000000000402',
+    version_id,
+    content_hash,
+    '00000000-0000-0000-0000-000000000405',
+    'w4-affiliate-terms-accept',
+    '2026-07-25T22:33:00Z'
+  );
+  if not (result->>'ok')::boolean or not (result->>'idempotent')::boolean then
+    raise exception 'agreement acceptance replay was not idempotent: %', result;
+  end if;
+
+  update public.research_partners
+  set state = 'active'
+  where id = '00000000-0000-0000-0000-000000000402';
+  if not public.research_operations_partner_terms_ready(
+    '00000000-0000-0000-0000-000000000402'
+  ) then
+    raise exception 'partner terms readiness did not become true';
+  end if;
+
+  begin
+    update public.research_partner_agreements
+    set decision = 'declined'
+    where partner_id = '00000000-0000-0000-0000-000000000402';
+  exception
+    when others then
+      mutation_refused := position('append-only' in sqlerrm) > 0;
+  end;
+  if not mutation_refused then
+    raise exception 'agreement evidence was mutable';
   end if;
 end
 $$;
