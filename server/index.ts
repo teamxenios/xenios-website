@@ -31,12 +31,14 @@ import {
   buildCareAppointmentRepository,
   buildCareEligibilityRepository,
   buildCareIntakeRepository,
+  buildCarePrescriptionRepository,
   buildCareProductionDependencies,
   carePageGate,
   registerCareApi,
   registerCareAppointmentApi,
   registerCareEligibilityApi,
   registerCareIntakeApi,
+  registerCarePrescriptionApi,
 } from "./care";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
@@ -144,10 +146,12 @@ const careAccess = buildCareProductionDependencies();
 const careEligibility = buildCareEligibilityRepository();
 const careIntake = buildCareIntakeRepository();
 const careAppointments = buildCareAppointmentRepository();
+const carePrescriptions = buildCarePrescriptionRepository();
 registerCareApi(app, careAccess);
 registerCareEligibilityApi(app, careAccess, careEligibility);
 registerCareIntakeApi(app, careAccess, careEligibility, careIntake);
 registerCareAppointmentApi(app, careAccess, careAppointments);
+registerCarePrescriptionApi(app, careAccess, carePrescriptions);
 registerMembershipApi(app);
 registerMemberApi(app);
 registerMemberAccessApi(app);

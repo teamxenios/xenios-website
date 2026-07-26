@@ -26,6 +26,9 @@ describe("Care shared integration wiring", () => {
     const appointmentRegistration = serverSource.indexOf(
       "registerCareAppointmentApi(app, careAccess, careAppointments)",
     );
+    const prescriptionRegistration = serverSource.indexOf(
+      "registerCarePrescriptionApi(app, careAccess, carePrescriptions)",
+    );
     const apiFallback = serverSource.indexOf('app.use("/api/{*rest}"');
     const productionSpa = serverSource.indexOf("serveStatic(app)");
     const developmentSpa = serverSource.indexOf("setupVite(");
@@ -35,9 +38,11 @@ describe("Care shared integration wiring", () => {
     expect(eligibilityRegistration).toBeGreaterThan(registration);
     expect(intakeRegistration).toBeGreaterThan(eligibilityRegistration);
     expect(appointmentRegistration).toBeGreaterThan(intakeRegistration);
+    expect(prescriptionRegistration).toBeGreaterThan(appointmentRegistration);
     expect(registration).toBeLessThan(apiFallback);
     expect(intakeRegistration).toBeLessThan(apiFallback);
     expect(appointmentRegistration).toBeLessThan(apiFallback);
+    expect(prescriptionRegistration).toBeLessThan(apiFallback);
     expect(registration).toBeLessThan(productionSpa);
     expect(registration).toBeLessThan(developmentSpa);
   });
@@ -55,6 +60,12 @@ describe("Care shared integration wiring", () => {
     expect(appSource).toContain(
       'const CareAppointments = lazy(() => import("@/care/CareAppointmentsPage"))',
     );
+    expect(appSource).toContain(
+      'const CarePrescriptions = lazy(() => import("@/care/CarePrescriptionsPage"))',
+    );
+    expect(appSource).toContain(
+      'const CarePharmacyOrders = lazy(() => import("@/care/CarePharmacyOrdersPage"))',
+    );
     const eligibilityRoute = appSource.indexOf(
       '<Route path="/care/eligibility" component={CareEligibilityRoutes} />',
     );
@@ -64,13 +75,21 @@ describe("Care shared integration wiring", () => {
     const appointmentRoute = appSource.indexOf(
       '<Route path="/care/appointments" component={CareAppointmentRoutes} />',
     );
+    const prescriptionRoute = appSource.indexOf(
+      '<Route path="/care/prescriptions" component={CarePrescriptionRoutes} />',
+    );
+    const pharmacyRoute = appSource.indexOf(
+      '<Route path="/care/pharmacy" component={CarePharmacyRoutes} />',
+    );
     const broadRoute = appSource.indexOf(
       '<Route path="/care/*" component={CareRoutes} />',
     );
     expect(eligibilityRoute).toBeGreaterThan(-1);
     expect(consentRoute).toBeGreaterThan(eligibilityRoute);
     expect(appointmentRoute).toBeGreaterThan(consentRoute);
-    expect(broadRoute).toBeGreaterThan(appointmentRoute);
+    expect(prescriptionRoute).toBeGreaterThan(appointmentRoute);
+    expect(pharmacyRoute).toBeGreaterThan(prescriptionRoute);
+    expect(broadRoute).toBeGreaterThan(pharmacyRoute);
     expect(appSource).toContain(
       '<Route path="/care" component={CareRoutes} />',
     );

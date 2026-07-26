@@ -1,5 +1,82 @@
 # Website 2 release-manager handoff
 
+## Current checkpoint — Care PR4 integration candidate
+
+- Session: Website 2 — Release Manager
+- Integration branch: `integration/care-pr4-production`
+- Base production main:
+  `69c8181a49ba1a3b431b24e35068ba70925bb28a`
+- Accepted Care PR3 source/base:
+  `71da91c458907eaf4f627488e5de35cddf82c04a`
+- Accepted Care PR4 source:
+  `0ff2352120544f436c005959e1593465353f15bb`
+- Superseded PR4 heads: `604ed05c54ca29063302433aa2c816a68b197424`,
+  `bb5b320471832c69571511d36815306159506b17`,
+  `c0998cab27c08c8cca4aa3245e1dff7dfceb133f`, and
+  `4b886f27b5ea79bb2b5fb35a5c09e13810d8f8ec`
+- Integration head/PR: pending final validation and freeze
+- Care PR4 migration: `care-prescription-pharmacy.sql` — NOT APPLIED
+- Production status: NOT YET MERGED
+
+This focused unit integrates only the accepted Care PR4 human-clinician
+prescription, verified pharmacy/readiness, clarification, dispense, shipment,
+delivery, cancellation, and immutable event foundations after live Care PR3.
+Care remains disabled. No patient, clinician, pharmacy, license, supported
+state, prescription, order, role, seed, approval, or external action is
+created.
+
+Shared integration:
+
+- registers `buildCarePrescriptionRepository()` and
+  `registerCarePrescriptionApi(...)` after accepted Care PR1–PR3 dependencies
+  and before API/SPA fallbacks;
+- registers `/care/prescriptions` and `/care/pharmacy` before the broad
+  `/care/*` route using the existing lazy/Suspense pattern;
+- preserves the global no-store/no-cache/noindex Care middleware and the
+  no-store/noindex/no-referrer page gate;
+- preserves the accepted PR4 exact domain semantics for consent/state
+  freshness, replay authorization, exact-entity readiness, clinician-owned
+  clarification resolution, signed-prescription/supersession enforcement,
+  terminal clarification cancellation, and narrow delivery handling;
+- resolves only the migration ledger conflict by retaining applied Care
+  PR1–PR3 versions and recording Care PR4 as pending.
+
+Production assets:
+
+- migration: `supabase/care-prescription-pharmacy.sql`;
+- lifecycle: `supabase/tests/care-prescription-pharmacy-lifecycle.test.sql`;
+- verification: `supabase/verify-care-prescription-pharmacy.sql`;
+- rollback:
+  `supabase/production/care-prescription-pharmacy-rollback-notes.md`.
+
+Current integration validation:
+
+- six focused Care server/client/integration files, 37 tests passed;
+- full suite: 186 files, 3,472 tests passed;
+- `npm run check`, `npm run build`, and `git diff --check` passed; the build
+  retains only the existing large-chunk advisory;
+- fresh PostgreSQL 16 applied Care PR1–PR4 twice with `ON_ERROR_STOP=1`;
+- all four lifecycle scripts and all four read-only verification scripts
+  passed;
+- disposable verification confirmed 38/38 total Care tables forced RLS, zero
+  PR4 browser grants/policies, seven reviewed PR4 service-role RPC grants, zero
+  PR4 prescription/order rows and roles, and the canonical disabled capability;
+- local browser checks passed on `/care/prescriptions` and `/care/pharmacy` at
+  1440, 375, and 320 pixels with one main/H1, no overflow, no internal-key
+  leakage, a truthful retry state, clean console, and mobile menu
+  Escape/focus-return;
+- native 200% zoom was unavailable in the browser runtime; committed PR4
+  evidence and an independent 720-pixel reflow-equivalent check passed.
+
+Release boundary:
+
+- do not apply the migration, merge, or deploy until Website 6 accepts the exact
+  integration SHA;
+- keep Care disabled and create no Care role, seed, operational row, or external
+  action;
+- keep PR5–7 held until PR4 is merged, deployed, and independently accepted
+  post-deploy.
+
 ## Current checkpoint — Care PR3 production release
 
 - Session: Website 2 — Release Manager
