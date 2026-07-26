@@ -29,6 +29,7 @@ diagnostic; it does not disclose the value.
 | Affiliate portal | `RESEARCH_AFFILIATE_COMMISSIONS_ENABLED`; payout execution remains separate | UI presence is not payout readiness |
 | Fulfillment portal | `RESEARCH_MITCH_FULFILLMENT_ENABLED` plus Mitch provider names below | Fail closed until provider readiness is confirmed |
 | Document rendering | `RESEARCH_DOCUMENT_RENDERING_ENABLED` | Requires verified private storage path |
+| Private pre-launch | Canonical Supabase settings/roles/seed namespaces; no client flag | Foundation candidate defaults to `internal_build` + provider `disabled`; no role or namespace is seeded |
 
 ## External provider-backed capabilities
 
@@ -46,6 +47,10 @@ diagnostic; it does not disclose the value.
 | Private media | `RESEARCH_PRIVATE_MEDIA_ENABLED`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEARCH_MEDIA_BUCKET` | default disabled |
 | Mitch fulfillment | `RESEARCH_MITCH_FULFILLMENT_ENABLED`, `MITCH_PROVIDER`, `MITCH_TRANSPORT_MODE`, `MITCH_ENDPOINT_URL`, `MITCH_API_KEY`, `MITCH_WEBHOOK_SECRET` | default disabled |
 | Affiliate payouts | `RESEARCH_AFFILIATE_PAYOUTS_ENABLED`, `PAYOUT_PROVIDER`, `PAYOUT_API_BASE`, `PAYOUT_API_KEY`, `PAYOUT_WEBHOOK_SECRET`, emergency `PAYOUTS_EMERGENCY_DISABLED` | default disabled |
+
+Internal-seed provider behavior is database-authoritative. Domain providers
+must use `disabled`, `capture`, or `live`; an `internal_seed` request can never
+resolve to `live`, regardless of an environment setting.
 
 ## Data-gated capabilities
 

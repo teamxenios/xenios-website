@@ -17,6 +17,10 @@ import {
   registerProductsDiagnosticsApi,
   toTrainerSafeBiomarkerSummary,
 } from "./research/products-diagnostics";
+import {
+  buildPrelaunchProductionDependencies,
+  registerPrelaunchApi,
+} from "./research/prelaunch";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
 import { requireActiveMember, requireMember } from "./research/member-auth";
@@ -166,6 +170,17 @@ registerProductsDiagnosticsApi(
     requireActiveMember,
     requireAdmin: requireSupabaseAdmin,
   },
+);
+
+// Canonical private pre-launch access. This is server-authoritative and has no
+// client-only bypass: every internal request verifies Supabase Auth, resolves a
+// persisted active role, validates an optional seed namespace, and commits an
+// access-audit record before the protected handler runs. No namespace or role
+// is seeded by application startup.
+registerPrelaunchApi(
+  app,
+  buildPrelaunchProductionDependencies(),
+  requireSupabaseAdmin,
 );
 
 // Founding membership activation (three-state: capability_disabled by default,

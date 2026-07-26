@@ -26,8 +26,8 @@ table in the same PR that adds or changes a migration file.
 | 17 | research-media.sql | Private media records, retention elections, access audit log | RUN (presence verified) | by 2026-07-25 | production schema check |
 | 18 | research-questions.sql | Member questions and Telegram link tokens (hash only) | RUN (presence verified) | by 2026-07-25 | production schema check |
 | 19 | research-sla-events.sql | SLA escalation ledger; the unique key is the idempotency guarantee | RUN (presence verified) | by 2026-07-25 | production schema check |
-| 20 | research-catalog.sql | Products, provenanced supplier facts, goal + guide links, prohibited claims, open supplier questions, supplement candidates | PENDING (not run) | — | commerce lane |
-| 21 | research-inventory-lots.sql | Lots, per-lot quality documents, excursions, FEFO allocations, lot-to-order shipment traceability | PENDING (not run) | — | commerce lane |
+| 20 | research-catalog.sql | Products, provenanced supplier facts, goal + guide links, prohibited claims, open supplier questions, supplement candidates | RUN | 2026-07-25 | managed migration `release_train_1_research_catalog`; production schema/RLS/count verification |
+| 21 | research-inventory-lots.sql | Lots, per-lot quality documents, excursions, FEFO allocations, lot-to-order shipment traceability | RUN | 2026-07-25 | managed migration `release_train_1_research_inventory_lots`; production schema/RLS/count verification |
 | 22 | research-orders.sql | Carts, orders, order lines, state events, webhook replay events, claims, durable refund keys | PENDING (not run) | — | commerce lane |
 | 23 | research-subscriptions.sql | Product subscriptions (30/60/90) + append-only subscription events | PENDING (not run) | — | commerce lane |
 | 24 | research-fulfillment.sql | Split fulfillment orders, shipments, shipping quotes with provenance, shipping profiles | PENDING (not run) | — | commerce lane |
@@ -37,7 +37,7 @@ table in the same PR that adds or changes a migration file.
 | 28 | research-product-requests-hardening.sql | Remove Supabase default direct table grants from anonymous and authenticated browser roles | RUN | 2026-07-25 | zero browser-role table grants |
 | 29 | research-product-requests-function-hardening.sql | Remove default browser-role execution from the append-only event trigger helper | RUN | 2026-07-25 | zero browser-role Product Request function grants |
 | 30 | research-security-definer-grants-hardening.sql | Remove unnecessary PUBLIC/anon/authenticated execution from the internal RLS event-trigger helper | RUN | 2026-07-25 | managed migration `20260725231517`; advisor + explicit privilege check |
-| 31 | research-products-diagnostics.sql | Extend canonical lots/quality documents; persist supplement placeholders, metabolic pathways/interests, Superpower configuration, biomarker uploads/records, product content, private buckets, and append-only certificate access audit | PENDING (not run) | — | apply after 20-21; disposable PostgreSQL apply-twice/atomic/RLS/grant gate passed |
+| 31 | research-products-diagnostics.sql | Extend canonical lots/quality documents; persist supplement placeholders, metabolic pathways/interests, Superpower configuration, biomarker uploads/records, product content, private buckets, and append-only certificate access audit | RUN | 2026-07-25 | managed migration `release_train_1_research_products_diagnostics`; forced-RLS/browser-grant/private-bucket/RPC/count verification |
 
 Founding-membership operational migrations use a separate dependency chain.
 Production presence and managed migration history were reconciled on
@@ -120,3 +120,16 @@ Notes:
 - The global order in this ledger is the integration order. The authoritative
   ordered run script for a production apply is
   docs/research-launch/FULL_PRODUCTION_MIGRATION_MANIFEST.md.
+- 2026-07-25: Release Train 1 production migrations were applied in dependency
+  order as managed migrations
+  `release_train_1_research_catalog`,
+  `release_train_1_research_inventory_lots`, and
+  `release_train_1_research_products_diagnostics`. Verification found all
+  expected tables, the Website 3 forced-RLS/browser-grant/private-bucket/RPC
+  posture, zero fabricated product/lot/COA/biomarker records, and unchanged
+  existing record-count invariants.
+- `research-prelaunch-foundation.sql` is a PENDING focused follow-on migration.
+  It creates the canonical disabled pre-launch settings, role assignments, seed
+  namespace registry, append-only access audit, and append-only external-action
+  capture. It creates no role or seed namespace. Production application is
+  prohibited until the focused branch is reviewed, frozen, and accepted.
