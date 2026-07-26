@@ -186,17 +186,30 @@ owners approve any later disposition.
 
 - Exact corrected ancestry: merge base is accepted Care PR 4 source head
   `0ff2352120544f436c005959e1593465353f15bb`.
-- Focused, full-repository, typecheck, build, scope-parity, and GitHub CI
-  results are recorded after the corrected candidate is frozen.
-- Disposable PostgreSQL:
-  - prerequisite Care 1–4 schema present;
-  - Care-5 migration applied twice with `ON_ERROR_STOP=1`;
-  - lifecycle proof completed and rolled back;
-  - 11/11 Care-5 tables have enabled + forced RLS;
+- Scope parity: the original and corrected PR 5 deltas contain the same 22
+  files; all 18 additive implementation, test, migration, UI, and evidence
+  blobs are byte-for-byte unchanged; the `server/care/index.ts`,
+  `supabase/MIGRATIONS.md`, and remaining-scope deltas are identical.
+- Locked-file isolation: no delta in `client/src/App.tsx`, `server/index.ts`, or
+  navigation files.
+- Focused: 3 files / 16 tests passed.
+- Full repository: 165 files / 3,254 tests passed.
+- `npm run check`: passed.
+- `npm run build`: passed; existing Vite large-chunk advisory only.
+- `git diff --check`: passed.
+- Fresh disposable PostgreSQL 16:
+  - Care 1–5 migrations applied in order and all five applied a second time
+    with `ON_ERROR_STOP=1`;
+  - all five lifecycle proofs completed and rolled back;
+  - 49/49 total Care tables and 11/11 Care-5 tables have enabled + forced RLS;
+  - Care-5 browser table grants: zero;
+  - Care-5 browser routine grants: zero;
+  - nine reviewed Care-5 service-role RPC grants were present;
   - cross-patient instruction/replacement actions rejected;
   - instruction and replacement histories reject UPDATE and DELETE;
   - capability remained `care:disabled`;
-  - zero Care-5 fixture rows survived rollback.
+  - zero disposable auth users, roles, access audits, instructions, supply
+    kits, or replacements remained.
 - Viewable UI evidence: `docs/evidence/care-pr5/`.
 
 ## Exact external blockers
