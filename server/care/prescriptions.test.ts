@@ -28,6 +28,8 @@ const prescription: CarePrescription = {
   version: 0,
   signedAt: null,
   supersedesPrescriptionId: null,
+  createdAt: "2026-07-25T20:00:00Z",
+  updatedAt: "2026-07-25T20:00:00Z",
 };
 
 const order: CarePharmacyOrder = {
@@ -40,6 +42,8 @@ const order: CarePharmacyOrder = {
   clarificationOpen: false,
   trackingReferencePresent: false,
   version: 2,
+  createdAt: "2026-07-25T20:00:00Z",
+  updatedAt: "2026-07-25T20:00:00Z",
 };
 
 describe("Care PR 4 prescription boundary", () => {
