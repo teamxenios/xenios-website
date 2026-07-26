@@ -1090,6 +1090,79 @@ body {
 .ra-subnav-active { color: var(--ra-selected); font-weight: 700; border-bottom: 2px solid var(--ra-selected); }
 .ra-pagehead { margin-top: 8px; }
 .ra-admin-top { padding-bottom: 10px; border-bottom: 1px solid var(--ra-border); }
+.ra-admin-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: 8px;
+  align-items: start;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--ra-border);
+  margin-bottom: 20px;
+}
+.ra-admin-nav-overview,
+.ra-admin-nav-summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--ra-border);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: left;
+  text-decoration: none;
+}
+.ra-admin-nav-summary {
+  cursor: pointer;
+  list-style: none;
+}
+.ra-admin-nav-summary::-webkit-details-marker { display: none; }
+.ra-admin-nav-summary:hover,
+.ra-admin-nav-overview:hover,
+.ra-admin-nav-link:hover { color: var(--ra-selected); border-color: var(--ra-selected); }
+.ra-admin-nav-summary:focus-visible,
+.ra-admin-nav-overview:focus-visible,
+.ra-admin-nav-link:focus-visible {
+  outline: 2px solid var(--ra-focus);
+  outline-offset: 2px;
+}
+.ra-admin-nav-indicator::before {
+  content: "+";
+  display: block;
+  color: var(--ink-mute);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+.ra-admin-nav-group[open] .ra-admin-nav-indicator::before { content: "−"; }
+.ra-admin-nav-group { min-width: 0; }
+.ra-admin-nav-links {
+  display: grid;
+  gap: 2px;
+  padding-top: 6px;
+}
+.ra-admin-nav-link {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-left: 2px solid var(--ra-border);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+.ra-admin-nav-active {
+  border-color: var(--ra-selected);
+  color: var(--ra-selected);
+  font-weight: 700;
+}
 @media (prefers-reduced-motion: reduce) {
   .research-app * { transition: none !important; animation: none !important; }
 }
@@ -1103,5 +1176,14 @@ body {
 @media (max-width: 640px) {
   .ra-subnav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
   .ra-subnav-link { padding: 12px 2px; white-space: nowrap; }
+  .ra-admin-nav {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+  .ra-admin-nav-overview,
+  .ra-admin-nav-summary,
+  .ra-admin-nav-link {
+    max-width: 100%;
+  }
 }
 a.wordmark { text-decoration: none !important; }

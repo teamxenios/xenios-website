@@ -1,4 +1,11 @@
-import { type ReactNode } from "react";
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  type SyntheticEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Link, useLocation } from "wouter";
 import { MEMBER_ROUTES, PARTNER_ROUTES, ADMIN_ROUTES } from "../lib/routes";
 
@@ -140,34 +147,151 @@ export function ResearchPartnerShell({
 // Admin shell: information-dense operations chrome for /admin/research.
 // The browser never grants authority; every panel's data comes from
 // admin-authorized APIs and denial renders as an honest state.
-const ADMIN_SUBNAV = [
-  { href: ADMIN_ROUTES.home, label: "Overview" },
-  { href: ADMIN_ROUTES.applications, label: "Applications" },
-  { href: ADMIN_ROUTES.members, label: "Members" },
-  { href: ADMIN_ROUTES.plans, label: "Plans" },
-  { href: ADMIN_ROUTES.blueprintReview, label: "Plan review" },
-  { href: ADMIN_ROUTES.products, label: "Products" },
-  { href: ADMIN_ROUTES.productConfiguration, label: "Product config" },
-  { href: ADMIN_ROUTES.productRequests, label: "Product requests" },
-  { href: ADMIN_ROUTES.inventory, label: "Inventory" },
-  { href: ADMIN_ROUTES.orders, label: "Orders" },
-  { href: ADMIN_ROUTES.fulfillment, label: "Fulfillment" },
-  { href: ADMIN_ROUTES.commerceQueues, label: "Commerce queues" },
-  { href: ADMIN_ROUTES.activationQueue, label: "Payment verification" },
-  { href: ADMIN_ROUTES.activationBridge, label: "Bridge" },
-  { href: ADMIN_ROUTES.activationChecklist, label: "Day 15" },
-  { href: ADMIN_ROUTES.activationReconciliation, label: "Reconciliation" },
-  { href: ADMIN_ROUTES.activationReadiness, label: "Readiness" },
-  { href: ADMIN_ROUTES.esignDocuments, label: "E-signatures" },
-  { href: ADMIN_ROUTES.questions, label: "Questions" },
-  { href: ADMIN_ROUTES.guides, label: "Guides" },
-  { href: ADMIN_ROUTES.partners, label: "Partners" },
-  { href: ADMIN_ROUTES.security, label: "Security" },
-  { href: ADMIN_ROUTES.privacy, label: "Privacy" },
-  { href: ADMIN_ROUTES.capabilities, label: "Capabilities" },
-  { href: ADMIN_ROUTES.requiredInputs, label: "Required inputs" },
-  { href: ADMIN_ROUTES.audit, label: "Audit" },
+type AdminNavItem = { href: string; label: string };
+type AdminNavGroup = { label: string; items: AdminNavItem[] };
+
+const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
+  {
+    label: "Members",
+    items: [
+      { href: ADMIN_ROUTES.applications, label: "Applications" },
+      { href: ADMIN_ROUTES.members, label: "Members" },
+      { href: ADMIN_ROUTES.plans, label: "Plans" },
+      { href: ADMIN_ROUTES.blueprintReview, label: "Plan review" },
+      { href: ADMIN_ROUTES.questions, label: "Questions" },
+    ],
+  },
+  {
+    label: "Commerce",
+    items: [
+      { href: ADMIN_ROUTES.products, label: "Products" },
+      { href: ADMIN_ROUTES.productConfiguration, label: "Product configuration" },
+      { href: ADMIN_ROUTES.productRequests, label: "Product requests" },
+      { href: ADMIN_ROUTES.inventory, label: "Inventory" },
+      { href: ADMIN_ROUTES.orders, label: "Orders" },
+      { href: ADMIN_ROUTES.fulfillment, label: "Fulfillment" },
+      { href: ADMIN_ROUTES.commerceQueues, label: "Commerce queues" },
+    ],
+  },
+  {
+    label: "Activation",
+    items: [
+      { href: ADMIN_ROUTES.activationQueue, label: "Payment verification" },
+      { href: ADMIN_ROUTES.activationBridge, label: "Payment bridge" },
+      { href: ADMIN_ROUTES.activationChecklist, label: "Day 15 checklist" },
+      { href: ADMIN_ROUTES.activationReconciliation, label: "Reconciliation" },
+      { href: ADMIN_ROUTES.activationReadiness, label: "Readiness" },
+      { href: ADMIN_ROUTES.esignDocuments, label: "E-signatures" },
+    ],
+  },
+  {
+    label: "Content & partners",
+    items: [
+      { href: ADMIN_ROUTES.guides, label: "Guides" },
+      { href: ADMIN_ROUTES.partners, label: "Partners" },
+    ],
+  },
+  {
+    label: "Governance",
+    items: [
+      { href: ADMIN_ROUTES.security, label: "Security" },
+      { href: ADMIN_ROUTES.privacy, label: "Privacy" },
+      { href: ADMIN_ROUTES.capabilities, label: "Capabilities" },
+      { href: ADMIN_ROUTES.requiredInputs, label: "Required inputs" },
+      { href: ADMIN_ROUTES.audit, label: "Audit" },
+    ],
+  },
 ];
+
+function adminRouteIsActive(location: string, href: string): boolean {
+  if (href === ADMIN_ROUTES.home) return location === href;
+  return location === href || location.startsWith(href + "/");
+}
+
+function AdminNavLink({
+  item,
+  location,
+  overview = false,
+}: {
+  item: AdminNavItem;
+  location: string;
+  overview?: boolean;
+}) {
+  const active = adminRouteIsActive(location, item.href);
+  return (
+    <Link
+      href={item.href}
+      className={`${overview ? "ra-admin-nav-overview" : "ra-admin-nav-link"} ${
+        active ? "ra-admin-nav-active" : ""
+      }`}
+      aria-current={active ? "page" : undefined}
+    >
+      {item.label}
+    </Link>
+  );
+}
+
+function AdminNavGroup({
+  group,
+  location,
+}: {
+  group: AdminNavGroup;
+  location: string;
+}) {
+  const containsCurrentRoute = group.items.some((item) =>
+    adminRouteIsActive(location, item.href),
+  );
+  const [open, setOpen] = useState(containsCurrentRoute);
+  const summaryRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (containsCurrentRoute) setOpen(true);
+  }, [containsCurrentRoute]);
+
+  function handleToggle(event: SyntheticEvent<HTMLDetailsElement>) {
+    setOpen(event.currentTarget.open);
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLDetailsElement>) {
+    if (event.key !== "Escape" || !open) return;
+    event.preventDefault();
+    setOpen(false);
+    summaryRef.current?.focus();
+  }
+
+  return (
+    <details
+      className="ra-admin-nav-group"
+      open={open}
+      onToggle={handleToggle}
+      onKeyDown={handleKeyDown}
+    >
+      <summary ref={summaryRef} className="ra-admin-nav-summary">
+        <span>{group.label}</span>
+        <span className="ra-admin-nav-indicator" aria-hidden="true" />
+      </summary>
+      <div className="ra-admin-nav-links">
+        {group.items.map((item) => (
+          <AdminNavLink key={item.href} item={item} location={location} />
+        ))}
+      </div>
+    </details>
+  );
+}
+
+function AdminGroupedNav() {
+  const [location] = useLocation();
+  const overview = { href: ADMIN_ROUTES.home, label: "Overview" };
+
+  return (
+    <nav aria-label="Research operations areas" className="ra-admin-nav">
+      <AdminNavLink item={overview} location={location} overview />
+      {ADMIN_NAV_GROUPS.map((group) => (
+        <AdminNavGroup key={group.label} group={group} location={location} />
+      ))}
+    </nav>
+  );
+}
 
 export function ResearchAdminShell({
   title,
@@ -189,7 +313,7 @@ export function ResearchAdminShell({
         </Link>
         <Link href="/" className="body-s text-ink-mute" style={{ textDecoration: "none" }}>Back to site</Link>
       </div>
-      <SubNav items={ADMIN_SUBNAV} label="Research operations areas" />
+      <AdminGroupedNav />
       <PageHeader eyebrow="Operations" title={title} lead={lead} actions={actions} />
       <main className="mt-6">{children}</main>
     </div>
