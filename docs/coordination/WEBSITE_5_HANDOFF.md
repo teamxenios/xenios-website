@@ -1,134 +1,152 @@
-# Website 5 — Care PR 4 production handoff
+# Website 5 — Care PR 5 production handoff
 
 ## Release unit
 
 - Session: WEBSITE 5 — XENIOS CARE FOUNDATION
-- Domain: patient-specific prescription and pharmacy foundation
-- Stacked base: frozen Care PR 3 head
-  `fcc91987586b6f20a88c3467f63fc26202d91f27`
-- Branch: `feature/website-5-care-prescription-pharmacy`
-- PR/frozen head: recorded after final push
-- Release order: PR #46 → PR #56 → PR #59 → this PR
+- Domain: patient instruction and product-specific supply foundation
+- Stacked base: frozen Care PR 4 head
+  `604ed05c54ca29063302433aa2c816a68b197424`
+- Starting checkpoint: `493ca898ebe688eb9b039b570e619baa85dee8af`
+- Branch: `feature/website-5-care-instructions-supplies`
+- PR/frozen head: recorded in the final PR and Command Center handoff
+- Release order: PR #46 → PR #56 → PR #59 → PR #63 → this PR
 
-Care PRs 1–3 remain frozen and unchanged. This release contains no instruction
-center, supply kit, laboratory sharing, messaging, adverse-event workflow, or
-parallel cross-domain pre-launch/required-input model.
+Care PRs 1–4 remain frozen and unchanged. This unit does not contain laboratory
+sharing, messaging, support, adverse-event work, PR6 code, clinical seed data,
+external clinical actions, or a parallel canonical required-input/readiness
+model.
 
 ## Completed scope
 
-- Patient-specific prescription source, draft, signing, version, and
-  supersession records.
-- Signing is limited to the exact assigned human clinician after a completed
-  appointment, approved human-clinician review, current state coverage, and
-  complete patient-specific content.
-- Verified pharmacy identity, license, state coverage, agreement, integration,
-  support, and assigned-operator seams.
-- Pharmacy receipt, clarification, acceptance, rejection, dispense, shipment,
-  delivery, cancellation, and support-reference history.
-- Open clarification blocks dispensing; shipment requires a private tracking
-  reference.
-- Cross-patient, wrong-clinician, wrong-pharmacy, inactive-role, expired
-  coverage, stale-version, and replay controls.
-- Append-only prescription source/event, pharmacy order event, and
-  configuration-audit histories.
-- Ten new forced-RLS tables with no browser grants; all writes use service-role
-  RPCs behind the accepted Care authorization middleware.
-- Stable safe `503` responses disclose no provider/repository error text.
-- Final Xenios patient prescription UI plus clinical-administrator readiness
-  panel, with loading, disabled, auth/forbidden, error/retry, empty, populated,
-  and exact required-input states.
+- Patient-specific instruction sources for exact pharmacy label, pharmacy
+  information, clinician direction, and manufacturer material.
+- General education remains a separate source kind and cannot satisfy a
+  patient-specific instruction release.
+- Draft, assigned-human-clinician release, acknowledgment, version,
+  supersession, optimistic concurrency, and idempotency lifecycle.
+- Released instructions require a signed prescription, exact patient and
+  prescription binding, current verified sources, and the assigned human
+  clinician. AI and automation cannot release instructions.
+- Verified supply-source seam, released patient instruction prerequisite,
+  product-specific device, replacement cadence, kit version/release, patient
+  replacement request, and assigned-pharmacy replacement queue/action.
+- No RPC or route invokes shipping, pharmacy, supplier, clinician, laboratory,
+  messaging, or other external actions.
+- Eleven additive tables have forced RLS and no browser table/RPC grants.
+- Instruction sources, source links, instruction events, acknowledgments,
+  supply-kit events, and replacement events are database-enforced append-only.
+  Supply-source configuration changes are fully audited.
+- Repository failures return stable safe `503` JSON with no adapter error text.
+- Final Xenios patient instruction center, clinical-admin readiness panel, and
+  restricted pharmacy replacement UI include loading, disabled/forbidden,
+  error/retry, empty, populated, acknowledgment, and replacement states.
 
 ## Truthfulness and shared-contract boundary
 
-- No pharmacy, license, operator, patient, prescription, medication,
-  instruction, price, product, order, shipment, supported state, or clinical
-  fact is seeded.
+- No patient, clinician, pharmacy, prescription, instruction, supply source,
+  product-specific device, cadence, replacement, supported state, price,
+  availability, or clinical fact is seeded.
 - Care remains canonically `disabled`.
-- No pharmacy/provider external action is sent by this PR.
 - Software readiness is not clinical, operational, or public clearance.
-- The live canonical private pre-launch contract at
-  `docs/coordination/PRELAUNCH_SHARED_CONTRACT.md` was received after the PR4
-  checkpoint. Per Website 2 instruction, PR4 does not retrofit it mid-release.
-- No seed namespace or seed role exists; Care seed data remains prohibited.
-- Website 2 has not frozen canonical required-input/readiness/launch-switch
-  contracts. This PR retains exact Care-domain facts and creates no competing
-  shared model.
+- Website 2’s live pre-launch contract is not retrofitted into this stacked
+  unit. No Care seed namespace or role exists and no Care seed data is
+  authorized.
+- Canonical required-input/readiness/launch-switch contracts were not frozen
+  for this stack. PR5 retains only exact Care-domain facts for later Website 2
+  mapping and creates no competing shared object.
 
-## Files
+## Changed files
 
-- `shared/care/prescriptions.ts`
-- `server/care/prescriptions.ts`
-- `server/care/prescriptions.test.ts`
-- `server/care/prescription-repository.ts`
-- `server/care/prescription-routes.ts`
-- `server/care/prescription-routes.test.ts`
+- `shared/care/instructions.ts`
+- `server/care/instructions.ts`
+- `server/care/instructions.test.ts`
+- `server/care/instruction-repository.ts`
+- `server/care/instruction-routes.ts`
+- `server/care/instruction-routes.test.ts`
 - `server/care/index.ts`
-- `client/src/care/CarePrescriptionsPage.tsx`
-- `client/src/care/CarePharmacyOrdersPage.tsx`
-- `client/src/care/CarePharmacyReadinessPanel.tsx`
-- `client/src/care/prescription-ui.test.ts`
-- `supabase/care-prescription-pharmacy.sql`
-- `supabase/tests/care-prescription-pharmacy-lifecycle.test.sql`
+- `client/src/care/CareInstructionCenterPage.tsx`
+- `client/src/care/CareInstructionReadinessPanel.tsx`
+- `client/src/care/CareSupplyReplacementPage.tsx`
+- `client/src/care/instruction-ui.test.ts`
+- `supabase/care-instructions-supplies.sql`
+- `supabase/tests/care-instructions-supplies-lifecycle.test.sql`
 - `supabase/MIGRATIONS.md`
-- `docs/care/evidence/PR4_UI_EVIDENCE.md`
+- `docs/evidence/care-pr5/*`
 - `docs/coordination/WEBSITE_5_REMAINING_SCOPE.md`
 
 ## Route delta
 
-- `GET /api/care/prescriptions` — patient-owned records only
-- `POST /api/care/prescriptions` — assigned clinician draft
-- `POST /api/care/prescriptions/:id/sign` — assigned human clinician
-- `GET /api/care/pharmacy/orders` — assigned pharmacy operator only
-- `POST /api/care/pharmacy/orders/:id/action` — assigned pharmacy operator
-- `GET /api/care/pharmacy/admin/readiness` — clinical administrator
-- `POST /api/care/pharmacy/admin/prescriptions/:id/assign` — clinical
-  administrator
-- `/care/prescriptions` — patient UI
-- `/care/pharmacy` — restricted assigned-operator UI
+- `GET /api/care/instructions` — patient-owned released/history records
+- `POST /api/care/instructions` — assigned clinician draft
+- `POST /api/care/instructions/:instructionId/release` — assigned human clinician
+- `POST /api/care/instructions/:instructionId/acknowledge` — owning patient
+- `POST /api/care/instructions/sources/clinician` — clinician direction only
+- `POST /api/care/instructions/sources/pharmacy` — pharmacy label/information only
+- `POST /api/care/instructions/sources/admin` — manufacturer/general education
+- `GET /api/care/instructions/admin/readiness` — clinical administrator
+- `GET /api/care/supplies` — patient-owned kit/replacement records
+- `POST /api/care/supplies/:supplyKitId/replacements` — owning patient
+- `GET /api/care/supplies/pharmacy/replacements` — assigned pharmacy operator
+- `POST /api/care/supplies/pharmacy/replacements/:replacementId/action` —
+  assigned pharmacy operator
+- `POST /api/care/supplies/admin/sources` — audited clinical-admin supply-source
+  entry, review, and verification
+- `POST /api/care/supplies/admin/kits` — clinical administrator
+- `POST /api/care/supplies/admin/kits/:supplyKitId/release` —
+  clinical administrator
+- `/care/instructions` — patient instruction/supply UI
+- `/care/pharmacy/replacements` — restricted pharmacy queue UI
 
-Every actor identity comes from `res.locals.carePrincipal`, never the request
-body. Private tracking and clarification references are persisted but not
-returned by patient or queue projections.
+Every actor and patient identity comes from `res.locals.carePrincipal`, never
+the request body.
 
 ## Website 2 locked-file wiring request
 
-Do not register until Care migrations 1–4 are reviewed and applied in order.
+Do not register until Care migrations 1–5 are reviewed and applied in order.
 
 In `server/index.ts`, import:
 
 ```ts
-buildCarePrescriptionRepository,
-registerCarePrescriptionApi,
+buildCareInstructionRepository,
+registerCareInstructionApi,
 ```
 
 Then, after the accepted shared Care access dependencies:
 
 ```ts
-const carePrescriptions = buildCarePrescriptionRepository();
-registerCarePrescriptionApi(app, careAccess, carePrescriptions);
+const careInstructions = buildCareInstructionRepository();
+registerCareInstructionApi(app, careAccess, careInstructions);
 ```
 
 Register before the generic API 404 and SPA fallback. Never log request bodies,
-clinical content, clarification references, or tracking references.
+instruction content, source references/content, patient identifiers, supply
+details, or replacement records.
 
 In `client/src/App.tsx`, add:
 
 ```ts
-const CarePrescriptions = lazy(() => import("@/care/CarePrescriptionsPage"));
-const CarePharmacyOrders = lazy(() => import("@/care/CarePharmacyOrdersPage"));
+const CareInstructionCenter = lazy(
+  () => import("@/care/CareInstructionCenterPage"),
+);
+const CareSupplyReplacements = lazy(
+  () => import("@/care/CareSupplyReplacementPage"),
+);
 ```
 
-and register before the broad `/care/*` route:
+Register before the broad `/care/*` route:
 
 ```tsx
-<Route path="/care/prescriptions" component={CarePrescriptions} />
-<Route path="/care/pharmacy" component={CarePharmacyOrders} />
+<Route path="/care/instructions" component={CareInstructionCenter} />
+<Route
+  path="/care/pharmacy/replacements"
+  component={CareSupplyReplacements}
+/>
 ```
 
-Mount `CarePharmacyReadinessPanel` only inside the canonical server-authorized
-clinical administration experience. Website 2 should map its exact domain
-facts into the future canonical required-input/readiness contract after that
-contract is frozen.
+Mount `CareInstructionReadinessPanel` only inside the canonical
+server-authorized clinical administration experience. Website 2 should map its
+exact Care-domain facts into the canonical required-input/readiness contract
+only after that shared contract is frozen.
 
 ## Migration delta
 
@@ -138,54 +156,53 @@ Apply after:
 2. `care-eligibility-intake.sql`
 3. `care-appointments-clinician.sql`
 4. `care-prescription-pharmacy.sql`
+5. `care-instructions-supplies.sql`
 
-The PR4 migration adds:
+Care-5 adds:
 
-1. `care_pharmacies`
-2. `care_pharmacy_licenses`
-3. `care_pharmacy_state_coverage`
-4. `care_pharmacy_operators`
-5. `care_pharmacy_configuration_audit`
-6. `care_prescription_content_sources`
-7. `care_prescriptions`
-8. `care_prescription_events`
-9. `care_pharmacy_orders`
-10. `care_pharmacy_order_events`
+1. `care_instruction_sources`
+2. `care_patient_instructions`
+3. `care_instruction_source_links`
+4. `care_instruction_events`
+5. `care_instruction_acknowledgments`
+6. `care_supply_sources`
+7. `care_supply_configuration_audit`
+8. `care_supply_kits`
+9. `care_supply_kit_events`
+10. `care_supply_replacements`
+11. `care_supply_replacement_events`
 
-All ten have enabled and forced RLS. `public`, `anon`, and `authenticated`
-receive no table or RPC access. Configuration changes are audited; clinical
-source and workflow histories reject UPDATE and DELETE. Rollback is
-capability-off plus code rollback; additive tables must be retained until
-retention/legal owners approve any later data disposition.
+All eleven have enabled and forced RLS. `public`, `anon`, and `authenticated`
+receive no table or RPC access. Rollback is capability-off plus code rollback;
+additive clinical tables and audit history must remain until retention/legal
+owners approve any later disposition.
 
 ## Validation
 
 - Focused: 3 files / 16 tests passed.
+- Full repository: 161 files / 3,226 tests passed.
 - `npm run check`: passed.
 - `npm run build`: passed; existing Vite large-chunk advisory only.
-- Disposable PostgreSQL 16:
-  - Care 1–4 applied in order.
-  - PR4 migration applied twice with `ON_ERROR_STOP=1`.
-  - lifecycle proof completed and rolled back.
-  - 10/10 PR4 tables have enabled + forced RLS.
-  - capability remained `care:disabled`.
-  - zero PR4 fixture rows survived rollback.
-- Lifecycle proof covers no seeds, cross-patient rejection, assigned human
-  clinician, verified content, idempotent draft/sign, assigned verified
-  pharmacy/state/operator, clarification blocking, immutable source/events,
-  and rollback.
-- Full repository: 158 files / 3,210 tests passed.
-- Final UI evidence: `docs/care/evidence/PR4_UI_EVIDENCE.md`.
+- Disposable PostgreSQL:
+  - prerequisite Care 1–4 schema present;
+  - Care-5 migration applied twice with `ON_ERROR_STOP=1`;
+  - lifecycle proof completed and rolled back;
+  - 11/11 Care-5 tables have enabled + forced RLS;
+  - cross-patient instruction/replacement actions rejected;
+  - instruction and replacement histories reject UPDATE and DELETE;
+  - capability remained `care:disabled`;
+  - zero Care-5 fixture rows survived rollback.
+- Viewable UI evidence: `docs/evidence/care-pr5/`.
 
 ## Exact external blockers
 
-- Real medical group and executed agreement.
-- Real licensed clinician identity, credential review, state coverage, and
-  agreement.
-- Real pharmacy legal identity, current licenses, state/dispensing/shipping
-  coverage, executed agreement, integration, support, and operator approvals.
-- Real patient-specific prescription content signed by the assigned clinician.
-- Privacy, consent, instruction, support, incident, and Care activation review.
+- Real signed patient prescription and assigned licensed clinician.
+- Exact verified pharmacy label and information, clinician direction, and
+  manufacturer material for the patient/prescription.
+- Real verified supply relationship, product-specific device record, and
+  replacement cadence.
+- Real medical group, clinician/state coverage, pharmacy, privacy, consent,
+  support, incident process, and Care activation approvals.
 - Website 2 shared registration, ordered migration, merge, Render deployment,
   and live smoke.
 

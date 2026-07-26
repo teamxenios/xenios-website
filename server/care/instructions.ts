@@ -1,9 +1,43 @@
 import {
   CARE_PATIENT_INSTRUCTION_SOURCE_KINDS,
+  CARE_INSTRUCTION_REQUIRED_INPUT_LABELS,
   type CareInstructionSource,
+  type CareInstructionReadinessFacts,
+  type CareInstructionRequiredInputLabel,
   type CarePatientInstruction,
   type CareSupplyKit,
 } from "@shared/care/instructions";
+
+export function evaluateCareInstructionReadiness(
+  facts: CareInstructionReadinessFacts,
+) {
+  const requiredInputs: CareInstructionRequiredInputLabel[] = [];
+  const checks: readonly [
+    keyof CareInstructionReadinessFacts,
+    CareInstructionRequiredInputLabel,
+  ][] = [
+    ["pharmacyLabelVerified", CARE_INSTRUCTION_REQUIRED_INPUT_LABELS.pharmacyLabel],
+    ["pharmacyInformationVerified", CARE_INSTRUCTION_REQUIRED_INPUT_LABELS.pharmacyInformation],
+    ["clinicianDirectionVerified", CARE_INSTRUCTION_REQUIRED_INPUT_LABELS.clinicianDirection],
+    ["manufacturerMaterialVerified", CARE_INSTRUCTION_REQUIRED_INPUT_LABELS.manufacturerMaterial],
+    ["patientInstructionContentVerified", CARE_INSTRUCTION_REQUIRED_INPUT_LABELS.patientInstructions],
+    ["patientInstructionReviewed", CARE_INSTRUCTION_REQUIRED_INPUT_LABELS.instructionReview],
+    ["productSpecificDeviceVerified", CARE_INSTRUCTION_REQUIRED_INPUT_LABELS.device],
+    ["supplySourceVerified", CARE_INSTRUCTION_REQUIRED_INPUT_LABELS.supplier],
+    ["replacementCadenceVerified", CARE_INSTRUCTION_REQUIRED_INPUT_LABELS.replacementCadence],
+  ];
+  for (const [key, label] of checks) if (!facts[key]) requiredInputs.push(label);
+  const operationalReady = facts.prescriptionSigned && requiredInputs.length === 0;
+  if (!facts.publicActivationApproved) {
+    requiredInputs.push(CARE_INSTRUCTION_REQUIRED_INPUT_LABELS.careActivation);
+  }
+  return {
+    softwareReady: true as const,
+    operationalReady,
+    publicReady: operationalReady && facts.publicActivationApproved,
+    requiredInputs,
+  };
+}
 
 export type CareInstructionReleaseGate =
   | { allowed: true; instruction: CarePatientInstruction }

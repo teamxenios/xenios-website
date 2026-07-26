@@ -2,10 +2,15 @@ import { describe, expect, it } from "vitest";
 import type { CareRecordId } from "@shared/care/contracts";
 import type {
   CareInstructionSource,
+  CareInstructionReadinessFacts,
   CarePatientInstruction,
   CareSupplyKit,
 } from "@shared/care/instructions";
-import { releaseCarePatientInstruction, releaseCareSupplyKit } from "./instructions";
+import {
+  evaluateCareInstructionReadiness,
+  releaseCarePatientInstruction,
+  releaseCareSupplyKit,
+} from "./instructions";
 
 const id = (value: string) => value as CareRecordId;
 const instruction: CarePatientInstruction = {
@@ -14,9 +19,13 @@ const instruction: CarePatientInstruction = {
   prescriptionId: id("prescription-1"),
   status: "draft",
   sourceIds: [id("source-1")],
+  instructionContent: "verified patient-specific instruction",
   version: 0,
   acknowledgedVersion: null,
   supersedesInstructionId: null,
+  releasedAt: null,
+  createdAt: "2026-07-25T20:00:00Z",
+  updatedAt: "2026-07-25T20:00:00Z",
 };
 const source: CareInstructionSource = {
   id: id("source-1"),
@@ -25,8 +34,11 @@ const source: CareInstructionSource = {
   prescriptionId: id("prescription-1"),
   version: 1,
   contentHash: "sha256:verified",
+  sourceReference: "verified-source-reference",
+  content: "verified source content",
   verified: true,
   supersededAt: null,
+  createdAt: "2026-07-25T20:00:00Z",
 };
 const kit: CareSupplyKit = {
   id: id("kit-1"),
@@ -38,6 +50,9 @@ const kit: CareSupplyKit = {
   replacementCadence: null,
   version: 0,
   supersedesSupplyKitId: null,
+  releasedAt: null,
+  createdAt: "2026-07-25T20:00:00Z",
+  updatedAt: "2026-07-25T20:00:00Z",
 };
 
 describe("Care PR5 patient-specific instruction boundary", () => {
@@ -93,5 +108,43 @@ describe("Care PR5 supply boundary", () => {
       prescriptionSigned: true,
       instructionReleased: true,
     })).toMatchObject({ allowed: true, supplyKit: { status: "released", version: 1 } });
+  });
+});
+
+describe("Care PR5 readiness boundary", () => {
+  const readyFacts: CareInstructionReadinessFacts = {
+    prescriptionSigned: true,
+    pharmacyLabelVerified: true,
+    pharmacyInformationVerified: true,
+    clinicianDirectionVerified: true,
+    manufacturerMaterialVerified: true,
+    patientInstructionContentVerified: true,
+    patientInstructionReviewed: true,
+    productSpecificDeviceVerified: true,
+    supplySourceVerified: true,
+    replacementCadenceVerified: true,
+    publicActivationApproved: false,
+  };
+
+  it("distinguishes mechanically complete software from public clinical release", () => {
+    expect(evaluateCareInstructionReadiness(readyFacts)).toMatchObject({
+      softwareReady: true,
+      operationalReady: true,
+      publicReady: false,
+      requiredInputs: ["CARE ACTIVATION APPROVAL REQUIRED"],
+    });
+  });
+
+  it("names missing patient-specific content independently from its review", () => {
+    const result = evaluateCareInstructionReadiness({
+      ...readyFacts,
+      patientInstructionContentVerified: false,
+      patientInstructionReviewed: false,
+    });
+    expect(result.operationalReady).toBe(false);
+    expect(result.requiredInputs).toEqual(expect.arrayContaining([
+      "PATIENT INSTRUCTION CONTENT REQUIRED",
+      "PATIENT INSTRUCTION REVIEW REQUIRED",
+    ]));
   });
 });
