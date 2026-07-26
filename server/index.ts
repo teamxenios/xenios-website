@@ -26,6 +26,7 @@ import {
   buildRequiredInputProductionRepository,
   registerRequiredInputApi,
 } from "./research/required-inputs";
+import { registerAssessmentRequiredInputPlanApi } from "./research/assessment-required-inputs";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
 import { requireActiveMember, requireMember } from "./research/member-auth";
@@ -223,6 +224,7 @@ registerRequiredInputApi(
     ),
   },
 );
+registerAssessmentRequiredInputPlanApi(app, prelaunchDependencies);
 
 // Founding membership activation (three-state: capability_disabled by default,
 // not_provisioned without storage, live only when flag + storage exist).
