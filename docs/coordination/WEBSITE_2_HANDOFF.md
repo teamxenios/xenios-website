@@ -1,20 +1,27 @@
 # Website 2 release-manager handoff
 
-## Current checkpoint — Care PR3 appointment/clinician integration
+## Current checkpoint — Care PR3 production release
 
 - Session: Website 2 — Release Manager
-- Branch: `integration/care-pr3-production`
-- Base/current production main:
+- Integration branch: `integration/care-pr3-production`
+- Base production main:
   `9209df12275c1de3ac76883d5a5173be707bee28`
 - Accepted Care PR2 source/base:
   `54f9bd8d8834de9a8e57fc911665627af36f09ed`
 - Accepted Care PR3 source:
   `71da91c458907eaf4f627488e5de35cddf82c04a`
+- Accepted integration head:
+  `da249ec524b7b7fc5f8751979b822997cfd2e550`
+- Merge/deployed main:
+  `70711dba04aa33b90e2878c0f68c99bb21763224`
+- Integration PR: `#73`
+- Render deployment: `dep-d9itarbeo5us73d2unkg` (Live)
 - Rejected PR3 heads: `0218e23b0d4ef1bf6d2e7a4bfef78ab23d3b131c`
   and `fcc91987586b6f20a88c3467f63fc26202d91f27`
 - Care PR1 migration: `20260726064113 care_access_foundation`
 - Care PR2 migration: `20260726080248 care_eligibility_intake`
-- Production status: NOT YET MERGED
+- Care PR3 migration: `20260726093600 care_appointments_clinician`
+- Production status: SOFTWARE LIVE — REAL INPUTS REQUIRED (CARE DISABLED)
 
 This focused unit integrates only accepted Care PR3 appointment, assignment,
 provider-neutral scheduling, reminder, private telehealth-reference, and
@@ -35,7 +42,7 @@ Shared integration:
   serialization, same-clinician readiness, due scheduled no-show, human-only
   review, and one-main/H1 rendering;
 - resolves only the expected migration-ledger conflict by retaining applied
-  Care PR1/PR2 versions and adding Care PR3 as Pending.
+  Care PR1/PR2 versions and recording the serialized Care PR3 migration.
 
 Production assets:
 
@@ -59,18 +66,40 @@ Current focused integration validation:
   browser grants, the reviewed service-role RPC posture, zero Care
   roles/audits/patients/appointments/reviews/auth users, and the canonical
   disabled capability;
-- production-schema inspection, exact-head Website 6 integration review,
-  production migration, merge, Render deployment, and live smoke remain
-  pending.
+- Website 6 accepted the exact integration head and independently accepted the
+  deployed production release with no blocker/high finding.
+
+Production result:
+
+- migration `20260726093600 care_appointments_clinician` applied through the
+  approved production path and PostgREST schema reloaded;
+- PR #73 merged only the accepted integration head as
+  `70711dba04aa33b90e2878c0f68c99bb21763224`;
+- Render deployment `dep-d9itarbeo5us73d2unkg` reached Live at that SHA;
+- health returned 200, Care status remained disabled, every PR3 read and
+  mutation-shaped route returned stable no-store `503 care_disabled`, and
+  `/care/appointments` remained truthful and noindex;
+- live 1440/375/320 browser checks passed with one main/H1, no overflow,
+  keyboard Escape/focus return, and no console warning/error;
+- production verification confirmed 12/12 PR3 and 28/28 total Care tables
+  forced RLS, zero PR3 browser table/routine grants, nine reviewed service-role
+  RPC grants, zero PR3/role/audit rows, and unchanged member/application/outbox/
+  required-input/launch-control counts;
+- Supabase API logs contained zero 5xx entries and no production Care error.
+  Detailed Render log streaming remains unavailable until a workspace is
+  explicitly selected; no workspace was guessed.
 
 Release boundary:
 
-- do not apply the PR3 migration or merge/deploy until Website 6 accepts the
-  final Website 2 integration SHA;
-- keep Care disabled and create no role, seed, operational, or external-action
-  record;
-- PR4–7 remain held until PR3 completes migration, deployment, and post-deploy
-  QA.
+- PR3 production gate is closed; keep Care disabled and create no role, seed,
+  operational, or external-action record;
+- advance only PR4 on exact accepted PR3 source
+  `71da91c458907eaf4f627488e5de35cddf82c04a`;
+- old PR4 head `604ed05c54ca29063302433aa2c816a68b197424`
+  on superseded PR3 `fcc91987586b6f20a88c3467f63fc26202d91f27`
+  remains DO NOT REVIEW/MERGE/APPLY;
+- PR5–7 remain held until corrected PR4 completes exact-head QA and serialized
+  production gates.
 
 ## Current checkpoint — Care PR2 eligibility/intake production release
 

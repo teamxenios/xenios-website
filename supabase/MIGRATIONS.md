@@ -129,7 +129,7 @@ services:
 |---|---|---|---|
 | Care-1 | `care-access-foundation.sql` | Care capability, roles, access audit, forced RLS | RUN (`20260726064113 care_access_foundation`) |
 | Care-2 | `care-eligibility-intake.sql` | Patient identity seam, location, state/clinician coverage, append-only consent/waitlist/eligibility history, and versioned intake foundation | RUN (`20260726080248 care_eligibility_intake`) |
-| Care-3 | `care-appointments-clinician.sql` | Verified medical-group/clinician/provider readiness, appointment/reminder lifecycle, private telehealth references, assignment history, and human-clinician review | PENDING (stacked after Care-2; not yet applied) |
+| Care-3 | `care-appointments-clinician.sql` | Verified medical-group/clinician/provider readiness, appointment/reminder lifecycle, private telehealth references, assignment history, and human-clinician review | RUN (`20260726093600 care_appointments_clinician`) |
 
 Care-2 and Care-3 seed no state, clinician, medical group, provider, consent
 document, intake definition, medical question, patient, appointment, pharmacy,
