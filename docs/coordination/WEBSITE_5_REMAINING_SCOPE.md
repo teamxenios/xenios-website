@@ -94,3 +94,11 @@ retained above as the pre-implementation comparison.
 - Each later branch must rebase onto the then-current `main`, reuse only its release unit, add production repositories/routes/migrations/tests, and remain disabled or Pending.
 - Website 2 alone owns shared route registration, merge sequence, production migration application, Render deployment, and rollback coordination.
 - Website 5 owns focused domain implementation, review fixes, frozen SHAs, exact handoffs, and post-deployment feature smoke verification.
+
+## Disjoint Research Commerce assignment — CSV safety kernel
+
+Executive re-baseline pauses Care PR 5–7. The deployed Care foundation remains disabled, isolated, and fail-closed. This Research Commerce unit does not modify or advance Care.
+
+| Requirement | Original assignment | Current implementation | Live production state | Classification | Remaining work | Owner | Release train |
+|---|---|---|---|---|---|---|---|
+| Route-free administrator CSV validation kernel | Website 2 assignment: schema-driven safe UTF-8 CSV parse/serialize for future administrator workflows, with RFC 4180 behavior, deterministic output, configurable limits, formula-injection protection, stable redacted errors, and bounded regressions. | Implemented only in `shared/research/admin-data-exchange.ts`, `server/research/admin-data-exchange/csv.ts`, and `server/research/admin-data-exchange/csv.test.ts` on `feature/website-5-research-commerce-csv-safety`. It is a pure utility with no route, UI, repository, provider, persistence, dependency, or production change. | Not integrated and not deployed; intentionally does not block Wave 1. | COMPLETE_NOT_INTEGRATED | Website 6 bounded utility review; Website 2 decides any future authorized administrator workflow integration. Acceptance: focused/full tests, typecheck, build, diff check, exact allowlist, and frozen-SHA handoff. Production outcome: none until a separately authorized caller is integrated and released by Website 2. | Website 5 utility; Website 6 review; Website 2 integration/release | Future Research Commerce shared administration support |
