@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from "express";
+import { randomUUID } from "crypto";
 import { z } from "zod";
 import {
   BLUEPRINT_TRANSITIONS,
@@ -35,6 +36,7 @@ import { recommend, type RecommendationOutput } from "./recommendation";
 
 export const BLUEPRINTS_TABLE = "research_blueprints";
 const MEMBERS_TABLE = "research_members";
+const PLAN_REVIEW_AUDIT_TABLE = "research_plan_review_audit_events";
 
 // States that sit in Samuel's review queue. `preliminary` is the instant
 // between generation and entering review; generation advances it immediately
@@ -70,10 +72,46 @@ export type BlueprintRow = {
   published_at: string | null;
   superseded_by_version: number | null;
   member_acknowledged_at: string | null;
+  assigned_reviewer_email: string | null;
   created_at: string;
   updated_at: string;
   [key: string]: unknown;
 };
+
+function normalizedEmail(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value.trim().toLowerCase() : null;
+}
+
+function assignedToReviewer(row: BlueprintRow, reviewerEmail: string): boolean {
+  const assigned = normalizedEmail(row.assigned_reviewer_email);
+  return assigned === null || assigned === reviewerEmail;
+}
+
+async function recordPlanReviewAudit(
+  row: BlueprintRow,
+  actorEmail: string,
+  action:
+    | "plan_brief_viewed"
+    | "approve_and_publish_attempted"
+    | "request_information_attempted"
+    | "revise_attempted",
+  now: Date,
+): Promise<boolean> {
+  const { error } = await getSupabaseAdmin()
+    .from(PLAN_REVIEW_AUDIT_TABLE)
+    .insert({
+      event_key: `${action}:${row.id}:${now.toISOString()}:${randomUUID()}`,
+      blueprint_id: row.id,
+      member_id: row.member_id,
+      actor_email: actorEmail,
+      action,
+      // Deliberately excludes assessment answers, plan content, notes, and
+      // health-derived flags. The audit says who accessed which record.
+      metadata: { blueprintVersion: row.version, state: row.state },
+      created_at: now.toISOString(),
+    });
+  return !error;
+}
 
 // ---------------------------------------------------------------------------
 // State machine
@@ -101,6 +139,23 @@ async function transitionRow(
     .select("*")
     .maybeSingle();
   return (data as BlueprintRow) ?? null;
+}
+
+async function publishBlueprintAtomic(
+  row: BlueprintRow,
+  now: Date,
+  reviewComment?: string,
+): Promise<BlueprintRow | null> {
+  if (!canTransition(row.state, "published")) return null;
+  const { data, error } = await getSupabaseAdmin().rpc("publish_research_blueprint", {
+    p_blueprint_id: row.id,
+    p_published_at: now.toISOString(),
+    p_reviewed_by: REVIEWER_DISPLAY_NAME,
+    p_review_comment: reviewComment ?? null,
+  });
+  if (error) return null;
+  const published = Array.isArray(data) ? data[0] : data;
+  return (published as BlueprintRow) ?? null;
 }
 
 // ---------------------------------------------------------------------------
@@ -144,12 +199,20 @@ async function fetchSubmittedAssessment(memberId: string): Promise<AssessmentRes
       .from(ASSESSMENT_RESPONSES_TABLE)
       .select("*")
       .eq("member_id", memberId)
-      .eq("definition_id", INITIAL_ASSESSMENT_DEFINITION.definitionId)
       .eq("mode", INITIAL_ASSESSMENT_DEFINITION.mode)
-      .eq("status", "submitted")
-      .maybeSingle();
-    if (error) return null;
-    return (data as AssessmentResponseRow) ?? null;
+      .eq("status", "submitted");
+    if (error || !Array.isArray(data)) return null;
+    const rows = data as AssessmentResponseRow[];
+    return rows
+      .slice()
+      .sort((a, b) => {
+        const definitionRank = (row: AssessmentResponseRow) =>
+          row.definition_id === INITIAL_ASSESSMENT_DEFINITION.definitionId ? 2 : 1;
+        return (
+          definitionRank(b) - definitionRank(a) ||
+          String(b.submitted_at ?? "").localeCompare(String(a.submitted_at ?? ""))
+        );
+      })[0] ?? null;
   } catch {
     return null;
   }
@@ -187,6 +250,8 @@ export function toBlueprintView(row: BlueprintRow): BlueprintView {
     topPriorities: content.topPriorities ?? [],
     recommendations: content.recommendations ?? [],
     questionsForReview: content.questionsForReview ?? [],
+    unansweredImportantFields: content.unansweredImportantFields ?? [],
+    safetyFlags: content.safetyFlags ?? [],
     confidence: content.confidence ?? "low",
     reviewedBy: row.reviewed_by,
     publishedAt: row.published_at,
@@ -228,26 +293,26 @@ export async function generatePreliminaryBlueprint(
 
   const existing = await fetchBlueprints(memberId);
 
-  // Idempotent: a blueprint already in review for this exact submission is
-  // returned as-is. A forced regenerate would discard review state, so it is
-  // refused as a state conflict.
-  const inReview = existing.find(
-    (row) => row.assessment_response_id === submission.id && BLUEPRINT_REVIEW_STATES.includes(row.state),
-  );
-  if (inReview) {
+  // One submitted initial assessment owns exactly one Blueprint for its
+  // entire lifecycle. Publication or supersession must not turn the same
+  // immutable submission back into a generation job.
+  const forSubmission = existing.find((row) => row.assessment_response_id === submission.id);
+  if (forSubmission) {
     if (options.force) {
       return {
         ok: false,
         code: "state_conflict",
-        message: `Blueprint version ${inReview.version} is already in ${inReview.state}; regenerating would discard review state.`,
+        message:
+          `Blueprint version ${forSubmission.version} already represents this submitted assessment; ` +
+          "regenerating would duplicate its review history.",
       };
     }
     // Self-heal a preliminary row whose advance to review never landed.
-    if (inReview.state === "preliminary") {
-      const advanced = await transitionRow(inReview, "samuel_review", deps.clock.now());
-      return { ok: true, row: advanced ?? inReview, created: false };
+    if (forSubmission.state === "preliminary") {
+      const advanced = await transitionRow(forSubmission, "samuel_review", deps.clock.now());
+      return { ok: true, row: advanced ?? forSubmission, created: false };
     }
-    return { ok: true, row: inReview, created: false };
+    return { ok: true, row: forSubmission, created: false };
   }
 
   const output = recommend({ answers: (submission.answers ?? {}) as Record<string, string | number | string[] | null> });
@@ -265,6 +330,7 @@ export async function generatePreliminaryBlueprint(
       reviewed_by: null,
       review_comment: null,
       member_visible_message: null,
+      assigned_reviewer_email: normalizedEmail(process.env.ADMIN_EMAIL),
       published_at: null,
       superseded_by_version: null,
       member_acknowledged_at: null,
@@ -277,7 +343,7 @@ export async function generatePreliminaryBlueprint(
     // A concurrent generate may have raced on unique (member_id, version);
     // re-read before failing.
     const raced = (await fetchBlueprints(memberId)).find(
-      (row) => row.assessment_response_id === submission.id && BLUEPRINT_REVIEW_STATES.includes(row.state),
+      (row) => row.assessment_response_id === submission.id,
     );
     if (raced) return { ok: true, row: raced, created: false };
     return { ok: false, code: "state_conflict", message: "The blueprint could not be created." };
@@ -287,6 +353,37 @@ export async function generatePreliminaryBlueprint(
   const row = data as BlueprintRow;
   const advanced = await transitionRow(row, "samuel_review", deps.clock.now());
   return { ok: true, row: advanced ?? row, created: true };
+}
+
+// A submitted assessment is the durable generation job. If the immediate
+// post-submit attempt fails, opening the authorized review queue retries every
+// submitted member that does not yet have a blueprint. Generation is already
+// idempotent by assessment_response_id, so repeated sweeps cannot duplicate a
+// plan brief.
+export async function sweepPendingBlueprintGeneration(
+  deps: MemberPlatformDeps,
+): Promise<{ attempted: number; generated: number }> {
+  const { data, error } = await getSupabaseAdmin()
+    .from(ASSESSMENT_RESPONSES_TABLE)
+    .select("*")
+    .eq("status", "submitted")
+    .eq("mode", "initial");
+  if (error) return { attempted: 0, generated: 0 };
+  const memberIds = Array.from(new Set(((data as AssessmentResponseRow[]) ?? []).map((row) => row.member_id)));
+  const pendingMemberIds: string[] = [];
+  for (const memberId of memberIds) {
+    const submission = await fetchSubmittedAssessment(memberId);
+    if (!submission) continue;
+    const alreadyGenerated = (await fetchBlueprints(memberId))
+      .some((row) => row.assessment_response_id === submission.id);
+    if (!alreadyGenerated) pendingMemberIds.push(memberId);
+  }
+  let generated = 0;
+  for (const memberId of pendingMemberIds) {
+    const result = await generatePreliminaryBlueprint(memberId, deps);
+    if (result.ok && result.created) generated += 1;
+  }
+  return { attempted: pendingMemberIds.length, generated };
 }
 
 // ---------------------------------------------------------------------------
@@ -360,11 +457,12 @@ export function registerBlueprintApi(app: Express, deps: MemberPlatformDeps) {
         return res.json({ ok: true, blueprint: null, state });
       }
 
-      const head = rows[0];
-      const visibleRow = rows.find((row) => isMemberVisible(row.state)) ?? null;
+      const currentPublished = rows.find((row) => row.state === "published") ?? null;
+      const activeReview = rows.find((row) => BLUEPRINT_REVIEW_STATES.includes(row.state)) ?? null;
+      const head = activeReview ?? currentPublished ?? rows[0];
       const body: Record<string, unknown> = {
         ok: true,
-        blueprint: visibleRow ? toBlueprintView(visibleRow) : null,
+        blueprint: currentPublished ? toBlueprintView(currentPublished) : null,
         state: head.state,
       };
       if (BLUEPRINT_REVIEW_STATES.includes(head.state)) {
@@ -442,6 +540,7 @@ export function registerBlueprintApi(app: Express, deps: MemberPlatformDeps) {
   app.get("/api/admin/research/blueprints", requireSupabaseAdmin, async (req, res) => {
     setPrivacyHeaders(res);
     try {
+      await sweepPendingBlueprintGeneration(deps);
       const stateParam = typeof req.query.state === "string" && req.query.state ? req.query.state : null;
       if (stateParam && !BLUEPRINT_REVIEW_STATES.includes(stateParam as BlueprintState)) {
         return sendValidation(res, {
@@ -459,11 +558,14 @@ export function registerBlueprintApi(app: Express, deps: MemberPlatformDeps) {
       }
 
       const states = stateParam ? [stateParam] : [...BLUEPRINT_REVIEW_STATES];
+      const reviewerEmail = normalizedEmail((req as { adminEmail?: string }).adminEmail);
+      if (!reviewerEmail) return res.status(403).json({ ok: false, code: "admin_required" });
       const { data, error } = await getSupabaseAdmin()
         .from(BLUEPRINTS_TABLE)
         .select("*")
         .in("state", states);
       const rows = (error ? [] : ((data as BlueprintRow[]) ?? []))
+        .filter((row) => assignedToReviewer(row, reviewerEmail))
         .slice()
         .sort((a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : 0));
 
@@ -516,6 +618,44 @@ export function registerBlueprintApi(app: Express, deps: MemberPlatformDeps) {
     }
   });
 
+  // Minimum-necessary plan brief for the assigned reviewer. Raw assessment
+  // answers and unrelated member records never cross this route.
+  app.get("/api/admin/research/blueprints/:blueprintId", requireSupabaseAdmin, async (req, res) => {
+    setPrivacyHeaders(res);
+    try {
+      const reviewerEmail = normalizedEmail((req as { adminEmail?: string }).adminEmail);
+      if (!reviewerEmail) return res.status(403).json({ ok: false, code: "admin_required" });
+      const row = await fetchBlueprintById(String(req.params.blueprintId));
+      if (!row || !assignedToReviewer(row, reviewerEmail)) {
+        return sendNotFound(res, "No plan brief with that id.");
+      }
+      if (!(await recordPlanReviewAudit(row, reviewerEmail, "plan_brief_viewed", deps.clock.now()))) {
+        return res.status(500).json({ ok: false, message: "The review access could not be audited." });
+      }
+      const member = await fetchMemberById(row.member_id);
+      res.json({
+        ok: true,
+        planBrief: {
+          blueprintId: row.id,
+          memberFirstName: member?.first_name ?? "Member",
+          version: row.version,
+          state: row.state,
+          primaryGoal: row.content.primaryGoal ?? "",
+          secondaryGoals: row.content.secondaryGoals ?? [],
+          priorities: row.content.topPriorities ?? [],
+          recommendations: row.content.recommendations ?? [],
+          clarificationQuestions: row.content.questionsForReview ?? [],
+          unansweredImportantFields: row.content.unansweredImportantFields ?? [],
+          safetyFlags: row.content.safetyFlags ?? [],
+          createdAt: row.created_at,
+        },
+      });
+    } catch (err) {
+      console.error("[blueprint] review detail failed:", err instanceof Error ? err.message : err);
+      res.status(500).json({ ok: false, message: "The plan brief could not be loaded." });
+    }
+  });
+
   // The founding-phase manual generation trigger. The automatic path is a
   // later SLA-wave sweep over submitted assessment rows.
   app.post("/api/admin/research/blueprints/generate", requireSupabaseAdmin, async (req, res) => {
@@ -557,6 +697,19 @@ export function registerBlueprintApi(app: Express, deps: MemberPlatformDeps) {
 
       const now = deps.clock.now();
       const action = parsed.data;
+      const reviewerEmail = normalizedEmail((req as { adminEmail?: string }).adminEmail);
+      if (!reviewerEmail || !assignedToReviewer(row, reviewerEmail)) {
+        return sendNotFound(res, "No blueprint with that id.");
+      }
+      const auditAction =
+        action.action === "approve_and_publish"
+          ? "approve_and_publish_attempted"
+          : action.action === "request_information"
+            ? "request_information_attempted"
+            : "revise_attempted";
+      if (!(await recordPlanReviewAudit(row, reviewerEmail, auditAction, now))) {
+        return res.status(500).json({ ok: false, message: "The review action could not be audited." });
+      }
 
       if (action.action === "approve_and_publish") {
         // Publishing an already-published version, or anything else the
@@ -564,29 +717,8 @@ export function registerBlueprintApi(app: Express, deps: MemberPlatformDeps) {
         if (!canTransition(row.state, "published")) {
           return sendConflict(res, `A blueprint in ${row.state} cannot be published.`);
         }
-        const published = await transitionRow(row, "published", now, {
-          published_at: now.toISOString(),
-          reviewed_by: REVIEWER_DISPLAY_NAME,
-          ...(action.comment ? { review_comment: action.comment } : {}),
-        });
+        const published = await publishBlueprintAtomic(row, now, action.comment);
         if (!published) return sendConflict(res, "The blueprint state changed underneath the review. Reload and retry.");
-
-        // Supersede EVERY other member-visible version so exactly one
-        // blueprint is current, regardless of version ordering: the transition
-        // table legally allows an older superseded version to be revised and
-        // republished, and in that case the newer sibling must be demoted too.
-        const siblings = await fetchBlueprints(published.member_id);
-        for (const prior of siblings) {
-          if (prior.id === published.id) continue;
-          if (prior.state === "published") {
-            await transitionRow(prior, "updated", now, { superseded_by_version: published.version });
-          } else if (prior.state === "updated" && prior.superseded_by_version === null) {
-            await getSupabaseAdmin()
-              .from(BLUEPRINTS_TABLE)
-              .update({ superseded_by_version: published.version, updated_at: now.toISOString() })
-              .eq("id", prior.id);
-          }
-        }
 
         // Notify the member. Best effort: a notification failure never
         // un-publishes. Payload carries firstName only, never health data.

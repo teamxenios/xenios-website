@@ -214,7 +214,6 @@ async function assessmentCandidates(nowMs: number): Promise<SlaCandidate[]> {
 
   const submitted = await readRows(ASSESSMENT_RESPONSES_TABLE, (query) =>
     query
-      .eq("definition_id", INITIAL_ASSESSMENT_DEFINITION.definitionId)
       .eq("mode", INITIAL_ASSESSMENT_DEFINITION.mode)
       .eq("status", "submitted"),
   );

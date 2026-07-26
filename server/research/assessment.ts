@@ -11,7 +11,7 @@ import { requireActiveMember, type MemberRow } from "./member-auth";
 import { getSupabaseAdmin } from "../supabase";
 import { rateLimitHit } from "./rate-limit";
 import type { MemberPlatformDeps } from "./member-platform-deps";
-import { hasAcceptedCurrent } from "./agreements";
+import { hasAcceptedCurrent, healthAssessmentCollectionReady } from "./agreements";
 
 // ---------------------------------------------------------------------------
 // xenios research member platform: the assessment (G3).
@@ -55,7 +55,7 @@ const GOAL_OPTIONS = [
   { value: "general_health", label: "General health" },
 ];
 
-export const INITIAL_ASSESSMENT_DEFINITION: AssessmentDefinition = {
+export const INITIAL_ASSESSMENT_V1_DEFINITION: AssessmentDefinition = {
   definitionId: "initial-v1",
   version: 1,
   mode: "initial",
@@ -569,16 +569,594 @@ export const INITIAL_ASSESSMENT_DEFINITION: AssessmentDefinition = {
   ],
 };
 
-// Flat question index, built once. The definition is a constant, so this map
-// is safe to share.
-const QUESTION_INDEX: Map<string, AssessmentQuestion> = new Map(
-  INITIAL_ASSESSMENT_DEFINITION.sections.flatMap((section) =>
-    section.questions.map((question) => [question.id, question] as const),
-  ),
-);
+const TRAINING_FREQUENCY_OPTIONS = [
+  { value: "none", label: "None right now" },
+  { value: "one_to_two", label: "1 to 2 days" },
+  { value: "three_to_four", label: "3 to 4 days" },
+  { value: "five_plus", label: "5 or more days" },
+];
 
-export function listAssessmentQuestions(): AssessmentQuestion[] {
-  return INITIAL_ASSESSMENT_DEFINITION.sections.flatMap((section) => section.questions);
+// The live intake is intentionally shorter than v1. Historical v1 response
+// rows remain readable and continue to produce the same Blueprint inputs;
+// new members start on v2 and monthly check-ins use their own definition.
+export const INITIAL_ASSESSMENT_V2_DEFINITION: AssessmentDefinition = {
+  definitionId: "initial-v2",
+  version: 2,
+  mode: "initial",
+  targetMinutes: 8,
+  sections: [
+    {
+      id: "direction",
+      title: "Your direction",
+      description: "Set the outcome first. We will shape the routine around it.",
+      order: 1,
+      questions: [
+        {
+          id: "primary_goal",
+          sectionId: "direction",
+          kind: "single_choice",
+          prompt: "What is your primary goal right now?",
+          required: true,
+          options: GOAL_OPTIONS,
+        },
+        {
+          id: "secondary_goals",
+          sectionId: "direction",
+          kind: "multi_choice",
+          prompt: "Which secondary goals matter too?",
+          required: false,
+          options: GOAL_OPTIONS,
+        },
+        {
+          id: "goal_meaning",
+          sectionId: "direction",
+          kind: "short_text",
+          prompt: "What would meaningful progress look like by day 90?",
+          placeholder: "A short, specific outcome",
+          required: true,
+        },
+        {
+          id: "direction_30",
+          sectionId: "direction",
+          kind: "single_choice",
+          prompt: "What would make the first 30 days feel successful?",
+          required: true,
+          options: [
+            { value: "consistent_routine", label: "A routine I can keep" },
+            { value: "early_progress", label: "Clear early progress" },
+            { value: "better_energy", label: "More consistent energy" },
+            { value: "better_recovery", label: "Better recovery and sleep" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "schedule",
+      title: "Your real schedule",
+      description: "Use the week you actually have, not an ideal one.",
+      order: 2,
+      questions: [
+        {
+          id: "training_days_available",
+          sectionId: "schedule",
+          kind: "number",
+          prompt: "How many days can you reliably train each week?",
+          required: true,
+          min: 1,
+          max: 7,
+          unit: "days",
+        },
+        {
+          id: "session_minutes",
+          sectionId: "schedule",
+          kind: "single_choice",
+          prompt: "How much time can you usually protect for a session?",
+          required: true,
+          options: [
+            { value: "under_30", label: "Under 30 minutes" },
+            { value: "30_to_45", label: "30 to 45 minutes" },
+            { value: "45_to_60", label: "45 to 60 minutes" },
+            { value: "over_60", label: "More than 60 minutes" },
+          ],
+        },
+        {
+          id: "training_locations",
+          sectionId: "schedule",
+          kind: "multi_choice",
+          prompt: "Where can you train?",
+          required: true,
+          options: [
+            { value: "home", label: "At home" },
+            { value: "gym", label: "At a gym" },
+            { value: "outdoors", label: "Outdoors" },
+            { value: "travel", label: "While traveling" },
+          ],
+        },
+        {
+          id: "weekly_schedule_shape",
+          sectionId: "schedule",
+          kind: "single_choice",
+          prompt: "What best describes your week?",
+          required: false,
+          options: [
+            { value: "predictable", label: "Mostly predictable" },
+            { value: "some_variation", label: "A stable base with some variation" },
+            { value: "shift_based", label: "Shift-based or rotating" },
+            { value: "unpredictable", label: "Hard to predict" },
+          ],
+        },
+        {
+          id: "plan_structure",
+          sectionId: "schedule",
+          kind: "single_choice",
+          prompt: "How much structure helps you follow through?",
+          required: true,
+          options: [
+            { value: "minimal", label: "A few clear anchors" },
+            { value: "moderate", label: "A planned week with flexibility" },
+            { value: "detailed", label: "A detailed day-by-day plan" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "training_baseline",
+      title: "Training baseline",
+      description: "This is context for a coach, not a medical evaluation.",
+      order: 3,
+      sensitive: true,
+      questions: [
+        {
+          id: "training_frequency",
+          sectionId: "training_baseline",
+          kind: "single_choice",
+          prompt: "How often do you currently train or exercise?",
+          required: true,
+          options: TRAINING_FREQUENCY_OPTIONS,
+          consentRef: "XR-MEM-012",
+        },
+        {
+          id: "training_experience",
+          sectionId: "training_baseline",
+          kind: "single_choice",
+          prompt: "How familiar are you with structured training?",
+          required: false,
+          options: [
+            { value: "new", label: "New to it" },
+            { value: "some", label: "Some experience" },
+            { value: "experienced", label: "Experienced" },
+          ],
+        },
+        {
+          id: "training_styles",
+          sectionId: "training_baseline",
+          kind: "multi_choice",
+          prompt: "Which training styles do you use or enjoy?",
+          required: false,
+          options: [
+            { value: "strength", label: "Strength training" },
+            { value: "cardio", label: "Cardio or running" },
+            { value: "classes", label: "Group classes" },
+            { value: "sport", label: "Sport" },
+            { value: "walking", label: "Walking" },
+            { value: "mobility", label: "Mobility or yoga" },
+          ],
+        },
+        {
+          id: "equipment_access",
+          sectionId: "training_baseline",
+          kind: "multi_choice",
+          prompt: "What equipment can you use?",
+          required: false,
+          options: [
+            { value: "bodyweight", label: "Bodyweight only" },
+            { value: "bands", label: "Bands" },
+            { value: "dumbbells", label: "Dumbbells" },
+            { value: "full_gym", label: "Full gym" },
+          ],
+          showWhen: [{ questionId: "training_locations", equals: ["home", "gym"] }],
+        },
+        {
+          id: "has_injuries",
+          sectionId: "training_baseline",
+          kind: "single_choice",
+          prompt: "Do you have a current injury or physical limitation?",
+          required: true,
+          options: YES_NO,
+        },
+        {
+          id: "injury_details",
+          sectionId: "training_baseline",
+          kind: "short_text",
+          prompt: "Briefly describe what movement is limited.",
+          placeholder: "Keep this to the practical limitation",
+          required: true,
+          showWhen: [{ questionId: "has_injuries", equals: ["yes"] }],
+        },
+        {
+          id: "activity_restriction_flag",
+          sectionId: "training_baseline",
+          kind: "single_choice",
+          prompt: "Has a clinician advised you to limit physical activity?",
+          required: true,
+          options: [
+            { value: "yes", label: "Yes" },
+            { value: "no", label: "No" },
+            { value: "prefer_not_to_say", label: "Prefer not to say" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "nutrition_baseline",
+      title: "Nutrition baseline",
+      description: "We use broad patterns and preferences, not calorie judgment.",
+      order: 4,
+      sensitive: true,
+      questions: [
+        {
+          id: "eating_pattern",
+          sectionId: "nutrition_baseline",
+          kind: "single_choice",
+          prompt: "Which best describes how you eat today?",
+          required: true,
+          options: [
+            { value: "no_pattern", label: "No particular pattern" },
+            { value: "loosely_structured", label: "Loosely structured" },
+            { value: "tracked", label: "I track what I eat" },
+            { value: "set_plan", label: "I follow a set plan" },
+          ],
+        },
+        {
+          id: "nutrition_obstacle",
+          sectionId: "nutrition_baseline",
+          kind: "single_choice",
+          prompt: "What most often gets in the way?",
+          required: true,
+          options: [
+            { value: "time", label: "Time" },
+            { value: "planning", label: "Planning" },
+            { value: "travel", label: "Travel or eating out" },
+            { value: "appetite", label: "Appetite or consistency" },
+            { value: "budget", label: "Budget" },
+            { value: "other", label: "Something else" },
+          ],
+        },
+        {
+          id: "meals_per_day",
+          sectionId: "nutrition_baseline",
+          kind: "number",
+          prompt: "How many meals do you usually eat in a day?",
+          required: false,
+          min: 1,
+          max: 8,
+        },
+        {
+          id: "dietary_restrictions",
+          sectionId: "nutrition_baseline",
+          kind: "multi_choice",
+          prompt: "Which preferences or restrictions apply?",
+          required: false,
+          options: [
+            { value: "none", label: "None" },
+            { value: "vegetarian", label: "Vegetarian" },
+            { value: "vegan", label: "Vegan" },
+            { value: "halal", label: "Halal" },
+            { value: "kosher", label: "Kosher" },
+            { value: "gluten_free", label: "Gluten free" },
+            { value: "dairy_free", label: "Dairy free" },
+            { value: "other", label: "Another preference or restriction" },
+          ],
+        },
+        {
+          id: "has_allergies",
+          sectionId: "nutrition_baseline",
+          kind: "single_choice",
+          prompt: "Do you have a food allergy or intolerance?",
+          required: true,
+          options: YES_NO,
+        },
+        {
+          id: "allergy_details",
+          sectionId: "nutrition_baseline",
+          kind: "multi_choice",
+          prompt: "Which categories should a reviewer account for?",
+          required: true,
+          options: [
+            { value: "nuts", label: "Nuts" },
+            { value: "dairy", label: "Dairy" },
+            { value: "eggs", label: "Eggs" },
+            { value: "shellfish", label: "Shellfish" },
+            { value: "soy", label: "Soy" },
+            { value: "wheat", label: "Wheat or gluten" },
+            { value: "other_review", label: "Another category to review privately" },
+          ],
+          showWhen: [{ questionId: "has_allergies", equals: ["yes"] }],
+        },
+        {
+          id: "meal_prep_frequency",
+          sectionId: "nutrition_baseline",
+          kind: "single_choice",
+          prompt: "How often can you prepare food?",
+          required: false,
+          options: [
+            { value: "rarely", label: "Rarely" },
+            { value: "one_to_two", label: "1 to 2 times a week" },
+            { value: "three_plus", label: "3 or more times a week" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "recovery_lifestyle",
+      title: "Recovery and lifestyle",
+      description: "A few signals help keep the first plan realistic.",
+      order: 5,
+      sensitive: true,
+      questions: [
+        {
+          id: "sleep_hours",
+          sectionId: "recovery_lifestyle",
+          kind: "number",
+          prompt: "How many hours do you usually sleep?",
+          required: true,
+          min: 3,
+          max: 12,
+          unit: "hours",
+        },
+        {
+          id: "sleep_quality",
+          sectionId: "recovery_lifestyle",
+          kind: "scale",
+          prompt: "How would you rate your sleep quality?",
+          required: true,
+          min: 0,
+          max: 10,
+        },
+        {
+          id: "energy_level",
+          sectionId: "recovery_lifestyle",
+          kind: "scale",
+          prompt: "How would you rate your everyday energy?",
+          required: false,
+          min: 0,
+          max: 10,
+        },
+        {
+          id: "stress_level",
+          sectionId: "recovery_lifestyle",
+          kind: "scale",
+          prompt: "How would you rate your recent stress?",
+          required: true,
+          min: 0,
+          max: 10,
+        },
+        {
+          id: "lifestyle_constraints",
+          sectionId: "recovery_lifestyle",
+          kind: "multi_choice",
+          prompt: "Which constraints shape your week?",
+          required: false,
+          options: [
+            { value: "caregiving", label: "Caregiving" },
+            { value: "travel", label: "Travel" },
+            { value: "shift_work", label: "Shift work" },
+            { value: "long_commute", label: "Long commute" },
+            { value: "variable_hours", label: "Variable hours" },
+          ],
+        },
+        {
+          id: "typical_day",
+          sectionId: "recovery_lifestyle",
+          kind: "single_choice",
+          prompt: "Which best describes your workday?",
+          required: false,
+          options: [
+            { value: "seated_desk", label: "Mostly seated" },
+            { value: "mixed", label: "A mix of sitting and moving" },
+            { value: "on_feet", label: "On my feet most of the day" },
+            { value: "physically_demanding", label: "Physically demanding" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "personalization_review",
+      title: "Personalization and review",
+      description: "These answers set the level of support and the human-review gates.",
+      order: 6,
+      sensitive: true,
+      questions: [
+        {
+          id: "takes_supplements",
+          sectionId: "personalization_review",
+          kind: "single_choice",
+          prompt: "Do you currently use supplements or wellness products?",
+          required: false,
+          options: YES_NO,
+        },
+        {
+          id: "current_supplements",
+          sectionId: "personalization_review",
+          kind: "short_text",
+          prompt: "List names as written on the labels. Do not include amounts.",
+          required: true,
+          showWhen: [{ questionId: "takes_supplements", equals: ["yes"] }],
+        },
+        {
+          id: "monthly_budget",
+          sectionId: "personalization_review",
+          kind: "single_choice",
+          prompt: "What monthly budget feels comfortable for optional products and tools?",
+          required: false,
+          options: [
+            { value: "under_50", label: "Under $50" },
+            { value: "from_50_to_100", label: "$50 to $100" },
+            { value: "from_100_to_200", label: "$100 to $200" },
+            { value: "over_200", label: "Over $200" },
+            { value: "not_now", label: "Not part of my plan right now" },
+          ],
+        },
+        {
+          id: "plan_preference",
+          sectionId: "personalization_review",
+          kind: "single_choice",
+          prompt: "Which plan style would be easiest to follow?",
+          required: true,
+          options: [
+            { value: "simple", label: "Simple and flexible" },
+            { value: "balanced", label: "Structured with choices" },
+            { value: "detailed", label: "Detailed and specific" },
+          ],
+        },
+        {
+          id: "checkin_cadence",
+          sectionId: "personalization_review",
+          kind: "single_choice",
+          prompt: "How often would you like a progress check-in?",
+          required: false,
+          options: [
+            { value: "weekly", label: "Weekly" },
+            { value: "twice_monthly", label: "Twice monthly" },
+            { value: "monthly", label: "Monthly" },
+          ],
+        },
+        {
+          id: "coaching_style",
+          sectionId: "personalization_review",
+          kind: "single_choice",
+          prompt: "Which coaching style helps you most?",
+          required: false,
+          options: [
+            { value: "direct", label: "Direct and concise" },
+            { value: "encouraging", label: "Encouraging and supportive" },
+            { value: "educational", label: "Explain the reasoning" },
+          ],
+        },
+        {
+          id: "clinician_care_flag",
+          sectionId: "personalization_review",
+          kind: "single_choice",
+          prompt: "Are you currently under regular clinician care for something you monitor?",
+          required: true,
+          options: [
+            { value: "yes", label: "Yes" },
+            { value: "no", label: "No" },
+            { value: "prefer_not_to_say", label: "Prefer not to say" },
+          ],
+        },
+        {
+          id: "pregnancy_flag",
+          sectionId: "personalization_review",
+          kind: "single_choice",
+          prompt: "Are you currently pregnant or nursing?",
+          required: true,
+          options: [
+            { value: "yes", label: "Yes" },
+            { value: "no", label: "No" },
+            { value: "not_applicable", label: "Not applicable" },
+            { value: "prefer_not_to_say", label: "Prefer not to say" },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+export const MONTHLY_CHECK_IN_DEFINITION: AssessmentDefinition = {
+  definitionId: "monthly-check-in-v1",
+  version: 1,
+  mode: "monthly_check_in",
+  targetMinutes: 3,
+  sections: [
+    {
+      id: "monthly_progress",
+      title: "Monthly check-in",
+      description: "A quick pulse so your human reviewer can decide what needs attention.",
+      order: 1,
+      sensitive: true,
+      questions: [
+        { id: "progress_score", sectionId: "monthly_progress", kind: "scale", prompt: "How would you rate your progress this month?", required: true, min: 0, max: 10, consentRef: "XR-MEM-012" },
+        { id: "training_consistency", sectionId: "monthly_progress", kind: "scale", prompt: "How consistent was your training?", required: true, min: 0, max: 10 },
+        { id: "nutrition_consistency", sectionId: "monthly_progress", kind: "scale", prompt: "How consistent was your nutrition routine?", required: true, min: 0, max: 10 },
+        { id: "monthly_sleep", sectionId: "monthly_progress", kind: "scale", prompt: "How was your sleep overall?", required: true, min: 0, max: 10 },
+        { id: "monthly_energy", sectionId: "monthly_progress", kind: "scale", prompt: "How was your everyday energy?", required: true, min: 0, max: 10 },
+        {
+          id: "monthly_obstacles",
+          sectionId: "monthly_progress",
+          kind: "multi_choice",
+          prompt: "What got in the way?",
+          required: false,
+          options: [
+            { value: "time", label: "Time" },
+            { value: "travel", label: "Travel" },
+            { value: "motivation", label: "Motivation" },
+            { value: "recovery", label: "Recovery" },
+            { value: "schedule", label: "Schedule changes" },
+            { value: "other", label: "Something else" },
+          ],
+        },
+        {
+          id: "plan_change_need",
+          sectionId: "monthly_progress",
+          kind: "single_choice",
+          prompt: "Does your plan need a human review?",
+          required: true,
+          options: [
+            { value: "no", label: "No change needed" },
+            { value: "small", label: "A small adjustment" },
+            { value: "substantial", label: "A larger review" },
+          ],
+        },
+        {
+          id: "new_safety_change",
+          sectionId: "monthly_progress",
+          kind: "single_choice",
+          prompt: "Is there a new injury, restriction, allergy, or major life change?",
+          required: true,
+          options: YES_NO,
+        },
+        {
+          id: "monthly_change_detail",
+          sectionId: "monthly_progress",
+          kind: "short_text",
+          prompt: "Briefly describe what changed for the private reviewer.",
+          required: true,
+          showWhen: [{ questionId: "new_safety_change", equals: ["yes"] }],
+        },
+      ],
+    },
+  ],
+};
+
+export const INITIAL_ASSESSMENT_DEFINITION = INITIAL_ASSESSMENT_V2_DEFINITION;
+
+const DEFINITIONS = [
+  INITIAL_ASSESSMENT_V1_DEFINITION,
+  INITIAL_ASSESSMENT_V2_DEFINITION,
+  MONTHLY_CHECK_IN_DEFINITION,
+] as const;
+
+function definitionFor(definitionId: string, mode: AssessmentDefinition["mode"]): AssessmentDefinition | null {
+  return DEFINITIONS.find((definition) => definition.definitionId === definitionId && definition.mode === mode) ?? null;
+}
+
+function currentDefinitionForMode(mode: AssessmentDefinition["mode"]): AssessmentDefinition {
+  return mode === "monthly_check_in" ? MONTHLY_CHECK_IN_DEFINITION : INITIAL_ASSESSMENT_DEFINITION;
+}
+
+function questionIndexFor(definition: AssessmentDefinition): Map<string, AssessmentQuestion> {
+  return new Map(
+    definition.sections.flatMap((section) =>
+      section.questions.map((question) => [question.id, question] as const),
+    ),
+  );
+}
+
+export function listAssessmentQuestions(
+  definition: AssessmentDefinition = INITIAL_ASSESSMENT_DEFINITION,
+): AssessmentQuestion[] {
+  return definition.sections.flatMap((section) => section.questions);
 }
 
 // ---------------------------------------------------------------------------
@@ -663,7 +1241,9 @@ export type AssessmentResponseRow = {
   definition_id: string;
   definition_version: number;
   mode: string;
+  cycle_key: string;
   status: "in_progress" | "submitted";
+  revision: number;
   answers: Record<string, AnswerValue>;
   started_at: string | null;
   last_saved_at: string | null;
@@ -672,17 +1252,46 @@ export type AssessmentResponseRow = {
   [key: string]: unknown;
 };
 
-async function fetchResponseRow(memberId: string): Promise<AssessmentResponseRow | null> {
+async function fetchResponseRow(
+  memberId: string,
+  definition: AssessmentDefinition = INITIAL_ASSESSMENT_DEFINITION,
+  cycleKey = "initial",
+): Promise<AssessmentResponseRow | null> {
+  try {
+    let query = getSupabaseAdmin()
+      .from(ASSESSMENT_RESPONSES_TABLE)
+      .select("*")
+      .eq("member_id", memberId)
+      .eq("definition_id", definition.definitionId)
+      .eq("mode", definition.mode);
+    if (definition.mode === "monthly_check_in") query = query.eq("cycle_key", cycleKey);
+    const { data, error } = await query.maybeSingle();
+    if (error) return null;
+    return (data as AssessmentResponseRow) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// Historical v1 submissions remain completion-equivalent to v2. Prefer a
+// submitted initial row, then the current v2 draft, so existing members are
+// never forced to repeat an already-locked assessment.
+export async function fetchInitialResponseRow(memberId: string): Promise<AssessmentResponseRow | null> {
   try {
     const { data, error } = await getSupabaseAdmin()
       .from(ASSESSMENT_RESPONSES_TABLE)
       .select("*")
       .eq("member_id", memberId)
-      .eq("definition_id", INITIAL_ASSESSMENT_DEFINITION.definitionId)
-      .eq("mode", INITIAL_ASSESSMENT_DEFINITION.mode)
-      .maybeSingle();
-    if (error) return null;
-    return (data as AssessmentResponseRow) ?? null;
+      .eq("mode", "initial");
+    if (error || !Array.isArray(data)) return null;
+    return (data as AssessmentResponseRow[])
+      .slice()
+      .sort((a, b) => {
+        const rank = (row: AssessmentResponseRow) =>
+          (row.status === "submitted" ? 4 : 0) +
+          (row.definition_id === INITIAL_ASSESSMENT_DEFINITION.definitionId ? 2 : 1);
+        return rank(b) - rank(a);
+      })[0] ?? null;
   } catch {
     return null;
   }
@@ -697,8 +1306,13 @@ export async function getOrCreateResponse(
   memberId: string,
   now: Date,
   opened = true,
+  definition: AssessmentDefinition = INITIAL_ASSESSMENT_DEFINITION,
 ): Promise<AssessmentResponseRow> {
-  const existing = await fetchResponseRow(memberId);
+  const cycleKey =
+    definition.mode === "monthly_check_in"
+      ? `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`
+      : "initial";
+  const existing = await fetchResponseRow(memberId, definition, cycleKey);
   if (existing) {
     if (opened && existing.started_at === null && existing.status === "in_progress") {
       const stamped = await getSupabaseAdmin()
@@ -716,10 +1330,12 @@ export async function getOrCreateResponse(
     .from(ASSESSMENT_RESPONSES_TABLE)
     .insert({
       member_id: memberId,
-      definition_id: INITIAL_ASSESSMENT_DEFINITION.definitionId,
-      definition_version: INITIAL_ASSESSMENT_DEFINITION.version,
-      mode: INITIAL_ASSESSMENT_DEFINITION.mode,
+      definition_id: definition.definitionId,
+      definition_version: definition.version,
+      mode: definition.mode,
+      cycle_key: cycleKey,
       status: "in_progress",
+      revision: 0,
       answers: {},
       started_at: opened ? now.toISOString() : null,
       last_saved_at: null,
@@ -731,19 +1347,24 @@ export async function getOrCreateResponse(
   if (!error && data) return data as AssessmentResponseRow;
   // A concurrent request may have created the row first (the unique
   // constraint on member + definition + mode); re-read before failing.
-  const raced = await fetchResponseRow(memberId);
+  const raced = await fetchResponseRow(memberId, definition, cycleKey);
   if (raced) return raced;
   throw new Error("The assessment response could not be created.");
 }
 
-export function toResponseState(row: AssessmentResponseRow | null): AssessmentResponseState {
+export function toResponseState(
+  row: AssessmentResponseRow | null,
+  fallbackDefinition: AssessmentDefinition = INITIAL_ASSESSMENT_DEFINITION,
+): AssessmentResponseState {
   if (!row) {
     return {
       responseId: "",
-      definitionId: INITIAL_ASSESSMENT_DEFINITION.definitionId,
-      definitionVersion: INITIAL_ASSESSMENT_DEFINITION.version,
-      mode: INITIAL_ASSESSMENT_DEFINITION.mode,
+      definitionId: fallbackDefinition.definitionId,
+      definitionVersion: fallbackDefinition.version,
+      mode: fallbackDefinition.mode,
+      cycleKey: "initial",
       status: "not_started",
+      revision: 0,
       answers: [],
       startedAt: null,
       lastSavedAt: null,
@@ -751,7 +1372,9 @@ export function toResponseState(row: AssessmentResponseRow | null): AssessmentRe
     };
   }
   const answers: AssessmentAnswer[] = [];
-  for (const question of listAssessmentQuestions()) {
+  const storedDefinition =
+    definitionFor(row.definition_id, row.mode as AssessmentDefinition["mode"]) ?? fallbackDefinition;
+  for (const question of listAssessmentQuestions(storedDefinition)) {
     const value = row.answers?.[question.id];
     if (value !== undefined) answers.push({ questionId: question.id, value });
   }
@@ -760,7 +1383,9 @@ export function toResponseState(row: AssessmentResponseRow | null): AssessmentRe
     definitionId: row.definition_id,
     definitionVersion: row.definition_version,
     mode: row.mode as AssessmentResponseState["mode"],
+    cycleKey: row.cycle_key ?? "initial",
     status: row.status,
+    revision: row.revision ?? 0,
     answers,
     startedAt: row.started_at,
     lastSavedAt: row.last_saved_at,
@@ -784,7 +1409,7 @@ export async function assessmentStatusForMember(
   member: MemberRow,
   now: Date,
 ): Promise<AssessmentStatusSummary> {
-  const row = await fetchResponseRow(member.id);
+  const row = await fetchInitialResponseRow(member.id);
   const status: AssessmentStatusSummary["status"] = row ? row.status : "not_started";
   const due = memberDueAt(member);
   return {
@@ -793,6 +1418,21 @@ export async function assessmentStatusForMember(
     dueAt: due ? due.toISOString() : null,
     overdue: due !== null && status !== "submitted" && now.getTime() > due.getTime(),
     remindersSent: row?.reminders_sent ?? 0,
+  };
+}
+
+export async function monthlyCheckInStatusForMember(
+  memberId: string,
+  now: Date,
+): Promise<{
+  cycleKey: string;
+  status: "not_started" | "in_progress" | "submitted";
+}> {
+  const cycleKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+  const row = await fetchResponseRow(memberId, MONTHLY_CHECK_IN_DEFINITION, cycleKey);
+  return {
+    cycleKey,
+    status: row?.status ?? "not_started",
   };
 }
 
@@ -809,17 +1449,19 @@ type ServiceErr = {
 type ServiceOk<T> = { ok: true } & T;
 type ServiceResult<T> = ServiceOk<T> | ServiceErr;
 
-function versionConflict(definitionId: string, definitionVersion: number): ServiceErr | null {
-  if (
-    definitionId !== INITIAL_ASSESSMENT_DEFINITION.definitionId ||
-    definitionVersion !== INITIAL_ASSESSMENT_DEFINITION.version
-  ) {
+function versionConflict(
+  definitionId: string,
+  definitionVersion: number,
+  mode: AssessmentDefinition["mode"],
+): ServiceErr | null {
+  const definition = currentDefinitionForMode(mode);
+  if (definitionId !== definition.definitionId || definitionVersion !== definition.version) {
     return {
       ok: false,
       code: "state_conflict",
       message:
         `The assessment definition has changed. Current definition is ` +
-        `${INITIAL_ASSESSMENT_DEFINITION.definitionId} version ${INITIAL_ASSESSMENT_DEFINITION.version}. Reload to continue.`,
+        `${definition.definitionId} version ${definition.version}. Reload to continue.`,
     };
   }
   return null;
@@ -830,15 +1472,35 @@ function versionConflict(definitionId: string, definitionVersion: number): Servi
 // merge), so a buggy client cannot poison the stored answers.
 export async function mergeAutosave(
   memberId: string,
-  request: { definitionId: string; definitionVersion: number; answers: AssessmentAnswer[] },
+  request: {
+    definitionId: string;
+    definitionVersion: number;
+    mode: AssessmentDefinition["mode"];
+    expectedCycleKey: string;
+    expectedRevision: number;
+    answers: AssessmentAnswer[];
+  },
   now: Date,
-): Promise<ServiceResult<{ row: AssessmentResponseRow; lastSavedAt: string }>> {
-  const stale = versionConflict(request.definitionId, request.definitionVersion);
+): Promise<ServiceResult<{ row: AssessmentResponseRow; lastSavedAt: string; revision: number }>> {
+  const stale = versionConflict(request.definitionId, request.definitionVersion, request.mode);
   if (stale) return stale;
+  const definition = currentDefinitionForMode(request.mode);
+  const expectedNowCycle =
+    definition.mode === "monthly_check_in"
+      ? `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`
+      : "initial";
+  if (request.expectedCycleKey !== expectedNowCycle) {
+    return {
+      ok: false,
+      code: "state_conflict",
+      message: "This assessment cycle has changed. Reload before saving.",
+    };
+  }
+  const questionIndex = questionIndexFor(definition);
 
   const fieldErrors: Record<string, string[]> = {};
   for (const answer of request.answers) {
-    const question = QUESTION_INDEX.get(answer.questionId);
+    const question = questionIndex.get(answer.questionId);
     if (!question) {
       fieldErrors[answer.questionId] = ["Unknown question."];
       continue;
@@ -850,9 +1512,16 @@ export async function mergeAutosave(
     return { ok: false, code: "validation_failed", fieldErrors };
   }
 
-  const row = await getOrCreateResponse(memberId, now);
+  const row = await getOrCreateResponse(memberId, now, true, definition);
   if (row.status === "submitted") {
     return { ok: false, code: "state_conflict", message: "The assessment is already submitted." };
+  }
+  if ((row.revision ?? 0) !== request.expectedRevision) {
+    return {
+      ok: false,
+      code: "state_conflict",
+      message: "This assessment was updated in another tab or device. Reload before saving again.",
+    };
   }
 
   const merged: Record<string, AnswerValue> = { ...(row.answers ?? {}) };
@@ -862,18 +1531,23 @@ export async function mergeAutosave(
   }
 
   const lastSavedAt = now.toISOString();
+  const nextRevision = (row.revision ?? 0) + 1;
   const { data } = await getSupabaseAdmin()
     .from(ASSESSMENT_RESPONSES_TABLE)
-    .update({ answers: merged, last_saved_at: lastSavedAt })
+    .update({ answers: merged, last_saved_at: lastSavedAt, revision: nextRevision })
     .eq("id", row.id)
     .eq("status", "in_progress")
+    .eq("revision", row.revision ?? 0)
     .select("*")
     .maybeSingle();
   if (!data) {
-    // The status guard matched nothing: submitted between our read and write.
-    return { ok: false, code: "state_conflict", message: "The assessment is already submitted." };
+    return {
+      ok: false,
+      code: "state_conflict",
+      message: "This assessment changed while it was being saved. Reload before continuing.",
+    };
   }
-  return { ok: true, row: data as AssessmentResponseRow, lastSavedAt };
+  return { ok: true, row: data as AssessmentResponseRow, lastSavedAt, revision: nextRevision };
 }
 
 // Locks the response. Every required question that is visible under the
@@ -881,20 +1555,45 @@ export async function mergeAutosave(
 // block. Submitting twice is a state conflict.
 export async function submitAssessment(
   memberId: string,
-  request: { definitionId: string; definitionVersion: number },
+  request: {
+    definitionId: string;
+    definitionVersion: number;
+    mode: AssessmentDefinition["mode"];
+    expectedCycleKey: string;
+    expectedRevision: number;
+  },
   now: Date,
 ): Promise<ServiceResult<{ row: AssessmentResponseRow }>> {
-  const stale = versionConflict(request.definitionId, request.definitionVersion);
+  const stale = versionConflict(request.definitionId, request.definitionVersion, request.mode);
   if (stale) return stale;
+  const definition = currentDefinitionForMode(request.mode);
+  const expectedNowCycle =
+    definition.mode === "monthly_check_in"
+      ? `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`
+      : "initial";
+  if (request.expectedCycleKey !== expectedNowCycle) {
+    return {
+      ok: false,
+      code: "state_conflict",
+      message: "This assessment cycle has changed. Reload before submitting.",
+    };
+  }
 
-  const row = await getOrCreateResponse(memberId, now);
+  const row = await getOrCreateResponse(memberId, now, true, definition);
   if (row.status === "submitted") {
     return { ok: false, code: "state_conflict", message: "The assessment is already submitted." };
+  }
+  if ((row.revision ?? 0) !== request.expectedRevision) {
+    return {
+      ok: false,
+      code: "state_conflict",
+      message: "This assessment was updated in another tab or device. Reload before submitting.",
+    };
   }
 
   const answers = row.answers ?? {};
   const missing: string[] = [];
-  for (const question of listAssessmentQuestions()) {
+  for (const question of listAssessmentQuestions(definition)) {
     if (!question.required) continue;
     if (!isQuestionVisible(question, answers)) continue;
     if (!isAnswered(answers[question.id])) missing.push(question.id);
@@ -911,11 +1610,18 @@ export async function submitAssessment(
   }
 
   const submittedAt = now.toISOString();
+  const nextRevision = (row.revision ?? 0) + 1;
   const { data } = await getSupabaseAdmin()
     .from(ASSESSMENT_RESPONSES_TABLE)
-    .update({ status: "submitted", submitted_at: submittedAt, last_saved_at: submittedAt })
+    .update({
+      status: "submitted",
+      submitted_at: submittedAt,
+      last_saved_at: submittedAt,
+      revision: nextRevision,
+    })
     .eq("id", row.id)
     .eq("status", "in_progress")
+    .eq("revision", row.revision ?? 0)
     .select("*")
     .maybeSingle();
   if (!data) {
@@ -936,6 +1642,9 @@ const answerSchema = z.object({
 const autosaveSchema = z.object({
   definitionId: z.string().min(1).max(100),
   definitionVersion: z.number().int(),
+  mode: z.enum(["initial", "monthly_check_in"]),
+  expectedCycleKey: z.string().min(1).max(32),
+  expectedRevision: z.number().int().min(0),
   answers: z.array(answerSchema).max(100),
   clientSavedAt: z.string().max(64),
 });
@@ -943,12 +1652,25 @@ const autosaveSchema = z.object({
 const submitSchema = z.object({
   definitionId: z.string().min(1).max(100),
   definitionVersion: z.number().int(),
+  mode: z.enum(["initial", "monthly_check_in"]),
+  expectedCycleKey: z.string().min(1).max(32),
+  expectedRevision: z.number().int().min(0),
   confirmReviewed: z.literal(true),
 });
 
 function setPrivacyHeaders(res: Response) {
   res.set("Cache-Control", "no-store");
   res.set("Referrer-Policy", "no-referrer");
+}
+
+function requireHealthAssessmentCollection(res: Response): boolean {
+  if (healthAssessmentCollectionReady()) return true;
+  res.status(503).json({
+    ok: false,
+    code: "health_data_collection_pending",
+    message: "The assessment is pending final privacy and consent approval. No answers were collected.",
+  });
+  return false;
 }
 
 function memberFrom(req: Request): MemberRow | null {
@@ -972,14 +1694,28 @@ export function registerAssessmentApi(app: Express, deps: MemberPlatformDeps) {
     try {
       const member = memberFrom(req);
       if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
+      if (!requireHealthAssessmentCollection(res)) return;
       const now = deps.clock.now();
-      const row = await getOrCreateResponse(member.id, now);
+      const mode = req.query.mode === "monthly_check_in" ? "monthly_check_in" : "initial";
+      const historical = mode === "initial" ? await fetchInitialResponseRow(member.id) : null;
+      const definition =
+        historical?.status === "submitted"
+          ? definitionFor(historical.definition_id, "initial") ?? INITIAL_ASSESSMENT_DEFINITION
+          : currentDefinitionForMode(mode);
+      const row =
+        historical?.status === "submitted"
+          ? historical
+          : await getOrCreateResponse(member.id, now, true, definition);
       const status = await assessmentStatusForMember(member, now);
       res.json({
         ok: true,
-        definition: INITIAL_ASSESSMENT_DEFINITION,
-        response: toResponseState(row),
+        definition,
+        response: toResponseState(row, definition),
         status,
+        consent: {
+          key: "XR-MEM-012",
+          accepted: await hasAcceptedCurrent(member.id, "XR-MEM-012"),
+        },
       });
     } catch (err) {
       console.error("[assessment] load failed:", err instanceof Error ? err.message : err);
@@ -993,6 +1729,7 @@ export function registerAssessmentApi(app: Express, deps: MemberPlatformDeps) {
     try {
       const member = memberFrom(req);
       if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
+      if (!requireHealthAssessmentCollection(res)) return;
       // Server-side consent gate: the assessment stores health-adjacent
       // answers, so the Sensitive Health Data Consent (XR-MEM-012, its own
       // separate acceptance at first entry) must be accepted at the current
@@ -1017,7 +1754,7 @@ export function registerAssessmentApi(app: Express, deps: MemberPlatformDeps) {
       }
       const result = await mergeAutosave(member.id, parsed.data, deps.clock.now());
       if (!result.ok) return sendServiceErr(res, result);
-      res.json({ ok: true, lastSavedAt: result.lastSavedAt });
+      res.json({ ok: true, lastSavedAt: result.lastSavedAt, revision: result.revision });
     } catch (err) {
       console.error("[assessment] autosave failed:", err instanceof Error ? err.message : err);
       res.status(500).json({ ok: false, message: "The answers could not be saved." });
@@ -1030,6 +1767,7 @@ export function registerAssessmentApi(app: Express, deps: MemberPlatformDeps) {
     try {
       const member = memberFrom(req);
       if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
+      if (!requireHealthAssessmentCollection(res)) return;
       // Same consent gate as autosave: no submission without the current
       // Sensitive Health Data Consent on record.
       if (!(await hasAcceptedCurrent(member.id, "XR-MEM-012"))) {
@@ -1049,10 +1787,30 @@ export function registerAssessmentApi(app: Express, deps: MemberPlatformDeps) {
       }
       const result = await submitAssessment(member.id, parsed.data, deps.clock.now());
       if (!result.ok) return sendServiceErr(res, result);
+
+      let blueprintState: string = "not_applicable";
+      if (parsed.data.mode === "initial") {
+        try {
+          if (deps.generateBlueprintFromAssessment) {
+            const generated = await deps.generateBlueprintFromAssessment(member.id);
+            blueprintState = generated.ok ? generated.state ?? "samuel_review" : "generation_pending";
+          } else {
+            // Imported lazily because blueprint.ts reads the version registry
+            // above. The resulting draft remains private until an authorized
+            // human review explicitly publishes it.
+            const { generatePreliminaryBlueprint } = await import("./blueprint");
+            const generated = await generatePreliminaryBlueprint(member.id, deps);
+            blueprintState = generated.ok ? generated.row.state : "generation_pending";
+          }
+        } catch (err) {
+          blueprintState = "generation_pending";
+          console.error("[assessment] plan brief generation failed:", err instanceof Error ? err.message : err);
+        }
+      }
       res.json({
         ok: true,
-        response: toResponseState(result.row),
-        blueprintState: "assessment_submitted",
+        response: toResponseState(result.row, currentDefinitionForMode(parsed.data.mode)),
+        blueprintState,
       });
     } catch (err) {
       console.error("[assessment] submit failed:", err instanceof Error ? err.message : err);

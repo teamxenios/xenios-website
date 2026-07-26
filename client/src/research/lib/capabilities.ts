@@ -55,7 +55,7 @@ const PENDING: Record<ResearchCapability, string> = {
   quantum_commerce: "Quantum is coming soon.",
   referrals: "The referral program is not open yet.",
   tracker: "The tracker unlocks after your assessment.",
-  assessment: "The assessment opens with your active membership.",
+  assessment: "The assessment is awaiting final privacy and consent approval. No answers are collected while it is pending.",
   blueprint: "Your Blueprint is prepared after the assessment.",
   questions: "Questions open with your active membership.",
 };

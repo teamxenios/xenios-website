@@ -109,11 +109,22 @@ vi.mock("./member-auth", () => ({
   },
   requireActiveMember: (_req: any, res: any, _next: any) =>
     res.status(403).json({ ok: false, code: "activation_required" }),
+  requireResearchSubject: (req: any, res: any, next: any) => {
+    const member = auth.currentMember;
+    if (!member) return res.status(401).json({ ok: false, message: "Sign in required." });
+    req.researchMember = member;
+    next();
+  },
 }));
 
 process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 
-import { AGREEMENT_DEFINITIONS, agreementContentHash, registerAgreementsApi } from "./agreements";
+import {
+  AGREEMENT_DEFINITIONS,
+  agreementContentHash,
+  healthAssessmentCollectionReady,
+  registerAgreementsApi,
+} from "./agreements";
 
 const FIXED_NOW = "2026-07-20T12:00:00.000Z";
 let clockNow = FIXED_NOW;
@@ -179,6 +190,7 @@ beforeEach(() => {
   state.other.length = 0;
   auth.currentMember = MEMBER_A;
   clockNow = FIXED_NOW;
+  delete process.env.RESEARCH_HEALTH_DATA_ENABLED;
   vi.clearAllMocks();
 });
 
@@ -224,11 +236,74 @@ describe("listing definitions", () => {
     }
   });
 
-  it("is refused signed out and for a closed membership", async () => {
+  it("keeps the health-data gate closed and rejects acceptance of the draft XR-MEM-012", async () => {
+    process.env.RESEARCH_HEALTH_DATA_ENABLED = "true";
+    expect(healthAssessmentCollectionReady()).toBe(false);
+    const res = await request(makeApp())
+      .post("/api/research/agreements")
+      .send({
+        decisions: [{
+          key: "XR-MEM-012",
+          version: CURRENT,
+          decision: "accepted",
+        }],
+    });
+    expect(res.status).toBe(409);
+    expect(res.body.code).toBe("state_conflict");
+    expect(state.acceptances).toHaveLength(0);
+    delete process.env.RESEARCH_HEALTH_DATA_ENABLED;
+  });
+
+  it("binds XR-MEM-012 acceptance to the exact displayed immutable content hash", async () => {
+    const definition = AGREEMENT_DEFINITIONS.find((item) => item.key === "XR-MEM-012")!;
+    const original = { ...definition };
+    const content = "Approved sensitive-data consent text shown to the member.";
+    const contentHash = crypto.createHash("sha256").update(content).digest("hex");
+    Object.assign(definition, {
+      status: "published",
+      effectiveDate: "2026-07-25",
+      content,
+      contentHash,
+    });
+    process.env.RESEARCH_HEALTH_DATA_ENABLED = "true";
+    try {
+      const stale = await request(makeApp())
+        .post("/api/research/agreements")
+        .send({
+          decisions: [{
+            key: "XR-MEM-012",
+            version: CURRENT,
+            decision: "accepted",
+            contentHash: "0".repeat(64),
+          }],
+        });
+      expect(stale.status).toBe(409);
+      expect(state.acceptances).toHaveLength(0);
+
+      const accepted = await request(makeApp())
+        .post("/api/research/agreements")
+        .send({
+          decisions: [{
+            key: "XR-MEM-012",
+            version: CURRENT,
+            decision: "accepted",
+            contentHash,
+          }],
+        });
+      expect(accepted.status).toBe(200);
+      expect(state.acceptances).toHaveLength(1);
+      expect(state.acceptances[0].content_hash).toBe(contentHash);
+    } finally {
+      Object.assign(definition, original);
+      delete process.env.RESEARCH_HEALTH_DATA_ENABLED;
+    }
+  });
+
+  it("is refused signed out but remains readable by a closed privacy subject", async () => {
     auth.currentMember = null;
     expect((await request(makeApp()).get("/api/research/agreements")).status).toBe(401);
     auth.currentMember = { ...MEMBER_A, status: "closed" };
-    expect((await request(makeApp()).get("/api/research/agreements")).status).toBe(403);
+    expect((await request(makeApp()).get("/api/research/agreements")).status).toBe(200);
   });
 });
 
@@ -358,6 +433,30 @@ describe("reacceptance", () => {
 });
 
 describe("declines", () => {
+  it("withdraws a historical XR-MEM-012 acceptance for a closed member even while the feature gate is off", async () => {
+    const historicalHash = "b".repeat(64);
+    seedAcceptance({
+      agreement_key: "XR-MEM-012",
+      agreement_version: "0.0.7-superseded",
+      content_hash: historicalHash,
+    });
+    auth.currentMember = { ...MEMBER_A, status: "closed" };
+
+    const res = await request(makeApp())
+      .post("/api/research/agreements/XR-MEM-012/withdraw")
+      .send({});
+
+    expect(res.status).toBe(200);
+    const rows = state.acceptances.filter((row) => row.agreement_key === "XR-MEM-012");
+    expect(rows).toHaveLength(2);
+    expect(rows[1]).toMatchObject({
+      agreement_version: "0.0.7-superseded",
+      content_hash: historicalHash,
+      decision: "declined",
+    });
+    expect(res.body.agreements.find((item: any) => item.key === "XR-MEM-012").acceptedVersion).toBeNull();
+  });
+
   it("records a decline and does not count it as accepted", async () => {
     const res = await request(makeApp())
       .post("/api/research/agreements")

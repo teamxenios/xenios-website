@@ -52,7 +52,12 @@ async function allowClaim(req: Request): Promise<boolean> {
 // The member guards and row type live in member-auth.ts (shared with the
 // member-authed research APIs); re-exported here for existing importers.
 export { requireMember } from "./member-auth";
-import { getMemberByEmail, requireMember, type MemberRow } from "./member-auth";
+import {
+  getMemberByEmail,
+  requireMember,
+  requireResearchSubject,
+  type MemberRow,
+} from "./member-auth";
 
 // Resolve a Supabase Auth user by email through the admin API. Used only to
 // heal a stranded claim (auth user exists, member row does not); the member
@@ -248,7 +253,7 @@ export function registerMemberApi(app: Express) {
   });
 
   // Session probe for the auth-aware navigation (V3 section 4.3).
-  app.get("/api/research/member/me", requireMember, async (req, res) => {
+  app.get("/api/research/member/me", requireResearchSubject, async (req, res) => {
     const member = (req as any).researchMember as MemberRow;
     const { data: application } = await getSupabaseAdmin()
       .from(APPLICATIONS)

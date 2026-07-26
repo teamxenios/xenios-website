@@ -79,6 +79,7 @@ export const ADMIN_ROUTES = {
   member: "/admin/research/members/:id",
   plans: "/admin/research/plans",
   plan: "/admin/research/plans/:id",
+  blueprintReview: "/admin/research/blueprint-review",
   products: "/admin/research/products",
   product: "/admin/research/products/:id",
   productConfiguration: "/admin/research/product-configuration",

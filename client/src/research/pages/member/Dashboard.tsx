@@ -7,6 +7,7 @@ import { getMemberOverview } from "../../adapters/member";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { devFixture } from "../../lib/fixtures";
 import { MEMBER_ROUTES } from "../../lib/routes";
+import type { MemberOverview as ServerMemberOverview } from "@shared/research/member-platform";
 
 // ---------------------------------------------------------------------------
 // Member home (/research/member). The first viewport is ONE next action, not
@@ -19,9 +20,7 @@ import { MEMBER_ROUTES } from "../../lib/routes";
 // link rows into every member area.
 // ---------------------------------------------------------------------------
 
-type MemberOverview = {
-  assessment?: { state: "due" | "in_progress" | "complete" | "locked" } | null;
-  plan?: { state: "preparing" | "ready" | "updated"; updatedAt?: string | null } | null;
+type MemberOverview = ServerMemberOverview & {
   reviewedUpdate?: { title: string; at?: string | null } | null;
   orderIssue?: { orderId: string; summary: string } | null;
   subscriptionIssue?: { summary: string } | null;
@@ -37,25 +36,71 @@ type NextStep = {
 };
 
 function deriveNextStep(overview: MemberOverview | null, assessmentStatus: CapabilityStatus): NextStep {
-  if (overview?.assessment && (overview.assessment.state === "due" || overview.assessment.state === "in_progress")) {
+  if (assessmentStatus.state !== "enabled") {
     return {
-      eyebrow: "Next step",
-      title: overview.assessment.state === "in_progress" ? "Finish your assessment" : "Complete your assessment",
-      body: "Your plan starts from your assessment. It saves as you go, so you can stop and come back.",
+      eyebrow: "Pending",
+      title: "Your assessment is awaiting final privacy approval",
+      body: assessmentStatus.publicMessage,
       href: MEMBER_ROUTES.assessment,
-      cta: overview.assessment.state === "in_progress" ? "Continue the assessment" : "Start the assessment",
+      cta: "View assessment status",
     };
   }
-  if (overview?.plan && (overview.plan.state === "ready" || overview.plan.state === "updated")) {
+  if (overview?.assessment && overview.assessment.status !== "submitted") {
     return {
       eyebrow: "Next step",
-      title: overview.plan.state === "updated" ? "Your Blueprint was updated" : "Your Blueprint is ready",
+      title: overview.assessment.status === "in_progress" ? "Finish your assessment" : "Complete your assessment",
+      body: "Your plan starts from your assessment. It saves as you go, so you can stop and come back.",
+      href: MEMBER_ROUTES.assessment,
+      cta: overview.assessment.status === "in_progress" ? "Continue the assessment" : "Start the assessment",
+    };
+  }
+  if (
+    overview?.blueprint &&
+    ["assessment_submitted", "preliminary", "samuel_review", "more_information_needed"].includes(
+      overview.blueprint.state,
+    )
+  ) {
+    return {
+      eyebrow: "Current state",
+      title: overview.blueprint.state === "more_information_needed"
+        ? "The review team needs one clarification"
+        : "Your plan is being prepared",
+      body: overview.blueprint.state === "more_information_needed"
+        ? "Open your plan status to see the review team’s question."
+        : "Your submitted assessment is in private human review. Nothing is published automatically.",
+      href: MEMBER_ROUTES.blueprint,
+      cta: "View plan status",
+    };
+  }
+  if (
+    overview?.blueprint &&
+    overview.blueprint.requiresAcknowledgment &&
+    (overview.blueprint.state === "published" || overview.blueprint.state === "updated")
+  ) {
+    return {
+      eyebrow: "Next step",
+      title: overview.blueprint.state === "updated" ? "Your Blueprint was updated" : "Your Blueprint is ready",
       body:
-        overview.plan.state === "updated"
+        overview.blueprint.state === "updated"
           ? "Your plan has changed since you last read it. Review the update before your next block."
           : "Your personal plan has been prepared and is ready to read.",
       href: MEMBER_ROUTES.blueprint,
       cta: "Open your Blueprint",
+    };
+  }
+  if (
+    overview?.blueprint &&
+    (overview.blueprint.state === "published" || overview.blueprint.state === "updated") &&
+    overview.monthlyCheckIn.status !== "submitted"
+  ) {
+    return {
+      eyebrow: "Next step",
+      title: overview.monthlyCheckIn.status === "in_progress"
+        ? "Finish your monthly check-in"
+        : "Complete your monthly check-in",
+      body: "Share a concise update so your next plan review reflects what changed this month.",
+      href: `${MEMBER_ROUTES.assessment}?mode=checkin`,
+      cta: overview.monthlyCheckIn.status === "in_progress" ? "Continue check-in" : "Start check-in",
     };
   }
   if (overview?.reviewedUpdate) {
@@ -156,10 +201,10 @@ export default function MemberDashboard() {
     if (!member || !memberToken) return;
     let alive = true;
     (async () => {
-      const res = await getMemberOverview<MemberOverview>(memberToken);
+      const res = await getMemberOverview<{ ok: boolean; overview: MemberOverview }>(memberToken);
       if (!alive) return;
       if (res.kind === "ok") {
-        setOverview(res.data);
+        setOverview(res.data.overview);
       } else if (res.kind === "unauthorized") {
         setSessionEnded(true);
       } else {
@@ -167,9 +212,17 @@ export default function MemberDashboard() {
         // realistic fixture; production renders the honest default next step.
         setOverview(
           devFixture<MemberOverview>(() => ({
-            assessment: { state: "due" },
+            assessment: {
+              required: true,
+              status: "not_started",
+              dueAt: null,
+              overdue: false,
+              remindersSent: 0,
+            },
+            monthlyCheckIn: { cycleKey: "2026-07", status: "not_started" },
+            blueprint: { state: "assessment_due", updatedAt: null, requiresAcknowledgment: false },
             supportAnswer: { summary: "Your question about shipping timelines was answered." },
-          })),
+          } as MemberOverview)),
         );
       }
       setOverviewLoaded(true);
