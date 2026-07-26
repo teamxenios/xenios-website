@@ -127,7 +127,7 @@ services:
 
 | Order | File | Purpose | Status |
 |---|---|---|---|
-| Care-1 | `care-access-foundation.sql` | Care capability, roles, access audit, forced RLS | PENDING (PR #46 accepted; not yet applied) |
+| Care-1 | `care-access-foundation.sql` | Care capability, roles, access audit, forced RLS | RUN (`20260726064113 care_access_foundation`) |
 | Care-2 | `care-eligibility-intake.sql` | Patient identity seam, location, state/clinician coverage, append-only consent/waitlist/eligibility history, and versioned intake foundation | PENDING (stacked after Care-1; not yet applied) |
 
 Care-2 seeds no state, clinician, consent document, intake definition, medical
