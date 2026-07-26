@@ -40,4 +40,13 @@ export function registerCareApi(
 
 export * from "./access";
 export * from "./capability";
+export * from "./consent";
+export * from "./consent-repository";
+export * from "./eligibility";
+export * from "./eligibility-repository";
+export * from "./eligibility-routes";
+export * from "./intake";
+export * from "./intake-repository";
+export * from "./intake-routes";
 export * from "./production-deps";
+export * from "./waitlist";

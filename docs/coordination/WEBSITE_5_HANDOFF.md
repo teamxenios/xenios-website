@@ -1,67 +1,156 @@
-# Website 5 — Care PR 1 production handoff
+# Website 5 — Care PR 2 production handoff
 
 ## Release unit
 
 - Session: WEBSITE 5 — XENIOS CARE FOUNDATION
-- Feature domain: Care rail separation, Care roles and authorization, and a
-  truthful public Pending shell
-- Base branch/SHA: `main` at
-  `48cb57250c1ec54fe8714e59fa1071a9eb27f867`
-- Feature branch: `feature/website-5-care-foundation`
-- Pull request: `https://github.com/teamxenios/xenios-website/pull/46`
-- Current frozen SHA: recorded in PR #46 and issue #44 after this committed
-  handoff is pushed.
-- Full seven-PR staging snapshot:
-  `feature/website-5-care-sequence-staging` at
-  `1a8dbf8172df37ab7a5941fd340305c00d962c81`
+- Feature domain: patient location, supported-state/clinician coverage,
+  service eligibility, non-clinical waitlist, identity state, versioned Care
+  consent, and independently versioned clinical-intake foundation
+- Stacked base: accepted Care PR 1 head
+  `e1c5117ff0a671312f0f703c80a5690214c5c81c`
+- Feature branch: `feature/website-5-care-eligibility-intake`
+- Pull request: recorded after this branch is pushed
+- Final frozen SHA: recorded in the PR and issue #44 after this committed
+  handoff is pushed
 
-PR #46 is intentionally PR 1 only. The former broad head `1a8dbf8` and
-superseded review head `a002fed` are not mergeable. Later intake, clinician,
-pharmacy, instruction, supply, labs, messaging, and adverse-event work remains
-preserved only on the staging branch for focused follow-on PRs.
+Care PR 1 remains frozen and unchanged at its accepted exact SHA. This branch
+is PR 2 only. It does not contain appointments, clinician decisions,
+prescriptions, pharmacy workflow, instructions, supplies, labs, secure
+messaging, or adverse-event workflow.
 
-The complete requirement-by-requirement reconciliation, exact planned branches,
-files, owners, acceptance tests, release outcomes, and PR 2–7 sequence are in
-`docs/coordination/WEBSITE_5_REMAINING_SCOPE.md`. The broad staging branch is
-source material only and must never be merged as a unit.
+## Included
 
-## Included and excluded
+- A Care-only patient identity projection linked to one Supabase Auth identity.
+- Append-only current-physical-location attestations with idempotency and
+  supersession linkage.
+- An unseeded supported-state/service registry with database audit history.
+- An unseeded clinician-state coverage seam that counts only users with an
+  active `clinician` Care role and current, verified coverage.
+- Server-authoritative eligibility decisions for disabled, location-required,
+  unsupported-state, service-unavailable, clinician-unavailable,
+  identity-unverified, consent-required, and intake-foundation-ready states.
+- A hard invariant that mechanical readiness always records
+  `care_eligibility_cleared = false`.
+- Append-only patient-owned waitlist join/withdraw events, bound to the state
+  returned by the server decision and containing no availability promise.
+- Versioned telehealth/privacy document records, append-only grant/revoke
+  events, and database-enforced immutability after document approval except
+  for the one-way supersession transition. No document copy or version is
+  seeded.
+- Independently versioned Care intake definitions, drafts, immutable
+  revisions, optimistic autosave, idempotent start/save/submit, and strict
+  validation against the exact approved definition bound to the draft.
+- Production Supabase repositories and ownership-bound Express route modules.
+- Supabase bearer-session propagation in the browser and server rejection of
+  password-recovery-purpose credentials.
+- Stable safe 503 dependency boundaries with no adapter error text.
+- Xenios-consistent loading, disabled, auth-required, error, retry,
+  location-required, waitlist, success, and consent-unavailable UI states.
 
-Included:
+## Explicitly not included
 
-- Branded Care/Research record IDs and a generic, consented discovery seam
-  without product, order, purchase, inventory, or instruction linkage.
-- Seven Care-only roles, narrow role permissions, and explicit exclusion of
-  affiliate, Mitch, fulfillment, trainer, and Research-admin roles.
-- A server-authoritative capability record that remains disabled by default.
-- A second deployment approval plus database approver and timestamp before the
-  server can report `enabled`.
-- Supabase JWT verification, active Care-role lookup, and metadata-only access
-  decision audit.
-- A polished responsive `/care` Pending shell using the existing Xenios
-  `PageShell`, global header/footer, typography, tokens, buttons, cards, rules,
-  and responsive utilities, with no form, clinical action, provider claim,
-  availability claim, price, product, or launch date.
-- Explicit fail-closed status loading and retryable error states, plus
-  decorative card numbering using the accessible existing purple token.
-- A minimal additive migration for capability, role assignment, access audit,
-  RLS, grants, constraints, indexes, and rollback notes.
+- No supported state, clinician, medical group, consent text, clinical
+  question, patient, pharmacy, product, price, availability, appointment,
+  prescription, direction, supply, or treatment record is seeded.
+- No automatic clinical clearance, treatment decision, prescribing,
+  diagnosis, medical advice, or AI decision.
+- No import from a Research assessment type, table, response, or question.
+- No Care capability activation.
+- No direct edit to Website 2-locked `client/src/App.tsx`, `server/index.ts`,
+  or `client/src/components/Navbar.tsx`.
 
-Excluded:
+## Files
 
-- Eligibility, intake, consent, appointments, clinical review, prescriptions,
-  pharmacy routing, patient-specific instructions, supplies, biomarkers,
-  messaging, support cases, and adverse-event workflows.
-- Medical group, clinician, pharmacy, state, pricing, inventory, or treatment
-  records.
-- Any AI final clinical decision or Research-to-Care product conversion.
-- Any claim that clinical services are live.
+Shared contracts:
+
+- `shared/care/eligibility.ts`
+- `shared/care/consent.ts`
+- `shared/care/intake.ts`
+- `shared/care/contracts.ts`
+
+Server:
+
+- `server/care/eligibility.ts`
+- `server/care/eligibility-repository.ts`
+- `server/care/eligibility-routes.ts`
+- `server/care/waitlist.ts`
+- `server/care/consent.ts`
+- `server/care/consent-repository.ts`
+- `server/care/intake.ts`
+- `server/care/intake-repository.ts`
+- `server/care/intake-routes.ts`
+- `server/care/production-deps.ts`
+- `server/care/index.ts`
+
+Client:
+
+- `client/src/care/api.ts`
+- `client/src/care/EligibilityPendingPage.tsx`
+- `client/src/care/CareConsentPendingPage.tsx`
+
+Migration:
+
+- `supabase/care-eligibility-intake.sql`
+- `supabase/tests/care-eligibility-intake-lifecycle.test.sql`
+- `supabase/MIGRATIONS.md`
+
+## Route delta
+
+Focused modules provide:
+
+- `GET /api/care/eligibility`
+- `POST /api/care/eligibility/location`
+- `POST /api/care/eligibility/waitlist`
+- `POST /api/care/consents`
+- `GET /api/care/intake`
+- `POST /api/care/intake`
+- `PATCH /api/care/intake/:intakeId/autosave`
+- `POST /api/care/intake/:intakeId/submit`
+- `/care/eligibility` client page
+- `/care/consent` client page
+
+Every API route requires the accepted PR 1 capability and Care-role boundary.
+When Care remains disabled, the middleware returns `503 care_disabled` before
+authentication, repository access, or patient mutation. When enabled later,
+the self-service routes require a valid non-recovery Supabase JWT, an active
+`care_patient` role, and the patient profile bound to that authenticated
+subject.
 
 ## Website 2 locked-file wiring requests
 
-PR #46 makes no direct change to `client/src/App.tsx` or `server/index.ts`.
-Website 2 should apply these exact wiring changes during coordinated
-integration.
+Do not register PR 2 before both Care migrations are applied in order.
+
+### `server/index.ts`
+
+Extend the accepted PR 1 Care import:
+
+```ts
+import {
+  buildCareEligibilityRepository,
+  buildCareIntakeRepository,
+  buildCareProductionDependencies,
+  carePageGate,
+  registerCareApi,
+  registerCareEligibilityApi,
+  registerCareIntakeApi,
+} from "./care";
+```
+
+Replace the single PR 1 registration with one shared access dependency:
+
+```ts
+app.use(carePageGate);
+
+const careAccess = buildCareProductionDependencies();
+const careEligibility = buildCareEligibilityRepository();
+const careIntake = buildCareIntakeRepository();
+
+registerCareApi(app, careAccess);
+registerCareEligibilityApi(app, careAccess, careEligibility);
+registerCareIntakeApi(app, careAccess, careEligibility, careIntake);
+```
+
+Keep this block before the generic API 404 and SPA catch-all.
 
 ### `client/src/App.tsx`
 
@@ -69,252 +158,157 @@ Add with the existing lazy imports:
 
 ```ts
 const CareSection = lazy(() => import("@/care/section"));
+const CareEligibility = lazy(() => import("@/care/EligibilityPendingPage"));
+const CareConsent = lazy(() => import("@/care/CareConsentPendingPage"));
 ```
 
-Add alongside the Research route wrapper:
+Add the exact routes before the broad `/care/*` route:
 
 ```tsx
-function CareRoutes() {
-  return (
-    <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
-      <CareSection />
-    </Suspense>
-  );
-}
+<Route path="/care/eligibility" component={CareEligibility} />
+<Route path="/care/consent" component={CareConsent} />
+<Route path="/care" component={CareSection} />
+<Route path="/care/*" component={CareSection} />
 ```
 
-Add alongside the `/research` routes:
+Use the same `Suspense` loading treatment as the accepted PR 1 handoff. Do not
+add a `/care/intake` client form until an externally approved definition exists.
+
+### `client/src/components/Navbar.tsx`
+
+Retain the accepted PR 1 narrow-mobile correction:
 
 ```tsx
-<Route path="/care" component={CareRoutes} />
-<Route path="/care/*" component={CareRoutes} />
-```
-
-### Shared mobile header correction
-
-Required 375px evidence exposed a pre-existing global header overflow on current
-`main`: the later `.btn` rule overrides Navbar's `hidden` utility, so the
-desktop `Request Early Access` action remains visible below `sm` and extends the
-document from 360px to 435px. PR #46 does not edit the shared Navbar.
-
-Website 2 should change this existing class in `client/src/components/Navbar.tsx`:
-
-```tsx
-// Current
-className="btn btn-primary hidden sm:inline-flex"
-
-// Corrected
 className="btn btn-primary !hidden sm:!inline-flex"
 ```
 
-With that shared correction present, browser verification measured equal
-`scrollWidth` and `clientWidth` at 320px, 375px, and 430px.
+PR 2 makes no shared Navbar edit.
 
-### `server/index.ts`
+## Migration delta
 
-Add:
+Apply after `supabase/care-access-foundation.sql`.
 
-```ts
-import {
-  buildCareProductionDependencies,
-  carePageGate,
-  registerCareApi,
-} from "./care";
-```
+`supabase/care-eligibility-intake.sql` creates 13 forced-RLS tables:
 
-Before the generic API 404 and SPA catch-all, add:
+1. `care_patients`
+2. `care_patient_locations`
+3. `care_supported_states`
+4. `care_supported_state_audit`
+5. `care_clinician_state_coverage`
+6. `care_clinician_coverage_audit`
+7. `care_consent_documents`
+8. `care_consent_events`
+9. `care_eligibility_checks`
+10. `care_waitlist_events`
+11. `care_intake_definitions`
+12. `care_intakes`
+13. `care_intake_revisions`
 
-```ts
-app.use(carePageGate);
-registerCareApi(app, buildCareProductionDependencies());
-```
+It also creates:
 
-The status route reads the real server-side capability record. The protected
-access probe verifies JWT and active Care roles. Neither route accepts clinical
-data.
+- fixed-search-path immutable-history, approved-version, and
+  configuration-audit triggers
+- active-clinician role/coverage validation
+- `care_active_clinician_count(text, timestamptz)`
+- atomic `care_intake_autosave(...)`
+- atomic `care_intake_submit(...)`
 
-## Migration delta and production order
+Anonymous and authenticated browser roles receive zero table grants. Only the
+service role may execute the clinician-count and intake transition functions.
+The migration is additive, idempotent, creates no Research reference, and does
+not change the canonical PR 1 capability row from `disabled`.
 
-File: `supabase/care-access-foundation.sql`
+## Validation
 
-Creates only:
+Current branch-ready validation:
 
-- `public.care_capabilities`
-- `public.care_role_assignments`
-- `public.care_access_audit`
-- `public.care_has_role(text[])`
-
-The migration is additive and repeatable, inserts only the canonical disabled
-capability row, forces RLS on all three tables, removes public/anonymous table
-authority, permits security-admin-only reads of roles and access audit, and
-provides no authenticated write policy. Active role grants use a partial unique
-index, so grant → revoke → re-grant creates a new lifecycle row while two
-simultaneous active grants fail. It creates no clinical or Research record.
-The access-audit table is database-enforced append-only through an idempotent
-fixed-search-path trigger; committed SQL proves INSERT succeeds while UPDATE
-and DELETE both fail.
-
-Approved application order:
-
-1. Confirm the production project is `yvzeduaxbwgcwllhywff`.
-2. Record existing Care object presence and relevant row counts.
-3. Dry-run this single migration on a disposable Supabase-compatible database.
-4. Apply through the authorized production migration path.
-5. Reload PostgREST schema if required.
-6. Confirm the `care` capability row is `disabled`.
-7. Confirm RLS, grants, policies, constraints, and indexes.
-8. Confirm no existing non-Care record counts changed.
-9. Apply the two locked-file wiring requests.
-10. Merge and deploy through Website 2's coordinated Render sequence.
-
-Required environment-variable names:
-
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `SUPABASE_ANON_KEY`
-- `CARE_ENABLED`
-- `CARE_ENABLE_APPROVED`
-
-Do not place values in GitHub, issues, chat, logs, screenshots, or browser code.
-For this Pending release, keep both Care enable flags unset or not equal to
-`true`, and keep the database capability state `disabled`.
-
-## Validation at frozen-head preparation
-
-- Focused Care/shared/client tests: 6 files, 29 tests passed.
-- Repository-wide `npm test`: 141 files, 3,126 tests passed.
+- Focused Care/client/migration tests: 9 files / 49 tests passed.
 - `npm run check`: passed.
-- `npm run build`: passed.
-- `git diff --check`: passed.
-- Disposable Postgres migration dry-run: applied twice with
-  `ON_ERROR_STOP=1`; one canonical `care:disabled` row remained, all three
-  expected tables existed, and all three reported RLS plus forced RLS.
-- Disposable role lifecycle proof: grant → revoke → re-grant passed, a second
-  simultaneous active grant raised `unique_violation`, and the test transaction
-  rolled back to zero role rows. The same proof inserted an access-audit row,
-  rejected UPDATE and DELETE with SQLSTATE `55000`, retained the original row,
-  and rolled back to zero audit rows.
-- Care dependency failures: status, authentication/role, and access-audit
-  failures return only stable `503 care_temporarily_unavailable` JSON. Adapter
-  error text is not exposed, and a failed allowed-decision audit never invokes
-  the protected handler.
-- Card numbering: decorative with `aria-hidden="true"` and the retained visual
-  Xenios purple token measures 5.70:1 against the white card background.
-- Locked-file isolation: final base-to-head diff contains no
-  `client/src/App.tsx`, `server/index.ts`, or
-  `client/src/components/Navbar.tsx` edit.
-- Production migration: not applied by Website 5; Website 2 owns coordinated
-  production migration and release.
-- Live/mobile/accessibility smoke: pending Website 2 integration and Render
-  deployment because the route and server wiring are intentionally excluded
-  from this PR.
+- Disposable PostgreSQL 16: PR 1 migration applied, PR 2 migration applied
+  twice with `ON_ERROR_STOP=1`.
+- SQL lifecycle passed:
+  - no state, consent document, or intake definition existed after migration
+  - location UPDATE and DELETE rejected
+  - supported-state insert/update audit recorded
+  - supported-state audit UPDATE and DELETE rejected
+  - clinician coverage required an active clinician role and was audited
+  - clinician-coverage audit UPDATE and DELETE rejected
+  - active clinician count joined role, state, active, and expiry state
+  - consent UPDATE and DELETE rejected
+  - approved consent document content mutation/delete rejected
+  - cross-patient consent-to-intake binding rejected
+  - eligibility history UPDATE and DELETE rejected
+  - waitlist history UPDATE and DELETE rejected
+  - autosave replay returned one immutable revision
+  - cross-patient autosave rejected
+  - cross-patient submit rejected
+  - stale-version autosave rejected
+  - intake-revision UPDATE and DELETE rejected
+  - approved intake definition content mutation/delete rejected
+  - autosave and submit required the draft's exact approved definition
+  - submission replay was idempotent
+  - transaction rolled back to zero patient, state, consent, definition, and
+    intake fixture rows
+- All 13 PR 2 tables reported RLS plus forced RLS.
+- PR 2 browser table grants for `anon`/`authenticated`: zero.
+- Canonical PR 1 capability remained `care:disabled`.
+- Full repository tests: 149 files / 3,171 tests passed.
+- `npm run check`: passed.
+- `npm run build`: passed (existing Vite large-chunk advisory only).
 
-Current production snapshot on 2026-07-25:
+## UI evidence
 
-- `GET https://xeniostechnology.com/api/health`: HTTP 200.
-- `GET https://xeniostechnology.com/api/care/status`: HTTP 404.
-- `GET https://xeniostechnology.com/care`: the generic SPA document is served,
-  but the focused Care client route is not registered.
+Viewable evidence:
 
-This evidence is why the release remains `NOT YET MERGED`, not `LIVE`.
+[`docs/care/evidence/PR2_UI_EVIDENCE.md`](../care/evidence/PR2_UI_EVIDENCE.md)
 
-## UI consistency evidence
-
-The production home page and local global UI system were used as the visual
-baseline. The Care shell now uses `PageShell` rather than a duplicate header,
-and reuses `container-x`, `display-m`, `display-s`, `body-l`, `body-m`,
-`mono-cap`, `mono-label`, `text-pulse`, `text-ink-2`, `text-ink-mute`, `btn`,
-`btn-primary`, `btn-secondary`, `btn-ghost`, `card`, and `rule-*`.
-
-Removed from the earlier shell:
-
-- Care-only mint/green palette
-- radial gradient
-- Georgia typography
-- custom 16–18px rounding
-- custom shadow
-- duplicate Care wordmark/header
-- separate Care button, card, status, and spacing systems
-
-Browser evidence captured:
-
-- Production baseline at desktop.
-- Care loading at desktop with `aria-busy=true`.
-- Care authoritative `disabled` state at desktop.
-- Care unavailable/error state with one labeled retry action at desktop.
-- Care unavailable/error state at 375px.
-- Overflow checks at 320px, 375px, and 430px with the shared Navbar correction
-  above; `scrollWidth === clientWidth` at every width.
-- Computed Care surface: white background, graphite text, Inter Tight headings,
-  JetBrains Mono labels, restrained `--pulse` emphasis, thin borders, no
-  gradient, and no shell shadow.
-
-Viewable artifacts are committed under `docs/care/evidence/`:
-
-- `PR1_UI_EVIDENCE.md`
-- `care-pr1-desktop-loading.jpg`
-- `care-pr1-desktop-disabled.jpg`
-- `care-pr1-desktop-error.jpg`
-- `care-pr1-mobile-375-error.jpg`
-- `care-pr1-mobile-320-error.jpg`
-- `care-pr1-zoom-200-reflow-equivalent.jpg`
-
-The 640px reflow artifact is the standards-equivalent CSS width for a 1280px
-viewport at 200% zoom. The available browser surface does not expose persistent
-native page zoom, so Website 6 must repeat native 200% zoom on the integrated
-candidate; the handoff does not claim that post-integration gate has passed.
-
-There is no populated or empty clinical-data state in PR 1 because this release
-creates no clinical records or workflow. The truthful authoritative disabled
-state is the approved Pending production surface.
+It covers desktop loading/disabled/error/location/consent states, 375px
+waitlist and success, 320px retry, and 200%-reflow-equivalent behavior. Browser
+console warnings/errors were zero. Temporary fixture and route wiring was
+removed before validation.
 
 UI CONSISTENCY STATUS: MATCHES EXISTING XENIOS
 
-## Production verification
+## External blockers and activation gates
 
-After Website 2 deploys:
+The following remain external and intentionally absent:
 
-1. Confirm the Render deployment is Live and deployed SHA matches merged main.
-2. Confirm `/api/health`.
-3. Open `/care` at desktop and 320px mobile widths.
-4. Confirm the shell truthfully says Care is being prepared.
-5. Confirm it contains no clinical submission action and no fabricated partner,
-   state, clinician, pharmacy, prescription, instruction, supply, price,
-   availability, or launch claim.
-6. Confirm `GET /api/care/status` returns rail `care`, state `disabled`, and
-   `enabled: false`.
-7. Confirm `GET /api/care/audit/access` returns `503 care_disabled` even with a
-   valid non-Care account.
-8. Confirm response headers include no-store/noindex protections on Care pages.
-9. Review Render and Supabase logs for new serious errors without exposing
-   payloads or secrets.
-10. Record the deployment ID, deployed SHA, migration result, persona, steps,
-    actual result, mobile/accessibility result, authorization result, and logs
-    result in the shared Command Center.
+- medical-group contract and configuration
+- real supported-state approvals
+- real clinician identities, licenses, role grants, and state coverage
+- approved telehealth consent document/version/content hash
+- approved Care privacy notice document/version/content hash
+- approved clinical intake definition and question schema
+- clinical support and privacy operations
+- later Care PRs 3–7
+- integrated security, mobile, accessibility, and production QA
 
-## Clinical activation gates
+Do not set the Care capability to `enabled` or both deployment approvals to
+`true` until all later clinical release gates pass.
 
-This PR is not clinical activation approval. Do not set the database capability
-to `enabled` or set both deployment approvals until every later Care release
-gate is complete, including real medical-group, clinician, state coverage,
-pharmacy, patient-specific instruction, support, privacy, security, and
-production QA records.
+## Production verification after Website 2 release
 
-## Remaining scope and next exact action
+1. Confirm Render is Live and deployed SHA matches merged main.
+2. Confirm `/api/health` is 200.
+3. Confirm the Care capability remains `disabled`.
+4. Confirm every PR 2 API returns `503 care_disabled` before mutation.
+5. Confirm `/care/eligibility` and `/care/consent` render truthful Pending
+   states at desktop, 375px, and 320px.
+6. Confirm no supported state, clinician, consent, or intake definition was
+   fabricated during migration.
+7. Confirm 13/13 PR 2 tables force RLS and browser grants remain zero.
+8. Inspect Render and Supabase logs without exposing payloads or secrets.
+9. Record migration, deployment, persona, authorization, mobile,
+   accessibility, persistence, and logs evidence in issue #44.
 
-Care PR 1 is the first of seven focused release units. After Website 2 accepts,
-merges, migrates, and deploys this unit, Website 5 must:
+## Next exact action
 
-1. Verify the disabled `/care` shell and `/api/care/status` on production.
-2. Record the deployment evidence in issue #44.
-3. Branch `feature/website-5-care-eligibility-intake` from the then-current
-   `main`.
-4. Selectively recover only PR 2 eligibility/intake/consent work from
-   `feature/website-5-care-sequence-staging`.
-5. Add its focused repository, route, migration, authorization, RLS, state,
-   mobile, accessibility, and no-fabrication proof.
+After Website 2 accepts this frozen PR 2 unit:
 
-The exact PR 2–7 implementation plan and all external activation blockers are
-maintained in `docs/coordination/WEBSITE_5_REMAINING_SCOPE.md`.
+1. Keep PR 2 unchanged.
+2. Remain available for PR 1/2 integration corrections and live Pending smoke.
+3. Create the next focused Care PR for appointment and clinician workflow
+   foundation.
+4. Reuse only the relevant stable staging work; do not create a mega-diff.
 
 PRODUCTION STATUS: NOT YET MERGED
