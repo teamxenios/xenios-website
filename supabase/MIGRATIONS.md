@@ -120,6 +120,19 @@ Notes:
   retains its pinned `pg_catalog` search path and enabled event trigger while
   PUBLIC, `anon`, and `authenticated` no longer have execute privilege. The
   corresponding Supabase security-advisor finding is cleared.
+
+Care uses a separate, disabled-by-default migration chain. These migrations
+must remain serialized behind Website 2 review and must not activate clinical
+services:
+
+| Order | File | Purpose | Status |
+|---|---|---|---|
+| Care-1 | `care-access-foundation.sql` | Care capability, roles, access audit, forced RLS | PENDING (PR #46 accepted; not yet applied) |
+| Care-2 | `care-eligibility-intake.sql` | Patient identity seam, location, state/clinician coverage, append-only consent/waitlist/eligibility history, and versioned intake foundation | PENDING (stacked after Care-1; not yet applied) |
+
+Care-2 seeds no state, clinician, consent document, intake definition, medical
+question, patient, pharmacy, product, price, or availability record. It cannot
+make the canonical Care capability live.
 - The global order in this ledger is the integration order. The authoritative
   ordered run script for a production apply is
   docs/research-launch/FULL_PRODUCTION_MIGRATION_MANIFEST.md.
