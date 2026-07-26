@@ -165,6 +165,7 @@ const ADMIN_SUBNAV = [
   { href: ADMIN_ROUTES.security, label: "Security" },
   { href: ADMIN_ROUTES.privacy, label: "Privacy" },
   { href: ADMIN_ROUTES.capabilities, label: "Capabilities" },
+  { href: ADMIN_ROUTES.requiredInputs, label: "Required inputs" },
   { href: ADMIN_ROUTES.audit, label: "Audit" },
 ];
 

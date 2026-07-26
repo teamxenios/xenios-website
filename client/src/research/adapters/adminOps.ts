@@ -12,6 +12,11 @@
 import { apiGet, apiPost, apiPut, type ApiResult } from "../lib/api";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../lib/capabilities";
 import type { AdminCommerceQueuesDto } from "@shared/research/commerce-api";
+import type {
+  DomainReadiness,
+  RequiredInput,
+  RequiredInputSummary,
+} from "@shared/research/required-inputs";
 
 // The shape useAdminResource loads through. Loaders with parameters are bound
 // in the page (module-level or useCallback on the parameter) so identity only
@@ -33,6 +38,26 @@ export function getApplication<T>(token: string, id: string): Promise<ApiResult<
 
 export function getSystemStatus<T>(token: string): Promise<ApiResult<T>> {
   return apiGet<T>(`${BASE}/system-status`, token);
+}
+
+export function listRequiredInputs(
+  token: string,
+): Promise<
+  ApiResult<{
+    ok: true;
+    items: RequiredInput[];
+    summary: RequiredInputSummary;
+    readiness: DomainReadiness[];
+  }>
+> {
+  return apiGet(`${BASE}/required-inputs`, token);
+}
+
+export function getDomainReadiness(
+  token: string,
+  domain: string,
+): Promise<ApiResult<{ ok: true; readiness: DomainReadiness }>> {
+  return apiGet(`${BASE}/readiness/${enc(domain)}`, token);
 }
 
 export function listReferralFraud<T>(token: string, status: string): Promise<ApiResult<T>> {
@@ -217,6 +242,45 @@ export function resolveClaimWithReplacement<T>(token: string, claimId: string): 
 
 export function runOutbox<T>(token: string): Promise<ApiResult<T>> {
   return apiPost<T>(`${BASE}/outbox/run`, {}, token);
+}
+
+export function defineRequiredInput<T>(
+  token: string,
+  body: unknown,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/required-inputs`, body, token);
+}
+
+export function transitionRequiredInput<T>(
+  token: string,
+  id: string,
+  body: unknown,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(
+    `${BASE}/required-inputs/${enc(id)}/transition`,
+    body,
+    token,
+  );
+}
+
+export function setReadinessManifest<T>(
+  token: string,
+  domain: string,
+  body: unknown,
+): Promise<ApiResult<T>> {
+  return apiPut<T>(`${BASE}/readiness/${enc(domain)}/manifest`, body, token);
+}
+
+export function transitionDomainLaunch<T>(
+  token: string,
+  domain: string,
+  body: unknown,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(
+    `${BASE}/readiness/${enc(domain)}/transition`,
+    body,
+    token,
+  );
 }
 
 export function retryOutboxItem<T>(token: string, id: string): Promise<ApiResult<T>> {

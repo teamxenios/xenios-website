@@ -217,6 +217,37 @@ describe("private pre-launch access", () => {
     expect(response.status).toBe(403);
     expect(guarded).not.toHaveBeenCalled();
   });
+
+  it("attaches the verified immutable user id and can prohibit seed governance context", async () => {
+    const { deps } = buildHarness({ roles: ["approved_internal_reviewer"] });
+    const app = express();
+    app.get(
+      "/api/admin/research/governance",
+      buildPrelaunchGuard(
+        deps,
+        ["approved_internal_reviewer"],
+        { allowSeedContext: false },
+      ),
+      (req, res) =>
+        res.json({
+          actorId: (req as typeof req & { prelaunchActorId?: string })
+            .prelaunchActorId,
+        }),
+    );
+
+    const allowed = await request(app)
+      .get("/api/admin/research/governance")
+      .set("Authorization", "Bearer valid");
+    expect(allowed.status).toBe(200);
+    expect(allowed.body.actorId).toBe("user-1");
+
+    const seedDenied = await request(app)
+      .get("/api/admin/research/governance")
+      .set("Authorization", "Bearer valid")
+      .set("X-Xenios-Seed-Namespace", "website3-review");
+    expect(seedDenied.status).toBe(403);
+    expect(seedDenied.body.code).toBe("seed_namespace_unavailable");
+  });
 });
 
 describe("pre-launch migration posture", () => {

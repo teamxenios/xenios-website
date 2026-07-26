@@ -1,8 +1,12 @@
 # Xenios Private Pre-Launch Shared Contract
 
 Owner: Website 2
-Status: focused foundation candidate; not yet merged or applied
+Status: LIVE; frozen and available for approved domain adoption
 Branch: `integration/prelaunch-foundation`
+Reviewed feature head: `df33ee19555c9301c530e513bcc29a6cdcec28bf`
+Merged/deployed SHA: `3859e799abb9a7a307b13ca1e8a6a5d252abbc5e`
+Render deployment: `dep-d9inc8vaqgkc7395fvr0`
+Production migration: `canonical_prelaunch_foundation`
 
 This is the one canonical contract domain sessions must consume after Website 2
 freezes and releases it. It does not authorize a parallel preview application,
@@ -45,8 +49,8 @@ An internal-seed context includes:
 - `resetGroup`
 - `releaseEligible: false`
 
-Website 2 does not create seed namespaces or operational seed records in this
-foundation. A later reviewed seed-reset unit must create them explicitly after
+Website 2 created no seed namespace or operational seed record in this
+production release. A later reviewed seed-reset unit may create them explicitly after
 RLS, repository filtering, analytics exclusion, and external-action isolation
 are proven for the affected domain.
 
@@ -80,8 +84,9 @@ Canonical states:
 - `paused`
 - `disabled`
 
-This foundation initializes only `internal_build` with provider mode
-`disabled`. It creates no browser mutation grant and no public policy. Later
+Production contains only `internal_build` with provider mode `disabled`. It
+contains no role or namespace, creates no browser mutation grant, and has no
+public policy. Later
 readiness/launch-switch work must validate blocking required inputs on the
 server before permitting `public_enabled`.
 
@@ -119,8 +124,8 @@ financial, partner, clinical, or other operational record.
 
 ## Domain adoption rule
 
-Website 1, 3, 4, and 5 must wait for Website 2 to return an accepted exact
-contract SHA. Their follow-on branches may then:
+Website 2 returned the accepted exact contract SHA to Websites 1, 3, 4, and 5.
+Their focused follow-on branches may:
 
 - use these exact roles and states;
 - use `PrelaunchDataContext` in production repository queries;

@@ -1,6 +1,81 @@
 # Website 2 release-manager handoff
 
-## Current checkpoint
+## Current checkpoint — required-input/readiness contract
+
+- Session: Website 2 — Release Manager
+- Branch: `integration/required-input-readiness`
+- Base/deployed main: `3859e799abb9a7a307b13ca1e8a6a5d252abbc5e`
+- Base Render deployment: `dep-d9inc8vaqgkc7395fvr0` (Live)
+- Dependency: canonical pre-launch contract, migration, and signed-out smoke are
+  live; production has no pre-launch role or seed namespace
+- Production status: NOT YET MERGED
+
+This focused unit implements the canonical required-input object, append-only
+review workflow, exact administrator form links, readiness manifests,
+domain-specific scorecards, and database-authoritative launch switches.
+
+Migration:
+
+- `supabase/research-required-input-readiness.sql`
+- creates four forced-RLS governance tables;
+- grants no browser table/function authority;
+- inserts no required input, launch control, role, namespace, seed, product,
+  financial, clinical, or other operational row;
+- rejects external-secret values, requires explicit sensitive-reference
+  classification, and accepts only uppercase configuration-name references;
+- uses persisted pre-launch roles and immutable Supabase user IDs rather than
+  the singleton administrator email;
+- requires entry, review, and a different reviewer before `verified`,
+  `rejected`, or `not_applicable`;
+- computes the canonical manifest hash server-side and blocks
+  `public_enabled` unless software, recomputed hash, exact count, and every
+  blocking input agree.
+
+Routes:
+
+- `GET /api/admin/research/required-inputs`
+- `POST /api/admin/research/required-inputs`
+- `POST /api/admin/research/required-inputs/:id/transition`
+- `GET /api/admin/research/readiness/:domain`
+- `PUT /api/admin/research/readiness/:domain/manifest`
+- `POST /api/admin/research/readiness/:domain/transition`
+- `/admin/research/required-inputs`
+
+Current corrected validation:
+
+- focused pre-launch/server/UI tests: 33 passed;
+- full suite: 155 files, 3,294 tests passed;
+- typecheck and production build pass (existing large-chunk advisory only);
+- migration applies twice in disposable PostgreSQL 16;
+- lifecycle proves `recordId`/`record_id` alias-parity secret rejection,
+  reference-only configuration-name storage,
+  independent verification/rejection, premature-public and stale same-count
+  manifest rejection, recomputed approved launch, append-only audit, 4/4
+  forced RLS, zero browser grants, and rollback to zero rows.
+
+Remaining:
+
+- preserve the refreshed desktop/375/320/keyboard evidence and obtain the
+  independent native 200%-zoom result;
+- freeze and obtain renewed Website 6 review of the corrected exact SHA;
+- only after acceptance, inspect production, apply migration, merge, deploy,
+  verify zero-row baseline and signed-out admin gate, and return the exact
+  contract SHA to domain owners.
+
+Queued but not mixed into this candidate:
+
+- PR #61 Website 1 pre-launch application at
+  `1ee36a3d6d492cb3da8d8d0fe23c9653085951b2` (QA queued, not reviewed);
+- PR #62 Website 3 pre-launch application at
+  `7cbc7a4e3bf309db9b44359a20bea8922ab27e00`;
+- Care PRs #46 → #56 → #59 → #63 → #65 in stacked migration order; #65 is
+  frozen at `8fbe05a68f06104959ee73c77343142185ed9c12` and queued, not reviewed;
+  Care PR6 has restarted separately from that exact PR5 head and is not yet a
+  frozen candidate; PR7 remains held;
+- Website 4 Train 3A at
+  `d162f1eafe249be57e9d23c87c65d99f1efdbc89`.
+
+## Archived Release Train 1 checkpoint
 
 - Session: Website 2 — Release Manager
 - Branch: `integration/website-3-production-v2`

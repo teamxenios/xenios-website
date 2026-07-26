@@ -19,7 +19,7 @@ order; Samuel pastes it into the Supabase SQL Editor after review.
 
 ## Status legend
 
-- RUN: applied and verified in production (migrations 1-19).
+- RUN: applied and verified in production.
 - PENDING: drafted, reviewed here, not yet run.
 
 ## Ordered manifest
@@ -45,8 +45,8 @@ order; Samuel pastes it into the Supabase SQL Editor after review.
 | 17 | research-media.sql | Private media + access log | RUN | 3 | yes | 0 | private media storage |
 | 18 | research-questions.sql | Questions + Telegram links | RUN | 2 | yes | 0 | Telegram for inbound |
 | 19 | research-sla-events.sql | SLA escalation ledger | RUN | 1 | yes | 0 | Infinity for emit |
-| 20 | research-catalog.sql | Products + provenanced facts | PENDING | 7 | yes | 0 | commerce flag |
-| 21 | research-inventory-lots.sql | Lots, quality docs, FEFO | PENDING | 5 | yes | 0 | commerce flag |
+| 20 | research-catalog.sql | Products + provenanced facts | RUN | 7 | yes | 0 | commerce flag |
+| 21 | research-inventory-lots.sql | Lots, quality docs, FEFO | RUN | 5 | yes | 0 | commerce flag |
 | 22 | research-orders.sql | Carts, orders, refunds | PENDING | 8 | yes | 0 | payment provider + commerce flag |
 | 23 | research-subscriptions.sql | Product subscriptions | PENDING | 2 | yes | 0 | payment provider + commerce flag |
 | 24 | research-fulfillment.sql | Split fulfillment, shipping | PENDING | 5 | yes | 0 | shipping + Mitch fulfillment |
@@ -75,7 +75,9 @@ original 1-26 base bundle:
 | 28 | research-product-requests-hardening.sql | RUN 2026-07-25 | 27 |
 | 29 | research-product-requests-function-hardening.sql | RUN 2026-07-25 | 27 |
 | 30 | research-security-definer-grants-hardening.sql | RUN 2026-07-25 (`20260725231517`) | independent privilege hardening |
-| 31 | research-products-diagnostics.sql | PENDING review/apply | 4 + 20 + 21 |
+| 31 | research-products-diagnostics.sql | RUN 2026-07-25 | 4 + 20 + 21 |
+| 32 | research-prelaunch-foundation.sql | RUN 2026-07-25 (`canonical_prelaunch_foundation`) | Supabase Auth + admin boundary |
+| 33 | research-required-input-readiness.sql | PENDING independent review/apply | 32 |
 
 The exact FM-1 apply date is not in the managed migration-history stream, so
 the manifest records verified presence instead of inventing a timestamp.
@@ -126,14 +128,19 @@ presence of FM or Product Request objects.
   no longer reports that security-definer privilege finding.
 - Migration 31 reuses `research_products`, `research_inventory_lots`, and
   `research_lot_quality_documents`; it does not create parallel product, lot,
-  auth, notification, or Storage architectures. Its disposable PostgreSQL 16
-  gate passed two consecutive applies plus RLS/grant, private-bucket,
-  append-only audit, and atomic biomarker-confirmation verification. Website 3
-  frozen head `877ebfff75452f47b3b185e9879a0dcf156e0ef7` and the focused
-  Website 2 integration have passed their current review gates. The migration
-  remains unapplied until Release Train 0 is released, the final Train 1
-  integrated browser/build gates pass, and production pre-apply counts are
-  recorded.
+  auth, notification, or Storage architectures. It is applied and verified
+  through managed migration `release_train_1_research_products_diagnostics`.
+  Production verification confirmed forced RLS, zero browser grants, private
+  buckets, append-only audit, atomic biomarker confirmation, zero fabricated
+  product/lot/COA/biomarker rows, and unchanged prior-record invariants.
+- Migration 32 is applied as `canonical_prelaunch_foundation`. It contains only
+  the disabled internal-build settings row; production has zero pre-launch
+  role, namespace, access-audit, and external-action-capture rows.
+- Migration 33 remains pending independent review. Its disposable PostgreSQL
+  16 proof applies twice, exercises the complete required-input and launch
+  lifecycle, rejects secret values and premature public enablement, preserves
+  append-only audit, verifies 4/4 forced RLS and zero browser grants, and rolls
+  all lifecycle rows back to zero.
 - PENDING migrations for commerce (20-26) are schema-ready but commerce stays
   disabled until: the production commerce dependency layer is wired (see the
   provider readiness doc), a payment processor is approved, and per-SKU purchase
