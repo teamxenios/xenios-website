@@ -40,7 +40,7 @@ table in the same PR that adds or changes a migration file.
 | 31 | research-products-diagnostics.sql | Extend canonical lots/quality documents; persist supplement placeholders, metabolic pathways/interests, Superpower configuration, biomarker uploads/records, product content, private buckets, and append-only certificate access audit | RUN | 2026-07-25 | managed migration `release_train_1_research_products_diagnostics`; forced-RLS/browser-grant/private-bucket/RPC/count verification |
 | 32 | research-prelaunch-foundation.sql | Canonical private roles, seed-origin namespaces, provider modes, access audit, and external-action capture | RUN | 2026-07-25 | managed migration `canonical_prelaunch_foundation`; 5/5 forced RLS, zero browser grants, zero roles/namespaces/audits/captures |
 | 33 | research-required-input-readiness.sql | Canonical required-input register, append-only review audit, readiness manifests, and server launch switches | RUN | 2026-07-26 | managed migration `20260726045307 canonical_required_input_readiness`; forced-RLS/browser-grant/zero-row verification |
-| 34 | care-access-foundation.sql | Disabled-by-default Care capability, Care-only roles, and metadata-only access audit | PENDING (not run) | — | disposable PostgreSQL apply-twice/lifecycle proof; independent review required |
+| 34 | care-access-foundation.sql | Disabled-by-default Care capability, Care-only roles, and metadata-only access audit | RUN | 2026-07-26 | managed migration `20260726064113 care_access_foundation`; one disabled capability, 3/3 forced RLS, zero browser mutation grants, zero role/audit rows |
 
 Founding-membership operational migrations use a separate dependency chain.
 Production presence and managed migration history were reconciled on
@@ -139,7 +139,9 @@ Notes:
   `20260726045307 canonical_required_input_readiness`. Production verification
   found 4/4 forced-RLS governance tables, zero browser grants, and zero
   required-input, audit, readiness-manifest, or launch-switch rows.
-- `care-access-foundation.sql` is a PENDING focused migration. It inserts only
-  the canonical `care:disabled` capability and creates no clinical record.
-  Production application is prohibited until the Website 2 integration
-  candidate passes independent review.
+- `care-access-foundation.sql` was applied as managed migration
+  `20260726064113 care_access_foundation` after the Website 2 integration
+  candidate passed independent review. Production verification found one
+  canonical `care:disabled` capability, 3/3 forced-RLS tables, zero browser
+  mutation grants, two intended authenticated read policies, and zero Care
+  role-assignment or access-audit rows. It creates no clinical record.
