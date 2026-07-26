@@ -493,6 +493,159 @@ revoke all on function public.care_clinician_ready(uuid, text, timestamptz)
 grant execute on function public.care_clinician_ready(uuid, text, timestamptz)
   to service_role;
 
+create or replace function public.care_operational_clinician_ready(
+  p_state_code text,
+  p_as_of timestamptz default now()
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.care_clinician_profiles profile
+    where public.care_clinician_ready(
+      profile.clinician_user_id,
+      p_state_code,
+      p_as_of
+    )
+  );
+$$;
+
+revoke all on function public.care_operational_clinician_ready(
+  text, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.care_operational_clinician_ready(
+  text, timestamptz
+) to service_role;
+
+create or replace function public.care_appointment_consents_current(
+  p_intake_id uuid,
+  p_patient_id uuid
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  intake_row public.care_intakes%rowtype;
+begin
+  perform 1
+  from public.care_patients patient
+  where patient.id = p_patient_id
+  for update;
+  if not found then return false; end if;
+
+  select * into intake_row
+  from public.care_intakes
+  where id = p_intake_id
+    and patient_id = p_patient_id
+    and status = 'submitted'
+  for share;
+  if not found then return false; end if;
+
+  perform 1
+  from public.care_consent_events event
+  where event.id in (
+    intake_row.telehealth_consent_event_id,
+    intake_row.privacy_consent_event_id
+  )
+  for share;
+  perform 1
+  from public.care_consent_documents document
+  where document.id in (
+    select event.document_id
+    from public.care_consent_events event
+    where event.id in (
+      intake_row.telehealth_consent_event_id,
+      intake_row.privacy_consent_event_id
+    )
+  )
+  for share;
+
+  return exists (
+    select 1
+    from public.care_consent_events event
+    join public.care_consent_documents document
+      on document.id = event.document_id
+     and document.kind = event.kind
+     and document.version = event.document_version
+    where event.id = intake_row.telehealth_consent_event_id
+      and event.patient_id = p_patient_id
+      and event.kind = 'telehealth'
+      and event.action = 'granted'
+      and document.status = 'approved'
+      and document.approved_at is not null
+      and document.effective_at is not null
+      and event.id = (
+        select latest.id
+        from public.care_consent_events latest
+        where latest.patient_id = p_patient_id
+          and latest.kind = 'telehealth'
+        order by latest.occurred_at desc, latest.id desc
+        limit 1
+      )
+  ) and exists (
+    select 1
+    from public.care_consent_events event
+    join public.care_consent_documents document
+      on document.id = event.document_id
+     and document.kind = event.kind
+     and document.version = event.document_version
+    where event.id = intake_row.privacy_consent_event_id
+      and event.patient_id = p_patient_id
+      and event.kind = 'privacy_notice'
+      and event.action = 'granted'
+      and document.status = 'approved'
+      and document.approved_at is not null
+      and document.effective_at is not null
+      and event.id = (
+        select latest.id
+        from public.care_consent_events latest
+        where latest.patient_id = p_patient_id
+          and latest.kind = 'privacy_notice'
+        order by latest.occurred_at desc, latest.id desc
+        limit 1
+      )
+  );
+end;
+$$;
+
+revoke all on function public.care_appointment_consents_current(uuid, uuid)
+  from public, anon, authenticated;
+
+create or replace function public.care_supported_state_current(
+  p_state_code text
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  perform 1
+  from public.care_supported_states state
+  where state.state_code = p_state_code
+  for share;
+
+  return exists (
+    select 1
+    from public.care_supported_states state
+    where state.state_code = p_state_code
+      and state.supported_state_active
+      and state.service_coverage_active
+      and state.approved_by is not null
+      and state.approved_at is not null
+  );
+end;
+$$;
+
+revoke all on function public.care_supported_state_current(text)
+  from public, anon, authenticated;
+
 create or replace function public.care_request_appointment(
   p_patient_id uuid,
   p_intake_id uuid,
@@ -508,12 +661,6 @@ declare
   appointment_row public.care_appointments%rowtype;
   location_row public.care_patient_locations%rowtype;
 begin
-  select * into appointment_row
-  from public.care_appointments
-  where patient_id = p_patient_id
-    and request_idempotency_key = p_idempotency_key;
-  if found then return appointment_row; end if;
-
   if not exists (
     select 1
     from public.care_intakes intake
@@ -522,6 +669,13 @@ begin
       and intake.status = 'submitted'
   ) then
     raise exception 'care_submitted_intake_required'
+      using errcode = '23514';
+  end if;
+  if not public.care_appointment_consents_current(
+    p_intake_id,
+    p_patient_id
+  ) then
+    raise exception 'care_current_consent_required'
       using errcode = '23514';
   end if;
 
@@ -534,15 +688,7 @@ begin
     raise exception 'care_current_location_required'
       using errcode = '23514';
   end if;
-  if not exists (
-    select 1
-    from public.care_supported_states state
-    where state.state_code = location_row.state_code
-      and state.supported_state_active
-      and state.service_coverage_active
-      and state.approved_by is not null
-      and state.approved_at is not null
-  ) then
+  if not public.care_supported_state_current(location_row.state_code) then
     raise exception 'care_supported_state_required'
       using errcode = '23514';
   end if;
@@ -569,6 +715,12 @@ begin
     raise exception 'care_verified_clinician_coverage_required'
       using errcode = '23514';
   end if;
+
+  select * into appointment_row
+  from public.care_appointments
+  where patient_id = p_patient_id
+    and request_idempotency_key = p_idempotency_key;
+  if found then return appointment_row; end if;
 
   insert into public.care_appointments (
     patient_id,
@@ -649,6 +801,29 @@ begin
   ) then
     raise exception 'care_clinical_admin_required' using errcode = '42501';
   end if;
+  if not public.care_appointment_consents_current(
+    appointment_row.intake_id,
+    appointment_row.patient_id
+  ) then
+    raise exception 'care_current_consent_required'
+      using errcode = '23514';
+  end if;
+  if appointment_row.patient_location_id <> (
+    select location.id
+    from public.care_patient_locations location
+    where location.patient_id = appointment_row.patient_id
+    order by location.attested_at desc, location.id desc
+    limit 1
+  ) then
+    raise exception 'care_patient_location_changed'
+      using errcode = '23514';
+  end if;
+  if not public.care_supported_state_current(
+    appointment_row.patient_state_code
+  ) then
+    raise exception 'care_supported_state_required'
+      using errcode = '23514';
+  end if;
   if exists (
     select 1 from public.care_clinician_assignment_events event
     where event.appointment_id = p_appointment_id
@@ -667,16 +842,6 @@ begin
   if existing_review_status = 'decided' then
     raise exception 'care_decided_review_assignment_immutable'
       using errcode = '55000';
-  end if;
-  if appointment_row.patient_location_id <> (
-    select location.id
-    from public.care_patient_locations location
-    where location.patient_id = appointment_row.patient_id
-    order by location.attested_at desc, location.id desc
-    limit 1
-  ) then
-    raise exception 'care_patient_location_changed'
-      using errcode = '23514';
   end if;
   if not public.care_clinician_ready(
     p_clinician_user_id,
@@ -813,6 +978,27 @@ begin
   ) then
     raise exception 'care_clinical_admin_required' using errcode = '42501';
   end if;
+  if not public.care_appointment_consents_current(
+    appointment_row.intake_id,
+    appointment_row.patient_id
+  ) then
+    raise exception 'care_current_consent_required'
+      using errcode = '23514';
+  end if;
+  if appointment_row.patient_location_id <> (
+    select location.id from public.care_patient_locations location
+    where location.patient_id = appointment_row.patient_id
+    order by location.attested_at desc, location.id desc limit 1
+  ) then
+    raise exception 'care_patient_location_changed'
+      using errcode = '23514';
+  end if;
+  if not public.care_supported_state_current(
+    appointment_row.patient_state_code
+  ) then
+    raise exception 'care_supported_state_required'
+      using errcode = '23514';
+  end if;
   if exists (
     select 1 from public.care_appointment_events event
     where event.appointment_id = p_appointment_id
@@ -847,14 +1033,6 @@ begin
       and cardinality(provider.reminder_offsets_minutes) > 0
   ) then
     raise exception 'care_scheduling_provider_required'
-      using errcode = '23514';
-  end if;
-  if appointment_row.patient_location_id <> (
-    select location.id from public.care_patient_locations location
-    where location.patient_id = appointment_row.patient_id
-    order by location.attested_at desc, location.id desc limit 1
-  ) then
-    raise exception 'care_patient_location_changed'
       using errcode = '23514';
   end if;
   if not public.care_clinician_ready(
@@ -974,6 +1152,29 @@ begin
   for update;
   if not found or appointment_row.patient_id <> p_patient_id then
     raise exception 'care_appointment_not_found' using errcode = '42501';
+  end if;
+  if p_action = 'check_in' then
+    if not public.care_appointment_consents_current(
+      appointment_row.intake_id,
+      appointment_row.patient_id
+    ) then
+      raise exception 'care_current_consent_required'
+        using errcode = '23514';
+    end if;
+    if appointment_row.patient_location_id <> (
+      select location.id from public.care_patient_locations location
+      where location.patient_id = appointment_row.patient_id
+      order by location.attested_at desc, location.id desc limit 1
+    ) then
+      raise exception 'care_patient_location_changed'
+        using errcode = '23514';
+    end if;
+    if not public.care_supported_state_current(
+      appointment_row.patient_state_code
+    ) then
+      raise exception 'care_supported_state_required'
+        using errcode = '23514';
+    end if;
   end if;
   if exists (
     select 1 from public.care_appointment_events event
@@ -1279,7 +1480,9 @@ begin
     raise exception 'care_appointment_version_conflict'
       using errcode = '40001';
   end if;
-  if appointment_row.status not in ('scheduled', 'checked_in') then
+  if appointment_row.status <> 'scheduled'
+    or appointment_row.starts_at is null
+    or p_occurred_at < appointment_row.starts_at then
     raise exception 'care_no_show_unavailable' using errcode = '55000';
   end if;
   prior_status := appointment_row.status;

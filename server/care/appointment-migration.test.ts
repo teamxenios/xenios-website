@@ -52,6 +52,9 @@ describe("Care PR 3 migration posture", () => {
 
   it("requires verified medical-group, clinician, license, coverage, and provider records", () => {
     expect(migration).toContain("public.care_clinician_ready");
+    expect(migration).toContain("public.care_operational_clinician_ready");
+    expect(migration).toContain("public.care_appointment_consents_current");
+    expect(migration).toContain("public.care_supported_state_current");
     expect(migration).toContain("medical_group.verification_state = 'verified'");
     expect(migration).toContain("license.verification_state = 'verified'");
     expect(migration).toContain("coverage.active");
@@ -62,6 +65,18 @@ describe("Care PR 3 migration posture", () => {
     for (const proof of [
       "cross-patient appointment request was accepted",
       "cross-patient appointment mutation was accepted",
+      "revoked-consent appointment request was accepted",
+      "revoked-consent appointment request replay was accepted",
+      "inactive-state appointment assignment was accepted",
+      "inactive-state appointment assignment replay was accepted",
+      "inactive-state appointment scheduling was accepted",
+      "inactive-state appointment schedule replay was accepted",
+      "revoked-consent check-in was accepted",
+      "revoked-consent check-in replay was accepted",
+      "disjoint clinician readiness was accepted",
+      "matched clinician readiness was rejected",
+      "premature no-show transition was accepted",
+      "checked-in no-show transition was accepted",
       "unauthorized assignment replay was accepted",
       "unauthorized no-show replay was accepted",
       "unauthorized schedule replay was accepted",

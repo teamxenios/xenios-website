@@ -56,6 +56,7 @@ export interface CareAppointmentReadinessFacts {
   clinicianLicenseVerified: boolean;
   clinicianCredentialsVerified: boolean;
   clinicianCoverageVerified: boolean;
+  operationalClinicianReady: boolean;
   supportedStateVerified: boolean;
   telehealthProviderVerified: boolean;
   schedulingProviderVerified: boolean;

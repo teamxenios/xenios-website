@@ -17,6 +17,8 @@ describe("Care PR 3 appointment UI", () => {
     expect(page).toContain("container-x");
     expect(page).toContain("text-pulse");
     expect(page).toContain('className="card');
+    expect(page).toContain('id="main-content"');
+    expect(page).not.toContain("<main");
     expect(page).not.toMatch(/gradient|Georgia|rounded-\[|shadow-(xl|2xl)/i);
   });
 

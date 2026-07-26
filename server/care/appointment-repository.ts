@@ -177,6 +177,7 @@ export function buildCareAppointmentRepository(): CareAppointmentRepository {
         schedulingProviders,
         supportedState,
         coverage,
+        operationalClinician,
       ] = await Promise.all([
         admin.from("care_medical_groups").select("id").eq("verification_state", "verified").limit(1),
         admin.from("care_clinician_profiles").select("clinician_user_id").eq("verification_state", "verified").limit(1),
@@ -190,6 +191,12 @@ export function buildCareAppointmentRepository(): CareAppointmentRepository {
         stateCode
           ? admin.from("care_clinician_state_coverage").select("id").eq("state_code", stateCode).eq("active", true).limit(1)
           : Promise.resolve({ data: [], error: null }),
+        stateCode
+          ? admin.rpc("care_operational_clinician_ready", {
+              p_state_code: stateCode,
+              p_as_of: now,
+            })
+          : Promise.resolve({ data: false, error: null }),
       ]);
       for (const result of [
         medicalGroups,
@@ -198,6 +205,7 @@ export function buildCareAppointmentRepository(): CareAppointmentRepository {
         schedulingProviders,
         supportedState,
         coverage,
+        operationalClinician,
       ]) {
         throwOnError(result.error, "care_appointment_readiness_lookup_failed");
       }
@@ -210,6 +218,7 @@ export function buildCareAppointmentRepository(): CareAppointmentRepository {
           Boolean(clinicianProfiles.data?.length) &&
           Boolean(clinicianLicenses.data?.length),
         clinicianCoverageVerified: Boolean(coverage.data?.length),
+        operationalClinicianReady: operationalClinician.data === true,
         supportedStateVerified: Boolean(supportedState.data?.length),
         telehealthProviderVerified: Boolean(provider),
         schedulingProviderVerified: Boolean(provider),

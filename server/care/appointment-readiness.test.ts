@@ -7,6 +7,7 @@ const readyFacts = {
   clinicianLicenseVerified: true,
   clinicianCredentialsVerified: true,
   clinicianCoverageVerified: true,
+  operationalClinicianReady: true,
   supportedStateVerified: true,
   telehealthProviderVerified: true,
   schedulingProviderVerified: true,
@@ -43,6 +44,23 @@ describe("Care PR 3 required-input application", () => {
       operationalReady: true,
       publicReady: true,
       requiredInputs: [],
+    });
+  });
+
+  it("does not combine disjoint clinician facts into operational readiness", () => {
+    expect(
+      evaluateCareAppointmentReadiness({
+        ...readyFacts,
+        operationalClinicianReady: false,
+      }),
+    ).toEqual({
+      softwareReady: true,
+      operationalReady: false,
+      publicReady: false,
+      requiredInputs: [
+        "CLINICIAN CREDENTIAL VERIFICATION REQUIRED",
+        "CLINICIAN COVERAGE REQUIRED",
+      ],
     });
   });
 });

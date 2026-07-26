@@ -28,12 +28,18 @@ export function evaluateCareAppointmentReadiness(
       CARE_APPOINTMENT_REQUIRED_INPUT_LABELS.clinicianLicense,
     );
   }
-  if (!facts.clinicianCredentialsVerified) {
+  if (
+    !facts.clinicianCredentialsVerified ||
+    !facts.operationalClinicianReady
+  ) {
     requiredInputs.push(
       CARE_APPOINTMENT_REQUIRED_INPUT_LABELS.clinicianCredentials,
     );
   }
-  if (!facts.clinicianCoverageVerified) {
+  if (
+    !facts.clinicianCoverageVerified ||
+    !facts.operationalClinicianReady
+  ) {
     requiredInputs.push(
       CARE_APPOINTMENT_REQUIRED_INPUT_LABELS.clinicianCoverage,
     );

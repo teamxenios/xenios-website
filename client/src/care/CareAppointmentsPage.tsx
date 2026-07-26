@@ -73,7 +73,7 @@ export default function CareAppointmentsPage() {
         description="Private appointment status for the separate Xenios Care pathway."
         path="/care/appointments"
       />
-      <main className="container-x pt-24 md:pt-36 pb-20" id="main-content">
+      <div className="container-x pt-24 md:pt-36 pb-20" id="main-content">
         <p className="mono-cap text-pulse mb-6">CARE · APPOINTMENTS</p>
         <h1 className="display-m max-w-[19ch]">
           Scheduling stays connected to verified Care coverage.
@@ -214,7 +214,7 @@ export default function CareAppointmentsPage() {
             decision.
           </p>
         </aside>
-      </main>
+      </div>
     </PageShell>
   );
 }

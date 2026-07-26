@@ -62,6 +62,7 @@ function repo(overrides: Partial<CareAppointmentRepository> = {}): CareAppointme
       clinicianLicenseVerified: false,
       clinicianCredentialsVerified: false,
       clinicianCoverageVerified: false,
+      operationalClinicianReady: false,
       supportedStateVerified: false,
       telehealthProviderVerified: false,
       schedulingProviderVerified: false,

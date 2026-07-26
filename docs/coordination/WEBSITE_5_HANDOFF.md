@@ -196,9 +196,12 @@ Current branch-ready validation:
 - Exact corrected ancestry: merge base is accepted Care PR 2 source head
   `54f9bd8d8834de9a8e57fc911665627af36f09ed`.
 - The accepted PR 2 consent-freshness correction is present unchanged.
-- PR 3 name/status scope matches the superseded `fcc919875...` candidate and
-  contains no Website 2 locked shared registration file.
-- Focused PR 3 tests: 6 files / 23 tests passed.
+- PR 3 retains the original bounded 26-file domain delta plus two focused
+  regression files; it contains no Website 2 locked shared registration file.
+- Rejected four-HIGH head
+  `0218e23b0d4ef1bf6d2e7a4bfef78ab23d3b131c` is superseded and must not be
+  reviewed, merged, applied, integrated, or deployed.
+- Focused PR 3 tests: 8 files / 29 tests passed.
 - `npm run check`: passed.
 - Disposable PostgreSQL 16:
   - Care-1, Care-2, and Care-3 applied in order.
@@ -206,8 +209,9 @@ Current branch-ready validation:
   - PR 1, PR 2, and PR 3 lifecycle SQL each completed and rolled back.
   - 28/28 total Care tables reported RLS plus forced RLS.
   - 12/12 PR 3 tables reported RLS plus forced RLS.
-  - PR 3 browser grants were zero and seven reviewed service-role workflow RPC
-    grants were present.
+  - PR 3 browser table and routine grants were zero; seven reviewed workflow
+    RPC grants and two reviewed readiness RPC grants were present for
+    `service_role`.
   - Capability remained `care:disabled`.
   - Zero residual PR 1 roles/audits, PR 2 records, PR 3 records, or disposable
     auth users remained after rollback.
@@ -216,19 +220,32 @@ Current branch-ready validation:
   - cross-patient appointment request rejection
   - cross-patient appointment mutation rejection
   - request replay idempotency
+  - telehealth-consent revocation blocks request without mutation
+  - privacy-consent revocation blocks check-in without mutation
+  - supported-state invalidation blocks assignment and scheduling without
+    mutation
+  - each current-consent/state boundary runs before idempotent replay as well
+    as before a new mutation
+  - disjoint clinician profile/license/coverage records remain not operational
+  - one exact matched clinician becomes operational
   - current-state and verified-clinician coverage enforcement
   - verified provider and reminder requirements
   - private telehealth reference persistence
   - append-only appointment, assignment, configuration, and review histories
+  - pre-start and checked-in no-show rejection without status, version,
+    event, reminder, or session mutation
+  - a due scheduled no-show succeeds and replays idempotently
   - completed appointment requirement before a final decision
   - final decision source fixed to `human_clinician`
   - decided-review assignment immutability
-- Full repository tests: 155 files / 3,199 tests passed.
+- Full repository tests: 157 files / 3,205 tests passed.
 - `npm run check`: passed.
 - `npm run build`: passed (existing Vite large-chunk advisory only).
 - Viewable desktop, 375px, 320px, populated, empty, disabled, error/retry,
   no-overflow, and 200%-reflow-equivalent evidence:
   `docs/care/evidence/PR3_UI_EVIDENCE.md`.
+- Routed desktop/mobile/reflow landmark regression confirms exactly one
+  `<main>`, one `<h1>`, and retained `#main-content`.
 
 ## External and canonical blockers
 
