@@ -213,6 +213,26 @@ describe("Research administration CSV serialization", () => {
     });
   });
 
+  it.each(["\uD800", "\uDC00"])(
+    "rejects ill-formed schema header and key text for %j",
+    (loneSurrogate) => {
+      const unsafeHeader: AdminCsvSchema<"value"> = {
+        columns: [{ key: "value", header: loneSurrogate }],
+      };
+      const unsafeKey: AdminCsvSchema<string> = {
+        columns: [{ key: loneSurrogate, header: "Value" }],
+      };
+      expect(serializeAdminCsv([], unsafeHeader)).toMatchObject({
+        ok: false,
+        errors: [{ code: "invalid_schema", scope: "header" }],
+      });
+      expect(serializeAdminCsv([], unsafeKey)).toMatchObject({
+        ok: false,
+        errors: [{ code: "invalid_schema", scope: "header" }],
+      });
+    },
+  );
+
   it("uses schema order, CRLF output, RFC quoting, and deterministic bytes", () => {
     const records = [
       {
@@ -371,6 +391,9 @@ describe("Research administration CSV bounded property coverage", () => {
       const serialized = serializeAdminCsv([record], schema);
       expect(serialized.ok).toBe(true);
       if (!serialized.ok) continue;
+      expect(
+        new TextDecoder("utf-8", { fatal: true }).decode(serialized.bytes),
+      ).toBe(serialized.csv);
       const parsed = parseAdminCsv(serialized.bytes, schema);
       expect(parsed).toMatchObject({ ok: true, records: [record] });
     }
