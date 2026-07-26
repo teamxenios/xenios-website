@@ -16,7 +16,18 @@
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "sync": "node script/sync-github.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "qa:routes": "node script/qa-route-inventory.mjs",
+    "qa:routes:check": "node script/qa-route-inventory.mjs --check",
+    "qa:browser": "playwright test",
+    "qa:browser:desktop": "playwright test --project=chromium-desktop",
+    "qa:evidence": "node script/qa-capture-ui-evidence.mjs",
+    "qa:leaks": "node script/qa-leak-scan.mjs",
+    "qa:performance": "node script/qa-performance-budget.mjs",
+    "qa:ui": "node script/qa-ui-consistency.mjs",
+    "qa:migrations": "node script/qa-migration-verify.mjs",
+    "qa:smoke": "node script/qa-production-smoke.mjs",
+    "qa:release": "npm run qa:routes:check && npm run qa:ui && npm run qa:leaks && npm run qa:migrations && npm run qa:browser"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -101,6 +112,8 @@
     "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.62.0",
     "@replit/vite-plugin-cartographer": "^0.4.4",
     "@replit/vite-plugin-dev-banner": "^0.1.1",
     "@types/connect-pg-simple": "^7.0.3",

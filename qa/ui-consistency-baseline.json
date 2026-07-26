@@ -1,0 +1,11 @@
+{
+  "basis": "test/website-6-final-qa rebased onto production main 48cb57250c1ec54fe8714e59fa1071a9eb27f867",
+  "maximums": {
+    "rawColorLiterals": 91,
+    "gradientDeclarations": 14,
+    "shadowDeclarations": 2,
+    "fontFamilyDeclarations": 43,
+    "largeRadiusDeclarations": 6,
+    "customButtonSelectors": 27
+  }
+}
