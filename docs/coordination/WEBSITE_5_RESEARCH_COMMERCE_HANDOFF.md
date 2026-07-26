@@ -1,51 +1,66 @@
-# Website 5 — Research Commerce CSV Safety Handoff
+# Website 5 — Wave 3 Product Control CSV Mapping Handoff
 
-Status: focused utility ready for bounded Website 6 review
+Status: focused route-free utility preparing for bounded Website 6 review
 
 ## Release identity
 
-- Authorized base: `6e4944674cfdfb33a8fd5685c031c7ac7c86fdb4`
-- Branch: `feature/website-5-research-commerce-csv-safety`
-- Frozen head: use the exact SHA recorded on the draft PR and in the Website 2/6 handoff; this file is part of that head.
-- Release placement: future Research Commerce shared administration support; does not block Wave 1.
+- Authorized base: `f4de7f371177beaa2f4de7eb2e7b6a88d7378a19`
+- Branch: `feature/website-5-wave3-product-control-csv-mapping`
+- Frozen head: use the exact SHA recorded on the draft PR and Website 2/6 handoff; this document is part of that head.
+- Release placement: Wave 3 Product Control administration support.
 
 ## Completed scope
 
-- Added schema-driven UTF-8 CSV parsing and serialization.
-- Added RFC 4180 quoting, embedded newline support, optional BOM handling, LF/CRLF parsing, and deterministic CRLF output.
-- Added deterministic schema column order and configurable byte, row, and column limits.
-- Added fail-closed validation for invalid UTF-8, control characters, malformed quoting/line endings, duplicate or missing headers, strict unexpected headers, inconsistent rows, and spreadsheet formula risk.
-- Added formula-injection neutralization for every exported data cell and rejection of formula-risk schema headers.
-- Added stable coordinate-only validation errors. Errors contain no raw cell, row, file content, decoder text, or provider error.
-- Added bounded deterministic property-style round-trip coverage alongside focused malformed, Unicode, limit, formula-risk, and redaction regressions.
+- Added deterministic strict CSV schemas for product, variant, effective-dated price, and private-media metadata drafts.
+- Built the schemas on the accepted live CSV kernel, preserving its UTF-8, BOM, RFC 4180, CRLF, formula-injection, limit, malformed-file, and redacted-error boundaries.
+- Added pure parse and validation mappings to canonical Product Control draft inputs.
+- Requires explicit UUIDs, product codes, slugs, aliases, SKUs, booleans, sort order, audience, currency, effective dates, media metadata, and private storage-key references. No business value or default is invented.
+- Added exact product-to-variant relationship validation for complete bundles and caller-supplied canonical binding contexts.
+- Added deterministic redacted export projections that exclude lifecycle, publication, approval, actor, audit, signed-URL, and provider fields.
+- Added bounded generated round-trip coverage for all four profiles plus semantic, relationship, Unicode, BOM, formula, limit, redaction, and private storage-reference regressions.
+
+## Output boundary
+
+Every parsed item is a `*_draft` or `media_metadata_draft` command object only.
+
+This unit:
+
+- does not call a route or RPC;
+- does not read or write a database;
+- does not publish, approve, activate, upload, create, or mutate a record;
+- does not expose media bytes, signed URLs, or public URLs;
+- does not imply that any imported fact is verified;
+- does not authorize a future caller to persist the output.
 
 ## Exact files
 
-- `shared/research/admin-data-exchange.ts`
-- `server/research/admin-data-exchange/csv.ts`
-- `server/research/admin-data-exchange/csv.test.ts`
+- `shared/research/admin-data-exchange/product-control-csv.ts`
+- `server/research/admin-data-exchange/product-control-csv.ts`
+- `server/research/admin-data-exchange/product-control-csv.test.ts`
 - `docs/coordination/WEBSITE_5_RESEARCH_COMMERCE_HANDOFF.md`
 - `docs/coordination/WEBSITE_5_REMAINING_SCOPE.md`
 
-## Boundaries preserved
-
-- Pure route-free utility only.
-- No UI, route, authentication, role, repository, provider, database, migration, RLS, Storage, seed, or production changes.
-- No domain import or database writer.
-- No package dependency changes.
-- No Care file, branch, PR, or behavior changed.
-
 ## Validation
 
-- Focused CSV tests: required before freeze.
+- Focused Product Control CSV tests: required before freeze.
+- Bounded generated-property cases: included in the focused test file.
 - Full `npm test`: required before freeze.
 - `npm run check`: required before freeze.
 - `npm run build`: required before freeze.
 - `git diff --check`: required before freeze.
-- Scope check: only the exact allowlist above may differ from the authorized base.
+- Exact allowlist comparison against the authorized base: required before freeze.
+- GitHub build/test/typecheck: required for the exact pushed head.
 
-## Integration request
+## Review request
 
-Website 2 retains all wiring, integration, merge, deployment, and production authority. A future administrator workflow may import the shared contract and server utility only after its own authorization, domain validation, persistence, and audit design are independently reviewed. This unit must not be registered as a route or treated as authorization for any production write.
+Website 6 should review only:
 
-Website 6 review request: inspect only RFC 4180 behavior, Unicode/UTF-8 boundaries, limits, formula-injection safety, error redaction, deterministic output, and allowlist isolation.
+- deterministic schema and mapping correctness;
+- exact identifier and product/variant binding preservation;
+- effective-date and enum validation;
+- storage-key reference-only behavior;
+- formula, UTF-8, BOM, row/column/byte limit inheritance;
+- redaction of error metadata and exports;
+- absence of routes, persistence, lifecycle mutation, provider execution, and non-allowlisted files.
+
+Website 2 retains all wiring, integration, merge, deployment, and production authority.
