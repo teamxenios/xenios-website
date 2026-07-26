@@ -194,6 +194,8 @@ Current branch-ready validation:
   `604ed05c54ca29063302433aa2c816a68b197424` remains prohibited.
 - Rejected head `bb5b320471832c69571511d36815306159506b17`
   remains prohibited.
+- Rejected head `c0998cab27c08c8cca4aa3245e1dff7dfceb133f`
+  remains prohibited.
 - Focused PR 4 tests: 5 files / 32 tests passed.
 - Full repository result: 162 files / 3,237 tests passed.
 - `npm run check`: passed.
@@ -218,7 +220,10 @@ Current branch-ready validation:
   clinician, verified content, current consent/state before mutation and replay,
   actor/input-equivalent idempotency, exact-entity readiness isolation, assigned
   verified pharmacy/state/operator, clinician/admin clarification resolution,
-  immutable source/events, and rollback.
+  linked-prescription supersession blocking before forward action and replay,
+  superseded-order cancellation, valid replacement-order progression, narrowly
+  permitted post-shipment delivery recording, immutable source/events, and
+  rollback.
 - Final UI evidence: `docs/care/evidence/PR4_UI_EVIDENCE.md`.
 
 ## Exact external blockers

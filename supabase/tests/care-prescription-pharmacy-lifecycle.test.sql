@@ -494,6 +494,200 @@ select public.care_apply_pharmacy_order_action(
   'pr4-dispense','2026-07-25T20:09:00Z'
 );
 
+create or replace function pg_temp.assert_superseded_order_action_blocked(
+  p_order_id uuid,
+  p_expected_version integer,
+  p_action text,
+  p_clarification_reference text,
+  p_tracking_reference text,
+  p_idempotency_key text
+)
+returns void
+language plpgsql
+as $$
+begin
+  begin
+    perform public.care_apply_pharmacy_order_action(
+      p_order_id,
+      '40000000-0000-4000-8000-000000000005',
+      p_expected_version,
+      p_action,
+      p_clarification_reference,
+      p_tracking_reference,
+      p_idempotency_key,
+      '2026-07-25T20:10:30Z'
+    );
+    raise exception 'superseded prescription accepted pharmacy action %', p_action;
+  exception when check_violation then
+    if sqlerrm <> 'care_current_signed_prescription_required' then raise; end if;
+  end;
+end;
+$$;
+
+do $$
+declare
+  original_prescription_id uuid := (
+    select id from public.care_prescriptions
+    where create_idempotency_key = 'pr4-draft'
+  );
+  original_order_id uuid := (select id from public.care_pharmacy_orders);
+  replacement_prescription_id uuid;
+  replacement_order_id uuid;
+  prescription_count_before bigint := (select count(*) from public.care_prescriptions);
+  prescription_event_count_before bigint := (select count(*) from public.care_prescription_events);
+  order_count_before bigint := (select count(*) from public.care_pharmacy_orders);
+  order_event_count_before bigint := (select count(*) from public.care_pharmacy_order_events);
+begin
+  begin
+    select id into replacement_prescription_id
+    from public.care_create_prescription_draft(
+      '41000000-0000-4000-8000-000000000001',
+      '4b000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000003',
+      'Replacement disposable formulation','Replacement disposable concentration',
+      'Replacement disposable route','Replacement disposable quantity',
+      'Replacement disposable patient-specific directions',0,
+      original_prescription_id,
+      'pr4-supersession-draft','2026-07-25T20:10:00Z'
+    );
+    perform public.care_sign_prescription(
+      replacement_prescription_id,
+      '40000000-0000-4000-8000-000000000003',
+      0,
+      'pr4-supersession-sign',
+      '2026-07-25T20:10:10Z'
+    );
+    if (select status from public.care_prescriptions where id = original_prescription_id) <> 'superseded'
+      or (select status from public.care_prescriptions where id = replacement_prescription_id) <> 'signed'
+    then raise exception 'replacement signing did not establish canonical supersession'; end if;
+
+    perform pg_temp.assert_superseded_order_action_blocked(
+      original_order_id,8,'receive',null,null,'pr4-superseded-new-receive'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      original_order_id,8,'accept',null,null,'pr4-superseded-new-accept'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      original_order_id,8,'dispense',null,null,'pr4-superseded-new-dispense'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      original_order_id,8,'ship',null,'private-superseded-tracking',
+      'pr4-superseded-new-ship'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      original_order_id,0,'receive',null,null,'pr4-receive'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      original_order_id,3,'accept',null,null,'pr4-accept-one'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      original_order_id,7,'dispense',null,null,'pr4-dispense'
+    );
+
+    if (select status from public.care_pharmacy_orders where id = original_order_id) <> 'dispensed'
+      or (select version from public.care_pharmacy_orders where id = original_order_id) <> 8
+      or (select count(*) from public.care_pharmacy_order_events) <> order_event_count_before
+    then raise exception 'superseded action rejection mutated the old order'; end if;
+
+    perform public.care_apply_pharmacy_order_action(
+      original_order_id,
+      '40000000-0000-4000-8000-000000000005',
+      8,'cancel',null,null,
+      'pr4-superseded-cancel',
+      '2026-07-25T20:10:40Z'
+    );
+    if (select status from public.care_pharmacy_orders where id = original_order_id) <> 'cancelled'
+    then raise exception 'superseded-order cancellation was unavailable'; end if;
+
+    select id into replacement_order_id
+    from public.care_assign_pharmacy_order(
+      replacement_prescription_id,
+      '4c000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000004',
+      'pr4-replacement-assign',
+      '2026-07-25T20:10:50Z'
+    );
+    perform public.care_apply_pharmacy_order_action(
+      replacement_order_id,'40000000-0000-4000-8000-000000000005',
+      0,'receive',null,null,'pr4-replacement-receive','2026-07-25T20:11:00Z'
+    );
+    perform public.care_apply_pharmacy_order_action(
+      replacement_order_id,'40000000-0000-4000-8000-000000000005',
+      0,'receive',null,null,'pr4-replacement-receive','2026-07-25T20:11:01Z'
+    );
+    perform public.care_apply_pharmacy_order_action(
+      replacement_order_id,'40000000-0000-4000-8000-000000000005',
+      1,'accept',null,null,'pr4-replacement-accept','2026-07-25T20:11:10Z'
+    );
+    perform public.care_apply_pharmacy_order_action(
+      replacement_order_id,'40000000-0000-4000-8000-000000000005',
+      2,'dispense',null,null,'pr4-replacement-dispense','2026-07-25T20:11:20Z'
+    );
+    perform public.care_apply_pharmacy_order_action(
+      replacement_order_id,'40000000-0000-4000-8000-000000000005',
+      3,'ship',null,'private-replacement-tracking',
+      'pr4-replacement-ship','2026-07-25T20:11:30Z'
+    );
+    if (select status from public.care_pharmacy_orders where id = replacement_order_id) <> 'shipped'
+    then raise exception 'current replacement prescription did not follow the valid path'; end if;
+
+    raise exception 'rollback-superseded-order-cancellation-proof';
+  exception when raise_exception then
+    if sqlerrm <> 'rollback-superseded-order-cancellation-proof' then raise; end if;
+  end;
+
+  begin
+    perform public.care_apply_pharmacy_order_action(
+      original_order_id,'40000000-0000-4000-8000-000000000005',
+      8,'ship',null,'private-pre-supersession-tracking',
+      'pr4-pre-supersession-ship','2026-07-25T20:10:00Z'
+    );
+    select id into replacement_prescription_id
+    from public.care_create_prescription_draft(
+      '41000000-0000-4000-8000-000000000001',
+      '4b000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000003',
+      'Replacement disposable formulation','Replacement disposable concentration',
+      'Replacement disposable route','Replacement disposable quantity',
+      'Replacement disposable patient-specific directions',0,
+      original_prescription_id,
+      'pr4-shipped-supersession-draft','2026-07-25T20:10:10Z'
+    );
+    perform public.care_sign_prescription(
+      replacement_prescription_id,
+      '40000000-0000-4000-8000-000000000003',
+      0,
+      'pr4-shipped-supersession-sign',
+      '2026-07-25T20:10:20Z'
+    );
+    perform pg_temp.assert_superseded_order_action_blocked(
+      original_order_id,8,'ship',null,'private-pre-supersession-tracking',
+      'pr4-pre-supersession-ship'
+    );
+    perform public.care_apply_pharmacy_order_action(
+      original_order_id,'40000000-0000-4000-8000-000000000005',
+      9,'deliver',null,null,
+      'pr4-superseded-terminal-delivery','2026-07-25T20:10:40Z'
+    );
+    if (select status from public.care_pharmacy_orders where id = original_order_id) <> 'delivered'
+    then raise exception 'narrow terminal delivery recording was unavailable'; end if;
+
+    raise exception 'rollback-superseded-order-delivery-proof';
+  exception when raise_exception then
+    if sqlerrm <> 'rollback-superseded-order-delivery-proof' then raise; end if;
+  end;
+
+  if (select status from public.care_prescriptions where id = original_prescription_id) <> 'signed'
+    or (select status from public.care_pharmacy_orders where id = original_order_id) <> 'dispensed'
+    or (select version from public.care_pharmacy_orders where id = original_order_id) <> 8
+    or (select count(*) from public.care_prescriptions) <> prescription_count_before
+    or (select count(*) from public.care_prescription_events) <> prescription_event_count_before
+    or (select count(*) from public.care_pharmacy_orders) <> order_count_before
+    or (select count(*) from public.care_pharmacy_order_events) <> order_event_count_before
+  then raise exception 'supersession lifecycle proof left residual state'; end if;
+end;
+$$;
+
 select public.care_create_prescription_draft(
   '41000000-0000-4000-8000-000000000001',
   '4b000000-0000-4000-8000-000000000001',

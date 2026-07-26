@@ -855,6 +855,10 @@ begin
   ) then raise exception 'care_assigned_pharmacy_operator_required' using errcode = '42501'; end if;
   if not public.care_pharmacy_ready(order_row.assigned_pharmacy_id, order_row.patient_state_code, p_occurred_at)
   then raise exception 'care_current_pharmacy_coverage_required' using errcode = '23514'; end if;
+  if prescription_row.status <> 'signed'
+    and p_action not in ('cancel', 'reject')
+    and not (p_action = 'deliver' and order_row.status = 'shipped')
+  then raise exception 'care_current_signed_prescription_required' using errcode = '23514'; end if;
 
   select * into replay_event
   from public.care_pharmacy_order_events
@@ -890,7 +894,7 @@ begin
     (order_row.status = 'pending_pharmacy' and next_status in ('received','rejected','cancelled'))
     or (order_row.status = 'received' and next_status in ('clarification_requested','accepted','rejected','cancelled'))
     or (order_row.status = 'accepted' and next_status in ('clarification_requested','dispensed','cancelled'))
-    or (order_row.status = 'dispensed' and next_status = 'shipped')
+    or (order_row.status = 'dispensed' and next_status in ('shipped','cancelled'))
     or (order_row.status = 'shipped' and next_status = 'delivered')
   ) then raise exception 'care_invalid_pharmacy_transition' using errcode = '23514'; end if;
   if p_action = 'request_clarification' and nullif(trim(p_clarification_reference), '') is null
