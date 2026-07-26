@@ -136,7 +136,7 @@ export default function EligibilityPendingPage() {
         path="/care/eligibility"
       />
 
-      <main className="container-x pt-24 md:pt-36 pb-20" id="main-content">
+      <div className="container-x pt-24 md:pt-36 pb-20" id="main-content">
         <p className="mono-cap text-pulse mb-6">CARE · ELIGIBILITY</p>
         <h1 className="display-m max-w-[18ch]">Care availability begins with your current location.</h1>
         <p className="mt-8 body-l text-ink-2 max-w-[64ch]">
@@ -280,7 +280,7 @@ export default function EligibilityPendingPage() {
             Return to Care
           </Link>
         </section>
-      </main>
+      </div>
     </PageShell>
   );
 }

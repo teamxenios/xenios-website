@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { Router } from "wouter";
+import CareConsentPendingPage from "./CareConsentPendingPage";
+import EligibilityPendingPage from "./EligibilityPendingPage";
 
 const eligibility = readFileSync(
   resolve(__dirname, "./EligibilityPendingPage.tsx"),
@@ -15,6 +20,8 @@ describe("Care PR 2 Xenios UI and truthful-state gate", () => {
   it("reuses the Xenios shell, tokens, forms, and responsive grid", () => {
     for (const source of [eligibility, consent]) {
       expect(source).toContain("<PageShell>");
+      expect(source).toContain('id="main-content"');
+      expect(source).not.toContain("<main");
       expect(source).toContain("container-x");
       expect(source).toContain("mono-cap text-pulse");
       expect(source).toContain("display-m");
@@ -22,6 +29,27 @@ describe("Care PR 2 Xenios UI and truthful-state gate", () => {
       expect(source).not.toMatch(/gradient|Georgia|--care-|care-wordmark/i);
     }
     expect(consent).toContain("grid-cols-1 md:grid-cols-2");
+  });
+
+  it.each([
+    ["/care/eligibility", EligibilityPendingPage],
+    ["/care/consent", CareConsentPendingPage],
+  ])("renders exactly one main landmark and one H1 at %s", (route, Page) => {
+    const staticLocation = () => [route, () => undefined] as const;
+    const staticSearch = () => "";
+    const html = renderToStaticMarkup(
+      createElement(
+        Router,
+        {
+          hook: staticLocation,
+          searchHook: staticSearch,
+          ssrPath: route,
+        },
+        createElement(Page),
+      ),
+    );
+    expect(html.match(/<main(?:\s|>)/g)).toHaveLength(1);
+    expect(html.match(/<h1(?:\s|>)/g)).toHaveLength(1);
   });
 
   it("includes fail-closed loading, disabled, error, and retry states", () => {

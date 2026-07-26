@@ -54,7 +54,7 @@ export default function CareConsentPendingPage() {
         description="Versioned Care telehealth consent and privacy-notice readiness."
         path="/care/consent"
       />
-      <main className="container-x pt-24 md:pt-36 pb-20" id="main-content">
+      <div className="container-x pt-24 md:pt-36 pb-20" id="main-content">
         <p className="mono-cap text-pulse mb-6">CARE · NOTICES</p>
         <h1 className="display-m max-w-[19ch]">
           Consent must be exact, current, and informed.
@@ -130,7 +130,7 @@ export default function CareConsentPendingPage() {
             Back to Care eligibility
           </Link>
         </aside>
-      </main>
+      </div>
     </PageShell>
   );
 }
