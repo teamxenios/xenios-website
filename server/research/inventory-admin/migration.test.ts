@@ -26,6 +26,7 @@ describe("Website 4 canonical inventory/lot/COA schema delta", () => {
     expect(sql).toContain("reconcile is an explicit available-quantity delta");
     expect(sql).toContain("adjust is an explicit available-quantity delta");
     expect(sql).toContain("inventory quantities may change only through an atomic movement command");
+    expect(sql).toContain("pg_advisory_xact_lock(hashtextextended(p_idempotency_key, 0))");
     expect(sql).toContain("research_inventory_lots_quantity_command_only");
   });
 
@@ -33,13 +34,11 @@ describe("Website 4 canonical inventory/lot/COA schema delta", () => {
     expect(sql).toContain("research_lot_is_allocatable");
     expect(sql).toContain("l.disposition = 'available'");
     expect(sql).toContain("l.expiry_date > p_as_of::date");
-    expect(sql).toContain("l.product_id is not null");
-    expect(sql).toContain("l.variant_id is not null");
+    expect(sql).toContain("research_inventory_product_variant_ready");
+    expect(sql).toContain("select false;");
+    expect(sql).toContain("dd58ccf1fa7919f78838a60aaf66cdee48b73993");
     expect(sql).toContain("d.published_at is not null");
     expect(sql).toContain("d.coa_on_file = true");
-    for (const test of ["identity", "assay", "purity", "chain_of_custody"]) {
-      expect(sql).toContain(`'${test}'`);
-    }
   });
 
   it("models missing test states without treating absence as passing", () => {
@@ -54,6 +53,10 @@ describe("Website 4 canonical inventory/lot/COA schema delta", () => {
       expect(sql).toContain(`'${state}'`);
     }
     expect(sql).toContain("required exact-lot quality tests are not approved");
+    expect(sql).toContain("research_lot_quality_tests_ready");
+    expect(sql).toContain("t.state not in ('passed', 'not_applicable')");
+    expect(sql).toContain("quality tests may change only during approval");
+    expect(sql).toContain("research_lot_quality_tests_command_only");
   });
 
   it("forces RLS, removes browser grants, and restricts private Storage references", () => {
@@ -65,6 +68,7 @@ describe("Website 4 canonical inventory/lot/COA schema delta", () => {
       "research_inventory_lot_events",
       "research_lot_quality_tests",
       "research_lot_quality_events",
+      "research_lot_quality_access_events",
     ]) {
       expect(sql).toContain(`alter table public.${table} force row level security`);
       expect(sql).toMatch(
@@ -79,6 +83,12 @@ describe("Website 4 canonical inventory/lot/COA schema delta", () => {
     expect(sql).toContain("grant execute on function public.research_apply_inventory_movement");
     expect(sql).toContain("to service_role");
     expect(sql).toContain("research_lot_quality_document_command_only");
-    expect(sql).toContain("quality state may change only through a reviewed quality command");
+    expect(sql).toContain("quality records may change only through a reviewed quality command");
+    expect(sql).toContain("revoke update, delete on table public.research_lot_quality_documents");
+    expect(sql).not.toContain(
+      "grant select, insert, update on table public.research_lot_quality_documents",
+    );
+    expect(sql).toContain("research_authorize_lot_quality_access");
+    expect(sql).toContain("research_lot_quality_access_events_no_update");
   });
 });

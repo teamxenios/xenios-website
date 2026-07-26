@@ -6,6 +6,7 @@ import type {
   InventoryLotAdmin,
   InventoryMovementAdmin,
   InventoryMovementCommand,
+  LotQualityAccessPurpose,
   LotQualityDocumentAdmin,
   LotQualityTestAdmin,
 } from "@shared/research/inventory-admin";
@@ -16,6 +17,10 @@ const COA_MAX_BYTES = 20 * 1024 * 1024;
 
 type Db = SupabaseClient;
 type Row = Record<string, any>;
+export type AcceptedProductCommerceReadinessReader = {
+  getForVariant(variantId: string): Promise<unknown>;
+};
+
 
 export class InventoryAdminPersistenceError extends Error {
   constructor(readonly code: string) {
@@ -134,7 +139,41 @@ export type QualityReviewCommand = {
 };
 
 export class SupabaseInventoryLotAdminRepository {
-  constructor(private readonly db: Db = getSupabaseAdmin()) {}
+  constructor(
+    private readonly db: Db = getSupabaseAdmin(),
+    private readonly productReadiness?: AcceptedProductCommerceReadinessReader,
+  ) {}
+
+  private async assertCanonicalProductVariantReady(lotId: string): Promise<void> {
+    if (!this.productReadiness) failed("inventory_product_control_unavailable");
+    const lot = await this.db
+      .from("research_inventory_lots")
+      .select("product_id,variant_id,sku")
+      .eq("id", lotId)
+      .maybeSingle();
+    if (lot.error || !lot.data?.product_id || !lot.data?.variant_id || !lot.data?.sku) {
+      failed("inventory_product_binding_missing");
+    }
+    let value: unknown;
+    try {
+      value = await this.productReadiness.getForVariant(String(lot.data.variant_id));
+    } catch {
+      failed("inventory_product_control_unavailable");
+    }
+    if (!value || typeof value !== "object") failed("inventory_product_binding_rejected");
+    const projection = value as Row;
+    if (
+      projection.productId !== String(lot.data.product_id) ||
+      projection.variantId !== String(lot.data.variant_id) ||
+      projection.sku !== String(lot.data.sku) ||
+      projection.productApproved !== true ||
+      projection.productActive !== true ||
+      projection.variantApproved !== true ||
+      projection.variantActive !== true
+    ) {
+      failed("inventory_product_binding_rejected");
+    }
+  }
 
   async listLots(): Promise<InventoryLotAdmin[]> {
     const { data, error } = await this.db
@@ -174,18 +213,6 @@ export class SupabaseInventoryLotAdminRepository {
       return lotView({ ...existing.data, allocatable: false });
     }
 
-    if (input.productId) {
-      const product = await this.db
-        .from("research_products")
-        .select("id,sku")
-        .eq("id", input.productId)
-        .maybeSingle();
-      if (product.error) failed("inventory_product_read_failed");
-      if (!product.data || product.data.sku !== input.sku) {
-        failed("inventory_product_sku_mismatch");
-      }
-    }
-
     const id = randomUUID();
     const now = new Date().toISOString();
     const { data, error } = await this.db
@@ -222,6 +249,9 @@ export class SupabaseInventoryLotAdminRepository {
     command: InventoryMovementCommand,
     actorId: string,
   ): Promise<Record<string, unknown>> {
+    if (command.movementType === "reserve") {
+      await this.assertCanonicalProductVariantReady(lotId);
+    }
     const { data, error } = await this.db.rpc("research_apply_inventory_movement", {
       p_lot_id: lotId,
       p_movement_type: command.movementType,
@@ -247,6 +277,9 @@ export class SupabaseInventoryLotAdminRepository {
     },
     actorId: string,
   ): Promise<Record<string, unknown>> {
+    if (input.disposition === "available") {
+      await this.assertCanonicalProductVariantReady(lotId);
+    }
     const { data, error } = await this.db.rpc("research_set_inventory_lot_disposition", {
       p_lot_id: lotId,
       p_disposition: input.disposition,
@@ -307,7 +340,10 @@ export class SupabaseLotQualityAdminRepository {
       input.contentType !== "application/pdf" ||
       input.sizeBytes < 5 ||
       input.sizeBytes > COA_MAX_BYTES ||
-      !/^[a-f0-9]{64}$/.test(input.sha256)
+      !/^[a-f0-9]{64}$/.test(input.sha256) ||
+      input.reportIssuer.trim().length < 2 ||
+      input.reportNumber.trim().length < 2 ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(input.reportDate)
     ) {
       failed("coa_upload_metadata_invalid");
     }
@@ -322,42 +358,62 @@ export class SupabaseLotQualityAdminRepository {
     const storageKey = `lots/${input.lotId}/${randomUUID()}-${safeName}`;
     const existing = await this.db
       .from("research_lot_quality_documents")
-      .select("id,version,document_state")
+      .select("id,version,document_state,verification_state,published_at,coa_on_file")
       .eq("lot_id", input.lotId)
       .maybeSingle();
     if (existing.error) failed("coa_document_read_failed");
-    if (existing.data && existing.data.document_state !== "pending") {
+    if (
+      existing.data &&
+      (
+        existing.data.document_state !== "pending" ||
+        existing.data.verification_state !== "pending" ||
+        existing.data.published_at ||
+        existing.data.coa_on_file
+      )
+    ) {
       failed("coa_document_not_replaceable");
     }
     const documentId = existing.data?.id ?? randomUUID();
-    const payload = {
-      id: documentId,
-      lot_id: input.lotId,
-      bucket_id: this.bucketName,
-      private_storage_key: storageKey,
-      document_ref: storageKey,
-      original_filename: safeName,
-      content_type: input.contentType,
-      size_bytes: input.sizeBytes,
-      sha256: input.sha256,
-      coa_on_file: false,
-      document_state: "pending",
-      verification_state: "pending",
-      reviewed_at: null,
-      reviewed_by: null,
-      published_at: null,
-      published_by: null,
-      recorded_at: new Date().toISOString(),
-      version: Number(existing.data?.version ?? 0) + 1,
-    };
-    const write = existing.data
-      ? await this.db
-          .from("research_lot_quality_documents")
-          .update(payload)
-          .eq("id", documentId)
-          .eq("version", existing.data.version)
-      : await this.db.from("research_lot_quality_documents").insert(payload);
-    if (write.error) failed("coa_upload_reference_failed");
+    let currentVersion = Number(existing.data?.version ?? 1);
+    if (!existing.data) {
+      const created = await this.db
+        .from("research_lot_quality_documents")
+        .insert({
+          id: documentId,
+          lot_id: input.lotId,
+          coa_on_file: false,
+          document_state: "pending",
+          verification_state: "pending",
+          version: 1,
+        })
+        .select("version")
+        .single();
+      if (created.error || !created.data) failed("coa_upload_reference_failed");
+      currentVersion = Number(created.data.version);
+    }
+    const prepared = await this.db.rpc("research_manage_lot_quality_document", {
+      p_document_id: documentId,
+      p_action: "replace_upload",
+      p_tests: {
+        bucketId: this.bucketName,
+        storageKey,
+        documentRef: storageKey,
+        originalFilename: safeName,
+        contentType: input.contentType,
+        sizeBytes: input.sizeBytes,
+        sha256: input.sha256,
+        reportIssuer: input.reportIssuer.trim(),
+        reportNumber: input.reportNumber.trim(),
+        reportDate: input.reportDate,
+      },
+      p_expected_version: currentVersion,
+      p_idempotency_key: input.idempotencyKey,
+      p_reason: "Private exact-lot COA upload reference prepared",
+      p_actor_id: actorId,
+      p_occurred_at: new Date().toISOString(),
+    });
+    if (prepared.error || !prepared.data) failed("coa_upload_reference_failed");
+    const documentVersion = Number((prepared.data as Row).version);
     const testSeed = [
       "identity",
       "assay",
@@ -385,7 +441,7 @@ export class SupabaseLotQualityAdminRepository {
     if (error || !data?.signedUrl) failed("coa_upload_grant_failed");
     return {
       documentId,
-      documentVersion: payload.version,
+      documentVersion,
       uploadUrl: data.signedUrl,
       storageKey,
       expiresAt: new Date(Date.now() + 2 * 60 * 1000).toISOString(),
@@ -461,18 +517,31 @@ export class SupabaseLotQualityAdminRepository {
     return data as Record<string, unknown>;
   }
 
-  async createReadGrant(documentId: string): Promise<{ signedUrl: string; expiresAt: string }> {
-    const document = await this.db
-      .from("research_lot_quality_documents")
-      .select("private_storage_key")
-      .eq("id", documentId)
-      .maybeSingle();
-    if (document.error || !document.data?.private_storage_key) {
-      failed("coa_private_object_missing");
+  async createReadGrant(
+    documentId: string,
+    actorId: string,
+    purpose: LotQualityAccessPurpose,
+  ): Promise<{ signedUrl: string; expiresAt: string }> {
+    const accessId = randomUUID();
+    const authorization = await this.db.rpc("research_authorize_lot_quality_access", {
+      p_document_id: documentId,
+      p_actor_id: actorId,
+      p_purpose: purpose,
+      p_access_id: accessId,
+      p_occurred_at: new Date().toISOString(),
+    });
+    const authorized = authorization.data as Row | null;
+    if (
+      authorization.error ||
+      !authorized?.storageKey ||
+      authorized.bucketId !== this.bucketName ||
+      authorized.accessEventId !== accessId
+    ) {
+      failed("coa_access_audit_failed");
     }
     const { data, error } = await this.db.storage
       .from(this.bucketName)
-      .createSignedUrl(document.data.private_storage_key, 60);
+      .createSignedUrl(String(authorized.storageKey), 60);
     if (error || !data?.signedUrl) failed("coa_access_grant_failed");
     return {
       signedUrl: data.signedUrl,
@@ -481,9 +550,14 @@ export class SupabaseLotQualityAdminRepository {
   }
 }
 
-export function buildInventoryLotAdminProductionDependencies() {
+export function buildInventoryLotAdminProductionDependencies(
+  productReadiness?: AcceptedProductCommerceReadinessReader,
+) {
   return {
-    inventory: new SupabaseInventoryLotAdminRepository(),
+    inventory: new SupabaseInventoryLotAdminRepository(
+      getSupabaseAdmin(),
+      productReadiness,
+    ),
     quality: new SupabaseLotQualityAdminRepository(),
   };
 }

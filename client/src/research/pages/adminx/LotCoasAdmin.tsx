@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from "react";
-import type {
-  InventoryLotAdmin,
-  LotQualityDocumentAdmin,
-  LotQualityTestAdmin,
-  LotQualityTestKey,
-  LotQualityTestState,
+import {
+  LOT_QUALITY_TEST_KEYS,
+  type InventoryLotAdmin,
+  type LotQualityAccessPurpose,
+  type LotQualityDocumentAdmin,
+  type LotQualityTestAdmin,
+  type LotQualityTestKey,
+  type LotQualityTestState,
 } from "@shared/research/inventory-admin";
 import {
   ResearchEmptyState,
@@ -25,12 +27,7 @@ import {
 import { useAdminResource } from "./auth";
 import { AdminScreen } from "./AdminResearchHome";
 
-const REQUIRED_TESTS: LotQualityTestKey[] = [
-  "identity",
-  "assay",
-  "purity",
-  "chain_of_custody",
-];
+const REQUIRED_TESTS: LotQualityTestKey[] = [...LOT_QUALITY_TEST_KEYS];
 const ALL_TEST_LABELS: Record<LotQualityTestKey, string> = {
   identity: "Identity",
   assay: "Assay",
@@ -42,7 +39,7 @@ const ALL_TEST_LABELS: Record<LotQualityTestKey, string> = {
   elemental_impurities: "Elemental impurities",
   chain_of_custody: "Chain of custody",
 };
-const inputClass = "input-field w-full";
+const inputClass = "input-field w-full min-w-0";
 const labelClass = "form-label";
 
 export default function LotCoasAdmin() {
@@ -114,6 +111,10 @@ export function LotCoasBody({ token }: { token: string }) {
         contentType: "application/pdf",
         sizeBytes: file.size,
         sha256: digest,
+        reportIssuer: String(data.get("reportIssuer") ?? ""),
+        reportNumber: String(data.get("reportNumber") ?? ""),
+        reportDate: String(data.get("reportDate") ?? ""),
+        idempotencyKey: crypto.randomUUID(),
       });
       if (prepared.kind !== "ok") return fail("A private upload grant could not be prepared.");
       const uploaded = await putPrivateCoaFile(prepared.data.upload.uploadUrl, file);
@@ -144,7 +145,7 @@ export function LotCoasBody({ token }: { token: string }) {
     if (!selected) return;
     const form = new FormData(event.currentTarget);
     const action = String(form.get("action")) as "approve" | "reject" | "publish" | "withdraw";
-    const tests: LotQualityTestAdmin[] = REQUIRED_TESTS.map((testKey) => ({
+    const tests: LotQualityTestAdmin[] = action === "approve" ? REQUIRED_TESTS.map((testKey) => ({
       testKey,
       state: String(form.get(`${testKey}.state`)) as LotQualityTestState,
       method: String(form.get(`${testKey}.method`) || "") || null,
@@ -152,7 +153,7 @@ export function LotCoasBody({ token }: { token: string }) {
       unit: null,
       reviewedBy: null,
       reviewedAt: null,
-    }));
+    })) : [];
     setBusy(true);
     setFeedback(null);
     const result = await reviewLotQualityDocument(token, selected.id, {
@@ -174,7 +175,11 @@ export function LotCoasBody({ token }: { token: string }) {
   async function openPrivateFile() {
     if (!selected) return;
     setBusy(true);
-    const result = await requestCoaReadGrant(token, selected.id);
+    const result = await requestCoaReadGrant(
+      token,
+      selected.id,
+      "quality_review" satisfies LotQualityAccessPurpose,
+    );
     setBusy(false);
     if (result.kind !== "ok") return fail("The private file could not be opened.");
     window.open(result.data.grant.signedUrl, "_blank", "noopener,noreferrer");
@@ -189,8 +194,8 @@ export function LotCoasBody({ token }: { token: string }) {
         </div>
       )}
 
-      <div className="grid lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,.9fr)] gap-6 items-start">
-        <section className="card" aria-labelledby="coa-records-title">
+      <div className="grid min-w-0 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,.9fr)] gap-6 items-start">
+        <section className="card min-w-0" aria-labelledby="coa-records-title">
           <p className="mono-label text-ink-mute">Private quality records</p>
           <h2 id="coa-records-title" className="heading-s mt-2">Exact-lot documents</h2>
           {records.length === 0 ? (
@@ -206,7 +211,7 @@ export function LotCoasBody({ token }: { token: string }) {
                 <button
                   type="button"
                   key={document.id}
-                  className="card ra-select-card text-left w-full"
+                  className="card ra-select-card !flex-col text-left w-full min-w-0"
                   aria-pressed={document.id === selectedId}
                   onClick={() => setSelectedId(document.id)}
                 >
@@ -223,7 +228,7 @@ export function LotCoasBody({ token }: { token: string }) {
                       tone={document.publishedAt ? "success" : "pending"}
                     />
                   </div>
-                  <div className="flex gap-2 flex-wrap mt-4">
+                  <div className="flex min-w-0 gap-2 flex-wrap mt-4 [&_.ra-badge]:max-w-full [&_.ra-badge]:whitespace-normal [&_.ra-badge]:break-words">
                     {document.tests.map((test) => (
                       <ResearchStatusBadge
                         key={test.testKey}
@@ -238,7 +243,7 @@ export function LotCoasBody({ token }: { token: string }) {
           )}
         </section>
 
-        <form className="card grid gap-4" onSubmit={handleUpload}>
+        <form className="card grid min-w-0 gap-4" onSubmit={handleUpload}>
           <div>
             <p className="mono-label text-ink-mute">Private Storage</p>
             <h2 className="heading-s mt-2">Upload exact-lot report</h2>
@@ -259,6 +264,18 @@ export function LotCoasBody({ token }: { token: string }) {
             <span className={labelClass}>COA PDF</span>
             <input className={inputClass} type="file" name="file" accept="application/pdf,.pdf" required />
           </label>
+          <label className="grid gap-2">
+            <span className={labelClass}>Laboratory or report issuer</span>
+            <input className={inputClass} name="reportIssuer" minLength={2} maxLength={200} required />
+          </label>
+          <label className="grid gap-2">
+            <span className={labelClass}>Report number</span>
+            <input className={inputClass} name="reportNumber" minLength={2} maxLength={160} required />
+          </label>
+          <label className="grid gap-2">
+            <span className={labelClass}>Report date</span>
+            <input className={inputClass} type="date" name="reportDate" required />
+          </label>
           <button type="submit" className="btn btn-primary justify-self-start" disabled={busy}>
             {busy ? "Verifying..." : "Upload private COA"}
           </button>
@@ -266,7 +283,7 @@ export function LotCoasBody({ token }: { token: string }) {
       </div>
 
       {selected && (
-        <form className="card grid gap-5" onSubmit={handleReview}>
+        <form className="card grid min-w-0 gap-5" onSubmit={handleReview}>
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
               <p className="mono-label text-ink-mute">Independent review</p>
@@ -277,11 +294,11 @@ export function LotCoasBody({ token }: { token: string }) {
               Open private file
             </button>
           </div>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid min-w-0 md:grid-cols-2 gap-4">
             {REQUIRED_TESTS.map((testKey) => {
               const current = selected.tests.find((test) => test.testKey === testKey);
               return (
-                <fieldset key={testKey} className="card grid gap-3">
+                <fieldset key={testKey} className="card grid min-w-0 gap-3">
                   <legend className="body-m font-700 px-1">{ALL_TEST_LABELS[testKey]}</legend>
                   <label className="grid gap-2">
                     <span className={labelClass}>State</span>

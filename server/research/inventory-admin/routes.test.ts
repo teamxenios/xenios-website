@@ -2,6 +2,10 @@ import express from "express";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import { registerInventoryLotAdminApi } from "./routes";
+import {
+  SupabaseInventoryLotAdminRepository,
+  SupabaseLotQualityAdminRepository,
+} from "./production";
 
 const LOT_ID = "10000000-0000-4000-8000-000000000001";
 const DOC_ID = "20000000-0000-4000-8000-000000000001";
@@ -9,7 +13,8 @@ const DOC_ID = "20000000-0000-4000-8000-000000000001";
 function appFor(allowed = true) {
   const guard = (req: any, res: any, next: any) => {
     if (!allowed) return res.status(403).json({ ok: false, code: "prelaunch_role_required" });
-    req.prelaunchActorId = "operations-user";
+    req.prelaunchActorId =
+      req.get("x-test-actor") ?? "operations-user";
     next();
   };
   const inventory = {
@@ -110,6 +115,10 @@ describe("Website 4 inventory, lots, and exact-lot COA routes", () => {
         contentType: "application/pdf",
         sizeBytes: 100,
         sha256: "a".repeat(64),
+        reportIssuer: "Verified Laboratory",
+        reportNumber: "REPORT-001",
+        reportDate: "2026-07-26",
+        idempotencyKey: "upload-reference-0001",
       });
     expect(valid.status).toBe(201);
     expect(valid.body.upload.storageKey).toMatch(new RegExp(`^lots/${LOT_ID}/`));
@@ -139,5 +148,146 @@ describe("Website 4 inventory, lots, and exact-lot COA routes", () => {
       });
     expect(response.status).toBe(403);
     expect(quality.review).not.toHaveBeenCalled();
+  });
+
+  it("requires an approved purpose and binds every private grant to the server actor", async () => {
+    const { app, quality } = appFor();
+    const missingPurpose = await request(app)
+      .post(`/api/admin/research/lot-quality-documents/${DOC_ID}/file-access`)
+      .send({});
+    expect(missingPurpose.status).toBe(400);
+    expect(quality.createReadGrant).not.toHaveBeenCalled();
+
+    await request(app)
+      .post(`/api/admin/research/lot-quality-documents/${DOC_ID}/file-access`)
+      .set("x-test-actor", "reviewer-a")
+      .send({ purpose: "quality_review" })
+      .expect(200);
+    await request(app)
+      .post(`/api/admin/research/lot-quality-documents/${DOC_ID}/file-access`)
+      .set("x-test-actor", "reviewer-b")
+      .send({ purpose: "compliance_review" })
+      .expect(200);
+
+    expect(quality.createReadGrant).toHaveBeenNthCalledWith(
+      1,
+      DOC_ID,
+      "reviewer-a",
+      "quality_review",
+    );
+    expect(quality.createReadGrant).toHaveBeenNthCalledWith(
+      2,
+      DOC_ID,
+      "reviewer-b",
+      "compliance_review",
+    );
+  });
+});
+
+describe("Website 4 accepted product-control and access-audit repository boundaries", () => {
+  function inventoryDb() {
+    const query: any = {};
+    query.select = vi.fn(() => query);
+    query.eq = vi.fn(() => query);
+    query.maybeSingle = vi.fn(async () => ({
+      data: {
+        product_id: "30000000-0000-4000-8000-000000000001",
+        variant_id: "40000000-0000-4000-8000-000000000001",
+        sku: "EXACT-SKU",
+      },
+      error: null,
+    }));
+    return {
+      from: vi.fn(() => query),
+      rpc: vi.fn(async () => ({ data: { version: 2 }, error: null })),
+    };
+  }
+
+  it("fails reserve and release closed without the accepted Product Control reader", async () => {
+    const db = inventoryDb();
+    const repository = new SupabaseInventoryLotAdminRepository(db as never);
+    await expect(repository.setDisposition(
+      LOT_ID,
+      {
+        disposition: "available",
+        expectedVersion: 1,
+        idempotencyKey: "release-command-0001",
+        reason: "Attempt without Product Control",
+      },
+      "operations-user",
+    )).rejects.toMatchObject({ code: "inventory_product_control_unavailable" });
+    expect(db.rpc).not.toHaveBeenCalled();
+  });
+
+  it("rejects mismatched readiness and accepts only the exact approved active projection", async () => {
+    const rejectedDb = inventoryDb();
+    const rejected = new SupabaseInventoryLotAdminRepository(
+      rejectedDb as never,
+      {
+        getForVariant: vi.fn(async () => ({
+          productId: "30000000-0000-4000-8000-000000000001",
+          variantId: "40000000-0000-4000-8000-000000000999",
+          sku: "EXACT-SKU",
+          productApproved: true,
+          productActive: true,
+          variantApproved: true,
+          variantActive: true,
+        })),
+      },
+    );
+    await expect(rejected.setDisposition(
+      LOT_ID,
+      {
+        disposition: "available",
+        expectedVersion: 1,
+        idempotencyKey: "release-command-0002",
+        reason: "Mismatched variant",
+      },
+      "operations-user",
+    )).rejects.toMatchObject({ code: "inventory_product_binding_rejected" });
+    expect(rejectedDb.rpc).not.toHaveBeenCalled();
+
+    const acceptedDb = inventoryDb();
+    const accepted = new SupabaseInventoryLotAdminRepository(
+      acceptedDb as never,
+      {
+        getForVariant: vi.fn(async () => ({
+          productId: "30000000-0000-4000-8000-000000000001",
+          variantId: "40000000-0000-4000-8000-000000000001",
+          sku: "EXACT-SKU",
+          productApproved: true,
+          productActive: true,
+          variantApproved: true,
+          variantActive: true,
+        })),
+      },
+    );
+    await accepted.setDisposition(
+      LOT_ID,
+      {
+        disposition: "available",
+        expectedVersion: 1,
+        idempotencyKey: "release-command-0003",
+        reason: "Exact accepted projection",
+      },
+      "operations-user",
+    );
+    expect(acceptedDb.rpc).toHaveBeenCalledWith(
+      "research_set_inventory_lot_disposition",
+      expect.objectContaining({ p_lot_id: LOT_ID }),
+    );
+  });
+
+  it("never asks Storage for a signed URL when the access audit RPC fails", async () => {
+    const createSignedUrl = vi.fn();
+    const db = {
+      rpc: vi.fn(async () => ({ data: null, error: { message: "audit rejected" } })),
+      storage: { from: vi.fn(() => ({ createSignedUrl })) },
+    };
+    const repository = new SupabaseLotQualityAdminRepository(db as never);
+    await expect(
+      repository.createReadGrant(DOC_ID, "reviewer-a", "quality_review"),
+    ).rejects.toMatchObject({ code: "coa_access_audit_failed" });
+    expect(createSignedUrl).not.toHaveBeenCalled();
   });
 });

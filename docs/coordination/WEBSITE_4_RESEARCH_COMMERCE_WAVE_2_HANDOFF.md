@@ -6,7 +6,7 @@
 - Base: `6e4944674cfdfb33a8fd5685c031c7ac7c86fdb4`
 - Domain: Inventory, lots, and private exact-lot COA administration only
 - Production mutation: none
-- Website 3 product seam: PR #78, head `7817f4857e6429fec0051168ab9a2fc08847b8e4`
+- Website 3 product seam: Website 6-accepted PR #78 head `dd58ccf1fa7919f78838a60aaf66cdee48b73993`
 - Website 3 contract: `server/research/products-diagnostics/product-commerce-readiness.ts`
 
 ## Completed
@@ -24,13 +24,26 @@
 - Forced RLS and removal of browser-role grants on all seven affected tables.
 - Service-role-only controlled writes with reviewed transition guards.
 - Server-authorized route family, production repositories, client adapters, and Xenios UI.
+- Exact canonical product + variant + SKU readiness validation through the accepted
+  server-only Product Control reader; absent, mismatched, draft, or inactive
+  projections fail release and allocation closed.
+- Confirmed/published report and private-object metadata are immutable outside the
+  versioned audited command; quality-test rows use the same command-only boundary.
+- Every applicable failed or missing quality test blocks approval and readiness.
+- Movement, disposition, and quality commands serialize and recheck idempotency under lock.
+- Private file access records actor, purpose, document version, and immutable audit
+  before a signed URL can be issued.
 
 ## Website 2 wiring request
 
 Register `registerInventoryLotAdminApi` from
 `server/research/inventory-admin/routes.ts` with
-`buildInventoryLotAdminProductionDependencies()` from
-`server/research/inventory-admin/production.ts`.
+`buildInventoryLotAdminProductionDependencies(productReadiness)` from
+`server/research/inventory-admin/production.ts`. The injected reader must be the
+accepted PR #78 `ProductCommerceReadinessReader`; do not query Product Control
+admin tables directly. Compose the post-Product-Control SQL implementation of
+`research_inventory_product_variant_ready` during Website 2 integration. The
+standalone migration deliberately returns false.
 
 Guards:
 
@@ -63,11 +76,14 @@ migration ledger, and deployment manifests remain Website 2-owned and unchanged.
 
 ## Product boundary
 
-Consume only `ProductCommerceReadinessReader` and
-`ProductCommerceReadinessProjection` from Website 3's frozen server-only seam.
+Consume only the accepted `ProductCommerceReadinessReader` and
+`ProductCommerceReadinessProjection` from Website 3's server-only seam.
 Website 4 remains authoritative for location, lot, quantity, inventory disposition,
-COA operational state, and allocation readiness. Do not read Website 3 admin tables
-directly and do not create another product model.
+COA operational state, and allocation readiness. The repository performs an exact
+product ID + variant ID + SKU + approved/active comparison before release or
+allocation. If the accepted reader or integration bridge is unavailable, both the
+repository and SQL command path fail closed. Do not read Website 3 admin tables
+directly, copy Product Control files, or create another product model.
 
 ## Migration and rollback
 
@@ -90,21 +106,25 @@ directly and do not create another product model.
 
 ## Validation evidence
 
-- Focused tests: 2 files, 9 tests passed.
+- Focused tests: 2 files, 13 tests passed.
+- Full tests: 188 files, 3,485 tests passed.
 - TypeScript check: passed.
+- Production build: passed.
 - Disposable database: apply twice passed.
-- Database proof covered movement arithmetic, version conflicts, idempotent replay,
-  idempotency conflict, direct-write guards, append-only history, forced RLS/grants,
-  exact-lot COA binding, missing-test failure, expiry/recall/quarantine gates,
-  rollback, and zero residual rows.
-- 1440px: rendered with existing Xenios tokens/components.
-- 375px: `scrollWidth === clientWidth`, no clipped elements, minimum visible
-  control height 52px.
-- 320px: `scrollWidth === clientWidth`, no clipped elements, zero unlabeled form
-  controls, minimum visible control height 52px.
-- 200% reflow proxy at 720 CSS px: no clipped elements or horizontal overflow.
-- Keyboard: lot selector receives visible native focus; forms use semantic labels,
-  headings, and controls.
+- Database proof covered exact product/variant/SKU rejection; movement arithmetic;
+  concurrent replay for all three command families; idempotency conflicts; direct
+  published-metadata and test-mutation rejection; all-test fail-closed semantics;
+  immutable actor/purpose access audit before signing; append-only history; forced
+  RLS/grants; expiry/recall/quarantine gates; rollback; and zero residual rows.
+- 1440px: no clipped elements; one main landmark and one page heading; all nine
+  quality fieldsets render; minimum visible control height 60px.
+- 375px: `scrollWidth === clientWidth` (360px scrollbar-adjusted), no clipped or
+  internally scrollable elements, minimum visible control height 52px.
+- 320px: `scrollWidth === clientWidth` (305px scrollbar-adjusted), no clipped
+  elements, zero unlabeled controls, minimum visible control height 52px.
+- 200% reflow proxy at 720 CSS px: `scrollWidth === clientWidth` and no clipping.
+- Keyboard: the labeled lot selector receives the existing visible purple focus
+  border; forms preserve semantic headings, fieldsets, labels, and controls.
 
 ## Environment
 
@@ -115,7 +135,7 @@ directly and do not create another product model.
 
 ## Next exact action
 
-Website 6 reviews this frozen head and disposable evidence. Website 2 then wires the
+Website 6 reviews this corrected frozen head and adversarial evidence. Website 2 then wires the
 listed server/client routes, consumes the Website 3 readiness seam, keeps checkout
 disabled until the legacy direct quantity path is removed, applies the reviewed
 migration, merges, deploys, and live-smokes the authorized admin roles.

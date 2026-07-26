@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   INVENTORY_MOVEMENT_TYPES,
   INVENTORY_SOURCE_BUCKETS,
+  LOT_QUALITY_ACCESS_PURPOSES,
   LOT_QUALITY_TEST_KEYS,
   LOT_QUALITY_TEST_STATES,
 } from "@shared/research/inventory-admin";
@@ -87,6 +88,10 @@ const uploadSchema = z.object({
   contentType: z.literal("application/pdf"),
   sizeBytes: z.number().int().min(5).max(20 * 1024 * 1024),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  reportIssuer: z.string().trim().min(2).max(200),
+  reportNumber: z.string().trim().min(2).max(160),
+  reportDate: isoDate,
+  idempotencyKey,
 });
 
 const testSchema = z.object({
@@ -110,6 +115,10 @@ const reviewSchema = z.object({
 const confirmSchema = z.object({
   expectedVersion: z.number().int().positive(),
   idempotencyKey,
+});
+
+const accessSchema = z.object({
+  purpose: z.enum(LOT_QUALITY_ACCESS_PURPOSES),
 });
 
 type ActorRequest = Request & {
@@ -303,13 +312,18 @@ export function registerInventoryLotAdminApi(
     async (req, res) => {
       noStore(res);
       const documentId = uuid.safeParse(req.params.documentId);
-      if (!documentId.success) {
+      const parsed = accessSchema.safeParse(req.body);
+      if (!documentId.success || !parsed.success) {
         return res.status(400).json({ ok: false, code: "validation_failed" });
       }
       try {
         return res.json({
           ok: true,
-          grant: await deps.quality.createReadGrant(documentId.data),
+          grant: await deps.quality.createReadGrant(
+            documentId.data,
+            actor(req),
+            parsed.data.purpose,
+          ),
         });
       } catch (error) {
         return failure(res, error);

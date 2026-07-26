@@ -40,6 +40,13 @@ export const LOT_QUALITY_TEST_STATES = [
 ] as const;
 export type LotQualityTestState = (typeof LOT_QUALITY_TEST_STATES)[number];
 
+export const LOT_QUALITY_ACCESS_PURPOSES = [
+  "quality_review",
+  "compliance_review",
+  "incident_investigation",
+] as const;
+export type LotQualityAccessPurpose = (typeof LOT_QUALITY_ACCESS_PURPOSES)[number];
+
 export type InventoryLotAdmin = {
   id: string;
   lotCode: string;
@@ -129,6 +136,10 @@ export type CoaUploadPreparation = {
   contentType: "application/pdf";
   sizeBytes: number;
   sha256: string;
+  reportIssuer: string;
+  reportNumber: string;
+  reportDate: string;
+  idempotencyKey: string;
 };
 
 export type CoaUploadGrant = {

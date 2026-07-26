@@ -4,6 +4,7 @@ import type {
   InventoryLotAdmin,
   InventoryMovementAdmin,
   InventoryMovementCommand,
+  LotQualityAccessPurpose,
   LotQualityDocumentAdmin,
   LotQualityTestAdmin,
 } from "@shared/research/inventory-admin";
@@ -106,10 +107,11 @@ export function reviewLotQualityDocument(
 export function requestCoaReadGrant(
   token: string,
   documentId: string,
+  purpose: LotQualityAccessPurpose,
 ): Promise<ApiResult<{ ok: true; grant: { signedUrl: string; expiresAt: string } }>> {
   return apiPost(
     `${BASE}/lot-quality-documents/${enc(documentId)}/file-access`,
-    {},
+    { purpose },
     token,
   );
 }
