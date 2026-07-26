@@ -104,6 +104,7 @@ from information_schema.role_routine_grants
 where routine_schema = 'public'
   and routine_name in (
     'research_operations_apply_fulfillment_command',
+    'research_operations_apply_crm_command',
     'research_operations_apply_task_command',
     'research_operations_submit_partner_request',
     'research_operations_apply_professional_account',

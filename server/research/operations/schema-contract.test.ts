@@ -103,6 +103,14 @@ describe("operations additive schema contract", () => {
     expect(sql).toContain("prior.command_hash <> command_hash");
   });
 
+  it("persists operational CRM commands while refusing clinical note content", () => {
+    expect(sql).toContain("research_operations_apply_crm_command");
+    expect(sql).toContain("contact.version <> p_expected_version");
+    expect(sql).toContain("prior.command_hash <> command_hash");
+    expect(sql).toContain("privacy_refused");
+    expect(sql).toContain("patient|medical|medication");
+  });
+
   it("persists the complete professional commercial pipeline with an atomic transition RPC", () => {
     for (const stage of ["prospect", "discovery", "diligence", "commercial_review", "agreement", "active", "paused", "closed"]) {
       expect(sql).toContain(`'${stage}'`);

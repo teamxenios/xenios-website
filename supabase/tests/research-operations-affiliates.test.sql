@@ -298,6 +298,63 @@ $$;
 do $$
 declare
   result jsonb;
+  contact_uuid uuid := '00000000-0000-0000-0000-000000000470';
+  event_count bigint;
+  contact_stage text;
+  contact_version bigint;
+begin
+  result := public.research_operations_apply_crm_command(
+    contact_uuid, 'create', null, 'admin@example.com', 'admin', 'w4-crm-create',
+    '{"kind":"professional","displayName":"Example Practice","email":"contact@example.com"}'::jsonb,
+    '2026-07-25T21:30:00Z'
+  );
+  if not (result->>'ok')::boolean then raise exception 'CRM create failed: %', result; end if;
+
+  result := public.research_operations_apply_crm_command(
+    contact_uuid, 'stage', 1, 'admin@example.com', 'admin', 'w4-crm-stage',
+    '{"to":"active"}'::jsonb, '2026-07-25T21:31:00Z'
+  );
+  if not (result->>'ok')::boolean then raise exception 'CRM stage failed: %', result; end if;
+
+  result := public.research_operations_apply_crm_command(
+    contact_uuid, 'note', 2, 'admin@example.com', 'admin', 'w4-crm-private',
+    '{"summary":"Patient diagnosis follow-up"}'::jsonb, '2026-07-25T21:32:00Z'
+  );
+  if (result->>'code') <> 'privacy_refused' then raise exception 'CRM private note was not refused: %', result; end if;
+
+  result := public.research_operations_apply_crm_command(
+    contact_uuid, 'note', 2, 'admin@example.com', 'admin', 'w4-crm-note',
+    '{"summary":"Commercial review scheduled."}'::jsonb, '2026-07-25T21:33:00Z'
+  );
+  if not (result->>'ok')::boolean then raise exception 'CRM note failed: %', result; end if;
+
+  result := public.research_operations_apply_crm_command(
+    contact_uuid, 'note', 2, 'admin@example.com', 'admin', 'w4-crm-note',
+    '{"summary":"Commercial review scheduled."}'::jsonb, '2026-07-25T21:33:00Z'
+  );
+  if not (result->>'ok')::boolean or not (result->>'idempotent')::boolean then
+    raise exception 'CRM replay was not idempotent: %', result;
+  end if;
+
+  result := public.research_operations_apply_crm_command(
+    contact_uuid, 'link', 3, 'admin@example.com', 'admin', 'w4-crm-link',
+    '{"referenceType":"order","referenceId":"order-1"}'::jsonb, '2026-07-25T21:34:00Z'
+  );
+  if not (result->>'ok')::boolean then raise exception 'CRM link failed: %', result; end if;
+
+  select stage, version into contact_stage, contact_version
+  from public.research_operations_crm_contacts where id = contact_uuid;
+  select count(*) into event_count
+  from public.research_operations_crm_events where contact_id = contact_uuid;
+  if contact_stage <> 'active' or contact_version <> 4 or event_count <> 4 then
+    raise exception 'unexpected CRM state/version/events: %/%/%', contact_stage, contact_version, event_count;
+  end if;
+end
+$$;
+
+do $$
+declare
+  result jsonb;
   task_uuid uuid := '00000000-0000-0000-0000-000000000480';
   event_count bigint;
   task_status text;

@@ -241,11 +241,12 @@ create table if not exists public.research_operations_crm_events (
   kind text not null check (kind in ('created','stage_changed','note','order_linked','exception_linked','follow_up')),
   actor_id text not null,
   actor_role text not null
-    check (actor_role in ('operations_manager','finance','mitch','logistics','system')),
+    check (actor_role in ('admin','operations_manager','finance','system')),
   summary text not null check (length(trim(summary)) > 0),
   reference_type text check (reference_type in ('order','exception')),
   reference_id text,
   idempotency_key text not null unique,
+  command_hash text not null check (length(command_hash) = 64),
   occurred_at timestamptz not null default now(),
   check ((reference_type is null) = (reference_id is null))
 );
@@ -1018,6 +1019,168 @@ exception
 end
 $$;
 
+-- Atomic operational CRM commands. The database repeats the privacy boundary
+-- enforced by the domain service so clinical or highly sensitive notes cannot
+-- enter this administrative contact history.
+create or replace function public.research_operations_apply_crm_command(
+  p_contact_id uuid,
+  p_action text,
+  p_expected_version bigint,
+  p_actor_id text,
+  p_actor_role text,
+  p_idempotency_key text,
+  p_payload jsonb default '{}'::jsonb,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  contact public.research_operations_crm_contacts%rowtype;
+  prior public.research_operations_crm_events%rowtype;
+  command_hash text;
+  previous_stage text;
+  event_kind text;
+  event_summary text;
+  event_reference_type text;
+  event_reference_id text;
+begin
+  if p_actor_role not in ('admin','operations_manager','system')
+     or p_action not in ('create','stage','note','link')
+     or length(trim(coalesce(p_actor_id, ''))) = 0
+     or length(trim(coalesce(p_idempotency_key, ''))) = 0 then
+    return jsonb_build_object('ok', false, 'code', 'forbidden', 'message', 'A valid authorized CRM command is required.');
+  end if;
+
+  command_hash := encode(
+    extensions.digest(
+      convert_to(
+        concat_ws(
+          '|', p_action, coalesce(p_contact_id::text, ''),
+          coalesce(p_expected_version::text, ''), p_actor_id, p_actor_role,
+          coalesce(p_payload, '{}'::jsonb)::text
+        ),
+        'utf8'
+      ),
+      'sha256'
+    ),
+    'hex'
+  );
+
+  select * into prior
+  from public.research_operations_crm_events
+  where idempotency_key = p_idempotency_key;
+  if found then
+    if prior.command_hash <> command_hash then
+      return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'That idempotency key belongs to another CRM command.');
+    end if;
+    return jsonb_build_object('ok', true, 'idempotent', true, 'contactId', prior.contact_id);
+  end if;
+
+  if p_action = 'create' then
+    if p_payload->>'kind' not in ('member','applicant','affiliate','professional')
+       or length(trim(coalesce(p_payload->>'displayName', ''))) = 0
+       or coalesce(p_payload->>'email', '') !~* '^[^@\s]+@[^@\s]+\.[^@\s]+$' then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'A valid CRM contact is required.');
+    end if;
+    insert into public.research_operations_crm_contacts (
+      id, kind, display_name, email, created_at, updated_at
+    )
+    values (
+      coalesce(p_contact_id, gen_random_uuid()),
+      p_payload->>'kind',
+      trim(p_payload->>'displayName'),
+      lower(trim(p_payload->>'email')),
+      p_occurred_at,
+      p_occurred_at
+    )
+    returning * into contact;
+
+    insert into public.research_operations_crm_events (
+      contact_id, kind, actor_id, actor_role, summary, reference_type,
+      reference_id, idempotency_key, command_hash, occurred_at
+    )
+    values (
+      contact.id, 'created', p_actor_id, p_actor_role, 'Contact created.',
+      null, null, p_idempotency_key, command_hash, p_occurred_at
+    );
+    return jsonb_build_object('ok', true, 'idempotent', false, 'contactId', contact.id);
+  end if;
+
+  if p_contact_id is null or p_expected_version is null then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Contact id and expected version are required.');
+  end if;
+  select * into contact
+  from public.research_operations_crm_contacts
+  where id = p_contact_id
+  for update;
+  if not found then
+    return jsonb_build_object('ok', false, 'code', 'not_found', 'message', 'CRM contact not found.');
+  end if;
+  if contact.version <> p_expected_version then
+    return jsonb_build_object('ok', false, 'code', 'stale_write', 'message', 'The CRM record changed; reload it.');
+  end if;
+  previous_stage := contact.stage;
+
+  if p_action = 'stage' then
+    if p_payload->>'to' not in (
+      'new','pending_application','pending_activation','payment_verification','active','paused','closed'
+    ) or p_payload->>'to' = contact.stage then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'That CRM stage transition is invalid.');
+    end if;
+    event_kind := 'stage_changed';
+    event_summary := contact.stage || ' -> ' || (p_payload->>'to');
+    contact.stage := p_payload->>'to';
+  elsif p_action = 'note' then
+    event_summary := trim(coalesce(p_payload->>'summary', ''));
+    if length(event_summary) = 0 then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'A CRM note is required.');
+    end if;
+    if event_summary ~* '(diagnos(is|ed|tic)|prescri(be|ption|bed)|patient|medical|medication|ssn|date of birth)' then
+      return jsonb_build_object('ok', false, 'code', 'privacy_refused', 'message', 'Clinical, patient, and highly sensitive identity data do not belong in operations CRM.');
+    end if;
+    event_kind := 'note';
+  else
+    event_reference_type := p_payload->>'referenceType';
+    event_reference_id := trim(coalesce(p_payload->>'referenceId', ''));
+    if event_reference_type not in ('order','exception') or length(event_reference_id) = 0 then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'A valid operational reference is required.');
+    end if;
+    event_kind := case when event_reference_type = 'order' then 'order_linked' else 'exception_linked' end;
+    event_summary := event_reference_type || ' linked';
+  end if;
+
+  update public.research_operations_crm_contacts
+  set
+    stage = contact.stage,
+    version = version + 1,
+    updated_at = p_occurred_at
+  where id = contact.id
+  returning * into contact;
+
+  insert into public.research_operations_crm_events (
+    contact_id, kind, actor_id, actor_role, summary, reference_type,
+    reference_id, idempotency_key, command_hash, occurred_at
+  )
+  values (
+    contact.id, event_kind, p_actor_id, p_actor_role, event_summary,
+    event_reference_type, event_reference_id, p_idempotency_key, command_hash, p_occurred_at
+  );
+
+  return jsonb_build_object(
+    'ok', true, 'idempotent', false, 'contactId', contact.id,
+    'previousStage', previous_stage, 'version', contact.version
+  );
+exception
+  when invalid_text_representation then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'The CRM command contains an invalid identifier.');
+  when unique_violation then
+    return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'A conflicting CRM command already exists.');
+end
+$$;
+
 -- Atomic operations task creation and transition. The append-only event owns
 -- the idempotency key and command fingerprint, so replays are safe and a reused
 -- key with different input fails closed.
@@ -1508,6 +1671,12 @@ revoke all on function public.research_operations_apply_fulfillment_command(
 ) from public, anon, authenticated;
 grant execute on function public.research_operations_apply_fulfillment_command(
   uuid, text, bigint, text, uuid, text, jsonb, timestamptz
+) to service_role;
+revoke all on function public.research_operations_apply_crm_command(
+  uuid, text, bigint, text, text, text, jsonb, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.research_operations_apply_crm_command(
+  uuid, text, bigint, text, text, text, jsonb, timestamptz
 ) to service_role;
 revoke all on function public.research_operations_apply_task_command(
   uuid, text, bigint, text, text, text, jsonb, timestamptz

@@ -6,7 +6,7 @@ import type {
   AffiliateLink,
   AffiliateResult,
 } from "./affiliate-service";
-import type { CrmContact, CrmResult, CrmStage } from "./crm-service";
+import type { CrmContact, CrmEvent, CrmResult, CrmStage } from "./crm-service";
 import type {
   FulfillmentFailureCode,
   FulfillmentResult,
@@ -59,6 +59,72 @@ function operationsTask(row: Record<string, unknown>): OperationsTask {
     updatedAt: String(row.updated_at),
     completedAt: row.completed_at ? String(row.completed_at) : null,
   };
+}
+
+function crmContact(row: Record<string, unknown>): CrmContact {
+  return {
+    id: String(row.id),
+    kind: String(row.kind) as CrmContact["kind"],
+    displayName: String(row.display_name),
+    email: String(row.email),
+    stage: String(row.stage) as CrmStage,
+    version: Number(row.version),
+    tags: Array.isArray(row.tags) ? row.tags.map(String) : [],
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at),
+  };
+}
+
+async function loadCrmContact(client: SupabaseClient, contactId: string): Promise<CrmContact | null> {
+  const result = await client
+    .from("research_operations_crm_contacts")
+    .select("id, kind, display_name, email, stage, version, tags, created_at, updated_at")
+    .eq("id", contactId)
+    .maybeSingle();
+  if (result.error) throw new Error(`operations CRM contact load failed: ${result.error.message}`);
+  return result.data ? crmContact(result.data as Record<string, unknown>) : null;
+}
+
+async function applyCrmCommand(
+  client: SupabaseClient,
+  input: {
+    contactId: string;
+    action: "create" | "stage" | "note" | "link";
+    expectedVersion: number | null;
+    actor: OperationsActor;
+    idempotencyKey: string;
+    payload: Record<string, unknown>;
+    occurredAt: Date;
+  },
+): Promise<CrmResult<CrmContact>> {
+  const result = await client.rpc("research_operations_apply_crm_command", {
+    p_contact_id: input.contactId || null,
+    p_action: input.action,
+    p_expected_version: input.expectedVersion,
+    p_actor_id: input.actor.id,
+    p_actor_role: input.actor.role,
+    p_idempotency_key: input.idempotencyKey,
+    p_payload: input.payload,
+    p_occurred_at: input.occurredAt.toISOString(),
+  });
+  if (result.error) throw new Error(`operations CRM command failed: ${result.error.message}`);
+  const rpc = result.data as {
+    ok?: boolean;
+    contactId?: string;
+    idempotent?: boolean;
+    code?: string;
+    message?: string;
+  };
+  if (!rpc.ok || !rpc.contactId) {
+    return {
+      ok: false,
+      code: (rpc.code ?? "invalid_input") as Extract<CrmResult<never>, { ok: false }>["code"],
+      message: rpc.message ?? "CRM command refused.",
+    };
+  }
+  const contact = await loadCrmContact(client, rpc.contactId);
+  if (!contact) return { ok: false, code: "not_found", message: "CRM contact not found." };
+  return { ok: true, value: contact, idempotent: rpc.idempotent === true };
 }
 
 function fail<T>(code: FulfillmentFailureCode, message: string): FulfillmentResult<T> {
@@ -1146,6 +1212,82 @@ export function buildOperationsProductionDependencies(
         submitPartnerPortalRequest(client, authUserId, kind, body, occurredAt),
     },
     crm: {
+      async get(contactId, _actor): Promise<CrmResult<{ contact: CrmContact; timeline: CrmEvent[] }>> {
+        const contact = await loadCrmContact(client, contactId);
+        if (!contact) return { ok: false, code: "not_found", message: "CRM contact not found." };
+        const events = await client
+          .from("research_operations_crm_events")
+          .select("id, contact_id, kind, actor_id, actor_role, summary, reference_type, reference_id, occurred_at")
+          .eq("contact_id", contactId)
+          .order("occurred_at", { ascending: true });
+        if (events.error) throw new Error(`operations CRM timeline load failed: ${events.error.message}`);
+        return {
+          ok: true,
+          value: {
+            contact,
+            timeline: ((events.data ?? []) as Array<Record<string, unknown>>).map((row) => ({
+              id: String(row.id),
+              contactId: String(row.contact_id),
+              kind: String(row.kind) as CrmEvent["kind"],
+              actorId: String(row.actor_id),
+              actorRole: String(row.actor_role) as CrmEvent["actorRole"],
+              summary: String(row.summary),
+              referenceType: row.reference_type ? (String(row.reference_type) as "order" | "exception") : null,
+              referenceId: row.reference_id ? String(row.reference_id) : null,
+              occurredAt: String(row.occurred_at),
+            })),
+          },
+          idempotent: true,
+        };
+      },
+      create(input) {
+        return applyCrmCommand(client, {
+          contactId: input.id,
+          action: "create",
+          expectedVersion: null,
+          actor: input.actor,
+          idempotencyKey: input.idempotencyKey,
+          payload: {
+            kind: input.kind,
+            displayName: input.displayName,
+            email: input.email,
+          },
+          occurredAt: input.occurredAt,
+        });
+      },
+      transitionStage(input) {
+        return applyCrmCommand(client, {
+          contactId: input.contactId,
+          action: "stage",
+          expectedVersion: input.expectedVersion,
+          actor: input.actor,
+          idempotencyKey: input.idempotencyKey,
+          payload: { to: input.to },
+          occurredAt: input.occurredAt,
+        });
+      },
+      addNote(input) {
+        return applyCrmCommand(client, {
+          contactId: input.contactId,
+          action: "note",
+          expectedVersion: input.expectedVersion,
+          actor: input.actor,
+          idempotencyKey: input.idempotencyKey,
+          payload: { summary: input.summary },
+          occurredAt: input.occurredAt,
+        });
+      },
+      linkReference(input) {
+        return applyCrmCommand(client, {
+          contactId: input.contactId,
+          action: "link",
+          expectedVersion: input.expectedVersion,
+          actor: input.actor,
+          idempotencyKey: input.idempotencyKey,
+          payload: { referenceType: input.referenceType, referenceId: input.referenceId },
+          occurredAt: input.occurredAt,
+        });
+      },
       async list(_actor, stage?: CrmStage, search?: string): Promise<CrmResult<CrmContact[]>> {
         let query = client
           .from("research_operations_crm_contacts")
@@ -1172,17 +1314,7 @@ export function buildOperationsProductionDependencies(
               row.display_name.toLowerCase().includes(needle) ||
               row.email.toLowerCase().includes(needle),
           )
-          .map((row) => ({
-            id: row.id,
-            kind: row.kind,
-            displayName: row.display_name,
-            email: row.email,
-            stage: row.stage,
-            version: Number(row.version),
-            tags: row.tags,
-            createdAt: row.created_at,
-            updatedAt: row.updated_at,
-          }));
+          .map((row) => crmContact(row));
         return { ok: true, value: contacts, idempotent: true };
       },
     },

@@ -1,6 +1,6 @@
 import type { Express, NextFunction, Request, RequestHandler, Response } from "express";
 import type { AffiliateService } from "./affiliate-service";
-import type { CrmService } from "./crm-service";
+import type { CrmService, CrmStage } from "./crm-service";
 import type { FulfillmentService, MitchQueue } from "./fulfillment-service";
 import type { NotificationOutbox, NotificationStatus } from "./notification-outbox";
 import type { OperationsDashboardInput } from "./operations-dashboard";
@@ -46,6 +46,11 @@ export interface OperationsProfessionalPort {
 
 export interface OperationsCrmPort {
   list: AsyncCompatibleMethod<CrmService["list"]>;
+  get: AsyncCompatibleMethod<CrmService["get"]>;
+  create: AsyncCompatibleMethod<CrmService["create"]>;
+  transitionStage: AsyncCompatibleMethod<CrmService["transitionStage"]>;
+  addNote: AsyncCompatibleMethod<CrmService["addNote"]>;
+  linkReference: AsyncCompatibleMethod<CrmService["linkReference"]>;
 }
 
 export interface OperationsOutboxPort {
@@ -488,6 +493,99 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     if (!acting) return;
     relay(res, await deps.crm.list(acting, undefined, typeof req.query.search === "string" ? req.query.search : undefined));
   });
+
+  app.get("/api/admin/research/operations/crm/:contactId", admin, async (req: OperationsRouteRequest, res) => {
+    noStore(res);
+    const acting = actor(req, deps, res);
+    if (!acting) return;
+    relay(res, await deps.crm.get(String(req.params.contactId), acting));
+  });
+
+  app.post("/api/admin/research/operations/crm", admin, async (req: OperationsRouteRequest, res) => {
+    const acting = actor(req, deps, res);
+    const idempotencyKey = key(req);
+    const body = req.body as Record<string, unknown>;
+    if (!acting || !idempotencyKey) {
+      if (!idempotencyKey) {
+        res.status(400).json({ ok: false, code: "invalid_input", message: "Idempotency-Key is required." });
+      }
+      return;
+    }
+    relay(
+      res,
+      await deps.crm.create({
+        id: String(body.id ?? ""),
+        kind: String(body.kind ?? "") as Parameters<OperationsCrmPort["create"]>[0]["kind"],
+        displayName: String(body.displayName ?? ""),
+        email: String(body.email ?? ""),
+        actor: acting,
+        idempotencyKey,
+        occurredAt: deps.now(),
+      }),
+    );
+  });
+
+  app.post(
+    "/api/admin/research/operations/crm/:contactId/stage",
+    admin,
+    async (req: OperationsRouteRequest, res) => {
+      const acting = actor(req, deps, res);
+      const command = requireCommand(req, res);
+      if (!acting || !command) return;
+      relay(
+        res,
+        await deps.crm.transitionStage({
+          contactId: String(req.params.contactId),
+          to: String((req.body as Record<string, unknown>).to ?? "") as CrmStage,
+          ...command,
+          actor: acting,
+          occurredAt: deps.now(),
+        }),
+      );
+    },
+  );
+
+  app.post(
+    "/api/admin/research/operations/crm/:contactId/notes",
+    admin,
+    async (req: OperationsRouteRequest, res) => {
+      const acting = actor(req, deps, res);
+      const command = requireCommand(req, res);
+      if (!acting || !command) return;
+      relay(
+        res,
+        await deps.crm.addNote({
+          contactId: String(req.params.contactId),
+          summary: String((req.body as Record<string, unknown>).summary ?? ""),
+          ...command,
+          actor: acting,
+          occurredAt: deps.now(),
+        }),
+      );
+    },
+  );
+
+  app.post(
+    "/api/admin/research/operations/crm/:contactId/references",
+    admin,
+    async (req: OperationsRouteRequest, res) => {
+      const acting = actor(req, deps, res);
+      const command = requireCommand(req, res);
+      const body = req.body as Record<string, unknown>;
+      if (!acting || !command) return;
+      relay(
+        res,
+        await deps.crm.linkReference({
+          contactId: String(req.params.contactId),
+          referenceType: String(body.referenceType ?? "") as "order" | "exception",
+          referenceId: String(body.referenceId ?? ""),
+          ...command,
+          actor: acting,
+          occurredAt: deps.now(),
+        }),
+      );
+    },
+  );
 
   app.get("/api/admin/research/operations/tasks", admin, async (req: OperationsRouteRequest, res) => {
     noStore(res);

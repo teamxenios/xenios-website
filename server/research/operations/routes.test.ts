@@ -324,4 +324,68 @@ describe("operations integration-ready routes", () => {
     expect(list.status).toBe(200);
     expect(list.body.value).toHaveLength(1);
   });
+
+  it("persists CRM create, stage, note, reference, and timeline commands with privacy refusal", async () => {
+    const created = await request(app)
+      .post("/api/admin/research/operations/crm")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "crm-create")
+      .send({
+        id: "crm-1",
+        kind: "professional",
+        displayName: "Example Practice",
+        email: "contact@example.com",
+      });
+    expect(created.status).toBe(200);
+    expect(created.body.value).toMatchObject({ id: "crm-1", stage: "new", version: 1 });
+
+    const staged = await request(app)
+      .post("/api/admin/research/operations/crm/crm-1/stage")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "crm-stage")
+      .send({ to: "active", expectedVersion: 1 });
+    expect(staged.status).toBe(200);
+    expect(staged.body.value).toMatchObject({ stage: "active", version: 2 });
+
+    const privateNote = await request(app)
+      .post("/api/admin/research/operations/crm/crm-1/notes")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "crm-private-note")
+      .send({ summary: "Patient diagnosis follow-up", expectedVersion: 2 });
+    expect(privateNote.status).toBe(400);
+    expect(privateNote.body.code).toBe("privacy_refused");
+
+    const note = await request(app)
+      .post("/api/admin/research/operations/crm/crm-1/notes")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "crm-note")
+      .send({ summary: "Commercial review scheduled.", expectedVersion: 2 });
+    expect(note.status).toBe(200);
+    expect(note.body.value.version).toBe(3);
+
+    const linked = await request(app)
+      .post("/api/admin/research/operations/crm/crm-1/references")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel")
+      .set("Idempotency-Key", "crm-link")
+      .send({ referenceType: "order", referenceId: "order-1", expectedVersion: 3 });
+    expect(linked.status).toBe(200);
+    expect(linked.body.value.version).toBe(4);
+
+    const detail = await request(app)
+      .get("/api/admin/research/operations/crm/crm-1")
+      .set("x-role", "admin")
+      .set("x-actor-id", "samuel");
+    expect(detail.status).toBe(200);
+    expect(detail.body.value.timeline.map((event: { kind: string }) => event.kind)).toEqual([
+      "created",
+      "stage_changed",
+      "note",
+      "order_linked",
+    ]);
+  });
 });
