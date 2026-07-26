@@ -57,8 +57,11 @@ describe("Care PR 1 migration", () => {
     );
     expect(lifecycle).toContain("care access audit insert proof failed");
     expect(lifecycle).toContain("care access audit update was accepted");
+    expect(lifecycle).toContain("care access audit actor reassignment was accepted");
+    expect(lifecycle).toContain("audited auth-user deletion did not redact actor");
+    expect(lifecycle).toContain("care access audit actor restoration was accepted");
     expect(lifecycle).toContain("care access audit delete was accepted");
-    expect(lifecycle.match(/when sqlstate '55000'/g)).toHaveLength(2);
+    expect(lifecycle.match(/when sqlstate '55000'/g)).toHaveLength(4);
   });
 
   it("does not establish clinical records or a Research linkage", () => {

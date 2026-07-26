@@ -88,6 +88,17 @@ language plpgsql
 set search_path = ''
 as $$
 begin
+  if tg_op = 'UPDATE'
+    and old.actor_user_id is not null
+    and new.actor_user_id is null
+    and new.id is not distinct from old.id
+    and new.permission is not distinct from old.permission
+    and new.outcome is not distinct from old.outcome
+    and new.occurred_at is not distinct from old.occurred_at
+  then
+    return new;
+  end if;
+
   raise exception 'care_access_audit_append_only'
     using errcode = '55000';
 end;
