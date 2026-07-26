@@ -1,291 +1,226 @@
-# Website 5 — Care PR 3 production handoff
+# Website 5 — Care PR 4 production handoff
 
 ## Release unit
 
 - Session: WEBSITE 5 — XENIOS CARE FOUNDATION
-- Feature domain: appointments, provider-neutral scheduling, reminders,
-  telehealth-session references, clinician assignment, and human-clinician
-  review
-- Stacked base: accepted Care PR 2 source head
-  `54f9bd8d8834de9a8e57fc911665627af36f09ed`
-- Feature branch: `feature/website-5-care-appointments-clinician`
-- Pull request: `https://github.com/teamxenios/xenios-website/pull/59`
-- Final frozen SHA: recorded in the pull request and issue #44 after push
+- Domain: patient-specific prescription and pharmacy foundation
+- Stacked base: accepted Care PR 3 source head
+  `71da91c458907eaf4f627488e5de35cddf82c04a`
+- Branch: `feature/website-5-care-prescription-pharmacy`
+- Pull request: `https://github.com/teamxenios/xenios-website/pull/63`
+- Final frozen SHA: recorded after final validation and push
+- Release order: PR #46 → PR #56 → PR #59 → PR #63
 
-Care PR 1 and PR 2 remain frozen and unchanged. This branch is PR 3 only. It
-preserves the accepted PR 2 consent-freshness correction and supersedes the
-old PR 3 candidate `fcc91987586b6f20a88c3467f63fc26202d91f27`, which was
-stacked on rejected PR 2 head
-`0f44cdeb4c04b61e585363690655192ec3295e25`. The old PR 3 candidate must not
-be reviewed, merged, migrated, or deployed. This focused unit
-does not contain prescriptions, pharmacy fulfillment, patient-specific
-instructions, supplies, report sharing, messaging, adverse-event workflow, or
-the canonical cross-domain launch-gate implementation.
+Care PRs 1–3 remain frozen and unchanged. This release contains no instruction
+center, supply kit, laboratory sharing, messaging, adverse-event workflow, or
+parallel cross-domain pre-launch/required-input model.
 
-## Included
+The superseded PR 4 head
+`604ed05c54ca29063302433aa2c816a68b197424`, stacked on superseded PR 3
+`fcc91987586b6f20a88c3467f63fc26202d91f27`, remains prohibited.
 
-- Verified medical-group, clinician-profile, clinician-license, scheduling,
-  telehealth, reminder, state, and clinician-coverage readiness seams.
-- Exact Care required-input labels for missing medical group, clinician record,
-  license, credential verification, coverage, supported state, telehealth
-  provider, scheduling provider, reminders, and activation approval.
-- A provider-neutral appointment lifecycle: request, assign, schedule,
-  reschedule, patient cancel, check-in, clinician completion, and administrator
-  no-show.
-- Opaque private telehealth-session references that are never returned by the
-  repository or route response.
-- Privacy-safe reminder records containing no clinical detail.
-- Assigned-clinician review states for review, information request, laboratory
-  request, follow-up, approve, decline, and no-treatment.
-- A database constraint and server contract that permit only
-  `human_clinician` as the final-decision source.
-- Patient/clinician ownership, active role, current state coverage, optimistic
-  version, idempotency, and append-only audit/history controls.
-- Production Supabase repository and focused Express route modules.
-- Stable fail-closed `503` JSON that discloses no adapter/provider error text.
-- A final Xenios patient appointment page with loading, disabled,
-  authentication-required, error/retry, empty, and populated states.
-- A clinical-administrator readiness panel that distinguishes SOFTWARE
-  COMPLETE from REAL INPUTS REQUIRED and PUBLIC RELEASE BLOCKED.
+## Completed scope
 
-## Truthfulness and pre-launch boundary
+- Patient-specific prescription source, draft, signing, version, and
+  supersession records.
+- Signing is limited to the exact assigned human clinician after a completed
+  appointment, approved human-clinician review, current state coverage, and
+  complete patient-specific content.
+- Verified pharmacy identity, license, state coverage, agreement, integration,
+  support, and assigned-operator seams.
+- Pharmacy receipt, clarification, acceptance, rejection, dispense, shipment,
+  delivery, cancellation, and support-reference history.
+- Open clarification blocks dispensing; shipment requires a private tracking
+  reference.
+- Cross-patient, wrong-clinician, wrong-pharmacy, inactive-role, expired
+  coverage, stale-version, and replay controls.
+- Append-only prescription source/event, pharmacy order event, and
+  configuration-audit histories.
+- Ten new forced-RLS tables with no browser grants; all writes use service-role
+  RPCs behind the accepted Care authorization middleware.
+- Stable safe `503` responses disclose no provider/repository error text.
+- Final Xenios patient prescription UI plus clinical-administrator readiness
+  panel, with loading, disabled, auth/forbidden, error/retry, empty, populated,
+  and exact required-input states.
 
-- No medical group, clinician, license, supported state, provider, appointment,
-  telehealth session, reminder, clinical decision, patient, pharmacy, product,
-  price, availability, or treatment record is seeded.
-- No private seed record is authorized by this PR. Website 2 owns the canonical
-  seed-origin model, server pre-launch gate, reset safety, cross-domain
-  exclusions, and approval.
-- No browser value can activate scheduling, validate credentials, approve
-  coverage, or make a clinical decision.
-- No AI or automation actor can submit a final clinician decision.
-- The canonical Care capability remains `disabled`.
-- Mechanical software readiness is not clinical or public-launch clearance.
+## Truthfulness and shared-contract boundary
+
+- No pharmacy, license, operator, patient, prescription, medication,
+  instruction, price, product, order, shipment, supported state, or clinical
+  fact is seeded.
+- Care remains canonically `disabled`.
+- No pharmacy/provider external action is sent by this PR.
+- Software readiness is not clinical, operational, or public clearance.
+- The shared pre-launch and canonical required-input contracts are not
+  duplicated or amended in this focused domain PR.
+- No seed namespace or seed role is introduced; Care seed data remains
+  prohibited.
+- Website 2 retains canonical required-input/readiness/launch-switch mapping and
+  shared integration ownership.
 
 ## Files
 
-Shared:
-
-- `shared/care/appointments.ts`
-- `shared/care/clinician-review.ts`
-
-Server:
-
-- `server/care/appointments.ts`
-- `server/care/clinician-review.ts`
-- `server/care/appointment-readiness.ts`
-- `server/care/appointment-repository.ts`
-- `server/care/appointment-routes.ts`
+- `shared/care/prescriptions.ts`
+- `server/care/prescriptions.ts`
+- `server/care/prescriptions.test.ts`
+- `server/care/prescription-repository.ts`
+- `server/care/prescription-routes.ts`
+- `server/care/prescription-routes.test.ts`
 - `server/care/index.ts`
-
-Client:
-
-- `client/src/care/CareAppointmentsPage.tsx`
-- `client/src/care/CareAppointmentReadinessPanel.tsx`
-
-Migration:
-
-- `supabase/care-appointments-clinician.sql`
-- `supabase/tests/care-appointments-clinician-lifecycle.test.sql`
+- `client/src/care/CarePrescriptionsPage.tsx`
+- `client/src/care/CarePharmacyOrdersPage.tsx`
+- `client/src/care/CarePharmacyReadinessPanel.tsx`
+- `client/src/care/prescription-ui.test.ts`
+- `supabase/care-prescription-pharmacy.sql`
+- `supabase/tests/care-prescription-pharmacy-lifecycle.test.sql`
 - `supabase/MIGRATIONS.md`
+- `docs/care/evidence/PR4_UI_EVIDENCE.md`
+- `docs/coordination/WEBSITE_5_REMAINING_SCOPE.md`
 
 ## Route delta
 
-The focused module provides:
+- `GET /api/care/prescriptions` — patient-owned records only
+- `POST /api/care/prescriptions` — assigned clinician draft
+- `POST /api/care/prescriptions/:id/sign` — assigned human clinician
+- `GET /api/care/pharmacy/orders` — assigned pharmacy operator only
+- `POST /api/care/pharmacy/orders/:id/action` — assigned pharmacy operator
+- `GET /api/care/pharmacy/admin/readiness` — clinical administrator
+- `POST /api/care/pharmacy/admin/prescriptions/:id/assign` — clinical
+  administrator
+- `/care/prescriptions` — patient UI
+- `/care/pharmacy` — restricted assigned-operator UI
 
-- `GET /api/care/appointments`
-- `POST /api/care/appointments`
-- `POST /api/care/appointments/:appointmentId/action`
-- `GET /api/care/appointments/admin/readiness`
-- `POST /api/care/appointments/:appointmentId/assign`
-- `POST /api/care/appointments/:appointmentId/schedule`
-- `POST /api/care/appointments/:appointmentId/no-show`
-- `POST /api/care/appointments/:appointmentId/complete`
-- `GET /api/care/reviews`
-- `POST /api/care/reviews/:reviewId/action`
-- `/care/appointments` client page
+Every actor identity comes from `res.locals.carePrincipal`, never the request
+body. Private tracking and clarification references are persisted but not
+returned by patient or queue projections.
 
-Every API route first passes the accepted PR 1 capability and active Care-role
-boundary. Self-service routes bind patient identity from the authenticated
-principal. Administrator routes require `care:administer`. Review and
-completion routes require `care:review_assigned` and bind the clinician from
-the authenticated principal.
+## Website 2 locked-file wiring request
 
-## Website 2 locked-file wiring requests
+Do not register until Care migrations 1–4 are reviewed and applied in order.
 
-Do not register PR 3 before Care-1, Care-2, and Care-3 migrations are reviewed
-and applied in order.
-
-### `server/index.ts`
-
-Extend the Care import with:
+In `server/index.ts`, import:
 
 ```ts
-buildCareAppointmentRepository,
-registerCareAppointmentApi,
+buildCarePrescriptionRepository,
+registerCarePrescriptionApi,
 ```
 
-After the accepted PR 1/2 shared dependencies:
+Then, after the accepted shared Care access dependencies:
 
 ```ts
-const careAppointments = buildCareAppointmentRepository();
-registerCareAppointmentApi(app, careAccess, careAppointments);
+const carePrescriptions = buildCarePrescriptionRepository();
+registerCarePrescriptionApi(app, careAccess, carePrescriptions);
 ```
 
-Keep registration before the generic API 404 and SPA catch-all. Do not log
-request bodies or provider session references.
+Register before the generic API 404 and SPA fallback. Never log request bodies,
+clinical content, clarification references, or tracking references.
 
-### `client/src/App.tsx`
-
-Add:
+In `client/src/App.tsx`, add:
 
 ```ts
-const CareAppointments = lazy(() => import("@/care/CareAppointmentsPage"));
+const CarePrescriptions = lazy(() => import("@/care/CarePrescriptionsPage"));
+const CarePharmacyOrders = lazy(() => import("@/care/CarePharmacyOrdersPage"));
 ```
 
 Register before the broad `/care/*` route:
 
 ```tsx
-<Route path="/care/appointments" component={CareAppointments} />
+<Route path="/care/prescriptions" component={CarePrescriptions} />
+<Route path="/care/pharmacy" component={CarePharmacyOrders} />
 ```
 
-The clinical-administrator readiness panel is an embeddable Care-domain
-component. Website 2 should mount it only inside the canonical server-
-authorized internal administration experience; it must not be placed on a
-public route.
-
-### Canonical pre-launch integration
-
-Website 2 must map `CareAppointmentReadinessFacts` and the exact labels returned
-by this module into the canonical required-input objects, role gate, readiness
-dashboard, and launch switch. This PR deliberately does not create a competing
-canonical required-input table, seed-origin model, or browser launch flag.
+Mount `CarePharmacyReadinessPanel` only inside the canonical server-authorized
+clinical administration experience. Website 2 owns mapping its exact domain
+facts into the canonical required-input/readiness contract.
 
 ## Migration delta
 
 Apply after:
 
-1. `supabase/care-access-foundation.sql`
-2. `supabase/care-eligibility-intake.sql`
+1. `care-access-foundation.sql`
+2. `care-eligibility-intake.sql`
+3. `care-appointments-clinician.sql`
+4. `care-prescription-pharmacy.sql`
 
-`supabase/care-appointments-clinician.sql` creates 12 forced-RLS tables:
+The PR4 migration adds:
 
-1. `care_medical_groups`
-2. `care_clinician_profiles`
-3. `care_clinician_licenses`
-4. `care_scheduling_providers`
-5. `care_clinical_configuration_audit`
-6. `care_appointments`
-7. `care_telehealth_sessions`
-8. `care_appointment_events`
-9. `care_clinician_assignment_events`
-10. `care_clinician_reviews`
-11. `care_clinician_review_events`
-12. `care_appointment_reminders`
+1. `care_pharmacies`
+2. `care_pharmacy_licenses`
+3. `care_pharmacy_state_coverage`
+4. `care_pharmacy_operators`
+5. `care_pharmacy_configuration_audit`
+6. `care_prescription_content_sources`
+7. `care_prescriptions`
+8. `care_prescription_events`
+9. `care_pharmacy_orders`
+10. `care_pharmacy_order_events`
 
-It adds fixed-search-path validation/transition functions, immutable
-configuration and workflow histories, active-role/current-license/current-
-coverage checks, private session-reference storage, optimistic versions,
-idempotency keys, and reminder supersession. Anonymous and authenticated
-browser roles receive zero table grants or function execution.
+All ten have enabled and forced RLS. `public`, `anon`, and `authenticated`
+receive no table or RPC access. Configuration changes are audited; clinical
+source and workflow histories reject UPDATE and DELETE. Rollback is
+capability-off plus code rollback; additive tables must be retained until
+retention/legal owners approve any later data disposition.
 
 ## Validation
 
 Current branch-ready validation:
 
-- Exact corrected ancestry: merge base is accepted Care PR 2 source head
-  `54f9bd8d8834de9a8e57fc911665627af36f09ed`.
-- The accepted PR 2 consent-freshness correction is present unchanged.
-- PR 3 retains the original bounded 26-file domain delta plus two focused
-  regression files; it contains no Website 2 locked shared registration file.
-- Rejected four-HIGH head
-  `0218e23b0d4ef1bf6d2e7a4bfef78ab23d3b131c` is superseded and must not be
-  reviewed, merged, applied, integrated, or deployed.
-- Focused PR 3 tests: 8 files / 29 tests passed.
-- `npm run check`: passed.
+- Exact corrected ancestry: merge base is accepted Care PR 3 source head
+  `71da91c458907eaf4f627488e5de35cddf82c04a`.
+- Accepted PR 3 implementation and correction blobs remain unchanged.
+- PR 4 retains the original bounded prescription/pharmacy domain delta and
+  contains no Website 2 locked shared registration files.
+- Superseded PR 4 head
+  `604ed05c54ca29063302433aa2c816a68b197424` remains prohibited.
+- Focused, full, typecheck, build, diff, and PostgreSQL proof results are
+  recorded after the corrected ancestry is validated.
 - Disposable PostgreSQL 16:
-  - Care-1, Care-2, and Care-3 applied in order.
-  - All three migrations then applied a second time with `ON_ERROR_STOP=1`.
-  - PR 1, PR 2, and PR 3 lifecycle SQL each completed and rolled back.
-  - 28/28 total Care tables reported RLS plus forced RLS.
-  - 12/12 PR 3 tables reported RLS plus forced RLS.
-  - PR 3 browser table and routine grants were zero; seven reviewed workflow
-    RPC grants and two reviewed readiness RPC grants were present for
-    `service_role`.
-  - Capability remained `care:disabled`.
-  - Zero residual PR 1 roles/audits, PR 2 records, PR 3 records, or disposable
-    auth users remained after rollback.
-- Lifecycle proof includes:
-  - no migration seed records
-  - cross-patient appointment request rejection
-  - cross-patient appointment mutation rejection
-  - request replay idempotency
-  - telehealth-consent revocation blocks request without mutation
-  - privacy-consent revocation blocks check-in without mutation
-  - supported-state invalidation blocks assignment and scheduling without
-    mutation
-  - each current-consent/state boundary runs before idempotent replay as well
-    as before a new mutation
-  - disjoint clinician profile/license/coverage records remain not operational
-  - one exact matched clinician becomes operational
-  - current-state and verified-clinician coverage enforcement
-  - verified provider and reminder requirements
-  - private telehealth reference persistence
-  - append-only appointment, assignment, configuration, and review histories
-  - pre-start and checked-in no-show rejection without status, version,
-    event, reminder, or session mutation
-  - a due scheduled no-show succeeds and replays idempotently
-  - completed appointment requirement before a final decision
-  - final decision source fixed to `human_clinician`
-  - decided-review assignment immutability
-- Full repository tests: 157 files / 3,205 tests passed.
-- `npm run check`: passed.
-- `npm run build`: passed (existing Vite large-chunk advisory only).
-- Viewable desktop, 375px, 320px, populated, empty, disabled, error/retry,
-  no-overflow, and 200%-reflow-equivalent evidence:
-  `docs/care/evidence/PR3_UI_EVIDENCE.md`.
-- Routed desktop/mobile/reflow landmark regression confirms exactly one
-  `<main>`, one `<h1>`, and retained `#main-content`.
+  - Care 1–4 applied in order.
+  - All four migrations applied twice with `ON_ERROR_STOP=1`.
+  - PR 1–4 lifecycle proofs completed and rolled back.
+  - 10/10 PR4 tables have enabled and forced RLS.
+  - capability remained `care:disabled`.
+  - zero PR1–4 disposable rows survived rollback.
+- Lifecycle proof covers no seeds, cross-patient rejection, assigned human
+  clinician, verified content, idempotent draft/sign, assigned verified
+  pharmacy/state/operator, clarification blocking, immutable source/events,
+  and rollback.
+- Final UI evidence: `docs/care/evidence/PR4_UI_EVIDENCE.md`.
 
-## External and canonical blockers
+## Exact external blockers
 
-- Actual medical-group relationship and executed agreement.
-- Actual clinician identity, license, credential review, agreement, role, and
-  state coverage.
-- Actual supported-state approval.
-- Actual telehealth and scheduling-provider configuration.
-- Approved reminder timing and communication integration.
-- Website 2 canonical required-input records, private pre-launch gate,
-  seed-origin filtering, launch switches, migration apply, and shared route
-  registration.
-- Website 6 integrated isolation, mobile, accessibility, and launch-gate
-  verification.
+- Real medical group and executed agreement.
+- Real licensed clinician identity, credential review, state coverage, and
+  agreement.
+- Real pharmacy legal identity, current licenses, state/dispensing/shipping
+  coverage, executed agreement, integration, support, and operator approvals.
+- Real patient-specific prescription content signed by the assigned clinician.
+- Privacy, consent, instruction, support, incident, and Care activation review.
+- Website 2 shared registration, ordered migration, merge, Render deployment,
+  and live smoke.
 
 ## Production verification after Website 2 release
 
 1. Confirm Render is Live and deployed SHA matches merged main.
 2. Confirm `/api/health` is 200.
 3. Confirm the Care capability remains `disabled`.
-4. Confirm every PR 3 route returns `503 care_disabled` before repository
+4. Confirm every PR 4 route returns `503 care_disabled` before repository
    access or mutation.
-5. Confirm `/care/appointments` renders the truthful disabled state at desktop,
-   375px, and 320px.
-6. Confirm no clinical or scheduling facts were fabricated during migration.
-7. Confirm 12/12 PR 3 tables force RLS and browser grants remain zero.
-8. Confirm internal readiness labels are visible only to an authorized clinical
-   administrator after the canonical internal gate is integrated.
+5. Confirm `/care/prescriptions` and `/care/pharmacy` render truthful disabled
+   states at desktop, 375px, and 320px.
+6. Confirm no clinical, prescription, pharmacy, or shipment facts were
+   fabricated during migration.
+7. Confirm all PR 4 tables force RLS and browser grants remain zero.
+8. Confirm readiness labels are visible only to authorized internal roles after
+   Website 2 integrates the canonical shared contracts.
 9. Inspect Render and Supabase logs without exposing payloads or secrets.
 
 ## Next exact action
 
-After Website 2 accepts this frozen PR 3 unit:
-
-1. Keep PR 3 unchanged after exact-SHA acceptance.
-2. Remain available for PR 1–3 integration corrections and live Pending smoke.
-3. Keep PRs 4–7 held until PR 3 completes serialized production gates.
-4. Website 2 retains serialized migration, shared wiring, merge, deployment,
-   and production verification.
-
-UI CONSISTENCY STATUS: MATCHES EXISTING XENIOS
+After Website 6 accepts the frozen PR 4 unit, Website 2 retains serialized
+migration, shared wiring, merge, deployment, and production verification.
+PR 5–7 remain held until Website 2 advances the queue.
 
 PRODUCTION STATUS: NOT YET MERGED
+
+UI CONSISTENCY STATUS: MATCHES EXISTING XENIOS

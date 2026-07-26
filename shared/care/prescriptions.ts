@@ -71,6 +71,8 @@ export interface CarePrescription {
   version: number;
   signedAt: string | null;
   supersedesPrescriptionId: CareRecordId | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CarePharmacyOrder {
@@ -83,4 +85,26 @@ export interface CarePharmacyOrder {
   clarificationOpen: boolean;
   trackingReferencePresent: boolean;
   version: number;
+  createdAt: string;
+  updatedAt: string;
+  prescriptionContent?: {
+    formulation: string;
+    concentration: string;
+    route: string;
+    quantity: string;
+    directions: string;
+    refills: number;
+  };
 }
+
+export const CARE_PHARMACY_ACTIONS = [
+  "receive",
+  "request_clarification",
+  "accept",
+  "reject",
+  "dispense",
+  "ship",
+  "deliver",
+  "cancel",
+] as const;
+export type CarePharmacyAction = (typeof CARE_PHARMACY_ACTIONS)[number];
