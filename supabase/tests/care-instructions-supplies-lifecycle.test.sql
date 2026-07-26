@@ -555,12 +555,98 @@ select public.care_apply_supply_replacement_action(
   'pr5-replacement-fulfill','2026-07-25T20:03:00Z'
 );
 
+select public.care_create_instruction_source(
+  null,null,'general_education','disposable-education-reference-v2',
+  'sha256:disposable-education-v2','Disposable general education revision',
+  '50000000-0000-4000-8000-000000000004','pr5-education-source-v2',
+  '2026-07-25T20:03:02Z'
+);
+do $$
+begin
+  if not public.care_instruction_sources_current(
+    (select id from public.care_patient_instructions where status='released'),
+    '51000000-0000-4000-8000-000000000001',
+    '5d000000-0000-4000-8000-000000000001'
+  ) then
+    raise exception 'unrelated source supersession contaminated instruction chain';
+  end if;
+end;
+$$;
+
+select public.care_create_instruction_source(
+  '51000000-0000-4000-8000-000000000001',
+  '5d000000-0000-4000-8000-000000000001',
+  'pharmacy_label','disposable-label-reference-v2','sha256:disposable-label-v2',
+  'Disposable pharmacy label revision','50000000-0000-4000-8000-000000000005',
+  'pr5-label-source-v2','2026-07-25T20:03:04Z'
+);
+do $$
+declare
+  replacement_status text;
+  replacement_version integer;
+  replacement_event_count bigint;
+  replacement_count bigint;
+  acknowledgment_count bigint;
+begin
+  if public.care_instruction_sources_current(
+    (select id from public.care_patient_instructions where status='released'),
+    '51000000-0000-4000-8000-000000000001',
+    '5d000000-0000-4000-8000-000000000001'
+  ) then
+    raise exception 'superseded linked source left instruction current';
+  end if;
+  select status,version into replacement_status,replacement_version
+  from public.care_supply_replacements;
+  select count(*) into replacement_event_count
+  from public.care_supply_replacement_events;
+  select count(*) into replacement_count from public.care_supply_replacements;
+  select count(*) into acknowledgment_count
+  from public.care_instruction_acknowledgments;
+  begin
+    perform public.care_request_supply_replacement(
+      (select id from public.care_supply_kits where status='released'),
+      '51000000-0000-4000-8000-000000000001',
+      'pr5-stale-source-request','2026-07-25T20:03:05Z'
+    );
+    raise exception 'superseded linked source allowed replacement request';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform public.care_apply_supply_replacement_action(
+      (select id from public.care_supply_replacements),
+      '50000000-0000-4000-8000-000000000005',1,'fulfill',
+      'pr5-replacement-fulfill','2026-07-25T20:03:06Z'
+    );
+    raise exception 'superseded linked source allowed replacement replay';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.care_acknowledge_patient_instruction(
+      (select id from public.care_patient_instructions where status='released'),
+      '51000000-0000-4000-8000-000000000001',1,
+      'pr5-instruction-ack','2026-07-25T20:03:07Z'
+    );
+    raise exception 'superseded linked source allowed acknowledgment replay';
+  exception when check_violation then null;
+  end;
+  if (select status from public.care_supply_replacements) <> replacement_status
+    or (select version from public.care_supply_replacements) <> replacement_version
+    or (select count(*) from public.care_supply_replacement_events)
+      <> replacement_event_count
+    or (select count(*) from public.care_supply_replacements) <> replacement_count
+    or (select count(*) from public.care_instruction_acknowledgments)
+      <> acknowledgment_count
+  then raise exception 'superseded source rejection mutated history'; end if;
+end;
+$$;
+
 select public.care_create_patient_instruction_draft(
   '51000000-0000-4000-8000-000000000001',
   '5d000000-0000-4000-8000-000000000001',
   '50000000-0000-4000-8000-000000000003',
   'Disposable replacement instruction content',
-  (select id from public.care_instruction_sources where kind='pharmacy_label'),
+  (select id from public.care_instruction_sources
+    where source_reference='disposable-label-reference-v2'),
   (select id from public.care_instruction_sources where kind='pharmacy_information'),
   (select id from public.care_instruction_sources where kind='clinician_direction'),
   (select id from public.care_instruction_sources where kind='manufacturer_material'),
@@ -572,6 +658,41 @@ select public.care_release_patient_instruction(
   '50000000-0000-4000-8000-000000000003',0,
   'pr5-second-release','2026-07-25T20:03:20Z'
 );
+select public.care_create_supply_kit(
+  '51000000-0000-4000-8000-000000000001',
+  '5d000000-0000-4000-8000-000000000001',
+  (select id from public.care_patient_instructions where status='released'),
+  (select id from public.care_supply_sources),
+  'Disposable replacement product-specific device',
+  'Disposable replacement verified cadence',
+  '50000000-0000-4000-8000-000000000004',
+  (select id from public.care_supply_kits where status='released'),
+  'pr5-second-supply-kit','2026-07-25T20:03:22Z'
+);
+select public.care_release_supply_kit(
+  (select id from public.care_supply_kits where status='verified'),
+  '50000000-0000-4000-8000-000000000004',0,
+  'pr5-second-supply-release','2026-07-25T20:03:24Z'
+);
+do $$
+begin
+  if not public.care_instruction_sources_current(
+    (select id from public.care_patient_instructions where status='released'),
+    '51000000-0000-4000-8000-000000000001',
+    '5d000000-0000-4000-8000-000000000001'
+  ) then
+    raise exception 'replacement instruction did not become current';
+  end if;
+  if not public.care_supply_kit_replacement_context_current(
+    (select id from public.care_supply_kits where status='released'),
+    '51000000-0000-4000-8000-000000000001',
+    null,
+    '2026-07-25T20:03:25Z'
+  ) then
+    raise exception 'replacement kit linked to canonical sources was blocked';
+  end if;
+end;
+$$;
 do $$
 begin
   begin
@@ -692,7 +813,7 @@ begin
   end;
   if (select count(*) from public.care_patient_instructions) <> 2
     or (select count(*) from public.care_instruction_acknowledgments) <> 1
-    or (select count(*) from public.care_supply_kits) <> 1
+    or (select count(*) from public.care_supply_kits) <> 2
     or (select count(*) from public.care_supply_replacements) <> 1
     or (select count(*) from public.care_supply_source_events) <> 4
   then raise exception 'PR5 idempotency proof failed'; end if;

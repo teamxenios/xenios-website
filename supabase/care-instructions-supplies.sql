@@ -328,6 +328,65 @@ begin
 end;
 $$;
 
+create or replace function public.care_instruction_sources_current(
+  p_instruction_id uuid,
+  p_patient_id uuid,
+  p_prescription_id uuid
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  linked_count integer;
+  current_count integer;
+begin
+  select count(*), count(*) filter (
+    where source.verification_state = 'verified'
+      and source.patient_id = p_patient_id
+      and source.prescription_id = p_prescription_id
+      and source.kind = link.source_kind
+      and not exists (
+        select 1
+        from public.care_instruction_sources successor
+        where successor.supersedes_source_id = source.id
+          and successor.patient_id = source.patient_id
+          and successor.prescription_id = source.prescription_id
+          and successor.kind = source.kind
+          and successor.verification_state = 'verified'
+      )
+  )
+  into linked_count, current_count
+  from public.care_instruction_source_links link
+  join public.care_instruction_sources source on source.id = link.source_id
+  where link.instruction_id = p_instruction_id
+    and link.source_kind in (
+      'pharmacy_label', 'pharmacy_information', 'clinician_direction',
+      'manufacturer_material'
+    );
+
+  return linked_count = 4
+    and current_count = 4
+    and exists (
+      select 1 from public.care_instruction_source_links
+      where instruction_id = p_instruction_id and source_kind = 'pharmacy_label'
+    )
+    and exists (
+      select 1 from public.care_instruction_source_links
+      where instruction_id = p_instruction_id and source_kind = 'pharmacy_information'
+    )
+    and exists (
+      select 1 from public.care_instruction_source_links
+      where instruction_id = p_instruction_id and source_kind = 'clinician_direction'
+    )
+    and exists (
+      select 1 from public.care_instruction_source_links
+      where instruction_id = p_instruction_id and source_kind = 'manufacturer_material'
+    );
+end;
+$$;
+
 create or replace function public.care_supply_kit_replacement_context_current(
   p_supply_kit_id uuid,
   p_patient_id uuid,
@@ -363,6 +422,11 @@ begin
     and instruction.status = 'released'
   for share;
   if not found then return false; end if;
+  if not public.care_instruction_sources_current(
+    instruction_row.id,
+    instruction_row.patient_id,
+    instruction_row.prescription_id
+  ) then return false; end if;
   select * into supply_source_row
   from public.care_supply_sources source
   where source.id = kit_row.supply_source_id
@@ -735,18 +799,11 @@ begin
         p_occurred_at
       )
   ) then raise exception 'care_current_signed_assigned_prescription_required' using errcode='23514'; end if;
-  if (
-    select count(*) from public.care_instruction_source_links link
-    join public.care_instruction_sources source on source.id=link.source_id
-    where link.instruction_id=p_instruction_id
-      and source.patient_id=instruction_row.patient_id
-      and source.prescription_id=instruction_row.prescription_id
-      and source.verification_state='verified'
-      and not exists (
-        select 1 from public.care_instruction_sources newer
-        where newer.supersedes_source_id=source.id and newer.verification_state='verified'
-      )
-  ) <> 4 then raise exception 'care_current_verified_instruction_sources_required' using errcode='23514'; end if;
+  if not public.care_instruction_sources_current(
+    p_instruction_id,
+    instruction_row.patient_id,
+    instruction_row.prescription_id
+  ) then raise exception 'care_current_verified_instruction_sources_required' using errcode='23514'; end if;
 
   select * into replay_event
   from public.care_instruction_events
@@ -816,6 +873,11 @@ begin
     instruction_row.patient_id,
     instruction_row.prescription_id
   ) then raise exception 'care_current_consent_and_state_required' using errcode='23514'; end if;
+  if not public.care_instruction_sources_current(
+    instruction_row.id,
+    instruction_row.patient_id,
+    instruction_row.prescription_id
+  ) then raise exception 'care_current_verified_instruction_sources_required' using errcode='23514'; end if;
   select * into acknowledgment_row
   from public.care_instruction_acknowledgments
   where patient_id=p_patient_id and idempotency_key=p_idempotency_key
@@ -863,6 +925,9 @@ begin
   ) then raise exception 'care_clinical_admin_required' using errcode='42501'; end if;
   if not public.care_instruction_context_current(p_patient_id,p_prescription_id)
   then raise exception 'care_current_consent_and_state_required' using errcode='23514'; end if;
+  if not public.care_instruction_sources_current(
+    p_instruction_id,p_patient_id,p_prescription_id
+  ) then raise exception 'care_current_verified_instruction_sources_required' using errcode='23514'; end if;
   perform 1 from public.care_supply_sources
   where id=p_supply_source_id and verification_state='verified'
   for share;
@@ -1074,6 +1139,11 @@ begin
     kit_row.patient_id,
     kit_row.prescription_id
   ) then raise exception 'care_current_consent_and_state_required' using errcode='23514'; end if;
+  if not public.care_instruction_sources_current(
+    kit_row.instruction_id,
+    kit_row.patient_id,
+    kit_row.prescription_id
+  ) then raise exception 'care_current_verified_instruction_sources_required' using errcode='23514'; end if;
   perform 1 from public.care_supply_sources
   where id=kit_row.supply_source_id and verification_state='verified'
   for share;
@@ -1294,6 +1364,7 @@ $$;
 
 revoke all on function public.care_audit_supply_source() from public,anon,authenticated;
 revoke all on function public.care_instruction_context_current(uuid,uuid) from public,anon,authenticated;
+revoke all on function public.care_instruction_sources_current(uuid,uuid,uuid) from public,anon,authenticated;
 revoke all on function public.care_supply_kit_replacement_context_current(uuid,uuid,uuid,timestamptz) from public,anon,authenticated;
 revoke all on function public.care_supply_replacement_context_current(uuid,uuid,uuid,timestamptz) from public,anon,authenticated;
 revoke all on function public.care_create_instruction_source(uuid,uuid,text,text,text,text,uuid,text,timestamptz) from public,anon,authenticated;
@@ -1308,6 +1379,7 @@ revoke all on function public.care_apply_supply_replacement_action(uuid,uuid,int
 
 grant execute on function public.care_create_instruction_source(uuid,uuid,text,text,text,text,uuid,text,timestamptz) to service_role;
 grant execute on function public.care_instruction_context_current(uuid,uuid) to service_role;
+grant execute on function public.care_instruction_sources_current(uuid,uuid,uuid) to service_role;
 grant execute on function public.care_supply_kit_replacement_context_current(uuid,uuid,uuid,timestamptz) to service_role;
 grant execute on function public.care_supply_replacement_context_current(uuid,uuid,uuid,timestamptz) to service_role;
 grant execute on function public.care_create_patient_instruction_draft(uuid,uuid,uuid,text,uuid,uuid,uuid,uuid,uuid,text,timestamptz) to service_role;

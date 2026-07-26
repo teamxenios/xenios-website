@@ -26,7 +26,8 @@ const stamp = "2026-07-25T20:00:00Z";
 
 const instruction: CarePatientInstruction = {
   id: INSTRUCTION, patientId: PATIENT, prescriptionId: PRESCRIPTION,
-  status: "released", sourceIds: [SOURCE], instructionContent: "verified content",
+  status: "released", sourceChainCurrent: true, sourceIds: [SOURCE],
+  instructionContent: "verified content",
   version: 1, acknowledgedVersion: null, supersedesInstructionId: null,
   releasedAt: stamp, createdAt: stamp, updatedAt: stamp,
 };
@@ -42,6 +43,7 @@ const kit: CareSupplyKit = {
   verifiedSupplierReference: "verified supplier",
   supplySourceVerificationState: "verified",
   supplySourceVerifiedAt: stamp,
+  replacementEligible: true,
   replacementCadence: "verified cadence", version: 1,
   supersedesSupplyKitId: null, releasedAt: stamp, createdAt: stamp, updatedAt: stamp,
 };
@@ -125,6 +127,26 @@ describe("Care PR5 instruction and supply routes", () => {
     expect(repository.requestReplacement).toHaveBeenCalledWith(
       expect.objectContaining({ patientId: PATIENT }),
     );
+  });
+
+  it("keeps a released instruction with superseded linked sources as history", async () => {
+    const staleInstruction = { ...instruction, sourceChainCurrent: false };
+    const { app } = appFor(
+      "care_patient",
+      "patient-user",
+      repo({
+        listPatientInstructions: vi.fn(async () => [staleInstruction]),
+      }),
+    );
+    const response = await request(app).get("/api/care/instructions");
+    expect(response.status).toBe(200);
+    expect(response.body.instructions).toEqual([
+      expect.objectContaining({
+        id: INSTRUCTION,
+        status: "released",
+        sourceChainCurrent: false,
+      }),
+    ]);
   });
 
   it("uses the authenticated clinician identity and rejects body actor injection", async () => {

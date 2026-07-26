@@ -87,6 +87,11 @@ findings: current consent/state enforcement on protected reads and writes,
 exact actor/input-bound replay authorization, exact replacement-chain
 revalidation, state-first supply-source projection, and optimistic
 version/idempotency/transition guards with immutable configuration history.
+The follow-up source-chain correction adds one canonical four-source predicate:
+a verified successor immediately makes the old linked instruction historical,
+removes it from readiness, and blocks replacement reads/actions/replays until a
+new instruction and kit explicitly bind the current source. Unrelated source
+contexts do not contaminate the chain.
 Care remains disabled and no real or seed clinical facts were added.
 
 | Requirement | Original assignment | Current implementation | Live production state | Classification | Remaining work | Owner | Release train |

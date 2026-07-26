@@ -66,6 +66,7 @@ export interface CarePatientInstruction {
   patientId: CareRecordId;
   prescriptionId: CareRecordId;
   status: CareInstructionStatus;
+  sourceChainCurrent: boolean;
   sourceIds: readonly CareRecordId[];
   instructionContent: string;
   version: number;
@@ -85,6 +86,7 @@ export interface CareSupplyKit {
   verifiedSupplierReference: string | null;
   supplySourceVerificationState: CareSupplySourceVerificationState;
   supplySourceVerifiedAt: string | null;
+  replacementEligible: boolean;
   replacementCadence: string | null;
   version: number;
   supersedesSupplyKitId: CareRecordId | null;

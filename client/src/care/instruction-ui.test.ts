@@ -20,6 +20,8 @@ describe("Care PR5 final Xenios UI states", () => {
     expect(center).toContain(
       'kit.supplySourceVerificationState === "verified"',
     );
+    expect(center).toContain("instruction.sourceChainCurrent");
+    expect(center).toContain("kit.replacementEligible");
     expect(center).toContain("Supply replacement unavailable");
     expect(center).toContain("overflow-x-clip");
     expect(center).not.toMatch(/amazon|generic syringe|sample instruction|fake supplier/i);

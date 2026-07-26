@@ -201,13 +201,13 @@ owners approve any later disposition.
 - Exact corrected ancestry: merge base is accepted Care PR 4 source head
   `0ff2352120544f436c005959e1593465353f15bb`.
 - Scope isolation: the ancestry-corrected 22-file PR5 unit remains intact; the
-  five bounded Website 6 corrections modify only PR5 instruction/supply
+  bounded Website 6 corrections modify only PR5 instruction/supply
   schema, repository, routes, types, UI, and tests, plus one adjacent
   repository regression file. No PR6/PR7 or shared canonical model is added.
 - Locked-file isolation: no delta in `client/src/App.tsx`, `server/index.ts`, or
   navigation files.
-- Focused: 4 files / 21 tests passed.
-- Full repository: 166 files / 3,259 tests passed.
+- Focused: 4 files / 26 tests passed.
+- Full repository: 166 files / 3,264 tests passed.
 - `npm run check`: passed.
 - `npm run build`: passed; existing Vite large-chunk advisory only.
 - `git diff --check`: passed.
@@ -218,13 +218,17 @@ owners approve any later disposition.
   - 50/50 total Care tables and 12/12 Care-5 tables have enabled + forced RLS;
   - Care-5 browser table grants: zero;
   - Care-5 browser routine grants: zero;
-  - twelve reviewed Care-5 service-role RPC grants were present;
+  - thirteen reviewed Care-5 service-role RPC grants were present;
   - state-disabled and consent-revoked/superseded actions and replays rejected;
   - changed-input, cross-patient, cross-pharmacy, and revoked-role replays
     rejected without row/version/history changes;
   - expired source relationships blocked replacement progress;
   - stale supply-source writes lost, exact replays wrote once, and guarded
     source transitions preserved immutable audit history;
+  - a verified successor invalidated the old linked instruction, readiness,
+    replacement request/action/replay, and patient current label without
+    rewriting history; an unrelated successor did not contaminate the chain,
+    and an explicitly successor-linked instruction and kit passed;
   - instruction and replacement histories reject UPDATE and DELETE;
   - capability remained `care:disabled`;
   - zero disposable auth users, roles, access audits, instructions, supply

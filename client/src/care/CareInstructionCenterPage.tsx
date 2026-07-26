@@ -216,7 +216,8 @@ export default function CareInstructionCenterPage() {
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
                         <p className="mono-label text-pulse">
-                          {instruction.status === "released"
+                          {instruction.status === "released" &&
+                          instruction.sourceChainCurrent
                             ? "CURRENT CLINICIAN INSTRUCTION"
                             : "INSTRUCTION HISTORY"}
                         </p>
@@ -231,7 +232,9 @@ export default function CareInstructionCenterPage() {
                         {instruction.instructionContent}
                       </p>
                     </div>
-                    {instruction.status === "released" && !acknowledged && (
+                    {instruction.status === "released" &&
+                      instruction.sourceChainCurrent &&
+                      !acknowledged && (
                       <button
                         type="button"
                         className="btn btn-primary mt-6"
@@ -283,10 +286,11 @@ export default function CareInstructionCenterPage() {
                           <dd className="body-m mt-2">{kit.replacementCadence}</dd>
                         </div>
                       </dl>
-                      {!supplierVerified ? (
+                      {!supplierVerified || !kit.replacementEligible ? (
                         <p className="body-m text-ink-2 mt-6" role="status">
-                          Supply replacement unavailable until the exact source
-                          relationship is verified.
+                          Supply replacement unavailable until the exact
+                          instruction and supply relationships are current and
+                          verified.
                         </p>
                       ) : openReplacement ? (
                         <p className="body-m text-ink-2 mt-6">

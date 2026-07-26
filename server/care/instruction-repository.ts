@@ -35,7 +35,10 @@ function asSource(row: Row): CareInstructionSource {
   };
 }
 
-function asInstruction(row: Row): CarePatientInstruction {
+export function mapCarePatientInstructionRow(
+  row: Row,
+  sourceChainCurrent: boolean,
+): CarePatientInstruction {
   const links = (row.care_instruction_source_links ?? []) as Row[];
   const acknowledgments = (row.care_instruction_acknowledgments ?? []) as Row[];
   const acknowledged = acknowledgments
@@ -47,6 +50,7 @@ function asInstruction(row: Row): CarePatientInstruction {
     patientId: asId(row.patient_id),
     prescriptionId: asId(row.prescription_id),
     status: row.status as CarePatientInstruction["status"],
+    sourceChainCurrent,
     sourceIds: links.map((link) => asId(link.source_id)),
     instructionContent: String(row.instruction_content),
     version: Number(row.version),
@@ -60,7 +64,10 @@ function asInstruction(row: Row): CarePatientInstruction {
   };
 }
 
-export function mapCareSupplyKitRow(row: Row): CareSupplyKit {
+export function mapCareSupplyKitRow(
+  row: Row,
+  replacementEligible = false,
+): CareSupplyKit {
   const source = (row.care_supply_sources ?? {}) as Row;
   const verificationState =
     (source.verification_state ??
@@ -84,6 +91,7 @@ export function mapCareSupplyKitRow(row: Row): CareSupplyKit {
       verificationState === "verified" && source.verified_at
         ? String(source.verified_at)
         : null,
+    replacementEligible,
     replacementCadence: row.replacement_cadence
       ? String(row.replacement_cadence)
       : null,
@@ -127,7 +135,7 @@ function asSupplySource(row: Row): CareSupplySource {
 }
 
 const INSTRUCTION_COLUMNS =
-  "id,patient_id,prescription_id,status,instruction_content,version,supersedes_instruction_id,released_at,created_at,updated_at,care_instruction_source_links(source_id),care_instruction_acknowledgments(instruction_version)";
+  "id,patient_id,prescription_id,status,instruction_content,version,supersedes_instruction_id,released_at,created_at,updated_at,care_instruction_source_links(source_id,source_kind),care_instruction_acknowledgments(instruction_version)";
 const KIT_COLUMNS =
   "id,patient_id,prescription_id,status,product_specific_device,replacement_cadence,version,supersedes_supply_kit_id,released_at,created_at,updated_at,care_supply_sources(relationship_reference,verification_state,verified_at)";
 const REPLACEMENT_COLUMNS =
@@ -250,6 +258,19 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
     throwOnError(result.error, "care_supply_replacement_context_lookup_failed");
     return result.data === true;
   };
+  const instructionSourcesCurrent = async (
+    instructionId: CareRecordId,
+    patientId: CareRecordId,
+    prescriptionId: CareRecordId,
+  ) => {
+    const result = await admin.rpc("care_instruction_sources_current", {
+      p_instruction_id: instructionId,
+      p_patient_id: patientId,
+      p_prescription_id: prescriptionId,
+    });
+    throwOnError(result.error, "care_instruction_source_context_lookup_failed");
+    return result.data === true;
+  };
   const rpcInstruction = async (
     name: string,
     args: Record<string, unknown>,
@@ -263,9 +284,20 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
       .eq("id", row.id)
       .single();
     throwOnError(related.error, "care_instruction_lookup_failed");
-    const instruction = asInstruction(related.data as Row);
+    const sourceChainCurrent = await instructionSourcesCurrent(
+      asId(row.id),
+      asId(row.patient_id),
+      asId(row.prescription_id),
+    );
+    const instruction = mapCarePatientInstructionRow(
+      related.data as Row,
+      sourceChainCurrent,
+    );
     if (!(await contextCurrent(instruction.patientId, instruction.prescriptionId))) {
       throw new Error("care_instruction_context_unavailable");
+    }
+    if (!instruction.sourceChainCurrent) {
+      throw new Error("care_instruction_source_context_unavailable");
     }
     return instruction;
   };
@@ -279,12 +311,25 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         .order("created_at", { ascending: false });
       throwOnError(error, "care_instruction_lookup_failed");
       const rows = (data ?? []).map((row) => row as Row);
-      const current = await Promise.all(
+      const currentContext = await Promise.all(
         rows.map((row) =>
           contextCurrent(asId(row.patient_id), asId(row.prescription_id)),
         ),
       );
-      return rows.filter((_row, index) => current[index]).map(asInstruction);
+      const currentSources = await Promise.all(
+        rows.map((row) =>
+          instructionSourcesCurrent(
+            asId(row.id),
+            asId(row.patient_id),
+            asId(row.prescription_id),
+          ),
+        ),
+      );
+      return rows
+        .filter((_row, index) => currentContext[index])
+        .map((row, index) =>
+          mapCarePatientInstructionRow(row, currentSources[index]),
+        );
     },
     async listPatientSupplyKits(patientId) {
       const { data, error } = await admin
@@ -300,9 +345,43 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
           contextCurrent(asId(row.patient_id), asId(row.prescription_id)),
         ),
       );
+      const replacementEligible = await Promise.all(
+        rows.map(async (row) => {
+          const replacements = await admin
+            .from("care_supply_replacements")
+            .select("id")
+            .eq("supply_kit_id", asId(row.id))
+            .order("created_at", { ascending: false })
+            .limit(1);
+          throwOnError(
+            replacements.error,
+            "care_supply_replacement_lookup_failed",
+          );
+          const replacementId = replacements.data?.[0]?.id;
+          if (replacementId) {
+            return replacementContextCurrent(asId(replacementId), patientId, null);
+          }
+          const result = await admin.rpc(
+            "care_supply_kit_replacement_context_current",
+            {
+              p_supply_kit_id: asId(row.id),
+              p_patient_id: patientId,
+              p_operator_user_id: null,
+              p_as_of: new Date().toISOString(),
+            },
+          );
+          throwOnError(
+            result.error,
+            "care_supply_replacement_context_lookup_failed",
+          );
+          return result.data === true;
+        }),
+      );
       return rows
         .filter((_row, index) => current[index])
-        .map(mapCareSupplyKitRow);
+        .map((row, index) =>
+          mapCareSupplyKitRow(row, replacementEligible[index]),
+        );
     },
     async listPatientReplacements(patientId) {
       const { data, error } = await admin
@@ -358,27 +437,39 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
       return rows.filter((_row, index) => current[index]).map(asReplacement);
     },
     async loadReadiness(prescriptionId) {
-      const sources = prescriptionId
-        ? await admin
-            .from("care_instruction_sources")
-            .select("kind")
-            .eq("prescription_id", prescriptionId)
-            .eq("verification_state", "verified")
-        : { data: [], error: null };
-      throwOnError(sources.error, "care_instruction_readiness_lookup_failed");
-      const kinds = new Set((sources.data ?? []).map((row) => String(row.kind)));
       const prescription = prescriptionId
         ? await admin.from("care_prescriptions").select("status").eq("id", prescriptionId).maybeSingle()
         : { data: null, error: null };
       throwOnError(prescription.error, "care_instruction_readiness_lookup_failed");
       const instruction = prescriptionId
-        ? await admin.from("care_patient_instructions").select("id").eq("prescription_id", prescriptionId).eq("status", "released").limit(1)
+        ? await admin
+            .from("care_patient_instructions")
+            .select("id,patient_id,prescription_id,care_instruction_source_links(source_kind)")
+            .eq("prescription_id", prescriptionId)
+            .eq("status", "released")
+            .limit(1)
         : { data: [], error: null };
       const kit = prescriptionId
         ? await admin.from("care_supply_kits").select("product_specific_device,replacement_cadence,care_supply_sources(verification_state)").eq("prescription_id", prescriptionId).eq("status", "released").limit(1)
         : { data: [], error: null };
       throwOnError(instruction.error, "care_instruction_readiness_lookup_failed");
       throwOnError(kit.error, "care_instruction_readiness_lookup_failed");
+      const instructionRow = instruction.data?.[0] as Row | undefined;
+      const instructionCurrent = instructionRow
+        ? await instructionSourcesCurrent(
+            asId(instructionRow.id),
+            asId(instructionRow.patient_id),
+            asId(instructionRow.prescription_id),
+          )
+        : false;
+      const sourceLinks = (
+        instructionCurrent
+          ? (instructionRow?.care_instruction_source_links ?? [])
+          : []
+      ) as Row[];
+      const kinds = new Set(
+        sourceLinks.map((row) => String(row.source_kind)),
+      );
       const kitRow = kit.data?.[0] as Row | undefined;
       const supplySource = (kitRow?.care_supply_sources ?? {}) as Row;
       return {
@@ -387,8 +478,8 @@ export function buildCareInstructionRepository(): CareInstructionRepository {
         pharmacyInformationVerified: kinds.has("pharmacy_information"),
         clinicianDirectionVerified: kinds.has("clinician_direction"),
         manufacturerMaterialVerified: kinds.has("manufacturer_material"),
-        patientInstructionContentVerified: Boolean(instruction.data?.length),
-        patientInstructionReviewed: Boolean(instruction.data?.length),
+        patientInstructionContentVerified: instructionCurrent,
+        patientInstructionReviewed: instructionCurrent,
         productSpecificDeviceVerified: Boolean(kitRow?.product_specific_device),
         supplySourceVerified: supplySource.verification_state === "verified",
         replacementCadenceVerified: Boolean(kitRow?.replacement_cadence),
