@@ -75,6 +75,37 @@ describe("diagnostics member experience", () => {
     );
     expect(html).toContain("does not validate Research products");
   });
+
+  it("uses the member shell and complete route states without diagnostics-only styling", () => {
+    const populated = renderToStaticMarkup(
+      <DiagnosticsMemberHome
+        offer={offer}
+        biomarker={{ state: "Not started", updatedAt: null }}
+      />,
+    );
+    const unavailable = renderToStaticMarkup(
+      <DiagnosticsMemberHome
+        offer={offer}
+        biomarker={{ state: "Not started", updatedAt: null }}
+        state="unavailable"
+      />,
+    );
+    const error = renderToStaticMarkup(
+      <DiagnosticsMemberHome
+        offer={offer}
+        biomarker={{ state: "Not started", updatedAt: null }}
+        state="error"
+        errorMessage="Diagnostics request failed."
+      />,
+    );
+    expect(populated).toContain("research-app");
+    expect(populated).toContain("ra-pagehead");
+    expect(unavailable).toContain("Diagnostics are not available right now.");
+    expect(error).toContain("Diagnostics request failed.");
+    expect(populated).not.toMatch(
+      /linear-gradient|radial-gradient|rounded-\[2rem\]|rounded-2xl|shadow-(?:sm|md|lg|xl)|(?:slate|indigo|amber|emerald)-/,
+    );
+  });
 });
 
 describe("storage and support", () => {

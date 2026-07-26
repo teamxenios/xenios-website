@@ -20,7 +20,13 @@ export interface SuperpowerOfferConfig {
   priceCents: number | null;
   priceEffectiveDate: string | null;
   lastVerificationDate: string | null;
+  lastReviewedDate: string | null;
+  verifiedPriceDate: string | null;
   disclosure: string;
+  interest: {
+    enabled: boolean;
+    href: string | null;
+  };
   affiliate: {
     enabled: boolean;
     url: string | null;
@@ -40,7 +46,10 @@ export interface PublicSuperpowerOffer {
   priceCents: number | null;
   priceEffectiveDate: string | null;
   lastVerificationDate: string | null;
+  lastReviewedDate: string | null;
+  verifiedPriceDate: string | null;
   disclosure: string;
+  interestHref: string | null;
   affiliateUrl: string | null;
   researchBoundary: string;
 }
@@ -56,8 +65,14 @@ export const DEFAULT_SUPERPOWER_OFFER: SuperpowerOfferConfig = {
   priceCents: null,
   priceEffectiveDate: null,
   lastVerificationDate: null,
+  lastReviewedDate: null,
+  verifiedPriceDate: null,
   disclosure:
     "If an affiliate relationship is enabled later, Xenios may receive compensation. No affiliate link is active today.",
+  interest: {
+    enabled: true,
+    href: "/research/member/product-requests/new?source=diagnostics",
+  },
   affiliate: { enabled: false, url: null },
   adminEditable: true,
   updatedAt: "2026-07-25T00:00:00.000Z",
@@ -77,7 +92,13 @@ export function toPublicSuperpowerOffer(
     priceCents: offer.priceCents,
     priceEffectiveDate: offer.priceEffectiveDate,
     lastVerificationDate: offer.lastVerificationDate,
+    lastReviewedDate: offer.lastReviewedDate,
+    verifiedPriceDate: offer.verifiedPriceDate,
     disclosure: offer.disclosure,
+    interestHref:
+      offer.interest.enabled && offer.interest.href?.startsWith("/research/")
+        ? offer.interest.href
+        : null,
     affiliateUrl:
       offer.affiliate.enabled && offer.status === "available" ? offer.affiliate.url : null,
     researchBoundary: SUPERPOWER_RESEARCH_BOUNDARY,
@@ -86,6 +107,12 @@ export function toPublicSuperpowerOffer(
 
 export class SuperpowerOfferRepository {
   private offer = structuredClone(DEFAULT_SUPERPOWER_OFFER);
+
+  constructor(
+    private readonly persist: (
+      offer: SuperpowerOfferConfig,
+    ) => Promise<void> = async () => undefined,
+  ) {}
 
   readPublic(): PublicSuperpowerOffer {
     return toPublicSuperpowerOffer(this.offer);
@@ -107,7 +134,10 @@ export class SuperpowerOfferRepository {
         | "priceCents"
         | "priceEffectiveDate"
         | "lastVerificationDate"
+        | "lastReviewedDate"
+        | "verifiedPriceDate"
         | "disclosure"
+        | "interest"
         | "affiliate"
       >
     >,
@@ -119,7 +149,15 @@ export class SuperpowerOfferRepository {
         "An enabled affiliate offer requires an HTTPS URL.",
       );
     }
-    this.offer = {
+    if (
+      patch.interest?.enabled &&
+      !patch.interest.href?.startsWith("/research/")
+    ) {
+      throw new Website3ValidationError(
+        "An enabled interest action must stay inside the Research member area.",
+      );
+    }
+    const next: SuperpowerOfferConfig = {
       ...this.offer,
       ...structuredClone(patch),
       offerId: this.offer.offerId,
@@ -127,6 +165,8 @@ export class SuperpowerOfferRepository {
       updatedAt: at,
       updatedBy: actor,
     };
+    await this.persist(structuredClone(next));
+    this.offer = next;
     return this.readAdmin();
   }
 }
@@ -191,6 +231,28 @@ export interface BiomarkerRecord {
   consentVersion: string | null;
   consentedAt: string | null;
   updatedAt: string;
+}
+
+export interface TrainerSafeBiomarkerSummary {
+  state: BiomarkerState;
+  stateLabel: string;
+  followUpNeeded: boolean;
+  updatedAt: string;
+}
+
+/**
+ * Trainer-safe projection. It intentionally excludes report identity, private
+ * storage, consent, partner, member, and laboratory-result data.
+ */
+export function toTrainerSafeBiomarkerSummary(
+  record: BiomarkerRecord,
+): TrainerSafeBiomarkerSummary {
+  return {
+    state: record.state,
+    stateLabel: BIOMARKER_STATE_LABELS[record.state],
+    followUpNeeded: record.state === "follow_up_due",
+    updatedAt: record.updatedAt,
+  };
 }
 
 export interface BiomarkerUploadProvider {

@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { ResearchMemberShell } from "../ui/shells";
 import {
-  ArrowRight,
-  CalendarClock,
-  CheckCircle2,
-  FileLock2,
-  FlaskConical,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+  ResearchPendingPanel,
+  ResearchRouteBoundary,
+  ResearchSecureNotice,
+  ResearchStatusBadge,
+} from "../ui/kit";
+import type { Website3SurfaceState } from "./ProductCatalogExperience";
 
 export type SuperpowerOfferView = {
   label: string;
@@ -19,7 +18,10 @@ export type SuperpowerOfferView = {
   priceLabel: string | null;
   priceEffectiveDate: string | null;
   lastVerificationDate: string | null;
+  lastReviewedDate?: string | null;
+  verifiedPriceDate?: string | null;
   disclosure: string;
+  interestHref?: string | null;
   affiliateUrl: string | null;
   researchBoundary: string;
 };
@@ -40,59 +42,80 @@ export type BiomarkerStateView = {
   updatedAt: string | null;
 };
 
+function offerStatusLabel(status: SuperpowerOfferView["status"]): string {
+  if (status === "coming_soon") return "Coming soon";
+  if (status === "available") return "Available";
+  if (status === "paused") return "Paused";
+  return "Unavailable";
+}
+
 export function SuperpowerDiagnostics({ offer }: { offer: SuperpowerOfferView }) {
-  const isAvailable = offer.status === "available";
+  const isAvailable = offer.status === "available" && Boolean(offer.affiliateUrl);
   return (
-    <section aria-labelledby="superpower-title" className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="overflow-hidden rounded-[2rem] border border-indigo-200 bg-[radial-gradient(circle_at_top_right,#c7d2fe_0,transparent_36%),linear-gradient(135deg,#0f172a_0%,#1e1b4b_100%)] p-6 text-white shadow-xl sm:p-10">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center">
-          <div>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.15em] text-indigo-100">
-                <Sparkles size={14} aria-hidden="true" /> Superpower
-              </span>
-              <span className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-slate-200">
-                {offer.status === "coming_soon" ? "Coming soon" : offer.status.replace(/_/g, " ")}
-              </span>
-            </div>
-            <h2 id="superpower-title" className="mt-5 text-3xl font-semibold tracking-tight sm:text-5xl">{offer.label}</h2>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">{offer.summary}</p>
-            <p className="mt-5 max-w-3xl rounded-xl border border-white/15 bg-white/5 p-4 text-sm leading-6 text-slate-200">
-              {offer.researchBoundary}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur">
-            <dl className="grid gap-4 text-sm">
-              <div>
-                <dt className="text-slate-400">Availability</dt>
-                <dd className="mt-1 font-semibold text-white">{offer.availability}</dd>
-              </div>
-              <div>
-                <dt className="text-slate-400">Collection method</dt>
-                <dd className="mt-1 font-semibold text-white">{offer.collectionMethod ?? "Pending verification"}</dd>
-              </div>
-              <div>
-                <dt className="text-slate-400">Current price</dt>
-                <dd className="mt-1 font-semibold text-white">{offer.priceLabel ?? "Not published"}</dd>
-                {offer.priceEffectiveDate && <dd className="mt-1 text-xs text-slate-400">Effective {offer.priceEffectiveDate}</dd>}
-              </div>
-              <div>
-                <dt className="text-slate-400">Last verified</dt>
-                <dd className="mt-1 font-semibold text-white">{offer.lastVerificationDate ?? "Verification pending"}</dd>
-              </div>
-            </dl>
-            {isAvailable && offer.affiliateUrl ? (
-              <a href={offer.affiliateUrl} rel="nofollow sponsored noreferrer" className="btn btn-primary mt-5 w-full justify-center">
-                View partner offer <ArrowRight size={16} aria-hidden="true" />
-              </a>
-            ) : (
-              <button type="button" className="btn btn-secondary mt-5 w-full justify-center" disabled>
-                Partner offer not enabled
-              </button>
-            )}
-            <p className="mt-4 text-xs leading-5 text-slate-300">{offer.disclosure}</p>
-          </div>
+    <section aria-labelledby="superpower-title">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="mono-cap text-pulse">Diagnostics partner</p>
+          <h2 id="superpower-title" className="body-l font-700 mt-2">{offer.label}</h2>
+          <p className="body-s text-ink-2 mt-2 max-w-[64ch]">{offer.summary}</p>
         </div>
+        <ResearchStatusBadge
+          label={offerStatusLabel(offer.status)}
+          tone={offer.status === "available" ? "success" : offer.status === "unavailable" ? "warning" : "pending"}
+        />
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        {isAvailable ? (
+          <div className="card">
+            <p className="mono-label text-ink-mute">Partner access</p>
+            <p className="body-s text-ink-2 mt-2">{offer.researchBoundary}</p>
+            <a href={offer.affiliateUrl ?? undefined} rel="nofollow sponsored noreferrer" className="btn btn-primary mt-4">
+              View partner offer
+            </a>
+          </div>
+        ) : (
+          <ResearchPendingPanel
+            kind={offer.status === "unavailable" ? "unavailable" : "coming_soon"}
+            title="Partner offer not enabled"
+            body={`${offer.researchBoundary} ${offer.disclosure}`}
+            action={
+              offer.interestHref ? (
+                <Link href={offer.interestHref} className="btn btn-secondary">
+                  Register interest
+                </Link>
+              ) : undefined
+            }
+          />
+        )}
+
+        <dl className="card grid gap-4 body-s">
+          <div>
+            <dt className="mono-label text-ink-mute">Availability</dt>
+            <dd className="text-ink-2 mt-1">{offer.availability}</dd>
+          </div>
+          <div>
+            <dt className="mono-label text-ink-mute">Collection method</dt>
+            <dd className="text-ink-2 mt-1">{offer.collectionMethod ?? "Pending verification"}</dd>
+          </div>
+          <div>
+            <dt className="mono-label text-ink-mute">Current price</dt>
+            <dd className="text-ink-2 mt-1">{offer.priceLabel ?? "Not published"}</dd>
+            {offer.priceEffectiveDate && <dd className="text-ink-mute mt-1">Effective {offer.priceEffectiveDate}</dd>}
+          </div>
+          <div>
+            <dt className="mono-label text-ink-mute">Last verified</dt>
+            <dd className="text-ink-2 mt-1">{offer.lastVerificationDate ?? "Verification pending"}</dd>
+          </div>
+          <div>
+            <dt className="mono-label text-ink-mute">Last reviewed</dt>
+            <dd className="text-ink-2 mt-1">{offer.lastReviewedDate ?? "Review pending"}</dd>
+          </div>
+          <div>
+            <dt className="mono-label text-ink-mute">Price verified</dt>
+            <dd className="text-ink-2 mt-1">{offer.verifiedPriceDate ?? "No verified price"}</dd>
+          </div>
+        </dl>
       </div>
     </section>
   );
@@ -134,73 +157,96 @@ export function BiomarkerCenter({
     }
   };
 
+  const activeIndex = BIOMARKER_STEPS.indexOf(record.state);
+
   return (
-    <section aria-labelledby="biomarker-title" className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <section aria-labelledby="biomarker-title" className="mt-10 pt-8" style={{ borderTop: "1px solid var(--rule)" }}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-700">Private member diagnostics</p>
-          <h2 id="biomarker-title" className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Biomarker Center</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+          <p className="mono-cap text-pulse">Private member diagnostics</p>
+          <h2 id="biomarker-title" className="body-l font-700 mt-2">Biomarker Center</h2>
+          <p className="body-s text-ink-2 mt-2 max-w-[68ch]">
             Follow logistics and document status without automated medical interpretation. Results
-            remain with the partner or in your private upload until a qualified review is requested.
+            remain with the partner or in private storage until a qualified review is requested.
           </p>
         </div>
-        <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-bold text-indigo-900">
-          <CalendarClock size={16} aria-hidden="true" /> {record.state}
-        </span>
+        <ResearchStatusBadge label={record.state} tone="info" />
       </div>
 
-      <ol className="mt-6 grid list-none gap-2 p-0 sm:grid-cols-2 lg:grid-cols-4">
+      <ol className="mt-5 grid list-none gap-2 p-0 sm:grid-cols-2 lg:grid-cols-3">
         {BIOMARKER_STEPS.map((step, index) => {
-          const activeIndex = BIOMARKER_STEPS.indexOf(record.state);
           const complete = index < activeIndex;
           const current = index === activeIndex;
           return (
-            <li key={step} className={`rounded-xl border p-3 text-sm ${current ? "border-indigo-500 bg-indigo-50 text-indigo-950" : complete ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-slate-200 bg-white text-slate-500"}`} aria-current={current ? "step" : undefined}>
-              <span className="flex items-center gap-2 font-semibold">
-                {complete ? <CheckCircle2 size={15} aria-hidden="true" /> : <span className="inline-grid h-5 w-5 place-items-center rounded-full border text-[10px]">{index + 1}</span>}
-                {step}
+            <li
+              key={step}
+              className="flex items-center gap-3 border-b py-3 body-s"
+              style={{ borderColor: "var(--rule)" }}
+              aria-current={current ? "step" : undefined}
+            >
+              <span className="mono-label text-ink-mute" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span className={current ? "font-700 text-pulse" : complete ? "text-ink" : "text-ink-mute"}>
+                {step}{complete ? " — complete" : current ? " — current" : ""}
               </span>
             </li>
           );
         })}
       </ol>
 
-      <div className="mt-7 grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-          <div className="flex items-start gap-3">
-            <FileLock2 className="mt-0.5 shrink-0 text-indigo-700" aria-hidden="true" />
-            <div>
-              <h3 className="text-lg font-semibold text-slate-950">Upload a private report</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                PDF, JPEG, or PNG up to 15 MB. The file uses private storage and short-lived signed access.
-              </p>
-            </div>
-          </div>
-          <label className="mt-5 block text-sm font-semibold text-slate-800">
-            Report file
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" className="mt-2 block w-full text-sm" onChange={(event) => setFile(event.target.files?.[0] ?? null)} />
-          </label>
-          <label className="mt-4 flex items-start gap-3 rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-            <input type="checkbox" className="mt-1" checked={consent} onChange={(event) => setConsent(event.target.checked)} />
-            <span>I consent to storing this report privately for the Biomarker Center and understand that uploading it does not create an automated medical interpretation.</span>
-          </label>
-          <button type="button" className="btn btn-primary mt-4" onClick={() => void upload()} disabled={!file || !consent || !onUpload || phase === "uploading"}>
-            {phase === "uploading" ? "Preparing private upload…" : "Upload report"}
-          </button>
-          <div aria-live="polite" className="mt-3 text-sm">
-            {phase === "success" && <p className="text-emerald-800">Your report upload is prepared and remains private.</p>}
-            {phase === "error" && <p className="text-red-700">Private upload is unavailable right now. Try again later.</p>}
-          </div>
-        </div>
-        <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-          <ShieldCheck className="text-slate-800" aria-hidden="true" />
-          <h3 className="mt-4 text-lg font-semibold text-slate-950">Qualified review only</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Xenios does not auto-score or diagnose uploaded reports. A review request goes to a
-            qualified reviewer and remains separate from Research product commerce.
+      <div className="mt-7 grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <form className="card" onSubmit={(event) => { event.preventDefault(); void upload(); }}>
+          <h3 className="body-m font-700">Upload a private report</h3>
+          <p className="body-s text-ink-2 mt-2">
+            PDF, JPEG, or PNG up to 15 MB. Files use private storage and short-lived signed access.
           </p>
-          <Link href="/research/member/questions?topic=biomarker-review" className="btn btn-secondary mt-5 w-full justify-center">
+          <label className="grid gap-2 mt-5">
+            <span className="form-label">Report file</span>
+            <input
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+              className="input-field"
+              onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+            />
+          </label>
+          <label className="flex items-start gap-3 mt-4 body-s text-ink-2">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={consent}
+              onChange={(event) => setConsent(event.target.checked)}
+            />
+            <span>
+              I consent to storing this report privately for the Biomarker Center and understand
+              that uploading it does not create an automated medical interpretation.
+            </span>
+          </label>
+          <button
+            type="submit"
+            className="btn btn-primary mt-4"
+            disabled={!file || !consent || !onUpload || phase === "uploading"}
+          >
+            {phase === "uploading" ? "Preparing private upload..." : "Upload report"}
+          </button>
+          <div aria-live="polite" className="mt-3 body-s">
+            {phase === "success" && <p role="status">Your report upload is prepared and remains private.</p>}
+            {phase === "error" && (
+              <p role="alert">
+                Private upload is unavailable right now. Your selection is preserved; try again.
+              </p>
+            )}
+          </div>
+        </form>
+
+        <aside className="card">
+          <p className="mono-label text-ink-mute">Review boundary</p>
+          <h3 className="body-m font-700 mt-2">Qualified review only</h3>
+          <p className="body-s text-ink-2 mt-2">
+            Xenios does not auto-score or diagnose uploaded reports. Review remains separate from
+            Research product commerce.
+          </p>
+          <Link href="/research/member/questions?topic=biomarker-review" className="btn btn-secondary mt-4">
             Ask about review
           </Link>
         </aside>
@@ -212,22 +258,37 @@ export function BiomarkerCenter({
 export function DiagnosticsMemberHome({
   offer,
   biomarker,
+  state = "ok",
+  errorMessage,
+  onRetry,
 }: {
   offer: SuperpowerOfferView;
   biomarker: BiomarkerStateView;
+  state?: Website3SurfaceState;
+  errorMessage?: string;
+  onRetry?: () => void;
 }) {
   return (
-    <>
-      <div className="mx-auto w-full max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-600">
-          <FlaskConical className="shrink-0 text-indigo-700" aria-hidden="true" />
-          Diagnostics organizes offers, collection, partner results, private reports, and review
-          status. It does not validate Research products.
+    <ResearchMemberShell
+      eyebrow="Member diagnostics"
+      title="Diagnostics"
+      lead="Organize partner offers, collection status, private reports, and qualified review without implying that diagnostic results validate a Research product."
+    >
+      <ResearchRouteBoundary
+        state={state}
+        errorMessage={errorMessage}
+        onRetry={onRetry}
+        unavailableTitle="Diagnostics are not available right now."
+        unavailableBody="Partner access and private report workflows remain closed until their production gates are confirmed."
+      >
+        <ResearchSecureNotice>
+          Diagnostics does not validate Research products or establish product quality, safety, or suitability.
+        </ResearchSecureNotice>
+        <div className="mt-6">
+          <SuperpowerDiagnostics offer={offer} />
+          <BiomarkerCenter record={biomarker} />
         </div>
-      </div>
-      <SuperpowerDiagnostics offer={offer} />
-      <BiomarkerCenter record={biomarker} />
-    </>
+      </ResearchRouteBoundary>
+    </ResearchMemberShell>
   );
 }
-

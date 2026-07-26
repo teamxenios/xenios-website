@@ -14,7 +14,7 @@ Website 3 — Products, Diagnostics & Member Commerce.
 
 ## 4. Base
 
-`origin/main` at `a486b889503a8f9d42f86c4666e808af6c5e852c`.
+`origin/main` at `48cb57250c1ec54fe8714e59fa1071a9eb27f867`.
 
 ## 5. Head
 
@@ -31,28 +31,35 @@ diagnostics email intents.
 
 ## 7. Delivery status
 
-Domain implementation is complete, pushed, and ready for review. It is not yet
-merged or deployed. Shared route registration, shared UI route registration,
-production migrations, and production provider construction remain
-coordinator-owned integration work. Website 2 is the sole final merge and
-Render deployment coordinator; Website 3 remains responsible for review fixes
-and live verification after Website 2 releases the integration.
+Domain-local implementation and the original-scope reconciliation are complete
+on this branch. The candidate is not yet merged or deployed. Shared route
+registration, capabilities/navigation, production migrations, and production
+provider construction remain coordinator-owned integration work. Website 2 is
+the sole final merge and Render deployment coordinator; Website 3 remains
+responsible for review fixes, Release Train 4 product application after Website
+1 freezes the trust contracts, and live verification after Website 2 releases
+the integration.
 
 ## 8. Checkpoint commits
 
-- `716645c` — normalized product master foundations
-- `77d7e2e` — truthful catalog and exact-lot COA experience
-- `da1ed6b` — supplement and metabolic pathway experiences
-- `0a002c3` — product-request integration and demand aggregation
-- `69f4ac0` — diagnostics, biomarker, and member communications
-- Wave 6 — isolated route registration, integration manifest, validation, and handoff
+- `3a7fe44` — normalized product master foundations
+- `630a532` — truthful catalog and exact-lot COA experience
+- `a7c9871` — supplement and metabolic pathway experiences
+- `8bd068e` — product-request integration and demand aggregation
+- `748205c` — diagnostics, biomarker, and member communications
+- `b1889ee` / `5e9c6fd` — integration handoff and production authorization
+- `a617e88` — production-integrity review corrections
+- Final Website 3 completion commit — existing-shell/UI-kit refactor,
+  shared request-source contract, state regressions, and complete evidence
 
 ## 9. Intended files delivered
 
 - `server/research/products-diagnostics/**`
 - `client/src/research/products-diagnostics/**`
+- `shared/research/product-request-sources.ts`
 - `docs/coordination/WEBSITE_3_HANDOFF.md`
 - `docs/coordination/WEBSITE_3_INTEGRATION_MANIFEST.json`
+- `docs/coordination/WEBSITE_3_REMAINING_SCOPE.md`
 
 No Website 2-owned application wiring, research wiring, shared capability /
 member-platform types, legal documents, or production migration artifacts were
@@ -83,15 +90,17 @@ from the existing authoritative catalog and production persistence/providers:
    certificate rows, a private signed-read provider, and an audit recorder.
 4. Construct `MetabolicInterestService` with a Supabase-backed
    `MetabolicInterestStore`.
-5. Hydrate `MetabolicPathwayRepository` and `SuperpowerOfferRepository` from
-   the admin configuration tables listed below. Persist every admin update
-   before returning success; the included in-memory repositories are
-   deterministic development/test providers, not production persistence.
+5. Hydrate `MetabolicPathwayRepository`, `SupplementPlaceholderRepository`,
+   and `SuperpowerOfferRepository` from the admin configuration tables listed
+   below. Persist every admin update before returning success; the included
+   in-memory defaults are deterministic development/test providers, not
+   production persistence.
 6. Construct `BiomarkerService` with a Supabase-backed `BiomarkerStore` and
    private signed-upload provider. The provider must verify the private object
    before the confirmation route transitions a record to `report_uploaded`.
-7. Implement pathway and Superpower repository mutations as awaited durable
-   writes. Persistence failure must reject and must never produce a 200 response.
+7. Implement pathway, supplement, and Superpower repository mutations as
+   awaited durable writes. Persistence failure must reject and must never
+   produce a 200 response.
 
 ## 11. Routes exported
 
@@ -112,6 +121,8 @@ Admin routes, all behind `requireSupabaseAdmin`:
 - `PUT /api/admin/research/metabolic-pathways/:pathwayId`
 - `GET /api/admin/research/superpower-offer`
 - `PUT /api/admin/research/superpower-offer`
+- `GET /api/admin/research/supplement-placeholders`
+- `PUT /api/admin/research/supplement-placeholders/:category`
 
 Existing product, commerce, cart, order, subscription, product-request, and
 demand-analytics routes remain authoritative and must not be duplicated.
@@ -125,8 +136,9 @@ Coordinator-owned route work:
 
 1. Adapt `GET /api/research/product-platform` plus the existing
    `GET /api/research/products` DTO into `ProductCardView`, then render
-   `ProductCatalogExperience` at the existing
-   `/research/member/products` route.
+   `ProductCatalogExperience` at the existing `/research/member/products`
+   route. Preserve family filtering, search, and the published-facts
+   comparison.
 2. Keep the existing product-detail commerce behavior authoritative. Add the
    nine-section `ProductDetailExperience` presentation and exact-lot
    certificate action without weakening the server `purchasable` decision.
@@ -136,8 +148,9 @@ Coordinator-owned route work:
    `PendingMetabolicCare` and `SupplementComingSoon`.
 5. Reuse the existing product-request form and routes. Entry links must carry
    the `source` query parameter defined by `productRequestHref`.
-6. Add `StorageAndOrganization` and `SupportCenter` to the existing member
-   product/support surfaces. Do not add primary-navigation Coming Soon tabs.
+6. Add `StorageAndOrganization`, `SupportCenter`, and
+   `ResearchEducationCenter` to the existing member product/support/education
+   surfaces. Do not add primary-navigation Coming Soon tabs.
 
 ## 13. Product master
 
@@ -165,9 +178,12 @@ contact, interest date, and attribution source. It is not a clinical intake.
 ## 16. Diagnostics and privacy
 
 Superpower is Coming Soon and has no affiliate URL until the admin explicitly
-enables an HTTPS offer. Biomarker files require consent and private signed
-upload. The member DTO omits storage keys and contains no interpretation field.
-Bloodwork is explicitly separate from and cannot validate Research products.
+enables an HTTPS offer. Its admin record includes a safe interest action,
+partner/offer state, last-reviewed date, and verified-price date. Biomarker
+files require consent and private signed upload. The member DTO omits storage
+keys and contains no interpretation field. The trainer-safe projection contains
+only status, follow-up need, and update time. Bloodwork is explicitly separate
+from and cannot validate Research products.
 
 ## 17. Product requests and demand
 
@@ -178,7 +194,7 @@ Submitted URLs are never fetched. Member demand summaries use an explicit
 allowlist and expose no requester ids or sources.
 
 The member UI and server adapter import one browser-safe Website 3 source
-contract from `product-request-sources.ts`. Every rendered source is in the
+contract from `shared/research/product-request-sources.ts`. Every rendered source is in the
 server-accepted `PRODUCT_REQUEST_ENTRY_POINTS` vocabulary.
 
 ## 18. Communications
@@ -197,22 +213,26 @@ allowlisted; extra sensitive fields are discarded.
 
 ## 19. Production data requirements
 
-Website 2 / the release coordinator owns production migrations. Create and
-review migrations for:
+Website 2 / the release coordinator owns production migrations. Inspect and
+reuse canonical schema rather than creating parallel product-lot tables.
+Create or extend reviewed migrations for:
 
-- `research_product_lots`: variant id, lot code, release state, received /
-  expiry dates; unique `(variant_id, lot_code)`.
-- `research_product_certificates`: exact lot id, document state, private
-  storage key, verification state, reviewed date.
+- canonical `research_inventory_lots`: exact variant/product lot, release and
+  availability state, received/expiry dates, unique canonical lot identity.
+- canonical `research_lot_quality_documents`: exact lot, document state,
+  private storage key, verification state, reviewed date.
 - `research_certificate_access_audit`: member id, certificate id, lot id,
   outcome, reason, timestamp; append-only.
+- `research_supplement_placeholders`: category, public copy, private channel
+  configuration, launch-interest action, updated actor/time.
 - `research_metabolic_pathways`: pathway id, public fields, internal aliases,
   action links, updated actor/time.
 - `research_metabolic_interests`: member id, pathway id, state, general goal,
   contact method, interest date, attribution, idempotency key; unique
   `(member_id, idempotency_key)`.
-- `research_superpower_offers`: offer fields, affiliate enabled/url,
-  effective/verification dates, updated actor/time.
+- `research_superpower_offers`: offer/partner state, affiliate enabled/url,
+  interest state/action, effective/verification/reviewed dates, updated
+  actor/time.
 - `research_biomarker_records`: member id, state, partner reference, private
   report key/filename, consent version/time, updated time; unique member id.
 - `research_biomarker_uploads`: upload id, member id, pending state, private
@@ -241,12 +261,10 @@ are admin data and stay null until enabled.
 
 ## 21. Validation
 
-- Focused Website 3 and reused-system suites: green.
-- Complete `npm test`: 142 test files, 3,139 tests, all passed.
+- Focused Website 3 suites: 12 files, 76 tests, all passed.
+- Complete `npm test`: 147 test files, 3,173 tests, all passed.
 - `npm run check`: passed.
-- `npm run build`: passed.
-- Production build retains the repository's existing large-chunk warning; no
-  new build failure.
+- `npm run build`: passed with the repository's existing large-chunk warning.
 
 ## 22. Visual, keyboard, mobile, and accessibility review
 
@@ -260,21 +278,30 @@ Website 3 React component and repository styles. Evidence is committed under
 `docs/coordination/evidence/`:
 
 - `website3-catalog-desktop-1440.png`
+- `website3-catalog-mobile-375.png`
 - `website3-catalog-mobile-320.png`
 - `website3-catalog-keyboard-focus-320.png`
+- `website3-catalog-empty-375.png`
+- `website3-catalog-unavailable-375.png`
+- `website3-catalog-error-375.png`
+- `website3-diagnostics-desktop-1440.png`
+- `website3-diagnostics-biomarker-form-1440.png`
+- `website3-care-form-desktop-1440.png`
 - `WEBSITE_3_UI_EVIDENCE.md`
 
-The desktop and 320 px document widths matched their scroll widths, so no
-page-level horizontal overflow was present. The product-family row retains an
-intentional horizontal scroller. The DOM accessibility tree exposed semantic
-headings, a named searchbox, pressed-state buttons, and descriptive links; the
-focused searchbox displayed a visible focus border. Website 2 / QA should still
-repeat the matrix after shared route integration and on the live site.
+The desktop, 375 px, and 320 px document widths matched their scroll widths, so
+no page-level horizontal overflow was present. The product-family row retains
+an intentional horizontal scroller. The DOM accessibility tree exposed
+semantic headings, a named searchbox, pressed-state buttons, and descriptive
+links; the focused searchbox displayed a visible focus border. Website 2 /
+Website 6 must repeat the matrix, including 200% zoom, after shared route
+integration and on the live site.
 
 ## 23. Risks, blockers, and release rule
 
-- Do not merge until durable pathway/offer/interest/biomarker persistence and
-  private storage providers are wired through reviewed production migrations.
+- Do not merge until durable pathway/supplement/offer/interest/biomarker
+  persistence and private storage providers are wired through reviewed
+  production migrations.
 - Do not enable product commerce, Superpower affiliate access, or biomarker
   uploads from client state.
 - Do not publish the internal GLP-3 alias.
@@ -287,3 +314,10 @@ repeat the matrix after shared route integration and on the live site.
   provider, and migration work. Website 3 must then verify its affected live
   routes, role restrictions, persistence, mobile behavior, accessibility, and
   relevant production logs before reporting `LIVE`.
+
+The exact original-scope classification, owner, acceptance test, and release
+train for each item is in `docs/coordination/WEBSITE_3_REMAINING_SCOPE.md`.
+
+UI CONSISTENCY STATUS: MATCHES EXISTING XENIOS
+
+PRODUCTION STATUS: NOT YET MERGED

@@ -68,5 +68,18 @@ describe("care and supplement member surfaces", () => {
     expect(html).toContain("No brand, price, stock, serving instruction, or benefit claim");
     expect(html).not.toContain("$");
   });
+
+  it("uses the member shell, shared pending states, and quiet unavailable state", () => {
+    const care = renderToStaticMarkup(<PendingMetabolicCare pathways={pathways} />);
+    const supplementsUnavailable = renderToStaticMarkup(
+      <SupplementComingSoon supplements={supplements} state="unavailable" />,
+    );
+    expect(care).toContain("research-app");
+    expect(care).toContain("ra-pending-coming_soon");
+    expect(supplementsUnavailable).toContain("Supplement information is not available right now.");
+    expect(`${care}${supplementsUnavailable}`).not.toMatch(
+      /linear-gradient|radial-gradient|rounded-\[2rem\]|rounded-2xl|shadow-(?:sm|md|lg|xl)|(?:slate|indigo|amber|emerald)-/,
+    );
+  });
 });
 

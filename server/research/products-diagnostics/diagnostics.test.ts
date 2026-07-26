@@ -7,6 +7,7 @@ import {
   SUPERPOWER_RESEARCH_BOUNDARY,
   SuperpowerOfferRepository,
   canTransitionBiomarkerState,
+  toTrainerSafeBiomarkerSummary,
   type BiomarkerUploadProvider,
 } from "./diagnostics";
 import {
@@ -19,7 +20,10 @@ import {
 import {
   STORAGE_ACCESSORY_BOUNDARY,
   STORAGE_AND_ORGANIZATION_ACCESSORIES,
+  STORAGE_SOURCE_CARDS,
   SUPPORT_CENTER_CATEGORIES,
+  RESEARCH_EDUCATION_BOUNDARY,
+  RESEARCH_EDUCATION_TOPICS,
 } from "./support-and-storage";
 
 describe("Superpower Diagnostics", () => {
@@ -28,6 +32,7 @@ describe("Superpower Diagnostics", () => {
     expect(repository.readPublic()).toMatchObject({
       status: "coming_soon",
       affiliateUrl: null,
+      interestHref: "/research/member/product-requests/new?source=diagnostics",
       priceCents: null,
       researchBoundary: SUPERPOWER_RESEARCH_BOUNDARY,
     });
@@ -49,6 +54,8 @@ describe("Superpower Diagnostics", () => {
         priceCents: 24900,
         priceEffectiveDate: "2026-08-01",
         lastVerificationDate: "2026-07-31",
+        lastReviewedDate: "2026-07-31",
+        verifiedPriceDate: "2026-07-31",
         collectionMethod: "Partner collection site",
         availability: "Eligible US locations",
       },
@@ -59,9 +66,46 @@ describe("Superpower Diagnostics", () => {
       "https://partner.example/offer",
     );
   });
+
+  it("persists before exposing an administrator update", async () => {
+    const repository = new SuperpowerOfferRepository(async () => {
+      throw new Error("database unavailable");
+    });
+    await expect(
+      repository.update(
+        { lastReviewedDate: "2026-07-31" },
+        "admin@example.com",
+        "2026-07-31T12:00:00.000Z",
+      ),
+    ).rejects.toThrow("database unavailable");
+    expect(repository.readAdmin().lastReviewedDate).toBeNull();
+  });
 });
 
 describe("Biomarker Center", () => {
+  it("creates a trainer-safe status summary without report or consent details", () => {
+    const summary = toTrainerSafeBiomarkerSummary({
+      biomarkerRecordId: "record_private",
+      memberId: "member_private",
+      state: "follow_up_due",
+      partnerReference: "partner_private",
+      reportStorageKey: "private/report.pdf",
+      reportFilename: "report.pdf",
+      consentVersion: "consent-v1",
+      consentedAt: "2026-07-25T12:00:00.000Z",
+      updatedAt: "2026-07-25T12:00:00.000Z",
+    });
+    expect(summary).toEqual({
+      state: "follow_up_due",
+      stateLabel: "Follow-up due",
+      followUpNeeded: true,
+      updatedAt: "2026-07-25T12:00:00.000Z",
+    });
+    expect(JSON.stringify(summary)).not.toMatch(
+      /member_private|partner_private|report\.pdf|consent-v1/,
+    );
+  });
+
   it("defines every requested state and controlled transitions", () => {
     expect(BIOMARKER_STATES).toHaveLength(11);
     expect(canTransitionBiomarkerState("not_started", "test_ordered")).toBe(true);
@@ -294,6 +338,18 @@ describe("communications, storage, and support", () => {
     ]);
     expect(STORAGE_ACCESSORY_BOUNDARY).toContain(
       "not human administration supplies",
+    );
+  });
+
+  it("provides status, COA, and source education without human-use guidance", () => {
+    expect(RESEARCH_EDUCATION_TOPICS.map((topic) => topic.topicId)).toEqual([
+      "product-status",
+      "coa-scope",
+      "research-boundary",
+    ]);
+    expect(STORAGE_SOURCE_CARDS).toHaveLength(3);
+    expect(RESEARCH_EDUCATION_BOUNDARY).toContain(
+      "does not provide dosing, reconstitution, administration",
     );
   });
 });

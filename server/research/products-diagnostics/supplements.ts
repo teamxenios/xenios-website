@@ -1,3 +1,5 @@
+import { Website3ValidationError } from "./errors";
+
 export const SUPPLEMENT_PLACEHOLDER_CATEGORIES = [
   "foundational",
   "performance",
@@ -15,7 +17,13 @@ export type FutureSupplementChannel =
   | "partner_fulfilled"
   | "private_label";
 
-export interface SupplementPlaceholder {
+type SupplementChannelConfig = {
+  configured: boolean;
+  partnerReference: string | null;
+  publicUrl: string | null;
+};
+
+export interface SupplementPlaceholderConfig {
   placeholderId: string;
   category: SupplementPlaceholderCategory;
   label: string;
@@ -26,11 +34,16 @@ export interface SupplementPlaceholder {
   stockState: null;
   servingInstructions: null;
   claims: never[];
-  channelMetadata: Record<
-    FutureSupplementChannel,
-    { configured: boolean; partnerReference: null; publicUrl: null }
-  >;
+  channelMetadata: Record<FutureSupplementChannel, SupplementChannelConfig>;
+  launchInterestHref: string;
   adminEditable: true;
+  updatedAt: string;
+  updatedBy: string | null;
+}
+
+export interface SupplementPlaceholder
+  extends Omit<SupplementPlaceholderConfig, "channelMetadata" | "updatedBy"> {
+  channelMetadata: Record<FutureSupplementChannel, { configured: boolean }>;
 }
 
 const CHANNELS: readonly FutureSupplementChannel[] = [
@@ -52,16 +65,16 @@ const descriptions: Record<SupplementPlaceholderCategory, string> = {
     "Specialty supplement candidates require category-specific documentation and professional-channel review before launch.",
 };
 
-function channelMetadata(): SupplementPlaceholder["channelMetadata"] {
+function channelMetadata(): SupplementPlaceholderConfig["channelMetadata"] {
   return Object.fromEntries(
     CHANNELS.map((channel) => [
       channel,
       { configured: false, partnerReference: null, publicUrl: null },
     ]),
-  ) as SupplementPlaceholder["channelMetadata"];
+  ) as SupplementPlaceholderConfig["channelMetadata"];
 }
 
-export const SUPPLEMENT_PLACEHOLDERS: readonly SupplementPlaceholder[] =
+export const DEFAULT_SUPPLEMENT_PLACEHOLDERS: readonly SupplementPlaceholderConfig[] =
   SUPPLEMENT_PLACEHOLDER_CATEGORIES.map((category) => ({
     placeholderId: `supplement_placeholder_${category}`,
     category,
@@ -74,6 +87,112 @@ export const SUPPLEMENT_PLACEHOLDERS: readonly SupplementPlaceholder[] =
     servingInstructions: null,
     claims: [] as never[],
     channelMetadata: channelMetadata(),
+    launchInterestHref: "/research/member/product-requests/new?source=supplements",
     adminEditable: true,
+    updatedAt: "2026-07-25T00:00:00.000Z",
+    updatedBy: null,
   }));
 
+export function toPublicSupplementPlaceholder(
+  config: SupplementPlaceholderConfig,
+): SupplementPlaceholder {
+  const {
+    channelMetadata: privateChannels,
+    updatedBy: _updatedBy,
+    ...publicConfig
+  } = structuredClone(config);
+  void _updatedBy;
+  return {
+    ...publicConfig,
+    channelMetadata: Object.fromEntries(
+      CHANNELS.map((channel) => [
+        channel,
+        { configured: privateChannels[channel].configured },
+      ]),
+    ) as SupplementPlaceholder["channelMetadata"],
+  };
+}
+
+export const SUPPLEMENT_PLACEHOLDERS: readonly SupplementPlaceholder[] =
+  DEFAULT_SUPPLEMENT_PLACEHOLDERS.map(toPublicSupplementPlaceholder);
+
+export class SupplementPlaceholderRepository {
+  private rows = DEFAULT_SUPPLEMENT_PLACEHOLDERS.map((row) => structuredClone(row));
+
+  constructor(
+    private readonly persist: (
+      row: SupplementPlaceholderConfig,
+    ) => Promise<void> = async () => undefined,
+  ) {}
+
+  listPublic(): SupplementPlaceholder[] {
+    return this.rows.map(toPublicSupplementPlaceholder);
+  }
+
+  listAdmin(): SupplementPlaceholderConfig[] {
+    return structuredClone(this.rows);
+  }
+
+  async update(
+    category: SupplementPlaceholderCategory,
+    patch: Partial<
+      Pick<
+        SupplementPlaceholderConfig,
+        "label" | "description" | "channelMetadata" | "launchInterestHref"
+      >
+    >,
+    actor: string,
+    at: string,
+  ): Promise<SupplementPlaceholderConfig> {
+    const index = this.rows.findIndex((row) => row.category === category);
+    if (index < 0) throw new Website3ValidationError("Unknown supplement placeholder category.");
+    if (patch.label !== undefined && !patch.label.trim()) {
+      throw new Website3ValidationError("Supplement placeholder label is required.");
+    }
+    if (patch.description !== undefined && !patch.description.trim()) {
+      throw new Website3ValidationError("Supplement placeholder description is required.");
+    }
+    if (
+      patch.launchInterestHref !== undefined &&
+      !patch.launchInterestHref.startsWith("/research/")
+    ) {
+      throw new Website3ValidationError(
+        "Supplement launch-interest links must stay inside the Research member area.",
+      );
+    }
+    if (patch.channelMetadata) {
+      for (const channel of CHANNELS) {
+        const config = patch.channelMetadata[channel];
+        if (!config) {
+          throw new Website3ValidationError(`Missing ${channel} channel configuration.`);
+        }
+        if (config.configured && !config.partnerReference?.trim()) {
+          throw new Website3ValidationError(
+            `Configured ${channel} metadata requires a partner reference.`,
+          );
+        }
+        if (config.publicUrl && !config.publicUrl.startsWith("https://")) {
+          throw new Website3ValidationError(`${channel} public URL must use HTTPS.`);
+        }
+      }
+    }
+    const next: SupplementPlaceholderConfig = {
+      ...this.rows[index],
+      ...structuredClone(patch),
+      placeholderId: this.rows[index].placeholderId,
+      category,
+      status: "coming_soon",
+      priceCents: null,
+      brand: null,
+      stockState: null,
+      servingInstructions: null,
+      claims: [],
+      adminEditable: true,
+      updatedAt: at,
+      updatedBy: actor,
+    };
+    await this.persist(structuredClone(next));
+    this.rows[index] = next;
+    return structuredClone(next);
+  }
+}

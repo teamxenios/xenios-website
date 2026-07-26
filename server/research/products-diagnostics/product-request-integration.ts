@@ -9,13 +9,13 @@ import {
   normalizeDemandName,
   validateSubmittedProductUrl,
 } from "../product-requests";
-import type { ProductRequestEntryPoint } from "./product-request-sources";
+import type { ProductRequestEntryPoint } from "@shared/research/product-request-sources";
 
 export {
   PRODUCT_REQUEST_ENTRY_POINTS,
   productRequestHref,
-} from "./product-request-sources";
-export type { ProductRequestEntryPoint } from "./product-request-sources";
+} from "@shared/research/product-request-sources";
+export type { ProductRequestEntryPoint } from "@shared/research/product-request-sources";
 
 export interface Website3ProductRequestForm {
   productName: string;

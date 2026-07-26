@@ -1,5 +1,15 @@
 import { Link } from "wouter";
-import { ArrowUpRight, Inbox, LockKeyhole, Users } from "lucide-react";
+import {
+  productRequestHref,
+  type ProductRequestEntryPoint,
+} from "@shared/research/product-request-sources";
+import {
+  ResearchDataTable,
+  ResearchEmptyState,
+  ResearchSecureNotice,
+  ResearchStatusBadge,
+  type BadgeTone,
+} from "../ui/kit";
 
 export type DemandQueueRow = {
   candidateId: string;
@@ -14,91 +24,130 @@ export type DemandQueueRow = {
   status: string;
 };
 
+function urgencyTone(urgency: DemandQueueRow["urgency"]): BadgeTone {
+  if (urgency === "high") return "warning";
+  if (urgency === "medium") return "info";
+  return "neutral";
+}
+
 export function ProductRequestCallout({
   source,
   productName,
 }: {
-  source: string;
+  source: ProductRequestEntryPoint;
   productName?: string;
 }) {
-  const params = new URLSearchParams({ source });
-  if (productName) params.set("product", productName);
   return (
-    <aside className="rounded-2xl border border-indigo-200 bg-indigo-50 p-5">
-      <div className="flex items-start gap-3">
-        <LockKeyhole className="mt-0.5 shrink-0 text-indigo-700" aria-hidden="true" size={20} />
-        <div className="min-w-0">
-          <h2 className="text-lg font-semibold text-slate-950">Cannot find what you need?</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Submit a private product request with an optional screenshot. Xenios stores the link
-            for review but never fetches it. A submission does not create a product, inventory,
-            order, payment, public page, availability promise, or clinical recommendation.
-          </p>
-          <Link
-            href={`/research/member/product-requests/new?${params.toString()}`}
-            className="btn btn-primary mt-4"
-          >
-            Start a product request <ArrowUpRight size={16} aria-hidden="true" />
-          </Link>
-        </div>
-      </div>
+    <aside className="card">
+      <p className="mono-label text-ink-mute">Private product request</p>
+      <h2 className="body-m font-700 mt-2">Cannot find what you need?</h2>
+      <p className="body-s text-ink-2 mt-2 max-w-[64ch]">
+        Submit a private product request with an optional screenshot. Xenios stores the link for
+        review but never fetches it. A submission does not create a product, inventory, order,
+        payment, public page, availability promise, or clinical recommendation.
+      </p>
+      <Link href={productRequestHref(source, productName)} className="btn btn-primary mt-4">
+        Start a product request
+      </Link>
+      <ResearchSecureNotice>
+        Request details remain private to authorized members of the review team.
+      </ResearchSecureNotice>
     </aside>
   );
 }
 
+function formatValue(value: string): string {
+  return value.replace(/_/g, " ");
+}
+
 export function DemandQueue({ rows }: { rows: DemandQueueRow[] }) {
   return (
-    <section aria-labelledby="demand-queue-title" className="rounded-2xl border border-slate-200 bg-white p-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <section aria-labelledby="demand-queue-title">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-indigo-700">Private admin queue</p>
-          <h2 id="demand-queue-title" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Member demand</h2>
+          <p className="mono-cap text-pulse">Private admin queue</p>
+          <h2 id="demand-queue-title" className="body-l font-700 mt-2">Member demand</h2>
         </div>
-        <span className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600">
-          <Inbox size={17} aria-hidden="true" /> {rows.length} candidates
-        </span>
+        <p className="body-s tabular text-ink-mute">{rows.length} candidates</p>
       </div>
+
       {rows.length === 0 ? (
-        <div className="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
-          <p className="font-semibold text-slate-900">No demand candidates yet.</p>
-          <p className="mt-1 text-sm text-slate-600">Submitted requests will aggregate here without exposing members to one another.</p>
+        <div className="mt-5">
+          <ResearchEmptyState
+            title="No demand candidates yet."
+            body="Submitted requests will aggregate here without exposing members to one another."
+          />
         </div>
       ) : (
-        <div className="mt-5 overflow-x-auto">
-          <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
-            <thead>
-              <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
-                <th className="px-3 py-3">Candidate</th>
-                <th className="px-3 py-3">Category</th>
-                <th className="px-3 py-3">Demand</th>
-                <th className="px-3 py-3">Urgency</th>
-                <th className="px-3 py-3">Status</th>
-                <th className="px-3 py-3">Latest</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row.candidateId} className="border-b border-slate-100">
-                  <td className="px-3 py-4">
-                    <p className="font-semibold text-slate-950">{row.normalizedCandidate}</p>
-                    {row.brand && <p className="mt-1 text-xs text-slate-500">{row.brand}</p>}
-                  </td>
-                  <td className="px-3 py-4 text-slate-600">{row.category.replace(/_/g, " ")}</td>
-                  <td className="px-3 py-4">
-                    <span className="inline-flex items-center gap-2 font-semibold text-slate-900">
-                      <Users size={15} aria-hidden="true" /> {row.uniqueMembers} members / {row.totalRequests} requests
+        <>
+          <div className="mt-5 hidden md:block">
+            <ResearchDataTable
+              caption="Member product demand"
+              rows={rows}
+              rowKey={(row) => row.candidateId}
+              columns={[
+                {
+                  key: "candidate",
+                  header: "Candidate",
+                  render: (row) => (
+                    <span>
+                      <span className="font-700">{row.normalizedCandidate}</span>
+                      {row.brand && <span className="block text-ink-mute mt-1">{row.brand}</span>}
                     </span>
-                  </td>
-                  <td className="px-3 py-4 capitalize text-slate-600">{row.urgency.replace(/_/g, " ")}</td>
-                  <td className="px-3 py-4 capitalize text-slate-600">{row.status.replace(/_/g, " ")}</td>
-                  <td className="px-3 py-4 text-slate-600">{new Date(row.latestRequestAt).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  ),
+                },
+                { key: "category", header: "Category", render: (row) => formatValue(row.category) },
+                {
+                  key: "demand",
+                  header: "Demand",
+                  render: (row) => `${row.uniqueMembers} members / ${row.totalRequests} requests`,
+                },
+                {
+                  key: "urgency",
+                  header: "Urgency",
+                  render: (row) => (
+                    <ResearchStatusBadge label={formatValue(row.urgency)} tone={urgencyTone(row.urgency)} />
+                  ),
+                },
+                { key: "status", header: "Status", render: (row) => formatValue(row.status) },
+                {
+                  key: "latest",
+                  header: "Latest",
+                  render: (row) => new Date(row.latestRequestAt).toLocaleDateString(),
+                },
+              ]}
+            />
+          </div>
+
+          <ul className="mt-5 grid list-none gap-3 p-0 md:hidden" aria-label="Member product demand">
+            {rows.map((row) => (
+              <li key={row.candidateId} className="card">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="body-m font-700">{row.normalizedCandidate}</p>
+                    {row.brand && <p className="body-s text-ink-mute mt-1">{row.brand}</p>}
+                  </div>
+                  <ResearchStatusBadge label={formatValue(row.urgency)} tone={urgencyTone(row.urgency)} />
+                </div>
+                <dl className="mt-4 grid gap-3 body-s">
+                  <div>
+                    <dt className="mono-label text-ink-mute">Category</dt>
+                    <dd className="mt-1">{formatValue(row.category)}</dd>
+                  </div>
+                  <div>
+                    <dt className="mono-label text-ink-mute">Demand</dt>
+                    <dd className="mt-1">{row.uniqueMembers} members / {row.totalRequests} requests</dd>
+                  </div>
+                  <div>
+                    <dt className="mono-label text-ink-mute">Status</dt>
+                    <dd className="mt-1">{formatValue(row.status)}</dd>
+                  </div>
+                </dl>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </section>
   );
 }
-

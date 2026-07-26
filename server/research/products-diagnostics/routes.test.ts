@@ -20,6 +20,7 @@ import {
   type BiomarkerUploadProvider,
 } from "./diagnostics";
 import { buildProductMaster } from "./product-master";
+import { SupplementPlaceholderRepository } from "./supplements";
 import {
   registerProductsDiagnosticsApi,
   type Website3ApiDependencies,
@@ -85,6 +86,7 @@ function dependencies(): Website3ApiDependencies {
     ),
     pathways: new MetabolicPathwayRepository(),
     interests: new MetabolicInterestService(new MemoryMetabolicInterestStore()),
+    supplements: new SupplementPlaceholderRepository(),
     superpower: new SuperpowerOfferRepository(),
     biomarkers: new BiomarkerService(
       new MemoryBiomarkerStore(),
@@ -257,6 +259,37 @@ describe("Website 3 route registration", () => {
     const response = await request(app)
       .put("/api/admin/research/superpower-offer")
       .send({ status: "paused" });
+    expect(response.status).toBe(503);
+    expect(response.body).toMatchObject({
+      ok: false,
+      code: "persistence_failed",
+    });
+  });
+
+  it("lets administrators edit supplement placeholders without publishing partner references", async () => {
+    const updated = await request(app)
+      .put("/api/admin/research/supplement-placeholders/foundational")
+      .send({ label: "Foundational supplements under review" });
+    expect(updated.status).toBe(200);
+    expect(updated.body.supplement).toMatchObject({
+      category: "foundational",
+      label: "Foundational supplements under review",
+      status: "coming_soon",
+      priceCents: null,
+    });
+
+    const platform = await request(app).get("/api/research/product-platform");
+    expect(platform.body.supplements).toHaveLength(4);
+    expect(platform.body.supplements[0]).not.toHaveProperty("updatedBy");
+  });
+
+  it("does not report supplement success when durable persistence rejects", async () => {
+    vi.spyOn(deps.supplements, "update").mockRejectedValue(
+      new Error("database unavailable"),
+    );
+    const response = await request(app)
+      .put("/api/admin/research/supplement-placeholders/performance")
+      .send({ label: "Performance supplements in review" });
     expect(response.status).toBe(503);
     expect(response.body).toMatchObject({
       ok: false,

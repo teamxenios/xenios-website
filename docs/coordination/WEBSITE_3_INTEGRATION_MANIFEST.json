@@ -1,8 +1,9 @@
 {
   "session": "Website 3 — Products, Diagnostics & Member Commerce",
   "branch": "feature/website-3-products-diagnostics",
-  "base_sha": "a486b889503a8f9d42f86c4666e808af6c5e852c",
+  "base_sha": "48cb57250c1ec54fe8714e59fa1071a9eb27f867",
   "production_delivery_required": true,
+  "release_train": 1,
   "release_authority": {
     "merge_owner": "Website 2",
     "render_deployment_owner": "Website 2",
@@ -13,6 +14,7 @@
   "server_entrypoint": "server/research/products-diagnostics/index.ts",
   "server_registration_export": "registerProductsDiagnosticsApi",
   "client_entrypoint": "client/src/research/products-diagnostics/index.ts",
+  "scope_reconciliation": "docs/coordination/WEBSITE_3_REMAINING_SCOPE.md",
   "shared_files_not_modified": [
     "server/index.ts",
     "server/routes.ts",
@@ -21,9 +23,9 @@
     "client/src/research/section.tsx",
     "client/src/research/layout.tsx",
     "client/src/research/core.tsx",
-    "shared/research/*",
     "supabase/production/*"
   ],
+  "shared_contract_added": "shared/research/product-request-sources.ts",
   "member_routes": [
     "GET /api/research/product-platform",
     "POST /api/research/products/:sku/certificates/access",
@@ -38,7 +40,9 @@
     "GET /api/admin/research/metabolic-pathways",
     "PUT /api/admin/research/metabolic-pathways/:pathwayId",
     "GET /api/admin/research/superpower-offer",
-    "PUT /api/admin/research/superpower-offer"
+    "PUT /api/admin/research/superpower-offer",
+    "GET /api/admin/research/supplement-placeholders",
+    "PUT /api/admin/research/supplement-placeholders/:category"
   ],
   "required_guards": {
     "member": "requireActiveMember",
@@ -52,12 +56,15 @@
     "server/research/member-auth.ts",
     "server/research/outbox.ts",
     "server/research/media.ts",
-    "server/services/email-config.ts"
+    "server/services/email-config.ts",
+    "research_inventory_lots",
+    "research_lot_quality_documents"
   ],
-  "production_tables_required": [
-    "research_product_lots",
-    "research_product_certificates",
+  "production_tables_to_create_or_extend": [
+    "research_inventory_lots",
+    "research_lot_quality_documents",
     "research_certificate_access_audit",
+    "research_supplement_placeholders",
     "research_metabolic_pathways",
     "research_metabolic_interests",
     "research_superpower_offers",
@@ -70,15 +77,24 @@
     "RESEARCH_BIOMARKER_REPORTS_BUCKET"
   ],
   "validation": {
-    "focused_test_files": 10,
-    "focused_tests_passed": 62,
-    "complete_test_files": 142,
-    "complete_tests_passed": 3139,
+    "focused_test_files": 12,
+    "focused_tests_passed": 76,
+    "complete_test_files": 147,
+    "complete_tests_passed": 3173,
     "typecheck": "passed",
     "build": "passed_with_existing_large_chunk_warning",
     "desktop_evidence": "docs/coordination/evidence/website3-catalog-desktop-1440.png",
+    "mobile_375_evidence": "docs/coordination/evidence/website3-catalog-mobile-375.png",
     "mobile_320_evidence": "docs/coordination/evidence/website3-catalog-mobile-320.png",
     "keyboard_focus_evidence": "docs/coordination/evidence/website3-catalog-keyboard-focus-320.png",
+    "empty_state_evidence": "docs/coordination/evidence/website3-catalog-empty-375.png",
+    "unavailable_state_evidence": "docs/coordination/evidence/website3-catalog-unavailable-375.png",
+    "error_state_evidence": "docs/coordination/evidence/website3-catalog-error-375.png",
+    "diagnostics_evidence": "docs/coordination/evidence/website3-diagnostics-desktop-1440.png",
+    "biomarker_form_evidence": "docs/coordination/evidence/website3-diagnostics-biomarker-form-1440.png",
+    "metabolic_form_evidence": "docs/coordination/evidence/website3-care-form-desktop-1440.png",
     "evidence_report": "docs/coordination/evidence/WEBSITE_3_UI_EVIDENCE.md"
-  }
+  },
+  "ui_consistency_status": "MATCHES EXISTING XENIOS",
+  "production_status": "NOT YET MERGED"
 }

@@ -1,29 +1,35 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Link } from "wouter";
+import { ArrowRight } from "lucide-react";
+import { productRequestHref } from "@shared/research/product-request-sources";
+import { ResearchMemberShell } from "../ui/shells";
 import {
-  ArrowRight,
-  CheckCircle2,
-  FileCheck2,
-  FlaskConical,
-  Search,
-  ShieldCheck,
-} from "lucide-react";
-import { productRequestHref } from "../../../../server/research/products-diagnostics/product-request-sources";
+  ResearchEmptyState,
+  ResearchFilterBar,
+  ResearchPendingPanel,
+  ResearchRouteBoundary,
+  ResearchSearch,
+  ResearchSecureNotice,
+  ResearchStatusBadge,
+  ResearchTabs,
+  type BadgeTone,
+} from "../ui/kit";
 
 export const PRODUCT_FAMILY_OPTIONS = [
-  ["all_products", "All Products"],
-  ["research_vials", "Research Vials"],
+  ["all_products", "All products"],
+  ["research_vials", "Research vials"],
   ["blends", "Blends"],
   ["supplements", "Supplements"],
   ["programs", "Programs"],
   ["quantum", "Quantum"],
-  ["laboratory_supplies", "Laboratory Supplies"],
+  ["laboratory_supplies", "Laboratory supplies"],
   ["diagnostics", "Diagnostics"],
-  ["clinician_guided_care", "Clinician-Guided Care"],
-  ["storage_and_organization", "Storage and Organization"],
+  ["clinician_guided_care", "Clinician-guided care"],
+  ["storage_and_organization", "Storage and organization"],
 ] as const;
 
 export type ProductFamilyFilter = (typeof PRODUCT_FAMILY_OPTIONS)[number][0];
+export type Website3SurfaceState = "loading" | "ok" | "error" | "unavailable";
 
 export type ProductCardView = {
   slug: string;
@@ -63,25 +69,126 @@ export type ProductDetailView = ProductCardView & {
   relatedProducts: ProductCardView[];
 };
 
-function StatusPill({ label }: { label: ProductCardView["statusLabel"] }) {
-  const positive = label === "Available";
+function statusTone(label: ProductCardView["statusLabel"]): BadgeTone {
+  if (label === "Available") return "success";
+  if (label === "Out of stock" || label === "Not currently offered") return "warning";
+  if (label === "Coming soon" || label === "Clinician pathway pending") return "pending";
+  return "neutral";
+}
+
+function ProductCard({
+  product,
+  compared,
+  compareDisabled,
+  onToggleCompare,
+}: {
+  product: ProductCardView;
+  compared: boolean;
+  compareDisabled: boolean;
+  onToggleCompare: () => void;
+}) {
   return (
-    <span
-      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${
-        positive
-          ? "border-emerald-300/40 bg-emerald-50 text-emerald-800"
-          : "border-slate-300 bg-slate-50 text-slate-700"
-      }`}
-    >
-      <span className={`h-1.5 w-1.5 rounded-full ${positive ? "bg-emerald-500" : "bg-slate-400"}`} />
-      {label}
-    </span>
+    <li className="card" data-testid={`website3-product-${product.slug}`}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div style={{ minWidth: 0 }}>
+          <p className="mono-label text-ink-mute">{product.familyLabel}</p>
+          <h2 className="body-m font-700 mt-1">
+            <Link href={`/research/member/products/${product.slug}`}>{product.displayName}</Link>
+          </h2>
+          <p className="body-s text-ink-2 mt-2 max-w-[64ch]">{product.summary}</p>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <ResearchStatusBadge label={product.statusLabel} tone={statusTone(product.statusLabel)} />
+          {product.priceLabel ? (
+            <p className="body-s tabular text-ink-2">{product.priceLabel}</p>
+          ) : (
+            <p className="body-s text-ink-mute">Pricing not confirmed</p>
+          )}
+        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-3">
+        <Link href={`/research/member/products/${product.slug}`} className="btn btn-secondary">
+          View product
+        </Link>
+        <button
+          type="button"
+          className="btn btn-ghost"
+          aria-pressed={compared}
+          disabled={compareDisabled && !compared}
+          onClick={onToggleCompare}
+        >
+          {compared ? "Remove from compare" : "Add to compare"}
+        </button>
+      </div>
+    </li>
   );
 }
 
-export function ProductCatalogExperience({ products }: { products: ProductCardView[] }) {
+export function ProductComparePanel({
+  products,
+  onClear,
+}: {
+  products: ProductCardView[];
+  onClear: () => void;
+}) {
+  if (products.length === 0) return null;
+  return (
+    <section className="card mt-5" aria-labelledby="product-compare-title" data-testid="website3-product-compare">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="mono-label text-ink-mute">Compare products</p>
+          <h2 id="product-compare-title" className="body-m font-700 mt-1">
+            {products.length < 2 ? "Select one more product" : `${products.length} products selected`}
+          </h2>
+          <p className="body-s text-ink-2 mt-2">
+            Compare only published catalog facts. Status and pricing remain subject to their server-authoritative gates.
+          </p>
+        </div>
+        <button type="button" className="btn btn-ghost" onClick={onClear}>Clear comparison</button>
+      </div>
+      {products.length >= 2 && (
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {products.map((product) => (
+            <article key={product.slug} className="py-3" style={{ borderTop: "1px solid var(--rule)" }}>
+              <p className="body-m font-700">{product.displayName}</p>
+              <dl className="mt-3 grid gap-3 body-s">
+                <div>
+                  <dt className="mono-label text-ink-mute">Family</dt>
+                  <dd className="mt-1">{product.familyLabel}</dd>
+                </div>
+                <div>
+                  <dt className="mono-label text-ink-mute">Status</dt>
+                  <dd className="mt-1"><ResearchStatusBadge label={product.statusLabel} tone={statusTone(product.statusLabel)} /></dd>
+                </div>
+                <div>
+                  <dt className="mono-label text-ink-mute">Price</dt>
+                  <dd className="mt-1">{product.priceLabel ?? "Pricing not confirmed"}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+export function ProductCatalogExperience({
+  products,
+  state = "ok",
+  errorMessage,
+  onRetry,
+  initialFamily = "all_products",
+}: {
+  products: ProductCardView[];
+  state?: Website3SurfaceState;
+  errorMessage?: string;
+  onRetry?: () => void;
+  initialFamily?: ProductFamilyFilter;
+}) {
   const [query, setQuery] = useState("");
-  const [family, setFamily] = useState<ProductFamilyFilter>("all_products");
+  const [family, setFamily] = useState<ProductFamilyFilter>(initialFamily);
+  const [comparedSlugs, setComparedSlugs] = useState<string[]>([]);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -100,98 +207,104 @@ export function ProductCatalogExperience({ products }: { products: ProductCardVi
     });
   }, [family, products, query]);
 
+  const comparedProducts = useMemo(
+    () => comparedSlugs.flatMap((slug) => {
+      const product = products.find((candidate) => candidate.slug === slug);
+      return product ? [product] : [];
+    }),
+    [comparedSlugs, products],
+  );
+
+  const toggleCompare = (slug: string) => {
+    setComparedSlugs((current) => {
+      if (current.includes(slug)) return current.filter((item) => item !== slug);
+      if (current.length >= 3) return current;
+      return [...current, slug];
+    });
+  };
+
   return (
-    <section aria-labelledby="product-catalog-title" className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(135deg,#f8fafc_0%,#eef2ff_55%,#ecfeff_100%)] p-6 shadow-sm sm:p-10">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-700">Member catalog</p>
-        <div className="mt-3 grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-end">
-          <div>
-            <h1 id="product-catalog-title" className="max-w-3xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-              Products with precise status, documentation, and access.
-            </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
-              Browse the complete Xenios catalog. A listing becomes purchasable only when its product,
-              documentation, inventory, and commerce gates are all confirmed.
-            </p>
-          </div>
-          <Link href={productRequestHref("products")} className="btn btn-primary w-full justify-center">
-            Request a product <ArrowRight aria-hidden="true" size={16} />
-          </Link>
-        </div>
-      </div>
-
-      <div className="sticky top-2 z-10 mt-6 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-sm backdrop-blur">
-        <label className="relative block">
-          <span className="sr-only">Search products</span>
-          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true" size={18} />
-          <input
-            type="search"
+    <ResearchMemberShell
+      eyebrow="Renew 360 catalog"
+      title="Products"
+      lead="Browse the Xenios catalog with clear availability and documentation status. Ordering appears only after every product, inventory, documentation, and commerce gate is confirmed."
+      actions={
+        <Link href={productRequestHref("products")} className="btn btn-primary">
+          Request a product
+        </Link>
+      }
+    >
+      <ResearchRouteBoundary
+        state={state}
+        errorMessage={errorMessage}
+        onRetry={onRetry}
+        unavailableTitle="The product catalog is not available right now."
+        unavailableBody="The catalog is being prepared. Nothing is wrong with your membership, and no unavailable product is being presented as orderable."
+      >
+        <ResearchFilterBar>
+          <ResearchSearch
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search by product, family, or alias"
-            className="input-field w-full pl-10"
+            onChange={setQuery}
+            label="Search products"
+            placeholder="Search the catalog"
           />
-        </label>
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1" aria-label="Product families">
-          {PRODUCT_FAMILY_OPTIONS.map(([value, label]) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setFamily(value)}
-              aria-pressed={family === value}
-              className={`shrink-0 rounded-full border px-3 py-2 text-sm font-semibold transition ${
-                family === value
-                  ? "border-slate-950 bg-slate-950 text-white"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-400"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
+        </ResearchFilterBar>
+        <ResearchTabs
+          tabs={PRODUCT_FAMILY_OPTIONS.map(([key, label]) => ({ key, label }))}
+          active={family}
+          onSelect={(key) => setFamily(key as ProductFamilyFilter)}
+          label="Product families"
+        />
 
-      {visible.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-          <p className="text-lg font-semibold text-slate-950">No current listing matches that search.</p>
-          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-600">
-            Submit a private request for evaluation. It is a demand signal, not an order,
-            availability promise, or clinical recommendation.
-          </p>
-          <div className="mt-5 flex flex-wrap justify-center gap-3">
-            <Link href={productRequestHref("empty_search", query)} className="btn btn-primary">
-              Request this product
-            </Link>
-            <button type="button" className="btn btn-secondary" onClick={() => setQuery("")}>
-              Clear search
-            </button>
-          </div>
-        </div>
-      ) : (
-        <ul className="mt-6 grid list-none gap-4 p-0 sm:grid-cols-2 xl:grid-cols-3">
-          {visible.map((product) => (
-            <li key={product.slug} className="group flex min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-              <div className="flex items-start justify-between gap-3">
-                <span className="rounded-xl bg-slate-100 p-2 text-slate-700">
-                  <FlaskConical aria-hidden="true" size={18} />
+        <ProductComparePanel products={comparedProducts} onClear={() => setComparedSlugs([])} />
+
+        <section className="mt-6" aria-label="Product list">
+          {products.length === 0 ? (
+            <ResearchEmptyState
+              title="No products are published yet."
+              body="The catalog appears here as products clear review. Nothing is wrong with your membership."
+              action={
+                <Link href={productRequestHref("products")} className="btn btn-secondary">
+                  Request a product
+                </Link>
+              }
+            />
+          ) : visible.length === 0 ? (
+            <ResearchEmptyState
+              title="We do not currently have that product in the catalog."
+              body="You can ask the research team to evaluate it. A request is a demand signal, not an order or availability promise."
+              action={
+                <span className="flex flex-wrap gap-3">
+                  <Link href={productRequestHref("empty_search", query)} className="btn btn-primary">
+                    Request this product
+                  </Link>
+                  <button type="button" className="btn btn-secondary" onClick={() => setQuery("")}>
+                    Clear search
+                  </button>
                 </span>
-                <StatusPill label={product.statusLabel} />
-              </div>
-              <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">{product.familyLabel}</p>
-              <h2 className="mt-2 text-xl font-semibold tracking-tight text-slate-950">{product.displayName}</h2>
-              <p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{product.summary}</p>
-              {product.priceLabel && <p className="mt-4 text-sm font-semibold text-slate-900">{product.priceLabel}</p>}
-              <Link
-                href={`/research/member/products/${product.slug}`}
-                className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-indigo-700"
-              >
-                View details <ArrowRight aria-hidden="true" size={15} />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+              }
+            />
+          ) : (
+            <ul className="grid gap-4" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {visible.map((product) => (
+                <ProductCard
+                  key={product.slug}
+                  product={product}
+                  compared={comparedSlugs.includes(product.slug)}
+                  compareDisabled={comparedSlugs.length >= 3}
+                  onToggleCompare={() => toggleCompare(product.slug)}
+                />
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <ResearchSecureNotice>
+          Product status and documentation are shown from approved records. A listing does not imply
+          clinical suitability or availability outside its stated gate.
+        </ResearchSecureNotice>
+      </ResearchRouteBoundary>
+    </ResearchMemberShell>
   );
 }
 
@@ -219,124 +332,172 @@ const DETAIL_SECTIONS = [
   "Request an Alternative",
 ] as const;
 
-export function ProductDetailExperience({ product }: { product: ProductDetailView }) {
+function sectionId(label: string): string {
+  return label.toLowerCase().replace(/[^a-z]+/g, "-");
+}
+
+function DetailSection({
+  title,
+  children,
+}: {
+  title: (typeof DETAIL_SECTIONS)[number];
+  children: ReactNode;
+}) {
   return (
-    <article className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <div className="min-w-0">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-indigo-700">{product.familyLabel}</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-5xl">{product.displayName}</h1>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">{TEMPLATE_INTROS[product.templateClass]}</p>
+    <section id={sectionId(title)} className="py-6" style={{ borderTop: "1px solid var(--rule)" }}>
+      <h2 className="body-l font-700">{title}</h2>
+      <div className="body-s text-ink-2 mt-3 max-w-[68ch]">{children}</div>
+    </section>
+  );
+}
+
+export function ProductDetailExperience({
+  product,
+  state = "ok",
+  errorMessage,
+  onRetry,
+}: {
+  product: ProductDetailView;
+  state?: Website3SurfaceState;
+  errorMessage?: string;
+  onRetry?: () => void;
+}) {
+  return (
+    <ResearchMemberShell
+      eyebrow={product.familyLabel}
+      title={product.displayName}
+      lead={TEMPLATE_INTROS[product.templateClass]}
+      actions={
+        <Link href={productRequestHref("products", product.displayName)} className="btn btn-secondary">
+          Request an alternative
+        </Link>
+      }
+    >
+      <ResearchRouteBoundary
+        state={state}
+        errorMessage={errorMessage}
+        onRetry={onRetry}
+        unavailableTitle="This product page is not available right now."
+        unavailableBody="The listing remains unavailable until its current records can be verified."
+      >
+        <div className="card">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <ResearchStatusBadge label={product.statusLabel} tone={statusTone(product.statusLabel)} />
+              <p className="body-s text-ink-2 mt-3 max-w-[60ch]">{product.summary}</p>
+            </div>
+            <p className="body-m tabular">
+              {product.priceLabel ?? "Pricing not confirmed"}
+            </p>
+          </div>
         </div>
-        <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-          <StatusPill label={product.statusLabel} />
-          <p className="mt-4 text-sm leading-6 text-slate-600">{product.summary}</p>
-          <Link href={productRequestHref("products", product.displayName)} className="btn btn-primary mt-5 w-full justify-center">
-            Request an alternative
-          </Link>
-        </aside>
-      </div>
 
-      <nav className="mt-8 overflow-x-auto border-y border-slate-200 py-3" aria-label="Product sections">
-        <ul className="flex min-w-max list-none gap-5 p-0 text-sm font-semibold text-slate-600">
+        <nav className="ra-subnav mt-5" aria-label="Product sections">
           {DETAIL_SECTIONS.map((section) => (
-            <li key={section}><a href={`#${section.toLowerCase().replace(/[^a-z]+/g, "-")}`}>{section}</a></li>
+            <a key={section} href={`#${sectionId(section)}`} className="ra-subnav-link">
+              {section}
+            </a>
           ))}
-        </ul>
-      </nav>
+        </nav>
 
-      <div className="mt-8 grid gap-5">
-        <section id="overview" className="card">
-          <h2 className="text-xl font-semibold text-slate-950">Overview</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-600">{product.summary}</p>
-        </section>
-        <section id="specifications" className="card">
-          <h2 className="text-xl font-semibold text-slate-950">Specifications</h2>
-          {product.specifications.length ? (
-            <dl className="mt-4 grid gap-3 sm:grid-cols-2">
-              {product.specifications.map((item) => (
-                <div key={item.label} className="rounded-xl bg-slate-50 p-4">
-                  <dt className="text-xs font-bold uppercase tracking-wide text-slate-500">{item.label}</dt>
-                  <dd className="mt-1 text-sm text-slate-900">{item.value}</dd>
-                </div>
-              ))}
-            </dl>
-          ) : <p className="mt-3 text-sm text-slate-600">Specifications are pending documentation review.</p>}
-        </section>
-        <section id="certificate-of-analysis" className="card">
-          <div className="flex items-start gap-3">
-            <FileCheck2 className="mt-0.5 text-indigo-700" aria-hidden="true" />
-            <div>
-              <h2 className="text-xl font-semibold text-slate-950">Certificate of Analysis</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Certificates are private, signed, and linked only to the exact lot code on the product.
-                Documentation pending is shown when an exact-lot document is not on file.
-              </p>
-              <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-6 text-amber-950">
-                A reported purity result does not establish sterility, safety, potency, or suitability for human use.
-              </p>
+        <div className="mt-4">
+          <DetailSection title="Overview">
+            <p>{product.summary}</p>
+          </DetailSection>
+
+          <DetailSection title="Specifications">
+            {product.specifications.length ? (
+              <dl className="grid gap-3 sm:grid-cols-2">
+                {product.specifications.map((item) => (
+                  <div key={item.label}>
+                    <dt className="mono-label text-ink-mute">{item.label}</dt>
+                    <dd className="mt-1">{item.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              <ResearchPendingPanel
+                kind="supplier_pending"
+                title="Specifications are pending documentation review."
+                body="Only confirmed specifications will appear here."
+              />
+            )}
+          </DetailSection>
+
+          <DetailSection title="Certificate of Analysis">
+            <p>
+              Certificates are private, signed, and linked only to the exact lot code on the product.
+              Documentation pending is shown when an exact-lot document is not on file.
+            </p>
+            <div className="mt-4">
+              <ResearchPendingPanel
+                kind="supplier_pending"
+                body="A reported purity result does not establish sterility, safety, potency, or suitability for human use."
+              />
             </div>
-          </div>
-        </section>
-        <section id="research-information" className="card">
-          <h2 className="text-xl font-semibold text-slate-950">Research Information</h2>
-          {product.researchInformation.length ? (
-            <ul className="mt-3 grid gap-2 pl-5 text-sm leading-6 text-slate-600">
-              {product.researchInformation.map((item) => <li key={item}>{item}</li>)}
-            </ul>
-          ) : <p className="mt-3 text-sm text-slate-600">Research information is under review.</p>}
-        </section>
-        <section id="storage-and-handling" className="card">
-          <h2 className="text-xl font-semibold text-slate-950">Storage and Handling</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-600">{product.storageAndHandling ?? "Storage documentation is pending."}</p>
-        </section>
-        <section id="shipping-and-returns" className="card">
-          <h2 className="text-xl font-semibold text-slate-950">Shipping and Returns</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-600">{product.shippingAndReturns ?? "Shipping and returns details are pending final review."}</p>
-        </section>
-        <section id="documentation" className="card">
-          <h2 className="text-xl font-semibold text-slate-950">Documentation</h2>
-          <ul className="mt-4 grid list-none gap-3 p-0">
-            {product.documentation.map((item) => (
-              <li key={item.label} className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 p-3">
-                <span className="inline-flex items-center gap-2 text-sm font-semibold text-slate-900">
-                  <ShieldCheck size={16} aria-hidden="true" /> {item.label}
-                </span>
-                <span className="text-sm text-slate-600">{item.state}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-        <section id="related-products" className="card">
-          <h2 className="text-xl font-semibold text-slate-950">Related Products</h2>
-          {product.relatedProducts.length ? (
-            <ul className="mt-4 grid list-none gap-3 p-0 sm:grid-cols-2">
-              {product.relatedProducts.map((item) => (
-                <li key={item.slug} className="rounded-xl border border-slate-200 p-4">
-                  <p className="font-semibold text-slate-950">{item.displayName}</p>
-                  <Link href={`/research/member/products/${item.slug}`} className="mt-2 inline-flex items-center gap-1 text-sm font-bold text-indigo-700">
-                    View <ArrowRight size={14} aria-hidden="true" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : <p className="mt-3 text-sm text-slate-600">No related products are published yet.</p>}
-        </section>
-        <section id="request-an-alternative" className="rounded-2xl bg-slate-950 p-6 text-white">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-xl font-semibold">Request an Alternative</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-                Tell the team what you are looking for. A request does not create an order, product,
-                inventory, availability promise, or clinical recommendation.
-              </p>
-            </div>
-            <Link href={productRequestHref("products", product.displayName)} className="btn btn-primary shrink-0">
-              Start request <CheckCircle2 size={16} aria-hidden="true" />
+          </DetailSection>
+
+          <DetailSection title="Research Information">
+            {product.researchInformation.length ? (
+              <ul className="grid gap-2 pl-5">
+                {product.researchInformation.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            ) : (
+              <p>Research information is under review.</p>
+            )}
+          </DetailSection>
+
+          <DetailSection title="Storage and Handling">
+            <p>{product.storageAndHandling ?? "Storage documentation is pending."}</p>
+          </DetailSection>
+
+          <DetailSection title="Shipping and Returns">
+            <p>{product.shippingAndReturns ?? "Shipping and returns details are pending final review."}</p>
+          </DetailSection>
+
+          <DetailSection title="Documentation">
+            {product.documentation.length ? (
+              <dl className="grid gap-3">
+                {product.documentation.map((item) => (
+                  <div key={item.label} className="flex flex-wrap items-center justify-between gap-3">
+                    <dt className="font-700">{item.label}</dt>
+                    <dd><ResearchStatusBadge label={item.state} tone="neutral" /></dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              <p>No documentation is published yet.</p>
+            )}
+          </DetailSection>
+
+          <DetailSection title="Related Products">
+            {product.relatedProducts.length ? (
+              <ul className="grid gap-3" style={{ listStyle: "none", padding: 0 }}>
+                {product.relatedProducts.map((item) => (
+                  <li key={item.slug} className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="font-700">{item.displayName}</span>
+                    <Link href={`/research/member/products/${item.slug}`} className="btn btn-ghost">
+                      View product
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No related products are published yet.</p>
+            )}
+          </DetailSection>
+
+          <DetailSection title="Request an Alternative">
+            <p>
+              Tell the team what you are looking for. A request does not create an order, product,
+              inventory, availability promise, or clinical recommendation.
+            </p>
+            <Link href={productRequestHref("products", product.displayName)} className="btn btn-primary mt-4">
+              Start request <ArrowRight size={15} aria-hidden="true" />
             </Link>
-          </div>
-        </section>
-      </div>
-    </article>
+          </DetailSection>
+        </div>
+      </ResearchRouteBoundary>
+    </ResearchMemberShell>
   );
 }

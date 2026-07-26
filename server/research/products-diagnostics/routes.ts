@@ -11,11 +11,17 @@ import type {
   BiomarkerService,
   SuperpowerOfferRepository,
 } from "./diagnostics";
-import { SUPPLEMENT_PLACEHOLDERS } from "./supplements";
+import type {
+  SupplementPlaceholderCategory,
+  SupplementPlaceholderRepository,
+} from "./supplements";
 import {
   STORAGE_ACCESSORY_BOUNDARY,
   STORAGE_AND_ORGANIZATION_ACCESSORIES,
+  STORAGE_SOURCE_CARDS,
   SUPPORT_CENTER_CATEGORIES,
+  RESEARCH_EDUCATION_BOUNDARY,
+  RESEARCH_EDUCATION_TOPICS,
 } from "./support-and-storage";
 import { Website3ValidationError } from "./errors";
 
@@ -31,6 +37,7 @@ export interface Website3ApiDependencies {
   certificates: ExactLotCertificateService;
   pathways: MetabolicPathwayRepository;
   interests: MetabolicInterestService;
+  supplements: SupplementPlaceholderRepository;
   superpower: SuperpowerOfferRepository;
   biomarkers: BiomarkerService;
 }
@@ -106,12 +113,17 @@ export function registerProductsDiagnosticsApi(
           purchasable: commerce?.purchasable ?? false,
         };
       }),
-      supplements: SUPPLEMENT_PLACEHOLDERS,
+      supplements: deps.supplements.listPublic(),
       storageAndOrganization: {
         accessories: STORAGE_AND_ORGANIZATION_ACCESSORIES,
         boundary: STORAGE_ACCESSORY_BOUNDARY,
       },
       supportCategories: SUPPORT_CENTER_CATEGORIES,
+      education: {
+        topics: RESEARCH_EDUCATION_TOPICS,
+        storageSources: STORAGE_SOURCE_CARDS,
+        boundary: RESEARCH_EDUCATION_BOUNDARY,
+      },
     });
   });
 
@@ -268,4 +280,28 @@ export function registerProductsDiagnosticsApi(
       mutationFailure(res, error);
     }
   });
+
+  app.get("/api/admin/research/supplement-placeholders", admin, (_req, res) => {
+    noStore(res);
+    res.json({ ok: true, supplements: deps.supplements.listAdmin() });
+  });
+
+  app.put(
+    "/api/admin/research/supplement-placeholders/:category",
+    admin,
+    async (req, res) => {
+      noStore(res);
+      try {
+        const supplement = await deps.supplements.update(
+          String(req.params.category) as SupplementPlaceholderCategory,
+          req.body ?? {},
+          (req as ResearchRequest).adminEmail ?? "admin",
+          new Date().toISOString(),
+        );
+        res.json({ ok: true, supplement });
+      } catch (error) {
+        mutationFailure(res, error);
+      }
+    },
+  );
 }
