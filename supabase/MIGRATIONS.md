@@ -125,10 +125,14 @@ services:
 |---|---|---|---|
 | Care-1 | `care-access-foundation.sql` | Care capability, roles, access audit, forced RLS | PENDING (PR #46 accepted; not yet applied) |
 | Care-2 | `care-eligibility-intake.sql` | Patient identity seam, location, state/clinician coverage, append-only consent/waitlist/eligibility history, and versioned intake foundation | PENDING (stacked after Care-1; not yet applied) |
+| Care-3 | `care-appointments-clinician.sql` | Verified medical-group/clinician/provider readiness, appointment/reminder lifecycle, private telehealth references, assignment history, and human-clinician review | PENDING (stacked after Care-2; not yet applied) |
 
-Care-2 seeds no state, clinician, consent document, intake definition, medical
-question, patient, pharmacy, product, price, or availability record. It cannot
-make the canonical Care capability live.
+Care-2 and Care-3 seed no state, clinician, medical group, provider, consent
+document, intake definition, medical question, patient, appointment, pharmacy,
+product, price, or availability record. Neither migration can make the
+canonical Care capability live. Care-3 must be applied only after Care-1 and
+Care-2, and Website 2 must integrate the canonical pre-launch gate and required
+input model before any private seed-data workflow is authorized.
 - The global order in this ledger is the integration order. The authoritative
   ordered run script for a production apply is
   docs/research-launch/FULL_PRODUCTION_MIGRATION_MANIFEST.md.
