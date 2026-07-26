@@ -135,6 +135,86 @@ describe("Website 3 canonical required-input application", () => {
     });
   });
 
+  it("fails closed when the supplied active item set is empty or truncated", () => {
+    const verified = input(
+      "products",
+      "PRODUCT RELEASE APPROVAL REQUIRED",
+      "blocks_public_launch",
+      "verified",
+    );
+
+    expect(
+      evaluateWebsite3Readiness("products", [], readiness("products", 5)),
+    ).toMatchObject({
+      publicEnabled: false,
+      realInputsRequired: true,
+    });
+    expect(
+      evaluateWebsite3Readiness(
+        "products",
+        [verified],
+        readiness("products", 5),
+      ),
+    ).toMatchObject({
+      publicEnabled: false,
+      realInputsRequired: true,
+    });
+  });
+
+  it("excludes superseded rows from the canonical active item count", () => {
+    const verified = input(
+      "products",
+      "PRODUCT RELEASE APPROVAL REQUIRED",
+      "blocks_public_launch",
+      "verified",
+    );
+    const superseded = input(
+      "products",
+      "SUPERSEDED PRODUCT APPROVAL",
+      "blocks_public_launch",
+      "superseded",
+    );
+
+    expect(
+      evaluateWebsite3Readiness(
+        "products",
+        [verified, superseded],
+        readiness("products", 1),
+      ).publicEnabled,
+    ).toBe(true);
+    expect(
+      evaluateWebsite3Readiness(
+        "products",
+        [verified, superseded],
+        readiness("products", 2),
+      ).publicEnabled,
+    ).toBe(false);
+  });
+
+  it("fails closed when canonical blocking metadata is inconsistent", () => {
+    const verified = input(
+      "products",
+      "PRODUCT RELEASE APPROVAL REQUIRED",
+      "blocks_public_launch",
+      "verified",
+    );
+
+    expect(
+      evaluateWebsite3Readiness("products", [verified], {
+        ...readiness("products", 1),
+        blockingKeys: ["products.stale_blocker"],
+        blockingInputCount: 0,
+      }).publicEnabled,
+    ).toBe(false);
+    expect(
+      evaluateWebsite3Readiness("products", [verified], {
+        ...readiness("products", 1),
+        blockingKeys: [],
+        blockingInputCount: 1,
+      }).publicEnabled,
+    ).toBe(false);
+  });
+
   it("fails closed for an absent, stale, or mismatched readiness manifest", () => {
     const verified = input(
       "diagnostics",

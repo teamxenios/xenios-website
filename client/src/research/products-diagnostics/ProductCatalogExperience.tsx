@@ -38,6 +38,7 @@ export type Website3SurfaceState = "loading" | "ok" | "error" | "unavailable";
 
 export type ProductCardView = {
   slug: string;
+  requiredInputRecordId?: string | null;
   displayName: string;
   family: Exclude<ProductFamilyFilter, "all_products">;
   familyLabel: string;
@@ -106,16 +107,17 @@ function ProductCard({
         </div>
         <div className="flex flex-col items-end gap-2">
           <ResearchStatusBadge label={product.statusLabel} tone={statusTone(product.statusLabel)} />
-          {product.priceLabel ? (
-            <p className="body-s tabular text-ink-2">{product.priceLabel}</p>
-          ) : requiredInputs ? (
+          {requiredInputs ? (
             <p className="body-s text-ink-2">
               <Website3RequiredInputValue
-                value={null}
+                value={product.priceLabel}
                 slot="retailPrice"
                 items={requiredInputs}
+                recordId={product.requiredInputRecordId}
               />
             </p>
+          ) : product.priceLabel ? (
+            <p className="body-s tabular text-ink-2">{product.priceLabel}</p>
           ) : (
             <p className="body-s text-ink-mute">Pricing not confirmed</p>
           )}
@@ -499,16 +501,15 @@ export function ProductDetailExperience({
               <p className="body-s text-ink-2 mt-3 max-w-[60ch]">{product.summary}</p>
             </div>
             <p className="body-m tabular">
-              {product.priceLabel ?? (
-                requiredInputs ? (
-                  <Website3RequiredInputValue
-                    value={null}
-                    slot="retailPrice"
-                    items={requiredInputs}
-                  />
-                ) : (
-                  "Pricing not confirmed"
-                )
+              {requiredInputs ? (
+                <Website3RequiredInputValue
+                  value={product.priceLabel}
+                  slot="retailPrice"
+                  items={requiredInputs}
+                  recordId={product.requiredInputRecordId}
+                />
+              ) : (
+                product.priceLabel ?? "Pricing not confirmed"
               )}
             </p>
           </div>
@@ -559,18 +560,22 @@ export function ProductDetailExperience({
                 <Website3RequiredInputNotice
                   slot="activeLot"
                   items={requiredInputs}
+                  recordId={product.requiredInputRecordId}
                 />
                 <Website3RequiredInputNotice
                   slot="coaFile"
                   items={requiredInputs}
+                  recordId={product.requiredInputRecordId}
                 />
                 <Website3RequiredInputNotice
                   slot="exactLotMatch"
                   items={requiredInputs}
+                  recordId={product.requiredInputRecordId}
                 />
                 <Website3RequiredInputNotice
                   slot="qualityReview"
                   items={requiredInputs}
+                  recordId={product.requiredInputRecordId}
                 />
               </div>
             ) : (
@@ -606,6 +611,7 @@ export function ProductDetailExperience({
               <Website3RequiredInputNotice
                 slot="storageInformation"
                 items={requiredInputs}
+                recordId={product.requiredInputRecordId}
               />
             ) : (
               <p>Storage documentation is pending.</p>

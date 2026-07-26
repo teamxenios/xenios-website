@@ -256,11 +256,19 @@ export function findWebsite3RequiredInput(
   recordId?: string | null,
 ): RequiredInput | null {
   const presentation = WEBSITE3_REQUIRED_INPUT_PRESENTATIONS[slot];
+  if (recordId != null) {
+    const exact =
+      items.find(
+        (item) =>
+          item.key === presentation.key && item.recordId === recordId,
+      ) ?? null;
+    if (exact) return exact;
+  }
   return (
     items.find(
       (item) =>
         item.key === presentation.key &&
-        (recordId == null || item.recordId == null || item.recordId === recordId),
+        item.recordId == null,
     ) ?? null
   );
 }
@@ -270,14 +278,22 @@ export function Website3RequiredInputNotice({
   items = [],
   recordId,
   compact = false,
+  forceVisible = false,
 }: {
   slot: Website3RequiredInputSlot;
   items?: readonly RequiredInput[];
   recordId?: string | null;
   compact?: boolean;
+  forceVisible?: boolean;
 }) {
   const canonical = findWebsite3RequiredInput(items, slot, recordId);
-  if (canonical && RESOLVED_STATES.includes(canonical.currentState)) return null;
+  if (
+    !forceVisible &&
+    canonical &&
+    RESOLVED_STATES.includes(canonical.currentState)
+  ) {
+    return null;
+  }
   const presentation = WEBSITE3_REQUIRED_INPUT_PRESENTATIONS[slot];
   const label = canonical?.label ?? presentation.label;
   const description = canonical?.description ?? presentation.description;
@@ -337,15 +353,30 @@ export function Website3RequiredInputValue({
   items?: readonly RequiredInput[];
   recordId?: string | null;
 }) {
-  if (value !== null && value !== undefined && value !== "") {
+  const hasValue = value !== null && value !== undefined && value !== "";
+  if (items === undefined) {
+    if (hasValue) return <>{value}</>;
+    return (
+      <Website3RequiredInputNotice
+        slot={slot}
+        recordId={recordId}
+        compact
+      />
+    );
+  }
+
+  const canonical = findWebsite3RequiredInput(items, slot, recordId);
+  if (canonical?.currentState === "verified" && hasValue) {
     return <>{value}</>;
   }
+
   return (
     <Website3RequiredInputNotice
       slot={slot}
       items={items}
       recordId={recordId}
       compact
+      forceVisible
     />
   );
 }

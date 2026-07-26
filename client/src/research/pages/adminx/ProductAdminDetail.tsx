@@ -86,7 +86,7 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
                     <Website3RequiredInputValue
                       value={p.sku}
                       slot="productSku"
-                      items={requiredInputs.data?.items}
+                      items={requiredInputs.data?.items ?? []}
                       recordId={p.id}
                     />
                   </p>
@@ -101,7 +101,7 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
                           : `$${(p.price_cents / 100).toFixed(2)}`
                       }
                       slot="retailPrice"
-                      items={requiredInputs.data?.items}
+                      items={requiredInputs.data?.items ?? []}
                       recordId={p.id}
                     />
                   </p>
@@ -112,7 +112,7 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
                     <Website3RequiredInputValue
                       value={p.category}
                       slot="productFamily"
-                      items={requiredInputs.data?.items}
+                      items={requiredInputs.data?.items ?? []}
                       recordId={p.id}
                     />
                   </p>
@@ -123,7 +123,7 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
                     <Website3RequiredInputValue
                       value={p.inventory_on_hand}
                       slot="availableInventory"
-                      items={requiredInputs.data?.items}
+                      items={requiredInputs.data?.items ?? []}
                       recordId={p.id}
                     />
                   </p>

@@ -80,14 +80,26 @@ export function evaluateWebsite3Readiness(
   readiness: DomainReadiness | null | undefined,
 ): Website3ReadinessDecision {
   const domainItems = items.filter((item) => item.domain === domain);
-  const blocking = domainItems.filter(unresolved);
+  const activeDomainItems = domainItems.filter(
+    (item) => item.currentState !== "superseded",
+  );
+  const blocking = activeDomainItems.filter(unresolved);
+  const activeItemCountMatches =
+    readiness != null &&
+    activeDomainItems.length === readiness.actualInputCount;
+  const blockingMetadataConsistent =
+    readiness != null &&
+    readiness.blockingKeys.length === readiness.blockingInputCount &&
+    readiness.blockingKeys.length === 0 &&
+    readiness.blockingInputCount === 0;
   const canonicalReady =
     readiness?.domain === domain &&
     readiness.publicEnabled === true &&
     readiness.softwareComplete === true &&
     readiness.manifestApproved === true &&
     readiness.realInputsRequired === false &&
-    readiness.blockingInputCount === 0 &&
+    activeItemCountMatches &&
+    blockingMetadataConsistent &&
     readiness.expectedInputCount > 0 &&
     readiness.actualInputCount === readiness.expectedInputCount &&
     readiness.launchStatus === "public_enabled";
@@ -97,7 +109,10 @@ export function evaluateWebsite3Readiness(
     publicEnabled,
     softwareComplete: readiness?.softwareComplete === true,
     realInputsRequired:
-      readiness?.realInputsRequired !== false || blocking.length > 0,
+      readiness?.realInputsRequired !== false ||
+      blocking.length > 0 ||
+      !activeItemCountMatches ||
+      !blockingMetadataConsistent,
     blockingLabels: blocking.map((item) => item.label),
     publicMessage: publicEnabled
       ? null

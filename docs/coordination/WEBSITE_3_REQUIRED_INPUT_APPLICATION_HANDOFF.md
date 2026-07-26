@@ -37,6 +37,24 @@ Website 2 handoff message.
   ordinary member/public rendering;
 - keeps long administrator actions inside narrow cards.
 
+## Targeted PR #68 correction
+
+The rejected head `559173948a4a353f8930d359bd9b042101c2b895`
+received three high findings. The corrected containing commit:
+
+- lets canonical state win over a stored value: only a verified, exact matching
+  row with a present value may render that value; missing, entered,
+  under-review, rejected, expired, unresolved, or verified-without-value states
+  fail closed to the exact label;
+- requires the supplied non-superseded domain item count to match canonical
+  `actualInputCount` and requires consistent zero blocking keys/count before
+  public enablement;
+- carries the stable platform product ID through catalog and detail view models,
+  prefers exact key-and-record matches, and permits only an explicitly
+  domain-global row when record identity is absent.
+
+The branch was not rebased solely for the disjoint production-main change.
+
 ## Explicit boundaries
 
 - no database migration;

@@ -108,7 +108,7 @@ function ProductsBody({ token }: { token: string }) {
                 <Website3RequiredInputValue
                   value={p.sku}
                   slot="productSku"
-                  items={requiredInputs.data?.items}
+                  items={requiredInputs.data?.items ?? []}
                   recordId={p.id}
                 />
               ),
@@ -132,7 +132,7 @@ function ProductsBody({ token }: { token: string }) {
                       : `$${(p.price_cents / 100).toFixed(2)}`
                   }
                   slot="retailPrice"
-                  items={requiredInputs.data?.items}
+                  items={requiredInputs.data?.items ?? []}
                   recordId={p.id}
                 />
               ),
