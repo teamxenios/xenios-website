@@ -50,6 +50,31 @@
 23. **Rollback:** revert the focused Website 6 commit(s). No production data,
     capability, provider, migration, or environment value was changed.
 
+## Complete-the-unfinished-build reconciliation
+
+- **Checkpoint SHA before reconciliation:** `230e4c94fdcec8dc73c8bde62b7a0e2888cf3613`
+- **Remaining-scope source of truth:**
+  `docs/coordination/WEBSITE_6_REMAINING_SCOPE.md`
+- **Newly completed scope:** formal requirement-by-requirement classification
+  with exact owner, branch, files, acceptance test, release train, and production
+  outcome.
+- **Changed reconciliation files:**
+  `docs/coordination/WEBSITE_6_REMAINING_SCOPE.md` and this handoff.
+- **Migrations:** none added; Website 6 continues to verify candidate migration
+  order, RLS, grants, policies, constraints, and production read-only invariants.
+- **Routes:** no domain route was added. The 16 partner endpoint mismatch remains
+  intentionally release-blocking and assigned to Website 4.
+- **Remaining QA scope:** full persona/auth journeys, integrated uploads and
+  private Storage, offline/retry, 200% zoom, broader state coverage, notification
+  replay/concurrency, API p95 measurement, full SEO semantics, new-train
+  migration/RLS checks, trust-layer verification, integrated screenshots, and
+  per-train live verification.
+- **Shared wiring:** Website 2 registers/integrates domain modules; Website 6
+  reviews the frozen result and adds narrow regression coverage.
+- **Next exact action:** Website 4 resolves the PR #48 route-parity micro-task;
+  Website 6 reruns `npm run qa:routes:check` on its next frozen head without
+  implementing partner business logic.
+
 Website 2 remains the sole merge/deployment coordinator. Website 6 must verify
 the deployed SHA, live 320px behavior, contrast, logs, and smoke checks after
 the Website 6 release.
