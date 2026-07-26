@@ -50,6 +50,12 @@ import {
 import type { ProductCertificateRecord, ProductLotRecord } from "./model";
 import type { Website3ApiDependencies } from "./routes";
 import { Website3ValidationError } from "./errors";
+import {
+  buildWebsite3PrelaunchRepositoryScope,
+  type Website3PrelaunchRepositoryScope,
+  type Website3RepositoryOperation,
+} from "./prelaunch-application";
+import type { PrelaunchAccessStatus } from "@shared/research/prelaunch";
 
 type DbClient = Pick<SupabaseClient, "from" | "rpc" | "storage">;
 
@@ -1019,4 +1025,21 @@ export function buildWebsite3ProductionDependencies(
       new SupabaseBiomarkerUploadProvider(db),
     ),
   };
+}
+
+/**
+ * Website 2 may use this factory after its canonical pre-launch guard has
+ * attached a verified access status to an internal Website 3 request.
+ * Existing public/member/admin Train 1 construction remains unchanged.
+ */
+export function buildWebsite3PrelaunchProductionDependencies(
+  access: PrelaunchAccessStatus,
+  operation: Website3RepositoryOperation,
+  env: NodeJS.ProcessEnv = process.env,
+): Website3PrelaunchRepositoryScope<Website3ApiDependencies> {
+  return buildWebsite3PrelaunchRepositoryScope(
+    access,
+    operation,
+    () => buildWebsite3ProductionDependencies(env),
+  );
 }
