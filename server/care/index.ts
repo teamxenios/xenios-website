@@ -39,7 +39,12 @@ export function registerCareApi(
 }
 
 export * from "./access";
+export * from "./appointment-readiness";
+export * from "./appointment-repository";
+export * from "./appointment-routes";
+export * from "./appointments";
 export * from "./capability";
+export * from "./clinician-review";
 export * from "./consent";
 export * from "./consent-repository";
 export * from "./eligibility";
