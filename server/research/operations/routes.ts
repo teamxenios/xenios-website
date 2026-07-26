@@ -8,9 +8,78 @@ import { buildOperationsDashboard } from "./operations-dashboard";
 import type { ProfessionalAccountService, ProfessionalLifecycle, ProfessionalProgram } from "./professional-accounts";
 import type { OperationsActor } from "./state-machines";
 
+type Awaitable<T> = T | Promise<T>;
+type AsyncCompatibleMethod<T extends (...args: any[]) => any> = (
+  ...args: Parameters<T>
+) => Awaitable<Awaited<ReturnType<T>>>;
+
+export interface OperationsFulfillmentPort {
+  listMitchQueue: AsyncCompatibleMethod<FulfillmentService["listMitchQueue"]>;
+  trackingForMember: AsyncCompatibleMethod<FulfillmentService["trackingForMember"]>;
+  acknowledge: AsyncCompatibleMethod<FulfillmentService["acknowledge"]>;
+  setExpectedDate: AsyncCompatibleMethod<FulfillmentService["setExpectedDate"]>;
+  allocateExact: AsyncCompatibleMethod<FulfillmentService["allocateExact"]>;
+  beginPicking: AsyncCompatibleMethod<FulfillmentService["beginPicking"]>;
+  pack: AsyncCompatibleMethod<FulfillmentService["pack"]>;
+  addShippingLabel: AsyncCompatibleMethod<FulfillmentService["addShippingLabel"]>;
+  ship: AsyncCompatibleMethod<FulfillmentService["ship"]>;
+  reportException: AsyncCompatibleMethod<FulfillmentService["reportException"]>;
+  addNote: AsyncCompatibleMethod<FulfillmentService["addNote"]>;
+}
+
+export interface OperationsAffiliatePort {
+  login: AsyncCompatibleMethod<AffiliateService["login"]>;
+  issueLink: AsyncCompatibleMethod<AffiliateService["issueLink"]>;
+}
+
+export interface OperationsProfessionalPort {
+  apply: AsyncCompatibleMethod<ProfessionalAccountService["apply"]>;
+  list: AsyncCompatibleMethod<ProfessionalAccountService["list"]>;
+  review: AsyncCompatibleMethod<ProfessionalAccountService["review"]>;
+}
+
+export interface OperationsCrmPort {
+  list: AsyncCompatibleMethod<CrmService["list"]>;
+}
+
+export interface OperationsOutboxPort {
+  list: AsyncCompatibleMethod<NotificationOutbox["list"]>;
+}
+
+export type PartnerPortalSurface =
+  | "conversions"
+  | "leads"
+  | "commissions"
+  | "payouts"
+  | "resources"
+  | "training"
+  | "campaigns"
+  | "events"
+  | "organizations"
+  | "compliance"
+  | "onboarding"
+  | "security_sessions";
+
+export type PartnerPortalRequestKind = "campaign" | "event" | "organization" | "compliance";
+
+export interface OperationsPartnerPortalPort {
+  read(
+    surface: PartnerPortalSurface,
+    authUserId: string,
+    currentSessionKey?: string | null,
+  ): Awaitable<Record<string, unknown>>;
+  submit(
+    kind: PartnerPortalRequestKind,
+    authUserId: string,
+    body: unknown,
+    occurredAt: Date,
+  ): Awaitable<{ ok: boolean; message?: string; code?: string; idempotent?: boolean }>;
+}
+
 export interface OperationsRouteRequest extends Request {
   operationsActor?: OperationsActor;
   operationsMemberRef?: string;
+  operationsSessionKey?: string;
 }
 
 export interface OperationsRouteGuards {
@@ -24,11 +93,12 @@ export interface OperationsRouteGuards {
 
 export interface OperationsRouteDeps {
   guards: OperationsRouteGuards;
-  fulfillment: FulfillmentService;
-  affiliates: AffiliateService;
-  professionals: ProfessionalAccountService;
-  crm: CrmService;
-  outbox: NotificationOutbox;
+  fulfillment: OperationsFulfillmentPort;
+  affiliates: OperationsAffiliatePort;
+  professionals: OperationsProfessionalPort;
+  partnerPortal: OperationsPartnerPortalPort;
+  crm: OperationsCrmPort;
+  outbox: OperationsOutboxPort;
   dashboard(): Promise<OperationsDashboardInput> | OperationsDashboardInput;
   now(): Date;
 }
@@ -101,20 +171,22 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     res.json({ ok: true, dashboard: buildOperationsDashboard(await deps.dashboard()) });
   });
 
-  app.get("/api/operations/mitch/queues/:queue", logistics, (req, res) => {
+  app.get("/api/operations/mitch/queues/:queue", logistics, async (req, res) => {
     noStore(res);
     const queue = String(req.params.queue) as MitchQueue;
     if (!MITCH_QUEUES.includes(queue)) {
       res.status(400).json({ ok: false, code: "invalid_input", message: "Unknown Mitch queue." });
       return;
     }
-    res.json({ ok: true, queue, rows: deps.fulfillment.listMitchQueue(queue, deps.now()) });
+    res.json({ ok: true, queue, rows: await deps.fulfillment.listMitchQueue(queue, deps.now()) });
   });
 
-  app.get("/api/research/orders/:orderId/tracking", member, (req: OperationsRouteRequest, res) => {
+  app.get("/api/research/orders/:orderId/tracking", member, async (req: OperationsRouteRequest, res) => {
     noStore(res);
     const memberRef = deps.guards.memberRefOf(req);
-    const tracking = memberRef ? deps.fulfillment.trackingForMember(String(req.params.orderId), memberRef) : null;
+    const tracking = memberRef
+      ? await deps.fulfillment.trackingForMember(String(req.params.orderId), memberRef)
+      : null;
     if (!tracking) {
       // Ownership failures are indistinguishable from absence.
       res.status(404).json({ ok: false, code: "not_found", message: "Order tracking not found." });
@@ -123,13 +195,13 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     res.json({ ok: true, tracking });
   });
 
-  app.post("/api/operations/mitch/orders/:orderId/acknowledge", logistics, (req: OperationsRouteRequest, res) => {
+  app.post("/api/operations/mitch/orders/:orderId/acknowledge", logistics, async (req: OperationsRouteRequest, res) => {
     const command = requireCommand(req, res);
     const acting = actor(req, deps, res);
     if (!command || !acting) return;
     relay(
       res,
-      deps.fulfillment.acknowledge({
+      await deps.fulfillment.acknowledge({
         orderId: String(req.params.orderId),
         ...command,
         actor: acting,
@@ -138,7 +210,7 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.post("/api/operations/mitch/orders/:orderId/expected-date", logistics, (req: OperationsRouteRequest, res) => {
+  app.post("/api/operations/mitch/orders/:orderId/expected-date", logistics, async (req: OperationsRouteRequest, res) => {
     const command = requireCommand(req, res);
     const acting = actor(req, deps, res);
     const expectedAt = (req.body as { expectedAt?: unknown })?.expectedAt;
@@ -149,7 +221,7 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     }
     relay(
       res,
-      deps.fulfillment.setExpectedDate({
+      await deps.fulfillment.setExpectedDate({
         orderId: String(req.params.orderId),
         ...command,
         expectedAt,
@@ -159,7 +231,7 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.post("/api/operations/mitch/orders/:orderId/allocate", logistics, (req: OperationsRouteRequest, res) => {
+  app.post("/api/operations/mitch/orders/:orderId/allocate", logistics, async (req: OperationsRouteRequest, res) => {
     const command = requireCommand(req, res);
     const acting = actor(req, deps, res);
     const body = req.body as Record<string, unknown>;
@@ -175,7 +247,7 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     }
     relay(
       res,
-      deps.fulfillment.allocateExact({
+      await deps.fulfillment.allocateExact({
         orderId: String(req.params.orderId),
         itemId: body.itemId,
         lotId: body.lotId,
@@ -188,13 +260,13 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.post("/api/operations/mitch/orders/:orderId/pick", logistics, (req: OperationsRouteRequest, res) => {
+  app.post("/api/operations/mitch/orders/:orderId/pick", logistics, async (req: OperationsRouteRequest, res) => {
     const command = requireCommand(req, res);
     const acting = actor(req, deps, res);
     if (!command || !acting) return;
     relay(
       res,
-      deps.fulfillment.beginPicking({
+      await deps.fulfillment.beginPicking({
         orderId: String(req.params.orderId),
         ...command,
         actor: acting,
@@ -203,13 +275,13 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.post("/api/operations/mitch/orders/:orderId/pack", logistics, (req: OperationsRouteRequest, res) => {
+  app.post("/api/operations/mitch/orders/:orderId/pack", logistics, async (req: OperationsRouteRequest, res) => {
     const command = requireCommand(req, res);
     const acting = actor(req, deps, res);
     if (!command || !acting) return;
     relay(
       res,
-      deps.fulfillment.pack({
+      await deps.fulfillment.pack({
         orderId: String(req.params.orderId),
         ...command,
         actor: acting,
@@ -218,7 +290,7 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.post("/api/operations/mitch/orders/:orderId/label", logistics, (req: OperationsRouteRequest, res) => {
+  app.post("/api/operations/mitch/orders/:orderId/label", logistics, async (req: OperationsRouteRequest, res) => {
     const command = requireCommand(req, res);
     const acting = actor(req, deps, res);
     const body = req.body as Record<string, unknown>;
@@ -229,7 +301,7 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     }
     relay(
       res,
-      deps.fulfillment.addShippingLabel({
+      await deps.fulfillment.addShippingLabel({
         orderId: String(req.params.orderId),
         ...command,
         carrier: String(body.carrier),
@@ -241,13 +313,13 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.post("/api/operations/mitch/orders/:orderId/ship", logistics, (req: OperationsRouteRequest, res) => {
+  app.post("/api/operations/mitch/orders/:orderId/ship", logistics, async (req: OperationsRouteRequest, res) => {
     const command = requireCommand(req, res);
     const acting = actor(req, deps, res);
     if (!command || !acting) return;
     relay(
       res,
-      deps.fulfillment.ship({
+      await deps.fulfillment.ship({
         orderId: String(req.params.orderId),
         ...command,
         actor: acting,
@@ -256,18 +328,18 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.post("/api/operations/mitch/orders/:orderId/exception", logistics, (req: OperationsRouteRequest, res) => {
+  app.post("/api/operations/mitch/orders/:orderId/exception", logistics, async (req: OperationsRouteRequest, res) => {
     const command = requireCommand(req, res);
     const acting = actor(req, deps, res);
     const body = req.body as Record<string, unknown>;
     if (!command || !acting) return;
     relay(
       res,
-      deps.fulfillment.reportException({
+      await deps.fulfillment.reportException({
         orderId: String(req.params.orderId),
         ...command,
-        kind: String(body.kind ?? "other") as Parameters<FulfillmentService["reportException"]>[0]["kind"],
-        severity: String(body.severity ?? "normal") as Parameters<FulfillmentService["reportException"]>[0]["severity"],
+        kind: String(body.kind ?? "other") as Parameters<OperationsFulfillmentPort["reportException"]>[0]["kind"],
+        severity: String(body.severity ?? "normal") as Parameters<OperationsFulfillmentPort["reportException"]>[0]["severity"],
         detail: String(body.detail ?? ""),
         actor: acting,
         occurredAt: deps.now(),
@@ -275,14 +347,14 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.post("/api/operations/mitch/orders/:orderId/note", logistics, (req: OperationsRouteRequest, res) => {
+  app.post("/api/operations/mitch/orders/:orderId/note", logistics, async (req: OperationsRouteRequest, res) => {
     const command = requireCommand(req, res);
     const acting = actor(req, deps, res);
     const body = req.body as Record<string, unknown>;
     if (!command || !acting) return;
     relay(
       res,
-      deps.fulfillment.addNote({
+      await deps.fulfillment.addNote({
         orderId: String(req.params.orderId),
         ...command,
         text: String(body.text ?? ""),
@@ -294,14 +366,14 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.get("/api/research/affiliate/dashboard", affiliate, (req: OperationsRouteRequest, res) => {
+  app.get("/api/research/affiliate/dashboard", affiliate, async (req: OperationsRouteRequest, res) => {
     noStore(res);
     const acting = actor(req, deps, res);
     if (!acting) return;
-    relay(res, deps.affiliates.login(acting.id));
+    relay(res, await deps.affiliates.login(acting.id));
   });
 
-  app.post("/api/research/affiliate/links", affiliate, (req: OperationsRouteRequest, res) => {
+  app.post("/api/research/affiliate/links", affiliate, async (req: OperationsRouteRequest, res) => {
     const acting = actor(req, deps, res);
     const idempotencyKey = key(req);
     if (!acting || !idempotencyKey) {
@@ -310,7 +382,7 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     }
     relay(
       res,
-      deps.affiliates.issueLink({
+      await deps.affiliates.issueLink({
         affiliateId: String((req.body as { affiliateId?: unknown }).affiliateId ?? ""),
         campaign: typeof (req.body as { campaign?: unknown }).campaign === "string" ? String((req.body as { campaign?: unknown }).campaign) : null,
         actor: acting,
@@ -320,7 +392,7 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.post("/api/research/professional-accounts/apply", (req, res) => {
+  app.post("/api/research/professional-accounts/apply", async (req, res) => {
     const body = req.body as Record<string, unknown>;
     const idempotencyKey = key(req);
     if (!idempotencyKey || !Array.isArray(body.programs)) {
@@ -329,7 +401,7 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     }
     relay(
       res,
-      deps.professionals.apply({
+      await deps.professionals.apply({
         id: String(body.id ?? ""),
         accountType: body.accountType === "practitioner" ? "practitioner" : "professional",
         organizationName: String(body.organizationName ?? ""),
@@ -345,26 +417,100 @@ export function registerOperationsApi(app: Express, deps: OperationsRouteDeps): 
     );
   });
 
-  app.get("/api/admin/research/professional-accounts", admin, (req: OperationsRouteRequest, res) => {
+  app.get("/api/admin/research/professional-accounts", admin, async (req: OperationsRouteRequest, res) => {
     noStore(res);
     const acting = actor(req, deps, res);
     if (!acting) return;
     const state = typeof req.query.state === "string" ? (req.query.state as ProfessionalLifecycle) : undefined;
-    relay(res, deps.professionals.list(acting, state));
+    relay(res, await deps.professionals.list(acting, state));
   });
 
-  app.get("/api/admin/research/operations/crm", admin, (req: OperationsRouteRequest, res) => {
+  app.post(
+    "/api/admin/research/professional-accounts/:accountId/transition",
+    admin,
+    async (req: OperationsRouteRequest, res) => {
+      const acting = actor(req, deps, res);
+      const command = requireCommand(req, res);
+      if (!acting || !command) return;
+      const body = req.body as Record<string, unknown>;
+      relay(
+        res,
+        await deps.professionals.review({
+          accountId: String(req.params.accountId),
+          to: String(body.to) as Exclude<ProfessionalLifecycle, "applied">,
+          expectedVersion: command.expectedVersion,
+          actor: acting,
+          agreementVersion:
+            typeof body.agreementVersion === "string" ? body.agreementVersion : undefined,
+          idempotencyKey: command.idempotencyKey,
+          occurredAt: deps.now(),
+        }),
+      );
+    },
+  );
+
+  app.get("/api/admin/research/operations/crm", admin, async (req: OperationsRouteRequest, res) => {
     noStore(res);
     const acting = actor(req, deps, res);
     if (!acting) return;
-    relay(res, deps.crm.list(acting, undefined, typeof req.query.search === "string" ? req.query.search : undefined));
+    relay(res, await deps.crm.list(acting, undefined, typeof req.query.search === "string" ? req.query.search : undefined));
   });
 
-  app.get("/api/admin/research/operations/outbox", admin, (req, res) => {
+  app.get("/api/admin/research/operations/outbox", admin, async (req, res) => {
     noStore(res);
     const status = typeof req.query.status === "string" ? (req.query.status as NotificationStatus) : undefined;
-    res.json({ ok: true, notifications: deps.outbox.list(status) });
+    res.json({ ok: true, notifications: await deps.outbox.list(status) });
   });
+
+  const partnerRead =
+    (surface: PartnerPortalSurface) => async (req: OperationsRouteRequest, res: Response) => {
+      noStore(res);
+      const acting = actor(req, deps, res);
+      if (!acting) return;
+      try {
+        res.json(await deps.partnerPortal.read(surface, acting.id, req.operationsSessionKey ?? null));
+      } catch (error) {
+        console.error(`[research partner] ${surface} load failed:`, error);
+        res.status(500).json({ ok: false, code: "internal_error", message: "Unable to load this partner surface." });
+      }
+    };
+
+  const partnerSubmit =
+    (kind: PartnerPortalRequestKind) => async (req: OperationsRouteRequest, res: Response) => {
+      noStore(res);
+      const acting = actor(req, deps, res);
+      if (!acting) return;
+      try {
+        const result = await deps.partnerPortal.submit(kind, acting.id, req.body, deps.now());
+        if (!result.ok) {
+          relay(res, result);
+          return;
+        }
+        res.status(result.idempotent ? 200 : 202).json(result);
+      } catch (error) {
+        console.error(`[research partner] ${kind} request failed:`, error);
+        res.status(500).json({ ok: false, code: "internal_error", message: "Unable to submit this partner request." });
+      }
+    };
+
+  // These are the 16 literal adapter paths that previously had no server
+  // registration. Literal calls keep generated route inventories authoritative.
+  app.get("/api/research/partner/conversions", affiliate, partnerRead("conversions"));
+  app.get("/api/research/partner/leads", affiliate, partnerRead("leads"));
+  app.get("/api/research/partner/commissions", affiliate, partnerRead("commissions"));
+  app.get("/api/research/partner/payouts", affiliate, partnerRead("payouts"));
+  app.get("/api/research/partner/resources", affiliate, partnerRead("resources"));
+  app.get("/api/research/partner/training", affiliate, partnerRead("training"));
+  app.get("/api/research/partner/campaigns", affiliate, partnerRead("campaigns"));
+  app.post("/api/research/partner/campaigns/request", affiliate, partnerSubmit("campaign"));
+  app.get("/api/research/partner/events", affiliate, partnerRead("events"));
+  app.post("/api/research/partner/events/request", affiliate, partnerSubmit("event"));
+  app.get("/api/research/partner/organizations", affiliate, partnerRead("organizations"));
+  app.post("/api/research/partner/organizations/request", affiliate, partnerSubmit("organization"));
+  app.get("/api/research/partner/compliance", affiliate, partnerRead("compliance"));
+  app.post("/api/research/partner/compliance/submissions", affiliate, partnerSubmit("compliance"));
+  app.get("/api/research/partner/onboarding", affiliate, partnerRead("onboarding"));
+  app.get("/api/research/partner/security/sessions", affiliate, partnerRead("security_sessions"));
 }
 
 export function attachOperationsActor(actorValue: OperationsActor, memberRef?: string): RequestHandler {

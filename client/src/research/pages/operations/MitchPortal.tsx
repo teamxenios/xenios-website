@@ -52,12 +52,14 @@ export function MitchPortal({
   rows,
   initialQueue = "awaiting_acknowledgement",
   onPrimaryAction,
+  onSecondaryAction,
   loading = false,
   error,
 }: {
   rows: MitchUiRow[];
   initialQueue?: MitchUiQueue;
   onPrimaryAction?: (row: MitchUiRow) => void;
+  onSecondaryAction?: (row: MitchUiRow) => void;
   loading?: boolean;
   error?: string | null;
 }) {
@@ -75,7 +77,7 @@ export function MitchPortal({
   }, [rows, search]);
 
   return (
-    <main className="ops-page mitch-page" data-testid="mitch-portal">
+    <main className="research-app ops-page mitch-page" data-testid="mitch-portal">
       <div className="ops-shell">
         <header className="ops-header">
           <div>
@@ -83,7 +85,7 @@ export function MitchPortal({
             <h1 className="ops-title">Today’s ship floor.</h1>
             <p className="ops-lead">One queue, one next action. Exact lots stay attached from pick through return.</p>
           </div>
-          <span className="ops-status">{visible.length} waiting</span>
+          <span className="ra-badge ops-status">{visible.length} waiting</span>
         </header>
 
         <nav className="ops-queue-tabs" aria-label="Fulfillment queues">
@@ -103,7 +105,7 @@ export function MitchPortal({
         <label>
           <span className="ops-kicker">Find an order</span>
           <input
-            className="ops-input"
+            className="input-field ops-input"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Order, initials, or destination"
@@ -123,7 +125,10 @@ export function MitchPortal({
                     <p className="ops-kicker">Order</p>
                     <h2 className="mitch-card-ref">{row.orderReference}</h2>
                   </div>
-                  <span className="ops-status" data-tone={row.openExceptionCount ? "danger" : undefined}>
+                  <span
+                    className={`ra-badge ops-status ${row.openExceptionCount ? "ra-badge-danger" : ""}`}
+                    data-tone={row.openExceptionCount ? "danger" : undefined}
+                  >
                     {row.fulfillmentState.replaceAll("_", " ")}
                   </span>
                 </div>
@@ -136,8 +141,21 @@ export function MitchPortal({
                   <div><dt>Exceptions</dt><dd>{row.openExceptionCount}</dd></div>
                 </dl>
                 <div className="mitch-card-bottom">
-                  <button type="button" className="ops-card-link">Note · Assistance · Escalate</button>
-                  <button type="button" className="ops-primary" onClick={() => onPrimaryAction?.(row)}>
+                  {onSecondaryAction && (
+                    <button
+                      type="button"
+                      className="btn btn-ghost ops-card-link"
+                      onClick={() => onSecondaryAction(row)}
+                    >
+                      Note · Assistance · Escalate
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="btn btn-primary ops-primary"
+                    onClick={() => onPrimaryAction?.(row)}
+                    disabled={!onPrimaryAction}
+                  >
                     {primaryAction(row.fulfillmentState)}
                   </button>
                 </div>
@@ -145,7 +163,10 @@ export function MitchPortal({
             ))}
           </section>
         ) : (
-          <div className="ops-state" role="status">This queue is clear.</div>
+          <div className="ops-state" role="status">
+            <p>This queue is clear.</p>
+            <p className="ops-state-detail">Choose another queue above or check again after the next fulfillment update.</p>
+          </div>
         )}
       </div>
     </main>

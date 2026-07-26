@@ -25,7 +25,13 @@ export interface AffiliatePortalData {
 
 const money = (cents: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
 
-export function AffiliatePortal({ data }: { data: AffiliatePortalData }) {
+export function AffiliatePortal({
+  data,
+  onCreateLink,
+}: {
+  data: AffiliatePortalData;
+  onCreateLink?: () => void;
+}) {
   const metrics = [
     ["Clicks", data.metrics.clicks],
     ["Unique visitors", data.metrics.uniqueVisitors],
@@ -42,7 +48,7 @@ export function AffiliatePortal({ data }: { data: AffiliatePortalData }) {
     ["Reversed", money(data.commission.reversedCents)],
   ] as const;
   return (
-    <main className="ops-page" data-testid="affiliate-portal">
+    <main className="research-app ops-page" data-testid="affiliate-portal">
       <div className="ops-shell">
         <header className="ops-header">
           <div>
@@ -50,7 +56,11 @@ export function AffiliatePortal({ data }: { data: AffiliatePortalData }) {
             <h1 className="ops-title">Your channel, in numbers.</h1>
             <p className="ops-lead">Campaign performance and commission status—without customer identity.</p>
           </div>
-          <button type="button" className="ops-primary">Create campaign link</button>
+          {onCreateLink && (
+            <button type="button" className="btn btn-primary ops-primary" onClick={onCreateLink}>
+              Create campaign link
+            </button>
+          )}
         </header>
         <section className="affiliate-summary ops-section">
           <div className="affiliate-hero">
@@ -80,7 +90,10 @@ export function AffiliatePortal({ data }: { data: AffiliatePortalData }) {
                 <thead><tr><th>Campaign</th><th>Link</th></tr></thead>
                 <tbody>
                   {data.links.map((link) => (
-                    <tr key={link.id}><td>{link.campaign ?? "General"}</td><td>{link.url}</td></tr>
+                    <tr key={link.id}>
+                      <td data-label="Campaign">{link.campaign ?? "General"}</td>
+                      <td data-label="Link" className="ops-breakable">{link.url}</td>
+                    </tr>
                   ))}
                 </tbody>
               </table>

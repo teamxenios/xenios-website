@@ -36,6 +36,7 @@ table in the same PR that adds or changes a migration file.
 | 27 | research-product-requests.sql | Private member product requests, demand candidates, private attachments, append-only events, and atomic request/status functions | RUN | 2026-07-25 | Supabase migration + production schema checks |
 | 28 | research-product-requests-hardening.sql | Remove Supabase default direct table grants from anonymous and authenticated browser roles | RUN | 2026-07-25 | zero browser-role table grants |
 | 29 | research-product-requests-function-hardening.sql | Remove default browser-role execution from the append-only event trigger helper | RUN | 2026-07-25 | zero browser-role Product Request function grants |
+| 30 | research-operations-affiliates.sql | Operations staff roles, fulfillment projections and atomic commands, audit/movements/exceptions, affiliate metrics, CRM, Lawrence configuration, and professional accounts over canonical commerce tables | PENDING (not run) | — | operations lane; requires 20–26 and order-to-lot allocation bridge |
 
 Verification files (read-only, run any time):
 
@@ -43,6 +44,9 @@ Verification files (read-only, run any time):
   public policies, referral seed values correct.
 - `verify-referral-fraud.sql` — the fraud tables, uniqueness and queue indexes,
   the applicant_ip column, and the research_rate_limit_hit function.
+
+- `research-operations-affiliates-verification.sql` — Website 4 dependency,
+  RLS, browser-grant, RPC-grant, record-count, traceability, and inventory-delta checks.
 
 Notes:
 
@@ -98,3 +102,9 @@ Notes:
 - The global order in this ledger is the integration order. The authoritative
   ordered run script for a production apply is
   docs/research-launch/FULL_PRODUCTION_MIGRATION_MANIFEST.md.
+- 2026-07-25: migration 30 was dry-run twice after migrations 1–26 in a
+  disposable PostgreSQL 16 database. Its behavior test completed an exact-lot
+  acknowledge-to-ship flow, verified idempotent replay and no double inventory
+  decrement, and verified professional-account replay and clinical-economics
+  refusal. It is NOT run in production. Website 2 must first confirm migrations
+  20–26 and the checkout-to-`research_lot_allocations` bridge.

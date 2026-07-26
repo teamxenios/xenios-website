@@ -47,7 +47,7 @@ export function OperationsCommandCenter({
   }, [metrics, search, tone]);
 
   return (
-    <main className="ops-page" data-testid="operations-command-center">
+    <main className="research-app ops-page" data-testid="operations-command-center">
       <div className="ops-shell">
         <header className="ops-header">
           <div>
@@ -61,7 +61,7 @@ export function OperationsCommandCenter({
           <div>
             <p className="ops-kicker">Last refreshed</p>
             <p className="body-s">{new Date(generatedAt).toLocaleString()}</p>
-            <a href={priorityHref} className="ops-primary" style={{ marginTop: 12 }}>
+            <a href={priorityHref} className="btn btn-primary ops-primary" style={{ marginTop: 12 }}>
               Open priority queue
             </a>
           </div>
@@ -77,7 +77,7 @@ export function OperationsCommandCenter({
             <p className="ops-kicker">Operations unavailable</p>
             <p>{error}</p>
             {onRetry && (
-              <button type="button" className="ops-primary" onClick={onRetry}>
+              <button type="button" className="btn btn-primary ops-primary" onClick={onRetry}>
                 Try again
               </button>
             )}
@@ -88,7 +88,7 @@ export function OperationsCommandCenter({
               <label>
                 <span className="ops-kicker">Search metrics</span>
                 <input
-                  className="ops-input"
+                  className="input-field ops-input"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Inventory, payouts, applications…"
@@ -149,16 +149,21 @@ export function OperationsCommandCenter({
                     <tbody>
                       {exceptions.map((row) => (
                         <tr key={row.id}>
-                          <td><strong>{row.orderReference}</strong></td>
-                          <td>{row.kind}</td>
-                          <td>{row.owner}</td>
-                          <td>{row.age}</td>
-                          <td>
-                            <span className="ops-status" data-tone={row.severity === "normal" ? "warning" : "danger"}>
+                          <td data-label="Order"><strong>{row.orderReference}</strong></td>
+                          <td data-label="Exception">{row.kind}</td>
+                          <td data-label="Owner">{row.owner}</td>
+                          <td data-label="Age">{row.age}</td>
+                          <td data-label="Status">
+                            <span
+                              className={`ra-badge ops-status ${
+                                row.severity === "normal" ? "ra-badge-warning" : "ra-badge-danger"
+                              }`}
+                              data-tone={row.severity === "normal" ? "warning" : "danger"}
+                            >
                               {row.severity === "samuel_decision" ? "Samuel decision" : row.severity}
                             </span>
                           </td>
-                          <td><a className="ops-card-link" href={row.href}>Open →</a></td>
+                          <td data-label="Action"><a className="ops-card-link" href={row.href}>Open →</a></td>
                         </tr>
                       ))}
                     </tbody>

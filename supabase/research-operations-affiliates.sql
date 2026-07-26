@@ -1,313 +1,367 @@
--- Website 4 additive schema: operations, fulfillment, affiliates, and
--- professional accounts. This is intentionally NOT a production bundle.
--- Website 2 / release management owns production migration composition.
+-- Website 4 production migration: additive operations, affiliate, and
+-- fulfillment persistence over the canonical Website 3 commerce schema.
+--
+-- IMPORTANT:
+--   * Apply supabase/production/research-track-b-commerce.sql first.
+--   * This file deliberately does NOT create a second order, lot, shipment,
+--     partner, commission, payout, or notification-outbox architecture.
+--   * Checkout already decrements quantity_available when it creates a lot
+--     reservation. Shipping records traceability and MUST NOT decrement it a
+--     second time.
+--   * Every table is server-only. Browser access goes through authorized routes.
 
 create extension if not exists pgcrypto;
 
-create type research_operations_role as enum (
-  'admin', 'operations_manager', 'finance', 'mitch', 'logistics',
-  'affiliate', 'professional', 'system', 'provider'
-);
-create type research_payment_state as enum ('pending', 'authorized', 'captured', 'failed', 'refunded', 'chargeback');
-create type research_operations_order_state as enum ('new', 'confirmed', 'processing', 'complete', 'cancelled', 'returned');
-create type research_fulfillment_state as enum (
-  'new', 'awaiting_acknowledgement', 'acknowledged', 'picking', 'packed',
-  'label_required', 'ready_to_ship', 'shipped', 'exception', 'returned'
-);
-create type research_shipment_state as enum (
-  'not_created', 'label_required', 'label_created', 'in_transit',
-  'delivered', 'exception', 'return_requested', 'returned'
-);
-create type research_allocation_state as enum ('unallocated', 'reserved', 'allocated', 'released', 'shipped');
-create type research_inventory_movement_kind as enum (
-  'receipt', 'reserve', 'allocate', 'release', 'ship', 'return',
-  'damage', 'correction', 'reconcile'
-);
-create type research_notification_channel as enum ('in_app', 'email', 'sms', 'telegram');
-create type research_notification_status as enum (
-  'pending', 'processing', 'sent', 'failed_retryable',
-  'failed_permanent', 'suppressed'
-);
-create type research_affiliate_state as enum (
-  'invited', 'applied', 'under_review', 'approved', 'active',
-  'paused', 'rejected', 'terminated'
-);
-create type research_professional_program as enum (
-  'wholesale', 'reseller', 'professional_membership', 'directory',
-  'education', 'event', 'implementation', 'software',
-  'future_clinical_partnership'
+do $$
+declare
+  dependency text;
+begin
+  foreach dependency in array array[
+    'public.research_members',
+    'public.research_orders',
+    'public.research_order_lines',
+    'public.research_fulfillment_orders',
+    'public.research_fulfillment_lines',
+    'public.research_shipments',
+    'public.research_inventory_lots',
+    'public.research_lot_quality_documents',
+    'public.research_lot_allocations',
+    'public.research_lot_shipments',
+    'public.research_partners',
+    'public.research_partner_links',
+    'public.research_attribution_conversions',
+    'public.research_commission_ledger',
+    'public.research_payout_batches',
+    'public.research_notification_outbox'
+  ]
+  loop
+    if to_regclass(dependency) is null then
+      raise exception 'Website 4 dependency missing: %. Apply the canonical Track B commerce migrations first.', dependency;
+    end if;
+  end loop;
+end
+$$;
+
+-- Canonical-table extensions needed for optimistic concurrency and durable
+-- idempotency/provenance. These are additive and safe on existing rows.
+alter table public.research_inventory_lots
+  add column if not exists version bigint not null default 0;
+
+alter table public.research_partner_links
+  add column if not exists idempotency_key text;
+create unique index if not exists research_partner_links_idempotency_idx
+  on public.research_partner_links (partner_id, idempotency_key)
+  where idempotency_key is not null;
+
+alter table public.research_attribution_conversions
+  add column if not exists channel text,
+  add column if not exists set_by_admin_id text,
+  add column if not exists override_reason text,
+  add column if not exists idempotency_key text;
+create unique index if not exists research_attribution_conversions_idempotency_idx
+  on public.research_attribution_conversions (idempotency_key)
+  where idempotency_key is not null;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'research_attribution_manual_override_names_admin'
+      and conrelid = 'public.research_attribution_conversions'::regclass
+  ) then
+    alter table public.research_attribution_conversions
+      add constraint research_attribution_manual_override_names_admin
+      check (
+        channel is distinct from 'manual'
+        or (
+          set_by_admin_id is not null
+          and length(trim(coalesce(override_reason, ''))) > 0
+        )
+      ) not valid;
+  end if;
+end
+$$;
+
+create table if not exists public.research_operations_staff_roles (
+  auth_user_id uuid primary key,
+  role text not null check (role in ('operations_manager','finance','mitch','logistics')),
+  enabled boolean not null default true,
+  version bigint not null default 1 check (version > 0),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
 
-create table if not exists research_operations_orders (
-  id uuid primary key default gen_random_uuid(),
-  source_order_id text not null unique,
-  member_ref uuid not null,
-  order_reference text not null unique,
-  payment_state research_payment_state not null default 'pending',
-  order_state research_operations_order_state not null default 'new',
-  fulfillment_state research_fulfillment_state not null default 'new',
-  shipment_state research_shipment_state not null default 'not_created',
-  allocation_state research_allocation_state not null default 'unallocated',
-  version bigint not null default 0 check (version >= 0),
+-- One operational projection per canonical fulfillment order. Shipping identity
+-- remains in research_fulfillment_orders; this row contains workflow only.
+create table if not exists public.research_fulfillment_work_orders (
+  fulfillment_order_id uuid primary key
+    references public.research_fulfillment_orders (id) on delete cascade,
+  fulfillment_state text not null default 'awaiting_acknowledgement'
+    check (fulfillment_state in (
+      'new','awaiting_acknowledgement','acknowledged','picking','packed',
+      'label_required','ready_to_ship','shipped','exception','returned'
+    )),
+  shipment_state text not null default 'not_created'
+    check (shipment_state in (
+      'not_created','label_required','label_created','in_transit',
+      'delivered','exception','return_requested','returned'
+    )),
+  allocation_state text not null default 'unallocated'
+    check (allocation_state in ('unallocated','reserved','allocated','released','shipped')),
   due_at timestamptz not null,
   expected_at timestamptz,
   acknowledged_at timestamptz,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists research_operations_audit_events (
-  id uuid primary key default gen_random_uuid(),
-  aggregate_id uuid not null references research_operations_orders(id),
-  aggregate_version bigint not null check (aggregate_version > 0),
-  actor_id text not null,
-  actor_role research_operations_role not null,
-  action text not null,
-  machine text not null check (machine in ('payment', 'order', 'fulfillment', 'shipment', 'allocation')),
-  from_state text not null,
-  to_state text not null,
-  idempotency_key text not null,
-  metadata jsonb not null default '{}'::jsonb,
-  occurred_at timestamptz not null default now(),
-  unique (aggregate_id, idempotency_key),
-  unique (aggregate_id, aggregate_version)
-);
-
-create table if not exists research_operations_lots (
-  id uuid primary key default gen_random_uuid(),
-  lot_code text not null unique,
-  sku text not null,
-  owner text not null check (owner in ('mitch', 'xenios')),
-  disposition text not null,
-  manufactured_date date,
-  expiry_date date,
-  retest_date date,
-  shelf_life_source text not null check (shelf_life_source in ('supplier_document', 'coa', 'not_confirmed')),
-  coa_on_file boolean not null default false,
-  identity_confirmed boolean not null default false,
-  purity_confirmed boolean not null default false,
-  sterility_confirmed boolean,
-  endotoxin_confirmed boolean,
-  excursion_state text not null default 'none' check (excursion_state in ('none', 'pending_review', 'cleared', 'rejected')),
-  recalled boolean not null default false,
+  shipment_id uuid references public.research_shipments (id),
   version bigint not null default 0 check (version >= 0),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+create index if not exists research_fulfillment_work_queue_idx
+  on public.research_fulfillment_work_orders (fulfillment_state, due_at);
+create index if not exists research_fulfillment_work_allocation_idx
+  on public.research_fulfillment_work_orders (allocation_state, due_at);
 
-create table if not exists research_operations_inventory_movements (
+create table if not exists public.research_operations_audit_events (
   id uuid primary key default gen_random_uuid(),
-  lot_id uuid not null references research_operations_lots(id),
-  sku text not null,
-  movement_kind research_inventory_movement_kind not null,
+  fulfillment_order_id uuid not null
+    references public.research_fulfillment_orders (id) on delete cascade,
+  aggregate_version bigint not null check (aggregate_version >= 0),
+  actor_id text not null,
+  actor_role text not null
+    check (actor_role in ('operations_manager','finance','mitch','logistics','system','provider')),
+  action text not null,
+  idempotency_key text not null,
+  command_hash text not null check (length(command_hash) = 64),
+  metadata jsonb not null default '{}'::jsonb,
+  occurred_at timestamptz not null default now(),
+  unique (fulfillment_order_id, idempotency_key)
+);
+create index if not exists research_operations_audit_timeline_idx
+  on public.research_operations_audit_events (fulfillment_order_id, occurred_at);
+
+-- Append-only inventory evidence. Allocation and shipment have delta 0 because
+-- canonical checkout has already reduced quantity_available for the finalized
+-- hold. A positive/negative physical adjustment is allowed only for a named
+-- receipt, return, damage, correction, or reconciliation event.
+create table if not exists public.research_operations_inventory_movements (
+  id uuid primary key default gen_random_uuid(),
+  lot_id uuid not null references public.research_inventory_lots (id),
+  order_id uuid not null references public.research_orders (id),
+  fulfillment_line_id uuid references public.research_fulfillment_lines (id),
+  movement_kind text not null
+    check (movement_kind in ('receipt','allocate','release','ship','return','damage','correction','reconcile')),
   quantity integer not null check (quantity > 0),
   on_hand_delta integer not null,
-  order_id uuid references research_operations_orders(id),
-  item_id text,
   actor_id text not null,
-  actor_role research_operations_role not null,
+  actor_role text not null
+    check (actor_role in ('operations_manager','finance','mitch','logistics','system','provider')),
   reason text,
   idempotency_key text not null unique,
   occurred_at timestamptz not null default now(),
   check (
-    (movement_kind in ('reserve', 'allocate', 'release') and on_hand_delta = 0)
-    or (movement_kind = 'receipt' and on_hand_delta = quantity)
-    or (movement_kind in ('ship', 'damage') and on_hand_delta = -quantity)
-    or (movement_kind = 'return' and on_hand_delta = quantity)
-    or movement_kind in ('correction', 'reconcile')
+    (movement_kind in ('allocate','release','ship') and on_hand_delta = 0)
+    or (movement_kind in ('receipt','return') and on_hand_delta = quantity)
+    or (movement_kind = 'damage' and on_hand_delta = -quantity)
+    or movement_kind in ('correction','reconcile')
   ),
-  check (movement_kind not in ('correction', 'reconcile', 'damage', 'release') or length(trim(coalesce(reason, ''))) > 0)
+  check (
+    movement_kind not in ('release','damage','correction','reconcile')
+    or length(trim(coalesce(reason, ''))) > 0
+  )
 );
+create index if not exists research_operations_movements_lot_idx
+  on public.research_operations_inventory_movements (lot_id, occurred_at);
+create index if not exists research_operations_movements_order_idx
+  on public.research_operations_inventory_movements (order_id, occurred_at);
+create index if not exists research_operations_movements_line_idx
+  on public.research_operations_inventory_movements (fulfillment_line_id)
+  where fulfillment_line_id is not null;
 
-create table if not exists research_operations_exact_lot_allocations (
+create table if not exists public.research_fulfillment_exceptions (
   id uuid primary key default gen_random_uuid(),
-  order_id uuid not null references research_operations_orders(id),
-  item_id text not null,
-  sku text not null,
-  lot_id uuid not null references research_operations_lots(id),
-  quantity integer not null check (quantity > 0),
-  returned_quantity integer not null default 0 check (returned_quantity >= 0 and returned_quantity <= quantity),
-  status text not null check (status in ('allocated', 'released', 'shipped')),
-  allocated_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (order_id, item_id)
-);
-
-create table if not exists research_operations_shipments (
-  id uuid primary key default gen_random_uuid(),
-  order_id uuid not null unique references research_operations_orders(id),
-  carrier text not null,
-  service text not null,
-  tracking text not null unique,
-  state research_shipment_state not null default 'label_created',
-  shipped_at timestamptz,
-  delivered_at timestamptz,
-  provider_reference text,
-  version bigint not null default 0 check (version >= 0),
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists research_operations_returns (
-  id uuid primary key default gen_random_uuid(),
-  order_id uuid not null references research_operations_orders(id),
-  item_id text not null,
-  lot_id uuid not null references research_operations_lots(id),
-  quantity integer not null check (quantity > 0),
-  reason text not null check (length(trim(reason)) > 0),
-  idempotency_key text not null unique,
-  received_at timestamptz not null default now()
-);
-
-create table if not exists research_operations_exceptions (
-  id uuid primary key default gen_random_uuid(),
-  order_id uuid not null references research_operations_orders(id),
-  kind text not null check (kind in ('shortage', 'inventory', 'address', 'carrier', 'damage', 'quality', 'other')),
-  severity text not null check (severity in ('normal', 'urgent', 'samuel_decision')),
+  fulfillment_order_id uuid not null
+    references public.research_fulfillment_orders (id) on delete cascade,
+  kind text not null check (kind in ('shortage','inventory','address','carrier','damage','quality','other')),
+  severity text not null check (severity in ('normal','urgent','samuel_decision')),
   detail text not null check (length(trim(detail)) > 0),
-  status text not null default 'open' check (status in ('open', 'resolved')),
+  status text not null default 'open' check (status in ('open','resolved')),
   created_by text not null,
   created_at timestamptz not null default now(),
-  resolved_at timestamptz
+  resolved_by text,
+  resolved_at timestamptz,
+  resolution text,
+  check (
+    status <> 'resolved'
+    or (
+      resolved_by is not null
+      and resolved_at is not null
+      and length(trim(coalesce(resolution, ''))) > 0
+    )
+  )
 );
+create index if not exists research_fulfillment_exceptions_open_idx
+  on public.research_fulfillment_exceptions (fulfillment_order_id, created_at)
+  where status = 'open';
 
-create table if not exists research_operations_crm_contacts (
+create table if not exists public.research_fulfillment_notes (
   id uuid primary key default gen_random_uuid(),
-  kind text not null check (kind in ('member', 'applicant', 'affiliate', 'professional')),
-  display_name text not null,
-  email citext not null,
-  stage text not null check (stage in ('new', 'pending_application', 'pending_activation', 'payment_verification', 'active', 'paused', 'closed')),
+  fulfillment_order_id uuid not null
+    references public.research_fulfillment_orders (id) on delete cascade,
+  note text not null check (length(trim(note)) > 0),
+  assistance_requested boolean not null default false,
+  escalation boolean not null default false,
+  actor_id text not null,
+  idempotency_key text not null unique,
+  created_at timestamptz not null default now()
+);
+create index if not exists research_fulfillment_notes_timeline_idx
+  on public.research_fulfillment_notes (fulfillment_order_id, created_at);
+
+-- Operations CRM excludes clinical content but may hold the minimum contact
+-- identity needed by authorized administrators.
+create table if not exists public.research_operations_crm_contacts (
+  id uuid primary key default gen_random_uuid(),
+  kind text not null check (kind in ('member','applicant','affiliate','professional')),
+  display_name text not null check (length(trim(display_name)) > 0),
+  email text not null check (email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
+  stage text not null default 'new'
+    check (stage in ('new','pending_application','pending_activation','payment_verification','active','paused','closed')),
   tags text[] not null default '{}',
   version bigint not null default 1 check (version > 0),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+create index if not exists research_operations_crm_stage_idx
+  on public.research_operations_crm_contacts (stage, updated_at desc);
 
-create table if not exists research_operations_crm_events (
+create table if not exists public.research_operations_crm_events (
   id uuid primary key default gen_random_uuid(),
-  contact_id uuid not null references research_operations_crm_contacts(id),
-  kind text not null check (kind in ('created', 'stage_changed', 'note', 'order_linked', 'exception_linked', 'follow_up')),
+  contact_id uuid not null
+    references public.research_operations_crm_contacts (id) on delete cascade,
+  kind text not null check (kind in ('created','stage_changed','note','order_linked','exception_linked','follow_up')),
   actor_id text not null,
-  actor_role research_operations_role not null,
-  summary text not null,
-  reference_type text check (reference_type in ('order', 'exception')),
+  actor_role text not null
+    check (actor_role in ('operations_manager','finance','mitch','logistics','system')),
+  summary text not null check (length(trim(summary)) > 0),
+  reference_type text check (reference_type in ('order','exception')),
   reference_id text,
   idempotency_key text not null unique,
-  occurred_at timestamptz not null default now()
-);
-
-create table if not exists research_operations_notification_outbox (
-  id uuid primary key default gen_random_uuid(),
-  audience_kind text not null check (audience_kind in ('member', 'affiliate', 'professional', 'operator')),
-  audience_id uuid not null,
-  channel research_notification_channel not null,
-  topic text not null,
-  dedupe_key text not null,
-  sensitivity text not null check (sensitivity in ('public', 'operational', 'customer_sensitive')),
-  title text not null,
-  body text not null,
-  action_url text,
-  status research_notification_status not null default 'pending',
-  attempt_count integer not null default 0 check (attempt_count >= 0),
-  next_attempt_at timestamptz not null default now(),
-  lease_until timestamptz,
-  provider_reference text,
-  failure_code text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (audience_kind, audience_id, channel, dedupe_key),
-  check (
-    channel not in ('sms', 'telegram')
-    or sensitivity <> 'customer_sensitive'
-    or status = 'suppressed'
-  )
-);
-
-create table if not exists research_operations_affiliates (
-  id uuid primary key default gen_random_uuid(),
-  auth_user_id uuid unique,
-  email citext not null unique,
-  display_name text not null,
-  state research_affiliate_state not null default 'invited',
-  invitation_hash text,
-  agreement_version text,
-  custom_code text unique,
-  version bigint not null default 1 check (version > 0),
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists research_operations_affiliate_links (
-  id uuid primary key default gen_random_uuid(),
-  affiliate_id uuid not null references research_operations_affiliates(id),
-  code text not null unique,
-  campaign text,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists research_operations_attribution_events (
-  id uuid primary key default gen_random_uuid(),
-  order_id text not null,
-  affiliate_id uuid not null references research_operations_affiliates(id),
-  link_id uuid not null references research_operations_affiliate_links(id),
-  campaign text,
-  event_kind text not null check (event_kind in ('attributed', 'manual_override')),
-  actor_id text not null,
-  reason text,
   occurred_at timestamptz not null default now(),
-  check (event_kind <> 'manual_override' or length(trim(coalesce(reason, ''))) > 0)
+  check ((reference_type is null) = (reference_id is null))
 );
-create unique index if not exists research_operations_attribution_initial_winner
-  on research_operations_attribution_events(order_id) where event_kind = 'attributed';
+create index if not exists research_operations_crm_events_contact_idx
+  on public.research_operations_crm_events (contact_id, occurred_at);
 
-create table if not exists research_operations_commission_policies (
+-- Immutable commission policy snapshots refer to the canonical partner and
+-- canonical append-only commission ledger. Rates are never hard-coded in code.
+create table if not exists public.research_commission_policies (
   id uuid primary key default gen_random_uuid(),
-  partner_id uuid references research_operations_affiliates(id),
+  partner_id uuid references public.research_partners (id),
   version text not null,
   rule_document jsonb not null,
   rate_ceiling_bps integer not null check (rate_ceiling_bps between 0 and 10000),
   effective_at timestamptz not null,
+  created_by text not null,
   created_at timestamptz not null default now(),
-  unique (partner_id, version)
+  unique nulls not distinct (partner_id, version)
+);
+create index if not exists research_commission_policies_effective_idx
+  on public.research_commission_policies (partner_id, effective_at desc);
+
+create table if not exists public.research_lawrence_partner_models (
+  id uuid primary key default gen_random_uuid(),
+  model_key text not null,
+  version integer not null check (version > 0),
+  partner_id uuid references public.research_partners (id),
+  configuration jsonb not null,
+  status text not null default 'draft' check (status in ('draft','approved','active','superseded')),
+  approved_by text,
+  approved_at timestamptz,
+  created_at timestamptz not null default now(),
+  check (status not in ('approved','active') or (approved_by is not null and approved_at is not null)),
+  unique (model_key, version)
 );
 
-create table if not exists research_operations_commission_events (
+-- Durable facts not represented by the canonical attribution/commission
+-- tables. Subject keys are opaque; no applicant/member identity is stored.
+create table if not exists public.research_partner_metric_events (
   id uuid primary key default gen_random_uuid(),
-  chain_id uuid not null,
-  affiliate_id uuid not null references research_operations_affiliates(id),
-  order_id text not null,
-  event_kind text not null check (event_kind in ('accrued', 'approved', 'payable', 'paid', 'reversed')),
-  state text not null check (state in ('pending', 'approved', 'payable', 'paid', 'reversed')),
-  amount_cents bigint not null,
-  eligible_revenue_cents bigint not null check (eligible_revenue_cents >= 0),
-  policy_id uuid not null references research_operations_commission_policies(id),
-  policy_version text not null,
-  actor_id text not null,
-  actor_role research_operations_role not null,
-  reason text,
-  provider_reference text,
+  partner_id uuid not null references public.research_partners (id) on delete cascade,
+  kind text not null check (kind in ('qualified_signup','refund','chargeback')),
+  subject_key text,
+  order_id uuid,
+  amount_cents bigint not null default 0 check (amount_cents >= 0),
   idempotency_key text not null unique,
+  occurred_at timestamptz not null default now(),
+  check (
+    (kind = 'qualified_signup' and subject_key is not null and order_id is null and amount_cents = 0)
+    or (kind in ('refund','chargeback') and order_id is not null and amount_cents > 0)
+  ),
+  check (subject_key is null or subject_key !~ '\s')
+);
+create index if not exists research_partner_metric_events_partner_idx
+  on public.research_partner_metric_events (partner_id, kind, occurred_at);
+
+-- Partner-owned requests back the four portal forms that previously called
+-- unregistered endpoints. Payloads are private, service-role-only, and never
+-- joined into partner aggregate reporting.
+create table if not exists public.research_partner_portal_requests (
+  id uuid primary key default gen_random_uuid(),
+  partner_id uuid not null references public.research_partners (id) on delete cascade,
+  kind text not null check (kind in ('campaign','event','organization','compliance')),
+  title text not null check (length(trim(title)) > 0),
+  payload jsonb not null default '{}'::jsonb,
+  state text not null default 'submitted'
+    check (state in ('submitted','under_review','approved','declined','withdrawn')),
+  idempotency_key text not null,
+  version bigint not null default 1 check (version > 0),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (partner_id, kind, idempotency_key)
+);
+create index if not exists research_partner_portal_requests_partner_idx
+  on public.research_partner_portal_requests (partner_id, kind, created_at desc);
+
+create table if not exists public.research_partner_portal_request_events (
+  id uuid primary key default gen_random_uuid(),
+  request_id uuid not null
+    references public.research_partner_portal_requests (id) on delete cascade,
+  from_state text,
+  to_state text not null,
+  actor_id text not null,
+  detail text,
   occurred_at timestamptz not null default now()
 );
+create index if not exists research_partner_portal_request_events_request_idx
+  on public.research_partner_portal_request_events (request_id, occurred_at);
 
-create table if not exists research_operations_payouts (
+-- Session keys are one-way hashes of verified Supabase access tokens. Raw
+-- tokens and IP addresses are never stored.
+create table if not exists public.research_partner_security_sessions (
   id uuid primary key default gen_random_uuid(),
-  affiliate_id uuid not null references research_operations_affiliates(id),
-  batch_id text not null,
-  amount_cents bigint not null check (amount_cents > 0),
-  provider_reference text not null,
-  paid_at timestamptz not null,
-  unique (affiliate_id, batch_id),
-  unique (provider_reference)
+  partner_id uuid not null references public.research_partners (id) on delete cascade,
+  auth_user_id uuid not null,
+  session_key text not null,
+  started_at timestamptz not null,
+  last_seen_at timestamptz not null default now(),
+  user_agent text,
+  revoked_at timestamptz,
+  unique (partner_id, session_key)
 );
+create index if not exists research_partner_security_sessions_partner_idx
+  on public.research_partner_security_sessions (partner_id, last_seen_at desc);
 
-create table if not exists research_operations_professional_accounts (
+create table if not exists public.research_professional_accounts (
   id uuid primary key default gen_random_uuid(),
   auth_user_id uuid unique,
-  account_type text not null check (account_type in ('practitioner', 'professional')),
-  organization_name text not null,
-  contact_email citext not null,
-  state text not null check (state in ('applied', 'under_review', 'approved', 'active', 'paused', 'rejected', 'terminated')),
+  account_type text not null check (account_type in ('practitioner','professional')),
+  organization_name text not null check (length(trim(organization_name)) > 0),
+  contact_email text not null check (contact_email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
+  state text not null default 'applied'
+    check (state in (
+      'applied','prospect','discovery','diligence','commercial_review','agreement',
+      'under_review','approved','active','paused','closed','rejected','terminated'
+    )),
   agreement_version text,
   economic_terms jsonb not null default jsonb_build_object(
     'wholesaleDiscountBps', 0,
@@ -319,73 +373,940 @@ create table if not exists research_operations_professional_accounts (
     'implementationFeeCents', 0,
     'softwareFeeCents', 0
   ),
+  application_idempotency_key text not null unique,
   version bigint not null default 1 check (version > 0),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   check (
     not (economic_terms ?| array[
-      'prescriptionPaymentCents', 'patientReferralPaymentCents',
-      'diagnosisPaymentCents', 'clinicalApprovalPaymentCents',
-      'medicationValuePaymentCents'
+      'prescriptionPaymentCents','patientReferralPaymentCents',
+      'diagnosisPaymentCents','clinicalApprovalPaymentCents',
+      'medicationValuePaymentCents','prescription','patientReferral',
+      'diagnosis','clinicalApproval','medicationValue'
     ])
   )
 );
+create index if not exists research_professional_accounts_state_idx
+  on public.research_professional_accounts (state, updated_at desc);
 
-create table if not exists research_operations_professional_programs (
-  account_id uuid not null references research_operations_professional_accounts(id),
-  program research_professional_program not null,
-  status text not null default 'pending' check (status in ('pending', 'approved', 'active', 'paused', 'closed')),
+-- Replace the automatically named check when upgrading an earlier Website 4
+-- draft so the required professional pipeline stages are accepted.
+alter table public.research_professional_accounts
+  drop constraint if exists research_professional_accounts_state_check;
+alter table public.research_professional_accounts
+  add constraint research_professional_accounts_state_check check (state in (
+    'applied','prospect','discovery','diligence','commercial_review','agreement',
+    'under_review','approved','active','paused','closed','rejected','terminated'
+  ));
+
+create table if not exists public.research_professional_programs (
+  account_id uuid not null
+    references public.research_professional_accounts (id) on delete cascade,
+  program text not null check (program in (
+    'wholesale','reseller','professional_membership','directory','education',
+    'event','implementation','software','future_clinical_partnership'
+  )),
+  status text not null default 'pending'
+    check (status in ('pending','approved','active','paused','closed')),
   terms_document jsonb not null default '{}'::jsonb,
   primary key (account_id, program),
   check (
     not (terms_document ?| array[
-      'prescriptionPaymentCents', 'patientReferralPaymentCents',
-      'diagnosisPaymentCents', 'clinicalApprovalPaymentCents',
-      'medicationValuePaymentCents'
+      'prescriptionPaymentCents','patientReferralPaymentCents',
+      'diagnosisPaymentCents','clinicalApprovalPaymentCents',
+      'medicationValuePaymentCents','prescription','patientReferral',
+      'diagnosis','clinicalApproval','medicationValue'
     ])
   )
 );
 
--- Append-only enforcement for evidence tables.
-create or replace function research_operations_refuse_mutation()
-returns trigger language plpgsql as $$
+create table if not exists public.research_professional_audit_events (
+  id uuid primary key default gen_random_uuid(),
+  account_id uuid not null
+    references public.research_professional_accounts (id) on delete cascade,
+  action text not null,
+  actor_id text not null,
+  actor_role text not null,
+  idempotency_key text not null unique,
+  command_hash text,
+  occurred_at timestamptz not null default now()
+);
+alter table public.research_professional_audit_events
+  add column if not exists command_hash text;
+create index if not exists research_professional_audit_account_idx
+  on public.research_professional_audit_events (account_id, occurred_at);
+
+-- Automatically create the operational projection for canonical fulfillment
+-- rows. The trigger stores workflow only and does not duplicate shipping PII.
+create or replace function public.research_operations_bootstrap_work_order()
+returns trigger
+language plpgsql
+security invoker
+set search_path = ''
+as $$
 begin
-  raise exception '% is append-only', tg_table_name;
-end;
+  insert into public.research_fulfillment_work_orders (
+    fulfillment_order_id,
+    fulfillment_state,
+    shipment_state,
+    allocation_state,
+    due_at,
+    created_at,
+    updated_at
+  )
+  values (
+    new.id,
+    case when new.state in ('shipped','delivered') then 'shipped' else 'awaiting_acknowledgement' end,
+    case
+      when new.state = 'delivered' then 'delivered'
+      when new.state = 'shipped' then 'in_transit'
+      else 'not_created'
+    end,
+    case when new.state in ('shipped','delivered') then 'shipped' else 'unallocated' end,
+    new.created_at + interval '1 day',
+    new.created_at,
+    new.updated_at
+  )
+  on conflict (fulfillment_order_id) do nothing;
+  return new;
+end
 $$;
 
-drop trigger if exists research_operations_inventory_append_only on research_operations_inventory_movements;
-create trigger research_operations_inventory_append_only
-before update or delete on research_operations_inventory_movements
-for each row execute function research_operations_refuse_mutation();
+drop trigger if exists research_operations_fulfillment_bootstrap
+  on public.research_fulfillment_orders;
+create trigger research_operations_fulfillment_bootstrap
+after insert on public.research_fulfillment_orders
+for each row execute function public.research_operations_bootstrap_work_order();
 
-drop trigger if exists research_operations_audit_append_only on research_operations_audit_events;
+insert into public.research_fulfillment_work_orders (
+  fulfillment_order_id,
+  fulfillment_state,
+  shipment_state,
+  allocation_state,
+  due_at,
+  created_at,
+  updated_at
+)
+select
+  f.id,
+  case when f.state in ('shipped','delivered') then 'shipped' else 'awaiting_acknowledgement' end,
+  case
+    when f.state = 'delivered' then 'delivered'
+    when f.state = 'shipped' then 'in_transit'
+    else 'not_created'
+  end,
+  case when f.state in ('shipped','delivered') then 'shipped' else 'unallocated' end,
+  f.created_at + interval '1 day',
+  f.created_at,
+  f.updated_at
+from public.research_fulfillment_orders f
+on conflict (fulfillment_order_id) do nothing;
+
+-- Evidence tables are append-only. Corrections are new events.
+create or replace function public.research_operations_refuse_mutation()
+returns trigger
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+begin
+  raise exception '% is append-only', tg_table_name;
+end
+$$;
+
+drop trigger if exists research_operations_audit_append_only
+  on public.research_operations_audit_events;
 create trigger research_operations_audit_append_only
-before update or delete on research_operations_audit_events
-for each row execute function research_operations_refuse_mutation();
+before update or delete on public.research_operations_audit_events
+for each row execute function public.research_operations_refuse_mutation();
 
-drop trigger if exists research_operations_attribution_append_only on research_operations_attribution_events;
-create trigger research_operations_attribution_append_only
-before update or delete on research_operations_attribution_events
-for each row execute function research_operations_refuse_mutation();
+drop trigger if exists research_operations_inventory_append_only
+  on public.research_operations_inventory_movements;
+create trigger research_operations_inventory_append_only
+before update or delete on public.research_operations_inventory_movements
+for each row execute function public.research_operations_refuse_mutation();
 
-drop trigger if exists research_operations_commission_append_only on research_operations_commission_events;
-create trigger research_operations_commission_append_only
-before update or delete on research_operations_commission_events
-for each row execute function research_operations_refuse_mutation();
+drop trigger if exists research_operations_crm_events_append_only
+  on public.research_operations_crm_events;
+create trigger research_operations_crm_events_append_only
+before update or delete on public.research_operations_crm_events
+for each row execute function public.research_operations_refuse_mutation();
 
-alter table research_operations_orders enable row level security;
-alter table research_operations_inventory_movements enable row level security;
-alter table research_operations_crm_contacts enable row level security;
-alter table research_operations_notification_outbox enable row level security;
-alter table research_operations_affiliates enable row level security;
-alter table research_operations_professional_accounts enable row level security;
+drop trigger if exists research_professional_audit_append_only
+  on public.research_professional_audit_events;
+create trigger research_professional_audit_append_only
+before update or delete on public.research_professional_audit_events
+for each row execute function public.research_operations_refuse_mutation();
 
--- Service-role-only by default. Authenticated access is exposed through
--- server-authorized routes, never direct table grants.
-revoke all on research_operations_orders from anon, authenticated;
-revoke all on research_operations_inventory_movements from anon, authenticated;
-revoke all on research_operations_crm_contacts from anon, authenticated;
-revoke all on research_operations_notification_outbox from anon, authenticated;
-revoke all on research_operations_affiliates from anon, authenticated;
-revoke all on research_operations_professional_accounts from anon, authenticated;
+drop trigger if exists research_partner_metric_events_append_only
+  on public.research_partner_metric_events;
+create trigger research_partner_metric_events_append_only
+before update or delete on public.research_partner_metric_events
+for each row execute function public.research_operations_refuse_mutation();
+
+drop trigger if exists research_partner_portal_request_events_append_only
+  on public.research_partner_portal_request_events;
+create trigger research_partner_portal_request_events_append_only
+before update or delete on public.research_partner_portal_request_events
+for each row execute function public.research_operations_refuse_mutation();
+
+-- Atomic fulfillment command boundary. The staff assignment, optimistic
+-- version check, idempotency record, canonical state update, exact-lot
+-- traceability, and operational projection update commit together.
+create or replace function public.research_operations_apply_fulfillment_command(
+  p_fulfillment_order_id uuid,
+  p_action text,
+  p_expected_version bigint,
+  p_idempotency_key text,
+  p_actor_id uuid,
+  p_actor_role text,
+  p_payload jsonb default '{}'::jsonb,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  work public.research_fulfillment_work_orders%rowtype;
+  fulfillment public.research_fulfillment_orders%rowtype;
+  line public.research_fulfillment_lines%rowtype;
+  lot public.research_inventory_lots%rowtype;
+  quality public.research_lot_quality_documents%rowtype;
+  existing public.research_operations_audit_events%rowtype;
+  command_hash text;
+  shipment_uuid uuid;
+  input_quantity integer;
+begin
+  if p_idempotency_key is null or length(trim(p_idempotency_key)) = 0 then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Idempotency-Key is required.');
+  end if;
+  if p_expected_version is null or p_expected_version < 0 then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'A non-negative expectedVersion is required.');
+  end if;
+  if p_action not in ('acknowledge','set_expected_date','allocate_exact','begin_picking','pack','add_label','ship','exception','note') then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Unknown fulfillment command.');
+  end if;
+  if p_actor_role not in ('operations_manager','mitch','logistics') or not exists (
+    select 1
+    from public.research_operations_staff_roles staff
+    where staff.auth_user_id = p_actor_id
+      and staff.role = p_actor_role
+      and staff.enabled
+  ) then
+    return jsonb_build_object('ok', false, 'code', 'forbidden', 'message', 'An enabled server-authorized logistics role is required.');
+  end if;
+
+  command_hash := encode(
+    extensions.digest(
+      convert_to(
+        p_action || ':' || p_expected_version::text || ':' || coalesce(p_payload, '{}'::jsonb)::text,
+        'utf8'
+      ),
+      'sha256'
+    ),
+    'hex'
+  );
+
+  select * into work
+  from public.research_fulfillment_work_orders
+  where fulfillment_order_id = p_fulfillment_order_id
+  for update;
+  if not found then
+    return jsonb_build_object('ok', false, 'code', 'not_found', 'message', 'Fulfillment work order not found.');
+  end if;
+
+  select * into existing
+  from public.research_operations_audit_events
+  where fulfillment_order_id = p_fulfillment_order_id
+    and idempotency_key = p_idempotency_key;
+  if found then
+    if existing.command_hash <> command_hash then
+      return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'That idempotency key was already used for a different command.');
+    end if;
+    return jsonb_build_object(
+      'ok', true,
+      'idempotent', true,
+      'fulfillmentOrderId', work.fulfillment_order_id,
+      'version', work.version
+    );
+  end if;
+
+  if work.version <> p_expected_version then
+    return jsonb_build_object('ok', false, 'code', 'stale_write', 'message', 'The work order changed; reload it.');
+  end if;
+
+  select * into fulfillment
+  from public.research_fulfillment_orders
+  where id = p_fulfillment_order_id
+  for update;
+
+  if p_action = 'acknowledge' then
+    if work.fulfillment_state not in ('new','awaiting_acknowledgement') then
+      return jsonb_build_object('ok', false, 'code', 'invalid_state', 'message', 'Only a new work order can be acknowledged.');
+    end if;
+    work.fulfillment_state := 'acknowledged';
+    work.acknowledged_at := p_occurred_at;
+    update public.research_fulfillment_orders
+      set state = 'accepted', updated_at = p_occurred_at
+      where id = p_fulfillment_order_id;
+
+  elsif p_action = 'set_expected_date' then
+    if nullif(p_payload->>'expectedAt', '') is null then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'expectedAt is required.');
+    end if;
+    work.expected_at := (p_payload->>'expectedAt')::timestamptz;
+
+  elsif p_action = 'allocate_exact' then
+    input_quantity := nullif(p_payload->>'quantity', '')::integer;
+    if nullif(p_payload->>'itemId', '') is null
+      or nullif(p_payload->>'lotId', '') is null
+      or input_quantity is null
+      or input_quantity <= 0
+      or nullif(p_payload->>'expectedLotVersion', '') is null
+    then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Exact item, lot, quantity, and lot version are required.');
+    end if;
+
+    select * into line
+    from public.research_fulfillment_lines
+    where id = (p_payload->>'itemId')::uuid
+      and fulfillment_order_id = p_fulfillment_order_id
+    for update;
+    if not found or line.quantity <> input_quantity then
+      return jsonb_build_object('ok', false, 'code', 'inventory_refused', 'message', 'The exact fulfillment line and quantity were not found.');
+    end if;
+
+    select * into lot
+    from public.research_inventory_lots
+    where lot_id = p_payload->>'lotId'
+    for update;
+    if not found
+      or lot.version <> (p_payload->>'expectedLotVersion')::bigint
+      or lot.sku <> line.sku
+      or lot.disposition <> 'available'
+      or lot.recalled
+      or lot.expiry_date is null
+      or lot.expiry_date <= p_occurred_at::date
+      or (lot.retest_date is not null and lot.retest_date <= p_occurred_at::date)
+      or lot.shelf_life_source = 'not_confirmed'
+      or lot.excursion not in ('none','cleared')
+    then
+      return jsonb_build_object('ok', false, 'code', 'inventory_refused', 'message', 'The lot is not eligible for exact allocation.');
+    end if;
+
+    select * into quality
+    from public.research_lot_quality_documents
+    where lot_id = lot.id;
+    if not found
+      or not quality.coa_on_file
+      or not quality.identity_confirmed
+      or not quality.purity_confirmed
+      or quality.sterility_confirmed is false
+      or quality.endotoxin_confirmed is false
+    then
+      return jsonb_build_object('ok', false, 'code', 'inventory_refused', 'message', 'The lot is missing required quality evidence.');
+    end if;
+
+    -- The canonical order allocation proves checkout reserved this exact lot.
+    -- No stock decrement occurs here; the checkout hold already performed it.
+    if not exists (
+      select 1
+      from public.research_lot_allocations allocation
+      where allocation.order_id = fulfillment.order_id
+        and allocation.lot_id = lot.id
+        and allocation.quantity >= input_quantity
+        and allocation.released_at is null
+    ) then
+      return jsonb_build_object('ok', false, 'code', 'inventory_refused', 'message', 'No finalized canonical reservation proves this exact lot for the order.');
+    end if;
+
+    if line.lot_id is not null and line.lot_id <> lot.lot_id then
+      return jsonb_build_object('ok', false, 'code', 'inventory_refused', 'message', 'The fulfillment line already names a different lot.');
+    end if;
+
+    update public.research_fulfillment_lines
+      set lot_id = lot.lot_id
+      where id = line.id;
+    update public.research_inventory_lots
+      set version = version + 1, updated_at = p_occurred_at
+      where id = lot.id;
+    insert into public.research_operations_inventory_movements (
+      lot_id, order_id, fulfillment_line_id, movement_kind, quantity,
+      on_hand_delta, actor_id, actor_role, idempotency_key, occurred_at
+    )
+    values (
+      lot.id, fulfillment.order_id, line.id, 'allocate', input_quantity,
+      0, p_actor_id::text, p_actor_role, p_idempotency_key || ':allocation', p_occurred_at
+    );
+    work.allocation_state := case
+      when not exists (
+        select 1 from public.research_fulfillment_lines pending
+        where pending.fulfillment_order_id = p_fulfillment_order_id
+          and pending.id <> line.id
+          and pending.lot_id is null
+      ) then 'allocated'
+      else 'reserved'
+    end;
+
+  elsif p_action = 'begin_picking' then
+    if work.fulfillment_state <> 'acknowledged' or work.allocation_state <> 'allocated' then
+      return jsonb_build_object('ok', false, 'code', 'invalid_state', 'message', 'Picking requires an acknowledged, fully allocated order.');
+    end if;
+    work.fulfillment_state := 'picking';
+
+  elsif p_action = 'pack' then
+    if work.fulfillment_state <> 'picking' then
+      return jsonb_build_object('ok', false, 'code', 'invalid_state', 'message', 'Only a picked order can be packed.');
+    end if;
+    work.fulfillment_state := 'label_required';
+    work.shipment_state := 'label_required';
+
+  elsif p_action = 'add_label' then
+    if work.fulfillment_state not in ('packed','label_required') then
+      return jsonb_build_object('ok', false, 'code', 'invalid_state', 'message', 'A label can be added only after packing.');
+    end if;
+    if nullif(trim(p_payload->>'carrier'), '') is null
+      or nullif(trim(p_payload->>'service'), '') is null
+      or nullif(trim(p_payload->>'tracking'), '') is null
+    then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Carrier, service, and tracking are required.');
+    end if;
+    insert into public.research_shipments (
+      fulfillment_order_id, carrier, service, tracking_number, created_at
+    )
+    values (
+      p_fulfillment_order_id,
+      trim(p_payload->>'carrier'),
+      trim(p_payload->>'service'),
+      trim(p_payload->>'tracking'),
+      p_occurred_at
+    )
+    returning id into shipment_uuid;
+    work.shipment_id := shipment_uuid;
+    work.fulfillment_state := 'ready_to_ship';
+    work.shipment_state := 'label_created';
+
+  elsif p_action = 'ship' then
+    if work.fulfillment_state <> 'ready_to_ship'
+      or work.shipment_state <> 'label_created'
+      or work.shipment_id is null
+      or work.allocation_state <> 'allocated'
+      or exists (
+        select 1 from public.research_fulfillment_lines unallocated
+        where unallocated.fulfillment_order_id = p_fulfillment_order_id
+          and unallocated.lot_id is null
+      )
+      or exists (
+        select 1
+        from public.research_fulfillment_lines candidate_line
+        left join public.research_inventory_lots candidate_lot
+          on candidate_lot.lot_id = candidate_line.lot_id
+        left join public.research_lot_quality_documents candidate_quality
+          on candidate_quality.lot_id = candidate_lot.id
+        where candidate_line.fulfillment_order_id = p_fulfillment_order_id
+          and (
+            candidate_lot.id is null
+            or candidate_lot.disposition <> 'available'
+            or candidate_lot.recalled
+            or candidate_lot.expiry_date is null
+            or candidate_lot.expiry_date <= p_occurred_at::date
+            or (candidate_lot.retest_date is not null and candidate_lot.retest_date <= p_occurred_at::date)
+            or candidate_lot.shelf_life_source = 'not_confirmed'
+            or candidate_lot.excursion not in ('none','cleared')
+            or candidate_quality.id is null
+            or not candidate_quality.coa_on_file
+            or not candidate_quality.identity_confirmed
+            or not candidate_quality.purity_confirmed
+            or candidate_quality.sterility_confirmed is false
+            or candidate_quality.endotoxin_confirmed is false
+          )
+      )
+    then
+      return jsonb_build_object('ok', false, 'code', 'invalid_state', 'message', 'Shipping requires a label and exact eligible lots for every line.');
+    end if;
+
+    insert into public.research_lot_shipments (lot_id, order_id, member_id, shipped_at)
+    select lot_row.id, fulfillment.order_id, order_row.member_id, p_occurred_at
+    from public.research_fulfillment_lines fulfillment_line
+    join public.research_inventory_lots lot_row on lot_row.lot_id = fulfillment_line.lot_id
+    join public.research_orders order_row on order_row.id = fulfillment.order_id
+    join public.research_lot_quality_documents quality_row on quality_row.lot_id = lot_row.id
+    where fulfillment_line.fulfillment_order_id = p_fulfillment_order_id
+      and lot_row.disposition = 'available'
+      and not lot_row.recalled
+      and lot_row.expiry_date > p_occurred_at::date
+      and (lot_row.retest_date is null or lot_row.retest_date > p_occurred_at::date)
+      and lot_row.shelf_life_source <> 'not_confirmed'
+      and lot_row.excursion in ('none','cleared')
+      and quality_row.coa_on_file
+      and quality_row.identity_confirmed
+      and quality_row.purity_confirmed
+      and quality_row.sterility_confirmed is not false
+      and quality_row.endotoxin_confirmed is not false;
+
+    insert into public.research_operations_inventory_movements (
+      lot_id, order_id, fulfillment_line_id, movement_kind, quantity,
+      on_hand_delta, actor_id, actor_role, idempotency_key, occurred_at
+    )
+    select
+      lot_row.id,
+      fulfillment.order_id,
+      fulfillment_line.id,
+      'ship',
+      fulfillment_line.quantity,
+      0,
+      p_actor_id::text,
+      p_actor_role,
+      p_idempotency_key || ':ship:' || fulfillment_line.id::text,
+      p_occurred_at
+    from public.research_fulfillment_lines fulfillment_line
+    join public.research_inventory_lots lot_row on lot_row.lot_id = fulfillment_line.lot_id
+    where fulfillment_line.fulfillment_order_id = p_fulfillment_order_id;
+
+    update public.research_shipments
+      set shipped_at = p_occurred_at
+      where id = work.shipment_id;
+    update public.research_fulfillment_orders
+      set state = 'shipped', updated_at = p_occurred_at
+      where id = p_fulfillment_order_id;
+    work.fulfillment_state := 'shipped';
+    work.shipment_state := 'in_transit';
+    work.allocation_state := 'shipped';
+
+  elsif p_action = 'exception' then
+    if nullif(trim(p_payload->>'detail'), '') is null then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Exception detail is required.');
+    end if;
+    insert into public.research_fulfillment_exceptions (
+      fulfillment_order_id, kind, severity, detail, created_by, created_at
+    )
+    values (
+      p_fulfillment_order_id,
+      coalesce(nullif(p_payload->>'kind', ''), 'other'),
+      coalesce(nullif(p_payload->>'severity', ''), 'normal'),
+      trim(p_payload->>'detail'),
+      p_actor_id::text,
+      p_occurred_at
+    );
+    update public.research_fulfillment_orders
+      set state = 'exception', updated_at = p_occurred_at
+      where id = p_fulfillment_order_id;
+    work.fulfillment_state := 'exception';
+    work.shipment_state := case
+      when work.shipment_state = 'in_transit' then 'exception'
+      else work.shipment_state
+    end;
+
+  elsif p_action = 'note' then
+    if nullif(trim(p_payload->>'text'), '') is null then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'A note is required.');
+    end if;
+    insert into public.research_fulfillment_notes (
+      fulfillment_order_id, note, assistance_requested, escalation,
+      actor_id, idempotency_key, created_at
+    )
+    values (
+      p_fulfillment_order_id,
+      trim(p_payload->>'text'),
+      coalesce((p_payload->>'assistanceRequested')::boolean, false),
+      coalesce((p_payload->>'escalation')::boolean, false),
+      p_actor_id::text,
+      p_idempotency_key,
+      p_occurred_at
+    );
+  end if;
+
+  work.version := work.version + 1;
+  work.updated_at := p_occurred_at;
+  update public.research_fulfillment_work_orders
+  set
+    fulfillment_state = work.fulfillment_state,
+    shipment_state = work.shipment_state,
+    allocation_state = work.allocation_state,
+    due_at = work.due_at,
+    expected_at = work.expected_at,
+    acknowledged_at = work.acknowledged_at,
+    shipment_id = work.shipment_id,
+    version = work.version,
+    updated_at = work.updated_at
+  where fulfillment_order_id = p_fulfillment_order_id;
+
+  insert into public.research_operations_audit_events (
+    fulfillment_order_id, aggregate_version, actor_id, actor_role, action,
+    idempotency_key, command_hash, metadata, occurred_at
+  )
+  values (
+    p_fulfillment_order_id,
+    work.version,
+    p_actor_id::text,
+    p_actor_role,
+    p_action,
+    p_idempotency_key,
+    command_hash,
+    jsonb_build_object('action', p_action),
+    p_occurred_at
+  );
+
+  return jsonb_build_object(
+    'ok', true,
+    'idempotent', false,
+    'fulfillmentOrderId', work.fulfillment_order_id,
+    'version', work.version
+  );
+exception
+  when invalid_text_representation or datetime_field_overflow then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'The command contains an invalid identifier, number, or date.');
+  when check_violation then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'The command violates an operations data constraint.');
+  when unique_violation then
+    return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'A conflicting command already exists.');
+end
+$$;
+
+-- Atomic partner request intake for campaign, event, organization, and
+-- compliance forms. Replays return the original request.
+create or replace function public.research_operations_submit_partner_request(
+  p_partner_id uuid,
+  p_kind text,
+  p_title text,
+  p_payload jsonb,
+  p_idempotency_key text,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  request_row public.research_partner_portal_requests%rowtype;
+begin
+  if p_kind not in ('campaign','event','organization','compliance')
+     or length(trim(coalesce(p_title, ''))) = 0
+     or length(trim(coalesce(p_idempotency_key, ''))) = 0 then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'A valid partner request is required.');
+  end if;
+  if not exists (
+    select 1 from public.research_partners
+    where id = p_partner_id and state <> 'terminated'
+  ) then
+    return jsonb_build_object('ok', false, 'code', 'not_found', 'message', 'Partner account not found.');
+  end if;
+
+  select * into request_row
+  from public.research_partner_portal_requests
+  where partner_id = p_partner_id
+    and kind = p_kind
+    and idempotency_key = p_idempotency_key;
+  if found then
+    return jsonb_build_object('ok', true, 'idempotent', true, 'requestId', request_row.id);
+  end if;
+
+  insert into public.research_partner_portal_requests (
+    partner_id, kind, title, payload, idempotency_key, created_at, updated_at
+  )
+  values (
+    p_partner_id, p_kind, trim(p_title), coalesce(p_payload, '{}'::jsonb),
+    p_idempotency_key, p_occurred_at, p_occurred_at
+  )
+  returning * into request_row;
+
+  insert into public.research_partner_portal_request_events (
+    request_id, from_state, to_state, actor_id, detail, occurred_at
+  )
+  values (
+    request_row.id, null, 'submitted', p_partner_id::text, 'Partner portal submission', p_occurred_at
+  );
+
+  return jsonb_build_object('ok', true, 'idempotent', false, 'requestId', request_row.id);
+exception
+  when unique_violation then
+    select * into request_row
+    from public.research_partner_portal_requests
+    where partner_id = p_partner_id
+      and kind = p_kind
+      and idempotency_key = p_idempotency_key;
+    if found then
+      return jsonb_build_object('ok', true, 'idempotent', true, 'requestId', request_row.id);
+    end if;
+    return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'Conflicting partner request.');
+end
+$$;
+
+create or replace function public.research_operations_apply_professional_account(
+  p_account_type text,
+  p_organization_name text,
+  p_contact_email text,
+  p_programs text[],
+  p_economic_terms jsonb,
+  p_idempotency_key text,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  account public.research_professional_accounts%rowtype;
+  requested_program text;
+begin
+  select * into account
+  from public.research_professional_accounts
+  where application_idempotency_key = p_idempotency_key;
+  if found then
+    return jsonb_build_object('ok', true, 'idempotent', true, 'accountId', account.id);
+  end if;
+
+  if p_account_type not in ('practitioner','professional')
+    or length(trim(coalesce(p_organization_name, ''))) = 0
+    or coalesce(p_contact_email, '') !~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+    or coalesce(cardinality(p_programs), 0) = 0
+    or length(trim(coalesce(p_idempotency_key, ''))) = 0
+  then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Organization, email, and at least one valid program are required.');
+  end if;
+
+  if coalesce(p_economic_terms, '{}'::jsonb) ?| array[
+    'prescriptionPaymentCents','patientReferralPaymentCents',
+    'diagnosisPaymentCents','clinicalApprovalPaymentCents',
+    'medicationValuePaymentCents','prescription','patientReferral',
+    'diagnosis','clinicalApproval','medicationValue'
+  ] then
+    return jsonb_build_object('ok', false, 'code', 'clinical_economics_refused', 'message', 'Clinical referral economics are prohibited.');
+  end if;
+
+  foreach requested_program in array p_programs
+  loop
+    if requested_program not in (
+      'wholesale','reseller','professional_membership','directory','education',
+      'event','implementation','software','future_clinical_partnership'
+    ) then
+      return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'An unknown professional program was supplied.');
+    end if;
+  end loop;
+
+  insert into public.research_professional_accounts (
+    account_type, organization_name, contact_email, economic_terms,
+    application_idempotency_key, created_at, updated_at
+  )
+  values (
+    p_account_type,
+    trim(p_organization_name),
+    lower(trim(p_contact_email)),
+    jsonb_build_object(
+      'wholesaleDiscountBps', 0,
+      'resellerDiscountBps', 0,
+      'membershipFeeCents', 0,
+      'directoryFeeCents', 0,
+      'educationFeeCents', 0,
+      'eventFeeCents', 0,
+      'implementationFeeCents', 0,
+      'softwareFeeCents', 0
+    ) || coalesce(p_economic_terms, '{}'::jsonb),
+    p_idempotency_key,
+    p_occurred_at,
+    p_occurred_at
+  )
+  returning * into account;
+
+  insert into public.research_professional_programs (account_id, program)
+  select account.id, program
+  from unnest(p_programs) as program
+  on conflict (account_id, program) do nothing;
+
+  insert into public.research_professional_audit_events (
+    account_id, action, actor_id, actor_role, idempotency_key, occurred_at
+  )
+  values (
+    account.id, 'applied', 'public', 'public', p_idempotency_key, p_occurred_at
+  );
+
+  return jsonb_build_object('ok', true, 'idempotent', false, 'accountId', account.id);
+exception
+  when unique_violation then
+    select * into account
+    from public.research_professional_accounts
+    where application_idempotency_key = p_idempotency_key;
+    if found then
+      return jsonb_build_object('ok', true, 'idempotent', true, 'accountId', account.id);
+    end if;
+    return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'A conflicting professional account already exists.');
+  when check_violation then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'The professional application violates a data constraint.');
+end
+$$;
+
+create or replace function public.research_operations_transition_professional_account(
+  p_account_id uuid,
+  p_to_state text,
+  p_expected_version bigint,
+  p_agreement_version text,
+  p_actor_id text,
+  p_actor_role text,
+  p_idempotency_key text,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  account public.research_professional_accounts%rowtype;
+  prior public.research_professional_audit_events%rowtype;
+  command_hash text;
+  allowed boolean := false;
+begin
+  if p_actor_role not in ('admin','operations_manager') then
+    return jsonb_build_object('ok', false, 'code', 'forbidden', 'message', 'Professional review role required.');
+  end if;
+  if p_expected_version is null or p_expected_version < 0
+     or length(trim(coalesce(p_idempotency_key, ''))) = 0 then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Version and Idempotency-Key are required.');
+  end if;
+
+  command_hash := encode(extensions.digest(
+    concat_ws('|', p_account_id::text, p_to_state, p_expected_version::text, coalesce(p_agreement_version, ''), p_actor_id),
+    'sha256'
+  ), 'hex');
+  select * into prior
+  from public.research_professional_audit_events
+  where idempotency_key = p_idempotency_key;
+  if found then
+    if prior.command_hash is distinct from command_hash then
+      return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'Idempotency-Key was used for another transition.');
+    end if;
+    return jsonb_build_object('ok', true, 'idempotent', true, 'accountId', prior.account_id);
+  end if;
+
+  select * into account
+  from public.research_professional_accounts
+  where id = p_account_id
+  for update;
+  if not found then
+    return jsonb_build_object('ok', false, 'code', 'not_found', 'message', 'Professional account not found.');
+  end if;
+  if account.version <> p_expected_version then
+    return jsonb_build_object('ok', false, 'code', 'stale_write', 'message', 'Professional account changed; reload it.');
+  end if;
+
+  allowed := case account.state
+    when 'applied' then p_to_state in ('prospect','under_review','rejected','terminated','closed')
+    when 'prospect' then p_to_state in ('discovery','closed','terminated')
+    when 'discovery' then p_to_state in ('diligence','closed','terminated')
+    when 'diligence' then p_to_state in ('commercial_review','closed','terminated')
+    when 'commercial_review' then p_to_state in ('agreement','closed','terminated')
+    when 'agreement' then p_to_state in ('active','closed','terminated')
+    when 'under_review' then p_to_state in ('approved','rejected','terminated','closed')
+    when 'approved' then p_to_state in ('agreement','active','rejected','terminated','closed')
+    when 'active' then p_to_state in ('paused','closed','terminated')
+    when 'paused' then p_to_state in ('active','closed','terminated')
+    else false
+  end;
+  if not allowed then
+    return jsonb_build_object('ok', false, 'code', 'invalid_state', 'message', 'Professional transition is not allowed.');
+  end if;
+  if p_to_state in ('agreement','approved') and length(trim(coalesce(p_agreement_version, ''))) = 0 then
+    return jsonb_build_object('ok', false, 'code', 'invalid_input', 'message', 'Agreement version is required.');
+  end if;
+  if p_to_state = 'active'
+     and length(trim(coalesce(p_agreement_version, account.agreement_version, ''))) = 0 then
+    return jsonb_build_object('ok', false, 'code', 'invalid_state', 'message', 'An approved agreement is required before activation.');
+  end if;
+
+  update public.research_professional_accounts
+  set
+    state = p_to_state,
+    agreement_version = case
+      when p_to_state in ('agreement','approved') then trim(p_agreement_version)
+      else coalesce(nullif(trim(coalesce(p_agreement_version, '')), ''), agreement_version)
+    end,
+    version = version + 1,
+    updated_at = p_occurred_at
+  where id = account.id
+  returning * into account;
+
+  insert into public.research_professional_audit_events (
+    account_id, action, actor_id, actor_role, idempotency_key, command_hash, occurred_at
+  )
+  values (
+    account.id, p_to_state, p_actor_id, p_actor_role, p_idempotency_key, command_hash, p_occurred_at
+  );
+
+  return jsonb_build_object('ok', true, 'idempotent', false, 'accountId', account.id);
+exception
+  when unique_violation then
+    return jsonb_build_object('ok', false, 'code', 'idempotency_conflict', 'message', 'Conflicting professional transition.');
+end
+$$;
+
+-- Every new table is service-role-only. RLS remains enabled even though the API
+-- uses the server client, so an accidental browser grant still fails closed.
+do $$
+declare
+  table_name text;
+begin
+  foreach table_name in array array[
+    'research_operations_staff_roles',
+    'research_fulfillment_work_orders',
+    'research_operations_audit_events',
+    'research_operations_inventory_movements',
+    'research_fulfillment_exceptions',
+    'research_fulfillment_notes',
+    'research_operations_crm_contacts',
+    'research_operations_crm_events',
+    'research_commission_policies',
+    'research_lawrence_partner_models',
+    'research_partner_metric_events',
+    'research_partner_portal_requests',
+    'research_partner_portal_request_events',
+    'research_partner_security_sessions',
+    'research_professional_accounts',
+    'research_professional_programs',
+    'research_professional_audit_events'
+  ]
+  loop
+    execute format('alter table public.%I enable row level security', table_name);
+    execute format('revoke all on table public.%I from anon, authenticated', table_name);
+    execute format('grant select, insert, update, delete on table public.%I to service_role', table_name);
+  end loop;
+end
+$$;
+
+-- Canonical tables touched by Website 4 remain inaccessible to browsers.
+revoke all on table public.research_inventory_lots from anon, authenticated;
+revoke all on table public.research_partner_links from anon, authenticated;
+revoke all on table public.research_attribution_conversions from anon, authenticated;
+
+-- Functions are trigger-only in this migration. Application mutations are
+-- performed through the server's service-role adapter with optimistic
+-- concurrency and database uniqueness constraints. No public EXECUTE remains.
+revoke all on function public.research_operations_bootstrap_work_order() from public, anon, authenticated;
+revoke all on function public.research_operations_refuse_mutation() from public, anon, authenticated;
+revoke all on function public.research_operations_apply_fulfillment_command(
+  uuid, text, bigint, text, uuid, text, jsonb, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.research_operations_apply_fulfillment_command(
+  uuid, text, bigint, text, uuid, text, jsonb, timestamptz
+) to service_role;
+revoke all on function public.research_operations_submit_partner_request(
+  uuid, text, text, jsonb, text, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.research_operations_submit_partner_request(
+  uuid, text, text, jsonb, text, timestamptz
+) to service_role;
+revoke all on function public.research_operations_apply_professional_account(
+  text, text, text, text[], jsonb, text, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.research_operations_apply_professional_account(
+  text, text, text, text[], jsonb, text, timestamptz
+) to service_role;
+revoke all on function public.research_operations_transition_professional_account(
+  uuid, text, bigint, text, text, text, text, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.research_operations_transition_professional_account(
+  uuid, text, bigint, text, text, text, text, timestamptz
+) to service_role;

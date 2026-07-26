@@ -47,6 +47,23 @@ export function listProfessionalAccounts<T>(token: string, state?: string): Prom
   return apiGet<T>(`/api/admin/research/professional-accounts${state ? `?state=${encodeURIComponent(state)}` : ""}`, token);
 }
 
+export function transitionProfessionalAccount<T>(
+  token: string,
+  accountId: string,
+  body: {
+    to: string;
+    expectedVersion: number;
+    idempotencyKey: string;
+    agreementVersion?: string;
+  },
+): Promise<ApiResult<T>> {
+  return apiPost<T>(
+    `/api/admin/research/professional-accounts/${encodeURIComponent(accountId)}/transition`,
+    body,
+    token,
+  );
+}
+
 export function listOperationsCrm<T>(token: string, search?: string): Promise<ApiResult<T>> {
   return apiGet<T>(`${ADMIN}/crm${search ? `?search=${encodeURIComponent(search)}` : ""}`, token);
 }

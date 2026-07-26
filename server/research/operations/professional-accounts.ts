@@ -16,10 +16,16 @@ export type ProfessionalProgram = (typeof PROFESSIONAL_PROGRAMS)[number];
 
 export type ProfessionalLifecycle =
   | "applied"
+  | "prospect"
+  | "discovery"
+  | "diligence"
+  | "commercial_review"
+  | "agreement"
   | "under_review"
   | "approved"
   | "active"
   | "paused"
+  | "closed"
   | "rejected"
   | "terminated";
 
@@ -96,11 +102,17 @@ const FORBIDDEN_ECONOMIC_KEYS = new Set([
   "medicationValue",
 ]);
 const LIFECYCLE: Readonly<Record<ProfessionalLifecycle, readonly ProfessionalLifecycle[]>> = {
-  applied: ["under_review", "rejected", "terminated"],
-  under_review: ["approved", "rejected", "terminated"],
-  approved: ["active", "rejected", "terminated"],
-  active: ["paused", "terminated"],
-  paused: ["active", "terminated"],
+  applied: ["prospect", "under_review", "rejected", "terminated", "closed"],
+  prospect: ["discovery", "closed", "terminated"],
+  discovery: ["diligence", "closed", "terminated"],
+  diligence: ["commercial_review", "closed", "terminated"],
+  commercial_review: ["agreement", "closed", "terminated"],
+  agreement: ["active", "closed", "terminated"],
+  under_review: ["approved", "rejected", "terminated", "closed"],
+  approved: ["agreement", "active", "rejected", "terminated", "closed"],
+  active: ["paused", "closed", "terminated"],
+  paused: ["active", "closed", "terminated"],
+  closed: [],
   rejected: [],
   terminated: [],
 };
@@ -187,7 +199,7 @@ export class ProfessionalAccountService {
     if (!LIFECYCLE[account.state].includes(input.to)) {
       return this.failure("invalid_state", `Cannot move ${account.state} to ${input.to}.`);
     }
-    if (input.to === "approved") {
+    if (input.to === "approved" || input.to === "agreement") {
       if (!input.agreementVersion?.trim()) return this.failure("invalid_input", "Agreement version is required for approval.");
       account.agreementVersion = input.agreementVersion.trim();
     }

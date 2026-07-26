@@ -67,6 +67,10 @@ describe("operations integration-ready routes", () => {
       fulfillment,
       affiliates: new AffiliateService("secret", "https://xenios.test"),
       professionals: new ProfessionalAccountService(),
+      partnerPortal: {
+        read: async (surface) => ({ surface, rows: [] }),
+        submit: async (kind) => ({ ok: true, message: `${kind} received`, idempotent: false }),
+      },
       crm: new CrmService(),
       outbox: new NotificationOutbox(new InMemoryOutboxRepository(), {}),
       dashboard: () => ({
@@ -135,6 +139,29 @@ describe("operations integration-ready routes", () => {
     expect(response.body.message).toContain("Idempotency-Key");
   });
 
+  it("awaits durable async fulfillment adapters before replying", async () => {
+    const service = deps.fulfillment;
+    const acknowledge = service.acknowledge.bind(service);
+    deps.fulfillment = {
+      ...service,
+      acknowledge: async (input) => {
+        await Promise.resolve();
+        return acknowledge(input);
+      },
+    };
+    const [row] = await service.listMitchQueue("awaiting_acknowledgement", NOW);
+
+    const response = await request(app)
+      .post("/api/operations/mitch/orders/ful-1/acknowledge")
+      .set("x-role", "mitch")
+      .set("x-actor-id", "mitch")
+      .set("Idempotency-Key", "async-ack")
+      .send({ expectedVersion: row.version });
+
+    expect(response.status).toBe(200);
+    expect(response.body.value.aggregate.states.fulfillment).toBe("acknowledged");
+  });
+
   it("returns tracking only to the owning member and makes absence indistinguishable from unauthorized ownership", async () => {
     const owner = await request(app)
       .get("/api/research/orders/ful-1/tracking")
@@ -161,5 +188,79 @@ describe("operations integration-ready routes", () => {
       });
     expect(response.status).toBe(400);
     expect(response.body.code).toBe("clinical_economics_refused");
+  });
+
+  it("registers all 16 partner adapter endpoints behind partner ownership", async () => {
+    const reads = [
+      "conversions",
+      "leads",
+      "commissions",
+      "payouts",
+      "resources",
+      "training",
+      "campaigns",
+      "events",
+      "organizations",
+      "compliance",
+      "onboarding",
+      "security/sessions",
+    ];
+    for (const path of reads) {
+      expect((await request(app).get(`/api/research/partner/${path}`)).status).toBe(403);
+      const response = await request(app)
+        .get(`/api/research/partner/${path}`)
+        .set("x-role", "affiliate")
+        .set("x-actor-id", "partner-auth-user");
+      expect(response.status, path).toBe(200);
+      expect(response.headers["cache-control"], path).toBe("no-store");
+    }
+
+    const writes = [
+      "campaigns/request",
+      "events/request",
+      "organizations/request",
+      "compliance/submissions",
+    ];
+    for (const path of writes) {
+      expect((await request(app).post(`/api/research/partner/${path}`).send({})).status).toBe(403);
+      const response = await request(app)
+        .post(`/api/research/partner/${path}`)
+        .set("x-role", "affiliate")
+        .set("x-actor-id", "partner-auth-user")
+        .send({ example: true });
+      expect(response.status, path).toBe(202);
+    }
+  });
+
+  it("runs the required professional prospect-to-active pipeline with versioned agreement", async () => {
+    const applied = await request(app)
+      .post("/api/research/professional-accounts/apply")
+      .set("Idempotency-Key", "pipeline-apply")
+      .send({
+        id: "professional-pipeline",
+        accountType: "professional",
+        organizationName: "Pipeline Practice",
+        contactEmail: "pipeline@example.com",
+        programs: ["education", "software"],
+      });
+    expect(applied.status).toBe(200);
+
+    const stages = ["prospect", "discovery", "diligence", "commercial_review", "agreement", "active"];
+    let version = 1;
+    for (const stage of stages) {
+      const response = await request(app)
+        .post("/api/admin/research/professional-accounts/professional-pipeline/transition")
+        .set("x-role", "admin")
+        .set("x-actor-id", "samuel")
+        .set("Idempotency-Key", `pipeline-${stage}`)
+        .send({
+          to: stage,
+          expectedVersion: version,
+          ...(stage === "agreement" ? { agreementVersion: "agreement-v1" } : {}),
+        });
+      expect(response.status, stage).toBe(200);
+      expect(response.body.value.state, stage).toBe(stage);
+      version += 1;
+    }
   });
 });

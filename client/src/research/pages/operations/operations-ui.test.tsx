@@ -115,6 +115,7 @@ describe("operations UI states and accessibility", () => {
             version: 2,
           },
         ]}
+        onSecondaryAction={() => undefined}
       />,
     );
     expect(view.querySelectorAll("nav button")).toHaveLength(10);

@@ -9,7 +9,7 @@ export interface ProfessionalUiAccount {
 
 export function ProfessionalAccounts({ accounts }: { accounts: ProfessionalUiAccount[] }) {
   return (
-    <main className="ops-page" data-testid="professional-accounts">
+    <main className="research-app ops-page" data-testid="professional-accounts">
       <div className="ops-shell">
         <header className="ops-header">
           <div>
@@ -20,7 +20,7 @@ export function ProfessionalAccounts({ accounts }: { accounts: ProfessionalUiAcc
               clinical partnerships each retain their own terms and review.
             </p>
           </div>
-          <a className="ops-primary" href="?queue=applications">Review applications</a>
+          <a className="btn btn-primary ops-primary" href="?queue=applications">Review applications</a>
         </header>
         <section className="ops-section">
           {accounts.length ? (
@@ -31,12 +31,21 @@ export function ProfessionalAccounts({ accounts }: { accounts: ProfessionalUiAcc
                 <tbody>
                   {accounts.map((account) => (
                     <tr key={account.id}>
-                      <td><strong>{account.organizationName}</strong></td>
-                      <td>{account.accountType}</td>
-                      <td>{account.programs.join(" · ")}</td>
-                      <td>{account.agreementVersion ?? "Pending"}</td>
-                      <td><span className="ops-status" data-tone={account.state === "active" ? "success" : "warning"}>{account.state}</span></td>
-                      <td><a className="ops-card-link" href={`?account=${encodeURIComponent(account.id)}`}>Open →</a></td>
+                      <td data-label="Account"><strong>{account.organizationName}</strong></td>
+                      <td data-label="Type">{account.accountType}</td>
+                      <td data-label="Programs">{account.programs.join(" · ")}</td>
+                      <td data-label="Agreement">{account.agreementVersion ?? "Pending"}</td>
+                      <td data-label="Status">
+                        <span
+                          className={`ra-badge ops-status ${
+                            account.state === "active" ? "ra-badge-success" : "ra-badge-warning"
+                          }`}
+                          data-tone={account.state === "active" ? "success" : "warning"}
+                        >
+                          {account.state}
+                        </span>
+                      </td>
+                      <td data-label="Action"><a className="ops-card-link" href={`?account=${encodeURIComponent(account.id)}`}>Open →</a></td>
                     </tr>
                   ))}
                 </tbody>
