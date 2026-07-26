@@ -94,7 +94,6 @@ const priceCsv = (
     currency: "USD",
     effectiveAt: "2026-08-01T00:00:00Z",
     expiresAt: "2026-09-01T00:00:00Z",
-    approvalNote: "Draft for review",
     ...overrides,
   };
   return `${priceHeader}\r\n${Object.values(values).join(",")}\r\n`;
@@ -106,7 +105,7 @@ const mediaCsv = (
   const values = {
     mediaId: MEDIA_ID,
     productId: PRODUCT_ID,
-    storageKey: `research-products/${PRODUCT_ID}/primary.webp`,
+    storageKey: `${PRODUCT_ID}/${MEDIA_ID}/primary.webp`,
     kind: "primary_image",
     filename: "primary.webp",
     contentType: "image/webp",
@@ -205,6 +204,30 @@ describe("Product Control CSV deterministic draft mappings", () => {
     ).toEqual(["invalid_date_range"]);
   });
 
+  it.each([
+    "2025-02-29T00:00:00Z",
+    "2026-02-30T00:00:00Z",
+    "2026-04-31T00:00:00Z",
+    "2026-13-01T00:00:00Z",
+    "2026-08-01T24:00:00Z",
+    "2026-08-01T00:00:00+24:00",
+    "2026-08-01T00:00:00+12:60",
+  ])("rejects RFC-shaped but invalid calendar timestamp %s", (effectiveAt) => {
+    expect(errorCodes(parsePriceCsv(priceCsv({ effectiveAt })))).toEqual([
+      "invalid_date",
+    ]);
+  });
+
+  it.each([
+    "2024-02-29T23:59:59Z",
+    "2026-08-01T00:00:00+05:30",
+    "2026-08-01T00:00:00-04:00",
+  ])("accepts strict calendar-valid RFC 3339 timestamp %s", (effectiveAt) => {
+    expect(parsePriceCsv(priceCsv({ effectiveAt, expiresAt: "" })).ok).toBe(
+      true,
+    );
+  });
+
   it("maps private-media metadata as a storage-key reference only", () => {
     const result = parseMediaCsv(mediaCsv());
     expect(result).toMatchObject({
@@ -214,7 +237,7 @@ describe("Product Control CSV deterministic draft mappings", () => {
           kind: "media_metadata_draft",
           mediaId: MEDIA_ID,
           productId: PRODUCT_ID,
-          storageKey: `research-products/${PRODUCT_ID}/primary.webp`,
+          storageKey: `${PRODUCT_ID}/${MEDIA_ID}/primary.webp`,
           input: {
             kind: "primary_image",
             filename: "primary.webp",
@@ -228,6 +251,10 @@ describe("Product Control CSV deterministic draft mappings", () => {
     });
     expect(JSON.stringify(result)).not.toMatch(/signedUrl|uploadUrl|publicUrl/i);
     for (const storageKey of [
+      `care/${PRODUCT_ID}/${MEDIA_ID}/primary.webp`,
+      `${OTHER_PRODUCT_ID}/${MEDIA_ID}/primary.webp`,
+      `${PRODUCT_ID}/${PRICE_ID}/primary.webp`,
+      `${PRODUCT_ID}/${MEDIA_ID}/other.webp`,
       "../private.webp",
       "/absolute/private.webp",
       "https://invalid.example/private.webp",
@@ -237,6 +264,19 @@ describe("Product Control CSV deterministic draft mappings", () => {
         "invalid_storage_reference",
       ]);
     }
+    expect(
+      errorCodes(
+        parseMediaCsv(
+          mediaCsv({
+            filename: "unsafe name.webp",
+            storageKey: `${PRODUCT_ID}/${MEDIA_ID}/unsafe name.webp`,
+          }),
+        ),
+      ),
+    ).toEqual([
+      "invalid_storage_reference",
+      "invalid_storage_reference",
+    ]);
   });
 });
 
@@ -287,6 +327,23 @@ describe("Product Control CSV fail-closed validation", () => {
     },
   );
 
+  it("caps variant and media sort order at the PostgreSQL integer boundary", () => {
+    expect(
+      parseVariantCsv(variantCsv({ sortOrder: "2147483647" })).ok,
+    ).toBe(true);
+    expect(parseMediaCsv(mediaCsv({ sortOrder: "2147483647" })).ok).toBe(
+      true,
+    );
+    expect(
+      errorCodes(
+        parseVariantCsv(variantCsv({ sortOrder: "2147483648" })),
+      ),
+    ).toEqual(["invalid_integer"]);
+    expect(
+      errorCodes(parseMediaCsv(mediaCsv({ sortOrder: "2147483648" }))),
+    ).toEqual(["invalid_integer"]);
+  });
+
   it.each([
     ["product ID", productCsv({ productId: "not-a-uuid" }), "invalid_identifier"],
     ["product code", productCsv({ productCode: "alpha 1" }), "invalid_identifier"],
@@ -335,6 +392,45 @@ describe("Product Control CSV fail-closed validation", () => {
     if (result.ok) return;
     expect(JSON.stringify(result.errors)).not.toContain(PRODUCT_ID);
     expect(JSON.stringify(result.errors)).not.toContain("ALPHA-1");
+  });
+
+  it("canonicalizes UUID case and rejects case-only identity aliases", () => {
+    const first = productCsv().trimEnd().split("\r\n")[1];
+    const second = productCsv({
+      productId: PRODUCT_ID.toUpperCase(),
+      productCode: "BETA-1",
+      slug: "beta-one",
+    })
+      .trimEnd()
+      .split("\r\n")[1];
+    const duplicate = parseProductCsv(
+      `${productHeader}\r\n${first}\r\n${second}\r\n`,
+    );
+    expect(errorCodes(duplicate)).toEqual(["duplicate_identifier"]);
+
+    const mixed = parsePriceCsv(
+      priceCsv({
+        productId: PRODUCT_ID.toUpperCase(),
+        variantId: VARIANT_ID.toUpperCase(),
+      }),
+      {
+        bindings: {
+          productIds: [PRODUCT_ID.toUpperCase()],
+          variantProductIds: {
+            [VARIANT_ID.toUpperCase()]: PRODUCT_ID.toUpperCase(),
+          },
+        },
+      },
+    );
+    expect(mixed).toMatchObject({
+      ok: true,
+      commands: [
+        {
+          productId: PRODUCT_ID,
+          input: { variantId: VARIANT_ID },
+        },
+      ],
+    });
   });
 
   it("never includes raw rows, storage keys, notes, or full file content in errors", () => {
@@ -454,13 +550,12 @@ describe("Product Control CSV redacted deterministic export", () => {
     currency: "USD",
     effectiveAt: "2026-08-01T00:00:00Z",
     expiresAt: null,
-    approvalNote: null,
   };
   const media: MediaCsvExportSource = {
     id: MEDIA_ID,
     productId: PRODUCT_ID,
     kind: "primary_image",
-    storageKey: `research-products/${PRODUCT_ID}/primary.webp`,
+    storageKey: `${PRODUCT_ID}/${MEDIA_ID}/primary.webp`,
     filename: "primary.webp",
     contentType: "image/webp",
     sizeBytes: 2048,
@@ -482,7 +577,13 @@ describe("Product Control CSV redacted deterministic export", () => {
         { ...variant, status: "approved", createdAt: "private" } as VariantCsvExportSource,
       ]),
       exportPriceCsv([
-        { ...price, approvedBy: "private", createdBy: "private" } as PriceCsvExportSource,
+        {
+          ...price,
+          approvalNote: "INTERNAL REVIEW vendor terms unresolved",
+          status: "approved",
+          approvedBy: "private",
+          createdBy: "private",
+        } as PriceCsvExportSource,
       ]),
       exportMediaCsv([
         { ...media, approvedBy: "private", signedUrl: "private" } as MediaCsvExportSource,
@@ -492,7 +593,7 @@ describe("Product Control CSV redacted deterministic export", () => {
       expect(result.ok).toBe(true);
       if (!result.ok) continue;
       expect(result.csv).not.toMatch(
-        /status|published|created by|approved by|signed url|private\r?\n/i,
+        /status|published|created by|approved by|approval note|internal review|vendor terms|signed url|private\r?\n/i,
       );
       expect(result.csv.endsWith("\r\n")).toBe(true);
       expect(new TextDecoder().decode(result.bytes)).toBe(result.csv);
@@ -538,7 +639,7 @@ describe("Product Control CSV redacted deterministic export", () => {
   it("rejects missing private storage references without inventing one", () => {
     const result = exportMediaCsv([{ ...media, storageKey: null }]);
     expect(errorCodes(result)).toEqual(["required_value"]);
-    expect(JSON.stringify(result)).not.toContain("research-products/");
+    expect(JSON.stringify(result)).not.toContain(`${PRODUCT_ID}/`);
   });
 });
 
@@ -584,13 +685,12 @@ describe("Product Control CSV bounded generated-property coverage", () => {
         currency: "USD",
         effectiveAt: "2026-08-01T00:00:00Z",
         expiresAt: null,
-        approvalNote: null,
-      };
+  };
       const mediaSource: MediaCsvExportSource = {
         id: uuid(index + 3000),
         productId,
         kind: index % 2 ? "primary_image" : "gallery_image",
-        storageKey: `research-products/${productId}/${index}.webp`,
+        storageKey: `${productId}/${uuid(index + 3000)}/${index}.webp`,
         filename: `${index}.webp`,
         contentType: "image/webp",
         sizeBytes: 1024 + index,

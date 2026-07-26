@@ -43,9 +43,10 @@ const PRODUCT_CODE = /^[A-Z0-9][A-Z0-9._-]{1,63}$/;
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const SKU = /^[A-Z0-9][A-Z0-9._-]{1,95}$/;
 const RFC3339 =
-  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/;
+  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(?:Z|[+-](\d{2}):(\d{2}))$/;
 const MEDIA_CONTENT_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_MEDIA_BYTES = 10 * 1024 * 1024;
+const POSTGRES_INTEGER_MAX = 2_147_483_647;
 
 const DOMAIN_MESSAGES = {
   required_value: "A required CSV value is missing.",
@@ -68,6 +69,12 @@ const DOMAIN_MESSAGES = {
 
 type DomainCode = keyof typeof DOMAIN_MESSAGES;
 type AnyRecord = AdminCsvRecord<ProductControlCsvField>;
+
+function canonicalExportId(value: unknown): string {
+  return (
+    typeof value === "string" ? value.toLowerCase() : value
+  ) as string;
+}
 
 function schemaFor(profile: ProductControlCsvProfile): AdminCsvSchema<any> {
   if (profile === "products") return PRODUCT_CSV_SCHEMA;
@@ -208,7 +215,7 @@ function identifier(
     errors.push(domainError(profile, "invalid_identifier", row, field));
     return undefined;
   }
-  return value;
+  return value.toLowerCase();
 }
 
 function exactPattern(
@@ -307,11 +314,52 @@ function exactDate(
     errors.push(domainError(profile, "required_value", row, field));
     return undefined;
   }
-  if (!RFC3339.test(value) || !Number.isFinite(Date.parse(value))) {
+  if (!validRfc3339(value)) {
     errors.push(domainError(profile, "invalid_date", row, field));
     return undefined;
   }
   return value;
+}
+
+function validRfc3339(value: string): boolean {
+  const match = RFC3339.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const hour = Number(match[4]);
+  const minute = Number(match[5]);
+  const second = Number(match[6]);
+  const offsetHour = match[7] === undefined ? 0 : Number(match[7]);
+  const offsetMinute = match[8] === undefined ? 0 : Number(match[8]);
+  const leapYear =
+    year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const monthDays = [
+    31,
+    leapYear ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+  ];
+  return (
+    month >= 1 &&
+    month <= 12 &&
+    day >= 1 &&
+    day <= monthDays[month - 1] &&
+    hour <= 23 &&
+    minute <= 59 &&
+    second <= 59 &&
+    offsetHour <= 23 &&
+    offsetMinute <= 59 &&
+    Number.isFinite(Date.parse(value))
+  );
 }
 
 function aliases(
@@ -352,6 +400,9 @@ function storageReference(
   record: AnyRecord,
   row: number,
   errors: ProductControlCsvValidationError[],
+  productId: string | undefined,
+  mediaId: string | undefined,
+  filename: string | undefined,
 ): string | undefined {
   const value = requiredText(
     "media",
@@ -362,12 +413,23 @@ function storageReference(
     1024,
   );
   if (value === undefined) return undefined;
-  const segments = value.split("/");
+  const safeFilename =
+    filename !== undefined &&
+    /^[A-Za-z0-9._-]+$/.test(filename) &&
+    filename !== "." &&
+    filename !== "..";
+  if (!safeFilename) {
+    errors.push(
+      domainError("media", "invalid_storage_reference", row, "filename"),
+    );
+  }
+  const expected =
+    productId !== undefined && mediaId !== undefined && safeFilename
+      ? `${productId}/${mediaId}/${filename}`
+      : null;
   if (
-    value.startsWith("/") ||
-    value.includes("\\") ||
-    value.includes("://") ||
-    segments.some((segment) => segment === "" || segment === "." || segment === "..")
+    expected === null ||
+    value !== expected
   ) {
     errors.push(
       domainError("media", "invalid_storage_reference", row, "storageKey"),
@@ -574,6 +636,7 @@ function variantCommand(
     row,
     "sortOrder",
     errors,
+    POSTGRES_INTEGER_MAX,
   );
   if (
     variantId === undefined ||
@@ -656,14 +719,6 @@ function priceCommand(
     errors,
     true,
   );
-  const approvalNote = optionalText(
-    "prices",
-    record,
-    row,
-    "approvalNote",
-    errors,
-    1000,
-  );
   if (
     effectiveAt !== undefined &&
     effectiveAt !== null &&
@@ -685,7 +740,6 @@ function priceCommand(
     effectiveAt === undefined ||
     effectiveAt === null ||
     expiresAt === undefined ||
-    approvalNote === undefined ||
     (expiresAt !== null && Date.parse(expiresAt) <= Date.parse(effectiveAt))
   ) {
     return null;
@@ -701,7 +755,6 @@ function priceCommand(
       currency,
       effectiveAt,
       expiresAt,
-      approvalNote,
     },
   };
 }
@@ -713,7 +766,6 @@ function mediaCommand(
 ): MediaCsvDraftCommand | null {
   const mediaId = identifier("media", record, row, "mediaId", errors);
   const productId = identifier("media", record, row, "productId", errors);
-  const storageKey = storageReference(record, row, errors);
   const kind = exactEnum(
     "media",
     record,
@@ -729,6 +781,14 @@ function mediaCommand(
     "filename",
     errors,
     240,
+  );
+  const storageKey = storageReference(
+    record,
+    row,
+    errors,
+    productId,
+    mediaId,
+    filename,
   );
   const contentType = requiredText(
     "media",
@@ -766,6 +826,7 @@ function mediaCommand(
     row,
     "sortOrder",
     errors,
+    POSTGRES_INTEGER_MAX,
   );
   if (
     mediaId === undefined ||
@@ -991,17 +1052,26 @@ export function validateProductControlCsvRelationships(
   bindings: ProductControlCsvBindingContext = {},
 ): ProductControlCsvRelationshipResult {
   const errors: ProductControlCsvValidationError[] = [];
-  const products = new Set(bindings.productIds ?? []);
-  bundle.products?.forEach((command) => products.add(command.productId));
+  const products = new Set(
+    (bindings.productIds ?? []).map((productId) => productId.toLowerCase()),
+  );
+  bundle.products?.forEach((command) =>
+    products.add(command.productId.toLowerCase()),
+  );
   const productKnowledge =
     bindings.productIds !== undefined || bundle.products !== undefined;
 
-  const variants = new Map<string, string>(
-    Object.entries(bindings.variantProductIds ?? {}),
+  const variants = new Map<string, string>();
+  Object.entries(bindings.variantProductIds ?? {}).forEach(
+    ([variantId, productId]) => {
+      variants.set(variantId.toLowerCase(), productId.toLowerCase());
+    },
   );
   bundle.variants?.forEach((command, index) => {
-    const known = variants.get(command.variantId);
-    if (known !== undefined && known !== command.productId) {
+    const variantId = command.variantId.toLowerCase();
+    const productId = command.productId.toLowerCase();
+    const known = variants.get(variantId);
+    if (known !== undefined && known !== productId) {
       errors.push(
         domainError(
           "variants",
@@ -1011,9 +1081,9 @@ export function validateProductControlCsvRelationships(
         ),
       );
     } else {
-      variants.set(command.variantId, command.productId);
+      variants.set(variantId, productId);
     }
-    if (productKnowledge && !products.has(command.productId)) {
+    if (productKnowledge && !products.has(productId)) {
       errors.push(
         domainError(
           "variants",
@@ -1028,7 +1098,9 @@ export function validateProductControlCsvRelationships(
     bindings.variantProductIds !== undefined || bundle.variants !== undefined;
 
   bundle.prices?.forEach((command, index) => {
-    if (productKnowledge && !products.has(command.productId)) {
+    const productId = command.productId.toLowerCase();
+    const variantId = command.input.variantId.toLowerCase();
+    if (productKnowledge && !products.has(productId)) {
       errors.push(
         domainError(
           "prices",
@@ -1038,8 +1110,8 @@ export function validateProductControlCsvRelationships(
         ),
       );
     }
-    const productId = variants.get(command.input.variantId);
-    if (variantKnowledge && productId === undefined) {
+    const variantProductId = variants.get(variantId);
+    if (variantKnowledge && variantProductId === undefined) {
       errors.push(
         domainError(
           "prices",
@@ -1048,7 +1120,10 @@ export function validateProductControlCsvRelationships(
           "variantId",
         ),
       );
-    } else if (productId !== undefined && productId !== command.productId) {
+    } else if (
+      variantProductId !== undefined &&
+      variantProductId !== productId
+    ) {
       errors.push(
         domainError(
           "prices",
@@ -1061,7 +1136,10 @@ export function validateProductControlCsvRelationships(
   });
 
   bundle.media?.forEach((command, index) => {
-    if (productKnowledge && !products.has(command.productId)) {
+    if (
+      productKnowledge &&
+      !products.has(command.productId.toLowerCase())
+    ) {
       errors.push(
         domainError(
           "media",
@@ -1116,7 +1194,7 @@ export function exportProductCsv(
   options: ProductControlCsvSerializeOptions = {},
 ): ProductControlCsvExportResult {
   const records: AnyRecord[] = sources.map((source) => ({
-    productId: source.id,
+    productId: canonicalExportId(source.id),
     productCode: source.productCode,
     slug: source.slug,
     displayName: source.displayName,
@@ -1160,8 +1238,8 @@ export function exportVariantCsv(
   options: ProductControlCsvSerializeOptions = {},
 ): ProductControlCsvExportResult {
   const records: AnyRecord[] = sources.map((source) => ({
-    variantId: source.id,
-    productId: source.productId,
+    variantId: canonicalExportId(source.id),
+    productId: canonicalExportId(source.productId),
     sku: source.sku,
     catalogNumber: source.catalogNumber ?? "",
     label: source.label,
@@ -1202,15 +1280,14 @@ export function exportPriceCsv(
   options: ProductControlCsvSerializeOptions = {},
 ): ProductControlCsvExportResult {
   const records: AnyRecord[] = sources.map((source) => ({
-    priceId: source.id,
-    productId: source.productId,
-    variantId: source.variantId,
+    priceId: canonicalExportId(source.id),
+    productId: canonicalExportId(source.productId),
+    variantId: canonicalExportId(source.variantId),
     audience: source.audience,
     amountCents: String(source.amountCents),
     currency: source.currency,
     effectiveAt: source.effectiveAt,
     expiresAt: source.expiresAt ?? "",
-    approvalNote: source.approvalNote ?? "",
   })) as AnyRecord[];
   const errors = validateExportRecords("prices", records, priceCommand, [
     {
@@ -1237,8 +1314,8 @@ export function exportMediaCsv(
   options: ProductControlCsvSerializeOptions = {},
 ): ProductControlCsvExportResult {
   const records: AnyRecord[] = sources.map((source) => ({
-    mediaId: source.id,
-    productId: source.productId,
+    mediaId: canonicalExportId(source.id),
+    productId: canonicalExportId(source.productId),
     storageKey: source.storageKey ?? "",
     kind: source.kind,
     filename: source.filename,

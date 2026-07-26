@@ -57,8 +57,7 @@ export type PriceCsvField =
   | "amountCents"
   | "currency"
   | "effectiveAt"
-  | "expiresAt"
-  | "approvalNote";
+  | "expiresAt";
 
 export type MediaCsvField =
   | "mediaId"
@@ -121,7 +120,6 @@ export const PRICE_CSV_SCHEMA: AdminCsvSchema<PriceCsvField> = {
     { key: "currency", header: "Currency" },
     { key: "effectiveAt", header: "Effective At" },
     { key: "expiresAt", header: "Expires At" },
-    { key: "approvalNote", header: "Approval Note" },
   ],
 };
 
@@ -312,7 +310,6 @@ export type PriceCsvExportSource = Pick<
   | "currency"
   | "effectiveAt"
   | "expiresAt"
-  | "approvalNote"
 >;
 
 export type MediaCsvExportSource = Pick<
