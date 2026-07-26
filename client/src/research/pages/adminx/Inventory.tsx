@@ -90,7 +90,7 @@ function InventoryBody({ token }: { token: string }) {
           ]}
           rows={filtered}
           rowKey={(r) => r.id}
-          empty="No inventory rows yet."
+          empty="AVAILABLE INVENTORY REQUIRED — enter and reconcile verified inventory before commerce or allocation can be enabled."
         />
       </AdminBoundary>
 

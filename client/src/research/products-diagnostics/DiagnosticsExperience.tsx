@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import type { RequiredInput } from "@shared/research/required-inputs";
 import { ResearchMemberShell } from "../ui/shells";
 import {
   ResearchPendingPanel,
@@ -8,6 +9,10 @@ import {
   ResearchStatusBadge,
 } from "../ui/kit";
 import type { Website3SurfaceState } from "./ProductCatalogExperience";
+import {
+  Website3RequiredInputNotice,
+  Website3RequiredInputValue,
+} from "./RequiredInputState";
 
 export type SuperpowerOfferView = {
   label: string;
@@ -49,7 +54,13 @@ function offerStatusLabel(status: SuperpowerOfferView["status"]): string {
   return "Unavailable";
 }
 
-export function SuperpowerDiagnostics({ offer }: { offer: SuperpowerOfferView }) {
+export function SuperpowerDiagnostics({
+  offer,
+  requiredInputs,
+}: {
+  offer: SuperpowerOfferView;
+  requiredInputs?: readonly RequiredInput[];
+}) {
   const isAvailable = offer.status === "available" && Boolean(offer.affiliateUrl);
   return (
     <section aria-labelledby="superpower-title">
@@ -96,11 +107,35 @@ export function SuperpowerDiagnostics({ offer }: { offer: SuperpowerOfferView })
           </div>
           <div>
             <dt className="mono-label text-ink-mute">Collection method</dt>
-            <dd className="text-ink-2 mt-1">{offer.collectionMethod ?? "Pending verification"}</dd>
+            <dd className="text-ink-2 mt-1">
+              {offer.collectionMethod ?? (
+                requiredInputs ? (
+                  <Website3RequiredInputValue
+                    value={null}
+                    slot="superpowerOfferData"
+                    items={requiredInputs}
+                  />
+                ) : (
+                  "Pending verification"
+                )
+              )}
+            </dd>
           </div>
           <div>
             <dt className="mono-label text-ink-mute">Current price</dt>
-            <dd className="text-ink-2 mt-1">{offer.priceLabel ?? "Not published"}</dd>
+            <dd className="text-ink-2 mt-1">
+              {offer.priceLabel ?? (
+                requiredInputs ? (
+                  <Website3RequiredInputValue
+                    value={null}
+                    slot="superpowerCurrentPrice"
+                    items={requiredInputs}
+                  />
+                ) : (
+                  "Not published"
+                )
+              )}
+            </dd>
             {offer.priceEffectiveDate && <dd className="text-ink-mute mt-1">Effective {offer.priceEffectiveDate}</dd>}
           </div>
           <div>
@@ -117,6 +152,22 @@ export function SuperpowerDiagnostics({ offer }: { offer: SuperpowerOfferView })
           </div>
         </dl>
       </div>
+      {requiredInputs && !isAvailable && (
+        <div className="grid gap-4 mt-4 sm:grid-cols-2">
+          <Website3RequiredInputNotice
+            slot="superpowerRelationship"
+            items={requiredInputs}
+          />
+          <Website3RequiredInputNotice
+            slot="superpowerAffiliateUrl"
+            items={requiredInputs}
+          />
+          <Website3RequiredInputNotice
+            slot="superpowerLaunchApproval"
+            items={requiredInputs}
+          />
+        </div>
+      )}
     </section>
   );
 }
@@ -138,9 +189,11 @@ const BIOMARKER_STEPS = [
 export function BiomarkerCenter({
   record,
   onUpload,
+  requiredInputs,
 }: {
   record: BiomarkerStateView;
   onUpload?: (input: { file: File; consentAccepted: boolean }) => Promise<void>;
+  requiredInputs?: readonly RequiredInput[];
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [consent, setConsent] = useState(false);
@@ -202,9 +255,22 @@ export function BiomarkerCenter({
             PDF, JPEG, or PNG up to 15 MB. Files use private storage and short-lived signed access.
           </p>
           {!onUpload && (
-            <p className="body-s text-ink-mute mt-3" role="status">
-              Private report upload is not enabled yet.
-            </p>
+            requiredInputs ? (
+              <div className="grid gap-4 mt-4">
+                <Website3RequiredInputNotice
+                  slot="diagnosticPartner"
+                  items={requiredInputs}
+                />
+                <Website3RequiredInputNotice
+                  slot="biomarkerReviewWorkflow"
+                  items={requiredInputs}
+                />
+              </div>
+            ) : (
+              <p className="body-s text-ink-mute mt-3" role="status">
+                Private report upload is not enabled yet.
+              </p>
+            )
           )}
           <label className="grid gap-2 mt-5">
             <span className="form-label">Report file</span>
@@ -267,6 +333,7 @@ export function DiagnosticsMemberHome({
   state = "ok",
   errorMessage,
   onRetry,
+  requiredInputs,
 }: {
   offer: SuperpowerOfferView;
   biomarker: BiomarkerStateView;
@@ -274,6 +341,7 @@ export function DiagnosticsMemberHome({
   state?: Website3SurfaceState;
   errorMessage?: string;
   onRetry?: () => void;
+  requiredInputs?: readonly RequiredInput[];
 }) {
   return (
     <ResearchMemberShell
@@ -292,8 +360,15 @@ export function DiagnosticsMemberHome({
           Diagnostics does not validate Research products or establish product quality, safety, or suitability.
         </ResearchSecureNotice>
         <div className="mt-6">
-          <SuperpowerDiagnostics offer={offer} />
-          <BiomarkerCenter record={biomarker} onUpload={onUpload} />
+          <SuperpowerDiagnostics
+            offer={offer}
+            requiredInputs={requiredInputs}
+          />
+          <BiomarkerCenter
+            record={biomarker}
+            onUpload={onUpload}
+            requiredInputs={requiredInputs}
+          />
         </div>
       </ResearchRouteBoundary>
     </ResearchMemberShell>

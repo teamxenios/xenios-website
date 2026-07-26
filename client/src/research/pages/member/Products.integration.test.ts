@@ -53,6 +53,7 @@ describe("Website 3 catalog integration", () => {
     expect(cards).toEqual([
       expect.objectContaining({
         slug: "alpha",
+        requiredInputRecordId: "product-1",
         family: "research_vials",
         familyLabel: "Research vials",
         statusLabel: "Documentation pending",

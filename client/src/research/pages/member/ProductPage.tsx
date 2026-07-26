@@ -292,6 +292,7 @@ const STATUS_LABELS: Record<
 
 const EMPTY_PRODUCT_DETAIL: ProductDetailView = {
   slug: "",
+  requiredInputRecordId: null,
   displayName: "Product",
   family: "research_vials",
   familyLabel: "Product",
@@ -328,6 +329,7 @@ function relatedCard(
   const statusLabel = STATUS_LABELS[product.truthState];
   return {
     slug: product.slug,
+    requiredInputRecordId: product.productId,
     displayName: product.displayName,
     family: product.family,
     familyLabel: familyLabel(platform, product),
@@ -349,6 +351,7 @@ function detailView(state: Extract<PageState, { phase: "ok" }>): ProductDetailVi
   });
   return {
     slug: product.slug,
+    requiredInputRecordId: platformProduct.productId,
     displayName: product.displayName,
     family: platformProduct.family,
     familyLabel: familyLabel(platform, platformProduct),

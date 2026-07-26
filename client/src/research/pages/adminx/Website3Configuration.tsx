@@ -9,6 +9,12 @@ import {
   type AdminSupplementPlaceholder,
 } from "../../adapters/products-diagnostics";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../../ui/kit";
+import { listRequiredInputs } from "../../adapters/adminOps";
+import {
+  Website3RequiredInputNotice,
+  type Website3RequiredInputSlot,
+} from "../../products-diagnostics/RequiredInputState";
+import type { RequiredInput } from "@shared/research/required-inputs";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 import { useAdminResource } from "./auth";
 
@@ -111,6 +117,29 @@ function Field({
   );
 }
 
+function RequiredInputChecklist({
+  items,
+  slots,
+}: {
+  items: readonly RequiredInput[];
+  slots: readonly Website3RequiredInputSlot[];
+}) {
+  return (
+    <div
+      className="grid gap-4 mt-4 sm:grid-cols-2"
+      aria-label="Required inputs for this section"
+    >
+      {slots.map((slot) => (
+        <Website3RequiredInputNotice
+          key={slot}
+          slot={slot}
+          items={items}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function Website3Configuration() {
   return (
     <AdminScreen
@@ -126,6 +155,8 @@ function ConfigurationBody({ token }: { token: string }) {
   const pathways = useAdminResource(token, getAdminMetabolicPathways);
   const supplements = useAdminResource(token, getAdminSupplementPlaceholders);
   const superpower = useAdminResource(token, getAdminSuperpowerOffer);
+  const requiredInputs = useAdminResource(token, listRequiredInputs);
+  const requiredItems = requiredInputs.data?.items ?? [];
 
   return (
     <div className="grid gap-9">
@@ -136,6 +167,10 @@ function ConfigurationBody({ token }: { token: string }) {
 
       <section aria-labelledby="admin-pathways-title">
         <h2 id="admin-pathways-title" className="body-l font-700">Metabolic pathways</h2>
+        <RequiredInputChecklist
+          items={requiredItems}
+          slots={["metabolicPathwayDefinition"]}
+        />
         <div className="mt-4">
           <AdminBoundary
             state={pathways.state}
@@ -173,6 +208,10 @@ function ConfigurationBody({ token }: { token: string }) {
 
       <section aria-labelledby="admin-supplements-title">
         <h2 id="admin-supplements-title" className="body-l font-700">Supplement placeholders</h2>
+        <RequiredInputChecklist
+          items={requiredItems}
+          slots={["supplementProductData", "approvedProductImage", "storageInformation"]}
+        />
         <div className="mt-4">
           <AdminBoundary
             state={supplements.state}
@@ -259,6 +298,17 @@ function ConfigurationBody({ token }: { token: string }) {
 
       <section aria-labelledby="admin-superpower-title">
         <h2 id="admin-superpower-title" className="body-l font-700">Superpower public state</h2>
+        <RequiredInputChecklist
+          items={requiredItems}
+          slots={[
+            "superpowerRelationship",
+            "superpowerAffiliateUrl",
+            "superpowerOfferData",
+            "superpowerCurrentPrice",
+            "superpowerLaunchApproval",
+            "diagnosticPartner",
+          ]}
+        />
         <div className="mt-4">
           <AdminBoundary
             state={superpower.state}

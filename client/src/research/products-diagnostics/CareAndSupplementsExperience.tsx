@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "wouter";
 import { productRequestHref } from "@shared/research/product-request-sources";
+import type { RequiredInput } from "@shared/research/required-inputs";
 import { ResearchMemberShell } from "../ui/shells";
 import {
   ResearchEmptyState,
@@ -10,6 +11,7 @@ import {
   ResearchStatusBadge,
 } from "../ui/kit";
 import type { Website3SurfaceState } from "./ProductCatalogExperience";
+import { Website3RequiredInputNotice } from "./RequiredInputState";
 
 export type PublicPathwayCard = {
   pathwayId: string;
@@ -37,6 +39,7 @@ export function PendingMetabolicCare({
   state = "ok",
   errorMessage,
   onRetry,
+  requiredInputs,
 }: {
   pathways: PublicPathwayCard[];
   onJoinInterest?: (input: {
@@ -50,6 +53,7 @@ export function PendingMetabolicCare({
   state?: Website3SurfaceState;
   errorMessage?: string;
   onRetry?: () => void;
+  requiredInputs?: readonly RequiredInput[];
 }) {
   const [selectedPathway, setSelectedPathway] = useState(pathways[0]?.pathwayId ?? "");
   const [currentState, setCurrentState] = useState("");
@@ -94,6 +98,14 @@ export function PendingMetabolicCare({
           title="Care pathways are being prepared"
           body="Clinicians must define eligibility, service, product, and follow-up details before any pathway is offered."
         />
+        {requiredInputs && (
+          <div className="mt-4">
+            <Website3RequiredInputNotice
+              slot="metabolicPathwayDefinition"
+              items={requiredInputs}
+            />
+          </div>
+        )}
 
         {pathways.length === 0 ? (
           <div className="mt-5">
@@ -218,11 +230,13 @@ export function SupplementComingSoon({
   state = "ok",
   errorMessage,
   onRetry,
+  requiredInputs,
 }: {
   supplements: SupplementCard[];
   state?: Website3SurfaceState;
   errorMessage?: string;
   onRetry?: () => void;
+  requiredInputs?: readonly RequiredInput[];
 }) {
   return (
     <ResearchMemberShell
@@ -247,6 +261,22 @@ export function SupplementComingSoon({
           title="Supplement categories are under review"
           body="Approved products will publish only after their quality, claims, inventory, and channel checks are complete."
         />
+        {requiredInputs && (
+          <div className="grid gap-4 mt-4 sm:grid-cols-2">
+            <Website3RequiredInputNotice
+              slot="supplementProductData"
+              items={requiredInputs}
+            />
+            <Website3RequiredInputNotice
+              slot="approvedProductImage"
+              items={requiredInputs}
+            />
+            <Website3RequiredInputNotice
+              slot="storageInformation"
+              items={requiredInputs}
+            />
+          </div>
+        )}
 
         {supplements.length === 0 ? (
           <div className="mt-5">

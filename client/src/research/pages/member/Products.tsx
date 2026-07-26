@@ -59,6 +59,7 @@ export function toProductCards(
     const statusLabel = STATUS_LABELS[product.truthState];
     return {
       slug: product.slug,
+      requiredInputRecordId: product.productId,
       displayName: product.displayName,
       family: product.family,
       familyLabel: familyLabels.get(product.family) ?? product.family.replaceAll("_", " "),
