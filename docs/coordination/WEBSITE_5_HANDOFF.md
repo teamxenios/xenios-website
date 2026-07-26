@@ -9,6 +9,8 @@
   `48cb57250c1ec54fe8714e59fa1071a9eb27f867`
 - Feature branch: `feature/website-5-care-foundation`
 - Pull request: `https://github.com/teamxenios/xenios-website/pull/46`
+- Current frozen SHA: recorded in PR #46 and issue #44 after this committed
+  handoff is pushed.
 - Full seven-PR staging snapshot:
   `feature/website-5-care-sequence-staging` at
   `1a8dbf8172df37ab7a5941fd340305c00d962c81`
@@ -17,6 +19,11 @@ PR #46 is intentionally PR 1 only. The former broad head `1a8dbf8` and
 superseded review head `a002fed` are not mergeable. Later intake, clinician,
 pharmacy, instruction, supply, labs, messaging, and adverse-event work remains
 preserved only on the staging branch for focused follow-on PRs.
+
+The complete requirement-by-requirement reconciliation, exact planned branches,
+files, owners, acceptance tests, release outcomes, and PR 2–7 sequence are in
+`docs/coordination/WEBSITE_5_REMAINING_SCOPE.md`. The broad staging branch is
+source material only and must never be merged as a unit.
 
 ## Included and excluded
 
@@ -194,6 +201,15 @@ For this Pending release, keep both Care enable flags unset or not equal to
   deployment because the route and server wiring are intentionally excluded
   from this PR.
 
+Current production snapshot on 2026-07-25:
+
+- `GET https://xeniostechnology.com/api/health`: HTTP 200.
+- `GET https://xeniostechnology.com/api/care/status`: HTTP 404.
+- `GET https://xeniostechnology.com/care`: the generic SPA document is served,
+  but the focused Care client route is not registered.
+
+This evidence is why the release remains `NOT YET MERGED`, not `LIVE`.
+
 ## UI consistency evidence
 
 The production home page and local global UI system were used as the visual
@@ -260,5 +276,22 @@ to `enabled` or set both deployment approvals until every later Care release
 gate is complete, including real medical-group, clinician, state coverage,
 pharmacy, patient-specific instruction, support, privacy, security, and
 production QA records.
+
+## Remaining scope and next exact action
+
+Care PR 1 is the first of seven focused release units. After Website 2 accepts,
+merges, migrates, and deploys this unit, Website 5 must:
+
+1. Verify the disabled `/care` shell and `/api/care/status` on production.
+2. Record the deployment evidence in issue #44.
+3. Branch `feature/website-5-care-eligibility-intake` from the then-current
+   `main`.
+4. Selectively recover only PR 2 eligibility/intake/consent work from
+   `feature/website-5-care-sequence-staging`.
+5. Add its focused repository, route, migration, authorization, RLS, state,
+   mobile, accessibility, and no-fabrication proof.
+
+The exact PR 2–7 implementation plan and all external activation blockers are
+maintained in `docs/coordination/WEBSITE_5_REMAINING_SCOPE.md`.
 
 PRODUCTION STATUS: NOT YET MERGED
