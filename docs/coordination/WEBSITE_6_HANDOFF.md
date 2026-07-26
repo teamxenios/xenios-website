@@ -6,11 +6,11 @@
    monitoring, production smoke, and UI consistency.
 3. **Starting branch:** `test/website-6-final-qa`
 4. **Starting SHA:** `a486b889503a8f9d42f86c4666e808af6c5e852c`
-5. **Release base:** production `main` at
-   `48cb57250c1ec54fe8714e59fa1071a9eb27f867`
+5. **Release base:** production `main` advanced to
+   `68ee5d612df7d0452091ff0dfd2062d433943066` after Release Train 0.
 6. **Final branch:** `test/website-6-final-qa`
-7. **Final head SHA:** use the frozen PR head posted to Command Center #44.
-8. **PR URL:** use the Website 6 PR posted to Command Center #44.
+7. **Current head SHA:** `eff0030cd0c1abe6ce05de1ba6944bf3af8b5286`.
+8. **PR URL:** https://github.com/teamxenios/xenios-website/pull/51
 9. **Merge SHA:** pending Website 2.
 10. **Migration applied:** Website 6 adds no production migration. The exact
     35-file production sequence passes in disposable PostgreSQL 16 after rebasing
@@ -37,9 +37,11 @@
     guards authoritative.
 19. **Logs result:** live browser inspection found no console errors. Render and
     Supabase post-deploy log review remains Website 2 coordinated.
-20. **Exact blockers:** 16 partner adapter endpoints still lack registered server
-    routes; PR #46 and PR #47 are awaiting Xenios UI consistency revisions; PR #48
-    remains draft integration work; post-deploy live smoke and logs are pending.
+20. **Exact blockers:** the Website 4 16-endpoint mismatch is closed at exact
+    candidate `6dba785b649a8b729d74d2691ac7d46b2a64e4f6`; generated inventory reports
+    zero missing adapter routes and 49/49 focused tests pass. Release Train 1
+    final-candidate verification and authenticated production persona/persistence
+    smoke remain pending.
 21. **Validation:** 132 files / 3,077 tests passed before the coordinated rebase;
     104 tests covering the rebased production-main changes passed afterward;
     typecheck, build, built-asset budgets, source/bundle leak scan, UI consistency
@@ -62,8 +64,10 @@
   `docs/coordination/WEBSITE_6_REMAINING_SCOPE.md` and this handoff.
 - **Migrations:** none added; Website 6 continues to verify candidate migration
   order, RLS, grants, policies, constraints, and production read-only invariants.
-- **Routes:** no domain route was added. The 16 partner endpoint mismatch remains
-  intentionally release-blocking and assigned to Website 4.
+- **Routes:** no domain route was added. The 16 partner endpoint mismatch is
+  resolved at Website 4 candidate `6dba785b649a8b729d74d2691ac7d46b2a64e4f6`.
+  QA commit `eff0030` also classifies the operations adapter's two composed base
+  constants as prefixes rather than callable endpoints.
 - **Remaining QA scope:** full persona/auth journeys, integrated uploads and
   private Storage, offline/retry, 200% zoom, broader state coverage, notification
   replay/concurrency, API p95 measurement, full SEO semantics, new-train
@@ -71,9 +75,35 @@
   per-train live verification.
 - **Shared wiring:** Website 2 registers/integrates domain modules; Website 6
   reviews the frozen result and adds narrow regression coverage.
-- **Next exact action:** Website 4 resolves the PR #48 route-parity micro-task;
-  Website 6 reruns `npm run qa:routes:check` on its next frozen head without
-  implementing partner business logic.
+- **Next exact action:** verify the Release Train 1 frozen head, then re-run the
+  integrated route, migration, responsive, accessibility, and no-leak gates
+  without implementing domain business logic.
+
+## Release Train 0 production evidence
+
+- Approved PR #52 head:
+  `534e8ab6895f67fba1b3cb83ca7ad4017d09036a`.
+- Domain merge: `9dad933d37cbd84430487c77f6ea421e7ff2cf75`.
+- Coordinator wiring PR #54 and production main:
+  `68ee5d612df7d0452091ff0dfd2062d433943066`.
+- Render deployment: `dep-d9ilv150kf9s73bmj44g`, Live at `68ee5d6`.
+- Migration `release_train_0_research_assessment_v2`: applied and verified with
+  no live row-count changes.
+- Website 6 candidate gates: 339/339 focused tests, 28/28 PostgreSQL 16
+  migration checks, production build, 1,061-file/101-artifact leak scan, and
+  5/5 responsive disabled-state browser projects passed.
+- Live evidence: `/api/health` 200; signed-out Assessment and Blueprint review
+  APIs return 401; desktop/375/320 have no overflow; focus is visible; no new
+  serious Render errors.
+- Assessment remains fail-closed while `RESEARCH_HEALTH_DATA_ENABLED` is false
+  or unset and no counsel-approved, published, effective, hash-valid XR-MEM-012
+  exists.
+- Authenticated member/admin persistence smoke is **pending, not failed**:
+  no authorized Research gate/member/admin session was available, and no
+  account or production record was fabricated.
+- Command Center evidence:
+  https://github.com/teamxenios/xenios-website/issues/44#issuecomment-5081358506
+- Release Train 0 production status: **PARTIALLY LIVE**.
 
 Website 2 remains the sole merge/deployment coordinator. Website 6 must verify
 the deployed SHA, live 320px behavior, contrast, logs, and smoke checks after

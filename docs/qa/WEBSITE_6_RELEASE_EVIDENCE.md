@@ -30,11 +30,35 @@
 
 ## Active release gates
 
-- `npm run qa:routes:check` intentionally fails until 16 partner adapter calls
-  have matching registered server endpoints.
+- Website 4 candidate `6dba785b649a8b729d74d2691ac7d46b2a64e4f6`
+  resolves all 16 partner adapter registrations. The generated inventory reports
+  zero missing adapter routes, and 49/49 focused adapter/route tests pass.
 - PR #46 and PR #47 require Website 2-approved Xenios visual revisions and new
   frozen heads before Website 6 cross-PR visual verification.
 - PR #48 remains draft and requires production wiring and persona smoke tests.
+
+## Release Train 0 — Assessment
+
+- PR #52 exact approved head
+  `534e8ab6895f67fba1b3cb83ca7ad4017d09036a` merged as
+  `9dad933d37cbd84430487c77f6ea421e7ff2cf75`; coordinator wiring PR #54
+  produced production main `68ee5d612df7d0452091ff0dfd2062d433943066`.
+- Render deployment `dep-d9ilv150kf9s73bmj44g` is Live at `68ee5d6`.
+- Migration `release_train_0_research_assessment_v2` is applied and verified
+  with no live row-count changes.
+- Candidate verification passed: 339/339 focused Assessment/Blueprint/legal/auth
+  tests; 28/28 disposable PostgreSQL 16 checks; production build and leak scan;
+  desktop, 320, 375, 430, and tablet disabled-state browser checks with WCAG
+  A/AA, contrast, focus, touch targets, no overflow, and no sensitive browser
+  state.
+- Live read-only evidence: `/api/health` 200; signed-out Assessment and
+  Blueprint review APIs return 401; desktop/375/320 have no overflow; focus is
+  visible; no new serious Render errors.
+- Assessment truthfully fails closed pending approved XR-MEM-012.
+- Authenticated member/admin persistence smoke remains **pending, not failed**
+  because no authorized production session was available; no identity or record
+  was fabricated.
+- Production status: **PARTIALLY LIVE**.
 
 ## Pre-release live baseline
 
