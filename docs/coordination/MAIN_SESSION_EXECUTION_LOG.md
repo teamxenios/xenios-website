@@ -1,5 +1,24 @@
 # Main session execution log
 
+## 2026-07-27T05:00:00Z — PR #88 bounded control-plane correction
+
+- Rejected PR #88 head `5d5561807fb359356e8af89d99a19f2c08b572a3`
+  remains prohibited after Website 6 found a self-invalidating future-deploy
+  equality and incomplete ownership snapshot parsing.
+- Checked-in production, graph, and migration identities now explicitly mean
+  `TRUSTED_RELEASE_BASELINE`; they authorize and verify the release baseline
+  but do not attempt to predict a future merge SHA.
+- Post-deploy validation accepts externally supplied main, Render Git,
+  deployment, and accepted-candidate identities and requires exact resolution,
+  baseline/candidate ancestry, and byte-identical candidate-scoped files.
+- Current ownership snapshots now use the complete canonical parser before
+  casting. Missing arrays, malformed lanes or rules, unsafe patterns, and
+  unknown structures fail with `CURRENT_OWNERSHIP_SNAPSHOT_INVALID`.
+- Trusted-base ownership remains the only policy allowed to authorize a
+  candidate diff; candidate wildcard self-authorization remains prohibited.
+- Production effect: none. No runtime, migration, role, row, or provider
+  mutation occurred.
+
 Append-only coordination record for the serialized release manager. This file
 records engineering facts and decisions; it is not a substitute for Git,
 GitHub, Supabase, or Render evidence.

@@ -29,6 +29,7 @@ export type MigrationNode = {
 
 export type MigrationDag = {
   schemaVersion: number;
+  identitySemantics: "TRUSTED_RELEASE_BASELINE";
   generatedAt: string;
   productionSha: string;
   checksumScope: string;
@@ -62,6 +63,12 @@ export function validateMigrationDag(
   }
   if (dag.schemaVersion !== 1) {
     issues.push({ code: "DAG_SCHEMA_VERSION", message: "Migration DAG schemaVersion must equal 1." });
+  }
+  if (dag.identitySemantics !== "TRUSTED_RELEASE_BASELINE") {
+    issues.push({
+      code: "DAG_IDENTITY_SEMANTICS",
+      message: "Migration DAG productionSha must be an immutable trusted release baseline.",
+    });
   }
   if (!SHA_PATTERN.test(dag.productionSha ?? "")) {
     issues.push({ code: "DAG_PRODUCTION_SHA", message: "Migration DAG productionSha must be a lowercase Git SHA." });

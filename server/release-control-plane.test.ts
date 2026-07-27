@@ -20,6 +20,7 @@ import {
 } from "../scripts/acceptance/verify-route-uniqueness.ts";
 import {
   loadCurrentOwnershipSnapshot,
+  validateObservedDeployment,
   validateProductionState,
   type FileOwnership,
   type ProductionState,
@@ -50,6 +51,34 @@ const CONTROL_PLANE_FILES = [
   "server/release-control-plane.test.ts",
   "supabase/MIGRATIONS.md",
 ];
+
+function ownershipFixture(
+  productionBaseSha: string,
+  patterns: string[],
+): Record<string, unknown> {
+  return {
+    schemaVersion: 1,
+    generatedAt: NOW.toISOString(),
+    productionBaseSha,
+    lanes: [{
+      owner: "Website 2",
+      lane: "release-manager",
+      state: "ACTIVE",
+      activeUnit: "Release control-plane validation.",
+      branch: "chore/release-control-plane",
+      headSha: null,
+    }],
+    rules: [{
+      id: "base-release-manager",
+      owner: "Website 2",
+      lane: "release-manager",
+      mode: "write",
+      state: "active",
+      patterns,
+    }],
+    invariants: ["Candidate rules cannot authorize their own diff."],
+  };
+}
 
 function validManifest(): Record<string, unknown> {
   const pass = {
@@ -299,18 +328,10 @@ describe("release manifest validator", () => {
   });
 
   it("uses trusted-base ownership instead of a candidate wildcard for an exact bound diff", () => {
-    const basePolicy = Buffer.from(JSON.stringify({
-      schemaVersion: 1,
-      productionBaseSha: PRODUCTION_SHA,
-      rules: [{
-        id: "base-release-manager",
-        owner: "Website 2",
-        lane: "release-manager",
-        mode: "write",
-        state: "active",
-        patterns: ["docs/coordination/FILE_OWNERSHIP.json"],
-      }],
-    }));
+    const basePolicy = Buffer.from(JSON.stringify(ownershipFixture(
+      PRODUCTION_SHA,
+      ["docs/coordination/FILE_OWNERSHIP.json"],
+    )));
     const candidateWildcard = Buffer.from(JSON.stringify({
       schemaVersion: 1,
       productionBaseSha: PRODUCTION_SHA,
@@ -533,6 +554,7 @@ describe("migration DAG validator", () => {
   function migrationDag(): MigrationDag {
     return {
       schemaVersion: 1,
+      identitySemantics: "TRUSTED_RELEASE_BASELINE",
       generatedAt: NOW.toISOString(),
       productionSha: PRODUCTION_SHA,
       checksumScope: "canonical Git blob bytes at productionSha",
@@ -673,7 +695,7 @@ describe("production state validator", () => {
     expect(
       validateProductionState(state, graph, ownership, {
         now: NOW,
-        expectedProductionSha: PRODUCTION_SHA,
+        trustedReleaseBaseSha: PRODUCTION_SHA,
         repoFiles,
       }),
     ).toEqual([]);
@@ -682,23 +704,15 @@ describe("production state validator", () => {
   it("separates trusted-base diff authorization from the current production ownership snapshot", () => {
     const { state, graph, ownership: currentOwnership } = checkedInState();
     const policyOriginSha = "d494150668de2ede8a61fd0d28bc9ff9a75def26";
-    const basePolicy = Buffer.from(JSON.stringify({
-      schemaVersion: 1,
-      productionBaseSha: policyOriginSha,
-      rules: [{
-        id: "base-release-manager",
-        owner: "Website 2",
-        lane: "release-manager",
-        mode: "write",
-        state: "active",
-        patterns: [
-          "docs/coordination/CURRENT_PRODUCTION_STATE.json",
-          "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
-          "docs/coordination/MIGRATION_DAG.json",
-          "docs/coordination/FILE_OWNERSHIP.json",
-        ],
-      }],
-    }));
+    const basePolicy = Buffer.from(JSON.stringify(ownershipFixture(
+      policyOriginSha,
+      [
+        "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+        "docs/coordination/MIGRATION_DAG.json",
+        "docs/coordination/FILE_OWNERSHIP.json",
+      ],
+    )));
     const candidateWildcard = Buffer.from(JSON.stringify({
       ...currentOwnership,
       rules: [{
@@ -723,7 +737,7 @@ describe("production state validator", () => {
     expect(
       validateProductionState(state, graph, currentOwnership, {
         now: NOW,
-        expectedProductionSha: PRODUCTION_SHA,
+        trustedReleaseBaseSha: PRODUCTION_SHA,
       }),
     ).toEqual([]);
 
@@ -761,6 +775,79 @@ describe("production state validator", () => {
     expect(
       loadCurrentOwnershipSnapshot(ROOT, () => "{not-json").issues.map((issue) => issue.code),
     ).toContain("CURRENT_OWNERSHIP_SNAPSHOT_INVALID");
+    for (const invalid of [
+      {},
+      { schemaVersion: 1, generatedAt: NOW.toISOString(), productionBaseSha: PRODUCTION_SHA },
+      {
+        ...ownershipFixture(PRODUCTION_SHA, ["docs/coordination/**"]),
+        rules: "not-an-array",
+      },
+      {
+        ...ownershipFixture(PRODUCTION_SHA, ["docs/coordination/**"]),
+        lanes: [{ owner: "Website 2", lane: "release-manager" }],
+      },
+      {
+        ...ownershipFixture(PRODUCTION_SHA, ["docs/coordination/**"]),
+        rules: [{ id: "malformed", patterns: [] }],
+      },
+      {
+        ...ownershipFixture(PRODUCTION_SHA, ["docs/coordination/**"]),
+        unexpected: true,
+      },
+    ]) {
+      expect(
+        loadCurrentOwnershipSnapshot(ROOT, () => JSON.stringify(invalid)).issues.map(
+          (issue) => issue.code,
+        ),
+      ).toContain("CURRENT_OWNERSHIP_SNAPSHOT_INVALID");
+    }
+    expect(
+      loadCurrentOwnershipSnapshot(
+        ROOT,
+        () => JSON.stringify(ownershipFixture(PRODUCTION_SHA, ["docs/coordination/**"])),
+      ).issues,
+    ).toEqual([]);
+  });
+
+  it("validates a distinct observed merge without requiring it in the checked-in baseline", () => {
+    const { state } = checkedInState();
+    const candidateSha = "5d5561807fb359356e8af89d99a19f2c08b572a3";
+    const deployedSha = "a".repeat(40);
+    const observation = {
+      baselineSha: PRODUCTION_SHA,
+      acceptedCandidateSha: candidateSha,
+      observedMainSha: deployedSha,
+      observedRenderSha: deployedSha,
+      renderDeploymentId: "dep-postdeploy123",
+      expectedObservedTreeSha: "c".repeat(40),
+    };
+    const binding = {
+      baselineExists: true,
+      candidateExists: true,
+      observedExists: true,
+      resolvedBaselineSha: PRODUCTION_SHA,
+      resolvedCandidateSha: candidateSha,
+      resolvedObservedSha: deployedSha,
+      resolvedObservedTreeSha: "c".repeat(40),
+      checkoutHeadSha: deployedSha,
+      baselineAncestorOfObserved: true,
+      candidateAncestorOfObserved: true,
+      scopedFilesMatch: true,
+      runtimeEvidencePassed: true,
+      routeEvidencePassed: true,
+      healthStatus: 200,
+    };
+    expect(validateObservedDeployment(state, observation, binding)).toEqual([]);
+    expect(
+      validateObservedDeployment(
+        state,
+        { ...observation, observedRenderSha: "b".repeat(40) },
+        { ...binding, candidateAncestorOfObserved: false },
+      ).map((issue) => issue.code),
+    ).toEqual(expect.arrayContaining([
+      "OBSERVED_DEPLOYMENT_IDENTITY_MISMATCH",
+      "OBSERVED_CANDIDATE_NOT_ANCESTOR",
+    ]));
   });
 
   it("detects production identity and data-posture contradictions", () => {
@@ -773,11 +860,11 @@ describe("production state validator", () => {
     }
     const codes = validateProductionState(state, graph, ownership, {
       now: NOW,
-      expectedProductionSha: PRODUCTION_SHA,
+      trustedReleaseBaseSha: PRODUCTION_SHA,
     }).map((issue) => issue.code);
     expect(codes).toEqual(
       expect.arrayContaining([
-        "STALE_PRODUCTION_SHA",
+        "STALE_PRODUCTION_BASELINE",
         "PRODUCTION_IDENTITY_CONTRADICTION",
         "DATA_POSTURE_CONTRADICTION",
       ]),

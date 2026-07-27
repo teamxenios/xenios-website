@@ -4,15 +4,27 @@ This is the human companion to
 `docs/coordination/CURRENT_PRODUCTION_STATE.json`. The JSON record is the
 machine-readable release-manager snapshot.
 
-## Live identity
+## Trusted release baseline
 
 | Field | Value |
 |---|---|
-| Production Git SHA | `b729c8ee1a357e0af95fe50a05989b2f662f7270` |
+| Audited baseline Git SHA | `b729c8ee1a357e0af95fe50a05989b2f662f7270` |
 | Render deployment | `dep-d9jdiuf41pts73b4p02g` |
 | Render state | `LIVE` |
 | Public origin | `https://xeniostechnology.com` |
 | Evidence captured | `2026-07-27T04:15:34Z` |
+
+The checked-in SHA is an immutable audited baseline and policy reference. It
+does not attempt to predict the SHA of a future merge. Pre-merge validation
+binds the trusted external base and reviewed candidate to their exact diff.
+Post-deploy validation receives the observed main SHA, Render Git SHA, Render
+deployment id, and accepted candidate SHA externally; it requires exact
+identity, commit ancestry, the reviewed merge tree, byte-identical
+candidate-scoped files, health 200, and passing route/runtime evidence. A
+non-descendant or mismatched observed deployment fails without requiring
+another checked-in snapshot commit. The post-deploy CLI receives these facts
+only through `XENIOS_OBSERVED_*`, `XENIOS_ACCEPTED_CANDIDATE_SHA`, and
+`XENIOS_EXPECTED_OBSERVED_TREE_SHA`; partial input fails closed.
 
 Health is 200. The signed-out Research account gate is 200/no-store, while
 member, activation, capability, and activation-readiness endpoints reject

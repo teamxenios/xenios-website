@@ -1,5 +1,6 @@
 {
   "schemaVersion": 2,
+  "identitySemantics": "TRUSTED_RELEASE_BASELINE",
   "generatedAt": "2026-07-27T04:15:34Z",
   "production": {
     "gitSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",

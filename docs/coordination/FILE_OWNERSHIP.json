@@ -158,11 +158,11 @@
     }
   ],
   "invariants": [
-    "The trusted-base ownership policy authorizes the current base..head diff; the candidate/current FILE_OWNERSHIP snapshot is validated separately and never authorizes its own changes.",
+    "The trusted-base ownership policy authorizes the current base..head diff; productionBaseSha is the policy-origin baseline, and the candidate/current FILE_OWNERSHIP snapshot is validated separately and never authorizes its own changes.",
     "One active writer per repository file.",
     "Review-only lanes own no write patterns.",
     "A prohibited or frozen head may be corrected only by its owning lane.",
     "Website 2 alone owns shared integration, migration application, merge, deployment, and rollback decisions.",
-    "A new unit must start from the exact current production SHA."
+    "A new unit must start from the exact externally observed current production SHA supplied by Website 2; checked-in productionBaseSha remains the policy-origin baseline."
   ]
 }

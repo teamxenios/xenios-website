@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "identitySemantics": "TRUSTED_RELEASE_BASELINE",
   "generatedAt": "2026-07-27T04:15:34Z",
   "productionSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
   "checksumScope": "canonical Git blob bytes at productionSha",

@@ -1,15 +1,16 @@
 {
   "schemaVersion": 1,
+  "identitySemantics": "TRUSTED_RELEASE_BASELINE",
   "generatedAt": "2026-07-27T04:15:34Z",
   "productionSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
   "nodes": [
     {
       "id": "production-b729c8e",
-      "type": "production",
+      "type": "production_baseline",
       "owner": "Website 2",
-      "state": "DEPLOYED",
+      "state": "AUDITED_BASELINE",
       "sha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
-      "label": "Production main / PR #87 runtime healthy, control-plane fix-forward"
+      "label": "Audited production baseline / PR #87 runtime healthy"
     },
     {
       "id": "high-capabilities-route",

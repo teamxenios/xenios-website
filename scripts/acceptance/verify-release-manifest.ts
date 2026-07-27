@@ -20,6 +20,24 @@ export type OwnershipRule = {
   patterns: string[];
 };
 
+export type OwnershipLane = {
+  owner: string;
+  lane: string;
+  state: string;
+  activeUnit: string;
+  branch: string | null;
+  headSha: string | null;
+};
+
+export type OwnershipDocument = {
+  schemaVersion: number;
+  generatedAt: string;
+  productionBaseSha: string;
+  lanes: OwnershipLane[];
+  rules: OwnershipRule[];
+  invariants: string[];
+};
+
 export type ReleaseManifestValidationOptions = {
   now?: Date;
   maxEvidenceAgeMs?: number;
@@ -147,14 +165,68 @@ export function trustedReleaseIdentityFromEnvironment(
   };
 }
 
-function parseOwnershipPolicy(raw: Buffer): {
-  document: Record<string, unknown> | null;
+const OWNERSHIP_TOP_LEVEL_KEYS = new Set([
+  "schemaVersion",
+  "generatedAt",
+  "productionBaseSha",
+  "lanes",
+  "rules",
+  "invariants",
+]);
+const OWNERSHIP_LANE_KEYS = new Set([
+  "owner",
+  "lane",
+  "state",
+  "activeUnit",
+  "branch",
+  "headSha",
+]);
+const OWNERSHIP_RULE_KEYS = new Set([
+  "id",
+  "owner",
+  "lane",
+  "mode",
+  "state",
+  "patterns",
+]);
+const OWNERSHIP_LANE_STATES = new Set([
+  "REPLACEMENT_IN_PROGRESS",
+  "ACTIVE",
+  "FROZEN_ACCEPTED_INTEGRATION_PENDING",
+  "FROZEN_PROHIBITED_CHANGES_REQUIRED",
+  "WAITING_FOR_WEBSITE_2_ASSIGNMENT",
+  "REVIEW_ONLY",
+]);
+const OWNERSHIP_RULE_STATES = new Set(["active", "reserved", "deployed", "frozen"]);
+
+function exactKeys(record: Record<string, unknown>, allowed: Set<string>): boolean {
+  return Object.keys(record).every((key) => allowed.has(key));
+}
+
+function nonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function safeOwnershipPattern(value: string): boolean {
+  return (
+    value.length > 0 &&
+    !value.includes("\\") &&
+    !value.startsWith("/") &&
+    !value.split("/").includes("..") &&
+    value !== "*" &&
+    value !== "**" &&
+    value !== "**/*"
+  );
+}
+
+export function parseOwnershipDocument(raw: Buffer | string): {
+  document: OwnershipDocument | null;
   rules: OwnershipRule[];
   issues: ValidationIssue[];
 } {
   let parsed: unknown;
   try {
-    parsed = JSON.parse(raw.toString("utf8")) as unknown;
+    parsed = JSON.parse(typeof raw === "string" ? raw : raw.toString("utf8")) as unknown;
   } catch {
     return {
       document: null,
@@ -166,37 +238,89 @@ function parseOwnershipPolicy(raw: Buffer): {
     };
   }
   const document = objectValue(parsed);
-  const rules = document?.rules;
-  if (!document || !Array.isArray(rules)) {
+  if (
+    !document ||
+    !exactKeys(document, OWNERSHIP_TOP_LEVEL_KEYS) ||
+    document.schemaVersion !== 1 ||
+    !nonEmptyString(document.generatedAt) ||
+    !Number.isFinite(new Date(document.generatedAt).getTime()) ||
+    typeof document.productionBaseSha !== "string" ||
+    !SHA_PATTERN.test(document.productionBaseSha) ||
+    !Array.isArray(document.lanes) ||
+    document.lanes.length === 0 ||
+    !Array.isArray(document.rules) ||
+    document.rules.length === 0 ||
+    !Array.isArray(document.invariants) ||
+    document.invariants.length === 0 ||
+    !document.invariants.every(nonEmptyString)
+  ) {
     return {
-      document,
+      document: null,
       rules: [],
       issues: [{
         code: "TRUSTED_OWNERSHIP_INVALID",
-        message: "Trusted ownership policy must be an object with a rules array.",
+        message: "Ownership policy has an invalid or incomplete top-level structure.",
       }],
     };
   }
+
+  const parsedLanes: OwnershipLane[] = [];
+  for (const laneValue of document.lanes) {
+    const lane = objectValue(laneValue);
+    if (
+      !lane ||
+      !exactKeys(lane, OWNERSHIP_LANE_KEYS) ||
+      !nonEmptyString(lane.owner) ||
+      !nonEmptyString(lane.lane) ||
+      typeof lane.state !== "string" ||
+      !OWNERSHIP_LANE_STATES.has(lane.state) ||
+      !nonEmptyString(lane.activeUnit) ||
+      !(lane.branch === null || nonEmptyString(lane.branch)) ||
+      !(lane.headSha === null || (typeof lane.headSha === "string" && SHA_PATTERN.test(lane.headSha)))
+    ) {
+      return {
+        document: null,
+        rules: [],
+        issues: [{
+          code: "TRUSTED_OWNERSHIP_INVALID",
+          message: "Every ownership lane must match the canonical lane structure.",
+        }],
+      };
+    }
+    parsedLanes.push({
+      owner: lane.owner,
+      lane: lane.lane,
+      state: lane.state,
+      activeUnit: lane.activeUnit,
+      branch: lane.branch,
+      headSha: lane.headSha,
+    });
+  }
+
+  const rules = document?.rules;
   const parsedRules: OwnershipRule[] = [];
   for (const ruleValue of rules) {
     const rule = objectValue(ruleValue);
     const patterns = rule ? stringArray(rule.patterns) : null;
     if (
       !rule ||
-      typeof rule.id !== "string" ||
-      typeof rule.owner !== "string" ||
-      typeof rule.lane !== "string" ||
-      typeof rule.mode !== "string" ||
+      !exactKeys(rule, OWNERSHIP_RULE_KEYS) ||
+      !nonEmptyString(rule.id) ||
+      !nonEmptyString(rule.owner) ||
+      !nonEmptyString(rule.lane) ||
+      rule.mode !== "write" ||
       typeof rule.state !== "string" ||
+      !OWNERSHIP_RULE_STATES.has(rule.state) ||
       !patterns ||
-      patterns.length === 0
+      patterns.length === 0 ||
+      !patterns.every(safeOwnershipPattern)
     ) {
       return {
-        document,
+        document: null,
         rules: [],
         issues: [{
           code: "TRUSTED_OWNERSHIP_INVALID",
-          message: "Every trusted ownership rule requires id, owner, lane, mode, state, and patterns.",
+          message: "Every ownership rule must match the canonical rule structure and use safe patterns.",
         }],
       };
     }
@@ -209,7 +333,18 @@ function parseOwnershipPolicy(raw: Buffer): {
       patterns,
     });
   }
-  return { document, rules: parsedRules, issues: [] };
+  return {
+    document: {
+      schemaVersion: document.schemaVersion,
+      generatedAt: document.generatedAt,
+      productionBaseSha: document.productionBaseSha,
+      lanes: parsedLanes,
+      rules: parsedRules,
+      invariants: document.invariants,
+    },
+    rules: parsedRules,
+    issues: [],
+  };
 }
 
 export function trustedOwnershipPolicy(
@@ -296,7 +431,7 @@ export function trustedOwnershipPolicy(
       }],
     };
   }
-  const parsed = parseOwnershipPolicy(raw);
+  const parsed = parseOwnershipDocument(raw);
   if (!parsed.document || parsed.issues.length > 0) {
     return { policy: null, issues: parsed.issues };
   }
