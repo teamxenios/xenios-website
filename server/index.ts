@@ -13,6 +13,8 @@ import { defaultDeps as defaultMemberPlatformDeps } from "./research/member-plat
 import { registerMemberCapabilityApi } from "./research/capabilities";
 import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
+import { registerMemberCatalogApi } from "./research/catalog/member-catalog-routes";
+import { buildMemberCatalogProductionService } from "./research/catalog/member-catalog-service";
 import {
   buildWebsite3ProductionDependencies,
   registerProductsDiagnosticsApi,
@@ -196,6 +198,11 @@ registerCommerceApi(app, commerceDependencies, {
   requireMember: adaptGuard(requireMember),
   requireAdmin: adaptGuard(requireSupabaseAdmin),
 });
+registerMemberCatalogApi(
+  app,
+  buildMemberCatalogProductionService(),
+  requireActiveMember,
+);
 
 // Website 3 products and diagnostics. Uses the same active-member/admin guards,
 // canonical catalog readiness, canonical lot/quality tables, private Supabase
