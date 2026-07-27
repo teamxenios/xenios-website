@@ -20,6 +20,7 @@ import {
 } from "../scripts/acceptance/verify-route-uniqueness.ts";
 import {
   loadCurrentOwnershipSnapshot,
+  productionAcceptanceMessage,
   validateObservedDeployment,
   validateProductionState,
   type FileOwnership,
@@ -592,14 +593,29 @@ describe("migration DAG validator", () => {
   }
 
   it("accepts an acyclic, complete DAG when file checks are disabled", () => {
-    expect(validateMigrationDag(migrationDag(), { checkFiles: false })).toEqual([]);
+    expect(validateMigrationDag(migrationDag(), {
+      checkFiles: false,
+      expectedBaselineSha: PRODUCTION_SHA,
+    })).toEqual([]);
+  });
+
+  it("rejects a migration baseline that differs from the canonical release baseline", () => {
+    const dag = migrationDag();
+    dag.productionSha = "d494150668de2ede8a61fd0d28bc9ff9a75def26";
+    expect(validateMigrationDag(dag, {
+      checkFiles: false,
+      expectedBaselineSha: PRODUCTION_SHA,
+    }).map((issue) => issue.code)).toContain("DAG_BASELINE_IDENTITY_CONTRADICTION");
   });
 
   it("detects cycles, missing prerequisites, and missing rollback evidence", () => {
     const dag = migrationDag();
     dag.migrations[0].dependsOn = ["two", "missing"];
     dag.migrations[1].rollback.evidence = "";
-    const codes = validateMigrationDag(dag, { checkFiles: false }).map((issue) => issue.code);
+    const codes = validateMigrationDag(dag, {
+      checkFiles: false,
+      expectedBaselineSha: PRODUCTION_SHA,
+    }).map((issue) => issue.code);
     expect(codes).toEqual(
       expect.arrayContaining(["MIGRATION_CYCLE", "MISSING_PREREQUISITE", "MIGRATION_ROLLBACK"]),
     );
@@ -613,6 +629,7 @@ describe("migration DAG validator", () => {
     expect(
       validateMigrationDag(dag, {
         repoRoot: ROOT,
+        expectedBaselineSha: PRODUCTION_SHA,
         canonicalBytes: (_productionSha, path) =>
           execFileSync("git", ["show", `HEAD:${path}`], {
             cwd: ROOT,
@@ -696,6 +713,7 @@ describe("production state validator", () => {
       validateProductionState(state, graph, ownership, {
         now: NOW,
         trustedReleaseBaseSha: PRODUCTION_SHA,
+        migrationBaselineSha: PRODUCTION_SHA,
         repoFiles,
       }),
     ).toEqual([]);
@@ -738,6 +756,7 @@ describe("production state validator", () => {
       validateProductionState(state, graph, currentOwnership, {
         now: NOW,
         trustedReleaseBaseSha: PRODUCTION_SHA,
+        migrationBaselineSha: PRODUCTION_SHA,
       }),
     ).toEqual([]);
 
@@ -838,6 +857,12 @@ describe("production state validator", () => {
       healthStatus: 200,
     };
     expect(validateObservedDeployment(state, observation, binding)).toEqual([]);
+    expect(productionAcceptanceMessage(state, observation)).toBe(
+      `Observed deployment accepted: ${deployedSha} / dep-postdeploy123 (baseline ${PRODUCTION_SHA}).`,
+    );
+    expect(productionAcceptanceMessage(state)).toBe(
+      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-d9jdiuf41pts73b4p02g.`,
+    );
     expect(
       validateObservedDeployment(
         state,
@@ -848,6 +873,62 @@ describe("production state validator", () => {
       "OBSERVED_DEPLOYMENT_IDENTITY_MISMATCH",
       "OBSERVED_CANDIDATE_NOT_ANCESTOR",
     ]));
+  });
+
+  it("requires one trusted baseline across state, graph, ownership, and migration DAG", () => {
+    const ancestor = "d494150668de2ede8a61fd0d28bc9ff9a75def26";
+    const checked = checkedInState();
+    const validate = (
+      state: ProductionState,
+      graph: ReleaseGraph,
+      ownership: FileOwnership,
+      migrationBaselineSha: string,
+    ) => validateProductionState(state, graph, ownership, {
+      now: NOW,
+      trustedReleaseBaseSha: PRODUCTION_SHA,
+      migrationBaselineSha,
+    }).map((issue) => issue.code);
+
+    expect(validate(
+      structuredClone(checked.state),
+      structuredClone(checked.graph),
+      structuredClone(checked.ownership),
+      PRODUCTION_SHA,
+    )).not.toContain("BASELINE_IDENTITY_CONTRADICTION");
+
+    const stateDrift = structuredClone(checked.state);
+    stateDrift.production.gitSha = ancestor;
+    expect(validate(
+      stateDrift,
+      structuredClone(checked.graph),
+      structuredClone(checked.ownership),
+      PRODUCTION_SHA,
+    )).toContain("BASELINE_IDENTITY_CONTRADICTION");
+
+    const graphDrift = structuredClone(checked.graph);
+    graphDrift.productionSha = ancestor;
+    expect(validate(
+      structuredClone(checked.state),
+      graphDrift,
+      structuredClone(checked.ownership),
+      PRODUCTION_SHA,
+    )).toContain("BASELINE_IDENTITY_CONTRADICTION");
+
+    const ownershipDrift = structuredClone(checked.ownership);
+    ownershipDrift.productionBaseSha = ancestor;
+    expect(validate(
+      structuredClone(checked.state),
+      structuredClone(checked.graph),
+      ownershipDrift,
+      PRODUCTION_SHA,
+    )).toContain("BASELINE_IDENTITY_CONTRADICTION");
+
+    expect(validate(
+      structuredClone(checked.state),
+      structuredClone(checked.graph),
+      structuredClone(checked.ownership),
+      ancestor,
+    )).toContain("BASELINE_IDENTITY_CONTRADICTION");
   });
 
   it("detects production identity and data-posture contradictions", () => {
@@ -861,11 +942,12 @@ describe("production state validator", () => {
     const codes = validateProductionState(state, graph, ownership, {
       now: NOW,
       trustedReleaseBaseSha: PRODUCTION_SHA,
+      migrationBaselineSha: PRODUCTION_SHA,
     }).map((issue) => issue.code);
     expect(codes).toEqual(
       expect.arrayContaining([
         "STALE_PRODUCTION_BASELINE",
-        "PRODUCTION_IDENTITY_CONTRADICTION",
+        "BASELINE_IDENTITY_CONTRADICTION",
         "DATA_POSTURE_CONTRADICTION",
       ]),
     );

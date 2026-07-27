@@ -1,5 +1,19 @@
 # Main session execution log
 
+## 2026-07-27T05:10:00Z — PR #88 baseline identity/output tightening
+
+- PR #88 head `2ccd2221177b1928cf8b53eb0dc7a7274bd14fe9`
+  remains prohibited after Website 6 found two release-evidence HIGHs.
+- The single `TRUSTED_RELEASE_BASELINE` is now enforced across production
+  state, release graph, ownership policy origin, and migration DAG. Independent
+  drift of any record fails a stable baseline-identity check.
+- Successful observed-deployment mode reports the externally observed main
+  SHA and Render deployment id, with the checked-in baseline labeled
+  separately. Pre-merge mode reports an audited baseline, never a deployed
+  future identity.
+- Production effect: none. No runtime, migration, role, row, or provider
+  mutation occurred.
+
 ## 2026-07-27T05:00:00Z — PR #88 bounded control-plane correction
 
 - Rejected PR #88 head `5d5561807fb359356e8af89d99a19f2c08b572a3`

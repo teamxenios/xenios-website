@@ -116,6 +116,7 @@ export type ProductionValidationOptions = {
   maxEvidenceAgeMs?: number;
   trustedReleaseBaseSha?: string;
   baselineAncestorOfTrustedBase?: boolean;
+  migrationBaselineSha?: string;
   repoFiles?: string[];
 };
 
@@ -300,10 +301,14 @@ export function validateProductionState(
       message: `Recorded baseline ${state.production.gitSha} is not the trusted release base ${options.trustedReleaseBaseSha} or its ancestor.`,
     });
   }
-  if (graph.productionSha !== state.production.gitSha) {
+  if (
+    graph.productionSha !== state.production.gitSha ||
+    ownership.productionBaseSha !== state.production.gitSha ||
+    options.migrationBaselineSha !== state.production.gitSha
+  ) {
     issues.push({
-      code: "PRODUCTION_IDENTITY_CONTRADICTION",
-      message: "Trusted release baseline differs across CURRENT_PRODUCTION_STATE and ACTIVE_RELEASE_GRAPH.",
+      code: "BASELINE_IDENTITY_CONTRADICTION",
+      message: "Trusted release baseline differs across production state, release graph, ownership policy origin, or migration DAG.",
     });
   }
 
@@ -568,6 +573,16 @@ export function validateObservedDeployment(
   return issues;
 }
 
+export function productionAcceptanceMessage(
+  state: ProductionState,
+  observation: ObservedDeployment | null = null,
+): string {
+  if (observation) {
+    return `Observed deployment accepted: ${observation.observedMainSha} / ${observation.renderDeploymentId} (baseline ${state.production.gitSha}).`;
+  }
+  return `Trusted release baseline accepted: ${state.production.gitSha} / ${state.production.renderDeploymentId}.`;
+}
+
 function isCli(): boolean {
   return Boolean(
     process.argv[1] &&
@@ -634,6 +649,9 @@ if (isCli()) {
   const graph = JSON.parse(
     readFileSync(resolve(root, "docs/coordination/ACTIVE_RELEASE_GRAPH.json"), "utf8"),
   ) as ReleaseGraph;
+  const migrationDag = JSON.parse(
+    readFileSync(resolve(root, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+  ) as { productionSha?: string };
   const trusted = trustedReleaseIdentityFromEnvironment();
   const authorizationPolicy = trustedOwnershipPolicy(
     root,
@@ -662,9 +680,11 @@ if (isCli()) {
         Boolean(trusted.identity) &&
         state.production.gitSha !== trusted.identity?.baseSha &&
         isAncestor(root, state.production.gitSha, trusted.identity?.baseSha ?? ""),
+      migrationBaselineSha: migrationDag.productionSha,
       repoFiles,
     }),
   ];
+  let observedAcceptance: ObservedDeployment | null = null;
   const observedMainSha = process.env.XENIOS_OBSERVED_MAIN_SHA;
   const observedRenderSha = process.env.XENIOS_OBSERVED_RENDER_SHA;
   const observedRenderDeploymentId = process.env.XENIOS_OBSERVED_RENDER_DEPLOYMENT_ID;
@@ -706,16 +726,17 @@ if (isCli()) {
         cwd: root,
         encoding: "utf8",
       }).trim();
+      observedAcceptance = {
+        baselineSha,
+        acceptedCandidateSha: candidateSha,
+        observedMainSha: deployedSha,
+        observedRenderSha: observedRenderSha ?? "",
+        renderDeploymentId: observedRenderDeploymentId ?? "",
+        expectedObservedTreeSha: expectedObservedTreeSha ?? "",
+      };
       issues.push(...validateObservedDeployment(
         state,
-        {
-          baselineSha,
-          acceptedCandidateSha: candidateSha,
-          observedMainSha: deployedSha,
-          observedRenderSha: observedRenderSha ?? "",
-          renderDeploymentId: observedRenderDeploymentId ?? "",
-          expectedObservedTreeSha: expectedObservedTreeSha ?? "",
-        },
+        observedAcceptance,
         {
           baselineExists: resolvedBaselineSha === baselineSha,
           candidateExists: resolvedCandidateSha === candidateSha,
@@ -739,8 +760,6 @@ if (isCli()) {
     for (const issue of issues) console.error(`${issue.code}: ${issue.message}`);
     process.exitCode = 1;
   } else {
-    console.log(
-      `Production state accepted: ${state.production.gitSha} / ${state.production.renderDeploymentId}.`,
-    );
+    console.log(productionAcceptanceMessage(state, observedAcceptance));
   }
 }

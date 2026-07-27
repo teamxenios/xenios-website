@@ -158,6 +158,7 @@
     }
   ],
   "invariants": [
+    "productionBaseSha is the same TRUSTED_RELEASE_BASELINE recorded by CURRENT_PRODUCTION_STATE, ACTIVE_RELEASE_GRAPH, and MIGRATION_DAG; it is not a prediction of a future deployed merge SHA.",
     "The trusted-base ownership policy authorizes the current base..head diff; productionBaseSha is the policy-origin baseline, and the candidate/current FILE_OWNERSHIP snapshot is validated separately and never authorizes its own changes.",
     "One active writer per repository file.",
     "Review-only lanes own no write patterns.",

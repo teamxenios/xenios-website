@@ -43,6 +43,7 @@
     }
   ],
   "invariants": [
+    "productionSha is the same TRUSTED_RELEASE_BASELINE recorded by CURRENT_PRODUCTION_STATE, ACTIVE_RELEASE_GRAPH, and FILE_OWNERSHIP.",
     "Every dependency must exist and be applied before its dependent migration.",
     "The dependency graph must be acyclic.",
     "Checksums are computed from canonical Git blob bytes, not platform-normalized worktree line endings.",
