@@ -28,7 +28,9 @@ projection over the live Product Control repository.
   fields. Missing, rejected, expired, superseded, duplicated, or cross-product
   bindings suppress the dependent field or product. Canonical IDs must be
   unique across bindings, and verification must exist at or before the exact
-  server evaluation instant.
+  server evaluation instant. The complete active per-product
+  `blocks_display` set must exactly equal the four canonical tuples; extra
+  display blockers or downgraded canonical metadata invalidate the set.
 - Member projections include approved active variants/SKUs, normalized current
   price identity, canonical required-input/readiness versions, Website 4's
   injected availability, and one exact current lot/COA presentation fact.
@@ -38,7 +40,8 @@ projection over the live Product Control repository.
   `<productId>/<mediaId>/<safeFilename>` object path with one short-lived
   JWT-shaped token and future expiry. Credentials, fragments, traversal,
   mismatched objects, unknown query fields, private/unapproved hosts, and stale
-  signatures fail closed.
+  signatures fail closed. Signed access must expire after evaluation and no
+  later than the shared five-minute Research media access TTL.
   Product Control private Storage keys, audit history, required-input values,
   inventory quantities, lots, locations, and providers remain server-only.
 - The accepted cart product-selection contract is consumed unchanged as the

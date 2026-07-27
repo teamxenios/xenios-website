@@ -10,6 +10,7 @@ import {
   MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CATEGORY,
   MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CLASSIFICATION,
   MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY,
+  MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS,
   MEMBER_CATALOG_SORTS,
   type MemberCatalog,
   type MemberCatalogCard,
@@ -99,7 +100,10 @@ function safeMediaHref(
     if (
       policy !== "xenios_signed_storage_v1" ||
       !canonicalIso(expiresAt) ||
-      Date.parse(expiresAt) <= Date.parse(evaluatedAt)
+      Date.parse(expiresAt) <= Date.parse(evaluatedAt) ||
+      Date.parse(expiresAt) >
+        Date.parse(evaluatedAt) +
+          MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS * 1000
     ) {
       return false;
     }

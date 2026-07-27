@@ -13,6 +13,8 @@ export const MEMBER_CATALOG_SORTS = [
   "recently_updated",
 ] as const;
 
+export const MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS = 5 * 60;
+
 export type MemberCatalogSort = (typeof MEMBER_CATALOG_SORTS)[number];
 
 export type MemberCatalogQuery = {

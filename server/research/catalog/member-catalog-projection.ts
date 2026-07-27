@@ -24,6 +24,7 @@ import {
   MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CATEGORY,
   MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CLASSIFICATION,
   MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY,
+  MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS,
 } from "@shared/research/member-catalog";
 import type { DomainReadiness, RequiredInput } from "@shared/research/required-inputs";
 import { selectCartProduct } from "../commerce/cart-product-selection";
@@ -77,9 +78,11 @@ function safePublicMediaHref(
       );
     }
     if (policy !== "xenios_signed_storage_v1") return false;
-    const expiresMs =
-      expiresAt === null ? null : parseProductControlTimestamp(expiresAt);
-    const evaluatedMs = parseProductControlTimestamp(evaluatedAt);
+    const expiresMicros =
+      expiresAt === null
+        ? null
+        : parseProductControlTimestampMicros(expiresAt);
+    const evaluatedMicros = parseProductControlTimestampMicros(evaluatedAt);
     const keys = Array.from(url.searchParams.keys());
     const prefix =
       "/storage/v1/object/sign/research-product-media/";
@@ -103,9 +106,12 @@ function safePublicMediaHref(
       /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(
         url.searchParams.get("token") ?? "",
       ) &&
-      expiresMs !== null &&
-      evaluatedMs !== null &&
-      expiresMs > evaluatedMs
+      expiresMicros !== null &&
+      evaluatedMicros !== null &&
+      expiresMicros > evaluatedMicros &&
+      expiresMicros <=
+        evaluatedMicros +
+          MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS * 1_000_000
     );
   } catch {
     return false;
@@ -130,15 +136,31 @@ function resolvedProductDisplayBindings(
   items: readonly RequiredInput[],
   evaluatedAt: string,
 ): ProductDisplayBindings {
+  const unresolved = () =>
+    Object.fromEntries(
+      PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map(({ key }) => [key, false]),
+    ) as ProductDisplayBindings;
+  const activeDisplayItems = items.filter(
+    (item) =>
+      item.recordId === productId &&
+      item.currentState !== "superseded" &&
+      item.blockingLevel === "blocks_display",
+  );
+  if (
+    activeDisplayItems.length !==
+    PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.length
+  ) {
+    return unresolved();
+  }
   const evaluatedMicros = parseProductControlTimestampMicros(evaluatedAt);
   const entries = PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding) => {
-    const active = items.filter(
+    const active = activeDisplayItems.filter(
       (item) =>
         item.key === binding.key &&
         item.domain === binding.domain &&
         item.recordType === binding.recordType &&
         item.recordId === productId &&
-        item.currentState !== "superseded",
+        item.blockingLevel === "blocks_display",
     );
     const item = active.length === 1 ? active[0] : null;
     const verifiedAt =
@@ -163,9 +185,7 @@ function resolvedProductDisplayBindings(
     entry.id === null ? [] : [entry.id],
   );
   if (new Set(resolvedIds).size !== resolvedIds.length) {
-    return Object.fromEntries(
-      PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map(({ key }) => [key, false]),
-    ) as ProductDisplayBindings;
+    return unresolved();
   }
   return Object.fromEntries(
     entries.map(({ key, verified }) => [key, verified]),

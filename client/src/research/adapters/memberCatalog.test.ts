@@ -180,6 +180,16 @@ describe("member catalog browser adapter", () => {
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T21:59:59.000Z",
       },
+      {
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/media-a/product-a.webp?token=header.payload.signature",
+        policy: "xenios_signed_storage_v1",
+        expiresAt: "2026-07-26T22:05:00.001Z",
+      },
+      {
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/media-a/product-a.webp?token=header.payload.signature",
+        policy: "xenios_signed_storage_v1",
+        expiresAt: "2099-01-01T00:00:00.000Z",
+      },
     ]) {
       expect(
         adaptMemberCatalog({

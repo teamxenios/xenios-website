@@ -289,8 +289,7 @@ describe("member catalog projection", () => {
     const input = source([product()]);
     input.requiredInputs = input.requiredInputs.slice(1);
     const result = projectMemberCatalog(input);
-    expect(result.items[0].displayState).toBe("documentation_pending");
-    expect(result.items[0].variantCount).toBe(0);
+    expect(result.items).toEqual([]);
     expect(JSON.stringify(result)).not.toContain("PRODUCT-A-SKU");
     expect(JSON.stringify(result)).not.toContain("products.sku");
     expect(JSON.stringify(result)).not.toContain("product_content.primary_image");
@@ -318,7 +317,11 @@ describe("member catalog projection", () => {
         item.key === "products.sku" ? { ...item, currentState: state } : item,
       );
       const skuDetail = projectMemberProductDetail(sku, "product-a");
-      expect(skuDetail?.variants).toEqual([]);
+      if (state === "superseded") {
+        expect(skuDetail).toBeNull();
+      } else {
+        expect(skuDetail?.variants).toEqual([]);
+      }
       expect(JSON.stringify(skuDetail)).not.toContain("PRODUCT-A-SKU");
 
       const image = source([product()]);
@@ -327,7 +330,13 @@ describe("member catalog projection", () => {
           ? { ...item, currentState: state }
           : item,
       );
-      expect(projectMemberProductDetail(image, "product-a")?.media).toBeNull();
+      if (state === "superseded") {
+        expect(projectMemberProductDetail(image, "product-a")).toBeNull();
+      } else {
+        expect(
+          projectMemberProductDetail(image, "product-a")?.media,
+        ).toBeNull();
+      }
       expect(JSON.stringify(projectMemberCatalog(image))).not.toContain(
         "product-a-media",
       );
@@ -338,9 +347,16 @@ describe("member catalog projection", () => {
           ? { ...item, currentState: state }
           : item,
       );
-      expect(
-        projectMemberProductDetail(storage, "product-a")?.storageInformation,
-      ).toBeNull();
+      if (state === "superseded") {
+        expect(projectMemberProductDetail(storage, "product-a")).toBeNull();
+      } else {
+        expect(
+          projectMemberProductDetail(
+            storage,
+            "product-a",
+          )?.storageInformation,
+        ).toBeNull();
+      }
       expect(JSON.stringify(projectMemberProductDetail(storage, "product-a")))
         .not.toContain("Storage information.");
     }
@@ -357,9 +373,7 @@ describe("member catalog projection", () => {
       ...duplicate.requiredInputs,
       { ...duplicate.requiredInputs[0], id: "duplicate-input" },
     ];
-    expect(
-      projectMemberProductDetail(duplicate, "product-a")?.variants,
-    ).toEqual([]);
+    expect(projectMemberProductDetail(duplicate, "product-a")).toBeNull();
 
     const invalidVersion = source([product()]);
     invalidVersion.requiredInputs = invalidVersion.requiredInputs.map(
@@ -406,6 +420,32 @@ describe("member catalog projection", () => {
     );
     expect(projectMemberCatalog(reusedId).items).toEqual([]);
     expect(projectMemberProductDetail(reusedId, "product-a")).toBeNull();
+
+    const extraDisplayInput = source([product()]);
+    extraDisplayInput.requiredInputs = [
+      ...extraDisplayInput.requiredInputs,
+      {
+        ...extraDisplayInput.requiredInputs[0],
+        id: "unexpected-display-input",
+        key: "product_content.unreviewed",
+      },
+    ];
+    expect(projectMemberCatalog(extraDisplayInput).items).toEqual([]);
+    expect(
+      projectMemberProductDetail(extraDisplayInput, "product-a"),
+    ).toBeNull();
+
+    const downgradedCanonical = source([product()]);
+    downgradedCanonical.requiredInputs =
+      downgradedCanonical.requiredInputs.map((item) =>
+        item.key === "products.family"
+          ? { ...item, blockingLevel: "informational" }
+          : item,
+      );
+    expect(projectMemberCatalog(downgradedCanonical).items).toEqual([]);
+    expect(
+      projectMemberProductDetail(downgradedCanonical, "product-a"),
+    ).toBeNull();
 
     const notApplicable = source([product()]);
     notApplicable.requiredInputs = notApplicable.requiredInputs.map((item) => ({
@@ -469,6 +509,22 @@ describe("member catalog projection", () => {
       },
     ];
     expect(projectMemberCatalog(unknownSignedQuery).items[0].media).toBeNull();
+
+    for (const expiresAt of [
+      "2026-07-26T22:05:00.000001+00:00",
+      "2099-01-01T00:00:00+00:00",
+    ]) {
+      const overlongSigned = source([product()]);
+      overlongSigned.source.mediaPresentations = [
+        {
+          ...overlongSigned.source.mediaPresentations[0],
+          href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/product-a-media/product-a.webp?token=header.payload.signature",
+          policy: "xenios_signed_storage_v1",
+          expiresAt,
+        },
+      ];
+      expect(projectMemberCatalog(overlongSigned).items[0].media).toBeNull();
+    }
 
     for (const path of [
       "private-coa/product-a/product-a-media/product-a.webp",
