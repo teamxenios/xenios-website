@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "session": "Website 4 — Operations, Affiliates & Fulfillment",
   "branch": "feature/website-4-research-commerce-wave-2-inventory-lots",
-  "baseSha": "f4de7f371177beaa2f4de7eb2e7b6a88d7378a19",
+  "baseSha": "bf1815c6754e04fd95325b25996ff441dc92fe43",
   "headSha": "RESOLVE_FROM_GIT_HEAD",
   "headShaResolution": "git rev-parse HEAD",
   "domain": "Research Commerce Wave 2 — inventory, lots, and private exact-lot COA administration",
@@ -15,12 +15,15 @@
   "files": [
     "client/src/research/adapters/inventory-admin.ts",
     "client/src/research/pages/adminx/InventoryLotsAdmin.tsx",
+    "client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx",
     "client/src/research/pages/adminx/LotCoasAdmin.tsx",
+    "client/src/research/pages/adminx/LotCoasAdmin.test.tsx",
     "docs/coordination/WEBSITE_4_REMAINING_SCOPE.md",
     "docs/coordination/WEBSITE_4_RESEARCH_COMMERCE_WAVE_2_HANDOFF.md",
     "docs/coordination/WEBSITE_4_WAVE_2_RELEASE_MANIFEST.json",
     "server/research/inventory-admin/migration.test.ts",
     "server/research/inventory-admin/production.ts",
+    "server/research/inventory-admin/production.test.ts",
     "server/research/inventory-admin/routes.test.ts",
     "server/research/inventory-admin/routes.ts",
     "shared/research/inventory-admin.ts",
@@ -70,6 +73,8 @@
     "public.research_lot_quality_tests_ready(uuid)",
     "public.research_lot_quality_ready(uuid,timestamptz)",
     "public.research_lot_is_allocatable(uuid,timestamptz)",
+    "public.research_create_inventory_lot(text,text,uuid,uuid,text,text,text,date,date,date,text,text,text,timestamptz)",
+    "public.research_prepare_lot_quality_upload(uuid,jsonb,text,text,text,timestamptz)",
     "public.research_apply_inventory_movement(uuid,text,integer,text,bigint,text,text,text,timestamptz)",
     "public.research_set_inventory_lot_disposition(uuid,text,bigint,text,text,text,timestamptz)",
     "public.research_manage_lot_quality_document(uuid,text,jsonb,bigint,text,text,text,timestamptz)",
@@ -88,15 +93,13 @@
   "rlsPolicies": [],
   "expectedPrivileges": {
     "browserTableGrants": 0,
-    "serviceRoleTablePrivileges": 11,
-    "serviceRoleExecutePrivileges": 8,
+    "serviceRoleTablePrivileges": 8,
+    "serviceRoleExecutePrivileges": 10,
     "serviceRoleTables": {
       "public.research_inventory_lots": [
-        "INSERT",
         "SELECT"
       ],
       "public.research_lot_quality_documents": [
-        "INSERT",
         "SELECT"
       ],
       "public.research_lot_allocations": [
@@ -109,7 +112,6 @@
         "SELECT"
       ],
       "public.research_lot_quality_tests": [
-        "INSERT",
         "SELECT"
       ],
       "public.research_lot_quality_events": [
@@ -132,21 +134,21 @@
   "sharedWiring": [
     "Register registerInventoryLotAdminApi in the Website 2-owned server entrypoint.",
     "Inject the canonical ProductCommerceReadinessReader from server/research/products-diagnostics/product-commerce-readiness.ts.",
-    "Implement the SQL research_inventory_product_variant_ready bridge only in the Website 2 integration tree; the standalone candidate intentionally returns false.",
+    "Preserve the exact SQL binding to canonical Product Control product and variant identifiers on the accepted production base.",
     "Register InventoryLotsAdmin and LotCoasAdmin in Website 2-owned admin routing and navigation.",
     "Keep checkout disabled until the legacy direct lot decrement is replaced by reviewed reservation/movement commands."
   ],
   "validation": {
     "focusedTests": {
-      "command": "npm.cmd test -- server/research/inventory-admin/migration.test.ts server/research/inventory-admin/routes.test.ts",
-      "filesPassed": 2,
-      "testsPassed": 13,
+      "command": "npm.cmd test -- server/research/inventory-admin/migration.test.ts server/research/inventory-admin/routes.test.ts server/research/inventory-admin/production.test.ts client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx client/src/research/pages/adminx/LotCoasAdmin.test.tsx",
+      "filesPassed": 5,
+      "testsPassed": 19,
       "status": "passed"
     },
     "fullTests": {
-      "command": "npm.cmd test",
-      "filesPassed": 195,
-      "testsPassed": 3543,
+      "command": "npm.cmd test -- --maxWorkers=2",
+      "filesPassed": 203,
+      "testsPassed": 3649,
       "status": "passed"
     },
     "typecheck": {
@@ -162,9 +164,9 @@
       "directDml": "passed",
       "forcedRlsTables": 8,
       "browserTableGrants": 0,
-      "serviceRoleTablePrivileges": 11,
-      "serviceRoleExecutePrivileges": 8,
-      "concurrentReplay": "passed_for_movement_disposition_and_quality",
+      "serviceRoleTablePrivileges": 8,
+      "serviceRoleExecutePrivileges": 10,
+      "concurrentReplay": "passed_for_lot_creation_upload_preparation_movement_disposition_and_quality",
       "failedRequiredQualityTest": "blocked",
       "privateAccessAuditBeforeGrant": "passed",
       "rollback": "passed",
@@ -172,10 +174,10 @@
       "result": "WAVE2_DISPOSABLE_VERIFICATION_OK"
     },
     "ui": {
-      "desktop1440": "one main, one H1, no horizontal overflow, no offscreen focusables, minimum control height 60px",
-      "mobile375": "scrollWidth equals clientWidth, no offscreen focusables, no internal horizontal scrollers, minimum control height 52px",
-      "mobile320": "scrollWidth equals clientWidth, no offscreen focusables, zero unlabeled controls, minimum control height 52px",
-      "zoom200Proxy": "720 CSS px reflow has no horizontal overflow or offscreen focusables",
+      "desktop1440": "one main, one H1, nine quality fieldsets, no horizontal overflow, no offscreen focusables, zero unlabeled controls, minimum control height 60px",
+      "mobile375": "scrollWidth equals clientWidth, no offscreen focusables, no internal horizontal scrollers, zero unlabeled controls, minimum control height 52px",
+      "mobile320": "scrollWidth equals clientWidth, no offscreen focusables, no internal horizontal scrollers, zero unlabeled controls, minimum control height 44px",
+      "zoom200Proxy": "720 CSS px reflow has no horizontal overflow or offscreen focusables; minimum control height 56px",
       "keyboardFocus": "visible existing purple focus border on the labeled lot selector",
       "consoleErrorsOrWarnings": 0,
       "status": "passed"

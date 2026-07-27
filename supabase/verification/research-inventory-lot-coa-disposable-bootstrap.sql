@@ -9,7 +9,20 @@ do $$ begin create role service_role nologin bypassrls; exception when duplicate
 
 create table public.research_products (
   id uuid primary key,
-  sku text not null unique
+  sku text not null unique,
+  admin_status text not null default 'draft'
+    check (admin_status in ('draft','in_review','approved','published','archived')),
+  active_state boolean not null default true
+);
+
+create table public.research_product_variants (
+  id uuid primary key,
+  product_id uuid not null references public.research_products(id),
+  sku text not null unique,
+  status text not null default 'draft'
+    check (status in ('draft','in_review','approved','archived')),
+  active boolean not null default false,
+  unique (product_id, id)
 );
 
 create table public.research_inventory_lots (

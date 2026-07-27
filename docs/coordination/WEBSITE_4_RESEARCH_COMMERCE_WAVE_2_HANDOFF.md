@@ -3,17 +3,19 @@
 ## Frozen scope
 
 - Branch: `feature/website-4-research-commerce-wave-2-inventory-lots`
-- Base: `f4de7f371177beaa2f4de7eb2e7b6a88d7378a19`
+- Base: `bf1815c6754e04fd95325b25996ff441dc92fe43`
 - Domain: Inventory, lots, and private exact-lot COA administration only
 - Production mutation: none
-- Website 3 product seam: canonical Product Control on main
-  `f4de7f371177beaa2f4de7eb2e7b6a88d7378a19`, sourced from Website 6-accepted
-  PR #78 head `dd58ccf1fa7919f78838a60aaf66cdee48b73993`
+- Product seam: canonical Product Control is present on the exact accepted
+  production base `bf1815c6754e04fd95325b25996ff441dc92fe43`.
 - Website 3 contract: `server/research/products-diagnostics/product-commerce-readiness.ts`
 
 ## Completed
 
 - Canonical lot extensions on `research_inventory_lots`.
+- Atomic RPC-only lot creation starts quarantined with zero quantity buckets,
+  version 1, exact Product Control binding, one immutable created event, and
+  lock-serialized idempotent replay. Direct service-role lot INSERT is revoked.
 - Atomic, optimistic-concurrency inventory movements for receipt, reserve, release,
   adjust, quarantine, quarantine release, damage, and reconcile.
 - Append-only inventory movement and lot-status histories.
@@ -23,6 +25,9 @@
 - Exact product + variant + lot COA readiness binding.
 - Explicit missing-test states; missing tests never pass.
 - Reviewed COA confirmation, approval, publication, withdrawal, idempotency, and audit.
+- Atomic replayable upload preparation persists one document and private object
+  identity; rejected or withdrawn reports are replaced through an audited,
+  versioned supersession path that preserves prior metadata and events.
 - Forced RLS and removal of browser-role grants on all seven affected tables.
 - Service-role-only controlled writes with reviewed transition guards.
 - Server-authorized route family, production repositories, client adapters, and Xenios UI.
@@ -44,8 +49,8 @@ Register `registerInventoryLotAdminApi` from
 `server/research/inventory-admin/production.ts`. The injected reader must be the
 canonical main `ProductCommerceReadinessReader`; do not query Product Control
 admin tables directly. Compose the post-Product-Control SQL implementation of
-`research_inventory_product_variant_ready` during Website 2 integration. The
-standalone migration deliberately returns false.
+  `research_inventory_product_variant_ready` binding already present in this
+candidate; do not substitute a parallel product model.
 
 Guards:
 
@@ -108,28 +113,31 @@ directly, copy Product Control files, or create another product model.
 
 ## Validation evidence
 
-- Focused tests: 2 files, 13 tests passed.
-- Full tests: 195 files, 3,543 tests passed.
+- Focused tests: 5 files, 19 tests passed.
+- Full tests: 203 files, 3,649 tests passed with two workers.
 - TypeScript check: passed.
 - Production build: passed.
 - Machine-readable release manifest:
   `docs/coordination/WEBSITE_4_WAVE_2_RELEASE_MANIFEST.json`.
 - Disposable database: apply twice passed.
 - Database proof covered exact product/variant/SKU rejection; movement arithmetic;
-  concurrent replay for all three command families; idempotency conflicts; direct
+  concurrent replay for lot creation, upload preparation, movement, disposition,
+  and quality commands; idempotency conflicts; direct
   published-metadata and test-mutation rejection; all-test fail-closed semantics;
   immutable actor/purpose access audit before signing; append-only history; forced
   RLS/grants; expiry/recall/quarantine gates; rollback; and zero residual rows.
 - Exact disposable privilege snapshot: 8 forced-RLS tables, 0 browser table
-  grants, 11 service-role table privileges, 8 reviewed RPC execute privileges,
-  and no service-role table privilege outside the explicit SELECT/INSERT allowlist.
+  grants, 8 service-role SELECT privileges, 10 reviewed RPC execute privileges,
+  and no service-role command-table DML.
 - 1440px: no clipped elements; one main landmark and one page heading; all nine
   quality fieldsets render; minimum visible control height 60px.
 - 375px: `scrollWidth === clientWidth` (360px scrollbar-adjusted), no clipped or
   internally scrollable elements, minimum visible control height 52px.
 - 320px: `scrollWidth === clientWidth` (305px scrollbar-adjusted), no clipped
-  elements, zero unlabeled controls, minimum visible control height 52px.
-- 200% reflow proxy at 720 CSS px: `scrollWidth === clientWidth` and no clipping.
+  elements, no internal horizontal scrollers, zero unlabeled controls, minimum
+  visible control height 44px.
+- 200% reflow proxy at 720 CSS px: `scrollWidth === clientWidth`, no clipping,
+  and minimum visible control height 56px.
 - Keyboard: the labeled lot selector receives the existing visible purple focus
   border; forms preserve semantic headings, fieldsets, labels, and controls.
 

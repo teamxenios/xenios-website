@@ -283,7 +283,7 @@ export function LotCoasBody({ token }: { token: string }) {
       </div>
 
       {selected && (
-        <form className="card grid min-w-0 gap-5" onSubmit={handleReview}>
+        <form key={selected.id} className="card grid min-w-0 gap-5" onSubmit={handleReview}>
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
               <p className="mono-label text-ink-mute">Independent review</p>

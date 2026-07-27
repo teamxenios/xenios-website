@@ -67,7 +67,8 @@ export function InventoryLotsBody({ token }: { token: string }) {
   async function handleCreate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFeedback(null);
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const result = await createInventoryLot(token, {
       lotCode: form.get("lotCode"),
       sku: form.get("sku"),
@@ -86,7 +87,7 @@ export function InventoryLotsBody({ token }: { token: string }) {
       setFeedback({ tone: "error", text: messageFor(result.kind, "code" in result ? result.code : undefined) });
       return;
     }
-    event.currentTarget.reset();
+    formElement.reset();
     setSelectedId(result.data.lot.id);
     setFeedback({ tone: "success", text: "Lot created in quarantine. Receive and approve it before release." });
     resource.reload();
@@ -96,7 +97,8 @@ export function InventoryLotsBody({ token }: { token: string }) {
     event.preventDefault();
     if (!selected) return;
     setFeedback(null);
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const movementType = String(form.get("movementType")) as InventoryMovementType;
     const sourceValue = String(form.get("sourceBucket") ?? "");
     const result = await applyInventoryMovement(token, selected.id, {
@@ -111,7 +113,7 @@ export function InventoryLotsBody({ token }: { token: string }) {
       setFeedback({ tone: "error", text: messageFor(result.kind, "code" in result ? result.code : undefined) });
       return;
     }
-    event.currentTarget.reset();
+    formElement.reset();
     setFeedback({ tone: "success", text: "Movement recorded. The lot version and exact counts advanced together." });
     resource.reload();
   }
@@ -280,10 +282,10 @@ export function InventoryLotsBody({ token }: { token: string }) {
             <div className="border-t border-line pt-4">
               <p className="mono-label text-ink-mute">Controlled status</p>
               <div className="flex gap-3 flex-wrap mt-3">
-                <button type="button" className="btn btn-secondary" onClick={() => handleDisposition("available")}>
+                <button type="button" className="btn btn-secondary min-h-11" onClick={() => handleDisposition("available")}>
                   Release lot
                 </button>
-                <button type="button" className="btn btn-ghost" onClick={() => handleDisposition("quarantined")}>
+                <button type="button" className="btn btn-ghost min-h-11" onClick={() => handleDisposition("quarantined")}>
                   Quarantine lot
                 </button>
               </div>

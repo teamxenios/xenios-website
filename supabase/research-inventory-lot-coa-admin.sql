@@ -152,6 +152,28 @@ alter table public.research_lot_quality_documents
   add column if not exists published_by text;
 alter table public.research_lot_quality_documents
   add column if not exists version bigint not null default 1;
+alter table public.research_lot_quality_documents
+  add column if not exists withdrawn_at timestamptz;
+alter table public.research_lot_quality_documents
+  add column if not exists withdrawn_by text;
+alter table public.research_lot_quality_documents
+  add column if not exists superseded_at timestamptz;
+alter table public.research_lot_quality_documents
+  add column if not exists superseded_by uuid
+    references public.research_lot_quality_documents(id);
+alter table public.research_lot_quality_documents
+  add column if not exists supersession_reason text;
+alter table public.research_lot_quality_documents
+  add column if not exists replaces_document_id uuid
+    references public.research_lot_quality_documents(id);
+
+alter table public.research_lot_quality_documents
+  drop constraint if exists research_lot_quality_documents_lot_id_key;
+create unique index if not exists research_lot_quality_documents_one_active_lot_idx
+  on public.research_lot_quality_documents(lot_id)
+  where superseded_at is null;
+create index if not exists research_lot_quality_documents_lot_history_idx
+  on public.research_lot_quality_documents(lot_id, recorded_at desc);
 
 do $$
 begin
@@ -242,6 +264,20 @@ create table if not exists public.research_lot_quality_events (
   occurred_at timestamptz not null default now()
 );
 alter table public.research_lot_quality_events
+  drop constraint if exists research_lot_quality_events_event_type_check;
+alter table public.research_lot_quality_events
+  add constraint research_lot_quality_events_event_type_check
+  check (event_type in (
+    'upload_referenced',
+    'upload_confirmed',
+    'submitted_for_review',
+    'review_approved',
+    'review_rejected',
+    'published',
+    'withdrawn',
+    'superseded'
+  ));
+alter table public.research_lot_quality_events
   add column if not exists resulting_version bigint;
 update public.research_lot_quality_events as event
    set resulting_version = document.version
@@ -328,6 +364,10 @@ begin
     return old;
   end if;
   if tg_op = 'INSERT' then
+    if coalesce(current_setting('xenios.quality_command', true), '') = 'allowed'
+       and current_user <> 'service_role' then
+      return new;
+    end if;
     if new.coa_on_file = true
        or new.document_state <> 'pending'
        or new.verification_state <> 'pending'
@@ -381,10 +421,8 @@ end;
 $$;
 
 -- Accepted Product Control contract:
--- server/research/products-diagnostics/product-commerce-readiness.ts at
--- dd58ccf1fa7919f78838a60aaf66cdee48b73993.
--- This Wave 2 candidate deliberately fails closed until Website 2 injects that
--- exact accepted server reader and an integration migration replaces this hook.
+-- exact product + variant + SKU identity and approved/active state from the
+-- live Product Control schema at f4de7f371177beaa2f4de7eb2e7b6a88d7378a19.
 create or replace function public.research_inventory_product_variant_ready(
   p_product_id uuid,
   p_variant_id uuid,
@@ -396,7 +434,19 @@ stable
 security definer
 set search_path = pg_catalog
 as $$
-  select false;
+  select exists (
+    select 1
+      from public.research_products p
+      join public.research_product_variants v
+        on v.product_id = p.id
+     where p.id = p_product_id
+       and v.id = p_variant_id
+       and v.sku = p_sku
+       and p.admin_status in ('approved', 'published')
+       and p.active_state = true
+       and v.status = 'approved'
+       and v.active = true
+  );
 $$;
 
 create or replace function public.research_lot_quality_tests_ready(
@@ -492,6 +542,127 @@ as $$
   );
 $$;
 
+create or replace function public.research_create_inventory_lot(
+  p_lot_code text,
+  p_sku text,
+  p_product_id uuid,
+  p_variant_id uuid,
+  p_owner text,
+  p_storage_location text,
+  p_supplier_reference text,
+  p_manufactured_date date,
+  p_expiry_date date,
+  p_retest_date date,
+  p_shelf_life_source text,
+  p_idempotency_key text,
+  p_actor_id text,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = pg_catalog
+as $$
+declare
+  l public.research_inventory_lots%rowtype;
+  v_id uuid;
+  v_hash text;
+begin
+  if char_length(coalesce(p_lot_code, '')) < 2
+     or char_length(coalesce(p_sku, '')) < 1
+     or p_product_id is null
+     or p_variant_id is null
+     or p_owner not in ('mitch', 'xenios')
+     or char_length(coalesce(p_storage_location, '')) < 2
+     or char_length(coalesce(p_supplier_reference, '')) < 2
+     or p_expiry_date is null
+     or p_shelf_life_source not in ('supplier_document', 'coa')
+     or char_length(coalesce(p_idempotency_key, '')) < 8
+     or char_length(coalesce(p_actor_id, '')) < 1 then
+    raise exception 'inventory lot creation metadata is incomplete';
+  end if;
+  if p_retest_date is not null and p_retest_date > p_expiry_date then
+    raise exception 'inventory lot retest date cannot follow expiry';
+  end if;
+  if not public.research_inventory_product_variant_ready(
+    p_product_id,
+    p_variant_id,
+    p_sku
+  ) then
+    raise exception 'canonical product variant binding is not approved and active';
+  end if;
+
+  v_hash := encode(extensions.digest(
+    concat_ws('|',
+      p_lot_code,
+      p_sku,
+      p_product_id::text,
+      p_variant_id::text,
+      p_owner,
+      p_storage_location,
+      p_supplier_reference,
+      coalesce(p_manufactured_date::text, ''),
+      p_expiry_date::text,
+      coalesce(p_retest_date::text, ''),
+      p_shelf_life_source,
+      p_actor_id
+    ),
+    'sha256'
+  ), 'hex');
+
+  perform pg_advisory_xact_lock(hashtextextended(p_idempotency_key, 0));
+  select * into l
+    from public.research_inventory_lots
+   where creation_idempotency_key = p_idempotency_key
+   for update;
+  if found then
+    if l.creation_command_hash <> v_hash then
+      raise exception 'idempotency key was reused for a different lot creation command';
+    end if;
+    return jsonb_build_object(
+      'lotId', l.id,
+      'version', l.version,
+      'idempotentReplay', true
+    );
+  end if;
+
+  v_id := gen_random_uuid();
+  insert into public.research_inventory_lots (
+    id, lot_id, sku, product_id, variant_id, owner, disposition,
+    storage_location, supplier_reference, manufactured_date, expiry_date,
+    retest_date, shelf_life_source, quantity_received, quantity_available,
+    quantity_reserved, quantity_quarantined, quantity_damaged, version,
+    recalled, excursion, creation_idempotency_key, creation_command_hash,
+    reviewed_at, reviewed_by, created_at, updated_at
+  ) values (
+    v_id, p_lot_code, p_sku, p_product_id, p_variant_id, p_owner,
+    'quarantined', p_storage_location, p_supplier_reference,
+    p_manufactured_date, p_expiry_date, p_retest_date, p_shelf_life_source,
+    0, 0, 0, 0, 0, 1, false, 'none',
+    p_idempotency_key, v_hash, p_occurred_at, p_actor_id,
+    p_occurred_at, p_occurred_at
+  )
+  returning * into l;
+
+  insert into public.research_inventory_lot_events (
+    lot_id, event_type, from_disposition, to_disposition,
+    resulting_version, idempotency_key, command_hash,
+    actor_id, reason, occurred_at
+  ) values (
+    l.id, 'created', null, 'quarantined',
+    1, p_idempotency_key, v_hash, p_actor_id,
+    'Inventory lot created with zero command-managed quantities',
+    p_occurred_at
+  );
+
+  return jsonb_build_object(
+    'lotId', l.id,
+    'version', 1,
+    'idempotentReplay', false
+  );
+end;
+$$;
+
 create or replace function public.research_apply_inventory_movement(
   p_lot_id uuid,
   p_movement_type text,
@@ -529,6 +700,9 @@ begin
   end if;
   if p_movement_type not in ('adjust', 'reconcile') and p_quantity < 1 then
     raise exception 'inventory quantity must be positive';
+  end if;
+  if p_expected_version is null or p_expected_version < 1 then
+    raise exception 'inventory expected version must be positive';
   end if;
   if char_length(coalesce(p_reason, '')) < 3
      or char_length(coalesce(p_idempotency_key, '')) < 8
@@ -572,6 +746,39 @@ begin
     raise exception 'inventory lot version conflict';
   end if;
 
+  if l.recalled
+     or l.disposition in ('shipped', 'damaged', 'expired', 'recalled', 'destroyed')
+     or (l.expiry_date is not null and l.expiry_date <= p_occurred_at::date) then
+    raise exception 'terminal, recalled, or expired lots reject inventory movement';
+  end if;
+  if p_movement_type = 'receipt' and l.disposition <> 'quarantined' then
+    raise exception 'receipts must enter a quarantined lot';
+  end if;
+  if p_movement_type in ('reserve', 'release')
+     and l.disposition not in ('available', 'allocated') then
+    raise exception 'reservation movement requires an available or allocated lot';
+  end if;
+  if p_movement_type in ('adjust', 'reconcile')
+     and l.disposition not in (
+       'quarantined', 'available', 'quality_hold', 'temperature_hold'
+     ) then
+    raise exception 'quantity correction is not allowed in this lot state';
+  end if;
+  if p_movement_type = 'quarantine'
+     and l.disposition not in (
+       'quarantined', 'available', 'allocated', 'quality_hold', 'temperature_hold'
+     ) then
+    raise exception 'quarantine movement is not allowed in this lot state';
+  end if;
+  if p_movement_type = 'quarantine_release' then
+    if l.disposition not in ('quarantined', 'quality_hold', 'temperature_hold') then
+      raise exception 'quarantine release requires a held lot';
+    end if;
+    if not public.research_lot_quality_ready(l.id, p_occurred_at) then
+      raise exception 'quarantine release requires approved exact-lot quality';
+    end if;
+  end if;
+
   v_available := l.quantity_available;
   v_reserved := l.quantity_reserved;
   v_quarantined := l.quantity_quarantined;
@@ -581,7 +788,7 @@ begin
   case p_movement_type
     when 'receipt' then
       v_received := v_received + p_quantity;
-      v_available := v_available + p_quantity;
+      v_quarantined := v_quarantined + p_quantity;
     when 'reserve' then
       if not public.research_lot_is_allocatable(l.id, p_occurred_at) then
         raise exception 'lot is not allocatable';
@@ -703,6 +910,9 @@ begin
   ) then
     raise exception 'invalid lot disposition';
   end if;
+  if p_expected_version is null or p_expected_version < 1 then
+    raise exception 'inventory expected version must be positive';
+  end if;
   if char_length(coalesce(p_reason, '')) < 3
      or char_length(coalesce(p_idempotency_key, '')) < 8
      or char_length(coalesce(p_actor_id, '')) < 1 then
@@ -736,13 +946,49 @@ begin
   end if;
 
   if l.version <> p_expected_version then raise exception 'inventory lot version conflict'; end if;
+  if l.disposition = p_disposition then
+    raise exception 'inventory lot disposition must change';
+  end if;
+  if l.disposition in ('shipped', 'expired', 'recalled', 'destroyed') then
+    raise exception 'terminal lot disposition is immutable';
+  end if;
+  if not (
+    (l.disposition = 'quarantined' and p_disposition in (
+      'quality_hold', 'temperature_hold', 'available', 'damaged', 'expired', 'recalled'
+    ))
+    or (l.disposition in ('quality_hold', 'temperature_hold') and p_disposition in (
+      'quarantined', 'available', 'damaged', 'expired', 'recalled'
+    ))
+    or (l.disposition = 'available' and p_disposition in (
+      'allocated', 'quarantined', 'quality_hold', 'temperature_hold',
+      'damaged', 'expired', 'recalled'
+    ))
+    or (l.disposition = 'allocated' and p_disposition in (
+      'available', 'picked', 'quarantined', 'quality_hold',
+      'temperature_hold', 'damaged', 'expired', 'recalled'
+    ))
+    or (l.disposition = 'picked' and p_disposition in (
+      'allocated', 'packed', 'quarantined', 'quality_hold',
+      'temperature_hold', 'damaged', 'expired', 'recalled'
+    ))
+    or (l.disposition = 'packed' and p_disposition in (
+      'picked', 'shipped', 'quarantined', 'quality_hold',
+      'temperature_hold', 'damaged', 'expired', 'recalled'
+    ))
+    or (l.disposition = 'damaged' and p_disposition = 'destroyed')
+  ) then
+    raise exception 'illegal inventory lot disposition transition';
+  end if;
   if p_disposition = 'available'
      and not public.research_lot_quality_ready(l.id, p_occurred_at) then
     raise exception 'lot cannot be released until exact-lot quality gates pass';
   end if;
 
+  perform set_config('xenios.inventory_command', 'allowed', true);
   update public.research_inventory_lots
      set disposition = p_disposition,
+         recalled = case when p_disposition = 'recalled' then true else recalled end,
+         recalled_at = case when p_disposition = 'recalled' then p_occurred_at else recalled_at end,
          version = version + 1,
          reviewed_at = p_occurred_at,
          reviewed_by = p_actor_id,
@@ -763,6 +1009,260 @@ begin
     'lotId', l.id,
     'disposition', p_disposition,
     'version', l.version + 1,
+    'idempotentReplay', false
+  );
+end;
+$$;
+
+create or replace function public.research_prepare_lot_quality_upload(
+  p_lot_id uuid,
+  p_upload jsonb,
+  p_idempotency_key text,
+  p_reason text,
+  p_actor_id text,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = pg_catalog
+as $$
+declare
+  l public.research_inventory_lots%rowtype;
+  current_document public.research_lot_quality_documents%rowtype;
+  prepared_document public.research_lot_quality_documents%rowtype;
+  prior public.research_lot_quality_events%rowtype;
+  v_document_id uuid;
+  v_storage_key text;
+  v_hash text;
+  v_retire_key text;
+  v_filename text;
+  v_test_key text;
+begin
+  if p_lot_id is null
+     or jsonb_typeof(p_upload) <> 'object'
+     or char_length(coalesce(p_idempotency_key, '')) < 8
+     or char_length(coalesce(p_actor_id, '')) < 1
+     or char_length(coalesce(p_reason, '')) < 3 then
+    raise exception 'quality upload preparation metadata is incomplete';
+  end if;
+
+  v_filename := p_upload->>'originalFilename';
+  if char_length(coalesce(v_filename, '')) < 1
+     or v_filename !~ '^[A-Za-z0-9._-]+$'
+     or p_upload->>'bucketId' <> 'research-coa-production'
+     or p_upload->>'contentType' <> 'application/pdf'
+     or (p_upload->>'sizeBytes')::integer not between 5 and 20971520
+     or coalesce(p_upload->>'sha256', '') !~ '^[a-f0-9]{64}$'
+     or char_length(coalesce(p_upload->>'reportIssuer', '')) < 2
+     or char_length(coalesce(p_upload->>'reportNumber', '')) < 2
+     or nullif(p_upload->>'reportDate', '')::date is null then
+    raise exception 'quality upload preparation payload is invalid';
+  end if;
+
+  v_hash := encode(extensions.digest(
+    concat_ws('|',
+      p_lot_id::text,
+      p_upload::text,
+      p_reason,
+      p_actor_id
+    ),
+    'sha256'
+  ), 'hex');
+
+  perform pg_advisory_xact_lock(hashtextextended(p_idempotency_key, 0));
+  select * into prior
+    from public.research_lot_quality_events
+   where idempotency_key = p_idempotency_key;
+  if found then
+    if prior.event_type <> 'upload_referenced'
+       or prior.command_hash <> v_hash then
+      raise exception 'idempotency key was reused for a different quality upload';
+    end if;
+    select * into prepared_document
+      from public.research_lot_quality_documents
+     where id = prior.quality_document_id;
+    if not found or prepared_document.superseded_at is not null then
+      raise exception 'prepared quality upload is no longer active';
+    end if;
+    return jsonb_build_object(
+      'documentId', prepared_document.id,
+      'documentVersion', prepared_document.version,
+      'storageKey', prepared_document.private_storage_key,
+      'idempotentReplay', true
+    );
+  end if;
+
+  select * into l
+    from public.research_inventory_lots
+   where id = p_lot_id
+   for update;
+  if not found then raise exception 'inventory lot not found'; end if;
+
+  select * into current_document
+    from public.research_lot_quality_documents
+   where lot_id = p_lot_id
+     and superseded_at is null
+   for update;
+  if found and current_document.document_state <> 'withdrawn' then
+    raise exception 'active exact-lot quality document is not replaceable';
+  end if;
+
+  v_document_id := gen_random_uuid();
+  v_storage_key := concat(
+    'lots/',
+    p_lot_id::text,
+    '/',
+    v_document_id::text,
+    '-',
+    v_filename
+  );
+  perform set_config('xenios.quality_command', 'allowed', true);
+
+  if current_document.id is not null then
+    update public.research_lot_quality_documents
+       set superseded_at = p_occurred_at,
+           supersession_reason = p_reason
+     where id = current_document.id;
+
+    v_retire_key := encode(extensions.digest(
+      concat('supersede|', p_idempotency_key),
+      'sha256'
+    ), 'hex');
+    insert into public.research_lot_quality_events (
+      quality_document_id,
+      event_type,
+      from_document_state,
+      to_document_state,
+      from_verification_state,
+      to_verification_state,
+      resulting_version,
+      idempotency_key,
+      command_hash,
+      actor_id,
+      reason,
+      occurred_at
+    ) values (
+      current_document.id,
+      'superseded',
+      current_document.document_state,
+      current_document.document_state,
+      current_document.verification_state,
+      current_document.verification_state,
+      current_document.version,
+      v_retire_key,
+      v_hash,
+      p_actor_id,
+      p_reason,
+      p_occurred_at
+    );
+  end if;
+
+  insert into public.research_lot_quality_documents (
+    id,
+    lot_id,
+    coa_on_file,
+    document_state,
+    verification_state,
+    document_ref,
+    bucket_id,
+    private_storage_key,
+    original_filename,
+    content_type,
+    size_bytes,
+    sha256,
+    report_issuer,
+    report_number,
+    report_date,
+    recorded_at,
+    version,
+    replaces_document_id
+  ) values (
+    v_document_id,
+    p_lot_id,
+    false,
+    'pending',
+    'pending',
+    v_storage_key,
+    'research-coa-production',
+    v_storage_key,
+    v_filename,
+    'application/pdf',
+    (p_upload->>'sizeBytes')::integer,
+    p_upload->>'sha256',
+    p_upload->>'reportIssuer',
+    p_upload->>'reportNumber',
+    (p_upload->>'reportDate')::date,
+    p_occurred_at,
+    1,
+    current_document.id
+  )
+  returning * into prepared_document;
+
+  if current_document.id is not null then
+    update public.research_lot_quality_documents
+       set superseded_by = prepared_document.id
+     where id = current_document.id;
+  end if;
+
+  foreach v_test_key in array array[
+    'identity',
+    'assay',
+    'purity',
+    'sterility',
+    'endotoxin',
+    'particulate',
+    'residual_solvents',
+    'elemental_impurities',
+    'chain_of_custody'
+  ]
+  loop
+    insert into public.research_lot_quality_tests (
+      quality_document_id,
+      test_key,
+      state,
+      updated_at
+    ) values (
+      prepared_document.id,
+      v_test_key,
+      'not_provided',
+      p_occurred_at
+    );
+  end loop;
+
+  insert into public.research_lot_quality_events (
+    quality_document_id,
+    event_type,
+    from_document_state,
+    to_document_state,
+    from_verification_state,
+    to_verification_state,
+    resulting_version,
+    idempotency_key,
+    command_hash,
+    actor_id,
+    reason,
+    occurred_at
+  ) values (
+    prepared_document.id,
+    'upload_referenced',
+    null,
+    'pending',
+    null,
+    'pending',
+    1,
+    p_idempotency_key,
+    v_hash,
+    p_actor_id,
+    p_reason,
+    p_occurred_at
+  );
+  perform set_config('xenios.quality_command', '', true);
+
+  return jsonb_build_object(
+    'documentId', prepared_document.id,
+    'documentVersion', 1,
+    'storageKey', prepared_document.private_storage_key,
     'idempotentReplay', false
   );
 end;
@@ -792,8 +1292,11 @@ declare
   v_verification_state text;
   v_event_type text;
 begin
-  if p_action not in ('replace_upload', 'confirm_upload', 'approve', 'reject', 'publish', 'withdraw') then
+  if p_action not in ('confirm_upload', 'approve', 'reject', 'publish', 'withdraw') then
     raise exception 'invalid lot quality action';
+  end if;
+  if p_expected_version is null or p_expected_version < 1 then
+    raise exception 'lot quality expected version must be positive';
   end if;
   if char_length(coalesce(p_reason, '')) < 3
      or char_length(coalesce(p_idempotency_key, '')) < 8
@@ -836,63 +1339,40 @@ begin
   end if;
 
   perform set_config('xenios.quality_command', 'allowed', true);
-  if p_action = 'replace_upload' then
-    if jsonb_typeof(p_tests) <> 'object' then
-      raise exception 'replacement upload metadata must be an object';
-    end if;
-  else
-    if p_tests is null then p_tests := '[]'::jsonb; end if;
-    if jsonb_typeof(p_tests) <> 'array' then raise exception 'quality tests must be an array'; end if;
-    if p_action <> 'approve' and jsonb_array_length(p_tests) <> 0 then
-      raise exception 'quality tests may change only during approval';
-    end if;
-    for item in select value from jsonb_array_elements(p_tests)
-    loop
-      insert into public.research_lot_quality_tests (
-        quality_document_id, test_key, state, method, result, unit,
-        reviewed_by, reviewed_at, updated_at
-      ) values (
-        d.id,
-        item->>'testKey',
-        item->>'state',
-        nullif(item->>'method', ''),
-        nullif(item->>'result', ''),
-        nullif(item->>'unit', ''),
-        case when item->>'state' in ('passed', 'failed') then p_actor_id else null end,
-        case when item->>'state' in ('passed', 'failed') then p_occurred_at else null end,
-        p_occurred_at
-      )
-      on conflict (quality_document_id, test_key) do update set
-        state = excluded.state,
-        method = excluded.method,
-        result = excluded.result,
-        unit = excluded.unit,
-        reviewed_by = excluded.reviewed_by,
-        reviewed_at = excluded.reviewed_at,
-        updated_at = excluded.updated_at;
-    end loop;
+  if p_tests is null then p_tests := '[]'::jsonb; end if;
+  if jsonb_typeof(p_tests) <> 'array' then raise exception 'quality tests must be an array'; end if;
+  if p_action <> 'approve' and jsonb_array_length(p_tests) <> 0 then
+    raise exception 'quality tests may change only during approval';
   end if;
+  for item in select value from jsonb_array_elements(p_tests)
+  loop
+    insert into public.research_lot_quality_tests (
+      quality_document_id, test_key, state, method, result, unit,
+      reviewed_by, reviewed_at, updated_at
+    ) values (
+      d.id,
+      item->>'testKey',
+      item->>'state',
+      nullif(item->>'method', ''),
+      nullif(item->>'result', ''),
+      nullif(item->>'unit', ''),
+      case when item->>'state' in ('passed', 'failed') then p_actor_id else null end,
+      case when item->>'state' in ('passed', 'failed') then p_occurred_at else null end,
+      p_occurred_at
+    )
+    on conflict (quality_document_id, test_key) do update set
+      state = excluded.state,
+      method = excluded.method,
+      result = excluded.result,
+      unit = excluded.unit,
+      reviewed_by = excluded.reviewed_by,
+      reviewed_at = excluded.reviewed_at,
+      updated_at = excluded.updated_at;
+  end loop;
 
   v_document_state := d.document_state;
   v_verification_state := d.verification_state;
   case p_action
-    when 'replace_upload' then
-      if d.coa_on_file
-         or d.document_state <> 'pending'
-         or d.verification_state <> 'pending'
-         or p_tests->>'bucketId' <> 'research-coa-production'
-         or p_tests->>'storageKey' not like ('lots/' || d.lot_id::text || '/%')
-         or p_tests->>'documentRef' <> p_tests->>'storageKey'
-         or char_length(coalesce(p_tests->>'originalFilename', '')) < 1
-         or p_tests->>'contentType' <> 'application/pdf'
-         or (p_tests->>'sizeBytes')::integer not between 5 and 20971520
-         or coalesce(p_tests->>'sha256', '') !~ '^[a-f0-9]{64}$'
-         or char_length(coalesce(p_tests->>'reportIssuer', '')) < 2
-         or char_length(coalesce(p_tests->>'reportNumber', '')) < 2
-         or nullif(p_tests->>'reportDate', '')::date is null then
-        raise exception 'replacement upload metadata is incomplete';
-      end if;
-      v_event_type := 'upload_referenced';
     when 'confirm_upload' then
       if d.private_storage_key is null
          or d.sha256 is null
@@ -932,22 +1412,13 @@ begin
      set coa_on_file = case when p_action = 'confirm_upload' then true else coa_on_file end,
          document_state = v_document_state,
          verification_state = v_verification_state,
-         document_ref = case when p_action = 'replace_upload' then p_tests->>'documentRef' else document_ref end,
-         bucket_id = case when p_action = 'replace_upload' then p_tests->>'bucketId' else bucket_id end,
-         private_storage_key = case when p_action = 'replace_upload' then p_tests->>'storageKey' else private_storage_key end,
-         original_filename = case when p_action = 'replace_upload' then p_tests->>'originalFilename' else original_filename end,
-         content_type = case when p_action = 'replace_upload' then p_tests->>'contentType' else content_type end,
-         size_bytes = case when p_action = 'replace_upload' then (p_tests->>'sizeBytes')::integer else size_bytes end,
-         sha256 = case when p_action = 'replace_upload' then p_tests->>'sha256' else sha256 end,
-         report_issuer = case when p_action = 'replace_upload' then p_tests->>'reportIssuer' else report_issuer end,
-         report_number = case when p_action = 'replace_upload' then p_tests->>'reportNumber' else report_number end,
-         report_date = case when p_action = 'replace_upload' then (p_tests->>'reportDate')::date else report_date end,
-         recorded_at = case when p_action = 'replace_upload' then p_occurred_at else recorded_at end,
          reviewed_at = case when p_action in ('approve', 'reject') then p_occurred_at else reviewed_at end,
          reviewed_by = case when p_action in ('approve', 'reject') then p_actor_id else reviewed_by end,
          review_notes = case when p_action in ('approve', 'reject') then p_reason else review_notes end,
-         published_at = case when p_action = 'publish' then p_occurred_at when p_action = 'withdraw' then null else published_at end,
-         published_by = case when p_action = 'publish' then p_actor_id when p_action = 'withdraw' then null else published_by end,
+         published_at = case when p_action = 'publish' then p_occurred_at else published_at end,
+         published_by = case when p_action = 'publish' then p_actor_id else published_by end,
+         withdrawn_at = case when p_action in ('reject', 'withdraw') then p_occurred_at else withdrawn_at end,
+         withdrawn_by = case when p_action in ('reject', 'withdraw') then p_actor_id else withdrawn_by end,
          version = version + 1
    where id = d.id;
   perform set_config('xenios.quality_command', '', true);
@@ -1133,6 +1604,13 @@ revoke all on function public.research_lot_is_allocatable(uuid, timestamptz)
   from public, anon, authenticated;
 revoke all on function public.research_lot_quality_ready(uuid, timestamptz)
   from public, anon, authenticated;
+revoke all on function public.research_create_inventory_lot(
+  text, text, uuid, uuid, text, text, text, date, date, date,
+  text, text, text, timestamptz
+) from public, anon, authenticated;
+revoke all on function public.research_prepare_lot_quality_upload(
+  uuid, jsonb, text, text, text, timestamptz
+) from public, anon, authenticated;
 revoke all on function public.research_apply_inventory_movement(
   uuid, text, integer, text, bigint, text, text, text, timestamptz
 ) from public, anon, authenticated;
@@ -1153,6 +1631,13 @@ grant execute on function public.research_lot_is_allocatable(uuid, timestamptz)
   to service_role;
 grant execute on function public.research_lot_quality_ready(uuid, timestamptz)
   to service_role;
+grant execute on function public.research_create_inventory_lot(
+  text, text, uuid, uuid, text, text, text, date, date, date,
+  text, text, text, timestamptz
+) to service_role;
+grant execute on function public.research_prepare_lot_quality_upload(
+  uuid, jsonb, text, text, text, timestamptz
+) to service_role;
 grant execute on function public.research_apply_inventory_movement(
   uuid, text, integer, text, bigint, text, text, text, timestamptz
 ) to service_role;
@@ -1172,14 +1657,13 @@ revoke all privileges on table public.research_lot_quality_tests from service_ro
 revoke all privileges on table public.research_lot_quality_events from service_role;
 revoke all privileges on table public.research_lot_quality_access_events from service_role;
 
--- The service role reads canonical state, inserts new lot/document/test records,
--- and executes the security-definer commands above. Quantity, disposition,
--- review, and publication transitions cannot be performed as direct table
--- updates, so application code cannot bypass version/idempotency/audit gates.
+-- The service role reads canonical state and executes the reviewed
+-- security-definer commands above. It has no direct command-table DML, so
+-- application code cannot bypass version, idempotency, or audit gates.
 
-grant select, insert on table public.research_inventory_lots
+grant select on table public.research_inventory_lots
   to service_role;
-grant select, insert on table public.research_lot_quality_documents
+grant select on table public.research_lot_quality_documents
   to service_role;
 grant select on table public.research_lot_allocations
   to service_role;
@@ -1187,7 +1671,7 @@ grant select on table public.research_inventory_movements
   to service_role;
 grant select on table public.research_inventory_lot_events
   to service_role;
-grant select, insert on table public.research_lot_quality_tests
+grant select on table public.research_lot_quality_tests
   to service_role;
 grant select on table public.research_lot_quality_events
   to service_role;
