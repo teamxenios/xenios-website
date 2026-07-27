@@ -255,12 +255,16 @@ export function registerResearchApi(app: Express) {
   // the shared review cookie is absent; otherwise this earlier gateway would
   // shadow the route, omit its privacy headers, and reject a valid member JWT.
   const DOWNSTREAM_MEMBER_GUARDED_READ_PATHS = new Set(["/capabilities"]);
+  const downstreamMemberGuardedRead = (path: string): boolean =>
+    DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(path) ||
+    path === "/member/products" ||
+    path.startsWith("/member/products/");
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
     if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
     if (
       (req.method === "GET" || req.method === "HEAD") &&
-      DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(req.path)
+      downstreamMemberGuardedRead(req.path)
     ) {
       return next();
     }

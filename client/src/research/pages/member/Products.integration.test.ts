@@ -1,66 +1,113 @@
-import { describe, expect, it } from "vitest";
-import type { ProductSummaryDto } from "@shared/research/commerce-api";
-import type { ProductPlatformResponse } from "../../adapters/products-diagnostics";
-import { toProductCards } from "./Products";
+// @vitest-environment jsdom
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import React, { act } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { ResearchContext, type ResearchContextValue } from "../../core";
+import Products from "./Products";
 
-describe("Website 3 catalog integration", () => {
-  it("combines the normalized platform taxonomy with canonical commerce pricing", () => {
-    const commerce: ProductSummaryDto[] = [
-      {
-        sku: "SKU-1",
-        slug: "alpha",
-        displayName: "Alpha",
-        lane: "research_material",
-        availability: "documentation_review",
-        purchasable: false,
-        priceCents: null,
-        goalMappings: [],
-        guideState: "guide_in_development",
-        relatedGuideSlugs: [],
-      },
-    ];
-    const platform: ProductPlatformResponse = {
-      ok: true,
-      capabilities: {
-        certificateAccess: false,
-        biomarkerReportUpload: false,
-      },
-      families: [
-        { family: "all_products", label: "All products", productCount: 1 },
-        { family: "research_vials", label: "Research vials", productCount: 1 },
-      ],
-      products: [
-        {
-          productId: "product-1",
-          slug: "alpha",
-          displayName: "Alpha",
-          family: "research_vials",
-          templateClass: "research_material",
-          searchAliases: ["A-1"],
-          truthState: "documentation_pending",
-          priceCents: 9900,
-          purchasable: false,
-        },
-      ],
-      supplements: [],
-      storageAndOrganization: { accessories: [], boundary: "Boundary" },
-      supportCategories: [],
-      education: { topics: [], storageSources: [], boundary: "Boundary" },
-    };
+(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true;
 
-    const cards = toProductCards(platform, commerce);
+let root: Root | null = null;
+let container: HTMLDivElement | null = null;
 
-    expect(cards).toEqual([
-      expect.objectContaining({
-        slug: "alpha",
-        requiredInputRecordId: "product-1",
-        family: "research_vials",
-        familyLabel: "Research vials",
-        statusLabel: "Documentation pending",
-        priceLabel: null,
-        aliases: ["A-1", "SKU-1"],
-      }),
-    ]);
-    expect(cards[0].summary).toContain("server-authoritative ordering");
+afterEach(() => {
+  if (root) act(() => root!.unmount());
+  container?.remove();
+  root = null;
+  container = null;
+  vi.unstubAllGlobals();
+});
+
+function context(memberToken: string | null): ResearchContextValue {
+  return {
+    gate: "open",
+    member: memberToken
+      ? { firstName: "Sam", status: "active", applicationStatus: null }
+      : null,
+    memberToken,
+    memberChecking: false,
+    recovery: "none",
+  } as ResearchContextValue;
+}
+
+function jsonResponse(status: number, body: unknown): Response {
+  return {
+    status,
+    ok: status >= 200 && status < 300,
+    headers: new Headers({ "content-type": "application/json" }),
+    json: async () => body,
+  } as Response;
+}
+
+describe("Website 3 member catalog integration", () => {
+  it("uses the accepted Product Control projection instead of combining legacy catalog authorities", () => {
+    const source = readFileSync(
+      resolve("client/src/research/pages/member/Products.tsx"),
+      "utf8",
+    );
+    expect(source).toContain("getMemberCatalog");
+    expect(source).toContain("adaptMemberCatalog");
+    expect(source).toContain("MemberCatalogExperience");
+    expect(source).not.toContain("listProducts");
+    expect(source).not.toContain("getProductPlatform");
+    expect(source).not.toContain("toProductCards");
+  });
+
+  it("ignores a stale signed-out response after the member token changes", async () => {
+    let finishSignedOut!: (value: Response) => void;
+    const signedOut = new Promise<Response>((resolve) => {
+      finishSignedOut = resolve;
+    });
+    const fetch = vi
+      .fn()
+      .mockImplementationOnce(() => signedOut)
+      .mockResolvedValueOnce(
+        jsonResponse(200, {
+          ok: true,
+          catalog: {
+            audience: "member",
+            currency: "USD",
+            evaluatedAt: "2026-07-27T12:00:00.000Z",
+            items: [],
+            categories: [],
+            lanes: [],
+          },
+        }),
+      );
+    vi.stubGlobal("fetch", fetch);
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    await act(async () => {
+      root!.render(
+        React.createElement(
+          ResearchContext.Provider,
+          { value: context(null) },
+          React.createElement(Products),
+        ),
+      );
+    });
+    await act(async () => {
+      root!.render(
+        React.createElement(
+          ResearchContext.Provider,
+          { value: context("member-jwt") },
+          React.createElement(Products),
+        ),
+      );
+    });
+    await act(async () => {});
+    expect(container.textContent).toContain("No products are published yet.");
+
+    await act(async () => {
+      finishSignedOut(
+        jsonResponse(401, { ok: false, code: "sign_in_required" }),
+      );
+    });
+    expect(container.textContent).toContain("No products are published yet.");
+    expect(container.textContent).not.toContain("Your session has ended.");
   });
 });
