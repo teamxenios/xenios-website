@@ -31,4 +31,3 @@ export function isAuthenticatedExperience(
     (AUTHENTICATED_EXPERIENCES as readonly string[]).includes(value)
   );
 }
-

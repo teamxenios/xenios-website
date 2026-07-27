@@ -81,4 +81,3 @@ describe("admin authority client adapter", () => {
     await expect(getAuthenticatedLanding("unprivileged-token")).resolves.toBeNull();
   });
 });
-

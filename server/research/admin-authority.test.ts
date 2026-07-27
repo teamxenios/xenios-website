@@ -235,4 +235,3 @@ describe("durable administrator authority", () => {
     expect(response.body.code).toBe("preference_version_conflict");
   });
 });
-

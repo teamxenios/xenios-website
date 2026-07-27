@@ -10,7 +10,6 @@ async function responseBody(response: Response): Promise<unknown> {
     return null;
   }
 }
-
 export async function getAuthenticatedLanding(
   accessToken: string,
 ): Promise<AuthenticatedLandingResponse | null> {
@@ -50,4 +49,3 @@ export async function setAuthenticatedExperience(
     | null;
   return response.ok && body?.ok ? body : null;
 }
-

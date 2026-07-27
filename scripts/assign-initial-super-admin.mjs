@@ -42,7 +42,6 @@ const client = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY,
   { auth: { persistSession: false, autoRefreshToken: false } },
 );
-
 const { data, error } = await client.rpc(
   "research_admin_assign_initial_super_admin",
   {
@@ -65,4 +64,3 @@ console.log(
     assignmentCreatedOrConfirmed: true,
   }),
 );
-

@@ -43,4 +43,3 @@ grant select, insert, update, delete
   to service_role;
 
 commit;
-

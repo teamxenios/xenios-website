@@ -12,7 +12,6 @@ function commandKey(): string {
   return globalThis.crypto?.randomUUID?.() ??
     `experience-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
-
 export function AdminExperienceSwitch({
   accessToken,
   currentExperience,
@@ -97,4 +96,3 @@ export function AdminExperienceSwitch({
     </div>
   );
 }
-

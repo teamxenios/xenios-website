@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "frozenBaseSha": "64cceb82f72170004525d5c78dc49ea7b77fdf6b",
+  "pr103SourceSha": "97ee1895763ea9c243de7365f224660d83773966",
+  "nodes": [
+    {
+      "order": 1,
+      "path": "supabase/migrations/20260726143000_research_product_control_center.sql",
+      "source": "frozen_base",
+      "action": "verify_managed_history_and_checksum"
+    },
+    {
+      "order": 2,
+      "path": "supabase/migrations/20260726214500_research_product_control_center_privilege_hardening.sql",
+      "source": "frozen_base",
+      "dependsOn": [1],
+      "action": "verify_managed_history_and_privileges"
+    },
+    {
+      "order": 3,
+      "path": "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+      "source": "frozen_base",
+      "dependsOn": [2],
+      "action": "verify_managed_history_and_security_posture"
+    },
+    {
+      "order": 4,
+      "path": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+      "source": "frozen_base",
+      "dependsOn": [3],
+      "action": "verify_managed_history_and_atomic_command_posture"
+    },
+    {
+      "order": 5,
+      "path": "supabase/migrations/20260727190000_research_admin_authority.sql",
+      "source": "takeover_candidate",
+      "dependsOn": [4],
+      "productionApplied": false
+    },
+    {
+      "order": 6,
+      "path": "supabase/migrations/20260727200000_research_persistent_cart.sql",
+      "source": "pr103_reproduced",
+      "dependsOn": [4],
+      "productionApplied": false
+    }
+  ]
+}
