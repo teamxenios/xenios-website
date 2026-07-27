@@ -2,7 +2,11 @@ import crypto from "crypto";
 import type { Express, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import type { CatalogResponse, CommerceLane, Product } from "@shared/research/types";
-import { isResearchPath, isResearchResetPasswordPath } from "@shared/research/paths";
+import {
+  isResearchAdminPath,
+  isResearchPath,
+  isResearchResetPasswordPath,
+} from "@shared/research/paths";
 import { products } from "./products-data";
 import { policies } from "./policies-data";
 import { requireActiveMember } from "./member-auth";
@@ -134,6 +138,13 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   // /%72esearch/... too, so a raw case-sensitive comparison here would drop
   // noindex + the recovery-page security headers on those variants. The root
   // homepage stays unaffected (it never normalizes to /research).
+  if (isResearchAdminPath(req.path)) {
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Referrer-Policy", "no-referrer");
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+    return next();
+  }
   if (!isResearchPath(req.path)) return next();
   if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");
   // The password-recovery page (founder decision, 2026-07-19: recovery works
@@ -239,9 +250,20 @@ export function registerResearchApi(app: Express) {
   // data, and never mints a review cookie. This does not make research
   // public: every other route keeps its wall or member guard.
   const OPEN_RECOVERY_PATHS = new Set(["/member/forgot-password"]);
+  // These exact read routes own their stronger downstream member guard and
+  // private-response headers. Let them reach that canonical handler even when
+  // the shared review cookie is absent; otherwise this earlier gateway would
+  // shadow the route, omit its privacy headers, and reject a valid member JWT.
+  const DOWNSTREAM_MEMBER_GUARDED_READ_PATHS = new Set(["/capabilities"]);
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
     if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
+    if (
+      (req.method === "GET" || req.method === "HEAD") &&
+      DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(req.path)
+    ) {
+      return next();
+    }
     const bearer = (req.headers.authorization ?? "").startsWith("Bearer ");
     if (bearer && MEMBER_AUTHED_PREFIXES.some((p) => req.path === p || req.path.startsWith(p + "/"))) {
       return next();

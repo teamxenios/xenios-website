@@ -245,7 +245,7 @@ describe("route registration", () => {
 
   it("registers the frozen contract paths", () => {
     const paths = routes.map((r) => `${r.method.toUpperCase()} ${r.path}`);
-    expect(paths).toContain("GET /api/research/capabilities");
+    expect(paths).not.toContain("GET /api/research/capabilities");
     expect(paths).toContain("GET /api/research/products/:slug");
     expect(paths).toContain("GET /api/research/guides/:slug");
     expect(paths).toContain("POST /api/research/checkout");
@@ -266,7 +266,10 @@ describe("route registration", () => {
 
   it("marks member responses no-store", async () => {
     const { res, captured } = fakeRes();
-    await route(routes, "get", "/api/research/capabilities").handler(reqWith({ id: "mem_1" }), res);
+    await route(routes, "get", "/api/research/products/:slug").handler(
+      reqWith({ id: "mem_1" }, { params: { slug: "missing" } } as Partial<Request>),
+      res,
+    );
     expect(captured.headers["Cache-Control"]).toBe("no-store");
   });
 });

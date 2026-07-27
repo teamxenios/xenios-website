@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isResearchPath, isResearchResetPasswordPath } from "./paths";
+import { isResearchAdminPath, isResearchPath, isResearchResetPasswordPath } from "./paths";
 
 // The path normalization must match the wouter router (decodeURI + case-fold)
 // so the tracking guard and the server page gate cover exactly the URLs that
@@ -56,5 +56,26 @@ describe("isResearchResetPasswordPath", () => {
     expect(isResearchResetPasswordPath("/research")).toBe(false);
     expect(isResearchResetPasswordPath("/research/member")).toBe(false);
     expect(isResearchResetPasswordPath("/research/reset-password/extra")).toBe(false);
+  });
+});
+
+describe("isResearchAdminPath", () => {
+  it("matches the canonical admin surface and its descendants", () => {
+    expect(isResearchAdminPath("/admin/research")).toBe(true);
+    expect(isResearchAdminPath("/admin/research/")).toBe(true);
+    expect(isResearchAdminPath("/admin/research/products")).toBe(true);
+  });
+
+  it("matches case and percent-encoded variants rendered by the SPA", () => {
+    expect(isResearchAdminPath("/Admin/Research")).toBe(true);
+    expect(isResearchAdminPath("/%61dmin/research/members")).toBe(true);
+    expect(isResearchAdminPath("/admin/%72esearch")).toBe(true);
+  });
+
+  it("does not match APIs or neighboring paths", () => {
+    expect(isResearchAdminPath("/api/admin/research")).toBe(false);
+    expect(isResearchAdminPath("/admin/researchers")).toBe(false);
+    expect(isResearchAdminPath("/research")).toBe(false);
+    expect(isResearchAdminPath("/admin")).toBe(false);
   });
 });
