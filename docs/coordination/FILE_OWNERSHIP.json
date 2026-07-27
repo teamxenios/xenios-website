@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T16:11:00Z",
+  "generatedAt": "2026-07-27T19:30:00Z",
   "productionBaseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
   "lanes": [
     {
@@ -15,8 +15,8 @@
       "owner": "Website 2",
       "lane": "release-manager",
       "state": "ACTIVE",
-      "activeUnit": "PR #85 member catalog shared integration after the atomic reservation production gate closed.",
-      "branch": "integration/research-commerce-member-catalog-release",
+      "activeUnit": "PR #99 post-deploy fix-forward: add the missing main landmark to the shared locked Research password gate.",
+      "branch": "fix/research-password-gate-main-landmark",
       "headSha": null
     },
     {
@@ -109,6 +109,17 @@
       "patterns": [
         "client/src/research/section.tsx",
         "client/src/research/adminx-section.tsx"
+      ]
+    },
+    {
+      "id": "OWNER-W2-RESEARCH-PASSWORD-GATE-LANDMARK",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "client/src/research/layout.tsx",
+        "client/src/research/recovery-route-isolation.test.tsx"
       ]
     },
     {
