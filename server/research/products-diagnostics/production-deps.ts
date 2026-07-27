@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { adaptLegacyCatalog } from "../catalog/legacy-adapter";
+import { v3PreviewCatalogProducts } from "../catalog/v3-preview-catalog";
 import { buildCommerceDependencies } from "../commerce/production-deps";
-import { products as legacyProducts } from "../products-data";
 import { getSupabaseAdmin, supabaseConfigured } from "../../supabase";
 import { isSafeStoragePath } from "../media-provider";
 import {
@@ -901,10 +900,7 @@ function buildCertificateAccessService(
 function productMasterForProduction(
   env: NodeJS.ProcessEnv,
 ): Website3ApiDependencies["productMaster"] {
-  const catalogProducts = adaptLegacyCatalog(
-    legacyProducts,
-    "2026-07-20",
-  ).products;
+  const catalogProducts = v3PreviewCatalogProducts;
   const readiness: CanonicalCommerceReadiness[] =
     buildCommerceDependencies(() => new Date(), env).catalog
       .listProducts()

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "name": "XENIOS_MAIN_CODEX_FULL_49_PROFILE_MULTI_SUPPLIER_SUPERMEGA_PROMPT_V3.md",
+      "sha256": "7ca0eacfdff35df50da498549d8d52c6bf519f01db97e687c66f2c0f5cb68eea",
+      "bytes": 293934,
+      "role": "internal_build_input"
+    },
+    {
+      "name": "XENIOS_FULL_CATALOG_SUPPLIER_AND_CUSTOMER_UX_MASTER_V3.xlsx",
+      "sha256": "1100c292d2e17351c6148a3d58a3a78494d81518d1c2e1a5dd020cd9cfd8fe4d",
+      "bytes": 88232,
+      "role": "internal_build_input"
+    },
+    {
+      "name": "XENIOS_INTERNAL_NORTHLINE_EXPANDED_CATALOG_REFERENCE_AND_GAP_ANALYSIS_V3.md",
+      "sha256": "26fde3b5d8979c19083df70366fa4fc50a29d3d5d8eac9210673443acd78d036",
+      "bytes": 19245,
+      "role": "internal_build_input"
+    },
+    {
+      "name": "XENIOS_MITCH_PRODUCT_COVERAGE_AND_LAUNCH_INPUT_V3.xlsx",
+      "sha256": "371f8427ae5058daca16ba8730fe557b40d3058c5548672342e4f139b4648bd8",
+      "bytes": 31622,
+      "role": "internal_build_input"
+    },
+    {
+      "name": "XENIOS_NEW_SUPPLIER_PRODUCT_COVERAGE_AND_LAUNCH_INPUT_V3.xlsx",
+      "sha256": "24ee20cd3014814d5947d9dd950eb320c0a0c50f7ae7fc40124ca85aed1deaeb",
+      "bytes": 31684,
+      "role": "internal_build_input"
+    }
+  ]
+}

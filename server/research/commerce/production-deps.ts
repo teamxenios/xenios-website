@@ -14,8 +14,7 @@ import type {
   ShippingQuoteRequest,
 } from "@shared/research/commerce-api";
 import type { InventoryLot } from "../inventory/lots";
-import { products as legacyProducts } from "../products-data";
-import { adaptLegacyCatalog } from "../catalog/legacy-adapter";
+import { v3PreviewCatalogProducts } from "../catalog/v3-preview-catalog";
 import { createCatalogService, type CatalogService } from "../catalog/catalog-service";
 import { createCartService, type CartService } from "./cart";
 import {
@@ -180,7 +179,7 @@ function serviceableStatesFrom(env: NodeJS.ProcessEnv): string[] {
 // ---------------------------------------------------------------------------
 
 export interface CommerceWiring {
-  /** Catalog records to serve. Default: the provenance-adapted legacy catalog. */
+  /** Catalog records to serve. Default: the fail-closed V3 preview catalog. */
   catalogProducts?: CatalogProduct[];
   resolveCartStore(): AsyncCartStore;
   resolveOrderRepository(): OrderRepository;
@@ -1330,9 +1329,10 @@ export function buildCommerceDependencies(
 
   const resolved: CommerceWiring = { ...defaultWiring(), ...wiring };
 
-  // Real catalog, provenance-gated. Reviewed date is the catalog review date;
-  // it labels the adapted records, it is not a live inventory timestamp.
-  const products = resolved.catalogProducts ?? adaptLegacyCatalog(legacyProducts, "2026-07-20").products;
+  // Supplier-independent V3 discovery catalog. Every commerce-critical field
+  // is structurally unconfirmed, so this compatibility read side cannot make
+  // a product purchasable. Sellable selections come only from Product Control.
+  const products = resolved.catalogProducts ?? v3PreviewCatalogProducts;
   const catalogService = createCatalogService({
     products,
     commerceEnabled: operable,

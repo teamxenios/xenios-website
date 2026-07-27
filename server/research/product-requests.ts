@@ -23,7 +23,7 @@ import { requireSupabaseAdmin } from "../routes";
 import { requireActiveMember, type MemberRow } from "./member-auth";
 import { enqueueNotification, runOutboxTick } from "./outbox";
 import { enqueueProductDiagnosticEmail } from "./products-diagnostics/outbox-adapter";
-import { products } from "./products-data";
+import { v3PreviewProducts } from "./catalog/v3-preview-catalog";
 
 const REQUESTS = "research_product_requests";
 const FILES = "research_product_request_files";
@@ -1317,7 +1317,7 @@ export function registerProductRequestApi(app: Express): void {
       parsed.data.linkedProductRef === undefined ? before.linked_product_ref : parsed.data.linkedProductRef;
     if (
       requestedProductRef &&
-      !products.some((product) => product.slug === requestedProductRef)
+      !v3PreviewProducts.some((product) => product.slug === requestedProductRef)
     ) {
       return sendValidation(res, {
         linkedProductRef: ["Link only an existing server-catalog product slug."],

@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "source": "XENIOS_FULL_CATALOG_SUPPLIER_AND_CUSTOMER_UX_MASTER_V3.xlsx#Subscription & Flavor",
+  "rules": [
+    {
+      "Type": "Purchase",
+      "Key": "one_time",
+      "Display Label": "One-time purchase",
+      "Eligible Products": "Purchase-ready products only",
+      "Default State": "Disabled until exact readiness",
+      "Customer UX": "Primary CTA when ready",
+      "Required Truth": "Approved public price + supplier + inventory + lot/COA + shipping + payment",
+      "Billing / Inventory Rule": "One idempotent order; no hidden renewal",
+      "Owner": "Website 5"
+    },
+    {
+      "Type": "Reminder",
+      "Key": "reorder_reminder",
+      "Display Label": "Reorder reminder",
+      "Eligible Products": "Research products, Quantum, supplements",
+      "Default State": "Available without billing",
+      "Customer UX": "Customer selects reminder cadence",
+      "Required Truth": "Notification consent and preference",
+      "Billing / Inventory Rule": "No auto-charge; re-check product state on reminder",
+      "Owner": "Website 1 + 5"
+    },
+    {
+      "Type": "Subscription",
+      "Key": "sub_30",
+      "Display Label": "Every 30 days",
+      "Eligible Products": "Supplements first; RUO products only after legal/business approval",
+      "Default State": "Disabled",
+      "Customer UX": "Cadence selector and next-renewal date",
+      "Required Truth": "Price, consent, cancellation, inventory, support, legal approval",
+      "Billing / Inventory Rule": "Revalidate price, lot/COA, inventory, shipping, eligibility before every renewal",
+      "Owner": "Website 5"
+    },
+    {
+      "Type": "Subscription",
+      "Key": "sub_45",
+      "Display Label": "Every 45 days",
+      "Eligible Products": "Supplements and approved replenishment offers",
+      "Default State": "Disabled",
+      "Customer UX": "Alternative cadence",
+      "Required Truth": "Same as above",
+      "Billing / Inventory Rule": "Same as above",
+      "Owner": "Website 5"
+    },
+    {
+      "Type": "Subscription",
+      "Key": "sub_60",
+      "Display Label": "Every 60 days",
+      "Eligible Products": "Supplements, larger packs and approved bundles",
+      "Default State": "Disabled",
+      "Customer UX": "Two-month cadence",
+      "Required Truth": "Same as above",
+      "Billing / Inventory Rule": "Same as above",
+      "Owner": "Website 5"
+    },
+    {
+      "Type": "Subscription",
+      "Key": "sub_90",
+      "Display Label": "Every 90 days",
+      "Eligible Products": "Supplement systems and verified professional accounts",
+      "Default State": "Disabled",
+      "Customer UX": "Quarterly cadence",
+      "Required Truth": "Same as above",
+      "Billing / Inventory Rule": "Same as above",
+      "Owner": "Website 5"
+    },
+    {
+      "Type": "Control",
+      "Key": "pause_skip_cancel",
+      "Display Label": "Pause, skip, change or cancel",
+      "Eligible Products": "All active subscriptions",
+      "Default State": "Required before enablement",
+      "Customer UX": "Self-service account controls",
+      "Required Truth": "Provider support + audit + effective-date truth",
+      "Billing / Inventory Rule": "No dark patterns; cancel without contacting supplier",
+      "Owner": "Website 1 + 5"
+    },
+    {
+      "Type": "Flavor",
+      "Key": "flavor_not_applicable",
+      "Display Label": "No flavor option",
+      "Eligible Products": "Vials, capsules unless supplier confirms otherwise",
+      "Default State": "Default",
+      "Customer UX": "Hide flavor selector",
+      "Required Truth": "Product format",
+      "Billing / Inventory Rule": "No flavor inventory axis",
+      "Owner": "Website 3"
+    },
+    {
+      "Type": "Flavor",
+      "Key": "flavor_pending",
+      "Display Label": "Flavor options pending",
+      "Eligible Products": "Powders, greens, hydration, drink mixes, gummies",
+      "Default State": "Coming soon",
+      "Customer UX": "Disabled selector or informative state",
+      "Required Truth": "Official variant, media, SKU, stock",
+      "Billing / Inventory Rule": "Each flavor maps to exact SKU and inventory",
+      "Owner": "Website 3 + 5"
+    },
+    {
+      "Type": "Flavor",
+      "Key": "flavor_active",
+      "Display Label": "Choose flavor",
+      "Eligible Products": "Only supplier-confirmed flavored variants",
+      "Default State": "Disabled until confirmed",
+      "Customer UX": "Image/size/flavor selector",
+      "Required Truth": "Official flavor names, rights, media and stock",
+      "Billing / Inventory Rule": "Flavor-specific price/stock/fulfillment",
+      "Owner": "Website 3 + 5"
+    },
+    {
+      "Type": "Quantity",
+      "Key": "quantity_controls",
+      "Display Label": "Choose quantity",
+      "Eligible Products": "All variants",
+      "Default State": "UI built; exact limits pending",
+      "Customer UX": "Stepper plus max/low-stock messaging",
+      "Required Truth": "MOQ, max quantity, pack count, stock",
+      "Billing / Inventory Rule": "Server-enforced limits; no fake scarcity",
+      "Owner": "Website 3 + 5"
+    },
+    {
+      "Type": "Bundle",
+      "Key": "research_collection",
+      "Display Label": "Research collection",
+      "Eligible Products": "Approved products/supplements",
+      "Default State": "Preview only",
+      "Customer UX": "Add eligible items separately or as governed bundle",
+      "Required Truth": "Every component purchase-ready + content review",
+      "Billing / Inventory Rule": "No individualized protocols or dose instructions",
+      "Owner": "Website 3 + 5"
+    }
+  ]
+}

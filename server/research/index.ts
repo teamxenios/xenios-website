@@ -7,7 +7,7 @@ import {
   isResearchPath,
   isResearchResetPasswordPath,
 } from "@shared/research/paths";
-import { products } from "./products-data";
+import { v3PreviewProducts as products } from "./catalog/v3-preview-catalog";
 import { policies } from "./policies-data";
 import { requireActiveMember } from "./member-auth";
 

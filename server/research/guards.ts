@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import type { CatalogResponse } from "@shared/research/types";
 import { requireActiveMember } from "./member-auth";
-import { products } from "./products-data";
+import { v3PreviewProducts } from "./catalog/v3-preview-catalog";
 
 // ---------------------------------------------------------------------------
 // Member-scoped access APIs (ACCOUNT-EMAIL-SYSTEMS-001). The ONE
@@ -20,7 +20,7 @@ export function registerMemberAccessApi(app: Express) {
   app.get("/api/research/member/catalog", requireActiveMember, (_req, res) => {
     res.set("Cache-Control", "no-store");
     const body: CatalogResponse = {
-      products,
+      products: v3PreviewProducts,
       commerce: {
         research: process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true",
         consumer: process.env.NEXT_PUBLIC_CONSUMER_COMMERCE_ENABLED === "true",

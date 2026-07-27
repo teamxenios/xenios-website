@@ -17,21 +17,19 @@ import { buildCommerceDependencies } from "./production-deps";
 describe("production commerce dependencies", () => {
   const deps = buildCommerceDependencies(() => new Date("2026-07-21T00:00:00Z"));
 
-  it("serves the real catalog: all 15 research SKUs plus mapped records render", () => {
+  it("serves the complete supplier-independent 49-profile V3 catalog", () => {
     const products = deps.catalog.listProducts();
-    // The adapted legacy catalog carries the 15 research SKUs (P001-P015) and
-    // additional mapped records; every one is catalog-visible to a member.
-    expect(products.length).toBeGreaterThanOrEqual(15);
+    expect(products).toHaveLength(49);
     const skus = products.map((p) => p.sku);
-    for (const sku of ["P001", "P002", "P003", "P006", "P015"]) {
-      expect(skus).toContain(sku);
-    }
+    expect(skus).toContain("XN-RETA-GLP-3");
+    expect(skus).toContain("XN-BACTERIOSTATIC-WATER-USP-GRADE");
+    expect(skus.some((sku) => /^P\d{3}$/.test(sku))).toBe(false);
   });
 
   it("shows no unconfirmed supplier fact as fact: every price is null, never zero or a guess", () => {
     for (const product of deps.catalog.listProducts()) {
-      // Legacy values are unverified_legacy and never member-displayable, so
-      // the member payload carries null rather than an unconfirmed number.
+      // V3 preview values are structurally not_confirmed and never
+      // member-displayable, so no guessed number can reach this payload.
       expect(product.priceCents).toBeNull();
     }
   });
@@ -52,10 +50,7 @@ describe("production commerce dependencies", () => {
   });
 
   it("returns a valid goal list (empty until the content lane's goal mappings are loaded)", () => {
-    // Honest state: the legacy catalog adapter carries no goal->product
-    // mappings, so goal navigation is empty. It is populated when the content
-    // lane's goal data feeds the catalog. Whatever it returns, no goal exposes
-    // a purchasable product.
+    // Honest state: the V3 source does not authorize goal mappings yet.
     const goals = deps.catalog.listGoals();
     expect(Array.isArray(goals)).toBe(true);
   });

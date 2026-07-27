@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "source": "XENIOS_FULL_CATALOG_SUPPLIER_AND_CUSTOMER_UX_MASTER_V3.xlsx#Customer Journey",
+  "stages": [
+    {
+      "Stage": "Discovery",
+      "Customer Goal": "Understand Xenios Research",
+      "Primary Surfaces": "Research landing, category collections, search, featured product universe",
+      "Core State": "Public status objects and no unsupported claims",
+      "Primary CTA": "Explore products",
+      "Revenue / Demand Signal": "Page view, search terms, category interest",
+      "Failure / Coming-Soon State": "Truthful Coming soon instead of dead route",
+      "Owner": "Website 3"
+    },
+    {
+      "Stage": "Catalog",
+      "Customer Goal": "Find an exact product or research area",
+      "Primary Surfaces": "Search, autocomplete, category, class, format, size, documentation, availability filters",
+      "Core State": "Canonical product profiles + supplier-independent variants",
+      "Primary CTA": "View details / Notify me",
+      "Revenue / Demand Signal": "Product and size demand",
+      "Failure / Coming-Soon State": "No-results recovery and request-a-product",
+      "Owner": "Website 3"
+    },
+    {
+      "Stage": "Product detail",
+      "Customer Goal": "Understand identity, options and readiness",
+      "Primary Surfaces": "Hero, status banner, size/format selector, quality, documents, storage-source, shipping, FAQ, related research",
+      "Core State": "Exact product + variant + source + supplier readiness",
+      "Primary CTA": "Add to cart / Request access / Notify me",
+      "Revenue / Demand Signal": "Variant selection, document opens, request clicks",
+      "Failure / Coming-Soon State": "Explain exact missing gate; never fake purchase",
+      "Owner": "Website 3"
+    },
+    {
+      "Stage": "Coming soon demand capture",
+      "Customer Goal": "Signal product and size demand",
+      "Primary Surfaces": "Notify-me, request sourcing, vote for size/format, supplier interest",
+      "Core State": "Email/member identity + product/variant",
+      "Primary CTA": "Notify me",
+      "Revenue / Demand Signal": "Demand count by product/size",
+      "Failure / Coming-Soon State": "Confirmation plus expected next update, no fake date",
+      "Owner": "Website 3 + 5"
+    },
+    {
+      "Stage": "Account continuity",
+      "Customer Goal": "Sign in once and continue",
+      "Primary Surfaces": "Sign-in, status recovery, member/admin switch",
+      "Core State": "Valid Supabase identity and role/member link",
+      "Primary CTA": "Continue",
+      "Revenue / Demand Signal": "Activation completion",
+      "Failure / Coming-Soon State": "Never force valid user into repeated magic-link loop",
+      "Owner": "Website 1"
+    },
+    {
+      "Stage": "Assessment",
+      "Customer Goal": "Give enough information for plans without fatigue",
+      "Primary Surfaces": "5–8 minute progressive intake, save/resume",
+      "Core State": "Goals, constraints, training/nutrition basics, interests, consent",
+      "Primary CTA": "Save and continue",
+      "Revenue / Demand Signal": "Assessment completion",
+      "Failure / Coming-Soon State": "Partial progress remains useful and visible to admin",
+      "Owner": "Website 1"
+    },
+    {
+      "Stage": "Member home",
+      "Customer Goal": "See next actions and owned information",
+      "Primary Surfaces": "Plans, orders, docs, subscriptions, products, support",
+      "Core State": "Member-safe projections",
+      "Primary CTA": "Continue next action",
+      "Revenue / Demand Signal": "Retention and repeat discovery",
+      "Failure / Coming-Soon State": "Useful empty states",
+      "Owner": "Website 1"
+    },
+    {
+      "Stage": "Options",
+      "Customer Goal": "Choose exact size, format, quantity, flavor and purchase type",
+      "Primary Surfaces": "Variant selector, compare sizes, price state, quantity limits, flavor/cadence controls",
+      "Core State": "ProductVariant + PriceVersion + flavor + inventory",
+      "Primary CTA": "Select option",
+      "Revenue / Demand Signal": "AOV and variant demand",
+      "Failure / Coming-Soon State": "Hide axes that are not applicable or unconfirmed",
+      "Owner": "Website 3 + 5"
+    },
+    {
+      "Stage": "Cart",
+      "Customer Goal": "Preserve exact choices and explain changes",
+      "Primary Surfaces": "Persistent cart, item identity, current price/availability check",
+      "Core State": "Cart ownership, product/variant/version",
+      "Primary CTA": "Proceed to checkout",
+      "Revenue / Demand Signal": "Cart conversion",
+      "Failure / Coming-Soon State": "Price/stock/readiness change state",
+      "Owner": "Website 5"
+    },
+    {
+      "Stage": "Checkout",
+      "Customer Goal": "Create exactly one durable order",
+      "Primary Surfaces": "Address, manual/payment bridge or provider, terms, order summary",
+      "Core State": "Idempotency, reservation, payment state",
+      "Primary CTA": "Place order",
+      "Revenue / Demand Signal": "First revenue",
+      "Failure / Coming-Soon State": "No duplicate or paid-orphan order",
+      "Owner": "Website 2 + 5"
+    },
+    {
+      "Stage": "Fulfillment",
+      "Customer Goal": "Ship with minimum supplier data",
+      "Primary Surfaces": "Restricted supplier portal, pick/pack/label/tracking/exceptions",
+      "Core State": "Assigned supplier offer, exact lot allocation",
+      "Primary CTA": "Ship assigned order",
+      "Revenue / Demand Signal": "Fulfillment time and exception rate",
+      "Failure / Coming-Soon State": "Supplier sees only assigned task",
+      "Owner": "Website 4"
+    },
+    {
+      "Stage": "Post-purchase",
+      "Customer Goal": "Track, verify and reorder responsibly",
+      "Primary Surfaces": "Order status, shipment, exact-lot docs, support, reminders/subscription controls",
+      "Core State": "Shipment events, docs, preferences",
+      "Primary CTA": "Track / Contact / Reorder",
+      "Revenue / Demand Signal": "LTV, support containment",
+      "Failure / Coming-Soon State": "Clear exception and refund states",
+      "Owner": "Website 1 + 3 + 5"
+    }
+  ]
+}
