@@ -188,6 +188,8 @@ function source(products: AdminProductDetail[]): MemberCatalogProjectionInput {
         href: `https://media.xeniostechnology.com/${media.id}`,
         altText: media.altText,
         sourceVersion: "media-v1",
+        policy: "xenios_public_media_v1" as const,
+        expiresAt: null,
       })),
     ),
     lotCoaPresentations: products.flatMap((item) =>
@@ -287,8 +289,110 @@ describe("member catalog projection", () => {
     input.requiredInputs = input.requiredInputs.slice(1);
     const result = projectMemberCatalog(input);
     expect(result.items[0].displayState).toBe("documentation_pending");
+    expect(result.items[0].variantCount).toBe(0);
+    expect(JSON.stringify(result)).not.toContain("PRODUCT-A-SKU");
     expect(JSON.stringify(result)).not.toContain("products.sku");
     expect(JSON.stringify(result)).not.toContain("product_content.primary_image");
+  });
+
+  it("suppresses each required-input-backed field before member projection", () => {
+    const unresolvedStates = [
+      "missing",
+      "rejected",
+      "expired",
+      "superseded",
+    ] as const;
+    for (const state of unresolvedStates) {
+      const family = source([product()]);
+      family.requiredInputs = family.requiredInputs.map((item) =>
+        item.key === "products.family"
+          ? { ...item, currentState: state }
+          : item,
+      );
+      expect(projectMemberCatalog(family).items).toEqual([]);
+      expect(projectMemberProductDetail(family, "product-a")).toBeNull();
+
+      const sku = source([product()]);
+      sku.requiredInputs = sku.requiredInputs.map((item) =>
+        item.key === "products.sku" ? { ...item, currentState: state } : item,
+      );
+      const skuDetail = projectMemberProductDetail(sku, "product-a");
+      expect(skuDetail?.variants).toEqual([]);
+      expect(JSON.stringify(skuDetail)).not.toContain("PRODUCT-A-SKU");
+
+      const image = source([product()]);
+      image.requiredInputs = image.requiredInputs.map((item) =>
+        item.key === "product_content.primary_image"
+          ? { ...item, currentState: state }
+          : item,
+      );
+      expect(projectMemberProductDetail(image, "product-a")?.media).toBeNull();
+      expect(JSON.stringify(projectMemberCatalog(image))).not.toContain(
+        "product-a-media",
+      );
+
+      const storage = source([product()]);
+      storage.requiredInputs = storage.requiredInputs.map((item) =>
+        item.key === "product_content.storage_information"
+          ? { ...item, currentState: state }
+          : item,
+      );
+      expect(
+        projectMemberProductDetail(storage, "product-a")?.storageInformation,
+      ).toBeNull();
+      expect(JSON.stringify(projectMemberProductDetail(storage, "product-a")))
+        .not.toContain("Storage information.");
+    }
+
+    const crossProduct = source([product()]);
+    crossProduct.requiredInputs = crossProduct.requiredInputs.map((item) => ({
+      ...item,
+      recordId: "product-b",
+    }));
+    expect(projectMemberCatalog(crossProduct).items).toEqual([]);
+
+    const duplicate = source([product()]);
+    duplicate.requiredInputs = [
+      ...duplicate.requiredInputs,
+      { ...duplicate.requiredInputs[0], id: "duplicate-input" },
+    ];
+    expect(
+      projectMemberProductDetail(duplicate, "product-a")?.variants,
+    ).toEqual([]);
+
+    const invalidVersion = source([product()]);
+    invalidVersion.requiredInputs = invalidVersion.requiredInputs.map(
+      (item) =>
+        item.key === "products.family" ? { ...item, version: 0 } : item,
+    );
+    expect(projectMemberCatalog(invalidVersion).items).toEqual([]);
+
+    const unverifiedMetadata = source([product()]);
+    unverifiedMetadata.requiredInputs =
+      unverifiedMetadata.requiredInputs.map((item) =>
+        item.key === "product_content.storage_information"
+          ? { ...item, verifiedAt: null }
+          : item,
+      );
+    expect(
+      projectMemberProductDetail(
+        unverifiedMetadata,
+        "product-a",
+      )?.storageInformation,
+    ).toBeNull();
+
+    const notApplicable = source([product()]);
+    notApplicable.requiredInputs = notApplicable.requiredInputs.map((item) => ({
+      ...item,
+      currentState: "not_applicable",
+      verifiedBy: null,
+      verifiedAt: null,
+    }));
+    expect(projectMemberProductDetail(notApplicable, "product-a")).toMatchObject({
+      media: { mediaId: "product-a-media" },
+      storageInformation: "Storage information.",
+      variants: [{ sku: "PRODUCT-A-SKU" }],
+    });
   });
 
   it("rejects unsafe or mismatched media presentations", () => {
@@ -303,6 +407,55 @@ describe("member catalog projection", () => {
       media: null,
       selection: null,
       displayState: "documentation_pending",
+    });
+
+    for (const href of [
+      "https://tracking.example.com/object",
+      "https://user:password@media.xeniostechnology.com/object",
+      "https://media.xeniostechnology.com/object#fragment",
+      "https://media.xeniostechnology.com/object?token=secret",
+    ]) {
+      const unsafe = source([product()]);
+      unsafe.source.mediaPresentations = [
+        { ...unsafe.source.mediaPresentations[0], href },
+      ];
+      expect(projectMemberCatalog(unsafe).items[0].media).toBeNull();
+    }
+
+    const staleSigned = source([product()]);
+    staleSigned.source.mediaPresentations = [
+      {
+        ...staleSigned.source.mediaPresentations[0],
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/object?token=header.payload.signature",
+        policy: "xenios_signed_storage_v1",
+        expiresAt: "2026-07-26T21:59:59+00:00",
+      },
+    ];
+    expect(projectMemberCatalog(staleSigned).items[0].media).toBeNull();
+
+    const unknownSignedQuery = source([product()]);
+    unknownSignedQuery.source.mediaPresentations = [
+      {
+        ...unknownSignedQuery.source.mediaPresentations[0],
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/object?token=header.payload.signature&download=1",
+        policy: "xenios_signed_storage_v1",
+        expiresAt: "2026-07-26T22:05:00+00:00",
+      },
+    ];
+    expect(projectMemberCatalog(unknownSignedQuery).items[0].media).toBeNull();
+
+    const validSigned = source([product()]);
+    validSigned.source.mediaPresentations = [
+      {
+        ...validSigned.source.mediaPresentations[0],
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/object?token=header.payload.signature",
+        policy: "xenios_signed_storage_v1",
+        expiresAt: "2026-07-26T22:05:00+00:00",
+      },
+    ];
+    expect(projectMemberCatalog(validSigned).items[0].media).toMatchObject({
+      policy: "xenios_signed_storage_v1",
+      expiresAt: "2026-07-26T22:05:00.000Z",
     });
   });
 
@@ -322,6 +475,40 @@ describe("member catalog projection", () => {
       selectionFailure: "inventory_unavailable",
     });
     expect(detail?.displayState).toBe("unavailable");
+
+    for (const facts of [
+      [
+        {
+          ...input.source.lotCoaPresentations[0],
+          state: "passed" as never,
+        },
+      ],
+      [
+        input.source.lotCoaPresentations[0],
+        { ...input.source.lotCoaPresentations[0] },
+      ],
+      [
+        {
+          ...input.source.lotCoaPresentations[0],
+          evaluatedAt: "2026-07-26T21:59:59+00:00",
+        },
+      ],
+      [
+        {
+          ...input.source.lotCoaPresentations[0],
+          productId: "other-product",
+        },
+      ],
+    ]) {
+      const adversarial = source([product()]);
+      adversarial.source.lotCoaPresentations = facts;
+      expect(
+        projectMemberProductDetail(adversarial, "product-a")?.variants[0],
+      ).toMatchObject({
+        lotCoaState: "required",
+        selection: null,
+      });
+    }
   });
 
   it("keeps GLP/future-clinical records as non-transactional Research catalog states", () => {
@@ -337,10 +524,17 @@ describe("member catalog projection", () => {
     const result = projectMemberProductDetail(source([glp]), "glp-1");
     expect(result).toMatchObject({
       displayState: "catalog_only",
+      price: null,
+      selection: null,
+      variants: [],
+      variantCount: 0,
       overview: null,
       researchInformation: null,
+      researchOnlyBoundary: true,
     });
-    expect(result?.variants[0].selection).toBeNull();
+    expect(JSON.stringify(result)).not.toContain("GLP-1-SKU");
+    expect(JSON.stringify(result)).not.toContain("10 mg");
+    expect(JSON.stringify(result)).not.toContain("14900");
     expect(JSON.stringify(result)).not.toContain("weekly dose");
     expect(JSON.stringify(result)).not.toContain("Prescribing workflow");
   });

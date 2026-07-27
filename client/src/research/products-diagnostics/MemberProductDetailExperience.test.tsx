@@ -4,6 +4,11 @@ import { createRoot, type Root } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import type { MemberProductDetail } from "@shared/research/member-catalog";
+import {
+  MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY,
+  MEMBER_CATALOG_FUTURE_CLINICAL_CLASSIFICATION,
+  MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY,
+} from "@shared/research/member-catalog";
 import { MemberProductDetailExperience } from "./MemberProductDetailExperience";
 
 const AT = "2026-07-26T22:00:00.000Z";
@@ -24,6 +29,8 @@ const product: MemberProductDetail = {
     href: "https://media.xeniostechnology.com/media-a",
     altText: "Alpha package",
     sourceVersion: "media-v1",
+    policy: "xenios_public_media_v1",
+    expiresAt: null,
   },
   price: {
     id: "price-a",
@@ -196,6 +203,26 @@ describe("member product detail experience", () => {
     expect(empty).toContain("Product not found.");
     expect(error).toContain("Product request failed.");
     expect(unavailable).toContain("This product is not available.");
+
+    for (const state of [
+      "loading",
+      "error",
+      "unavailable",
+      "unauthorized",
+    ] as const) {
+      const html = renderToStaticMarkup(
+        <MemberProductDetailExperience
+          product={product}
+          state={state}
+          errorMessage="Catalog request failed."
+        />,
+      );
+      expect(html).toContain("Product information");
+      expect(html).not.toContain("Alpha Research");
+      expect(html).not.toContain("Reviewed summary.");
+      expect(html).not.toContain("Request an alternative");
+      expect(html).not.toContain(">Research<");
+    }
   });
 
   it("keeps GLP entries non-transactional and free of treatment controls", () => {
@@ -204,11 +231,24 @@ describe("member product detail experience", () => {
       id: "glp-1",
       slug: "glp-1",
       displayName: "GLP-1 pathway",
+      canonicalName: "GLP-1 pathway",
+      aliases: [],
       lane: "future_clinical",
+      category: MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY,
+      classification: MEMBER_CATALOG_FUTURE_CLINICAL_CLASSIFICATION,
+      summary: MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY,
       displayState: "catalog_only",
+      price: null,
+      selection: null,
+      readiness: null,
       overview: null,
       specifications: null,
       researchInformation: null,
+      storageInformation: null,
+      shippingInformation: null,
+      returnInformation: null,
+      disclaimers: null,
+      reviewDate: null,
       variants: [],
       variantCount: 0,
     };
@@ -217,6 +257,9 @@ describe("member product detail experience", () => {
     );
     expect(html).toContain("Catalog information");
     expect(html).toContain("not prescribing");
+    expect(html).not.toContain("$149.00");
+    expect(html).not.toContain("SKU-A");
+    expect(html).not.toContain("10 mg");
     expect(html).not.toMatch(/Start treatment|Choose dose|Book clinician|Add to cart/);
   });
 

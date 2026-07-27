@@ -3,6 +3,11 @@ import {
   adaptMemberCatalog,
   adaptMemberProductDetail,
 } from "./memberCatalog";
+import {
+  MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY,
+  MEMBER_CATALOG_FUTURE_CLINICAL_CLASSIFICATION,
+  MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY,
+} from "@shared/research/member-catalog";
 
 const AT = "2026-07-26T22:00:00.000Z";
 const price = {
@@ -19,6 +24,8 @@ const media = {
   href: "https://media.xeniostechnology.com/media-a",
   altText: "Product A package",
   sourceVersion: "media-v1",
+  policy: "xenios_public_media_v1",
+  expiresAt: null,
 };
 const cardBase = {
   id: "product-a",
@@ -159,6 +166,35 @@ describe("member catalog browser adapter", () => {
         catalog: { ...base.catalog, privateStorageKey: "private/object" },
       }),
     ).toEqual({ ok: false, code: "invalid_projection" });
+    for (const mediaOverride of [
+      { href: "https://tracking.example.com/object" },
+      { href: "https://media.xeniostechnology.com/object?token=secret" },
+      {
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/object?token=header.payload.signature&download=1",
+        policy: "xenios_signed_storage_v1",
+        expiresAt: "2026-07-26T22:05:00.000Z",
+      },
+      {
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/object?token=header.payload.signature",
+        policy: "xenios_signed_storage_v1",
+        expiresAt: "2026-07-26T21:59:59.000Z",
+      },
+    ]) {
+      expect(
+        adaptMemberCatalog({
+          ...base,
+          catalog: {
+            ...base.catalog,
+            items: [
+              {
+                ...card,
+                media: { ...media, ...mediaOverride },
+              },
+            ],
+          },
+        }),
+      ).toEqual({ ok: false, code: "invalid_projection" });
+    }
     expect(
       adaptMemberCatalog({
         ...base,
@@ -229,6 +265,31 @@ describe("member catalog browser adapter", () => {
         },
       }),
     ).toEqual({ ok: false, code: "invalid_projection" });
+    for (const variantOverride of [
+      { availability: "unavailable" },
+      { lotCoaState: "required" },
+      {
+        selection: {
+          ...selection,
+          inventoryEligibility: {
+            ...selection.inventoryEligibility,
+            evaluatedAt: "2026-07-26T21:59:59.000Z",
+          },
+        },
+      },
+    ]) {
+      expect(
+        adaptMemberProductDetail({
+          ok: true,
+          product: {
+            ...detail,
+            variants: [
+              { ...detail.variants[0], ...variantOverride },
+            ],
+          },
+        }),
+      ).toEqual({ ok: false, code: "invalid_projection" });
+    }
     expect(
       adaptMemberProductDetail({
         ok: true,
@@ -311,6 +372,96 @@ describe("member catalog browser adapter", () => {
               },
             },
           ],
+        },
+      }),
+    ).toEqual({ ok: false, code: "invalid_projection" });
+  });
+
+  it("accepts only the nontransactional future-clinical Research boundary", () => {
+    const pathway = {
+      ...detail,
+      displayName: "GLP-1 pathway",
+      canonicalName: "GLP-1 pathway",
+      aliases: [],
+      lane: "future_clinical",
+      category: MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY,
+      classification: MEMBER_CATALOG_FUTURE_CLINICAL_CLASSIFICATION,
+      summary: MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY,
+      displayState: "catalog_only",
+      price: null,
+      readiness: null,
+      selection: null,
+      variantCount: 0,
+      overview: null,
+      specifications: null,
+      researchInformation: null,
+      storageInformation: null,
+      shippingInformation: null,
+      returnInformation: null,
+      disclaimers: null,
+      reviewDate: null,
+      variants: [],
+      relatedProducts: [],
+      researchOnlyBoundary: true,
+    };
+    expect(
+      adaptMemberProductDetail({ ok: true, product: pathway }),
+    ).toEqual({ ok: true, product: pathway });
+    const pathwayCard = {
+      id: pathway.id,
+      slug: pathway.slug,
+      displayName: pathway.displayName,
+      aliases: pathway.aliases,
+      lane: pathway.lane,
+      category: pathway.category,
+      classification: pathway.classification,
+      summary: pathway.summary,
+      displayState: pathway.displayState,
+      media: pathway.media,
+      price: pathway.price,
+      readiness: pathway.readiness,
+      selection: pathway.selection,
+      variantCount: pathway.variantCount,
+      updatedAt: pathway.updatedAt,
+    };
+    expect(
+      adaptMemberCatalog({
+        ok: true,
+        catalog: {
+          audience: "member",
+          currency: "USD",
+          evaluatedAt: AT,
+          items: [pathwayCard],
+          categories: [MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY],
+          lanes: ["future_clinical"],
+        },
+      }),
+    ).toMatchObject({ ok: true });
+
+    for (const override of [
+      { price },
+      { variants: detail.variants, variantCount: 1 },
+      { summary: "Take a weekly dose for treatment." },
+      { researchOnlyBoundary: false },
+      { displayName: "GLP-1 10 mg injection pathway" },
+    ]) {
+      expect(
+        adaptMemberProductDetail({
+          ok: true,
+          product: { ...pathway, ...override },
+        }),
+      ).toEqual({ ok: false, code: "invalid_projection" });
+    }
+    expect(
+      adaptMemberCatalog({
+        ok: true,
+        catalog: {
+          audience: "member",
+          currency: "USD",
+          evaluatedAt: AT,
+          items: [{ ...pathwayCard, price }],
+          categories: [MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY],
+          lanes: ["future_clinical"],
         },
       }),
     ).toEqual({ ok: false, code: "invalid_projection" });

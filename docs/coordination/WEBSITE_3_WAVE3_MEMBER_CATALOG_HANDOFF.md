@@ -4,6 +4,7 @@
 
 - Branch: `feature/website-3-wave3-member-catalog-detail`
 - Exact base: `ae6533f57de6619b9656c866312f953ccb7eca8d`
+- Prohibited predecessor: `12759c2567246ee83ed71aad9ffa4b517d31e8aa`
 - Domain: `website3.research-commerce.member-catalog-detail`
 - Routes: none
 - Migrations: none
@@ -15,14 +16,22 @@
 This focused unit adds a route-free member catalog and product-detail
 projection over the live Product Control repository.
 
-- `LiveProductControlReader` reads only published, public, active products and
-  fails duplicate IDs/slugs closed.
+- `LiveProductControlReader` reads only published, public, active products,
+  binds summary/detail ID and normalized slug to an unchanged Product Control
+  summary snapshot, and fails substitution, drift, or duplicate identity closed.
 - `ProductControlCurrentPriceResolver` returns one exact approved, active,
   effective price for the server-authorized purchase audience.
+- Member projections resolve one exact active, version-valid per-product
+  required-input map before rendering family, SKU, media, or storage-backed
+  fields. Missing, rejected, expired, superseded, duplicated, or cross-product
+  bindings suppress the dependent field or product.
 - Member projections include approved active variants/SKUs, normalized current
   price identity, canonical required-input/readiness versions, Website 4's
-  injected availability, and injected lot/COA presentation state.
-- Approved media is exposed only through an injected HTTPS presentation href.
+  injected availability, and one exact current lot/COA presentation fact.
+- Approved media is exposed only through an injected presentation using the
+  closed Xenios CDN policy or the exact production Storage origin with one
+  short-lived JWT-shaped token and future expiry. Credentials, fragments,
+  unknown query fields, private/unapproved hosts, and stale signatures fail closed.
   Product Control private Storage keys, audit history, required-input values,
   inventory quantities, lots, locations, and providers remain server-only.
 - The accepted cart product-selection contract is consumed unchanged as the
@@ -43,9 +52,10 @@ Only exact published/public Product Control records are projected. Missing,
 stale, ambiguous, cross-product, unapproved, or unauthorized facts fail closed.
 Public/member copy never displays internal required-input keys.
 
-`future_clinical`/GLP records remain non-transactional Research catalog states.
-Their unreviewed content is suppressed, no cart selection is emitted, and no
-prescribing, dosing, booking, or treatment control is rendered.
+`future_clinical`/GLP and non-product program records remain non-transactional
+Research catalog states. Price, variants, SKU, strength, presentation,
+availability, lot/COA, selection, readiness, and unreviewed clinical content
+are suppressed; no prescribing, dosing, booking, or treatment control is rendered.
 
 ## Integration seams
 
@@ -66,8 +76,8 @@ The production integration must inject:
 
 ## Validation
 
-- Focused readers/projection/adapter/UI tests: 5 files / 29 tests passed
-- Full test suite: 201 files / 3,621 tests passed
+- Focused readers/projection/adapter/UI tests: 5 files / 32 tests passed
+- Full test suite: 201 files / 3,624 tests passed
 - TypeScript: passed
 - Production build: passed (existing chunk-size warning only)
 - Diff/allowlist/secret/leak checks: passed

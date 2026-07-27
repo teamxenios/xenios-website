@@ -4,6 +4,7 @@ import type {
   AdminProductPrice,
   AdminProductVariant,
 } from "@shared/research/product-admin";
+import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
 import type {
   MemberCatalog,
   MemberCatalogCard,
@@ -14,6 +15,15 @@ import type {
   MemberCatalogReadiness,
   MemberCatalogVariant,
   MemberProductDetail,
+} from "@shared/research/member-catalog";
+import {
+  isSafeMemberCatalogPathwayName,
+  MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY,
+  MEMBER_CATALOG_FUTURE_CLINICAL_CLASSIFICATION,
+  MEMBER_CATALOG_LOT_COA_STATES,
+  MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CATEGORY,
+  MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CLASSIFICATION,
+  MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY,
 } from "@shared/research/member-catalog";
 import type { DomainReadiness, RequiredInput } from "@shared/research/required-inputs";
 import { selectCartProduct } from "../commerce/cart-product-selection";
@@ -39,14 +49,48 @@ function canonicalIso(value: string): string | null {
     : null;
 }
 
-function safeHttpsHref(value: string): boolean {
+function safePublicMediaHref(
+  value: string,
+  policy: "xenios_public_media_v1" | "xenios_signed_storage_v1",
+  expiresAt: string | null,
+  evaluatedAt: string,
+): boolean {
   try {
     const url = new URL(value);
+    if (
+      url.protocol !== "https:" ||
+      url.username ||
+      url.password ||
+      url.hash ||
+      url.port
+    ) {
+      return false;
+    }
+    if (policy === "xenios_public_media_v1") {
+      return (
+        (url.hostname === "xeniostechnology.com" ||
+          url.hostname.endsWith(".xeniostechnology.com")) &&
+        url.search === "" &&
+        expiresAt === null
+      );
+    }
+    if (policy !== "xenios_signed_storage_v1") return false;
+    const expiresMs =
+      expiresAt === null ? null : parseProductControlTimestamp(expiresAt);
+    const evaluatedMs = parseProductControlTimestamp(evaluatedAt);
+    const keys = Array.from(url.searchParams.keys());
     return (
-      url.protocol === "https:" &&
-      !url.username &&
-      !url.password &&
-      !url.hash
+      url.origin === "https://yvzeduaxbwgcwllhywff.supabase.co" &&
+      url.pathname.startsWith("/storage/v1/object/sign/") &&
+      keys.length === 1 &&
+      keys[0] === "token" &&
+      url.searchParams.getAll("token").length === 1 &&
+      /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(
+        url.searchParams.get("token") ?? "",
+      ) &&
+      expiresMs !== null &&
+      evaluatedMs !== null &&
+      expiresMs > evaluatedMs
     );
   } catch {
     return false;
@@ -59,6 +103,50 @@ function exactlyOne<T>(
 ): T | null {
   const matches = values.filter(predicate);
   return matches.length === 1 ? matches[0] : null;
+}
+
+type ProductDisplayBindingKey =
+  (typeof PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS)[number]["key"];
+
+type ProductDisplayBindings = Record<ProductDisplayBindingKey, boolean>;
+
+function resolvedProductDisplayBindings(
+  productId: string,
+  items: readonly RequiredInput[],
+): ProductDisplayBindings {
+  return Object.fromEntries(
+    PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding) => {
+      const active = items.filter(
+        (item) =>
+          item.key === binding.key &&
+          item.domain === binding.domain &&
+          item.recordType === binding.recordType &&
+          item.recordId === productId &&
+          item.currentState !== "superseded",
+      );
+      const item = active.length === 1 ? active[0] : null;
+      const verified =
+        item !== null &&
+        Boolean(item.id.trim()) &&
+        Boolean(item.fieldPath.trim()) &&
+        Number.isInteger(item.version) &&
+        item.version > 0 &&
+        (item.currentState === "not_applicable" ||
+          (item.currentState === "verified" &&
+            Boolean(item.verifiedBy?.trim()) &&
+            item.verifiedAt !== null &&
+            parseProductControlTimestamp(item.verifiedAt) !== null));
+      return [binding.key, verified];
+    }),
+  ) as ProductDisplayBindings;
+}
+
+function allProductDisplayBindingsResolved(
+  bindings: ProductDisplayBindings,
+): boolean {
+  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.every(
+    ({ key }) => bindings[key],
+  );
 }
 
 function approvedVariants(
@@ -139,14 +227,46 @@ function safeMedia(
   );
   return presentation !== null &&
     presentation.sourceVersion.trim() &&
-    safeHttpsHref(presentation.href)
+    safePublicMediaHref(
+      presentation.href,
+      presentation.policy,
+      presentation.expiresAt,
+      source.evaluatedAt,
+    )
     ? {
         mediaId: presentation.mediaId,
         productId: presentation.productId,
         href: presentation.href,
         altText: presentation.altText,
         sourceVersion: presentation.sourceVersion,
+        policy: presentation.policy,
+        expiresAt:
+          presentation.expiresAt === null
+            ? null
+            : canonicalIso(presentation.expiresAt),
       }
+    : null;
+}
+
+function exactLotCoaPresentation(
+  productId: string,
+  variantId: string,
+  source: MemberCatalogProjectionSource,
+) {
+  const records = source.lotCoaPresentations.filter(
+    (item) => item.productId === productId && item.variantId === variantId,
+  );
+  if (records.length !== 1) return null;
+  const item = records[0];
+  return (
+    (MEMBER_CATALOG_LOT_COA_STATES as readonly unknown[]).includes(
+      item.state,
+    ) &&
+    Boolean(item.sourceVersion.trim()) &&
+    parseProductControlTimestamp(item.evaluatedAt) ===
+      parseProductControlTimestamp(source.evaluatedAt)
+  )
+    ? item
     : null;
 }
 
@@ -163,23 +283,15 @@ function variantProjection(
     (item) =>
       item.productId === product.id && item.variantId === variant.id,
   );
-  const lotCoa = exactlyOne(
-    input.source.lotCoaPresentations,
-    (item) =>
-      item.productId === product.id &&
-      item.variantId === variant.id &&
-      Boolean(item.sourceVersion.trim()) &&
-      parseProductControlTimestamp(item.evaluatedAt) ===
-        parseProductControlTimestamp(input.source.evaluatedAt),
+  const lotCoa = exactLotCoaPresentation(
+    product.id,
+    variant.id,
+    input.source,
   );
-  const commerceLane =
-    product.lane !== "future_clinical" &&
-    product.lane !== "non_product_program";
-  const selectionResult = !commerceLane
-    ? { ok: false as const, code: "product_commerce_unapproved" as const }
-    : !safePresentationAvailable
+  const selectionResult = !safePresentationAvailable
       ? { ok: false as const, code: "media_unapproved" as const }
-      : lotCoa?.state === "required" || lotCoa === null
+      : lotCoa === null ||
+          !["verified", "not_applicable"].includes(lotCoa.state)
         ? { ok: false as const, code: "inventory_unavailable" as const }
         : selectCartProduct(
         {
@@ -250,12 +362,16 @@ function readinessFrom(
 function displayState(
   product: AdminProductDetail,
   variants: readonly MemberCatalogVariant[],
+  bindings: ProductDisplayBindings,
 ): MemberCatalogDisplayState {
   if (
     product.lane === "future_clinical" ||
     product.lane === "non_product_program"
   ) {
     return "catalog_only";
+  }
+  if (!allProductDisplayBindingsResolved(bindings)) {
+    return "documentation_pending";
   }
   if (variants.some((variant) => variant.selection !== null)) return "available";
   const failures = variants.flatMap((variant) =>
@@ -282,8 +398,11 @@ function displayState(
 }
 
 function safeSummary(product: AdminProductDetail): string {
-  if (product.lane === "future_clinical") {
-    return "Research pathway information is being prepared. This catalog state does not offer prescribing, dosing, or treatment.";
+  if (
+    product.lane === "future_clinical" ||
+    product.lane === "non_product_program"
+  ) {
+    return MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY;
   }
   return (
     product.content.shortDescription?.trim() ||
@@ -295,15 +414,28 @@ function projectProduct(
   product: AdminProductDetail,
   input: MemberCatalogProjectionInput,
   resolver: CurrentPriceResolver,
-): MemberProductDetail {
-  const media = safeMedia(product, input.source);
-  const variants = approvedVariants(
-    product,
-    input.source.audienceEligibility!.audience,
-  ).map((variant) =>
-    variantProjection(product, variant, input, resolver, media !== null),
+): MemberProductDetail | null {
+  const bindings = resolvedProductDisplayBindings(
+    product.id,
+    input.requiredInputs,
   );
-  const state = displayState(product, variants);
+  if (!bindings["products.family"]) return null;
+  const nontransactional =
+    product.lane === "future_clinical" ||
+    product.lane === "non_product_program";
+  const media = bindings["product_content.primary_image"]
+    ? safeMedia(product, input.source)
+    : null;
+  const variants =
+    nontransactional || !bindings["products.sku"]
+      ? []
+      : approvedVariants(
+          product,
+          input.source.audienceEligibility!.audience,
+        ).map((variant) =>
+          variantProjection(product, variant, input, resolver, media !== null),
+        );
+  const state = displayState(product, variants, bindings);
   const lowestPrice = variants
     .flatMap((variant) => (variant.price ? [variant.price] : []))
     .sort((left, right) => left.amountCents - right.amountCents)[0] ?? null;
@@ -311,48 +443,68 @@ function projectProduct(
     variants.find((variant) => variant.selection !== null) ?? null;
   const selection = selectedVariant?.selection ?? null;
   const displayPrice = selectedVariant?.price ?? lowestPrice;
-  const clinicalCatalogOnly = product.lane === "future_clinical";
+  const safePathwayName =
+    product.lane === "future_clinical" &&
+    isSafeMemberCatalogPathwayName(product.displayName)
+      ? product.displayName.trim()
+      : product.lane === "future_clinical"
+        ? "Research pathway"
+        : product.lane === "non_product_program"
+          ? "Research program"
+          : product.displayName;
 
   return {
     id: product.id,
     slug: product.slug,
-    displayName: product.displayName,
-    canonicalName: product.canonicalName,
-    aliases: [...product.aliases],
+    displayName: safePathwayName,
+    canonicalName: nontransactional ? safePathwayName : product.canonicalName,
+    aliases: nontransactional ? [] : [...product.aliases],
     lane: product.lane,
-    category: product.category,
-    classification: product.classification,
+    category:
+      product.lane === "future_clinical"
+        ? MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY
+        : product.lane === "non_product_program"
+          ? MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CATEGORY
+        : product.category,
+    classification:
+      product.lane === "future_clinical"
+        ? MEMBER_CATALOG_FUTURE_CLINICAL_CLASSIFICATION
+        : product.lane === "non_product_program"
+          ? MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CLASSIFICATION
+        : product.classification,
     summary: safeSummary(product),
     displayState: state,
     media,
-    price: displayPrice,
-    selection,
-    variantCount: variants.length,
+    price: nontransactional ? null : displayPrice,
+    selection: nontransactional ? null : selection,
+    variantCount: nontransactional ? 0 : variants.length,
     updatedAt: canonicalIso(product.updatedAt) ?? input.source.evaluatedAt,
     audience: input.source.audienceEligibility!.audience,
     currency: input.source.currency,
     evaluatedAt: canonicalIso(input.source.evaluatedAt)!,
-    overview: clinicalCatalogOnly ? null : product.content.overview,
-    specifications: clinicalCatalogOnly ? null : product.content.specifications,
-    researchInformation: clinicalCatalogOnly
+    overview: nontransactional ? null : product.content.overview,
+    specifications: nontransactional ? null : product.content.specifications,
+    researchInformation: nontransactional
       ? null
       : product.content.researchInformation,
-    storageInformation: clinicalCatalogOnly
+    storageInformation:
+      nontransactional ||
+      !bindings["product_content.storage_information"]
       ? null
       : product.content.storageInformation,
-    shippingInformation: clinicalCatalogOnly
+    shippingInformation: nontransactional
       ? null
       : product.content.shippingInformation,
-    returnInformation: clinicalCatalogOnly
+    returnInformation: nontransactional
       ? null
       : product.content.returnInformation,
-    disclaimers: product.content.disclaimers,
-    reviewDate: product.content.reviewDate,
+    disclaimers: nontransactional ? null : product.content.disclaimers,
+    reviewDate: nontransactional ? null : product.content.reviewDate,
     variants,
-    readiness: readinessFrom(variants),
+    readiness: nontransactional ? null : readinessFrom(variants),
     relatedProducts: [],
     researchOnlyBoundary:
-      product.lane === "research_material" || clinicalCatalogOnly,
+      product.lane === "research_material" || nontransactional,
   };
 }
 
@@ -429,9 +581,9 @@ export function projectMemberCatalog(
   resolver: CurrentPriceResolver = new ProductControlCurrentPriceResolver(),
 ): MemberCatalog {
   const evaluatedAt = requireProjectionSource(input.source);
-  const projected = visibleProducts(input.products).map((product) =>
-    projectProduct(product, input, resolver),
-  );
+  const projected = visibleProducts(input.products)
+    .map((product) => projectProduct(product, input, resolver))
+    .filter((product): product is MemberProductDetail => product !== null);
   const categories = Array.from(
     new Set(projected.map((product) => product.category).filter(Boolean)),
   ).sort();
@@ -495,6 +647,7 @@ export function projectMemberProductDetail(
   );
   if (matches.length !== 1) return null;
   const projected = projectProduct(matches[0], input, resolver);
+  if (projected === null) return null;
   projected.relatedProducts = products
     .filter(
       (product) =>
@@ -503,6 +656,8 @@ export function projectMemberProductDetail(
           product.lane === matches[0].lane),
     )
     .slice(0, 3)
-    .map((product) => card(projectProduct(product, input, resolver)));
+    .map((product) => projectProduct(product, input, resolver))
+    .filter((product): product is MemberProductDetail => product !== null)
+    .map(card);
   return projected;
 }

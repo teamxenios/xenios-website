@@ -43,6 +43,40 @@ function publiclyPublished(product: AdminProductSummary): boolean {
   );
 }
 
+function sameTimestamp(left: string | null, right: string | null): boolean {
+  if (left === null || right === null) return left === right;
+  const leftMs = parseProductControlTimestamp(left);
+  return leftMs !== null && leftMs === parseProductControlTimestamp(right);
+}
+
+function sameSummarySnapshot(
+  summary: AdminProductSummary,
+  detail: AdminProductDetail,
+): boolean {
+  return (
+    detail.id === summary.id &&
+    detail.slug.trim().toLowerCase() === summary.slug.trim().toLowerCase() &&
+    detail.productCode === summary.productCode &&
+    detail.displayName === summary.displayName &&
+    detail.canonicalName === summary.canonicalName &&
+    JSON.stringify(detail.aliases) === JSON.stringify(summary.aliases) &&
+    detail.lane === summary.lane &&
+    detail.category === summary.category &&
+    detail.classification === summary.classification &&
+    detail.status === summary.status &&
+    detail.active === summary.active &&
+    detail.visibility === summary.visibility &&
+    detail.availability === summary.availability &&
+    detail.commerceApproval === summary.commerceApproval &&
+    detail.qualityDocumentState === summary.qualityDocumentState &&
+    detail.variantCount === summary.variantCount &&
+    detail.approvedVariantCount === summary.approvedVariantCount &&
+    detail.missingInputCount === summary.missingInputCount &&
+    sameTimestamp(detail.updatedAt, summary.updatedAt) &&
+    sameTimestamp(detail.publishedAt, summary.publishedAt)
+  );
+}
+
 /**
  * Server-only reader over the live Product Control repository. Admin records,
  * private media keys, and audit history never leave this boundary directly.
@@ -76,8 +110,10 @@ export class LiveProductControlReader
       exact.map((product) => this.repository.get(product.id)),
     );
     return details.filter(
-      (product): product is AdminProductDetail =>
-        product !== null && publiclyPublished(product),
+      (product, index): product is AdminProductDetail =>
+        product !== null &&
+        publiclyPublished(product) &&
+        sameSummarySnapshot(exact[index], product),
     );
   }
 
@@ -96,7 +132,11 @@ export class LiveProductControlReader
     );
     if (matches.length !== 1) return null;
     const detail = await this.repository.get(matches[0].id);
-    return detail !== null && publiclyPublished(detail) ? detail : null;
+    return detail !== null &&
+      publiclyPublished(detail) &&
+      sameSummarySnapshot(matches[0], detail)
+      ? detail
+      : null;
   }
 }
 

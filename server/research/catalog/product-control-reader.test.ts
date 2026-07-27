@@ -122,6 +122,52 @@ describe("live Product Control member readers", () => {
     await expect(reader.readCatalog()).resolves.toEqual([]);
     expect(repository.get).not.toHaveBeenCalled();
   });
+
+  it("binds summary and detail identity to one exact Product Control snapshot", async () => {
+    const productA = summary();
+    const substitutedB = detail({
+      id: "product-b",
+      productCode: "PRODUCT-B",
+      slug: "product-b",
+      displayName: "Product B",
+      canonicalName: "Product B",
+    });
+    const substitutionRepository = {
+      list: vi.fn(async () => [productA]),
+      get: vi.fn(async () => substitutedB),
+    };
+    const substitutionReader = new LiveProductControlReader(
+      substitutionRepository,
+    );
+    await expect(substitutionReader.readCatalog()).resolves.toEqual([]);
+    await expect(substitutionReader.readDetail("product-a")).resolves.toBeNull();
+
+    const changedSlugRepository = {
+      list: vi.fn(async () => [productA]),
+      get: vi.fn(async () =>
+        detail({ slug: "product-a-renamed", updatedAt: AT }),
+      ),
+    };
+    const changedSlugReader = new LiveProductControlReader(
+      changedSlugRepository,
+    );
+    await expect(changedSlugReader.readCatalog()).resolves.toEqual([]);
+    await expect(changedSlugReader.readDetail("product-a")).resolves.toBeNull();
+
+    const changedVersionRepository = {
+      list: vi.fn(async () => [productA]),
+      get: vi.fn(async () =>
+        detail({ updatedAt: "2026-07-26T22:00:01+00:00" }),
+      ),
+    };
+    const changedVersionReader = new LiveProductControlReader(
+      changedVersionRepository,
+    );
+    await expect(changedVersionReader.readCatalog()).resolves.toEqual([]);
+    await expect(
+      changedVersionReader.readDetail("product-a"),
+    ).resolves.toBeNull();
+  });
 });
 
 describe("Product Control current price resolver", () => {

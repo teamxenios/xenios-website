@@ -73,17 +73,21 @@ export function MemberProductDetailExperience({
       null,
     [product, selectedVariantId],
   );
+  const showProductIdentity = state === "ok" && product !== null;
 
   return (
     <ResearchMemberShell
-      eyebrow={product?.category ?? "Product catalog"}
-      title={product?.displayName ?? "Product"}
+      eyebrow={showProductIdentity ? product.category : "Product catalog"}
+      title={showProductIdentity ? product.displayName : "Product information"}
       lead={
-        product?.summary ??
-        "Approved product information appears after the exact catalog record is loaded."
+        showProductIdentity
+          ? product.summary
+          : "Approved product information appears after the exact catalog record is loaded."
       }
       actions={
-        product && product.lane !== "future_clinical" ? (
+        showProductIdentity &&
+        product.lane !== "future_clinical" &&
+        product.lane !== "non_product_program" ? (
           <Link
             href={productRequestHref("products", product.displayName)}
             className="btn btn-primary"

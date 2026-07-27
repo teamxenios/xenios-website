@@ -28,15 +28,45 @@ export type MemberCatalogMediaPresentation = {
   href: string;
   altText: string;
   sourceVersion: string;
+  policy: "xenios_public_media_v1" | "xenios_signed_storage_v1";
+  expiresAt: string | null;
 };
+
+export const MEMBER_CATALOG_LOT_COA_STATES = [
+  "verified",
+  "required",
+  "not_applicable",
+] as const;
 
 export type MemberCatalogLotCoaPresentation = {
   productId: string;
   variantId: string;
-  state: "verified" | "required" | "not_applicable";
+  state: (typeof MEMBER_CATALOG_LOT_COA_STATES)[number];
   sourceVersion: string;
   evaluatedAt: string;
 };
+
+export const MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY =
+  "Research pathway information is being prepared. This catalog state does not offer prescribing, dosing, or treatment.";
+
+export const MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY = "Research pathways";
+export const MEMBER_CATALOG_FUTURE_CLINICAL_CLASSIFICATION =
+  "Research catalog pathway";
+export const MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CATEGORY = "Research programs";
+export const MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CLASSIFICATION =
+  "Research catalog program";
+
+export function isSafeMemberCatalogPathwayName(value: string): boolean {
+  const normalized = value.trim();
+  return (
+    normalized.length > 0 &&
+    normalized.length <= 80 &&
+    /pathway$/i.test(normalized) &&
+    !/\b(?:dose|dosage|treat(?:ment)?|prescrib\w*|inject\w*|mg|mcg|ml|weekly|daily|therapy|patient|clinician)\b/i.test(
+      normalized,
+    )
+  );
+}
 
 export type MemberCatalogProjectionSource = {
   audienceEligibility: CartAudienceEligibility | null;

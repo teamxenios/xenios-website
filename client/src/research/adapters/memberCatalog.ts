@@ -4,6 +4,12 @@ import {
   type CartProductSelection,
 } from "@shared/research/cart-product-selection";
 import {
+  isSafeMemberCatalogPathwayName,
+  MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY,
+  MEMBER_CATALOG_FUTURE_CLINICAL_CLASSIFICATION,
+  MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CATEGORY,
+  MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CLASSIFICATION,
+  MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY,
   MEMBER_CATALOG_SORTS,
   type MemberCatalog,
   type MemberCatalogCard,
@@ -63,15 +69,49 @@ function canonicalIso(value: unknown): value is string {
   );
 }
 
-function safeHttps(value: unknown): value is string {
-  if (!text(value)) return false;
+function safeMediaHref(
+  value: unknown,
+  policy: unknown,
+  expiresAt: unknown,
+  evaluatedAt: string,
+): value is string {
+  if (!text(value) || !canonicalIso(evaluatedAt)) return false;
   try {
     const url = new URL(value);
+    if (
+      url.protocol !== "https:" ||
+      url.username ||
+      url.password ||
+      url.hash ||
+      url.port
+    ) {
+      return false;
+    }
+    if (policy === "xenios_public_media_v1") {
+      return (
+        (url.hostname === "xeniostechnology.com" ||
+          url.hostname.endsWith(".xeniostechnology.com")) &&
+        url.search === "" &&
+        expiresAt === null
+      );
+    }
+    if (
+      policy !== "xenios_signed_storage_v1" ||
+      !canonicalIso(expiresAt) ||
+      Date.parse(expiresAt) <= Date.parse(evaluatedAt)
+    ) {
+      return false;
+    }
+    const keys = Array.from(url.searchParams.keys());
     return (
-      url.protocol === "https:" &&
-      !url.username &&
-      !url.password &&
-      !url.hash
+      url.origin === "https://yvzeduaxbwgcwllhywff.supabase.co" &&
+      url.pathname.startsWith("/storage/v1/object/sign/") &&
+      keys.length === 1 &&
+      keys[0] === "token" &&
+      url.searchParams.getAll("token").length === 1 &&
+      /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(
+        url.searchParams.get("token") ?? "",
+      )
     );
   } catch {
     return false;
@@ -115,13 +155,19 @@ function price(value: unknown): MemberCatalogPrice | null | undefined {
 function media(
   value: unknown,
   productId: string,
+  evaluatedAt: string,
 ): MemberCatalogMediaPresentation | null | undefined {
   if (value === null) return null;
   if (
     !isObject(value) ||
     !text(value.mediaId) ||
     value.productId !== productId ||
-    !safeHttps(value.href) ||
+    !safeMediaHref(
+      value.href,
+      value.policy,
+      value.expiresAt,
+      evaluatedAt,
+    ) ||
     !text(value.altText) ||
     !text(value.sourceVersion)
   ) {
@@ -133,6 +179,8 @@ function media(
     href: value.href,
     altText: value.altText,
     sourceVersion: value.sourceVersion,
+    policy: value.policy as MemberCatalogMediaPresentation["policy"],
+    expiresAt: value.expiresAt as string | null,
   };
 }
 
@@ -198,7 +246,7 @@ function readiness(value: unknown): MemberCatalogReadiness | null | undefined {
   };
 }
 
-function card(value: unknown): MemberCatalogCard | null {
+function card(value: unknown, evaluatedAt: string): MemberCatalogCard | null {
   if (
     !isObject(value) ||
     !text(value.id) ||
@@ -218,7 +266,7 @@ function card(value: unknown): MemberCatalogCard | null {
     return null;
   }
   const safePrice = price(value.price);
-  const safeMedia = media(value.media, value.id);
+  const safeMedia = media(value.media, value.id, evaluatedAt);
   const safeReadiness = readiness(value.readiness);
   let safeSelection: CartProductSelection | null = null;
   if (value.selection !== null) {
@@ -340,15 +388,20 @@ function variant(value: unknown, productId: string): MemberCatalogVariant | null
 }
 
 function detail(value: unknown): MemberProductDetail | null {
-  const base = card(value);
   if (
-    base === null ||
     !isObject(value) ||
-    !text(value.canonicalName) ||
     !(CART_PURCHASE_AUDIENCES as readonly unknown[]).includes(value.audience) ||
     !text(value.currency) ||
     value.currency !== value.currency.toUpperCase() ||
-    !canonicalIso(value.evaluatedAt) ||
+    !canonicalIso(value.evaluatedAt)
+  ) {
+    return null;
+  }
+  const detailEvaluatedAt = value.evaluatedAt;
+  const base = card(value, detailEvaluatedAt);
+  if (
+    base === null ||
+    !text(value.canonicalName) ||
     !nullableText(value.overview) ||
     !nullableText(value.specifications) ||
     !nullableText(value.researchInformation) ||
@@ -363,10 +416,14 @@ function detail(value: unknown): MemberProductDetail | null {
   ) {
     return null;
   }
-  const detailEvaluatedAt = value.evaluatedAt as string;
   const variants = value.variants.map((item) => variant(item, base.id));
-  const related = value.relatedProducts.map(card);
+  const related = value.relatedProducts.map((item) =>
+    card(item, detailEvaluatedAt),
+  );
   const safeReadiness = base.readiness;
+  const nontransactional =
+    base.lane === "future_clinical" ||
+    base.lane === "non_product_program";
   if (
     variants.some((item) => item === null) ||
     related.some((item) => item === null) ||
@@ -392,12 +449,23 @@ function detail(value: unknown): MemberProductDetail | null {
           (item.selection !== null &&
             (item.selection.audience !== value.audience ||
               item.selection.evaluatedAt !== detailEvaluatedAt ||
+              item.selection.inventoryEligibility.productId !== base.id ||
+              item.selection.inventoryEligibility.variantId !== item.id ||
+              item.selection.inventoryEligibility.evaluatedAt !==
+                detailEvaluatedAt ||
+              item.selection.inventoryEligibility.state !== "eligible" ||
+              item.availability !== "available" ||
+              !["verified", "not_applicable"].includes(item.lotCoaState) ||
               item.selection.price.id !== item.price?.id ||
               item.selection.price.version !== item.price?.version ||
               item.selection.price.amountCents !== item.price?.amountCents ||
               item.selection.price.currency !== item.price?.currency ||
               item.selection.price.effectiveAt !== item.price?.effectiveAt ||
-              item.selection.price.expiresAt !== item.price?.expiresAt)))
+              item.selection.price.expiresAt !== item.price?.expiresAt ||
+              item.selection.media.id !== base.media?.mediaId ||
+              item.selection.media.altText !== base.media?.altText ||
+              JSON.stringify(item.selection.canonicalReadiness) !==
+                JSON.stringify(safeReadiness))))
     ) ||
     (base.price !== null && base.price.currency !== value.currency) ||
     (base.displayState === "available") !==
@@ -412,7 +480,38 @@ function detail(value: unknown): MemberProductDetail | null {
           item !== null &&
           item.selection !== null &&
           JSON.stringify(item.selection) === JSON.stringify(base.selection),
-      ))
+      )) ||
+    (nontransactional &&
+      (base.displayState !== "catalog_only" ||
+        base.summary !== MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY ||
+        base.price !== null ||
+        base.selection !== null ||
+        base.readiness !== null ||
+        base.variantCount !== 0 ||
+        variants.length !== 0 ||
+        value.researchOnlyBoundary !== true ||
+        value.overview !== null ||
+        value.specifications !== null ||
+        value.researchInformation !== null ||
+        value.storageInformation !== null ||
+        value.shippingInformation !== null ||
+        value.returnInformation !== null ||
+        value.disclaimers !== null ||
+        value.reviewDate !== null)) ||
+    (base.lane === "future_clinical" &&
+      (!isSafeMemberCatalogPathwayName(base.displayName) ||
+        value.canonicalName !== base.displayName ||
+        base.aliases.length !== 0 ||
+        base.category !== MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY ||
+        base.classification !==
+          MEMBER_CATALOG_FUTURE_CLINICAL_CLASSIFICATION)) ||
+    (base.lane === "non_product_program" &&
+      (base.displayName !== "Research program" ||
+        value.canonicalName !== "Research program" ||
+        base.aliases.length !== 0 ||
+        base.category !== MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CATEGORY ||
+        base.classification !==
+          MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CLASSIFICATION))
   ) {
     return null;
   }
@@ -462,7 +561,7 @@ export function adaptMemberCatalog(value: unknown): MemberCatalogResult {
     return { ok: false, code: "invalid_projection" };
   }
   const catalogEvaluatedAt = catalog.evaluatedAt as string;
-  const items = catalog.items.map(card);
+  const items = catalog.items.map((item) => card(item, catalogEvaluatedAt));
   if (
     items.some((item) => item === null) ||
     new Set(items.map((item) => item!.id)).size !== items.length ||
@@ -475,7 +574,34 @@ export function adaptMemberCatalog(value: unknown): MemberCatalogResult {
           (item.selection !== null &&
             (item.selection.audience !== catalog.audience ||
               item.selection.evaluatedAt !== catalogEvaluatedAt ||
+              item.selection.inventoryEligibility.productId !== item.id ||
+              item.selection.inventoryEligibility.evaluatedAt !==
+                catalogEvaluatedAt ||
               item.selection.price.currency !== catalog.currency))),
+    ) ||
+    items.some(
+      (item) =>
+        item !== null &&
+        (item.lane === "future_clinical" ||
+          item.lane === "non_product_program") &&
+        (item.displayState !== "catalog_only" ||
+          item.summary !== MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY ||
+          item.price !== null ||
+          item.selection !== null ||
+          item.readiness !== null ||
+          item.variantCount !== 0 ||
+          (item.lane === "future_clinical" &&
+            (!isSafeMemberCatalogPathwayName(item.displayName) ||
+              item.aliases.length !== 0 ||
+              item.category !== MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY ||
+              item.classification !==
+                MEMBER_CATALOG_FUTURE_CLINICAL_CLASSIFICATION)) ||
+          (item.lane === "non_product_program" &&
+            (item.displayName !== "Research program" ||
+              item.aliases.length !== 0 ||
+              item.category !== MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CATEGORY ||
+              item.classification !==
+                MEMBER_CATALOG_NON_PRODUCT_PROGRAM_CLASSIFICATION))),
     )
   ) {
     return { ok: false, code: "invalid_projection" };

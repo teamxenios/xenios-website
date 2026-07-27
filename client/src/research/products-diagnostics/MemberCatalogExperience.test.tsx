@@ -47,6 +47,8 @@ const catalog: MemberCatalog = {
         href: "https://media.xeniostechnology.com/media-a",
         altText: "Alpha package",
         sourceVersion: "media-v1",
+        policy: "xenios_public_media_v1",
+        expiresAt: null,
       },
       price: {
         id: "price-a",
