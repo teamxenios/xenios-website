@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "session": "Website 4 — Operations, Affiliates & Fulfillment",
+  "branch": "feature/website-4-research-commerce-wave-2-inventory-lots",
+  "baseSha": "8efcd9fc9e4f33be84e5b9271aa83b5122788bdf",
+  "headSha": "RESOLVE_FROM_GIT_HEAD",
+  "headShaResolution": "git rev-parse HEAD",
+  "supersedesProhibitedHeadShas": [
+    "c0dfbe0cc19a1e0c067d8c6a733af7331a9c9f05",
+    "825e98f95308bf8a07cbc4ceaffc1c13a178d32e",
+    "ea1a0b8cf1c520706492bbd99ea1e8860cff3297",
+    "715be2ea022e6501c02ca404f8058754676e99c9",
+    "d16ccf59b655981f6b7923c635a7dc429de82675",
+    "cbf9f0fb1ef69949a3c94aa252417981a6b5940d",
+    "bdafa110fbca67f018b5cb91b227f7ffd49c8663",
+    "b1a17c8c9bc581089b85047fbb3b7e21513c98d1",
+    "f646708d45d4a6e4e7acf4e2653e44746baef184",
+    "0f6937f0d2e67dea8a0067dd8786378cca9095be"
+  ],
+  "domain": "Research Commerce Wave 2 — inventory, lots, and private exact-lot COA administration",
+  "releaseAuthority": {
+    "mergeOwner": "Website 2",
+    "migrationOwner": "Website 2",
+    "deploymentOwner": "Website 2",
+    "website4MayMergeOrDeploy": false
+  },
+  "files": [
+    "client/src/research/adapters/inventory-admin.ts",
+    "client/src/research/pages/adminx/InventoryLotsAdmin.tsx",
+    "client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx",
+    "client/src/research/pages/adminx/LotCoasAdmin.tsx",
+    "client/src/research/pages/adminx/LotCoasAdmin.test.tsx",
+    "docs/coordination/WEBSITE_4_REMAINING_SCOPE.md",
+    "docs/coordination/WEBSITE_4_RESEARCH_COMMERCE_WAVE_2_HANDOFF.md",
+    "docs/coordination/WEBSITE_4_WAVE_2_RELEASE_MANIFEST.json",
+    "server/research/inventory-admin/migration.test.ts",
+    "server/research/inventory-admin/production.ts",
+    "server/research/inventory-admin/production.test.ts",
+    "server/research/inventory-admin/routes.test.ts",
+    "server/research/inventory-admin/routes.ts",
+    "shared/research/inventory-admin.ts",
+    "supabase/research-inventory-lot-coa-admin.sql",
+    "supabase/verification/research-inventory-lot-coa-admin.verify.sql",
+    "supabase/verification/research-inventory-lot-coa-disposable-bootstrap.sql"
+  ],
+  "routes": [
+    "GET /api/admin/research/inventory/lots",
+    "POST /api/admin/research/inventory/lots",
+    "GET /api/admin/research/inventory/movements",
+    "POST /api/admin/research/inventory/lots/:lotId/movements",
+    "POST /api/admin/research/inventory/lots/:lotId/disposition",
+    "GET /api/admin/research/lot-quality-documents",
+    "POST /api/admin/research/lot-quality-documents/upload",
+    "POST /api/admin/research/lot-quality-documents/upload/cancel",
+    "POST /api/admin/research/lot-quality-documents/:documentId/confirm",
+    "POST /api/admin/research/lot-quality-documents/:documentId/review",
+    "POST /api/admin/research/lot-quality-documents/:documentId/file-access"
+  ],
+  "clientRoutesRequested": [
+    "/admin/research/inventory/lots",
+    "/admin/research/inventory/coas"
+  ],
+  "migrations": [
+    {
+      "path": "supabase/research-inventory-lot-coa-admin.sql",
+      "productionApplied": false,
+      "applyOrder": "after research_product_control_center privilege hardening and before any checkout, order, or fulfillment capability is enabled"
+    }
+  ],
+  "tables": [
+    "public.research_inventory_lots",
+    "public.research_lot_quality_documents",
+    "public.research_lot_allocations",
+    "public.research_inventory_movements",
+    "public.research_inventory_lot_events",
+    "public.research_lot_quality_tests",
+    "public.research_lot_quality_events",
+    "public.research_lot_quality_access_events"
+  ],
+  "functions": [
+    "public.research_inventory_append_only()",
+    "public.research_inventory_guard_quantity_update()",
+    "public.research_quality_guard_transition()",
+    "public.research_quality_test_guard()",
+    "public.research_inventory_product_variant_ready(uuid,uuid,text)",
+    "public.research_lot_quality_tests_ready(uuid)",
+    "public.research_lot_quality_ready(uuid,timestamptz)",
+    "public.research_lot_is_allocatable(uuid,timestamptz)",
+    "public.research_create_inventory_lot(text,text,uuid,uuid,text,text,text,date,date,date,text,text,text,timestamptz)",
+    "public.research_prepare_lot_quality_upload(uuid,jsonb,text,text,text,timestamptz)",
+    "public.research_cancel_lot_quality_upload(uuid,jsonb,bigint,text,text,text,text,timestamptz)",
+    "public.research_apply_inventory_movement(uuid,text,integer,text,bigint,text,text,text,timestamptz)",
+    "public.research_set_inventory_lot_disposition(uuid,text,bigint,text,text,text,timestamptz)",
+    "public.research_manage_lot_quality_document(uuid,text,jsonb,bigint,text,text,text,timestamptz)",
+    "public.research_authorize_lot_quality_access(uuid,text,text,uuid,timestamptz)"
+  ],
+  "forcedRlsTables": [
+    "public.research_inventory_lots",
+    "public.research_lot_quality_documents",
+    "public.research_lot_allocations",
+    "public.research_inventory_movements",
+    "public.research_inventory_lot_events",
+    "public.research_lot_quality_tests",
+    "public.research_lot_quality_events",
+    "public.research_lot_quality_access_events"
+  ],
+  "rlsPolicies": [],
+  "expectedPrivileges": {
+    "browserTableGrants": 0,
+    "serviceRoleTablePrivileges": 8,
+    "serviceRoleExecutePrivileges": 11,
+    "serviceRoleTables": {
+      "public.research_inventory_lots": [
+        "SELECT"
+      ],
+      "public.research_lot_quality_documents": [
+        "SELECT"
+      ],
+      "public.research_lot_allocations": [
+        "SELECT"
+      ],
+      "public.research_inventory_movements": [
+        "SELECT"
+      ],
+      "public.research_inventory_lot_events": [
+        "SELECT"
+      ],
+      "public.research_lot_quality_tests": [
+        "SELECT"
+      ],
+      "public.research_lot_quality_events": [
+        "SELECT"
+      ],
+      "public.research_lot_quality_access_events": [
+        "SELECT"
+      ]
+    },
+    "directCommandTableUpdateDeleteTruncateTrigger": 0
+  },
+  "environmentVariables": [
+    {
+      "name": "RESEARCH_COA_BUCKET",
+      "required": false,
+      "default": "research-coa-production",
+      "secret": false
+    }
+  ],
+  "sharedWiring": [
+    "Register registerInventoryLotAdminApi in the Website 2-owned server entrypoint.",
+    "Inject the canonical ProductCommerceReadinessReader from server/research/products-diagnostics/product-commerce-readiness.ts.",
+    "Preserve the exact SQL binding to canonical Product Control product and variant identifiers on the accepted production base.",
+    "Register InventoryLotsAdmin and LotCoasAdmin in Website 2-owned admin routing and navigation.",
+    "Preserve the production registerAdminPreSignOutTask seam consumed by LotCoasAdmin; do not replace it with a page-owned auth coordinator.",
+    "Keep checkout disabled until the legacy direct lot decrement is replaced by reviewed reservation/movement commands."
+  ],
+  "validation": {
+    "focusedTests": {
+      "command": "npm.cmd test -- server/research/inventory-admin/migration.test.ts server/research/inventory-admin/routes.test.ts server/research/inventory-admin/production.test.ts client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx client/src/research/pages/adminx/LotCoasAdmin.test.tsx client/src/research/pages/adminx/admin-sign-out.test.tsx server/release-control-plane.test.ts",
+      "filesPassed": 7,
+      "testsPassed": 58,
+      "status": "passed"
+    },
+    "fullTests": {
+      "command": "npm.cmd test -- --maxWorkers=2",
+      "filesPassed": 204,
+      "testsPassed": 3664,
+      "status": "passed"
+    },
+    "typecheck": {
+      "command": "npm.cmd run check",
+      "status": "passed"
+    },
+    "build": {
+      "command": "npm.cmd run build",
+      "status": "passed_with_existing_large_chunk_warning"
+    },
+    "disposablePostgres16": {
+      "applyTwice": "passed",
+      "directDml": "passed",
+      "forcedRlsTables": 8,
+      "browserTableGrants": 0,
+      "serviceRoleTablePrivileges": 8,
+      "serviceRoleExecutePrivileges": 11,
+      "concurrentReplay": "passed_for_lot_creation_upload_preparation_upload_cancellation_movement_disposition_and_quality",
+      "terminalQualityLifecycle": "rejected_withdrawn_and_superseded_documents_reject_in_place_commands_without_document_lot_test_or_event_mutation",
+      "replacementQualityLifecycle": "passed_for_rejected_and_withdrawn_documents_through_new_versioned_document",
+      "resumableUploadPreparation": "same_metadata_replays_original_document_storage_and_command_identity_after_grant_put_or_lost_confirmation_response_without_duplicate_put_event_or_post_confirmation_write_grant",
+      "changedMetadataRecovery": "unconfirmed_preparation_is_actor_metadata_version_and_key_bound_then_audited_terminal_and_concurrently_replayable_before_one_replacement",
+      "failedRequiredQualityTest": "blocked",
+      "privateAccessAuditBeforeGrant": "passed",
+      "rollback": "passed",
+      "residualBusinessRows": 0,
+      "result": "WAVE2_DISPOSABLE_VERIFICATION_OK"
+    },
+    "ui": {
+      "desktop1440": "previous accepted lane retained; retry-state interaction adds no separate layout system",
+      "mobile375": "scrollWidth equals clientWidth, no offscreen focusables, no internal horizontal scrollers, zero unlabeled controls, minimum control height 52px",
+      "mobile320": "retry-state scrollWidth 305 at 320 CSS px, no horizontal overflow; retry action width 219.3px",
+      "zoom200Proxy": "720 CSS px reflow has no horizontal overflow",
+      "keyboardFocus": "visible existing purple focus border on the labeled lot selector",
+      "consoleErrorsOrWarnings": 0,
+      "retryInteraction": "same-tab remount after committed preparation or successful PUT restores the JWT-sub-scoped fingerprint-bound command envelope without token or signed URL; same-user token refresh preserves it; principal change cannot render or consume another principal's state; production registerAdminPreSignOutTask awaits exact preparation replay and audited cancellation before Supabase sign-out, while cleanup rejection keeps the session and principal recovery authority; SIGNED_OUT is retention-only fallback; confirmation replays original version and key without duplicate PUT; changed metadata cancels the old unconfirmed preparation before replacement; confirmed success clears recovery storage",
+      "status": "passed"
+    }
+  },
+  "rollback": "Before production data exists, revert the application release and migration transaction. After production data exists, roll back application capability wiring while preserving additive schema and append-only audit history; never drop operational history tables.",
+  "productionSmoke": [
+    "Confirm Render deployment is Live and deployed SHA matches merged main.",
+    "Confirm /api/health returns 200.",
+    "Sign in as operations_admin and verify lot create plus receive/reserve/release/quarantine/damage/reconcile replay.",
+    "Verify blocked, quarantined, expired, and recalled lots cannot allocate.",
+    "Sign in as product_admin or approved_internal_reviewer and verify private COA confirm/review/publish/access.",
+    "Verify signed COA access creates an immutable actor-and-purpose audit event before URL issuance.",
+    "Verify anon, authenticated, and wrong-role requests fail closed.",
+    "Inspect Render, Supabase API, Postgres, and Storage logs for new serious errors.",
+    "Keep checkout disabled until InventoryReservationPort and caller idempotency are accepted."
+  ],
+  "productionStatus": "NOT_YET_MERGED"
+}
