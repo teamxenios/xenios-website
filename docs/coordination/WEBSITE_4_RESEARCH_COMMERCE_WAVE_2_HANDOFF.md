@@ -4,7 +4,8 @@
 
 - Branch: `feature/website-4-research-commerce-wave-2-inventory-lots`
 - Base: `bf1815c6754e04fd95325b25996ff441dc92fe43`
-- Supersedes prohibited heads: `d16ccf59b655981f6b7923c635a7dc429de82675`,
+- Supersedes prohibited heads: `715be2ea022e6501c02ca404f8058754676e99c9`,
+  `d16ccf59b655981f6b7923c635a7dc429de82675`,
   `cbf9f0fb1ef69949a3c94aa252417981a6b5940d`,
   `bdafa110fbca67f018b5cb91b227f7ffd49c8663`,
   `b1a17c8c9bc581089b85047fbb3b7e21513c98d1`,
@@ -52,6 +53,10 @@
   in-memory state is ignored, and same-user token refreshes retain the original
   command envelope. A different administrator cannot see or inherit another
   administrator's report metadata or retry identity.
+- The page subscribes to the canonical Supabase auth state and removes only the
+  current principal's envelope on `SIGNED_OUT`. Ordinary route unmounts and
+  same-user token refreshes do not trigger cleanup, so recoverability and
+  explicit-session privacy both hold.
 - Metadata changes first retire an unconfirmed preparation through a dedicated
   actor- and metadata-bound, lock-serialized, audited cancellation RPC. The
   abandoned object reference and history remain immutable; only then can a new
@@ -142,8 +147,8 @@ directly, copy Product Control files, or create another product model.
 
 ## Validation evidence
 
-- Focused tests: 6 files, 52 tests passed.
-- Full tests: 203 files, 3,658 tests passed with two workers.
+- Focused tests: 6 files, 53 tests passed.
+- Full tests: 203 files, 3,659 tests passed with two workers.
 - TypeScript check: passed.
 - Production build: passed.
 - Machine-readable release manifest:
@@ -186,6 +191,9 @@ directly, copy Product Control files, or create another product model.
   before Admin B renders in the same tab; B sees empty fields and can start with
   independent command keys. Admin A's refreshed token with the same JWT `sub`
   restores the original retry envelope.
+- Explicit sign-out proof: after Admin A prepares, canonical `SIGNED_OUT` removes
+  A's recovery key before another account can authenticate, while the existing
+  remount and refreshed-token tests retain same-principal recovery.
 
 ## Environment
 

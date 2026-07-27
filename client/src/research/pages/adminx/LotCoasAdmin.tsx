@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import {
   LOT_QUALITY_TEST_KEYS,
   type CoaUploadMetadata,
@@ -200,6 +201,24 @@ export function LotCoasBody({ token }: { token: string }) {
 
   useEffect(() => {
     setUploadRetry(readUploadRetry(principalId));
+  }, [principalId]);
+
+  useEffect(() => {
+    let active = true;
+    let unsubscribe: (() => void) | undefined;
+    void getSupabaseBrowser().then((client) => {
+      if (!active || !client) return;
+      const { data } = client.auth.onAuthStateChange((event) => {
+        if (event !== "SIGNED_OUT") return;
+        removeUploadRetry(principalId);
+        setUploadRetry(null);
+      });
+      unsubscribe = () => data.subscription.unsubscribe();
+    });
+    return () => {
+      active = false;
+      unsubscribe?.();
+    };
   }, [principalId]);
 
   function rememberUploadRetry(value: UploadRetryState): void {

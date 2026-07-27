@@ -19,6 +19,23 @@ const mocks = vi.hoisted(() => ({
   confirm: vi.fn(),
   access: vi.fn(),
   digest: vi.fn(),
+  authStateCallback: null as null | ((event: string) => void),
+  unsubscribeAuth: vi.fn(),
+}));
+
+vi.mock("@/lib/supabaseBrowser", () => ({
+  getSupabaseBrowser: vi.fn(async () => ({
+    auth: {
+      onAuthStateChange: (callback: (event: string) => void) => {
+        mocks.authStateCallback = callback;
+        return {
+          data: {
+            subscription: { unsubscribe: mocks.unsubscribeAuth },
+          },
+        };
+      },
+    },
+  })),
 }));
 
 vi.mock("../../adapters/inventory-admin", () => ({
@@ -198,6 +215,7 @@ async function submit(form: HTMLFormElement) {
 beforeEach(() => {
   window.sessionStorage.clear();
   activeToken = ADMIN_A_TOKEN;
+  mocks.authStateCallback = null;
   host = document.createElement("div");
   document.body.appendChild(host);
   root = null;
@@ -529,6 +547,33 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     });
     expect(host.textContent).toContain("Private COA object verified.");
     expect(window.sessionStorage.getItem(retryStorageKey(ADMIN_B_SUB))).toBeNull();
+  });
+
+  it("clears only the current principal's envelope on canonical sign-out", async () => {
+    vi.mocked(crypto.randomUUID)
+      .mockReset()
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000050")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000051")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000052");
+    mocks.prepare.mockRejectedValueOnce(
+      new Error("grant failed after Admin A preparation commit"),
+    );
+
+    await renderPage();
+    const { form } = populateUploadForm();
+    await submit(form);
+    expect(window.sessionStorage.getItem(
+      retryStorageKey(ADMIN_A_SUB),
+    )).toContain("REPORT-RETRY");
+    expect(mocks.authStateCallback).toBeTypeOf("function");
+
+    await act(async () => {
+      mocks.authStateCallback?.("SIGNED_OUT");
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(window.sessionStorage.getItem(retryStorageKey(ADMIN_A_SUB))).toBeNull();
+    expect(host.textContent).not.toContain("Retry private COA upload");
   });
 
   it("starts a new preparation when normalized upload metadata changes", async () => {
