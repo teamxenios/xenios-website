@@ -15,8 +15,8 @@
       "owner": "Website 2",
       "lane": "release-manager",
       "state": "ACTIVE",
-      "activeUnit": "Atomic inventory reservation integration on production base 8205ffe.",
-      "branch": "integration/research-commerce-inventory-reservation-final",
+      "activeUnit": "PR #85 member catalog shared integration after the atomic reservation production gate closed.",
+      "branch": "integration/research-commerce-member-catalog-release",
       "headSha": null
     },
     {
@@ -109,6 +109,26 @@
       "patterns": [
         "client/src/research/section.tsx",
         "client/src/research/adminx-section.tsx"
+      ]
+    },
+    {
+      "id": "OWNER-W2-PR85-INTEGRATION",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "client/src/research/adapters/memberCatalogApi.test.ts",
+        "client/src/research/adapters/memberCatalogApi.ts",
+        "client/src/research/pages/member/ProductPage.tsx",
+        "client/src/research/pages/member/Products.integration.test.ts",
+        "client/src/research/pages/member/Products.tsx",
+        "client/src/research/pages/member/product-subscribe.test.tsx",
+        "docs/coordination/WEBSITE_2_MEMBER_CATALOG_INTEGRATION_HANDOFF.md",
+        "server/research/catalog/member-catalog-routes.test.ts",
+        "server/research/catalog/member-catalog-routes.ts",
+        "server/research/catalog/member-catalog-service.test.ts",
+        "server/research/catalog/member-catalog-service.ts"
       ]
     },
     {
