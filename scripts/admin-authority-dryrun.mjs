@@ -362,13 +362,13 @@ try {
   expectScalar(
     "zero-state rollback removes every new object",
     `select concat(
-       to_regclass('public.research_admin_experience_preferences') is null,
+       (to_regclass('public.research_admin_experience_preferences') is null)::text,
        ':',
-       to_regclass('public.research_admin_authority_audit') is null,
+       (to_regclass('public.research_admin_authority_audit') is null)::text,
        ':',
-       to_regprocedure(
+       (to_regprocedure(
          'public.research_admin_assign_initial_super_admin(uuid,text,text)'
-       ) is null
+       ) is null)::text
      );`,
     "true:true:true",
     "rollback_zero",
