@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T02:13:11.637Z",
-  "productionSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
+  "generatedAt": "2026-07-27T03:05:00Z",
+  "productionSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
   "checksumScope": "canonical Git blob bytes at productionSha",
   "migrations": [
     {

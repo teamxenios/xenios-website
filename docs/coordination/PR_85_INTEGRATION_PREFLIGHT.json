@@ -1,28 +1,22 @@
 {
   "schemaVersion": 1,
-  "capturedAt": "2026-07-27T02:39:00Z",
+  "capturedAt": "2026-07-27T03:05:00Z",
   "pullRequest": 85,
-  "baseSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
-  "headSha": "0472905dff10c45239b7f95834e1086c3b3c5f59",
-  "headTree": "aecf5da0475ad4dd169fb0ff8bb71a431bb1d9bc",
+  "sourceBaseSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
+  "currentProductionSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+  "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
+  "currentMainMergeTree": "f0a8fa4e813a0087c24103b73547e65a77afe31e",
   "prohibitedPredecessors": [
     "12759c2567246ee83ed71aad9ffa4b517d31e8aa",
-    "30b0f6b708c936e2ba1631e4a57f1c5b8c2c54c4"
+    "30b0f6b708c936e2ba1631e4a57f1c5b8c2c54c4",
+    "0472905dff10c45239b7f95834e1086c3b3c5f59"
   ],
-  "state": "PROHIBITED_QA_CHANGES_REQUIRED",
-  "priorVerdict": {
-    "headSha": "30b0f6b708c936e2ba1631e4a57f1c5b8c2c54c4",
-    "result": "CHANGES_REQUIRED",
-    "highFindings": 3
-  },
+  "state": "ACCEPTED_INTEGRATION_PENDING",
   "website6Verdict": {
-    "headSha": "0472905dff10c45239b7f95834e1086c3b3c5f59",
-    "result": "CHANGES_REQUIRED",
-    "highFindings": [
-      "Active display-blocking required-input records are not required to be the exact complete canonical tuple, identifier, and blocking-metadata set.",
-      "Signed-media expiry is not bounded by the shared five-minute access TTL."
-    ],
-    "integrationAuthorized": false
+    "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
+    "result": "ACCEPT",
+    "blockerHighFindings": 0,
+    "integrationAuthorized": true
   },
   "github": {
     "open": true,
@@ -55,9 +49,10 @@
   "providers": [],
   "sharedWiring": [],
   "collisionAssessment": {
-    "currentWebsite2SharedCandidate": false,
+    "releaseControlPlane": false,
     "website1AuthorityWorktree": false,
-    "website4Wave2Worktree": false
+    "website4Wave2Worktree": false,
+    "currentMainMergeClean": true
   },
   "integrationBoundary": {
     "sourceBlobsMustRemainByteIdentical": true,
@@ -91,5 +86,5 @@
     "Confirm browsing creates zero cart, order, reservation, inventory, provider, or Product Control rows.",
     "Verify production counts, Care disabled state, and Render/Supabase error posture remain unchanged."
   ],
-  "releaseGate": "DO_NOT_MERGE_OR_CREATE_INTEGRATION_CANDIDATE"
+  "releaseGate": "CREATE_SEPARATE_CURRENT_MAIN_INTEGRATION_CANDIDATE"
 }

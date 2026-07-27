@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T02:13:11.637Z",
-  "productionBaseSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
+  "generatedAt": "2026-07-27T03:05:00Z",
+  "productionBaseSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
   "lanes": [
     {
       "owner": "Website 1",
@@ -22,10 +22,10 @@
     {
       "owner": "Website 3",
       "lane": "wave3-member-catalog",
-      "state": "FROZEN_PROHIBITED_CHANGES_REQUIRED",
-      "activeUnit": "PR #85 two-finding replacement; heads 12759c25, 30b0f6b7, and 0472905d remain prohibited.",
+      "state": "FROZEN_ACCEPTED_INTEGRATION_PENDING",
+      "activeUnit": "PR #85 exact accepted source; heads 12759c25, 30b0f6b7, and 0472905d remain prohibited.",
       "branch": "feature/website-3-wave3-member-catalog-detail",
-      "headSha": "0472905dff10c45239b7f95834e1086c3b3c5f59"
+      "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed"
     },
     {
       "owner": "Website 4",
@@ -92,7 +92,7 @@
       "owner": "Website 2",
       "lane": "release-manager",
       "mode": "write",
-      "state": "frozen",
+      "state": "deployed",
       "patterns": [
         "server/index.ts",
         "server/research/capabilities.test.ts",

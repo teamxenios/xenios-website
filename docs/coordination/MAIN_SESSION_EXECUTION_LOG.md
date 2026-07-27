@@ -86,6 +86,34 @@ the superseded entry.
 - Production effect: none. No merge, migration, deployment, or data mutation
   occurred.
 
+## 2026-07-27T03:05:00Z — PR #86 production gate accepted
+
+- Website 6 post-deploy accepted exact source
+  `4f71648aa5684ebec70f14b7e09268331c522969` deployed as current main
+  `d494150668de2ede8a61fd0d28bc9ff9a75def26`.
+- Render deployment `dep-d9jcfkuk1jcs73fi5r1g` is LIVE. No migration applied.
+- Read-only verification passed health, capability GET/HEAD/POST ordering,
+  downstream member/admin authentication, no-store/no-cache/no-referrer/noindex
+  headers, 1440/720/375/320 browser boundaries, and release-window error logs.
+- Production counts remained members 2, applications 2, outbox 42, required
+  inputs 0, launch controls 0, Product Control rows 0, and Care disabled.
+- Rollback identity: prior main
+  `ae6533f57de6619b9656c866312f953ccb7eca8d`; no rollback was required.
+
+## 2026-07-27T03:05:00Z — PR #85 accepted source preflighted
+
+- Website 6 exact-SHA accepted PR #85 source
+  `dc11623d27fa59cb51b6cfe653f143633c7ae9ed` on source base
+  `ae6533f57de6619b9656c866312f953ccb7eca8d`.
+- Prohibited predecessors `12759c2567246ee83ed71aad9ffa4b517d31e8aa`,
+  `30b0f6b708c936e2ba1631e4a57f1c5b8c2c54c4`, and
+  `0472905dff10c45239b7f95834e1086c3b3c5f59` remain excluded.
+- Read-only collision preflight against current production `d4941506` is clean,
+  with expected merge tree `f0a8fa4e813a0087c24103b73547e65a77afe31e`
+  and no release-control-plane file overlap.
+- PR #85 is not included in PR #87; its separate integration candidate remains
+  pending. Production effect: none.
+
 ## 2026-07-27T02:49:00Z — PR #86 GitHub checks completed
 
 - Exact PR #86 head `4f71648aa5684ebec70f14b7e09268331c522969`

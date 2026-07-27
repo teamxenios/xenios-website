@@ -8,11 +8,11 @@ machine-readable release-manager snapshot.
 
 | Field | Value |
 |---|---|
-| Production Git SHA | `ae6533f57de6619b9656c866312f953ccb7eca8d` |
-| Render deployment | `dep-d9j9687aqgkc739gvru0` |
+| Production Git SHA | `d494150668de2ede8a61fd0d28bc9ff9a75def26` |
+| Render deployment | `dep-d9jcfkuk1jcs73fi5r1g` |
 | Render state | `LIVE` |
 | Public origin | `https://xeniostechnology.com` |
-| Evidence captured | `2026-07-27T02:17:31Z` |
+| Evidence captured | `2026-07-27T03:05:00Z` |
 
 Health is 200. The signed-out Research account gate is 200/no-store, while
 member, activation, capability, and activation-readiness endpoints reject
@@ -48,15 +48,13 @@ provider status is `not_started`. Therefore:
 
 ## Capability route ownership
 
-Production currently registers `GET /api/research/capabilities` twice:
-
-1. canonical owner: `server/research/capabilities.ts`, mounted through
-   `registerMemberPlatformApi`;
-2. shadowed duplicate: `server/research/commerce/routes.ts`.
-
-The shared correction removes the commerce duplicate, keeps the member-platform
-contract authoritative, adds private headers before early member/admin auth
-rejections, and pins exact method/path uniqueness in a routed regression.
+PR #86 is deployed and Website 6 post-deploy accepted it. Production now has
+one canonical `GET`/`HEAD /api/research/capabilities` owner in
+`server/research/capabilities.ts`, mounted through `registerMemberPlatformApi`.
+Private no-store/no-cache/no-referrer/noindex headers are applied before the
+downstream member and administrator authentication boundaries. `POST` remains
+intercepted and fail-closed. The `/admin/research` document receives the same
+private document posture.
 
 ## Migration ledger reconciliation
 
@@ -100,14 +98,17 @@ table privileges, five command-table SELECT grants, zero command-table DML, and
   `0472905dff10c45239b7f95834e1086c3b3c5f59` is prohibited after two
   Website 6 HIGH findings covering exact active display-blocking input
   completeness and the shared five-minute signed-media TTL.
+- PR #85 exact source `dc11623d27fa59cb51b6cfe653f143633c7ae9ed`
+  is Website 6 accepted with zero blocker/high. Its 12 source blobs are frozen;
+  a separate current-main integration candidate is required.
 - PR #86 head `225455615eda0c420996929379a5a1f9d535b4e8`
   is prohibited because full production route order shadows the capability
   handler before its private member boundary. A bounded replacement is in
   progress in the separate shared-hotfix worktree.
 - PR #86 replacement `4f71648aa5684ebec70f14b7e09268331c522969`
-  has independent review acceptance and GitHub test/typecheck/build success.
-  Website 6 exact-SHA acceptance remains required. Its exact 12 paths are
-  assigned to Website 2 in the machine-readable ownership map.
+  is merged and deployed as `d494150668de2ede8a61fd0d28bc9ff9a75def26`
+  on Render `dep-d9jcfkuk1jcs73fi5r1g`. Website 6 post-deploy QA accepted the
+  live route/header/browser/log posture with no blocker/high.
 - Website 1 is preparing the durable Samuel-authority replacement from the
   exact production base.
 

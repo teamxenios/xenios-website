@@ -23,8 +23,8 @@ import {
 } from "../scripts/acceptance/verify-production-state.ts";
 
 const ROOT = process.cwd();
-const NOW = new Date("2026-07-27T02:13:11.637Z");
-const PRODUCTION_SHA = "ae6533f57de6619b9656c866312f953ccb7eca8d";
+const NOW = new Date("2026-07-27T03:05:00.000Z");
+const PRODUCTION_SHA = "d494150668de2ede8a61fd0d28bc9ff9a75def26";
 const HEAD_SHA = "12759c2567246ee83ed71aad9ffa4b517d31e8aa";
 
 function validManifest(): Record<string, unknown> {
@@ -187,7 +187,17 @@ describe("migration DAG validator", () => {
     const dag = JSON.parse(
       readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
     ) as MigrationDag;
-    expect(validateMigrationDag(dag, { repoRoot: ROOT })).toEqual([]);
+    expect(dag.productionSha).toBe(PRODUCTION_SHA);
+    expect(
+      validateMigrationDag(dag, {
+        repoRoot: ROOT,
+        canonicalBytes: (_productionSha, path) =>
+          execFileSync("git", ["show", `HEAD:${path}`], {
+            cwd: ROOT,
+            encoding: "buffer",
+          }),
+      }),
+    ).toEqual([]);
   });
 });
 
@@ -206,19 +216,17 @@ describe("route uniqueness validator", () => {
     expect(validateRouteUniqueness(routes)[0]?.code).toBe("DUPLICATE_ROUTE");
   });
 
-  it("detects the known production capabilities-route HIGH as a negative control", () => {
+  it("detects the superseded capabilities-route duplicate as a self-contained negative control", () => {
     const productionRoutes = [
-      "server/research/capabilities.ts",
-      "server/research/commerce/routes.ts",
-    ].flatMap((file) =>
-      extractExpressRoutes(
-        execFileSync("git", ["show", `${PRODUCTION_SHA}:${file}`], {
-          cwd: ROOT,
-          encoding: "utf8",
-        }),
-        file,
+      ...extractExpressRoutes(
+        'app.get("/api/research/capabilities", privateHeaders, requireMember, handler);',
+        "server/research/capabilities.ts",
       ),
-    );
+      ...extractExpressRoutes(
+        'app.get("/api/research/capabilities", sharedPassword, commerceHandler);',
+        "server/research/commerce/routes.ts",
+      ),
+    ];
     const duplicates = findDuplicateRoutes(productionRoutes);
     const registrations = duplicates.get("GET /api/research/capabilities");
     expect(registrations?.map((route) => route.file)).toEqual(

@@ -10,6 +10,9 @@ type ProductionCandidate = {
   lane?: string;
   headSha?: string;
   baseSha?: string;
+  sourceBaseSha?: string;
+  integrationBaseSha?: string;
+  currentMainMergeTree?: string;
   state: string;
   reason?: string;
   prohibitedPredecessor?: string;
@@ -323,6 +326,15 @@ export function validateProductionState(
     if (candidate.baseSha && !SHA_PATTERN.test(candidate.baseSha)) {
       issues.push({ code: "CANDIDATE_SHA", message: `PR #${candidate.pullRequest ?? "unassigned"} has invalid base SHA.` });
     }
+    if (candidate.sourceBaseSha && !SHA_PATTERN.test(candidate.sourceBaseSha)) {
+      issues.push({ code: "CANDIDATE_SHA", message: `PR #${candidate.pullRequest ?? "unassigned"} has invalid source base SHA.` });
+    }
+    if (candidate.integrationBaseSha && !SHA_PATTERN.test(candidate.integrationBaseSha)) {
+      issues.push({ code: "CANDIDATE_SHA", message: `PR #${candidate.pullRequest ?? "unassigned"} has invalid integration base SHA.` });
+    }
+    if (candidate.currentMainMergeTree && !SHA_PATTERN.test(candidate.currentMainMergeTree)) {
+      issues.push({ code: "CANDIDATE_SHA", message: `PR #${candidate.pullRequest ?? "unassigned"} has invalid current-main merge tree.` });
+    }
     if (candidate.baseSha && candidate.baseSha !== state.production.gitSha) {
       issues.push({
         code: "STALE_CANDIDATE_BASE",
@@ -333,6 +345,12 @@ export function validateProductionState(
       issues.push({
         code: "STALE_CANDIDATE_BASE",
         message: `${candidate.lane ?? "Unassigned lane"} requires stale base ${candidate.requiredBaseSha}.`,
+      });
+    }
+    if (candidate.integrationBaseSha && candidate.integrationBaseSha !== state.production.gitSha) {
+      issues.push({
+        code: "STALE_CANDIDATE_BASE",
+        message: `PR #${candidate.pullRequest} integration base ${candidate.integrationBaseSha} is not current production.`,
       });
     }
     if (candidate.headSha && candidate.headSha === state.production.gitSha) {

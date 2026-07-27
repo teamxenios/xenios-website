@@ -1,34 +1,34 @@
 flowchart LR
-  PROD["Production ae6533f<br/>Render dep-d9j9687aqgkc739gvru0<br/>DEPLOYED"]
-  CAP["HIGH: duplicate capabilities route<br/>OPEN"]
-  PRIV["HIGH: admin page privacy gate<br/>OPEN"]
+  PROD["Production d4941506<br/>Render dep-d9jcfkuk1jcs73fi5r1g<br/>DEPLOYED / PR86 ACCEPTED"]
+  CAP["Capabilities route ownership<br/>CLOSED"]
+  PRIV["Admin document privacy<br/>CLOSED"]
   PR80["PR #80 f646708d<br/>PROHIBITED"]
-  PR85OLD["PR #85 12759c25<br/>PROHIBITED PREDECESSOR"]
-  PR85NEW["PR #85 30b0f6b7<br/>PROHIBITED"]
-  PR85NEXT["PR #85 0472905d<br/>PROHIBITED"]
-  PR86["PR #86 22545561<br/>PROHIBITED"]
-  PR86NEW["PR #86 4f71648a<br/>CI GREEN / WEBSITE 6 QA PENDING"]
+  PR85OLD["PR #85 12759c25<br/>PROHIBITED"]
+  PR85MID["PR #85 30b0f6b7<br/>PROHIBITED"]
+  PR85LAST["PR #85 0472905d<br/>PROHIBITED"]
+  PR85["PR #85 dc11623d<br/>ACCEPTED / INTEGRATION PENDING"]
+  PR86OLD["PR #86 22545561<br/>PROHIBITED"]
+  PR86["PR #86 4f71648a<br/>DEPLOYED / POSTDEPLOY ACCEPTED"]
+  PR87["PR #87 control plane<br/>CANDIDATE PREPARATION"]
   CHECKOUT["Wave 3 checkout enablement<br/>BLOCKED"]
 
-  PROD -->|baseline contains| CAP
-  PROD -->|baseline contains| PRIV
-  PROD -->|candidate based on| PR80
-  PROD -->|candidate based on| PR85OLD
-  PROD -->|candidate based on| PR85NEW
-  PROD -->|candidate based on| PR86
-  PR86 -->|superseded by| PR86NEW
-  PR85OLD -->|superseded by| PR85NEW
-  PR85NEW -->|superseded by| PR85NEXT
+  PR86 -->|deployed as| PROD
+  PROD -->|closes| CAP
+  PROD -->|closes| PRIV
+  PR86OLD -->|superseded by| PR86
+  PR85OLD -->|superseded by| PR85MID
+  PR85MID -->|superseded by| PR85LAST
+  PR85LAST -->|superseded by| PR85
+  PROD -->|integration base for| PR85
+  PROD -->|candidate based on| PR87
   PR80 -->|replace + accept first| CHECKOUT
-  CAP -->|blocks enablement| CHECKOUT
-  PRIV -->|blocks final QA| CHECKOUT
+  PR85 -->|integrate first| CHECKOUT
 
   classDef live fill:#d8f3dc,stroke:#1b4332,color:#081c15
-  classDef high fill:#ffe5d9,stroke:#9d0208,color:#370617
+  classDef closed fill:#d8f3dc,stroke:#1b4332,color:#081c15
   classDef prohibited fill:#f8d7da,stroke:#842029,color:#58151c
-  classDef blocked fill:#fff3cd,stroke:#664d03,color:#332701
-  class PROD live
-  class CAP,PRIV high
-  class PR80,PR85OLD,PR85NEW,PR85NEXT,PR86 prohibited
-  class PR86NEW blocked
-  class CHECKOUT blocked
+  classDef pending fill:#fff3cd,stroke:#664d03,color:#332701
+  class PROD,PR86 live
+  class CAP,PRIV closed
+  class PR80,PR85OLD,PR85MID,PR85LAST,PR86OLD prohibited
+  class PR85,PR87,CHECKOUT pending
