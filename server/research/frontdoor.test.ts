@@ -16,6 +16,9 @@ function makeApp() {
   app.use(researchPageGate);
   app.get("/", (_req, res) => res.send("professional-homepage"));
   app.get("/research", (_req, res) => res.send("research-shell"));
+  app.get("/admin/research", (_req, res) => res.send("admin-shell"));
+  app.get("/admin/research/products", (_req, res) => res.send("admin-products"));
+  app.head("/admin/research", (_req, res) => res.sendStatus(200));
   return app;
 }
 
@@ -68,5 +71,35 @@ describe("the homepage stays at the root domain", () => {
     const res = await request(makeApp()).get("/research");
     expect(res.status).toBe(200);
     expect(res.text).toBe("research-shell");
+  });
+
+  it.each([
+    ["get", "/admin/research"],
+    ["head", "/admin/research"],
+    ["get", "/admin/research/products"],
+    ["get", "/Admin/Research"],
+    ["get", "/%61dmin/research"],
+    ["get", "/admin/%72esearch/products"],
+  ] as const)("protects the admin document boundary for %s %s", async (method, path) => {
+    const app = express();
+    app.use(researchPageGate);
+    app.use((_req, res) => res.send("spa"));
+
+    const res = await (request(app) as any)[method](path);
+    expect(res.status).toBe(200);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+  });
+
+  it("does not apply admin document headers to the API namespace", async () => {
+    const app = express();
+    app.use(researchPageGate);
+    app.get("/api/admin/research/products", (_req, res) => res.sendStatus(401));
+
+    const res = await request(app).get("/api/admin/research/products");
+    expect(res.status).toBe(401);
+    expect(res.headers["x-robots-tag"]).toBeUndefined();
   });
 });

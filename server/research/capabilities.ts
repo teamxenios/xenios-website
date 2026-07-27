@@ -1,6 +1,7 @@
-import type { Express } from "express";
+import type { Express, NextFunction, Request, Response } from "express";
 import type {
   AdminCapabilityDiagnostic,
+  CapabilityStatusView,
   MemberCapabilitiesPayload,
   MemberPlatformCapability,
 } from "@shared/research/member-platform";
@@ -113,16 +114,72 @@ export function adminCapabilityDiagnostics(now: Date): AdminCapabilityDiagnostic
   });
 }
 
-export function registerCapabilityApi(app: Express, clockNow: () => Date) {
-  app.get("/api/research/capabilities", requireActiveMember, (_req, res) => {
-    res.set("Cache-Control", "no-store");
-    res.set("Referrer-Policy", "no-referrer");
-    res.json({ ok: true, capabilities: memberCapabilities() });
-  });
+type MemberCapabilityMap = Record<string, CapabilityStatusView>;
+type CapabilityGuard = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => unknown;
 
-  app.get("/api/admin/research/capabilities", requireSupabaseAdmin, (_req, res) => {
-    res.set("Cache-Control", "no-store");
-    res.set("Referrer-Policy", "no-referrer");
-    res.json({ ok: true, diagnostics: adminCapabilityDiagnostics(clockNow()) });
-  });
+function privateCapabilityHeaders(
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  res.set("Cache-Control", "no-store");
+  res.set("Pragma", "no-cache");
+  res.set("Referrer-Policy", "no-referrer");
+  res.set("X-Robots-Tag", "noindex, nofollow");
+  next();
+}
+
+export function mergedMemberCapabilities(
+  additionalCapabilities: MemberCapabilityMap = {},
+): MemberCapabilityMap {
+  return {
+    ...memberCapabilities(),
+    ...additionalCapabilities,
+  };
+}
+
+export function registerMemberCapabilityApi(
+  app: Express,
+  additionalMemberCapabilities: () => MemberCapabilityMap = () => ({}),
+  activeMemberGuard: CapabilityGuard = requireActiveMember,
+) {
+  app.get(
+    "/api/research/capabilities",
+    privateCapabilityHeaders,
+    activeMemberGuard,
+    (_req, res) => {
+      res.json({
+        ok: true,
+        capabilities: mergedMemberCapabilities(additionalMemberCapabilities()),
+      });
+    },
+  );
+}
+
+export function registerAdminCapabilityApi(
+  app: Express,
+  clockNow: () => Date,
+  adminGuard: CapabilityGuard = requireSupabaseAdmin,
+) {
+  app.get(
+    "/api/admin/research/capabilities",
+    privateCapabilityHeaders,
+    adminGuard,
+    (_req, res) => {
+      res.json({ ok: true, diagnostics: adminCapabilityDiagnostics(clockNow()) });
+    },
+  );
+}
+
+export function registerCapabilityApi(
+  app: Express,
+  clockNow: () => Date,
+  additionalMemberCapabilities: () => MemberCapabilityMap = () => ({}),
+) {
+  registerMemberCapabilityApi(app, additionalMemberCapabilities);
+  registerAdminCapabilityApi(app, clockNow);
 }

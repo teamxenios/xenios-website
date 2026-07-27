@@ -10,6 +10,7 @@ import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { registerMemberPlatformApi } from "./research/member-platform";
 import { defaultDeps as defaultMemberPlatformDeps } from "./research/member-platform-deps";
+import { registerMemberCapabilityApi } from "./research/capabilities";
 import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
 import {
@@ -165,6 +166,7 @@ registerMemberAccessApi(app);
 // This is the one-line wiring the member-platform lane deliberately left for
 // the integration session (it never edits this file itself).
 const website3Dependencies = buildWebsite3ProductionDependencies();
+const commerceDependencies = buildCommerceDependencies();
 registerMemberPlatformApi(app, {
   ...defaultMemberPlatformDeps(),
   getTrainerSafeBiomarkerSummary: async (memberId) => {
@@ -172,6 +174,7 @@ registerMemberPlatformApi(app, {
     return record ? toTrainerSafeBiomarkerSummary(record) : null;
   },
 });
+registerMemberCapabilityApi(app, () => commerceDependencies.capabilities.memberVisible());
 // Commerce surface (G6-G8): catalog and goal reads are live and provenance-
 // gated; every stateful surface (cart writes, checkout, orders, subscriptions,
 // claims, partners) fails closed with commerce_disabled until the production
@@ -186,7 +189,7 @@ const adaptGuard =
   async (req: Request, res: Response, next: () => void): Promise<void> => {
     await guard(req, res, next as unknown as NextFunction);
   };
-registerCommerceApi(app, buildCommerceDependencies(), {
+registerCommerceApi(app, commerceDependencies, {
   requireActiveMember: adaptGuard(requireActiveMember),
   requireMember: adaptGuard(requireMember),
   requireAdmin: adaptGuard(requireSupabaseAdmin),

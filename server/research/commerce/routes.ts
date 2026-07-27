@@ -396,11 +396,6 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   const member = guards.requireMember;
   const admin = guards.requireAdmin;
 
-  // ---- G0 capabilities -----------------------------------------------------
-  app.get("/api/research/capabilities", active, (_req, res) => {
-    ok(res, { capabilities: deps.capabilities.memberVisible() });
-  });
-
   // ---- G6 catalog, goals, guides -------------------------------------------
   app.get("/api/research/products", active, (_req, res) => {
     ok(res, { products: deps.catalog.listProducts() });

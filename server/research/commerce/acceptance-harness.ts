@@ -30,6 +30,7 @@
 
 import express, { type Express, type NextFunction, type Request, type Response } from "express";
 import { registerCommerceApi, type CommerceGuards } from "./routes";
+import { registerMemberCapabilityApi } from "../capabilities";
 import { buildCommerceDependencies, CHECKOUT_REQUIRED_AGREEMENT_KEYS } from "./production-deps";
 import { createInMemoryCartStore, type AsyncCartStore } from "./persistence/cart-store";
 import { createInMemoryOrderStore, type AsyncOrderStore } from "./persistence/orders-store";
@@ -374,7 +375,13 @@ export async function buildAcceptanceContext(
       },
     }),
   );
-  registerCommerceApi(app, deps, testGuards());
+  const guards = testGuards();
+  registerMemberCapabilityApi(
+    app,
+    () => deps.capabilities.memberVisible(),
+    (req, res, next) => guards.requireActiveMember(req, res, () => next()),
+  );
+  registerCommerceApi(app, deps, guards);
 
   // The same tail server/index.ts installs: the JSON error handler, then the
   // /api 404 guard so an unknown API path answers JSON rather than the SPA.

@@ -32,7 +32,7 @@ vi.mock("../supabase", () => ({
 process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 
 import { registerMemberPlatformApi } from "./member-platform";
-import { registerCapabilityApi } from "./capabilities";
+import { registerAdminCapabilityApi } from "./capabilities";
 import { registerOverviewApi } from "./overview";
 import { registerAgreementsApi } from "./agreements";
 import { registerProfileApi } from "./profile";
@@ -72,7 +72,7 @@ function registeredRoutes(): Set<string> {
 // inventory only guards the routes someone remembered to list; this compares
 // each module against itself.
 const LANE_MODULES: Array<[string, (app: any, deps?: any) => void]> = [
-  ["capabilities", (app, deps) => registerCapabilityApi(app, () => deps.clock.now())],
+  ["capabilities", (app, deps) => registerAdminCapabilityApi(app, () => deps.clock.now())],
   ["overview", registerOverviewApi],
   ["agreements", registerAgreementsApi],
   ["profile", registerProfileApi],
@@ -92,7 +92,6 @@ describe("registerMemberPlatformApi", () => {
   // but is not wired is indistinguishable from a module that does not exist.
   const CONTRACT_ROUTES = [
     // capabilities + overview
-    "GET /api/research/capabilities",
     "GET /api/admin/research/capabilities",
     "GET /api/research/member/overview",
     // wave 1
