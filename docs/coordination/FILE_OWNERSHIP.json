@@ -73,7 +73,8 @@
         "scripts/acceptance/**",
         "server/release-control-plane.test.ts",
         "supabase/MIGRATIONS.md",
-        "package.json"
+        "package.json",
+        "package-lock.json"
       ]
     },
     {

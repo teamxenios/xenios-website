@@ -1,6 +1,9 @@
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
+import Ajv2020Module from "ajv/dist/2020.js";
+import addFormatsModule from "ajv-formats";
 
 export type ValidationIssue = {
   code: string;
@@ -20,7 +23,16 @@ export type ReleaseManifestValidationOptions = {
   now?: Date;
   maxEvidenceAgeMs?: number;
   expectedProductionSha?: string;
+  expectedHeadSha?: string;
   ownershipRules?: OwnershipRule[];
+  gitBinding?: {
+    baseExists: boolean;
+    headExists: boolean;
+    headSha: string;
+    resolvedBaseSha?: string;
+    resolvedHeadSha?: string;
+    files: string[];
+  };
 };
 
 const SHA_PATTERN = /^[0-9a-f]{40}$/;
@@ -28,6 +40,24 @@ const SHA256_PATTERN = /^[0-9a-f]{64}$/;
 const ENV_PATTERN = /^[A-Z][A-Z0-9_]*$/;
 const ROUTE_METHODS = new Set(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"]);
 const DEFAULT_MAX_EVIDENCE_AGE_MS = 7 * 24 * 60 * 60 * 1_000;
+type SchemaError = { instancePath: string; message?: string };
+type CompiledSchema = ((input: unknown) => boolean) & { errors?: SchemaError[] | null };
+const Ajv2020 = Ajv2020Module as unknown as new (options: object) => {
+  compile: (schema: object) => CompiledSchema;
+};
+const addFormats = addFormatsModule as unknown as (validator: object) => void;
+const CANONICAL_SCHEMA = JSON.parse(
+  readFileSync(
+    resolve(
+      fileURLToPath(new URL(".", import.meta.url)),
+      "../../docs/coordination/release-manifest.schema.json",
+    ),
+    "utf8",
+  ),
+) as object;
+const schemaValidator = new Ajv2020({ allErrors: true, strict: true });
+addFormats(schemaValidator);
+const validateCanonicalSchema = schemaValidator.compile(CANONICAL_SCHEMA);
 
 function objectValue(value: unknown): Record<string, unknown> | null {
   return value !== null && typeof value === "object" && !Array.isArray(value)
@@ -54,6 +84,15 @@ function duplicateValues(values: string[]): string[] {
   const counts = new Map<string, number>();
   for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1);
   return [...counts.entries()].filter(([, count]) => count > 1).map(([value]) => value);
+}
+
+function exactSetDifference(left: string[], right: string[]): { missing: string[]; extra: string[] } {
+  const leftSet = new Set(left);
+  const rightSet = new Set(right);
+  return {
+    missing: right.filter((entry) => !leftSet.has(entry)),
+    extra: left.filter((entry) => !rightSet.has(entry)),
+  };
 }
 
 function globToRegExp(glob: string): RegExp {
@@ -92,6 +131,14 @@ export function validateReleaseManifest(
   const issues: ValidationIssue[] = [];
   const manifest = objectValue(input);
   if (!manifest) return [{ code: "MANIFEST_NOT_OBJECT", message: "Manifest must be a JSON object." }];
+  if (!validateCanonicalSchema(input)) {
+    for (const error of validateCanonicalSchema.errors ?? []) {
+      issues.push({
+        code: "SCHEMA_VALIDATION",
+        message: `${error.instancePath || "$"} ${error.message ?? "failed canonical schema validation"}.`,
+      });
+    }
+  }
 
   if (manifest.schemaVersion !== 1) {
     issues.push({ code: "SCHEMA_VERSION", message: "schemaVersion must equal 1." });
@@ -123,6 +170,18 @@ export function validateReleaseManifest(
       message: `Manifest production SHA ${String(manifest.currentProductionSha)} does not match expected ${options.expectedProductionSha}.`,
     });
   }
+  if (options.expectedProductionSha && manifest.baseSha !== options.expectedProductionSha) {
+    issues.push({
+      code: "STALE_BASE_SHA",
+      message: `Manifest base SHA ${String(manifest.baseSha)} does not match expected production ${options.expectedProductionSha}.`,
+    });
+  }
+  if (options.expectedHeadSha && manifest.headSha !== options.expectedHeadSha) {
+    issues.push({
+      code: "HEAD_SHA_MISMATCH",
+      message: `Manifest head SHA ${String(manifest.headSha)} does not match reviewed head ${options.expectedHeadSha}.`,
+    });
+  }
 
   const now = options.now ?? new Date();
   const createdAt = validDate(manifest.createdAt);
@@ -133,6 +192,7 @@ export function validateReleaseManifest(
   }
 
   const files = stringArray(manifest.files);
+  let ownershipFiles = files ?? [];
   if (!files || files.length === 0) {
     issues.push({ code: "FILES_REQUIRED", message: "files must contain at least one repository path." });
   } else {
@@ -145,23 +205,67 @@ export function validateReleaseManifest(
       issues.push({ code: "DUPLICATE_FILE", message: `Duplicate file entry: ${duplicate}` });
     }
 
-    if (options.ownershipRules) {
-      const lane = stringValue(manifest.lane);
-      for (const file of files) {
-        const owners = ownersForFile(file, options.ownershipRules);
-        if (owners.length === 0) {
-          issues.push({ code: "UNOWNED_FILE", message: `${file} has no write owner.` });
-        } else if (owners.length > 1) {
-          issues.push({
-            code: "OWNERSHIP_CONFLICT",
-            message: `${file} is owned by ${owners.map((owner) => owner.id).join(", ")}.`,
-          });
-        } else if (lane && owners[0].lane !== lane) {
-          issues.push({
-            code: "WRONG_LANE_OWNER",
-            message: `${file} belongs to ${owners[0].lane}, not manifest lane ${lane}.`,
-          });
-        }
+  }
+  if (options.gitBinding) {
+    if (!options.gitBinding.baseExists) {
+      issues.push({ code: "BASE_COMMIT_UNRESOLVED", message: `Manifest base commit ${String(manifest.baseSha)} cannot be resolved.` });
+    }
+    if (!options.gitBinding.headExists) {
+      issues.push({ code: "HEAD_COMMIT_UNRESOLVED", message: `Manifest head commit ${String(manifest.headSha)} cannot be resolved.` });
+    }
+    if (
+      typeof manifest.baseSha === "string" &&
+      options.gitBinding.resolvedBaseSha &&
+      manifest.baseSha !== options.gitBinding.resolvedBaseSha
+    ) {
+      issues.push({ code: "BASE_COMMIT_MISMATCH", message: `Manifest base ${manifest.baseSha} resolves to ${options.gitBinding.resolvedBaseSha}.` });
+    }
+    if (
+      typeof manifest.headSha === "string" &&
+      options.gitBinding.resolvedHeadSha &&
+      manifest.headSha !== options.gitBinding.resolvedHeadSha
+    ) {
+      issues.push({ code: "HEAD_COMMIT_MISMATCH", message: `Manifest head ${manifest.headSha} resolves to ${options.gitBinding.resolvedHeadSha}.` });
+    }
+    if (typeof manifest.headSha === "string" && manifest.headSha !== options.gitBinding.headSha) {
+      issues.push({ code: "HEAD_SHA_MISMATCH", message: `Manifest head ${manifest.headSha} does not match resolved ${options.gitBinding.headSha}.` });
+    }
+    const normalizedDiffFiles = options.gitBinding.files.map((file) => file.replaceAll("\\", "/"));
+    for (const file of normalizedDiffFiles) {
+      if (file.startsWith("/") || /^[A-Za-z]:\//.test(file) || /(^|\/)\.\.(\/|$)/.test(file)) {
+        issues.push({ code: "GIT_DIFF_UNSAFE_PATH", message: `Git diff contains unsafe path: ${file}` });
+      }
+    }
+    for (const duplicate of duplicateValues(normalizedDiffFiles)) {
+      issues.push({ code: "GIT_DIFF_DUPLICATE_PATH", message: `Git diff contains duplicate path: ${duplicate}` });
+    }
+    if (files) {
+      const difference = exactSetDifference(files, normalizedDiffFiles);
+      for (const file of difference.missing) {
+        issues.push({ code: "MANIFEST_FILE_OMITTED", message: `${file} is changed in Git but omitted from manifest.files.` });
+      }
+      for (const file of difference.extra) {
+        issues.push({ code: "MANIFEST_FILE_EXTRA", message: `${file} is claimed in manifest.files but absent from the Git diff.` });
+      }
+    }
+    ownershipFiles = normalizedDiffFiles;
+  }
+  if (options.ownershipRules) {
+    const lane = stringValue(manifest.lane);
+    for (const file of ownershipFiles) {
+      const owners = ownersForFile(file, options.ownershipRules);
+      if (owners.length === 0) {
+        issues.push({ code: "UNOWNED_FILE", message: `${file} has no write owner.` });
+      } else if (owners.length > 1) {
+        issues.push({
+          code: "OWNERSHIP_CONFLICT",
+          message: `${file} is owned by ${owners.map((owner) => owner.id).join(", ")}.`,
+        });
+      } else if (lane && owners[0].lane !== lane) {
+        issues.push({
+          code: "WRONG_LANE_OWNER",
+          message: `${file} belongs to ${owners[0].lane}, not manifest lane ${lane}.`,
+        });
       }
     }
   }
@@ -294,6 +398,50 @@ function isCli(): boolean {
   );
 }
 
+function resolveGitCommit(root: string, sha: string): string | null {
+  try {
+    return execFileSync("git", ["rev-parse", "--verify", `${sha}^{commit}`], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    try {
+      execFileSync("git", ["fetch", "--no-tags", "--depth=1", "origin", sha], {
+        cwd: root,
+        stdio: "ignore",
+      });
+      return execFileSync("git", ["rev-parse", "--verify", `${sha}^{commit}`], {
+        cwd: root,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+      }).trim();
+    } catch {
+      return null;
+    }
+  }
+}
+
+function githubReviewedHead(root: string): string | null {
+  const eventPath = process.env.GITHUB_EVENT_PATH;
+  if (eventPath) {
+    try {
+      const event = JSON.parse(readFileSync(eventPath, "utf8")) as {
+        pull_request?: { head?: { sha?: string } };
+      };
+      const sha = event.pull_request?.head?.sha;
+      if (typeof sha === "string" && SHA_PATTERN.test(sha)) return sha;
+    } catch {
+      // Fall through to the checked-out HEAD.
+    }
+  }
+  try {
+    return execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+  } catch {
+    return null;
+  }
+}
+
 if (isCli()) {
   const manifestPath = process.argv[2];
   if (!manifestPath) {
@@ -308,9 +456,36 @@ if (isCli()) {
     const ownership = JSON.parse(
       readFileSync(resolve(root, "docs/coordination/FILE_OWNERSHIP.json"), "utf8"),
     ) as { rules?: OwnershipRule[] };
+    const record = objectValue(manifest);
+    const baseSha = typeof record?.baseSha === "string" ? record.baseSha : "";
+    const headSha = typeof record?.headSha === "string" ? record.headSha : "";
+    const resolvedBaseSha = SHA_PATTERN.test(baseSha) ? resolveGitCommit(root, baseSha) : null;
+    const resolvedHeadSha = SHA_PATTERN.test(headSha) ? resolveGitCommit(root, headSha) : null;
+    const baseExists = resolvedBaseSha === baseSha;
+    const headExists = resolvedHeadSha === headSha;
+    const reviewedHead = process.env.XENIOS_EXPECTED_HEAD_SHA ?? githubReviewedHead(root) ?? "";
+    const changedFiles =
+      baseExists && headExists
+        ? execFileSync("git", ["diff", "--name-only", "--no-renames", "-z", `${baseSha}..${headSha}`, "--"], {
+            cwd: root,
+            encoding: "buffer",
+          })
+            .toString("utf8")
+            .split("\0")
+            .filter(Boolean)
+        : [];
     const issues = validateReleaseManifest(manifest, {
       expectedProductionSha: process.env.XENIOS_EXPECTED_PRODUCTION_SHA ?? production.production?.gitSha,
+      expectedHeadSha: reviewedHead,
       ownershipRules: ownership.rules ?? [],
+      gitBinding: {
+        baseExists,
+        headExists,
+        headSha: reviewedHead,
+        resolvedBaseSha: resolvedBaseSha ?? undefined,
+        resolvedHeadSha: resolvedHeadSha ?? undefined,
+        files: changedFiles,
+      },
     });
     if (issues.length > 0) {
       for (const issue of issues) console.error(`${issue.code}: ${issue.message}`);

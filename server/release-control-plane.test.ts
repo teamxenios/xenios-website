@@ -100,6 +100,157 @@ describe("release manifest validator", () => {
     ).toEqual([]);
   });
 
+  it("enforces the canonical closed schema at top-level and nested objects", () => {
+    const topLevel = validManifest();
+    topLevel.unexpected = true;
+    const nested = validManifest();
+    (nested.tests as Record<string, unknown>).focused = {
+      status: "PASS",
+      command: "npm test",
+      checkedAt: NOW.toISOString(),
+      unexpected: true,
+    };
+    const incomplete = validManifest();
+    (incomplete.rollback as Record<string, unknown>).verification = undefined;
+    delete (incomplete.rollback as Record<string, unknown>).verification;
+
+    for (const manifest of [topLevel, nested, incomplete]) {
+      expect(
+        validateReleaseManifest(manifest, {
+          now: NOW,
+          expectedProductionSha: PRODUCTION_SHA,
+          ownershipRules: ownership,
+        }).map((issue) => issue.code),
+      ).toContain("SCHEMA_VALIDATION");
+    }
+  });
+
+  it("binds exact commits and the claimed file set to the computed Git diff", () => {
+    const manifest = validManifest();
+    const matchingBinding = {
+      baseExists: true,
+      headExists: true,
+      headSha: HEAD_SHA,
+      resolvedBaseSha: PRODUCTION_SHA,
+      resolvedHeadSha: HEAD_SHA,
+      files: ["server/research/catalog/unit.ts"],
+    };
+    expect(
+      validateReleaseManifest(manifest, {
+        now: NOW,
+        expectedProductionSha: PRODUCTION_SHA,
+        expectedHeadSha: HEAD_SHA,
+        ownershipRules: ownership,
+        gitBinding: matchingBinding,
+      }),
+    ).toEqual([]);
+
+    const omitted = structuredClone(manifest);
+    omitted.files = [];
+    const extra = structuredClone(manifest);
+    extra.files = ["server/research/catalog/unit.ts", "server/research/catalog/extra.ts"];
+    const nonexistent = structuredClone(manifest);
+    nonexistent.headSha = "a".repeat(40);
+    const mismatch = structuredClone(manifest);
+    mismatch.headSha = "b".repeat(40);
+
+    expect(
+      validateReleaseManifest(omitted, {
+        now: NOW,
+        expectedProductionSha: PRODUCTION_SHA,
+        expectedHeadSha: HEAD_SHA,
+        ownershipRules: ownership,
+        gitBinding: matchingBinding,
+      }).map((issue) => issue.code),
+    ).toContain("MANIFEST_FILE_OMITTED");
+    expect(
+      validateReleaseManifest(extra, {
+        now: NOW,
+        expectedProductionSha: PRODUCTION_SHA,
+        expectedHeadSha: HEAD_SHA,
+        ownershipRules: ownership,
+        gitBinding: matchingBinding,
+      }).map((issue) => issue.code),
+    ).toContain("MANIFEST_FILE_EXTRA");
+    expect(
+      validateReleaseManifest(nonexistent, {
+        now: NOW,
+        expectedProductionSha: PRODUCTION_SHA,
+        expectedHeadSha: HEAD_SHA,
+        ownershipRules: ownership,
+        gitBinding: { ...matchingBinding, headExists: false },
+      }).map((issue) => issue.code),
+    ).toEqual(expect.arrayContaining(["HEAD_COMMIT_UNRESOLVED", "HEAD_SHA_MISMATCH"]));
+    expect(
+      validateReleaseManifest(manifest, {
+        now: NOW,
+        expectedProductionSha: PRODUCTION_SHA,
+        expectedHeadSha: HEAD_SHA,
+        ownershipRules: ownership,
+        gitBinding: { ...matchingBinding, baseExists: false, resolvedBaseSha: undefined },
+      }).map((issue) => issue.code),
+    ).toContain("BASE_COMMIT_UNRESOLVED");
+    expect(
+      validateReleaseManifest(mismatch, {
+        now: NOW,
+        expectedProductionSha: PRODUCTION_SHA,
+        expectedHeadSha: HEAD_SHA,
+        ownershipRules: ownership,
+        gitBinding: matchingBinding,
+      }).map((issue) => issue.code),
+    ).toContain("HEAD_SHA_MISMATCH");
+  });
+
+  it("runs ownership collision checks on the computed Git diff", () => {
+    const manifest = validManifest();
+    const issues = validateReleaseManifest(manifest, {
+      now: NOW,
+      expectedProductionSha: PRODUCTION_SHA,
+      expectedHeadSha: HEAD_SHA,
+      ownershipRules: [
+        ...ownership,
+        {
+          ...ownership[0],
+          id: "collision",
+          owner: "Website 2",
+          lane: "release-manager",
+        },
+      ],
+      gitBinding: {
+        baseExists: true,
+        headExists: true,
+        headSha: HEAD_SHA,
+        files: ["server/research/catalog/unit.ts"],
+      },
+    });
+    expect(issues.map((issue) => issue.code)).toContain("OWNERSHIP_CONFLICT");
+  });
+
+  it("rejects unsafe and duplicate paths returned by the computed Git diff", () => {
+    const manifest = validManifest();
+    const codes = validateReleaseManifest(manifest, {
+      now: NOW,
+      expectedProductionSha: PRODUCTION_SHA,
+      expectedHeadSha: HEAD_SHA,
+      ownershipRules: ownership,
+      gitBinding: {
+        baseExists: true,
+        headExists: true,
+        headSha: HEAD_SHA,
+        resolvedBaseSha: PRODUCTION_SHA,
+        resolvedHeadSha: HEAD_SHA,
+        files: [
+          "server/research/catalog/unit.ts",
+          "../outside.ts",
+          "server/research/catalog/unit.ts",
+        ],
+      },
+    }).map((issue) => issue.code);
+    expect(codes).toEqual(
+      expect.arrayContaining(["GIT_DIFF_UNSAFE_PATH", "GIT_DIFF_DUPLICATE_PATH"]),
+    );
+  });
+
   it("detects stale identity, stale evidence, and ownership conflicts", () => {
     const manifest = validManifest();
     manifest.currentProductionSha = "0000000000000000000000000000000000000000";

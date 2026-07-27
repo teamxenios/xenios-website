@@ -120,6 +120,8 @@
     "@types/react-signature-canvas": "^1.0.7",
     "@types/supertest": "^7.2.1",
     "@types/ws": "^8.5.13",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "drizzle-kit": "^0.31.4",
     "jsdom": "^29.1.1",
     "supertest": "^7.2.2",
