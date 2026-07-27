@@ -27,6 +27,11 @@ export function isResearchPath(pathname: string): boolean {
   return p === "/research" || p.startsWith("/research/");
 }
 
+export function isResearchAdminPath(pathname: string): boolean {
+  const p = normalize(pathname);
+  return p === "/admin/research" || p.startsWith("/admin/research/");
+}
+
 export function isResearchResetPasswordPath(pathname: string): boolean {
   // Tolerate the optional trailing slash, mirroring the wouter route pattern
   // ^/research/reset-password/?$ — the router renders the reset page at
