@@ -29,6 +29,7 @@ import {
   registerAdminCapabilityApi,
   registerMemberCapabilityApi,
 } from "./capabilities";
+import { registerResearchApi } from "./index";
 
 function makeApp() {
   const app = express();
@@ -37,6 +38,17 @@ function makeApp() {
     quantum_commerce: { enabled: false },
   }));
   registerAdminCapabilityApi(app, () => new Date("2026-07-26T00:00:00.000Z"));
+  return app;
+}
+
+function makeProductionOrderApp() {
+  const app = express();
+  app.use(express.json());
+  registerResearchApi(app);
+  registerMemberCapabilityApi(app, () => ({
+    product_commerce: { enabled: true },
+    quantum_commerce: { enabled: false },
+  }));
   return app;
 }
 
@@ -80,5 +92,42 @@ describe("canonical capabilities routes", () => {
 
     expect(res.status).toBe(401);
     expectPrivateHeaders(res.headers);
+  });
+
+  it("is not shadowed by the earlier shared-password gateway in production order", async () => {
+    const priorPassword = process.env.RESEARCH_ACCESS_PASSWORD;
+    const priorSecret = process.env.RESEARCH_SESSION_SECRET;
+    const priorPublic = process.env.RESEARCH_PUBLIC;
+    process.env.RESEARCH_ACCESS_PASSWORD = "review-password";
+    process.env.RESEARCH_SESSION_SECRET = "review-secret";
+    delete process.env.RESEARCH_PUBLIC;
+
+    try {
+      guardState.allowMember = false;
+      const signedOut = await request(makeProductionOrderApp()).get(
+        "/api/research/capabilities",
+      );
+      expect(signedOut.status).toBe(401);
+      expect(signedOut.body).toMatchObject({ ok: false, message: "Access required." });
+      expectPrivateHeaders(signedOut.headers);
+
+      guardState.allowMember = true;
+      const activeMember = await request(makeProductionOrderApp())
+        .get("/api/research/capabilities")
+        .set("Authorization", "Bearer member-token");
+      expect(activeMember.status).toBe(200);
+      expect(activeMember.body.capabilities).toMatchObject({
+        identity_verification: { enabled: false },
+        product_commerce: { enabled: true },
+      });
+      expectPrivateHeaders(activeMember.headers);
+    } finally {
+      if (priorPassword === undefined) delete process.env.RESEARCH_ACCESS_PASSWORD;
+      else process.env.RESEARCH_ACCESS_PASSWORD = priorPassword;
+      if (priorSecret === undefined) delete process.env.RESEARCH_SESSION_SECRET;
+      else process.env.RESEARCH_SESSION_SECRET = priorSecret;
+      if (priorPublic === undefined) delete process.env.RESEARCH_PUBLIC;
+      else process.env.RESEARCH_PUBLIC = priorPublic;
+    }
   });
 });

@@ -250,9 +250,20 @@ export function registerResearchApi(app: Express) {
   // data, and never mints a review cookie. This does not make research
   // public: every other route keeps its wall or member guard.
   const OPEN_RECOVERY_PATHS = new Set(["/member/forgot-password"]);
+  // These exact read routes own their stronger downstream member guard and
+  // private-response headers. Let them reach that canonical handler even when
+  // the shared review cookie is absent; otherwise this earlier gateway would
+  // shadow the route, omit its privacy headers, and reject a valid member JWT.
+  const DOWNSTREAM_MEMBER_GUARDED_READ_PATHS = new Set(["/capabilities"]);
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
     if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
+    if (
+      (req.method === "GET" || req.method === "HEAD") &&
+      DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(req.path)
+    ) {
+      return next();
+    }
     const bearer = (req.headers.authorization ?? "").startsWith("Bearer ");
     if (bearer && MEMBER_AUTHED_PREFIXES.some((p) => req.path === p || req.path.startsWith(p + "/"))) {
       return next();
