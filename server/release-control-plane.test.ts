@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  trustedReleaseIdentityFromEnvironment,
   validateReleaseManifest,
   type OwnershipRule,
 } from "../scripts/acceptance/verify-release-manifest.ts";
@@ -201,6 +202,79 @@ describe("release manifest validator", () => {
     ).toContain("HEAD_SHA_MISMATCH");
   });
 
+  it("requires an external trusted base and head and prefers pull-request event identity", () => {
+    const eventBase = PRODUCTION_SHA;
+    const eventHead = HEAD_SHA;
+    const event = trustedReleaseIdentityFromEnvironment(
+      {
+        GITHUB_EVENT_PATH: "event.json",
+        XENIOS_EXPECTED_PRODUCTION_SHA: "a".repeat(40),
+        XENIOS_EXPECTED_HEAD_SHA: "b".repeat(40),
+      },
+      () => ({
+        pull_request: {
+          base: { sha: eventBase },
+          head: { sha: eventHead },
+        },
+      }),
+    );
+    expect(event).toEqual({
+      identity: {
+        baseSha: eventBase,
+        headSha: eventHead,
+        source: "github_pull_request",
+      },
+      issues: [],
+    });
+
+    const explicit = trustedReleaseIdentityFromEnvironment({
+      XENIOS_EXPECTED_PRODUCTION_SHA: eventBase,
+      XENIOS_EXPECTED_HEAD_SHA: eventHead,
+    });
+    expect(explicit.identity).toEqual({
+      baseSha: eventBase,
+      headSha: eventHead,
+      source: "explicit_environment",
+    });
+    expect(trustedReleaseIdentityFromEnvironment({}).issues.map((issue) => issue.code)).toContain(
+      "TRUSTED_RELEASE_IDENTITY_REQUIRED",
+    );
+  });
+
+  it("cannot use candidate production or ownership edits to truncate and self-certify the trusted diff", () => {
+    const manifest = validManifest();
+    manifest.baseSha = "c".repeat(40);
+    manifest.currentProductionSha = "c".repeat(40);
+    const codes = validateReleaseManifest(manifest, {
+      now: NOW,
+      expectedProductionSha: PRODUCTION_SHA,
+      expectedHeadSha: HEAD_SHA,
+      ownershipRules: [{
+        id: "candidate-self-authorization",
+        owner: "candidate-self-authorization",
+        lane: "catalog",
+        mode: "write",
+        state: "active",
+        patterns: ["**"],
+      }],
+      gitBinding: {
+        baseExists: true,
+        headExists: true,
+        headSha: HEAD_SHA,
+        resolvedBaseSha: "c".repeat(40),
+        resolvedHeadSha: HEAD_SHA,
+        files: ["server/research/catalog/unit.ts", "package.json"],
+      },
+    }).map((issue) => issue.code);
+    expect(codes).toEqual(
+      expect.arrayContaining([
+        "STALE_PRODUCTION_SHA",
+        "STALE_BASE_SHA",
+        "MANIFEST_FILE_OMITTED",
+      ]),
+    );
+  });
+
   it("runs ownership collision checks on the computed Git diff", () => {
     const manifest = validManifest();
     const issues = validateReleaseManifest(manifest, {
@@ -248,6 +322,43 @@ describe("release manifest validator", () => {
     }).map((issue) => issue.code);
     expect(codes).toEqual(
       expect.arrayContaining(["GIT_DIFF_UNSAFE_PATH", "GIT_DIFF_DUPLICATE_PATH"]),
+    );
+  });
+
+  it("rejects literal backslashes without aliasing them into owned POSIX paths", () => {
+    const manifest = validManifest();
+    const aliasCodes = validateReleaseManifest(manifest, {
+      now: NOW,
+      expectedProductionSha: PRODUCTION_SHA,
+      expectedHeadSha: HEAD_SHA,
+      ownershipRules: ownership,
+      gitBinding: {
+        baseExists: true,
+        headExists: true,
+        headSha: HEAD_SHA,
+        resolvedBaseSha: PRODUCTION_SHA,
+        resolvedHeadSha: HEAD_SHA,
+        files: ["server\\research\\catalog\\unit.ts"],
+      },
+    }).map((issue) => issue.code);
+    expect(aliasCodes).toEqual(
+      expect.arrayContaining([
+        "GIT_DIFF_UNSAFE_PATH",
+        "MANIFEST_FILE_OMITTED",
+        "MANIFEST_FILE_EXTRA",
+        "UNOWNED_FILE",
+      ]),
+    );
+
+    const manifestBackslash = validManifest();
+    manifestBackslash.files = ["server\\research\\catalog\\unit.ts"];
+    const manifestCodes = validateReleaseManifest(manifestBackslash, {
+      now: NOW,
+      expectedProductionSha: PRODUCTION_SHA,
+      ownershipRules: ownership,
+    }).map((issue) => issue.code);
+    expect(manifestCodes).toEqual(
+      expect.arrayContaining(["SCHEMA_VALIDATION", "UNSAFE_FILE_PATH", "UNOWNED_FILE"]),
     );
   });
 

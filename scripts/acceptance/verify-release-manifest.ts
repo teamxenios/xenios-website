@@ -35,6 +35,17 @@ export type ReleaseManifestValidationOptions = {
   };
 };
 
+export type TrustedReleaseIdentity = {
+  baseSha: string;
+  headSha: string;
+  source: "github_pull_request" | "explicit_environment";
+};
+
+export type TrustedReleaseIdentityResult = {
+  identity: TrustedReleaseIdentity | null;
+  issues: ValidationIssue[];
+};
+
 const SHA_PATTERN = /^[0-9a-f]{40}$/;
 const SHA256_PATTERN = /^[0-9a-f]{64}$/;
 const ENV_PATTERN = /^[A-Z][A-Z0-9_]*$/;
@@ -58,6 +69,70 @@ const CANONICAL_SCHEMA = JSON.parse(
 const schemaValidator = new Ajv2020({ allErrors: true, strict: true });
 addFormats(schemaValidator);
 const validateCanonicalSchema = schemaValidator.compile(CANONICAL_SCHEMA);
+
+export function trustedReleaseIdentityFromEnvironment(
+  environment: Record<string, string | undefined> = process.env,
+  readEvent: (path: string) => unknown = (path) => JSON.parse(readFileSync(path, "utf8")) as unknown,
+): TrustedReleaseIdentityResult {
+  const eventPath = environment.GITHUB_EVENT_PATH;
+  if (eventPath) {
+    try {
+      const event = objectValue(readEvent(eventPath));
+      const pullRequest = objectValue(event?.pull_request);
+      if (pullRequest) {
+        const baseSha = objectValue(pullRequest.base)?.sha;
+        const headSha = objectValue(pullRequest.head)?.sha;
+        if (
+          typeof baseSha === "string" &&
+          SHA_PATTERN.test(baseSha) &&
+          typeof headSha === "string" &&
+          SHA_PATTERN.test(headSha)
+        ) {
+          return {
+            identity: { baseSha, headSha, source: "github_pull_request" },
+            issues: [],
+          };
+        }
+        return {
+          identity: null,
+          issues: [{
+            code: "TRUSTED_GITHUB_IDENTITY_INVALID",
+            message: "GitHub pull_request event must contain valid base.sha and head.sha.",
+          }],
+        };
+      }
+    } catch {
+      return {
+        identity: null,
+        issues: [{
+          code: "TRUSTED_GITHUB_EVENT_INVALID",
+          message: "GITHUB_EVENT_PATH could not be parsed as a trusted event.",
+        }],
+      };
+    }
+  }
+
+  const baseSha = environment.XENIOS_EXPECTED_PRODUCTION_SHA;
+  const headSha = environment.XENIOS_EXPECTED_HEAD_SHA;
+  if (
+    typeof baseSha === "string" &&
+    SHA_PATTERN.test(baseSha) &&
+    typeof headSha === "string" &&
+    SHA_PATTERN.test(headSha)
+  ) {
+    return {
+      identity: { baseSha, headSha, source: "explicit_environment" },
+      issues: [],
+    };
+  }
+  return {
+    identity: null,
+    issues: [{
+      code: "TRUSTED_RELEASE_IDENTITY_REQUIRED",
+      message: "Outside pull-request CI, XENIOS_EXPECTED_PRODUCTION_SHA and XENIOS_EXPECTED_HEAD_SHA are required.",
+    }],
+  };
+}
 
 function objectValue(value: unknown): Record<string, unknown> | null {
   return value !== null && typeof value === "object" && !Array.isArray(value)
@@ -115,12 +190,11 @@ function globToRegExp(glob: string): RegExp {
 }
 
 export function ownersForFile(file: string, rules: OwnershipRule[]): OwnershipRule[] {
-  const normalized = file.replaceAll("\\", "/");
   return rules.filter(
     (rule) =>
       rule.mode === "write" &&
       rule.state !== "retired" &&
-      rule.patterns.some((pattern) => globToRegExp(pattern).test(normalized)),
+      rule.patterns.some((pattern) => globToRegExp(pattern).test(file)),
   );
 }
 
@@ -197,7 +271,12 @@ export function validateReleaseManifest(
     issues.push({ code: "FILES_REQUIRED", message: "files must contain at least one repository path." });
   } else {
     for (const file of files) {
-      if (file.startsWith("/") || /^[A-Za-z]:[\\/]/.test(file) || /(^|\/)\.\.(\/|$)/.test(file)) {
+      if (
+        file.includes("\\") ||
+        file.startsWith("/") ||
+        /^[A-Za-z]:[\\/]/.test(file) ||
+        /(^|\/)\.\.(\/|$)/.test(file)
+      ) {
         issues.push({ code: "UNSAFE_FILE_PATH", message: `Unsafe repository path: ${file}` });
       }
     }
@@ -230,17 +309,22 @@ export function validateReleaseManifest(
     if (typeof manifest.headSha === "string" && manifest.headSha !== options.gitBinding.headSha) {
       issues.push({ code: "HEAD_SHA_MISMATCH", message: `Manifest head ${manifest.headSha} does not match resolved ${options.gitBinding.headSha}.` });
     }
-    const normalizedDiffFiles = options.gitBinding.files.map((file) => file.replaceAll("\\", "/"));
-    for (const file of normalizedDiffFiles) {
-      if (file.startsWith("/") || /^[A-Za-z]:\//.test(file) || /(^|\/)\.\.(\/|$)/.test(file)) {
+    const exactDiffFiles = options.gitBinding.files;
+    for (const file of exactDiffFiles) {
+      if (
+        file.includes("\\") ||
+        file.startsWith("/") ||
+        /^[A-Za-z]:\//.test(file) ||
+        /(^|\/)\.\.(\/|$)/.test(file)
+      ) {
         issues.push({ code: "GIT_DIFF_UNSAFE_PATH", message: `Git diff contains unsafe path: ${file}` });
       }
     }
-    for (const duplicate of duplicateValues(normalizedDiffFiles)) {
+    for (const duplicate of duplicateValues(exactDiffFiles)) {
       issues.push({ code: "GIT_DIFF_DUPLICATE_PATH", message: `Git diff contains duplicate path: ${duplicate}` });
     }
     if (files) {
-      const difference = exactSetDifference(files, normalizedDiffFiles);
+      const difference = exactSetDifference(files, exactDiffFiles);
       for (const file of difference.missing) {
         issues.push({ code: "MANIFEST_FILE_OMITTED", message: `${file} is changed in Git but omitted from manifest.files.` });
       }
@@ -248,7 +332,7 @@ export function validateReleaseManifest(
         issues.push({ code: "MANIFEST_FILE_EXTRA", message: `${file} is claimed in manifest.files but absent from the Git diff.` });
       }
     }
-    ownershipFiles = normalizedDiffFiles;
+    ownershipFiles = exactDiffFiles;
   }
   if (options.ownershipRules) {
     const lane = stringValue(manifest.lane);
@@ -422,26 +506,6 @@ function resolveGitCommit(root: string, sha: string): string | null {
   }
 }
 
-function githubReviewedHead(root: string): string | null {
-  const eventPath = process.env.GITHUB_EVENT_PATH;
-  if (eventPath) {
-    try {
-      const event = JSON.parse(readFileSync(eventPath, "utf8")) as {
-        pull_request?: { head?: { sha?: string } };
-      };
-      const sha = event.pull_request?.head?.sha;
-      if (typeof sha === "string" && SHA_PATTERN.test(sha)) return sha;
-    } catch {
-      // Fall through to the checked-out HEAD.
-    }
-  }
-  try {
-    return execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
-  } catch {
-    return null;
-  }
-}
-
 if (isCli()) {
   const manifestPath = process.argv[2];
   if (!manifestPath) {
@@ -450,9 +514,6 @@ if (isCli()) {
   } else {
     const root = process.cwd();
     const manifest = JSON.parse(readFileSync(resolve(root, manifestPath), "utf8")) as unknown;
-    const production = JSON.parse(
-      readFileSync(resolve(root, "docs/coordination/CURRENT_PRODUCTION_STATE.json"), "utf8"),
-    ) as { production?: { gitSha?: string } };
     const ownership = JSON.parse(
       readFileSync(resolve(root, "docs/coordination/FILE_OWNERSHIP.json"), "utf8"),
     ) as { rules?: OwnershipRule[] };
@@ -463,7 +524,9 @@ if (isCli()) {
     const resolvedHeadSha = SHA_PATTERN.test(headSha) ? resolveGitCommit(root, headSha) : null;
     const baseExists = resolvedBaseSha === baseSha;
     const headExists = resolvedHeadSha === headSha;
-    const reviewedHead = process.env.XENIOS_EXPECTED_HEAD_SHA ?? githubReviewedHead(root) ?? "";
+    const trusted = trustedReleaseIdentityFromEnvironment();
+    const reviewedBase = trusted.identity?.baseSha ?? "";
+    const reviewedHead = trusted.identity?.headSha ?? "";
     const changedFiles =
       baseExists && headExists
         ? execFileSync("git", ["diff", "--name-only", "--no-renames", "-z", `${baseSha}..${headSha}`, "--"], {
@@ -474,8 +537,8 @@ if (isCli()) {
             .split("\0")
             .filter(Boolean)
         : [];
-    const issues = validateReleaseManifest(manifest, {
-      expectedProductionSha: process.env.XENIOS_EXPECTED_PRODUCTION_SHA ?? production.production?.gitSha,
+    const issues = [...trusted.issues, ...validateReleaseManifest(manifest, {
+      expectedProductionSha: reviewedBase,
       expectedHeadSha: reviewedHead,
       ownershipRules: ownership.rules ?? [],
       gitBinding: {
@@ -486,7 +549,7 @@ if (isCli()) {
         resolvedHeadSha: resolvedHeadSha ?? undefined,
         files: changedFiles,
       },
-    });
+    })];
     if (issues.length > 0) {
       for (const issue of issues) console.error(`${issue.code}: ${issue.message}`);
       process.exitCode = 1;

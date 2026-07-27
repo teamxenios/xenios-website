@@ -3,7 +3,10 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { OwnershipRule, ValidationIssue } from "./verify-release-manifest.ts";
-import { ownersForFile } from "./verify-release-manifest.ts";
+import {
+  ownersForFile,
+  trustedReleaseIdentityFromEnvironment,
+} from "./verify-release-manifest.ts";
 
 type ProductionCandidate = {
   pullRequest?: number;
@@ -421,13 +424,14 @@ if (isCli()) {
   const ownership = JSON.parse(
     readFileSync(resolve(root, "docs/coordination/FILE_OWNERSHIP.json"), "utf8"),
   ) as FileOwnership;
+  const trusted = trustedReleaseIdentityFromEnvironment();
   const repoFiles = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
     .split(/\r?\n/)
     .filter(Boolean);
-  const issues = validateProductionState(state, graph, ownership, {
-    expectedProductionSha: process.env.XENIOS_EXPECTED_PRODUCTION_SHA,
+  const issues = [...trusted.issues, ...validateProductionState(state, graph, ownership, {
+    expectedProductionSha: trusted.identity?.baseSha,
     repoFiles,
-  });
+  })];
   if (issues.length > 0) {
     for (const issue of issues) console.error(`${issue.code}: ${issue.message}`);
     process.exitCode = 1;
