@@ -115,6 +115,8 @@ returns boolean language plpgsql security definer set search_path = pg_catalog a
 declare v_input jsonb; v_domain jsonb;
 begin
   if p_selection->'canonicalReadiness'->>'ready' <> 'true'
+     or nullif(btrim(p_selection->>'displayName'), '') is null
+     or p_selection->>'fulfillmentOwner' not in ('mitch','xenios')
      or p_selection->'inventoryEligibility'->>'state' <> 'eligible'
      or p_selection->'inventoryEligibility'->>'productId' <> p_selection->>'productId'
      or p_selection->'inventoryEligibility'->>'variantId' <> p_selection->>'variantId'
@@ -165,6 +167,8 @@ begin
     where p.id = (p_selection->>'productId')::uuid
       and v.id = (p_selection->>'variantId')::uuid
       and v.sku = p_selection->>'sku'
+      and p.display_name = p_selection->>'displayName'
+      and p.fulfillment_owner = p_selection->>'fulfillmentOwner'
       and p.admin_status = 'published' and p.active_state and p.visibility_state <> 'hidden'
       and v.status = 'approved' and v.active
       and r.id = (p_selection->'price'->>'id')::uuid
@@ -244,6 +248,8 @@ returns jsonb language sql security definer set search_path = pg_catalog as $$
       select jsonb_agg(jsonb_build_object(
         'id', i.id, 'productId', i.product_id, 'variantId', i.variant_id,
         'sku', i.sku, 'audience', i.audience, 'quantity', i.quantity,
+        'displayName', i.selection_snapshot->>'displayName',
+        'fulfillmentOwner', i.selection_snapshot->>'fulfillmentOwner',
         'priceReference', jsonb_build_object(
           'id', i.price_id, 'amountCents', i.price_amount_cents,
           'currency', i.price_currency, 'effectiveAt', i.price_effective_at,

@@ -101,6 +101,8 @@ export type CartProductSelection = {
   productId: string;
   variantId: string;
   sku: string;
+  displayName: string;
+  fulfillmentOwner: "mitch" | "xenios";
   audience: CartPurchaseAudience;
   audienceEligibility: CartAudienceEligibility & { state: "authorized" };
   price: {

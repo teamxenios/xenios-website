@@ -28,6 +28,7 @@ function summary(
     visibility: "public",
     availability: "in_stock",
     commerceApproval: "approved",
+    fulfillmentOwner: "mitch",
     qualityDocumentState: "approved",
     variantCount: 1,
     approvedVariantCount: 1,

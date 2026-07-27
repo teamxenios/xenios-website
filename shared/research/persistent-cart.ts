@@ -21,6 +21,8 @@ export type PersistentCartItem = {
   productId: string;
   variantId: string;
   sku: string;
+  displayName: string;
+  fulfillmentOwner: "mitch" | "xenios";
   audience: CartProductSelection["audience"];
   quantity: number;
   priceReference: CartProductSelection["price"];

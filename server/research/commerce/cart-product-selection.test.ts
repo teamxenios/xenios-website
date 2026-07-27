@@ -83,6 +83,7 @@ function source(): CartProductSelectionSource {
         visibility: "members_only",
         availability: "in_stock",
         commerceApproval: "approved",
+        fulfillmentOwner: "mitch",
         qualityDocumentState: "approved",
         variantCount: 1,
         approvedVariantCount: 1,
@@ -194,6 +195,18 @@ describe("Website 3 cart product selection", () => {
     expect(selectCartProduct(request, missingInventory)).toEqual({
       ok: false,
       code: "inventory_eligibility_missing",
+    });
+  });
+
+  it("fails closed when fulfillment ownership is not assigned", () => {
+    const value = source();
+    value.products = value.products.map((product) => ({
+      ...product,
+      fulfillmentOwner: "not_assigned",
+    }));
+    expect(selectCartProduct(request, value)).toEqual({
+      ok: false,
+      code: "invalid_projection",
     });
   });
 

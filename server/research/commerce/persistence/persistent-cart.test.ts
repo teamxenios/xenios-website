@@ -15,6 +15,8 @@ const selection: CartProductSelection = {
   productId: product,
   variantId: variant,
   sku: "SKU-1",
+  displayName: "Product One",
+  fulfillmentOwner: "mitch",
   audience: "member",
   audienceEligibility: {
     audience: "member",

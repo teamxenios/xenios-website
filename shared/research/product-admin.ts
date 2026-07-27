@@ -101,6 +101,7 @@ export interface AdminProductSummary {
   visibility: ProductVisibilityState;
   availability: ProductAvailability;
   commerceApproval: CommerceApprovalState;
+  fulfillmentOwner: "mitch" | "xenios" | "not_assigned";
   qualityDocumentState: DocumentState;
   variantCount: number;
   approvedVariantCount: number;

@@ -94,6 +94,10 @@ function productSummary(
       row.commerce_approval,
       "blocked_pending_written_approval",
     ) as AdminProductSummary["commerceApproval"],
+    fulfillmentOwner: rowText(
+      row.fulfillment_owner,
+      "not_assigned",
+    ) as AdminProductSummary["fulfillmentOwner"],
     qualityDocumentState: rowText(
       row.quality_document_state,
       "missing",

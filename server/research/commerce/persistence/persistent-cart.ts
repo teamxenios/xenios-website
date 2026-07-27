@@ -68,6 +68,9 @@ function parseCart(value: unknown): PersistentCartResult {
         validUuid(row.variantId as string) &&
         typeof row.sku === "string" &&
         row.sku.length > 0 &&
+        typeof row.displayName === "string" &&
+        row.displayName.trim().length > 0 &&
+        ["mitch", "xenios"].includes(String(row.fulfillmentOwner)) &&
         Number.isSafeInteger(row.quantity) &&
         (row.quantity as number) >= 1 &&
         (row.quantity as number) <= PERSISTENT_CART_QUANTITY_MAX &&
@@ -125,6 +128,8 @@ function validMutation(input: PutPersistentCartItemInput): boolean {
     validUuid(input.selection.variantId) &&
     validUuid(input.selection.price.id) &&
     Boolean(input.selection.sku.trim()) &&
+    Boolean(input.selection.displayName.trim()) &&
+    ["mitch", "xenios"].includes(input.selection.fulfillmentOwner) &&
     input.selection.canonicalReadiness.ready === true &&
     input.selection.inventoryEligibility.state === "eligible" &&
     input.selection.inventoryEligibility.productId === input.selection.productId &&

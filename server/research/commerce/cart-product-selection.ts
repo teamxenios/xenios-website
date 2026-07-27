@@ -268,6 +268,12 @@ export function selectCartProduct(
   if (!["in_stock", "low_stock"].includes(product.availability)) {
     return blocked("product_unavailable");
   }
+  if (
+    product.fulfillmentOwner !== "mitch" &&
+    product.fulfillmentOwner !== "xenios"
+  ) {
+    return blocked("invalid_projection");
+  }
 
   const audienceEligibility: CartAudienceEligibility | null =
     source.audienceEligibility;
@@ -330,6 +336,8 @@ export function selectCartProduct(
     productId: product.id,
     variantId: variant.id,
     sku: variant.sku,
+    displayName: product.displayName,
+    fulfillmentOwner: product.fulfillmentOwner,
     audience: request.audience,
     audienceEligibility: {
       audience: audienceEligibility.audience,

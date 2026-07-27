@@ -60,6 +60,8 @@ function validSelection(value: unknown): value is CartProductSelection {
     !isText(value.productId) ||
     !isText(value.variantId) ||
     !isText(value.sku) ||
+    !isText(value.displayName) ||
+    !["mitch", "xenios"].includes(String(value.fulfillmentOwner)) ||
     !isText(value.audience) ||
     !(CART_PURCHASE_AUDIENCES as readonly string[]).includes(value.audience) ||
     !isIso(value.evaluatedAt) ||
@@ -144,6 +146,8 @@ function browserSafeSelection(
     productId: selection.productId,
     variantId: selection.variantId,
     sku: selection.sku,
+    displayName: selection.displayName,
+    fulfillmentOwner: selection.fulfillmentOwner,
     audience: selection.audience,
     audienceEligibility: {
       audience: selection.audienceEligibility.audience,

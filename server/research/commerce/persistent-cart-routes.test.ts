@@ -13,6 +13,8 @@ const selection: CartProductSelection = {
   productId,
   variantId,
   sku: "SKU-1",
+  displayName: "Product One",
+  fulfillmentOwner: "mitch",
   audience: "member",
   audienceEligibility: {
     audience: "member",
