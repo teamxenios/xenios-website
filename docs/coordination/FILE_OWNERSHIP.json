@@ -31,7 +31,7 @@
       "owner": "Website 4",
       "lane": "wave3-atomic-inventory-reservation",
       "state": "FROZEN_ACCEPTED_INTEGRATION_PENDING",
-      "activeUnit": "PR #92 exact accepted source d9107eb69355513ab89c82b6ff48c2bfe6174895; write lease transferred to Website 2 for byte-preserving integration.",
+      "activeUnit": "PR #92 production-compatible exact accepted source 31b91f107cd2a54140d007267bb4cc02549e8404; write lease transferred to Website 2 for byte-preserving integration.",
       "branch": "feature/website-4-wave3-atomic-inventory-reservation",
       "headSha": null
     },
