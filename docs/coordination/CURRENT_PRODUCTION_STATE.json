@@ -229,7 +229,13 @@
     },
     {
       "owner": "Website 4",
+      "baseSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
       "scope": "PR 80 seven-finding inventory/lot/COA replacement only",
+      "authorizedAdditionalTestFiles": [
+        "server/research/inventory-admin/production.test.ts",
+        "client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx",
+        "client/src/research/pages/adminx/LotCoasAdmin.test.tsx"
+      ],
       "prohibitedHeadSha": "f646708d45d4a6e4e7acf4e2653e44746baef184"
     },
     {

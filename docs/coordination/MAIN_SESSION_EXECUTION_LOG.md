@@ -114,6 +114,21 @@ the superseded entry.
 - PR #85 is not included in PR #87; its separate integration candidate remains
   pending. Production effect: none.
 
+## 2026-07-27T03:13:00Z — Website 4 regression ownership expanded
+
+- Website 4 is authorized on current base
+  `d494150668de2ede8a61fd0d28bc9ff9a75def26` to add exactly three disjoint PR
+  #80 regression files:
+  `server/research/inventory-admin/production.test.ts`,
+  `client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx`, and
+  `client/src/research/pages/adminx/LotCoasAdmin.test.tsx`.
+- The files cover RPC wiring, stable React form references, and cross-document
+  COA editor isolation. They do not overlap shared routes or control-plane
+  files.
+- Existing PR #80 head `f646708d45d4a6e4e7acf4e2653e44746baef184`
+  remains prohibited; the current dirty Website 4 branch is not mergeable.
+- Production effect: none.
+
 ## 2026-07-27T02:49:00Z — PR #86 GitHub checks completed
 
 - Exact PR #86 head `4f71648aa5684ebec70f14b7e09268331c522969`
