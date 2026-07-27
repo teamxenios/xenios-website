@@ -2,9 +2,14 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { OwnershipRule, ValidationIssue } from "./verify-release-manifest.ts";
+import type {
+  OwnershipDocument,
+  OwnershipRule,
+  ValidationIssue,
+} from "./verify-release-manifest.ts";
 import {
   ownersForFile,
+  parseOwnershipDocument,
   trustedOwnershipPolicy,
   trustedReleaseIdentityFromEnvironment,
 } from "./verify-release-manifest.ts";
@@ -34,6 +39,7 @@ type ProductionEvidence = {
 
 export type ProductionState = {
   schemaVersion: number;
+  identitySemantics: "TRUSTED_RELEASE_BASELINE";
   generatedAt: string;
   production: {
     gitSha: string;
@@ -88,6 +94,7 @@ export type ProductionState = {
 
 export type ReleaseGraph = {
   schemaVersion: number;
+  identitySemantics: "TRUSTED_RELEASE_BASELINE";
   generatedAt: string;
   productionSha: string;
   nodes: Array<{
@@ -102,27 +109,46 @@ export type ReleaseGraph = {
   edges: Array<{ from: string; to: string; relation: string }>;
 };
 
-export type FileOwnership = {
-  schemaVersion: number;
-  generatedAt: string;
-  productionBaseSha: string;
-  lanes: Array<{
-    owner: string;
-    lane: string;
-    state: string;
-    activeUnit: string;
-    branch: string | null;
-    headSha: string | null;
-  }>;
-  rules: OwnershipRule[];
-  invariants: string[];
-};
+export type FileOwnership = OwnershipDocument;
 
 export type ProductionValidationOptions = {
   now?: Date;
   maxEvidenceAgeMs?: number;
-  expectedProductionSha?: string;
+  trustedReleaseBaseSha?: string;
+  baselineAncestorOfTrustedBase?: boolean;
+  migrationBaselineSha?: string;
   repoFiles?: string[];
+};
+
+export type ObservedDeployment = {
+  baselineSha: string;
+  acceptedCandidateSha: string;
+  observedMainSha: string;
+  observedRenderSha: string;
+  renderDeploymentId: string;
+  expectedObservedTreeSha: string;
+};
+
+export type ObservedDeploymentBinding = {
+  baselineExists: boolean;
+  candidateExists: boolean;
+  observedExists: boolean;
+  resolvedBaselineSha?: string;
+  resolvedCandidateSha?: string;
+  resolvedObservedSha?: string;
+  resolvedObservedTreeSha?: string;
+  checkoutHeadSha?: string;
+  baselineAncestorOfObserved: boolean;
+  candidateAncestorOfObserved: boolean;
+  scopedFilesMatch: boolean;
+  runtimeEvidencePassed: boolean;
+  routeEvidencePassed: boolean;
+  healthStatus: number;
+};
+
+export type CurrentOwnershipSnapshotResult = {
+  ownership: FileOwnership | null;
+  issues: ValidationIssue[];
 };
 
 const SHA_PATTERN = /^[0-9a-f]{40}$/;
@@ -132,6 +158,35 @@ const DEFAULT_MAX_EVIDENCE_AGE_MS = 7 * 24 * 60 * 60 * 1_000;
 function parsedDate(value: string): Date | null {
   const parsed = new Date(value);
   return Number.isFinite(parsed.getTime()) ? parsed : null;
+}
+
+export function loadCurrentOwnershipSnapshot(
+  root: string,
+  readSnapshot: (path: string) => string = (path) => readFileSync(path, "utf8"),
+): CurrentOwnershipSnapshotResult {
+  let raw: string;
+  try {
+    raw = readSnapshot(resolve(root, "docs/coordination/FILE_OWNERSHIP.json"));
+  } catch {
+    return {
+      ownership: null,
+      issues: [{
+        code: "CURRENT_OWNERSHIP_SNAPSHOT_INVALID",
+        message: "The current FILE_OWNERSHIP snapshot is missing or invalid JSON.",
+      }],
+    };
+  }
+  const parsed = parseOwnershipDocument(raw);
+  if (!parsed.document || parsed.issues.length > 0) {
+    return {
+      ownership: null,
+      issues: [{
+        code: "CURRENT_OWNERSHIP_SNAPSHOT_INVALID",
+        message: "The current FILE_OWNERSHIP snapshot does not match the complete canonical structure.",
+      }],
+    };
+  }
+  return { ownership: parsed.document, issues: [] };
 }
 
 function findGraphCycles(graph: ReleaseGraph): string[][] {
@@ -215,6 +270,15 @@ export function validateProductionState(
   if (![1, 2].includes(state.schemaVersion) || graph.schemaVersion !== 1) {
     issues.push({ code: "STATE_SCHEMA_VERSION", message: "Production state schemaVersion must be 1 or 2 and release graph schemaVersion must be 1." });
   }
+  if (
+    state.identitySemantics !== "TRUSTED_RELEASE_BASELINE" ||
+    graph.identitySemantics !== "TRUSTED_RELEASE_BASELINE"
+  ) {
+    issues.push({
+      code: "PRODUCTION_IDENTITY_SEMANTICS",
+      message: "Production state and release graph must describe a trusted release baseline.",
+    });
+  }
   if (!SHA_PATTERN.test(state.production?.gitSha ?? "")) {
     issues.push({ code: "PRODUCTION_SHA", message: "Production gitSha must be a lowercase 40-character SHA." });
   }
@@ -227,16 +291,24 @@ export function validateProductionState(
   if (state.production?.branch !== "main") {
     issues.push({ code: "PRODUCTION_BRANCH", message: "Production branch must be main." });
   }
-  if (options.expectedProductionSha && state.production.gitSha !== options.expectedProductionSha) {
+  if (
+    options.trustedReleaseBaseSha &&
+    state.production.gitSha !== options.trustedReleaseBaseSha &&
+    options.baselineAncestorOfTrustedBase !== true
+  ) {
     issues.push({
-      code: "STALE_PRODUCTION_SHA",
-      message: `Recorded production ${state.production.gitSha} does not match expected ${options.expectedProductionSha}.`,
+      code: "STALE_PRODUCTION_BASELINE",
+      message: `Recorded baseline ${state.production.gitSha} is not the trusted release base ${options.trustedReleaseBaseSha} or its ancestor.`,
     });
   }
-  if (graph.productionSha !== state.production.gitSha || ownership.productionBaseSha !== state.production.gitSha) {
+  if (
+    graph.productionSha !== state.production.gitSha ||
+    ownership.productionBaseSha !== state.production.gitSha ||
+    options.migrationBaselineSha !== state.production.gitSha
+  ) {
     issues.push({
-      code: "PRODUCTION_IDENTITY_CONTRADICTION",
-      message: "Production SHA differs across CURRENT_PRODUCTION_STATE, ACTIVE_RELEASE_GRAPH, and FILE_OWNERSHIP.",
+      code: "BASELINE_IDENTITY_CONTRADICTION",
+      message: "Trusted release baseline differs across production state, release graph, ownership policy origin, or migration DAG.",
     });
   }
 
@@ -301,15 +373,15 @@ export function validateProductionState(
     });
   }
 
-  const deployed = graph.nodes.filter((node) => node.state === "DEPLOYED");
+  const deployed = graph.nodes.filter((node) => node.state === "AUDITED_BASELINE");
   if (
     deployed.length !== 1 ||
-    deployed[0].type !== "production" ||
+    deployed[0].type !== "production_baseline" ||
     deployed[0].sha !== state.production.gitSha
   ) {
     issues.push({
-      code: "DEPLOYED_NODE_CONTRADICTION",
-      message: "Release graph must contain exactly one deployed production node matching current production.",
+      code: "BASELINE_NODE_CONTRADICTION",
+      message: "Release graph must contain exactly one audited production baseline node matching the state baseline.",
     });
   }
 
@@ -407,11 +479,166 @@ export function validateProductionState(
   return issues;
 }
 
+export function validateObservedDeployment(
+  state: ProductionState,
+  observation: ObservedDeployment,
+  binding: ObservedDeploymentBinding,
+): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  for (const [field, sha] of [
+    ["baselineSha", observation.baselineSha],
+    ["acceptedCandidateSha", observation.acceptedCandidateSha],
+    ["observedMainSha", observation.observedMainSha],
+    ["observedRenderSha", observation.observedRenderSha],
+    ["expectedObservedTreeSha", observation.expectedObservedTreeSha],
+  ] as const) {
+    if (!SHA_PATTERN.test(sha)) {
+      issues.push({
+        code: "OBSERVED_DEPLOYMENT_SHA_INVALID",
+        message: `${field} must be a lowercase 40-character SHA.`,
+      });
+    }
+  }
+  if (!RENDER_DEPLOYMENT_PATTERN.test(observation.renderDeploymentId)) {
+    issues.push({
+      code: "OBSERVED_RENDER_DEPLOYMENT_INVALID",
+      message: "Observed Render deployment identity is invalid.",
+    });
+  }
+  if (observation.baselineSha !== state.production.gitSha) {
+    issues.push({
+      code: "OBSERVED_BASELINE_MISMATCH",
+      message: "Observed deployment baseline does not match the checked-in trusted release baseline.",
+    });
+  }
+  if (observation.observedMainSha !== observation.observedRenderSha) {
+    issues.push({
+      code: "OBSERVED_DEPLOYMENT_IDENTITY_MISMATCH",
+      message: "Observed main and Render Git identities differ.",
+    });
+  }
+  if (binding.checkoutHeadSha !== observation.observedMainSha) {
+    issues.push({
+      code: "OBSERVED_CHECKOUT_MISMATCH",
+      message: "The validator checkout HEAD does not equal the externally observed main identity.",
+    });
+  }
+  if (
+    !binding.baselineExists ||
+    binding.resolvedBaselineSha !== observation.baselineSha ||
+    !binding.candidateExists ||
+    binding.resolvedCandidateSha !== observation.acceptedCandidateSha ||
+    !binding.observedExists ||
+    binding.resolvedObservedSha !== observation.observedMainSha
+  ) {
+    issues.push({
+      code: "OBSERVED_DEPLOYMENT_UNRESOLVED",
+      message: "Baseline, accepted candidate, and observed deployment must resolve to their exact commits.",
+    });
+  }
+  if (binding.resolvedObservedTreeSha !== observation.expectedObservedTreeSha) {
+    issues.push({
+      code: "OBSERVED_TREE_MISMATCH",
+      message: "Observed deployment tree does not match the externally reviewed merge tree.",
+    });
+  }
+  if (!binding.baselineAncestorOfObserved) {
+    issues.push({
+      code: "OBSERVED_BASELINE_NOT_ANCESTOR",
+      message: "Observed deployment does not descend from the trusted release baseline.",
+    });
+  }
+  if (!binding.candidateAncestorOfObserved) {
+    issues.push({
+      code: "OBSERVED_CANDIDATE_NOT_ANCESTOR",
+      message: "Observed deployment does not contain the accepted candidate.",
+    });
+  }
+  if (!binding.scopedFilesMatch) {
+    issues.push({
+      code: "OBSERVED_SCOPED_BLOB_MISMATCH",
+      message: "Accepted candidate scoped files are not byte-identical in the observed deployment.",
+    });
+  }
+  if (
+    binding.healthStatus !== 200 ||
+    !binding.runtimeEvidencePassed ||
+    !binding.routeEvidencePassed
+  ) {
+    issues.push({
+      code: "OBSERVED_RUNTIME_EVIDENCE_FAILED",
+      message: "Observed deployment requires passing health, runtime, and route evidence.",
+    });
+  }
+  return issues;
+}
+
+export function productionAcceptanceMessage(
+  state: ProductionState,
+  observation: ObservedDeployment | null = null,
+): string {
+  if (observation) {
+    return `Observed deployment accepted: ${observation.observedMainSha} / ${observation.renderDeploymentId} (baseline ${state.production.gitSha}).`;
+  }
+  return `Trusted release baseline accepted: ${state.production.gitSha} / ${state.production.renderDeploymentId}.`;
+}
+
 function isCli(): boolean {
   return Boolean(
     process.argv[1] &&
       resolve(process.argv[1]).toLowerCase() === fileURLToPath(import.meta.url).toLowerCase(),
   );
+}
+
+function resolveCommit(root: string, sha: string): string | null {
+  if (!SHA_PATTERN.test(sha)) return null;
+  try {
+    return execFileSync("git", ["rev-parse", "--verify", `${sha}^{commit}`], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return null;
+  }
+}
+
+function isAncestor(root: string, ancestor: string, descendant: string): boolean {
+  try {
+    execFileSync("git", ["merge-base", "--is-ancestor", ancestor, descendant], {
+      cwd: root,
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function candidateScopedFilesMatch(
+  root: string,
+  baselineSha: string,
+  candidateSha: string,
+  observedSha: string,
+): boolean {
+  try {
+    const files = execFileSync(
+      "git",
+      ["diff", "--name-only", "--no-renames", "-z", `${baselineSha}..${candidateSha}`, "--"],
+      { cwd: root, encoding: "buffer" },
+    )
+      .toString("utf8")
+      .split("\0")
+      .filter(Boolean);
+    if (files.length === 0) return false;
+    execFileSync("git", ["diff", "--quiet", candidateSha, observedSha, "--", ...files], {
+      cwd: root,
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 if (isCli()) {
@@ -422,34 +649,117 @@ if (isCli()) {
   const graph = JSON.parse(
     readFileSync(resolve(root, "docs/coordination/ACTIVE_RELEASE_GRAPH.json"), "utf8"),
   ) as ReleaseGraph;
+  const migrationDag = JSON.parse(
+    readFileSync(resolve(root, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+  ) as { productionSha?: string };
   const trusted = trustedReleaseIdentityFromEnvironment();
-  const trustedOwnership = trustedOwnershipPolicy(
+  const authorizationPolicy = trustedOwnershipPolicy(
     root,
     trusted.identity?.baseSha ?? "",
     trusted.identity?.headSha ?? "",
   );
-  const ownership = (trustedOwnership.policy?.document ?? {
+  const currentOwnership = loadCurrentOwnershipSnapshot(root);
+  const ownership = currentOwnership.ownership ?? {
     schemaVersion: 0,
+    generatedAt: "",
     productionBaseSha: "",
     lanes: [],
     rules: [],
-  }) as unknown as FileOwnership;
+    invariants: [],
+  };
   const repoFiles = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
     .split(/\r?\n/)
     .filter(Boolean);
   const issues = [
     ...trusted.issues,
-    ...trustedOwnership.issues,
+    ...authorizationPolicy.issues,
+    ...currentOwnership.issues,
     ...validateProductionState(state, graph, ownership, {
-    expectedProductionSha: trusted.identity?.baseSha,
-    repoFiles,
-  })];
+      trustedReleaseBaseSha: trusted.identity?.baseSha,
+      baselineAncestorOfTrustedBase:
+        Boolean(trusted.identity) &&
+        state.production.gitSha !== trusted.identity?.baseSha &&
+        isAncestor(root, state.production.gitSha, trusted.identity?.baseSha ?? ""),
+      migrationBaselineSha: migrationDag.productionSha,
+      repoFiles,
+    }),
+  ];
+  let observedAcceptance: ObservedDeployment | null = null;
+  const observedMainSha = process.env.XENIOS_OBSERVED_MAIN_SHA;
+  const observedRenderSha = process.env.XENIOS_OBSERVED_RENDER_SHA;
+  const observedRenderDeploymentId = process.env.XENIOS_OBSERVED_RENDER_DEPLOYMENT_ID;
+  const acceptedCandidateSha = process.env.XENIOS_ACCEPTED_CANDIDATE_SHA;
+  const expectedObservedTreeSha = process.env.XENIOS_EXPECTED_OBSERVED_TREE_SHA;
+  const observedHealthStatus = process.env.XENIOS_OBSERVED_HEALTH_STATUS;
+  const observedRuntimeEvidence = process.env.XENIOS_OBSERVED_RUNTIME_EVIDENCE;
+  const observedRouteEvidence = process.env.XENIOS_OBSERVED_ROUTE_EVIDENCE;
+  const observedInputs = [
+    observedMainSha,
+    observedRenderSha,
+    observedRenderDeploymentId,
+    acceptedCandidateSha,
+    expectedObservedTreeSha,
+    observedHealthStatus,
+    observedRuntimeEvidence,
+    observedRouteEvidence,
+  ];
+  if (observedInputs.some((value) => value !== undefined)) {
+    if (observedInputs.some((value) => value === undefined)) {
+      issues.push({
+        code: "OBSERVED_DEPLOYMENT_INPUTS_REQUIRED",
+        message: "Post-deploy validation requires observed main SHA, Render SHA, deployment id, and accepted candidate SHA.",
+      });
+    } else {
+      const baselineSha = state.production.gitSha;
+      const candidateSha = acceptedCandidateSha ?? "";
+      const deployedSha = observedMainSha ?? "";
+      const resolvedBaselineSha = resolveCommit(root, baselineSha);
+      const resolvedCandidateSha = resolveCommit(root, candidateSha);
+      const resolvedObservedSha = resolveCommit(root, deployedSha);
+      const resolvedObservedTreeSha = resolvedObservedSha
+        ? execFileSync("git", ["rev-parse", `${deployedSha}^{tree}`], {
+            cwd: root,
+            encoding: "utf8",
+          }).trim()
+        : undefined;
+      const checkoutHeadSha = execFileSync("git", ["rev-parse", "HEAD"], {
+        cwd: root,
+        encoding: "utf8",
+      }).trim();
+      observedAcceptance = {
+        baselineSha,
+        acceptedCandidateSha: candidateSha,
+        observedMainSha: deployedSha,
+        observedRenderSha: observedRenderSha ?? "",
+        renderDeploymentId: observedRenderDeploymentId ?? "",
+        expectedObservedTreeSha: expectedObservedTreeSha ?? "",
+      };
+      issues.push(...validateObservedDeployment(
+        state,
+        observedAcceptance,
+        {
+          baselineExists: resolvedBaselineSha === baselineSha,
+          candidateExists: resolvedCandidateSha === candidateSha,
+          observedExists: resolvedObservedSha === deployedSha,
+          resolvedBaselineSha: resolvedBaselineSha ?? undefined,
+          resolvedCandidateSha: resolvedCandidateSha ?? undefined,
+          resolvedObservedSha: resolvedObservedSha ?? undefined,
+          resolvedObservedTreeSha,
+          checkoutHeadSha,
+          baselineAncestorOfObserved: isAncestor(root, baselineSha, deployedSha),
+          candidateAncestorOfObserved: isAncestor(root, candidateSha, deployedSha),
+          scopedFilesMatch: candidateScopedFilesMatch(root, baselineSha, candidateSha, deployedSha),
+          runtimeEvidencePassed: observedRuntimeEvidence === "PASS",
+          routeEvidencePassed: observedRouteEvidence === "PASS",
+          healthStatus: Number(observedHealthStatus),
+        },
+      ));
+    }
+  }
   if (issues.length > 0) {
     for (const issue of issues) console.error(`${issue.code}: ${issue.message}`);
     process.exitCode = 1;
   } else {
-    console.log(
-      `Production state accepted: ${state.production.gitSha} / ${state.production.renderDeploymentId}.`,
-    );
+    console.log(productionAcceptanceMessage(state, observedAcceptance));
   }
 }

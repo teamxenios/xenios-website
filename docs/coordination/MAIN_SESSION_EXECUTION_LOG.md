@@ -1,5 +1,38 @@
 # Main session execution log
 
+## 2026-07-27T05:10:00Z — PR #88 baseline identity/output tightening
+
+- PR #88 head `2ccd2221177b1928cf8b53eb0dc7a7274bd14fe9`
+  remains prohibited after Website 6 found two release-evidence HIGHs.
+- The single `TRUSTED_RELEASE_BASELINE` is now enforced across production
+  state, release graph, ownership policy origin, and migration DAG. Independent
+  drift of any record fails a stable baseline-identity check.
+- Successful observed-deployment mode reports the externally observed main
+  SHA and Render deployment id, with the checked-in baseline labeled
+  separately. Pre-merge mode reports an audited baseline, never a deployed
+  future identity.
+- Production effect: none. No runtime, migration, role, row, or provider
+  mutation occurred.
+
+## 2026-07-27T05:00:00Z — PR #88 bounded control-plane correction
+
+- Rejected PR #88 head `5d5561807fb359356e8af89d99a19f2c08b572a3`
+  remains prohibited after Website 6 found a self-invalidating future-deploy
+  equality and incomplete ownership snapshot parsing.
+- Checked-in production, graph, and migration identities now explicitly mean
+  `TRUSTED_RELEASE_BASELINE`; they authorize and verify the release baseline
+  but do not attempt to predict a future merge SHA.
+- Post-deploy validation accepts externally supplied main, Render Git,
+  deployment, and accepted-candidate identities and requires exact resolution,
+  baseline/candidate ancestry, and byte-identical candidate-scoped files.
+- Current ownership snapshots now use the complete canonical parser before
+  casting. Missing arrays, malformed lanes or rules, unsafe patterns, and
+  unknown structures fail with `CURRENT_OWNERSHIP_SNAPSHOT_INVALID`.
+- Trusted-base ownership remains the only policy allowed to authorize a
+  candidate diff; candidate wildcard self-authorization remains prohibited.
+- Production effect: none. No runtime, migration, role, row, or provider
+  mutation occurred.
+
 Append-only coordination record for the serialized release manager. This file
 records engineering facts and decisions; it is not a substitute for Git,
 GitHub, Supabase, or Render evidence.
@@ -85,6 +118,26 @@ the superseded entry.
   remains prohibited. Website 3 owns the replacement.
 - Production effect: none. No merge, migration, deployment, or data mutation
   occurred.
+
+## 2026-07-27T04:15:34Z — PR #87 live; production snapshot fix-forward opened
+
+- Website 6 independently confirmed accepted PR #87 source
+  `0276112499ed029e70f09c2cd53bf9191d851601` is merged and live as main
+  `b729c8ee1a357e0af95fe50a05989b2f662f7270` on Render
+  `dep-d9jdiuf41pts73b4p02g`.
+- Runtime health, capability/admin private headers, signed-out responsive
+  behavior, production counts, and disabled Care remain green. No rollback is
+  indicated.
+- Website 6 found the checked-in current-production snapshot still recorded
+  pre-merge identity `d494150668de2ede8a61fd0d28bc9ff9a75def26`.
+- The fix-forward separates trusted-base ownership used to authorize the
+  computed Git diff from the candidate/current ownership snapshot used to
+  validate current production identity. Candidate ownership changes cannot
+  authorize their own diff.
+- Current production, release graph, migration DAG, ownership snapshot, and
+  accepted PR #85 current-main preflight are reconciled to `b729c8ee...`.
+- Production effect of this follow-up candidate: documentation and validation
+  only. No route, migration, database, role, capability, or data mutation.
 
 ## 2026-07-27T03:05:00Z — PR #86 production gate accepted
 

@@ -4,20 +4,38 @@ This is the human companion to
 `docs/coordination/CURRENT_PRODUCTION_STATE.json`. The JSON record is the
 machine-readable release-manager snapshot.
 
-## Live identity
+## Trusted release baseline
 
 | Field | Value |
 |---|---|
-| Production Git SHA | `d494150668de2ede8a61fd0d28bc9ff9a75def26` |
-| Render deployment | `dep-d9jcfkuk1jcs73fi5r1g` |
+| Audited baseline Git SHA | `b729c8ee1a357e0af95fe50a05989b2f662f7270` |
+| Render deployment | `dep-d9jdiuf41pts73b4p02g` |
 | Render state | `LIVE` |
 | Public origin | `https://xeniostechnology.com` |
-| Evidence captured | `2026-07-27T03:05:00Z` |
+| Evidence captured | `2026-07-27T04:15:34Z` |
+
+The checked-in SHA is an immutable audited baseline and policy reference. It
+does not attempt to predict the SHA of a future merge. Pre-merge validation
+binds the trusted external base and reviewed candidate to their exact diff.
+Post-deploy validation receives the observed main SHA, Render Git SHA, Render
+deployment id, and accepted candidate SHA externally; it requires exact
+identity, commit ancestry, the reviewed merge tree, byte-identical
+candidate-scoped files, health 200, and passing route/runtime evidence. A
+non-descendant or mismatched observed deployment fails without requiring
+another checked-in snapshot commit. The post-deploy CLI receives these facts
+only through `XENIOS_OBSERVED_*`, `XENIOS_ACCEPTED_CANDIDATE_SHA`, and
+`XENIOS_EXPECTED_OBSERVED_TREE_SHA`; partial input fails closed.
 
 Health is 200. The signed-out Research account gate is 200/no-store, while
 member, activation, capability, and activation-readiness endpoints reject
 signed-out requests with 401. Care remains disabled and absent from ordinary
 Research navigation.
+
+PR #87 source `0276112499ed029e70f09c2cd53bf9191d851601` is
+merged and live at the identity above. Runtime route, header, responsive,
+console, and production-count smoke is healthy. Website 6 requires a
+forward-only control-plane snapshot reconciliation before closing the PR #87
+post-deploy gate; no rollback is indicated.
 
 ## Account continuity
 
@@ -109,6 +127,12 @@ table privileges, five command-table SELECT grants, zero command-table DML, and
   is merged and deployed as `d494150668de2ede8a61fd0d28bc9ff9a75def26`
   on Render `dep-d9jcfkuk1jcs73fi5r1g`. Website 6 post-deploy QA accepted the
   live route/header/browser/log posture with no blocker/high.
+- PR #87 source `0276112499ed029e70f09c2cd53bf9191d851601`
+  is merged and deployed as current main
+  `b729c8ee1a357e0af95fe50a05989b2f662f7270` on Render
+  `dep-d9jdiuf41pts73b4p02g`. Runtime smoke is healthy. Its post-deploy
+  control-plane snapshot blocker is being corrected forward in a separate
+  docs/control-plane-only candidate.
 - Website 1 is preparing the durable Samuel-authority replacement from the
   exact production base.
 

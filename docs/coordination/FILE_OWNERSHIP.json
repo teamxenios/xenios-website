@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T03:05:00Z",
-  "productionBaseSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+  "generatedAt": "2026-07-27T04:15:34Z",
+  "productionBaseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
   "lanes": [
     {
       "owner": "Website 1",
@@ -15,8 +15,8 @@
       "owner": "Website 2",
       "lane": "release-manager",
       "state": "ACTIVE",
-      "activeUnit": "Main release control plane and serialized integration authority.",
-      "branch": "chore/main-release-control-plane",
+      "activeUnit": "Post-PR87 production snapshot reconciliation and serialized integration authority.",
+      "branch": "chore/main-release-control-plane-production-reconcile",
       "headSha": null
     },
     {
@@ -31,7 +31,7 @@
       "owner": "Website 4",
       "lane": "wave2-inventory-lot-coa",
       "state": "FROZEN_PROHIBITED_CHANGES_REQUIRED",
-      "activeUnit": "PR #80 replacement on current base d4941506; existing head f646708d remains prohibited.",
+      "activeUnit": "PR #80 replacement must be reconstructed on current base b729c8ee; existing head f646708d remains prohibited.",
       "branch": "feature/website-4-research-commerce-wave-2-inventory-lots",
       "headSha": "f646708d45d4a6e4e7acf4e2653e44746baef184"
     },
@@ -158,10 +158,12 @@
     }
   ],
   "invariants": [
+    "productionBaseSha is the same TRUSTED_RELEASE_BASELINE recorded by CURRENT_PRODUCTION_STATE, ACTIVE_RELEASE_GRAPH, and MIGRATION_DAG; it is not a prediction of a future deployed merge SHA.",
+    "The trusted-base ownership policy authorizes the current base..head diff; productionBaseSha is the policy-origin baseline, and the candidate/current FILE_OWNERSHIP snapshot is validated separately and never authorizes its own changes.",
     "One active writer per repository file.",
     "Review-only lanes own no write patterns.",
     "A prohibited or frozen head may be corrected only by its owning lane.",
     "Website 2 alone owns shared integration, migration application, merge, deployment, and rollback decisions.",
-    "A new unit must start from the exact current production SHA."
+    "A new unit must start from the exact externally observed current production SHA supplied by Website 2; checked-in productionBaseSha remains the policy-origin baseline."
   ]
 }

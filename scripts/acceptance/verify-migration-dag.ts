@@ -29,6 +29,7 @@ export type MigrationNode = {
 
 export type MigrationDag = {
   schemaVersion: number;
+  identitySemantics: "TRUSTED_RELEASE_BASELINE";
   generatedAt: string;
   productionSha: string;
   checksumScope: string;
@@ -38,6 +39,7 @@ export type MigrationDag = {
 export type MigrationDagValidationOptions = {
   repoRoot?: string;
   checkFiles?: boolean;
+  expectedBaselineSha?: string;
   canonicalBytes?: (productionSha: string, path: string) => Buffer;
 };
 
@@ -63,8 +65,23 @@ export function validateMigrationDag(
   if (dag.schemaVersion !== 1) {
     issues.push({ code: "DAG_SCHEMA_VERSION", message: "Migration DAG schemaVersion must equal 1." });
   }
+  if (dag.identitySemantics !== "TRUSTED_RELEASE_BASELINE") {
+    issues.push({
+      code: "DAG_IDENTITY_SEMANTICS",
+      message: "Migration DAG productionSha must be an immutable trusted release baseline.",
+    });
+  }
   if (!SHA_PATTERN.test(dag.productionSha ?? "")) {
     issues.push({ code: "DAG_PRODUCTION_SHA", message: "Migration DAG productionSha must be a lowercase Git SHA." });
+  }
+  if (
+    options.expectedBaselineSha !== undefined &&
+    dag.productionSha !== options.expectedBaselineSha
+  ) {
+    issues.push({
+      code: "DAG_BASELINE_IDENTITY_CONTRADICTION",
+      message: `Migration DAG baseline ${dag.productionSha} does not match expected ${options.expectedBaselineSha}.`,
+    });
   }
   if (!Array.isArray(dag.migrations)) {
     return [...issues, { code: "DAG_MIGRATIONS_ARRAY", message: "migrations must be an array." }];
@@ -182,7 +199,13 @@ if (isCli()) {
   const root = process.cwd();
   const path = resolve(root, process.argv[2] ?? "docs/coordination/MIGRATION_DAG.json");
   const dag = JSON.parse(readFileSync(path, "utf8")) as MigrationDag;
-  const issues = validateMigrationDag(dag, { repoRoot: root });
+  const state = JSON.parse(
+    readFileSync(resolve(root, "docs/coordination/CURRENT_PRODUCTION_STATE.json"), "utf8"),
+  ) as { production?: { gitSha?: string } };
+  const issues = validateMigrationDag(dag, {
+    repoRoot: root,
+    expectedBaselineSha: state.production?.gitSha,
+  });
   if (issues.length > 0) {
     for (const issue of issues) console.error(`${issue.code}: ${issue.message}`);
     process.exitCode = 1;

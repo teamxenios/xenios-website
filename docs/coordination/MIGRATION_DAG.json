@@ -1,7 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T03:05:00Z",
-  "productionSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+  "identitySemantics": "TRUSTED_RELEASE_BASELINE",
+  "generatedAt": "2026-07-27T04:15:34Z",
+  "productionSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
   "checksumScope": "canonical Git blob bytes at productionSha",
   "migrations": [
     {
@@ -42,6 +43,7 @@
     }
   ],
   "invariants": [
+    "productionSha is the same TRUSTED_RELEASE_BASELINE recorded by CURRENT_PRODUCTION_STATE, ACTIVE_RELEASE_GRAPH, and FILE_OWNERSHIP.",
     "Every dependency must exist and be applied before its dependent migration.",
     "The dependency graph must be acyclic.",
     "Checksums are computed from canonical Git blob bytes, not platform-normalized worktree line endings.",

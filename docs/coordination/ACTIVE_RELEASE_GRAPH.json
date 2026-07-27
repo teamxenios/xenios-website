@@ -1,15 +1,16 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T03:05:00Z",
-  "productionSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+  "identitySemantics": "TRUSTED_RELEASE_BASELINE",
+  "generatedAt": "2026-07-27T04:15:34Z",
+  "productionSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
   "nodes": [
     {
-      "id": "production-d494150",
-      "type": "production",
+      "id": "production-b729c8e",
+      "type": "production_baseline",
       "owner": "Website 2",
-      "state": "DEPLOYED",
-      "sha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
-      "label": "Production main / PR #86"
+      "state": "AUDITED_BASELINE",
+      "sha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+      "label": "Audited production baseline / PR #87 runtime healthy"
     },
     {
       "id": "high-capabilities-route",
@@ -94,10 +95,10 @@
       "id": "pr87-release-control-plane",
       "type": "candidate",
       "owner": "Website 2",
-      "state": "CANDIDATE_PREPARATION",
-      "sha": null,
+      "state": "MERGED_DEPLOYED_POSTDEPLOY_CHANGES_REQUIRED",
+      "sha": "0276112499ed029e70f09c2cd53bf9191d851601",
       "pullRequest": 87,
-      "label": "Current-main release control plane"
+      "label": "Accepted release control plane; production snapshot fix-forward required"
     },
     {
       "id": "wave3-checkout-enablement",
@@ -111,16 +112,21 @@
   "edges": [
     {
       "from": "pr86-4f71648a",
-      "to": "production-d494150",
+      "to": "pr87-release-control-plane",
+      "relation": "preceded"
+    },
+    {
+      "from": "pr87-release-control-plane",
+      "to": "production-b729c8e",
       "relation": "deployed_as"
     },
     {
-      "from": "production-d494150",
+      "from": "production-b729c8e",
       "to": "high-capabilities-route",
       "relation": "closes"
     },
     {
-      "from": "production-d494150",
+      "from": "production-b729c8e",
       "to": "high-admin-page-privacy",
       "relation": "closes"
     },
@@ -140,7 +146,7 @@
       "relation": "superseded_by"
     },
     {
-      "from": "production-d494150",
+      "from": "production-b729c8e",
       "to": "pr85-dc11623d",
       "relation": "integration_base_for"
     },
@@ -148,11 +154,6 @@
       "from": "pr86-22545561",
       "to": "pr86-4f71648a",
       "relation": "superseded_by"
-    },
-    {
-      "from": "production-d494150",
-      "to": "pr87-release-control-plane",
-      "relation": "candidate_based_on"
     },
     {
       "from": "pr80-f646708d",
@@ -166,7 +167,7 @@
     }
   ],
   "releaseOrder": [
-    "Freeze and obtain Website 6 exact-SHA acceptance for PR #87 without runtime or domain files.",
+    "Freeze and obtain Website 6 exact-SHA acceptance for the PR #87 production snapshot fix-forward candidate.",
     "Create a separate current-main integration candidate for accepted PR #85 while preserving all 12 source blobs.",
     "Replace and accept prohibited PR #80 before inventory-dependent checkout.",
     "Integrate only through Website 2 from exact current production.",
