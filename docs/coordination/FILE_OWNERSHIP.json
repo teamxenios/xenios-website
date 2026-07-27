@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T04:15:34Z",
+  "generatedAt": "2026-07-27T14:04:55Z",
   "productionBaseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
   "lanes": [
     {
@@ -29,11 +29,11 @@
     },
     {
       "owner": "Website 4",
-      "lane": "wave2-inventory-lot-coa",
-      "state": "FROZEN_PROHIBITED_CHANGES_REQUIRED",
-      "activeUnit": "PR #80 replacement must be reconstructed on current base b729c8ee; existing head f646708d remains prohibited.",
-      "branch": "feature/website-4-research-commerce-wave-2-inventory-lots",
-      "headSha": "f646708d45d4a6e4e7acf4e2653e44746baef184"
+      "lane": "wave3-atomic-inventory-reservation",
+      "state": "ACTIVE",
+      "activeUnit": "Atomic server-only inventory reservation commands on production base 141ae456; no checkout or route wiring.",
+      "branch": "feature/website-4-wave3-atomic-inventory-reservation",
+      "headSha": null
     },
     {
       "owner": "Website 5",
@@ -154,6 +154,25 @@
         "supabase/research-inventory-lot-coa-admin.sql",
         "supabase/verification/research-inventory-lot-coa-admin.verify.sql",
         "supabase/verification/research-inventory-lot-coa-disposable-bootstrap.sql"
+      ]
+    },
+    {
+      "id": "OWNER-W4-INVENTORY-RESERVATION",
+      "owner": "Website 4",
+      "lane": "wave3-atomic-inventory-reservation",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/coordination/WEBSITE_4_INVENTORY_RESERVATION_HANDOFF.md",
+        "docs/coordination/WEBSITE_4_INVENTORY_RESERVATION_RELEASE_MANIFEST.json",
+        "server/research/inventory-reservation/migration.test.ts",
+        "server/research/inventory-reservation/port.ts",
+        "server/research/inventory-reservation/production.test.ts",
+        "server/research/inventory-reservation/production.ts",
+        "shared/research/inventory-reservation.ts",
+        "supabase/research-inventory-reservation-commands.sql",
+        "supabase/verification/research-inventory-reservation-commands.verify.sql",
+        "supabase/verification/research-inventory-reservation-disposable-bootstrap.sql"
       ]
     }
   ],
