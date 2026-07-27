@@ -81,7 +81,7 @@ function PasswordPage() {
   }
 
   return (
-    <div className="container-x" style={{ paddingTop: "var(--space-hero-top)", paddingBottom: "var(--space-hero-bottom)" }}>
+    <main className="container-x" style={{ paddingTop: "var(--space-hero-top)", paddingBottom: "var(--space-hero-bottom)" }}>
       <div style={{ maxWidth: 480 }}>
         <p className="mono-cap text-pulse mb-6">xenios research</p>
         <h1 className="display-m text-balance">This area is under review.</h1>
@@ -114,7 +114,7 @@ function PasswordPage() {
           No password? Ask the xenios team for review access. Nothing in this section is for human or veterinary use, and ordering is not open.
         </p>
       </div>
-    </div>
+    </main>
   );
 }
 
