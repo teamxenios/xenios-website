@@ -161,6 +161,9 @@ describe("member product detail experience", () => {
     expect(html).toContain("Exact-lot documentation verified");
     expect(html).toContain("This is Research catalog information.");
     expect(html).toContain("Request an alternative");
+    expect(html).toContain("Evidence and Research information");
+    expect(html).toContain("Quality and COA status");
+    expect(html).toContain('aria-label="Breadcrumb"');
     expect(html).not.toMatch(/Add to cart|Buy now|private\/|storageKey/);
   });
 

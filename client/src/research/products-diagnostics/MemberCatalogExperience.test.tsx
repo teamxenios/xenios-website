@@ -124,6 +124,9 @@ describe("member catalog experience", () => {
     expect(view.querySelector("#member-catalog-lane")).not.toBeNull();
     expect(view.querySelector("#member-catalog-category")).not.toBeNull();
     expect(view.querySelector("#member-catalog-sort")).not.toBeNull();
+    expect(view.querySelector("#member-catalog-status")).not.toBeNull();
+    expect(view.querySelector("#member-catalog-composition")).not.toBeNull();
+    expect(view.querySelector("#member-catalog-suggestions")).not.toBeNull();
 
     act(() => {
       Object.getOwnPropertyDescriptor(
@@ -144,6 +147,35 @@ describe("member catalog experience", () => {
           (element as HTMLElement).tabIndex >= 0,
       ),
     ).toBe(true);
+  });
+
+  it("compares up to three profiles without inventing missing facts", () => {
+    const view = mount();
+    const compare = view.querySelectorAll<HTMLInputElement>(
+      'input[type="checkbox"]',
+    );
+    expect(compare).toHaveLength(2);
+    act(() => compare[0].click());
+    expect(view.textContent).toContain("Compare products");
+    expect(view.textContent).toContain("Price not currently available");
+    expect(view.textContent).not.toMatch(/Add to cart|Buy now/);
+  });
+
+  it("exposes save only through an injected persistence seam", () => {
+    const htmlWithoutSave = renderToStaticMarkup(
+      <MemberCatalogExperience catalog={catalog} />,
+    );
+    expect(htmlWithoutSave).not.toContain(">Save<");
+    const htmlWithSave = renderToStaticMarkup(
+      <MemberCatalogExperience
+        catalog={catalog}
+        savedProductIds={["product-a"]}
+        onSaveProduct={() => undefined}
+      />,
+    );
+    expect(htmlWithSave).toContain('aria-pressed="true"');
+    expect(htmlWithSave).toContain(">Saved<");
+    expect(htmlWithSave).toContain(">Save<");
   });
 
   it("renders loading, empty, error, unavailable, and unauthorized states", () => {

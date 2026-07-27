@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
+import SeoHead from "@/components/SeoHead";
 import { productRequestHref } from "@shared/research/product-request-sources";
 import type {
   MemberCatalog,
   MemberCatalogCard,
-  MemberCatalogSort,
 } from "@shared/research/member-catalog";
 import { ResearchMemberShell } from "../ui/shells";
 import {
@@ -21,6 +21,14 @@ export type MemberCatalogSurfaceState =
   | "error"
   | "unavailable"
   | "unauthorized";
+
+type CatalogSort =
+  | "editorial"
+  | "name_ascending"
+  | "name_descending"
+  | "recently_updated"
+  | "availability"
+  | "documentation";
 
 const STATE_COPY: Record<
   MemberCatalogCard["displayState"],
@@ -68,7 +76,21 @@ function priceLabel(product: MemberCatalogCard): string {
   }).format(product.price.amountCents / 100);
 }
 
-function CatalogCard({ product }: { product: MemberCatalogCard }) {
+function CatalogCard({
+  product,
+  selectedForCompare,
+  compareDisabled,
+  onCompare,
+  saved,
+  onSave,
+}: {
+  product: MemberCatalogCard;
+  selectedForCompare: boolean;
+  compareDisabled: boolean;
+  onCompare: (productId: string) => void;
+  saved: boolean;
+  onSave?: (productId: string) => void;
+}) {
   const presentation = STATE_COPY[product.displayState];
   return (
     <li
@@ -115,13 +137,40 @@ function CatalogCard({ product }: { product: MemberCatalogCard }) {
         </div>
       </dl>
       <p className="body-s text-ink-mute">{presentation.note}</p>
-      <div>
+      <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`/research/member/products/${product.slug}`}
           className="btn btn-secondary"
         >
           View product
         </Link>
+        <Link
+          href={productRequestHref("products", product.displayName)}
+          className="btn btn-ghost"
+        >
+          {product.displayState === "available"
+            ? "Request an alternative"
+            : "Notify me"}
+        </Link>
+        <label className="body-s inline-flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={selectedForCompare}
+            disabled={compareDisabled && !selectedForCompare}
+            onChange={() => onCompare(product.id)}
+          />
+          Compare
+        </label>
+        {onSave && (
+          <button
+            type="button"
+            className="btn btn-ghost"
+            aria-pressed={saved}
+            onClick={() => onSave(product.id)}
+          >
+            {saved ? "Saved" : "Save"}
+          </button>
+        )}
       </div>
     </li>
   );
@@ -132,16 +181,23 @@ export function MemberCatalogExperience({
   state = "ok",
   errorMessage,
   onRetry,
+  savedProductIds = [],
+  onSaveProduct,
 }: {
   catalog: MemberCatalog;
   state?: MemberCatalogSurfaceState;
   errorMessage?: string;
   onRetry?: () => void;
+  savedProductIds?: readonly string[];
+  onSaveProduct?: (productId: string) => void;
 }) {
   const [query, setQuery] = useState("");
   const [lane, setLane] = useState("all");
   const [category, setCategory] = useState("all");
-  const [sort, setSort] = useState<MemberCatalogSort>("name_ascending");
+  const [status, setStatus] = useState("all");
+  const [composition, setComposition] = useState("all");
+  const [sort, setSort] = useState<CatalogSort>("editorial");
+  const [compareIds, setCompareIds] = useState<string[]>([]);
 
   const visible = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -149,6 +205,16 @@ export function MemberCatalogExperience({
       .filter((product) => {
         if (lane !== "all" && product.lane !== lane) return false;
         if (category !== "all" && product.category !== category) return false;
+        if (status !== "all" && product.displayState !== status) return false;
+        const productComposition = /blend/i.test(product.classification)
+          ? "blend"
+          : "single";
+        if (
+          composition !== "all" &&
+          productComposition !== composition
+        ) {
+          return false;
+        }
         return (
           !normalized ||
           [
@@ -163,34 +229,71 @@ export function MemberCatalogExperience({
         );
       })
       .sort((left, right) => {
+        if (sort === "editorial") return 0;
         if (sort === "name_descending") {
           return right.displayName.localeCompare(left.displayName);
         }
         if (sort === "recently_updated") {
           return right.updatedAt.localeCompare(left.updatedAt);
         }
+        if (sort === "availability") {
+          return (
+            Number(right.displayState === "available") -
+              Number(left.displayState === "available") ||
+            left.displayName.localeCompare(right.displayName)
+          );
+        }
+        if (sort === "documentation") {
+          return (
+            Number(left.displayState === "documentation_pending") -
+              Number(right.displayState === "documentation_pending") ||
+            left.displayName.localeCompare(right.displayName)
+          );
+        }
         return left.displayName.localeCompare(right.displayName);
       });
-  }, [catalog.items, category, lane, query, sort]);
+  }, [catalog.items, category, composition, lane, query, sort, status]);
 
   const clearFilters = () => {
     setQuery("");
     setLane("all");
     setCategory("all");
-    setSort("name_ascending");
+    setStatus("all");
+    setComposition("all");
+    setSort("editorial");
+  };
+
+  const compared = compareIds
+    .map((id) => catalog.items.find((item) => item.id === id))
+    .filter((item): item is MemberCatalogCard => Boolean(item));
+
+  const onCompare = (productId: string) => {
+    setCompareIds((current) =>
+      current.includes(productId)
+        ? current.filter((id) => id !== productId)
+        : current.length < 3
+          ? [...current, productId]
+          : current,
+    );
   };
 
   return (
-    <ResearchMemberShell
-      eyebrow="Renew 360 catalog"
-      title="Products"
-      lead="Browse approved product information, current member pricing, and truthful availability. A catalog listing is not a clinical recommendation."
-      actions={
-        <Link href={productRequestHref("products")} className="btn btn-primary">
-          Request a product
-        </Link>
-      }
-    >
+    <>
+      <SeoHead
+        title="Research Products | Xenios"
+        description="Browse Xenios Research profiles, verified product information, and truthful readiness states."
+        path="/research/member/products"
+      />
+      <ResearchMemberShell
+        eyebrow="Renew 360 catalog"
+        title="Products"
+        lead="Browse approved product information, current member pricing, and truthful availability. A catalog listing is not a clinical recommendation."
+        actions={
+          <Link href={productRequestHref("products")} className="btn btn-primary">
+            Request a product
+          </Link>
+        }
+      >
       <ResearchRouteBoundary
         state={state}
         errorMessage={errorMessage}
@@ -211,7 +314,13 @@ export function MemberCatalogExperience({
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search name, category, or alias"
+              list="member-catalog-suggestions"
             />
+            <datalist id="member-catalog-suggestions">
+              {catalog.items.slice(0, 20).map((item) => (
+                <option key={item.id} value={item.displayName} />
+              ))}
+            </datalist>
           </label>
           <label className="grid gap-2" htmlFor="member-catalog-lane">
             <span className="form-label">Product family</span>
@@ -251,14 +360,87 @@ export function MemberCatalogExperience({
               id="member-catalog-sort"
               className="input-field"
               value={sort}
-              onChange={(event) => setSort(event.target.value as MemberCatalogSort)}
+              onChange={(event) => setSort(event.target.value as CatalogSort)}
             >
+              <option value="editorial">Editorial order</option>
               <option value="name_ascending">Name, A to Z</option>
               <option value="name_descending">Name, Z to A</option>
               <option value="recently_updated">Recently updated</option>
+              <option value="availability">Availability</option>
+              <option value="documentation">Documentation readiness</option>
+            </select>
+          </label>
+          <label className="grid gap-2" htmlFor="member-catalog-status">
+            <span className="form-label">Status</span>
+            <select
+              id="member-catalog-status"
+              className="input-field"
+              value={status}
+              onChange={(event) => setStatus(event.target.value)}
+            >
+              <option value="all">All statuses</option>
+              <option value="available">Available</option>
+              <option value="documentation_pending">Documentation pending</option>
+              <option value="pricing_pending">Pricing pending</option>
+              <option value="unavailable">Unavailable</option>
+              <option value="catalog_only">Catalog information</option>
+            </select>
+          </label>
+          <label className="grid gap-2" htmlFor="member-catalog-composition">
+            <span className="form-label">Composition</span>
+            <select
+              id="member-catalog-composition"
+              className="input-field"
+              value={composition}
+              onChange={(event) => setComposition(event.target.value)}
+            >
+              <option value="all">All compositions</option>
+              <option value="single">Single research material</option>
+              <option value="blend">Blend</option>
             </select>
           </label>
         </section>
+
+        {compared.length > 0 && (
+          <section
+            className="card mt-5 grid gap-4"
+            aria-labelledby="member-catalog-compare"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 id="member-catalog-compare" className="body-l font-700">
+                  Compare products
+                </h2>
+                <p className="body-s text-ink-2 mt-1">
+                  Compare up to three published profiles. Missing facts remain
+                  explicit.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => setCompareIds([])}
+              >
+                Clear comparison
+              </button>
+            </div>
+            <ul
+              className="grid gap-3 md:grid-cols-3"
+              style={{ listStyle: "none", margin: 0, padding: 0 }}
+            >
+              {compared.map((product) => (
+                <li key={product.id} className="rule-bottom pb-3">
+                  <p className="font-700">{product.displayName}</p>
+                  <p className="body-s text-ink-2 mt-1">{product.category}</p>
+                  <p className="body-s text-ink-mute mt-1">
+                    {STATE_COPY[product.displayState].label} ·{" "}
+                    {priceLabel(product)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section className="mt-6" aria-labelledby="member-catalog-results">
           <div className="flex flex-wrap items-end justify-between gap-3">
@@ -270,7 +452,11 @@ export function MemberCatalogExperience({
                 {visible.length} {visible.length === 1 ? "product" : "products"}
               </p>
             </div>
-            {(query || lane !== "all" || category !== "all") && (
+            {(query ||
+              lane !== "all" ||
+              category !== "all" ||
+              status !== "all" ||
+              composition !== "all") && (
               <button
                 type="button"
                 className="btn btn-ghost"
@@ -318,7 +504,15 @@ export function MemberCatalogExperience({
               style={{ listStyle: "none", margin: 0, padding: 0 }}
             >
               {visible.map((product) => (
-                <CatalogCard key={product.id} product={product} />
+                <CatalogCard
+                  key={product.id}
+                  product={product}
+                  selectedForCompare={compareIds.includes(product.id)}
+                  compareDisabled={compareIds.length >= 3}
+                  onCompare={onCompare}
+                  saved={savedProductIds.includes(product.id)}
+                  onSave={onSaveProduct}
+                />
               ))}
             </ul>
           )}
@@ -330,6 +524,7 @@ export function MemberCatalogExperience({
           quantities, locations, and provider details are not exposed here.
         </ResearchSecureNotice>
       </ResearchRouteBoundary>
-    </ResearchMemberShell>
+      </ResearchMemberShell>
+    </>
   );
 }

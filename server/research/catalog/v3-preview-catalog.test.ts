@@ -44,6 +44,8 @@ describe("V3 supplier-independent catalog", () => {
       v3PreviewCatalogProducts,
     });
     expect(serialized).not.toContain("northlinelabs");
+    expect(serialized).not.toContain("reference_sizes");
+    expect(serialized).not.toMatch(/\b10mg;\s*15mg\b/);
     expect(serialized).not.toContain("reference price");
     expect(serialized).not.toMatch(/amountCents|priceVersion/);
   });

@@ -19,7 +19,9 @@ export default function Supplements() {
         lead="Premium supplements selected around clear formulas, transparent sourcing, independent verification, and the practical reality of daily use."
       />
       <NoticeBar>
-        The supplement catalog is ready for the wholesale list Mitch is sourcing. Placeholder products are intentionally marked coming soon until the actual formula, facts panel, price, testing, and claims are approved.
+        Candidate formulas remain marked Coming Soon until the exact formula,
+        facts panel, format, flavor where applicable, price, testing, and
+        customer-facing claims are verified and approved.
       </NoticeBar>
       <section className="container-x section-y">
         <ProductGrid products={items} />

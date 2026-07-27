@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
+import SeoHead from "@/components/SeoHead";
 import { productRequestHref } from "@shared/research/product-request-sources";
 import type {
   MemberCatalogVariant,
@@ -74,9 +75,30 @@ export function MemberProductDetailExperience({
     [product, selectedVariantId],
   );
   const showProductIdentity = state === "ok" && product !== null;
+  const productPath = showProductIdentity
+    ? `/research/member/products/${product.slug}`
+    : "/research/member/products";
+  const requestLabel =
+    showProductIdentity && product.displayState === "available"
+      ? "Request an alternative"
+      : "Notify me";
 
   return (
-    <ResearchMemberShell
+    <>
+      <SeoHead
+        title={
+          showProductIdentity
+            ? `${product.displayName} Research Profile | Xenios`
+            : "Product Information | Xenios"
+        }
+        description={
+          showProductIdentity
+            ? product.summary
+            : "Approved Xenios Research product information."
+        }
+        path={productPath}
+      />
+      <ResearchMemberShell
       eyebrow={showProductIdentity ? product.category : "Product catalog"}
       title={showProductIdentity ? product.displayName : "Product information"}
       lead={
@@ -92,7 +114,7 @@ export function MemberProductDetailExperience({
             href={productRequestHref("products", product.displayName)}
             className="btn btn-primary"
           >
-            Request an alternative
+            {requestLabel}
           </Link>
         ) : undefined
       }
@@ -116,6 +138,13 @@ export function MemberProductDetailExperience({
           />
         ) : (
           <>
+            <nav aria-label="Breadcrumb" className="mb-5 body-s">
+              <Link href="/research/member/products" className="text-ink-2">
+                Products
+              </Link>
+              <span aria-hidden="true"> / </span>
+              <span aria-current="page">{product.displayName}</span>
+            </nav>
             <section className="card grid gap-6 md:grid-cols-2">
               <div style={{ minWidth: 0 }}>
                 {product.media ? (
@@ -215,27 +244,67 @@ export function MemberProductDetailExperience({
               </div>
             )}
 
+            <nav
+              className="mt-5 flex flex-wrap gap-2"
+              aria-label="Product information"
+            >
+              {[
+                ["Overview", "overview"],
+                ["Evidence", "evidence"],
+                ["Quality and COA", "quality"],
+                ["Storage", "storage"],
+                ["Related", "related"],
+              ].map(([label, id]) => (
+                <a key={id} href={`#${id}`} className="btn btn-ghost">
+                  {label}
+                </a>
+              ))}
+            </nav>
+
             <div className="mt-6">
-              <FactSection
-                title="Overview"
-                value={product.overview}
-                pending="Approved overview content is required before it can be displayed."
-              />
+              <div id="overview">
+                <FactSection
+                  title="Overview"
+                  value={product.overview}
+                  pending="Approved overview content is required before it can be displayed."
+                />
+              </div>
               <FactSection
                 title="Specifications"
                 value={product.specifications}
                 pending="Approved product specifications are required."
               />
-              <FactSection
-                title="Research information"
-                value={product.researchInformation}
-                pending="Reviewed Research information is required."
-              />
-              <FactSection
-                title="Storage"
-                value={product.storageInformation}
-                pending="Approved storage information is required."
-              />
+              <div id="evidence">
+                <FactSection
+                  title="Evidence and Research information"
+                  value={product.researchInformation}
+                  pending="Reviewed Research information and evidence classification are required."
+                />
+              </div>
+              <section
+                id="quality"
+                className="py-6"
+                style={{ borderTop: "1px solid var(--rule)" }}
+              >
+                <h2 className="body-l font-700">Quality and COA status</h2>
+                <p className="body-s text-ink-2 mt-3 max-w-[68ch]">
+                  {selected
+                    ? lotCoaLabel(selected.lotCoaState)
+                    : "An exact approved variant and lot-specific quality record are required before documentation can be presented."}
+                </p>
+                <p className="body-s text-ink-mute mt-2">
+                  Missing tests are never presented as passed. A certificate
+                  link appears only when it is verified for the exact product,
+                  variant, and lot.
+                </p>
+              </section>
+              <div id="storage">
+                <FactSection
+                  title="Storage"
+                  value={product.storageInformation}
+                  pending="Approved storage information is required."
+                />
+              </div>
               <FactSection
                 title="Shipping and returns"
                 value={
@@ -246,6 +315,7 @@ export function MemberProductDetailExperience({
                 pending="Approved shipping and return information is required."
               />
               <section
+                id="related"
                 className="py-6"
                 style={{ borderTop: "1px solid var(--rule)" }}
               >
@@ -282,6 +352,7 @@ export function MemberProductDetailExperience({
           </>
         )}
       </ResearchRouteBoundary>
-    </ResearchMemberShell>
+      </ResearchMemberShell>
+    </>
   );
 }

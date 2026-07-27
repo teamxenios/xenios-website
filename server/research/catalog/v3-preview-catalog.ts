@@ -127,8 +127,7 @@ export const v3PreviewProducts: Product[] = v3CatalogProfiles.map(
     specifications: {
       Classification: profile.product_class,
       "Research category": profile.merchandising_category,
-      "Candidate presentations":
-        profile.reference_sizes || "Pending supplier confirmation",
+      "Presentation status": "Options being confirmed",
       "Purchase state": "Disabled pending complete readiness",
     },
     qualityNotes: [
@@ -273,9 +272,8 @@ export function v3PreviewMemberDetail(
     overview:
       `${profile.display_name} is a supplier-independent non-clinical discovery profile. ` +
       "It is not an offer for sale and carries no supplier, price, inventory, lot, quality, storage, or shipping assertion.",
-    specifications: profile.reference_sizes
-      ? `Candidate presentations (not supplier-confirmed): ${profile.reference_sizes}`
-      : null,
+    specifications:
+      "Options are being confirmed. No presentation, format, size, or SKU is public until an exact supplier-backed variant is approved.",
     researchInformation: profile.preview_copy,
     storageInformation: null,
     shippingInformation: null,
