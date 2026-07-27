@@ -10,6 +10,7 @@ import {
   type OwnershipRule,
 } from "../scripts/acceptance/verify-release-manifest.ts";
 import {
+  managedMigrationPathsFromLedger,
   validateMigrationDag,
   type MigrationDag,
 } from "../scripts/acceptance/verify-migration-dag.ts";
@@ -625,18 +626,117 @@ describe("migration DAG validator", () => {
     const dag = JSON.parse(
       readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
     ) as MigrationDag;
+    const managedMigrationPaths = managedMigrationPathsFromLedger(
+      readFileSync(resolve(ROOT, "supabase/MIGRATIONS.md"), "utf8"),
+    );
     expect(dag.productionSha).toBe(PRODUCTION_SHA);
     expect(
       validateMigrationDag(dag, {
         repoRoot: ROOT,
         expectedBaselineSha: PRODUCTION_SHA,
-        canonicalBytes: (_productionSha, path) =>
-          execFileSync("git", ["show", `HEAD:${path}`], {
+        expectedManagedMigrationPaths: managedMigrationPaths,
+        canonicalBytes: (sourceSha, path) => {
+          if (
+            path ===
+            "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql"
+          ) {
+            expect(sourceSha).toBe(
+              "2542f8da508792f39abe7dea5a5686ade5c9e5a3",
+            );
+          } else {
+            expect(sourceSha).toBe(PRODUCTION_SHA);
+          }
+          return execFileSync("git", ["cat-file", "blob", `HEAD:${path}`], {
             cwd: ROOT,
             encoding: "buffer",
-          }),
+          });
+        },
       }),
     ).toEqual([]);
+  });
+
+  it("requires every managed ledger migration exactly once in the DAG", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    const managedMigrationPaths = managedMigrationPathsFromLedger(
+      readFileSync(resolve(ROOT, "supabase/MIGRATIONS.md"), "utf8"),
+    );
+    const missing = structuredClone(dag);
+    missing.migrations = missing.migrations.filter(
+      (migration) => migration.id !== "research_inventory_lot_coa_admin",
+    );
+    expect(
+      validateMigrationDag(missing, {
+        checkFiles: false,
+        expectedBaselineSha: PRODUCTION_SHA,
+        expectedManagedMigrationPaths: managedMigrationPaths,
+      }).map((issue) => issue.code),
+    ).toContain("MANAGED_MIGRATION_MISSING_FROM_DAG");
+
+    const duplicate = structuredClone(dag);
+    duplicate.migrations.push({
+      ...structuredClone(duplicate.migrations.at(-1)!),
+      id: "duplicate_wave_2",
+    });
+    expect(
+      validateMigrationDag(duplicate, {
+        checkFiles: false,
+        expectedBaselineSha: PRODUCTION_SHA,
+        expectedManagedMigrationPaths: managedMigrationPaths,
+      }).map((issue) => issue.code),
+    ).toContain("DUPLICATE_MIGRATION_PATH");
+  });
+
+  it("hashes canonical raw Git blobs and rejects newline-normalized bytes", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    const wave2 = dag.migrations.find(
+      (migration) => migration.id === "research_inventory_lot_coa_admin",
+    );
+    expect(wave2?.sourceSha).toBe(
+      "2542f8da508792f39abe7dea5a5686ade5c9e5a3",
+    );
+    expect(wave2?.checksum.value).toBe(
+      "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524",
+    );
+
+    const issues = validateMigrationDag(dag, {
+      repoRoot: ROOT,
+      expectedBaselineSha: PRODUCTION_SHA,
+      canonicalBytes: (sourceSha, path) => {
+        if (path === wave2?.path) {
+          expect(sourceSha).toBe(wave2.sourceSha);
+        }
+        const raw = execFileSync("git", ["cat-file", "blob", `HEAD:${path}`], {
+          cwd: ROOT,
+          encoding: "buffer",
+        });
+        if (path !== wave2?.path) return raw;
+        return Buffer.from(raw.toString("utf8").replace(/\r?\n/g, "\r\n"));
+      },
+    });
+    expect(issues.map((issue) => issue.code)).toContain(
+      "MIGRATION_CHECKSUM_MISMATCH",
+    );
+  });
+
+  it("fails closed when a pinned migration source is unavailable", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    const wave2 = dag.migrations.find(
+      (migration) => migration.id === "research_inventory_lot_coa_admin",
+    );
+    expect(wave2).toBeDefined();
+    wave2!.sourceSha = PRODUCTION_SHA;
+    expect(
+      validateMigrationDag(dag, {
+        repoRoot: ROOT,
+        expectedBaselineSha: PRODUCTION_SHA,
+      }).map((issue) => issue.code),
+    ).toContain("MIGRATION_SOURCE_UNAVAILABLE");
   });
 });
 

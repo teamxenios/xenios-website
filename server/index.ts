@@ -21,6 +21,8 @@ import {
 import { ProductAdminService } from "./research/products-diagnostics/product-admin";
 import { buildProductAdminProductionService } from "./research/products-diagnostics/product-admin-integration";
 import { registerProductAdminApi } from "./research/products-diagnostics/product-admin-routes";
+import { buildInventoryLotAdminIntegrationDependencies } from "./research/inventory-admin/integration";
+import { registerInventoryLotAdminApi } from "./research/inventory-admin/routes";
 import {
   buildPrelaunchGuard,
   buildPrelaunchProductionDependencies,
@@ -266,6 +268,38 @@ registerRequiredInputApi(
   },
 );
 registerAssessmentRequiredInputPlanApi(app, prelaunchDependencies);
+
+// Research Commerce Wave 2 inventory and exact-lot COA administration.
+// Registration is unconditional so missing persistence returns stable JSON
+// instead of a 404. Every protected request still resolves a durable prelaunch
+// role before repository access, and the Product Control reader is an atomic
+// service-only SQL projection.
+registerInventoryLotAdminApi(
+  app,
+  buildInventoryLotAdminIntegrationDependencies(),
+  {
+    read: buildPrelaunchGuard(
+      prelaunchDependencies,
+      [
+        "super_admin",
+        "operations_admin",
+        "product_admin",
+        "approved_internal_reviewer",
+      ],
+      { allowSeedContext: false },
+    ),
+    mutateInventory: buildPrelaunchGuard(
+      prelaunchDependencies,
+      ["super_admin", "operations_admin"],
+      { allowSeedContext: false },
+    ),
+    reviewQuality: buildPrelaunchGuard(
+      prelaunchDependencies,
+      ["super_admin", "product_admin", "approved_internal_reviewer"],
+      { allowSeedContext: false },
+    ),
+  },
+);
 
 // Founding membership activation (three-state: capability_disabled by default,
 // not_provisioned without storage, live only when flag + storage exist).

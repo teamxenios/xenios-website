@@ -19,6 +19,7 @@ type MigrationRollback = {
 export type MigrationNode = {
   id: string;
   path: string;
+  sourceSha?: string;
   dependsOn: string[];
   checksum: MigrationChecksum;
   appliedToProduction: boolean;
@@ -40,18 +41,30 @@ export type MigrationDagValidationOptions = {
   repoRoot?: string;
   checkFiles?: boolean;
   expectedBaselineSha?: string;
-  canonicalBytes?: (productionSha: string, path: string) => Buffer;
+  expectedManagedMigrationPaths?: string[];
+  canonicalBytes?: (sourceSha: string, path: string) => Buffer;
 };
 
 const SHA_PATTERN = /^[0-9a-f]{40}$/;
 const SHA256_PATTERN = /^[0-9a-f]{64}$/;
 
-function canonicalGitBytes(repoRoot: string, productionSha: string, path: string): Buffer {
-  return execFileSync("git", ["show", `${productionSha}:${path}`], {
+function canonicalGitBytes(repoRoot: string, sourceSha: string, path: string): Buffer {
+  return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
     cwd: repoRoot,
     encoding: "buffer",
     stdio: ["ignore", "pipe", "pipe"],
   });
+}
+
+export function managedMigrationPathsFromLedger(source: string): string[] {
+  const paths: string[] = [];
+  for (const line of source.split(/\r?\n/)) {
+    const match = line.match(
+      /^\|\s*\d+\s*\|\s*(migrations\/[^|]+?)\s*\|/,
+    );
+    if (match?.[1]) paths.push(`supabase/${match[1].trim()}`);
+  }
+  return paths;
 }
 
 export function validateMigrationDag(
@@ -88,6 +101,7 @@ export function validateMigrationDag(
   }
 
   const byId = new Map<string, MigrationNode>();
+  const byPath = new Map<string, MigrationNode>();
   for (const migration of dag.migrations) {
     if (!migration.id || typeof migration.id !== "string") {
       issues.push({ code: "MIGRATION_ID", message: "Every migration requires an id." });
@@ -100,6 +114,31 @@ export function validateMigrationDag(
     }
     if (!migration.path || migration.path.startsWith("/") || /(^|\/)\.\.(\/|$)/.test(migration.path)) {
       issues.push({ code: "MIGRATION_PATH", message: `${migration.id} has an unsafe path.` });
+    } else if (byPath.has(migration.path)) {
+      issues.push({
+        code: "DUPLICATE_MIGRATION_PATH",
+        message: `Duplicate migration path: ${migration.path}`,
+      });
+    } else {
+      byPath.set(migration.path, migration);
+    }
+    if (
+      migration.sourceSha !== undefined &&
+      !SHA_PATTERN.test(migration.sourceSha)
+    ) {
+      issues.push({
+        code: "MIGRATION_SOURCE_SHA",
+        message: `${migration.id} sourceSha must be a lowercase Git SHA.`,
+      });
+    }
+    if (
+      migration.appliedToProduction === false &&
+      !SHA_PATTERN.test(migration.sourceSha ?? "")
+    ) {
+      issues.push({
+        code: "PENDING_MIGRATION_SOURCE_SHA",
+        message: `${migration.id} must pin the externally reviewed source SHA while pending.`,
+      });
     }
     if (!Array.isArray(migration.dependsOn)) {
       issues.push({ code: "MIGRATION_DEPENDS_ON", message: `${migration.id} dependsOn must be an array.` });
@@ -118,6 +157,34 @@ export function validateMigrationDag(
     }
     if (!migration.managedMigrationId?.trim()) {
       issues.push({ code: "MANAGED_MIGRATION_ID", message: `${migration.id} lacks a managed migration identity.` });
+    } else if (
+      migration.appliedToProduction === false &&
+      migration.managedMigrationId !== "PENDING"
+    ) {
+      issues.push({
+        code: "PENDING_MANAGED_MIGRATION_ID",
+        message: `${migration.id} must use managedMigrationId PENDING before production application.`,
+      });
+    }
+  }
+
+  if (options.expectedManagedMigrationPaths) {
+    const expected = new Set(options.expectedManagedMigrationPaths);
+    for (const path of expected) {
+      if (!byPath.has(path)) {
+        issues.push({
+          code: "MANAGED_MIGRATION_MISSING_FROM_DAG",
+          message: `${path} appears in the managed migration ledger but not the formal DAG.`,
+        });
+      }
+    }
+    for (const path of byPath.keys()) {
+      if (!expected.has(path)) {
+        issues.push({
+          code: "DAG_MIGRATION_MISSING_FROM_LEDGER",
+          message: `${path} appears in the formal DAG but not the managed migration ledger.`,
+        });
+      }
     }
   }
 
@@ -157,8 +224,9 @@ export function validateMigrationDag(
     const root = options.repoRoot ?? process.cwd();
     const readCanonical = options.canonicalBytes ?? ((sha, path) => canonicalGitBytes(root, sha, path));
     for (const migration of dag.migrations) {
+      const sourceSha = migration.sourceSha ?? dag.productionSha;
       try {
-        const bytes = readCanonical(dag.productionSha, migration.path);
+        const bytes = readCanonical(sourceSha, migration.path);
         const actual = createHash("sha256").update(bytes).digest("hex");
         if (actual !== migration.checksum.value) {
           issues.push({
@@ -169,7 +237,7 @@ export function validateMigrationDag(
       } catch (error) {
         issues.push({
           code: "MIGRATION_SOURCE_UNAVAILABLE",
-          message: `${migration.id} cannot be read at ${dag.productionSha}:${migration.path}: ${error instanceof Error ? error.message : String(error)}`,
+          message: `${migration.id} cannot be read at ${sourceSha}:${migration.path}: ${error instanceof Error ? error.message : String(error)}`,
         });
       }
       if (migration.rollback?.procedure) {
@@ -205,6 +273,9 @@ if (isCli()) {
   const issues = validateMigrationDag(dag, {
     repoRoot: root,
     expectedBaselineSha: state.production?.gitSha,
+    expectedManagedMigrationPaths: managedMigrationPathsFromLedger(
+      readFileSync(resolve(root, "supabase/MIGRATIONS.md"), "utf8"),
+    ),
   });
   if (issues.length > 0) {
     for (const issue of issues) console.error(`${issue.code}: ${issue.message}`);

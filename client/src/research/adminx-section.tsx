@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
-import { Route, Switch, Link } from "wouter";
+import { Redirect, Route, Switch, Link } from "wouter";
+import { AdminScreen } from "./pages/adminx/AdminResearchHome";
 import { ResearchLoadingState } from "./ui/kit";
 
 // The Samuel admin operations family, mounted by App.tsx at /admin/research*.
@@ -21,7 +22,14 @@ const Website3Configuration = lazy(() => import("./pages/adminx/Website3Configur
 const ProductRequestsAdmin = lazy(() => import("./pages/adminx/ProductRequestsAdmin"));
 const ProductRequestAdminDetail = lazy(() => import("./pages/adminx/ProductRequestAdminDetail"));
 const ProductAdminDetail = lazy(() => import("./pages/adminx/ProductAdminDetail"));
-const Inventory = lazy(() => import("./pages/adminx/Inventory"));
+const InventoryLotsBody = lazy(async () => {
+  const module = await import("./pages/adminx/InventoryLotsAdmin");
+  return { default: module.InventoryLotsBody };
+});
+const LotCoasBody = lazy(async () => {
+  const module = await import("./pages/adminx/LotCoasAdmin");
+  return { default: module.LotCoasBody };
+});
 const OrdersAdmin = lazy(() => import("./pages/adminx/OrdersAdmin"));
 const OrderAdminDetail = lazy(() => import("./pages/adminx/OrderAdminDetail"));
 const Fulfillment = lazy(() => import("./pages/adminx/Fulfillment"));
@@ -58,6 +66,59 @@ function S({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<ResearchLoadingState />}>{children}</Suspense>;
 }
 
+function InventoryFamilyNav({ current }: { current: "lots" | "coas" }) {
+  return (
+    <nav aria-label="Inventory administration" className="ra-subnav mb-6">
+      <Link
+        href="/admin/research/inventory/lots"
+        className={`ra-subnav-link ${current === "lots" ? "ra-subnav-active" : ""}`}
+        aria-current={current === "lots" ? "page" : undefined}
+      >
+        Inventory &amp; lots
+      </Link>
+      <Link
+        href="/admin/research/inventory/coas"
+        className={`ra-subnav-link ${current === "coas" ? "ra-subnav-active" : ""}`}
+        aria-current={current === "coas" ? "page" : undefined}
+      >
+        Exact-lot COAs
+      </Link>
+    </nav>
+  );
+}
+
+function InventoryLotsIntegrated() {
+  return (
+    <AdminScreen
+      title="Inventory & lots"
+      lead="Exact receiving, lot status, and append-only quantity movements. Counts change only through recorded commands."
+    >
+      {(token) => (
+        <>
+          <InventoryFamilyNav current="lots" />
+          <InventoryLotsBody token={token} />
+        </>
+      )}
+    </AdminScreen>
+  );
+}
+
+function LotCoasIntegrated() {
+  return (
+    <AdminScreen
+      title="Exact-lot COAs"
+      lead="Private upload references, explicit missing-test states, independent review, and controlled publication."
+    >
+      {(token) => (
+        <>
+          <InventoryFamilyNav current="coas" />
+          <LotCoasBody token={token} />
+        </>
+      )}
+    </AdminScreen>
+  );
+}
+
 export default function AdminResearchSection() {
   return (
     <Switch>
@@ -74,7 +135,11 @@ export default function AdminResearchSection() {
       <Route path="/admin/research/product-configuration">{() => <S><Website3Configuration /></S>}</Route>
       <Route path="/admin/research/product-requests">{() => <S><ProductRequestsAdmin /></S>}</Route>
       <Route path="/admin/research/product-requests/:id">{() => <S><ProductRequestAdminDetail /></S>}</Route>
-      <Route path="/admin/research/inventory">{() => <S><Inventory /></S>}</Route>
+      <Route path="/admin/research/inventory/lots">{() => <S><InventoryLotsIntegrated /></S>}</Route>
+      <Route path="/admin/research/inventory/coas">{() => <S><LotCoasIntegrated /></S>}</Route>
+      <Route path="/admin/research/inventory">
+        <Redirect to="/admin/research/inventory/lots" />
+      </Route>
       <Route path="/admin/research/orders">{() => <S><OrdersAdmin /></S>}</Route>
       <Route path="/admin/research/orders/:id">{() => <S><OrderAdminDetail /></S>}</Route>
       <Route path="/admin/research/fulfillment">{() => <S><Fulfillment /></S>}</Route>
