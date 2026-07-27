@@ -6,6 +6,7 @@
   "headSha": "RESOLVE_FROM_GIT_HEAD",
   "headShaResolution": "git rev-parse HEAD",
   "supersedesProhibitedHeadShas": [
+    "d16ccf59b655981f6b7923c635a7dc429de82675",
     "cbf9f0fb1ef69949a3c94aa252417981a6b5940d",
     "bdafa110fbca67f018b5cb91b227f7ffd49c8663",
     "b1a17c8c9bc581089b85047fbb3b7e21513c98d1",
@@ -151,13 +152,13 @@
     "focusedTests": {
       "command": "npm.cmd test -- server/research/inventory-admin/migration.test.ts server/research/inventory-admin/routes.test.ts server/research/inventory-admin/production.test.ts client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx client/src/research/pages/adminx/LotCoasAdmin.test.tsx server/release-control-plane.test.ts",
       "filesPassed": 6,
-      "testsPassed": 51,
+      "testsPassed": 52,
       "status": "passed"
     },
     "fullTests": {
       "command": "npm.cmd test -- --maxWorkers=2",
       "filesPassed": 203,
-      "testsPassed": 3657,
+      "testsPassed": 3658,
       "status": "passed"
     },
     "typecheck": {
@@ -193,7 +194,7 @@
       "zoom200Proxy": "720 CSS px reflow has no horizontal overflow",
       "keyboardFocus": "visible existing purple focus border on the labeled lot selector",
       "consoleErrorsOrWarnings": 0,
-      "retryInteraction": "same-tab remount after committed preparation or successful PUT restores the fingerprint-bound command envelope without token or signed URL; confirmation replays original version and key without duplicate PUT; changed metadata cancels the old unconfirmed preparation before replacement; confirmed success clears recovery storage",
+      "retryInteraction": "same-tab remount after committed preparation or successful PUT restores the JWT-sub-scoped fingerprint-bound command envelope without token or signed URL; same-user token refresh preserves it; principal change removes it before use; confirmation replays original version and key without duplicate PUT; changed metadata cancels the old unconfirmed preparation before replacement; confirmed success clears recovery storage",
       "status": "passed"
     }
   },

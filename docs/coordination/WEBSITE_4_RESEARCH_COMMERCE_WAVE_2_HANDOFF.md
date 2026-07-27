@@ -4,7 +4,8 @@
 
 - Branch: `feature/website-4-research-commerce-wave-2-inventory-lots`
 - Base: `bf1815c6754e04fd95325b25996ff441dc92fe43`
-- Supersedes prohibited heads: `cbf9f0fb1ef69949a3c94aa252417981a6b5940d`,
+- Supersedes prohibited heads: `d16ccf59b655981f6b7923c635a7dc429de82675`,
+  `cbf9f0fb1ef69949a3c94aa252417981a6b5940d`,
   `bdafa110fbca67f018b5cb91b227f7ffd49c8663`,
   `b1a17c8c9bc581089b85047fbb3b7e21513c98d1`,
   `f646708d45d4a6e4e7acf4e2653e44746baef184`, and
@@ -46,6 +47,11 @@
   external boundary and restored with strict metadata-fingerprint validation
   after reload/remount. It never stores the bearer token or signed upload URL,
   and is removed only after confirmed success or audited cancellation.
+- Recovery storage is namespaced to the stable authenticated JWT `sub`, not the
+  token. Other-principal envelopes are removed before render/use, mismatched
+  in-memory state is ignored, and same-user token refreshes retain the original
+  command envelope. A different administrator cannot see or inherit another
+  administrator's report metadata or retry identity.
 - Metadata changes first retire an unconfirmed preparation through a dedicated
   actor- and metadata-bound, lock-serialized, audited cancellation RPC. The
   abandoned object reference and history remain immutable; only then can a new
@@ -136,8 +142,8 @@ directly, copy Product Control files, or create another product model.
 
 ## Validation evidence
 
-- Focused tests: 6 files, 51 tests passed.
-- Full tests: 203 files, 3,657 tests passed with two workers.
+- Focused tests: 6 files, 52 tests passed.
+- Full tests: 203 files, 3,658 tests passed with two workers.
 - TypeScript check: passed.
 - Production build: passed.
 - Machine-readable release manifest:
@@ -176,6 +182,10 @@ directly, copy Product Control files, or create another product model.
   resets the form, and announces status through the live region. The previously
   accepted responsive lane remains unchanged and free of horizontal overflow at
   320 CSS px.
+- Principal-isolation proof: Admin A's committed-preparation envelope is removed
+  before Admin B renders in the same tab; B sees empty fields and can start with
+  independent command keys. Admin A's refreshed token with the same JWT `sub`
+  restores the original retry envelope.
 
 ## Environment
 

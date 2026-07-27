@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import {
   LOT_QUALITY_TEST_KEYS,
   type CoaUploadMetadata,
@@ -30,6 +30,7 @@ import { useAdminResource } from "./auth";
 import { AdminScreen } from "./AdminResearchHome";
 
 type UploadRetryState = {
+  principalId: string;
   fingerprint: string;
   metadata: CoaUploadMetadata;
   preparationIdempotencyKey: string;
@@ -41,17 +42,54 @@ type UploadRetryState = {
   objectUploaded: boolean;
 };
 
-const UPLOAD_RETRY_STORAGE_KEY = "xenios.research.coa-upload-retry.v1";
+const UPLOAD_RETRY_STORAGE_PREFIX = "xenios.research.coa-upload-retry.v1.";
 
-function readUploadRetry(): UploadRetryState | null {
+function authenticatedPrincipalId(token: string): string | null {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const decoded = JSON.parse(
+      atob(normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=")),
+    ) as { sub?: unknown };
+    return typeof decoded.sub === "string" && decoded.sub.length > 0 && decoded.sub.length <= 128
+      ? decoded.sub
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearOtherPrincipalRetries(activeKey: string | null): void {
+  if (typeof window === "undefined") return;
+  for (let index = window.sessionStorage.length - 1; index >= 0; index -= 1) {
+    const key = window.sessionStorage.key(index);
+    if (
+      key?.startsWith(UPLOAD_RETRY_STORAGE_PREFIX)
+      && key !== activeKey
+    ) {
+      window.sessionStorage.removeItem(key);
+    }
+  }
+}
+
+function retryStorageKey(principalId: string): string {
+  return `${UPLOAD_RETRY_STORAGE_PREFIX}${principalId}`;
+}
+
+function readUploadRetry(principalId: string | null): UploadRetryState | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = window.sessionStorage.getItem(UPLOAD_RETRY_STORAGE_KEY);
+    const storageKey = principalId ? retryStorageKey(principalId) : null;
+    clearOtherPrincipalRetries(storageKey);
+    if (!storageKey) return null;
+    const raw = window.sessionStorage.getItem(storageKey);
     if (!raw) return null;
     const value = JSON.parse(raw) as Partial<UploadRetryState>;
     const metadata = value.metadata as Partial<CoaUploadMetadata> | undefined;
     if (
-      !metadata
+      value.principalId !== principalId
+      || !metadata
       || typeof metadata.lotId !== "string"
       || typeof metadata.filename !== "string"
       || metadata.contentType !== "application/pdf"
@@ -70,7 +108,7 @@ function readUploadRetry(): UploadRetryState | null {
       || typeof value.objectUploaded !== "boolean"
       || (value.objectUploaded && (!value.documentId || !value.storageKey))
     ) {
-      window.sessionStorage.removeItem(UPLOAD_RETRY_STORAGE_KEY);
+      window.sessionStorage.removeItem(storageKey);
       return null;
     }
     return value as UploadRetryState;
@@ -83,23 +121,29 @@ function writeUploadRetry(value: UploadRetryState): void {
   if (typeof window === "undefined") {
     throw new Error("upload retry storage unavailable");
   }
-  window.sessionStorage.setItem(UPLOAD_RETRY_STORAGE_KEY, JSON.stringify(value));
+  const storageKey = retryStorageKey(value.principalId);
+  clearOtherPrincipalRetries(storageKey);
+  window.sessionStorage.setItem(storageKey, JSON.stringify(value));
 }
 
-function removeUploadRetry(): void {
+function removeUploadRetry(principalId: string | null): void {
   if (typeof window === "undefined") return;
   try {
-    window.sessionStorage.removeItem(UPLOAD_RETRY_STORAGE_KEY);
+    if (principalId) {
+      window.sessionStorage.removeItem(retryStorageKey(principalId));
+    }
   } catch {
     // A confirmed server command remains safely replayable even if local cleanup fails.
   }
 }
 
 function newUploadAttempt(
+  principalId: string,
   metadata: CoaUploadMetadata,
   fingerprint: string,
 ): UploadRetryState {
   return {
+    principalId,
     fingerprint,
     metadata,
     preparationIdempotencyKey: crypto.randomUUID(),
@@ -139,6 +183,7 @@ export default function LotCoasAdmin() {
 }
 
 export function LotCoasBody({ token }: { token: string }) {
+  const principalId = authenticatedPrincipalId(token);
   const lots = useAdminResource<{ ok: true; lots: InventoryLotAdmin[] }>(token, listInventoryLots);
   const documents = useAdminResource<{ ok: true; documents: LotQualityDocumentAdmin[] }>(
     token,
@@ -147,16 +192,26 @@ export function LotCoasBody({ token }: { token: string }) {
   const [selectedId, setSelectedId] = useState("");
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: "error" | "success"; text: string } | null>(null);
-  const [uploadRetry, setUploadRetry] = useState<UploadRetryState | null>(readUploadRetry);
+  const [uploadRetry, setUploadRetry] = useState<UploadRetryState | null>(
+    () => readUploadRetry(principalId),
+  );
+  const activeUploadRetry = uploadRetry?.principalId === principalId ? uploadRetry : null;
   const selected = documents.data?.documents.find((document) => document.id === selectedId) ?? null;
 
+  useEffect(() => {
+    setUploadRetry(readUploadRetry(principalId));
+  }, [principalId]);
+
   function rememberUploadRetry(value: UploadRetryState): void {
+    if (!principalId || value.principalId !== principalId) {
+      throw new Error("authenticated upload recovery principal unavailable");
+    }
     writeUploadRetry(value);
     setUploadRetry(value);
   }
 
   function clearUploadRetry(): void {
-    removeUploadRetry();
+    removeUploadRetry(principalId);
     setUploadRetry(null);
   }
 
@@ -215,7 +270,10 @@ export function LotCoasBody({ token }: { token: string }) {
         reportDate: String(data.get("reportDate") ?? ""),
       };
       const fingerprint = JSON.stringify(normalized);
-      let attempt = uploadRetry;
+      if (!principalId) {
+        return fail("Your authenticated session could not be verified for safe upload recovery.");
+      }
+      let attempt = activeUploadRetry;
       if (attempt && attempt.fingerprint !== fingerprint) {
         const cancelled = await cancelCoaUpload(token, {
           ...attempt.metadata,
@@ -228,9 +286,9 @@ export function LotCoasBody({ token }: { token: string }) {
             "The prior unconfirmed upload could not be safely retired. Retry before changing report metadata.",
           );
         }
-        attempt = newUploadAttempt(normalized, fingerprint);
+        attempt = newUploadAttempt(principalId, normalized, fingerprint);
       } else if (!attempt) {
-        attempt = newUploadAttempt(normalized, fingerprint);
+        attempt = newUploadAttempt(principalId, normalized, fingerprint);
       }
       rememberUploadRetry(attempt);
       const prepared = await prepareCoaUpload(token, {
@@ -425,7 +483,7 @@ export function LotCoasBody({ token }: { token: string }) {
           <button type="submit" className="btn btn-primary justify-self-start" disabled={busy}>
             {busy
               ? "Verifying..."
-              : uploadRetry
+              : activeUploadRetry
                 ? "Retry private COA upload"
                 : "Upload private COA"}
           </button>

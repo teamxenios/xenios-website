@@ -96,6 +96,22 @@ const documentB = qualityDocument(
   "LOT-B",
   "B",
 );
+const ADMIN_A_SUB = "80000000-0000-4000-8000-000000000001";
+const ADMIN_B_SUB = "80000000-0000-4000-8000-000000000002";
+
+function jwtFor(sub: string, session: string) {
+  const payload = btoa(JSON.stringify({ sub, session }))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+  return `e30.${payload}.signature`;
+}
+
+const ADMIN_A_TOKEN = jwtFor(ADMIN_A_SUB, "initial");
+const ADMIN_A_REFRESH_TOKEN = jwtFor(ADMIN_A_SUB, "refreshed");
+const ADMIN_B_TOKEN = jwtFor(ADMIN_B_SUB, "initial");
+const retryStorageKey = (sub: string) =>
+  `xenios.research.coa-upload-retry.v1.${sub}`;
 const lots: InventoryLotAdmin[] = [documentA, documentB].map((item) => ({
   id: item.lotId,
   lotCode: item.lotCode,
@@ -121,11 +137,12 @@ const lots: InventoryLotAdmin[] = [documentA, documentB].map((item) => ({
 
 let host: HTMLDivElement;
 let root: Root | null;
+let activeToken: string;
 
 async function renderPage() {
   await act(async () => {
     root = createRoot(host);
-    root.render(<LotCoasBody token="admin-token" />);
+    root.render(<LotCoasBody token={activeToken} />);
     await new Promise((resolve) => setTimeout(resolve, 0));
   });
 }
@@ -180,6 +197,7 @@ async function submit(form: HTMLFormElement) {
 
 beforeEach(() => {
   window.sessionStorage.clear();
+  activeToken = ADMIN_A_TOKEN;
   host = document.createElement("div");
   document.body.appendChild(host);
   root = null;
@@ -265,7 +283,7 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     });
 
     expect(mocks.review).toHaveBeenCalledWith(
-      "admin-token",
+      ADMIN_A_TOKEN,
       documentB.id,
       expect.objectContaining({
         expectedVersion: 2,
@@ -313,13 +331,14 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     await submit(form);
     expect(host.textContent).toContain("Retry private COA upload");
     const preparedEnvelope = window.sessionStorage.getItem(
-      "xenios.research.coa-upload-retry.v1",
+      retryStorageKey(ADMIN_A_SUB),
     );
     expect(preparedEnvelope).toContain(
       "70000000-0000-4000-8000-000000000010",
     );
     expect(preparedEnvelope).not.toContain("https://storage.invalid");
 
+    activeToken = ADMIN_A_REFRESH_TOKEN;
     await remountPage();
     ({ form } = populateUploadForm());
     await submit(form);
@@ -331,11 +350,16 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     const preparationKeys = mocks.prepare.mock.calls.map(
       (call) => call[1].idempotencyKey,
     );
+    expect(mocks.prepare.mock.calls.map((call) => call[0])).toEqual([
+      ADMIN_A_TOKEN,
+      ADMIN_A_REFRESH_TOKEN,
+      ADMIN_A_REFRESH_TOKEN,
+    ]);
     expect(new Set(preparationKeys)).toEqual(
       new Set(["70000000-0000-4000-8000-000000000010"]),
     );
     expect(mocks.confirm).toHaveBeenCalledWith(
-      "admin-token",
+      ADMIN_A_REFRESH_TOKEN,
       upload.documentId,
       {
         expectedVersion: 1,
@@ -346,7 +370,7 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     expect(host.textContent).toContain("Private COA object verified.");
     expect(mocks.listDocuments).toHaveBeenCalledTimes(3);
     expect(window.sessionStorage.getItem(
-      "xenios.research.coa-upload-retry.v1",
+      retryStorageKey(ADMIN_A_SUB),
     )).toBeNull();
   });
 
@@ -402,13 +426,14 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     await submit(form);
     expect(host.textContent).toContain("Retry private COA upload");
     const confirmationEnvelope = window.sessionStorage.getItem(
-      "xenios.research.coa-upload-retry.v1",
+      retryStorageKey(ADMIN_A_SUB),
     );
     expect(confirmationEnvelope).toContain(
       "70000000-0000-4000-8000-000000000031",
     );
     expect(confirmationEnvelope).toContain('"objectUploaded":true');
     expect(confirmationEnvelope).not.toContain("https://storage.invalid");
+    activeToken = ADMIN_A_REFRESH_TOKEN;
     await remountPage();
     ({ form } = populateUploadForm());
     await submit(form);
@@ -419,9 +444,13 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     );
     expect(mocks.upload).toHaveBeenCalledTimes(1);
     expect(mocks.confirm).toHaveBeenCalledTimes(2);
+    expect(mocks.confirm.mock.calls.map((call) => call[0])).toEqual([
+      ADMIN_A_TOKEN,
+      ADMIN_A_REFRESH_TOKEN,
+    ]);
     for (const call of mocks.confirm.mock.calls) {
       expect(call).toEqual([
-        "admin-token",
+        expect.stringMatching(/^e30\./),
         identity.documentId,
         {
           expectedVersion: 1,
@@ -431,8 +460,75 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     }
     expect(host.textContent).toContain("Private COA object verified.");
     expect(window.sessionStorage.getItem(
-      "xenios.research.coa-upload-retry.v1",
+      retryStorageKey(ADMIN_A_SUB),
     )).toBeNull();
+  });
+
+  it("removes another admin's envelope and lets the new principal start independently", async () => {
+    vi.mocked(crypto.randomUUID)
+      .mockReset()
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000040")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000041")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000042")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000043")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000044")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000045");
+    mocks.prepare
+      .mockRejectedValueOnce(new Error("Admin A grant failed after preparation commit"))
+      .mockResolvedValueOnce({
+        kind: "ok",
+        data: {
+          ok: true,
+          upload: {
+            documentId: "60000000-0000-4000-8000-000000000040",
+            documentVersion: 1,
+            storageKey: "lots/50000000-0000-4000-8000-000000000001/admin-b.pdf",
+            uploadRequired: true,
+            uploadUrl: "https://storage.invalid/admin-b",
+            expiresAt: "2026-07-27T01:00:00.000Z",
+          },
+        },
+      });
+
+    await renderPage();
+    let { form } = populateUploadForm();
+    await submit(form);
+    const adminAEnvelope = window.sessionStorage.getItem(
+      retryStorageKey(ADMIN_A_SUB),
+    );
+    expect(adminAEnvelope).toContain("REPORT-RETRY");
+
+    activeToken = ADMIN_B_TOKEN;
+    await remountPage();
+
+    expect(window.sessionStorage.getItem(retryStorageKey(ADMIN_A_SUB))).toBeNull();
+    expect(window.sessionStorage.getItem(retryStorageKey(ADMIN_B_SUB))).toBeNull();
+    expect(host.textContent).not.toContain("Retry private COA upload");
+    const emptyReportNumber = host.querySelector<HTMLInputElement>(
+      'input[name="reportNumber"]',
+    );
+    expect(emptyReportNumber?.value).toBe("");
+
+    ({ form } = populateUploadForm());
+    const reportNumber = form.elements.namedItem("reportNumber");
+    if (!(reportNumber instanceof HTMLInputElement)) {
+      throw new Error("Admin B report number missing");
+    }
+    reportNumber.value = "ADMIN-B-REPORT";
+    await submit(form);
+
+    expect(mocks.prepare).toHaveBeenCalledTimes(2);
+    expect(mocks.prepare.mock.calls[0]?.[0]).toBe(ADMIN_A_TOKEN);
+    expect(mocks.prepare.mock.calls[1]?.[0]).toBe(ADMIN_B_TOKEN);
+    expect(mocks.prepare.mock.calls[0]?.[1].idempotencyKey).not.toBe(
+      mocks.prepare.mock.calls[1]?.[1].idempotencyKey,
+    );
+    expect(mocks.prepare.mock.calls[1]?.[1]).toMatchObject({
+      reportNumber: "ADMIN-B-REPORT",
+      idempotencyKey: "70000000-0000-4000-8000-000000000043",
+    });
+    expect(host.textContent).toContain("Private COA object verified.");
+    expect(window.sessionStorage.getItem(retryStorageKey(ADMIN_B_SUB))).toBeNull();
   });
 
   it("starts a new preparation when normalized upload metadata changes", async () => {
@@ -482,7 +578,7 @@ describe("Website 4 exact-lot COA editor isolation", () => {
       reportNumber: "REPORT-CHANGED",
       idempotencyKey: "70000000-0000-4000-8000-000000000023",
     });
-    expect(mocks.cancel).toHaveBeenCalledWith("admin-token", {
+    expect(mocks.cancel).toHaveBeenCalledWith(ADMIN_A_TOKEN, {
       lotId: lots[0].id,
       filename: "retry_report.pdf",
       contentType: "application/pdf",
