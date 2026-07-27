@@ -24,6 +24,10 @@
 - Put requires a complete PR84 `CartProductSelection`; SQL revalidates exact
   product, variant, SKU, active approved price, required-input versions, and
   domain readiness versions before mutation or replay.
+- Cart selection validation takes fixed-order mutation-conflicting table locks.
+  Authoritative product, price, required-input, and domain invalidations always
+  remain available; after invalidation, forward mutation, replay, and claim
+  fail closed against the stale saved selection.
 - Remove is deliberately exposure-reducing and does not depend on a current
   saved selection.
 - Claim locks anonymous then member scope, is one-way, checks both optimistic
@@ -44,7 +48,9 @@ Required before freeze:
 
 - focused repository tests
 - disposable PostgreSQL 16 apply-twice, forced-RLS, grants, direct-DML denial,
-  concurrency/claim/idempotency, immutable audit, expiry, and rollback-zero
+  concurrency/claim/idempotency, immutable audit, expiry, rollback-zero, and
+  cart-first/writer-first invalidation races for product, price, required
+  input, and domain readiness
 - full `npm test`
 - `npm run check`
 - `npm run build`

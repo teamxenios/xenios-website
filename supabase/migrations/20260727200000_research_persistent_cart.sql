@@ -235,116 +235,6 @@ exception when others then return false;
 end;
 $$;
 
-create or replace function public.research_persistent_cart_invalidation_guard()
-returns trigger language plpgsql security definer set search_path = pg_catalog as $$
-declare v_id text; v_invalidating boolean := tg_op='DELETE'; v_in_use boolean;
-begin
-  if tg_table_name='research_products' then
-    v_id:=case when tg_op='DELETE' then old.id else new.id end::text;
-    if tg_op='UPDATE' then
-      v_invalidating:=new.admin_status is distinct from old.admin_status
-        or new.active_state is distinct from old.active_state
-        or new.visibility_state is distinct from old.visibility_state
-        or new.commerce_approval is distinct from old.commerce_approval;
-    end if;
-    select exists(select 1 from public.research_persistent_cart_items i
-      join public.research_persistent_carts c on c.id=i.cart_id
-      where i.product_id=v_id::uuid and c.state='active' and c.expires_at>clock_timestamp())
-      into v_in_use;
-  elsif tg_table_name='research_product_variants' then
-    v_id:=case when tg_op='DELETE' then old.id else new.id end::text;
-    if tg_op='UPDATE' then
-      v_invalidating:=new.product_id is distinct from old.product_id
-        or new.sku is distinct from old.sku or new.status is distinct from old.status
-        or new.active is distinct from old.active or new.version is distinct from old.version;
-    end if;
-    select exists(select 1 from public.research_persistent_cart_items i
-      join public.research_persistent_carts c on c.id=i.cart_id
-      where i.variant_id=v_id::uuid and c.state='active' and c.expires_at>clock_timestamp())
-      into v_in_use;
-  elsif tg_table_name='research_product_prices' then
-    v_id:=case when tg_op='DELETE' then old.id else new.id end::text;
-    if tg_op='UPDATE' then
-      v_invalidating:=new.product_id is distinct from old.product_id
-        or new.variant_id is distinct from old.variant_id
-        or new.audience is distinct from old.audience
-        or new.amount_cents is distinct from old.amount_cents
-        or new.currency is distinct from old.currency
-        or new.effective_at is distinct from old.effective_at
-        or new.expires_at is distinct from old.expires_at
-        or new.status is distinct from old.status
-        or new.approved_by is distinct from old.approved_by
-        or new.version is distinct from old.version;
-    end if;
-    select exists(select 1 from public.research_persistent_cart_items i
-      join public.research_persistent_carts c on c.id=i.cart_id
-      where i.price_id=v_id::uuid and c.state='active' and c.expires_at>clock_timestamp())
-      into v_in_use;
-  elsif tg_table_name='research_required_inputs' then
-    v_id:=case when tg_op='DELETE' then old.id else new.id end::text;
-    if tg_op='INSERT' then
-      v_invalidating:=new.current_state<>'superseded';
-    end if;
-    if tg_op='UPDATE' then
-      v_invalidating:=new.key is distinct from old.key or new.domain is distinct from old.domain
-        or new.record_type is distinct from old.record_type
-        or new.record_id is distinct from old.record_id
-        or new.current_state is distinct from old.current_state
-        or new.blocking_level is distinct from old.blocking_level
-        or new.version is distinct from old.version;
-    end if;
-    if tg_op='INSERT' then
-      select exists(select 1 from public.research_persistent_cart_items i
-        join public.research_persistent_carts c on c.id=i.cart_id
-        where i.product_id::text=new.record_id
-          and c.state='active' and c.expires_at>clock_timestamp()) into v_in_use;
-    else
-      select exists(select 1 from public.research_persistent_cart_items i
-        join public.research_persistent_carts c on c.id=i.cart_id
-        where i.selection_snapshot->'canonicalReadiness'->'inputVersions'
-          @> jsonb_build_array(jsonb_build_object('id',v_id))
-          and c.state='active' and c.expires_at>clock_timestamp()) into v_in_use;
-    end if;
-  elsif tg_table_name='research_domain_launch_controls' then
-    v_id:=case when tg_op='DELETE' then old.domain else new.domain end;
-    if tg_op='UPDATE' then
-      v_invalidating:=new.domain is distinct from old.domain
-        or new.launch_status is distinct from old.launch_status
-        or new.software_complete is distinct from old.software_complete
-        or new.version is distinct from old.version;
-    end if;
-    select exists(select 1 from public.research_persistent_cart_items i
-      join public.research_persistent_carts c on c.id=i.cart_id
-      where i.selection_snapshot->'canonicalReadiness'->'domainVersions'
-        @> jsonb_build_array(jsonb_build_object('domain',v_id))
-        and c.state='active' and c.expires_at>clock_timestamp()) into v_in_use;
-  else
-    raise exception 'persistent cart invalidation target is invalid';
-  end if;
-  if v_invalidating and v_in_use then
-    raise exception 'persistent_cart_selection_in_use' using errcode='55000';
-  end if;
-  if tg_op='DELETE' then return old; end if;
-  return new;
-end;
-$$;
-
-drop trigger if exists research_cart_product_invalidation_guard on public.research_products;
-create trigger research_cart_product_invalidation_guard before update or delete on public.research_products
-for each row execute function public.research_persistent_cart_invalidation_guard();
-drop trigger if exists research_cart_variant_invalidation_guard on public.research_product_variants;
-create trigger research_cart_variant_invalidation_guard before update or delete on public.research_product_variants
-for each row execute function public.research_persistent_cart_invalidation_guard();
-drop trigger if exists research_cart_price_invalidation_guard on public.research_product_prices;
-create trigger research_cart_price_invalidation_guard before update or delete on public.research_product_prices
-for each row execute function public.research_persistent_cart_invalidation_guard();
-drop trigger if exists research_cart_required_input_invalidation_guard on public.research_required_inputs;
-create trigger research_cart_required_input_invalidation_guard before insert or update or delete on public.research_required_inputs
-for each row execute function public.research_persistent_cart_invalidation_guard();
-drop trigger if exists research_cart_domain_invalidation_guard on public.research_domain_launch_controls;
-create trigger research_cart_domain_invalidation_guard before update or delete on public.research_domain_launch_controls
-for each row execute function public.research_persistent_cart_invalidation_guard();
-
 create or replace function public.research_persistent_cart_json(p_cart_id uuid)
 returns jsonb language sql security definer set search_path = pg_catalog as $$
   select jsonb_build_object(
@@ -674,7 +564,6 @@ revoke all on function public.research_persistent_cart_owner_scope(text,text) fr
 revoke all on function public.research_persistent_cart_selection_current(jsonb) from public, anon, authenticated, service_role;
 revoke all on function public.research_persistent_cart_json(uuid) from public, anon, authenticated, service_role;
 revoke all on function public.research_persistent_cart_immutable() from public, anon, authenticated, service_role;
-revoke all on function public.research_persistent_cart_invalidation_guard() from public, anon, authenticated, service_role;
 grant execute on function public.research_persistent_cart_get(text,text) to service_role;
 grant execute on function public.research_persistent_cart_put_item(text,text,uuid,bigint,bigint,integer,jsonb,text,timestamptz) to service_role;
 grant execute on function public.research_persistent_cart_remove_item(text,text,uuid,uuid,bigint,bigint,text) to service_role;

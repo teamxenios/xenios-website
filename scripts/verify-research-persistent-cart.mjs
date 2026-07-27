@@ -561,66 +561,124 @@ try {
       end $proof$;
     `,
   ]));
-  for (const database of ["cart_first_race", "writer_first_race"]) {
-    requireOk(`create ${database}`, psql(`create database ${database} template postgres;`));
-    requireOk(`seed ${database}`, await psqlAsync(database, selectionFixtureSql));
-  }
   const putRaceSql = `
     select public.research_persistent_cart_put_item(
       'anonymous',repeat('d',64),null,null,null,1,
       (select value from public.cart_test_selection),repeat('d',64),
       '2027-07-27T20:00:00Z'
     );`;
-  const cartFirst = psqlAsync("cart_first_race", `
-    begin; ${putRaceSql} select pg_sleep(2); commit;`);
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  const cartFirstWriter = psqlAsync("cart_first_race", `
-    update public.research_product_prices set status='expired'
-    where id='83000000-0000-4000-8000-000000000001';`);
-  const [cartFirstResult, writerAfterCartResult] = await Promise.all([
-    cartFirst, cartFirstWriter,
-  ]);
-  requireOk("cart-first race commits current cart", cartFirstResult);
-  requireOk("cart-first race rejects later invalidation",
-    writerAfterCartResult.status !== 0 &&
-      /persistent_cart_selection_in_use/.test(writerAfterCartResult.stderr)
-      ? { status: 0 }
-      : { status: 1, stderr: writerAfterCartResult.stderr });
-  requireOk("cart-first race leaves active price and one cart", await psqlAsync(
-    "cart_first_race",
-    `do $proof$ begin
-      if (select status from public.research_product_prices
-        where id='83000000-0000-4000-8000-000000000001')<>'active'
-        or (select count(*) from public.research_persistent_carts)<>1
-      then raise exception 'cart-first stale commit'; end if;
-    end $proof$;`,
-  ));
+  const invalidations = [
+    {
+      name: "price",
+      sql: `update public.research_product_prices set status='expired'
+        where id='83000000-0000-4000-8000-000000000001';`,
+    },
+    {
+      name: "product",
+      sql: `update public.research_products
+        set visibility_state='hidden', admin_status='archived', active_state=false
+        where id='81000000-0000-4000-8000-000000000001';`,
+    },
+    {
+      name: "required_input",
+      sql: `update public.research_required_inputs set current_state='expired'
+        where id='84000000-0000-4000-8000-000000000001';`,
+    },
+    {
+      name: "domain",
+      sql: `update public.research_domain_launch_controls
+        set launch_status='disabled', software_complete=false
+        where domain='products';`,
+    },
+  ];
+  for (const invalidation of invalidations) {
+    const cartFirstDatabase = `cart_first_${invalidation.name}`;
+    const writerFirstDatabase = `writer_first_${invalidation.name}`;
+    for (const database of [cartFirstDatabase, writerFirstDatabase]) {
+      requireOk(`create ${database}`, psql(`create database ${database} template postgres;`));
+      requireOk(`seed ${database}`, await psqlAsync(database, selectionFixtureSql));
+    }
 
-  const writerFirst = psqlAsync("writer_first_race", `
-    begin;
-    update public.research_product_prices set status='expired'
-      where id='83000000-0000-4000-8000-000000000001';
-    select pg_sleep(2); commit;`);
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  const cartAfterWriter = psqlAsync("writer_first_race", putRaceSql);
-  const [writerFirstResult, cartAfterWriterResult] = await Promise.all([
-    writerFirst, cartAfterWriter,
-  ]);
-  requireOk("writer-first race commits invalidation", writerFirstResult);
-  requireOk("writer-first race rejects stale cart",
-    cartAfterWriterResult.status !== 0 &&
-      /selection_stale/.test(cartAfterWriterResult.stderr)
-      ? { status: 0 }
-      : { status: 1, stderr: cartAfterWriterResult.stderr });
-  requireOk("writer-first race leaves zero carts", await psqlAsync(
-    "writer_first_race",
-    `do $proof$ begin
-      if (select count(*) from public.research_persistent_carts)<>0
-        or (select status from public.research_product_prices
-          where id='83000000-0000-4000-8000-000000000001')<>'expired'
-      then raise exception 'writer-first stale commit'; end if;
-    end $proof$;`,
-  ));
+    const cartFirst = psqlAsync(cartFirstDatabase, `
+      begin; ${putRaceSql} select pg_sleep(2); commit;`);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const writerAfterCart = psqlAsync(cartFirstDatabase, invalidation.sql);
+    const [cartFirstResult, writerAfterCartResult] = await Promise.all([
+      cartFirst, writerAfterCart,
+    ]);
+    requireOk(`${invalidation.name} cart-first commits current cart`, cartFirstResult);
+    requireOk(`${invalidation.name} cart-first permits authoritative invalidation`,
+      writerAfterCartResult);
+    requireOk(`${invalidation.name} invalidation stales forward/replay/claim but permits remove`,
+      await psqlAsync(cartFirstDatabase, `
+        do $proof$
+        declare v_carts bigint; v_items bigint; v_commands bigint; v_events bigint;
+          v_cart uuid; v_item uuid;
+        begin
+          select id into v_cart from public.research_persistent_carts
+            where anonymous_hash=repeat('d',64);
+          select id into v_item from public.research_persistent_cart_items where cart_id=v_cart;
+          select count(*) into v_carts from public.research_persistent_carts;
+          select count(*) into v_items from public.research_persistent_cart_items;
+          select count(*) into v_commands from public.research_persistent_cart_commands;
+          select count(*) into v_events from public.research_persistent_cart_events;
+          begin
+            perform public.research_persistent_cart_put_item(
+              'anonymous',repeat('d',64),v_cart,2,1,1,
+              (select value from public.cart_test_selection),repeat('d',64),
+              '2027-07-27T20:00:00Z');
+            raise exception 'stale replay passed';
+          exception when others then if sqlerrm<>'selection_stale' then raise; end if; end;
+          begin
+            perform public.research_persistent_cart_put_item(
+              'anonymous',repeat('d',64),v_cart,2,1,2,
+              (select value from public.cart_test_selection),repeat('e',64),
+              '2027-07-27T20:00:00Z');
+            raise exception 'stale forward mutation passed';
+          exception when others then if sqlerrm<>'selection_stale' then raise; end if; end;
+          begin
+            perform public.research_persistent_cart_claim(
+              '50000000-0000-4000-8000-000000000001',repeat('d',64),
+              jsonb_build_array((select value from public.cart_test_selection)),
+              2,null,null,repeat('f',64),'2027-07-27T20:00:00Z');
+            raise exception 'stale claim passed';
+          exception when others then if sqlerrm<>'selection_stale' then raise; end if; end;
+          if (select count(*) from public.research_persistent_carts)<>v_carts
+            or (select count(*) from public.research_persistent_cart_items)<>v_items
+            or (select count(*) from public.research_persistent_cart_commands)<>v_commands
+            or (select count(*) from public.research_persistent_cart_events)<>v_events
+          then raise exception 'stale command mutated state'; end if;
+          perform public.research_persistent_cart_remove_item(
+            'anonymous',repeat('d',64),v_cart,v_item,2,1,repeat('a',64));
+          if (select count(*) from public.research_persistent_cart_items)<>0
+          then raise exception 'stale remove failed'; end if;
+        end $proof$;`,
+      ));
+
+    const writerFirst = psqlAsync(writerFirstDatabase, `
+      begin; ${invalidation.sql} select pg_sleep(2); commit;`);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const cartAfterWriter = psqlAsync(writerFirstDatabase, putRaceSql);
+    const [writerFirstResult, cartAfterWriterResult] = await Promise.all([
+      writerFirst, cartAfterWriter,
+    ]);
+    requireOk(`${invalidation.name} writer-first commits invalidation`, writerFirstResult);
+    requireOk(`${invalidation.name} writer-first rejects stale cart`,
+      cartAfterWriterResult.status !== 0 &&
+        /selection_stale/.test(cartAfterWriterResult.stderr)
+        ? { status: 0 }
+        : { status: 1, stderr: cartAfterWriterResult.stderr });
+    requireOk(`${invalidation.name} writer-first leaves zero cart state`,
+      await psqlAsync(writerFirstDatabase, `
+        do $proof$ begin
+          if (select count(*) from public.research_persistent_carts)
+            +(select count(*) from public.research_persistent_cart_items)
+            +(select count(*) from public.research_persistent_cart_commands)
+            +(select count(*) from public.research_persistent_cart_events)<>0
+          then raise exception 'writer-first stale commit'; end if;
+        end $proof$;`,
+      ));
+  }
   const directDml = psql(`
     set role service_role;
     insert into public.research_persistent_carts(owner_kind,member_id,expires_at)
