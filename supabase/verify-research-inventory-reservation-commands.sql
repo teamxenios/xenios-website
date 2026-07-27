@@ -186,9 +186,9 @@ order by table_name;
 
 select
   (select count(*) from public.research_members) as members,
-  (select count(*) from public.research_membership_applications) as applications,
+  (select count(*) from public.research_applications) as applications,
   (select count(*) from public.research_notification_outbox) as outbox,
   (select count(*) from public.research_required_inputs) as required_inputs,
   (select count(*) from public.research_domain_launch_controls) as launch_controls,
   (select count(*) from public.care_capabilities
-    where capability_key = 'care' and enabled = false) as care_disabled_rows;
+    where capability_key = 'care' and state = 'disabled') as care_disabled_rows;
