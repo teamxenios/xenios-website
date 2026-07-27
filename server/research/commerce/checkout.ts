@@ -67,6 +67,11 @@ export type ReserveOutcome =
   | { ok: true; reservationIds: string[] }
   | { ok: false; refusals: ReservationRefusalCode[] };
 
+export type ReservationCommandContext = {
+  actorId: string;
+  idempotencyKey: string;
+};
+
 /**
  * The inventory hold around a checkout. `reserve` pins real lots (FEFO) and
  * decrements their available quantity so no concurrent checkout can sell the
@@ -79,9 +84,18 @@ export interface ReservationSeam {
     memberId: string,
     lines: readonly ReservationLineRequest[],
     asOf: Date,
+    command?: ReservationCommandContext,
   ): Promise<ReserveOutcome>;
-  release(reservationIds: readonly string[]): Promise<void>;
-  finalize(reservationIds: readonly string[]): Promise<void>;
+  release(
+    reservationIds: readonly string[],
+    memberId?: string,
+    command?: ReservationCommandContext,
+  ): Promise<void>;
+  finalize(
+    reservationIds: readonly string[],
+    memberId?: string,
+    command?: ReservationCommandContext,
+  ): Promise<void>;
 }
 
 /**
@@ -382,6 +396,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
         memberId,
         cart.lines.map((line) => ({ sku: line.sku, quantity: line.quantity })),
         asOf,
+        { actorId: memberId, idempotencyKey: req.idempotencyKey },
       );
       if (!reserved.ok) {
         return {
@@ -407,7 +422,10 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     /** The compensation for a checkout that dies after the hold was taken. */
     const releaseReservations = async (orderId: string): Promise<void> => {
       if (!deps.inventory || reservationIds.length === 0) return;
-      await deps.inventory.release(reservationIds);
+      await deps.inventory.release(reservationIds, memberId, {
+        actorId: memberId,
+        idempotencyKey: req.idempotencyKey,
+      });
       await audit("released", orderId);
     };
 
@@ -549,7 +567,10 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       // Settlement: the reserve-time decrement becomes permanent. The units are
       // sold, so a later release (or refund) must never put them back.
       if (deps.inventory && reservationIds.length > 0) {
-        await deps.inventory.finalize(reservationIds);
+        await deps.inventory.finalize(reservationIds, memberId, {
+          actorId: memberId,
+          idempotencyKey: req.idempotencyKey,
+        });
         await audit("finalized", orderId);
       }
     }

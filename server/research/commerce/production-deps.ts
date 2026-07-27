@@ -24,6 +24,9 @@ import {
   type CheckoutOrder,
   type CheckoutService,
 } from "./checkout";
+import { inventoryReservationSeamOverPort } from "./inventory-reservation-adapter";
+import { SupabaseInventoryReservationPort } from "../inventory-reservation/production";
+import type { InventoryReservationPort } from "../inventory-reservation/port";
 import {
   createOrderService,
   type OrderRecord,
@@ -196,6 +199,11 @@ export interface CommerceWiring {
    * so a checkout reserves real FEFO stock before any money moves.
    */
   resolveReservationStore(): ReservationRepository;
+  /**
+   * Atomic DB command boundary used by production. Tests that intentionally
+   * inject the legacy in-memory stores may omit this resolver.
+   */
+  resolveInventoryReservationPort?: () => InventoryReservationPort;
   /** The durable webhook replay guard (DB-backed when the database is configured). */
   resolveWebhookEventStore(): WebhookEventStore;
   resolvePartnerMemberStore(): AsyncPartnerMemberStore;
@@ -275,6 +283,8 @@ function defaultWiring(): CommerceWiring {
     resolveSubscriptionRepository,
     resolveAdminQueuesStore,
     resolveReservationStore,
+    resolveInventoryReservationPort: () =>
+      new SupabaseInventoryReservationPort(),
     resolveWebhookEventStore: resolveDurableWebhookEventStore,
     resolvePartnerMemberStore,
     resolvePartnerLinkStore,
@@ -848,7 +858,6 @@ function liveDependencies(
   const creditLedger = wiring.resolveStoreCreditLedgerStore();
   const subscriptionRepository = wiring.resolveSubscriptionRepository();
   const adminQueuesStore = wiring.resolveAdminQueuesStore();
-  const reservationStore = wiring.resolveReservationStore();
   const webhookEventStore = wiring.resolveWebhookEventStore();
   const partnerMemberStore = wiring.resolvePartnerMemberStore();
   const partnerLinkStore = wiring.resolvePartnerLinkStore();
@@ -867,11 +876,16 @@ function liveDependencies(
    * released/finalized timestamps) are the evidence trail until an audit
    * destination exists, which is reported rather than invented.
    */
-  const inventoryReservations = createInventoryReservationSeam({
-    lots: lotStore,
-    reservations: reservationStore,
-    now,
-  });
+  const inventoryReservations = wiring.resolveInventoryReservationPort
+    ? inventoryReservationSeamOverPort(
+        wiring.resolveInventoryReservationPort(),
+        { now },
+      )
+    : createInventoryReservationSeam({
+        lots: lotStore,
+        reservations: wiring.resolveReservationStore(),
+        now,
+      });
 
   const catalogBySku = new Map<string, CatalogProduct>(products.map((p) => [p.sku, p]));
 
@@ -1327,7 +1341,16 @@ export function buildCommerceDependencies(
   // without a backing capability can never present goods as purchasable.
   const operable = commerceEnabled && dbConfigured;
 
-  const resolved: CommerceWiring = { ...defaultWiring(), ...wiring };
+  const resolved: CommerceWiring = {
+    ...defaultWiring(),
+    ...wiring,
+    // A fully injected test wiring historically exercises the in-memory
+    // reference seam. Do not silently mix that sandbox with the production
+    // Supabase port. Bare production composition keeps the default resolver.
+    ...(wiring && !("resolveInventoryReservationPort" in wiring)
+      ? { resolveInventoryReservationPort: undefined }
+      : {}),
+  };
 
   // Supplier-independent V3 discovery catalog. Every commerce-critical field
   // is structurally unconfirmed, so this compatibility read side cannot make
