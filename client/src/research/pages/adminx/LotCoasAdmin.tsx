@@ -41,6 +41,7 @@ type UploadRetryState = {
   preparedVersion: number;
   storageKey: string | null;
   objectUploaded: boolean;
+  signOutCleanupPending: boolean;
 };
 
 const UPLOAD_RETRY_STORAGE_PREFIX = "xenios.research.coa-upload-retry.v1.";
@@ -69,6 +70,14 @@ function clearOtherPrincipalRetries(activeKey: string | null): void {
       key?.startsWith(UPLOAD_RETRY_STORAGE_PREFIX)
       && key !== activeKey
     ) {
+      try {
+        const value = JSON.parse(
+          window.sessionStorage.getItem(key) ?? "null",
+        ) as Partial<UploadRetryState> | null;
+        if (value?.signOutCleanupPending === true) continue;
+      } catch {
+        // Invalid recovery state is removed below.
+      }
       window.sessionStorage.removeItem(key);
     }
   }
@@ -107,6 +116,7 @@ function readUploadRetry(principalId: string | null): UploadRetryState | null {
       || !(value.documentId === null || typeof value.documentId === "string")
       || !(value.storageKey === null || typeof value.storageKey === "string")
       || typeof value.objectUploaded !== "boolean"
+      || typeof value.signOutCleanupPending !== "boolean"
       || (value.objectUploaded && (!value.documentId || !value.storageKey))
     ) {
       window.sessionStorage.removeItem(storageKey);
@@ -154,6 +164,7 @@ function newUploadAttempt(
     preparedVersion: 1,
     storageKey: null,
     objectUploaded: false,
+    signOutCleanupPending: false,
   };
 }
 
@@ -210,8 +221,48 @@ export function LotCoasBody({ token }: { token: string }) {
       if (!active || !client) return;
       const { data } = client.auth.onAuthStateChange((event) => {
         if (event !== "SIGNED_OUT") return;
-        removeUploadRetry(principalId);
-        setUploadRetry(null);
+        const retained = readUploadRetry(principalId);
+        if (!retained) {
+          if (active) setUploadRetry(null);
+          return;
+        }
+        const cleanupAttempt = {
+          ...retained,
+          signOutCleanupPending: true,
+        };
+        writeUploadRetry(cleanupAttempt);
+        if (active) setUploadRetry(cleanupAttempt);
+        void (async () => {
+          try {
+            const prepared = await prepareCoaUpload(token, {
+              ...cleanupAttempt.metadata,
+              idempotencyKey: cleanupAttempt.preparationIdempotencyKey,
+            });
+            if (prepared.kind !== "ok") return;
+            if (
+              (cleanupAttempt.documentId
+                && cleanupAttempt.documentId !== prepared.data.upload.documentId)
+              || (cleanupAttempt.storageKey
+                && cleanupAttempt.storageKey !== prepared.data.upload.storageKey)
+              || prepared.data.upload.documentVersion < cleanupAttempt.preparedVersion
+            ) {
+              return;
+            }
+            if (prepared.data.upload.uploadRequired) {
+              const cancelled = await cancelCoaUpload(token, {
+                ...cleanupAttempt.metadata,
+                expectedVersion: cleanupAttempt.preparedVersion,
+                preparationIdempotencyKey: cleanupAttempt.preparationIdempotencyKey,
+                idempotencyKey: cleanupAttempt.cancellationIdempotencyKey,
+              });
+              if (cancelled.kind !== "ok") return;
+            }
+            removeUploadRetry(principalId);
+            if (active) setUploadRetry(null);
+          } catch {
+            // Keep the exact command envelope so the same principal can recover later.
+          }
+        })();
       });
       unsubscribe = () => data.subscription.unsubscribe();
     });

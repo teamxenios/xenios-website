@@ -549,15 +549,30 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     expect(window.sessionStorage.getItem(retryStorageKey(ADMIN_B_SUB))).toBeNull();
   });
 
-  it("clears only the current principal's envelope on canonical sign-out", async () => {
+  it("retires a committed preparation before clearing the envelope on canonical sign-out", async () => {
     vi.mocked(crypto.randomUUID)
       .mockReset()
       .mockReturnValueOnce("70000000-0000-4000-8000-000000000050")
       .mockReturnValueOnce("70000000-0000-4000-8000-000000000051")
       .mockReturnValueOnce("70000000-0000-4000-8000-000000000052");
-    mocks.prepare.mockRejectedValueOnce(
-      new Error("grant failed after Admin A preparation commit"),
-    );
+    mocks.prepare
+      .mockRejectedValueOnce(
+        new Error("grant failed after Admin A preparation commit"),
+      )
+      .mockResolvedValueOnce({
+        kind: "ok",
+        data: {
+          ok: true,
+          upload: {
+            documentId: "60000000-0000-4000-8000-000000000050",
+            documentVersion: 1,
+            storageKey: "lots/50000000-0000-4000-8000-000000000001/sign-out.pdf",
+            uploadRequired: true,
+            uploadUrl: "https://storage.invalid/sign-out",
+            expiresAt: "2026-07-27T01:00:00.000Z",
+          },
+        },
+      });
 
     await renderPage();
     const { form } = populateUploadForm();
@@ -572,7 +587,74 @@ describe("Website 4 exact-lot COA editor isolation", () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
+    expect(mocks.prepare).toHaveBeenCalledTimes(2);
+    expect(mocks.prepare.mock.calls[1]?.[1].idempotencyKey).toBe(
+      mocks.prepare.mock.calls[0]?.[1].idempotencyKey,
+    );
+    expect(mocks.cancel).toHaveBeenCalledTimes(1);
+    expect(mocks.cancel).toHaveBeenCalledWith(ADMIN_A_TOKEN, {
+      lotId: lots[0].id,
+      filename: "retry_report.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 14,
+      sha256: "a".repeat(64),
+      reportIssuer: "Verified Lab",
+      reportNumber: "REPORT-RETRY",
+      reportDate: "2026-07-27",
+      expectedVersion: 1,
+      preparationIdempotencyKey: "70000000-0000-4000-8000-000000000050",
+      idempotencyKey: "70000000-0000-4000-8000-000000000052",
+    });
     expect(window.sessionStorage.getItem(retryStorageKey(ADMIN_A_SUB))).toBeNull();
+    expect(host.textContent).not.toContain("Retry private COA upload");
+  });
+
+  it("retains the exact recovery authority when sign-out cancellation transport fails", async () => {
+    vi.mocked(crypto.randomUUID)
+      .mockReset()
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000060")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000061")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000062");
+    mocks.prepare
+      .mockRejectedValueOnce(
+        new Error("grant failed after Admin A preparation commit"),
+      )
+      .mockResolvedValueOnce({
+        kind: "ok",
+        data: {
+          ok: true,
+          upload: {
+            documentId: "60000000-0000-4000-8000-000000000060",
+            documentVersion: 1,
+            storageKey: "lots/50000000-0000-4000-8000-000000000001/sign-out-failed.pdf",
+            uploadRequired: true,
+            uploadUrl: "https://storage.invalid/sign-out-failed",
+            expiresAt: "2026-07-27T01:00:00.000Z",
+          },
+        },
+      });
+    mocks.cancel.mockRejectedValueOnce(new Error("cancellation transport failed"));
+
+    await renderPage();
+    const { form } = populateUploadForm();
+    await submit(form);
+
+    await act(async () => {
+      mocks.authStateCallback?.("SIGNED_OUT");
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(mocks.cancel).toHaveBeenCalledTimes(1);
+    expect(window.sessionStorage.getItem(
+      retryStorageKey(ADMIN_A_SUB),
+    )).toContain('"signOutCleanupPending":true');
+    expect(host.textContent).toContain("Retry private COA upload");
+
+    activeToken = ADMIN_B_TOKEN;
+    await remountPage();
+    expect(window.sessionStorage.getItem(
+      retryStorageKey(ADMIN_A_SUB),
+    )).toContain('"signOutCleanupPending":true');
     expect(host.textContent).not.toContain("Retry private COA upload");
   });
 
