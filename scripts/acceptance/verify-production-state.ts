@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import type { OwnershipRule, ValidationIssue } from "./verify-release-manifest.ts";
 import {
   ownersForFile,
+  trustedOwnershipPolicy,
   trustedReleaseIdentityFromEnvironment,
 } from "./verify-release-manifest.ts";
 
@@ -421,14 +422,25 @@ if (isCli()) {
   const graph = JSON.parse(
     readFileSync(resolve(root, "docs/coordination/ACTIVE_RELEASE_GRAPH.json"), "utf8"),
   ) as ReleaseGraph;
-  const ownership = JSON.parse(
-    readFileSync(resolve(root, "docs/coordination/FILE_OWNERSHIP.json"), "utf8"),
-  ) as FileOwnership;
   const trusted = trustedReleaseIdentityFromEnvironment();
+  const trustedOwnership = trustedOwnershipPolicy(
+    root,
+    trusted.identity?.baseSha ?? "",
+    trusted.identity?.headSha ?? "",
+  );
+  const ownership = (trustedOwnership.policy?.document ?? {
+    schemaVersion: 0,
+    productionBaseSha: "",
+    lanes: [],
+    rules: [],
+  }) as unknown as FileOwnership;
   const repoFiles = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
     .split(/\r?\n/)
     .filter(Boolean);
-  const issues = [...trusted.issues, ...validateProductionState(state, graph, ownership, {
+  const issues = [
+    ...trusted.issues,
+    ...trustedOwnership.issues,
+    ...validateProductionState(state, graph, ownership, {
     expectedProductionSha: trusted.identity?.baseSha,
     repoFiles,
   })];

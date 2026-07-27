@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
@@ -43,6 +44,18 @@ export type TrustedReleaseIdentity = {
 
 export type TrustedReleaseIdentityResult = {
   identity: TrustedReleaseIdentity | null;
+  issues: ValidationIssue[];
+};
+
+export type TrustedOwnershipPolicy = {
+  document: Record<string, unknown>;
+  rules: OwnershipRule[];
+  sha256: string;
+  source: "trusted_base_commit" | "externally_pinned_snapshot";
+};
+
+export type TrustedOwnershipPolicyResult = {
+  policy: TrustedOwnershipPolicy | null;
   issues: ValidationIssue[];
 };
 
@@ -131,6 +144,170 @@ export function trustedReleaseIdentityFromEnvironment(
       code: "TRUSTED_RELEASE_IDENTITY_REQUIRED",
       message: "Outside pull-request CI, XENIOS_EXPECTED_PRODUCTION_SHA and XENIOS_EXPECTED_HEAD_SHA are required.",
     }],
+  };
+}
+
+function parseOwnershipPolicy(raw: Buffer): {
+  document: Record<string, unknown> | null;
+  rules: OwnershipRule[];
+  issues: ValidationIssue[];
+} {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw.toString("utf8")) as unknown;
+  } catch {
+    return {
+      document: null,
+      rules: [],
+      issues: [{
+        code: "TRUSTED_OWNERSHIP_INVALID",
+        message: "Trusted ownership policy is not valid JSON.",
+      }],
+    };
+  }
+  const document = objectValue(parsed);
+  const rules = document?.rules;
+  if (!document || !Array.isArray(rules)) {
+    return {
+      document,
+      rules: [],
+      issues: [{
+        code: "TRUSTED_OWNERSHIP_INVALID",
+        message: "Trusted ownership policy must be an object with a rules array.",
+      }],
+    };
+  }
+  const parsedRules: OwnershipRule[] = [];
+  for (const ruleValue of rules) {
+    const rule = objectValue(ruleValue);
+    const patterns = rule ? stringArray(rule.patterns) : null;
+    if (
+      !rule ||
+      typeof rule.id !== "string" ||
+      typeof rule.owner !== "string" ||
+      typeof rule.lane !== "string" ||
+      typeof rule.mode !== "string" ||
+      typeof rule.state !== "string" ||
+      !patterns ||
+      patterns.length === 0
+    ) {
+      return {
+        document,
+        rules: [],
+        issues: [{
+          code: "TRUSTED_OWNERSHIP_INVALID",
+          message: "Every trusted ownership rule requires id, owner, lane, mode, state, and patterns.",
+        }],
+      };
+    }
+    parsedRules.push({
+      id: rule.id,
+      owner: rule.owner,
+      lane: rule.lane,
+      mode: rule.mode,
+      state: rule.state,
+      patterns,
+    });
+  }
+  return { document, rules: parsedRules, issues: [] };
+}
+
+export function trustedOwnershipPolicy(
+  root: string,
+  baseSha: string,
+  headSha: string,
+  environment: Record<string, string | undefined> = process.env,
+  readBaseBlob: (root: string, sha: string) => Buffer | null = (repositoryRoot, sha) => {
+    try {
+      return execFileSync(
+        "git",
+        ["show", `${sha}:docs/coordination/FILE_OWNERSHIP.json`],
+        { cwd: repositoryRoot, encoding: "buffer", stdio: ["ignore", "pipe", "ignore"] },
+      );
+    } catch {
+      return null;
+    }
+  },
+  readPinnedSnapshot: (root: string, sha: string) => Buffer = (repositoryRoot, sha) =>
+    execFileSync(
+      "git",
+      ["show", `${sha}:docs/coordination/FILE_OWNERSHIP.json`],
+      { cwd: repositoryRoot, encoding: "buffer", stdio: ["ignore", "pipe", "ignore"] },
+    ),
+): TrustedOwnershipPolicyResult {
+  if (!SHA_PATTERN.test(baseSha) || !SHA_PATTERN.test(headSha)) {
+    return {
+      policy: null,
+      issues: [{
+        code: "TRUSTED_OWNERSHIP_BASE_INVALID",
+        message: "Trusted ownership policy requires valid external base and head SHAs.",
+      }],
+    };
+  }
+
+  const expectedDigest = environment.XENIOS_EXPECTED_OWNERSHIP_SHA256;
+  if (expectedDigest !== undefined && !SHA256_PATTERN.test(expectedDigest)) {
+    return {
+      policy: null,
+      issues: [{
+        code: "TRUSTED_OWNERSHIP_DIGEST_INVALID",
+        message: "XENIOS_EXPECTED_OWNERSHIP_SHA256 must be a lowercase SHA-256 digest.",
+      }],
+    };
+  }
+
+  const baseBlob = readBaseBlob(root, baseSha);
+  let raw: Buffer;
+  let source: TrustedOwnershipPolicy["source"];
+  if (baseBlob) {
+    raw = baseBlob;
+    source = "trusted_base_commit";
+  } else {
+    if (!expectedDigest) {
+      return {
+        policy: null,
+        issues: [{
+          code: "TRUSTED_OWNERSHIP_REQUIRED",
+          message: "Trusted base has no ownership policy; an externally pinned ownership SHA-256 is required.",
+        }],
+      };
+    }
+    try {
+      raw = readPinnedSnapshot(root, headSha);
+    } catch {
+      return {
+        policy: null,
+        issues: [{
+          code: "TRUSTED_OWNERSHIP_UNAVAILABLE",
+          message: "Externally pinned ownership snapshot could not be read.",
+        }],
+      };
+    }
+    source = "externally_pinned_snapshot";
+  }
+
+  const actualDigest = createHash("sha256").update(raw).digest("hex");
+  if (expectedDigest && actualDigest !== expectedDigest) {
+    return {
+      policy: null,
+      issues: [{
+        code: "TRUSTED_OWNERSHIP_DIGEST_MISMATCH",
+        message: `Trusted ownership SHA-256 ${actualDigest} does not match expected ${expectedDigest}.`,
+      }],
+    };
+  }
+  const parsed = parseOwnershipPolicy(raw);
+  if (!parsed.document || parsed.issues.length > 0) {
+    return { policy: null, issues: parsed.issues };
+  }
+  return {
+    policy: {
+      document: parsed.document,
+      rules: parsed.rules,
+      sha256: actualDigest,
+      source,
+    },
+    issues: [],
   };
 }
 
@@ -514,9 +691,6 @@ if (isCli()) {
   } else {
     const root = process.cwd();
     const manifest = JSON.parse(readFileSync(resolve(root, manifestPath), "utf8")) as unknown;
-    const ownership = JSON.parse(
-      readFileSync(resolve(root, "docs/coordination/FILE_OWNERSHIP.json"), "utf8"),
-    ) as { rules?: OwnershipRule[] };
     const record = objectValue(manifest);
     const baseSha = typeof record?.baseSha === "string" ? record.baseSha : "";
     const headSha = typeof record?.headSha === "string" ? record.headSha : "";
@@ -527,6 +701,7 @@ if (isCli()) {
     const trusted = trustedReleaseIdentityFromEnvironment();
     const reviewedBase = trusted.identity?.baseSha ?? "";
     const reviewedHead = trusted.identity?.headSha ?? "";
+    const trustedOwnership = trustedOwnershipPolicy(root, reviewedBase, reviewedHead);
     const changedFiles =
       baseExists && headExists
         ? execFileSync("git", ["diff", "--name-only", "--no-renames", "-z", `${baseSha}..${headSha}`, "--"], {
@@ -537,10 +712,13 @@ if (isCli()) {
             .split("\0")
             .filter(Boolean)
         : [];
-    const issues = [...trusted.issues, ...validateReleaseManifest(manifest, {
+    const issues = [
+      ...trusted.issues,
+      ...trustedOwnership.issues,
+      ...validateReleaseManifest(manifest, {
       expectedProductionSha: reviewedBase,
       expectedHeadSha: reviewedHead,
-      ownershipRules: ownership.rules ?? [],
+      ownershipRules: trustedOwnership.policy?.rules ?? [],
       gitBinding: {
         baseExists,
         headExists,

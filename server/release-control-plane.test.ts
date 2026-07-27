@@ -1,8 +1,10 @@
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  trustedOwnershipPolicy,
   trustedReleaseIdentityFromEnvironment,
   validateReleaseManifest,
   type OwnershipRule,
@@ -27,6 +29,26 @@ const ROOT = process.cwd();
 const NOW = new Date("2026-07-27T03:05:00.000Z");
 const PRODUCTION_SHA = "d494150668de2ede8a61fd0d28bc9ff9a75def26";
 const HEAD_SHA = "12759c2567246ee83ed71aad9ffa4b517d31e8aa";
+const CONTROL_PLANE_FILES = [
+  "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+  "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
+  "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+  "docs/coordination/CURRENT_PRODUCTION_STATE.md",
+  "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md",
+  "docs/coordination/FILE_OWNERSHIP.json",
+  "docs/coordination/MAIN_SESSION_EXECUTION_LOG.md",
+  "docs/coordination/MIGRATION_DAG.json",
+  "docs/coordination/PR_85_INTEGRATION_PREFLIGHT.json",
+  "docs/coordination/release-manifest.schema.json",
+  "package-lock.json",
+  "package.json",
+  "scripts/acceptance/verify-migration-dag.ts",
+  "scripts/acceptance/verify-production-state.ts",
+  "scripts/acceptance/verify-release-manifest.ts",
+  "scripts/acceptance/verify-route-uniqueness.ts",
+  "server/release-control-plane.test.ts",
+  "supabase/MIGRATIONS.md",
+];
 
 function validManifest(): Record<string, unknown> {
   const pass = {
@@ -273,6 +295,121 @@ describe("release manifest validator", () => {
         "MANIFEST_FILE_OMITTED",
       ]),
     );
+  });
+
+  it("uses trusted-base ownership instead of a candidate wildcard for an exact bound diff", () => {
+    const basePolicy = Buffer.from(JSON.stringify({
+      schemaVersion: 1,
+      productionBaseSha: PRODUCTION_SHA,
+      rules: [{
+        id: "base-release-manager",
+        owner: "Website 2",
+        lane: "release-manager",
+        mode: "write",
+        state: "active",
+        patterns: ["docs/coordination/FILE_OWNERSHIP.json"],
+      }],
+    }));
+    const candidateWildcard = Buffer.from(JSON.stringify({
+      schemaVersion: 1,
+      productionBaseSha: PRODUCTION_SHA,
+      rules: [{
+        id: "candidate-wildcard",
+        owner: "Website 2",
+        lane: "release-manager",
+        mode: "write",
+        state: "active",
+        patterns: ["**"],
+      }],
+    }));
+    const trustedPolicy = trustedOwnershipPolicy(
+      ROOT,
+      PRODUCTION_SHA,
+      HEAD_SHA,
+      {},
+      () => basePolicy,
+      () => candidateWildcard,
+    );
+    expect(trustedPolicy.issues).toEqual([]);
+    expect(trustedPolicy.policy?.source).toBe("trusted_base_commit");
+
+    const manifest = validManifest();
+    manifest.domain = "release-control-plane";
+    manifest.lane = "release-manager";
+    manifest.owner = "Website 2";
+    manifest.files = [
+      "docs/coordination/FILE_OWNERSHIP.json",
+      "server/research/runtime-bypass.ts",
+    ];
+    const codes = validateReleaseManifest(manifest, {
+      now: NOW,
+      expectedProductionSha: PRODUCTION_SHA,
+      expectedHeadSha: HEAD_SHA,
+      ownershipRules: trustedPolicy.policy?.rules ?? [],
+      gitBinding: {
+        baseExists: true,
+        headExists: true,
+        headSha: HEAD_SHA,
+        resolvedBaseSha: PRODUCTION_SHA,
+        resolvedHeadSha: HEAD_SHA,
+        files: manifest.files as string[],
+      },
+    }).map((issue) => issue.code);
+    expect(codes).toContain("UNOWNED_FILE");
+  });
+
+  it("fails closed without base ownership or an external digest and accepts the exact pinned bootstrap", () => {
+    const candidateOwnership = readFileSync(
+      resolve(ROOT, "docs/coordination/FILE_OWNERSHIP.json"),
+    );
+    const digest = createHash("sha256").update(candidateOwnership).digest("hex");
+    expect(
+      trustedOwnershipPolicy(ROOT, PRODUCTION_SHA, HEAD_SHA, {}, () => null, () => candidateOwnership)
+        .issues.map((issue) => issue.code),
+    ).toContain("TRUSTED_OWNERSHIP_REQUIRED");
+    expect(
+      trustedOwnershipPolicy(
+        ROOT,
+        PRODUCTION_SHA,
+        HEAD_SHA,
+        { XENIOS_EXPECTED_OWNERSHIP_SHA256: "0".repeat(64) },
+        () => null,
+        () => candidateOwnership,
+      ).issues.map((issue) => issue.code),
+    ).toContain("TRUSTED_OWNERSHIP_DIGEST_MISMATCH");
+
+    const pinned = trustedOwnershipPolicy(
+      ROOT,
+      PRODUCTION_SHA,
+      HEAD_SHA,
+      { XENIOS_EXPECTED_OWNERSHIP_SHA256: digest },
+      () => null,
+      () => candidateOwnership,
+    );
+    expect(pinned.issues).toEqual([]);
+    expect(pinned.policy?.source).toBe("externally_pinned_snapshot");
+
+    const manifest = validManifest();
+    manifest.domain = "release-control-plane";
+    manifest.lane = "release-manager";
+    manifest.owner = "Website 2";
+    manifest.files = CONTROL_PLANE_FILES;
+    expect(
+      validateReleaseManifest(manifest, {
+        now: NOW,
+        expectedProductionSha: PRODUCTION_SHA,
+        expectedHeadSha: HEAD_SHA,
+        ownershipRules: pinned.policy?.rules ?? [],
+        gitBinding: {
+          baseExists: true,
+          headExists: true,
+          headSha: HEAD_SHA,
+          resolvedBaseSha: PRODUCTION_SHA,
+          resolvedHeadSha: HEAD_SHA,
+          files: CONTROL_PLANE_FILES,
+        },
+      }),
+    ).toEqual([]);
   });
 
   it("runs ownership collision checks on the computed Git diff", () => {
