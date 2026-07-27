@@ -1,9 +1,10 @@
 import { Link } from "wouter";
 import { listFulfillment } from "../../adapters/adminOps";
-import { ResearchDataTable, ResearchStatusBadge } from "../../ui/kit";
+import { MitchPortal } from "../../operations/MitchPortal";
 import { ADMIN_ROUTES } from "../../lib/routes";
-import { fmtDate, useAdminResource } from "./auth";
+import { useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import type { FulfillmentAssignmentView } from "@shared/research/fulfillment/contracts";
 
 // ---------------------------------------------------------------------------
 // /admin/research/fulfillment: the shipment pipeline. Publishes with the
@@ -14,13 +15,92 @@ import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 
 type FulfillmentRow = {
   id: string;
+  fulfillment_order_id?: string | null;
   order_reference: string;
-  member_email: string;
   stage: string;
+  version?: number | null;
+  supplier_id?: string | null;
+  supplier_label?: string | null;
+  expected_ship_at?: string | null;
+  recipient_name?: string | null;
+  address_line1?: string | null;
+  address_line2?: string | null;
+  address_city?: string | null;
+  address_state?: string | null;
+  address_postal_code?: string | null;
+  address_country?: string | null;
+  shipping_service?: string | null;
+  handling_profile?: string | null;
+  lines?: Array<{
+    id: string;
+    sku: string;
+    quantity: number;
+    lot_id: string;
+    lot_code: string;
+  }>;
+  label_reference?: string | null;
   carrier: string | null;
   tracking_reference: string | null;
   updated_at: string | null;
 };
+
+function toAssignment(row: FulfillmentRow): FulfillmentAssignmentView | null {
+  if (
+    !row.supplier_id ||
+    !row.fulfillment_order_id ||
+    !row.supplier_label ||
+    !row.recipient_name ||
+    !row.address_line1 ||
+    !row.address_city ||
+    !row.address_state ||
+    !row.address_postal_code ||
+    row.address_country !== "US" ||
+    !row.shipping_service ||
+    !Number.isSafeInteger(row.version) ||
+    Number(row.version) <= 0 ||
+    ![
+      "assigned", "acknowledged", "picking", "packed", "shipped",
+      "delivered", "exception", "returned", "damaged", "lost",
+      "recalled", "cancelled",
+    ].includes(row.stage) ||
+    !["ambient", "cold_chain"].includes(row.handling_profile ?? "")
+  ) {
+    return null;
+  }
+  return {
+    assignmentId: row.id,
+    fulfillmentOrderId: row.fulfillment_order_id,
+    orderReference: row.order_reference,
+    supplierId: row.supplier_id,
+    supplierLabel: row.supplier_label,
+    state: row.stage as FulfillmentAssignmentView["state"],
+    version: Number(row.version),
+    expectedShipAt: row.expected_ship_at ?? null,
+    recipient: {
+      name: row.recipient_name,
+      addressLine1: row.address_line1,
+      addressLine2: row.address_line2 ?? null,
+      city: row.address_city,
+      state: row.address_state,
+      postalCode: row.address_postal_code,
+      country: "US",
+      phone: null,
+    },
+    shippingService: row.shipping_service,
+    handlingProfile: row.handling_profile as "ambient" | "cold_chain",
+    lines: (row.lines ?? []).map((line) => ({
+      lineId: line.id,
+      sku: line.sku,
+      quantity: line.quantity,
+      lotId: line.lot_id,
+      lotCode: line.lot_code,
+    })),
+    labelReference: row.label_reference ?? null,
+    carrier: row.carrier,
+    trackingReference: row.tracking_reference,
+    updatedAt: row.updated_at ?? "",
+  };
+}
 
 export default function Fulfillment() {
   return (
@@ -35,6 +115,9 @@ export default function Fulfillment() {
 
 function FulfillmentBody({ token }: { token: string }) {
   const resource = useAdminResource<{ ok: boolean; shipments: FulfillmentRow[] }>(token, listFulfillment);
+  const assignments = (resource.data?.shipments ?? [])
+    .map(toAssignment)
+    .filter((row): row is FulfillmentAssignmentView => row !== null);
   return (
     <div className="grid gap-6">
       <AdminBoundary
@@ -45,37 +128,7 @@ function FulfillmentBody({ token }: { token: string }) {
         unavailableTitle="Fulfillment publishes with the commerce backend."
         unavailableBody="The shipment pipeline renders here when orders exist and the fulfillment integration is configured. The Capabilities page names exactly what is still missing."
       >
-        <ResearchDataTable<FulfillmentRow>
-          caption="Shipments"
-          columns={[
-            {
-              key: "order",
-              header: "Order",
-              render: (s) => (
-                <Link href={`${ADMIN_ROUTES.orders}/${s.id}`} className="font-700 underline">
-                  {s.order_reference}
-                </Link>
-              ),
-            },
-            { key: "member", header: "Member", render: (s) => <span style={{ overflowWrap: "anywhere" }}>{s.member_email}</span> },
-            {
-              key: "stage",
-              header: "Stage",
-              render: (s) => (
-                <ResearchStatusBadge
-                  label={s.stage}
-                  tone={s.stage === "delivered" ? "success" : s.stage === "exception" ? "danger" : "info"}
-                />
-              ),
-            },
-            { key: "carrier", header: "Carrier", render: (s) => s.carrier ?? "" },
-            { key: "tracking", header: "Tracking", render: (s) => s.tracking_reference ?? "" },
-            { key: "updated", header: "Updated", render: (s) => fmtDate(s.updated_at) },
-          ]}
-          rows={resource.data?.shipments ?? []}
-          rowKey={(s) => s.id}
-          empty="No shipments in the pipeline."
-        />
+        <MitchPortal assignments={assignments} />
       </AdminBoundary>
 
       <div className="card">
