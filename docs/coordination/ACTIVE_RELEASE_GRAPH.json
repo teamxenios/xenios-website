@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-27T03:05:00Z",
+  "productionSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+  "nodes": [
+    {
+      "id": "production-d494150",
+      "type": "production",
+      "owner": "Website 2",
+      "state": "DEPLOYED",
+      "sha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+      "label": "Production main / PR #86"
+    },
+    {
+      "id": "high-capabilities-route",
+      "type": "finding",
+      "owner": "Website 2",
+      "state": "CLOSED_PRODUCTION_ACCEPTED",
+      "sha": null,
+      "label": "Canonical GET /api/research/capabilities ownership"
+    },
+    {
+      "id": "high-admin-page-privacy",
+      "type": "finding",
+      "owner": "Website 2",
+      "state": "CLOSED_PRODUCTION_ACCEPTED",
+      "sha": null,
+      "label": "Private /admin/research document headers"
+    },
+    {
+      "id": "pr80-f646708d",
+      "type": "candidate",
+      "owner": "Website 4",
+      "state": "PROHIBITED",
+      "sha": "f646708d45d4a6e4e7acf4e2653e44746baef184",
+      "pullRequest": 80,
+      "label": "Wave 2 inventory/lots/COA"
+    },
+    {
+      "id": "pr85-12759c25",
+      "type": "candidate",
+      "owner": "Website 3",
+      "state": "PROHIBITED",
+      "sha": "12759c2567246ee83ed71aad9ffa4b517d31e8aa",
+      "pullRequest": 85,
+      "label": "Initial member catalog/detail"
+    },
+    {
+      "id": "pr85-30b0f6b7",
+      "type": "candidate",
+      "owner": "Website 3",
+      "state": "PROHIBITED",
+      "sha": "30b0f6b708c936e2ba1631e4a57f1c5b8c2c54c4",
+      "pullRequest": 85,
+      "label": "Rejected member catalog/detail replacement"
+    },
+    {
+      "id": "pr85-0472905d",
+      "type": "candidate",
+      "owner": "Website 3",
+      "state": "PROHIBITED",
+      "sha": "0472905dff10c45239b7f95834e1086c3b3c5f59",
+      "pullRequest": 85,
+      "label": "Rejected second member catalog/detail replacement"
+    },
+    {
+      "id": "pr85-dc11623d",
+      "type": "candidate",
+      "owner": "Website 3",
+      "state": "ACCEPTED_INTEGRATION_PENDING",
+      "sha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
+      "pullRequest": 85,
+      "label": "Accepted member catalog/detail source"
+    },
+    {
+      "id": "pr86-22545561",
+      "type": "candidate",
+      "owner": "Website 2",
+      "state": "PROHIBITED",
+      "sha": "225455615eda0c420996929379a5a1f9d535b4e8",
+      "pullRequest": 86,
+      "label": "Rejected capabilities/privacy hotfix"
+    },
+    {
+      "id": "pr86-4f71648a",
+      "type": "candidate",
+      "owner": "Website 2",
+      "state": "MERGED_DEPLOYED_POSTDEPLOY_ACCEPTED",
+      "sha": "4f71648aa5684ebec70f14b7e09268331c522969",
+      "pullRequest": 86,
+      "label": "Accepted capabilities/privacy hotfix"
+    },
+    {
+      "id": "pr87-release-control-plane",
+      "type": "candidate",
+      "owner": "Website 2",
+      "state": "CANDIDATE_PREPARATION",
+      "sha": null,
+      "pullRequest": 87,
+      "label": "Current-main release control plane"
+    },
+    {
+      "id": "wave3-checkout-enablement",
+      "type": "future_gate",
+      "owner": "Website 2",
+      "state": "BLOCKED",
+      "sha": null,
+      "label": "Persistent cart, checkout, and order enablement"
+    }
+  ],
+  "edges": [
+    {
+      "from": "pr86-4f71648a",
+      "to": "production-d494150",
+      "relation": "deployed_as"
+    },
+    {
+      "from": "production-d494150",
+      "to": "high-capabilities-route",
+      "relation": "closes"
+    },
+    {
+      "from": "production-d494150",
+      "to": "high-admin-page-privacy",
+      "relation": "closes"
+    },
+    {
+      "from": "pr85-12759c25",
+      "to": "pr85-30b0f6b7",
+      "relation": "superseded_by"
+    },
+    {
+      "from": "pr85-30b0f6b7",
+      "to": "pr85-0472905d",
+      "relation": "superseded_by"
+    },
+    {
+      "from": "pr85-0472905d",
+      "to": "pr85-dc11623d",
+      "relation": "superseded_by"
+    },
+    {
+      "from": "production-d494150",
+      "to": "pr85-dc11623d",
+      "relation": "integration_base_for"
+    },
+    {
+      "from": "pr86-22545561",
+      "to": "pr86-4f71648a",
+      "relation": "superseded_by"
+    },
+    {
+      "from": "production-d494150",
+      "to": "pr87-release-control-plane",
+      "relation": "candidate_based_on"
+    },
+    {
+      "from": "pr80-f646708d",
+      "to": "wave3-checkout-enablement",
+      "relation": "must_be_replaced_and_accepted_before"
+    },
+    {
+      "from": "pr85-dc11623d",
+      "to": "wave3-checkout-enablement",
+      "relation": "must_be_integrated_before"
+    }
+  ],
+  "releaseOrder": [
+    "Freeze and obtain Website 6 exact-SHA acceptance for PR #87 without runtime or domain files.",
+    "Create a separate current-main integration candidate for accepted PR #85 while preserving all 12 source blobs.",
+    "Replace and accept prohibited PR #80 before inventory-dependent checkout.",
+    "Integrate only through Website 2 from exact current production.",
+    "Apply migrations only in MIGRATION_DAG.json order and run production smoke."
+  ]
+}

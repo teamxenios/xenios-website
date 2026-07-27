@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-07-27T03:05:00Z",
+  "pullRequest": 85,
+  "sourceBaseSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
+  "currentProductionSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+  "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
+  "currentMainMergeTree": "f0a8fa4e813a0087c24103b73547e65a77afe31e",
+  "prohibitedPredecessors": [
+    "12759c2567246ee83ed71aad9ffa4b517d31e8aa",
+    "30b0f6b708c936e2ba1631e4a57f1c5b8c2c54c4",
+    "0472905dff10c45239b7f95834e1086c3b3c5f59"
+  ],
+  "state": "ACCEPTED_INTEGRATION_PENDING",
+  "website6Verdict": {
+    "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
+    "result": "ACCEPT",
+    "blockerHighFindings": 0,
+    "integrationAuthorized": true
+  },
+  "github": {
+    "open": true,
+    "draft": true,
+    "mergeable": true,
+    "test": "SUCCESS",
+    "typecheck": "SUCCESS",
+    "build": "SUCCESS"
+  },
+  "files": [
+    "client/src/research/adapters/memberCatalog.test.ts",
+    "client/src/research/adapters/memberCatalog.ts",
+    "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+    "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+    "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+    "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+    "docs/coordination/WEBSITE_3_WAVE3_MEMBER_CATALOG_HANDOFF.md",
+    "server/research/catalog/member-catalog-projection.test.ts",
+    "server/research/catalog/member-catalog-projection.ts",
+    "server/research/catalog/product-control-reader.test.ts",
+    "server/research/catalog/product-control-reader.ts",
+    "shared/research/member-catalog.ts"
+  ],
+  "routes": [],
+  "migrations": [],
+  "tables": [],
+  "functions": [],
+  "privileges": [],
+  "environmentVariables": [],
+  "providers": [],
+  "sharedWiring": [],
+  "collisionAssessment": {
+    "releaseControlPlane": false,
+    "website1AuthorityWorktree": false,
+    "website4Wave2Worktree": false,
+    "currentMainMergeClean": true
+  },
+  "integrationBoundary": {
+    "sourceBlobsMustRemainByteIdentical": true,
+    "website2MayAddAfterAcceptance": [
+      "member catalog/detail server route registration",
+      "production dependency injection",
+      "member catalog/detail client route wiring"
+    ],
+    "website2MustNotAdd": [
+      "cart persistence",
+      "inventory mutation",
+      "checkout",
+      "orders",
+      "payments",
+      "providers",
+      "seed data"
+    ]
+  },
+  "rollback": {
+    "application": "Revert the eventual focused integration merge.",
+    "database": "None.",
+    "productionData": "None."
+  },
+  "smokePlan": [
+    "Confirm deployed main contains all 12 accepted source blobs byte-identically.",
+    "GET /api/health returns 200.",
+    "Signed-out member catalog and detail APIs return JSON 401 rather than 404.",
+    "Signed-out member catalog and detail pages retain truthful auth gates and private headers.",
+    "With an existing authorized member session only, verify redaction, exact product identity, safe media origins, canonical readiness, and GLP catalog-only behavior.",
+    "Verify 1440/720/375/320 and 200 percent reflow without overflow, stale identity, or console errors.",
+    "Confirm browsing creates zero cart, order, reservation, inventory, provider, or Product Control rows.",
+    "Verify production counts, Care disabled state, and Render/Supabase error posture remain unchanged."
+  ],
+  "releaseGate": "CREATE_SEPARATE_CURRENT_MAIN_INTEGRATION_CANDIDATE"
+}
