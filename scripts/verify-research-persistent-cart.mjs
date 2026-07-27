@@ -94,7 +94,8 @@ const selectionFixtureSql = `
   create table public.cart_test_selection(value jsonb not null);
   insert into public.cart_test_selection values(jsonb_build_object(
     'productId','81000000-0000-4000-8000-000000000001',
-    'variantId','82000000-0000-4000-8000-000000000001','sku','RACE-VARIANT','audience','member',
+    'variantId','82000000-0000-4000-8000-000000000001','sku','RACE-VARIANT',
+    'displayName','Race Product','fulfillmentOwner','xenios','audience','member',
     'audienceEligibility',jsonb_build_object('audience','member','state','authorized',
       'sourceVersion','member:1','evaluatedAt',clock_timestamp()),
     'price',jsonb_build_object('id','83000000-0000-4000-8000-000000000001',
@@ -221,6 +222,7 @@ try {
     insert into cart_selection values(jsonb_build_object(
       'productId','10000000-0000-4000-8000-000000000001',
       'variantId','20000000-0000-4000-8000-000000000001','sku','CART-VARIANT',
+      'displayName','Cart Product','fulfillmentOwner','xenios',
       'audience','member',
       'audienceEligibility',jsonb_build_object('audience','member','state','authorized',
         'sourceVersion','member:1','evaluatedAt',clock_timestamp()),
