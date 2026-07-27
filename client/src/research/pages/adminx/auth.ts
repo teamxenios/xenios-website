@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import type { AdminLoader } from "../../adapters/adminOps";
@@ -25,6 +25,31 @@ export interface AdminSession {
   signOut: () => Promise<void>;
 }
 
+export type AdminPreSignOutTask = () => void | Promise<void>;
+
+const adminPreSignOutTasks = new Set<AdminPreSignOutTask>();
+
+/**
+ * Registers authenticated cleanup that must finish before the canonical admin
+ * session is signed out. The returned disposer is identity-bound to this exact
+ * task so React Strict Mode remounts cannot remove a newer registration.
+ */
+export function registerAdminPreSignOutTask(task: AdminPreSignOutTask): () => void {
+  adminPreSignOutTasks.add(task);
+  let active = true;
+  return () => {
+    if (!active) return;
+    active = false;
+    adminPreSignOutTasks.delete(task);
+  };
+}
+
+async function runAdminPreSignOutTasks(): Promise<void> {
+  for (const task of Array.from(adminPreSignOutTasks)) {
+    await task();
+  }
+}
+
 export function useAdminSession(): AdminSession {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [state, setState] = useState<AdminSessionState>("loading");
@@ -32,6 +57,7 @@ export function useAdminSession(): AdminSession {
   const [email, setEmail] = useState<string | null>(null);
   const [signingIn, setSigningIn] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
+  const signOutInFlight = useRef<Promise<void> | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -99,10 +125,26 @@ export function useAdminSession(): AdminSession {
     [supabase],
   );
 
-  const signOut = useCallback(async () => {
-    if (!supabase) return;
-    await supabase.auth.signOut();
-    setEmail(null);
+  const signOut = useCallback(() => {
+    if (!supabase) return Promise.resolve();
+    if (signOutInFlight.current) return signOutInFlight.current;
+
+    const operation = (async () => {
+      await runAdminPreSignOutTasks();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      setEmail(null);
+    })();
+    signOutInFlight.current = operation;
+    operation.then(
+      () => {
+        if (signOutInFlight.current === operation) signOutInFlight.current = null;
+      },
+      () => {
+        if (signOutInFlight.current === operation) signOutInFlight.current = null;
+      },
+    );
+    return operation;
   }, [supabase]);
 
   return { state, token, email, signingIn, signInError, signIn, signOut };
