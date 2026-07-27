@@ -27,7 +27,10 @@ import {
   reviewLotQualityDocument,
   sha256Hex,
 } from "../../adapters/inventory-admin";
-import { useAdminResource } from "./auth";
+import {
+  registerAdminPreSignOutTask,
+  useAdminResource,
+} from "./auth";
 import { AdminScreen } from "./AdminResearchHome";
 
 type UploadRetryState = {
@@ -215,6 +218,56 @@ export function LotCoasBody({ token }: { token: string }) {
   }, [principalId]);
 
   useEffect(() => {
+    return registerAdminPreSignOutTask(async () => {
+      const retained = readUploadRetry(principalId);
+      if (!retained) return;
+      const cleanupAttempt = {
+        ...retained,
+        signOutCleanupPending: true,
+      };
+      writeUploadRetry(cleanupAttempt);
+      setUploadRetry(cleanupAttempt);
+      try {
+        const prepared = await prepareCoaUpload(token, {
+          ...cleanupAttempt.metadata,
+          idempotencyKey: cleanupAttempt.preparationIdempotencyKey,
+        });
+        if (prepared.kind !== "ok") {
+          throw new Error("quality upload preparation replay failed");
+        }
+        if (
+          (cleanupAttempt.documentId
+            && cleanupAttempt.documentId !== prepared.data.upload.documentId)
+          || (cleanupAttempt.storageKey
+            && cleanupAttempt.storageKey !== prepared.data.upload.storageKey)
+          || prepared.data.upload.documentVersion < cleanupAttempt.preparedVersion
+        ) {
+          throw new Error("quality upload preparation identity changed");
+        }
+        if (prepared.data.upload.uploadRequired) {
+          const cancelled = await cancelCoaUpload(token, {
+            ...cleanupAttempt.metadata,
+            expectedVersion: cleanupAttempt.preparedVersion,
+            preparationIdempotencyKey: cleanupAttempt.preparationIdempotencyKey,
+            idempotencyKey: cleanupAttempt.cancellationIdempotencyKey,
+          });
+          if (cancelled.kind !== "ok") {
+            throw new Error("quality upload cancellation failed");
+          }
+        }
+        removeUploadRetry(principalId);
+        setUploadRetry(null);
+      } catch (error) {
+        setFeedback({
+          tone: "error",
+          text: "Sign-out paused because the private upload could not be safely retired. Retry sign-out.",
+        });
+        throw error;
+      }
+    });
+  }, [principalId, token]);
+
+  useEffect(() => {
     let active = true;
     let unsubscribe: (() => void) | undefined;
     void getSupabaseBrowser().then((client) => {
@@ -222,47 +275,13 @@ export function LotCoasBody({ token }: { token: string }) {
       const { data } = client.auth.onAuthStateChange((event) => {
         if (event !== "SIGNED_OUT") return;
         const retained = readUploadRetry(principalId);
-        if (!retained) {
-          if (active) setUploadRetry(null);
-          return;
-        }
+        if (!retained) return;
         const cleanupAttempt = {
           ...retained,
           signOutCleanupPending: true,
         };
         writeUploadRetry(cleanupAttempt);
         if (active) setUploadRetry(cleanupAttempt);
-        void (async () => {
-          try {
-            const prepared = await prepareCoaUpload(token, {
-              ...cleanupAttempt.metadata,
-              idempotencyKey: cleanupAttempt.preparationIdempotencyKey,
-            });
-            if (prepared.kind !== "ok") return;
-            if (
-              (cleanupAttempt.documentId
-                && cleanupAttempt.documentId !== prepared.data.upload.documentId)
-              || (cleanupAttempt.storageKey
-                && cleanupAttempt.storageKey !== prepared.data.upload.storageKey)
-              || prepared.data.upload.documentVersion < cleanupAttempt.preparedVersion
-            ) {
-              return;
-            }
-            if (prepared.data.upload.uploadRequired) {
-              const cancelled = await cancelCoaUpload(token, {
-                ...cleanupAttempt.metadata,
-                expectedVersion: cleanupAttempt.preparedVersion,
-                preparationIdempotencyKey: cleanupAttempt.preparationIdempotencyKey,
-                idempotencyKey: cleanupAttempt.cancellationIdempotencyKey,
-              });
-              if (cancelled.kind !== "ok") return;
-            }
-            removeUploadRetry(principalId);
-            if (active) setUploadRetry(null);
-          } catch {
-            // Keep the exact command envelope so the same principal can recover later.
-          }
-        })();
       });
       unsubscribe = () => data.subscription.unsubscribe();
     });

@@ -21,6 +21,7 @@ const mocks = vi.hoisted(() => ({
   digest: vi.fn(),
   authStateCallback: null as null | ((event: string) => void),
   unsubscribeAuth: vi.fn(),
+  preSignOutTask: null as null | (() => void | Promise<void>),
 }));
 
 vi.mock("@/lib/supabaseBrowser", () => ({
@@ -49,6 +50,21 @@ vi.mock("../../adapters/inventory-admin", () => ({
   requestCoaReadGrant: mocks.access,
   sha256Hex: mocks.digest,
 }));
+
+vi.mock("./auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./auth")>();
+  return {
+    ...actual,
+    registerAdminPreSignOutTask: (
+      task: () => void | Promise<void>,
+    ) => {
+      mocks.preSignOutTask = task;
+      return () => {
+        if (mocks.preSignOutTask === task) mocks.preSignOutTask = null;
+      };
+    },
+  };
+});
 
 import { LotCoasBody } from "./LotCoasAdmin";
 
@@ -216,6 +232,7 @@ beforeEach(() => {
   window.sessionStorage.clear();
   activeToken = ADMIN_A_TOKEN;
   mocks.authStateCallback = null;
+  mocks.preSignOutTask = null;
   host = document.createElement("div");
   document.body.appendChild(host);
   root = null;
@@ -583,6 +600,7 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     expect(mocks.authStateCallback).toBeTypeOf("function");
 
     await act(async () => {
+      await mocks.preSignOutTask?.();
       mocks.authStateCallback?.("SIGNED_OUT");
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
@@ -639,6 +657,11 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     const { form } = populateUploadForm();
     await submit(form);
 
+    await expect(
+      act(async () => {
+        await mocks.preSignOutTask?.();
+      }),
+    ).rejects.toThrow("cancellation transport failed");
     await act(async () => {
       mocks.authStateCallback?.("SIGNED_OUT");
       await new Promise((resolve) => setTimeout(resolve, 0));

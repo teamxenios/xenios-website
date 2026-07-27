@@ -2,10 +2,12 @@
   "schemaVersion": 1,
   "session": "Website 4 — Operations, Affiliates & Fulfillment",
   "branch": "feature/website-4-research-commerce-wave-2-inventory-lots",
-  "baseSha": "bf1815c6754e04fd95325b25996ff441dc92fe43",
+  "baseSha": "8efcd9fc9e4f33be84e5b9271aa83b5122788bdf",
   "headSha": "RESOLVE_FROM_GIT_HEAD",
   "headShaResolution": "git rev-parse HEAD",
   "supersedesProhibitedHeadShas": [
+    "c0dfbe0cc19a1e0c067d8c6a733af7331a9c9f05",
+    "825e98f95308bf8a07cbc4ceaffc1c13a178d32e",
     "ea1a0b8cf1c520706492bbd99ea1e8860cff3297",
     "715be2ea022e6501c02ca404f8058754676e99c9",
     "d16ccf59b655981f6b7923c635a7dc429de82675",
@@ -148,19 +150,20 @@
     "Inject the canonical ProductCommerceReadinessReader from server/research/products-diagnostics/product-commerce-readiness.ts.",
     "Preserve the exact SQL binding to canonical Product Control product and variant identifiers on the accepted production base.",
     "Register InventoryLotsAdmin and LotCoasAdmin in Website 2-owned admin routing and navigation.",
+    "Preserve the production registerAdminPreSignOutTask seam consumed by LotCoasAdmin; do not replace it with a page-owned auth coordinator.",
     "Keep checkout disabled until the legacy direct lot decrement is replaced by reviewed reservation/movement commands."
   ],
   "validation": {
     "focusedTests": {
-      "command": "npm.cmd test -- server/research/inventory-admin/migration.test.ts server/research/inventory-admin/routes.test.ts server/research/inventory-admin/production.test.ts client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx client/src/research/pages/adminx/LotCoasAdmin.test.tsx server/release-control-plane.test.ts",
-      "filesPassed": 6,
-      "testsPassed": 54,
+      "command": "npm.cmd test -- server/research/inventory-admin/migration.test.ts server/research/inventory-admin/routes.test.ts server/research/inventory-admin/production.test.ts client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx client/src/research/pages/adminx/LotCoasAdmin.test.tsx client/src/research/pages/adminx/admin-sign-out.test.tsx server/release-control-plane.test.ts",
+      "filesPassed": 7,
+      "testsPassed": 58,
       "status": "passed"
     },
     "fullTests": {
       "command": "npm.cmd test -- --maxWorkers=2",
-      "filesPassed": 203,
-      "testsPassed": 3660,
+      "filesPassed": 204,
+      "testsPassed": 3664,
       "status": "passed"
     },
     "typecheck": {
@@ -196,7 +199,7 @@
       "zoom200Proxy": "720 CSS px reflow has no horizontal overflow",
       "keyboardFocus": "visible existing purple focus border on the labeled lot selector",
       "consoleErrorsOrWarnings": 0,
-      "retryInteraction": "same-tab remount after committed preparation or successful PUT restores the JWT-sub-scoped fingerprint-bound command envelope without token or signed URL; same-user token refresh preserves it; principal change cannot render or consume another principal's state; canonical SIGNED_OUT replays the exact preparation and performs audited cancellation before clearing, while transport failure retains only that principal's cleanup authority; confirmation replays original version and key without duplicate PUT; changed metadata cancels the old unconfirmed preparation before replacement; confirmed success clears recovery storage",
+      "retryInteraction": "same-tab remount after committed preparation or successful PUT restores the JWT-sub-scoped fingerprint-bound command envelope without token or signed URL; same-user token refresh preserves it; principal change cannot render or consume another principal's state; production registerAdminPreSignOutTask awaits exact preparation replay and audited cancellation before Supabase sign-out, while cleanup rejection keeps the session and principal recovery authority; SIGNED_OUT is retention-only fallback; confirmation replays original version and key without duplicate PUT; changed metadata cancels the old unconfirmed preparation before replacement; confirmed success clears recovery storage",
       "status": "passed"
     }
   },
