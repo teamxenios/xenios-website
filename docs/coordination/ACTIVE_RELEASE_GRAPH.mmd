@@ -1,5 +1,5 @@
 flowchart LR
-  PROD["Production d4941506<br/>Render dep-d9jcfkuk1jcs73fi5r1g<br/>DEPLOYED / PR86 ACCEPTED"]
+  PROD["Production b729c8ee<br/>Render dep-d9jdiuf41pts73b4p02g<br/>LIVE / PR87 FIX-FORWARD"]
   CAP["Capabilities route ownership<br/>CLOSED"]
   PRIV["Admin document privacy<br/>CLOSED"]
   PR80["PR #80 f646708d<br/>PROHIBITED"]
@@ -9,10 +9,11 @@ flowchart LR
   PR85["PR #85 dc11623d<br/>ACCEPTED / INTEGRATION PENDING"]
   PR86OLD["PR #86 22545561<br/>PROHIBITED"]
   PR86["PR #86 4f71648a<br/>DEPLOYED / POSTDEPLOY ACCEPTED"]
-  PR87["PR #87 control plane<br/>CANDIDATE PREPARATION"]
+  PR87["PR #87 02761124<br/>MERGED / DEPLOYED / POSTDEPLOY CHANGES REQUIRED"]
   CHECKOUT["Wave 3 checkout enablement<br/>BLOCKED"]
 
-  PR86 -->|deployed as| PROD
+  PR86 -->|preceded| PR87
+  PR87 -->|deployed as| PROD
   PROD -->|closes| CAP
   PROD -->|closes| PRIV
   PR86OLD -->|superseded by| PR86

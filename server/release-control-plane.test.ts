@@ -19,6 +19,7 @@ import {
   validateRouteUniqueness,
 } from "../scripts/acceptance/verify-route-uniqueness.ts";
 import {
+  loadCurrentOwnershipSnapshot,
   validateProductionState,
   type FileOwnership,
   type ProductionState,
@@ -26,8 +27,8 @@ import {
 } from "../scripts/acceptance/verify-production-state.ts";
 
 const ROOT = process.cwd();
-const NOW = new Date("2026-07-27T03:05:00.000Z");
-const PRODUCTION_SHA = "d494150668de2ede8a61fd0d28bc9ff9a75def26";
+const NOW = new Date("2026-07-27T04:15:34.000Z");
+const PRODUCTION_SHA = "b729c8ee1a357e0af95fe50a05989b2f662f7270";
 const HEAD_SHA = "12759c2567246ee83ed71aad9ffa4b517d31e8aa";
 const CONTROL_PLANE_FILES = [
   "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
@@ -676,6 +677,90 @@ describe("production state validator", () => {
         repoFiles,
       }),
     ).toEqual([]);
+  });
+
+  it("separates trusted-base diff authorization from the current production ownership snapshot", () => {
+    const { state, graph, ownership: currentOwnership } = checkedInState();
+    const policyOriginSha = "d494150668de2ede8a61fd0d28bc9ff9a75def26";
+    const basePolicy = Buffer.from(JSON.stringify({
+      schemaVersion: 1,
+      productionBaseSha: policyOriginSha,
+      rules: [{
+        id: "base-release-manager",
+        owner: "Website 2",
+        lane: "release-manager",
+        mode: "write",
+        state: "active",
+        patterns: [
+          "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+          "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+          "docs/coordination/MIGRATION_DAG.json",
+          "docs/coordination/FILE_OWNERSHIP.json",
+        ],
+      }],
+    }));
+    const candidateWildcard = Buffer.from(JSON.stringify({
+      ...currentOwnership,
+      rules: [{
+        id: "candidate-wildcard",
+        owner: "Website 2",
+        lane: "release-manager",
+        mode: "write",
+        state: "active",
+        patterns: ["**"],
+      }],
+    }));
+    const trustedPolicy = trustedOwnershipPolicy(
+      ROOT,
+      policyOriginSha,
+      HEAD_SHA,
+      {},
+      () => basePolicy,
+      () => candidateWildcard,
+    );
+    expect(trustedPolicy.issues).toEqual([]);
+    expect(currentOwnership.productionBaseSha).toBe(PRODUCTION_SHA);
+    expect(
+      validateProductionState(state, graph, currentOwnership, {
+        now: NOW,
+        expectedProductionSha: PRODUCTION_SHA,
+      }),
+    ).toEqual([]);
+
+    const manifest = validManifest();
+    manifest.domain = "release-control-plane";
+    manifest.lane = "release-manager";
+    manifest.owner = "Website 2";
+    manifest.files = [
+      "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+      "server/research/runtime-bypass.ts",
+    ];
+    const codes = validateReleaseManifest(manifest, {
+      now: NOW,
+      expectedProductionSha: PRODUCTION_SHA,
+      expectedHeadSha: HEAD_SHA,
+      ownershipRules: trustedPolicy.policy?.rules ?? [],
+      gitBinding: {
+        baseExists: true,
+        headExists: true,
+        headSha: HEAD_SHA,
+        resolvedBaseSha: PRODUCTION_SHA,
+        resolvedHeadSha: HEAD_SHA,
+        files: manifest.files as string[],
+      },
+    }).map((issue) => issue.code);
+    expect(codes).toContain("UNOWNED_FILE");
+  });
+
+  it("fails closed when the current ownership snapshot is missing or invalid", () => {
+    expect(
+      loadCurrentOwnershipSnapshot(ROOT, () => {
+        throw new Error("missing");
+      }).issues.map((issue) => issue.code),
+    ).toContain("CURRENT_OWNERSHIP_SNAPSHOT_INVALID");
+    expect(
+      loadCurrentOwnershipSnapshot(ROOT, () => "{not-json").issues.map((issue) => issue.code),
+    ).toContain("CURRENT_OWNERSHIP_SNAPSHOT_INVALID");
   });
 
   it("detects production identity and data-posture contradictions", () => {

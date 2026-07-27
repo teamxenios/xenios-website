@@ -125,6 +125,11 @@ export type ProductionValidationOptions = {
   repoFiles?: string[];
 };
 
+export type CurrentOwnershipSnapshotResult = {
+  ownership: FileOwnership | null;
+  issues: ValidationIssue[];
+};
+
 const SHA_PATTERN = /^[0-9a-f]{40}$/;
 const RENDER_DEPLOYMENT_PATTERN = /^dep-[a-z0-9]+$/;
 const DEFAULT_MAX_EVIDENCE_AGE_MS = 7 * 24 * 60 * 60 * 1_000;
@@ -132,6 +137,36 @@ const DEFAULT_MAX_EVIDENCE_AGE_MS = 7 * 24 * 60 * 60 * 1_000;
 function parsedDate(value: string): Date | null {
   const parsed = new Date(value);
   return Number.isFinite(parsed.getTime()) ? parsed : null;
+}
+
+export function loadCurrentOwnershipSnapshot(
+  root: string,
+  readSnapshot: (path: string) => string = (path) => readFileSync(path, "utf8"),
+): CurrentOwnershipSnapshotResult {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(
+      readSnapshot(resolve(root, "docs/coordination/FILE_OWNERSHIP.json")),
+    ) as unknown;
+  } catch {
+    return {
+      ownership: null,
+      issues: [{
+        code: "CURRENT_OWNERSHIP_SNAPSHOT_INVALID",
+        message: "The current FILE_OWNERSHIP snapshot is missing or invalid JSON.",
+      }],
+    };
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return {
+      ownership: null,
+      issues: [{
+        code: "CURRENT_OWNERSHIP_SNAPSHOT_INVALID",
+        message: "The current FILE_OWNERSHIP snapshot must be a JSON object.",
+      }],
+    };
+  }
+  return { ownership: parsed as FileOwnership, issues: [] };
 }
 
 function findGraphCycles(graph: ReleaseGraph): string[][] {
@@ -236,7 +271,7 @@ export function validateProductionState(
   if (graph.productionSha !== state.production.gitSha || ownership.productionBaseSha !== state.production.gitSha) {
     issues.push({
       code: "PRODUCTION_IDENTITY_CONTRADICTION",
-      message: "Production SHA differs across CURRENT_PRODUCTION_STATE, ACTIVE_RELEASE_GRAPH, and FILE_OWNERSHIP.",
+      message: "Production SHA differs across CURRENT_PRODUCTION_STATE, ACTIVE_RELEASE_GRAPH, and the current FILE_OWNERSHIP snapshot.",
     });
   }
 
@@ -423,27 +458,32 @@ if (isCli()) {
     readFileSync(resolve(root, "docs/coordination/ACTIVE_RELEASE_GRAPH.json"), "utf8"),
   ) as ReleaseGraph;
   const trusted = trustedReleaseIdentityFromEnvironment();
-  const trustedOwnership = trustedOwnershipPolicy(
+  const authorizationPolicy = trustedOwnershipPolicy(
     root,
     trusted.identity?.baseSha ?? "",
     trusted.identity?.headSha ?? "",
   );
-  const ownership = (trustedOwnership.policy?.document ?? {
+  const currentOwnership = loadCurrentOwnershipSnapshot(root);
+  const ownership = currentOwnership.ownership ?? {
     schemaVersion: 0,
+    generatedAt: "",
     productionBaseSha: "",
     lanes: [],
     rules: [],
-  }) as unknown as FileOwnership;
+    invariants: [],
+  };
   const repoFiles = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
     .split(/\r?\n/)
     .filter(Boolean);
   const issues = [
     ...trusted.issues,
-    ...trustedOwnership.issues,
+    ...authorizationPolicy.issues,
+    ...currentOwnership.issues,
     ...validateProductionState(state, graph, ownership, {
-    expectedProductionSha: trusted.identity?.baseSha,
-    repoFiles,
-  })];
+      expectedProductionSha: trusted.identity?.baseSha,
+      repoFiles,
+    }),
+  ];
   if (issues.length > 0) {
     for (const issue of issues) console.error(`${issue.code}: ${issue.message}`);
     process.exitCode = 1;

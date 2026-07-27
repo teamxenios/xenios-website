@@ -86,6 +86,26 @@ the superseded entry.
 - Production effect: none. No merge, migration, deployment, or data mutation
   occurred.
 
+## 2026-07-27T04:15:34Z — PR #87 live; production snapshot fix-forward opened
+
+- Website 6 independently confirmed accepted PR #87 source
+  `0276112499ed029e70f09c2cd53bf9191d851601` is merged and live as main
+  `b729c8ee1a357e0af95fe50a05989b2f662f7270` on Render
+  `dep-d9jdiuf41pts73b4p02g`.
+- Runtime health, capability/admin private headers, signed-out responsive
+  behavior, production counts, and disabled Care remain green. No rollback is
+  indicated.
+- Website 6 found the checked-in current-production snapshot still recorded
+  pre-merge identity `d494150668de2ede8a61fd0d28bc9ff9a75def26`.
+- The fix-forward separates trusted-base ownership used to authorize the
+  computed Git diff from the candidate/current ownership snapshot used to
+  validate current production identity. Candidate ownership changes cannot
+  authorize their own diff.
+- Current production, release graph, migration DAG, ownership snapshot, and
+  accepted PR #85 current-main preflight are reconciled to `b729c8ee...`.
+- Production effect of this follow-up candidate: documentation and validation
+  only. No route, migration, database, role, capability, or data mutation.
+
 ## 2026-07-27T03:05:00Z — PR #86 production gate accepted
 
 - Website 6 post-deploy accepted exact source

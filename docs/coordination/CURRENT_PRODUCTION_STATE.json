@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-27T03:05:00Z",
+  "generatedAt": "2026-07-27T04:15:34Z",
   "production": {
-    "gitSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
-    "renderDeploymentId": "dep-d9jcfkuk1jcs73fi5r1g",
+    "gitSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+    "renderDeploymentId": "dep-d9jdiuf41pts73b4p02g",
     "status": "LIVE",
-    "verifiedAt": "2026-07-27T03:05:00Z",
+    "verifiedAt": "2026-07-27T04:15:34Z",
     "branch": "main",
     "publicOrigin": "https://xeniostechnology.com"
   },
@@ -175,8 +175,8 @@
       "lane": "Website 3",
       "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
       "sourceBaseSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
-      "integrationBaseSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
-      "currentMainMergeTree": "f0a8fa4e813a0087c24103b73547e65a77afe31e",
+      "integrationBaseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+      "currentMainMergeTree": "d377eb4ae5abbf9ef9ed76ab7357b99eb3356db7",
       "state": "ACCEPTED_INTEGRATION_PENDING",
       "reason": "Website 6 exact-SHA acceptance has zero blocker/high findings; read-only current-main preflight is clean and the 12 source blobs remain integration-gated.",
       "prohibitedPredecessor": "0472905dff10c45239b7f95834e1086c3b3c5f59"
@@ -199,29 +199,37 @@
       "prohibitedPredecessor": "225455615eda0c420996929379a5a1f9d535b4e8"
     },
     {
+      "pullRequest": 87,
+      "lane": "Website 2 release control plane",
+      "headSha": "0276112499ed029e70f09c2cd53bf9191d851601",
+      "sourceBaseSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+      "state": "MERGED_DEPLOYED_POSTDEPLOY_CHANGES_REQUIRED",
+      "reason": "Runtime production smoke is healthy; Website 6 requires a forward-only current-production snapshot reconciliation before closing the control-plane gate."
+    },
+    {
       "lane": "Website 1",
       "state": "REPLACEMENT_IN_PROGRESS",
-      "requiredBaseSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+      "requiredBaseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
       "scope": "durable Samuel authority, account continuity, server-authoritative landing, and audited member-mode switching"
     }
   ],
   "taskAssignments": [
     {
       "owner": "Website 1",
-      "baseSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+      "baseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
       "scope": "durable Samuel authority and account continuity",
       "sharedFilesExcluded": true
     },
     {
       "owner": "Website 2",
-      "baseSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+      "baseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
       "scope": "release control plane, migration ledger, shared-hotfix integration, deployment, rollback, and production smoke",
-      "headSha": "4f71648aa5684ebec70f14b7e09268331c522969",
-      "prohibitedHeadSha": "225455615eda0c420996929379a5a1f9d535b4e8"
+      "headSha": "0276112499ed029e70f09c2cd53bf9191d851601",
+      "prohibitedHeadSha": "02fc121ddf18df6ba0dc9fa5498802e3db4dde79"
     },
     {
       "owner": "Website 3",
-      "baseSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+      "baseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
       "scope": "PR 85 accepted member catalog/detail source; integration pending",
       "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
       "prohibitedReplacementHeadSha": "0472905dff10c45239b7f95834e1086c3b3c5f59",
@@ -229,7 +237,7 @@
     },
     {
       "owner": "Website 4",
-      "baseSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
+      "baseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
       "scope": "PR 80 seven-finding inventory/lot/COA replacement only",
       "authorizedAdditionalTestFiles": [
         "server/research/inventory-admin/production.test.ts",
@@ -249,6 +257,11 @@
     }
   ],
   "knownRisks": [
+    {
+      "id": "BLOCKER-PR87-CURRENT-PRODUCTION-SNAPSHOT",
+      "state": "FIX_FORWARD_WITH_WEBSITE_2",
+      "summary": "PR 87 runtime is healthy and live at b729c8ee; current production records and ownership snapshot semantics require a docs/control-plane-only forward correction."
+    },
     {
       "id": "BLOCKER-DURABLE-ADMIN-AUTHORITY",
       "state": "OPEN_WITH_WEBSITE_1",
@@ -276,17 +289,17 @@
     }
   ],
   "nextIntegrationUnits": [
+    "Website 2 PR 87 current-production snapshot fix-forward after exact-SHA acceptance",
     "Website 1 durable authority replacement after exact-SHA acceptance",
     "Website 3 PR 85 accepted source dc11623d through a separate current-main integration candidate",
-    "Website 4 corrected Wave 2 inventory/lot/COA after exact-SHA acceptance",
-    "Website 2 release-control-plane PR 87 after exact-SHA acceptance"
+    "Website 4 corrected Wave 2 inventory/lot/COA after exact-SHA acceptance"
   ],
   "lastSuccessfulValidation": {
-    "kind": "Website 6 post-deploy acceptance",
-    "release": "PR 86",
-    "sourceSha": "4f71648aa5684ebec70f14b7e09268331c522969",
-    "deployedSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
-    "renderDeploymentId": "dep-d9jcfkuk1jcs73fi5r1g"
+    "kind": "Website 2 production smoke; Website 6 runtime healthy with control-plane fix-forward required",
+    "release": "PR 87",
+    "sourceSha": "0276112499ed029e70f09c2cd53bf9191d851601",
+    "deployedSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+    "renderDeploymentId": "dep-d9jdiuf41pts73b4p02g"
   },
   "evidenceLimitations": [
     "No authorized existing member or administrator browser session was available for this snapshot.",
@@ -306,22 +319,22 @@
     {
       "id": "EVIDENCE-GIT-MAIN",
       "kind": "git",
-      "observedSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
-      "checkedAt": "2026-07-27T03:05:00Z",
-      "detail": "origin/main, PR 86 merge identity, and Render deployed application identity were reconciled to the same exact SHA."
+      "observedSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+      "checkedAt": "2026-07-27T04:15:34Z",
+      "detail": "origin/main, PR 87 merge identity, and Render deployed application identity were reconciled to the same exact SHA."
     },
     {
       "id": "EVIDENCE-PRODUCTION-HTTP",
       "kind": "http",
-      "observedSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
-      "checkedAt": "2026-07-27T03:05:00Z",
+      "observedSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+      "checkedAt": "2026-07-27T04:15:34Z",
       "detail": "Health, capability GET/HEAD/POST ordering, admin capability privacy, admin document privacy, and responsive signed-out browser boundaries were checked read-only."
     },
     {
       "id": "EVIDENCE-PRODUCTION-DATABASE",
       "kind": "database",
-      "observedSha": "d494150668de2ede8a61fd0d28bc9ff9a75def26",
-      "checkedAt": "2026-07-27T03:05:00Z",
+      "observedSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+      "checkedAt": "2026-07-27T04:15:34Z",
       "detail": "Account continuity, activation bridge, migration history, RLS, privilege, zero-row, and disabled-Care invariants were checked read-only."
     }
   ],
