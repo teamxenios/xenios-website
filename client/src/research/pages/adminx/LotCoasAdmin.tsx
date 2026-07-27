@@ -38,10 +38,62 @@ type UploadRetryState = {
   documentId: string | null;
   preparedVersion: number;
   storageKey: string | null;
-  uploadUrl: string | null;
-  expiresAt: string | null;
   objectUploaded: boolean;
 };
+
+const UPLOAD_RETRY_STORAGE_KEY = "xenios.research.coa-upload-retry.v1";
+
+function readUploadRetry(): UploadRetryState | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(UPLOAD_RETRY_STORAGE_KEY);
+    if (!raw) return null;
+    const value = JSON.parse(raw) as Partial<UploadRetryState>;
+    const metadata = value.metadata as Partial<CoaUploadMetadata> | undefined;
+    if (
+      !metadata
+      || typeof metadata.lotId !== "string"
+      || typeof metadata.filename !== "string"
+      || metadata.contentType !== "application/pdf"
+      || typeof metadata.sizeBytes !== "number"
+      || typeof metadata.sha256 !== "string"
+      || typeof metadata.reportIssuer !== "string"
+      || typeof metadata.reportNumber !== "string"
+      || typeof metadata.reportDate !== "string"
+      || value.fingerprint !== JSON.stringify(metadata)
+      || typeof value.preparationIdempotencyKey !== "string"
+      || typeof value.confirmationIdempotencyKey !== "string"
+      || typeof value.cancellationIdempotencyKey !== "string"
+      || value.preparedVersion !== 1
+      || !(value.documentId === null || typeof value.documentId === "string")
+      || !(value.storageKey === null || typeof value.storageKey === "string")
+      || typeof value.objectUploaded !== "boolean"
+      || (value.objectUploaded && (!value.documentId || !value.storageKey))
+    ) {
+      window.sessionStorage.removeItem(UPLOAD_RETRY_STORAGE_KEY);
+      return null;
+    }
+    return value as UploadRetryState;
+  } catch {
+    return null;
+  }
+}
+
+function writeUploadRetry(value: UploadRetryState): void {
+  if (typeof window === "undefined") {
+    throw new Error("upload retry storage unavailable");
+  }
+  window.sessionStorage.setItem(UPLOAD_RETRY_STORAGE_KEY, JSON.stringify(value));
+}
+
+function removeUploadRetry(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(UPLOAD_RETRY_STORAGE_KEY);
+  } catch {
+    // A confirmed server command remains safely replayable even if local cleanup fails.
+  }
+}
 
 function newUploadAttempt(
   metadata: CoaUploadMetadata,
@@ -56,8 +108,6 @@ function newUploadAttempt(
     documentId: null,
     preparedVersion: 1,
     storageKey: null,
-    uploadUrl: null,
-    expiresAt: null,
     objectUploaded: false,
   };
 }
@@ -97,8 +147,18 @@ export function LotCoasBody({ token }: { token: string }) {
   const [selectedId, setSelectedId] = useState("");
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: "error" | "success"; text: string } | null>(null);
-  const [uploadRetry, setUploadRetry] = useState<UploadRetryState | null>(null);
+  const [uploadRetry, setUploadRetry] = useState<UploadRetryState | null>(readUploadRetry);
   const selected = documents.data?.documents.find((document) => document.id === selectedId) ?? null;
+
+  function rememberUploadRetry(value: UploadRetryState): void {
+    writeUploadRetry(value);
+    setUploadRetry(value);
+  }
+
+  function clearUploadRetry(): void {
+    removeUploadRetry();
+    setUploadRetry(null);
+  }
 
   if (lots.state === "loading" || documents.state === "loading") {
     return <ResearchLoadingState label="Loading exact-lot quality records" />;
@@ -172,7 +232,7 @@ export function LotCoasBody({ token }: { token: string }) {
       } else if (!attempt) {
         attempt = newUploadAttempt(normalized, fingerprint);
       }
-      setUploadRetry(attempt);
+      rememberUploadRetry(attempt);
       const prepared = await prepareCoaUpload(token, {
         ...normalized,
         idempotencyKey: attempt.preparationIdempotencyKey,
@@ -189,10 +249,8 @@ export function LotCoasBody({ token }: { token: string }) {
         ...attempt,
         documentId: prepared.data.upload.documentId,
         storageKey: prepared.data.upload.storageKey,
-        uploadUrl: prepared.data.upload.uploadUrl,
-        expiresAt: prepared.data.upload.expiresAt,
       };
-      setUploadRetry(preparedAttempt);
+      rememberUploadRetry(preparedAttempt);
       if (!preparedAttempt.objectUploaded) {
         if (!prepared.data.upload.uploadRequired || !prepared.data.upload.uploadUrl) {
           return fail(
@@ -202,7 +260,7 @@ export function LotCoasBody({ token }: { token: string }) {
         const uploaded = await putPrivateCoaFile(prepared.data.upload.uploadUrl, file);
         if (!uploaded) return fail("The private object upload did not complete.");
         preparedAttempt = { ...preparedAttempt, objectUploaded: true };
-        setUploadRetry(preparedAttempt);
+        rememberUploadRetry(preparedAttempt);
       }
       const confirmed = await confirmCoaUpload(
         token,
@@ -214,7 +272,7 @@ export function LotCoasBody({ token }: { token: string }) {
       );
       if (confirmed.kind !== "ok") return fail("The uploaded object could not be verified.");
       form.reset();
-      setUploadRetry(null);
+      clearUploadRetry();
       setSelectedId(prepared.data.upload.documentId);
       setFeedback({
         tone: "success",

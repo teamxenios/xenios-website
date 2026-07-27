@@ -4,7 +4,8 @@
 
 - Branch: `feature/website-4-research-commerce-wave-2-inventory-lots`
 - Base: `bf1815c6754e04fd95325b25996ff441dc92fe43`
-- Supersedes prohibited heads: `bdafa110fbca67f018b5cb91b227f7ffd49c8663`,
+- Supersedes prohibited heads: `cbf9f0fb1ef69949a3c94aa252417981a6b5940d`,
+  `bdafa110fbca67f018b5cb91b227f7ffd49c8663`,
   `b1a17c8c9bc581089b85047fbb3b7e21513c98d1`,
   `f646708d45d4a6e4e7acf4e2653e44746baef184`, and
   `0f6937f0d2e67dea8a0067dd8786378cca9095be`
@@ -41,6 +42,10 @@
   identity, and object-upload posture across grant, PUT, and confirmation
   failures. A lost confirmation response replays the original version/key and
   cannot duplicate the upload or confirmation event.
+- The recovery envelope is written to same-tab session storage before each
+  external boundary and restored with strict metadata-fingerprint validation
+  after reload/remount. It never stores the bearer token or signed upload URL,
+  and is removed only after confirmed success or audited cancellation.
 - Metadata changes first retire an unconfirmed preparation through a dedicated
   actor- and metadata-bound, lock-serialized, audited cancellation RPC. The
   abandoned object reference and history remain immutable; only then can a new
@@ -163,12 +168,14 @@ directly, copy Product Control files, or create another product model.
   and minimum visible control height 56px.
 - Keyboard: the labeled lot selector receives the existing visible purple focus
   border; forms preserve semantic headings, fieldsets, labels, and controls.
-- Browser/component retry proof: signed-grant and PUT failures preserve the
-  selected lot, PDF metadata, and retry identity; a lost confirmation response
-  replays the original version/key without a second PUT; changed metadata invokes
-  audited cancellation before a new preparation. Success resets the form and
-  announces status through the live region. The previously accepted responsive
-  lane remains unchanged and free of horizontal overflow at 320 CSS px.
+- Browser/component retry proof: remount after committed preparation restores the
+  original preparation key; remount after successful PUT/lost confirmation
+  restores the original version/key and skips a second PUT. The persisted
+  envelope contains neither token nor signed URL. Changed metadata invokes
+  audited cancellation before a new preparation. Success clears the envelope,
+  resets the form, and announces status through the live region. The previously
+  accepted responsive lane remains unchanged and free of horizontal overflow at
+  320 CSS px.
 
 ## Environment
 

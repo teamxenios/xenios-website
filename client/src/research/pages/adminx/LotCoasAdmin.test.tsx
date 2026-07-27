@@ -130,6 +130,14 @@ async function renderPage() {
   });
 }
 
+async function remountPage() {
+  if (root) {
+    await act(async () => root?.unmount());
+    root = null;
+  }
+  await renderPage();
+}
+
 async function flush() {
   await act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -171,6 +179,7 @@ async function submit(form: HTMLFormElement) {
 }
 
 beforeEach(() => {
+  window.sessionStorage.clear();
   host = document.createElement("div");
   document.body.appendChild(host);
   root = null;
@@ -207,6 +216,7 @@ beforeEach(() => {
 
 afterEach(async () => {
   if (root) await act(async () => root?.unmount());
+  window.sessionStorage.clear();
   host.remove();
   vi.unstubAllGlobals();
   vi.clearAllMocks();
@@ -299,10 +309,19 @@ describe("Website 4 exact-lot COA editor isolation", () => {
       .mockResolvedValueOnce(true);
 
     await renderPage();
-    const { form } = populateUploadForm();
+    let { form } = populateUploadForm();
     await submit(form);
     expect(host.textContent).toContain("Retry private COA upload");
+    const preparedEnvelope = window.sessionStorage.getItem(
+      "xenios.research.coa-upload-retry.v1",
+    );
+    expect(preparedEnvelope).toContain(
+      "70000000-0000-4000-8000-000000000010",
+    );
+    expect(preparedEnvelope).not.toContain("https://storage.invalid");
 
+    await remountPage();
+    ({ form } = populateUploadForm());
     await submit(form);
     expect(host.textContent).toContain("Retry private COA upload");
 
@@ -325,7 +344,10 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     );
     expect(mocks.upload).toHaveBeenCalledTimes(2);
     expect(host.textContent).toContain("Private COA object verified.");
-    expect(mocks.listDocuments).toHaveBeenCalledTimes(2);
+    expect(mocks.listDocuments).toHaveBeenCalledTimes(3);
+    expect(window.sessionStorage.getItem(
+      "xenios.research.coa-upload-retry.v1",
+    )).toBeNull();
   });
 
   it("replays confirmation with the original version and skips a duplicate PUT", async () => {
@@ -376,9 +398,19 @@ describe("Website 4 exact-lot COA editor isolation", () => {
       });
 
     await renderPage();
-    const { form } = populateUploadForm();
+    let { form } = populateUploadForm();
     await submit(form);
     expect(host.textContent).toContain("Retry private COA upload");
+    const confirmationEnvelope = window.sessionStorage.getItem(
+      "xenios.research.coa-upload-retry.v1",
+    );
+    expect(confirmationEnvelope).toContain(
+      "70000000-0000-4000-8000-000000000031",
+    );
+    expect(confirmationEnvelope).toContain('"objectUploaded":true');
+    expect(confirmationEnvelope).not.toContain("https://storage.invalid");
+    await remountPage();
+    ({ form } = populateUploadForm());
     await submit(form);
 
     expect(mocks.prepare).toHaveBeenCalledTimes(2);
@@ -398,6 +430,9 @@ describe("Website 4 exact-lot COA editor isolation", () => {
       ]);
     }
     expect(host.textContent).toContain("Private COA object verified.");
+    expect(window.sessionStorage.getItem(
+      "xenios.research.coa-upload-retry.v1",
+    )).toBeNull();
   });
 
   it("starts a new preparation when normalized upload metadata changes", async () => {

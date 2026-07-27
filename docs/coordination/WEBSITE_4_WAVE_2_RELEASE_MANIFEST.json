@@ -6,6 +6,7 @@
   "headSha": "RESOLVE_FROM_GIT_HEAD",
   "headShaResolution": "git rev-parse HEAD",
   "supersedesProhibitedHeadShas": [
+    "cbf9f0fb1ef69949a3c94aa252417981a6b5940d",
     "bdafa110fbca67f018b5cb91b227f7ffd49c8663",
     "b1a17c8c9bc581089b85047fbb3b7e21513c98d1",
     "f646708d45d4a6e4e7acf4e2653e44746baef184",
@@ -192,7 +193,7 @@
       "zoom200Proxy": "720 CSS px reflow has no horizontal overflow",
       "keyboardFocus": "visible existing purple focus border on the labeled lot selector",
       "consoleErrorsOrWarnings": 0,
-      "retryInteraction": "grant_put_and_lost_confirmation_failures preserve command identity; confirmation replays original version and key without duplicate PUT; changed metadata cancels the old unconfirmed preparation before replacement",
+      "retryInteraction": "same-tab remount after committed preparation or successful PUT restores the fingerprint-bound command envelope without token or signed URL; confirmation replays original version and key without duplicate PUT; changed metadata cancels the old unconfirmed preparation before replacement; confirmed success clears recovery storage",
       "status": "passed"
     }
   },
