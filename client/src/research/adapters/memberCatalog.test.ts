@@ -54,6 +54,8 @@ const selection = {
   productId: "product-a",
   variantId: "variant-a",
   sku: "SKU-A",
+  displayName: "Product A",
+  fulfillmentOwner: "mitch",
   audience: "member",
   audienceEligibility: {
     audience: "member",
