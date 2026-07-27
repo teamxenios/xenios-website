@@ -23,7 +23,7 @@
       "owner": "Website 3",
       "lane": "wave3-member-catalog",
       "state": "FROZEN_ACCEPTED_INTEGRATION_PENDING",
-      "activeUnit": "PR #85 exact accepted source; heads 12759c25, 30b0f6b7, and 0472905d remain prohibited.",
+      "activeUnit": "PR #85 exact accepted source transferred byte-for-byte to Website 2 for controlled integration; heads 12759c25, 30b0f6b7, and 0472905d remain prohibited.",
       "branch": "feature/website-3-wave3-member-catalog-detail",
       "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed"
     },
@@ -153,11 +153,11 @@
       ]
     },
     {
-      "id": "OWNER-W3-PR85",
-      "owner": "Website 3",
-      "lane": "wave3-member-catalog",
+      "id": "OWNER-W2-PR85-ACCEPTED-SOURCE",
+      "owner": "Website 2",
+      "lane": "release-manager",
       "mode": "write",
-      "state": "frozen",
+      "state": "reserved",
       "patterns": [
         "client/src/research/adapters/memberCatalog.test.ts",
         "client/src/research/adapters/memberCatalog.ts",
