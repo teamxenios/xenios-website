@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xeniostechnology.com/schemas/release-manifest.schema.json",
+  "title": "Xenios bounded release manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "releaseId",
+    "domain",
+    "lane",
+    "owner",
+    "createdAt",
+    "baseSha",
+    "headSha",
+    "currentProductionSha",
+    "files",
+    "routes",
+    "migrations",
+    "tables",
+    "functions",
+    "rls",
+    "privileges",
+    "environmentNames",
+    "sharedWiring",
+    "tests",
+    "rollback",
+    "smoke",
+    "evidence"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "releaseId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "lane": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "baseSha": {
+      "$ref": "#/$defs/gitSha"
+    },
+    "headSha": {
+      "$ref": "#/$defs/gitSha"
+    },
+    "currentProductionSha": {
+      "$ref": "#/$defs/gitSha"
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/repositoryPath"
+      }
+    },
+    "routes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method",
+          "path"
+        ],
+        "properties": {
+          "method": {
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "PATCH",
+              "DELETE",
+              "OPTIONS",
+              "HEAD"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^/"
+          }
+        }
+      }
+    },
+    "migrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "path",
+          "checksum",
+          "dependsOn",
+          "rollback"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "$ref": "#/$defs/repositoryPath"
+          },
+          "checksum": {
+            "$ref": "#/$defs/sha256"
+          },
+          "dependsOn": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "rollback": {
+            "$ref": "#/$defs/rollback"
+          }
+        }
+      }
+    },
+    "tables": {
+      "$ref": "#/$defs/stringSet"
+    },
+    "functions": {
+      "$ref": "#/$defs/stringSet"
+    },
+    "rls": {
+      "$ref": "#/$defs/stringSet"
+    },
+    "privileges": {
+      "$ref": "#/$defs/stringSet"
+    },
+    "environmentNames": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]*$"
+      }
+    },
+    "sharedWiring": {
+      "$ref": "#/$defs/stringSet"
+    },
+    "tests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "focused",
+        "fullSuite",
+        "typecheck",
+        "build",
+        "diffCheck"
+      ],
+      "properties": {
+        "focused": {
+          "$ref": "#/$defs/testEvidence"
+        },
+        "fullSuite": {
+          "$ref": "#/$defs/testEvidence"
+        },
+        "typecheck": {
+          "$ref": "#/$defs/testEvidence"
+        },
+        "build": {
+          "$ref": "#/$defs/testEvidence"
+        },
+        "diffCheck": {
+          "$ref": "#/$defs/testEvidence"
+        }
+      }
+    },
+    "rollback": {
+      "$ref": "#/$defs/rollback"
+    },
+    "smoke": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "steps",
+        "expected"
+      ],
+      "properties": {
+        "steps": {
+          "$ref": "#/$defs/nonEmptyStrings"
+        },
+        "expected": {
+          "$ref": "#/$defs/nonEmptyStrings"
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "checkedAt",
+          "reference"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reference": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "gitSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+"
+    },
+    "stringSet": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "nonEmptyStrings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "testEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "command",
+        "checkedAt"
+      ],
+      "properties": {
+        "status": {
+          "const": "PASS"
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checkedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy",
+        "steps",
+        "verification"
+      ],
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "steps": {
+          "$ref": "#/$defs/nonEmptyStrings"
+        },
+        "verification": {
+          "$ref": "#/$defs/nonEmptyStrings"
+        }
+      }
+    }
+  }
+}

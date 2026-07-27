@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-27T02:13:11.637Z",
+  "productionSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
+  "checksumScope": "canonical Git blob bytes at productionSha",
+  "migrations": [
+    {
+      "id": "research_product_control_center",
+      "path": "supabase/migrations/20260726143000_research_product_control_center.sql",
+      "dependsOn": [],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "b1589eb24405d4700206d25541b647479afee34c2cd05422da70df2179876203"
+      },
+      "appliedToProduction": true,
+      "managedMigrationId": "20260726214102 research_product_control_center",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "documented_compensating_rollback",
+        "procedure": "supabase/production/research-product-control-center-rollback-notes.md",
+        "evidence": "scripts/product-control-dryrun.mjs rollback-zero proof and Website 6 PostgreSQL 16 acceptance"
+      }
+    },
+    {
+      "id": "research_product_control_center_privilege_hardening",
+      "path": "supabase/migrations/20260726214500_research_product_control_center_privilege_hardening.sql",
+      "dependsOn": [
+        "research_product_control_center"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "2fb96f105fcfb1d6f77bf6e9bcf191b48decbc9206f2045b32cf7595d31551db"
+      },
+      "appliedToProduction": true,
+      "managedMigrationId": "20260726215603 research_product_control_center_privilege_hardening",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "documented_privilege_restore",
+        "procedure": "supabase/production/research-product-control-center-rollback-notes.md",
+        "evidence": "Website 6 independently reproduced 69 privileges, applied the revoke-only migration twice, and converged to the reviewed 33-privilege boundary"
+      }
+    }
+  ],
+  "invariants": [
+    "Every dependency must exist and be applied before its dependent migration.",
+    "The dependency graph must be acyclic.",
+    "Checksums are computed from canonical Git blob bytes, not platform-normalized worktree line endings.",
+    "Every migration requires a non-empty rollback strategy, procedure, and verification evidence.",
+    "No migration in this DAG creates product, price, inventory, lot, COA, order, role, seed, or Care records."
+  ]
+}

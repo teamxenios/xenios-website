@@ -1,0 +1,294 @@
+import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, expect, it } from "vitest";
+import {
+  validateReleaseManifest,
+  type OwnershipRule,
+} from "../scripts/acceptance/verify-release-manifest.ts";
+import {
+  validateMigrationDag,
+  type MigrationDag,
+} from "../scripts/acceptance/verify-migration-dag.ts";
+import {
+  extractExpressRoutes,
+  findDuplicateRoutes,
+  validateRouteUniqueness,
+} from "../scripts/acceptance/verify-route-uniqueness.ts";
+import {
+  validateProductionState,
+  type FileOwnership,
+  type ProductionState,
+  type ReleaseGraph,
+} from "../scripts/acceptance/verify-production-state.ts";
+
+const ROOT = process.cwd();
+const NOW = new Date("2026-07-27T02:13:11.637Z");
+const PRODUCTION_SHA = "ae6533f57de6619b9656c866312f953ccb7eca8d";
+const HEAD_SHA = "12759c2567246ee83ed71aad9ffa4b517d31e8aa";
+
+function validManifest(): Record<string, unknown> {
+  const pass = {
+    status: "PASS",
+    command: "npm test",
+    checkedAt: NOW.toISOString(),
+  };
+  return {
+    schemaVersion: 1,
+    releaseId: "release-test",
+    domain: "catalog",
+    lane: "wave3-member-catalog",
+    owner: "Website 3",
+    createdAt: NOW.toISOString(),
+    baseSha: PRODUCTION_SHA,
+    headSha: HEAD_SHA,
+    currentProductionSha: PRODUCTION_SHA,
+    files: ["server/research/catalog/unit.ts"],
+    routes: [],
+    migrations: [],
+    tables: [],
+    functions: [],
+    rls: [],
+    privileges: [],
+    environmentNames: [],
+    sharedWiring: [],
+    tests: {
+      focused: pass,
+      fullSuite: pass,
+      typecheck: pass,
+      build: pass,
+      diffCheck: pass,
+    },
+    rollback: {
+      strategy: "revert commit",
+      steps: ["Revert the exact release commit."],
+      verification: ["Run the focused suite."],
+    },
+    smoke: {
+      steps: ["GET /api/health"],
+      expected: ["HTTP 200"],
+    },
+    evidence: [
+      {
+        kind: "ci",
+        checkedAt: NOW.toISOString(),
+        reference: "https://example.test/check",
+      },
+    ],
+  };
+}
+
+describe("release manifest validator", () => {
+  const ownership: OwnershipRule[] = [
+    {
+      id: "catalog",
+      owner: "Website 3",
+      lane: "wave3-member-catalog",
+      mode: "write",
+      state: "active",
+      patterns: ["server/research/catalog/**"],
+    },
+  ];
+
+  it("accepts a complete current manifest", () => {
+    expect(
+      validateReleaseManifest(validManifest(), {
+        now: NOW,
+        expectedProductionSha: PRODUCTION_SHA,
+        ownershipRules: ownership,
+      }),
+    ).toEqual([]);
+  });
+
+  it("detects stale identity, stale evidence, and ownership conflicts", () => {
+    const manifest = validManifest();
+    manifest.currentProductionSha = "0000000000000000000000000000000000000000";
+    manifest.evidence = [
+      {
+        kind: "ci",
+        checkedAt: "2026-07-01T00:00:00.000Z",
+        reference: "stale",
+      },
+    ];
+    const issues = validateReleaseManifest(manifest, {
+      now: NOW,
+      expectedProductionSha: PRODUCTION_SHA,
+      ownershipRules: [
+        ...ownership,
+        {
+          ...ownership[0],
+          id: "collision",
+          owner: "Website 2",
+          lane: "release-manager",
+        },
+      ],
+    });
+    expect(issues.map((issue) => issue.code)).toEqual(
+      expect.arrayContaining(["STALE_PRODUCTION_SHA", "STALE_EVIDENCE", "OWNERSHIP_CONFLICT"]),
+    );
+  });
+});
+
+describe("migration DAG validator", () => {
+  function migrationDag(): MigrationDag {
+    return {
+      schemaVersion: 1,
+      generatedAt: NOW.toISOString(),
+      productionSha: PRODUCTION_SHA,
+      checksumScope: "canonical Git blob bytes at productionSha",
+      migrations: [
+        {
+          id: "one",
+          path: "supabase/migrations/one.sql",
+          dependsOn: [],
+          checksum: { algorithm: "sha256", value: "a".repeat(64) },
+          appliedToProduction: true,
+          managedMigrationId: "one",
+          applyTwiceVerified: true,
+          rollback: {
+            strategy: "compensating",
+            procedure: "rollback.md",
+            evidence: "rollback-zero",
+          },
+        },
+        {
+          id: "two",
+          path: "supabase/migrations/two.sql",
+          dependsOn: ["one"],
+          checksum: { algorithm: "sha256", value: "b".repeat(64) },
+          appliedToProduction: true,
+          managedMigrationId: "two",
+          applyTwiceVerified: true,
+          rollback: {
+            strategy: "compensating",
+            procedure: "rollback.md",
+            evidence: "rollback-zero",
+          },
+        },
+      ],
+    };
+  }
+
+  it("accepts an acyclic, complete DAG when file checks are disabled", () => {
+    expect(validateMigrationDag(migrationDag(), { checkFiles: false })).toEqual([]);
+  });
+
+  it("detects cycles, missing prerequisites, and missing rollback evidence", () => {
+    const dag = migrationDag();
+    dag.migrations[0].dependsOn = ["two", "missing"];
+    dag.migrations[1].rollback.evidence = "";
+    const codes = validateMigrationDag(dag, { checkFiles: false }).map((issue) => issue.code);
+    expect(codes).toEqual(
+      expect.arrayContaining(["MIGRATION_CYCLE", "MISSING_PREREQUISITE", "MIGRATION_ROLLBACK"]),
+    );
+  });
+
+  it("verifies the checked-in canonical migration checksums", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    expect(validateMigrationDag(dag, { repoRoot: ROOT })).toEqual([]);
+  });
+});
+
+describe("route uniqueness validator", () => {
+  it("extracts and rejects duplicate method+path registrations", () => {
+    const first = extractExpressRoutes(
+      'app.get("/api/research/capabilities", guard, handler);',
+      "first.ts",
+    );
+    const second = extractExpressRoutes(
+      'router.get("/api/research/capabilities/", guard, handler);',
+      "second.ts",
+    );
+    const routes = [...first, ...second];
+    expect(findDuplicateRoutes(routes).has("GET /api/research/capabilities")).toBe(true);
+    expect(validateRouteUniqueness(routes)[0]?.code).toBe("DUPLICATE_ROUTE");
+  });
+
+  it("detects the known production capabilities-route HIGH as a negative control", () => {
+    const productionRoutes = [
+      "server/research/capabilities.ts",
+      "server/research/commerce/routes.ts",
+    ].flatMap((file) =>
+      extractExpressRoutes(
+        execFileSync("git", ["show", `${PRODUCTION_SHA}:${file}`], {
+          cwd: ROOT,
+          encoding: "utf8",
+        }),
+        file,
+      ),
+    );
+    const duplicates = findDuplicateRoutes(productionRoutes);
+    const registrations = duplicates.get("GET /api/research/capabilities");
+    expect(registrations?.map((route) => route.file)).toEqual(
+      expect.arrayContaining([
+        "server/research/capabilities.ts",
+        "server/research/commerce/routes.ts",
+      ]),
+    );
+  });
+
+  it("accepts a canonical single-owner capability route fixture", () => {
+    const routes = extractExpressRoutes(
+      'app.get("/api/research/capabilities", privateHeaders, requireMember, handler);',
+      "server/research/capabilities.ts",
+    );
+    expect(validateRouteUniqueness(routes)).toEqual([]);
+  });
+});
+
+describe("production state validator", () => {
+  function checkedInState(): {
+    state: ProductionState;
+    graph: ReleaseGraph;
+    ownership: FileOwnership;
+  } {
+    return {
+      state: JSON.parse(
+        readFileSync(resolve(ROOT, "docs/coordination/CURRENT_PRODUCTION_STATE.json"), "utf8"),
+      ) as ProductionState,
+      graph: JSON.parse(
+        readFileSync(resolve(ROOT, "docs/coordination/ACTIVE_RELEASE_GRAPH.json"), "utf8"),
+      ) as ReleaseGraph,
+      ownership: JSON.parse(
+        readFileSync(resolve(ROOT, "docs/coordination/FILE_OWNERSHIP.json"), "utf8"),
+      ) as FileOwnership,
+    };
+  }
+
+  it("accepts the internally consistent checked-in production snapshot", () => {
+    const { state, graph, ownership } = checkedInState();
+    const repoFiles = execFileSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8" })
+      .split(/\r?\n/)
+      .filter(Boolean);
+    expect(
+      validateProductionState(state, graph, ownership, {
+        now: NOW,
+        expectedProductionSha: PRODUCTION_SHA,
+        repoFiles,
+      }),
+    ).toEqual([]);
+  });
+
+  it("detects production identity and data-posture contradictions", () => {
+    const { state, graph, ownership } = checkedInState();
+    state.production.gitSha = "0000000000000000000000000000000000000000";
+    if (state.dataPosture) {
+      state.dataPosture.fabricatedDataCount = 1;
+    } else if (state.productionCounts) {
+      state.productionCounts.productControlRows = 1;
+    }
+    const codes = validateProductionState(state, graph, ownership, {
+      now: NOW,
+      expectedProductionSha: PRODUCTION_SHA,
+    }).map((issue) => issue.code);
+    expect(codes).toEqual(
+      expect.arrayContaining([
+        "STALE_PRODUCTION_SHA",
+        "PRODUCTION_IDENTITY_CONTRADICTION",
+        "DATA_POSTURE_CONTRADICTION",
+      ]),
+    );
+  });
+});

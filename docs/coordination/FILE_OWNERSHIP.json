@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-27T02:13:11.637Z",
+  "productionBaseSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
+  "lanes": [
+    {
+      "owner": "Website 1",
+      "lane": "samuel-admin-routing",
+      "state": "REPLACEMENT_IN_PROGRESS",
+      "activeUnit": "Durable Samuel authority, account continuity, server-authoritative landing, and audited member-mode switching.",
+      "branch": "CURRENT_WEBSITE_1_TASK",
+      "headSha": null
+    },
+    {
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "state": "ACTIVE",
+      "activeUnit": "Main release control plane and serialized integration authority.",
+      "branch": "chore/main-release-control-plane",
+      "headSha": null
+    },
+    {
+      "owner": "Website 3",
+      "lane": "wave3-member-catalog",
+      "state": "FROZEN_PROHIBITED_CHANGES_REQUIRED",
+      "activeUnit": "PR #85 two-finding replacement; heads 12759c25, 30b0f6b7, and 0472905d remain prohibited.",
+      "branch": "feature/website-3-wave3-member-catalog-detail",
+      "headSha": "0472905dff10c45239b7f95834e1086c3b3c5f59"
+    },
+    {
+      "owner": "Website 4",
+      "lane": "wave2-inventory-lot-coa",
+      "state": "FROZEN_PROHIBITED_CHANGES_REQUIRED",
+      "activeUnit": "PR #80 inventory, lots, and exact-lot COA correction.",
+      "branch": "feature/website-4-research-commerce-wave-2-inventory-lots",
+      "headSha": "f646708d45d4a6e4e7acf4e2653e44746baef184"
+    },
+    {
+      "owner": "Website 5",
+      "lane": "wave3-persistent-cart",
+      "state": "WAITING_FOR_WEBSITE_2_ASSIGNMENT",
+      "activeUnit": "No write scope until Website 2 supplies an exact current base and allowlist.",
+      "branch": null,
+      "headSha": null
+    },
+    {
+      "owner": "Website 6",
+      "lane": "independent-qa",
+      "state": "REVIEW_ONLY",
+      "activeUnit": "Review exact frozen SHAs and deployed identities; no domain writing.",
+      "branch": null,
+      "headSha": null
+    }
+  ],
+  "rules": [
+    {
+      "id": "OWNER-W2-CONTROL-PLANE",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.md",
+        "docs/coordination/FILE_OWNERSHIP.json",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
+        "docs/coordination/MIGRATION_DAG.json",
+        "docs/coordination/MAIN_SESSION_EXECUTION_LOG.md",
+        "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md",
+        "docs/coordination/PR_85_INTEGRATION_PREFLIGHT.json",
+        "docs/coordination/release-manifest.schema.json",
+        "scripts/acceptance/**",
+        "server/release-control-plane.test.ts",
+        "supabase/MIGRATIONS.md",
+        "package.json"
+      ]
+    },
+    {
+      "id": "OWNER-W2-SHARED-INTEGRATION",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "client/src/research/section.tsx",
+        "client/src/research/adminx-section.tsx"
+      ]
+    },
+    {
+      "id": "OWNER-W2-PR86-SHARED-HOTFIX",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "frozen",
+      "patterns": [
+        "server/index.ts",
+        "server/research/capabilities.test.ts",
+        "server/research/capabilities.ts",
+        "server/research/commerce/acceptance-harness.ts",
+        "server/research/commerce/routes.test.ts",
+        "server/research/commerce/routes.ts",
+        "server/research/frontdoor.test.ts",
+        "server/research/index.ts",
+        "server/research/member-platform.test.ts",
+        "server/research/member-platform.ts",
+        "shared/research/paths.test.ts",
+        "shared/research/paths.ts"
+      ]
+    },
+    {
+      "id": "OWNER-W3-PR85",
+      "owner": "Website 3",
+      "lane": "wave3-member-catalog",
+      "mode": "write",
+      "state": "frozen",
+      "patterns": [
+        "client/src/research/adapters/memberCatalog.test.ts",
+        "client/src/research/adapters/memberCatalog.ts",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+        "docs/coordination/WEBSITE_3_WAVE3_MEMBER_CATALOG_HANDOFF.md",
+        "server/research/catalog/member-catalog-projection.test.ts",
+        "server/research/catalog/member-catalog-projection.ts",
+        "server/research/catalog/product-control-reader.test.ts",
+        "server/research/catalog/product-control-reader.ts",
+        "shared/research/member-catalog.ts"
+      ]
+    },
+    {
+      "id": "OWNER-W4-PR80",
+      "owner": "Website 4",
+      "lane": "wave2-inventory-lot-coa",
+      "mode": "write",
+      "state": "frozen",
+      "patterns": [
+        "client/src/research/adapters/inventory-admin.ts",
+        "client/src/research/pages/adminx/InventoryLotsAdmin.tsx",
+        "client/src/research/pages/adminx/LotCoasAdmin.tsx",
+        "docs/coordination/WEBSITE_4_REMAINING_SCOPE.md",
+        "docs/coordination/WEBSITE_4_RESEARCH_COMMERCE_WAVE_2_HANDOFF.md",
+        "docs/coordination/WEBSITE_4_WAVE_2_RELEASE_MANIFEST.json",
+        "server/research/inventory-admin/migration.test.ts",
+        "server/research/inventory-admin/production.ts",
+        "server/research/inventory-admin/routes.test.ts",
+        "server/research/inventory-admin/routes.ts",
+        "shared/research/inventory-admin.ts",
+        "supabase/research-inventory-lot-coa-admin.sql",
+        "supabase/verification/research-inventory-lot-coa-admin.verify.sql",
+        "supabase/verification/research-inventory-lot-coa-disposable-bootstrap.sql"
+      ]
+    }
+  ],
+  "invariants": [
+    "One active writer per repository file.",
+    "Review-only lanes own no write patterns.",
+    "A prohibited or frozen head may be corrected only by its owning lane.",
+    "Website 2 alone owns shared integration, migration application, merge, deployment, and rollback decisions.",
+    "A new unit must start from the exact current production SHA."
+  ]
+}
