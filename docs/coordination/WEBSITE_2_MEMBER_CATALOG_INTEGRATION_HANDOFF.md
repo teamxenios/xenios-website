@@ -2,9 +2,9 @@
 
 ## Frozen inputs
 
-- Production/trusted integration base: `863d9a0bf098a4a23fed39f8a488a0d9dd6885b2`
+- Production/trusted integration base: `368452dacc6e66cb913093f45b909b789f101c69`
 - Website 6-accepted PR #85 source: `dc11623d27fa59cb51b6cfe653f143633c7ae9ed`
-- Exact source merge: `25d2435162420a2e9eddccf78e3ae6fca1a0ef60`
+- Exact source merge: `69e229b2fed4ea61b2394ef30c03573869131dec`
 - Source-merge parents: production base plus accepted PR #85 source
 - Accepted source files: 12/12 byte-preserved
 - Migrations, tables, grants, providers, environment variables, and seeds: none
