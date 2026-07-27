@@ -78,6 +78,19 @@
       ]
     },
     {
+      "id": "OWNER-W2-INVENTORY-RESERVATION-INTEGRATION",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "docs/coordination/WEBSITE_2_INVENTORY_RESERVATION_INTEGRATION_HANDOFF.md",
+        "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+        "supabase/production/research-inventory-reservation-commands-rollback-notes.md",
+        "supabase/verify-research-inventory-reservation-commands.sql"
+      ]
+    },
+    {
       "id": "OWNER-W2-SHARED-INTEGRATION",
       "owner": "Website 2",
       "lane": "release-manager",
