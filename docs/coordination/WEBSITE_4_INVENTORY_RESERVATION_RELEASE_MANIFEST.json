@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "website-4-wave3-atomic-inventory-reservation",
+  "domain": "Research Commerce inventory reservation commands",
+  "lane": "wave3-atomic-inventory-reservation",
+  "owner": "Website 4",
+  "createdAt": "2026-07-27T14:24:19Z",
+  "branch": "feature/website-4-wave3-atomic-inventory-reservation",
+  "manifestRole": "COORDINATION_EVIDENCE_TEMPLATE",
+  "authoritativeManifest": "SHA-pinned schema-valid JSON posted out-of-band on the draft PR after the final head is frozen",
+  "baseSha": "ef158672ce9ec3524f8bb64841b285a76e37a54b",
+  "headSha": "RESOLVE_FROM_GIT_HEAD",
+  "headShaResolution": "git rev-parse HEAD",
+  "currentProductionSha": "ef158672ce9ec3524f8bb64841b285a76e37a54b",
+  "files": [
+    "shared/research/inventory-reservation.ts",
+    "server/research/inventory-reservation/port.ts",
+    "server/research/inventory-reservation/production.ts",
+    "server/research/inventory-reservation/production.test.ts",
+    "server/research/inventory-reservation/migration.test.ts",
+    "supabase/research-inventory-reservation-commands.sql",
+    "supabase/verification/research-inventory-reservation-disposable-bootstrap.sql",
+    "supabase/verification/research-inventory-reservation-commands.verify.sql",
+    "docs/coordination/WEBSITE_4_INVENTORY_RESERVATION_HANDOFF.md",
+    "docs/coordination/WEBSITE_4_INVENTORY_RESERVATION_RELEASE_MANIFEST.json"
+  ],
+  "routes": [],
+  "migrations": [
+    {
+      "id": "research_inventory_reservation_commands",
+      "path": "supabase/research-inventory-reservation-commands.sql",
+      "checksum": "4dbb183f367e6dcd847cba3048a37f132ab4cc559791c2719baf7e05c42767f7",
+      "checksumSource": "raw Git blob via git show <frozen-sha>:supabase/research-inventory-reservation-commands.sql",
+      "byteLength": 49917,
+      "dependsOn": [
+        "20260727120000 research_inventory_lot_coa_admin"
+      ],
+      "productionApplied": false
+    }
+  ],
+  "tables": [
+    "public.research_lot_reservations",
+    "public.research_lot_reservation_allocations",
+    "public.research_inventory_reservation_events"
+  ],
+  "functions": [
+    "public.research_inventory_readiness_serialization_guard()",
+    "public.research_inventory_lot_identity_serialization_guard()",
+    "public.research_reserve_inventory(uuid,uuid,jsonb,timestamptz,timestamptz,text)",
+    "public.research_release_inventory_reservations(uuid,uuid,text[],timestamptz,text,text)",
+    "public.research_finalize_inventory_reservations(uuid,uuid,text[],timestamptz,text,text)",
+    "public.research_expire_inventory_reservations(uuid,uuid,text[],timestamptz,text,text)"
+  ],
+  "rls": [
+    "public.research_lot_reservations FORCE RLS with no policies",
+    "public.research_lot_reservation_allocations FORCE RLS with no policies",
+    "public.research_inventory_reservation_events FORCE RLS with no policies"
+  ],
+  "privileges": [
+    "anon/authenticated/public: zero table and RPC grants",
+    "service_role: SELECT only on three reservation tables",
+    "service_role: EXECUTE only on four reviewed command RPCs",
+    "service_role: zero direct INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER"
+  ],
+  "environmentNames": [],
+  "sharedWiring": [
+    "Website 2 composes future authenticated server callers after Website 6 acceptance",
+    "Checkout remains disabled until caller idempotency and reservation integrity are integrated",
+    "No HTTP route or shared registry change is included"
+  ],
+  "tests": {
+    "focused": {
+      "status": "PASS",
+      "command": "npm test -- --run server/research/inventory-reservation/production.test.ts server/research/inventory-reservation/migration.test.ts",
+      "checkedAt": "2026-07-27T15:28:30Z",
+      "filesPassed": 2,
+      "testsPassed": 16
+    },
+    "fullSuite": {
+      "status": "PASS",
+      "command": "npm test -- --maxWorkers=2",
+      "checkedAt": "2026-07-27T15:28:30Z",
+      "filesPassed": 207,
+      "testsPassed": 3688
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run check",
+      "checkedAt": "2026-07-27T15:28:30Z"
+    },
+    "build": {
+      "status": "PASS",
+      "command": "npm run build",
+      "checkedAt": "2026-07-27T15:28:30Z",
+      "notes": "Passed with pre-existing chunk/import warnings"
+    },
+    "diffCheck": {
+      "status": "PASS",
+      "command": "git diff --check and exact ten-file allowlist comparison",
+      "checkedAt": "2026-07-27T15:28:30Z"
+    },
+    "disposablePostgres16": {
+      "status": "PASS",
+      "checkedAt": "2026-07-27T15:28:30Z",
+      "applyTwice": true,
+      "forcedRlsTables": 3,
+      "browserGrants": 0,
+      "serviceSelectPrivileges": 3,
+      "serviceRpcExecutePrivileges": 4,
+      "directDmlDenied": true,
+      "deterministicFefo": true,
+      "multiSkuAllOrNothing": true,
+      "identicalConcurrentReplay": true,
+      "sameLotNoOversell": true,
+      "holdHorizonValidation": true,
+      "finalizeCurrentReadinessValidation": true,
+      "readinessInvalidationSerialization": true,
+      "zeroLotIdentityPhantomClosed": true,
+      "backdatedLifecycleDenied": true,
+      "transitionAndOwnershipChecks": true,
+      "immutableRedactedEvents": true,
+      "rollbackZeroResidual": true
+    }
+  },
+  "rollback": {
+    "strategy": "Disable future callers and preserve append-only reservation history.",
+    "steps": [
+      "Before production data exists, Website 2 may revert application integration and the migration transaction.",
+      "After production data exists, keep the additive tables and immutable event receipts.",
+      "Never drop or rewrite operational reservation history."
+    ],
+    "verification": [
+      "Checkout remains disabled.",
+      "No route or provider is registered by this unit.",
+      "Record counts remain unchanged unless a reviewed caller created real reservations."
+    ]
+  },
+  "smoke": {
+    "steps": [
+      "Website 2 confirms migration checksum and apply order.",
+      "Run the disposable verifier against the packaged production migration.",
+      "Confirm four RPC grants, three SELECT-only table privileges, forced RLS, and zero browser grants.",
+      "Keep checkout disabled until a future authenticated caller uses InventoryReservationPort."
+    ],
+    "expected": [
+      "No direct reservation-table DML path exists.",
+      "No seed or fabricated reservation rows exist.",
+      "No checkout, order, payment, or fulfillment capability is enabled by this unit."
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "focused-tests",
+      "checkedAt": "2026-07-27T15:28:30Z",
+      "reference": "2 files / 16 tests passed including canonical Git-blob checksum and CRLF negative control"
+    },
+    {
+      "kind": "full-suite",
+      "checkedAt": "2026-07-27T15:28:30Z",
+      "reference": "207 files / 3688 tests passed"
+    },
+    {
+      "kind": "disposable-postgresql-16",
+      "checkedAt": "2026-07-27T15:28:30Z",
+      "reference": "apply twice, RLS/grants, direct-DML, FEFO, hold horizon, exact finalize readiness, existing-lot and zero-lot identity invalidation races, backdated transitions, all-or-nothing, concurrency, immutable events, rollback and zero residual passed"
+    }
+  ],
+  "productionMutation": false,
+  "productionStatus": "NOT_YET_MERGED"
+}

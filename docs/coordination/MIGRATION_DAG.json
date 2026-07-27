@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-07-27T04:15:34Z",
+  "generatedAt": "2026-07-27T15:40:00Z",
   "productionSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
-  "checksumScope": "canonical Git blob bytes at each migration sourceSha, or productionSha when sourceSha is omitted",
+  "checksumScope": "canonical Git blob bytes at each migration sourceSha and optional sourcePath, or productionSha and path when sourceSha is omitted; managed copies must byte-match the pinned source",
   "migrations": [
     {
       "id": "research_product_control_center",
@@ -53,13 +53,34 @@
         "algorithm": "sha256",
         "value": "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "20260727120000 research_inventory_lot_coa_admin",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "retain_additive_schema_and_append_only_history",
         "procedure": "supabase/production/research-inventory-lot-coa-admin-rollback-notes.md",
         "evidence": "Website 2 fresh PostgreSQL 16 managed apply-twice, accepted adversarial lifecycle/concurrency verifier, read-only privilege/count verifier, and rollback-zero proof"
+      }
+    },
+    {
+      "id": "research_inventory_reservation_commands",
+      "path": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+      "sourceSha": "d9107eb69355513ab89c82b6ff48c2bfe6174895",
+      "sourcePath": "supabase/research-inventory-reservation-commands.sql",
+      "dependsOn": [
+        "research_inventory_lot_coa_admin"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "4dbb183f367e6dcd847cba3048a37f132ab4cc559791c2719baf7e05c42767f7"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_additive_schema_and_append_only_reservation_history",
+        "procedure": "supabase/production/research-inventory-reservation-commands-rollback-notes.md",
+        "evidence": "Website 4 and Website 6 fresh PostgreSQL 16 apply-twice, full readiness race/concurrency/security verifier, direct-DML denial, immutable-event, temporal-guard, and rollback-zero proof; Website 2 managed-copy byte identity and read-only verifier"
       }
     }
   ],
@@ -67,7 +88,7 @@
     "productionSha is the same TRUSTED_RELEASE_BASELINE recorded by CURRENT_PRODUCTION_STATE, ACTIVE_RELEASE_GRAPH, and FILE_OWNERSHIP.",
     "Every dependency must exist and be applied before its dependent migration.",
     "The dependency graph must be acyclic.",
-    "Checksums are computed from canonical Git blob bytes, not platform-normalized worktree line endings.",
+    "Checksums are computed from canonical Git blob bytes at the reviewed source SHA/path, not platform-normalized worktree line endings; a distinct managed path must byte-match that source.",
     "Every migration requires a non-empty rollback strategy, procedure, and verification evidence.",
     "No migration in this DAG creates product, price, inventory, lot, COA, order, role, seed, or Care records."
   ]

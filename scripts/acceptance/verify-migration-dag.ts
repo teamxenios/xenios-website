@@ -20,6 +20,7 @@ export type MigrationNode = {
   id: string;
   path: string;
   sourceSha?: string;
+  sourcePath?: string;
   dependsOn: string[];
   checksum: MigrationChecksum;
   appliedToProduction: boolean;
@@ -43,6 +44,7 @@ export type MigrationDagValidationOptions = {
   expectedBaselineSha?: string;
   expectedManagedMigrationPaths?: string[];
   canonicalBytes?: (sourceSha: string, path: string) => Buffer;
+  managedBytes?: (path: string) => Buffer;
 };
 
 const SHA_PATTERN = /^[0-9a-f]{40}$/;
@@ -54,6 +56,19 @@ function canonicalGitBytes(repoRoot: string, sourceSha: string, path: string): B
     encoding: "buffer",
     stdio: ["ignore", "pipe", "pipe"],
   });
+}
+
+function currentGitBytes(repoRoot: string, path: string): Buffer {
+  return execFileSync("git", ["cat-file", "blob", `HEAD:${path}`], {
+    cwd: repoRoot,
+    encoding: "buffer",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+}
+
+function isUnsafePath(path: string): boolean {
+  return !path || path.startsWith("/") || path.includes("\\") ||
+    /(^|\/)\.\.(\/|$)/.test(path);
 }
 
 export function managedMigrationPathsFromLedger(source: string): string[] {
@@ -112,7 +127,7 @@ export function validateMigrationDag(
     } else {
       byId.set(migration.id, migration);
     }
-    if (!migration.path || migration.path.startsWith("/") || /(^|\/)\.\.(\/|$)/.test(migration.path)) {
+    if (isUnsafePath(migration.path)) {
       issues.push({ code: "MIGRATION_PATH", message: `${migration.id} has an unsafe path.` });
     } else if (byPath.has(migration.path)) {
       issues.push({
@@ -129,6 +144,24 @@ export function validateMigrationDag(
       issues.push({
         code: "MIGRATION_SOURCE_SHA",
         message: `${migration.id} sourceSha must be a lowercase Git SHA.`,
+      });
+    }
+    if (
+      migration.sourcePath !== undefined &&
+      isUnsafePath(migration.sourcePath)
+    ) {
+      issues.push({
+        code: "MIGRATION_SOURCE_PATH",
+        message: `${migration.id} has an unsafe sourcePath.`,
+      });
+    }
+    if (
+      migration.sourcePath !== undefined &&
+      migration.sourceSha === undefined
+    ) {
+      issues.push({
+        code: "MIGRATION_SOURCE_PATH_WITHOUT_SHA",
+        message: `${migration.id} sourcePath requires a pinned sourceSha.`,
       });
     }
     if (
@@ -223,11 +256,14 @@ export function validateMigrationDag(
   if (options.checkFiles !== false && SHA_PATTERN.test(dag.productionSha ?? "")) {
     const root = options.repoRoot ?? process.cwd();
     const readCanonical = options.canonicalBytes ?? ((sha, path) => canonicalGitBytes(root, sha, path));
+    const readManaged = options.managedBytes ?? ((path) => currentGitBytes(root, path));
     for (const migration of dag.migrations) {
       const sourceSha = migration.sourceSha ?? dag.productionSha;
+      const sourcePath = migration.sourcePath ?? migration.path;
+      let sourceBytes: Buffer | undefined;
       try {
-        const bytes = readCanonical(sourceSha, migration.path);
-        const actual = createHash("sha256").update(bytes).digest("hex");
+        sourceBytes = readCanonical(sourceSha, sourcePath);
+        const actual = createHash("sha256").update(sourceBytes).digest("hex");
         if (actual !== migration.checksum.value) {
           issues.push({
             code: "MIGRATION_CHECKSUM_MISMATCH",
@@ -237,8 +273,24 @@ export function validateMigrationDag(
       } catch (error) {
         issues.push({
           code: "MIGRATION_SOURCE_UNAVAILABLE",
-          message: `${migration.id} cannot be read at ${sourceSha}:${migration.path}: ${error instanceof Error ? error.message : String(error)}`,
+          message: `${migration.id} cannot be read at ${sourceSha}:${sourcePath}: ${error instanceof Error ? error.message : String(error)}`,
         });
+      }
+      if (migration.sourcePath !== undefined && sourceBytes !== undefined) {
+        try {
+          const managed = readManaged(migration.path);
+          if (!managed.equals(sourceBytes)) {
+            issues.push({
+              code: "MANAGED_MIGRATION_SOURCE_MISMATCH",
+              message: `${migration.id} managed migration does not byte-match ${sourceSha}:${sourcePath}.`,
+            });
+          }
+        } catch (error) {
+          issues.push({
+            code: "MANAGED_MIGRATION_UNAVAILABLE",
+            message: `${migration.id} managed migration cannot be read at HEAD:${migration.path}: ${error instanceof Error ? error.message : String(error)}`,
+          });
+        }
       }
       if (migration.rollback?.procedure) {
         try {

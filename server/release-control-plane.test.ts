@@ -643,6 +643,17 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(
               "2542f8da508792f39abe7dea5a5686ade5c9e5a3",
             );
+          } else if (
+            path === "supabase/research-inventory-reservation-commands.sql"
+          ) {
+            expect(sourceSha).toBe(
+              "d9107eb69355513ab89c82b6ff48c2bfe6174895",
+            );
+            return execFileSync(
+              "git",
+              ["cat-file", "blob", `${sourceSha}:${path}`],
+              { cwd: ROOT, encoding: "buffer" },
+            );
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
@@ -651,6 +662,11 @@ describe("migration DAG validator", () => {
             encoding: "buffer",
           });
         },
+        managedBytes: (path) =>
+          execFileSync("git", ["show", `:${path}`], {
+            cwd: ROOT,
+            encoding: "buffer",
+          }),
       }),
     ).toEqual([]);
   });
@@ -737,6 +753,122 @@ describe("migration DAG validator", () => {
         expectedBaselineSha: PRODUCTION_SHA,
       }).map((issue) => issue.code),
     ).toContain("MIGRATION_SOURCE_UNAVAILABLE");
+  });
+
+  it("binds a distinct managed migration path to the reviewed source blob", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    const reservation = dag.migrations.find(
+      (migration) => migration.id === "research_inventory_reservation_commands",
+    );
+    expect(reservation).toMatchObject({
+      path: "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+      sourceSha: "d9107eb69355513ab89c82b6ff48c2bfe6174895",
+      sourcePath: "supabase/research-inventory-reservation-commands.sql",
+      appliedToProduction: false,
+      managedMigrationId: "PENDING",
+    });
+    expect(reservation?.checksum.value).toBe(
+      "4dbb183f367e6dcd847cba3048a37f132ab4cc559791c2719baf7e05c42767f7",
+    );
+
+    const source = execFileSync(
+      "git",
+      [
+        "cat-file",
+        "blob",
+        `${reservation!.sourceSha}:${reservation!.sourcePath}`,
+      ],
+      { cwd: ROOT, encoding: "buffer" },
+    );
+    const managed = execFileSync("git", ["show", `:${reservation!.path}`], {
+      cwd: ROOT,
+      encoding: "buffer",
+    });
+    expect(managed.equals(source)).toBe(true);
+
+    const mismatchIssues = validateMigrationDag(dag, {
+      repoRoot: ROOT,
+      expectedBaselineSha: PRODUCTION_SHA,
+      canonicalBytes: (sourceSha, path) =>
+        execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
+          cwd: ROOT,
+          encoding: "buffer",
+        }),
+      managedBytes: (path) =>
+        path === reservation!.path
+          ? Buffer.from("not-the-reviewed-migration")
+          : execFileSync("git", ["show", `:${path}`], {
+              cwd: ROOT,
+              encoding: "buffer",
+            }),
+    });
+    expect(mismatchIssues.map((issue) => issue.code)).toContain(
+      "MANAGED_MIGRATION_SOURCE_MISMATCH",
+    );
+  });
+
+  it("rejects unsafe or unpinned migration source paths", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    const reservation = dag.migrations.find(
+      (migration) => migration.id === "research_inventory_reservation_commands",
+    )!;
+    reservation.sourcePath = "..\\candidate.sql";
+    delete reservation.sourceSha;
+    expect(
+      validateMigrationDag(dag, {
+        checkFiles: false,
+        expectedBaselineSha: PRODUCTION_SHA,
+      }).map((issue) => issue.code),
+    ).toEqual(
+      expect.arrayContaining([
+        "MIGRATION_SOURCE_PATH",
+        "MIGRATION_SOURCE_PATH_WITHOUT_SHA",
+        "PENDING_MIGRATION_SOURCE_SHA",
+      ]),
+    );
+  });
+
+  it("records reservation release evidence without changing the accepted source", () => {
+    const managed = execFileSync(
+      "git",
+      [
+        "show",
+        ":supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+      ],
+      { cwd: ROOT, encoding: "buffer" },
+    );
+    const source = execFileSync(
+      "git",
+      [
+        "cat-file",
+        "blob",
+        "d9107eb69355513ab89c82b6ff48c2bfe6174895:supabase/research-inventory-reservation-commands.sql",
+      ],
+      { cwd: ROOT, encoding: "buffer" },
+    );
+    const verifier = readFileSync(
+      resolve(ROOT, "supabase/verify-research-inventory-reservation-commands.sql"),
+      "utf8",
+    );
+    const rollback = readFileSync(
+      resolve(
+        ROOT,
+        "supabase/production/research-inventory-reservation-commands-rollback-notes.md",
+      ),
+      "utf8",
+    );
+
+    expect(managed.equals(source)).toBe(true);
+    expect(verifier).toContain("reservation forced-RLS count mismatch");
+    expect(verifier).toContain("reservation service RPC grant mismatch");
+    expect(verifier).toContain("reservation rows found before enablement");
+    expect(rollback).toContain(
+      "4dbb183f367e6dcd847cba3048a37f132ab4cc559791c2719baf7e05c42767f7",
+    );
   });
 });
 
