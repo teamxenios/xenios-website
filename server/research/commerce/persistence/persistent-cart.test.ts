@@ -191,4 +191,26 @@ describe("persistent cart repository", () => {
     });
     expect(rpc).not.toHaveBeenCalled();
   });
+
+  it("rejects past target expiry before put or claim reaches persistence", async () => {
+    const rpc = vi.fn();
+    const repo = createPersistentCartRepository({ rpc });
+    await expect(repo.putMemberItem(member, {
+      expectedCartVersion: null,
+      expectedItemVersion: null,
+      quantity: 1,
+      selection,
+      idempotencyKey: "past-put-key-123456",
+      expiresAt: "2026-01-01T00:00:00Z",
+    })).resolves.toEqual({ ok: false, code: "invalid_input" });
+    await expect(repo.claimAnonymousCart(member, {
+      anonymousSecret: secret,
+      selections: [selection],
+      expectedAnonymousCartVersion: 1,
+      expectedMemberCartVersion: null,
+      idempotencyKey: "past-claim-key-1234",
+      expiresAt: "2026-01-01T00:00:00Z",
+    })).resolves.toEqual({ ok: false, code: "invalid_input" });
+    expect(rpc).not.toHaveBeenCalled();
+  });
 });

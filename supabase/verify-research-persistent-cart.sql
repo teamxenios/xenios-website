@@ -56,9 +56,22 @@ begin
    where routine_schema='public'
      and routine_name=any(array[
        'research_persistent_cart_immutable','research_persistent_cart_owner_scope',
-       'research_persistent_cart_selection_current','research_persistent_cart_json'
+       'research_persistent_cart_selection_current','research_persistent_cart_json',
+       'research_persistent_cart_invalidation_guard'
      ]) and grantee in ('PUBLIC','anon','authenticated','service_role');
   if v_count<>0 then raise exception 'persistent cart internal function grant found: %',v_count; end if;
+
+  select count(*) into v_count from pg_trigger t
+   join pg_class c on c.oid=t.tgrelid join pg_namespace n on n.oid=c.relnamespace
+   where n.nspname='public' and not t.tgisinternal and t.tgenabled='O'
+     and t.tgname=any(array[
+       'research_cart_product_invalidation_guard',
+       'research_cart_variant_invalidation_guard',
+       'research_cart_price_invalidation_guard',
+       'research_cart_required_input_invalidation_guard',
+       'research_cart_domain_invalidation_guard'
+     ]);
+  if v_count<>5 then raise exception 'persistent cart invalidation trigger mismatch: %',v_count; end if;
 
   select (select count(*) from public.research_persistent_carts)
     +(select count(*) from public.research_persistent_cart_items)

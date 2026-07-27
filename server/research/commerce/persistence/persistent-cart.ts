@@ -106,6 +106,7 @@ function rpcFailure(message?: string): PersistentCartResult {
 }
 
 function validMutation(input: PutPersistentCartItemInput): boolean {
+  const expiresAt = Date.parse(input.expiresAt);
   return (
     (input.cartId === undefined || validUuid(input.cartId)) &&
     Number.isSafeInteger(input.quantity) &&
@@ -118,7 +119,8 @@ function validMutation(input: PutPersistentCartItemInput): boolean {
       (Number.isSafeInteger(input.expectedItemVersion) &&
         input.expectedItemVersion >= 1)) &&
     IDEMPOTENCY.test(input.idempotencyKey) &&
-    Number.isFinite(Date.parse(input.expiresAt)) &&
+    Number.isFinite(expiresAt) &&
+    expiresAt > Date.now() &&
     validUuid(input.selection.productId) &&
     validUuid(input.selection.variantId) &&
     validUuid(input.selection.price.id) &&
@@ -240,6 +242,7 @@ export function createPersistentCartRepository(
     removeMemberItem: (memberId, input) => remove("member", memberId, input),
     removeAnonymousItem: (secret, input) => remove("anonymous", secret, input),
     async claimAnonymousCart(memberId: string, input: ClaimAnonymousCartInput) {
+      const expiresAt = Date.parse(input.expiresAt);
       if (
         !validUuid(memberId) ||
         !validSecret(input.anonymousSecret) ||
@@ -253,7 +256,8 @@ export function createPersistentCartRepository(
           (!Number.isSafeInteger(input.expectedMemberCartVersion) ||
             input.expectedMemberCartVersion < 1)) ||
         !IDEMPOTENCY.test(input.idempotencyKey) ||
-        !Number.isFinite(Date.parse(input.expiresAt))
+        !Number.isFinite(expiresAt) ||
+        expiresAt <= Date.now()
       ) {
         return failure("invalid_input");
       }
