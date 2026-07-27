@@ -5,6 +5,7 @@ import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
 import { memberDestination, safeResearchReturnTo } from "../lib/member-routing";
+import { getAuthenticatedLanding } from "../adapters/adminAuthority";
 
 // Member sign-in (V3 sections 4.3 and 13). Auth is Supabase (same provider as
 // the rest of the site); membership itself is verified SERVER-side on every
@@ -38,6 +39,11 @@ export default function SignIn() {
         return;
       }
       const submittedToken = data.session.access_token;
+      const landing = await getAuthenticatedLanding(submittedToken);
+      if (landing?.destination === "/admin") {
+        navigate("/admin");
+        return;
+      }
       let verifiedMember = await establishMemberSession(submittedToken);
       if (!verifiedMember) {
         // TOKEN_REFRESHED may supersede the exact token returned by
@@ -55,7 +61,10 @@ export default function SignIn() {
       }
       if (verifiedMember) {
         const returnTo = safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
-        navigate(memberDestination(verifiedMember, returnTo));
+        navigate(
+          landing?.destination ??
+            memberDestination(verifiedMember, returnTo),
+        );
       } else {
         const currentToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
         if (!currentToken || currentToken === submittedToken) {

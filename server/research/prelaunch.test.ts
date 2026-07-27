@@ -65,6 +65,7 @@ function buildHarness(options?: {
   app.use(express.json());
   registerPrelaunchApi(app, deps, (req, _res, next) => {
     (req as any).adminEmail = "admin@example.test";
+    (req as any).adminAuthUserId = "00000000-0000-4000-8000-000000000010";
     next();
   });
   return { app, deps, repository, audits };
@@ -189,14 +190,16 @@ describe("private pre-launch access", () => {
         role: "operations_admin",
         reason: "Approved for internal operations review.",
         expiresAt: null,
+        idempotencyKey: "grant-operations-admin-001",
       });
 
     expect(response.status).toBe(201);
     expect(response.body.assignment.role).toBe("operations_admin");
     expect(repository.grantRole).toHaveBeenCalledWith(
       expect.objectContaining({
-        assignedBy: "admin@example.test",
+        actorAuthUserId: "00000000-0000-4000-8000-000000000010",
         role: "operations_admin",
+        idempotencyKey: "grant-operations-admin-001",
       }),
     );
   });

@@ -40,7 +40,15 @@ vi.mock("../supabase", () => ({
     auth: {
       getUser: async (jwt: string) =>
         jwt === state.goodToken
-          ? { data: { user: { email: "member@example.com" } }, error: null }
+          ? {
+              data: {
+                user: {
+                  id: "auth-user-1",
+                  email: "member@example.com",
+                },
+              },
+              error: null,
+            }
           : { data: { user: null }, error: { message: "bad token" } },
     },
   }),
@@ -79,7 +87,14 @@ beforeEach(() => {
   process.env.RESEARCH_ACCESS_PASSWORD = "review-pw";
   process.env.RESEARCH_SESSION_SECRET = "test-secret";
   state.members.length = 0;
-  state.members.push({ id: "mem-1", email: "member@example.com", status: "active", first_name: "Avery", application_id: "app-1" });
+  state.members.push({
+    id: "mem-1",
+    auth_user_id: "auth-user-1",
+    email: "member@example.com",
+    status: "active",
+    first_name: "Avery",
+    application_id: "app-1",
+  });
 });
 afterEach(() => {
   for (const key of ENV_KEYS) {

@@ -180,8 +180,8 @@ export async function requireActiveMember(req: Request, res: Response, next: Nex
 
 // Verifies the Supabase JWT and resolves the member row. Never trusts hidden
 // UI; attaches the member for downstream handlers. The stable identity link
-// is the Auth user id (email can change); the email lookup remains only as a
-// legacy fallback.
+// is the verified Auth user id. Email is mutable and is never an authority or
+// account-link fallback.
 async function resolveResearchMember(
   req: Request,
   res: Response,
@@ -194,7 +194,7 @@ async function resolveResearchMember(
     const jwt = header.startsWith("Bearer ") ? header.slice(7) : "";
     if (!jwt) return res.status(401).json({ ok: false, message: "Sign in required." });
     const { data, error } = await getSupabaseAnon().auth.getUser(jwt);
-    if (error || !data?.user?.email) {
+    if (error || !data?.user?.id) {
       const detail = error as { message?: unknown; status?: unknown } | null;
       const message = typeof detail?.message === "string" ? detail.message.toLowerCase() : "";
       const reason =
@@ -214,7 +214,7 @@ async function resolveResearchMember(
     // Purpose check BEFORE member lookup: a recovery-grade session is denied
     // even when it maps to an active member (correction-pass blocker 3).
     if (denyRecoveryPurposeSession(jwt, res)) return;
-    const member = (await getMemberByAuthUserId(data.user.id)) ?? (await getMemberByEmail(data.user.email));
+    const member = await getMemberByAuthUserId(data.user.id);
     if (!member || (!allowClosed && member.status === "closed")) {
       return res.status(403).json({ ok: false, message: "No research membership for this account." });
     }

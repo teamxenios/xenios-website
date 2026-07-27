@@ -15,6 +15,10 @@ import {
 } from "@shared/research/prelaunch";
 import { getSupabaseAdmin, getSupabaseAnon, supabaseConfigured } from "../supabase";
 import { denyRecoveryPurposeSession } from "./member-auth";
+import {
+  registerAdminAuthorityApi,
+  type AdminAuthorityDependencies,
+} from "./admin-authority";
 
 type VerifiedPrelaunchUser = {
   id: string;
@@ -53,14 +57,16 @@ export type PrelaunchRepository = {
   grantRole(input: {
     authUserId: string;
     role: PrelaunchRole;
-    assignedBy: string;
+    actorAuthUserId: string;
     reason: string;
     expiresAt: string | null;
+    idempotencyKey: string;
   }): Promise<PrelaunchRoleAssignmentView>;
   revokeRole(input: {
     assignmentId: string;
-    revokedBy: string;
+    actorAuthUserId: string;
     reason: string;
+    idempotencyKey: string;
   }): Promise<void>;
 };
 
@@ -76,10 +82,12 @@ const grantRoleSchema = z.object({
   role: z.string().refine(isPrelaunchRole, "Unknown pre-launch role."),
   reason: z.string().trim().min(3).max(500),
   expiresAt: z.string().datetime({ offset: true }).nullable().optional(),
+  idempotencyKey: z.string().trim().min(8).max(200),
 });
 
 const revokeRoleSchema = z.object({
   reason: z.string().trim().min(3).max(500),
+  idempotencyKey: z.string().trim().min(8).max(200),
 });
 
 function bearerToken(req: Request): string {
@@ -303,34 +311,29 @@ export function buildPrelaunchProductionDependencies(): PrelaunchDependencies {
     },
 
     async grantRole(input) {
-      const { data, error } = await admin
-        .from("research_prelaunch_role_assignments")
-        .insert({
-          auth_user_id: input.authUserId,
-          role: input.role,
-          assigned_by: input.assignedBy,
-          reason: input.reason,
-          expires_at: input.expiresAt,
-        })
-        .select("id,auth_user_id,role,granted_at,expires_at,revoked_at")
-        .single();
+      const { data, error } = await admin.rpc("research_admin_role_grant", {
+        p_actor_auth_user_id: input.actorAuthUserId,
+        p_target_auth_user_id: input.authUserId,
+        p_role: input.role,
+        p_reason: input.reason,
+        p_expires_at: input.expiresAt,
+        p_idempotency_key: input.idempotencyKey,
+      });
       if (error) throw error;
-      return assignmentView(data);
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row) throw new Error("assignment_not_created");
+      return assignmentView(row);
     },
 
     async revokeRole(input) {
-      const { data, error } = await admin
-        .from("research_prelaunch_role_assignments")
-        .update({
-          revoked_at: new Date().toISOString(),
-          revoked_by: input.revokedBy,
-          revocation_reason: input.reason,
-        })
-        .eq("id", input.assignmentId)
-        .is("revoked_at", null)
-        .select("id");
+      const { data, error } = await admin.rpc("research_admin_role_revoke", {
+        p_actor_auth_user_id: input.actorAuthUserId,
+        p_assignment_id: input.assignmentId,
+        p_reason: input.reason,
+        p_idempotency_key: input.idempotencyKey,
+      });
       if (error) throw error;
-      if (!data?.length) throw new Error("assignment_not_active");
+      if (!data) throw new Error("assignment_not_active");
     },
   };
 
@@ -351,8 +354,10 @@ export function registerPrelaunchApi(
   app: Express,
   deps: PrelaunchDependencies,
   requireAdmin: (req: Request, res: Response, next: NextFunction) => unknown,
+  adminAuthority?: AdminAuthorityDependencies,
 ) {
   const requirePrelaunch = buildPrelaunchGuard(deps);
+  if (adminAuthority) registerAdminAuthorityApi(app, adminAuthority);
 
   app.get("/api/internal/prelaunch/status", requirePrelaunch, (req, res) => {
     noStore(res);
@@ -394,9 +399,13 @@ export function registerPrelaunchApi(
         const assignment = await deps.repository.grantRole({
           authUserId: parsed.data.authUserId,
           role: parsed.data.role as PrelaunchRole,
-          assignedBy: String((req as Request & { adminEmail?: string }).adminEmail ?? "admin"),
+          actorAuthUserId: String(
+            (req as Request & { adminAuthUserId?: string }).adminAuthUserId ??
+              "",
+          ),
           reason: parsed.data.reason,
           expiresAt: parsed.data.expiresAt ?? null,
+          idempotencyKey: parsed.data.idempotencyKey,
         });
         return res.status(201).json({ ok: true, assignment });
       } catch {
@@ -420,8 +429,12 @@ export function registerPrelaunchApi(
       try {
         await deps.repository.revokeRole({
           assignmentId: id.data,
-          revokedBy: String((req as Request & { adminEmail?: string }).adminEmail ?? "admin"),
+          actorAuthUserId: String(
+            (req as Request & { adminAuthUserId?: string }).adminAuthUserId ??
+              "",
+          ),
           reason: body.data.reason,
+          idempotencyKey: body.data.idempotencyKey,
         });
         return res.json({ ok: true });
       } catch {

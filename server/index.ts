@@ -52,6 +52,7 @@ import { registerFoundingActivationApi } from "./research/membership-activation/
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
 import { requireActiveMember, requireMember } from "./research/member-auth";
 import { requireSupabaseAdmin } from "./routes";
+import { buildAdminAuthorityProductionDependencies } from "./research/admin-authority";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
 import { runProductionFoundingSchedulerTick } from "./research/membership-activation/scheduler";
@@ -234,7 +235,12 @@ registerProductAdminApi(app, {
 // access-audit record before the protected handler runs. No namespace or role
 // is seeded by application startup.
 const prelaunchDependencies = buildPrelaunchProductionDependencies();
-registerPrelaunchApi(app, prelaunchDependencies, requireSupabaseAdmin);
+registerPrelaunchApi(
+  app,
+  prelaunchDependencies,
+  requireSupabaseAdmin,
+  buildAdminAuthorityProductionDependencies(),
+);
 registerRequiredInputApi(
   app,
   buildRequiredInputProductionRepository(),

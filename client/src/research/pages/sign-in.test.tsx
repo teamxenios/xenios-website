@@ -94,6 +94,22 @@ function submit() {
 beforeEach(() => {
   vi.clearAllMocks();
   supa.state.currentToken = "password-session-token";
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        ok: true,
+        authUserId: "00000000-0000-4000-8000-000000000002",
+        destination: "/research/member",
+        preferredExperience: "member",
+        preferenceVersion: 0,
+        adminAuthorized: false,
+        memberAuthorized: true,
+        authoritySource: null,
+      }),
+    })),
+  );
 });
 
 afterEach(() => {
@@ -105,6 +121,19 @@ afterEach(() => {
 
 describe("member sign-in", () => {
   it("hydrates the provider with the returned token before routing a pending member to activation", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        ok: true,
+        authUserId: "00000000-0000-4000-8000-000000000002",
+        destination: "/research/activate",
+        preferredExperience: "member",
+        preferenceVersion: 0,
+        adminAuthorized: false,
+        memberAuthorized: true,
+        authoritySource: null,
+      }),
+    } as Response);
     let resolveMember!: (member: MemberInfo) => void;
     const pending = new Promise<MemberInfo>((resolve) => {
       resolveMember = resolve;
@@ -135,6 +164,29 @@ describe("member sign-in", () => {
     submit();
     await flush();
     expect(window.location.pathname).toBe("/research/member");
+  });
+
+  it("routes an admin without a member row from the server-authoritative landing response", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        ok: true,
+        authUserId: "00000000-0000-4000-8000-000000000001",
+        destination: "/admin",
+        preferredExperience: "admin",
+        preferenceVersion: 0,
+        adminAuthorized: true,
+        memberAuthorized: false,
+        authoritySource: "persisted_super_admin",
+      }),
+    } as Response);
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish);
+    submit();
+    await flush();
+
+    expect(window.location.pathname).toBe("/admin");
+    expect(establish).not.toHaveBeenCalled();
   });
 
   it("retains and verifies a newer refreshed token when the submitted token becomes stale", async () => {
@@ -168,6 +220,19 @@ describe("member sign-in", () => {
   });
 
   it("does not let an external returnTo override the server-authoritative member destination", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        ok: true,
+        authUserId: "00000000-0000-4000-8000-000000000002",
+        destination: "/research/activate",
+        preferredExperience: "member",
+        preferenceVersion: 0,
+        adminAuthorized: false,
+        memberAuthorized: true,
+        authoritySource: null,
+      }),
+    } as Response);
     const establish = vi.fn(async () => ({
       firstName: "Avery",
       status: "pending_activation",

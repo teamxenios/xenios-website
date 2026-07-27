@@ -259,9 +259,20 @@ export function registerResearchApi(app: Express) {
     DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(path) ||
     path === "/member/products" ||
     path.startsWith("/member/products/");
+  // These exact method/path pairs own stronger downstream Supabase JWT,
+  // recovery-purpose, persisted-role, UUID-member and optimistic-version
+  // enforcement. They bypass only the earlier shared review-password wall.
+  // Prefix matching is deliberately prohibited.
+  const DOWNSTREAM_AUTHORITY_PATHS = new Set([
+    "GET /auth/landing",
+    "POST /auth/experience",
+  ]);
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
     if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
+    if (DOWNSTREAM_AUTHORITY_PATHS.has(`${req.method} ${req.path}`)) {
+      return next();
+    }
     if (
       (req.method === "GET" || req.method === "HEAD") &&
       downstreamMemberGuardedRead(req.path)

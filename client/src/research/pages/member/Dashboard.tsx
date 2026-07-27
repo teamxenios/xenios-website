@@ -8,6 +8,7 @@ import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } fro
 import { devFixture } from "../../lib/fixtures";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import type { MemberOverview as ServerMemberOverview } from "@shared/research/member-platform";
+import { AdminExperienceSwitch } from "../../components/AdminExperienceSwitch";
 
 // ---------------------------------------------------------------------------
 // Member home (/research/member). The first viewport is ONE next action, not
@@ -250,6 +251,12 @@ export default function MemberDashboard() {
       lead="One place for your plan, your products, and your account."
     >
       <ResearchRouteBoundary state={state}>
+        <div className="mb-6 flex justify-end">
+          <AdminExperienceSwitch
+            accessToken={memberToken}
+            currentExperience="member"
+          />
+        </div>
         <section aria-labelledby="ra-next-step-heading" className="card" style={{ borderWidth: 2 }}>
           <div className="flex items-center gap-3">
             <p className="mono-cap text-pulse">{nextStep.eyebrow}</p>

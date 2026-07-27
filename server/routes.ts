@@ -33,8 +33,11 @@ import {
   type WaitlistInput,
   type LoiInput,
 } from "./supabase-store";
-import { supabaseConfigured, getSupabaseAnon } from "./supabase";
-import { denyRecoveryPurposeSession } from "./research/member-auth";
+import {
+  buildAdminAuthorityProductionDependencies,
+  buildRequireSuperAdmin,
+} from "./research/admin-authority";
+import { supabaseConfigured } from "./supabase";
 import { verifyTurnstile } from "./turnstile";
 
 const WAITLIST_STATUSES = ["New", "Contacted", "Qualified", "Not a fit", "Converted", "Archived"];
@@ -114,31 +117,30 @@ function adminAuth(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-// Supabase-Auth admin gate: verifies the user's JWT and that the email matches
-// ADMIN_EMAIL. Used by the /admin dashboard endpoints and the research admin API.
-export async function requireSupabaseAdmin(req: Request, res: Response, next: NextFunction) {
-  try {
-    const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
-    if (!adminEmail || !supabaseConfigured()) {
-      return res.status(503).json({ success: false, message: "Admin access not configured" });
-    }
-    const authHeader = req.headers.authorization || "";
-    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-    if (!token) return res.status(401).json({ success: false, message: "Unauthorized" });
-    const { data, error } = await getSupabaseAnon().auth.getUser(token);
-    if (error || !data?.user) return res.status(401).json({ success: false, message: "Unauthorized" });
-    // A password-recovery-grade session is never an admin session, even when
-    // the email matches ADMIN_EMAIL (PR #25 correction pass, blocker 3).
-    if (denyRecoveryPurposeSession(token, res)) return;
-    if ((data.user.email || "").toLowerCase() !== adminEmail) {
-      return res.status(403).json({ success: false, message: "Forbidden" });
-    }
-    (req as any).adminEmail = data.user.email;
-    next();
-  } catch (err) {
-    console.error("[admin auth] error:", err);
-    res.status(401).json({ success: false, message: "Unauthorized" });
-  }
+// Two-phase durable admin cutover.
+//
+// legacy (default): preserves the deployed ADMIN_EMAIL guard while the exact
+// existing auth.users UUID is independently continuity-checked.
+// dual: accepts either that legacy identity or a persisted active/unexpired
+// super_admin role.
+// durable: requires only the persisted super_admin role.
+//
+// No branch infers a role from an email. Email is retained solely as the
+// explicitly temporary legacy cutover credential and disappears when Website
+// 2 switches RESEARCH_ADMIN_AUTHORITY_MODE to durable.
+let requireSuperAdmin:
+  | ReturnType<typeof buildRequireSuperAdmin>
+  | null = null;
+
+export async function requireSupabaseAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  requireSuperAdmin ??= buildRequireSuperAdmin(
+    buildAdminAuthorityProductionDependencies(),
+  );
+  return requireSuperAdmin(req, res, next);
 }
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {

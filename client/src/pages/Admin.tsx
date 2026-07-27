@@ -4,6 +4,7 @@ import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import ResearchApplicationsTab from "@/pages/AdminResearchTab";
+import { AdminExperienceSwitch } from "@/research/components/AdminExperienceSwitch";
 
 // Local copies of the row/summary shapes the admin API returns.
 // These mirror server/supabase-store.ts. We never import server code here.
@@ -292,6 +293,10 @@ export default function Admin() {
           <h1 className="display-l">Dashboard</h1>
           {session && (
             <div className="flex items-center gap-4">
+              <AdminExperienceSwitch
+                accessToken={token}
+                currentExperience="admin"
+              />
               {adminEmail && (
                 <span className="body-s text-ink-mute" data-testid="text-admin-email">
                   {adminEmail}
