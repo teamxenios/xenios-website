@@ -269,6 +269,29 @@ try {
     "1:1",
   );
 
+  for (const [name, sql] of [
+    [
+      "preference rejects a NULL expected version",
+      `select public.research_admin_set_experience_preference(
+        '${ADMIN}', 'member', null, 'preference-null-version'
+      );`,
+    ],
+    [
+      "preference rejects a NULL experience",
+      `select public.research_admin_set_experience_preference(
+        '${ADMIN}', null, 0, 'preference-null-experience'
+      );`,
+    ],
+    [
+      "preference rejects a NULL idempotency key",
+      `select public.research_admin_set_experience_preference(
+        '${ADMIN}', 'member', 0, null
+      );`,
+    ],
+  ]) {
+    expectRejected(name, sql, /invalid experience preference command/i);
+  }
+
   const preferenceSql = (key) => `select public.research_admin_set_experience_preference(
     '${ADMIN}', 'member', 0, '${key}'
   );`;

@@ -60,7 +60,11 @@ describe("administrator authority migration contract", () => {
     ).toBeGreaterThanOrEqual(5);
     expect(migration).toContain("p_expected_version bigint");
     expect(migration).toContain("p_idempotency_key text");
-    expect(migration).toContain("pg_advisory_xact_lock");
+    expect(migration).toContain(
+      "'research_admin_preference:' || p_actor_auth_user_id::text",
+    );
+    expect(migration).toContain("p_expected_version is null");
+    expect(migration).toContain("p_idempotency_key is null");
     expect(migration).toContain("preference version conflict");
   });
 

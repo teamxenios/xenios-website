@@ -41,12 +41,13 @@ The Node/npm variance did not cause a test, typecheck, or build failure, but CI 
 
 ### Admin authority
 
-- 25 disposable PostgreSQL checks pass;
+- 28 disposable PostgreSQL checks pass in three consecutive fresh runs;
 - migration applies twice;
 - forced RLS and direct-DML denial pass;
 - fixed-search-path command RPCs pass;
 - bootstrap, replay, and concurrent role assignment pass;
-- preference optimistic version/idempotency passes;
+- actor-scoped advisory locking serializes concurrent first preference writes;
+- preference optimistic version/idempotency and NULL-input denial pass;
 - append-only audit passes;
 - rollback zero passes.
 

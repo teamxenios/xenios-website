@@ -104,8 +104,11 @@ declare
   response jsonb;
 begin
   if p_actor_auth_user_id is null
+     or p_preferred_experience is null
      or p_preferred_experience not in ('admin', 'member')
+     or p_expected_version is null
      or p_expected_version < 0
+     or p_idempotency_key is null
      or length(btrim(p_idempotency_key)) not between 8 and 200 then
     raise exception 'invalid experience preference command'
       using errcode = '22023';
@@ -122,6 +125,15 @@ begin
       'sha256'
     ),
     'hex'
+  );
+  -- A preference row may not exist yet, so a row lock alone cannot serialize
+  -- concurrent first writes using different idempotency keys. Lock the actor
+  -- before checking replay state, then lock the individual command key.
+  perform pg_advisory_xact_lock(
+    hashtextextended(
+      'research_admin_preference:' || p_actor_auth_user_id::text,
+      0
+    )
   );
   perform pg_advisory_xact_lock(hashtextextended(p_idempotency_key, 0));
 

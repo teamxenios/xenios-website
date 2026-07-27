@@ -13,6 +13,7 @@ Care and clinical functionality were not expanded or enabled. Existing dormant C
 - Exact snapshot and frozen-base verification.
 - Exact PR #103 reconstruction without applying its migration.
 - Durable admin authority command boundary, two-phase legacy/durable cutover support, server-authoritative landing, and admin/member experience switching.
+- Actor-scoped preference locking closes the concurrent first-write race even when callers use different idempotency keys.
 - Forty-nine supplier-independent V3 product preview profiles.
 - Safe V3 supplement-candidate, purchase-option, and customer-journey source records.
 - Product Control-first production catalog composition; legacy catalog is no longer the transaction authority.
