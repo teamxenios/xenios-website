@@ -1,5 +1,6 @@
 import type {
   CoaUploadGrant,
+  CoaUploadCancellation,
   CoaUploadPreparation,
   InventoryLotAdmin,
   InventoryMovementAdmin,
@@ -63,6 +64,13 @@ export function prepareCoaUpload(
   body: CoaUploadPreparation,
 ): Promise<ApiResult<{ ok: true; upload: CoaUploadGrant }>> {
   return apiPost(`${BASE}/lot-quality-documents/upload`, body, token);
+}
+
+export function cancelCoaUpload(
+  token: string,
+  body: CoaUploadCancellation,
+): Promise<ApiResult<{ ok: true; result: Record<string, unknown> }>> {
+  return apiPost(`${BASE}/lot-quality-documents/upload/cancel`, body, token);
 }
 
 export async function putPrivateCoaFile(uploadUrl: string, file: File): Promise<boolean> {

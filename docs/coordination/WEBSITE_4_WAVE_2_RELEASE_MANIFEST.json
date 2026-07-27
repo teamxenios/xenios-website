@@ -5,6 +5,12 @@
   "baseSha": "bf1815c6754e04fd95325b25996ff441dc92fe43",
   "headSha": "RESOLVE_FROM_GIT_HEAD",
   "headShaResolution": "git rev-parse HEAD",
+  "supersedesProhibitedHeadShas": [
+    "bdafa110fbca67f018b5cb91b227f7ffd49c8663",
+    "b1a17c8c9bc581089b85047fbb3b7e21513c98d1",
+    "f646708d45d4a6e4e7acf4e2653e44746baef184",
+    "0f6937f0d2e67dea8a0067dd8786378cca9095be"
+  ],
   "domain": "Research Commerce Wave 2 — inventory, lots, and private exact-lot COA administration",
   "releaseAuthority": {
     "mergeOwner": "Website 2",
@@ -39,6 +45,7 @@
     "POST /api/admin/research/inventory/lots/:lotId/disposition",
     "GET /api/admin/research/lot-quality-documents",
     "POST /api/admin/research/lot-quality-documents/upload",
+    "POST /api/admin/research/lot-quality-documents/upload/cancel",
     "POST /api/admin/research/lot-quality-documents/:documentId/confirm",
     "POST /api/admin/research/lot-quality-documents/:documentId/review",
     "POST /api/admin/research/lot-quality-documents/:documentId/file-access"
@@ -75,6 +82,7 @@
     "public.research_lot_is_allocatable(uuid,timestamptz)",
     "public.research_create_inventory_lot(text,text,uuid,uuid,text,text,text,date,date,date,text,text,text,timestamptz)",
     "public.research_prepare_lot_quality_upload(uuid,jsonb,text,text,text,timestamptz)",
+    "public.research_cancel_lot_quality_upload(uuid,jsonb,bigint,text,text,text,text,timestamptz)",
     "public.research_apply_inventory_movement(uuid,text,integer,text,bigint,text,text,text,timestamptz)",
     "public.research_set_inventory_lot_disposition(uuid,text,bigint,text,text,text,timestamptz)",
     "public.research_manage_lot_quality_document(uuid,text,jsonb,bigint,text,text,text,timestamptz)",
@@ -94,7 +102,7 @@
   "expectedPrivileges": {
     "browserTableGrants": 0,
     "serviceRoleTablePrivileges": 8,
-    "serviceRoleExecutePrivileges": 10,
+    "serviceRoleExecutePrivileges": 11,
     "serviceRoleTables": {
       "public.research_inventory_lots": [
         "SELECT"
@@ -142,13 +150,13 @@
     "focusedTests": {
       "command": "npm.cmd test -- server/research/inventory-admin/migration.test.ts server/research/inventory-admin/routes.test.ts server/research/inventory-admin/production.test.ts client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx client/src/research/pages/adminx/LotCoasAdmin.test.tsx server/release-control-plane.test.ts",
       "filesPassed": 6,
-      "testsPassed": 46,
+      "testsPassed": 51,
       "status": "passed"
     },
     "fullTests": {
       "command": "npm.cmd test -- --maxWorkers=2",
       "filesPassed": 203,
-      "testsPassed": 3652,
+      "testsPassed": 3657,
       "status": "passed"
     },
     "typecheck": {
@@ -165,11 +173,12 @@
       "forcedRlsTables": 8,
       "browserTableGrants": 0,
       "serviceRoleTablePrivileges": 8,
-      "serviceRoleExecutePrivileges": 10,
-      "concurrentReplay": "passed_for_lot_creation_upload_preparation_movement_disposition_and_quality",
+      "serviceRoleExecutePrivileges": 11,
+      "concurrentReplay": "passed_for_lot_creation_upload_preparation_upload_cancellation_movement_disposition_and_quality",
       "terminalQualityLifecycle": "rejected_withdrawn_and_superseded_documents_reject_in_place_commands_without_document_lot_test_or_event_mutation",
       "replacementQualityLifecycle": "passed_for_rejected_and_withdrawn_documents_through_new_versioned_document",
-      "resumableUploadPreparation": "same_metadata_replays_original_document_version_storage_identity_and_idempotency_key_after_grant_put_or_confirm_failure",
+      "resumableUploadPreparation": "same_metadata_replays_original_document_storage_and_command_identity_after_grant_put_or_lost_confirmation_response_without_duplicate_put_event_or_post_confirmation_write_grant",
+      "changedMetadataRecovery": "unconfirmed_preparation_is_actor_metadata_version_and_key_bound_then_audited_terminal_and_concurrently_replayable_before_one_replacement",
       "failedRequiredQualityTest": "blocked",
       "privateAccessAuditBeforeGrant": "passed",
       "rollback": "passed",
@@ -183,7 +192,7 @@
       "zoom200Proxy": "720 CSS px reflow has no horizontal overflow",
       "keyboardFocus": "visible existing purple focus border on the labeled lot selector",
       "consoleErrorsOrWarnings": 0,
-      "retryInteraction": "first post-commit grant failure preserves values and exposes Retry private COA upload; unchanged retry verifies the same prepared object, resets the form, and announces success",
+      "retryInteraction": "grant_put_and_lost_confirmation_failures preserve command identity; confirmation replays original version and key without duplicate PUT; changed metadata cancels the old unconfirmed preparation before replacement",
       "status": "passed"
     }
   },

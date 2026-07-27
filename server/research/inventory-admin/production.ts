@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
+  CoaUploadCancellation,
   CoaUploadGrant,
   CoaUploadPreparation,
   InventoryLotAdmin,
@@ -380,7 +381,18 @@ export class SupabaseLotQualityAdminRepository {
     const documentId = String(preparation.documentId);
     const documentVersion = Number(preparation.documentVersion);
     const storageKey = String(preparation.storageKey);
+    const objectConfirmed = preparation.objectConfirmed === true;
 
+    if (objectConfirmed) {
+      return {
+        documentId,
+        documentVersion,
+        uploadRequired: false,
+        uploadUrl: null,
+        storageKey,
+        expiresAt: null,
+      };
+    }
     const { data, error } = await this.db.storage
       .from(this.bucketName)
       .createSignedUploadUrl(storageKey);
@@ -388,10 +400,39 @@ export class SupabaseLotQualityAdminRepository {
     return {
       documentId,
       documentVersion,
+      uploadRequired: true,
       uploadUrl: data.signedUrl,
       storageKey,
       expiresAt: new Date(Date.now() + 2 * 60 * 1000).toISOString(),
     };
+  }
+
+  async cancelUpload(
+    input: CoaUploadCancellation,
+    actorId: string,
+  ): Promise<Record<string, unknown>> {
+    const safeName = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120);
+    const { data, error } = await this.db.rpc("research_cancel_lot_quality_upload", {
+      p_lot_id: input.lotId,
+      p_upload: {
+        bucketId: this.bucketName,
+        originalFilename: safeName,
+        contentType: input.contentType,
+        sizeBytes: input.sizeBytes,
+        sha256: input.sha256,
+        reportIssuer: input.reportIssuer.trim(),
+        reportNumber: input.reportNumber.trim(),
+        reportDate: input.reportDate,
+      },
+      p_expected_version: input.expectedVersion,
+      p_preparation_idempotency_key: input.preparationIdempotencyKey,
+      p_idempotency_key: input.idempotencyKey,
+      p_reason: "Unconfirmed exact-lot COA upload abandoned before metadata replacement",
+      p_actor_id: actorId,
+      p_occurred_at: new Date().toISOString(),
+    });
+    if (error || !data) failed("coa_upload_cancellation_rejected");
+    return data as Record<string, unknown>;
   }
 
   async confirmUpload(

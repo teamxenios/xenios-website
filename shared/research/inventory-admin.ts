@@ -142,10 +142,19 @@ export type CoaUploadPreparation = {
   idempotencyKey: string;
 };
 
+export type CoaUploadMetadata = Omit<CoaUploadPreparation, "idempotencyKey">;
+
+export type CoaUploadCancellation = CoaUploadMetadata & {
+  expectedVersion: number;
+  preparationIdempotencyKey: string;
+  idempotencyKey: string;
+};
+
 export type CoaUploadGrant = {
   documentId: string;
   documentVersion: number;
-  uploadUrl: string;
+  uploadRequired: boolean;
+  uploadUrl: string | null;
   storageKey: string;
-  expiresAt: string;
+  expiresAt: string | null;
 };

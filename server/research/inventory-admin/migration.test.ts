@@ -67,6 +67,12 @@ describe("Website 4 canonical inventory/lot/COA schema delta", () => {
     expect(sql).toContain("quality tests may change only during approval");
     expect(sql).toContain("research_lot_quality_tests_command_only");
     expect(sql).toContain("research_prepare_lot_quality_upload");
+    expect(sql).toContain("research_cancel_lot_quality_upload");
+    expect(sql).toContain("'upload_abandoned'");
+    expect(sql).toContain("only an unconfirmed pending COA upload can be abandoned");
+    expect(sql).toContain(
+      "quality upload cancellation does not match the prepared metadata",
+    );
     expect(sql).toContain("prepared_document.superseded_at is not null");
     expect(sql).toContain("replaces_document_id");
     expect(sql).toContain("prior.event_type <> 'upload_referenced'");
@@ -105,6 +111,7 @@ describe("Website 4 canonical inventory/lot/COA schema delta", () => {
     expect(sql).not.toContain("grant select, insert on table public.research_inventory_lots");
     expect(sql).toContain("grant execute on function public.research_create_inventory_lot");
     expect(sql).toContain("grant execute on function public.research_prepare_lot_quality_upload");
+    expect(sql).toContain("grant execute on function public.research_cancel_lot_quality_upload");
     expect(sql).not.toContain("grant select, insert, update, delete on table public.research_inventory_lots");
     expect(sql).toContain("grant execute on function public.research_apply_inventory_movement");
     expect(sql).toContain("to service_role");

@@ -29,10 +29,12 @@ function appFor(allowed = true) {
     prepareUpload: vi.fn(async () => ({
       documentId: DOC_ID,
       documentVersion: 1,
+      uploadRequired: true,
       uploadUrl: "https://storage.invalid/signed",
       storageKey: `lots/${LOT_ID}/coa.pdf`,
       expiresAt: "2026-07-26T12:00:00.000Z",
     })),
+    cancelUpload: vi.fn(async () => ({ version: 2, documentState: "withdrawn" })),
     confirmUpload: vi.fn(async () => ({ version: 2 })),
     review: vi.fn(async () => ({ version: 3 })),
     createReadGrant: vi.fn(async () => ({
@@ -122,6 +124,37 @@ describe("Website 4 inventory, lots, and exact-lot COA routes", () => {
       });
     expect(valid.status).toBe(201);
     expect(valid.body.upload.storageKey).toMatch(new RegExp(`^lots/${LOT_ID}/`));
+  });
+
+  it("binds pending-upload cancellation to validated metadata and the server actor", async () => {
+    const { app, quality } = appFor();
+    const body = {
+      lotId: LOT_ID,
+      filename: "exact-lot-coa.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 100,
+      sha256: "a".repeat(64),
+      reportIssuer: "Verified Laboratory",
+      reportNumber: "REPORT-001",
+      reportDate: "2026-07-26",
+      expectedVersion: 1,
+      preparationIdempotencyKey: "upload-reference-0001",
+      idempotencyKey: "upload-cancel-0001",
+    };
+    await request(app)
+      .post("/api/admin/research/lot-quality-documents/upload/cancel")
+      .set("x-test-actor", "operations-reviewer")
+      .send(body)
+      .expect(200);
+    expect(quality.cancelUpload).toHaveBeenCalledWith(
+      body,
+      "operations-reviewer",
+    );
+
+    await request(app)
+      .post("/api/admin/research/lot-quality-documents/upload/cancel")
+      .send({ ...body, expectedVersion: 0 })
+      .expect(400);
   });
 
   it("separates inventory mutation from quality review authority", async () => {

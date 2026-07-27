@@ -87,13 +87,14 @@ begin
         ('public.research_lot_quality_ready(uuid,timestamptz)'),
         ('public.research_create_inventory_lot(text,text,uuid,uuid,text,text,text,date,date,date,text,text,text,timestamptz)'),
         ('public.research_prepare_lot_quality_upload(uuid,jsonb,text,text,text,timestamptz)'),
+        ('public.research_cancel_lot_quality_upload(uuid,jsonb,bigint,text,text,text,text,timestamptz)'),
         ('public.research_apply_inventory_movement(uuid,text,integer,text,bigint,text,text,text,timestamptz)'),
         ('public.research_set_inventory_lot_disposition(uuid,text,bigint,text,text,text,timestamptz)'),
         ('public.research_manage_lot_quality_document(uuid,text,jsonb,bigint,text,text,text,timestamptz)')
     ) as expected(signature)
    where has_function_privilege('service_role', signature, 'execute');
-  if execute_privilege_count <> 10 then
-    raise exception 'expected 10 reviewed RPC grants, found %',
+  if execute_privilege_count <> 11 then
+    raise exception 'expected 11 reviewed RPC grants, found %',
       execute_privilege_count;
   end if;
 end;
@@ -267,7 +268,7 @@ select dblink_send_query(
       "sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       "reportIssuer":"Verified Lab","reportNumber":"CONCURRENT-REPORT",
       "reportDate":"2026-07-26"}'::jsonb,
-    'upload-concurrent-001','Prepare concurrent exact-lot COA','reviewer-1',now()
+    'upload-concurrent-001','Private exact-lot COA upload reference prepared','reviewer-1',now()
   )::text$q$
 );
 select * from dblink(
@@ -280,7 +281,7 @@ select * from dblink(
       "sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       "reportIssuer":"Verified Lab","reportNumber":"CONCURRENT-REPORT",
       "reportDate":"2026-07-26"}'::jsonb,
-    'upload-concurrent-001','Prepare concurrent exact-lot COA','reviewer-1',now()
+    'upload-concurrent-001','Private exact-lot COA upload reference prepared','reviewer-1',now()
   )::text$q$
 ) as applied(result text);
 select dblink_exec('wave2_upload_a', 'commit');
@@ -305,6 +306,255 @@ begin
      or (select count(*) from public.research_lot_quality_events
          where event_type = 'upload_referenced') <> 1 then
     raise exception 'upload replay duplicated document, tests, or transition';
+  end if;
+end;
+$$;
+
+-- An unconfirmed preparation can be abandoned only through its exact original
+-- metadata, actor, and version. Failed probes leave the document unchanged.
+do $$
+declare
+  document uuid := (
+    select id from public.research_lot_quality_documents
+     where superseded_at is null
+  );
+  blocked boolean;
+  before_version bigint := (
+    select version from public.research_lot_quality_documents where id=document
+  );
+  before_events integer := (
+    select count(*) from public.research_lot_quality_events
+     where quality_document_id=document
+  );
+begin
+  blocked := false;
+  begin
+    perform public.research_cancel_lot_quality_upload(
+      (select lot_id from public.research_lot_quality_documents where id=document),
+      '{"bucketId":"research-coa-production","originalFilename":"concurrent.pdf",
+        "contentType":"application/pdf","sizeBytes":100,
+        "sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "reportIssuer":"Verified Lab","reportNumber":"MISMATCHED-REPORT",
+        "reportDate":"2026-07-26"}'::jsonb,
+      1,'upload-concurrent-001','cancel-bad-metadata-001',
+      'Abandon mismatched upload','reviewer-1',now()
+    );
+  exception when others then
+    blocked := sqlerrm like '%does not match the prepared metadata%';
+  end;
+  if not blocked then raise exception 'mismatched cancellation metadata was accepted'; end if;
+
+  blocked := false;
+  begin
+    perform public.research_cancel_lot_quality_upload(
+      (select lot_id from public.research_lot_quality_documents where id=document),
+      '{"bucketId":"research-coa-production","originalFilename":"concurrent.pdf",
+        "contentType":"application/pdf","sizeBytes":100,
+        "sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "reportIssuer":"Verified Lab","reportNumber":"CONCURRENT-REPORT",
+        "reportDate":"2026-07-26"}'::jsonb,
+      1,'upload-concurrent-001','cancel-cross-actor-001',
+      'Abandon exact pending upload','reviewer-2',now()
+    );
+  exception when others then
+    blocked := sqlerrm like '%does not match the prepared metadata%';
+  end;
+  if not blocked then raise exception 'cross-actor cancellation was accepted'; end if;
+
+  blocked := false;
+  begin
+    perform public.research_cancel_lot_quality_upload(
+      (select lot_id from public.research_lot_quality_documents where id=document),
+      '{"bucketId":"research-coa-production","originalFilename":"concurrent.pdf",
+        "contentType":"application/pdf","sizeBytes":100,
+        "sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "reportIssuer":"Verified Lab","reportNumber":"CONCURRENT-REPORT",
+        "reportDate":"2026-07-26"}'::jsonb,
+      2,'upload-concurrent-001','cancel-stale-version-001',
+      'Abandon exact pending upload','reviewer-1',now()
+    );
+  exception when others then
+    blocked := sqlerrm like '%version conflict%';
+  end;
+  if not blocked then raise exception 'stale cancellation version was accepted'; end if;
+
+  if (select version from public.research_lot_quality_documents where id=document) <> before_version
+     or (select document_state from public.research_lot_quality_documents where id=document) <> 'pending'
+     or (select verification_state from public.research_lot_quality_documents where id=document) <> 'pending'
+     or (select count(*) from public.research_lot_quality_events
+         where quality_document_id=document) <> before_events then
+    raise exception 'rejected cancellation probe changed document or history';
+  end if;
+end;
+$$;
+
+-- Concurrent exact cancellation produces one immutable upload_abandoned event.
+select dblink_connect('wave2_cancel_a', 'dbname=' || current_database());
+select dblink_connect('wave2_cancel_b', 'dbname=' || current_database());
+select dblink_exec('wave2_cancel_a', 'begin');
+select * from dblink(
+  'wave2_cancel_a',
+  'select pg_advisory_xact_lock(hashtextextended(''cancel-concurrent-001'',0))::text'
+) as locked(result text);
+select dblink_send_query(
+  'wave2_cancel_b',
+  $q$select public.research_cancel_lot_quality_upload(
+    (select lot_id from public.research_lot_quality_documents
+      where superseded_at is null),
+    '{"bucketId":"research-coa-production","originalFilename":"concurrent.pdf",
+      "contentType":"application/pdf","sizeBytes":100,
+      "sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "reportIssuer":"Verified Lab","reportNumber":"CONCURRENT-REPORT",
+      "reportDate":"2026-07-26"}'::jsonb,
+    1,'upload-concurrent-001','cancel-concurrent-001',
+    'Abandon exact pending upload','reviewer-1',now()
+  )::text$q$
+);
+select * from dblink(
+  'wave2_cancel_a',
+  $q$select public.research_cancel_lot_quality_upload(
+    (select lot_id from public.research_lot_quality_documents
+      where superseded_at is null),
+    '{"bucketId":"research-coa-production","originalFilename":"concurrent.pdf",
+      "contentType":"application/pdf","sizeBytes":100,
+      "sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "reportIssuer":"Verified Lab","reportNumber":"CONCURRENT-REPORT",
+      "reportDate":"2026-07-26"}'::jsonb,
+    1,'upload-concurrent-001','cancel-concurrent-001',
+    'Abandon exact pending upload','reviewer-1',now()
+  )::text$q$
+) as applied(result text);
+select dblink_exec('wave2_cancel_a', 'commit');
+do $$
+declare replay jsonb;
+begin
+  select result::jsonb into replay
+    from dblink_get_result('wave2_cancel_b') as completed(result text);
+  if replay->>'idempotentReplay' <> 'true' then
+    raise exception 'concurrent upload cancellation did not replay';
+  end if;
+end;
+$$;
+select * from dblink_get_result('wave2_cancel_b') as drained(result text);
+select dblink_disconnect('wave2_cancel_a');
+select dblink_disconnect('wave2_cancel_b');
+
+-- Sequential replay is stable and a changed actor cannot reuse the key.
+select public.research_cancel_lot_quality_upload(
+  (select lot_id from public.research_lot_quality_documents
+    where report_number='CONCURRENT-REPORT'),
+  '{"bucketId":"research-coa-production","originalFilename":"concurrent.pdf",
+    "contentType":"application/pdf","sizeBytes":100,
+    "sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "reportIssuer":"Verified Lab","reportNumber":"CONCURRENT-REPORT",
+    "reportDate":"2026-07-26"}'::jsonb,
+  1,'upload-concurrent-001','cancel-concurrent-001',
+  'Abandon exact pending upload','reviewer-1',now()
+);
+do $$
+declare blocked boolean := false;
+begin
+  begin
+    perform public.research_cancel_lot_quality_upload(
+      (select lot_id from public.research_lot_quality_documents
+        where report_number='CONCURRENT-REPORT'),
+      '{"bucketId":"research-coa-production","originalFilename":"concurrent.pdf",
+        "contentType":"application/pdf","sizeBytes":100,
+        "sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "reportIssuer":"Verified Lab","reportNumber":"CONCURRENT-REPORT",
+        "reportDate":"2026-07-26"}'::jsonb,
+      1,'upload-concurrent-001','cancel-concurrent-001',
+      'Abandon exact pending upload','reviewer-2',now()
+    );
+  exception when others then
+    blocked := sqlerrm like '%different upload cancellation%';
+  end;
+  if not blocked then raise exception 'cancellation replay accepted a different actor'; end if;
+end;
+$$;
+
+-- Changed metadata can now create one audited replacement, while the abandoned
+-- object reference and history remain immutable.
+select public.research_prepare_lot_quality_upload(
+  (select lot_id from public.research_lot_quality_documents
+    where report_number='CONCURRENT-REPORT'),
+  '{"bucketId":"research-coa-production","originalFilename":"changed.pdf",
+    "contentType":"application/pdf","sizeBytes":101,
+    "sha256":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "reportIssuer":"Verified Lab","reportNumber":"CHANGED-REPORT",
+    "reportDate":"2026-07-27"}'::jsonb,
+  'upload-after-cancel-001','Prepare changed exact-lot COA','reviewer-1',now()
+);
+select public.research_manage_lot_quality_document(
+  (select id from public.research_lot_quality_documents
+    where report_number='CHANGED-REPORT'),
+  'confirm_upload','[]'::jsonb,1,'confirm-after-cancel-001',
+  'Confirm changed private object','reviewer-1',now()
+);
+do $$
+declare
+  document uuid := (select id from public.research_lot_quality_documents
+                    where report_number='CHANGED-REPORT');
+  blocked boolean := false;
+  before_version bigint := (select version from public.research_lot_quality_documents
+                            where id=document);
+  before_events integer := (select count(*) from public.research_lot_quality_events
+                            where quality_document_id=document);
+begin
+  begin
+    perform public.research_cancel_lot_quality_upload(
+      (select lot_id from public.research_lot_quality_documents where id=document),
+      '{"bucketId":"research-coa-production","originalFilename":"changed.pdf",
+        "contentType":"application/pdf","sizeBytes":101,
+        "sha256":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "reportIssuer":"Verified Lab","reportNumber":"CHANGED-REPORT",
+        "reportDate":"2026-07-27"}'::jsonb,
+      2,'upload-after-cancel-001','cancel-confirmed-denied-001',
+      'Confirmed document cancellation probe','reviewer-1',now()
+    );
+  exception when others then
+    blocked := sqlerrm like '%only an unconfirmed pending COA upload can be abandoned%';
+  end;
+  if not blocked then raise exception 'confirmed upload cancellation was accepted'; end if;
+  if (select version from public.research_lot_quality_documents where id=document) <> before_version
+     or (select count(*) from public.research_lot_quality_events
+         where quality_document_id=document) <> before_events then
+    raise exception 'confirmed upload cancellation probe changed document or history';
+  end if;
+end;
+$$;
+do $$
+declare
+  old_document public.research_lot_quality_documents%rowtype;
+  new_document public.research_lot_quality_documents%rowtype;
+begin
+  select * into old_document from public.research_lot_quality_documents
+   where report_number='CONCURRENT-REPORT';
+  select * into new_document from public.research_lot_quality_documents
+   where report_number='CHANGED-REPORT';
+  if old_document.version <> 2
+     or old_document.document_state <> 'withdrawn'
+     or old_document.verification_state <> 'withdrawn'
+     or old_document.superseded_at is null
+     or old_document.superseded_by <> new_document.id
+     or old_document.private_storage_key not like '%concurrent.pdf'
+     or new_document.replaces_document_id <> old_document.id
+     or new_document.version <> 2
+     or not new_document.coa_on_file
+     or new_document.superseded_at is not null
+     or (select count(*) from public.research_lot_quality_documents) <> 2
+     or (select count(*) from public.research_lot_quality_documents
+         where superseded_at is null and not coa_on_file) <> 0
+     or (select count(*) from public.research_lot_quality_events
+         where quality_document_id=old_document.id
+           and event_type='upload_abandoned') <> 1
+     or (select count(*) from public.research_lot_quality_events
+         where quality_document_id=old_document.id
+           and event_type='superseded') <> 1
+     or (select count(*) from public.research_lot_quality_events
+         where quality_document_id=new_document.id
+           and event_type='upload_confirmed') <> 1 then
+    raise exception 'cancelled upload replacement history is incorrect';
   end if;
 end;
 $$;
@@ -479,6 +729,42 @@ select public.research_manage_lot_quality_document(
   'confirm_upload','[]'::jsonb,1,'confirm-quality-v1',
   'Confirm private object','reviewer-1',now()
 );
+
+-- A lost confirmation response replays the original version/key after the
+-- document has advanced to version two, without a second transition.
+do $$
+declare
+  document uuid := (select id from public.research_lot_quality_documents
+                    where superseded_at is null);
+  replay jsonb;
+  preparation_replay jsonb;
+begin
+  select public.research_manage_lot_quality_document(
+    document,
+    'confirm_upload','[]'::jsonb,1,'confirm-quality-v1',
+    'Confirm private object','reviewer-1',now()
+  ) into replay;
+  select public.research_prepare_lot_quality_upload(
+    (select lot_id from public.research_lot_quality_documents where id=document),
+    '{"bucketId":"research-coa-production","originalFilename":"quality-v1.pdf",
+      "contentType":"application/pdf","sizeBytes":100,
+      "sha256":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "reportIssuer":"Verified Lab","reportNumber":"QUALITY-V1",
+      "reportDate":"2026-07-26"}'::jsonb,
+    'prepare-quality-v1','Prepare quality version one','reviewer-1',now()
+  ) into preparation_replay;
+  if replay->>'idempotentReplay' <> 'true'
+     or (replay->>'version')::bigint <> 2
+     or preparation_replay->>'idempotentReplay' <> 'true'
+     or preparation_replay->>'objectConfirmed' <> 'true'
+     or (preparation_replay->>'documentVersion')::bigint <> 2
+     or (select count(*) from public.research_lot_quality_events
+         where quality_document_id=document
+           and event_type='upload_confirmed') <> 1 then
+    raise exception 'lost confirmation response did not replay exactly once';
+  end if;
+end;
+$$;
 
 do $$
 declare

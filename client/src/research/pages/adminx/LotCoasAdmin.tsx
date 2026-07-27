@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import {
   LOT_QUALITY_TEST_KEYS,
+  type CoaUploadMetadata,
   type InventoryLotAdmin,
   type LotQualityAccessPurpose,
   type LotQualityDocumentAdmin,
@@ -15,6 +16,7 @@ import {
   ResearchStatusBadge,
 } from "../../ui/kit";
 import {
+  cancelCoaUpload,
   confirmCoaUpload,
   listInventoryLots,
   listLotQualityDocuments,
@@ -29,14 +31,36 @@ import { AdminScreen } from "./AdminResearchHome";
 
 type UploadRetryState = {
   fingerprint: string;
+  metadata: CoaUploadMetadata;
   preparationIdempotencyKey: string;
   confirmationIdempotencyKey: string;
+  cancellationIdempotencyKey: string;
   documentId: string | null;
-  documentVersion: number | null;
+  preparedVersion: number;
   storageKey: string | null;
   uploadUrl: string | null;
   expiresAt: string | null;
+  objectUploaded: boolean;
 };
+
+function newUploadAttempt(
+  metadata: CoaUploadMetadata,
+  fingerprint: string,
+): UploadRetryState {
+  return {
+    fingerprint,
+    metadata,
+    preparationIdempotencyKey: crypto.randomUUID(),
+    confirmationIdempotencyKey: crypto.randomUUID(),
+    cancellationIdempotencyKey: crypto.randomUUID(),
+    documentId: null,
+    preparedVersion: 1,
+    storageKey: null,
+    uploadUrl: null,
+    expiresAt: null,
+    objectUploaded: false,
+  };
+}
 
 const REQUIRED_TESTS: LotQualityTestKey[] = [...LOT_QUALITY_TEST_KEYS];
 const ALL_TEST_LABELS: Record<LotQualityTestKey, string> = {
@@ -120,7 +144,7 @@ export function LotCoasBody({ token }: { token: string }) {
     setFeedback(null);
     try {
       const digest = await sha256Hex(file);
-      const normalized = {
+      const normalized: CoaUploadMetadata = {
         lotId,
         filename: file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120),
         contentType: "application/pdf" as const,
@@ -131,18 +155,23 @@ export function LotCoasBody({ token }: { token: string }) {
         reportDate: String(data.get("reportDate") ?? ""),
       };
       const fingerprint = JSON.stringify(normalized);
-      const attempt: UploadRetryState = uploadRetry?.fingerprint === fingerprint
-        ? uploadRetry
-        : {
-            fingerprint,
-            preparationIdempotencyKey: crypto.randomUUID(),
-            confirmationIdempotencyKey: crypto.randomUUID(),
-            documentId: null,
-            documentVersion: null,
-            storageKey: null,
-            uploadUrl: null,
-            expiresAt: null,
-          };
+      let attempt = uploadRetry;
+      if (attempt && attempt.fingerprint !== fingerprint) {
+        const cancelled = await cancelCoaUpload(token, {
+          ...attempt.metadata,
+          expectedVersion: attempt.preparedVersion,
+          preparationIdempotencyKey: attempt.preparationIdempotencyKey,
+          idempotencyKey: attempt.cancellationIdempotencyKey,
+        });
+        if (cancelled.kind !== "ok") {
+          return fail(
+            "The prior unconfirmed upload could not be safely retired. Retry before changing report metadata.",
+          );
+        }
+        attempt = newUploadAttempt(normalized, fingerprint);
+      } else if (!attempt) {
+        attempt = newUploadAttempt(normalized, fingerprint);
+      }
       setUploadRetry(attempt);
       const prepared = await prepareCoaUpload(token, {
         ...normalized,
@@ -151,27 +180,35 @@ export function LotCoasBody({ token }: { token: string }) {
       if (prepared.kind !== "ok") return fail("A private upload grant could not be prepared.");
       if (
         (attempt.documentId && attempt.documentId !== prepared.data.upload.documentId)
-        || (attempt.documentVersion && attempt.documentVersion !== prepared.data.upload.documentVersion)
         || (attempt.storageKey && attempt.storageKey !== prepared.data.upload.storageKey)
+        || prepared.data.upload.documentVersion < attempt.preparedVersion
       ) {
         return fail("The prepared upload identity changed unexpectedly. No file was uploaded.");
       }
-      const preparedAttempt: UploadRetryState = {
+      let preparedAttempt: UploadRetryState = {
         ...attempt,
         documentId: prepared.data.upload.documentId,
-        documentVersion: prepared.data.upload.documentVersion,
         storageKey: prepared.data.upload.storageKey,
         uploadUrl: prepared.data.upload.uploadUrl,
         expiresAt: prepared.data.upload.expiresAt,
       };
       setUploadRetry(preparedAttempt);
-      const uploaded = await putPrivateCoaFile(prepared.data.upload.uploadUrl, file);
-      if (!uploaded) return fail("The private object upload did not complete.");
+      if (!preparedAttempt.objectUploaded) {
+        if (!prepared.data.upload.uploadRequired || !prepared.data.upload.uploadUrl) {
+          return fail(
+            "The server reports an already-confirmed object without this upload session. Reload the records before continuing.",
+          );
+        }
+        const uploaded = await putPrivateCoaFile(prepared.data.upload.uploadUrl, file);
+        if (!uploaded) return fail("The private object upload did not complete.");
+        preparedAttempt = { ...preparedAttempt, objectUploaded: true };
+        setUploadRetry(preparedAttempt);
+      }
       const confirmed = await confirmCoaUpload(
         token,
         prepared.data.upload.documentId,
         {
-          expectedVersion: prepared.data.upload.documentVersion,
+          expectedVersion: preparedAttempt.preparedVersion,
           idempotencyKey: preparedAttempt.confirmationIdempotencyKey,
         },
       );
@@ -294,11 +331,7 @@ export function LotCoasBody({ token }: { token: string }) {
           )}
         </section>
 
-        <form
-          className="card grid min-w-0 gap-4"
-          onSubmit={handleUpload}
-          onChange={() => setUploadRetry(null)}
-        >
+        <form className="card grid min-w-0 gap-4" onSubmit={handleUpload}>
           <div>
             <p className="mono-label text-ink-mute">Private Storage</p>
             <h2 className="heading-s mt-2">Upload exact-lot report</h2>

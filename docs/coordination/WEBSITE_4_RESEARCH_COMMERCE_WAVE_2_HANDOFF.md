@@ -4,7 +4,8 @@
 
 - Branch: `feature/website-4-research-commerce-wave-2-inventory-lots`
 - Base: `bf1815c6754e04fd95325b25996ff441dc92fe43`
-- Supersedes prohibited heads: `b1a17c8c9bc581089b85047fbb3b7e21513c98d1`,
+- Supersedes prohibited heads: `bdafa110fbca67f018b5cb91b227f7ffd49c8663`,
+  `b1a17c8c9bc581089b85047fbb3b7e21513c98d1`,
   `f646708d45d4a6e4e7acf4e2653e44746baef184`, and
   `0f6937f0d2e67dea8a0067dd8786378cca9095be`
 - Domain: Inventory, lots, and private exact-lot COA administration only
@@ -36,10 +37,14 @@
   identity; rejected or withdrawn reports are replaced through an audited,
   versioned supersession path that preserves prior metadata and events.
 - The client preserves the normalized upload fingerprint, preparation and
-  confirmation idempotency keys, prepared document/version/storage identity,
-  and refreshed signed-grant posture across grant, PUT, and confirmation
-  failures. Unchanged retries resume the same preparation; metadata changes
-  deliberately start a new preparation.
+  confirmation idempotency keys, original prepared version, document/storage
+  identity, and object-upload posture across grant, PUT, and confirmation
+  failures. A lost confirmation response replays the original version/key and
+  cannot duplicate the upload or confirmation event.
+- Metadata changes first retire an unconfirmed preparation through a dedicated
+  actor- and metadata-bound, lock-serialized, audited cancellation RPC. The
+  abandoned object reference and history remain immutable; only then can a new
+  metadata-bound preparation become the sole active report.
 - Forced RLS and removal of browser-role grants on all seven affected tables.
 - Service-role-only controlled writes with reviewed transition guards.
 - Server-authorized route family, production repositories, client adapters, and Xenios UI.
@@ -86,6 +91,7 @@ Required server routes:
 - `POST /api/admin/research/inventory/lots/:lotId/disposition`
 - `GET /api/admin/research/lot-quality-documents`
 - `POST /api/admin/research/lot-quality-documents/upload`
+- `POST /api/admin/research/lot-quality-documents/upload/cancel`
 - `POST /api/admin/research/lot-quality-documents/:documentId/confirm`
 - `POST /api/admin/research/lot-quality-documents/:documentId/review`
 - `POST /api/admin/research/lot-quality-documents/:documentId/file-access`
@@ -125,8 +131,8 @@ directly, copy Product Control files, or create another product model.
 
 ## Validation evidence
 
-- Focused tests: 6 files, 46 tests passed.
-- Full tests: 203 files, 3,652 tests passed with two workers.
+- Focused tests: 6 files, 51 tests passed.
+- Full tests: 203 files, 3,657 tests passed with two workers.
 - TypeScript check: passed.
 - Production build: passed.
 - Machine-readable release manifest:
@@ -137,12 +143,14 @@ directly, copy Product Control files, or create another product model.
   and quality commands; idempotency conflicts; direct
   published-metadata and test-mutation rejection; all-test fail-closed semantics;
   rejected/withdrawn/superseded terminal no-mutation semantics; positive audited
-  replacement through a new document; resumable upload identity after a
-  post-commit grant failure;
+  replacement through a new document; resumable upload identity after
+  post-commit grant and confirmation-response failures; no renewed write grant
+  after the object is confirmed; actor/metadata/version
+  bound cancellation and concurrent replay before changed-metadata replacement;
   immutable actor/purpose access audit before signing; append-only history; forced
   RLS/grants; expiry/recall/quarantine gates; rollback; and zero residual rows.
 - Exact disposable privilege snapshot: 8 forced-RLS tables, 0 browser table
-  grants, 8 service-role SELECT privileges, 10 reviewed RPC execute privileges,
+  grants, 8 service-role SELECT privileges, 11 reviewed RPC execute privileges,
   and no service-role command-table DML.
 - 1440px: no clipped elements; one main landmark and one page heading; all nine
   quality fieldsets render; minimum visible control height 60px.
@@ -155,11 +163,12 @@ directly, copy Product Control files, or create another product model.
   and minimum visible control height 56px.
 - Keyboard: the labeled lot selector receives the existing visible purple focus
   border; forms preserve semantic headings, fieldsets, labels, and controls.
-- Browser retry proof: the first signed-grant failure preserved the selected lot,
-  PDF, issuer, report number, report date, and retry identity; the unchanged
-  retry succeeded, reset the form, announced status through the live region,
-  emitted no console warning/error, and remained free of horizontal overflow at
-  320 CSS px.
+- Browser/component retry proof: signed-grant and PUT failures preserve the
+  selected lot, PDF metadata, and retry identity; a lost confirmation response
+  replays the original version/key without a second PUT; changed metadata invokes
+  audited cancellation before a new preparation. Success resets the form and
+  announces status through the live region. The previously accepted responsive
+  lane remains unchanged and free of horizontal overflow at 320 CSS px.
 
 ## Environment
 

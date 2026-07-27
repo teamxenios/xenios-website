@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import {
   SupabaseInventoryLotAdminRepository,
@@ -152,6 +153,7 @@ describe("Website 4 production repository command wiring", () => {
           documentId: DOCUMENT_ID,
           documentVersion: 1,
           storageKey: `lots/${LOT_ID}/${DOCUMENT_ID}-exact.pdf`,
+          objectConfirmed: false,
           idempotentReplay: rpc.mock.calls.length > 1,
         },
         error: null,
@@ -219,6 +221,7 @@ describe("Website 4 production repository command wiring", () => {
         documentId: DOCUMENT_ID,
         documentVersion: 1,
         storageKey,
+        objectConfirmed: false,
         idempotentReplay: rpc.mock.calls.length > 1,
       },
       error: null,
@@ -250,7 +253,13 @@ describe("Website 4 production repository command wiring", () => {
     expect(rpc.mock.calls[0]?.[1]).toMatchObject({
       p_idempotency_key: "prepare-upload-retry",
     });
-    expect(rpc.mock.calls[1]?.[1]).toEqual(rpc.mock.calls[0]?.[1]);
+    expect(rpc.mock.calls[1]?.[1]).toMatchObject({
+      p_lot_id: rpc.mock.calls[0]?.[1].p_lot_id,
+      p_upload: rpc.mock.calls[0]?.[1].p_upload,
+      p_idempotency_key: rpc.mock.calls[0]?.[1].p_idempotency_key,
+      p_reason: rpc.mock.calls[0]?.[1].p_reason,
+      p_actor_id: rpc.mock.calls[0]?.[1].p_actor_id,
+    });
     expect(replay).toMatchObject({
       documentId: DOCUMENT_ID,
       documentVersion: 1,
@@ -260,5 +269,175 @@ describe("Website 4 production repository command wiring", () => {
     expect(createSignedUploadUrl).toHaveBeenNthCalledWith(1, storageKey);
     expect(createSignedUploadUrl).toHaveBeenNthCalledWith(2, storageKey);
     expect(query.insert).toBeUndefined();
+  });
+
+  it("does not mint a second write grant when preparation replays an already-confirmed object", async () => {
+    const query = lotReadQuery();
+    const storageKey = `lots/${LOT_ID}/${DOCUMENT_ID}-confirmed.pdf`;
+    const createSignedUploadUrl = vi.fn();
+    const db = {
+      from: vi.fn(() => query),
+      rpc: vi.fn(async () => ({
+        data: {
+          documentId: DOCUMENT_ID,
+          documentVersion: 2,
+          storageKey,
+          objectConfirmed: true,
+          idempotentReplay: true,
+        },
+        error: null,
+      })),
+      storage: { from: vi.fn(() => ({ createSignedUploadUrl })) },
+    };
+    const repository = new SupabaseLotQualityAdminRepository(db as never);
+
+    const replay = await repository.prepareUpload({
+      lotId: LOT_ID,
+      filename: "confirmed.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 100,
+      sha256: "d".repeat(64),
+      reportIssuer: "Verified Lab",
+      reportNumber: "REPORT-CONFIRMED",
+      reportDate: "2026-07-27",
+      idempotencyKey: "prepare-upload-confirmed",
+    }, "quality-reviewer");
+
+    expect(replay).toEqual({
+      documentId: DOCUMENT_ID,
+      documentVersion: 2,
+      uploadRequired: false,
+      uploadUrl: null,
+      storageKey,
+      expiresAt: null,
+    });
+    expect(createSignedUploadUrl).not.toHaveBeenCalled();
+  });
+
+  it("cancels an unconfirmed preparation only through the metadata-bound audited RPC", async () => {
+    const rpc = vi.fn(async () => ({
+      data: {
+        documentId: DOCUMENT_ID,
+        documentState: "withdrawn",
+        verificationState: "withdrawn",
+        version: 2,
+        idempotentReplay: false,
+      },
+      error: null,
+    }));
+    const repository = new SupabaseLotQualityAdminRepository({ rpc } as never);
+
+    const result = await repository.cancelUpload({
+      lotId: LOT_ID,
+      filename: "retry report.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 100,
+      sha256: "c".repeat(64),
+      reportIssuer: " Verified Lab ",
+      reportNumber: " REPORT-CANCEL ",
+      reportDate: "2026-07-27",
+      expectedVersion: 1,
+      preparationIdempotencyKey: "prepare-upload-cancel",
+      idempotencyKey: "cancel-upload-001",
+    }, "operations-admin");
+
+    expect(rpc).toHaveBeenCalledWith(
+      "research_cancel_lot_quality_upload",
+      expect.objectContaining({
+        p_lot_id: LOT_ID,
+        p_expected_version: 1,
+        p_preparation_idempotency_key: "prepare-upload-cancel",
+        p_idempotency_key: "cancel-upload-001",
+        p_actor_id: "operations-admin",
+        p_upload: expect.objectContaining({
+          bucketId: "research-coa-production",
+          originalFilename: "retry_report.pdf",
+          reportIssuer: "Verified Lab",
+          reportNumber: "REPORT-CANCEL",
+        }),
+      }),
+    );
+    expect(result).toMatchObject({ version: 2, documentState: "withdrawn" });
+  });
+
+  it("replays confirmation with the original version and command key after a lost response", async () => {
+    const bytes = new TextEncoder().encode("%PDF-confirm-replay");
+    const storageKey = `lots/${LOT_ID}/${DOCUMENT_ID}-confirm-replay.pdf`;
+    const documentQuery: any = {};
+    documentQuery.select = vi.fn(() => documentQuery);
+    documentQuery.eq = vi.fn(() => documentQuery);
+    documentQuery.maybeSingle = vi.fn(async () => ({
+      data: {
+        id: DOCUMENT_ID,
+        private_storage_key: storageKey,
+        size_bytes: bytes.byteLength,
+        content_type: "application/pdf",
+        sha256: createHash("sha256").update(bytes).digest("hex"),
+      },
+      error: null,
+    }));
+    const info = vi.fn(async () => ({
+      data: { contentType: "application/pdf", size: bytes.byteLength },
+      error: null,
+    }));
+    const download = vi.fn(async () => ({
+      data: new Blob([bytes], { type: "application/pdf" }),
+      error: null,
+    }));
+    const remove = vi.fn();
+    const rpc = vi
+      .fn()
+      .mockResolvedValueOnce({
+        data: null,
+        error: { message: "confirmation response lost after commit" },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          documentId: DOCUMENT_ID,
+          documentState: "pending",
+          verificationState: "pending",
+          version: 2,
+          idempotentReplay: true,
+        },
+        error: null,
+      });
+    const db = {
+      from: vi.fn(() => documentQuery),
+      rpc,
+      storage: { from: vi.fn(() => ({ info, download, remove })) },
+    };
+    const repository = new SupabaseLotQualityAdminRepository(db as never);
+
+    await expect(
+      repository.confirmUpload(
+        DOCUMENT_ID,
+        1,
+        "confirm-upload-replay-001",
+        "quality-reviewer",
+      ),
+    ).rejects.toMatchObject({ code: "coa_upload_confirmation_rejected" });
+    const replay = await repository.confirmUpload(
+      DOCUMENT_ID,
+      1,
+      "confirm-upload-replay-001",
+      "quality-reviewer",
+    );
+
+    expect(rpc).toHaveBeenCalledTimes(2);
+    for (const call of rpc.mock.calls) {
+      expect(call[0]).toBe("research_manage_lot_quality_document");
+      expect(call[1]).toMatchObject({
+        p_document_id: DOCUMENT_ID,
+        p_action: "confirm_upload",
+        p_tests: [],
+        p_expected_version: 1,
+        p_idempotency_key: "confirm-upload-replay-001",
+        p_actor_id: "quality-reviewer",
+      });
+    }
+    expect(replay).toMatchObject({ version: 2, idempotentReplay: true });
+    expect(info).toHaveBeenCalledTimes(2);
+    expect(download).toHaveBeenCalledTimes(2);
+    expect(remove).not.toHaveBeenCalled();
   });
 });

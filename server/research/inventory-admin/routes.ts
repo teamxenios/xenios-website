@@ -28,7 +28,12 @@ export type InventoryLotAdminDependencies = {
   >;
   quality: Pick<
     SupabaseLotQualityAdminRepository,
-    "listDocuments" | "prepareUpload" | "confirmUpload" | "review" | "createReadGrant"
+    | "listDocuments"
+    | "prepareUpload"
+    | "cancelUpload"
+    | "confirmUpload"
+    | "review"
+    | "createReadGrant"
   >;
 };
 
@@ -91,6 +96,12 @@ const uploadSchema = z.object({
   reportIssuer: z.string().trim().min(2).max(200),
   reportNumber: z.string().trim().min(2).max(160),
   reportDate: isoDate,
+  idempotencyKey,
+});
+
+const cancelUploadSchema = uploadSchema.omit({ idempotencyKey: true }).extend({
+  expectedVersion: z.number().int().positive(),
+  preparationIdempotencyKey: idempotencyKey,
   idempotencyKey,
 });
 
@@ -252,6 +263,26 @@ export function registerInventoryLotAdminApi(
         return res.status(201).json({
           ok: true,
           upload: await deps.quality.prepareUpload(parsed.data, actor(req)),
+        });
+      } catch (error) {
+        return failure(res, error);
+      }
+    },
+  );
+
+  app.post(
+    "/api/admin/research/lot-quality-documents/upload/cancel",
+    guards.mutateInventory,
+    async (req, res) => {
+      noStore(res);
+      const parsed = cancelUploadSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ ok: false, code: "validation_failed" });
+      }
+      try {
+        return res.json({
+          ok: true,
+          result: await deps.quality.cancelUpload(parsed.data, actor(req)),
         });
       } catch (error) {
         return failure(res, error);

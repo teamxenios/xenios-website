@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
   listDocuments: vi.fn(),
   review: vi.fn(),
   prepare: vi.fn(),
+  cancel: vi.fn(),
   upload: vi.fn(),
   confirm: vi.fn(),
   access: vi.fn(),
@@ -25,6 +26,7 @@ vi.mock("../../adapters/inventory-admin", () => ({
   listLotQualityDocuments: mocks.listDocuments,
   reviewLotQualityDocument: mocks.review,
   prepareCoaUpload: mocks.prepare,
+  cancelCoaUpload: mocks.cancel,
   putPrivateCoaFile: mocks.upload,
   confirmCoaUpload: mocks.confirm,
   requestCoaReadGrant: mocks.access,
@@ -188,6 +190,10 @@ beforeEach(() => {
     data: { ok: true, result: { version: 3 } },
   });
   mocks.digest.mockResolvedValue("a".repeat(64));
+  mocks.cancel.mockResolvedValue({
+    kind: "ok",
+    data: { ok: true, result: { version: 2 } },
+  });
   mocks.upload.mockResolvedValue(true);
   mocks.confirm.mockResolvedValue({
     kind: "ok",
@@ -272,11 +278,13 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     vi.mocked(crypto.randomUUID)
       .mockReset()
       .mockReturnValueOnce("70000000-0000-4000-8000-000000000010")
-      .mockReturnValueOnce("70000000-0000-4000-8000-000000000011");
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000011")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000012");
     const upload = {
       documentId: "60000000-0000-4000-8000-000000000010",
       documentVersion: 1,
       storageKey: "lots/50000000-0000-4000-8000-000000000001/retry.pdf",
+      uploadRequired: true,
       uploadUrl: "https://storage.invalid/retry",
       expiresAt: "2026-07-27T01:00:00.000Z",
     };
@@ -320,13 +328,87 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     expect(mocks.listDocuments).toHaveBeenCalledTimes(2);
   });
 
+  it("replays confirmation with the original version and skips a duplicate PUT", async () => {
+    vi.mocked(crypto.randomUUID)
+      .mockReset()
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000030")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000031")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000032");
+    const identity = {
+      documentId: "60000000-0000-4000-8000-000000000030",
+      storageKey: "lots/50000000-0000-4000-8000-000000000001/confirm-replay.pdf",
+    };
+    mocks.prepare
+      .mockResolvedValueOnce({
+        kind: "ok",
+        data: {
+          ok: true,
+          upload: {
+            ...identity,
+            documentVersion: 1,
+            uploadRequired: true,
+            uploadUrl: "https://storage.invalid/confirm-replay",
+            expiresAt: "2026-07-27T01:00:00.000Z",
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        kind: "ok",
+        data: {
+          ok: true,
+          upload: {
+            ...identity,
+            documentVersion: 2,
+            uploadRequired: false,
+            uploadUrl: null,
+            expiresAt: null,
+          },
+        },
+      });
+    mocks.confirm
+      .mockResolvedValueOnce({
+        kind: "error",
+        message: "confirmation response lost after commit",
+      })
+      .mockResolvedValueOnce({
+        kind: "ok",
+        data: { ok: true, result: { version: 2, idempotentReplay: true } },
+      });
+
+    await renderPage();
+    const { form } = populateUploadForm();
+    await submit(form);
+    expect(host.textContent).toContain("Retry private COA upload");
+    await submit(form);
+
+    expect(mocks.prepare).toHaveBeenCalledTimes(2);
+    expect(mocks.prepare.mock.calls[1]?.[1].idempotencyKey).toBe(
+      mocks.prepare.mock.calls[0]?.[1].idempotencyKey,
+    );
+    expect(mocks.upload).toHaveBeenCalledTimes(1);
+    expect(mocks.confirm).toHaveBeenCalledTimes(2);
+    for (const call of mocks.confirm.mock.calls) {
+      expect(call).toEqual([
+        "admin-token",
+        identity.documentId,
+        {
+          expectedVersion: 1,
+          idempotencyKey: "70000000-0000-4000-8000-000000000031",
+        },
+      ]);
+    }
+    expect(host.textContent).toContain("Private COA object verified.");
+  });
+
   it("starts a new preparation when normalized upload metadata changes", async () => {
     vi.mocked(crypto.randomUUID)
       .mockReset()
       .mockReturnValueOnce("70000000-0000-4000-8000-000000000020")
       .mockReturnValueOnce("70000000-0000-4000-8000-000000000021")
       .mockReturnValueOnce("70000000-0000-4000-8000-000000000022")
-      .mockReturnValueOnce("70000000-0000-4000-8000-000000000023");
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000023")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000024")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000025");
     mocks.prepare
       .mockRejectedValueOnce(new Error("grant failed after RPC commit"))
       .mockResolvedValueOnce({
@@ -337,6 +419,7 @@ describe("Website 4 exact-lot COA editor isolation", () => {
             documentId: "60000000-0000-4000-8000-000000000020",
             documentVersion: 1,
             storageKey: "lots/50000000-0000-4000-8000-000000000001/changed.pdf",
+            uploadRequired: true,
             uploadUrl: "https://storage.invalid/changed",
             expiresAt: "2026-07-27T01:00:00.000Z",
           },
@@ -362,6 +445,19 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     });
     expect(mocks.prepare.mock.calls[1]?.[1]).toMatchObject({
       reportNumber: "REPORT-CHANGED",
+      idempotencyKey: "70000000-0000-4000-8000-000000000023",
+    });
+    expect(mocks.cancel).toHaveBeenCalledWith("admin-token", {
+      lotId: lots[0].id,
+      filename: "retry_report.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 14,
+      sha256: "a".repeat(64),
+      reportIssuer: "Verified Lab",
+      reportNumber: "REPORT-RETRY",
+      reportDate: "2026-07-27",
+      expectedVersion: 1,
+      preparationIdempotencyKey: "70000000-0000-4000-8000-000000000020",
       idempotencyKey: "70000000-0000-4000-8000-000000000022",
     });
   });

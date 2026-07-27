@@ -275,6 +275,7 @@ alter table public.research_lot_quality_events
     'review_rejected',
     'published',
     'withdrawn',
+    'upload_abandoned',
     'superseded'
   ));
 alter table public.research_lot_quality_events
@@ -1089,6 +1090,7 @@ begin
       'documentId', prepared_document.id,
       'documentVersion', prepared_document.version,
       'storageKey', prepared_document.private_storage_key,
+      'objectConfirmed', prepared_document.coa_on_file,
       'idempotentReplay', true
     );
   end if;
@@ -1263,6 +1265,163 @@ begin
     'documentId', prepared_document.id,
     'documentVersion', 1,
     'storageKey', prepared_document.private_storage_key,
+    'objectConfirmed', false,
+    'idempotentReplay', false
+  );
+end;
+$$;
+
+create or replace function public.research_cancel_lot_quality_upload(
+  p_lot_id uuid,
+  p_upload jsonb,
+  p_expected_version bigint,
+  p_preparation_idempotency_key text,
+  p_idempotency_key text,
+  p_reason text,
+  p_actor_id text,
+  p_occurred_at timestamptz default now()
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = pg_catalog
+as $$
+declare
+  d public.research_lot_quality_documents%rowtype;
+  preparation public.research_lot_quality_events%rowtype;
+  prior public.research_lot_quality_events%rowtype;
+  v_hash text;
+begin
+  if p_lot_id is null
+     or jsonb_typeof(p_upload) <> 'object'
+     or p_expected_version is null
+     or p_expected_version < 1
+     or char_length(coalesce(p_preparation_idempotency_key, '')) < 8
+     or char_length(coalesce(p_idempotency_key, '')) < 8
+     or char_length(coalesce(p_actor_id, '')) < 1
+     or char_length(coalesce(p_reason, '')) < 3 then
+    raise exception 'quality upload cancellation metadata is incomplete';
+  end if;
+
+  v_hash := encode(extensions.digest(
+    concat_ws('|',
+      p_lot_id::text,
+      p_upload::text,
+      p_expected_version::text,
+      p_preparation_idempotency_key,
+      p_reason,
+      p_actor_id
+    ),
+    'sha256'
+  ), 'hex');
+
+  perform pg_advisory_xact_lock(hashtextextended(p_idempotency_key, 0));
+  select * into prior
+    from public.research_lot_quality_events
+   where idempotency_key = p_idempotency_key;
+  if found then
+    if prior.event_type <> 'upload_abandoned'
+       or prior.command_hash <> v_hash then
+      raise exception 'idempotency key was reused for a different upload cancellation';
+    end if;
+    select * into d
+      from public.research_lot_quality_documents
+     where id = prior.quality_document_id
+       and lot_id = p_lot_id
+     for update;
+    if not found then
+      raise exception 'cancelled quality upload identity no longer matches';
+    end if;
+    return jsonb_build_object(
+      'documentId', d.id,
+      'documentState', prior.to_document_state,
+      'verificationState', prior.to_verification_state,
+      'version', prior.resulting_version,
+      'idempotentReplay', true
+    );
+  end if;
+
+  select * into preparation
+    from public.research_lot_quality_events
+   where idempotency_key = p_preparation_idempotency_key;
+  if not found or preparation.event_type <> 'upload_referenced' then
+    raise exception 'quality upload preparation identity is invalid';
+  end if;
+
+  select * into d
+    from public.research_lot_quality_documents
+   where id = preparation.quality_document_id
+     and lot_id = p_lot_id
+   for update;
+  if not found then raise exception 'prepared quality upload not found'; end if;
+
+  if preparation.actor_id <> p_actor_id
+     or d.bucket_id <> p_upload->>'bucketId'
+     or d.original_filename <> p_upload->>'originalFilename'
+     or d.content_type <> p_upload->>'contentType'
+     or d.size_bytes <> (p_upload->>'sizeBytes')::integer
+     or d.sha256 <> p_upload->>'sha256'
+     or d.report_issuer <> p_upload->>'reportIssuer'
+     or d.report_number <> p_upload->>'reportNumber'
+     or d.report_date <> (p_upload->>'reportDate')::date then
+    raise exception 'quality upload cancellation does not match the prepared metadata';
+  end if;
+  if d.version <> p_expected_version then
+    raise exception 'lot quality document version conflict';
+  end if;
+  if d.superseded_at is not null
+     or d.document_state <> 'pending'
+     or d.verification_state <> 'pending'
+     or d.coa_on_file
+     or d.reviewed_at is not null
+     or d.published_at is not null
+     or d.withdrawn_at is not null then
+    raise exception 'only an unconfirmed pending COA upload can be abandoned';
+  end if;
+
+  perform set_config('xenios.quality_command', 'allowed', true);
+  update public.research_lot_quality_documents
+     set document_state = 'withdrawn',
+         verification_state = 'withdrawn',
+         withdrawn_at = p_occurred_at,
+         withdrawn_by = p_actor_id,
+         version = version + 1
+   where id = d.id;
+  perform set_config('xenios.quality_command', '', true);
+
+  insert into public.research_lot_quality_events (
+    quality_document_id,
+    event_type,
+    from_document_state,
+    to_document_state,
+    from_verification_state,
+    to_verification_state,
+    resulting_version,
+    idempotency_key,
+    command_hash,
+    actor_id,
+    reason,
+    occurred_at
+  ) values (
+    d.id,
+    'upload_abandoned',
+    d.document_state,
+    'withdrawn',
+    d.verification_state,
+    'withdrawn',
+    d.version + 1,
+    p_idempotency_key,
+    v_hash,
+    p_actor_id,
+    p_reason,
+    p_occurred_at
+  );
+
+  return jsonb_build_object(
+    'documentId', d.id,
+    'documentState', 'withdrawn',
+    'verificationState', 'withdrawn',
+    'version', d.version + 1,
     'idempotentReplay', false
   );
 end;
@@ -1653,6 +1812,9 @@ revoke all on function public.research_create_inventory_lot(
 revoke all on function public.research_prepare_lot_quality_upload(
   uuid, jsonb, text, text, text, timestamptz
 ) from public, anon, authenticated;
+revoke all on function public.research_cancel_lot_quality_upload(
+  uuid, jsonb, bigint, text, text, text, text, timestamptz
+) from public, anon, authenticated;
 revoke all on function public.research_apply_inventory_movement(
   uuid, text, integer, text, bigint, text, text, text, timestamptz
 ) from public, anon, authenticated;
@@ -1679,6 +1841,9 @@ grant execute on function public.research_create_inventory_lot(
 ) to service_role;
 grant execute on function public.research_prepare_lot_quality_upload(
   uuid, jsonb, text, text, text, timestamptz
+) to service_role;
+grant execute on function public.research_cancel_lot_quality_upload(
+  uuid, jsonb, bigint, text, text, text, text, timestamptz
 ) to service_role;
 grant execute on function public.research_apply_inventory_movement(
   uuid, text, integer, text, bigint, text, text, text, timestamptz
