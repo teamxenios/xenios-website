@@ -3,6 +3,12 @@ import type {
   ProvenancedFact,
 } from "@shared/research/catalog";
 import type { Product } from "@shared/research/types";
+import type {
+  MemberCatalog,
+  MemberCatalogCard,
+  MemberCatalogQuery,
+  MemberProductDetail,
+} from "@shared/research/member-catalog";
 import catalogSource from "../../../content/research-products/v3-catalog.json";
 
 export type V3CatalogProfile = {
@@ -185,3 +191,100 @@ export const v3PreviewCatalogProducts: CatalogProduct[] =
       "Confirm public price, inventory, exact lot, quality, storage, and shipping.",
     ],
   }));
+
+function previewCard(profile: V3CatalogProfile): MemberCatalogCard {
+  return {
+    id: profile.product_key,
+    slug: profile.slug,
+    displayName: profile.display_name,
+    aliases: [],
+    lane:
+      profile.product_key === "xn-quantum-foundational-reset"
+        ? "quantum"
+        : "research_material",
+    category: profile.merchandising_category,
+    classification: profile.product_class,
+    summary: profile.preview_copy,
+    displayState: "documentation_pending",
+    media: null,
+    price: null,
+    readiness: null,
+    selection: null,
+    variantCount: 0,
+    updatedAt: "2026-07-27T00:00:00.000Z",
+  };
+}
+
+export function v3PreviewMemberCatalog(
+  evaluatedAt: string,
+  query: MemberCatalogQuery = {},
+): MemberCatalog {
+  let items = v3CatalogProfiles.map(previewCard);
+  const search = query.query?.trim().toLowerCase();
+  if (search) {
+    items = items.filter((item) =>
+      [
+        item.displayName,
+        item.category,
+        item.classification,
+        item.summary,
+      ].some((value) => value.toLowerCase().includes(search)),
+    );
+  }
+  if (query.category && query.category !== "all") {
+    items = items.filter((item) => item.category === query.category);
+  }
+  if (query.lane && query.lane !== "all") {
+    items = items.filter((item) => item.lane === query.lane);
+  }
+  items.sort((left, right) => {
+    if (query.sort === "name_descending") {
+      return right.displayName.localeCompare(left.displayName);
+    }
+    if (query.sort === "recently_updated") {
+      return right.updatedAt.localeCompare(left.updatedAt);
+    }
+    return left.displayName.localeCompare(right.displayName);
+  });
+  return {
+    audience: "member",
+    currency: "USD",
+    evaluatedAt,
+    items,
+    categories: Array.from(
+      new Set(v3CatalogProfiles.map((item) => item.merchandising_category)),
+    ).sort(),
+    lanes: Array.from(new Set(items.map((item) => item.lane))),
+  };
+}
+
+export function v3PreviewMemberDetail(
+  slug: string,
+  evaluatedAt: string,
+): MemberProductDetail | null {
+  const profile = v3CatalogProfiles.find((item) => item.slug === slug);
+  if (!profile) return null;
+  return {
+    ...previewCard(profile),
+    audience: "member",
+    currency: "USD",
+    evaluatedAt,
+    canonicalName: profile.display_name,
+    overview:
+      `${profile.display_name} is a supplier-independent non-clinical discovery profile. ` +
+      "It is not an offer for sale and carries no supplier, price, inventory, lot, quality, storage, or shipping assertion.",
+    specifications: profile.reference_sizes
+      ? `Candidate presentations (not supplier-confirmed): ${profile.reference_sizes}`
+      : null,
+    researchInformation: profile.preview_copy,
+    storageInformation: null,
+    shippingInformation: null,
+    returnInformation: null,
+    disclaimers:
+      "For research use only. Not for human or veterinary use. Purchase remains disabled until every server-authoritative readiness gate passes.",
+    reviewDate: "2026-07-27",
+    variants: [],
+    relatedProducts: [],
+    researchOnlyBoundary: true,
+  };
+}

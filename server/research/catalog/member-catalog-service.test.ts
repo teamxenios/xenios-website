@@ -38,28 +38,26 @@ function dependencies(configured = true) {
 }
 
 describe("MemberCatalogService", () => {
-  it("returns a truthful empty catalog without manufacturing Product Control or inventory facts", async () => {
+  it("returns all truthful V3 previews without manufacturing Product Control or inventory facts", async () => {
     const deps = dependencies();
     const service = new MemberCatalogService(deps);
-    await expect(service.list({ member: MEMBER })).resolves.toEqual({
-      audience: "member",
-      currency: "USD",
-      evaluatedAt: "2026-07-27T13:00:00.000Z",
-      items: [],
-      categories: [],
-      lanes: [],
-    });
+    const catalog = await service.list({ member: MEMBER });
+    expect(catalog.audience).toBe("member");
+    expect(catalog.items).toHaveLength(49);
+    expect(catalog.items.every((item) => item.selection === null)).toBe(true);
+    expect(catalog.items.every((item) => item.price === null)).toBe(true);
+    expect(catalog.items.every((item) => item.media === null)).toBe(true);
     expect(deps.products.readCatalog).toHaveBeenCalledTimes(1);
     expect(deps.requiredInputs.list).toHaveBeenCalledTimes(1);
     expect(deps.requiredInputs.readinessAll).toHaveBeenCalledTimes(1);
   });
 
-  it("fails closed before reads when production persistence is unavailable", async () => {
+  it("falls back to the nontransactional preview before reads when persistence is unavailable", async () => {
     const deps = dependencies(false);
     const service = new MemberCatalogService(deps);
-    await expect(service.list({ member: MEMBER })).rejects.toThrow(
-      "member_catalog_not_configured",
-    );
+    const catalog = await service.list({ member: MEMBER });
+    expect(catalog.items).toHaveLength(49);
+    expect(catalog.items.filter((item) => item.selection !== null)).toEqual([]);
     expect(deps.products.readCatalog).not.toHaveBeenCalled();
   });
 });

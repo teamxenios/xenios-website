@@ -34,6 +34,10 @@ import {
   createProductionProductControlReader,
   type ProductCatalogReader,
 } from "./product-control-reader";
+import {
+  v3PreviewMemberCatalog,
+  v3PreviewMemberDetail,
+} from "./v3-preview-catalog";
 
 const MEDIA_BUCKET = "research-product-media";
 const CURRENCY = "USD";
@@ -257,16 +261,48 @@ export class MemberCatalogService {
     member,
     query,
   }: MemberCatalogRequestContext): Promise<MemberCatalog> {
-    return projectMemberCatalog(await this.projectionInput(member), query);
+    const evaluatedAt = this.dependencies.now().toISOString();
+    const preview = v3PreviewMemberCatalog(evaluatedAt, query);
+    try {
+      const live = projectMemberCatalog(
+        await this.projectionInput(member),
+        query,
+      );
+      const liveSlugs = new Set(live.items.map((item) => item.slug));
+      return {
+        ...live,
+        items: [
+          ...live.items,
+          ...preview.items.filter((item) => !liveSlugs.has(item.slug)),
+        ],
+        categories: Array.from(
+          new Set([...live.categories, ...preview.categories]),
+        ).sort(),
+        lanes: Array.from(new Set([...live.lanes, ...preview.lanes])),
+      };
+    } catch {
+      return preview;
+    }
   }
 
   async detail({
     member,
     slug,
   }: MemberCatalogRequestContext): Promise<MemberProductDetail | null> {
-    return projectMemberProductDetail(
-      await this.projectionInput(member),
-      slug ?? "",
+    const exactSlug = slug ?? "";
+    try {
+      const live = projectMemberProductDetail(
+        await this.projectionInput(member),
+        exactSlug,
+      );
+      if (live) return live;
+    } catch {
+      // The truthful preview remains available when Product Control has no
+      // matching published record; it never carries a cart selection.
+    }
+    return v3PreviewMemberDetail(
+      exactSlug,
+      this.dependencies.now().toISOString(),
     );
   }
 }
