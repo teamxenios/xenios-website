@@ -140,15 +140,15 @@
   ],
   "validation": {
     "focusedTests": {
-      "command": "npm.cmd test -- server/research/inventory-admin/migration.test.ts server/research/inventory-admin/routes.test.ts server/research/inventory-admin/production.test.ts client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx client/src/research/pages/adminx/LotCoasAdmin.test.tsx",
-      "filesPassed": 5,
-      "testsPassed": 19,
+      "command": "npm.cmd test -- server/research/inventory-admin/migration.test.ts server/research/inventory-admin/routes.test.ts server/research/inventory-admin/production.test.ts client/src/research/pages/adminx/InventoryLotsAdmin.test.tsx client/src/research/pages/adminx/LotCoasAdmin.test.tsx server/release-control-plane.test.ts",
+      "filesPassed": 6,
+      "testsPassed": 46,
       "status": "passed"
     },
     "fullTests": {
       "command": "npm.cmd test -- --maxWorkers=2",
       "filesPassed": 203,
-      "testsPassed": 3649,
+      "testsPassed": 3652,
       "status": "passed"
     },
     "typecheck": {
@@ -167,6 +167,9 @@
       "serviceRoleTablePrivileges": 8,
       "serviceRoleExecutePrivileges": 10,
       "concurrentReplay": "passed_for_lot_creation_upload_preparation_movement_disposition_and_quality",
+      "terminalQualityLifecycle": "rejected_withdrawn_and_superseded_documents_reject_in_place_commands_without_document_lot_test_or_event_mutation",
+      "replacementQualityLifecycle": "passed_for_rejected_and_withdrawn_documents_through_new_versioned_document",
+      "resumableUploadPreparation": "same_metadata_replays_original_document_version_storage_identity_and_idempotency_key_after_grant_put_or_confirm_failure",
       "failedRequiredQualityTest": "blocked",
       "privateAccessAuditBeforeGrant": "passed",
       "rollback": "passed",
@@ -174,12 +177,13 @@
       "result": "WAVE2_DISPOSABLE_VERIFICATION_OK"
     },
     "ui": {
-      "desktop1440": "one main, one H1, nine quality fieldsets, no horizontal overflow, no offscreen focusables, zero unlabeled controls, minimum control height 60px",
+      "desktop1440": "previous accepted lane retained; retry-state interaction adds no separate layout system",
       "mobile375": "scrollWidth equals clientWidth, no offscreen focusables, no internal horizontal scrollers, zero unlabeled controls, minimum control height 52px",
-      "mobile320": "scrollWidth equals clientWidth, no offscreen focusables, no internal horizontal scrollers, zero unlabeled controls, minimum control height 44px",
-      "zoom200Proxy": "720 CSS px reflow has no horizontal overflow or offscreen focusables; minimum control height 56px",
+      "mobile320": "retry-state scrollWidth 305 at 320 CSS px, no horizontal overflow; retry action width 219.3px",
+      "zoom200Proxy": "720 CSS px reflow has no horizontal overflow",
       "keyboardFocus": "visible existing purple focus border on the labeled lot selector",
       "consoleErrorsOrWarnings": 0,
+      "retryInteraction": "first post-commit grant failure preserves values and exposes Retry private COA upload; unchanged retry verifies the same prepared object, resets the form, and announces success",
       "status": "passed"
     }
   },

@@ -27,6 +27,17 @@ import {
 import { useAdminResource } from "./auth";
 import { AdminScreen } from "./AdminResearchHome";
 
+type UploadRetryState = {
+  fingerprint: string;
+  preparationIdempotencyKey: string;
+  confirmationIdempotencyKey: string;
+  documentId: string | null;
+  documentVersion: number | null;
+  storageKey: string | null;
+  uploadUrl: string | null;
+  expiresAt: string | null;
+};
+
 const REQUIRED_TESTS: LotQualityTestKey[] = [...LOT_QUALITY_TEST_KEYS];
 const ALL_TEST_LABELS: Record<LotQualityTestKey, string> = {
   identity: "Identity",
@@ -62,6 +73,7 @@ export function LotCoasBody({ token }: { token: string }) {
   const [selectedId, setSelectedId] = useState("");
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: "error" | "success"; text: string } | null>(null);
+  const [uploadRetry, setUploadRetry] = useState<UploadRetryState | null>(null);
   const selected = documents.data?.documents.find((document) => document.id === selectedId) ?? null;
 
   if (lots.state === "loading" || documents.state === "loading") {
@@ -95,7 +107,10 @@ export function LotCoasBody({ token }: { token: string }) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
-    const file = data.get("file");
+    const fileControl = form.elements.namedItem("file");
+    const file = fileControl instanceof HTMLInputElement
+      ? fileControl.files?.[0] ?? null
+      : null;
     const lotId = String(data.get("lotId") ?? "");
     if (!(file instanceof File) || file.type !== "application/pdf") {
       fail("Select one PDF COA file.");
@@ -105,18 +120,51 @@ export function LotCoasBody({ token }: { token: string }) {
     setFeedback(null);
     try {
       const digest = await sha256Hex(file);
-      const prepared = await prepareCoaUpload(token, {
+      const normalized = {
         lotId,
-        filename: file.name,
-        contentType: "application/pdf",
+        filename: file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120),
+        contentType: "application/pdf" as const,
         sizeBytes: file.size,
         sha256: digest,
-        reportIssuer: String(data.get("reportIssuer") ?? ""),
-        reportNumber: String(data.get("reportNumber") ?? ""),
+        reportIssuer: String(data.get("reportIssuer") ?? "").trim(),
+        reportNumber: String(data.get("reportNumber") ?? "").trim(),
         reportDate: String(data.get("reportDate") ?? ""),
-        idempotencyKey: crypto.randomUUID(),
+      };
+      const fingerprint = JSON.stringify(normalized);
+      const attempt: UploadRetryState = uploadRetry?.fingerprint === fingerprint
+        ? uploadRetry
+        : {
+            fingerprint,
+            preparationIdempotencyKey: crypto.randomUUID(),
+            confirmationIdempotencyKey: crypto.randomUUID(),
+            documentId: null,
+            documentVersion: null,
+            storageKey: null,
+            uploadUrl: null,
+            expiresAt: null,
+          };
+      setUploadRetry(attempt);
+      const prepared = await prepareCoaUpload(token, {
+        ...normalized,
+        idempotencyKey: attempt.preparationIdempotencyKey,
       });
       if (prepared.kind !== "ok") return fail("A private upload grant could not be prepared.");
+      if (
+        (attempt.documentId && attempt.documentId !== prepared.data.upload.documentId)
+        || (attempt.documentVersion && attempt.documentVersion !== prepared.data.upload.documentVersion)
+        || (attempt.storageKey && attempt.storageKey !== prepared.data.upload.storageKey)
+      ) {
+        return fail("The prepared upload identity changed unexpectedly. No file was uploaded.");
+      }
+      const preparedAttempt: UploadRetryState = {
+        ...attempt,
+        documentId: prepared.data.upload.documentId,
+        documentVersion: prepared.data.upload.documentVersion,
+        storageKey: prepared.data.upload.storageKey,
+        uploadUrl: prepared.data.upload.uploadUrl,
+        expiresAt: prepared.data.upload.expiresAt,
+      };
+      setUploadRetry(preparedAttempt);
       const uploaded = await putPrivateCoaFile(prepared.data.upload.uploadUrl, file);
       if (!uploaded) return fail("The private object upload did not complete.");
       const confirmed = await confirmCoaUpload(
@@ -124,17 +172,20 @@ export function LotCoasBody({ token }: { token: string }) {
         prepared.data.upload.documentId,
         {
           expectedVersion: prepared.data.upload.documentVersion,
-          idempotencyKey: crypto.randomUUID(),
+          idempotencyKey: preparedAttempt.confirmationIdempotencyKey,
         },
       );
       if (confirmed.kind !== "ok") return fail("The uploaded object could not be verified.");
       form.reset();
+      setUploadRetry(null);
       setSelectedId(prepared.data.upload.documentId);
       setFeedback({
         tone: "success",
         text: "Private COA object verified. Review the exact-lot tests before approval.",
       });
       documents.reload();
+    } catch {
+      fail("The private upload was interrupted. Retry with the same unchanged file and metadata.");
     } finally {
       setBusy(false);
     }
@@ -243,7 +294,11 @@ export function LotCoasBody({ token }: { token: string }) {
           )}
         </section>
 
-        <form className="card grid min-w-0 gap-4" onSubmit={handleUpload}>
+        <form
+          className="card grid min-w-0 gap-4"
+          onSubmit={handleUpload}
+          onChange={() => setUploadRetry(null)}
+        >
           <div>
             <p className="mono-label text-ink-mute">Private Storage</p>
             <h2 className="heading-s mt-2">Upload exact-lot report</h2>
@@ -277,7 +332,11 @@ export function LotCoasBody({ token }: { token: string }) {
             <input className={inputClass} type="date" name="reportDate" required />
           </label>
           <button type="submit" className="btn btn-primary justify-self-start" disabled={busy}>
-            {busy ? "Verifying..." : "Upload private COA"}
+            {busy
+              ? "Verifying..."
+              : uploadRetry
+                ? "Retry private COA upload"
+                : "Upload private COA"}
           </button>
         </form>
       </div>

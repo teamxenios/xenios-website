@@ -200,4 +200,65 @@ describe("Website 4 production repository command wiring", () => {
     expect(createSignedUploadUrl).toHaveBeenNthCalledWith(2, first.storageKey);
     expect(query.insert).toBeUndefined();
   });
+
+  it("recovers a signed-grant failure by replaying the same prepared document identity", async () => {
+    const query = lotReadQuery();
+    const storageKey = `lots/${LOT_ID}/${DOCUMENT_ID}-retry.pdf`;
+    const createSignedUploadUrl = vi
+      .fn()
+      .mockResolvedValueOnce({
+        data: null,
+        error: { message: "temporary signing failure" },
+      })
+      .mockResolvedValueOnce({
+        data: { signedUrl: `https://storage.invalid/${storageKey}` },
+        error: null,
+      });
+    const rpc = vi.fn(async () => ({
+      data: {
+        documentId: DOCUMENT_ID,
+        documentVersion: 1,
+        storageKey,
+        idempotentReplay: rpc.mock.calls.length > 1,
+      },
+      error: null,
+    }));
+    const db = {
+      from: vi.fn(() => query),
+      rpc,
+      storage: { from: vi.fn(() => ({ createSignedUploadUrl })) },
+    };
+    const repository = new SupabaseLotQualityAdminRepository(db as never);
+    const input = {
+      lotId: LOT_ID,
+      filename: "retry.pdf",
+      contentType: "application/pdf" as const,
+      sizeBytes: 100,
+      sha256: "b".repeat(64),
+      reportIssuer: "Verified Lab",
+      reportNumber: "REPORT-RETRY",
+      reportDate: "2026-07-27",
+      idempotencyKey: "prepare-upload-retry",
+    };
+
+    await expect(
+      repository.prepareUpload(input, "quality-reviewer"),
+    ).rejects.toMatchObject({ code: "coa_upload_grant_failed" });
+    const replay = await repository.prepareUpload(input, "quality-reviewer");
+
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(rpc.mock.calls[0]?.[1]).toMatchObject({
+      p_idempotency_key: "prepare-upload-retry",
+    });
+    expect(rpc.mock.calls[1]?.[1]).toEqual(rpc.mock.calls[0]?.[1]);
+    expect(replay).toMatchObject({
+      documentId: DOCUMENT_ID,
+      documentVersion: 1,
+      storageKey,
+    });
+    expect(createSignedUploadUrl).toHaveBeenCalledTimes(2);
+    expect(createSignedUploadUrl).toHaveBeenNthCalledWith(1, storageKey);
+    expect(createSignedUploadUrl).toHaveBeenNthCalledWith(2, storageKey);
+    expect(query.insert).toBeUndefined();
+  });
 });

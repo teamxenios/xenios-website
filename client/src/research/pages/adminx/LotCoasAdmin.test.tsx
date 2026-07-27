@@ -134,6 +134,40 @@ async function flush() {
   });
 }
 
+function populateUploadForm() {
+  const fileInput = host.querySelector<HTMLInputElement>('input[name="file"]');
+  const form = fileInput?.closest("form");
+  if (!fileInput || !form) throw new Error("upload form missing");
+  const file = new File(["%PDF-1.7 retry"], "retry report.pdf", {
+    type: "application/pdf",
+  });
+  Object.defineProperty(fileInput, "files", {
+    configurable: true,
+    value: [file],
+  });
+  const values: Record<string, string> = {
+    lotId: lots[0].id,
+    reportIssuer: "Verified Lab",
+    reportNumber: "REPORT-RETRY",
+    reportDate: "2026-07-27",
+  };
+  for (const [name, value] of Object.entries(values)) {
+    const control = form.elements.namedItem(name);
+    if (!(control instanceof HTMLInputElement || control instanceof HTMLSelectElement)) {
+      throw new Error(`${name} missing`);
+    }
+    control.value = value;
+  }
+  return { form, fileInput };
+}
+
+async function submit(form: HTMLFormElement) {
+  await act(async () => {
+    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+}
+
 beforeEach(() => {
   host = document.createElement("div");
   document.body.appendChild(host);
@@ -152,6 +186,12 @@ beforeEach(() => {
   mocks.review.mockResolvedValue({
     kind: "ok",
     data: { ok: true, result: { version: 3 } },
+  });
+  mocks.digest.mockResolvedValue("a".repeat(64));
+  mocks.upload.mockResolvedValue(true);
+  mocks.confirm.mockResolvedValue({
+    kind: "ok",
+    data: { ok: true, result: { version: 2 } },
   });
   vi.stubGlobal("crypto", {
     ...globalThis.crypto,
@@ -226,5 +266,103 @@ describe("Website 4 exact-lot COA editor isolation", () => {
     expect(JSON.stringify(mocks.review.mock.calls[0])).not.toContain(
       "A-edited-in-the-DOM",
     );
+  });
+
+  it("reuses one metadata-bound preparation after grant and PUT failures", async () => {
+    vi.mocked(crypto.randomUUID)
+      .mockReset()
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000010")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000011");
+    const upload = {
+      documentId: "60000000-0000-4000-8000-000000000010",
+      documentVersion: 1,
+      storageKey: "lots/50000000-0000-4000-8000-000000000001/retry.pdf",
+      uploadUrl: "https://storage.invalid/retry",
+      expiresAt: "2026-07-27T01:00:00.000Z",
+    };
+    mocks.prepare
+      .mockRejectedValueOnce(new Error("grant failed after RPC commit"))
+      .mockResolvedValue({
+        kind: "ok",
+        data: { ok: true, upload },
+      });
+    mocks.upload
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(true);
+
+    await renderPage();
+    const { form } = populateUploadForm();
+    await submit(form);
+    expect(host.textContent).toContain("Retry private COA upload");
+
+    await submit(form);
+    expect(host.textContent).toContain("Retry private COA upload");
+
+    await submit(form);
+
+    expect(mocks.prepare).toHaveBeenCalledTimes(3);
+    const preparationKeys = mocks.prepare.mock.calls.map(
+      (call) => call[1].idempotencyKey,
+    );
+    expect(new Set(preparationKeys)).toEqual(
+      new Set(["70000000-0000-4000-8000-000000000010"]),
+    );
+    expect(mocks.confirm).toHaveBeenCalledWith(
+      "admin-token",
+      upload.documentId,
+      {
+        expectedVersion: 1,
+        idempotencyKey: "70000000-0000-4000-8000-000000000011",
+      },
+    );
+    expect(mocks.upload).toHaveBeenCalledTimes(2);
+    expect(host.textContent).toContain("Private COA object verified.");
+    expect(mocks.listDocuments).toHaveBeenCalledTimes(2);
+  });
+
+  it("starts a new preparation when normalized upload metadata changes", async () => {
+    vi.mocked(crypto.randomUUID)
+      .mockReset()
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000020")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000021")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000022")
+      .mockReturnValueOnce("70000000-0000-4000-8000-000000000023");
+    mocks.prepare
+      .mockRejectedValueOnce(new Error("grant failed after RPC commit"))
+      .mockResolvedValueOnce({
+        kind: "ok",
+        data: {
+          ok: true,
+          upload: {
+            documentId: "60000000-0000-4000-8000-000000000020",
+            documentVersion: 1,
+            storageKey: "lots/50000000-0000-4000-8000-000000000001/changed.pdf",
+            uploadUrl: "https://storage.invalid/changed",
+            expiresAt: "2026-07-27T01:00:00.000Z",
+          },
+        },
+      });
+
+    await renderPage();
+    const { form } = populateUploadForm();
+    await submit(form);
+
+    const reportNumber = form.elements.namedItem("reportNumber");
+    if (!(reportNumber instanceof HTMLInputElement)) {
+      throw new Error("report number missing");
+    }
+    reportNumber.value = "REPORT-CHANGED";
+    act(() => reportNumber.dispatchEvent(new Event("change", { bubbles: true })));
+    await flush();
+    await submit(form);
+
+    expect(mocks.prepare.mock.calls[0]?.[1]).toMatchObject({
+      reportNumber: "REPORT-RETRY",
+      idempotencyKey: "70000000-0000-4000-8000-000000000020",
+    });
+    expect(mocks.prepare.mock.calls[1]?.[1]).toMatchObject({
+      reportNumber: "REPORT-CHANGED",
+      idempotencyKey: "70000000-0000-4000-8000-000000000022",
+    });
   });
 });

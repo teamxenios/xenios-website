@@ -71,6 +71,11 @@ describe("Website 4 canonical inventory/lot/COA schema delta", () => {
     expect(sql).toContain("replaces_document_id");
     expect(sql).toContain("prior.event_type <> 'upload_referenced'");
     expect(sql).toContain("'superseded'");
+    expect(sql).toContain("superseded COA records are terminal");
+    expect(sql).toContain("withdrawn or rejected COA records are terminal");
+    expect(sql).toContain("only an unconfirmed pending COA can be confirmed");
+    expect(sql).toContain("only a confirmed pending COA can be reviewed");
+    expect(sql).toContain("only one approved unpublished COA can be published");
     expect(sql).toContain("lot quality expected version must be positive");
     expect(sql).toContain(
       "if p_action not in ('confirm_upload', 'approve', 'reject', 'publish', 'withdraw')",

@@ -1334,8 +1334,50 @@ begin
 
   if d.version <> p_expected_version then raise exception 'lot quality document version conflict'; end if;
 
-  if d.published_at is not null and p_action <> 'withdraw' then
-    raise exception 'published COA records are immutable; withdraw before replacement';
+  if d.superseded_at is not null then
+    raise exception 'superseded COA records are terminal';
+  end if;
+  if d.document_state = 'withdrawn'
+     or d.verification_state = 'withdrawn'
+     or d.withdrawn_at is not null then
+    raise exception 'withdrawn or rejected COA records are terminal; prepare a replacement';
+  end if;
+  if p_action = 'confirm_upload'
+     and (
+       d.document_state <> 'pending'
+       or d.verification_state <> 'pending'
+       or d.coa_on_file
+       or d.published_at is not null
+     ) then
+    raise exception 'only an unconfirmed pending COA can be confirmed';
+  end if;
+  if p_action in ('approve', 'reject')
+     and (
+       d.document_state <> 'pending'
+       or d.verification_state <> 'pending'
+       or not d.coa_on_file
+       or d.published_at is not null
+     ) then
+    raise exception 'only a confirmed pending COA can be reviewed';
+  end if;
+  if p_action = 'publish'
+     and (
+       d.document_state <> 'available'
+       or d.verification_state <> 'document_on_file'
+       or not d.coa_on_file
+       or d.reviewed_at is null
+       or d.published_at is not null
+     ) then
+    raise exception 'only one approved unpublished COA can be published';
+  end if;
+  if p_action = 'withdraw'
+     and (
+       d.document_state <> 'available'
+       or d.verification_state <> 'document_on_file'
+       or not d.coa_on_file
+       or d.reviewed_at is null
+     ) then
+    raise exception 'only an approved COA can be withdrawn';
   end if;
 
   perform set_config('xenios.quality_command', 'allowed', true);

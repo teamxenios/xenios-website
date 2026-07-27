@@ -4,6 +4,9 @@
 
 - Branch: `feature/website-4-research-commerce-wave-2-inventory-lots`
 - Base: `bf1815c6754e04fd95325b25996ff441dc92fe43`
+- Supersedes prohibited heads: `b1a17c8c9bc581089b85047fbb3b7e21513c98d1`,
+  `f646708d45d4a6e4e7acf4e2653e44746baef184`, and
+  `0f6937f0d2e67dea8a0067dd8786378cca9095be`
 - Domain: Inventory, lots, and private exact-lot COA administration only
 - Production mutation: none
 - Product seam: canonical Product Control is present on the exact accepted
@@ -25,9 +28,18 @@
 - Exact product + variant + lot COA readiness binding.
 - Explicit missing-test states; missing tests never pass.
 - Reviewed COA confirmation, approval, publication, withdrawal, idempotency, and audit.
+- Rejected, withdrawn, and superseded COA documents are terminal for in-place
+  confirmation, review, approval, rejection, publication, and withdrawal after
+  the original command replay check. Their document version/state, lot state,
+  tests, and audit/event cardinality remain unchanged after rejected commands.
 - Atomic replayable upload preparation persists one document and private object
   identity; rejected or withdrawn reports are replaced through an audited,
   versioned supersession path that preserves prior metadata and events.
+- The client preserves the normalized upload fingerprint, preparation and
+  confirmation idempotency keys, prepared document/version/storage identity,
+  and refreshed signed-grant posture across grant, PUT, and confirmation
+  failures. Unchanged retries resume the same preparation; metadata changes
+  deliberately start a new preparation.
 - Forced RLS and removal of browser-role grants on all seven affected tables.
 - Service-role-only controlled writes with reviewed transition guards.
 - Server-authorized route family, production repositories, client adapters, and Xenios UI.
@@ -113,8 +125,8 @@ directly, copy Product Control files, or create another product model.
 
 ## Validation evidence
 
-- Focused tests: 5 files, 19 tests passed.
-- Full tests: 203 files, 3,649 tests passed with two workers.
+- Focused tests: 6 files, 46 tests passed.
+- Full tests: 203 files, 3,652 tests passed with two workers.
 - TypeScript check: passed.
 - Production build: passed.
 - Machine-readable release manifest:
@@ -124,6 +136,9 @@ directly, copy Product Control files, or create another product model.
   concurrent replay for lot creation, upload preparation, movement, disposition,
   and quality commands; idempotency conflicts; direct
   published-metadata and test-mutation rejection; all-test fail-closed semantics;
+  rejected/withdrawn/superseded terminal no-mutation semantics; positive audited
+  replacement through a new document; resumable upload identity after a
+  post-commit grant failure;
   immutable actor/purpose access audit before signing; append-only history; forced
   RLS/grants; expiry/recall/quarantine gates; rollback; and zero residual rows.
 - Exact disposable privilege snapshot: 8 forced-RLS tables, 0 browser table
@@ -140,6 +155,11 @@ directly, copy Product Control files, or create another product model.
   and minimum visible control height 56px.
 - Keyboard: the labeled lot selector receives the existing visible purple focus
   border; forms preserve semantic headings, fieldsets, labels, and controls.
+- Browser retry proof: the first signed-grant failure preserved the selected lot,
+  PDF, issuer, report number, report date, and retry identity; the unchanged
+  retry succeeded, reset the form, announced status through the live region,
+  emitted no console warning/error, and remained free of horizontal overflow at
+  320 CSS px.
 
 ## Environment
 

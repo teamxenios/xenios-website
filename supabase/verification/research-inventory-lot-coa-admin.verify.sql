@@ -558,6 +558,55 @@ select public.research_manage_lot_quality_document(
   'withdraw','[]'::jsonb,4,'withdraw-quality-v1',
   'Withdraw published COA','reviewer-1',now()
 );
+do $$
+declare
+  document uuid := (select id from public.research_lot_quality_documents
+                    where report_number='QUALITY-V1');
+  lot uuid := (select lot_id from public.research_lot_quality_documents where id=document);
+  action text;
+  blocked boolean;
+  before_version bigint := (select version from public.research_lot_quality_documents where id=document);
+  before_lot_version bigint := (select version from public.research_inventory_lots where id=lot);
+  before_tests integer := (select count(*) from public.research_lot_quality_tests where quality_document_id=document);
+  before_events integer := (select count(*) from public.research_lot_quality_events where quality_document_id=document);
+  passing_tests jsonb := '[
+    {"testKey":"identity","state":"passed","method":"MS","result":"match","unit":null},
+    {"testKey":"assay","state":"passed","method":"HPLC","result":"ok","unit":"percent"},
+    {"testKey":"purity","state":"passed","method":"HPLC","result":"ok","unit":"percent"},
+    {"testKey":"sterility","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"endotoxin","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"particulate","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"residual_solvents","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"elemental_impurities","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"chain_of_custody","state":"passed","method":"review","result":"verified","unit":null}
+  ]'::jsonb;
+begin
+  foreach action in array array['confirm_upload','approve','reject','publish','withdraw']
+  loop
+    blocked := false;
+    begin
+      perform public.research_manage_lot_quality_document(
+        document,action,
+        case when action='approve' then passing_tests else '[]'::jsonb end,
+        before_version,
+        'terminal-withdrawn-' || action,
+        'Withdrawn terminal-state probe','reviewer-1',now()
+      );
+    exception when others then
+      blocked := sqlerrm like '%terminal%';
+    end;
+    if not blocked then raise exception 'withdrawn document accepted in-place action %', action; end if;
+  end loop;
+  if (select version from public.research_lot_quality_documents where id=document) <> before_version
+     or (select document_state from public.research_lot_quality_documents where id=document) <> 'withdrawn'
+     or (select verification_state from public.research_lot_quality_documents where id=document) <> 'withdrawn'
+     or (select version from public.research_inventory_lots where id=lot) <> before_lot_version
+     or (select count(*) from public.research_lot_quality_tests where quality_document_id=document) <> before_tests
+     or (select count(*) from public.research_lot_quality_events where quality_document_id=document) <> before_events then
+    raise exception 'withdrawn terminal-state probe changed state or history';
+  end if;
+end;
+$$;
 select public.research_prepare_lot_quality_upload(
   (select id from public.research_inventory_lots where creation_idempotency_key='create-quality-001'),
   '{"bucketId":"research-coa-production","originalFilename":"quality-v2.pdf",
@@ -603,6 +652,54 @@ select public.research_manage_lot_quality_document(
   'reject','[]'::jsonb,2,'reject-quality-v2',
   'Reject replacement report','reviewer-1',now()
 );
+do $$
+declare
+  document uuid := (select id from public.research_lot_quality_documents
+                    where report_number='QUALITY-V2');
+  lot uuid := (select lot_id from public.research_lot_quality_documents where id=document);
+  action text;
+  blocked boolean;
+  before_version bigint := (select version from public.research_lot_quality_documents where id=document);
+  before_lot_version bigint := (select version from public.research_inventory_lots where id=lot);
+  before_tests integer := (select count(*) from public.research_lot_quality_tests where quality_document_id=document);
+  before_events integer := (select count(*) from public.research_lot_quality_events where quality_document_id=document);
+  passing_tests jsonb := '[
+    {"testKey":"identity","state":"passed","method":"MS","result":"match","unit":null},
+    {"testKey":"assay","state":"passed","method":"HPLC","result":"ok","unit":"percent"},
+    {"testKey":"purity","state":"passed","method":"HPLC","result":"ok","unit":"percent"},
+    {"testKey":"sterility","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"endotoxin","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"particulate","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"residual_solvents","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"elemental_impurities","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"chain_of_custody","state":"passed","method":"review","result":"verified","unit":null}
+  ]'::jsonb;
+begin
+  foreach action in array array['confirm_upload','approve','reject','publish','withdraw']
+  loop
+    blocked := false;
+    begin
+      perform public.research_manage_lot_quality_document(
+        document,action,
+        case when action='approve' then passing_tests else '[]'::jsonb end,
+        before_version,'terminal-rejected-' || action,
+        'Rejected terminal-state probe','reviewer-1',now()
+      );
+    exception when others then
+      blocked := sqlerrm like '%terminal%';
+    end;
+    if not blocked then raise exception 'rejected document accepted in-place action %', action; end if;
+  end loop;
+  if (select version from public.research_lot_quality_documents where id=document) <> before_version
+     or (select document_state from public.research_lot_quality_documents where id=document) <> 'withdrawn'
+     or (select verification_state from public.research_lot_quality_documents where id=document) <> 'withdrawn'
+     or (select version from public.research_inventory_lots where id=lot) <> before_lot_version
+     or (select count(*) from public.research_lot_quality_tests where quality_document_id=document) <> before_tests
+     or (select count(*) from public.research_lot_quality_events where quality_document_id=document) <> before_events then
+    raise exception 'rejected terminal-state probe changed state or history';
+  end if;
+end;
+$$;
 select public.research_prepare_lot_quality_upload(
   (select id from public.research_inventory_lots where creation_idempotency_key='create-quality-001'),
   '{"bucketId":"research-coa-production","originalFilename":"quality-v3.pdf",
@@ -612,6 +709,32 @@ select public.research_prepare_lot_quality_upload(
     "reportDate":"2026-07-28"}'::jsonb,
   'prepare-quality-v3','Replace rejected quality report','reviewer-1',now()
 );
+select public.research_manage_lot_quality_document(
+  (select id from public.research_lot_quality_documents where superseded_at is null),
+  'confirm_upload','[]'::jsonb,1,'confirm-quality-v3',
+  'Confirm final replacement object','reviewer-1',now()
+);
+select public.research_manage_lot_quality_document(
+  (select id from public.research_lot_quality_documents where superseded_at is null),
+  'approve',
+  '[
+    {"testKey":"identity","state":"passed","method":"MS","result":"match","unit":null},
+    {"testKey":"assay","state":"passed","method":"HPLC","result":"ok","unit":"percent"},
+    {"testKey":"purity","state":"passed","method":"HPLC","result":"ok","unit":"percent"},
+    {"testKey":"sterility","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"endotoxin","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"particulate","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"residual_solvents","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"elemental_impurities","state":"not_applicable","method":null,"result":null,"unit":null},
+    {"testKey":"chain_of_custody","state":"passed","method":"review","result":"verified","unit":null}
+  ]'::jsonb,
+  2,'approve-quality-v3','Approve final replacement','reviewer-1',now()
+);
+select public.research_manage_lot_quality_document(
+  (select id from public.research_lot_quality_documents where superseded_at is null),
+  'publish','[]'::jsonb,3,'publish-quality-v3',
+  'Publish final replacement','reviewer-1',now()
+);
 
 do $$
 begin
@@ -619,7 +742,9 @@ begin
       where superseded_at is null) <> 1
      or (select count(*) from public.research_lot_quality_documents) <> 3
      or (select count(*) from public.research_lot_quality_events
-         where event_type='superseded') <> 2 then
+         where event_type='superseded') <> 2
+     or (select count(*) from public.research_lot_quality_documents
+         where superseded_at is null and published_at is not null) <> 1 then
     raise exception 'replacement history cardinality is incorrect';
   end if;
 end;
