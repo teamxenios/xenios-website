@@ -33,6 +33,13 @@ const ROOT = process.cwd();
 const NOW = new Date("2026-07-27T04:15:34.000Z");
 const PRODUCTION_SHA = "b729c8ee1a357e0af95fe50a05989b2f662f7270";
 const HEAD_SHA = "12759c2567246ee83ed71aad9ffa4b517d31e8aa";
+const RESERVATION_SOURCE_SHA = "31b91f107cd2a54140d007267bb4cc02549e8404";
+const RESERVATION_SOURCE_PATH =
+  "supabase/research-inventory-reservation-commands.sql";
+const RESERVATION_SOURCE_BLOB =
+  "97b304881eb65c9517beae1b91e8dc39982a8e34";
+const pg16It =
+  process.env.CI || process.env.XENIOS_RUN_PG16_VERIFIER === "1" ? it : it.skip;
 const CONTROL_PLANE_FILES = [
   "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
   "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
@@ -53,6 +60,20 @@ const CONTROL_PLANE_FILES = [
   "server/release-control-plane.test.ts",
   "supabase/MIGRATIONS.md",
 ];
+
+function checkedInReservationSourceBytes(): Buffer {
+  const blob = execFileSync(
+    "git",
+    ["rev-parse", `HEAD:${RESERVATION_SOURCE_PATH}`],
+    { cwd: ROOT, encoding: "utf8" },
+  ).trim();
+  expect(blob).toBe(RESERVATION_SOURCE_BLOB);
+  return execFileSync(
+    "git",
+    ["cat-file", "blob", `HEAD:${RESERVATION_SOURCE_PATH}`],
+    { cwd: ROOT, encoding: "buffer" },
+  );
+}
 
 function ownershipFixture(
   productionBaseSha: string,
@@ -643,6 +664,11 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(
               "2542f8da508792f39abe7dea5a5686ade5c9e5a3",
             );
+          } else if (
+            path === RESERVATION_SOURCE_PATH
+          ) {
+            expect(sourceSha).toBe(RESERVATION_SOURCE_SHA);
+            return checkedInReservationSourceBytes();
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
@@ -651,6 +677,11 @@ describe("migration DAG validator", () => {
             encoding: "buffer",
           });
         },
+        managedBytes: (path) =>
+          execFileSync("git", ["show", `:${path}`], {
+            cwd: ROOT,
+            encoding: "buffer",
+          }),
       }),
     ).toEqual([]);
   });
@@ -738,6 +769,278 @@ describe("migration DAG validator", () => {
       }).map((issue) => issue.code),
     ).toContain("MIGRATION_SOURCE_UNAVAILABLE");
   });
+
+  it("binds a distinct managed migration path to the reviewed source blob", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    const reservation = dag.migrations.find(
+      (migration) => migration.id === "research_inventory_reservation_commands",
+    );
+    expect(reservation).toMatchObject({
+      path: "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+      sourceSha: RESERVATION_SOURCE_SHA,
+      sourcePath: RESERVATION_SOURCE_PATH,
+      appliedToProduction: false,
+      managedMigrationId: "PENDING",
+    });
+    expect(reservation?.checksum.value).toBe(
+      "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005",
+    );
+
+    const source = checkedInReservationSourceBytes();
+    const managed = execFileSync("git", ["show", `:${reservation!.path}`], {
+      cwd: ROOT,
+      encoding: "buffer",
+    });
+    expect(managed.equals(source)).toBe(true);
+
+    const mismatchIssues = validateMigrationDag(dag, {
+      repoRoot: ROOT,
+      expectedBaselineSha: PRODUCTION_SHA,
+      canonicalBytes: (sourceSha, path) => {
+        if (path === RESERVATION_SOURCE_PATH) {
+          expect(sourceSha).toBe(RESERVATION_SOURCE_SHA);
+          return checkedInReservationSourceBytes();
+        }
+        return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
+          cwd: ROOT,
+          encoding: "buffer",
+        });
+      },
+      managedBytes: (path) =>
+        path === reservation!.path
+          ? Buffer.from("not-the-reviewed-migration")
+          : execFileSync("git", ["show", `:${path}`], {
+              cwd: ROOT,
+              encoding: "buffer",
+            }),
+    });
+    expect(mismatchIssues.map((issue) => issue.code)).toContain(
+      "MANAGED_MIGRATION_SOURCE_MISMATCH",
+    );
+  });
+
+  it("rejects unsafe or unpinned migration source paths", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    const reservation = dag.migrations.find(
+      (migration) => migration.id === "research_inventory_reservation_commands",
+    )!;
+    reservation.sourcePath = "..\\candidate.sql";
+    delete reservation.sourceSha;
+    expect(
+      validateMigrationDag(dag, {
+        checkFiles: false,
+        expectedBaselineSha: PRODUCTION_SHA,
+      }).map((issue) => issue.code),
+    ).toEqual(
+      expect.arrayContaining([
+        "MIGRATION_SOURCE_PATH",
+        "MIGRATION_SOURCE_PATH_WITHOUT_SHA",
+        "PENDING_MIGRATION_SOURCE_SHA",
+      ]),
+    );
+  });
+
+  it("records reservation release evidence without changing the accepted source", () => {
+    const managed = execFileSync(
+      "git",
+      [
+        "show",
+        ":supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+      ],
+      { cwd: ROOT, encoding: "buffer" },
+    );
+    const source = checkedInReservationSourceBytes();
+    const verifier = readFileSync(
+      resolve(ROOT, "supabase/verify-research-inventory-reservation-commands.sql"),
+      "utf8",
+    );
+    const rollback = readFileSync(
+      resolve(
+        ROOT,
+        "supabase/production/research-inventory-reservation-commands-rollback-notes.md",
+      ),
+      "utf8",
+    );
+
+    expect(managed.equals(source)).toBe(true);
+    expect(verifier).toContain("reservation forced-RLS count mismatch");
+    expect(verifier).toContain("reservation service RPC grant mismatch");
+    expect(verifier).toContain("reservation rows found before enablement");
+    expect(rollback).toContain(
+      "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005",
+    );
+  });
+
+  pg16It(
+    "executes the complete production verifier against canonical production-shaped PostgreSQL",
+    () => {
+      const container = `xenios-pr95-verifier-${process.pid}`;
+      const applySql = (source: string | Buffer): string =>
+        execFileSync(
+          "docker",
+          [
+            "exec",
+            "-i",
+            container,
+            "psql",
+            "-X",
+            "-U",
+            "postgres",
+            "-d",
+            "postgres",
+            "-v",
+            "ON_ERROR_STOP=1",
+          ],
+          {
+            input: source,
+            encoding: "utf8",
+            maxBuffer: 32 * 1024 * 1024,
+            stdio: ["pipe", "pipe", "pipe"],
+          },
+        );
+
+      try {
+        execFileSync(
+          "docker",
+          [
+            "run",
+            "--rm",
+            "-d",
+            "--name",
+            container,
+            "-e",
+            "POSTGRES_PASSWORD=postgres",
+            "postgres:16",
+          ],
+          { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
+        );
+        execFileSync(
+          "docker",
+          [
+            "exec",
+            container,
+            "sh",
+            "-c",
+            "until pg_isready -U postgres >/dev/null 2>&1; do sleep 1; done",
+          ],
+          { encoding: "utf8", timeout: 30_000, stdio: ["ignore", "pipe", "pipe"] },
+        );
+
+        applySql(
+          readFileSync(
+            resolve(
+              ROOT,
+              "supabase/verification/research-inventory-lot-coa-disposable-bootstrap.sql",
+            ),
+          ),
+        );
+        applySql(`
+          create schema if not exists storage;
+          create table if not exists storage.buckets (
+            id text primary key,
+            name text not null,
+            public boolean not null default false,
+            file_size_limit bigint,
+            allowed_mime_types text[]
+          );
+          alter table public.research_product_variants
+            add column if not exists shipping_class text;
+          create table if not exists public.research_members (
+            id uuid primary key default gen_random_uuid()
+          );
+          create table if not exists public.research_applications (
+            id uuid primary key default gen_random_uuid()
+          );
+          create table if not exists public.research_notification_outbox (
+            id uuid primary key default gen_random_uuid()
+          );
+          create table if not exists public.research_required_inputs (
+            id uuid primary key default gen_random_uuid()
+          );
+          create table if not exists public.research_domain_launch_controls (
+            id uuid primary key default gen_random_uuid()
+          );
+          create table if not exists public.care_capabilities (
+            capability_key text primary key,
+            state text not null
+          );
+          insert into public.care_capabilities (capability_key, state)
+          values ('care', 'disabled')
+          on conflict (capability_key) do update set state = excluded.state;
+        `);
+        applySql(
+          readFileSync(
+            resolve(ROOT, "supabase/research-inventory-lot-coa-admin.sql"),
+          ),
+        );
+        const beforeMigration = applySql(`
+          select
+            (to_regclass('public.research_lot_reservations') is null)::int
+              as reservations_absent,
+            (to_regclass('public.research_lot_reservation_allocations') is null)::int
+              as allocations_absent;
+        `);
+        expect(beforeMigration).toContain("reservations_absent");
+        expect(beforeMigration).toMatch(/\b1\s+\|\s+1\b/);
+        const migration = readFileSync(
+          resolve(
+            ROOT,
+            "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+          ),
+        );
+        applySql(migration);
+        applySql(migration);
+
+        const afterMigration = applySql(`
+          select
+            count(*) filter (
+              where to_regclass(format('public.%I', table_name)) is not null
+            )::int as reservation_tables_present
+          from (
+            values
+              ('research_lot_reservations'),
+              ('research_lot_reservation_allocations'),
+              ('research_inventory_reservation_events')
+          ) as expected(table_name);
+
+          select
+            (select count(*) from public.research_lot_reservations)::int
+              as reservation_rows,
+            (select count(*) from public.research_lot_reservation_allocations)::int
+              as allocation_rows,
+            (select count(*) from public.research_inventory_reservation_events)::int
+              as event_rows;
+        `);
+        expect(afterMigration).toMatch(/\b3\b/);
+        expect(afterMigration).toMatch(/\b0\s+\|\s+0\s+\|\s+0\b/);
+
+        const verifier = readFileSync(
+          resolve(ROOT, "supabase/verify-research-inventory-reservation-commands.sql"),
+        );
+        const output = applySql(verifier);
+        expect(output).toContain("research_lot_reservations");
+        expect(output).toContain("applications");
+        expect(output).toContain("care_disabled_rows");
+        expect(verifier.toString("utf8")).not.toContain(
+          "research_membership_applications",
+        );
+        expect(verifier.toString("utf8")).not.toContain("enabled = false");
+      } finally {
+        try {
+          execFileSync("docker", ["rm", "-f", container], {
+            stdio: ["ignore", "ignore", "ignore"],
+          });
+        } catch {
+          // The container may already be gone after a startup failure.
+        }
+      }
+    },
+    120_000,
+  );
 });
 
 describe("route uniqueness validator", () => {

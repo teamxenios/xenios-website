@@ -1,0 +1,54 @@
+# Research inventory reservation command rollback
+
+## Release identity
+
+- Exact integration/production base:
+  `57533983e4c11e6549e6e8bf9d94f50cd46005af`
+- Exact PR #92 source base:
+  `ef158672ce9ec3524f8bb64841b285a76e37a54b`
+- Website 6-accepted production-compatible PR #92 domain source:
+  `31b91f107cd2a54140d007267bb4cc02549e8404`
+- Accepted source and managed migration canonical Git-blob SHA-256:
+  `4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005`
+- Managed migration candidate:
+  `20260727160000_research_inventory_reservation_commands.sql`
+- The superseded managed copy at integration head
+  `10f1f15a4e0de0ec4c7b28befc9c2e3e45ed0061` failed transactionally
+  before object creation against the Wave 2-only production shape. Read-only
+  follow-up confirmed zero reservation tables, functions, rows, and migration
+  ledger entries from that attempt.
+- Integration, merge, deployed, Render, and managed-application identities are
+  recorded only after Website 6 accepts the exact integration candidate.
+
+## Routine recovery
+
+The migration is additive and idempotent. If application is interrupted,
+re-run only the exact reviewed managed migration, then run the read-only
+`supabase/verify-research-inventory-reservation-commands.sql` verifier. Do not
+edit the migration, relax grants, or create a parallel reservation model.
+
+If the application release regresses, restore the exact pre-release Render
+deployment while retaining the inert additive schema and append-only
+reservation history. Checkout remains disabled, and no route invokes the
+reservation port in this release.
+
+## Production invariants
+
+- The migration creates no product, variant, lot, COA, reservation,
+  allocation, movement, event, cart, order, payment, role, provider, or Care
+  record.
+- All three reservation tables force RLS, have zero policies and browser
+  grants, and expose only SELECT to `service_role`.
+- Only the four reviewed fixed-search-path command RPCs are executable by
+  `service_role`; helper and trigger functions remain ungranted.
+- Reserve, release, finalize, and expire remain atomic, versioned, idempotent,
+  timestamp-bound, and serialized with Product Control and exact-lot readiness.
+- Care remains disabled, isolated, and absent from ordinary navigation.
+- Never invoke a mutating reservation RPC merely to test production.
+
+## Destructive rollback
+
+Dropping reservation objects is not a routine rollback. It requires an
+explicit destructive-data decision, verified exports, exact count evidence,
+and separate review. Never use `CASCADE`. Until that authority exists, retain
+the schema and roll back only application deployment.
