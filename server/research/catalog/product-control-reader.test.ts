@@ -88,7 +88,7 @@ describe("live Product Control member readers", () => {
       status: "published",
       visibility: "public",
     });
-    expect(repository.get).toHaveBeenCalledTimes(1);
+    expect(repository.get).toHaveBeenCalledTimes(2);
   });
 
   it("resolves one exact public slug and fails closed for absent or ambiguous identity", async () => {
@@ -167,6 +167,137 @@ describe("live Product Control member readers", () => {
     await expect(
       changedVersionReader.readDetail("product-a"),
     ).resolves.toBeNull();
+  });
+
+  it("rechecks exact parent and child snapshots without losing microseconds", async () => {
+    const subMillisecondSummary = summary({
+      updatedAt: "2026-07-27T00:00:00.123001Z",
+    });
+    const subMillisecondRepository = {
+      list: vi.fn(async () => [subMillisecondSummary]),
+      get: vi.fn(async () =>
+        detail({ updatedAt: "2026-07-27T00:00:00.123999Z" }),
+      ),
+    };
+    const subMillisecondReader = new LiveProductControlReader(
+      subMillisecondRepository,
+    );
+    await expect(subMillisecondReader.readCatalog()).resolves.toEqual([]);
+
+    const baseDetail = detail({
+      prices: [
+        {
+          id: "price-a",
+          productId: "product-a",
+          variantId: "variant-a",
+          audience: "member",
+          amountCents: 14900,
+          currency: "USD",
+          effectiveAt: AT,
+          expiresAt: null,
+          status: "active",
+          approvalNote: "Approved",
+          version: 1,
+          createdBy: "admin",
+          approvedBy: "reviewer",
+          createdAt: AT,
+          updatedAt: AT,
+        },
+      ],
+    });
+    const changedPrice = detail({
+      prices: [
+        {
+          ...baseDetail.prices[0],
+          amountCents: 19900,
+          version: 2,
+        },
+      ],
+    });
+    const priceMutationRepository = {
+      list: vi.fn(async () => [summary()]),
+      get: vi
+        .fn()
+        .mockResolvedValueOnce(baseDetail)
+        .mockResolvedValueOnce(changedPrice),
+    };
+    const priceMutationReader = new LiveProductControlReader(
+      priceMutationRepository,
+    );
+    await expect(priceMutationReader.readCatalog()).resolves.toEqual([]);
+    const detailPriceMutationRepository = {
+      list: vi.fn(async () => [summary()]),
+      get: vi
+        .fn()
+        .mockResolvedValueOnce(baseDetail)
+        .mockResolvedValueOnce(changedPrice),
+    };
+    await expect(
+      new LiveProductControlReader(
+        detailPriceMutationRepository,
+      ).readDetail("product-a"),
+    ).resolves.toBeNull();
+
+    for (const changed of [
+      detail({
+        variants: [
+          {
+            id: "variant-a",
+            productId: "product-a",
+            sku: "CHANGED-SKU",
+            catalogNumber: null,
+            label: "Changed",
+            strength: null,
+            size: null,
+            format: null,
+            presentation: null,
+            shippingClass: null,
+            memberEligible: true,
+            status: "approved",
+            active: true,
+            sortOrder: 0,
+            createdAt: AT,
+            updatedAt: AT,
+          },
+        ],
+      }),
+      detail({
+        media: [
+          {
+            id: "media-a",
+            productId: "product-a",
+            kind: "primary_image",
+            state: "approved",
+            storageKey: "product-a/media-a/product-a.webp",
+            filename: "product-a.webp",
+            contentType: "image/webp",
+            sizeBytes: 100,
+            altText: "Changed media",
+            sortOrder: 0,
+            approvedBy: "reviewer",
+            createdAt: AT,
+            updatedAt: AT,
+          },
+        ],
+      }),
+      detail({
+        content: {
+          ...detail().content,
+          overview: "Changed content",
+        },
+      }),
+    ]) {
+      const repository = {
+        list: vi.fn(async () => [summary()]),
+        get: vi
+          .fn()
+          .mockResolvedValueOnce(detail())
+          .mockResolvedValueOnce(changed),
+      };
+      await expect(
+        new LiveProductControlReader(repository).readCatalog(),
+      ).resolves.toEqual([]);
+    }
   });
 });
 

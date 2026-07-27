@@ -17,21 +17,28 @@ This focused unit adds a route-free member catalog and product-detail
 projection over the live Product Control repository.
 
 - `LiveProductControlReader` reads only published, public, active products,
-  binds summary/detail ID and normalized slug to an unchanged Product Control
-  summary snapshot, and fails substitution, drift, or duplicate identity closed.
+  binds summary/detail ID and normalized slug to an exact Product Control
+  summary snapshot, then re-reads and compares every projected parent, content,
+  variant, price, and media field before accepting it. Raw timestamps are
+  compared exactly, preserving PostgreSQL microseconds.
 - `ProductControlCurrentPriceResolver` returns one exact approved, active,
   effective price for the server-authorized purchase audience.
 - Member projections resolve one exact active, version-valid per-product
   required-input map before rendering family, SKU, media, or storage-backed
   fields. Missing, rejected, expired, superseded, duplicated, or cross-product
-  bindings suppress the dependent field or product.
+  bindings suppress the dependent field or product. Canonical IDs must be
+  unique across bindings, and verification must exist at or before the exact
+  server evaluation instant.
 - Member projections include approved active variants/SKUs, normalized current
   price identity, canonical required-input/readiness versions, Website 4's
   injected availability, and one exact current lot/COA presentation fact.
 - Approved media is exposed only through an injected presentation using the
-  closed Xenios CDN policy or the exact production Storage origin with one
-  short-lived JWT-shaped token and future expiry. Credentials, fragments,
-  unknown query fields, private/unapproved hosts, and stale signatures fail closed.
+  closed Xenios CDN policy or the exact production Storage origin, exact
+  `research-product-media` bucket, and exact approved
+  `<productId>/<mediaId>/<safeFilename>` object path with one short-lived
+  JWT-shaped token and future expiry. Credentials, fragments, traversal,
+  mismatched objects, unknown query fields, private/unapproved hosts, and stale
+  signatures fail closed.
   Product Control private Storage keys, audit history, required-input values,
   inventory quantities, lots, locations, and providers remain server-only.
 - The accepted cart product-selection contract is consumed unchanged as the
@@ -76,8 +83,8 @@ The production integration must inject:
 
 ## Validation
 
-- Focused readers/projection/adapter/UI tests: 5 files / 32 tests passed
-- Full test suite: 201 files / 3,624 tests passed
+- Focused readers/projection/adapter/UI tests: 5 files / 33 tests passed
+- Full test suite: 201 files / 3,625 tests passed
 - TypeScript: passed
 - Production build: passed (existing chunk-size warning only)
 - Diff/allowlist/secret/leak checks: passed

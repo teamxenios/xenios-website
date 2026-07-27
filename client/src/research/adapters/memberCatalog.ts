@@ -74,6 +74,7 @@ function safeMediaHref(
   policy: unknown,
   expiresAt: unknown,
   evaluatedAt: string,
+  expectedObjectPath: string,
 ): value is string {
   if (!text(value) || !canonicalIso(evaluatedAt)) return false;
   try {
@@ -103,9 +104,22 @@ function safeMediaHref(
       return false;
     }
     const keys = Array.from(url.searchParams.keys());
+    const prefix =
+      "/storage/v1/object/sign/research-product-media/";
+    if (!url.pathname.startsWith(prefix)) return false;
+    let decodedObjectPath: string;
+    try {
+      decodedObjectPath = decodeURIComponent(url.pathname.slice(prefix.length));
+    } catch {
+      return false;
+    }
     return (
       url.origin === "https://yvzeduaxbwgcwllhywff.supabase.co" &&
-      url.pathname.startsWith("/storage/v1/object/sign/") &&
+      decodedObjectPath === expectedObjectPath &&
+      !decodedObjectPath.includes("\\") &&
+      decodedObjectPath.split("/").every(
+        (segment) => segment !== "." && segment !== "..",
+      ) &&
       keys.length === 1 &&
       keys[0] === "token" &&
       url.searchParams.getAll("token").length === 1 &&
@@ -162,11 +176,16 @@ function media(
     !isObject(value) ||
     !text(value.mediaId) ||
     value.productId !== productId ||
+    !text(value.filename) ||
+    !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(value.filename) ||
+    value.filename === "." ||
+    value.filename === ".." ||
     !safeMediaHref(
       value.href,
       value.policy,
       value.expiresAt,
       evaluatedAt,
+      `${productId}/${value.mediaId}/${value.filename}`,
     ) ||
     !text(value.altText) ||
     !text(value.sourceVersion)
@@ -178,6 +197,7 @@ function media(
     productId,
     href: value.href,
     altText: value.altText,
+    filename: value.filename,
     sourceVersion: value.sourceVersion,
     policy: value.policy as MemberCatalogMediaPresentation["policy"],
     expiresAt: value.expiresAt as string | null,

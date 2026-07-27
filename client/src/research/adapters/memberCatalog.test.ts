@@ -23,6 +23,7 @@ const media = {
   productId: "product-a",
   href: "https://media.xeniostechnology.com/media-a",
   altText: "Product A package",
+  filename: "product-a.webp",
   sourceVersion: "media-v1",
   policy: "xenios_public_media_v1",
   expiresAt: null,
@@ -170,12 +171,12 @@ describe("member catalog browser adapter", () => {
       { href: "https://tracking.example.com/object" },
       { href: "https://media.xeniostechnology.com/object?token=secret" },
       {
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/object?token=header.payload.signature&download=1",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/media-a/product-a.webp?token=header.payload.signature&download=1",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T22:05:00.000Z",
       },
       {
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/object?token=header.payload.signature",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/media-a/product-a.webp?token=header.payload.signature",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T21:59:59.000Z",
       },
@@ -195,6 +196,47 @@ describe("member catalog browser adapter", () => {
         }),
       ).toEqual({ ok: false, code: "invalid_projection" });
     }
+    for (const path of [
+      "private-coa/product-a/media-a/product-a.webp",
+      "research-product-media/product-b/media-a/product-a.webp",
+      "research-product-media/product-a/media-b/product-a.webp",
+      "research-product-media/product-a/media-a/%2e%2e%2fproduct-a.webp",
+    ]) {
+      expect(
+        adaptMemberCatalog({
+          ...base,
+          catalog: {
+            ...base.catalog,
+            items: [
+              {
+                ...card,
+                media: {
+                  ...media,
+                  href: `https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/${path}?token=header.payload.signature`,
+                  policy: "xenios_signed_storage_v1",
+                  expiresAt: "2026-07-26T22:05:00.000Z",
+                },
+              },
+            ],
+          },
+        }),
+      ).toEqual({ ok: false, code: "invalid_projection" });
+    }
+    const signedCard = {
+      ...card,
+      media: {
+        ...media,
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/media-a/product-a.webp?token=header.payload.signature",
+        policy: "xenios_signed_storage_v1",
+        expiresAt: "2026-07-26T22:05:00.000Z",
+      },
+    };
+    expect(
+      adaptMemberCatalog({
+        ...base,
+        catalog: { ...base.catalog, items: [signedCard] },
+      }),
+    ).toMatchObject({ ok: true });
     expect(
       adaptMemberCatalog({
         ...base,

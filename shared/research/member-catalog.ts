@@ -27,6 +27,7 @@ export type MemberCatalogMediaPresentation = {
   productId: string;
   href: string;
   altText: string;
+  filename: string;
   sourceVersion: string;
   policy: "xenios_public_media_v1" | "xenios_signed_storage_v1";
   expiresAt: string | null;

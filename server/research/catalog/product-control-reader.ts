@@ -43,15 +43,9 @@ function publiclyPublished(product: AdminProductSummary): boolean {
   );
 }
 
-function sameTimestamp(left: string | null, right: string | null): boolean {
-  if (left === null || right === null) return left === right;
-  const leftMs = parseProductControlTimestamp(left);
-  return leftMs !== null && leftMs === parseProductControlTimestamp(right);
-}
-
 function sameSummarySnapshot(
   summary: AdminProductSummary,
-  detail: AdminProductDetail,
+  detail: AdminProductSummary,
 ): boolean {
   return (
     detail.id === summary.id &&
@@ -72,9 +66,49 @@ function sameSummarySnapshot(
     detail.variantCount === summary.variantCount &&
     detail.approvedVariantCount === summary.approvedVariantCount &&
     detail.missingInputCount === summary.missingInputCount &&
-    sameTimestamp(detail.updatedAt, summary.updatedAt) &&
-    sameTimestamp(detail.publishedAt, summary.publishedAt)
+    detail.updatedAt === summary.updatedAt &&
+    detail.publishedAt === summary.publishedAt
   );
+}
+
+function detailSnapshotToken(detail: AdminProductDetail): string {
+  const variants = [...detail.variants].sort((left, right) =>
+    left.id.localeCompare(right.id),
+  );
+  const prices = [...detail.prices].sort((left, right) =>
+    left.id.localeCompare(right.id),
+  );
+  const media = [...detail.media].sort((left, right) =>
+    left.id.localeCompare(right.id),
+  );
+  return JSON.stringify({
+    summary: {
+      id: detail.id,
+      productCode: detail.productCode,
+      slug: detail.slug,
+      displayName: detail.displayName,
+      canonicalName: detail.canonicalName,
+      aliases: detail.aliases,
+      lane: detail.lane,
+      category: detail.category,
+      classification: detail.classification,
+      status: detail.status,
+      active: detail.active,
+      visibility: detail.visibility,
+      availability: detail.availability,
+      commerceApproval: detail.commerceApproval,
+      qualityDocumentState: detail.qualityDocumentState,
+      variantCount: detail.variantCount,
+      approvedVariantCount: detail.approvedVariantCount,
+      missingInputCount: detail.missingInputCount,
+      updatedAt: detail.updatedAt,
+      publishedAt: detail.publishedAt,
+    },
+    content: detail.content,
+    variants,
+    prices,
+    media,
+  });
 }
 
 /**
@@ -85,6 +119,26 @@ export class LiveProductControlReader
   implements ProductCatalogReader, ProductDetailReader
 {
   constructor(private readonly repository: ProductControlReadRepository) {}
+
+  private async readStableDetail(
+    summary: AdminProductSummary,
+  ): Promise<AdminProductDetail | null> {
+    const first = await this.repository.get(summary.id);
+    if (
+      first === null ||
+      !publiclyPublished(first) ||
+      !sameSummarySnapshot(summary, first)
+    ) {
+      return null;
+    }
+    const second = await this.repository.get(summary.id);
+    return second !== null &&
+      publiclyPublished(second) &&
+      sameSummarySnapshot(summary, second) &&
+      detailSnapshotToken(first) === detailSnapshotToken(second)
+      ? second
+      : null;
+  }
 
   async readCatalog(): Promise<AdminProductDetail[]> {
     const summaries = await this.repository.list({
@@ -107,14 +161,43 @@ export class LiveProductControlReader
         slugCounts.get(product.slug.toLowerCase()) === 1,
     );
     const details = await Promise.all(
-      exact.map((product) => this.repository.get(product.id)),
+      exact.map((product) => this.readStableDetail(product)),
     );
-    return details.filter(
-      (product, index): product is AdminProductDetail =>
-        product !== null &&
-        publiclyPublished(product) &&
-        sameSummarySnapshot(exact[index], product),
-    );
+    const verification = await this.repository.list({
+      status: "published",
+      visibility: "public",
+    });
+    const verificationIdCounts = new Map<string, number>();
+    const verificationSlugCounts = new Map<string, number>();
+    for (const candidate of verification.filter(publiclyPublished)) {
+      verificationIdCounts.set(
+        candidate.id,
+        (verificationIdCounts.get(candidate.id) ?? 0) + 1,
+      );
+      const candidateSlug = candidate.slug.trim().toLowerCase();
+      verificationSlugCounts.set(
+        candidateSlug,
+        (verificationSlugCounts.get(candidateSlug) ?? 0) + 1,
+      );
+    }
+    return details.filter((product, index): product is AdminProductDetail => {
+      if (product === null) return false;
+      const summary = exact[index];
+      const matches = verification.filter(
+        (candidate) =>
+          publiclyPublished(candidate) &&
+          candidate.id === summary.id &&
+          candidate.slug.trim().toLowerCase() ===
+            summary.slug.trim().toLowerCase(),
+      );
+      return (
+        matches.length === 1 &&
+        verificationIdCounts.get(summary.id) === 1 &&
+        verificationSlugCounts.get(summary.slug.trim().toLowerCase()) === 1 &&
+        sameSummarySnapshot(summary, matches[0]) &&
+        sameSummarySnapshot(matches[0], product)
+      );
+    });
   }
 
   async readDetail(slug: string): Promise<AdminProductDetail | null> {
@@ -131,10 +214,22 @@ export class LiveProductControlReader
         product.slug.toLowerCase() === normalized,
     );
     if (matches.length !== 1) return null;
-    const detail = await this.repository.get(matches[0].id);
-    return detail !== null &&
-      publiclyPublished(detail) &&
-      sameSummarySnapshot(matches[0], detail)
+    const summary = matches[0];
+    const detail = await this.readStableDetail(summary);
+    if (detail === null) return null;
+    const verification = await this.repository.list({
+      query: normalized,
+      status: "published",
+      visibility: "public",
+    });
+    const verifiedMatches = verification.filter(
+      (product) =>
+        publiclyPublished(product) &&
+        product.slug.trim().toLowerCase() === normalized,
+    );
+    return verifiedMatches.length === 1 &&
+      sameSummarySnapshot(summary, verifiedMatches[0]) &&
+      sameSummarySnapshot(verifiedMatches[0], detail)
       ? detail
       : null;
   }
@@ -172,6 +267,20 @@ export function parseProductControlTimestamp(value: string): number | null {
   }
   const milliseconds = Date.parse(value);
   return Number.isFinite(milliseconds) ? milliseconds : null;
+}
+
+export function parseProductControlTimestampMicros(
+  value: string,
+): number | null {
+  const milliseconds = parseProductControlTimestamp(value);
+  const match =
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,6}))?(Z|[+-]\d{2}:\d{2})$/.exec(
+      value,
+    );
+  if (milliseconds === null || match === null) return null;
+  const micros = Number((match[7] ?? "").padEnd(6, "0"));
+  const epochMicros = milliseconds * 1000 + (micros % 1000);
+  return Number.isSafeInteger(epochMicros) ? epochMicros : null;
 }
 
 export class ProductControlCurrentPriceResolver

@@ -29,6 +29,7 @@ import type { DomainReadiness, RequiredInput } from "@shared/research/required-i
 import { selectCartProduct } from "../commerce/cart-product-selection";
 import {
   parseProductControlTimestamp,
+  parseProductControlTimestampMicros,
   ProductControlCurrentPriceResolver,
   type CurrentPriceResolver,
 } from "./product-control-reader";
@@ -54,6 +55,7 @@ function safePublicMediaHref(
   policy: "xenios_public_media_v1" | "xenios_signed_storage_v1",
   expiresAt: string | null,
   evaluatedAt: string,
+  expectedObjectPath: string,
 ): boolean {
   try {
     const url = new URL(value);
@@ -79,9 +81,22 @@ function safePublicMediaHref(
       expiresAt === null ? null : parseProductControlTimestamp(expiresAt);
     const evaluatedMs = parseProductControlTimestamp(evaluatedAt);
     const keys = Array.from(url.searchParams.keys());
+    const prefix =
+      "/storage/v1/object/sign/research-product-media/";
+    if (!url.pathname.startsWith(prefix)) return false;
+    let decodedObjectPath: string;
+    try {
+      decodedObjectPath = decodeURIComponent(url.pathname.slice(prefix.length));
+    } catch {
+      return false;
+    }
     return (
       url.origin === "https://yvzeduaxbwgcwllhywff.supabase.co" &&
-      url.pathname.startsWith("/storage/v1/object/sign/") &&
+      decodedObjectPath === expectedObjectPath &&
+      !decodedObjectPath.includes("\\") &&
+      decodedObjectPath.split("/").every(
+        (segment) => segment !== "." && segment !== "..",
+      ) &&
       keys.length === 1 &&
       keys[0] === "token" &&
       url.searchParams.getAll("token").length === 1 &&
@@ -113,31 +128,47 @@ type ProductDisplayBindings = Record<ProductDisplayBindingKey, boolean>;
 function resolvedProductDisplayBindings(
   productId: string,
   items: readonly RequiredInput[],
+  evaluatedAt: string,
 ): ProductDisplayBindings {
+  const evaluatedMicros = parseProductControlTimestampMicros(evaluatedAt);
+  const entries = PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding) => {
+    const active = items.filter(
+      (item) =>
+        item.key === binding.key &&
+        item.domain === binding.domain &&
+        item.recordType === binding.recordType &&
+        item.recordId === productId &&
+        item.currentState !== "superseded",
+    );
+    const item = active.length === 1 ? active[0] : null;
+    const verifiedAt =
+      item?.verifiedAt === null || item?.verifiedAt === undefined
+        ? null
+        : parseProductControlTimestampMicros(item.verifiedAt);
+    const verified =
+      item !== null &&
+      evaluatedMicros !== null &&
+      Boolean(item.id.trim()) &&
+      Boolean(item.fieldPath.trim()) &&
+      Number.isInteger(item.version) &&
+      item.version > 0 &&
+      (item.currentState === "not_applicable" ||
+        (item.currentState === "verified" &&
+          Boolean(item.verifiedBy?.trim()) &&
+          verifiedAt !== null &&
+          verifiedAt <= evaluatedMicros));
+    return { key: binding.key, id: verified ? item!.id : null, verified };
+  });
+  const resolvedIds = entries.flatMap((entry) =>
+    entry.id === null ? [] : [entry.id],
+  );
+  if (new Set(resolvedIds).size !== resolvedIds.length) {
+    return Object.fromEntries(
+      PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map(({ key }) => [key, false]),
+    ) as ProductDisplayBindings;
+  }
   return Object.fromEntries(
-    PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding) => {
-      const active = items.filter(
-        (item) =>
-          item.key === binding.key &&
-          item.domain === binding.domain &&
-          item.recordType === binding.recordType &&
-          item.recordId === productId &&
-          item.currentState !== "superseded",
-      );
-      const item = active.length === 1 ? active[0] : null;
-      const verified =
-        item !== null &&
-        Boolean(item.id.trim()) &&
-        Boolean(item.fieldPath.trim()) &&
-        Number.isInteger(item.version) &&
-        item.version > 0 &&
-        (item.currentState === "not_applicable" ||
-          (item.currentState === "verified" &&
-            Boolean(item.verifiedBy?.trim()) &&
-            item.verifiedAt !== null &&
-            parseProductControlTimestamp(item.verifiedAt) !== null));
-      return [binding.key, verified];
-    }),
+    entries.map(({ key, verified }) => [key, verified]),
   ) as ProductDisplayBindings;
 }
 
@@ -218,26 +249,39 @@ function safeMedia(
       Boolean(item.altText.trim()),
   );
   if (media === null) return null;
+  if (
+    !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(media.filename) ||
+    media.filename === "." ||
+    media.filename === ".."
+  ) {
+    return null;
+  }
+  const expectedObjectPath = `${product.id}/${media.id}/${media.filename}`;
   const presentation = exactlyOne(
     source.mediaPresentations,
     (item) =>
       item.productId === product.id &&
       item.mediaId === media.id &&
-      item.altText.trim() === media.altText.trim(),
+      item.altText.trim() === media.altText.trim() &&
+      item.filename === media.filename,
   );
   return presentation !== null &&
     presentation.sourceVersion.trim() &&
+    (presentation.policy !== "xenios_signed_storage_v1" ||
+      media.storageKey === expectedObjectPath) &&
     safePublicMediaHref(
       presentation.href,
       presentation.policy,
       presentation.expiresAt,
       source.evaluatedAt,
+      expectedObjectPath,
     )
     ? {
         mediaId: presentation.mediaId,
         productId: presentation.productId,
         href: presentation.href,
         altText: presentation.altText,
+        filename: presentation.filename,
         sourceVersion: presentation.sourceVersion,
         policy: presentation.policy,
         expiresAt:
@@ -276,6 +320,7 @@ function variantProjection(
   input: MemberCatalogProjectionInput,
   resolver: CurrentPriceResolver,
   safePresentationAvailable: boolean,
+  displayBindingsReady: boolean,
 ): MemberCatalogVariant {
   const price = currentPrice(resolver, product, variant, input.source);
   const inventory = exactlyOne(
@@ -288,7 +333,9 @@ function variantProjection(
     variant.id,
     input.source,
   );
-  const selectionResult = !safePresentationAvailable
+  const selectionResult = !displayBindingsReady
+    ? { ok: false as const, code: "required_inputs_incomplete" as const }
+    : !safePresentationAvailable
       ? { ok: false as const, code: "media_unapproved" as const }
       : lotCoa === null ||
           !["verified", "not_applicable"].includes(lotCoa.state)
@@ -418,6 +465,7 @@ function projectProduct(
   const bindings = resolvedProductDisplayBindings(
     product.id,
     input.requiredInputs,
+    input.source.evaluatedAt,
   );
   if (!bindings["products.family"]) return null;
   const nontransactional =
@@ -433,7 +481,14 @@ function projectProduct(
           product,
           input.source.audienceEligibility!.audience,
         ).map((variant) =>
-          variantProjection(product, variant, input, resolver, media !== null),
+          variantProjection(
+            product,
+            variant,
+            input,
+            resolver,
+            media !== null,
+            allProductDisplayBindingsResolved(bindings),
+          ),
         );
   const state = displayState(product, variants, bindings);
   const lowestPrice = variants

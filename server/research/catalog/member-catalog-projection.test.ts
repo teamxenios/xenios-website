@@ -147,7 +147,7 @@ function product(
         productId: id,
         kind: "primary_image",
         state: "approved",
-        storageKey: `private/${id}.webp`,
+        storageKey: `${id}/${id}-media/${id}.webp`,
         filename: `${id}.webp`,
         contentType: "image/webp",
         sizeBytes: 100,
@@ -187,6 +187,7 @@ function source(products: AdminProductDetail[]): MemberCatalogProjectionInput {
         productId: item.id,
         href: `https://media.xeniostechnology.com/${media.id}`,
         altText: media.altText,
+        filename: media.filename,
         sourceVersion: "media-v1",
         policy: "xenios_public_media_v1" as const,
         expiresAt: null,
@@ -381,6 +382,31 @@ describe("member catalog projection", () => {
       )?.storageInformation,
     ).toBeNull();
 
+    const futureVerified = source([product()]);
+    futureVerified.requiredInputs = futureVerified.requiredInputs.map(
+      (item) =>
+        item.key === "product_content.storage_information"
+          ? {
+              ...item,
+              verifiedAt: "2026-07-26T22:00:00.000001+00:00",
+            }
+          : item,
+    );
+    const futureDetail = projectMemberProductDetail(
+      futureVerified,
+      "product-a",
+    );
+    expect(futureDetail?.storageInformation).toBeNull();
+    expect(futureDetail?.selection).toBeNull();
+    expect(futureDetail?.variants[0]?.selection).toBeNull();
+
+    const reusedId = source([product()]);
+    reusedId.requiredInputs = reusedId.requiredInputs.map((item, index) =>
+      index === 1 ? { ...item, id: reusedId.requiredInputs[0].id } : item,
+    );
+    expect(projectMemberCatalog(reusedId).items).toEqual([]);
+    expect(projectMemberProductDetail(reusedId, "product-a")).toBeNull();
+
     const notApplicable = source([product()]);
     notApplicable.requiredInputs = notApplicable.requiredInputs.map((item) => ({
       ...item,
@@ -426,7 +452,7 @@ describe("member catalog projection", () => {
     staleSigned.source.mediaPresentations = [
       {
         ...staleSigned.source.mediaPresentations[0],
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/object?token=header.payload.signature",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/product-a-media/product-a.webp?token=header.payload.signature",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T21:59:59+00:00",
       },
@@ -437,18 +463,36 @@ describe("member catalog projection", () => {
     unknownSignedQuery.source.mediaPresentations = [
       {
         ...unknownSignedQuery.source.mediaPresentations[0],
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/object?token=header.payload.signature&download=1",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/product-a-media/product-a.webp?token=header.payload.signature&download=1",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T22:05:00+00:00",
       },
     ];
     expect(projectMemberCatalog(unknownSignedQuery).items[0].media).toBeNull();
 
+    for (const path of [
+      "private-coa/product-a/product-a-media/product-a.webp",
+      "research-product-media/product-b/product-a-media/product-a.webp",
+      "research-product-media/product-a/other-media/product-a.webp",
+      "research-product-media/product-a/product-a-media/%2e%2e%2fproduct-a.webp",
+    ]) {
+      const wrongObject = source([product()]);
+      wrongObject.source.mediaPresentations = [
+        {
+          ...wrongObject.source.mediaPresentations[0],
+          href: `https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/${path}?token=header.payload.signature`,
+          policy: "xenios_signed_storage_v1",
+          expiresAt: "2026-07-26T22:05:00+00:00",
+        },
+      ];
+      expect(projectMemberCatalog(wrongObject).items[0].media).toBeNull();
+    }
+
     const validSigned = source([product()]);
     validSigned.source.mediaPresentations = [
       {
         ...validSigned.source.mediaPresentations[0],
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/object?token=header.payload.signature",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/product-a-media/product-a.webp?token=header.payload.signature",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T22:05:00+00:00",
       },

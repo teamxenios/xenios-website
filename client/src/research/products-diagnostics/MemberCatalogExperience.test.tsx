@@ -46,6 +46,7 @@ const catalog: MemberCatalog = {
         productId: "product-a",
         href: "https://media.xeniostechnology.com/media-a",
         altText: "Alpha package",
+        filename: "alpha.webp",
         sourceVersion: "media-v1",
         policy: "xenios_public_media_v1",
         expiresAt: null,
