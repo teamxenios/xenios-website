@@ -67,4 +67,22 @@ describe("recovery route chrome isolation", () => {
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
     expect(view.querySelector('a[href="/research"]')).toBeNull();
   });
+
+  it.each([1440, 720, 375, 320])(
+    "keeps the routed signed-out member catalog gate to one main and one H1 at %dpx",
+    (width) => {
+      Object.defineProperty(window, "innerWidth", {
+        configurable: true,
+        value: width,
+      });
+
+      const view = renderAt("/research/member/products");
+      const main = view.querySelector("main");
+
+      expect(view.querySelectorAll("main")).toHaveLength(1);
+      expect(view.querySelectorAll("h1")).toHaveLength(1);
+      expect(main?.querySelector('[data-testid="form-research-access"]')).toBeTruthy();
+      expect(main?.querySelector("h1")?.textContent).toBe("This area is under review.");
+    },
+  );
 });
