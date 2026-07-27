@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { MemberCatalog } from "@shared/research/member-catalog";
 import { useResearch } from "../../core";
 import { getMemberCatalog } from "../../adapters/memberCatalogApi";
@@ -24,11 +24,14 @@ export default function Products() {
   const [catalog, setCatalog] = useState<MemberCatalog>(EMPTY_CATALOG);
   const [state, setState] = useState<MemberCatalogSurfaceState>("loading");
   const [errorMessage, setErrorMessage] = useState<string>();
+  const requestGeneration = useRef(0);
 
   const load = useCallback(async () => {
+    const generation = ++requestGeneration.current;
     setState("loading");
     setErrorMessage(undefined);
     const result = await getMemberCatalog(memberToken);
+    if (generation !== requestGeneration.current) return;
     if (result.kind === "ok") {
       const adapted = adaptMemberCatalog(result.data);
       if (adapted.ok) {
@@ -53,6 +56,9 @@ export default function Products() {
 
   useEffect(() => {
     void load();
+    return () => {
+      requestGeneration.current += 1;
+    };
   }, [load]);
 
   return (

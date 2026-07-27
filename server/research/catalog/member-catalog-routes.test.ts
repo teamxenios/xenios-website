@@ -3,6 +3,7 @@ import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import type { MemberCatalog } from "@shared/research/member-catalog";
 import type { MemberRow } from "../member-auth";
+import { registerResearchApi } from "../index";
 import { registerMemberCatalogApi } from "./member-catalog-routes";
 import type { MemberCatalogService } from "./member-catalog-service";
 
@@ -46,6 +47,15 @@ function appWith(
   return app;
 }
 
+function expectPrivateHeaders(
+  headers: Record<string, string | string[] | undefined>,
+): void {
+  expect(headers["cache-control"]).toBe("no-store");
+  expect(headers.pragma).toBe("no-cache");
+  expect(headers["referrer-policy"]).toBe("no-referrer");
+  expect(headers["x-robots-tag"]).toBe("noindex, nofollow");
+}
+
 describe("member catalog routes", () => {
   it("sets private headers before the member guard and registers list/detail paths", async () => {
     const app = appWith(
@@ -61,10 +71,60 @@ describe("member catalog routes", () => {
     ]) {
       const response = await request(app).get(path);
       expect(response.status, path).toBe(401);
-      expect(response.headers["cache-control"]).toBe("no-store");
-      expect(response.headers.pragma).toBe("no-cache");
-      expect(response.headers["referrer-policy"]).toBe("no-referrer");
-      expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
+      expectPrivateHeaders(response.headers);
+    }
+  });
+
+  it("is not shadowed by the earlier shared-password gateway in production order", async () => {
+    const previous = {
+      password: process.env.RESEARCH_ACCESS_PASSWORD,
+      secret: process.env.RESEARCH_SESSION_SECRET,
+      public: process.env.RESEARCH_PUBLIC,
+    };
+    process.env.RESEARCH_ACCESS_PASSWORD = "review-password";
+    process.env.RESEARCH_SESSION_SECRET = "review-secret";
+    delete process.env.RESEARCH_PUBLIC;
+    try {
+      const app = express();
+      registerResearchApi(app);
+      registerMemberCatalogApi(
+        app,
+        { list: vi.fn(), detail: vi.fn() } as unknown as MemberCatalogService,
+        (_req, res) => {
+          res.status(401).json({ ok: false, code: "sign_in_required" });
+        },
+      );
+      for (const method of ["get", "head"] as const) {
+        for (const path of [
+          "/api/research/member/products",
+          "/api/research/member/products/example",
+        ]) {
+          const response = await request(app)[method](path);
+          expect(response.status, `${method.toUpperCase()} ${path}`).toBe(401);
+          expect(response.body, `${method.toUpperCase()} ${path}`).toMatchObject(
+            method === "get"
+              ? { ok: false, code: "sign_in_required" }
+              : {},
+          );
+          expectPrivateHeaders(response.headers);
+        }
+      }
+    } finally {
+      if (previous.password === undefined) {
+        delete process.env.RESEARCH_ACCESS_PASSWORD;
+      } else {
+        process.env.RESEARCH_ACCESS_PASSWORD = previous.password;
+      }
+      if (previous.secret === undefined) {
+        delete process.env.RESEARCH_SESSION_SECRET;
+      } else {
+        process.env.RESEARCH_SESSION_SECRET = previous.secret;
+      }
+      if (previous.public === undefined) {
+        delete process.env.RESEARCH_PUBLIC;
+      } else {
+        process.env.RESEARCH_PUBLIC = previous.public;
+      }
     }
   });
 

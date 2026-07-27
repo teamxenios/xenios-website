@@ -26,6 +26,9 @@ the accepted Product Control projection. It registers:
 Both endpoints set no-store/no-cache/no-referrer/noindex headers before the
 canonical active-member guard. They derive the purchase audience from the
 guard-attached durable member record, never from query/body/email input.
+The earlier shared-password gateway explicitly passes signed-out GET/HEAD
+requests for this exact route family to the downstream guard, so it cannot
+shadow those private headers.
 
 The production service reads only published/public/active Product Control
 records, canonical required-input/readiness records, current lot

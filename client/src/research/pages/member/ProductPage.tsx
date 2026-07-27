@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "wouter";
 import type { MemberProductDetail } from "@shared/research/member-catalog";
 import { useResearch } from "../../core";
@@ -15,15 +15,25 @@ export default function ProductPage() {
   const [product, setProduct] = useState<MemberProductDetail | null>(null);
   const [state, setState] = useState<MemberCatalogSurfaceState>("loading");
   const [errorMessage, setErrorMessage] = useState<string>();
+  const requestGeneration = useRef(0);
 
   const load = useCallback(async () => {
+    const generation = ++requestGeneration.current;
     setState("loading");
     setProduct(null);
     setErrorMessage(undefined);
     const result = await getMemberProductDetail(memberToken, slug);
+    if (generation !== requestGeneration.current) return;
     if (result.kind === "ok") {
       const adapted = adaptMemberProductDetail(result.data);
       if (adapted.ok) {
+        if (
+          adapted.product.slug.trim().toLowerCase() !==
+          slug.trim().toLowerCase()
+        ) {
+          setState("unavailable");
+          return;
+        }
         setProduct(adapted.product);
         setState("ok");
       } else if (adapted.code === "not_found") {
@@ -47,6 +57,9 @@ export default function ProductPage() {
 
   useEffect(() => {
     void load();
+    return () => {
+      requestGeneration.current += 1;
+    };
   }, [load]);
 
   return (
