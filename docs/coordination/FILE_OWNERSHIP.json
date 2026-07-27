@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T19:30:00Z",
+  "generatedAt": "2026-07-27T20:00:00Z",
   "productionBaseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
   "lanes": [
     {
@@ -15,8 +15,8 @@
       "owner": "Website 2",
       "lane": "release-manager",
       "state": "ACTIVE",
-      "activeUnit": "PR #99 post-deploy fix-forward: add the missing main landmark to the shared locked Research password gate.",
-      "branch": "fix/research-password-gate-main-landmark",
+      "activeUnit": "Publish the exact Website 5 persistent-cart ownership lease after PR #101 post-deploy acceptance.",
+      "branch": "agent/website5-persistent-cart-ownership-lease",
       "headSha": null
     },
     {
@@ -38,9 +38,9 @@
     {
       "owner": "Website 5",
       "lane": "wave3-persistent-cart",
-      "state": "WAITING_FOR_WEBSITE_2_ASSIGNMENT",
-      "activeUnit": "No write scope until Website 2 supplies an exact current base and allowlist.",
-      "branch": null,
+      "state": "ACTIVE",
+      "activeUnit": "Persistent-cart command contract and persistence kernel only; no routes, checkout, reservations, orders, payments, provider execution, catalog authority, or production application.",
+      "branch": "feature/website-5-wave3-persistent-cart",
       "headSha": null
     },
     {
@@ -208,6 +208,23 @@
         "supabase/research-inventory-lot-coa-admin.sql",
         "supabase/verification/research-inventory-lot-coa-admin.verify.sql",
         "supabase/verification/research-inventory-lot-coa-disposable-bootstrap.sql"
+      ]
+    },
+    {
+      "id": "OWNER-W5-PERSISTENT-CART",
+      "owner": "Website 5",
+      "lane": "wave3-persistent-cart",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "docs/coordination/WEBSITE_5_REMAINING_SCOPE.md",
+        "docs/coordination/WEBSITE_5_WAVE3_PERSISTENT_CART_HANDOFF.md",
+        "scripts/verify-research-persistent-cart.mjs",
+        "server/research/commerce/persistence/persistent-cart.test.ts",
+        "server/research/commerce/persistence/persistent-cart.ts",
+        "shared/research/persistent-cart.ts",
+        "supabase/migrations/20260727200000_research_persistent_cart.sql",
+        "supabase/verify-research-persistent-cart.sql"
       ]
     }
   ],
