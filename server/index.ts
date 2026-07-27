@@ -15,6 +15,11 @@ import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
 import { registerMemberCatalogApi } from "./research/catalog/member-catalog-routes";
 import { buildMemberCatalogProductionService } from "./research/catalog/member-catalog-service";
+import { registerPersistentCartApi } from "./research/commerce/persistent-cart-routes";
+import {
+  buildMemberCartSelectionResolver,
+  buildPersistentCartRepository,
+} from "./research/commerce/persistent-cart-production";
 import {
   buildWebsite3ProductionDependencies,
   registerProductsDiagnosticsApi,
@@ -199,11 +204,14 @@ registerCommerceApi(app, commerceDependencies, {
   requireMember: adaptGuard(requireMember),
   requireAdmin: adaptGuard(requireSupabaseAdmin),
 });
-registerMemberCatalogApi(
-  app,
-  buildMemberCatalogProductionService(),
+const memberCatalogService = buildMemberCatalogProductionService();
+registerMemberCatalogApi(app, memberCatalogService, requireActiveMember);
+registerPersistentCartApi(app, {
+  carts: buildPersistentCartRepository(),
+  selections: buildMemberCartSelectionResolver(memberCatalogService),
   requireActiveMember,
-);
+  now: () => new Date(),
+});
 
 // Website 3 products and diagnostics. Uses the same active-member/admin guards,
 // canonical catalog readiness, canonical lot/quality tables, private Supabase
