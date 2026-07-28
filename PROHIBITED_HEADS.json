@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-28T23:35:00Z",
+  "heads": [
+    {
+      "sha": "5188f774fade0ba8ac8217cf6cb9d92f20bea80d",
+      "pullRequest": 105,
+      "state": "PROHIBITED",
+      "reason": "Independent QA found three HIGH issues: invented SKU projection, unapproved supplier branding, and member-only pages marked indexable.",
+      "allowedNextAction": "Existing Website 3 source owner may create a bounded replacement head; direct merge and Phase 2 transfer are prohibited."
+    },
+    {
+      "sha": "de5c6fb596d1dd4b2368419dd4acfd657f5c7fdc",
+      "pullRequest": 106,
+      "state": "PROHIBITED_SUPERSEDED",
+      "reason": "Superseded by corrected head a5c2b21e779117e1f785850188b38bad2e1ba2d8.",
+      "allowedNextAction": "None."
+    },
+    {
+      "sha": "51a67326ed69f6795433026b2933e7d22acd2d9e",
+      "pullRequest": 104,
+      "state": "PROHIBITED_DIRECT_MERGE",
+      "reason": "Failed PostgreSQL readiness verification, unapplied migrations, migration-history drift, missing rollback, missing durable-admin input, and inherited scope that must be split into accepted units.",
+      "allowedNextAction": "Evidence-only preflight and bounded rebuilds on current main."
+    },
+    {
+      "sha": "f646708d45d4a6e4e7acf4e2653e44746baef184",
+      "pullRequest": 80,
+      "state": "PROHIBITED",
+      "reason": "Previously recorded seven HIGH findings.",
+      "allowedNextAction": "Replacement only."
+    },
+    {
+      "sha": "12759c2567246ee83ed71aad9ffa4b517d31e8aa",
+      "pullRequest": 85,
+      "state": "PROHIBITED_SUPERSEDED",
+      "reason": "Superseded rejected member catalog head.",
+      "allowedNextAction": "None."
+    },
+    {
+      "sha": "30b0f6b708c936e2ba1631e4a57f1c5b8c2c54c4",
+      "pullRequest": 85,
+      "state": "PROHIBITED_SUPERSEDED",
+      "reason": "Superseded rejected member catalog head.",
+      "allowedNextAction": "None."
+    },
+    {
+      "sha": "0472905dff10c45239b7f95834e1086c3b3c5f59",
+      "pullRequest": 85,
+      "state": "PROHIBITED_SUPERSEDED",
+      "reason": "Superseded rejected member catalog head.",
+      "allowedNextAction": "None."
+    }
+  ],
+  "notProhibitedButNotAccepted": [
+    {
+      "sha": "a5c2b21e779117e1f785850188b38bad2e1ba2d8",
+      "pullRequest": 106,
+      "state": "CURRENT_SOURCE_AWAITING_INDEPENDENT_QA"
+    },
+    {
+      "sha": "97ee1895763ea9c243de7365f224660d83773966",
+      "pullRequest": 103,
+      "state": "CURRENT_SOURCE_AWAITING_INDEPENDENT_QA"
+    }
+  ]
+}
