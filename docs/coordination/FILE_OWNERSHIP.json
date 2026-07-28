@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T20:00:00Z",
+  "generatedAt": "2026-07-28T00:07:40Z",
   "productionBaseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
   "lanes": [
     {
@@ -15,8 +15,8 @@
       "owner": "Website 2",
       "lane": "release-manager",
       "state": "ACTIVE",
-      "activeUnit": "Publish the exact Website 5 persistent-cart ownership lease after PR #101 post-deploy acceptance.",
-      "branch": "agent/website5-persistent-cart-ownership-lease",
+      "activeUnit": "Authorize exact non-clinical takeover governance and per-lane status check-ins without runtime, migration, or data scope.",
+      "branch": "agent/release-control-session-checkin-ownership",
       "headSha": null
     },
     {
@@ -50,6 +50,46 @@
       "activeUnit": "Review exact frozen SHAs and deployed identities; no domain writing.",
       "branch": null,
       "headSha": null
+    },
+    {
+      "owner": "Website 3",
+      "lane": "v3-products-diagnostics-checkin",
+      "state": "ACTIVE",
+      "activeUnit": "Record status and evidence for the bounded V3 products and diagnostics unit only.",
+      "branch": "feature/website-3-v3-products-catalog",
+      "headSha": "5188f774fade0ba8ac8217cf6cb9d92f20bea80d"
+    },
+    {
+      "owner": "Website 4",
+      "lane": "nonclinical-operations-affiliates-checkin",
+      "state": "ACTIVE",
+      "activeUnit": "Record status and evidence for PR #106 exact frozen head de5c6fb596d1dd4b2368419dd4acfd657f5c7fdc only; runtime and migration files are not authorized by this check-in lease.",
+      "branch": "feature/website-4-takeover-operations-fulfillment-affiliates",
+      "headSha": "de5c6fb596d1dd4b2368419dd4acfd657f5c7fdc"
+    },
+    {
+      "owner": "Website 6",
+      "lane": "final-qa-checkin",
+      "state": "ACTIVE",
+      "activeUnit": "Record final-QA status and evidence only; no application or domain writing.",
+      "branch": null,
+      "headSha": null
+    },
+    {
+      "owner": "Website 2",
+      "lane": "supabase-render-checkin",
+      "state": "ACTIVE",
+      "activeUnit": "Record Supabase and Render status and evidence only; production authority remains with the release manager.",
+      "branch": null,
+      "headSha": null
+    },
+    {
+      "owner": "Website 5",
+      "lane": "care-paused-checkin",
+      "state": "ACTIVE",
+      "activeUnit": "Record Care paused status only; no Care implementation, migration, route, or production scope.",
+      "branch": null,
+      "headSha": null
     }
   ],
   "rules": [
@@ -75,6 +115,79 @@
         "supabase/MIGRATIONS.md",
         "package.json",
         "package-lock.json"
+      ]
+    },
+    {
+      "id": "OWNER-W2-TAKEOVER-GOVERNANCE",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/coordination/CURRENT_TAKEOVER_STATUS.md",
+        "docs/coordination/SESSION_ASSIGNMENTS.md",
+        "docs/coordination/INTEGRATION_QUEUE.md",
+        "docs/coordination/FOUNDER_HEARTBEAT.md"
+      ]
+    },
+    {
+      "id": "OWNER-W2-SESSION-CHECKINS",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/coordination/session-checkins/release-coordinator.md"
+      ]
+    },
+    {
+      "id": "OWNER-W3-PRODUCTS-DIAGNOSTICS-CHECKIN",
+      "owner": "Website 3",
+      "lane": "v3-products-diagnostics-checkin",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/coordination/session-checkins/products-and-diagnostics.md"
+      ]
+    },
+    {
+      "id": "OWNER-W4-OPERATIONS-AFFILIATES-CHECKIN",
+      "owner": "Website 4",
+      "lane": "nonclinical-operations-affiliates-checkin",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/coordination/session-checkins/operations-and-affiliates.md"
+      ]
+    },
+    {
+      "id": "OWNER-W6-FINAL-QA-CHECKIN",
+      "owner": "Website 6",
+      "lane": "final-qa-checkin",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/coordination/session-checkins/final-qa.md"
+      ]
+    },
+    {
+      "id": "OWNER-W5-CARE-PAUSED-CHECKIN",
+      "owner": "Website 5",
+      "lane": "care-paused-checkin",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/coordination/session-checkins/care-paused.md"
+      ]
+    },
+    {
+      "id": "OWNER-W2-SUPABASE-RENDER-CHECKIN",
+      "owner": "Website 2",
+      "lane": "supabase-render-checkin",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/coordination/session-checkins/supabase-and-render.md"
       ]
     },
     {
@@ -235,6 +348,7 @@
     "Review-only lanes own no write patterns.",
     "A prohibited or frozen head may be corrected only by its owning lane.",
     "Website 2 alone owns shared integration, migration application, merge, deployment, and rollback decisions.",
+    "Takeover governance and session check-in rules are exact-path status/evidence leases only and authorize no runtime, migration, data, provider, Care implementation, or production action.",
     "A new unit must start from the exact externally observed current production SHA supplied by Website 2; checked-in productionBaseSha remains the policy-origin baseline."
   ]
 }
