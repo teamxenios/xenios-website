@@ -7,7 +7,7 @@ const source = readFileSync(resolve(__dirname, "suppliers.ts"), "utf8");
 describe("supplier operations boundary", () => {
   it("uses RPC-only commands and reauthorizing read projections", () => {
     expect(source).toContain('.rpc("research_fulfillment_onboard_supplier"');
-    expect(source).toContain('.rpc("research_fulfillment_assign_supplier_user"');
+    expect(source).toMatch(/\.rpc\(\s*"research_fulfillment_assign_supplier_user"/);
     expect(source).toContain('.rpc("research_fulfillment_configure_offer"');
     expect(source).toContain('.rpc("research_fulfillment_record_settlement"');
     expect(source).toContain('"research_fulfillment_list_suppliers"');

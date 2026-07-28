@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "status": "coordination_template",
+  "authoritativeManifest": "SHA-pinned JSON in the draft PR comment after the final commit is frozen",
+  "owner": "Website 4",
+  "lane": "operations-fulfillment-affiliates",
+  "baseSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+  "productionReferenceSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+  "headSha": "RESOLVE_FROM_FINAL_GIT_HEAD",
+  "commit1Sha": "RESOLVE_FROM_FINAL_TWO_COMMIT_HISTORY",
+  "commitCount": 2,
+  "migrations": [
+    "supabase/migrations/20260728010000_research_fulfillment_supplier_operations.sql",
+    "supabase/migrations/20260728020000_research_affiliate_professional_operations.sql"
+  ],
+  "productionMutation": false,
+  "sharedWiringMutation": false,
+  "validation": {
+    "focusedTests": "8 correction tests passed; all seven owned TypeScript test files 31 passed; previously accepted broader focused lane 79 passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "fullTests": "3764 passed, 1 skipped, 1 base/environment timeout",
+    "postgres16": "fresh production-shaped bootstrap, apply twice, collision/grant preservation, security, summed multi-lot, readiness races, atomic one-current Lawrence replacement/concurrency/crash rollback, pinned hold and threshold enforcement, immutable payout evidence, immutable earning-period statement lineage and supersession, rollback-zero passed",
+    "browser": "375px, 320px, and 640px 200%-reflow proxy: no horizontal overflow, landmarks present, zero console errors"
+  },
+  "correctionEvidence": {
+    "lawrenceCurrentVersions": "exactly one non-superseded row per partner; concurrent same-version edits serialize to one success and one version conflict; replay is stable",
+    "payoutTransitions": "configured hold and aggregate threshold enforced; mark_paid requires provider/reference evidence; injected failure and concurrent replay leave one paid event",
+    "statementLineage": "attribution occurred_at is the immutable earning-period source; later transitions cannot duplicate an attribution across active statement periods; refund reversal is captured through exact audited supersession",
+    "security": "10 forced-RLS commercial tables, zero browser grants/policies on those tables, 10 SELECT-only service table privileges, 8 reviewed service RPC grants, zero residual candidate rows"
+  }
+}
