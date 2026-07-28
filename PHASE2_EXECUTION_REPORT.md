@@ -21,7 +21,7 @@ approval.
 | Session | Actual scope | Classification | Disposition |
 |---|---|---|---|
 | `019f94ed…` | Phase 2 package hardening and credential incident | `EVIDENCE_ONLY` | Freeze; resume for control-package or credential-closure work only |
-| `019f9b2b-347a…` | PR 105 read-only integration reconciliation | `EVIDENCE_ONLY` | Freeze; transfer decision to Phase 2 release manager |
+| `019f9b2b-347a…` | PR 105 source ownership and integration reconciliation | `CURRENT_SOURCE` | Resume now as sole PR 105 correction writer |
 | `019f9b2c-565a…` | PR 103 persistent cart source | `CURRENT_SOURCE` | Resume for QA findings; no migration or merge |
 | `019f9b2c-ec9b…` | PR 105 independent QA | `EVIDENCE_ONLY` | Resume after replacement head |
 | `019f9b2a…` | PR 105 release sequencing | `EVIDENCE_ONLY` | Freeze; sequence adopted by release manager |

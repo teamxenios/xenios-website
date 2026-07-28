@@ -55,7 +55,7 @@
     },
     {
       "sessionId": "019f9b2b-347a-7301-a777-1155a32f6022",
-      "actualScope": "Read-only PR 105 reconciliation against current main",
+      "actualScope": "Website 3 PR 105 source ownership plus read-only reconciliation against current main",
       "repositoryPath": "C:/Users/sboad/projects/wt-website-3-v3-products",
       "branch": "feature/website-3-v3-products-catalog",
       "headSha": "5188f774fade0ba8ac8217cf6cb9d92f20bea80d",
@@ -64,8 +64,8 @@
       "untrackedFiles": [],
       "openPullRequest": 105,
       "latestMeaningfulCommit": "5188f774fade0ba8ac8217cf6cb9d92f20bea80d feat(catalog): complete V3 product discovery surfaces",
-      "classification": "EVIDENCE_ONLY",
-      "disposition": "Keep reconciliation history frozen; implementation changes belong to the PR 105 source session and then the Phase 2 catalog lane."
+      "classification": "CURRENT_SOURCE",
+      "disposition": "Resume now as the sole PR 105 correction writer. After replacement exact-SHA acceptance, transfer accepted blobs through the release-manager lane."
     },
     {
       "sessionId": "019f9b2c-565a-7510-9aeb-0914815ebb42",
