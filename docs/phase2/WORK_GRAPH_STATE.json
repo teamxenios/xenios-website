@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-29T00:05:00Z",
+  "repository": "teamxenios/xenios-website",
+  "trustedBaseSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+  "terminalState": "LIVE_COMMIT_AND_POST_DEPLOY_CHECKS_VERIFIED",
+  "careClinicalPolicy": "DISABLED_PROHIBITED_OFF_GRAPH",
+  "nodes": [
+    {
+      "id": "P2-CONTROL-001",
+      "label": "Inventory seven sessions and serialize ownership",
+      "owner": "phase2-release-manager",
+      "state": "COMPLETE",
+      "evidence": [
+        "CURRENT_RUN_BASELINE.json",
+        "FILE_OWNERSHIP_LEDGER.csv",
+        "PROHIBITED_HEADS.json",
+        "PHASE2_EXECUTION_REPORT.md",
+        "https://github.com/teamxenios/xenios-website/pull/108"
+      ]
+    },
+    {
+      "id": "P2-W3-105-FIX",
+      "label": "Correct PR 105 three HIGH findings",
+      "ownerSessionId": "019f9b2b-347a-7301-a777-1155a32f6022",
+      "state": "AUTHORIZED",
+      "sourceSha": "5188f774fade0ba8ac8217cf6cb9d92f20bea80d",
+      "writeBoundary": "PR105 exact 16-path manifest only",
+      "prohibitedActions": [
+        "merge",
+        "production deploy",
+        "production data",
+        "migration",
+        "Care or clinical activation"
+      ]
+    },
+    {
+      "id": "P2-W6-105-QA",
+      "label": "Independent exact-SHA QA of replacement PR 105",
+      "ownerSessionId": "019f9b2c-ec9b-7cb3-a763-f8ac8eb7396f",
+      "state": "BLOCKED_BY_P2-W3-105-FIX",
+      "mode": "READ_ONLY"
+    },
+    {
+      "id": "P2-W6-103-QA",
+      "label": "Independent exact-SHA QA of PR 103 persistent cart",
+      "ownerSessionId": "019f9b2c-ec9b-7cb3-a763-f8ac8eb7396f",
+      "state": "AUTHORIZED_SERIAL_QUEUE_1",
+      "candidateSha": "97ee1895763ea9c243de7365f224660d83773966",
+      "mode": "READ_ONLY"
+    },
+    {
+      "id": "P2-W6-106-QA",
+      "label": "Independent exact-SHA QA of PR 106 operations",
+      "ownerSessionId": "019f9b2c-ec9b-7cb3-a763-f8ac8eb7396f",
+      "state": "AUTHORIZED_SERIAL_QUEUE_2",
+      "candidateSha": "a5c2b21e779117e1f785850188b38bad2e1ba2d8",
+      "mode": "READ_ONLY"
+    },
+    {
+      "id": "P2-W2-105-TRANSFER",
+      "label": "Create current-main PR 105 exact-path transfer",
+      "owner": "phase2-release-manager",
+      "state": "BLOCKED_BY_P2-W6-105-QA",
+      "baseShaPolicy": "CURRENT_ORIGIN_MAIN_AT_CREATION",
+      "excludeAncestry": [
+        "51a67326ed69f6795433026b2933e7d22acd2d9e"
+      ]
+    },
+    {
+      "id": "P2-W2-103-INTEGRATE",
+      "label": "Create current-main accepted PR 103 integration candidate",
+      "owner": "phase2-release-manager",
+      "state": "BLOCKED_BY_P2-W6-103-QA",
+      "migrationGate": "PRODUCTION_DATABASE_MIGRATIONS"
+    },
+    {
+      "id": "P2-W2-106-INTEGRATE",
+      "label": "Create current-main accepted PR 106 integration candidate",
+      "owner": "phase2-release-manager",
+      "state": "BLOCKED_BY_P2-W6-106-QA",
+      "migrationGate": "PRODUCTION_DATABASE_MIGRATIONS",
+      "actionGates": [
+        "FINANCIAL_FULFILLMENT_AND_COMMUNICATION_ACTIONS",
+        "REAL_CUSTOMER_OR_PRODUCTION_DATA"
+      ]
+    },
+    {
+      "id": "P2-ASSEMBLED-QA",
+      "label": "Full assembled nonclinical integration QA",
+      "ownerSessionId": "019f9b2c-ec9b-7cb3-a763-f8ac8eb7396f",
+      "state": "BLOCKED_BY_INTEGRATION_CANDIDATES",
+      "mode": "READ_ONLY"
+    },
+    {
+      "id": "P2-MERGE",
+      "label": "Merge accepted nonclinical work to main",
+      "owner": "phase2-release-manager",
+      "state": "BLOCKED_BY_P2-ASSEMBLED-QA"
+    },
+    {
+      "id": "P2-PROD-MIGRATIONS",
+      "label": "Apply approved production migrations",
+      "owner": "phase2-release-manager",
+      "state": "PROTECTED_APPROVAL_REQUIRED",
+      "gate": "PRODUCTION_DATABASE_MIGRATIONS"
+    },
+    {
+      "id": "P2-DEPLOY",
+      "label": "Deploy approved main commit and verify live website",
+      "owner": "phase2-release-manager",
+      "state": "BLOCKED_BY_MERGE_AND_APPLICABLE_APPROVALS"
+    }
+  ],
+  "edges": [
+    {"from": "P2-CONTROL-001", "to": "P2-W3-105-FIX"},
+    {"from": "P2-CONTROL-001", "to": "P2-W6-103-QA"},
+    {"from": "P2-W6-103-QA", "to": "P2-W6-106-QA"},
+    {"from": "P2-W3-105-FIX", "to": "P2-W6-105-QA"},
+    {"from": "P2-W6-105-QA", "to": "P2-W2-105-TRANSFER"},
+    {"from": "P2-W6-103-QA", "to": "P2-W2-103-INTEGRATE"},
+    {"from": "P2-W6-106-QA", "to": "P2-W2-106-INTEGRATE"},
+    {"from": "P2-W2-105-TRANSFER", "to": "P2-ASSEMBLED-QA"},
+    {"from": "P2-W2-103-INTEGRATE", "to": "P2-ASSEMBLED-QA"},
+    {"from": "P2-W2-106-INTEGRATE", "to": "P2-ASSEMBLED-QA"},
+    {"from": "P2-ASSEMBLED-QA", "to": "P2-MERGE"},
+    {"from": "P2-MERGE", "to": "P2-PROD-MIGRATIONS"},
+    {"from": "P2-MERGE", "to": "P2-DEPLOY"},
+    {"from": "P2-PROD-MIGRATIONS", "to": "P2-DEPLOY"}
+  ],
+  "oneWriterInvariants": [
+    "Session 019f9b2b-347a-7301-a777-1155a32f6022 is the only PR 105 correction writer.",
+    "Session 019f9b2c-ec9b-7cb3-a763-f8ac8eb7396f is read-only and serializes PR 103, PR 106, replacement PR 105, and assembled QA.",
+    "The Phase 2 catalog lane cannot write PR 105 paths before accepted exact-path transfer.",
+    "The release-manager lane alone creates integration candidates and performs merges.",
+    "Care and clinical nodes are excluded from this graph."
+  ]
+}
