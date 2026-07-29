@@ -54,10 +54,10 @@
     {
       "owner": "Website 3",
       "lane": "v3-products-diagnostics-checkin",
-      "state": "ACTIVE",
-      "activeUnit": "Record status and evidence for the bounded V3 products and diagnostics unit only.",
-      "branch": "feature/website-3-v3-products-catalog",
-      "headSha": "5188f774fade0ba8ac8217cf6cb9d92f20bea80d"
+      "state": "WAITING_FOR_WEBSITE_2_ASSIGNMENT",
+      "activeUnit": "Reconstruct the accepted sanitized 18-path V3 products and diagnostics unit as a fresh direct child of the deployed ownership-policy base.",
+      "branch": null,
+      "headSha": null
     },
     {
       "owner": "Website 4",
@@ -147,7 +147,24 @@
       "mode": "write",
       "state": "active",
       "patterns": [
-        "docs/coordination/session-checkins/products-and-diagnostics.md"
+        "client/src/research/pages/Supplements.tsx",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+        "client/src/research/products-diagnostics/V3SupplementCatalogExperience.test.tsx",
+        "client/src/research/products-diagnostics/V3SupplementCatalogExperience.tsx",
+        "docs/coordination/session-checkins/products-and-diagnostics.md",
+        "server/research/catalog/v3-catalog-search.test.ts",
+        "server/research/catalog/v3-catalog-search.ts",
+        "server/research/catalog/v3-preview-catalog.test.ts",
+        "server/research/catalog/v3-preview-catalog.ts",
+        "server/research/catalog/v3-product-seo.test.ts",
+        "server/research/catalog/v3-product-seo.ts",
+        "server/research/catalog/v3-supplement-catalog.test.ts",
+        "server/research/catalog/v3-supplement-catalog.ts",
+        "server/research/commerce/production-deps.test.ts",
+        "server/research/commerce/production-wiring.test.ts"
       ]
     },
     {
@@ -285,10 +302,6 @@
       "patterns": [
         "client/src/research/adapters/memberCatalog.test.ts",
         "client/src/research/adapters/memberCatalog.ts",
-        "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
-        "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
-        "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
-        "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
         "docs/coordination/WEBSITE_3_WAVE3_MEMBER_CATALOG_HANDOFF.md",
         "server/research/catalog/member-catalog-projection.test.ts",
         "server/research/catalog/member-catalog-projection.ts",
