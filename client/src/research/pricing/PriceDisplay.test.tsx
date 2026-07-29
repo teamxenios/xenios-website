@@ -15,7 +15,11 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { PriceDisplay } from "./PriceDisplay";
 import { PriceUnavailable } from "./PriceUnavailable";
-import { PRICE_UNAVAILABLE_COPY, type CustomerPriceDto } from "./format";
+import {
+  PRICE_UNAVAILABLE_COPY,
+  type CatalogPriceProjection,
+  type CustomerPriceDto,
+} from "./format";
 
 let root: Root | null = null;
 let container: HTMLDivElement | null = null;
@@ -37,7 +41,7 @@ function render(node: ReactNode): HTMLDivElement {
   return container!;
 }
 
-function memberPrice(overrides: Partial<CustomerPriceDto> = {}): CustomerPriceDto {
+function basePriceFields(): CustomerPriceDto {
   return {
     priceId: "price-1",
     productId: "product-1",
@@ -48,8 +52,13 @@ function memberPrice(overrides: Partial<CustomerPriceDto> = {}): CustomerPriceDt
     effectiveAt: "2026-07-01T00:00:00.000Z",
     expiresAt: null,
     version: 1,
-    ...overrides,
   };
+}
+
+// The priced branch of the projection nests the customer-safe fields under
+// .price, matching shared/research/pricing.ts CatalogPriceProjection.
+function memberPrice(overrides: Partial<CustomerPriceDto> = {}): CatalogPriceProjection {
+  return { state: "priced", price: { ...basePriceFields(), ...overrides } };
 }
 
 describe("PriceDisplay (valid price)", () => {
@@ -110,8 +119,15 @@ describe("PriceDisplay (the impossible-$0 invariant)", () => {
     });
   }
 
-  it("renders unavailable for an unsupported currency", () => {
-    const view = render(<PriceDisplay price={memberPrice({ currency: "EUR" })} />);
+  it("renders unavailable for an unsupported currency smuggled past the type", () => {
+    // Double assertion on purpose: the shared contract types currency as the
+    // literal "USD", so a non-USD value can only arrive the way a wire
+    // payload would, past the compiler. The formatter still rejects it.
+    const smuggled = {
+      state: "priced",
+      price: { ...basePriceFields(), currency: "EUR" },
+    } as unknown as CatalogPriceProjection;
+    const view = render(<PriceDisplay price={smuggled} />);
     expect(view.textContent).toBe(PRICE_UNAVAILABLE_COPY);
   });
 });

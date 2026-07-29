@@ -21,12 +21,12 @@ import {
   isPriceUnavailable,
   priceAriaPhrase,
   tryFormatCustomerAmountCents,
-  type CustomerPriceProjection,
+  type CatalogPriceProjection,
 } from "./format";
 
 export interface PriceDisplayProps {
   /** The authoritative projection. Absent means not loaded: renders unavailable. */
-  price?: CustomerPriceProjection | null;
+  price?: CatalogPriceProjection | null;
   /** True while the price is being fetched. */
   loading?: boolean;
   /** True when the fetch failed. Renders the unavailable state, never the error. */
@@ -69,20 +69,22 @@ export function PriceDisplay({
     return <PriceUnavailable testId={`${testId}-unavailable`} className={className} />;
   }
 
-  const formatted = tryFormatCustomerAmountCents(price.amountCents, price.currency);
+  // Narrowed to the "priced" state: the customer-safe fields live under .price.
+  const customerPrice = price.price;
+  const formatted = tryFormatCustomerAmountCents(customerPrice.amountCents, customerPrice.currency);
   if (!formatted.ok) {
     // The impossible-$0 invariant: a zero, negative, or malformed amount is
     // not a price, so it renders the honest unavailable state.
     return <PriceUnavailable testId={`${testId}-unavailable`} className={className} />;
   }
 
-  const qualifier = showAudience ? AUDIENCE_PHRASES[price.audience] : null;
+  const qualifier = showAudience ? AUDIENCE_PHRASES[customerPrice.audience] : null;
 
   return (
     <span data-testid={testId} className={className}>
       <span
         data-testid={`${testId}-amount`}
-        aria-label={priceAriaPhrase(formatted.text, price.audience, unitLabel)}
+        aria-label={priceAriaPhrase(formatted.text, customerPrice.audience, unitLabel)}
         className="tabular"
       >
         {formatted.text}

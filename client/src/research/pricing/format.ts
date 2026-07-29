@@ -17,13 +17,16 @@
 // Types mirroring shared/research/pricing.ts
 // ---------------------------------------------------------------------------
 // This branch's base commit does not contain shared/research/pricing.ts, so
-// these are minimal local structural types kept assignment-compatible with
-// the shared DTOs (a shared CustomerPrice assigns to CustomerPriceDto). At
-// integration, delete this section and import the shared types instead; no
-// other code in this folder should need to change.
+// these are minimal local structural types that mirror the shared contract
+// exactly: CustomerPriceDto mirrors CustomerPrice, and CatalogPriceProjection
+// mirrors CatalogPriceProjection (the priced branch nests the price fields
+// under .price with a state discriminant). A shared value assigns to the
+// local type. At integration, delete this section and re-export the shared
+// types under these names instead; no other code in this folder changes.
 
 export type CustomerPriceAudience = "retail" | "member" | "professional" | "wholesale";
 
+/** Mirrors shared/research/pricing.ts CustomerPrice. */
 export interface CustomerPriceDto {
   priceId: string;
   productId: string;
@@ -37,15 +40,22 @@ export interface CustomerPriceDto {
   version: number;
 }
 
-/** The authoritative not-available projection: no price exists, on purpose. */
+/** The authoritative not-available state: no price exists, on purpose. */
 export interface PriceNotAvailable {
   state: "not_currently_available";
 }
 
-export type CustomerPriceProjection = CustomerPriceDto | PriceNotAvailable;
+/**
+ * What a catalog surface may render: the customer-safe price fields nested
+ * under the "priced" state, or the explicit not-available state. There is no
+ * third shape and no default, so a missing price can never render as $0.
+ */
+export type CatalogPriceProjection =
+  | { state: "priced"; price: CustomerPriceDto }
+  | PriceNotAvailable;
 
-export function isPriceUnavailable(value: CustomerPriceProjection): value is PriceNotAvailable {
-  return "state" in value && value.state === "not_currently_available";
+export function isPriceUnavailable(value: CatalogPriceProjection): value is PriceNotAvailable {
+  return value.state === "not_currently_available";
 }
 
 // ---------------------------------------------------------------------------

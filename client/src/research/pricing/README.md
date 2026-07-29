@@ -8,7 +8,8 @@ The presentation layer for authoritative customer prices. Three pieces:
   Zero, negative, non-integer, unsafe, and non-USD inputs are rejected, so a
   $0.00 render is impossible by construction. Also carries the audience phrase
   table and `priceAriaPhrase`.
-- `PriceDisplay.tsx`: renders the price-or-unavailable projection. A valid price
+- `PriceDisplay.tsx`: renders the `CatalogPriceProjection` union
+  (`{ state: "priced", price }` or `{ state: "not_currently_available" }`). A valid price
   is a single text node carrying the full accessible phrase ("Price: $1,800.00
   per unit for members") with an optional visible audience qualifier. Anything
   else (explicit not-available, missing, malformed amount, error) renders the
@@ -18,8 +19,9 @@ The presentation layer for authoritative customer prices. Three pieces:
 
 ## Adoption notes for the catalog and detail lanes
 
-- Pass the authoritative projection straight through: `<PriceDisplay
-  price={variant.price} unitLabel="per unit" />`. Do not pre-format, do not
+- Pass the authoritative `CatalogPriceProjection` straight through:
+  `<PriceDisplay price={projection} unitLabel="per unit" />`. Do not unwrap the
+  priced branch, do not pre-format, do not
   divide by 100, and do not branch on `amountCents` yourself; the component owns
   every honest state, including the error and loading ones (`loading` and
   `error` props).
@@ -35,8 +37,23 @@ The presentation layer for authoritative customer prices. Three pieces:
 ## The shared-type swap
 
 This branch's base commit predates `shared/research/pricing.ts`, so `format.ts`
-defines minimal local structural types (`CustomerPriceDto`, `PriceNotAvailable`,
-`CustomerPriceProjection`) documented as mirroring the shared contract and kept
-assignment-compatible with it. At integration, delete that section of
-`format.ts` and re-export the shared types instead; component and test code in
-this folder needs no other change.
+defines minimal local structural types that mirror the shared contract exactly:
+`CustomerPriceDto` mirrors `CustomerPrice`, and `CatalogPriceProjection` mirrors
+`CatalogPriceProjection` (the priced branch nests the fields under `.price` with
+a `state` discriminant). At integration, replace that one section of `format.ts`
+with re-exports:
+
+```ts
+import type { CatalogPriceProjection, CustomerPriceAudience } from "@shared/research/pricing";
+export type { CatalogPriceProjection, CustomerPriceAudience } from "@shared/research/pricing";
+export type { CustomerPrice as CustomerPriceDto } from "@shared/research/pricing";
+export type PriceNotAvailable = Extract<CatalogPriceProjection, { state: "not_currently_available" }>;
+```
+
+(The import line matters: a `export type ... from` re-export alone does not put
+the names in module scope, and `format.ts` uses `CustomerPriceAudience` and
+`CatalogPriceProjection` in its own declarations.)
+
+and keep `isPriceUnavailable` as is. Component and test code in this folder
+needs no other change; this was verified with a strict scratch compile of these
+files against the real shared module.
