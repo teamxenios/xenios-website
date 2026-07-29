@@ -11,14 +11,18 @@ PUBLIC) and relocated byte-for-byte to the PRIVATE operations repository
 `teamxenios/xenios-private-operations`, under `supplier/`, together with a
 `PROVENANCE.md` recording source commit and hashes.
 
-Relocated files (former path in this repo, SHA-256 of the relocated copy):
+Relocated files (former path in this repo, SHA-256 of the relocated copy).
+Hashing basis: sha256 over the canonical git blob content (LF form) at source
+commit ca52b824158a51eff6d0b0b4d6abc202b1b90a05, reproducible with
+`git show ca52b824158a51eff6d0b0b4d6abc202b1b90a05:<path> | sha256sum`.
+Do not hash a Windows CRLF working-copy checkout; it yields different values.
 
-| Former path | SHA-256 |
+| Former path | SHA-256 (git blob, LF) |
 | --- | --- |
-| docs/research-commerce/signed-supplier-master-facts.json | cc2e6b3f4e1f8fb2851438cf84953d7526c151d6b22922631bb979413fd409aa |
-| docs/research-commerce/SIGNED_SUPPLIER_MASTER_INTAKE.md | 1237a3ff734df94114f1864654467b1872a893cb72fbb31477adce691700b2bd |
-| docs/research-commerce/PER_SKU_GATE_REPORT.json | 250a694a656f2fb4e28c1238596b58f11909a86e3732fbb4df0743b00c4839ce |
-| docs/research-commerce/PURCHASE_ELIGIBILITY_FINAL.md | 25ebdd770f7b3f6120421e4fb53123855251438d548a41d60c6fbbf6e095dbb5 |
+| docs/research-commerce/signed-supplier-master-facts.json | 0cec31914260e1c237e67754d250295197e9d20a5782a628e06cd7dc57acdb3a |
+| docs/research-commerce/SIGNED_SUPPLIER_MASTER_INTAKE.md | 54999b25e19db712631af6675eaf341d259fa972171fae5b999fb2c12379a701 |
+| docs/research-commerce/PER_SKU_GATE_REPORT.json | e1113af9a11c52a0412c860b1953a6f265b6388cfd18e813d16b28cb96cb1cf6 |
+| docs/research-commerce/PURCHASE_ELIGIBILITY_FINAL.md | 26d9a74981b6dcbd514864820e0b0c0edc12adb46ba2aa18d1cf56e78e0a078e |
 
 What stayed, and why: `SUPPLIER_FACT_RECONCILIATION.md`,
 `SUPPLIER_FACT_RECONCILIATION_FINAL.md`, `SUPPLIER_ATTACHMENT_VERIFICATION_REPORT.md`,
