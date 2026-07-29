@@ -2,22 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import type { CarePrescription } from "@shared/care/prescriptions";
 import { careApiFetch } from "./api";
 
 type State =
   | { kind: "loading" }
   | { kind: "disabled" }
   | { kind: "auth_required" }
-  | { kind: "ready"; prescriptions: CarePrescription[] }
+  | { kind: "ready"; hasPrescriptions: boolean }
   | { kind: "error" };
-
-const statusCopy: Record<CarePrescription["status"], string> = {
-  draft: "Clinician draft",
-  signed: "Signed by your clinician",
-  superseded: "Replaced by a newer prescription",
-  cancelled: "Cancelled",
-};
 
 export default function CarePrescriptionsPage() {
   const [state, setState] = useState<State>({ kind: "loading" });
@@ -33,7 +25,10 @@ export default function CarePrescriptionsPage() {
       if (!response.ok || body?.ok !== true || !Array.isArray(body.prescriptions)) {
         throw new Error("care_prescriptions_unavailable");
       }
-      setState({ kind: "ready", prescriptions: body.prescriptions });
+      setState({
+        kind: "ready",
+        hasPrescriptions: body.prescriptions.length > 0,
+      });
     } catch {
       setState({ kind: "error" });
     }
@@ -53,12 +48,14 @@ export default function CarePrescriptionsPage() {
         <p className="body-l text-ink-2 mt-8 max-w-[64ch]">
           This private area never invents medication details. Information appears
           only after an assigned human clinician signs a patient-specific record.
+          This frontend is read-only and exposes no prescription action.
         </p>
         <section
           className="mt-10 max-w-[920px]"
           aria-live="polite"
           aria-busy={state.kind === "loading"}
           aria-labelledby="care-prescription-status"
+          data-care-read-only="true"
         >
           <p className="mono-label text-pulse mb-3">CURRENT STATUS</p>
           <h2 id="care-prescription-status" className="h2">
@@ -66,8 +63,8 @@ export default function CarePrescriptionsPage() {
             {state.kind === "disabled" && "Prescription services are not currently available."}
             {state.kind === "auth_required" && "Sign in is required."}
             {state.kind === "error" && "Prescription status is temporarily unavailable."}
-            {state.kind === "ready" && state.prescriptions.length === 0 && "No prescription is recorded."}
-            {state.kind === "ready" && state.prescriptions.length > 0 && "Your prescription history"}
+            {state.kind === "ready" && !state.hasPrescriptions && "No prescription is recorded."}
+            {state.kind === "ready" && state.hasPrescriptions && "Restricted prescription records exist."}
           </h2>
           {state.kind === "loading" && (
             <div className="card mt-6"><p className="body-m text-ink-mute">No prescription or pharmacy action is enabled while this check is in progress.</p></div>
@@ -90,30 +87,19 @@ export default function CarePrescriptionsPage() {
               <button type="button" className="btn btn-secondary mt-6" onClick={() => void load()}>Try again</button>
             </div>
           )}
-          {state.kind === "ready" && state.prescriptions.length === 0 && (
+          {state.kind === "ready" && !state.hasPrescriptions && (
             <div className="card mt-6">
               <p className="body-m text-ink-2">No patient-specific prescription has been signed. Research membership and an appointment request do not imply treatment or prescribing.</p>
               <Link href="/care" className="btn btn-secondary mt-6">Review Care status</Link>
             </div>
           )}
-          {state.kind === "ready" && state.prescriptions.length > 0 && (
-            <div className="mt-6 grid grid-cols-1 gap-4">
-              {state.prescriptions.map((item) => (
-                <article className="card" key={item.id}>
-                  <p className="mono-label text-pulse">{statusCopy[item.status]}</p>
-                  <h3 className="h3 mt-3">{item.formulation}</h3>
-                  <dl className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
-                    <div><dt className="mono-label text-ink-mute">CONCENTRATION</dt><dd className="body-m mt-2">{item.concentration}</dd></div>
-                    <div><dt className="mono-label text-ink-mute">ROUTE</dt><dd className="body-m mt-2">{item.route}</dd></div>
-                    <div><dt className="mono-label text-ink-mute">QUANTITY</dt><dd className="body-m mt-2">{item.quantity}</dd></div>
-                    <div><dt className="mono-label text-ink-mute">REFILLS</dt><dd className="body-m mt-2">{item.refills}</dd></div>
-                  </dl>
-                  <div className="rule-top mt-6 pt-6">
-                    <p className="mono-label text-ink-mute">CLINICIAN DIRECTIONS</p>
-                    <p className="body-m text-ink-2 mt-3 whitespace-pre-wrap">{item.directions}</p>
-                  </div>
-                </article>
-              ))}
+          {state.kind === "ready" && state.hasPrescriptions && (
+            <div className="card mt-6">
+              <p className="body-m text-ink-2">
+                An authorized read returned restricted prescription records.
+                This frontend displays no prescription details and exposes no
+                prescribing, pharmacy, or clinical actions.
+              </p>
             </div>
           )}
         </section>
