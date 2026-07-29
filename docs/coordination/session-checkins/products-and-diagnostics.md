@@ -2,11 +2,11 @@
 
 SESSION: Website 3 — Products and Diagnostics
 
-EXACT BASE: `fc07a9b123806765b383203baf4b534dc3574ed2`
+EXACT BASE: `ca52b824158a51eff6d0b0b4d6abc202b1b90a05`
 
 EXACT HEAD: supplied in the SHA-pinned release manifest
 
-BRANCH: `feature/website-3-pr109-livebase-sanitized`
+BRANCH: `agent/website-3-pr120-post-ownership-reconstruction`
 
 WORKTREE: isolated clean reconstruction
 

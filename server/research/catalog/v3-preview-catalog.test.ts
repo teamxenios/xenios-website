@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   getV3PreviewProfile,
@@ -61,6 +63,26 @@ describe("V3 public-safe preview catalog", () => {
     expect(rendered).not.toMatch(/(?:[A-Z]:\\|\/(?:Users|home)\/)/);
     expect(rendered).not.toMatch(
       /sourceUrl|source_cost|internal_cost|supplier|wholesale|private_reference/i,
+    );
+  });
+
+  it("pins the release check-in to the trusted base and GitHub head branch", () => {
+    const checkIn = readFileSync(
+      resolve(
+        process.cwd(),
+        "docs/coordination/session-checkins/products-and-diagnostics.md",
+      ),
+      "utf8",
+    );
+
+    expect(checkIn).toContain(
+      "EXACT BASE: `ca52b824158a51eff6d0b0b4d6abc202b1b90a05`",
+    );
+    expect(checkIn).toContain(
+      "BRANCH: `agent/website-3-pr120-post-ownership-reconstruction`",
+    );
+    expect(checkIn).not.toMatch(
+      /fc07a9b123806765b383203baf4b534dc3574ed2|feature\/website-3-pr109-livebase-sanitized/,
     );
   });
 });
