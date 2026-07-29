@@ -5,8 +5,9 @@ Reconciles the revised signed supplier master (SHA-256
 against the legacy catalog (`server/research/products-data.ts`) and the prior
 reconciliation ([SUPPLIER_FACT_RECONCILIATION.md](SUPPLIER_FACT_RECONCILIATION.md)).
 
-Machine-readable output: [signed-supplier-master-facts.json](signed-supplier-master-facts.json)
-(165 facts, 65 attachments, 15 SKUs).
+Machine-readable output: signed-supplier-master-facts.json (165 facts, 65
+attachments, 15 SKUs), relocated to the private operations repository on
+2026-07-29 (see [SUPPLIER_DATA_RELOCATION.md](SUPPLIER_DATA_RELOCATION.md)).
 
 ## Headline
 

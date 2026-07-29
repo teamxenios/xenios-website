@@ -109,8 +109,9 @@ Notes:
   that older habits would have allowed:
   - research_product_facts refuses a fact marked `confirmed` without both a value
     and a supplier document or COA source. This is deliberate and is exactly the
-    control that keeps the signed-but-unattached supplier package (see
-    docs/research-commerce/PURCHASE_ELIGIBILITY_FINAL.md) from unlocking commerce
+    control that keeps the signed-but-unattached supplier package (eligibility
+    summary relocated to the private operations repository; see
+    docs/research-commerce/SUPPLIER_DATA_RELOCATION.md) from unlocking commerce
     on COA-backed facts.
   - research_orders refuses a payment_authorized, payment_captured, or refunded
     row without a provider reference, refuses a capture above the authorization,

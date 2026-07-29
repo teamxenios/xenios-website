@@ -162,5 +162,6 @@ presence of FM or Product Request objects.
 - PENDING migrations for commerce (20-26) are schema-ready but commerce stays
   disabled until: the production commerce dependency layer is wired (see the
   provider readiness doc), a payment processor is approved, and per-SKU purchase
-  eligibility passes (currently 0 of 15; see
-  docs/research-commerce/PURCHASE_ELIGIBILITY_FINAL.md).
+  eligibility passes (currently 0 of 15; the eligibility summary was relocated
+  to the private operations repository, see
+  docs/research-commerce/SUPPLIER_DATA_RELOCATION.md).

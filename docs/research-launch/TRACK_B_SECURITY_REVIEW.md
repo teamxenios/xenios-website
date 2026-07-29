@@ -68,26 +68,37 @@ Result: PASS. All five required call sites present and positioned before constru
 
 ## Check 3: Supplier-PII scan over client/ and dist/public
 
-Commands and exit codes (grep exit 1 = no matches), all against the fresh build:
+Commands and exit codes (grep exit 1 = no matches), all against the fresh build.
+REDACTION NOTE (2026-07-29): the literal grep patterns below carried the
+supplier's signer email prefix, brand name, legal name, street fragment, and
+phone fragment. They were redacted from this document when the supplier
+artifacts were relocated to the private operations repository (see
+`docs/research-commerce/SUPPLIER_DATA_RELOCATION.md`); the exact terms are
+recoverable from the relocated artifacts themselves.
 
 ```
-grep -rInE "mitch\.clark|apexbio|Apex BioInnovations|Research Park Blvd|555-1234" client        # exit 1, no matches
-grep -rlEi  "mitch\.clark|apexbio|Apex BioInnovations|Research Park Blvd|555-1234" dist/public  # exit 1, no matches
+grep -rInE "<supplier-identity patterns, redacted 2026-07-29>" client        # exit 1, no matches
+grep -rlEi  "<supplier-identity patterns, redacted 2026-07-29>" dist/public  # exit 1, no matches
 grep -rlin  "E8ED723F994138A33F9EB08018228FDE773A40BC299B099F568BC4EEA3031884" dist/public      # exit 1, no matches
 grep -rlin  "e8ed723f" dist/public                                                              # exit 1, no matches (prefix check)
 ```
 
-The signed-master SHA-256 value was taken from `docs/research-commerce/SIGNED_SUPPLIER_MASTER_INTAKE.md:16` (the intake record of the executed Apex master, 2026-07-21).
+The signed-master SHA-256 value was taken from line 16 of the signed supplier
+master intake record dated 2026-07-21 (relocated to the private operations
+repository on 2026-07-29).
 
-Negative control (the scan is meaningful because the terms DO exist in the repo, confined to back-office docs never shipped to the client):
+Negative control (the scan was meaningful because the terms DID exist in the
+repo at review time, confined to back-office docs never shipped to the client;
+all four carrier documents were relocated to the private operations repository
+on 2026-07-29):
 
 ```
-grep -rli "mitch.clark|apexbio|apex bio" --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.git .
-  ./docs/research-commerce/PER_SKU_GATE_REPORT.json
-  ./docs/research-commerce/PURCHASE_ELIGIBILITY_FINAL.md
-  ./docs/research-commerce/signed-supplier-master-facts.json
-  ./docs/research-commerce/SIGNED_SUPPLIER_MASTER_INTAKE.md
-  ./docs/research-launch/TRACK_B_SECURITY_REVIEW.md   (this document)
+grep -rli "<supplier-identity patterns, redacted 2026-07-29>" --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.git .
+  ./docs/research-commerce/PER_SKU_GATE_REPORT.json            (relocated)
+  ./docs/research-commerce/PURCHASE_ELIGIBILITY_FINAL.md       (relocated)
+  ./docs/research-commerce/signed-supplier-master-facts.json   (relocated)
+  ./docs/research-commerce/SIGNED_SUPPLIER_MASTER_INTAKE.md    (relocated)
+  ./docs/research-launch/TRACK_B_SECURITY_REVIEW.md   (this document; patterns redacted)
 ```
 
 Result: PASS. No supplier PII and no signed-master SHA in the client source or the shipped client bundle.

@@ -60,9 +60,9 @@ profile (`STORAGE-Pxxx-v1`), one shipping profile (`SHIP-Pxxx-v1`), and one or
 more COAs (`COA-Pxxx-LOT-0824x`, lot `0824x`). P001 references two COA lots
 (0824A, 0824B). Package-level: `PRICE-SCHEDULE-2026-Q3` (confidential),
 `RECALL-CONTACT-v2`, `INVENTORY-STATEMENT-2026-07`, `FULFILLMENT-SLA-v1`. Full
-per-document list with states is in
-[signed-supplier-master-facts.json](signed-supplier-master-facts.json)
-(`attachments`).
+per-document list with states is in signed-supplier-master-facts.json
+(`attachments`), relocated to the private operations repository on 2026-07-29
+(see [SUPPLIER_DATA_RELOCATION.md](SUPPLIER_DATA_RELOCATION.md)).
 
 ## To clear this report
 
