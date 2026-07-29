@@ -15,6 +15,16 @@ import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
 import { registerMemberCatalogApi } from "./research/catalog/member-catalog-routes";
 import { buildMemberCatalogProductionService } from "./research/catalog/member-catalog-service";
+import { createProductionProductControlReader } from "./research/catalog/product-control-reader";
+import {
+  CatalogPricingProductSource,
+  createAuthoritativePriceResolver,
+} from "./research/pricing/authoritative-price-resolver";
+import {
+  pricingEnabledFromCommerceEnv,
+  registerPricingApi,
+  type PricingAudienceGrant,
+} from "./research/pricing/routes";
 import {
   buildWebsite3ProductionDependencies,
   registerProductsDiagnosticsApi,
@@ -50,15 +60,16 @@ import {
 } from "./care";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
-import { requireActiveMember, requireMember } from "./research/member-auth";
+import { requireActiveMember, requireMember, type MemberRow } from "./research/member-auth";
 import { requireSupabaseAdmin } from "./routes";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
 import { runProductionFoundingSchedulerTick } from "./research/membership-activation/scheduler";
 import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
-import { shouldLogApiResponseBody } from "./request-logging";
+import { formatWithRequestId, requestId, shouldLogApiResponseBody } from "./request-logging";
 import { createServer } from "http";
+import { createHash } from "crypto";
 
 const app = express();
 const httpServer = createServer(app);
@@ -77,6 +88,13 @@ app.use(
     secure: true,
   }),
 );
+
+// Request correlation ids: one id per request (an inbound X-Request-Id is
+// reused only when it is unambiguous and log-safe), stamped on the response
+// header. Mounted after the /kairos proxy (whose streams pass through
+// untouched) and before helmet and the body parsers, so every request,
+// including a body-parse failure, carries an id.
+app.use(requestId());
 
 declare module "http" {
   interface IncomingMessage {
@@ -137,7 +155,7 @@ app.use((req, res, next) => {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
 
-      log(logLine);
+      log(formatWithRequestId(logLine, req));
     }
   });
 
@@ -203,6 +221,63 @@ registerMemberCatalogApi(
   buildMemberCatalogProductionService(),
   requireActiveMember,
 );
+
+// Pricing reads (the frozen pricing core behind its smallest adapter). Wiring
+// per the routes.ts header: the resolver reads the canonical Product Control
+// catalog; the audience authorizer is built on the same requireActiveMember
+// guard as the member catalog, with the memberAudience sourceVersion
+// fingerprint from member-catalog-service.ts; enablement rides the shared
+// research commerce env flag (disabled answers a uniform 503
+// pricing_disabled). The /api/research gateway wall bypasses GET/HEAD
+// /pricing/* reads to this adapter's own guard chain (the
+// downstreamMemberGuardedRead predicate in server/research/index.ts).
+const pricingResolver = createAuthoritativePriceResolver(
+  new CatalogPricingProductSource(createProductionProductControlReader()),
+);
+const authorizePricingAudience = async (
+  req: Request,
+): Promise<PricingAudienceGrant | null> => {
+  // Run the canonical active-member guard against a silent response stub:
+  // any denial (missing or invalid JWT, recovery-purpose session, inactive
+  // membership, billing hold) reads as null and the pricing adapter answers
+  // its own closed 401. The real response is never written here.
+  let authorized = false;
+  const silenced: unknown = {
+    status() {
+      return this;
+    },
+    json() {
+      return this;
+    },
+  };
+  await requireActiveMember(req, silenced as Response, (() => {
+    authorized = true;
+  }) as NextFunction);
+  if (!authorized) return null;
+  const member = (req as any).researchMember as MemberRow | undefined;
+  if (!member) return null;
+  // The same server-side row facts memberAudience fingerprints in
+  // member-catalog-service.ts, so one member row change rolls both
+  // sourceVersions together.
+  return {
+    audience: "member",
+    sourceVersion: createHash("sha256")
+      .update(
+        JSON.stringify({
+          memberId: member.id,
+          status: member.status,
+          billingState: member.billing_state ?? null,
+          updatedAt: member.updated_at ?? member.created_at,
+        }),
+      )
+      .digest("hex"),
+  };
+};
+registerPricingApi(app, {
+  resolver: pricingResolver,
+  authorizeAudience: authorizePricingAudience,
+  enabled: pricingEnabledFromCommerceEnv,
+});
 
 // Website 3 products and diagnostics. Uses the same active-member/admin guards,
 // canonical catalog readiness, canonical lot/quality tables, private Supabase

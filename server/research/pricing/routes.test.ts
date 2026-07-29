@@ -753,7 +753,7 @@ describe("gateway integration (real registerResearchApi)", () => {
     };
   }
 
-  it("documents the trap: today's wall shadows a Bearer-authorized pricing read", async () => {
+  it("post-wiring: the bypass admits a Bearer-authorized pricing read", async () => {
     await inProductionPosture(async () => {
       const resolver = fakeResolver(available());
       const authorizer = bearerBoundAuthorizer();
@@ -770,25 +770,33 @@ describe("gateway integration (real registerResearchApi)", () => {
         .get(priceUrl("product-a", "variant-a"))
         .set("Authorization", "Bearer member-token");
 
-      // The gateway wall answers; the adapter, its authorizer, and its
-      // private headers never run. This is the shadowing the routes.ts
-      // header requires the release manager to fix in the gateway file.
-      expect(res.status).toBe(401);
-      expect(res.body).toEqual({ ok: false, message: "Access required." });
-      expect(authorizer.state.calls).toBe(0);
-      expect(resolver.calls).toHaveLength(0);
-      expect(res.headers["x-robots-tag"]).toBeUndefined();
+      // TRUE production ordering: the real wall runs first, and its
+      // downstreamMemberGuardedRead predicate (extended with /pricing/ by
+      // the release wiring the routes.ts header specified) steps aside for
+      // this GET read, so the request reaches the adapter's own guard
+      // chain, resolves, and carries the private headers.
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        ok: true,
+        state: "available",
+        price: customerPrice(),
+      });
+      expect(authorizer.state.calls).toBe(1);
+      expect(resolver.calls).toHaveLength(1);
+      expectPrivateHeaders(res.headers);
     });
   });
 
-  it("documents the trap: the disabled state is also shadowed into the wall's 401", async () => {
+  it("post-wiring: the disabled state answers the adapter's uniform 503, not the wall's 401", async () => {
     await inProductionPosture(async () => {
       const resolver = fakeResolver(available());
       const authorizer = bearerBoundAuthorizer();
       const app = express();
       registerResearchApi(app);
-      // Flag omitted: the adapter would answer 503 pricing_disabled, but the
-      // wall answers first in today's ordering.
+      // Flag omitted: disabled. The wall's read bypass lets the request
+      // through, and the adapter's enablement gate answers the uniform
+      // closed 503 pricing_disabled with private headers; the authorizer
+      // and the resolver never run.
       registerPricingApi(app, {
         resolver,
         authorizeAudience: authorizer.authorize,
@@ -798,9 +806,11 @@ describe("gateway integration (real registerResearchApi)", () => {
         .get(priceUrl("product-a", "variant-a"))
         .set("Authorization", "Bearer member-token");
 
-      expect(res.status).toBe(401);
-      expect(res.body).toEqual({ ok: false, message: "Access required." });
+      expect(res.status).toBe(503);
+      expect(res.body).toEqual(PRICING_DISABLED_RESPONSE);
+      expectPrivateHeaders(res.headers);
       expect(authorizer.state.calls).toBe(0);
+      expect(resolver.calls).toHaveLength(0);
     });
   });
 

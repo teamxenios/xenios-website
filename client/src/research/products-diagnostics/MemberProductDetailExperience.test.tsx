@@ -154,7 +154,8 @@ describe("member product detail experience", () => {
       <MemberProductDetailExperience product={product} />,
     );
     expect(html.match(/<h1/g)).toHaveLength(1);
-    expect(html).toContain("<main");
+    // Landmark rule: the layout's section chrome owns the page's one <main>; the shell must not nest a second.
+    expect(html).not.toContain("<main");
     expect(html).toContain("Alpha Research");
     expect(html).toContain("https://media.xeniostechnology.com/media-a");
     expect(html).toContain("$149.00");

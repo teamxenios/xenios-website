@@ -56,6 +56,18 @@ interface Props {
 
 type FieldErrors = Partial<Record<"name" | "email" | "role" | "clientCount" | "consent", string>>;
 
+// DOM order of the validated fields, and the id each one carries. Both drive
+// the error summary banner and the focus-first-invalid-field behavior on a
+// failed submit.
+const FIELD_ORDER: Array<keyof FieldErrors> = ["name", "email", "role", "clientCount", "consent"];
+const FIELD_IDS: Record<keyof FieldErrors, string> = {
+  name: "wl-name",
+  email: "wl-email",
+  role: "wl-role",
+  clientCount: "wl-clientcount",
+  consent: "wl-consent",
+};
+
 export default function WaitlistForm({ onSuccess, onDark = false }: Props) {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [submitting, setSubmitting] = useState(false);
@@ -84,7 +96,13 @@ export default function WaitlistForm({ onSuccess, onDark = false }: Props) {
     const next = validate();
     setErrors(next);
     setError(null);
-    if (Object.keys(next).length > 0) return;
+    if (Object.keys(next).length > 0) {
+      const firstInvalid = FIELD_ORDER.find((key) => next[key]);
+      if (firstInvalid) {
+        (document.getElementById(FIELD_IDS[firstInvalid]) as HTMLElement | null)?.focus();
+      }
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -135,39 +153,53 @@ export default function WaitlistForm({ onSuccess, onDark = false }: Props) {
         <input id="wl-website" tabIndex={-1} autoComplete="off" type="text" value={form.website} onChange={(e) => update("website", e.target.value)} />
       </div>
 
+      {/* Error summary: one role="alert" so the failure is announced once,
+          not once per field. Each field still carries its own inline message
+          (wired to the input via aria-describedby) and aria-invalid. */}
+      {Object.keys(errors).length > 0 && (
+        <div className="border border-[color:var(--error)] text-[color:var(--error)] px-4 py-3 rounded body-s" role="alert" data-testid="text-validation-summary">
+          <p className="font-700">Please fix the following:</p>
+          <ul className="mt-1 pl-5" style={{ listStyleType: "disc" }}>
+            {FIELD_ORDER.filter((key) => errors[key]).map((key) => (
+              <li key={key}>{errors[key]}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="wl-name" className={labelCls}>Name</label>
-          <input id="wl-name" type="text" maxLength={160} placeholder="Full name" value={form.name} onChange={(e) => update("name", e.target.value)} className={inputCls} aria-invalid={!!errors.name} data-testid="input-name" />
-          {errors.name && <p className="body-s mt-2" role="alert" style={errStyle} data-testid="error-name">{errors.name}</p>}
+          <input id="wl-name" type="text" maxLength={160} placeholder="Full name" value={form.name} onChange={(e) => update("name", e.target.value)} className={inputCls} aria-invalid={!!errors.name} aria-describedby={errors.name ? "wl-name-error" : undefined} data-testid="input-name" />
+          {errors.name && <p id="wl-name-error" className="body-s mt-2" style={errStyle} data-testid="error-name">{errors.name}</p>}
         </div>
         <div>
           <label htmlFor="wl-email" className={labelCls}>Email</label>
-          <input id="wl-email" type="email" placeholder="you@yourpractice.com" value={form.email} onChange={(e) => update("email", e.target.value)} className={inputCls} aria-invalid={!!errors.email} data-testid="input-email" />
-          {errors.email && <p className="body-s mt-2" role="alert" style={errStyle} data-testid="error-email">{errors.email}</p>}
+          <input id="wl-email" type="email" placeholder="you@yourpractice.com" value={form.email} onChange={(e) => update("email", e.target.value)} className={inputCls} aria-invalid={!!errors.email} aria-describedby={errors.email ? "wl-email-error" : undefined} data-testid="input-email" />
+          {errors.email && <p id="wl-email-error" className="body-s mt-2" style={errStyle} data-testid="error-email">{errors.email}</p>}
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="wl-role" className={labelCls}>Role</label>
-          <select id="wl-role" value={form.role} onChange={(e) => update("role", e.target.value)} className={inputCls} aria-invalid={!!errors.role} data-testid="select-role">
+          <select id="wl-role" value={form.role} onChange={(e) => update("role", e.target.value)} className={inputCls} aria-invalid={!!errors.role} aria-describedby={errors.role ? "wl-role-error" : undefined} data-testid="select-role">
             <option value="">Pick the closest fit</option>
             {ROLE_OPTIONS.map((r) => (
               <option key={r} value={r}>{r}</option>
             ))}
           </select>
-          {errors.role && <p className="body-s mt-2" role="alert" style={errStyle} data-testid="error-role">{errors.role}</p>}
+          {errors.role && <p id="wl-role-error" className="body-s mt-2" style={errStyle} data-testid="error-role">{errors.role}</p>}
         </div>
         <div>
           <label htmlFor="wl-clientcount" className={labelCls}>Number of clients</label>
-          <select id="wl-clientcount" value={form.clientCount} onChange={(e) => update("clientCount", e.target.value)} className={inputCls} aria-invalid={!!errors.clientCount} data-testid="select-client-count">
+          <select id="wl-clientcount" value={form.clientCount} onChange={(e) => update("clientCount", e.target.value)} className={inputCls} aria-invalid={!!errors.clientCount} aria-describedby={errors.clientCount ? "wl-clientcount-error" : undefined} data-testid="select-client-count">
             <option value="">Select a range</option>
             {CLIENT_COUNT_OPTIONS.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          {errors.clientCount && <p className="body-s mt-2" role="alert" style={errStyle} data-testid="error-client-count">{errors.clientCount}</p>}
+          {errors.clientCount && <p id="wl-clientcount-error" className="body-s mt-2" style={errStyle} data-testid="error-client-count">{errors.clientCount}</p>}
         </div>
       </div>
 
@@ -200,16 +232,16 @@ export default function WaitlistForm({ onSuccess, onDark = false }: Props) {
 
       <div>
         <label className={`flex items-start gap-3 cursor-pointer ${onDark ? "text-paper" : "text-ink-2"}`} data-testid="label-consent">
-          <input type="checkbox" checked={form.consent} onChange={(e) => update("consent", e.target.checked)} className="mt-1 w-4 h-4 accent-[var(--pulse)]" aria-invalid={!!errors.consent} data-testid="checkbox-consent" />
+          <input id="wl-consent" type="checkbox" checked={form.consent} onChange={(e) => update("consent", e.target.checked)} className="mt-1 w-4 h-4 accent-[var(--pulse)]" aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "wl-consent-error" : undefined} data-testid="checkbox-consent" />
           <span className="body-s">{F.fields.consent.label}</span>
         </label>
-        {errors.consent && <p className="body-s mt-2" role="alert" style={errStyle} data-testid="error-consent">{errors.consent}</p>}
+        {errors.consent && <p id="wl-consent-error" className="body-s mt-2" style={errStyle} data-testid="error-consent">{errors.consent}</p>}
       </div>
 
       <Turnstile onToken={onTurnstileToken} onDark={onDark} />
 
       {error && (
-        <div className="border border-[color:var(--error)] text-[color:var(--error)] px-4 py-3 rounded body-s" data-testid="text-error">
+        <div className="border border-[color:var(--error)] text-[color:var(--error)] px-4 py-3 rounded body-s" role="alert" data-testid="text-error">
           {error}
         </div>
       )}

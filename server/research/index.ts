@@ -258,7 +258,8 @@ export function registerResearchApi(app: Express) {
   const downstreamMemberGuardedRead = (path: string): boolean =>
     DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(path) ||
     path === "/member/products" ||
-    path.startsWith("/member/products/");
+    path.startsWith("/member/products/") ||
+    path.startsWith("/pricing/");
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
     if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
