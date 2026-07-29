@@ -277,9 +277,11 @@ describe("peptide catalog shape", () => {
   });
 
   it("uses no em dash or en dash anywhere in the module data", () => {
+    // The dashes are written as escapes so this file does not itself contain the
+    // characters. A sibling suite scans every file in this directory for them.
     const everyString = JSON.stringify(PEPTIDE_CATALOG);
-    expect(everyString).not.toContain("—");
-    expect(everyString).not.toContain("–");
+    expect(everyString).not.toContain("\u2014");
+    expect(everyString).not.toContain("\u2013");
   });
 });
 
