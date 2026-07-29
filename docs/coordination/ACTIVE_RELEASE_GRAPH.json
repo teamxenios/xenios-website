@@ -107,6 +107,15 @@
       "state": "BLOCKED",
       "sha": null,
       "label": "Persistent cart, checkout, and order enablement"
+    },
+    {
+      "id": "pr103-e24b0c4e",
+      "type": "candidate",
+      "owner": "Website 5",
+      "state": "ACCEPTED_INTEGRATION_PENDING",
+      "sha": "e24b0c4e1af25fea1f51f01f7045de488ec6f380",
+      "pullRequest": 103,
+      "label": "Accepted persistent-cart persistence kernel; migration unapplied"
     }
   ],
   "edges": [
@@ -164,13 +173,24 @@
       "from": "pr85-dc11623d",
       "to": "wave3-checkout-enablement",
       "relation": "must_be_integrated_before"
+    },
+    {
+      "from": "production-b729c8e",
+      "to": "pr103-e24b0c4e",
+      "relation": "policy_baseline_precedes"
+    },
+    {
+      "from": "pr103-e24b0c4e",
+      "to": "wave3-checkout-enablement",
+      "relation": "migration_and_postdeploy_acceptance_required_before"
     }
   ],
   "releaseOrder": [
-    "Freeze and obtain Website 6 exact-SHA acceptance for the PR #87 production snapshot fix-forward candidate.",
-    "Create a separate current-main integration candidate for accepted PR #85 while preserving all 12 source blobs.",
-    "Replace and accept prohibited PR #80 before inventory-dependent checkout.",
-    "Integrate only through Website 2 from exact current production.",
-    "Apply migrations only in MIGRATION_DAG.json order and run production smoke."
+    "Obtain Website 6 exact-SHA integration acceptance for PR #103 source e24b0c4e plus this Website 2 control-plane delta.",
+    "After exact protected approval, apply 20260727200000 research_persistent_cart in MIGRATION_DAG.json order and verify zero-row/RLS/grant invariants.",
+    "Merge and deploy only the accepted PR #103 integration candidate, then complete Website 6 read-only postdeploy QA.",
+    "Review and integrate PR #106 only after the PR #103 production gate closes.",
+    "Review and integrate PR #109 only after PR #106 closes.",
+    "Keep checkout, orders, pricing imports, supplier economics, and Care activation disabled until their separate gates close."
   ]
 }

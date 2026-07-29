@@ -47,7 +47,8 @@ table in the same PR that adds or changes a migration file.
 | 38 | migrations/20260726143000_research_product_control_center.sql | Product, variant, effective-dated price, private media, immutable audit, and exact readiness administration | RUN | 2026-07-26 | managed migration `20260726214102 research_product_control_center`; post-apply verification found Supabase pre-existing/default `TRUNCATE`, `REFERENCES`, and `TRIGGER` grants requiring migration 39 before application deployment |
 | 39 | migrations/20260726214500_research_product_control_center_privilege_hardening.sql | Converge Product Control service-role grants to the reviewed exact 33-privilege boundary | RUN | 2026-07-26 | managed migration `20260726215603 research_product_control_center_privilege_hardening`; 33 service table privileges, five command tables SELECT-only, zero command DML, zero excess `TRUNCATE`/`REFERENCES`/`TRIGGER`, 11 service RPC grants, zero Product Control rows |
 | 40 | migrations/20260727120000_research_inventory_lot_coa_admin.sql | Versioned inventory lots, append-only movements, exact-lot private COAs, immutable quality/access audit, and atomic Product Control projection | RUN | 2026-07-27 | managed migration `20260727120000 research_inventory_lot_coa_admin`; Website 6 post-deploy accepted exact production schema/RLS/grants/bucket/zero-row and browser/API gates |
-| 41 | migrations/20260727160000_research_inventory_reservation_commands.sql | Atomic server-only inventory reserve/release/finalize/expire commands, independently additive canonical reservation tables, exact readiness serialization, immutable redacted receipts, and checkout-disabled composition port | PENDING (not run) | — | Website 6 accepted production-compatible exact domain source `31b91f107cd2a54140d007267bb4cc02549e8404`; Website 2 integration, production apply, and read-only verification pending |
+| 41 | migrations/20260727160000_research_inventory_reservation_commands.sql | Atomic server-only inventory reserve/release/finalize/expire commands, independently additive canonical reservation tables, exact readiness serialization, immutable redacted receipts, and checkout-disabled composition port | RUN | 2026-07-27 | managed migration `20260727160000 research_inventory_reservation_commands`; authenticated production history and zero-row dependency posture reconfirmed before PR #103 |
+| 42 | migrations/20260727200000_research_persistent_cart.sql | Server-only persistent member/anonymous carts with exact Product Control price lineage, canonical inventory/lot/COA revalidation, immutable redacted commands/events, and no reservation or checkout activation | PENDING (not run) | — | Website 6 accepted exact source `e24b0c4e1af25fea1f51f01f7045de488ec6f380`; raw Git-blob SHA-256 `6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880`; protected Website 2 production action pending |
 
 Founding-membership operational migrations use a separate dependency chain.
 Production presence and managed migration history were reconciled on
@@ -176,3 +177,16 @@ input model before any private seed-data workflow is authorized.
   canonical `care:disabled` capability, 3/3 forced-RLS tables, zero browser
   mutation grants, two intended authenticated read policies, and zero Care
   role-assignment or access-audit rows. It creates no clinical record.
+
+- 2026-07-28 authenticated production preflight confirmed managed migration
+  `20260727160000 research_inventory_reservation_commands` is applied.
+  The next reviewed migration is
+  `20260727200000 research_persistent_cart`, exact source
+  `e24b0c4e1af25fea1f51f01f7045de488ec6f380`, raw Git-blob SHA-256
+  `6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880`.
+  It remains unapplied pending Website 2's exact protected action. Pre-apply
+  production verification found all four cart tables and all cart functions
+  absent, all Product Control/inventory/reservation domain rows at zero, and
+  two existing Research members. The migration creates no rows and performs
+  no inventory reservation, allocation, decrement, checkout, order, payment,
+  provider, or Care action.
