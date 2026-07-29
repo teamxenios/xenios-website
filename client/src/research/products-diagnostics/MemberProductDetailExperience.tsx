@@ -168,7 +168,7 @@ export function MemberProductDetailExperience({
                 ) : (
                   <ResearchPendingPanel
                     kind="supplier_pending"
-                    body="An approved active variant and SKU are required."
+                    body="An exact approved Product Control variant and SKU are required."
                   />
                 )}
 

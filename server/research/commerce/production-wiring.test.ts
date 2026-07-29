@@ -28,6 +28,7 @@ import type { CatalogProduct, ProvenancedFact } from "@shared/research/catalog";
 import type { CartDto, CheckoutRequest, ShippingQuoteRequest } from "@shared/research/commerce-api";
 import type { PartnerSelfSource } from "./routes";
 import type { InventoryLot } from "../inventory/lots";
+import { v3PreviewCatalogProducts } from "../catalog/v3-preview-catalog";
 
 // ---------------------------------------------------------------------------
 // Three-state proof of the production commerce composition.
@@ -633,11 +634,9 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
     expect(caps.quantum_commerce.enabled).toBe(false);
   });
 
-  it("keeps the REAL catalog non-purchasable even fully configured (per-SKU gates hold)", () => {
-    // No catalogProducts override here: the genuine adapted catalog with the
-    // flag on and the database configured still sells nothing, because per-SKU
-    // eligibility (confirmed facts, quality documentation) fails closed.
+  it("keeps discovery previews outside commerce without canonical Product Control SKU authority", () => {
     const deps = buildCommerceDependencies(NOW, LIVE_ENV, {
+      catalogProducts: [...v3PreviewCatalogProducts],
       resolveCartStore: () => createInMemoryCartStore(),
       resolveOrderRepository: () => createInMemoryOrderStore(),
       resolveClaimRepository: () => createInMemoryClaimRepository(),
@@ -652,9 +651,9 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
       hasEffectiveAgreement: async () => true,
     });
     const products = deps.catalog.listProducts();
-    expect(products.length).toBeGreaterThanOrEqual(15);
-    expect(products.filter((p) => p.purchasable)).toEqual([]);
-    for (const product of products) expect(product.priceCents).toBeNull();
+    expect(v3PreviewCatalogProducts).toEqual([]);
+    expect(products).toEqual([]);
+    expect(deps.catalog.getProduct("preview-only")).toBeNull();
   });
 
   it("refuses to compose over a synthetic configuration marker (the guard runs first)", () => {
