@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-07-27T04:15:34Z",
-  "productionSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+  "generatedAt": "2026-07-29T07:03:15Z",
+  "productionSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
   "nodes": [
     {
-      "id": "production-b729c8e",
+      "id": "production-267950a",
       "type": "production_baseline",
       "owner": "Website 2",
       "state": "AUDITED_BASELINE",
-      "sha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
-      "label": "Audited production baseline / PR #87 runtime healthy"
+      "sha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
+      "label": "Audited production baseline / PR #132 postdeploy accepted"
     },
     {
       "id": "high-capabilities-route",
@@ -107,6 +107,49 @@
       "state": "BLOCKED",
       "sha": null,
       "label": "Persistent cart, checkout, and order enablement"
+    },
+    {
+      "id": "pr117-persistent-cart",
+      "type": "candidate",
+      "owner": "Website 2",
+      "state": "ACCEPTED_PROTECTED_MIGRATION_PENDING",
+      "sha": "821bf169e32fe19c0f0e37e6c5bc39eae448e062",
+      "pullRequest": 117,
+      "label": "Accepted persistent-cart integration; managed migration absent and unapplied"
+    },
+    {
+      "id": "pr132-pr106-ownership-policy",
+      "type": "candidate",
+      "owner": "Website 2",
+      "state": "MERGED_DEPLOYED_POSTDEPLOY_ACCEPTED",
+      "sha": "8f1797a14fc782b92f29cc42a8d64adc76231216",
+      "pullRequest": 132,
+      "label": "Accepted PR106 exact-path ownership policy"
+    },
+    {
+      "id": "pr106-operations-affiliates",
+      "type": "candidate",
+      "owner": "Website 2",
+      "state": "ACCEPTED_SOURCE_CURRENT_BASE_TRANSFER_PENDING",
+      "sha": "40d697c7bb4b903ae4d0ba62978239c369f35d6f",
+      "pullRequest": 106,
+      "label": "Accepted operations and affiliates source; both managed migrations absent and unapplied"
+    },
+    {
+      "id": "immutable-paid-order-evidence",
+      "type": "future_gate",
+      "owner": "Website 2",
+      "state": "BLOCKED",
+      "sha": null,
+      "label": "Immutable paid-order economics evidence"
+    },
+    {
+      "id": "commission-payout-activation",
+      "type": "future_gate",
+      "owner": "Website 2",
+      "state": "BLOCKED",
+      "sha": null,
+      "label": "Commission and payout activation"
     }
   ],
   "edges": [
@@ -116,17 +159,17 @@
       "relation": "preceded"
     },
     {
-      "from": "pr87-release-control-plane",
-      "to": "production-b729c8e",
+      "from": "pr132-pr106-ownership-policy",
+      "to": "production-267950a",
       "relation": "deployed_as"
     },
     {
-      "from": "production-b729c8e",
+      "from": "production-267950a",
       "to": "high-capabilities-route",
       "relation": "closes"
     },
     {
-      "from": "production-b729c8e",
+      "from": "production-267950a",
       "to": "high-admin-page-privacy",
       "relation": "closes"
     },
@@ -146,7 +189,7 @@
       "relation": "superseded_by"
     },
     {
-      "from": "production-b729c8e",
+      "from": "production-267950a",
       "to": "pr85-dc11623d",
       "relation": "integration_base_for"
     },
@@ -164,6 +207,26 @@
       "from": "pr85-dc11623d",
       "to": "wave3-checkout-enablement",
       "relation": "must_be_integrated_before"
+    },
+    {
+      "from": "production-267950a",
+      "to": "pr117-persistent-cart",
+      "relation": "integration_base_for"
+    },
+    {
+      "from": "pr117-persistent-cart",
+      "to": "pr106-operations-affiliates",
+      "relation": "must_precede"
+    },
+    {
+      "from": "immutable-paid-order-evidence",
+      "to": "commission-payout-activation",
+      "relation": "required_before"
+    },
+    {
+      "from": "pr106-operations-affiliates",
+      "to": "commission-payout-activation",
+      "relation": "remains_disabled_until"
     }
   ],
   "releaseOrder": [
@@ -171,6 +234,8 @@
     "Create a separate current-main integration candidate for accepted PR #85 while preserving all 12 source blobs.",
     "Replace and accept prohibited PR #80 before inventory-dependent checkout.",
     "Integrate only through Website 2 from exact current production.",
-    "Apply migrations only in MIGRATION_DAG.json order and run production smoke."
+    "Apply migrations only in MIGRATION_DAG.json order and run production smoke.",
+    "PR117 persistent cart must precede both PR106 migrations.",
+    "Commission and payout activation remains blocked until immutable paid-order economics evidence is live and independently accepted."
   ]
 }

@@ -1,12 +1,12 @@
 {
   "schemaVersion": 2,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-07-27T04:15:34Z",
+  "generatedAt": "2026-07-29T07:03:15Z",
   "production": {
-    "gitSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
-    "renderDeploymentId": "dep-d9jdiuf41pts73b4p02g",
+    "gitSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
+    "renderDeploymentId": "dep-d9kq6l2d0e5s73ethf8g",
     "status": "LIVE",
-    "verifiedAt": "2026-07-27T04:15:34Z",
+    "verifiedAt": "2026-07-29T07:03:15Z",
     "branch": "main",
     "publicOrigin": "https://xeniostechnology.com"
   },
@@ -33,7 +33,9 @@
       "20260726093600 care_appointments_clinician",
       "20260726112848 care_prescription_pharmacy",
       "20260726214102 research_product_control_center",
-      "20260726215603 research_product_control_center_privilege_hardening"
+      "20260726215603 research_product_control_center_privilege_hardening",
+      "20260727120000 research_inventory_lot_coa_admin",
+      "20260727160000 research_inventory_reservation_commands"
     ],
     "checksums": [
       {
@@ -43,6 +45,14 @@
       {
         "path": "supabase/migrations/20260726214500_research_product_control_center_privilege_hardening.sql",
         "sha256GitBlob": "2fb96f105fcfb1d6f77bf6e9bcf191b48decbc9206f2045b32cf7595d31551db"
+      },
+      {
+        "path": "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+        "sha256GitBlob": "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524"
+      },
+      {
+        "path": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+        "sha256GitBlob": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
       }
     ]
   },
@@ -176,7 +186,7 @@
       "lane": "Website 3",
       "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
       "sourceBaseSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
-      "integrationBaseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+      "integrationBaseSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
       "currentMainMergeTree": "d377eb4ae5abbf9ef9ed76ab7357b99eb3356db7",
       "state": "ACCEPTED_INTEGRATION_PENDING",
       "reason": "Website 6 exact-SHA acceptance has zero blocker/high findings; read-only current-main preflight is clean and the 12 source blobs remain integration-gated.",
@@ -210,7 +220,7 @@
     {
       "lane": "Website 1",
       "state": "REPLACEMENT_IN_PROGRESS",
-      "requiredBaseSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+      "requiredBaseSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
       "scope": "durable Samuel authority, account continuity, server-authoritative landing, and audited member-mode switching"
     }
   ],
@@ -296,11 +306,11 @@
     "Website 4 corrected Wave 2 inventory/lot/COA after exact-SHA acceptance"
   ],
   "lastSuccessfulValidation": {
-    "kind": "Website 2 production smoke; Website 6 runtime healthy with control-plane fix-forward required",
-    "release": "PR 87",
-    "sourceSha": "0276112499ed029e70f09c2cd53bf9191d851601",
-    "deployedSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
-    "renderDeploymentId": "dep-d9jdiuf41pts73b4p02g"
+    "kind": "Website 2 authenticated Git, Render, and Supabase read-only reconciliation; Website 6 PR132 postdeploy accepted",
+    "release": "PR 132",
+    "sourceSha": "8f1797a14fc782b92f29cc42a8d64adc76231216",
+    "deployedSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
+    "renderDeploymentId": "dep-d9kq6l2d0e5s73ethf8g"
   },
   "evidenceLimitations": [
     "No authorized existing member or administrator browser session was available for this snapshot.",
@@ -320,23 +330,23 @@
     {
       "id": "EVIDENCE-GIT-MAIN",
       "kind": "git",
-      "observedSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
-      "checkedAt": "2026-07-27T04:15:34Z",
-      "detail": "origin/main, PR 87 merge identity, and Render deployed application identity were reconciled to the same exact SHA."
+      "observedSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
+      "checkedAt": "2026-07-29T07:03:15Z",
+      "detail": "origin/main, PR 132 merge identity, and authenticated Render deployment dep-d9kq6l2d0e5s73ethf8g were reconciled to the same exact SHA."
     },
     {
       "id": "EVIDENCE-PRODUCTION-HTTP",
       "kind": "http",
-      "observedSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
-      "checkedAt": "2026-07-27T04:15:34Z",
-      "detail": "Health, capability GET/HEAD/POST ordering, admin capability privacy, admin document privacy, and responsive signed-out browser boundaries were checked read-only."
+      "observedSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
+      "checkedAt": "2026-07-29T07:03:15Z",
+      "detail": "Health, member/admin capability privacy, admin document privacy, and disabled Care boundaries were checked read-only after PR 132."
     },
     {
       "id": "EVIDENCE-PRODUCTION-DATABASE",
       "kind": "database",
-      "observedSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
-      "checkedAt": "2026-07-27T04:15:34Z",
-      "detail": "Account continuity, activation bridge, migration history, RLS, privilege, zero-row, and disabled-Care invariants were checked read-only."
+      "observedSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
+      "checkedAt": "2026-07-29T07:03:15Z",
+      "detail": "Authenticated Supabase migration history confirms reservation 20260727160000 applied and PR117/PR106 managed versions absent. Repository Git-blob checksums are separate source identity evidence; provider SQL-byte equality was not claimed."
     }
   ],
   "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md"

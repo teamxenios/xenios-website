@@ -30,8 +30,8 @@ import {
 } from "../scripts/acceptance/verify-production-state.ts";
 
 const ROOT = process.cwd();
-const NOW = new Date("2026-07-27T04:15:34.000Z");
-const PRODUCTION_SHA = "b729c8ee1a357e0af95fe50a05989b2f662f7270";
+const NOW = new Date("2026-07-29T07:03:15.000Z");
+const PRODUCTION_SHA = "267950aefc4b3cd808d4fadc75044b7140b5e100";
 const HEAD_SHA = "12759c2567246ee83ed71aad9ffa4b517d31e8aa";
 const RESERVATION_SOURCE_SHA = "31b91f107cd2a54140d007267bb4cc02549e8404";
 const RESERVATION_SOURCE_PATH =
@@ -761,7 +761,7 @@ describe("migration DAG validator", () => {
       (migration) => migration.id === "research_inventory_lot_coa_admin",
     );
     expect(wave2).toBeDefined();
-    wave2!.sourceSha = PRODUCTION_SHA;
+    wave2!.sourceSha = "d494150668de2ede8a61fd0d28bc9ff9a75def26";
     expect(
       validateMigrationDag(dag, {
         repoRoot: ROOT,
@@ -781,8 +781,8 @@ describe("migration DAG validator", () => {
       path: "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
       sourceSha: RESERVATION_SOURCE_SHA,
       sourcePath: RESERVATION_SOURCE_PATH,
-      appliedToProduction: false,
-      managedMigrationId: "PENDING",
+      appliedToProduction: true,
+      managedMigrationId: "20260727160000 research_inventory_reservation_commands",
     });
     expect(reservation?.checksum.value).toBe(
       "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005",
@@ -828,6 +828,8 @@ describe("migration DAG validator", () => {
     const reservation = dag.migrations.find(
       (migration) => migration.id === "research_inventory_reservation_commands",
     )!;
+    reservation.appliedToProduction = false;
+    reservation.managedMigrationId = "PENDING";
     reservation.sourcePath = "..\\candidate.sql";
     delete reservation.sourceSha;
     expect(
@@ -1264,7 +1266,7 @@ describe("production state validator", () => {
       `Observed deployment accepted: ${deployedSha} / dep-postdeploy123 (baseline ${PRODUCTION_SHA}).`,
     );
     expect(productionAcceptanceMessage(state)).toBe(
-      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-d9jdiuf41pts73b4p02g.`,
+      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-d9kq6l2d0e5s73ethf8g.`,
     );
     expect(
       validateObservedDeployment(
