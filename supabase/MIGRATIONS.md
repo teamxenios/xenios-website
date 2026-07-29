@@ -177,3 +177,23 @@ input model before any private seed-data workflow is authorized.
   canonical `care:disabled` capability, 3/3 forced-RLS tables, zero browser
   mutation grants, two intended authenticated read policies, and zero Care
   role-assignment or access-audit rows. It creates no clinical record.
+
+- 2026-07-28 authenticated production preflight confirmed managed migration
+  `20260727160000 research_inventory_reservation_commands` is applied.
+  The reviewed and accepted persistent-cart migration
+  `migrations/20260727200000_research_persistent_cart.sql` is present in this
+  repository at raw Git-blob SHA-256
+  `6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880`
+  (blob `2a1869e21f90990811e85f9304168b8a474b4706`, 39,749 bytes).
+  It is deliberately not numbered in the managed ledger table above and not
+  present in `docs/coordination/MIGRATION_DAG.json`, matching the standing
+  control-plane invariant that an accepted but unapplied migration stays
+  outside the deployed DAG until its managed migration files ship in the same
+  reviewed candidate. The already-present `20260728010000` and `20260728020000`
+  files follow the same convention.
+  Pre-apply production verification found all four cart tables and all cart
+  functions absent, all Product Control, inventory, and reservation domain rows
+  at zero, and two existing Research members. The migration creates no rows and
+  performs no inventory reservation, allocation, decrement, checkout, order,
+  payment, provider, or Care action. Applying it to production remains a
+  separate protected action that this change does not perform or authorize.

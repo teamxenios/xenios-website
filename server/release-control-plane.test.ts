@@ -1122,7 +1122,10 @@ describe("production state validator", () => {
         repoFiles,
       }),
     ).toEqual([]);
-  });
+    // Ownership validation is O(repo files x rules) and already measures
+    // 4.7s to 6.8s on current main, so the 5s default timeout makes this
+    // assertion machine dependent. The assertion itself is unchanged.
+  }, 15_000);
 
   it("separates trusted-base diff authorization from the current production ownership snapshot", () => {
     const { state, graph, ownership: currentOwnership } = checkedInState();
