@@ -25,3 +25,20 @@ Constraints noted: the Sentinel does not enter passwords, so the review gate and
 12. Home page at 375x812: DOM-wide anchor scan matching sign/login/member/admin/partner/affiliate returned zero links. SEN-0001 confirmed on mobile as well as desktop.
 13. Signed-out API rejection probes (production): /api/research/member/profile 401, /api/research/member/orders 401, /api/research/capabilities 401 (all correctly rejected); /api/admin/research/members 404 (path shape unverified, not recorded as a finding).
 14. /admin at 375x812 renders the admin dashboard sign-in with a forgot-password path. Reachable on mobile.
+
+## 2026-07-29T23:47Z, founder clarification and correction sweep
+
+Samuel clarified directive 1: the four entry links belong on /research, and Research is a hidden
+destination that the main site must never link. SEN-0001 retracted accordingly.
+
+15. Home page DOM scan for anchors with href starting /research: two persistent anchors, one in
+    the header (labelled Research; offsetParent null because the header is fixed-position, but the
+    element was confirmed rendered and interactive in the 1280 read at 23:21Z) and one visible in
+    the footer. The full-site-menu overlay adds a third when open (confirmed 23:21Z, ref list).
+    These are shared-layout components, so every marketing page carries them. SEN-0007 filed.
+16. /research pre-gate interactive elements (from 23:21Z evidence): one password field, one Enter
+    button, zero entry links. Post-gate Gateway.tsx at 517c219 renders Apply and Member sign-in
+    plus policy and mailto links only: no Partner/Affiliate entry, no Admin entry. SEN-0008 filed.
+17. Exhaustive disclosure sweep launched (workflow: marketing-surface links, sitemap/robots/
+    llms.txt/SEO assets, copy mentions, gateway four-links analysis, each claim adversarially
+    verified). Results will be appended when complete.

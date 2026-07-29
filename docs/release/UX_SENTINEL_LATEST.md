@@ -1,7 +1,18 @@
 # UX Sentinel latest report
 
 Sentinel session: independent continuous UX and reliability reviewer (read-only, evidence-first).
-Directive date: 2026-07-29. Report generated: 2026-07-29T23:25Z.
+Directive date: 2026-07-29. Report generated: 2026-07-29T23:25Z. Corrected: 2026-07-29T23:47Z.
+
+## FOUNDER CLARIFICATION 2026-07-29T23:4xZ (supersedes the first reading of directive 1)
+
+Samuel clarified: the four entry links (Apply for Membership, Member Login, Partner/Affiliate
+Login, Admin Login) belong on the /research home page, NOT the main home page. Research is a
+hidden destination: the main xeniostechnology.com marketing site must contain NO hyperlink to
+/research at all. Consequences: SEN-0001 is RETRACTED (the main home page having no login links
+is correct); new SEN-0007 (the main site currently links /research from header, footer, and full
+site menu on every page) and SEN-0008 (/research itself exposes none of the four entries pre-gate
+and only 2 of 4 post-gate) are the operative P1 findings. Do NOT implement the retracted
+SEN-0001 recommendation.
 
 ## Baseline
 
@@ -34,7 +45,7 @@ Roles identified: visitor, applicant, member (active, pending activation), partn
 
 | Directive | Result |
 | --- | --- |
-| 1. Home page exposes Apply for Membership, Member Login, Partner/Affiliate Login, Admin Login | FAIL. None of the four exist anywhere on the home page (hero, header nav, full site menu, footer, DOM-wide link scan). Only "Apply for Early Access" -> /waitlist. Finding SEN-0001. |
+| 1 (clarified). /research exposes the four entries; the main site never links /research | DOUBLE FAIL. Main site links /research from header nav, footer, and full site menu on every page (SEN-0007). /research pre-gate shows zero of the four entries; post-gate Gateway shows 2 of 4, missing Partner/Affiliate Login and Admin Login (SEN-0008). Main home page correctly has no login links (SEN-0001 retracted). |
 | 2. /research has no Research Catalog CTA | PASS at current SHA. Production /research is a review password gate with no catalog control. Code level: Gateway.tsx renders only apply, sign-in, privacy, terms, support, with an explicit "No navigation, no catalog" design comment. Playwright assertion not yet added (needs leader file lease). |
 | 3. Catalog access via authenticated member workspace | PARTIAL. MEMBER_ROUTES declares products, supplements, cart, checkout, orders. Signed-in verification pending test-account strategy. |
 | 4. Care is a complete live production surface | FAIL against the 2026-07-29 directive. /care renders a deliberate, well-built "pending" page: all six modules NOT YET AVAILABLE, fail-closed, honest emergency boundary. Not a broken page; a globally disabled surface. Finding SEN-0003, routed to leader workstream 6. |
@@ -47,8 +58,10 @@ Roles identified: visitor, applicant, member (active, pending activation), partn
 
 | ID | Sev | Summary |
 | --- | --- | --- |
-| SEN-0001 | P1 | Home page has zero of the four required entry links; members, partners, and admins have no discoverable way in. |
-| SEN-0002 | P1 | /research/apply and /research/partners sit behind the review password gate; a visitor cannot start a membership application and a partner cannot reach the portal. Gate boundary is inconsistent: sign-in is open, apply is gated. |
+| SEN-0001 | retracted | Misfiled first reading of directive 1. The main home page having no login links is correct. Superseded by SEN-0007 and SEN-0008. |
+| SEN-0002 | P1 | /research/apply and /research/partners sit behind the review password gate while /research/sign-in is open; the gate boundary is inconsistent and the application journey is blocked at step 1. Resolve together with SEN-0008 (where the four entries sit relative to the gate is one design decision). |
+| SEN-0007 | P1 | The main marketing site discloses the hidden /research area on every page: header nav, footer, and full-site-menu links. Founder directive says zero links to /research on the main site. |
+| SEN-0008 | P1 | /research itself exposes none of the four required entries pre-gate, and only Apply plus Member sign-in (2 of 4) post-gate; Partner/Affiliate Login and Admin Login are missing entirely. |
 | SEN-0003 | P1 (directive gap) | Care globally disabled; all six modules NOT YET AVAILABLE. Deliberate and well-executed, but fails the 2026-07-29 directive that Care be a live surface. |
 | SEN-0004 | P1 (directive gap) | No clinical surface exists at all: no route, no page, 404. |
 | SEN-0005 | P1 (directive gap) | Commerce is off end to end: commerceEnabled false, 911/911 rows DISPLAY_ONLY, purchase mode structurally blocked by a build-time guard, zero transaction routes. |
@@ -57,7 +70,7 @@ Roles identified: visitor, applicant, member (active, pending activation), partn
 ## Notes for the release leader
 
 1. No leader lease is claimed as of 23:25Z. When the orchestrator session claims it, this Sentinel will read the lease record and route findings to the ownership matrix it publishes.
-2. SEN-0001 and SEN-0002 are the highest-leverage quick wins: the destinations already exist and work (sign-in, admin sign-in); the home page simply never links them, and the password gate covers apply and partners.
+2. SEN-0007 is the highest-leverage quick win: remove the Research entries from the shared header, footer, and full site menu (label and href deletions in the shared layout). SEN-0008 needs one deliberate design decision: where the four entries sit relative to the review gate on /research, then add the missing Partner/Affiliate and Admin entries.
 3. SEN-0003/0004/0005 are the deliberate baseline the 2026-07-29 founder directive orders changed. Provenance to preserve while changing them: the offer-readiness guard encodes supplier documentation gaps (873 rows NEEDS_SUPPLIER_DOCUMENTATION) and prior counsel gates. Per the directive, missing dependencies become narrow per-row controls plus founder decision records, not global shutdown.
 4. The Sentinel needs from the leader: the approved test-account and fixture strategy, Render deployment identity access or a relayed SHA, and a file lease if the leader wants the Sentinel to add the /research catalog-CTA Playwright assertion.
 
