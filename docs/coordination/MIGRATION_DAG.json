@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-07-27T15:40:00Z",
-  "productionSha": "b729c8ee1a357e0af95fe50a05989b2f662f7270",
+  "generatedAt": "2026-07-29T07:03:15Z",
+  "productionSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
   "checksumScope": "canonical Git blob bytes at each migration sourceSha and optional sourcePath, or productionSha and path when sourceSha is omitted; managed copies must byte-match the pinned source",
   "migrations": [
     {
@@ -74,8 +74,8 @@
         "algorithm": "sha256",
         "value": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "20260727160000 research_inventory_reservation_commands",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "retain_additive_schema_and_append_only_reservation_history",
@@ -90,6 +90,7 @@
     "The dependency graph must be acyclic.",
     "Checksums are computed from canonical Git blob bytes at the reviewed source SHA/path, not platform-normalized worktree line endings; a distinct managed path must byte-match that source.",
     "Every migration requires a non-empty rollback strategy, procedure, and verification evidence.",
-    "No migration in this DAG creates product, price, inventory, lot, COA, order, role, seed, or Care records."
+    "No migration in this DAG creates product, price, inventory, lot, COA, order, role, seed, or Care records.",
+    "Accepted but unapplied migrations enter this DAG only when their managed migration files are present in the same reviewed candidate; PR117 20260727200000 and PR106 20260728010000/20260728020000 remain outside this deployed DAG and absent from the authenticated production ledger."
   ]
 }
