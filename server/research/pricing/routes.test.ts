@@ -1,6 +1,11 @@
-import express from "express";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
+import { registerResearchApi } from "../index";
 import {
   PRICE_RESOLUTION_FAILURE_REASONS,
   type CustomerPrice,
@@ -559,6 +564,64 @@ describe("id validation", () => {
       "0b0f8a52-9f10-4a7e-8f4e-2f1f0a9c2d31",
     );
   });
+
+  it("answers an undecodable path segment with the closed 400, not the global handler", async () => {
+    const resolver = fakeResolver(available());
+    const authorizer = fakeAuthorizer(retailGrant());
+    const app = makeApp(enabledDeps(resolver, authorizer));
+    // The same shape as the global error handler in server/index.ts, which
+    // echoes err.message. Registered after the adapter, exactly as in
+    // production module order; the path scoped boundary must answer first.
+    let globalHandlerCalls = 0;
+    app.use(
+      (err: unknown, _req: Request, res: Response, next: NextFunction) => {
+        globalHandlerCalls += 1;
+        if (res.headersSent) return next(err);
+        const shaped = err as { status?: number; message?: string };
+        res
+          .status(shaped.status ?? 500)
+          .json({ message: shaped.message ?? "Internal Server Error" });
+      },
+    );
+
+    // %zz cannot be percent decoded, so this fails inside the router before
+    // any pricing handler runs.
+    const res = await request(app).get(
+      "/api/research/pricing/products/%zz/variants/variant-a/price",
+    );
+
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual(PRICING_INVALID_REQUEST_RESPONSE);
+    expectPrivateHeaders(res.headers);
+    const wire = JSON.stringify(res.body);
+    expect(wire).not.toContain("%zz");
+    expect(wire).not.toContain("Failed to decode");
+    expect(globalHandlerCalls).toBe(0);
+    expect(authorizer.state.calls).toBe(0);
+    expect(resolver.calls).toHaveLength(0);
+  });
+
+  it("fails closed with 503 for a non client error crossing the boundary", async () => {
+    const app = express();
+    // A route on the pricing prefix that errors before the adapter's own
+    // handlers, registered ahead of registerPricingApi so the boundary
+    // (registered after it) is the next error handler downstream. The
+    // boundary must keep the error on a closed code with private headers.
+    app.get("/api/research/pricing/boom", () => {
+      throw new Error("internal detail that must not leak");
+    });
+    registerPricingApi(
+      app,
+      enabledDeps(fakeResolver(available()), fakeAuthorizer(retailGrant())),
+    );
+
+    const res = await request(app).get("/api/research/pricing/boom");
+
+    expect(res.status).toBe(503);
+    expect(res.body).toEqual(PRICING_TEMPORARILY_UNAVAILABLE_RESPONSE);
+    expectPrivateHeaders(res.headers);
+    expect(JSON.stringify(res.body)).not.toContain("internal detail");
+  });
 });
 
 describe("http method sanity", () => {
@@ -574,20 +637,40 @@ describe("http method sanity", () => {
     expectPrivateHeaders(res.headers);
   });
 
-  it("advertises only read methods on OPTIONS", async () => {
+  it("advertises only read methods on an explicit OPTIONS with private headers", async () => {
     const app = makeApp(
       enabledDeps(fakeResolver(available()), fakeAuthorizer(retailGrant())),
     );
 
+    for (const url of [
+      priceUrl("product-a", "variant-a"),
+      cardUrl("product-a", "variant-a"),
+    ]) {
+      const res = await request(app).options(url);
+
+      expect(res.status).toBe(204);
+      expect(res.headers.allow).toBe("GET, HEAD, OPTIONS");
+      expectPrivateHeaders(res.headers);
+      expect(res.text ?? "").toBe("");
+    }
+  });
+
+  it("answers OPTIONS with the uniform disabled body while disabled", async () => {
+    const resolver = fakeResolver(available());
+    const authorizer = fakeAuthorizer(retailGrant());
+    const app = makeApp({
+      resolver,
+      authorizeAudience: authorizer.authorize,
+    });
+
     const res = await request(app).options(priceUrl("product-a", "variant-a"));
 
-    expect(res.status).toBe(200);
-    const allow = String(res.headers.allow ?? "");
-    expect(allow).toContain("GET");
-    expect(allow).not.toContain("POST");
-    expect(allow).not.toContain("PUT");
-    expect(allow).not.toContain("DELETE");
-    expect(allow).not.toContain("PATCH");
+    expect(res.status).toBe(503);
+    expect(res.body).toEqual(PRICING_DISABLED_RESPONSE);
+    expectPrivateHeaders(res.headers);
+    expect(res.headers.allow).toBeUndefined();
+    expect(authorizer.state.calls).toBe(0);
+    expect(resolver.calls).toHaveLength(0);
   });
 
   it("has no mutation endpoint of any kind", async () => {
@@ -601,5 +684,193 @@ describe("http method sanity", () => {
       );
       expect(res.status).toBe(404);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Gateway integration: the REAL registerResearchApi (server/research/index.ts,
+// leased to another lane and imported here read only) mounted on one app with
+// this adapter.
+//
+// What these tests prove:
+// 1. THE TRAP, TODAY: in the production posture (password + session secret
+//    set, RESEARCH_PUBLIC off), the gateway's /api/research wall runs before
+//    this adapter and bypasses the review cookie only for
+//    MEMBER_AUTHED_PREFIXES Bearer callers and the downstream member guarded
+//    GET/HEAD read paths. "/pricing" is on neither list, so a valid member
+//    Bearer JWT is answered 401 by the wall and this adapter never runs.
+// 2. THE POST EDIT BEHAVIOR: after the release manager's one line gateway
+//    edit (extend downstreamMemberGuardedRead with
+//    `|| path.startsWith("/pricing/")`, see the routes.ts header), GET/HEAD
+//    pricing requests pass the wall without the review cookie and meet this
+//    adapter's own guard chain.
+//
+// Honest simulation note: this lane cannot edit the leased gateway file, so
+// the post edit predicate cannot be exercised literally. The simulation
+// registers the pricing routes AHEAD of the real wall, which produces the
+// same observable behavior the predicate bypass produces for exactly these
+// GET paths (they reach the adapter without the cookie) while the real wall
+// stays mounted and still guards every other research path, which is
+// asserted. One known divergence: in the real post edit ordering, pricing
+// requests still pass the gateway's configured() fail closed 503 middleware
+// first; the simulation skips it. The trap tests exercise the true
+// production ordering.
+// ---------------------------------------------------------------------------
+describe("gateway integration (real registerResearchApi)", () => {
+  async function inProductionPosture(run: () => Promise<void>): Promise<void> {
+    const prior = {
+      password: process.env.RESEARCH_ACCESS_PASSWORD,
+      secret: process.env.RESEARCH_SESSION_SECRET,
+      publicMode: process.env.RESEARCH_PUBLIC,
+    };
+    process.env.RESEARCH_ACCESS_PASSWORD = "review-password";
+    process.env.RESEARCH_SESSION_SECRET = "review-secret";
+    delete process.env.RESEARCH_PUBLIC;
+    try {
+      await run();
+    } finally {
+      if (prior.password === undefined) delete process.env.RESEARCH_ACCESS_PASSWORD;
+      else process.env.RESEARCH_ACCESS_PASSWORD = prior.password;
+      if (prior.secret === undefined) delete process.env.RESEARCH_SESSION_SECRET;
+      else process.env.RESEARCH_SESSION_SECRET = prior.secret;
+      if (prior.publicMode === undefined) delete process.env.RESEARCH_PUBLIC;
+      else process.env.RESEARCH_PUBLIC = prior.publicMode;
+    }
+  }
+
+  /** Grants only the caller presenting the member Bearer token, like the
+   *  production authorizer built on requireActiveMember. */
+  function bearerBoundAuthorizer() {
+    const state = { calls: 0 };
+    return {
+      state,
+      authorize: async (req: Request): Promise<PricingAudienceGrant | null> => {
+        state.calls += 1;
+        return String(req.headers.authorization ?? "") === "Bearer member-token"
+          ? retailGrant()
+          : null;
+      },
+    };
+  }
+
+  it("documents the trap: today's wall shadows a Bearer-authorized pricing read", async () => {
+    await inProductionPosture(async () => {
+      const resolver = fakeResolver(available());
+      const authorizer = bearerBoundAuthorizer();
+      const app = express();
+      registerResearchApi(app); // production order in server/index.ts
+      registerPricingApi(app, {
+        resolver,
+        authorizeAudience: authorizer.authorize,
+        enabled: () => true,
+        now: () => new Date(NOW),
+      });
+
+      const res = await request(app)
+        .get(priceUrl("product-a", "variant-a"))
+        .set("Authorization", "Bearer member-token");
+
+      // The gateway wall answers; the adapter, its authorizer, and its
+      // private headers never run. This is the shadowing the routes.ts
+      // header requires the release manager to fix in the gateway file.
+      expect(res.status).toBe(401);
+      expect(res.body).toEqual({ ok: false, message: "Access required." });
+      expect(authorizer.state.calls).toBe(0);
+      expect(resolver.calls).toHaveLength(0);
+      expect(res.headers["x-robots-tag"]).toBeUndefined();
+    });
+  });
+
+  it("documents the trap: the disabled state is also shadowed into the wall's 401", async () => {
+    await inProductionPosture(async () => {
+      const resolver = fakeResolver(available());
+      const authorizer = bearerBoundAuthorizer();
+      const app = express();
+      registerResearchApi(app);
+      // Flag omitted: the adapter would answer 503 pricing_disabled, but the
+      // wall answers first in today's ordering.
+      registerPricingApi(app, {
+        resolver,
+        authorizeAudience: authorizer.authorize,
+      });
+
+      const res = await request(app)
+        .get(priceUrl("product-a", "variant-a"))
+        .set("Authorization", "Bearer member-token");
+
+      expect(res.status).toBe(401);
+      expect(res.body).toEqual({ ok: false, message: "Access required." });
+      expect(authorizer.state.calls).toBe(0);
+    });
+  });
+
+  it("reaches the adapter once the gateway read bypass exists (simulated)", async () => {
+    await inProductionPosture(async () => {
+      const resolver = fakeResolver(available());
+      const authorizer = bearerBoundAuthorizer();
+      const app = express();
+      // SIMULATION of the post edit gateway (see the block comment above):
+      // pricing registered ahead of the real wall stands in for the one line
+      // downstreamMemberGuardedRead extension this lane cannot make.
+      registerPricingApi(app, {
+        resolver,
+        authorizeAudience: authorizer.authorize,
+        enabled: () => true,
+        now: () => new Date(NOW),
+      });
+      registerResearchApi(app);
+
+      // A Bearer-authorized pricing GET without any review cookie reaches
+      // the adapter and resolves.
+      const authed = await request(app)
+        .get(priceUrl("product-a", "variant-a"))
+        .set("Authorization", "Bearer member-token");
+      expect(authed.status).toBe(200);
+      expect(authed.body).toEqual({
+        ok: true,
+        state: "available",
+        price: customerPrice(),
+      });
+      expect(resolver.calls).toHaveLength(1);
+      expectPrivateHeaders(authed.headers);
+
+      // An unauthenticated caller gets the ADAPTER's closed 401, not the
+      // gateway's generic one: the adapter owns its denials past the bypass.
+      const anon = await request(app).get(priceUrl("product-a", "variant-a"));
+      expect(anon.status).toBe(401);
+      expect(anon.body).toEqual(PRICING_AUTH_REQUIRED_RESPONSE);
+      expectPrivateHeaders(anon.headers);
+      expect(resolver.calls).toHaveLength(1);
+
+      // The real wall is still mounted and still guards every non bypassed
+      // research path in this simulated app, so the simulation did not
+      // simply remove the gateway.
+      const walled = await request(app).get("/api/research/policies");
+      expect(walled.status).toBe(401);
+      expect(walled.body).toEqual({ ok: false, message: "Access required." });
+    });
+  });
+
+  it("keeps the uniform disabled 503 once the bypass exists (simulated)", async () => {
+    await inProductionPosture(async () => {
+      const resolver = fakeResolver(available());
+      const authorizer = bearerBoundAuthorizer();
+      const app = express();
+      registerPricingApi(app, {
+        resolver,
+        authorizeAudience: authorizer.authorize,
+      });
+      registerResearchApi(app);
+
+      const res = await request(app)
+        .get(priceUrl("product-a", "variant-a"))
+        .set("Authorization", "Bearer member-token");
+
+      expect(res.status).toBe(503);
+      expect(res.body).toEqual(PRICING_DISABLED_RESPONSE);
+      expectPrivateHeaders(res.headers);
+      expect(authorizer.state.calls).toBe(0);
+      expect(resolver.calls).toHaveLength(0);
+    });
   });
 });
