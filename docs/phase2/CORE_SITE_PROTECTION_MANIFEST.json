@@ -1,0 +1,319 @@
+{
+  "$comment": [
+    "The authoritative core-site protection record for Phase 2.",
+    "Samuel's directive: the main xenios website outside /research and /care must not be",
+    "redesigned, rewritten, or behaviorally modified. Every Research and Care candidate",
+    "must pass scripts/acceptance/verify-core-site-protection.mjs before review.",
+    "Built by inspecting the repository at baselineSha, not by assumption.",
+    "Every route below was read out of client/src/App.tsx; every slug out of",
+    "client/src/lib/content.ts (ICP_BY_SLUG) and client/src/lib/careers.ts (CAREERS_ROLES),",
+    "which are the same two sources client/src/lib/sitemap-parity.test.ts pins the sitemap to."
+  ],
+  "version": 1,
+  "taskId": "XCA-W17-CORE-PROTECTION",
+  "baselineSha": "766f19fce3b67cd9b940ea66fe075281c2d8bdf8",
+  "baselineRef": "origin/main",
+  "capturedAt": "2026-07-29T00:00:00Z",
+  "hashAlgorithm": {
+    "name": "sha256-lf",
+    "$comment": [
+      "sha256 over the file's UTF-8 content with every CRLF normalized to LF, so the",
+      "digest is identical whether the file is read from a CRLF Windows checkout",
+      "(this repo sets core.autocrlf) or from `git show <ref>:<path>`.",
+      "Values are prefixed 'sha256:'."
+    ]
+  },
+
+  "protectedRoutes": {
+    "$comment": [
+      "Every client route registered in client/src/App.tsx that is NOT under /research",
+      "or /care. /admin/research and /admin/research/* are deliberately EXCLUDED: they mount",
+      "client/src/research/adminx-section.tsx and belong to the Research surface.",
+      "'kind' distinguishes a rendered page from a pure redirect, because a redirect's",
+      "protected behavior is its target, not its markup."
+    ],
+    "pages": [
+      { "path": "/", "component": "pages/Home", "kind": "page" },
+      { "path": "/product", "component": "pages/Product", "kind": "page" },
+      { "path": "/how-it-works", "component": "pages/HowItWorks", "kind": "page" },
+      { "path": "/for-coaches", "component": "pages/ForCoaches", "kind": "page" },
+      { "path": "/for-clients", "component": "pages/ForClients", "kind": "page" },
+      { "path": "/storefront", "component": "pages/Storefront", "kind": "page" },
+      { "path": "/network", "component": "pages/Network", "kind": "page" },
+      { "path": "/ecosystem", "component": "pages/Ecosystem", "kind": "page" },
+      { "path": "/for-practitioners", "component": "pages/ForPractitioners", "kind": "page" },
+      { "path": "/for/:slug", "component": "pages/IcpPage", "kind": "page", "slugSource": "client/src/lib/content.ts#ICP_BY_SLUG" },
+      { "path": "/manifesto", "component": "pages/Manifesto", "kind": "page" },
+      { "path": "/about", "component": "pages/About", "kind": "page" },
+      { "path": "/careers", "component": "pages/Careers", "kind": "page" },
+      { "path": "/careers/:slug", "component": "pages/Careers#CareersRole", "kind": "page", "slugSource": "client/src/lib/careers.ts#CAREERS_ROLES" },
+      { "path": "/waitlist", "component": "pages/Waitlist", "kind": "page" },
+      { "path": "/contact", "component": "pages/Contact", "kind": "page" },
+      { "path": "/security", "component": "pages/Security", "kind": "page" },
+      { "path": "/compliance", "component": "pages/Compliance", "kind": "page" },
+      { "path": "/investors", "component": "pages/Investors", "kind": "page" },
+      { "path": "/press", "component": "pages/Press", "kind": "page" },
+      { "path": "/privacy", "component": "pages/Privacy", "kind": "page" },
+      { "path": "/terms", "component": "pages/Terms", "kind": "page" },
+      { "path": "/disclosures", "component": "pages/Disclosures", "kind": "page" },
+      { "path": "/early-interest", "component": "pages/EarlyInterest", "kind": "page" },
+      { "path": "/book", "component": "pages/Book", "kind": "page" },
+      { "path": "/concepts", "component": "pages/Concepts", "kind": "page" },
+      { "path": "/mvps", "component": "pages/MvpLab", "kind": "page", "family": "mvp-lab" },
+      { "path": "/admin", "component": "pages/Admin", "kind": "page", "note": "non-research admin dashboard, lazy chunk; /admin/research* is Research-owned and excluded" },
+      { "path": "*", "component": "pages/not-found", "kind": "catch-all" }
+    ],
+    "redirects": [
+      { "path": "/careers/innovative-product-builder", "to": "/careers/founding-senior-ai-software-engineer", "kind": "redirect" },
+      { "path": "/argos", "to": "/mvps", "kind": "redirect", "family": "argos" },
+      { "path": "/telemedicine", "to": "/product", "kind": "redirect", "note": "retired route" },
+      { "path": "/agents", "to": "/product", "kind": "redirect", "note": "retired route" },
+      { "path": "/developers", "to": "/ecosystem", "kind": "redirect", "note": "retired route" },
+      { "path": "/enterprise", "to": "/contact", "kind": "redirect", "note": "retired route" },
+      { "path": "/ontology", "to": "/product", "kind": "redirect", "note": "retired route" },
+      { "path": "/partners", "to": "/ecosystem", "kind": "redirect", "note": "retired route" },
+      { "path": "/faq", "to": "/product", "kind": "redirect", "note": "retired route" }
+    ],
+    "externalRedirects": [
+      { "path": "/kairos", "to": "https://kairos.xeniostechnology.com", "kind": "external-redirect", "family": "kairos" }
+    ],
+    "productFamilyRoutesPresent": ["/mvps", "/argos", "/kairos"],
+    "productFamilyRoutesAbsent": {
+      "$comment": "Verified absent from client/src/App.tsx, client/src/lib/nav.ts and client/public/sitemap.xml at baselineSha. Listed so a later reviewer does not assume the manifest forgot them.",
+      "names": ["Atlas", "Athena", "Agora", "Infinity", "Most Fit Barber"]
+    },
+    "icpSlugs": [
+      "strength-coaches", "personal-trainers", "sports-performance", "functional-medicine",
+      "longevity-clinics", "concierge-medicine", "performance-labs", "recovery-studios",
+      "virtual-coaching", "preventive-care", "nutrition-companies", "supplement-brands",
+      "athlete-brands", "corporate-wellness", "healthcare-systems", "military",
+      "biohacking-clinics", "physical-therapists", "chiropractors", "hormone-clinics",
+      "wellness-clinics", "self-insured-employers", "elite-athletes", "creators",
+      "sports-agencies"
+    ],
+    "careersSlugs": [
+      "founding-designer",
+      "founding-senior-ai-software-engineer",
+      "founding-coach-cohort"
+    ]
+  },
+
+  "protectedPaths": {
+    "$comment": [
+      "Glob patterns for files that must not change. Evaluated as: a changed path is a",
+      "violation unless it matches an allowedWriteZone, an infrastructureZone, or a",
+      "permittedSeamFile. These globs are the human-readable statement of the same rule;",
+      "the gate's decision is made by the zone lists, so the two can never disagree."
+    ],
+    "globs": [
+      "client/index.html",
+      "client/public/**",
+      "client/src/App.tsx",
+      "client/src/main.tsx",
+      "client/src/index.css",
+      "client/src/pages/**",
+      "client/src/components/**",
+      "client/src/hooks/**",
+      "client/src/lib/**",
+      "server/index.ts",
+      "server/routes.ts",
+      "server/static.ts",
+      "server/vite.ts",
+      "server/storage.ts",
+      "server/db.ts",
+      "server/supabase.ts",
+      "server/supabase-store.ts",
+      "server/turnstile.ts",
+      "server/request-logging.ts",
+      "server/services/**",
+      "shared/schema.ts",
+      "vite.config.ts",
+      "postcss.config.js",
+      "components.json",
+      "package.json",
+      "package-lock.json",
+      "tsconfig.json",
+      "vitest.config.ts",
+      "script/**"
+    ],
+    "exemptSubtrees": {
+      "$comment": "Subtrees that sit inside the globs above but are Research/Care owned, so the globs do not capture them.",
+      "paths": [
+        "client/src/research/**",
+        "client/src/care/**",
+        "client/src/pages/AdminResearchTab.tsx"
+      ]
+    }
+  },
+
+  "allowedWriteZones": {
+    "$comment": [
+      "The Research and Care surfaces as they ACTUALLY exist in this repository at",
+      "baselineSha. A candidate branch may add, change, or remove files freely inside",
+      "these prefixes without a lease."
+    ],
+    "prefixes": [
+      "client/src/research/",
+      "client/src/care/",
+      "server/research/",
+      "server/care/",
+      "shared/research/",
+      "shared/care/",
+      "content/research-goals/",
+      "content/research-guides/",
+      "content/research-products/",
+      "supabase/"
+    ],
+    "exactFiles": [
+      "client/src/pages/AdminResearchTab.tsx"
+    ],
+    "notPresent": {
+      "$comment": "Directives sometimes name these; they do not exist at baselineSha. Creating one is a new-surface decision, not a routine Research/Care write, so it is deliberately NOT pre-approved here.",
+      "paths": ["client/src/pages/Research/", "client/src/pages/Care/", "server/api/research/", "server/api/care/"]
+    }
+  },
+
+  "infrastructureZones": {
+    "$comment": [
+      "DELIBERATE DECISION, see docs/phase2/CORE_SITE_PROTECTION.md.",
+      "Neither the protected site nor a Research/Care feature: documentation and",
+      "verification tooling. Nothing under these prefixes is imported by the client",
+      "bundle, mounted by the Express app, or served to a visitor, so a change here",
+      "cannot redesign or behaviorally modify the main website. Allowing them is what",
+      "lets this protection gate exist in the repo without the gate rejecting itself.",
+      "NOTE THE SINGULAR/PLURAL TRAP: 'scripts/' (plural) is tooling and is allowed;",
+      "'script/' (singular) is the production BUILD (script/build.mjs, referenced by",
+      "package.json's build and render-build) and stays PROTECTED in protectedPaths."
+    ],
+    "prefixes": [
+      "docs/",
+      "scripts/"
+    ],
+    "exactFiles": []
+  },
+
+  "reportedZones": {
+    "$comment": [
+      "DELIBERATE DECISION, see docs/phase2/CORE_SITE_PROTECTION.md.",
+      "Test files pass the gate but are always REPORTED, wherever they live, including",
+      "inside the Research and Care write zones.",
+      "Why they pass: a test is never bundled or served, so it cannot redesign or",
+      "behaviorally modify the website. Refusing them would fire on ordinary Research",
+      "work (origin/main's own persistent-cart change touches",
+      "server/release-control-plane.test.ts) and would push people to widen this",
+      "manifest, which is the one move that defeats the whole mechanism.",
+      "Why they are still reported: the repo rule 'do not lower existing safety or",
+      "regression gates to make a build pass' is exactly the risk a silent test edit",
+      "carries. Review must confirm each touched test was strengthened, not weakened.",
+      "This is also what covers server/core-site-protection.test.ts itself: it sits",
+      "beside server/release-control-plane.test.ts because that is the repo's existing",
+      "home for acceptance tests (vitest.config.ts includes server/**/*.test.ts, and",
+      "tsconfig.json excludes **/*.test.ts from `npm run check`), and it is admitted by",
+      "the same rule as every other test rather than by a special case for itself."
+    ],
+    "testFileSuffixes": [".test.ts", ".test.tsx", ".test.mjs", ".test.js"]
+  },
+
+  "permittedSeamFiles": {
+    "$comment": [
+      "The ONLY protected files a Research or Care candidate may touch, and only for a",
+      "minimal integration seam (registering a route, mounting a router, adding a flag).",
+      "Every edit here requires ALL of:",
+      "  1. an exclusive lease on the file for the duration of the change,",
+      "  2. the minimum possible diff (a registration line, not a refactor),",
+      "  3. a focused regression test proving no unrelated behavior moved,",
+      "  4. QA confirmation that the diff contains no unrelated change.",
+      "The gate PASSES a seam edit but REPORTS it, so review never sees one by accident."
+    ],
+    "files": [
+      {
+        "path": "client/src/App.tsx",
+        "seam": "route registration only",
+        "allowed": "add or remove a <Route> for a /research or /care path, and its lazy import plus Suspense wrapper, following the existing ResearchRoutes/CareRoutes pattern",
+        "forbidden": "changing any protected route, its component, its order relative to protected routes, the ScrollToTop behavior, or the provider tree in App()"
+      },
+      {
+        "path": "server/index.ts",
+        "seam": "router mounting only",
+        "allowed": "import and call a register*Api / *PageGate for a Research or Care module, in the existing registration block",
+        "forbidden": "changing middleware order, helmet or CSP configuration, session setup, static serving, error handling, or any non-research non-care registration"
+      },
+      {
+        "path": "server/research/index.ts",
+        "seam": "Research API composition",
+        "allowed": "any change, this file is inside the Research surface",
+        "forbidden": "nothing, listed here only because server/index.ts references it and reviewers expect the pair"
+      },
+      {
+        "path": "server/care/index.ts",
+        "seam": "Care API composition",
+        "allowed": "any change, this file is inside the Care surface",
+        "forbidden": "nothing, listed here for the same reason as the Research index"
+      },
+      {
+        "path": "shared/research/flags.ts",
+        "seam": "feature flag declaration",
+        "allowed": "add a flag with a FALSE default",
+        "forbidden": "changing an existing flag's default to true, or removing a flag another surface reads"
+      }
+    ]
+  },
+
+  "fileHashes": {
+    "$comment": [
+      "HARD TRIPWIRE. Curated highest-risk protected files: the global shell, global CSS,",
+      "shared layout and navigation, the two slug sources the sitemap is pinned to, the",
+      "public SEO files, the main server route table, and the build config. A mismatch is",
+      "an unconditional FAIL, because none of these can be part of a legitimate",
+      "Research or Care seam. Not the whole tree, by design: this is a tripwire for an",
+      "accidental edit, not a lockfile.",
+      "Seam files are NOT hashed here; their baselines live in seamBaselineHashes."
+    ],
+    "files": {
+      "client/index.html": "sha256:67b9d426ed7cbb3478dd2c62bb7761bd80d62fccfde9ac96e382fee7ff68e0a6",
+      "client/src/index.css": "sha256:1e751af8960e46d66448a04c61348945ca568b4b2f3e6348c8be09bec913ed3d",
+      "client/src/main.tsx": "sha256:66385e594f6b0dbf33c91acfdf463c3a69c11c6d3f1157a3e3363791ea5fc2fe",
+      "client/src/components/Navbar.tsx": "sha256:65f461df9c0413bbacc941ebffd75145177497fe5cf6267aae52cf4b005cf003",
+      "client/src/components/Footer.tsx": "sha256:7c51c77b06c0f1ebfe9b3dbfe5ca2040d81b0dca9d386501a161fb14d4e0404c",
+      "client/src/components/PageShell.tsx": "sha256:467a2ff5936b943d53609dc543a0b13a83b7e85781b830832fde02678e1bbbef",
+      "client/src/components/SeoHead.tsx": "sha256:5744060dcb0cc512bd6edb5e04b98c2631d8d90ff1aaa76fe0ff0e0b87a47957",
+      "client/src/components/TopRibbon.tsx": "sha256:7c17c36f6a54a2eb9bcadf8489d266254115cae2f88e845e003d2c2cc4a2c440",
+      "client/src/components/Wordmark.tsx": "sha256:b910c8bf6a0b890612378aae0f95691adfb989cf0b37bc89ccc2da8eac541cb3",
+      "client/src/components/ExternalRedirect.tsx": "sha256:72e9709bfa674dcc138a4156edf4fa73aed0c3014c53bba5c37c7c10ff88459a",
+      "client/src/pages/Home.tsx": "sha256:7fe88e0c954c8af9bd90f7e90399b7bdb11d2e20aeec8ef38420cbda52b7e463",
+      "client/src/pages/not-found.tsx": "sha256:701071f957e11ada559fbe641024f992614e59bb1746ca101a852173c8952758",
+      "client/src/lib/nav.ts": "sha256:d338569c5d9a061aea98ac381549c243cf48153992664db0077c2fed29a720c9",
+      "client/src/lib/content.ts": "sha256:077f0e154aa05ee91f4a9088f763c391d3ca61f78cf9bd89f9ce7031bf8cc13a",
+      "client/src/lib/careers.ts": "sha256:b3da84886eb24be6f8d77e551fc460e9279d8813063fae9f860128e9fda75ebc",
+      "client/public/sitemap.xml": "sha256:e065ea855d43904b8104bf191435bf8ba1a28b08c38788e9048ba5f5b84750ea",
+      "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
+      "server/routes.ts": "sha256:6b080fff3ed04fd48eb3af7aa9272d26cbc6f570c4f2c42a17979affe299f94f",
+      "server/static.ts": "sha256:7ad68ceb8da0fe0b29af6d517e66cfc14f106a641de845aac4f1bd995ad24f4a",
+      "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
+      "vite.config.ts": "sha256:e5f8e5e64bc85bb5ed788c4412beb8b6c82b5807ce98c0e1e6dd505acb059f8e"
+    }
+  },
+
+  "seamBaselineHashes": {
+    "$comment": [
+      "Baselines for the permitted seam files. A mismatch here is NOT a hard fail, because",
+      "a leased seam edit is legitimate. The gate REPORTS it so review always sees which",
+      "seam moved and can demand the lease, the minimum diff, and the focused test."
+    ],
+    "files": {
+      "client/src/App.tsx": "sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c",
+      "server/index.ts": "sha256:f1db7af91fd07d9afd145f49116f6b8028964762d5b7e475e43129256220c613",
+      "server/research/index.ts": "sha256:417f2a7531accfec58932099143a321e4d4f6e5b4c521b84fa7c08c97c543ddb",
+      "server/care/index.ts": "sha256:fea8c5ad5124dacf07350818e891396ee9f234983a93be65540911c1eafd81db",
+      "shared/research/flags.ts": "sha256:be85e1a8b1e82d6b6724aa721b196535c663beefc6ea34fc21f1ca26a4bc5e1b"
+    }
+  },
+
+  "routeManifestSources": {
+    "$comment": "Where protectedRoutes was read from. server/core-site-protection.test.ts cross-checks the manifest against these files so it cannot rot.",
+    "router": "client/src/App.tsx",
+    "icpSlugs": "client/src/lib/content.ts",
+    "careersSlugs": "client/src/lib/careers.ts",
+    "publicSitemap": "client/public/sitemap.xml"
+  }
+}
