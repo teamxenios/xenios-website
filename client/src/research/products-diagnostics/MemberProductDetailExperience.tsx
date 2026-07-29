@@ -63,33 +63,34 @@ export function MemberProductDetailExperience({
   errorMessage?: string;
   onRetry?: () => void;
 }) {
+  const safeProduct = state === "ok" ? product : null;
   const [selectedVariantId, setSelectedVariantId] = useState(
-    product?.variants[0]?.id ?? "",
+    safeProduct?.variants[0]?.id ?? "",
   );
   const selected = useMemo(
     () =>
-      product?.variants.find((variant) => variant.id === selectedVariantId) ??
-      product?.variants[0] ??
+      safeProduct?.variants.find((variant) => variant.id === selectedVariantId) ??
+      safeProduct?.variants[0] ??
       null,
-    [product, selectedVariantId],
+    [safeProduct, selectedVariantId],
   );
-  const showProductIdentity = state === "ok" && product !== null;
+  const showProductIdentity = safeProduct !== null;
 
   return (
     <ResearchMemberShell
-      eyebrow={showProductIdentity ? product.category : "Product catalog"}
-      title={showProductIdentity ? product.displayName : "Product information"}
+      eyebrow={showProductIdentity ? safeProduct.category : "Product catalog"}
+      title={showProductIdentity ? safeProduct.displayName : "Product information"}
       lead={
         showProductIdentity
-          ? product.summary
+          ? safeProduct.summary
           : "Approved product information appears after the exact catalog record is loaded."
       }
       actions={
         showProductIdentity &&
-        product.lane !== "future_clinical" &&
-        product.lane !== "non_product_program" ? (
+        safeProduct.lane !== "future_clinical" &&
+        safeProduct.lane !== "non_product_program" ? (
           <Link
-            href={productRequestHref("products", product.displayName)}
+            href={productRequestHref("products", safeProduct.displayName)}
             className="btn btn-primary"
           >
             Request an alternative
@@ -104,7 +105,7 @@ export function MemberProductDetailExperience({
         unavailableTitle="This product is not available."
         unavailableBody="Only an exact published and public Product Control record can appear here."
       >
-        {product === null ? (
+        {safeProduct === null ? (
           <ResearchEmptyState
             title="Product not found."
             body="The product may no longer be published, or the link may be incorrect."
@@ -118,10 +119,10 @@ export function MemberProductDetailExperience({
           <>
             <section className="card grid gap-6 md:grid-cols-2">
               <div style={{ minWidth: 0 }}>
-                {product.media ? (
+                {safeProduct.media ? (
                   <img
-                    src={product.media.href}
-                    alt={product.media.altText}
+                    src={safeProduct.media.href}
+                    alt={safeProduct.media.altText}
                     className="w-full"
                     style={{ aspectRatio: "4 / 3", objectFit: "contain" }}
                   />
@@ -133,23 +134,23 @@ export function MemberProductDetailExperience({
                 )}
               </div>
               <div className="grid content-start gap-4" style={{ minWidth: 0 }}>
-                <p className="mono-label text-ink-mute">{product.classification}</p>
+                <p className="mono-label text-ink-mute">{safeProduct.classification}</p>
                 <ResearchStatusBadge
                   label={
-                    product.displayState === "available"
+                    safeProduct.displayState === "available"
                       ? "Available"
-                      : product.displayState === "catalog_only"
+                      : safeProduct.displayState === "catalog_only"
                         ? "Catalog information"
-                        : product.displayState === "documentation_pending"
+                        : safeProduct.displayState === "documentation_pending"
                           ? "Documentation pending"
-                          : product.displayState === "pricing_pending"
+                          : safeProduct.displayState === "pricing_pending"
                             ? "Pricing pending"
                             : "Unavailable"
                   }
-                  tone={product.displayState === "available" ? "success" : "pending"}
+                  tone={safeProduct.displayState === "available" ? "success" : "pending"}
                 />
 
-                {product.variants.length ? (
+                {safeProduct.variants.length ? (
                   <label className="grid gap-2" htmlFor="member-product-variant">
                     <span className="form-label">Variant</span>
                     <select
@@ -158,7 +159,7 @@ export function MemberProductDetailExperience({
                       value={selected?.id ?? ""}
                       onChange={(event) => setSelectedVariantId(event.target.value)}
                     >
-                      {product.variants.map((variant) => (
+                      {safeProduct.variants.map((variant) => (
                         <option key={variant.id} value={variant.id}>
                           {variant.label} — {variant.sku}
                         </option>
@@ -205,7 +206,7 @@ export function MemberProductDetailExperience({
               </div>
             </section>
 
-            {product.researchOnlyBoundary && (
+            {safeProduct.researchOnlyBoundary && (
               <div className="mt-5">
                 <ResearchSecureNotice>
                   This is Research catalog information. It is not prescribing,
@@ -218,28 +219,28 @@ export function MemberProductDetailExperience({
             <div className="mt-6">
               <FactSection
                 title="Overview"
-                value={product.overview}
+                value={safeProduct.overview}
                 pending="Approved overview content is required before it can be displayed."
               />
               <FactSection
                 title="Specifications"
-                value={product.specifications}
+                value={safeProduct.specifications}
                 pending="Approved product specifications are required."
               />
               <FactSection
                 title="Research information"
-                value={product.researchInformation}
+                value={safeProduct.researchInformation}
                 pending="Reviewed Research information is required."
               />
               <FactSection
                 title="Storage"
-                value={product.storageInformation}
+                value={safeProduct.storageInformation}
                 pending="Approved storage information is required."
               />
               <FactSection
                 title="Shipping and returns"
                 value={
-                  [product.shippingInformation, product.returnInformation]
+                  [safeProduct.shippingInformation, safeProduct.returnInformation]
                     .filter(Boolean)
                     .join(" ") || null
                 }
@@ -250,12 +251,12 @@ export function MemberProductDetailExperience({
                 style={{ borderTop: "1px solid var(--rule)" }}
               >
                 <h2 className="body-l font-700">Related products</h2>
-                {product.relatedProducts.length ? (
+                {safeProduct.relatedProducts.length ? (
                   <ul
                     className="mt-3 grid gap-3"
                     style={{ listStyle: "none", padding: 0 }}
                   >
-                    {product.relatedProducts.map((related) => (
+                    {safeProduct.relatedProducts.map((related) => (
                       <li
                         key={related.id}
                         className="flex flex-wrap items-center justify-between gap-3"

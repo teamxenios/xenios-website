@@ -222,6 +222,8 @@ describe("member product detail experience", () => {
       expect(html).not.toContain("Alpha Research");
       expect(html).not.toContain("Reviewed summary.");
       expect(html).not.toContain("Request an alternative");
+      expect(html).not.toContain("media-a");
+      expect(html).not.toContain("$149.00");
       expect(html).not.toContain(">Research<");
     }
   });

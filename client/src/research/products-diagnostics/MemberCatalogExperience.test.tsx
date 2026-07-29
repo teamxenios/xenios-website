@@ -108,12 +108,13 @@ describe("member catalog experience", () => {
     expect(html).toContain("research-app");
     expect(html).toContain("<main");
     expect(html.match(/<h1/g)).toHaveLength(1);
+    expect(html).toContain("Xenios Research catalog");
     expect(html).toContain("Alpha Research");
     expect(html).toContain("$149.00");
     expect(html).toContain("Documentation pending");
     expect(html).toContain("Price not currently available");
     expect(html).not.toMatch(
-      /Add to cart|Buy now|linear-gradient|radial-gradient|shadow-(?:sm|md|lg|xl)|rounded-2xl/,
+      /Add to cart|Buy now|linear-gradient|radial-gradient|shadow-(?:sm|md|lg|xl)|rounded-2xl/i,
     );
   });
 

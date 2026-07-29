@@ -1,6 +1,7 @@
 import SeoHead from "@/components/SeoHead";
 import { byCategory, useResearch } from "../core";
-import { NoticeBar, PageIntro, ProductGrid } from "../components";
+import { NoticeBar, PageIntro } from "../components";
+import { V3SupplementCatalogExperience } from "../products-diagnostics/V3SupplementCatalogExperience";
 
 export default function Supplements() {
   const { products } = useResearch();
@@ -19,11 +20,16 @@ export default function Supplements() {
         lead="Premium supplements selected around clear formulas, transparent sourcing, independent verification, and the practical reality of daily use."
       />
       <NoticeBar>
-        The supplement catalog is ready for the wholesale list Mitch is sourcing. Placeholder products are intentionally marked coming soon until the actual formula, facts panel, price, testing, and claims are approved.
+        Supplement profiles remain coming soon until their exact formula,
+        customer price, documentation, availability, and release approval are
+        verified.
       </NoticeBar>
-      <section className="container-x section-y">
-        <ProductGrid products={items} />
-      </section>
+      <V3SupplementCatalogExperience
+        items={items.map((item) => ({
+          slug: item.slug,
+          displayName: item.name,
+        }))}
+      />
     </>
   );
 }

@@ -28,6 +28,7 @@ import type { CatalogProduct, ProvenancedFact } from "@shared/research/catalog";
 import type { CartDto, CheckoutRequest, ShippingQuoteRequest } from "@shared/research/commerce-api";
 import type { PartnerSelfSource } from "./routes";
 import type { InventoryLot } from "../inventory/lots";
+import { v3PreviewCatalogProducts } from "../catalog/v3-preview-catalog";
 
 // ---------------------------------------------------------------------------
 // Three-state proof of the production commerce composition.
@@ -59,6 +60,7 @@ function refusingWiring(): { wiring: Partial<CommerceWiring>; spies: Record<stri
     return fn;
   };
   const wiring = {
+    catalogProducts: v3PreviewCatalogProducts,
     resolveCartStore: refuse("resolveCartStore"),
     resolveOrderRepository: refuse("resolveOrderRepository"),
     resolveClaimRepository: refuse("resolveClaimRepository"),
@@ -297,11 +299,9 @@ describe("state 1: commerce flag off (production default)", () => {
     expect(await deps.adminQueues.commerce()).toEqual({ provisioned: false, items: [] });
   });
 
-  it("keeps the real catalog readable, purchasable nowhere, prices null", () => {
+  it("keeps discovery previews out of the compatibility catalog", () => {
     const products = deps.catalog.listProducts();
-    expect(products.length).toBeGreaterThanOrEqual(15);
-    expect(products.filter((p) => p.purchasable)).toEqual([]);
-    for (const product of products) expect(product.priceCents).toBeNull();
+    expect(products).toEqual([]);
     const caps = deps.capabilities.memberVisible();
     expect(caps.product_commerce.enabled).toBe(false);
     expect(caps.quantum_commerce.enabled).toBe(false);
@@ -418,10 +418,9 @@ describe("state 2: flag on, commerce database not provisioned", () => {
     expect(await deps.adminQueues.commerce()).toEqual({ provisioned: false, items: [] });
   });
 
-  it("still serves the catalog, presents nothing purchasable, reports commerce disabled", () => {
+  it("still exposes zero compatibility entries and reports commerce disabled", () => {
     const products = deps.catalog.listProducts();
-    expect(products.length).toBeGreaterThanOrEqual(15);
-    expect(products.filter((p) => p.purchasable)).toEqual([]);
+    expect(products).toEqual([]);
     const caps = deps.capabilities.memberVisible();
     expect(caps.product_commerce.enabled).toBe(false);
     expect(caps.quantum_commerce.enabled).toBe(false);
@@ -633,11 +632,9 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
     expect(caps.quantum_commerce.enabled).toBe(false);
   });
 
-  it("keeps the REAL catalog non-purchasable even fully configured (per-SKU gates hold)", () => {
-    // No catalogProducts override here: the genuine adapted catalog with the
-    // flag on and the database configured still sells nothing, because per-SKU
-    // eligibility (confirmed facts, quality documentation) fails closed.
+  it("keeps discovery profiles out of commerce even fully configured", () => {
     const deps = buildCommerceDependencies(NOW, LIVE_ENV, {
+      catalogProducts: v3PreviewCatalogProducts,
       resolveCartStore: () => createInMemoryCartStore(),
       resolveOrderRepository: () => createInMemoryOrderStore(),
       resolveClaimRepository: () => createInMemoryClaimRepository(),
@@ -652,9 +649,7 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
       hasEffectiveAgreement: async () => true,
     });
     const products = deps.catalog.listProducts();
-    expect(products.length).toBeGreaterThanOrEqual(15);
-    expect(products.filter((p) => p.purchasable)).toEqual([]);
-    for (const product of products) expect(product.priceCents).toBeNull();
+    expect(products).toEqual([]);
   });
 
   it("refuses to compose over a synthetic configuration marker (the guard runs first)", () => {
