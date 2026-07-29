@@ -1,0 +1,57 @@
+{
+  "approver": "Samuel Boadu",
+  "recorded": "2026-07-29T06:10:00Z",
+  "repository": "teamxenios/xenios-website",
+  "source": "user-provided directive in the active Claude Fable 5 session (run xca-20260729T0302Z); transcription, not a cryptographic signature",
+  "scope": "approved nonclinical website build",
+  "exact_hash_rule": "every protected approval conditional on exact PR, full SHA, tree, manifest, migration checksum, dependency state, CI, independent QA, and rollback identity; no transfer across drift; re-verified identical-content candidates proceed without new approval; materially changed scope holds only that action",
+  "migration_approvals": {
+    "pr117_persistent_cart": {
+      "head": "821bf169e32fe19c0f0e37e6c5bc39eae448e062",
+      "migration": "supabase/migrations/20260727200000_research_persistent_cart.sql",
+      "sha256": "6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880",
+      "dependency": "20260727160000_research_inventory_reservation_commands",
+      "conditions": 32,
+      "claude_independent_verdict": "ACCEPT at 821bf169 (2026-07-29): identity, checksum, manifest, ancestry, boundary refutation, 396 kernel tests, zero Claude-lane collision"
+    },
+    "pricing_provenance": {
+      "version": "20260729000000",
+      "pr": 113,
+      "accepted_sha": "ec73fa72d305458134c96b8792be282ccf881465",
+      "conditions": 15
+    },
+    "rls_retro_hardening": {
+      "version": "20260729100000",
+      "pr": 124,
+      "accepted_sha": "5405043960c0cb9cfbced3ecb8aba0ceb296522f",
+      "conditions": 15,
+      "grantor_role_use": "authorized solely for the exact reviewed grant, revoke, RLS, and default-privilege statements; credentials never printed or committed"
+    }
+  },
+  "quantum_approval": {
+    "decision": "QNT-001",
+    "amount_cents": 180000,
+    "currency": "USD",
+    "audience": "member",
+    "identity_rule": "authoritative evidence only; no fabricated attributes; safest-draft record plus unavailable purchasing when attributes are missing; production mutation only after identity and readiness gates pass"
+  },
+  "proposed_prices_approval": {
+    "status": "HELD_PENDING_ARTIFACT_RECONCILIATION",
+    "reason": "directive approves exactly 33 rows; the decisions JSON contains 35 proposed rows (PEP-001..015, NUT-001..020) while its own decision_boundary claims 33 and the matrix table lists 33 (NUT-019/NUT-020 only in the JSON); the artifacts must agree and per-row binding conditions must pass before any activation"
+  },
+  "supplier_relocation": "approved: private operations repository (existing, else create teamxenios/xenios-private-operations), PRIVATE visibility verified before upload, provenance and SHA-256 preserved, website branch sanitized with safe stub, leakage scans, bounded security PR; automatic history rewrite not approved",
+  "credential_rotation": "exact verified-exposed credentials only; 8 preconditions; replacement created and verified before revocation; nothing printed, logged, or committed",
+  "stripe": "test-mode and inert production wiring approved; no live financial actions, no live-mode test transactions, no real customer payment data",
+  "merge_and_deploy": "standing approval for accepted nonclinical application code after the enumerated pre-merge and post-merge verification; cooperative mode executes via the Codex Release Manager; evidence-gated exclusive Claude failover may execute with a recorded lease and single-authority rule",
+  "excluded": [
+    "customer, supplier, or affiliate communications",
+    "real shipping labels or fulfillment",
+    "live refunds, payouts, or arbitrary charges",
+    "new final legal publication without approved source text",
+    "clinical records or Care/clinical activation",
+    "capacity purchases",
+    "provider account deletion, domain transfers, organization ownership changes",
+    "destruction of production evidence",
+    "fabricated customers, members, orders, payments, inventory, lots, COAs, supplier facts, revenue, fulfillment"
+  ]
+}
