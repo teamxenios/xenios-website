@@ -146,8 +146,8 @@ describe("copy shape", () => {
 describe("house style", () => {
   it("uses no em dash or en dash anywhere in the copy", () => {
     for (const value of customerFacingCopyStrings()) {
-      expect(value, value).not.toContain("—");
-      expect(value, value).not.toContain("–");
+      expect(value, value).not.toContain("\u2014");
+      expect(value, value).not.toContain("\u2013");
     }
   });
 
