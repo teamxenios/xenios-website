@@ -106,7 +106,8 @@ describe("member catalog experience", () => {
       <MemberCatalogExperience catalog={catalog} />,
     );
     expect(html).toContain("research-app");
-    expect(html).toContain("<main");
+    // Landmark rule: the layout's section chrome owns the page's one <main>; the shell must not nest a second.
+    expect(html).not.toContain("<main");
     expect(html.match(/<h1/g)).toHaveLength(1);
     expect(html).toContain("Xenios Research catalog");
     expect(html).toContain("Alpha Research");
