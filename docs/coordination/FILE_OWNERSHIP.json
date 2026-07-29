@@ -198,6 +198,25 @@
       ]
     },
     {
+      "id": "OWNER-W2-CARE-FRONTEND-INTEGRATION",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "client/src/care/CareAppointmentReadinessPanel.tsx",
+        "client/src/care/CareAppointmentsPage.tsx",
+        "client/src/care/CareConsentPendingPage.tsx",
+        "client/src/care/CarePharmacyOrdersPage.tsx",
+        "client/src/care/CarePharmacyReadinessPanel.tsx",
+        "client/src/care/CarePrescriptionsPage.tsx",
+        "client/src/care/appointment-ui.test.ts",
+        "client/src/care/eligibility-ui.test.ts",
+        "client/src/care/frontend-failclosed.test.tsx",
+        "client/src/care/prescription-ui.test.ts"
+      ]
+    },
+    {
       "id": "OWNER-W2-SUPABASE-RENDER-CHECKIN",
       "owner": "Website 2",
       "lane": "supabase-render-checkin",
