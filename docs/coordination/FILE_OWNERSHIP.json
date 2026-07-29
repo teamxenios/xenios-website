@@ -324,11 +324,11 @@
       ]
     },
     {
-      "id": "OWNER-W5-PERSISTENT-CART",
-      "owner": "Website 5",
-      "lane": "wave3-persistent-cart",
+      "id": "OWNER-W2-PERSISTENT-CART-INTEGRATION",
+      "owner": "Website 2",
+      "lane": "release-manager",
       "mode": "write",
-      "state": "reserved",
+      "state": "active",
       "patterns": [
         "docs/coordination/WEBSITE_5_REMAINING_SCOPE.md",
         "docs/coordination/WEBSITE_5_WAVE3_PERSISTENT_CART_HANDOFF.md",
