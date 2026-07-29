@@ -285,7 +285,7 @@ export default function Admin() {
 
   return (
     <PageShell>
-      <SeoHead title="xenios admin" description="Admin dashboard" path="/admin" />
+      <SeoHead title="xenios admin" description="Admin dashboard" path="/admin" robots="noindex, nofollow" />
       <section className="container-x pt-24 md:pt-36 pb-16">
         <p className="mono-cap text-ink-mute mb-6">ADMIN</p>
         <div className="flex items-center justify-between gap-4 flex-wrap">

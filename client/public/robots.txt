@@ -1,22 +1,36 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /admin
 
 User-agent: GPTBot
 Allow: /
+Disallow: /api/
+Disallow: /admin
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /api/
+Disallow: /admin
 
 User-agent: Claude-Web
 Allow: /
+Disallow: /api/
+Disallow: /admin
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /api/
+Disallow: /admin
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /api/
+Disallow: /admin
 
 User-agent: CCBot
 Allow: /
+Disallow: /api/
+Disallow: /admin
 
 Sitemap: https://xeniostechnology.com/sitemap.xml
