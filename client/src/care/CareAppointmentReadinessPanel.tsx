@@ -4,6 +4,8 @@ import { careApiFetch } from "./api";
 
 type ReadinessState =
   | { kind: "loading" }
+  | { kind: "disabled" }
+  | { kind: "auth_required" }
   | { kind: "forbidden" }
   | {
       kind: "ready";
@@ -14,27 +16,27 @@ type ReadinessState =
     }
   | { kind: "error" };
 
-const nextAction: Record<CareAppointmentRequiredInputLabel, string> = {
+const requirementCopy: Record<CareAppointmentRequiredInputLabel, string> = {
   "MEDICAL GROUP REQUIRED":
-    "Enter and verify the medical-group relationship and governance evidence.",
+    "A verified medical-group relationship and governance record is required.",
   "LICENSED CLINICIAN RECORD REQUIRED":
-    "Create the clinician record before assignment can begin.",
+    "An independently verified licensed-clinician record is required.",
   "CLINICIAN LICENSE REQUIRED":
-    "Enter an unexpired license for the patient’s current state.",
+    "A current license for the patient’s physical state is required.",
   "CLINICIAN CREDENTIAL VERIFICATION REQUIRED":
-    "Complete credential review before the clinician can be activated.",
+    "Completed clinician credential review is required.",
   "CLINICIAN COVERAGE REQUIRED":
-    "Verify active clinician coverage for the patient’s current state.",
+    "Verified clinician coverage for the patient’s current state is required.",
   "SUPPORTED STATE REQUIRED":
-    "Record and approve the state-coverage decision.",
+    "An approved supported-state decision is required.",
   "TELEHEALTH PROVIDER REQUIRED":
-    "Configure and verify the telehealth provider relationship.",
+    "A verified telehealth-provider relationship is required.",
   "SCHEDULING PROVIDER REQUIRED":
-    "Configure and verify the scheduling provider.",
+    "A verified scheduling-provider relationship is required.",
   "APPOINTMENT REMINDER CONFIGURATION REQUIRED":
-    "Approve reminder timing before appointments can be scheduled.",
+    "Approved appointment-reminder timing is required.",
   "CARE ACTIVATION APPROVAL REQUIRED":
-    "Complete the server-authoritative Care release review.",
+    "Separate server-authoritative release approval is required.",
 };
 
 export default function CareAppointmentReadinessPanel({
@@ -52,8 +54,16 @@ export default function CareAppointmentReadinessPanel({
         `/api/care/appointments/admin/readiness${query}`,
       );
       const body = await response.json().catch(() => ({}));
-      if (response.status === 401 || response.status === 403) {
+      if (response.status === 401) {
+        setState({ kind: "auth_required" });
+        return;
+      }
+      if (response.status === 403) {
         setState({ kind: "forbidden" });
+        return;
+      }
+      if (response.status === 503 && body?.code === "care_disabled") {
+        setState({ kind: "disabled" });
         return;
       }
       if (!response.ok || body?.ok !== true || !body.readiness) {
@@ -75,10 +85,13 @@ export default function CareAppointmentReadinessPanel({
       aria-labelledby="care-appointment-readiness-title"
       aria-live="polite"
       aria-busy={state.kind === "loading"}
+      data-care-readonly-readiness="true"
     >
-      <p className="mono-label text-pulse mb-3">APPOINTMENT READINESS</p>
+      <p className="mono-label text-pulse mb-3">
+        READ-ONLY APPOINTMENT READINESS
+      </p>
       <h2 id="care-appointment-readiness-title" className="h2">
-        Software readiness and operational readiness remain separate.
+        Operational evidence and public availability remain separate.
       </h2>
       {state.kind === "loading" && (
         <div className="card mt-6">
@@ -87,10 +100,26 @@ export default function CareAppointmentReadinessPanel({
           </p>
         </div>
       )}
+      {state.kind === "disabled" && (
+        <div className="card mt-6">
+          <p className="body-m text-ink-2">
+            Care is not available. No scheduling, provider, or activation
+            control is exposed by this frontend.
+          </p>
+        </div>
+      )}
+      {state.kind === "auth_required" && (
+        <div className="card mt-6">
+          <p className="body-m text-ink-2">
+            Readiness evidence requires an authorized Care administrator.
+          </p>
+        </div>
+      )}
       {state.kind === "forbidden" && (
         <div className="card mt-6">
           <p className="body-m text-ink-2">
-            Care readiness details require the clinical administrator role.
+            This account cannot review Care readiness evidence. No operational
+            controls are available.
           </p>
         </div>
       )}
@@ -121,27 +150,34 @@ export default function CareAppointmentReadinessPanel({
                 </dd>
               </div>
               <div>
-                <dt className="mono-label text-ink-mute">PUBLIC RELEASE</dt>
+                <dt className="mono-label text-ink-mute">FRONTEND ACCESS</dt>
                 <dd className="body-m mt-2">
-                  {state.publicReady ? "Approved" : "Blocked"}
+                  Unavailable
                 </dd>
               </div>
             </dl>
+            <p className="body-m text-ink-2 mt-6">
+              {state.publicReady
+                ? "A readiness record exists, but this frontend cannot activate or expose Care."
+                : "Public Care access has not been approved and remains unavailable here."}
+            </p>
           </div>
           {state.requiredInputs.length > 0 ? (
             <div className="mt-4 grid grid-cols-1 gap-3">
               {state.requiredInputs.map((label) => (
                 <article className="card" key={label}>
                   <h3 className="mono-label text-ink">{label}</h3>
-                  <p className="body-m text-ink-2 mt-3">{nextAction[label]}</p>
+                  <p className="body-m text-ink-2 mt-3">
+                    {requirementCopy[label]}
+                  </p>
                 </article>
               ))}
             </div>
           ) : (
             <div className="card mt-4">
               <p className="body-m text-ink-2">
-                All appointment-domain inputs are verified. Public release still
-                remains subject to the canonical server launch gate.
+                No additional required-input labels were returned. This does not
+                activate Care; public access remains unavailable here.
               </p>
             </div>
           )}

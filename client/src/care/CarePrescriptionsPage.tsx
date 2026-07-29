@@ -53,12 +53,14 @@ export default function CarePrescriptionsPage() {
         <p className="body-l text-ink-2 mt-8 max-w-[64ch]">
           This private area never invents medication details. Information appears
           only after an assigned human clinician signs a patient-specific record.
+          This frontend is read-only and exposes no prescription action.
         </p>
         <section
           className="mt-10 max-w-[920px]"
           aria-live="polite"
           aria-busy={state.kind === "loading"}
           aria-labelledby="care-prescription-status"
+          data-care-read-only="true"
         >
           <p className="mono-label text-pulse mb-3">CURRENT STATUS</p>
           <h2 id="care-prescription-status" className="h2">

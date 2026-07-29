@@ -21,18 +21,28 @@ describe("Care PR4 final Xenios UI states", () => {
     expect(panel).toContain("PHARMACY LICENSE VERIFICATION REQUIRED");
     expect(panel).toContain("PATIENT-SPECIFIC PRESCRIPTION CONTENT REQUIRED");
     expect(panel).toContain("CARE ACTIVATION APPROVAL REQUIRED");
-    expect(panel).toContain("Care remains blocked");
+    expect(panel).toContain("FRONTEND ACCESS");
+    expect(panel).toContain("Unavailable");
+    expect(panel).toContain('{ kind: "disabled" }');
+    expect(panel).toContain('{ kind: "auth_required" }');
+    expect(panel).toContain('data-care-readonly-readiness="true"');
+    expect(panel).not.toContain('publicReady ? "Approved"');
+    expect(panel).not.toMatch(/\b(Create|Configure|Enter)\b/);
   });
-  it("keeps the assigned pharmacy queue fail-closed with one state action", () => {
+  it("keeps the pharmacy shell fail-closed and exposes no state action", () => {
     expect(pharmacy).toContain("Authorized pharmacy access is required.");
-    expect(pharmacy).toContain("No orders are assigned.");
-    expect(pharmacy).toContain("PRIVATE TRACKING REFERENCE");
-    expect(pharmacy).toContain("CLARIFICATION REQUEST REFERENCE");
-    expect(pharmacy).toContain("CLINICIAN RESPONSE REQUIRED");
-    expect(pharmacy).toContain("Request clarification");
-    expect(pharmacy).toContain('clarification_requested: "cancel"');
-    expect(pharmacy).toContain("Cancel order");
+    expect(pharmacy).toContain("No pharmacy records are assigned.");
+    expect(pharmacy).toContain("This frontend is read-only.");
+    expect(pharmacy).toContain("exposes no operational controls");
+    expect(pharmacy).toContain("<CarePharmacyReadinessPanel />");
     expect(pharmacy).toContain("Nothing was changed.");
+    expect(pharmacy).not.toContain('method: "POST"');
+    expect(pharmacy).not.toContain("/action");
+    expect(pharmacy).not.toContain("CarePharmacyAction");
+    expect(pharmacy).not.toContain("TRACKING REFERENCE");
+    expect(pharmacy).not.toContain("Request clarification");
+    expect(pharmacy).not.toContain("Cancel order");
+    expect(pharmacy).not.toContain("orders.map");
     expect(pharmacy).not.toContain("<main");
     expect(pharmacy).not.toMatch(/demo pharmacy|sample order|fake patient/i);
   });

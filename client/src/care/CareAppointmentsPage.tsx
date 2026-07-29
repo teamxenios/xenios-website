@@ -4,6 +4,7 @@ import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import type { CareAppointment } from "@shared/care/appointments";
 import { careApiFetch } from "./api";
+import CareAppointmentReadinessPanel from "./CareAppointmentReadinessPanel";
 
 type ViewState =
   | { kind: "loading" }
@@ -154,16 +155,11 @@ export default function CareAppointmentsPage() {
             <div className="card mt-6">
               <p className="body-m text-ink-2">
                 {state.requestAvailable
-                  ? "Complete the separate Care intake before requesting an appointment."
+                  ? "Separate Care intake is not available from this frontend. Review your Care eligibility and status before any scheduling request."
                   : "Scheduling is not available until the required Care coverage and provider records are verified."}
               </p>
-              <Link
-                href={state.requestAvailable ? "/care/intake" : "/care/eligibility"}
-                className="btn btn-primary mt-6"
-              >
-                {state.requestAvailable
-                  ? "Continue Care intake"
-                  : "Review Care eligibility"}
+              <Link href="/care/eligibility" className="btn btn-primary mt-6">
+                Review Care eligibility
               </Link>
             </div>
           )}
@@ -206,6 +202,10 @@ export default function CareAppointmentsPage() {
             </div>
           )}
         </section>
+
+        {(state.kind === "disabled" ||
+          state.kind === "error" ||
+          state.kind === "ready") && <CareAppointmentReadinessPanel />}
 
         <aside className="mt-12 max-w-[760px] pt-10 rule-top">
           <p className="body-m text-ink-2">
