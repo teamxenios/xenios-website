@@ -62,10 +62,10 @@
     {
       "owner": "Website 4",
       "lane": "nonclinical-operations-affiliates-checkin",
-      "state": "ACTIVE",
-      "activeUnit": "Record status and evidence for PR #106 exact frozen head de5c6fb596d1dd4b2368419dd4acfd657f5c7fdc only; runtime and migration files are not authorized by this check-in lease.",
+      "state": "FROZEN_ACCEPTED_INTEGRATION_PENDING",
+      "activeUnit": "PR #106 exact accepted source 40d697c7bb4b903ae4d0ba62978239c369f35d6f; exact 30-path write lease transferred to Website 2 for byte-preserving current-base integration.",
       "branch": "feature/website-4-takeover-operations-fulfillment-affiliates",
-      "headSha": "de5c6fb596d1dd4b2368419dd4acfd657f5c7fdc"
+      "headSha": "40d697c7bb4b903ae4d0ba62978239c369f35d6f"
     },
     {
       "owner": "Website 6",
@@ -168,13 +168,42 @@
       ]
     },
     {
-      "id": "OWNER-W4-OPERATIONS-AFFILIATES-CHECKIN",
-      "owner": "Website 4",
-      "lane": "nonclinical-operations-affiliates-checkin",
+      "id": "OWNER-W2-PR106-INTEGRATION",
+      "owner": "Website 2",
+      "lane": "release-manager",
       "mode": "write",
-      "state": "active",
+      "state": "reserved",
       "patterns": [
-        "docs/coordination/session-checkins/operations-and-affiliates.md"
+        "client/src/research/operations/MitchPortal.test.tsx",
+        "client/src/research/operations/MitchPortal.tsx",
+        "client/src/research/operations/OperationsCommandCenter.test.tsx",
+        "client/src/research/operations/OperationsCommandCenter.tsx",
+        "client/src/research/pages/adminx/Fulfillment.tsx",
+        "docs/coordination/WEBSITE_4_OPERATIONS_AFFILIATES_HANDOFF.md",
+        "docs/coordination/WEBSITE_4_OPERATIONS_AFFILIATES_RELEASE_MANIFEST.json",
+        "docs/coordination/session-checkins/operations-and-affiliates.md",
+        "server/research/affiliates/production.test.ts",
+        "server/research/affiliates/production.ts",
+        "server/research/fulfillment/port.ts",
+        "server/research/fulfillment/production.test.ts",
+        "server/research/fulfillment/production.ts",
+        "server/research/fulfillment/service.test.ts",
+        "server/research/fulfillment/service.ts",
+        "server/research/operations/commercial.test.ts",
+        "server/research/operations/commercial.ts",
+        "server/research/operations/suppliers.test.ts",
+        "server/research/operations/suppliers.ts",
+        "shared/research/affiliates/contracts.ts",
+        "shared/research/fulfillment/contracts.ts",
+        "shared/research/operations/commercial.ts",
+        "shared/research/operations/suppliers.ts",
+        "supabase/migrations/20260728010000_research_fulfillment_supplier_operations.sql",
+        "supabase/migrations/20260728020000_research_affiliate_professional_operations.sql",
+        "supabase/verification/research-affiliate-professional-disposable-bootstrap.sql",
+        "supabase/verification/research-affiliate-professional-operations.verify.sql",
+        "supabase/verification/research-fulfillment-supplier-concurrency.verify.sql",
+        "supabase/verification/research-fulfillment-supplier-disposable-bootstrap.sql",
+        "supabase/verification/research-fulfillment-supplier-operations.verify.sql"
       ]
     },
     {
