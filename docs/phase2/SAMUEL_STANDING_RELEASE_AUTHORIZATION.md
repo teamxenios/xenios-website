@@ -30,3 +30,11 @@ Every protected approval is conditional on exact identity: PR number, full candi
 Customer, supplier, or affiliate communications; real shipping labels or fulfillment; live refunds, payouts, or arbitrary charges; publication of new final legal terms without approved source text; creation or modification of clinical records; Care or clinical activation (Care remains DISABLED, PROHIBITED, OFF GRAPH, NOT PUBLIC, NOT MARKETED AS ACTIVE; fail-closed shells only); purchases of Claude, Codex, API, or provider capacity; provider account deletion; domain transfers; organization ownership changes; destruction of production evidence.
 
 Source of authority: Samuel Boadu's user-provided directive, received in the active Claude Fable 5 session, 2026-07-29.
+
+## Post-ingestion verification result (2026-07-29, pricing artifacts)
+
+Exact verification completed. Artifact SHA-256: ZIP 5f52425c4c52d180635566394797cc5978c5a9199d14480cbf48699076bfca57; decision matrix XLSX 19e65e0b1a7548fb354f6871e94e3d8367f6ccd7573e19d28773e8bb378fc254; decisions JSON 75801b15bbda316ce1b677c3ecb82de506e120354ff3ba53c3cba4af20a3e413; NutriDyn source workbook 2b47a6b6fe6d0fac60cd51399c6c8823ab12e926da113211b96cd6d3c7d82bd5.
+
+Finding: the XLSX decision sheets and the JSON decisions array agree row-for-row on all 36 ids (1 APPROVED QNT-001 + 35 PROPOSED, including NUT-019 PeriMenopause Support R199 and NUT-020 Stress Essentials Calm R123C). The count "33" is a stale summary that survives only in the JSON decision_boundary field and the master-prompt matrix table (which stops at NUT-018); the same master prompt's prose and the XLSX executive summary both say 35 proposed / 36 total. Sensitivity: the XLSX Price Matrix sheet carries internal wholesale/margin columns (the Codex Import sheet and the JSON are clean); any repo import must use the clean plane only.
+
+Status consequence: the proposed-price approval remains HELD on one exact founder decision: whether NUT-019 and NUT-020 are members of the approved proposed set (making it 35) or excluded (making it 33 as the stale summaries state). All 35 rows are otherwise data-consistent and bindable once canonical identities exist. QNT-001 is unaffected.
