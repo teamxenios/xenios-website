@@ -8,6 +8,7 @@ import { careApiFetch } from "./api";
 type ConsentViewState =
   | { kind: "loading" }
   | { kind: "disabled" }
+  | { kind: "auth_required" }
   | {
       kind: "ready";
       telehealth: CareConsentStatus;
@@ -28,6 +29,10 @@ export default function CareConsentPendingPage() {
     })
       .then(async (response) => {
         const body = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          setState({ kind: "auth_required" });
+          return;
+        }
         if (response.status === 503 && body?.code === "care_disabled") {
           setState({ kind: "disabled" });
           return;
@@ -82,6 +87,23 @@ export default function CareConsentPendingPage() {
               <p className="body-m text-ink-2 mt-4">
                 No placeholder legal text is being presented as approved.
               </p>
+            </article>
+          )}
+          {state.kind === "auth_required" && (
+            <article className="card md:col-span-2">
+              <p className="mono-label text-pulse mb-3">
+                AUTHORIZATION REQUIRED
+              </p>
+              <h2 className="h2">
+                Sign in is required to review private Care notice status.
+              </h2>
+              <p className="body-m text-ink-2 mt-4">
+                No consent action is available here. Research access does not
+                grant Care authorization.
+              </p>
+              <Link href="/research/sign-in" className="btn btn-primary mt-6">
+                Sign in securely
+              </Link>
             </article>
           )}
           {state.kind === "error" && (

@@ -52,7 +52,7 @@ describe("Care PR 2 Xenios UI and truthful-state gate", () => {
     expect(html.match(/<h1(?:\s|>)/g)).toHaveLength(1);
   });
 
-  it("includes fail-closed loading, disabled, error, and retry states", () => {
+  it("includes fail-closed loading, disabled, auth, error, and retry states", () => {
     for (const source of [eligibility, consent]) {
       expect(source).toContain('{ kind: "loading" }');
       expect(source).toContain('{ kind: "disabled" }');
@@ -61,6 +61,13 @@ describe("Care PR 2 Xenios UI and truthful-state gate", () => {
       expect(source).toContain('aria-live="polite"');
       expect(source).toContain("aria-busy=");
     }
+    expect(consent).toContain('{ kind: "auth_required" }');
+    expect(consent).toContain("response.status === 401");
+    expect(consent).toContain("AUTHORIZATION REQUIRED");
+    expect(consent).toMatch(
+      /Research access does not\s+grant Care authorization\./,
+    );
+    expect(consent).toContain('href="/research/sign-in"');
   });
 
   it("uses labeled location input and actionable announced errors", () => {
