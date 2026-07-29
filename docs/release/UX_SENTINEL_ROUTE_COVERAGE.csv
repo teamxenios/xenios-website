@@ -1,0 +1,10 @@
+route,access,roles_allowed,tested_at,environment,viewport,auth_state,result,notes
+/,public,all,2026-07-29T23:21Z,production,1280x720,signed-out,TESTED-FAIL-DIRECTIVE-1,Renders correctly; zero of the four required entry links (SEN-0001)
+/research,public-gated,all,2026-07-29T23:21Z,production,1280x720,signed-out,TESTED-PASS-DIRECTIVE-2,Review password gate; no catalog CTA; behind-gate Gateway.tsx verified in source as apply/sign-in only
+/research/sign-in,public,visitor,2026-07-29T23:22Z,production,1280x720,signed-out,TESTED-PASS,Member sign-in form renders directly; not behind the password gate
+/research/apply,public-gated,visitor,2026-07-29T23:22Z,production,1280x720,signed-out,TESTED-FAIL,Behind review password gate (SEN-0002)
+/research/partners,public-gated,partner,2026-07-29T23:23Z,production,1280x720,signed-out,TESTED-FAIL,Behind review password gate (SEN-0002)
+/care,public,all,2026-07-29T23:22Z,production,1280x720,signed-out,TESTED-DIRECTIVE-GAP,Deliberate pending page; all modules NOT YET AVAILABLE (SEN-0003); no console errors
+/clinical,none,none,2026-07-29T23:23Z,production,1280x720,signed-out,TESTED-404,No route registered (SEN-0004)
+/admin/research,protected,samuel-admin,2026-07-29T23:23Z,production,1280x720,signed-out,TESTED-PASS-REACHABLE,Admin sign-in form renders; credential check stays with founder
+/api/health,public,all,2026-07-29T23:19Z,production,n/a,signed-out,TESTED-PASS,200; commerceEnabled false; turnstileConfigured false (SEN-0005 SEN-0006)
