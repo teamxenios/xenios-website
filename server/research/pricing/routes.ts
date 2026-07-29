@@ -39,7 +39,46 @@
  * pricing_invalid_request (400), pricing_unavailable (503). Unavailability
  * reasons are the closed PriceResolutionFailureReason enum from
  * shared/research/pricing.ts and nothing else; an off enum reason from a
- * misbehaving resolver collapses to price_missing.
+ * misbehaving resolver collapses to price_missing. A path scoped error
+ * boundary keeps router level failures (an undecodable percent escape in a
+ * path segment) on the same closed codes with the same private headers, so
+ * nothing under /api/research/pricing can reach the global error handler in
+ * server/index.ts, which echoes err.message. OPTIONS is answered explicitly
+ * under the same enablement flag and private headers; Express's default
+ * OPTIONS reflection is never used here.
+ *
+ * Wiring (release manager; two files, both leased elsewhere, this lane edits
+ * neither):
+ * 1. server/index.ts: one import plus one registerPricingApi(app, deps)
+ *    call, placed with the other member facing research registrations,
+ *    right after registerMemberCatalogApi. Deps: resolver from
+ *    createAuthoritativePriceResolver(new CatalogPricingProductSource(
+ *    createProductionProductControlReader())); authorizeAudience built on
+ *    requireActiveMember from server/research/member-auth.ts with the
+ *    memberAudience sourceVersion fingerprint from
+ *    server/research/catalog/member-catalog-service.ts; enabled:
+ *    pricingEnabledFromCommerceEnv.
+ * 2. server/research/index.ts (REQUIRED, or these routes are unreachable in
+ *    the production posture): the /api/research gateway wall registered by
+ *    registerResearchApi runs before this adapter and answers its own 401
+ *    to any caller without the shared review cookie unless the path is on a
+ *    bypass list. "/pricing" is on no list today, so a valid active member
+ *    Bearer JWT never reaches this adapter, and the disabled state answers
+ *    the gateway's generic 401 instead of the uniform 503 pricing_disabled.
+ *    The gateway file documents this exact shadowing trap beside its
+ *    DOWNSTREAM_MEMBER_GUARDED_READ_PATHS set. The one line fix: extend the
+ *    downstreamMemberGuardedRead predicate with
+ *    `|| path.startsWith("/pricing/")`. That read predicate, not
+ *    MEMBER_AUTHED_PREFIXES, is the right lever because it matches the
+ *    gateway's stated intent for exactly this shape (GET and HEAD reads
+ *    that own a stronger downstream member guard and private response
+ *    headers, the same shape as /capabilities and /member/products), it is
+ *    scoped to GET and HEAD at the gateway so no future mutation surface
+ *    could ride the bypass, and it lets every caller reach this adapter's
+ *    uniform closed answers (503 pricing_disabled while disabled, 401
+ *    pricing_auth_required when unauthenticated) instead of the gateway's
+ *    generic 401. The gateway integration suite in routes.test.ts proves
+ *    both today's trap and the post edit behavior.
  */
 
 import type { Express, NextFunction, Request, Response } from "express";
@@ -142,11 +181,15 @@ export function pricingEnabledFromCommerceEnv(): boolean {
 }
 
 /** Prices are audience specific and must never be cached or indexed. */
-function privateHeaders(_req: Request, res: Response, next: NextFunction): void {
+function setPrivateHeaders(res: Response): void {
   res.set("Cache-Control", "no-store");
   res.set("Pragma", "no-cache");
   res.set("Referrer-Policy", "no-referrer");
   res.set("X-Robots-Tag", "noindex, nofollow");
+}
+
+function privateHeaders(_req: Request, res: Response, next: NextFunction): void {
+  setPrivateHeaders(res);
   next();
 }
 
@@ -221,16 +264,19 @@ export function registerPricingApi(
   const enabled = deps.enabled ?? (() => false);
   const now = deps.now ?? (() => new Date());
 
+  /** A flag that throws reads as disabled. Fail closed. */
+  const readEnabled = (): boolean => {
+    try {
+      return enabled() === true;
+    } catch {
+      return false;
+    }
+  };
+
   const handle =
     (respond: (res: Response, resolution: PriceResolution) => void) =>
     async (req: Request, res: Response): Promise<void> => {
-      let isEnabled = false;
-      try {
-        isEnabled = enabled() === true;
-      } catch {
-        isEnabled = false;
-      }
-      if (!isEnabled) {
+      if (!readEnabled()) {
         res.status(503).json(PRICING_DISABLED_RESPONSE);
         return;
       }
@@ -277,10 +323,59 @@ export function registerPricingApi(
       }
     };
 
+  // Explicit OPTIONS: Express's default reflection would answer 200 with an
+  // Allow header before the enablement flag or the private headers ran. Here
+  // OPTIONS obeys the same flag as every other request and advertises only
+  // the read methods this surface has.
+  const handleOptions = (_req: Request, res: Response): void => {
+    if (!readEnabled()) {
+      res.status(503).json(PRICING_DISABLED_RESPONSE);
+      return;
+    }
+    res.set("Allow", "GET, HEAD, OPTIONS");
+    res.status(204).end();
+  };
+
   app.get(PRICING_PRICE_ROUTE, privateHeaders, handle(respondResolvedPrice));
   app.get(
     PRICING_CARD_PRICE_ROUTE,
     privateHeaders,
     handle(respondCardProjection),
+  );
+  app.options(PRICING_PRICE_ROUTE, privateHeaders, handleOptions);
+  app.options(PRICING_CARD_PRICE_ROUTE, privateHeaders, handleOptions);
+
+  // Path scoped error boundary. A percent escape that cannot be decoded in a
+  // path segment (for example /products/%zz/...) fails inside the router
+  // before any handler above runs, and would otherwise fall through to the
+  // global error handler in server/index.ts, which answers with err.message
+  // (echoing the malformed input, with no private headers). Everything that
+  // errors under this prefix answers a closed code with the private headers
+  // instead: a client shaped error (URIError or a 400 status the router
+  // attached) reads as pricing_invalid_request, anything else fails closed
+  // as pricing_unavailable. Registered inside registerPricingApi so the
+  // boundary always ships with the routes and sits before the global
+  // handler, which server/index.ts registers later.
+  app.use(
+    "/api/research/pricing",
+    (err: unknown, _req: Request, res: Response, next: NextFunction): void => {
+      if (res.headersSent) {
+        next(err);
+        return;
+      }
+      setPrivateHeaders(res);
+      const shaped = (
+        typeof err === "object" && err !== null ? err : {}
+      ) as { status?: unknown; statusCode?: unknown };
+      const clientError =
+        err instanceof URIError ||
+        shaped.status === 400 ||
+        shaped.statusCode === 400;
+      if (clientError) {
+        res.status(400).json(PRICING_INVALID_REQUEST_RESPONSE);
+      } else {
+        res.status(503).json(PRICING_TEMPORARILY_UNAVAILABLE_RESPONSE);
+      }
+    },
   );
 }
