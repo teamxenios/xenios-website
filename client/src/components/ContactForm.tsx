@@ -8,6 +8,18 @@ interface Props {
   onSuccess?: () => void;
 }
 
+// Only these two fields carry real client-side validation today (persona is
+// required, message has a minimum length); the rest rely on native `required`
+// as a semantic hint plus server-side checks. The error pattern below only
+// standardizes accessibility for validation that actually exists, it does
+// not add new business rules.
+type FieldErrors = Partial<Record<"persona" | "message", string>>;
+const FIELD_ORDER: Array<keyof FieldErrors> = ["persona", "message"];
+const FIELD_IDS: Record<keyof FieldErrors, string> = {
+  persona: "cf-persona",
+  message: "cf-message",
+};
+
 export default function ContactForm({ onSuccess }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,6 +28,7 @@ export default function ContactForm({ onSuccess }: Props) {
   const [message, setMessage] = useState("");
   const [website, setWebsite] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
@@ -31,14 +44,21 @@ export default function ContactForm({ onSuccess }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!persona) {
-      setError("Please tell us who you are.");
+    const next: FieldErrors = {};
+    if (!persona) next.persona = "Please tell us who you are.";
+    if (message.trim().length < 20) next.message = "Message must be at least 20 characters.";
+    setFieldErrors(next);
+    if (Object.keys(next).length > 0) {
+      const firstInvalid = FIELD_ORDER.find((key) => next[key]);
+      if (firstInvalid) {
+        (document.getElementById(FIELD_IDS[firstInvalid]) as HTMLElement | null)?.focus();
+      }
       return;
     }
-    if (message.trim().length < 20) {
-      setError("Message must be at least 20 characters.");
-      return;
-    }
+    // Unreachable at runtime (next.persona above already caught an empty
+    // persona), but it narrows `persona` for the type checker so the submit
+    // call below does not need an `as` cast.
+    if (!persona) return;
     setSubmitting(true);
     try {
       await contactService.submit({
@@ -74,6 +94,20 @@ export default function ContactForm({ onSuccess }: Props) {
         <input id="cf-website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
       </div>
 
+      {/* Error summary: one role="alert" so the failure is announced once,
+          not once per field. Each invalid field still carries aria-invalid
+          and an inline message wired via aria-describedby. */}
+      {Object.keys(fieldErrors).length > 0 && (
+        <div className="border border-[color:var(--error)] text-[color:var(--error)] px-4 py-3 rounded body-s" role="alert" data-testid="text-contact-validation-summary">
+          <p className="font-700">Please fix the following:</p>
+          <ul className="mt-1 pl-5" style={{ listStyleType: "disc" }}>
+            {FIELD_ORDER.filter((key) => fieldErrors[key]).map((key) => (
+              <li key={key}>{fieldErrors[key]}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="cf-name" className="form-label">Name</label>
@@ -87,12 +121,13 @@ export default function ContactForm({ onSuccess }: Props) {
 
       <div>
         <label htmlFor="cf-persona" className="form-label">I am a</label>
-        <select id="cf-persona" required value={persona} onChange={(e) => handlePersona(e.target.value as ContactSubmission["persona"])} className="input-field" data-testid="select-contact-persona">
+        <select id="cf-persona" required value={persona} onChange={(e) => handlePersona(e.target.value as ContactSubmission["persona"])} className="input-field" aria-invalid={!!fieldErrors.persona} aria-describedby={fieldErrors.persona ? "cf-persona-error" : undefined} data-testid="select-contact-persona">
           <option value="">Choose one</option>
           {C.personaOptions.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
           ))}
         </select>
+        {fieldErrors.persona && <p id="cf-persona-error" className="body-s mt-2" style={{ color: "var(--error)" }} data-testid="error-contact-persona">{fieldErrors.persona}</p>}
       </div>
 
       <div>
@@ -102,11 +137,12 @@ export default function ContactForm({ onSuccess }: Props) {
 
       <div>
         <label htmlFor="cf-message" className="form-label">Message</label>
-        <textarea id="cf-message" required minLength={20} maxLength={4000} value={message} onChange={(e) => setMessage(e.target.value)} className="input-field textarea-field" rows={6} data-testid="textarea-contact-message" />
+        <textarea id="cf-message" required minLength={20} maxLength={4000} value={message} onChange={(e) => setMessage(e.target.value)} className="input-field textarea-field" rows={6} aria-invalid={!!fieldErrors.message} aria-describedby={fieldErrors.message ? "cf-message-error" : undefined} data-testid="textarea-contact-message" />
+        {fieldErrors.message && <p id="cf-message-error" className="body-s mt-2" style={{ color: "var(--error)" }} data-testid="error-contact-message">{fieldErrors.message}</p>}
       </div>
 
       {error && (
-        <div className="border border-[color:var(--error)] text-[color:var(--error)] px-4 py-3 rounded body-s" data-testid="text-contact-error">
+        <div className="border border-[color:var(--error)] text-[color:var(--error)] px-4 py-3 rounded body-s" role="alert" data-testid="text-contact-error">
           {error}
         </div>
       )}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { statusFor, type CapabilityStatus, type ResearchCapability } from "../lib/capabilities";
 import { denialPresentation } from "../lib/denials";
 
@@ -360,31 +360,104 @@ export function ResearchSearch({
   );
 }
 
+// Full ARIA tabs pattern: roving tabindex (only the active tab is in the Tab
+// order), ArrowLeft/ArrowRight moves and selects with wraparound, Home/End
+// jump to the first/last tab. Backward compatible: existing callers pass only
+// tabs/active/onSelect/label and inherit the keyboard behavior for free. A
+// tab may optionally carry a panelId for full tabpanel association
+// (aria-controls on the tab, id on the panel); callers that render their own
+// panel content elsewhere are unaffected since aria-controls is only emitted
+// when panelId is supplied.
 export function ResearchTabs({
   tabs,
   active,
   onSelect,
   label,
 }: {
-  tabs: Array<{ key: string; label: string }>;
+  tabs: Array<{ key: string; label: string; panelId?: string }>;
   active: string;
   onSelect: (key: string) => void;
   label: string;
 }) {
+  const baseId = useRef(`ra-tabs-${Math.random().toString(36).slice(2, 8)}`).current;
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  function focusAndSelect(key: string) {
+    onSelect(key);
+    tabRefs.current[key]?.focus();
+  }
+
+  function handleKeyDown(e: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (!tabs.length) return;
+    let nextIndex: number | null = null;
+    switch (e.key) {
+      case "ArrowRight":
+        nextIndex = (index + 1) % tabs.length;
+        break;
+      case "ArrowLeft":
+        nextIndex = (index - 1 + tabs.length) % tabs.length;
+        break;
+      case "Home":
+        nextIndex = 0;
+        break;
+      case "End":
+        nextIndex = tabs.length - 1;
+        break;
+      default:
+        return;
+    }
+    e.preventDefault();
+    focusAndSelect(tabs[nextIndex].key);
+  }
+
   return (
     <div role="tablist" aria-label={label} className="ra-tabs" data-testid="ra-tabs">
-      {tabs.map((t) => (
-        <button
-          key={t.key}
-          role="tab"
-          type="button"
-          aria-selected={active === t.key}
-          className={`chip ${active === t.key ? "ra-chip-selected" : "text-ink-2"}`}
-          onClick={() => onSelect(t.key)}
-        >
-          {t.label}
-        </button>
-      ))}
+      {tabs.map((t, i) => {
+        const selected = active === t.key;
+        return (
+          <button
+            key={t.key}
+            ref={(el) => {
+              tabRefs.current[t.key] = el;
+            }}
+            id={`${baseId}-tab-${t.key}`}
+            role="tab"
+            type="button"
+            aria-controls={t.panelId}
+            tabIndex={selected ? 0 : -1}
+            aria-selected={selected}
+            className={`chip ${selected ? "ra-chip-selected" : "text-ink-2"}`}
+            onClick={() => focusAndSelect(t.key)}
+            onKeyDown={(e) => handleKeyDown(e, i)}
+          >
+            {t.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// Optional companion for ResearchTabs: a properly associated tabpanel. Pass
+// the same id used as a tab's panelId, and tabId as that tab's rendered id
+// (`${baseId}-tab-${key}`, or any stable id) for aria-labelledby. Purely
+// additive; existing ResearchTabs consumers that render panel content inline
+// are unaffected.
+export function ResearchTabPanel({
+  id,
+  tabId,
+  hidden = false,
+  children,
+}: {
+  id: string;
+  tabId: string;
+  hidden?: boolean;
+  children: ReactNode;
+}) {
+  if (hidden) return null;
+  return (
+    <div id={id} role="tabpanel" aria-labelledby={tabId} tabIndex={0}>
+      {children}
     </div>
   );
 }
@@ -443,8 +516,29 @@ export function ResearchModal({
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;
     ref.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      // Focus trap: Tab never leaves the dialog while it is open. Pattern
+      // ported from the mobile nav overlay in components/Navbar.tsx.
+      if (e.key !== "Tab") return;
+      const root = ref.current;
+      if (!root) return;
+      const focusables = root.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => {
