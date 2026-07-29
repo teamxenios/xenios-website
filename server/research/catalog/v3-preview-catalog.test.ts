@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   V3_PREVIEW_PROFILE_COUNT,
@@ -58,5 +59,36 @@ describe("sanitized V3 preview catalog", () => {
     expect(detail?.price).toBeNull();
     expect(detail?.selection).toBeNull();
     expect(createV3MemberProductDetail("not-a-profile", AT)).toBeNull();
+  });
+
+  it("keeps the PR-renderable handoff free of internal pricing evidence", () => {
+    const handoff = readFileSync(
+      new URL(
+        "../../../docs/coordination/session-checkins/products-and-diagnostics.md",
+        import.meta.url,
+      ),
+      "utf8",
+    );
+    const forbiddenFragments = [
+      ["QN", "T-", "\\d{3}"].join(""),
+      ["18", "0000"].join(""),
+      ["\\$1", ",?800(?:\\.00)?"].join(""),
+      ["quant", "um\\s+ev"].join(""),
+      ["cell", "\\s+factors"].join(""),
+      ["one", "[- ]vial"].join(""),
+      ["pricing", "\\s+(?:source|package)"].join(""),
+      ["correction", "\\s+overlay"].join(""),
+      ["master", "\\s+artifact"].join(""),
+      ["[A-Z]:\\\\Us", "ers\\\\"].join(""),
+      ["\\/Us", "ers\\/"].join(""),
+      ["\\/ho", "me\\/"].join(""),
+      ["north", "line"].join(""),
+      ["renew", "\\s+360"].join(""),
+      ["supplier", "[_ -]?(?:cost|metadata)"].join(""),
+      ["wholesale", "[_ -]?cost"].join(""),
+      ["source", "[_ -]?url"].join(""),
+      ["private", "[_ -]?reference"].join(""),
+    ];
+    expect(handoff).not.toMatch(new RegExp(forbiddenFragments.join("|"), "i"));
   });
 });

@@ -8,7 +8,7 @@ EXACT HEAD: Published in the SHA-pinned release manifest after commit.
 
 BRANCH: `feature/website-3-pr105-current-main-sanitized`
 
-WORKTREE: `C:\Users\sboad\projects\wt-website-3-pr105-sanitized`
+WORKTREE: Isolated clean reconstruction worktree.
 
 OWNED FILES: Exact 18-path Website 2 lease covering the member catalog and
 detail UI, supplement UI, V3 preview/search/SEO/supplement modules and tests,
@@ -49,12 +49,9 @@ Control mapping supplies:
 - immutable price version
 - approval state, approver, and approval evidence
 
-Founder decision `QNT-001` proposes a member price of USD 180000 cents for
-"Quantum EV/cell factors" sold as one vial. It remains external-input-only and
-is not mapped, persisted, displayed, or enabled because the canonical
-`productId`, exact one-vial `variantId`, verified SKU/presentation, and
-Product Control readiness evidence are unresolved. All other price decisions
-remain proposed and inactive.
+All external pricing inputs remain inactive until canonical Product Control
+identity and readiness are approved. This unit stores, displays, and enables no
+candidate price.
 
 MIGRATIONS: None.
 
@@ -62,7 +59,7 @@ ROUTES: None registered. Website 2 owns route and composition integration.
 
 TESTS:
 
-- Focused nine-file catalog/SEO/UI/commerce suite: PASS, 9 files / 82 tests.
+- Focused nine-file catalog/SEO/UI/commerce suite: PASS, 9 files / 83 tests.
 - Adjacent authoritative-price projection audit: PASS, 6 files / 141 tests.
 - Full suite: 219 files / 3,753 tests PASS; one production-state validator
   exceeded its five-second timeout under full parallel load.
