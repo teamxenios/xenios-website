@@ -183,6 +183,24 @@ describe("member product detail experience", () => {
     expect(host.textContent).toContain("Exact-lot documentation required");
   });
 
+  it("shows a truthful pending price when an approved current variant price is absent", () => {
+    const pendingPrice: MemberProductDetail = {
+      ...product,
+      price: null,
+      displayState: "pricing_pending",
+      variants: product.variants.map((variant) => ({
+        ...variant,
+        price: null,
+        selection: null,
+      })),
+    };
+    const html = renderToStaticMarkup(
+      <MemberProductDetailExperience product={pendingPrice} />,
+    );
+    expect(html).toContain("Price not currently available");
+    expect(html).not.toMatch(/[$]\d|Add to cart|Buy now/);
+  });
+
   it("renders truthful pending, empty, error, and unavailable detail states", () => {
     const pending = renderToStaticMarkup(
       <MemberProductDetailExperience product={product} />,

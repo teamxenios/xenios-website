@@ -182,7 +182,7 @@ export function MemberCatalogExperience({
 
   return (
     <ResearchMemberShell
-      eyebrow="Renew 360 catalog"
+      eyebrow="Xenios Research catalog"
       title="Products"
       lead="Browse approved product information, current member pricing, and truthful availability. A catalog listing is not a clinical recommendation."
       actions={
