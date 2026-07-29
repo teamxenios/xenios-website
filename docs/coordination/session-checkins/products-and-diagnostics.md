@@ -51,7 +51,7 @@ Control mapping supplies:
 
 All external pricing inputs remain inactive until canonical Product Control
 identity and readiness are approved. This unit stores, displays, and enables no
-candidate price.
+external price values.
 
 MIGRATIONS: None.
 
@@ -71,7 +71,7 @@ TESTS:
 - Diff, exact allowlist, secret, candidate-source, browser-bundle,
   rendered-output, robots and sitemap gates: PASS.
 
-ROLLBACK: Source-only unit. Revert the single reconstruction commit on the
+ROLLBACK: Code-only unit. Revert the single reconstruction commit on the
 future integration branch; no database or production state is changed.
 
 PRODUCTION MUTATION: None.

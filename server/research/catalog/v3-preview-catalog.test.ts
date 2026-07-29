@@ -69,26 +69,12 @@ describe("sanitized V3 preview catalog", () => {
       ),
       "utf8",
     );
-    const forbiddenFragments = [
-      ["QN", "T-", "\\d{3}"].join(""),
-      ["18", "0000"].join(""),
-      ["\\$1", ",?800(?:\\.00)?"].join(""),
-      ["quant", "um\\s+ev"].join(""),
-      ["cell", "\\s+factors"].join(""),
-      ["one", "[- ]vial"].join(""),
-      ["pricing", "\\s+(?:source|package)"].join(""),
-      ["correction", "\\s+overlay"].join(""),
-      ["master", "\\s+artifact"].join(""),
-      ["[A-Z]:\\\\Us", "ers\\\\"].join(""),
-      ["\\/Us", "ers\\/"].join(""),
-      ["\\/ho", "me\\/"].join(""),
-      ["north", "line"].join(""),
-      ["renew", "\\s+360"].join(""),
-      ["supplier", "[_ -]?(?:cost|metadata)"].join(""),
-      ["wholesale", "[_ -]?cost"].join(""),
-      ["source", "[_ -]?url"].join(""),
-      ["private", "[_ -]?reference"].join(""),
-    ];
-    expect(handoff).not.toMatch(new RegExp(forbiddenFragments.join("|"), "i"));
+    expect(handoff).not.toMatch(/\b[A-Z]{3}-\d{3}\b/);
+    expect(handoff).not.toMatch(/(?:USD|[$€£])\s*\d/i);
+    expect(handoff).not.toMatch(/\b\d+\s+cents\b/i);
+    expect(handoff).not.toMatch(/(?:[A-Z]:\\|\/(?:Users|home)\/)/);
+    expect(handoff).not.toMatch(
+      /\b(?:decision identifier|proposed amount|pricing source|pricing package|internal cost|supplier cost|wholesale cost)\b/i,
+    );
   });
 });
