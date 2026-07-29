@@ -14,6 +14,9 @@ describe("Care PR4 final Xenios UI states", () => {
     expect(page).toContain("No prescription is recorded.");
     expect(page).toContain("Try again");
     expect(page).toContain("aria-live=\"polite\"");
+    expect(page).toContain("Restricted prescription records exist.");
+    expect(page).toContain("This frontend displays no prescription details");
+    expect(page).not.toContain("prescriptions.map");
     expect(page).not.toContain("<main");
     expect(page).not.toMatch(/demo|sample prescription|fake pharmacy/i);
   });

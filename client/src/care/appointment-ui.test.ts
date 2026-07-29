@@ -42,9 +42,9 @@ describe("Care PR 3 appointment UI", () => {
 
   it("contains no fabricated clinician, pharmacy, product, state, price, or availability", () => {
     expect(page).not.toMatch(/\$\d+|Dr\.\s+[A-Z]|Rx\s|in stock|available in [A-Z]{2}/);
-    expect(page).toContain(
-      "A human clinician remains responsible for review and any decision.",
-    );
+    expect(page).toContain("Restricted appointment records exist.");
+    expect(page).toContain("This frontend displays no appointment details");
+    expect(page).not.toContain("appointments.map");
   });
 
   it("shows exact required facts only in the authorized readiness surface", () => {

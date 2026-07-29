@@ -1,12 +1,24 @@
+// @vitest-environment jsdom
+
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { act } from "react";
+import { createRoot, type Root } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Route, Router } from "wouter";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { careApiFetch } from "./api";
 import CareAppointmentsPage from "./CareAppointmentsPage";
 import CareConsentPendingPage from "./CareConsentPendingPage";
 import CarePharmacyOrdersPage from "./CarePharmacyOrdersPage";
 import CarePrescriptionsPage from "./CarePrescriptionsPage";
+
+vi.mock("./api", () => ({
+  careApiFetch: vi.fn(),
+}));
+
+(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean })
+  .IS_REACT_ACT_ENVIRONMENT = true;
 
 const source = (path: string) =>
   readFileSync(resolve(__dirname, path), "utf8");
@@ -19,6 +31,22 @@ const appointmentReadiness = source("./CareAppointmentReadinessPanel.tsx");
 const pharmacyReadiness = source("./CarePharmacyReadinessPanel.tsx");
 const careApi = source("./api.ts");
 const careServer = source("../../../server/care/index.ts");
+const careApiFetchMock = vi.mocked(careApiFetch);
+
+let container: HTMLDivElement;
+let root: Root;
+
+beforeEach(() => {
+  careApiFetchMock.mockReset();
+  container = document.createElement("div");
+  document.body.append(container);
+  root = createRoot(container);
+});
+
+afterEach(() => {
+  act(() => root.unmount());
+  container.remove();
+});
 
 function renderRoute(path: string, Page: () => React.JSX.Element) {
   return renderToStaticMarkup(
@@ -28,6 +56,49 @@ function renderRoute(path: string, Page: () => React.JSX.Element) {
       </Route>
     </Router>,
   );
+}
+
+async function renderClientRoute(
+  path: string,
+  Page: () => React.JSX.Element,
+  responseBody: Record<string, unknown>,
+) {
+  careApiFetchMock.mockImplementation(async (requestPath) => {
+    if (requestPath.includes("/admin/readiness")) {
+      return new Response(JSON.stringify({ ok: false }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    return new Response(JSON.stringify(responseBody), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  });
+  const staticLocation = (): [string, (nextPath: string) => void] => [
+    path,
+    () => undefined,
+  ];
+  const staticSearch = () => "";
+
+  await act(async () => {
+    root.render(
+      <Router
+        hook={staticLocation}
+        searchHook={staticSearch}
+        ssrPath={path}
+      >
+        <Route path={path}>
+          <Page />
+        </Route>
+      </Router>,
+    );
+  });
+  await act(async () => {
+    await new Promise((resolvePromise) => setTimeout(resolvePromise, 0));
+  });
+
+  return container.textContent ?? "";
 }
 
 describe("Care frontend fail-closed lease", () => {
@@ -73,6 +144,122 @@ describe("Care frontend fail-closed lease", () => {
     expect(pharmacy).not.toContain("<input");
     expect(pharmacy).not.toContain("orders.map");
     expect(pharmacy).toContain('data-care-read-only="true"');
+  });
+
+  it("renders hostile appointment records as a count-free redacted state", async () => {
+    const markers = [
+      "PRIVATE_APPOINTMENT_ID",
+      "PRIVATE_PATIENT_ID",
+      "PRIVATE_INTAKE_ID",
+      "PRIVATE_LOCATION_ID",
+      "PRIVATE_STATE_CODE",
+      "PRIVATE_CLINICIAN_ID",
+      "PRIVATE_COVERAGE_ID",
+      "PRIVATE_APPOINTMENT_STATUS",
+      "PRIVATE_START_TIME",
+      "PRIVATE_END_TIME",
+      "PRIVATE_TELEHEALTH_FLAG",
+      "PRIVATE_APPOINTMENT_VERSION",
+      "PRIVATE_APPOINTMENT_CREATED",
+      "PRIVATE_APPOINTMENT_UPDATED",
+    ];
+    const hostileRecord = {
+      id: markers[0],
+      patientId: markers[1],
+      intakeId: markers[2],
+      patientLocationId: markers[3],
+      patientStateCode: markers[4],
+      assignedClinicianUserId: markers[5],
+      clinicianCoverageId: markers[6],
+      status: markers[7],
+      startsAt: markers[8],
+      endsAt: markers[9],
+      telehealthReady: markers[10],
+      version: markers[11],
+      createdAt: markers[12],
+      updatedAt: markers[13],
+    };
+    const text = await renderClientRoute(
+      "/care/appointments",
+      CareAppointmentsPage,
+      {
+        ok: true,
+        requestAvailable: true,
+        appointments: [hostileRecord, hostileRecord],
+      },
+    );
+
+    expect(text).toContain("Restricted appointment records exist.");
+    expect(text).toContain("This frontend displays no appointment details");
+    for (const marker of markers) expect(text).not.toContain(marker);
+    expect(text).not.toMatch(/\b2\s+(?:appointment|record)/i);
+  });
+
+  it("renders hostile prescription records as a count-free redacted state", async () => {
+    const markers = [
+      "PRIVATE_PRESCRIPTION_ID",
+      "PRIVATE_PRESCRIPTION_PATIENT",
+      "PRIVATE_PRESCRIPTION_APPOINTMENT",
+      "PRIVATE_CLINICIAN_REVIEW",
+      "PRIVATE_PRESCRIBER",
+      "PRIVATE_PRESCRIPTION_STATUS",
+      "PRIVATE_FORMULATION",
+      "PRIVATE_CONCENTRATION",
+      "PRIVATE_ROUTE",
+      "PRIVATE_QUANTITY",
+      "PRIVATE_DIRECTIONS",
+      "PRIVATE_REFILLS",
+      "PRIVATE_CONTENT_SOURCE",
+      "PRIVATE_PRESCRIPTION_VERSION",
+      "PRIVATE_SIGNED_TIME",
+      "PRIVATE_SUPERSEDED_ID",
+      "PRIVATE_PRESCRIPTION_CREATED",
+      "PRIVATE_PRESCRIPTION_UPDATED",
+    ];
+    const hostileRecord = {
+      id: markers[0],
+      patientId: markers[1],
+      appointmentId: markers[2],
+      clinicianReviewId: markers[3],
+      prescribingClinicianUserId: markers[4],
+      status: markers[5],
+      formulation: markers[6],
+      concentration: markers[7],
+      route: markers[8],
+      quantity: markers[9],
+      directions: markers[10],
+      refills: markers[11],
+      verifiedContentSourceId: markers[12],
+      version: markers[13],
+      signedAt: markers[14],
+      supersedesPrescriptionId: markers[15],
+      createdAt: markers[16],
+      updatedAt: markers[17],
+    };
+    const text = await renderClientRoute(
+      "/care/prescriptions",
+      CarePrescriptionsPage,
+      {
+        ok: true,
+        prescriptions: [hostileRecord, hostileRecord],
+      },
+    );
+
+    expect(text).toContain("Restricted prescription records exist.");
+    expect(text).toContain("This frontend displays no prescription details");
+    for (const marker of markers) expect(text).not.toContain(marker);
+    expect(text).not.toMatch(/\b2\s+(?:prescription|record)/i);
+  });
+
+  it("forbids record mapping and clinical-field projection in redacted pages", () => {
+    expect(appointments).not.toContain("appointments.map");
+    expect(appointments).not.toMatch(
+      /appointment\.(?:id|patientId|intakeId|patientLocationId|patientStateCode|assignedClinicianUserId|clinicianCoverageId|status|startsAt|endsAt|telehealthReady|version|createdAt|updatedAt)/,
+    );
+    expect(prescriptions).not.toContain("prescriptions.map");
+    expect(prescriptions).not.toMatch(
+      /(?:item|prescription)\.(?:id|patientId|appointmentId|clinicianReviewId|prescribingClinicianUserId|status|formulation|concentration|route|quantity|directions|refills|verifiedContentSourceId|version|signedAt|supersedesPrescriptionId|createdAt|updatedAt)/,
+    );
   });
 
   it("keeps readiness panels passive, unavailable, and non-operational", () => {
