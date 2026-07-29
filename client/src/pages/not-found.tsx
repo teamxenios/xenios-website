@@ -6,7 +6,7 @@ import { PAGES } from "@/lib/content";
 export default function NotFound() {
   return (
     <PageShell>
-      <SeoHead {...PAGES.notFound} />
+      <SeoHead {...PAGES.notFound} robots="noindex, nofollow" />
       <section className="container-x py-32 md:py-48 text-center">
         <p className="mono-cap text-ink-mute mb-6">404</p>
         <h1 className="display-l mb-6 max-w-[24ch] mx-auto">That page is not here.</h1>

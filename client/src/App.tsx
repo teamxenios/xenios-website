@@ -29,7 +29,6 @@ import Disclosures from "@/pages/Disclosures";
 import EarlyInterest from "@/pages/EarlyInterest";
 import Book from "@/pages/Book";
 import Concepts from "@/pages/Concepts";
-import Admin from "@/pages/Admin";
 import MvpLab from "@/pages/MvpLab";
 import ExternalRedirect from "@/components/ExternalRedirect";
 import NotFound from "@/pages/not-found";
@@ -42,6 +41,10 @@ const KAIROS_APP_URL = "https://kairos.xeniostechnology.com";
 // xenios research: the entire section is one lazy chunk so the main bundle does
 // not grow. It carries no product data; the catalog comes from gated server APIs.
 const ResearchSection = lazy(() => import("@/research/section"));
+// Admin dashboard: a large, rarely visited surface (waitlist/LOI/bookings/
+// analytics/research tables). Its own lazy chunk keeps it out of the main
+// public bundle.
+const Admin = lazy(() => import("@/pages/Admin"));
 // Research operations (Samuel admin presentation) — its own lazy chunk at
 // /admin/research*. Presentation only; all authority is server-side.
 const AdminResearchSection = lazy(() => import("@/research/adminx-section"));
@@ -56,6 +59,14 @@ function ResearchRoutes() {
   return (
     <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
       <ResearchSection />
+    </Suspense>
+  );
+}
+
+function AdminRoutes() {
+  return (
+    <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
+      <Admin />
     </Suspense>
   );
 }
@@ -154,7 +165,7 @@ function Router() {
       <Route path="/early-interest" component={EarlyInterest} />
       <Route path="/book" component={Book} />
       <Route path="/concepts" component={Concepts} />
-      <Route path="/admin" component={Admin} />
+      <Route path="/admin" component={AdminRoutes} />
       {/* Research operations family (Samuel admin presentation, own chunk). */}
       <Route path="/admin/research" component={AdminResearchRoutes} />
       <Route path="/admin/research/*" component={AdminResearchRoutes} />

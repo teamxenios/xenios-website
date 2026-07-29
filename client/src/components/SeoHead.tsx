@@ -4,10 +4,24 @@ interface Props {
   title: string;
   description: string;
   path: string;
+  /**
+   * Optional robots directive (e.g. "noindex, nofollow"). Omit for the
+   * default indexable behavior. When set, the canonical and hreflang
+   * alternates are skipped, since a page telling search engines not to
+   * index it should not also be endorsing a canonical URL for indexing.
+   */
+  robots?: string;
 }
 
 const SITE = "https://xeniostechnology.com";
 const OG_IMAGE = `${SITE}/og/xenios-og-image-v2.png`;
+
+// The site default, matching the literal static tag in client/index.html.
+// Kept as a hardcoded constant (rather than read from the DOM at module
+// load) so an indexable page always gets this exact directive regardless of
+// whether the static tag happened to load first; the two are asserted to
+// match by a dedicated test rather than relying on load order.
+export const DEFAULT_ROBOTS = "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1";
 
 function ensureMeta(selector: string, attrs: Record<string, string>) {
   let el = document.head.querySelector(selector) as HTMLMetaElement | null;
@@ -30,6 +44,10 @@ function ensureLink(rel: string, href: string, extraAttrs: Record<string, string
   Object.entries(extraAttrs).forEach(([k, v]) => el!.setAttribute(k, v));
 }
 
+function removeEl(selector: string) {
+  document.head.querySelector(selector)?.remove();
+}
+
 function ensureJsonLd(id: string, data: Record<string, unknown>) {
   let el = document.head.querySelector(`script[data-jsonld="${id}"]`) as HTMLScriptElement | null;
   if (!el) {
@@ -41,7 +59,7 @@ function ensureJsonLd(id: string, data: Record<string, unknown>) {
   el.text = JSON.stringify(data);
 }
 
-export default function SeoHead({ title, description, path }: Props) {
+export default function SeoHead({ title, description, path, robots }: Props) {
   useEffect(() => {
     document.title = title;
     const url = `${SITE}${path}`;
@@ -59,9 +77,24 @@ export default function SeoHead({ title, description, path }: Props) {
     ensureMeta('meta[name="twitter:description"]', { name: "twitter:description", content: description });
     ensureMeta('meta[name="twitter:image"]', { name: "twitter:image", content: OG_IMAGE });
 
-    ensureLink("canonical", url);
-    ensureLink("alternate", url, { hreflang: "en-us" });
-    ensureLink("alternate", url, { hreflang: "x-default" });
+    if (robots) {
+      // A noindex page should not also endorse a canonical URL for search
+      // engines to index, so skip canonical/hreflang and clear any that a
+      // prior page left behind in this SPA session.
+      ensureMeta('meta[name="robots"]', { name: "robots", content: robots });
+      removeEl('link[rel="canonical"]');
+      removeEl('link[rel="alternate"][hreflang="en-us"]');
+      removeEl('link[rel="alternate"][hreflang="x-default"]');
+    } else {
+      // Restore the site default rather than deleting the tag: an indexable
+      // page must never end up with NO robots meta at all, which would
+      // silently drop max-image-preview:large (and the rest of the default
+      // directive) sitewide.
+      ensureMeta('meta[name="robots"]', { name: "robots", content: DEFAULT_ROBOTS });
+      ensureLink("canonical", url);
+      ensureLink("alternate", url, { hreflang: "en-us" });
+      ensureLink("alternate", url, { hreflang: "x-default" });
+    }
 
     ensureJsonLd("organization", {
       "@context": "https://schema.org",
@@ -89,7 +122,7 @@ export default function SeoHead({ title, description, path }: Props) {
       url: SITE,
       description: "AI workspace for health and performance professionals.",
     });
-  }, [title, description, path]);
+  }, [title, description, path, robots]);
 
   return null;
 }
