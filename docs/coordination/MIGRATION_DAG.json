@@ -74,13 +74,33 @@
         "algorithm": "sha256",
         "value": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "20260727160000 research_inventory_reservation_commands",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "retain_additive_schema_and_append_only_reservation_history",
         "procedure": "supabase/production/research-inventory-reservation-commands-rollback-notes.md",
-        "evidence": "Website 4 and Website 6 fresh PostgreSQL 16 Wave2-only zero-table creation and preexisting Track B convergence lanes apply-twice, full readiness race/concurrency/security verifier, direct-DML denial, immutable-event, temporal-guard, and rollback-zero proof; Website 2 production-shaped zero-table managed-copy apply-twice, byte identity, and read-only verifier"
+        "evidence": "Website 4 and Website 6 fresh PostgreSQL 16 Wave2-only zero-table creation and preexisting Track B convergence lanes apply-twice, full readiness race/concurrency/security verifier, direct-DML denial, immutable-event, temporal-guard, and rollback-zero proof; Website 2 production-shaped zero-table managed-copy apply-twice, byte identity, read-only verifier, and authenticated production migration-history confirmation"
+      }
+    },
+    {
+      "id": "research_persistent_cart",
+      "path": "supabase/migrations/20260727200000_research_persistent_cart.sql",
+      "sourceSha": "e24b0c4e1af25fea1f51f01f7045de488ec6f380",
+      "dependsOn": [
+        "research_inventory_reservation_commands"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "disable_callers_then_preserve_or_remove_additive_zero-row_cart_schema",
+        "procedure": "docs/coordination/WEBSITE_5_WAVE3_PERSISTENT_CART_HANDOFF.md",
+        "evidence": "Website 5 and Website 6 fresh PostgreSQL 16 apply-twice, forced-RLS, grant, direct-DML, immutable-audit, idempotency, deterministic invalidation-race, safe-remove, no-reservation, and rollback-zero acceptance for exact source e24b0c4e1af25fea1f51f01f7045de488ec6f380"
       }
     }
   ],
@@ -90,6 +110,7 @@
     "The dependency graph must be acyclic.",
     "Checksums are computed from canonical Git blob bytes at the reviewed source SHA/path, not platform-normalized worktree line endings; a distinct managed path must byte-match that source.",
     "Every migration requires a non-empty rollback strategy, procedure, and verification evidence.",
-    "No migration in this DAG creates product, price, inventory, lot, COA, order, role, seed, or Care records."
+    "No migration in this DAG creates product, price, inventory, lot, COA, order, role, seed, or Care records.",
+    "The persistent-cart migration creates no cart rows, reserves or decrements no inventory, and remains unapplied until the exact protected production action is approved."
   ]
 }

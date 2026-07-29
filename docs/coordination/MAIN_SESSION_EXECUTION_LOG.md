@@ -119,6 +119,25 @@ the superseded entry.
 - Production effect: none. No merge, migration, deployment, or data mutation
   occurred.
 
+## 2026-07-28T22:29:00Z — PR #103 protected migration preflight
+
+- Website 6 accepted exact persistent-cart source
+  `e24b0c4e1af25fea1f51f01f7045de488ec6f380` on exact current-main parent
+  `2891dcb9ded41e6007f636bf053cd090dcd16111`.
+- Raw migration blob `2a1869e21f90990811e85f9304168b8a474b4706`
+  is 39,749 bytes with SHA-256
+  `6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880`.
+- Authenticated read-only Supabase evidence confirmed project health and
+  `20260727160000 research_inventory_reservation_commands` as the latest
+  managed migration. The four target cart tables and cart routines are absent.
+- Exact pre-apply row counts: Research members 2; Product Control products,
+  variants, prices, media, required inputs, launch controls, inventory lots,
+  lot-quality documents/tests, reservations, allocations, and reservation
+  events are all 0.
+- Production effect: none. The protected migration, merge, and deployment
+  remain blocked pending exact approval and Website 6 acceptance of the
+  integration/control-plane SHA.
+
 ## 2026-07-27T04:15:34Z — PR #87 live; production snapshot fix-forward opened
 
 - Website 6 independently confirmed accepted PR #87 source

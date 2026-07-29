@@ -38,10 +38,10 @@
     {
       "owner": "Website 5",
       "lane": "wave3-persistent-cart",
-      "state": "ACTIVE",
-      "activeUnit": "Persistent-cart command contract and persistence kernel only; no routes, checkout, reservations, orders, payments, provider execution, catalog authority, or production application.",
+      "state": "FROZEN_ACCEPTED_INTEGRATION_PENDING",
+      "activeUnit": "PR #103 exact accepted persistent-cart source e24b0c4e1af25fea1f51f01f7045de488ec6f380; Website 2 owns integration, protected migration application, deployment, rollback, and production smoke.",
       "branch": "feature/website-5-wave3-persistent-cart",
-      "headSha": null
+      "headSha": "e24b0c4e1af25fea1f51f01f7045de488ec6f380"
     },
     {
       "owner": "Website 6",

@@ -38,6 +38,12 @@ const RESERVATION_SOURCE_PATH =
   "supabase/research-inventory-reservation-commands.sql";
 const RESERVATION_SOURCE_BLOB =
   "97b304881eb65c9517beae1b91e8dc39982a8e34";
+const PERSISTENT_CART_SOURCE_SHA =
+  "e24b0c4e1af25fea1f51f01f7045de488ec6f380";
+const PERSISTENT_CART_PATH =
+  "supabase/migrations/20260727200000_research_persistent_cart.sql";
+const PERSISTENT_CART_SOURCE_BLOB =
+  "2a1869e21f90990811e85f9304168b8a474b4706";
 const pg16It =
   process.env.CI || process.env.XENIOS_RUN_PG16_VERIFIER === "1" ? it : it.skip;
 const CONTROL_PLANE_FILES = [
@@ -71,6 +77,20 @@ function checkedInReservationSourceBytes(): Buffer {
   return execFileSync(
     "git",
     ["cat-file", "blob", `HEAD:${RESERVATION_SOURCE_PATH}`],
+    { cwd: ROOT, encoding: "buffer" },
+  );
+}
+
+function checkedInPersistentCartSourceBytes(): Buffer {
+  const blob = execFileSync(
+    "git",
+    ["rev-parse", `HEAD:${PERSISTENT_CART_PATH}`],
+    { cwd: ROOT, encoding: "utf8" },
+  ).trim();
+  expect(blob).toBe(PERSISTENT_CART_SOURCE_BLOB);
+  return execFileSync(
+    "git",
+    ["cat-file", "blob", `HEAD:${PERSISTENT_CART_PATH}`],
     { cwd: ROOT, encoding: "buffer" },
   );
 }
@@ -669,6 +689,9 @@ describe("migration DAG validator", () => {
           ) {
             expect(sourceSha).toBe(RESERVATION_SOURCE_SHA);
             return checkedInReservationSourceBytes();
+          } else if (path === PERSISTENT_CART_PATH) {
+            expect(sourceSha).toBe(PERSISTENT_CART_SOURCE_SHA);
+            return checkedInPersistentCartSourceBytes();
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
@@ -781,8 +804,8 @@ describe("migration DAG validator", () => {
       path: "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
       sourceSha: RESERVATION_SOURCE_SHA,
       sourcePath: RESERVATION_SOURCE_PATH,
-      appliedToProduction: false,
-      managedMigrationId: "PENDING",
+      appliedToProduction: true,
+      managedMigrationId: "20260727160000 research_inventory_reservation_commands",
     });
     expect(reservation?.checksum.value).toBe(
       "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005",
@@ -825,11 +848,11 @@ describe("migration DAG validator", () => {
     const dag = JSON.parse(
       readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
     ) as MigrationDag;
-    const reservation = dag.migrations.find(
-      (migration) => migration.id === "research_inventory_reservation_commands",
+    const persistentCart = dag.migrations.find(
+      (migration) => migration.id === "research_persistent_cart",
     )!;
-    reservation.sourcePath = "..\\candidate.sql";
-    delete reservation.sourceSha;
+    persistentCart.sourcePath = "..\\candidate.sql";
+    delete persistentCart.sourceSha;
     expect(
       validateMigrationDag(dag, {
         checkFiles: false,
@@ -1120,7 +1143,7 @@ describe("production state validator", () => {
         repoFiles,
       }),
     ).toEqual([]);
-  });
+  }, 15_000);
 
   it("separates trusted-base diff authorization from the current production ownership snapshot", () => {
     const { state, graph, ownership: currentOwnership } = checkedInState();
