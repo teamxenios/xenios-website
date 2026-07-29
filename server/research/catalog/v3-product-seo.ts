@@ -7,7 +7,9 @@ export type V3ProductSeo = {
   title: string;
   description: string;
   canonicalUrl: string;
-  robots: "index,follow";
+  access: "member";
+  indexable: false;
+  robots: "noindex,nofollow";
 };
 
 export const v3ProductSeoRecords: readonly V3ProductSeo[] = Object.freeze(
@@ -19,7 +21,9 @@ export const v3ProductSeoRecords: readonly V3ProductSeo[] = Object.freeze(
         `${item.displayName} is a supplier-independent Xenios Research profile. ` +
         "Review its classification and current readiness without unsupported product, price, inventory, or clinical claims.",
       canonicalUrl: `${SITE}${item.route}`,
-      robots: "index,follow" as const,
+      access: "member" as const,
+      indexable: false as const,
+      robots: "noindex,nofollow" as const,
     }),
   ),
 );
@@ -32,7 +36,7 @@ export function getV3ProductSeo(slug: string): V3ProductSeo | null {
 }
 
 export function v3ProductSitemapPaths(): string[] {
-  return v3ProductSeoRecords.map((record) =>
-    record.canonicalUrl.replace(SITE, ""),
-  );
+  return v3ProductSeoRecords
+    .filter((record) => record.indexable)
+    .map((record) => record.canonicalUrl.replace(SITE, ""));
 }

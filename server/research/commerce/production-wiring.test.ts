@@ -297,11 +297,9 @@ describe("state 1: commerce flag off (production default)", () => {
     expect(await deps.adminQueues.commerce()).toEqual({ provisioned: false, items: [] });
   });
 
-  it("keeps the real catalog readable, purchasable nowhere, prices null", () => {
+  it("keeps legacy SKU compatibility empty until Product Control authority exists", () => {
     const products = deps.catalog.listProducts();
-    expect(products.length).toBeGreaterThanOrEqual(15);
-    expect(products.filter((p) => p.purchasable)).toEqual([]);
-    for (const product of products) expect(product.priceCents).toBeNull();
+    expect(products).toEqual([]);
     const caps = deps.capabilities.memberVisible();
     expect(caps.product_commerce.enabled).toBe(false);
     expect(caps.quantum_commerce.enabled).toBe(false);
@@ -418,10 +416,9 @@ describe("state 2: flag on, commerce database not provisioned", () => {
     expect(await deps.adminQueues.commerce()).toEqual({ provisioned: false, items: [] });
   });
 
-  it("still serves the catalog, presents nothing purchasable, reports commerce disabled", () => {
+  it("keeps the legacy catalog empty and reports commerce disabled", () => {
     const products = deps.catalog.listProducts();
-    expect(products.length).toBeGreaterThanOrEqual(15);
-    expect(products.filter((p) => p.purchasable)).toEqual([]);
+    expect(products).toEqual([]);
     const caps = deps.capabilities.memberVisible();
     expect(caps.product_commerce.enabled).toBe(false);
     expect(caps.quantum_commerce.enabled).toBe(false);
@@ -633,7 +630,7 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
     expect(caps.quantum_commerce.enabled).toBe(false);
   });
 
-  it("keeps the REAL catalog non-purchasable even fully configured (per-SKU gates hold)", () => {
+  it("does not manufacture SKU authority even when provider seams are configured", () => {
     // No catalogProducts override here: the genuine adapted catalog with the
     // flag on and the database configured still sells nothing, because per-SKU
     // eligibility (confirmed facts, quality documentation) fails closed.
@@ -652,9 +649,7 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
       hasEffectiveAgreement: async () => true,
     });
     const products = deps.catalog.listProducts();
-    expect(products.length).toBeGreaterThanOrEqual(15);
-    expect(products.filter((p) => p.purchasable)).toEqual([]);
-    for (const product of products) expect(product.priceCents).toBeNull();
+    expect(products).toEqual([]);
   });
 
   it("refuses to compose over a synthetic configuration marker (the guard runs first)", () => {

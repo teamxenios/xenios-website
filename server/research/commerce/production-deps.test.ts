@@ -1,4 +1,10 @@
 import { describe, expect, it } from "vitest";
+import {
+  v3CatalogProfiles,
+  v3PreviewMemberCatalog,
+  v3PreviewMemberDetail,
+  v3PreviewProducts,
+} from "../catalog/v3-preview-catalog";
 import { buildCommerceDependencies } from "./production-deps";
 
 // ---------------------------------------------------------------------------
@@ -6,32 +12,34 @@ import { buildCommerceDependencies } from "./production-deps";
 //
 // The commerce router is registered in server/index.ts with these production
 // deps. This suite proves what boots at runtime, not just that it compiles:
-//   1. The catalog read path serves the REAL product list.
-//   2. No unconfirmed supplier fact reaches a member as fact (price is null,
-//      never a guessed number or zero).
-//   3. Nothing is purchasable, because commerce is disabled and no SKU passes
-//      the eligibility gate. This is the load-bearing safety property.
+//   1. The legacy SKU catalog is empty until canonical Product Control
+//      product + variant + SKU authority exists.
+//   2. All 49 supplier-independent profiles remain available through the
+//      non-transactional discovery/member preview projections.
+//   3. No unconfirmed supplier fact reaches a member as fact.
 //   4. Every stateful surface fails closed with commerce_disabled.
 // ---------------------------------------------------------------------------
 
 describe("production commerce dependencies", () => {
   const deps = buildCommerceDependencies(() => new Date("2026-07-21T00:00:00Z"));
 
-  it("serves the complete supplier-independent 49-profile V3 catalog", () => {
-    const products = deps.catalog.listProducts();
-    expect(products).toHaveLength(49);
-    const skus = products.map((p) => p.sku);
-    expect(skus).toContain("XN-RETA-GLP-3");
-    expect(skus).toContain("XN-BACTERIOSTATIC-WATER-USP-GRADE");
-    expect(skus.some((sku) => /^P\d{3}$/.test(sku))).toBe(false);
+  it("keeps legacy SKU compatibility empty while preserving all 49 truthful previews", () => {
+    expect(deps.catalog.listProducts()).toEqual([]);
+    expect(v3PreviewProducts).toHaveLength(49);
+    expect(
+      v3PreviewMemberCatalog("2026-07-21T00:00:00.000Z").items,
+    ).toHaveLength(49);
   });
 
-  it("shows no unconfirmed supplier fact as fact: every price is null, never zero or a guess", () => {
-    for (const product of deps.catalog.listProducts()) {
-      // V3 preview values are structurally not_confirmed and never
-      // member-displayable, so no guessed number can reach this payload.
-      expect(product.priceCents).toBeNull();
-    }
+  it("shows no invented SKU or price through either compatibility or preview paths", () => {
+    const memberCatalog = v3PreviewMemberCatalog(
+      "2026-07-21T00:00:00.000Z",
+    );
+    expect(deps.catalog.listProducts()).toEqual([]);
+    expect(memberCatalog.items.every((product) => product.price === null)).toBe(
+      true,
+    );
+    expect(JSON.stringify(memberCatalog)).not.toMatch(/"sku"\s*:/i);
   });
 
   it("sells nothing: no product is purchasable while commerce is disabled", () => {
@@ -39,14 +47,17 @@ describe("production commerce dependencies", () => {
     expect(purchasable).toEqual([]);
   });
 
-  it("a product detail carries confirmed facts only and no claims text", () => {
-    const first = deps.catalog.listProducts()[0];
-    const detail = deps.catalog.getProduct(first.slug);
+  it("denies legacy detail authority while retaining a non-transactional preview", () => {
+    const first = v3CatalogProfiles[0];
+    expect(deps.catalog.getProduct(first.slug)).toBeNull();
+    const detail = v3PreviewMemberDetail(
+      first.slug,
+      "2026-07-21T00:00:00.000Z",
+    );
     expect(detail).not.toBeNull();
-    expect(detail!.purchasable).toBe(false);
-    expect(detail!.priceCents).toBeNull();
-    // The member detail never carries claims text.
-    expect(detail!.prohibitedClaims).toEqual([]);
+    expect(detail!.price).toBeNull();
+    expect(detail!.variants).toEqual([]);
+    expect(detail!.selection).toBeNull();
   });
 
   it("returns a valid goal list (empty until the content lane's goal mappings are loaded)", () => {

@@ -116,7 +116,7 @@ function publicItem(
     access: "member",
     primaryCta: "Notify me",
     secondaryCta: "Request sourcing",
-    route: profile.route,
+    route: `/research/member/products/${profile.slug}`,
     summary: profile.preview_copy,
     reviewedAt: "2026-07-27",
     editorialOrder,

@@ -16,9 +16,11 @@ describe("V3 public catalog search", () => {
     expect(new Set(v3PublicCatalogItems.map((item) => item.slug)).size).toBe(49);
     const serialized = JSON.stringify(v3PublicCatalogItems);
     expect(serialized).not.toMatch(
-      /northline|source_reference|reference_sizes|wholesale|inventory quantity|lot code|coa file/i,
+      /renew 360|northline|source_reference|reference_sizes|official source url|supplier \/ reseller state|private reference|wholesale|inventory quantity|lot code|coa file/i,
     );
     for (const item of v3PublicCatalogItems) {
+      expect(item.route).toBe(`/research/member/products/${item.slug}`);
+      expect(item.access).toBe("member");
       expect(item.purchaseState).toBe("disabled_pending_readiness");
       expect(item.priceState).toBe("public_price_pending");
       expect(item.formatState).toBe("pending_confirmation");
@@ -102,7 +104,7 @@ describe("V3 public catalog search", () => {
       expect(detail?.presentationSummary).toBe("Options being confirmed");
       expect(detail?.documentation).toHaveLength(4);
       expect(JSON.stringify(detail)).not.toMatch(
-        /northline|reference_sizes|source_reference|dose|dosage|treatment recommendation/i,
+        /renew 360|northline|reference_sizes|source_reference|official source url|supplier \/ reseller state|private reference|dose|dosage|treatment recommendation/i,
       );
     }
     expect(getV3CatalogDetail("not-a-real-profile")).toBeNull();

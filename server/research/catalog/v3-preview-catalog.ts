@@ -1,7 +1,4 @@
-import type {
-  CatalogProduct,
-  ProvenancedFact,
-} from "@shared/research/catalog";
+import type { CatalogProduct } from "@shared/research/catalog";
 import type { Product } from "@shared/research/types";
 import type {
   MemberCatalog,
@@ -139,57 +136,12 @@ export const v3PreviewProducts: Product[] = v3CatalogProfiles.map(
   }),
 );
 
-function unknownFact<T>(): ProvenancedFact<T> {
-  return {
-    value: null,
-    confirmation: "not_confirmed",
-    source: { kind: "none" },
-  };
-}
-
 /**
- * Non-transactional compatibility projection for the older commerce read
- * service. Every commerce-critical fact is structurally unconfirmed, so this
- * projection can never authorize cart, checkout, or subscription activity.
- * Product Control remains the only authority for a future sellable selection.
+ * Legacy commerce consumers still import this symbol. Preview profiles have
+ * no approved Product Control variant or SKU, so the only truthful and
+ * fail-closed compatibility projection is an empty catalog.
  */
-export const v3PreviewCatalogProducts: CatalogProduct[] =
-  v3CatalogProfiles.map((profile) => ({
-    sku: profile.product_key.toUpperCase(),
-    slug: profile.slug,
-    displayName: profile.display_name,
-    lane:
-      profile.product_key === "xn-quantum-foundational-reset"
-        ? "quantum"
-        : "research_material",
-    laneDecision: "decided",
-    nameAliases: [],
-    availability: "coming_soon",
-    commerceApproval: "blocked_pending_written_approval",
-    fulfillmentOwner: "not_assigned",
-    facts: {
-      composition: unknownFact<string>(),
-      strength: unknownFact<string>(),
-      format: unknownFact<string>(),
-      priceCents: unknownFact<number>(),
-      shelfLife: unknownFact<string>(),
-      storage: unknownFact<string>(),
-      coa: unknownFact<string>(),
-    },
-    guideState: "guide_in_development",
-    qualityDocumentState: "missing",
-    storageDataState: "missing",
-    shippingProfileState: "missing",
-    goalMappings: [],
-    relatedGuideSlugs: [],
-    prohibitedClaims: [],
-    subscriptionEligible: false,
-    lastReviewed: "2026-07-27",
-    openSupplierQuestions: [
-      "Confirm exact supplier offer and variant.",
-      "Confirm public price, inventory, exact lot, quality, storage, and shipping.",
-    ],
-  }));
+export const v3PreviewCatalogProducts: CatalogProduct[] = [];
 
 function previewCard(profile: V3CatalogProfile): MemberCatalogCard {
   return {
