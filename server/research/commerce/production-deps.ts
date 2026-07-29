@@ -117,8 +117,9 @@ import { getSupabaseAdmin, supabaseConfigured } from "../../supabase";
 //     fixtures can never compose into a live process.
 //
 // Product commerce additionally stays gated by per-SKU purchase eligibility
-// (0 of 15 today; no COAs on file) regardless of state. See
-// docs/research-commerce/PURCHASE_ELIGIBILITY_FINAL.md.
+// (0 of 15 today; no COAs on file) regardless of state. The eligibility
+// summary lives in the private operations repository (see
+// docs/research-commerce/SUPPLIER_DATA_RELOCATION.md).
 // ---------------------------------------------------------------------------
 
 const DISABLED = { ok: false as const, code: "commerce_disabled" as const };

@@ -60,8 +60,9 @@ blocker. When the files arrive, drop them into the
 `XENIOS_SUPPLIER_SECURE_INTAKE/` subfolders and re-run the attachment
 verification; eligibility recomputes per SKU with no code change.
 
-The full 19-gate matrix for every SKU is machine-readable at
-`docs/research-commerce/PER_SKU_GATE_REPORT.json`. Each SKU fails five gates
+The full 19-gate matrix for every SKU is machine-readable in the private
+operations repository (relocated 2026-07-29; see
+`docs/research-commerce/SUPPLIER_DATA_RELOCATION.md`). Each SKU fails five gates
 independently (coa, payment, agreements, feature_flag, admin_release), so no SKU
 is blocked merely because another's documents are missing; each must clear its
 own gates.
