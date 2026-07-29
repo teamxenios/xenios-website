@@ -141,12 +141,65 @@ export async function requireSupabaseAdmin(req: Request, res: Response, next: Ne
   }
 }
 
+// ---------------------------------------------------------------------------
+// GET /api/health: liveness plus deploy-diagnostic config presence.
+// Deliberately fast: no network probes, no database or Supabase calls (a deep
+// readiness probe would need an admin-guard decision and belongs to a separate
+// lane). Backward compatible: the original { status } field and unconditional
+// 200 are unchanged, so existing release smoke checks keep passing.
+// The config block reports PRESENCE BOOLEANS ONLY, never env values:
+//   supabaseConfigured   SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (same rule
+//                        as supabaseConfigured() in server/supabase.ts)
+//   adminConfigured      ADMIN_API_KEY (legacy bearer gate) or ADMIN_EMAIL
+//                        (Supabase-auth admin gate) is present
+//   turnstileConfigured  TURNSTILE_SECRET_KEY is present
+//   commerceEnabled      NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true"
+// requestId echoes the sanitized correlation id that the requestId()
+// middleware (server/request-logging.ts) stamps on the X-Request-Id response
+// header; the field is omitted until that middleware is mounted in
+// server/index.ts. Extracted and exported so server/health.test.ts can
+// exercise the exact production payload without calling registerRoutes
+// (which needs a live Server and seeds the counter).
+export interface HealthPayload {
+  status: string;
+  uptimeSeconds: number;
+  timestamp: string;
+  config: {
+    supabaseConfigured: boolean;
+    adminConfigured: boolean;
+    turnstileConfigured: boolean;
+    commerceEnabled: boolean;
+  };
+  requestId?: string;
+}
+
+export function buildHealthPayload(requestId?: unknown): HealthPayload {
+  const payload: HealthPayload = {
+    status: "Xenios API is running",
+    uptimeSeconds: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+    config: {
+      supabaseConfigured: supabaseConfigured(),
+      adminConfigured: Boolean(process.env.ADMIN_API_KEY || process.env.ADMIN_EMAIL),
+      turnstileConfigured: Boolean(process.env.TURNSTILE_SECRET_KEY),
+      commerceEnabled: process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true",
+    },
+  };
+  if (typeof requestId === "string" && requestId) payload.requestId = requestId;
+  return payload;
+}
+
+export function healthHandler(_req: Request, res: Response): void {
+  // The id is read from the response header our sanitizing middleware sets,
+  // never from the raw inbound header, so an unsanitized value cannot echo.
+  const rid = res.getHeader("X-Request-Id");
+  res.json(buildHealthPayload(rid));
+}
+
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   await storage.ensureCounterSeeded(550).catch((e) => console.error("[seed] counter seed failed:", e));
 
-  app.get("/api/health", (_req, res) => {
-    res.json({ status: "Xenios API is running" });
-  });
+  app.get("/api/health", healthHandler);
 
   const handleCount = async (_req: Request, res: Response) => {
     try {
