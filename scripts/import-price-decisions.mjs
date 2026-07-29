@@ -136,15 +136,15 @@ async function defaultLoadModules() {
     "../server/research/pricing/price-decision-import.ts",
     import.meta.url,
   ).href;
-  try {
-    return await import(specifier);
-  } catch {
-    // Plain node cannot import TypeScript; register the repo's existing tsx
-    // loader (a dependency already, not a new one) and retry.
-    const { register } = await import("tsx/esm/api");
-    register();
-    return await import(specifier);
-  }
+  // Register the repo's existing tsx loader (a dependency already, not a new
+  // one) BEFORE the first import of the TypeScript module. Never probe with a
+  // raw import first: node caches a failed ESM module job by specifier, so on
+  // node 20 a retry of the same specifier after register() receives the same
+  // cached ERR_UNKNOWN_FILE_EXTENSION rejection and the CLI exits 1. Always
+  // registering first keeps one identical code path on every node version.
+  const { register } = await import("tsx/esm/api");
+  register();
+  return await import(specifier);
 }
 
 /**

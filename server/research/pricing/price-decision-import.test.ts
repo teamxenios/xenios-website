@@ -769,18 +769,22 @@ describe("import-price-decisions CLI", () => {
           encoding: "utf8",
           timeout: 90_000,
         });
-        expect(run.status).toBe(0);
-        expect(run.stdout).toContain("DRY RUN ONLY");
-        expect(run.stdout).toContain("NO DATABASE WAS TOUCHED");
-        expect(run.stdout).toContain("unresolved_identity");
+        // Carry the child's output into the failure message so a CI-only
+        // failure is diagnosable straight from the test report.
+        const runEvidence = `child stderr:\n${run.stderr}\nchild stdout:\n${run.stdout}`;
+        expect(run.status, runEvidence).toBe(0);
+        expect(run.stdout, runEvidence).toContain("DRY RUN ONLY");
+        expect(run.stdout, runEvidence).toContain("NO DATABASE WAS TOUCHED");
+        expect(run.stdout, runEvidence).toContain("unresolved_identity");
 
         const refused = spawnSync(
           process.execPath,
           [script, fixturePath, "--live"],
           { cwd: repoRoot, encoding: "utf8", timeout: 90_000 },
         );
-        expect(refused.status).toBe(2);
-        expect(refused.stderr).toContain("REFUSED");
+        const refusedEvidence = `child stderr:\n${refused.stderr}\nchild stdout:\n${refused.stdout}`;
+        expect(refused.status, refusedEvidence).toBe(2);
+        expect(refused.stderr, refusedEvidence).toContain("REFUSED");
       } finally {
         rmSync(tempDir, { recursive: true, force: true });
       }
