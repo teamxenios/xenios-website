@@ -96,7 +96,11 @@ export function ResearchMemberShell({
     <div className="research-app container-x" style={{ paddingTop: 28, paddingBottom: 64 }}>
       <SubNav items={MEMBER_SUBNAV} label="Member areas" />
       <PageHeader eyebrow={eyebrow} title={title} lead={lead} actions={actions} />
-      <main className="mt-8">{children}</main>
+      {/* Not a landmark: the section chrome in layout.tsx already renders the
+          page's one <main>, and this shell always composes inside it. A
+          second <main> here would nest landmarks, which assistive tech
+          reports as two "main" regions on one page. */}
+      <div className="mt-8">{children}</div>
     </div>
   );
 }
@@ -139,7 +143,8 @@ export function ResearchPartnerShell({
     <div className="research-app container-x" style={{ paddingTop: 28, paddingBottom: 64 }}>
       {showNav && <SubNav items={PARTNER_SUBNAV} label="Partner areas" />}
       <PageHeader eyebrow={eyebrow} title={title} lead={lead} actions={actions} />
-      <main className="mt-8">{children}</main>
+      {/* Not a landmark: see the comment in ResearchMemberShell above. */}
+      <div className="mt-8">{children}</div>
     </div>
   );
 }
@@ -315,6 +320,12 @@ export function ResearchAdminShell({
       </div>
       <AdminGroupedNav />
       <PageHeader eyebrow="Operations" title={title} lead={lead} actions={actions} />
+      {/* Unlike the member/partner/public shells above, this one keeps a real
+          <main>: /admin/research mounts standalone in App.tsx
+          (adminx-section.tsx), with no ResearchLayout/MemberChrome wrapper
+          providing an outer main, so this is the page's only landmark, not a
+          nested one. Verified by reading App.tsx and adminx-section.tsx: the
+          admin route tree renders no chrome above this shell. */}
       <main className="mt-6">{children}</main>
     </div>
   );
@@ -336,7 +347,8 @@ export function ResearchPublicShell({
   return (
     <div className="research-app container-x" style={{ paddingTop: 40, paddingBottom: 64 }}>
       <PageHeader eyebrow={eyebrow} title={title} lead={lead} />
-      <main className="mt-8" style={{ maxWidth: 720 }}>{children}</main>
+      {/* Not a landmark: see the comment in ResearchMemberShell above. */}
+      <div className="mt-8" style={{ maxWidth: 720 }}>{children}</div>
     </div>
   );
 }
