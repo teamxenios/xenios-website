@@ -16,6 +16,13 @@ interface Props {
 const SITE = "https://xeniostechnology.com";
 const OG_IMAGE = `${SITE}/og/xenios-og-image-v2.png`;
 
+// The site default, matching the literal static tag in client/index.html.
+// Kept as a hardcoded constant (rather than read from the DOM at module
+// load) so an indexable page always gets this exact directive regardless of
+// whether the static tag happened to load first; the two are asserted to
+// match by a dedicated test rather than relying on load order.
+export const DEFAULT_ROBOTS = "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1";
+
 function ensureMeta(selector: string, attrs: Record<string, string>) {
   let el = document.head.querySelector(selector) as HTMLMetaElement | null;
   if (!el) {
@@ -79,7 +86,11 @@ export default function SeoHead({ title, description, path, robots }: Props) {
       removeEl('link[rel="alternate"][hreflang="en-us"]');
       removeEl('link[rel="alternate"][hreflang="x-default"]');
     } else {
-      removeEl('meta[name="robots"]');
+      // Restore the site default rather than deleting the tag: an indexable
+      // page must never end up with NO robots meta at all, which would
+      // silently drop max-image-preview:large (and the rest of the default
+      // directive) sitewide.
+      ensureMeta('meta[name="robots"]', { name: "robots", content: DEFAULT_ROBOTS });
       ensureLink("canonical", url);
       ensureLink("alternate", url, { hreflang: "en-us" });
       ensureLink("alternate", url, { hreflang: "x-default" });
