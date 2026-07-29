@@ -1,5 +1,6 @@
-#!/usr/bin/env node
 // Founder price-decision import CLI. DRY RUN ONLY.
+// No shebang on purpose: this file is always invoked as `node scripts/...`
+// and is also imported by tests, where a shebang breaks the module runner.
 //
 // Reads a founder decision JSON file, validates every row, and prints the
 // dry-run import plan with identity resolution unavailable (no readers, no
