@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { useResearch } from "../../core";
 import { type ApiResult } from "../../lib/api";
 import { acknowledgeXenios30, getXenios30Plan } from "../../adapters/member";
+import type { Xenios30Plan as ContractXenios30Plan } from "@shared/research/member-platform";
 import {
   fetchCapabilities,
   type CapabilityStatus,
@@ -24,11 +25,12 @@ import {
 // ---------------------------------------------------------------------------
 // Xenios 30 (/research/member/xenios-30): the current month working plan,
 // drawn from the member's Blueprint. Data comes from
-// GET /api/research/member/plans/xenios-30; the acknowledgment posts to
-// /api/research/member/plans/xenios-30/acknowledge and tolerates an absent
-// endpoint. Every section is honest about absence and supplements are named
-// as categories only, never with amounts, unless the server supplies the
-// approved copy verbatim.
+// GET /api/research/plans/xenios30 (the frozen-contract route; the response
+// carries { ok, current, history } with the shared Xenios30Plan projection);
+// the acknowledgment posts to /api/research/plans/xenios30/:planId/acknowledge
+// and tolerates an absent endpoint. Every section is honest about absence and
+// supplements are named as categories only, never with amounts, unless the
+// server supplies the approved copy verbatim.
 // ---------------------------------------------------------------------------
 
 export interface Xenios30Archive {
@@ -38,6 +40,7 @@ export interface Xenios30Archive {
 }
 
 export interface Xenios30Plan {
+  planId?: string | null;
   monthLabel?: string | null;
   version?: string | null;
   publishedAt?: string | null;
@@ -56,10 +59,38 @@ type Xenios30Envelope = Partial<Xenios30Plan> & {
   ok?: boolean;
   plan?: Xenios30Plan | null;
   data?: Xenios30Plan | null;
+  // The frozen-contract response: the shared Xenios30Plan projection under
+  // `current`, with published/superseded heads under `history`.
+  current?: ContractXenios30Plan | null;
+  history?: { planId: string; monthLabel: string; state: string }[];
 };
+
+// Maps the shared contract projection (server/research/plans.ts
+// toXenios30Plan) onto this page's display model. Recommendation items keep
+// their approved titles only; adherence targets render as "label: target".
+function fromContractPlan(plan: ContractXenios30Plan): Xenios30Plan {
+  return {
+    planId: plan.planId,
+    monthLabel: plan.monthLabel,
+    version: String(plan.version),
+    publishedAt: plan.publishedAt,
+    checkInDate: plan.checkInDueAt,
+    acknowledgedAt: plan.memberAcknowledgedAt,
+    supplementFoundation: (plan.supplementFoundation ?? []).map((item) => item.title),
+    productGuidance: (plan.productGuidance ?? []).map((item) => item.title),
+    adherenceTargets: (plan.adherenceTargets ?? []).map(
+      (target) => `${target.label}: ${target.target}`,
+    ),
+    trackerMetrics: (plan.trackerMetricKeys ?? []).map(String),
+  };
+}
 
 function normalizePlan(body: Xenios30Envelope | null): Xenios30Plan | null {
   if (!body) return null;
+  if (body.current) return fromContractPlan(body.current);
+  // The contract answers { ok, current: null, history } when no plan is
+  // published yet: that is the honest pending state, never a flat fallback.
+  if (body.current === null && "history" in body) return null;
   const candidate = body.plan ?? body.data ?? null;
   if (candidate) return candidate;
   // A flat payload is accepted only when it carries recognizable plan fields.
@@ -171,8 +202,15 @@ function AcknowledgeCard({
   const acknowledge = useCallback(async () => {
     setBusy(true);
     setNote(null);
+    if (!plan.planId) {
+      // The contract route addresses the plan by id; without one (a legacy or
+      // sample payload) acknowledgment is honestly not open.
+      setNote("Acknowledgment is not open yet. Your plan is unaffected and nothing is wrong with your account.");
+      setBusy(false);
+      return;
+    }
     const res: ApiResult<{ ok?: boolean; acknowledgedAt?: string }> = await acknowledgeXenios30(
-      plan.version ?? null,
+      plan.planId,
       memberToken,
     );
     if (res.kind === "ok") {
@@ -188,7 +226,7 @@ function AcknowledgeCard({
       setNote(failureText(res, "Acknowledgment needs an active membership."));
     }
     setBusy(false);
-  }, [memberToken, plan.version]);
+  }, [memberToken, plan.planId]);
 
   return (
     <section className="card" aria-label="Plan acknowledgment">

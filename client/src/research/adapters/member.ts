@@ -157,14 +157,22 @@ export function getBlueprint<T>(token?: string | null): Promise<ApiResult<T>> {
 // --- Plans (xenios 30 and xenios 90) ---------------------------------------
 
 export function getXenios30Plan<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/plans/xenios-30`, token);
+  // The frozen-contract route (server/research/plans.ts): the response is
+  // { ok, current, history } with the shared Xenios30Plan projection.
+  return apiGet<T>("/api/research/plans/xenios30", token);
 }
 
 export function acknowledgeXenios30(
-  version: string | null,
+  planId: string,
   token?: string | null,
 ): Promise<ApiResult<{ ok?: boolean; acknowledgedAt?: string }>> {
-  return apiPost<{ ok?: boolean; acknowledgedAt?: string }>(`${BASE}/plans/xenios-30/acknowledge`, { version }, token);
+  // Acknowledgment addresses the member's own published plan by id; the
+  // server verifies ownership and publication state.
+  return apiPost<{ ok?: boolean; acknowledgedAt?: string }>(
+    `/api/research/plans/xenios30/${encodeURIComponent(planId)}/acknowledge`,
+    {},
+    token,
+  );
 }
 
 export function getXenios90Plan<T>(token?: string | null): Promise<ApiResult<T>> {
