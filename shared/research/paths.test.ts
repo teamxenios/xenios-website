@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { isResearchAdminPath, isResearchPath, isResearchResetPasswordPath } from "./paths";
+import {
+  isResearchActivatePath,
+  isResearchAdminPath,
+  isResearchApplicationStatusPath,
+  isResearchPath,
+  isResearchResetPasswordPath,
+} from "./paths";
 
 // The path normalization must match the wouter router (decodeURI + case-fold)
 // so the tracking guard and the server page gate cover exactly the URLs that
@@ -56,6 +62,37 @@ describe("isResearchResetPasswordPath", () => {
     expect(isResearchResetPasswordPath("/research")).toBe(false);
     expect(isResearchResetPasswordPath("/research/member")).toBe(false);
     expect(isResearchResetPasswordPath("/research/reset-password/extra")).toBe(false);
+  });
+});
+
+describe("isResearchActivatePath", () => {
+  it("matches plain, case, encoded, and trailing-slash activation paths", () => {
+    expect(isResearchActivatePath("/research/activate")).toBe(true);
+    expect(isResearchActivatePath("/Research/Activate")).toBe(true);
+    expect(isResearchActivatePath("/research/%61ctivate")).toBe(true);
+    expect(isResearchActivatePath("/research/activate/")).toBe(true);
+  });
+
+  it("does not match adjacent paths", () => {
+    expect(isResearchActivatePath("/research")).toBe(false);
+    expect(isResearchActivatePath("/research/activate/extra")).toBe(false);
+    expect(isResearchActivatePath("/research/application-status")).toBe(false);
+  });
+});
+
+describe("isResearchApplicationStatusPath", () => {
+  it("matches both registered status routes with normalization and trailing slashes", () => {
+    expect(isResearchApplicationStatusPath("/research/apply/status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/research/application-status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/Research/Application-Status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/research/%61pply/status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/research/apply/status/")).toBe(true);
+  });
+
+  it("does not match adjacent paths", () => {
+    expect(isResearchApplicationStatusPath("/research/apply")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/apply/status/extra")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/activate")).toBe(false);
   });
 });
 

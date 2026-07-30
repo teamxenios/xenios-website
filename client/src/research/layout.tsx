@@ -1,7 +1,11 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import Wordmark from "@/components/Wordmark";
-import { isResearchResetPasswordPath } from "@shared/research/paths";
+import {
+  isResearchActivatePath,
+  isResearchApplicationStatusPath,
+  isResearchResetPasswordPath,
+} from "@shared/research/paths";
 import { useResearch } from "./core";
 
 // xenios research: section chrome. Three modes by route (canonical gateway
@@ -269,7 +273,12 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   // Use the same decoded, case-folded helper as the router, tracking guard,
   // and server headers. Plain, trailing-slash, case, and encoded forms must
   // all mount the isolated recovery experience outside the shared gate.
-  if (isResearchResetPasswordPath(location) || isResearchSignInPath(location)) {
+  if (
+    isResearchResetPasswordPath(location) ||
+    isResearchSignInPath(location) ||
+    isResearchActivatePath(location) ||
+    isResearchApplicationStatusPath(location)
+  ) {
     return <RecoveryChrome>{children}</RecoveryChrome>;
   }
   if (gate === "checking") {

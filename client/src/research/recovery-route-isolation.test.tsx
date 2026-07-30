@@ -68,6 +68,32 @@ describe("recovery route chrome isolation", () => {
     expect(view.querySelector('a[href="/research"]')).toBeNull();
   });
 
+  it.each([
+    "/research/activate",
+    "/research/activate/",
+    "/Research/Activate",
+    "/research/%61ctivate",
+  ])("mounts membership activation outside the shared gate at %s", (path) => {
+    const view = renderAt(path);
+    expect(view.querySelector('[data-testid="recovery-content"]')).toBeTruthy();
+    expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
+    expect(view.querySelector('a[href="/research"]')).toBeNull();
+    expect(view.querySelector('a[href*="/policies/"]')).toBeNull();
+  });
+
+  it.each([
+    "/research/apply/status",
+    "/research/application-status",
+    "/research/application-status/",
+    "/Research/Apply/Status",
+  ])("mounts application status outside the shared gate at %s", (path) => {
+    const view = renderAt(path);
+    expect(view.querySelector('[data-testid="recovery-content"]')).toBeTruthy();
+    expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
+    expect(view.querySelector('a[href="/research"]')).toBeNull();
+    expect(view.querySelector('a[href*="/policies/"]')).toBeNull();
+  });
+
   it.each([1440, 720, 375, 320])(
     "keeps the routed signed-out member catalog gate to one main and one H1 at %dpx",
     (width) => {

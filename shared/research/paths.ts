@@ -40,3 +40,18 @@ export function isResearchResetPasswordPath(pathname: string): boolean {
   const p = normalize(pathname);
   return p === "/research/reset-password" || p === "/research/reset-password/";
 }
+
+export function isResearchActivatePath(pathname: string): boolean {
+  const p = normalize(pathname);
+  return p === "/research/activate" || p === "/research/activate/";
+}
+
+export function isResearchApplicationStatusPath(pathname: string): boolean {
+  const p = normalize(pathname);
+  return (
+    p === "/research/apply/status" ||
+    p === "/research/apply/status/" ||
+    p === "/research/application-status" ||
+    p === "/research/application-status/"
+  );
+}

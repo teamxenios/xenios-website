@@ -3,7 +3,9 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import type { CatalogResponse, CommerceLane, Product } from "@shared/research/types";
 import {
+  isResearchActivatePath,
   isResearchAdminPath,
+  isResearchApplicationStatusPath,
   isResearchPath,
   isResearchResetPasswordPath,
 } from "@shared/research/paths";
@@ -150,7 +152,11 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   // The password-recovery page (founder decision, 2026-07-19: recovery works
   // from a fresh browser without the review password) is a sensitive account
   // page: never cached, never indexed, never leaks a referrer.
-  if (isResearchResetPasswordPath(req.path)) {
+  if (
+    isResearchResetPasswordPath(req.path) ||
+    isResearchActivatePath(req.path) ||
+    isResearchApplicationStatusPath(req.path)
+  ) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Referrer-Policy", "no-referrer");
     res.setHeader("X-Robots-Tag", "noindex, nofollow");
@@ -249,7 +255,12 @@ export function registerResearchApi(app: Express) {
   // endpoint itself is enumeration-safe and rate-limited, exposes no member
   // data, and never mints a review cookie. This does not make research
   // public: every other route keeps its wall or member guard.
-  const OPEN_RECOVERY_PATHS = new Set(["/member/forgot-password"]);
+  const OPEN_ACCOUNT_ACCESS_REQUESTS = new Set([
+    "POST /member/forgot-password",
+    "POST /member/claim",
+    "GET /applications/status",
+    "POST /applications/resend-link",
+  ]);
   // These exact read routes own their stronger downstream member guard and
   // private-response headers. Let them reach that canonical handler even when
   // the shared review cookie is absent; otherwise this earlier gateway would
@@ -262,7 +273,7 @@ export function registerResearchApi(app: Express) {
     path.startsWith("/pricing/");
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
-    if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
+    if (OPEN_ACCOUNT_ACCESS_REQUESTS.has(`${req.method} ${req.path}`)) return next();
     if (
       (req.method === "GET" || req.method === "HEAD") &&
       downstreamMemberGuardedRead(req.path)
