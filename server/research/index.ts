@@ -250,6 +250,35 @@ export function registerResearchApi(app: Express) {
   // data, and never mints a review cookie. This does not make research
   // public: every other route keeps its wall or member guard.
   const OPEN_RECOVERY_PATHS = new Set(["/member/forgot-password"]);
+  // FOUNDER DECISION (2026-07-30, "option 1", narrowed after PR #154): the
+  // discover-and-apply entry is public, so the reads the public pages perform
+  // open with them. Scope:
+  //  - /policies: the public LegalPage (/research/privacy, /research/terms)
+  //    and PolicyPage (/research/policies/*) both render via GET
+  //    /api/research/policies (fetchPolicies in core.tsx); a footer link that
+  //    401s is a dead end. GET-only by nature of the route.
+  //  - /applications/status + /applications/resend-link: the status page an
+  //    applicant reaches from the signed email link. Both are token-gated and
+  //    rate-limited in members.ts, the same bar the 2026-07-19 recovery
+  //    exemption was held to.
+  //
+  // What deliberately does NOT open:
+  //  - "/applications" (submit): the deployed Apply page is documentation-
+  //    pending and cannot submit (#156's recorded boundary: submission stays
+  //    closed while Terms/Privacy are operational drafts and no approved
+  //    policy version can be bound). When Samuel approves the final documents,
+  //    opening submission is a one-line addition here.
+  //  - "/applications/resubmit": same reasoning; no public UI can reach it.
+  //  - "/member/claim": account claim belongs to PR #147's activation lane.
+  //  - /catalog, /member/*, /orders and every other member route: those
+  //    require the member's own Supabase JWT, which the shared password never
+  //    granted, so the catalog stays private while COAs and legal review are
+  //    outstanding.
+  const OPEN_APPLICATION_PATHS = new Set([
+    "/applications/status",
+    "/applications/resend-link",
+    "/policies",
+  ]);
   // These exact read routes own their stronger downstream member guard and
   // private-response headers. Let them reach that canonical handler even when
   // the shared review cookie is absent; otherwise this earlier gateway would
@@ -263,6 +292,7 @@ export function registerResearchApi(app: Express) {
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
     if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
+    if (OPEN_APPLICATION_PATHS.has(req.path)) return next();
     if (
       (req.method === "GET" || req.method === "HEAD") &&
       downstreamMemberGuardedRead(req.path)

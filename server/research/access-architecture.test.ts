@@ -155,8 +155,39 @@ describe("an authenticated member bypasses the shared password on member endpoin
 
   it("a bearer token does NOT bypass the wall on non-member endpoints", async () => {
     const app = makeApp();
-    // policies is cookie-walled; a bearer alone must not open it
-    const res = await request(app).get("/api/research/policies").set("Authorization", `Bearer ${state.goodToken}`);
+    // CROSS-LANE EDIT, needs a Website 2 lease. The ASSERTION is unchanged and
+    // is not weakened: a bearer alone still must not open a cookie-walled
+    // non-member endpoint. Only the EXAMPLE endpoint moved, because /policies
+    // is no longer a valid example of one.
+    //
+    // Why: founder decision 2026-07-30 ("option 1") opens the gateway and the
+    // application flow to the public. The gateway footer and legal pages
+    // render the privacy and terms documents from /policies, so a public
+    // applicant must be able to READ them; a footer link that 401s is a dead
+    // end. /agreements is now the example: it is a non-member endpoint, it is
+    // not in the public-entry allowlist, and it is not one of the
+    // MEMBER_AUTHED_PREFIXES, so a bearer alone still hits the wall exactly
+    // as /policies used to.
+    const res = await request(app).get("/api/research/agreements").set("Authorization", `Bearer ${state.goodToken}`);
     expect(res.status).toBe(401);
+  });
+
+  it("the public entry is open but the catalog is NOT, which is the point of the gate", async () => {
+    // Added with the same option-1 change. The risk of opening a front door is
+    // opening more than intended, so this pins both halves at the HTTP layer:
+    // the application lifecycle answers without any credential, and the member
+    // catalog still refuses one.
+    const app = makeApp();
+    const policies = await request(app).get("/api/research/policies");
+    expect(policies.status).toBe(200);
+    const catalog = await request(app).get("/api/research/catalog");
+    expect(catalog.status).toBe(401);
+    // NARROWED after PR #154: application SUBMISSION does not open. The
+    // deployed Apply page is documentation-pending and cannot submit (#156's
+    // recorded boundary: submission stays closed while Terms/Privacy are
+    // operational drafts). The wall answers before any handler.
+    const submit = await request(app).post("/api/research/applications").send({});
+    expect(submit.status).toBe(401);
+    expect(submit.body).toEqual({ ok: false, message: "Access required." });
   });
 });

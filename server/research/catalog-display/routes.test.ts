@@ -531,7 +531,12 @@ describe("gateway integration (real registerResearchApi)", () => {
 
       // The real wall is still mounted and still guards every non bypassed
       // research path, so the simulation did not simply remove the gateway.
-      const walled = await request(app).get("/api/research/policies");
+      // NOTE 2026-07-30 (founder decision "option 1"): /api/research/policies is
+      // NO LONGER a valid "still walled" canary. The public gateway links the
+      // privacy and terms documents and the application form requires agreeing
+      // to both, so an applicant with no credential must be able to read them.
+      // /agreements is the replacement canary: same property, still walled.
+      const walled = await request(app).get("/api/research/agreements");
       expect(walled.status).toBe(401);
       expect(walled.body).toEqual({ ok: false, message: "Access required." });
     });

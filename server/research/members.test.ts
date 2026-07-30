@@ -767,10 +767,36 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     expect(fourth.status).toBe(429);
   });
 
-  it("the allowlist opens ONLY recovery: gateway/application-flow endpoints keep the wall", async () => {
+  it("the allowlist opens ONLY recovery and the application lifecycle: member content keeps the wall", async () => {
     const app = makeComposedApp();
-    // No credential: everything else still 401s at the wall.
-    expect((await request(app).get("/api/research/policies")).status).toBe(401);
+    // FOUNDER DECISION 2026-07-30 ("option 1", narrowed after PR #154): the
+    // allowlist now covers the public reads of the discover-and-apply
+    // lifecycle as well as recovery, because the gateway itself sat behind the
+    // wall and a prospective member had no public path into Xenios. /policies
+    // opens with it: the public gateway and legal pages render the privacy and
+    // terms documents from it, and a footer link that 401s is a dead end.
+    expect((await request(app).get("/api/research/policies")).status).toBe(200);
+    // The status and resend endpoints are reachable (their OWN token and
+    // rate-limit logic answers, not the wall's "Access required.").
+    const status = await request(app).get("/api/research/applications/status");
+    expect(status.status).toBe(401);
+    expect(status.body.message).toBe("This status link is not valid.");
+    const resend = await request(app)
+      .post("/api/research/applications/resend-link")
+      .set("X-Forwarded-For", uniqueIp())
+      .send({});
+    expect(resend.status).toBe(400);
+    expect(resend.body.message).toBe("Enter a valid email address.");
+    // SUBMISSION stays at the wall (#156's recorded boundary): the deployed
+    // Apply page is documentation-pending and cannot submit, so the endpoint
+    // does not open until the approved Terms/Privacy can be bound.
+    const submit = await request(app).post("/api/research/applications").send({});
+    expect(submit.status).toBe(401);
+    expect(submit.body.message).toBe("Access required.");
+    //
+    // The SAFETY half of this test is unchanged and is the half that matters:
+    // no credential still reaches no member content.
+    expect((await request(app).get("/api/research/agreements")).status).toBe(401);
     expect((await request(app).get("/api/research/catalog")).status).toBe(401);
     expect((await request(app).get("/api/research/member/me")).status).toBe(401);
     expect((await request(app).get("/api/research/member/catalog")).status).toBe(401);
