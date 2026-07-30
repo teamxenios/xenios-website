@@ -531,7 +531,7 @@ describe("gateway integration (real registerResearchApi)", () => {
 
       // The real wall is still mounted and still guards every non bypassed
       // research path, so the simulation did not simply remove the gateway.
-      const walled = await request(app).get("/api/research/applications");
+      const walled = await request(app).get("/api/research/policies");
       expect(walled.status).toBe(401);
       expect(walled.body).toEqual({ ok: false, message: "Access required." });
     });

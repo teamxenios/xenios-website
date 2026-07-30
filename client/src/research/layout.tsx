@@ -249,34 +249,13 @@ function MemberChrome({ children }: { children: ReactNode }) {
   );
 }
 
-function normalizeResearchPath(path: string): string | null {
+function isResearchSignInPath(path: string): boolean {
   try {
     const rawPath = path.split(/[?#]/, 1)[0];
-    return decodeURIComponent(rawPath).replace(/\/+$/, "").toLowerCase() || "/";
+    return decodeURIComponent(rawPath).replace(/\/+$/, "").toLowerCase() === "/research/sign-in";
   } catch {
-    return null;
+    return false;
   }
-}
-
-function isResearchSignInPath(path: string): boolean {
-  return normalizeResearchPath(path) === "/research/sign-in";
-}
-
-function isPublicResearchPath(path: string): boolean {
-  const normalized = normalizeResearchPath(path);
-  if (!normalized) return false;
-
-  return normalized === "/research"
-    || normalized === "/research/apply"
-    || normalized === "/research/apply/review"
-    || normalized === "/research/apply/success"
-    || normalized === "/research/apply/status"
-    || normalized === "/research/application/status"
-    || normalized === "/research/application-status"
-    || normalized === "/research/support"
-    || normalized === "/research/privacy"
-    || normalized === "/research/terms"
-    || normalized.startsWith("/research/policies/");
 }
 
 // Account access works from a fresh browser WITHOUT the shared review
@@ -285,25 +264,14 @@ function isPublicResearchPath(path: string): boolean {
 export default function ResearchLayout({ children }: { children: ReactNode }) {
   const { gate } = useResearch();
   const [location] = useLocation();
-  const normalizedLocation = normalizeResearchPath(location);
 
+  if (gate === "unconfigured") return <Unconfigured />;
   // Use the same decoded, case-folded helper as the router, tracking guard,
   // and server headers. Plain, trailing-slash, case, and encoded forms must
   // all mount the isolated recovery experience outside the shared gate.
   if (isResearchResetPasswordPath(location) || isResearchSignInPath(location)) {
     return <RecoveryChrome>{children}</RecoveryChrome>;
   }
-  // The public Research journey must not depend on the legacy shared review
-  // password. The gateway exposes only Apply and Member Login; application,
-  // status, support, and policy routes contain no member/catalog data. This
-  // keeps a missing preview-password configuration from disabling the public
-  // journey while every member/catalog route remains protected.
-  if (isPublicResearchPath(location)) {
-    return normalizedLocation === "/research"
-      ? <>{children}</>
-      : <MinimalChrome>{children}</MinimalChrome>;
-  }
-  if (gate === "unconfigured") return <Unconfigured />;
   if (gate === "checking") {
     return (
       <div className="container-x" style={{ paddingTop: "var(--space-hero-top)" }}>
@@ -313,6 +281,8 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   }
   if (gate === "locked") return <PasswordPage />;
 
+  // The gateway is its own full-viewport page: no chrome at all.
+  if (location === "/research" || location === "/research/") return <>{children}</>;
   if (isMemberAreaPath(location)) return <MemberChrome>{children}</MemberChrome>;
   return <MinimalChrome>{children}</MinimalChrome>;
 }

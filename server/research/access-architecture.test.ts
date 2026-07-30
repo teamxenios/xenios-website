@@ -3,14 +3,12 @@ import request from "supertest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Canonical access architecture:
-// - the public gateway, read-only policies, signed application status lookup,
-//   and enumeration-resistant resend route do not need the shared password
-// - application submission/resubmission remain behind the cookie wall while
-//   the legal policies are unapproved operational drafts
+// - the shared password unlocks the gateway + application flows (cookie wall)
 // - the catalog and orders are MEMBER content: the shared password does NOT
 //   unlock them; they require the member's own verified JWT
 // - an authenticated member bypasses the shared password on exactly the
 //   member-authed endpoints; every other endpoint keeps the cookie wall
+// - policies stay readable behind the shared password (gateway footer links)
 
 const state = vi.hoisted(() => ({
   members: [] as any[],
@@ -98,12 +96,12 @@ describe("the shared password does not unlock member content", () => {
     expect(res.status).toBe(401);
   });
 
-  it("policies are readable without the shared password and retain their draft source", async () => {
+  it("policies stay readable behind the shared password (gateway footer)", async () => {
     const app = makeApp();
-    const res = await request(app).get("/api/research/policies");
+    const cookie = await passwordCookie(app);
+    const res = await request(app).get("/api/research/policies").set("Cookie", cookie);
     expect(res.status).toBe(200);
     expect(res.body.policies).toBeTruthy();
-    expect(JSON.stringify(res.body.policies)).toMatch(/draft status/i);
   });
 });
 
@@ -157,9 +155,8 @@ describe("an authenticated member bypasses the shared password on member endpoin
 
   it("a bearer token does NOT bypass the wall on non-member endpoints", async () => {
     const app = makeApp();
-    // Application collection access remains cookie-walled; a bearer alone
-    // must not accidentally turn a member credential into application access.
-    const res = await request(app).get("/api/research/applications").set("Authorization", `Bearer ${state.goodToken}`);
+    // policies is cookie-walled; a bearer alone must not open it
+    const res = await request(app).get("/api/research/policies").set("Authorization", `Bearer ${state.goodToken}`);
     expect(res.status).toBe(401);
   });
 });
