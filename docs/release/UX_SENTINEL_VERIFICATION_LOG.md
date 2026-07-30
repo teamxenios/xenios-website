@@ -224,3 +224,39 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     founder can designate the single release authority explicitly.
 54. No new defects this sweep. Open verification work: SEN-0012 and SEN-0013 fixes, the SEN-0007
     nav deletion, the SEN-0008 four-entries decision, signed-in lanes pending fixtures.
+
+## 2026-07-30T10:40Z, DIRECTIVE CHANGEOVER: the 2026-07-30 final master directive is now canonical
+
+55. Samuel issued XENIOS_FINAL_CLAUDE_CODEX_FULL_WEBSITE_COMPLETION_MASTER_DIRECTIVE_2026-07-30.
+    It supersedes the 2026-07-29 sentinel prompt and every earlier master prompt. New operating
+    model: CODEX is the sole release manager, merger, migration operator, and deployer; this
+    session is the continuous product completion and reliability reviewer and never claims the
+    lease. The prior lease-contention observation (entry 53) is resolved by fiat.
+56. Workbook ingestion: all five canonical source workbooks located in Downloads and SHA-256
+    verified EXACTLY against the directive (activation model 345787a2, 2.5x pricing 5bc5a624,
+    peptide master f11742ae, supplement catalog f09285fb, nutridyn wholesale 2b47a6b6).
+    Arithmetic check: all 35 locked pricing rows (P001-P015 plus 20 NutriDyn) verify as
+    ROUND(wholesale * 2.5, 2) exactly.
+57. Codex activity: branch codex/founder-lock-release-reconciliation and PR #145 (reconciles
+    production baseline 4a45b89 on Render dep-d9l8s8m7bikc73f9bj0g, pins workbooks, formalizes
+    the five-migration DAG). Production identity is now Render-evidenced, upgrading the
+    Sentinel's earlier uptime inference. PR #145 review running via workflow.
+58. FINDING RE-MAPPING under the new directive:
+    - SEN-0007 (main-site links to /research) SUPERSEDED: directive 9.2 keeps /research as a
+      public or gated landing surface, and 8.1 requires login actions on the home page, so a
+      main-site link to research surfaces is no longer a defect by itself.
+    - SEN-0008 (four entries on /research) SUPERSEDED by 8.1: the four actions belong on the
+      MAIN home page. The Gateway's existing Apply plus Member Login satisfies 9.2 for the
+      landing surface; the shared review password must still be replaced by Supabase Auth
+      entitlement (9.2), which SEN-0013 already evidences.
+    - NEW SEN-0014 (P1, directive 8.1): the main home page exposes ZERO of the four required
+      actions (evidence: sweeps 1 and 5, DOM scans at 1280 and 375 found no login, member,
+      admin, partner, or apply-for-membership controls; only Apply for Early Access -> /waitlist)
+      and no portal hub for Supplier/Lab, Clinical Staff, or Support logins. Owner: Codex.
+    - SEN-0009 reframed: the care pages' /research/sign-in CTAs become a legitimate member
+      sign-in route under 9.2; remaining question is routing consistency once /login exists.
+    - SEN-0012 (ghost CTA CSS regression) and SEN-0013 (activation email lands on the review
+      password gate) stand unchanged and are now defect packets for Codex.
+59. Sentinel artifacts continue on sentinel/ux-reliability-continuous; the directive's shared
+    ledgers (XENIOS_DEFECT_LEDGER.csv and companions) are seeded on this branch for Codex to
+    adopt or relocate.
