@@ -394,7 +394,8 @@
         "server/research/catalog/product-control-reader.ts",
         "server/research/catalog/product-control-reader.test.ts",
         "server/research/commerce/cart-product-selection.ts",
-        "server/research/commerce/cart-product-selection.test.ts"
+        "server/research/commerce/cart-product-selection.test.ts",
+        "server/research/pricing/authoritative-price-resolver.ts"
       ]
     },
     {
