@@ -342,6 +342,16 @@
       ]
     },
     {
+      "id": "OWNER-W2-RESEARCH-PUBLIC-APPLICATION-BOUNDARY",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "server/research/access-architecture.test.ts"
+      ]
+    },
+    {
       "id": "OWNER-W2-PR85-ACCEPTED-SOURCE",
       "owner": "Website 2",
       "lane": "release-manager",
