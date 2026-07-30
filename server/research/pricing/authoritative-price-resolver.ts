@@ -196,6 +196,13 @@ function classifyFailure(input: {
       : unavailable("price_inactive");
   }
 
+  // The canonical authority rejects zero before returning a row. Preserve this
+  // customer-safe boundary's established redaction: a non-displayable zero
+  // remains indistinguishable from a missing price, never an approval detail.
+  if (active.some((price) => price.amountCents === 0)) {
+    return unavailable("price_missing");
+  }
+
   const wellFormed = active.filter(priceRowWellFormed);
   if (wellFormed.length === 0) return unavailable("price_unapproved");
 
