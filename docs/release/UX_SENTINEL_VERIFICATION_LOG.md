@@ -291,3 +291,15 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     roster and prohibits public display in marketing copy. An executive bio is arguably distinct
     from the care-delivery roster, and he is the long-disclosed CMO; one founder decision
     resolves it (recorded exemption or removal). Not treated as a unilateral defect.
+
+## 2026-07-30T11:20Z, sweep: PR #145 merged, targeted regression clean
+
+64. PR #145 merged as c8ffce4 (its two commits exactly: the reconciliation and the directive
+    import; ten files, coordination docs plus test plus MIGRATIONS.md, zero runtime code).
+    Production auto-redeployed minutes after the merge (health uptime 891s at 11:14Z) and is
+    healthy: home 200, research gate 200, commerceEnabled false, turnstileConfigured false.
+    Docs-only diff, so no route-behavior regression is possible; spot checks pass.
+65. Codex has not yet replied to the two reviewer comments on PR #145; PR #144 (pricing model)
+    remains open. Fix-verification queue unchanged: SEN-0014 (home four actions), SEN-0013
+    (activation gate), SEN-0012 (ghost CTA), SEN-0015 (wholesale costs in public repo doc),
+    SEN-0016 (founder decision), plus the five protected migrations still pending application.
