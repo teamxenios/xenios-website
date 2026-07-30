@@ -209,7 +209,9 @@ const ADAPTERS: Array<{
   {
     name: "logTrackerEntry",
     invoke: (t) => logTrackerEntry(TRACKER_ENTRY, t),
-    path: "/api/research/member/tracker/log",
+    // The frozen-contract observation write (server/research/tracker.ts); the
+    // old /member/tracker/log form was never registered server-side.
+    path: "/api/research/tracker",
     method: "POST",
     body: TRACKER_ENTRY,
   },

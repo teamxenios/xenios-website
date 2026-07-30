@@ -19,7 +19,10 @@ export function logTrackerEntry(
   entry: TrackerLogEntry,
   token?: string | null,
 ): Promise<ApiResult<{ logged?: boolean }>> {
-  return apiPost<{ logged?: boolean }>(`${BASE}/log`, entry, token);
+  // The observation write lives at the frozen-contract path (POST
+  // /api/research/tracker, server/research/tracker.ts); /member/tracker/log
+  // was never registered server-side (completion audit, API lens).
+  return apiPost<{ logged?: boolean }>("/api/research/tracker", entry, token);
 }
 
 export function requestTrackerExport(

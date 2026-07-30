@@ -4,7 +4,7 @@
 // spelling URL strings inline. Behavior is identical to the previous inline
 // calls: the same ApiResult envelope, payload types supplied by the caller.
 
-import { apiGet, apiPost, type ApiResult } from "../lib/api";
+import { apiDelete, apiGet, apiPost, type ApiResult } from "../lib/api";
 import type { GuideDetailDto, GuideSummaryDto } from "@shared/research/commerce-api";
 
 const BASE = "/api/research/member";
@@ -14,13 +14,15 @@ export const guidesPaths = {
   guide: (slug: string) => `${BASE}/guides/${encodeURIComponent(slug)}`,
   guideCorrections: (slug: string) => `${BASE}/guides/${encodeURIComponent(slug)}/corrections`,
   guideTopicRequests: `${BASE}/guide-topic-requests`,
-  questions: `${BASE}/questions`,
+  // Questions, rating, and Telegram linking live at the frozen-contract
+  // unprefixed paths (server/research/questions.ts); the /member/* forms were
+  // never registered server-side (completion audit, API lens).
+  questions: "/api/research/questions",
   questionVoice: `${BASE}/questions/voice`,
   questionRating: (questionId: string) =>
-    `${BASE}/questions/${encodeURIComponent(questionId)}/rating`,
-  telegram: `${BASE}/telegram`,
-  telegramLink: `${BASE}/telegram/link`,
-  telegramUnlink: `${BASE}/telegram/unlink`,
+    `/api/research/questions/${encodeURIComponent(questionId)}/rate`,
+  telegram: "/api/research/telegram",
+  telegramLink: "/api/research/telegram/link",
   referrals: `${BASE}/referrals`,
 } as const;
 
@@ -109,9 +111,10 @@ export function linkTelegram<T>(token?: string | null): Promise<ApiResult<T>> {
   return apiPost<T>(guidesPaths.telegramLink, {}, token);
 }
 
-/** Unlink the member's Telegram account. */
+/** Unlink the member's Telegram account (the contract verb is DELETE on the
+ * same /telegram/link resource that POST creates). */
 export function unlinkTelegram<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiPost<T>(guidesPaths.telegramUnlink, {}, token);
+  return apiDelete<T>(guidesPaths.telegramLink, token);
 }
 
 /** Fetch the member's referral summary. */
