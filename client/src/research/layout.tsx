@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import Wordmark from "@/components/Wordmark";
-import { isResearchResetPasswordPath } from "@shared/research/paths";
+import { isResearchPublicEntryPath, isResearchResetPasswordPath } from "@shared/research/paths";
 import { useResearch } from "./core";
 
 // xenios research: section chrome. Three modes by route (canonical gateway
@@ -279,7 +279,13 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
       </div>
     );
   }
-  if (gate === "locked") return <PasswordPage />;
+  // FOUNDER DECISION (2026-07-30, "option 1"): the discover-and-apply entry is
+  // public, so a locked gate must NOT swallow the gateway or the application
+  // flow. Everything else still hits the password wall, and the member area in
+  // particular can never fall through here because no member path is in the
+  // public-entry set. See isResearchPublicEntryPath for why this is an exact
+  // allowlist rather than a prefix.
+  if (gate === "locked" && !isResearchPublicEntryPath(location)) return <PasswordPage />;
 
   // The gateway is its own full-viewport page: no chrome at all.
   if (location === "/research" || location === "/research/") return <>{children}</>;

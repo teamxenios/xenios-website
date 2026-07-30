@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, type ComponentType, type ReactNode } from "react";
-import { Link, Redirect, Route, Switch } from "wouter";
+import { Link, Redirect, Route, Switch, useLocation } from "wouter";
+import ResearchErrorBoundary from "./ui/ErrorBoundary";
 import { ResearchProvider, useResearch } from "./core";
 import ResearchLayout from "./layout";
 import Gateway from "./pages/Gateway";
@@ -157,8 +158,13 @@ export default function ResearchSection() {
     };
   }, []);
 
+  // Reset the boundary on navigation so a caught error does not trap the
+  // visitor on the fallback screen after they navigate somewhere that works.
+  const [boundaryLocation] = useLocation();
+
   return (
     <ResearchProvider>
+      <ResearchErrorBoundary resetKey={boundaryLocation}>
       <ResearchLayout>
         <Switch>
           {/* The gateway */}
@@ -280,6 +286,7 @@ export default function ResearchSection() {
           <Route component={ResearchNotFound} />
         </Switch>
       </ResearchLayout>
+      </ResearchErrorBoundary>
     </ResearchProvider>
   );
 }

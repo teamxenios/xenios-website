@@ -250,6 +250,32 @@ export function registerResearchApi(app: Express) {
   // data, and never mints a review cookie. This does not make research
   // public: every other route keeps its wall or member guard.
   const OPEN_RECOVERY_PATHS = new Set(["/member/forgot-password"]);
+  // FOUNDER DECISION (2026-07-30, "option 1"): the discover-and-apply entry is
+  // public. Opening only the PAGES would produce a form that renders and then
+  // fails with 401 on submit, so the endpoints behind them open with them.
+  //
+  // Scope is the application lifecycle and nothing else: submit, check status,
+  // resend the link, resubmit after a request for changes, and claim the
+  // account once approved. Each is already token-gated and rate-limited in
+  // membership.ts and members.ts (submit 5 per 10 min per IP, resend 3 per IP
+  // plus 1 per email, claim 10 per 10 min per IP), which is the same bar the
+  // 2026-07-19 recovery exemption was held to.
+  //
+  // /policies opens because the now-public gateway footer links privacy and
+  // terms, and a footer link that 401s is a dead end.
+  //
+  // What deliberately does NOT open: /catalog, /member/products, /orders and
+  // every other member route. Those require the member's own Supabase JWT,
+  // which the shared password never granted, so the catalog stays private while
+  // COAs and legal review are outstanding.
+  const OPEN_APPLICATION_PATHS = new Set([
+    "/applications",
+    "/applications/status",
+    "/applications/resend-link",
+    "/applications/resubmit",
+    "/member/claim",
+    "/policies",
+  ]);
   // These exact read routes own their stronger downstream member guard and
   // private-response headers. Let them reach that canonical handler even when
   // the shared review cookie is absent; otherwise this earlier gateway would
@@ -263,6 +289,7 @@ export function registerResearchApi(app: Express) {
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
     if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
+    if (OPEN_APPLICATION_PATHS.has(req.path)) return next();
     if (
       (req.method === "GET" || req.method === "HEAD") &&
       downstreamMemberGuardedRead(req.path)

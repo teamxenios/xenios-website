@@ -40,3 +40,47 @@ export function isResearchResetPasswordPath(pathname: string): boolean {
   const p = normalize(pathname);
   return p === "/research/reset-password" || p === "/research/reset-password/";
 }
+
+// FOUNDER DECISION (2026-07-30, "option 1"): the public entry to Research is
+// open. Before this, the shared review password gated the gateway itself, so
+// the gateway's own "Apply for Membership" button could not be reached and
+// /research/apply hit the password wall directly. A prospective member had no
+// public path into Xenios at all.
+//
+// This opens EXACTLY the discover-and-apply lifecycle and nothing else. The
+// catalog, product data, orders and every member route keep their existing
+// guard: those need the member's own Supabase JWT, which the shared password
+// never granted anyway. Opening these paths therefore does not publish the
+// catalog, which is the state the review gate exists to protect while COAs and
+// legal review are outstanding.
+//
+// This mirrors the 2026-07-19 recovery decision in shape: an explicit, named,
+// exact-match allowlist rather than a prefix, so a future /research/apply-admin
+// style route cannot fall through it by accident. Every endpoint behind these
+// pages is token-gated and rate-limited server-side.
+const PUBLIC_ENTRY_PATHS = new Set([
+  "/research", // the gateway itself, which carries the apply and sign-in actions
+  "/research/apply",
+  "/research/apply/review",
+  "/research/apply/success",
+  "/research/apply/status",
+  "/research/application/status", // alias registered in section.tsx
+  "/research/application-status", // alias registered in section.tsx
+  // These are the EXACT targets the gateway footer links to
+  // (Gateway.tsx:86-87). An earlier draft of this list used /research/privacy
+  // and /research/terms, which are real routes but are NOT what the gateway
+  // links to, so the public gateway would have shipped with two footer links
+  // that hit the password wall. Read the component, not the route table.
+  "/research/policies/privacy",
+  "/research/policies/terms",
+]);
+
+export function isResearchPublicEntryPath(pathname: string): boolean {
+  // Strip query and hash first: the status page is reached as
+  // /research/apply/status?token=..., and a raw comparison would miss it.
+  // Then normalize exactly as wouter does (decodeURI, lowercase) and tolerate
+  // a trailing slash, matching isResearchResetPasswordPath's reasoning.
+  const raw = pathname.split(/[?#]/, 1)[0];
+  const p = normalize(raw).replace(/\/+$/, "");
+  return PUBLIC_ENTRY_PATHS.has(p === "" ? "/" : p);
+}
