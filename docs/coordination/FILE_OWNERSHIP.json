@@ -15,7 +15,7 @@
       "owner": "Website 2",
       "lane": "release-manager",
       "state": "ACTIVE",
-      "activeUnit": "Reconcile both 2026-07-30 founder addenda, exact current production identity, managed-migration DAG, founder-attested nonblocking workaround states, external-evidence queue, and bounded seven-workstream leases without applying migrations, seeding production, transmitting partner orders, or activating production or clinical capabilities.",
+      "activeUnit": "Reconcile the final 2026-07-30 full-website directive, both earlier founder addenda, exact current production identity, managed-migration DAG, founder-attested nonblocking workaround states, external-evidence queue, and bounded seven-workstream leases before serial protected actions or domain integration.",
       "branch": "codex/founder-lock-release-reconciliation",
       "headSha": null
     },

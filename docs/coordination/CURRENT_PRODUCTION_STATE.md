@@ -37,10 +37,14 @@ Render evidence binds the live deployment to the same SHA, and the bounded log
 view contained no explicit error/fatal/panic/failed or credential-assignment
 matches. Raw log lines and secret values were not reported.
 
-Samuel's 2026-07-30 Founder Decision Lock assigns Codex/Website 2 sole release
-control. Claude Code Fable 5 is the independent UX/reliability Sentinel and
-does not hold a competing merge or provider lease. PR #108 comment
-`5129153960` records the exact current-main bounded lease.
+Samuel's 2026-07-30 Final Claude + Codex Full Website Completion Master
+Directive confirms Codex/Website 2 as sole release manager, merger, migration
+operator, environment operator, and deployer. Claude Code Fable 5 is the
+independent continuous product/reliability reviewer and does not hold a
+competing merge or provider lease. PR #108 comment `5129153960` records the
+exact current-main bounded lease; the final directive expands the program
+mission but does not erase exact path ownership, review, migration preflight,
+or post-action verification requirements.
 
 ## Account continuity
 
@@ -126,6 +130,12 @@ table privileges, five command-table SELECT grants, zero command-table DML, and
   `1850fa49256e8722717f02c4ed4344511fe354f8f6fccde648e69d44066d05ce`.
 - Activation-workaround workbook SHA-256:
   `345787a2a00ceab988c7222f5d73f5dcaa1928fce643757aad387c8e4cd4aaeb`.
+- Final full-website master directive SHA-256:
+  `aeef43961c57f5740600aca45c9a5a0b0801f033d68643869bcbf6cedcf01373`.
+- Codex release-manager copy SHA-256:
+  `27c9b330d19c1114dfe2d10d23be027821cb26abdfa4aa1486903cede4761886`.
+- Claude Fable 5 review copy SHA-256:
+  `0ad9f242308773ede5307ba027ae308e6993d97978c60556e269a89fbc2c0461`.
 
 The source contains 15 peptide and 20 NutriDyn rows. Every displayed target
 price is formula-driven as `ROUND(cost * 2.5, 2)`. Eleven peptide presentation
@@ -152,6 +162,13 @@ apply a migration, seed production data, enable a payment rail, transmit a
 partner order, assign a provider, schedule or administer a clinical service, or
 activate Care. QNT-001 remains a pricing decision identifier rather than a
 product SKU.
+
+The final master directive supersedes conflicting permanent-global-disable,
+planning-only, and sandbox-only instructions. It directs serial application of
+the five reviewed migrations once exact current production, checksum,
+dependency, RLS/grant, count, rollback, and post-apply gates are green. Until
+those gates are independently accepted, the authenticated production ledger
+remains authoritative and all five nodes remain pending.
 
 ## Release queue
 

@@ -1,5 +1,31 @@
 # Main session execution log
 
+## 2026-07-30T10:24:00Z — final full-website directive superseded program instructions
+
+- Final master directive SHA-256:
+  `aeef43961c57f5740600aca45c9a5a0b0801f033d68643869bcbf6cedcf01373`.
+- Codex release-manager copy SHA-256:
+  `27c9b330d19c1114dfe2d10d23be027821cb26abdfa4aa1486903cede4761886`.
+- Claude Fable 5 review copy SHA-256:
+  `0ad9f242308773ede5307ba027ae308e6993d97978c60556e269a89fbc2c0461`.
+- The Codex and Claude copies differ from the master only by their explicit
+  role-selection block. Codex/Website2 remains sole merger, migration operator,
+  environment operator, deployer, and rollback coordinator; Claude remains the
+  independent continuous reviewer.
+- The three reattached workbook copies are byte-identical to the already
+  validated sources: wholesale `2b47a6b6...`, commercial `5bc5a624...`, and
+  activation workaround `345787a2...`; no second import or altered source was
+  created.
+- The final directive supersedes conflicting permanent-global-disable and
+  planning-only instructions while preserving exact ownership, review,
+  authorization, evidence, RLS/grant, rollback, and post-action gates.
+- Draft PR #145 remained unmerged. Its prior exact-SHA review was paused so the
+  same ten-path control-plane candidate could pin this superseding authority
+  before a replacement frozen SHA and manifest.
+- No migration, SQL, production seed, credential/environment change, payment,
+  partner transmission, provider assignment, notification, Care/Clinical
+  action, merge, or deployment occurred in this step.
+
 ## 2026-07-30T10:02:00Z — founder workaround and CRM activation inputs ingested
 
 - Missing-inputs workaround addendum SHA-256:

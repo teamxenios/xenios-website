@@ -322,7 +322,8 @@
     }
   ],
   "nextIntegrationUnits": [
-    "Website 2 current-production/founder-lock/migration-DAG control-plane reconciliation after exact-SHA acceptance",
+    "Website 2 final-master-directive/current-production/migration-DAG control-plane reconciliation after exact-SHA acceptance",
+    "Serial protected application and verification of the five pending migrations only after the exact current production, checksum, dependency, RLS/grant, count, rollback, and post-apply packet passes",
     "Website 2 bounded Samuel authority and server error/signing/admin-key hardening after an exact path lease",
     "Founder-workbook Product Control draft import and founder-attested 1,200-unit-per-exact-SKU seed architecture with no production rows until exact identity, migration, and approval gates pass",
     "Supplier-unmetered brand availability and native Superpower D2C manual-handoff architecture under separate non-overlapping leases",
@@ -379,6 +380,13 @@
       "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
       "checkedAt": "2026-07-30T10:02:00Z",
       "detail": "The signed missing-inputs workaround addendum and workbook 345787a2a00ceab988c7222f5d73f5dcaa1928fce643757aad387c8e4cd4aaeb lock the 1,200-unit opening balance per exact mapped Renew360 SKU, supplier-unmetered brand availability, native Superpower D2C/manual handoff, 48 contiguous-state target with Alaska/Hawaii excluded, and a $1,800-per-vial restricted Quantum EV Care route. They do not apply migrations, identify a Quantum product row, seed production, enable payments, or activate Care."
+    },
+    {
+      "id": "EVIDENCE-FINAL-FULL-WEBSITE-DIRECTIVE",
+      "kind": "founder_authority",
+      "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+      "checkedAt": "2026-07-30T10:24:00Z",
+      "detail": "Final master directive SHA-256 aeef43961c57f5740600aca45c9a5a0b0801f033d68643869bcbf6cedcf01373, Codex copy 27c9b330d19c1114dfe2d10d23be027821cb26abdfa4aa1486903cede4761886, and Claude review copy 0ad9f242308773ede5307ba027ae308e6993d97978c60556e269a89fbc2c0461 establish Codex/Website2 as sole release operator and Claude as independent reviewer. The three attached workbook copies are byte-identical to the already pinned 2b47a6b6..., 5bc5a624..., and 345787a2... sources."
     }
   ],
   "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md"
