@@ -144,3 +144,23 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 35. Queue for sweep 5: 320/768 viewport pass on home, waitlist, and gateway; accessibility first
     pass (headings, labels, focus) on home and waitlist; the four remaining redirect aliases
     live; storefront thinness noted for the leader's workstream 5 copy pass.
+
+## 2026-07-30T01:52Z, sweep 5 (loop iteration 5): viewport and accessibility first pass, all clean
+
+36. Sync: origin/main unchanged at 4a45b89; claude/f5/pricing-model still unmerged (18:45 -0500).
+37. Home at 320x812: zero horizontal overflow, zero heading-order skips, zero images without
+    alt, zero unnamed buttons or links, zero unlabeled inputs, exactly one h1 and one main.
+38. Waitlist at 320x812: same clean results on labels, names, alts, overflow. Target-size scan
+    found 30 sub-24px elements: 27 are inline footer links (WCAG 2.2 inline exception), the
+    consent checkbox (16px) gains its target from its clickable label, and wl-website is a
+    correctly built anti-bot honeypot (absolute wrapper at x=-9999, tabindex -1, labelled
+    "Leave this field empty" so a screen reader user is instructed correctly). No finding.
+39. Research gateway (password page) at 320: zero overflow, labelled Access password field at
+    52px height. Home at 768: zero overflow, menu button visible and reachable.
+40. Sweep 5 conclusion: no new findings. The signed-out surface is in genuinely good shape:
+    every crawled route renders, zero console errors anywhere, accessibility basics pass at
+    mobile widths. The open work concentrates in the P1 directive findings (SEN-0007, SEN-0008),
+    the latent SEN-0009, and signed-in coverage blocked on a fixture strategy.
+41. Queue for sweep 6: color-contrast spot check on home and waitlist; keyboard tab-order walk
+    on the waitlist form; live verification of the four remaining redirect aliases; then idle
+    watch for the pricing-model merge and the leader's lease record.
