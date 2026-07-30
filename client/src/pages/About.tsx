@@ -2,10 +2,15 @@ import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 
+// Clinical leadership is deliberately absent from this list. Founder decision
+// D006 (2026-07-30) makes the clinical roster confidential: those names must not
+// appear in public page source, public API payloads, client bundles, structured
+// metadata, or sitemap content. A clinician's identity is disclosed to a patient
+// only inside the confidential Care process. Do not add a clinical name here.
+// The guard in About.roster-privacy.test.ts fails the build if one returns.
 const TEAM = [
   { name: "Samuel Boadu", role: "Founder and CEO", body: "Samuel is building from the inside of the coaching and performance world. The founding insight is simple: client relationships change behavior, but the operating layer behind those relationships is broken." },
   { name: "Brian Bentow", role: "CTO", body: "Brian brings senior healthcare and payments technology experience, including prior exits and the infrastructure judgment needed for sensitive workflows." },
-  { name: "Dr. Wesley Nahm, MD", role: "CMO and Medical Director", body: "Clinical leadership informs how xenios handles boundaries, health data posture, and the future clinical surface without confusing software with care." },
 ];
 
 const VALUES = [
