@@ -8,11 +8,11 @@ machine-readable release-manager snapshot.
 
 | Field | Value |
 |---|---|
-| Audited baseline Git SHA | `b729c8ee1a357e0af95fe50a05989b2f662f7270` |
-| Render deployment | `dep-d9jdiuf41pts73b4p02g` |
+| Audited baseline Git SHA | `4a45b89856df3104de498c7124d27b608e52b34d` |
+| Render deployment | `dep-d9l8s8m7bikc73f9bj0g` |
 | Render state | `LIVE` |
 | Public origin | `https://xeniostechnology.com` |
-| Evidence captured | `2026-07-27T04:15:34Z` |
+| Evidence captured | `2026-07-30T01:05:00Z` |
 
 The checked-in SHA is an immutable audited baseline and policy reference. It
 does not attempt to predict the SHA of a future merge. Pre-merge validation
@@ -31,11 +31,20 @@ member, activation, capability, and activation-readiness endpoints reject
 signed-out requests with 401. Care remains disabled and absent from ordinary
 Research navigation.
 
-PR #87 source `0276112499ed029e70f09c2cd53bf9191d851601` is
-merged and live at the identity above. Runtime route, header, responsive,
-console, and production-count smoke is healthy. Website 6 requires a
-forward-only control-plane snapshot reconciliation before closing the PR #87
-post-deploy gate; no rollback is indicated.
+PR #143 is merged and live at the identity above. Exact-main Actions run
+`30499992101` completed successfully. The repository is private. Authenticated
+Render evidence binds the live deployment to the same SHA, and the bounded log
+view contained no explicit error/fatal/panic/failed or credential-assignment
+matches. Raw log lines and secret values were not reported.
+
+Samuel's 2026-07-30 Final Claude + Codex Full Website Completion Master
+Directive confirms Codex/Website 2 as sole release manager, merger, migration
+operator, environment operator, and deployer. Claude Code Fable 5 is the
+independent continuous product/reliability reviewer and does not hold a
+competing merge or provider lease. PR #108 comment `5129153960` records the
+exact current-main bounded lease; the final directive expands the program
+mission but does not erase exact path ownership, review, migration preflight,
+or post-action verification requirements.
 
 ## Account continuity
 
@@ -76,14 +85,21 @@ private document posture.
 
 ## Migration ledger reconciliation
 
-Production migration history contains both Product Control releases:
+Production migration history ends at:
 
-- `20260726214102 research_product_control_center`;
-- `20260726215603 research_product_control_center_privilege_hardening`.
+- `20260727160000 research_inventory_reservation_commands`.
 
-The repository ledger incorrectly marked the hardening migration pending. The
-shared correction records it as RUN and pins the verified 33/5/0/11 privilege
-posture. No migration is applied by this documentation correction.
+The five later managed files are present in Git and represented as pending
+nodes in the formal DAG:
+
+- `20260727200000 research_persistent_cart`;
+- `20260728010000 research_fulfillment_supplier_operations`;
+- `20260728020000 research_affiliate_professional_operations`;
+- `20260729000000 research_pricing_lineage`;
+- `20260729100000 research_rls_retro_hardening`.
+
+All five are absent from the authenticated production ledger. This
+control-plane correction applies no migration and authorizes none.
 
 ## Safe production counts
 
@@ -101,6 +117,58 @@ posture. No migration is applied by this documentation correction.
 Product Control remains 12/12 forced RLS, zero browser table grants, 33 service
 table privileges, five command-table SELECT grants, zero command-table DML, and
 11 service-only RPC grants.
+
+## Founder-commercial source pins
+
+- Founder addendum SHA-256:
+  `a19be2e51672991b94eaccf1cbb0d3896afda67cc36c09e1d45df9b30bb9a7ce`.
+- Final commercial workbook SHA-256:
+  `5bc5a624b88cd7c2d77d81633370d6c31f26ca223d6c919deca2a26011b9e1d1`.
+- Wholesale-source workbook SHA-256:
+  `2b47a6b6fe6d0fac60cd51399c6c8823ab12e926da113211b96cd6d3c7d82bd5`.
+- Missing-inputs workaround addendum SHA-256:
+  `1850fa49256e8722717f02c4ed4344511fe354f8f6fccde648e69d44066d05ce`.
+- Activation-workaround workbook SHA-256:
+  `345787a2a00ceab988c7222f5d73f5dcaa1928fce643757aad387c8e4cd4aaeb`.
+- Final full-website master directive SHA-256:
+  `aeef43961c57f5740600aca45c9a5a0b0801f033d68643869bcbf6cedcf01373`.
+- Codex release-manager copy SHA-256:
+  `27c9b330d19c1114dfe2d10d23be027821cb26abdfa4aa1486903cede4761886`.
+- Claude Fable 5 review copy SHA-256:
+  `0ad9f242308773ede5307ba027ae308e6993d97978c60556e269a89fbc2c0461`.
+
+The source contains 15 peptide and 20 NutriDyn rows. Every displayed target
+price is formula-driven as `ROUND(cost * 2.5, 2)`. Eleven peptide presentation
+rows retain explicit founder-override mismatch evidence. The final workbook's
+Decision Register renumbers D002-D018 differently from the signed addendum and
+labels several now-locked commercial inputs as Recommended; the signed addendum
+is therefore the controlling decision map, and the source workbook remains
+immutable provenance evidence.
+
+The later workaround workbook preserves those 35 price rows and adds founder
+attestations for a 1,200-unit opening balance per exact mapped Renew360 SKU,
+`SUPPLIER_UNMETERED` brand availability, native Superpower D2C with a restricted
+manual partner handoff, the 48 contiguous-state target with Alaska and Hawaii
+excluded, and a $1,800-per-vial restricted Quantum EV Care service. Its
+Decision Register still does not match the signed founder addendum's D002-D018
+numbering, so the signed Markdown addenda remain the controlling decision map
+and the workbook remains immutable implementation provenance.
+
+These attestations convert missing documents and feeds into explicit
+operational states and evidence tasks. They authorize bounded software,
+template, migration-source, and test construction under separately reviewed
+path leases. They do not by themselves identify a live Product Control row,
+apply a migration, seed production data, enable a payment rail, transmit a
+partner order, assign a provider, schedule or administer a clinical service, or
+activate Care. QNT-001 remains a pricing decision identifier rather than a
+product SKU.
+
+The final master directive supersedes conflicting permanent-global-disable,
+planning-only, and sandbox-only instructions. It directs serial application of
+the five reviewed migrations once exact current production, checksum,
+dependency, RLS/grant, count, rollback, and post-apply gates are green. Until
+those gates are independently accepted, the authenticated production ledger
+remains authoritative and all five nodes remain pending.
 
 ## Release queue
 
@@ -128,13 +196,15 @@ table privileges, five command-table SELECT grants, zero command-table DML, and
   on Render `dep-d9jcfkuk1jcs73fi5r1g`. Website 6 post-deploy QA accepted the
   live route/header/browser/log posture with no blocker/high.
 - PR #87 source `0276112499ed029e70f09c2cd53bf9191d851601`
-  is merged and deployed as current main
-  `b729c8ee1a357e0af95fe50a05989b2f662f7270` on Render
-  `dep-d9jdiuf41pts73b4p02g`. Runtime smoke is healthy. Its post-deploy
-  control-plane snapshot blocker is being corrected forward in a separate
-  docs/control-plane-only candidate.
-- Website 1 is preparing the durable Samuel-authority replacement from the
-  exact production base.
+  is historical merged release-control lineage. The current snapshot correction
+  is proceeding from exact main `4a45b89856df3104de498c7124d27b608e52b34d`.
+- PR #144 exact head `410e687898d6406a684023e8327dc5fb697b30d3`
+  is frozen. Its seven pricing-model paths are outside the current
+  control-plane lease and require founder-rule, ownership, provenance, and
+  independent exact-SHA reconciliation.
+- The next bounded source unit will address Samuel authority plus the raw-error,
+  committed signing-fallback, and legacy admin-key findings only after an exact
+  current-base path lease is merged.
 
 Website 2 alone owns shared integration, migration ordering, merge, Render
 deployment, rollback, and production smoke. No candidate merges or deploys

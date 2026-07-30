@@ -30,8 +30,8 @@ import {
 } from "../scripts/acceptance/verify-production-state.ts";
 
 const ROOT = process.cwd();
-const NOW = new Date("2026-07-29T07:03:15.000Z");
-const PRODUCTION_SHA = "267950aefc4b3cd808d4fadc75044b7140b5e100";
+const NOW = new Date("2026-07-30T09:37:39.000Z");
+const PRODUCTION_SHA = "4a45b89856df3104de498c7124d27b608e52b34d";
 const HEAD_SHA = "12759c2567246ee83ed71aad9ffa4b517d31e8aa";
 const RESERVATION_SOURCE_SHA = "31b91f107cd2a54140d007267bb4cc02549e8404";
 const RESERVATION_SOURCE_PATH =
@@ -719,6 +719,116 @@ describe("migration DAG validator", () => {
     ).toContain("DUPLICATE_MIGRATION_PATH");
   });
 
+  it("records every current managed migration and keeps the five protected targets pending", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    const managedMigrationPaths = managedMigrationPathsFromLedger(
+      readFileSync(resolve(ROOT, "supabase/MIGRATIONS.md"), "utf8"),
+    );
+    const expectedPaths = [
+      "supabase/migrations/20260726143000_research_product_control_center.sql",
+      "supabase/migrations/20260726214500_research_product_control_center_privilege_hardening.sql",
+      "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+      "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+      "supabase/migrations/20260727200000_research_persistent_cart.sql",
+      "supabase/migrations/20260728010000_research_fulfillment_supplier_operations.sql",
+      "supabase/migrations/20260728020000_research_affiliate_professional_operations.sql",
+      "supabase/migrations/20260729000000_research_pricing_lineage.sql",
+      "supabase/migrations/20260729100000_research_rls_retro_hardening.sql",
+    ];
+    expect(managedMigrationPaths).toEqual(expectedPaths);
+    expect(dag.migrations.map((migration) => migration.path)).toEqual(expectedPaths);
+
+    const protectedNodes = dag.migrations.slice(-5);
+    expect(
+      protectedNodes.map((migration) => ({
+        id: migration.id,
+        appliedToProduction: migration.appliedToProduction,
+        managedMigrationId: migration.managedMigrationId,
+        sourceSha: migration.sourceSha,
+      })),
+    ).toEqual([
+      {
+        id: "research_persistent_cart",
+        appliedToProduction: false,
+        managedMigrationId: "PENDING",
+        sourceSha: PRODUCTION_SHA,
+      },
+      {
+        id: "research_fulfillment_supplier_operations",
+        appliedToProduction: false,
+        managedMigrationId: "PENDING",
+        sourceSha: PRODUCTION_SHA,
+      },
+      {
+        id: "research_affiliate_professional_operations",
+        appliedToProduction: false,
+        managedMigrationId: "PENDING",
+        sourceSha: PRODUCTION_SHA,
+      },
+      {
+        id: "research_pricing_lineage",
+        appliedToProduction: false,
+        managedMigrationId: "PENDING",
+        sourceSha: PRODUCTION_SHA,
+      },
+      {
+        id: "research_rls_retro_hardening",
+        appliedToProduction: false,
+        managedMigrationId: "PENDING",
+        sourceSha: PRODUCTION_SHA,
+      },
+    ]);
+  });
+
+  it("rejects missing pending migration nodes and broken protected release order", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    const managedMigrationPaths = managedMigrationPathsFromLedger(
+      readFileSync(resolve(ROOT, "supabase/MIGRATIONS.md"), "utf8"),
+    );
+
+    const missingPersistentCart = structuredClone(dag);
+    missingPersistentCart.migrations = missingPersistentCart.migrations.filter(
+      (migration) => migration.id !== "research_persistent_cart",
+    );
+    expect(
+      validateMigrationDag(missingPersistentCart, {
+        checkFiles: false,
+        expectedBaselineSha: PRODUCTION_SHA,
+        expectedManagedMigrationPaths: managedMigrationPaths,
+      }).map((issue) => issue.code),
+    ).toEqual(expect.arrayContaining([
+      "MANAGED_MIGRATION_MISSING_FROM_DAG",
+      "MISSING_PREREQUISITE",
+    ]));
+
+    const brokenOrder = structuredClone(dag);
+    const fulfillment = brokenOrder.migrations.find(
+      (migration) => migration.id === "research_fulfillment_supplier_operations",
+    );
+    expect(fulfillment).toBeDefined();
+    fulfillment!.dependsOn = ["research_inventory_reservation_commands"];
+    expect(fulfillment!.dependsOn).not.toContain("research_persistent_cart");
+    const requiredOrder = [
+      "research_inventory_reservation_commands",
+      "research_persistent_cart",
+      "research_fulfillment_supplier_operations",
+      "research_affiliate_professional_operations",
+      "research_pricing_lineage",
+      "research_rls_retro_hardening",
+    ];
+    const dependencyByNode = new Map(
+      brokenOrder.migrations.map((migration) => [migration.id, migration.dependsOn]),
+    );
+    expect(
+      requiredOrder.slice(1).every((id, index) =>
+        dependencyByNode.get(id)?.includes(requiredOrder[index])),
+    ).toBe(false);
+  });
+
   it("hashes canonical raw Git blobs and rejects newline-normalized bytes", () => {
     const dag = JSON.parse(
       readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
@@ -1269,7 +1379,7 @@ describe("production state validator", () => {
       `Observed deployment accepted: ${deployedSha} / dep-postdeploy123 (baseline ${PRODUCTION_SHA}).`,
     );
     expect(productionAcceptanceMessage(state)).toBe(
-      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-d9kq6l2d0e5s73ethf8g.`,
+      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-d9l8s8m7bikc73f9bj0g.`,
     );
     expect(
       validateObservedDeployment(

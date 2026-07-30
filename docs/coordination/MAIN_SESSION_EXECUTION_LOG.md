@@ -1,5 +1,91 @@
 # Main session execution log
 
+## 2026-07-30T10:24:00Z — final full-website directive superseded program instructions
+
+- Final master directive SHA-256:
+  `aeef43961c57f5740600aca45c9a5a0b0801f033d68643869bcbf6cedcf01373`.
+- Codex release-manager copy SHA-256:
+  `27c9b330d19c1114dfe2d10d23be027821cb26abdfa4aa1486903cede4761886`.
+- Claude Fable 5 review copy SHA-256:
+  `0ad9f242308773ede5307ba027ae308e6993d97978c60556e269a89fbc2c0461`.
+- The Codex and Claude copies differ from the master only by their explicit
+  role-selection block. Codex/Website2 remains sole merger, migration operator,
+  environment operator, deployer, and rollback coordinator; Claude remains the
+  independent continuous reviewer.
+- The three reattached workbook copies are byte-identical to the already
+  validated sources: wholesale `2b47a6b6...`, commercial `5bc5a624...`, and
+  activation workaround `345787a2...`; no second import or altered source was
+  created.
+- The final directive supersedes conflicting permanent-global-disable and
+  planning-only instructions while preserving exact ownership, review,
+  authorization, evidence, RLS/grant, rollback, and post-action gates.
+- Draft PR #145 remained unmerged. Its prior exact-SHA review was paused so the
+  same ten-path control-plane candidate could pin this superseding authority
+  before a replacement frozen SHA and manifest.
+- No migration, SQL, production seed, credential/environment change, payment,
+  partner transmission, provider assignment, notification, Care/Clinical
+  action, merge, or deployment occurred in this step.
+
+## 2026-07-30T10:02:00Z — founder workaround and CRM activation inputs ingested
+
+- Missing-inputs workaround addendum SHA-256:
+  `1850fa49256e8722717f02c4ed4344511fe354f8f6fccde648e69d44066d05ce`.
+- Activation-workaround workbook SHA-256:
+  `345787a2a00ceab988c7222f5d73f5dcaa1928fce643757aad387c8e4cd4aaeb`.
+- The workbook contains 14 sheets, including `Activation Workarounds`,
+  `Inventory Seed`, and `Quantum EV Service`. Formula scanning found zero
+  standard Excel errors.
+- The 15 Renew360 rows each carry a 1,200-unit founder-attested opening
+  quantity; P013 and P014 use `bottle`, the other 13 use `vial`, and the
+  formula-driven total is 18,000 units.
+- Founder locks `SUPPLIER_UNMETERED` for the four supplement brands, native
+  Superpower D2C with a restricted manual partner handoff, the 48 contiguous
+  states with Alaska and Hawaii excluded, and a $1,800-per-vial restricted
+  Quantum EV Care route with no direct shipment.
+- The workbook Decision Register continues to use a numbering map that differs
+  from the signed founder addendum. The signed Markdown addenda are controlling;
+  both workbooks remain unchanged provenance inputs.
+- External-input states were narrowed so missing documents and feeds become
+  explicit CRM/evidence tasks rather than global software blockers.
+- No Product Control identity was inferred, QNT-001 was not treated as a SKU,
+  and no migration, SQL, production seed, payment, partner transmission,
+  provider assignment, clinical action, notification, or activation occurred.
+
+## 2026-07-30T09:37:39Z — founder lock and sole Codex lease started
+
+- Samuel's newest Founder Decision Lock assigns Codex/Website 2 sole release,
+  merge, migration, deployment, and rollback coordination. Claude Code Fable 5
+  is the read-only UX/reliability Sentinel.
+- PR #108 comment `5129153960` records the exact lease.
+- Branch: `codex/founder-lock-release-reconciliation`.
+- Exact base:
+  `4a45b89856df3104de498c7124d27b608e52b34d`.
+- Exact base tree:
+  `f2e96deda31c0e5318b78b014e5c3fbfef54da0a`.
+- Repository: private. Exact-main Actions run `30499992101`: success.
+- Authenticated Render: service `srv-d8s9vej7uimc7384dfcg`, deployment
+  `dep-d9l8s8m7bikc73f9bj0g`, live at the exact base.
+- Authenticated Supabase managed history ends at
+  `20260727160000 research_inventory_reservation_commands`; exact versions
+  `20260727200000`, `20260728010000`, `20260728020000`, `20260729000000`,
+  and `20260729100000` are absent and held.
+- Founder addendum SHA-256:
+  `a19be2e51672991b94eaccf1cbb0d3896afda67cc36c09e1d45df9b30bb9a7ce`.
+- Final commercial workbook SHA-256:
+  `5bc5a624b88cd7c2d77d81633370d6c31f26ca223d6c919deca2a26011b9e1d1`.
+- Wholesale-source workbook SHA-256:
+  `2b47a6b6fe6d0fac60cd51399c6c8823ab12e926da113211b96cd6d3c7d82bd5`.
+- Workbook verification parsed 15 peptide and 20 NutriDyn rows. All 35 prices
+  equal `ROUND(cost * 2.5, 2)`; 11 peptide presentation overrides remain
+  explicit mismatch evidence.
+- The immutable workbook Decision Register does not use the signed addendum's
+  D002-D018 numbering and still labels several now-locked commercial inputs
+  Recommended. The addendum is the controlling decision map; the source
+  workbook is preserved unchanged as provenance.
+- Current bounded scope is control-plane reconciliation only. No migration,
+  SQL, data import, env/flag, credential change, payment, notification,
+  clinician/supplier invitation, or Care/Clinical activation was performed.
+
 ## 2026-07-27T05:10:00Z — PR #88 baseline identity/output tightening
 
 - PR #88 head `2ccd2221177b1928cf8b53eb0dc7a7274bd14fe9`
