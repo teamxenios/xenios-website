@@ -767,12 +767,10 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     expect(fourth.status).toBe(429);
   });
 
-  it("the public applicant allowlist stays exact while member and application writes keep the wall", async () => {
+  it("the allowlist opens ONLY recovery: gateway/application-flow endpoints keep the wall", async () => {
     const app = makeComposedApp();
-    expect((await request(app).get("/api/research/policies")).status).toBe(200);
-    expect((await request(app).get("/api/research/applications")).status).toBe(401);
-    expect((await request(app).post("/api/research/applications").send({})).status).toBe(401);
-    expect((await request(app).post("/api/research/applications/resubmit").send({})).status).toBe(401);
+    // No credential: everything else still 401s at the wall.
+    expect((await request(app).get("/api/research/policies")).status).toBe(401);
     expect((await request(app).get("/api/research/catalog")).status).toBe(401);
     expect((await request(app).get("/api/research/member/me")).status).toBe(401);
     expect((await request(app).get("/api/research/member/catalog")).status).toBe(401);

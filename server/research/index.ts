@@ -15,12 +15,10 @@ import { requireActiveMember } from "./member-auth";
 // xenios research: Express gate + APIs.
 //
 // Security model: this is a Vite SPA, so anything bundled into client JS is
-// publicly fetchable. Therefore the catalog (products, prices) and ordering
-// live ONLY behind gated APIs; the client bundle carries no product data.
-// Applicant legal policies are a deliberately public, no-store projection
-// that truthfully retains their operational-draft status. The legacy gate is
-// a shared password (RESEARCH_ACCESS_PASSWORD) exchanged for a signed,
-// HTTP-only cookie. Fail closed: with no password set,
+// publicly fetchable. Therefore the catalog (products, prices), policies, and
+// ordering live ONLY behind these gated APIs; the client bundle carries no
+// product data. The gate is a shared password (RESEARCH_ACCESS_PASSWORD)
+// exchanged for a signed, HTTP-only cookie. Fail closed: with no password set,
 // /research and its APIs serve nothing.
 //
 // Commerce stays off unless the lane's flag is explicitly "true". Orders are
@@ -237,24 +235,14 @@ export function registerResearchApi(app: Express) {
     res.json({ ok: true });
   });
 
-  // Access architecture: the public gateway, signed application-status
-  // lookup, and applicant legal policies do not depend on the legacy shared
-  // review password. Application submission remains behind the wall while
-  // the published policy sources are operational drafts and no exact approved
-  // policy version can be bound to an acceptance. Member content (catalog,
-  // orders, member routes) still requires the member's own Supabase JWT,
-  // verified server-side by requireMember. Everything else keeps the
-  // session-cookie wall.
+  // Access architecture (canonical): the shared password unlocks the private
+  // GATEWAY and the application/status flows only. Member content (catalog,
+  // orders, member routes) requires the member's own Supabase JWT, verified
+  // server-side by requireMember, and an authenticated member bypasses the
+  // shared password on exactly those member-authed endpoints (the Bearer
+  // token is the stronger credential; every bypassed path still enforces it).
+  // Everything else keeps the session-cookie wall.
   const MEMBER_AUTHED_PREFIXES = ["/member", "/activation", "/catalog", "/orders"];
-  const OPEN_PUBLIC_READ_PATHS = new Set([
-    "/applications/status",
-    "/policies",
-  ]);
-  const OPEN_PUBLIC_WRITE_PATHS = new Set([
-    // Existing applicants may request a replacement signed status link.
-    // The endpoint remains enumeration-resistant and creates no application.
-    "/applications/resend-link",
-  ]);
   // FOUNDER DECISION (2026-07-19): password recovery must work from a fresh
   // browser WITHOUT the shared review password. Exactly these routes bypass
   // the wall by explicit allowlist (no credential of any kind required); the
@@ -274,13 +262,6 @@ export function registerResearchApi(app: Express) {
     path.startsWith("/pricing/");
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
-    if (
-      ((req.method === "GET" || req.method === "HEAD") &&
-        OPEN_PUBLIC_READ_PATHS.has(req.path)) ||
-      (req.method === "POST" && OPEN_PUBLIC_WRITE_PATHS.has(req.path))
-    ) {
-      return next();
-    }
     if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
     if (
       (req.method === "GET" || req.method === "HEAD") &&
@@ -310,9 +291,8 @@ export function registerResearchApi(app: Express) {
     res.json(body);
   });
 
-  // Policies are public read-only applicant documentation. The source remains
-  // visibly identified as an operational draft until approved policy
-  // identities exist; no application acceptance is enabled from this route.
+  // Policies (privacy, terms, research-use) stay behind the shared password
+  // only: the gateway footer links them and every applicant may read them.
   app.get("/api/research/policies", (_req, res) => {
     res.set("Cache-Control", "no-store");
     res.json({ policies });

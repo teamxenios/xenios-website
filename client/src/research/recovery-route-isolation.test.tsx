@@ -46,36 +46,6 @@ function renderAt(path: string) {
 
 describe("recovery route chrome isolation", () => {
   it.each([
-    "/research",
-    "/research/",
-    "/Research",
-    "/research/%61pply",
-  ])("keeps the public gateway/application journey outside the shared gate at %s", (path) => {
-    const view = renderAt(path);
-    expect(view.querySelector('[data-testid="recovery-content"]')).toBeTruthy();
-    expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
-  });
-
-  it.each([
-    "/research/apply",
-    "/research/apply/review",
-    "/research/apply/success",
-    "/research/apply/status",
-    "/research/application/status",
-    "/research/application-status",
-    "/research/support",
-    "/research/privacy",
-    "/research/terms",
-    "/research/policies/privacy",
-  ])("mounts public Research routes in minimal chrome without the shared gate at %s", (path) => {
-    const view = renderAt(path);
-    expect(view.querySelector('[data-testid="recovery-content"]')).toBeTruthy();
-    expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
-    expect(view.querySelectorAll("main")).toHaveLength(1);
-    expect(view.textContent).toContain("Back to gateway");
-  });
-
-  it.each([
     "/research/reset-password",
     "/research/reset-password/",
     "/Research/reset-password",
