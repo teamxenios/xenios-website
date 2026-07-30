@@ -110,6 +110,7 @@
         "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md",
         "docs/coordination/PR_85_INTEGRATION_PREFLIGHT.json",
         "docs/coordination/release-manifest.schema.json",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         "scripts/acceptance/**",
         "server/release-control-plane.test.ts",
         "supabase/MIGRATIONS.md",
@@ -348,6 +349,7 @@
       "mode": "write",
       "state": "reserved",
       "patterns": [
+        "server/research/account-access-wall.test.ts",
         "server/research/access-architecture.test.ts",
         "server/research/catalog-display/routes.test.ts",
         "server/research/members.test.ts",
