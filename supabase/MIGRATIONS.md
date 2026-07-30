@@ -48,6 +48,11 @@ table in the same PR that adds or changes a migration file.
 | 39 | migrations/20260726214500_research_product_control_center_privilege_hardening.sql | Converge Product Control service-role grants to the reviewed exact 33-privilege boundary | RUN | 2026-07-26 | managed migration `20260726215603 research_product_control_center_privilege_hardening`; 33 service table privileges, five command tables SELECT-only, zero command DML, zero excess `TRUNCATE`/`REFERENCES`/`TRIGGER`, 11 service RPC grants, zero Product Control rows |
 | 40 | migrations/20260727120000_research_inventory_lot_coa_admin.sql | Versioned inventory lots, append-only movements, exact-lot private COAs, immutable quality/access audit, and atomic Product Control projection | RUN | 2026-07-27 | managed migration `20260727120000 research_inventory_lot_coa_admin`; Website 6 post-deploy accepted exact production schema/RLS/grants/bucket/zero-row and browser/API gates |
 | 41 | migrations/20260727160000_research_inventory_reservation_commands.sql | Atomic server-only inventory reserve/release/finalize/expire commands, independently additive canonical reservation tables, exact readiness serialization, immutable redacted receipts, and checkout-disabled composition port | RUN | 2026-07-27 | authenticated managed migration `20260727160000 research_inventory_reservation_commands`; repository source identity is SHA-256 `4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005`; provider SQL-byte equality is not claimed |
+| 42 | migrations/20260727200000_research_persistent_cart.sql | Authenticated-member and opaque-anonymous persistent-cart commands with exact Product Control price/readiness/inventory lineage, optimistic versions, expiry, idempotency, one-way claim, immutable audit, and no inventory mutation | PENDING (not run) | — | raw Git-blob SHA-256 `6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880`; accepted disposable PostgreSQL 16 apply-twice/security/concurrency/rollback proof; requires migration 41 |
+| 43 | migrations/20260728010000_research_fulfillment_supplier_operations.sql | Supplier and fulfillment operations, immutable command evidence, lot/readiness binding, shipment and exception foundations | PENDING (not run) | — | raw Git-blob SHA-256 `dd8895522862383f2dcc3b2d4013a2a9d4a4ef5385efcf237980756c13b6df53`; accepted PR106 disposable PostgreSQL 16 proof; requires migration 42 |
+| 44 | migrations/20260728020000_research_affiliate_professional_operations.sql | Affiliate, organization, professional, commission, statement, payout, reversal, and immutable paid-evidence foundations | PENDING (not run) | — | raw Git-blob SHA-256 `989cc6e5929d1297056c3f600898c07bab191c378107f12c8029263c9c77a722`; accepted PR106 disposable PostgreSQL 16 proof; requires migration 43; commission/payout activation remains separately blocked |
+| 45 | migrations/20260729000000_research_pricing_lineage.sql | Additive order-line price provenance snapshot with coherent price identity/version/audience/amount/currency/effective-window evidence and guarded absent-table behavior | PENDING (not run) | — | raw Git-blob SHA-256 `377fe1eec2655026de94454254602a77227adfc0afa4297b8f11711dfe164666`; requires migration 44 and exact target-table preflight |
+| 46 | migrations/20260729100000_research_rls_retro_hardening.sql | Retrospective forced-RLS and browser-grant hardening across the intended Research operational schemas with absent-target-safe behavior | PENDING (not run) | — | raw Git-blob SHA-256 `406c9a481dd588c56ec1cff467e091a2e154e92671e3cba30bac3b458013e87d`; requires migration 45 and exact target/privilege preflight |
 
 Founding-membership operational migrations use a separate dependency chain.
 Production presence and managed migration history were reconciled on
@@ -178,19 +183,13 @@ input model before any private seed-data workflow is authorized.
   mutation grants, two intended authenticated read policies, and zero Care
   role-assignment or access-audit rows. It creates no clinical record.
 
-- 2026-07-28 authenticated production preflight confirmed managed migration
+- 2026-07-30 authenticated production preflight confirmed managed migration
   `20260727160000 research_inventory_reservation_commands` is applied.
-  The reviewed and accepted persistent-cart migration
-  `migrations/20260727200000_research_persistent_cart.sql` is present in this
-  repository at raw Git-blob SHA-256
-  `6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880`
-  (blob `2a1869e21f90990811e85f9304168b8a474b4706`, 39,749 bytes).
-  It is deliberately not numbered in the managed ledger table above and not
-  present in `docs/coordination/MIGRATION_DAG.json`, matching the standing
-  control-plane invariant that an accepted but unapplied migration stays
-  outside the deployed DAG until its managed migration files ship in the same
-  reviewed candidate. The already-present `20260728010000` and `20260728020000`
-  files follow the same convention.
+  The five managed files numbered 42 through 46 are present in the repository,
+  are represented exactly once in `docs/coordination/MIGRATION_DAG.json`, and
+  remain absent from the authenticated production ledger. Their checked-in
+  representation is release-order evidence only; it does not authorize or
+  imply production application.
   Pre-apply production verification found all four cart tables and all cart
   functions absent, all Product Control, inventory, and reservation domain rows
   at zero, and two existing Research members. The migration creates no rows and

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-29T07:03:15Z",
-  "productionBaseSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
+  "generatedAt": "2026-07-30T09:37:39Z",
+  "productionBaseSha": "4a45b89856df3104de498c7124d27b608e52b34d",
   "lanes": [
     {
       "owner": "Website 1",
@@ -15,8 +15,8 @@
       "owner": "Website 2",
       "lane": "release-manager",
       "state": "ACTIVE",
-      "activeUnit": "Authorize exact non-clinical takeover governance and per-lane status check-ins without runtime, migration, or data scope.",
-      "branch": "agent/release-control-session-checkin-ownership",
+      "activeUnit": "Reconcile the final 2026-07-30 full-website directive, both earlier founder addenda, exact current production identity, managed-migration DAG, founder-attested nonblocking workaround states, external-evidence queue, and bounded seven-workstream leases before serial protected actions or domain integration.",
+      "branch": "codex/founder-lock-release-reconciliation",
       "headSha": null
     },
     {
