@@ -10,6 +10,14 @@ import { apiGet, apiPost, type ApiResult } from "../lib/api";
 import type {
   AssessmentAutosaveRequest,
   AssessmentSubmitRequest,
+  BlueprintState,
+  BlueprintView,
+  DocumentAccessGrant,
+  MemberProfileView,
+  MonthlyReviewState,
+  PlanDocument,
+  ProfileSection,
+  Xenios90Plan,
 } from "@shared/research/member-platform";
 
 const BASE = "/api/research/member";
@@ -61,8 +69,15 @@ export function requestPrivacyDeletion(token?: string | null): Promise<ApiResult
 
 // --- Profile ---------------------------------------------------------------
 
-export function getProfile<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/profile`, token);
+export type ProfileResponse = { ok: true; profile: MemberProfileView };
+export type SensitiveProfileResponse = { ok: true; sections: ProfileSection[] };
+
+export function getProfile(token?: string | null): Promise<ApiResult<ProfileResponse>> {
+  return apiGet<ProfileResponse>("/api/research/profile", token);
+}
+
+export function getSensitiveProfile(token?: string | null): Promise<ApiResult<SensitiveProfileResponse>> {
+  return apiGet<SensitiveProfileResponse>("/api/research/profile/sensitive", token);
 }
 
 // --- Assessment ------------------------------------------------------------
@@ -150,8 +165,15 @@ export function withdrawResearchAgreement(
 
 // --- Blueprint -------------------------------------------------------------
 
-export function getBlueprint<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/blueprint`, token);
+export type BlueprintResponse = {
+  ok: true;
+  blueprint: BlueprintView | null;
+  state: BlueprintState;
+  memberVisibleMessage?: string | null;
+};
+
+export function getBlueprint(token?: string | null): Promise<ApiResult<BlueprintResponse>> {
+  return apiGet<BlueprintResponse>("/api/research/blueprint", token);
 }
 
 // --- Plans (xenios 30 and xenios 90) ---------------------------------------
@@ -167,12 +189,43 @@ export function acknowledgeXenios30(
   return apiPost<{ ok?: boolean; acknowledgedAt?: string }>(`${BASE}/plans/xenios-30/acknowledge`, { version }, token);
 }
 
-export function getXenios90Plan<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/plans/xenios-90`, token);
+export type Xenios90Response = {
+  ok: true;
+  plan: Xenios90Plan | null;
+  review: MonthlyReviewState;
+};
+
+export function getXenios90Plan(token?: string | null): Promise<ApiResult<Xenios90Response>> {
+  return apiGet<Xenios90Response>("/api/research/plans/xenios90", token);
 }
 
 // --- Documents -------------------------------------------------------------
 
-export function getDocuments<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/documents`, token);
+export type DocumentsResponse = { ok: true; documents: PlanDocument[] };
+
+export function getDocuments(token?: string | null): Promise<ApiResult<DocumentsResponse>> {
+  return apiGet<DocumentsResponse>("/api/research/documents", token);
+}
+
+export function requestDocumentAccess(
+  documentId: string,
+  token?: string | null,
+): Promise<ApiResult<{ ok: true; grant: DocumentAccessGrant }>> {
+  return apiPost<{ ok: true; grant: DocumentAccessGrant }>(
+    `/api/research/documents/${encodeURIComponent(documentId)}/access`,
+    {},
+    token,
+  );
+}
+
+export function acknowledgeDocument(
+  documentId: string,
+  version: number,
+  token?: string | null,
+): Promise<ApiResult<{ ok: true; acknowledgedAt: string }>> {
+  return apiPost<{ ok: true; acknowledgedAt: string }>(
+    `/api/research/documents/${encodeURIComponent(documentId)}/acknowledge`,
+    { documentId, version },
+    token,
+  );
 }
