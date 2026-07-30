@@ -1,5 +1,5 @@
 flowchart LR
-  PROD["Audited baseline b729c8ee<br/>Render dep-d9jdiuf41pts73b4p02g<br/>LIVE when captured"]
+  PROD["Audited baseline 4a45b898<br/>Render dep-d9l8s8m7bikc73f9bj0g<br/>LIVE when captured"]
   CAP["Capabilities route ownership<br/>CLOSED"]
   PRIV["Admin document privacy<br/>CLOSED"]
   PR80["PR #80 f646708d<br/>PROHIBITED"]
@@ -10,6 +10,9 @@ flowchart LR
   PR86OLD["PR #86 22545561<br/>PROHIBITED"]
   PR86["PR #86 4f71648a<br/>DEPLOYED / POSTDEPLOY ACCEPTED"]
   PR87["PR #87 02761124<br/>MERGED / DEPLOYED / POSTDEPLOY CHANGES REQUIRED"]
+  PR144["PR #144 410e6878<br/>FROZEN / RECONCILIATION REQUIRED"]
+  FOUNDER["Founder Decision Lock 2026-07-30<br/>LOCKED / CODEX SOLE RELEASE CONTROL"]
+  WORKAROUND["Founder Workaround Addendum 2026-07-30<br/>LOCKED / OPERATIONAL STATES"]
   CHECKOUT["Wave 3 checkout enablement<br/>BLOCKED"]
 
   PR86 -->|preceded| PR87
@@ -24,12 +27,14 @@ flowchart LR
   PROD -->|candidate based on| PR87
   PR80 -->|replace + accept first| CHECKOUT
   PR85 -->|integrate first| CHECKOUT
+  FOUNDER -->|requires reconciliation| PR144
+  WORKAROUND -->|defines nonblocking workarounds| CHECKOUT
 
   classDef live fill:#d8f3dc,stroke:#1b4332,color:#081c15
   classDef closed fill:#d8f3dc,stroke:#1b4332,color:#081c15
   classDef prohibited fill:#f8d7da,stroke:#842029,color:#58151c
   classDef pending fill:#fff3cd,stroke:#664d03,color:#332701
-  class PROD,PR86 live
+  class PROD,PR86,FOUNDER,WORKAROUND live
   class CAP,PRIV closed
   class PR80,PR85OLD,PR85MID,PR85LAST,PR86OLD prohibited
-  class PR85,PR87,CHECKOUT pending
+  class PR85,PR87,PR144,CHECKOUT pending

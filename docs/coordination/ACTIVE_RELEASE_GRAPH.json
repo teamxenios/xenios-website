@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-07-29T07:03:15Z",
-  "productionSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
+  "generatedAt": "2026-07-30T09:37:39Z",
+  "productionSha": "4a45b89856df3104de498c7124d27b608e52b34d",
   "nodes": [
     {
-      "id": "production-267950a",
+      "id": "production-4a45b89",
       "type": "production_baseline",
       "owner": "Website 2",
       "state": "AUDITED_BASELINE",
-      "sha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
-      "label": "Audited production baseline / PR #132 postdeploy accepted"
+      "sha": "4a45b89856df3104de498c7124d27b608e52b34d",
+      "label": "Audited production baseline / PR #143 postdeploy live"
     },
     {
       "id": "high-capabilities-route",
@@ -115,7 +115,7 @@
       "state": "ACCEPTED_PROTECTED_MIGRATION_PENDING",
       "sha": "821bf169e32fe19c0f0e37e6c5bc39eae448e062",
       "pullRequest": 117,
-      "label": "Accepted persistent-cart integration; managed migration absent and unapplied"
+      "label": "Accepted persistent-cart source; managed migration present in Git and unapplied in production"
     },
     {
       "id": "pr132-pr106-ownership-policy",
@@ -133,7 +133,32 @@
       "state": "ACCEPTED_SOURCE_CURRENT_BASE_TRANSFER_PENDING",
       "sha": "40d697c7bb4b903ae4d0ba62978239c369f35d6f",
       "pullRequest": 106,
-      "label": "Accepted operations and affiliates source; both managed migrations absent and unapplied"
+      "label": "Accepted operations and affiliates source; both managed migrations present in Git and unapplied in production"
+    },
+    {
+      "id": "pr144-pricing-model",
+      "type": "candidate",
+      "owner": "Claude Fable 5",
+      "state": "FROZEN_RECONCILIATION_REQUIRED",
+      "sha": "410e687898d6406a684023e8327dc5fb697b30d3",
+      "pullRequest": 144,
+      "label": "Unaccepted pricing-model candidate; outside the current Codex control-plane lease"
+    },
+    {
+      "id": "founder-decision-lock-20260730",
+      "type": "authority",
+      "owner": "Samuel",
+      "state": "LOCKED",
+      "sha": null,
+      "label": "Founder Decision Lock and Codex Execution Addendum; 2.5x pricing and sole Codex release control"
+    },
+    {
+      "id": "founder-workaround-addendum-20260730",
+      "type": "authority",
+      "owner": "Samuel",
+      "state": "LOCKED",
+      "sha": null,
+      "label": "Missing-inputs workaround and CRM activation addendum; source SHA-256 1850fa49256e8722717f02c4ed4344511fe354f8f6fccde648e69d44066d05ce; workbook SHA-256 345787a2a00ceab988c7222f5d73f5dcaa1928fce643757aad387c8e4cd4aaeb"
     },
     {
       "id": "immutable-paid-order-evidence",
@@ -160,16 +185,16 @@
     },
     {
       "from": "pr132-pr106-ownership-policy",
-      "to": "production-267950a",
+      "to": "production-4a45b89",
       "relation": "deployed_as"
     },
     {
-      "from": "production-267950a",
+      "from": "production-4a45b89",
       "to": "high-capabilities-route",
       "relation": "closes"
     },
     {
-      "from": "production-267950a",
+      "from": "production-4a45b89",
       "to": "high-admin-page-privacy",
       "relation": "closes"
     },
@@ -189,7 +214,7 @@
       "relation": "superseded_by"
     },
     {
-      "from": "production-267950a",
+      "from": "production-4a45b89",
       "to": "pr85-dc11623d",
       "relation": "integration_base_for"
     },
@@ -209,7 +234,7 @@
       "relation": "must_be_integrated_before"
     },
     {
-      "from": "production-267950a",
+      "from": "production-4a45b89",
       "to": "pr117-persistent-cart",
       "relation": "integration_base_for"
     },
@@ -227,15 +252,19 @@
       "from": "pr106-operations-affiliates",
       "to": "commission-payout-activation",
       "relation": "remains_disabled_until"
+    },
+    {
+      "from": "founder-decision-lock-20260730",
+      "to": "pr144-pricing-model",
+      "relation": "requires_reconciliation_before_acceptance"
     }
   ],
   "releaseOrder": [
-    "Freeze and obtain Website 6 exact-SHA acceptance for the PR #87 production snapshot fix-forward candidate.",
-    "Create a separate current-main integration candidate for accepted PR #85 while preserving all 12 source blobs.",
-    "Replace and accept prohibited PR #80 before inventory-dependent checkout.",
-    "Integrate only through Website 2 from exact current production.",
+    "Reconcile current production, founder authority, ownership, managed migration completeness, and provider ledger truth in a control-plane-only candidate.",
+    "Keep PR144 frozen until it is reconciled against the founder-locked ROUND(cost * 2.5, 2) rule and receives independent exact-SHA acceptance.",
+    "Integrate only through Website 2 / Codex from exact current production.",
     "Apply migrations only in MIGRATION_DAG.json order and run production smoke.",
-    "PR117 persistent cart must precede both PR106 migrations.",
+    "Persistent cart must precede fulfillment, affiliates, pricing lineage, and RLS retro hardening.",
     "Commission and payout activation remains blocked until immutable paid-order economics evidence is live and independently accepted."
   ]
 }

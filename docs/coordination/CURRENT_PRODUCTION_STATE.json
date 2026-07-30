@@ -1,12 +1,12 @@
 {
   "schemaVersion": 2,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-07-29T07:03:15Z",
+  "generatedAt": "2026-07-30T09:37:39Z",
   "production": {
-    "gitSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
-    "renderDeploymentId": "dep-d9kq6l2d0e5s73ethf8g",
+    "gitSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+    "renderDeploymentId": "dep-d9l8s8m7bikc73f9bj0g",
     "status": "LIVE",
-    "verifiedAt": "2026-07-29T07:03:15Z",
+    "verifiedAt": "2026-07-30T01:05:00Z",
     "branch": "main",
     "publicOrigin": "https://xeniostechnology.com"
   },
@@ -186,10 +186,9 @@
       "lane": "Website 3",
       "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
       "sourceBaseSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
-      "integrationBaseSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
-      "currentMainMergeTree": "d377eb4ae5abbf9ef9ed76ab7357b99eb3356db7",
+      "integrationBaseSha": "4a45b89856df3104de498c7124d27b608e52b34d",
       "state": "ACCEPTED_INTEGRATION_PENDING",
-      "reason": "Website 6 exact-SHA acceptance has zero blocker/high findings; read-only current-main preflight is clean and the 12 source blobs remain integration-gated.",
+      "reason": "Website 6 exact-SHA acceptance has zero blocker/high findings; the 12 accepted source blobs remain integration-gated and the exact current-main merge tree must be recomputed before a transfer candidate freezes.",
       "prohibitedPredecessor": "0472905dff10c45239b7f95834e1086c3b3c5f59"
     },
     {
@@ -218,9 +217,17 @@
       "reason": "Runtime production smoke is healthy; Website 6 requires a forward-only current-production snapshot reconciliation before closing the control-plane gate."
     },
     {
+      "pullRequest": 144,
+      "lane": "Claude Fable 5 pricing model",
+      "headSha": "410e687898d6406a684023e8327dc5fb697b30d3",
+      "sourceBaseSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+      "state": "FROZEN_RECONCILIATION_REQUIRED",
+      "reason": "Seven new pricing-model paths remain outside the current control-plane lease and require reconciliation against the founder-locked exact 2.5x source workbook, ownership, provenance, and independent exact-SHA review before any acceptance."
+    },
+    {
       "lane": "Website 1",
       "state": "REPLACEMENT_IN_PROGRESS",
-      "requiredBaseSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
+      "requiredBaseSha": "4a45b89856df3104de498c7124d27b608e52b34d",
       "scope": "durable Samuel authority, account continuity, server-authoritative landing, and audited member-mode switching"
     }
   ],
@@ -270,13 +277,28 @@
   "knownRisks": [
     {
       "id": "BLOCKER-PR87-CURRENT-PRODUCTION-SNAPSHOT",
-      "state": "FIX_FORWARD_WITH_WEBSITE_2",
-      "summary": "PR 87 runtime is healthy and live at b729c8ee; current production records and ownership snapshot semantics require a docs/control-plane-only forward correction."
+      "state": "FIX_FORWARD_IN_PROGRESS_WITH_WEBSITE_2",
+      "summary": "Current production is healthy and live at 4a45b898; Codex started a docs/control-plane-only reconciliation from that exact base."
     },
     {
       "id": "BLOCKER-DURABLE-ADMIN-AUTHORITY",
       "state": "OPEN_WITH_WEBSITE_1",
       "summary": "Production still relies on email/static-key administration rather than a durable persisted Samuel role and priority."
+    },
+    {
+      "id": "HIGH-RAW-INTERNAL-ERROR-EXPOSURE",
+      "state": "OPEN_WITH_WEBSITE_2",
+      "summary": "The current server error boundary still returns a raw internal error message on a 5xx path; the founder directive requires a bounded redacted-error correction."
+    },
+    {
+      "id": "HIGH-COMMITTED-SIGNING-FALLBACK",
+      "state": "OPEN_WITH_WEBSITE_2",
+      "summary": "The committed Research development signing-secret fallback remains referenced and must be removed without rotating or printing active credentials."
+    },
+    {
+      "id": "HIGH-LEGACY-ADMIN-API-KEY",
+      "state": "OPEN_WITH_WEBSITE_2",
+      "summary": "Legacy ADMIN_API_KEY handling remains a second administrator door and requires a separately leased authorization correction that preserves Samuel's authenticated founder access."
     },
     {
       "id": "HIGH-CAPABILITY-ROUTE-DUPLICATE",
@@ -300,21 +322,24 @@
     }
   ],
   "nextIntegrationUnits": [
-    "Website 2 PR 87 current-production snapshot fix-forward after exact-SHA acceptance",
-    "Website 1 durable authority replacement after exact-SHA acceptance",
-    "Website 3 PR 85 accepted source dc11623d through a separate current-main integration candidate",
-    "Website 4 corrected Wave 2 inventory/lot/COA after exact-SHA acceptance"
+    "Website 2 current-production/founder-lock/migration-DAG control-plane reconciliation after exact-SHA acceptance",
+    "Website 2 bounded Samuel authority and server error/signing/admin-key hardening after an exact path lease",
+    "Founder-workbook Product Control draft import and founder-attested 1,200-unit-per-exact-SKU seed architecture with no production rows until exact identity, migration, and approval gates pass",
+    "Supplier-unmetered brand availability and native Superpower D2C manual-handoff architecture under separate non-overlapping leases",
+    "Document Center, evidence-task, replacement-history, and CRM relationship architecture under a separate exact lease",
+    "Contiguous-state and Quantum EV fail-closed Care architecture with Alaska/Hawaii excluded and no provider or clinical activation",
+    "Seven non-overlapping workstreams from exact current main under separately reviewed ownership leases"
   ],
   "lastSuccessfulValidation": {
-    "kind": "Website 2 authenticated Git, Render, and Supabase read-only reconciliation; Website 6 PR132 postdeploy accepted",
-    "release": "PR 132",
-    "sourceSha": "8f1797a14fc782b92f29cc42a8d64adc76231216",
-    "deployedSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
-    "renderDeploymentId": "dep-d9kq6l2d0e5s73ethf8g"
+    "kind": "Codex authenticated Git, Render, and Supabase read-only reconciliation after the founder decision lock",
+    "release": "PR 143",
+    "sourceSha": "586851add0562d4337755c21a8794e7b6c459481",
+    "deployedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+    "renderDeploymentId": "dep-d9l8s8m7bikc73f9bj0g"
   },
   "evidenceLimitations": [
     "No authorized existing member or administrator browser session was available for this snapshot.",
-    "Detailed Render log streaming was not available without selecting a workspace; no workspace was guessed.",
+    "The bounded authenticated Render view was inspected without reporting raw log lines or secret-looking substrings.",
     "Provider credentials and secret values were not read or printed."
   ],
   "dataPosture": {
@@ -324,29 +349,36 @@
     "seededInventoryCount": 0,
     "seededOrderCount": 0,
     "careEnabled": false,
-    "statement": "Read-only evidence confirms no fabricated or seeded Research Commerce records and Care remains disabled."
+    "statement": "Read-only evidence confirms no fabricated or seeded Research Commerce records and Care remains disabled. Founder attestations authorize bounded source construction but no production seed, partner transmission, payment, provider assignment, or clinical action has occurred."
   },
   "evidence": [
     {
       "id": "EVIDENCE-GIT-MAIN",
       "kind": "git",
-      "observedSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
-      "checkedAt": "2026-07-29T07:03:15Z",
-      "detail": "origin/main, PR 132 merge identity, and authenticated Render deployment dep-d9kq6l2d0e5s73ethf8g were reconciled to the same exact SHA."
+      "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+      "checkedAt": "2026-07-30T01:05:00Z",
+      "detail": "origin/main, PR 143 merge identity, Actions run 30499992101, and authenticated Render deployment dep-d9l8s8m7bikc73f9bj0g were reconciled to the same exact SHA."
     },
     {
       "id": "EVIDENCE-PRODUCTION-HTTP",
       "kind": "http",
-      "observedSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
-      "checkedAt": "2026-07-29T07:03:15Z",
-      "detail": "Health, member/admin capability privacy, admin document privacy, and disabled Care boundaries were checked read-only after PR 132."
+      "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+      "checkedAt": "2026-07-30T01:05:00Z",
+      "detail": "Health, private headers, and disabled fail-closed Care document/API boundaries were checked read-only after PR 143."
     },
     {
       "id": "EVIDENCE-PRODUCTION-DATABASE",
       "kind": "database",
-      "observedSha": "267950aefc4b3cd808d4fadc75044b7140b5e100",
-      "checkedAt": "2026-07-29T07:03:15Z",
-      "detail": "Authenticated Supabase migration history confirms reservation 20260727160000 applied and PR117/PR106 managed versions absent. Repository Git-blob checksums are separate source identity evidence; provider SQL-byte equality was not claimed."
+      "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+      "checkedAt": "2026-07-30T01:05:00Z",
+      "detail": "Authenticated Supabase migration history confirms reservation 20260727160000 applied and exact versions 20260727200000, 20260728010000, 20260728020000, 20260729000000, and 20260729100000 absent. Repository Git-blob checksums are separate source identity evidence; provider SQL-byte equality was not claimed."
+    },
+    {
+      "id": "EVIDENCE-FOUNDER-WORKAROUND-ADDENDUM",
+      "kind": "founder_attestation",
+      "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+      "checkedAt": "2026-07-30T10:02:00Z",
+      "detail": "The signed missing-inputs workaround addendum and workbook 345787a2a00ceab988c7222f5d73f5dcaa1928fce643757aad387c8e4cd4aaeb lock the 1,200-unit opening balance per exact mapped Renew360 SKU, supplier-unmetered brand availability, native Superpower D2C/manual handoff, 48 contiguous-state target with Alaska/Hawaii excluded, and a $1,800-per-vial restricted Quantum EV Care route. They do not apply migrations, identify a Quantum product row, seed production, enable payments, or activate Care."
     }
   ],
   "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md"
