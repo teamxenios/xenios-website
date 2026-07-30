@@ -5,6 +5,7 @@ import type { CatalogResponse, CommerceLane, Product } from "@shared/research/ty
 import {
   isResearchActivatePath,
   isResearchAdminPath,
+  isResearchApplicationStatusPath,
   isResearchPath,
   isResearchResetPasswordPath,
 } from "@shared/research/paths";
@@ -148,12 +149,17 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   }
   if (!isResearchPath(req.path)) return next();
   if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");
-  // The password-recovery and membership-activation pages (account access
-  // works from a fresh browser without the review password; the activation
-  // email's Continue activation link lands directly on /research/activate)
-  // are sensitive account pages: never cached, never indexed, never leak a
-  // referrer.
-  if (isResearchResetPasswordPath(req.path) || isResearchActivatePath(req.path)) {
+  // The password-recovery, membership-activation, and application-status
+  // pages (account access works from a fresh browser without the review
+  // password; the activation email's Continue activation link lands on
+  // /research/activate and the approval email's claim link lands on the
+  // application-status page) are sensitive account pages: never cached,
+  // never indexed, never leak a referrer.
+  if (
+    isResearchResetPasswordPath(req.path) ||
+    isResearchActivatePath(req.path) ||
+    isResearchApplicationStatusPath(req.path)
+  ) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Referrer-Policy", "no-referrer");
     res.setHeader("X-Robots-Tag", "noindex, nofollow");
@@ -246,13 +252,24 @@ export function registerResearchApi(app: Express) {
   // token is the stronger credential; every bypassed path still enforces it).
   // Everything else keeps the session-cookie wall.
   const MEMBER_AUTHED_PREFIXES = ["/member", "/activation", "/catalog", "/orders"];
-  // FOUNDER DECISION (2026-07-19): password recovery must work from a fresh
-  // browser WITHOUT the shared review password. Exactly these routes bypass
-  // the wall by explicit allowlist (no credential of any kind required); the
-  // endpoint itself is enumeration-safe and rate-limited, exposes no member
-  // data, and never mints a review cookie. This does not make research
+  // FOUNDER DECISION (2026-07-19, extended 2026-07-30 by the final master
+  // directive's 9.1/9.2 account-access rule): ACCOUNT ACCESS must work from a
+  // fresh browser WITHOUT the shared review password. Exactly these routes
+  // bypass the wall by explicit allowlist; each endpoint is token-scoped or
+  // enumeration-safe and rate-limited, exposes no member data without its own
+  // credential, and never mints a review cookie. This does not make research
   // public: every other route keeps its wall or member guard.
-  const OPEN_RECOVERY_PATHS = new Set(["/member/forgot-password"]);
+  //  - /member/forgot-password: uniform-response recovery mail (2026-07-19).
+  //  - /member/claim: consumes a one-time purpose-scoped account_claim token
+  //    plus a new password; a status link or guessed id can never claim.
+  //  - /applications/status: reads status by signed token only.
+  //  - /applications/resend-link: uniform-response, IP rate-limited resend.
+  const OPEN_ACCOUNT_ACCESS_PATHS = new Set([
+    "/member/forgot-password",
+    "/member/claim",
+    "/applications/status",
+    "/applications/resend-link",
+  ]);
   // These exact read routes own their stronger downstream member guard and
   // private-response headers. Let them reach that canonical handler even when
   // the shared review cookie is absent; otherwise this earlier gateway would
@@ -265,7 +282,7 @@ export function registerResearchApi(app: Express) {
     path.startsWith("/pricing/");
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
-    if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
+    if (OPEN_ACCOUNT_ACCESS_PATHS.has(req.path)) return next();
     if (
       (req.method === "GET" || req.method === "HEAD") &&
       downstreamMemberGuardedRead(req.path)

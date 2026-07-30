@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   isResearchActivatePath,
   isResearchAdminPath,
+  isResearchApplicationStatusPath,
   isResearchPath,
   isResearchResetPasswordPath,
 } from "./paths";
@@ -81,6 +82,27 @@ describe("isResearchActivatePath", () => {
     expect(isResearchActivatePath("/research/member")).toBe(false);
     expect(isResearchActivatePath("/research/activate/extra")).toBe(false);
     expect(isResearchActivatePath("/research/application-status")).toBe(false);
+  });
+});
+
+describe("isResearchApplicationStatusPath", () => {
+  it("matches both registered status routes in plain, case, and encoded forms", () => {
+    expect(isResearchApplicationStatusPath("/research/apply/status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/research/application-status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/Research/Application-Status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/research/%61pply/status")).toBe(true);
+  });
+
+  it("tolerates the optional trailing slash", () => {
+    expect(isResearchApplicationStatusPath("/research/apply/status/")).toBe(true);
+    expect(isResearchApplicationStatusPath("/research/application-status/")).toBe(true);
+  });
+
+  it("does not match other research pages", () => {
+    expect(isResearchApplicationStatusPath("/research")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/apply")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/apply/status/extra")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/activate")).toBe(false);
   });
 });
 

@@ -51,3 +51,18 @@ export function isResearchActivatePath(pathname: string): boolean {
   const p = normalize(pathname);
   return p === "/research/activate" || p === "/research/activate/";
 }
+
+export function isResearchApplicationStatusPath(pathname: string): boolean {
+  // The approval email's claim link lands on the application-status page,
+  // where a freshly approved applicant sets their password with a one-time
+  // purpose-scoped account_claim token. Like sign-in, reset-password, and
+  // activate, this is account access: it must work from a fresh browser
+  // WITHOUT the shared review password. Two registered routes render it.
+  const p = normalize(pathname);
+  return (
+    p === "/research/apply/status" ||
+    p === "/research/apply/status/" ||
+    p === "/research/application-status" ||
+    p === "/research/application-status/"
+  );
+}
