@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { isResearchAdminPath, isResearchPath, isResearchResetPasswordPath } from "./paths";
+import {
+  isResearchActivatePath,
+  isResearchAdminPath,
+  isResearchApplicationStatusPath,
+  isResearchPath,
+  isResearchResetPasswordPath,
+} from "./paths";
 
 // The path normalization must match the wouter router (decodeURI + case-fold)
 // so the tracking guard and the server page gate cover exactly the URLs that
@@ -56,6 +62,39 @@ describe("isResearchResetPasswordPath", () => {
     expect(isResearchResetPasswordPath("/research")).toBe(false);
     expect(isResearchResetPasswordPath("/research/member")).toBe(false);
     expect(isResearchResetPasswordPath("/research/reset-password/extra")).toBe(false);
+  });
+});
+
+describe("isResearchActivatePath", () => {
+  it("matches plain, case, encoded, and trailing-slash activation routes", () => {
+    expect(isResearchActivatePath("/research/activate")).toBe(true);
+    expect(isResearchActivatePath("/Research/Activate")).toBe(true);
+    expect(isResearchActivatePath("/research/%61ctivate")).toBe(true);
+    expect(isResearchActivatePath("/research/activate/")).toBe(true);
+  });
+
+  it("fails closed for neighboring and malformed routes", () => {
+    expect(isResearchActivatePath("/research/activate/extra")).toBe(false);
+    expect(isResearchActivatePath("/research/application-status")).toBe(false);
+    expect(isResearchActivatePath("/research/%ZZ")).toBe(false);
+  });
+});
+
+describe("isResearchApplicationStatusPath", () => {
+  it("matches every registered alias in plain, case, encoded, and slash forms", () => {
+    expect(isResearchApplicationStatusPath("/research/apply/status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/research/application/status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/research/application-status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/Research/Application-Status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/research/%61pply/status")).toBe(true);
+    expect(isResearchApplicationStatusPath("/research/application/status/")).toBe(true);
+  });
+
+  it("fails closed for application and status lookalikes", () => {
+    expect(isResearchApplicationStatusPath("/research/apply")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/apply/status/extra")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/activate")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/%ZZ")).toBe(false);
   });
 });
 
