@@ -1030,3 +1030,123 @@ describe("outbound Telegram content", () => {
     expect(scan.violations).toContain("payment data");
   });
 });
+
+// ---------------------------------------------------------------------------
+// Samuel's inbox (admin reads). These routes are what make the answer
+// composer reachable: without them the admin pages called GET endpoints that
+// did not exist, so the inbox was permanently empty while members could
+// submit questions.
+// ---------------------------------------------------------------------------
+
+describe("GET /api/admin/research/questions (Samuel's inbox)", () => {
+  it("returns real rows with member emails, newest first, behind admin auth", async () => {
+    const app = makeApp();
+    const older = seedQuestion({ created_at: new Date(T0 - HOUR_MS).toISOString() });
+    const newer = seedQuestion({ member_id: MEMBER_B.id, created_at: new Date(T0).toISOString() });
+
+    const res = await request(app).get("/api/admin/research/questions");
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+    expect(res.body.questions.map((q: any) => q.id)).toEqual([newer.id, older.id]);
+    expect(res.body.questions[0].member_email).toBe(MEMBER_B.email);
+    expect(res.body.questions[1].member_email).toBe(MEMBER_A.email);
+    // The adminx list shape exactly: subject metadata only.
+    expect(Object.keys(res.body.questions[0]).sort()).toEqual(
+      ["asked_at", "id", "last_activity_at", "member_email", "status", "topic"],
+    );
+    expect(res.body.questions[0].topic).toBe("plan");
+    expect(res.body.questions[0].asked_at).toBe(newer.created_at);
+  });
+
+  it("maps real statuses onto the open / answered / closed queue buckets and filters by them", async () => {
+    const app = makeApp();
+    const open = seedQuestion({ status: "pending" });
+    const reviewing = seedQuestion({ status: "being_reviewed" });
+    const moreInfo = seedQuestion({ status: "more_information_needed" });
+    const answered = seedQuestion({ status: "answer_ready", answer_text: "Here.", answered_at: new Date(T0).toISOString(), answered_by: "Samuel" });
+    const closed = seedQuestion({ status: "completed", answer_text: "Done.", answered_at: new Date(T0).toISOString(), answered_by: "Samuel", rating: 5 });
+
+    const openRes = await request(app).get("/api/admin/research/questions?status=open");
+    expect(openRes.body.questions.map((q: any) => q.id).sort()).toEqual(
+      [open.id, reviewing.id, moreInfo.id].sort(),
+    );
+    for (const row of openRes.body.questions) expect(row.status).toBe("open");
+
+    const answeredRes = await request(app).get("/api/admin/research/questions?status=answered");
+    expect(answeredRes.body.questions.map((q: any) => q.id)).toEqual([answered.id]);
+    expect(answeredRes.body.questions[0].status).toBe("answered");
+
+    const closedRes = await request(app).get("/api/admin/research/questions?status=closed");
+    expect(closedRes.body.questions.map((q: any) => q.id)).toEqual([closed.id]);
+    expect(closedRes.body.questions[0].status).toBe("closed");
+
+    // Absent or unrecognized filters are the whole inbox.
+    const allRes = await request(app).get("/api/admin/research/questions");
+    expect(allRes.body.questions).toHaveLength(5);
+  });
+
+  it("never carries a question body in the list payload", async () => {
+    const app = makeApp();
+    seedQuestion({ body_text: "My private health context sentence." });
+    const res = await request(app).get("/api/admin/research/questions");
+    expect(res.status).toBe(200);
+    expect(JSON.stringify(res.body)).not.toContain("private health context");
+  });
+
+  it("is refused without admin authority (list and detail)", async () => {
+    admin.allow = false;
+    const app = makeApp();
+    const row = seedQuestion();
+    const list = await request(app).get("/api/admin/research/questions");
+    expect(list.status).toBe(403);
+    expect(list.body.code).toBe("admin_required");
+    const detail = await request(app).get(`/api/admin/research/questions/${row.id}`);
+    expect(detail.status).toBe(403);
+    expect(detail.body.code).toBe("admin_required");
+  });
+});
+
+describe("GET /api/admin/research/questions/:questionId", () => {
+  it("returns the real body and the answer thread with the display name, never an admin email", async () => {
+    const app = makeApp();
+    const answeredAt = new Date(T0).toISOString();
+    const row = seedQuestion({
+      status: "answer_ready",
+      body_text: "Which protocol applies to a travel week?",
+      answer_text: "Keep the anchor steps; skip the optional block.",
+      answered_at: answeredAt,
+      answered_by: "Samuel",
+    });
+
+    const res = await request(app).get(`/api/admin/research/questions/${row.id}`);
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+    const q = res.body.question;
+    expect(q.id).toBe(row.id);
+    expect(q.member_email).toBe(MEMBER_A.email);
+    expect(q.body).toBe("Which protocol applies to a travel week?");
+    expect(q.status).toBe("answered");
+    expect(q.thread).toEqual([
+      {
+        id: `${row.id}-answer`,
+        author: "Samuel",
+        body: "Keep the anchor steps; skip the optional block.",
+        at: answeredAt,
+      },
+    ]);
+    expect(JSON.stringify(res.body)).not.toContain(ADMIN_EMAIL);
+  });
+
+  it("has an empty thread while the question is unanswered, and reports not_found for an unknown id", async () => {
+    const app = makeApp();
+    const row = seedQuestion();
+    const res = await request(app).get(`/api/admin/research/questions/${row.id}`);
+    expect(res.status).toBe(200);
+    expect(res.body.question.thread).toEqual([]);
+    expect(res.body.question.status).toBe("open");
+
+    const missing = await request(app).get("/api/admin/research/questions/does-not-exist");
+    expect(missing.status).toBe(404);
+    expect(missing.body.code).toBe("not_found");
+  });
+});

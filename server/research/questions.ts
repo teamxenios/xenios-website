@@ -141,6 +141,59 @@ export function toMemberQuestion(row: MemberQuestionRow): MemberQuestion {
   };
 }
 
+// Samuel's inbox vocabulary. The adminx Questions pages queue and badge on
+// "open" / "answered" / "closed", so the admin payload carries that bucket,
+// derived deterministically from the real status (never stored, never
+// guessed): anything still needing or awaiting review is open, a delivered
+// answer is answered, a completed question is closed.
+export type AdminQuestionQueue = "open" | "answered" | "closed";
+
+export function adminQueueFor(status: QuestionStatus): AdminQuestionQueue {
+  if (status === "answer_ready") return "answered";
+  if (status === "completed") return "closed";
+  return "open";
+}
+
+// The list row is subject metadata ONLY: who, topic, state, dates. The
+// question body deliberately does not travel in list payloads (it can carry
+// health context); it opens one at a time on the detail route.
+function toAdminQuestionRow(row: MemberQuestionRow, memberEmail: string) {
+  return {
+    id: row.id,
+    member_email: memberEmail,
+    topic: row.category,
+    status: adminQueueFor(row.status),
+    asked_at: row.created_at,
+    last_activity_at: row.updated_at ?? null,
+  };
+}
+
+// The detail carries the body and a thread built from real fields only: the
+// one answer entry exists exactly when an answer was written, stamped with
+// the stored display name (never an admin email) and the real answered_at.
+function toAdminQuestionDetail(row: MemberQuestionRow, memberEmail: string) {
+  const thread =
+    row.answer_text !== null && row.answer_text !== undefined
+      ? [
+          {
+            id: `${row.id}-answer`,
+            author: row.answered_by ?? ANSWERER_DISPLAY_NAME,
+            body: row.answer_text,
+            at: row.answered_at ?? row.updated_at,
+          },
+        ]
+      : [];
+  return {
+    id: row.id,
+    member_email: memberEmail,
+    topic: row.category,
+    status: adminQueueFor(row.status),
+    asked_at: row.created_at,
+    body: row.body_text ?? "",
+    thread,
+  };
+}
+
 function toTelegramLinkState(row: TelegramLinkRow | null): TelegramLinkState {
   if (!row) return { linked: false, linkedAt: null, telegramDisplayName: null };
   return {
@@ -189,7 +242,39 @@ async function fetchMemberQuestionById(memberId: string, questionId: string): Pr
   }
 }
 
-// By id alone. The only caller is Samuel's answer route, behind
+// Every question, for Samuel's inbox. Admin-only callers (behind
+// requireSupabaseAdmin); newest first, ordering in code.
+async function fetchAllQuestions(): Promise<MemberQuestionRow[]> {
+  try {
+    const { data, error } = await getSupabaseAdmin()
+      .from(MEMBER_QUESTIONS_TABLE)
+      .select("*");
+    if (error || !Array.isArray(data)) return [];
+    return (data as MemberQuestionRow[])
+      .slice()
+      .sort((a, b) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0));
+  } catch {
+    return [];
+  }
+}
+
+async function fetchMembersByIds(memberIds: string[]): Promise<Map<string, MemberRow>> {
+  const out = new Map<string, MemberRow>();
+  if (memberIds.length === 0) return out;
+  try {
+    const { data, error } = await getSupabaseAdmin()
+      .from(MEMBERS_TABLE)
+      .select("*")
+      .in("id", memberIds);
+    if (error || !Array.isArray(data)) return out;
+    for (const row of data as MemberRow[]) out.set(row.id, row);
+    return out;
+  } catch {
+    return out;
+  }
+}
+
+// By id alone. Callers are Samuel's admin routes, behind
 // requireSupabaseAdmin; no member request reaches this.
 async function fetchQuestionById(questionId: string): Promise<MemberQuestionRow | null> {
   try {
@@ -562,6 +647,55 @@ export function registerQuestionsApi(app: Express, deps: MemberPlatformDeps) {
     } catch (err) {
       console.error("[questions] rate failed:", err instanceof Error ? err.message : err);
       res.status(500).json({ ok: false, message: "The rating could not be saved." });
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // Samuel's inbox (admin reads)
+  // ---------------------------------------------------------------------------
+
+  // The question inbox, Samuel-only. ?status= filters by the admin queue
+  // bucket (open / answered / closed); anything else, including absence, is
+  // every question. Rows are subject metadata only, never the body.
+  app.get("/api/admin/research/questions", requireSupabaseAdmin, async (req, res) => {
+    setPrivacyHeaders(res);
+    try {
+      const queue = typeof req.query.status === "string" ? req.query.status : "";
+      const rows = await fetchAllQuestions();
+      const filtered =
+        queue === "open" || queue === "answered" || queue === "closed"
+          ? rows.filter((row) => adminQueueFor(row.status) === queue)
+          : rows;
+      const members = await fetchMembersByIds(
+        Array.from(new Set(filtered.map((row) => row.member_id))),
+      );
+      res.json({
+        ok: true,
+        questions: filtered.map((row) =>
+          toAdminQuestionRow(row, members.get(row.member_id)?.email ?? "(unknown member)"),
+        ),
+      });
+    } catch (err) {
+      console.error("[questions] admin list failed:", err instanceof Error ? err.message : err);
+      res.status(500).json({ ok: false, message: "The question inbox could not be loaded." });
+    }
+  });
+
+  // One question thread, Samuel-only. The body renders here, deliberately,
+  // one question at a time.
+  app.get("/api/admin/research/questions/:questionId", requireSupabaseAdmin, async (req, res) => {
+    setPrivacyHeaders(res);
+    try {
+      const row = await fetchQuestionById(String(req.params.questionId));
+      if (!row) return sendNotFound(res, "No question with that id.");
+      const member = await fetchMemberById(row.member_id);
+      res.json({
+        ok: true,
+        question: toAdminQuestionDetail(row, member?.email ?? "(unknown member)"),
+      });
+    } catch (err) {
+      console.error("[questions] admin detail failed:", err instanceof Error ? err.message : err);
+      res.status(500).json({ ok: false, message: "The question could not be loaded." });
     }
   });
 

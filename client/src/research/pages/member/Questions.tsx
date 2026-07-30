@@ -9,6 +9,7 @@ import {
   submitVoiceQuestion,
   unlinkTelegram,
 } from "../../adapters/guides";
+import type { MemberQuestion, TelegramLinkStart, TelegramLinkState as WireTelegramLinkState } from "@shared/research/member-platform";
 import {
   fetchCapabilities,
   statusFor,
@@ -31,17 +32,21 @@ import {
 } from "../../ui/kit";
 
 // ---------------------------------------------------------------------------
-// Member questions (/research/member/questions). The whole surface sits
-// behind the "questions" capability boundary; the voice panel additionally
-// sits behind "private_media" and the Telegram panel behind
-// "telegram_support". Honest states only: the list renders real server data,
-// dev fixtures via devFixture, or a truthful pending state, never invented
-// facts. Deliberately absent everywhere: queue position numbers and any
-// self-service "mark urgent" control. The response expectation is stated
+// Member questions (/research/member/questions). Questions carry NO
+// whole-surface capability gate: the server (server/research/questions.ts)
+// serves them to every active member behind requireActiveMember and the
+// capability registry deliberately emits no "questions" key, so gating here
+// on one would disable a live surface for everyone. The voice panel sits
+// behind "private_media" and the Telegram panel behind "telegram_support",
+// both real registry keys. Honest states only: the list renders real server
+// data, dev fixtures via devFixture, or a truthful pending state, never
+// invented facts. Deliberately absent everywhere: queue position numbers and
+// any self-service "mark urgent" control. The response expectation is stated
 // once, calmly: a first response typically arrives within about 12 hours.
 // ---------------------------------------------------------------------------
 
-type QuestionState = "pending" | "being_reviewed" | "more_info_needed" | "answer_ready" | "completed";
+// The server's QuestionStatus vocabulary, verbatim.
+type QuestionState = "pending" | "being_reviewed" | "more_information_needed" | "answer_ready" | "completed";
 
 interface QuestionTimelineEvent {
   at: string;
@@ -64,10 +69,53 @@ interface QuestionItem {
 const STATE_META: Record<QuestionState, { label: string; tone: BadgeTone }> = {
   pending: { label: "Pending", tone: "pending" },
   being_reviewed: { label: "Being Reviewed", tone: "info" },
-  more_info_needed: { label: "More Information Needed", tone: "warning" },
+  more_information_needed: { label: "More Information Needed", tone: "warning" },
   answer_ready: { label: "Answer Ready", tone: "success" },
   completed: { label: "Completed", tone: "neutral" },
 };
+
+// ---------------------------------------------------------------------------
+// Wire mapping. The server serializes MemberQuestion (shared contract:
+// questionId/status/bodyText/answerText/...). This page's display shape adds
+// a subject line and a timeline, both derived from real fields only: the
+// subject is the first line of the member's own text (the form submits
+// "subject\n\nbody", so it round-trips), and the timeline holds exactly the
+// events that have real timestamps (created, answered). Nothing is invented.
+// ---------------------------------------------------------------------------
+
+function toQuestionItem(q: MemberQuestion): QuestionItem {
+  const text = q.bodyText ?? "";
+  const firstLine = (text.split("\n")[0] ?? "").trim();
+  const subject =
+    firstLine !== ""
+      ? firstLine.length > 140
+        ? firstLine.slice(0, 137) + "..."
+        : firstLine
+      : q.source === "telegram_voice"
+        ? "Voice question"
+        : "Question";
+  const asked = q.createdAt.slice(0, 10);
+  const timeline: QuestionTimelineEvent[] = [{ at: asked, title: "Question received" }];
+  if (q.answeredAt) {
+    timeline.push({
+      at: q.answeredAt.slice(0, 10),
+      title: q.status === "more_information_needed" ? "More information needed" : "Answer ready",
+    });
+  }
+  return {
+    id: q.questionId,
+    subject,
+    body: text,
+    // The vocabularies match verbatim; an unexpected server status still
+    // renders truthfully via the STATE_META fallback in the row and drawer.
+    state: q.status as QuestionState,
+    createdAt: asked,
+    answer: q.answerText,
+    rating: q.rating,
+    followUpOfId: q.followUpOfQuestionId,
+    timeline,
+  };
+}
 
 type StatusMap = Map<ResearchCapability, CapabilityStatus>;
 
@@ -144,9 +192,9 @@ export default function Questions() {
   const loadQuestions = useCallback(async () => {
     setListState("loading");
     setListError(undefined);
-    const result = await fetchQuestions<{ questions?: QuestionItem[] }>(memberToken);
+    const result = await fetchQuestions<{ questions?: MemberQuestion[] }>(memberToken);
     if (result.kind === "ok") {
-      setItems(Array.isArray(result.data.questions) ? result.data.questions : []);
+      setItems(Array.isArray(result.data.questions) ? result.data.questions.map(toQuestionItem) : []);
       setListState("ok");
       return;
     }
@@ -190,7 +238,10 @@ export default function Questions() {
       {statuses === null ? (
         <ResearchLoadingState label="Checking availability" />
       ) : (
-        <ResearchCapabilityBoundary status={statusFor(statuses, "questions")}>
+        <>
+          {/* No whole-surface capability gate: the server serves questions to
+              every active member and the registry emits no "questions" key.
+              Only the voice and Telegram panels are capability-gated. */}
           <div className="grid gap-6">
             <div ref={formRef}>
               <NewQuestionForm
@@ -272,7 +323,7 @@ export default function Questions() {
               onFollowUp={() => startFollowUp(openItem)}
             />
           )}
-        </ResearchCapabilityBoundary>
+        </>
       )}
     </ResearchMemberShell>
   );
@@ -370,12 +421,16 @@ function NewQuestionForm({
     }
     setBusy(true);
     setFeedback(null);
-    const result = await submitQuestion<{ id?: string }>(
+    // The server's QuestionCreateRequest shape exactly (category, bodyText,
+    // optional followUpOfQuestionId). The form has no category picker, so the
+    // member's choice is honestly "other", the same default the Telegram door
+    // uses; the subject rides as the first line of bodyText and round-trips
+    // through toQuestionItem.
+    const result = await submitQuestion<{ question?: MemberQuestion }>(
       {
-        subject: draft.subject.trim(),
-        body: draft.body.trim(),
-        followUpOf: followUp?.questionId ?? null,
-        submittedAt: new Date().toISOString(),
+        category: "other",
+        bodyText: `${draft.subject.trim()}\n\n${draft.body.trim()}`,
+        ...(followUp ? { followUpOfQuestionId: followUp.questionId } : {}),
       },
       token,
     );
@@ -759,7 +814,10 @@ function QuestionDrawer({
 }) {
   const meta = STATE_META[question.state] ?? { label: question.state, tone: "neutral" as BadgeTone };
   const showAnswer = (question.state === "answer_ready" || question.state === "completed") && !!question.answer;
-  const canFollowUp = question.state === "answer_ready" || question.state === "completed";
+  // The server accepts a linked follow-up only on the member's own COMPLETED
+  // question (rating an answer is what completes it), so the button appears
+  // exactly where the server would accept it.
+  const canFollowUp = question.state === "completed";
 
   return (
     <ResearchDrawer open title={question.subject} onClose={onClose}>
@@ -776,10 +834,10 @@ function QuestionDrawer({
           </p>
         </div>
 
-        {question.state === "more_info_needed" && (
+        {question.state === "more_information_needed" && (
           <p className="body-s text-ink-2" role="status">
-            The research team needs a little more information before answering. Use the follow-up button below or reply
-            with the details in a new question, and it will pick up where this one left off.
+            The research team needs a little more information before answering. Reply with the details in a new
+            question, and it will pick up where this one left off.
           </p>
         )}
 
@@ -938,10 +996,15 @@ function TelegramControls({ token }: { token: string | null }) {
 
   useEffect(() => {
     let alive = true;
-    void fetchTelegramLink<TelegramLinkState>(token).then((result) => {
+    // The server envelope is { ok, state: TelegramLinkState } with a display
+    // name only (never chat ids or tokens).
+    void fetchTelegramLink<{ state?: Partial<WireTelegramLinkState> }>(token).then((result) => {
       if (!alive) return;
       if (result.kind === "ok") {
-        setLink({ linked: result.data.linked === true, username: result.data.username ?? null });
+        setLink({
+          linked: result.data.state?.linked === true,
+          username: result.data.state?.telegramDisplayName ?? null,
+        });
         setState("ready");
         return;
       }
@@ -965,14 +1028,23 @@ function TelegramControls({ token }: { token: string | null }) {
   const linkAccount = async () => {
     setBusy(true);
     setMessage(null);
-    const result = await linkTelegram<{ linkUrl?: string }>(token);
+    // The server mints a one-time token: { ok, link: { linkToken, expiresAt,
+    // botUsername } }. The deep link is Telegram's own /start convention,
+    // which is exactly what the webhook parses on the other side.
+    const result = await linkTelegram<{ link?: Partial<TelegramLinkStart> }>(token);
     setBusy(false);
     if (result.kind === "ok") {
-      if (result.data.linkUrl) {
-        setMessage("A secure linking window has been prepared. Open the link below to finish in Telegram.");
-        window.open(result.data.linkUrl, "_blank", "noopener,noreferrer");
+      const minted = result.data.link;
+      if (minted?.linkToken && minted.botUsername) {
+        const linkUrl = `https://t.me/${encodeURIComponent(minted.botUsername)}?start=${encodeURIComponent(minted.linkToken)}`;
+        setMessage(
+          "A secure linking window has been opened. Press Start in Telegram to finish; the link expires in about 15 minutes.",
+        );
+        window.open(linkUrl, "_blank", "noopener,noreferrer");
       } else {
-        setMessage("Linking started. Follow the instructions sent to your account to finish in Telegram.");
+        setMessage(
+          "The Telegram bot address is not configured yet, so the link could not be opened. Questions asked on this page still reach a person.",
+        );
       }
       return;
     }
