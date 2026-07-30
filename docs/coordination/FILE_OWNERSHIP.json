@@ -348,7 +348,21 @@
       "mode": "write",
       "state": "reserved",
       "patterns": [
-        "server/research/access-architecture.test.ts"
+        "server/research/access-architecture.test.ts",
+        "server/research/catalog-display/routes.test.ts",
+        "server/research/members.test.ts",
+        "server/research/pricing/routes.test.ts"
+      ]
+    },
+    {
+      "id": "OWNER-W5-RESEARCH-LEGAL-TRUTHFULNESS-UI",
+      "owner": "Website 5",
+      "lane": "research-application-ui-completion",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "client/src/research/pages/LegalPage.tsx",
+        "client/src/research/pages/PolicyPage.tsx"
       ]
     },
     {
