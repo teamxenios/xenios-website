@@ -260,3 +260,34 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 59. Sentinel artifacts continue on sentinel/ux-reliability-continuous; the directive's shared
     ledgers (XENIOS_DEFECT_LEDGER.csv and companions) are seeded on this branch for Codex to
     adopt or relocate.
+
+## 2026-07-30T11:15Z, workbook ingestion and PR #145 review results (22-agent workflow, all claims adversarially verified)
+
+60. Workbook cross-verification: the two commercial models agree with the directive on every
+    number. All P001-P015 and NutriDyn wholesale and final prices match exactly, and every final
+    price recomputes as ROUND(wholesale x 2.5, 2) inside the workbooks themselves. Three
+    cosmetic name annotations only (Magtein, Collagen Renew, Inflam-Eze carry supplier
+    parentheticals the directive omits; same SKUs, same prices). Parser note for future readers:
+    these workbooks store text as inline strings, so shared-strings-only xlsx parsers see blanks.
+61. The ELEVEN presentation mismatches the directive says exist (12.2) were independently found
+    and verified: P001, P003, P007, P008, P009, P010, P011, P012, P013, P014, P015. The stale
+    supplier labels differ from the founder-confirmed presentations (largest: P001 source label
+    15mg/15mg vs confirmed 5mg+5mg, and the P001 verification cites the signed 2026-07-21
+    supplier master supporting the founder-confirmed strengths). Count matches the directive
+    exactly. Codex must preserve these as mismatch history per 12.2; the Sentinel will verify
+    the Product Control import keeps both.
+62. PR #145 review verdict: APPROVE_WITH_NOTES at branch tip cfb9de3. Mechanically exact: all
+    nine migration-DAG checksums independently recomputed from git blobs and matching, the five
+    protected pending migrations in a strict serial chain, production pinned to 4a45b89 on
+    Render dep-d9l8s8m7bikc73f9bj0g. Verified notes: (a) SEN-0015 filed, exact supplier
+    wholesale costs for all fifteen peptide SKUs live in docs/research-commerce/
+    PEPTIDE_CATALOG_BUILD_NOTES.md lines 82-98 on the public repo (directive 7.19/21.2 work);
+    (b) the recorded founder addenda omit the 999/99 membership values and older 50/25 economics
+    remain in repo docs; (c) the broken-protected-order half of the new test never exercises the
+    validator; (d) P3s: mmd/json release-graph divergence, stale taskAssignments (baseSha two
+    baselines old), em dashes in new doc content, branch mutated mid-review.
+63. SEN-0016 filed as decision-required: the public About page presents Dr. Wesley Nahm, MD as
+    CMO (About.tsx:8, live since June, deliberate). Directive 7.11 names him in the restricted
+    roster and prohibits public display in marketing copy. An executive bio is arguably distinct
+    from the care-delivery roster, and he is the long-disclosed CMO; one founder decision
+    resolves it (recorded exemption or removal). Not treated as a unilateral defect.
