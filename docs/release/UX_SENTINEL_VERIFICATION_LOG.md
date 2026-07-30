@@ -42,3 +42,39 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 17. Exhaustive disclosure sweep launched (workflow: marketing-surface links, sitemap/robots/
     llms.txt/SEO assets, copy mentions, gateway four-links analysis, each claim adversarially
     verified). Results will be appended when complete.
+
+## 2026-07-30T00:05Z, exhaustive /research disclosure sweep results (23-agent workflow, every claim adversarially verified)
+
+18. CONFIRMED hyperlink disclosures on the marketing surface: all three render surfaces trace to
+    exactly TWO data lines. client/src/lib/nav.ts:18 (primaryNav) drives the desktop header link
+    (Navbar.tsx:84-97, lg+ viewports, data-testid link-nav-research). client/src/lib/nav.ts:35
+    (menuGroups Product group) drives BOTH the full-site menu overlay (Navbar.tsx:172-190, all
+    viewports including mobile) AND the footer Product column (Footer.tsx:43-44). Navbar and
+    Footer mount through PageShell on all 28 marketing pages. Verifiers confirmed byte-identity
+    across 517c2191 and current origin/main, and found no test pinning a Research nav entry.
+    Fix is two one-line data deletions. Extends SEN-0007.
+19. Static assets CLEAN: zero mentions of research in public/sitemap.xml, public/llms.txt,
+    public/robots.txt (workflow agent plus an independent grep of the worktree).
+20. LATENT disclosures found by the adversarial pass (filed as SEN-0009): four public care pages
+    carry a primary "Sign in securely" CTA to /research/sign-in in their auth_required branch
+    (CarePrescriptionsPage.tsx:81, EligibilityPendingPage.tsx:186, CareConsentPendingPage.tsx:104,
+    CareAppointmentsPage.tsx:116). Unreachable today because server/care/access.ts:40-57 checks
+    the care capability BEFORE auth and production returns 503 care_disabled (live-probed). The
+    branch becomes reachable for every signed-out visitor the moment Care is enabled. CI pin:
+    eligibility-ui.test.ts:70 asserts the /research/sign-in href, so the fix must update the test.
+21. REJECTED claims (recorded to prevent refiling): care boundary copy naming "Research" without
+    a hyperlink (section.tsx:59/:118, CareAppointmentsPage.tsx:65/:165, CareConsentPendingPage.tsx:68,
+    EligibilityPendingPage.tsx:143, CarePrescriptionsPage.tsx:92) does not violate the
+    no-hyperlinks directive; moved to recommendation R-001 (copy rewording). A test-file
+    disclosure (eligibility-ui.test.ts:70) is not user-reachable; tracked inside SEN-0009 as the
+    CI pin. Note the verifier pool split on the four care CTAs (one confirmed, three refuted as
+    latent-only); the Sentinel resolves the set consistently as SEN-0009 latent severity.
+22. Gateway four-entries ground truth (independent re-derivation, verifier isReal=true): pre-gate
+    PasswordPage (research/layout.tsx:67-119) has ZERO links. Post-gate Gateway.tsx renders
+    exactly five links: Apply (:72), Member Login (:75), privacy (:86), terms (:87), mailto
+    support (:88). Partner/Affiliate Login MISSING (and partners have NO credentialed login of
+    their own anywhere: partner pages authenticate with the member session token,
+    partners/Dashboard.tsx:59-63). Admin Login MISSING from the gateway (admin sign-in lives only
+    at /admin/research and /admin destinations). sign-in and reset-password deliberately bypass
+    the gate via RecoveryChrome (layout.tsx:272-274), which explains observation 6. Extends
+    SEN-0008; SEN-0002 merged into the SEN-0008 design decision.
