@@ -1,7 +1,7 @@
 import express from "express";
 import request from "supertest";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { researchPageGate } from "./index";
+import { registerResearchApi, researchPageGate } from "./index";
 
 // Root-domain invariant (canonical decision, 2026-07-18): the xenios homepage
 // stays at / in EVERY mode. Research is a private, password-gated section at
@@ -101,5 +101,50 @@ describe("the homepage stays at the root domain", () => {
     const res = await request(app).get("/api/admin/research/products");
     expect(res.status).toBe(401);
     expect(res.headers["x-robots-tag"]).toBeUndefined();
+  });
+});
+
+describe("the public Research application boundary", () => {
+  function makeResearchApiApp() {
+    const app = express();
+    app.use(express.json());
+    registerResearchApi(app);
+    app.get("/api/research/applications/status", (_req, res) => res.json({ route: "status" }));
+    app.post("/api/research/applications/resend-link", (_req, res) => res.json({ route: "resend" }));
+    return app;
+  }
+
+  it.each([
+    ["get", "/api/research/applications/status", "status"],
+    ["post", "/api/research/applications/resend-link", "resend"],
+  ] as const)("allows the exact public applicant route for %s %s", async (method, path, route) => {
+    process.env.RESEARCH_ACCESS_PASSWORD = "gate-password";
+    const res = await (request(makeResearchApiApp()) as any)[method](path);
+    expect(res.status).toBe(200);
+    expect(res.body.route).toBe(route);
+  });
+
+  it("allows applicant policies without opening catalog or application writes", async () => {
+    process.env.RESEARCH_ACCESS_PASSWORD = "gate-password";
+    const app = makeResearchApiApp();
+
+    const policies = await request(app).get("/api/research/policies");
+    expect(policies.status).toBe(200);
+    expect(policies.body.policies).toBeTruthy();
+
+    const catalog = await request(app).get("/api/research/catalog");
+    expect(catalog.status).toBe(401);
+
+    const applicationList = await request(app).get("/api/research/applications");
+    expect(applicationList.status).toBe(401);
+
+    for (const path of [
+      "/api/research/applications",
+      "/api/research/applications/resubmit",
+    ]) {
+      expect((await request(app).post(path).send({})).status).toBe(401);
+    }
+
+    expect((await request(app).delete("/api/research/applications")).status).toBe(401);
   });
 });
