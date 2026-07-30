@@ -302,6 +302,32 @@ describe("Website 3 cart product selection", () => {
   });
 
   it("rejects unapproved, future, expired, and ambiguous prices", () => {
+    const missing = source();
+    missing.prices = [];
+    expect(selectCartProduct(request, missing)).toEqual({
+      ok: false,
+      code: "price_missing",
+    });
+
+    const wrongCurrency = source();
+    wrongCurrency.prices[0] = {
+      ...wrongCurrency.prices[0],
+      currency: "EUR",
+    };
+    expect(selectCartProduct(request, wrongCurrency)).toEqual({
+      ok: false,
+      code: "price_currency_mismatch",
+    });
+    expect(
+      selectCartProduct(
+        { ...request, currency: "EUR" },
+        {
+          ...source(),
+          prices: [{ ...source().prices[0], currency: "EUR" }],
+        },
+      ),
+    ).toEqual({ ok: false, code: "price_currency_mismatch" });
+
     const unapproved = source();
     unapproved.prices[0] = {
       ...unapproved.prices[0],
@@ -311,6 +337,18 @@ describe("Website 3 cart product selection", () => {
       ok: false,
       code: "price_unapproved",
     });
+
+    for (const amountCents of [0, -1, 149.5, Number.MAX_SAFE_INTEGER + 1]) {
+      const invalidAmount = source();
+      invalidAmount.prices[0] = {
+        ...invalidAmount.prices[0],
+        amountCents,
+      };
+      expect(selectCartProduct(request, invalidAmount)).toEqual({
+        ok: false,
+        code: "price_unapproved",
+      });
+    }
 
     const future = source();
     future.prices[0] = {
@@ -328,6 +366,16 @@ describe("Website 3 cart product selection", () => {
       expiresAt: "2026-07-20T00:00:00.000Z",
     };
     expect(selectCartProduct(request, expired)).toEqual({
+      ok: false,
+      code: "price_stale",
+    });
+
+    const exactExpiry = source();
+    exactExpiry.prices[0] = {
+      ...exactExpiry.prices[0],
+      expiresAt: request.evaluatedAt,
+    };
+    expect(selectCartProduct(request, exactExpiry)).toEqual({
       ok: false,
       code: "price_stale",
     });
