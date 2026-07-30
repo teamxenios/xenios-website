@@ -400,6 +400,21 @@
         "supabase/migrations/20260727200000_research_persistent_cart.sql",
         "supabase/verify-research-persistent-cart.sql"
       ]
+    },
+    {
+      "id": "OWNER-W5-RESEARCH-APPLICATION-UI-COMPLETION",
+      "owner": "Website 5",
+      "lane": "research-application-ui-completion",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "client/src/research/pages/Gateway.catalog-guard.test.tsx",
+        "client/src/research/pages/Gateway.tsx",
+        "client/src/research/pages/Apply.tsx",
+        "client/src/research/pages/ApplyStatus.tsx",
+        "client/src/research/pages/Support.tsx",
+        "client/src/research/pages/public-access-flow.test.tsx"
+      ]
     }
   ],
   "invariants": [
