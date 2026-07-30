@@ -164,3 +164,25 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 41. Queue for sweep 6: color-contrast spot check on home and waitlist; keyboard tab-order walk
     on the waitlist form; live verification of the four remaining redirect aliases; then idle
     watch for the pricing-model merge and the leader's lease record.
+
+## 2026-07-30T02:30Z, sweep 6 (loop iteration 6): contrast sweep finds a real CSS regression
+
+42. Sync: origin/main unchanged at 4a45b89; leader quiet since 18:45 -0500.
+43. All eight redirect aliases now live-verified: /agents -> /product, /developers -> /ecosystem,
+    /enterprise -> /contact, /ontology -> /product (plus the four from sweeps 3-4). All match
+    App.tsx declarations.
+44. Waitlist keyboard and contrast: natural DOM tab order (zero positive tabindex), honeypot
+    excluded from the tab sequence, logical field order ending consent -> submit, ZERO contrast
+    failures against solid backgrounds.
+45. Home contrast sweep flagged one element at ratio 2.05, and verification proved it a REAL
+    site-wide CSS regression (SEN-0012): the class string btn-ghost-on-dark matches no stylesheet
+    rule (the sheet defines .btn-on-dark.btn-ghost as a two-class selector), so the anchor
+    renders in browser-default link blue rgb(0,0,238) on the near-black rgb(14,14,14) closing
+    sections. Computed contrast 2.05 (the scan and the hand computation agree exactly). Six
+    occurrences across five marketing pages, including the About page's Request Early Access
+    and Product's Join the Founding Cohort conversion CTAs. Fix is either six class-string edits
+    or one CSS alias rule; a guard test asserting every .btn-* class used in JSX resolves to a
+    stylesheet rule would prevent recurrence.
+46. Queue for sweep 7: idle watch (main move, pricing-model merge, leader lease record); spot
+    contrast pass on the five affected pages after the SEN-0012 fix lands; keyboard focus
+    visibility walk when a real display is available for screenshots.
