@@ -78,3 +78,31 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     at /admin/research and /admin destinations). sign-in and reset-password deliberately bypass
     the gate via RecoveryChrome (layout.tsx:272-274), which explains observation 6. Extends
     SEN-0008; SEN-0002 merged into the SEN-0008 design decision.
+
+## 2026-07-30T00:35Z, sweep 2 (loop iteration 2): main moved, leader active, targeted regression
+
+23. origin/main advanced 517c219 -> 4a45b89 (two commits). PR #143 (claude/f5/research-guard,
+    merged 18:34 -0500): adds client/src/research/pages/Gateway.catalog-guard.test.tsx and
+    docs/research/RESEARCH_HOME_CATALOG_POLICY.md. Test-and-doc only; no runtime change, so
+    production behavior is unchanged from sweep 1 evidence.
+24. PR #143 guard quality review (Loop B): three independent checks in one file: (a) DOM render
+    of Gateway with a CLOSED ALLOWLIST, so any unexpected new anchor or button fails, not only
+    denylist matches; (b) viewport and flag independence assertions (honest that jsdom cannot
+    measure CSS hiding; proves rendered output reads no width, prop, or flag); (c) source-level
+    scan of Gateway.tsx catching denylisted routes inside untaken branches (feature flags,
+    dev-only blocks). Denylists cover catalog phrases and catalog hrefs including the legacy
+    routes. Assessment: SATISFIES the founder's automated-assertion requirement for directive 2
+    at the component level, and the closed allowlist is stronger than a text scan. Residual gap
+    (small): no real-browser production check; a Playwright smoke against the deployed /research
+    would complete the belt-and-suspenders. The Sentinel's own to-add-assertion item is now
+    covered by the leader's guard.
+25. Peptide reconciliation (queued from sweep 1) RESOLVED: peptide-catalog.test.ts asserts
+    allVariants() has length 70 (workbook 21, expansion 33, regulatory_hold 16) across the 45
+    products. The founder count of 70 peptide variant rows reconciles on main, in CI.
+26. Leader activity: branches claude/f5/research-guard (merged as PR #143) and
+    claude/f5/pricing-model (18:45, unmerged, "import the founder peptide pricing model, blocked
+    from activation"). The Fable 5 leader session is ACTIVE. Coordination note: no release-lease
+    or ownership record has been committed yet; docs/coordination/FILE_OWNERSHIP.json on main is
+    still the 2026-07-29T07:03Z Website 1-6 snapshot naming Website 2 as release-manager. The
+    Sentinel requests the leader publish its lease claim and current ownership matrix so findings
+    can be routed by file area.
