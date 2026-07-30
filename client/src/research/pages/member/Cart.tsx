@@ -2,10 +2,13 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useResearch } from "../../core";
 import { getCart, removeCartLine, updateCartLine } from "../../adapters/commerce";
+import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { denialPresentation } from "../../lib/denials";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
+  capabilityStatusOrPending,
+  ResearchCapabilityBoundary,
   ResearchDenialNotice,
   ResearchEmptyState,
   ResearchRouteBoundary,
@@ -55,6 +58,7 @@ export default function Cart() {
   const [busySku, setBusySku] = useState<string | null>(null);
   const [actionDenial, setActionDenial] = useState<{ code: string; message?: string } | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [capabilities, setCapabilities] = useState<Map<ResearchCapability, CapabilityStatus> | null>(null);
 
   const load = useCallback(async () => {
     setState("loading");
@@ -86,6 +90,20 @@ export default function Cart() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Capability statuses are fetched once per page; an absent registry degrades
+  // to honest pending defaults (nothing is enabled by assumption).
+  useEffect(() => {
+    let cancelled = false;
+    void fetchCapabilities(memberToken).then((map) => {
+      if (!cancelled) setCapabilities(map);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [memberToken]);
+
+  const commerceStatus = capabilityStatusOrPending(capabilities, "product_commerce");
 
   // One mutation path: every cart change routes through here so the denied,
   // error, and unauthorized branches behave identically for update and remove.
@@ -154,15 +172,21 @@ export default function Cart() {
         {denial ? (
           <ResearchDenialNotice code={denial.code} message={denial.message} />
         ) : !cart || cart.lines.length === 0 ? (
-          <ResearchEmptyState
-            title="Your cart is empty."
-            body="Browse the catalog and add a product; it will wait for you here."
-            action={
-              <Link href={MEMBER_ROUTES.products} className="btn btn-primary">
-                Browse products
-              </Link>
-            }
-          />
+          // While product_commerce is not enabled the member cannot add an
+          // item, so an empty-cart prompt to do exactly that would be a lie.
+          // The capability boundary renders the honest not-open state instead;
+          // the moment commerce is enabled the designed empty state returns.
+          <ResearchCapabilityBoundary status={commerceStatus}>
+            <ResearchEmptyState
+              title="Your cart is empty."
+              body="Browse the catalog and add a product; it will wait for you here."
+              action={
+                <Link href={MEMBER_ROUTES.products} className="btn btn-primary">
+                  Browse products
+                </Link>
+              }
+            />
+          </ResearchCapabilityBoundary>
         ) : (
           <div className="grid gap-6">
             {actionDenial && <ResearchDenialNotice code={actionDenial.code} message={actionDenial.message} />}

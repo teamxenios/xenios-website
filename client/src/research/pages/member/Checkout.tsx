@@ -2,10 +2,13 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { Link } from "wouter";
 import { useResearch } from "../../core";
 import { getCart, getStoreCredit, quoteShipping, submitCheckout } from "../../adapters/commerce";
+import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { denialPresentation } from "../../lib/denials";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
+  capabilityStatusOrPending,
+  ResearchCapabilityBoundary,
   ResearchDenialNotice,
   ResearchEmptyState,
   ResearchPendingPanel,
@@ -101,6 +104,7 @@ export default function Checkout() {
   const [loadDenial, setLoadDenial] = useState<{ code: string; message?: string } | null>(null);
   const [cart, setCart] = useState<CartDto | null>(null);
   const [storeCredit, setStoreCredit] = useState<StoreCreditDto | null>(null);
+  const [capabilities, setCapabilities] = useState<Map<ResearchCapability, CapabilityStatus> | null>(null);
 
   // Shipping address (country is fixed to US by the contract).
   const [line1, setLine1] = useState("");
@@ -167,6 +171,20 @@ export default function Checkout() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Capability statuses are fetched once per page; an absent registry degrades
+  // to honest pending defaults (nothing is enabled by assumption).
+  useEffect(() => {
+    let cancelled = false;
+    void fetchCapabilities(memberToken).then((map) => {
+      if (!cancelled) setCapabilities(map);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [memberToken]);
+
+  const commerceStatus = capabilityStatusOrPending(capabilities, "product_commerce");
 
   const destination = useMemo(
     () => ({
@@ -336,15 +354,21 @@ export default function Checkout() {
         {loadDenial ? (
           <ResearchDenialNotice code={loadDenial.code} message={loadDenial.message} />
         ) : !cart || cart.lines.length === 0 ? (
-          <ResearchEmptyState
-            title="There is nothing to check out."
-            body="Your cart is empty. Add a product first, then come back here."
-            action={
-              <Link href={MEMBER_ROUTES.products} className="btn btn-primary">
-                Browse products
-              </Link>
-            }
-          />
+          // While product_commerce is not enabled the member cannot add an
+          // item, so "add a product first" would instruct an impossible
+          // action. The capability boundary renders the honest not-open state
+          // instead; when commerce is enabled the designed empty state returns.
+          <ResearchCapabilityBoundary status={commerceStatus}>
+            <ResearchEmptyState
+              title="There is nothing to check out."
+              body="Your cart is empty. Add a product first, then come back here."
+              action={
+                <Link href={MEMBER_ROUTES.products} className="btn btn-primary">
+                  Browse products
+                </Link>
+              }
+            />
+          </ResearchCapabilityBoundary>
         ) : (
           <div className="grid gap-6">
             {submitDenial && <ResearchDenialNotice code={submitDenial.code} message={submitDenial.message} />}
