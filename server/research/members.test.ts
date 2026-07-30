@@ -767,10 +767,19 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
     expect(fourth.status).toBe(429);
   });
 
-  it("the allowlist opens ONLY recovery: gateway/application-flow endpoints keep the wall", async () => {
+  it("the allowlist opens ONLY recovery and the application lifecycle: member content keeps the wall", async () => {
     const app = makeComposedApp();
-    // No credential: everything else still 401s at the wall.
-    expect((await request(app).get("/api/research/policies")).status).toBe(401);
+    // FOUNDER DECISION 2026-07-30 ("option 1"): the allowlist now covers the
+    // discover-and-apply lifecycle as well as recovery, because the gateway
+    // itself sat behind the wall and a prospective member had no public path
+    // into Xenios. /policies opens with it: the gateway footer links privacy
+    // and terms, and the application form requires agreeing to both, so an
+    // applicant with no credential must be able to read them.
+    //
+    // The SAFETY half of this test is unchanged and is the half that matters:
+    // no credential still reaches no member content.
+    expect((await request(app).get("/api/research/policies")).status).toBe(200);
+    expect((await request(app).get("/api/research/agreements")).status).toBe(401);
     expect((await request(app).get("/api/research/catalog")).status).toBe(401);
     expect((await request(app).get("/api/research/member/me")).status).toBe(401);
     expect((await request(app).get("/api/research/member/catalog")).status).toBe(401);
