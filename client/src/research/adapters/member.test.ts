@@ -116,7 +116,7 @@ const ADAPTERS: Array<{
     method: "POST",
     body: {},
   },
-  { name: "getProfile", invoke: (t) => getProfile(t), path: "/api/research/member/profile", method: "GET" },
+  { name: "getProfile", invoke: (t) => getProfile(t), path: "/api/research/profile", method: "GET" },
   { name: "getAssessment", invoke: (t) => getAssessment(t), path: "/api/research/assessment", method: "GET" },
   {
     name: "getAssessmentMode",
@@ -195,7 +195,7 @@ const ADAPTERS: Array<{
     method: "POST",
     body: {},
   },
-  { name: "getBlueprint", invoke: (t) => getBlueprint(t), path: "/api/research/member/blueprint", method: "GET" },
+  { name: "getBlueprint", invoke: (t) => getBlueprint(t), path: "/api/research/blueprint", method: "GET" },
   { name: "getXenios30Plan", invoke: (t) => getXenios30Plan(t), path: "/api/research/member/plans/xenios-30", method: "GET" },
   {
     name: "acknowledgeXenios30",
@@ -204,8 +204,8 @@ const ADAPTERS: Array<{
     method: "POST",
     body: { version: "2026-07" },
   },
-  { name: "getXenios90Plan", invoke: (t) => getXenios90Plan(t), path: "/api/research/member/plans/xenios-90", method: "GET" },
-  { name: "getDocuments", invoke: (t) => getDocuments(t), path: "/api/research/member/documents", method: "GET" },
+  { name: "getXenios90Plan", invoke: (t) => getXenios90Plan(t), path: "/api/research/plans/xenios90", method: "GET" },
+  { name: "getDocuments", invoke: (t) => getDocuments(t), path: "/api/research/documents", method: "GET" },
   {
     name: "logTrackerEntry",
     invoke: (t) => logTrackerEntry(TRACKER_ENTRY, t),

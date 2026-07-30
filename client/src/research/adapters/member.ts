@@ -62,7 +62,7 @@ export function requestPrivacyDeletion(token?: string | null): Promise<ApiResult
 // --- Profile ---------------------------------------------------------------
 
 export function getProfile<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/profile`, token);
+  return apiGet<T>("/api/research/profile", token);
 }
 
 // --- Assessment ------------------------------------------------------------
@@ -151,7 +151,7 @@ export function withdrawResearchAgreement(
 // --- Blueprint -------------------------------------------------------------
 
 export function getBlueprint<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/blueprint`, token);
+  return apiGet<T>("/api/research/blueprint", token);
 }
 
 // --- Plans (xenios 30 and xenios 90) ---------------------------------------
@@ -168,11 +168,11 @@ export function acknowledgeXenios30(
 }
 
 export function getXenios90Plan<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/plans/xenios-90`, token);
+  return apiGet<T>("/api/research/plans/xenios90", token);
 }
 
 // --- Documents -------------------------------------------------------------
 
 export function getDocuments<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/documents`, token);
+  return apiGet<T>("/api/research/documents", token);
 }
