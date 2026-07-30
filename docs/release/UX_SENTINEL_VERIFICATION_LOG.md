@@ -206,3 +206,21 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     workstream 1 (account continuity), coupled to the SEN-0008 gate-boundary decision.
 51. Queue for sweep 8: idle watch; re-verify SEN-0012/0013 when fixes land; signed-in lanes
     remain blocked on the leader's fixture strategy.
+
+## 2026-07-30T04:30Z, sweep 8 (loop iteration 8): idle sync plus a lease-contention observation
+
+52. Sync: origin/main unchanged at 4a45b89; no new branches; production same process
+    (uptime 17316s at 04:24Z). PR #144 (claude/f5/pricing-model, non-draft) is open: "Import
+    Samuel's founder peptide pricing model as gated draft targets."
+53. COORDINATION OBSERVATION for Samuel and the Fable 5 leader: PR #108 (release-manager session
+    inventory) carries fresh comments from a CODEX release-manager session: a
+    [CODEX_RELEASE_MANAGER_DIRECTIVE_RECONCILIATION] SINGLE-AUTHORITY HOLD at 2026-07-30T00:45Z
+    (responding to a separate founder directive, XENIOS_CODEX_FULL_BLOCKER_RESOLUTION_AND_
+    PRODUCTION_ACTIVATION_MASTER_DIRECTIVE_2026-07-29.md) and an authenticated read-only
+    provider-evidence addendum at 01:06Z confirming main exactly 4a45b89. Two release-authority
+    processes (the Fable 5 leader on claude/f5/*, the Codex release manager on PR #108) are now
+    describing authority over the same repository, and neither has committed a lease record to
+    main. The Sentinel arbitrates nothing and holds no lease; it flags the contention so the
+    founder can designate the single release authority explicitly.
+54. No new defects this sweep. Open verification work: SEN-0012 and SEN-0013 fixes, the SEN-0007
+    nav deletion, the SEN-0008 four-entries decision, signed-in lanes pending fixtures.
