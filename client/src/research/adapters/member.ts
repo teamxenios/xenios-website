@@ -14,6 +14,25 @@ import type {
 
 const BASE = "/api/research/member";
 
+// The member surface is served from TWO mount points, and conflating them is
+// the single largest source of dead pages in this section.
+//
+// BASE ("/api/research/member") hosts the member-account routes: overview,
+// membership, catalog, claim, me, product-requests, security, privacy.
+//
+// PLATFORM ("/api/research") hosts the member-PLATFORM routes registered by
+// registerMemberPlatformApi: profile, blueprint, plans and documents. Those
+// backends are built, guarded and tested, but every client call reached them
+// through BASE, so each one 404'd and its page degraded to a permanent pending
+// state. Profile, Blueprint, Xenios 30, Xenios 90 and Documents all looked
+// unbuilt while their servers were working. Verified against the actual route
+// strings in server/research/: /api/research/profile, /api/research/blueprint,
+// /api/research/plans/xenios30, /api/research/plans/xenios90 (no hyphen in
+// either plan path) and /api/research/documents.
+//
+// Do not "simplify" these back onto BASE.
+const PLATFORM = "/api/research";
+
 // --- Dashboard -------------------------------------------------------------
 
 export function getMemberOverview<T>(token?: string | null): Promise<ApiResult<T>> {
@@ -62,7 +81,7 @@ export function requestPrivacyDeletion(token?: string | null): Promise<ApiResult
 // --- Profile ---------------------------------------------------------------
 
 export function getProfile<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/profile`, token);
+  return apiGet<T>(`${PLATFORM}/profile`, token);
 }
 
 // --- Assessment ------------------------------------------------------------
@@ -151,28 +170,37 @@ export function withdrawResearchAgreement(
 // --- Blueprint -------------------------------------------------------------
 
 export function getBlueprint<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/blueprint`, token);
+  return apiGet<T>(`${PLATFORM}/blueprint`, token);
 }
 
 // --- Plans (xenios 30 and xenios 90) ---------------------------------------
 
 export function getXenios30Plan<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/plans/xenios-30`, token);
+  return apiGet<T>(`${PLATFORM}/plans/xenios30`, token);
 }
 
+// The server identifies the plan by PATH PARAMETER and ignores the body
+// (server/research/plans.ts:639 reads req.params.planId). The previous
+// signature posted a `version` in the body to a URL with no planId segment, so
+// the route never matched and the member was always told "Acknowledgment is
+// not open yet" even with a published plan in front of them.
 export function acknowledgeXenios30(
-  version: string | null,
+  planId: string,
   token?: string | null,
 ): Promise<ApiResult<{ ok?: boolean; acknowledgedAt?: string }>> {
-  return apiPost<{ ok?: boolean; acknowledgedAt?: string }>(`${BASE}/plans/xenios-30/acknowledge`, { version }, token);
+  return apiPost<{ ok?: boolean; acknowledgedAt?: string }>(
+    `${PLATFORM}/plans/xenios30/${encodeURIComponent(planId)}/acknowledge`,
+    {},
+    token,
+  );
 }
 
 export function getXenios90Plan<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/plans/xenios-90`, token);
+  return apiGet<T>(`${PLATFORM}/plans/xenios90`, token);
 }
 
 // --- Documents -------------------------------------------------------------
 
 export function getDocuments<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/documents`, token);
+  return apiGet<T>(`${PLATFORM}/documents`, token);
 }
