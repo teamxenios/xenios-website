@@ -106,3 +106,24 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     still the 2026-07-29T07:03Z Website 1-6 snapshot naming Website 2 as release-manager. The
     Sentinel requests the leader publish its lease claim and current ownership matrix so findings
     can be routed by file area.
+
+## 2026-07-30T00:47Z, sweep 3 (loop iteration 3): marketing-route crawl, redirects, zero console errors
+
+27. Sync: origin/main unchanged at 4a45b89; no new remote branches since claude/f5/pricing-model
+    (18:45 -0500). Leader quiet for about 50 minutes.
+28. Marketing crawl (production, signed out, 1280): /product, /how-it-works, /for-coaches,
+    /for-clients, /storefront, /waitlist, /contact, /book, /about, /careers ALL render real
+    content with correct titles and h1s. ZERO console errors accumulated across the entire
+    twelve-navigation crawl. /storefront is the thinnest page (748 chars of main text) but
+    renders; /book carries its scheduling iframe; /careers lists three roles.
+29. Waitlist form (the site's primary public CTA target): complete form present with eleven
+    fields (two text, email, two selects, tel, three text, textarea, consent checkbox) and a
+    "Join the waitlist" submit. Submission NOT exercised (Sentinel does not submit forms without
+    an approved test procedure).
+30. Redirect aliases verified client-side: /telemedicine lands on /product; /partners lands on
+    /ecosystem. Remaining aliases (/agents, /developers, /enterprise, /ontology, /faq, /argos)
+    queued.
+31. Remaining unvisited marketing routes queued for sweep 4: /network, /ecosystem (direct),
+    /for-practitioners, /manifesto, /security, /compliance, /investors, /press, /privacy,
+    /terms, /disclosures, /early-interest, /concepts, /mvps, plus a 320/768 viewport pass and
+    the accessibility first pass.

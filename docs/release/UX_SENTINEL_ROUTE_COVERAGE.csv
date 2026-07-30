@@ -8,3 +8,15 @@ route,access,roles_allowed,tested_at,environment,viewport,auth_state,result,note
 /clinical,none,none,2026-07-29T23:23Z,production,1280x720,signed-out,TESTED-404,No route registered (SEN-0004)
 /admin/research,protected,samuel-admin,2026-07-29T23:23Z,production,1280x720,signed-out,TESTED-PASS-REACHABLE,Admin sign-in form renders; credential check stays with founder
 /api/health,public,all,2026-07-29T23:19Z,production,n/a,signed-out,TESTED-PASS,200; commerceEnabled false; turnstileConfigured false (SEN-0005 SEN-0006)
+/product,public,all,2026-07-30T00:40Z,production,1280x720,signed-out,TESTED-PASS,Renders; title Product; h1 present; no console errors
+/how-it-works,public,all,2026-07-30T00:40Z,production,1280x720,signed-out,TESTED-PASS,Renders; no console errors
+/for-coaches,public,all,2026-07-30T00:41Z,production,1280x720,signed-out,TESTED-PASS,Renders; no console errors
+/for-clients,public,all,2026-07-30T00:41Z,production,1280x720,signed-out,TESTED-PASS,Renders; no console errors
+/storefront,public,all,2026-07-30T00:42Z,production,1280x720,signed-out,TESTED-PASS,Renders; thin page (748 chars main text); zero in-page research links
+/waitlist,public,all,2026-07-30T00:43Z,production,1280x720,signed-out,TESTED-PASS,Primary CTA target; form complete: 11 fields incl email and consent checkbox plus Join the waitlist submit
+/contact,public,all,2026-07-30T00:44Z,production,1280x720,signed-out,TESTED-PASS,Renders with form
+/book,public,all,2026-07-30T00:44Z,production,1280x720,signed-out,TESTED-PASS,Renders; scheduling iframe present
+/about,public,all,2026-07-30T00:45Z,production,1280x720,signed-out,TESTED-PASS,Renders; no console errors
+/careers,public,all,2026-07-30T00:45Z,production,1280x720,signed-out,TESTED-PASS,Renders; 3 role links
+/telemedicine,redirect,all,2026-07-30T00:46Z,production,1280x720,signed-out,TESTED-PASS,Client redirect lands on /product
+/partners,redirect,all,2026-07-30T00:46Z,production,1280x720,signed-out,TESTED-PASS,Client redirect lands on /ecosystem
