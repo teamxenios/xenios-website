@@ -20,3 +20,19 @@ route,access,roles_allowed,tested_at,environment,viewport,auth_state,result,note
 /careers,public,all,2026-07-30T00:45Z,production,1280x720,signed-out,TESTED-PASS,Renders; 3 role links
 /telemedicine,redirect,all,2026-07-30T00:46Z,production,1280x720,signed-out,TESTED-PASS,Client redirect lands on /product
 /partners,redirect,all,2026-07-30T00:46Z,production,1280x720,signed-out,TESTED-PASS,Client redirect lands on /ecosystem
+/network,public,all,2026-07-30T01:12Z,production,1280x720,signed-out,TESTED-PASS,Renders
+/ecosystem,public,all,2026-07-30T01:12Z,production,1280x720,signed-out,TESTED-PASS,Renders
+/for-practitioners,public,all,2026-07-30T01:13Z,production,1280x720,signed-out,TESTED-PASS,Renders
+/manifesto,public,all,2026-07-30T01:13Z,production,1280x720,signed-out,TESTED-PASS,Renders
+/security,public,all,2026-07-30T01:14Z,production,1280x720,signed-out,TESTED-PASS,Renders
+/compliance,public,all,2026-07-30T01:14Z,production,1280x720,signed-out,TESTED-PASS,Renders
+/investors,public,all,2026-07-30T01:15Z,production,1280x720,signed-out,TESTED-PASS,Renders
+/press,public,all,2026-07-30T01:15Z,production,1280x720,signed-out,TESTED-PASS,Thin contact page (318 chars) by design
+/privacy,public,all,2026-07-30T01:16Z,production,1280x720,signed-out,TESTED-PASS,Renders
+/terms,public,all,2026-07-30T01:16Z,production,1280x720,signed-out,TESTED-PASS,Renders
+/disclosures,public,all,2026-07-30T01:17Z,production,1280x720,signed-out,TESTED-PASS,Renders; title convention breaks (SEN-0011)
+/early-interest,public,all,2026-07-30T01:17Z,production,1280x720,signed-out,TESTED-PASS,Renders with form
+/concepts,public,all,2026-07-30T01:18Z,production,1280x720,signed-out,TESTED-P3,Menu-linked but effectively empty (SEN-0010)
+/mvps,public,all,2026-07-30T01:18Z,production,1280x720,signed-out,TESTED-PASS,Renders
+/faq,redirect,all,2026-07-30T01:19Z,production,1280x720,signed-out,TESTED-PASS,Client redirect lands on /product
+/argos,redirect,all,2026-07-30T01:19Z,production,1280x720,signed-out,TESTED-PASS,Client redirect lands on /mvps

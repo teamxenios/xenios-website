@@ -127,3 +127,20 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     /for-practitioners, /manifesto, /security, /compliance, /investors, /press, /privacy,
     /terms, /disclosures, /early-interest, /concepts, /mvps, plus a 320/768 viewport pass and
     the accessibility first pass.
+
+## 2026-07-30T01:20Z, sweep 4 (loop iteration 4): full public marketing surface crawled clean
+
+32. Sync: origin/main unchanged at 4a45b89; claude/f5/pricing-model untouched since 18:45 -0500.
+33. Crawled the remaining thirteen marketing routes (production, signed out, 1280): /network,
+    /ecosystem, /for-practitioners, /manifesto, /security, /compliance, /investors, /press,
+    /privacy, /terms, /disclosures, /early-interest (form present), /concepts, /mvps. All render;
+    ZERO console errors across the crawl. Redirects /faq -> /product and /argos -> /mvps land
+    correctly. With sweep 3 this completes the entire public marketing surface: 24 content
+    routes rendering, 4 of 8 redirect aliases live-verified (the other four are identical
+    one-line Redirect components in App.tsx, source-verified).
+34. New P3s: SEN-0010 (/concepts is menu-linked but effectively empty, "New concepts are on the
+    way", 129 chars) and SEN-0011 (/disclosures title uses "Disclosures - xenios", breaking the
+    comma title convention every other page follows).
+35. Queue for sweep 5: 320/768 viewport pass on home, waitlist, and gateway; accessibility first
+    pass (headings, labels, focus) on home and waitlist; the four remaining redirect aliases
+    live; storefront thinness noted for the leader's workstream 5 copy pass.
