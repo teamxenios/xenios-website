@@ -40,3 +40,25 @@ export function isResearchResetPasswordPath(pathname: string): boolean {
   const p = normalize(pathname);
   return p === "/research/reset-password" || p === "/research/reset-password/";
 }
+
+export function isResearchActivatePath(pathname: string): boolean {
+  // Activation links are opened from email in a fresh browser. The page must
+  // render without the shared review cookie, while its API remains protected
+  // by the member's own Bearer token.
+  const p = normalize(pathname);
+  return p === "/research/activate" || p === "/research/activate/";
+}
+
+export function isResearchApplicationStatusPath(pathname: string): boolean {
+  // All three registered status aliases can carry a signed status or
+  // account-claim token. Keep them in the same isolated account-access chrome.
+  const p = normalize(pathname);
+  return (
+    p === "/research/apply/status" ||
+    p === "/research/apply/status/" ||
+    p === "/research/application/status" ||
+    p === "/research/application/status/" ||
+    p === "/research/application-status" ||
+    p === "/research/application-status/"
+  );
+}
