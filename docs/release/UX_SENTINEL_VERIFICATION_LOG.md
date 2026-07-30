@@ -303,3 +303,24 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     remains open. Fix-verification queue unchanged: SEN-0014 (home four actions), SEN-0013
     (activation gate), SEN-0012 (ghost CTA), SEN-0015 (wholesale costs in public repo doc),
     SEN-0016 (founder decision), plus the five protected migrations still pending application.
+
+## 2026-07-30T11:50Z, PR #144 review complete (5-agent workflow, verified): REQUEST_CHANGES
+
+66. SEN-0017 filed (P1, blocks merge as-is): the pricing-model import predates the 2026-07-30
+    directive and drifts on every substantive value. All 15 member price targets encode the
+    superseded market-led numbers (examples: P001 109 vs locked 335.00, P007 79 vs 197.50, P012
+    109 vs 222.50; full table in the ledger). The locked formula ROUND(wholesale x 2.5, 2)
+    appears nowhere; instead the module implements a nearest-5 ladder for 39 expansion targets
+    and the tests PIN the forbidden x9 ladder (expect overrideTargetCents % 1000 == 900).
+    Presentation canon is inverted: the stale supplier label is the SKU identity and the
+    founder-confirmed presentation sits as conflicting metadata, the reverse of directive 12.2.
+67. Engineering quality verified GOOD: activation genuinely fail-closed (12 gates, member price
+    display null for all 70 rows, nothing chargeable), the discount policy cannot break exact
+    cents, no wholesale cost is client-reachable, zero em dashes (test-enforced). The eleven
+    presentation mismatches are preserved with both versions matching the directive workbooks.
+68. SEN-0018 filed (P2, pre-existing on main): peptide-catalog.ts computes customer amounts at
+    1.80x and matrix amounts at 2.5x with a 99 floor and round-up-to-5; neither reproduces the
+    locked table, and the branch's wholesale cents match the directive exactly on all 15, so the
+    correct prices are derivable in-repo once the locked formula is implemented.
+69. Verdict REQUEST_CHANGES posted to Codex on PR #144 with the per-SKU table and the five
+    concrete pre-merge changes.
