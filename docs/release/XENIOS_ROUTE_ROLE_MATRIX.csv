@@ -1,0 +1,254 @@
+route,family,status,directive_section,roles,notes
+/,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/about,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/*,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/activation-bridge,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/activation-checklist,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/activation-queue,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/activation-readiness,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/activation-reconciliation,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/applications,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/applications/:id,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/audit,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/blueprint-review,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/capabilities,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/commerce-queues,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/esign,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/fulfillment,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/guides,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/guides/:id,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/inventory,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/members,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/members/:id,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/orders,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/orders/:id,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/partners,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/partners/:id,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/plans,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/plans/:id,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/privacy,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/product-configuration,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/product-requests,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/product-requests/:id,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/products,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/products/:id,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/questions,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/questions/:id,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/required-inputs,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/admin/research/security,admin,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/agents,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/argos,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/book,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/care,care,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/care/*,care,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/care/appointments,care,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/care/consent,care,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/care/eligibility,care,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/care/pharmacy,care,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/care/prescriptions,care,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/careers,care,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/careers/:slug,care,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/careers/innovative-product-builder,care,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/compliance,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/concepts,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/contact,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/developers,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/disclosures,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/early-interest,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/ecosystem,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/enterprise,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/faq,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/for-clients,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/for-coaches,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/for-practitioners,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/for/:slug,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/how-it-works,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/investors,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/kairos,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/manifesto,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/mvps,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/network,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/ontology,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/partners,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/press,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/privacy,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/product,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/*,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/activate,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/application-status,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/apply,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/assessment,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/blueprint,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/cart,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/checkout,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/diagnostics,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/documents,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/documents-center,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/education,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/goals,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/goals/:slug,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/guides,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/guides/:slug,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/membership,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/metabolic-care,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/orders,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/orders/:id,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/privacy,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/product-requests,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/product-requests/new,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/products,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/products/:slug,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/profile,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/questions,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/referrals,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/security,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/storage,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/subscriptions,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/supplements,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/support,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/tracker,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/xenios-30,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/member/xenios-90,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/apply,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/campaigns,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/commissions,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/compliance,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/conversions,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/dashboard,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/events,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/leads,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/links,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/onboarding,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/organizations,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/payouts,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/resources,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/security,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/support,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/partners/training,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/privacy,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/reset-password,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/sign-in,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/support,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/research/terms,research,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/security,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/storefront,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/telemedicine,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/terms,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/waitlist,marketing,EXISTS,current-main,visitor or per-manifest,registered at c8ffce4
+/,public,EXISTS,8.2,visitor,
+/apply,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/login,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/membership,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/research,public,EXISTS,8.2,visitor,
+/care,public,EXISTS,8.2,visitor,
+/care/eligibility,public,EXISTS,8.2,visitor,
+/care/consent,public,EXISTS,8.2,visitor,
+/partners,public,EXISTS,8.2,visitor,
+/partners/apply,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/partners/login,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/supplier/login,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/clinical/login,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/admin,public,EXISTS,8.2,visitor,
+/support,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/privacy,public,EXISTS,8.2,visitor,
+/terms,public,EXISTS,8.2,visitor,
+/accessibility,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/refunds,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/shipping,public,TARGET-NEW,8.2,visitor,directive target; Codex to build or map to an existing canonical route
+/member,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/home,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/plans,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/research,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/catalog,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/products/:slug,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/cart,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/checkout,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/orders,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/orders/:id,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/care,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/care/cases/:id,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/labs,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/appointments,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/messages,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/notifications,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/support,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/profile,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/member/security,member,TARGET-NEW,8.3,member,directive target; Codex to build or map to an existing canonical route
+/partner,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/apply,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/home,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/profile,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/links,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/leads,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/clients,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/orders,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/commissions,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/payouts,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/support,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/organization,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/sellers,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/partner/settings,partner,TARGET-NEW,8.4,partner roles,directive target; Codex to build or map to an existing canonical route
+/supplier,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/home,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/orders,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/orders/:id,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/inventory,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/lots,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/coa,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/qa,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/packing,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/shipments,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/exceptions,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/returns,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/team,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/notifications,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/supplier/documents,supplier,TARGET-NEW,8.5,supplier roles,directive target; Codex to build or map to an existing canonical route
+/clinical,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/home,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/cases,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/cases/:id,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/intake,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/eligibility,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/consents,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/schedule,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/appointments,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/orders,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/labs,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/pharmacy,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/protocols,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/administrations,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/follow-up,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/escalations,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/clinical/settings,clinical,TARGET-NEW,8.6,clinical roles,directive target; Codex to build or map to an existing canonical route
+/admin,admin,EXISTS,8.7,admin roles,
+/admin/research,admin,EXISTS,8.7,admin roles,
+/admin/mastertracker,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/members,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/applications,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/partners,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/affiliates,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/organizations,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/suppliers,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/clinical,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/products,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/catalog,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/pricing,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/inventory,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/lots,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/coa,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/orders,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/payments,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/refunds,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/commissions,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/payouts,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/notifications,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/support,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/documents,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/audit,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/settings,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
+/admin/release,admin,TARGET-NEW,8.7,admin roles,directive target; Codex to build or map to an existing canonical route
