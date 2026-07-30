@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-30T09:37:39Z",
-  "productionBaseSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+  "generatedAt": "2026-07-30T21:25:26Z",
+  "productionBaseSha": "696d75b997fa95770aaba56afb2bc640560ed678",
   "lanes": [
     {
       "owner": "Website 1",
@@ -379,9 +379,95 @@
         "docs/coordination/WEBSITE_3_WAVE3_MEMBER_CATALOG_HANDOFF.md",
         "server/research/catalog/member-catalog-projection.test.ts",
         "server/research/catalog/member-catalog-projection.ts",
-        "server/research/catalog/product-control-reader.test.ts",
-        "server/research/catalog/product-control-reader.ts",
         "shared/research/member-catalog.ts"
+      ]
+    },
+    {
+      "id": "OWNER-W2-P1-CANONICAL-PRODUCT-CONTROL-PRICE",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/products-diagnostics/product-control-price-resolver.ts",
+        "server/research/products-diagnostics/product-control-price-resolver.test.ts",
+        "server/research/catalog/product-control-reader.ts",
+        "server/research/catalog/product-control-reader.test.ts",
+        "server/research/commerce/cart-product-selection.ts",
+        "server/research/commerce/cart-product-selection.test.ts"
+      ]
+    },
+    {
+      "id": "OWNER-W2-CARE-ARCHITECTURE-WS6-A",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/care/architecture/CARE_48_STATE_CAPABILITY_MODEL.md",
+        "docs/care/architecture/CARE_PRIVACY_TEST_MATRIX.md",
+        "docs/care/architecture/CARE_WORKFLOW_STATE_MACHINE.md",
+        "docs/care/architecture/CONFIDENTIAL_PROVIDER_ROSTER.md",
+        "docs/care/architecture/GLP_CARE_AND_QUANTUM_EV_BOUNDARIES.md"
+      ]
+    },
+    {
+      "id": "OWNER-W2-CARE-SHARED-CONTRACTS-WS6-B",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "shared/care/follow-up.test.ts",
+        "shared/care/follow-up.ts",
+        "shared/care/jurisdiction-capabilities.test.ts",
+        "shared/care/jurisdiction-capabilities.ts",
+        "shared/care/labs.test.ts",
+        "shared/care/labs.ts",
+        "shared/care/programs.test.ts",
+        "shared/care/programs.ts"
+      ]
+    },
+    {
+      "id": "OWNER-W2-AFFILIATE-ORGANIZATION-ECONOMICS",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/affiliates/organization-economics/port.ts",
+        "server/research/affiliates/organization-economics/production.test.ts",
+        "server/research/affiliates/organization-economics/production.ts",
+        "shared/research/affiliates/organization-economics.ts"
+      ]
+    },
+    {
+      "id": "OWNER-W2-RESEARCH-MEMBER-UI-CONTRACT-RECONSTRUCTION",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "client/src/research/adapters/member.ts",
+        "client/src/research/adapters/member.test.ts",
+        "client/src/research/pages/member/Profile.tsx",
+        "client/src/research/pages/member/profile.test.tsx",
+        "client/src/research/pages/member/Blueprint.tsx",
+        "client/src/research/pages/member/blueprint.test.tsx",
+        "client/src/research/pages/member/Xenios90.tsx",
+        "client/src/research/pages/member/xenios90.test.tsx",
+        "client/src/research/pages/member/Documents.tsx",
+        "client/src/research/pages/member/documents.test.tsx",
+        "client/src/research/adapters/guides.ts",
+        "client/src/research/adapters/guides.test.ts",
+        "client/src/research/pages/member/Questions.tsx",
+        "client/src/research/pages/member/questions.test.tsx",
+        "client/src/research/adapters/tracker.ts",
+        "client/src/research/adapters/tracker.test.ts",
+        "client/src/research/pages/member/Tracker.tsx",
+        "client/src/research/pages/member/tracker.test.tsx",
+        "client/src/research/ui/shells.tsx",
+        "client/src/research/ui/shells.test.tsx"
       ]
     },
     {

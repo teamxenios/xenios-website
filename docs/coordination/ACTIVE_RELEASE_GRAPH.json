@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-07-30T09:37:39Z",
-  "productionSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+  "generatedAt": "2026-07-30T21:25:26Z",
+  "productionSha": "696d75b997fa95770aaba56afb2bc640560ed678",
   "nodes": [
     {
-      "id": "production-4a45b89",
+      "id": "production-696d75b",
       "type": "production_baseline",
       "owner": "Website 2",
       "state": "AUDITED_BASELINE",
-      "sha": "4a45b89856df3104de498c7124d27b608e52b34d",
-      "label": "Audited production baseline / PR #143 postdeploy live"
+      "sha": "696d75b997fa95770aaba56afb2bc640560ed678",
+      "label": "Audited production baseline / PR #166 postdeploy live"
     },
     {
       "id": "high-capabilities-route",
@@ -193,16 +193,16 @@
     },
     {
       "from": "pr132-pr106-ownership-policy",
-      "to": "production-4a45b89",
+      "to": "production-696d75b",
       "relation": "deployed_as"
     },
     {
-      "from": "production-4a45b89",
+      "from": "production-696d75b",
       "to": "high-capabilities-route",
       "relation": "closes"
     },
     {
-      "from": "production-4a45b89",
+      "from": "production-696d75b",
       "to": "high-admin-page-privacy",
       "relation": "closes"
     },
@@ -222,7 +222,7 @@
       "relation": "superseded_by"
     },
     {
-      "from": "production-4a45b89",
+      "from": "production-696d75b",
       "to": "pr85-dc11623d",
       "relation": "integration_base_for"
     },
@@ -242,7 +242,7 @@
       "relation": "must_be_integrated_before"
     },
     {
-      "from": "production-4a45b89",
+      "from": "production-696d75b",
       "to": "pr117-persistent-cart",
       "relation": "integration_base_for"
     },

@@ -30,14 +30,23 @@ import {
 } from "../scripts/acceptance/verify-production-state.ts";
 
 const ROOT = process.cwd();
-const NOW = new Date("2026-07-30T09:37:39.000Z");
-const PRODUCTION_SHA = "4a45b89856df3104de498c7124d27b608e52b34d";
+const NOW = new Date("2026-07-30T21:25:26.000Z");
+const PRODUCTION_SHA = "696d75b997fa95770aaba56afb2bc640560ed678";
+const PROTECTED_PENDING_SOURCE_SHA =
+  "4a45b89856df3104de498c7124d27b608e52b34d";
 const HEAD_SHA = "12759c2567246ee83ed71aad9ffa4b517d31e8aa";
 const RESERVATION_SOURCE_SHA = "31b91f107cd2a54140d007267bb4cc02549e8404";
 const RESERVATION_SOURCE_PATH =
   "supabase/research-inventory-reservation-commands.sql";
 const RESERVATION_SOURCE_BLOB =
   "97b304881eb65c9517beae1b91e8dc39982a8e34";
+const PROTECTED_PENDING_SOURCE_PATHS = new Set([
+  "supabase/migrations/20260727200000_research_persistent_cart.sql",
+  "supabase/migrations/20260728010000_research_fulfillment_supplier_operations.sql",
+  "supabase/migrations/20260728020000_research_affiliate_professional_operations.sql",
+  "supabase/migrations/20260729000000_research_pricing_lineage.sql",
+  "supabase/migrations/20260729100000_research_rls_retro_hardening.sql",
+]);
 const pg16It =
   process.env.CI || process.env.XENIOS_RUN_PG16_VERIFIER === "1" ? it : it.skip;
 const CONTROL_PLANE_FILES = [
@@ -669,6 +678,8 @@ describe("migration DAG validator", () => {
           ) {
             expect(sourceSha).toBe(RESERVATION_SOURCE_SHA);
             return checkedInReservationSourceBytes();
+          } else if (PROTECTED_PENDING_SOURCE_PATHS.has(path)) {
+            expect(sourceSha).toBe(PROTECTED_PENDING_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
@@ -753,31 +764,31 @@ describe("migration DAG validator", () => {
         id: "research_persistent_cart",
         appliedToProduction: false,
         managedMigrationId: "PENDING",
-        sourceSha: PRODUCTION_SHA,
+        sourceSha: PROTECTED_PENDING_SOURCE_SHA,
       },
       {
         id: "research_fulfillment_supplier_operations",
         appliedToProduction: false,
         managedMigrationId: "PENDING",
-        sourceSha: PRODUCTION_SHA,
+        sourceSha: PROTECTED_PENDING_SOURCE_SHA,
       },
       {
         id: "research_affiliate_professional_operations",
         appliedToProduction: false,
         managedMigrationId: "PENDING",
-        sourceSha: PRODUCTION_SHA,
+        sourceSha: PROTECTED_PENDING_SOURCE_SHA,
       },
       {
         id: "research_pricing_lineage",
         appliedToProduction: false,
         managedMigrationId: "PENDING",
-        sourceSha: PRODUCTION_SHA,
+        sourceSha: PROTECTED_PENDING_SOURCE_SHA,
       },
       {
         id: "research_rls_retro_hardening",
         appliedToProduction: false,
         managedMigrationId: "PENDING",
-        sourceSha: PRODUCTION_SHA,
+        sourceSha: PROTECTED_PENDING_SOURCE_SHA,
       },
     ]);
   });
@@ -1379,7 +1390,7 @@ describe("production state validator", () => {
       `Observed deployment accepted: ${deployedSha} / dep-postdeploy123 (baseline ${PRODUCTION_SHA}).`,
     );
     expect(productionAcceptanceMessage(state)).toBe(
-      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-d9l8s8m7bikc73f9bj0g.`,
+      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-d9lrs8bncjis73ce41j0.`,
     );
     expect(
       validateObservedDeployment(

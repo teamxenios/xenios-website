@@ -1,12 +1,12 @@
 {
   "schemaVersion": 2,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-07-30T09:37:39Z",
+  "generatedAt": "2026-07-30T21:25:26Z",
   "production": {
-    "gitSha": "4a45b89856df3104de498c7124d27b608e52b34d",
-    "renderDeploymentId": "dep-d9l8s8m7bikc73f9bj0g",
+    "gitSha": "696d75b997fa95770aaba56afb2bc640560ed678",
+    "renderDeploymentId": "dep-d9lrs8bncjis73ce41j0",
     "status": "LIVE",
-    "verifiedAt": "2026-07-30T01:05:00Z",
+    "verifiedAt": "2026-07-30T21:25:26Z",
     "branch": "main",
     "publicOrigin": "https://xeniostechnology.com"
   },
@@ -186,7 +186,7 @@
       "lane": "Website 3",
       "headSha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
       "sourceBaseSha": "ae6533f57de6619b9656c866312f953ccb7eca8d",
-      "integrationBaseSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+      "integrationBaseSha": "696d75b997fa95770aaba56afb2bc640560ed678",
       "state": "ACCEPTED_INTEGRATION_PENDING",
       "reason": "Website 6 exact-SHA acceptance has zero blocker/high findings; the 12 accepted source blobs remain integration-gated and the exact current-main merge tree must be recomputed before a transfer candidate freezes.",
       "prohibitedPredecessor": "0472905dff10c45239b7f95834e1086c3b3c5f59"
@@ -227,7 +227,7 @@
     {
       "lane": "Website 1",
       "state": "REPLACEMENT_IN_PROGRESS",
-      "requiredBaseSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+      "requiredBaseSha": "696d75b997fa95770aaba56afb2bc640560ed678",
       "scope": "durable Samuel authority, account continuity, server-authoritative landing, and audited member-mode switching"
     }
   ],
@@ -278,7 +278,7 @@
     {
       "id": "BLOCKER-PR87-CURRENT-PRODUCTION-SNAPSHOT",
       "state": "FIX_FORWARD_IN_PROGRESS_WITH_WEBSITE_2",
-      "summary": "Current production is healthy and live at 4a45b898; Codex started a docs/control-plane-only reconciliation from that exact base."
+      "summary": "Current production is healthy and live at 696d75b9; Codex started a docs/control-plane-only reconciliation from that exact base."
     },
     {
       "id": "BLOCKER-DURABLE-ADMIN-AUTHORITY",
@@ -333,10 +333,10 @@
   ],
   "lastSuccessfulValidation": {
     "kind": "Codex authenticated Git, Render, and Supabase read-only reconciliation after the founder decision lock",
-    "release": "PR 143",
-    "sourceSha": "586851add0562d4337755c21a8794e7b6c459481",
-    "deployedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
-    "renderDeploymentId": "dep-d9l8s8m7bikc73f9bj0g"
+    "release": "PR 166",
+    "sourceSha": "369db15da73ac008502ec574a183f01bd0b1d20b",
+    "deployedSha": "696d75b997fa95770aaba56afb2bc640560ed678",
+    "renderDeploymentId": "dep-d9lrs8bncjis73ce41j0"
   },
   "evidenceLimitations": [
     "No authorized existing member or administrator browser session was available for this snapshot.",
@@ -356,36 +356,36 @@
     {
       "id": "EVIDENCE-GIT-MAIN",
       "kind": "git",
-      "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
-      "checkedAt": "2026-07-30T01:05:00Z",
-      "detail": "origin/main, PR 143 merge identity, Actions run 30499992101, and authenticated Render deployment dep-d9l8s8m7bikc73f9bj0g were reconciled to the same exact SHA."
+      "observedSha": "696d75b997fa95770aaba56afb2bc640560ed678",
+      "checkedAt": "2026-07-30T21:25:26Z",
+      "detail": "origin/main, PR 166 merge identity, tree 9fa7f3b721a0a123d9129b84789f948fb63bdd80, Actions run 30582426596, and Render deployment dep-d9lrs8bncjis73ce41j0 were reconciled to the same exact SHA."
     },
     {
       "id": "EVIDENCE-PRODUCTION-HTTP",
       "kind": "http",
-      "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
-      "checkedAt": "2026-07-30T01:05:00Z",
-      "detail": "Health, private headers, and disabled fail-closed Care document/API boundaries were checked read-only after PR 143."
+      "observedSha": "696d75b997fa95770aaba56afb2bc640560ed678",
+      "checkedAt": "2026-07-30T21:25:26Z",
+      "detail": "Health, private headers, and disabled fail-closed Care document/API boundaries were checked read-only after PR 166."
     },
     {
       "id": "EVIDENCE-PRODUCTION-DATABASE",
       "kind": "database",
-      "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
-      "checkedAt": "2026-07-30T01:05:00Z",
+      "observedSha": "696d75b997fa95770aaba56afb2bc640560ed678",
+      "checkedAt": "2026-07-30T21:25:26Z",
       "detail": "Authenticated Supabase migration history confirms reservation 20260727160000 applied and exact versions 20260727200000, 20260728010000, 20260728020000, 20260729000000, and 20260729100000 absent. Repository Git-blob checksums are separate source identity evidence; provider SQL-byte equality was not claimed."
     },
     {
       "id": "EVIDENCE-FOUNDER-WORKAROUND-ADDENDUM",
       "kind": "founder_attestation",
-      "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
-      "checkedAt": "2026-07-30T10:02:00Z",
+      "observedSha": "696d75b997fa95770aaba56afb2bc640560ed678",
+      "checkedAt": "2026-07-30T21:25:26Z",
       "detail": "The signed missing-inputs workaround addendum and workbook 345787a2a00ceab988c7222f5d73f5dcaa1928fce643757aad387c8e4cd4aaeb lock the 1,200-unit opening balance per exact mapped Renew360 SKU, supplier-unmetered brand availability, native Superpower D2C/manual handoff, 48 contiguous-state target with Alaska/Hawaii excluded, and a $1,800-per-vial restricted Quantum EV Care route. They do not apply migrations, identify a Quantum product row, seed production, enable payments, or activate Care."
     },
     {
       "id": "EVIDENCE-FINAL-FULL-WEBSITE-DIRECTIVE",
       "kind": "founder_authority",
-      "observedSha": "4a45b89856df3104de498c7124d27b608e52b34d",
-      "checkedAt": "2026-07-30T10:24:00Z",
+      "observedSha": "696d75b997fa95770aaba56afb2bc640560ed678",
+      "checkedAt": "2026-07-30T21:25:26Z",
       "detail": "Final master directive SHA-256 aeef43961c57f5740600aca45c9a5a0b0801f033d68643869bcbf6cedcf01373, Codex copy 27c9b330d19c1114dfe2d10d23be027821cb26abdfa4aa1486903cede4761886, and Claude review copy 0ad9f242308773ede5307ba027ae308e6993d97978c60556e269a89fbc2c0461 establish Codex/Website2 as sole release operator and Claude as independent reviewer. The three attached workbook copies are byte-identical to the already pinned 2b47a6b6..., 5bc5a624..., and 345787a2... sources."
     }
   ],
