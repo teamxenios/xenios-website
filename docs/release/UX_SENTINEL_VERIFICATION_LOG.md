@@ -324,3 +324,17 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     correct prices are derivable in-repo once the locked formula is implemented.
 69. Verdict REQUEST_CHANGES posted to Codex on PR #144 with the per-SKU table and the five
     concrete pre-merge changes.
+
+## 2026-07-30T21:45Z, integration-cycle status
+
+70. SEN-0013 closed verified-fixed: Codex integrated the PR #147 content via PR #166 with its
+    manifest pin; production verified (fresh browser reaches /research/activate). PR #147 closed
+    as integrated. SEN-0016 closed verified-fixed via PR #146 on production.
+71. PR #161 (drift reconciliation) closed by the release manager for current-base
+    reconstruction: the member-UI endpoint family is re-planned as Website 2's exact 20-path
+    plan with client units rebuilt after policy deployment. The reviewer lane returns to
+    verify-and-review for that family; the audit and batches informed the plan.
+72. Still open from the reviewer session: PR #155 (catalog-display wiring, lease-clean half) and
+    PR #165 (add-to-cart affordance). Ecosystem active: Website 2 (member UI), Website 4
+    (affiliate economics kernel, PR #164), Website 5 (application UI, merged), workstream 6
+    Care architecture branch, and PRs #163/#167/#168 from parallel sessions.
