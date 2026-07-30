@@ -162,9 +162,9 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
       "/", // Wordmark's link back to the site root
       "/research/apply",
       "/research/sign-in",
-      "/research/policies/privacy",
-      "/research/policies/terms",
-      "mailto:research@xeniostechnology.com",
+      "/research/privacy",
+      "/research/terms",
+      "/research/support",
     ]);
 
     const view = await renderGateway();
@@ -235,7 +235,7 @@ describe("Gateway: responsive + feature-flag dimension", () => {
     ).toEqual([]);
   });
 
-  const VIEWPORT_WIDTHS = [375, 1920]; // representative narrow (mobile) and wide (desktop)
+  const VIEWPORT_WIDTHS = [320, 375, 768, 1024, 1440];
 
   for (const width of VIEWPORT_WIDTHS) {
     it(`stays clean at a reported ${width}px viewport width (DOM re-check only, see comment above)`, async () => {

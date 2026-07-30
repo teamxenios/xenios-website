@@ -1,8 +1,9 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import type { ApplicationStatusView } from "@shared/research/membership-types";
 import { PageIntro } from "../components";
+import { ResearchErrorState, ResearchLoadingState } from "../ui/kit";
 
 // Applicant-facing status page, reached from the signed link in every email.
 
@@ -29,6 +30,11 @@ function ClaimAccount() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [claimed, setClaimed] = useState(false);
+  const successRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (claimed) successRef.current?.focus();
+  }, [claimed]);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -64,7 +70,14 @@ function ClaimAccount() {
 
   if (claimed) {
     return (
-      <div className="card" data-testid="card-claim-success">
+      <div
+        ref={successRef}
+        className="card"
+        role="status"
+        aria-live="polite"
+        tabIndex={-1}
+        data-testid="card-claim-success"
+      >
         <p className="mono-cap text-pulse mb-2">Account created</p>
         <p className="body-s text-ink-2 mb-4">Your member account is ready. Sign in to continue.</p>
         <Link href="/research/sign-in" className="btn btn-primary">Sign in</Link>
@@ -99,6 +112,7 @@ export default function ApplyStatus() {
   const [error, setError] = useState<string | null>(null);
   const [resendEmail, setResendEmail] = useState("");
   const [resendMessage, setResendMessage] = useState<string | null>(null);
+  const [resendOutcome, setResendOutcome] = useState<"success" | "error" | null>(null);
   const [resending, setResending] = useState(false);
 
   useEffect(() => {
@@ -131,13 +145,16 @@ export default function ApplyStatus() {
     };
   }, []);
 
-  async function requestNewLink() {
+  async function requestNewLink(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     if (resending || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(resendEmail.trim())) {
       setResendMessage("Enter a valid email address.");
+      setResendOutcome("error");
       return;
     }
     setResending(true);
     setResendMessage(null);
+    setResendOutcome(null);
     try {
       const res = await fetch("/api/research/applications/resend-link", {
         method: "POST",
@@ -145,10 +162,14 @@ export default function ApplyStatus() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: resendEmail.trim().toLowerCase() }),
       });
-      const body = await res.json().catch(() => null);
-      setResendMessage(body?.message || "If an application exists for that address, a secure status link is on its way.");
+      await res.json().catch(() => null);
+      if (!res.ok) throw new Error("request_failed");
+      // Deliberately independent of whether an application exists.
+      setResendMessage("If an application exists for that address, a secure status link is on its way.");
+      setResendOutcome("success");
     } catch {
       setResendMessage("The request could not be processed. Please try again.");
+      setResendOutcome("error");
     } finally {
       setResending(false);
     }
@@ -159,13 +180,14 @@ export default function ApplyStatus() {
   return (
     <>
       <SeoHead title="Application status, xenios research" description="Check the status of your xenios research membership application." path="/research/apply/status" />
-      <PageIntro eyebrow="Application status" title={copy ? copy.title : error ? "Status unavailable" : "Loading"} />
+      <PageIntro eyebrow="Application status" title={copy ? copy.title : error ? "Status unavailable" : "Application status"} />
       <section className="container-x pb-20">
         <div className="max-w-[560px]">
+          {!error && !view && <ResearchLoadingState label="Loading application status" />}
           {error && (
             <div>
-              <p className="body-l text-ink-2">{error}</p>
-              <div className="card mt-8">
+              <ResearchErrorState message={error} />
+              <form className="card mt-8" onSubmit={requestNewLink} noValidate>
                 <p className="mono-cap text-ink-mute mb-3">Lost your link?</p>
                 <p className="body-s text-ink-2 mb-4">
                   Enter the email you applied with and we will send a fresh secure link to that address.
@@ -174,16 +196,26 @@ export default function ApplyStatus() {
                 <input
                   id="rs-email"
                   type="email"
+                  autoComplete="email"
                   className="input-field"
                   value={resendEmail}
                   onChange={(e) => setResendEmail(e.target.value)}
                   data-testid="input-resend-email"
                 />
-                {resendMessage && <p className="body-s text-ink-2 mt-3" role="status" data-testid="text-resend-message">{resendMessage}</p>}
-                <button type="button" className="btn btn-secondary mt-4" onClick={() => void requestNewLink()} disabled={resending} data-testid="button-resend-link">
+                {resendMessage && (
+                  <p
+                    className="body-s text-ink-2 mt-3"
+                    role={resendOutcome === "error" ? "alert" : "status"}
+                    aria-live={resendOutcome === "success" ? "polite" : undefined}
+                    data-testid="text-resend-message"
+                  >
+                    {resendMessage}
+                  </p>
+                )}
+                <button type="submit" className="btn btn-secondary mt-4" disabled={resending} data-testid="button-resend-link">
                   {resending ? "Sending" : "Send a new link"}
                 </button>
-              </div>
+              </form>
             </div>
           )}
           {view && copy && (

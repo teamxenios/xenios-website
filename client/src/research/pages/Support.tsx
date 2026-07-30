@@ -36,13 +36,25 @@ export default function Support() {
             answer, email us directly.
           </p>
           <div className="mt-4">
-            <a href={`mailto:${SUPPORT_EMAIL}`} className="btn btn-primary">
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="btn btn-primary"
+              style={{
+                maxWidth: "100%",
+                minHeight: 52,
+                height: "auto",
+                paddingTop: 12,
+                paddingBottom: 12,
+                whiteSpace: "normal",
+                overflowWrap: "anywhere",
+                textAlign: "center",
+              }}
+            >
               Email {SUPPORT_EMAIL}
             </a>
           </div>
           <p className="body-s text-ink-mute mt-4">
-            We aim to reply within two business days. If your message needs more time, we will tell you that
-            instead of leaving you waiting.
+            We will reply as soon as a member of the xenios team is available.
           </p>
         </section>
 

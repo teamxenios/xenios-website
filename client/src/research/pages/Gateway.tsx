@@ -2,8 +2,8 @@ import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import Wordmark from "@/components/Wordmark";
 
-// The private membership gateway (canonical structure). This page is the
-// entirety of /research for a gated visitor: wordmark, eyebrow, headline, one
+// The public membership gateway (canonical structure). This page is the
+// entirety of /research for a signed-out visitor: wordmark, eyebrow, headline, one
 // sentence, two actions, three small footer links. No navigation, no catalog,
 // no sections, no scrolling on common desktop sizes.
 //
@@ -13,11 +13,19 @@ import Wordmark from "@/components/Wordmark";
 // media queries: each is min(100%, 240px) inside a wrapping flex row.
 
 const footerLink: React.CSSProperties = { textDecoration: "none" };
+const footerTouchLink: React.CSSProperties = {
+  ...footerLink,
+  minHeight: 44,
+  padding: "12px 2px",
+  display: "inline-flex",
+  alignItems: "center",
+};
 const buttonStyle: React.CSSProperties = {
   height: 52,
   padding: "0 24px",
   fontSize: 15,
-  width: "min(100%, 240px)",
+  width: "100%",
+  maxWidth: 240,
   justifyContent: "center",
 };
 
@@ -36,8 +44,7 @@ export default function Gateway() {
           flexDirection: "column",
           paddingTop: "max(16px, env(safe-area-inset-top))",
           paddingBottom: "max(16px, env(safe-area-inset-bottom))",
-          background:
-            "radial-gradient(ellipse 70% 45% at 50% 38%, color-mix(in srgb, var(--pulse) 7%, transparent), transparent 70%)",
+          background: "var(--paper)",
         }}
       >
         <main
@@ -81,11 +88,11 @@ export default function Gateway() {
         <footer style={{ padding: "0 24px 8px" }}>
           <nav
             aria-label="Gateway links"
-            style={{ display: "flex", justifyContent: "center", gap: 32 }}
+            style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", columnGap: 28, rowGap: 4 }}
           >
-            <Link href="/research/policies/privacy" className="body-s text-ink-mute hover:text-pulse transition-colors" style={footerLink}>Privacy</Link>
-            <Link href="/research/policies/terms" className="body-s text-ink-mute hover:text-pulse transition-colors" style={footerLink}>Terms</Link>
-            <a href="mailto:research@xeniostechnology.com" className="body-s text-ink-mute hover:text-pulse transition-colors" style={footerLink}>Support</a>
+            <Link href="/research/privacy" className="body-s text-ink-mute hover:text-pulse transition-colors" style={footerTouchLink}>Privacy</Link>
+            <Link href="/research/terms" className="body-s text-ink-mute hover:text-pulse transition-colors" style={footerTouchLink}>Terms</Link>
+            <Link href="/research/support" className="body-s text-ink-mute hover:text-pulse transition-colors" style={footerTouchLink}>Support</Link>
           </nav>
         </footer>
       </div>

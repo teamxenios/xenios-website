@@ -4,16 +4,14 @@ import SeoHead from "@/components/SeoHead";
 import type { Policy } from "@shared/research/types";
 import { fetchPolicies } from "../core";
 import { ResearchPublicShell } from "../ui/shells";
-import { ResearchEmptyState, ResearchRouteBoundary } from "../ui/kit";
+import { ResearchEmptyState, ResearchPendingPanel, ResearchRouteBoundary } from "../ui/kit";
 import { ACCESS_ROUTES } from "../lib/routes";
 
 // ---------------------------------------------------------------------------
 // LegalPage (/research/privacy and /research/terms). One component, two
-// kinds, rendering the EXISTING server policy content via fetchPolicies().
-// The policies API is cookie-gated: outside the private gateway it answers
-// without the policy body, and this page renders that truthfully (a calm
-// "enter the gateway first" state with the gateway link), never a fabricated
-// policy text.
+// kinds, rendering the EXISTING public server policy content via
+// fetchPolicies(). If that public document cannot be loaded, the page offers a
+// truthful retry and support path rather than implying private-gateway access.
 // ---------------------------------------------------------------------------
 
 export type LegalKind = "privacy" | "terms";
@@ -37,7 +35,11 @@ type LoadState =
   | { phase: "loading" }
   | { phase: "ready"; policy: Policy }
   | { phase: "missing" }
-  | { phase: "gated" };
+  | { phase: "unavailable" };
+
+function isOperationalDraft(policy: Policy): boolean {
+  return policy.sections.some((section) => /^draft status$/i.test(section.heading.trim()));
+}
 
 export default function LegalPage({ kind }: { kind: LegalKind }) {
   const meta = KIND_META[kind];
@@ -45,11 +47,15 @@ export default function LegalPage({ kind }: { kind: LegalKind }) {
 
   const load = useCallback(async () => {
     setState({ phase: "loading" });
-    const policies = await fetchPolicies();
+    let policies: Awaited<ReturnType<typeof fetchPolicies>>;
+    try {
+      policies = await fetchPolicies();
+    } catch {
+      setState({ phase: "unavailable" });
+      return;
+    }
     if (!policies) {
-      // Non-200 from the cookie-gated policies API: the visitor has not
-      // entered the private gateway (or the endpoint is unreachable).
-      setState({ phase: "gated" });
+      setState({ phase: "unavailable" });
       return;
     }
     const policy = policies[meta.key];
@@ -65,23 +71,29 @@ export default function LegalPage({ kind }: { kind: LegalKind }) {
   }, [load]);
 
   const policy = state.phase === "ready" ? state.policy : null;
+  const draft = policy ? isOperationalDraft(policy) : false;
 
   return (
     <>
       <SeoHead title={`${meta.title}, xenios research`} description={meta.description} path={meta.path} />
       <ResearchPublicShell
-        eyebrow={policy ? `Updated ${policy.updated}` : "Legal"}
+        eyebrow={draft ? "Documentation pending" : policy ? `Updated ${policy.updated}` : "Legal"}
         title={meta.title}
       >
         <ResearchRouteBoundary state={state.phase === "loading" ? "loading" : "ok"}>
-          {state.phase === "gated" && (
+          {state.phase === "unavailable" && (
             <ResearchEmptyState
-              title={`The ${meta.title} is available after you enter the private gateway.`}
-              body="This section is private. Enter through the gateway first, then return here to read the full document."
+              title="Documentation temporarily unavailable"
+              body={`The public ${meta.title} could not be loaded. Try again, or contact Research support if you need help.`}
               action={
-                <Link href={ACCESS_ROUTES.gateway} className="btn btn-primary">
-                  Go to the gateway
-                </Link>
+                <div className="flex flex-wrap gap-3">
+                  <button type="button" className="btn btn-primary" onClick={() => void load()}>
+                    Try again
+                  </button>
+                  <Link href={ACCESS_ROUTES.support} className="btn btn-secondary">
+                    Contact support
+                  </Link>
+                </div>
               }
             />
           )}
@@ -97,27 +109,45 @@ export default function LegalPage({ kind }: { kind: LegalKind }) {
             />
           )}
           {policy && (
-            <article aria-label={meta.title} className="space-y-10" style={{ maxWidth: "72ch" }}>
-              {policy.sections.filter((s: { heading?: string }) => !/draft status/i.test(s.heading ?? "")).map((section) => (
-                <section key={section.heading}>
-                  <h2 className="body-m font-700 mb-3">{section.heading}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph} className="body-m text-ink-2 mb-3">
-                      {paragraph}
-                    </p>
-                  ))}
-                  {section.bullets && (
-                    <ul className="mt-2 space-y-2" style={{ paddingLeft: 18, listStyle: "disc" }}>
-                      {section.bullets.map((bullet) => (
-                        <li key={bullet} className="body-s text-ink-2">
-                          {bullet}
-                        </li>
+            <>
+              {draft && (
+                <ResearchPendingPanel
+                  kind="samuel_review_pending"
+                  title="Documentation pending"
+                  body="This is starter language for operational review. It has not been approved for acceptance, enrollment, payment, or account creation."
+                  testid="legal-draft-status"
+                />
+              )}
+              <article
+                aria-label={`${meta.title}${draft ? " operational draft" : ""}`}
+                className="space-y-10 mt-8"
+                style={{ maxWidth: "72ch" }}
+                data-testid={draft ? "legal-operational-draft" : "legal-approved-document"}
+              >
+                {policy.sections.map((section) => {
+                  const draftStatus = /^draft status$/i.test(section.heading.trim());
+                  return (
+                    <section key={section.heading} className={draftStatus ? "card bg-paper-2" : undefined}>
+                      <h2 className="body-m font-700 mb-3">{section.heading}</h2>
+                      {section.paragraphs.map((paragraph) => (
+                        <p key={paragraph} className="body-m text-ink-2 mb-3">
+                          {paragraph}
+                        </p>
                       ))}
-                    </ul>
-                  )}
-                </section>
-              ))}
-            </article>
+                      {section.bullets && (
+                        <ul className="mt-2 space-y-2" style={{ paddingLeft: 18, listStyle: "disc" }}>
+                          {section.bullets.map((bullet) => (
+                            <li key={bullet} className="body-s text-ink-2">
+                              {bullet}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </section>
+                  );
+                })}
+              </article>
+            </>
           )}
         </ResearchRouteBoundary>
       </ResearchPublicShell>
