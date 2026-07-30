@@ -186,3 +186,23 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 46. Queue for sweep 7: idle watch (main move, pricing-model merge, leader lease record); spot
     contrast pass on the five affected pages after the SEN-0012 fix lands; keyboard focus
     visibility walk when a real display is available for screenshots.
+
+## 2026-07-30T03:40Z, sweep 7 (loop iteration 7): activation journey defect found
+
+47. Sync: origin/main unchanged at 4a45b89; no new branches; production healthy, no redeploy
+    (uptime 13419s at 03:19Z, same process since 22:30Z).
+48. Sitemap consistency: 27 entries, all previously crawled-clean marketing routes; no /research,
+    /care, or /admin disclosure (correct). The empty /concepts page IS in the sitemap, which
+    strengthens SEN-0010. Career roles all listed and all three render fully (4.5k-6.7k chars).
+49. Research access lane, fresh browser: /research/reset-password OPEN via RecoveryChrome with a
+    labelled email field (correct); /research/application-status GATED; /research/activate GATED.
+50. SEN-0013 filed (P2 now, P1 for any freshly approved member): the activation email's Continue
+    activation button links to /research/activate (server/research/membership-activation/
+    emails.ts:188), but the RecoveryChrome bypass in layout.tsx covers only sign-in and
+    reset-password, so the emailed claim link lands on the review password wall from a fresh
+    browser. This contradicts the layout's own design comment ("Account access works from a
+    fresh browser WITHOUT the shared review password") and production has one member pending
+    activation. The application-status gating is the same decision surface. Owner: leader
+    workstream 1 (account continuity), coupled to the SEN-0008 gate-boundary decision.
+51. Queue for sweep 8: idle watch; re-verify SEN-0012/0013 when fixes land; signed-in lanes
+    remain blocked on the leader's fixture strategy.
