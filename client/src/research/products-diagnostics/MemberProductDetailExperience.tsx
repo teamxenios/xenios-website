@@ -52,17 +52,35 @@ function FactSection({
   );
 }
 
+// The add-to-cart outcome the page-level wiring reports back for honest UI.
+export type AddToCartOutcome =
+  | { kind: "added" }
+  | { kind: "not_open"; message: string }
+  | { kind: "signed_out" }
+  | { kind: "error"; message: string };
+
 export function MemberProductDetailExperience({
   product,
   state = "ok",
   errorMessage,
   onRetry,
+  onAddToCart,
 }: {
   product: MemberProductDetail | null;
   state?: MemberCatalogSurfaceState;
   errorMessage?: string;
   onRetry?: () => void;
+  /**
+   * Wired by the page. The button renders ONLY for a variant whose
+   * server-evaluated cart selection exists (variant.selection non-null):
+   * the server decided price, audience, and inventory eligibility, never
+   * the client. Absent wiring or absent selection renders no dead button.
+   */
+  onAddToCart?: (variant: MemberCatalogVariant) => Promise<AddToCartOutcome>;
 }) {
+  const [cartBusy, setCartBusy] = useState(false);
+  const [cartAdded, setCartAdded] = useState(false);
+  const [cartNote, setCartNote] = useState<string | null>(null);
   const [selectedVariantId, setSelectedVariantId] = useState(
     product?.variants[0]?.id ?? "",
   );
@@ -156,7 +174,11 @@ export function MemberProductDetailExperience({
                       id="member-product-variant"
                       className="input-field"
                       value={selected?.id ?? ""}
-                      onChange={(event) => setSelectedVariantId(event.target.value)}
+                      onChange={(event) => {
+                        setSelectedVariantId(event.target.value);
+                        setCartAdded(false);
+                        setCartNote(null);
+                      }}
                     >
                       {product.variants.map((variant) => (
                         <option key={variant.id} value={variant.id}>
@@ -198,6 +220,49 @@ export function MemberProductDetailExperience({
                     </div>
                   </dl>
                 )}
+
+                {selected && onAddToCart && selected.selection ? (
+                  // The server-evaluated selection is the sole authorization to
+                  // offer the purchase affordance: price, audience, and
+                  // inventory eligibility were decided server-side. No
+                  // selection, no button, never a dead control.
+                  <div className="grid gap-2" data-testid="member-product-add-to-cart">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        disabled={cartBusy}
+                        data-testid="button-add-to-cart"
+                        onClick={async () => {
+                          setCartBusy(true);
+                          setCartNote(null);
+                          const outcome = await onAddToCart(selected);
+                          if (outcome.kind === "added") {
+                            setCartAdded(true);
+                            setCartNote("Added to your cart.");
+                          } else if (outcome.kind === "signed_out") {
+                            setCartNote("Your session has ended. Sign in again to add this to your cart.");
+                          } else {
+                            setCartNote(outcome.message);
+                          }
+                          setCartBusy(false);
+                        }}
+                      >
+                        {cartBusy ? "Adding to cart" : "Add to cart"}
+                      </button>
+                      {cartAdded ? (
+                        <Link href="/research/member/cart" className="btn btn-secondary">
+                          View cart
+                        </Link>
+                      ) : null}
+                    </div>
+                    {cartNote ? (
+                      <p className="body-s text-ink-2" role="status">
+                        {cartNote}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
                 <p className="body-s text-ink-mute">
                   Ordering appears only after current product, price,
                   documentation, and availability checks pass.

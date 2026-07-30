@@ -293,3 +293,119 @@ describe("member product detail experience", () => {
     expect(html).not.toContain("overflow-x:scroll");
   });
 });
+
+describe("add-to-cart affordance", () => {
+  const AUTHORIZED_SELECTION = {
+    productId: "product-a",
+    variantId: "variant-a",
+    sku: "SKU-A",
+    audience: "member" as const,
+    audienceEligibility: {
+      audience: "member" as const,
+      state: "authorized" as const,
+      sourceVersion: "v1",
+      evaluatedAt: AT,
+    },
+    price: {
+      id: "price-a",
+      amountCents: 14900,
+      currency: "USD",
+      effectiveAt: "2026-07-01T00:00:00.000Z",
+      expiresAt: null,
+      version: 1,
+    },
+    media: { id: "media-a", kind: "primary_image" as const, altText: "Vial" },
+    canonicalReadiness: {
+      ready: true as const,
+      verifiedInputCount: 1,
+      inputVersions: [{ id: "input-a", version: 1 }],
+      domainVersions: [{ domain: "catalog", version: 1 }],
+    },
+    inventoryEligibility: {
+      productId: "product-a",
+      variantId: "variant-a",
+      state: "eligible" as const,
+      sourceVersion: "v1",
+      evaluatedAt: AT,
+    },
+    evaluatedAt: AT,
+  };
+
+  function withSelection(): MemberProductDetail {
+    return {
+      ...product,
+      variants: [
+        { ...product.variants[0], selection: AUTHORIZED_SELECTION },
+        product.variants[1],
+      ],
+    };
+  }
+
+  it("renders NO button without a server-evaluated selection, even when wired", () => {
+    const html = renderToStaticMarkup(
+      <MemberProductDetailExperience
+        product={product}
+        onAddToCart={async () => ({ kind: "added" as const })}
+      />,
+    );
+    expect(html).not.toContain("button-add-to-cart");
+  });
+
+  it("renders NO button when the page does not wire the action", () => {
+    const html = renderToStaticMarkup(
+      <MemberProductDetailExperience product={withSelection()} />,
+    );
+    expect(html).not.toContain("button-add-to-cart");
+  });
+
+  it("adds through the wired action and offers the cart link on success", async () => {
+    const calls: string[] = [];
+    host = document.createElement("div");
+    document.body.appendChild(host);
+    root = createRoot(host);
+    act(() =>
+      root!.render(
+        <MemberProductDetailExperience
+          product={withSelection()}
+          onAddToCart={async (variant) => {
+            calls.push(variant.sku);
+            return { kind: "added" as const };
+          }}
+        />,
+      ),
+    );
+    const button = host.querySelector<HTMLButtonElement>('[data-testid="button-add-to-cart"]')!;
+    expect(button).toBeTruthy();
+    await act(async () => {
+      button.click();
+    });
+    expect(calls).toEqual(["SKU-A"]);
+    expect(host.textContent).toContain("Added to your cart.");
+    const affordance = host.querySelector('[data-testid="member-product-add-to-cart"]')!;
+    expect(affordance.querySelector('a[href="/research/member/cart"]')).toBeTruthy();
+  });
+
+  it("renders the calm not-open message when commerce is disabled", async () => {
+    host = document.createElement("div");
+    document.body.appendChild(host);
+    root = createRoot(host);
+    act(() =>
+      root!.render(
+        <MemberProductDetailExperience
+          product={withSelection()}
+          onAddToCart={async () => ({
+            kind: "not_open" as const,
+            message: "Ordering is not open yet.",
+          })}
+        />,
+      ),
+    );
+    const button = host.querySelector<HTMLButtonElement>('[data-testid="button-add-to-cart"]')!;
+    await act(async () => {
+      button.click();
+    });
+    expect(host.textContent).toContain("Ordering is not open yet.");
+    const affordance = host.querySelector('[data-testid="member-product-add-to-cart"]')!;
+    expect(affordance.querySelector('a[href="/research/member/cart"]')).toBeNull();
+  });
+});
