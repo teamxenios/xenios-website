@@ -7,6 +7,7 @@ import {
   LiveProductControlReader,
   ProductControlCurrentPriceResolver,
 } from "./product-control-reader";
+import { resolveProductControlPrice } from "../products-diagnostics/product-control-price-resolver";
 
 const AT = "2026-07-26T22:00:00+00:00";
 
@@ -340,21 +341,24 @@ describe("Product Control current price resolver", () => {
 
   it("returns one approved effective price for the exact variant and audience", () => {
     const resolver = new ProductControlCurrentPriceResolver();
-    expect(
-      resolver.resolve({
-        productId: "product-a",
-        variant,
-        prices: [price],
-        audienceEligibility: {
-          audience: "member",
-          state: "authorized",
-          sourceVersion: "member-v1",
-          evaluatedAt: AT,
-        },
-        currency: "USD",
+    const input = {
+      productId: "product-a",
+      variant,
+      prices: [price],
+      audienceEligibility: {
+        audience: "member" as const,
+        state: "authorized" as const,
+        sourceVersion: "member-v1",
         evaluatedAt: AT,
-      }),
-    ).toEqual(price);
+      },
+      currency: "USD",
+      evaluatedAt: AT,
+    };
+    expect(resolver.resolve(input)).toEqual(price);
+    expect(resolveProductControlPrice(input)).toMatchObject({
+      ok: true,
+      price,
+    });
   });
 
   it("fails closed for unreviewed variants, stale prices, and ambiguity", () => {
@@ -407,6 +411,19 @@ describe("Product Control current price resolver", () => {
           ...input.audienceEligibility,
           state: "unauthorized",
         },
+      }),
+    ).toBeNull();
+    expect(
+      resolver.resolve({
+        ...input,
+        prices: [{ ...price, amountCents: 0 }],
+      }),
+    ).toBeNull();
+    expect(
+      resolver.resolve({
+        ...input,
+        currency: "EUR",
+        prices: [{ ...price, currency: "EUR" }],
       }),
     ).toBeNull();
   });

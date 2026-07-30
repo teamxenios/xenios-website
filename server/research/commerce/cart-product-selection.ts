@@ -1,7 +1,6 @@
 import {
   PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS,
   type AdminProductMedia,
-  type AdminProductPrice,
 } from "@shared/research/product-admin";
 import type {
   CartAudienceEligibility,
@@ -13,6 +12,11 @@ import type {
 } from "@shared/research/cart-product-selection";
 import { CART_PURCHASE_AUDIENCES } from "@shared/research/cart-product-selection";
 import type { DomainReadiness, RequiredInput } from "@shared/research/required-inputs";
+import {
+  parseProductControlTimestamp,
+  resolveProductControlPrice,
+  type ProductControlPriceFailureCode,
+} from "../products-diagnostics/product-control-price-resolver";
 
 const REQUIRED_DOMAINS = Array.from(
   new Set(PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map(({ domain }) => domain)),
@@ -20,57 +24,6 @@ const REQUIRED_DOMAINS = Array.from(
 
 function blocked(code: CartProductSelectionFailureCode): CartProductSelectionResult {
   return { ok: false, code };
-}
-
-function strictTimestamp(value: string): number | null {
-  const match =
-    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,6}))?(Z|[+-]\d{2}:\d{2})$/.exec(
-      value,
-    );
-  if (match === null) return null;
-
-  const [, yearText, monthText, dayText, hourText, minuteText, secondText, , zone] =
-    match;
-  const year = Number(yearText);
-  const month = Number(monthText);
-  const day = Number(dayText);
-  const hour = Number(hourText);
-  const minute = Number(minuteText);
-  const second = Number(secondText);
-  const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-  const daysInMonth = [
-    31,
-    leapYear ? 29 : 28,
-    31,
-    30,
-    31,
-    30,
-    31,
-    31,
-    30,
-    31,
-    30,
-    31,
-  ];
-  if (
-    month < 1 ||
-    month > 12 ||
-    day < 1 ||
-    day > daysInMonth[month - 1] ||
-    hour > 23 ||
-    minute > 59 ||
-    second > 59
-  ) {
-    return null;
-  }
-  if (zone !== "Z") {
-    const offsetHour = Number(zone.slice(1, 3));
-    const offsetMinute = Number(zone.slice(4, 6));
-    if (offsetHour > 23 || offsetMinute > 59) return null;
-  }
-
-  const milliseconds = Date.parse(value);
-  return Number.isFinite(milliseconds) ? milliseconds : null;
 }
 
 function exactOne<T>(
@@ -81,65 +34,26 @@ function exactOne<T>(
   return { value: matches.length === 1 ? matches[0] : null, count: matches.length };
 }
 
-function activePrice(
-  prices: readonly AdminProductPrice[],
-  request: CartProductSelectionRequest,
-  evaluatedAt: number,
-):
-  | CartProductSelectionResult
-  | {
-      price: AdminProductPrice;
-      effectiveAt: number;
-      expiresAt: number | null;
-    } {
-  const identityMatches = prices.filter(
-    (price) =>
-      price.productId === request.productId &&
-      price.variantId === request.variantId &&
-      price.audience === request.audience,
-  );
-  if (identityMatches.length === 0) return blocked("price_missing");
-
-  const currencyMatches = identityMatches.filter(
-    (price) => price.currency === request.currency,
-  );
-  if (currencyMatches.length === 0) return blocked("price_currency_mismatch");
-
-  const approved = currencyMatches.filter(
-    (price) => price.status === "active" && Boolean(price.approvedBy),
-  );
-  if (approved.length === 0) return blocked("price_unapproved");
-
-  const current = approved.filter((price) => {
-    const effectiveAt = strictTimestamp(price.effectiveAt);
-    const expiresAt =
-      price.expiresAt === null ? null : strictTimestamp(price.expiresAt);
-    return (
-      effectiveAt !== null &&
-      effectiveAt <= evaluatedAt &&
-      (price.expiresAt === null ||
-        (expiresAt !== null && expiresAt > evaluatedAt))
-    );
-  });
-  if (current.length === 0) return blocked("price_stale");
-  if (current.length !== 1) return blocked("price_ambiguous");
-
-  const price = current[0];
-  if (
-    !price.id.trim() ||
-    !Number.isSafeInteger(price.amountCents) ||
-    price.amountCents < 0 ||
-    !Number.isInteger(price.version) ||
-    price.version <= 0
-  ) {
-    return blocked("price_unapproved");
+function mapPriceFailure(
+  code: ProductControlPriceFailureCode,
+): CartProductSelectionFailureCode {
+  switch (code) {
+    case "invalid_context":
+      return "invalid_request";
+    case "audience_unauthorized":
+      return "audience_unauthorized";
+    case "variant_product_mismatch":
+    case "variant_unapproved":
+    case "variant_inactive":
+    case "member_variant_ineligible":
+    case "variant_sku_missing":
+    case "price_missing":
+    case "price_currency_mismatch":
+    case "price_unapproved":
+    case "price_stale":
+    case "price_ambiguous":
+      return code;
   }
-  return {
-    price,
-    effectiveAt: strictTimestamp(price.effectiveAt)!,
-    expiresAt:
-      price.expiresAt === null ? null : strictTimestamp(price.expiresAt)!,
-  };
 }
 
 function approvedPrimaryMedia(
@@ -238,7 +152,7 @@ export function selectCartProduct(
   request: CartProductSelectionRequest,
   source: CartProductSelectionSource,
 ): CartProductSelectionResult {
-  const evaluatedAt = strictTimestamp(request.evaluatedAt);
+  const evaluatedAt = parseProductControlTimestamp(request.evaluatedAt);
   if (
     !request.productId.trim() ||
     !request.variantId.trim() ||
@@ -280,7 +194,7 @@ export function selectCartProduct(
   if (
     audienceEligibility.state !== "authorized" ||
     !audienceEligibility.sourceVersion.trim() ||
-    strictTimestamp(audienceEligibility.evaluatedAt) !== evaluatedAt
+    parseProductControlTimestamp(audienceEligibility.evaluatedAt) !== evaluatedAt
   ) {
     return blocked("audience_unauthorized");
   }
@@ -300,8 +214,15 @@ export function selectCartProduct(
   }
   if (!variant.sku.trim()) return blocked("variant_sku_missing");
 
-  const priceResult = activePrice(source.prices, request, evaluatedAt);
-  if ("ok" in priceResult) return priceResult;
+  const priceResult = resolveProductControlPrice({
+    productId: request.productId,
+    variant,
+    prices: source.prices,
+    audienceEligibility,
+    currency: request.currency,
+    evaluatedAt: request.evaluatedAt,
+  });
+  if (!priceResult.ok) return blocked(mapPriceFailure(priceResult.code));
   const mediaResult = approvedPrimaryMedia(source.media, product.id);
   if ("ok" in mediaResult) return mediaResult;
   const inputResult = exactRequiredInputs(source.requiredInputs, product.id);
@@ -321,7 +242,7 @@ export function selectCartProduct(
     inventory.state !== "eligible" ||
     inventory.reason !== null ||
     !inventory.sourceVersion.trim() ||
-    strictTimestamp(inventory.evaluatedAt) !== evaluatedAt
+    parseProductControlTimestamp(inventory.evaluatedAt) !== evaluatedAt
   ) {
     return blocked("inventory_unavailable");
   }
