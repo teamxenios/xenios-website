@@ -3,6 +3,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import type { CatalogResponse, CommerceLane, Product } from "@shared/research/types";
 import {
+  isResearchActivatePath,
   isResearchAdminPath,
   isResearchPath,
   isResearchResetPasswordPath,
@@ -147,10 +148,12 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   }
   if (!isResearchPath(req.path)) return next();
   if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");
-  // The password-recovery page (founder decision, 2026-07-19: recovery works
-  // from a fresh browser without the review password) is a sensitive account
-  // page: never cached, never indexed, never leaks a referrer.
-  if (isResearchResetPasswordPath(req.path)) {
+  // The password-recovery and membership-activation pages (account access
+  // works from a fresh browser without the review password; the activation
+  // email's Continue activation link lands directly on /research/activate)
+  // are sensitive account pages: never cached, never indexed, never leak a
+  // referrer.
+  if (isResearchResetPasswordPath(req.path) || isResearchActivatePath(req.path)) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Referrer-Policy", "no-referrer");
     res.setHeader("X-Robots-Tag", "noindex, nofollow");

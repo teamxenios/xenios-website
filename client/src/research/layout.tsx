@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import Wordmark from "@/components/Wordmark";
-import { isResearchResetPasswordPath } from "@shared/research/paths";
+import { isResearchActivatePath, isResearchResetPasswordPath } from "@shared/research/paths";
 import { useResearch } from "./core";
 
 // xenios research: section chrome. Three modes by route (canonical gateway
@@ -259,8 +259,10 @@ function isResearchSignInPath(path: string): boolean {
 }
 
 // Account access works from a fresh browser WITHOUT the shared review
-// password. Sign-in and password recovery render in isolated account chrome;
-// neither route exposes catalog, application, or member data.
+// password. Sign-in, password recovery, and membership activation render in
+// isolated account chrome; none of these routes exposes catalog, application,
+// or member data (activation content itself requires the member's own JWT,
+// which the /api/research/activation wall already enforces server-side).
 export default function ResearchLayout({ children }: { children: ReactNode }) {
   const { gate } = useResearch();
   const [location] = useLocation();
@@ -269,7 +271,11 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   // Use the same decoded, case-folded helper as the router, tracking guard,
   // and server headers. Plain, trailing-slash, case, and encoded forms must
   // all mount the isolated recovery experience outside the shared gate.
-  if (isResearchResetPasswordPath(location) || isResearchSignInPath(location)) {
+  if (
+    isResearchResetPasswordPath(location) ||
+    isResearchSignInPath(location) ||
+    isResearchActivatePath(location)
+  ) {
     return <RecoveryChrome>{children}</RecoveryChrome>;
   }
   if (gate === "checking") {

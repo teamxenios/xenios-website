@@ -40,3 +40,14 @@ export function isResearchResetPasswordPath(pathname: string): boolean {
   const p = normalize(pathname);
   return p === "/research/reset-password" || p === "/research/reset-password/";
 }
+
+export function isResearchActivatePath(pathname: string): boolean {
+  // The activation email's "Continue activation" link lands here from a fresh
+  // browser. Account access works WITHOUT the shared review password (same
+  // founder decision as password recovery): the page renders in the isolated
+  // account chrome, and the activation APIs already require the member's own
+  // Bearer JWT, which bypasses the review-cookie wall on /activation. Same
+  // trailing-slash and normalization tolerance as the reset-password helper.
+  const p = normalize(pathname);
+  return p === "/research/activate" || p === "/research/activate/";
+}

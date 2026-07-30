@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { isResearchAdminPath, isResearchPath, isResearchResetPasswordPath } from "./paths";
+import {
+  isResearchActivatePath,
+  isResearchAdminPath,
+  isResearchPath,
+  isResearchResetPasswordPath,
+} from "./paths";
 
 // The path normalization must match the wouter router (decodeURI + case-fold)
 // so the tracking guard and the server page gate cover exactly the URLs that
@@ -56,6 +61,26 @@ describe("isResearchResetPasswordPath", () => {
     expect(isResearchResetPasswordPath("/research")).toBe(false);
     expect(isResearchResetPasswordPath("/research/member")).toBe(false);
     expect(isResearchResetPasswordPath("/research/reset-password/extra")).toBe(false);
+  });
+});
+
+describe("isResearchActivatePath", () => {
+  it("matches the activation page in plain, case, and encoded forms", () => {
+    expect(isResearchActivatePath("/research/activate")).toBe(true);
+    expect(isResearchActivatePath("/Research/Activate")).toBe(true);
+    expect(isResearchActivatePath("/research/%61ctivate")).toBe(true);
+  });
+
+  it("tolerates the optional trailing slash (wouter route is /research/activate/?$)", () => {
+    expect(isResearchActivatePath("/research/activate/")).toBe(true);
+    expect(isResearchActivatePath("/Research/activate/")).toBe(true);
+  });
+
+  it("does not match other research pages", () => {
+    expect(isResearchActivatePath("/research")).toBe(false);
+    expect(isResearchActivatePath("/research/member")).toBe(false);
+    expect(isResearchActivatePath("/research/activate/extra")).toBe(false);
+    expect(isResearchActivatePath("/research/application-status")).toBe(false);
   });
 });
 
