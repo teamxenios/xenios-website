@@ -1,8 +1,36 @@
-import { useEffect, useState } from "react";
-import { Link } from "wouter";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { Link, Route, Switch } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import type { CareCapabilityStatus } from "@shared/care/contracts";
+
+// The Care section router. App.tsx mounts this section at /care and at the
+// /care/* wildcard, so every Care path that is not one of the explicitly
+// registered pages resolves here. Deep pages are code split.
+const CareIntakePage = lazy(() => import("./CareIntakePage"));
+
+export default function CareSection() {
+  return (
+    <Switch>
+      <Route path="/care/intake">
+        <Suspense
+          fallback={
+            <div
+              className="container-x"
+              style={{ paddingTop: 96 }}
+              aria-busy="true"
+            />
+          }
+        >
+          <CareIntakePage />
+        </Suspense>
+      </Route>
+      <Route>
+        <CarePendingShell />
+      </Route>
+    </Switch>
+  );
+}
 
 const preparation = [
   ["Eligibility", "Location, state coverage, identity, consent"],
@@ -18,7 +46,7 @@ type StatusLoadState =
   | { kind: "ready"; status: CareCapabilityStatus }
   | { kind: "error" };
 
-export default function CareSection() {
+function CarePendingShell() {
   const [loadState, setLoadState] = useState<StatusLoadState>({ kind: "loading" });
   const [loadAttempt, setLoadAttempt] = useState(0);
 
