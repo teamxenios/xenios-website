@@ -394,3 +394,21 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     session. Their correctness rests on the merged source and CI, not on a production probe. The two
     admin endpoints remain provably missing. This is the same limit the audit recorded; noting it
     again here so no later reader mistakes six 401s for six working endpoints.
+
+## 2026-07-31T06:20Z, a reliable external discriminator for wall bypasses (method note)
+
+86. Reviewed PR #191 (profile reads past the review wall, merged as 6908699). Verified correct at
+    code and runtime: bypass is GET/HEAD only, both handlers carry requireActiveMember, and
+    no-store is present, so the PR #188 header-before-auth ordering holds.
+87. METHOD CORRECTION to log entry 83. I recorded that a 401 under /api/research proves nothing
+    because the wall answers 401 for unknown paths. That is true of the STATUS CODE but NOT of the
+    RESPONSE BODY, and the distinction is usable:
+      "Access required."  = the gateway WALL answered (request never reached a route)
+      "Sign in required." = the MEMBER GUARD answered (request passed the wall and hit the handler)
+    Evidence at 6908699: GET /profile and GET /profile/sensitive return 'Sign in required.'; POST
+    /profile and GET /nope-xyz return 'Access required.'
+88. So a wall bypass IS externally verifiable without credentials: assert the bypassed read returns
+    the guard message and that the same path under a write verb still returns the wall message.
+    Use this for every future addition to DOWNSTREAM_MEMBER_GUARDED_READ_PATHS,
+    OPEN_PUBLIC_READ_PATHS, OPEN_PUBLIC_WRITE_PATHS, or OPEN_ACCOUNT_WRITE_PATHS.
+89. SEN-0022 re-probed at 6908699: /admin still returns no x-robots-tag. Still open.
