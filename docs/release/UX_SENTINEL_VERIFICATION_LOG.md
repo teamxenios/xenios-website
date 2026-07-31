@@ -741,3 +741,30 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
      now gates a measured accessibility failure on 29 live pages.
 152. Screenshot attempt failed (browser pane not displayed). Not chased: computed-style values plus
      the contrast computation are stronger and more checkable evidence than an image.
+
+## 2026-07-31T12:55Z, PR #200 documents UI verified; client and server contracts agree
+
+153. PR #200 (6e4bf9e) merged, hardening the member documents UI and download path. Reviewed the
+     full client/server seam rather than the diff alone, because this is where the signed-URL
+     contract has to line up exactly with the wall bypass shipped in #198.
+154. CONTRACTS AGREE. Client validator in adapters/member.ts:326
+       /^\/api\/research\/documents\/([0-9a-f-]{36})\/download\?exp=(\d+)&sig=([A-Za-z0-9_-]{43})$/
+     Server bypass in research/index.ts
+       /^\/api\/research\/documents\/([^/?]+)\/download\?exp=(0|[1-9]\d*)&sig=([A-Za-z0-9_-]{43})$/
+     plus a uuid and lowercase check. The exp forms differ syntactically but not in effect: the
+     client permits (\d+) then rejects non-canonical values via String(parsedExp) === match[2],
+     which is the same leading-zero rejection the server encodes in its alternation.
+155. CHECKED A UNITS MISMATCH THAT WOULD HAVE BROKEN EVERY DOWNLOAD, and it is clean. The client
+     asserts parsedExp === Date.parse(grant.expiresAt), and Date.parse returns MILLISECONDS, so a
+     server emitting exp in seconds would fail that equality on every request. The server uses
+     milliseconds end to end: expiresAtMs = now.getTime() + TTL, exp: String(expiresAtMs), and
+     expiresAt: new Date(expiresAtMs).toISOString(). Consistent. No defect.
+156. The client also fetches grant.signedUrl VERBATIM, so the exp and sig query survive to the
+     server, which matters because the wall bypass keys on originalUrl rather than path. Additional
+     care worth recording: it rejects a grant whose documentId does not match the requested one,
+     rejects tokens containing whitespace or newlines (header-injection guard), sets
+     redirect: "error", and refuses any response that does not carry Cache-Control: no-store, so a
+     cacheable response is never treated as a private document.
+157. No response yet on the SEN-0012 P1 escalation (#182) or on the protection re-baseline question.
+     Wall scope unchanged: 20 routes across 5 pages still shadowed (assessment, blueprint, media,
+     questions, telegram, tracker, agreements) plus the PUT/DELETE verb gap.
