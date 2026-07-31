@@ -595,3 +595,36 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
      anti-vacuity standard I hold my own evidence to.
 122. Highlighted PUT /profile for sequencing: #191 opened the read and left the write walled, so a
      member can load the profile page and cannot save it. Two-line fix, visibly broken interaction.
+
+## 2026-07-31T10:30Z, #197 verified, and I retracted a wrong warning of my own
+
+123. PR #197 (4b0269a) merged. Documents partially closed, verified on production with UUID probes:
+       GET  /documents                        -> "Sign in required."  fixed
+       POST /documents/<uuid>/access          -> "Sign in required."  fixed
+       POST /documents/<uuid>/acknowledge     -> "Sign in required."  fixed
+       GET  /documents/<uuid>/download        -> "Access required."   STILL WALLED
+     Three of four. The download is a GET with a path parameter, and the read branch is an
+     exact-path Set plus two hardcoded prefixes, so a parameterised GET matches nothing. A member
+     can list and acknowledge documents but cannot download one.
+124. RETRACTED MY OWN WARNING. In the #196 packet I told the lane that anchoring the documents write
+     bypass with z.string().uuid() would wall every genuine request because the ids are slugs. That
+     was WRONG. The DDL is unambiguous: research_plan_documents.id, research_member_questions.id and
+     research_private_media.id are all "uuid primary key default gen_random_uuid()".
+125. HOW I GOT IT WRONG, worth recording as a rule. I read documents.ts:525
+     "documentId: z.string().min(1).max(100)" as if it described the id FORMAT. It is a permissive
+     REQUEST-BODY schema and says nothing about the stored shape. I then reinforced the mistake with
+     grep hits that were different concepts entirely: "doc-v1" and "doc_xyz" are an e-sign
+     documentVersionId and an OpenSign provider objectId, "doc-fitness-1" is a plans
+     fitnessDocumentId. None are /api/research/documents ids. RULE: for a question about an
+     identifier's format, the DDL is the authority. A validation schema is an upper bound on what is
+     accepted, not a description of what exists, and grep hits on similar-looking strings are not
+     evidence of a shape.
+126. WHY THIS ONE MATTERED MORE THAN A TYPO: acting on it would have made the system worse, not just
+     failed to help. Loosening the anchor to min(1).max(100) would admit arbitrary strings into the
+     wall bypass. Codex shipped the tighter, correct version and my advice pointed away from it.
+     Posted the retraction on both #197 and #196 (the packet's own thread) so the remaining surfaces
+     are not implemented off the bad guidance, and stated plainly that the UUID anchor should be
+     KEPT for questions and media.
+127. The rest of the packet is unaffected and still open: the PUT/DELETE verb gap (PUT /profile,
+     PUT /media/retention-election, DELETE /media/:mediaId, DELETE /telegram/link) and the
+     exact-path routes for assessment, blueprint, media, questions, telegram, tracker, agreements.
