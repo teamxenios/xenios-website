@@ -82,6 +82,10 @@ import {
 } from "../providers/fulfillment";
 import { hasAcceptedCurrent } from "../agreements";
 import { getSupabaseAdmin, supabaseConfigured } from "../../supabase";
+import {
+  createContentGuideSource,
+  relatedProductSkusByGuideSlug,
+} from "../evidence/content-guides";
 
 // ---------------------------------------------------------------------------
 // Production commerce dependencies (integration lane): the three-state composition.
@@ -301,14 +305,22 @@ function catalogDependency(catalogService: CatalogService): CommerceDependencies
   };
 }
 
-// Evidence-domain guides exist (server/research/evidence), but the
-// evidence-to-commerce DTO adapter is the next content-integration step, so
-// the member guide surface reads empty rather than presenting unmapped data.
-// This is deliberately NOT one of the stateful commerce surfaces.
-function guidesDependency(): CommerceDependencies["guides"] {
+// The evidence-to-commerce guide surface: the REAL guide packets under
+// content/research-guides, mapped by server/research/evidence/content-guides.ts.
+// Every packet is an unreviewed draft today, so the list is honest status
+// metadata (in_development, publishedAt null, related SKUs from the catalog's
+// own guide links) and the detail path answers guide_not_published until the
+// evidence review gate (evidence/guides.ts) publishes a revision. Read-only
+// content like the catalog, so every state serves it; a deployment without the
+// content tree on disk truthfully reads empty. This is deliberately NOT one of
+// the stateful commerce surfaces.
+function guidesDependency(products: CatalogProduct[]): CommerceDependencies["guides"] {
+  const source = createContentGuideSource({
+    relatedSkusByGuideSlug: relatedProductSkusByGuideSlug(products),
+  });
   return {
-    listForMember: () => Promise.resolve([]),
-    getForMember: () => Promise.resolve(null),
+    listForMember: () => source.listForMember(),
+    getForMember: (slug) => source.getForMember(slug),
   };
 }
 
@@ -365,11 +377,12 @@ function ordersAdminFailClosed(denial: {
 
 function disabledDependencies(
   catalogService: CatalogService,
+  guides: CommerceDependencies["guides"],
   now: () => Date,
 ): CommerceDependencies {
   return {
     catalog: catalogDependency(catalogService),
-    guides: guidesDependency(),
+    guides,
     cart: {
       getCart: (memberId) => Promise.resolve({ owner: memberId, lines: [], commerceEnabled: false }),
       addLine: () => Promise.resolve(DISABLED),
@@ -428,6 +441,7 @@ function disabledDependencies(
 
 function unprovisionedDependencies(
   catalogService: CatalogService,
+  guides: CommerceDependencies["guides"],
   now: () => Date,
 ): CommerceDependencies {
   // Storage-dependent writes refuse as a capability that is not ready, which
@@ -449,7 +463,7 @@ function unprovisionedDependencies(
   };
   return {
     catalog: catalogDependency(catalogService),
-    guides: guidesDependency(),
+    guides,
     cart: {
       getCart: (memberId) => Promise.resolve({ owner: memberId, lines: [], commerceEnabled: false }),
       addLine: () => Promise.resolve(storageDenial),
@@ -815,6 +829,7 @@ function liveDependencies(
   wiring: CommerceWiring,
   products: CatalogProduct[],
   catalogService: CatalogService,
+  guides: CommerceDependencies["guides"],
   quantumEnabled: boolean,
 ): CommerceDependencies {
   const serviceableStates = serviceableStatesFrom(env);
@@ -1139,7 +1154,7 @@ function liveDependencies(
 
   return {
     catalog: catalogDependency(catalogService),
-    guides: guidesDependency(),
+    guides,
     cart: {
       getCart: async (memberId, asOf) => (await cartServiceFor(memberId, asOf)).getCart(memberId, asOf),
       addLine: async (memberId, req, asOf) =>
@@ -1340,7 +1355,11 @@ export function buildCommerceDependencies(
     quantumCommerceEnabled: operable && quantumEnabled,
   });
 
-  if (!commerceEnabled) return disabledDependencies(catalogService, now);
-  if (!dbConfigured) return unprovisionedDependencies(catalogService, now);
-  return liveDependencies(now, env, resolved, products, catalogService, quantumEnabled);
+  // One content-backed guide source per build, shared by every state: the
+  // guide library is real read-only content, exactly like the catalog.
+  const guides = guidesDependency(products);
+
+  if (!commerceEnabled) return disabledDependencies(catalogService, guides, now);
+  if (!dbConfigured) return unprovisionedDependencies(catalogService, guides, now);
+  return liveDependencies(now, env, resolved, products, catalogService, guides, quantumEnabled);
 }
