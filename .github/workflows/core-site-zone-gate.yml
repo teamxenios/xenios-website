@@ -73,7 +73,22 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          git diff --name-only "${BASE_SHA}...${HEAD_SHA}" | tee changed-files.txt
+          # -z, NOT --name-only alone. git C-QUOTES any path containing non-ASCII bytes
+          # unless core.quotePath=false (the default is true, and it is unset both in this
+          # repo and on GitHub runners). The quotes survive into normalizePath, the zone
+          # prefix match then fails, and a file inside an ALLOWED zone is reported as a
+          # violation. This is not hypothetical: commit c5085ed touches
+          #   docs/legal/xenios-research/v1.0.0/approval_records/Xenios Research \342\200\224 ... .docx
+          # which reproduces the false positive end to end. -z never quotes, and it is
+          # preferred over core.quotePath=false because that still C-quotes paths
+          # containing a quote, a backslash, or a control character.
+          #
+          # set -o pipefail because the exit status of a pipeline is otherwise tee's. A
+          # git failure here would be swallowed, changed-files.txt would be empty, and the
+          # step would report success. The gate's exit-2-on-empty rule is the second net
+          # under that same failure; this is the first.
+          set -o pipefail
+          git diff -z --name-only "${BASE_SHA}...${HEAD_SHA}" | tr '\0' '\n' | tee changed-files.txt
           echo "---"
           echo "$(wc -l < changed-files.txt) changed file(s)"
 

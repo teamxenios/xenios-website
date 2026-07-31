@@ -431,3 +431,81 @@ describe("the .github zone contradiction is real and is reported, not papered ov
     expect(manifest.reportedZones.testFileSuffixes).toContain(".test.ts");
   });
 });
+
+describe("the manifest cannot widen its own permissions without a deliberate diff", () => {
+  // WHY THIS EXISTS.
+  //
+  // docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json starts with "docs/", which is an
+  // infrastructureZones prefix, so classifyPath returns "infrastructure" and BOTH the
+  // hash tripwire and the zone gate pass an edit to the manifest itself without comment.
+  // The manifest is the file that decides what is protected, and nothing was checking it.
+  //
+  // Demonstrated on this branch before this test existed: appending "client/src/lib/" or
+  // "client/src/hooks/" to allowedWriteZones.prefixes unlocked 13 and 3 files
+  // respectively with the ENTIRE 58-test suite green and the zone gate reporting PASS.
+  // The hash tripwire was the only backstop left, and it covers 21 of 207 protected files.
+  //
+  // These four lists ARE the gate's decision surface: classifyPath reads nothing else to
+  // decide "allowed" or "infrastructure". Pinning them as literals means a zone change is
+  // still entirely possible, it just cannot happen SILENTLY: it fails here and has to land
+  // as an explicit, reviewed diff to this file. Deliberately pinned narrowly, so routes,
+  // slugs, hashes and comments in the manifest stay free to evolve.
+
+  it("pins allowedWriteZones.prefixes", () => {
+    expect(manifest.allowedWriteZones.prefixes).toEqual([
+      "client/src/research/",
+      "client/src/care/",
+      "server/research/",
+      "server/care/",
+      "shared/research/",
+      "shared/care/",
+      "content/research-goals/",
+      "content/research-guides/",
+      "content/research-products/",
+      "supabase/",
+    ]);
+  });
+
+  it("pins allowedWriteZones.exactFiles", () => {
+    expect(manifest.allowedWriteZones.exactFiles).toEqual([
+      "client/src/pages/AdminResearchTab.tsx",
+    ]);
+  });
+
+  it("pins infrastructureZones.prefixes, including the scripts/ vs script/ trap", () => {
+    // "scripts/" (plural) is tooling and allowed. "script/" (singular) is the production
+    // build referenced by package.json and stays protected. A one-character edit here
+    // would unlock the build, so the literal is pinned rather than pattern-matched.
+    expect(manifest.infrastructureZones.prefixes).toEqual(["docs/", "scripts/"]);
+    expect(manifest.infrastructureZones.prefixes).not.toContain("script/");
+  });
+
+  it("pins infrastructureZones.exactFiles as empty", () => {
+    expect(manifest.infrastructureZones.exactFiles).toEqual([]);
+  });
+
+  it("keeps the protected page and component trees OUT of every permitted zone", () => {
+    // The specific widenings proven to pass silently before this test existed.
+    const permitted = [
+      ...manifest.allowedWriteZones.prefixes,
+      ...manifest.infrastructureZones.prefixes,
+    ];
+    for (const forbidden of [
+      "client/src/pages/",
+      "client/src/components/",
+      "client/src/lib/",
+      "client/src/hooks/",
+      "client/public/",
+      "server/services/",
+      "script/",
+    ]) {
+      expect(permitted).not.toContain(forbidden);
+    }
+    const exact = [
+      ...manifest.allowedWriteZones.exactFiles,
+      ...manifest.infrastructureZones.exactFiles,
+    ];
+    expect(exact).not.toContain("client/src/pages/About.tsx");
+    expect(exact).not.toContain("client/src/pages/Home.tsx");
+  });
+});
