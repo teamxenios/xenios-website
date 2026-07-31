@@ -240,9 +240,13 @@ describe("adapter endpoint contracts", () => {
 });
 
 describe("adapter state matrix", () => {
+  const passthroughAdapters = ADAPTERS.filter(
+    ({ name }) => name !== "getProfile" && name !== "getSensitiveProfile",
+  );
+
   // The pending promise IS the page's loading state; it must resolve to ok
   // with the server payload, never anything invented.
-  it.each(ADAPTERS)("$name: loading resolves to ok with the server data", async (spec) => {
+  it.each(passthroughAdapters)("$name: loading resolves to ok with the server data", async (spec) => {
     const payload = { ok: true, marker: "server-data" };
     stubFetch(200, payload);
     const pending = spec.invoke(TOKEN);
@@ -251,7 +255,7 @@ describe("adapter state matrix", () => {
     expect(res).toEqual({ kind: "ok", data: payload });
   });
 
-  it.each(ADAPTERS)("$name: an empty 200 payload is still ok, with empty data", async (spec) => {
+  it.each(passthroughAdapters)("$name: an empty 200 payload is still ok, with empty data", async (spec) => {
     stubFetch(200, {});
     const res = await spec.invoke(TOKEN);
     expect(res).toEqual({ kind: "ok", data: {} });
@@ -269,7 +273,7 @@ describe("adapter state matrix", () => {
     expect(res).toEqual({ kind: "unavailable" });
   });
 
-  it.each(ADAPTERS)("$name: 500 maps to error with the server message", async (spec) => {
+  it.each(passthroughAdapters)("$name: 500 maps to error with the server message", async (spec) => {
     stubFetch(500, { message: "database unavailable" });
     const res = await spec.invoke(TOKEN);
     expect(res).toEqual({ kind: "error", message: "database unavailable" });
@@ -281,10 +285,10 @@ describe("adapter state matrix", () => {
     expect(res).toEqual({ kind: "unauthorized" });
   });
 
-  it("a 500 without a message falls back to the generic error copy", async () => {
+  it("a profile 500 without a message uses fixed local error copy", async () => {
     stubFetch(500, {});
     const res = await getProfile(TOKEN);
-    expect(res).toEqual({ kind: "error", message: "Something went wrong. Please try again." });
+    expect(res).toEqual({ kind: "error", message: "We could not load your profile. Please try again." });
   });
 
   it("a network failure maps to the connection error, never a throw", async () => {
@@ -296,5 +300,61 @@ describe("adapter state matrix", () => {
     );
     const res = await getDocuments(TOKEN);
     expect(res).toEqual({ kind: "error", message: "The connection failed. Please try again." });
+  });
+});
+
+describe("profile DTO validation", () => {
+  const updatedAt = "2026-07-30T12:00:00.000Z";
+  const ordinary = {
+    ok: true,
+    profile: {
+      memberId: "m1",
+      sections: [{ key: "goals", schemaVersion: 1, data: { primary_goal: "Consistency" }, updatedAt }],
+      completeness: { completedSections: 1, totalSections: 17 },
+    },
+  };
+  const sensitive = {
+    ok: true,
+    sections: [{ key: "sleep", schemaVersion: 1, data: { quality: "Variable" }, updatedAt }],
+  };
+
+  it("accepts the exact ordinary and sensitive envelopes", async () => {
+    stubFetch(200, ordinary);
+    await expect(getProfile(TOKEN)).resolves.toEqual({ kind: "ok", data: ordinary });
+    stubFetch(200, sensitive);
+    await expect(getSensitiveProfile(TOKEN)).resolves.toEqual({ kind: "ok", data: sensitive });
+  });
+
+  it.each([
+    ["extra envelope key", { ...ordinary, unexpected: true }],
+    ["empty member id", { ...ordinary, profile: { ...ordinary.profile, memberId: " " } }],
+    ["unknown section", { ...ordinary, profile: { ...ordinary.profile, sections: [{ ...ordinary.profile.sections[0], key: "hostile" }] } }],
+    ["sensitive ordinary section", { ...ordinary, profile: { ...ordinary.profile, sections: [{ ...ordinary.profile.sections[0], key: "sleep" }] } }],
+    ["duplicate section", { ...ordinary, profile: { ...ordinary.profile, sections: [ordinary.profile.sections[0], ordinary.profile.sections[0]] } }],
+    ["zero schema version", { ...ordinary, profile: { ...ordinary.profile, sections: [{ ...ordinary.profile.sections[0], schemaVersion: 0 }] } }],
+    ["noncanonical timestamp", { ...ordinary, profile: { ...ordinary.profile, sections: [{ ...ordinary.profile.sections[0], updatedAt: "2026-07-30T12:00:00Z" }] } }],
+    ["nested object data", { ...ordinary, profile: { ...ordinary.profile, sections: [{ ...ordinary.profile.sections[0], data: { hostile: { echo: "NO" } } }] } }],
+  ])("rejects %s", async (_name, payload) => {
+    stubFetch(200, payload);
+    await expect(getProfile(TOKEN)).resolves.toEqual({
+      kind: "error",
+      message: "The profile response was incomplete.",
+    });
+  });
+
+  it("rejects ordinary content from the sensitive endpoint", async () => {
+    stubFetch(200, { ...sensitive, sections: [{ ...sensitive.sections[0], key: "goals" }] });
+    await expect(getSensitiveProfile(TOKEN)).resolves.toEqual({
+      kind: "error",
+      message: "The profile response was incomplete.",
+    });
+  });
+
+  it("does not echo a server error message", async () => {
+    stubFetch(500, { message: "HOSTILE_SERVER_ECHO" });
+    await expect(getProfile(TOKEN)).resolves.toEqual({
+      kind: "error",
+      message: "We could not load your profile. Please try again.",
+    });
   });
 });
