@@ -65,6 +65,9 @@ function request(overrides: Partial<CheckoutRequest> = {}): CheckoutRequest {
     shippingService: "standard",
     acceptedAgreementKeys: ["research_use_v1"],
     idempotencyKey: "key_1",
+    // A well-formed checkout carries a provider payment-method token. Tests
+    // that exercise its ABSENCE pass paymentMethodReference: undefined.
+    paymentMethodReference: "pm_test_instrument",
     ...overrides,
   };
 }
@@ -1210,5 +1213,73 @@ describe("checkout through the real seam", () => {
     expect(await quantity(lots, "LOT-EARLY")).toBe(1);
     expect(await quantity(lots, "LOT-LATE")).toBe(10);
     expect((await reservations.get(outcome.order.reservationIds[0]!))!.status).toBe("finalized");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Payment instrument. The defect this guards: paymentMethodReference existed on
+// the provider contract and was consumed by the Stripe adapter, but it never
+// appeared on CheckoutRequest and was never passed at either authorize call
+// site, so a real one-time checkout could never be paid. The suite stayed green
+// because TestPaymentProvider authorizes without an instrument. These tests fail
+// if the field is dropped from the wire, from a call site, or from the gate.
+// ---------------------------------------------------------------------------
+describe("payment instrument", () => {
+  it("refuses a payable checkout with no instrument, and reserves and charges nothing", async () => {
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+
+    const service = createCheckoutService(deps({ payment }));
+    const outcome = await service.submit(
+      "mem_1",
+      request({ paymentMethodReference: undefined }),
+      NOW,
+    );
+
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) expect(outcome.denials).toContain("payment_method_required");
+    expect(authorize).not.toHaveBeenCalled();
+  });
+
+  it("reports the missing instrument through validate, alongside every other blocker", async () => {
+    const service = createCheckoutService(deps());
+    const result = await service.validate(
+      "mem_1",
+      request({ paymentMethodReference: undefined }),
+      NOW,
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.denials).toContain("payment_method_required");
+  });
+
+  it("passes the instrument through to the provider on a clean submit", async () => {
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+
+    const service = createCheckoutService(deps({ payment }));
+    const outcome = await service.submit(
+      "mem_1",
+      request({ paymentMethodReference: "pm_live_token" }),
+      NOW,
+    );
+
+    expect(outcome.ok).toBe(true);
+    expect(authorize).toHaveBeenCalledTimes(1);
+    expect(authorize.mock.calls[0][0]).toMatchObject({
+      paymentMethodReference: "pm_live_token",
+    });
+  });
+
+  it("never carries card data: the field is a provider token and nothing else", async () => {
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+
+    const service = createCheckoutService(deps({ payment }));
+    await service.submit("mem_1", request({ paymentMethodReference: "pm_abc" }), NOW);
+
+    const sent = JSON.stringify(authorize.mock.calls[0][0]);
+    expect(sent).not.toMatch(/\b\d{13,19}\b/); // no PAN-shaped value
+    expect(sent).not.toMatch(/cvc|cvv|expiry|exp_month|exp_year/i);
   });
 });

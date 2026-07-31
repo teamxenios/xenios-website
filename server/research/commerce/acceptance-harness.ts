@@ -436,6 +436,9 @@ export function checkoutRequest(overrides: Partial<CheckoutRequest> = {}): Check
     shippingService: "standard",
     acceptedAgreementKeys: [...CHECKOUT_REQUIRED_AGREEMENT_KEYS],
     idempotencyKey: "acceptance-key-1",
+    // A well-formed checkout carries a provider payment-method token; a payable
+    // order without one is refused before anything is reserved or charged.
+    paymentMethodReference: "pm_acceptance_instrument",
     ...overrides,
   };
 }
