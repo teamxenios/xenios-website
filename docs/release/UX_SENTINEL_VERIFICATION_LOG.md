@@ -469,3 +469,31 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     #190 is a byte-identical no-op superseded by #193, close for hygiene, no regression risk.
     Rule reaffirmed: for any "this PR would revert X" claim, diff against the merge base, never
     against the tip.
+
+## 2026-07-31T08:25Z, SEN-0023 blast radius, and a scan that under-counted
+
+99. Measured which member pages SEN-0023 actually breaks. EIGHT, not the six my first scan reported:
+    Assessment (agreements, assessment), Blueprint (blueprint), Documents (documents),
+    PrivacyControls (agreements), Xenios30 (plans), Xenios90 (plans), Questions (questions,
+    telegram), Tracker (tracker).
+100. METHODOLOGY MISS, recorded so the number is not trusted blindly next time. My scanner matched
+     adapter functions against literal "/api/research/..." strings inside the function body. It
+     missed Questions.tsx and Tracker.tsx because those adapters resolve their path through a
+     CONSTANT OBJECT (adapters/guides.ts exports guidesPaths.questions and .telegram) or live in a
+     separate adapter module (adapters/tracker.ts). Indirection through a path map defeats a
+     body-local literal match.
+101. I caught it only because I listed the member page directory and noticed Questions.tsx and
+     Tracker.tsx existed but were absent from the results, then resolved both by hand:
+     guides.ts:26 questions -> "/api/research/questions", :29 telegram -> "/api/research/telegram",
+     tracker.ts -> "/api/research/tracker". Confirmed all three are walled on production.
+102. RULE: when an automated sweep produces a count, cross-check it against the directory listing of
+     the things being counted. A scan that returns a plausible number is the easiest kind of wrong
+     answer to publish. Reported the corrected 8 rather than the tidy 6.
+103. PRE-MERGE CATCHES this pass, both handed to the owning lane before the wasted cycle:
+     - #194 reserves plans.ts for private headers, which is the #188 half only. Without the #191
+       half in index.ts the headers never reach the wire, since the wall answers first. Website 2
+       already owns index.ts under OWNER-W2-PR86-SHARED-HOTFIX (state deployed, needs a fresh
+       active reservation), so ownership is not the blocker.
+     - #186 hardens the Documents UI against four routes that are ALL wall-shadowed today. Flagged
+       while still draft, with the sequencing note and the GET-only-bypass trap (access and
+       acknowledge are POSTs).
