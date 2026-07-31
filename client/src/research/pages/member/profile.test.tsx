@@ -50,6 +50,10 @@ describe("Profile", () => {
     expect(view.textContent).toContain("2 of 17 sections complete");
     expect(calls.map((call) => call.url)).toEqual(["/api/research/profile", "/api/research/profile/sensitive"]);
     expect(calls.every((call) => call.auth === "Bearer raw-token")).toBe(true);
+    expect(view.querySelectorAll("h1")).toHaveLength(1);
+    expect(view.querySelectorAll("dl")).toHaveLength(2);
+    expect(view.querySelectorAll("dt")).toHaveLength(2);
+    expect(view.querySelectorAll("dd")).toHaveLength(2);
   });
 
   it("fails closed when sensitive content appears in the ordinary DTO", async () => {
@@ -80,5 +84,47 @@ describe("Profile", () => {
     for (const marker of ["HOSTILE_STRING", "987654", "true", "false"]) {
       expect(view.textContent).not.toContain(marker);
     }
+  });
+
+  it("rejects arbitrary object data without rendering hostile nested values", async () => {
+    const { view } = await renderWith({
+      "/api/research/profile": { status: 200, body: { ok: true, profile: { memberId: "m1", sections: [{
+        key: "goals",
+        schemaVersion: 1,
+        data: { hostile: { nested: "HOSTILE_NESTED_VALUE" } },
+        updatedAt: "2026-07-30T12:00:00.000Z",
+      }], completeness: { completedSections: 1, totalSections: 17 } } } },
+      "/api/research/profile/sensitive": { status: 200, body: { ok: true, sections: [] } },
+    });
+    expect(view.textContent).toContain("Something went wrong");
+    expect(view.textContent).not.toContain("HOSTILE_NESTED_VALUE");
+  });
+
+  it("clears previously rendered sensitive data as soon as retry begins", async () => {
+    let round = 0;
+    const never = new Promise<Response>(() => {});
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      if (round > 0) return never;
+      const body = url.endsWith("/sensitive")
+        ? { ok: true, sections: [{ key: "sleep", schemaVersion: 1, data: { quality: "STALE_SENSITIVE_VALUE" }, updatedAt: "2026-07-30T12:00:00.000Z" }] }
+        : { ok: true, profile: { memberId: "m1", sections: [], completeness: { completedSections: 1, totalSections: 17 } } };
+      return new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
+    }));
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    await act(async () => {
+      root!.render(<ResearchContext.Provider value={context()}><Profile /></ResearchContext.Provider>);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect(host.textContent).toContain("STALE_SENSITIVE_VALUE");
+
+    round = 1;
+    const retry = Array.from(host.querySelectorAll("button")).find(
+      (button) => button.textContent === "Refresh profile",
+    );
+    expect(retry).toBeDefined();
+    act(() => retry!.click());
+    expect(host.textContent).not.toContain("STALE_SENSITIVE_VALUE");
   });
 });
