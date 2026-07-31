@@ -4,12 +4,15 @@ import type {
   AdminProductSummary,
   AdminProductVariant,
 } from "@shared/research/product-admin";
-import {
-  CART_PURCHASE_AUDIENCES,
-  type CartAudienceEligibility,
-} from "@shared/research/cart-product-selection";
+import type { CartAudienceEligibility } from "@shared/research/cart-product-selection";
 import type { ProductAdminRepository } from "../products-diagnostics/product-admin";
 import { SupabaseProductAdminRepository } from "../products-diagnostics/product-admin-production";
+import { resolveProductControlPrice } from "../products-diagnostics/product-control-price-resolver";
+
+export {
+  parseProductControlTimestamp,
+  parseProductControlTimestampMicros,
+} from "../products-diagnostics/product-control-price-resolver";
 
 export type ProductControlReadRepository = Pick<
   ProductAdminRepository,
@@ -235,110 +238,14 @@ export class LiveProductControlReader
   }
 }
 
-export function parseProductControlTimestamp(value: string): number | null {
-  const match =
-    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,6}))?(Z|[+-]\d{2}:\d{2})$/.exec(
-      value,
-    );
-  if (!match) return null;
-  const [, yearText, monthText, dayText, hourText, minuteText, secondText, , zone] =
-    match;
-  const year = Number(yearText);
-  const month = Number(monthText);
-  const day = Number(dayText);
-  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  if (
-    month < 1 ||
-    month > 12 ||
-    day < 1 ||
-    day > days[month - 1] ||
-    Number(hourText) > 23 ||
-    Number(minuteText) > 59 ||
-    Number(secondText) > 59
-  ) {
-    return null;
-  }
-  if (
-    zone !== "Z" &&
-    (Number(zone.slice(1, 3)) > 23 || Number(zone.slice(4, 6)) > 59)
-  ) {
-    return null;
-  }
-  const milliseconds = Date.parse(value);
-  return Number.isFinite(milliseconds) ? milliseconds : null;
-}
-
-export function parseProductControlTimestampMicros(
-  value: string,
-): number | null {
-  const milliseconds = parseProductControlTimestamp(value);
-  const match =
-    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,6}))?(Z|[+-]\d{2}:\d{2})$/.exec(
-      value,
-    );
-  if (milliseconds === null || match === null) return null;
-  const micros = Number((match[7] ?? "").padEnd(6, "0"));
-  const epochMicros = milliseconds * 1000 + (micros % 1000);
-  return Number.isSafeInteger(epochMicros) ? epochMicros : null;
-}
-
 export class ProductControlCurrentPriceResolver
   implements CurrentPriceResolver
 {
-  resolve({
-    productId,
-    variant,
-    prices,
-    audienceEligibility,
-    currency,
-    evaluatedAt,
-  }: Parameters<CurrentPriceResolver["resolve"]>[0]): AdminProductPrice | null {
-    const at = parseProductControlTimestamp(evaluatedAt);
-    if (
-      at === null ||
-      !productId.trim() ||
-      !variant.id.trim() ||
-      !variant.sku.trim() ||
-      !currency.trim() ||
-      currency !== currency.toUpperCase() ||
-      audienceEligibility.state !== "authorized" ||
-      !audienceEligibility.sourceVersion.trim() ||
-      parseProductControlTimestamp(audienceEligibility.evaluatedAt) !== at ||
-      !(CART_PURCHASE_AUDIENCES as readonly string[]).includes(
-        audienceEligibility.audience,
-      ) ||
-      variant.productId !== productId ||
-      variant.status !== "approved" ||
-      !variant.active ||
-      (audienceEligibility.audience === "member" && !variant.memberEligible)
-    ) {
-      return null;
-    }
-    const matches = prices.filter((price) => {
-      const effectiveAt = parseProductControlTimestamp(price.effectiveAt);
-      const expiresAt =
-        price.expiresAt === null
-          ? null
-          : parseProductControlTimestamp(price.expiresAt);
-      return (
-        price.productId === productId &&
-        price.variantId === variant.id &&
-        price.audience === audienceEligibility.audience &&
-        price.currency === currency &&
-        price.status === "active" &&
-        Boolean(price.id.trim()) &&
-        Boolean(price.approvedBy) &&
-        Number.isSafeInteger(price.amountCents) &&
-        price.amountCents >= 0 &&
-        Number.isInteger(price.version) &&
-        price.version > 0 &&
-        effectiveAt !== null &&
-        effectiveAt <= at &&
-        (price.expiresAt === null || (expiresAt !== null && expiresAt > at))
-      );
-    });
-    return matches.length === 1 ? matches[0] : null;
+  resolve(
+    input: Parameters<CurrentPriceResolver["resolve"]>[0],
+  ): AdminProductPrice | null {
+    const result = resolveProductControlPrice(input);
+    return result.ok ? result.price : null;
   }
 }
 
