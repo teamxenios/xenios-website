@@ -18,9 +18,14 @@ import {
 
 const BASE = "/api/research/member";
 
+// Contract note (2026-07-31 adapter audit): there is no `${BASE}/guides`
+// surface on the server and there never was. The guide library and one guide
+// live on the FROZEN commerce paths below (`/api/research/guides`), which is
+// what the member pages call. The member-prefixed list and detail entries that
+// used to sit here, and the two unused functions that read them, resolved to
+// nothing and have been removed rather than left as a trap for the next page
+// that reaches for them.
 export const guidesPaths = {
-  guides: `${BASE}/guides`,
-  guide: (slug: string) => `${BASE}/guides/${encodeURIComponent(slug)}`,
   guideCorrections: (slug: string) => `${BASE}/guides/${encodeURIComponent(slug)}/corrections`,
   guideTopicRequests: `${BASE}/guide-topic-requests`,
   questions: "/api/research/questions",
@@ -50,20 +55,16 @@ export function getGuide(token: string | null, slug: string): Promise<ApiResult<
   return apiGet(frozenGuidePaths.guide(slug), token);
 }
 
-/** Fetch the member guide library. */
-export function fetchGuides<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(guidesPaths.guides, token);
-}
-
-/** Fetch one guide by slug. */
-export function fetchGuide<T>(slug: string, token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(guidesPaths.guide(slug), token);
-}
-
 /**
  * Submit a correction on a guide. A guide payload may carry its own
  * corrections path; when present (non-empty) it wins over the default,
  * mirroring the page's previous `path || defaultEndpoint` behavior.
+ *
+ * Contract note: no server route collects corrections yet, and no store
+ * exists to put one in. The unavailable result is therefore correct and the
+ * page says so plainly, naming the email address that does reach a person.
+ * That is a real fallback, not a dead end, so this call is left pointing at
+ * the path the editorial store will publish on.
  */
 export function submitGuideCorrection<T>(
   slug: string,
@@ -74,7 +75,10 @@ export function submitGuideCorrection<T>(
   return apiPost<T>(overridePath || guidesPaths.guideCorrections(slug), body, token);
 }
 
-/** Ask for a new guide topic to be covered. */
+/**
+ * Ask for a new guide topic to be covered. Same posture as corrections: not
+ * published yet, and the page names the email that reaches a person.
+ */
 export function requestGuideTopic<T>(body: unknown, token?: string | null): Promise<ApiResult<T>> {
   return apiPost<T>(guidesPaths.guideTopicRequests, body, token);
 }
