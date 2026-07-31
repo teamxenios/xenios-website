@@ -375,3 +375,22 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     family that dominated that count is now largely closed by the Website 2 reconstruction, and
     the residue is concentrated almost entirely in ONE unimplemented lane (partner). This is the
     clearest quantitative evidence so far that the reconstruction approach is working.
+
+## 2026-07-31T05:20Z, production probe of the repaired member contracts, and why it proves less than it looks
+
+81. Main is e45ae5a (PR #187, profile private-header ownership). Production healthy, uptime 1698s.
+82. Probed the six repaired member endpoints signed out (/tracker, /profile, /questions, /telegram,
+    /documents, /blueprint). All six returned 401 {"ok":false,"message":"Access required."}.
+83. THIS IS NOT VERIFICATION, and the control proves it: GET /api/research/definitely-not-a-route-xyz
+    returns the IDENTICAL 401 and identical body. The gateway wall answers before routing, so under
+    /api/research a 401 cannot distinguish a live route from a missing one. Recorded as
+    NON-DISCRIMINATING rather than as a pass.
+84. Discriminating probes that DO carry information, all outside the wall: /api/admin/research/
+    fulfillment 404 and /api/admin/research/members 404 (still genuinely missing, matching the audit
+    and GAP-008); /api/care/status 200 with state disabled (Care rail deployed and fail-closed);
+    /api/research/pricing/.../price 503 pricing_disabled (the pricing adapter IS deployed and
+    correctly refuses while the flag is off).
+85. CONCLUSION: the member-contract repairs cannot be verified from outside without an authenticated
+    session. Their correctness rests on the merged source and CI, not on a production probe. The two
+    admin endpoints remain provably missing. This is the same limit the audit recorded; noting it
+    again here so no later reader mistakes six 401s for six working endpoints.
