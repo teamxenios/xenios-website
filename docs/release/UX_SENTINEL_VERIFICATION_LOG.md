@@ -533,3 +533,37 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 109. NET: six genuinely broken CTAs on the live main site, and the founder's own headline directive,
      are both frozen by the same rule. Escalating to Samuel as a decision rather than continuing to
      file PRs that structurally cannot merge.
+
+## 2026-07-31T09:20Z, PR #195 verified live, and a suspected pricing exposure cleared
+
+110. PR #195 (e6a64b9) MERGED AND VERIFIED ON PRODUCTION. The #194 handover was acted on, and the
+     lane solved the POST trap MORE TIGHTLY than I proposed. I suggested adding /plans to
+     MEMBER_AUTHED_PREFIXES, which would open the whole prefix for every verb behind a bearer.
+     They instead added a narrow write bypass anchored to one exact shape,
+     /^\/plans\/xenios30\/([^/]+)\/acknowledge$/, with the planId validated as a UUID.
+     Smaller surface than my suggestion. Recording that theirs is the better design.
+111. DISCRIMINATING PROOF, both 401 so no state changed:
+       POST /plans/xenios30/<valid-uuid>/acknowledge  -> "Sign in required."  (guard, bypass works)
+       POST /plans/xenios30/not-a-uuid/acknowledge    -> "Access required."   (wall, UUID check works)
+       GET  /plans/xenios30                           -> "Sign in required." + Cache-Control: no-store
+                                                         + x-robots-tag: noindex, nofollow
+     The non-UUID case is what makes this non-vacuous: it proves the bypass discriminates on shape
+     rather than matching the prefix.
+112. SEN-0023 downgraded to partially_fixed. Plans is closed. 24 routes across 6 pages remain:
+     documents, media, questions, tracker, assessment, blueprint, agreements, telegram, PUT /profile.
+113. SUSPECTED FINDING RAISED AND CLEARED, recorded because the near-miss is the useful part. While
+     reading #195 I noticed the wall's read bypass also carries path.startsWith("/pricing/"), a
+     PREFIX rather than an exact path, and the pricing routes register as
+     app.get(PRICING_PRICE_ROUTE, privateHeaders, handle(...)) with NO auth middleware. That reads
+     as a public pricing exposure, which would directly violate the directive's rule against
+     exposing pricing. Production returns 503 pricing_disabled today, so the probe could not settle
+     it, and a flag-gated exposure would still be a real latent defect with the price-approval batch
+     pending.
+114. I read the handler before filing, and there is no defect. Auth is INSIDE handle(): it calls
+     authorizeAudience(req), returns 401 on a null grant, then re-brands via
+     authorizeAudienceFromServerIdentity and returns 401 again if the brand fails, so an off
+     allowlist audience or empty sourceVersion never reaches the resolver. The catch answers 503 and
+     the comment is explicit that it is "never a 500, never an internal message, never a guessed
+     price". It fails closed on every path.
+115. RULE REAFFIRMED: absence of auth MIDDLEWARE is not absence of auth. Read the handler body
+     before calling a route unguarded. I would have filed a false P0 against a well-built surface.
