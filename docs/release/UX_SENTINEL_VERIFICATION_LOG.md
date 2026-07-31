@@ -831,3 +831,31 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 169. RULE, a sharper version of the one at entry 102: a bundle crawl must be TRANSITIVE. Chunks
      reference chunks. Enumerating only what the entry bundle names covers a small fraction of what
      is publicly fetchable, and any "no leak found" conclusion drawn from it is unsupported.
+
+## 2026-07-31T18:15Z, post-merge live verification of 204/205/206, no regressions
+
+170. Production redeployed after the three merges: bundle fingerprint moved index-CSrV0jnb.js ->
+     index-B1fmcksm.js, uptimeSeconds 1497 at 18:11Z puts process start near 17:46Z, after the
+     17:25-17:33Z merges.
+171. CARE RAIL STILL FAIL-CLOSED after merging a clinician review queue, which was the highest-risk
+     check of the cycle. Every clinical contract path still answers 503 care_disabled, INCLUDING the
+     new surfaces: /api/care/reviews/queue and /api/care/reviews/detail both return care_disabled.
+     /api/care/status still reports enabled false. No regression.
+172. #204's MERGE BASIS RE-VERIFIED ON MERGED MAIN. I merged it on the claim that its sixteen routes
+     are not wired and therefore have zero runtime effect. Confirmed: server/index.ts contains no
+     partner registration, the single grep hit being a comment at :202. The claim holds, so the
+     commerce-gate P1 stays latent rather than live, exactly as recorded.
+173. #206 VERIFIED LIVE BY CONTENT, using the transitive 118-chunk crawl rather than the one-level
+     crawl that misled me earlier today. Two of three distinctive strings are present in
+     section-CC-_c6zq.js: "Checking your assigned reviews" and "clinician review". The third,
+     "Appointment: None recorded", was not found and is most likely assembled at runtime rather than
+     stored as a literal. Recording two of three honestly rather than rounding it to "verified".
+174. SEN-0023 REGRESSION SWEEP, unchanged and correct: plans/xenios30, documents, profile and
+     capabilities answer "Sign in required." (past the wall, member guard deciding); tracker,
+     questions, assessment, blueprint, media, telegram and agreements still answer "Access required."
+     (wall shadowing). The five member pages remain unreachable for a member who signed in without
+     the shared review password. No merge this cycle touched that.
+175. QUEUE THIS CYCLE: 4 dispositioned, 3 merged (205, 204, 206), 1 refused (203, CHANGES_REQUIRED).
+     The refusal was on evidence CI cannot produce: two existing fail-closed assertions inverted from
+     not.toContain to toContain, undisclosed in the body, plus a write-path gate whose hardcoded file
+     list excludes the only Care page that writes.
