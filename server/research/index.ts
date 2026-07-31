@@ -275,6 +275,7 @@ export function registerResearchApi(app: Express) {
   // shadow the route, omit its privacy headers, and reject a valid member JWT.
   const DOWNSTREAM_MEMBER_GUARDED_READ_PATHS = new Set([
     "/capabilities",
+    "/documents",
     "/plans/xenios30",
     "/profile",
     "/profile/sensitive",
@@ -285,8 +286,15 @@ export function registerResearchApi(app: Express) {
     path.startsWith("/member/products/") ||
     path.startsWith("/pricing/");
   const downstreamMemberGuardedWrite = (path: string): boolean => {
-    const match = /^\/plans\/xenios30\/([^/]+)\/acknowledge$/.exec(path);
-    return match !== null && z.string().uuid().safeParse(match[1]).success;
+    const xenios30Match = /^\/plans\/xenios30\/([^/]+)\/acknowledge$/.exec(path);
+    if (xenios30Match !== null && z.string().uuid().safeParse(xenios30Match[1]).success) {
+      return true;
+    }
+
+    const documentsMatch = /^\/documents\/([^/]+)\/(access|acknowledge)$/.exec(path);
+    if (documentsMatch === null) return false;
+    const rawDocumentId = documentsMatch[1];
+    return rawDocumentId === rawDocumentId.toLowerCase() && z.string().uuid().safeParse(rawDocumentId).success;
   };
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
