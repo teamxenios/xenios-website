@@ -1,4 +1,4 @@
-import type { Express, Request, Response } from "express";
+import type { Express, NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import {
   PROFILE_SECTION_KEYS,
@@ -275,6 +275,17 @@ function setMemberHeaders(res: Response) {
   res.set("Referrer-Policy", "no-referrer");
 }
 
+function privateMemberHeaders(
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  setMemberHeaders(res);
+  res.set("Pragma", "no-cache");
+  res.set("X-Robots-Tag", "noindex, nofollow");
+  next();
+}
+
 function memberOf(req: Request): MemberRow | undefined {
   return (req as { researchMember?: MemberRow }).researchMember;
 }
@@ -350,7 +361,7 @@ export function registerProfileApi(app: Express, deps: MemberPlatformDeps) {
   // Non-sensitive sections plus completeness. Completeness COUNTS every
   // completed section (sensitive included) but the section list never carries
   // sensitive content; ordinary account surfaces call only this endpoint.
-  app.get("/api/research/profile", requireActiveMember, async (req, res: Response) => {
+  app.get("/api/research/profile", privateMemberHeaders, requireActiveMember, async (req, res: Response) => {
     setMemberHeaders(res);
     const member = memberOf(req);
     if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
@@ -373,7 +384,7 @@ export function registerProfileApi(app: Express, deps: MemberPlatformDeps) {
 
   // The sensitive set only, on its own endpoint, so health-adjacent data is
   // fetched exclusively by surfaces that explicitly need it.
-  app.get("/api/research/profile/sensitive", requireActiveMember, async (req, res: Response) => {
+  app.get("/api/research/profile/sensitive", privateMemberHeaders, requireActiveMember, async (req, res: Response) => {
     setMemberHeaders(res);
     const member = memberOf(req);
     if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
