@@ -13,9 +13,19 @@ vi.mock("./member-auth", async (importOriginal) => {
 
 import { registerResearchApi, researchPageGate } from "./index";
 import { registerMemberPlatformApi } from "./member-platform";
+import { documentDownloadPath, signDocumentGrant } from "./documents";
 
 const VALID_PLAN_ID = "00000000-0000-4000-8000-000000000030";
 const VALID_DOCUMENT_ID = "00000000-0000-4000-8000-0000000000d0";
+const DOWNLOAD_EXPIRY = 1893456000000;
+
+function canonicalDownloadPath() {
+  return documentDownloadPath(
+    VALID_DOCUMENT_ID,
+    DOWNLOAD_EXPIRY,
+    signDocumentGrant(VALID_DOCUMENT_ID, "member-for-wall-shape", DOWNLOAD_EXPIRY),
+  );
+}
 
 const KEYS = [
   "RESEARCH_PUBLIC",
@@ -164,12 +174,54 @@ describe("fresh-browser account-access wall", () => {
     expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
   });
 
-  it("does not let a Bearer token bypass the shared wall for document download", async () => {
+  it("lets only the signer-emitted download GET shape reach the downstream member guard", async () => {
     const response = await request(makeWalledApi())
-      .get(`/api/research/documents/${VALID_DOCUMENT_ID}/download?exp=9999999999999&sig=private`)
+      .get(canonicalDownloadPath())
       .set("Authorization", "Bearer member-jwt-without-review-cookie");
     expect(response.status).toBe(401);
-    expect(response.body).toEqual({ ok: false, message: "Access required." });
+    expect(response.body).toEqual({ ok: false, message: "Sign in required." });
+    expect(response.headers["cache-control"]).toBe("no-store");
+    expect(response.headers.pragma).toBe("no-cache");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
+    expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
+  });
+
+  it.each([
+    ["head", () => canonicalDownloadPath()],
+    ["post", () => canonicalDownloadPath()],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/download`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/download?exp=${DOWNLOAD_EXPIRY}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/download?sig=${"a".repeat(43)}`],
+    ["get", () => `${canonicalDownloadPath()}&extra=1`],
+    ["get", () => `${canonicalDownloadPath()}&exp=${DOWNLOAD_EXPIRY}`],
+    ["get", () => `${canonicalDownloadPath()}&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/download?sig=${"a".repeat(43)}&exp=${DOWNLOAD_EXPIRY}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/download?%65xp=${DOWNLOAD_EXPIRY}&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/download?exp=%31${String(DOWNLOAD_EXPIRY).slice(1)}&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/download?exp=${DOWNLOAD_EXPIRY}&sig=%61${"a".repeat(42)}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/download?exp=0${DOWNLOAD_EXPIRY}&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/download?exp=9007199254740992&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID.toUpperCase()}/download?exp=${DOWNLOAD_EXPIRY}&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/documents/%30${VALID_DOCUMENT_ID.slice(1)}/download?exp=${DOWNLOAD_EXPIRY}&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}%2Fextra/download?exp=${DOWNLOAD_EXPIRY}&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/documents/private-document-id/download?exp=${DOWNLOAD_EXPIRY}&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/download/extra?exp=${DOWNLOAD_EXPIRY}&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/document/${VALID_DOCUMENT_ID}/download?exp=${DOWNLOAD_EXPIRY}&sig=${"a".repeat(43)}`],
+    ["get", () => `/api/research/documents/${VALID_DOCUMENT_ID}/downloads?exp=${DOWNLOAD_EXPIRY}&sig=${"a".repeat(43)}`],
+  ] as const)("keeps hostile download boundary case %s shared-walled", async (method, path) => {
+    const call = (request(makeWalledApi()) as any)[method](path()).set(
+      "Authorization",
+      "Bearer member-jwt-without-review-cookie",
+    );
+    const response = method === "post" ? await call.send({}) : await call;
+    expect(response.status).toBe(401);
+    if (method === "head") {
+      expect(response.text ?? "").toBe("");
+    } else {
+      expect(response.body).toEqual({ ok: false, message: "Access required." });
+    }
+    expect(response.headers.pragma).toBeUndefined();
+    expect(response.headers["x-robots-tag"]).toBeUndefined();
   });
 
   it.each([

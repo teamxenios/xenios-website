@@ -222,9 +222,12 @@ function privateLogSpies() {
   ];
 }
 
-function expectNoPrivateLogLeak(spies: ReturnType<typeof privateLogSpies>) {
+function expectNoPrivateLogLeak(
+  spies: ReturnType<typeof privateLogSpies>,
+  markers: readonly string[] = [CONTENT_MARKER],
+) {
   const logged = spies.flatMap((spy) => spy.mock.calls).flat().map(String).join(" ");
-  expect(logged).not.toContain(CONTENT_MARKER);
+  for (const marker of markers) expect(logged).not.toContain(marker);
 }
 
 const MEMBER_A = {
@@ -250,6 +253,13 @@ const MEMBER_B = {
 // A marker planted in section bodies: it must never reach a notification, a
 // list response, or anything else a document's CONTENT should not reach.
 const CONTENT_MARKER = "XENIOS_DOCUMENT_CONTENT_MARKER";
+const DOWNLOAD_PRIVATE_METADATA_MARKER = "XENIOS_DOWNLOAD_PRIVATE_METADATA_SENTINEL";
+const DOWNLOAD_PRIVATE_BYTES_MARKER = "XENIOS_DOWNLOAD_PRIVATE_BYTES_SENTINEL";
+const UNIFORM_DOWNLOAD_DENIAL = {
+  ok: false,
+  code: "not_found",
+  message: "This document link is not valid.",
+};
 
 const SECTIONS = [
   { heading: "This month", body: `Three sessions a week. ${CONTENT_MARKER}` },
@@ -551,9 +561,9 @@ describe("POST /api/research/documents/:documentId/access", () => {
 
 describe("GET /api/research/documents/:documentId/download", () => {
   // Publishes a real document and returns the member's signed URL for it.
-  async function publishAndGrant(app: express.Express) {
+  async function publishAndGrant(app: express.Express, overrides: Record<string, any> = {}) {
     state.members.push({ ...MEMBER_A });
-    const created = await createDocument(app);
+    const created = await createDocument(app, overrides);
     expect(created.status).toBe(200);
     const documentId = created.body.document.documentId;
     const access = await request(app).post(`/api/research/documents/${documentId}/access`);
@@ -568,8 +578,8 @@ describe("GET /api/research/documents/:documentId/download", () => {
     expect(res.status).toBe(200);
     expect(res.headers["cache-control"]).toBe("no-store");
     expect(res.headers["referrer-policy"]).toBe("no-referrer");
-    expect(res.headers.pragma).toBeUndefined();
-    expect(res.headers["x-robots-tag"]).toBeUndefined();
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
     expect(res.headers["content-disposition"]).toContain(`${documentId}.txt`);
     // The title is never in the filename.
     expect(res.headers["content-disposition"]).not.toContain("August");
@@ -592,13 +602,55 @@ describe("GET /api/research/documents/:documentId/download", () => {
     expect(state.documents[0].storage_path).not.toContain("August");
   });
 
+  it.each([
+    ["signed out", null, { status: 401, code: "member_required" }],
+    ["invalid Bearer", "Bearer invalid-member-token", { status: 401, code: "invalid_token" }],
+  ] as const)("%s denial happens before every document, byte, notification, or logging effect", async (_label, bearer, denial) => {
+    const app = makeApp();
+    const { signedUrl } = await publishAndGrant(app, {
+      title: DOWNLOAD_PRIVATE_METADATA_MARKER,
+      sections: [{ heading: "Private bytes", body: DOWNLOAD_PRIVATE_BYTES_MARKER }],
+    });
+    expect(state.documents[0].title).toBe(DOWNLOAD_PRIVATE_METADATA_MARKER);
+    const seededBytes = await memoryDocumentBytesStore.get(state.documents[0].storage_path);
+    expect(seededBytes).not.toBeNull();
+    expect(new TextDecoder().decode(seededBytes!.bytes)).toContain(DOWNLOAD_PRIVATE_BYTES_MARKER);
+    const beforeDocuments = structuredClone(state.documents);
+    state.documentQueries = 0;
+    state.documentUpdates = 0;
+    notifications = [];
+    auth.deny = denial;
+    const getSpy = vi.spyOn(memoryDocumentBytesStore, "get");
+    const putSpy = vi.spyOn(memoryDocumentBytesStore, "put");
+    const logSpies = privateLogSpies();
+
+    const call = request(app).get(signedUrl);
+    if (bearer) call.set("Authorization", bearer);
+    const res = await call;
+
+    expect(res.status).toBe(401);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    expect(state.documentQueries).toBe(0);
+    expect(state.documentUpdates).toBe(0);
+    expect(getSpy).not.toHaveBeenCalled();
+    expect(putSpy).not.toHaveBeenCalled();
+    expect(state.documents).toEqual(beforeDocuments);
+    expect(notifications).toHaveLength(0);
+    expect(res.text ?? "").not.toContain(DOWNLOAD_PRIVATE_METADATA_MARKER);
+    expect(res.text ?? "").not.toContain(DOWNLOAD_PRIVATE_BYTES_MARKER);
+    expectNoPrivateLogLeak(logSpies, [DOWNLOAD_PRIVATE_METADATA_MARKER, DOWNLOAD_PRIVATE_BYTES_MARKER]);
+  });
+
   it("an expired signature is denied", async () => {
     const app = makeApp();
     const { signedUrl } = await publishAndGrant(app);
     nowMs = T0 + DOCUMENT_GRANT_TTL_MS + MINUTE;
     const res = await request(app).get(signedUrl);
     expect(res.status).toBe(403);
-    expect(res.body.code).toBe("not_found");
+    expect(res.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
     expect(res.text).not.toContain("XENIOS-TEST-DOCUMENT");
   });
 
@@ -615,18 +667,18 @@ describe("GET /api/research/documents/:documentId/download", () => {
     url.searchParams.set("sig", flipped);
     const tampered = await request(app).get(`${url.pathname}${url.search}`);
     expect(tampered.status).toBe(403);
-    expect(tampered.body.code).toBe("not_found");
+    expect(tampered.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
 
     // Different length: the length guard must deny, not throw.
     url.searchParams.set("sig", signature.slice(0, 8));
     const truncated = await request(app).get(`${url.pathname}${url.search}`);
     expect(truncated.status).toBe(403);
-    expect(truncated.body.code).toBe("not_found");
+    expect(truncated.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
 
     // No signature at all.
     const bare = await request(app).get(url.pathname);
     expect(bare.status).toBe(403);
-    expect(bare.body.code).toBe("not_found");
+    expect(bare.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
   });
 
   it("a valid signature under the WRONG member session is denied: a signature is not an authorization", async () => {
@@ -638,7 +690,7 @@ describe("GET /api/research/documents/:documentId/download", () => {
     auth.current = MEMBER_B;
     const res = await request(app).get(signedUrl);
     expect(res.status).toBe(403);
-    expect(res.body.code).toBe("not_found");
+    expect(res.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
     expect(res.text).not.toContain("XENIOS-TEST-DOCUMENT");
   });
 
@@ -655,7 +707,7 @@ describe("GET /api/research/documents/:documentId/download", () => {
     // The MAC verifies (B signed it for B), so the ownership re-read is what
     // stops this. Both layers are load-bearing.
     expect(res.status).toBe(403);
-    expect(res.body.code).toBe("not_found");
+    expect(res.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
   });
 
   it("capability off: the door reports capability_disabled and serves nothing", async () => {

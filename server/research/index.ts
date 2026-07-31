@@ -296,6 +296,18 @@ export function registerResearchApi(app: Express) {
     const rawDocumentId = documentsMatch[1];
     return rawDocumentId === rawDocumentId.toLowerCase() && z.string().uuid().safeParse(rawDocumentId).success;
   };
+  const downstreamMemberGuardedDownload = (req: Request): boolean => {
+    const match = /^\/api\/research\/documents\/([^/?]+)\/download\?exp=(0|[1-9]\d*)&sig=([A-Za-z0-9_-]{43})$/.exec(
+      req.originalUrl,
+    );
+    if (match === null) return false;
+    const [, rawDocumentId, rawExpiresAt] = match;
+    if (rawDocumentId !== rawDocumentId.toLowerCase() || !z.string().uuid().safeParse(rawDocumentId).success) {
+      return false;
+    }
+    const expiresAt = Number(rawExpiresAt);
+    return Number.isSafeInteger(expiresAt) && String(expiresAt) === rawExpiresAt;
+  };
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
     if (
@@ -310,7 +322,8 @@ export function registerResearchApi(app: Express) {
     if (
       ((req.method === "GET" || req.method === "HEAD") &&
         downstreamMemberGuardedRead(req.path)) ||
-      (req.method === "POST" && downstreamMemberGuardedWrite(req.path))
+      (req.method === "POST" && downstreamMemberGuardedWrite(req.path)) ||
+      (req.method === "GET" && downstreamMemberGuardedDownload(req))
     ) {
       return next();
     }

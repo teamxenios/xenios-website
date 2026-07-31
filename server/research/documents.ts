@@ -632,8 +632,7 @@ export function registerDocumentsApi(app: Express, deps: MemberPlatformDeps) {
   // who is asking, and the stored row proves ownership. A signature alone is
   // never sufficient, so a URL that leaks into a log, a browser history, or a
   // shared screenshot opens nothing on its own.
-  app.get("/api/research/documents/:documentId/download", requireActiveMember, async (req, res) => {
-    setPrivacyHeaders(res);
+  app.get("/api/research/documents/:documentId/download", privateDocumentResponse, requireActiveMember, async (req, res) => {
     try {
       const member = memberFrom(req);
       if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
