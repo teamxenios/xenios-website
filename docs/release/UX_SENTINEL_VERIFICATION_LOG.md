@@ -950,3 +950,34 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 191. SEN-0025 built and opened as PR #213 in the same cycle. It needed no protection decision because
      client/src/research/ is an allowedWriteZone, which is why it could be done now while SEN-0012,
      0014, 0024, 0026, 0027 and 0028 still wait on the core-site re-baseline.
+
+## 2026-07-31T23:30Z, SEN-0025 verified live, SEN-0027 robots half merged, and a repeated crawl error
+
+192. SEN-0025 FIXED AND VERIFIED LIVE at 491e724. link-signin-gateway,
+     link-signin-privacy and the Back to gateway copy are all present in the deployed section chunk.
+193. I MADE THE SAME CRAWL MISTAKE AGAIN, and caught it the same way. My first production crawl
+     reached 16 chunks and found none of the three markers, which reads exactly like an unshipped
+     deploy. The shell loop had broken out early. A correct transitive crawl found 131 chunks and all
+     three strings. This is the second occurrence today of the identical error class (entry 166 was
+     14 of 118). RULE, now twice-earned: a bundle crawl must loop until it adds zero new chunks, and
+     the round-by-round count must be PRINTED, because a crawl that silently stops early is
+     indistinguishable from a feature that is not deployed.
+194. SEN-0027 robots half merged as b911bab. Deployment NOT yet confirmed and I am not claiming it:
+     the fix is a dependency-array change with no new string to fingerprint, and the deployed section
+     chunk is still section-CDLsih5s.js, which is the build carrying SEN-0025. Since section.tsx
+     changed in b911bab, a deployed build would carry a different section hash. So it is still in
+     flight. Behavioural verification in a real browser is the right check and belongs next cycle.
+195. ROOT CAUSE WAS BIGGER THAN I FIRST RECORDED. I had logged SEN-0027 as a stale-title-and-drift
+     nit. It is structural: the section asserted noindex in an effect with an EMPTY dependency array,
+     while 27 research pages render SeoHead with no robots prop and SeoHead's default begins
+     index,follow. Every client-side navigation inside the gated tree flipped the markup indexable.
+     One dependency fixes all 27.
+196. OWNERSHIP CORRECTION, and it cost time. I filed SEN-0027 as "Codex (protected)". Its files are
+     client/src/research/layout.tsx and section.tsx, both under an allowedWriteZone, so it was
+     buildable by me from the moment it was filed. I misread the zone and parked a fixable defect.
+     Ledger owner field corrected. Same class of error as assuming server/research/index.ts was
+     doctrinally blocked, which delayed SEN-0023 by most of a day. WHEN A DEFECT LOOKS BLOCKED, RE-READ
+     THE ZONE RULE AGAINST THE ACTUAL PATH BEFORE PARKING IT.
+197. Scope kept honest: the TITLE half of SEN-0027 stays open. The gate and not-found views render no
+     SeoHead at all, so document.title goes stale after client-side navigation (WCAG 2.4.2 Level A).
+     That needs a per-view title decision rather than a one-line dependency change.
