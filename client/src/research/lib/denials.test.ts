@@ -34,6 +34,7 @@ const EXPECTED_CODES = [
   "state_not_serviceable",
   "shipping_unavailable",
   "payment_disabled",
+  "payment_method_required",
   "payment_failed",
   "large_order_review_required",
   "order_not_found",

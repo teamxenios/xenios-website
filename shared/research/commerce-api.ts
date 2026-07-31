@@ -58,6 +58,7 @@ export type CommerceDenialCode =
   | "state_not_serviceable"
   | "shipping_unavailable"
   | "payment_disabled"
+  | "payment_method_required"
   | "payment_failed"
   | "large_order_review_required"
   | "order_not_found"
@@ -202,6 +203,17 @@ export interface CheckoutRequest {
   researchAttestation?: boolean;
   /** Client-supplied so a retried submit cannot create two orders. */
   idempotencyKey: string;
+  /**
+   * A provider payment-method token collected by the provider's own client
+   * surface (Stripe Elements and equivalents). NEVER card data: xenios stores
+   * no card number, expiry, or CVC, and this field cannot carry them.
+   *
+   * Without it a provider can only open an unconfirmed intent, which is not a
+   * synchronous authorization, so a real one-time checkout cannot be paid.
+   * The server rejects a paid checkout that omits it rather than creating an
+   * order that can never settle.
+   */
+  paymentMethodReference?: string;
 }
 
 export interface OrderSummaryDto {
