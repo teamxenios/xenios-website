@@ -412,3 +412,25 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     Use this for every future addition to DOWNSTREAM_MEMBER_GUARDED_READ_PATHS,
     OPEN_PUBLIC_READ_PATHS, OPEN_PUBLIC_WRITE_PATHS, or OPEN_ACCOUNT_WRITE_PATHS.
 89. SEN-0022 re-probed at 6908699: /admin still returns no x-robots-tag. Still open.
+
+## 2026-07-31T07:20Z, Xenios30 handover verified fixed at main 600288d (PR #193)
+
+90. At 06:50Z I handed the Website 2 lane the measured Xenios30 contract analysis when it reserved
+    that surface (PR #192), specifically warning that a path-only repoint would leave the page
+    broken because three independent mismatches existed. PR #193 merged ~30 minutes later.
+91. VERIFIED, all three closed at main 600288d:
+    (1) PATH/SLUG: adapter now calls /api/research/plans/xenios30; zero occurrences of the old
+        /member/plans/xenios-30 form remain.
+    (2) ENVELOPE: Xenios30Response is typed { ok, current, history } matching the server, and the
+        page validates it at RUNTIME with hasExactKeys(value, ["ok","current","history"]) plus
+        current === null || isPlan(current), so the honest pending state is preserved.
+    (3) ACKNOWLEDGE: acknowledgeXenios30(planId) posts to
+        /api/research/plans/xenios30/:planId/acknowledge with an empty body, and planId is sourced
+        from the loaded plan (Xenios30.tsx:170, dependency at :185).
+92. The lane went BEYOND the handover in a way worth recording: rather than mapping the server
+    projection down to the page's old flat string shape, it adopted the shared Xenios30Plan type
+    directly and added runtime shape validation. That removes the lossy mapping layer my own
+    proposal would have introduced. Their solution is better than the one I offered.
+93. PATTERN CONFIRMED: analysis handed to the owning lane converted to a correct merged repair
+    within 30 minutes. With merge access unavailable for reviewer branches, precise evidence
+    delivered to the lane that owns the surface is the higher-throughput path.
