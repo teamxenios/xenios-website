@@ -567,3 +567,31 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
      price". It fails closed on every path.
 115. RULE REAFFIRMED: absence of auth MIDDLEWARE is not absence of auth. Read the handler body
      before calling a route unguarded. I would have filed a false P0 against a well-built surface.
+
+## 2026-07-31T09:55Z, consolidated the remaining wall work and caught a copy-the-pattern trap
+
+116. #196 leased server/research/documents.ts for the documents access boundary, the same shape as
+     #194: the lease omits server/research/index.ts, where the wall actually lives. On #195 the lane
+     edited index.ts anyway, so this is a note rather than a blocker.
+117. Rather than flag each lease one at a time for six more surfaces, measured the whole remaining
+     set and handed it over in ONE packet: 24 routes, 18 of which need no regex at all (exact paths)
+     and 6 of which carry a path parameter.
+118. CAUGHT A TRAP BEFORE IMPLEMENTATION. #195 anchored its write bypass with z.string().uuid() on
+     the planId, which is right for plans and WRONG for documents and questions:
+       documents.ts:525  documentId: z.string().min(1).max(100)
+       questions.ts:340  questionId: z.string().min(1).max(100)
+     Real document ids in this repo are slugs, not UUIDs ("doc-fitness-1", "doc-v1", "doc_xyz").
+     Copying #195 verbatim would wall every genuine documents request. Worse, it could PASS its own
+     tests if those fixtures happen to use UUIDs, so the defect would reach production green.
+119. VERB GAP, structural. The predicate admits GET/HEAD and POST only. Four remaining routes are
+     PUT or DELETE (PUT /profile, PUT /media/retention-election, DELETE /media/:mediaId,
+     DELETE /telegram/link) and stay walled regardless of which paths are listed until the branch
+     is extended.
+120. DECLARED AN UNKNOWN RATHER THAN GUESSING. I could not find an explicit id schema for mediaId,
+     so the packet flags the two /media/:mediaId routes as unconfirmed shape and asks them to read
+     media.ts before anchoring a pattern, instead of asserting a format I had not verified.
+121. Asked for a NEGATIVE case per parameterised route, mirroring #195's non-UUID probe. Without one
+     a test cannot distinguish a correct rule from an over-broad prefix match, which is the same
+     anti-vacuity standard I hold my own evidence to.
+122. Highlighted PUT /profile for sequencing: #191 opened the read and left the write walled, so a
+     member can load the profile page and cannot save it. Two-line fix, visibly broken interaction.
