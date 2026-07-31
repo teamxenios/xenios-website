@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import type { CareCapabilityStatus } from "@shared/care/contracts";
+import CareClinicianReviewQueuePage, {
+  CARE_CLINICIAN_REVIEW_PATH,
+} from "./CareClinicianReviewQueuePage";
 
 const preparation = [
   ["Eligibility", "Location, state coverage, identity, consent"],
@@ -18,7 +21,21 @@ type StatusLoadState =
   | { kind: "ready"; status: CareCapabilityStatus }
   | { kind: "error" };
 
+/**
+ * The broad Care route resolves here. Care-owned sub-surfaces are selected
+ * inside the Care module, so a new Care screen never needs a change to the
+ * protected application router. Anything unrecognized falls through to the
+ * pending shell below, which is the fail-closed default.
+ */
 export default function CareSection() {
+  const [location] = useLocation();
+  if (location === CARE_CLINICIAN_REVIEW_PATH) {
+    return <CareClinicianReviewQueuePage />;
+  }
+  return <CarePendingShell />;
+}
+
+function CarePendingShell() {
   const [loadState, setLoadState] = useState<StatusLoadState>({ kind: "loading" });
   const [loadAttempt, setLoadAttempt] = useState(0);
 

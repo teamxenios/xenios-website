@@ -16,6 +16,11 @@ import {
 } from "./access";
 import { evaluateCareAppointmentReadiness } from "./appointment-readiness";
 import type { CareAppointmentRepository } from "./appointment-repository";
+import {
+  lazyCareClinicianReviewRepository,
+  type CareClinicianReviewRepository,
+} from "./review-repository";
+import { registerCareClinicianReviewApi } from "./review-routes";
 
 const recordId = z.string().uuid();
 const userId = z.string().uuid();
@@ -74,6 +79,10 @@ export function registerCareAppointmentApi(
   access: CareAccessDependencies,
   repository: CareAppointmentRepository,
   now: () => Date = () => new Date(),
+  // The clinician review READ surface belongs to this module, which already
+  // owns /api/care/reviews. Registering it here keeps the new screen out of
+  // the protected application and server seams entirely.
+  reviewRepository: CareClinicianReviewRepository = lazyCareClinicianReviewRepository(),
 ) {
   app.get(
     CARE_ROUTE_CONTRACTS.appointments,
@@ -313,4 +322,8 @@ export function registerCareAppointmentApi(
       }
     },
   );
+
+  // The clinician review queue and review detail reads. Registered last so the
+  // literal /queue path is matched before the parameterised review id.
+  registerCareClinicianReviewApi(app, access, reviewRepository);
 }
