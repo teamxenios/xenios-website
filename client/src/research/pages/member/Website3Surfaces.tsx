@@ -23,6 +23,17 @@ import {
   type SuperpowerOfferView,
   type Website3SurfaceState,
 } from "../../products-diagnostics";
+import {
+  getCatalogDisplay,
+  getCatalogDisplayProduct,
+} from "../../adapters/catalogDisplay";
+import { CatalogGrid } from "../../catalog-display/CatalogGrid";
+import { ProductDetail } from "../../catalog-display/ProductDetail";
+import type {
+  CatalogDisplayListResponse,
+  CatalogDisplayDetailResponse,
+  DisplayProductCard,
+} from "@shared/research/catalog-display/contract";
 
 type LoadState<T> =
   | { phase: "loading" }
@@ -73,8 +84,111 @@ function useProductPlatform() {
   return { state, load };
 }
 
+// The supplements surface prefers the governed catalog-display projection
+// (server/research/catalog-display): when that read surface is enabled and
+// the member is authorized, the real display catalog renders with inline
+// product detail. Until the release manager enables the surface (flag off,
+// wall bypass pending, or adapter unregistered) every response degrades to
+// "unavailable" and the existing governed coming-soon experience renders
+// unchanged, so this mount is inert in the current production posture.
+function useCatalogDisplay() {
+  const { memberToken } = useResearch();
+  const [state, setState] = useState<LoadState<CatalogDisplayListResponse>>({
+    phase: "loading",
+  });
+
+  const load = useCallback(async () => {
+    setState({ phase: "loading" });
+    const result = await getCatalogDisplay(memberToken);
+    if (result.kind === "ok") setState({ phase: "ok", value: result.data });
+    else if (result.kind === "error") setState({ phase: "error", message: result.message });
+    else setState({ phase: "unavailable" });
+  }, [memberToken]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  return { state, load };
+}
+
+function CatalogDisplaySupplements({
+  list,
+}: {
+  list: CatalogDisplayListResponse;
+}) {
+  const { memberToken } = useResearch();
+  const [selected, setSelected] = useState<DisplayProductCard | null>(null);
+  const [detail, setDetail] = useState<LoadState<CatalogDisplayDetailResponse>>({
+    phase: "loading",
+  });
+
+  const supplements = useMemo(
+    () => list.products.filter((product) => product.lane === "supplement"),
+    [list.products],
+  );
+
+  useEffect(() => {
+    if (!selected) return;
+    let alive = true;
+    setDetail({ phase: "loading" });
+    void getCatalogDisplayProduct(memberToken, selected.lane, selected.slug).then((result) => {
+      if (!alive) return;
+      if (result.kind === "ok") setDetail({ phase: "ok", value: result.data });
+      else if (result.kind === "error") setDetail({ phase: "error", message: result.message });
+      else setDetail({ phase: "unavailable" });
+    });
+    return () => {
+      alive = false;
+    };
+  }, [memberToken, selected]);
+
+  if (selected) {
+    return (
+      <div className="grid gap-6" data-testid="member-supplements-display-detail">
+        <div>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => setSelected(null)}
+            data-testid="button-supplements-back-to-catalog"
+          >
+            Back to supplements
+          </button>
+        </div>
+        <ProductDetail
+          product={detail.phase === "ok" ? detail.value.product : null}
+          loading={detail.phase === "loading"}
+          error={detail.phase === "error" || detail.phase === "unavailable"}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <CatalogGrid
+      products={supplements}
+      breadth={list.breadth}
+      heading="Supplements"
+      onSelect={(product) => setSelected(product)}
+      testId="member-supplements-display"
+    />
+  );
+}
+
 export function MemberSupplements() {
+  const display = useCatalogDisplay();
   const { state, load } = useProductPlatform();
+
+  // The enabled catalog-display surface wins; anything else falls back to the
+  // governed coming-soon flow exactly as before this mount existed.
+  if (display.state.phase === "ok") {
+    return <CatalogDisplaySupplements list={display.state.value} />;
+  }
+  if (display.state.phase === "loading") {
+    return <CatalogGrid loading heading="Supplements" testId="member-supplements-display" />;
+  }
+
   const supplements =
     state.phase === "ok"
       ? state.value.supplements.map((item) => ({
