@@ -768,3 +768,34 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 157. No response yet on the SEN-0012 P1 escalation (#182) or on the protection re-baseline question.
      Wall scope unchanged: 20 routes across 5 pages still shadowed (assessment, blueprint, media,
      questions, telegram, tracker, agreements) plus the PUT/DELETE verb gap.
+
+## 2026-07-31T13:30Z, Care rail audited fail-closed as the lane begins building Care shells
+
+158. #201 leases the Care pending shells, so Codex has moved from the wall to Care rather than
+     finishing the remaining 20 walled member routes. Audited the Care rail now, before shells land,
+     because it is the highest-stakes surface in the repo (prescriptions, pharmacy, intake).
+159. FAIL-CLOSED CONFIRMED on production, every contract path, unauthenticated:
+       GET  /api/care/status         200  {"state":"disabled","enabled":false}  honest capability report
+       GET  /api/care/eligibility    503  care_disabled
+       POST /api/care/consents       503  care_disabled
+       GET  /api/care/intake         503  care_disabled
+       GET  /api/care/appointments   503  care_disabled
+       GET  /api/care/reviews        503  care_disabled
+       GET  /api/care/prescriptions  503  care_disabled
+       GET  /api/care/audit/access   503  care_disabled
+     No clinical data, no route enumeration beyond the published contract, no 500s.
+160. INDEXABILITY CONFIRMED: /care, /care/prescriptions and /care/eligibility all serve
+     x-robots-tag: noindex, nofollow, applied by carePageGate before anything renders.
+161. APPARENT ANOMALY RESOLVED AS MY OWN ERROR. GET /api/care/consents returns a bare 404 while every
+     sibling returns 503, which reads like an unregistered route or a contract mismatch of the kind
+     that broke Xenios30. It is neither: CARE_ROUTE_CONTRACTS.consents is registered as a POST
+     (eligibility-routes.ts:162), so a GET is correctly Not Found. POST returns the same 503
+     care_disabled as its siblings. Verified before filing. RULE: a 404 on a contract path is not
+     evidence of a missing route until the VERB has been checked.
+162. Design note worth recording: server/care/index.ts registers only two live routes, status and an
+     audit permission probe. Every clinical module is exported but not wired, so the clinical
+     surface area currently reachable is deliberately near-zero. That is the right posture while the
+     capability is disabled.
+163. REINFORCES SEN-0022. Care pages and research pages both carry noindex; /admin still does not.
+     That makes /admin the single outlier across all three restricted surfaces, which strengthens
+     the case for the header rather than leaving it as an isolated nit.
