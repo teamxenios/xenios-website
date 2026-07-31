@@ -434,3 +434,38 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 93. PATTERN CONFIRMED: analysis handed to the owning lane converted to a correct merged repair
     within 30 minutes. With merge access unavailable for reviewer branches, precise evidence
     delivered to the lane that owns the surface is the higher-throughput path.
+
+## 2026-07-31T07:50Z, wall changes verified live, and the defect class they left behind
+
+94. VERIFIED LIVE on production, PR #188 + #191 (main 600288d). GET /api/research/profile and
+    /profile/sensitive now answer "Sign in required." (the member guard) instead of "Access
+    required." (the wall), and both carry Cache-Control: no-store and x-robots-tag: noindex,
+    nofollow ON THE 401 ITSELF. Headers on a denial that never reached the handler is direct proof
+    that #188's ordering fix (privateMemberHeaders before requireActiveMember) is deployed.
+    Control: /catalog and a nonsense path return "Access required." with neither header, so the
+    header presence is route-specific and the result is not vacuous.
+95. Static review found the change sound: the bypass is method-exact (GET/HEAD), and the downstream
+    guard requireActiveMember verifies the JWT, active status, and billing parity, which is
+    strictly stronger than the shared-password wall it replaced.
+96. SEN-0023 FILED (P1, fails closed). The same defect class remains on 28 other member-guarded
+    routes. The wall is satisfied only by isAuthed() = the xr_access cookie, minted at exactly ONE
+    call site (setSessionCookie, index.ts:237, the shared review-password handler). Member login
+    never mints it, and neither bypass covers these paths. So a member who signs in through Member
+    Login without the review password is locked out of plans, documents, media, questions, tracker,
+    assessment, blueprint, agreements, telegram, and PUT /profile.
+    Production discriminator, no credentials: nine routes answered "Access required." (wall) while
+    three controls answered "Sign in required." (guard).
+97. This makes PR #193's repair unreachable for the flow the founder directive mandates, since the
+    directive puts Member Login on the MAIN home page, where a member never meets the password gate.
+    Two sharp edges recorded: #191 opened GET /profile but left PUT /profile walled (load succeeds,
+    save fails), and POST /plans/xenios30/:planId/acknowledge is walled too, so a GET-only fix would
+    let a member read the plan and still fail to acknowledge it.
+98. SELF-CORRECTION, recorded because I nearly published the error. A raw
+    `git diff origin/main <branch>` on PR #190 appeared to show it reverting the #188 and #191 wall
+    fixes. That reading was WRONG. Against the true merge base (e45ae5a) #190 modifies only four
+    client/src files and never touches server/research/index.ts or profile.ts, so a three-way merge
+    preserves main's server state. The raw diff was reporting "branch is behind main," not "merge
+    reverts." I tested merge-base semantics BEFORE reporting and published the corrected finding:
+    #190 is a byte-identical no-op superseded by #193, close for hygiene, no regression risk.
+    Rule reaffirmed: for any "this PR would revert X" claim, diff against the merge base, never
+    against the tip.
