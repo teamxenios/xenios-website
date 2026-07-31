@@ -1,0 +1,76 @@
+# Core-site ZONE gate: classify the pull request's actual diff.
+#
+# WHAT THIS CLOSES
+# checks.yml runs test, typecheck and build. None of them ever ran the changed-file
+# classifier against a real pull-request diff. server/core-site-protection.test.ts
+# exercises the classifier on hand-written path lists and checks the content-HASH
+# tripwire, so a branch that edited a protected path which is NOT one of the 21
+# hash-pinned files went green in silence. This job is the missing link: it feeds the
+# PR's own diff to scripts/acceptance/verify-changed-file-zones.mjs, which calls the
+# existing classifyChangedFiles and exits 1 when anything lands in no permitted zone.
+#
+# NO npm ci ON PURPOSE
+# The gate is plain Node with zero dependencies (it imports only node:crypto, node:fs,
+# node:path, node:url and the sibling gate script). Keeping it install-free means a
+# registry outage or a broken lockfile cannot take the protection gate offline, and the
+# job finishes in seconds. The vitest suite that proves the gate's own behaviour
+# (server/core-site-zone-gate.test.ts) is collected by the existing `test` job, because
+# vitest.config.ts already includes server/**/*.test.ts.
+#
+# KNOWN CONTRADICTION, FOR THE FOUNDER, NOT RESOLVED HERE
+# .github/** sits in NO zone in docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json, so
+# classifyPath's default applies and this very file classifies as a "violation". The
+# pull request that installs this gate is therefore flagged by the gate it installs.
+# That is NOT fixed by widening infrastructureZones, because widening the protection
+# manifest is a founder decision. See the finding in the pull request description and
+# server/core-site-zone-gate.test.ts, which asserts the current behaviour so that any
+# future zone change has to be deliberate.
+
+name: core-site zone gate
+
+on:
+  pull_request:
+
+# A pull_request-only trigger is deliberate: this is a PRE-MERGE gate, and a push to
+# main has no meaningful base to diff against.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: core-site-zone-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  zones:
+    name: changed files stay inside their zones
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The PR head itself, not the synthetic merge commit, so the diff is exactly
+          # what the branch changed. fetch-depth 0 because the gate resolves a merge
+          # base, which a shallow clone cannot do.
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Make the base commit available
+        run: |
+          git fetch --no-tags --prune origin \
+            +${{ github.event.pull_request.base.sha }}:refs/remotes/pull-base
+
+      - name: List the changed files
+        run: |
+          git diff --name-only \
+            ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} \
+            | tee changed-files.txt
+          echo "---"
+          echo "$(wc -l < changed-files.txt) changed file(s)"
+
+      - name: Classify them against the protection manifest
+        # Exits 0 when every path is in a permitted zone, 1 on any violation, and 2 on a
+        # setup error, which INCLUDES an empty changed-file list. The empty case is a
+        # failure on purpose: a pull request always changes at least one file, so an
+        # empty list means this diff step misfired, and a gate that passes on a list it
+        # failed to compute is a gate that is not running.
+        run: node scripts/acceptance/verify-changed-file-zones.mjs --files-from changed-files.txt
