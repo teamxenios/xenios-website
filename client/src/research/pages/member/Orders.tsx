@@ -3,10 +3,13 @@ import { Link } from "wouter";
 import type { OrderSummaryDto } from "@shared/research/commerce-api";
 import { useResearch } from "../../core";
 import { listOrders } from "../../adapters/commerce";
+import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { denialPresentation } from "../../lib/denials";
 import { MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
+  capabilityStatusOrPending,
+  ResearchCapabilityBoundary,
   ResearchDataTable,
   ResearchDenialNotice,
   ResearchEmptyState,
@@ -52,6 +55,7 @@ function shipmentsSummary(order: OrderSummaryDto): string {
 export default function Orders() {
   const { memberToken } = useResearch();
   const [state, setState] = useState<PageState>({ phase: "loading" });
+  const [capabilities, setCapabilities] = useState<Map<ResearchCapability, CapabilityStatus> | null>(null);
 
   const load = useCallback(async () => {
     setState({ phase: "loading" });
@@ -79,6 +83,20 @@ export default function Orders() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Capability statuses are fetched once per page; an absent registry degrades
+  // to honest pending defaults (nothing is enabled by assumption).
+  useEffect(() => {
+    let cancelled = false;
+    void fetchCapabilities(memberToken).then((map) => {
+      if (!cancelled) setCapabilities(map);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [memberToken]);
+
+  const commerceStatus = capabilityStatusOrPending(capabilities, "product_commerce");
 
   const orders = state.phase === "ok" ? state.orders : [];
   const hasPendingReview = useMemo(() => orders.some((o) => o.state === "manual_review"), [orders]);
@@ -145,10 +163,18 @@ export default function Orders() {
         {state.phase === "denied" ? (
           <ResearchDenialNotice code={state.code} message={state.message} />
         ) : orders.length === 0 ? (
-          <ResearchEmptyState
-            title="No orders yet."
-            body="When you place your first order it will appear here with its full status history."
-          />
+          // While product_commerce is not enabled the member cannot place an
+          // order, so "when you place your first order" would promise an
+          // action they cannot take. The capability boundary renders the
+          // honest not-open state instead; orders that already exist (for
+          // example placed before commerce was switched off) still render in
+          // the table below regardless of the capability.
+          <ResearchCapabilityBoundary status={commerceStatus}>
+            <ResearchEmptyState
+              title="No orders yet."
+              body="When you place your first order it will appear here with its full status history."
+            />
+          </ResearchCapabilityBoundary>
         ) : (
           <>
             {/* The calm pending-review note: informational, never an error. */}

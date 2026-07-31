@@ -17,8 +17,10 @@ import type { ReactNode } from "react";
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 import { ResearchContext, type ResearchContextValue } from "../../core";
+import { __resetCapabilitiesCache } from "../../lib/capabilities";
 import Cart from "./Cart";
 import Checkout from "./Checkout";
+import Orders from "./Orders";
 import type { CartDto, StoreCreditDto } from "@shared/research/commerce-api";
 
 let root: Root | null = null;
@@ -30,6 +32,9 @@ afterEach(() => {
   root = null;
   container = null;
   vi.unstubAllGlobals();
+  // The capabilities module memoizes for 60s; reset so each test observes its
+  // own capabilities stub.
+  __resetCapabilitiesCache();
 });
 
 // Only the fields the pages read need real values (test-only cast, same
@@ -53,14 +58,33 @@ type StubRoute = {
 
 type RecordedCall = { url: string; init: RequestInit | undefined };
 
+// product_commerce is reported enabled by default so the enabled-path tests
+// exercise the pages exactly as before the capability boundary existed. A test
+// that wants commerce OFF passes its own capabilities route, which wins
+// because caller routes are matched first.
+const CAPABILITIES_ENABLED: StubRoute = {
+  method: "GET",
+  path: "/api/research/capabilities",
+  status: 200,
+  body: { ok: true, capabilities: { product_commerce: { enabled: true } } },
+};
+
+const CAPABILITIES_OFF: StubRoute = {
+  method: "GET",
+  path: "/api/research/capabilities",
+  status: 200,
+  body: { ok: true, capabilities: {} },
+};
+
 function stubFetch(routes: StubRoute[]): RecordedCall[] {
   const calls: RecordedCall[] = [];
+  const all = [...routes, CAPABILITIES_ENABLED];
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string, init?: RequestInit) => {
       calls.push({ url, init });
       const method = (init?.method ?? "GET").toUpperCase();
-      const route = routes.find((r) => r.method === method && r.path === url);
+      const route = all.find((r) => r.method === method && r.path === url);
       if (!route) throw new TypeError(`unstubbed fetch: ${method} ${url}`);
       return {
         status: route.status,
@@ -221,6 +245,25 @@ describe("Cart page", () => {
     const view = await renderPage(<Cart />);
     expect(view.textContent).toContain("Your cart is empty.");
     expect(view.querySelector('[data-testid="ra-empty"] a[href="/research/member/products"]')).toBeTruthy();
+  });
+
+  it("renders the honest not-open state instead of the empty cart while commerce is off", async () => {
+    stubFetch([
+      CAPABILITIES_OFF,
+      {
+        method: "GET",
+        path: "/api/research/cart",
+        status: 200,
+        body: { ok: true, cart: { ...readyCart, lines: [], shipmentGroups: [], checkoutReady: false } },
+      },
+    ]);
+    const view = await renderPage(<Cart />);
+    // The capability boundary, not an empty cart instructing an action the
+    // member cannot take (there is no add-to-cart while commerce is off).
+    expect(view.querySelector('[data-testid="ra-capability-product_commerce"]')).toBeTruthy();
+    expect(view.textContent).toContain("Ordering is not open yet. The catalog is available for review.");
+    expect(view.textContent).not.toContain("Your cart is empty.");
+    expect(view.textContent).not.toContain("add a product");
   });
 
   it("routes a denied cart read (403 + machine code) to the designed denial copy", async () => {
@@ -465,5 +508,86 @@ describe("Checkout page", () => {
       setValue(byTestId<HTMLInputElement>(view, "co-credit"), "100");
     });
     expect(view.textContent).toContain("Applying $25.00");
+  });
+
+  it("shows the designed empty state for an empty cart when commerce is enabled", async () => {
+    stubFetch([
+      {
+        method: "GET",
+        path: "/api/research/cart",
+        status: 200,
+        body: { ok: true, cart: { ...readyCart, lines: [], shipmentGroups: [], checkoutReady: false } },
+      },
+      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+    ]);
+    const view = await renderPage(<Checkout />);
+    expect(view.textContent).toContain("There is nothing to check out.");
+    expect(view.querySelector('[data-testid="ra-empty"] a[href="/research/member/products"]')).toBeTruthy();
+  });
+
+  it("renders the honest not-open state instead of the empty-cart prompt while commerce is off", async () => {
+    stubFetch([
+      CAPABILITIES_OFF,
+      {
+        method: "GET",
+        path: "/api/research/cart",
+        status: 200,
+        body: { ok: true, cart: { ...readyCart, lines: [], shipmentGroups: [], checkoutReady: false } },
+      },
+      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+    ]);
+    const view = await renderPage(<Checkout />);
+    // "Add a product first" would instruct an action the member cannot take.
+    expect(view.querySelector('[data-testid="ra-capability-product_commerce"]')).toBeTruthy();
+    expect(view.textContent).toContain("Ordering is not open yet. The catalog is available for review.");
+    expect(view.textContent).not.toContain("There is nothing to check out.");
+    expect(view.textContent).not.toContain("Add a product first");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Orders
+// ---------------------------------------------------------------------------
+
+const placedOrder = {
+  orderId: "ord-1",
+  state: "processing",
+  // Midday UTC so the rendered local day is stable across test timezones.
+  placedAt: "2026-07-20T12:00:00Z",
+  totalCents: 15095,
+  shipments: [],
+};
+
+describe("Orders page", () => {
+  it("shows the designed empty state when commerce is enabled and there are no orders", async () => {
+    stubFetch([{ method: "GET", path: "/api/research/orders", status: 200, body: { ok: true, orders: [] } }]);
+    const view = await renderPage(<Orders />);
+    expect(view.textContent).toContain("No orders yet.");
+    expect(view.querySelector('[data-testid="ra-capability-product_commerce"]')).toBeNull();
+  });
+
+  it("renders the honest not-open state instead of the empty order history while commerce is off", async () => {
+    stubFetch([
+      CAPABILITIES_OFF,
+      { method: "GET", path: "/api/research/orders", status: 200, body: { ok: true, orders: [] } },
+    ]);
+    const view = await renderPage(<Orders />);
+    // "When you place your first order" would promise an action the member
+    // cannot take while ordering is closed.
+    expect(view.querySelector('[data-testid="ra-capability-product_commerce"]')).toBeTruthy();
+    expect(view.textContent).toContain("Ordering is not open yet. The catalog is available for review.");
+    expect(view.textContent).not.toContain("No orders yet.");
+  });
+
+  it("still renders existing orders while commerce is off", async () => {
+    stubFetch([
+      CAPABILITIES_OFF,
+      { method: "GET", path: "/api/research/orders", status: 200, body: { ok: true, orders: [placedOrder] } },
+    ]);
+    const view = await renderPage(<Orders />);
+    // An order placed before commerce switched off is still the member's
+    // record; the capability never hides real history.
+    expect(view.textContent).toContain("ord-1");
+    expect(view.querySelector('[data-testid="ra-capability-product_commerce"]')).toBeNull();
   });
 });
