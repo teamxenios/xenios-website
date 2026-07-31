@@ -356,3 +356,22 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     tests, not the 21-file red-tripwire state earlier reports described.
 76. Audit side effect disclosed and REPAIRED: the primary clone's node_modules was destroyed during
     an agent's worktree setup; npm install completed exit 0 and vitest/4.1.10 is verified restored.
+
+## 2026-07-31T04:35Z, dead-client-call progress measurement at main 944d8ce
+
+77. Re-ran the audit's dead-call analysis (Agent M's method) against current main after the
+    contract-repair merges PR #177 (tracker), #181 (questions and Telegram), #184 (pricing).
+    Raw result: 85 client-referenced API paths, 231 registered server routes, 28 apparent dead.
+78. Five of the 28 are ARTIFACTS of matching a path with its query string; each base path IS
+    registered and was verified individually: /api/research/tracker (2 registrations),
+    /api/research/assessment (1), /api/research/applications/status (2), /api/admin/export (1),
+    /api/admin/notes (2). Three more are BASE CONSTANTS rather than endpoints
+    (/api/research/member, /api/admin/research, /api/research/activation).
+79. TRUE remaining dead calls: about 20, and SIXTEEN of them are the partner lane
+    (campaigns, campaigns/request, commissions, compliance, compliance/submissions, conversions,
+    events, events/request, leads, onboarding, organizations, organizations/request, payouts,
+    resources, security/sessions, training) plus two admin research paths and two esign paths.
+80. PROGRESS: the audit measured 62 dead client calls on 2026-07-30. The member-prefix drift
+    family that dominated that count is now largely closed by the Website 2 reconstruction, and
+    the residue is concentrated almost entirely in ONE unimplemented lane (partner). This is the
+    clearest quantitative evidence so far that the reconstruction approach is working.
