@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { ProfileSection, ProfileSectionKey } from "@shared/research/member-platform";
-import { PROFILE_SECTION_KEYS, SENSITIVE_PROFILE_SECTIONS } from "@shared/research/member-platform";
+import type { ProfileSection } from "@shared/research/member-platform";
 import { useResearch } from "../../core";
 import {
   getProfile,
@@ -12,46 +11,13 @@ import type { ApiResult } from "../../lib/api";
 import { ResearchRouteBoundary, ResearchSecureNotice } from "../../ui/kit";
 import { ResearchMemberShell } from "../../ui/shells";
 
-const SENSITIVE = new Set<ProfileSectionKey>(SENSITIVE_PROFILE_SECTIONS);
-const PROFILE_KEYS = new Set<string>(PROFILE_SECTION_KEYS);
-
-function isSection(value: unknown): value is ProfileSection {
-  if (!value || typeof value !== "object") return false;
-  const row = value as Partial<ProfileSection>;
-  return typeof row.key === "string"
-    && PROFILE_KEYS.has(row.key)
-    && Number.isInteger(row.schemaVersion)
-    && row.schemaVersion! > 0
-    && !!row.data
-    && typeof row.data === "object"
-    && !Array.isArray(row.data)
-    && typeof row.updatedAt === "string";
-}
-
-function profileValid(value: ProfileResponse): boolean {
-  return value?.ok === true
-    && typeof value.profile?.memberId === "string"
-    && Array.isArray(value.profile?.sections)
-    && value.profile.sections.every((section) => isSection(section) && !SENSITIVE.has(section.key))
-    && Number.isInteger(value.profile?.completeness?.completedSections)
-    && Number.isInteger(value.profile?.completeness?.totalSections);
-}
-
-function sensitiveValid(value: SensitiveProfileResponse): boolean {
-  return value?.ok === true
-    && Array.isArray(value.sections)
-    && value.sections.every((section) => isSection(section) && SENSITIVE.has(section.key));
-}
-
 function displayValue(value: unknown): string {
   if (typeof value === "string") return value;
   if (typeof value === "number" || typeof value === "boolean") return String(value);
-  if (Array.isArray(value) && value.every((item) => typeof item === "string")) return value.join(", ");
-  return "Saved securely";
+  return "Not provided";
 }
 
-function SectionCard({ section }: { section: ProfileSection }) {
-  const sensitive = SENSITIVE.has(section.key);
+function SectionCard({ section, sensitive = false }: { section: ProfileSection; sensitive?: boolean }) {
   return (
     <section className="card" aria-labelledby={`profile-${section.key}`}>
       <h2 id={`profile-${section.key}`} className="body-m font-700">
@@ -118,12 +84,14 @@ export default function Profile() {
     if (ordinary.kind !== "ok" || sensitive.kind !== "ok") {
       return { kind: "error" as const, message: "The profile response was incomplete." };
     }
-    if (!profileValid(ordinary.data) || !sensitiveValid(sensitive.data)) {
+    const ordinaryKeys = new Set(ordinary.data.profile.sections.map((section) => section.key));
+    if (sensitive.data.sections.some((section) => ordinaryKeys.has(section.key))) {
       return { kind: "error" as const, message: "The profile response was incomplete." };
     }
     return {
       kind: "ok" as const,
-      sections: [...ordinary.data.profile.sections, ...sensitive.data.sections],
+      ordinarySections: ordinary.data.profile.sections,
+      sensitiveSections: sensitive.data.sections,
       completeness: ordinary.data.profile.completeness,
     };
   }, [loadState]);
@@ -142,12 +110,32 @@ export default function Profile() {
             <p className="body-s text-ink-2 mb-5" role="status">
               {state.completeness.completedSections} of {state.completeness.totalSections} sections complete.
             </p>
-            {state.sections.length === 0 ? (
+            <button type="button" className="btn btn-secondary mb-5" onClick={() => void load()}>
+              Refresh profile
+            </button>
+            {state.ordinarySections.length === 0 && state.sensitiveSections.length === 0 ? (
               <p className="card body-s">No profile sections are on file yet.</p>
             ) : (
-              <div className="grid gap-5">
-                {state.sections.map((section) => <SectionCard key={section.key} section={section} />)}
-              </div>
+              <>
+                {state.ordinarySections.length > 0 && (
+                  <section aria-labelledby="ordinary-profile-sections">
+                    <h2 id="ordinary-profile-sections" className="body-l font-700 mb-4">Profile details</h2>
+                    <div className="grid gap-5">
+                      {state.ordinarySections.map((section) => <SectionCard key={section.key} section={section} />)}
+                    </div>
+                  </section>
+                )}
+                {state.sensitiveSections.length > 0 && (
+                  <section aria-labelledby="sensitive-profile-sections" className="mt-6">
+                    <h2 id="sensitive-profile-sections" className="body-l font-700 mb-4">Sensitive profile details</h2>
+                    <div className="grid gap-5">
+                      {state.sensitiveSections.map((section) => (
+                        <SectionCard key={section.key} section={section} sensitive />
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </>
             )}
           </>
         )}

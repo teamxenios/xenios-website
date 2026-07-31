@@ -16,7 +16,7 @@
  * - The response never carries supplier cost, wholesale source, margin,
  *   source URL, approval note, approver identity, or any internal field.
  *   CustomerPrice is built by explicit field picks, never by spread.
- * - Amounts are positive safe integers. A zero-amount row is never returned
+ * - Amounts are positive safe integers. A non-positive row is never returned
  *   as available.
  * - When this module's failure classifier disagrees with the authority (the
  *   classifier thinks a price exists but the authority said no), the
@@ -196,6 +196,14 @@ function classifyFailure(input: {
       : unavailable("price_inactive");
   }
 
+  // The canonical authority rejects non-positive amounts before returning a
+  // row. Preserve that customer-safe redaction here as defense in depth: zero
+  // and negative values remain indistinguishable from a missing price, never
+  // an approval detail.
+  if (active.some((price) => price.amountCents <= 0)) {
+    return unavailable("price_missing");
+  }
+
   const wellFormed = active.filter(priceRowWellFormed);
   if (wellFormed.length === 0) return unavailable("price_unapproved");
 
@@ -296,8 +304,9 @@ export class AuthoritativePriceResolver {
     });
 
     if (resolved !== null) {
-      // The authority allows amountCents >= 0; the customer boundary does
-      // not. A zero-amount row is never displayable and never becomes $0.
+      // Defense in depth: no non-positive or otherwise unsafe numeric amount
+      // may cross the customer boundary even if an authority implementation
+      // changes later.
       if (!isCustomerSafeAmountCents(resolved.amountCents)) {
         return unavailable("price_missing");
       }
