@@ -628,3 +628,32 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 127. The rest of the packet is unaffected and still open: the PUT/DELETE verb gap (PUT /profile,
      PUT /media/retention-election, DELETE /media/:mediaId, DELETE /telegram/link) and the
      exact-path routes for assessment, blueprint, media, questions, telegram, tracker, agreements.
+
+## 2026-07-31T11:00Z, documents closed 4/4, and a second correction of my own
+
+128. PR #198 (832bee6) merged; documents is now FULLY closed. Verified on production at 198cf13:
+     list, signed download, access, and acknowledge all answer "Sign in required.".
+129. THREE-WAY DISCRIMINATION on the download proves the rule is not over-broad:
+       signed shape (exp + 43-char sig) -> "Sign in required."  guard, bypass works
+       bare, no query string            -> "Access required."   wall, unsigned does not bypass
+       sig of wrong length              -> "Access required."   wall, shape validation works
+130. CORRECTED MYSELF TWICE ON THIS ONE ROUTE, both recorded because the second is the substantive one.
+     (a) BAD PROBE. On #197 I reported the download as still walled after requesting the BARE path
+         with no query string. The bypass keys on the signed-URL shape, so a bare request is
+         supposed to be refused. The fix was already deployed and correct; my probe did not match
+         the contract. RULE: when a bypass is defined over originalUrl rather than path, the probe
+         must carry the query string, or it tests nothing.
+     (b) MY PROPOSED SHAPE WAS LOOSER THAN THEIRS. I suggested
+         /^\/documents\/([^/]+)\/download$/ with a UUID check. That would have admitted an UNSIGNED
+         download past the wall on a well-formed UUID alone. Codex requires lowercase UUID + exp as
+         a canonical safe integer (String(expiresAt) === rawExpiresAt rejects leading zeros and
+         exponent forms) + sig of exactly 43 base64url chars, matched against req.originalUrl so the
+         query string is visible to the predicate. Theirs is strictly tighter. Said so on the PR.
+131. PATTERN NOW CONFIRMED TWICE IN A ROW: on both #195 and #198 the lane's implementation was
+     TIGHTER than the shape I proposed. My value here is measurement and evidence, not prescribing
+     the fix. Adjusting accordingly: keep handing over precise route inventories and discriminating
+     probes, and stop proposing concrete regexes unless asked.
+132. SEN-0023 remaining after documents: 20 routes across 5 pages (assessment, blueprint, media,
+     questions, telegram, tracker, agreements) plus the PUT/DELETE verb gap. PUT /profile stays the
+     one worth pulling forward, because it is the only case where the page LOADS and then silently
+     cannot persist, rather than failing visibly.
