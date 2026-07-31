@@ -918,3 +918,35 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
      re-read them, found the assertions genuinely exist and say what was claimed, and reported them
      as citation errors rather than fabrications. Requiring the adversary to re-verify cited snippets
      rather than trust them is what caught this.
+
+## 2026-07-31T22:40Z, SEN-0023 CLOSED end to end and verified live
+
+186. PR #212 merged as 70e8418 and verified on production. SEN-0023, filed this morning as the
+     largest open user-facing defect, is closed: six member pages that a signed-in member could not
+     load now reach their own guards.
+187. THE VERIFICATION IS THREE-WAY DISCRIMINATING, which is what makes it meaningful rather than
+     just green:
+       WITH a member bearer, all eight reads and the three sampled writes answer "Sign in required."
+         (the member guard decided, so the wall was passed)
+       WITHOUT a bearer, the same route answers "Access required."
+         (proves the bypass stays tied to a member credential, design rule 2)
+       NEAR-MISS SHAPES with a bearer still answer "Access required.":
+         POST /agreements/XR-MEM-999/withdraw   the withdraw path is exact, not a pattern
+         DELETE /media/retention-election       the UUID anchor discriminates from the sibling literal
+188. I NEARLY MISREAD MY OWN FIX AS BROKEN. My first production probe went out without an
+     Authorization header and returned "Access required." across the board, which looks exactly like
+     an unshipped deploy. It was correct behaviour: the bypass requires a bearer by design. Uptime
+     240s already proved the deploy had landed. RULE: probe the CONTRACT, not the convenient shape.
+     A verification that omits a required precondition tests nothing and reads as failure.
+189. The build itself was caught being half-right by an independent completeness review: the first
+     pass unblocked four of six pages, admitting POST /agreements (sign) while leaving GET
+     /agreements (read the document being signed) walled. That broke Assessment's ConsentGate for
+     every first-time member and made PrivacyControls tell a signed-in member their session had
+     ended. Both fixed before merge.
+190. Two disclosures made in the open rather than buried: three assertions pinning the incomplete
+     behaviour were revised (branch-local, never on main, reasoning written into the test file), and
+     the server/research/index.ts SEAM baseline was re-pinned under directive 4.1 with scope verified
+     programmatically (only seamBaselineHashes moved; fileHashes and both zone lists byte-identical).
+191. SEN-0025 built and opened as PR #213 in the same cycle. It needed no protection decision because
+     client/src/research/ is an allowedWriteZone, which is why it could be done now while SEN-0012,
+     0014, 0024, 0026, 0027 and 0028 still wait on the core-site re-baseline.
