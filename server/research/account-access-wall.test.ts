@@ -1,7 +1,18 @@
 import express from "express";
 import request from "supertest";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("./member-auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./member-auth")>();
+  return {
+    ...actual,
+    requireActiveMember: (_req: unknown, res: any) =>
+      res.status(401).json({ ok: false, message: "Sign in required." }),
+  };
+});
+
 import { registerResearchApi, researchPageGate } from "./index";
+import { registerMemberPlatformApi } from "./member-platform";
 
 const KEYS = [
   "RESEARCH_PUBLIC",
@@ -14,6 +25,7 @@ function makeWalledApi() {
   const app = express();
   app.use(express.json());
   registerResearchApi(app);
+  registerMemberPlatformApi(app);
   return app;
 }
 
@@ -63,11 +75,27 @@ describe("fresh-browser account-access wall", () => {
     ["post", "/api/research/member/claim-other"],
     ["get", "/api/research/member/profile"],
     ["get", "/api/research/catalog"],
+    ["put", "/api/research/profile"],
+    ["post", "/api/research/profile/sensitive"],
   ] as const)("keeps wrong-method, lookalike, and private %s %s calls walled", async (method, path) => {
     const call = (request(makeWalledApi()) as any)[method](path);
     const response = method === "get" ? await call : await call.send({});
     expect(response.status).toBe(401);
     expect(response.body?.message).toBe("Access required.");
+  });
+
+  it.each([
+    ["get", "/api/research/profile"],
+    ["head", "/api/research/profile"],
+    ["get", "/api/research/profile/sensitive"],
+    ["head", "/api/research/profile/sensitive"],
+  ] as const)("lets the downstream profile guard own private headers for %s %s", async (method, path) => {
+    const response = await (request(makeWalledApi()) as any)[method](path);
+    expect(response.status).toBe(401);
+    expect(response.headers["cache-control"]).toBe("no-store");
+    expect(response.headers.pragma).toBe("no-cache");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
+    expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
   });
 });
 
