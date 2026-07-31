@@ -688,3 +688,31 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
      filed P3 rather than inflated. Note for whoever fixes it: the natural remedy is opaque chunk
      filenames in the build config, and vite.config.ts is a HARD-TRIPWIRE protected file, so it
      carries the same manifest blocker as SEN-0014 and #182.
+
+## 2026-07-31T11:55Z, rendered-UX pass on the /research gateway (my remit, under-served until now)
+
+140. No merges this cycle and the wall unchanged, so I ran the rendered-page verification I had been
+     neglecting. I have been heavily API-focused; the Sentinel remit is UX/UI/reliability.
+141. DIRECTIVE COMPLIANCE, PASS. The /research landing renders exactly the two actions the directive
+     specifies, "Apply for Membership" -> /research/apply and "Member Login" -> /research/sign-in,
+     with NO catalog CTA anywhere. Footer carries Privacy, Terms, Support.
+142. HONEST STATES, PASS. /research/apply renders "Applications are being prepared" and states
+     plainly that no application has been started or saved. The policy pages render with a
+     "Documentation pending / In review" banner and describe themselves as starter language not
+     approved for enrollment. These are the honest not-open states the canon asks for, not fake
+     working forms. Zero console errors across every page visited.
+143. SUSPECTED BROKEN LINK, CLEARED. The landing footer links /research/privacy while the apply page
+     footer links /research/policies/privacy, and the apply page's own body uses the first form while
+     its footer uses the second. That reads as a broken link or a stale path. I rendered BOTH and
+     they serve the same Privacy Policy page, so they are aliases. Not a defect, not filed. Since
+     /research is noindex, the duplicate path is not even an SEO concern.
+144. SEN-0025 FILED (P3). /research/sign-in is a dead end. Full page text is the heading, the two
+     fields, the submit button, "Forgot your password?" and one paragraph. No "Back to gateway", no
+     footer, no Privacy, Terms or Support link. It is the only /research page with no exit, and the
+     only credential-collecting page with no policy links. Verified by full text extraction rather
+     than the accessibility tree alone, so a visually hidden footer would have been caught.
+     Every sibling page has an exit: landing (footer), apply and policies ("Back to gateway" +
+     footer), reset-password (Member Login + Support).
+145. Worth noting for prioritisation: this one is NOT blocked by the protection manifest.
+     client/src/research/** sits inside allowedWriteZones, so unlike SEN-0014, #182 and SEN-0024 it
+     can be fixed without a founder re-baseline decision.
