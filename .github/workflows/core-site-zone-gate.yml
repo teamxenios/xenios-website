@@ -54,16 +54,26 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
-      - name: Make the base commit available
+      # Every step below passes GitHub context through env: rather than interpolating
+      # ${{ }} straight into the shell. Nothing here is attacker-controlled today, but
+      # expanding context into a run: block is the standard Actions injection footgun and
+      # a protection gate is the wrong place to leave one.
+      - name: Make sure the base commit is present
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
-          git fetch --no-tags --prune origin \
-            +${{ github.event.pull_request.base.sha }}:refs/remotes/pull-base
+          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            git fetch --no-tags --prune origin "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+          fi
+          git cat-file -e "${BASE_SHA}^{commit}"
 
       - name: List the changed files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          git diff --name-only \
-            ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} \
-            | tee changed-files.txt
+          git diff --name-only "${BASE_SHA}...${HEAD_SHA}" | tee changed-files.txt
           echo "---"
           echo "$(wc -l < changed-files.txt) changed file(s)"
 
