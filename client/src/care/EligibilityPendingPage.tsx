@@ -230,6 +230,23 @@ export default function EligibilityPendingPage() {
               </form>
             )}
 
+          {/* The one outcome where intake is genuinely the patient's next step.
+              The link is the only way into intake from a Care surface, and it
+              stays closed on every other outcome. */}
+          {loadState.kind === "ready" &&
+            loadState.decision.outcome === "intake_available" && (
+              <div className="mt-6">
+                <p className="body-m text-ink-2 max-w-[58ch]">
+                  Your intake questionnaire is the next step. Starting it saves
+                  a private draft for a clinician to read. It does not approve
+                  treatment, create a prescription, or schedule anything.
+                </p>
+                <Link href="/care/intake" className="btn btn-primary mt-6">
+                  Continue to Care intake
+                </Link>
+              </div>
+            )}
+
           {loadState.kind === "ready" &&
             loadState.decision.outcome === "waitlist_available" && (
               <div className="mt-6">

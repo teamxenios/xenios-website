@@ -137,12 +137,19 @@ export default function CareAppointmentsPage() {
             <div className="card mt-6">
               <p className="body-m text-ink-2">
                 {state.requestAvailable
-                  ? "Separate Care intake is not available from this frontend. Review your Care eligibility and status before any scheduling request."
+                  ? "Care intake is a separate step from scheduling, and a clinician reads it first. Review your Care eligibility and complete your intake before any scheduling request."
                   : "Scheduling is not available until the required Care coverage and provider records are verified."}
               </p>
-              <Link href="/care/eligibility" className="btn btn-primary mt-6">
-                Review Care eligibility
-              </Link>
+              <div className="flex flex-wrap gap-4 mt-6">
+                <Link href="/care/eligibility" className="btn btn-primary">
+                  Review Care eligibility
+                </Link>
+                {state.requestAvailable && (
+                  <Link href="/care/intake" className="btn btn-secondary">
+                    Go to Care intake
+                  </Link>
+                )}
+              </div>
             </div>
           )}
           {state.kind === "ready" && state.hasAppointments && (

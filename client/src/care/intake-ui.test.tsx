@@ -2,15 +2,18 @@
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { act } from "react";
+import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Route, Router } from "wouter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CareRecordId } from "@shared/care/contracts";
+import type { CareEligibilityDecision } from "@shared/care/eligibility";
 import type { CareIntakeDefinition } from "@shared/care/intake";
 import { careApiFetch } from "./api";
+import CareAppointmentsPage from "./CareAppointmentsPage";
 import CareIntakePage from "./CareIntakePage";
+import EligibilityPendingPage from "./EligibilityPendingPage";
 
 vi.mock("./api", () => ({ careApiFetch: vi.fn() }));
 
@@ -81,6 +84,10 @@ beforeEach(() => {
 afterEach(() => {
   act(() => root.unmount());
   container.remove();
+  // A fake-timer test that fails mid-body never reaches its own restore, and
+  // every later test then hangs on a timer that will not fire. Restoring here
+  // keeps one real failure from being reported as many.
+  vi.useRealTimers();
 });
 
 async function flush() {
@@ -89,22 +96,31 @@ async function flush() {
   });
 }
 
-async function mountPage() {
+// Renders without flushing, so a fake-timer test can drive the clock itself
+// rather than waiting on a timer that will never fire.
+async function renderAt(route: string, element: ReactElement) {
   const staticLocation = (): [string, (next: string) => void] => [
-    ROUTE,
+    route,
     () => undefined,
   ];
   await act(async () => {
     root.render(
-      <Router hook={staticLocation} searchHook={() => ""} ssrPath={ROUTE}>
-        <Route path={ROUTE}>
-          <CareIntakePage />
-        </Route>
+      <Router hook={staticLocation} searchHook={() => ""} ssrPath={route}>
+        <Route path={route}>{element}</Route>
       </Router>,
     );
   });
-  await flush();
   return () => container.textContent ?? "";
+}
+
+async function mountAt(route: string, element: ReactElement) {
+  const text = await renderAt(route, element);
+  await flush();
+  return text;
+}
+
+async function mountPage() {
+  return mountAt(ROUTE, <CareIntakePage />);
 }
 
 function byText(selector: string, text: string): HTMLElement | undefined {
@@ -498,6 +514,173 @@ describe("Care intake surface, the multi-step draft", () => {
     expect(text()).toContain("No clinical decision has been made");
   });
 
+  it("reuses one submit key across retries, so a retry is a replay", async () => {
+    careApiFetchMock.mockResolvedValueOnce(
+      draftResponse({ identity_synthetic_short_answer: "synthetic answer" }),
+    );
+    const text = await mountPage();
+    expect(text()).toContain("Review your answers");
+
+    // The submit commits on the server and the answer is lost on the way back.
+    // This route reports that as a 503.
+    careApiFetchMock.mockResolvedValue(
+      json({ ok: false, code: "care_temporarily_unavailable" }, 503),
+    );
+    click(byText("button", "Submit my intake"));
+    await flush();
+
+    // A 503 is what this route returns when the submit itself threw, which
+    // includes the record already being submitted. The page cannot tell.
+    expect(text()).toContain("SUBMISSION NOT CONFIRMED");
+    expect(text()).not.toContain("Nothing was sent to a clinician.");
+
+    // The replay, which the server only performs on a matching key.
+    careApiFetchMock.mockResolvedValue(
+      json({
+        ok: true,
+        intake: {
+          ...SYNTHETIC_DRAFT,
+          status: "submitted",
+          version: 2,
+          submittedAt: "2026-07-26T12:00:00.000Z",
+        },
+      }),
+    );
+    click(byText("button", "Submit my intake"));
+    await flush();
+
+    const keys = careApiFetchMock.mock.calls
+      .filter(([path]) => String(path).endsWith("/submit"))
+      .map(([, init]) => JSON.parse(String(init?.body)).idempotencyKey);
+    expect(keys).toHaveLength(2);
+    expect(keys[0]).toBe(keys[1]);
+    expect(String(keys[0]).length).toBeGreaterThanOrEqual(8);
+    expect(text()).toContain("Your intake has been submitted.");
+    expect(text()).not.toContain("Nothing was sent to a clinician.");
+  });
+
+  it("does not claim nothing was sent when the outcome is unknown", async () => {
+    careApiFetchMock.mockResolvedValueOnce(
+      draftResponse({ identity_synthetic_short_answer: "synthetic answer" }),
+    );
+    const text = await mountPage();
+
+    // The connection fails after the request left the browser, so the page
+    // cannot know whether the intake reached a clinician.
+    careApiFetchMock.mockRejectedValue(new Error("network_unavailable"));
+    click(byText("button", "Submit my intake"));
+    await flush();
+
+    expect(text()).toContain("SUBMISSION NOT CONFIRMED");
+    expect(text()).toContain(
+      "We could not confirm whether your intake was submitted",
+    );
+    expect(text()).toContain("It may already be with a clinician.");
+    // The false absolute claim, in either of its wordings.
+    expect(text()).not.toContain("Nothing was sent to a clinician.");
+    expect(text()).not.toContain("Your intake was not submitted.");
+    // The patient can find out rather than being left with a guess.
+    expect(byText("button", "Check my intake status")).toBeDefined();
+    expect(container.querySelector('a[href="/contact"]')).not.toBeNull();
+  });
+
+  it("keeps the definitive wording for a refusal the server proved", async () => {
+    careApiFetchMock.mockResolvedValueOnce(
+      draftResponse({ identity_synthetic_short_answer: "synthetic answer" }),
+    );
+    const text = await mountPage();
+
+    // A 409 is decided before the submit is attempted, so nothing was written.
+    careApiFetchMock.mockResolvedValue(
+      json({ ok: false, code: "care_intake_consent_required" }, 409),
+    );
+    click(byText("button", "Submit my intake"));
+    await flush();
+
+    expect(text()).toContain("NOT SUBMITTED");
+    expect(text()).toContain("Nothing was sent to a clinician.");
+    expect(text()).not.toContain("SUBMISSION NOT CONFIRMED");
+  });
+
+  it("does not let an unconfirmed submission be edited away", async () => {
+    careApiFetchMock.mockResolvedValueOnce(
+      draftResponse({ identity_synthetic_short_answer: "synthetic answer" }),
+    );
+    const text = await mountPage();
+    careApiFetchMock.mockRejectedValue(new Error("network_unavailable"));
+    click(byText("button", "Submit my intake"));
+    await flush();
+    expect(text()).toContain("SUBMISSION NOT CONFIRMED");
+
+    click(byText("button", "Identity"));
+    const input = container.querySelector<HTMLTextAreaElement>(
+      "#care-intake-field-identity_synthetic_short_answer",
+    );
+    act(() => {
+      const setter = Object.getOwnPropertyDescriptor(
+        HTMLTextAreaElement.prototype,
+        "value",
+      )?.set;
+      setter?.call(input, "synthetic answer edited");
+      input?.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    // Typing does not settle what happened to a submission already in flight.
+    expect(text()).toContain("SUBMISSION NOT CONFIRMED");
+  });
+
+  it("clears the unsaved indicator when the save turns out to be a no-op", async () => {
+    vi.useFakeTimers();
+    try {
+      careApiFetchMock.mockResolvedValue(
+        draftResponse({ identity_synthetic_short_answer: "synthetic answer" }),
+      );
+      const text = await renderAt(ROUTE, <CareIntakePage />);
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(0);
+      });
+      expect(text()).toContain("ALL CHANGES SAVED AS A DRAFT");
+
+      click(byText("button", "Identity"));
+      const input = container.querySelector<HTMLTextAreaElement>(
+        "#care-intake-field-identity_synthetic_short_answer",
+      );
+      expect(input).not.toBeNull();
+      const setter = Object.getOwnPropertyDescriptor(
+        HTMLTextAreaElement.prototype,
+        "value",
+      )?.set;
+      const type = (value: string) => {
+        act(() => {
+          setter?.call(input, value);
+          input?.dispatchEvent(new Event("input", { bubbles: true }));
+        });
+      };
+
+      // The patient edits, then puts the answer back exactly as it was saved.
+      type("synthetic answer typo");
+      type("synthetic answer");
+      expect(text()).toContain("UNSAVED CHANGES");
+
+      careApiFetchMock.mockClear();
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(1_500);
+      });
+
+      // Nothing needed writing, and the indicator must say so rather than
+      // latching on "unsaved" over a draft the server already holds.
+      expect(
+        careApiFetchMock.mock.calls.filter(([path]) =>
+          String(path).endsWith("/autosave"),
+        ),
+      ).toHaveLength(0);
+      expect(text()).toContain("ALL CHANGES SAVED AS A DRAFT");
+      expect(text()).not.toContain("UNSAVED CHANGES");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("explains a blocked start without inventing a reason", async () => {
     careApiFetchMock.mockResolvedValueOnce(
       json({
@@ -519,5 +702,84 @@ describe("Care intake surface, the multi-step draft", () => {
 
     expect(text()).toContain("Your telehealth consent is not current.");
     expect(container.querySelector('a[href="/care/consent"]')).not.toBeNull();
+  });
+});
+
+describe("Care intake surface, how a patient reaches it", () => {
+  // A synthetic decision. No real person, state, or clinical meaning.
+  function decision(
+    outcome: CareEligibilityDecision["outcome"],
+    reason: CareEligibilityDecision["reason"],
+  ): CareEligibilityDecision {
+    return {
+      patientId: "synthetic-patient" as CareRecordId,
+      outcome,
+      reason,
+      stateCode: "ZZ",
+      careEligibilityCleared: false,
+      evaluatedAt: "2026-07-26T09:00:00.000Z",
+      auditRequired: true,
+    };
+  }
+
+  function intakeLink() {
+    return container.querySelector('a[href="/care/intake"]');
+  }
+
+  it("offers intake from Care eligibility once intake is the next step", async () => {
+    careApiFetchMock.mockResolvedValue(
+      json({
+        ok: true,
+        decision: decision("intake_available", "intake_foundation_ready"),
+      }),
+    );
+    const text = await mountAt("/care/eligibility", <EligibilityPendingPage />);
+    expect(text()).toContain("Your intake questionnaire is the next step.");
+    expect(intakeLink()).not.toBeNull();
+    expect(intakeLink()?.textContent).toContain("Continue to Care intake");
+    // The link is a route into intake, not a claim about care itself.
+    expect(text()).toContain(
+      "It does not approve treatment, create a prescription, or schedule anything.",
+    );
+  });
+
+  it("offers no route into intake while eligibility is not there yet", async () => {
+    careApiFetchMock.mockResolvedValue(
+      json({
+        ok: true,
+        decision: decision("waitlist_available", "unsupported_state"),
+      }),
+    );
+    await mountAt("/care/eligibility", <EligibilityPendingPage />);
+    expect(intakeLink()).toBeNull();
+  });
+
+  it("offers intake from Care appointments and no longer denies it exists", async () => {
+    careApiFetchMock.mockImplementation(async (path: string) => {
+      if (path.includes("/readiness")) {
+        return json({ ok: false, code: "care_forbidden" }, 403);
+      }
+      return json({ ok: true, appointments: [], requestAvailable: true });
+    });
+    const text = await mountAt("/care/appointments", <CareAppointmentsPage />);
+    expect(intakeLink()).not.toBeNull();
+    expect(intakeLink()?.textContent).toContain("Go to Care intake");
+    expect(text()).not.toContain(
+      "Separate Care intake is not available from this frontend.",
+    );
+    expect(text()).toContain(
+      "Care intake is a separate step from scheduling, and a clinician reads it first.",
+    );
+  });
+
+  it("offers no route into intake while scheduling is not verified", async () => {
+    careApiFetchMock.mockImplementation(async (path: string) => {
+      if (path.includes("/readiness")) {
+        return json({ ok: false, code: "care_forbidden" }, 403);
+      }
+      return json({ ok: true, appointments: [], requestAvailable: false });
+    });
+    await mountAt("/care/appointments", <CareAppointmentsPage />);
+    expect(intakeLink()).toBeNull();
   });
 });

@@ -35,8 +35,15 @@ const AUTOSAVE_DELAY_MS = 1_200;
 
 const SAVE_FAILED_MESSAGE =
   "Your latest answers were not saved. Nothing was submitted. Try saving again.";
-const SUBMIT_FAILED_MESSAGE =
+// Only used where the server answered before it could have written anything, so
+// the claim that nothing reached a clinician is something the page actually knows.
+const SUBMIT_REFUSED_MESSAGE =
   "Your intake was not submitted. Nothing was sent to a clinician. Confirm your answers and try again.";
+// Used where the request left the browser and no answer came back to say what
+// happened to it. Stating that nothing reached a clinician here would be a guess
+// presented as a fact, so the copy says only what is known and offers the check.
+const SUBMIT_UNCONFIRMED_MESSAGE =
+  "We could not confirm whether your intake was submitted, so we cannot tell you either way. It may already be with a clinician. Check your current status before submitting again.";
 
 type LoadState =
   | { kind: "loading" }
@@ -56,6 +63,13 @@ type SaveState =
   | { kind: "saving" }
   | { kind: "saved" }
   | { kind: "error" };
+
+// A refusal is something the page can prove: either it never sent the request,
+// or the server declined before it wrote. Anything else is unconfirmed, and the
+// two are never allowed to share wording.
+type SubmitNotice =
+  | { kind: "refused"; message: string }
+  | { kind: "unconfirmed"; message: string };
 
 type StartBlock =
   | "eligibility_not_ready"
@@ -137,12 +151,18 @@ export default function CareIntakePage() {
   const [startBlock, setStartBlock] = useState<StartBlock | null>(null);
   const [starting, setStarting] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+  const [submitNotice, setSubmitNotice] = useState<SubmitNotice | null>(null);
   const [justSubmitted, setJustSubmitted] = useState(false);
 
   const versionRef = useRef(0);
   const savedPayloadRef = useRef("");
+  // Whether the server holds a revision for these answers. A no-op save has to
+  // restore the state that was already true, not invent one.
+  const savedRevisionRef = useRef(false);
   const pendingSaveRef = useRef<{ key: string; payload: string } | null>(null);
+  // One idempotency key per submit intent, so a retry after a lost response is a
+  // replay the server recognizes rather than a second attempt it refuses.
+  const pendingSubmitRef = useRef<{ key: string; intent: string } | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Writes are serialized. Returning an in-flight promise would report the
   // newest answers as saved when that request never carried them.
@@ -170,11 +190,21 @@ export default function CareIntakePage() {
     }
   }, []);
 
+  // An unconfirmed submission is only settled by a real answer about this
+  // intake. A later refusal the page decided on its own does not disprove it,
+  // so it must never overwrite it.
+  const noteRefusal = useCallback((message: string) => {
+    setSubmitNotice((current) =>
+      current?.kind === "unconfirmed" ? current : { kind: "refused", message },
+    );
+  }, []);
+
   const load = useCallback(async () => {
     clearTimer();
     pendingSaveRef.current = null;
+    pendingSubmitRef.current = null;
     setLoadState({ kind: "loading" });
-    setSubmitError("");
+    setSubmitNotice(null);
     setStartBlock(null);
     setJustSubmitted(false);
     try {
@@ -206,6 +236,7 @@ export default function CareIntakePage() {
       savedPayloadRef.current = stableResponseKey(
         autosavePayload(buildIntakeSections(loadedDefinition), loaded),
       );
+      savedRevisionRef.current = revision !== null;
       responsesRef.current = loaded;
       setResponses(loaded);
       setFieldErrors({});
@@ -239,6 +270,13 @@ export default function CareIntakePage() {
     const serialized = stableResponseKey(payload);
     if (serialized === savedPayloadRef.current) {
       pendingSaveRef.current = null;
+      // The server already holds exactly these answers, so there is nothing to
+      // write. Restoring the state matters: scheduleSave has already shown
+      // "unsaved changes", and returning without correcting it would leave that
+      // showing forever on a draft that is in fact saved.
+      setSaveState(
+        savedRevisionRef.current ? { kind: "saved" } : { kind: "idle" },
+      );
       return true;
     }
     // One idempotency key per distinct payload, so a retry of the same draft
@@ -284,6 +322,7 @@ export default function CareIntakePage() {
       const revision = body.revision as CareIntakeRevision;
       versionRef.current = revision.version;
       savedPayloadRef.current = serialized;
+      savedRevisionRef.current = true;
       pendingSaveRef.current = null;
       setSaveState({ kind: "saved" });
       return true;
@@ -314,8 +353,11 @@ export default function CareIntakePage() {
   const updateField = useCallback(
     (field: CareIntakeFieldDefinition, value: CareIntakeResponseValue) => {
       // A stale "not submitted" reason stops being true the moment the answer
-      // it named changes.
-      setSubmitError("");
+      // it named changes. An unconfirmed submission is not resolved by editing,
+      // so it stays until the status is actually re-checked.
+      setSubmitNotice((current) =>
+        current?.kind === "unconfirmed" ? current : null,
+      );
       setResponses((current) => ({ ...current, [field.key]: value }));
       setFieldErrors((current) => {
         const error = validateField(field, value, false);
@@ -366,6 +408,8 @@ export default function CareIntakePage() {
       const started = body.intake as CareClinicalIntake;
       versionRef.current = started.version;
       savedPayloadRef.current = stableResponseKey({});
+      savedRevisionRef.current = false;
+      pendingSubmitRef.current = null;
       responsesRef.current = {};
       setResponses({});
       setFieldErrors({});
@@ -384,7 +428,9 @@ export default function CareIntakePage() {
   async function submitIntake() {
     if (submitting) return;
     if (!intake || intake.status !== "draft") return;
-    setSubmitError("");
+    setSubmitNotice((current) =>
+      current?.kind === "unconfirmed" ? current : null,
+    );
     if (blockers.blockingFieldKeys.length > 0) {
       const nextErrors: Record<string, CareIntakeFieldError> = {};
       for (const section of sections) {
@@ -397,7 +443,7 @@ export default function CareIntakePage() {
       const firstKey = blockers.blockingFieldKeys[0];
       const owner = sectionIdForFieldKey(sections, firstKey);
       if (owner) setStepId(owner);
-      setSubmitError(
+      noteRefusal(
         "Some required questions still need an answer. Nothing was submitted.",
       );
       globalThis.setTimeout(() => {
@@ -410,11 +456,24 @@ export default function CareIntakePage() {
       clearTimer();
       const saved = await performSave();
       if (!saved) {
-        setSubmitError(
-          "Your answers were not saved, so nothing was submitted. Try saving again first.",
+        noteRefusal(
+          "Your latest answers were not saved, so this submit was not sent. Try saving again first.",
         );
         return;
       }
+      // One key per submit intent, matching how autosave keys a distinct
+      // payload. Reusing it means a retry after a lost response is a replay the
+      // server returns the submitted intake for, instead of a second attempt it
+      // refuses. A new intent (a new version, from an edit the server accepted)
+      // is a genuinely different submit and earns a fresh key.
+      const intent = `${intake.id}:${versionRef.current}`;
+      if (pendingSubmitRef.current?.intent !== intent) {
+        pendingSubmitRef.current = {
+          key: newIdempotencyKey("care-intake-submit"),
+          intent,
+        };
+      }
+      const attempt = pendingSubmitRef.current;
       const response = await careApiFetch(
         `${INTAKE_PATH}/${encodeURIComponent(intake.id)}/submit`,
         {
@@ -422,7 +481,7 @@ export default function CareIntakePage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             expectedVersion: versionRef.current,
-            idempotencyKey: newIdempotencyKey("care-intake-submit"),
+            idempotencyKey: attempt.key,
           }),
         },
       );
@@ -439,18 +498,39 @@ export default function CareIntakePage() {
         setLoadState({ kind: "disabled" });
         return;
       }
-      if (!response.ok || body?.ok !== true || !body.intake) {
-        setSubmitError(SUBMIT_FAILED_MESSAGE);
+      if (response.ok && body?.ok === true && body.intake) {
+        pendingSubmitRef.current = null;
+        setSubmitNotice(null);
+        setJustSubmitted(true);
+        setLoadState((current) =>
+          current.kind === "ready"
+            ? { ...current, intake: body.intake as CareClinicalIntake }
+            : current,
+        );
         return;
       }
-      setJustSubmitted(true);
-      setLoadState((current) =>
-        current.kind === "ready"
-          ? { ...current, intake: body.intake as CareClinicalIntake }
-          : current,
-      );
+      // 400 is a rejected request and 409 is a stated precondition failure.
+      // Both are decided before the submit is attempted, so both prove that
+      // nothing reached a clinician and the definitive wording is earned.
+      if (response.status === 400 || response.status === 409) {
+        setSubmitNotice({ kind: "refused", message: SUBMIT_REFUSED_MESSAGE });
+        return;
+      }
+      // Anything else leaves the outcome genuinely unknown. A 503 is what this
+      // route returns when the submit itself threw, which includes the case
+      // where the record is already submitted, so the page must not claim that
+      // nothing was sent. The key is kept so the next attempt replays.
+      setSubmitNotice({
+        kind: "unconfirmed",
+        message: SUBMIT_UNCONFIRMED_MESSAGE,
+      });
     } catch {
-      setSubmitError(SUBMIT_FAILED_MESSAGE);
+      // The request left the browser and no answer came back. It may have been
+      // committed before the connection failed.
+      setSubmitNotice({
+        kind: "unconfirmed",
+        message: SUBMIT_UNCONFIRMED_MESSAGE,
+      });
     } finally {
       setSubmitting(false);
     }
@@ -760,10 +840,28 @@ export default function CareIntakePage() {
             {/* Kept outside the review step: a blocked submit moves the patient
                 to the offending question, and the reason it was not submitted
                 has to travel with them. */}
-            {submitError && (
+            {submitNotice && (
               <div className="card mt-8" role="alert" tabIndex={-1}>
-                <p className="mono-label text-pulse mb-2">NOT SUBMITTED</p>
-                <p className="body-m text-ink-2">{submitError}</p>
+                <p className="mono-label text-pulse mb-2">
+                  {submitNotice.kind === "refused"
+                    ? "NOT SUBMITTED"
+                    : "SUBMISSION NOT CONFIRMED"}
+                </p>
+                <p className="body-m text-ink-2">{submitNotice.message}</p>
+                {submitNotice.kind === "unconfirmed" && (
+                  <div className="flex flex-wrap gap-4 mt-6">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => void load()}
+                    >
+                      Check my intake status
+                    </button>
+                    <Link href="/contact" className="btn btn-ghost">
+                      Ask about Care
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
 

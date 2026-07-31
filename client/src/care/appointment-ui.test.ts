@@ -10,6 +10,7 @@ const readiness = readFileSync(
   resolve(__dirname, "./CareAppointmentReadinessPanel.tsx"),
   "utf8",
 );
+const section = readFileSync(resolve(__dirname, "./section.tsx"), "utf8");
 
 describe("Care PR 3 appointment UI", () => {
   it("uses the existing Xenios shell and shared UI tokens", () => {
@@ -37,7 +38,11 @@ describe("Care PR 3 appointment UI", () => {
     expect(page).toContain('aria-live="polite"');
     expect(page).toContain('aria-busy={state.kind === "loading"}');
     expect(page).toContain('href="/care/eligibility"');
-    expect(page).not.toContain("/care/intake");
+    // Intake used to have no destination, so this asserted the link away. The
+    // destination is real now, so the guard is that the page only routes to a
+    // path the Care section actually mounts.
+    expect(page).toContain('href="/care/intake"');
+    expect(section).toContain('<Route path="/care/intake">');
   });
 
   it("contains no fabricated clinician, pharmacy, product, state, price, or availability", () => {
