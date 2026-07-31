@@ -467,6 +467,8 @@
         "client/src/research/adapters/tracker.test.ts",
         "client/src/research/pages/member/Tracker.tsx",
         "client/src/research/pages/member/tracker.test.tsx",
+        "client/src/research/pages/member/Xenios30.tsx",
+        "client/src/research/pages/member/xenios30.test.tsx",
         "client/src/research/ui/shells.tsx",
         "client/src/research/ui/shells.test.tsx"
       ]
