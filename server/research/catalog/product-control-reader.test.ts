@@ -7,6 +7,11 @@ import {
   LiveProductControlReader,
   ProductControlCurrentPriceResolver,
 } from "./product-control-reader";
+import { resolveProductControlPrice } from "../products-diagnostics/product-control-price-resolver";
+import {
+  authorizeAudienceFromServerIdentity,
+  createAuthoritativePriceResolver,
+} from "../pricing/authoritative-price-resolver";
 
 const AT = "2026-07-26T22:00:00+00:00";
 
@@ -340,21 +345,24 @@ describe("Product Control current price resolver", () => {
 
   it("returns one approved effective price for the exact variant and audience", () => {
     const resolver = new ProductControlCurrentPriceResolver();
-    expect(
-      resolver.resolve({
-        productId: "product-a",
-        variant,
-        prices: [price],
-        audienceEligibility: {
-          audience: "member",
-          state: "authorized",
-          sourceVersion: "member-v1",
-          evaluatedAt: AT,
-        },
-        currency: "USD",
+    const input = {
+      productId: "product-a",
+      variant,
+      prices: [price],
+      audienceEligibility: {
+        audience: "member" as const,
+        state: "authorized" as const,
+        sourceVersion: "member-v1",
         evaluatedAt: AT,
-      }),
-    ).toEqual(price);
+      },
+      currency: "USD",
+      evaluatedAt: AT,
+    };
+    expect(resolver.resolve(input)).toEqual(price);
+    expect(resolveProductControlPrice(input)).toMatchObject({
+      ok: true,
+      price,
+    });
   });
 
   it("fails closed for unreviewed variants, stale prices, and ambiguity", () => {
@@ -409,5 +417,53 @@ describe("Product Control current price resolver", () => {
         },
       }),
     ).toBeNull();
+    for (const amountCents of [0, -1]) {
+      expect(
+        resolver.resolve({
+          ...input,
+          prices: [{ ...price, amountCents }],
+        }),
+      ).toBeNull();
+    }
+    expect(
+      resolver.resolve({
+        ...input,
+        currency: "EUR",
+        prices: [{ ...price, currency: "EUR" }],
+      }),
+    ).toBeNull();
+  });
+
+  it("redacts non-positive customer prices as missing without an amount", async () => {
+    const authenticatedAudience = authorizeAudienceFromServerIdentity({
+      audience: "member",
+      sourceVersion: "member-v1",
+      evaluatedAt: AT,
+    });
+    expect(authenticatedAudience).not.toBeNull();
+
+    for (const amountCents of [0, -1]) {
+      const resolver = createAuthoritativePriceResolver({
+        readProductForPricing: vi.fn(async () =>
+          detail({
+            variants: [variant],
+            prices: [{ ...price, amountCents }],
+          }),
+        ),
+      });
+      const result = await resolver.resolveApprovedResearchPrice({
+        productId: "product-a",
+        variantId: "variant-a",
+        authenticatedAudience: authenticatedAudience!,
+        currency: "USD",
+        at: AT,
+      });
+      expect(result).toEqual({
+        state: "unavailable",
+        reason: "price_missing",
+      });
+      expect(result).not.toHaveProperty("price");
+      expect(result).not.toHaveProperty("amountCents");
+    }
   });
 });
