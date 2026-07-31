@@ -21,7 +21,7 @@ const state = vi.hoisted(() => ({
 
 const auth = vi.hoisted(() => ({
   current: null as any,
-  deny: null as { status: number; code: string } | null,
+  deny: null as { status: number; code: string; body?: Record<string, unknown> } | null,
 }));
 
 const admin = vi.hoisted(() => ({
@@ -116,7 +116,9 @@ vi.mock("../supabase", () => {
 
 vi.mock("./member-auth", () => ({
   requireActiveMember: (req: any, res: any, next: any) => {
-    if (auth.deny) return res.status(auth.deny.status).json({ ok: false, code: auth.deny.code });
+    if (auth.deny) {
+      return res.status(auth.deny.status).json(auth.deny.body ?? { ok: false, code: auth.deny.code });
+    }
     req.researchMember = auth.current;
     next();
   },
@@ -197,6 +199,8 @@ const MEMBER_B = {
 
 // Sentinel strings that must never reach a member before publication.
 const DRAFT_SENTINEL = "draft-only-sentinel-value";
+const PRIVATE_GET_SENTINEL = "private-published-get-sentinel-value";
+const PRIVATE_ACK_SENTINEL = "private-acknowledgment-sentinel-value";
 
 // A full Xenios30Plan content payload (minus the column-owned fields).
 // Provenance rule holds: product references are slugs + dispositions only,
@@ -316,6 +320,43 @@ describe("review week calendar math", () => {
 });
 
 describe("GET /api/research/plans/xenios30", () => {
+  it("denies signed-out GET before serializing a published private plan", async () => {
+    const app = makeApp();
+    const draft = await adminCreate30(app, MEMBER_A.id, "2026-07", {
+      blueprintActions: [PRIVATE_GET_SENTINEL],
+    });
+    await adminPublish30(app, draft.planId);
+    auth.deny = {
+      status: 401,
+      code: "sign_in_required",
+      body: { ok: false, message: "Sign in required." },
+    };
+
+    const res = await request(app).get("/api/research/plans/xenios30");
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ ok: false, message: "Sign in required." });
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    expect(JSON.stringify(res.body)).not.toContain(PRIVATE_GET_SENTINEL);
+  });
+
+  it("returns private headers and an empty body for signed-out HEAD", async () => {
+    auth.deny = {
+      status: 401,
+      code: "sign_in_required",
+      body: { ok: false, message: "Sign in required." },
+    };
+    const res = await request(makeApp()).head("/api/research/plans/xenios30");
+    expect(res.status).toBe(401);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    expect(res.text ?? "").toBe("");
+  });
+
   it("returns the empty state with privacy headers before any plan exists", async () => {
     const res = await request(makeApp()).get("/api/research/plans/xenios30");
     expect(res.status).toBe(200);
@@ -405,6 +446,31 @@ describe("GET /api/research/plans/xenios30", () => {
 });
 
 describe("acknowledge", () => {
+  it("sets private headers before signed-out denial without acknowledging a plan", async () => {
+    const app = makeApp();
+    const draft = await adminCreate30(app, MEMBER_A.id, "2026-07", {
+      blueprintActions: [PRIVATE_ACK_SENTINEL],
+    });
+    await adminPublish30(app, draft.planId);
+    auth.deny = {
+      status: 401,
+      code: "sign_in_required",
+      body: { ok: false, message: "Sign in required." },
+    };
+
+    const res = await request(app)
+      .post(`/api/research/plans/xenios30/${draft.planId}/acknowledge`)
+      .send({});
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ ok: false, message: "Sign in required." });
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    expect(JSON.stringify(res.body)).not.toContain(PRIVATE_ACK_SENTINEL);
+    expect(x30Row(draft.planId).member_acknowledged_at).toBeNull();
+  });
+
   it("stamps member_acknowledged_at on the member's own published plan, idempotently keeping the first stamp", async () => {
     const app = makeApp();
     const draft = await adminCreate30(app, MEMBER_A.id, "2026-07");

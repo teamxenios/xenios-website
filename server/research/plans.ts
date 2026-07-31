@@ -1,4 +1,4 @@
-import type { Express, Request, Response } from "express";
+import type { Express, NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import {
   XENIOS_90_PHASES,
@@ -596,6 +596,17 @@ function setPrivacyHeaders(res: Response) {
   res.set("Referrer-Policy", "no-referrer");
 }
 
+function privateXenios30Headers(
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  setPrivacyHeaders(res);
+  res.set("Pragma", "no-cache");
+  res.set("X-Robots-Tag", "noindex, nofollow");
+  next();
+}
+
 function memberFrom(req: Request): MemberRow | null {
   return ((req as { researchMember?: MemberRow }).researchMember as MemberRow) ?? null;
 }
@@ -618,7 +629,7 @@ function sendServiceErr(res: Response, err: ServiceErr) {
 export function registerPlansApi(app: Express, deps: MemberPlatformDeps) {
   // The member's current published Xenios 30 plan plus published/superseded
   // history heads. Draft and samuel_review rows never appear here in any form.
-  app.get("/api/research/plans/xenios30", requireActiveMember, async (req, res) => {
+  app.get("/api/research/plans/xenios30", privateXenios30Headers, requireActiveMember, async (req, res) => {
     setPrivacyHeaders(res);
     try {
       const member = memberFrom(req);
@@ -636,19 +647,24 @@ export function registerPlansApi(app: Express, deps: MemberPlatformDeps) {
   });
 
   // Acknowledge the member's own published plan.
-  app.post("/api/research/plans/xenios30/:planId/acknowledge", requireActiveMember, async (req, res) => {
-    setPrivacyHeaders(res);
-    try {
-      const member = memberFrom(req);
-      if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
-      const result = await acknowledgeXenios30(member.id, String(req.params.planId), deps.clock.now());
-      if (!result.ok) return sendServiceErr(res, result);
-      res.json({ ok: true, acknowledgedAt: result.acknowledgedAt });
-    } catch (err) {
-      console.error("[plans] acknowledge failed:", err instanceof Error ? err.message : err);
-      res.status(500).json({ ok: false, message: "The plan could not be acknowledged." });
-    }
-  });
+  app.post(
+    "/api/research/plans/xenios30/:planId/acknowledge",
+    privateXenios30Headers,
+    requireActiveMember,
+    async (req, res) => {
+      setPrivacyHeaders(res);
+      try {
+        const member = memberFrom(req);
+        if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
+        const result = await acknowledgeXenios30(member.id, String(req.params.planId), deps.clock.now());
+        if (!result.ok) return sendServiceErr(res, result);
+        res.json({ ok: true, acknowledgedAt: result.acknowledgedAt });
+      } catch (err) {
+        console.error("[plans] acknowledge failed:", err instanceof Error ? err.message : err);
+        res.status(500).json({ ok: false, message: "The plan could not be acknowledged." });
+      }
+    },
+  );
 
   // The one included early plan change this calendar month.
   app.post("/api/research/plans/early-change", requireActiveMember, async (req, res) => {

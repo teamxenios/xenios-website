@@ -14,6 +14,8 @@ vi.mock("./member-auth", async (importOriginal) => {
 import { registerResearchApi, researchPageGate } from "./index";
 import { registerMemberPlatformApi } from "./member-platform";
 
+const VALID_PLAN_ID = "00000000-0000-4000-8000-000000000030";
+
 const KEYS = [
   "RESEARCH_PUBLIC",
   "RESEARCH_ACCESS_PASSWORD",
@@ -77,6 +79,20 @@ describe("fresh-browser account-access wall", () => {
     ["get", "/api/research/catalog"],
     ["put", "/api/research/profile"],
     ["post", "/api/research/profile/sensitive"],
+    ["post", "/api/research/plans/xenios30"],
+    ["get", "/api/research/plans/xenios30/lookalike"],
+    ["get", "/api/research/plans/xenios90"],
+    ["get", `/api/research/plans/xenios30/${VALID_PLAN_ID}/acknowledge`],
+    ["post", `/api/research/plans/xenios30/${VALID_PLAN_ID}/acknowledge/extra`],
+    ["post", `/api/research/plans/xenios30/${VALID_PLAN_ID}/acknowledgements`],
+    ["post", `/api/research/plans/xenios90/${VALID_PLAN_ID}/acknowledge`],
+    ["post", `/api/research/documents/${VALID_PLAN_ID}/acknowledge`],
+    ["post", "/api/research/plans/xenios30/private-plan-id/acknowledge"],
+    ["post", "/api/research/plans/xenios30//acknowledge"],
+    ["post", "/api/research/plans/xenios30/%E0%A4%A/acknowledge"],
+    ["post", "/api/research/plans/xenios30/%00/acknowledge"],
+    ["post", "/api/research/plans/xenios30/%20/acknowledge"],
+    ["post", `/api/research/plans/xenios30/${VALID_PLAN_ID}%2Fextra/acknowledge`],
   ] as const)("keeps wrong-method, lookalike, and private %s %s calls walled", async (method, path) => {
     const call = (request(makeWalledApi()) as any)[method](path);
     const response = method === "get" ? await call : await call.send({});
@@ -92,6 +108,36 @@ describe("fresh-browser account-access wall", () => {
   ] as const)("lets the downstream profile guard own private headers for %s %s", async (method, path) => {
     const response = await (request(makeWalledApi()) as any)[method](path);
     expect(response.status).toBe(401);
+    expect(response.headers["cache-control"]).toBe("no-store");
+    expect(response.headers.pragma).toBe("no-cache");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
+    expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
+  });
+
+  it.each([
+    ["get", "/api/research/plans/xenios30"],
+    ["head", "/api/research/plans/xenios30"],
+  ] as const)("lets the downstream Xenios30 guard own private headers for %s %s", async (method, path) => {
+    const response = await (request(makeWalledApi()) as any)[method](path);
+    expect(response.status).toBe(401);
+    expect(response.headers["cache-control"]).toBe("no-store");
+    expect(response.headers.pragma).toBe("no-cache");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
+    expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    if (method === "get") {
+      expect(response.body).toEqual({ ok: false, message: "Sign in required." });
+    } else {
+      expect(response.text ?? "").toBe("");
+    }
+  });
+
+  it("lets only the exact Xenios30 acknowledge POST reach its downstream guard", async () => {
+    const response = await request(makeWalledApi())
+      .post(`/api/research/plans/xenios30/${VALID_PLAN_ID}/acknowledge`)
+      .set("Authorization", "Bearer member-jwt-without-review-cookie")
+      .send({});
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({ ok: false, message: "Sign in required." });
     expect(response.headers["cache-control"]).toBe("no-store");
     expect(response.headers.pragma).toBe("no-cache");
     expect(response.headers["referrer-policy"]).toBe("no-referrer");
