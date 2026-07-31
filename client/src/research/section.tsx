@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, type ComponentType, type ReactNode } from "react";
-import { Link, Redirect, Route, Switch } from "wouter";
+import { Link, Redirect, Route, Switch, useLocation } from "wouter";
 import { ResearchProvider, useResearch } from "./core";
 import ResearchLayout from "./layout";
 import Gateway from "./pages/Gateway";
@@ -141,6 +141,26 @@ function L({ component: C, member = false, props }: { component: ComponentType<a
 }
 
 export default function ResearchSection() {
+  const [location] = useLocation();
+  // SEN-0027. This effect used to run once on mount with an empty dependency
+  // array, which was not enough. 27 research pages render <SeoHead> without a
+  // robots prop, and SeoHead then writes its DEFAULT_ROBOTS, which begins
+  // "index,follow". So a client-side navigation INSIDE the research tree
+  // overwrote the noindex set here and never restored it: the tree advertised
+  // itself as indexable until a full page load.
+  //
+  // Depending on `location` re-asserts it after every navigation. The ordering
+  // is what makes this work rather than fight SeoHead: React runs child effects
+  // before parent effects within a commit, and this section is the parent of
+  // every research page, so this assertion lands after the page's own SeoHead
+  // has written its value.
+  //
+  // NOT a live indexing exposure either before or after: production sends a
+  // real "x-robots-tag: noindex, nofollow" HEADER on /research routes and the
+  // sitemap excludes the tree, both verified against production. The header is
+  // what search engines actually obey. This closes the in-page defect so the
+  // markup stops contradicting the header, which is defence in depth rather
+  // than a leak being plugged.
   useEffect(() => {
     let el = document.head.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
     const created = !el;
@@ -152,10 +172,14 @@ export default function ResearchSection() {
     const prev = el.getAttribute("content");
     el.setAttribute("content", "noindex, nofollow");
     return () => {
+      // On a navigation WITHIN research this restores the value the outgoing
+      // page had set, and the next run immediately re-asserts noindex. On the
+      // final unmount, when the visitor leaves the research tree entirely, it
+      // hands the main site back whatever robots value it was using.
       if (created) el!.remove();
       else if (prev) el!.setAttribute("content", prev);
     };
-  }, []);
+  }, [location]);
 
   return (
     <ResearchProvider>
