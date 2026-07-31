@@ -485,6 +485,17 @@
       ]
     },
     {
+      "id": "OWNER-W2-P1-XENIOS30-PRIVATE-HEADERS",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/plans.ts",
+        "server/research/plans.test.ts"
+      ]
+    },
+    {
       "id": "OWNER-W4-PR80",
       "owner": "Website 4",
       "lane": "wave2-inventory-lot-coa",
