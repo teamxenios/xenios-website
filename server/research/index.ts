@@ -308,6 +308,91 @@ export function registerResearchApi(app: Express) {
     const expiresAt = Number(rawExpiresAt);
     return Number.isSafeInteger(expiresAt) && String(expiresAt) === rawExpiresAt;
   };
+
+  // SEN-0023, the remaining half. The member-platform routes below are ALL
+  // already owned by their own requireActiveMember / requireMember guard, but
+  // this earlier gateway answered 401 "Access required." before that guard
+  // could run, so a member who signed in with Member Login and never typed the
+  // shared review password was locked out of their own account. It failed
+  // closed, never open, but it is still a lockout.
+  //
+  // Two rules keep the widening as small as the routes themselves:
+  //   1. Every entry is an EXACT path or an ANCHORED shape. No bare prefixes,
+  //      so a future route added under any of these namespaces is walled by
+  //      default until it is listed here on purpose.
+  //   2. The branch is admitted only when the request actually carries a
+  //      member bearer credential. Every downstream guard here resolves the
+  //      Supabase JWT out of "Authorization: Bearer ..." and 401s immediately
+  //      without one (member-auth.ts resolveResearchMember), so requiring the
+  //      header costs a real member nothing and denies the wall-probing
+  //      caller who has no credential at all.
+  //
+  // Ids are validated against the DDL, not against a route's own zod schema:
+  // research_private_media.id and research_member_questions.id are both
+  // "uuid primary key default gen_random_uuid()", so a lowercase-canonical
+  // UUID is the correct anchor. Guide slugs are content directory names under
+  // content/research-guides/{individual,blends}, which are lowercase
+  // kebab-case, so that is the anchor there.
+  const MEMBER_SESSION_READ_PATHS = new Set([
+    "/assessment", // assessment.ts: requireActiveMember
+    "/blueprint", // blueprint.ts: requireActiveMember
+    "/guides", // commerce/routes.ts: injected requireActiveMember
+    "/media", // media.ts: requireActiveMember
+    "/questions", // questions.ts: requireActiveMember
+    "/telegram", // questions.ts: requireActiveMember
+    "/tracker", // tracker.ts: requireActiveMember
+  ]);
+  const MEMBER_SESSION_WRITE_PATHS = new Set([
+    "/agreements", // agreements.ts: requireMember (signing precedes activation)
+    "/assessment/responses", // assessment.ts: requireActiveMember
+    "/assessment/submit", // assessment.ts: requireActiveMember
+    "/blueprint/acknowledge", // blueprint.ts: requireActiveMember
+    "/media/intent", // media.ts: requireActiveMember
+    "/questions", // questions.ts: requireActiveMember
+    "/telegram/link", // questions.ts: requireActiveMember
+    "/tracker", // tracker.ts: requireActiveMember
+  ]);
+  const MEMBER_SESSION_REPLACE_PATHS = new Set([
+    "/media/retention-election", // media.ts: requireActiveMember
+    "/profile", // profile.ts: requireActiveMember
+  ]);
+  const MEMBER_SESSION_REMOVE_PATHS = new Set([
+    "/telegram/link", // questions.ts: requireActiveMember
+  ]);
+  // A canonical lowercase UUID. The lowercase check is not cosmetic: it keeps
+  // one row addressable by exactly one path, so a case variant cannot be used
+  // to probe for a differently-normalized bypass.
+  const canonicalUuid = (value: string): boolean =>
+    value === value.toLowerCase() && z.string().uuid().safeParse(value).success;
+  const GUIDE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+  const memberSessionRoute = (method: string, path: string): boolean => {
+    if (method === "GET" || method === "HEAD") {
+      if (MEMBER_SESSION_READ_PATHS.has(path)) return true;
+      // GET /guides/:slug (commerce/routes.ts, injected requireActiveMember).
+      const guide = /^\/guides\/([^/]+)$/.exec(path);
+      return guide !== null && guide[1].length <= 80 && GUIDE_SLUG.test(guide[1]);
+    }
+    if (method === "POST") {
+      if (MEMBER_SESSION_WRITE_PATHS.has(path)) return true;
+      // POST /media/:mediaId/access (media.ts, requireActiveMember).
+      const mediaAccess = /^\/media\/([^/]+)\/access$/.exec(path);
+      if (mediaAccess !== null) return canonicalUuid(mediaAccess[1]);
+      // POST /questions/:questionId/rate (questions.ts, requireActiveMember).
+      const questionRating = /^\/questions\/([^/]+)\/rate$/.exec(path);
+      return questionRating !== null && canonicalUuid(questionRating[1]);
+    }
+    if (method === "PUT") return MEMBER_SESSION_REPLACE_PATHS.has(path);
+    if (method === "DELETE") {
+      if (MEMBER_SESSION_REMOVE_PATHS.has(path)) return true;
+      // DELETE /media/:mediaId (media.ts, requireActiveMember). The UUID
+      // anchor is what separates this from the sibling literal segment:
+      // DELETE /media/retention-election is not a UUID and stays walled.
+      const media = /^\/media\/([^/]+)$/.exec(path);
+      return media !== null && canonicalUuid(media[1]);
+    }
+    return false;
+  };
+
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
     if (
@@ -328,6 +413,9 @@ export function registerResearchApi(app: Express) {
       return next();
     }
     const bearer = (req.headers.authorization ?? "").startsWith("Bearer ");
+    if (bearer && memberSessionRoute(req.method, req.path)) {
+      return next();
+    }
     if (bearer && MEMBER_AUTHED_PREFIXES.some((p) => req.path === p || req.path.startsWith(p + "/"))) {
       return next();
     }
