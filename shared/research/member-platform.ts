@@ -425,7 +425,7 @@ export type PlanDocument = {
 
 // Signed access: the server returns a short-lived signed URL; documents are
 // never emailed as ordinary attachments and never publicly addressable.
-export type DocumentAccessRequest = { documentId: string };
+export type DocumentAccessRequest = Record<string, never>;
 export type DocumentAccessGrant = {
   documentId: string;
   signedUrl: string;
