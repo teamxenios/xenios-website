@@ -273,7 +273,11 @@ export function registerResearchApi(app: Express) {
   // private-response headers. Let them reach that canonical handler even when
   // the shared review cookie is absent; otherwise this earlier gateway would
   // shadow the route, omit its privacy headers, and reject a valid member JWT.
-  const DOWNSTREAM_MEMBER_GUARDED_READ_PATHS = new Set(["/capabilities"]);
+  const DOWNSTREAM_MEMBER_GUARDED_READ_PATHS = new Set([
+    "/capabilities",
+    "/profile",
+    "/profile/sensitive",
+  ]);
   const downstreamMemberGuardedRead = (path: string): boolean =>
     DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(path) ||
     path === "/member/products" ||
