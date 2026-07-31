@@ -247,6 +247,20 @@
       ]
     },
     {
+      "id": "OWNER-W2-CARE-PENDING-SHELLS",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "client/src/care/section.tsx",
+        "client/src/care/PatientIntakePendingPage.tsx",
+        "client/src/care/patient-intake-pending.test.tsx",
+        "client/src/care/CareClinicianReviewPendingPage.tsx",
+        "client/src/care/clinician-review-pending.test.tsx"
+      ]
+    },
+    {
       "id": "OWNER-W2-SUPABASE-RENDER-CHECKIN",
       "owner": "Website 2",
       "lane": "supabase-render-checkin",
