@@ -716,3 +716,28 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 145. Worth noting for prioritisation: this one is NOT blocked by the protection manifest.
      client/src/research/** sits inside allowedWriteZones, so unlike SEN-0014, #182 and SEN-0024 it
      can be fixed without a founder re-baseline decision.
+
+## 2026-07-31T12:15Z, SEN-0012 measured on production: a WCAG AA failure, not a cosmetic CSS nit
+
+146. Third consecutive cycle with no merges, so I quantified the ghost-CTA defect (SEN-0012, my
+     blocked PR #182) by MEASURING it on production rather than reasoning from source.
+147. RESULT, and it is worse than I had been describing it. Every btn-ghost-on-dark CTA renders as
+     unstyled default-link text: color rgb(0,0,238), transparent background, transparent border,
+     sitting on the near-black section background rgb(14,14,14). Measured contrast ratio 2.05:1,
+     which fails WCAG AA for normal text (4.5:1) and ALSO for large text (3.0:1). The elements are
+     fully laid out and visible (193x64px on the home page), so this is not a hidden element.
+148. NON-VACUOUS CONTROL on the same page: .btn.btn-primary resolves correctly to white on
+     rgb(14,14,14). The stylesheet loads fine; only the ghost class fails to resolve. Without that
+     control the measurement would be consistent with a stylesheet that simply had not loaded.
+149. BLAST RADIUS IS 29 PAGES, NOT 6. I had been calling this "six ghost CTAs", counting SOURCE
+     SITES. The IcpPage instance renders on every /for/:slug page, and the sitemap lists 25 of them.
+     So: / (1), /about (2 CTAs), /for-coaches (1), /product (1), /for/:slug (25) = 29 pages,
+     30 CTA instances. Corrected the ledger rather than keeping the tidier number.
+150. FOUR OF THE SIX ARE PRIMARY CONVERSION CTAs: "Request Early Access", "Join the Founding
+     Cohort", "Founding Coach Cohort", "See How It Works". This is revenue-path, not decoration.
+151. SEN-0012 upgraded P2 -> P1 on this evidence. It remains structurally blocked: Home.tsx is a
+     hard-tripwire file and the other four pages are captured by the client/src/pages/** glob, so
+     the fix needs the same protection re-baseline decision as SEN-0014 and SEN-0024. That decision
+     now gates a measured accessibility failure on 29 live pages.
+152. Screenshot attempt failed (browser pane not displayed). Not chased: computed-style values plus
+     the contrast computation are stronger and more checkable evidence than an image.
