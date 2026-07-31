@@ -1,231 +1,142 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { PlanDocument } from "@shared/research/member-platform";
 import { useResearch } from "../../core";
-import { getDocuments } from "../../adapters/member";
-import { devFixture } from "../../lib/fixtures";
+import { acknowledgeDocument, fetchDocumentBlob, getDocuments, requestDocumentAccess, type DocumentsResponse } from "../../adapters/member";
+import type { ApiResult } from "../../lib/api";
+import { ResearchEmptyState, ResearchRouteBoundary, ResearchStatusBadge } from "../../ui/kit";
 import { ResearchMemberShell } from "../../ui/shells";
-import {
-  ResearchDocumentCard,
-  ResearchDrawer,
-  ResearchEmptyState,
-  ResearchRouteBoundary,
-  ResearchSecureNotice,
-  ResearchStatusBadge,
-  ResearchTimeline,
-} from "../../ui/kit";
 
-// ---------------------------------------------------------------------------
-// Member Document Center (/research/member/documents). Every fact on this
-// page comes from GET /api/research/member/documents; when that endpoint is
-// not published yet the page renders an honest "documents appear after
-// activation" state (dev builds may show typed fixtures via devFixture,
-// production never does). Downloads use ONLY a server-provided signedUrl;
-// a document without one shows "Download pending" and never a fabricated
-// link.
-// ---------------------------------------------------------------------------
-
-interface DocumentHistoryEvent {
-  at: string;
-  title: string;
-  detail?: string;
-}
-
-interface MemberDocument {
-  id: string;
-  title: string;
-  type: string;
-  version: string;
-  templateVersion?: string | null;
-  reviewer?: string | null;
-  publishedAt?: string | null;
-  acknowledged?: boolean | null;
-  signedUrl?: string | null;
-  history?: DocumentHistoryEvent[] | null;
-}
-
-type DocumentsPayload = { documents?: MemberDocument[] } | MemberDocument[];
-
-function normalizeDocuments(payload: DocumentsPayload): MemberDocument[] {
-  if (Array.isArray(payload)) return payload.filter((d) => d && d.id);
-  return (payload?.documents ?? []).filter((d) => d && d.id);
-}
-
-// Dev-only synthetic documents. devFixture returns null in production, so a
-// live member can never see these. No signedUrl is ever fabricated: fixture
-// documents render the same "Download pending" state the real page shows
-// until the server signs a URL.
-function fixtureDocuments(): MemberDocument[] {
-  return [
-    {
-      id: "fix-terms",
-      title: "Research Terms of Participation",
-      type: "Agreement",
-      version: "2.1",
-      templateVersion: "3",
-      reviewer: "Research operations",
-      publishedAt: "2026-06-02",
-      acknowledged: true,
-      signedUrl: null,
-      history: [
-        { at: "2026-06-02", title: "Version 2.1 published", detail: "Clarified data handling language. Template version 3." },
-        { at: "2026-03-14", title: "Version 2.0 published", detail: "Annual review update." },
-        { at: "2026-03-20", title: "Acknowledged by you" },
-      ],
-    },
-    {
-      id: "fix-privacy",
-      title: "Member Privacy Notice",
-      type: "Notice",
-      version: "1.4",
-      reviewer: "Research operations",
-      publishedAt: "2026-05-18",
-      acknowledged: false,
-      signedUrl: null,
-      history: [{ at: "2026-05-18", title: "Version 1.4 published", detail: "Added the media retention section." }],
-    },
-    {
-      id: "fix-protocol",
-      title: "Baseline Assessment Protocol",
-      type: "Protocol",
-      version: "1.0",
-      publishedAt: null,
-      acknowledged: null,
-      signedUrl: null,
-      history: [],
-    },
-  ];
-}
-
-type BoundaryState = "loading" | "ok" | "error" | "unavailable" | "unauthorized";
-
-const UNAVAILABLE_TITLE = "Your documents appear after activation.";
-const UNAVAILABLE_BODY =
-  "Agreements, notices, and protocol documents are published here by the research team as your membership becomes active. Nothing is wrong with your account.";
+type Feedback = { kind: "success" | "error"; message: string };
 
 export default function Documents() {
   const { memberToken } = useResearch();
-  const [state, setState] = useState<BoundaryState>("loading");
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
-  const [documents, setDocuments] = useState<MemberDocument[]>([]);
-  const [source, setSource] = useState<"server" | "fixture">("server");
-  const [historyDoc, setHistoryDoc] = useState<MemberDocument | null>(null);
+  const [result, setResult] = useState<ApiResult<DocumentsResponse> | null>(null);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [openingId, setOpeningId] = useState<string | null>(null);
+  const [acknowledgingId, setAcknowledgingId] = useState<string | null>(null);
+  const operation = useRef(0);
+  const feedbackTarget = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
-    setState("loading");
-    setErrorMessage(undefined);
-    const result = await getDocuments<DocumentsPayload>(memberToken);
-    if (result.kind === "ok") {
-      setDocuments(normalizeDocuments(result.data));
-      setSource("server");
-      setState("ok");
-      return;
-    }
-    if (result.kind === "unauthorized") {
-      setState("unauthorized");
-      return;
-    }
-    if (result.kind === "unavailable" || result.kind === "forbidden") {
-      // Endpoint not published (or not yet granted). Dev builds may render
-      // typed fixtures; production renders the honest pending state.
-      const fixture = devFixture(fixtureDocuments);
-      if (fixture) {
-        setDocuments(fixture);
-        setSource("fixture");
-        setState("ok");
-      } else {
-        setState("unavailable");
-      }
-      return;
-    }
-    setErrorMessage(result.message);
-    setState("error");
+    setResult(null);
+    setResult(await getDocuments(memberToken));
   }, [memberToken]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    let current = true;
+    ++operation.current;
+    setOpeningId(null);
+    setAcknowledgingId(null);
+    setResult(null);
+    void getDocuments(memberToken).then((next) => { if (current) setResult(next); });
+    return () => { current = false; ++operation.current; };
+  }, [memberToken]);
+
+  const restoreFocus = (element: HTMLElement | null) => { if (element?.isConnected) element.focus(); };
+
+  const openDocument = async (document: PlanDocument, control: HTMLButtonElement) => {
+    const current = ++operation.current;
+    setAcknowledgingId(null);
+    setOpeningId(document.documentId);
+    setFeedback(null);
+    if (!memberToken) {
+      setOpeningId(null);
+      setFeedback({ kind: "error", message: "Please sign in again to open this private document." });
+      restoreFocus(control);
+      return;
+    }
+    const response = await requestDocumentAccess(document.documentId, memberToken);
+    if (current !== operation.current) return;
+    if (response.kind !== "ok") {
+      setOpeningId(null);
+      setFeedback({ kind: "error", message: "The private document could not be opened." });
+      restoreFocus(control);
+      return;
+    }
+    const downloaded = await fetchDocumentBlob(response.data.grant, memberToken);
+    if (current !== operation.current) return;
+    setOpeningId(null);
+    if (downloaded.kind !== "ok") {
+      setFeedback({ kind: "error", message: "The private document could not be opened." });
+      restoreFocus(control);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(downloaded.data);
+    const anchor = control.ownerDocument.createElement("a");
+    anchor.href = objectUrl;
+    anchor.download = `document-${document.version}.pdf`;
+    anchor.hidden = true;
+    control.ownerDocument.body.append(anchor);
+    try { anchor.click(); } finally { anchor.remove(); URL.revokeObjectURL(objectUrl); }
+    setFeedback({ kind: "success", message: "Your private document download has started." });
+    restoreFocus(control);
+  };
+
+  const acknowledge = async (document: PlanDocument, control: HTMLButtonElement) => {
+    const current = ++operation.current;
+    setOpeningId(null);
+    setAcknowledgingId(document.documentId);
+    setFeedback(null);
+    const response = await acknowledgeDocument(document.documentId, document.version, memberToken);
+    if (current !== operation.current) return;
+    if (response.kind !== "ok") {
+      setAcknowledgingId(null);
+      setFeedback({ kind: "error", message: "The document could not be acknowledged." });
+      restoreFocus(control);
+      return;
+    }
+    const refreshed = await getDocuments(memberToken);
+    if (current !== operation.current) return;
+    setAcknowledgingId(null);
+    setResult(refreshed);
+    if (refreshed.kind === "ok" && refreshed.data.documents.some((item) => item.documentId === document.documentId && item.acknowledgedAt === response.data.acknowledgedAt)) {
+      setFeedback({ kind: "success", message: "Document acknowledged." });
+    } else {
+      setFeedback({ kind: "error", message: "The document status could not be refreshed." });
+    }
+    feedbackTarget.current?.focus();
+  };
+
+  const state = result === null ? "loading"
+    : result.kind === "unauthorized" ? "unauthorized"
+      : result.kind === "unavailable" || result.kind === "forbidden" || result.kind === "denied" ? "unavailable"
+        : result.kind === "error" ? "error" : "ok";
+  const documents = result?.kind === "ok" ? result.data.documents : [];
 
   return (
-    <ResearchMemberShell
-      title="Documents"
-      lead="Your agreements, notices, and protocol documents, with their version history and acknowledgment status."
-    >
-      <ResearchRouteBoundary
-        state={state}
-        errorMessage={errorMessage}
-        onRetry={() => void load()}
-        unavailableTitle={UNAVAILABLE_TITLE}
-        unavailableBody={UNAVAILABLE_BODY}
-      >
-        {source === "fixture" && (
-          <p className="mono-label text-ink-mute mb-4" role="note">
-            Development preview data. Production shows only documents published by the research team.
-          </p>
-        )}
-        {documents.length === 0 ? (
-          <ResearchEmptyState title={UNAVAILABLE_TITLE} body={UNAVAILABLE_BODY} />
-        ) : (
+    <ResearchMemberShell title="Documents" lead="Your private, versioned plan documents.">
+      <ResearchRouteBoundary state={state} errorMessage={result?.kind === "error" ? result.message : undefined}
+        unavailableTitle="Documents are unavailable." unavailableBody="No document or download availability has been inferred." onRetry={() => void load()}>
+        <div id="documents-feedback" ref={feedbackTarget} tabIndex={-1} aria-live={feedback?.kind === "error" ? "assertive" : "polite"}
+          role={feedback?.kind === "error" ? "alert" : "status"} className={feedback ? "card body-s mb-4" : "sr-only"}>
+          {feedback?.message ?? "Document action updates appear here."}
+        </div>
+        {documents.length === 0 ? <ResearchEmptyState title="No documents yet." body="Published plan documents will appear here." /> : (
           <div className="grid gap-4">
-            {documents.map((doc) => (
-              <ResearchDocumentCard
-                key={doc.id}
-                title={doc.title}
-                docType={doc.templateVersion ? `${doc.type} · template v${doc.templateVersion}` : doc.type}
-                version={doc.version}
-                publishedAt={doc.publishedAt}
-                acknowledged={doc.acknowledged}
-                reviewer={doc.reviewer}
-                action={
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      className="btn btn-ghost"
-                      onClick={() => setHistoryDoc(doc)}
-                      aria-label={`View history for ${doc.title}`}
-                    >
-                      History
+            {documents.map((document) => (
+              <article className="card min-w-0" key={document.documentId}>
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="min-w-0"><h2 className="body-m font-700 break-words">{document.title}</h2>
+                    <p className="body-s text-ink-2 mt-1">Version {document.version} · Published {new Date(document.publishedAt).toLocaleDateString()}</p></div>
+                  <ResearchStatusBadge label={document.status} tone={document.status === "current" ? "success" : "neutral"} />
+                </div>
+                <div className="flex flex-wrap gap-3 mt-4">
+                  <button type="button" className="btn btn-secondary" aria-describedby="documents-feedback"
+                    disabled={openingId === document.documentId} onClick={(event) => void openDocument(document, event.currentTarget)}>
+                    {openingId === document.documentId ? "Opening securely…" : "Open securely"}
+                  </button>
+                  {document.status === "current" && !document.acknowledgedAt && (
+                    <button type="button" className="btn btn-primary" aria-describedby="documents-feedback"
+                      disabled={acknowledgingId === document.documentId} onClick={(event) => void acknowledge(document, event.currentTarget)}>
+                      {acknowledgingId === document.documentId ? "Acknowledging…" : `Acknowledge version ${document.version}`}
                     </button>
-                    {doc.signedUrl ? (
-                      <a
-                        className="btn btn-secondary"
-                        href={doc.signedUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`Download ${doc.title}, version ${doc.version}`}
-                      >
-                        Download
-                      </a>
-                    ) : (
-                      <ResearchStatusBadge label="Download pending" tone="pending" />
-                    )}
-                  </div>
-                }
-              />
+                  )}
+                </div>
+              </article>
             ))}
           </div>
         )}
-        <div className="mt-8">
-          <ResearchSecureNotice>
-            Documents are delivered through time-limited signed links generated by the server. If a download is marked
-            pending, the file has not been signed for release yet.
-          </ResearchSecureNotice>
-        </div>
       </ResearchRouteBoundary>
-
-      <ResearchDrawer
-        open={historyDoc !== null}
-        title={historyDoc ? `${historyDoc.title}: history` : "Document history"}
-        onClose={() => setHistoryDoc(null)}
-      >
-        {historyDoc && (
-          <div>
-            <p className="mono-label text-ink-mute mb-4">
-              {historyDoc.type} · v{historyDoc.version}
-              {historyDoc.templateVersion ? ` · template v${historyDoc.templateVersion}` : ""}
-            </p>
-            <ResearchTimeline items={historyDoc.history ?? []} />
-          </div>
-        )}
-      </ResearchDrawer>
     </ResearchMemberShell>
   );
 }

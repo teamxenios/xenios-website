@@ -63,6 +63,12 @@ const DENIAL_COPY: Record<CommerceDenialCode, Copy> = {
     tone: "pending",
   },
 
+  payment_method_required: {
+    title: "Add a payment method to continue.",
+    body: "Your order is ready. Choose or add a payment method and submit again. Nothing has been charged and your cart is unchanged.",
+    tone: "error",
+  },
+
   // Catalog and purchasability.
   product_not_found: {
     title: "Product not found.",

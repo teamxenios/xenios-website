@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-07-30T09:37:39Z",
-  "productionSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+  "generatedAt": "2026-07-30T21:25:26Z",
+  "productionSha": "696d75b997fa95770aaba56afb2bc640560ed678",
   "checksumScope": "canonical Git blob bytes at each migration sourceSha and optional sourcePath, or productionSha and path when sourceSha is omitted; managed copies must byte-match the pinned source",
   "migrations": [
     {

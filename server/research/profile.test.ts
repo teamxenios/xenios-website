@@ -22,6 +22,7 @@ const state = vi.hoisted(() => ({
 const auth = vi.hoisted(() => ({
   member: null as any,
   denyCode: null as string | null,
+  signedOut: false,
 }));
 
 vi.mock("../supabase", () => {
@@ -106,6 +107,7 @@ vi.mock("../supabase", () => {
 // reach the handler in production; the mock mirrors that contract).
 vi.mock("./member-auth", () => ({
   requireActiveMember: (req: any, res: any, next: any) => {
+    if (auth.signedOut) return res.status(401).json({ ok: false, message: "Sign in required." });
     if (auth.denyCode) return res.status(403).json({ ok: false, code: auth.denyCode });
     req.researchMember = auth.member;
     next();
@@ -165,6 +167,7 @@ beforeEach(() => {
   state.profiles.length = 0;
   auth.member = MEMBER_A;
   auth.denyCode = null;
+  auth.signedOut = false;
   vi.clearAllMocks();
 });
 
@@ -395,6 +398,21 @@ describe("completeness", () => {
 });
 
 describe("guard denials", () => {
+  it.each([
+    ["GET", "/api/research/profile"],
+    ["HEAD", "/api/research/profile"],
+    ["GET", "/api/research/profile/sensitive"],
+    ["HEAD", "/api/research/profile/sensitive"],
+  ])("sets private headers before a signed-out %s denial on %s", async (method, path) => {
+    auth.signedOut = true;
+    const res = await request(makeApp())[method.toLowerCase() as "get" | "head"](path);
+    expect(res.status).toBe(401);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers["pragma"]).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+  });
+
   it("a pending member is denied with activation_required", async () => {
     auth.denyCode = "activation_required";
     const app = makeApp();

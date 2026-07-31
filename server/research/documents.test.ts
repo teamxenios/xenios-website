@@ -16,6 +16,8 @@ import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   documents: [] as any[],
   members: [] as any[],
+  documentQueries: 0,
+  documentUpdates: 0,
 }));
 
 const auth = vi.hoisted(() => ({
@@ -32,6 +34,7 @@ vi.mock("../supabase", () => {
     throw new Error(`unexpected table in test: ${name}`);
   }
   function query(table: string) {
+    if (table === "research_plan_documents") state.documentQueries += 1;
     const list = tableFor(table);
     let mode: "select" | "insert" | "update" = "select";
     let insertPayload: any = null;
@@ -78,7 +81,12 @@ vi.mock("../supabase", () => {
     const api: any = {
       select: () => api,
       insert: (p: any) => { mode = "insert"; insertPayload = p; return api; },
-      update: (p: any) => { mode = "update"; updatePayload = p; return api; },
+      update: (p: any) => {
+        mode = "update";
+        updatePayload = p;
+        if (table === "research_plan_documents") state.documentUpdates += 1;
+        return api;
+      },
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
       is: (c: string, v: any) => { if (v === null) isNullCol = c; return api; },
       in: (c: string, vs: any[]) => { inFilters.push([c, vs]); return api; },
@@ -166,6 +174,7 @@ afterAll(() => {
 import {
   clearMemoryDocumentBytes,
   DOCUMENT_GRANT_TTL_MS,
+  memoryDocumentBytesStore,
   registerDocumentsApi,
   signDocumentGrant,
 } from "./documents";
@@ -205,6 +214,22 @@ function makeApp() {
   return app;
 }
 
+function privateLogSpies() {
+  return [
+    vi.spyOn(console, "error").mockImplementation(() => undefined),
+    vi.spyOn(console, "warn").mockImplementation(() => undefined),
+    vi.spyOn(console, "log").mockImplementation(() => undefined),
+  ];
+}
+
+function expectNoPrivateLogLeak(
+  spies: ReturnType<typeof privateLogSpies>,
+  markers: readonly string[] = [CONTENT_MARKER],
+) {
+  const logged = spies.flatMap((spy) => spy.mock.calls).flat().map(String).join(" ");
+  for (const marker of markers) expect(logged).not.toContain(marker);
+}
+
 const MEMBER_A = {
   id: "00000000-0000-4000-8000-0000000doca0",
   application_id: "app-a",
@@ -228,6 +253,13 @@ const MEMBER_B = {
 // A marker planted in section bodies: it must never reach a notification, a
 // list response, or anything else a document's CONTENT should not reach.
 const CONTENT_MARKER = "XENIOS_DOCUMENT_CONTENT_MARKER";
+const DOWNLOAD_PRIVATE_METADATA_MARKER = "XENIOS_DOWNLOAD_PRIVATE_METADATA_SENTINEL";
+const DOWNLOAD_PRIVATE_BYTES_MARKER = "XENIOS_DOWNLOAD_PRIVATE_BYTES_SENTINEL";
+const UNIFORM_DOWNLOAD_DENIAL = {
+  ok: false,
+  code: "not_found",
+  message: "This document link is not valid.",
+};
 
 const SECTIONS = [
   { heading: "This month", body: `Three sessions a week. ${CONTENT_MARKER}` },
@@ -272,6 +304,8 @@ async function createDocument(app: express.Express, overrides: Record<string, an
 beforeEach(() => {
   state.documents.length = 0;
   state.members.length = 0;
+  state.documentQueries = 0;
+  state.documentUpdates = 0;
   clearMemoryDocumentBytes();
   auth.current = MEMBER_A;
   auth.deny = null;
@@ -281,7 +315,7 @@ beforeEach(() => {
   deps = makeDeps();
   process.env.RESEARCH_DOCUMENT_RENDERING_ENABLED = "true";
   process.env.RESEARCH_PRIVATE_MEDIA_ENABLED = "true";
-  vi.clearAllMocks();
+  vi.restoreAllMocks();
 });
 
 // ---------------------------------------------------------------------------
@@ -370,7 +404,9 @@ describe("GET /api/research/documents", () => {
     const res = await request(makeApp()).get("/api/research/documents");
     expect(res.status).toBe(200);
     expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
     expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
     expect(res.body.documents).toHaveLength(3);
     expect(res.body.documents.map((d: any) => d.version)).toEqual([2, 1, 1]);
     expect(res.body.documents[0].status).toBe("current");
@@ -409,6 +445,30 @@ describe("GET /api/research/documents", () => {
     const res = await request(makeApp()).get("/api/research/documents");
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ ok: true, documents: [] });
+  });
+
+  it.each(["get", "head"] as const)("denied %s fails before document or storage effects and leaks no sentinel", async (method) => {
+    seedDocument({ title: `Private ${CONTENT_MARKER}`, storage_path: `private/${CONTENT_MARKER}` });
+    auth.deny = { status: 401, code: "member_required" };
+    const getSpy = vi.spyOn(memoryDocumentBytesStore, "get");
+    const putSpy = vi.spyOn(memoryDocumentBytesStore, "put");
+    const logSpies = privateLogSpies();
+
+    const res = await (request(makeApp()) as any)[method]("/api/research/documents");
+
+    expect(res.status).toBe(401);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    expect(state.documentQueries).toBe(0);
+    expect(state.documentUpdates).toBe(0);
+    expect(getSpy).not.toHaveBeenCalled();
+    expect(putSpy).not.toHaveBeenCalled();
+    expect(notifications).toHaveLength(0);
+    expect(res.text ?? "").not.toContain(CONTENT_MARKER);
+    expectNoPrivateLogLeak(logSpies);
+    if (method === "head") expect(res.text ?? "").toBe("");
   });
 });
 
@@ -458,6 +518,41 @@ describe("POST /api/research/documents/:documentId/access", () => {
     expect(res.body.grant).toBeUndefined();
     expect(JSON.stringify(res.body)).not.toContain("/download");
   });
+
+  it("denied access fails before queries, storage reads, grant creation, notifications, or sentinel leakage", async () => {
+    const row = seedDocument({ title: `Private ${CONTENT_MARKER}`, storage_path: `private/${CONTENT_MARKER}` });
+    auth.deny = { status: 401, code: "member_required" };
+    const getSpy = vi.spyOn(memoryDocumentBytesStore, "get");
+    const putSpy = vi.spyOn(memoryDocumentBytesStore, "put");
+    const logSpies = privateLogSpies();
+
+    const res = await request(makeApp()).post(`/api/research/documents/${row.id}/access`);
+
+    expect(res.status).toBe(401);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    expect(state.documentQueries).toBe(0);
+    expect(state.documentUpdates).toBe(0);
+    expect(getSpy).not.toHaveBeenCalled();
+    expect(putSpy).not.toHaveBeenCalled();
+    expect(notifications).toHaveLength(0);
+    expect(res.body.grant).toBeUndefined();
+    expect(JSON.stringify(res.body)).not.toContain(CONTENT_MARKER);
+    expectNoPrivateLogLeak(logSpies);
+  });
+
+  it.each(["not-a-uuid", "00000000-0000-4000-8000-0000000000D0"])(
+    "rejects non-canonical path id %s before document effects",
+    async (documentId) => {
+      const res = await request(makeApp()).post(`/api/research/documents/${documentId}/access`);
+      expect(res.status).toBe(400);
+      expect(state.documentQueries).toBe(0);
+      expect(state.documentUpdates).toBe(0);
+      expect(res.body.grant).toBeUndefined();
+    },
+  );
 });
 
 // ---------------------------------------------------------------------------
@@ -466,9 +561,9 @@ describe("POST /api/research/documents/:documentId/access", () => {
 
 describe("GET /api/research/documents/:documentId/download", () => {
   // Publishes a real document and returns the member's signed URL for it.
-  async function publishAndGrant(app: express.Express) {
+  async function publishAndGrant(app: express.Express, overrides: Record<string, any> = {}) {
     state.members.push({ ...MEMBER_A });
-    const created = await createDocument(app);
+    const created = await createDocument(app, overrides);
     expect(created.status).toBe(200);
     const documentId = created.body.document.documentId;
     const access = await request(app).post(`/api/research/documents/${documentId}/access`);
@@ -483,6 +578,8 @@ describe("GET /api/research/documents/:documentId/download", () => {
     expect(res.status).toBe(200);
     expect(res.headers["cache-control"]).toBe("no-store");
     expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
     expect(res.headers["content-disposition"]).toContain(`${documentId}.txt`);
     // The title is never in the filename.
     expect(res.headers["content-disposition"]).not.toContain("August");
@@ -505,13 +602,55 @@ describe("GET /api/research/documents/:documentId/download", () => {
     expect(state.documents[0].storage_path).not.toContain("August");
   });
 
+  it.each([
+    ["signed out", null, { status: 401, code: "member_required" }],
+    ["invalid Bearer", "Bearer invalid-member-token", { status: 401, code: "invalid_token" }],
+  ] as const)("%s denial happens before every document, byte, notification, or logging effect", async (_label, bearer, denial) => {
+    const app = makeApp();
+    const { signedUrl } = await publishAndGrant(app, {
+      title: DOWNLOAD_PRIVATE_METADATA_MARKER,
+      sections: [{ heading: "Private bytes", body: DOWNLOAD_PRIVATE_BYTES_MARKER }],
+    });
+    expect(state.documents[0].title).toBe(DOWNLOAD_PRIVATE_METADATA_MARKER);
+    const seededBytes = await memoryDocumentBytesStore.get(state.documents[0].storage_path);
+    expect(seededBytes).not.toBeNull();
+    expect(new TextDecoder().decode(seededBytes!.bytes)).toContain(DOWNLOAD_PRIVATE_BYTES_MARKER);
+    const beforeDocuments = structuredClone(state.documents);
+    state.documentQueries = 0;
+    state.documentUpdates = 0;
+    notifications = [];
+    auth.deny = denial;
+    const getSpy = vi.spyOn(memoryDocumentBytesStore, "get");
+    const putSpy = vi.spyOn(memoryDocumentBytesStore, "put");
+    const logSpies = privateLogSpies();
+
+    const call = request(app).get(signedUrl);
+    if (bearer) call.set("Authorization", bearer);
+    const res = await call;
+
+    expect(res.status).toBe(401);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    expect(state.documentQueries).toBe(0);
+    expect(state.documentUpdates).toBe(0);
+    expect(getSpy).not.toHaveBeenCalled();
+    expect(putSpy).not.toHaveBeenCalled();
+    expect(state.documents).toEqual(beforeDocuments);
+    expect(notifications).toHaveLength(0);
+    expect(res.text ?? "").not.toContain(DOWNLOAD_PRIVATE_METADATA_MARKER);
+    expect(res.text ?? "").not.toContain(DOWNLOAD_PRIVATE_BYTES_MARKER);
+    expectNoPrivateLogLeak(logSpies, [DOWNLOAD_PRIVATE_METADATA_MARKER, DOWNLOAD_PRIVATE_BYTES_MARKER]);
+  });
+
   it("an expired signature is denied", async () => {
     const app = makeApp();
     const { signedUrl } = await publishAndGrant(app);
     nowMs = T0 + DOCUMENT_GRANT_TTL_MS + MINUTE;
     const res = await request(app).get(signedUrl);
     expect(res.status).toBe(403);
-    expect(res.body.code).toBe("not_found");
+    expect(res.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
     expect(res.text).not.toContain("XENIOS-TEST-DOCUMENT");
   });
 
@@ -528,18 +667,18 @@ describe("GET /api/research/documents/:documentId/download", () => {
     url.searchParams.set("sig", flipped);
     const tampered = await request(app).get(`${url.pathname}${url.search}`);
     expect(tampered.status).toBe(403);
-    expect(tampered.body.code).toBe("not_found");
+    expect(tampered.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
 
     // Different length: the length guard must deny, not throw.
     url.searchParams.set("sig", signature.slice(0, 8));
     const truncated = await request(app).get(`${url.pathname}${url.search}`);
     expect(truncated.status).toBe(403);
-    expect(truncated.body.code).toBe("not_found");
+    expect(truncated.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
 
     // No signature at all.
     const bare = await request(app).get(url.pathname);
     expect(bare.status).toBe(403);
-    expect(bare.body.code).toBe("not_found");
+    expect(bare.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
   });
 
   it("a valid signature under the WRONG member session is denied: a signature is not an authorization", async () => {
@@ -551,7 +690,7 @@ describe("GET /api/research/documents/:documentId/download", () => {
     auth.current = MEMBER_B;
     const res = await request(app).get(signedUrl);
     expect(res.status).toBe(403);
-    expect(res.body.code).toBe("not_found");
+    expect(res.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
     expect(res.text).not.toContain("XENIOS-TEST-DOCUMENT");
   });
 
@@ -568,7 +707,7 @@ describe("GET /api/research/documents/:documentId/download", () => {
     // The MAC verifies (B signed it for B), so the ownership re-read is what
     // stops this. Both layers are load-bearing.
     expect(res.status).toBe(403);
-    expect(res.body.code).toBe("not_found");
+    expect(res.body).toEqual(UNIFORM_DOWNLOAD_DENIAL);
   });
 
   it("capability off: the door reports capability_disabled and serves nothing", async () => {
@@ -652,6 +791,8 @@ describe("POST /api/research/documents/:documentId/acknowledge", () => {
     expect(res.body.fieldErrors.documentId).toBeTruthy();
     expect(state.documents[0].acknowledged_at).toBeNull();
     expect(state.documents[1].acknowledged_at).toBeNull();
+    expect(state.documentQueries).toBe(0);
+    expect(state.documentUpdates).toBe(0);
   });
 
   it("rejects a malformed body", async () => {
@@ -662,6 +803,48 @@ describe("POST /api/research/documents/:documentId/acknowledge", () => {
     expect(res.status).toBe(400);
     expect(res.body.code).toBe("validation_failed");
     expect(res.body.fieldErrors.version).toBeTruthy();
+    expect(state.documentQueries).toBe(0);
+    expect(state.documentUpdates).toBe(0);
+  });
+
+  it("denied acknowledge fails before queries, updates, storage, acknowledgments, notifications, or sentinel leakage", async () => {
+    const row = seedDocument({ title: `Private ${CONTENT_MARKER}`, storage_path: `private/${CONTENT_MARKER}` });
+    auth.deny = { status: 401, code: "member_required" };
+    const getSpy = vi.spyOn(memoryDocumentBytesStore, "get");
+    const putSpy = vi.spyOn(memoryDocumentBytesStore, "put");
+    const logSpies = privateLogSpies();
+
+    const res = await request(makeApp())
+      .post(`/api/research/documents/${row.id}/acknowledge`)
+      .send({ documentId: row.id, version: 1 });
+
+    expect(res.status).toBe(401);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    expect(state.documentQueries).toBe(0);
+    expect(state.documentUpdates).toBe(0);
+    expect(getSpy).not.toHaveBeenCalled();
+    expect(putSpy).not.toHaveBeenCalled();
+    expect(state.documents[0].acknowledged_at).toBeNull();
+    expect(notifications).toHaveLength(0);
+    expect(JSON.stringify(res.body)).not.toContain(CONTENT_MARKER);
+    expectNoPrivateLogLeak(logSpies);
+  });
+
+  it.each([
+    ["not-a-uuid", "not-a-uuid"],
+    ["00000000-0000-4000-8000-0000000000D0", "00000000-0000-4000-8000-0000000000D0"],
+    ["00000000-0000-4000-8000-0000000000d0", "not-a-uuid"],
+  ])("rejects non-canonical path/body ids before side effects", async (pathId, bodyId) => {
+    const res = await request(makeApp())
+      .post(`/api/research/documents/${pathId}/acknowledge`)
+      .send({ documentId: bodyId, version: 1 });
+    expect(res.status).toBe(400);
+    expect(state.documentQueries).toBe(0);
+    expect(state.documentUpdates).toBe(0);
+    expect(notifications).toHaveLength(0);
   });
 });
 
@@ -674,6 +857,10 @@ describe("POST /api/admin/research/documents", () => {
     state.members.push({ ...MEMBER_A });
     const res = await createDocument(makeApp());
     expect(res.status).toBe(200);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers.pragma).toBeUndefined();
+    expect(res.headers["x-robots-tag"]).toBeUndefined();
     expect(res.body.document.version).toBe(1);
     expect(res.body.document.status).toBe("current");
     expect(res.body.document.type).toBe("fitness_plan_pdf");

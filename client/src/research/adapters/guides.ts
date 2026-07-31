@@ -4,8 +4,17 @@
 // spelling URL strings inline. Behavior is identical to the previous inline
 // calls: the same ApiResult envelope, payload types supplied by the caller.
 
-import { apiGet, apiPost, type ApiResult } from "../lib/api";
+import { apiDelete, apiGet, apiPost, type ApiResult } from "../lib/api";
 import type { GuideDetailDto, GuideSummaryDto } from "@shared/research/commerce-api";
+import {
+  QUESTION_CATEGORIES,
+  QUESTION_STATUSES,
+  type MemberQuestion,
+  type QuestionCreateRequest,
+  type QuestionRateRequest,
+  type TelegramLinkStart,
+  type TelegramLinkState,
+} from "@shared/research/member-platform";
 
 const BASE = "/api/research/member";
 
@@ -14,13 +23,11 @@ export const guidesPaths = {
   guide: (slug: string) => `${BASE}/guides/${encodeURIComponent(slug)}`,
   guideCorrections: (slug: string) => `${BASE}/guides/${encodeURIComponent(slug)}/corrections`,
   guideTopicRequests: `${BASE}/guide-topic-requests`,
-  questions: `${BASE}/questions`,
-  questionVoice: `${BASE}/questions/voice`,
+  questions: "/api/research/questions",
   questionRating: (questionId: string) =>
-    `${BASE}/questions/${encodeURIComponent(questionId)}/rating`,
-  telegram: `${BASE}/telegram`,
-  telegramLink: `${BASE}/telegram/link`,
-  telegramUnlink: `${BASE}/telegram/unlink`,
+    `/api/research/questions/${encodeURIComponent(questionId)}/rate`,
+  telegram: "/api/research/telegram",
+  telegramLink: "/api/research/telegram/link",
   referrals: `${BASE}/referrals`,
 } as const;
 
@@ -72,46 +79,125 @@ export function requestGuideTopic<T>(body: unknown, token?: string | null): Prom
   return apiPost<T>(guidesPaths.guideTopicRequests, body, token);
 }
 
-/** Fetch the member's submitted questions. */
-export function fetchQuestions<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(guidesPaths.questions, token);
+const malformed = <T>(): ApiResult<T> => ({
+  kind: "error",
+  code: "malformed_response",
+  message: "The server returned an invalid response.",
+});
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+const isNullableString = (value: unknown): value is string | null =>
+  value === null || typeof value === "string";
+const CANONICAL_ISO_DATE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+const isIsoDate = (value: unknown): value is string =>
+  typeof value === "string" &&
+  CANONICAL_ISO_DATE_TIME.test(value) &&
+  !Number.isNaN(Date.parse(value)) &&
+  new Date(value).toISOString() === value;
+
+export function isMemberQuestion(value: unknown): value is MemberQuestion {
+  if (!isRecord(value)) return false;
+  if (
+    typeof value.source !== "string" ||
+    !["web", "telegram_text", "telegram_voice"].includes(value.source)
+  ) return false;
+  const hasBody = typeof value.bodyText === "string" && value.bodyText.trim().length > 0;
+  const hasTranscriptMedia =
+    typeof value.transcriptMediaId === "string" && value.transcriptMediaId.trim().length > 0;
+  const sourceRelationship =
+    value.source === "telegram_voice"
+      ? value.bodyText === null && hasTranscriptMedia
+      : hasBody && value.transcriptMediaId === null;
+  return (
+    typeof value.questionId === "string" &&
+    value.questionId.length > 0 &&
+    QUESTION_CATEGORIES.includes(value.category as never) &&
+    QUESTION_STATUSES.includes(value.status as never) &&
+    sourceRelationship &&
+    isNullableString(value.answerText) &&
+    (value.answeredAt === null || isIsoDate(value.answeredAt)) &&
+    (value.rating === null || [1, 2, 3, 4, 5].includes(value.rating as number)) &&
+    isNullableString(value.followUpOfQuestionId) &&
+    isIsoDate(value.createdAt) &&
+    (value.slaTargetAt === null || isIsoDate(value.slaTargetAt))
+  );
+}
+
+export function isTelegramLinkState(value: unknown): value is TelegramLinkState {
+  return (
+    isRecord(value) &&
+    typeof value.linked === "boolean" &&
+    (value.linkedAt === null || isIsoDate(value.linkedAt)) &&
+    isNullableString(value.telegramDisplayName) &&
+    (!value.linked || value.linkedAt !== null)
+  );
+}
+
+export function isTelegramLinkStart(value: unknown): value is TelegramLinkStart {
+  return (
+    isRecord(value) &&
+    typeof value.linkToken === "string" &&
+    value.linkToken.length > 20 &&
+    isIsoDate(value.expiresAt) &&
+    isNullableString(value.botUsername)
+  );
+}
+
+/** Fetch the member's submitted questions and reject malformed DTOs. */
+export async function fetchQuestions(token?: string | null): Promise<ApiResult<{ questions: MemberQuestion[] }>> {
+  const result = await apiGet<unknown>(guidesPaths.questions, token);
+  if (result.kind !== "ok") return result;
+  if (!isRecord(result.data) || result.data.ok !== true || !Array.isArray(result.data.questions)) return malformed();
+  if (!result.data.questions.every(isMemberQuestion)) return malformed();
+  return { kind: "ok", data: { questions: result.data.questions } };
 }
 
 /** Submit a written question. */
-export function submitQuestion<T>(body: unknown, token?: string | null): Promise<ApiResult<T>> {
-  return apiPost<T>(guidesPaths.questions, body, token);
-}
-
-/** Submit a recorded voice question. */
-export function submitVoiceQuestion<T>(
-  body: unknown,
+export async function submitQuestion(
+  body: QuestionCreateRequest,
   token?: string | null,
-): Promise<ApiResult<T>> {
-  return apiPost<T>(guidesPaths.questionVoice, body, token);
+): Promise<ApiResult<{ question: MemberQuestion }>> {
+  const result = await apiPost<unknown>(guidesPaths.questions, body, token);
+  if (result.kind !== "ok") return result;
+  if (!isRecord(result.data) || result.data.ok !== true || !isMemberQuestion(result.data.question)) return malformed();
+  return { kind: "ok", data: { question: result.data.question } };
 }
 
 /** Rate the answer to a question. */
-export function rateAnswer<T>(
+export async function rateAnswer(
   questionId: string,
-  body: unknown,
+  body: QuestionRateRequest,
   token?: string | null,
-): Promise<ApiResult<T>> {
-  return apiPost<T>(guidesPaths.questionRating(questionId), body, token);
+): Promise<ApiResult<{ ok: true }>> {
+  const result = await apiPost<unknown>(guidesPaths.questionRating(questionId), body, token);
+  if (result.kind !== "ok") return result;
+  if (!isRecord(result.data) || result.data.ok !== true) return malformed();
+  return { kind: "ok", data: { ok: true } };
 }
 
 /** Fetch the current Telegram link state. */
-export function fetchTelegramLink<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(guidesPaths.telegram, token);
+export async function fetchTelegramLink(token?: string | null): Promise<ApiResult<{ state: TelegramLinkState }>> {
+  const result = await apiGet<unknown>(guidesPaths.telegram, token);
+  if (result.kind !== "ok") return result;
+  if (!isRecord(result.data) || result.data.ok !== true || !isTelegramLinkState(result.data.state)) return malformed();
+  return { kind: "ok", data: { state: result.data.state } };
 }
 
 /** Start linking the member's Telegram account. */
-export function linkTelegram<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiPost<T>(guidesPaths.telegramLink, {}, token);
+export async function linkTelegram(token?: string | null): Promise<ApiResult<{ link: TelegramLinkStart }>> {
+  const result = await apiPost<unknown>(guidesPaths.telegramLink, {}, token);
+  if (result.kind !== "ok") return result;
+  if (!isRecord(result.data) || result.data.ok !== true || !isTelegramLinkStart(result.data.link)) return malformed();
+  return { kind: "ok", data: { link: result.data.link } };
 }
 
 /** Unlink the member's Telegram account. */
-export function unlinkTelegram<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiPost<T>(guidesPaths.telegramUnlink, {}, token);
+export async function unlinkTelegram(token?: string | null): Promise<ApiResult<{ ok: true }>> {
+  const result = await apiDelete<unknown>(guidesPaths.telegramLink, token);
+  if (result.kind !== "ok") return result;
+  if (!isRecord(result.data) || result.data.ok !== true) return malformed();
+  return { kind: "ok", data: { ok: true } };
 }
 
 /** Fetch the member's referral summary. */

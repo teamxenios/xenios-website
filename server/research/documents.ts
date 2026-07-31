@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import type { Express, Request, Response } from "express";
+import type { Express, NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import {
   PLAN_DOCUMENT_TYPES,
@@ -521,8 +521,13 @@ export async function createPlanDocument(
 // Routes
 // ---------------------------------------------------------------------------
 
+const canonicalDocumentIdSchema = z
+  .string()
+  .uuid()
+  .refine((value) => value === value.toLowerCase(), "documentId must be a canonical UUID");
+
 const acknowledgeSchema = z.object({
-  documentId: z.string().min(1).max(100),
+  documentId: canonicalDocumentIdSchema,
   version: z.number().int().min(1),
 });
 
@@ -545,6 +550,13 @@ const createSchema = z.object({
 function setPrivacyHeaders(res: Response) {
   res.set("Cache-Control", "no-store");
   res.set("Referrer-Policy", "no-referrer");
+}
+
+function privateDocumentResponse(_req: Request, res: Response, next: NextFunction) {
+  setPrivacyHeaders(res);
+  res.set("Pragma", "no-cache");
+  res.set("X-Robots-Tag", "noindex, nofollow");
+  next();
 }
 
 function memberFrom(req: Request): MemberRow | null {
@@ -585,8 +597,7 @@ function denyDownload(res: Response) {
 export function registerDocumentsApi(app: Express, deps: MemberPlatformDeps) {
   // The member's own documents, current and archived, newest first. The
   // storage path is not in the serializer, so it cannot appear here.
-  app.get("/api/research/documents", requireActiveMember, async (req, res) => {
-    setPrivacyHeaders(res);
+  app.get("/api/research/documents", privateDocumentResponse, requireActiveMember, async (req, res) => {
     try {
       const member = memberFrom(req);
       if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
@@ -599,12 +610,15 @@ export function registerDocumentsApi(app: Express, deps: MemberPlatformDeps) {
   });
 
   // Mint a short-lived signed grant for the member's own document.
-  app.post("/api/research/documents/:documentId/access", requireActiveMember, async (req, res) => {
-    setPrivacyHeaders(res);
+  app.post("/api/research/documents/:documentId/access", privateDocumentResponse, requireActiveMember, async (req, res) => {
     try {
       const member = memberFrom(req);
       if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
-      const result = await grantDocumentAccess(member.id, String(req.params.documentId), deps.clock.now());
+      const parsedDocumentId = canonicalDocumentIdSchema.safeParse(req.params.documentId);
+      if (!parsedDocumentId.success) {
+        return sendValidation(res, { documentId: ["documentId must be a canonical UUID"] });
+      }
+      const result = await grantDocumentAccess(member.id, parsedDocumentId.data, deps.clock.now());
       if (!result.ok) return sendServiceErr(res, result);
       res.json({ ok: true, grant: result.grant });
     } catch (err) {
@@ -618,8 +632,7 @@ export function registerDocumentsApi(app: Express, deps: MemberPlatformDeps) {
   // who is asking, and the stored row proves ownership. A signature alone is
   // never sufficient, so a URL that leaks into a log, a browser history, or a
   // shared screenshot opens nothing on its own.
-  app.get("/api/research/documents/:documentId/download", requireActiveMember, async (req, res) => {
-    setPrivacyHeaders(res);
+  app.get("/api/research/documents/:documentId/download", privateDocumentResponse, requireActiveMember, async (req, res) => {
     try {
       const member = memberFrom(req);
       if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
@@ -681,18 +694,22 @@ export function registerDocumentsApi(app: Express, deps: MemberPlatformDeps) {
   });
 
   // Member acknowledgment of a current document version.
-  app.post("/api/research/documents/:documentId/acknowledge", requireActiveMember, async (req, res) => {
-    setPrivacyHeaders(res);
+  app.post("/api/research/documents/:documentId/acknowledge", privateDocumentResponse, requireActiveMember, async (req, res) => {
     try {
       const member = memberFrom(req);
       if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
+
+      const parsedPathId = canonicalDocumentIdSchema.safeParse(req.params.documentId);
+      if (!parsedPathId.success) {
+        return sendValidation(res, { documentId: ["documentId must be a canonical UUID"] });
+      }
 
       const parsed = acknowledgeSchema.safeParse(req.body);
       if (!parsed.success) return sendValidation(res, parsed.error.flatten().fieldErrors);
 
       // The route parameter is authoritative; a body that disagrees is a
       // malformed request, never a silent redirect to a different document.
-      const documentId = String(req.params.documentId);
+      const documentId = parsedPathId.data;
       if (parsed.data.documentId !== documentId) {
         return sendValidation(res, { documentId: ["documentId must match the document in the path"] });
       }

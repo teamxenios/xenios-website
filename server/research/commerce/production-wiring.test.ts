@@ -256,6 +256,9 @@ function checkoutRequest(overrides: Partial<CheckoutRequest> = {}): CheckoutRequ
     shippingService: "standard",
     acceptedAgreementKeys: [...CHECKOUT_REQUIRED_AGREEMENT_KEYS],
     idempotencyKey: "wire-key-1",
+    // The state-3 wiring exercises a payable order, so it carries an
+    // instrument. Its absence is covered by checkout.test.ts.
+    paymentMethodReference: "pm_wire_instrument",
     ...overrides,
   };
 }

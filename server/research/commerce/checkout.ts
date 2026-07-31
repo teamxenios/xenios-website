@@ -309,6 +309,21 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
 
     if (!(await paymentIsUsable())) denials.add("payment_disabled");
 
+    // A payable order needs an instrument. Without one a provider can only open
+    // an unconfirmed intent, which is not a synchronous authorization, so the
+    // order would be created and could never settle. Refuse before anything is
+    // reserved or charged. A fully credit-covered order owes nothing and needs
+    // no instrument, so that case is deliberately allowed through.
+    const payableCents = Math.max(
+      0,
+      cart.subtotalCents +
+        (quote === null ? 0 : orderShippingTotalCents([quote])) -
+        (req.applyStoreCreditCents ?? 0),
+    );
+    if (!req.paymentMethodReference && payableCents > 0) {
+      denials.add("payment_method_required");
+    }
+
     return { denials, cart, quote };
   }
 
@@ -489,6 +504,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
           orderId,
           memberId,
           idempotencyKey: req.idempotencyKey,
+          paymentMethodReference: req.paymentMethodReference,
         });
         if (auth.ok) {
           order.paymentReference = auth.value.providerReference;
@@ -506,6 +522,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       orderId,
       memberId,
       idempotencyKey: req.idempotencyKey,
+      paymentMethodReference: req.paymentMethodReference,
     });
     if (!auth.ok) {
       // The hold is returned to the shelf: no payment, no reservation. This is

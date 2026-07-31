@@ -3,7 +3,9 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import type { CatalogResponse, CommerceLane, Product } from "@shared/research/types";
 import {
+  isResearchActivatePath,
   isResearchAdminPath,
+  isResearchApplicationStatusPath,
   isResearchPath,
   isResearchResetPasswordPath,
 } from "@shared/research/paths";
@@ -149,10 +151,14 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   }
   if (!isResearchPath(req.path)) return next();
   if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");
-  // The password-recovery page (founder decision, 2026-07-19: recovery works
-  // from a fresh browser without the review password) is a sensitive account
-  // page: never cached, never indexed, never leaks a referrer.
-  if (isResearchResetPasswordPath(req.path)) {
+  // Account-access pages are opened from email in a fresh browser and can
+  // carry signed, purpose-scoped tokens. They are never cached, indexed, or
+  // allowed to leak a referrer.
+  if (
+    isResearchResetPasswordPath(req.path) ||
+    isResearchActivatePath(req.path) ||
+    isResearchApplicationStatusPath(req.path)
+  ) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Referrer-Policy", "no-referrer");
     res.setHeader("X-Robots-Tag", "noindex, nofollow");
@@ -255,36 +261,69 @@ export function registerResearchApi(app: Express) {
     // The endpoint remains enumeration-resistant and creates no application.
     "/applications/resend-link",
   ]);
-  // FOUNDER DECISION (2026-07-19): password recovery must work from a fresh
-  // browser WITHOUT the shared review password. Exactly these routes bypass
-  // the wall by explicit allowlist (no credential of any kind required); the
-  // endpoint itself is enumeration-safe and rate-limited, exposes no member
-  // data, and never mints a review cookie. This does not make research
-  // public: every other route keeps its wall or member guard.
-  const OPEN_RECOVERY_PATHS = new Set(["/member/forgot-password"]);
+  // Account setup and recovery must work from a fresh browser without the
+  // legacy review password. Keep the bypass method-exact: forgot-password is
+  // enumeration-safe and rate-limited; claim consumes a one-time,
+  // purpose-scoped token plus a new password. Wrong methods remain walled.
+  const OPEN_ACCOUNT_WRITE_PATHS = new Set([
+    "/member/forgot-password",
+    "/member/claim",
+  ]);
   // These exact read routes own their stronger downstream member guard and
   // private-response headers. Let them reach that canonical handler even when
   // the shared review cookie is absent; otherwise this earlier gateway would
   // shadow the route, omit its privacy headers, and reject a valid member JWT.
-  const DOWNSTREAM_MEMBER_GUARDED_READ_PATHS = new Set(["/capabilities"]);
+  const DOWNSTREAM_MEMBER_GUARDED_READ_PATHS = new Set([
+    "/capabilities",
+    "/documents",
+    "/plans/xenios30",
+    "/profile",
+    "/profile/sensitive",
+  ]);
   const downstreamMemberGuardedRead = (path: string): boolean =>
     DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(path) ||
     path === "/member/products" ||
     path.startsWith("/member/products/") ||
     path.startsWith("/pricing/");
+  const downstreamMemberGuardedWrite = (path: string): boolean => {
+    const xenios30Match = /^\/plans\/xenios30\/([^/]+)\/acknowledge$/.exec(path);
+    if (xenios30Match !== null && z.string().uuid().safeParse(xenios30Match[1]).success) {
+      return true;
+    }
+
+    const documentsMatch = /^\/documents\/([^/]+)\/(access|acknowledge)$/.exec(path);
+    if (documentsMatch === null) return false;
+    const rawDocumentId = documentsMatch[1];
+    return rawDocumentId === rawDocumentId.toLowerCase() && z.string().uuid().safeParse(rawDocumentId).success;
+  };
+  const downstreamMemberGuardedDownload = (req: Request): boolean => {
+    const match = /^\/api\/research\/documents\/([^/?]+)\/download\?exp=(0|[1-9]\d*)&sig=([A-Za-z0-9_-]{43})$/.exec(
+      req.originalUrl,
+    );
+    if (match === null) return false;
+    const [, rawDocumentId, rawExpiresAt] = match;
+    if (rawDocumentId !== rawDocumentId.toLowerCase() || !z.string().uuid().safeParse(rawDocumentId).success) {
+      return false;
+    }
+    const expiresAt = Number(rawExpiresAt);
+    return Number.isSafeInteger(expiresAt) && String(expiresAt) === rawExpiresAt;
+  };
   app.use("/api/research", (req, res, next) => {
     if (publicMode()) return next();
     if (
       ((req.method === "GET" || req.method === "HEAD") &&
         OPEN_PUBLIC_READ_PATHS.has(req.path)) ||
-      (req.method === "POST" && OPEN_PUBLIC_WRITE_PATHS.has(req.path))
+      (req.method === "POST" &&
+        (OPEN_PUBLIC_WRITE_PATHS.has(req.path) ||
+          OPEN_ACCOUNT_WRITE_PATHS.has(req.path)))
     ) {
       return next();
     }
-    if (OPEN_RECOVERY_PATHS.has(req.path)) return next();
     if (
-      (req.method === "GET" || req.method === "HEAD") &&
-      downstreamMemberGuardedRead(req.path)
+      ((req.method === "GET" || req.method === "HEAD") &&
+        downstreamMemberGuardedRead(req.path)) ||
+      (req.method === "POST" && downstreamMemberGuardedWrite(req.path)) ||
+      (req.method === "GET" && downstreamMemberGuardedDownload(req))
     ) {
       return next();
     }
