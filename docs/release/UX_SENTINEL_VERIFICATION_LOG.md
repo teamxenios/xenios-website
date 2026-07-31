@@ -338,3 +338,21 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
     PR #165 (add-to-cart affordance). Ecosystem active: Website 2 (member UI), Website 4
     (affiliate economics kernel, PR #164), Website 5 (application UI, merged), workstream 6
     Care architecture branch, and PRs #163/#167/#168 from parallel sessions.
+
+## 2026-07-31T00:35Z, full-build forensic audit delivered
+
+73. Thirteen read-only agents audited the whole build at main eb5226d (2.36M tokens, 894 tool
+    calls, zero mutations). Package at C:/Users/sboad/projects/xenios-full-build-audit-20260730T231252Z:
+    24 artifacts plus a verified 224KB ZIP. Scores: ~72% code, ~55% production, ~15% commercial,
+    ~5% clinical, ~45% overall verified.
+74. Three findings had no prior owner and were broadcast to the coordination thread (PR #108) and
+    the pricing lane (PR #175): (a) P0, the checkout collects no payment instrument and the green
+    happy-path test hides it by injecting a provider that authorizes without one; (b) P1, forced
+    RLS missing on 62 of 142 applied tables with the fix for 57 sequenced behind unapplied commerce
+    migrations and 5 covered by no migration at all; (c) P2, /kairos 307s to a login that lands on
+    the marketing 404, breaking the only live MVP link.
+75. Corrections to the record: PR #166 opened only /member/claim (the other three account-access
+    lanes were already reachable), and PR #152's closed head e0246c1 was 16 files with ZERO failing
+    tests, not the 21-file red-tripwire state earlier reports described.
+76. Audit side effect disclosed and REPAIRED: the primary clone's node_modules was destroyed during
+    an agent's worktree setup; npm install completed exit 0 and vitest/4.1.10 is verified restored.
