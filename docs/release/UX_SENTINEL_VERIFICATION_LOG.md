@@ -799,3 +799,35 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
 163. REINFORCES SEN-0022. Care pages and research pages both carry noindex; /admin still does not.
      That makes /admin the single outlier across all three restricted surfaces, which strengthens
      the case for the header rather than leaving it as an isolated nit.
+
+## 2026-07-31T16:50Z, live verification of the merges, and a correction to my own bundle audit
+
+164. PR #208 (CI zone gate) verified on a real pull request. Tests, typecheck and build all SUCCESS;
+     the zone job FAILS, flagging EXACTLY ONE path, .github/workflows/core-site-zone-gate.yml, which
+     is the documented .github contradiction. Its two sibling files classified correctly and passed:
+     scripts/acceptance/verify-changed-file-zones.mjs as infrastructure, server/core-site-zone-gate.test.ts
+     as a reported test. No false positive on either. The gate does what it claims on real input.
+165. #163 VERIFIED LIVE ON PRODUCTION by content, not by timing. All four strings it introduced are
+     present in the deployed bundle: "Your cart is empty" (Cart, Checkout, kit chunks),
+     "There is nothing to check out" (Checkout-D8S3VE0_.js), "it will wait for you here" and
+     "Browse the catalog and add a product" (Cart-BZdQhpPd.js). Production also redeployed: the main
+     bundle fingerprint moved from index-Cb1K3J51.js to index-CSrV0jnb.js, and uptimeSeconds 5638 at
+     16:44Z puts process start near 15:10Z, minutes after the #163 merge. The fingerprint and string
+     evidence is what establishes it; the timing alone would not have.
+166. CORRECTION TO MY OWN EARLIER AUDIT, and it matters because I called it complete.
+     At 11:35Z I reported the static-bundle catalog check as "verified COMPLETELY rather than
+     partially", stating I had extracted "all 13 lazy-chunk names" and "fetched every one", 14 files
+     in total. That was WRONG. The main bundle references 13 chunks, but those chunks reference
+     further chunks. A transitive crawl finds 118 chunks totalling 2,077,069 bytes. My scan covered
+     14 of 118, roughly 12 percent of the bundle, and I described it as exhaustive.
+167. I found this only because a one-level crawl made #163 look UNDEPLOYED: two of its four strings
+     were missing from the 14 files I had. Rather than report "not deployed" I widened the crawl,
+     which both corrected that conclusion and exposed the audit error underneath it.
+168. RE-RAN THE CATALOG SCAN AT FULL COVERAGE. 48 catalog display names against all 118 chunks:
+     ZERO matches. Structural markers: semaglutide, tirzepatide, BPC-157, retatrutide, mg/mL all
+     absent; only the generic words "peptide" and "vial" appear, in 2 chunks each. So the VERDICT IS
+     UNCHANGED, the directive's static-bundle clause passes, but it now rests on 118 chunks instead
+     of 14. The earlier answer was right by luck of sampling, not by method.
+169. RULE, a sharper version of the one at entry 102: a bundle crawl must be TRANSITIVE. Chunks
+     reference chunks. Enumerating only what the entry bundle names covers a small fraction of what
+     is publicly fetchable, and any "no leak found" conclusion drawn from it is unsupported.
