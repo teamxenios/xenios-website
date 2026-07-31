@@ -19,8 +19,10 @@ import type {
   DocumentAccessGrant,
   MemberProfileView,
   MonthlyReviewState,
+  PlanPublicationState,
   PlanDocument,
   ProfileSection,
+  Xenios30Plan,
   Xenios90Plan,
 } from "@shared/research/member-platform";
 
@@ -260,15 +262,25 @@ export function getBlueprint(token?: string | null): Promise<ApiResult<Blueprint
 
 // --- Plans (xenios 30 and xenios 90) ---------------------------------------
 
-export function getXenios30Plan<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/plans/xenios-30`, token);
+export type Xenios30Response = {
+  ok: true;
+  current: Xenios30Plan | null;
+  history: Array<{ planId: string; monthLabel: string; state: PlanPublicationState }>;
+};
+
+export function getXenios30Plan(token?: string | null): Promise<ApiResult<Xenios30Response>> {
+  return apiGet<Xenios30Response>("/api/research/plans/xenios30", token);
 }
 
 export function acknowledgeXenios30(
-  version: string | null,
+  planId: string,
   token?: string | null,
-): Promise<ApiResult<{ ok?: boolean; acknowledgedAt?: string }>> {
-  return apiPost<{ ok?: boolean; acknowledgedAt?: string }>(`${BASE}/plans/xenios-30/acknowledge`, { version }, token);
+): Promise<ApiResult<{ ok: true; acknowledgedAt: string }>> {
+  return apiPost<{ ok: true; acknowledgedAt: string }>(
+    `/api/research/plans/xenios30/${encodeURIComponent(planId)}/acknowledge`,
+    {},
+    token,
+  );
 }
 
 export type Xenios90Response = {
