@@ -13,6 +13,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 //   2. PER-MEMBER ISOLATION. Every read filters on the member the guard
 //      resolved, so one member's ledger, periods, consents, and media are
 //      never visible to another.
+//   1b. THE GUARD CHOICE ITSELF. Which of the two member guards each route
+//      mounts is pinned by name, because swapping them changes who is admitted
+//      without changing any handler behaviour a test would otherwise notice.
 //   3. TRUTHFULNESS. A missing table reads as the empty state, a malformed row
 //      is dropped rather than rendered with filler, no amount is ever zero,
 //      and the five surfaces with no store answer 503 naming that store rather
@@ -77,22 +80,31 @@ vi.mock("../supabase", () => {
 });
 
 // The guards are mocked so a test chooses the member a request runs as, or the
-// exact denial production would produce. Both member guards share the same
-// mock body: this module's routes differ only in WHICH guard they mount, and
-// each route's guard choice is asserted separately below.
+// exact denial production would produce. They share one behaviour but NOT one
+// identity: each is a distinct function object stamped with its own name, and
+// each stamps that name on the response. That is what makes "which guard does
+// this route mount" observable two ways in "which guard each route mounts"
+// below, statically (the express stack holds that exact function) and at
+// runtime (the header the request came back with). A single shared mock object
+// would make every route's guard choice indistinguishable from its opposite.
 vi.mock("./member-auth", () => {
-  const guard = (req: any, res: any, next: any) => {
-    if (auth.signedOut) return res.status(401).json({ ok: false, message: "Sign in required." });
-    if (auth.noMember) {
-      return res.status(403).json({ ok: false, message: "No research membership for this account." });
-    }
-    req.researchMember = auth.member;
-    next();
-  };
+  function makeGuard(guardName: string) {
+    const guard = (req: any, res: any, next: any) => {
+      res.setHeader("x-test-guard", guardName);
+      if (auth.signedOut) return res.status(401).json({ ok: false, message: "Sign in required." });
+      if (auth.noMember) {
+        return res.status(403).json({ ok: false, message: "No research membership for this account." });
+      }
+      req.researchMember = auth.member;
+      next();
+    };
+    (guard as any).guardName = guardName;
+    return guard;
+  }
   return {
-    requireMember: guard,
-    requireResearchSubject: guard,
-    requireActiveMember: guard,
+    requireMember: makeGuard("requireMember"),
+    requireResearchSubject: makeGuard("requireResearchSubject"),
+    requireActiveMember: makeGuard("requireActiveMember"),
   };
 });
 
@@ -107,6 +119,9 @@ import {
   paymentsFromLedger,
   registerMemberAccountApi,
 } from "./member-account";
+// The mocked guards themselves, so a mount can be pinned by function identity
+// and not merely by behaviour.
+import { requireActiveMember, requireMember, requireResearchSubject } from "./member-auth";
 import { MEMBER_ACCOUNT_API } from "@shared/research/member-paths";
 import { AGREEMENT_DEFINITIONS } from "./agreements";
 import { defaultDeps } from "./member-platform-deps";
@@ -141,6 +156,21 @@ const REFUSING_ROUTES: Array<{ method: "get" | "post"; path: string; store: stri
   { method: "post", path: MEMBER_ACCOUNT_PATHS.privacyExport, store: MISSING_STORES.privacyRequests },
   { method: "post", path: MEMBER_ACCOUNT_PATHS.privacyCorrection, store: MISSING_STORES.privacyRequests },
   { method: "post", path: MEMBER_ACCOUNT_PATHS.privacyDeletion, store: MISSING_STORES.privacyRequests },
+];
+
+/**
+ * The guard every route must mount, named. This table IS the security
+ * decision: change a mount in member-account.ts without changing this line and
+ * the suite fails.
+ */
+const GUARD_BY_ROUTE: Array<{ method: "get" | "post"; path: string; guard: string }> = [
+  { method: "get", path: MEMBER_ACCOUNT_PATHS.membership, guard: "requireMember" },
+  { method: "post", path: MEMBER_ACCOUNT_PATHS.cancel, guard: "requireMember" },
+  { method: "get", path: MEMBER_ACCOUNT_PATHS.securitySessions, guard: "requireMember" },
+  { method: "get", path: MEMBER_ACCOUNT_PATHS.privacySummary, guard: "requireResearchSubject" },
+  { method: "post", path: MEMBER_ACCOUNT_PATHS.privacyExport, guard: "requireResearchSubject" },
+  { method: "post", path: MEMBER_ACCOUNT_PATHS.privacyCorrection, guard: "requireResearchSubject" },
+  { method: "post", path: MEMBER_ACCOUNT_PATHS.privacyDeletion, guard: "requireResearchSubject" },
 ];
 
 beforeEach(() => {
@@ -192,6 +222,68 @@ describe("published paths", () => {
     const paths = new Set([...registered()].map((route) => route.split(" ")[1]));
     for (const path of Object.values(MEMBER_ACCOUNT_API)) {
       expect(paths.has(path)).toBe(true);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 0b. Which guard each route mounts
+//
+// The split between the two guards is a security decision, not a style choice,
+// and it is dangerous in BOTH directions:
+//   * /membership mounts requireMember, not requireActiveMember, so a past_due
+//     member can still read the page that explains their own lapse. Mount
+//     requireResearchSubject there instead and a CLOSED account would reach a
+//     billing record.
+//   * every /privacy/* route mounts requireResearchSubject, so data rights
+//     outlive the membership. Mount requireMember there instead and a former
+//     subject is locked out of their own export, correction, and deletion.
+// Neither direction changes a single line of handler behaviour, so no
+// behavioural test can catch it. These two pins can: one on the identity of
+// the function express registered, one on the guard that actually ran.
+// ---------------------------------------------------------------------------
+
+describe("which guard each route mounts", () => {
+  const GUARDS: Record<string, unknown> = {
+    requireMember,
+    requireResearchSubject,
+    requireActiveMember,
+  };
+
+  /** The handler chain express registered for one route, in order. */
+  function mountedHandlers(method: string, path: string): unknown[] {
+    const app = makeApp() as any;
+    for (const layer of app.router?.stack ?? app._router?.stack ?? []) {
+      if (!layer.route || layer.route.path !== path) continue;
+      if (!layer.route.methods[method]) continue;
+      return (layer.route.stack ?? []).map((entry: any) => entry.handle);
+    }
+    throw new Error(`no ${method.toUpperCase()} ${path} route is registered`);
+  }
+
+  it.each(GUARD_BY_ROUTE)("registers $guard, and only $guard, on $method $path", ({ method, path, guard }) => {
+    const handlers = mountedHandlers(method, path);
+    // Exactly one guard on the chain, it is the named one, and it runs before
+    // the route body rather than after it.
+    expect(handlers.map((handler: any) => handler?.guardName).filter(Boolean)).toEqual([guard]);
+    expect(handlers[0]).toBe(GUARDS[guard]);
+    for (const [name, other] of Object.entries(GUARDS)) {
+      if (name === guard) continue;
+      expect(handlers).not.toContain(other);
+    }
+  });
+
+  it.each(GUARD_BY_ROUTE)("runs $guard on a live $method $path request", async ({ method, path, guard }) => {
+    const response = await request(makeApp())[method](path).send({});
+    expect(response.headers["x-test-guard"]).toBe(guard);
+  });
+
+  // requireActiveMember is the right guard for surfaces that a lapse should
+  // close. No account surface is one of those: a member in trouble with their
+  // billing is exactly the member who needs these pages.
+  it("mounts requireActiveMember on nothing in this module", () => {
+    for (const { method, path } of ALL_ROUTES) {
+      expect(mountedHandlers(method, path)).not.toContain(requireActiveMember);
     }
   });
 });
