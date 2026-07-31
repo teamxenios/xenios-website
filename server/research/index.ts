@@ -334,6 +334,14 @@ export function registerResearchApi(app: Express) {
   // content/research-guides/{individual,blends}, which are lowercase
   // kebab-case, so that is the anchor there.
   const MEMBER_SESSION_READ_PATHS = new Set([
+    // agreements.ts:337, requireResearchSubject. That guard is
+    // resolveResearchMember(..., allowClosed: true): it demands the same
+    // non-recovery Supabase JWT and the same member row as requireMember and
+    // 401s without a Bearer, differing only in tolerating status "closed".
+    // Reading the document is what makes signing it meaningful: POST
+    // /agreements was already admitted below, so without this the member could
+    // sign a consent form they were never able to read.
+    "/agreements",
     "/assessment", // assessment.ts: requireActiveMember
     "/blueprint", // blueprint.ts: requireActiveMember
     "/guides", // commerce/routes.ts: injected requireActiveMember
@@ -344,6 +352,12 @@ export function registerResearchApi(app: Express) {
   ]);
   const MEMBER_SESSION_WRITE_PATHS = new Set([
     "/agreements", // agreements.ts: requireMember (signing precedes activation)
+    // agreements.ts:349, requireResearchSubject. A fully literal path: the
+    // agreement id XR-MEM-012 is hardcoded in the registration, so this needs
+    // no pattern and admits exactly one shape. Withdrawing consent must stay
+    // reachable for a member whose status has since closed, which is precisely
+    // the case requireResearchSubject exists to allow.
+    "/agreements/XR-MEM-012/withdraw",
     "/assessment/responses", // assessment.ts: requireActiveMember
     "/assessment/submit", // assessment.ts: requireActiveMember
     "/blueprint/acknowledge", // blueprint.ts: requireActiveMember

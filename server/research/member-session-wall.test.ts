@@ -38,6 +38,10 @@ vi.mock("./member-auth", async (importOriginal) => {
     ...actual,
     requireActiveMember: denyAsDownstreamGuard,
     requireMember: denyAsDownstreamGuard,
+    // agreements.ts uses this third guard. It is resolveResearchMember(...,
+    // allowClosed: true): same non-recovery JWT, same member row, 401 without a
+    // bearer, differing only in tolerating status "closed".
+    requireResearchSubject: denyAsDownstreamGuard,
   };
 });
 
@@ -106,6 +110,8 @@ function expectStillWalled(response: any, method: string) {
 const ADMITTED = [
   ["get", "/api/research/assessment"],
   ["head", "/api/research/assessment"],
+  ["get", "/api/research/agreements"],
+  ["head", "/api/research/agreements"],
   ["get", "/api/research/blueprint"],
   ["get", "/api/research/guides"],
   ["get", `/api/research/guides/${GUIDE_SLUG}`],
@@ -114,6 +120,7 @@ const ADMITTED = [
   ["get", "/api/research/telegram"],
   ["get", "/api/research/tracker"],
   ["post", "/api/research/agreements"],
+  ["post", "/api/research/agreements/XR-MEM-012/withdraw"],
   ["post", "/api/research/assessment/responses"],
   ["post", "/api/research/assessment/submit"],
   ["post", "/api/research/blueprint/acknowledge"],
@@ -171,7 +178,6 @@ describe("SEN-0023 member-session wall bypass", () => {
     ["delete", "/api/research/telegram"],
     ["patch", "/api/research/profile"],
     ["post", "/api/research/profile"],
-    ["get", "/api/research/agreements"],
     ["post", "/api/research/guides"],
     // Sibling literals one character away from an admitted exact path.
     ["get", "/api/research/blueprints"],
@@ -249,16 +255,30 @@ describe("SEN-0023 member-session wall bypass", () => {
     expectStillWalled(await call(method, path, { Authorization: BEARER }), method);
   });
 
-  // Routes that share a namespace with an admitted one but are NOT guarded by
-  // requireActiveMember/requireMember. They must stay walled: the Telegram
-  // webhook has no member guard at all (it is signature-gated downstream), and
-  // the agreements read plus the XR-MEM-012 withdrawal use
-  // requireResearchSubject, which is a different guard.
+  // Routes that share a namespace with an admitted one but carry NO member
+  // guard at all. The Telegram webhook is signature-gated downstream, so a
+  // member bearer must not open it.
+  //
+  // REVISED WITHIN THIS BRANCH, DELIBERATELY AND IN THE OPEN. An earlier
+  // revision of this file also listed GET /agreements and
+  // POST /agreements/XR-MEM-012/withdraw here, on the reasoning that
+  // requireResearchSubject "is a different guard". That reasoning does not
+  // survive: requireResearchSubject is resolveResearchMember(..., allowClosed:
+  // true), the same non-recovery Supabase JWT and the same member row as
+  // requireMember, 401 without a bearer, differing only in tolerating status
+  // "closed". Excluding it left POST /agreements (sign) admitted while GET
+  // /agreements (read the document being signed) stayed walled, which broke
+  // Assessment's ConsentGate outright and made PrivacyControls map the wall's
+  // 401 to "your session ended" for a signed-in member. Both are now admitted
+  // above and their exact-shape negatives are asserted at the end of this file.
+  //
+  // This edit changes assertions that were added by this same unmerged branch
+  // and have never been on main, so no established gate is being lowered. The
+  // reasoning is recorded here rather than in a commit message so the next
+  // reader sees why the earlier line was wrong.
   it.each([
     ["post", "/api/research/telegram/webhook"],
     ["get", "/api/research/telegram/webhook"],
-    ["post", "/api/research/agreements/XR-MEM-012/withdraw"],
-    ["get", "/api/research/agreements"],
   ] as const)("keeps the non-member-guarded neighbour %s %s walled", async (method, path) => {
     expectStillWalled(await call(method, path, { Authorization: BEARER }), method);
   });
@@ -289,4 +309,26 @@ describe("SEN-0023 member-session wall bypass", () => {
       "get",
     );
   });
+});
+
+describe("the withdraw path is exact, not a pattern", () => {
+  // Negatives for the second half of the SEN-0023 fix. agreements.ts:349
+  // hardcodes the agreement id in the registration, so exactly one shape may
+  // pass. If any of these ever reach the guard, the rule has drifted from an
+  // exact path into a namespace.
+  const NEAR_MISSES = [
+    ["post", "/api/research/agreements/XR-MEM-999/withdraw"],
+    ["post", "/api/research/agreements/xr-mem-012/withdraw"],
+    ["post", "/api/research/agreements/XR-MEM-012/withdraw/extra"],
+    ["post", "/api/research/agreements/XR-MEM-012"],
+    ["get", "/api/research/agreements/XR-MEM-012/withdraw"],
+    ["delete", "/api/research/agreements"],
+    ["put", "/api/research/agreements"],
+  ] as const;
+
+  for (const [method, path] of NEAR_MISSES) {
+    it(`still walls ${method.toUpperCase()} ${path}`, async () => {
+      expectStillWalled(await call(method, path, { Authorization: BEARER }), method);
+    });
+  }
 });
