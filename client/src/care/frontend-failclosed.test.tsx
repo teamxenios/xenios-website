@@ -27,6 +27,8 @@ const appointments = source("./CareAppointmentsPage.tsx");
 const consent = source("./CareConsentPendingPage.tsx");
 const prescriptions = source("./CarePrescriptionsPage.tsx");
 const pharmacy = source("./CarePharmacyOrdersPage.tsx");
+const eligibility = source("./EligibilityPendingPage.tsx");
+const section = source("./section.tsx");
 const appointmentReadiness = source("./CareAppointmentReadinessPanel.tsx");
 const pharmacyReadiness = source("./CarePharmacyReadinessPanel.tsx");
 const careApi = source("./api.ts");
@@ -117,9 +119,14 @@ describe("Care frontend fail-closed lease", () => {
     },
   );
 
-  it("never routes to the missing intake destination", () => {
+  it("routes only to Care destinations that are actually mounted", () => {
     expect(appointments).toContain('href="/care/eligibility"');
-    expect(appointments).not.toContain("/care/intake");
+    // This asserted the intake link away while intake had no destination. The
+    // guard it was protecting is that no Care page points at a dead route, so
+    // it now checks the destination exists rather than that it is absent.
+    expect(appointments).toContain('href="/care/intake"');
+    expect(eligibility).toContain('href="/care/intake"');
+    expect(section).toContain('<Route path="/care/intake">');
   });
 
   it("distinguishes an unauthenticated consent response", () => {
