@@ -99,6 +99,29 @@ export default function SignIn() {
             Returning members do not need another approval email. If you have not created your account yet, use the one-time claim link in your approval email.
           </p>
         </form>
+        {/*
+          SEN-0025. Every other /research page offers a way out: the gateway has
+          a footer, Apply and the policy pages carry "Back to gateway" plus a
+          footer, and Reset password links Member Login and Support. Sign in had
+          none of them, so it was the only dead end in the surface, and the only
+          page that asks for credentials while offering no route to the Privacy
+          Policy or Terms it is collecting them under.
+        */}
+        <div className="max-w-[420px] mt-8 space-y-3 border-t border-line pt-6">
+          <p className="body-s text-ink-mute">
+            <Link href="/research" className="underline" data-testid="link-signin-gateway">Back to gateway</Link>
+          </p>
+          <p className="body-s text-ink-mute">
+            Not a member yet? <Link href="/research/apply" className="underline" data-testid="link-signin-apply">Apply for membership</Link>
+          </p>
+          <p className="body-s text-ink-mute">
+            <Link href="/research/policies/privacy" className="underline" data-testid="link-signin-privacy">Privacy</Link>
+            {" · "}
+            <Link href="/research/policies/terms" className="underline" data-testid="link-signin-terms">Terms</Link>
+            {" · "}
+            <a href="mailto:research@xeniostechnology.com" className="underline" data-testid="link-signin-support">Support</a>
+          </p>
+        </div>
       </section>
     </>
   );
