@@ -188,3 +188,44 @@ describe("member sign-in", () => {
     expect(container!.textContent).toContain("Returning members do not need another approval email.");
   });
 });
+
+describe("SEN-0025: sign in is not a dead end", () => {
+  // Before this, sign in was the ONLY /research page with no route away from
+  // it, and the only credential-collecting page with no link to the Privacy
+  // Policy or Terms it collects under. Every sibling already had an exit: the
+  // gateway has a footer, Apply and the policy pages carry "Back to gateway"
+  // plus a footer, Reset password links Member Login and Support.
+  //
+  // Anti-vacuity: each assertion reads the href, not just presence, so a link
+  // that renders with the wrong destination still fails.
+
+  it("offers a route back to the gateway", async () => {
+    await renderSignIn(async () => null);
+    const link = container!.querySelector('[data-testid="link-signin-gateway"]') as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+    expect(link.getAttribute("href")).toBe("/research");
+  });
+
+  it("offers the apply route for someone who is not a member yet", async () => {
+    await renderSignIn(async () => null);
+    const link = container!.querySelector('[data-testid="link-signin-apply"]') as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+    expect(link.getAttribute("href")).toBe("/research/apply");
+  });
+
+  it("links the policies it is collecting credentials under", async () => {
+    await renderSignIn(async () => null);
+    const privacy = container!.querySelector('[data-testid="link-signin-privacy"]') as HTMLAnchorElement;
+    const terms = container!.querySelector('[data-testid="link-signin-terms"]') as HTMLAnchorElement;
+    const support = container!.querySelector('[data-testid="link-signin-support"]') as HTMLAnchorElement;
+    expect(privacy?.getAttribute("href")).toBe("/research/policies/privacy");
+    expect(terms?.getAttribute("href")).toBe("/research/policies/terms");
+    expect(support?.getAttribute("href")).toBe("mailto:research@xeniostechnology.com");
+  });
+
+  it("keeps the existing forgot-password route intact", async () => {
+    await renderSignIn(async () => null);
+    const link = container!.querySelector('[data-testid="link-forgot-password"]') as HTMLAnchorElement;
+    expect(link?.getAttribute("href")).toBe("/research/reset-password");
+  });
+});
