@@ -32,12 +32,18 @@ export default function EligibilityPendingPage() {
   const [loadState, setLoadState] = useState<LoadState>({ kind: "loading" });
   const [location, setLocation] = useState("");
   const [actionError, setActionError] = useState("");
+  // Validation of the state field is kept separate from request failures so the
+  // message can sit next to the input it is about, and so the input itself can
+  // be marked invalid. A request failure is about the whole action, not the
+  // field, and keeps its own announcement below.
+  const [fieldError, setFieldError] = useState("");
   const [waitlist, setWaitlist] = useState<CareWaitlistEvent | null>(null);
   const [saving, setSaving] = useState(false);
 
   const loadEligibility = useCallback(async () => {
     setLoadState({ kind: "loading" });
     setActionError("");
+    setFieldError("");
     try {
       const response = await careApiFetch("/api/care/eligibility", {
         cache: "no-store",
@@ -71,11 +77,12 @@ export default function EligibilityPendingPage() {
     event.preventDefault();
     const stateCode = location.trim().toUpperCase();
     if (!/^[A-Z]{2}$/.test(stateCode)) {
-      setActionError("Enter the two-letter code for your current state.");
+      setFieldError("Enter the two-letter code for your current state.");
       return;
     }
     setSaving(true);
     setActionError("");
+    setFieldError("");
     try {
       const response = await careApiFetch("/api/care/eligibility/location", {
         method: "POST",
@@ -209,13 +216,28 @@ export default function EligibilityPendingPage() {
                   name="stateCode"
                   className="input-field"
                   value={location}
-                  onChange={(event) => setLocation(event.target.value)}
+                  onChange={(event) => {
+                    setLocation(event.target.value);
+                    if (fieldError) setFieldError("");
+                  }}
                   inputMode="text"
                   autoComplete="address-level1"
                   maxLength={2}
                   required
-                  aria-describedby="care-state-help"
+                  aria-invalid={fieldError ? true : undefined}
+                  aria-describedby={
+                    fieldError ? "care-state-error care-state-help" : "care-state-help"
+                  }
                 />
+                {fieldError && (
+                  <p
+                    id="care-state-error"
+                    role="alert"
+                    className="body-s text-pulse mt-2"
+                  >
+                    {fieldError}
+                  </p>
+                )}
                 <p id="care-state-help" className="body-s text-ink-mute mt-2">
                   Enter the two-letter code for where you are physically located
                   now. This does not establish clinical eligibility.
