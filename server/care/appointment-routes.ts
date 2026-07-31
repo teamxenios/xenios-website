@@ -14,6 +14,10 @@ import {
   sendCareTemporarilyUnavailable,
   type CareAccessDependencies,
 } from "./access";
+import {
+  registerCareAdminAppointmentQueueApi,
+  type CareAdminQueueOptions,
+} from "./admin-queue-routes";
 import { evaluateCareAppointmentReadiness } from "./appointment-readiness";
 import type { CareAppointmentRepository } from "./appointment-repository";
 import {
@@ -83,7 +87,14 @@ export function registerCareAppointmentApi(
   // owns /api/care/reviews. Registering it here keeps the new screen out of
   // the protected application and server seams entirely.
   reviewRepository: CareClinicianReviewRepository = lazyCareClinicianReviewRepository(),
+  // The Care administrator's appointment queue. The admin write contracts
+  // below (assign, schedule, no-show) had no list to work from, because the
+  // read on this same path is a patient self read. Registering the queue here
+  // keeps it out of the protected application and server seams.
+  adminQueue: CareAdminQueueOptions = {},
 ) {
+  registerCareAdminAppointmentQueueApi(app, access, adminQueue);
+
   app.get(
     CARE_ROUTE_CONTRACTS.appointments,
     requireCarePermission("care:appointments_self", access),

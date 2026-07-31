@@ -11,6 +11,10 @@ import {
   sendCareTemporarilyUnavailable,
   type CareAccessDependencies,
 } from "./access";
+import {
+  registerCareAdminPharmacyQueueApi,
+  type CareAdminQueueOptions,
+} from "./admin-queue-routes";
 import { evaluateCarePrescriptionReadiness } from "./prescriptions";
 import type { CarePrescriptionRepository } from "./prescription-repository";
 
@@ -56,7 +60,14 @@ export function registerCarePrescriptionApi(
   access: CareAccessDependencies,
   repository: CarePrescriptionRepository,
   now: () => Date = () => new Date(),
+  // The Care administrator's pharmacy queues. The admin write contracts below
+  // (assign a pharmacy, resolve a clarification) had no list to work from: the
+  // prescription read on this path is a patient self read and the order read is
+  // scoped to a pharmacy operator. Neither is widened.
+  adminQueue: CareAdminQueueOptions = {},
 ) {
+  registerCareAdminPharmacyQueueApi(app, access, adminQueue);
+
   const resolveClarification = async (req: Request, res: Response) => {
     res.set("Cache-Control", "no-store");
     const parsed = clarificationResolutionBody.safeParse(req.body);
