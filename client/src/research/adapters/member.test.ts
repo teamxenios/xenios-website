@@ -1,4 +1,4 @@
-// Adapter state-matrix tests. Every member and tracker adapter is driven
+// Adapter state-matrix tests. Every member adapter is driven
 // against a stubbed fetch, proving two things: (1) each function calls its
 // exact endpoint with the right method, bearer token, and JSON body, and
 // (2) every server outcome maps to the one honest ApiResult shape the pages
@@ -9,6 +9,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ApiResult } from "../lib/api";
 import {
+  acknowledgeDocument,
   acknowledgeXenios30,
   cancelMembership,
   acceptResearchAgreement,
@@ -20,18 +21,19 @@ import {
   getMembership,
   getPrivacySummary,
   getProfile,
+  getSensitiveProfile,
   getResearchAgreements,
   getSecuritySessions,
   getXenios30Plan,
   getXenios90Plan,
   requestPrivacyCorrection,
+  requestDocumentAccess,
   requestPrivacyDeletion,
   requestPrivacyExport,
   saveAssessment,
   submitAssessment,
   withdrawResearchAgreement,
 } from "./member";
-import { logTrackerEntry, requestTrackerDeletion, requestTrackerExport } from "./tracker";
 
 const TOKEN = "member-jwt";
 
@@ -64,14 +66,6 @@ afterEach(() => {
 // Every adapter, with the exact endpoint contract it owns. `invoke` runs the
 // adapter the way its page does; `body` is the JSON the server must receive
 // (undefined means a GET with no body).
-const TRACKER_ENTRY = {
-  sleepHours: 7.5,
-  energy: 8,
-  trainingDone: true,
-  notes: "solid session",
-  loggedAt: "2026-07-20T08:00:00.000Z",
-};
-
 const ADAPTERS: Array<{
   name: string;
   invoke: (token: string | null) => Promise<ApiResult<unknown>>;
@@ -116,7 +110,8 @@ const ADAPTERS: Array<{
     method: "POST",
     body: {},
   },
-  { name: "getProfile", invoke: (t) => getProfile(t), path: "/api/research/member/profile", method: "GET" },
+  { name: "getProfile", invoke: (t) => getProfile(t), path: "/api/research/profile", method: "GET" },
+  { name: "getSensitiveProfile", invoke: (t) => getSensitiveProfile(t), path: "/api/research/profile/sensitive", method: "GET" },
   { name: "getAssessment", invoke: (t) => getAssessment(t), path: "/api/research/assessment", method: "GET" },
   {
     name: "getAssessmentMode",
@@ -195,7 +190,7 @@ const ADAPTERS: Array<{
     method: "POST",
     body: {},
   },
-  { name: "getBlueprint", invoke: (t) => getBlueprint(t), path: "/api/research/member/blueprint", method: "GET" },
+  { name: "getBlueprint", invoke: (t) => getBlueprint(t), path: "/api/research/blueprint", method: "GET" },
   { name: "getXenios30Plan", invoke: (t) => getXenios30Plan(t), path: "/api/research/member/plans/xenios-30", method: "GET" },
   {
     name: "acknowledgeXenios30",
@@ -204,28 +199,21 @@ const ADAPTERS: Array<{
     method: "POST",
     body: { version: "2026-07" },
   },
-  { name: "getXenios90Plan", invoke: (t) => getXenios90Plan(t), path: "/api/research/member/plans/xenios-90", method: "GET" },
-  { name: "getDocuments", invoke: (t) => getDocuments(t), path: "/api/research/member/documents", method: "GET" },
+  { name: "getXenios90Plan", invoke: (t) => getXenios90Plan(t), path: "/api/research/plans/xenios90", method: "GET" },
+  { name: "getDocuments", invoke: (t) => getDocuments(t), path: "/api/research/documents", method: "GET" },
   {
-    name: "logTrackerEntry",
-    invoke: (t) => logTrackerEntry(TRACKER_ENTRY, t),
-    path: "/api/research/member/tracker/log",
+    name: "requestDocumentAccess",
+    invoke: (t) => requestDocumentAccess("doc/id", t),
+    path: "/api/research/documents/doc%2Fid/access",
     method: "POST",
-    body: TRACKER_ENTRY,
+    body: {},
   },
   {
-    name: "requestTrackerExport",
-    invoke: (t) => requestTrackerExport("2026-07-20T09:00:00.000Z", t),
-    path: "/api/research/member/tracker/export-request",
+    name: "acknowledgeDocument",
+    invoke: (t) => acknowledgeDocument("doc/id", 3, t),
+    path: "/api/research/documents/doc%2Fid/acknowledge",
     method: "POST",
-    body: { requestedAt: "2026-07-20T09:00:00.000Z" },
-  },
-  {
-    name: "requestTrackerDeletion",
-    invoke: (t) => requestTrackerDeletion("2026-07-20T09:00:00.000Z", t),
-    path: "/api/research/member/tracker/delete-request",
-    method: "POST",
-    body: { requestedAt: "2026-07-20T09:00:00.000Z" },
+    body: { documentId: "doc/id", version: 3 },
   },
 ];
 
