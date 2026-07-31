@@ -657,3 +657,34 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
      questions, telegram, tracker, agreements) plus the PUT/DELETE verb gap. PUT /profile stays the
      one worth pulling forward, because it is the only case where the page LOADS and then silently
      cannot persist, rather than failing visibly.
+
+## 2026-07-31T11:35Z, directive audit of the public bundle: catalog clause PASSES, one metadata finding
+
+133. Wall work paused this cycle (#199 only extends a UI lease with shared/research/member-platform.ts),
+     so I audited an unexamined area tied to a locked directive: "Do not expose them in public APIs,
+     metadata, static bundles, page source, sitemap, structured data".
+134. SITEMAP: PASS. /research is absent. The 6 apparent matches were false positives on the
+     substring "care": /careers, /careers/*, /for/preventive-care, /for/healthcare-systems.
+     Checked before reporting rather than counting grep hits.
+135. ROBOTS/INDEXABILITY: /research and /research/apply both serve x-robots-tag: noindex, nofollow.
+     / and /waitlist correctly do NOT, which is the control proving the header is route-specific.
+     Leaving /research out of robots.txt is CORRECT, not a gap: robots.txt is public, so listing a
+     hidden path there would advertise it. The noindex header is the right mechanism.
+136. SEN-0022 CONFIRMED STILL LIVE: /admin serves no x-robots-tag. It is Disallowed in robots.txt,
+     which prevents crawling but not indexing (a URL can still be listed without being fetched), and
+     it is inconsistent with the research surfaces which do carry the header.
+137. STATIC-BUNDLE CATALOG CLAUSE: PASS, and verified COMPLETELY rather than partially. Extracted
+     all 13 lazy-chunk names from the single public bundle, fetched every one, and tested all 48
+     catalog display names against all 14 files. ZERO matches. No compound or product name reaches
+     any publicly fetchable asset. The /research landing chunk contains the generic word "peptide"
+     3 times (its own page copy) and no compound names.
+138. I initially scanned only 5 of the 13 chunks and got zero matches. Rather than report that as a
+     clean result I fetched the remaining 8 and re-ran, because a partial sweep reported as complete
+     is the same failure mode as the page-count under-count I recorded at entry 100.
+139. SEN-0024 FILED (P3). The main bundle embeds source-derived chunk filenames, disclosing the
+     route inventory of restricted surfaces to anonymous visitors: CarePrescriptionsPage,
+     CarePharmacyOrdersPage, CareAppointmentsPage, CareConsentPendingPage, EligibilityPendingPage,
+     Admin, adminx-section. Framed honestly as route-existence METADATA, not a catalog leak, and
+     filed P3 rather than inflated. Note for whoever fixes it: the natural remedy is opaque chunk
+     filenames in the build config, and vite.config.ts is a HARD-TRIPWIRE protected file, so it
+     carries the same manifest blocker as SEN-0014 and #182.
