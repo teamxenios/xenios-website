@@ -474,6 +474,17 @@
       ]
     },
     {
+      "id": "OWNER-W2-P1-DOCUMENTS-ACCESS-BOUNDARY",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/documents.ts",
+        "server/research/documents.test.ts"
+      ]
+    },
+    {
       "id": "OWNER-W2-P1-RESEARCH-PROFILE-PRIVATE-HEADERS",
       "owner": "Website 2",
       "lane": "release-manager",
