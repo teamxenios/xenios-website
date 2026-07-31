@@ -859,3 +859,34 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
      The refusal was on evidence CI cannot produce: two existing fail-closed assertions inverted from
      not.toContain to toContain, undisclosed in the body, plus a write-path gate whose hardcoded file
      list excludes the only Care page that writes.
+
+## 2026-07-31T18:40Z, an independent lane corroborated SEN-0012, and found three defects I missed
+
+176. PR #211 (Lane H browser and accessibility sweep) merged as 9bcd41b. Three files, all in permitted
+     zones, CI green, verify-core-site-protection.mjs PASS.
+177. INDEPENDENT CORROBORATION OF SEN-0012. A separate lane driving real browsers measured the ghost
+     CTAs at 2.05:1, named the same root cause (btn-ghost-on-dark is never defined in index.css, so
+     the anchors fall back to user-agent link blue rgb(0,0,238) on #0e0e0e), and listed the same
+     five files. Arrived at independently of my measurement. It also crawled 117 shipped chunks,
+     which closely matches the 118 I found after correcting my own one-level crawl, so the corrected
+     figure is cross-validated.
+178. THREE DEFECTS THEY FOUND THAT I DID NOT. All are things static reading and API probing cannot
+     surface; they needed a real browser at real viewports.
+     SEN-0026 (P1): the skip link does not move focus. main#site-main has no tabindex="-1", so
+       activating it leaves focus on BODY and the next Tab walks back into the header. WCAG 2.4.1
+       Level A. My own rendered-UX pass at entry 140 read pages and checked links but never exercised
+       the keyboard path.
+     SEN-0027 (P2): the research gate and not-found views render no SeoHead, so document.title goes
+       stale after client-side navigation, and meta robots drifts from noindex to index,follow.
+       Explicitly NOT a live indexing exposure: the real x-robots-tag header and the sitemap exclusion
+       both hold, which I verified independently at entry 135. Defect in depth, not a leak.
+     SEN-0028 (P2): /book scrolls horizontally at 320px, caused by our own inline minWidth 320px
+       inside a 16px-padded container, not by the Calendly script. The single responsive failure
+       across 34 public routes.
+179. WHAT THIS SAYS ABOUT MY OWN COVERAGE: I have been strong on API surfaces, wall behaviour,
+     protection zones and bundle contents, and thin on keyboard interaction and narrow viewports. The
+     one rendered-UX pass I ran read structure and links rather than driving the keyboard. Filed all
+     three rather than treating them as another lane's business, because the ledger is meant to be
+     the single authoritative defect record.
+180. All three sit in protected paths (components/, pages/, research layout), so they inherit the same
+     core-site authorization blocker as SEN-0012 and SEN-0014.
