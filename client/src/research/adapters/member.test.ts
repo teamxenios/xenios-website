@@ -17,6 +17,7 @@ import {
   getAssessmentMode,
   getBlueprint,
   getDocuments,
+  fetchDocumentBlob,
   getMemberOverview,
   getMembership,
   getPrivacySummary,
@@ -60,6 +61,7 @@ function stubFetch(status: number, body: unknown): { calls: Call[] } {
 }
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.unstubAllGlobals();
 });
 
@@ -203,17 +205,17 @@ const ADAPTERS: Array<{
   { name: "getDocuments", invoke: (t) => getDocuments(t), path: "/api/research/documents", method: "GET" },
   {
     name: "requestDocumentAccess",
-    invoke: (t) => requestDocumentAccess("doc/id", t),
-    path: "/api/research/documents/doc%2Fid/access",
+    invoke: (t) => requestDocumentAccess("11111111-1111-4111-8111-111111111111", t),
+    path: "/api/research/documents/11111111-1111-4111-8111-111111111111/access",
     method: "POST",
     body: {},
   },
   {
     name: "acknowledgeDocument",
-    invoke: (t) => acknowledgeDocument("doc/id", 3, t),
-    path: "/api/research/documents/doc%2Fid/acknowledge",
+    invoke: (t) => acknowledgeDocument("11111111-1111-4111-8111-111111111111", 3, t),
+    path: "/api/research/documents/11111111-1111-4111-8111-111111111111/acknowledge",
     method: "POST",
-    body: { documentId: "doc/id", version: 3 },
+    body: { documentId: "11111111-1111-4111-8111-111111111111", version: 3 },
   },
 ];
 
@@ -241,7 +243,7 @@ describe("adapter endpoint contracts", () => {
 
 describe("adapter state matrix", () => {
   const passthroughAdapters = ADAPTERS.filter(
-    ({ name }) => name !== "getProfile" && name !== "getSensitiveProfile",
+    ({ name }) => !["getProfile", "getSensitiveProfile", "getDocuments", "requestDocumentAccess", "acknowledgeDocument"].includes(name),
   );
 
   // The pending promise IS the page's loading state; it must resolve to ok
@@ -299,7 +301,7 @@ describe("adapter state matrix", () => {
       }),
     );
     const res = await getDocuments(TOKEN);
-    expect(res).toEqual({ kind: "error", message: "The connection failed. Please try again." });
+    expect(res).toEqual({ kind: "error", message: "We could not load your documents. Please try again." });
   });
 });
 
@@ -356,5 +358,96 @@ describe("profile DTO validation", () => {
       kind: "error",
       message: "We could not load your profile. Please try again.",
     });
+  });
+});
+
+describe("documents privacy contract", () => {
+  const id = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const publishedAt = "2026-07-30T12:00:00.000Z";
+  const document = { documentId: id, type: "blueprint_pdf", title: "My Blueprint", version: 2,
+    templateVersion: "blueprint-v2", checksumSha256: "a".repeat(64), status: "current",
+    supersedesDocumentId: null, reviewedBy: "Reviewer", publishedAt, acknowledgedAt: null };
+
+  it("accepts only exact document list DTOs and unique canonical ids", async () => {
+    stubFetch(200, { ok: true, documents: [document] });
+    await expect(getDocuments(TOKEN)).resolves.toEqual({ kind: "ok", data: { ok: true, documents: [document] } });
+    for (const payload of [
+      { ok: true, documents: [{ ...document, storagePath: "PRIVATE_MARKER" }] },
+      { ok: true, documents: [document, document] },
+      { ok: true, documents: [{ ...document, documentId: id.toUpperCase() }] },
+      { ok: true, documents: [{ ...document, checksumSha256: "A".repeat(64) }] },
+      { ok: true, documents: [{ ...document, reviewedBy: "" }] },
+      { ok: true, documents: [{ ...document, acknowledgedAt: "2026-07-30T12:00:00Z" }] },
+    ]) {
+      stubFetch(200, payload);
+      await expect(getDocuments(TOKEN)).resolves.toEqual({ kind: "error", message: "The documents response was incomplete." });
+    }
+  });
+
+  it("fails invalid ids before access or acknowledge network calls", async () => {
+    const fetchSpy = vi.fn(); vi.stubGlobal("fetch", fetchSpy);
+    await expect(requestDocumentAccess("doc/id", TOKEN)).resolves.toEqual({ kind: "error", message: "The private document could not be opened." });
+    await expect(acknowledgeDocument(id.toUpperCase(), 2, TOKEN)).resolves.toEqual({ kind: "error", message: "The document could not be acknowledged." });
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("validates exact coherent grants and exact acknowledgment responses", async () => {
+    const now = Date.now();
+    const expiresAt = new Date(now + 60_000).toISOString();
+    const signedUrl = `/api/research/documents/${id}/download?exp=${Date.parse(expiresAt)}&sig=${"a".repeat(43)}`;
+    stubFetch(200, { ok: true, grant: { documentId: id, signedUrl, expiresAt } });
+    await expect(requestDocumentAccess(id, TOKEN)).resolves.toEqual({ kind: "ok", data: { ok: true, grant: { documentId: id, signedUrl, expiresAt } } });
+    for (const bad of [signedUrl + "&extra=1", signedUrl.replace("?exp=", "?sig=x&exp="), `https://example.test${signedUrl}`, signedUrl.replace(id, id.toUpperCase())]) {
+      stubFetch(200, { ok: true, grant: { documentId: id, signedUrl: bad, expiresAt } });
+      expect((await requestDocumentAccess(id, TOKEN)).kind).toBe("error");
+    }
+    stubFetch(200, { ok: true, acknowledgedAt: publishedAt });
+    expect((await acknowledgeDocument(id, 2, TOKEN)).kind).toBe("ok");
+    stubFetch(200, { ok: true, acknowledgedAt: publishedAt, memberId: "PRIVATE_MARKER" });
+    expect((await acknowledgeDocument(id, 2, TOKEN)).kind).toBe("error");
+  });
+
+  it.each([
+    ["ahead", "2036-07-30T12:00:00.000Z"],
+    ["behind", "2016-07-30T12:00:00.000Z"],
+  ])("accepts a server-coherent grant when the browser clock is materially %s", async (_direction, browserNow) => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(browserNow));
+    const serverExpiresAt = "2026-07-30T12:10:00.000Z";
+    const signedUrl = `/api/research/documents/${id}/download?exp=${Date.parse(serverExpiresAt)}&sig=${"a".repeat(43)}`;
+    stubFetch(200, { ok: true, grant: { documentId: id, signedUrl, expiresAt: serverExpiresAt } });
+    await expect(requestDocumentAccess(id, TOKEN)).resolves.toEqual({
+      kind: "ok",
+      data: { ok: true, grant: { documentId: id, signedUrl, expiresAt: serverExpiresAt } },
+    });
+    vi.useRealTimers();
+  });
+
+  it("downloads once with one bearer and private fetch posture, checking headers before Blob", async () => {
+    const blob = new Blob(["private"]); const blobSpy = vi.fn(async () => blob);
+    const fetchSpy = vi.fn(async () => ({ ok: true, headers: new Headers({ "Cache-Control": "private, no-store" }), blob: blobSpy }));
+    vi.stubGlobal("fetch", fetchSpy);
+    const expiresAt = new Date(Date.now() + 60_000).toISOString();
+    const grant = { documentId: id, signedUrl: `/api/research/documents/${id}/download?exp=${Date.parse(expiresAt)}&sig=${"a".repeat(43)}`, expiresAt };
+    await expect(fetchDocumentBlob(grant, TOKEN)).resolves.toEqual({ kind: "ok", data: blob });
+    expect(fetchSpy).toHaveBeenCalledWith(grant.signedUrl, { method: "GET", headers: { Authorization: `Bearer ${TOKEN}` }, cache: "no-store", credentials: "same-origin", redirect: "error", referrerPolicy: "no-referrer" });
+    expect(Object.keys(fetchSpy.mock.calls[0][1].headers)).toEqual(["Authorization"]);
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, headers: new Headers(), blob: blobSpy })));
+    expect((await fetchDocumentBlob(grant, TOKEN)).kind).toBe("error");
+    expect(blobSpy).toHaveBeenCalledTimes(1);
+    expect((await fetchDocumentBlob(grant, null)).kind).toBe("unauthorized");
+  });
+
+  it("revalidates hostile grants at the Blob boundary before any bearer-bearing fetch", async () => {
+    const fetchSpy = vi.fn(); vi.stubGlobal("fetch", fetchSpy);
+    const expiresAt = new Date(Date.now() + 60_000).toISOString(); const exp = String(Date.parse(expiresAt));
+    const good = `/api/research/documents/${id}/download?exp=${exp}&sig=${"a".repeat(43)}`;
+    const hostile = [
+      `https://hostile.test${good}`, `//hostile.test${good}`, good.replace(id, "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"),
+      good.replace(id, encodeURIComponent(id).replace(/-/g, "%2D")), good.replace(`exp=${exp}&sig=`, `sig=${"a".repeat(43)}&exp=${exp}&again=`),
+      `${good}&extra=1`, good.replace(`exp=${exp}`, `exp=0${exp}`), good.replace("/download", "%2Fdownload"),
+    ];
+    for (const signedUrl of hostile) expect((await fetchDocumentBlob({ documentId: id, signedUrl, expiresAt }, TOKEN)).kind).toBe("error");
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
