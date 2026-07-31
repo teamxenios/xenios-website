@@ -890,3 +890,31 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
      the single authoritative defect record.
 180. All three sit in protected paths (components/, pages/, research layout), so they inherit the same
      core-site authorization blocker as SEN-0012 and SEN-0014.
+
+## 2026-07-31T21:10Z, #167 merged after the adversary failed to refute it, and SEN-0023 grew a page
+
+181. PR #167 merged as c96bfc3 after independent review plus adversarial refutation. The adversary
+     attacked all four hard criteria (claim holds, fails closed, weakens no gate, fabricates no
+     evidence) and could refute none of them. Its own strongest attempts also failed: a per-request
+     1.46 MB sync-I/O theory died on server/index.ts:191 building the dependency graph at module
+     scope, and a dangling-catalog-reference theory died on a perfect 26/26 slug match.
+182. THE RISK THAT JUSTIFIED THE REVIEW was that this PR modifies the file where commerce fails
+     closed. Verified intact: the three-state ladder has identical conditions in identical order to
+     base with only arguments added, and the PR #204 shape (a live port composed on
+     supabaseConfigured() alone, skipping the commerce gate) is absent.
+183. NO EVIDENCE IS FABRICABLE: the module emits exactly five keys and never constructs a
+     GuideDetailDto, so no claim, grade, citation, sourceId or verified flag can originate from
+     content. publishedAt is a literal null in both branches.
+184. SEN-0023 SCOPE GREW BECAUSE OF THIS MERGE, which is worth recording as a general lesson. The
+     /api/research/guides path is wall-shadowed (absent from MEMBER_AUTHED_PREFIXES). That cost
+     nothing while the guide list was hardcoded empty. #167 populates it with 26 real cards, so the
+     member Guides library becomes a SIXTH page unreachable for a member who signed in without the
+     shared review password. Confirmed by probe with AND without a bearer token, against a control.
+     LESSON: a latent gap becomes a live defect the moment unrelated work makes the surface real.
+     Merging correct code can widen an open finding, so the finding needs re-scoping at merge time,
+     not only when it is filed.
+185. CITATION HYGIENE, recorded because it validates the method. The first reviewer cited four line
+     numbers that cannot exist (two in a 215-line file, two in a 172-line file). The adversary
+     re-read them, found the assertions genuinely exist and say what was claimed, and reported them
+     as citation errors rather than fabrications. Requiring the adversary to re-verify cited snippets
+     rather than trust them is what caught this.
