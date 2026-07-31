@@ -1,8 +1,20 @@
-import { useEffect, useState } from "react";
-import { Link } from "wouter";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { Link, useLocation } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import type { CareCapabilityStatus } from "@shared/care/contracts";
+import { CARE_ADMIN_BASE_PATH } from "./admin/contracts";
+
+// App.tsx mounts /care and /care/* on this module, so the Care section owns
+// its own sub-routing the same way the Research section does. The admin
+// console is code-split: the public Care page must not carry its bundle.
+const CareAdminRoutes = lazy(() => import("./admin/router"));
+
+function isCareAdminPath(path: string): boolean {
+  return (
+    path === CARE_ADMIN_BASE_PATH || path.startsWith(`${CARE_ADMIN_BASE_PATH}/`)
+  );
+}
 
 const preparation = [
   ["Eligibility", "Location, state coverage, identity, consent"],
@@ -19,6 +31,22 @@ type StatusLoadState =
   | { kind: "error" };
 
 export default function CareSection() {
+  const [location] = useLocation();
+  if (isCareAdminPath(location)) {
+    return (
+      <Suspense
+        fallback={
+          <div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />
+        }
+      >
+        <CareAdminRoutes />
+      </Suspense>
+    );
+  }
+  return <CarePendingSection />;
+}
+
+function CarePendingSection() {
   const [loadState, setLoadState] = useState<StatusLoadState>({ kind: "loading" });
   const [loadAttempt, setLoadAttempt] = useState(0);
 
