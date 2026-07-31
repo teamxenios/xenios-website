@@ -497,3 +497,39 @@ destination that the main site must never link. SEN-0001 retracted accordingly.
      - #186 hardens the Documents UI against four routes that are ALL wall-shadowed today. Flagged
        while still draft, with the sequencing note and the GET-only-bypass trap (access and
        acknowledge are POSTs).
+
+## 2026-07-31T08:55Z, why the directive's headline item has not moved: a governance conflict, not neglect
+
+104. Quiet window, zero merges in 30 minutes and the wall unchanged on production, so I audited why
+     SEN-0014 (directive 8.1, the four portal actions on the MAIN home page) has sat open through
+     many merge cycles with nobody building it.
+105. FOUND THE STRUCTURAL CAUSE. docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json freezes the main
+     site. Its stated purpose: "the main xenios website outside /research and /care must not be
+     redesigned, rewritten, or behaviorally modified." Two tiers:
+     - fileHashes, described in the manifest as a HARD TRIPWIRE where "a mismatch is an
+       unconditional FAIL". 21 files, INCLUDING client/src/pages/Home.tsx and client/src/lib/nav.ts.
+     - protectedPaths.globs, which include client/src/pages/**, components/**, hooks/**, lib/**.
+       Exempt subtrees are only research/**, care/**, and AdminResearchTab.tsx.
+     Enforced by server/core-site-protection.test.ts (a real vitest test that loads the manifest and
+     runs verifyHashes/classifyChangedFiles), not merely documented.
+106. THE CONFLICT. Directive 8.1 (2026-07-30) requires putting four portal actions on the main home
+     page. That means editing Home.tsx, and probably nav.ts. Both are hard-tripwire files, so the
+     directive as written cannot be implemented without Samuel authorizing a manifest re-baseline.
+     The directive is NEWER than the manifest baseline (capturedAt 2026-07-29), so it likely
+     supersedes, but a reviewer must not assume that. This is a founder decision.
+107. TRIAGE OF MY OWN STUCK PRs, now with the exact mechanism rather than my earlier vague "needs a
+     manifest pin":
+     - #179 (route error boundary) touches ONLY client/src/App.tsx among protected files, and
+       App.tsx is a permittedSeamFile whose allowance is "route registration only, mounting a
+       router". So it HAS a legitimate merge path: exclusive lease, minimum diff, focused regression
+       test, QA confirmation of no unrelated change. All four are satisfiable.
+     - #182 (six ghost CTAs) has NO path without a protection decision. Home.tsx is a hard tripwire,
+       and the other four pages (About, ForCoaches, IcpPage, Product) are all captured by the
+       client/src/pages/** glob.
+108. I TESTED AND ABANDONED a split. My first idea was to carve #182 into a mergeable half (the four
+     non-Home pages) and a blocked half (Home.tsx alone). That does not work: the pages glob
+     protects all four. Only the new test file at client/src/button-class-resolution.test.ts sits
+     outside every glob, and a test alone fixes no CTA. Recording the dead end so it is not retried.
+109. NET: six genuinely broken CTAs on the live main site, and the founder's own headline directive,
+     are both frozen by the same rule. Escalating to Samuel as a decision rather than continuing to
+     file PRs that structurally cannot merge.
