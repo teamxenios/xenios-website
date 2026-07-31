@@ -6,6 +6,12 @@ import type { CareCapabilityStatus } from "@shared/care/contracts";
 import CareClinicianReviewQueuePage, {
   CARE_CLINICIAN_REVIEW_PATH,
 } from "./CareClinicianReviewQueuePage";
+import CareAdverseEventPage, {
+  CARE_ADVERSE_EVENT_PATH,
+} from "./CareAdverseEventPage";
+import CareLabResultsPage, {
+  CARE_LAB_RESULTS_PATH,
+} from "./CareLabResultsPage";
 
 const preparation = [
   ["Eligibility", "Location, state coverage, identity, consent"],
@@ -31,6 +37,12 @@ export default function CareSection() {
   const [location] = useLocation();
   if (location === CARE_CLINICIAN_REVIEW_PATH) {
     return <CareClinicianReviewQueuePage />;
+  }
+  if (location === CARE_LAB_RESULTS_PATH) {
+    return <CareLabResultsPage />;
+  }
+  if (location === CARE_ADVERSE_EVENT_PATH) {
+    return <CareAdverseEventPage />;
   }
   return <CarePendingShell />;
 }

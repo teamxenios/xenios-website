@@ -21,6 +21,16 @@ import {
   type CareClinicianReviewRepository,
 } from "./review-repository";
 import { registerCareClinicianReviewApi } from "./review-routes";
+import {
+  lazyCareAdverseEventRepository,
+  lazyCareLabRepository,
+  type CareAdverseEventRepository,
+  type CareLabRepository,
+} from "./safety-repository";
+import {
+  registerCareAdverseEventApi,
+  registerCareLabApi,
+} from "./safety-routes";
 
 const recordId = z.string().uuid();
 const userId = z.string().uuid();
@@ -83,6 +93,14 @@ export function registerCareAppointmentApi(
   // owns /api/care/reviews. Registering it here keeps the new screen out of
   // the protected application and server seams entirely.
   reviewRepository: CareClinicianReviewRepository = lazyCareClinicianReviewRepository(),
+  // Labs and adverse events follow the same reasoning. Both belong to the care
+  // episode this module already owns: a review moves to awaiting_labs through
+  // the request_labs action registered above, and an adverse event is reported
+  // against the same episode. Registering them here gives the two declared
+  // contracts a handler without touching the protected application or server
+  // seams, or the Care module index, which is a seam as well.
+  labRepository: CareLabRepository = lazyCareLabRepository(),
+  adverseEventRepository: CareAdverseEventRepository = lazyCareAdverseEventRepository(),
 ) {
   app.get(
     CARE_ROUTE_CONTRACTS.appointments,
@@ -326,4 +344,8 @@ export function registerCareAppointmentApi(
   // The clinician review queue and review detail reads. Registered last so the
   // literal /queue path is matched before the parameterised review id.
   registerCareClinicianReviewApi(app, access, reviewRepository);
+
+  // The lab and adverse event surfaces, previously declared with no handler.
+  registerCareLabApi(app, access, labRepository);
+  registerCareAdverseEventApi(app, access, adverseEventRepository, now);
 }
