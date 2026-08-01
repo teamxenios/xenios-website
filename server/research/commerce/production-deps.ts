@@ -20,11 +20,16 @@ import { createCatalogService, type CatalogService } from "../catalog/catalog-se
 import { createCartService, MAX_LINE_QUANTITY, type CartService } from "./cart";
 import {
   createProductControlMoneyAuthority,
+  createUnavailableMoneyAuthority,
+  PRICE_AUTHORITY_FLAG,
   priceAuthorityEnabled,
   type MoneyPriceAuthority,
 } from "./price-authority";
 import { createCatalogVariantLookupBySku } from "../catalog/variant-sku-lookup";
-import { createProductionProductControlReader } from "../catalog/product-control-reader";
+import {
+  createProductionProductControlReader,
+  type ProductCatalogReader,
+} from "../catalog/product-control-reader";
 import {
   CatalogPricingProductSource,
   createAuthoritativePriceResolver,
@@ -294,6 +299,55 @@ async function memberHasAcceptedCurrentAgreement(memberId: string, agreementKey:
 }
 
 /**
+ * A reader that knows no products. Every SKU asked about refuses `sku_unknown`,
+ * which blocks the line: it invents no price and it reaches no network.
+ */
+const EMPTY_MONEY_CATALOG_READER: ProductCatalogReader = {
+  readCatalog: async () => [],
+};
+
+/**
+ * True when this process is a test runner, whether the caller injected an env
+ * or not. The injected `env` objects in this package are deliberately partial
+ * (see production-wiring.test.ts's LIVE_ENV, which carries SUPABASE_* and no
+ * NODE_ENV), so the AMBIENT runner env has to be consulted as well. Reading
+ * `process.env.NODE_ENV === "test"` here follows the existing repo convention
+ * for selecting a deterministic provider (research/identity-provider.ts:481,
+ * research/media-provider.ts:499, research/telegram-provider.ts:600).
+ */
+function inTestRunner(env: NodeJS.ProcessEnv): boolean {
+  return (
+    env.NODE_ENV === "test" ||
+    process.env.NODE_ENV === "test" ||
+    process.env.VITEST === "true"
+  );
+}
+
+/**
+ * The Product Control reader the MONEY authority reads through.
+ *
+ * The live reader is Supabase backed, and it is EAGER: constructing it runs
+ * `new SupabaseProductAdminRepository()`, whose default `db` parameter calls
+ * `getSupabaseAdmin()` at construction time. That client is built from
+ * AMBIENT process.env (server/supabase.ts:14-15, not this injected `env`) and
+ * it fires a fire-and-forget `auth.admin.listUsers` privilege probe
+ * (server/supabase.ts:34-49), which is a real outbound call.
+ *
+ * Under a test runner that would be the suite dialling out, so the test
+ * environment gets the empty reader instead. The direction of that substitute
+ * is deliberate: an empty catalog refuses every SKU, so a suite that turns the
+ * flag on fails CLOSED rather than either inventing a price or making a
+ * network call. Production is unaffected and still reads the one live reader,
+ * constructed ONCE and shared by the variant lookup and the price source.
+ */
+function resolveMoneyCatalogReader(
+  env: NodeJS.ProcessEnv,
+): ProductCatalogReader {
+  if (inTestRunner(env)) return EMPTY_MONEY_CATALOG_READER;
+  return createProductionProductControlReader();
+}
+
+/**
  * The default money-authority resolver.
  *
  * OFF (the default, and anything other than the literal "true") returns
@@ -301,26 +355,28 @@ async function memberHasAcceptedCurrentAgreement(memberId: string, agreementKey:
  * exactly as it does today. There is no partially-joined state.
  *
  * ON builds the Product Control authority over the same drift-checked reader
- * the read-only pricing API already uses (`createProductionProductControlReader`),
- * plus the SKU-to-variant lookup in `catalog/variant-sku-lookup.ts`. It writes
- * no resolver of its own; `resolveSkuPrice` inside the seam is the one
- * authority.
+ * the read-only pricing API already uses (`createProductionProductControlReader`,
+ * via `resolveMoneyCatalogReader`), plus the SKU-to-variant lookup in
+ * `catalog/variant-sku-lookup.ts`. It writes no resolver of its own;
+ * `resolveSkuPrice` inside the seam is the one authority.
  *
  * The audience is fixed to `member` because the transacting cart is only ever
  * reached behind the member session wall. It is a SERVER fact, never anything
  * the browser sent, and `sourceVersion` names the rule that granted it so the
  * decision is attributable.
+ *
+ * Exported so a test can drive construction directly and prove it performs no
+ * outbound call.
  */
-function resolveMoneyPriceAuthority(
+export function resolveMoneyPriceAuthority(
   env: NodeJS.ProcessEnv,
 ): MoneyPriceAuthority | undefined {
   if (!priceAuthorityEnabled(env)) return undefined;
+  const reader = resolveMoneyCatalogReader(env);
   return createProductControlMoneyAuthority({
-    variants: createCatalogVariantLookupBySku(
-      createProductionProductControlReader(),
-    ),
+    variants: createCatalogVariantLookupBySku(reader),
     priceResolver: createAuthoritativePriceResolver(
-      new CatalogPricingProductSource(createProductionProductControlReader()),
+      new CatalogPricingProductSource(reader),
     ),
     audience: {
       audience: "member",
@@ -961,14 +1017,45 @@ function liveDependencies(
    * order snapshot, because checkout recomputes from the revalidated cart and
    * the order is written from that recomputation.
    *
-   * A resolver that throws reads as OFF rather than taking the whole commerce
-   * build down, and the flag-off path is the safe one to fall back to.
+   * A resolver that THROWS is decided by the flag, and it is decided the
+   * fail-CLOSED way when the flag is on.
+   *
+   * The tempting handling, and the one that was here, is to read a
+   * construction failure as OFF. That is the worst available state on the
+   * money path: the operator set the flag, reads the system as priced by
+   * Product Control, and the legacy `facts.priceCents` runtime quietly decides
+   * the charge instead. A flag that reports ON while behaving OFF is worse
+   * than the flag being off, because nobody is looking.
+   *
+   * So with the flag ON a construction failure installs the fail-closed
+   * authority: every line refuses `authority_unavailable`, nothing is
+   * purchasable, no authorization is created, and no order settles. With the
+   * flag OFF the resolver was never asked to build anything, so the legacy
+   * path is not a fallback, it is the configured behavior.
    */
   let moneyPriceAuthority: MoneyPriceAuthority | undefined;
   try {
     moneyPriceAuthority = wiring.resolveMoneyPriceAuthority(env);
-  } catch {
-    moneyPriceAuthority = undefined;
+  } catch (error) {
+    if (priceAuthorityEnabled(env)) {
+      // Loud, and credential safe. The error MESSAGE is deliberately not
+      // logged: a construction failure in this chain can carry a connection
+      // string or a key fragment, and this line is read by whatever ships the
+      // process logs. The error's class name is enough to tell an operator
+      // where to look, and the state is not silent either way, because every
+      // price now refuses.
+      console.error(
+        "[research-commerce] PRICE AUTHORITY UNAVAILABLE: " +
+          `${PRICE_AUTHORITY_FLAG} is on and the Product Control money ` +
+          "authority could not be constructed. FAILING CLOSED: every line " +
+          "refuses authority_unavailable and nothing can be purchased. There " +
+          "is no fallback to the supplier-fact price. Error class: " +
+          (error instanceof Error ? error.name : typeof error),
+      );
+      moneyPriceAuthority = createUnavailableMoneyAuthority();
+    } else {
+      moneyPriceAuthority = undefined;
+    }
   }
 
   /**

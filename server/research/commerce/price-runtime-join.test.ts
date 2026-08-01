@@ -9,16 +9,28 @@
  *
  * This suite drives the real cart service, the real checkout service, and the
  * real production wiring (no HTTP, no network, no live provider) and proves
- * four things:
+ * six things:
  *
  *   1. FLAG OFF is today. Every number and every code is identical to a cart
  *      built with no join at all, asserted by deep equality of the whole DTO.
  *   2. FLAG ON fails closed. The exact defect above is reproduced with the flag
  *      off and refused with the flag on: nothing is purchasable, no
  *      authorization is created, and no order settles.
- *   3. The settled order is immutable under BOTH flag states. A later price
- *      change does not move a hash taken over the settled lines and totals.
+ *   3. A settled order does not follow a LATER PRICE CHANGE, under both flag
+ *      states, asserted by a sha256 over the settled lines and totals taken
+ *      before and after the price moves. Stated precisely, because that is a
+ *      narrower claim than "the order object is immutable": the catalog and
+ *      the Product Control rows are read fresh on every cart read, so this
+ *      proves the order does not re-derive from a moved source. It says
+ *      nothing about whether the order aliases the cart's own arrays, which is
+ *      what point 5 exists for.
  *   4. No path under either flag state emits a zero or negative charge.
+ *   5. The order snapshot is a COPY of the cart's line and shipment arrays,
+ *      not a view of them: a cart projection that RETAINS the array it hands
+ *      back cannot mutate a settled order afterwards.
+ *   6. The COMPOSITION fails closed. When the flag is on and the authority
+ *      cannot be constructed, the composed cart refuses rather than falling
+ *      back to the legacy supplier fact.
  */
 
 import { createHash } from "node:crypto";
@@ -27,7 +39,7 @@ import {
   type CatalogProduct,
   type ProvenancedFact,
 } from "@shared/research/catalog";
-import type { CheckoutRequest } from "@shared/research/commerce-api";
+import type { CartDto, CheckoutRequest } from "@shared/research/commerce-api";
 import type {
   AdminProductDetail,
   AdminProductPrice,
@@ -54,7 +66,29 @@ import {
   PRICE_AUTHORITY_FLAG,
   type MoneyPriceAuthority,
 } from "./price-authority";
-import { buildCommerceDependencies } from "./production-deps";
+import {
+  buildCommerceDependencies,
+  CHECKOUT_REQUIRED_AGREEMENT_KEYS,
+  type CommerceWiring,
+} from "./production-deps";
+import { createInMemoryCartStore } from "./persistence/cart-store";
+import { createInMemoryOrderStore } from "./persistence/orders-store";
+import { createInMemoryInventoryLotStore } from "./persistence/inventory-store";
+import { createInMemoryStoreCreditLedgerStore } from "./persistence/store-credit-store";
+import { createInMemorySubscriptionStore } from "./persistence/subscriptions-store";
+import { createInMemoryAdminQueuesStore } from "./persistence/admin-queues-store";
+import { createInMemoryReservationStore } from "./persistence/reservations-store";
+import {
+  createInMemoryClaimOrderRepository,
+  createInMemoryClaimRepository,
+} from "./refunds";
+import { createInMemoryWebhookEventStore } from "./webhooks";
+import {
+  createInMemoryPartnerLinkStore,
+  createInMemoryPartnerMemberStore,
+} from "./persistence/partners-store";
+import { createInMemoryCommissionLedgerStore } from "./persistence/commissions-store";
+import { TestMitchProvider } from "../providers/fulfillment";
 
 const AT = "2026-07-28T12:00:00.000Z";
 const NOW = new Date(AT);
@@ -839,5 +873,280 @@ describe("what the flag still needs before it can be flipped", () => {
     expect(outcome.ok).toBe(true);
     if (!outcome.ok) throw new Error("unreachable");
     expect(outcome.order.subtotalCents).toBe(33999);
+  });
+});
+
+// ===========================================================================
+// 6. The order snapshot is a COPY of the cart's arrays, not a view of them
+// ===========================================================================
+
+/**
+ * Section 4 above proves a narrower thing than it reads like: a settled order
+ * does not follow a LATER PRICE CHANGE. It cannot prove the defensive copies
+ * at checkout.ts, because the real cart service allocates fresh line objects
+ * on every read, so there is no aliasing for a copy to defend against and
+ * `lines: cart.lines` would pass those tests unchanged.
+ *
+ * The property is real and worth protecting, so it is proved here against the
+ * shape that can actually violate it: a cart projection that RETAINS the array
+ * it hands back. That is not a contrived shape. Any cart implementation that
+ * memoizes its DTO for the life of a request, or hands back a stored array
+ * directly, has exactly this shape, and checkout accepts ANY implementation of
+ * the `{ revalidate }` seam. Without the copy, such a cart's later array
+ * mutation would rewrite what a member already paid for.
+ *
+ * Every mutation below is an ARRAY-level mutation, deliberately. The copy at
+ * checkout.ts is shallow, so it does not claim to defend against a mutation of
+ * a line OBJECT that both arrays reference, and this file does not claim it
+ * either.
+ */
+describe("the settled order is a snapshot copy, not a view of the cart", () => {
+  /**
+   * A cart seam that hands back the SAME CartDto object on every revalidate,
+   * so the test holds the very array checkout was given.
+   */
+  async function retainingCart() {
+    const cart = createCartService(cartDeps());
+    await cart.addLine(
+      MEMBER,
+      { sku: SKU, quantity: 2, purchaseMode: "one_time" },
+      NOW,
+    );
+    const retained: CartDto = await cart.revalidate(MEMBER, NOW);
+    const { payment, authorize } = spiedPayment();
+    const checkout = createCheckoutService({
+      cart: { revalidate: async () => retained },
+      payment,
+      shipping: new ConfiguredRateShippingProvider(),
+      commerceEnabled: true,
+      serviceableStates: ["TX", "CA"],
+      acceptedAgreementKeys: [],
+    });
+    return { retained, checkout, authorize };
+  }
+
+  it("a line pushed onto the retained array after settlement does not join the order", async () => {
+    const { retained, checkout } = await retainingCart();
+    const outcome = await checkout.submit(MEMBER, checkoutRequest(), NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) throw new Error("unreachable");
+    const before = orderHash(outcome.order);
+    expect(outcome.order.lines).toHaveLength(1);
+
+    // The cart's own array grows AFTER the order settled. Without the copy
+    // this line would appear inside a captured order no member agreed to.
+    retained.lines.push({ ...retained.lines[0], sku: "SMUGGLED" });
+
+    expect(outcome.order.lines).toHaveLength(1);
+    expect(outcome.order.lines.some((line) => line.sku === "SMUGGLED")).toBe(
+      false,
+    );
+    expect(orderHash(outcome.order)).toBe(before);
+  });
+
+  it("a line REPLACED in the retained array after settlement does not reprice the order", async () => {
+    const { retained, checkout } = await retainingCart();
+    const outcome = await checkout.submit(MEMBER, checkoutRequest(), NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) throw new Error("unreachable");
+    const before = orderHash(outcome.order);
+    expect(outcome.order.lines[0].unitPriceCents).toBe(LEGACY_FACT_CENTS);
+
+    // Slot replacement, not object mutation: the settled order holds its own
+    // array, so its slot 0 still points at what it settled against.
+    retained.lines[0] = {
+      ...retained.lines[0],
+      unitPriceCents: 1,
+      lineTotalCents: 2,
+    };
+
+    expect(outcome.order.lines[0].unitPriceCents).toBe(LEGACY_FACT_CENTS);
+    expect(orderHash(outcome.order)).toBe(before);
+  });
+
+  it("emptying the retained arrays after settlement does not empty the order", async () => {
+    const { retained, checkout } = await retainingCart();
+    const outcome = await checkout.submit(MEMBER, checkoutRequest(), NOW);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) throw new Error("unreachable");
+    const before = orderHash(outcome.order);
+    const settledGroupCount = outcome.order.shipmentGroups.length;
+    expect(settledGroupCount).toBeGreaterThan(0);
+
+    retained.lines.length = 0;
+    retained.shipmentGroups.length = 0;
+
+    expect(outcome.order.lines).toHaveLength(1);
+    expect(outcome.order.shipmentGroups).toHaveLength(settledGroupCount);
+    expect(orderHash(outcome.order)).toBe(before);
+  });
+});
+
+// ===========================================================================
+// 7. The COMPOSITION fails closed when the authority cannot be built
+// ===========================================================================
+
+/**
+ * The defect this section closes: buildCommerceDependencies used to SWALLOW a
+ * throwing resolveMoneyPriceAuthority and continue with no authority, which
+ * silently returns MONEY to the legacy facts.priceCents runtime while the
+ * operator reads the flag as ON. That is worse than the flag being off,
+ * because it is off while reporting on.
+ *
+ * These tests drive the REAL production composition in its live state over
+ * injected in-memory stores. No network, no live provider, no real charge.
+ */
+const COMPOSED_ENV: NodeJS.ProcessEnv = {
+  NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
+  // Throwaway placeholders so the composition takes its LIVE branch. They are
+  // not credentials and nothing constructs a client from them.
+  SUPABASE_URL: "https://placeholder.supabase.co",
+  SUPABASE_SERVICE_ROLE_KEY: "placeholder-not-a-real-key",
+  RESEARCH_SERVICEABLE_STATES: "TX,CA",
+};
+
+async function composedCommerce(
+  resolveMoneyPriceAuthority: CommerceWiring["resolveMoneyPriceAuthority"],
+  env: NodeJS.ProcessEnv,
+) {
+  const lotStore = createInMemoryInventoryLotStore();
+  await lotStore.save(lot());
+  const payment = new TestPaymentProvider();
+  const authorize = vi.spyOn(payment, "createAuthorization");
+  const wiring: Partial<CommerceWiring> = {
+    catalogProducts: [catalogProduct()],
+    resolveMoneyPriceAuthority,
+    resolveCartStore: () => createInMemoryCartStore(),
+    resolveOrderRepository: () => createInMemoryOrderStore(),
+    resolveClaimRepository: () => createInMemoryClaimRepository(),
+    resolveClaimOrderRepository: () => createInMemoryClaimOrderRepository(),
+    resolveInventoryLotStore: () => lotStore,
+    resolveReservationStore: () => createInMemoryReservationStore(),
+    resolveStoreCreditLedgerStore: () => createInMemoryStoreCreditLedgerStore(),
+    resolveSubscriptionRepository: () => createInMemorySubscriptionStore(),
+    resolveAdminQueuesStore: () => createInMemoryAdminQueuesStore(),
+    resolveWebhookEventStore: () => createInMemoryWebhookEventStore(),
+    resolvePartnerMemberStore: () => createInMemoryPartnerMemberStore(),
+    resolvePartnerLinkStore: () => createInMemoryPartnerLinkStore(),
+    resolveCommissionLedgerStore: () => createInMemoryCommissionLedgerStore(),
+    resolvePaymentProvider: () => payment,
+    resolveShippingProvider: () => new ConfiguredRateShippingProvider(),
+    resolveFulfillmentProvider: () => new TestMitchProvider(),
+    isMembershipActive: async () => true,
+    hasEffectiveAgreement: async () => true,
+  };
+  return {
+    deps: buildCommerceDependencies(() => NOW, env, wiring),
+    authorize,
+  };
+}
+
+function composedCheckoutRequest(): CheckoutRequest {
+  return checkoutRequest({
+    acceptedAgreementKeys: [...CHECKOUT_REQUIRED_AGREEMENT_KEYS],
+  });
+}
+
+/** A construction failure carrying a secret-looking value, so a leak shows. */
+const SECRET_LOOKING = "postgresql://svc:hunter2@db.placeholder.internal:5432";
+
+describe("the composition fails closed when the authority cannot be built", () => {
+  it("FLAG OFF control: the same composition prices at the supplier fact", async () => {
+    // Without this control the refusal below proves nothing: it fixes that the
+    // only difference is the flag plus the construction failure.
+    const { deps } = await composedCommerce(() => undefined, COMPOSED_ENV);
+    expect(
+      await deps.cart.addLine(
+        MEMBER,
+        { sku: SKU, quantity: 2, purchaseMode: "one_time" },
+        NOW,
+      ),
+    ).toMatchObject({ ok: true });
+    const dto = await deps.cart.getCart(MEMBER, NOW);
+    expect(dto.lines?.[0].unitPriceCents).toBe(LEGACY_FACT_CENTS);
+    expect(dto.checkoutReady).toBe(true);
+  });
+
+  it("FLAG ON + construction throws: refuses to price, never falls back to facts.priceCents", async () => {
+    const boom = vi.fn(() => {
+      throw new Error("could not reach " + SECRET_LOOKING);
+    });
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    const { deps, authorize } = await composedCommerce(boom, {
+      ...COMPOSED_ENV,
+      [PRICE_AUTHORITY_FLAG]: "true",
+    });
+    expect(boom).toHaveBeenCalled();
+
+    expect(
+      await deps.cart.addLine(
+        MEMBER,
+        { sku: SKU, quantity: 2, purchaseMode: "one_time" },
+        NOW,
+      ),
+    ).toMatchObject({ ok: true });
+
+    const dto = await deps.cart.getCart(MEMBER, NOW);
+    // THE ASSERTION THE DEFECT INVERTED: no number at all, and specifically
+    // not the legacy supplier fact.
+    expect(dto.lines?.[0].unitPriceCents).toBeNull();
+    expect(dto.lines?.[0].unitPriceCents).not.toBe(LEGACY_FACT_CENTS);
+    expect(dto.lines?.[0].lineTotalCents).toBeNull();
+    expect(dto.lines?.[0].blockedReason).toBe("unconfirmed_supplier_facts");
+    expect(dto.checkoutReady).toBe(false);
+
+    const outcome = await deps.checkout.submit(
+      MEMBER,
+      composedCheckoutRequest(),
+      NOW,
+    );
+    expect(outcome).toMatchObject({ ok: false });
+    expect(authorize).not.toHaveBeenCalled();
+
+    logged.mockRestore();
+  });
+
+  it("FLAG ON + construction throws: says so loudly and leaks nothing", async () => {
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    await composedCommerce(
+      () => {
+        throw new Error("could not reach " + SECRET_LOOKING);
+      },
+      { ...COMPOSED_ENV, [PRICE_AUTHORITY_FLAG]: "true" },
+    );
+
+    // Loud: the failure is not silent, and it names the flag and the outcome.
+    expect(logged).toHaveBeenCalledTimes(1);
+    const message = String(logged.mock.calls[0]?.[0] ?? "");
+    expect(message).toContain(PRICE_AUTHORITY_FLAG);
+    expect(message).toContain("FAILING CLOSED");
+
+    // Leaks nothing: not the thrown message, not the connection string, not
+    // the key, not the URL carried on the env.
+    expect(message).not.toContain(SECRET_LOOKING);
+    expect(message).not.toContain("hunter2");
+    expect(message).not.toContain("placeholder-not-a-real-key");
+    expect(message).not.toContain("placeholder.supabase.co");
+
+    logged.mockRestore();
+  });
+
+  it("FLAG OFF + construction throws: stays on the configured legacy path", async () => {
+    // With the flag off the default resolver builds nothing, so a throwing
+    // INJECTED resolver is not a fallback, it is the configured behavior.
+    // Nothing is logged, because nothing failed closed.
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    const { deps } = await composedCommerce(() => {
+      throw new Error("injected");
+    }, COMPOSED_ENV);
+    await deps.cart.addLine(
+      MEMBER,
+      { sku: SKU, quantity: 1, purchaseMode: "one_time" },
+      NOW,
+    );
+    const dto = await deps.cart.getCart(MEMBER, NOW);
+    expect(dto.lines?.[0].unitPriceCents).toBe(LEGACY_FACT_CENTS);
+    expect(logged).not.toHaveBeenCalled();
+    logged.mockRestore();
   });
 });

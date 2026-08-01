@@ -18,6 +18,7 @@ import type { ProductCatalogReader } from "../catalog/product-control-reader";
 import {
   assertNoZeroOrNegativeCharge,
   createProductControlMoneyAuthority,
+  createUnavailableMoneyAuthority,
   denialForRefusal,
   isChargeableAmountCents,
   PRICE_AUTHORITY_FLAG,
@@ -477,6 +478,7 @@ describe("refusals reach a member as blocking denials", () => {
       "member_ineligible",
       "quantity_invalid",
       "line_total_overflow",
+      "authority_unavailable",
     ];
     const blocking = new Set([
       "product_not_found",
@@ -489,5 +491,41 @@ describe("refusals reach a member as blocking denials", () => {
     }
     // The defect's own reason is the most specific one a member can act on.
     expect(denialForRefusal("sku_unknown")).toBe("product_not_found");
+  });
+});
+
+describe("the fail-closed authority", () => {
+  it("refuses every SKU it is asked about and can produce no number", async () => {
+    const authority = createUnavailableMoneyAuthority();
+    const priced = await authority.priceLines(
+      [
+        { sku: SKU, quantity: 1 },
+        { sku: "OTHER", quantity: 4 },
+      ],
+      ASOF,
+    );
+
+    expect(priced.size).toBe(2);
+    for (const sku of [SKU, "OTHER"]) {
+      expect(priced.get(sku)).toEqual({
+        state: "refused",
+        reason: "authority_unavailable",
+      });
+    }
+    // Structurally, not by inspection: no entry carries a price at all.
+    expect(
+      [...priced.values()].every((entry) => entry.state === "refused"),
+    ).toBe(true);
+  });
+
+  it("blocks the line rather than showing a member a price", () => {
+    expect(denialForRefusal("authority_unavailable")).toBe(
+      "unconfirmed_supplier_facts",
+    );
+  });
+
+  it("asks about nothing when there is nothing to price", async () => {
+    const priced = await createUnavailableMoneyAuthority().priceLines([], ASOF);
+    expect(priced.size).toBe(0);
   });
 });

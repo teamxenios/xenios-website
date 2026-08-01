@@ -157,13 +157,22 @@ export type AuthoritativeLinePrice =
 
 /**
  * The refusal taxonomy. It is the Product Control lane's own failure set,
- * unchanged, plus the two the quantity policy contributes. Widening this union
- * cannot turn a refusal into a price: every arm is a refusal.
+ * unchanged, plus the two the quantity policy contributes and the one the
+ * COMPOSITION contributes. Widening this union cannot turn a refusal into a
+ * price: every arm is a refusal.
+ *
+ * `authority_unavailable` is the composition's arm: the flag says Product
+ * Control decides the money and the authority could not be built, so there is
+ * no answer to give. It is a refusal and never a fallback, because the failure
+ * mode it names (the operator believes the authority is on while the legacy
+ * supplier fact quietly prices the charge) is strictly worse than the flag
+ * being off.
  */
 export type MoneyPriceRefusalReason =
   | SkuResolveFailureReason
   | "quantity_invalid"
-  | "line_total_overflow";
+  | "line_total_overflow"
+  | "authority_unavailable";
 
 /** Keyed by SKU. A SKU absent from the map was never asked about. */
 export type AuthoritativePriceMap = ReadonlyMap<string, AuthoritativeLinePrice>;
@@ -220,12 +229,50 @@ const REFUSAL_TO_DENIAL: Readonly<
   member_ineligible: "product_not_purchasable",
   quantity_invalid: "quantity_invalid",
   line_total_overflow: "quantity_invalid",
+  // The authority itself could not be built. A member is told the honest "we
+  // cannot confirm this price" state, which is the same thing they are told
+  // for every other unanswerable price, and it blocks the line.
+  authority_unavailable: "unconfirmed_supplier_facts",
 };
 
 export function denialForRefusal(
   reason: MoneyPriceRefusalReason,
 ): CommerceDenialCode {
   return REFUSAL_TO_DENIAL[reason] ?? "unconfirmed_supplier_facts";
+}
+
+// ---------------------------------------------------------------------------
+// The fail-closed authority
+// ---------------------------------------------------------------------------
+
+/**
+ * THE FAIL-CLOSED AUTHORITY. Installed when the flag says Product Control
+ * decides the money and the real authority could not be constructed.
+ *
+ * The alternative that this exists to forbid is falling back to
+ * `facts.priceCents`. That fallback is the worst available state, worse than
+ * the flag being off, because the operator reads the flag as ON and believes
+ * Product Control is pricing while the legacy runtime is quietly deciding the
+ * charge. A flag that reports on while behaving off is not a flag.
+ *
+ * So this authority answers every SKU it is asked about with a refusal, which
+ * the cart already turns into a blocked line with no price, an unready
+ * checkout, and no authorization. Nothing here can produce a number: the only
+ * value it constructs is `{ state: "refused" }`.
+ */
+export function createUnavailableMoneyAuthority(): MoneyPriceAuthority {
+  return {
+    async priceLines(
+      requests: readonly MoneyPriceRequest[],
+    ): Promise<AuthoritativePriceMap> {
+      return new Map(
+        requests.map((request) => [
+          request.sku,
+          { state: "refused", reason: "authority_unavailable" } as const,
+        ]),
+      );
+    },
+  };
 }
 
 // ---------------------------------------------------------------------------
