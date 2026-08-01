@@ -25,6 +25,7 @@ import {
   type CareAccessDependencies,
 } from "./access";
 import {
+  CareMessageThreadNotOwnedError,
   CareServiceStorageUnavailableError,
   type CareInstructionRepository,
   type CareMessageRepository,
@@ -51,6 +52,10 @@ import {
  * - Nothing transmits. `server/care` contains no outbound transport of any
  *   kind, so every write response carries the not-enabled transmission state
  *   and says plainly that no notification is sent.
+ * - A patient writes only into their own conversation. The thread id is the one
+ *   identifier a caller may name, and the repository checks it against the
+ *   writing patient before the insert, so a thread that is unknown or belongs to
+ *   someone else is refused rather than written into.
  *
  * Every patient route sits behind `requireCarePermission`, which answers 401
  * for an anonymous caller and 403 for the wrong role before any repository is
@@ -198,6 +203,19 @@ export function registerCareMessageApi(
           message: toCareMessageReceipt(record),
         });
       } catch (error) {
+        if (error instanceof CareMessageThreadNotOwnedError) {
+          // The thread id is the one identifier a caller may name, so it is
+          // checked against the caller's own record before anything is written.
+          // The refusal names no thread back, because an unknown thread and
+          // another patient's thread answer the same way.
+          return res.status(403).json({
+            ok: false,
+            code: "care_message_thread_not_owned",
+            transmission: CARE_TRANSMISSION_STATE,
+            message:
+              "This message was not recorded and nobody will see it. It named a conversation that is not yours. Start a new message instead, and contact local emergency services if this may be an emergency.",
+          });
+        }
         if (error instanceof CareServiceStorageUnavailableError) {
           return res.status(503).json({
             ok: false,

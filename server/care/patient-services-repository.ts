@@ -31,7 +31,9 @@ import { getSupabaseAdmin } from "../supabase";
  *
  * Every query is scoped to the patient inside the query itself, so a repository
  * caller that lost track of whose record it was reading still cannot read
- * someone else's. Nothing here creates a table. When the migration that adds
+ * someone else's. The message write is scoped the same way: the only identifier
+ * a caller may supply is a thread id, and it is checked against the writing
+ * patient before the insert rather than trusted. Nothing here creates a table. When the migration that adds
  * them lands, these reads start returning records without another change, and a
  * column that does not match surfaces as a hard failure rather than as silently
  * wrong data.
@@ -102,6 +104,26 @@ export class CareServiceStorageUnavailableError extends Error {
     super("care_service_storage_unavailable");
     this.name = "CareServiceStorageUnavailableError";
     this.missingTables = [...missingTables];
+  }
+}
+
+/**
+ * Raised when a write named a conversation the writing patient does not own.
+ *
+ * Distinct from `CareServiceStorageUnavailableError` on purpose: a refusal
+ * because the thread is not yours must be readable apart from a refusal because
+ * no table exists at all, or the two failures cannot be told apart in a log.
+ *
+ * An unknown thread and another patient's thread raise this identically, so the
+ * refusal never reports whether someone else's conversation exists.
+ */
+export class CareMessageThreadNotOwnedError extends Error {
+  readonly threadId: CareRecordId;
+
+  constructor(threadId: CareRecordId) {
+    super("care_message_thread_not_owned");
+    this.name = "CareMessageThreadNotOwnedError";
+    this.threadId = threadId;
   }
 }
 
@@ -300,6 +322,32 @@ export function buildCareMessageRepository(): CareMessageRepository {
       };
     },
     async recordPatientMessage(input) {
+      // A thread id arrives from the request body, so it is a claim about whose
+      // conversation this is, not a fact. Every read here is scoped by
+      // patient_id inside the query; the write is scoped the same way, before
+      // the insert runs, or the insert does not run at all. Without this a
+      // legitimate patient could post into another patient's clinical thread by
+      // naming its id: the permission guard passes, the schema passes, and the
+      // row lands in a conversation that is not theirs.
+      if (input.threadId) {
+        const owned = (await admin
+          .from("care_message_threads")
+          .select("id")
+          .eq("id", input.threadId)
+          .eq("patient_id", input.patientId)
+          .maybeSingle()) as { data: Row | null; error: QueryError };
+        if (isMissingCareServiceRelation(owned.error)) {
+          throw new CareServiceStorageUnavailableError(
+            CARE_MESSAGE_STORAGE_TABLES,
+          );
+        }
+        if (owned.error) throw new Error("care_message_thread_lookup_failed");
+        // Not found and not yours are the same answer, so a refusal cannot be
+        // used to discover that another patient's thread exists.
+        if (!owned.data) {
+          throw new CareMessageThreadNotOwnedError(input.threadId);
+        }
+      }
       const { data, error } = await admin
         .from("care_messages")
         .insert({

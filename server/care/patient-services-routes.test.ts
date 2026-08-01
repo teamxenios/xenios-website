@@ -1,6 +1,6 @@
 import express, { type Express } from "express";
 import request from "supertest";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   CARE_ROUTE_CONTRACTS,
   type AnyPlatformRole,
@@ -21,6 +21,7 @@ import type { CareEligibilityRepository } from "./eligibility-repository";
 import type { CareIntakeRepository } from "./intake-repository";
 import { registerCareIntakeApi } from "./intake-routes";
 import {
+  buildCareMessageRepository,
   CareServiceStorageUnavailableError,
   type CareInstructionRepository,
   type CareMessageRepository,
@@ -37,6 +38,67 @@ import {
 
 const patientId = "patient-1" as CareRecordId;
 const now = () => new Date("2026-07-30T12:00:00.000Z");
+
+/**
+ * A stand-in for the Care schema, holding only what the message write touches.
+ *
+ * The thread-ownership tests drive the real repository through the real route,
+ * because the property under test is that nothing is inserted when the caller
+ * names a conversation that is not theirs, and only the real repository decides
+ * whether the insert runs.
+ */
+const supabase = vi.hoisted(() => {
+  const state = {
+    threads: [] as Array<{ id: string; patient_id: string }>,
+    // Every filter the ownership lookup applied, so a test can prove the query
+    // was scoped by patient_id rather than by thread id alone.
+    lookupFilters: [] as Array<Record<string, unknown>>,
+  };
+  const insert = vi.fn((row: Record<string, unknown>) => ({
+    select: () => ({
+      single: async () => ({
+        data: {
+          id: "message-1",
+          thread_id: row.thread_id,
+          patient_id: row.patient_id,
+          author_role: "patient",
+          body: row.body,
+          transmission: "not_enabled",
+          recorded_at: row.recorded_at,
+        },
+        error: null,
+      }),
+    }),
+  }));
+  const from = vi.fn((table: string) => {
+    if (table === "care_messages") return { insert };
+    if (table !== "care_message_threads") {
+      throw new Error(`unexpected_table:${table}`);
+    }
+    const filters: Record<string, unknown> = {};
+    const builder = {
+      select: () => builder,
+      eq: (column: string, value: unknown) => {
+        filters[column] = value;
+        return builder;
+      },
+      maybeSingle: async () => {
+        state.lookupFilters.push({ ...filters });
+        const match = state.threads.find(
+          (row) =>
+            row.id === filters.id && row.patient_id === filters.patient_id,
+        );
+        return { data: match ?? null, error: null };
+      },
+    };
+    return builder;
+  });
+  return { state, from, insert };
+});
+
+vi.mock("../supabase", () => ({
+  getSupabaseAdmin: () => ({ from: supabase.from }),
+}));
 
 type PrincipalShape = "patient" | "clinician" | "anonymous";
 
@@ -479,6 +541,91 @@ describe("Care messages route", () => {
     // caller name a patient the principal is not.
     expect(response.status).toBe(400);
     expect(repository.recordPatientMessage).not.toHaveBeenCalled();
+  });
+});
+
+describe("Care message thread ownership", () => {
+  // The thread id is the only identifier the caller may name, and the read side
+  // of this module already scopes every query by patient_id. This is the write
+  // side held to the same rule: a well-formed thread id from a legitimate
+  // patient is a claim about whose conversation it is, not a fact.
+  const OWN_THREAD = "11111111-1111-4111-8111-111111111111";
+  const FOREIGN_THREAD = "22222222-2222-4222-8222-222222222222";
+  const UNKNOWN_THREAD = "33333333-3333-4333-8333-333333333333";
+
+  beforeEach(() => {
+    supabase.state.threads = [
+      { id: OWN_THREAD, patient_id: patientId },
+      // Real, in use, and someone else's.
+      { id: FOREIGN_THREAD, patient_id: "patient-2" },
+    ];
+    supabase.state.lookupFilters = [];
+    supabase.insert.mockClear();
+    supabase.from.mockClear();
+  });
+
+  function live(): Express {
+    return app((instance) =>
+      registerCareMessageApi(
+        instance,
+        access(),
+        buildCareMessageRepository(),
+        now,
+      ),
+    );
+  }
+
+  function post(threadId: string | null) {
+    return request(live())
+      .post(CARE_ROUTE_CONTRACTS.messages)
+      .send({ threadId, body: "A question", idempotencyKey: "idem-key-0001" });
+  }
+
+  it("writes nothing into another patient's thread", async () => {
+    const response = await post(FOREIGN_THREAD);
+    expect(response.status).toBe(403);
+    expect(response.body.ok).toBe(false);
+    expect(response.body.code).toBe("care_message_thread_not_owned");
+    // The property that matters: the row never reached the other patient's
+    // clinical conversation.
+    expect(supabase.insert).not.toHaveBeenCalled();
+  });
+
+  it("scopes the ownership lookup by patient rather than by thread id alone", async () => {
+    await post(FOREIGN_THREAD);
+    expect(supabase.state.lookupFilters).toEqual([
+      { id: FOREIGN_THREAD, patient_id: patientId },
+    ]);
+  });
+
+  it("does not report back that the other patient's thread exists", async () => {
+    const response = await post(FOREIGN_THREAD);
+    expect(JSON.stringify(response.body)).not.toContain(FOREIGN_THREAD);
+    // An unknown thread answers exactly as a foreign one does, so the refusal
+    // cannot be used to enumerate other people's conversations.
+    const unknown = await post(UNKNOWN_THREAD);
+    expect(unknown.status).toBe(response.status);
+    expect(unknown.body.code).toBe(response.body.code);
+    expect(supabase.insert).not.toHaveBeenCalled();
+  });
+
+  it("records a message in the caller's own thread", async () => {
+    const response = await post(OWN_THREAD);
+    expect(response.status).toBe(201);
+    expect(response.body.message.transmission).toBe("not_enabled");
+    expect(supabase.insert).toHaveBeenCalledWith(
+      expect.objectContaining({ thread_id: OWN_THREAD, patient_id: patientId }),
+    );
+  });
+
+  it("records a message that names no thread at all", async () => {
+    const response = await post(null);
+    expect(response.status).toBe(201);
+    // Nothing to check ownership of, so no lookup runs and the write proceeds.
+    expect(supabase.state.lookupFilters).toEqual([]);
+    expect(supabase.insert).toHaveBeenCalledWith(
+      expect.objectContaining({ thread_id: null, patient_id: patientId }),
+    );
   });
 });
 
