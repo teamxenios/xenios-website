@@ -17,6 +17,10 @@ import {
 import { evaluateCareAppointmentReadiness } from "./appointment-readiness";
 import type { CareAppointmentRepository } from "./appointment-repository";
 import {
+  requireCareClinicalCapability,
+  type CareClinicalWriteGateOptions,
+} from "./clinical-write-gate";
+import {
   lazyCareClinicianReviewRepository,
   type CareClinicianReviewRepository,
 } from "./review-repository";
@@ -74,6 +78,24 @@ function route(base: string, suffix: string) {
   return `${base}${suffix}`;
 }
 
+/**
+ * Clinical classification of the writes in this module.
+ *
+ * Gated on a clinical capability:
+ *   POST /appointments/:id/complete   provider_actions
+ *   POST /reviews/:id/action          per action, see CARE_REVIEW_ACTION_CAPABILITY
+ *
+ * Not gated, because they carry no clinical effect and no clinical content,
+ * and gating them would stop the scheduling and handoff workflow from being
+ * usable at all:
+ *   POST /appointments                a patient asking for a slot
+ *   POST /appointments/:id/action     a patient cancelling or checking in
+ *   POST /appointments/:id/assign     an administrator routing work to a clinician
+ *   POST /appointments/:id/schedule   an administrator recording the slot and the
+ *                                     external session handoff reference
+ *   POST /appointments/:id/no-show    an administrator recording attendance
+ * All five stay behind `requireCarePermission` and the Care capability status.
+ */
 export function registerCareAppointmentApi(
   app: Express,
   access: CareAccessDependencies,
@@ -83,6 +105,9 @@ export function registerCareAppointmentApi(
   // owns /api/care/reviews. Registering it here keeps the new screen out of
   // the protected application and server seams entirely.
   reviewRepository: CareClinicianReviewRepository = lazyCareClinicianReviewRepository(),
+  // The clinical capability gate. Defaults read the real environment, so the
+  // production wiring in server/index.ts needs no change to be protected.
+  gate: CareClinicalWriteGateOptions = {},
 ) {
   app.get(
     CARE_ROUTE_CONTRACTS.appointments,
@@ -278,6 +303,9 @@ export function registerCareAppointmentApi(
   app.post(
     route(CARE_ROUTE_CONTRACTS.appointments, "/:appointmentId/complete"),
     requireCarePermission("care:review_assigned", access),
+    // Clinical. The assigned clinician attests that the encounter happened,
+    // and that attestation is what unlocks approve, decline, and no treatment.
+    requireCareClinicalCapability("appointment.clinician_complete", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = completeBody.safeParse(req.body);
@@ -302,6 +330,14 @@ export function registerCareAppointmentApi(
   app.post(
     route(CARE_ROUTE_CONTRACTS.reviews, "/:reviewId/action"),
     requireCarePermission("care:review_assigned", access),
+    // Clinical, and per action: request_information depends on outbound
+    // communication, request_labs on clinical fulfillment, and the rest on
+    // provider actions. The gate reads the requested action from the body.
+    requireCareClinicalCapability(
+      "review.action",
+      gate,
+      (req) => (req.body as { action?: unknown } | undefined)?.action,
+    ),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = reviewActionBody.safeParse(req.body);

@@ -60,6 +60,21 @@ async function loadDecision(input: {
   return { id, context, decision };
 }
 
+/**
+ * Clinical classification of this module: nothing here is clinical, so nothing
+ * here is gated on a clinical capability.
+ *
+ *   GET  /eligibility                a coverage answer, no clinical content
+ *   POST /eligibility/location       a state attestation used for coverage
+ *   POST /eligibility/waitlist       a waitlist record
+ *   POST /consents                   a consent grant or revocation
+ *
+ * Consent in particular must keep working with every clinical capability off.
+ * It is the prerequisite for care rather than an act of care, and a person has
+ * to be able to revoke a consent at any time, so putting a clinical capability
+ * in front of it would be both wrong and unsafe. All four stay behind
+ * `requireCarePermission` and the Care capability status.
+ */
 export function registerCareEligibilityApi(
   app: Express,
   access: CareAccessDependencies,

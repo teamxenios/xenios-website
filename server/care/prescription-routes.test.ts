@@ -70,10 +70,26 @@ function repo(overrides: Partial<CarePrescriptionRepository> = {}): CarePrescrip
     ...overrides,
   };
 }
+// These cases exercise the routes with the clinical capabilities switched on.
+// The refusal behavior when they are off is covered in clinical-write-gate.test.ts.
+const CLINICAL_CAPABILITIES_ON = {
+  provider_actions: true,
+  prescribing: true,
+  clinical_fulfillment: true,
+  external_communications: true,
+  real_patient_data: true,
+} as const;
+
 function appFor(role: CareRole, subjectId: string, repository = repo()) {
   const app = express();
   app.use(express.json());
-  registerCarePrescriptionApi(app, access(role, subjectId), repository, () => new Date("2026-07-25T20:00:00Z"));
+  registerCarePrescriptionApi(
+    app,
+    access(role, subjectId),
+    repository,
+    () => new Date("2026-07-25T20:00:00Z"),
+    { readFlags: () => CLINICAL_CAPABILITIES_ON },
+  );
   return { app, repository };
 }
 

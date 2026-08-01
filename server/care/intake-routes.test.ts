@@ -186,6 +186,16 @@ function intakeRepository(
   };
 }
 
+// These cases exercise the routes with the clinical capabilities switched on.
+// The refusal behavior when they are off is covered in clinical-write-gate.test.ts.
+const CLINICAL_CAPABILITIES_ON = {
+  provider_actions: true,
+  prescribing: true,
+  clinical_fulfillment: true,
+  external_communications: true,
+  real_patient_data: true,
+} as const;
+
 function app(
   intakes: CareIntakeRepository,
   eligibility: CareEligibilityRepository = eligibilityRepository(),
@@ -198,6 +208,7 @@ function app(
     eligibility,
     intakes,
     () => new Date("2026-07-25T20:00:00.000Z"),
+    { readFlags: () => CLINICAL_CAPABILITIES_ON },
   );
   return instance;
 }

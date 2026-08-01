@@ -11,6 +11,10 @@ import {
   sendCareTemporarilyUnavailable,
   type CareAccessDependencies,
 } from "./access";
+import {
+  requireCareClinicalCapability,
+  type CareClinicalWriteGateOptions,
+} from "./clinical-write-gate";
 import { evaluateCarePrescriptionReadiness } from "./prescriptions";
 import type { CarePrescriptionRepository } from "./prescription-repository";
 
@@ -51,11 +55,32 @@ const invalid = (res: Response) =>
   res.status(400).json({ ok: false, code: "care_invalid_request" });
 const safe = (res: Response) => sendCareTemporarilyUnavailable(res);
 
+/**
+ * Clinical classification of this module.
+ *
+ * Every write here is clinical, and every read here returns real prescription
+ * content, so all of them are gated:
+ *   GET  /prescriptions                                 real_patient_data
+ *   POST /prescriptions                                 prescribing
+ *   POST /prescriptions/:id/sign                        prescribing
+ *   POST /pharmacy/admin/prescriptions/:id/assign       clinical_fulfillment
+ *   POST /pharmacy/orders/:id/action                    clinical_fulfillment
+ *   POST /prescriptions/pharmacy-orders/:id/clarification/resolve
+ *                                                       clinical_fulfillment
+ *   POST /pharmacy/admin/orders/:id/clarification/resolve
+ *                                                       clinical_fulfillment
+ *
+ * Not gated:
+ *   GET  /pharmacy/orders           the assigned fulfillment worklist, which is
+ *                                   workflow state and carries no clinical content
+ *   GET  /pharmacy/admin/readiness  a deployment readiness projection
+ */
 export function registerCarePrescriptionApi(
   app: Express,
   access: CareAccessDependencies,
   repository: CarePrescriptionRepository,
   now: () => Date = () => new Date(),
+  gate: CareClinicalWriteGateOptions = {},
 ) {
   const resolveClarification = async (req: Request, res: Response) => {
     res.set("Cache-Control", "no-store");
@@ -82,6 +107,7 @@ export function registerCarePrescriptionApi(
   app.get(
     CARE_ROUTE_CONTRACTS.prescriptions,
     requireCarePermission("care:read_self", access),
+    requireCareClinicalCapability("prescription.read_self", gate),
     async (_req, res) => {
       res.set("Cache-Control", "no-store");
       const patientId = principal(res)?.patientId as CareRecordId | undefined;
@@ -100,6 +126,7 @@ export function registerCarePrescriptionApi(
   app.post(
     CARE_ROUTE_CONTRACTS.prescriptions,
     requireCarePermission("care:prescribe_assigned", access),
+    requireCareClinicalCapability("prescription.create_draft", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = draftBody.safeParse(req.body);
@@ -128,6 +155,7 @@ export function registerCarePrescriptionApi(
   app.post(
     `${CARE_ROUTE_CONTRACTS.prescriptions}/:prescriptionId/sign`,
     requireCarePermission("care:prescribe_assigned", access),
+    requireCareClinicalCapability("prescription.sign", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = signBody.safeParse(req.body);
@@ -172,6 +200,7 @@ export function registerCarePrescriptionApi(
   app.post(
     `${CARE_ROUTE_CONTRACTS.pharmacy}/orders/:orderId/action`,
     requireCarePermission("care:pharmacy_assigned", access),
+    requireCareClinicalCapability("pharmacy.order_action", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = actionBody.safeParse(req.body);
@@ -234,6 +263,7 @@ export function registerCarePrescriptionApi(
   app.post(
     `${CARE_ROUTE_CONTRACTS.pharmacy}/admin/prescriptions/:prescriptionId/assign`,
     requireCarePermission("care:administer", access),
+    requireCareClinicalCapability("prescription.assign_pharmacy", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = assignBody.safeParse(req.body);
@@ -261,12 +291,14 @@ export function registerCarePrescriptionApi(
   app.post(
     `${CARE_ROUTE_CONTRACTS.prescriptions}/pharmacy-orders/:orderId/clarification/resolve`,
     requireCarePermission("care:prescribe_assigned", access),
+    requireCareClinicalCapability("pharmacy.resolve_clarification", gate),
     resolveClarification,
   );
 
   app.post(
     `${CARE_ROUTE_CONTRACTS.pharmacy}/admin/orders/:orderId/clarification/resolve`,
     requireCarePermission("care:administer", access),
+    requireCareClinicalCapability("pharmacy.resolve_clarification", gate),
     resolveClarification,
   );
 }
