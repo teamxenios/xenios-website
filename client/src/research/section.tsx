@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, type ComponentType, type ReactNode } from "react";
-import { Link, Redirect, Route, Switch, useLocation } from "wouter";
+import { Link, Redirect, Route, Switch } from "wouter";
 import { ResearchProvider, useResearch } from "./core";
 import ResearchLayout from "./layout";
 import Gateway from "./pages/Gateway";
@@ -141,45 +141,81 @@ function L({ component: C, member = false, props }: { component: ComponentType<a
 }
 
 export default function ResearchSection() {
-  const [location] = useLocation();
-  // SEN-0027. This effect used to run once on mount with an empty dependency
-  // array, which was not enough. 27 research pages render <SeoHead> without a
-  // robots prop, and SeoHead then writes its DEFAULT_ROBOTS, which begins
-  // "index,follow". So a client-side navigation INSIDE the research tree
-  // overwrote the noindex set here and never restored it: the tree advertised
-  // itself as indexable until a full page load.
+  // SEN-0027. The research tree must never advertise itself as indexable.
   //
-  // Depending on `location` re-asserts it after every navigation. The ordering
-  // is what makes this work rather than fight SeoHead: React runs child effects
-  // before parent effects within a commit, and this section is the parent of
-  // every research page, so this assertion lands after the page's own SeoHead
-  // has written its value.
+  // TWO EARLIER ATTEMPTS, and why each was not enough. Recorded because the
+  // second one looked correct, passed its tests, shipped, and still failed in
+  // production.
   //
-  // NOT a live indexing exposure either before or after: production sends a
-  // real "x-robots-tag: noindex, nofollow" HEADER on /research routes and the
-  // sitemap excludes the tree, both verified against production. The header is
-  // what search engines actually obey. This closes the in-page defect so the
-  // markup stops contradicting the header, which is defence in depth rather
-  // than a leak being plugged.
+  //   1. An effect with an EMPTY dependency array. It ran once on mount, so any
+  //      client-side navigation to one of the 27 research pages that render
+  //      <SeoHead> without a robots prop overwrote it with SeoHead's
+  //      DEFAULT_ROBOTS, which begins "index,follow", and nothing restored it.
+  //
+  //   2. The same effect keyed on `location`. That relies on React running
+  //      child effects before parent effects WITHIN A COMMIT, which is true but
+  //      does not hold across a Suspense boundary. Most research routes are
+  //      lazy(). On a COLD chunk the page's SeoHead effect lands in a LATER
+  //      commit than the section's, so the section asserts first and SeoHead
+  //      overwrites it afterwards. Measured on production at b911bab:
+  //      noindex at t=50ms, then "index,follow,..." from t=150ms onward and it
+  //      stayed there. A warm chunk hid the bug, which is why it passed both a
+  //      jsdom model test using a synchronous child and a first manual pass.
+  //
+  // So ordering cannot be the mechanism. This observes the tag instead and
+  // re-asserts whenever anything writes a different value, which is correct
+  // regardless of which commit the writer lands in, whether the chunk is cold
+  // or warm, and whether SeoHead mutates the existing element or appends a new
+  // one. The empty dependency array is right here: the observer lives for the
+  // whole time the research section is mounted.
+  //
+  // NOT a live indexing exposure at any point: production sends a real
+  // "x-robots-tag: noindex, nofollow" HEADER on /research routes and the
+  // sitemap excludes the tree, both verified independently against production.
+  // Search engines obey the header. This stops the markup contradicting it.
   useEffect(() => {
-    let el = document.head.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
-    const created = !el;
-    if (!el) {
-      el = document.createElement("meta");
-      el.setAttribute("name", "robots");
-      document.head.appendChild(el);
-    }
-    const prev = el.getAttribute("content");
-    el.setAttribute("content", "noindex, nofollow");
-    return () => {
-      // On a navigation WITHIN research this restores the value the outgoing
-      // page had set, and the next run immediately re-asserts noindex. On the
-      // final unmount, when the visitor leaves the research tree entirely, it
-      // hands the main site back whatever robots value it was using.
-      if (created) el!.remove();
-      else if (prev) el!.setAttribute("content", prev);
+    const DESIRED = "noindex, nofollow";
+    const find = () =>
+      document.head.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+
+    const existing = find();
+    const created = !existing;
+    const previous = existing ? existing.getAttribute("content") : null;
+
+    const assert = () => {
+      let el = find();
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute("name", "robots");
+        document.head.appendChild(el);
+      }
+      // Guarded so writing does not re-trigger this observer in a loop: once the
+      // value already equals DESIRED there is no further mutation to observe.
+      if (el.getAttribute("content") !== DESIRED) el.setAttribute("content", DESIRED);
     };
-  }, [location]);
+
+    assert();
+
+    // Watch the whole head, not just the element we found. childList catches a
+    // writer that appends a replacement meta rather than mutating this one;
+    // attributeFilter keeps the callback cheap for unrelated head churn.
+    const observer = new MutationObserver(assert);
+    observer.observe(document.head, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["content", "name"],
+    });
+
+    return () => {
+      observer.disconnect();
+      // Leaving the research tree hands the main site back its own value.
+      const el = find();
+      if (!el) return;
+      if (created) el.remove();
+      else if (previous) el.setAttribute("content", previous);
+    };
+  }, []);
 
   return (
     <ResearchProvider>
