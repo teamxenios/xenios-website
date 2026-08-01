@@ -7,11 +7,16 @@ import {
   isConfidentialOperatingKey,
   isOperatingDeniedCapability,
   isOperatingGrowthPrincipal,
+  isOperatingLivePermission,
   isOperatingPermission,
+  OPERATING_CAPABILITIES_WITHOUT_REGISTERED_SURFACE,
   OPERATING_DENIED_CAPABILITIES,
   OPERATING_GROWTH_ROLE,
+  OPERATING_LIVE_PERMISSIONS,
   OPERATING_PERMISSION_CAPABILITY,
   OPERATING_PERMISSIONS,
+  OPERATING_PLANNED_PERMISSIONS,
+  OPERATING_PLANNED_SURFACES,
   OPERATING_ROLE_PERMISSIONS,
   OPERATING_SURFACE_POLICY,
   operatingSurfaceDecision,
@@ -224,6 +229,115 @@ describe("operating and growth role: confidential commercial fields", () => {
   });
 });
 
+describe("operating and growth role: redaction does not trust the prototype", () => {
+  // The first version of this walker only descended into objects whose
+  // prototype was Object.prototype or null. Everything else fell through and
+  // was returned unredacted. A repository row, an ORM entity, or any value
+  // built by a constructor is exactly what a handler passes to sendOperatingJson,
+  // so the redactor failed open on the shape it was most likely to be handed.
+  class PartnerRow {
+    partnerId = "prt-1";
+    commissionCents = 900;
+    wholesaleSourceCostCents = 4200;
+    grossMarginPct = 61.2;
+  }
+
+  it("redacts a class instance", () => {
+    const row = new PartnerRow();
+    expect(Object.getPrototypeOf(row)).not.toBe(Object.prototype);
+    expect(findConfidentialOperatingFields(row).sort()).toEqual([
+      "grossMarginPct",
+      "wholesaleSourceCostCents",
+    ]);
+    const redacted = redactOperatingPayload(row);
+    expect(findConfidentialOperatingFields(redacted)).toEqual([]);
+    expect(redacted).toEqual({ partnerId: "prt-1", commissionCents: 900 });
+    const serialised = JSON.stringify(redacted);
+    for (const leak of ["wholesale", "4200", "Margin", "61.2"]) {
+      expect(serialised).not.toContain(leak);
+    }
+  });
+
+  it("redacts a class instance nested inside a plain payload", () => {
+    const payload = { orgId: "org-1", partners: [new PartnerRow()] };
+    expect(findConfidentialOperatingFields(payload)).toEqual([
+      "partners[0].wholesaleSourceCostCents",
+      "partners[0].grossMarginPct",
+    ]);
+    const redacted = redactOperatingPayload(payload);
+    expect(findConfidentialOperatingFields(redacted)).toEqual([]);
+    expect(JSON.stringify(redacted)).not.toContain("4200");
+  });
+
+  it("redacts a null prototype object, at the top level and nested", () => {
+    // A bare null prototype object was already handled by the old check, so
+    // this half is a regression guard rather than a proof. The nested half is
+    // the proof: under the old check the class instance around it was returned
+    // whole, so the null prototype object inside it was never even reached.
+    const bare = Object.create(null) as Record<string, unknown>;
+    bare.partnerId = "prt-2";
+    bare.unitCostCents = 4242;
+    expect(findConfidentialOperatingFields(bare)).toEqual(["unitCostCents"]);
+    const redacted = redactOperatingPayload(bare);
+    expect(findConfidentialOperatingFields(redacted)).toEqual([]);
+    expect(JSON.stringify(redacted)).toBe('{"partnerId":"prt-2"}');
+
+    const nested = new PartnerRow() as unknown as Record<string, unknown>;
+    nested.pricing = bare;
+    expect(findConfidentialOperatingFields(nested)).toContain(
+      "pricing.unitCostCents",
+    );
+    expect(
+      findConfidentialOperatingFields(redactOperatingPayload(nested)),
+    ).toEqual([]);
+    expect(JSON.stringify(redactOperatingPayload(nested))).not.toContain("4242");
+  });
+
+  it("redacts an object whose prototype was replaced after construction", () => {
+    const tampered = { partnerId: "prt-3", supplierSource: "Apex" };
+    Object.setPrototypeOf(tampered, { toString: () => "row" });
+    const redacted = redactOperatingPayload(tampered);
+    expect(findConfidentialOperatingFields(redacted)).toEqual([]);
+    expect(JSON.stringify(redacted)).not.toContain("Apex");
+  });
+
+  it("catches a confidential own getter from its name, without invoking it", () => {
+    let reads = 0;
+    const row: Record<string, unknown> = { partnerId: "prt-4" };
+    Object.defineProperty(row, "landedCostCents", {
+      enumerable: true,
+      get() {
+        reads += 1;
+        return 1234;
+      },
+    });
+    expect(findConfidentialOperatingFields(row)).toEqual(["landedCostCents"]);
+    const redacted = redactOperatingPayload(row);
+    expect(reads).toBe(0);
+    expect(JSON.stringify(redacted)).toBe('{"partnerId":"prt-4"}');
+  });
+
+  it("leaves a value that serialises to a scalar intact rather than emptying it", () => {
+    // A Date has no own enumerable keys, so recursing would turn a timestamp
+    // into {} while removing nothing. It carries no field to redact.
+    const at = new Date("2026-08-01T00:00:00.000Z");
+    const payload = { partnerId: "prt-5", reviewedAt: at, unitCostCents: 5 };
+    expect(findConfidentialOperatingFields(payload)).toEqual(["unitCostCents"]);
+    const redacted = redactOperatingPayload(payload) as Record<string, unknown>;
+    expect(redacted.reviewedAt).toBe(at);
+    expect(JSON.stringify(redacted)).toBe(
+      '{"partnerId":"prt-5","reviewedAt":"2026-08-01T00:00:00.000Z"}',
+    );
+  });
+
+  it("still returns primitives and null unchanged", () => {
+    for (const value of ["text", 7, true, null, undefined]) {
+      expect(redactOperatingPayload(value)).toBe(value);
+      expect(findConfidentialOperatingFields(value)).toEqual([]);
+    }
+  });
+});
+
 describe("operating and growth role: the surface policy", () => {
   it("resolves the price approval route as refused", () => {
     expect(
@@ -244,17 +358,80 @@ describe("operating and growth role: the surface policy", () => {
     }
   });
 
-  it("covers each refused capability with at least one real surface", () => {
+  it("covers each refused capability except the two named as pre-committed", () => {
+    // Honest form. supplier_cost and margin have no route in this repository at
+    // all, so their refusal is written down rather than demonstrated. Naming
+    // that in a constant, and asserting the constant matches the computed set,
+    // means a reviewer is never told a refusal was exercised when it was not,
+    // and a later margin route forces this list to be revisited.
+    const preCommitted = new Set<string>(
+      OPERATING_CAPABILITIES_WITHOUT_REGISTERED_SURFACE,
+    );
+    const uncovered: string[] = [];
     for (const capability of OPERATING_DENIED_CAPABILITIES) {
       const covered = OPERATING_SURFACE_POLICY.some(
         (entry) =>
           entry.decision.kind === "deny" && entry.decision.capability === capability,
       );
-      expect(covered, `no surface covers ${capability}`).toBe(true);
+      if (!covered) uncovered.push(capability);
     }
+    expect(uncovered.sort()).toEqual([...preCommitted].sort());
   });
 
   it("returns null for a surface it has no opinion about", () => {
     expect(operatingSurfaceDecision("GET", "/api/health")).toBeNull();
+  });
+
+  it("returns null for a planned surface, so it authorizes nothing", () => {
+    for (const planned of OPERATING_PLANNED_SURFACES) {
+      expect(
+        operatingSurfaceDecision(planned.method, planned.surface),
+        `${planned.method} ${planned.surface} resolved to a decision`,
+      ).toBeNull();
+    }
+  });
+});
+
+describe("operating and growth role: live versus planned is a real distinction", () => {
+  it("splits the five permissions into one live and four planned", () => {
+    expect([...OPERATING_LIVE_PERMISSIONS]).toEqual(["operating:partner_workflow"]);
+    expect([...OPERATING_PLANNED_PERMISSIONS]).toEqual([
+      "operating:partner_pipeline_read",
+      "operating:organization_pipeline_read",
+      "operating:growth_kpis_read",
+      "operating:operating_kpis_read",
+    ]);
+    expect(
+      [...OPERATING_LIVE_PERMISSIONS, ...OPERATING_PLANNED_PERMISSIONS].sort(),
+    ).toEqual([...OPERATING_PERMISSIONS].sort());
+  });
+
+  it("recognizes only a live permission as live", () => {
+    expect(isOperatingLivePermission("operating:partner_workflow")).toBe(true);
+    for (const permission of OPERATING_PLANNED_PERMISSIONS) {
+      expect(isOperatingLivePermission(permission)).toBe(false);
+    }
+    for (const attempt of ["", "*", "admin", null, undefined, 42, {}]) {
+      expect(isOperatingLivePermission(attempt)).toBe(false);
+    }
+  });
+
+  it("allows nothing in the decision table for a planned permission", () => {
+    // The type system already refuses this: OperatingSurfaceDecision's allow arm
+    // is typed OperatingLivePermission, so writing an allow for a planned
+    // permission does not compile. This asserts the shipped table agrees.
+    for (const entry of OPERATING_SURFACE_POLICY) {
+      if (entry.decision.kind !== "allow") continue;
+      expect(isOperatingLivePermission(entry.decision.permission)).toBe(true);
+    }
+  });
+
+  it("keeps a planned surface free of anything shaped like an authorization", () => {
+    for (const planned of OPERATING_PLANNED_SURFACES) {
+      expect(Object.keys(planned).sort()).toEqual(["method", "note", "surface"]);
+      expect("decision" in planned).toBe(false);
+      expect("permission" in planned).toBe(false);
+      expect("capability" in planned).toBe(false);
+    }
   });
 });

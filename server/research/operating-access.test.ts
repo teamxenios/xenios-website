@@ -3,7 +3,9 @@ import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import {
   OPERATING_GROWTH_ROLE,
+  OPERATING_LIVE_PERMISSIONS,
   OPERATING_PERMISSIONS,
+  OPERATING_PLANNED_PERMISSIONS,
   OPERATING_SURFACE_POLICY,
   type OperatingPermission,
   type OperatingSurfacePolicyEntry,
@@ -553,15 +555,32 @@ describe("the authorized surfaces work and stay clean", () => {
     });
   }
 
-  it("covers every granted permission with an authorized surface", () => {
-    const covered = new Set(
+  it("covers every LIVE permission with an authorized surface, and no planned one", () => {
+    // The earlier version of this test asserted a surface for all five
+    // permissions and passed, because four of the five surfaces in the table
+    // did not exist in this repository. It was asserting the table against
+    // itself. Only the permissions with a route registered in server/** are
+    // exercised here; the rest are named as planned and reach nothing.
+    // server/research/operating-surface-registry.test.ts is what holds that
+    // line against the real sources.
+    const covered = new Set<string>(
       allowedEntries.map((entry) =>
         entry.decision.kind === "allow" ? entry.decision.permission : "",
       ),
     );
-    for (const permission of OPERATING_PERMISSIONS) {
+    for (const permission of OPERATING_LIVE_PERMISSIONS) {
       expect(covered.has(permission), `no surface uses ${permission}`).toBe(true);
     }
+    for (const permission of OPERATING_PLANNED_PERMISSIONS) {
+      expect(
+        covered.has(permission),
+        `${permission} is planned but an authorized surface uses it`,
+      ).toBe(false);
+    }
+    expect([...covered].sort()).toEqual([...OPERATING_LIVE_PERMISSIONS].sort());
+    expect(OPERATING_PERMISSIONS.length).toBe(
+      OPERATING_LIVE_PERMISSIONS.length + OPERATING_PLANNED_PERMISSIONS.length,
+    );
   });
 
   it("strips supplier cost, margin, and supplier identity from an authorized payload", async () => {
