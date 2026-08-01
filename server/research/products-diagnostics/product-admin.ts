@@ -26,8 +26,14 @@ import type { RequiredInput } from "@shared/research/required-inputs";
 import {
   ProductAdminConflictError,
   ProductAdminNotFoundError,
+  ProductAdminStrengthDisputeError,
   ProductAdminValidationError,
 } from "./product-admin-errors";
+import {
+  screenPriceForApproval,
+  screenVariantForPriceWrite,
+  type VariantStrengthWriteRefusal,
+} from "./variant-strength-write-gate";
 
 export interface ProductReleaseEvaluation {
   displayReady: boolean;
@@ -526,6 +532,17 @@ function normalizePrice(value: CreateAdminPriceInput): CreateAdminPriceInput {
   };
 }
 
+/**
+ * Turn a strength-write refusal into the file's existing refusal idiom: a
+ * conflict carrying a machine code, extended with the reason so the operator can
+ * see WHICH two presentations disagree. Called for its throw, so the caller
+ * cannot forget to check a returned value.
+ */
+function refusePriceWrite(refusal: VariantStrengthWriteRefusal | null): void {
+  if (refusal === null) return;
+  throw new ProductAdminStrengthDisputeError(refusal.code, refusal.reason);
+}
+
 export class ProductAdminService {
   constructor(
     private readonly repository: ProductAdminRepository,
@@ -749,27 +766,51 @@ export class ProductAdminService {
     );
   }
 
-  createPrice(
+  /**
+   * A price row is the settlement of a physical presentation, so it is refused
+   * before it exists whenever that presentation is contested. The gate sits
+   * INSIDE the idempotent action and immediately before the repository call, so
+   * no path reaches persistence without it, and it re-reads the product rather
+   * than trusting the caller for the strength.
+   *
+   * Ordering: input validation runs first, so a malformed price still reports
+   * the precise validation error rather than an identity refusal.
+   */
+  async createPrice(
     productId: string,
     input: CreateAdminPriceInput,
     actor: string,
     idempotencyKey: string,
   ) {
     const id = requiredText(productId, "productId");
+    const normalized = normalizePrice(input);
+    const normalizedActor = requiredText(actor, "actor", 320);
     return this.idempotency.run(
       `product_admin.create_price.${id}`,
       requiredText(idempotencyKey, "idempotencyKey", 200),
-      () =>
-        this.repository.createPrice(
+      async () => {
+        refusePriceWrite(
+          screenVariantForPriceWrite(
+            await this.repository.get(id),
+            normalized.variantId,
+          ),
+        );
+        return this.repository.createPrice(
           id,
-          normalizePrice(input),
-          requiredText(actor, "actor", 320),
+          normalized,
+          normalizedActor,
           this.now(),
-        ),
+        );
+      },
     );
   }
 
-  approvePrice(
+  /**
+   * Approval is the moment a draft price becomes an authority, so it is gated on
+   * exactly the same fact as creation. Gating creation alone would leave drafts
+   * written before this gate existed able to be approved into active prices.
+   */
+  async approvePrice(
     productId: string,
     priceId: string,
     actor: string,
@@ -777,16 +818,21 @@ export class ProductAdminService {
   ) {
     const product = requiredText(productId, "productId");
     const price = requiredText(priceId, "priceId");
+    const normalizedActor = requiredText(actor, "actor", 320);
     return this.idempotency.run(
       `product_admin.approve_price.${price}`,
       requiredText(idempotencyKey, "idempotencyKey", 200),
-      () =>
-        this.repository.approvePrice(
+      async () => {
+        refusePriceWrite(
+          screenPriceForApproval(await this.repository.get(product), price),
+        );
+        return this.repository.approvePrice(
           product,
           price,
-          requiredText(actor, "actor", 320),
+          normalizedActor,
           this.now(),
-        ),
+        );
+      },
     );
   }
 
