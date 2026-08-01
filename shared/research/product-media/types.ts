@@ -200,7 +200,7 @@ export interface CropData {
 
 /**
  * Private brand. A `ProductMediaAsset` value can only be produced by
- * `createProductMediaAsset`, which is where the provenance and rights rules are
+ * `sealProductMediaAsset`, which is where the provenance and rights rules are
  * enforced. An object literal cannot be widened into this type, so there is no
  * path that skips the gate.
  */
@@ -281,10 +281,180 @@ export class MediaProvenanceViolation extends Error {
   }
 }
 
+// ---------------------------------------------------------------------------
+// The invariant core
+// ---------------------------------------------------------------------------
+//
+// These predicates live here, next to the brand, rather than in `asset.ts`,
+// because the seal below must enforce them and the seal is the last line before
+// a value becomes a `ProductMediaAsset`. `asset.ts` re-exports them, so the
+// public surface is unchanged.
+
+function isBlank(value: string | null | undefined): boolean {
+  return value === null || value === undefined || value.trim().length === 0;
+}
+
+/** True when the source type asserts a camera photographed the real item. */
+export function isPhotographicSource(sourceType: MediaSourceType): boolean {
+  return PHOTOGRAPHIC_SOURCE_TYPES.includes(sourceType);
+}
+
 /**
- * Internal escape hatch for the factory only. Not exported from the package
- * surface; `asset.ts` re-exports nothing that returns it.
+ * True when the rights record is complete enough to be evidence. A record with a
+ * blank id, a blank holder, or a blank evidence pointer is not evidence, it is a
+ * note to self.
  */
-export function brandAsset(value: Omit<ProductMediaAsset, typeof provenanceChecked>): ProductMediaAsset {
-  return value as ProductMediaAsset;
+export function isCompleteRightsRecord(record: RightsRecord | null | undefined): record is RightsRecord {
+  if (!record) return false;
+  if (isBlank(record.recordId)) return false;
+  if (isBlank(record.holder)) return false;
+  if (isBlank(record.grantedOn)) return false;
+  if (isBlank(record.evidenceRef)) return false;
+  return true;
+}
+
+/**
+ * The rights gate, exposed on its own so a test can walk every source type
+ * against every rights status without constructing an asset.
+ *
+ * Returns null when the combination is allowed, or the violation code when it is
+ * not. Callers that want the throw use `createProductMediaAsset`.
+ */
+export function rightsViolationFor(
+  sourceType: MediaSourceType,
+  rightsStatus: RightsStatus,
+  rightsRecord: RightsRecord | null | undefined,
+): string | null {
+  if (isPhotographicSource(sourceType)) {
+    // A photograph claim needs a grant we can point at. RIGHTS_NOT_REQUIRED is
+    // refused explicitly: it is the shape a caller would reach for to skip this.
+    if (rightsStatus === "RIGHTS_NOT_REQUIRED") {
+      return "PHOTOGRAPH_CLAIMS_RIGHTS_NOT_REQUIRED";
+    }
+    if (rightsStatus !== "RIGHTS_ON_FILE") {
+      return "PHOTOGRAPH_WITHOUT_RIGHTS_ON_FILE";
+    }
+    if (!isCompleteRightsRecord(rightsRecord)) {
+      return "PHOTOGRAPH_WITHOUT_RIGHTS_RECORD";
+    }
+    return null;
+  }
+
+  // Xenios owns a render and a placeholder outright, so a third party rights
+  // grant on one is a category error and is refused rather than ignored: it
+  // usually means the caller mislabelled the source.
+  if (rightsStatus !== "RIGHTS_NOT_REQUIRED") {
+    return "XENIOS_OWNED_SOURCE_CLAIMS_THIRD_PARTY_RIGHTS";
+  }
+  if (rightsRecord) {
+    return "XENIOS_OWNED_SOURCE_CARRIES_RIGHTS_RECORD";
+  }
+  return null;
+}
+
+/**
+ * The shape a claim must hold for its provenance tag to be true of it. Deliberately
+ * structural rather than nominal, so it can also be run over a value that arrived
+ * from outside this process (a database row, a JSON payload, a type assertion) and
+ * therefore never passed through the seal.
+ */
+export interface ProvenanceClaim {
+  readonly assetId: string;
+  readonly sourceType: MediaSourceType;
+  readonly provenanceTag: ProvenanceTag;
+  readonly rightsStatus: RightsStatus;
+  readonly rightsRecord: RightsRecord | null;
+  readonly identityStatus: IdentityVerificationStatus;
+  readonly publicStatus: MediaPublicStatus;
+  readonly approvalOwner: string | null;
+  readonly approvalDate: string | null;
+}
+
+/**
+ * The one function that decides whether a claim is supportable. Returns null when
+ * it is, or a violation code when it is not.
+ *
+ * The first check is the one this module exists for: a provenance tag that does
+ * not follow from the source type is a forgery, whichever direction it points. A
+ * render tagged `supplier_photograph` is the case the canon names, and it is
+ * refused here even if every other field is immaculate.
+ */
+export function provenanceViolationIn(claim: ProvenanceClaim): string | null {
+  if (claim.provenanceTag !== provenanceTagFor(claim.sourceType)) {
+    return "PROVENANCE_TAG_DOES_NOT_FOLLOW_FROM_SOURCE";
+  }
+
+  const rightsCode = rightsViolationFor(claim.sourceType, claim.rightsStatus, claim.rightsRecord);
+  if (rightsCode) return rightsCode;
+
+  // A supplier or commissioned photograph claim always needs a grant on file. The
+  // rights gate above already says so, but it is restated as its own code because
+  // this is the pairing the canon forbids and a reader of a failure should see it
+  // named, not inferred from a rights status.
+  if (isPhotographicSource(claim.sourceType) && !isCompleteRightsRecord(claim.rightsRecord)) {
+    return "PHOTOGRAPH_WITHOUT_RIGHTS_RECORD";
+  }
+
+  if (claim.publicStatus === "PUBLISHED") {
+    if (claim.sourceType === "internal_placeholder") {
+      return "PUBLISHED_PLACEHOLDER";
+    }
+    if (claim.identityStatus !== "VERIFIED_EXACT_VARIANT") {
+      return "PUBLISHED_WITHOUT_IDENTITY";
+    }
+    if (isBlank(claim.approvalOwner) || isBlank(claim.approvalDate)) {
+      return "PUBLISHED_WITHOUT_NAMED_APPROVAL";
+    }
+  }
+
+  return null;
+}
+
+/**
+ * The fields the seal accepts.
+ *
+ * `provenanceTag` is absent on purpose and this absence is the structural half of
+ * the guarantee: there is no in repo call site, internal or not, that can hand a
+ * provenance tag to the constructor, so "a generated render tagged as a supplier
+ * photograph" is not a value anyone can ask for. The tag is computed from the
+ * source type below.
+ */
+export type SealableAssetFields = Omit<ProductMediaAsset, typeof provenanceChecked | "provenanceTag">;
+
+/**
+ * The structural guarantee, asserted where the typechecker will see it.
+ *
+ * Test files are excluded from `npm run check`, so a compile time claim made only
+ * in a test is not a gate. This assertion lives in the shipped module: if anyone
+ * widens `SealableAssetFields` to accept a provenance tag again, `tsc` fails here
+ * with "Type 'false' does not satisfy the constraint 'true'".
+ */
+type Assert<T extends true> = T;
+type ProvenanceTagIsNotSealable = "provenanceTag" extends keyof SealableAssetFields ? false : true;
+type _NoCallerSuppliedProvenance = Assert<ProvenanceTagIsNotSealable>;
+
+/**
+ * The only path to a `ProductMediaAsset`.
+ *
+ * Callers use `createProductMediaAsset` in `asset.ts`, which validates the wider
+ * input (ids, alt text, version, focal point, stored bytes) and then seals. This
+ * function is the narrower, unskippable core: it derives the provenance tag and
+ * refuses any claim `provenanceViolationIn` rejects. It is exported only because
+ * `asset.ts` is a separate module; it grants no capability the factory does not,
+ * because it enforces the same rules.
+ */
+export function sealProductMediaAsset(fields: SealableAssetFields): ProductMediaAsset {
+  const provenanceTag = provenanceTagFor(fields.sourceType);
+  const sealed = { ...fields, provenanceTag } as ProductMediaAsset;
+
+  const violation = provenanceViolationIn(sealed);
+  if (violation) {
+    throw new MediaProvenanceViolation(
+      violation,
+      `Asset ${fields.assetId} cannot be sealed: source ${fields.sourceType} with rights ${fields.rightsStatus} ` +
+        `and status ${fields.publicStatus} does not support the claim ${provenanceTag}.`,
+    );
+  }
+
+  return sealed;
 }

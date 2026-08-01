@@ -35,13 +35,14 @@ import {
   type ManifestEntry,
 } from "./manifest";
 import { formatStrength, strengthsMatch, variantCarriesStrength } from "./strength";
-import type { ImageRole, ProductMediaAsset } from "./types";
+import { provenanceViolationIn, type ImageRole, type ProductMediaAsset } from "./types";
 
 // ---------------------------------------------------------------------------
 // Findings
 // ---------------------------------------------------------------------------
 
 export const MEDIA_FINDING_CODES = [
+  "UNSUPPORTED_PROVENANCE_CLAIM",
   "MISSING_MEDIA_STATE",
   "MISSING_PRODUCT_IDENTIFIER",
   "STRENGTH_MISMATCH",
@@ -74,6 +75,7 @@ export interface MediaFinding {
 }
 
 const SEVERITY_BY_CODE: Record<MediaFindingCode, MediaFindingSeverity> = {
+  UNSUPPORTED_PROVENANCE_CLAIM: "blocking",
   MISSING_MEDIA_STATE: "blocking",
   MISSING_PRODUCT_IDENTIFIER: "advisory",
   STRENGTH_MISMATCH: "blocking",
@@ -322,6 +324,28 @@ export function checkPublicSafety(
     const entry = rows && rows.length > 0 ? rows[0] : undefined;
     const onActiveRow = entry ? activeImageIds.has(entry.imageId) : false;
 
+    // Re-derive the provenance claim rather than trusting the tag on the record.
+    // An asset built through `createProductMediaAsset` can never fail this, so a
+    // failure means the value did not come through the seal: a row read back from
+    // storage, a JSON payload, a type assertion. The verification pass is the last
+    // place to catch that before a surface reads it, so it is checked here rather
+    // than assumed.
+    const provenanceCode = provenanceViolationIn(asset);
+    if (provenanceCode) {
+      findings.push(
+        finding("UNSUPPORTED_PROVENANCE_CLAIM", {
+          imageId: entry?.imageId ?? null,
+          assetId: asset.assetId,
+          sku: asset.productId,
+          variant: asset.variantId,
+          detail:
+            `Asset ${asset.assetId} is tagged ${asset.provenanceTag} against source ${asset.sourceType} ` +
+            `and fails ${provenanceCode}. The record makes a claim its own fields do not support, so it did ` +
+            "not come through the constructor and may not be shown.",
+        }),
+      );
+    }
+
     const competitor = competitorTokenIn(
       asset.filePath,
       asset.rightsRecord?.holder,
@@ -525,6 +549,10 @@ export function verifyProductMedia(input: VerificationInput): VerificationReport
 
 /** Convenience for a surface: may this asset be shown at all. */
 export function isPublishable(asset: ProductMediaAsset, entry: ManifestEntry | undefined): boolean {
+  // First, and before anything about the row: does the record's own provenance
+  // claim hold. A value that never passed the seal is refused here even though the
+  // type says it did.
+  if (provenanceViolationIn(asset)) return false;
   if (!entry) return false;
   if (entry.isExpansionCandidate) return false;
   if (asset.publicStatus !== "PUBLISHED") return false;

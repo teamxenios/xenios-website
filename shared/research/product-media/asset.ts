@@ -6,10 +6,14 @@
 //
 // The enforcement is structural, not procedural:
 //
-//   1. `ProductMediaAsset` is branded, so the only way to obtain one is to call
-//      `createProductMediaAsset`. There is no object literal path.
-//   2. `provenanceTag` is derived here from `sourceType`. A caller cannot pass it,
-//      so a caller cannot set `supplier_photograph` on a render.
+//   1. `ProductMediaAsset` is branded, and the brand is applied by exactly one
+//      function, `sealProductMediaAsset` in `types.ts`. There is no object literal
+//      path and no unchecked internal one either: the seal re-runs the provenance
+//      gate itself, so it is not a hatch that trusts its caller.
+//   2. `provenanceTag` is derived by the seal from `sourceType`, and the seal's
+//      parameter type does not contain the field at all. Nobody, inside this
+//      package or outside it, can hand a provenance tag to a constructor, so
+//      "a render labelled `supplier_photograph`" is not an expressible value.
 //   3. A photographic source type without a complete rights record throws. There
 //      is no lenient mode, no override flag, and no environment that relaxes it.
 //   4. `reclassifySourceType` refuses every transition that would upgrade a
@@ -22,9 +26,10 @@
 import {
   IDENTITY_BEARING_ROLES,
   MediaProvenanceViolation,
-  PHOTOGRAPHIC_SOURCE_TYPES,
-  brandAsset,
+  isPhotographicSource,
   provenanceTagFor,
+  rightsViolationFor,
+  sealProductMediaAsset,
   type MediaSourceType,
   type ProductMediaAsset,
   type ProductMediaAssetInput,
@@ -32,66 +37,18 @@ import {
   type RightsStatus,
 } from "./types";
 
+// The rights and provenance predicates live in `types.ts`, beside the brand, so
+// the seal itself can enforce them. They are re-exported here because this module
+// is the package's public surface for reasoning about an asset.
+export {
+  isCompleteRightsRecord,
+  isPhotographicSource,
+  provenanceViolationIn,
+  rightsViolationFor,
+} from "./types";
+
 function isBlank(value: string | null | undefined): boolean {
   return value === null || value === undefined || value.trim().length === 0;
-}
-
-/** True when the source type asserts a camera photographed the real item. */
-export function isPhotographicSource(sourceType: MediaSourceType): boolean {
-  return PHOTOGRAPHIC_SOURCE_TYPES.includes(sourceType);
-}
-
-/**
- * True when the rights record is complete enough to be evidence. A record with a
- * blank id, a blank holder, or a blank evidence pointer is not evidence, it is a
- * note to self.
- */
-export function isCompleteRightsRecord(record: RightsRecord | null | undefined): record is RightsRecord {
-  if (!record) return false;
-  if (isBlank(record.recordId)) return false;
-  if (isBlank(record.holder)) return false;
-  if (isBlank(record.grantedOn)) return false;
-  if (isBlank(record.evidenceRef)) return false;
-  return true;
-}
-
-/**
- * The rights gate, exposed on its own so a test can walk every source type
- * against every rights status without constructing an asset.
- *
- * Returns null when the combination is allowed, or the violation code when it is
- * not. Callers that want the throw use `createProductMediaAsset`.
- */
-export function rightsViolationFor(
-  sourceType: MediaSourceType,
-  rightsStatus: RightsStatus,
-  rightsRecord: RightsRecord | null | undefined,
-): string | null {
-  if (isPhotographicSource(sourceType)) {
-    // A photograph claim needs a grant we can point at. RIGHTS_NOT_REQUIRED is
-    // refused explicitly: it is the shape a caller would reach for to skip this.
-    if (rightsStatus === "RIGHTS_NOT_REQUIRED") {
-      return "PHOTOGRAPH_CLAIMS_RIGHTS_NOT_REQUIRED";
-    }
-    if (rightsStatus !== "RIGHTS_ON_FILE") {
-      return "PHOTOGRAPH_WITHOUT_RIGHTS_ON_FILE";
-    }
-    if (!isCompleteRightsRecord(rightsRecord)) {
-      return "PHOTOGRAPH_WITHOUT_RIGHTS_RECORD";
-    }
-    return null;
-  }
-
-  // Xenios owns a render and a placeholder outright, so a third party rights
-  // grant on one is a category error and is refused rather than ignored: it
-  // usually means the caller mislabelled the source.
-  if (rightsStatus !== "RIGHTS_NOT_REQUIRED") {
-    return "XENIOS_OWNED_SOURCE_CLAIMS_THIRD_PARTY_RIGHTS";
-  }
-  if (rightsRecord) {
-    return "XENIOS_OWNED_SOURCE_CARRIES_RIGHTS_RECORD";
-  }
-  return null;
 }
 
 /**
@@ -124,8 +81,6 @@ export function createProductMediaAsset(input: ProductMediaAssetInput): ProductM
         "A photograph of a real product may only be recorded against a rights record on file.",
     );
   }
-
-  const provenanceTag = provenanceTagFor(input.sourceType);
 
   const version = input.version ?? 1;
   if (!Number.isInteger(version) || version < 1) {
@@ -178,13 +133,12 @@ export function createProductMediaAsset(input: ProductMediaAssetInput): ProductM
     }
   }
 
-  return brandAsset({
+  return sealProductMediaAsset({
     assetId: input.assetId,
     productId: input.productId,
     variantId: input.variantId ?? null,
     role: input.role,
     sourceType: input.sourceType,
-    provenanceTag,
     rightsStatus: input.rightsStatus,
     rightsRecord: input.rightsRecord ?? null,
     identityStatus: input.identityStatus,

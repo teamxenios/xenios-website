@@ -161,4 +161,24 @@ describe("an asset moves a row into approved, nothing else does", () => {
     expect(bucketFor(row, 0)).toBe("BLOCKED_ON_IDENTITY");
     expect(bucketFor(row, 1)).toBe("APPROVED");
   });
+
+  it("never promotes a competitor expansion candidate, whatever is attached to it", () => {
+    const candidate = productImageManifest().find((item) => item.isExpansionCandidate);
+    expect(candidate).toBeDefined();
+    const before = bucketFor(candidate as ManifestEntry, 0);
+    expect(bucketFor(candidate as ManifestEntry, 3)).toBe(before);
+  });
+
+  it("does not count an asset whose provenance claim does not hold", () => {
+    // The same forgery QA built, reaching the coverage number instead of a surface:
+    // a Xenios render tagged as a supplier photograph. Counting it would move the
+    // honest zero on evidence we do not have.
+    const forged = {
+      ...approvedAsset(),
+      provenanceTag: "supplier_photograph",
+    } as unknown as ProductMediaAsset;
+
+    expect(countsAsCoverage(forged)).toBe(false);
+    expect(computeCoverage({ assets: [forged] }).approved).toBe(0);
+  });
 });

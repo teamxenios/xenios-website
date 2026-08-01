@@ -18,7 +18,7 @@ import {
   type ManifestEntry,
 } from "@shared/research/product-media/manifest";
 import { manifestKey } from "@shared/research/product-media/manifest";
-import type { ProductMediaAsset } from "@shared/research/product-media/types";
+import { provenanceViolationIn, type ProductMediaAsset } from "@shared/research/product-media/types";
 
 // ---------------------------------------------------------------------------
 // Shape
@@ -85,12 +85,21 @@ const BUCKET_BY_COVERAGE_STATE: Record<ManifestCoverageState, CoverageBucket> = 
  * promote a row: absence of an asset never reads as approved.
  */
 export function bucketFor(entry: ManifestEntry, approvedAssetCount: number): CoverageBucket {
+  // A competitor expansion candidate is a gap analysis row and not something we
+  // offer, so no asset count promotes it. The registry already refuses to attach
+  // imagery to one; this stops a stray record from reading as our coverage.
+  if (entry.isExpansionCandidate) return BUCKET_BY_COVERAGE_STATE[entry.coverageState];
   if (approvedAssetCount > 0) return "APPROVED";
   return BUCKET_BY_COVERAGE_STATE[entry.coverageState];
 }
 
 /** Assets that count as coverage: approved or published, and identity verified. */
 export function countsAsCoverage(asset: ProductMediaAsset): boolean {
+  // A record whose provenance claim does not hold is not coverage, it is a defect.
+  // Counting it would move the approved figure on the strength of an asset nobody
+  // could show, which is the same lie as the one the constructor refuses, told with
+  // a number instead of an image.
+  if (provenanceViolationIn(asset)) return false;
   if (asset.sourceType === "internal_placeholder") return false;
   if (asset.identityStatus !== "VERIFIED_EXACT_VARIANT") return false;
   return asset.publicStatus === "PUBLISHED" || asset.publicStatus === "APPROVED_NOT_PUBLISHED";
