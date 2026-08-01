@@ -6,6 +6,12 @@ import type { CareCapabilityStatus } from "@shared/care/contracts";
 import CareClinicianReviewQueuePage, {
   CARE_CLINICIAN_REVIEW_PATH,
 } from "./CareClinicianReviewQueuePage";
+import CareInstructionsPage, {
+  CARE_INSTRUCTIONS_PATH,
+} from "./CareInstructionsPage";
+import CareSuppliesPage, { CARE_SUPPLIES_PATH } from "./CareSuppliesPage";
+import CareMessagesPage, { CARE_MESSAGES_PATH } from "./CareMessagesPage";
+import CareSupportPage, { CARE_SUPPORT_PATH } from "./CareSupportPage";
 
 const preparation = [
   ["Eligibility", "Location, state coverage, identity, consent"],
@@ -31,6 +37,18 @@ export default function CareSection() {
   const [location] = useLocation();
   if (location === CARE_CLINICIAN_REVIEW_PATH) {
     return <CareClinicianReviewQueuePage />;
+  }
+  if (location === CARE_INSTRUCTIONS_PATH) {
+    return <CareInstructionsPage />;
+  }
+  if (location === CARE_SUPPLIES_PATH) {
+    return <CareSuppliesPage />;
+  }
+  if (location === CARE_MESSAGES_PATH) {
+    return <CareMessagesPage />;
+  }
+  if (location === CARE_SUPPORT_PATH) {
+    return <CareSupportPage />;
   }
   return <CarePendingShell />;
 }
