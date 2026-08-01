@@ -124,7 +124,12 @@ Unchanged and still owned by `server/research/commerce/routes.ts`:
 Without Supabase credentials, `resolvePartnerPortalPort()` returns the unconfigured port
 and every contract answers `404 partner_not_found`, which the pages render as their
 prepared-state copy. Nothing is fabricated and nothing half-works. This is asserted, not
-assumed, in the last test of `registration-readiness.test.ts`.
+assumed, in the last test of `registration-readiness.test.ts`, which now DELETES
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in a `beforeEach` (restoring them after) so
+the unconfigured precondition is established by the test rather than inherited from the
+shell. Before that pin, the same test built the Supabase port in any environment carrying
+those variables and issued sixteen live queries, timing out at five seconds: green
+locally, a false blocker in a configured CI.
 
 With Supabase configured, the reads are live against tables that already exist in the
 shipped schema. Three surfaces stay honestly empty because the schema has no table behind

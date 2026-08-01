@@ -42,7 +42,7 @@
 
 import express, { type NextFunction, type Request, type Response } from "express";
 import request from "supertest";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PARTNER_API } from "@/research/adapters/partner";
 import {
   PARTNER_LEDGERS,
@@ -186,6 +186,49 @@ const CONTRACTS: ReadonlyArray<readonly ["get" | "post", string]> = [
 ] as const;
 
 // ---------------------------------------------------------------------------
+// The unconfigured precondition, ESTABLISHED rather than inherited.
+//
+// Two blocks below call the real resolvePartnerPortalPort() / partnerSubmissionsEnabled(),
+// which read ambient env: server/supabase.ts supabaseConfigured() is
+// Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY). With those present the
+// Supabase-backed port is built instead, and this file starts making real outbound
+// calls:
+//
+//   * "answers partner_not_found honestly ... when Supabase is unconfigured" issues
+//     sixteen live queries and times out at 5s, so the file is a false CI blocker in
+//     any environment that carries those variables.
+//   * "mounts with the production dependency expression" fires one request as a side
+//     effect of construction alone: getSupabaseAdmin() runs its service-key self-test
+//     (GET /auth/v1/admin/users). It is fire-and-forget, so that test still passes,
+//     which is exactly why it needs pinning too. Its assertions hold under either
+//     port; the outbound call is the defect, not the expectations.
+//
+// Passing by inheriting an unconfigured shell is an accidental pass. The same
+// saved / deleted / restored pattern as partner-gateway-wall.test.ts:170-190 makes
+// the precondition a fact of the test.
+// ---------------------------------------------------------------------------
+
+const SUPABASE_KEYS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"] as const;
+const savedEnv: Partial<Record<(typeof SUPABASE_KEYS)[number], string>> = {};
+
+beforeEach(() => {
+  for (const key of SUPABASE_KEYS) {
+    const value = process.env[key];
+    if (value === undefined) delete savedEnv[key];
+    else savedEnv[key] = value;
+    delete process.env[key];
+  }
+});
+
+afterEach(() => {
+  for (const key of SUPABASE_KEYS) {
+    const value = savedEnv[key];
+    if (value === undefined) delete process.env[key];
+    else process.env[key] = value;
+  }
+});
+
+// ---------------------------------------------------------------------------
 // Mounting helpers.
 // ---------------------------------------------------------------------------
 
@@ -266,6 +309,15 @@ describe("the registration the release authority is being asked to make", () => 
     // The real resolvers, not a fixture. This is the line the packet asks for, so
     // if resolvePartnerPortalPort or partnerSubmissionsEnabled ever changes shape,
     // the packet is wrong and this fails before anyone edits the pinned seam.
+    //
+    // PINNED, do not "simplify" the beforeEach away. Every assertion here holds
+    // under either port, so this test looks environment-independent and is not:
+    // with SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY set, resolvePartnerPortalPort()
+    // builds the Supabase port, and getSupabaseAdmin()'s service-key self-test sends
+    // a real GET /auth/v1/admin/users. It is fire-and-forget, so the test still
+    // passes while the suite quietly talks to the network. The file-level beforeEach
+    // deletes those two variables, so what is exercised is the resolver's SHAPE and
+    // nothing leaves the process.
     const deps = productionDependencies();
     expect(typeof deps.port.findPartnerForMember).toBe("function");
     expect(typeof deps.submissionsEnabled).toBe("boolean");
@@ -524,10 +576,14 @@ describe("the request-style forms refuse honestly rather than reporting a false 
 
 describe("what the release authority will actually see on the first deploy", () => {
   it("answers partner_not_found honestly on every contract when Supabase is unconfigured", async () => {
-    // resolvePartnerPortalPort() returns the unconfigured port without Supabase
-    // credentials, which is the state of any environment that has not wired the
-    // database. Nothing is fabricated: every surface says the member owns no
-    // partner account, which the pages render as their prepared-state copy.
+    // The file-level beforeEach has DELETED SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY,
+    // so "unconfigured" is a fact this test establishes rather than a property of
+    // whatever shell it happens to run in. resolvePartnerPortalPort() therefore
+    // returns the unconfigured port, which is the state of any environment that has
+    // not wired the database. Nothing is fabricated: every surface says the member
+    // owns no partner account, which the pages render as their prepared-state copy.
+    // Nothing here reaches the network: with the credentials present this loop used
+    // to issue sixteen live queries and time out at five seconds.
     const app = mount({ port: resolvePartnerPortalPort(), submissionsEnabled: partnerSubmissionsEnabled() });
     for (const [method, path] of CONTRACTS) {
       const response = await send(app, method, path, ALICE_MEMBER);
