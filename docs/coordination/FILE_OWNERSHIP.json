@@ -565,6 +565,44 @@
       ]
     },
     {
+      "id": "OWNER-W2-P0-STRENGTH-IDENTITY-FREEZE",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/products-diagnostics/product-admin-errors.ts",
+        "server/research/products-diagnostics/product-admin-routes.ts",
+        "server/research/products-diagnostics/product-admin.ts",
+        "server/research/products-diagnostics/variant-strength-write-gate-sql.test.ts",
+        "server/research/products-diagnostics/variant-strength-write-gate.test.ts",
+        "server/research/products-diagnostics/variant-strength-write-gate.ts",
+        "supabase/migrations/20260801120000_research_variant_strength_write_gate.sql",
+        "supabase/verification/research-variant-strength-write-gate.verify.sql"
+      ]
+    },
+    {
+      "id": "OWNER-W2-P0-CARE-CLINICAL-WRITE-CHOKEPOINT",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/care/appointment-routes.test.ts",
+        "server/care/appointment-routes.ts",
+        "server/care/clinical-route-coverage.test.ts",
+        "server/care/clinical-write-gate.adversarial.test.ts",
+        "server/care/clinical-write-gate.test.ts",
+        "server/care/clinical-write-gate.ts",
+        "server/care/eligibility-routes.ts",
+        "server/care/intake-routes.test.ts",
+        "server/care/intake-routes.ts",
+        "server/care/prescription-routes.test.ts",
+        "server/care/prescription-routes.ts",
+        "server/care/review-routes.ts"
+      ]
+    },
+    {
       "id": "OWNER-W5-RESEARCH-APPLICATION-UI-COMPLETION",
       "owner": "Website 5",
       "lane": "research-application-ui-completion",
