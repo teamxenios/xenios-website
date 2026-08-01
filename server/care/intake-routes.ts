@@ -22,6 +22,23 @@ import {
   authorizeCareIntakeStart,
   validateCareIntakeResponses,
 } from "./intake";
+import {
+  lazyCareInstructionRepository,
+  lazyCareMessageRepository,
+  lazyCareSupplyRepository,
+  lazyCareSupportRepository,
+  type CareInstructionRepository,
+  type CareMessageRepository,
+  type CareSupplyRepository,
+  type CareSupportRepository,
+} from "./patient-services-repository";
+import {
+  registerCareDiscoveryApi,
+  registerCareInstructionApi,
+  registerCareMessageApi,
+  registerCareSupplyApi,
+  registerCareSupportApi,
+} from "./patient-services-routes";
 
 const idempotencyKey = z.string().trim().min(8).max(128);
 const startBody = z.object({ idempotencyKey }).strict();
@@ -99,6 +116,19 @@ export function registerCareIntakeApi(
   eligibilityRepository: CareEligibilityRepository,
   intakeRepository: CareIntakeRepository,
   now: () => Date = () => new Date(),
+  // The five patient service surfaces that had no handler: instructions,
+  // supplies, messages, support, and discovery. They are registered from this
+  // module because it is the patient-self registrar that is not itself a
+  // protected seam. The Care module index and the server entry point are both
+  // pinned, and registering through an existing registrar rather than editing
+  // one of them follows the precedent already set by the appointment registrar,
+  // which registers the clinician review routes the same way. The default
+  // repositories are lazy, so an unconfigured Supabase client cannot decide the
+  // outcome at boot.
+  instructionRepository: CareInstructionRepository = lazyCareInstructionRepository(),
+  supplyRepository: CareSupplyRepository = lazyCareSupplyRepository(),
+  messageRepository: CareMessageRepository = lazyCareMessageRepository(),
+  supportRepository: CareSupportRepository = lazyCareSupportRepository(),
 ) {
   app.get(
     CARE_ROUTE_CONTRACTS.intake,
@@ -284,4 +314,12 @@ export function registerCareIntakeApi(
       }
     },
   );
+
+  // The five surfaces that were previously declared with no handler. Each one
+  // owns a distinct path, so none of them can shadow an intake route above.
+  registerCareInstructionApi(app, access, instructionRepository);
+  registerCareSupplyApi(app, access, supplyRepository);
+  registerCareMessageApi(app, access, messageRepository, now);
+  registerCareSupportApi(app, access, supportRepository, now);
+  registerCareDiscoveryApi(app, access);
 }
