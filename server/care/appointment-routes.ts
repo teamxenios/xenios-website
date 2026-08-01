@@ -20,6 +20,7 @@ import {
   requireCareClinicalCapability,
   type CareClinicalWriteGateOptions,
 } from "./clinical-write-gate";
+import { toCareReviewListItem } from "./review-detail";
 import {
   lazyCareClinicianReviewRepository,
   type CareClinicianReviewRepository,
@@ -282,6 +283,25 @@ export function registerCareAppointmentApi(
     },
   );
 
+  // The assigned review list. Nonclinical, and now actually so.
+  //
+  // Until this change the handler returned `listAssignedReviews` straight out
+  // of the repository, which joins in `patient_id`, `assigned_clinician_user_id`,
+  // `patient_state_code`, `status`, `final_decision`, and
+  // `final_decision_source` (see REVIEW_COLUMNS and `asReview` in
+  // appointment-repository.ts). That is real patient content, and it was
+  // returned with `CARE_REAL_PATIENT_DATA` off, while the product told the
+  // clinician "Real patient data is turned off. This screen shows workflow
+  // state only." The route's own classification was false.
+  //
+  // `toCareReviewListItem` makes it true: the response now carries the review
+  // id, the workflow status, whether a decision exists, the version, and the
+  // timestamp, and drops every identifier and the decision source. No client
+  // consumes the dropped fields; the clinician screen reads
+  // /api/care/reviews/queue and /api/care/reviews/:reviewId, both of which are
+  // already projections. If a future caller genuinely needs the clinical
+  // fields, the answer is to mount `requireCareClinicalCapability` on
+  // `real_patient_data` here, not to widen the projection back out.
   app.get(
     CARE_ROUTE_CONTRACTS.reviews,
     requireCarePermission("care:review_assigned", access),
@@ -290,9 +310,10 @@ export function registerCareAppointmentApi(
       const clinicianUserId = principal(res)?.subjectId;
       if (!clinicianUserId) return safeFailure(res);
       try {
+        const reviews = await repository.listAssignedReviews(clinicianUserId);
         return res.json({
           ok: true,
-          reviews: await repository.listAssignedReviews(clinicianUserId),
+          reviews: reviews.map(toCareReviewListItem),
         });
       } catch {
         return safeFailure(res);

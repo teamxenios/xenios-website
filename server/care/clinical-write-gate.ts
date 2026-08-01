@@ -299,6 +299,17 @@ function actorFrom(res: Response): string | null {
 }
 
 /**
+ * The registry of middlewares this module actually built, and the operation
+ * each one gates.
+ *
+ * It is module private, has exactly one writer (`requireCareClinicalCapability`,
+ * below), and is keyed by the function object itself, so membership is proof of
+ * construction rather than proof of resemblance. Nothing outside this file can
+ * add an entry, which is the property the route coverage test depends on.
+ */
+const CARE_CLINICAL_GATES = new WeakMap<object, CareClinicalOperation>();
+
+/**
  * The Express chokepoint. Mount it directly after `requireCarePermission` on
  * every clinical route, so the order is: capability status, then principal and
  * permission, then the clinical capability flag, then the handler. The handler
@@ -347,11 +358,16 @@ export function requireCareClinicalCapability(
     });
   } as CareClinicalGateMiddleware;
 
-  // The route coverage test walks the registered Express stack and asks each
-  // handler which clinical operation it gates. Carrying the answer on the
-  // middleware itself means the test never has to match on a function name or
-  // a source string, so a clinical route registered without this gate is
-  // detected structurally rather than by convention.
+  // Identity, not a label. The middleware is recorded in the module-private
+  // registry above at the moment this factory builds it, and that record is
+  // what the coverage test reads back.
+  CARE_CLINICAL_GATES.set(middleware, operation);
+
+  // Kept as a readable tag for anyone inspecting a handler in a debugger or a
+  // stack dump. It is deliberately NOT what `careClinicalGateOperationOf`
+  // answers from: a plain property can be set by anything, and a look-alike
+  // middleware that set it would otherwise satisfy the coverage test while
+  // enforcing nothing.
   middleware.careClinicalOperation = operation;
   return middleware;
 }
@@ -369,13 +385,27 @@ export interface CareClinicalGateMiddleware {
  * Which clinical operation a registered Express handler gates, or null when the
  * handler is not the centralized gate. Used by the route coverage test to prove
  * that every clinical route goes through this one guard.
+ *
+ * The answer comes from `CARE_CLINICAL_GATES`, a module-private WeakMap that
+ * only `requireCareClinicalCapability` writes to, so it reports gate IDENTITY
+ * rather than a resemblance. This matters because the coverage test is the
+ * only thing standing between a newly added clinical route and an unprotected
+ * production endpoint: when the answer came from a `careClinicalOperation`
+ * property, a three line middleware that set that property and called `next()`
+ * satisfied the whole coverage suite while gating nothing at all. A forged
+ * marker now answers null, the route reads as ungated, and the classification
+ * case fails by name. The registry is not exported and has no writer other
+ * than the factory, so there is no way to enroll a handler the factory did not
+ * build.
  */
 export function careClinicalGateOperationOf(
   handler: unknown,
 ): CareClinicalOperation | null {
-  const operation = (handler as Partial<CareClinicalGateMiddleware> | null)
-    ?.careClinicalOperation;
-  return typeof operation === "string" && isKnownOperation(operation)
+  if (typeof handler !== "function" && (typeof handler !== "object" || handler === null)) {
+    return null;
+  }
+  const operation = CARE_CLINICAL_GATES.get(handler as object);
+  return operation !== undefined && isKnownOperation(operation)
     ? operation
     : null;
 }

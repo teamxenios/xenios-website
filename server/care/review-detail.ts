@@ -43,18 +43,55 @@ function consentComplete(consents: readonly CareConsentStatus[]): boolean {
   return consents.length > 0 && consents.every((consent) => consent.satisfied);
 }
 
+/**
+ * The narrowest review projection: only what can be derived from the review
+ * record itself, and nothing that would need a second lookup to be true.
+ *
+ * It exists because the assigned review LIST route has the review record and
+ * nothing else. Projecting that record through `toCareReviewQueueItem` would
+ * have to invent an appointment status, an intake state, and a consent answer
+ * out of absent data, and a projection that reports "intake missing" when it
+ * simply did not look is a worse defect than the one it fixes. So the list
+ * route gets the honest subset, and the queue route, which does load the rest,
+ * gets the full item.
+ *
+ * The type is a `Pick` of `CareReviewQueueItem` rather than a new shape, so it
+ * is a subset by construction and cannot drift into carrying a field the queue
+ * item does not have.
+ */
+export type CareReviewListItem = Pick<
+  CareReviewQueueItem,
+  "reviewId" | "status" | "decision" | "version" | "updatedAt"
+>;
+
+/**
+ * Workflow state only. The patient id, the assigned clinician identity, the
+ * patient state code, and the decision source are all dropped here, which is
+ * the whole point: the caller receives what it needs to render a work list and
+ * nothing that identifies a person or describes their care.
+ */
+export function toCareReviewListItem(
+  review: CareClinicianReview,
+): CareReviewListItem {
+  return {
+    reviewId: review.id,
+    status: review.status,
+    decision: review.finalDecision,
+    version: review.version,
+    updatedAt: review.updatedAt,
+  };
+}
+
 export function toCareReviewQueueItem(
   facts: CareReviewFacts,
 ): CareReviewQueueItem {
   return {
-    reviewId: facts.review.id,
-    status: facts.review.status,
-    decision: facts.review.finalDecision,
+    // Composed from the list item, so the two projections cannot disagree
+    // about the fields they share and the list item stays a strict subset.
+    ...toCareReviewListItem(facts.review),
     appointmentStatus: facts.appointment?.status ?? null,
     intakeState: careReviewIntakeState(facts.intake),
     consentComplete: consentComplete(facts.consents),
-    version: facts.review.version,
-    updatedAt: facts.review.updatedAt,
   };
 }
 
