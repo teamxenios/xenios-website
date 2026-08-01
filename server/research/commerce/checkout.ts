@@ -314,11 +314,19 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     // order would be created and could never settle. Refuse before anything is
     // reserved or charged. A fully credit-covered order owes nothing and needs
     // no instrument, so that case is deliberately allowed through.
+    //
+    // The credit subtracted here is the SERVER's, read from the member's ledger
+    // by the cart, and it is the same number the charge is reduced by below
+    // (`totalCents`, from cart.storeCreditAppliedCents). Using the request's
+    // applyStoreCreditCents instead would let a browser send a large enough
+    // number to drive this to zero and skip the instrument gate, while the
+    // charge still went out at the full amount, which is the exact failure
+    // GAP-001 was filed to prevent.
     const payableCents = Math.max(
       0,
       cart.subtotalCents +
         (quote === null ? 0 : orderShippingTotalCents([quote])) -
-        (req.applyStoreCreditCents ?? 0),
+        cart.storeCreditAppliedCents,
     );
     if (!req.paymentMethodReference && payableCents > 0) {
       denials.add("payment_method_required");
