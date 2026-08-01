@@ -194,3 +194,119 @@ export function screenPriceForApproval(
   }
   return screenVariantForPriceWrite(product, price.variantId);
 }
+
+/**
+ * Screen a VARIANT EDIT. This closes the hole that made the price gate above a
+ * check-at-write-time over a MUTABLE key, which an adversarial review defeated
+ * with two working exploits against the same admin auth the price gate refuses:
+ *
+ *   EXPLOIT A  price a clean variant, approve it, then updateVariant it onto the
+ *              disputed SKU. No price row is written, so the price gate and the
+ *              SQL price trigger never re-fire, and an approved price now sits
+ *              on a contested unit.
+ *
+ *   EXPLOIT B  the worse one. The price gate refuses the disputed variant, so
+ *              rename only its SKU. findVariantStrengthDispute then returns null
+ *              for the renamed unit while the contested physical strength is
+ *              unchanged, and BOTH the write gate and the read resolver go
+ *              blind. An active, servable price on a contested unit with nothing
+ *              left to catch it.
+ *
+ * Two rules, and rule 1 is the one that matters:
+ *
+ *   1. YOU CANNOT EDIT YOUR WAY OUT OF A DISPUTE. If the variant is contested
+ *      TODAY, its sku, catalogNumber and strength are frozen. Only a named human
+ *      resolving the presentation clears it, which is exactly what the owner
+ *      decision requires. Renaming is not resolution.
+ *
+ *   2. YOU CANNOT EDIT YOUR WAY INTO ONE. If the edit would land the variant on
+ *      a contested presentation, it is refused, so a priced clean variant cannot
+ *      be walked onto a disputed identity.
+ *
+ * Fields that cannot change the dispute answer (title, status, active, price
+ * fields) are untouched by this screen: it only refuses when the identity
+ * triple would move, or when the result would be contested.
+ */
+export function screenVariantEdit(
+  product: AdminProductDetail | null,
+  variantId: string,
+  update: {
+    sku?: string | null;
+    catalogNumber?: string | null;
+    strength?: string | null;
+  },
+): VariantStrengthWriteRefusal | null {
+  if (product === null || !product.id.trim()) {
+    return unresolved("the product record could not be read.");
+  }
+  const wanted = variantId.trim();
+  if (!wanted) {
+    return unresolved("the update names no variant.");
+  }
+  const matches = product.variants.filter((variant) => variant.id === wanted);
+  if (matches.length !== 1) {
+    return unresolved(
+      matches.length === 0
+        ? "no variant with the requested id belongs to this product."
+        : "more than one variant of this product claims the requested id.",
+    );
+  }
+  const current = matches[0];
+  if (current.productId !== product.id) {
+    return unresolved("the requested variant belongs to a different product.");
+  }
+
+  // An explicit null is a CLEAR, which is a change, not "leave alone". Only
+  // undefined means the field was not in the update.
+  const nextOr = (given: string | null | undefined, currentValue: string | null | undefined) =>
+    given === undefined ? (currentValue ?? "").trim() : (given ?? "").trim();
+  const touchesIdentity =
+    nextOr(update.sku, current.sku) !== (current.sku ?? "").trim() ||
+    nextOr(update.strength, current.strength) !== (current.strength ?? "").trim() ||
+    nextOr(update.catalogNumber, current.catalogNumber) !==
+      (current.catalogNumber ?? "").trim();
+
+  // RULE 1. Frozen while contested. Checked BEFORE the result, because after a
+  // rename the result screens clean and that is precisely the evasion.
+  if (touchesIdentity && current.sku.trim()) {
+    const existing = findVariantStrengthDispute({
+      sku: current.sku,
+      catalogNumber: current.catalogNumber,
+      strength: current.strength,
+    });
+    if (existing !== null) {
+      return {
+        code: "variant_strength_disputed",
+        reason:
+          describeVariantStrengthDispute(existing) +
+          " Its SKU, catalogue number and strength are frozen until that is " +
+          "resolved: renaming the unit is not resolving the dispute.",
+        dispute: existing,
+      };
+    }
+  }
+
+  if (!touchesIdentity) return null;
+
+  // RULE 2. Cannot move onto a contested presentation.
+  const nextSku = nextOr(update.sku, current.sku);
+  if (!nextSku) {
+    return unresolved(
+      "the update would leave the variant with no SKU, so it could not be " +
+        "matched against the founder-locked catalog.",
+    );
+  }
+  const resulting = findVariantStrengthDispute({
+    sku: nextSku,
+    catalogNumber: nextOr(update.catalogNumber, current.catalogNumber) || null,
+    strength: nextOr(update.strength, current.strength),
+  });
+  if (resulting === null) return null;
+  return {
+    code: "variant_strength_disputed",
+    reason:
+      describeVariantStrengthDispute(resulting) +
+      " This edit would move the variant onto that contested presentation.",
+    dispute: resulting,
+  };
+}

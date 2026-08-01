@@ -31,6 +31,7 @@ import {
 } from "./product-admin-errors";
 import {
   screenPriceForApproval,
+  screenVariantEdit,
   screenVariantForPriceWrite,
   type VariantStrengthWriteRefusal,
 } from "./variant-strength-write-gate";
@@ -755,14 +756,40 @@ export class ProductAdminService {
     return this.idempotency.run(
       `product_admin.update_variant.${variant}`,
       requiredText(idempotencyKey, "idempotencyKey", 200),
-      () =>
-        this.repository.updateVariant(
+      async () => {
+        // The price gate alone was a check-at-write-time over a MUTABLE key.
+        // An adversarial review defeated it with two exploits that never write
+        // a price row at all, so neither the price gate nor the SQL price
+        // trigger re-fires: walk a priced variant ONTO a disputed SKU, or
+        // rename a disputed variant so both the write gate and the read
+        // resolver stop recognising it while the contested strength stands.
+        // Screening the edit itself is what makes the invariant hold.
+        // Only an edit that touches the identity triple can change the dispute
+        // answer, so a lifecycle-only update (status, active, title) neither
+        // runs the screen nor pays for the extra product read. This is not a
+        // loosening: sku, catalogNumber and strength are the only inputs
+        // findVariantStrengthDispute reads.
+        const touchesIdentity =
+          normalized.sku !== undefined ||
+          normalized.catalogNumber !== undefined ||
+          normalized.strength !== undefined;
+        if (touchesIdentity) {
+          refusePriceWrite(
+            screenVariantEdit(await this.repository.get(product), variant, {
+              sku: normalized.sku,
+              catalogNumber: normalized.catalogNumber,
+              strength: normalized.strength,
+            }),
+          );
+        }
+        return this.repository.updateVariant(
           product,
           variant,
           normalized,
           requiredText(actor, "actor", 320),
           this.now(),
-        ),
+        );
+      },
     );
   }
 

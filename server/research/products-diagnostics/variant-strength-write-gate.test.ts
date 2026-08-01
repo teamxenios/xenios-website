@@ -29,6 +29,7 @@ import { registerProductAdminApi } from "./product-admin-routes";
 import { recordedVariantStrengthDisputes } from "./variant-strength-dispute";
 import {
   screenPriceForApproval,
+  screenVariantEdit,
   screenVariantForPriceWrite,
 } from "./variant-strength-write-gate";
 
@@ -427,5 +428,100 @@ describe("the refusal reaches the operator through the API", () => {
       dispute.founderLocked.presentation,
     );
     expect(String(response.body.message)).toContain(dispute.sku);
+  });
+});
+
+describe("the two exploits an adversarial review used to defeat the price gate", () => {
+  // The price gate alone was a check-at-write-time over a MUTABLE key. Both of
+  // these were driven end to end through the real service and SUCCEEDED before
+  // screenVariantEdit existed. Neither writes a price row, so neither the price
+  // gate nor the SQL price trigger ever re-fires.
+
+  it("EXPLOIT A: cannot walk a priced clean variant ONTO a disputed SKU", () => {
+    const dispute = DISPUTED[0];
+    const clean = undisputedCatalogVariant();
+    const record = detail({
+      variants: [variant({ id: "variant-1", sku: clean.sku, strength: clean.strength })],
+    });
+
+    // The original attack: price and approve on the clean SKU (allowed, correct),
+    // then rename the variant onto the disputed SKU.
+    expect(screenVariantForPriceWrite(record, "variant-1")).toBeNull();
+
+    const refusal = screenVariantEdit(record, "variant-1", { sku: dispute.sku });
+    expect(refusal).not.toBeNull();
+    expect(refusal!.code).toBe("variant_strength_disputed");
+    expect(refusal!.reason).toContain(dispute.sku);
+  });
+
+  it("EXPLOIT B: cannot rename a disputed variant to escape the guard", () => {
+    const dispute = DISPUTED[0];
+    const record = detail({
+      variants: [variant({ id: "variant-1", sku: dispute.sku })],
+    });
+
+    // The gate correctly refuses the price today.
+    const priceRefusal = screenVariantForPriceWrite(record, "variant-1");
+    expect(priceRefusal).not.toBeNull();
+    expect(priceRefusal!.code).toBe("variant_strength_disputed");
+
+    // The evasion was a single rename: findVariantStrengthDispute then returns
+    // null for the renamed unit while the contested physical strength stands,
+    // blinding BOTH the write gate and the read resolver. Renaming is not
+    // resolving, so the identity triple is frozen while the dispute stands.
+    const renamed = screenVariantEdit(record, "variant-1", {
+      sku: "R360-RENAMED-TO-ESCAPE-VIAL",
+    });
+    expect(renamed).not.toBeNull();
+    expect(renamed!.code).toBe("variant_strength_disputed");
+    expect(renamed!.reason).toContain("renaming the unit is not resolving the dispute");
+  });
+
+  it("also freezes the strength and catalogue number, not just the SKU", () => {
+    const dispute = DISPUTED[0];
+    const record = detail({ variants: [variant({ id: "variant-1", sku: dispute.sku })] });
+    for (const update of [
+      { strength: "1 mg" },
+      { catalogNumber: "CN-REWRITTEN" },
+      { sku: "R360-OTHER-VIAL", strength: "1 mg" },
+    ]) {
+      const refusal = screenVariantEdit(record, "variant-1", update);
+      expect(refusal).not.toBeNull();
+      expect(refusal!.code).toBe("variant_strength_disputed");
+    }
+  });
+
+  it("does NOT refuse an edit that leaves the identity triple alone", () => {
+    // A lifecycle or labelling change cannot alter the dispute answer, so it
+    // must still pass. This is the assertion that keeps the gate from becoming
+    // an unusable blanket refusal on a disputed variant.
+    const dispute = DISPUTED[0];
+    const record = detail({ variants: [variant({ id: "variant-1", sku: dispute.sku })] });
+    expect(screenVariantEdit(record, "variant-1", {})).toBeNull();
+  });
+
+  it("does NOT refuse an ordinary rename of an undisputed variant", () => {
+    const clean = undisputedCatalogVariant();
+    const record = detail({
+      variants: [variant({ id: "variant-1", sku: clean.sku, strength: clean.strength })],
+    });
+    expect(
+      screenVariantEdit(record, "variant-1", { sku: "SKU-OUTSIDE-CATALOG-RENAMED" }),
+    ).toBeNull();
+  });
+
+  it("fails closed when the edit targets a variant it cannot resolve", () => {
+    const record = detail({ variants: [variant({ id: "variant-1" })] });
+    for (const [id, update] of [
+      ["", { sku: "X" }],
+      ["variant-missing", { sku: "X" }],
+    ] as const) {
+      const refusal = screenVariantEdit(record, id, update);
+      expect(refusal).not.toBeNull();
+      expect(refusal!.code).toBe("variant_identity_unresolved");
+    }
+    expect(screenVariantEdit(null, "variant-1", { sku: "X" })!.code).toBe(
+      "variant_identity_unresolved",
+    );
   });
 });
