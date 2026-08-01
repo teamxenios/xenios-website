@@ -349,3 +349,168 @@ on conflict (sku_key) do update set
   founder_locked_strength = excluded.founder_locked_strength,
   supplier_master_strength = excluded.supplier_master_strength,
   recorded_at = now();
+
+-- ---------------------------------------------------------------------------
+-- R2. THE VARIANT-SIDE GATE.
+--
+-- The price trigger above is necessary and NOT sufficient. An adversarial audit
+-- established that public.research_admin_update_product_variant is SECURITY
+-- DEFINER, is granted to service_role, assigns sku, catalog_number and strength
+-- with no dispute screen (20260726143000:50-53), and that there was NO trigger
+-- of any kind on public.research_product_variants. So a caller holding the
+-- service role reaches an active price on a contested unit in three ordinary
+-- RPC calls, writing NOTHING to research_product_prices, which means the price
+-- trigger never fires:
+--
+--   1. research_admin_create_product_price   on a genuinely clean variant  -> draft
+--   2. research_admin_approve_product_price  same clean variant            -> active
+--   3. research_admin_update_product_variant '{"strength":"5 mg"}'         -> now contested,
+--                                                                            price still active
+--
+-- Substituting the disputed SKU in step 3 lands it on a recorded dispute
+-- instead. The application layer refuses both (screenVariantEdit), but an RPC
+-- caller does not pass through the application layer, which is the entire
+-- reason this file exists.
+--
+-- The same two rules the application enforces, mirrored here so the database is
+-- authoritative:
+--   RULE 1  frozen while contested. If the row is disputed BEFORE the edit, its
+--           sku, catalog_number and strength may not change. Renaming is not
+--           resolving; only a named human resolving the presentation clears it.
+--           Checked FIRST, because after a rename the resulting row screens
+--           clean and that is precisely the evasion.
+--   RULE 2  cannot move INTO a dispute. If the row would be contested AFTER the
+--           edit, the edit is refused.
+--
+-- Scoped exactly like the application screen: an update that does not touch the
+-- identity triple runs no check at all, so lifecycle, ordering and labelling
+-- edits are unaffected.
+-- ---------------------------------------------------------------------------
+
+create or replace function public.research_variant_strength_triple_dispute_reason(
+  p_sku text,
+  p_catalog_number text,
+  p_strength text
+)
+returns text
+language plpgsql
+stable
+security definer
+set search_path = pg_catalog
+as $triple_reason$
+declare
+  v_locked public.research_catalog_founder_locked_variant%rowtype;
+  v_sku_key text;
+  v_catalog_key text;
+begin
+  -- An unseeded registry proves nothing, so it refuses everything.
+  if not exists (
+    select 1 from public.research_catalog_founder_locked_variant
+  ) then
+    return 'variant_strength_registry_unavailable: the founder-locked '
+      || 'presentation registry holds no rows, so no unit can be proven '
+      || 'undisputed.';
+  end if;
+
+  v_sku_key := public.research_normalize_sku_key(p_sku);
+  v_catalog_key := public.research_normalize_sku_key(p_catalog_number);
+  if v_sku_key = '' then
+    return 'variant_identity_unresolved: the edit would leave the variant '
+      || 'with no SKU, so it could not be matched against the founder-locked '
+      || 'catalog.';
+  end if;
+
+  select * into v_locked
+  from public.research_catalog_founder_locked_variant
+  where sku_key in (v_sku_key, v_catalog_key)
+    and supplier_master_strength is not null
+  order by (sku_key <> v_sku_key)
+  limit 1;
+  if found then
+    return format(
+      'variant_strength_disputed: variant %s (%s) has a contested strength. '
+      || 'The founder-locked catalog records "%s" and the signed supplier '
+      || 'master records "%s". A named human must resolve the presentation '
+      || 'before this unit can carry a price.',
+      v_locked.sku, v_locked.product_code,
+      v_locked.founder_locked_strength, v_locked.supplier_master_strength
+    );
+  end if;
+
+  if btrim(coalesce(p_strength, '')) <> '' then
+    select * into v_locked
+    from public.research_catalog_founder_locked_variant
+    where sku_key in (v_sku_key, v_catalog_key)
+      and public.research_normalize_presentation_key(founder_locked_strength)
+          <> public.research_normalize_presentation_key(p_strength)
+    order by (sku_key <> v_sku_key)
+    limit 1;
+    if found then
+      return format(
+        'variant_strength_disputed: variant %s (%s) contradicts the '
+        || 'founder-locked catalog. The founder-locked catalog records "%s" '
+        || 'and the edit records "%s". A named human must resolve the '
+        || 'presentation before this unit can carry a price.',
+        v_locked.sku, v_locked.product_code,
+        v_locked.founder_locked_strength, p_strength
+      );
+    end if;
+  end if;
+
+  return null;
+end;
+$triple_reason$;
+
+create or replace function public.research_product_variant_strength_gate()
+returns trigger
+language plpgsql
+security definer
+set search_path = pg_catalog
+as $variant_gate$
+declare
+  v_reason text;
+  v_touches boolean;
+begin
+  v_touches :=
+    coalesce(new.sku, '') is distinct from coalesce(old.sku, '')
+    or coalesce(new.catalog_number, '') is distinct from coalesce(old.catalog_number, '')
+    or coalesce(new.strength, '') is distinct from coalesce(old.strength, '');
+
+  if not v_touches then
+    return new;
+  end if;
+
+  -- RULE 1. Frozen while contested. Evaluated on the OLD row, before the edit.
+  v_reason := public.research_variant_strength_triple_dispute_reason(
+    old.sku, old.catalog_number, old.strength
+  );
+  if v_reason is not null then
+    raise exception
+      'research product variant refused: % Its SKU, catalogue number and '
+      || 'strength are frozen until that is resolved: renaming the unit is '
+      || 'not resolving the dispute.', v_reason
+      using errcode = 'check_violation';
+  end if;
+
+  -- RULE 2. Cannot move onto a contested presentation.
+  v_reason := public.research_variant_strength_triple_dispute_reason(
+    new.sku, new.catalog_number, new.strength
+  );
+  if v_reason is not null then
+    raise exception
+      'research product variant refused: % This edit would move the variant '
+      || 'onto that contested presentation.', v_reason
+      using errcode = 'check_violation';
+  end if;
+
+  return new;
+end;
+$variant_gate$;
+
+drop trigger if exists research_product_variants_strength_gate
+  on public.research_product_variants;
+
+create trigger research_product_variants_strength_gate
+  before update on public.research_product_variants
+  for each row
+  execute function public.research_product_variant_strength_gate();

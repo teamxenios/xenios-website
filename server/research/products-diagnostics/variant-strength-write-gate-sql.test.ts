@@ -297,3 +297,50 @@ describe("the SQL enforcement is shaped the way a price gate must be", () => {
     }
   });
 });
+
+describe("R2: the variant-side trigger, which the price trigger alone did not cover", () => {
+  // An adversarial audit established that research_admin_update_product_variant is
+  // SECURITY DEFINER, granted to service_role, assigns sku/catalog_number/strength
+  // with no screen, and that NO trigger existed on research_product_variants. So a
+  // service-role caller reached an active price on a contested unit in three RPC
+  // calls while writing nothing to research_product_prices, meaning the price
+  // trigger never fired. These assertions pin the closure.
+
+  it("declares a BEFORE UPDATE row trigger on research_product_variants", () => {
+    expect(SQL).toContain("create trigger research_product_variants_strength_gate");
+    expect(SQL).toContain("before update on public.research_product_variants");
+    expect(SQL).toContain("for each row");
+  });
+
+  it("checks the OLD row first, so a rename cannot screen itself clean", () => {
+    const gate = SQL.slice(SQL.indexOf("$variant_gate$"));
+    const rule1 = gate.indexOf("old.sku, old.catalog_number, old.strength");
+    const rule2 = gate.indexOf("new.sku, new.catalog_number, new.strength");
+    expect(rule1).toBeGreaterThan(-1);
+    expect(rule2).toBeGreaterThan(-1);
+    // Order is the whole defence: after a rename the NEW triple screens clean.
+    expect(rule1).toBeLessThan(rule2);
+  });
+
+  it("runs no check when the identity triple is untouched", () => {
+    expect(SQL).toContain("if not v_touches then");
+    expect(SQL).toContain("coalesce(new.sku, '') is distinct from coalesce(old.sku, '')");
+  });
+
+  it("refuses with check_violation so the RPC surfaces it as a constraint failure", () => {
+    const gate = SQL.slice(SQL.indexOf("$variant_gate$"));
+    expect((gate.match(/errcode = 'check_violation'/g) ?? []).length).toBe(2);
+  });
+
+  it("fails closed on an unseeded registry and on a cleared SKU", () => {
+    const fn = SQL.slice(SQL.indexOf("$triple_reason$"));
+    expect(fn).toContain("variant_strength_registry_unavailable");
+    expect(fn).toContain("the edit would leave the variant");
+  });
+
+  it("adds no destructive statement", () => {
+    expect(SQL).not.toMatch(/drop table/i);
+    expect(SQL).not.toMatch(/truncate/i);
+    expect(SQL).not.toMatch(/delete from/i);
+  });
+});
