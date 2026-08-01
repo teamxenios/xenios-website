@@ -344,3 +344,36 @@ describe("R2: the variant-side trigger, which the price trigger alone did not co
     expect(SQL).not.toMatch(/delete from/i);
   });
 });
+
+describe("R3: the registry the gate consults is not writable by the application role", () => {
+  // The whole SQL gate reads research_catalog_founder_locked_variant. If the role
+  // the application runs as can write it, one statement blinds the gate for every
+  // unit and both triggers then pass every contested variant:
+  //   update public.research_catalog_founder_locked_variant
+  //      set supplier_master_strength = null;
+  //
+  // FORCE ROW LEVEL SECURITY does not cover this, because service_role bypasses
+  // row security. That is the same reason 20260729100000_research_rls_retro_hardening
+  // exists, and that file states at :24 that it deliberately never touches the
+  // server role grants. So this table has to revoke it explicitly.
+
+  it("revokes ALL from service_role, not only from the browser roles", () => {
+    expect(SQL).toContain(
+      "from public, anon, authenticated, service_role;",
+    );
+  });
+
+  it("re-grants SELECT and nothing more", () => {
+    const block = SQL.slice(
+      SQL.indexOf("revoke all on table public.research_catalog_founder_locked_variant"),
+      SQL.indexOf("create index if not exists research_catalog_founder_locked_variant_disputed_idx"),
+    );
+    expect(block).toContain("grant select on table public.research_catalog_founder_locked_variant");
+    // No write privilege may be handed back anywhere in that block.
+    expect(block).not.toMatch(/grant\s+(insert|update|delete|all)/i);
+  });
+
+  it("still forces row level security, as defence in depth for non-bypassing roles", () => {
+    expect(SQL).toContain("force row level security");
+  });
+});

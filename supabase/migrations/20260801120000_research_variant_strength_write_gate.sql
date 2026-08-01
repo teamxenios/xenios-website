@@ -85,8 +85,31 @@ alter table public.research_catalog_founder_locked_variant
   enable row level security;
 alter table public.research_catalog_founder_locked_variant
   force row level security;
+-- R3. service_role IS IN THIS REVOKE ON PURPOSE.
+--
+-- An audit raised, and reading this block confirmed, that revoking only from
+-- public/anon/authenticated leaves service_role holding whatever write grants
+-- Supabase gave the table at creation. 20260729100000_research_rls_retro_hardening
+-- documents exactly that failure mode: Supabase grants defaults at creation, and
+-- its own post-apply verification found pre-existing default TRUNCATE, REFERENCES
+-- and TRIGGER grants that a later migration had to remove. That file also states
+-- at :24 that it deliberately never touches the server role grants.
+--
+-- FORCE ROW LEVEL SECURITY above does not cover this: service_role bypasses row
+-- security, which is the same reason the hardening migration exists.
+--
+-- This registry is the single source of truth the whole gate consults. If the
+-- role that runs the application can write it, one statement blinds the gate for
+-- every unit:
+--     update public.research_catalog_founder_locked_variant
+--        set supplier_master_strength = null;
+-- after which every contested unit screens clean and both triggers pass it.
+--
+-- Nothing legitimate needs that write. The migration seeds the table as the
+-- migration owner, not as service_role, and every gate function is SECURITY
+-- DEFINER so it reads as the definer. service_role needs SELECT and nothing more.
 revoke all on table public.research_catalog_founder_locked_variant
-  from public, anon, authenticated;
+  from public, anon, authenticated, service_role;
 grant select on table public.research_catalog_founder_locked_variant
   to service_role;
 
