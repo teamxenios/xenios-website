@@ -43,10 +43,35 @@ function notFound(res: Response) {
 /**
  * The clinician review read surface.
  *
- * Both routes sit behind `care:review_assigned`, so an anonymous visitor gets
- * 401 and a member or any other role gets 403 before a repository is touched.
- * The responses are workflow projections only: no patient identifier, no
- * clinician identity, no intake answer, and no clinical content.
+ * REGISTRATION. This module IS reachable at runtime. `server/index.ts` does not
+ * call it directly, so it is easy to read the wiring and conclude it is inert;
+ * it is not. `registerCareAppointmentApi` calls
+ * `registerCareClinicianReviewApi(app, access, reviewRepository)` as its last
+ * statement, and `server/index.ts` calls `registerCareAppointmentApi`. Both
+ * routes below are therefore mounted on the production app, and
+ * `readCareClinicalCapabilityFlags` reaching this file through
+ * `careReviewActionStates` is a live call, not dead code. Never annotate this
+ * module as unregistered without first checking appointment-routes.ts.
+ * `clinical-route-coverage.test.ts` asserts the registration path holds.
+ *
+ * CLASSIFICATION. Both routes sit behind `care:review_assigned`, so an
+ * anonymous visitor gets 401 and a member or any other role gets 403 before a
+ * repository is touched. Neither is gated on a clinical capability because
+ * neither returns clinical content: `toCareReviewQueueItem` and
+ * `toCareReviewDetail` project workflow state only (status, decision presence,
+ * intake state, consent satisfaction, versions, timestamps), dropping the
+ * patient id, the clinician identity, the state code, and every intake answer.
+ * The `actions` payload reports the capability state truthfully rather than
+ * acting on it.
+ *
+ * OBLIGATION. Any route added to this module that reads or writes real clinical
+ * content, or that carries a clinical effect, MUST mount
+ * `requireCareClinicalCapability` from `./clinical-write-gate` in the SAME
+ * change, directly after `requireCarePermission`. This is enforced, not merely
+ * asked for: `clinical-route-coverage.test.ts` enumerates every route this
+ * module registers and fails on any route it does not already know, so a new
+ * route cannot land until it is classified as clinical (gated) or nonclinical
+ * (with the reason recorded).
  */
 export function registerCareClinicianReviewApi(
   app: Express,

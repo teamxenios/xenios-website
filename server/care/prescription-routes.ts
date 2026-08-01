@@ -58,9 +58,10 @@ const safe = (res: Response) => sendCareTemporarilyUnavailable(res);
 /**
  * Clinical classification of this module.
  *
- * Every write here is clinical, and every read here returns real prescription
- * content, so all of them are gated:
+ * Two reads return real prescription content and every write is clinical, so
+ * eight of the nine routes are gated:
  *   GET  /prescriptions                                 real_patient_data
+ *   GET  /pharmacy/orders                               real_patient_data
  *   POST /prescriptions                                 prescribing
  *   POST /prescriptions/:id/sign                        prescribing
  *   POST /pharmacy/admin/prescriptions/:id/assign       clinical_fulfillment
@@ -70,10 +71,20 @@ const safe = (res: Response) => sendCareTemporarilyUnavailable(res);
  *   POST /pharmacy/admin/orders/:id/clarification/resolve
  *                                                       clinical_fulfillment
  *
+ * `GET /pharmacy/orders` is gated on `real_patient_data` because it returns
+ * real clinical content, not merely workflow state. `listAssignedPharmacyOrders`
+ * selects ORDER_COLUMNS, which joins `care_prescriptions` to
+ * `care_prescription_content_sources`, and `asOrder` attaches the joined
+ * formulation, concentration, route, quantity, directions, and refills to each
+ * order as `prescriptionContent`. That is the same clinical field set that
+ * gates `GET /prescriptions`, so it is gated on the same capability. An earlier
+ * revision of this comment claimed the worklist carried no clinical content;
+ * that claim was wrong, and the route was ungated on the strength of it.
+ *
  * Not gated:
- *   GET  /pharmacy/orders           the assigned fulfillment worklist, which is
- *                                   workflow state and carries no clinical content
- *   GET  /pharmacy/admin/readiness  a deployment readiness projection
+ *   GET  /pharmacy/admin/readiness  a deployment readiness projection, built
+ *                                   from verification booleans only and holding
+ *                                   no patient identifier and no clinical field
  */
 export function registerCarePrescriptionApi(
   app: Express,
@@ -182,6 +193,10 @@ export function registerCarePrescriptionApi(
   app.get(
     `${CARE_ROUTE_CONTRACTS.pharmacy}/orders`,
     requireCarePermission("care:pharmacy_assigned", access),
+    // Clinical. Each order in this worklist carries the prescription content it
+    // is to be dispensed against, so this read is gated exactly as the patient
+    // prescription read is.
+    requireCareClinicalCapability("pharmacy.read_orders", gate),
     async (_req, res) => {
       res.set("Cache-Control", "no-store");
       const operatorUserId = principal(res)?.subjectId;

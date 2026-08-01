@@ -45,6 +45,7 @@ export const CARE_CLINICAL_OPERATIONS = [
   // Reads that would return a real person's clinical content.
   "intake.read",
   "prescription.read_self",
+  "pharmacy.read_orders",
   // Clinician and patient clinical writes.
   "intake.start",
   "intake.autosave",
@@ -73,6 +74,12 @@ const OPERATION_CAPABILITY: Readonly<
 > = {
   "intake.read": "real_patient_data",
   "prescription.read_self": "real_patient_data",
+  // The assigned fulfillment worklist. Each order carries the prescription
+  // content it is to be dispensed against (formulation, concentration, route,
+  // quantity, directions, refills), joined in by the repository, so this read
+  // returns the same clinical field set as the patient prescription read and
+  // is gated on the same capability.
+  "pharmacy.read_orders": "real_patient_data",
   "intake.start": "real_patient_data",
   "intake.autosave": "real_patient_data",
   "intake.submit": "real_patient_data",
@@ -177,7 +184,14 @@ export function evaluateCareClinicalWrite(
   }
 
   // A capability that is absent from the flag object is treated as off, so a
-  // partially built flag object cannot open a gate.
+  // partially built flag object cannot open a gate. The check is on an OWN
+  // property and against the boolean `true` exactly, so a value inherited
+  // through the prototype chain cannot open a gate either: neither a polluted
+  // `Object.prototype` nor a flag object built with `Object.create` can make
+  // this return allowed, and no truthy-but-not-true value ("true", 1, {}) can.
+  if (!Object.prototype.hasOwnProperty.call(flags, capability)) {
+    return refuse("capability_disabled", capability);
+  }
   if (flags[capability] !== true) {
     return refuse("capability_disabled", capability);
   }
@@ -300,8 +314,12 @@ export function requireCareClinicalCapability(
   operation: CareClinicalOperation,
   options: CareClinicalWriteGateOptions = {},
   reviewActionFrom: (req: Request) => unknown = () => null,
-) {
-  return (req: Request, res: Response, next: NextFunction) => {
+): CareClinicalGateMiddleware {
+  const middleware = function careClinicalCapabilityGate(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     const reviewAction = reviewActionFrom(req);
     const flags = (options.readFlags ?? readCareClinicalCapabilityFlags)();
     const decision = evaluateCareClinicalWrite({ operation, reviewAction }, flags);
@@ -327,7 +345,39 @@ export function requireCareClinicalCapability(
       capability: decision.capability,
       message: CARE_CLINICAL_REFUSED_MESSAGE,
     });
-  };
+  } as CareClinicalGateMiddleware;
+
+  // The route coverage test walks the registered Express stack and asks each
+  // handler which clinical operation it gates. Carrying the answer on the
+  // middleware itself means the test never has to match on a function name or
+  // a source string, so a clinical route registered without this gate is
+  // detected structurally rather than by convention.
+  middleware.careClinicalOperation = operation;
+  return middleware;
+}
+
+/**
+ * The Express middleware `requireCareClinicalCapability` returns, tagged with
+ * the operation it gates.
+ */
+export interface CareClinicalGateMiddleware {
+  (req: Request, res: Response, next: NextFunction): unknown;
+  careClinicalOperation: CareClinicalOperation;
+}
+
+/**
+ * Which clinical operation a registered Express handler gates, or null when the
+ * handler is not the centralized gate. Used by the route coverage test to prove
+ * that every clinical route goes through this one guard.
+ */
+export function careClinicalGateOperationOf(
+  handler: unknown,
+): CareClinicalOperation | null {
+  const operation = (handler as Partial<CareClinicalGateMiddleware> | null)
+    ?.careClinicalOperation;
+  return typeof operation === "string" && isKnownOperation(operation)
+    ? operation
+    : null;
 }
 
 /** Exported for the route table test, so the map cannot drift silently. */

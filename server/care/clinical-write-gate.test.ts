@@ -243,6 +243,40 @@ describe("Care clinical write chokepoint", () => {
     expect(h.prescriptions.listPatientPrescriptions).not.toHaveBeenCalled();
   });
 
+  // 1b. The pharmacy worklist read. This route was ungated on the strength of
+  // a comment claiming it carried no clinical content. It does: the repository
+  // joins the prescription content source into every order, so an operator
+  // holding only `pharmacy_operations` received real formulation and directions
+  // from a deployment where GET /api/care/prescriptions answered 403.
+  it("refuses the pharmacy order worklist while real patient data is disabled, and returns no prescription content", async () => {
+    const h = harness(ALL_OFF, ["pharmacy_operations"], OPERATOR);
+    const response = await request(h.app).get("/api/care/pharmacy/orders");
+
+    expect(response.status).toBe(403);
+    expect(response.body.code).toBe(CARE_CLINICAL_REFUSED_CODE);
+    expect(response.body.capability).toBe("real_patient_data");
+    expect(h.prescriptions.listAssignedPharmacyOrders).not.toHaveBeenCalled();
+    expect(response.text).not.toContain("prescriptionContent");
+    expect(h.refusals.map((event) => event.operation)).toEqual([
+      "pharmacy.read_orders",
+    ]);
+  });
+
+  // 1c. The same deployment, the same flags: the two reads that return the same
+  // clinical field set must answer the same way. The defect was that they did
+  // not, and this is the assertion that keeps them aligned.
+  it("answers the pharmacy worklist and the patient prescription read identically while real patient data is disabled", async () => {
+    const operator = harness(ALL_OFF, ["pharmacy_operations"], OPERATOR);
+    const patient = harness(ALL_OFF, ["care_patient"], PATIENT);
+    const worklist = await request(operator.app).get("/api/care/pharmacy/orders");
+    const prescriptions = await request(patient.app).get("/api/care/prescriptions");
+
+    expect(worklist.status).toBe(prescriptions.status);
+    expect(worklist.body.code).toBe(prescriptions.body.code);
+    expect(worklist.body.capability).toBe(prescriptions.body.capability);
+    expect(worklist.body.capability).toBe("real_patient_data");
+  });
+
   // 2. Approve.
   it("refuses an approve decision while provider actions are disabled, and writes nothing", async () => {
     const h = harness(ALL_OFF);
