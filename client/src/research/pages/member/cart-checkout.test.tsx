@@ -319,6 +319,51 @@ function checkoutBodies(calls: RecordedCall[]): Array<Record<string, unknown>> {
 }
 
 describe("Checkout page", () => {
+  it.each([1440, 1024, 720, 375, 320])(
+    "keeps the address grid, labels, and focus reflow-safe at %ipx",
+    async (viewportWidth) => {
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: viewportWidth });
+    window.dispatchEvent(new Event("resize"));
+    const { view } = await renderCheckoutWithSubmit({
+      status: 403,
+      body: { ok: false, code: "commerce_disabled" },
+    });
+
+    const localityGrid = byTestId(view, "co-locality-grid");
+    expect(localityGrid.classList.contains("grid-cols-1")).toBe(true);
+    expect(localityGrid.classList.contains("md:grid-cols-[2fr_1fr_1fr]")).toBe(true);
+    expect(localityGrid.style.gridTemplateColumns).toBe("");
+
+    for (const [testId, id, label] of [
+      ["co-city", "co-city", "City"],
+      ["co-state", "co-state", "State"],
+      ["co-postal", "co-postal", "ZIP"],
+    ] as const) {
+      const input = byTestId<HTMLInputElement>(view, testId);
+      expect(view.querySelector(`label[for="${id}"]`)?.textContent).toContain(label);
+      expect(input.parentElement?.parentElement?.classList.contains("min-w-0")).toBe(true);
+      input.focus();
+      expect(document.activeElement).toBe(input);
+    }
+  });
+
+  it("announces incomplete-address validation and does not submit", async () => {
+    const calls = stubFetch([
+      { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: readyCart } },
+      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+    ]);
+    const view = await renderPage(<Checkout />);
+
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "co-submit").click();
+    });
+
+    const validation = byTestId(view, "co-validation");
+    expect(validation.getAttribute("role")).toBe("alert");
+    expect(validation.textContent).toContain("Fill in the shipping address");
+    expect(calls.some((call) => call.url === "/api/research/checkout")).toBe(false);
+  });
+
   it("renders the canonical commerce_disabled state and keeps the form values", async () => {
     const { view, calls } = await renderCheckoutWithSubmit({
       status: 403,
