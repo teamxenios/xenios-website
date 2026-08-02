@@ -4,12 +4,26 @@ import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
 import { FRAUD_ACTIONS, FRAUD_FLAG_REASONS } from "@shared/research/referral-types";
 import { applyFraudAction, openFraudFlag } from "./fraud";
+import { referralsEnabled } from "./referrals";
 
 // The referral fraud review queue admin API (V3 sections 64 and 71).
 // Every action requires an audit reason; the queue exposes internal state to
 // authenticated admins only and never to members.
+//
+// The authoritative capability gate lives in fraud.ts, not here: applyFraudAction
+// and openFraudFlag refuse on their own when RESEARCH_REFERRALS_ENABLED is not
+// exactly "true", so a caller that is not one of these routes cannot reach the
+// reward table or the credit ledger either. What these routes add is the HTTP
+// shape, 503 with code "referrals_disabled", matching how the rest of the
+// research admin surface reports a capability that is switched off.
 
 const FLAGS = "referral_fraud_flags";
+
+const REFERRALS_DISABLED_BODY = {
+  ok: false as const,
+  code: "referrals_disabled" as const,
+  message: "The referral program is disabled, so no referral reward or member credit action can be taken.",
+};
 
 export function registerReferralFraudAdmin(app: Express) {
   app.get("/api/admin/research/referral-fraud", requireSupabaseAdmin, async (req: Request, res: Response) => {
@@ -49,7 +63,11 @@ export function registerReferralFraudAdmin(app: Express) {
         reason: parsed.data.reason,
         adminId: (req as any).adminEmail ?? null,
       });
-      if (!result.ok) return res.status(404).json(result);
+      if (!result.ok) {
+        // 503 for "the capability is off", 404 for "no such flag" or "already
+        // resolved", which is what this route already returned.
+        return res.status(result.code === "referrals_disabled" ? 503 : 404).json(result);
+      }
       res.json(result);
     } catch (err) {
       console.error("[referral fraud] action error:", err);
@@ -70,6 +88,10 @@ export function registerReferralFraudAdmin(app: Express) {
         })
         .safeParse(req.body);
       if (!parsed.success) return res.status(400).json({ ok: false, message: "A detail note is required." });
+      // openFraudFlag already refuses when the capability is off and writes
+      // nothing. Reporting that refusal here keeps the route from answering
+      // ok: true with a null flagId, which would read as "deduplicated".
+      if (!referralsEnabled()) return res.status(503).json(REFERRALS_DISABLED_BODY);
       const id = await openFraudFlag({
         reason: "manual-report",
         attributionId: parsed.data.attributionId ?? null,
