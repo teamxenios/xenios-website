@@ -1,9 +1,12 @@
 # Supabase migration ledger
 
-The xenios research schema is applied by pasting these files into the Supabase
-SQL Editor (production project), in order. This ledger is the source of truth
-for what has been run. Every file is idempotent (safe to re-run). Update this
-table in the same PR that adds or changes a migration file.
+The xenios research schema is applied through the approved Supabase production
+path in dependency order. For PENDING rows, `docs/coordination/MIGRATION_DAG.json`
+dependencies override numeric append order: row 47 must be applied and verified
+before row 42. The Order column records append-only ledger history; it does not
+authorize or reorder pending application. This ledger is the source of truth for
+what has been run. Every file is idempotent (safe to re-run). Update this table
+in the same PR that adds or changes a migration file.
 
 | Order | File | Purpose | Status | Run date | Verified |
 |---|---|---|---|---|---|
@@ -53,6 +56,7 @@ table in the same PR that adds or changes a migration file.
 | 44 | migrations/20260728020000_research_affiliate_professional_operations.sql | Affiliate, organization, professional, commission, statement, payout, reversal, and immutable paid-evidence foundations | PENDING (not run) | — | raw Git-blob SHA-256 `989cc6e5929d1297056c3f600898c07bab191c378107f12c8029263c9c77a722`; accepted PR106 disposable PostgreSQL 16 proof; requires migration 43; commission/payout activation remains separately blocked |
 | 45 | migrations/20260729000000_research_pricing_lineage.sql | Additive order-line price provenance snapshot with coherent price identity/version/audience/amount/currency/effective-window evidence and guarded absent-table behavior | PENDING (not run) | — | raw Git-blob SHA-256 `377fe1eec2655026de94454254602a77227adfc0afa4297b8f11711dfe164666`; requires migration 44 and exact target-table preflight |
 | 46 | migrations/20260729100000_research_rls_retro_hardening.sql | Retrospective forced-RLS and browser-grant hardening across the intended Research operational schemas with absent-target-safe behavior | PENDING (not run) | — | raw Git-blob SHA-256 `406c9a481dd588c56ec1cff467e091a2e154e92671e3cba30bac3b458013e87d`; requires migration 45 and exact target/privilege preflight |
+| 47 | migrations/20260801120000_research_variant_strength_write_gate.sql | Freeze disputed variant identity and refuse unresolved disputed price creation or approval at the database boundary | PENDING (not run) | — | canonical Git-blob SHA-256 `6cd11e07eb764d0f803db4baa308ae397c23aacb8ff5d29306c8797be60b4818`; independently accepted source `0b835c7d7fa6fb633b269cd64665a0338c7bf163`; stock PostgreSQL 16.14 and 17.10 apply/apply-twice, atomic unsafe-precondition rollback, P0/P1/P2/P3-P8/P12/P13, and full/partial/absent rollback plus reapply; requires migrations 38 and 39; prerequisite to migration 42 |
 
 Founding-membership operational migrations use a separate dependency chain.
 Production presence and managed migration history were reconciled on

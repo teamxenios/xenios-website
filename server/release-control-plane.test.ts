@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -40,6 +40,13 @@ const RESERVATION_SOURCE_PATH =
   "supabase/research-inventory-reservation-commands.sql";
 const RESERVATION_SOURCE_BLOB =
   "97b304881eb65c9517beae1b91e8dc39982a8e34";
+const STRENGTH_GATE_SOURCE_SHA =
+  "0b835c7d7fa6fb633b269cd64665a0338c7bf163";
+const STRENGTH_GATE_PATH =
+  "supabase/migrations/20260801120000_research_variant_strength_write_gate.sql";
+const STRENGTH_GATE_BLOB = "30e3550db2c37e64fb16a348076fd40fcec77f65";
+const STRENGTH_GATE_CHECKSUM =
+  "6cd11e07eb764d0f803db4baa308ae397c23aacb8ff5d29306c8797be60b4818";
 const PROTECTED_PENDING_SOURCE_PATHS = new Set([
   "supabase/migrations/20260727200000_research_persistent_cart.sql",
   "supabase/migrations/20260728010000_research_fulfillment_supplier_operations.sql",
@@ -82,6 +89,36 @@ function checkedInReservationSourceBytes(): Buffer {
     ["cat-file", "blob", `HEAD:${RESERVATION_SOURCE_PATH}`],
     { cwd: ROOT, encoding: "buffer" },
   );
+}
+
+function checkedInStrengthGateSourceBytes(): Buffer {
+  const blob = execFileSync(
+    "git",
+    ["rev-parse", `:${STRENGTH_GATE_PATH}`],
+    { cwd: ROOT, encoding: "utf8" },
+  ).trim();
+  expect(blob).toBe(STRENGTH_GATE_BLOB);
+  return execFileSync(
+    "git",
+    ["show", `:${STRENGTH_GATE_PATH}`],
+    { cwd: ROOT, encoding: "buffer" },
+  );
+}
+
+function checkedInManagedMigrationPaths(): string[] {
+  const names = readdirSync(resolve(ROOT, "supabase/migrations"), {
+    withFileTypes: true,
+  })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".sql"))
+    .map((entry) => entry.name)
+    .sort();
+  expect(names.length).toBeGreaterThan(0);
+  for (const name of names) {
+    expect(name).toMatch(/^\d{14}_[a-z0-9_]+\.sql$/);
+  }
+  const paths = names.map((name) => `supabase/migrations/${name}`);
+  expect(new Set(paths).size).toBe(paths.length);
+  return paths;
 }
 
 function ownershipFixture(
@@ -678,6 +715,9 @@ describe("migration DAG validator", () => {
           ) {
             expect(sourceSha).toBe(RESERVATION_SOURCE_SHA);
             return checkedInReservationSourceBytes();
+          } else if (path === STRENGTH_GATE_PATH) {
+            expect(sourceSha).toBe(STRENGTH_GATE_SOURCE_SHA);
+            return checkedInStrengthGateSourceBytes();
           } else if (PROTECTED_PENDING_SOURCE_PATHS.has(path)) {
             expect(sourceSha).toBe(PROTECTED_PENDING_SOURCE_SHA);
           } else {
@@ -730,28 +770,24 @@ describe("migration DAG validator", () => {
     ).toContain("DUPLICATE_MIGRATION_PATH");
   });
 
-  it("records every current managed migration and keeps the five protected targets pending", () => {
+  it("records every direct migration exactly once in the directory, ledger, and DAG", () => {
     const dag = JSON.parse(
       readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
     ) as MigrationDag;
     const managedMigrationPaths = managedMigrationPathsFromLedger(
       readFileSync(resolve(ROOT, "supabase/MIGRATIONS.md"), "utf8"),
     );
-    const expectedPaths = [
-      "supabase/migrations/20260726143000_research_product_control_center.sql",
-      "supabase/migrations/20260726214500_research_product_control_center_privilege_hardening.sql",
-      "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
-      "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
-      "supabase/migrations/20260727200000_research_persistent_cart.sql",
-      "supabase/migrations/20260728010000_research_fulfillment_supplier_operations.sql",
-      "supabase/migrations/20260728020000_research_affiliate_professional_operations.sql",
-      "supabase/migrations/20260729000000_research_pricing_lineage.sql",
-      "supabase/migrations/20260729100000_research_rls_retro_hardening.sql",
-    ];
-    expect(managedMigrationPaths).toEqual(expectedPaths);
-    expect(dag.migrations.map((migration) => migration.path)).toEqual(expectedPaths);
+    const directoryPaths = checkedInManagedMigrationPaths();
+    const dagPaths = dag.migrations.map((migration) => migration.path);
+    expect(new Set(managedMigrationPaths).size).toBe(managedMigrationPaths.length);
+    expect(new Set(dagPaths).size).toBe(dagPaths.length);
+    expect([...managedMigrationPaths].sort()).toEqual(directoryPaths);
+    expect([...dagPaths].sort()).toEqual(directoryPaths);
 
-    const protectedNodes = dag.migrations.slice(-5);
+    const protectedNodes = dag.migrations.filter((migration) =>
+      PROTECTED_PENDING_SOURCE_PATHS.has(migration.path),
+    );
+    expect(protectedNodes).toHaveLength(PROTECTED_PENDING_SOURCE_PATHS.size);
     expect(
       protectedNodes.map((migration) => ({
         id: migration.id,
@@ -791,6 +827,38 @@ describe("migration DAG validator", () => {
         sourceSha: PROTECTED_PENDING_SOURCE_SHA,
       },
     ]);
+
+    const strengthGate = dag.migrations.find(
+      (migration) => migration.id === "research_variant_strength_write_gate",
+    );
+    expect(strengthGate).toMatchObject({
+      path: STRENGTH_GATE_PATH,
+      sourceSha: STRENGTH_GATE_SOURCE_SHA,
+      dependsOn: [
+        "research_product_control_center",
+        "research_product_control_center_privilege_hardening",
+      ],
+      checksum: { algorithm: "sha256", value: STRENGTH_GATE_CHECKSUM },
+      appliedToProduction: false,
+      managedMigrationId: "PENDING",
+      applyTwiceVerified: true,
+      rollback: {
+        strategy: "drop_gate_triggers_functions_and_registry_only_after_explicit_approval",
+        procedure: "supabase/verification/research-variant-strength-write-gate.verify.sql",
+      },
+    });
+    expect(strengthGate?.rollback.evidence).toContain("PostgreSQL 16.14 and 17.10");
+    const strengthBytes = checkedInStrengthGateSourceBytes();
+    expect(createHash("sha256").update(strengthBytes).digest("hex")).toBe(
+      STRENGTH_GATE_CHECKSUM,
+    );
+    expect(
+      dag.migrations.find((migration) => migration.id === "research_persistent_cart")
+        ?.dependsOn,
+    ).toEqual([
+      "research_inventory_reservation_commands",
+      "research_variant_strength_write_gate",
+    ]);
   });
 
   it("rejects missing pending migration nodes and broken protected release order", () => {
@@ -816,27 +884,53 @@ describe("migration DAG validator", () => {
       "MISSING_PREREQUISITE",
     ]));
 
-    const brokenOrder = structuredClone(dag);
-    const fulfillment = brokenOrder.migrations.find(
-      (migration) => migration.id === "research_fulfillment_supplier_operations",
+    const missingStrengthGate = structuredClone(dag);
+    missingStrengthGate.migrations = missingStrengthGate.migrations.filter(
+      (migration) => migration.id !== "research_variant_strength_write_gate",
     );
-    expect(fulfillment).toBeDefined();
-    fulfillment!.dependsOn = ["research_inventory_reservation_commands"];
-    expect(fulfillment!.dependsOn).not.toContain("research_persistent_cart");
-    const requiredOrder = [
-      "research_inventory_reservation_commands",
-      "research_persistent_cart",
-      "research_fulfillment_supplier_operations",
-      "research_affiliate_professional_operations",
-      "research_pricing_lineage",
-      "research_rls_retro_hardening",
-    ];
+    expect(
+      validateMigrationDag(missingStrengthGate, {
+        checkFiles: false,
+        expectedBaselineSha: PRODUCTION_SHA,
+        expectedManagedMigrationPaths: managedMigrationPaths,
+      }).map((issue) => issue.code),
+    ).toEqual(expect.arrayContaining([
+      "MANAGED_MIGRATION_MISSING_FROM_DAG",
+      "MISSING_PREREQUISITE",
+    ]));
+
+    const brokenOrder = structuredClone(dag);
+    const persistentCart = brokenOrder.migrations.find(
+      (migration) => migration.id === "research_persistent_cart",
+    );
+    expect(persistentCart).toBeDefined();
+    persistentCart!.dependsOn = ["research_inventory_reservation_commands"];
+    expect(persistentCart!.dependsOn).not.toContain(
+      "research_variant_strength_write_gate",
+    );
+    const requiredEdges = [
+      ["research_variant_strength_write_gate", "research_product_control_center"],
+      [
+        "research_variant_strength_write_gate",
+        "research_product_control_center_privilege_hardening",
+      ],
+      ["research_persistent_cart", "research_inventory_reservation_commands"],
+      ["research_persistent_cart", "research_variant_strength_write_gate"],
+      ["research_fulfillment_supplier_operations", "research_persistent_cart"],
+      [
+        "research_affiliate_professional_operations",
+        "research_fulfillment_supplier_operations",
+      ],
+      ["research_pricing_lineage", "research_affiliate_professional_operations"],
+      ["research_rls_retro_hardening", "research_pricing_lineage"],
+    ] as const;
     const dependencyByNode = new Map(
       brokenOrder.migrations.map((migration) => [migration.id, migration.dependsOn]),
     );
     expect(
-      requiredOrder.slice(1).every((id, index) =>
-        dependencyByNode.get(id)?.includes(requiredOrder[index])),
+      requiredEdges.every(([id, dependency]) =>
+        dependencyByNode.get(id)?.includes(dependency),
+      ),
     ).toBe(false);
   });
 
@@ -861,10 +955,12 @@ describe("migration DAG validator", () => {
         if (path === wave2?.path) {
           expect(sourceSha).toBe(wave2.sourceSha);
         }
-        const raw = execFileSync("git", ["cat-file", "blob", `HEAD:${path}`], {
-          cwd: ROOT,
-          encoding: "buffer",
-        });
+        const raw = path === STRENGTH_GATE_PATH
+          ? checkedInStrengthGateSourceBytes()
+          : execFileSync("git", ["cat-file", "blob", `HEAD:${path}`], {
+              cwd: ROOT,
+              encoding: "buffer",
+            });
         if (path !== wave2?.path) return raw;
         return Buffer.from(raw.toString("utf8").replace(/\r?\n/g, "\r\n"));
       },
