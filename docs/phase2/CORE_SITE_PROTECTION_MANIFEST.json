@@ -302,8 +302,8 @@
     ],
     "files": {
       "client/src/App.tsx": "sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c",
-      "server/index.ts": "sha256:f1db7af91fd07d9afd145f49116f6b8028964762d5b7e475e43129256220c613",
-      "server/research/index.ts": "sha256:37289a584a1acb4483398202393ae51a5239bb9cdd2b89c0a38fce58fdfcdf41",
+      "server/index.ts": "sha256:15d0cbd3cfc72a67f2d76150f67f4c8c2f82b24a0692e8c771daa58f9a4abef8",
+      "server/research/index.ts": "sha256:1e2d94f67f47fc9798e03b7c34636a32ee6226e93624058148ec791ef5387eb7",
       "server/care/index.ts": "sha256:fea8c5ad5124dacf07350818e891396ee9f234983a93be65540911c1eafd81db",
       "shared/research/flags.ts": "sha256:be85e1a8b1e82d6b6724aa721b196535c663beefc6ea34fc21f1ca26a4bc5e1b"
     }
