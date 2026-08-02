@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
 import { FRAUD_ACTIONS, FRAUD_FLAG_REASONS } from "@shared/research/referral-types";
-import { applyFraudAction, openFraudFlag } from "./fraud";
+import { applyFraudAction, openFraudFlag, REFERRALS_DISABLED_MESSAGE } from "./fraud";
 import { referralsEnabled } from "./referrals";
 
 // The referral fraud review queue admin API (V3 sections 64 and 71).
@@ -19,10 +19,12 @@ import { referralsEnabled } from "./referrals";
 
 const FLAGS = "referral_fraud_flags";
 
+// The message comes from fraud.ts so the HTTP refusal and the service refusal
+// are the same sentence by construction and cannot drift.
 const REFERRALS_DISABLED_BODY = {
   ok: false as const,
   code: "referrals_disabled" as const,
-  message: "The referral program is disabled, so no referral reward or member credit action can be taken.",
+  message: REFERRALS_DISABLED_MESSAGE,
 };
 
 export function registerReferralFraudAdmin(app: Express) {

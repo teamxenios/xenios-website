@@ -185,6 +185,14 @@ function makeAdminApp() {
   return app;
 }
 
+// A refused action logs. Captured rather than printed, so the refusal-log
+// assertions below read the calls instead of the test output being flooded.
+let warned: ReturnType<typeof vi.spyOn>;
+
+function warnLines(): string[] {
+  return warned.mock.calls.map((call) => String(call[0]));
+}
+
 beforeEach(() => {
   for (const key of Object.keys(db.tables)) db.tables[key].length = 0;
   db.ledgerInsert.mockClear();
@@ -194,9 +202,11 @@ beforeEach(() => {
   db.anyUpdate.mockClear();
   auth.adminEmail = null;
   delete process.env.RESEARCH_REFERRALS_ENABLED;
+  warned = vi.spyOn(console, "warn").mockImplementation(() => {});
 });
 
 afterEach(() => {
+  warned.mockRestore();
   delete process.env.RESEARCH_REFERRALS_ENABLED;
 });
 
@@ -288,6 +298,107 @@ describe("capability OFF: every fraud entry point fails closed", () => {
     await recordReferralEvent({ eventType: "fraud-action-clear", actorType: "admin", actorId: "admin@x" });
     expect(db.tables.referral_events).toHaveLength(0);
     expect(db.anyInsert).not.toHaveBeenCalled();
+  });
+});
+
+describe("capability OFF: a refused action leaves a log line, and only a log line", () => {
+  // Without this, an admin attempting money moves during a capability-off
+  // window produces zero rows AND zero log lines, so the attempts are
+  // invisible. The log is the only trace, because recording a row would be a
+  // referral-subsystem write while the subsystem is off.
+  it("warns with the action and the flag id while still writing nothing", async () => {
+    const { flag } = seedCase(["held", "available"]);
+
+    const result = await applyFraudAction({
+      flagId: flag.id,
+      action: "reverse-reward",
+      reason: "attempted while the program is off",
+      adminId: "admin@xeniostechnology.com",
+    });
+
+    expect(result.ok).toBe(false);
+    const lines = warnLines();
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toContain("[referral fraud]");
+    expect(lines[0]).toContain("reverse-reward");
+    expect(lines[0]).toContain(flag.id);
+
+    // Log only. Nothing was inserted or updated anywhere, so the fail-closed
+    // property is intact and observability did not weaken it.
+    expect(db.anyInsert).not.toHaveBeenCalled();
+    expect(db.anyUpdate).not.toHaveBeenCalled();
+    expect(db.tables.referral_events).toHaveLength(0);
+    expect(db.tables.referral_fraud_flags[0].status).toBe("open");
+    expectNoMoneyPathTouched();
+  });
+
+  it("logs no email, no reviewer reason text and no ledger amount", async () => {
+    const { flag } = seedCase(["available"]);
+
+    await applyFraudAction({
+      flagId: flag.id,
+      action: "disqualify",
+      reason: "member jane.doe@example.com reported this",
+      adminId: "admin@xeniostechnology.com",
+    });
+
+    const line = warnLines()[0];
+    expect(line).not.toContain("admin@xeniostechnology.com");
+    expect(line).not.toContain("jane.doe@example.com");
+    expect(line).not.toContain("referrer@example.com");
+    expect(line).not.toContain("1500");
+  });
+
+  it("logs every repeated attempt, so a run of attempts is visible as a run", async () => {
+    const { flag } = seedCase(["held", "available"]);
+    const attempts: Array<"disqualify" | "reverse-reward"> = [
+      "disqualify",
+      "reverse-reward",
+      "disqualify",
+    ];
+
+    for (const action of attempts) {
+      await applyFraudAction({
+        flagId: flag.id,
+        action,
+        reason: "attempted while the program is off",
+        adminId: "admin@xeniostechnology.com",
+      });
+    }
+
+    expect(warnLines()).toHaveLength(3);
+    expect(warnLines().filter((l) => l.includes("disqualify"))).toHaveLength(2);
+    expectNoMoneyPathTouched();
+  });
+
+  it("the admin route's refusal is logged too", async () => {
+    auth.adminEmail = "admin@xeniostechnology.com";
+    const { flag } = seedCase(["available"]);
+
+    const res = await request(makeAdminApp())
+      .post(`/api/admin/research/referral-fraud/${flag.id}/action`)
+      .send({ action: "disqualify", reason: "confirmed duplicate accounts" });
+
+    expect(res.status).toBe(503);
+    expect(warnLines().some((l) => l.includes("disqualify") && l.includes(flag.id))).toBe(true);
+    expectNoMoneyPathTouched();
+  });
+});
+
+describe("capability ON: an applied action is not logged as a refusal", () => {
+  it("stays silent when the action actually runs", async () => {
+    process.env.RESEARCH_REFERRALS_ENABLED = "true";
+    const { flag } = seedCase(["held"]);
+
+    const result = await applyFraudAction({
+      flagId: flag.id,
+      action: "hold",
+      reason: "investigating a report",
+      adminId: "admin@xeniostechnology.com",
+    });
+
+    expect(result.ok).toBe(true);
+    expect(warnLines()).toHaveLength(0);
   });
 });
 

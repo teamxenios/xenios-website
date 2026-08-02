@@ -26,8 +26,12 @@ import type { FraudAction, FraudFlagReason } from "@shared/research/referral-typ
 // reason qualifyReferralForMembershipActivation returns in referrals.ts, and
 // the { ok: false, code: "<capability>_disabled" } shape used elsewhere on the
 // research admin surface.
+//
+// The message is exported so fraud-admin.ts builds its 503 body from this one
+// definition rather than repeating the sentence, which would let the service
+// refusal and the HTTP refusal drift apart.
 export type FraudRefusalCode = "referrals_disabled";
-const REFERRALS_DISABLED_MESSAGE =
+export const REFERRALS_DISABLED_MESSAGE =
   "The referral program is disabled, so no referral reward or member credit action can be taken.";
 
 const EVENTS = "referral_events";
@@ -41,9 +45,8 @@ const IDENTITIES = "referral_identities";
 // stored address is always the one the person typed.
 //
 // Not capability gated: it is a pure string function that reads no store and
-// writes nothing, it has no refusal value to return, and rate-limit.ts uses it
-// outside the referral subsystem. Every caller that acts on its answer is
-// gated.
+// writes nothing, so it has no refusal value to return. Every caller that acts
+// on its answer is gated.
 export function canonicalizeEmail(email: string): string {
   const trimmed = email.trim().toLowerCase();
   const at = trimmed.lastIndexOf("@");
@@ -70,7 +73,8 @@ const DISPOSABLE_DOMAINS = new Set([
 ]);
 
 // Not capability gated, for the same reason as canonicalizeEmail: pure, no
-// store access, no mutation, and read by rate-limit.ts outside referrals.
+// store access, no mutation, nothing to refuse with, and every caller that
+// acts on its answer is gated.
 export function isDisposableEmail(email: string): boolean {
   const at = email.trim().toLowerCase().lastIndexOf("@");
   if (at < 0) return false;
@@ -262,6 +266,22 @@ export async function reverseRewardsForAttribution(input: {
 // credit, and disqualify and reverse-reward write negative entries into
 // member_credit_ledger. An admin principal is not enough while the program is
 // off, so the refusal happens here and not only at the route.
+//
+// The gate deliberately covers all seven actions, including the three that do
+// not move money (escalate, request-information, suspend-referrer). They stay
+// gated because they still mutate referral_identities, referral_fraud_flags
+// and referral_events in a subsystem that is meant to be off, and because
+// carving a per-action exception would recreate exactly the ungated sibling
+// path this gate exists to close. That is not free: with the program disabled
+// an admin cannot pause a fraudulent referrer or move a case forward from this
+// surface. It is accepted because no new rewards accrue while the program is
+// off and promoteHeldRewards is gated too, so nothing mints while a case
+// waits.
+//
+// A refusal is logged, never recorded as a row. Writing an audit row here
+// would itself be a referral-subsystem write while the subsystem is off, which
+// is the property this gate exists to hold, so repeated attempts are made
+// observable through the log instead.
 export async function applyFraudAction(input: {
   flagId: string;
   action: FraudAction;
@@ -269,6 +289,13 @@ export async function applyFraudAction(input: {
   adminId?: string | null;
 }): Promise<{ ok: true; status: string } | { ok: false; message: string; code?: FraudRefusalCode }> {
   if (!referralsEnabled()) {
+    // Action name and flag id only. No email, no member id, no reviewer reason
+    // text, no ledger amount: a refusal line must not become a PII sink.
+    console.warn(
+      `[referral fraud] refused reviewer action "${input.action}"` +
+        (input.flagId ? ` on flag ${input.flagId}` : "") +
+        ": the referral program is disabled, so nothing was written.",
+    );
     return { ok: false, code: "referrals_disabled", message: REFERRALS_DISABLED_MESSAGE };
   }
   const { data: flag } = await getSupabaseAdmin().from(FLAGS).select("*").eq("id", input.flagId).maybeSingle();
