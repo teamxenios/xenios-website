@@ -108,19 +108,27 @@
       "headSha": null
     },
     {
-      "owner": "Claude B",
+      "owner": "Codex Control",
       "lane": "integration-status-configuration-queue",
-      "state": "WAITING_FOR_WEBSITE_2_ASSIGNMENT",
+      "state": "ACTIVE",
       "activeUnit": "Build the exact leased credential-presence registry, protected integration-status module, tests, and placeholder-only Samuel configuration queue; registration remains Website 2-owned.",
-      "branch": null,
+      "branch": "codex/war-control-20260802-123935",
       "headSha": null
     },
     {
-      "owner": "Claude A",
+      "owner": "Codex Products",
       "lane": "customer-commerce-ux",
-      "state": "WAITING_FOR_WEBSITE_2_ASSIGNMENT",
+      "state": "ACTIVE",
       "activeUnit": "Correct the exact leased Checkout address reflow and focused responsive regression only; preserve all server, payment, price, cart, order, provider, data, and commerce activation boundaries.",
-      "branch": null,
+      "branch": "codex/war-products-20260802-123935",
+      "headSha": null
+    },
+    {
+      "owner": "Codex DB",
+      "lane": "v3-import-dryrun",
+      "state": "ACTIVE",
+      "activeUnit": "Build the credential-independent operational reporting outbox schema/tests and reconstruct the exact ten-path V3 planning import and dry-run contract from the current production base; all 86 variants remain non-purchasable and no production apply/import, price approval, provider, environment, or activation action is permitted.",
+      "branch": "codex/war-database-20260802-0525",
       "headSha": null
     }
   ],
@@ -677,8 +685,8 @@
       ]
     },
     {
-      "id": "OWNER-CLAUDEB-INTEGRATION-STATUS-CONFIGURATION-QUEUE",
-      "owner": "Claude B",
+      "id": "OWNER-CODEX-CONTROL-INTEGRATION-STATUS-CONFIGURATION-QUEUE",
+      "owner": "Codex Control",
       "lane": "integration-status-configuration-queue",
       "mode": "write",
       "state": "reserved",
@@ -689,14 +697,36 @@
       ]
     },
     {
-      "id": "OWNER-CLAUDEA-CHECKOUT-ADDRESS-REFLOW",
-      "owner": "Claude A",
+      "id": "OWNER-CODEX-PRODUCTS-CHECKOUT-ADDRESS-REFLOW",
+      "owner": "Codex Products",
       "lane": "customer-commerce-ux",
       "mode": "write",
       "state": "reserved",
       "patterns": [
         "client/src/research/pages/member/Checkout.tsx",
         "client/src/research/pages/member/cart-checkout.test.tsx"
+      ]
+    },
+    {
+      "id": "OWNER-CODEX-DB-V3-IMPORT-DRYRUN",
+      "owner": "Codex DB",
+      "lane": "v3-import-dryrun",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "docs/research-commerce/V3_IMPORT_DRYRUN.md",
+        "scripts/v3-import-dry-run.mts",
+        "server/research/v3-import/dry-run.test.ts",
+        "server/research/v3-import/dry-run.ts",
+        "server/research/v3-import/import.test.ts",
+        "server/research/v3-import/import.ts",
+        "server/research/v3-import/leakage.test.ts",
+        "server/research/v3-import/workbook.ts",
+        "server/research/reporting/outbox-migration.test.ts",
+        "shared/research/v3-import.test.ts",
+        "shared/research/v3-import.ts",
+        "supabase/research-operational-reporting-outbox.sql",
+        "supabase/tests/research-operational-reporting-outbox-lifecycle.test.sql"
       ]
     },
     {
