@@ -31,6 +31,14 @@ export interface CareAccessDependencies {
   recordAccessDecision: (decision: CareAccessDecision) => Promise<void>;
 }
 
+function isExactlyEnabledCareCapability(
+  capability: CareCapabilityStatus,
+): boolean {
+  return capability.rail === "care" &&
+    capability.state === "enabled" &&
+    capability.enabled === true;
+}
+
 export function requireCarePermission(
   permission: CarePermission,
   deps: CareAccessDependencies,
@@ -38,11 +46,11 @@ export function requireCarePermission(
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const capability = await deps.loadCapabilityStatus();
-      if (!capability.enabled) {
+      if (!isExactlyEnabledCareCapability(capability)) {
         return res.status(503).json({
           ok: false,
           code: "care_disabled",
-          message: capability.publicMessage,
+          message: "Care is not currently available.",
         });
       }
 

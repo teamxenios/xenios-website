@@ -1,7 +1,18 @@
 import express from "express";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
-import type { CareAccessDependencies } from "./access";
+import {
+  requireCarePermission,
+  type CareAccessDependencies,
+} from "./access";
+import {
+  CARE_PERMISSIONS,
+  CARE_ROLE_PERMISSIONS,
+  CARE_ROLES,
+  type CarePermission,
+  type CarePrincipal,
+  type CareRole,
+} from "@shared/care/contracts";
 import { registerCareApi } from "./index";
 
 function dependencies(
@@ -28,6 +39,24 @@ function appFor(deps: CareAccessDependencies) {
   const app = express();
   registerCareApi(app, deps);
   return app;
+}
+
+async function callBoundary(
+  permission: CarePermission,
+  deps: CareAccessDependencies,
+) {
+  const middleware = requireCarePermission(permission, deps);
+  const req = {} as express.Request;
+  const json = vi.fn();
+  const status = vi.fn(() => ({ json }));
+  const res = {
+    locals: {},
+    status,
+  } as unknown as express.Response;
+  const next = vi.fn();
+
+  await middleware(req, res, next);
+  return { json, next, res, status };
 }
 
 describe("Care access boundary", () => {
@@ -81,6 +110,113 @@ describe("Care access boundary", () => {
     expect(response.body.code).toBe("care_disabled");
     expect(resolvePrincipal).not.toHaveBeenCalled();
     expect(recordAccessDecision).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["disabled", false],
+    ["disabled", true],
+    ["pending_provider", true],
+    ["pending_pharmacy", true],
+    ["pending_clinicians", true],
+    ["pending_qa", true],
+    ["enabled", false],
+    ["ENABLED", true],
+    [" enabled", true],
+    ["enabled ", true],
+    ["true", true],
+    ["1", true],
+  ])("fails closed for capability state %j with enabled=%j", async (state, enabled) => {
+    const resolvePrincipal = vi.fn(async () => ({
+      subjectId: "security-1",
+      roles: ["care_security_admin" as const],
+    }));
+    const recordAccessDecision = vi.fn(async () => undefined);
+    const result = await callBoundary(
+      "care:security_audit",
+      dependencies({
+        loadCapabilityStatus: vi.fn(async () => ({
+          rail: "care",
+          state,
+          enabled,
+          publicMessage: "PRIVATE-CAPABILITY-MESSAGE",
+          checkedAt: "2026-08-02T00:00:00.000Z",
+        }) as never),
+        resolvePrincipal,
+        recordAccessDecision,
+      }),
+    );
+
+    expect(result.status).toHaveBeenCalledWith(503);
+    expect(result.json).toHaveBeenCalledWith({
+      ok: false,
+      code: "care_disabled",
+      message: "Care is not currently available.",
+    });
+    expect(JSON.stringify(result.json.mock.calls)).not.toContain(
+      "PRIVATE-CAPABILITY-MESSAGE",
+    );
+    expect(resolvePrincipal).not.toHaveBeenCalled();
+    expect(recordAccessDecision).not.toHaveBeenCalled();
+    expect(result.next).not.toHaveBeenCalled();
+  });
+
+  it("fails closed when a direct caller supplies a malformed capability object", async () => {
+    const result = await callBoundary(
+      "care:security_audit",
+      dependencies({
+        loadCapabilityStatus: vi.fn(async () => ({
+          rail: "research",
+          state: "enabled",
+          enabled: true,
+          publicMessage: "PRIVATE-MALFORMED-MESSAGE",
+          checkedAt: "not-a-date",
+        }) as never),
+      }),
+    );
+
+    expect(result.status).toHaveBeenCalledWith(503);
+    expect(result.next).not.toHaveBeenCalled();
+    expect(JSON.stringify(result.json.mock.calls)).not.toContain("PRIVATE");
+  });
+
+  it.each(
+    CARE_ROLES.flatMap((role) =>
+      CARE_PERMISSIONS.map((permission) => [role, permission] as const),
+    ),
+  )("enforces the exact direct-call persona matrix for %s and %s", async (role, permission) => {
+    const principal: CarePrincipal = {
+      subjectId: `${role}-subject`,
+      roles: [role],
+    };
+    const recordAccessDecision = vi.fn(async () => undefined);
+    const result = await callBoundary(
+      permission,
+      dependencies({
+        resolvePrincipal: vi.fn(async () => principal),
+        recordAccessDecision,
+      }),
+    );
+    const allowed = CARE_ROLE_PERMISSIONS[role as CareRole].includes(permission);
+
+    if (allowed) {
+      expect(result.next).toHaveBeenCalledOnce();
+      expect(result.status).not.toHaveBeenCalled();
+      expect(result.res.locals.carePrincipal).toBe(principal);
+    } else {
+      expect(result.next).not.toHaveBeenCalled();
+      expect(result.status).toHaveBeenCalledWith(403);
+      expect(result.json).toHaveBeenCalledWith({
+        ok: false,
+        code: "care_forbidden",
+      });
+      expect(result.res.locals).not.toHaveProperty("carePrincipal");
+    }
+    expect(recordAccessDecision).toHaveBeenCalledWith({
+      actorSubjectId: `${role}-subject`,
+      permission,
+      outcome: allowed ? "allowed" : "forbidden",
+      occurredAt: expect.any(String),
+    });
   });
 
   it("audits unauthenticated and forbidden attempts without request content", async () => {
