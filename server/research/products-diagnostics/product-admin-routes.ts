@@ -11,6 +11,7 @@ import type { ProductAdminService } from "./product-admin";
 import {
   ProductAdminConflictError,
   ProductAdminNotFoundError,
+  ProductAdminStrengthDisputeError,
   ProductAdminValidationError,
 } from "./product-admin-errors";
 
@@ -74,6 +75,19 @@ function sendError(res: Response, error: unknown): void {
     res
       .status(404)
       .json({ ok: false, code: error.code, message: error.message });
+    return;
+  }
+  // Checked before the general conflict arm, which replaces the message with a
+  // fixed sentence. A contested presentation is refused WITH its reason: the
+  // operator has to see which two presentations disagree to act on it.
+  if (error instanceof ProductAdminStrengthDisputeError) {
+    res.status(409).json({
+      ok: false,
+      code: error.code,
+      blockingKeys: error.blockingKeys,
+      reason: error.reason,
+      message: error.reason,
+    });
     return;
   }
   if (error instanceof ProductAdminConflictError) {
