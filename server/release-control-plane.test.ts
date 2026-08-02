@@ -15,8 +15,10 @@ import {
   type MigrationDag,
 } from "../scripts/acceptance/verify-migration-dag.ts";
 import {
+  extractExpressRouteScan,
   extractExpressRoutes,
   findDuplicateRoutes,
+  scanExpressRouteResult,
   validateRouteUniqueness,
 } from "../scripts/acceptance/verify-route-uniqueness.ts";
 import {
@@ -1305,6 +1307,49 @@ describe("route uniqueness validator", () => {
     );
     expect(validateRouteUniqueness(routes)).toEqual([]);
   });
+
+  it("resolves constant-backed, templated, helper-joined, and finite-loop registrations", () => {
+    const result = extractExpressRouteScan(
+      `
+        const ROUTES = { status: "/api/status", base: "/api/items" } as const;
+        function route(base: string, suffix: string) { return base + suffix; }
+        app.get(ROUTES.status, handler);
+        app.post(\`${"${ROUTES.base}"}/:itemId\`, handler);
+        for (const action of ["approve", "deny"] as const) {
+          app.post(route(ROUTES.base, \`/${"${action}"}\`), handler);
+        }
+      `,
+      "fixture.ts",
+    );
+    expect(result.issues).toEqual([]);
+    expect(result.callSites).toBe(3);
+    expect(result.routes.map((route) => `${route.method} ${route.path}`)).toEqual([
+      "GET /api/status",
+      "POST /api/items/:itemId",
+      "POST /api/items/approve",
+      "POST /api/items/deny",
+    ]);
+  });
+
+  it("fails closed when an app/router route path is not statically resolvable", () => {
+    const result = extractExpressRouteScan(
+      `const dynamicPath = process.env.DYNAMIC_PATH; app.get(dynamicPath, handler);`,
+      "unresolved.ts",
+    );
+    expect(result.routes).toEqual([]);
+    expect(result.callSites).toBe(1);
+    expect(result.issues).toEqual([
+      expect.objectContaining({ code: "UNRESOLVED_ROUTE_PATH" }),
+    ]);
+  });
+
+  it("covers every current Express API call site and finite registration", () => {
+    const result = scanExpressRouteResult(ROOT);
+    expect(result.issues).toEqual([]);
+    expect(result.callSites).toBe(298);
+    expect(result.routes).toHaveLength(307);
+    expect(validateRouteUniqueness(result.routes)).toEqual([]);
+  }, 15_000);
 });
 
 describe("production state validator", () => {
