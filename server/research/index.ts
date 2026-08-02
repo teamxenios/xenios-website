@@ -12,6 +12,11 @@ import {
 import { products } from "./products-data";
 import { policies } from "./policies-data";
 import { requireActiveMember } from "./member-auth";
+import { registerPartnerPortalApi } from "./partners/portal-routes";
+import {
+  partnerSubmissionsEnabled,
+  resolvePartnerPortalPort,
+} from "./partners/portal-production";
 
 // ---------------------------------------------------------------------------
 // xenios research: Express gate + APIs.
@@ -352,6 +357,23 @@ export function registerResearchApi(app: Express) {
     "/questions", // questions.ts: requireActiveMember
     "/telegram", // questions.ts: requireActiveMember
     "/tracker", // tracker.ts: requireActiveMember
+    // The partner portal reads (partners/portal-routes.ts, injected
+    // requireActiveMember, then the caller's OWN partner record or 404
+    // partner_not_found). Listed one path at a time, deliberately NOT as a
+    // "/partner" prefix: an unlisted sibling such as /partner/me must stay
+    // walled, which is what member-session-wall.test.ts pins.
+    "/partner/onboarding",
+    "/partner/training",
+    "/partner/leads",
+    "/partner/conversions",
+    "/partner/commissions",
+    "/partner/payouts",
+    "/partner/resources",
+    "/partner/campaigns",
+    "/partner/events",
+    "/partner/organizations",
+    "/partner/compliance",
+    "/partner/security/sessions",
   ]);
   const MEMBER_SESSION_WRITE_PATHS = new Set([
     "/agreements", // agreements.ts: requireMember (signing precedes activation)
@@ -368,6 +390,15 @@ export function registerResearchApi(app: Express) {
     "/questions", // questions.ts: requireActiveMember
     "/telegram/link", // questions.ts: requireActiveMember
     "/tracker", // tracker.ts: requireActiveMember
+    // The partner portal writes. The three request forms answer
+    // capability_disabled by design (no intake table exists yet) and the
+    // compliance submission is refused unless the surface is switched on, but
+    // each must reach its own route to say so rather than being answered by the
+    // gateway as though the surface did not exist.
+    "/partner/campaigns/request",
+    "/partner/events/request",
+    "/partner/organizations/request",
+    "/partner/compliance/submissions",
   ]);
   const MEMBER_SESSION_REPLACE_PATHS = new Set([
     "/media/retention-election", // media.ts: requireActiveMember
@@ -467,4 +498,27 @@ export function registerResearchApi(app: Express) {
     res.json({ policies });
   });
 
+  // ---- partner portal ------------------------------------------------------
+  //
+  // The 16 partner routes landed implemented but never mounted, so every one of
+  // them answered 404 with an empty body: the client called them and got
+  // nothing back that it could render. Mounted here rather than in
+  // server/index.ts because the partner portal is a Research surface and
+  // server/index.ts is a protected core-site file.
+  //
+  // The port is resolved through partnerPortalLive(), which requires BOTH the
+  // commerce kill switch and a configured Supabase. With either missing, the
+  // unconfigured port answers every read as "this member owns no partner",
+  // which the route layer turns into 404 partner_not_found and the pages render
+  // as their honest pending state, and it refuses the one write. Nothing is
+  // fabricated and nothing half-works.
+  //
+  // requireActiveMember, not a looser member check: the portal exposes the
+  // commission ledger and payout status, so an approved-but-not-activated
+  // membership must not reach it.
+  registerPartnerPortalApi(
+    app,
+    { port: resolvePartnerPortalPort(), submissionsEnabled: partnerSubmissionsEnabled() },
+    { requireMember: requireActiveMember },
+  );
 }

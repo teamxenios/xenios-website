@@ -441,11 +441,47 @@ export function createUnconfiguredPartnerPortalPort(): PartnerPortalPort {
   };
 }
 
-export function resolvePartnerPortalPort(): PartnerPortalPort {
-  return supabaseConfigured() ? createSupabasePartnerPortalPort() : createUnconfiguredPartnerPortalPort();
+/**
+ * The production enablement flag for the research commerce surface, read the
+ * same way every other commerce site reads it (see production-deps.ts:1339 and
+ * pricing/routes.ts pricingEnabledFromCommerceEnv).
+ */
+function researchCommerceEnabled(): boolean {
+  return process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true";
 }
 
-/** Compliance submissions are durable only when the database behind them is. */
+/**
+ * Whether the REAL, member-linked partner surface may be composed.
+ *
+ * The partner portal is a commerce surface: it reads the commission ledger,
+ * conversions, payout status, and accepts the compliance write. The commerce
+ * lane already states the doctrine for exactly this capability in
+ * server/research/commerce/production-deps.ts:
+ *
+ *   if (!commerceEnabled) return disabledDependencies(...)
+ *      -> partners: partnersFailClosed(DISABLED)
+ *
+ * so partner reads go empty-safe and partner writes refuse whenever the
+ * commerce kill switch is off.
+ *
+ * This resolver keyed on supabaseConfigured() ALONE, which meant it would have
+ * composed the live Supabase-backed port with the kill switch off: the one
+ * state the sibling doctrine forbids. Both conditions are now required, so the
+ * portal cannot outlive the switch that is supposed to govern it.
+ */
+export function partnerPortalLive(): boolean {
+  return researchCommerceEnabled() && supabaseConfigured();
+}
+
+export function resolvePartnerPortalPort(): PartnerPortalPort {
+  return partnerPortalLive() ? createSupabasePartnerPortalPort() : createUnconfiguredPartnerPortalPort();
+}
+
+/**
+ * Compliance submissions are durable only when the database behind them is AND
+ * the surface is switched on. False makes the route answer capability_disabled
+ * rather than accepting content into nowhere.
+ */
 export function partnerSubmissionsEnabled(): boolean {
-  return supabaseConfigured();
+  return partnerPortalLive();
 }
