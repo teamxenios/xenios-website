@@ -2,7 +2,11 @@ import express, { type Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
-import { researchPageGate, registerResearchApi } from "./research";
+import {
+  registerLegacyResearchOrderContainment,
+  researchPageGate,
+  registerResearchApi,
+} from "./research";
 import { registerMembershipApi } from "./research/membership";
 import { registerMemberApi } from "./research/members";
 import { registerMemberAccessApi } from "./research/guards";
@@ -107,6 +111,10 @@ app.use(
     contentSecurityPolicy: false,
   }),
 );
+
+// The held legacy order endpoint must terminate before any application body
+// parser or rawBody verifier can retain customer-supplied bytes.
+registerLegacyResearchOrderContainment(app);
 
 app.use(
   express.json({
