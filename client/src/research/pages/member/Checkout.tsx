@@ -87,7 +87,7 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div>
+    <div className="min-w-0">
       <label htmlFor={id} className="mono-label text-ink-mute">
         {label}
         {optional ? " (optional)" : ""}
@@ -409,7 +409,10 @@ export default function Checkout() {
                     data-testid="co-line2"
                   />
                 </Field>
-                <div className="grid gap-3" style={{ gridTemplateColumns: "2fr 1fr 1fr" }}>
+                <div
+                  className="grid grid-cols-1 gap-3 md:grid-cols-[2fr_1fr_1fr]"
+                  data-testid="co-locality-grid"
+                >
                   <Field id="co-city" label="City">
                     <input
                       id="co-city"
