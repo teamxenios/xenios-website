@@ -30,6 +30,7 @@ vi.mock("./member-auth", async (importOriginal) => {
 });
 
 import { registerResearchApi } from "./index";
+import { registerMemberAccessApi } from "./guards";
 
 const KEYS = [
   "RESEARCH_PUBLIC",
@@ -45,6 +46,27 @@ function build() {
   registerResearchApi(app);
   return app;
 }
+
+// The member-contract alias is a SECOND door onto the same array, mounted at
+// server/index.ts:191. The first version of this containment corrected only
+// /api/research/catalog, and an executed probe then showed this path still
+// returning all three contested amounts while commerce.research was false.
+// Every assertion below therefore runs against BOTH doors.
+function buildMemberAlias() {
+  const app = express();
+  app.use(express.json());
+  registerMemberAccessApi(app);
+  return app;
+}
+
+const DOORS: ReadonlyArray<{ name: string; path: string; app: () => express.Express }> = [
+  { name: "GET /api/research/catalog", path: "/api/research/catalog", app: build },
+  {
+    name: "GET /api/research/member/catalog",
+    path: "/api/research/member/catalog",
+    app: buildMemberAlias,
+  },
+];
 
 beforeEach(() => {
   for (const key of KEYS) {
@@ -124,6 +146,50 @@ describe("B7: the legacy catalog withholds money while the lane cannot transact"
     // null, which would be a different defect wearing the same green tick.
     process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED = "true";
     const response = await request(build()).get("/api/research/catalog");
+
+    expect(response.body.commerce.research).toBe(true);
+    const priced = response.body.products.filter(
+      (product: { priceCents: number | null }) => typeof product.priceCents === "number",
+    );
+    expect(priced.length).toBeGreaterThan(0);
+  });
+});
+
+describe.each(DOORS)("B7: $name withholds money identically", (door) => {
+  it("withholds every price when research commerce is off", async () => {
+    delete process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED;
+    const response = await request(door.app()).get(door.path);
+
+    expect(response.status).toBe(200);
+    expect(response.body.commerce.research).toBe(false);
+    expect(response.body.products.length).toBeGreaterThan(0);
+    for (const product of response.body.products) {
+      expect(product.priceCents).toBeNull();
+      expect(product.priceCents).not.toBe(0);
+    }
+  });
+
+  it("withholds the three contested units by name", async () => {
+    delete process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED;
+    const response = await request(door.app()).get(door.path);
+    const contested = ["tesamorelin", "nad-plus", "ss-31"];
+
+    const seen: string[] = [];
+    for (const product of response.body.products) {
+      const slug: string = product.slug ?? "";
+      if (contested.some((fragment) => slug.includes(fragment))) {
+        seen.push(slug);
+        expect(product.priceCents).toBeNull();
+      }
+    }
+    // Anti-vacuity: if the slugs ever change, this must fail loudly rather than
+    // pass by matching nothing.
+    expect(seen.length).toBe(3);
+  });
+
+  it("NEGATIVE CONTROL: with commerce ON this door serves amounts unchanged", async () => {
+    process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED = "true";
+    const response = await request(door.app()).get(door.path);
 
     expect(response.body.commerce.research).toBe(true);
     const priced = response.body.products.filter(

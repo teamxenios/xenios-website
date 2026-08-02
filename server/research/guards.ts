@@ -1,7 +1,6 @@
 import type { Express } from "express";
-import type { CatalogResponse } from "@shared/research/types";
 import { requireActiveMember } from "./member-auth";
-import { products } from "./products-data";
+import { buildCatalogResponse } from "./catalog-response";
 
 // ---------------------------------------------------------------------------
 // Member-scoped access APIs (ACCOUNT-EMAIL-SYSTEMS-001). The ONE
@@ -19,14 +18,9 @@ export { requireActiveMember } from "./member-auth";
 export function registerMemberAccessApi(app: Express) {
   app.get("/api/research/member/catalog", requireActiveMember, (_req, res) => {
     res.set("Cache-Control", "no-store");
-    const body: CatalogResponse = {
-      products,
-      commerce: {
-        research: process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true",
-        consumer: process.env.NEXT_PUBLIC_CONSUMER_COMMERCE_ENABLED === "true",
-      },
-      email: "research@xeniostechnology.com",
-    };
-    res.json(body);
+    // B7. This alias served the priced array while commerce.research reported
+    // false, so the amounts the sibling door withheld were still reachable one
+    // path over. Both doors now build the body in one place.
+    res.json(buildCatalogResponse());
   });
 }

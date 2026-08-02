@@ -12,6 +12,11 @@ import {
 import { products } from "./products-data";
 import { policies } from "./policies-data";
 import { requireActiveMember } from "./member-auth";
+import {
+  buildCatalogResponse,
+  consumerCommerceEnabled,
+  researchCommerceEnabled,
+} from "./catalog-response";
 
 // ---------------------------------------------------------------------------
 // xenios research: Express gate + APIs.
@@ -45,8 +50,6 @@ export const sessionSecretOk = () =>
 const configured = () => (Boolean(password()) || publicMode()) && sessionSecretOk();
 const indexable = () => process.env.RESEARCH_INDEXABLE === "true";
 
-const researchCommerceEnabled = () => process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true";
-const consumerCommerceEnabled = () => process.env.NEXT_PUBLIC_CONSUMER_COMMERCE_ENABLED === "true";
 const laneEnabled = (lane: CommerceLane) => (lane === "research" ? researchCommerceEnabled() : consumerCommerceEnabled());
 
 // Signing key. Production requires the dedicated secret (configured() already
@@ -443,37 +446,10 @@ export function registerResearchApi(app: Express) {
   // the active status server-side.
   app.get("/api/research/catalog", requireActiveMember, (_req, res) => {
     res.set("Cache-Control", "no-store");
-    const researchCommerceOn = researchCommerceEnabled();
-    // B7. This lane serves prices from the hardcoded products-data array, NOT
-    // from Product Control, so nothing in the strength-dispute machinery can
-    // see it: no price row means the price trigger never fires, no variant row
-    // means the variant trigger never fires, and findVariantStrengthDispute is
-    // never called. Three of these entries carry a strength the signed supplier
-    // master contradicts, and client/src/research/components.tsx renders
-    // formatMoney(product.priceCents) unconditionally, so an active member was
-    // shown a firm price for a contested unit while the lane could not transact.
-    //
-    // The response already reported `commerce.research`; no render site read it.
-    // Withholding the amount at the boundary fixes every consumer at once
-    // instead of asking each one to remember.
-    //
-    // NULL, never 0. formatMoney(null) already renders "Pricing available after
-    // review", which is the honest state, and CartPage computes with
-    // `priceCents || 0`, so a zero would read as FREE. shared/research/types.ts
-    // already types priceCents as `number | null`, so this needs no type change.
-    //
-    // This is a containment fix, not the cure. When research commerce is turned
-    // ON these amounts are served again with no dispute check anywhere. The
-    // durable fix is to stop serving money from products-data.ts and resolve
-    // through Product Control, where the gate applies.
-    const body: CatalogResponse = {
-      products: researchCommerceOn
-        ? products
-        : products.map((product) => ({ ...product, priceCents: null })),
-      commerce: { research: researchCommerceOn, consumer: consumerCommerceEnabled() },
-      email: "research@xeniostechnology.com",
-    };
-    res.json(body);
+    // B7. Built by the shared boundary so this door and the member-contract
+    // alias (/api/research/member/catalog) cannot disagree about whether money
+    // leaves the server. See server/research/catalog-response.ts.
+    res.json(buildCatalogResponse());
   });
 
   // Policies are public read-only applicant documentation. The source remains
