@@ -90,6 +90,38 @@
       "activeUnit": "Record Care paused status only; no Care implementation, migration, route, or production scope.",
       "branch": null,
       "headSha": null
+    },
+    {
+      "owner": "Codex 5",
+      "lane": "care-tebra-security",
+      "state": "WAITING_FOR_WEBSITE_2_ASSIGNMENT",
+      "activeUnit": "Build the exact leased credential-free Care privacy and Tebra contract unit; no route registration, provider call, clinical payload, migration, flag, activation, or production action.",
+      "branch": null,
+      "headSha": null
+    },
+    {
+      "owner": "Codex 6",
+      "lane": "partners-supplier-reporting",
+      "state": "WAITING_FOR_WEBSITE_2_ASSIGNMENT",
+      "activeUnit": "Build the exact leased route-free reporting contracts, disabled Google Sheets adapter, bounded worker, tests, and handoff evidence; no migration, credentials, external call, producer wiring, or production action.",
+      "branch": null,
+      "headSha": null
+    },
+    {
+      "owner": "Claude B",
+      "lane": "integration-status-configuration-queue",
+      "state": "WAITING_FOR_WEBSITE_2_ASSIGNMENT",
+      "activeUnit": "Build the exact leased credential-presence registry, protected integration-status module, tests, and placeholder-only Samuel configuration queue; registration remains Website 2-owned.",
+      "branch": null,
+      "headSha": null
+    },
+    {
+      "owner": "Claude A",
+      "lane": "customer-commerce-ux",
+      "state": "WAITING_FOR_WEBSITE_2_ASSIGNMENT",
+      "activeUnit": "Correct the exact leased Checkout address reflow and focused responsive regression only; preserve all server, payment, price, cart, order, provider, data, and commerce activation boundaries.",
+      "branch": null,
+      "headSha": null
     }
   ],
   "rules": [
@@ -350,6 +382,7 @@
         "server/research/commerce/routes.ts",
         "server/research/frontdoor.test.ts",
         "server/research/index.ts",
+        "server/research/member-session-wall.test.ts",
         "server/research/member-platform.test.ts",
         "server/research/member-platform.ts",
         "shared/research/paths.test.ts",
@@ -602,6 +635,68 @@
         "server/care/prescription-routes.ts",
         "server/care/review-detail.ts",
         "server/care/review-routes.ts"
+      ]
+    },
+    {
+      "id": "OWNER-CODEX5-CARE-TEBRA-SECURITY",
+      "owner": "Codex 5",
+      "lane": "care-tebra-security",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "server/care/access.test.ts",
+        "server/care/access.ts",
+        "server/care/clinical-projection-privacy.test.ts",
+        "server/care/prescription-repository.test.ts",
+        "server/care/prescription-repository.ts",
+        "server/care/production-deps.test.ts",
+        "server/care/production-deps.ts",
+        "server/care/review-detail.test.ts",
+        "server/care/review-repository.ts",
+        "server/care/tebra-fallback.test.ts",
+        "server/care/tebra-scheduling.test.ts",
+        "server/care/tebra-scheduling.ts"
+      ]
+    },
+    {
+      "id": "OWNER-CODEX6-PARTNERS-SUPPLIER-REPORTING",
+      "owner": "Codex 6",
+      "lane": "partners-supplier-reporting",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "docs/coordination/CODEX_6_REPORTING_HANDOFF.md",
+        "docs/coordination/CODEX_6_REPORTING_RELEASE_MANIFEST.json",
+        "server/research/reporting/google-sheets.test.ts",
+        "server/research/reporting/google-sheets.ts",
+        "server/research/reporting/port.ts",
+        "server/research/reporting/worker.test.ts",
+        "server/research/reporting/worker.ts",
+        "shared/research/reporting/contracts.test.ts",
+        "shared/research/reporting/contracts.ts"
+      ]
+    },
+    {
+      "id": "OWNER-CLAUDEB-INTEGRATION-STATUS-CONFIGURATION-QUEUE",
+      "owner": "Claude B",
+      "lane": "integration-status-configuration-queue",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "docs/launch/SAMUEL_CONFIGURATION_QUEUE.md",
+        "server/integrations/status.test.ts",
+        "server/integrations/status.ts"
+      ]
+    },
+    {
+      "id": "OWNER-CLAUDEA-CHECKOUT-ADDRESS-REFLOW",
+      "owner": "Claude A",
+      "lane": "customer-commerce-ux",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "client/src/research/pages/member/Checkout.tsx",
+        "client/src/research/pages/member/cart-checkout.test.tsx"
       ]
     },
     {
