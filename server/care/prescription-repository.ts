@@ -97,16 +97,6 @@ function asPrescription(row: Row): CarePrescription {
 }
 
 function asOrder(row: Row): CarePharmacyOrder {
-  const prescription = (row.care_prescriptions ?? {}) as Row;
-  const source = (prescription.care_prescription_content_sources ?? {}) as Row;
-  const hasContent = [
-    source.formulation,
-    source.concentration,
-    source.route,
-    source.quantity,
-    source.directions,
-  ].every((value) => typeof value === "string" && value.length > 0)
-    && Number.isInteger(Number(source.refills));
   return {
     id: asId(row.id),
     patientId: asId(row.patient_id),
@@ -119,18 +109,6 @@ function asOrder(row: Row): CarePharmacyOrder {
     version: Number(row.version),
     createdAt: String(row.created_at),
     updatedAt: String(row.updated_at),
-    ...(hasContent
-      ? {
-          prescriptionContent: {
-            formulation: String(source.formulation),
-            concentration: String(source.concentration),
-            route: String(source.route),
-            quantity: String(source.quantity),
-            directions: String(source.directions),
-            refills: Number(source.refills),
-          },
-        }
-      : {}),
   };
 }
 
@@ -141,7 +119,7 @@ function throwOnError(error: { message?: string } | null, code: string) {
 const PRESCRIPTION_COLUMNS =
   "id,patient_id,appointment_id,clinician_review_id,prescribing_clinician_user_id,verified_content_source_id,status,version,signed_at,supersedes_prescription_id,created_at,updated_at,care_prescription_content_sources(formulation,concentration,route,quantity,directions,refills)";
 const ORDER_COLUMNS =
-  "id,patient_id,prescription_id,assigned_pharmacy_id,patient_state_code,status,clarification_open,tracking_reference,version,created_at,updated_at,care_prescriptions(care_prescription_content_sources(formulation,concentration,route,quantity,directions,refills))";
+  "id,patient_id,prescription_id,assigned_pharmacy_id,patient_state_code,status,clarification_open,tracking_reference,version,created_at,updated_at";
 
 export function buildCarePrescriptionRepository(): CarePrescriptionRepository {
   const admin = getSupabaseAdmin();

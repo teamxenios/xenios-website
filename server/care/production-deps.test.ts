@@ -69,6 +69,31 @@ describe("Care production dependencies", () => {
     ).resolves.toMatchObject({ state: "enabled", enabled: true });
   });
 
+  it.each(["TRUE", "1", " true", "true ", "true\n", "yes", "on"])(
+    "rejects malformed deployment approval value %j",
+    async (malformed) => {
+      const approved = adapters({
+        loadCapability: vi.fn(async () => ({
+          state: "enabled",
+          approved_by: "security-admin",
+          approved_at: "2026-07-25T00:00:00.000Z",
+        })),
+      });
+      await expect(
+        createCareProductionDependencies(approved, {
+          CARE_ENABLED: malformed,
+          CARE_ENABLE_APPROVED: "true",
+        }).loadCapabilityStatus(),
+      ).resolves.toMatchObject({ state: "pending_qa", enabled: false });
+      await expect(
+        createCareProductionDependencies(approved, {
+          CARE_ENABLED: "true",
+          CARE_ENABLE_APPROVED: malformed,
+        }).loadCapabilityStatus(),
+      ).resolves.toMatchObject({ state: "pending_qa", enabled: false });
+    },
+  );
+
   it("never trusts malformed capability state", async () => {
     const deps = createCareProductionDependencies(
       adapters({
