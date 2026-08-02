@@ -594,11 +594,13 @@
         "server/care/clinical-write-gate.adversarial.test.ts",
         "server/care/clinical-write-gate.test.ts",
         "server/care/clinical-write-gate.ts",
+        "server/care/eligibility-routes.test.ts",
         "server/care/eligibility-routes.ts",
         "server/care/intake-routes.test.ts",
         "server/care/intake-routes.ts",
         "server/care/prescription-routes.test.ts",
         "server/care/prescription-routes.ts",
+        "server/care/review-detail.ts",
         "server/care/review-routes.ts"
       ]
     },
