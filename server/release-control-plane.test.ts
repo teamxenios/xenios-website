@@ -841,8 +841,8 @@ describe("migration DAG validator", () => {
         "research_product_control_center_privilege_hardening",
       ],
       checksum: { algorithm: "sha256", value: STRENGTH_GATE_CHECKSUM },
-      appliedToProduction: false,
-      managedMigrationId: "PENDING",
+      appliedToProduction: true,
+      managedMigrationId: "20260801120000 research_variant_strength_write_gate",
       applyTwiceVerified: true,
       rollback: {
         strategy: "drop_gate_triggers_functions_and_registry_only_after_explicit_approval",
