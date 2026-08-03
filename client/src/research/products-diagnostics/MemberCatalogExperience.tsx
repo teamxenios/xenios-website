@@ -70,17 +70,26 @@ function priceLabel(product: MemberCatalogCard): string {
 
 function CatalogCard({ product }: { product: MemberCatalogCard }) {
   const presentation = STATE_COPY[product.displayState];
+  // Signed media hrefs expire (MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS is five
+  // minutes) and the catalog is fetched once per visit, so a deferred image
+  // request can fire after its token has lapsed. Two consequences here:
+  // signed media loads eagerly, so its one request happens while the token is
+  // valid, and a load failure collapses to the same clean no-media card
+  // instead of leaving the browser's broken-image icon on an approved product.
+  // Public media never expires and keeps lazy loading.
+  const [mediaFailed, setMediaFailed] = useState(false);
   return (
     <li
       className="card grid gap-4"
       data-testid={`member-catalog-card-${product.id}`}
       style={{ minWidth: 0, overflowWrap: "anywhere" }}
     >
-      {product.media && (
+      {product.media && !mediaFailed && (
         <img
           src={product.media.href}
           alt={product.media.altText}
-          loading="lazy"
+          loading={product.media.policy === "xenios_signed_storage_v1" ? "eager" : "lazy"}
+          onError={() => setMediaFailed(true)}
           className="w-full"
           style={{
             aspectRatio: "4 / 3",

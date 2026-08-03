@@ -292,4 +292,27 @@ describe("member product detail experience", () => {
     expect(html).not.toMatch(/min-width:\s*[4-9]\d\dpx|width:\s*[4-9]\d\dpx/);
     expect(html).not.toContain("overflow-x:scroll");
   });
+
+  it("falls back to the truthful pending panel when the product image fails to load", () => {
+    // Signed media hrefs expire five minutes after they are minted, so a
+    // stale tab's image request can be rejected. The failure state is the
+    // same panel shown when no approved image exists, never the browser's
+    // broken-image icon.
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    act(() =>
+      root!.render(<MemberProductDetailExperience product={product} />),
+    );
+    const image = host.querySelector<HTMLImageElement>("img")!;
+    expect(image).not.toBeNull();
+
+    act(() => {
+      image.dispatchEvent(new Event("error"));
+    });
+    expect(host.querySelector("img")).toBeNull();
+    expect(host.textContent).toContain(
+      "An approved product image is not available.",
+    );
+  });
 });
