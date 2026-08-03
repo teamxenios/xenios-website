@@ -47,7 +47,11 @@ vi.mock("./member-auth", async (importOriginal) => {
 
 import { registerResearchApi } from "./index";
 import { registerMemberPlatformApi } from "./member-platform";
-import { registerCommerceApi, type CommerceGuards } from "./commerce/routes";
+import {
+  registerCommerceApi,
+  type CommerceDependencies,
+  type CommerceGuards,
+} from "./commerce/routes";
 import { buildCommerceDependencies } from "./commerce/production-deps";
 
 const MEDIA_ID = "3f1c2d4e-5a6b-4c8d-9e0f-1a2b3c4d5e6f";
@@ -62,7 +66,12 @@ const KEYS = [
 ] as const;
 const saved: Partial<Record<(typeof KEYS)[number], string>> = {};
 
-function makeWalledApi() {
+function makeWalledApi(
+  commerceDependencies: CommerceDependencies = buildCommerceDependencies(
+    () => new Date("2026-07-21T00:00:00.000Z"),
+    {},
+  ),
+) {
   const app = express();
   app.use(express.json());
   // Production registration order (server/index.ts): the wall first, then the
@@ -76,14 +85,19 @@ function makeWalledApi() {
   };
   registerCommerceApi(
     app,
-    buildCommerceDependencies(() => new Date("2026-07-21T00:00:00.000Z"), {}),
+    commerceDependencies,
     commerceGuards,
   );
   return app;
 }
 
-async function call(method: string, path: string, headers: Record<string, string> = {}) {
-  let pending = (request(makeWalledApi()) as any)[method](path);
+async function call(
+  method: string,
+  path: string,
+  headers: Record<string, string> = {},
+  commerceDependencies?: CommerceDependencies,
+) {
+  let pending = (request(makeWalledApi(commerceDependencies)) as any)[method](path);
   for (const [name, value] of Object.entries(headers)) pending = pending.set(name, value);
   return method === "get" || method === "head" ? await pending : await pending.send({});
 }
@@ -113,12 +127,16 @@ const ADMITTED = [
   ["get", "/api/research/agreements"],
   ["head", "/api/research/agreements"],
   ["get", "/api/research/blueprint"],
+  ["get", "/api/research/cart"],
+  ["head", "/api/research/cart"],
   ["get", "/api/research/guides"],
   ["get", `/api/research/guides/${GUIDE_SLUG}`],
   ["get", "/api/research/media"],
   ["get", "/api/research/questions"],
   ["get", "/api/research/telegram"],
   ["get", "/api/research/tracker"],
+  ["get", "/api/research/store-credit"],
+  ["head", "/api/research/store-credit"],
   ["post", "/api/research/agreements"],
   ["post", "/api/research/agreements/XR-MEM-012/withdraw"],
   ["post", "/api/research/assessment/responses"],
@@ -164,8 +182,53 @@ describe("SEN-0023 member-session wall bypass", () => {
   // negative that keeps the widening tied to an actual member request, and it
   // is why the pre-existing "PUT /api/research/profile is walled" assertion in
   // account-access-wall.test.ts remains true and untouched.
-  it.each(ADMITTED)("keeps %s %s walled when no bearer credential is presented", async (method, path) => {
-    expectStillWalled(await call(method, path), method);
+  it.each(ADMITTED.filter(([, path]) => !["/api/research/cart", "/api/research/store-credit"].includes(path)))(
+    "keeps %s %s walled when no bearer credential is presented",
+    async (method, path) => {
+      expectStillWalled(await call(method, path), method);
+    },
+  );
+
+  it.each([
+    ["get", "/api/research/cart"],
+    ["head", "/api/research/cart"],
+    ["get", "/api/research/store-credit"],
+    ["head", "/api/research/store-credit"],
+  ] as const)("sends private %s %s denials through downstream auth with an empty HEAD", async (method, path) => {
+    for (const authorization of [undefined, "Bearer invalid-member-jwt", BEARER]) {
+      const headers = authorization === undefined ? {} : { Authorization: authorization };
+      const response = await call(method, path, headers);
+      expectReachedDownstreamGuard(response, method);
+      expect(response.headers["cache-control"]).toBe("no-store");
+      expect(response.headers.pragma).toBe("no-cache");
+      expect(response.headers["referrer-policy"]).toBe("no-referrer");
+      expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
+      expect(JSON.stringify(response.body ?? {})).not.toContain("PRIVATE-");
+      if (method === "head") expect(response.text ?? "").toBe("");
+    }
+  });
+
+  it("performs zero private reads for signed-out and invalid-bearer cart and store-credit denials", async () => {
+    const baseline = buildCommerceDependencies(() => new Date("2026-07-21T00:00:00.000Z"), {});
+    const getCart = vi.fn(async () => ({ privateMarker: "PRIVATE-CART-MARKER" }));
+    const forMember = vi.fn(async () => ({ privateMarker: "PRIVATE-CREDIT-MARKER" }));
+    const guardedDependencies: CommerceDependencies = {
+      ...baseline,
+      cart: { ...baseline.cart, getCart },
+      storeCredit: { ...baseline.storeCredit, forMember },
+    };
+
+    for (const authorization of [undefined, "Bearer invalid-member-jwt"]) {
+      const headers = authorization === undefined ? {} : { Authorization: authorization };
+      for (const path of ["/api/research/cart", "/api/research/store-credit"]) {
+        const response = await call("get", path, headers, guardedDependencies);
+        expect(response.status).toBe(401);
+        expect(JSON.stringify(response.body)).not.toContain("PRIVATE-");
+      }
+    }
+
+    expect(getCart).not.toHaveBeenCalled();
+    expect(forMember).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -293,8 +356,13 @@ describe("SEN-0023 member-session wall bypass", () => {
     ["get", "/api/research/plans/xenios90"],
     ["get", "/api/research/products"],
     ["get", "/api/research/goals"],
-    ["get", "/api/research/cart"],
     ["get", "/api/research/partner/me"],
+    ["post", "/api/research/cart"],
+    ["get", "/api/research/cart/lines"],
+    ["get", "/api/research/carts"],
+    ["post", "/api/research/store-credit"],
+    ["get", "/api/research/store-credit/extra"],
+    ["get", "/api/research/store-credits"],
   ] as const)("does not let a bearer open the unlisted %s %s", async (method, path) => {
     expectStillWalled(await call(method, path, { Authorization: BEARER }), method);
   });

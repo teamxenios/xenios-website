@@ -252,6 +252,18 @@ function secure(res: Response): Response {
   return res;
 }
 
+/**
+ * Cart and store-credit are private member projections. Their privacy headers
+ * must be present even when authentication refuses the request, so this runs
+ * before the injected member guard rather than in the response handler.
+ */
+function privateMemberRead(res: Response): Response {
+  secure(res);
+  res.set("Pragma", "no-cache");
+  res.set("X-Robots-Tag", "noindex, nofollow");
+  return res;
+}
+
 function ok<T extends object>(res: Response, payload: T): void {
   secure(res).json({ ok: true, ...payload } satisfies Api<T>);
 }
@@ -395,6 +407,10 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   const active = guards.requireActiveMember;
   const member = guards.requireMember;
   const admin = guards.requireAdmin;
+  const privateActive: CommerceGuards["requireActiveMember"] = (req, res, next) => {
+    privateMemberRead(res);
+    return active(req, res, next);
+  };
 
   // ---- G6 catalog, goals, guides -------------------------------------------
   app.get("/api/research/products", active, (_req, res) => {
@@ -436,7 +452,7 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   // ---- G7 cart --------------------------------------------------------------
   app.get(
     "/api/research/cart",
-    active,
+    privateActive,
     withSubject(async (memberId, _req, res) => {
       ok(res, { cart: await deps.cart.getCart(memberId, deps.now()) });
     }),
@@ -545,7 +561,7 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
 
   app.get(
     "/api/research/store-credit",
-    active,
+    privateActive,
     withSubject(async (memberId, _req, res) => {
       ok(res, { storeCredit: await deps.storeCredit.forMember(memberId) });
     }),

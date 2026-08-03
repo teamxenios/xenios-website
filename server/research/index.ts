@@ -278,10 +278,12 @@ export function registerResearchApi(app: Express) {
   // shadow the route, omit its privacy headers, and reject a valid member JWT.
   const DOWNSTREAM_MEMBER_GUARDED_READ_PATHS = new Set([
     "/capabilities",
+    "/cart",
     "/documents",
     "/plans/xenios30",
     "/profile",
     "/profile/sensitive",
+    "/store-credit",
   ]);
   const downstreamMemberGuardedRead = (path: string): boolean =>
     DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(path) ||
