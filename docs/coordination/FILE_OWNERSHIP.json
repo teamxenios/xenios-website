@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-30T21:25:26Z",
+  "generatedAt": "2026-08-03T16:00:00Z",
   "productionBaseSha": "696d75b997fa95770aaba56afb2bc640560ed678",
   "lanes": [
     {
@@ -156,6 +156,29 @@
         "supabase/MIGRATIONS.md",
         "package.json",
         "package-lock.json"
+      ]
+    },
+    {
+      "id": "OWNER-W2-INFINITY-AGENT-CONTROL-PLANE",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/agent-control-plane-migration.test.ts",
+        "supabase/migrations/20260803160000_xenios_agent_control_plane.sql",
+        "supabase/production/xenios-agent-control-plane-rollback-notes.md",
+        "supabase/verification/xenios-agent-control-plane.verify.sql"
+      ]
+    },
+    {
+      "id": "OWNER-W2-INFINITY-E2E-ACCOUNT-MEMBERSHIP",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/e2e/account-membership-catalog.acceptance.test.ts"
       ]
     },
     {
