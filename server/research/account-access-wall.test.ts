@@ -57,6 +57,25 @@ function makeWalledApi() {
   return app;
 }
 
+function makeMemberMeGuardedApi() {
+  const app = express();
+  const privateRead = vi.fn();
+  const downstreamGuard = vi.fn((_req: unknown, res: any) =>
+    res.status(401).json({ ok: false, message: "Sign in required." }),
+  );
+  app.use(express.json());
+  registerResearchApi(app);
+  app.get(
+    "/api/research/member/me",
+    downstreamGuard,
+    (_req, res) => {
+      privateRead();
+      res.json({ ok: true, privateMarker: "must-not-render" });
+    },
+  );
+  return { app, downstreamGuard, privateRead };
+}
+
 beforeEach(() => {
   for (const key of KEYS) {
     const value = process.env[key];
@@ -102,6 +121,12 @@ describe("fresh-browser account-access wall", () => {
     ["post", "/api/research/applications"],
     ["post", "/api/research/member/claim-other"],
     ["get", "/api/research/member/profile"],
+    ["post", "/api/research/member/me"],
+    ["put", "/api/research/member/me"],
+    ["delete", "/api/research/member/me"],
+    ["get", "/api/research/member/me/extra"],
+    ["get", "/api/research/member/Me"],
+    ["get", "/api/research/member/%6De"],
     ["get", "/api/research/catalog"],
     ["post", "/api/research/cart"],
     ["put", "/api/research/cart"],
@@ -151,6 +176,54 @@ describe("fresh-browser account-access wall", () => {
     const response = method === "get" ? await call : await call.send({});
     expect(response.status).toBe(401);
     expect(response.body?.message).toBe("Access required.");
+  });
+
+  it.each([
+    ["get", undefined],
+    ["head", undefined],
+    ["get", "Bearer invalid-member-jwt"],
+    ["head", "Bearer invalid-member-jwt"],
+  ] as const)("lets exact member/me %s reach its downstream guard before private reads (%s)", async (method, authorization) => {
+    const { app, downstreamGuard, privateRead } = makeMemberMeGuardedApi();
+    let call = (request(app) as any)[method]("/api/research/member/me");
+    if (authorization !== undefined) call = call.set("Authorization", authorization);
+    const response = await call;
+
+    expect(response.status).toBe(401);
+    expect(response.headers["cache-control"]).toBe("no-store");
+    expect(response.headers.pragma).toBe("no-cache");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
+    expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    if (method === "head") {
+      expect(response.text ?? "").toBe("");
+    } else {
+      expect(response.body).toEqual({ ok: false, message: "Sign in required." });
+      expect(JSON.stringify(response.body)).not.toContain("must-not-render");
+    }
+    expect(downstreamGuard).toHaveBeenCalledTimes(1);
+    expect(privateRead).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["post", "/api/research/member/me"],
+    ["put", "/api/research/member/me"],
+    ["delete", "/api/research/member/me"],
+    ["get", "/api/research/member/me/extra"],
+    ["head", "/api/research/member/me/extra"],
+    ["get", "/api/research/member/Me"],
+    ["get", "/api/research/member/%6De"],
+  ] as const)("does not classify hostile member/me boundary %s %s as private", async (method, path) => {
+    const call = (request(makeWalledApi()) as any)[method](path);
+    const response = method === "get" || method === "head" ? await call : await call.send({});
+
+    expect(response.status).toBe(401);
+    if (method === "head") {
+      expect(response.text ?? "").toBe("");
+    } else {
+      expect(response.body).toEqual({ ok: false, message: "Access required." });
+    }
+    expect(response.headers.pragma).toBeUndefined();
+    expect(response.headers["x-robots-tag"]).toBeUndefined();
   });
 
   it.each([
