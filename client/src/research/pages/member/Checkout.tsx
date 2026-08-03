@@ -369,6 +369,39 @@ export default function Checkout() {
               }
             />
           </ResearchCapabilityBoundary>
+        ) : commerceStatus.state !== "enabled" || !cart.checkoutReady ? (
+          // A populated cart used to be handed straight to the transactional
+          // form: product_commerce and checkoutReady gated only the empty
+          // branch and the server, so a direct visit to /member/checkout
+          // showed quote and place-order controls for a cart the server would
+          // refuse. The server stays fail-closed either way; this branch makes
+          // the page tell the truth. While held, the ENTIRE form is withheld
+          // (no quote control, no submit control, no request leaves the page),
+          // the server's own blocking reasons render in the designed denial
+          // copy, and the one action offered is the way back to the cart.
+          // When commerce itself is off, the capability boundary renders the
+          // canonical not-open state instead.
+          <ResearchCapabilityBoundary status={commerceStatus}>
+            <section className="grid gap-6" data-testid="co-held" aria-label="Checkout held">
+              <ResearchPendingPanel
+                kind="not_configured"
+                title="Checkout is not open for this cart."
+                body="Nothing was lost and your cart is kept exactly as it is. The reasons below come from the order system itself; this page opens the moment every line clears."
+              />
+              {cart.blockingReasons.length > 0 && (
+                <div className="grid gap-3" data-testid="co-held-reasons">
+                  {cart.blockingReasons.map((code) => (
+                    <ResearchDenialNotice key={code} code={code} />
+                  ))}
+                </div>
+              )}
+              <div>
+                <Link href={MEMBER_ROUTES.cart} className="btn btn-primary" data-testid="co-held-back-to-cart">
+                  Back to your cart
+                </Link>
+              </div>
+            </section>
+          </ResearchCapabilityBoundary>
         ) : (
           <div className="grid gap-6">
             {submitDenial && <ResearchDenialNotice code={submitDenial.code} message={submitDenial.message} />}
