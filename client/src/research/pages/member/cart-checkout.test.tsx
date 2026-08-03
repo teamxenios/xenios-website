@@ -636,3 +636,73 @@ describe("Orders page", () => {
     expect(view.querySelector('[data-testid="ra-capability-product_commerce"]')).toBeNull();
   });
 });
+
+// ---------------------------------------------------------------------------
+// Checkout held states. A populated cart used to be handed straight to the
+// transactional form: product_commerce and checkoutReady gated only the empty
+// branch and the server, so a direct visit to /research/member/checkout showed
+// quote and place-order controls for a cart the server would refuse. These pin
+// the truthful held page: no form, no quote control, no submit control, ZERO
+// non-GET requests, the server's own blocking reasons in the designed copy,
+// and the way back to the cart. The ready-cart path is pinned unchanged.
+// ---------------------------------------------------------------------------
+
+describe("checkout is held, not transactional, for a server-blocked cart", () => {
+  function expectNoTransactionalSurface(view: HTMLElement, calls: RecordedCall[]) {
+    // The entire form is withheld: no address field, no quote, no submit.
+    expect(view.querySelector('[data-testid="co-line1"]')).toBeNull();
+    expect(view.querySelector('[data-testid="co-quote"]')).toBeNull();
+    expect(view.querySelector('[data-testid="co-submit"]')).toBeNull();
+    // Zero requests other than reads: nothing was quoted, nothing was placed.
+    for (const call of calls) {
+      expect((call.init?.method ?? "GET").toUpperCase()).toBe("GET");
+    }
+  }
+
+  it("commerce enabled but checkoutReady false: held panel, reasons, back to cart, zero POSTs", async () => {
+    const calls = stubFetch([
+      { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: blockedCart } },
+      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+    ]);
+    const view = await renderPage(<Checkout />);
+
+    expect(view.querySelector('[data-testid="co-held"]')).not.toBeNull();
+    expect(view.textContent).toContain("Checkout is not open for this cart.");
+    // The server's blocking reasons render through the designed denial copy,
+    // one notice per machine code, not as raw codes.
+    const reasons = view.querySelector('[data-testid="co-held-reasons"]');
+    expect(reasons).not.toBeNull();
+    expect(reasons!.querySelectorAll(":scope > *").length).toBe(blockedCart.blockingReasons.length);
+    expect(view.textContent).not.toContain("unconfirmed_supplier_facts");
+    // The one action is the way back to the cart.
+    const back = view.querySelector('[data-testid="co-held-back-to-cart"]');
+    expect(back).not.toBeNull();
+    expect(back!.getAttribute("href")).toBe("/research/member/cart");
+    expectNoTransactionalSurface(view, calls);
+  });
+
+  it("commerce off with a populated cart: the capability boundary answers, not the form", async () => {
+    const calls = stubFetch([
+      CAPABILITIES_OFF,
+      { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: readyCart } },
+      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+    ]);
+    const view = await renderPage(<Checkout />);
+
+    expect(view.querySelector('[data-testid="ra-capability-product_commerce"]')).not.toBeNull();
+    expectNoTransactionalSurface(view, calls);
+  });
+
+  it("NEGATIVE CONTROL: a ready cart with commerce enabled still renders the full form", async () => {
+    stubFetch([
+      { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: readyCart } },
+      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+    ]);
+    const view = await renderPage(<Checkout />);
+
+    // Without this, a page that always holds would pass every test above
+    // while destroying checkout for every ready cart.
+    expect(view.querySelector('[data-testid="co-held"]')).toBeNull();
+    expect(view.querySelector('[data-testid="co-line1"]')).not.toBeNull();
+  });
+});
