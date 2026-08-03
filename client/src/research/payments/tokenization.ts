@@ -9,7 +9,10 @@
 
 export type PublicPaymentConfiguration =
   | { state: "disabled" }
-  | { state: "not_configured"; missing: readonly ["VITE_STRIPE_PUBLISHABLE_KEY"] }
+  | {
+      state: "not_configured";
+      missing: readonly ["VITE_STRIPE_PUBLISHABLE_KEY"];
+    }
   | { state: "invalid"; message: string }
   | {
       state: "ready";
@@ -20,24 +23,65 @@ export type PublicPaymentConfiguration =
 
 export type PaymentTokenizationResult =
   | { ok: true; paymentMethodReference: string }
-  | { ok: false; code: "payment_disabled" | "payment_not_configured" | "payment_configuration_invalid"; message: string }
-  | { ok: false; code: "payment_method_invalid" | "payment_method_rejected"; message: string };
+  | {
+      ok: false;
+      code:
+        | "payment_disabled"
+        | "payment_not_configured"
+        | "payment_configuration_invalid";
+      message: string;
+    }
+  | {
+      ok: false;
+      code: "payment_method_invalid" | "payment_method_rejected";
+      message: string;
+    };
 
-/** The provider SDK owns the runtime value. It must never be serialized. */
+/**
+ * Opaque capability minted by this module. The provider element and SDK stay
+ * inside the integration-owned driver closure and can never be read from or
+ * forged onto this handle.
+ */
 export interface ProviderHostedPaymentElement {
   readonly provider: "stripe";
-  readonly element: unknown;
 }
 
-export interface StripeBrowserSdk {
+export interface StripeHostedElementDriver {
   createPaymentMethod(input: {
-    type: "card";
-    card: unknown;
     billing_details?: { name?: string; email?: string };
   }): Promise<{
     paymentMethod?: { id?: unknown };
     error?: { type?: unknown; message?: unknown };
   }>;
+}
+
+const HOSTED_ELEMENT_DRIVERS = new WeakMap<
+  ProviderHostedPaymentElement,
+  StripeHostedElementDriver
+>();
+
+/**
+ * Called only by the Stripe Elements integration with a closure that already
+ * owns the mounted hosted element. Extra fields are rejected so a raw-shaped
+ * object cannot be smuggled across the Xenios tokenization boundary.
+ */
+export function createProviderHostedPaymentElement(
+  driver: StripeHostedElementDriver,
+): ProviderHostedPaymentElement {
+  if (
+    !driver ||
+    typeof driver !== "object" ||
+    typeof driver.createPaymentMethod !== "function" ||
+    Object.getOwnPropertyNames(driver).some(
+      (key) => key !== "createPaymentMethod",
+    ) ||
+    Object.getOwnPropertySymbols(driver).length > 0
+  ) {
+    throw new Error("The provider-hosted payment driver is invalid.");
+  }
+  const handle = Object.freeze({ provider: "stripe" as const });
+  HOSTED_ELEMENT_DRIVERS.set(handle, driver);
+  return handle;
 }
 
 /**
@@ -58,7 +102,6 @@ export interface PaymentMethodRegistrar {
 export interface TokenizePaymentMethodInput {
   configuration: PublicPaymentConfiguration;
   hostedElement: ProviderHostedPaymentElement;
-  sdk: StripeBrowserSdk;
   registrar: PaymentMethodRegistrar;
   billingIdentity?: { name?: string; email?: string };
 }
@@ -71,18 +114,35 @@ export function resolvePublicPaymentConfiguration(input: {
   provider?: unknown;
   publishableKey?: unknown;
 }): PublicPaymentConfiguration {
-  if (input.provider === undefined || input.provider === null || input.provider === "" || input.provider === "disabled") {
+  if (
+    input.provider === undefined ||
+    input.provider === null ||
+    input.provider === "" ||
+    input.provider === "disabled"
+  ) {
     return { state: "disabled" };
   }
   if (input.provider !== "stripe") {
-    return { state: "invalid", message: "The configured payment provider is not supported." };
+    return {
+      state: "invalid",
+      message: "The configured payment provider is not supported.",
+    };
   }
-  if (typeof input.publishableKey !== "string" || input.publishableKey.trim() === "") {
-    return { state: "not_configured", missing: ["VITE_STRIPE_PUBLISHABLE_KEY"] };
+  if (
+    typeof input.publishableKey !== "string" ||
+    input.publishableKey.trim() === ""
+  ) {
+    return {
+      state: "not_configured",
+      missing: ["VITE_STRIPE_PUBLISHABLE_KEY"],
+    };
   }
   const match = STRIPE_PUBLISHABLE_KEY.exec(input.publishableKey);
   if (!match) {
-    return { state: "invalid", message: "The payment provider public configuration is invalid." };
+    return {
+      state: "invalid",
+      message: "The payment provider public configuration is invalid.",
+    };
   }
   return {
     state: "ready",
@@ -96,8 +156,10 @@ function normalizeBillingIdentity(
   value: TokenizePaymentMethodInput["billingIdentity"],
 ): { name?: string; email?: string } | undefined {
   if (!value) return undefined;
-  const name = typeof value.name === "string" ? value.name.trim().slice(0, 200) : "";
-  const email = typeof value.email === "string" ? value.email.trim().slice(0, 320) : "";
+  const name =
+    typeof value.name === "string" ? value.name.trim().slice(0, 200) : "";
+  const email =
+    typeof value.email === "string" ? value.email.trim().slice(0, 320) : "";
   if (!name && !email) return undefined;
   return { ...(name ? { name } : {}), ...(email ? { email } : {}) };
 }
@@ -107,9 +169,15 @@ function normalizeBillingIdentity(
  * payment-method reference. Provider error details are deliberately collapsed
  * into a safe UX contract so card/provider internals are never reflected.
  */
-export async function tokenizePaymentMethod(input: TokenizePaymentMethodInput): Promise<PaymentTokenizationResult> {
+export async function tokenizePaymentMethod(
+  input: TokenizePaymentMethodInput,
+): Promise<PaymentTokenizationResult> {
   if (input.configuration.state === "disabled") {
-    return { ok: false, code: "payment_disabled", message: "Payment is not enabled." };
+    return {
+      ok: false,
+      code: "payment_disabled",
+      message: "Payment is not enabled.",
+    };
   }
   if (input.configuration.state === "not_configured") {
     return {
@@ -119,9 +187,17 @@ export async function tokenizePaymentMethod(input: TokenizePaymentMethodInput): 
     };
   }
   if (input.configuration.state === "invalid") {
-    return { ok: false, code: "payment_configuration_invalid", message: input.configuration.message };
+    return {
+      ok: false,
+      code: "payment_configuration_invalid",
+      message: input.configuration.message,
+    };
   }
-  if (input.hostedElement.provider !== input.configuration.provider || input.hostedElement.element == null) {
+  const driver = HOSTED_ELEMENT_DRIVERS.get(input.hostedElement);
+  if (
+    input.hostedElement.provider !== input.configuration.provider ||
+    !driver
+  ) {
     return {
       ok: false,
       code: "payment_method_invalid",
@@ -130,38 +206,48 @@ export async function tokenizePaymentMethod(input: TokenizePaymentMethodInput): 
   }
 
   try {
-    const result = await input.sdk.createPaymentMethod({
-      type: "card",
-      card: input.hostedElement.element,
-      ...(normalizeBillingIdentity(input.billingIdentity)
-        ? { billing_details: normalizeBillingIdentity(input.billingIdentity) }
-        : {}),
+    const billingDetails = normalizeBillingIdentity(input.billingIdentity);
+    const result = await driver.createPaymentMethod({
+      ...(billingDetails ? { billing_details: billingDetails } : {}),
     });
     const reference = result.paymentMethod?.id;
-    if (result.error || typeof reference !== "string" || !STRIPE_PAYMENT_METHOD_REFERENCE.test(reference)) {
+    if (
+      result.error ||
+      typeof reference !== "string" ||
+      !STRIPE_PAYMENT_METHOD_REFERENCE.test(reference)
+    ) {
       return {
         ok: false,
         code: "payment_method_rejected",
-        message: "The payment provider could not securely save that payment method.",
+        message:
+          "The payment provider could not securely save that payment method.",
       };
     }
     const registered = await input.registrar.register({
       provider: "stripe",
       providerPaymentMethodReference: reference,
     });
-    if (!registered.ok || !XENIOS_PAYMENT_METHOD_REFERENCE.test(registered.paymentMethodReference)) {
+    if (
+      !registered.ok ||
+      !XENIOS_PAYMENT_METHOD_REFERENCE.test(registered.paymentMethodReference)
+    ) {
       return {
         ok: false,
         code: "payment_method_rejected",
-        message: "The payment provider could not securely save that payment method.",
+        message:
+          "The payment provider could not securely save that payment method.",
       };
     }
-    return { ok: true, paymentMethodReference: registered.paymentMethodReference };
+    return {
+      ok: true,
+      paymentMethodReference: registered.paymentMethodReference,
+    };
   } catch {
     return {
       ok: false,
       code: "payment_method_rejected",
-      message: "The payment provider could not securely save that payment method.",
+      message:
+        "The payment provider could not securely save that payment method.",
     };
   }
 }
