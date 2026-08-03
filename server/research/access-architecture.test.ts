@@ -55,6 +55,7 @@ vi.mock("../supabase", () => ({
 }));
 
 import { registerLegacyResearchOrderContainment, registerResearchApi } from "./index";
+import { registerMemberAccessApi } from "./guards";
 import { requireMember } from "./member-auth";
 
 const ENV_KEYS = [
@@ -73,6 +74,9 @@ function makeApp() {
   registerLegacyResearchOrderContainment(app);
   app.use(express.json());
   registerResearchApi(app);
+  // The member-contract catalog alias, registered after the research API
+  // exactly as production does in server/index.ts.
+  registerMemberAccessApi(app);
   // Registered after the shared research middleware, matching production.
   // The real activation implementation applies the same member guard before
   // every member activation handler.
@@ -170,6 +174,48 @@ describe("an authenticated member bypasses the shared password on member endpoin
     expect(
       res.body.products.every((product: { compareAtCents?: unknown }) => product.compareAtCents === null),
     ).toBe(true);
+  });
+
+  // The member-contract alias (/api/research/member/catalog) serves the SAME
+  // products-data array through a second door. The hold commit covered only
+  // the primary door; an executed probe on held main returned 15 priced
+  // products here, including tesamorelin-10mg 20999, nad-plus-500mg 15999,
+  // and ss-31-elamipretide 22999, the three units whose strength the signed
+  // supplier master contradicts. These tests pin both doors to one behavior.
+  it("member-catalog alias is served without legacy prices or commerce", async () => {
+    const app = makeApp();
+    const res = await request(app)
+      .get("/api/research/member/catalog")
+      .set("Authorization", `Bearer ${state.goodToken}`);
+    expect(res.status).toBe(200);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.body.commerce).toEqual({ research: false, consumer: false });
+    expect(res.body.products).not.toHaveLength(0);
+    expect(res.body.products.every((product: { priceCents: unknown }) => product.priceCents === null)).toBe(true);
+    expect(
+      res.body.products.every((product: { compareAtCents?: unknown }) => product.compareAtCents === null),
+    ).toBe(true);
+  });
+
+  it("member-catalog alias stays held even when both commerce flags are true", async () => {
+    process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED = "true";
+    process.env.NEXT_PUBLIC_CONSUMER_COMMERCE_ENABLED = "true";
+    const app = makeApp();
+    const res = await request(app)
+      .get("/api/research/member/catalog")
+      .set("Authorization", `Bearer ${state.goodToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.commerce).toEqual({ research: false, consumer: false });
+    const contested = res.body.products.filter((product: { slug?: string }) =>
+      ["tesamorelin", "nad-plus", "ss-31"].some((fragment) => (product.slug ?? "").includes(fragment)),
+    );
+    // Anti-vacuity: the contested units must actually be present for their
+    // withheld prices to mean anything.
+    expect(contested).toHaveLength(3);
+    for (const product of contested) {
+      expect(product.priceCents).toBeNull();
+    }
+    expect(res.body.products.every((product: { priceCents: unknown }) => product.priceCents === null)).toBe(true);
   });
 
   it.each([

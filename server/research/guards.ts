@@ -16,15 +16,24 @@ export { requireActiveMember } from "./member-auth";
 // catalog. Same guard, same data as GET /api/research/catalog (which PR #23
 // moved behind active membership); this endpoint exists so member-facing
 // clients can stay entirely on the /api/research/member/* contract.
+//
+// HELD, mirroring the primary door exactly (4c921ba, "Hold legacy Research
+// catalog pricing and ordering"). That commit unconditionally withheld
+// priceCents and compareAtCents and pinned commerce to false on
+// GET /api/research/catalog, but this alias serves the SAME products-data
+// array and was missed: an executed probe on the held main returned 15 priced
+// products here, including the three units whose strength the signed supplier
+// master contradicts (tesamorelin 20999, nad-plus 15999, ss-31 22999), while
+// the sibling door withheld every amount. Two doors onto one array must
+// disagree about nothing. The hold is deliberate and unconditional, not
+// flag-driven; it lifts only when legacy pricing is retired for Product
+// Control, where the dispute machinery applies.
 export function registerMemberAccessApi(app: Express) {
   app.get("/api/research/member/catalog", requireActiveMember, (_req, res) => {
     res.set("Cache-Control", "no-store");
     const body: CatalogResponse = {
-      products,
-      commerce: {
-        research: process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true",
-        consumer: process.env.NEXT_PUBLIC_CONSUMER_COMMERCE_ENABLED === "true",
-      },
+      products: products.map((product) => ({ ...product, priceCents: null, compareAtCents: null })),
+      commerce: { research: false, consumer: false },
       email: "research@xeniostechnology.com",
     };
     res.json(body);
