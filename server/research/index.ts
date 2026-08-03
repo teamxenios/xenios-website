@@ -45,7 +45,7 @@ export const sessionSecretOk = () =>
 const configured = () => (Boolean(password()) || publicMode()) && sessionSecretOk();
 const indexable = () => process.env.RESEARCH_INDEXABLE === "true";
 
-function setLegacyCommercePrivateHeaders(res: Response): void {
+function setResearchPrivateHeaders(res: Response): void {
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("Pragma", "no-cache");
   res.setHeader("Referrer-Policy", "no-referrer");
@@ -66,7 +66,7 @@ export function registerLegacyResearchOrderContainment(app: Express): void {
   app.post(
     "/api/research/orders",
     (_req, res, next) => {
-      setLegacyCommercePrivateHeaders(res);
+      setResearchPrivateHeaders(res);
       if (!configured()) {
         return res.status(503).json({ ok: false, message: "The research section is not configured." });
       }
@@ -280,6 +280,7 @@ export function registerResearchApi(app: Express) {
     "/capabilities",
     "/cart",
     "/documents",
+    "/member/me",
     "/plans/xenios30",
     "/profile",
     "/profile/sensitive",
@@ -414,15 +415,18 @@ export function registerResearchApi(app: Express) {
 
   app.use("/api/research", (req, res, next) => {
     // Path-exact GET/HEAD boundaries only: /member/catalog is the alias door
-    // onto the same legacy array (guards.ts), and its denials must carry the
-    // same private headers as its 200s, so the set is applied here BEFORE any
-    // wall or member-guard response. A lookalike path fails the equality and
-    // a wrong method fails the method check, so their walling is unchanged.
-    const legacyPrivateRoute =
+    // onto the same legacy array (guards.ts), while /member/me is the private
+    // session probe. Their denials must carry the same private headers as their
+    // 200s, so the set is applied here BEFORE any wall or member-guard response.
+    // A lookalike path fails the equality and a wrong method fails the method
+    // check, so their walling is unchanged.
+    const privateMemberReadRoute =
       (req.method === "GET" || req.method === "HEAD") &&
-      (req.path === "/catalog" || req.path === "/member/catalog");
-    if (legacyPrivateRoute) {
-      setLegacyCommercePrivateHeaders(res);
+      (req.path === "/catalog" ||
+        req.path === "/member/catalog" ||
+        req.path === "/member/me");
+    if (privateMemberReadRoute) {
+      setResearchPrivateHeaders(res);
     }
     if (publicMode()) return next();
     if (
