@@ -369,8 +369,38 @@ export default function Checkout() {
               }
             />
           </ResearchCapabilityBoundary>
+        ) : !cart.checkoutReady ? (
+          <section className="grid gap-3" aria-labelledby="checkout-held-heading" data-testid="checkout-held-cart">
+            <div className="card">
+              <p className="mono-label text-ink-mute">Checkout held</p>
+              <h2 id="checkout-held-heading" className="body-m font-700 mt-2">
+                This cart is not ready for checkout.
+              </h2>
+              <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
+                Review the cart for the exact items that still need approval. No order or provider request has been
+                started.
+              </p>
+              <div className="mt-4">
+                <Link href={MEMBER_ROUTES.cart} className="btn btn-primary">
+                  Review cart
+                </Link>
+              </div>
+            </div>
+            {cart.blockingReasons.length > 0 ? (
+              cart.blockingReasons.map((code, index) => (
+                <ResearchDenialNotice key={`${code}-${index}`} code={code} />
+              ))
+            ) : (
+              <ResearchPendingPanel
+                kind="samuel_review_pending"
+                title="Checkout is still under review."
+                body="The cart has not passed its server readiness check, so checkout remains closed."
+              />
+            )}
+          </section>
         ) : (
-          <div className="grid gap-6">
+          <ResearchCapabilityBoundary status={commerceStatus}>
+            <div className="grid gap-6">
             {submitDenial && <ResearchDenialNotice code={submitDenial.code} message={submitDenial.message} />}
             {submitUnavailable && (
               <ResearchPendingPanel
@@ -631,7 +661,8 @@ export default function Checkout() {
               The cart is revalidated at checkout and every total is computed by the server. A retried submit reuses
               the same order intent, so it can never create two orders.
             </ResearchSecureNotice>
-          </div>
+            </div>
+          </ResearchCapabilityBoundary>
         )}
       </ResearchRouteBoundary>
     </ResearchMemberShell>

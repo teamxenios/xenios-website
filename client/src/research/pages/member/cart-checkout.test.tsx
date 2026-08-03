@@ -588,6 +588,38 @@ describe("Checkout page", () => {
     expect(view.textContent).not.toContain("There is nothing to check out.");
     expect(view.textContent).not.toContain("Add a product first");
   });
+
+  it("keeps a populated checkout fail-closed when product commerce is disabled", async () => {
+    const calls = stubFetch([
+      CAPABILITIES_OFF,
+      { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: readyCart } },
+      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+    ]);
+    const view = await renderPage(<Checkout />);
+
+    expect(view.querySelector('[data-testid="ra-capability-product_commerce"]')).toBeTruthy();
+    expect(view.textContent).toContain("Ordering is not open yet. The catalog is available for review.");
+    expect(view.querySelector('[data-testid="co-submit"]')).toBeNull();
+    expect(view.querySelector('[data-testid="co-quote"]')).toBeNull();
+    expect(calls.some((call) => call.init?.method === "POST")).toBe(false);
+  });
+
+  it("keeps direct checkout access fail-closed when the server marks the cart not ready", async () => {
+    const calls = stubFetch([
+      { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: blockedCart } },
+      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+    ]);
+    const view = await renderPage(<Checkout />);
+
+    const held = byTestId(view, "checkout-held-cart");
+    expect(held.textContent).toContain("This cart is not ready for checkout.");
+    expect(held.textContent).toContain("Ordering is not open yet.");
+    expect(held.textContent).toContain("Awaiting supplier confirmation.");
+    expect(held.querySelector('a[href="/research/member/cart"]')).toBeTruthy();
+    expect(view.querySelector('[data-testid="co-submit"]')).toBeNull();
+    expect(view.querySelector('[data-testid="co-quote"]')).toBeNull();
+    expect(calls.some((call) => call.init?.method === "POST")).toBe(false);
+  });
 });
 
 // ---------------------------------------------------------------------------
