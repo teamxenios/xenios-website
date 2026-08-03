@@ -95,8 +95,8 @@
         "algorithm": "sha256",
         "value": "6cd11e07eb764d0f803db4baa308ae397c23aacb8ff5d29306c8797be60b4818"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "20260801120000 research_variant_strength_write_gate",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "drop_gate_triggers_functions_and_registry_only_after_explicit_approval",
