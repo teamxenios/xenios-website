@@ -14,8 +14,26 @@ import { referralsEnabled } from "./referrals";
 // and openFraudFlag refuse on their own when RESEARCH_REFERRALS_ENABLED is not
 // exactly "true", so a caller that is not one of these routes cannot reach the
 // reward table or the credit ledger either. What these routes add is the HTTP
-// shape, 503 with code "referrals_disabled", matching how the rest of the
-// research admin surface reports a capability that is switched off.
+// shape: 409 with code "referrals_disabled".
+//
+// 409 and not 503. This comment claims no house convention, because there is
+// not one: documents.ts, media.ts and questions.ts answer 409 with code
+// "capability_disabled", while catalog-display/routes.ts, pricing/routes.ts and
+// membership-activation/routes.ts answer 503 with a code of their own. Both
+// reasons for choosing 409 are local to this file.
+//
+//   1. 503 is already taken on these three routes. The supabaseConfigured()
+//      guards below answer 503 for "storage is not configured", a different
+//      condition with a different fix and a different owner. Reusing 503 for
+//      "the referral program is switched off" would leave one status meaning
+//      two things on one route, separable only by reading the code field.
+//   2. On a 503 that code field is unreadable to this route's own adapter.
+//      adapters/adminOps.ts (actOnReferralFlag, reportReferralFraud) calls
+//      through research/lib/api.ts, which maps 404, 501 and 503 to
+//      "unavailable" WITHOUT parsing the body, so on a 503 both the code and
+//      the message are discarded before the ok:false envelope is inspected. At
+//      409 the same refusal arrives as { kind: "denied", code:
+//      "referrals_disabled", message }, which is the whole point of the code.
 
 const FLAGS = "referral_fraud_flags";
 
@@ -66,9 +84,9 @@ export function registerReferralFraudAdmin(app: Express) {
         adminId: (req as any).adminEmail ?? null,
       });
       if (!result.ok) {
-        // 503 for "the capability is off", 404 for "no such flag" or "already
+        // 409 for "the capability is off", 404 for "no such flag" or "already
         // resolved", which is what this route already returned.
-        return res.status(result.code === "referrals_disabled" ? 503 : 404).json(result);
+        return res.status(result.code === "referrals_disabled" ? 409 : 404).json(result);
       }
       res.json(result);
     } catch (err) {
@@ -93,7 +111,7 @@ export function registerReferralFraudAdmin(app: Express) {
       // openFraudFlag already refuses when the capability is off and writes
       // nothing. Reporting that refusal here keeps the route from answering
       // ok: true with a null flagId, which would read as "deduplicated".
-      if (!referralsEnabled()) return res.status(503).json(REFERRALS_DISABLED_BODY);
+      if (!referralsEnabled()) return res.status(409).json(REFERRALS_DISABLED_BODY);
       const id = await openFraudFlag({
         reason: "manual-report",
         attributionId: parsed.data.attributionId ?? null,

@@ -170,6 +170,21 @@ function rewardStatuses(): string[] {
   return db.tables.referral_rewards.map((r) => r.status);
 }
 
+// A FIXED canonical flag id, for the tests that assert the refusal line does
+// NOT contain something. crypto.randomUUID() is unsafe there and was a real
+// measured flake: a v4 UUID is hex and hyphens, "1500" is the seeded reward's
+// value_cents and is made only of hex digits, so a random id contains it about
+// 1 run in 4,487 (measured over 20M samples) and fails an assertion that has
+// nothing to do with what it is testing. A flaky assertion in the file that
+// certifies the money-path gate destroys the signal it exists to give, because
+// the next person who sees it go red deletes it.
+//
+// This literal contains no "5" at all, so "1500" is impossible in it rather
+// than merely unlikely, and every other needle in ABSENT_NEEDLES contains a
+// character outside the UUID alphabet. Both properties are pinned by the guard
+// test in the log-forging section below, so the collision cannot come back.
+const LOG_SAFE_FLAG_ID = "a1b2c3d4-e6f7-4a8b-9c0d-e1f2a3b4c6d7";
+
 /** The single assertion that matters: no money moved and no reward changed. */
 function expectNoMoneyPathTouched() {
   expect(db.ledgerInsert).not.toHaveBeenCalled();
@@ -301,11 +316,11 @@ describe("capability OFF: every fraud entry point fails closed", () => {
   });
 });
 
-describe("capability OFF: a refused action leaves a log line, and only a log line", () => {
+describe("capability OFF: a refused action writes nothing and leaves a refusal log line", () => {
   // Without this, an admin attempting money moves during a capability-off
   // window produces zero rows AND zero log lines, so the attempts are
-  // invisible. The log is the only trace, because recording a row would be a
-  // referral-subsystem write while the subsystem is off.
+  // invisible. The refusal is logged rather than recorded, because recording a
+  // row would itself be a referral-subsystem write while the subsystem is off.
   it("warns with the action and the flag id while still writing nothing", async () => {
     const { flag } = seedCase(["held", "available"]);
 
@@ -333,10 +348,13 @@ describe("capability OFF: a refused action leaves a log line, and only a log lin
   });
 
   it("logs no email, no reviewer reason text and no ledger amount", async () => {
-    const { flag } = seedCase(["available"]);
+    // Fixed id, not crypto.randomUUID(): see LOG_SAFE_FLAG_ID. seedCase still
+    // supplies the 1500-cent reward that makes the amount assertion mean
+    // something.
+    seedCase(["available"]);
 
     await applyFraudAction({
-      flagId: flag.id,
+      flagId: LOG_SAFE_FLAG_ID,
       action: "disqualify",
       reason: "member jane.doe@example.com reported this",
       adminId: "admin@xeniostechnology.com",
@@ -379,19 +397,41 @@ describe("capability OFF: a refused action leaves a log line, and only a log lin
       .post(`/api/admin/research/referral-fraud/${flag.id}/action`)
       .send({ action: "disqualify", reason: "confirmed duplicate accounts" });
 
-    expect(res.status).toBe(503);
+    expect(res.status).toBe(409);
     expect(warnLines().some((l) => l.includes("disqualify") && l.includes(flag.id))).toBe(true);
     expectNoMoneyPathTouched();
   });
 });
 
 // ---------------------------------------------------------------------------
-// The refusal line is the ONLY trace a refused reviewer action leaves, because
-// recording a row would itself be a referral-subsystem write while the
-// subsystem is off. So a caller who can forge that line can forge the record.
+// This refusal line is the only trace the REFERRAL SUBSYSTEM records for a
+// refused reviewer action, because recording a row would itself be a
+// referral-subsystem write while the subsystem is off. So a caller who can
+// forge this line can forge that record.
+//
+// It is NOT the only line the request produces, and an earlier version of this
+// comment claimed it was. The pre-existing request logger in server/index.ts
+// runs for every /api request, before and regardless of authentication, and
+// emits a second line for the same request carrying req.path verbatim:
+//
+//   [rid:...] POST /api/admin/research/referral-fraud/referrer@example.com/action 409 in 1ms
+//
+// The residual there is narrow, and worth stating exactly rather than
+// flattening in either direction. req.path is NOT percent-decoded (req.params
+// is, which is why the cases below are real attacks against THIS line): in
+// req.path, %0A stays "%0A", %0D stays "%0D", %1B stays "%1B" and %40 stays
+// "%40", so newline, CRLF and ANSI forging are dead in the request log too.
+// What survives there is a RAW, unencoded "@", a legal path character, so an
+// address typed straight into the URL reaches the request log even though it
+// can never reach the refusal line below.
+//
+// That logger is pre-existing and is untouched by this change, so this gate
+// neither introduces nor worsens the residual. It is recorded as a follow-up
+// for the owner of server/index.ts rather than fixed here: changing a global
+// request logger is out of scope for this P0, and that file is leased.
 //
 // The flag id reaches applyFraudAction straight from the URL path, and Express
-// percent-decodes a path parameter before the route sees it: %0A arrives as a
+// percent-decodes a path PARAMETER before the route sees it: %0A arrives as a
 // real newline, %1B as a real escape character, %40 as a real "@". The route
 // tests below drive the REAL registered route with a REAL admin principal and
 // assert the string console.warn actually received.
@@ -422,6 +462,48 @@ function expectLineIsSingleLineAndClean(line: string) {
   expect(ANY_CONTROL_CHAR.test(line)).toBe(false);
   expect(line.split(/\r?\n/)).toHaveLength(1);
 }
+
+// Every string the refusal-line tests assert the line does NOT contain. A flag
+// id is echoed into that line verbatim when it is canonical, so an id that
+// happens to contain one of these fails an assertion about something else.
+const ABSENT_NEEDLES = [
+  "1500",
+  "@",
+  "\n",
+  "\r",
+  ESCAPE,
+  "FORGED",
+  "applied successfully",
+  "admin@xeniostechnology.com",
+  "jane.doe@example.com",
+  "referrer@example.com",
+  "evil.example.com",
+  "example.com",
+  "<omitted>",
+  "<unknown>",
+];
+
+// Mirrors CANONICAL_UUID in fraud.ts: an id must match this to be echoed at all
+// rather than reported as <omitted>.
+const CANONICAL_UUID_SHAPE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+it("the fixed flag ids are canonical and collide with none of the absent needles", () => {
+  // The regression guard for a measured flake. These ids used to be
+  // crypto.randomUUID(); "1500" is all hex digits, so about 1 random id in
+  // 4,487 contained it and failed "logs no email, no reviewer reason text and
+  // no ledger amount" for a reason unrelated to the gate. Fixing the ids fixed
+  // the flake; this test keeps a future edit from putting a colliding id back.
+  for (const id of [LOG_SAFE_FLAG_ID, VALID_FLAG_ID]) {
+    // Canonical, so the positive-control tests really do exercise the echo path.
+    expect(id).toMatch(CANONICAL_UUID_SHAPE);
+    for (const needle of ABSENT_NEEDLES) {
+      expect(id).not.toContain(needle);
+    }
+  }
+  // LOG_SAFE_FLAG_ID goes past "does not happen to contain 1500": it holds no
+  // "5" at all, so no substring of it can ever be "1500".
+  expect(LOG_SAFE_FLAG_ID).not.toContain("5");
+});
 
 /** Nothing at all was written: not the money path, not any other table. */
 function expectNothingWritten() {
@@ -504,7 +586,7 @@ describe("capability OFF: the refusal line cannot be forged by the flag id", () 
 
       // It really did reach the capability gate: the route answered the gate's
       // refusal, not a 400 or a 404 from somewhere earlier.
-      expect(res.status).toBe(503);
+      expect(res.status).toBe(409);
       expect(res.body.code).toBe("referrals_disabled");
 
       const lines = warnLines();
@@ -531,7 +613,7 @@ describe("capability OFF: the refusal line cannot be forged by the flag id", () 
 
     const res = await postAction(VALID_FLAG_ID);
 
-    expect(res.status).toBe(503);
+    expect(res.status).toBe(409);
     const line = warnLines()[0];
     expect(line).toContain(`flag=${VALID_FLAG_ID}`);
     expect(line).not.toContain("<omitted>");
@@ -654,7 +736,7 @@ describe("capability ON: an applied action is not logged as a refusal", () => {
 });
 
 describe("capability OFF with a real admin principal: the capability gate, not the auth gate, refuses", () => {
-  it("the action route answers 401 without an admin and 503 referrals_disabled with one", async () => {
+  it("the action route answers 401 without an admin and 409 referrals_disabled with one", async () => {
     const { flag } = seedCase(["held", "available"]);
     const app = makeAdminApp();
     const body = { action: "disqualify", reason: "confirmed duplicate accounts" };
@@ -667,7 +749,7 @@ describe("capability OFF with a real admin principal: the capability gate, not t
     // A real admin principal gets all the way past auth and is refused anyway.
     auth.adminEmail = "admin@xeniostechnology.com";
     const authorized = await request(app).post(`/api/admin/research/referral-fraud/${flag.id}/action`).send(body);
-    expect(authorized.status).toBe(503);
+    expect(authorized.status).toBe(409);
     expect(authorized.body.ok).toBe(false);
     expect(authorized.body.code).toBe("referrals_disabled");
 
@@ -682,7 +764,7 @@ describe("capability OFF with a real admin principal: the capability gate, not t
       .post("/api/admin/research/referral-fraud/report")
       .send({ detail: "a member reported a suspicious referral" });
 
-    expect(res.status).toBe(503);
+    expect(res.status).toBe(409);
     expect(res.body.ok).toBe(false);
     expect(res.body.code).toBe("referrals_disabled");
     expect(db.tables.referral_fraud_flags).toHaveLength(0);
