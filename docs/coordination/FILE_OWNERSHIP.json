@@ -679,6 +679,17 @@
       ]
     },
     {
+      "id": "OWNER-W2-P0-MANUAL-ORDER-PAYMENTS",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/commerce/manual-order-payments.test.ts",
+        "server/research/commerce/manual-order-payments.ts"
+      ]
+    },
+    {
       "id": "OWNER-CODEX5-CARE-TEBRA-SECURITY",
       "owner": "Codex 5",
       "lane": "care-tebra-security",
