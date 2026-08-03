@@ -182,6 +182,16 @@
       ]
     },
     {
+      "id": "OWNER-W2-P1-LEGACY-MEMBER-CATALOG-HOLD",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/guards.ts"
+      ]
+    },
+    {
       "id": "OWNER-W2-TAKEOVER-GOVERNANCE",
       "owner": "Website 2",
       "lane": "release-manager",
