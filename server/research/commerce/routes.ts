@@ -245,10 +245,19 @@ export function subjectOf(req: Request): string | null {
 // Response helpers
 // ---------------------------------------------------------------------------
 
-/** Member and admin JSON is never cached, matching the merged research routes. */
+/**
+ * Member and admin JSON is never cached, never carries a referrer, and is
+ * never indexed: the same four-header private set the research wall applies
+ * (setLegacyCommercePrivateHeaders) and the capabilities route already
+ * carries. This helper covers every handler-emitted commerce response; the
+ * wall's pre-auth boundary covers the GET/HEAD denials that a member guard
+ * emits before any handler here runs.
+ */
 function secure(res: Response): Response {
   res.set("Cache-Control", "no-store");
+  res.set("Pragma", "no-cache");
   res.set("Referrer-Policy", "no-referrer");
+  res.set("X-Robots-Tag", "noindex, nofollow");
   return res;
 }
 

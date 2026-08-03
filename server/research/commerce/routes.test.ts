@@ -272,6 +272,30 @@ describe("route registration", () => {
     );
     expect(captured.headers["Cache-Control"]).toBe("no-store");
   });
+
+  // The full canonical private set, not only no-store. The 19:48Z production
+  // finding showed cart and store-credit responses missing Pragma and
+  // X-Robots-Tag because secure() had only two of the four headers; the
+  // capabilities route was the control that carried all four. Asserted on an
+  // ok response AND a deny response, because both flow through secure().
+  it("puts the full private header set on member ok responses", async () => {
+    const { res, captured } = fakeRes();
+    await route(routes, "get", "/api/research/cart").handler(reqWith({ id: "mem_1" }), res);
+    expect(captured.headers["Cache-Control"]).toBe("no-store");
+    expect(captured.headers["Pragma"]).toBe("no-cache");
+    expect(captured.headers["Referrer-Policy"]).toBe("no-referrer");
+    expect(captured.headers["X-Robots-Tag"]).toBe("noindex, nofollow");
+  });
+
+  it("puts the full private header set on handler denials", async () => {
+    const { res, captured } = fakeRes();
+    await route(routes, "get", "/api/research/store-credit").handler(reqWith(undefined), res);
+    expect(captured.status).toBe(403);
+    expect(captured.headers["Cache-Control"]).toBe("no-store");
+    expect(captured.headers["Pragma"]).toBe("no-cache");
+    expect(captured.headers["Referrer-Policy"]).toBe("no-referrer");
+    expect(captured.headers["X-Robots-Tag"]).toBe("noindex, nofollow");
+  });
 });
 
 describe("handlers fail closed without an authenticated subject", () => {

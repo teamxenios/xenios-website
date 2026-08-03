@@ -416,9 +416,16 @@ export function registerResearchApi(app: Express) {
     // same private headers as its 200s, so the set is applied here BEFORE any
     // wall or member-guard response. A lookalike path fails the equality and
     // a wrong method fails the method check, so their walling is unchanged.
+    // /cart and /store-credit joined this set after the 19:48Z production
+    // finding: their signed-out denials are emitted by the member guard
+    // before any commerce handler runs, so only a pre-auth boundary can put
+    // the full private set on them.
     const legacyPrivateRoute =
       (req.method === "GET" || req.method === "HEAD") &&
-      (req.path === "/catalog" || req.path === "/member/catalog");
+      (req.path === "/catalog" ||
+        req.path === "/member/catalog" ||
+        req.path === "/cart" ||
+        req.path === "/store-credit");
     if (legacyPrivateRoute) {
       setLegacyCommercePrivateHeaders(res);
     }

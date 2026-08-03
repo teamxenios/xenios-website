@@ -259,6 +259,43 @@ describe("an authenticated member bypasses the shared password on member endpoin
     expect(noRoute.headers["x-robots-tag"]).toBeUndefined();
   });
 
+  // /cart and /store-credit joined the wall's pre-auth boundary after the
+  // 19:48Z production finding: their signed-out denials come from the member
+  // guard before any commerce handler runs, so only the wall can put the full
+  // private set on them. In walled mode the wall's own 401 must carry the
+  // set; in public mode the wall passes but the headers are applied BEFORE
+  // the publicMode check, which is exactly the production configuration the
+  // finding was observed in.
+  it.each(["/api/research/cart", "/api/research/store-credit"])(
+    "signed-out %s: the walled denial carries the full private set",
+    async (path) => {
+      const app = makeApp();
+      const res = await request(app).get(path);
+      expect(res.status).toBe(401);
+      expectPrivateHeaders(res);
+    },
+  );
+
+  it.each(["/api/research/cart", "/api/research/store-credit"])(
+    "public mode signed-out %s: headers are applied before the wall steps aside",
+    async (path) => {
+      process.env.RESEARCH_PUBLIC = "true";
+      const app = makeApp();
+      // makeApp does not mount the commerce registrar, so the request falls
+      // through to Express's 404; the pre-auth boundary must have marked the
+      // response anyway, which is what protects the guard-emitted 401 in
+      // production.
+      const res = await request(app).get(path);
+      expectPrivateHeaders(res);
+    },
+  );
+
+  it("commerce lookalike path: not the boundary, not marked private", async () => {
+    const app = makeApp();
+    const res = await request(app).get("/api/research/carts");
+    expect(res.headers["x-robots-tag"]).toBeUndefined();
+  });
+
   it("alias lookalike path: not the boundary, not marked private", async () => {
     const app = makeApp();
     const res = await request(app)
