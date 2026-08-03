@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"
+  role="img" aria-label="XENIOS  /  RENEW 360 | Thymosin Alpha-1 + KPV + LL-37 Research Blend | 5 mg / 5 mg / 5 mg | Vial | R360-THYMOSINALPHA1_KPV_LL37-5MG_5MG_5MG-VIAL | REVIEW ASSET  •  NOT APPROVED FOR PUBLICATION" data-source-type="xenios_generated_render"
+  data-provenance="generated_product_render" data-visual-state="review_pending">
+  <metadata>{&quot;variantId&quot;:&quot;R360-THYMOSINALPHA1_KPV_LL37-5MG_5MG_5MG-VIAL&quot;,&quot;sku&quot;:&quot;R360-THYMOSINALPHA1_KPV_LL37-5MG_5MG_5MG-VIAL&quot;,&quot;strength&quot;:&quot;5 mg / 5 mg / 5 mg&quot;,&quot;sourceWorkbookSha256&quot;:&quot;df317a28374c9e194f3379a2b276c8533016dc84aa906af9d48b49db46bf53d5&quot;,&quot;sourceType&quot;:&quot;xenios_generated_render&quot;,&quot;provenanceTag&quot;:&quot;generated_product_render&quot;,&quot;publicStatus&quot;:&quot;HELD&quot;}</metadata>
+  <style>
+    .brand{font:700 17px Arial,sans-serif;letter-spacing:1.2px;fill:#fff;text-anchor:middle}
+    .name{font:700 24px Arial,sans-serif;fill:#0a0a0a;text-anchor:middle}
+    .strength{font:700 36px Arial,sans-serif;fill:#0a0a0a;text-anchor:middle}
+    .meta{font:600 15px Arial,sans-serif;fill:#26313a;text-anchor:middle;letter-spacing:.4px}
+    .sku{font:600 12px Arial,sans-serif;fill:#26313a;text-anchor:middle;letter-spacing:.1px}
+    .hold{font:700 12px Arial,sans-serif;fill:#8a2f21;text-anchor:middle;letter-spacing:.7px}
+  </style>
+  <image href="../templates/neutral-vial-base.png" x="0" y="0" width="1024" height="1024"/>
+  <rect x="315" y="405" width="394" height="285" rx="14" fill="#fff" stroke="#c8cfd6" stroke-width="3"/>
+  <rect x="315" y="405" width="394" height="52" rx="14" fill="#0b1b2b"/>
+  <rect x="315" y="443" width="394" height="14" fill="#0b1b2b"/>
+  <text x="512" y="439" class="brand">XENIOS  /  RENEW 360</text>
+  <text x="512" y="485" class="name">Thymosin Alpha-1 + KPV +</text>
+<text x="512" y="516" class="name">LL-37 Research Blend</text>
+  <text x="512" y="593" class="strength">5 mg / 5 mg / 5 mg</text>
+  <text x="512" y="621" class="meta">Vial</text>
+  <text x="512" y="646" class="sku">R360-THYMOSINALPHA1_KPV_LL37-5MG_5MG_5MG-VIAL</text>
+  <line x1="342" y1="660" x2="682" y2="660" stroke="#c8cfd6"/>
+  <text x="512" y="680" class="hold">REVIEW ASSET  •  NOT APPROVED FOR PUBLICATION</text>
+</svg>
