@@ -317,11 +317,19 @@ export class InMemoryPaymentAuthorizationIdempotency implements PaymentAuthoriza
       return { ...outcome, idempotentReplay: true };
     }
     const outcome = Promise.resolve().then(operation);
-    this.entries.set(key, { fingerprint: commandFingerprintValue, outcome });
+    const entry = { fingerprint: commandFingerprintValue, outcome };
+    this.entries.set(key, entry);
     try {
-      return await outcome;
+      const resolved = await outcome;
+      // A transport failure may occur after a provider accepted the command.
+      // Evict it locally so a later retry can reuse the SAME provider
+      // idempotency key and ask for the authoritative provider result.
+      if (!resolved.ok && resolved.retryable && this.entries.get(key) === entry) {
+        this.entries.delete(key);
+      }
+      return resolved;
     } catch (error) {
-      this.entries.delete(key);
+      if (this.entries.get(key) === entry) this.entries.delete(key);
       throw error;
     }
   }

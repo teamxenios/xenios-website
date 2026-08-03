@@ -198,4 +198,28 @@ describe("checkout payment gates and idempotency", () => {
       retryable: true,
     });
   });
+
+  it("coalesces a retryable failure but lets a later same-key retry recover", async () => {
+    let current = { ...activeInstrument, providerPaymentMethodReference: "test_pm_unavailable" };
+    const deps = dependencies();
+    deps.instruments.resolve = vi.fn(async () => current);
+    const authorize = vi.spyOn(deps.provider, "authorize");
+
+    const [first, concurrentReplay] = await Promise.all([
+      authorizeCheckoutPayment("member-1", request, quote, deps),
+      authorizeCheckoutPayment("member-1", request, quote, deps),
+    ]);
+    expect(first).toMatchObject({ ok: false, code: "payment_provider_unavailable", retryable: true });
+    expect(concurrentReplay).toMatchObject({
+      ok: false,
+      code: "payment_provider_unavailable",
+      retryable: true,
+      idempotentReplay: true,
+    });
+    expect(authorize).toHaveBeenCalledTimes(1);
+
+    current = { ...activeInstrument, providerPaymentMethodReference: "test_pm_success" };
+    expect(await authorizeCheckoutPayment("member-1", request, quote, deps)).toMatchObject({ ok: true });
+    expect(authorize).toHaveBeenCalledTimes(2);
+  });
 });
