@@ -55,6 +55,7 @@ vi.mock("../supabase", () => ({
 }));
 
 import { registerLegacyResearchOrderContainment, registerResearchApi } from "./index";
+import { registerMemberAccessApi } from "./guards";
 import { requireMember } from "./member-auth";
 
 const ENV_KEYS = [
@@ -73,6 +74,9 @@ function makeApp() {
   registerLegacyResearchOrderContainment(app);
   app.use(express.json());
   registerResearchApi(app);
+  // The member-contract catalog alias, registered after the research API
+  // exactly as production does in server/index.ts.
+  registerMemberAccessApi(app);
   // Registered after the shared research middleware, matching production.
   // The real activation implementation applies the same member guard before
   // every member activation handler.
@@ -170,6 +174,98 @@ describe("an authenticated member bypasses the shared password on member endpoin
     expect(
       res.body.products.every((product: { compareAtCents?: unknown }) => product.compareAtCents === null),
     ).toBe(true);
+  });
+
+  // The member-contract alias (/api/research/member/catalog) is a second door
+  // onto the same products-data array. The hold commit covered only the
+  // primary door; an executed probe on held main returned 15 priced products
+  // here, including tesamorelin-10mg 20999, nad-plus-500mg 15999, and
+  // ss-31-elamipretide 22999. These regressions pin both doors to one
+  // behavior, and pin the private-header boundary BEFORE auth: signed-out and
+  // invalid-bearer denials must carry the same header set as the 200, which
+  // is why the wall applies it and not the handler.
+  const ALIAS = "/api/research/member/catalog";
+  function expectPrivateHeaders(res: request.Response) {
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers["pragma"]).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+  }
+
+  it("alias signed-out: the gateway denial itself carries the private headers", async () => {
+    const app = makeApp();
+    const res = await request(app).get(ALIAS);
+    expect(res.status).toBe(401);
+    expectPrivateHeaders(res);
+  });
+
+  it("alias invalid bearer: the member-guard denial carries the private headers", async () => {
+    const app = makeApp();
+    const res = await request(app).get(ALIAS).set("Authorization", "Bearer junk");
+    expect(res.status).toBe(401);
+    expectPrivateHeaders(res);
+  });
+
+  it("alias active member: 200 carries the headers and the held projection", async () => {
+    const app = makeApp();
+    const res = await request(app).get(ALIAS).set("Authorization", `Bearer ${state.goodToken}`);
+    expect(res.status).toBe(200);
+    expectPrivateHeaders(res);
+    expect(res.body.commerce).toEqual({ research: false, consumer: false });
+    expect(res.body.products).not.toHaveLength(0);
+    expect(res.body.products.every((product: { priceCents: unknown }) => product.priceCents === null)).toBe(true);
+    expect(
+      res.body.products.every((product: { compareAtCents?: unknown }) => product.compareAtCents === null),
+    ).toBe(true);
+  });
+
+  it("alias stays held even when both commerce flags are true", async () => {
+    process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED = "true";
+    process.env.NEXT_PUBLIC_CONSUMER_COMMERCE_ENABLED = "true";
+    const app = makeApp();
+    const res = await request(app).get(ALIAS).set("Authorization", `Bearer ${state.goodToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.commerce).toEqual({ research: false, consumer: false });
+    const contested = res.body.products.filter((product: { slug?: string }) =>
+      ["tesamorelin", "nad-plus", "ss-31"].some((fragment) => (product.slug ?? "").includes(fragment)),
+    );
+    // Anti-vacuity: the contested units must actually be present for their
+    // withheld prices to mean anything.
+    expect(contested).toHaveLength(3);
+    for (const product of contested) {
+      expect(product.priceCents).toBeNull();
+    }
+    expect(res.body.products.every((product: { priceCents: unknown }) => product.priceCents === null)).toBe(true);
+  });
+
+  it("alias HEAD: same boundary, same headers, no body", async () => {
+    const app = makeApp();
+    const res = await request(app).head(ALIAS).set("Authorization", `Bearer ${state.goodToken}`);
+    expect(res.status).toBe(200);
+    expectPrivateHeaders(res);
+    expect(res.text ?? "").toBe("");
+  });
+
+  it("alias wrong method: walling is unchanged and the boundary does not mark it private", async () => {
+    const app = makeApp();
+    // Signed out, wrong method: the wall answers exactly as before.
+    const walled = await request(app).post(ALIAS).send({});
+    expect(walled.status).toBe(401);
+    expect(walled.headers["x-robots-tag"]).toBeUndefined();
+    // Bearer, wrong method: passes the wall's member-prefix check, finds no
+    // POST route, and falls through exactly as before this change.
+    const noRoute = await request(app).post(ALIAS).set("Authorization", `Bearer ${state.goodToken}`).send({});
+    expect(noRoute.status).toBe(404);
+    expect(noRoute.headers["x-robots-tag"]).toBeUndefined();
+  });
+
+  it("alias lookalike path: not the boundary, not marked private", async () => {
+    const app = makeApp();
+    const res = await request(app)
+      .get("/api/research/member/catalogs")
+      .set("Authorization", `Bearer ${state.goodToken}`);
+    expect(res.headers["x-robots-tag"]).toBeUndefined();
+    expect(res.status).not.toBe(200);
   });
 
   it.each([

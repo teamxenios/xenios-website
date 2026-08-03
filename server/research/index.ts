@@ -411,8 +411,14 @@ export function registerResearchApi(app: Express) {
   };
 
   app.use("/api/research", (req, res, next) => {
+    // Path-exact GET/HEAD boundaries only: /member/catalog is the alias door
+    // onto the same legacy array (guards.ts), and its denials must carry the
+    // same private headers as its 200s, so the set is applied here BEFORE any
+    // wall or member-guard response. A lookalike path fails the equality and
+    // a wrong method fails the method check, so their walling is unchanged.
     const legacyPrivateRoute =
-      (req.method === "GET" || req.method === "HEAD") && req.path === "/catalog";
+      (req.method === "GET" || req.method === "HEAD") &&
+      (req.path === "/catalog" || req.path === "/member/catalog");
     if (legacyPrivateRoute) {
       setLegacyCommercePrivateHeaders(res);
     }
