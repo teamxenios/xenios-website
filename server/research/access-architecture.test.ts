@@ -188,7 +188,12 @@ describe("an authenticated member bypasses the shared password on member endpoin
       .get("/api/research/member/catalog")
       .set("Authorization", `Bearer ${state.goodToken}`);
     expect(res.status).toBe(200);
+    // The full canonical private-boundary set, not only no-store: member
+    // content must never be cached, leak a referrer, or be indexed.
     expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers["pragma"]).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
     expect(res.body.commerce).toEqual({ research: false, consumer: false });
     expect(res.body.products).not.toHaveLength(0);
     expect(res.body.products.every((product: { priceCents: unknown }) => product.priceCents === null)).toBe(true);

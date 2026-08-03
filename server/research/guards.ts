@@ -30,7 +30,14 @@ export { requireActiveMember } from "./member-auth";
 // Control, where the dispute machinery applies.
 export function registerMemberAccessApi(app: Express) {
   app.get("/api/research/member/catalog", requireActiveMember, (_req, res) => {
+    // The canonical private-boundary header set (member-catalog-routes.ts
+    // privateHeaders): member content must never be cached, leak a referrer,
+    // or be indexed. CODEX-RM flagged the missing set on the partner surface
+    // in the #243 disposition; the same rule holds here.
     res.set("Cache-Control", "no-store");
+    res.set("Pragma", "no-cache");
+    res.set("Referrer-Policy", "no-referrer");
+    res.set("X-Robots-Tag", "noindex, nofollow");
     const body: CatalogResponse = {
       products: products.map((product) => ({ ...product, priceCents: null, compareAtCents: null })),
       commerce: { research: false, consumer: false },
