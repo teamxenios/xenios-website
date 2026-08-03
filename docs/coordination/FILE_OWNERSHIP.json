@@ -130,6 +130,14 @@
       "activeUnit": "Build the credential-independent operational reporting outbox schema/tests and reconstruct the exact ten-path V3 planning import and dry-run contract from the current production base; all 86 variants remain non-purchasable and no production apply/import, price approval, provider, environment, or activation action is permitted.",
       "branch": "codex/war-database-20260802-0525",
       "headSha": null
+    },
+    {
+      "owner": "Codex Ops",
+      "lane": "supplier-fulfillment",
+      "state": "ACTIVE",
+      "activeUnit": "Build the exact route-free supplier-coordination contracts, port, kernel, tests, and handoff evidence only; no migration, runtime route, provider call, production data, environment, payment, pricing, fulfillment activation, or production action.",
+      "branch": "codex/war-supplier-fulfillment-20260802",
+      "headSha": null
     }
   ],
   "rules": [
@@ -727,6 +735,22 @@
         "shared/research/v3-import.ts",
         "supabase/research-operational-reporting-outbox.sql",
         "supabase/tests/research-operational-reporting-outbox-lifecycle.test.sql"
+      ]
+    },
+    {
+      "id": "OWNER-CODEX-OPS-SUPPLIER-COORDINATION-PROJECTION",
+      "owner": "Codex Ops",
+      "lane": "supplier-fulfillment",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "docs/coordination/CODEX_OPS_SUPPLIER_COORDINATION_HANDOFF.md",
+        "docs/coordination/CODEX_OPS_SUPPLIER_COORDINATION_RELEASE_MANIFEST.json",
+        "server/research/supplier-coordination/kernel.test.ts",
+        "server/research/supplier-coordination/kernel.ts",
+        "server/research/supplier-coordination/port.ts",
+        "shared/research/supplier-coordination/contracts.test.ts",
+        "shared/research/supplier-coordination/contracts.ts"
       ]
     },
     {
