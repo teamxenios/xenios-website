@@ -135,9 +135,9 @@ const guards = {
   requireAdmin: ((_r: Request, _s: Response, next?: () => void) => next?.()) as Handler,
 };
 
-function build(d: CommerceDependencies = deps()) {
+function build(d: CommerceDependencies = deps(), selectedGuards = guards) {
   const { app, routes } = fakeApp();
-  registerCommerceApi(app, d, guards);
+  registerCommerceApi(app, d, selectedGuards);
   return routes;
 }
 
@@ -289,6 +289,85 @@ describe("handlers fail closed without an authenticated subject", () => {
     const req = reqWith({ id: "mem_real" }, { body: { memberId: "mem_victim" } } as Partial<Request>);
     await route(routes, "get", "/api/research/cart").handler(req, res);
     expect(captured.body).toMatchObject({ ok: true, cart: { owner: "mem_real" } });
+  });
+});
+
+describe("cart and store-credit private read guards", () => {
+  it.each([
+    "/api/research/cart",
+    "/api/research/store-credit",
+  ])("sets every private header before downstream authentication for %s", async (path) => {
+    const reads = { cart: 0, credit: 0 };
+    const guardedDeps = deps({
+      cart: {
+        ...deps().cart,
+        getCart: async () => {
+          reads.cart += 1;
+          return { privateMarker: "PRIVATE-CART-MARKER" };
+        },
+      },
+      storeCredit: {
+        forMember: async () => {
+          reads.credit += 1;
+          return { privateMarker: "PRIVATE-CREDIT-MARKER" };
+        },
+      },
+    });
+    const observed: Record<string, string> = {};
+    const denyingGuards = {
+      ...guards,
+      requireActiveMember: ((_req: Request, res: Response) => {
+        Object.assign(observed, (res as unknown as { capturedHeaders?: Record<string, string> }).capturedHeaders);
+        res.status(401).json({ ok: false, message: "Sign in required." });
+      }) as Handler,
+    };
+    const routes = build(guardedDeps, denyingGuards);
+    const { res, captured } = fakeRes();
+    (res as unknown as { capturedHeaders: Record<string, string> }).capturedHeaders = captured.headers;
+
+    await route(routes, "get", path).guard(reqWith(undefined), res, () => {
+      throw new Error("a denied request must not reach the private handler");
+    });
+
+    expect(captured.status).toBe(401);
+    expect(observed).toMatchObject({
+      "Cache-Control": "no-store",
+      Pragma: "no-cache",
+      "Referrer-Policy": "no-referrer",
+      "X-Robots-Tag": "noindex, nofollow",
+    });
+    expect(JSON.stringify(captured.body)).not.toContain("PRIVATE-");
+    expect(reads).toEqual({ cart: 0, credit: 0 });
+  });
+
+  it.each([
+    "/api/research/cart",
+    "/api/research/store-credit",
+  ])("passes an authenticated %s request only to the injected active-member guard", async (path) => {
+    let authenticated = 0;
+    let nextCalls = 0;
+    const selectedGuards = {
+      ...guards,
+      requireActiveMember: ((_req: Request, _res: Response, next?: () => void) => {
+        authenticated += 1;
+        next?.();
+      }) as Handler,
+    };
+    const routes = build(deps(), selectedGuards);
+    const { res, captured } = fakeRes();
+
+    await route(routes, "get", path).guard(reqWith(undefined), res, () => {
+      nextCalls += 1;
+    });
+
+    expect(authenticated).toBe(1);
+    expect(nextCalls).toBe(1);
+    expect(captured.headers).toMatchObject({
+      "Cache-Control": "no-store",
+      Pragma: "no-cache",
+      "Referrer-Policy": "no-referrer",
+      "X-Robots-Tag": "noindex, nofollow",
+    });
   });
 });
 

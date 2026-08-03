@@ -14,6 +14,8 @@ vi.mock("./member-auth", async (importOriginal) => {
 import { registerResearchApi, researchPageGate } from "./index";
 import { registerMemberPlatformApi } from "./member-platform";
 import { documentDownloadPath, signDocumentGrant } from "./documents";
+import { registerCommerceApi, type CommerceGuards } from "./commerce/routes";
+import { buildCommerceDependencies } from "./commerce/production-deps";
 
 const VALID_PLAN_ID = "00000000-0000-4000-8000-000000000030";
 const VALID_DOCUMENT_ID = "00000000-0000-4000-8000-0000000000d0";
@@ -39,6 +41,19 @@ function makeWalledApi() {
   app.use(express.json());
   registerResearchApi(app);
   registerMemberPlatformApi(app);
+  const commerceGuards: CommerceGuards = {
+    requireActiveMember: (_req, res) =>
+      res.status(401).json({ ok: false, message: "Sign in required." }),
+    requireMember: (_req, res) =>
+      res.status(401).json({ ok: false, message: "Sign in required." }),
+    requireAdmin: (_req, res) =>
+      res.status(401).json({ ok: false, message: "Sign in required." }),
+  };
+  registerCommerceApi(
+    app,
+    buildCommerceDependencies(() => new Date("2026-08-03T00:00:00.000Z"), {}),
+    commerceGuards,
+  );
   return app;
 }
 
@@ -88,6 +103,14 @@ describe("fresh-browser account-access wall", () => {
     ["post", "/api/research/member/claim-other"],
     ["get", "/api/research/member/profile"],
     ["get", "/api/research/catalog"],
+    ["post", "/api/research/cart"],
+    ["put", "/api/research/cart"],
+    ["get", "/api/research/cart-lines"],
+    ["get", "/api/research/cart/lines"],
+    ["get", "/api/research/carts"],
+    ["post", "/api/research/store-credit"],
+    ["get", "/api/research/store-credits"],
+    ["get", "/api/research/store-credit/extra"],
     ["put", "/api/research/profile"],
     ["post", "/api/research/profile/sensitive"],
     ["post", "/api/research/plans/xenios30"],
@@ -158,6 +181,25 @@ describe("fresh-browser account-access wall", () => {
       expect(response.body).toEqual({ ok: false, message: "Sign in required." });
     } else {
       expect(response.text ?? "").toBe("");
+    }
+  });
+
+  it.each([
+    ["get", "/api/research/cart"],
+    ["head", "/api/research/cart"],
+    ["get", "/api/research/store-credit"],
+    ["head", "/api/research/store-credit"],
+  ] as const)("lets only the exact private commerce read reach downstream auth for %s %s", async (method, path) => {
+    const response = await (request(makeWalledApi()) as any)[method](path);
+    expect(response.status).toBe(401);
+    expect(response.headers["cache-control"]).toBe("no-store");
+    expect(response.headers.pragma).toBe("no-cache");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
+    expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    if (method === "head") {
+      expect(response.text ?? "").toBe("");
+    } else {
+      expect(response.body).toEqual({ ok: false, message: "Sign in required." });
     }
   });
 
