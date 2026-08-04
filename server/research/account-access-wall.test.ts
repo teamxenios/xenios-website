@@ -92,6 +92,52 @@ function makeOrderReadApi(guardResult: "deny" | "allow") {
   return { app, downstreamGuard, listForMember, getForMember };
 }
 
+function makePrivateCatalogReadApi(guardResult: "deny" | "allow" = "deny") {
+  const app = express();
+  const baseline = buildCommerceDependencies(() => new Date("2026-08-03T00:00:00.000Z"), {});
+  const privateMarker = "PRIVATE_CATALOG_GUIDE_SENTINEL_277";
+  const product = { ...baseline.catalog.listProducts()[0]!, displayName: privateMarker };
+  const listProducts = vi.fn(() => [product]);
+  const getProduct = vi.fn(() => ({
+    ...product,
+    confirmedFacts: {},
+    unavailableReason: null,
+    prohibitedClaims: [],
+    faq: [],
+  }));
+  const listGoals = vi.fn(() => [{ slug: "private-goal", label: privateMarker, productSkus: [], guideSlugs: [] }]);
+  const guide = { slug: "private-guide", title: privateMarker, status: "published" as const, publishedAt: null, relatedProductSkus: [] };
+  const listForMember = vi.fn(async () => [guide]);
+  const getForMember = vi.fn(async () => ({
+    ...guide,
+    revision: 1,
+    sections: [],
+    claims: [],
+    sources: [],
+    correctionHistory: [],
+  }));
+  const downstreamGuard = vi.fn((req: any, res: any, next: () => void) => {
+    if (guardResult === "deny") return res.status(401).json({ ok: false, message: "Sign in required." });
+    req.researchMember = { id: "member-private-catalog-canary" };
+    next();
+  });
+  const denyGuard: CommerceGuards["requireMember"] = (_req, res) =>
+    res.status(401).json({ ok: false, message: "Sign in required." });
+
+  app.use(express.json());
+  registerResearchApi(app);
+  registerCommerceApi(app, {
+    ...baseline,
+    catalog: { listProducts, getProduct, listGoals },
+    guides: { ...baseline.guides, listForMember, getForMember },
+  }, {
+    requireActiveMember: downstreamGuard,
+    requireMember: denyGuard,
+    requireAdmin: denyGuard,
+  });
+  return { app, downstreamGuard, privateMarker, privateReads: [listProducts, getProduct, listGoals, listForMember, getForMember] };
+}
+
 function makeMemberMeGuardedApi() {
   const app = express();
   const privateRead = vi.fn();
@@ -377,6 +423,117 @@ describe("fresh-browser account-access wall", () => {
     expect(listForMember).not.toHaveBeenCalled();
     expect(getForMember).not.toHaveBeenCalled();
   });
+
+  const PRIVATE_CATALOG_READ_BOUNDARIES = [
+    ["get", "/api/research/products"],
+    ["head", "/api/research/products"],
+    ["get", "/api/research/products/member-product"],
+    ["head", "/api/research/products/member-product"],
+    ["get", "/api/research/goals"],
+    ["head", "/api/research/goals"],
+    ["get", "/api/research/guides"],
+    ["head", "/api/research/guides"],
+    ["get", "/api/research/guides/member-guide"],
+    ["head", "/api/research/guides/member-guide"],
+  ] as const;
+
+  it.each([
+    ...PRIVATE_CATALOG_READ_BOUNDARIES.map(([method, path]) => [method, path, undefined, 0, "Access required."] as const),
+    ...PRIVATE_CATALOG_READ_BOUNDARIES.map(([method, path]) => [method, path, "Bearer invalid-member", 1, "Sign in required."] as const),
+  ])("sets private headers before catalog boundary %s %s denial (%s)", async (method, path, authorization, guardCalls, message) => {
+    const { app, downstreamGuard, privateMarker, privateReads } = makePrivateCatalogReadApi();
+    let pending = (request(app) as any)[method](path);
+    if (authorization !== undefined) pending = pending.set("Authorization", authorization);
+    const response = await pending;
+
+    expect(response.status).toBe(401);
+    expectPrivateHeaders(response);
+    if (method === "head") expect(response.text ?? "").toBe("");
+    else {
+      expect(response.body).toEqual({ ok: false, message });
+      expect(JSON.stringify(response.body)).not.toContain(privateMarker);
+    }
+    expect(downstreamGuard).toHaveBeenCalledTimes(guardCalls);
+    for (const privateRead of privateReads) expect(privateRead).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["/api/research/products", 0],
+    ["/api/research/products/member-product", 1],
+    ["/api/research/goals", 2],
+    ["/api/research/guides", 3],
+    ["/api/research/guides/member-guide", 4],
+  ] as const)("proves the exact permitted catalog route invokes only its sentinel reader: %s", async (path, readerIndex) => {
+    const { app, downstreamGuard, privateMarker, privateReads } = makePrivateCatalogReadApi("allow");
+    const response = await request(app).get(path).set("Authorization", "Bearer accepted-member");
+
+    expect(response.status).toBe(200);
+    expectPrivateHeaders(response);
+    expect(JSON.stringify(response.body)).toContain(privateMarker);
+    expect(downstreamGuard).toHaveBeenCalledTimes(1);
+    privateReads.forEach((privateRead, index) => {
+      expect(privateRead).toHaveBeenCalledTimes(index === readerIndex ? 1 : 0);
+    });
+  });
+
+  it.each([
+    ["post", "/api/research/products"],
+    ["get", "/api/research/product"],
+    ["get", "/api/research/products/"],
+    ["get", "/api/research/products/member-product/extra"],
+    ["get", "/api/research/products-extra/member-product"],
+    ["post", "/api/research/goals"],
+    ["get", "/api/research/goal"],
+    ["get", "/api/research/goals/member-goal"],
+    ["post", "/api/research/guides"],
+    ["get", "/api/research/guide"],
+    ["get", "/api/research/guides/"],
+    ["get", "/api/research/guides/member-guide/extra"],
+  ] as const)("does not classify catalog lookalike boundary %s %s as private", async (method, path) => {
+    const { app, downstreamGuard, privateMarker, privateReads } = makePrivateCatalogReadApi();
+    const pending = (request(app) as any)[method](path).set("Authorization", "Bearer member-jwt");
+    const response = method === "get" ? await pending : await pending.send({});
+
+    expect(response.status).toBe(401);
+    expect(response.headers.pragma).toBeUndefined();
+    expect(response.headers["x-robots-tag"]).toBeUndefined();
+    expect(JSON.stringify(response.body)).not.toContain(privateMarker);
+    expect(downstreamGuard).not.toHaveBeenCalled();
+    for (const privateRead of privateReads) expect(privateRead).not.toHaveBeenCalled();
+  });
+
+  const PRIVATE_DETAIL_DENIALS = [
+    "/api/research/products/member-product%2Fextra",
+    "/api/research/products/member-product%5Cextra",
+    "/api/research/products/%62pc-157",
+    "/api/research/products/bpc%2D157",
+    "/api/research/products/%00",
+    "/api/research/products/%E0%A4%A",
+    "/api/research/products/BPC-157",
+    "/api/research/products/bpc_157",
+    "/api/research/products/-bpc-157",
+    "/api/research/products/bpc-157-",
+    "/api/research/products/bpc--157",
+    `/api/research/products/${"a".repeat(121)}`,
+    "/api/research/guides/member-guide%2Fextra",
+    "/api/research/guides/member-guide%5Cextra",
+  ] as const;
+
+  it.each(PRIVATE_DETAIL_DENIALS.flatMap((path) => [["get", path], ["head", path]] as const))(
+    "classifies detail-shaped denial without admitting it: %s %s",
+    async (method, path) => {
+    const { app, downstreamGuard, privateMarker, privateReads } = makePrivateCatalogReadApi();
+    const response = await (request(app) as any)[method](path).set("Authorization", "Bearer member-jwt");
+
+    expect(response.status).toBe(401);
+    if (method === "head") expect(response.text ?? "").toBe("");
+    else expect(response.body).toEqual({ ok: false, message: "Access required." });
+    expectPrivateHeaders(response);
+    expect(JSON.stringify(response.body)).not.toContain(privateMarker);
+    expect(downstreamGuard).not.toHaveBeenCalled();
+    for (const privateRead of privateReads) expect(privateRead).not.toHaveBeenCalled();
+    },
+  );
 
   it("lets only the exact Xenios30 acknowledge POST reach its downstream guard", async () => {
     const response = await request(makeWalledApi())

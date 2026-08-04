@@ -338,7 +338,7 @@ export function registerResearchApi(app: Express) {
   // "uuid primary key default gen_random_uuid()", so a lowercase-canonical
   // UUID is the correct anchor. Guide slugs are content directory names under
   // content/research-guides/{individual,blends}, which are lowercase
-  // kebab-case, so that is the anchor there.
+  // kebab-case, so that remains the existing admission anchor.
   const MEMBER_SESSION_READ_PATHS = new Set([
     // agreements.ts:337, requireResearchSubject. That guard is
     // resolveResearchMember(..., allowClosed: true): it demands the same
@@ -350,9 +350,11 @@ export function registerResearchApi(app: Express) {
     "/agreements",
     "/assessment", // assessment.ts: requireActiveMember
     "/blueprint", // blueprint.ts: requireActiveMember
+    "/goals", // commerce/routes.ts: injected requireActiveMember
     "/guides", // commerce/routes.ts: injected requireActiveMember
     "/media", // media.ts: requireActiveMember
     "/questions", // questions.ts: requireActiveMember
+    "/products", // commerce/routes.ts: injected requireActiveMember
     "/telegram", // questions.ts: requireActiveMember
     "/tracker", // tracker.ts: requireActiveMember
   ]);
@@ -384,13 +386,25 @@ export function registerResearchApi(app: Express) {
   // to probe for a differently-normalized bypass.
   const canonicalUuid = (value: string): boolean =>
     value === value.toLowerCase() && z.string().uuid().safeParse(value).success;
-  const GUIDE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+  const CANONICAL_MEMBER_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+  const isOneRawPathSegment = (path: string, root: string): boolean => {
+    if (!path.startsWith(`${root}/`)) return false;
+    const segment = path.slice(root.length + 1);
+    return segment.length > 0 && !segment.includes("/");
+  };
+  const isCanonicalProductPath = (path: string): boolean => {
+    const product = /^\/products\/([^/]+)$/.exec(path);
+    return product !== null && product[1].length <= 120 && CANONICAL_MEMBER_SLUG.test(product[1]);
+  };
   const memberSessionRoute = (method: string, path: string): boolean => {
     if (method === "GET" || method === "HEAD") {
       if (MEMBER_SESSION_READ_PATHS.has(path)) return true;
-      // GET /guides/:slug (commerce/routes.ts, injected requireActiveMember).
+      // Product detail is an Express one-segment route; reject literal or
+      // encoded separators so the bypass cannot grow into a namespace prefix.
+      if (isCanonicalProductPath(path)) return true;
+      // Preserve the pre-existing canonical Guide admission boundary exactly.
       const guide = /^\/guides\/([^/]+)$/.exec(path);
-      return guide !== null && guide[1].length <= 80 && GUIDE_SLUG.test(guide[1]);
+      return guide !== null && guide[1].length <= 80 && CANONICAL_MEMBER_SLUG.test(guide[1]);
     }
     if (method === "POST") {
       if (MEMBER_SESSION_WRITE_PATHS.has(path)) return true;
@@ -424,12 +438,19 @@ export function registerResearchApi(app: Express) {
     // remains one raw segment; empty or literal extra segments do not match.
     const privateOrderReadPath =
       req.path === "/orders" || /^\/orders\/[^/]+$/.test(req.path);
+    const privateCatalogReadPath =
+      req.path === "/products" ||
+      isOneRawPathSegment(req.path, "/products") ||
+      req.path === "/goals" ||
+      req.path === "/guides" ||
+      isOneRawPathSegment(req.path, "/guides");
     const privateMemberReadRoute =
       (req.method === "GET" || req.method === "HEAD") &&
       (req.path === "/catalog" ||
         req.path === "/member/catalog" ||
         req.path === "/member/me" ||
-        privateOrderReadPath);
+        privateOrderReadPath ||
+        privateCatalogReadPath);
     if (privateMemberReadRoute) {
       setResearchPrivateHeaders(res);
     }
