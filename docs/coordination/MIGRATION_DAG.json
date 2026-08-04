@@ -262,6 +262,26 @@
         "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
         "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: apply twice, data written between applies survives, and the full behavioral suite through the real adapters (exactly-once settlement under concurrency, RLS denial, append-only money, restart survival)"
       }
+    },
+    {
+      "id": "research_early_access_reservation_holds",
+      "path": "supabase/migrations/20260804123000_research_early_access_reservation_holds.sql",
+      "sourceSha": "a2698a56b1a56cb46ffe1a89220eef4da3de92dc",
+      "dependsOn": [
+        "research_early_access_supplier_operations"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "3085cfe06fc2340c75e28a4f30491a2dae48773bc94572b763113933cd2df590"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_and_disable_forward_repair",
+        "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
+        "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: four-migration chain applied twice, data written between applies survives, 16/16 behavioral tests incl. idempotent insert, draft uniqueness, append-only expiry exceptions, browser-role denial"
+      }
     }
   ],
   "invariants": [
