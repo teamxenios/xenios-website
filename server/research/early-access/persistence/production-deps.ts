@@ -27,11 +27,13 @@ import {
   SupabaseEarlyAccessProofStorage,
 } from "./proof-storage";
 import {
+  RefusingConsumedTokenStore,
   RefusingEarlyAccessAuditSink,
   RefusingEarlyAccessCommerceStore,
   RefusingEarlyAccessCustomerRepository,
   RefusingSessionBindingStore,
 } from "./refusing";
+import { SupabaseEarlyAccessReservationStore } from "./reservation-store";
 import type { EarlyAccessPersistenceCall } from "./executor";
 
 /**
@@ -187,6 +189,7 @@ export function buildEarlyAccessPersistence(
         audit: new RefusingEarlyAccessAuditSink(),
         customers: new RefusingEarlyAccessCustomerRepository(),
         sessionBindings: new RefusingSessionBindingStore(),
+        consumed: new RefusingConsumedTokenStore(),
       },
     });
   }
@@ -204,6 +207,7 @@ export function buildEarlyAccessPersistence(
     audit: new SupabaseEarlyAccessAuditSink(run),
     customers: new SupabaseEarlyAccessCustomerRepository(run),
     sessionBindings: new SupabaseSessionBindingStore(run),
+    consumed: new SupabaseConsumedTokenStore(run),
     releases: new SupabaseEarlyAccessReleaseLedger(run),
     proofStorage: new SupabaseEarlyAccessProofStorage({
       query: run,
@@ -252,6 +256,18 @@ export function buildEarlyAccessConsumedTokenStore(
   query?: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
 ): SupabaseConsumedTokenStore {
   return new SupabaseConsumedTokenStore(query ?? createEarlyAccessSupabaseQuery());
+}
+
+/**
+ * The durable reservation store (migration 53) for the standalone
+ * hold-before-payment lifecycle. `registerPrivateEarlyAccessApi` has no
+ * reservation option yet, so the integration lane composes this directly
+ * wherever the reservation routes mount.
+ */
+export function buildEarlyAccessReservationStore(
+  query?: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
+): SupabaseEarlyAccessReservationStore {
+  return new SupabaseEarlyAccessReservationStore(query ?? createEarlyAccessSupabaseQuery());
 }
 
 function createEarlyAccessSupabaseQuery(): (

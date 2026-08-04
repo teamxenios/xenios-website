@@ -43,6 +43,7 @@ const MIGRATIONS = [
   "20260804120000_research_early_access_identity_persistence.sql",
   "20260804121000_research_early_access_commerce_persistence.sql",
   "20260804122000_research_early_access_supplier_operations.sql",
+  "20260804123000_research_early_access_reservation_holds.sql",
 ] as const;
 
 type Pool = import("pg").Pool;
@@ -810,6 +811,93 @@ run("Early Access durable persistence against real PostgreSQL", () => {
       expect(rows[0].result.orderNumber).toBe("XEA-PG-0001");
       await expect(
         client.query("select * from public.research_early_access_placements"),
+      ).rejects.toThrow(/permission denied/);
+      await client.query("reset role");
+    } finally {
+      client.release();
+    }
+  });
+
+  it("reservation holds: idempotent insert, one per draft, pure transitions, append-only exceptions", async () => {
+    const { SupabaseEarlyAccessReservationStore } = await import("./reservation-store");
+    const holds = new SupabaseEarlyAccessReservationStore(query);
+    const reservation = {
+      reservationId: "res-pg-1",
+      customerId: "cust-1",
+      orderDraftId: "draft-pg-1",
+      productId: "prod-1",
+      variantId: "var-1",
+      quantity: 2,
+      supplierConfirmationId: "conf-1",
+      createdAt: "2026-08-04T00:00:00.000Z",
+      expiresAt: "2026-08-04T12:00:00.000Z",
+      status: "active",
+      createdByActorId: "samuel.abc123def456",
+      createdByActorRole: "founder_admin",
+      auditEventId: "audit-res-1",
+    };
+    expect(await holds.insert(reservation as never)).toBe(true);
+    // Replayed id: false, idempotent, never a throw.
+    expect(await holds.insert(reservation as never)).toBe(false);
+    // A SECOND reservation for the SAME draft is refused at insert.
+    expect(
+      await holds.insert({ ...reservation, reservationId: "res-pg-2" } as never),
+    ).toBe(false);
+
+    expect((await holds.byId("res-pg-1"))?.orderDraftId).toBe("draft-pg-1");
+    expect((await holds.byOrderDraft("draft-pg-1"))?.reservationId).toBe("res-pg-1");
+    expect(await holds.activeForUnit("prod-1", "var-1")).toHaveLength(1);
+
+    // The pure module's transition persists; stored-active for the unit drops.
+    expect(
+      await holds.update({ ...reservation, status: "consumed" } as never),
+    ).toBe(true);
+    expect((await holds.byId("res-pg-1"))?.status).toBe("consumed");
+    expect(await holds.activeForUnit("prod-1", "var-1")).toHaveLength(0);
+    expect(
+      await holds.update({ ...reservation, reservationId: "res-pg-9" } as never),
+    ).toBe(false);
+
+    const exception = {
+      exceptionId: "exc-pg-1",
+      reservationId: "res-pg-1",
+      orderDraftId: "draft-pg-1",
+      customerId: "cust-1",
+      productId: "prod-1",
+      variantId: "var-1",
+      quantity: 2,
+      supplierConfirmationId: "conf-1",
+      reservationExpiredAt: "2026-08-04T12:00:00.000Z",
+      paymentProofRef: "eaproof." + "3".repeat(40),
+      payableTotalCents: 20000,
+      currency: "USD",
+      raisedAt: "2026-08-04T13:00:00.000Z",
+      requiresHumanDecision: true,
+      notifyAdmin: true,
+      notifyCustomer: true,
+    };
+    expect(await holds.recordExpiryException(exception as never)).toBe(true);
+    expect(await holds.recordExpiryException(exception as never)).toBe(false);
+    expect((await holds.expiryExceptions()).map((entry) => entry.exceptionId)).toContain(
+      "exc-pg-1",
+    );
+
+    // Append-only, even for the owner.
+    if (!pool) throw new Error("pool");
+    await expect(
+      pool.query(
+        "delete from public.research_early_access_reservation_expiry_exceptions",
+      ),
+    ).rejects.toThrow(/append-only/);
+    // And the browser roles reach neither table nor functions.
+    const client = await pool.connect();
+    try {
+      await client.query("set role anon");
+      await expect(
+        client.query("select * from public.research_early_access_reservation_holds"),
+      ).rejects.toThrow(/permission denied/);
+      await expect(
+        client.query("select public.research_early_access_reservation_by_id('res-pg-1')"),
       ).rejects.toThrow(/permission denied/);
       await client.query("reset role");
     } finally {

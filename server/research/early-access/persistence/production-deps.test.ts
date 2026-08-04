@@ -6,11 +6,13 @@ import {
 } from "./production-deps";
 import {
   EarlyAccessPersistenceUnavailableError,
+  RefusingConsumedTokenStore,
   RefusingEarlyAccessAuditSink,
   RefusingEarlyAccessCommerceStore,
   RefusingEarlyAccessCustomerRepository,
   RefusingSessionBindingStore,
 } from "./refusing";
+import { SupabaseConsumedTokenStore } from "./identity";
 import { SupabaseEarlyAccessCommerceStore } from "./commerce-store";
 import { SupabaseEarlyAccessCustomerRepository } from "./identity";
 import { SupabaseEarlyAccessReleaseLedger } from "./records";
@@ -121,6 +123,7 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
     expect(build.options.audit).toBeInstanceOf(RefusingEarlyAccessAuditSink);
     expect(build.options.customers).toBeInstanceOf(RefusingEarlyAccessCustomerRepository);
     expect(build.options.sessionBindings).toBeInstanceOf(RefusingSessionBindingStore);
+    expect(build.options.consumed).toBeInstanceOf(RefusingConsumedTokenStore);
     // No repository: the session layer's own gate then forces enabled=false.
     expect(build.options.repository).toBeUndefined();
   });
@@ -145,6 +148,7 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
     expect(build.options.referrals).toBeDefined();
     expect(build.options.audit).toBeDefined();
     expect(build.options.sessionBindings).toBeDefined();
+    expect(build.options.consumed).toBeInstanceOf(SupabaseConsumedTokenStore);
   });
 
   it("durable mode keeps the fail-closed agreement placeholder until the required list is stated", () => {

@@ -1,10 +1,11 @@
-# Rollback notes: Early Access durable persistence (migrations 50, 51, 52)
+# Rollback notes: Early Access durable persistence (migrations 50, 51, 52, 53)
 
-Covers the three additive Early Access persistence migrations:
+Covers the four additive Early Access persistence migrations:
 
 - `supabase/migrations/20260804120000_research_early_access_identity_persistence.sql`
 - `supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql`
 - `supabase/migrations/20260804122000_research_early_access_supplier_operations.sql`
+- `supabase/migrations/20260804123000_research_early_access_reservation_holds.sql`
 
 ## Strategy: retain-and-disable, forward repair
 
@@ -34,7 +35,9 @@ therefore OPERATIONAL, not schema surgery:
 
    ```sql
    -- Only while no production data has ever been written.
-   drop table if exists public.research_early_access_shipping_regions,
+   drop table if exists public.research_early_access_reservation_expiry_exceptions,
+     public.research_early_access_reservation_holds,
+     public.research_early_access_shipping_regions,
      public.research_early_access_manual_actions,
      public.research_early_access_supplier_confirmations,
      public.research_early_access_admin_exceptions,
