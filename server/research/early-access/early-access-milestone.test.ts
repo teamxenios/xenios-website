@@ -300,12 +300,13 @@ describe("THE MILESTONE: one real order, executed", () => {
     // The reservation is against the exact release the customer was shown.
     expect(placement.releaseId).toBe("rel-milestone-0001");
     expect(placement.productVersion).toBe(earlyAccessReleaseVersion(row));
-    // The caller's stated money was discarded entirely.
-    expect(placement.currency).toBe("USD");
-    expect(placement.subtotalCents).toBe(49_800);
+    // The caller's stated money was discarded entirely. The amounts live on the
+    // order's immutable money snapshot, the single authority for final money.
+    expect(placement.money.currency).toBe("USD");
+    expect(placement.money.subtotalCents).toBe(49_800);
     // Twenty percent applies at three units only, so two units carry no discount.
-    expect(placement.discountCents).toBe(0);
-    expect(placement.totalCents).toBe(49_800);
+    expect(placement.money.discountCents).toBe(0);
+    expect(placement.money.payableTotalCents).toBe(49_800);
 
     // The same idempotency key must not create a second order.
     const replay = await createEarlyAccessOrder({
@@ -339,7 +340,7 @@ describe("THE MILESTONE: one real order, executed", () => {
     if (!issued.ok) return;
     const invoice = issued.value.invoice;
     expect(invoice.orderId).toBe(order.orderId);
-    expect(invoice.totalCents).toBe(placement.totalCents);
+    expect(invoice.payableTotalCents).toBe(placement.money.payableTotalCents);
     expect(invoice.paymentReference.length).toBeGreaterThan(0);
 
     // Derived from the order, so one order can only ever have one reference to
