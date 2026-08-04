@@ -802,6 +802,22 @@
       ]
     },
     {
+      "id": "OWNER-W2-PRIVATE-EARLY-ACCESS-COOKIE-SESSION-DURABILITY",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/early-access/private-access-cookie-session.test.ts",
+        "server/research/early-access/private-access-cookie-session.ts",
+        "server/research/early-access/private-access-nonce-store.test.ts",
+        "server/research/early-access/private-access-nonce-store.ts",
+        "supabase/migrations/20260804120000_research_private_early_access_sessions.sql",
+        "supabase/production/research-private-early-access-sessions-rollback-notes.md",
+        "supabase/verification/research-private-early-access-sessions.verify.sql"
+      ]
+    },
+    {
       "id": "OWNER-CODEX-CONTROL-INTEGRATION-STATUS-CONFIGURATION-QUEUE",
       "owner": "Codex Control",
       "lane": "integration-status-configuration-queue",
