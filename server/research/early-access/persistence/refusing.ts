@@ -30,6 +30,12 @@ import type {
   EarlyAccessReservationExpiryException,
 } from "../commerce/reservation";
 import type { EarlyAccessReservationStore } from "../commerce/reservation-store";
+import type {
+  SupplierConfirmation,
+  SupplierConfirmationStore,
+} from "../ops/supplier-confirmation";
+import type { UnitHoldReader, UnitHoldRecord } from "../ops/unit-holds";
+import type { EarlyAccessHoldBlocker } from "../catalog/eligibility";
 
 /**
  * The refusing stores, for a production process whose durable configuration
@@ -132,6 +138,41 @@ export class RefusingEarlyAccessCustomerRepository implements EarlyAccessCustome
 export class RefusingConsumedTokenStore implements ConsumedTokenStore {
   async consume(_tokenId: string): Promise<boolean> {
     return refuse("token consume");
+  }
+}
+
+export class RefusingSupplierConfirmationStore implements SupplierConfirmationStore {
+  async insert(_confirmation: SupplierConfirmation): Promise<boolean> {
+    return refuse("supplier confirmation insert");
+  }
+  async byId(_confirmationId: string): Promise<SupplierConfirmation | null> {
+    return refuse("supplier confirmation byId");
+  }
+  async liveForUnit(
+    _productId: string,
+    _variantId: string,
+    _now: string,
+  ): Promise<SupplierConfirmation | null> {
+    return refuse("supplier confirmation liveForUnit");
+  }
+  async withdraw(_confirmationId: string, _by: string, _at: string): Promise<boolean> {
+    return refuse("supplier confirmation withdraw");
+  }
+}
+
+export class RefusingUnitHoldRegistry implements UnitHoldReader {
+  async record(_hold: UnitHoldRecord): Promise<boolean> {
+    return refuse("unit hold record");
+  }
+  async withdraw(_holdId: string, _by: string, _at: string): Promise<boolean> {
+    return refuse("unit hold withdraw");
+  }
+  async activeHoldsForUnit(
+    _productId: string,
+    _variantId: string,
+    _evaluatedAt: string,
+  ): Promise<readonly EarlyAccessHoldBlocker[]> {
+    return refuse("unit hold activeHoldsForUnit");
   }
 }
 

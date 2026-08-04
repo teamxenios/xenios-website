@@ -34,6 +34,10 @@ import {
   RefusingSessionBindingStore,
 } from "./refusing";
 import { SupabaseEarlyAccessReservationStore } from "./reservation-store";
+import {
+  SupabaseSupplierConfirmationStore,
+  SupabaseUnitHoldRegistry,
+} from "./ops-stores";
 import type { EarlyAccessPersistenceCall } from "./executor";
 
 /**
@@ -268,6 +272,31 @@ export function buildEarlyAccessReservationStore(
   query?: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
 ): SupabaseEarlyAccessReservationStore {
   return new SupabaseEarlyAccessReservationStore(query ?? createEarlyAccessSupabaseQuery());
+}
+
+/**
+ * The durable supplier-confirmation store (migration 52 table, port
+ * completed by migration 54). One instance serves both roles the integration
+ * lane composes: `supplierConfirmations` on the declared-facts reader (it
+ * satisfies SupplierConfirmationLiveReader structurally) and the full store
+ * for the admin recording path.
+ */
+export function buildEarlyAccessSupplierConfirmationStore(
+  query?: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
+): SupabaseSupplierConfirmationStore {
+  return new SupabaseSupplierConfirmationStore(query ?? createEarlyAccessSupabaseQuery());
+}
+
+/**
+ * The durable unit-hold registry (migration 54, QA R4's durable half): the
+ * `holds` reader on the declared-facts source plus the record/withdraw
+ * surface for the operator path. A hold recorded here survives every
+ * restart, which is the point.
+ */
+export function buildEarlyAccessUnitHoldRegistry(
+  query?: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
+): SupabaseUnitHoldRegistry {
+  return new SupabaseUnitHoldRegistry(query ?? createEarlyAccessSupabaseQuery());
 }
 
 function createEarlyAccessSupabaseQuery(): (

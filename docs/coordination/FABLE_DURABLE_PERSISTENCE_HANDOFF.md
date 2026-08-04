@@ -22,6 +22,7 @@ hookup is documented below.
 | supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql | 8a84bd82845e726702cdc001bdfce661ced7f74132c68a1338d5a476bd9ec9c6 |
 | supabase/migrations/20260804122000_research_early_access_supplier_operations.sql | fa12c45348c25826f63a5ad0a001a34ecfb847ef6e97a9470ff9fc96b1fd134c |
 | supabase/migrations/20260804123000_research_early_access_reservation_holds.sql | 3085cfe06fc2340c75e28a4f30491a2dae48773bc94572b763113933cd2df590 |
+| supabase/migrations/20260804130000_research_early_access_unit_holds.sql | cea8f8bcde4d31a4a2d77a7b2b11ed831aadd46eb38600f820f17a9c84ffede2 |
 
 Governance: managed-ledger rows 50-52 in supabase/MIGRATIONS.md; three DAG
 nodes in docs/coordination/MIGRATION_DAG.json pinned to reviewed source
@@ -38,7 +39,8 @@ production; managedMigrationId PENDING; PRODUCTION_DB_STATE_UNVERIFIED stands.
 - durable_session_bindings: YES — research_early_access_session_bindings (bind-once by primary key) + SupabaseSessionBindingStore
 - durable_consumed_tokens: YES — research_early_access_consumed_tokens (single-use by primary key) + SupabaseConsumedTokenStore (see seam request 1: no mount exists yet)
 - durable_releases: YES — research_early_access_releases (append-only) + SupabaseEarlyAccessReleaseLedger (domain validator runs BEFORE the database; duplicate id refused under concurrency)
-- durable_supplier_confirmations: YES — research_early_access_supplier_confirmations = SUPPLIER_CONFIRMED_ON_DEMAND: supplier org, contact, exact SKU/variant, strength, presentation, max quantity, fulfillment location + method, 72-hour handoff target, shipping requirements, cold-chain state, documentation state, confirmed timestamp, expiration, named confirmed-by, evidence, in-transaction audit event; SupabaseEarlyAccessSupplierDirectory answers only from active unexpired rows
+- durable_supplier_confirmations: YES — research_early_access_supplier_confirmations = SUPPLIER_CONFIRMED_ON_DEMAND: supplier org, contact, exact SKU/variant, strength, presentation, max quantity, fulfillment location + method, 72-hour handoff target, shipping requirements, cold-chain state, documentation state, confirmed timestamp, expiration, named confirmed-by, evidence, in-transaction audit event; SupabaseEarlyAccessSupplierDirectory answers only from active unexpired rows. Migration 54 completes the b5402c3 SupplierConfirmationStore PORT over the same table (truthful byId, caller-stamped withdraw with record sync, forward repair of the operator withdraw) via SupabaseSupplierConfirmationStore / buildEarlyAccessSupplierConfirmationStore, which also satisfies the declared-facts SupplierConfirmationLiveReader structurally.
+- durable_unit_holds: YES (QA R4's durable half) — migration 54's research_early_access_unit_holds: named-human prohibitions (REGULATORY_HOLD, RECALL, STOP_SHIP, SUPPLIER_QUALITY_HOLD) per exact unit, withdrawal as a recorded state change, deletion blocked by trigger for every role; SupabaseUnitHoldRegistry implements UnitHoldReader (canonical blocker order) + record/withdraw, composed via buildEarlyAccessUnitHoldRegistry; refusing variants exist for both new stores
 - durable_reservations: YES, both layers — (a) research_early_access_reservations, written INSIDE commit_placement BEFORE the invoice; optional TTL via RESEARCH_EARLY_ACCESS_RESERVATION_TTL_MINUTES; expiry after money submitted raises exactly one research_early_access_admin_exceptions row (no auto-fulfill, no silent refund; resolve requires a named human); and (b) migration 53's research_early_access_reservation_holds + research_early_access_reservation_expiry_exceptions implementing the 9dd38c9 EarlyAccessReservationStore port via SupabaseEarlyAccessReservationStore (insert idempotent by unique constraint, one reservation per order draft by unique constraint, pure-module transitions only, clock-derived validity, APPEND-ONLY expiry exceptions), composed via buildEarlyAccessReservationStore.
 - durable_orders: YES — research_early_access_placements (unique idempotency key, unique order number, payment-state vocabulary, canonical jsonb)
 - durable_order_lines: YES — research_early_access_order_lines, immutable (append-only trigger), line_total = quantity x unit_price as a table constraint
@@ -89,8 +91,8 @@ fault, never a wrong commit). Proven under real concurrency in the pg suite.
 
 ## verification evidence
 
-- pg16: PASS — scripts/verify-early-access-commerce-migration.sh 16 (2026-08-04, four-migration chain): apply twice with ON_ERROR_STOP, data written between applies survives, 16/16 behavioral tests through the real adapters
-- pg17: PASS — same script, same result
+- pg16: PASS — scripts/verify-early-access-commerce-migration.sh 16 (2026-08-04, five-migration chain): apply twice with ON_ERROR_STOP, data written between applies survives, 18/18 behavioral tests through the real adapters
+- pg17: PASS — same script, same result (the verifier's readiness wait now requires a real query twice, so it can never race initdb's throwaway server)
 - apply_twice: PASS on both majors (script + the pg suite each apply the chain twice)
 - rollback: retain-and-disable documented + additive-only compensating drops while pre-production (see rollback notes); append-only money tables are never deleted as rollback
 - restart-survival: explicit pg test — a second independent connection pool reads the placement, settlement, and fulfillment
@@ -112,6 +114,16 @@ regressions of this branch:
    newline-normalized bytes": trips its explicit 6 s timeout ONLY under
    full-suite parallelism while other sessions' review containers load this
    machine; passes in isolation in 1.1 s at the same commit.
+4. INHERITED FROM THE INTEGRATION HEAD (not this lane's code):
+   shared/research/pricing.test.ts:60 "stays identical to the cart purchase
+   audiences and never gains compare_at" — upstream commit 134704a added
+   "private_early_access" to CART_PURCHASE_AUDIENCES without extending
+   CUSTOMER_PRICE_AUDIENCES in shared/research/pricing.ts, so the two
+   constants disagree. Fails identically on b5402c3 itself. Suggested owner:
+   the integration lane (shared pricing is not this lane's surface).
+   Latest full gate on this branch: 6909 passed, 24 skipped, 2 failed
+   (this inherited one plus the Gateway baseline item; both control-plane
+   suites fully green including the timeout-flaky tests on a quiet run).
 
 ## shared_seam_requests (for FABLE-RM-INTEGRATION)
 

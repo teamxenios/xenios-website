@@ -282,6 +282,27 @@
         "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
         "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: four-migration chain applied twice, data written between applies survives, 16/16 behavioral tests incl. idempotent insert, draft uniqueness, append-only expiry exceptions, browser-role denial"
       }
+    },
+    {
+      "id": "research_early_access_unit_holds",
+      "path": "supabase/migrations/20260804130000_research_early_access_unit_holds.sql",
+      "sourceSha": "eafb8288ca2227d79dde545dfe2499d3dadb739e",
+      "dependsOn": [
+        "research_early_access_supplier_operations",
+        "research_early_access_reservation_holds"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "cea8f8bcde4d31a4a2d77a7b2b11ed831aadd46eb38600f820f17a9c84ffede2"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_and_disable_forward_repair",
+        "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
+        "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: five-migration chain applied twice, data preservation, 18/18 behavioral tests incl. hold record/withdraw semantics, delete-block trigger, caller-stamped withdrawal sync, browser-role denial"
+      }
     }
   ],
   "invariants": [

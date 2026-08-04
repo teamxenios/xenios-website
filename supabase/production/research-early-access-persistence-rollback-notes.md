@@ -1,11 +1,20 @@
-# Rollback notes: Early Access durable persistence (migrations 50, 51, 52, 53)
+# Rollback notes: Early Access durable persistence (migrations 50-54)
 
-Covers the four additive Early Access persistence migrations:
+Covers the five additive Early Access persistence migrations:
 
 - `supabase/migrations/20260804120000_research_early_access_identity_persistence.sql`
 - `supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql`
 - `supabase/migrations/20260804122000_research_early_access_supplier_operations.sql`
 - `supabase/migrations/20260804123000_research_early_access_reservation_holds.sql`
+- `supabase/migrations/20260804130000_research_early_access_unit_holds.sql`
+
+Note on migration 54: it is additive in objects but includes a FORWARD REPAIR
+(`create or replace`) of migration 52's withdraw function, preserving its
+signature, semantics, and grants while adding canonical-record sync. Rolling
+54 back therefore also means the migration-52 withdraw returns to its
+original body; the repair carries no data change. A unit-hold row is NEVER
+deleted as rollback: a recorded prohibition's history is part of the
+prohibition. Withdraw the hold instead.
 
 ## Strategy: retain-and-disable, forward repair
 
@@ -35,7 +44,8 @@ therefore OPERATIONAL, not schema surgery:
 
    ```sql
    -- Only while no production data has ever been written.
-   drop table if exists public.research_early_access_reservation_expiry_exceptions,
+   drop table if exists public.research_early_access_unit_holds,
+     public.research_early_access_reservation_expiry_exceptions,
      public.research_early_access_reservation_holds,
      public.research_early_access_shipping_regions,
      public.research_early_access_manual_actions,
