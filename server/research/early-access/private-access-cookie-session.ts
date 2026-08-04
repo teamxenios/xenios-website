@@ -10,7 +10,23 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const PRIVATE_ACCESS_COOKIE_NAME = "__Host-XeniosPrivateEarlyAccess" as const;
 export const PRIVATE_ACCESS_COOKIE_VERSION = "xpa-cookie-v1" as const;
-export const PRIVATE_ACCESS_COOKIE_TTL_SECONDS = 15 * 60;
+// Default cookie lifetime, raised from 15 to 240 minutes with the session TTL
+// so the browser cookie and the durable session row expire together. Callers
+// may pass an explicit ttlSeconds inside the same bounds; the encoded expiry is
+// still pinned to the resolved value, so a longer-lived cookie cannot be minted
+// by asking for one.
+export const PRIVATE_ACCESS_COOKIE_TTL_SECONDS = 240 * 60;
+export const PRIVATE_ACCESS_COOKIE_MIN_TTL_SECONDS = 15 * 60;
+export const PRIVATE_ACCESS_COOKIE_MAX_TTL_SECONDS = 480 * 60;
+
+/** Null for anything that is not a whole number of seconds inside the bounds. */
+function resolveCookieTtlSeconds(value: unknown): number | null {
+  if (value === undefined) return PRIVATE_ACCESS_COOKIE_TTL_SECONDS;
+  if (typeof value !== "number" || !Number.isSafeInteger(value)) return null;
+  if (value < PRIVATE_ACCESS_COOKIE_MIN_TTL_SECONDS) return null;
+  if (value > PRIVATE_ACCESS_COOKIE_MAX_TTL_SECONDS) return null;
+  return value;
+}
 export const PRIVATE_ACCESS_COOKIE_CLOCK_SKEW_SECONDS = 30;
 export const PRIVATE_ACCESS_COOKIE_MAX_KEY_COUNT = 4;
 export const PRIVATE_ACCESS_COOKIE_MAX_HEADER_BYTES = 4_096;
@@ -37,6 +53,7 @@ const CONTROL_CHARACTER = /[\u0000-\u001f\u007f]/;
 const ISSUE_KEYS = ["keyRing", "now", "sessionHandle"] as const;
 const VERIFY_KEYS = ["cookieHeader", "keyRing", "now"] as const;
 const KEY_RING_KEYS = ["activeKeyId", "keys"] as const;
+const TTL_OPTIONAL_KEYS = ["ttlSeconds"] as const;
 
 type PlainRecord = Record<string, unknown>;
 type PrivateAccessCookieKeyRing = Readonly<{
@@ -85,21 +102,35 @@ function failure(code: PrivateAccessCookieFailureCode): Readonly<{
 }
 
 /** Detach exact data properties without invoking attacker-controlled accessors. */
-function readExactPlainRecord(input: unknown, expectedKeys: readonly string[]): PlainRecord | null {
+function readExactPlainRecord(
+  input: unknown,
+  expectedKeys: readonly string[],
+  optionalKeys: readonly string[] = [],
+): PlainRecord | null {
   try {
     if (typeof input !== "object" || input === null) return null;
     const prototype = Object.getPrototypeOf(input);
     if (prototype !== Object.prototype && prototype !== null) return null;
     const ownKeys = Reflect.ownKeys(input);
     if (
-      ownKeys.length !== expectedKeys.length ||
-      ownKeys.some((key) => typeof key !== "string" || !expectedKeys.includes(key))
+      ownKeys.some(
+        (key) =>
+          typeof key !== "string" ||
+          (!expectedKeys.includes(key) && !optionalKeys.includes(key)),
+      ) ||
+      expectedKeys.some((key) => !ownKeys.includes(key))
     ) {
       return null;
     }
     const descriptors = Object.getOwnPropertyDescriptors(input);
     const detached: PlainRecord = Object.create(null) as PlainRecord;
     for (const key of expectedKeys) {
+      const descriptor = descriptors[key];
+      if (!descriptor || !("value" in descriptor)) return null;
+      detached[key] = descriptor.value;
+    }
+    for (const key of optionalKeys) {
+      if (!ownKeys.includes(key)) continue;
       const descriptor = descriptors[key];
       if (!descriptor || !("value" in descriptor)) return null;
       detached[key] = descriptor.value;
@@ -203,10 +234,12 @@ function metadata(
   });
 }
 
-function serializeSetCookie(cookieValue: string, expiresAt: number): string | null {
+function serializeSetCookie(cookieValue: string, expiresAt: number, ttlSeconds: number): string | null {
   const expires = new Date(expiresAt * 1_000);
   if (!Number.isFinite(expires.getTime())) return null;
-  return `${PRIVATE_ACCESS_COOKIE_NAME}=${cookieValue}; Path=/; Expires=${expires.toUTCString()}; Max-Age=${PRIVATE_ACCESS_COOKIE_TTL_SECONDS}; HttpOnly; Secure; SameSite=Strict`;
+  // Max-Age is derived from the SAME resolved TTL as the encoded expiry and the
+  // durable session row, so the browser and the database never disagree.
+  return `${PRIVATE_ACCESS_COOKIE_NAME}=${cookieValue}; Path=/; Expires=${expires.toUTCString()}; Max-Age=${ttlSeconds}; HttpOnly; Secure; SameSite=Strict`;
 }
 
 function exactPrivateCookieValue(cookieHeader: unknown):
@@ -260,7 +293,7 @@ function exactPrivateCookieValue(cookieHeader: unknown):
  * key-ring entry. Verify-only prior keys cannot be selected for issuance.
  */
 export function encodePrivateAccessCookie(input: unknown): PrivateAccessCookieIssueResult {
-  const record = readExactPlainRecord(input, ISSUE_KEYS);
+  const record = readExactPlainRecord(input, ISSUE_KEYS, TTL_OPTIONAL_KEYS);
   if (!record) return failure("INPUT_INVALID");
   const keyRing = readKeyRing(record.keyRing);
   if (!keyRing) return failure("CONFIGURATION_INVALID");
@@ -271,8 +304,10 @@ export function encodePrivateAccessCookie(input: unknown): PrivateAccessCookieIs
     return failure("INPUT_INVALID");
   }
 
+  const cookieTtl = resolveCookieTtlSeconds(record.ttlSeconds);
+  if (cookieTtl === null) return failure("CONFIGURATION_INVALID");
   const issuedAt = Math.floor(record.now / 1_000);
-  const expiresAt = issuedAt + PRIVATE_ACCESS_COOKIE_TTL_SECONDS;
+  const expiresAt = issuedAt + cookieTtl;
   const keyId = keyRing.activeKeyId;
   const encodedSignature = signature(
     keyRing.keys[keyId],
@@ -290,7 +325,7 @@ export function encodePrivateAccessCookie(input: unknown): PrivateAccessCookieIs
     encodedSignature,
   ].join(".");
   if (cookieValue.length > MAX_COOKIE_VALUE_LENGTH) return failure("INPUT_INVALID");
-  const setCookie = serializeSetCookie(cookieValue, expiresAt);
+  const setCookie = serializeSetCookie(cookieValue, expiresAt, cookieTtl);
   if (!setCookie) return failure("INPUT_INVALID");
 
   const value = Object.freeze({
@@ -306,10 +341,12 @@ export function encodePrivateAccessCookie(input: unknown): PrivateAccessCookieIs
  * key id, integrity, canonical encoding, bounded lifetime, and absolute expiry.
  */
 export function decodePrivateAccessCookie(input: unknown): PrivateAccessCookieVerificationResult {
-  const record = readExactPlainRecord(input, VERIFY_KEYS);
+  const record = readExactPlainRecord(input, VERIFY_KEYS, TTL_OPTIONAL_KEYS);
   if (!record) return failure("INPUT_INVALID");
   const keyRing = readKeyRing(record.keyRing);
   if (!keyRing) return failure("CONFIGURATION_INVALID");
+  const decodeTtl = resolveCookieTtlSeconds(record.ttlSeconds);
+  if (decodeTtl === null) return failure("CONFIGURATION_INVALID");
   if (!validNow(record.now)) return failure("INPUT_INVALID");
   const extracted = exactPrivateCookieValue(record.cookieHeader);
   if (!extracted.ok) return extracted;
@@ -331,7 +368,9 @@ export function decodePrivateAccessCookie(input: unknown): PrivateAccessCookieVe
   const issuedAt = canonicalEpochSeconds(issuedAtText);
   const expiresAt = canonicalEpochSeconds(expiresAtText);
   if (issuedAt === null || expiresAt === null) return failure("COOKIE_INVALID");
-  if (expiresAt - issuedAt !== PRIVATE_ACCESS_COOKIE_TTL_SECONDS) return failure("COOKIE_INVALID");
+  // Still pinned to the resolved lifetime, so a longer-lived cookie cannot be
+  // forged by editing the encoded timestamps.
+  if (expiresAt - issuedAt !== decodeTtl) return failure("COOKIE_INVALID");
   if (expiresAt * 1_000 > JAVASCRIPT_DATE_MAX_MS) return failure("COOKIE_INVALID");
 
   const provided = Buffer.from(encodedSignature, "base64url");

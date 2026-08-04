@@ -20,16 +20,16 @@ export const EARLY_ACCESS_ENV = {
   cookieName: "RESEARCH_EARLY_ACCESS_COOKIE_NAME",
 } as const;
 
-// The session core and the cookie codec both bound a token to 15 minutes, and
-// those bounds are enforced inside already-accepted modules. A deployment may
-// therefore configure a SHORTER lifetime, but a longer one cannot be honored by
-// simply asking for it. Rather than silently ignore an operator's 240, the
-// resolver reports the effective value and whether it was clamped, so the
-// mismatch is visible instead of surfacing later as customers being signed out
-// in the middle of an order.
-export const EARLY_ACCESS_MAX_SESSION_TTL_MINUTES = 15;
-
-const MIN_SESSION_TTL_MINUTES = 1;
+// Session lifetime is 240 minutes by decision, because the Early Access order
+// flow is an eight-step stepper with an identity document and a payment-proof
+// upload. The session core and the cookie codec now carry the same bounds, so a
+// configured value inside them is honored end to end rather than clamped away.
+// A value outside the bounds is clamped to the nearest bound and reported; a
+// malformed value uses the documented default rather than disabling the gate,
+// so a typo cannot take Early Access offline.
+export const EARLY_ACCESS_DEFAULT_SESSION_TTL_MINUTES = 240;
+export const EARLY_ACCESS_MIN_SESSION_TTL_MINUTES = 15;
+export const EARLY_ACCESS_MAX_SESSION_TTL_MINUTES = 480;
 const MIN_ATTEMPTS = 1;
 const MAX_ATTEMPTS = 100;
 const MIN_LOCKOUT_MINUTES = 1;
@@ -118,16 +118,19 @@ export function resolveEarlyAccessConfig(
     }
   }
 
-  const requestedTtl = readBoundedInteger(
-    env,
-    EARLY_ACCESS_ENV.sessionTtlMinutes,
+  // Read the raw request without bounds so an out-of-range value can be clamped
+  // and REPORTED rather than silently replaced by the default.
+  const rawTtl = readString(env, EARLY_ACCESS_ENV.sessionTtlMinutes);
+  const parsedTtl =
+    rawTtl !== null && /^[0-9]+$/.test(rawTtl) && Number.isSafeInteger(Number(rawTtl))
+      ? Number(rawTtl)
+      : null;
+  const requestedTtl = parsedTtl ?? EARLY_ACCESS_DEFAULT_SESSION_TTL_MINUTES;
+  const sessionTtlMinutes = Math.min(
+    Math.max(requestedTtl, EARLY_ACCESS_MIN_SESSION_TTL_MINUTES),
     EARLY_ACCESS_MAX_SESSION_TTL_MINUTES,
-    MIN_SESSION_TTL_MINUTES,
-    24 * 60,
   );
-  const sessionTtlMinutes = Math.min(requestedTtl, EARLY_ACCESS_MAX_SESSION_TTL_MINUTES);
-  const sessionTtlClampedFrom =
-    requestedTtl > EARLY_ACCESS_MAX_SESSION_TTL_MINUTES ? requestedTtl : null;
+  const sessionTtlClampedFrom = requestedTtl !== sessionTtlMinutes ? requestedTtl : null;
 
   const flag = readString(env, EARLY_ACCESS_ENV.enabled);
   const flagOn = flag === "true";

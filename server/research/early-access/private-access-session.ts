@@ -10,7 +10,28 @@ import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 
 export const PRIVATE_ACCESS_SESSION_VERSION = "xpa1" as const;
 export const PRIVATE_ACCESS_SESSION_PURPOSE = "xenios.private-early-access.session" as const;
-export const PRIVATE_ACCESS_SESSION_TTL_SECONDS = 15 * 60;
+// Default session lifetime. Raised from 15 minutes to 240 by an intentional
+// reviewed decision: the Early Access order flow is an eight-step stepper that
+// includes an identity document and a payment-proof upload, and a 15-minute
+// window signed customers out midway through placing a real order.
+//
+// The lifetime stays PINNED rather than free: a token still has to carry
+// exactly the lifetime the verifier expects (exp - iat === resolved TTL), so a
+// caller cannot mint a longer-lived token by asking for one. Callers may pass
+// an explicit ttlSeconds inside the documented bounds; anything outside them,
+// or malformed, is refused rather than silently coerced.
+export const PRIVATE_ACCESS_SESSION_TTL_SECONDS = 240 * 60;
+export const PRIVATE_ACCESS_SESSION_MIN_TTL_SECONDS = 15 * 60;
+export const PRIVATE_ACCESS_SESSION_MAX_TTL_SECONDS = 480 * 60;
+
+/** Null for anything that is not a whole number of seconds inside the bounds. */
+function resolveTtlSeconds(value: unknown): number | null {
+  if (value === undefined) return PRIVATE_ACCESS_SESSION_TTL_SECONDS;
+  if (typeof value !== "number" || !Number.isSafeInteger(value)) return null;
+  if (value < PRIVATE_ACCESS_SESSION_MIN_TTL_SECONDS) return null;
+  if (value > PRIVATE_ACCESS_SESSION_MAX_TTL_SECONDS) return null;
+  return value;
+}
 export const PRIVATE_ACCESS_SESSION_CLOCK_SKEW_SECONDS = 30;
 
 const TOKEN_MAC_DOMAIN = "xenios:research:private-early-access:session-token";
@@ -22,7 +43,7 @@ const NONCE_ENCODED_LENGTH = 43;
 const MAX_TOKEN_LENGTH = 1_024;
 const MAX_PAYLOAD_BYTES = 512;
 const MAX_CONSUMED_NONCES = 128;
-const MAX_NOW_MS = Number.MAX_SAFE_INTEGER - PRIVATE_ACCESS_SESSION_TTL_SECONDS * 1_000;
+const MAX_NOW_MS = Number.MAX_SAFE_INTEGER - PRIVATE_ACCESS_SESSION_MAX_TTL_SECONDS * 1_000;
 
 const BASE64URL = /^[A-Za-z0-9_-]+$/;
 const NONCE = new RegExp(`^[A-Za-z0-9_-]{${NONCE_ENCODED_LENGTH}}$`);
@@ -73,6 +94,7 @@ const PAYLOAD_KEYS = ["exp", "iat", "nonce", "purpose", "v"] as const;
 const ISSUE_KEYS = ["accessPassword", "nonce", "now", "presentedPassword", "sessionSecret"] as const;
 const PASSWORD_KEYS = ["accessPassword", "presentedPassword"] as const;
 const VERIFY_KEYS = ["consumedNonces", "expectedNonce", "now", "sessionSecret", "token"] as const;
+const TTL_OPTIONAL_KEYS = ["ttlSeconds"] as const;
 
 function failure(code: PrivateAccessSessionFailureCode): Readonly<{ ok: false; code: PrivateAccessSessionFailureCode }> {
   return Object.freeze({ ok: false as const, code });
@@ -83,16 +105,27 @@ function failure(code: PrivateAccessSessionFailureCode): Readonly<{ ok: false; c
  * become a closed boundary rather than an exception or an opportunity to read a
  * secret from an attacker-controlled getter.
  */
-function readExactPlainRecord(input: unknown, expectedKeys: readonly string[]): PlainRecord | null {
+function readExactPlainRecord(
+  input: unknown,
+  expectedKeys: readonly string[],
+  optionalKeys: readonly string[] = [],
+): PlainRecord | null {
   try {
     if (typeof input !== "object" || input === null) return null;
     const prototype = Object.getPrototypeOf(input);
     if (prototype !== Object.prototype && prototype !== null) return null;
 
     const ownKeys = Reflect.ownKeys(input);
+    // Every required key must be present, every present key must be known, and
+    // an unknown key is still refused outright. Optional keys are permitted but
+    // never assumed, so a caller that omits one gets the documented default.
     if (
-      ownKeys.length !== expectedKeys.length ||
-      ownKeys.some((key) => typeof key !== "string" || !expectedKeys.includes(key))
+      ownKeys.some(
+        (key) =>
+          typeof key !== "string" ||
+          (!expectedKeys.includes(key) && !optionalKeys.includes(key)),
+      ) ||
+      expectedKeys.some((key) => !ownKeys.includes(key))
     ) {
       return null;
     }
@@ -101,6 +134,14 @@ function readExactPlainRecord(input: unknown, expectedKeys: readonly string[]): 
     const detached: PlainRecord = Object.create(null) as PlainRecord;
     for (const key of expectedKeys) {
       const descriptor = descriptors[key];
+      if (!descriptor || !("value" in descriptor)) return null;
+      detached[key] = descriptor.value;
+    }
+    for (const key of optionalKeys) {
+      if (!ownKeys.includes(key)) continue;
+      const descriptor = descriptors[key];
+      // An accessor-backed optional key is refused exactly like a required one,
+      // so a getter can never feed this boundary.
       if (!descriptor || !("value" in descriptor)) return null;
       detached[key] = descriptor.value;
     }
@@ -217,7 +258,7 @@ function metadata(payload: SessionPayload): PrivateAccessSessionMetadata {
   });
 }
 
-function parsePayload(encodedPayload: string): SessionPayload | null {
+function parsePayload(encodedPayload: string, expectedTtlSeconds: number): SessionPayload | null {
   const decoded = decodeCanonicalBase64Url(encodedPayload, MAX_PAYLOAD_BYTES);
   if (!decoded) return null;
 
@@ -236,7 +277,9 @@ function parsePayload(encodedPayload: string): SessionPayload | null {
       exp: Number(record.exp),
       nonce: record.nonce,
     };
-    if (payload.exp - payload.iat !== PRIVATE_ACCESS_SESSION_TTL_SECONDS) return null;
+    // Still PINNED: the token must carry exactly the lifetime this verifier
+    // expects, so a longer-lived token cannot be minted by asking for one.
+    if (payload.exp - payload.iat !== expectedTtlSeconds) return null;
     // A semantically equivalent but non-canonical JSON serialization is not a
     // second valid representation of the same session.
     if (encodePayload(payload) !== encodedPayload) return null;
@@ -260,7 +303,7 @@ export function verifyPrivateAccessPassword(input: unknown): boolean {
 
 /** Verify the access password and issue one deterministic, short-lived token. */
 export function issuePrivateAccessSession(input: unknown): PrivateAccessSessionIssueResult {
-  const record = readExactPlainRecord(input, ISSUE_KEYS);
+  const record = readExactPlainRecord(input, ISSUE_KEYS, TTL_OPTIONAL_KEYS);
   if (!record) return failure("INPUT_INVALID");
   if (
     !validBoundedString(record.accessPassword, MAX_PASSWORD_BYTES) ||
@@ -272,6 +315,8 @@ export function issuePrivateAccessSession(input: unknown): PrivateAccessSessionI
     return failure("PASSWORD_INVALID");
   }
   if (!validNow(record.now) || !validNonce(record.nonce)) return failure("INPUT_INVALID");
+  const issueTtl = resolveTtlSeconds(record.ttlSeconds);
+  if (issueTtl === null) return failure("CONFIGURATION_INVALID");
   if (!fixedDigestEqual(record.accessPassword, record.presentedPassword)) {
     return failure("PASSWORD_INVALID");
   }
@@ -281,7 +326,7 @@ export function issuePrivateAccessSession(input: unknown): PrivateAccessSessionI
     v: 1,
     purpose: PRIVATE_ACCESS_SESSION_PURPOSE,
     iat: issuedAt,
-    exp: issuedAt + PRIVATE_ACCESS_SESSION_TTL_SECONDS,
+    exp: issuedAt + issueTtl,
     nonce: record.nonce,
   });
   const encodedPayload = encodePayload(payload);
@@ -302,11 +347,13 @@ export function issuePrivateAccessSession(input: unknown): PrivateAccessSessionI
  * one-time semantics; no replay state is hidden inside this pure module.
  */
 export function verifyPrivateAccessSession(input: unknown): PrivateAccessSessionVerificationResult {
-  const record = readExactPlainRecord(input, VERIFY_KEYS);
+  const record = readExactPlainRecord(input, VERIFY_KEYS, TTL_OPTIONAL_KEYS);
   if (!record) return failure("INPUT_INVALID");
   if (!validSessionSecret(record.sessionSecret)) {
     return failure("CONFIGURATION_INVALID");
   }
+  const verifyTtl = resolveTtlSeconds(record.ttlSeconds);
+  if (verifyTtl === null) return failure("CONFIGURATION_INVALID");
   if (
     !validBoundedString(record.token, MAX_TOKEN_LENGTH) ||
     !validNonce(record.expectedNonce) ||
@@ -329,7 +376,7 @@ export function verifyPrivateAccessSession(input: unknown): PrivateAccessSession
   const expectedSignature = signature(record.sessionSecret, encodedPayload);
   if (!timingSafeEqual(expectedSignature, providedSignature)) return failure("TOKEN_INVALID");
 
-  const payload = parsePayload(encodedPayload);
+  const payload = parsePayload(encodedPayload, verifyTtl);
   if (!payload) return failure("TOKEN_INVALID");
   const nowSeconds = Math.floor(record.now / 1_000);
   if (payload.iat > nowSeconds + PRIVATE_ACCESS_SESSION_CLOCK_SKEW_SECONDS) {

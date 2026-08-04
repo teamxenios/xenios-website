@@ -67,20 +67,24 @@ describe("Early Access deployment configuration", () => {
     expect(config.problems).toContain("SESSION_SECRET_EQUALS_PASSWORD_HASH");
   });
 
-  it("clamps a longer requested TTL and REPORTS the clamp", () => {
-    // The operator sheet suggests 240 minutes, but the accepted session and
-    // cookie codecs bound a token to 15. Silently ignoring 240 would sign a
-    // customer out mid-order with no explanation, so the clamp is surfaced.
+  it("honors 240 minutes without clamping, the decided lifetime", () => {
     const config = resolveEarlyAccessConfig(env({ [EARLY_ACCESS_ENV.sessionTtlMinutes]: "240" }));
-    expect(config.sessionTtlMinutes).toBe(EARLY_ACCESS_MAX_SESSION_TTL_MINUTES);
-    expect(config.sessionTtlClampedFrom).toBe(240);
-    expect(describeEarlyAccessConfig(config).sessionTtlClamped).toBe("yes, requested 240");
+    expect(config.sessionTtlMinutes).toBe(240);
+    expect(config.sessionTtlClampedFrom).toBeNull();
+    expect(describeEarlyAccessConfig(config).sessionTtlClamped).toBe("no");
   });
 
-  it("honors a shorter requested TTL without clamping", () => {
+  it("clamps beyond the maximum and REPORTS the clamp", () => {
+    const config = resolveEarlyAccessConfig(env({ [EARLY_ACCESS_ENV.sessionTtlMinutes]: "600" }));
+    expect(config.sessionTtlMinutes).toBe(EARLY_ACCESS_MAX_SESSION_TTL_MINUTES);
+    expect(config.sessionTtlClampedFrom).toBe(600);
+    expect(describeEarlyAccessConfig(config).sessionTtlClamped).toBe("yes, requested 600");
+  });
+
+  it("clamps below the minimum up to 15 so a session is never uselessly short", () => {
     const config = resolveEarlyAccessConfig(env({ [EARLY_ACCESS_ENV.sessionTtlMinutes]: "5" }));
-    expect(config.sessionTtlMinutes).toBe(5);
-    expect(config.sessionTtlClampedFrom).toBeNull();
+    expect(config.sessionTtlMinutes).toBe(15);
+    expect(config.sessionTtlClampedFrom).toBe(5);
   });
 
   it("falls back to safe defaults for malformed numeric settings", () => {
