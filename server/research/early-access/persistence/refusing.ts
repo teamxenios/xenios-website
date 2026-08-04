@@ -93,6 +93,9 @@ export class RefusingEarlyAccessCommerceStore implements EarlyAccessCommerceStor
   async settlement(_orderNumber: string): Promise<EarlyAccessSettlement | null> {
     return refuse("settlement");
   }
+  async settledTransactionRefs(): Promise<readonly string[]> {
+    return refuse("settledTransactionRefs");
+  }
   async commitSettlement(_settlement: EarlyAccessSettlement): Promise<SettlementCommit> {
     return refuse("commitSettlement");
   }
