@@ -57,6 +57,41 @@ function makeWalledApi() {
   return app;
 }
 
+function expectPrivateHeaders(response: { headers: Record<string, string | undefined> }) {
+  expect(response.headers["cache-control"]).toBe("no-store");
+  expect(response.headers.pragma).toBe("no-cache");
+  expect(response.headers["referrer-policy"]).toBe("no-referrer");
+  expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
+}
+
+function makeOrderReadApi(guardResult: "deny" | "allow") {
+  const app = express();
+  const listForMember = vi.fn(async () => [{ orderId: "ord_private_sentinel" }]);
+  const getForMember = vi.fn(async (_memberId: string, orderId: string) =>
+    orderId === "ord/1 x" ? { orderId, privateMarker: "ORDER_PRIVATE_SENTINEL" } : null,
+  );
+  const baseDependencies = buildCommerceDependencies(() => new Date("2026-08-03T00:00:00.000Z"), {});
+  const downstreamGuard = vi.fn((req: any, res: any, next: () => void) => {
+    if (guardResult === "deny") return res.status(401).json({ ok: false, message: "Sign in required." });
+    req.researchMember = { id: "member-for-order-wall" };
+    next();
+  });
+  const denyGuard: CommerceGuards["requireMember"] = (_req, res) =>
+    res.status(401).json({ ok: false, message: "Sign in required." });
+
+  app.use(express.json());
+  registerResearchApi(app);
+  registerCommerceApi(app, {
+    ...baseDependencies,
+    orders: { ...baseDependencies.orders, listForMember, getForMember },
+  }, {
+    requireActiveMember: downstreamGuard,
+    requireMember: denyGuard,
+    requireAdmin: denyGuard,
+  });
+  return { app, downstreamGuard, listForMember, getForMember };
+}
+
 function makeMemberMeGuardedApi() {
   const app = express();
   const privateRead = vi.fn();
@@ -274,6 +309,73 @@ describe("fresh-browser account-access wall", () => {
     } else {
       expect(response.body).toEqual({ ok: false, message: "Sign in required." });
     }
+  });
+
+  const ORDER_READ_BOUNDARIES = [
+    ["get", "/api/research/orders"],
+    ["head", "/api/research/orders"],
+    ["get", "/api/research/orders/ord%2F1%20x"],
+    ["head", "/api/research/orders/ord%2F1%20x"],
+  ] as const;
+
+  it.each([
+    ...ORDER_READ_BOUNDARIES.map(([method, path]) => [method, path, undefined, 0, "Access required."] as const),
+    ...ORDER_READ_BOUNDARIES.map(([method, path]) => [method, path, "Bearer invalid-order-member", 1, "Sign in required."] as const),
+  ])("sets private headers before %s %s auth denial (%s)", async (method, path, authorization, guardCalls, message) => {
+    const { app, downstreamGuard, listForMember, getForMember } = makeOrderReadApi("deny");
+    let call = (request(app) as any)[method](path);
+    if (authorization !== undefined) call = call.set("Authorization", authorization);
+    const response = await call;
+
+    expect(response.status).toBe(401);
+    expectPrivateHeaders(response);
+    if (method === "head") expect(response.text ?? "").toBe("");
+    else {
+      expect(response.body).toEqual({ ok: false, message });
+      expect(JSON.stringify(response.body)).not.toContain("ORDER_PRIVATE_SENTINEL");
+    }
+    expect(downstreamGuard).toHaveBeenCalledTimes(guardCalls);
+    expect(listForMember).not.toHaveBeenCalled();
+    expect(getForMember).not.toHaveBeenCalled();
+  });
+
+  it("retains private headers on allowed list/detail reads and a uniform missing detail", async () => {
+    const { app, listForMember, getForMember } = makeOrderReadApi("allow");
+    const bearer = { Authorization: "Bearer accepted-order-member" };
+    const list = await request(app).get("/api/research/orders").set(bearer);
+    const detail = await request(app).get("/api/research/orders/ord%2F1%20x").set(bearer);
+    const missing = await request(app).get("/api/research/orders/ord_missing").set(bearer);
+
+    expect(list.status).toBe(200);
+    expect(detail.status).toBe(200);
+    expect(missing.status).toBe(404);
+    for (const response of [list, detail, missing]) expectPrivateHeaders(response);
+    expect(listForMember).toHaveBeenCalledWith("member-for-order-wall");
+    expect(getForMember).toHaveBeenCalledWith("member-for-order-wall", "ord/1 x");
+    expect(missing.body).toEqual({ ok: false, code: "order_not_found" });
+  });
+
+  it.each([
+    ["put", "/api/research/orders"],
+    ["patch", "/api/research/orders"],
+    ["delete", "/api/research/orders"],
+    ["post", "/api/research/orders/ord_1"],
+    ["get", "/api/research/order"],
+    ["get", "/api/research/orders-extra"],
+    ["get", "/api/research/orders/"],
+    ["get", "/api/research/orders/ord_1/extra"],
+  ] as const)("does not widen the private order-read boundary for %s %s", async (method, path) => {
+    const { app, downstreamGuard, listForMember, getForMember } = makeOrderReadApi("deny");
+    const call = (request(app) as any)[method](path);
+    const response = method === "get" ? await call : await call.send({});
+
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({ ok: false, message: "Access required." });
+    expect(response.headers.pragma).toBeUndefined();
+    expect(response.headers["x-robots-tag"]).toBeUndefined();
+    expect(downstreamGuard).not.toHaveBeenCalled();
+    expect(listForMember).not.toHaveBeenCalled();
+    expect(getForMember).not.toHaveBeenCalled();
   });
 
   it("lets only the exact Xenios30 acknowledge POST reach its downstream guard", async () => {
