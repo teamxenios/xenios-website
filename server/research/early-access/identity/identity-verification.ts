@@ -271,11 +271,17 @@ export async function redeemVerificationToken(
   if (customer.normalizedEmail !== payload.em) return fail("TOKEN_EMAIL_MISMATCH");
   if (!mayOwnOrders(customer)) return fail("CUSTOMER_NOT_APPROVED");
 
-  if (!(await input.consumed.consume(payload.jti))) {
-    return fail("TOKEN_ALREADY_USED");
-  }
   if (existing === null && !(await input.bindings.bind(input.sessionId, customer.id))) {
     return fail("SESSION_ALREADY_BOUND");
+  }
+  // Consumed ONLY after the binding holds. The old order burned the token
+  // first, so a bind that then failed stranded the customer with a spent
+  // token and no way to retry. This way a crash between bind and consume
+  // lets the SAME session complete idempotently on retry (the sid rule above
+  // keeps every other session out), and a replay after completion still
+  // answers TOKEN_ALREADY_USED.
+  if (!(await input.consumed.consume(payload.jti))) {
+    return fail("TOKEN_ALREADY_USED");
   }
 
   return Object.freeze({ ok: true, value: customer });

@@ -524,7 +524,13 @@ export function registerPrivateEarlyAccessApi(
       // authorization to sell anything to anybody.
       catalog:
         options.catalog ??
-        createEarlyAccessCatalogSourceForDeployment(configured, REVIEW_AUDIENCE_SOURCE),
+        // The SAME recorded facts the customer projection reads: a founder
+        // reviewing a unit must see the confirmation and the hold the
+        // operator recorded, or review approves against a stale world.
+        createEarlyAccessCatalogSourceForDeployment(configured, REVIEW_AUDIENCE_SOURCE, {
+          supplierConfirmations,
+          holds,
+        }),
     },
     { guard: adminGuard, adminActor: options.adminActor },
   );

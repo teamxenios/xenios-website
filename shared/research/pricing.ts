@@ -22,6 +22,10 @@ export const CUSTOMER_PRICE_AUDIENCES = [
   "member",
   "professional",
   "wholesale",
+  // Private Early Access: an approved Early Access customer is a customer,
+  // and the EA price rows are scoped to exactly this audience. Mirrors
+  // CART_PURCHASE_AUDIENCES, and the test pins the two lists identical.
+  "private_early_access",
 ] as const;
 
 export type CustomerPriceAudience = (typeof CUSTOMER_PRICE_AUDIENCES)[number];
