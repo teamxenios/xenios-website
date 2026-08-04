@@ -94,7 +94,8 @@ function releaseBody(target: EarlyAccessCatalogRow, overrides: Record<string, un
     approvedPriceCents: 24_900,
     currency: "USD",
     waivedBlockers: [...target.blockers],
-    acknowledgedDisputes: [],
+    approvedQuantityLimit: 3,
+    expiresAt: null,
     reason: "Founder release for the private early access pilot.",
     ...overrides,
   };
@@ -220,20 +221,30 @@ describe("recording a founder release", () => {
     expect(state.status).toBe(404);
   });
 
-  it("passes the ledger's refusal through by name", async () => {
+  it("REFUSES an attempt to waive a non-waivable blocker, and names it", async () => {
     const { port, state } = res();
-    await createFounderReleaseRoute(deps())(
-      {
-        body: releaseBody(row(), {
-          waivedBlockers: [...HELD, "STRENGTH_DISPUTE_UNRESOLVED"],
-          acknowledgedDisputes: [],
-        }),
-        actor: "Samuel Boadu",
-      },
+    const d = deps();
+    await createFounderReleaseRoute(d)(
+      { body: releaseBody(row(), { waivedBlockers: [...HELD, "STRENGTH_DISPUTE_UNRESOLVED"] }), actor: "Samuel Boadu" },
       port,
     );
-    expect(state.status).toBe(400);
-    expect(state.body.code).toBe("DISPUTE_NOT_ACKNOWLEDGED");
+    expect(state.status).toBe(422);
+    expect(state.body.code).toBe("NONWAIVABLE_BLOCKER");
+    expect(state.body.nonwaivableBlockers).toContain("STRENGTH_DISPUTE_UNRESOLVED");
+    expect(await d.ledger.all()).toHaveLength(0);
+  });
+
+  it("REFUSES to offer approval at all on a unit whose contents are in doubt", async () => {
+    const disputed = row({ blockers: [...HELD, "IDENTITY_DISPUTE_UNRESOLVED"] });
+    const { port, state } = res();
+    const d = deps({ catalog: sourceOf([disputed]) });
+    await createFounderReleaseRoute(d)(
+      { body: releaseBody(disputed, { waivedBlockers: [...HELD] }), actor: "Samuel Boadu" },
+      port,
+    );
+    expect(state.status).toBe(422);
+    expect(state.body.nonwaivableBlockers).toContain("IDENTITY_DISPUTE_UNRESOLVED");
+    expect(await d.ledger.all()).toHaveLength(0);
   });
 
   it("refuses a body that is not an object", async () => {

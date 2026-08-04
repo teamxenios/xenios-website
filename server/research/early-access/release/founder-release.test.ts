@@ -53,7 +53,8 @@ function draft(overrides: Record<string, unknown> = {}) {
     approvedPriceCents: 24_900,
     currency: "USD",
     waivedBlockers: [...HELD_BLOCKERS],
-    acknowledgedDisputes: [],
+    approvedQuantityLimit: 3,
+    expiresAt: null,
     actor: "Samuel Boadu",
     reason: "Founder release for the private early access pilot.",
     recordedAt: "2026-08-04T12:00:00.000Z",
@@ -135,7 +136,7 @@ describe("a release is bound to the product facts the founder actually saw", () 
   it("goes STALE when Product Control reports a DIFFERENT set of problems", () => {
     // The founder waived what they were shown. A new blocker means the picture
     // they approved is not the picture now, so the unit is held for review.
-    const changed = row({ blockers: [...HELD_BLOCKERS, "SUPPLIER_NOT_ASSIGNED"] });
+    const changed = row({ blockers: [...HELD_BLOCKERS, "IMAGE_PENDING"] });
     const decision = decideEarlyAccessRelease({ row: changed, releases: [approved()] });
     expect(decision.released).toBe(false);
     if (!decision.released) expect(decision.hold).toBe("RELEASE_STALE");
@@ -159,42 +160,118 @@ describe("a release is bound to the product facts the founder actually saw", () 
 describe("nothing is waived by accident", () => {
   it("holds the unit when a blocker appears that the release never waived", () => {
     // Same facts the founder saw, except one extra blocker they never waived.
-    const changed = row({ blockers: [...HELD_BLOCKERS, "SUPPLIER_NOT_ASSIGNED"] });
+    const changed = row({ blockers: [...HELD_BLOCKERS, "IMAGE_PENDING"] });
     const release = approved({ productVersion: earlyAccessReleaseVersion(changed) });
     const decision = decideEarlyAccessRelease({ row: changed, releases: [release] });
     expect(decision.released).toBe(false);
     if (!decision.released) {
       expect(decision.hold).toBe("BLOCKERS_NOT_WAIVED");
-      expect(decision.unwaivedBlockers).toEqual(["SUPPLIER_NOT_ASSIGNED"]);
+      expect(decision.unwaivedBlockers).toEqual(["IMAGE_PENDING"]);
     }
   });
 
-  it("REFUSES to record a dispute waiver that was not acknowledged by name", () => {
-    // A dispute means two contradictory accounts of what is in the vial, so it
-    // must never be waived as a side effect of pasting a blocker list.
+  it.each([
+    ["an identity dispute", "IDENTITY_DISPUTE_UNRESOLVED"],
+    ["a strength dispute", "STRENGTH_DISPUTE_UNRESOLVED"],
+    ["a presentation dispute", "PRESENTATION_DISPUTE_UNRESOLVED"],
+    ["an unconfirmed identity", "IDENTITY_NOT_CONFIRMED"],
+    ["an unconfirmed strength", "STRENGTH_NOT_CONFIRMED"],
+    ["an unknown formula", "FORMULA_UNKNOWN"],
+    ["an unknown component split", "COMPONENT_SPLIT_UNKNOWN"],
+    ["a SKU identity mismatch", "SKU_IDENTITY_MISMATCH"],
+    ["a regulatory hold", "REGULATORY_HOLD"],
+    ["a recall", "RECALL"],
+    ["a stop ship", "STOP_SHIP"],
+    ["a supplier quality hold", "SUPPLIER_QUALITY_HOLD"],
+    ["an unassigned supplier", "SUPPLIER_NOT_ASSIGNED"],
+    ["an unavailable fulfilment path", "FULFILLMENT_UNAVAILABLE"],
+    ["a disallowed audience", "AUDIENCE_NOT_PERMITTED"],
+  ])("REFUSES to record a release waiving %s", (_label, blocker) => {
+    // A founder may bridge an operational gap. They may never assert that we
+    // know what is in the vial when we do not.
     const validated = validateEarlyAccessRelease(
-      draft({ waivedBlockers: [...HELD_BLOCKERS, "STRENGTH_DISPUTE_UNRESOLVED"], acknowledgedDisputes: [] }),
+      draft({ waivedBlockers: [...HELD_BLOCKERS, blocker] }),
     );
     expect(validated.ok).toBe(false);
-    if (!validated.ok) expect(validated.code).toBe("DISPUTE_NOT_ACKNOWLEDGED");
+    if (!validated.ok) expect(validated.code).toBe("NONWAIVABLE_BLOCKER");
   });
 
-  it("accepts a dispute waiver that names the exact dispute", () => {
-    const validated = validateEarlyAccessRelease(
-      draft({
-        waivedBlockers: [...HELD_BLOCKERS, "STRENGTH_DISPUTE_UNRESOLVED"],
-        acknowledgedDisputes: ["STRENGTH_DISPUTE_UNRESOLVED"],
-      }),
-    );
-    expect(validated.ok).toBe(true);
+  it.each([
+    ["lab documentation pending", "DOCUMENTATION_NOT_SATISFIED"],
+    ["lab documentation pending (explicit code)", "LAB_DOCUMENTATION_PENDING"],
+    ["a missing image", "IMAGE_PENDING"],
+    ["manual fulfilment", "MANUAL_FULFILLMENT_REQUIRED"],
+    ["pending supplier automation", "AUTOMATED_SUPPLIER_INTEGRATION_PENDING"],
+    ["pending tracking automation", "AUTOMATED_TRACKING_PENDING"],
+    ["a missing quantity limit", "QUANTITY_LIMIT_MISSING"],
+  ])("ALLOWS waiving %s when nothing about the contents is in doubt", (_label, blocker) => {
+    const unit = row({ blockers: [blocker] });
+    const release = approved({
+      waivedBlockers: [blocker],
+      productVersion: earlyAccessReleaseVersion(unit),
+    });
+    const decision = decideEarlyAccessRelease({ row: unit, releases: [release] });
+    expect(decision.released).toBe(true);
   });
 
-  it("refuses an acknowledgement that waives nothing", () => {
+  it("IGNORES a stored release that waives a non-waivable blocker", () => {
+    // Validation refuses to record one, but a record could arrive by another
+    // route: a direct database write, a backup restored from older rules, a code
+    // path nobody checked. The decision must not trust the ledger.
+    const unit = row({ blockers: ["STRENGTH_DISPUTE_UNRESOLVED"] });
+    const forged = {
+      ...approved(),
+      productVersion: earlyAccessReleaseVersion(unit),
+      waivedBlockers: ["STRENGTH_DISPUTE_UNRESOLVED"],
+    } as unknown as EarlyAccessRelease;
+    const decision = decideEarlyAccessRelease({ row: unit, releases: [forged] });
+    expect(decision.released).toBe(false);
+    if (!decision.released) {
+      expect(decision.hold).toBe("NONWAIVABLE_BLOCKER");
+      expect(decision.unwaivedBlockers).toContain("STRENGTH_DISPUTE_UNRESOLVED");
+    }
+  });
+
+  it("a PREVIOUSLY VALID release stops selling when a dispute appears later", () => {
+    const before = decideEarlyAccessRelease({ row: row(), releases: [approved()] });
+    expect(before.released).toBe(true);
+
+    // The same release, after Product Control raises a strength dispute.
+    const disputed = row({ blockers: [...HELD_BLOCKERS, "STRENGTH_DISPUTE_UNRESOLVED"] });
+    const after = decideEarlyAccessRelease({ row: disputed, releases: [approved()] });
+    expect(after.released).toBe(false);
+    if (!after.released) expect(after.hold).toBe("NONWAIVABLE_BLOCKER");
+  });
+
+  it("an unknown blocker code is treated as NON-waivable", () => {
+    // Fails closed: a code added to Product Control later must not become
+    // silently waivable the moment it appears.
     const validated = validateEarlyAccessRelease(
-      draft({ acknowledgedDisputes: ["IDENTITY_DISPUTE_UNRESOLVED"] }),
+      draft({ waivedBlockers: [...HELD_BLOCKERS, "SOME_FUTURE_BLOCKER"] }),
     );
     expect(validated.ok).toBe(false);
-    if (!validated.ok) expect(validated.code).toBe("BLOCKERS_INVALID");
+    if (!validated.ok) expect(validated.code).toBe("NONWAIVABLE_BLOCKER");
+  });
+
+  it("an expired release stops selling", () => {
+    const release = approved({ expiresAt: "2026-08-04T13:00:00.000Z" });
+    const live = decideEarlyAccessRelease({
+      row: row(), releases: [release], now: Date.parse("2026-08-04T12:30:00.000Z"),
+    });
+    expect(live.released).toBe(true);
+    const expired = decideEarlyAccessRelease({
+      row: row(), releases: [release], now: Date.parse("2026-08-04T13:30:00.000Z"),
+    });
+    expect(expired.released).toBe(false);
+    if (!expired.released) expect(expired.hold).toBe("RELEASE_EXPIRED");
+  });
+
+  it("requires a real quantity limit on an approval", () => {
+    for (const bad of [0, -1, 1.5, 1_000]) {
+      const validated = validateEarlyAccessRelease(draft({ approvedQuantityLimit: bad }));
+      expect(validated.ok).toBe(false);
+      if (!validated.ok) expect(validated.code).toBe("QUANTITY_LIMIT_INVALID");
+    }
   });
 });
 

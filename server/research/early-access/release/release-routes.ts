@@ -3,6 +3,7 @@ import { earlyAccessRowKey } from "../catalog/early-access-catalog";
 import type { EarlyAccessSessionCheck } from "../private-access-routes";
 import {
   earlyAccessReleaseVersion,
+  isNonwaivableBlocker,
   type EarlyAccessRelease,
   type EarlyAccessReleaseLedger,
 } from "./founder-release";
@@ -162,15 +163,13 @@ export function createFounderReleaseRoute(deps: EarlyAccessReleaseRouteDependenc
       const reason = readString(input, "reason");
       const status = readString(input, "status") ?? "approved";
       const waivedBlockers = readStringArray(input, "waivedBlockers");
-      const acknowledgedDisputes = readStringArray(input, "acknowledgedDisputes");
       if (
         productId === null ||
         variantId === null ||
         releaseId === null ||
         expectedVersion === null ||
         reason === null ||
-        waivedBlockers === null ||
-        acknowledgedDisputes === null
+        waivedBlockers === null
       ) {
         send(response, 400, { ok: false, code: "body_invalid" });
         return;
@@ -183,6 +182,28 @@ export function createFounderReleaseRoute(deps: EarlyAccessReleaseRouteDependenc
       );
       if (row === undefined) {
         send(response, 404, { ok: false, code: "unit_not_found" });
+        return;
+      }
+
+      // Refused at the route as well as in the domain function. A founder should
+      // be told which blocker stopped them, not handed a generic rejection, and
+      // the check must not depend on one layer being reached.
+      const nonwaivableOnUnit = row.blockers.filter((blocker) => isNonwaivableBlocker(blocker));
+      if (nonwaivableOnUnit.length > 0) {
+        send(response, 422, {
+          ok: false,
+          code: "NONWAIVABLE_BLOCKER",
+          nonwaivableBlockers: nonwaivableOnUnit,
+        });
+        return;
+      }
+      const attemptedNonwaivable = waivedBlockers.filter((blocker) => isNonwaivableBlocker(blocker));
+      if (attemptedNonwaivable.length > 0) {
+        send(response, 422, {
+          ok: false,
+          code: "NONWAIVABLE_BLOCKER",
+          nonwaivableBlockers: attemptedNonwaivable,
+        });
         return;
       }
 
@@ -208,7 +229,8 @@ export function createFounderReleaseRoute(deps: EarlyAccessReleaseRouteDependenc
         approvedPriceCents: input.approvedPriceCents,
         currency: input.currency,
         waivedBlockers,
-        acknowledgedDisputes,
+        approvedQuantityLimit: input.approvedQuantityLimit,
+        expiresAt: input.expiresAt === undefined ? null : input.expiresAt,
         actor,
         reason,
         recordedAt: new Date(now).toISOString(),
