@@ -131,7 +131,14 @@ export function createEarlyAccessCatalogRoute(deps: EarlyAccessReleaseRouteDepen
         earlyAccessCustomer: request?.earlyAccessCustomer ?? null,
       });
       const releases = await deps.ledger.all();
-      const storefront = buildEarlyAccessStorefront({ projection, releases });
+      // The customer sees the units a founder has EVER released, in any
+      // status: expired and stale releases stay visible and truthfully held,
+      // while units no founder ever put in front of customers are absent.
+      const storefront = buildEarlyAccessStorefront({
+        projection,
+        releases,
+        scope: "released_units",
+      });
 
       send(response, 200, {
         ok: true,

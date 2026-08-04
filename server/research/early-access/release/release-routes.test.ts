@@ -115,14 +115,32 @@ describe("the catalog behind the gate", () => {
     expect(JSON.stringify(state.body)).not.toMatch(/product-a|prod-a/);
   });
 
-  it("serves the storefront to a signed-in customer", async () => {
+  it("serves only founder-released units to a signed-in customer", async () => {
+    // A unit no founder ever released is ABSENT from the customer catalog,
+    // not shown as coming soon: the portal sells the first release, and an
+    // empty ledger truthfully means there is nothing in it yet.
     const { port, state } = res();
     await createEarlyAccessCatalogRoute(deps())({ cookieHeader: "x=1" }, port);
     expect(state.status).toBe(200);
-    expect(state.body.units).toHaveLength(1);
+    expect(state.body.units).toHaveLength(0);
     expect(state.body.purchasableCount).toBe(0);
-    expect(state.body.units[0].state).toBe("coming_soon");
-    expect(state.body.units[0].priceCents).toBeNull();
+
+    // The same unit becomes visible the moment a release names it, in any
+    // status, and an EXPIRED release keeps it visible and truthfully held.
+    const unit = row();
+    const ledger = new InMemoryEarlyAccessReleaseLedger();
+    await ledger.append({
+      ...releaseBody(unit),
+      expiresAt: "2026-08-04T11:30:00.000Z",
+      actor: "Samuel Boadu",
+      recordedAt: "2026-08-04T11:00:00.000Z",
+    });
+    const second = res();
+    await createEarlyAccessCatalogRoute(deps({ ledger }))({ cookieHeader: "x=1" }, second.port);
+    expect(second.state.body.units).toHaveLength(1);
+    expect(second.state.body.purchasableCount).toBe(0);
+    expect(second.state.body.units[0].availability).toBe("TEMPORARILY_HELD");
+    expect(second.state.body.units[0].priceCents).toBeNull();
   });
 
   it("shows a founder-released unit as purchasable at the release price", async () => {
