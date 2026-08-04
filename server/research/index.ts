@@ -12,6 +12,7 @@ import {
 import { products } from "./products-data";
 import { policies } from "./policies-data";
 import { requireActiveMember } from "./member-auth";
+import { EARLY_ACCESS_ORDER_NUMBER } from "./early-access/routes/order-number";
 
 // ---------------------------------------------------------------------------
 // xenios research: Express gate + APIs.
@@ -288,7 +289,25 @@ export function registerResearchApi(app: Express) {
   const EARLY_ACCESS_OPEN_WRITE_PATHS = new Set([
     "/early-access/unlock",
     "/early-access/logout",
+    "/early-access/orders",
   ]);
+  // The order routes carry an order number, so they cannot be a Set entry. They
+  // are ANCHORED against the exact generated shape instead of a bare prefix:
+  // /early-access/orders/<XEA-...> and its two leaf paths, and nothing else.
+  // A lookalike segment, an extra segment, and a wrong method all fail the match
+  // and stay walled, so a future route under this namespace is walled by default
+  // until it is listed here on purpose.
+  //
+  // Each handler still owns its own, STRONGER gate: the durable Early Access
+  // session, then the resolved customer, then ownership of that exact order.
+  // Getting through this wall reaches a refusal, never an order.
+  const ORDER_NUMBER_SEGMENT = EARLY_ACCESS_ORDER_NUMBER.source.replace(/^\^|\$$/g, "");
+  const EARLY_ACCESS_ORDER_READ = new RegExp(
+    `^/early-access/orders/(?:${ORDER_NUMBER_SEGMENT})(?:/invoice)?$`,
+  );
+  const EARLY_ACCESS_ORDER_WRITE = new RegExp(
+    `^/early-access/orders/(?:${ORDER_NUMBER_SEGMENT})/payment-proof$`,
+  );
 
   // These exact read routes own their stronger downstream member guard and
   // private-response headers. Let them reach that canonical handler even when
@@ -484,8 +503,10 @@ export function registerResearchApi(app: Express) {
     }
     if (
       ((req.method === "GET" || req.method === "HEAD") &&
-        EARLY_ACCESS_OPEN_READ_PATHS.has(req.path)) ||
-      (req.method === "POST" && EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path))
+        (EARLY_ACCESS_OPEN_READ_PATHS.has(req.path) ||
+          EARLY_ACCESS_ORDER_READ.test(req.path))) ||
+      (req.method === "POST" &&
+        (EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path) || EARLY_ACCESS_ORDER_WRITE.test(req.path)))
     ) {
       return next();
     }
