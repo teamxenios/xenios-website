@@ -776,6 +776,19 @@
         "client/src/research/pages/Support.tsx",
         "client/src/research/pages/public-access-flow.test.tsx"
       ]
+    },
+    {
+      "id": "OWNER-W2-P0-RESEARCH-LAZY-SUPABASE-BOOTSTRAP",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/prelaunch.ts",
+        "server/research/prelaunch.test.ts",
+        "server/research/required-inputs.ts",
+        "server/research/required-inputs.test.ts"
+      ]
     }
   ],
   "invariants": [
