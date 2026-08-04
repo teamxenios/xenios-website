@@ -165,6 +165,14 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
       "/research/privacy",
       "/research/terms",
       "/research/support",
+      // Private Early Access door (link-gateway-early-access). REVIEWED:
+      // Samuel's war-room directive routes the founding cohort through
+      // /research to the password wall, and the page behind this link is a
+      // gate, not a catalog: no product, no price, and nothing purchasable
+      // is reachable without the password, an admin-approved customer, and
+      // a session-bound email verification. It is an entry point to a lock,
+      // which the catalog policy permits; a catalog CTA it is not.
+      "/research/early-access",
     ]);
 
     const view = await renderGateway();
