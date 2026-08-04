@@ -85,6 +85,7 @@ import {
 import {
   EarlyAccessCustomerDirectory,
   InMemorySessionBindingStore,
+  type ConsumedTokenStore,
   type SessionBindingStore,
 } from "./identity/identity-verification";
 
@@ -216,6 +217,16 @@ export interface EarlyAccessRegistrationOptions {
    */
   readonly customers?: EarlyAccessCustomerRepository;
   readonly sessionBindings?: SessionBindingStore;
+  /**
+   * Single-use verification-token consumption, for the email-verification
+   * doors. ACCEPTED AND HELD: the doors are not mounted yet, so registration
+   * stores nothing through this today, but the injection point exists now so
+   * the durable composition can pass its store in one place and the door
+   * mount changes no caller. Single-use must be backed by a unique constraint
+   * in the durable store; application logic alone does not survive
+   * concurrency.
+   */
+  readonly consumed?: ConsumedTokenStore;
   readonly agreements?: EarlyAccessAgreementGate;
   readonly suppliers?: EarlyAccessSupplierDirectory;
   readonly shipping?: EarlyAccessShippingPolicy;
