@@ -243,3 +243,12 @@ describe("resolveSupplierConfirmationForReservation", () => {
     expect(resolved).toEqual({ ok: false, code: "confirmation_quantity_exceeded" });
   });
 });
+
+describe("the cold-chain contradiction", () => {
+  it("refuses required-and-unavailable at creation, so the record never exists", () => {
+    const created = createSupplierConfirmation(
+      input({ coldChainState: "required_and_unavailable" }),
+    );
+    expect(created).toEqual({ ok: false, code: "confirmation_invalid" });
+  });
+});

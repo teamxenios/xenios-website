@@ -389,6 +389,7 @@ export class UnavailableEarlyAccessCatalogSource
  */
 export function createProductionEarlyAccessCatalogSource(
   audience: EarlyAccessAudienceSource = EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE,
+  facts: EarlyAccessProjectionFactSources = {},
 ): ProductControlCatalogSource {
   const currency = resolveEarlyAccessSettlementCurrency();
   return new ProductControlCatalogSource({
@@ -397,6 +398,10 @@ export function createProductionEarlyAccessCatalogSource(
       inventory: buildProductionVariantInventoryFactsReader(),
       audience,
       currency,
+      ...(facts.supplierConfirmations
+        ? { supplierConfirmations: facts.supplierConfirmations }
+        : {}),
+      ...(facts.holds ? { holds: facts.holds } : {}),
     }),
   });
 }
@@ -411,14 +416,25 @@ export function createProductionEarlyAccessCatalogSource(
  * missing database into "nothing is available", which is a different sentence
  * and a false one.
  */
+/**
+ * The projection-time fact readers: SUPPLIER_CONFIRMED_ON_DEMAND and the
+ * unit-hold registry. Threaded to the declared-facts reader so a recorded
+ * confirmation or hold is in the NEXT projection, not the next deploy.
+ */
+export type EarlyAccessProjectionFactSources = {
+  readonly supplierConfirmations?: import("./declared-facts-source").SupplierConfirmationLiveReader;
+  readonly holds?: import("../ops/unit-holds").UnitHoldReader;
+};
+
 export function createEarlyAccessCatalogSourceForDeployment(
   configured: boolean,
   audience: EarlyAccessAudienceSource = EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE,
+  facts: EarlyAccessProjectionFactSources = {},
 ): EarlyAccessCatalogSource {
   if (!configured) {
     return new UnavailableEarlyAccessCatalogSource(
       "Private Early Access has no Product Control connection in this deployment, so the catalog cannot be read.",
     );
   }
-  return createProductionEarlyAccessCatalogSource(audience);
+  return createProductionEarlyAccessCatalogSource(audience, facts);
 }

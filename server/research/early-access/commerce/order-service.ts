@@ -468,6 +468,16 @@ export async function createEarlyAccessOrder(
   });
   if (!decision.released) return refused(releaseFailure(decision.hold));
 
+  // The release's own ceiling binds too (QA R7). The Product Control cap above
+  // and this one are enforced independently, so the effective limit is the
+  // most restrictive of the two.
+  if (
+    Number.isSafeInteger(decision.approvedQuantityLimit) &&
+    request.quantity > decision.approvedQuantityLimit
+  ) {
+    return refused("quantity_limit_exceeded");
+  }
+
   // The release is the only price. `row.priceCents` is deliberately not read: it
   // is null for every held unit, and reading it would create a second path to a
   // number that no founder approved for this portal.

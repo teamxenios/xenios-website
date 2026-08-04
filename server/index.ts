@@ -9,6 +9,7 @@ import {
 } from "./research";
 import { registerMembershipApi } from "./research/membership";
 import { registerPrivateEarlyAccessApi } from "./research/early-access/register";
+import { buildEarlyAccessPersistence } from "./research/early-access/persistence/production-deps";
 import { registerMemberApi } from "./research/members";
 import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
@@ -82,6 +83,22 @@ import { formatWithRequestId, requestId, shouldLogApiResponseBody } from "./requ
 import { createServer } from "http";
 
 const app = express();
+// Behind the deployment's reverse proxy, req.ip must be the CLIENT address,
+// not the proxy's, or every unlock attempt shares one rate-limit bucket and a
+// single scripted attacker can lock the door for everyone (QA R9). One hop is
+// what the deployment actually has; more would let a client spoof its own ip.
+app.set("trust proxy", 1);
+// Collapse duplicate slashes FIRST, before any gate or wall: a later rewrite
+// would let //api/research/... slip past the research wall (which matched the
+// un-normalized path) and reach a normalized route unguarded. Mounted here,
+// every gate below sees the same canonical path the router will match, and
+// //api/... is the API's own answer, never fallback HTML with a 200 (QA R8).
+app.use((req, _res, next) => {
+  if (req.url.startsWith("//")) {
+    req.url = req.url.replace(/^\/{2,}/, "/");
+  }
+  next();
+});
 const httpServer = createServer(app);
 
 // Serve the Kairos MVP in place at xeniostechnology.com/kairos by reverse-proxying to the deployed
@@ -227,7 +244,21 @@ async function resolveActiveMemberSilently(req: Request): Promise<MemberRow | nu
 // The founder release routes mount behind the same Supabase admin guard the
 // rest of research operations uses, and the actor is whatever that guard
 // authenticated.
+// The durable Early Access composition (QA R3). In production-like deployments
+// with the feature enabled and configuration missing, these options are the
+// REFUSING stores, so nothing can quietly fall back to memory; the warnings
+// and the refusal reason are logged so a misconfigured deployment says why.
+const earlyAccessPersistence = buildEarlyAccessPersistence();
+for (const warning of earlyAccessPersistence.warnings) {
+  // eslint-disable-next-line no-console
+  console.warn(`[early-access] ${warning}`);
+}
+if (earlyAccessPersistence.reason !== null) {
+  // eslint-disable-next-line no-console
+  console.error(`[early-access] ${earlyAccessPersistence.reason}`);
+}
 registerPrivateEarlyAccessApi(app, {
+  ...earlyAccessPersistence.options,
   resolveMember: resolveActiveMemberSilently,
   requireAdmin: requireSupabaseAdmin,
 });

@@ -84,10 +84,23 @@ import {
 } from "./identity/early-access-customer";
 import {
   EarlyAccessCustomerDirectory,
+  InMemoryConsumedTokenStore,
   InMemorySessionBindingStore,
   type ConsumedTokenStore,
   type SessionBindingStore,
 } from "./identity/identity-verification";
+import {
+  InMemorySupplierConfirmationStore,
+  type SupplierConfirmationStore,
+} from "./ops/supplier-confirmation";
+import {
+  InMemoryUnitHoldRegistry,
+  type UnitHoldRegistry,
+} from "./ops/unit-holds";
+import {
+  InMemoryPendingVerificationQueue,
+  registerEarlyAccessOpsRoutes,
+} from "./routes/ops-routes";
 
 // Registration seam for the Private Early Access gate.
 //
@@ -218,6 +231,16 @@ export interface EarlyAccessRegistrationOptions {
   readonly customers?: EarlyAccessCustomerRepository;
   readonly sessionBindings?: SessionBindingStore;
   /**
+   * SUPPLIER_CONFIRMED_ON_DEMAND records and unit holds. Both feed the
+   * catalog projection at every read AND the manual admin doors that record
+   * them, through ONE store each, so the door and the projection can never
+   * disagree about what was recorded.
+   */
+  readonly supplierConfirmations?: SupplierConfirmationStore;
+  readonly holds?: UnitHoldRegistry;
+  /** The admin-visible queue of minted verification tokens for manual delivery. */
+  readonly verificationQueue?: InMemoryPendingVerificationQueue;
+  /**
    * Single-use verification-token consumption, for the email-verification
    * doors. ACCEPTED AND HELD: the doors are not mounted yet, so registration
    * stores nothing through this today, but the injection point exists now so
@@ -342,11 +365,23 @@ export function registerPrivateEarlyAccessApi(
   // the two can never disagree about whether a cookie is good.
   const resolveSession = createEarlyAccessSessionResolver(deps);
   const configured = supabaseConfigured();
+  // The manual-operations stores, resolved once: the projection reads them
+  // and the admin doors write them.
+  const supplierConfirmations =
+    options.supplierConfirmations ?? new InMemorySupplierConfirmationStore();
+  const holds = options.holds ?? new InMemoryUnitHoldRegistry();
+  const consumed = options.consumed ?? new InMemoryConsumedTokenStore();
+  const verificationQueue =
+    options.verificationQueue ?? new InMemoryPendingVerificationQueue();
   // The catalog default is a REFUSAL, not an empty catalog. An unwired
   // deployment answers a truthful 503 instead of 200-with-no-units, which a
   // customer cannot tell apart from "we sell nothing".
   const catalog =
-    options.catalog ?? createEarlyAccessCatalogSourceForDeployment(configured);
+    options.catalog ??
+    createEarlyAccessCatalogSourceForDeployment(configured, undefined, {
+      supplierConfirmations,
+      holds,
+    });
   const releases = options.releases ?? new InMemoryEarlyAccessReleaseLedger();
   // THE customer identity, resolved through the real directory rather than a
   // hardwired nobody. The reader yields the same hashed session id the session
@@ -452,6 +487,24 @@ export function registerPrivateEarlyAccessApi(
   // resolution sites would let the operator routes and the founder release end
   // up behind different gates.
   const adminGuard: RequestHandler = options.requireAdmin ?? requireSupabaseAdmin;
+
+  // The manual operations doors: customer verification binding, and the admin
+  // records (approve customer, supplier confirmation, unit hold) that the
+  // projection consumes on its next read.
+  registerEarlyAccessOpsRoutes(app, {
+    guard: adminGuard,
+    adminActor: options.adminActor ?? defaultAdminActor,
+    resolveSession,
+    readSessionId: createEarlyAccessSessionIdReader(deps),
+    customers,
+    sessionBindings,
+    consumed,
+    confirmations: supplierConfirmations,
+    holds,
+    verificationQueue,
+    secret: effectiveConfig.sessionSecret,
+    now,
+  });
 
   registerEarlyAccessAdminApi(app, {
     store,

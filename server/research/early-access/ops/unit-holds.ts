@@ -113,8 +113,14 @@ export interface UnitHoldReader {
   ): Promise<readonly EarlyAccessHoldBlocker[]>;
 }
 
+/** The full registry: the reader plus the two recorded state changes. */
+export interface UnitHoldRegistry extends UnitHoldReader {
+  record(hold: UnitHoldRecord): Promise<boolean>;
+  withdraw(holdId: string, by: string, at: string): Promise<boolean>;
+}
+
 /** Test and labeled-local-development registry. The durable table backs production. */
-export class InMemoryUnitHoldRegistry implements UnitHoldReader {
+export class InMemoryUnitHoldRegistry implements UnitHoldRegistry {
   private readonly holds = new Map<string, UnitHoldRecord>();
 
   async record(hold: UnitHoldRecord): Promise<boolean> {

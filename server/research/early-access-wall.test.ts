@@ -89,6 +89,10 @@ describe("the research wall lets Private Early Access reach its own gate", () =>
     // durable session, then the resolved customer, then ownership of the exact
     // order. Getting past the wall reaches a refusal, never an order.
     ["POST", "/api/research/early-access/orders"],
+    // The verification doors: session-gated, and redemption is additionally
+    // bound to the token minted for the presenting session.
+    ["POST", "/api/research/early-access/verification/request"],
+    ["POST", "/api/research/early-access/verify"],
     ["GET", `/api/research/early-access/orders/${ORDER_NUMBER}`],
     ["GET", `/api/research/early-access/orders/${ORDER_NUMBER}/invoice`],
     ["POST", `/api/research/early-access/orders/${ORDER_NUMBER}/payment-proof`],
@@ -107,6 +111,8 @@ describe("the research wall lets Private Early Access reach its own gate", () =>
     // one of these answers SESSION_REQUIRED from its own handler.
     for (const [method, path] of [
       ["POST", "/api/research/early-access/orders"],
+      ["POST", "/api/research/early-access/verification/request"],
+      ["POST", "/api/research/early-access/verify"],
       ["GET", `/api/research/early-access/orders/${ORDER_NUMBER}`],
       ["GET", `/api/research/early-access/orders/${ORDER_NUMBER}/invoice`],
       ["POST", `/api/research/early-access/orders/${ORDER_NUMBER}/payment-proof`],

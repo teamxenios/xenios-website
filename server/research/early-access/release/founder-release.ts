@@ -356,6 +356,8 @@ export type EarlyAccessReleaseDecision =
       currency: string;
       waivedBlockers: readonly EarlyAccessBlocker[];
       productVersion: string;
+      /** The release's own per-order ceiling. The order path must enforce it. */
+      approvedQuantityLimit: number;
     }>
   | Readonly<{
       released: false;
@@ -431,6 +433,7 @@ export function decideEarlyAccessRelease(input: {
   return Object.freeze({
     released: true as const,
     releaseId: current.releaseId,
+    approvedQuantityLimit: current.approvedQuantityLimit,
     priceCents: current.approvedPriceCents,
     currency: current.currency,
     waivedBlockers: current.waivedBlockers,

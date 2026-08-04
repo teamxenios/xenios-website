@@ -165,7 +165,15 @@
       "supabase/"
     ],
     "exactFiles": [
-      "client/src/pages/AdminResearchTab.tsx"
+      "client/src/pages/AdminResearchTab.tsx",
+      ".env.example"
+    ],
+    "exactFilesComment": [
+      "2026-08-04 FABLE-RM-INTEGRATION: .env.example added after review. It documents",
+      "environment VARIABLE NAMES only (the Early Access RESEARCH_* surface from the",
+      "durable-persistence handoff); no value is ever committed, nothing imports it, and",
+      "every documented feature stays behind its own false-by-default flag, so a change",
+      "here cannot modify main-site behavior. Values and secrets remain forbidden."
     ],
     "notPresent": {
       "$comment": "Directives sometimes name these; they do not exist at baselineSha. Creating one is a new-surface decision, not a routine Research/Care write, so it is deliberately NOT pre-approved here.",
@@ -329,12 +337,31 @@
       "pricing can never claim different authorizations for one member. No guard weakened,",
       "no flag changed, Care untouched, no route added or reordered at this seam.",
       "server/research/index.ts, server/care/index.ts, shared/research/flags.ts and",
-      "client/src/App.tsx are UNCHANGED and still match their baselines."
+      "client/src/App.tsx are UNCHANGED and still match their baselines.",
+      "",
+      "2026-08-04, FABLE-RM-INTEGRATION review 2 (finish-early-access seam commit):",
+      "server/index.ts old sha256:7e13cd98210144e09cba590c5025e0e1c3e1c99839f8a0c4b243e58bb66c0997,",
+      "new sha256:91c410954b41718059184f823c9606cf0f4335d101648e419e4ed0ffd4575fa4.",
+      "Three hunks: (1) QA R9 trust proxy, one hop, so unlock rate-limit buckets key",
+      "on the real client ip; (2) QA R8 duplicate-slash collapse mounted FIRST, before",
+      "every gate, so //api paths normalize before the research wall matches and can",
+      "never slip past it into a normalized route; (3) QA R3 the durable Early Access",
+      "composition: buildEarlyAccessPersistence().options spread into",
+      "registerPrivateEarlyAccessApi with its warnings and refusal reason logged;",
+      "production-like + enabled + unconfigured yields REFUSING stores, never memory.",
+      "server/research/index.ts old sha256:96d8812956c28d25806344ed89448f4c70c1467cac357b6590c33ba4676d4fe4,",
+      "new sha256:9e8a11d1cf010ec4b380e268c6764fb551f1c9525bce04c8d5bf66050c5ef817.",
+      "One hunk: two method-exact wall exemptions for the verification doors",
+      "(/early-access/verification/request, /early-access/verify), each owning a",
+      "stronger downstream gate (durable session; redemption additionally bound to",
+      "the minting session). Covered by early-access-wall.test.ts (31 tests, both",
+      "reach-own-handler and refuse-on-own-terms lists). No guard weakened, no flag",
+      "changed, Care untouched."
     ],
     "files": {
       "client/src/App.tsx": "sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c",
-      "server/index.ts": "sha256:7e13cd98210144e09cba590c5025e0e1c3e1c99839f8a0c4b243e58bb66c0997",
-      "server/research/index.ts": "sha256:96d8812956c28d25806344ed89448f4c70c1467cac357b6590c33ba4676d4fe4",
+      "server/index.ts": "sha256:91c410954b41718059184f823c9606cf0f4335d101648e419e4ed0ffd4575fa4",
+      "server/research/index.ts": "sha256:9e8a11d1cf010ec4b380e268c6764fb551f1c9525bce04c8d5bf66050c5ef817",
       "server/care/index.ts": "sha256:fea8c5ad5124dacf07350818e891396ee9f234983a93be65540911c1eafd81db",
       "shared/research/flags.ts": "sha256:be85e1a8b1e82d6b6724aa721b196535c663beefc6ea34fc21f1ca26a4bc5e1b"
     }

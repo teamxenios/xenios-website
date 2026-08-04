@@ -37,3 +37,18 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+  # QA R10: BOTH protection checks run in CI. The vitest job already includes
+  # core-site-protection.test.ts (the hard-fail seam gate); this job runs the
+  # standalone verifier and the route-uniqueness census as their own gate, so
+  # a candidate cannot merge with either drifted.
+  protection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: node scripts/acceptance/verify-core-site-protection.mjs
+      - run: npm run verify:route-uniqueness

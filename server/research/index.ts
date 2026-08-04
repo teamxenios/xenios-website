@@ -290,6 +290,12 @@ export function registerResearchApi(app: Express) {
     "/early-access/unlock",
     "/early-access/logout",
     "/early-access/orders",
+    // The verification doors. Each owns a STRONGER downstream gate: both
+    // require the durable Early Access session, and redemption additionally
+    // requires the token minted for THIS session. Reaching them through the
+    // wall reaches a refusal, never a binding.
+    "/early-access/verification/request",
+    "/early-access/verify",
   ]);
   // The order routes carry an order number, so they cannot be a Set entry. They
   // are ANCHORED against the exact generated shape instead of a bare prefix:

@@ -164,6 +164,13 @@ export function createSupplierConfirmation(
   ) {
     return refused("confirmation_invalid");
   }
+  // A confirmation stating cold chain is REQUIRED AND UNAVAILABLE is a
+  // contradiction, refused at creation rather than recorded and filtered
+  // later: better the record never exist than sit one missing filter away
+  // from a customer. (Grafted from the read-only reviewer's module.)
+  if (/required[\s_-]*(and|but)?[\s_-]*unavailable/i.test(input.coldChainState)) {
+    return refused("confirmation_invalid");
+  }
   if (
     !Number.isSafeInteger(input.targetHandoffHours) ||
     input.targetHandoffHours < 1 ||

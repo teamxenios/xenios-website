@@ -1361,8 +1361,8 @@ describe("route uniqueness validator", () => {
   it("covers every current Express API call site and finite registration", () => {
     const result = scanExpressRouteResult(ROOT);
     expect(result.issues).toEqual([]);
-    expect(result.callSites).toBe(318);
-    expect(result.routes).toHaveLength(327);
+    expect(result.callSites).toBe(325);
+    expect(result.routes).toHaveLength(334);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });
