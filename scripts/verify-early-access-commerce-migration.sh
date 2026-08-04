@@ -26,6 +26,7 @@ MIGRATIONS=(
   "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql"
   "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql"
   "supabase/migrations/20260804123000_research_early_access_reservation_holds.sql"
+  "supabase/migrations/20260804130000_research_early_access_unit_holds.sql"
 )
 for f in "$SESSION_SQL" "${MIGRATIONS[@]}"; do
   [ -f "$f" ] || { echo "missing $f (run from the repository root)"; exit 1; }
@@ -36,7 +37,17 @@ trap cleanup EXIT
 cleanup
 docker run -d --rm --name "$NAME" -p "${PORT}:5432" \
   -e POSTGRES_PASSWORD=verify -e POSTGRES_DB=verify "postgres:${MAJOR}" >/dev/null
-for _ in $(seq 1 40); do docker exec "$NAME" pg_isready -q 2>/dev/null && break; sleep 2; done
+# The postgres image starts a TEMPORARY server during initdb and shuts it
+# down before the real one comes up, and pg_isready can answer during that
+# window. Require a real query to succeed twice, two seconds apart, so the
+# script never speaks to the throwaway server.
+for _ in $(seq 1 60); do
+  if docker exec "$NAME" psql -U postgres -d verify -qtAc "select 1" >/dev/null 2>&1; then
+    sleep 2
+    docker exec "$NAME" psql -U postgres -d verify -qtAc "select 1" >/dev/null 2>&1 && break
+  fi
+  sleep 2
+done
 
 q() { docker exec -i "$NAME" psql -U postgres -d verify -qtA "$@"; }
 

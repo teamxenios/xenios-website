@@ -44,6 +44,7 @@ const MIGRATIONS = [
   "20260804121000_research_early_access_commerce_persistence.sql",
   "20260804122000_research_early_access_supplier_operations.sql",
   "20260804123000_research_early_access_reservation_holds.sql",
+  "20260804130000_research_early_access_unit_holds.sql",
 ] as const;
 
 type Pool = import("pg").Pool;
@@ -898,6 +899,135 @@ run("Early Access durable persistence against real PostgreSQL", () => {
       ).rejects.toThrow(/permission denied/);
       await expect(
         client.query("select public.research_early_access_reservation_by_id('res-pg-1')"),
+      ).rejects.toThrow(/permission denied/);
+      await client.query("reset role");
+    } finally {
+      client.release();
+    }
+  });
+
+  it("supplier-confirmation PORT: insert, truthful byId, clock-derived liveness, caller-stamped withdraw", async () => {
+    const { SupabaseSupplierConfirmationStore } = await import("./ops-stores");
+    const store = new SupabaseSupplierConfirmationStore(query);
+    const confirmation = {
+      confirmationId: "conf-port-1",
+      supplierOrg: "apex-labs",
+      supplierContact: "Apex Ops, ops@apex.example",
+      productId: "prod-10",
+      variantId: "var-10",
+      sku: "XEN-GHK-50",
+      supplierSku: "APX-GHK-50",
+      strength: "50 mg",
+      presentation: "lyophilized vial",
+      maxQuantity: 5,
+      fulfillmentLocation: "Houston, TX",
+      fulfillmentMethod: "courier_handoff",
+      targetHandoffHours: 72,
+      shippingRequirements: "insulated mailer with gel pack",
+      coldChainState: "cool",
+      documentationState: "coa_on_file",
+      confirmedAt: "2026-08-03T00:00:00.000Z",
+      expiresAt: "2026-08-10T00:00:00.000Z",
+      confirmedBy: "Samuel Boadu",
+      evidenceRef: "email thread-456",
+      status: "active",
+      withdrawnAt: null,
+      withdrawnBy: null,
+    };
+    expect(await store.insert(confirmation as never)).toBe(true);
+    expect(await store.insert(confirmation as never)).toBe(false);
+
+    const read = await store.byId("conf-port-1");
+    expect(read?.supplierContact).toBe("Apex Ops, ops@apex.example");
+    expect(read?.evidenceRef).toBe("email thread-456");
+    expect(read?.status).toBe("active");
+
+    // Liveness is judged against the CALLER's instant.
+    expect(
+      (await store.liveForUnit("prod-10", "var-10", "2026-08-04T00:00:00.000Z"))
+        ?.confirmationId,
+    ).toBe("conf-port-1");
+    expect(
+      await store.liveForUnit("prod-10", "var-10", "2026-08-11T00:00:00.000Z"),
+    ).toBeNull();
+
+    // Withdrawal records the caller's named human and instant VERBATIM in the
+    // canonical record, and ends liveness immediately.
+    expect(
+      await store.withdraw("conf-port-1", "Samuel Boadu", "2026-08-05T09:30:00.000Z"),
+    ).toBe(true);
+    const withdrawn = await store.byId("conf-port-1");
+    expect(withdrawn?.status).toBe("withdrawn");
+    expect(withdrawn?.withdrawnBy).toBe("Samuel Boadu");
+    expect(withdrawn?.withdrawnAt).toBe("2026-08-05T09:30:00.000Z");
+    expect(
+      await store.liveForUnit("prod-10", "var-10", "2026-08-04T00:00:00.000Z"),
+    ).toBeNull();
+    expect(await store.withdraw("conf-port-none", "Samuel Boadu", "2026-08-05T00:00:00.000Z")).toBe(
+      false,
+    );
+  });
+
+  it("unit holds: recorded prohibitions survive, withdraw is a state change, rows never delete", async () => {
+    const { SupabaseUnitHoldRegistry } = await import("./ops-stores");
+    const registry = new SupabaseUnitHoldRegistry(query);
+    const hold = {
+      holdId: "hold-pg-1",
+      kind: "REGULATORY_HOLD",
+      productId: "prod-10",
+      variantId: "var-10",
+      reason: "Counsel moved the compound to regulatory hold.",
+      recordedBy: "Samuel Boadu",
+      recordedAt: "2026-08-04T00:00:00.000Z",
+      status: "active",
+      withdrawnBy: null,
+      withdrawnAt: null,
+    };
+    expect(await registry.record(hold as never)).toBe(true);
+    expect(await registry.record(hold as never)).toBe(false);
+    expect(
+      await registry.record({ ...hold, holdId: "hold-pg-2", kind: "STOP_SHIP" } as never),
+    ).toBe(true);
+
+    // Canonical blocker order, active only.
+    expect(
+      await registry.activeHoldsForUnit("prod-10", "var-10", "2026-08-04T01:00:00.000Z"),
+    ).toEqual(["REGULATORY_HOLD", "STOP_SHIP"]);
+
+    // Withdrawal is a recorded state change with the caller's stamp...
+    expect(
+      await registry.withdraw("hold-pg-1", "Samuel Boadu", "2026-08-05T00:00:00.000Z"),
+    ).toBe(true);
+    // ...false on a repeat or an unknown id, exactly like the in-memory registry...
+    expect(
+      await registry.withdraw("hold-pg-1", "Samuel Boadu", "2026-08-05T00:00:00.000Z"),
+    ).toBe(false);
+    expect(
+      await registry.withdraw("hold-pg-none", "Samuel Boadu", "2026-08-05T00:00:00.000Z"),
+    ).toBe(false);
+    expect(
+      await registry.activeHoldsForUnit("prod-10", "var-10", "2026-08-05T01:00:00.000Z"),
+    ).toEqual(["STOP_SHIP"]);
+    const withdrawnHold = await registry.byId("hold-pg-1");
+    expect(withdrawnHold?.status).toBe("withdrawn");
+    expect(withdrawnHold?.withdrawnAt).toBe("2026-08-05T00:00:00.000Z");
+
+    // The row NEVER disappears: deletion is blocked for everyone, owner included.
+    if (!pool) throw new Error("pool");
+    await expect(
+      pool.query("delete from public.research_early_access_unit_holds where hold_id = 'hold-pg-1'"),
+    ).rejects.toThrow(/never deleted/);
+    // Browser roles reach neither the table nor the reader function.
+    const client = await pool.connect();
+    try {
+      await client.query("set role anon");
+      await expect(
+        client.query("select * from public.research_early_access_unit_holds"),
+      ).rejects.toThrow(/permission denied/);
+      await expect(
+        client.query(
+          "select public.research_early_access_active_hold_kinds_for_unit('prod-10','var-10')",
+        ),
       ).rejects.toThrow(/permission denied/);
       await client.query("reset role");
     } finally {
