@@ -34,6 +34,7 @@ import { readEarlyAccessOrder, type EarlyAccessOrderStatus } from "./early-acces
 export const EARLY_ACCESS_PROOF_CONTENT_TYPES = [
   "image/png",
   "image/jpeg",
+  "image/webp",
   "application/pdf",
 ] as const;
 
@@ -120,6 +121,10 @@ const FILENAME_EXTENSIONS: Readonly<Record<EarlyAccessProofContentType, readonly
   Object.freeze({
     "image/png": Object.freeze([".png"]),
     "image/jpeg": Object.freeze([".jpg", ".jpeg"]),
+    // A phone screenshot of a bank transfer is commonly webp. The upload route
+    // already accepts it; this allowlist is the layer that actually stores, so
+    // the two must agree or a valid proof is accepted and then refused deeper.
+    "image/webp": Object.freeze([".webp"]),
     "application/pdf": Object.freeze([".pdf"]),
   });
 
