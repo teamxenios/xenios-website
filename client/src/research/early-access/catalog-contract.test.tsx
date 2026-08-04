@@ -165,6 +165,29 @@ describe("catalogue contract: real route, real adapter, real grid", () => {
     const el = renderGrid(load.products, load.dropped);
     const cards = el.querySelectorAll("article");
 
+    // The milestone evidence line. Printed on every successful run so the proof
+    // is something a human can read from the output rather than infer from a
+    // green tick.
+    const byState = load.products.reduce<Record<string, number>>((acc, p) => {
+      acc[p.availability] = (acc[p.availability] ?? 0) + 1;
+      return acc;
+    }, {});
+    // eslint-disable-next-line no-console
+    console.log(
+      [
+        "",
+        "CATALOGUE CONTRACT: LIVE",
+        `  server rows returned   ${load.received}`,
+        `  adapter rows received  ${load.products.length}`,
+        `  rows dropped           ${load.dropped}`,
+        `  cards rendered         ${cards.length}`,
+        `  AVAILABLE                        ${byState.AVAILABLE ?? 0}`,
+        `  AVAILABILITY_CONFIRMATION_REQUIRED ${byState.AVAILABILITY_CONFIRMATION_REQUIRED ?? 0}`,
+        `  TEMPORARILY_HELD                 ${byState.TEMPORARILY_HELD ?? 0}`,
+        "",
+      ].join("\n"),
+    );
+
     // Rendered cards equal adapter rows equal server rows minus dropped. This
     // is the whole chain in three numbers.
     expect(load.products.length).toBe(load.received - load.dropped);
