@@ -99,7 +99,7 @@ export interface PrivateAccessCookiePort {
     | Readonly<{ ok: true; setCookie: string; expiresAtEpochMs: number; maxAgeSeconds: number }>
     | Readonly<{ ok: false }>;
   read(
-    input: Readonly<{ cookieHeader: unknown; now: number }>,
+    input: Readonly<{ cookieHeader: unknown; now: number; ttlSeconds: number }>,
   ): Readonly<{ ok: true; sessionHandle: string }> | Readonly<{ ok: false }>;
   clear(): string;
 }
@@ -271,8 +271,13 @@ export function createDefaultPrivateAccessCookiePort(
 ): PrivateAccessCookiePort {
   const keyRing = { activeKeyId: DEFAULT_COOKIE_KEY_ID, keys: { [DEFAULT_COOKIE_KEY_ID]: sessionSecret } };
   return {
-    issue({ sessionHandle, now }) {
-      const issued = encodePrivateAccessCookie({ keyRing, now, sessionHandle });
+    issue({ sessionHandle, now, ttlSeconds }) {
+      // The resolved TTL must reach the codec, or the cookie carries the codec
+      // default while the durable row carries the configured lifetime. The two
+      // then disagree, the synchronization guard below refuses the cookie, and
+      // a correct password returns 401. Threading it here is what makes the
+      // cookie Max-Age and the database expiry one value rather than two.
+      const issued = encodePrivateAccessCookie({ keyRing, now, sessionHandle, ttlSeconds });
       if (!issued.ok) return Object.freeze({ ok: false as const });
       const maxAge = MAX_AGE.exec(issued.value.setCookie);
       if (!maxAge) return Object.freeze({ ok: false as const });
@@ -283,8 +288,11 @@ export function createDefaultPrivateAccessCookiePort(
         maxAgeSeconds: Number(maxAge[1]),
       });
     },
-    read({ cookieHeader, now }) {
-      const decoded = decodePrivateAccessCookie({ cookieHeader, keyRing, now });
+    read({ cookieHeader, now, ttlSeconds }) {
+      // Decode against the SAME resolved lifetime the cookie was sealed with;
+      // the codec pins exp - iat, so a mismatched TTL reads as an invalid
+      // cookie and silently signs the customer out.
+      const decoded = decodePrivateAccessCookie({ cookieHeader, keyRing, now, ttlSeconds });
       if (!decoded.ok) return Object.freeze({ ok: false as const });
       return Object.freeze({ ok: true as const, sessionHandle: decoded.value.sessionHandle });
     },
@@ -571,7 +579,9 @@ export function createSessionRoute(deps: PrivateAccessRouteDependencies): Privat
         return;
       }
 
-      const read = cookies.read({ cookieHeader: request?.cookieHeader, now });
+      // Same derivation as unlock, so read and issue always agree.
+      const ttlSeconds = Math.max(1, Math.floor(deps.config.sessionTtlMinutes)) * 60;
+      const read = cookies.read({ cookieHeader: request?.cookieHeader, now, ttlSeconds });
       if (!read.ok || !isOpaqueToken(read.sessionHandle)) {
         send(response, 200, { authenticated: false });
         return;
@@ -638,7 +648,9 @@ export function createLogoutRoute(deps: PrivateAccessRouteDependencies): Private
 
       const now = readInstant(deps.now);
       if (now !== null && gateIsOpen(deps.config)) {
-        const read = cookies.read({ cookieHeader: request?.cookieHeader, now });
+        // Same derivation as unlock, so read and issue always agree.
+      const ttlSeconds = Math.max(1, Math.floor(deps.config.sessionTtlMinutes)) * 60;
+      const read = cookies.read({ cookieHeader: request?.cookieHeader, now, ttlSeconds });
         if (read.ok && isOpaqueToken(read.sessionHandle)) {
           const revoked = await revokeQuietlyResult(
             deps,

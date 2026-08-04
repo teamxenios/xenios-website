@@ -8,6 +8,7 @@ import {
   registerResearchApi,
 } from "./research";
 import { registerMembershipApi } from "./research/membership";
+import { registerPrivateEarlyAccessApi } from "./research/early-access/register";
 import { registerMemberApi } from "./research/members";
 import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
@@ -184,6 +185,10 @@ app.use((req, res, next) => {
 // the SPA catch-all so the gate always runs first.
 app.use(researchPageGate);
 registerResearchApi(app);
+// Private Early Access API. Registered after the Research API so the shared
+// Research wall and its private headers still run first, and before the SPA
+// catch-all so these paths never resolve to fallback HTML.
+registerPrivateEarlyAccessApi(app);
 app.use(carePageGate);
 const careAccess = buildCareProductionDependencies();
 const careEligibility = buildCareEligibilityRepository();
