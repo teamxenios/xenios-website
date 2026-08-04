@@ -134,9 +134,9 @@ describe("the price is never taken from the client", () => {
 
     expect(record.order.line.unitPriceCents).toBe(RELEASE_PRICE_CENTS);
     expect(record.order.line.lineTotalCents).toBe(RELEASE_PRICE_CENTS);
-    expect(record.subtotalCents).toBe(RELEASE_PRICE_CENTS);
-    expect(record.totalCents).toBe(RELEASE_PRICE_CENTS);
-    expect(record.currency).toBe("USD");
+    expect(record.money.subtotalCents).toBe(RELEASE_PRICE_CENTS);
+    expect(record.money.payableTotalCents).toBe(RELEASE_PRICE_CENTS);
+    expect(record.money.currency).toBe("USD");
     expect(record.order.currency).toBe("USD");
   });
 
@@ -145,7 +145,7 @@ describe("the price is never taken from the client", () => {
       const result = await place({ request: request({ [key]: 1 }) });
       expect(result.ok).toBe(true);
       if (!result.ok) throw new Error(`refused on ${key}: ${result.code}`);
-      expect(result.value.record.totalCents).toBe(RELEASE_PRICE_CENTS);
+      expect(result.value.record.money.payableTotalCents).toBe(RELEASE_PRICE_CENTS);
     }
   });
 
@@ -158,8 +158,8 @@ describe("the price is never taken from the client", () => {
     const record = await placed({
       request: request({ quantity: 3, lineTotalCents: 3, orderTotalCents: 3 }),
     });
-    expect(record.subtotalCents).toBe(59_700);
-    expect(record.totalCents).toBe(47_760);
+    expect(record.money.subtotalCents).toBe(59_700);
+    expect(record.money.payableTotalCents).toBe(47_760);
   });
 
   it("takes the sku from the catalog row and ignores a client supplied one", async () => {
@@ -180,7 +180,7 @@ describe("the price is never taken from the client", () => {
 
     const record = await placed({ request: hostile });
 
-    expect(record.totalCents).toBe(RELEASE_PRICE_CENTS);
+    expect(record.money.payableTotalCents).toBe(RELEASE_PRICE_CENTS);
     expect((Object.prototype as Record<string, unknown>).polluted).toBeUndefined();
   });
 });
@@ -315,28 +315,28 @@ describe("quantity", () => {
 describe("bundle arithmetic is exact to the cent", () => {
   it("prices each tier from the release price", async () => {
     const one = await placed({ request: request({ quantity: 1 }) });
-    expect([one.subtotalCents, one.discountCents, one.totalCents]).toEqual([19_900, 0, 19_900]);
-    expect(one.tier.label).toBe("1 Unit");
+    expect([one.money.subtotalCents, one.money.discountCents, one.money.payableTotalCents]).toEqual([19_900, 0, 19_900]);
+    expect(one.promotion.label).toBe("1 Unit");
 
     const two = await placed({ request: request({ quantity: 2 }) });
-    expect([two.subtotalCents, two.discountCents, two.totalCents]).toEqual([39_800, 0, 39_800]);
-    expect(two.tier.label).toBe("2 Units");
+    expect([two.money.subtotalCents, two.money.discountCents, two.money.payableTotalCents]).toEqual([39_800, 0, 39_800]);
+    expect(two.promotion.label).toBe("2 Units");
 
     const three = await placed({ request: request({ quantity: 3 }) });
-    expect([three.subtotalCents, three.discountCents, three.totalCents]).toEqual([
+    expect([three.money.subtotalCents, three.money.discountCents, three.money.payableTotalCents]).toEqual([
       59_700, 11_940, 47_760,
     ]);
-    expect(three.tier.label).toBe("3-Unit Bundle");
-    expect(three.tier.discountBasisPoints).toBe(2_000);
+    expect(three.promotion.label).toBe("3-Unit Bundle");
+    expect(three.promotion.discountBasisPoints).toBe(2_000);
   });
 
   it("drops the fractional cent rather than inventing one", async () => {
     // 59,997 at twenty percent is 11,999.4 cents of discount.
     const odd = release({ approvedPriceCents: 19_999 });
     const record = await placed({ request: request({ quantity: 3 }), releases: [odd] });
-    expect(record.subtotalCents).toBe(59_997);
-    expect(record.discountCents).toBe(11_999);
-    expect(record.totalCents).toBe(47_998);
+    expect(record.money.subtotalCents).toBe(59_997);
+    expect(record.money.discountCents).toBe(11_999);
+    expect(record.money.payableTotalCents).toBe(47_998);
   });
 
   it("never produces a discount on an amount too small to carry one", () => {
@@ -348,7 +348,7 @@ describe("bundle arithmetic is exact to the cent", () => {
   it("does not drift across the whole supported price range", () => {
     for (let unit = 1; unit <= EARLY_ACCESS_MAX_UNIT_PRICE_CENTS; unit += 997) {
       for (const tier of EARLY_ACCESS_BUNDLE_TIERS) {
-        const subtotal = unit * tier.quantity;
+        const subtotal = unit * tier.eligibleQuantity;
         const discount = earlyAccessBundleDiscountCents(subtotal, tier.discountBasisPoints);
         expect(Number.isSafeInteger(discount)).toBe(true);
         // The discount is the largest whole cent that does not exceed the exact
@@ -367,7 +367,7 @@ describe("bundle arithmetic is exact to the cent", () => {
   });
 
   it("exposes exactly three tiers and one discount", () => {
-    expect(EARLY_ACCESS_BUNDLE_TIERS.map((tier) => tier.quantity)).toEqual([1, 2, 3]);
+    expect(EARLY_ACCESS_BUNDLE_TIERS.map((tier) => tier.eligibleQuantity)).toEqual([1, 2, 3]);
     expect(
       EARLY_ACCESS_BUNDLE_TIERS.filter((tier) => tier.discountBasisPoints > 0),
     ).toHaveLength(1);

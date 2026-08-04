@@ -152,10 +152,13 @@ describe("a founder approves one unit and a customer buys it", () => {
     expect(record.releaseId).toBe("rel-clean-0001");
     expect(record.productVersion).toBe(earlyAccessReleaseVersion(unit));
     // 3 units at 19,900 is 59,700, less the 20 percent bundle, is 47,760.
-    expect(record.subtotalCents).toBe(59_700);
-    expect(record.discountCents).toBe(11_940);
-    expect(record.totalCents).toBe(47_760);
-    expect(record.currency).toBe("USD");
+    expect(record.money.subtotalCents).toBe(59_700);
+    expect(record.money.discountCents).toBe(11_940);
+    expect(record.money.payableTotalCents).toBe(47_760);
+    expect(record.money.currency).toBe("USD");
+    // The pre-discount subtotal is still on the order, and it is still exactly
+    // unit price times quantity. It is not what anyone is asked to pay.
+    expect(record.order.orderTotalCents).toBe(59_700);
 
     // 4. THE INVOICE bills what the customer actually owes.
     const invoices = new InMemoryEarlyAccessInvoiceRepository();
@@ -167,7 +170,9 @@ describe("a founder approves one unit and a customer buys it", () => {
     expect(issued.ok).toBe(true);
     if (!issued.ok) return;
     const invoice = issued.value.invoice;
-    expect(invoice.totalCents).toBe(47_760);
+    expect(invoice.payableTotalCents).toBe(47_760);
+    expect(invoice.subtotalCents).toBe(59_700);
+    expect(invoice.discountCents).toBe(11_940);
     expect(invoice.currency).toBe("USD");
     expect(invoice.paymentReference.length).toBeGreaterThan(0);
     expect(invoice.orderId).toBe("ea-order-journey-0001");
@@ -197,7 +202,8 @@ describe("a founder approves one unit and a customer buys it", () => {
     expect(afterRevocation.purchasableCount).toBe(0);
 
     const stored = await orders.findByOrderId("ea-order-journey-0001");
-    expect(stored?.totalCents).toBe(47_760);
+    expect(stored?.money.payableTotalCents).toBe(47_760);
+    expect(stored?.money.promotionId).toBe("early-access-bundle-3");
     expect(stored?.releaseId).toBe("rel-clean-0001");
 
     const blockedNow = await createEarlyAccessOrder({

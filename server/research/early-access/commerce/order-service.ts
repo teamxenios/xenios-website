@@ -51,15 +51,20 @@ import {
 } from "../release/founder-release";
 import {
   EARLY_ACCESS_CURRENCIES,
-  EARLY_ACCESS_MAX_ORDER_TOTAL_CENTS,
   EARLY_ACCESS_MAX_QUANTITY,
   EARLY_ACCESS_MAX_UNIT_PRICE_CENTS,
   EARLY_ACCESS_MIN_QUANTITY,
   createEarlyAccessOrder as buildEarlyAccessOrderRecord,
-  type EarlyAccessCurrency,
   type EarlyAccessOrder,
   type EarlyAccessOrderFailureCode,
 } from "./early-access-order";
+import type { OrderMoneySnapshot } from "./order-money";
+import {
+  EARLY_ACCESS_PROMOTIONS,
+  earlyAccessPromotionDiscountCents,
+  earlyAccessPromotionFor,
+  type EarlyAccessPromotion,
+} from "./promotion";
 import {
   accepted,
   isBoundedInteger,
@@ -96,48 +101,28 @@ export function isEarlyAccessIdempotencyKey(value: unknown): value is string {
 // Bundle tiers
 // ---------------------------------------------------------------------------
 
-export type EarlyAccessBundleTier = Readonly<{
-  quantity: number;
-  label: string;
-  /** Basis points off the line subtotal. 2000 is twenty percent. */
-  discountBasisPoints: number;
-}>;
-
 /**
- * The three quantities Early Access sells, and the only discount that exists.
- *
- * Twenty percent at three units is the whole promotion. One and two units carry
- * no discount because none has been decided, and a discount nobody approved is a
- * financial fact this module is not entitled to invent.
+ * @deprecated The promotion table moved to `promotion.ts`, where every rule carries a
+ * version so a withdrawn or edited promotion cannot rewrite a historical order. These
+ * aliases are kept so existing importers keep compiling; new code uses the promotion
+ * names directly.
  */
-export const EARLY_ACCESS_BUNDLE_TIERS: readonly EarlyAccessBundleTier[] = Object.freeze([
-  Object.freeze({ quantity: 1, label: "1 Unit", discountBasisPoints: 0 }),
-  Object.freeze({ quantity: 2, label: "2 Units", discountBasisPoints: 0 }),
-  Object.freeze({ quantity: 3, label: "3-Unit Bundle", discountBasisPoints: 2_000 }),
-]);
+export type EarlyAccessBundleTier = EarlyAccessPromotion;
 
-export function earlyAccessBundleTier(quantity: number): EarlyAccessBundleTier | null {
-  return EARLY_ACCESS_BUNDLE_TIERS.find((tier) => tier.quantity === quantity) ?? null;
+/** @deprecated Use `EARLY_ACCESS_PROMOTIONS`. */
+export const EARLY_ACCESS_BUNDLE_TIERS: readonly EarlyAccessPromotion[] = EARLY_ACCESS_PROMOTIONS;
+
+/** @deprecated Use `earlyAccessPromotionFor`. */
+export function earlyAccessBundleTier(quantity: number): EarlyAccessPromotion | null {
+  return earlyAccessPromotionFor(quantity);
 }
 
-/**
- * The discount in whole cents, computed in integer arithmetic end to end.
- *
- * `subtotal * basisPoints` is an exact integer well inside the safe range, and
- * removing the remainder before dividing means no floating point value is ever
- * rounded, so the result cannot drift by a cent between runs or platforms.
- *
- * The remainder is dropped rather than rounded up, so the discount is never
- * larger than the approved percentage of the approved price. The customer pays
- * at most one cent more than an exact percentage, which is the direction that
- * cannot overstate what the founder released.
- */
+/** @deprecated Use `earlyAccessPromotionDiscountCents`. */
 export function earlyAccessBundleDiscountCents(
   subtotalCents: number,
   discountBasisPoints: number,
 ): number {
-  const gross = subtotalCents * discountBasisPoints;
-  return (gross - (gross % 10_000)) / 10_000;
+  return earlyAccessPromotionDiscountCents(subtotalCents, discountBasisPoints);
 }
 
 // ---------------------------------------------------------------------------
@@ -149,25 +134,25 @@ export function earlyAccessBundleDiscountCents(
  *
  * The domain order is embedded whole rather than flattened, so it stays valid
  * under `readEarlyAccessOrder` and every module downstream (invoicing, proof,
- * verification, commission) keeps reading the shape it already knows. Its
- * `orderTotalCents` is the undiscounted subtotal, because that module derives
- * the total from unit price times quantity and refuses a snapshot that disagrees
- * with its own line. The bundle discount therefore lives here, one level up,
- * where it can be stated explicitly instead of hidden inside a unit price that
- * would not divide evenly.
+ * verification, commission) keeps reading the shape it already knows.
+ *
+ * The money used to live HERE rather than on the order, which is precisely how a
+ * receipt and an affiliate commission came to be stated on a pre-discount subtotal:
+ * everything downstream reads the ORDER, and the order could not see the discount.
+ * The order now carries the money snapshot, and this record simply mirrors it, so
+ * there is one arithmetic and one place it can be wrong.
  */
 export type EarlyAccessReleaseOrder = Readonly<{
   idempotencyKey: string;
   order: EarlyAccessOrder;
   /** The exact founder decision this unit was sold under. */
   releaseId: string;
-  /** The product fingerprint that decision was bound to. */
+  /** The product fingerprint that decision was bound to, and the order's price version. */
   productVersion: string;
-  tier: EarlyAccessBundleTier;
-  subtotalCents: number;
-  discountCents: number;
-  totalCents: number;
-  currency: EarlyAccessCurrency;
+  /** The promotion rule that applied, in the version it applied in. */
+  promotion: EarlyAccessPromotion;
+  /** The order's own money snapshot. Not a second computation of it. */
+  money: OrderMoneySnapshot;
 }>;
 
 // ---------------------------------------------------------------------------
@@ -285,6 +270,13 @@ export interface EarlyAccessOrderServiceInput {
   /** Every founder release on record, including revocations. */
   readonly releases: readonly EarlyAccessRelease[];
   readonly orders: EarlyAccessOrderRepository;
+  /**
+   * The promotion table that applies to NEW orders. Defaults to the canonical one, and
+   * is deliberately not part of the request projection, so a customer can never name
+   * the promotion they are priced under. Withdrawing a promotion here stops new orders
+   * at that quantity and leaves every historical order exactly as it was sold.
+   */
+  readonly promotions?: readonly EarlyAccessPromotion[];
 }
 
 // ---------------------------------------------------------------------------
@@ -492,43 +484,43 @@ export async function createEarlyAccessOrder(
     return refused("quantity_limit_exceeded");
   }
 
-  const tier = earlyAccessBundleTier(request.quantity);
-  if (!tier) return refused("bundle_tier_unavailable");
+  const promotions = input.promotions ?? EARLY_ACCESS_PROMOTIONS;
+  const promotion = earlyAccessPromotionFor(request.quantity, promotions);
+  if (!promotion) return refused("bundle_tier_unavailable");
 
-  const built = buildEarlyAccessOrderRecord({
-    orderId: request.orderId,
-    customerRef: request.customerRef,
-    productId: row.productId,
-    variantId: row.variantId,
-    // The SKU is the catalog's, never the request's. A customer cannot name the
-    // unit they are billed for.
-    sku: row.sku,
-    quantity: request.quantity,
-    unitPriceCents: decision.priceCents,
-    currency: decision.currency,
-    now: request.now,
-    referralCode: request.referralCode,
-  });
+  // The order does the money. It resolves the same promotion from the same table, so
+  // there is exactly one discount arithmetic in the system and it lives with the record
+  // every downstream lane actually reads.
+  const built = buildEarlyAccessOrderRecord(
+    {
+      orderId: request.orderId,
+      customerRef: request.customerRef,
+      productId: row.productId,
+      variantId: row.variantId,
+      // The SKU is the catalog's, never the request's. A customer cannot name the
+      // unit they are billed for.
+      sku: row.sku,
+      quantity: request.quantity,
+      unitPriceCents: decision.priceCents,
+      // The founder release's product fingerprint IS the version of the approved price,
+      // so a historical order can state what it was priced under after the ledger is gone.
+      unitPriceVersion: decision.productVersion,
+      currency: decision.currency,
+      now: request.now,
+      referralCode: request.referralCode,
+    },
+    promotions,
+  );
   if (!built.ok) return refused(built.code);
   const order = built.value;
-
-  const subtotalCents = order.orderTotalCents;
-  const discountCents = earlyAccessBundleDiscountCents(subtotalCents, tier.discountBasisPoints);
-  const totalCents = subtotalCents - discountCents;
-  if (!isPositiveCents(totalCents, EARLY_ACCESS_MAX_ORDER_TOTAL_CENTS)) {
-    return refused("amount_overflow");
-  }
 
   const record: EarlyAccessReleaseOrder = Object.freeze({
     idempotencyKey: request.idempotencyKey,
     order,
     releaseId: decision.releaseId,
     productVersion: decision.productVersion,
-    tier,
-    subtotalCents,
-    discountCents,
-    totalCents,
-    currency: order.currency,
+    promotion,
+    money: order.money,
   });
 
   const written = await input.orders.insert(record);

@@ -28,6 +28,7 @@ function verifiedOrder(overrides: Record<string, unknown> = {}): EarlyAccessVeri
     sku: "XEA-BPC-5MG",
     quantity: 2,
     unitPriceCents: 12_450,
+    unitPriceVersion: "prdver-9f2c1a",
     currency: "USD",
     referralCode: "ALEX-2026",
     now: CREATED_AT,
@@ -40,6 +41,8 @@ function verifiedOrder(overrides: Record<string, unknown> = {}): EarlyAccessVeri
     idempotencyKey: "verify-ord-ea-0001-a",
     now: DECIDED_AT,
     appliedVerifications: [],
+    verifiedAmountCents: 24_900,
+    verifiedCurrency: "USD",
     method: "zelle",
   });
   if (!decided.ok || !decided.value.verifiedOrder) {
@@ -115,7 +118,16 @@ describe("commission hold", () => {
     const exported = Object.keys(commissionModule).filter(
       (name) => typeof (commissionModule as unknown as Record<string, unknown>)[name] === "function",
     );
-    expect(exported.sort()).toEqual(["buildCommissionHold", "commissionHoldIdFor"]);
+    expect(exported.sort()).toEqual([
+      "buildCommissionAccrual",
+      "buildCommissionHold",
+      "commissionAccrualIdFor",
+      "commissionBasisCentsFor",
+      "commissionBreakdownFor",
+      "commissionHoldFrom",
+      "commissionHoldIdFor",
+      "readCommissionAccrual",
+    ]);
     expect(JSON.stringify(build())).not.toContain("payable");
     expect(JSON.stringify(build())).toContain("\"state\":\"held\"");
   });
@@ -172,7 +184,25 @@ describe("commission hold refusals", () => {
   });
 
   it("refuses a hold that rounds away to nothing", () => {
-    expect(build({ holdBasisPoints: 1 }, { orderTotalCents: 1 })).toEqual({
+    expect(
+      build(
+        { holdBasisPoints: 1 },
+        {
+          orderTotalCents: 1,
+          verifiedAmountCents: 1,
+          money: {
+            currency: "USD",
+            subtotalCents: 1,
+            discountCents: 0,
+            shippingCents: 0,
+            taxCents: 0,
+            payableTotalCents: 1,
+            promotionId: null,
+            promotionVersion: null,
+          },
+        },
+      ),
+    ).toEqual({
       ok: false,
       code: "hold_amount_invalid",
     });

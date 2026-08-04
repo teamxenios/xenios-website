@@ -45,8 +45,11 @@ import {
 } from "./supplier-release";
 import {
   COMMISSION_HOLD_KEYS,
-  buildCommissionHold,
+  buildCommissionAccrual,
+  commissionHoldFrom,
+  readCommissionAccrual,
   type CommissionHoldFailureCode,
+  type EarlyAccessCommissionAccrual,
   type EarlyAccessCommissionHold,
 } from "./commission-event";
 import {
@@ -146,6 +149,12 @@ export type EarlyAccessFulfillmentRecord = Readonly<{
   fulfilledAt: string;
   /** Null when the order carried no referral, or no attribution was supplied. */
   commissionHold: EarlyAccessCommissionHold | null;
+  /**
+   * The server side economics behind the hold: policy, version, basis amount, rate, and
+   * the commission they produced. Stored so a commission can be explained later without
+   * recomputing it from a price list that may have moved.
+   */
+  commissionAccrual: EarlyAccessCommissionAccrual | null;
 }>;
 
 export const EARLY_ACCESS_FULFILLMENT_RECORD_KEYS = [
@@ -156,6 +165,7 @@ export const EARLY_ACCESS_FULFILLMENT_RECORD_KEYS = [
   "fulfilledByActorId",
   "fulfilledAt",
   "commissionHold",
+  "commissionAccrual",
 ] as const;
 
 export type EarlyAccessSupplierReleaseOutcome = Readonly<{
@@ -235,7 +245,11 @@ export function authorizingApproval(
         entry.actorId === verified.verifiedByActorId &&
         entry.actorRole === verified.verifiedByActorRole &&
         entry.decidedAt === verified.verifiedAt &&
-        entry.amountVerifiedCents === verified.orderTotalCents &&
+        // The confirmed amount, and the amount that was owed, must both match the
+        // projection. Matching against `orderTotalCents` (the pre-discount subtotal)
+        // was how a discounted order could never find its own approval.
+        entry.amountVerifiedCents === verified.verifiedAmountCents &&
+        entry.payableTotalCents === verified.money.payableTotalCents &&
         entry.currency === verified.currency,
     ) ?? null
   );
@@ -398,6 +412,23 @@ export function readEarlyAccessFulfillmentRecord(
     if (commissionHold === null) return null;
   }
 
+  let commissionAccrual: EarlyAccessCommissionAccrual | null = null;
+  if (record.commissionAccrual !== null) {
+    commissionAccrual = readCommissionAccrual(record.commissionAccrual);
+    if (commissionAccrual === null) return null;
+  }
+  // The two must describe one commission. A hold with no accrual behind it is an amount
+  // nobody can explain, and an accrual whose amount disagrees with its hold is a row
+  // that would reconcile two different ways.
+  if ((commissionHold === null) !== (commissionAccrual === null)) return null;
+  if (
+    commissionHold !== null &&
+    commissionAccrual !== null &&
+    commissionHold.holdAmountCents !== commissionAccrual.commissionAmountCents
+  ) {
+    return null;
+  }
+
   return Object.freeze({
     orderId: record.orderId,
     releaseId: record.releaseId,
@@ -406,6 +437,7 @@ export function readEarlyAccessFulfillmentRecord(
     fulfilledByActorId: record.fulfilledByActorId,
     fulfilledAt: record.fulfilledAt,
     commissionHold,
+    commissionAccrual,
   });
 }
 
@@ -484,10 +516,12 @@ export function describeFulfillment(input: unknown): FulfillmentResult {
   }
 
   let commissionHold: EarlyAccessCommissionHold | null = null;
+  let commissionAccrual: EarlyAccessCommissionAccrual | null = null;
   if (record.attribution !== null) {
-    const hold = buildCommissionHold(record.verifiedOrder, record.attribution);
-    if (!hold.ok) return refused(hold.code);
-    commissionHold = hold.value;
+    const accrual = buildCommissionAccrual(record.verifiedOrder, record.attribution);
+    if (!accrual.ok) return refused(accrual.code);
+    commissionAccrual = accrual.value;
+    commissionHold = commissionHoldFrom(accrual.value);
   }
 
   const fulfillment: EarlyAccessFulfillmentRecord = Object.freeze({
@@ -498,6 +532,7 @@ export function describeFulfillment(input: unknown): FulfillmentResult {
     fulfilledByActorId: record.actorId,
     fulfilledAt: record.fulfilledAt,
     commissionHold,
+    commissionAccrual,
   });
 
   return accepted(Object.freeze({ record: fulfillment, append: fulfillment }));

@@ -37,6 +37,16 @@ import {
 } from "./input-guards";
 import { readEarlyAccessOrder, type EarlyAccessCurrency } from "./early-access-order";
 import {
+  payableTotalFromComponents,
+  type PayableTotalCents,
+} from "./order-money";
+import {
+  EARLY_ACCESS_PAYMENT_CLASSIFICATIONS,
+  reconcilePayment,
+  type EarlyAccessPaymentClassification,
+} from "./payment-reconciliation";
+import { paymentExceptionIdFor } from "./payment-exception";
+import {
   EARLY_ACCESS_VERIFICATION_DECISIONS,
   EARLY_ACCESS_VERIFIER_ROLES,
   readEarlyAccessVerificationRecord,
@@ -71,6 +81,9 @@ export type VerificationServiceFailureCode =
   | "proof_history_invalid"
   | "proof_ref_mismatch"
   | "amount_mismatch"
+  | "payment_underpaid"
+  | "payment_overpaid"
+  | "duplicate_transaction"
   | "currency_mismatch"
   | "decision_history_invalid"
   | "payment_rejected_needs_new_proof";
@@ -91,7 +104,18 @@ export type EarlyAccessVerificationEntry = Readonly<{
   /** The exact proof the human reviewed, not merely the one that happened to be latest. */
   reviewedProofId: string;
   reviewedProofRef: string;
+  /** What the human confirmed arrived. */
   amountVerifiedCents: number;
+  /**
+   * What the order owed at the moment of the decision. Branded, so a ledger row cannot
+   * be written against the merchandise subtotal, which is the defect this whole lane
+   * exists to keep closed.
+   */
+  payableTotalCents: PayableTotalCents;
+  /** How the confirmed amount compared to the amount owed. */
+  classification: EarlyAccessPaymentClassification;
+  /** The variance exception that authorized a non-exact approval, or null. */
+  exceptionId: string | null;
   currency: EarlyAccessCurrency;
   /** One based position in this order's trail. Corrections append, never overwrite. */
   sequence: number;
@@ -109,6 +133,9 @@ export const EARLY_ACCESS_VERIFICATION_ENTRY_KEYS = [
   "reviewedProofId",
   "reviewedProofRef",
   "amountVerifiedCents",
+  "payableTotalCents",
+  "classification",
+  "exceptionId",
   "currency",
   "sequence",
 ] as const;
@@ -144,7 +171,14 @@ const DECIDE_REQUIRED_KEYS = [
   "now",
 ] as const;
 
-const DECIDE_OPTIONAL_KEYS = ["method"] as const;
+const DECIDE_OPTIONAL_KEYS = [
+  "method",
+  /** A named human's acceptance of one exact variance. Required to approve one. */
+  "exception",
+  /** The external reference for this payment, so the same money cannot count twice. */
+  "transactionRef",
+  "settledTransactionRefs",
+] as const;
 
 const ACTOR_KEYS = ["id", "role"] as const;
 
@@ -155,7 +189,7 @@ export function readEarlyAccessVerificationEntry(
   const record = readPlainRecord(value, EARLY_ACCESS_VERIFICATION_ENTRY_KEYS);
   if (!record) return null;
 
-  // The seven core fields are validated by the module that owns their vocabulary.
+  // The core decision fields are validated by the module that owns their vocabulary.
   const core = readEarlyAccessVerificationRecord({
     orderId: record.orderId,
     idempotencyKey: record.idempotencyKey,
@@ -164,6 +198,8 @@ export function readEarlyAccessVerificationEntry(
     actorRole: record.actorRole,
     decidedAt: record.decidedAt,
     method: record.method,
+    verifiedAmountCents: record.amountVerifiedCents,
+    classification: record.classification,
   });
   if (!core) return null;
 
@@ -175,6 +211,28 @@ export function readEarlyAccessVerificationEntry(
     typeof record.amountVerifiedCents !== "number" ||
     !Number.isSafeInteger(record.amountVerifiedCents) ||
     record.amountVerifiedCents <= 0
+  ) {
+    return null;
+  }
+  // A ledger row states what was owed as well as what arrived. The brand is re-minted
+  // through the invariant, so a row carrying an amount that is not a coherent payable
+  // total fails closed rather than being trusted because it was already stored.
+  const payableTotalCents = payableTotalFromComponents({
+    subtotalCents: record.payableTotalCents,
+    discountCents: 0,
+    shippingCents: 0,
+    taxCents: 0,
+    statedPayableTotalCents: record.payableTotalCents,
+  });
+  if (payableTotalCents === null) return null;
+  if (!isOneOf(record.classification, EARLY_ACCESS_PAYMENT_CLASSIFICATIONS)) return null;
+  if (record.exceptionId !== null && !isBoundedText(record.exceptionId, 200)) return null;
+  // An exact match needs no exception, and a variance approval cannot have none.
+  if (record.classification === "EXACT_MATCH" && record.exceptionId !== null) return null;
+  if (
+    record.decision === "approve" &&
+    record.classification !== "EXACT_MATCH" &&
+    record.exceptionId === null
   ) {
     return null;
   }
@@ -200,6 +258,9 @@ export function readEarlyAccessVerificationEntry(
     reviewedProofId: record.reviewedProofId,
     reviewedProofRef: record.reviewedProofRef,
     amountVerifiedCents: record.amountVerifiedCents,
+    payableTotalCents,
+    classification: record.classification,
+    exceptionId: record.exceptionId === null ? null : (record.exceptionId as string),
     currency: "USD" as const,
     sequence: record.sequence,
   });
@@ -228,7 +289,7 @@ export function readEarlyAccessVerificationHistory(
   return Object.freeze(records);
 }
 
-/** Project a stored row down to the seven fields the decision module reads. */
+/** Project a stored row down to the fields the decision module reads. */
 function toVerificationRecord(entry: EarlyAccessVerificationEntry): EarlyAccessVerificationRecord {
   return Object.freeze({
     orderId: entry.orderId,
@@ -238,6 +299,8 @@ function toVerificationRecord(entry: EarlyAccessVerificationEntry): EarlyAccessV
     actorRole: entry.actorRole,
     decidedAt: entry.decidedAt,
     method: entry.method,
+    verifiedAmountCents: entry.amountVerifiedCents,
+    classification: entry.classification,
   });
 }
 
@@ -314,11 +377,45 @@ export function decideManualPayment(input: unknown): VerificationDecisionResult 
   // means the admin is deciding against a photo the customer has already replaced.
   if (record.reviewedProofRef !== proof.storageRef) return refused("proof_ref_mismatch");
 
-  // HARD RULE: the amount confirmed is the amount billed. The order total is derived
-  // server side by `early-access-order.ts`, so this compares against a number no
-  // customer and no admin supplied.
-  if (record.amountVerifiedCents !== order.orderTotalCents) return refused("amount_mismatch");
-  if (record.currency !== order.currency) return refused("currency_mismatch");
+  // HARD RULE: the amount confirmed is compared against the amount OWED, which is the
+  // payable total on the order's own money snapshot. It used to be compared against
+  // `orderTotalCents`, the pre-discount merchandise subtotal, so a customer who paid the
+  // correct discounted amount on a three unit bundle was refused and one who paid the
+  // undiscounted subtotal was accepted. Both directions are now classified explicitly.
+  const reconciled = reconcilePayment({
+    money: order.money,
+    observedAmountCents: record.amountVerifiedCents,
+    observedCurrency: record.currency,
+    ...(record.transactionRef === undefined ? {} : { transactionRef: record.transactionRef }),
+    ...(record.settledTransactionRefs === undefined
+      ? {}
+      : { settledTransactionRefs: record.settledTransactionRefs }),
+  });
+  if (!reconciled.ok) {
+    if (reconciled.code === "observed_amount_invalid") return refused("amount_mismatch");
+    if (reconciled.code === "observed_currency_invalid") return refused("currency_mismatch");
+    return refused("input_invalid");
+  }
+  const reconciliation = reconciled.value;
+  if (reconciliation.classification === "CURRENCY_MISMATCH") return refused("currency_mismatch");
+  // The same external payment cannot settle two orders, whatever the amounts look like.
+  if (reconciliation.classification === "DUPLICATE_TRANSACTION") {
+    return refused("duplicate_transaction");
+  }
+  // A variance may be REJECTED freely: refusing a payment because it was the wrong
+  // amount is exactly what a rejection is for. Approving one is another matter. An
+  // underpayment is refused outright, and an overpayment needs a recorded exception
+  // whose action resolves the excess, which `verifyManualPayment` below enforces.
+  if (decision === "approve" && reconciliation.classification === "UNDERPAYMENT") {
+    return refused("payment_underpaid");
+  }
+  if (
+    decision === "approve" &&
+    reconciliation.classification === "OVERPAYMENT" &&
+    (record.exception === undefined || record.exception === null)
+  ) {
+    return refused("payment_overpaid");
+  }
 
   const history = readEarlyAccessVerificationHistory(record.decisions);
   if (!history) return refused("decision_history_invalid");
@@ -335,7 +432,12 @@ export function decideManualPayment(input: unknown): VerificationDecisionResult 
     idempotencyKey: record.idempotencyKey,
     now: record.now,
     appliedVerifications: prior === null ? [] : [toVerificationRecord(prior)],
+    verifiedAmountCents: reconciliation.observedAmountCents,
+    verifiedCurrency: reconciliation.observedCurrency,
     ...(record.method === undefined ? {} : { method: record.method }),
+    ...(record.exception === undefined || record.exception === null
+      ? {}
+      : { exception: record.exception }),
   });
   if (!delegated.ok) {
     // HARD RULE: a rejected payment is not silently re-verified. The delegate refuses
@@ -364,6 +466,7 @@ export function decideManualPayment(input: unknown): VerificationDecisionResult 
     );
   }
 
+  const entryDecision = verification.record.decision;
   const entry: EarlyAccessVerificationEntry = Object.freeze({
     orderId: verification.record.orderId,
     idempotencyKey: verification.record.idempotencyKey,
@@ -375,7 +478,16 @@ export function decideManualPayment(input: unknown): VerificationDecisionResult 
     reason,
     reviewedProofId: proof.proofId,
     reviewedProofRef: proof.storageRef,
-    amountVerifiedCents: order.orderTotalCents,
+    amountVerifiedCents: reconciliation.observedAmountCents,
+    payableTotalCents: reconciliation.payableTotalCents,
+    classification: reconciliation.classification,
+    // Non-null only where an exception was actually required and used. A REJECTED
+    // variance cites no exception, because nobody accepted anything. The id is derived
+    // rather than copied because the exception validator already binds it to the order.
+    exceptionId:
+      entryDecision === "approve" && reconciliation.classification !== "EXACT_MATCH"
+        ? paymentExceptionIdFor(order.orderId)
+        : null,
     currency: order.currency,
     sequence: history.length + 1,
   });
@@ -466,6 +578,10 @@ export type RecordDecisionInput = Readonly<{
   idempotencyKey: unknown;
   now: unknown;
   method?: unknown;
+  /** A named human's acceptance of one exact variance. Required to approve one. */
+  exception?: unknown;
+  transactionRef?: unknown;
+  settledTransactionRefs?: unknown;
 }>;
 
 export type VerificationServiceDependencies = Readonly<{
@@ -505,6 +621,11 @@ export async function recordManualPaymentDecision(
     idempotencyKey: input.idempotencyKey,
     now: input.now,
     ...(input.method === undefined ? {} : { method: input.method }),
+    ...(input.exception === undefined ? {} : { exception: input.exception }),
+    ...(input.transactionRef === undefined ? {} : { transactionRef: input.transactionRef }),
+    ...(input.settledTransactionRefs === undefined
+      ? {}
+      : { settledTransactionRefs: input.settledTransactionRefs }),
   });
   if (!decided.ok) return decided;
   if (decided.value.append === null) return decided;
