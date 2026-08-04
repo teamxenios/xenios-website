@@ -225,17 +225,30 @@ function exactPrivateCookieValue(cookieHeader: unknown):
   for (const rawSegment of cookieHeader.split(";")) {
     const segment = rawSegment.trim();
     const separator = segment.indexOf("=");
-    if (separator <= 0) return failure("COOKIE_HEADER_INVALID");
+    // A neighbouring cookie is not ours to police, and rejecting the whole
+    // header because of one is a denial of service against our own members.
+    // RFC 6265 section 4.1.1 permits a DQUOTE-wrapped value, and browsers send
+    // `name=` for an empty one, so a single `consent="yes"` or `_ga=` set by
+    // any sibling subdomain or analytics script would otherwise destroy a
+    // perfectly valid __Host- session that the member cannot repair. Skip
+    // anything that is not our exact cookie.
+    if (separator <= 0) continue;
     const name = segment.slice(0, separator).trim();
+    if (name.toLowerCase() !== PRIVATE_ACCESS_COOKIE_NAME.toLowerCase()) continue;
+
+    // From here the segment IS ours, and every original strict rule applies:
+    // exact case, a valid cookie-name token, a non-empty and unquoted value,
+    // and at most one occurrence. The value itself is still verified
+    // cryptographically downstream. Header-wide control-character and size
+    // limits were already enforced above, before this loop.
+    if (name !== PRIVATE_ACCESS_COOKIE_NAME) return failure("COOKIE_HEADER_INVALID");
+    if (!COOKIE_NAME_TOKEN.test(name)) return failure("COOKIE_HEADER_INVALID");
     const value = segment.slice(separator + 1).trim();
-    if (!COOKIE_NAME_TOKEN.test(name) || value.length === 0 || value.startsWith('"') || value.endsWith('"')) {
+    if (value.length === 0 || value.startsWith('"') || value.endsWith('"')) {
       return failure("COOKIE_HEADER_INVALID");
     }
-    if (name.toLowerCase() === PRIVATE_ACCESS_COOKIE_NAME.toLowerCase()) {
-      if (name !== PRIVATE_ACCESS_COOKIE_NAME) return failure("COOKIE_HEADER_INVALID");
-      if (found !== null) return failure("COOKIE_DUPLICATE");
-      found = value;
-    }
+    if (found !== null) return failure("COOKIE_DUPLICATE");
+    found = value;
   }
   return found === null
     ? failure("COOKIE_MISSING")
