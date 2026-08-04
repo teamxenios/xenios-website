@@ -114,6 +114,16 @@ regressions of this branch:
    newline-normalized bytes": trips its explicit 6 s timeout ONLY under
    full-suite parallelism while other sessions' review containers load this
    machine; passes in isolation in 1.1 s at the same commit.
+4. INHERITED FROM THE INTEGRATION HEAD (not this lane's code):
+   shared/research/pricing.test.ts:60 "stays identical to the cart purchase
+   audiences and never gains compare_at" — upstream commit 134704a added
+   "private_early_access" to CART_PURCHASE_AUDIENCES without extending
+   CUSTOMER_PRICE_AUDIENCES in shared/research/pricing.ts, so the two
+   constants disagree. Fails identically on b5402c3 itself. Suggested owner:
+   the integration lane (shared pricing is not this lane's surface).
+   Latest full gate on this branch: 6909 passed, 24 skipped, 2 failed
+   (this inherited one plus the Gateway baseline item; both control-plane
+   suites fully green including the timeout-flaky tests on a quiet run).
 
 ## shared_seam_requests (for FABLE-RM-INTEGRATION)
 
