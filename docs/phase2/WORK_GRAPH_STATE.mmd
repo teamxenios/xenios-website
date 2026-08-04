@@ -1,0 +1,24 @@
+flowchart TD
+  CONTROL["P2-CONTROL-001<br/>Inventory + ownership<br/>COMPLETE"]
+  W3FIX["P2-W3-105-FIX<br/>Session 019f9b2b-347a...<br/>AUTHORIZED"]
+  QA103["P2-W6-103-QA<br/>Session 019f9b2c-ec9b...<br/>READ-ONLY QUEUE 1"]
+  QA106["P2-W6-106-QA<br/>Session 019f9b2c-ec9b...<br/>READ-ONLY QUEUE 2"]
+  QA105["P2-W6-105-QA<br/>Replacement SHA QA<br/>BLOCKED"]
+  X105["P2-W2-105-TRANSFER<br/>Current-main exact 16 paths<br/>BLOCKED"]
+  I103["P2-W2-103-INTEGRATE<br/>Current-main accepted files<br/>BLOCKED"]
+  I106["P2-W2-106-INTEGRATE<br/>Current-main accepted files<br/>BLOCKED"]
+  AQA["P2-ASSEMBLED-QA<br/>Independent full QA<br/>BLOCKED"]
+  MERGE["P2-MERGE<br/>Accepted nonclinical work<br/>BLOCKED"]
+  MIG["PROTECTED GATE<br/>Production DB migrations"]
+  DEPLOY["P2-DEPLOY<br/>Exact live SHA + smoke<br/>BLOCKED"]
+
+  CONTROL --> W3FIX --> QA105 --> X105 --> AQA
+  CONTROL --> QA103 --> QA106
+  QA103 --> I103 --> AQA
+  QA106 --> I106 --> AQA
+  AQA --> MERGE
+  MERGE --> MIG --> DEPLOY
+  MERGE --> DEPLOY
+
+  CARE["Care / clinical<br/>DISABLED + OFF GRAPH"]:::prohibited
+  classDef prohibited fill:#5c162e,color:#fff,stroke:#ff6b9a;

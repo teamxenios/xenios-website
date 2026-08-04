@@ -1,0 +1,12 @@
+input_id,category,state,required_for,owner,protected_gate,notes
+EXT-PR105-REPLACEMENT-SHA,engineering,OPEN,PR105 independent QA,Website3 source session,NONE,Three HIGH findings must be corrected
+EXT-PR103-QA-VERDICT,independent_qa,OPEN,PR103 integration,Website6 QA session,NONE,Exact SHA 97ee1895763ea9c243de7365f224660d83773966
+EXT-PR106-QA-VERDICT,independent_qa,QUEUED,PR106 integration,Website6 QA session,NONE,Exact SHA a5c2b21e779117e1f785850188b38bad2e1ba2d8
+EXT-PROD-MIGRATION-APPROVAL,authorization,REQUIRED,Production schema changes,Samuel or designated production approver,PRODUCTION_DATABASE_MIGRATIONS,Separate approval required for each exact migration set
+EXT-PROD-DATA-APPROVAL,authorization,REQUIRED,Any real customer or production data action,Samuel or designated data owner,REAL_CUSTOMER_OR_PRODUCTION_DATA,No fabricated or convenience records
+EXT-FINANCIAL-FULFILLMENT-COMMS-APPROVAL,authorization,REQUIRED,Payments refunds payouts labels communications,Samuel or designated operations owner,FINANCIAL_FULFILLMENT_AND_COMMUNICATION_ACTIONS,Code and inert schemas may be reviewed separately
+EXT-LEGAL-PUBLICATION-APPROVAL,authorization,REQUIRED,Publishing legal text or agreements,Counsel and Samuel,LEGAL_PUBLICATION,Drafts are not publication authority
+EXT-CARE-CLINICAL-ACTIVATION,authorization,PROHIBITED,Any Care or clinical functionality,Care or clinical owner,CARE_OR_CLINICAL_FUNCTIONALITY,Must remain disabled and off the release graph
+EXT-PR103-ROLLBACK,engineering,OPEN,Production readiness for persistent cart,Website5 source and Website2 release manager,PRODUCTION_DATABASE_MIGRATIONS,Reviewed forward repair and rollback required
+EXT-MIGRATION-HISTORY-RECONCILIATION,engineering,OPEN,Any production migration,Website2 release manager,PRODUCTION_DATABASE_MIGRATIONS,Resolve local managed history drift before exact application
+EXT-LIVE-DEPLOYMENT-EVIDENCE,operations,WAITING,Claiming production deployment,Website2 release manager,NONE,Exact commit deployment ID Live state smoke logs and rollback identity
