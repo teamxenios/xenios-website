@@ -18,6 +18,7 @@ const BASE = Object.freeze({
   sku: "XEA-BPC-5MG",
   quantity: 2,
   unitPriceCents: 12_450,
+  unitPriceVersion: "prdver-9f2c1a",
   currency: "USD",
   now: NOW,
 });

@@ -32,6 +32,7 @@ function order(overrides: Record<string, unknown> = {}): EarlyAccessOrder {
     sku: "XEA-BPC-5MG",
     quantity: 2,
     unitPriceCents: 12_450,
+    unitPriceVersion: "prdver-9f2c1a",
     currency: "USD",
     referralCode: "ALEX-2026",
     now: CREATED_AT,
@@ -52,6 +53,8 @@ function verify(overrides: Record<string, unknown> = {}): EarlyAccessVerificatio
     idempotencyKey: KEY,
     now: DECIDED_AT,
     appliedVerifications: [],
+    verifiedAmountCents: 24_900,
+    verifiedCurrency: "USD",
     method: "zelle",
     ...overrides,
   });
@@ -160,12 +163,20 @@ describe("manual payment approval", () => {
       actorRole: "founder_admin",
       decidedAt: DECIDED_AT,
       method: "zelle",
+      verifiedAmountCents: 24_900,
+      classification: "EXACT_MATCH",
     });
+    // The receipt states what arrived AND what was owed, and neither of them is the
+    // pre-discount subtotal. On this two unit order they coincide; the three unit
+    // bundle case in the money suite is where they would not.
     expect(value.receiptIntent).toEqual({
       intentId: receiptIntentIdFor("ord_ea_0001"),
       kind: "customer_receipt",
       orderReference: "ord_ea_0001",
-      amountCents: 24_900,
+      verifiedAmountCents: 24_900,
+      payableTotalCents: 24_900,
+      subtotalCents: 24_900,
+      discountCents: 0,
       currency: "USD",
       issuedAt: DECIDED_AT,
       performed: false,
@@ -201,6 +212,8 @@ describe("manual payment approval", () => {
       idempotencyKey: KEY,
       now: DECIDED_AT,
       appliedVerifications: [],
+      verifiedAmountCents: 24_900,
+      verifiedCurrency: "USD",
     });
     expect(withoutMethod.ok && withoutMethod.value.record.method).toBeNull();
     expect(verify({ method: "bitcoin" })).toEqual({ ok: false, code: "method_unsupported" });

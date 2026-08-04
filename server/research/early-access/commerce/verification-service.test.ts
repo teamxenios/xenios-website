@@ -36,6 +36,7 @@ function order(overrides: Record<string, unknown> = {}): EarlyAccessOrder {
     sku: "XEA-BPC-5MG",
     quantity: 2,
     unitPriceCents: 12_450,
+    unitPriceVersion: "prdver-9f2c1a",
     currency: "USD",
     now: CREATED,
   });
@@ -156,18 +157,21 @@ describe("a payment cannot be verified without a proof on file", () => {
 });
 
 describe("the amount verified must equal the order's own total", () => {
-  it("refuses an amount above, below, or beside the server total", () => {
-    for (const amountVerifiedCents of [
-      ORDER_TOTAL_CENTS - 1,
-      ORDER_TOTAL_CENTS + 1,
-      1,
-      0,
-      -ORDER_TOTAL_CENTS,
-      12_450,
-      "24900",
-      null,
-      undefined,
-    ]) {
+  it("refuses an amount above, below, or beside the payable total", () => {
+    // Short of the amount owed. Money is still owed, so there is no approval.
+    for (const amountVerifiedCents of [ORDER_TOTAL_CENTS - 1, 1, 12_450]) {
+      expect(decide({ amountVerifiedCents })).toEqual({
+        ok: false,
+        code: "payment_underpaid",
+      });
+    }
+    // Over the amount owed. Nobody has recorded what to do with the excess yet.
+    expect(decide({ amountVerifiedCents: ORDER_TOTAL_CENTS + 1 })).toEqual({
+      ok: false,
+      code: "payment_overpaid",
+    });
+    // Not an amount at all.
+    for (const amountVerifiedCents of [0, -ORDER_TOTAL_CENTS, "24900", null, undefined]) {
       const result = decide({ amountVerifiedCents });
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.code).toBe("amount_mismatch");
@@ -182,13 +186,17 @@ describe("the amount verified must equal the order's own total", () => {
     }
   });
 
-  it("records the order's total, not the number the admin typed", () => {
+  it("records the payable total the order states, not a number an admin invented", () => {
     const result = decide();
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value.entry.amountVerifiedCents).toBe(ORDER_TOTAL_CENTS);
+    expect(result.value.entry.payableTotalCents).toBe(ORDER_TOTAL_CENTS);
+    expect(result.value.entry.classification).toBe("EXACT_MATCH");
+    expect(result.value.entry.exceptionId).toBeNull();
     expect(result.value.entry.currency).toBe("USD");
-    expect(result.value.verification.receiptIntent?.amountCents).toBe(ORDER_TOTAL_CENTS);
+    expect(result.value.verification.receiptIntent?.payableTotalCents).toBe(ORDER_TOTAL_CENTS);
+    expect(result.value.verification.receiptIntent?.verifiedAmountCents).toBe(ORDER_TOTAL_CENTS);
   });
 });
 

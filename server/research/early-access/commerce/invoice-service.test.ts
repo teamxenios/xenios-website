@@ -249,12 +249,14 @@ describe("the invoice fails closed", () => {
 
   it("refuses a record whose stored money disagrees with its own line", async () => {
     const record = await order(3);
+    // Every tamper is on the order's money snapshot, which is the only statement of
+    // the money now. The service cross checks it against the order and against the line.
     const tampered = [
-      { ...record, subtotalCents: 59_600 },
-      { ...record, totalCents: 1 },
-      { ...record, discountCents: 0 },
-      { ...record, discountCents: 59_700, totalCents: 0 },
-    ];
+      { ...record, money: { ...record.money, subtotalCents: 59_600 } },
+      { ...record, money: { ...record.money, payableTotalCents: 1 } },
+      { ...record, money: { ...record.money, discountCents: 0 } },
+      { ...record, money: { ...record.money, discountCents: 59_700, payableTotalCents: 0 } },
+    ] as unknown as EarlyAccessReleaseOrder[];
     for (const broken of tampered) {
       const result = await issue(broken);
       expect(result).toEqual({ ok: false, code: "totals_disagree" });
@@ -264,7 +266,10 @@ describe("the invoice fails closed", () => {
   it("stores nothing when the invoice is refused", async () => {
     const invoices = new InMemoryEarlyAccessInvoiceRepository();
     const record = await order(1);
-    await issue({ ...record, subtotalCents: 1 }, { invoices });
+    await issue(
+      { ...record, money: { ...record.money, subtotalCents: 1 } } as unknown as EarlyAccessReleaseOrder,
+      { invoices },
+    );
     expect(await invoices.findByOrderId(record.order.orderId)).toBeNull();
   });
 });

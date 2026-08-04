@@ -26,6 +26,7 @@ import {
   readEarlyAccessOrder,
   type EarlyAccessCurrency,
 } from "./early-access-order";
+import { payableTotalFromComponents, type PayableTotalCents } from "./order-money";
 
 /**
  * The neutral placeholder an administrator fills in out of band. Reviewed as data:
@@ -49,10 +50,21 @@ export type EarlyAccessInvoiceFailureCode =
   | "order_not_payable"
   | "payment_reference_invalid";
 
+/**
+ * The invoice states three amounts, and the one a customer pays is the payable total.
+ *
+ * `amountDueCents` used to be the order's `orderTotalCents`, which is the PRE-DISCOUNT
+ * merchandise subtotal, so a three unit bundle was invoiced for money the customer did
+ * not owe. It is now the payable total, and it is branded, so a later edit that reaches
+ * for the subtotal again does not compile. The subtotal and the discount are stated as
+ * their own fields so the arithmetic on the document can be checked rather than trusted.
+ */
 export type EarlyAccessInvoice = Readonly<{
   invoiceNumber: string;
   orderId: string;
-  amountDueCents: number;
+  amountDueCents: PayableTotalCents;
+  subtotalCents: number;
+  discountCents: number;
   currency: EarlyAccessCurrency;
   paymentReference: string;
   instructions: string;
@@ -70,6 +82,8 @@ export const EARLY_ACCESS_INVOICE_KEYS = [
   "invoiceNumber",
   "orderId",
   "amountDueCents",
+  "subtotalCents",
+  "discountCents",
   "currency",
   "paymentReference",
   "instructions",
@@ -102,7 +116,9 @@ export function buildInvoice(order: unknown, paymentReference: unknown): EarlyAc
     Object.freeze({
       invoiceNumber: earlyAccessInvoiceNumberFor(snapshot.orderId),
       orderId: snapshot.orderId,
-      amountDueCents: snapshot.orderTotalCents,
+      amountDueCents: snapshot.money.payableTotalCents,
+      subtotalCents: snapshot.money.subtotalCents,
+      discountCents: snapshot.money.discountCents,
       currency: snapshot.currency,
       paymentReference,
       instructions: EARLY_ACCESS_INVOICE_INSTRUCTIONS,
@@ -125,6 +141,19 @@ export function readEarlyAccessInvoice(value: unknown): EarlyAccessInvoice | nul
   }
   if (!isPositiveCents(record.amountDueCents, EARLY_ACCESS_MAX_ORDER_TOTAL_CENTS)) return null;
   if (record.currency !== "USD") return null;
+  if (!isPositiveCents(record.subtotalCents, EARLY_ACCESS_MAX_ORDER_TOTAL_CENTS)) return null;
+  // The same invariant that governs an order governs a stored invoice: the amount due is
+  // the merchandise subtotal less the discount. This lane charges no shipping and no tax,
+  // and both are stated as zero rather than omitted so the check covers them already.
+  const amountDueCents = payableTotalFromComponents({
+    subtotalCents: record.subtotalCents,
+    discountCents: record.discountCents,
+    shippingCents: 0,
+    taxCents: 0,
+    statedPayableTotalCents: record.amountDueCents,
+  });
+  if (amountDueCents === null) return null;
+  const discountCents = record.discountCents as number;
   if (typeof record.paymentReference !== "string" || !PAYMENT_REFERENCE.test(record.paymentReference)) {
     return null;
   }
@@ -136,7 +165,9 @@ export function readEarlyAccessInvoice(value: unknown): EarlyAccessInvoice | nul
   return Object.freeze({
     invoiceNumber: record.invoiceNumber,
     orderId: record.orderId,
-    amountDueCents: record.amountDueCents,
+    amountDueCents,
+    subtotalCents: record.subtotalCents,
+    discountCents,
     currency: "USD" as const,
     paymentReference: record.paymentReference,
     instructions: EARLY_ACCESS_INVOICE_INSTRUCTIONS,

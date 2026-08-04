@@ -39,6 +39,7 @@ function verifiedOrder(overrides: Record<string, unknown> = {}): EarlyAccessVeri
     sku: "XEA-BPC-5MG",
     quantity: 2,
     unitPriceCents: 12_450,
+    unitPriceVersion: "prdver-9f2c1a",
     currency: "USD",
     referralCode: "ALEX-2026",
     now: CREATED_AT,
@@ -51,6 +52,8 @@ function verifiedOrder(overrides: Record<string, unknown> = {}): EarlyAccessVeri
     idempotencyKey: "verify-ord-ea-0001-a",
     now: DECIDED_AT,
     appliedVerifications: [],
+    verifiedAmountCents: 24_900,
+    verifiedCurrency: "USD",
     method: "zelle",
   });
   if (!decided.ok || !decided.value.verifiedOrder) {

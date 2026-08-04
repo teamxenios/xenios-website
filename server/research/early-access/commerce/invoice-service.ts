@@ -29,6 +29,7 @@ import {
   earlyAccessInvoiceNumberFor,
 } from "./early-access-invoice";
 import { readEarlyAccessOrder, type EarlyAccessCurrency } from "./early-access-order";
+import type { PayableTotalCents } from "./order-money";
 import {
   accepted,
   isCanonicalTimestamp,
@@ -79,9 +80,16 @@ export type EarlyAccessReleaseInvoice = Readonly<{
   lines: readonly EarlyAccessInvoiceLine[];
   subtotalCents: number;
   discountCents: number;
-  /** The tier that produced the discount, or null when there was none. */
+  /** The promotion that produced the discount, or null when there was none. */
   discountLabel: string | null;
-  /** The amount owed. Always `subtotalCents - discountCents`. */
+  promotionId: string | null;
+  promotionVersion: string | null;
+  /**
+   * The amount owed, and the number the payment reference below is quoted against.
+   * Branded, so the merchandise subtotal cannot be printed here as the amount due.
+   */
+  payableTotalCents: PayableTotalCents;
+  /** @deprecated Duplicate of `payableTotalCents`, kept for existing readers. */
   totalCents: number;
   currency: EarlyAccessCurrency;
   paymentReference: string;
@@ -168,7 +176,7 @@ export async function createEarlyAccessInvoice(
   // as a lookup key and as the payment reference.
   const order = readEarlyAccessOrder(record.order);
   if (!order) return refused("order_invalid");
-  if (typeof record.tier?.label !== "string") return refused("order_invalid");
+  if (typeof record.promotion?.label !== "string") return refused("order_invalid");
 
   const existing = await input.invoices.findByOrderId(order.orderId);
   if (existing) return accepted(Object.freeze({ invoice: existing, replayed: true }));
@@ -187,15 +195,18 @@ export async function createEarlyAccessInvoice(
   // explain, and it is the shape a replayed or reordered write produces.
   if (!isNotBefore(input.now, order.createdAt)) return refused("issued_before_order");
 
-  // Three statements of the same amount must agree: the base invoice derived from
-  // the line, the subtotal stored with the order, and the discount arithmetic.
-  if (base.value.amountDueCents !== record.subtotalCents) return refused("totals_disagree");
-  if (order.line.lineTotalCents !== record.subtotalCents) return refused("totals_disagree");
-  if (record.subtotalCents - record.discountCents !== record.totalCents) {
-    return refused("totals_disagree");
-  }
-  if (record.discountCents < 0 || record.totalCents <= 0) return refused("totals_disagree");
-  if (record.currency !== base.value.currency) return refused("totals_disagree");
+  // Four statements of the same sale must agree: the base invoice built from the order,
+  // the order's own money snapshot, the merchandise line, and the record stored beside
+  // the order. A disagreement refuses instead of printing a number a human would have
+  // to catch.
+  const money = order.money;
+  if (base.value.amountDueCents !== money.payableTotalCents) return refused("totals_disagree");
+  if (base.value.subtotalCents !== money.subtotalCents) return refused("totals_disagree");
+  if (order.line.lineTotalCents !== money.subtotalCents) return refused("totals_disagree");
+  if (record.money.payableTotalCents !== money.payableTotalCents) return refused("totals_disagree");
+  if (record.money.subtotalCents !== money.subtotalCents) return refused("totals_disagree");
+  if (record.money.discountCents !== money.discountCents) return refused("totals_disagree");
+  if (money.currency !== base.value.currency) return refused("totals_disagree");
 
   const line: EarlyAccessInvoiceLine = Object.freeze({
     description: EARLY_ACCESS_LINE_DESCRIPTION,
@@ -210,11 +221,14 @@ export async function createEarlyAccessInvoice(
     orderId: order.orderId,
     customerRef: order.customerRef,
     lines: Object.freeze([line]),
-    subtotalCents: record.subtotalCents,
-    discountCents: record.discountCents,
-    discountLabel: record.discountCents > 0 ? record.tier.label : null,
-    totalCents: record.totalCents,
-    currency: record.currency,
+    subtotalCents: money.subtotalCents,
+    discountCents: money.discountCents,
+    discountLabel: money.discountCents > 0 ? record.promotion.label : null,
+    promotionId: money.promotionId,
+    promotionVersion: money.promotionVersion,
+    payableTotalCents: money.payableTotalCents,
+    totalCents: money.payableTotalCents,
+    currency: money.currency,
     paymentReference,
     instructions: EARLY_ACCESS_INVOICE_INSTRUCTIONS,
     status: "awaiting_payment" as const,
