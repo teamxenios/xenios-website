@@ -689,14 +689,26 @@
         "server/care/access.ts",
         "server/care/clinical-projection-privacy.test.ts",
         "server/care/prescription-repository.test.ts",
-        "server/care/prescription-repository.ts",
-        "server/care/production-deps.test.ts",
-        "server/care/production-deps.ts",
         "server/care/review-detail.test.ts",
         "server/care/review-repository.ts",
         "server/care/tebra-fallback.test.ts",
         "server/care/tebra-scheduling.test.ts",
         "server/care/tebra-scheduling.ts"
+      ]
+    },
+    {
+      "id": "OWNER-W2-P0-CARE-BOOTSTRAP-FAILCLOSED",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/care/appointment-repository.ts",
+        "server/care/eligibility-repository.ts",
+        "server/care/intake-repository.ts",
+        "server/care/prescription-repository.ts",
+        "server/care/production-deps.test.ts",
+        "server/care/production-deps.ts"
       ]
     },
     {
