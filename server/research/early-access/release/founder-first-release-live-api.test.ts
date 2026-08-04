@@ -39,8 +39,12 @@ import {
   FOUNDER_FIRST_RELEASE_PRICING,
   seedFounderFirstRelease,
 } from "./founder-first-release-seed";
+import { seedRawPeptidesConfirmations } from "./founder-supply-seed";
+import { InMemorySupplierConfirmationStore } from "../ops/supplier-confirmation";
+import { SHIP_TO } from "../routes/route-fixtures";
 
 const CATALOG_PATH = "/api/research/early-access/catalog";
+const ORDERS_PATH = "/api/research/early-access/orders";
 const UNLOCK = "/api/research/early-access/unlock";
 const NOW_MS = Date.parse("2026-08-04T22:30:00.000Z");
 const NOW_ISO = new Date(NOW_MS).toISOString();
@@ -267,6 +271,147 @@ describe("the pricing input stays verbatim", () => {
         5_600, 3_350, 4_750, 14_000, 7_000, 2_250, 4_200, 8_400, 5_050, 4_475,
         10_075, 3_925, 5_325, 10_650,
       ]),
+    );
+  });
+});
+
+describe("with Raw Peptides supply confirmed: the finish line", () => {
+  const LIVE_NOW_MS = Date.parse("2026-08-05T00:30:00.000Z");
+
+  async function confirmedHarness() {
+    const confirmations = new InMemorySupplierConfirmationStore();
+    const source = new ProductControlCatalogSource({
+      catalog: { readCatalog: async () => canonicalReviewProducts() },
+      declaredFacts: new ProductControlDeclaredFactsReader({
+        inventory: NO_RECORDED_LOTS_INVENTORY,
+        currency: resolveEarlyAccessSettlementCurrency(),
+        supplierConfirmations: confirmations,
+      }),
+    } as never);
+
+    const context = { earlyAccessCustomer: { customerRef: "cus_live22" } };
+    // 1. Record the founder's supply confirmations (identity-only resolution).
+    const before = await source.load(new Date(LIVE_NOW_MS), context);
+    const supply = await seedRawPeptidesConfirmations({
+      rows: before.rows as never,
+      store: confirmations,
+    });
+    // 2. Re-project: fulfillment is now confirmation-backed on every resolved
+    //    unit, and THIS is the world the founder releases against.
+    const confirmed = await source.load(new Date(LIVE_NOW_MS), context);
+    const ledger = new InMemoryEarlyAccessReleaseLedger();
+    const releases = await seedFounderFirstRelease({
+      rows: confirmed.rows as never,
+      ledger,
+    });
+
+    const customers = new InMemoryEarlyAccessCustomerRepository();
+    const sessionBindings = new InMemorySessionBindingStore();
+    const created = createEarlyAccessCustomer({
+      id: "cus_live22",
+      email: "live22@example.invalid",
+      legalName: "Live Catalog Proof Customer",
+      phone: "+1 555 0122",
+      now: new Date(LIVE_NOW_MS).toISOString(),
+    });
+    if (!created.ok) throw new Error("customer fixture invalid");
+    const approved = transitionEarlyAccessCustomer({
+      customer: created.value,
+      to: "APPROVED",
+      by: "Samuel Boadu",
+      reason: "Live finish-line proof",
+      now: new Date(LIVE_NOW_MS).toISOString(),
+    });
+    if (!approved.ok) throw new Error("approval fixture invalid");
+    await customers.insert(approved.value);
+
+    const app = express();
+    app.use(express.json());
+    registerPrivateEarlyAccessApi(app, {
+      config: EARLY_ACCESS_TEST_CONFIG,
+      catalog: source,
+      releases: ledger,
+      customers,
+      sessionBindings,
+      supplierConfirmations: confirmations,
+      agreements: new StubAgreementGate(true),
+      suppliers: new StubSupplierDirectory(SUPPLIER_ASSIGNMENT),
+      shipping: new StubShippingPolicy(true),
+      referrals: new StubReferralResolver(null),
+      orderNumber: sequentialOrderNumbers(),
+      proofId: sequentialProofIds(),
+      now: () => LIVE_NOW_MS,
+    });
+    const readSessionId = createEarlyAccessSessionIdReader({
+      config: EARLY_ACCESS_TEST_CONFIG,
+      repository: new InMemoryPrivateAccessSessionRepository(),
+      now: () => LIVE_NOW_MS,
+      randomToken: () => "unused",
+    } as PrivateAccessRouteDependencies);
+    return { app, supply, releases, sessionBindings, readSessionId };
+  }
+
+  it("sells: confirmed supply plus founder release makes real units AVAILABLE, and an order lands", async () => {
+    const harnessed = await confirmedHarness();
+    expect(harnessed.supply.seeded).toHaveLength(14);
+    expect(harnessed.releases.seeded).toHaveLength(14);
+
+    const unlocked = await request(harnessed.app)
+      .post(UNLOCK)
+      .send({ password: EARLY_ACCESS_TEST_PASSWORD });
+    const raw = unlocked.headers["set-cookie"];
+    const cookies = Array.isArray(raw) ? raw : raw === undefined ? [] : [raw];
+    const cookie = cookies.map((entry) => entry.split(";")[0]).join("; ");
+    const sessionId = harnessed.readSessionId(cookie);
+    expect(await harnessed.sessionBindings.bind(sessionId as string, "cus_live22")).toBe(true);
+
+    const answered = await request(harnessed.app).get(CATALOG_PATH).set("Cookie", cookie);
+    expect(answered.status).toBe(200);
+    const units = answered.body.units as ReadonlyArray<Record<string, unknown>>;
+    expect(units).toHaveLength(14);
+
+    const available = units.filter((unit) => unit.availability === "AVAILABLE");
+    const held = units.filter((unit) => unit.availability === "TEMPORARILY_HELD");
+    // The three strength-disputed units stay truthfully held; everything the
+    // founder priced AND the supplier confirmed is genuinely purchasable.
+    expect(held).toHaveLength(3);
+    expect(available).toHaveLength(11);
+    for (const unit of available) {
+      expect(unit.purchasable).toBe(true);
+      expect(unit.priceCents).not.toBeNull();
+    }
+
+    // Buy one: PT-141 10 mg at the founder's 3,925 cents.
+    const pt141 = available.find((unit) => unit.sku === "R360-PT141-10MG-VIAL");
+    expect(pt141).toBeDefined();
+    expect(pt141?.priceCents).toBe(3_925);
+    const placed = await request(harnessed.app)
+      .post(ORDERS_PATH)
+      .set("Cookie", cookie)
+      .send({
+        idempotencyKey: "ea-finish-line-order-0001",
+        productId: pt141?.productId,
+        variantId: pt141?.variantId,
+        quantity: 3,
+        expectedUnitPriceCents: 3_925,
+        expectedCurrency: "USD",
+        shipTo: SHIP_TO,
+      });
+    expect(placed.status).toBe(201);
+    // Three units carry the 20 percent bundle: 11,775 less 2,355 is 9,420.
+    expect(placed.body.order.money.subtotalCents).toBe(11_775);
+    expect(placed.body.order.money.payableTotalCents).toBe(9_420);
+
+    // eslint-disable-next-line no-console
+    console.log(
+      "[finish-line] available:",
+      available.length,
+      "held:",
+      held.length,
+      "order:",
+      placed.body.order.orderNumber,
+      "payable:",
+      placed.body.order.money.payableTotalCents,
     );
   });
 });

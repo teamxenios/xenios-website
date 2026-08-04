@@ -139,18 +139,31 @@ export interface AppendOnlyReleaseLedger {
  * for each EXACT match. Rows the catalog cannot name exactly are returned in
  * `unresolved`, one reason each, and nothing is appended for them.
  */
-export async function seedFounderFirstRelease(input: {
-  readonly rows: readonly EarlyAccessCatalogRow[];
-  readonly ledger: AppendOnlyReleaseLedger;
-  readonly recordedAt?: string;
-}): Promise<FounderFirstReleaseSeedOutcome> {
-  const seeded: SeededFirstRelease[] = [];
-  const unresolved: UnresolvedFirstRelease[] = [];
-  const recordedAt = input.recordedAt ?? FOUNDER_FIRST_RELEASE_RECORDED_AT;
+/** One founder input resolved to exactly one projected unit. */
+export type ResolvedFirstReleaseUnit = Readonly<{
+  input: FounderFirstReleaseInput;
+  row: EarlyAccessCatalogRow;
+}>;
 
+export type FounderFirstReleaseResolution = Readonly<{
+  resolved: readonly ResolvedFirstReleaseUnit[];
+  unresolved: readonly UnresolvedFirstRelease[];
+}>;
+
+/**
+ * Resolve the founder's 22 inputs against a projection: exactly one unit per
+ * input or an unresolved entry with the reason. Shared by the pricing seed
+ * and the supply seed so the two can never disagree about which unit a name
+ * means.
+ */
+export function resolveFounderFirstReleaseUnits(
+  rows: readonly EarlyAccessCatalogRow[],
+): FounderFirstReleaseResolution {
+  const resolved: ResolvedFirstReleaseUnit[] = [];
+  const unresolved: UnresolvedFirstRelease[] = [];
   for (const pricing of FOUNDER_FIRST_RELEASE_PRICING) {
     const wantedName = normalizeName(pricing.name);
-    const productRows = input.rows.filter(
+    const productRows = rows.filter(
       (row) =>
         normalizeName(row.displayName) === wantedName ||
         normalizeName(row.canonicalName) === wantedName,
@@ -193,8 +206,25 @@ export async function seedFounderFirstRelease(input: {
       );
       continue;
     }
+    resolved.push(Object.freeze({ input: pricing, row: matches[0] }));
+  }
+  return Object.freeze({
+    resolved: Object.freeze(resolved),
+    unresolved: Object.freeze(unresolved),
+  });
+}
 
-    const row = matches[0];
+export async function seedFounderFirstRelease(input: {
+  readonly rows: readonly EarlyAccessCatalogRow[];
+  readonly ledger: AppendOnlyReleaseLedger;
+  readonly recordedAt?: string;
+}): Promise<FounderFirstReleaseSeedOutcome> {
+  const seeded: SeededFirstRelease[] = [];
+  const recordedAt = input.recordedAt ?? FOUNDER_FIRST_RELEASE_RECORDED_AT;
+  const resolution = resolveFounderFirstReleaseUnits(input.rows);
+  const unresolved = [...resolution.unresolved];
+
+  for (const { input: pricing, row } of resolution.resolved) {
     const releaseId = `rel-first-${row.sku.toLowerCase()}`;
     const appended = await input.ledger.append({
       releaseId,
