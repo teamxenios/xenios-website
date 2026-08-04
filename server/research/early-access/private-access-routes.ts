@@ -609,45 +609,74 @@ async function revokeQuietly(
  * cookie, a forged cookie, an expired cookie, a revoked session, and a closed
  * deployment are one answer.
  */
-export function createSessionRoute(deps: PrivateAccessRouteDependencies): PrivateAccessSessionRoute {
+/** The answer to "may this cookie see anything behind the gate". */
+export type EarlyAccessSessionCheck = Readonly<{
+  authenticated: boolean;
+  expiresAtEpochMs: number | null;
+}>;
+
+const SESSION_DENIED: EarlyAccessSessionCheck = Object.freeze({
+  authenticated: false,
+  expiresAtEpochMs: null,
+});
+
+/**
+ * ONE definition of session validity, for every route behind the gate.
+ *
+ * The session endpoint and any protected resource must agree exactly. Two
+ * implementations of "is this cookie good" drift, and the drift shows up as a
+ * customer who is signed in on one screen and signed out on the next, or worse,
+ * as a resource that answers a cookie the session endpoint would reject.
+ */
+export function createEarlyAccessSessionResolver(
+  deps: PrivateAccessRouteDependencies,
+): (cookieHeader: unknown) => Promise<EarlyAccessSessionCheck> {
   const cookies = cookiePortOf(deps);
+
+  return async (cookieHeader) => {
+    const now = readInstant(deps.now);
+    if (now === null || !gateIsOpen(deps.config)) return SESSION_DENIED;
+
+    // Same derivation as unlock, so read and issue always agree.
+    const ttlSeconds = Math.max(1, Math.floor(deps.config.sessionTtlMinutes)) * 60;
+    const read = cookies.read({ cookieHeader, now, ttlSeconds });
+    if (!read.ok || !isOpaqueToken(read.sessionHandle)) return SESSION_DENIED;
+
+    const resolved = await deps.repository.resolve(
+      hashPrivateAccessSessionToken(read.sessionHandle),
+      now,
+    );
+    if (!resolved.ok || resolved.value === null) return SESSION_DENIED;
+
+    // Liveness telemetry only. It cannot extend the session, and a store that
+    // does not support it (or throws) must not change this answer.
+    try {
+      await deps.repository.touch(resolved.value.sessionHash, now);
+    } catch {
+      // Deliberately ignored.
+    }
+
+    return Object.freeze({
+      authenticated: true,
+      expiresAtEpochMs: resolved.value.expiresAtEpochMs,
+    });
+  };
+}
+
+export function createSessionRoute(deps: PrivateAccessRouteDependencies): PrivateAccessSessionRoute {
+  const resolve = createEarlyAccessSessionResolver(deps);
 
   return async (request, response): Promise<void> => {
     try {
       applyPrivateHeaders(response);
 
-      const now = readInstant(deps.now);
-      if (now === null || !gateIsOpen(deps.config)) {
+      const check = await resolve(request?.cookieHeader);
+      if (!check.authenticated) {
         send(response, 200, { authenticated: false });
         return;
       }
 
-      // Same derivation as unlock, so read and issue always agree.
-      const ttlSeconds = Math.max(1, Math.floor(deps.config.sessionTtlMinutes)) * 60;
-      const read = cookies.read({ cookieHeader: request?.cookieHeader, now, ttlSeconds });
-      if (!read.ok || !isOpaqueToken(read.sessionHandle)) {
-        send(response, 200, { authenticated: false });
-        return;
-      }
-
-      const resolved = await deps.repository.resolve(
-        hashPrivateAccessSessionToken(read.sessionHandle),
-        now,
-      );
-      if (!resolved.ok || resolved.value === null) {
-        send(response, 200, { authenticated: false });
-        return;
-      }
-
-      // Liveness telemetry only. It cannot extend the session, and a store that
-      // does not support it (or throws) must not change this answer.
-      try {
-        await deps.repository.touch(resolved.value.sessionHash, now);
-      } catch {
-        // Deliberately ignored.
-      }
-
-      const expiresAtEpochMs = resolved.value.expiresAtEpochMs;
+      const expiresAtEpochMs = check.expiresAtEpochMs;
       send(
         response,
         200,
