@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import Home from "@/pages/Home";
 import Product from "@/pages/Product";
 import HowItWorks from "@/pages/HowItWorks";
@@ -203,7 +204,12 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <ScrollToTop />
-        <Router />
+        {/* Wraps the router only: a throw inside any routed page (including a
+            failed lazy-chunk fetch after a deploy) renders a recovery screen
+            instead of unmounting the tree to a blank document. */}
+        <RouteErrorBoundary>
+          <Router />
+        </RouteErrorBoundary>
       </TooltipProvider>
     </QueryClientProvider>
   );
