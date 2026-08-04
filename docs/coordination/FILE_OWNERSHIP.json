@@ -729,6 +729,22 @@
       ]
     },
     {
+      "id": "OWNER-CODEX-OPS-SUPPLIER-COORDINATION-PROJECTION",
+      "owner": "Codex Ops",
+      "lane": "supplier-fulfillment",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "docs/coordination/CODEX_OPS_SUPPLIER_COORDINATION_HANDOFF.md",
+        "docs/coordination/CODEX_OPS_SUPPLIER_COORDINATION_RELEASE_MANIFEST.json",
+        "server/research/supplier-coordination/kernel.test.ts",
+        "server/research/supplier-coordination/kernel.ts",
+        "server/research/supplier-coordination/port.ts",
+        "shared/research/supplier-coordination/contracts.test.ts",
+        "shared/research/supplier-coordination/contracts.ts"
+      ]
+    },
+    {
       "id": "OWNER-CODEX-CONTROL-INTEGRATION-STATUS-CONFIGURATION-QUEUE",
       "owner": "Codex Control",
       "lane": "integration-status-configuration-queue",
