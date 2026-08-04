@@ -318,6 +318,15 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
         amountVerifiedCents: body.verifiedAmountCents as number,
         currency: body.verifiedCurrency as string,
         transactionRef: body.externalTransactionId,
+        // Every reference that has EVER settled, across ALL orders (Bug
+        // Hunter F4). Without this list the domain's DUPLICATE_TRANSACTION
+        // classification could never fire through this door, and one payment
+        // claiming a second order was only caught by the commit-time guard,
+        // with the wrong name and after the operator already believed the
+        // amounts matched.
+        ...(deps.store.settledTransactionRefs
+          ? { settledTransactionRefs: await deps.store.settledTransactionRefs() }
+          : {}),
         idempotencyKey: body.idempotencyKey,
         now,
         ...(body.method === undefined || body.method === null ? {} : { method: body.method }),

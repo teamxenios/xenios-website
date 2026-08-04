@@ -223,6 +223,22 @@ export interface EarlyAccessCommerceStore {
 
   verifications(orderNumber: string): Promise<readonly EarlyAccessVerificationEntry[]>;
   settlement(orderNumber: string): Promise<EarlyAccessSettlement | null>;
+
+  /**
+   * Every external transaction reference that has EVER settled an order,
+   * across ALL orders. Feeds the reconciliation's DUPLICATE_TRANSACTION
+   * classification, so one payment claiming a second order is named as a
+   * duplicate at classification time rather than surfacing only as the
+   * commit-time refusal. Cross-order on purpose: a per-order list would
+   * still allow the replay that actually loses money.
+   *
+   * OPTIONAL only because the durable adapter needs its own SQL function to
+   * answer it (assigned); a store that cannot answer leaves classification
+   * to the commit-time guard, which in durable mode is additionally backed
+   * by the unique externalTransactionId constraint. Never emulate this with
+   * a partial list: absent is safer than wrong.
+   */
+  settledTransactionRefs?(): Promise<readonly string[]>;
   /** Eight facts, one turn. This is the exactly-once boundary for money. */
   commitSettlement(settlement: EarlyAccessSettlement): Promise<SettlementCommit>;
 
@@ -322,6 +338,10 @@ export class InMemoryEarlyAccessCommerceStore implements EarlyAccessCommerceStor
 
   async settlement(orderNumber: string): Promise<EarlyAccessSettlement | null> {
     return this.settlements.get(orderNumber) ?? null;
+  }
+
+  async settledTransactionRefs(): Promise<readonly string[]> {
+    return Array.from(this.transactionIds.keys());
   }
 
   async commitSettlement(settlement: EarlyAccessSettlement): Promise<SettlementCommit> {

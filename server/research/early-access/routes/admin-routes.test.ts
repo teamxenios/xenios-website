@@ -383,7 +383,10 @@ describe("exactly once, under pressure", () => {
       });
 
     expect(reused.status).toBe(409);
-    expect(reused.body.code).toBe("TRANSACTION_ALREADY_USED");
+    // Since Bug Hunter F4 the duplicate is named at CLASSIFICATION time,
+    // before any settlement work; the commit-time guard remains beneath as
+    // the last line for a store that cannot answer the cross-order query.
+    expect(reused.body.code).toBe("DUPLICATE_TRANSACTION");
     expect(await harness.store.settlement(numbers[1] as string)).toBeNull();
     expect((await harness.store.placementByOrderNumber(numbers[1] as string))?.paymentState).toBe(
       "under_review",
@@ -559,5 +562,44 @@ describe("supplier release, dispatch and tracking", () => {
     expect(read.body.receipt.payableTotalCents).toBe(47_760);
     expect(read.body.fulfilment.tracking[0].trackingNumber).toBe("1Z999AA10123456784");
     expect(JSON.stringify(read.body)).not.toContain("supplier-apex");
+  });
+});
+
+describe("one payment settles one order (Bug Hunter F4)", () => {
+  it("names the same external reference on a second order DUPLICATE_TRANSACTION at classification", async () => {
+    // Order A settles under reference bank-txn-00001.
+    const ready = await orderAwaitingReview();
+    const applied = await confirm(ready);
+    expect([200, 201]).toContain(applied.status);
+
+    // Order B, same app, same store, same customer, SAME reference: the
+    // amount genuinely matches and the proof is a real screenshot of the
+    // same money. The only thing wrong is that the money already settled A.
+    const placedB = await request(ready.app)
+      .post(ORDERS)
+      .set("Cookie", ready.cookie)
+      .send({ ...ORDER_BODY, idempotencyKey: "ea-confirm-key-f4-order-b" });
+    expect(placedB.status).toBe(201);
+    const orderB = placedB.body.order.orderNumber as string;
+    const submittedB = await request(ready.app)
+      .post(`${ORDERS}/${orderB}/payment-proof`)
+      .set("Cookie", ready.cookie)
+      .send({ ...PROOF });
+    expect(submittedB.status).toBe(202);
+    const chainB = await ready.store.proofs(orderB);
+    const proofRefB = chainB[chainB.length - 1]?.record.storageRef ?? "";
+
+    const replayed = await request(ready.app)
+      .post(`${PAYMENTS}/${orderB}/confirm`)
+      .set("x-test-admin", FOUNDER)
+      .send({
+        ...CONFIRM,
+        idempotencyKey: "ea-confirm-key-f4-replay",
+        reviewedProofRef: proofRefB,
+      });
+    expect(replayed.status).toBe(409);
+    expect(replayed.body.code).toBe("DUPLICATE_TRANSACTION");
+    // Nothing settled for B: no receipt, no supplier order, no commission.
+    expect(await ready.store.settlement(orderB)).toBeNull();
   });
 });
