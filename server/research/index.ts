@@ -272,6 +272,24 @@ export function registerResearchApi(app: Express) {
     "/member/forgot-password",
     "/member/claim",
   ]);
+  // Private Early Access owns a STRONGER gate than this wall: a scrypt password
+  // with lockout on unlock, and a signed HttpOnly session cookie on every other
+  // route. It must be reachable by someone who is NOT a research member, because
+  // that is the entire point of the portal, so this earlier gateway cannot be the
+  // thing that answers. Without this the password prompt is unreachable in
+  // production and the feature looks broken rather than closed.
+  //
+  // Method-exact and path-exact. Each handler still refuses on its own terms, and
+  // while RESEARCH_EARLY_ACCESS_ENABLED is false every one of them refuses.
+  const EARLY_ACCESS_OPEN_READ_PATHS = new Set([
+    "/early-access/session",
+    "/early-access/catalog",
+  ]);
+  const EARLY_ACCESS_OPEN_WRITE_PATHS = new Set([
+    "/early-access/unlock",
+    "/early-access/logout",
+  ]);
+
   // These exact read routes own their stronger downstream member guard and
   // private-response headers. Let them reach that canonical handler even when
   // the shared review cookie is absent; otherwise this earlier gateway would
@@ -461,6 +479,13 @@ export function registerResearchApi(app: Express) {
       (req.method === "POST" &&
         (OPEN_PUBLIC_WRITE_PATHS.has(req.path) ||
           OPEN_ACCOUNT_WRITE_PATHS.has(req.path)))
+    ) {
+      return next();
+    }
+    if (
+      ((req.method === "GET" || req.method === "HEAD") &&
+        EARLY_ACCESS_OPEN_READ_PATHS.has(req.path)) ||
+      (req.method === "POST" && EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path))
     ) {
       return next();
     }

@@ -4,11 +4,21 @@ import type { Express, Request, Response } from "express";
 import { resolveEarlyAccessConfig, type EarlyAccessConfig } from "./private-access-config";
 import {
   PRIVATE_ACCESS_PRIVATE_HEADERS,
+  createEarlyAccessSessionResolver,
   createLogoutRoute,
   createSessionRoute,
   createUnlockRoute,
   type PrivateAccessRouteDependencies,
 } from "./private-access-routes";
+import {
+  EmptyEarlyAccessCatalogSource,
+  createEarlyAccessCatalogRoute,
+  type EarlyAccessCatalogSource,
+} from "./release/release-routes";
+import {
+  InMemoryEarlyAccessReleaseLedger,
+  type EarlyAccessReleaseLedger,
+} from "./release/founder-release";
 import {
   InMemoryPrivateAccessSessionRepository,
   type PrivateAccessSessionRepository,
@@ -28,11 +38,13 @@ import {
 export const EARLY_ACCESS_UNLOCK_PATH = "/api/research/early-access/unlock";
 export const EARLY_ACCESS_SESSION_PATH = "/api/research/early-access/session";
 export const EARLY_ACCESS_LOGOUT_PATH = "/api/research/early-access/logout";
+export const EARLY_ACCESS_CATALOG_PATH = "/api/research/early-access/catalog";
 
 export const EARLY_ACCESS_API_PATHS = Object.freeze([
   EARLY_ACCESS_UNLOCK_PATH,
   EARLY_ACCESS_SESSION_PATH,
   EARLY_ACCESS_LOGOUT_PATH,
+  EARLY_ACCESS_CATALOG_PATH,
 ] as const);
 
 /** A 43-character base64url encoding of 32 random bytes. */
@@ -62,6 +74,13 @@ export interface EarlyAccessRegistrationOptions {
   readonly config?: EarlyAccessConfig;
   readonly repository?: PrivateAccessSessionRepository;
   readonly now?: () => number;
+  /**
+   * Where the catalog comes from. Defaults to EMPTY rather than to the live
+   * Product Control source: a deployment that has not deliberately wired a
+   * catalog should show nothing, not whatever it can find.
+   */
+  readonly catalog?: EarlyAccessCatalogSource;
+  readonly releases?: EarlyAccessReleaseLedger;
 }
 
 /**
@@ -132,6 +151,18 @@ export function registerPrivateEarlyAccessApi(
 
   app.post(EARLY_ACCESS_LOGOUT_PATH, (req: Request, res: Response) => {
     void logout({ cookieHeader: req.headers.cookie }, res);
+  });
+
+  // The catalog reuses the SAME session resolver the session endpoint uses, so
+  // the two can never disagree about whether a cookie is good.
+  const catalogRoute = createEarlyAccessCatalogRoute({
+    resolveSession: createEarlyAccessSessionResolver(deps),
+    catalog: options.catalog ?? new EmptyEarlyAccessCatalogSource(),
+    ledger: options.releases ?? new InMemoryEarlyAccessReleaseLedger(),
+    now,
+  });
+  app.get(EARLY_ACCESS_CATALOG_PATH, (req: Request, res: Response) => {
+    void catalogRoute({ cookieHeader: req.headers.cookie }, res as never);
   });
 
   return effectiveConfig;
