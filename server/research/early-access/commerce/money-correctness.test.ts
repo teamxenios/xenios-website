@@ -178,6 +178,71 @@ describe("the amount owed, in exact cents", () => {
     expect(tiny.promotion).toBeNull();
   });
 
+  /**
+   * The 14 distinct founder-approved unit prices from the first release.
+   *
+   * READ THE NEXT SENTENCE BEFORE TRUSTING THIS TEST. Twenty percent of every
+   * subtotal below lands on a whole cent, so not one of these rows reaches the
+   * floor in `earlyAccessPromotionDiscountCents`. This test proves the discount
+   * is right for the prices that exist today; it CANNOT catch a rounding defect,
+   * and it must never be treated as the evidence that rounding works. The
+   * non-divisible cases immediately above are that evidence, and they stay.
+   *
+   * The day a price ending in an odd cent is approved, the floor path runs
+   * against real money for the first time, and only those cases will be
+   * standing under it.
+   *
+   * Verified independently against the server rule
+   * `discount = floor(subtotal * 2000 / 10000)` rather than copied from the
+   * price sheet, so a wrong sheet would fail here instead of being ratified.
+   */
+  const FIRST_RELEASE_UNIT_PRICES_AT_THREE = [
+    [5_600, 16_800, 3_360, 13_440],
+    [3_350, 10_050, 2_010, 8_040],
+    [4_750, 14_250, 2_850, 11_400],
+    [14_000, 42_000, 8_400, 33_600],
+    [7_000, 21_000, 4_200, 16_800],
+    [2_250, 6_750, 1_350, 5_400],
+    [4_200, 12_600, 2_520, 10_080],
+    [8_400, 25_200, 5_040, 20_160],
+    [5_050, 15_150, 3_030, 12_120],
+    [4_475, 13_425, 2_685, 10_740],
+    [10_075, 30_225, 6_045, 24_180],
+    [3_925, 11_775, 2_355, 9_420],
+    [5_325, 15_975, 3_195, 12_780],
+    [10_650, 31_950, 6_390, 25_560],
+  ] as const;
+
+  it.each(FIRST_RELEASE_UNIT_PRICES_AT_THREE)(
+    "prices the real %i-cent unit at three for %i less %i = %i",
+    (unitPriceCents, subtotalCents, discountCents, payableTotalCents) => {
+      const placed = order(3, { unitPriceCents });
+      expect(placed.money.subtotalCents).toBe(subtotalCents);
+      expect(placed.money.discountCents).toBe(discountCents);
+      expect(placed.money.payableTotalCents).toBe(payableTotalCents);
+      // Only the single-unit price is ever stored. The bundle total is computed,
+      // because a persisted bundle price is a second source of truth and the two
+      // drift the moment either is edited.
+      expect(placed.line.unitPriceCents).toBe(unitPriceCents);
+      expect(placed.orderTotalCents).toBe(subtotalCents);
+    },
+  );
+
+  it.each(FIRST_RELEASE_UNIT_PRICES_AT_THREE)(
+    "charges the real %i-cent unit at full price below the bundle threshold",
+    (unitPriceCents) => {
+      const one = order(1, { unitPriceCents });
+      expect(one.money.discountCents).toBe(0);
+      expect(one.money.payableTotalCents).toBe(unitPriceCents);
+      expect(one.money.promotionId).toBeNull();
+
+      const two = order(2, { unitPriceCents });
+      expect(two.money.discountCents).toBe(0);
+      expect(two.money.payableTotalCents).toBe(unitPriceCents * 2);
+      expect(two.money.promotionId).toBeNull();
+    },
+  );
+
   it("never rounds a discount up, across the whole supported price range", () => {
     for (let unit = 1; unit <= 500_000; unit += 997) {
       for (const promotion of EARLY_ACCESS_PROMOTIONS) {
