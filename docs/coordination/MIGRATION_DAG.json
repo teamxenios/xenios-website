@@ -303,6 +303,27 @@
         "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
         "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: five-migration chain applied twice, data preservation, 18/18 behavioral tests incl. hold record/withdraw semantics, delete-block trigger, caller-stamped withdrawal sync, browser-role denial"
       }
+    },
+    {
+      "id": "research_early_access_settled_transaction_refs",
+      "path": "supabase/migrations/20260804140000_research_early_access_settled_transaction_refs.sql",
+      "sourceSha": "da8385371b750d99026d88d3b7ce4e1e56bd8407",
+      "dependsOn": [
+        "research_early_access_commerce_persistence",
+        "research_early_access_unit_holds"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "ff7179abd2991bd1f4eb2f4ae735c6109683173780dd3439ae971cb483aae20b"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_and_disable_forward_repair",
+        "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
+        "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: six-migration chain applied twice, cross-order duplicate visibility and restart survival of the settled-reference list"
+      }
     }
   ],
   "invariants": [

@@ -23,6 +23,7 @@ hookup is documented below.
 | supabase/migrations/20260804122000_research_early_access_supplier_operations.sql | fa12c45348c25826f63a5ad0a001a34ecfb847ef6e97a9470ff9fc96b1fd134c |
 | supabase/migrations/20260804123000_research_early_access_reservation_holds.sql | 3085cfe06fc2340c75e28a4f30491a2dae48773bc94572b763113933cd2df590 |
 | supabase/migrations/20260804130000_research_early_access_unit_holds.sql | cea8f8bcde4d31a4a2d77a7b2b11ed831aadd46eb38600f820f17a9c84ffede2 |
+| supabase/migrations/20260804140000_research_early_access_settled_transaction_refs.sql | ff7179abd2991bd1f4eb2f4ae735c6109683173780dd3439ae971cb483aae20b |
 
 Governance: managed-ledger rows 50-52 in supabase/MIGRATIONS.md; three DAG
 nodes in docs/coordination/MIGRATION_DAG.json pinned to reviewed source
@@ -91,7 +92,7 @@ fault, never a wrong commit). Proven under real concurrency in the pg suite.
 
 ## verification evidence
 
-- pg16: PASS — scripts/verify-early-access-commerce-migration.sh 16 (2026-08-04, five-migration chain): apply twice with ON_ERROR_STOP, data written between applies survives, 18/18 behavioral tests through the real adapters
+- pg16: PASS — scripts/verify-early-access-commerce-migration.sh 16 (2026-08-04, six-migration chain incl. settledTransactionRefs/F4): apply twice with ON_ERROR_STOP, data written between applies survives, behavioral suite incl. cross-order duplicate visibility and restart survival of the settled-reference list
 - pg17: PASS — same script, same result (the verifier's readiness wait now requires a real query twice, so it can never race initdb's throwaway server)
 - apply_twice: PASS on both majors (script + the pg suite each apply the chain twice)
 - rollback: retain-and-disable documented + additive-only compensating drops while pre-production (see rollback notes); append-only money tables are never deleted as rollback
