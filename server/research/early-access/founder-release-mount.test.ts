@@ -41,12 +41,33 @@ function guardFor(email: string | null) {
   };
 }
 
-describe("the founder release surface is not mounted without a guard", () => {
-  it("answers 404 for every founder path when no admin guard was supplied", async () => {
+describe("the founder release surface always mounts behind THE admin guard", () => {
+  // This surface used to be left UNMOUNTED when no guard was injected, which
+  // answered 404. Consolidating onto one `requireAdmin` option, defaulted to
+  // requireSupabaseAdmin, means it now always mounts and the default guard
+  // does the refusing: 503 "Admin access not configured" when ADMIN_EMAIL is
+  // unset, as it is here.
+  //
+  // 503 is the better answer for the same reason the catalog default is a
+  // refusal rather than an empty list: a misconfigured deployment should say
+  // what is wrong, not look like a feature that was never built. Nothing is
+  // authorized either way, so this narrows nothing.
+  it("refuses every founder path with a truthful 503 when no guard is configured", async () => {
     const server = app({ catalog: new EmptyEarlyAccessCatalogSource() });
-    await request(server).get(EARLY_ACCESS_RELEASES_PATH).expect(404);
-    await request(server).post(EARLY_ACCESS_RELEASES_PATH).send({}).expect(404);
-    await request(server).get(EARLY_ACCESS_RELEASE_HISTORY_PATH).expect(404);
+    await request(server).get(EARLY_ACCESS_RELEASES_PATH).expect(503);
+    await request(server).post(EARLY_ACCESS_RELEASES_PATH).send({}).expect(503);
+    await request(server).get(EARLY_ACCESS_RELEASE_HISTORY_PATH).expect(503);
+  });
+
+  it("never reaches a handler without a guard decision", async () => {
+    // The point of the change is that the surface is guarded, not absent. An
+    // unconfigured default must still refuse before any handler runs.
+    const server = app({ catalog: new EmptyEarlyAccessCatalogSource() });
+    const response = await request(server).post(EARLY_ACCESS_RELEASES_PATH).send({
+      productId: "p", variantId: "v", productVersion: "x", actor: "attacker@example.com",
+    });
+    expect(response.status).toBe(503);
+    expect(JSON.stringify(response.body)).not.toContain("attacker@example.com");
   });
 });
 
