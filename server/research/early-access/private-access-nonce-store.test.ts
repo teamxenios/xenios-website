@@ -294,7 +294,12 @@ describe("private early access canonical SQL source invariants (causal execution
     expect(migration).toMatch(/nonce_hash text primary key/);
     expect(migration).not.toMatch(/\b(?:raw_nonce|raw_cookie|cookie_value|session_token|access_password)\b/i);
     expect(migration).toMatch(/access_role = 'private_early_access_member'/g);
-    expect(migration).toMatch(/expires_at = issued_at \+ interval '15 minutes'/);
+    // 240 minutes is the decided session lifetime (bounds 15..480). What this
+    // assertion actually guards is that the expiry is an EXACT interval fixed by
+    // the database, not a caller-supplied one, so the value may change by
+    // decision but the shape may not.
+    expect(migration).toMatch(/expires_at = issued_at \+ interval '240 minutes'/);
+    expect(migration).not.toMatch(/expires_at = issued_at \+ p_/);
     expect(migration).toMatch(/expires_at = issued_at \+ interval '5 minutes'/);
     expect(migration).toMatch(/exchanged_session_hash text/);
     expect(migration).toMatch(/\(consumed_at is null\) = \(exchanged_session_hash is null\)/);

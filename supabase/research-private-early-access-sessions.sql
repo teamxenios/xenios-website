@@ -80,7 +80,7 @@ create table if not exists public.research_private_early_access_sessions (
   constraint research_private_early_access_sessions_role_exact
     check (access_role = 'private_early_access_member'),
   constraint research_private_early_access_sessions_expiry_exact
-    check (expires_at = issued_at + interval '15 minutes'),
+    check (expires_at = issued_at + interval '240 minutes'),
   constraint research_private_early_access_sessions_revocation_order
     check (revoked_at is null or revoked_at >= issued_at)
 );
@@ -166,7 +166,7 @@ begin
   where c.conrelid = 'public.research_private_early_access_sessions'::regclass;
 
   if v_session_constraints is distinct from array[
-    'research_private_early_access_sessions_expiry_exact|c|true|CHECK (expires_at = (issued_at + ''00:15:00''::interval))',
+    'research_private_early_access_sessions_expiry_exact|c|true|CHECK (expires_at = (issued_at + ''04:00:00''::interval))',
     'research_private_early_access_sessions_hash_format|c|true|CHECK (session_hash ~ ''^[a-f0-9]{64}$''::text)',
     'research_private_early_access_sessions_pkey|p|true|PRIMARY KEY (session_hash)',
     'research_private_early_access_sessions_revocation_order|c|true|CHECK (revoked_at IS NULL OR revoked_at >= issued_at)',
@@ -491,7 +491,12 @@ begin
 
   -- The expiry decision is made only after advisory and row locks complete.
   v_now := pg_catalog.clock_timestamp();
-  v_expiry := v_now + interval '15 minutes';
+  -- 240 minutes is the founder-decided session lifetime (bounds 15..480). The
+  -- database, not the caller, fixes it, and the exact CHECK above means no
+  -- caller can widen it: a row whose expiry is not exactly this is rejected by
+  -- the table itself. RESEARCH_EARLY_ACCESS_SESSION_TTL_MINUTES must match, or
+  -- the cookie would outlive the row and unlock refuses the mint.
+  v_expiry := v_now + interval '240 minutes';
 
   if not found
      or v_nonce.owner_id <> p_owner_id
