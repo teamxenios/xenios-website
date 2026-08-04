@@ -1,0 +1,135 @@
+import { describe, expect, it } from "vitest";
+
+import {
+  SupabaseConsumedTokenStore,
+  SupabaseEarlyAccessCustomerRepository,
+  SupabaseSessionBindingStore,
+} from "./identity";
+import { EarlyAccessPersistenceError, type EarlyAccessPersistenceCall } from "./executor";
+import type { EarlyAccessCustomerRecord } from "../identity/early-access-customer";
+
+const record = {
+  id: "cust-1",
+  normalizedEmail: "a@example.com",
+  status: "INVITED",
+} as unknown as EarlyAccessCustomerRecord;
+
+type Script = Record<string, (call: EarlyAccessPersistenceCall) => unknown>;
+
+function query(script: Script) {
+  return async (call: EarlyAccessPersistenceCall) => {
+    const handler = script[call.fn];
+    if (!handler) throw new Error(`unscripted call: ${call.fn}`);
+    return handler(call);
+  };
+}
+
+describe("SupabaseEarlyAccessCustomerRepository", () => {
+  it("insert maps ok and the duplicate-email refusal onto the port's result", async () => {
+    const fresh = new SupabaseEarlyAccessCustomerRepository(
+      query({ research_early_access_customer_insert: () => ({ ok: true }) }),
+    );
+    expect(await fresh.insert(record)).toEqual({ ok: true, value: record });
+
+    const duplicate = new SupabaseEarlyAccessCustomerRepository(
+      query({
+        research_early_access_customer_insert: () => ({
+          ok: false,
+          code: "EMAIL_ALREADY_REGISTERED",
+        }),
+      }),
+    );
+    expect(await duplicate.insert(record)).toEqual({
+      ok: false,
+      code: "EMAIL_ALREADY_REGISTERED",
+    });
+  });
+
+  it("an unrecognized insert refusal is an infrastructure error", async () => {
+    const repo = new SupabaseEarlyAccessCustomerRepository(
+      query({
+        research_early_access_customer_insert: () => ({ ok: false, code: "SOMETHING_ELSE" }),
+      }),
+    );
+    await expect(repo.insert(record)).rejects.toBeInstanceOf(EarlyAccessPersistenceError);
+  });
+
+  it("finders answer the record verbatim or null", async () => {
+    const repo = new SupabaseEarlyAccessCustomerRepository(
+      query({
+        research_early_access_customer_by_id: (call) =>
+          call.args.p_id === "cust-1" ? record : null,
+        research_early_access_customer_by_email: (call) =>
+          call.args.p_normalized_email === "a@example.com" ? record : null,
+      }),
+    );
+    expect(await repo.findById("cust-1")).toEqual(record);
+    expect(await repo.findById("cust-2")).toBeNull();
+    expect(await repo.findByNormalizedEmail("a@example.com")).toEqual(record);
+    expect(await repo.findByNormalizedEmail("b@example.com")).toBeNull();
+  });
+
+  it("update sends the record and returns it, mirroring the in-memory port", async () => {
+    const sent: EarlyAccessPersistenceCall[] = [];
+    const repo = new SupabaseEarlyAccessCustomerRepository(async (call) => {
+      sent.push(call);
+      return record;
+    });
+    expect(await repo.update(record)).toEqual(record);
+    expect(sent[0]?.fn).toBe("research_early_access_customer_update");
+    expect(sent[0]?.args.p_record).toEqual(record);
+  });
+});
+
+describe("SupabaseConsumedTokenStore", () => {
+  it("is true only when the database says this call burned the token", async () => {
+    let first = true;
+    const store = new SupabaseConsumedTokenStore(
+      query({
+        research_early_access_consume_token: () => {
+          const answer = first;
+          first = false;
+          return answer;
+        },
+      }),
+    );
+    expect(await store.consume("jti-1")).toBe(true);
+    expect(await store.consume("jti-1")).toBe(false);
+  });
+
+  it("anything but true from the database reads as not-consumed", async () => {
+    const store = new SupabaseConsumedTokenStore(
+      query({ research_early_access_consume_token: () => "yes" }),
+    );
+    expect(await store.consume("jti-1")).toBe(false);
+  });
+});
+
+describe("SupabaseSessionBindingStore", () => {
+  it("bind is true only for the call that created the binding", async () => {
+    let bound = false;
+    const store = new SupabaseSessionBindingStore(
+      query({
+        research_early_access_bind_session: () => {
+          if (bound) return false;
+          bound = true;
+          return true;
+        },
+      }),
+    );
+    expect(await store.bind("s".repeat(64), "cust-1")).toBe(true);
+    // Already bound, EVEN to the same customer: false, exactly like the port.
+    expect(await store.bind("s".repeat(64), "cust-1")).toBe(false);
+  });
+
+  it("get answers the bound customer id or null", async () => {
+    const store = new SupabaseSessionBindingStore(
+      query({
+        research_early_access_session_binding: (call) =>
+          call.args.p_session_id === "known" ? "cust-1" : null,
+      }),
+    );
+    expect(await store.get("known")).toBe("cust-1");
+    expect(await store.get("unknown")).toBeNull();
+  });
+});

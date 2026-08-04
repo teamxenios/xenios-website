@@ -9,6 +9,7 @@ import {
 } from "./research";
 import { registerMembershipApi } from "./research/membership";
 import { registerPrivateEarlyAccessApi } from "./research/early-access/register";
+import { buildEarlyAccessPersistence } from "./research/early-access/persistence/production-deps";
 import { registerMemberApi } from "./research/members";
 import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
@@ -227,9 +228,22 @@ async function resolveActiveMemberSilently(req: Request): Promise<MemberRow | nu
 // The founder release routes mount behind the same Supabase admin guard the
 // rest of research operations uses, and the actor is whatever that guard
 // authenticated.
+// The persistence composition root decides which repositories this process
+// runs on: durable (Supabase configured), in-memory with a warning (local
+// development), or refusing (production-like with Early Access enabled and
+// the durable configuration missing; the gate is forced closed and nothing
+// falls back to process memory).
+const earlyAccessPersistence = buildEarlyAccessPersistence();
+for (const warning of earlyAccessPersistence.warnings) {
+  console.warn(`[early-access] ${warning}`);
+}
+if (earlyAccessPersistence.reason !== null) {
+  console.error(`[early-access] ${earlyAccessPersistence.reason}`);
+}
 registerPrivateEarlyAccessApi(app, {
   resolveMember: resolveActiveMemberSilently,
   requireAdmin: requireSupabaseAdmin,
+  ...earlyAccessPersistence.options,
 });
 app.use(carePageGate);
 const careAccess = buildCareProductionDependencies();
