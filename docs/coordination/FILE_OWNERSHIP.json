@@ -776,6 +776,31 @@
         "client/src/research/pages/Support.tsx",
         "client/src/research/pages/public-access-flow.test.tsx"
       ]
+    },
+    {
+      "id": "OWNER-W2-PEPTIDE-MEDIA-REVIEW-FACTORY",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "content/research-products/peptide-media/README.md",
+        "content/research-products/peptide-media/review/rawpeptides-r360-thymosinalpha1-kpv-ll37-5mg-5mg-5mg-vial-v1.svg",
+        "content/research-products/peptide-media/review/renew360-r360-dihexa-10mgx60-cap-v1.svg",
+        "content/research-products/peptide-media/review/renew360-r360-thymosinalpha1-kpv-ll37-5mg-5mg-5mg-vial-v1.svg",
+        "content/research-products/peptide-media/templates/neutral-capsule-bottle-base.png",
+        "content/research-products/peptide-media/templates/neutral-vial-base.png",
+        "docs/media/PEPTIDE_IMAGE_FACTORY_HANDOFF.md",
+        "scripts/generate-peptide-image-review.mts",
+        "server/research/peptide-image-factory/approval.test.ts",
+        "server/research/peptide-image-factory/approval.ts",
+        "server/research/peptide-image-factory/contracts.test.ts",
+        "server/research/peptide-image-factory/contracts.ts",
+        "server/research/peptide-image-factory/render-svg.test.ts",
+        "server/research/peptide-image-factory/render-svg.ts",
+        "server/research/peptide-image-factory/variant-media-plan.test.ts",
+        "server/research/peptide-image-factory/variant-media-plan.ts"
+      ]
     }
   ],
   "invariants": [
