@@ -42,6 +42,7 @@ import type {
   AdminProductVariant,
 } from "@shared/research/product-admin";
 import type { CartPurchaseAudience } from "@shared/research/cart-product-selection";
+import type { FulfillmentOwner } from "@shared/research/catalog";
 import type { OfferAvailabilityMode } from "@shared/research/catalog/offer-readiness";
 import { mayDisplayAmount } from "@shared/research/catalog/offer-readiness";
 import {
@@ -142,6 +143,13 @@ export interface EarlyAccessCatalogRow {
   readonly imageState: EarlyAccessImageState;
   readonly quantityLimit: number | null;
   readonly supplierReady: boolean;
+  /**
+   * WHO ships this exact unit, when an assignment names it. Null when nobody is
+   * assigned. `supplierReady` answers whether an assignment exists at all; a
+   * founder deciding whether to release a unit needs the name as well, because
+   * "someone will ship it" is not an operational answer.
+   */
+  readonly fulfillmentOwner: FulfillmentOwner | null;
   readonly disputeStatus: EarlyAccessRowDisputeStatus;
   /** True only when every eligibility condition holds for this exact unit. */
   readonly purchasable: boolean;
@@ -346,6 +354,10 @@ function projectRow(
       supplier.variantId === variant.id &&
       supplier.fulfillmentOwner !== "not_assigned" &&
       supplier.sourceVersion.trim().length > 0,
+    fulfillmentOwner:
+      supplier !== null && supplier.variantId === variant.id
+        ? supplier.fulfillmentOwner
+        : null,
     disputeStatus: {
       identity: earlyAccessIdentityDisputeState(facts),
       strength: earlyAccessStrengthDisputeState(facts, variant),

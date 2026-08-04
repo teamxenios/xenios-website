@@ -9,13 +9,20 @@ import {
   createLogoutRoute,
   createSessionRoute,
   createUnlockRoute,
+  type EarlyAccessSessionCheck,
   type PrivateAccessRouteDependencies,
 } from "./private-access-routes";
 import {
-  EmptyEarlyAccessCatalogSource,
   createEarlyAccessCatalogRoute,
+  createFounderReleaseReviewRoute,
+  createFounderReleaseRoute,
+  createReleaseHistoryRoute,
   type EarlyAccessCatalogSource,
 } from "./release/release-routes";
+import { createEarlyAccessCatalogSourceForDeployment } from "./catalog/product-control-source";
+import { REVIEW_AUDIENCE_SOURCE } from "./catalog/declared-facts-source";
+import { supabaseConfigured } from "../../supabase";
+import type { MemberRow } from "../member-auth";
 import {
   InMemoryEarlyAccessReleaseLedger,
   type EarlyAccessReleaseLedger,
@@ -135,6 +142,15 @@ export const EARLY_ACCESS_ADMIN_API_PATHS = Object.freeze([
   EARLY_ACCESS_ADMIN_SUPPLIER_SHIPPED_PATH,
 ] as const);
 
+/**
+ * The founder release admin surface. Under /api/admin so it sits behind the
+ * same Supabase admin guard the rest of research operations uses, and so no
+ * customer-session route can ever be mistaken for it.
+ */
+export const EARLY_ACCESS_RELEASES_PATH = "/api/admin/research/early-access/releases";
+export const EARLY_ACCESS_RELEASE_HISTORY_PATH =
+  "/api/admin/research/early-access/releases/history";
+
 /** A 43-character base64url encoding of 32 random bytes. */
 function randomToken(): string {
   return randomBytes(32).toString("base64url");
@@ -163,16 +179,22 @@ export interface EarlyAccessRegistrationOptions {
   readonly repository?: PrivateAccessSessionRepository;
   readonly now?: () => number;
   /**
-   * Where the catalog comes from. Defaults to EMPTY rather than to the live
-   * Product Control source: a deployment that has not deliberately wired a
-   * catalog should show nothing, not whatever it can find.
+   * Where the catalog comes from. Defaults to the LIVE Product Control source
+   * when this deployment is configured for it, and to a source that REFUSES
+   * when it is not.
+   *
+   * It deliberately does not default to an empty catalog. An empty catalog is a
+   * statement ("there is nothing available"), and a deployment that cannot
+   * reach Product Control is not in a position to make it. The refusing source
+   * turns into a 503 at the route, which a surface can tell apart from a 200
+   * with no units in it.
    */
   readonly catalog?: EarlyAccessCatalogSource;
   readonly releases?: EarlyAccessReleaseLedger;
 
   // The commerce seams. Every default that touches money, identity, or shipment
-  // fails closed, for the same reason the catalog defaults to empty: an unwired
-  // deployment should refuse with a truthful reason rather than sell on
+  // fails closed, for the same reason the catalog defaults to a refusal: an
+  // unwired deployment should refuse with a truthful reason rather than sell on
   // assumptions. Each one is the exact place a real source is injected.
   readonly store?: EarlyAccessCommerceStore;
   readonly identity?: EarlyAccessIdentityDirectory;
@@ -191,11 +213,29 @@ export interface EarlyAccessRegistrationOptions {
    */
   readonly admins?: EarlyAccessAdminDirectory;
   /**
-   * The admin gate itself. Defaults to the EXISTING `requireSupabaseAdmin`, so
-   * production is correct with no extra wiring; injectable so a route test can
-   * exercise the handlers without a Supabase JWT.
+   * THE admin gate, for the operator routes and the founder release routes
+   * alike. Defaults to the EXISTING `requireSupabaseAdmin`, so production is
+   * correct with no extra wiring; injectable so a route test can exercise the
+   * handlers without a Supabase JWT.
+   *
+   * Deliberately ONE option rather than two. An earlier pair (`adminGuard` for
+   * the operator routes, `requireAdmin` for the founder release) meant a caller
+   * could satisfy one and leave the other defaulted, which is precisely how a
+   * surface ends up mounted behind a guard nobody chose. The surviving name is
+   * `requireAdmin` because that is what the mounting seam in server/index.ts
+   * already passes, so consolidating costs no change to a file this lane does
+   * not own; the type is Express's RequestHandler, which is what the operator
+   * routes wanted.
    */
-  readonly adminGuard?: RequestHandler;
+  readonly requireAdmin?: RequestHandler;
+  /**
+   * The member the server-side guard authenticated for a request, when there is
+   * one. Early Access resolves its audience from that row and from nothing
+   * else; absent, every unit blocks on AUDIENCE_NOT_PERMITTED.
+   */
+  readonly resolveMember?: (request: Request) => Promise<MemberRow | null>;
+  /** The authenticated admin identity, read from the request the guard passed. */
+  readonly adminActor?: (request: Request) => string | null;
 }
 
 /**
@@ -272,16 +312,35 @@ export function registerPrivateEarlyAccessApi(
   // The catalog reuses the SAME session resolver the session endpoint uses, so
   // the two can never disagree about whether a cookie is good.
   const resolveSession = createEarlyAccessSessionResolver(deps);
-  const catalog = options.catalog ?? new EmptyEarlyAccessCatalogSource();
+  const configured = supabaseConfigured();
+  // The catalog default is a REFUSAL, not an empty catalog. An unwired
+  // deployment answers a truthful 503 instead of 200-with-no-units, which a
+  // customer cannot tell apart from "we sell nothing".
+  const catalog =
+    options.catalog ?? createEarlyAccessCatalogSourceForDeployment(configured);
   const releases = options.releases ?? new InMemoryEarlyAccessReleaseLedger();
-  const catalogRoute = createEarlyAccessCatalogRoute({
+  const routeDependencies = {
     resolveSession,
+    // The CUSTOMER source. Its audience comes from the member row the guard
+    // authenticated and from nothing else, so a review actor reaching this
+    // context authorizes nothing.
     catalog,
     ledger: releases,
     now,
-  });
+  };
+  const catalogRoute = createEarlyAccessCatalogRoute(routeDependencies);
+  const resolveMember = options.resolveMember ?? (async () => null);
   app.get(EARLY_ACCESS_CATALOG_PATH, (req: Request, res: Response) => {
-    void catalogRoute({ cookieHeader: req.headers.cookie }, res as never);
+    void resolveMember(req)
+      .then((member) =>
+        catalogRoute({ cookieHeader: req.headers.cookie, member }, res as never),
+      )
+      .catch(() => {
+        // A member lookup that threw is not "no member": it is a broken read,
+        // and answering it as an anonymous catalog would quietly downgrade a
+        // signed-in customer. It answers unavailable instead.
+        res.status(503).json({ ok: false, code: "unavailable" });
+      });
   });
 
   // The commerce routes read the catalog and the ledger through the SAME two
@@ -334,13 +393,33 @@ export function registerPrivateEarlyAccessApi(
     );
   });
 
+  // THE admin guard, resolved once and shared by both admin surfaces. Two
+  // resolution sites would let the operator routes and the founder release end
+  // up behind different gates.
+  const adminGuard: RequestHandler = options.requireAdmin ?? requireSupabaseAdmin;
+
   registerEarlyAccessAdminApi(app, {
     store,
     admins: options.admins ?? new ConfiguredEarlyAccessAdminDirectory(),
     audit,
     now,
-    guard: options.adminGuard ?? requireSupabaseAdmin,
+    guard: adminGuard,
   });
+
+  registerEarlyAccessFounderReleaseApi(
+    app,
+    {
+      ...routeDependencies,
+      // The FOUNDER source. Separate from the customer one because its audience
+      // comes from the admin identity the guard authenticated, which is a
+      // question about the unit ("could a member be sold this") and never an
+      // authorization to sell anything to anybody.
+      catalog:
+        options.catalog ??
+        createEarlyAccessCatalogSourceForDeployment(configured, REVIEW_AUDIENCE_SOURCE),
+    },
+    { guard: adminGuard, adminActor: options.adminActor },
+  );
 
   return effectiveConfig;
 }
@@ -427,6 +506,69 @@ function registerEarlyAccessAdminApi(
   app.post(EARLY_ACCESS_ADMIN_SUPPLIER_SHIPPED_PATH, guard, (req: Request, res: Response) => {
     void shipped({ adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber }, res);
   });
+}
+
+/**
+ * Mount the founder release surface behind THE admin guard.
+ *
+ * A founder release is the one place a named human overrides Product Control,
+ * so it never mounts unguarded. The guard is resolved once by the caller and
+ * passed in, so this surface and the operator routes can never end up behind
+ * two different gates. When nothing is injected that resolved guard is
+ * `requireSupabaseAdmin`, which itself refuses with 503 when ADMIN_EMAIL is
+ * unset, so a misconfigured deployment gets a truthful refusal rather than a
+ * silently absent surface.
+ */
+function registerEarlyAccessFounderReleaseApi(
+  app: Express,
+  routeDependencies: {
+    resolveSession: (cookieHeader: unknown) => Promise<EarlyAccessSessionCheck>;
+    catalog: EarlyAccessCatalogSource;
+    ledger: EarlyAccessReleaseLedger;
+    now: () => number;
+  },
+  options: {
+    readonly guard: RequestHandler;
+    readonly adminActor?: (request: Request) => string | null;
+  },
+): void {
+  const requireAdmin: RequestHandler = (req, res, next) => options.guard(req, res, next);
+  const adminActor = options.adminActor ?? defaultAdminActor;
+
+  const review = createFounderReleaseReviewRoute(routeDependencies);
+  const record = createFounderReleaseRoute(routeDependencies);
+  const history = createReleaseHistoryRoute(routeDependencies);
+
+  // The history path is registered BEFORE the collection path so Express does
+  // not have to disambiguate them; they differ by suffix, not by parameter, but
+  // ordering makes that independent of future edits.
+  app.get(EARLY_ACCESS_RELEASE_HISTORY_PATH, requireAdmin, (req: Request, res: Response) => {
+    void history({ query: req.query as Record<string, unknown> }, res as never);
+  });
+  app.get(EARLY_ACCESS_RELEASES_PATH, requireAdmin, (req: Request, res: Response) => {
+    void review({ actor: adminActor(req) }, res as never);
+  });
+  app.post(EARLY_ACCESS_RELEASES_PATH, requireAdmin, (req: Request, res: Response) => {
+    // The actor is read from what the guard authenticated and never from the
+    // body, even if the body carries a field of the same name.
+    void record({ body: req.body, actor: adminActor(req) }, res as never);
+  });
+}
+
+/**
+ * The named human behind an admin request.
+ *
+ * Read from what the guard attached to the request, in the same order the rest
+ * of this server reads it. A request the guard did not annotate yields null,
+ * and the route refuses, because a release recorded against nobody is not an
+ * audit trail.
+ */
+function defaultAdminActor(request: Request): string | null {
+  // `requireSupabaseAdmin` writes the verified address here after checking the
+  // JWT against ADMIN_EMAIL (server/routes.ts). Reading it anywhere else, or
+  // reading a header, would be reading something the caller controls.
+  const email = (request as unknown as { adminEmail?: unknown }).adminEmail;
+  return typeof email === "string" && email.trim().length > 0 ? email.trim() : null;
 }
 
 /** Re-exported so the caller can assert the header set without a literal. */

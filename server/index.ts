@@ -19,7 +19,10 @@ import { registerMemberCapabilityApi } from "./research/capabilities";
 import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
 import { registerMemberCatalogApi } from "./research/catalog/member-catalog-routes";
-import { buildMemberCatalogProductionService } from "./research/catalog/member-catalog-service";
+import {
+  buildMemberCatalogProductionService,
+  memberAudienceSourceVersion,
+} from "./research/catalog/member-catalog-service";
 import { createProductionProductControlReader } from "./research/catalog/product-control-reader";
 import {
   CatalogPricingProductSource,
@@ -77,7 +80,6 @@ import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
 import { formatWithRequestId, requestId, shouldLogApiResponseBody } from "./request-logging";
 import { createServer } from "http";
-import { createHash } from "crypto";
 
 const app = express();
 const httpServer = createServer(app);
@@ -185,10 +187,50 @@ app.use((req, res, next) => {
 // the SPA catch-all so the gate always runs first.
 app.use(researchPageGate);
 registerResearchApi(app);
+/**
+ * The active member behind a request, or null, without writing a response.
+ *
+ * The canonical active-member guard is run against a silent response stub: any
+ * denial (missing or invalid JWT, recovery-purpose session, inactive
+ * membership, billing hold) reads as null and the caller answers its own closed
+ * response. The real response is never written here.
+ *
+ * Shared by the pricing adapter and Private Early Access so both resolve the
+ * same member from the same guard.
+ */
+async function resolveActiveMemberSilently(req: Request): Promise<MemberRow | null> {
+  let authorized = false;
+  const silenced: unknown = {
+    status() {
+      return this;
+    },
+    json() {
+      return this;
+    },
+  };
+  await requireActiveMember(req, silenced as Response, (() => {
+    authorized = true;
+  }) as NextFunction);
+  if (!authorized) return null;
+  return ((req as any).researchMember as MemberRow | undefined) ?? null;
+}
+
 // Private Early Access API. Registered after the Research API so the shared
 // Research wall and its private headers still run first, and before the SPA
 // catch-all so these paths never resolve to fallback HTML.
-registerPrivateEarlyAccessApi(app);
+//
+// The catalog source is not passed, so registration resolves the live Product
+// Control adapter when this deployment is configured for it and a refusing
+// source when it is not. It never falls back to an empty catalog: "we cannot
+// reach the catalog" and "there is nothing to sell" are different answers.
+//
+// The founder release routes mount behind the same Supabase admin guard the
+// rest of research operations uses, and the actor is whatever that guard
+// authenticated.
+registerPrivateEarlyAccessApi(app, {
+  resolveMember: resolveActiveMemberSilently,
+  requireAdmin: requireSupabaseAdmin,
+});
 app.use(carePageGate);
 const careAccess = buildCareProductionDependencies();
 const careEligibility = buildCareEligibilityRepository();
@@ -259,40 +301,17 @@ const pricingResolver = createAuthoritativePriceResolver(
 const authorizePricingAudience = async (
   req: Request,
 ): Promise<PricingAudienceGrant | null> => {
-  // Run the canonical active-member guard against a silent response stub:
-  // any denial (missing or invalid JWT, recovery-purpose session, inactive
-  // membership, billing hold) reads as null and the pricing adapter answers
-  // its own closed 401. The real response is never written here.
-  let authorized = false;
-  const silenced: unknown = {
-    status() {
-      return this;
-    },
-    json() {
-      return this;
-    },
-  };
-  await requireActiveMember(req, silenced as Response, (() => {
-    authorized = true;
-  }) as NextFunction);
-  if (!authorized) return null;
-  const member = (req as any).researchMember as MemberRow | undefined;
+  // The shared silent guard run, so pricing and Early Access resolve the same
+  // member from the same guard and cannot disagree about who is asking.
+  const member = await resolveActiveMemberSilently(req);
   if (!member) return null;
-  // The same server-side row facts memberAudience fingerprints in
-  // member-catalog-service.ts, so one member row change rolls both
-  // sourceVersions together.
+  // The exported derivation from member-catalog-service.ts, not a copy of it.
+  // A second fingerprint written here would drift the first time either side
+  // gained a field, and the catalog and the price it quotes would then claim
+  // different authorizations for the same member.
   return {
     audience: "member",
-    sourceVersion: createHash("sha256")
-      .update(
-        JSON.stringify({
-          memberId: member.id,
-          status: member.status,
-          billingState: member.billing_state ?? null,
-          updatedAt: member.updated_at ?? member.created_at,
-        }),
-      )
-      .digest("hex"),
+    sourceVersion: memberAudienceSourceVersion(member),
   };
 };
 registerPricingApi(app, {

@@ -199,6 +199,7 @@ describe("projectEarlyAccessCatalog", () => {
       imageState: "approved",
       quantityLimit: 3,
       supplierReady: true,
+      fulfillmentOwner: "xenios",
       disputeStatus: { identity: "cleared", strength: "cleared" },
       purchasable: true,
       blockers: [],
