@@ -24,31 +24,32 @@
  * easy and would be a lie. A `supplierReady: true` invented here puts a unit
  * nobody has verified in front of a paying customer.
  *
- * So every fact Product Control does not carry resolves to the value that keeps
- * the unit HELD. `heldVariantFacts` is the one place those conservative values
- * are written, and `EARLY_ACCESS_UNSOURCED_FACTS` names the gap as a checkable
- * list rather than as a paragraph nobody re-reads.
+ * So every fact resolves either from a real system of record or to the value
+ * that keeps the unit HELD. `heldVariantFacts` is the one place those
+ * conservative values are written, and `EARLY_ACCESS_UNSOURCED_FACTS` names the
+ * remaining gap as a checkable list rather than as a paragraph nobody re-reads.
  *
- * WHAT THIS YIELDS AGAINST PRODUCTION DATA TODAY
+ * WHERE THE FACTS COME FROM NOW
  *
- * Every unit projects held, with PRICE_NOT_APPROVED, AUDIENCE_NOT_PERMITTED,
- * SUPPLIER_NOT_ASSIGNED, FULFILLMENT_UNAVAILABLE, QUANTITY_LIMIT_MISSING,
- * DOCUMENTATION_NOT_SATISFIED, IDENTITY_DISPUTE_UNRESOLVED,
- * STRENGTH_DISPUTE_UNRESOLVED, and OFFER_STATE_NOT_PURCHASABLE. The price
- * blocker rides along with the audience one rather than being a tenth gap: the
- * Product Control price resolver takes an authorized audience as an input, so
- * with no audience there is no resolved amount to approve.
+ * `EarlyAccessDeclaredFactsReader` is the seam each fact arrives through, and
+ * `ProductControlDeclaredFactsReader` (declared-facts-source.ts) is the real
+ * implementation: fulfilment and lot documentation from the inventory lots and
+ * the allocatable-lot RPC, supplier from the founder's recorded per-lane
+ * fulfilment owner, audience from the member catalog's own derivation applied
+ * to the member THIS request authenticated, the offer mode from the shared
+ * private-lane offer state machine, and both dispute states from the
+ * founder-locked canonical record. Two facts remain unsourced and are listed
+ * below; both still block, and both are blockers a founder release may bridge
+ * by supplying the missing fact itself.
  *
- * That is the truthful answer, not a failure of this adapter: those facts have
- * no store in this repository yet. It is also the state the founder release
- * bridge (release/founder-release.ts) was written for, so a held unit can still
- * be sold under one named human's explicit, version-bound decision.
+ * AN UNAVAILABLE ADAPTER IS NOT AN EMPTY CATALOG
  *
- * WHERE THE FACTS WILL COME FROM
- *
- * `EarlyAccessDeclaredFactsReader` is the seam each fact arrives through once
- * it has a store. Nothing is wired into it in production, and an absent reader
- * means absent facts, never assumed ones.
+ * Every read here either succeeds or throws `EarlyAccessCatalogSourceError`.
+ * Nothing catches a failed read and substitutes an empty projection, and the
+ * production registration refuses to fall back to `EmptyEarlyAccessCatalogSource`
+ * when the live adapter cannot be built. A customer told "there is nothing
+ * available" when the truth is "we cannot reach the catalog" has been told
+ * something we cannot support.
  */
 
 import type { AdminProductDetail } from "@shared/research/product-admin";
@@ -58,6 +59,13 @@ import {
   createProductionProductControlReader,
   type ProductCatalogReader,
 } from "../../catalog/product-control-reader";
+import { buildProductionVariantInventoryFactsReader } from "../../catalog/member-catalog-service";
+import type { MemberRow } from "../../member-auth";
+import {
+  MEMBER_ROW_AUDIENCE_SOURCE,
+  ProductControlDeclaredFactsReader,
+  type EarlyAccessAudienceSource,
+} from "./declared-facts-source";
 import { EARLY_ACCESS_CURRENCIES } from "../commerce/early-access-order";
 import type {
   EarlyAccessProductRecord,
@@ -80,8 +88,28 @@ import {
  * checks compare a fact's `evaluatedAt` against that instant, and two reads of
  * a clock inside one load would make a fact look stale for no reason.
  */
+/**
+ * What the SERVER already established about the caller of this load.
+ *
+ * It carries no request, no headers, and nothing a browser can set. `member` is
+ * the row a server-side guard authenticated; an absent member is an absent
+ * audience, which blocks, rather than an audience that does not apply.
+ */
+export interface EarlyAccessCatalogContext {
+  readonly member?: MemberRow | null;
+  /**
+   * The named human the ADMIN guard authenticated, when this load is a founder
+   * review rather than a customer read. Only a source deliberately built with
+   * the review audience reads it; the customer source ignores it entirely.
+   */
+  readonly reviewActor?: string | null;
+}
+
 export interface EarlyAccessCatalogSource {
-  load(now: Date): Promise<EarlyAccessCatalogProjection>;
+  load(
+    now: Date,
+    context?: EarlyAccessCatalogContext,
+  ): Promise<EarlyAccessCatalogProjection>;
 }
 
 /**
@@ -104,15 +132,16 @@ export class EarlyAccessCatalogSourceError extends Error {}
  * source for one of these is what removes its entry.
  */
 export const EARLY_ACCESS_UNSOURCED_FACTS = [
-  "audience",
-  "supplier",
-  "fulfillment",
-  "documentation",
+  // A per-order ceiling is a founder policy decision about how much of one unit
+  // a single member may buy at once. Nothing records it, and stock on hand is
+  // not that number. Blocks with QUANTITY_LIMIT_MISSING; a founder release
+  // carries `approvedQuantityLimit`, so the founder supplies it rather than
+  // discarding it.
   "quantityLimit",
-  "offerState",
+  // Product Control media (`AdminProductMedia`) is product-scoped and carries
+  // no variant binding, so no product-level asset can satisfy the exact-variant
+  // rule. Blocks the image state at `none`; IMAGE_PENDING is waivable.
   "image",
-  "identityDispute",
-  "strengthDispute",
 ] as const satisfies readonly ("audience" | keyof EarlyAccessVariantFacts)[];
 
 export type EarlyAccessUnsourcedFact =
@@ -187,6 +216,8 @@ export interface EarlyAccessDeclaredFactsReader {
   readDeclaredFacts(input: {
     readonly products: readonly AdminProductDetail[];
     readonly now: Date;
+    /** What the server established about this caller. Absent means nothing was. */
+    readonly context?: EarlyAccessCatalogContext;
   }): Promise<readonly EarlyAccessDeclaredProductFacts[]>;
 }
 
@@ -250,7 +281,10 @@ export class ProductControlCatalogSource implements EarlyAccessCatalogSource {
     );
   }
 
-  async load(now: Date): Promise<EarlyAccessCatalogProjection> {
+  async load(
+    now: Date,
+    context: EarlyAccessCatalogContext = {},
+  ): Promise<EarlyAccessCatalogProjection> {
     const products = await readOrFail(
       () => this.catalog.readCatalog(),
       "The Product Control catalog could not be read for Private Early Access.",
@@ -260,7 +294,7 @@ export class ProductControlCatalogSource implements EarlyAccessCatalogSource {
       reader === null
         ? []
         : await readOrFail(
-            () => reader.readDeclaredFacts({ products, now }),
+            () => reader.readDeclaredFacts({ products, now, context }),
             "The declared Early Access facts could not be read.",
           );
     return projectEarlyAccessCatalog({
@@ -312,20 +346,70 @@ export class EmptyEarlyAccessCatalogSource implements EarlyAccessCatalogSource {
 }
 
 /**
- * The production wiring: the real Product Control reader, and no declared facts.
+ * A source that cannot answer, and says so.
  *
- * The reader is the same `createProductionProductControlReader()` server/index.ts
- * hands to `CatalogPricingProductSource`, so pricing, the member catalog, and
- * Early Access all read one catalog.
- *
- * No declared-facts reader is passed, because the facts in
- * `EARLY_ACCESS_UNSOURCED_FACTS` have no store yet. Every unit therefore
- * projects held. Passing a stub that answered "ready" would make this function
- * the single most dangerous line in the portal, so it stays absent until each
- * fact has a real source.
+ * Used where the live adapter could not be built. Every load throws, so the
+ * route answers 503 rather than 200 with nothing in it. This is the whole point
+ * of the type: an unconfigured deployment must be distinguishable from a
+ * deployment with an empty shelf, and the only way to guarantee that is to make
+ * the unconfigured case incapable of producing a projection at all.
  */
-export function createProductionEarlyAccessCatalogSource(): ProductControlCatalogSource {
+export class UnavailableEarlyAccessCatalogSource
+  implements EarlyAccessCatalogSource
+{
+  constructor(private readonly reason: string) {}
+
+  async load(): Promise<EarlyAccessCatalogProjection> {
+    throw new EarlyAccessCatalogSourceError(this.reason);
+  }
+}
+
+/**
+ * The production wiring: the real Product Control reader, and the REAL declared
+ * facts.
+ *
+ * The catalog reader is the same `createProductionProductControlReader()`
+ * server/index.ts hands to `CatalogPricingProductSource`, so pricing, the member
+ * catalog, and Early Access all read one catalog. The declared-facts reader
+ * reads the inventory lots and the allocatable-lot RPC through the member
+ * catalog's own exported reader, so the two surfaces get one answer about the
+ * same lots.
+ *
+ * The facts still named in `EARLY_ACCESS_UNSOURCED_FACTS` arrive null and
+ * block. Nothing here substitutes a permissive value for them.
+ */
+export function createProductionEarlyAccessCatalogSource(
+  audience: EarlyAccessAudienceSource = MEMBER_ROW_AUDIENCE_SOURCE,
+): ProductControlCatalogSource {
+  const currency = resolveEarlyAccessSettlementCurrency();
   return new ProductControlCatalogSource({
     catalog: createProductionProductControlReader(),
+    declaredFacts: new ProductControlDeclaredFactsReader({
+      inventory: buildProductionVariantInventoryFactsReader(),
+      audience,
+      currency,
+    }),
   });
+}
+
+/**
+ * The catalog source a deployment gets, decided once at registration.
+ *
+ * A configured deployment gets the live adapter. An unconfigured one gets a
+ * source that refuses, NOT an empty one: `EmptyEarlyAccessCatalogSource` is for
+ * a caller that deliberately wants no catalog (a test, or a deployment that has
+ * genuinely decided to show nothing), and reaching for it here would turn a
+ * missing database into "nothing is available", which is a different sentence
+ * and a false one.
+ */
+export function createEarlyAccessCatalogSourceForDeployment(
+  configured: boolean,
+  audience: EarlyAccessAudienceSource = MEMBER_ROW_AUDIENCE_SOURCE,
+): EarlyAccessCatalogSource {
+  if (!configured) {
+    return new UnavailableEarlyAccessCatalogSource(
+      "Private Early Access has no Product Control connection in this deployment, so the catalog cannot be read.",
+    );
+  }
+  return createProductionEarlyAccessCatalogSource(audience);
 }

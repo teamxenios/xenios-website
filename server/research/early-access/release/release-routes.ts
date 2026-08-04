@@ -1,3 +1,4 @@
+import type { MemberRow } from "../../member-auth";
 import type { EarlyAccessCatalogProjection } from "../catalog/early-access-catalog";
 import { earlyAccessRowKey } from "../catalog/early-access-catalog";
 import type { EarlyAccessSessionCheck } from "../private-access-routes";
@@ -7,6 +8,11 @@ import {
   type EarlyAccessRelease,
   type EarlyAccessReleaseLedger,
 } from "./founder-release";
+import {
+  earlyAccessDerivedBlockers,
+  reviewEarlyAccessCatalog,
+  type FirstReleaseReview,
+} from "./first-release-review";
 import { buildEarlyAccessStorefront } from "./storefront-view";
 
 // The two routes the bridge needs: what a signed-in customer may see, and how a
@@ -18,11 +24,30 @@ import { buildEarlyAccessStorefront } from "./storefront-view";
 // at the mount point, following the pattern the rest of this server already
 // uses, and must never be reachable with only a customer session.
 
-export interface EarlyAccessCatalogSource {
-  load(now: Date): Promise<EarlyAccessCatalogProjection>;
+/**
+ * What the server already established about the caller of one load. Carries
+ * nothing a browser can set.
+ */
+export interface EarlyAccessCatalogContext {
+  readonly member?: MemberRow | null;
+  /** The named human the admin guard authenticated, for a founder review load. */
+  readonly reviewActor?: string | null;
 }
 
-/** Used until the Product Control adapter is wired, and by tests. */
+export interface EarlyAccessCatalogSource {
+  load(
+    now: Date,
+    context?: EarlyAccessCatalogContext,
+  ): Promise<EarlyAccessCatalogProjection>;
+}
+
+/**
+ * A catalog with nothing in it, for a caller that deliberately wants none.
+ *
+ * It is NOT the fallback for an adapter that could not be built. Registration
+ * hands out a source that refuses in that case, because an unreachable catalog
+ * and an empty one must not answer a customer the same way.
+ */
 export class EmptyEarlyAccessCatalogSource implements EarlyAccessCatalogSource {
   async load(now: Date): Promise<EarlyAccessCatalogProjection> {
     return {
@@ -63,7 +88,10 @@ function send(response: ResponsePort, status: number, body: unknown): void {
 // ---------------------------------------------------------------------------
 
 export function createEarlyAccessCatalogRoute(deps: EarlyAccessReleaseRouteDependencies) {
-  return async (request: { cookieHeader?: unknown }, response: ResponsePort): Promise<void> => {
+  return async (
+    request: { cookieHeader?: unknown; member?: MemberRow | null },
+    response: ResponsePort,
+  ): Promise<void> => {
     try {
       applyPrivateHeaders(response);
 
@@ -82,7 +110,12 @@ export function createEarlyAccessCatalogRoute(deps: EarlyAccessReleaseRouteDepen
         return;
       }
 
-      const projection = await deps.catalog.load(new Date(now));
+      // The member the server already authenticated for THIS request, when
+      // there is one. It is the only thing that can authorize the audience an
+      // Early Access price is resolved for, and it never comes from the body.
+      const projection = await deps.catalog.load(new Date(now), {
+        member: request?.member ?? null,
+      });
       const releases = await deps.ledger.all();
       const storefront = buildEarlyAccessStorefront({ projection, releases });
 
@@ -176,7 +209,11 @@ export function createFounderReleaseRoute(deps: EarlyAccessReleaseRouteDependenc
       }
 
       const now = deps.now();
-      const projection = await deps.catalog.load(new Date(now));
+      // Projected exactly as the review screen projected it, so the founder
+      // approves the picture they were shown. The version echo below is what
+      // proves it, but taking the projection a different way here would make
+      // that echo fail for a reason the founder cannot see.
+      const projection = await deps.catalog.load(new Date(now), { reviewActor: actor });
       const row = projection.rows.find(
         (candidate) => earlyAccessRowKey(candidate) === `${productId}::${variantId}`,
       );
@@ -188,7 +225,17 @@ export function createFounderReleaseRoute(deps: EarlyAccessReleaseRouteDependenc
       // Refused at the route as well as in the domain function. A founder should
       // be told which blocker stopped them, not handed a generic rejection, and
       // the check must not depend on one layer being reached.
-      const nonwaivableOnUnit = row.blockers.filter((blocker) => isNonwaivableBlocker(blocker));
+      //
+      // The derived blockers are included because the eligibility vocabulary
+      // does not emit REGULATORY_HOLD or FORMULA_UNKNOWN, and the founder
+      // release rules already forbid waiving either. Without this, a compound
+      // the founder-locked catalog holds pending counsel review could be
+      // released by waiving only the operational codes Product Control did
+      // report. The screen reads the same function, so the two cannot disagree.
+      const nonwaivableOnUnit = [
+        ...row.blockers,
+        ...earlyAccessDerivedBlockers(row),
+      ].filter((blocker) => isNonwaivableBlocker(blocker));
       if (nonwaivableOnUnit.length > 0) {
         send(response, 422, {
           ok: false,
@@ -249,6 +296,64 @@ export function createFounderReleaseRoute(deps: EarlyAccessReleaseRouteDependenc
       });
       send(response, 201, { ok: true, release: appended.release });
     } catch {
+      try {
+        send(response, 503, { ok: false, code: "unavailable" });
+      } catch {
+        // The response port itself is broken.
+      }
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Founder: the reviewed release list
+// ---------------------------------------------------------------------------
+
+/**
+ * Every unit, classified, for the founder release screen.
+ *
+ * It is a separate route from the customer catalog because it answers a
+ * different question and must never be reachable with a customer session: it
+ * reports the resolved price and the exact blockers for units nobody may buy,
+ * which is operator information. The mount point puts the admin guard in front
+ * of it, following the pattern the rest of this server uses.
+ *
+ * The screen cannot compute this itself. A browser deciding which blockers are
+ * waivable would be a browser deciding what may be sold, and the answer must
+ * come from the same function the founder release route enforces with.
+ */
+export function createFounderReleaseReviewRoute(deps: EarlyAccessReleaseRouteDependencies) {
+  return async (request: FounderReleaseRequest, response: ResponsePort): Promise<void> => {
+    try {
+      applyPrivateHeaders(response);
+
+      const actor = typeof request?.actor === "string" ? request.actor : null;
+      if (actor === null || actor.length === 0) {
+        send(response, 403, { ok: false, code: "actor_unknown" });
+        return;
+      }
+
+      const now = deps.now();
+      if (!Number.isSafeInteger(now) || now <= 0) {
+        send(response, 503, { ok: false, code: "unavailable" });
+        return;
+      }
+
+      const review: FirstReleaseReview = reviewEarlyAccessCatalog(
+        await deps.catalog.load(new Date(now), { reviewActor: actor }),
+      );
+      const releases = await deps.ledger.all();
+      send(response, 200, {
+        ok: true,
+        evaluatedAt: review.evaluatedAt,
+        counts: review.counts,
+        candidates: review.candidates,
+        productsWithoutVariants: review.productsWithoutVariants,
+        releases,
+      });
+    } catch {
+      // A review that cannot be built is 503, never an empty list. An empty
+      // list here reads as "there is nothing to release", which is a decision.
       try {
         send(response, 503, { ok: false, code: "unavailable" });
       } catch {

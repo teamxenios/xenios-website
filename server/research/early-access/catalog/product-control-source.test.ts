@@ -15,6 +15,8 @@ import {
   EarlyAccessCatalogSourceError,
   EmptyEarlyAccessCatalogSource,
   ProductControlCatalogSource,
+  UnavailableEarlyAccessCatalogSource,
+  createEarlyAccessCatalogSourceForDeployment,
   createProductionEarlyAccessCatalogSource,
   heldVariantFacts,
   resolveEarlyAccessSettlementCurrency,
@@ -242,16 +244,33 @@ describe("heldVariantFacts", () => {
     });
   });
 
-  it("holds no fact the unsourced list does not name", () => {
-    const held = heldVariantFacts(VARIANT_ID);
-    const absent = (
-      Object.keys(held) as (keyof EarlyAccessVariantFacts)[]
-    ).filter((key) => key !== "variantId");
-    for (const key of absent) {
-      expect(EARLY_ACCESS_UNSOURCED_FACTS).toContain(key);
+  it("blocks on every fact the unsourced list names", () => {
+    const held = heldVariantFacts(VARIANT_ID) as Record<string, unknown>;
+    for (const fact of EARLY_ACCESS_UNSOURCED_FACTS) {
+      // A fact with no source anywhere must be null here. If one of these ever
+      // gained a permissive default, an unverified unit would become sellable
+      // and this is the assertion that would catch it.
+      expect(held[fact]).toBeNull();
     }
-    // The record-level fact belongs to the same gap and is named with them.
-    expect(EARLY_ACCESS_UNSOURCED_FACTS).toContain("audience");
+  });
+
+  it("names only the facts that genuinely have no source", () => {
+    // Wiring a real source is what removes an entry, so these must be gone.
+    // A regression that unwires one shows up here rather than as units that
+    // quietly stopped being sellable.
+    const named: readonly string[] = EARLY_ACCESS_UNSOURCED_FACTS;
+    for (const sourced of [
+      "audience",
+      "supplier",
+      "fulfillment",
+      "documentation",
+      "offerState",
+      "identityDispute",
+      "strengthDispute",
+    ]) {
+      expect(named).not.toContain(sourced);
+    }
+    expect(named).toEqual(["quantityLimit", "image"]);
   });
 });
 
@@ -554,6 +573,42 @@ describe("createProductionEarlyAccessCatalogSource", () => {
       if (url !== undefined) process.env.SUPABASE_URL = url;
       if (key !== undefined) process.env.SUPABASE_SERVICE_ROLE_KEY = key;
     }
+  });
+});
+
+describe("an unavailable adapter is not an empty catalog", () => {
+  it("refuses rather than answering with nothing", async () => {
+    const source = new UnavailableEarlyAccessCatalogSource("no connection");
+    await expect(source.load(NOW)).rejects.toBeInstanceOf(
+      EarlyAccessCatalogSourceError,
+    );
+    // The message reaches an operator, so the refusal is diagnosable rather
+    // than an anonymous 503.
+    await expect(source.load(NOW)).rejects.toThrow(/no connection/);
+  });
+
+  it("is what an unconfigured deployment gets, never an empty source", async () => {
+    const source = createEarlyAccessCatalogSourceForDeployment(false);
+    expect(source).toBeInstanceOf(UnavailableEarlyAccessCatalogSource);
+    await expect(source.load(NOW)).rejects.toBeInstanceOf(
+      EarlyAccessCatalogSourceError,
+    );
+  });
+
+  it("MUTATION: swapping the refusing source for an empty one is caught here", async () => {
+    // The mutation this pins is the one-line "fallback" a future edit is most
+    // likely to reach for: `return new EmptyEarlyAccessCatalogSource()` in
+    // createEarlyAccessCatalogSourceForDeployment. Under that mutation the
+    // load below resolves with an empty projection instead of rejecting, and a
+    // signed-in customer is told there is nothing to buy when the truth is that
+    // nothing was ever asked.
+    const mutated: { load: (now: Date) => Promise<unknown> } =
+      new EmptyEarlyAccessCatalogSource();
+    const projection = (await mutated.load(NOW)) as { rows: unknown[] };
+    expect(projection.rows).toEqual([]);
+    await expect(
+      createEarlyAccessCatalogSourceForDeployment(false).load(NOW),
+    ).rejects.toBeInstanceOf(EarlyAccessCatalogSourceError);
   });
 });
 

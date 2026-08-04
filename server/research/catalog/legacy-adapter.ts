@@ -152,12 +152,21 @@ function mapAvailability(status: Product["status"]): ProductAvailability {
   }
 }
 
-function mapFulfillmentOwner(lane: ProductLane): FulfillmentOwner {
+/**
+ * Who ships a unit in a given lane.
+ *
+ * Exported because Private Early Access needs the same answer and must not
+ * write a second copy of a founder decision. A lane with no recorded owner
+ * resolves to `not_assigned`, which blocks a sale rather than guessing at one.
+ */
+export function fulfillmentOwnerForLane(lane: ProductLane): FulfillmentOwner {
   // Founder decision for roughly the first 60 days.
   if (lane === "research_material" || lane === "quantum") return "mitch";
   if (lane === "supplement") return "xenios";
   return "not_assigned";
 }
+
+const mapFulfillmentOwner = fulfillmentOwnerForLane;
 
 export interface AdaptedCatalog {
   products: CatalogProduct[];
