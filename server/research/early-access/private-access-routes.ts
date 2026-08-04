@@ -663,6 +663,38 @@ export function createEarlyAccessSessionResolver(
   };
 }
 
+/**
+ * The identity a session BINDING may be keyed by: the hash of the verified
+ * cookie's session handle, exactly as the session repository stores it. The
+ * raw handle never leaves this module, so a binding store can never become a
+ * table of bearer tokens.
+ *
+ * This reader states nothing about liveness. It verifies the cookie's
+ * signature and lifetime only and cannot see a revocation, so every consumer
+ * must sit BEHIND `createEarlyAccessSessionResolver`, the one definition of
+ * session validity. The order routes do exactly that: they resolve the session
+ * first and consult identity second, so a revoked session is refused before
+ * any binding is read.
+ */
+export function createEarlyAccessSessionIdReader(
+  deps: PrivateAccessRouteDependencies,
+): (cookieHeader: unknown) => string | null {
+  const cookies = cookiePortOf(deps);
+
+  return (cookieHeader) => {
+    const now = readInstant(deps.now);
+    if (now === null || !gateIsOpen(deps.config)) return null;
+
+    // Same derivation as unlock and the session resolver, so the id a binding
+    // was written under is the id this reader yields for the same cookie.
+    const ttlSeconds = Math.max(1, Math.floor(deps.config.sessionTtlMinutes)) * 60;
+    const read = cookies.read({ cookieHeader, now, ttlSeconds });
+    if (!read.ok || !isOpaqueToken(read.sessionHandle)) return null;
+
+    return hashPrivateAccessSessionToken(read.sessionHandle);
+  };
+}
+
 export function createSessionRoute(deps: PrivateAccessRouteDependencies): PrivateAccessSessionRoute {
   const resolve = createEarlyAccessSessionResolver(deps);
 

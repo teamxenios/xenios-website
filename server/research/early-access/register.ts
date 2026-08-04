@@ -5,6 +5,7 @@ import { requireSupabaseAdmin } from "../../routes";
 import { resolveEarlyAccessConfig, type EarlyAccessConfig } from "./private-access-config";
 import {
   PRIVATE_ACCESS_PRIVATE_HEADERS,
+  createEarlyAccessSessionIdReader,
   createEarlyAccessSessionResolver,
   createLogoutRoute,
   createSessionRoute,
@@ -60,7 +61,6 @@ import {
   ConfiguredEarlyAccessAdminDirectory,
   InMemoryEarlyAccessAuditSink,
   NoEarlyAccessAgreements,
-  NoEarlyAccessIdentity,
   NoEarlyAccessReferrals,
   NoEarlyAccessShipping,
   NoEarlyAccessSuppliers,
@@ -78,6 +78,15 @@ import {
   InMemoryEarlyAccessCommerceStore,
   type EarlyAccessCommerceStore,
 } from "./routes/store";
+import {
+  InMemoryEarlyAccessCustomerRepository,
+  type EarlyAccessCustomerRepository,
+} from "./identity/early-access-customer";
+import {
+  EarlyAccessCustomerDirectory,
+  InMemorySessionBindingStore,
+  type SessionBindingStore,
+} from "./identity/identity-verification";
 
 // Registration seam for the Private Early Access gate.
 //
@@ -198,6 +207,15 @@ export interface EarlyAccessRegistrationOptions {
   // assumptions. Each one is the exact place a real source is injected.
   readonly store?: EarlyAccessCommerceStore;
   readonly identity?: EarlyAccessIdentityDirectory;
+  /**
+   * The Early Access customer roster and the session-to-customer bindings the
+   * DEFAULT identity directory resolves through. Injected together, they are
+   * the durable-store seam; defaulted, they are in-memory and hold nothing,
+   * so identity resolves nobody until a verification door writes a binding
+   * and the shared password alone still buys no orders.
+   */
+  readonly customers?: EarlyAccessCustomerRepository;
+  readonly sessionBindings?: SessionBindingStore;
   readonly agreements?: EarlyAccessAgreementGate;
   readonly suppliers?: EarlyAccessSupplierDirectory;
   readonly shipping?: EarlyAccessShippingPolicy;
@@ -349,12 +367,27 @@ export function registerPrivateEarlyAccessApi(
   // against another picture of the world.
   const store = options.store ?? new InMemoryEarlyAccessCommerceStore();
   const audit = options.audit ?? new InMemoryEarlyAccessAuditSink();
+  // THE customer identity, resolved through the real directory rather than a
+  // hardwired nobody. The reader yields the same hashed session id the session
+  // repository stores, and the roster and bindings are the injectable stores
+  // above. An empty store resolves nobody, so the fail-closed behaviour of the
+  // old NoEarlyAccessIdentity default is preserved exactly; what changed is
+  // that the seam a durable roster mounts into now exists, in one place.
+  const customers = options.customers ?? new InMemoryEarlyAccessCustomerRepository();
+  const sessionBindings = options.sessionBindings ?? new InMemorySessionBindingStore();
+  const identity =
+    options.identity ??
+    new EarlyAccessCustomerDirectory({
+      readSessionId: createEarlyAccessSessionIdReader(deps),
+      bindings: sessionBindings,
+      customers,
+    });
   const commerce: EarlyAccessOrderRouteDependencies = {
     resolveSession,
     catalog,
     releases,
     store,
-    identity: options.identity ?? new NoEarlyAccessIdentity(),
+    identity,
     agreements: options.agreements ?? new NoEarlyAccessAgreements(),
     suppliers: options.suppliers ?? new NoEarlyAccessSuppliers(),
     shipping: options.shipping ?? new NoEarlyAccessShipping(),
