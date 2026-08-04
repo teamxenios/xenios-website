@@ -32,6 +32,13 @@ export interface EarlyAccessCatalogContext {
   readonly member?: MemberRow | null;
   /** The named human the admin guard authenticated, for a founder review load. */
   readonly reviewActor?: string | null;
+  /**
+   * The APPROVED Early Access customer the identity directory resolved for
+   * this session, or null. The one authorization that yields the
+   * PRIVATE_EARLY_ACCESS audience. Mirrors the canonical context in
+   * catalog/product-control-source.ts; keep the two in step.
+   */
+  readonly earlyAccessCustomer?: { readonly customerRef: string } | null;
 }
 
 export interface EarlyAccessCatalogSource {
@@ -89,7 +96,11 @@ function send(response: ResponsePort, status: number, body: unknown): void {
 
 export function createEarlyAccessCatalogRoute(deps: EarlyAccessReleaseRouteDependencies) {
   return async (
-    request: { cookieHeader?: unknown; member?: MemberRow | null },
+    request: {
+      cookieHeader?: unknown;
+      member?: MemberRow | null;
+      earlyAccessCustomer?: { readonly customerRef: string } | null;
+    },
     response: ResponsePort,
   ): Promise<void> => {
     try {
@@ -110,11 +121,14 @@ export function createEarlyAccessCatalogRoute(deps: EarlyAccessReleaseRouteDepen
         return;
       }
 
-      // The member the server already authenticated for THIS request, when
-      // there is one. It is the only thing that can authorize the audience an
-      // Early Access price is resolved for, and it never comes from the body.
+      // What the server already established about THIS request's caller. The
+      // approved Early Access customer is the one thing that can authorize
+      // the PRIVATE_EARLY_ACCESS audience; the member row rides along for
+      // provenance-parity reads and authorizes nothing here. Neither ever
+      // comes from the body.
       const projection = await deps.catalog.load(new Date(now), {
         member: request?.member ?? null,
+        earlyAccessCustomer: request?.earlyAccessCustomer ?? null,
       });
       const releases = await deps.ledger.all();
       const storefront = buildEarlyAccessStorefront({ projection, releases });

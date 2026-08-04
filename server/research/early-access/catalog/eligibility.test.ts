@@ -56,7 +56,7 @@ function price(overrides: Partial<AdminProductPrice> = {}): AdminProductPrice {
     id: "price-ea-0001",
     productId: PRODUCT_ID,
     variantId: VARIANT_ID,
-    audience: "member",
+    audience: "private_early_access",
     amountCents: 24_900,
     currency: "USD",
     effectiveAt: "2026-07-01T00:00:00.000Z",
@@ -163,9 +163,9 @@ function satisfied(
   return {
     product: product(),
     audience: {
-      audience: "member",
+      audience: "private_early_access",
       state: "authorized",
-      sourceVersion: "member-v1",
+      sourceVersion: "early_access_customer:cus-ea-0001",
       evaluatedAt: EVALUATED_AT,
     },
     currency: "USD",
@@ -392,9 +392,12 @@ describe("assessEarlyAccessEligibility", () => {
   });
 
   describe("audience", () => {
-    it("serves the member audience only", () => {
-      expect(EARLY_ACCESS_PERMITTED_AUDIENCES).toEqual(["member"]);
-      for (const audience of ["retail", "professional", "wholesale"] as const) {
+    it("serves the private early access audience only", () => {
+      expect(EARLY_ACCESS_PERMITTED_AUDIENCES).toEqual(["private_early_access"]);
+      // "member" is in this list on purpose: a signed-in member who never
+      // became an approved Early Access customer is refused exactly as a
+      // password-only session is. Membership is not Early Access approval.
+      for (const audience of ["retail", "member", "professional", "wholesale"] as const) {
         expect(
           blockersFor(
             satisfied({
@@ -423,9 +426,9 @@ describe("assessEarlyAccessEligibility", () => {
           blockersFor(
             satisfied({
               audience: {
-                audience: "member",
+                audience: "private_early_access",
                 state: "authorized",
-                sourceVersion: "member-v1",
+                sourceVersion: "early_access_customer:cus-ea-0001",
                 evaluatedAt: EVALUATED_AT,
                 ...override,
               },
@@ -435,14 +438,37 @@ describe("assessEarlyAccessEligibility", () => {
       }
     });
 
-    it("blocks a member audience on a variant not scoped to members", () => {
+    it("refuses the member audience even on a member-eligible variant", () => {
+      // The silent-substitution case: a real, authorized member audience is
+      // still not Early Access approval, so it never projects an eligible row.
       expect(
         blockersFor(
           satisfied({
-            product: product({ variants: [variant({ memberEligible: false })] }),
+            audience: {
+              audience: "member",
+              state: "authorized",
+              sourceVersion: "member-v1",
+              evaluatedAt: EVALUATED_AT,
+            },
           }),
         ),
       ).toContain("AUDIENCE_NOT_PERMITTED");
+    });
+
+    it("does not read member eligibility for the private early access audience", () => {
+      // memberEligible scopes the MEMBER surface. The Early Access audience is
+      // governed by the census (releases, blockers, offer state), not by a
+      // member-commerce flag, so a non-member-eligible variant stays eligible
+      // here when every real condition holds.
+      expect(
+        assessEarlyAccessEligibility(
+          satisfied({
+            product: product({ variants: [variant({ memberEligible: false })] }),
+          }),
+          variant({ memberEligible: false }),
+          NOW,
+        ),
+      ).toEqual({ eligible: true });
     });
   });
 

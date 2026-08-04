@@ -348,11 +348,31 @@ export function registerPrivateEarlyAccessApi(
   const catalog =
     options.catalog ?? createEarlyAccessCatalogSourceForDeployment(configured);
   const releases = options.releases ?? new InMemoryEarlyAccessReleaseLedger();
+  // THE customer identity, resolved through the real directory rather than a
+  // hardwired nobody. The reader yields the same hashed session id the session
+  // repository stores, and the roster and bindings are the injectable stores
+  // above. An empty store resolves nobody, so the fail-closed behaviour of the
+  // old NoEarlyAccessIdentity default is preserved exactly; what changed is
+  // that the seam a durable roster mounts into now exists, in one place.
+  // Composed BEFORE the catalog mount because the catalog's audience is the
+  // customer this directory resolves.
+  const customers = options.customers ?? new InMemoryEarlyAccessCustomerRepository();
+  const sessionBindings = options.sessionBindings ?? new InMemorySessionBindingStore();
+  const identity =
+    options.identity ??
+    new EarlyAccessCustomerDirectory({
+      readSessionId: createEarlyAccessSessionIdReader(deps),
+      bindings: sessionBindings,
+      customers,
+    });
+
   const routeDependencies = {
     resolveSession,
-    // The CUSTOMER source. Its audience comes from the member row the guard
-    // authenticated and from nothing else, so a review actor reaching this
-    // context authorizes nothing.
+    // The CUSTOMER source. Its audience comes from the APPROVED Early Access
+    // customer the identity directory resolved for this session, and from
+    // nothing else: a member row rides along for provenance parity but
+    // authorizes nothing, and a review actor reaching this context authorizes
+    // nothing.
     catalog,
     ledger: releases,
     now,
@@ -360,13 +380,19 @@ export function registerPrivateEarlyAccessApi(
   const catalogRoute = createEarlyAccessCatalogRoute(routeDependencies);
   const resolveMember = options.resolveMember ?? (async () => null);
   app.get(EARLY_ACCESS_CATALOG_PATH, (req: Request, res: Response) => {
-    void resolveMember(req)
-      .then((member) =>
-        catalogRoute({ cookieHeader: req.headers.cookie, member }, res as never),
+    void Promise.all([
+      resolveMember(req),
+      identity.resolve({ cookieHeader: req.headers.cookie }),
+    ])
+      .then(([member, earlyAccessCustomer]) =>
+        catalogRoute(
+          { cookieHeader: req.headers.cookie, member, earlyAccessCustomer },
+          res as never,
+        ),
       )
       .catch(() => {
-        // A member lookup that threw is not "no member": it is a broken read,
-        // and answering it as an anonymous catalog would quietly downgrade a
+        // A lookup that threw is not "nobody": it is a broken read, and
+        // answering it as an anonymous catalog would quietly downgrade a
         // signed-in customer. It answers unavailable instead.
         res.status(503).json({ ok: false, code: "unavailable" });
       });
@@ -378,21 +404,6 @@ export function registerPrivateEarlyAccessApi(
   // against another picture of the world.
   const store = options.store ?? new InMemoryEarlyAccessCommerceStore();
   const audit = options.audit ?? new InMemoryEarlyAccessAuditSink();
-  // THE customer identity, resolved through the real directory rather than a
-  // hardwired nobody. The reader yields the same hashed session id the session
-  // repository stores, and the roster and bindings are the injectable stores
-  // above. An empty store resolves nobody, so the fail-closed behaviour of the
-  // old NoEarlyAccessIdentity default is preserved exactly; what changed is
-  // that the seam a durable roster mounts into now exists, in one place.
-  const customers = options.customers ?? new InMemoryEarlyAccessCustomerRepository();
-  const sessionBindings = options.sessionBindings ?? new InMemorySessionBindingStore();
-  const identity =
-    options.identity ??
-    new EarlyAccessCustomerDirectory({
-      readSessionId: createEarlyAccessSessionIdReader(deps),
-      bindings: sessionBindings,
-      customers,
-    });
   const commerce: EarlyAccessOrderRouteDependencies = {
     resolveSession,
     catalog,

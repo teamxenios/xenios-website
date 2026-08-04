@@ -58,7 +58,7 @@ function price(overrides: Partial<AdminProductPrice> = {}): AdminProductPrice {
     id: "price-ea-src-0001",
     productId: PRODUCT_ID,
     variantId: VARIANT_ID,
-    audience: "member",
+    audience: "private_early_access",
     amountCents: 24_900,
     currency: "USD",
     effectiveAt: "2026-07-01T00:00:00.000Z",
@@ -184,7 +184,7 @@ function readyDeclaredFacts(
   return {
     productId: PRODUCT_ID,
     audience: {
-      audience: "member",
+      audience: "private_early_access",
       state: "authorized",
       sourceVersion: "member-v1",
       evaluatedAt: EVALUATED_AT,
@@ -381,7 +381,7 @@ describe("ProductControlCatalogSource, with declared facts wired", () => {
     expect(row.purchasable).toBe(true);
     expect(row.priceCents).toBe(24_900);
     expect(row.currency).toBe("USD");
-    expect(row.audience).toBe("member");
+    expect(row.audience).toBe("private_early_access");
     expect(row.availability).toBe("available");
     expect(row.supplierReady).toBe(true);
     expect(row.quantityLimit).toBe(3);

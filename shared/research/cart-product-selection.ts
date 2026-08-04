@@ -11,6 +11,13 @@ export const CART_PURCHASE_AUDIENCES = [
   "member",
   "professional",
   "wholesale",
+  /**
+   * Private Early Access. Explicit and additive: the Early Access password
+   * grants portal access only, and an approved Early Access customer is not a
+   * member, so their authorization is stated in its own vocabulary rather than
+   * borrowed from one. No member surface constructs this value.
+   */
+  "private_early_access",
 ] as const;
 
 export type CartPurchaseAudience =

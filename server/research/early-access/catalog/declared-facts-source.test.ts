@@ -10,6 +10,7 @@ import type { MemberRow } from "../../member-auth";
 import type { VariantInventoryFactsReader } from "../../catalog/member-catalog-service";
 import { memberAudience } from "../../catalog/member-catalog-service";
 import {
+  EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE,
   MEMBER_ROW_AUDIENCE_SOURCE,
   ProductControlDeclaredFactsReader,
   REVIEW_AUDIENCE_SOURCE,
@@ -242,7 +243,9 @@ describe("the audience comes from the member catalog's own derivation", () => {
     expect(
       REVIEW_AUDIENCE_SOURCE.authorize({ reviewActor: "founder@example.com" }, EVALUATED_AT),
     ).toEqual({
-      audience: "member",
+      // The review asks what a PRIVATE_EARLY_ACCESS customer could be sold,
+      // because that is the only audience Early Access sells to.
+      audience: "private_early_access",
       state: "authorized",
       sourceVersion: "founder_review:founder@example.com",
       evaluatedAt: EVALUATED_AT,
@@ -417,8 +420,15 @@ describe("a unit with every real fact in place", () => {
       canonicalName: "PT-141 (Bremelanotide)",
       slug: "pt-141-bremelanotide",
       variants: [variant({ sku: "R360-PT141-10MG-VIAL", strength: "10 mg" })],
+      // The founder-approved amount for the audience Early Access sells to.
+      prices: [price({ audience: "private_early_access" })],
     });
-    const facts = await factsFor(READY_INVENTORY, { member: member() }, corroborated);
+    const facts = await factsFor(
+      READY_INVENTORY,
+      { earlyAccessCustomer: { customerRef: "cus-ea-0001" } },
+      corroborated,
+      EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE,
+    );
     const eligibility = assessEarlyAccessEligibility(
       {
         product: corroborated,

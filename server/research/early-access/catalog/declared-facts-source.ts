@@ -120,6 +120,38 @@ export const MEMBER_ROW_AUDIENCE_SOURCE: EarlyAccessAudienceSource = {
 };
 
 /**
+ * THE customer audience for Private Early Access, and the default.
+ *
+ * It reads ONLY `context.earlyAccessCustomer`: the customer the identity
+ * directory resolved from the session's verified binding, which exists only
+ * for an APPROVED customer. Everything else is null and blocks:
+ *
+ *   - a password-only session (portal access is not identity),
+ *   - an unapproved, suspended, or revoked customer (the directory refuses),
+ *   - a signed-in member who never became an Early Access customer (member is
+ *     a different audience and is deliberately NOT read here, so a member row
+ *     can never silently substitute for Early Access approval),
+ *   - anything the browser claims about who it is (context is server-built).
+ *
+ * The provenance names the exact customer, so a projection is attributable to
+ * the person it was authorized for.
+ */
+export const EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE: EarlyAccessAudienceSource = {
+  authorize(context, evaluatedAt) {
+    const customer = context.earlyAccessCustomer ?? null;
+    if (customer === null) return null;
+    const reference = customer.customerRef?.trim() ?? "";
+    if (reference.length === 0) return null;
+    return {
+      audience: "private_early_access",
+      state: "authorized",
+      sourceVersion: `early_access_customer:${reference}`,
+      evaluatedAt,
+    };
+  },
+};
+
+/**
  * The audience a FOUNDER REVIEW is evaluated under. Never a customer's.
  *
  * A founder deciding whether a unit may be released is not a member, and has no
@@ -154,8 +186,12 @@ export const REVIEW_AUDIENCE_SOURCE: EarlyAccessAudienceSource = {
     // A blank actor is not a named human, and a review with no named human
     // behind it authorizes nothing.
     if (actor.length === 0) return null;
+    // The review asks what a PRIVATE_EARLY_ACCESS customer could be sold,
+    // because that is the only audience Early Access sells to. Evaluating the
+    // review under any other audience would approve releases whose
+    // fingerprints no real customer projection ever reproduces.
     return {
-      audience: "member",
+      audience: "private_early_access",
       state: "authorized",
       sourceVersion: `founder_review:${actor}`,
       evaluatedAt,
@@ -293,7 +329,7 @@ export class ProductControlDeclaredFactsReader
 
   constructor(dependencies: ProductControlDeclaredFactsDependencies) {
     this.inventory = dependencies.inventory;
-    this.audience = dependencies.audience ?? MEMBER_ROW_AUDIENCE_SOURCE;
+    this.audience = dependencies.audience ?? EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE;
     this.currency = dependencies.currency;
     this.supplierConfirmations = dependencies.supplierConfirmations ?? null;
   }

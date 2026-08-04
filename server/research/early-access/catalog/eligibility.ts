@@ -112,7 +112,15 @@ export type EarlyAccessDisputeState = (typeof EARLY_ACCESS_DISPUTE_STATES)[numbe
  * reviewed change, never a runtime default.
  */
 export const EARLY_ACCESS_PERMITTED_AUDIENCES: readonly CartPurchaseAudience[] = [
-  "member",
+  /**
+   * The ONLY audience Early Access sells to. Founder decision (war room):
+   * the password grants portal access, membership grants membership, and
+   * neither is Early Access approval. An approved, session-bound Early
+   * Access customer is the one authorization that projects eligible rows,
+   * so an unrelated signed-in member is refused exactly as a password-only
+   * session is.
+   */
+  "private_early_access",
 ] as const;
 
 /**

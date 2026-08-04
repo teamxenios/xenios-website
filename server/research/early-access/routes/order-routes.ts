@@ -448,7 +448,13 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
       // PRODUCT CONTROL. One row, or the unit is not something we can sell. An
       // absent row and an ambiguous one answer the same as a held one, so the
       // endpoint does not report what is in the catalog to someone probing it.
-      const projection = await deps.catalog.load(new Date(nowMs));
+      // The load carries the SAME customer the identity directory resolved for
+      // this request, so the order path projects under the identical
+      // PRIVATE_EARLY_ACCESS audience the storefront showed this customer,
+      // never an anonymous or body-supplied one.
+      const projection = await deps.catalog.load(new Date(nowMs), {
+        earlyAccessCustomer: { customerRef: customer.customerRef },
+      });
       const matches = projection.rows.filter(
         (row) => row.productId === body.productId && row.variantId === body.variantId,
       );

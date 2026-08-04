@@ -232,7 +232,10 @@ describe("the customer catalog route and an unreachable catalog", () => {
       { cookieHeader: "x=1", member },
       port,
     );
-    expect(catalog.contexts).toEqual([{ member }]);
+    // An absent customer is passed as an explicit null, never omitted: an
+    // unbound session must arrive as "nobody", not as a missing key a reader
+    // could default.
+    expect(catalog.contexts).toEqual([{ member, earlyAccessCustomer: null }]);
   });
 });
 

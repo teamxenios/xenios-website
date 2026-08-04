@@ -62,7 +62,7 @@ import {
 import { buildProductionVariantInventoryFactsReader } from "../../catalog/member-catalog-service";
 import type { MemberRow } from "../../member-auth";
 import {
-  MEMBER_ROW_AUDIENCE_SOURCE,
+  EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE,
   ProductControlDeclaredFactsReader,
   type EarlyAccessAudienceSource,
 } from "./declared-facts-source";
@@ -103,6 +103,15 @@ export interface EarlyAccessCatalogContext {
    * the review audience reads it; the customer source ignores it entirely.
    */
   readonly reviewActor?: string | null;
+  /**
+   * The APPROVED Early Access customer the identity directory resolved for
+   * this request's session, when there is one. The directory resolves only a
+   * session bound through a verification door to an APPROVED customer, so a
+   * password-only session, an unapproved customer, and a signed-in member who
+   * never became an Early Access customer all arrive here as null, which
+   * blocks. Never from the body.
+   */
+  readonly earlyAccessCustomer?: { readonly customerRef: string } | null;
 }
 
 export interface EarlyAccessCatalogSource {
@@ -379,7 +388,7 @@ export class UnavailableEarlyAccessCatalogSource
  * block. Nothing here substitutes a permissive value for them.
  */
 export function createProductionEarlyAccessCatalogSource(
-  audience: EarlyAccessAudienceSource = MEMBER_ROW_AUDIENCE_SOURCE,
+  audience: EarlyAccessAudienceSource = EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE,
 ): ProductControlCatalogSource {
   const currency = resolveEarlyAccessSettlementCurrency();
   return new ProductControlCatalogSource({
@@ -404,7 +413,7 @@ export function createProductionEarlyAccessCatalogSource(
  */
 export function createEarlyAccessCatalogSourceForDeployment(
   configured: boolean,
-  audience: EarlyAccessAudienceSource = MEMBER_ROW_AUDIENCE_SOURCE,
+  audience: EarlyAccessAudienceSource = EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE,
 ): EarlyAccessCatalogSource {
   if (!configured) {
     return new UnavailableEarlyAccessCatalogSource(

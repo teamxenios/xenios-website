@@ -55,7 +55,7 @@ function price(overrides: Partial<AdminProductPrice> = {}): AdminProductPrice {
     id: "price-ea-0001",
     productId: PRODUCT_ID,
     variantId: VARIANT_ID,
-    audience: "member",
+    audience: "private_early_access",
     amountCents: 24_900,
     currency: "USD",
     effectiveAt: "2026-07-01T00:00:00.000Z",
@@ -161,7 +161,7 @@ function satisfied(
   return {
     product: product(),
     audience: {
-      audience: "member",
+      audience: "private_early_access",
       state: "authorized",
       sourceVersion: "member-v1",
       evaluatedAt: EVALUATED_AT,
@@ -192,7 +192,7 @@ describe("projectEarlyAccessCatalog", () => {
       presentation: "Single-use vial",
       priceCents: 24_900,
       currency: "USD",
-      audience: "member",
+      audience: "private_early_access",
       availability: "available",
       offerState: "APPROVAL_REQUIRED_PURCHASE",
       description: "A research catalog item held for internal review.",
