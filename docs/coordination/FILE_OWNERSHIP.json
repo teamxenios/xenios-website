@@ -791,6 +791,17 @@
       ]
     },
     {
+      "id": "OWNER-W2-PRIVATE-EARLY-ACCESS-SERVER-ROUTE",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/early-access/private-access-route.test.ts",
+        "server/research/early-access/private-access-route.ts"
+      ]
+    },
+    {
       "id": "OWNER-CODEX-CONTROL-INTEGRATION-STATUS-CONFIGURATION-QUEUE",
       "owner": "Codex Control",
       "lane": "integration-status-configuration-queue",
