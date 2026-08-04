@@ -13,6 +13,19 @@ import {
 const NOW = "2026-08-04T12:00:00.000Z";
 const LATER = "2026-08-04T12:30:00.000Z";
 
+/**
+ * One filename per allowed content type, with a deliberately matching
+ * extension. Every test that enumerates the allowlist reads this map, so
+ * widening the allowlist fails loudly here once instead of silently producing
+ * an undefined filename in several places.
+ */
+const MATCHING_FILENAME: Record<(typeof EARLY_ACCESS_PROOF_CONTENT_TYPES)[number], string> = {
+  "image/png": "proof.png",
+  "image/jpeg": "proof.JPEG",
+  "image/webp": "proof.webp",
+  "application/pdf": "bank-statement.pdf",
+};
+
 function order(overrides: Record<string, unknown> = {}): EarlyAccessOrder {
   const result = createEarlyAccessOrder({
     orderId: "ord_ea_0001",
@@ -59,13 +72,11 @@ describe("payment proof metadata", () => {
   });
 
   it("accepts every allowed content type with a matching extension", () => {
-    const filenames: Record<string, string> = {
-      "image/png": "proof.png",
-      "image/jpeg": "proof.JPEG",
-      "application/pdf": "bank-statement.pdf",
-    };
     for (const contentType of EARLY_ACCESS_PROOF_CONTENT_TYPES) {
-      const result = submit({ contentType, filename: filenames[contentType] });
+      const result = submit({
+        contentType,
+        filename: MATCHING_FILENAME[contentType],
+      });
       expect(result.ok).toBe(true);
     }
   });
@@ -171,11 +182,10 @@ describe("payment proof cannot mark a payment received", () => {
     for (const status of ["awaiting_payment", "payment_under_review"] as const) {
       for (const contentType of EARLY_ACCESS_PROOF_CONTENT_TYPES) {
         for (const method of EARLY_ACCESS_PAYMENT_OPTION_CODES) {
-          const filename = contentType === "application/pdf" ? "proof.pdf" : "proof.jpg";
           const result = describeProofSubmission({
             order: order({ status }),
             proofId: "prf_0001",
-            filename: contentType === "image/png" ? "proof.png" : filename,
+            filename: MATCHING_FILENAME[contentType],
             contentType,
             byteSize: 1_024,
             submittedAt: LATER,
@@ -232,5 +242,37 @@ describe("payment proof hostile input", () => {
     expect(() => {
       (result.value as unknown as Record<string, unknown>).paid = true;
     }).toThrow();
+  });
+});
+
+describe("proof format allowlist agrees with the upload route", () => {
+  it("accepts a webp screenshot, the common phone bank-transfer proof", () => {
+    const result = submit({ filename: "transfer.webp", contentType: "image/webp" });
+    expect(result.ok).toBe(true);
+  });
+
+  it("still refuses a filename whose extension contradicts the declared type", () => {
+    expect(submit({ filename: "transfer.webp", contentType: "image/png" }).ok).toBe(false);
+    expect(submit({ filename: "transfer.png", contentType: "image/webp" }).ok).toBe(false);
+  });
+
+  it("pins the domain allowlist to the upload route's, in both directions", async () => {
+    // The bug this pins: the route accepted webp while the domain did not, so a
+    // valid proof passed the door and was refused one layer deeper. Whichever
+    // list is widened next, the other must be widened with it.
+    const { EARLY_ACCESS_PROOF_UPLOAD_TYPES } = await import(
+      "../routes/order-routes"
+    );
+    expect([...EARLY_ACCESS_PROOF_CONTENT_TYPES].sort()).toEqual(
+      Object.keys(EARLY_ACCESS_PROOF_UPLOAD_TYPES).sort(),
+    );
+    for (const contentType of EARLY_ACCESS_PROOF_CONTENT_TYPES) {
+      const routeExtensions = [...EARLY_ACCESS_PROOF_UPLOAD_TYPES[contentType]].sort();
+      const accepted = routeExtensions.filter(
+        (extension: string) =>
+          submit({ filename: `proof${extension}`, contentType }).ok,
+      );
+      expect(accepted).toEqual(routeExtensions);
+    }
   });
 });

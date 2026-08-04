@@ -857,9 +857,10 @@ export function createEarlyAccessInvoiceRoute(deps: EarlyAccessOrderRouteDepende
  * an image named for a document are both refused here.
  *
  * WEBP is listed because a phone screenshot is commonly webp and refusing it
- * would send customers away to convert a file by hand. See the note on
- * `describeProofSubmission` below: the domain's own allowlist has not been
- * widened to match yet, and until it is, a webp is refused one layer deeper.
+ * would send customers away to convert a file by hand. The domain allowlist in
+ * payment-proof.ts now carries webp too, so this route and the layer that
+ * actually stores agree; a regression test pins the two lists together, because
+ * a silent divergence accepts a proof at the door and refuses it deeper.
  */
 export const EARLY_ACCESS_PROOF_UPLOAD_TYPES: Readonly<Record<string, readonly string[]>> =
   Object.freeze({

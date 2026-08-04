@@ -556,20 +556,19 @@ describe("submitting payment proof", () => {
     }
   });
 
-  it("PINS the webp gap: the route allows it and the domain does not, yet", async () => {
-    // EARLY_ACCESS_PROOF_UPLOAD_TYPES lists image/webp because a phone
-    // screenshot is commonly webp, but EARLY_ACCESS_PROOF_CONTENT_TYPES in
-    // commerce/payment-proof.ts still lists png, jpeg and pdf only, and that
-    // module belongs to another lane. Until it is widened this refuses one layer
-    // deeper. When the domain list grows, this test flips to 202 and the routes
-    // need no change at all.
+  it("accepts a webp screenshot end to end, the gap the route once had", async () => {
+    // This test previously pinned a real defect: the route accepted webp while
+    // EARLY_ACCESS_PROOF_CONTENT_TYPES in commerce/payment-proof.ts did not, so
+    // a customer's phone screenshot passed the door and was refused one layer
+    // deeper. The domain allowlist now carries webp, and as that test predicted,
+    // this flipped to 202 with no route change. payment-proof.test.ts pins the
+    // two lists to each other so they cannot diverge again.
     const { app, cookie, orderNumber } = await placedOrder();
     const submitted = await request(app)
       .post(`${ORDERS}/${orderNumber}/payment-proof`)
       .set("Cookie", cookie)
       .send({ ...PROOF, contentType: "image/webp", filename: "transfer.webp" });
-    expect(submitted.status).toBe(415);
-    expect(submitted.body.code).toBe("CONTENT_TYPE_UNSUPPORTED");
+    expect(submitted.status).toBe(202);
   });
 
   it("enforces the size ceiling", async () => {
