@@ -55,6 +55,8 @@ import type {
   CartInventoryEligibility,
 } from "@shared/research/cart-product-selection";
 import { supplierConfirmedFulfillmentFact } from "../ops/supplier-confirmation";
+import type { UnitHoldReader } from "../ops/unit-holds";
+import type { EarlyAccessHoldBlocker } from "./eligibility";
 import type { ProductAvailability, ProductLane } from "@shared/research/catalog";
 import {
   resolvePrivateLaneOfferMode,
@@ -308,6 +310,15 @@ export interface ProductControlDeclaredFactsDependencies {
    * inventory-only and every lot-less unit truthfully blocks.
    */
   readonly supplierConfirmations?: SupplierConfirmationLiveReader;
+  /**
+   * Recorded prohibitions, loaded at EVERY projection (QA R4). An active
+   * REGULATORY_HOLD, RECALL, STOP_SHIP, or SUPPLIER_QUALITY_HOLD recorded
+   * after a founder release lands in the blockers on the next read, makes
+   * the release fingerprint stale, and refuses the release under its own
+   * non-waivable name. Absent (the default), only the canonical record's
+   * regulatory hold applies.
+   */
+  readonly holds?: UnitHoldReader;
 }
 
 /**
@@ -326,12 +337,14 @@ export class ProductControlDeclaredFactsReader
   private readonly audience: EarlyAccessAudienceSource;
   private readonly currency: string;
   private readonly supplierConfirmations: SupplierConfirmationLiveReader | null;
+  private readonly holds: UnitHoldReader | null;
 
   constructor(dependencies: ProductControlDeclaredFactsDependencies) {
     this.inventory = dependencies.inventory;
     this.audience = dependencies.audience ?? EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE;
     this.currency = dependencies.currency;
     this.supplierConfirmations = dependencies.supplierConfirmations ?? null;
+    this.holds = dependencies.holds ?? null;
   }
 
   async readDeclaredFacts(input: {
@@ -391,12 +404,21 @@ export class ProductControlDeclaredFactsReader
       product.qualityDocumentState,
       inventory.lotCoa.state,
     );
+    // Recorded prohibitions for THIS projection instant, merged with the
+    // canonical record's own regulatory hold. Loaded fresh every read, so a
+    // hold recorded after a release is in this answer, not the next deploy's.
+    const activeHolds = await this.activeHoldsFor(
+      product,
+      variant,
+      evaluatedAt,
+      canonical.regulatoryHoldReason !== null,
+    );
     const offerState = resolveEarlyAccessOfferState({
       product,
       variant,
       approvedAmountCents: this.approvedAmountCents(product, variant, audience, evaluatedAt),
       coaEvidence,
-      regulatoryHold: canonical.regulatoryHoldReason !== null,
+      regulatoryHold: activeHolds.includes("REGULATORY_HOLD"),
     });
 
     const fulfillmentOwner = fulfillmentOwnerForLane(product.lane);
@@ -428,7 +450,34 @@ export class ProductControlDeclaredFactsReader
       // unit with NO recorded dispute: cleared only when a second, independent
       // record names the same presentation, and unknown otherwise.
       strengthDispute: canonical.presentationCorroborated ? "cleared" : "unknown",
+      activeHolds,
     };
+  }
+
+  /**
+   * Active recorded holds for one exact unit, merged with the canonical
+   * record's regulatory hold. A broken registry read RAISES: "could not
+   * check the prohibitions" must never render as "nothing prohibits".
+   */
+  private async activeHoldsFor(
+    product: AdminProductDetail,
+    variant: AdminProductVariant,
+    evaluatedAt: string,
+    canonicalRegulatoryHold: boolean,
+  ): Promise<readonly EarlyAccessHoldBlocker[]> {
+    let recorded: readonly EarlyAccessHoldBlocker[] = [];
+    if (this.holds !== null) {
+      try {
+        recorded = await this.holds.activeHoldsForUnit(product.id, variant.id, evaluatedAt);
+      } catch (cause) {
+        throw new EarlyAccessDeclaredFactsError(
+          `Recorded holds could not be read for ${variant.sku}.`,
+          { cause },
+        );
+      }
+    }
+    if (!canonicalRegulatoryHold) return recorded;
+    return ["REGULATORY_HOLD", ...recorded.filter((hold) => hold !== "REGULATORY_HOLD")];
   }
 
   /**

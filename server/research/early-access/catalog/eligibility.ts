@@ -88,10 +88,27 @@ export const EARLY_ACCESS_BLOCKERS = [
   "DOCUMENTATION_NOT_SATISFIED",
   "IDENTITY_DISPUTE_UNRESOLVED",
   "STRENGTH_DISPUTE_UNRESOLVED",
+  // Recorded prohibitions, emitted FIRST-CLASS rather than folded into the
+  // offer state. This is the QA R4 repair: a hold that only ever surfaced as
+  // OFFER_STATE_NOT_PURCHASABLE could be waived by an older founder release
+  // and might not even change the release fingerprint. Each of these is
+  // NON-WAIVABLE in founder-release.ts, so a hold recorded after a release
+  // makes the fingerprint stale AND refuses the release on its own name.
+  "REGULATORY_HOLD",
+  "RECALL",
+  "STOP_SHIP",
+  "SUPPLIER_QUALITY_HOLD",
   "OFFER_STATE_NOT_PURCHASABLE",
 ] as const;
 
 export type EarlyAccessBlocker = (typeof EARLY_ACCESS_BLOCKERS)[number];
+
+/** The recorded-prohibition subset. What a hold registry may assert. */
+export type EarlyAccessHoldBlocker =
+  | "REGULATORY_HOLD"
+  | "RECALL"
+  | "STOP_SHIP"
+  | "SUPPLIER_QUALITY_HOLD";
 
 /**
  * The state of a recorded dispute for one exact unit.
@@ -198,6 +215,14 @@ export interface EarlyAccessVariantFacts {
   readonly identityDispute: EarlyAccessDisputeState;
   readonly strengthDispute: EarlyAccessDisputeState;
   readonly image: EarlyAccessVariantImage | null;
+  /**
+   * Recorded prohibitions currently ACTIVE for this exact unit, loaded at
+   * projection time. Optional because a hold is a positive record: absence of
+   * the field means no registry was consulted beyond the canonical record,
+   * and absence of a hold means nothing prohibits. Every value here lands in
+   * the blockers verbatim and every one is non-waivable.
+   */
+  readonly activeHolds?: readonly EarlyAccessHoldBlocker[];
 }
 
 /**
@@ -541,6 +566,12 @@ export function assessEarlyAccessEligibility(
   }
   if (earlyAccessStrengthDisputeState(facts, variant) !== "cleared") {
     blockers.push("STRENGTH_DISPUTE_UNRESOLVED");
+  }
+  // Recorded prohibitions, verbatim and first-class. Loaded at projection
+  // time, so a hold recorded five minutes ago is in THIS answer, makes the
+  // release fingerprint stale, and refuses any release under its own name.
+  for (const hold of facts?.activeHolds ?? []) {
+    blockers.push(hold);
   }
   if (!offerStatePermitsPurchase(product, facts)) {
     blockers.push("OFFER_STATE_NOT_PURCHASABLE");

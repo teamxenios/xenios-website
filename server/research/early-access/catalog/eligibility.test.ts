@@ -209,7 +209,14 @@ describe("assessEarlyAccessEligibility", () => {
       currency: "",
       variantFacts: [],
     };
-    expect(blockersFor(record)).toEqual([...EARLY_ACCESS_BLOCKERS]);
+    // Every blocker the record can emit. The four recorded-prohibition
+    // blockers are absent because a hold is a positive record: a draft with
+    // no facts has nobody asserting REGULATORY_HOLD, RECALL, STOP_SHIP, or
+    // SUPPLIER_QUALITY_HOLD, and everything else already holds the unit.
+    const HOLD_BLOCKERS = ["REGULATORY_HOLD", "RECALL", "STOP_SHIP", "SUPPLIER_QUALITY_HOLD"];
+    expect(blockersFor(record)).toEqual(
+      EARLY_ACCESS_BLOCKERS.filter((code) => !HOLD_BLOCKERS.includes(code)),
+    );
   });
 
   it("never infers eligibility from absent facts", () => {
