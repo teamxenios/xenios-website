@@ -25,6 +25,11 @@ import type {
   ConsumedTokenStore,
   SessionBindingStore,
 } from "../identity/identity-verification";
+import type {
+  EarlyAccessReservation,
+  EarlyAccessReservationExpiryException,
+} from "../commerce/reservation";
+import type { EarlyAccessReservationStore } from "../commerce/reservation-store";
 
 /**
  * The refusing stores, for a production process whose durable configuration
@@ -127,6 +132,35 @@ export class RefusingEarlyAccessCustomerRepository implements EarlyAccessCustome
 export class RefusingConsumedTokenStore implements ConsumedTokenStore {
   async consume(_tokenId: string): Promise<boolean> {
     return refuse("token consume");
+  }
+}
+
+export class RefusingEarlyAccessReservationStore implements EarlyAccessReservationStore {
+  async insert(_reservation: EarlyAccessReservation): Promise<boolean> {
+    return refuse("reservation insert");
+  }
+  async byId(_reservationId: string): Promise<EarlyAccessReservation | null> {
+    return refuse("reservation byId");
+  }
+  async byOrderDraft(_orderDraftId: string): Promise<EarlyAccessReservation | null> {
+    return refuse("reservation byOrderDraft");
+  }
+  async update(_reservation: EarlyAccessReservation): Promise<boolean> {
+    return refuse("reservation update");
+  }
+  async activeForUnit(
+    _productId: string,
+    _variantId: string,
+  ): Promise<readonly EarlyAccessReservation[]> {
+    return refuse("reservation activeForUnit");
+  }
+  async recordExpiryException(
+    _exception: EarlyAccessReservationExpiryException,
+  ): Promise<boolean> {
+    return refuse("reservation recordExpiryException");
+  }
+  async expiryExceptions(): Promise<readonly EarlyAccessReservationExpiryException[]> {
+    return refuse("reservation expiryExceptions");
   }
 }
 
