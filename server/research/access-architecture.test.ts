@@ -57,6 +57,10 @@ vi.mock("../supabase", () => ({
 import { registerLegacyResearchOrderContainment, registerResearchApi } from "./index";
 import { registerMemberAccessApi } from "./guards";
 import { requireMember } from "./member-auth";
+import {
+  PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH,
+  createPrivateEarlyAccessPaymentOptionsContainmentMiddleware,
+} from "./early-access/private-access-route";
 
 const ENV_KEYS = [
   "RESEARCH_ACCESS_PASSWORD",
@@ -95,15 +99,127 @@ async function passwordCookie(app: express.Express): Promise<string> {
 it("mounts legacy order containment before both production body parsers", () => {
   const productionSource = readFileSync(new URL("../index.ts", import.meta.url), "utf8");
   const gateCall = productionSource.indexOf("registerLegacyResearchOrderContainment(app);");
+  const earlyAccessContainment = productionSource.indexOf(
+    "app.use(createPrivateEarlyAccessPaymentOptionsContainmentMiddleware());",
+  );
   const jsonParser = productionSource.indexOf("express.json({");
   const urlencodedParser = productionSource.indexOf("express.urlencoded({ extended: false })");
   const researchRouter = productionSource.indexOf("registerResearchApi(app);");
 
   expect(gateCall).toBeGreaterThan(-1);
+  expect(earlyAccessContainment).toBeGreaterThan(gateCall);
+  expect(earlyAccessContainment).toBeLessThan(jsonParser);
+  expect(earlyAccessContainment).toBeLessThan(urlencodedParser);
   expect(gateCall).toBeLessThan(jsonParser);
   expect(gateCall).toBeLessThan(urlencodedParser);
   expect(jsonParser).toBeLessThan(researchRouter);
   expect((productionSource.match(/registerLegacyResearchOrderContainment\(app\);/g) ?? [])).toHaveLength(1);
+  expect(
+    productionSource.match(
+      /app\.use\(createPrivateEarlyAccessPaymentOptionsContainmentMiddleware\(\)\);/g,
+    ) ?? [],
+  ).toHaveLength(1);
+});
+
+it("contains exact Private Early Access requests before parsing and leaves lookalikes on the Research wall", async () => {
+  const parserReached = vi.fn();
+  const rawBodyVerifier = vi.fn();
+  const app = express();
+  app.use(createPrivateEarlyAccessPaymentOptionsContainmentMiddleware());
+  app.use((_req, _res, next) => {
+    parserReached();
+    next();
+  });
+  app.use(
+    express.json({
+      verify: () => {
+        rawBodyVerifier();
+      },
+    }),
+  );
+  registerResearchApi(app);
+
+  const expectPrivateHeaders = (response: request.Response) => {
+    expect(response.headers["cache-control"]).toBe("no-store");
+    expect(response.headers.pragma).toBe("no-cache");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
+    expect(response.headers["x-robots-tag"]).toBe("noindex, nofollow");
+  };
+
+  const exactGet = await request(app).get(
+    PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH,
+  );
+  expect(exactGet.status).toBe(503);
+  expect(exactGet.body).toEqual({
+    ok: false,
+    code: "private_access_unavailable",
+  });
+  expectPrivateHeaders(exactGet);
+  expect(parserReached).not.toHaveBeenCalled();
+  expect(rawBodyVerifier).not.toHaveBeenCalled();
+
+  for (const headers of [
+    { Authorization: `Bearer ${state.goodToken}` },
+    { Cookie: "xr_access=legacy-review-cookie" },
+    { Cookie: "private_early_access=arbitrary-untrusted-cookie" },
+  ]) {
+    const response = await request(app)
+      .get(PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH)
+      .set(headers);
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({
+      ok: false,
+      code: "private_access_unavailable",
+    });
+    expectPrivateHeaders(response);
+  }
+  expect(parserReached).not.toHaveBeenCalled();
+  expect(rawBodyVerifier).not.toHaveBeenCalled();
+
+  const exactHead = await request(app).head(
+    PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH,
+  );
+  expect(exactHead.status).toBe(404);
+  expect(exactHead.text ?? "").toBe("");
+  expectPrivateHeaders(exactHead);
+  expect(parserReached).not.toHaveBeenCalled();
+  expect(rawBodyVerifier).not.toHaveBeenCalled();
+
+  const hostileBody = '{"hostile":"PRIVATE_PREPARSER_EARLY_ACCESS_MARKER"';
+  const exactPost = await request(app)
+    .post(PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH)
+    .set("Content-Type", "application/json")
+    .send(hostileBody);
+  expect(exactPost.status).toBe(404);
+  expect(exactPost.body).toEqual({ ok: false, code: "not_found" });
+  expectPrivateHeaders(exactPost);
+  expect(JSON.stringify(exactPost.body)).not.toContain(
+    "PRIVATE_PREPARSER_EARLY_ACCESS_MARKER",
+  );
+  expect(parserReached).not.toHaveBeenCalled();
+  expect(rawBodyVerifier).not.toHaveBeenCalled();
+
+  const lookalikes = [
+    `${PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH}?preview=1`,
+    `${PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH}/`,
+    `${PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH}/extra`,
+    "/api/research/early-access/payment-Options",
+    "/api/research/early-access/payment%2Doptions",
+    "/api/research/early-access/%70ayment-options",
+    "/api/research/early-access//payment-options",
+  ];
+  for (const path of lookalikes) {
+    const lookalike = await request(app).get(path);
+    expect(lookalike.status, path).toBe(401);
+    expect(lookalike.body, path).toEqual({
+      ok: false,
+      message: "Access required.",
+    });
+    expect(lookalike.headers.pragma, path).toBeUndefined();
+    expect(lookalike.headers["x-robots-tag"], path).toBeUndefined();
+  }
+  expect(parserReached).toHaveBeenCalledTimes(lookalikes.length);
+  expect(rawBodyVerifier).not.toHaveBeenCalled();
 });
 
 beforeEach(() => {
