@@ -7,6 +7,7 @@ import {
   earlyAccessPaymentOptionLabel,
   isEarlyAccessPaymentOptionCode,
   normalizeEarlyAccessPaymentOptionCodes,
+  parseEarlyAccessPaymentOptionsPresentation,
 } from "./early-access-payment-options";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -94,6 +95,200 @@ describe("Early Access payment option presentation contract", () => {
     expect(earlyAccessPaymentOptionLabel("ach_wire")).toBe(
       "ACH / bank transfer / bank wire",
     );
+  });
+
+  it("strictly decodes unresolved and canonical resolved subsets into frozen values", () => {
+    const unresolved = parseEarlyAccessPaymentOptionsPresentation({
+      state: "unresolved",
+    });
+    expect(unresolved).toEqual({ state: "unresolved" });
+    expect(Object.isFrozen(unresolved)).toBe(true);
+
+    for (const codes of [
+      [],
+      ["zelle"],
+      ["venmo", "apple_cash", "other"],
+      [...EARLY_ACCESS_PAYMENT_OPTION_CODES],
+    ]) {
+      const parsed = parseEarlyAccessPaymentOptionsPresentation({
+        state: "resolved",
+        codes,
+      });
+      expect(parsed).toEqual({ state: "resolved", codes });
+      expect(Object.isFrozen(parsed)).toBe(true);
+      expect(parsed?.state === "resolved" && Object.isFrozen(parsed.codes)).toBe(
+        true,
+      );
+    }
+  });
+
+  it("refuses primitives, arrays, null, unknown states, and non-array code fields", () => {
+    for (const value of [
+      null,
+      undefined,
+      true,
+      1,
+      "unresolved",
+      [],
+      { state: null },
+      { state: "pending" },
+      { state: "resolved" },
+      { state: "resolved", codes: null },
+      { state: "resolved", codes: "zelle" },
+      { state: "resolved", codes: { 0: "zelle", length: 1 } },
+    ]) {
+      expect(parseEarlyAccessPaymentOptionsPresentation(value)).toBeNull();
+    }
+  });
+
+  it("refuses unknown, duplicate, out-of-order, sparse, and accessor-backed codes", () => {
+    for (const codes of [
+      ["card"],
+      ["apple_pay"],
+      ["zelle", "zelle"],
+      ["venmo", "zelle"],
+      ["other", "ach_wire"],
+      ["zelle", undefined],
+      ["zelle", { code: "venmo" }],
+    ]) {
+      expect(
+        parseEarlyAccessPaymentOptionsPresentation({
+          state: "resolved",
+          codes,
+        }),
+      ).toBeNull();
+    }
+
+    const sparse = new Array(1);
+    expect(
+      parseEarlyAccessPaymentOptionsPresentation({
+        state: "resolved",
+        codes: sparse,
+      }),
+    ).toBeNull();
+
+    let getterCalls = 0;
+    const accessorCodes: unknown[] = [];
+    Object.defineProperty(accessorCodes, "0", {
+      configurable: true,
+      enumerable: true,
+      get() {
+        getterCalls += 1;
+        return "zelle";
+      },
+    });
+    expect(
+      parseEarlyAccessPaymentOptionsPresentation({
+        state: "resolved",
+        codes: accessorCodes,
+      }),
+    ).toBeNull();
+    expect(getterCalls).toBe(0);
+  });
+
+  it("refuses extra keys and private or receiving-detail canaries at every level", () => {
+    for (const value of [
+      { state: "unresolved", destinationHandle: "PRIVATE-HANDLE-CANARY" },
+      { state: "unresolved", receivingInstructions: "PRIVATE-INSTRUCTIONS" },
+      { state: "resolved", codes: [], accountNumber: "PRIVATE-ACCOUNT" },
+      { state: "resolved", codes: [], routingNumber: "PRIVATE-ROUTING" },
+      {
+        state: "resolved",
+        codes: [{ code: "zelle", phone: "PRIVATE-PHONE-CANARY" }],
+      },
+    ]) {
+      expect(parseEarlyAccessPaymentOptionsPresentation(value)).toBeNull();
+    }
+
+    const codes = ["zelle"];
+    Object.defineProperty(codes, "destinationHandle", {
+      value: "PRIVATE-HANDLE-CANARY",
+      enumerable: false,
+    });
+    expect(
+      parseEarlyAccessPaymentOptionsPresentation({ state: "resolved", codes }),
+    ).toBeNull();
+  });
+
+  it("refuses accessors without invoking them and catches throwing objects", () => {
+    let getterCalls = 0;
+    const getterPresentation = Object.defineProperty({}, "state", {
+      enumerable: true,
+      get() {
+        getterCalls += 1;
+        return "unresolved";
+      },
+    });
+    expect(
+      parseEarlyAccessPaymentOptionsPresentation(getterPresentation),
+    ).toBeNull();
+    expect(getterCalls).toBe(0);
+
+    const throwing = new Proxy(
+      {},
+      {
+        ownKeys() {
+          throw new Error("HOSTILE-OWN-KEYS-CANARY");
+        },
+      },
+    );
+    expect(parseEarlyAccessPaymentOptionsPresentation(throwing)).toBeNull();
+
+    const revocable = Proxy.revocable({ state: "unresolved" }, {});
+    revocable.revoke();
+    expect(
+      parseEarlyAccessPaymentOptionsPresentation(revocable.proxy),
+    ).toBeNull();
+  });
+
+  it("refuses transparent proxies, inherited state, custom prototypes, and symbols", () => {
+    expect(
+      parseEarlyAccessPaymentOptionsPresentation(
+        new Proxy({ state: "unresolved" }, {}),
+      ),
+    ).toBeNull();
+    expect(
+      parseEarlyAccessPaymentOptionsPresentation(
+        Object.create({ state: "unresolved" }),
+      ),
+    ).toBeNull();
+
+    const customPrototype = Object.create({ hostile: true });
+    customPrototype.state = "unresolved";
+    expect(
+      parseEarlyAccessPaymentOptionsPresentation(customPrototype),
+    ).toBeNull();
+
+    const symbolKeyed = { state: "unresolved", [Symbol("private")]: true };
+    expect(
+      parseEarlyAccessPaymentOptionsPresentation(symbolKeyed),
+    ).toBeNull();
+
+    const polluted = JSON.parse(
+      '{"state":"unresolved","__proto__":{"approved":true}}',
+    );
+    expect(parseEarlyAccessPaymentOptionsPresentation(polluted)).toBeNull();
+  });
+
+  it("returns a detached snapshot that cannot be rewritten through the input", () => {
+    const input = { state: "resolved", codes: ["zelle", "apple_cash"] };
+    const parsed = parseEarlyAccessPaymentOptionsPresentation(input);
+    expect(parsed).toEqual({
+      state: "resolved",
+      codes: ["zelle", "apple_cash"],
+    });
+
+    input.state = "unresolved";
+    input.codes[0] = "card";
+    expect(parsed).toEqual({
+      state: "resolved",
+      codes: ["zelle", "apple_cash"],
+    });
+    expect(() => {
+      if (parsed?.state === "resolved") {
+        (parsed.codes as string[])[0] = "venmo";
+      }
+    }).toThrow();
   });
 
   it("matches the server manual-payment allowlist as a set without importing server code", () => {
