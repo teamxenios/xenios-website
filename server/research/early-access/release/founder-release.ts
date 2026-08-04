@@ -120,7 +120,15 @@ export function earlyAccessReleaseVersion(row: EarlyAccessCatalogRow): string {
     // Product Control's own verdict is part of the state that was approved. If
     // it later reports a DIFFERENT set of problems, the founder never saw them.
     [...row.blockers].sort().join(","),
-  ].join(" ");
+  ]
+    // Each field is length prefixed rather than joined by a separator. Any
+    // separator can appear inside a strength or presentation, and then two
+    // genuinely different units collide: "10 mg" + "vial" and "10" + "mg vial"
+    // produce the same string. A collision here would let a release approved
+    // for one unit validate against another, which is the single thing this
+    // fingerprint exists to prevent.
+    .map((field) => `${field.length}:${field}`)
+    .join("");
   return createHash("sha256").update(canonical, "utf8").digest("hex");
 }
 
