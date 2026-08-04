@@ -47,6 +47,7 @@ import type { EarlyAccessCatalogRow } from "../catalog/early-access-catalog";
 import {
   decideEarlyAccessRelease,
   type EarlyAccessRelease,
+  type EarlyAccessReleaseHold,
 } from "../release/founder-release";
 import {
   EARLY_ACCESS_CURRENCIES,
@@ -253,6 +254,8 @@ export type EarlyAccessOrderServiceCode =
   | "release_required"
   | "release_revoked"
   | "release_stale"
+  | "release_expired"
+  | "product_held"
   | "release_blockers_not_waived"
   | "release_price_invalid"
   | "release_currency_invalid"
@@ -413,9 +416,10 @@ function matchesStoredOrder(
 // Placement
 // ---------------------------------------------------------------------------
 
-function releaseFailure(
-  hold: "NO_FOUNDER_RELEASE" | "RELEASE_REVOKED" | "RELEASE_STALE" | "BLOCKERS_NOT_WAIVED",
-): EarlyAccessOrderServiceCode {
+// Typed against the hold union itself rather than a copy of it, so a new hold
+// code added to the bridge becomes a compile error here instead of falling
+// through to a default that would let an order past.
+function releaseFailure(hold: EarlyAccessReleaseHold): EarlyAccessOrderServiceCode {
   switch (hold) {
     case "NO_FOUNDER_RELEASE":
       return "release_required";
@@ -423,6 +427,10 @@ function releaseFailure(
       return "release_revoked";
     case "RELEASE_STALE":
       return "release_stale";
+    case "RELEASE_EXPIRED":
+      return "release_expired";
+    case "NONWAIVABLE_BLOCKER":
+      return "product_held";
     case "BLOCKERS_NOT_WAIVED":
       return "release_blockers_not_waived";
   }
@@ -461,7 +469,11 @@ export async function createEarlyAccessOrder(
   if (matches.length > 1) return refused("unit_ambiguous");
   const row = matches[0] as EarlyAccessCatalogRow;
 
-  const decision = decideEarlyAccessRelease({ row, releases: input.releases });
+  const decision = decideEarlyAccessRelease({
+    row,
+    releases: input.releases,
+    now: Date.parse(request.now),
+  });
   if (!decision.released) return refused(releaseFailure(decision.hold));
 
   // The release is the only price. `row.priceCents` is deliberately not read: it

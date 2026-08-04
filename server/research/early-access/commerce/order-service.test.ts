@@ -70,7 +70,8 @@ function release(overrides: Record<string, unknown> = {}): EarlyAccessRelease {
     approvedPriceCents: RELEASE_PRICE_CENTS,
     currency: "USD",
     waivedBlockers: [...HELD_BLOCKERS],
-    acknowledgedDisputes: [],
+    approvedQuantityLimit: 3,
+    expiresAt: null,
     actor: "Samuel Boadu",
     reason: "Founder approved this exact unit for the private early access portal.",
     recordedAt: "2026-08-01T00:00:00.000Z",
@@ -211,12 +212,29 @@ describe("a sale requires a live founder release", () => {
   });
 
   it("refuses when a blocker appeared that the release never waived", async () => {
-    const held = row({ blockers: [...HELD_BLOCKERS, "SUPPLIER_NOT_ASSIGNED"] });
+    const held = row({ blockers: [...HELD_BLOCKERS, "IMAGE_PENDING"] });
     // Re-approve against the new facts so the refusal is the unwaived blocker and
     // not staleness.
     const current = release({ productVersion: earlyAccessReleaseVersion(held) });
     const result = await place({ rows: [held], releases: [current] });
     expect(result).toEqual({ ok: false, code: "release_blockers_not_waived" });
+  });
+
+  it("refuses to sell a unit whose CONTENTS are in doubt, whatever the release says", async () => {
+    // A founder release may bridge an operational gap. It may never sell a unit
+    // when xenios cannot say exactly what is in the vial, so the order refuses
+    // even though a release exists and matches the current facts.
+    for (const blocker of [
+      "IDENTITY_DISPUTE_UNRESOLVED",
+      "STRENGTH_DISPUTE_UNRESOLVED",
+      "SUPPLIER_NOT_ASSIGNED",
+      "REGULATORY_HOLD",
+    ]) {
+      const doubtful = row({ blockers: [...HELD_BLOCKERS, blocker] });
+      const current = release({ productVersion: earlyAccessReleaseVersion(doubtful) });
+      const result = await place({ rows: [doubtful], releases: [current] });
+      expect(result).toEqual({ ok: false, code: "product_held" });
+    }
   });
 
   it("refuses a unit that Product Control considers purchasable but no founder released", async () => {
