@@ -769,6 +769,28 @@
       ]
     },
     {
+      "id": "OWNER-W2-PRIVATE-EARLY-ACCESS-SESSION-CORE",
+      "owner": "Website 2",
+      "lane": "private-early-access-session-core",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/early-access/private-access-session.test.ts",
+        "server/research/early-access/private-access-session.ts"
+      ]
+    },
+    {
+      "id": "OWNER-W2-PRIVATE-EARLY-ACCESS-PAGE-SHELL",
+      "owner": "Website 2",
+      "lane": "private-early-access-page-shell",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "client/src/research/early-access/PrivateEarlyAccessPage.test.tsx",
+        "client/src/research/early-access/PrivateEarlyAccessPage.tsx"
+      ]
+    },
+    {
       "id": "OWNER-CODEX-CONTROL-INTEGRATION-STATUS-CONFIGURATION-QUEUE",
       "owner": "Codex Control",
       "lane": "integration-status-configuration-queue",
