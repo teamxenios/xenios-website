@@ -758,6 +758,17 @@
       ]
     },
     {
+      "id": "OWNER-W2-EARLY-ACCESS-MANUAL-ORDER-PAYMENT-ADAPTER",
+      "owner": "Website 2",
+      "lane": "early-access-manual-order-payment-adapter",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/commerce/manual-order-payment-method-adapter.test.ts",
+        "server/research/commerce/manual-order-payment-method-adapter.ts"
+      ]
+    },
+    {
       "id": "OWNER-CODEX-CONTROL-INTEGRATION-STATUS-CONFIGURATION-QUEUE",
       "owner": "Codex Control",
       "lane": "integration-status-configuration-queue",
