@@ -745,6 +745,19 @@
       ]
     },
     {
+      "id": "OWNER-W2-EARLY-ACCESS-PAYMENT-OPTIONS-PRESENTATION",
+      "owner": "Website 2",
+      "lane": "early-access-payment-options-presentation",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "client/src/research/early-access/PaymentMethodSelector.test.tsx",
+        "client/src/research/early-access/PaymentMethodSelector.tsx",
+        "shared/research/early-access-payment-options.test.ts",
+        "shared/research/early-access-payment-options.ts"
+      ]
+    },
+    {
       "id": "OWNER-CODEX-CONTROL-INTEGRATION-STATUS-CONFIGURATION-QUEUE",
       "owner": "Codex Control",
       "lane": "integration-status-configuration-queue",
