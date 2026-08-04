@@ -3,6 +3,8 @@ import SeoHead from "@/components/SeoHead";
 
 import { EarlyAccessUnlockForm } from "./EarlyAccessUnlockForm";
 import { EarlyAccessStepper } from "./EarlyAccessStepper";
+import { EarlyAccessCatalogSection } from "./EarlyAccessCatalogSection";
+import { EARLY_ACCESS_FULFILLMENT_TARGET_COPY } from "./fulfillment-copy";
 
 // The mounted Private Early Access route.
 //
@@ -203,11 +205,23 @@ export default function EarlyAccessRoute() {
               </p>
             </div>
 
+            {/*
+              The live catalogue. It reads the mounted endpoint and renders
+              exactly what the server returns: no fixture rows, no padding to a
+              target count, and the dropped-row count surfaced rather than
+              absorbed. Whatever the server says today is what a customer sees.
+            */}
+            <div className="mt-8" data-testid="early-access-catalog-mount">
+              <EarlyAccessCatalogSection
+                fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
+              />
+            </div>
+
             <div className="card mt-8" data-testid="early-access-next-steps">
               <p className="mono-label text-ink-mute">What happens next</p>
               <p className="body-s text-ink-2 mt-2 max-w-[62ch]">
-                The remaining steps are being connected to the live catalog and ordering system. They
-                will appear here as each one comes online. Nothing has been ordered or charged.
+                Ordering, payment review and fulfillment are being connected and will appear here
+                as each one comes online. Nothing has been ordered or charged.
               </p>
             </div>
 
