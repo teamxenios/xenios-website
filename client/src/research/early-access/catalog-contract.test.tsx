@@ -7,9 +7,12 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { registerPrivateEarlyAccessApi } from "../../../../server/research/early-access/register";
 import {
+  CUSTOMER_ALPHA,
   EARLY_ACCESS_TEST_CONFIG,
   EARLY_ACCESS_TEST_PASSWORD,
+  StubIdentityDirectory,
 } from "../../../../server/research/early-access/routes/route-fixtures";
+import type { EarlyAccessCustomer } from "../../../../server/research/early-access/routes/ports";
 
 import { loadEarlyAccessCatalog } from "../adapters/earlyAccessCatalog";
 import { EarlyAccessCatalogGrid } from "./EarlyAccessCatalogGrid";
@@ -36,12 +39,30 @@ const UNLOCK_PATH = "/api/research/early-access/unlock";
 const FULFILLMENT =
   "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
 
-/** The real app, mounted the way the deployment mounts it. */
-function realApp() {
+/**
+ * The real app.
+ *
+ * `identity` is injected and the CATALOGUE IS NOT. That distinction is the whole
+ * integrity of this test: supplying WHO is asking is not supplying WHAT is sold.
+ * A signed-in approved customer has to exist for the route to have anyone to
+ * answer, and no amount of test identity can invent a product row. The catalogue
+ * still resolves through createEarlyAccessCatalogSourceForDeployment, the same
+ * source the deployment reads, so every row below came from the server
+ * authority.
+ */
+function realApp(customer: EarlyAccessCustomer | null = CUSTOMER_ALPHA) {
   const app = express();
   app.use(express.json());
-  registerPrivateEarlyAccessApi(app, { config: EARLY_ACCESS_TEST_CONFIG });
+  registerPrivateEarlyAccessApi(app, {
+    config: EARLY_ACCESS_TEST_CONFIG,
+    identity: new StubIdentityDirectory().always(customer),
+  });
   return app;
+}
+
+/** The same app with nobody signed in: a password-only session. */
+function passwordOnlyApp() {
+  return realApp(null);
 }
 
 async function unlock(app: express.Express): Promise<string> {
@@ -64,6 +85,16 @@ function realGet(app: express.Express, cookie: string, path = CATALOG_PATH) {
       ? await request(app).get(path).set("Cookie", cookie)
       : await request(app).get(path);
 
+    if (res.status >= 500) {
+      // A 5xx from this route is the interesting case, and "server 503" alone
+      // tells nobody why. Print what the route actually said so the next reader
+      // gets the code instead of a number.
+      // eslint-disable-next-line no-console
+      console.log(
+        `\nCATALOGUE CONTRACT: ${path} -> HTTP ${res.status}\n` +
+          `  body: ${JSON.stringify(res.body)}\n`,
+      );
+    }
     if (res.status === 401) return { kind: "unauthorized" };
     if (res.status === 403) return { kind: "forbidden" };
     if (res.status === 404) return { kind: "unavailable" };
