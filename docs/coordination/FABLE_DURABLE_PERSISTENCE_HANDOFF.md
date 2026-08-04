@@ -1,8 +1,9 @@
 # [FABLE-DURABLE-PERSISTENCE HANDOFF]
 
-base_sha: 5ed785e8f5c89a13042075d41ddf3751ca02d366 (claude/f5-ea-final-integration, frozen QA candidate, not edited)
-head_sha: FILL_AT_PUSH
+base_sha: 5ed785e8f5c89a13042075d41ddf3751ca02d366 (claude/f5-ea-final-integration, frozen QA candidate, not edited; 9dd38c9 merged in afterwards)
+head_sha: 61e0eae plus this handoff-document commit on top (the pushed branch tip is authoritative)
 branch: claude/f5-ea-durable-persistence
+code_commits: 8739b43 (implementation) -> be8fc3a (governance 50-52) -> 4da9615 (index.ts returned to the frozen seam) -> 8b031cd (merge 9dd38c9) -> a2698a5 (migration 53 + reservation adapter) -> 61e0eae (governance 53)
 
 Integration note (2026-08-04): the integration head moved to 29b5345 (the pure
 `commerce/reservation.ts` module) and then 9dd38c9 (the reservation store port
@@ -20,7 +21,7 @@ hookup is documented below.
 | supabase/migrations/20260804120000_research_early_access_identity_persistence.sql | 3ac2f40f9627d8952db3a181a2ae0174565bda1fe469e3bfc5661a02108c5e28 |
 | supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql | 8a84bd82845e726702cdc001bdfce661ced7f74132c68a1338d5a476bd9ec9c6 |
 | supabase/migrations/20260804122000_research_early_access_supplier_operations.sql | fa12c45348c25826f63a5ad0a001a34ecfb847ef6e97a9470ff9fc96b1fd134c |
-| supabase/migrations/20260804123000_research_early_access_reservation_holds.sql | FILL_AT_PUSH |
+| supabase/migrations/20260804123000_research_early_access_reservation_holds.sql | 3085cfe06fc2340c75e28a4f30491a2dae48773bc94572b763113933cd2df590 |
 
 Governance: managed-ledger rows 50-52 in supabase/MIGRATIONS.md; three DAG
 nodes in docs/coordination/MIGRATION_DAG.json pinned to reviewed source
@@ -88,12 +89,12 @@ fault, never a wrong commit). Proven under real concurrency in the pg suite.
 
 ## verification evidence
 
-- pg16: PASS — scripts/verify-early-access-commerce-migration.sh 16 (2026-08-04): apply twice with ON_ERROR_STOP, data written between applies survives, 15/15 behavioral tests through the real adapters
+- pg16: PASS — scripts/verify-early-access-commerce-migration.sh 16 (2026-08-04, four-migration chain): apply twice with ON_ERROR_STOP, data written between applies survives, 16/16 behavioral tests through the real adapters
 - pg17: PASS — same script, same result
 - apply_twice: PASS on both majors (script + the pg suite each apply the chain twice)
 - rollback: retain-and-disable documented + additive-only compensating drops while pre-production (see rollback notes); append-only money tables are never deleted as rollback
 - restart-survival: explicit pg test — a second independent connection pool reads the placement, settlement, and fulfillment
-- tests: FILL_AT_PUSH (offline persistence suite 67/67; release-control-plane 35 passed + 1 skipped with --testTimeout raised past the machine-dependent 15s limit)
+- tests: full suite 6817 passed, 22 skipped, 3 failed, all three environmental or baseline (below); offline persistence suite 79/79; migration DAG validator green (14 nodes, canonical checksums)
 - typecheck: PASS (tsc clean; check:release-control-plane strict pass clean)
 - build: PASS (dist/index.cjs 1.1mb)
 
@@ -105,7 +106,12 @@ regressions of this branch:
    flagged, deliberately not resolved in this lane).
 2. release-control-plane "accepts the internally consistent checked-in
    production snapshot": exceeds its own 15 s machine-dependent timeout here
-   (the test's comment acknowledges this); passes at 120 s, assertion intact.
+   (the test's comment acknowledges this); passes when the machine is quiet,
+   assertion intact.
+3. release-control-plane "hashes canonical raw Git blobs and rejects
+   newline-normalized bytes": trips its explicit 6 s timeout ONLY under
+   full-suite parallelism while other sessions' review containers load this
+   machine; passes in isolation in 1.1 s at the same commit.
 
 ## shared_seam_requests (for FABLE-RM-INTEGRATION)
 
