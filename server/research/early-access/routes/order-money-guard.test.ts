@@ -37,8 +37,13 @@ vi.mock("../commerce/order-service", async (importOriginal) => {
           record: Object.freeze({
             ...result.value.record,
             // The customer owes the discounted amount; this claims they owe the
-            // full subtotal while still reporting the discount.
-            totalCents: result.value.record.subtotalCents,
+            // full subtotal while still reporting the discount. It corrupts the
+            // money snapshot, which is where the payable total now lives, so the
+            // guard actually reads what is being tampered with.
+            money: Object.freeze({
+              ...result.value.record.money,
+              payableTotalCents: result.value.record.money.subtotalCents,
+            }),
           }),
         }),
       });
@@ -97,11 +102,17 @@ describe("PAYABLE_TOTAL_INVALID", () => {
 });
 
 describe("the money snapshot check itself", () => {
+  // The amounts live on the immutable money snapshot, which is the authority
+  // named in MONEY_MODEL_DECISION.md. These fixtures previously used the flat
+  // pre-money-model fields, so every patch below corrupted a property the guard
+  // does not read and the whole file asserted nothing about the real check.
   const SOUND = {
-    subtotalCents: 59_700,
-    discountCents: 11_940,
-    totalCents: 47_760,
-    currency: "USD",
+    money: {
+      currency: "USD",
+      subtotalCents: 59_700,
+      discountCents: 11_940,
+      payableTotalCents: 47_760,
+    },
     order: {
       currency: "USD",
       orderTotalCents: 59_700,
@@ -109,8 +120,12 @@ describe("the money snapshot check itself", () => {
     },
   } as unknown as EarlyAccessReleaseOrder;
 
+  /** Patches the money snapshot, since that is what the guard actually reads. */
   function broken(patch: Record<string, unknown>): EarlyAccessReleaseOrder {
-    return { ...SOUND, ...patch } as unknown as EarlyAccessReleaseOrder;
+    return {
+      ...SOUND,
+      money: { ...(SOUND as unknown as { money: object }).money, ...patch },
+    } as unknown as EarlyAccessReleaseOrder;
   }
 
   it("accepts a snapshot whose parts agree", () => {
@@ -118,11 +133,11 @@ describe("the money snapshot check itself", () => {
   });
 
   it.each([
-    ["a payable total that is not subtotal minus discount", { totalCents: 50_000 }],
-    ["a payable total of zero", { totalCents: 0, discountCents: 59_700 }],
-    ["a negative discount", { discountCents: -1, totalCents: 59_701 }],
-    ["a discount that swallows the whole order", { discountCents: 59_700, totalCents: 0 }],
-    ["a non-integer amount", { totalCents: 47_760.5 }],
+    ["a payable total that is not subtotal minus discount", { payableTotalCents: 50_000 }],
+    ["a payable total of zero", { payableTotalCents: 0, discountCents: 59_700 }],
+    ["a negative discount", { discountCents: -1, payableTotalCents: 59_701 }],
+    ["a discount that swallows the whole order", { discountCents: 59_700, payableTotalCents: 0 }],
+    ["a non-integer amount", { payableTotalCents: 47_760.5 }],
   ])("refuses %s", (_label, patch) => {
     expect(earlyAccessMoneySnapshotHolds(broken(patch))).toBe(false);
   });

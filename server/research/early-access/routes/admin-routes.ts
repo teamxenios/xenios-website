@@ -285,16 +285,15 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
         decision: "approve",
         reason: body.reason,
         reviewedProofRef: body.reviewedProofRef,
-        // FABLE-RM: `decideManualPayment` compares this against the order's
-        // `orderTotalCents`, which is today the PRE-DISCOUNT subtotal, while the
-        // amount the customer was invoiced is `totalCents`. The human above
-        // confirmed the payable total; this one line translates it into the
-        // number the current domain signature demands. When the money lane's
-        // `payableTotalCents` / `OrderMoneySnapshot` replaces `orderTotalCents`
-        // at the sites that need the final amount, this becomes
-        // `placement.order.money.payableTotalCents` and the translation disappears.
-        amountVerifiedCents: placement.order.order.orderTotalCents,
-        currency: placement.order.order.currency,
+        // The amount the human confirmed is the amount the customer OWED: the
+        // payable total on the money snapshot, never the pre-discount subtotal.
+        // The 422 above already refused anything else, so this is that same
+        // number rather than a second reading of it. The domain's money gate
+        // classifies against `order.money.payableTotalCents`, so passing the
+        // subtotal here reads a discounted order as an OVERPAYMENT and refuses a
+        // correct payment. The translation this replaced did exactly that.
+        amountVerifiedCents: placement.order.money.payableTotalCents,
+        currency: placement.order.money.currency,
         idempotencyKey: body.idempotencyKey,
         now,
         ...(body.method === undefined || body.method === null ? {} : { method: body.method }),

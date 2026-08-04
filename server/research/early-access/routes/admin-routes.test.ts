@@ -265,12 +265,15 @@ describe("confirm payment received and release order", () => {
     expect(applied.body.settlement.commission).not.toBeNull();
     expect(applied.body.settlement.commission.state).toBe("held");
     expect(applied.body.settlement.commission.payout).toBe(false);
-    // FABLE-RM: commission-event.ts computes the hold from the verified order's
-    // `orderTotalCents`, which is the PRE-DISCOUNT subtotal (59,700), not the
-    // 47,760 the customer actually paid. Ten percent of the subtotal is 5,970;
-    // ten percent of the payable total would be 4,776. Pinned here so the money
-    // lane's change to this number is a visible, deliberate one.
-    expect(applied.body.settlement.commission.holdAmountCents).toBe(5_970);
+    // This is the deliberate change the previous pin existed to force, and it is
+    // a correction rather than a drift. The affiliate was being credited on the
+    // PRE-DISCOUNT subtotal (59,700 -> 5,970), paying commission on money the
+    // customer never sent. MONEY_MODEL_DECISION.md makes the basis
+    // `subtotalCents - discountCents`, and commission-event.ts implements it as
+    // policy `xenios-subtotal-less-discount`: 59,700 - 11,940 = 47,760, ten
+    // percent of which is 4,776. The number went DOWN because the old one was
+    // wrong, so this assertion should never be "restored".
+    expect(applied.body.settlement.commission.holdAmountCents).toBe(4_776);
   });
 
   it("records no commission when there is no attribution", async () => {
