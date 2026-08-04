@@ -812,6 +812,7 @@
         "server/research/early-access/private-access-cookie-session.ts",
         "server/research/early-access/private-access-nonce-store.test.ts",
         "server/research/early-access/private-access-nonce-store.ts",
+        "supabase/research-private-early-access-sessions.sql",
         "supabase/migrations/20260804120000_research_private_early_access_sessions.sql",
         "supabase/production/research-private-early-access-sessions-rollback-notes.md",
         "supabase/verification/research-private-early-access-sessions.verify.sql"
