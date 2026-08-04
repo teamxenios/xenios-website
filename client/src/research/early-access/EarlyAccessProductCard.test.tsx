@@ -1,0 +1,196 @@
+// @vitest-environment jsdom
+import { act } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import type { ReactElement } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+import {
+  EarlyAccessProductCard,
+  type EarlyAccessAvailabilityState,
+  type EarlyAccessCardProduct,
+} from "./EarlyAccessProductCard";
+
+/** The canonical sentence, passed in exactly as the server states it. */
+const FULFILLMENT =
+  "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
+
+let container: HTMLElement | null = null;
+let root: Root | null = null;
+
+function render(element: ReactElement): HTMLElement {
+  container = document.createElement("div");
+  document.body.appendChild(container);
+  root = createRoot(container);
+  act(() => {
+    root?.render(element);
+  });
+  return container;
+}
+
+afterEach(() => {
+  act(() => {
+    root?.unmount();
+  });
+  container?.remove();
+  container = null;
+  root = null;
+});
+
+function product(overrides: Partial<EarlyAccessCardProduct> = {}): EarlyAccessCardProduct {
+  return {
+    productId: "prod-clean",
+    variantId: "var-10mg",
+    name: "Clean Unit",
+    strength: "10 mg",
+    unitPriceCents: 5_600,
+    currency: "USD",
+    description: "Lyophilised vial for research use.",
+    availability: "AVAILABLE",
+    ...overrides,
+  };
+}
+
+function card(overrides: Partial<EarlyAccessCardProduct> = {}, quantity: 1 | 2 | 3 = 1) {
+  return render(
+    <EarlyAccessProductCard
+      product={product(overrides)}
+      quantity={quantity}
+      onQuantityChange={() => {}}
+      onSelect={() => {}}
+      fulfillmentTargetCopy={FULFILLMENT}
+    />,
+  );
+}
+
+describe("early access product card", () => {
+  it("shows the single unit price and no computed total anywhere", () => {
+    // THE RULE THIS FILE EXISTS FOR. The server computes every total. If the card
+    // ever multiplies, these numbers appear and the customer is shown a figure
+    // they will not be charged.
+    const el = card({}, 3);
+    const text = el.textContent ?? "";
+
+    expect(text).toContain("$56.00 per unit");
+
+    // 5,600 x 3 = 16,800, less 20% = 13,440. None of it may appear.
+    expect(text).not.toContain("168.00");
+    expect(text).not.toContain("134.40");
+    expect(text).not.toContain("$16,800");
+    expect(text).not.toContain("$13,440");
+  });
+
+  it("never shows supplier, margin, inventory or dispute information", () => {
+    const el = card();
+    const text = (el.textContent ?? "").toLowerCase();
+    for (const forbidden of [
+      "supplier",
+      "wholesale",
+      "cost",
+      "margin",
+      "in stock",
+      "units left",
+      "inventory",
+      "dispute",
+    ]) {
+      expect(text, `card leaked "${forbidden}"`).not.toContain(forbidden);
+    }
+  });
+
+  it("renders the fulfillment target exactly as supplied, never a paraphrase", () => {
+    const el = card();
+    expect(el.textContent).toContain(FULFILLMENT);
+    // It is a target. The card must not turn it into a promise.
+    const text = (el.textContent ?? "").toLowerCase();
+    expect(text).not.toContain("guarantee");
+    expect(text).not.toContain("will arrive");
+    expect(text).not.toContain("delivered by");
+  });
+
+  it("names the bundle offer on the quantity option itself", () => {
+    const el = card();
+    expect(el.textContent).toContain("3-Unit Research Bundle — 20% savings");
+  });
+
+  it.each([
+    ["AVAILABLE", "Available to order", "Select", false],
+    [
+      "AVAILABILITY_CONFIRMATION_REQUIRED",
+      "Availability confirmed by our team before payment",
+      "Request availability",
+      false,
+    ],
+    ["TEMPORARILY_HELD", "Temporarily unavailable", "Unavailable", true],
+  ] as ReadonlyArray<[EarlyAccessAvailabilityState, string, string, boolean]>)(
+    "renders %s as visible, with its own copy and action",
+    (availability, copy, action, disabled) => {
+      const el = card({ availability });
+      // Visible in every state. A row is never hidden because inventory
+      // automation is missing; the customer is told the truth instead.
+      expect(el.querySelector("[data-testid='early-access-product-card']")).not.toBeNull();
+      expect(el.textContent).toContain(copy);
+      const button = el.querySelector<HTMLButtonElement>(
+        "[data-testid='early-access-product-card-action']",
+      );
+      expect(button?.textContent).toBe(action);
+      expect(button?.disabled).toBe(disabled);
+    },
+  );
+
+  it("tells a confirmation-required customer before they choose, not after", () => {
+    // The whole point of surfacing this state: they learn payment is gated on a
+    // human confirmation while they are still deciding.
+    const el = card({ availability: "AVAILABILITY_CONFIRMATION_REQUIRED" });
+    expect(
+      el.querySelector("[data-testid='early-access-product-card-availability-detail']"),
+    ).not.toBeNull();
+    expect(el.textContent).toContain("before any payment instructions are shown");
+  });
+
+  it("does not offer that detail when the product is simply available", () => {
+    const el = card({ availability: "AVAILABLE" });
+    expect(
+      el.querySelector("[data-testid='early-access-product-card-availability-detail']"),
+    ).toBeNull();
+  });
+
+  it("reports a quantity choice without acting on it", () => {
+    const onQuantityChange = vi.fn();
+    const onSelect = vi.fn();
+    const el = render(
+      <EarlyAccessProductCard
+        product={product()}
+        quantity={1}
+        onQuantityChange={onQuantityChange}
+        onSelect={onSelect}
+        fulfillmentTargetCopy={FULFILLMENT}
+      />,
+    );
+
+    const three = el.querySelector<HTMLInputElement>("input[value='3']");
+    expect(three).not.toBeNull();
+    act(() => {
+      three?.click();
+    });
+
+    expect(onQuantityChange).toHaveBeenCalledWith(3);
+    // Choosing a quantity is not ordering. The card never submits.
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("disables the quantity control on a held product", () => {
+    const el = card({ availability: "TEMPORARILY_HELD" });
+    const inputs = Array.from(el.querySelectorAll<HTMLInputElement>("input[type='radio']"));
+    expect(inputs.length).toBeGreaterThan(0);
+    for (const input of inputs) expect(input.disabled).toBe(true);
+  });
+
+  it("shows one placeholder and no product photography", () => {
+    // No image is safer than a wrong one: a vial photograph at the wrong
+    // strength misrepresents the product.
+    const el = card();
+    expect(el.querySelectorAll("img")).toHaveLength(0);
+    const media = el.querySelector("[data-testid='early-access-product-card-media']");
+    expect(media).not.toBeNull();
+    expect(media?.getAttribute("aria-hidden")).toBe("true");
+  });
+});

@@ -18,6 +18,13 @@ export interface EarlyAccessQuantitySelectorProps {
 }
 
 function unitLabel(quantity: EarlyAccessQuantity): string {
+  // Three units is the Research Bundle, and the offer is named on the option
+  // itself so a customer sees it while choosing rather than after choosing.
+  //
+  // "20% savings" is the name of the offer, not a computed figure. This
+  // component still prices nothing: the discount and the payable total are
+  // computed by the server and shown on the order review.
+  if (quantity === 3) return "3-Unit Research Bundle — 20% savings";
   return quantity === 1 ? "1 research unit" : `${quantity} research units`;
 }
 

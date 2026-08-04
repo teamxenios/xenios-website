@@ -66,7 +66,10 @@ describe("EarlyAccessQuantitySelector", () => {
     expect(inputs.map((input) => input.labels?.[0]?.textContent?.trim())).toEqual([
       "1 research unit",
       "2 research units",
-      "3 research units",
+      // Three units is the Research Bundle and the offer is named on the option,
+      // so the customer reads it while choosing rather than after. "20% savings"
+      // is the offer's name; this component still computes no money.
+      "3-Unit Research Bundle — 20% savings",
     ]);
     for (const input of inputs) {
       expect(view.host.querySelector(`label[for="${input.id}"]`), input.value).not.toBeNull();
