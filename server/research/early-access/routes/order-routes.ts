@@ -248,9 +248,9 @@ class StagingInvoiceRepository implements EarlyAccessInvoiceRepository {
  * over that one object and the two names stop needing to be told apart by hand.
  */
 export function earlyAccessMoneySnapshotHolds(record: EarlyAccessReleaseOrder): boolean {
-  const subtotal = record.subtotalCents;
-  const discount = record.discountCents;
-  const payable = record.totalCents;
+  const subtotal = record.money.subtotalCents;
+  const discount = record.money.discountCents;
+  const payable = record.money.payableTotalCents;
   return (
     Number.isSafeInteger(subtotal) &&
     Number.isSafeInteger(discount) &&
@@ -262,7 +262,7 @@ export function earlyAccessMoneySnapshotHolds(record: EarlyAccessReleaseOrder): 
     payable > 0 &&
     record.order.line.lineTotalCents === subtotal &&
     record.order.orderTotalCents === subtotal &&
-    record.currency === record.order.currency
+    record.money.currency === record.order.currency
   );
 }
 
@@ -289,13 +289,13 @@ function orderView(placement: EarlyAccessPlacement): Record<string, unknown> {
       quantity: record.order.line.quantity,
     },
     money: {
-      currency: record.currency,
+      currency: record.money.currency,
       unitPriceCents: record.order.line.unitPriceCents,
-      subtotalCents: record.subtotalCents,
-      discountCents: record.discountCents,
-      discountLabel: record.discountCents > 0 ? record.tier.label : null,
+      subtotalCents: record.money.subtotalCents,
+      discountCents: record.money.discountCents,
+      discountLabel: record.money.discountCents > 0 ? record.promotion.label : null,
       /** The amount owed. The invoice and the confirmation both quote this one. */
-      payableTotalCents: record.totalCents,
+      payableTotalCents: record.money.payableTotalCents,
     },
     invoice: {
       invoiceNumber: placement.invoice.invoiceNumber,
@@ -614,8 +614,8 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
         actor: customer.customerRef,
         at: now,
         detail: {
-          payableTotalCents: record.totalCents,
-          currency: record.currency,
+          payableTotalCents: record.money.payableTotalCents,
+          currency: record.money.currency,
           quantity,
           releaseId: record.releaseId,
         },

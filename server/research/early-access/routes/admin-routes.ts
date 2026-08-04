@@ -136,8 +136,8 @@ export function createEarlyAccessPaymentQueueRoute(deps: EarlyAccessAdminRouteDe
             orderNumber: placement.orderNumber,
             placedAt: placement.placedAt,
             paymentState: placement.paymentState,
-            payableTotalCents: placement.order.totalCents,
-            currency: placement.order.currency,
+            payableTotalCents: placement.order.money.payableTotalCents,
+            currency: placement.order.money.currency,
             sku: placement.order.order.line.sku,
             quantity: placement.order.order.line.quantity,
             paymentReference: placement.invoice.paymentReference,
@@ -254,12 +254,12 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
       // confirmation must be of the payable total on the invoice the customer
       // was actually sent, or the ledger records a payment for something else.
       if (
-        body.amountConfirmedCents !== placement.order.totalCents ||
-        body.currency !== placement.order.currency
+        body.amountConfirmedCents !== placement.order.money.payableTotalCents ||
+        body.currency !== placement.order.money.currency
       ) {
         fail(response, 422, "PAYABLE_TOTAL_INVALID", {
-          payableTotalCents: placement.order.totalCents,
-          currency: placement.order.currency,
+          payableTotalCents: placement.order.money.payableTotalCents,
+          currency: placement.order.money.currency,
         });
         return;
       }
@@ -292,7 +292,7 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
         // number the current domain signature demands. When the money lane's
         // `payableTotalCents` / `OrderMoneySnapshot` replaces `orderTotalCents`
         // at the sites that need the final amount, this becomes
-        // `placement.order.totalCents` and the translation disappears.
+        // `placement.order.money.payableTotalCents` and the translation disappears.
         amountVerifiedCents: placement.order.order.orderTotalCents,
         currency: placement.order.order.currency,
         idempotencyKey: body.idempotencyKey,
@@ -352,16 +352,16 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
           // Derived from the order id, so one order can only ever carry one.
           receiptId: receiptIntentIdFor(orderNumber),
           orderNumber,
-          payableTotalCents: placement.order.totalCents,
-          currency: placement.order.currency,
+          payableTotalCents: placement.order.money.payableTotalCents,
+          currency: placement.order.money.currency,
           issuedAt: now,
           issuedByActorId: caller.actor.actorId,
         }),
         ledgerEntry: Object.freeze({
           entryId: verificationUniqueKeyFor(orderNumber),
           orderNumber,
-          amountCents: placement.order.totalCents,
-          currency: placement.order.currency,
+          amountCents: placement.order.money.payableTotalCents,
+          currency: placement.order.money.currency,
           externalTransactionId: body.externalTransactionId,
           recordedAt: now,
           recordedByActorId: caller.actor.actorId,
@@ -406,8 +406,8 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
         at: now,
         detail: {
           role: caller.actor.role,
-          payableTotalCents: placement.order.totalCents,
-          currency: placement.order.currency,
+          payableTotalCents: placement.order.money.payableTotalCents,
+          currency: placement.order.money.currency,
           reviewedProofId: entry.reviewedProofId,
           externalTransactionId: body.externalTransactionId,
           receiptId: settlement.receipt.receiptId,
