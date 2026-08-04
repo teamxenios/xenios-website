@@ -56,6 +56,14 @@ const PROTECTED_PENDING_SOURCE_PATHS = new Set([
   "supabase/migrations/20260729000000_research_pricing_lineage.sql",
   "supabase/migrations/20260729100000_research_rls_retro_hardening.sql",
 ]);
+// The Early Access durable-persistence chain (ledger rows 50-52), pending,
+// pinned to the reviewed source commit on claude/f5-ea-durable-persistence.
+const EA_PERSISTENCE_SOURCE_SHA = "8739b433e5a1588a72bfed3eae649e38e416fe0f";
+const EA_PERSISTENCE_SOURCE_PATHS = new Set([
+  "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+  "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql",
+  "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+]);
 const pg16It =
   process.env.CI || process.env.XENIOS_RUN_PG16_VERIFIER === "1" ? it : it.skip;
 const CONTROL_PLANE_FILES = [
@@ -722,6 +730,8 @@ describe("migration DAG validator", () => {
             return checkedInStrengthGateSourceBytes();
           } else if (PROTECTED_PENDING_SOURCE_PATHS.has(path)) {
             expect(sourceSha).toBe(PROTECTED_PENDING_SOURCE_SHA);
+          } else if (EA_PERSISTENCE_SOURCE_PATHS.has(path)) {
+            expect(sourceSha).toBe(EA_PERSISTENCE_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
