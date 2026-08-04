@@ -298,12 +298,26 @@
     "$comment": [
       "Baselines for the permitted seam files. A mismatch here is NOT a hard fail, because",
       "a leased seam edit is legitimate. The gate REPORTS it so review always sees which",
-      "seam moved and can demand the lease, the minimum diff, and the focused test."
+      "seam moved and can demand the lease, the minimum diff, and the focused test.",
+      "",
+      "2026-08-04, reviewed head 61c2f0a: server/index.ts and server/research/index.ts",
+      "moved for the Private Early Access mount. Both diffs are PURELY ADDITIVE, verified",
+      "with git diff origin/main...HEAD. server/index.ts adds one import and one",
+      "registerPrivateEarlyAccessApi call, placed after registerResearchApi so the shared",
+      "wall and its private headers still run first, and before the SPA catch-all so these",
+      "paths never resolve to fallback HTML. server/research/index.ts adds a method-exact,",
+      "path-exact exemption for exactly four static paths plus two ANCHORED regexes for the",
+      "order paths, because Private Early Access must be reachable by someone who is not a",
+      "research member. No existing branch was reordered, no guard weakened, no flag",
+      "changed, and Care and member behaviour are untouched. Every exempted path still",
+      "enforces its own stronger gate. Covered by server/research/early-access-wall.test.ts",
+      "(29 tests); broadening the exemption to a prefix match fails 6 of them and removing",
+      "a single approved path fails 1."
     ],
     "files": {
       "client/src/App.tsx": "sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c",
-      "server/index.ts": "sha256:7ac5a308d25164123f3c1df129a4f3c797357a5be88aaf331348b994655a21aa",
-      "server/research/index.ts": "sha256:1624b4a342d2d8cf0f2f78f25c88d392f8c33fb43d063a62e73f7c1f4d261a2b",
+      "server/index.ts": "sha256:4e93d9e5d6dd1bf5084eec1d94fac07e7a5494be5566f8a23892d9d784c83b11",
+      "server/research/index.ts": "sha256:96d8812956c28d25806344ed89448f4c70c1467cac357b6590c33ba4676d4fe4",
       "server/care/index.ts": "sha256:fea8c5ad5124dacf07350818e891396ee9f234983a93be65540911c1eafd81db",
       "shared/research/flags.ts": "sha256:be85e1a8b1e82d6b6724aa721b196535c663beefc6ea34fc21f1ca26a4bc5e1b"
     }
