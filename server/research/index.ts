@@ -420,11 +420,16 @@ export function registerResearchApi(app: Express) {
     // 200s, so the set is applied here BEFORE any wall or member-guard response.
     // A lookalike path fails the equality and a wrong method fails the method
     // check, so their walling is unchanged.
+    // Orders have one list path and one Express detail segment. Encoded content
+    // remains one raw segment; empty or literal extra segments do not match.
+    const privateOrderReadPath =
+      req.path === "/orders" || /^\/orders\/[^/]+$/.test(req.path);
     const privateMemberReadRoute =
       (req.method === "GET" || req.method === "HEAD") &&
       (req.path === "/catalog" ||
         req.path === "/member/catalog" ||
-        req.path === "/member/me");
+        req.path === "/member/me" ||
+        privateOrderReadPath);
     if (privateMemberReadRoute) {
       setResearchPrivateHeaders(res);
     }
