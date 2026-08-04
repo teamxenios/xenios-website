@@ -1,9 +1,10 @@
-import { createHash, randomBytes } from "node:crypto";
+import { randomBytes } from "node:crypto";
 
-import type {
-  PrivateAccessSessionRepository,
-  PrivateAccessSessionRepositoryResult,
-  StoredPrivateAccessSession,
+import {
+  hashPrivateAccessSessionToken,
+  type PrivateAccessSessionRepository,
+  type PrivateAccessSessionRepositoryResult,
+  type StoredPrivateAccessSession,
 } from "./private-access-session-repository";
 
 // Durable Private Early Access session minting.
@@ -49,9 +50,16 @@ export interface DurableSessionMintInput {
   readonly randomToken?: () => string;
 }
 
-/** Lowercase 64-hex, the exact shape both RPCs validate. */
+/**
+ * Lowercase 64-hex, the exact shape both RPCs validate.
+ *
+ * This DELEGATES to the repository's canonical hash rather than repeating it.
+ * The session/logout paths hash the cookie token with that function to find the
+ * row; a second, independent implementation here would resolve nothing the day
+ * either one changed, and the failure would look like a random logout.
+ */
 export function hashToStorageHex(value: string): string {
-  return createHash("sha256").update(value, "utf8").digest("hex");
+  return hashPrivateAccessSessionToken(value);
 }
 
 function defaultRandomToken(): string {

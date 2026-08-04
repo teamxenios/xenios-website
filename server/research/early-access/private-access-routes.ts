@@ -128,6 +128,51 @@ export interface PrivateAccessRouteDependencies {
    * configuration and never comes from a request.
    */
   readonly ownerId?: string;
+  /**
+   * How a session comes into existence.
+   *
+   * The default mints it by writing a row directly. A durable deployment mints
+   * it through the database's grant-nonce exchange, which is the ONLY path the
+   * accepted migration exposes. Everything after the mint is identical either
+   * way, so the route's security properties do not depend on which store is
+   * configured.
+   */
+  readonly mintSession?: PrivateAccessSessionMint;
+}
+
+export type PrivateAccessSessionMintResult =
+  | Readonly<{ ok: true; token: string; expiresAtEpochMs: number | null }>
+  | Readonly<{ ok: false; code: string }>;
+
+export interface PrivateAccessSessionMint {
+  (
+    input: Readonly<{ ownerId: string; now: number; ttlSeconds: number }>,
+  ): Promise<PrivateAccessSessionMintResult>;
+}
+
+/** The default mint: one row, written directly. Used by tests and local dev. */
+export function createDirectSessionMint(
+  deps: PrivateAccessRouteDependencies,
+): PrivateAccessSessionMint {
+  return async ({ ownerId, now, ttlSeconds }) => {
+    const token = deps.randomToken();
+    if (!isOpaqueToken(token)) {
+      return Object.freeze({ ok: false as const, code: "TOKEN_SOURCE_INVALID" });
+    }
+    const created = await deps.repository.create({
+      sessionHash: hashPrivateAccessSessionToken(token),
+      ownerId,
+      issuedAt: now,
+      expiresAt: now + ttlSeconds * 1_000,
+    });
+    if (!created.ok) return Object.freeze({ ok: false as const, code: created.code });
+    const expiresAtEpochMs = created.value?.expiresAtEpochMs;
+    return Object.freeze({
+      ok: true as const,
+      token,
+      expiresAtEpochMs: typeof expiresAtEpochMs === "number" ? expiresAtEpochMs : null,
+    });
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -421,6 +466,7 @@ export function createUnlockRoute(deps: PrivateAccessRouteDependencies): Private
   const cookies = cookiePortOf(deps);
   const verify = deps.verifyPassword ?? verifyPrivateAccessPassword;
   const ownerId = deps.ownerId ?? PRIVATE_ACCESS_DEFAULT_OWNER_ID;
+  const mintSession = deps.mintSession ?? createDirectSessionMint(deps);
 
   return async (request, response): Promise<void> => {
     try {
@@ -469,25 +515,22 @@ export function createUnlockRoute(deps: PrivateAccessRouteDependencies): Private
       // Everything below this line runs only for a CORRECT password, so every
       // remaining failure must answer exactly like a wrong one. A distinct
       // status or body here would confirm the guess.
-      const token = deps.randomToken();
-      if (!isOpaqueToken(token)) {
+      const ttlSeconds = Math.max(1, Math.floor(deps.config.sessionTtlMinutes)) * 60;
+      const minted = await mintSession({ ownerId, now, ttlSeconds });
+      if (!minted.ok) {
         limiter.recordFailure(clientKey, now);
-        log(deps.logger, "private_access.unlock.token_source_invalid");
+        log(deps.logger, "private_access.unlock.store_refused", { code: minted.code });
         denyUnlock(response);
         return;
       }
 
+      const token = minted.token;
       const sessionHash = hashPrivateAccessSessionToken(token);
-      const ttlSeconds = Math.max(1, Math.floor(deps.config.sessionTtlMinutes)) * 60;
-      const created = await deps.repository.create({
-        sessionHash,
-        ownerId,
-        issuedAt: now,
-        expiresAt: now + ttlSeconds * 1_000,
-      });
-      if (!created.ok) {
+      if (!isOpaqueToken(token)) {
+        // A row may already exist, so it must not be left behind reachable.
+        await revokeQuietly(deps, sessionHash, now);
         limiter.recordFailure(clientKey, now);
-        log(deps.logger, "private_access.unlock.store_refused", { code: created.code });
+        log(deps.logger, "private_access.unlock.token_source_invalid");
         denyUnlock(response);
         return;
       }
@@ -504,7 +547,7 @@ export function createUnlockRoute(deps: PrivateAccessRouteDependencies): Private
       // The cookie must never outlive the row, and Max-Age must agree with the
       // cookie's own sealed expiry. A drift of more than the rounding of one
       // second is a configuration fault, not a request to be served.
-      const storedExpiry = created.value.expiresAtEpochMs;
+      const storedExpiry = minted.expiresAtEpochMs;
       const lifetimeMs = issued.expiresAtEpochMs - now;
       const maxAgeMs = issued.maxAgeSeconds * 1_000;
       const synchronized =

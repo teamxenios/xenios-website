@@ -13,7 +13,11 @@ import {
   InMemoryPrivateAccessSessionRepository,
   type PrivateAccessSessionRepository,
 } from "./private-access-session-repository";
-import { decideEarlyAccessAdapter, isGrantIssuingRepository } from "./durable-session";
+import {
+  decideEarlyAccessAdapter,
+  isGrantIssuingRepository,
+  mintDurableSession,
+} from "./durable-session";
 
 // Registration seam for the Private Early Access gate.
 //
@@ -97,7 +101,22 @@ export function registerPrivateEarlyAccessApi(
     : Object.freeze({ ...config, enabled: false });
   const now = options.now ?? (() => Date.now());
 
-  const deps: PrivateAccessRouteDependencies = { config: effectiveConfig, repository, now, randomToken };
+  // A durable repository cannot mint a session from a password alone. The
+  // accepted migration exposes no standalone minting function on purpose, so a
+  // session exists only as the atomic exchange of a one-time grant nonce. When
+  // the configured store can register a grant, unlock goes through that
+  // exchange; otherwise it writes a row directly, which is the local path.
+  const durable = isGrantIssuingRepository(repository);
+  const deps: PrivateAccessRouteDependencies = {
+    config: effectiveConfig,
+    repository,
+    now,
+    randomToken,
+    mintSession: durable
+      ? ({ ownerId, now: issuedAt, ttlSeconds }) =>
+          mintDurableSession({ repository, ownerId, now: issuedAt, ttlSeconds, randomToken })
+      : undefined,
+  };
 
   const unlock = createUnlockRoute(deps);
   const session = createSessionRoute(deps);
