@@ -65,10 +65,14 @@ const PROOF = Object.freeze({
   method: "zelle",
 });
 
+// What the admin OBSERVED. The expected amount is not here on purpose: the
+// server reads it from the order's immutable money snapshot, so a request
+// cannot state what the customer owed.
 const CONFIRM = Object.freeze({
   idempotencyKey: "ea-confirm-key-000001",
-  amountConfirmedCents: 47_760,
-  currency: "USD",
+  verifiedAmountCents: 47_760,
+  verifiedCurrency: "USD",
+  receivedAt: "2026-08-04T12:00:00.000Z",
   externalTransactionId: "bank-txn-00001",
   method: "zelle",
   reason: "Zelle transfer received and matched against the payment reference.",
@@ -225,14 +229,29 @@ describe("confirm payment received and release order", () => {
     expect(placement?.paymentState).toBe("payment_verified");
   });
 
-  it("refuses an amount that is not what the customer was invoiced", async () => {
+  it("reports an overpayment as an overpayment rather than as bad input", async () => {
     const ready = await orderAwaitingReview();
-    // The pre-discount subtotal is the classic wrong number to confirm, and it
-    // is exactly the one a screen showing the wrong field would offer.
-    const refused = await confirm(ready, { amountConfirmedCents: 59_700 });
-    expect(refused.status).toBe(422);
-    expect(refused.body.code).toBe("PAYABLE_TOTAL_INVALID");
-    expect(refused.body.payableTotalCents).toBe(47_760);
+    // 59,700 is the pre-discount subtotal: the classic wrong number, and exactly
+    // what a screen showing the wrong field would offer. The customer owed
+    // 47,760, so more money arrived than was owed.
+    //
+    // This test previously asserted 422 PAYABLE_TOTAL_INVALID, which encoded the
+    // defect: it treated a real overpayment as a malformed request. That reading
+    // loses the money. An overpayment needs a named human to record the excess
+    // and choose how it is resolved, and it can never be auto-approved, so it
+    // must survive as its own outcome all the way to the caller.
+    const refused = await confirm(ready, { verifiedAmountCents: 59_700 });
+    expect(refused.status).toBe(409);
+    expect(refused.body.code).toBe("PAYMENT_OVERPAID");
+    // Nothing settled: no receipt, no supplier order, no commission.
+    expect(await ready.store.settlement(ready.orderNumber)).toBeNull();
+  });
+
+  it("reports an underpayment as an underpayment, and settles nothing", async () => {
+    const ready = await orderAwaitingReview();
+    const refused = await confirm(ready, { verifiedAmountCents: 40_000 });
+    expect(refused.status).toBe(409);
+    expect(refused.body.code).toBe("PAYMENT_UNDERPAID");
     expect(await ready.store.settlement(ready.orderNumber)).toBeNull();
   });
 

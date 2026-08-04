@@ -172,11 +172,23 @@ export function createEarlyAccessPaymentQueueRoute(deps: EarlyAccessAdminRouteDe
 // POST confirm payment received and release order
 // ---------------------------------------------------------------------------
 
+/**
+ * What the admin supplies is only what they INDEPENDENTLY OBSERVED: the amount
+ * that arrived, the currency it arrived in, when it arrived, how, and the
+ * external reference that identifies it.
+ *
+ * The expected amount is deliberately absent. The server loads it from the
+ * order's immutable money snapshot, so an admin cannot state what the customer
+ * owed. If the request carried the expected amount, a typo or a stale screen
+ * would decide whether an underpayment counted as settled, and the comparison
+ * would be between two numbers the same person supplied.
+ */
 const CONFIRM_BODY_KEYS = [
   "idempotencyKey",
   "reviewedProofRef",
-  "amountConfirmedCents",
-  "currency",
+  "verifiedAmountCents",
+  "verifiedCurrency",
+  "receivedAt",
   "externalTransactionId",
   "method",
   "reason",
@@ -249,18 +261,26 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
         return;
       }
 
-      // THE AMOUNT THE HUMAN IS CONFIRMING IS THE AMOUNT THE CUSTOMER OWED. Not
-      // the pre-discount subtotal, and not a number they typed freely: the
-      // confirmation must be of the payable total on the invoice the customer
-      // was actually sent, or the ledger records a payment for something else.
+      // The observed amount is validated for SHAPE only. It is deliberately not
+      // compared against the payable total here.
+      //
+      // A refusal at this point would destroy the thing the money gate exists to
+      // detect: an amount that differs from the payable total is not a malformed
+      // request, it is an UNDERPAYMENT or an OVERPAYMENT, and each has its own
+      // required handling. Refusing 422 for "not equal" would collapse both into
+      // "bad input" and lose the distinction before any human saw it.
+      //
+      // So the route reports what arrived and the domain classifies it against
+      // the order's own immutable snapshot.
       if (
-        body.amountConfirmedCents !== placement.order.money.payableTotalCents ||
-        body.currency !== placement.order.money.currency
+        !Number.isSafeInteger(body.verifiedAmountCents) ||
+        (body.verifiedAmountCents as number) <= 0
       ) {
-        fail(response, 422, "PAYABLE_TOTAL_INVALID", {
-          payableTotalCents: placement.order.money.payableTotalCents,
-          currency: placement.order.money.currency,
-        });
+        fail(response, 400, "REQUEST_INVALID", { field: "verifiedAmountCents" });
+        return;
+      }
+      if (typeof body.verifiedCurrency !== "string" || body.verifiedCurrency.length === 0) {
+        fail(response, 400, "REQUEST_INVALID", { field: "verifiedCurrency" });
         return;
       }
 
@@ -285,15 +305,19 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
         decision: "approve",
         reason: body.reason,
         reviewedProofRef: body.reviewedProofRef,
-        // The amount the human confirmed is the amount the customer OWED: the
-        // payable total on the money snapshot, never the pre-discount subtotal.
-        // The 422 above already refused anything else, so this is that same
-        // number rather than a second reading of it. The domain's money gate
-        // classifies against `order.money.payableTotalCents`, so passing the
-        // subtotal here reads a discounted order as an OVERPAYMENT and refuses a
-        // correct payment. The translation this replaced did exactly that.
-        amountVerifiedCents: placement.order.money.payableTotalCents,
-        currency: placement.order.money.currency,
+        // WHAT THE ADMIN OBSERVED, not what the customer owed. The domain
+        // compares this against `order.money.payableTotalCents` from the
+        // immutable snapshot and yields EXACT_MATCH, UNDERPAYMENT, OVERPAYMENT
+        // or CURRENCY_MISMATCH.
+        //
+        // Feeding the payable total back in here would make the comparison
+        // compare a number with itself: it would always be EXACT_MATCH, the gate
+        // could never see a variance, and every underpayment would settle
+        // silently. The expected side comes from the order; only this side comes
+        // from the human.
+        amountVerifiedCents: body.verifiedAmountCents as number,
+        currency: body.verifiedCurrency as string,
+        transactionRef: body.externalTransactionId,
         idempotencyKey: body.idempotencyKey,
         now,
         ...(body.method === undefined || body.method === null ? {} : { method: body.method }),
@@ -435,6 +459,35 @@ function confirmRefusal(response: ResponsePort, code: string): void {
   }
   if (code === "amount_mismatch" || code === "currency_mismatch") {
     fail(response, 422, "PAYABLE_TOTAL_INVALID");
+    return;
+  }
+  // A variance is a distinct outcome, not a malformed request, and each of these
+  // needs a different human action. They are kept apart all the way to the wire
+  // so an operator is told which one happened rather than "invalid".
+  if (code === "payment_underpaid") {
+    // Money is still owed. There is deliberately no exception that approves an
+    // underpayment: the customer sends the rest and this runs again.
+    fail(response, 409, "PAYMENT_UNDERPAID");
+    return;
+  }
+  if (code === "payment_overpaid") {
+    // Never auto-approved and never turned into account credit. A named human
+    // must record the excess and choose how it is resolved.
+    fail(response, 409, "PAYMENT_OVERPAID");
+    return;
+  }
+  if (code === "exception_invalid") {
+    fail(response, 422, "EXCEPTION_INVALID");
+    return;
+  }
+  if (code === "duplicate_transaction") {
+    // The same external reference already settled money. Counting it twice would
+    // create a receipt for money that arrived once.
+    fail(response, 409, "DUPLICATE_TRANSACTION");
+    return;
+  }
+  if (code === "verified_amount_invalid" || code === "money_invalid") {
+    fail(response, 400, "REQUEST_INVALID");
     return;
   }
   if (code === "forbidden") {
