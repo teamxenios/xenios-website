@@ -13,6 +13,7 @@ import {
   InMemoryPrivateAccessSessionRepository,
   type PrivateAccessSessionRepository,
 } from "./private-access-session-repository";
+import { decideEarlyAccessAdapter, isGrantIssuingRepository } from "./durable-session";
 
 // Registration seam for the Private Early Access gate.
 //
@@ -70,13 +71,33 @@ export function registerPrivateEarlyAccessApi(
   options: EarlyAccessRegistrationOptions = {},
 ): EarlyAccessConfig {
   const config = options.config ?? resolveEarlyAccessConfig();
-  // The in-memory store is the pilot default. It is durable for the life of the
-  // process and correct for a single instance; the Supabase adapter replaces it
-  // once its grant-nonce leg is wired, which is a separate reviewed change.
   const repository = options.repository ?? new InMemoryPrivateAccessSessionRepository();
+
+  // An in-memory session vanishes on restart, on redeploy, and whenever a
+  // request lands on another instance, which would sign a customer out in the
+  // middle of an order. Production with the gate OPEN therefore requires a
+  // durable store; rather than degrade silently, the gate stays shut and says
+  // why. Production with the gate closed is fine, because nobody can reach it.
+  const decision = decideEarlyAccessAdapter({
+    isProduction: process.env.NODE_ENV === "production",
+    earlyAccessEnabled: config.enabled,
+    durableAvailable: isGrantIssuingRepository(repository),
+  });
+  if (!decision.ok) {
+    // eslint-disable-next-line no-console
+    console.error(`[early-access] ${decision.reason}`);
+  } else if (decision.warning !== null) {
+    // eslint-disable-next-line no-console
+    console.warn(`[early-access] ${decision.warning}`);
+  }
+  // A refused decision forces the gate closed for this process regardless of
+  // the flag, so no unlock can mint a session the deployment cannot keep.
+  const effectiveConfig: EarlyAccessConfig = decision.ok
+    ? config
+    : Object.freeze({ ...config, enabled: false });
   const now = options.now ?? (() => Date.now());
 
-  const deps: PrivateAccessRouteDependencies = { config, repository, now, randomToken };
+  const deps: PrivateAccessRouteDependencies = { config: effectiveConfig, repository, now, randomToken };
 
   const unlock = createUnlockRoute(deps);
   const session = createSessionRoute(deps);
@@ -94,7 +115,7 @@ export function registerPrivateEarlyAccessApi(
     void logout({ cookieHeader: req.headers.cookie }, res);
   });
 
-  return config;
+  return effectiveConfig;
 }
 
 /** Re-exported so the caller can assert the header set without a literal. */
