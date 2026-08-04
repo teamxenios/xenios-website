@@ -1397,7 +1397,11 @@ describe("production state validator", () => {
     // Ownership validation is O(repo files x rules) and already measures
     // 4.7s to 6.8s on current main, so the 5s default timeout makes this
     // assertion machine dependent. The assertion itself is unchanged.
-  }, 15_000);
+    // 15s was breached too on the integration machine under a concurrent
+    // full-suite load (the run itself completes; only the pin fires), so the
+    // pin now carries the same headroom the PG verifier grants: a timeout,
+    // not a performance assertion.
+  }, 120_000);
 
   it("separates trusted-base diff authorization from the current production ownership snapshot", () => {
     const { state, graph, ownership: currentOwnership } = checkedInState();
