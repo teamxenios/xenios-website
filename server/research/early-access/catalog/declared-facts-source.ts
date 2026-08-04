@@ -50,7 +50,11 @@ import type {
   AdminProductDetail,
   AdminProductVariant,
 } from "@shared/research/product-admin";
-import type { CartAudienceEligibility } from "@shared/research/cart-product-selection";
+import type {
+  CartAudienceEligibility,
+  CartInventoryEligibility,
+} from "@shared/research/cart-product-selection";
+import { supplierConfirmedFulfillmentFact } from "../ops/supplier-confirmation";
 import type { ProductAvailability, ProductLane } from "@shared/research/catalog";
 import {
   resolvePrivateLaneOfferMode,
@@ -238,12 +242,36 @@ export function resolveEarlyAccessOfferState(input: {
 // The reader
 // ---------------------------------------------------------------------------
 
+/**
+ * The one question the fulfillment projection asks the supplier-confirmation
+ * store. Satisfied by `SupplierConfirmationStore.liveForUnit`; kept structural
+ * here so this reader depends on the question, not the store.
+ */
+export interface SupplierConfirmationLiveReader {
+  liveForUnit(
+    productId: string,
+    variantId: string,
+    now: string,
+  ): Promise<import("../ops/supplier-confirmation").SupplierConfirmation | null>;
+}
+
 export interface ProductControlDeclaredFactsDependencies {
   readonly inventory: VariantInventoryFactsReader;
   /** Defaults to the member-row derivation. Injected so a test needs no member. */
   readonly audience?: EarlyAccessAudienceSource;
   /** The settlement currency. Resolved once by the catalog source and passed in. */
   readonly currency: string;
+  /**
+   * SUPPLIER_CONFIRMED_ON_DEMAND. When allocatable inventory does not make a
+   * unit fulfillable, a LIVE supplier confirmation for the EXACT unit does:
+   * Samuel manually confirms supply with the supplier, records it as an
+   * expiring named-human commitment, and the fulfillment fact carries that
+   * confirmation's provenance. Expiry returns the unit to held automatically,
+   * exactly like a stale founder release, because liveness is derived from
+   * the clock at every read. Absent (the default), fulfillment remains
+   * inventory-only and every lot-less unit truthfully blocks.
+   */
+  readonly supplierConfirmations?: SupplierConfirmationLiveReader;
 }
 
 /**
@@ -261,11 +289,13 @@ export class ProductControlDeclaredFactsReader
   private readonly inventory: VariantInventoryFactsReader;
   private readonly audience: EarlyAccessAudienceSource;
   private readonly currency: string;
+  private readonly supplierConfirmations: SupplierConfirmationLiveReader | null;
 
   constructor(dependencies: ProductControlDeclaredFactsDependencies) {
     this.inventory = dependencies.inventory;
     this.audience = dependencies.audience ?? MEMBER_ROW_AUDIENCE_SOURCE;
     this.currency = dependencies.currency;
+    this.supplierConfirmations = dependencies.supplierConfirmations ?? null;
   }
 
   async readDeclaredFacts(input: {
@@ -353,7 +383,7 @@ export class ProductControlDeclaredFactsReader
               // silently covering a unit somebody else now ships.
               sourceVersion: `lane:${product.lane}@${product.updatedAt}`,
             },
-      fulfillment: inventory.inventory,
+      fulfillment: await this.fulfillmentFact(product, variant, inventory.inventory, evaluatedAt),
       documentation: inventory.lotCoa,
       offerState,
       identityDispute: identityDisputeState(canonical.identity),
@@ -363,6 +393,46 @@ export class ProductControlDeclaredFactsReader
       // record names the same presentation, and unknown otherwise.
       strengthDispute: canonical.presentationCorroborated ? "cleared" : "unknown",
     };
+  }
+
+  /**
+   * Fulfillment for one exact unit: allocatable inventory when it makes the
+   * unit eligible, otherwise a LIVE supplier confirmation projected with its
+   * own provenance, otherwise the blocking inventory answer unchanged.
+   *
+   * A broken confirmation read RAISES, for the same reason a broken inventory
+   * read does: "could not check the supplier commitment" must never render as
+   * a truthful "unavailable".
+   */
+  private async fulfillmentFact(
+    product: AdminProductDetail,
+    variant: AdminProductVariant,
+    inventoryFact: CartInventoryEligibility | null,
+    evaluatedAt: string,
+  ): Promise<CartInventoryEligibility | null> {
+    if (inventoryFact !== null && inventoryFact.state === "eligible") return inventoryFact;
+    if (this.supplierConfirmations === null) return inventoryFact;
+    let confirmation;
+    try {
+      confirmation = await this.supplierConfirmations.liveForUnit(
+        product.id,
+        variant.id,
+        evaluatedAt,
+      );
+    } catch (cause) {
+      throw new EarlyAccessDeclaredFactsError(
+        `Supplier confirmations could not be read for ${variant.sku}.`,
+        { cause },
+      );
+    }
+    if (confirmation === null) return inventoryFact;
+    return (
+      supplierConfirmedFulfillmentFact(confirmation, {
+        productId: product.id,
+        variantId: variant.id,
+        evaluatedAt,
+      }) ?? inventoryFact
+    );
   }
 
   /**

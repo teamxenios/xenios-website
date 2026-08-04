@@ -18,6 +18,12 @@ import {
   resolveEarlyAccessOfferState,
 } from "./declared-facts-source";
 import { assessEarlyAccessEligibility } from "./eligibility";
+import type { SupplierConfirmationLiveReader } from "./declared-facts-source";
+import {
+  InMemorySupplierConfirmationStore,
+  createSupplierConfirmation,
+  type CreateSupplierConfirmationInput,
+} from "../ops/supplier-confirmation";
 import { projectEarlyAccessCatalog } from "./early-access-catalog";
 import { resolveEarlyAccessSettlementCurrency } from "./product-control-source";
 
@@ -477,5 +483,103 @@ describe("the review-only canonical source is not reachable from production", ()
       const source = readFileSync(resolve(__dirname, "../../../..", path), "utf8");
       expect(source).not.toContain("first-release-canonical-source");
     }
+  });
+});
+
+describe("SUPPLIER_CONFIRMED_ON_DEMAND projects fulfillment for a lot-less unit", () => {
+  async function liveStore(overrides: Partial<CreateSupplierConfirmationInput> = {}) {
+    const store = new InMemorySupplierConfirmationStore();
+    const created = createSupplierConfirmation({
+      confirmationId: "supconf-facts-0001",
+      supplierOrg: "Apex Research Supply",
+      supplierContact: "Mitch (recorded)",
+      productId: PRODUCT_ID,
+      variantId: VARIANT_ID,
+      sku: SKU,
+      supplierSku: "APX-0001",
+      strength: "10 mg",
+      presentation: "Single vial, 10 mg",
+      maxQuantity: 12,
+      fulfillmentLocation: "Houston TX",
+      fulfillmentMethod: "courier_handoff",
+      targetHandoffHours: 72,
+      shippingRequirements: "Insulated mailer",
+      coldChainState: "ambient_ok",
+      documentationState: "supplier_states_coa_available",
+      confirmedAt: "2026-08-04T00:00:00.000Z",
+      expiresAt: "2026-08-05T00:00:00.000Z",
+      confirmedBy: "Samuel Boadu",
+      evidenceRef: "telegram:supplier-thread/8841",
+      ...overrides,
+    });
+    if (!created.ok) throw new Error(`fixture invalid: ${created.code}`);
+    await store.insert(created.value);
+    return store;
+  }
+
+  function readerWith(
+    inventory: VariantInventoryFactsReader,
+    supplierConfirmations: SupplierConfirmationLiveReader,
+  ) {
+    return new ProductControlDeclaredFactsReader({
+      inventory,
+      audience: MEMBER_ROW_AUDIENCE_SOURCE,
+      currency: CURRENCY,
+      supplierConfirmations,
+    });
+  }
+
+  it("turns FULFILLMENT off held for a live confirmation, with the confirmation's provenance", async () => {
+    const declared = await readerWith(EMPTY_INVENTORY, await liveStore()).readDeclaredFacts({
+      products: [product()],
+      now: NOW,
+      context: { member: member() },
+    });
+    const facts = declared[0].variantFacts[0];
+    expect(facts.fulfillment?.state).toBe("eligible");
+    expect(facts.fulfillment?.reason).toBeNull();
+    expect(facts.fulfillment?.sourceVersion).toContain("SUPPLIER_CONFIRMED_ON_DEMAND");
+    // Documentation is deliberately NOT projected from the confirmation: the
+    // COA gate keeps reading lot evidence, and a supplier's self-declared
+    // state does not satisfy it.
+    expect(facts.documentation?.state).toBe("required");
+  });
+
+  it("keeps the lot's own provenance when allocatable inventory already makes the unit eligible", async () => {
+    const declared = await readerWith(READY_INVENTORY, await liveStore()).readDeclaredFacts({
+      products: [product()],
+      now: NOW,
+      context: { member: member() },
+    });
+    const facts = declared[0].variantFacts[0];
+    expect(facts.fulfillment?.state).toBe("eligible");
+    expect(facts.fulfillment?.sourceVersion).toBe("lot-fingerprint-ready");
+  });
+
+  it("returns the unit to held the instant the confirmation expires, with no process running", async () => {
+    const expired = await liveStore({ expiresAt: "2026-08-04T11:59:59.000Z" });
+    const declared = await readerWith(EMPTY_INVENTORY, expired).readDeclaredFacts({
+      products: [product()],
+      now: NOW,
+      context: { member: member() },
+    });
+    const facts = declared[0].variantFacts[0];
+    expect(facts.fulfillment?.state).toBe("unavailable");
+    expect(facts.fulfillment?.sourceVersion).toBe("lot-fingerprint-empty");
+  });
+
+  it("raises when the confirmation read breaks, because could-not-check is not unavailable", async () => {
+    const broken: SupplierConfirmationLiveReader = {
+      async liveForUnit() {
+        throw new Error("supplier_confirmation_store_unavailable");
+      },
+    };
+    await expect(
+      readerWith(EMPTY_INVENTORY, broken).readDeclaredFacts({
+        products: [product()],
+        now: NOW,
+        context: { member: member() },
+      }),
+    ).rejects.toBeInstanceOf(EarlyAccessDeclaredFactsError);
   });
 });
