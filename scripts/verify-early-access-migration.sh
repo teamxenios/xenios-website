@@ -78,5 +78,11 @@ check "200 racing exchanges over 50 grants yield exactly 50 sessions" \
 check "every grant is consumed exactly once" \
   "$(q -c "select count(*) from public.research_private_early_access_nonces where consumed_at is not null;")" 50
 
+# The upgrade path matters as much as the fresh one: most databases that ever
+# run this already have the fifteen-minute schema.
+if [ -f supabase/research-private-early-access-session-ttl-240.sql ]; then
+  check "the 240-minute lifetime is what the database actually grants"     "$(q -c "truncate public.research_private_early_access_nonces, public.research_private_early_access_sessions cascade; select public.research_private_early_access_issue_nonce(repeat('c',64),'$OWNER','$ROLE') is not null;" >/dev/null; q -c "select round(extract(epoch from (public.research_private_early_access_exchange_nonce(repeat('c',64),repeat('d',64),'$OWNER','$ROLE') - pg_catalog.clock_timestamp()))/60);")" 240
+fi
+
 echo
 [ "$fail" -eq 0 ] && echo "PostgreSQL ${MAJOR}: ALL CHECKS PASSED" || { echo "PostgreSQL ${MAJOR}: FAILURES ABOVE"; exit 1; }
