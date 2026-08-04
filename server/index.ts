@@ -64,6 +64,9 @@ import {
 } from "./care";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
+import {
+  createPrivateEarlyAccessPaymentOptionsContainmentMiddleware,
+} from "./research/early-access/private-access-route";
 import { requireActiveMember, requireMember, type MemberRow } from "./research/member-auth";
 import { requireSupabaseAdmin } from "./routes";
 import { promoteHeldRewards } from "./research/referrals";
@@ -115,6 +118,12 @@ app.use(
 // The held legacy order endpoint must terminate before any application body
 // parser or rawBody verifier can retain customer-supplied bytes.
 registerLegacyResearchOrderContainment(app);
+
+// Private Early Access stays unavailable, but its exact raw payment-options
+// boundary terminates before JSON/urlencoded parsing and rawBody capture. The
+// contained adapter has no session, registry, provider, or payment dependency;
+// a later separately reviewed unit must supply those before any 200 is possible.
+app.use(createPrivateEarlyAccessPaymentOptionsContainmentMiddleware());
 
 app.use(
   express.json({

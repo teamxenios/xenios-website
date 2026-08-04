@@ -11,10 +11,10 @@ import type {
 import { verifyPrivateAccessSession } from "./private-access-session";
 
 /**
- * This module is deliberately unregistered. A later, separately reviewed
- * integration must mount the returned handler without widening this exact raw
- * request boundary. Nothing here reads environment, cookie, body, query,
- * provider, or persistence state.
+ * This module owns the pure Private Early Access read boundary. Production may
+ * mount only the exported containment middleware, which deliberately supplies
+ * no session or operational registry. Nothing here reads environment, cookie,
+ * body, query, provider, or persistence state.
  */
 export const PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH =
   "/api/research/early-access/payment-options" as const;
@@ -58,6 +58,17 @@ export interface PrivateEarlyAccessPaymentOptionsResponsePort {
   status(code: number): unknown;
   json(body: unknown): unknown;
 }
+
+export interface PrivateEarlyAccessContainmentRequestPort {
+  readonly method: unknown;
+  readonly originalUrl: unknown;
+}
+
+export type PrivateEarlyAccessContainmentMiddleware = (
+  request: PrivateEarlyAccessContainmentRequestPort,
+  response: PrivateEarlyAccessPaymentOptionsResponsePort,
+  next: () => void,
+) => void;
 
 export type PrivateEarlyAccessPaymentOptionsRoute = (
   request: unknown,
@@ -378,5 +389,47 @@ export function createPrivateEarlyAccessPaymentOptionsRoute(
     const body = Object.freeze({ state: "resolved" as const, codes });
     response.status(200);
     response.json(body);
+  };
+}
+
+/**
+ * Exact raw-path production containment. The route is deliberately mounted
+ * before application body parsers, but cannot authenticate or resolve a
+ * payment method: there is no session, clock, or registry integration. Exact
+ * requests therefore fail closed with private headers while noncanonical
+ * lookalikes continue to the unchanged Research wall.
+ */
+export function createPrivateEarlyAccessPaymentOptionsContainmentMiddleware(
+): PrivateEarlyAccessContainmentMiddleware {
+  const route = createPrivateEarlyAccessPaymentOptionsRoute({
+    session: null,
+    methodRegistry: Object.freeze({
+      resolveEnabledMethod(): never {
+        throw new Error(
+          "Private Early Access payment registry is unavailable.",
+        );
+      },
+    }),
+    paymentClock: Object.freeze({
+      now(): never {
+        throw new Error("Private Early Access payment clock is unavailable.");
+      },
+    }),
+  });
+
+  return (request, response, next): void => {
+    if (request.originalUrl !== PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH) {
+      next();
+      return;
+    }
+
+    route(
+      Object.freeze({
+        method: request.method,
+        rawPath: request.originalUrl,
+        sessionToken: null,
+      }),
+      response,
+    );
   };
 }

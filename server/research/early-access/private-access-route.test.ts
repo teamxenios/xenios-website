@@ -14,6 +14,7 @@ import {
 } from "./private-access-session";
 import {
   PRIVATE_EARLY_ACCESS_PAYMENT_OPTIONS_PATH,
+  createPrivateEarlyAccessPaymentOptionsContainmentMiddleware,
   createPrivateEarlyAccessPaymentOptionsRoute,
   type PrivateEarlyAccessPaymentOptionsResponsePort,
   type PrivateEarlyAccessPaymentOptionsRouteDependencies,
@@ -704,7 +705,7 @@ describe("Private Early Access payment-options route factory", () => {
     expectPrivate(second);
   });
 
-  it("remains a pure unregistered core with no HTTP credential, environment, network, or integration read", () => {
+  it("keeps the containment core free of ambient credentials, environment, network, and Research-wall reads", () => {
     const source = readFileSync(
       path.join(HERE, "private-access-route.ts"),
       "utf8",
@@ -719,13 +720,23 @@ describe("Private Early Access payment-options route factory", () => {
       /xr_access|verifyPrivateAccessPassword|issuePrivateAccessSession/,
     );
 
-    for (const integrationPath of [
-      path.join(HERE, "..", "index.ts"),
+    expect(
+      readFileSync(path.join(HERE, "..", "index.ts"), "utf8"),
+    ).not.toContain("private-access-route");
+    const productionSource = readFileSync(
       path.join(HERE, "..", "..", "index.ts"),
-    ]) {
-      expect(readFileSync(integrationPath, "utf8")).not.toContain(
-        "private-access-route",
-      );
-    }
+      "utf8",
+    );
+    expect(productionSource).toContain(
+      "createPrivateEarlyAccessPaymentOptionsContainmentMiddleware",
+    );
+    expect(
+      productionSource.match(
+        /app\.use\(createPrivateEarlyAccessPaymentOptionsContainmentMiddleware\(\)\);/g,
+      ) ?? [],
+    ).toHaveLength(1);
+    expect(
+      createPrivateEarlyAccessPaymentOptionsContainmentMiddleware,
+    ).toBeTypeOf("function");
   });
 });
