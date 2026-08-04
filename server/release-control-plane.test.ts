@@ -67,6 +67,9 @@ const EA_PERSISTENCE_SOURCE_PATHS = new Set([
 const EA_RESERVATION_SOURCE_SHA = "a2698a56b1a56cb46ffe1a89220eef4da3de92dc";
 const EA_RESERVATION_PATH =
   "supabase/migrations/20260804123000_research_early_access_reservation_holds.sql";
+const EA_UNIT_HOLDS_SOURCE_SHA = "eafb8288ca2227d79dde545dfe2499d3dadb739e";
+const EA_UNIT_HOLDS_PATH =
+  "supabase/migrations/20260804130000_research_early_access_unit_holds.sql";
 const pg16It =
   process.env.CI || process.env.XENIOS_RUN_PG16_VERIFIER === "1" ? it : it.skip;
 const CONTROL_PLANE_FILES = [
@@ -737,6 +740,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(EA_PERSISTENCE_SOURCE_SHA);
           } else if (path === EA_RESERVATION_PATH) {
             expect(sourceSha).toBe(EA_RESERVATION_SOURCE_SHA);
+          } else if (path === EA_UNIT_HOLDS_PATH) {
+            expect(sourceSha).toBe(EA_UNIT_HOLDS_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
