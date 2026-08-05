@@ -29,6 +29,7 @@ MIGRATIONS=(
   "supabase/migrations/20260804130000_research_early_access_unit_holds.sql"
   "supabase/migrations/20260804140000_research_early_access_settled_transaction_refs.sql"
   "supabase/migrations/20260804150000_research_early_access_proof_bucket_privacy.sql"
+  "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql"
 )
 for f in "$SESSION_SQL" "${MIGRATIONS[@]}"; do
   [ -f "$f" ] || { echo "missing $f (run from the repository root)"; exit 1; }
