@@ -3,8 +3,13 @@
 Everything in the repository is ready. What remains needs production credentials
 and founder authority, which is why each step below is yours rather than mine.
 
-Branch: `claude/f5-flow-held-controls`
+Release candidate: `6ce298418b63878fe557bc9cc0b6fca14401aba7`
+Branch: `claude/f5-flow-held-controls` (pushed)
 Host: Render (`render-build` / `start` in `package.json`)
+
+Gates at this exact SHA: full suite 7,045 passed / 27 skipped / 0 failed,
+typecheck 0 errors, client build green, core-site-protection verifier PASS,
+`server/index.ts` and `server/research/index.ts` untouched.
 
 ## The accepted opening set
 
@@ -100,7 +105,7 @@ Tell me when it is live and I will verify against production directly: 22 cards,
 desktop and mobile.
 
 Until then the proof stands at pre-production, in
-`browser-artifacts/<sha>/preproduction/`.
+`docs/early-access-release/browser-artifacts/`.
 
 ## Step 8, order-critical smoke
 
