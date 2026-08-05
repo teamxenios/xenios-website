@@ -70,6 +70,9 @@ const EA_RESERVATION_PATH =
 const EA_UNIT_HOLDS_SOURCE_SHA = "eafb8288ca2227d79dde545dfe2499d3dadb739e";
 const EA_UNIT_HOLDS_PATH =
   "supabase/migrations/20260804130000_research_early_access_unit_holds.sql";
+const EA_SETTLED_REFS_SOURCE_SHA = "da8385371b750d99026d88d3b7ce4e1e56bd8407";
+const EA_SETTLED_REFS_PATH =
+  "supabase/migrations/20260804140000_research_early_access_settled_transaction_refs.sql";
 const pg16It =
   process.env.CI || process.env.XENIOS_RUN_PG16_VERIFIER === "1" ? it : it.skip;
 const CONTROL_PLANE_FILES = [
@@ -742,6 +745,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(EA_RESERVATION_SOURCE_SHA);
           } else if (path === EA_UNIT_HOLDS_PATH) {
             expect(sourceSha).toBe(EA_UNIT_HOLDS_SOURCE_SHA);
+          } else if (path === EA_SETTLED_REFS_PATH) {
+            expect(sourceSha).toBe(EA_SETTLED_REFS_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
@@ -757,7 +762,10 @@ describe("migration DAG validator", () => {
           }),
       }),
     ).toEqual([]);
-  });
+    // One git cat-file per DAG node; at 16 nodes this exceeds the 5 s default
+    // under full-suite parallelism on a loaded machine (measures ~3.4 s
+    // isolated). Same treatment as the production-state snapshot test below.
+  }, 30_000);
 
   it("requires every managed ledger migration exactly once in the DAG", () => {
     const dag = JSON.parse(
@@ -1058,7 +1066,10 @@ describe("migration DAG validator", () => {
     expect(mismatchIssues.map((issue) => issue.code)).toContain(
       "MANAGED_MIGRATION_SOURCE_MISMATCH",
     );
-  });
+    // Same git-spawning family as the canonical-checksum test: one process
+    // per DAG node no longer fits the 5 s default under full-suite
+    // parallelism on a loaded machine.
+  }, 30_000);
 
   it("rejects unsafe or unpinned migration source paths", () => {
     const dag = JSON.parse(

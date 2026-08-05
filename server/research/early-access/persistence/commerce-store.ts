@@ -50,6 +50,7 @@ const RPC = {
   placementByKey: "research_early_access_placement_by_key",
   placement: "research_early_access_placement",
   awaitingReview: "research_early_access_awaiting_review",
+  settledTransactionRefs: "research_early_access_settled_transaction_refs",
   proofs: "research_early_access_proofs",
   settlement: "research_early_access_settlement",
   verifications: "research_early_access_verifications",
@@ -209,6 +210,25 @@ export class SupabaseEarlyAccessCommerceStore implements EarlyAccessCommerceStor
     return raw === null || raw === undefined
       ? null
       : (Object.freeze(expectObject(RPC.settlement, raw)) as EarlyAccessSettlement);
+  }
+
+  /**
+   * Every external transaction reference that has EVER settled an order
+   * (migration 55). The ledger is written only inside commit_settlement and
+   * is append-only, so this answer is always whole, never partial, which is
+   * the interface's own requirement for implementing it at all.
+   */
+  async settledTransactionRefs(): Promise<readonly string[]> {
+    const raw = expectArray(
+      RPC.settledTransactionRefs,
+      await runEarlyAccessCall(this.query, {
+        fn: RPC.settledTransactionRefs,
+        args: {},
+      }),
+    );
+    return Object.freeze(
+      raw.filter((entry): entry is string => typeof entry === "string"),
+    );
   }
 
   async commitSettlement(settlement: EarlyAccessSettlement): Promise<SettlementCommit> {

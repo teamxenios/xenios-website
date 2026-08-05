@@ -189,6 +189,15 @@ describe("SupabaseEarlyAccessCommerceStore: reads", () => {
     expect(dispatch.fulfillment).toEqual({ orderId: "XEA-1" });
   });
 
+  it("settledTransactionRefs answers the whole cross-order list, frozen, dropping non-strings", async () => {
+    const store = storeWith({
+      research_early_access_settled_transaction_refs: () => ["BANK-1", "BANK-2", 3, null],
+    });
+    const refs = await store.settledTransactionRefs();
+    expect(refs).toEqual(["BANK-1", "BANK-2"]);
+    expect(Object.isFrozen(refs)).toBe(true);
+  });
+
   it("settlement reads answer null or the record", async () => {
     const stored = { orderNumber: "XEA-1" } as unknown as EarlyAccessSettlement;
     const store = storeWith({

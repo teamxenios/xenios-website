@@ -45,6 +45,7 @@ const MIGRATIONS = [
   "20260804122000_research_early_access_supplier_operations.sql",
   "20260804123000_research_early_access_reservation_holds.sql",
   "20260804130000_research_early_access_unit_holds.sql",
+  "20260804140000_research_early_access_settled_transaction_refs.sql",
 ] as const;
 
 type Pool = import("pg").Pool;
@@ -903,6 +904,39 @@ run("Early Access durable persistence against real PostgreSQL", () => {
       await client.query("reset role");
     } finally {
       client.release();
+    }
+  });
+
+  it("settledTransactionRefs: every reference that ever settled, across ALL orders (F4)", async () => {
+    // Runs after the settlement suite: XEA-PG-0001 settled with BANK-TXN-777.
+    // A second order settles with its own reference; BOTH must be visible,
+    // which is exactly the cross-order answer the classification needs.
+    const second = buildPlacement({ orderNumber: "XEA-PG-0005", idempotencyKey: "idem-5" });
+    expect((await store.commitPlacement(second)).committed).toBe(true);
+    const settled = await store.commitSettlement(
+      buildSettlement("XEA-PG-0005", "BANK-TXN-555"),
+    );
+    expect(settled.committed).toBe(true);
+
+    const refs = await store.settledTransactionRefs();
+    expect(refs).toContain("BANK-TXN-777");
+    expect(refs).toContain("BANK-TXN-555");
+    // Only settled references: the refused reuse attempts never joined.
+    expect(refs).not.toContain("BANK-TXN-888");
+    expect(refs).not.toContain("BANK-TXN-999");
+    // Oldest settlement first, matching the in-memory insertion order.
+    expect(refs.indexOf("BANK-TXN-777")).toBeLessThan(refs.indexOf("BANK-TXN-555"));
+
+    // A restart forgets nothing: a second pool answers the same whole list.
+    const { Pool } = await import("pg");
+    const reborn = new Pool({ connectionString: PG_URL, max: 2 });
+    try {
+      const rebornStore = new SupabaseEarlyAccessCommerceStore({
+        query: pgQuery(() => reborn),
+      });
+      expect(await rebornStore.settledTransactionRefs()).toEqual(refs);
+    } finally {
+      await reborn.end();
     }
   });
 
