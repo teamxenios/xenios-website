@@ -624,6 +624,10 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
         attribution,
         paymentState: "awaiting_payment" as const,
         placedAt: now,
+        // Stamped at placement, from the session that actually placed it.
+        // Absent provenance records as the weak value rather than being
+        // omitted, so a future history view never has to guess.
+        bindingProvenance: customer.boundBy ?? "email_entry",
       });
 
       const committed = await deps.store.commitPlacement(placement);

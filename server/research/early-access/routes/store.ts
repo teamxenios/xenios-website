@@ -81,6 +81,23 @@ export type EarlyAccessPlacement = Readonly<{
   attribution: EarlyAccessReferralAttribution | null;
   paymentState: EarlyAccessPaymentState;
   placedAt: string;
+  /**
+   * How the session that placed this order was bound to its customer.
+   *
+   * Recorded on the ORDER, at placement, because it is a fact about how this
+   * order came to exist and it must not be re-derived later from a session
+   * that no longer exists. Tonight every purchaser is "email_entry" by
+   * founder decision, and tonight that discloses nothing because there is no
+   * history browsing.
+   *
+   * It exists so the day history DOES ship, a row placed by someone who
+   * typed another person's email can be excluded or flagged rather than
+   * appearing in that person's history looking legitimate. Without this
+   * column the bad rows would already be indistinguishable by then.
+   *
+   * Absent means unknown, which every reader must treat as the WEAK value.
+   */
+  bindingProvenance?: "email_entry" | "verified_link";
 }>;
 
 /**

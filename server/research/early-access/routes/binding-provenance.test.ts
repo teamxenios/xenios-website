@@ -165,3 +165,29 @@ describe("an unknown provenance", () => {
     expect(attempted.status).toBe(404);
   });
 });
+
+describe("the order records how its session was bound", () => {
+  it("stamps email_entry on an order placed by a typed-email session", async () => {
+    const shared = await harness(EMAIL_ENTRY);
+    const cookie = await openSession(shared.app);
+    const placed = await request(shared.app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
+    expect(placed.status).toBe(201);
+    const stored = await shared.store.placementByOrderNumber(
+      placed.body.order.orderNumber as string,
+    );
+    // The day history ships, a row placed by someone who typed another
+    // person's email can be excluded or flagged. Without the stamp those
+    // rows would already be indistinguishable by then.
+    expect(stored?.bindingProvenance).toBe("email_entry");
+  });
+
+  it("stamps verified_link when the session proved the claim", async () => {
+    const shared = await harness(VERIFIED);
+    const cookie = await openSession(shared.app);
+    const placed = await request(shared.app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
+    const stored = await shared.store.placementByOrderNumber(
+      placed.body.order.orderNumber as string,
+    );
+    expect(stored?.bindingProvenance).toBe("verified_link");
+  });
+});
