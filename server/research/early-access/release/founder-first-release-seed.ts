@@ -173,6 +173,16 @@ export type FounderFirstReleaseSeedOutcome = Readonly<{
   unresolved: readonly UnresolvedFirstRelease[];
   /** Resolved units deliberately left unreleased. Visible, never purchasable. */
   founderHeld: readonly FounderCommercialHold[];
+  /**
+   * The exact units those holds resolved to. The storefront needs the product
+   * and variant ids to keep the row VISIBLE while the missing release keeps it
+   * unsellable; the hold list alone is names and strengths.
+   */
+  founderHeldUnits: readonly Readonly<{
+    productId: string;
+    variantId: string;
+    sku: string;
+  }>[];
 }>;
 
 export interface AppendOnlyReleaseLedger {
@@ -274,6 +284,7 @@ export async function seedFounderFirstRelease(input: {
   const unresolved = [...resolution.unresolved];
 
   const founderHeld: FounderCommercialHold[] = [];
+  const founderHeldUnits: { productId: string; variantId: string; sku: string }[] = [];
 
   for (const { input: pricing, row } of resolution.resolved) {
     // A founder-held unit is resolved and priced but never released, so the
@@ -281,6 +292,9 @@ export async function seedFounderFirstRelease(input: {
     const hold = heldByFounder(pricing);
     if (hold !== null) {
       founderHeld.push(hold);
+      founderHeldUnits.push(
+        Object.freeze({ productId: row.productId, variantId: row.variantId, sku: row.sku }),
+      );
       continue;
     }
     const releaseId = `rel-first-${row.sku.toLowerCase()}`;
@@ -323,5 +337,6 @@ export async function seedFounderFirstRelease(input: {
     seeded: Object.freeze(seeded),
     unresolved: Object.freeze(unresolved),
     founderHeld: Object.freeze(founderHeld),
+    founderHeldUnits: Object.freeze(founderHeldUnits),
   });
 }

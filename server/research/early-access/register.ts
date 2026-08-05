@@ -255,6 +255,14 @@ export interface EarlyAccessRegistrationOptions {
   /** What each session created, for the email-entry read guard. */
   readonly sessionOrders?: SessionOrderLog;
   /**
+   * Units a named human has deliberately NOT released for sale. They render
+   * TEMPORARILY_HELD with no price and no purchase action.
+   */
+  readonly founderHeldUnits?: readonly Readonly<{
+    productId: string;
+    variantId: string;
+  }>[];
+  /**
    * Single-use verification-token consumption, for the email-verification
    * doors. ACCEPTED AND HELD: the doors are not mounted yet, so registration
    * stores nothing through this today, but the injection point exists now so
@@ -417,6 +425,10 @@ export function registerPrivateEarlyAccessApi(
 
   const routeDependencies = {
     resolveSession,
+    // Founder-held units stay visible and unsellable rather than vanishing.
+    ...(options.founderHeldUnits === undefined
+      ? {}
+      : { founderHeldUnits: options.founderHeldUnits }),
     // The CUSTOMER source. Its audience comes from the APPROVED Early Access
     // customer the identity directory resolved for this session, and from
     // nothing else: a member row rides along for provenance parity but

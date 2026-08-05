@@ -67,6 +67,11 @@ export class EmptyEarlyAccessCatalogSource implements EarlyAccessCatalogSource {
 
 export interface EarlyAccessReleaseRouteDependencies {
   readonly resolveSession: (cookieHeader: unknown) => Promise<EarlyAccessSessionCheck>;
+  /** Units the founder has not released, kept visible and unsellable. */
+  readonly founderHeldUnits?: readonly Readonly<{
+    productId: string;
+    variantId: string;
+  }>[];
   readonly catalog: EarlyAccessCatalogSource;
   readonly ledger: EarlyAccessReleaseLedger;
   readonly now: () => number;
@@ -138,6 +143,9 @@ export function createEarlyAccessCatalogRoute(deps: EarlyAccessReleaseRouteDepen
         projection,
         releases,
         scope: "released_units",
+        ...(deps.founderHeldUnits === undefined
+          ? {}
+          : { founderHeldUnits: deps.founderHeldUnits }),
       });
 
       send(response, 200, {

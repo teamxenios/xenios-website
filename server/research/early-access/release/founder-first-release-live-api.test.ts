@@ -337,6 +337,7 @@ describe("with Raw Peptides supply confirmed: the finish line", () => {
       customers,
       sessionBindings,
       supplierConfirmations: confirmations,
+      founderHeldUnits: releases.founderHeldUnits,
       agreements: new StubAgreementGate(true),
       suppliers: new StubSupplierDirectory(SUPPLIER_ASSIGNMENT),
       shipping: new StubShippingPolicy(true),
@@ -373,20 +374,28 @@ describe("with Raw Peptides supply confirmed: the finish line", () => {
     const answered = await request(harnessed.app).get(CATALOG_PATH).set("Cookie", cookie);
     expect(answered.status).toBe(200);
     const units = answered.body.units as ReadonlyArray<Record<string, unknown>>;
-    // The founder-held unit is NOT released, so the customer catalog (scoped
-    // to released units) shows 21. It stays fully visible in Product Control
-    // and every internal surface.
-    expect(units).toHaveLength(21);
-    expect(units.some((unit) => unit.canonicalName === "Cagrilintide Research Material")).toBe(
-      false,
+    // ALL 22 render. The founder-held unit is visible and unsellable rather
+    // than absent: the customer sees it exists, with no price and no way to
+    // buy it, which is the founder's decision made legible.
+    expect(units).toHaveLength(22);
+
+    const cagrilintide = units.find(
+      (unit) => unit.canonicalName === "Cagrilintide Research Material",
     );
+    expect(cagrilintide).toBeDefined();
+    expect(cagrilintide?.availability).toBe("TEMPORARILY_HELD");
+    expect(cagrilintide?.purchasable).toBe(false);
+    // No amount beside a unit nobody may buy, and no basis to buy it on.
+    expect(cagrilintide?.priceCents).toBeNull();
+    expect(cagrilintide?.basis).toBeNull();
+    expect(cagrilintide?.hold).toBe("NO_FOUNDER_RELEASE");
 
     const available = units.filter((unit) => unit.availability === "AVAILABLE");
     const held = units.filter((unit) => unit.availability === "TEMPORARILY_HELD");
     // Every founder row is visible. Units carrying a recorded dispute or hold
     // stay truthfully held rather than being forced available, and the two
     // counts must account for all 22 with nothing dropped.
-    expect(available.length + held.length).toBe(21);
+    expect(available.length + held.length).toBe(22);
     expect(available.length).toBeGreaterThan(0);
     for (const unit of available) {
       expect(unit.purchasable).toBe(true);
