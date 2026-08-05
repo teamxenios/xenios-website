@@ -120,6 +120,8 @@ export interface PrivateAccessRouteDependencies {
   readonly randomToken: () => string;
   readonly logger?: PrivateAccessLogger;
   readonly attempts?: PrivateAccessAttemptLimiter;
+  /** Injected so the rate-limit switch is testable without touching process.env. */
+  readonly env?: NodeJS.ProcessEnv;
   readonly cookies?: PrivateAccessCookiePort;
   readonly verifyPassword?: (presented: unknown, storedHash: unknown) => boolean;
   /**
@@ -439,14 +441,51 @@ function cookiePortOf(deps: PrivateAccessRouteDependencies): PrivateAccessCookie
   return deps.cookies ?? createDefaultPrivateAccessCookiePort(deps.config.sessionSecret);
 }
 
+/** The env switch for the Early Access password limiter, and nothing else. */
+export const PRIVATE_ACCESS_RATE_LIMIT_ENV = "RESEARCH_EARLY_ACCESS_RATE_LIMIT_ENABLED";
+
+/**
+ * FAILS CLOSED. The limiter is on unless the value is EXACTLY "false".
+ *
+ * Missing, empty, "0", "no", "FALSE", or any malformed value keeps rate
+ * limiting ENABLED. Only the one exact string turns it off, so a typo or a
+ * half-set variable can never quietly remove the brute-force guard.
+ */
+export function privateAccessRateLimitEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env[PRIVATE_ACCESS_RATE_LIMIT_ENV] !== "false";
+}
+
+/**
+ * A limiter that never locks and records nothing.
+ *
+ * It is NOT a weaker password check. `verify` still runs on every attempt and a
+ * wrong password still returns the same refusal; what is removed is only the
+ * lockout that would refuse a LATER CORRECT password. It keeps no per-client
+ * state, so there is nothing to write and nothing to leak, and it logs nothing.
+ *
+ * This exists for launch, where a locked-out founder and a locked-out approved
+ * member are indistinguishable from a broken deployment. Restore the limiter
+ * after launch by setting the variable back to "true" or removing it.
+ */
+export function createPrivateAccessUnlimitedAttempts(): PrivateAccessAttemptLimiter {
+  return {
+    isLocked: () => false,
+    recordFailure: () => {},
+    reset: () => {},
+  };
+}
+
 function limiterOf(deps: PrivateAccessRouteDependencies): PrivateAccessAttemptLimiter {
-  return (
-    deps.attempts ??
-    createPrivateAccessAttemptLimiter({
-      maxAttempts: deps.config.maxAttempts,
-      lockoutMinutes: deps.config.lockoutMinutes,
-    })
-  );
+  if (deps.attempts !== undefined) return deps.attempts;
+  // Read per call rather than at module load, so the switch takes effect on a
+  // restart without depending on import order.
+  if (!privateAccessRateLimitEnabled(deps.env ?? process.env)) {
+    return createPrivateAccessUnlimitedAttempts();
+  }
+  return createPrivateAccessAttemptLimiter({
+    maxAttempts: deps.config.maxAttempts,
+    lockoutMinutes: deps.config.lockoutMinutes,
+  });
 }
 
 // ---------------------------------------------------------------------------
