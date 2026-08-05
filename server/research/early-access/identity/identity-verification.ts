@@ -205,20 +205,82 @@ export class InMemoryConsumedTokenStore implements ConsumedTokenStore {
 }
 
 /** A session may point at exactly one customer, for its whole life. */
+/**
+ * HOW a session came to be bound to a customer. The whole point is that these
+ * two are NOT interchangeable.
+ *
+ * "email_entry": the purchaser typed an email at checkout. Under the shared
+ *   password that is an unauthenticated claim: anyone holding the password
+ *   can type anyone's address. It is enough to place a NEW order, because the
+ *   purchaser only ever sees what they just entered and just bought.
+ * "verified_link": the purchaser redeemed a signed verification token minted
+ *   for THIS session. That is an authenticated claim.
+ *
+ * Reading anything that EXISTED BEFORE this session (order history, prior
+ * invoices, tracking, saved shipping, profile) requires "verified_link",
+ * always. Not "on a new device", not "after a long gap": always. Without
+ * this field the rule would be a judgement call; with it, it is a check.
+ */
+export const SESSION_BINDING_PROVENANCES = ["email_entry", "verified_link"] as const;
+
+export type SessionBindingProvenance = (typeof SESSION_BINDING_PROVENANCES)[number];
+
+export type SessionBinding = Readonly<{
+  customerId: string;
+  boundBy: SessionBindingProvenance;
+}>;
+
 export interface SessionBindingStore {
   get(sessionId: string): Promise<string | null>;
-  bind(sessionId: string, customerId: string): Promise<boolean>;
+  /**
+   * The binding WITH its provenance. Optional so an older durable adapter
+   * still compiles, but a store that cannot answer it makes every session
+   * unverified for read purposes, which fails CLOSED.
+   */
+  binding?(sessionId: string): Promise<SessionBinding | null>;
+  /**
+   * Defaults to "email_entry", the weaker provenance, so a caller that
+   * forgets to state how it bound cannot accidentally mint a verified one.
+   */
+  bind(
+    sessionId: string,
+    customerId: string,
+    boundBy?: SessionBindingProvenance,
+  ): Promise<boolean>;
 }
 
 export class InMemorySessionBindingStore implements SessionBindingStore {
-  private readonly bindings = new Map<string, string>();
+  private readonly bindings = new Map<string, SessionBinding>();
   async get(sessionId: string): Promise<string | null> {
+    return this.bindings.get(sessionId)?.customerId ?? null;
+  }
+  async binding(sessionId: string): Promise<SessionBinding | null> {
     return this.bindings.get(sessionId) ?? null;
   }
-  /** False when the session is already bound, even to the same customer. */
-  async bind(sessionId: string, customerId: string): Promise<boolean> {
-    if (this.bindings.has(sessionId)) return false;
-    this.bindings.set(sessionId, customerId);
+
+  /**
+   * False when the session is already bound, even to the same customer, with
+   * ONE exception: an existing "email_entry" binding may be UPGRADED to
+   * "verified_link" for the same customer, because that is a returning
+   * purchaser proving the claim they already made. A downgrade never
+   * happens, and a bind to a different customer is always refused.
+   */
+  async bind(
+    sessionId: string,
+    customerId: string,
+    boundBy: SessionBindingProvenance = "email_entry",
+  ): Promise<boolean> {
+    const existing = this.bindings.get(sessionId);
+    if (existing !== undefined) {
+      const upgrading =
+        existing.customerId === customerId &&
+        existing.boundBy === "email_entry" &&
+        boundBy === "verified_link";
+      if (!upgrading) return false;
+      this.bindings.set(sessionId, { customerId, boundBy });
+      return true;
+    }
+    this.bindings.set(sessionId, { customerId, boundBy });
     return true;
   }
 }
@@ -271,7 +333,17 @@ export async function redeemVerificationToken(
   if (customer.normalizedEmail !== payload.em) return fail("TOKEN_EMAIL_MISMATCH");
   if (!mayOwnOrders(customer)) return fail("CUSTOMER_NOT_APPROVED");
 
-  if (existing === null && !(await input.bindings.bind(input.sessionId, customer.id))) {
+  // Redemption is the authenticated path, so it binds (or upgrades to) the
+  // strong provenance. A session already bound by email entry to this same
+  // customer is upgraded rather than refused: that is exactly a returning
+  // purchaser proving the claim they typed.
+  //
+  // A refused bind is only fatal when the session belongs to somebody else.
+  // When it is already bound to THIS customer the redemption continues to
+  // the consume below, so a replayed token still reports the precise
+  // TOKEN_ALREADY_USED rather than being masked as a binding conflict.
+  const bound = await input.bindings.bind(input.sessionId, customer.id, "verified_link");
+  if (!bound && existing !== payload.cid) {
     return fail("SESSION_ALREADY_BOUND");
   }
   // Consumed ONLY after the binding holds. The old order burned the token
@@ -315,15 +387,28 @@ export class EarlyAccessCustomerDirectory implements EarlyAccessIdentityDirector
     const sessionId = this.deps.readSessionId(input.cookieHeader);
     if (sessionId === null || sessionId.length === 0) return null;
 
-    const customerId = await this.deps.bindings.get(sessionId);
-    if (customerId === null) return null;
+    // Provenance-aware when the store can answer, and FAIL CLOSED when it
+    // cannot: an unknown provenance is treated as the weak one, so a store
+    // that predates this field can never mint a verified session.
+    const binding =
+      typeof this.deps.bindings.binding === "function"
+        ? await this.deps.bindings.binding(sessionId)
+        : await this.deps.bindings
+            .get(sessionId)
+            .then((customerId) =>
+              customerId === null
+                ? null
+                : ({ customerId, boundBy: "email_entry" } as SessionBinding),
+            );
+    if (binding === null) return null;
 
-    const customer = await this.deps.customers.findById(customerId);
+    const customer = await this.deps.customers.findById(binding.customerId);
     if (customer === null || !mayOwnOrders(customer)) return null;
 
     return Object.freeze({
       customerRef: customerRefFor(customer),
       displayName: customer.legalName,
+      boundBy: binding.boundBy,
     });
   }
 }

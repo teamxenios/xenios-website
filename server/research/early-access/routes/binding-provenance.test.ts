@@ -1,0 +1,167 @@
+import request from "supertest";
+import { describe, expect, it } from "vitest";
+
+import {
+  EARLY_ACCESS_TEST_PASSWORD,
+  ORDER_BODY,
+  PROOF,
+  StubIdentityDirectory,
+  approvedLedgerFor,
+  catalogOf,
+  cleanUnit,
+  makeEarlyAccessApp,
+} from "./route-fixtures";
+import type { EarlyAccessCustomer } from "./ports";
+
+const ORDERS = "/api/research/early-access/orders";
+const UNLOCK = "/api/research/early-access/unlock";
+const MISSING_ORDER = "XEA-7F3K9QW2TM4BXYZ1";
+
+/**
+ * THE CROSS-CUSTOMER TAKEOVER, closed by provenance.
+ *
+ * The Early Access password is SHARED, so under the returning-customer model
+ * a purchaser claims identity by TYPING AN EMAIL. That claim is
+ * unauthenticated: anyone holding the password can type anyone's address,
+ * and every ownership rule downstream would still pass, because the BINDING
+ * itself is the forgery.
+ *
+ * The rule is therefore a field, not a judgement:
+ *   - email entry may PLACE an order and read back only what it created;
+ *   - reading anything that existed BEFORE this session requires the signed
+ *     verification link, always;
+ *   - an absent provenance counts as the weak one, so a store that cannot
+ *     answer can never mint a verified session.
+ */
+
+const CUSTOMER_REF = "cust-alpha-0001";
+
+const EMAIL_ENTRY: EarlyAccessCustomer = Object.freeze({
+  customerRef: CUSTOMER_REF,
+  displayName: "Alpha Buyer",
+  boundBy: "email_entry",
+});
+
+const VERIFIED: EarlyAccessCustomer = Object.freeze({
+  customerRef: CUSTOMER_REF,
+  displayName: "Alpha Buyer",
+  boundBy: "verified_link",
+});
+
+async function openSession(app: Parameters<typeof request>[0]): Promise<string> {
+  const unlocked = await request(app).post(UNLOCK).send({ password: EARLY_ACCESS_TEST_PASSWORD });
+  const raw = unlocked.headers["set-cookie"];
+  const cookies = Array.isArray(raw) ? raw : raw === undefined ? [] : [raw];
+  return cookies.map((entry) => entry.split(";")[0]).join("; ");
+}
+
+/** One app, one store, one identity directory whose answer the test steers. */
+async function harness(initial: EarlyAccessCustomer) {
+  const unit = cleanUnit();
+  return makeEarlyAccessApp({
+    catalog: catalogOf([unit]),
+    releases: await approvedLedgerFor(unit),
+    identity: new StubIdentityDirectory().always(initial),
+  });
+}
+
+/** An order placed by a verified session that then walks away. */
+async function preExistingOrder(shared: Awaited<ReturnType<typeof harness>>): Promise<string> {
+  const cookie = await openSession(shared.app);
+  const placed = await request(shared.app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
+  expect(placed.status).toBe(201);
+  return placed.body.order.orderNumber as string;
+}
+
+describe("a session bound by typing an email", () => {
+  it("places an order and reads back the one it just placed", async () => {
+    const shared = await harness(EMAIL_ENTRY);
+    const cookie = await openSession(shared.app);
+
+    const placed = await request(shared.app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
+    expect(placed.status).toBe(201);
+    const orderNumber = placed.body.order.orderNumber as string;
+
+    // The first-ever purchaser is completely unaffected by the rule: they
+    // see what they just bought, and its invoice.
+    expect((await request(shared.app).get(`${ORDERS}/${orderNumber}`).set("Cookie", cookie)).status)
+      .toBe(200);
+    expect(
+      (await request(shared.app).get(`${ORDERS}/${orderNumber}/invoice`).set("Cookie", cookie))
+        .status,
+    ).toBe(200);
+  });
+
+  it("cannot read an order that existed before it, and answers exactly like a missing one", async () => {
+    const shared = await harness(VERIFIED);
+    const orderNumber = await preExistingOrder(shared);
+
+    // A new session under the same shared password, identity claimed by
+    // typing the same email: SAME customerRef, so every ownership check
+    // downstream passes. Only the provenance refuses.
+    shared.identity.always(EMAIL_ENTRY);
+    const attacker = await openSession(shared.app);
+
+    const stolen = await request(shared.app)
+      .get(`${ORDERS}/${orderNumber}`)
+      .set("Cookie", attacker);
+    const invoice = await request(shared.app)
+      .get(`${ORDERS}/${orderNumber}/invoice`)
+      .set("Cookie", attacker);
+    const missing = await request(shared.app)
+      .get(`${ORDERS}/${MISSING_ORDER}`)
+      .set("Cookie", attacker);
+
+    expect(stolen.status).toBe(404);
+    expect(invoice.status).toBe(404);
+    // Identical to a genuinely missing order: the refusal cannot be used to
+    // discover which order numbers, or which emails, exist.
+    expect(stolen.status).toBe(missing.status);
+    expect(stolen.body).toEqual(missing.body);
+  });
+
+  it("cannot submit payment proof against an order it did not create", async () => {
+    const shared = await harness(VERIFIED);
+    const orderNumber = await preExistingOrder(shared);
+
+    shared.identity.always(EMAIL_ENTRY);
+    const attacker = await openSession(shared.app);
+    const proof = await request(shared.app)
+      .post(`${ORDERS}/${orderNumber}/payment-proof`)
+      .set("Cookie", attacker)
+      .send({ ...PROOF });
+    expect(proof.status).toBe(404);
+  });
+});
+
+describe("a session bound by the signed verification link", () => {
+  it("reads its own earlier order from a later session, which is the returning purchaser", async () => {
+    const shared = await harness(VERIFIED);
+    const orderNumber = await preExistingOrder(shared);
+
+    const returning = await openSession(shared.app);
+    const readBack = await request(shared.app)
+      .get(`${ORDERS}/${orderNumber}`)
+      .set("Cookie", returning);
+    expect(readBack.status).toBe(200);
+    expect(readBack.body.order.orderNumber).toBe(orderNumber);
+  });
+});
+
+describe("an unknown provenance", () => {
+  it("is treated as email entry, so a store that cannot answer fails closed", async () => {
+    const shared = await harness(VERIFIED);
+    const orderNumber = await preExistingOrder(shared);
+
+    // No boundBy field at all: exactly what an older durable adapter would
+    // produce. It must NOT read as verified.
+    shared.identity.always(
+      Object.freeze({ customerRef: CUSTOMER_REF, displayName: "Alpha Buyer" }),
+    );
+    const later = await openSession(shared.app);
+    const attempted = await request(shared.app)
+      .get(`${ORDERS}/${orderNumber}`)
+      .set("Cookie", later);
+    expect(attempted.status).toBe(404);
+  });
+});

@@ -39,7 +39,41 @@ export type EarlyAccessCustomer = Readonly<{
   customerRef: string;
   /** For an operator screen. Never returned to a customer-facing response. */
   displayName: string;
+  /**
+   * How this session was bound. Absent means unknown, which is treated as
+   * the WEAK provenance everywhere, because a missing answer must never read
+   * as a verified one. Placing a new order needs only a binding; reading
+   * anything that existed before this session needs "verified_link".
+   */
+  readonly boundBy?: "email_entry" | "verified_link";
 }>;
+
+/**
+ * What THIS session created, so a session bound only by email entry can read
+ * back the order it just placed (its invoice, its proof) without being able
+ * to read anything that existed before it. Scoped by session id, never by
+ * customer id: the customer id is exactly the thing an email-entry binding
+ * can claim without proof.
+ */
+export interface SessionOrderLog {
+  record(sessionId: string, orderNumber: string): Promise<void>;
+  createdHere(sessionId: string, orderNumber: string): Promise<boolean>;
+}
+
+export class InMemorySessionOrderLog implements SessionOrderLog {
+  private readonly bySession = new Map<string, Set<string>>();
+  async record(sessionId: string, orderNumber: string): Promise<void> {
+    const existing = this.bySession.get(sessionId);
+    if (existing === undefined) {
+      this.bySession.set(sessionId, new Set([orderNumber]));
+      return;
+    }
+    existing.add(orderNumber);
+  }
+  async createdHere(sessionId: string, orderNumber: string): Promise<boolean> {
+    return this.bySession.get(sessionId)?.has(orderNumber) === true;
+  }
+}
 
 export interface EarlyAccessIdentityDirectory {
   resolve(input: Readonly<{ cookieHeader: unknown }>): Promise<EarlyAccessCustomer | null>;

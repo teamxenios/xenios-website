@@ -43,6 +43,7 @@ import type {
   EarlyAccessReferralResolver,
   EarlyAccessShippingPolicy,
   EarlyAccessSupplierDirectory,
+  SessionOrderLog,
 } from "./ports";
 import { readShippingDestination } from "./ports";
 import type { EarlyAccessCommerceStore, EarlyAccessPlacement } from "./store";
@@ -186,6 +187,14 @@ export interface EarlyAccessOrderRouteDependencies {
   readonly now: () => number;
   readonly orderNumber: () => string;
   readonly proofId: () => string;
+  /**
+   * Reads the canonical session id from the cookie, and the log of what that
+   * session created. Together they let a session bound by EMAIL ENTRY read
+   * back its own new order while never reaching an older one. Absent, an
+   * email-entry session can read nothing at all, which fails CLOSED.
+   */
+  readonly readSessionId?: (cookieHeader: unknown) => string | null;
+  readonly sessionOrders?: SessionOrderLog;
 }
 
 // ---------------------------------------------------------------------------
@@ -388,12 +397,34 @@ async function ownedPlacement(
   deps: EarlyAccessOrderRouteDependencies,
   orderNumber: unknown,
   customer: EarlyAccessCustomer,
+  options: Readonly<{ cookieHeader?: unknown }> = {},
 ): Promise<EarlyAccessPlacement | null> {
   if (!isEarlyAccessOrderNumber(orderNumber)) return null;
   const placement = await deps.store.placementByOrderNumber(orderNumber);
   if (placement === null) return null;
   if (placement.customerRef !== customer.customerRef) return null;
-  return placement;
+  // THE HARD RULE. Under a shared password, typing an email is an
+  // unauthenticated claim to be someone: it is enough to place a NEW order,
+  // where the purchaser only ever sees what they themselves just entered and
+  // bought, and it is NEVER enough to read something that existed before
+  // this session. Otherwise one guessed address would surrender a stranger's
+  // order history, invoices, shipping address and tracking, and every
+  // ownership check above would still pass, because the BINDING itself was
+  // the forgery.
+  //
+  // A session bound by the signed verification link may read everything it
+  // owns. A session bound by email entry may read only what it created here.
+  // An absent provenance is treated as the weak one: a missing answer must
+  // never read as a verified one.
+  if (customer.boundBy === "verified_link") return placement;
+  if (deps.readSessionId === undefined || deps.sessionOrders === undefined) return null;
+  const sessionId = deps.readSessionId(options.cookieHeader);
+  if (sessionId === null) return null;
+  const createdHere = await deps.sessionOrders.createdHere(
+    sessionId,
+    placement.orderNumber,
+  );
+  return createdHere ? placement : null;
 }
 
 // ---------------------------------------------------------------------------
@@ -627,6 +658,16 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
         },
       });
 
+      // Remember that THIS session created THIS order, so a purchaser bound
+      // only by email entry can read back their own invoice and submit their
+      // own proof, and still cannot reach any order that existed before.
+      if (deps.readSessionId !== undefined && deps.sessionOrders !== undefined) {
+        const sessionId = deps.readSessionId(request?.cookieHeader);
+        if (sessionId !== null) {
+          await deps.sessionOrders.record(sessionId, placement.orderNumber);
+        }
+      }
+
       send(response, 201, { ok: true, replayed: false, order: orderView(placement) });
     } catch {
       unavailable(response);
@@ -774,7 +815,9 @@ export function createEarlyAccessOrderLookupRoute(deps: EarlyAccessOrderRouteDep
       const caller = await resolveCaller(deps, request?.cookieHeader, response);
       if (!caller.ok) return;
 
-      const placement = await ownedPlacement(deps, request?.orderNumber, caller.customer);
+      const placement = await ownedPlacement(deps, request?.orderNumber, caller.customer, {
+        cookieHeader: request?.cookieHeader,
+      });
       if (placement === null) {
         fail(response, 404, "ORDER_NOT_FOUND");
         return;
@@ -837,7 +880,9 @@ export function createEarlyAccessInvoiceRoute(deps: EarlyAccessOrderRouteDepende
       const caller = await resolveCaller(deps, request?.cookieHeader, response);
       if (!caller.ok) return;
 
-      const placement = await ownedPlacement(deps, request?.orderNumber, caller.customer);
+      const placement = await ownedPlacement(deps, request?.orderNumber, caller.customer, {
+        cookieHeader: request?.cookieHeader,
+      });
       if (placement === null) {
         fail(response, 404, "ORDER_NOT_FOUND");
         return;
@@ -917,7 +962,9 @@ export function createEarlyAccessPaymentProofRoute(deps: EarlyAccessOrderRouteDe
       if (!caller.ok) return;
       const now = stampOf(caller.nowMs);
 
-      const placement = await ownedPlacement(deps, request?.orderNumber, caller.customer);
+      const placement = await ownedPlacement(deps, request?.orderNumber, caller.customer, {
+        cookieHeader: request?.cookieHeader,
+      });
       if (placement === null) {
         fail(response, 404, "ORDER_NOT_FOUND");
         return;

@@ -78,6 +78,7 @@ import {
   InMemoryEarlyAccessCommerceStore,
   type EarlyAccessCommerceStore,
 } from "./routes/store";
+import { InMemorySessionOrderLog, type SessionOrderLog } from "./routes/ports";
 import {
   InMemoryEarlyAccessCustomerRepository,
   type EarlyAccessCustomerRepository,
@@ -240,6 +241,8 @@ export interface EarlyAccessRegistrationOptions {
   readonly holds?: UnitHoldRegistry;
   /** The admin-visible queue of minted verification tokens for manual delivery. */
   readonly verificationQueue?: InMemoryPendingVerificationQueue;
+  /** What each session created, for the email-entry read guard. */
+  readonly sessionOrders?: SessionOrderLog;
   /**
    * Single-use verification-token consumption, for the email-verification
    * doors. ACCEPTED AND HELD: the doors are not mounted yet, so registration
@@ -439,12 +442,18 @@ export function registerPrivateEarlyAccessApi(
   // against another picture of the world.
   const store = options.store ?? new InMemoryEarlyAccessCommerceStore();
   const audit = options.audit ?? new InMemoryEarlyAccessAuditSink();
+  const readSessionId = createEarlyAccessSessionIdReader(deps);
+  const sessionOrders = options.sessionOrders ?? new InMemorySessionOrderLog();
   const commerce: EarlyAccessOrderRouteDependencies = {
     resolveSession,
     catalog,
     releases,
     store,
     identity,
+    // The pair that lets an email-entry session read back its OWN new order
+    // and nothing older. Absent, such a session reads nothing (fails closed).
+    readSessionId,
+    sessionOrders,
     agreements: options.agreements ?? new NoEarlyAccessAgreements(),
     suppliers: options.suppliers ?? new NoEarlyAccessSuppliers(),
     shipping: options.shipping ?? new NoEarlyAccessShipping(),

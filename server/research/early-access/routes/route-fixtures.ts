@@ -137,14 +137,19 @@ export async function approvedLedgerFor(
 // Stub ports
 // ---------------------------------------------------------------------------
 
+// The route fixtures represent customers bound by the SIGNED verification
+// link, which is what a test exercising order reads means. A session bound
+// only by email entry is exercised explicitly in the provenance tests.
 export const CUSTOMER_ALPHA: EarlyAccessCustomer = Object.freeze({
   customerRef: "cust-alpha-0001",
   displayName: "Alpha Buyer",
+  boundBy: "verified_link",
 });
 
 export const CUSTOMER_BETA: EarlyAccessCustomer = Object.freeze({
   customerRef: "cust-beta-0002",
   displayName: "Beta Buyer",
+  boundBy: "verified_link",
 });
 
 /**
