@@ -345,6 +345,27 @@
         "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
         "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: a bucket pre-created PUBLIC is converged to private and asserted; there is no rollback to a public payment-proof bucket"
       }
+    },
+    {
+      "id": "research_early_access_strength_registry_mirror",
+      "path": "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql",
+      "sourceSha": "5bee236b996d839f71e148a416efeaa22c366810",
+      "dependsOn": [
+        "research_variant_strength_write_gate",
+        "research_early_access_proof_bucket_privacy"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "0391876a285023d58a6dfa8f113693140ca69e570bd61cf5069b7903dbe351b2"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_and_disable_forward_repair",
+        "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
+        "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17 with the write-gate substrate: real eight-row insert, gate-decision parity before and after, recorded disputes still block, existing identities unchanged; absent-registry no-op proven on the bare-database pass"
+      }
     }
   ],
   "invariants": [
