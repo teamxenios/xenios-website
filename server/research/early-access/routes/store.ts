@@ -216,6 +216,10 @@ export type SettlementCommit =
   | Readonly<{ committed: false; reason: "transaction_id_used"; settlement: null }>
   | Readonly<{ committed: false; reason: "order_unknown"; settlement: null }>;
 
+export type RefundAppend =
+  | Readonly<{ appended: true }>
+  | Readonly<{ appended: false; reason: "sequence_moved" | "refund_id_taken" }>;
+
 export type DispatchCommit =
   | Readonly<{ committed: true }>
   | Readonly<{
@@ -271,8 +275,25 @@ export interface EarlyAccessCommerceStore {
 
   /** This order's refund trail, oldest first. Append only. */
   refunds?(orderNumber: string): Promise<readonly unknown[]>;
-  /** Append one refund. False on a replayed refund id. */
-  appendRefund?(orderNumber: string, refund: unknown): Promise<boolean>;
+  /**
+   * Append one refund at an EXPECTED position in the trail.
+   *
+   * `expectedSequence` is the compare-and-swap. The caller read the trail,
+   * summed what was already refunded, and checked the ceiling against that
+   * sum; this refuses the write if the trail grew in between, so the loser
+   * must re-read and re-check against the winner's row. Deduplicating on
+   * refundId alone is NOT a substitute: the id is caller supplied, so two
+   * concurrent refunds with distinct ids would both pass a ceiling computed
+   * from the same stale trail and pay out twice what arrived.
+   *
+   * The same guard `commitDispatchEvent` uses, for the same reason, on the
+   * one path where money leaves.
+   */
+  appendRefund?(
+    orderNumber: string,
+    refund: unknown,
+    expectedSequence: number,
+  ): Promise<RefundAppend>;
   /** Eight facts, one turn. This is the exactly-once boundary for money. */
   commitSettlement(settlement: EarlyAccessSettlement): Promise<SettlementCommit>;
 
@@ -397,14 +418,24 @@ export class InMemoryEarlyAccessCommerceStore implements EarlyAccessCommerceStor
     return [...(this.refundTrail.get(orderNumber) ?? [])];
   }
 
-  async appendRefund(orderNumber: string, refund: unknown): Promise<boolean> {
+  async appendRefund(
+    orderNumber: string,
+    refund: unknown,
+    expectedSequence: number,
+  ): Promise<RefundAppend> {
     const id = (refund as { refundId?: unknown }).refundId;
     const trail = this.refundTrail.get(orderNumber) ?? [];
     if (trail.some((entry) => (entry as { refundId?: unknown }).refundId === id)) {
-      return false;
+      return Object.freeze({ appended: false as const, reason: "refund_id_taken" as const });
+    }
+    // The trail grew since the caller computed its ceiling, so that ceiling
+    // is stale and this write would spend money against a number that is no
+    // longer true.
+    if (expectedSequence !== trail.length + 1) {
+      return Object.freeze({ appended: false as const, reason: "sequence_moved" as const });
     }
     this.refundTrail.set(orderNumber, [...trail, refund]);
-    return true;
+    return Object.freeze({ appended: true as const });
   }
 
   async commitSettlement(settlement: EarlyAccessSettlement): Promise<SettlementCommit> {

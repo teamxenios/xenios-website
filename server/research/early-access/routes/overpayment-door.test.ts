@@ -22,7 +22,6 @@ vi.mock("../../../routes", () => ({
 import {
   EARLY_ACCESS_TEST_PASSWORD,
   ORDER_BODY,
-  PROOF,
   StubAdminDirectory,
   approvedLedgerFor,
   catalogOf,
@@ -46,6 +45,15 @@ const FOUNDER = "founder@xenios.test";
  * could not advance, could not be refunded and could not be rejected.
  */
 
+/** The proof shape the upload route accepts, as the operator suites use it. */
+const PROOF = Object.freeze({
+  filename: "transfer.png",
+  contentType: "image/png",
+  byteSize: 240_000,
+  sha256: "b".repeat(64),
+  method: "zelle",
+});
+
 const ADMINS = new StubAdminDirectory({
   [FOUNDER]: { actorId: "founder.aaaa1111", role: "founder_admin" },
 });
@@ -67,16 +75,23 @@ async function readyOrder() {
   const placed = await request(harness.app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
   expect(placed.status).toBe(201);
   const orderNumber = placed.body.order.orderNumber as string;
-  await request(harness.app)
+  const submitted = await request(harness.app)
     .post(`${ORDERS}/${orderNumber}/payment-proof`)
     .set("Cookie", cookie)
     .send({ ...PROOF });
+  if (submitted.status !== 202) {
+    throw new Error(`proof fixture failed: ${submitted.status} ${JSON.stringify(submitted.body)}`);
+  }
+
+  const chain = await (harness.store as InMemoryEarlyAccessCommerceStore).proofs(orderNumber);
+  const reviewedProofRef = chain[chain.length - 1]?.record.storageRef ?? "";
 
   return {
     app: harness.app,
     store: harness.store as InMemoryEarlyAccessCommerceStore,
     cookie,
     orderNumber,
+    reviewedProofRef,
     payableTotalCents: placed.body.order.money.payableTotalCents as number,
     subtotalCents: placed.body.order.money.subtotalCents as number,
   };
@@ -171,5 +186,98 @@ describe("the refund record", () => {
       .post(`${PAYMENTS}/${ready.orderNumber}/refund`)
       .send({ amountCents: 100, reason: "x" });
     expect(anonymous.status).toBe(401);
+  });
+});
+
+describe("the refund ceiling holds under a double-click (Bug Hunter F7)", () => {
+  /** Verify a payment so refunds become reachable at all. */
+  async function verifiedOrder() {
+    const ready = await readyOrder();
+    const confirmed = await request(ready.app)
+      .post(`${PAYMENTS}/${ready.orderNumber}/confirm`)
+      .set("x-test-admin", FOUNDER)
+      .send({
+        idempotencyKey: "ea-confirm-f7-000001",
+        verifiedAmountCents: ready.payableTotalCents,
+        verifiedCurrency: "USD",
+        receivedAt: "2026-08-05T01:00:00.000Z",
+        externalTransactionId: "bank-txn-f7-0001",
+        reviewedProofRef: ready.reviewedProofRef,
+        method: "zelle",
+        reason: "Zelle transfer received and matched against the payment reference.",
+      });
+    if (![200, 201].includes(confirmed.status)) {
+      throw new Error(
+        `confirm fixture failed: ${confirmed.status} ${JSON.stringify(confirmed.body)}`,
+      );
+    }
+    return ready;
+  }
+
+  it("refuses the second of two concurrent full refunds with DISTINCT ids", async () => {
+    const ready = await verifiedOrder();
+    const full = {
+      amountCents: ready.payableTotalCents,
+      reason: "Customer cancelled after payment; refunding in full.",
+    };
+
+    // Fired concurrently. The refund id is now derived by the domain from
+    // the trail position rather than accepted from the caller, so the
+    // compare-and-swap at the write is what has to hold, not id luck.
+    const [first, second] = await Promise.all([
+      request(ready.app)
+        .post(`${PAYMENTS}/${ready.orderNumber}/refund`)
+        .set("x-test-admin", FOUNDER)
+        .send({ ...full }),
+      request(ready.app)
+        .post(`${PAYMENTS}/${ready.orderNumber}/refund`)
+        .set("x-test-admin", FOUNDER)
+        .send({ ...full }),
+    ]);
+
+    // Exactly one wins. The loser is refused by one of the two guards that
+    // both have to hold: the domain ceiling (verified minus already
+    // refunded) or the compare-and-swap at the write when the trail grew
+    // after the ceiling was computed. Either is correct; a second 201 is not.
+    const created = [first, second].filter((res) => res.status === 201);
+    const refused = [first, second].filter((res) => res.status !== 201);
+    expect(created).toHaveLength(1);
+    expect(refused).toHaveLength(1);
+    expect(["refund_exceeds_verified_paid", "REFUND_SEQUENCE_MOVED"]).toContain(
+      refused[0]?.body.code,
+    );
+
+    // The money that left never exceeds the money that arrived.
+    const trail = await ready.store.refunds(ready.orderNumber);
+    const refunded = trail.reduce<number>(
+      (sum, entry) => sum + Number((entry as { amountCents?: unknown }).amountCents ?? 0),
+      0,
+    );
+    expect(trail).toHaveLength(1);
+    expect(refunded).toBe(ready.payableTotalCents);
+  });
+
+  it("still refuses a sequential second refund that would breach the ceiling", async () => {
+    const ready = await verifiedOrder();
+    const first = await request(ready.app)
+      .post(`${PAYMENTS}/${ready.orderNumber}/refund`)
+      .set("x-test-admin", FOUNDER)
+      .send({
+        amountCents: ready.payableTotalCents,
+        reason: "Customer cancelled after payment; refunding in full.",
+      });
+    expect(first.status).toBe(201);
+
+    const second = await request(ready.app)
+      .post(`${PAYMENTS}/${ready.orderNumber}/refund`)
+      .set("x-test-admin", FOUNDER)
+      .send({
+        amountCents: 1,
+        reason: "A second refund beyond what the customer ever paid.",
+      });
+    // The ceiling is the VERIFIED amount minus what was already refunded,
+    // so a second refund of even one cent is refused by name.
+    expect(second.status).toBe(422);
+    expect(second.body.code).toBe("refund_exceeds_verified_paid");
   });
 });

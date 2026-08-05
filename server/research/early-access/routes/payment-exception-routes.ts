@@ -186,41 +186,67 @@ export function createEarlyAccessRefundRoute(deps: EarlyAccessAdminRouteDependen
         return;
       }
 
+      // A recorded overpayment exception is what permits a refund ABOVE the
+      // payable total, so it is loaded and passed rather than assumed.
+      const exception =
+        deps.store.overpaymentException === undefined
+          ? null
+          : await deps.store.overpaymentException(orderNumber);
       const trail = await deps.store.refunds(orderNumber);
-      const priorRefundedCents = trail.reduce<number>(
-        (sum, entry) => sum + Number((entry as { amountCents?: unknown }).amountCents ?? 0),
-        0,
-      );
-      const body = project(request?.body, ["amountCents", "reason", "refundId"]);
+      // A malformed row must not silently DISABLE the ceiling: NaN compares
+      // false against everything, so summing it would let any refund
+      // through. An unreadable trail refuses instead.
+      let priorRefundedCents = 0;
+      for (const entry of trail) {
+        const amount = (entry as { amountCents?: unknown }).amountCents;
+        if (typeof amount !== "number" || !Number.isSafeInteger(amount) || amount < 0) {
+          fail(response, 409, "REFUND_TRAIL_UNREADABLE");
+          return;
+        }
+        priorRefundedCents += amount;
+      }
+      const body = project(request?.body, ["amountCents", "reason"]);
       if (body === null) {
         fail(response, 400, "REQUEST_INVALID");
         return;
       }
 
+      // The domain owns the ceiling: it reads the VERIFIED order projection
+      // (the number a named human confirmed arrived) and the prior trail,
+      // and refuses anything above verified minus already-refunded. The
+      // route supplies the facts and never the arithmetic.
       const recorded = recordRefund({
-        refundId:
-          typeof body.refundId === "string" && body.refundId.length > 0
-            ? body.refundId
-            : `early-access-refund:${orderNumber}:${trail.length + 1}`,
-        orderId: orderNumber,
+        verifiedOrder: settlement.verifiedOrder,
+        refunds: trail,
+        actor: { id: caller.actor.actorId, role: caller.actor.role },
         amountCents: body.amountCents,
         currency: settlement.ledgerEntry.currency,
-        // The ceiling is the number a named human confirmed arrived.
-        verifiedPaidCents: settlement.ledgerEntry.amountCents,
-        priorRefundedCents,
         reason: body.reason,
-        actor: { id: caller.actor.actorId, role: caller.actor.role },
         refundedAt: now,
-        sequence: trail.length + 1,
+        ...(exception === null ? {} : { overpaymentException: exception }),
       });
       if (!recorded.ok) {
         fail(response, 422, "REFUND_INVALID", { code: recorded.code });
         return;
       }
 
-      const appended = await deps.store.appendRefund(orderNumber, recorded.value);
-      if (!appended) {
-        fail(response, 409, "REFUND_ALREADY_RECORDED");
+      // Compare-and-swap at the write: the ceiling above was computed from a
+      // trail of exactly this length, so a trail that grew in between makes
+      // it stale. The loser of a double-click re-reads rather than paying
+      // out a second time against the same received money.
+      const appended = await deps.store.appendRefund(
+        orderNumber,
+        recorded.value,
+        trail.length + 1,
+      );
+      if (!appended.appended) {
+        fail(
+          response,
+          409,
+          appended.reason === "sequence_moved"
+            ? "REFUND_SEQUENCE_MOVED"
+            : "REFUND_ALREADY_RECORDED",
+        );
         return;
       }
 
