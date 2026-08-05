@@ -152,12 +152,19 @@ describe("the founder first-release seed against the founder-locked catalog", ()
     // or moves a strength, this fails rather than quietly selling 21.
     const { outcome } = await harness();
     expect(outcome.unresolved).toEqual([]);
-    expect(outcome.seeded).toHaveLength(22);
+    // 22 resolved; one is deliberately held by the founder and therefore
+    // never released, so 21 carry a release and all 22 still render.
+    expect(outcome.seeded).toHaveLength(21);
+    expect(outcome.founderHeld.map((hold) => hold.name)).toEqual(["Cagrilintide"]);
+    expect(outcome.founderHeld[0]?.reason).toBe(
+      "FOUNDER COMMERCIAL RELEASE NOT YET APPROVED",
+    );
+    expect(outcome.founderHeld[0]?.recordedBy).toBe("Samuel Boadu");
 
     // Unique product/strength pairs, so two founder rows can never collapse
     // onto one catalogued unit.
     const pairs = new Set(outcome.seeded.map((entry) => entry.sku));
-    expect(pairs.size).toBe(22);
+    expect(pairs.size).toBe(21);
   });
 });
 
@@ -349,8 +356,10 @@ describe("with Raw Peptides supply confirmed: the finish line", () => {
 
   it("sells: confirmed supply plus founder release makes real units AVAILABLE, and an order lands", async () => {
     const harnessed = await confirmedHarness();
+    // Supply is confirmed for all 22 (operational preparation continues for a
+    // founder-held unit); only 21 carry a founder release.
     expect(harnessed.supply.seeded).toHaveLength(22);
-    expect(harnessed.releases.seeded).toHaveLength(22);
+    expect(harnessed.releases.seeded).toHaveLength(21);
 
     const unlocked = await request(harnessed.app)
       .post(UNLOCK)
@@ -364,14 +373,20 @@ describe("with Raw Peptides supply confirmed: the finish line", () => {
     const answered = await request(harnessed.app).get(CATALOG_PATH).set("Cookie", cookie);
     expect(answered.status).toBe(200);
     const units = answered.body.units as ReadonlyArray<Record<string, unknown>>;
-    expect(units).toHaveLength(22);
+    // The founder-held unit is NOT released, so the customer catalog (scoped
+    // to released units) shows 21. It stays fully visible in Product Control
+    // and every internal surface.
+    expect(units).toHaveLength(21);
+    expect(units.some((unit) => unit.canonicalName === "Cagrilintide Research Material")).toBe(
+      false,
+    );
 
     const available = units.filter((unit) => unit.availability === "AVAILABLE");
     const held = units.filter((unit) => unit.availability === "TEMPORARILY_HELD");
     // Every founder row is visible. Units carrying a recorded dispute or hold
     // stay truthfully held rather than being forced available, and the two
     // counts must account for all 22 with nothing dropped.
-    expect(available.length + held.length).toBe(22);
+    expect(available.length + held.length).toBe(21);
     expect(available.length).toBeGreaterThan(0);
     for (const unit of available) {
       expect(unit.purchasable).toBe(true);

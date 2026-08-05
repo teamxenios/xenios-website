@@ -101,6 +101,53 @@ function normalizeStrength(value: string | null): string {
   return (value ?? "").toLowerCase().replace(/[,\s]/g, "");
 }
 
+/**
+ * A unit the founder has NOT approved for commercial release, recorded as a
+ * positive decision rather than an omission.
+ *
+ * The mechanism is the release ledger itself: a unit with no founder release
+ * projects NO_FOUNDER_RELEASE and can never be purchased, and that hold is
+ * exactly and only what it claims. Deliberately NOT the unit-hold registry,
+ * whose four kinds (REGULATORY_HOLD, RECALL, STOP_SHIP, SUPPLIER_QUALITY_HOLD)
+ * would each assert a determination nobody has made: there is no regulator
+ * finding, no recall, no stop-ship order and no supplier quality failure here.
+ * Recording one of those to achieve a hold would be a lie in an append-only
+ * ledger, and the customer-facing reason would be wrong.
+ *
+ * The unit still renders, still appears in Product Control, and every
+ * operational preparation (supplier mapping, lots, COA, inventory, admin and
+ * browser testing) proceeds untouched. Releasing it later is a deliberate
+ * founder act: remove the entry and seed the release.
+ */
+export type FounderCommercialHold = Readonly<{
+  name: string;
+  strength: string;
+  reason: string;
+  recordedBy: string;
+  recordedAt: string;
+}>;
+
+export const FOUNDER_COMMERCIAL_HOLDS: readonly FounderCommercialHold[] =
+  Object.freeze([
+    Object.freeze({
+      name: "Cagrilintide",
+      strength: "10 mg",
+      reason: "FOUNDER COMMERCIAL RELEASE NOT YET APPROVED",
+      recordedBy: "Samuel Boadu",
+      recordedAt: "2026-08-05T00:00:00.000Z",
+    }),
+  ]);
+
+function heldByFounder(input: FounderFirstReleaseInput): FounderCommercialHold | null {
+  return (
+    FOUNDER_COMMERCIAL_HOLDS.find(
+      (hold) =>
+        normalizeName(hold.name) === normalizeName(input.name) &&
+        normalizeStrength(hold.strength) === normalizeStrength(input.strength),
+    ) ?? null
+  );
+}
+
 export type UnresolvedFirstReleaseReason =
   | "product_not_in_catalog"
   | "strength_not_in_catalog"
@@ -124,6 +171,8 @@ export type SeededFirstRelease = Readonly<{
 export type FounderFirstReleaseSeedOutcome = Readonly<{
   seeded: readonly SeededFirstRelease[];
   unresolved: readonly UnresolvedFirstRelease[];
+  /** Resolved units deliberately left unreleased. Visible, never purchasable. */
+  founderHeld: readonly FounderCommercialHold[];
 }>;
 
 export interface AppendOnlyReleaseLedger {
@@ -224,7 +273,16 @@ export async function seedFounderFirstRelease(input: {
   const resolution = resolveFounderFirstReleaseUnits(input.rows);
   const unresolved = [...resolution.unresolved];
 
+  const founderHeld: FounderCommercialHold[] = [];
+
   for (const { input: pricing, row } of resolution.resolved) {
+    // A founder-held unit is resolved and priced but never released, so the
+    // storefront holds it on NO_FOUNDER_RELEASE and the order path refuses it.
+    const hold = heldByFounder(pricing);
+    if (hold !== null) {
+      founderHeld.push(hold);
+      continue;
+    }
     const releaseId = `rel-first-${row.sku.toLowerCase()}`;
     const appended = await input.ledger.append({
       releaseId,
@@ -264,5 +322,6 @@ export async function seedFounderFirstRelease(input: {
   return Object.freeze({
     seeded: Object.freeze(seeded),
     unresolved: Object.freeze(unresolved),
+    founderHeld: Object.freeze(founderHeld),
   });
 }
