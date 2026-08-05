@@ -47,7 +47,24 @@ const MIGRATIONS = [
   "20260804130000_research_early_access_unit_holds.sql",
   "20260804140000_research_early_access_settled_transaction_refs.sql",
   "20260804150000_research_early_access_proof_bucket_privacy.sql",
+  "20260804160000_research_early_access_strength_registry_mirror.sql",
 ] as const;
+
+/**
+ * The strength-gate substrate, so migration 57's REAL insert path (not only
+ * its absent-target no-op) is executed and proven here: the disposable
+ * bootstrap, the Product Control migrations, and the IMMUTABLE migration 47
+ * that owns the founder-locked registry. Applied once, before the chain.
+ */
+const STRENGTH_SUBSTRATE = {
+  bootstrap: "verification/research-pricing-lineage-disposable-bootstrap.sql",
+  productControl: "migrations/20260726143000_research_product_control_center.sql",
+  hardening: "migrations/20260726214500_research_product_control_center_privilege_hardening.sql",
+  writeGate: "migrations/20260801120000_research_variant_strength_write_gate.sql",
+} as const;
+
+/** The gate's answer for one of the eight BEFORE the mirror repair applied. */
+let cagrilintideReasonBeforeRepair: unknown = "unset";
 
 type Pool = import("pg").Pool;
 
@@ -259,7 +276,8 @@ run("Early Access durable persistence against real PostgreSQL", () => {
     await pool.query("create schema if not exists storage");
     await pool.query(
       `create table if not exists storage.buckets (
-         id text primary key, name text not null, public boolean not null default false
+         id text primary key, name text not null, public boolean not null default false,
+         file_size_limit bigint, allowed_mime_types text[]
        )`,
     );
     await pool.query(
@@ -267,6 +285,33 @@ run("Early Access durable persistence against real PostgreSQL", () => {
        values ('research-ea-payment-proofs-production', 'research-ea-payment-proofs-production', true)
        on conflict (id) do nothing`,
     );
+
+    // The strength-gate substrate, exactly as the write-gate CI harness
+    // builds it: stripped bootstrap, the two legacy columns, Product Control
+    // and its hardening, then the immutable migration 47 with its 70-row
+    // registry seed.
+    const bootstrap = readFileSync(
+      join(process.cwd(), "supabase", STRENGTH_SUBSTRATE.bootstrap),
+      "utf8",
+    ).replace(/^\\.*$/gm, "");
+    await pool.query(bootstrap);
+    await pool.query(
+      "alter table public.research_products add column if not exists slug text, add column if not exists lane text",
+    );
+    for (const file of [
+      STRENGTH_SUBSTRATE.productControl,
+      STRENGTH_SUBSTRATE.hardening,
+      STRENGTH_SUBSTRATE.writeGate,
+    ]) {
+      await pool.query(readFileSync(join(process.cwd(), "supabase", file), "utf8"));
+    }
+
+    // The gate's answer for an ACCEPTED-BUT-UNREGISTERED unit, captured
+    // before the repair: registering it must not change this answer.
+    const parity = await pool.query(
+      "select public.research_variant_strength_triple_dispute_reason('R360-CAGRILINTIDE-10MG-VIAL', '', '10 mg') as reason",
+    );
+    cagrilintideReasonBeforeRepair = parity.rows[0].reason;
 
     // APPLY TWICE: the second pass must be a no-op, not an error.
     for (let pass = 0; pass < 2; pass += 1) {
@@ -276,6 +321,70 @@ run("Early Access durable persistence against real PostgreSQL", () => {
       }
     }
   }, 120_000);
+
+  it("strength-registry mirror repair: 78 rows, the eight non-disputed, every gate decision unchanged", async () => {
+    if (!pool) throw new Error("pool");
+
+    // The registry mirrors the complete catalog: 70 immutable + the 8.
+    const total = await pool.query(
+      "select count(*)::int as n from public.research_catalog_founder_locked_variant",
+    );
+    expect(total.rows[0].n).toBe(78);
+
+    // The eight, field-exact and NON-DISPUTED (no invented dispute, no
+    // invented clearance or evidence: supplier_master_strength is null).
+    const eight = await pool.query(
+      `select sku_key, product_code, founder_locked_strength, supplier_master_strength
+       from public.research_catalog_founder_locked_variant
+       where product_code in ('PEX-001','PEX-003','PEX-007','PEX-015','PEX-023','PEX-028','PEX-029','PEX-030')
+         and sku_key like '%-VIAL'
+         and sku_key in (
+           'R360-BPC157-5MG-VIAL','R360-GHKCU-50MG-VIAL','R360-DSIP-10MG-VIAL',
+           'R360-GLUTATHIONE-500MG-VIAL','R360-SERMORELIN-5MG-VIAL',
+           'R360-CAGRILINTIDE-10MG-VIAL','R360-HEXARELIN-10MG-VIAL','R360-OXYTOCIN-5MG-VIAL'
+         )
+       order by sku_key`,
+    );
+    expect(eight.rows).toHaveLength(8);
+    for (const row of eight.rows) {
+      expect(row.supplier_master_strength).toBeNull();
+    }
+    expect(
+      eight.rows.find((row) => row.sku_key === "R360-CAGRILINTIDE-10MG-VIAL"),
+    ).toMatchObject({ product_code: "PEX-028", founder_locked_strength: "10 mg" });
+
+    // GATE PARITY: the answer for one of the eight is the SAME permitted
+    // null it was before registration, captured in beforeAll.
+    expect(cagrilintideReasonBeforeRepair).toBeNull();
+    const after = await pool.query(
+      "select public.research_variant_strength_triple_dispute_reason('R360-CAGRILINTIDE-10MG-VIAL', '', '10 mg') as reason",
+    );
+    expect(after.rows[0].reason).toBeNull();
+
+    // A RECORDED dispute still blocks writes, exactly as before the repair.
+    const disputed = await pool.query(
+      "select public.research_variant_strength_triple_dispute_reason('R360-BPC157_TB500-15MG_15MG-VIAL', '', '15 mg / 15 mg') as reason",
+    );
+    expect(disputed.rows[0].reason).toContain("supplier");
+
+    // An existing undisputed registered unit remains permitted.
+    const undisputed = await pool.query(
+      "select public.research_variant_strength_triple_dispute_reason('R360-THYMOSINALPHA1_KPV_LL37-5MG_5MG_5MG-VIAL', '', '5 mg / 5 mg / 5 mg') as reason",
+    );
+    expect(undisputed.rows[0].reason).toBeNull();
+
+    // An existing identity is unchanged, field for field.
+    const existing = await pool.query(
+      "select sku, product_code, legacy_product_code, founder_locked_strength, supplier_master_strength from public.research_catalog_founder_locked_variant where sku_key = 'R360-BPC157_TB500-15MG_15MG-VIAL'",
+    );
+    expect(existing.rows[0]).toEqual({
+      sku: "R360-BPC157_TB500-15MG_15MG-VIAL",
+      product_code: "PEP-001",
+      legacy_product_code: "P001",
+      founder_locked_strength: "15 mg / 15 mg",
+      supplier_master_strength: "5 mg BPC-157 / 5 mg TB-500 (10 mg total)",
+    });
+  });
 
   it("a pre-existing PUBLIC proof bucket is converged to PRIVATE by the chain, not skipped", async () => {
     if (!pool) throw new Error("pool");

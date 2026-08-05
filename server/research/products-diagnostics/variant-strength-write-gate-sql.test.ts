@@ -15,6 +15,7 @@
  */
 
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -161,6 +162,38 @@ function parseSeed(sql: string): SeedRow[] {
 
 const SEED = parseSeed(BODY);
 
+// The mirror repair (founder-authorized): migration 47 RAN in production
+// 2026-08-02 and is immutable, so the eight identities the founder added
+// afterwards enter through the ADDITIVE migration below. The registry the
+// database actually holds is the union of the two seeds, and that union is
+// what must mirror the catalog exactly. Neither file may drift: 47's
+// contribution is pinned at its historical 70 rows and its exact bytes, and
+// the repair is pinned to exactly the eight accepted variants.
+const MIGRATION_57 = resolve(
+  __dirname,
+  "..",
+  "..",
+  "..",
+  "supabase",
+  "migrations",
+  "20260804160000_research_early_access_strength_registry_mirror.sql",
+);
+const SQL_57 = readFileSync(MIGRATION_57, "utf8");
+const BODY_57 = withoutComments(SQL_57);
+const SEED_57 = parseSeed(BODY_57);
+const REGISTRY = [...SEED, ...SEED_57];
+
+const ACCEPTED_EIGHT = [
+  "R360-BPC157-5MG-VIAL",
+  "R360-CAGRILINTIDE-10MG-VIAL",
+  "R360-DSIP-10MG-VIAL",
+  "R360-GHKCU-50MG-VIAL",
+  "R360-GLUTATHIONE-500MG-VIAL",
+  "R360-HEXARELIN-10MG-VIAL",
+  "R360-OXYTOCIN-5MG-VIAL",
+  "R360-SERMORELIN-5MG-VIAL",
+] as const;
+
 interface CatalogRow extends SeedRow {}
 
 function catalogRows(): CatalogRow[] {
@@ -184,7 +217,7 @@ function byKey(rows: SeedRow[]): Map<string, SeedRow> {
   return new Map(rows.map((row) => [row.skuKey, row]));
 }
 
-describe("the migration's registry mirrors the founder-locked catalog exactly", () => {
+describe("the registry (migration 47 + the mirror repair) mirrors the founder-locked catalog exactly", () => {
   const catalog = catalogRows();
 
   it("parses a real, non-trivial seed", () => {
@@ -192,15 +225,40 @@ describe("the migration's registry mirrors the founder-locked catalog exactly", 
     expect(catalog.length).toBeGreaterThan(50);
   });
 
+  it("migration 47 is immutable: byte-for-byte pinned, contributing exactly its historical 70 rows", () => {
+    // Canonical git bytes, not the checkout: line endings differ per OS, and
+    // the pin is the same one the release control plane holds.
+    const canonical = execFileSync(
+      "git",
+      ["show", ":supabase/migrations/20260801120000_research_variant_strength_write_gate.sql"],
+      { cwd: ROOT, encoding: "buffer" },
+    );
+    expect(createHash("sha256").update(canonical).digest("hex")).toBe(
+      "6cd11e07eb764d0f803db4baa308ae397c23aacb8ff5d29306c8797be60b4818",
+    );
+    expect(SEED.length).toBe(70);
+  });
+
+  it("the repair contributes exactly the eight accepted variants, all non-disputed, and no key migration 47 already holds", () => {
+    expect(SEED_57.map((row) => row.skuKey).sort()).toEqual([...ACCEPTED_EIGHT]);
+    for (const row of SEED_57) {
+      expect(row.supplierMasterStrength, `${row.sku} must enter non-disputed`).toBeNull();
+    }
+    const seededKeys = new Set(SEED.map((row) => row.skuKey));
+    for (const row of SEED_57) {
+      expect(seededKeys.has(row.skuKey), `${row.skuKey} duplicates migration 47`).toBe(false);
+    }
+  });
+
   it("holds exactly one row per catalog variant, and no extra unit", () => {
-    expect(SEED.length).toBe(catalog.length);
-    expect([...byKey(SEED).keys()].sort()).toEqual(
+    expect(REGISTRY.length).toBe(catalog.length);
+    expect([...byKey(REGISTRY).keys()].sort()).toEqual(
       [...byKey(catalog).keys()].sort(),
     );
   });
 
   it("transcribes every field of every unit without alteration", () => {
-    const seeded = byKey(SEED);
+    const seeded = byKey(REGISTRY);
     for (const row of catalog) {
       expect(seeded.get(row.skuKey), `missing seed row for ${row.sku}`).toEqual(row);
     }
@@ -211,7 +269,7 @@ describe("the migration's registry mirrors the founder-locked catalog exactly", 
       .filter((row) => row.supplierMasterStrength !== null)
       .map((row) => row.skuKey)
       .sort();
-    const disputedInSeed = SEED.filter(
+    const disputedInSeed = REGISTRY.filter(
       (row) => row.supplierMasterStrength !== null,
     )
       .map((row) => row.skuKey)
@@ -221,10 +279,29 @@ describe("the migration's registry mirrors the founder-locked catalog exactly", 
   });
 
   it("never records a supplier strength equal to the founder-locked one", () => {
-    for (const row of SEED) {
+    for (const row of REGISTRY) {
       if (row.supplierMasterStrength === null) continue;
       expect(row.supplierMasterStrength).not.toBe(row.founderLockedStrength);
     }
+  });
+
+  it("the repair touches nothing but the registry: one upsert, no destructive statement, absent-target-safe", () => {
+    const inserts = BODY_57.match(/insert\s+into\s+public\.(\w+)/gi) ?? [];
+    expect(inserts).toEqual([
+      "insert into public.research_catalog_founder_locked_variant",
+    ]);
+    expect(BODY_57).not.toMatch(/\bdrop\s+/i);
+    expect(BODY_57).not.toMatch(/\btruncate\b/i);
+    expect(BODY_57).not.toMatch(/\bdelete\s+from\b/i);
+    expect(BODY_57).not.toMatch(/\balter\s+table\b/i);
+    expect(BODY_57).not.toMatch(/\bcreate\s+(table|function|trigger|policy|index)\b/i);
+    expect(BODY_57.toLowerCase()).not.toContain("price_cents");
+    expect(BODY_57.toLowerCase()).not.toContain("amount_cents");
+    expect(BODY_57).toContain("on conflict (sku_key) do update set");
+    expect(BODY_57).toContain(
+      "lock table public.research_catalog_founder_locked_variant in access exclusive mode;",
+    );
+    expect(BODY_57).toMatch(/to_regclass\('public\.research_catalog_founder_locked_variant'\)/);
   });
 });
 
