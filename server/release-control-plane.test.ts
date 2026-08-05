@@ -73,6 +73,9 @@ const EA_UNIT_HOLDS_PATH =
 const EA_SETTLED_REFS_SOURCE_SHA = "da8385371b750d99026d88d3b7ce4e1e56bd8407";
 const EA_SETTLED_REFS_PATH =
   "supabase/migrations/20260804140000_research_early_access_settled_transaction_refs.sql";
+const EA_BUCKET_PRIVACY_SOURCE_SHA = "44145cb66b56340de219fa9f826d3196a4193403";
+const EA_BUCKET_PRIVACY_PATH =
+  "supabase/migrations/20260804150000_research_early_access_proof_bucket_privacy.sql";
 const pg16It =
   process.env.CI || process.env.XENIOS_RUN_PG16_VERIFIER === "1" ? it : it.skip;
 const CONTROL_PLANE_FILES = [
@@ -747,6 +750,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(EA_UNIT_HOLDS_SOURCE_SHA);
           } else if (path === EA_SETTLED_REFS_PATH) {
             expect(sourceSha).toBe(EA_SETTLED_REFS_SOURCE_SHA);
+          } else if (path === EA_BUCKET_PRIVACY_PATH) {
+            expect(sourceSha).toBe(EA_BUCKET_PRIVACY_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }

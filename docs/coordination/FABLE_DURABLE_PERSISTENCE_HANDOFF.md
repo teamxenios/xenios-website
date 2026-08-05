@@ -24,6 +24,7 @@ hookup is documented below.
 | supabase/migrations/20260804123000_research_early_access_reservation_holds.sql | 3085cfe06fc2340c75e28a4f30491a2dae48773bc94572b763113933cd2df590 |
 | supabase/migrations/20260804130000_research_early_access_unit_holds.sql | cea8f8bcde4d31a4a2d77a7b2b11ed831aadd46eb38600f820f17a9c84ffede2 |
 | supabase/migrations/20260804140000_research_early_access_settled_transaction_refs.sql | ff7179abd2991bd1f4eb2f4ae735c6109683173780dd3439ae971cb483aae20b |
+| supabase/migrations/20260804150000_research_early_access_proof_bucket_privacy.sql | 803d68913a08ecf18b0f1dcc260b4f9a426ca6b0f6a0dc092b5757f067f7da13 |
 
 Governance: managed-ledger rows 50-52 in supabase/MIGRATIONS.md; three DAG
 nodes in docs/coordination/MIGRATION_DAG.json pinned to reviewed source
@@ -48,6 +49,7 @@ production; managedMigrationId PENDING; PRODUCTION_DB_STATE_UNVERIFIED stands.
 - durable_money_snapshots: YES — research_early_access_money_snapshots, immutable, payable = subtotal - discount + shipping + tax as a table constraint
 - durable_invoices: YES — research_early_access_invoices (unique invoice number, unique order, UNIQUE payment_reference); commit refuses an invoice whose money disagrees with the order snapshot
 - durable_payment_references: YES — the unique payment_reference column above (derived XEAPAY form persists verbatim)
+- proof bucket privacy is ENFORCED, not assumed (migration 56): a bucket with the proof bucket's id that pre-exists PUBLIC (hand-made, snapshot-restored) is converged to private and the migration ASSERTS the end state, failing the apply rather than reporting success over a public payment-proof bucket; the PG suite pre-seeds exactly that hostile precondition and proves the flip. bindingProvenance on placements is pinned: absent persists as absent, a stamped value round-trips verbatim, the store never invents one.
 - durable_manual_payment_submissions + durable_proof: YES — research_early_access_payment_proofs (unique proof id, unique (order, sequence) chain) + research_early_access_proof_objects (private-object reservations: JPG/PNG/WEBP/PDF only, 25 MiB cap, sha256 shape, enforced in BOTH the adapter and table constraints) + private bucket research-ea-payment-proofs-production (no policies, not public, no public URL possible); SupabaseEarlyAccessProofStorage derives the SAME opaque handle as the synthetic default; short-lived signed preview (bounded 600 s) via an injected signer, admin-side only
 - durable_verification: YES — research_early_access_verifications, written only inside commit_settlement
 - durable_payment_transactions: YES — research_early_access_ledger_entries, append-only money ledger, GLOBALLY UNIQUE external_transaction_id (one arrival of money pays one order)

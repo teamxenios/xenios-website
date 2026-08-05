@@ -324,6 +324,27 @@
         "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
         "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: six-migration chain applied twice, cross-order duplicate visibility and restart survival of the settled-reference list"
       }
+    },
+    {
+      "id": "research_early_access_proof_bucket_privacy",
+      "path": "supabase/migrations/20260804150000_research_early_access_proof_bucket_privacy.sql",
+      "sourceSha": "44145cb66b56340de219fa9f826d3196a4193403",
+      "dependsOn": [
+        "research_early_access_commerce_persistence",
+        "research_early_access_settled_transaction_refs"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "803d68913a08ecf18b0f1dcc260b4f9a426ca6b0f6a0dc092b5757f067f7da13"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_and_disable_forward_repair",
+        "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
+        "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: a bucket pre-created PUBLIC is converged to private and asserted; there is no rollback to a public payment-proof bucket"
+      }
     }
   ],
   "invariants": [

@@ -46,6 +46,7 @@ const MIGRATIONS = [
   "20260804123000_research_early_access_reservation_holds.sql",
   "20260804130000_research_early_access_unit_holds.sql",
   "20260804140000_research_early_access_settled_transaction_refs.sql",
+  "20260804150000_research_early_access_proof_bucket_privacy.sql",
 ] as const;
 
 type Pool = import("pg").Pool;
@@ -251,6 +252,22 @@ run("Early Access durable persistence against real PostgreSQL", () => {
       );
     }
 
+    // A stub of Supabase's storage schema, PRE-SEEDED with the proof bucket
+    // created PUBLIC: the exact hostile precondition of the migration-51
+    // finding (a hand-made or snapshot-restored bucket). The chain must
+    // converge it to private, and the test below asserts it did.
+    await pool.query("create schema if not exists storage");
+    await pool.query(
+      `create table if not exists storage.buckets (
+         id text primary key, name text not null, public boolean not null default false
+       )`,
+    );
+    await pool.query(
+      `insert into storage.buckets (id, name, public)
+       values ('research-ea-payment-proofs-production', 'research-ea-payment-proofs-production', true)
+       on conflict (id) do nothing`,
+    );
+
     // APPLY TWICE: the second pass must be a no-op, not an error.
     for (let pass = 0; pass < 2; pass += 1) {
       for (const file of MIGRATIONS) {
@@ -259,6 +276,15 @@ run("Early Access durable persistence against real PostgreSQL", () => {
       }
     }
   }, 120_000);
+
+  it("a pre-existing PUBLIC proof bucket is converged to PRIVATE by the chain, not skipped", async () => {
+    if (!pool) throw new Error("pool");
+    const { rows } = await pool.query(
+      "select public from storage.buckets where id = 'research-ea-payment-proofs-production'",
+    );
+    expect(rows).toHaveLength(1);
+    expect(rows[0].public).toBe(false);
+  });
 
   afterAll(async () => {
     await pool?.end();
@@ -339,6 +365,19 @@ run("Early Access durable persistence against real PostgreSQL", () => {
     const read = await store.placementByOrderNumber("XEA-PG-0001");
     expect(read?.idempotencyKey).toBe("idem-1");
     expect(await store.placementByIdempotencyKey("idem-1")).not.toBeNull();
+
+    // bindingProvenance: ABSENT persists as absent (the reader must treat it
+    // as the weak value; the store must never invent one) and a stamped value
+    // round-trips verbatim.
+    expect("bindingProvenance" in (read as Record<string, unknown>)).toBe(false);
+    const stamped = {
+      ...buildPlacement({ orderNumber: "XEA-PG-0006", idempotencyKey: "idem-6" }),
+      bindingProvenance: "email_entry" as const,
+    };
+    expect((await store.commitPlacement(stamped as never)).committed).toBe(true);
+    expect(
+      (await store.placementByOrderNumber("XEA-PG-0006"))?.bindingProvenance,
+    ).toBe("email_entry");
   });
 
   it("a placement whose invoice money disagrees with the order money is REFUSED whole", async () => {
