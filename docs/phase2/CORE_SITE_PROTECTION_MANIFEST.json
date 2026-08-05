@@ -166,14 +166,21 @@
     ],
     "exactFiles": [
       "client/src/pages/AdminResearchTab.tsx",
-      ".env.example"
+      ".env.example",
+      ".github/workflows/checks.yml"
     ],
     "exactFilesComment": [
       "2026-08-04 FABLE-RM-INTEGRATION: .env.example added after review. It documents",
       "environment VARIABLE NAMES only (the Early Access RESEARCH_* surface from the",
       "durable-persistence handoff); no value is ever committed, nothing imports it, and",
       "every documented feature stays behind its own false-by-default flag, so a change",
-      "here cannot modify main-site behavior. Values and secrets remain forbidden."
+      "here cannot modify main-site behavior. Values and secrets remain forbidden.",
+      "2026-08-05 FABLE-RM-INTEGRATION: .github/workflows/checks.yml added after review.",
+      "CI configuration is verification tooling, the same category the infrastructureZones",
+      "comment already reasons about: nothing under it is imported by the client bundle,",
+      "mounted by the Express app, or served to a visitor. The only change made here ADDS",
+      "a protection job (QA R10) that runs this very verifier plus the route census, so",
+      "excluding it would mean the gate could never be enforced in CI at all."
     ],
     "notPresent": {
       "$comment": "Directives sometimes name these; they do not exist at baselineSha. Creating one is a new-surface decision, not a routine Research/Care write, so it is deliberately NOT pre-approved here.",
