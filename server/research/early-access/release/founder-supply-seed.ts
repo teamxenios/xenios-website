@@ -65,16 +65,28 @@ export type FounderSupplySeedOutcome = Readonly<{
  * Idempotent: a replayed seed answers false from the store and the existing
  * record stands.
  */
+export const RAW_PEPTIDES_CONFIRMATION_ID_PREFIX = "supconf-rawpeptides-";
+
 export async function seedRawPeptidesConfirmations(input: {
   readonly rows: readonly EarlyAccessCatalogRow[];
   readonly store: SupplierConfirmationStore;
+  /**
+   * The identity namespace for the rows this run writes. It exists because the
+   * confirmation id is derived from the SKU, and the SKU is stable across
+   * re-keyings: the same unit confirmed against a different set of product and
+   * variant ids would collide on the primary key and silently no-op. A distinct
+   * prefix keeps the earlier rows intact and inert instead of overwriting them.
+   * Defaults to the original namespace, so every existing caller is unchanged.
+   */
+  readonly confirmationIdPrefix?: string;
 }): Promise<FounderSupplySeedOutcome> {
   const resolution = resolveFounderFirstReleaseUnits(input.rows);
   const seeded: SeededSupplyConfirmation[] = [];
+  const prefix = input.confirmationIdPrefix ?? RAW_PEPTIDES_CONFIRMATION_ID_PREFIX;
 
   for (const { row } of resolution.resolved) {
     const created = createSupplierConfirmation({
-      confirmationId: `supconf-rawpeptides-${row.sku.toLowerCase()}`,
+      confirmationId: `${prefix}${row.sku.toLowerCase()}`,
       supplierOrg: RAW_PEPTIDES_SUPPLY.supplierOrg,
       supplierContact: RAW_PEPTIDES_SUPPLY.supplierContact,
       productId: row.productId,

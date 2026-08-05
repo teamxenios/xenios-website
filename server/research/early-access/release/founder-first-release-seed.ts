@@ -273,13 +273,25 @@ export function resolveFounderFirstReleaseUnits(
   });
 }
 
+export const FOUNDER_FIRST_RELEASE_ID_PREFIX = "rel-first-";
+
 export async function seedFounderFirstRelease(input: {
   readonly rows: readonly EarlyAccessCatalogRow[];
   readonly ledger: AppendOnlyReleaseLedger;
   readonly recordedAt?: string;
+  /**
+   * The identity namespace for the releases this run writes. The release id is
+   * derived from the SKU, which is stable across a re-keying, so releasing the
+   * same unit against a different set of product and variant ids would collide
+   * on the ledger's primary key. A distinct prefix leaves the earlier releases
+   * intact and inert rather than overwriting an append-only record. Defaults to
+   * the original namespace, so every existing caller is unchanged.
+   */
+  readonly releaseIdPrefix?: string;
 }): Promise<FounderFirstReleaseSeedOutcome> {
   const seeded: SeededFirstRelease[] = [];
   const recordedAt = input.recordedAt ?? FOUNDER_FIRST_RELEASE_RECORDED_AT;
+  const releaseIdPrefix = input.releaseIdPrefix ?? FOUNDER_FIRST_RELEASE_ID_PREFIX;
   const resolution = resolveFounderFirstReleaseUnits(input.rows);
   const unresolved = [...resolution.unresolved];
 
@@ -297,7 +309,7 @@ export async function seedFounderFirstRelease(input: {
       );
       continue;
     }
-    const releaseId = `rel-first-${row.sku.toLowerCase()}`;
+    const releaseId = `${releaseIdPrefix}${row.sku.toLowerCase()}`;
     const appended = await input.ledger.append({
       releaseId,
       productId: row.productId,
