@@ -4,21 +4,23 @@ import type {
 } from "./EarlyAccessProductCard";
 
 /**
- * Maps one server catalogue row to the card's availability state.
+ * Reads the availability the SERVER decided for one catalogue row.
  *
- * THIS IS A TEMPORARY SEAM. The canonical AVAILABLE /
- * AVAILABILITY_CONFIRMATION_REQUIRED / TEMPORARILY_HELD model is being added
- * server-side by the integration lane. When it lands, the body of
- * `availabilityStateOf` is replaced by reading that field and this derivation is
- * deleted. It lives in exactly one function so that swap is a single edit and
- * cannot be half-done across a dozen call sites.
+ * This replaces the temporary client-side derivation that used to live here.
+ * The server now projects the canonical AVAILABLE /
+ * AVAILABILITY_CONFIRMATION_REQUIRED / TEMPORARILY_HELD model directly, and it
+ * is the only side that can decide it: the founder release ledger, the
+ * unit-hold registry and the supplier confirmations all live there. A browser
+ * that re-derived the state from raw fields would be a second authority able to
+ * disagree with the first, and the disagreement would be invisible.
  *
- * IT FAILS SAFE IN ONE DIRECTION ONLY. Anything unknown, missing, malformed or
- * unrecognised resolves to TEMPORARILY_HELD. A row is never promoted to
- * AVAILABLE by the absence of information. The cost of being wrong is
- * asymmetric: showing a held product as orderable can sell something that must
- * not be sold, while showing an orderable product as held is a delay someone
- * notices and reports.
+ * IT STILL FAILS SAFE IN ONE DIRECTION ONLY. A missing, malformed or
+ * unrecognised state resolves to TEMPORARILY_HELD, and a row the server did not
+ * mark purchasable is never rendered sellable whatever its state says. A row is
+ * never promoted toward AVAILABLE by the absence of information. The cost of
+ * being wrong is asymmetric: showing a held product as orderable can sell
+ * something that must not be sold, while showing an orderable product as held is
+ * a delay someone notices and reports.
  */
 
 /** The subset of the server row this view depends on. */
@@ -32,30 +34,25 @@ export type EarlyAccessCatalogRowView = Readonly<{
   description?: unknown;
   availability?: unknown;
   purchasable?: unknown;
-  blockers?: unknown;
-  supplierReady?: unknown;
 }>;
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+const KNOWN_AVAILABILITY: readonly EarlyAccessAvailabilityState[] = [
+  "AVAILABLE",
+  "AVAILABILITY_CONFIRMATION_REQUIRED",
+  "TEMPORARILY_HELD",
+];
+
 export function availabilityStateOf(row: EarlyAccessCatalogRowView): EarlyAccessAvailabilityState {
-  // A blocker of any kind holds the row. This is the path a regulatory or other
-  // nonwaivable hold recorded after founder release must travel down, so it is
-  // deliberately the first and broadest check rather than a special case.
-  const blockers = Array.isArray(row.blockers) ? row.blockers : null;
-  if (blockers === null) return "TEMPORARILY_HELD";
-  if (blockers.length > 0) return "TEMPORARILY_HELD";
-
-  // `purchasable` must be exactly true. Undefined, null or a truthy non-boolean
-  // is treated as not purchasable.
-  if (row.purchasable !== true) return "TEMPORARILY_HELD";
-
-  // Past this point the row is sellable in principle. What remains is whether
-  // supply is confirmed for it right now.
-  const supplyConfirmed = row.supplierReady === true && row.availability === "available";
-  return supplyConfirmed ? "AVAILABLE" : "AVAILABILITY_CONFIRMATION_REQUIRED";
+  const declared = KNOWN_AVAILABILITY.find((state) => state === row.availability);
+  if (declared === undefined) return "TEMPORARILY_HELD";
+  // Defence in depth. Two independent server fields must agree before anything
+  // renders as sellable, so a single wrong field cannot open a purchase path.
+  if (declared !== "TEMPORARILY_HELD" && row.purchasable !== true) return "TEMPORARILY_HELD";
+  return declared;
 }
 
 /**

@@ -7,6 +7,14 @@ import {
   type EarlyAccessCatalogRowView,
 } from "./earlyAccessCatalogView";
 
+/**
+ * These rows are shaped as the SERVER actually sends them. The view used to
+ * re-derive availability from `blockers` and `supplierReady`, two fields the
+ * server does not send, which held every row in a real browser while this file
+ * stayed green against its own invented shape. The projection is now the
+ * server's to decide and the browser's to honour, and
+ * `adapters/earlyAccessCatalog.contract.test.ts` pins the two together.
+ */
 function row(overrides: EarlyAccessCatalogRowView = {}): EarlyAccessCatalogRowView {
   return {
     productId: "prod-aod",
@@ -16,47 +24,40 @@ function row(overrides: EarlyAccessCatalogRowView = {}): EarlyAccessCatalogRowVi
     priceCents: 5_600,
     currency: "USD",
     description: "Lyophilised vial for research use.",
-    availability: "available",
+    availability: "AVAILABLE",
     purchasable: true,
-    blockers: [],
-    supplierReady: true,
     ...overrides,
   };
 }
 
 describe("availability state", () => {
-  it("is AVAILABLE only when nothing blocks it and supply is confirmed", () => {
+  it("is AVAILABLE when the server says so and marks the row purchasable", () => {
     expect(availabilityStateOf(row())).toBe("AVAILABLE");
   });
 
-  it("holds the row for ANY blocker, which is the path a late regulatory hold takes", () => {
-    // A nonwaivable hold recorded after founder release arrives as a blocker on
-    // the current projection. It must hold the row immediately, regardless of
-    // what the release once said.
-    expect(availabilityStateOf(row({ blockers: ["regulatory_hold"] }))).toBe("TEMPORARILY_HELD");
-    expect(availabilityStateOf(row({ blockers: ["strength_dispute"] }))).toBe("TEMPORARILY_HELD");
-    // Even with everything else looking perfectly sellable.
-    expect(
-      availabilityStateOf(
-        row({ blockers: ["regulatory_hold"], purchasable: true, supplierReady: true }),
-      ),
-    ).toBe("TEMPORARILY_HELD");
+  it("honours a held row, which is the path a late regulatory hold takes", () => {
+    // A nonwaivable hold recorded after founder release is applied server-side
+    // and arrives as the state itself. The browser holds none of the ledgers
+    // that decide this, so it honours the decision rather than recomputing it.
+    expect(availabilityStateOf(row({ availability: "TEMPORARILY_HELD", purchasable: false }))).toBe(
+      "TEMPORARILY_HELD",
+    );
   });
 
-  it("requires confirmation when the row is sellable but supply is not confirmed", () => {
-    expect(availabilityStateOf(row({ supplierReady: false }))).toBe(
-      "AVAILABILITY_CONFIRMATION_REQUIRED",
-    );
-    expect(availabilityStateOf(row({ availability: "unavailable" }))).toBe(
+  it("honours a row awaiting supply confirmation", () => {
+    expect(availabilityStateOf(row({ availability: "AVAILABILITY_CONFIRMATION_REQUIRED" }))).toBe(
       "AVAILABILITY_CONFIRMATION_REQUIRED",
     );
   });
 
   it.each([
-    ["blockers missing entirely", { blockers: undefined }],
-    ["blockers not an array", { blockers: "none" }],
+    ["availability missing entirely", { availability: undefined }],
+    ["availability not a string", { availability: 1 }],
+    ["availability lower case", { availability: "available" }],
+    ["availability a state this browser does not know", { availability: "SOMETHING_NEW" }],
     ["purchasable undefined", { purchasable: undefined }],
     ["purchasable null", { purchasable: null }],
+    ["purchasable false while the state claims available", { purchasable: false }],
     ["purchasable a truthy string", { purchasable: "yes" }],
     ["purchasable the number 1", { purchasable: 1 }],
   ] as ReadonlyArray<[string, EarlyAccessCatalogRowView]>)(
@@ -72,7 +73,7 @@ describe("availability state", () => {
   it("never promotes an unknown shape to AVAILABLE", () => {
     expect(availabilityStateOf({})).toBe("TEMPORARILY_HELD");
     expect(availabilityStateOf({ availability: "available" })).toBe("TEMPORARILY_HELD");
-    expect(availabilityStateOf({ supplierReady: true })).toBe("TEMPORARILY_HELD");
+    expect(availabilityStateOf({ purchasable: true })).toBe("TEMPORARILY_HELD");
   });
 });
 
@@ -115,8 +116,8 @@ describe("row projection", () => {
     // purchasable count.
     const result = toCardProducts([
       row(),
-      row({ blockers: ["regulatory_hold"] }),
-      row({ supplierReady: false }),
+      row({ availability: "TEMPORARILY_HELD", purchasable: false, priceCents: null }),
+      row({ availability: "AVAILABILITY_CONFIRMATION_REQUIRED" }),
     ]);
     expect(result.products).toHaveLength(3);
     expect(result.dropped).toBe(0);
@@ -139,7 +140,7 @@ describe("founder-held rows carry no price and must still render", () => {
     // entirely, and a customer cannot tell a hidden product from one that does
     // not exist.
     const product = toCardProduct(
-      row({ priceCents: null, purchasable: false, blockers: ["NO_FOUNDER_RELEASE"] }),
+      row({ priceCents: null, purchasable: false, availability: "TEMPORARILY_HELD" }),
     );
     expect(product).not.toBeNull();
     expect(product?.availability).toBe("TEMPORARILY_HELD");
@@ -156,7 +157,7 @@ describe("founder-held rows carry no price and must still render", () => {
 
   it("shows no price on a held row even if a malformed one is sent", () => {
     const product = toCardProduct(
-      row({ priceCents: -99, purchasable: false, blockers: ["NO_FOUNDER_RELEASE"] }),
+      row({ priceCents: -99, purchasable: false, availability: "TEMPORARILY_HELD" }),
     );
     expect(product?.unitPriceCents).toBeNull();
   });
@@ -164,7 +165,12 @@ describe("founder-held rows carry no price and must still render", () => {
   it("counts a held null-price row as rendered, not dropped", () => {
     const result = toCardProducts([
       row(),
-      row({ variantId: "v2", priceCents: null, purchasable: false, blockers: ["NO_FOUNDER_RELEASE"] }),
+      row({
+        variantId: "v2",
+        priceCents: null,
+        purchasable: false,
+        availability: "TEMPORARILY_HELD",
+      }),
     ]);
     expect(result.products).toHaveLength(2);
     expect(result.dropped).toBe(0);

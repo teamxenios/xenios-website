@@ -36,7 +36,7 @@ const APPROVED: ReadonlyArray<readonly [string, string, number]> = [
   ["Thymosin Alpha 1", "10 mg", 10_650],
 ];
 
-/** Held per the founder's list: disputes and nonwaivable blockers. */
+/** Held per the founder's list, as the SERVER projects it. */
 const HELD = new Set(["Cagrilintide 10 mg", "MOTS-c 10 mg", "NAD+ 500 mg"]);
 
 function approvedRows(): EarlyAccessCatalogRowView[] {
@@ -50,10 +50,8 @@ function approvedRows(): EarlyAccessCatalogRowView[] {
       priceCents,
       currency: "USD",
       description: "Lyophilised vial for research use.",
-      availability: "available",
+      availability: held ? "TEMPORARILY_HELD" : "AVAILABLE",
       purchasable: !held,
-      blockers: held ? ["nonwaivable_hold"] : [],
-      supplierReady: true,
     };
   });
 }

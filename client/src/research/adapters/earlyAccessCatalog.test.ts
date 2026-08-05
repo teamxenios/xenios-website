@@ -17,10 +17,8 @@ function row(overrides: Record<string, unknown> = {}) {
     priceCents: 5_600,
     currency: "USD",
     description: "Lyophilised vial for research use.",
-    availability: "available",
+    availability: "AVAILABLE",
     purchasable: true,
-    blockers: [],
-    supplierReady: true,
     ...overrides,
   };
 }
@@ -73,8 +71,8 @@ describe("early access catalogue adapter", () => {
         data: {
           rows: [
             row(),
-            row({ variantId: "v2", blockers: ["nonwaivable_hold"], purchasable: false }),
-            row({ variantId: "v3", supplierReady: false }),
+            row({ variantId: "v2", availability: "TEMPORARILY_HELD", purchasable: false }),
+            row({ variantId: "v3", availability: "AVAILABILITY_CONFIRMATION_REQUIRED" }),
             // No price the server approved: dropped rather than shown at zero.
             row({ variantId: "v4", priceCents: 0 }),
           ],

@@ -22,6 +22,7 @@ export const EARLY_ACCESS_CATALOG_PATH = "/api/research/early-access/catalog";
 
 /** What the mounted route answers with. Only the parts the storefront reads. */
 type CatalogResponse = {
+  units?: unknown;
   rows?: unknown;
   products?: unknown;
 };
@@ -42,10 +43,15 @@ export type EarlyAccessCatalogLoad =
   | { kind: "error"; message: string };
 
 function rowsOf(body: CatalogResponse): readonly unknown[] | null {
+  // `units` is what the mounted route actually answers with, and it is checked
+  // first for that reason. `rows` and `products` are earlier names for the same
+  // projection, kept so an older payload is still read rather than reported
+  // unreadable. Each is an array under a KNOWN key, never a guess at an
+  // arbitrary shape. `earlyAccessCatalog.contract.test.ts` pins the live key
+  // against the server's own response so this list cannot silently fall behind
+  // a rename again.
+  if (Array.isArray(body.units)) return body.units;
   if (Array.isArray(body.rows)) return body.rows;
-  // The projection has been named both ways during this build. Accepting either
-  // is deliberate and narrow: an array under a known key, never a guess at an
-  // arbitrary shape.
   if (Array.isArray(body.products)) return body.products;
   return null;
 }
