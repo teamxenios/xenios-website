@@ -1029,7 +1029,9 @@ describe("migration DAG validator", () => {
         expectedBaselineSha: PRODUCTION_SHA,
       }).map((issue) => issue.code),
     ).toContain("MIGRATION_SOURCE_UNAVAILABLE");
-  });
+    // Third member of the git-spawning family (one process per DAG node);
+    // the 18-node DAG outgrew the 5 s default under full-suite parallelism.
+  }, 30_000);
 
   it("binds a distinct managed migration path to the reviewed source blob", () => {
     const dag = JSON.parse(
