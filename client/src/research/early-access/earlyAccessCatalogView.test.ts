@@ -131,3 +131,42 @@ describe("row projection", () => {
     expect(toCardProduct(row({ currency: "" }))?.currency).toBe("USD");
   });
 });
+
+describe("founder-held rows carry no price and must still render", () => {
+  it("keeps a held row whose price is null, which is how Cagrilintide arrives", () => {
+    // The server sends priceCents null on a founder-held unit so no amount sits
+    // beside something nobody may buy. Dropping it would hide the product
+    // entirely, and a customer cannot tell a hidden product from one that does
+    // not exist.
+    const product = toCardProduct(
+      row({ priceCents: null, purchasable: false, blockers: ["NO_FOUNDER_RELEASE"] }),
+    );
+    expect(product).not.toBeNull();
+    expect(product?.availability).toBe("TEMPORARILY_HELD");
+    expect(product?.unitPriceCents).toBeNull();
+  });
+
+  it("still drops a sellable row with no usable price", () => {
+    // The relaxation is ONLY for held rows. A row that claims to be orderable
+    // without a price the server approved must never reach a customer.
+    for (const priceCents of [null, 0, -1, "5600", 56.5]) {
+      expect(toCardProduct(row({ priceCents })), `kept sellable price ${priceCents}`).toBeNull();
+    }
+  });
+
+  it("shows no price on a held row even if a malformed one is sent", () => {
+    const product = toCardProduct(
+      row({ priceCents: -99, purchasable: false, blockers: ["NO_FOUNDER_RELEASE"] }),
+    );
+    expect(product?.unitPriceCents).toBeNull();
+  });
+
+  it("counts a held null-price row as rendered, not dropped", () => {
+    const result = toCardProducts([
+      row(),
+      row({ variantId: "v2", priceCents: null, purchasable: false, blockers: ["NO_FOUNDER_RELEASE"] }),
+    ]);
+    expect(result.products).toHaveLength(2);
+    expect(result.dropped).toBe(0);
+  });
+});

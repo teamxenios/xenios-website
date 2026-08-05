@@ -194,3 +194,68 @@ describe("early access product card", () => {
     expect(media?.getAttribute("aria-hidden")).toBe("true");
   });
 });
+
+describe("a founder-held row, which is how Cagrilintide arrives", () => {
+  const held = {
+    productId: "PEX-028",
+    variantId: "PEX-028-10MG",
+    name: "Cagrilintide",
+    strength: "10 mg",
+    unitPriceCents: null,
+    currency: "USD",
+    description: "Lyophilised vial for research use.",
+    availability: "TEMPORARILY_HELD",
+  } as const;
+
+  function heldCard() {
+    return render(
+      <EarlyAccessProductCard
+        product={held}
+        quantity={null}
+        onQuantityChange={() => {}}
+        onSelect={() => {}}
+        fulfillmentTargetCopy={FULFILLMENT}
+      />,
+    );
+  }
+
+  it("renders the card, because a hidden product is worse than an unavailable one", () => {
+    const el = heldCard();
+    expect(el.querySelector("[data-testid='early-access-product-card']")).not.toBeNull();
+    expect(el.textContent).toContain("Cagrilintide");
+    expect(el.textContent).toContain("10 mg");
+  });
+
+  it("shows NO price and no placeholder that could be read as one", () => {
+    // RM's words: if the UI shows a price on this row, that IS the defect. A
+    // price beside an unavailable unit reads as an offer the customer would be
+    // entitled to expect.
+    const el = heldCard();
+    expect(el.querySelector("[data-testid='early-access-product-card-unit-price']")).toBeNull();
+    expect(el.textContent).not.toContain("$");
+    expect(el.textContent).not.toContain("per unit");
+    expect(el.textContent).toContain("Not available to order");
+  });
+
+  it("offers NO enabled purchase action", () => {
+    const el = heldCard();
+    const button = el.querySelector<HTMLButtonElement>(
+      "[data-testid='early-access-product-card-action']",
+    );
+    expect(button?.disabled).toBe(true);
+    expect(button?.textContent).toBe("Unavailable");
+    for (const input of Array.from(
+      el.querySelectorAll<HTMLInputElement>("input[type='radio']"),
+    )) {
+      expect(input.disabled).toBe(true);
+    }
+  });
+
+  it("leaks no internal blocker text to the customer", () => {
+    const el = heldCard();
+    const text = (el.textContent ?? "").toUpperCase();
+    expect(text).not.toContain("NO_FOUNDER_RELEASE");
+    expect(text).not.toContain("BLOCKER");
+    expect(text).not.toContain("PRODUCT CONTROL");
+  });
+});

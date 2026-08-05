@@ -38,8 +38,14 @@ export type EarlyAccessCardProduct = Readonly<{
   variantId: string;
   name: string;
   strength: string;
-  /** Server-approved single-unit price. The ONLY money on this card. */
-  unitPriceCents: number;
+  /**
+   * Server-approved single-unit price, and the ONLY money on this card.
+   *
+   * NULL on a founder-held row. No amount is shown beside a unit nobody may
+   * buy: a price next to an unavailable product reads as an offer, and the
+   * customer would be entitled to expect it.
+   */
+  unitPriceCents: number | null;
   currency: string;
   /** Short approved description. Never a supplier note. */
   description: string;
@@ -112,9 +118,14 @@ export function EarlyAccessProductCard({
       <p data-testid={`${testId}-strength`}>{product.strength}</p>
       <p data-testid={`${testId}-description`}>{product.description}</p>
 
-      <p data-testid={`${testId}-unit-price`}>
-        {formatUnitPrice(product.unitPriceCents, product.currency)} per unit
-      </p>
+      {product.unitPriceCents === null ? (
+        // No price, and no placeholder that could be mistaken for one.
+        <p data-testid={`${testId}-no-price`}>Not available to order</p>
+      ) : (
+        <p data-testid={`${testId}-unit-price`}>
+          {formatUnitPrice(product.unitPriceCents, product.currency)} per unit
+        </p>
+      )}
 
       <EarlyAccessQuantitySelector
         value={quantity}

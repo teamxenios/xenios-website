@@ -71,20 +71,32 @@ export function toCardProduct(row: EarlyAccessCatalogRowView): EarlyAccessCardPr
   if (!isNonEmptyString(row.variantId)) return null;
   if (!isNonEmptyString(row.displayName)) return null;
   if (!isNonEmptyString(row.strength)) return null;
-  // Money must be an exact integer number of cents. A string, a float or a
-  // negative is not a price, and rendering one would show a customer a figure
-  // the server never approved.
-  if (!Number.isSafeInteger(row.priceCents) || (row.priceCents as number) <= 0) return null;
+  const availability = availabilityStateOf(row);
+
+  // A held row carries NO price on purpose: the server sends priceCents null so
+  // no amount sits beside a unit nobody may buy. Dropping it would hide the row
+  // entirely, and a founder-held product that vanishes from the catalogue is
+  // worse than one shown as unavailable, because the customer cannot tell
+  // whether it exists.
+  //
+  // Every other row must carry an exact positive integer number of cents. A
+  // string, a float, a zero or a negative is not a price, and rendering one
+  // would show a customer a figure the server never approved.
+  const priceIsExact = Number.isSafeInteger(row.priceCents) && (row.priceCents as number) > 0;
+  if (!priceIsExact && availability !== "TEMPORARILY_HELD") return null;
+  // A held row that somehow carries a malformed price shows no price at all
+  // rather than a wrong one.
+  const unitPriceCents = priceIsExact ? (row.priceCents as number) : null;
 
   return {
     productId: row.productId,
     variantId: row.variantId,
     name: row.displayName,
     strength: row.strength,
-    unitPriceCents: row.priceCents as number,
+    unitPriceCents,
     currency: isNonEmptyString(row.currency) ? row.currency : "USD",
     description: isNonEmptyString(row.description) ? row.description : "",
-    availability: availabilityStateOf(row),
+    availability,
   };
 }
 
