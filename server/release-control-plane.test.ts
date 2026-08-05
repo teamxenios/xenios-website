@@ -1066,7 +1066,10 @@ describe("migration DAG validator", () => {
     expect(mismatchIssues.map((issue) => issue.code)).toContain(
       "MANAGED_MIGRATION_SOURCE_MISMATCH",
     );
-  });
+    // Same git-spawning family as the canonical-checksum test: one process
+    // per DAG node no longer fits the 5 s default under full-suite
+    // parallelism on a loaded machine.
+  }, 30_000);
 
   it("rejects unsafe or unpinned migration source paths", () => {
     const dag = JSON.parse(
