@@ -124,11 +124,14 @@ describe("early access catalogue grid", () => {
     expect(available).toHaveLength(22 - HELD.size);
   });
 
-  it("disables the action on a held row and leaves it enabled elsewhere", () => {
+  it("gives a held row no action at all, and leaves every other row its own", () => {
     const { el } = grid(approvedRows());
+    // Absent, not disabled: nothing in the DOM or the accessibility tree to
+    // reach for on a unit no named human has approved for sale.
     const heldCard = el.querySelector("[data-availability='TEMPORARILY_HELD']");
-    const heldButton = heldCard?.querySelector("button");
-    expect(heldButton?.disabled).toBe(true);
+    expect(heldCard).not.toBeNull();
+    expect(heldCard?.querySelectorAll("button")).toHaveLength(0);
+    expect(heldCard?.querySelectorAll("input")).toHaveLength(0);
 
     const availableCard = el.querySelector("[data-availability='AVAILABLE']");
     expect(availableCard?.querySelector("button")?.disabled).toBe(false);

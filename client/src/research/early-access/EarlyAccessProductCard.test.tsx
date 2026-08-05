@@ -122,7 +122,7 @@ describe("early access product card", () => {
     ["TEMPORARILY_HELD", "Temporarily unavailable", "Unavailable", true],
   ] as ReadonlyArray<[EarlyAccessAvailabilityState, string, string, boolean]>)(
     "renders %s as visible, with its own copy and action",
-    (availability, copy, action, disabled) => {
+    (availability, copy, action, heldWithNoControls) => {
       const el = card({ availability });
       // Visible in every state. A row is never hidden because inventory
       // automation is missing; the customer is told the truth instead.
@@ -131,8 +131,14 @@ describe("early access product card", () => {
       const button = el.querySelector<HTMLButtonElement>(
         "[data-testid='early-access-product-card-action']",
       );
-      expect(button?.textContent).toBe(action);
-      expect(button?.disabled).toBe(disabled);
+      if (heldWithNoControls) {
+        // A held row carries NO action control. Absent rather than disabled,
+        // so the accessibility tree offers nothing to reach for.
+        expect(button).toBeNull();
+      } else {
+        expect(button?.textContent).toBe(action);
+        expect(button?.disabled).toBe(false);
+      }
     },
   );
 
@@ -177,11 +183,22 @@ describe("early access product card", () => {
     expect(onSelect).not.toHaveBeenCalled();
   });
 
-  it("disables the quantity control on a held product", () => {
+  it("renders NO quantity control on a held product", () => {
+    // Absent, not disabled. A disabled control is still in the DOM and the
+    // accessibility tree, still announces itself, and can be re-enabled from
+    // devtools. Absence is the only state that cannot be misread.
     const el = card({ availability: "TEMPORARILY_HELD" });
-    const inputs = Array.from(el.querySelectorAll<HTMLInputElement>("input[type='radio']"));
-    expect(inputs.length).toBeGreaterThan(0);
-    for (const input of inputs) expect(input.disabled).toBe(true);
+    expect(el.querySelectorAll("input[type='radio']")).toHaveLength(0);
+    expect(el.querySelector("[data-testid='early-access-product-card-quantity']")).toBeNull();
+  });
+
+  it("keeps the quantity control on a sellable product", () => {
+    // Guards the guard: a change that removed the control everywhere would
+    // pass the assertion above while breaking the whole catalogue.
+    const el = card({ availability: "AVAILABLE" });
+    expect(
+      el.querySelectorAll("input[type='radio']").length,
+    ).toBeGreaterThan(0);
   });
 
   it("shows one placeholder and no product photography", () => {
@@ -237,18 +254,19 @@ describe("a founder-held row, which is how Cagrilintide arrives", () => {
     expect(el.textContent).toContain("Not available to order");
   });
 
-  it("offers NO enabled purchase action", () => {
+  it("offers NO purchase action at all, present or otherwise", () => {
     const el = heldCard();
-    const button = el.querySelector<HTMLButtonElement>(
-      "[data-testid='early-access-product-card-action']",
-    );
-    expect(button?.disabled).toBe(true);
-    expect(button?.textContent).toBe("Unavailable");
-    for (const input of Array.from(
-      el.querySelectorAll<HTMLInputElement>("input[type='radio']"),
-    )) {
-      expect(input.disabled).toBe(true);
-    }
+    // No action control, no quantity control, and no bundle invitation: an
+    // offer to order three units of something nobody may order is an offer
+    // we could not honour.
+    expect(
+      el.querySelector("[data-testid='early-access-product-card-action']"),
+    ).toBeNull();
+    expect(el.querySelectorAll("button")).toHaveLength(0);
+    expect(el.querySelectorAll("input")).toHaveLength(0);
+    expect(
+      el.querySelector("[data-testid='early-access-product-card-savings']"),
+    ).toBeNull();
   });
 
   it("leaks no internal blocker text to the customer", () => {

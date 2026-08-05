@@ -127,20 +127,34 @@ export function EarlyAccessProductCard({
         </p>
       )}
 
-      <EarlyAccessQuantitySelector
-        value={quantity}
-        onChange={onQuantityChange}
-        disabled={!sellable}
-        testId={`${testId}-quantity`}
-      />
+      {/*
+        A founder-held row renders NO purchase controls at all, rather than
+        disabled ones. A disabled control is still present in the DOM and the
+        accessibility tree: it announces itself, it can be re-enabled from
+        devtools, and it tells the customer "you could buy this" about a unit
+        no named human has approved for sale. Absent is the only state that
+        cannot be misread. The server refuses the order regardless; this is
+        the surface agreeing with it.
+      */}
+      {sellable ? (
+        <EarlyAccessQuantitySelector
+          value={quantity}
+          onChange={onQuantityChange}
+          testId={`${testId}-quantity`}
+        />
+      ) : null}
 
       {/*
         Names the offer. States no total, because the total is the server's to
-        compute and to state on the order review.
+        compute and to state on the order review. Absent on a held row: an
+        invitation to order three units of something nobody may order is an
+        offer we cannot honour.
       */}
-      <p data-testid={`${testId}-savings`}>
-        Order three units as the Research Bundle and save 20% on the bundle.
-      </p>
+      {sellable ? (
+        <p data-testid={`${testId}-savings`}>
+          Order three units as the Research Bundle and save 20% on the bundle.
+        </p>
+      ) : null}
 
       <p data-testid={`${testId}-availability`}>{AVAILABILITY_COPY[product.availability]}</p>
 
@@ -151,14 +165,11 @@ export function EarlyAccessProductCard({
         </p>
       ) : null}
 
-      <button
-        type="button"
-        data-testid={`${testId}-action`}
-        onClick={onSelect}
-        disabled={!sellable}
-      >
-        {ACTION_COPY[product.availability]}
-      </button>
+      {sellable ? (
+        <button type="button" data-testid={`${testId}-action`} onClick={onSelect}>
+          {ACTION_COPY[product.availability]}
+        </button>
+      ) : null}
 
       <p data-testid={`${testId}-fulfillment`}>{fulfillmentTargetCopy}</p>
     </article>
