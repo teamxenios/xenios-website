@@ -288,6 +288,17 @@ export function buildEarlyAccessSupplierConfirmationStore(
 }
 
 /**
+ * The durable founder release ledger. Composed into the registration options
+ * above; exported separately so the one-time release initialization can reach
+ * the SAME ledger without standing up the whole persistence object.
+ */
+export function buildEarlyAccessReleaseLedger(
+  query?: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
+): SupabaseEarlyAccessReleaseLedger {
+  return new SupabaseEarlyAccessReleaseLedger(query ?? createEarlyAccessSupabaseQuery());
+}
+
+/**
  * The durable unit-hold registry (migration 54, QA R4's durable half): the
  * `holds` reader on the declared-facts source plus the record/withdraw
  * surface for the operator path. A hold recorded here survives every
