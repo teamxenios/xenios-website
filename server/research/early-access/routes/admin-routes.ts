@@ -66,6 +66,14 @@ type AdminCaller =
  * still not enough, because only a founder or an operations admin may accept
  * money, and that second question is what this answers.
  */
+export async function resolveEarlyAccessAdmin(
+  deps: EarlyAccessAdminRouteDependencies,
+  adminEmail: unknown,
+  response: ResponsePort,
+): Promise<AdminCaller> {
+  return resolveAdmin(deps, adminEmail, response);
+}
+
 async function resolveAdmin(
   deps: EarlyAccessAdminRouteDependencies,
   adminEmail: unknown,
@@ -94,6 +102,13 @@ function unavailable(response: ResponsePort): void {
   } catch {
     // The response port itself is broken.
   }
+}
+
+export async function recordEarlyAccessAudit(
+  deps: EarlyAccessAdminRouteDependencies,
+  event: Parameters<typeof recordAudit>[1],
+): Promise<void> {
+  return recordAudit(deps, event);
 }
 
 async function recordAudit(

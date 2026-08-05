@@ -50,6 +50,10 @@ import {
   type EarlyAccessAdminRouteDependencies,
 } from "./routes/admin-routes";
 import {
+  createEarlyAccessOverpaymentExceptionRoute,
+  createEarlyAccessRefundRoute,
+} from "./routes/payment-exception-routes";
+import {
   createEarlyAccessInvoiceRoute,
   createEarlyAccessOrderLookupRoute,
   createEarlyAccessOrderPlacementRoute,
@@ -154,6 +158,11 @@ export const EARLY_ACCESS_ADMIN_SUPPLIER_TRACKING_PATH =
   "/api/admin/research/supplier-orders/:orderNumber/tracking";
 export const EARLY_ACCESS_ADMIN_SUPPLIER_SHIPPED_PATH =
   "/api/admin/research/supplier-orders/:orderNumber/shipped";
+/** The overpayment resolution door and the refund record. */
+export const EARLY_ACCESS_ADMIN_OVERPAYMENT_PATH =
+  "/api/admin/research/payments/:orderNumber/overpayment-exception";
+export const EARLY_ACCESS_ADMIN_REFUND_PATH =
+  "/api/admin/research/payments/:orderNumber/refund";
 
 export const EARLY_ACCESS_ADMIN_API_PATHS = Object.freeze([
   EARLY_ACCESS_ADMIN_PAYMENTS_PATH,
@@ -164,6 +173,8 @@ export const EARLY_ACCESS_ADMIN_API_PATHS = Object.freeze([
   EARLY_ACCESS_ADMIN_SUPPLIER_PACKING_PATH,
   EARLY_ACCESS_ADMIN_SUPPLIER_TRACKING_PATH,
   EARLY_ACCESS_ADMIN_SUPPLIER_SHIPPED_PATH,
+  EARLY_ACCESS_ADMIN_OVERPAYMENT_PATH,
+  EARLY_ACCESS_ADMIN_REFUND_PATH,
 ] as const);
 
 /**
@@ -628,6 +639,26 @@ function registerEarlyAccessAdminApi(
 
   app.post(EARLY_ACCESS_ADMIN_SUPPLIER_SHIPPED_PATH, guard, (req: Request, res: Response) => {
     void shipped({ adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber }, res);
+  });
+
+  // The two doors an overpaying customer's money needs. Both RECORD and
+  // neither settles: confirmation stays the only path that verifies a
+  // payment, issues a receipt, releases a supplier, or accrues commission.
+  const overpayment = createEarlyAccessOverpaymentExceptionRoute(deps);
+  const refund = createEarlyAccessRefundRoute(deps);
+
+  app.post(EARLY_ACCESS_ADMIN_OVERPAYMENT_PATH, guard, (req: Request, res: Response) => {
+    void overpayment(
+      { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
+      res,
+    );
+  });
+
+  app.post(EARLY_ACCESS_ADMIN_REFUND_PATH, guard, (req: Request, res: Response) => {
+    void refund(
+      { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
+      res,
+    );
   });
 }
 

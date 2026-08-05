@@ -239,6 +239,23 @@ export interface EarlyAccessCommerceStore {
    * a partial list: absent is safer than wrong.
    */
   settledTransactionRefs?(): Promise<readonly string[]>;
+
+  /**
+   * The overpayment exception recorded for one order, or null. One per
+   * order: an overpayment is a single fact about a single arrival of money,
+   * and a second record would be a second opinion about it.
+   */
+  overpaymentException?(orderNumber: string): Promise<unknown | null>;
+  /** Record it. False when one already exists, which is a replay. */
+  recordOverpaymentException?(
+    orderNumber: string,
+    exception: unknown,
+  ): Promise<boolean>;
+
+  /** This order's refund trail, oldest first. Append only. */
+  refunds?(orderNumber: string): Promise<readonly unknown[]>;
+  /** Append one refund. False on a replayed refund id. */
+  appendRefund?(orderNumber: string, refund: unknown): Promise<boolean>;
   /** Eight facts, one turn. This is the exactly-once boundary for money. */
   commitSettlement(settlement: EarlyAccessSettlement): Promise<SettlementCommit>;
 
@@ -257,6 +274,8 @@ export class InMemoryEarlyAccessCommerceStore implements EarlyAccessCommerceStor
   private readonly placementsByKey = new Map<string, string>();
   private readonly proofsByOrder = new Map<string, readonly EarlyAccessProofIntake[]>();
   private readonly settlements = new Map<string, EarlyAccessSettlement>();
+  private readonly exceptions = new Map<string, unknown>();
+  private readonly refundTrail = new Map<string, unknown[]>();
   private readonly transactionIds = new Map<string, string>();
   private readonly dispatchByOrder = new Map<string, EarlyAccessDispatch>();
 
@@ -342,6 +361,33 @@ export class InMemoryEarlyAccessCommerceStore implements EarlyAccessCommerceStor
 
   async settledTransactionRefs(): Promise<readonly string[]> {
     return Array.from(this.transactionIds.keys());
+  }
+
+  async overpaymentException(orderNumber: string): Promise<unknown | null> {
+    return this.exceptions.get(orderNumber) ?? null;
+  }
+
+  async recordOverpaymentException(
+    orderNumber: string,
+    exception: unknown,
+  ): Promise<boolean> {
+    if (this.exceptions.has(orderNumber)) return false;
+    this.exceptions.set(orderNumber, exception);
+    return true;
+  }
+
+  async refunds(orderNumber: string): Promise<readonly unknown[]> {
+    return [...(this.refundTrail.get(orderNumber) ?? [])];
+  }
+
+  async appendRefund(orderNumber: string, refund: unknown): Promise<boolean> {
+    const id = (refund as { refundId?: unknown }).refundId;
+    const trail = this.refundTrail.get(orderNumber) ?? [];
+    if (trail.some((entry) => (entry as { refundId?: unknown }).refundId === id)) {
+      return false;
+    }
+    this.refundTrail.set(orderNumber, [...trail, refund]);
+    return true;
   }
 
   async commitSettlement(settlement: EarlyAccessSettlement): Promise<SettlementCommit> {
