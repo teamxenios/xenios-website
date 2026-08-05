@@ -1695,6 +1695,7 @@ export const EXPANSION_TIER: readonly PeptideProduct[] = [
     category: "Peptide",
     peptideToken: "BPC157",
     sizes: [
+      { strength: "5 mg", marketReferencePriceCents: 1340 },
       { strength: "10 mg", marketReferencePriceCents: 8799 },
       { strength: "20 mg", marketReferencePriceCents: 10499 },
     ],
@@ -1719,7 +1720,10 @@ export const EXPANSION_TIER: readonly PeptideProduct[] = [
     productClass: "repair_peptide",
     category: "Peptide",
     peptideToken: "GHKCU",
-    sizes: [{ strength: "100 mg", marketReferencePriceCents: 9999 }],
+    sizes: [
+      { strength: "50 mg", marketReferencePriceCents: 900 },
+      { strength: "100 mg", marketReferencePriceCents: 9999 },
+    ],
   }),
   expansionProduct({
     internalProductCode: "PEX-004",
@@ -1764,7 +1768,10 @@ export const EXPANSION_TIER: readonly PeptideProduct[] = [
     productClass: "neuro_peptide",
     category: "Peptide",
     peptideToken: "DSIP",
-    sizes: [{ strength: "15 mg", marketReferencePriceCents: 7999 }],
+    sizes: [
+      { strength: "10 mg", marketReferencePriceCents: 2800 },
+      { strength: "15 mg", marketReferencePriceCents: 7999 },
+    ],
   }),
   expansionProduct({
     internalProductCode: "PEX-008",
@@ -1862,6 +1869,7 @@ export const EXPANSION_TIER: readonly PeptideProduct[] = [
     category: "Peptide",
     peptideToken: "GLUTATHIONE",
     sizes: [
+      { strength: "500 mg", marketReferencePriceCents: 1790 },
       { strength: "600 mg", marketReferencePriceCents: 7999 },
       { strength: "1500 mg", marketReferencePriceCents: 10999 },
     ],
@@ -1955,7 +1963,10 @@ export const EXPANSION_TIER: readonly PeptideProduct[] = [
     productClass: "gh_secretagogue",
     category: "Peptide",
     peptideToken: "SERMORELIN",
-    sizes: [{ strength: "10 mg", marketReferencePriceCents: 9999 }],
+    sizes: [
+      { strength: "5 mg", marketReferencePriceCents: 2020 },
+      { strength: "10 mg", marketReferencePriceCents: 9999 },
+    ],
   }),
   expansionProduct({
     internalProductCode: "PEX-024",
@@ -1999,6 +2010,50 @@ export const EXPANSION_TIER: readonly PeptideProduct[] = [
     category: "Blend",
     peptideToken: "TESAMORELIN_IPAMORELIN",
     sizes: [{ strength: "15 mg", marketReferencePriceCents: 10999 }],
+  }),
+  // The three first-release identities the founder named on 2026-08-05. They
+  // complete the 22-row Early Access list; without them the seed reported
+  // eight unresolved rows rather than inventing an identity to fit a price.
+  //
+  // The founder supplied internal codes in the form XEA-CAG-010MG-VIAL. This
+  // tier enforces PEX-### for internalProductCode (peptide-catalog.test.ts),
+  // so these continue the existing sequence instead. Nothing customer-facing
+  // changed: the SKU is DERIVED from the peptide token, which is why these
+  // project as R360-CAGRILINTIDE-10MG-VIAL and so on, exactly as every other
+  // catalogued unit does. Name, strength, presentation and price are the
+  // founder's, verbatim.
+  expansionProduct({
+    internalProductCode: "PEX-028",
+    canonicalName: "Cagrilintide Research Material",
+    displayName: "Cagrilintide",
+    slug: "cagrilintide",
+    nameAliases: ["Cagrilintide", "Cagrilintide Research Material"],
+    productClass: "metabolic_peptide",
+    category: "Peptide",
+    peptideToken: "CAGRILINTIDE",
+    sizes: [{ strength: "10 mg", marketReferencePriceCents: 5600 }],
+  }),
+  expansionProduct({
+    internalProductCode: "PEX-029",
+    canonicalName: "Hexarelin Research Material",
+    displayName: "Hexarelin",
+    slug: "hexarelin",
+    nameAliases: ["Hexarelin", "Hexarelin Research Material"],
+    productClass: "gh_secretagogue",
+    category: "Peptide",
+    peptideToken: "HEXARELIN",
+    sizes: [{ strength: "10 mg", marketReferencePriceCents: 3360 }],
+  }),
+  expansionProduct({
+    internalProductCode: "PEX-030",
+    canonicalName: "Oxytocin Research Material",
+    displayName: "Oxytocin",
+    slug: "oxytocin",
+    nameAliases: ["Oxytocin", "Oxytocin Research Material"],
+    productClass: "hormone_analogue",
+    category: "Peptide",
+    peptideToken: "OXYTOCIN",
+    sizes: [{ strength: "5 mg", marketReferencePriceCents: 1790 }],
   }),
 ];
 

@@ -232,10 +232,10 @@ describe("FULL_CATALOG_VISIBILITY over HTTP", () => {
     expect(res.body.ok).toBe(true);
     expect(res.body.audience).toBe("member");
     expect(res.body.breadth).toBe("full");
-    expect(res.body.products).toHaveLength(63);
+    expect(res.body.products).toHaveLength(66);
     expect(res.body.counts).toEqual({
-      listed: 63,
-      displayable: 63,
+      listed: 66,
+      displayable: 66,
       excludedRegulatoryHold: 3,
     });
     expectPrivateHeaders(res.headers);
@@ -249,7 +249,7 @@ describe("FULL_CATALOG_VISIBILITY over HTTP", () => {
     expect(res.body.products).toHaveLength(30);
     expect(res.body.counts).toEqual({
       listed: 30,
-      displayable: 63,
+      displayable: 66,
       excludedRegulatoryHold: 3,
     });
   });
@@ -519,7 +519,7 @@ describe("gateway integration (real registerResearchApi)", () => {
       const authed = await request(app).get(LIST_URL).set("Authorization", "Bearer member-token");
       expect(authed.status).toBe(200);
       expect(authed.body.breadth).toBe("full");
-      expect(authed.body.products).toHaveLength(63);
+      expect(authed.body.products).toHaveLength(66);
       expectPrivateHeaders(authed.headers);
 
       // An unauthenticated caller gets the ADAPTER's closed 401, not the

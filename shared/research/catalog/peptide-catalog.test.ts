@@ -166,20 +166,20 @@ const HARVESTED_5MG_PT141: AdditionalVariantInput = {
 describe("catalog tiers", () => {
   it("holds three tiers: 15 workbook, 27 expansion, 3 regulatory hold", () => {
     expect(productsInTier("workbook")).toHaveLength(15);
-    expect(productsInTier("expansion")).toHaveLength(27);
+    expect(productsInTier("expansion")).toHaveLength(30);
     expect(productsInTier("regulatory_hold")).toHaveLength(3);
-    expect(PEPTIDE_CATALOG).toHaveLength(45);
+    expect(PEPTIDE_CATALOG).toHaveLength(48);
     expect(PEPTIDE_CATALOG_SIZE).toBe(15);
     expect(WORKBOOK_TIER).toHaveLength(15);
-    expect(EXPANSION_TIER).toHaveLength(27);
+    expect(EXPANSION_TIER).toHaveLength(30);
     expect(REGULATORY_HOLD_TIER).toHaveLength(3);
   });
 
   it("holds seventy variants: 21 workbook, 33 expansion, 16 regulatory hold", () => {
     expect(allVariants(productsInTier("workbook"))).toHaveLength(21);
-    expect(allVariants(productsInTier("expansion"))).toHaveLength(33);
+    expect(allVariants(productsInTier("expansion"))).toHaveLength(41);
     expect(allVariants(productsInTier("regulatory_hold"))).toHaveLength(16);
-    expect(allVariants()).toHaveLength(70);
+    expect(allVariants()).toHaveLength(78);
   });
 
   it("gives every product a tier from the closed vocabulary and a non-empty variant list", () => {
@@ -249,8 +249,8 @@ describe("peptide catalog shape", () => {
   it("uses a unique internal product code and slug across the whole catalog", () => {
     const codes = PEPTIDE_CATALOG.map((p) => p.internalProductCode);
     const slugs = PEPTIDE_CATALOG.map((p) => p.slug);
-    expect(new Set(codes).size).toBe(45);
-    expect(new Set(slugs).size).toBe(45);
+    expect(new Set(codes).size).toBe(48);
+    expect(new Set(slugs).size).toBe(48);
     const legacyCodes = PEPTIDE_CATALOG.map((p) => p.legacyProductCode).filter(
       (code): code is string => code !== null,
     );
@@ -288,7 +288,7 @@ describe("peptide catalog shape", () => {
 describe("sku convention", () => {
   it("gives every variant of every product a unique sku", () => {
     const skus = allVariants().map((v) => v.sku);
-    expect(skus).toHaveLength(70);
+    expect(skus).toHaveLength(78);
     expect(new Set(skus).size).toBe(skus.length);
   });
 
@@ -555,7 +555,7 @@ describe("the cost basis rule", () => {
     );
     expect(withCost).toHaveLength(15);
     expect(withCost.every((entry) => entry.variant.isPrimary)).toBe(true);
-    expect(variantsWithoutCostBasis()).toHaveLength(55);
+    expect(variantsWithoutCostBasis()).toHaveLength(63);
   });
 
   it("never lets a variant without a cost basis reach a purchase mode", () => {
@@ -657,7 +657,7 @@ describe("the customer projection", () => {
     for (const product of productsInTier("regulatory_hold")) {
       expect(toCustomerProductProjection(product), product.internalProductCode).toBeNull();
     }
-    expect(customerCatalogProjection()).toHaveLength(42);
+    expect(customerCatalogProjection()).toHaveLength(45);
     const slugs = customerCatalogProjection().map((entry) => entry.slug);
     expect(slugs).not.toContain("semaglutide");
     expect(slugs).not.toContain("tirzepatide");
@@ -755,8 +755,8 @@ describe("the harvest lane extension point", () => {
       },
     ]);
     const skus = allVariants(merged).map((v) => v.sku);
-    expect(skus).toHaveLength(72);
-    expect(new Set(skus).size).toBe(72);
+    expect(skus).toHaveLength(80);
+    expect(new Set(skus).size).toBe(80);
     expect(skus).toContain("R360-DIHEXA-10MGX30-CAP");
     expect(skus).toContain("R360-DIHEXA-10MGX60-CAP");
   });

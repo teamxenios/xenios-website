@@ -691,7 +691,7 @@ describe("assessEarlyAccessEligibility", () => {
       // confirmed price or a certificate of analysis on file, so every one is
       // held on the price and documentation gates.
       const variants = PEPTIDE_CATALOG.flatMap((item) => item.variants);
-      expect(variants).toHaveLength(70);
+      expect(variants).toHaveLength(78);
 
       expect(
         variants.every(

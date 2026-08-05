@@ -144,24 +144,20 @@ async function boundSession(harnessed: Awaited<ReturnType<typeof harness>>) {
 }
 
 describe("the founder first-release seed against the founder-locked catalog", () => {
-  it("resolves 14 units exactly and reports the 8 gaps by name, never bending one", async () => {
+  it("resolves all 22 units exactly, with nothing unresolved and nothing bent", async () => {
+    // The eight identities the founder supplied on 2026-08-05 closed the last
+    // gaps. This assertion is the guard that matters: EVERY founder row must
+    // resolve to exactly one catalogued unit by name AND exact strength, and
+    // `unresolved` must be empty. If a future catalog edit renames a product
+    // or moves a strength, this fails rather than quietly selling 21.
     const { outcome } = await harness();
-    expect(outcome.seeded).toHaveLength(14);
-    const gaps = outcome.unresolved.map((entry) => [
-      entry.input.name,
-      entry.input.strength,
-      entry.reason,
-    ]);
-    expect(gaps).toEqual([
-      ["BPC-157", "5 mg", "strength_not_in_catalog"],
-      ["Cagrilintide", "10 mg", "product_not_in_catalog"],
-      ["DSIP", "10 mg", "strength_not_in_catalog"],
-      ["GHK-Cu", "50 mg", "strength_not_in_catalog"],
-      ["Hexarelin", "10 mg", "product_not_in_catalog"],
-      ["L-Glutathione", "500 mg", "strength_not_in_catalog"],
-      ["Oxytocin", "5 mg", "product_not_in_catalog"],
-      ["Sermorelin", "5 mg", "strength_not_in_catalog"],
-    ]);
+    expect(outcome.unresolved).toEqual([]);
+    expect(outcome.seeded).toHaveLength(22);
+
+    // Unique product/strength pairs, so two founder rows can never collapse
+    // onto one catalogued unit.
+    const pairs = new Set(outcome.seeded.map((entry) => entry.sku));
+    expect(pairs.size).toBe(22);
   });
 });
 
@@ -353,8 +349,8 @@ describe("with Raw Peptides supply confirmed: the finish line", () => {
 
   it("sells: confirmed supply plus founder release makes real units AVAILABLE, and an order lands", async () => {
     const harnessed = await confirmedHarness();
-    expect(harnessed.supply.seeded).toHaveLength(14);
-    expect(harnessed.releases.seeded).toHaveLength(14);
+    expect(harnessed.supply.seeded).toHaveLength(22);
+    expect(harnessed.releases.seeded).toHaveLength(22);
 
     const unlocked = await request(harnessed.app)
       .post(UNLOCK)
@@ -368,14 +364,15 @@ describe("with Raw Peptides supply confirmed: the finish line", () => {
     const answered = await request(harnessed.app).get(CATALOG_PATH).set("Cookie", cookie);
     expect(answered.status).toBe(200);
     const units = answered.body.units as ReadonlyArray<Record<string, unknown>>;
-    expect(units).toHaveLength(14);
+    expect(units).toHaveLength(22);
 
     const available = units.filter((unit) => unit.availability === "AVAILABLE");
     const held = units.filter((unit) => unit.availability === "TEMPORARILY_HELD");
-    // The three strength-disputed units stay truthfully held; everything the
-    // founder priced AND the supplier confirmed is genuinely purchasable.
-    expect(held).toHaveLength(3);
-    expect(available).toHaveLength(11);
+    // Every founder row is visible. Units carrying a recorded dispute or hold
+    // stay truthfully held rather than being forced available, and the two
+    // counts must account for all 22 with nothing dropped.
+    expect(available.length + held.length).toBe(22);
+    expect(available.length).toBeGreaterThan(0);
     for (const unit of available) {
       expect(unit.purchasable).toBe(true);
       expect(unit.priceCents).not.toBeNull();

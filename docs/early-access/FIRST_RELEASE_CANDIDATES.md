@@ -1,6 +1,6 @@
 # Private Early Access: the reviewed first-release list
 
-Evaluated at 2026-08-04T00:00:00.000Z. 70 exact units across 45 products.
+Evaluated at 2026-08-04T00:00:00.000Z. 78 exact units across 48 products.
 
 ## Where this came from
 
@@ -22,10 +22,10 @@ No amount is read from the peptide catalog. It holds wholesale costs, draft comp
 | NOT_APPROVABLE_FORMULA | 3 |
 | NOT_APPROVABLE_STRENGTH | 9 |
 | NOT_APPROVABLE_SUPPLIER | 0 |
-| NOT_APPROVABLE_FULFILLMENT | 42 |
+| NOT_APPROVABLE_FULFILLMENT | 50 |
 | NOT_APPROVABLE_PRICE | 0 |
 | APPROVABLE_FOR_EARLY_ACCESS | 0 |
-| **Total** | **70** |
+| **Total** | **78** |
 
 ## The recommended first release
 
@@ -37,7 +37,7 @@ No amount is read from the peptide catalog. It holds wholesale costs, draft comp
 | PT-141 Research Material | R360-PT141-10MG-VIAL | 10 mg | Single vial, 10 mg | mitch | FULFILLMENT_UNAVAILABLE, PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE |
 | Thymosin Alpha-1 + KPV + LL-37 Research Blend | R360-THYMOSINALPHA1_KPV_LL37-5MG_5MG_5MG-VIAL | 5 mg / 5 mg / 5 mg | Single vial, 5 mg / 5 mg / 5 mg | mitch | FULFILLMENT_UNAVAILABLE, PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE |
 
-A further 39 units carry no open product question either, but each is a size harvested from a market reference rather than a presentation the founder chose. They are releasable in principle and are not part of a first release.
+A further 47 units carry no open product question either, but each is a size harvested from a market reference rather than a presentation the founder chose. They are releasable in principle and are not part of a first release.
 
 ## Every unit
 
@@ -92,7 +92,7 @@ Obtain the supplier's written strength for this SKU and settle it against the fo
 | SS-31 Research Material | 10 mg, Single vial, 10 mg | R360-SS31-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE, STRENGTH_DISPUTE_UNRESOLVED |
 | Tesamorelin Research Material | 10 mg, Single vial, 10 mg | R360-TESAMORELIN-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE, STRENGTH_DISPUTE_UNRESOLVED |
 
-### NOT_APPROVABLE_FULFILLMENT (42)
+### NOT_APPROVABLE_FULFILLMENT (50)
 
 Receive an allocatable lot for this exact SKU, then re-review.
 
@@ -105,16 +105,22 @@ Receive an allocatable lot for this exact SKU, then re-review.
 | AOD-9604 Research Material | 5 mg, Single vial, 5 mg | R360-AOD9604-5MG-VIAL | 5 mg | Single vial, 5 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | BPC-157 Research Material | 10 mg, Single vial, 10 mg | R360-BPC157-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | BPC-157 Research Material | 20 mg, Single vial, 20 mg | R360-BPC157-20MG-VIAL | 20 mg | Single vial, 20 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
+| BPC-157 Research Material | 5 mg, Single vial, 5 mg | R360-BPC157-5MG-VIAL | 5 mg | Single vial, 5 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
+| Cagrilintide | 10 mg, Single vial, 10 mg | R360-CAGRILINTIDE-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | CJC-1295 + Ipamorelin Research Blend | 20 mg, Single vial, 20 mg total | R360-CJC1295_IPAMORELIN-20MG-VIAL | 20 mg | Single vial, 20 mg total | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | CJC-1295 + Ipamorelin Research Blend | 5 mg / 5 mg, Single vial, 5 mg / 5 mg | R360-CJC1295_IPAMORELIN-5MG_5MG-VIAL | 5 mg / 5 mg | Single vial, 5 mg / 5 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | CJC-1295 with DAC Research Material | 5 mg, Single vial, 5 mg | R360-CJC1295DAC-5MG-VIAL | 5 mg | Single vial, 5 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
+| DSIP Research Material | 10 mg, Single vial, 10 mg | R360-DSIP-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | DSIP Research Material | 15 mg, Single vial, 15 mg | R360-DSIP-15MG-VIAL | 15 mg | Single vial, 15 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Epithalon Research Material | 100 mg, Single vial, 100 mg | R360-EPITHALON-100MG-VIAL | 100 mg | Single vial, 100 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Follistatin Research Material | 1 mg, Single vial, 1 mg | R360-FOLLISTATIN-1MG-VIAL | 1 mg | Single vial, 1 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | GHK-Cu Research Material | 100 mg, Single vial, 100 mg | R360-GHKCU-100MG-VIAL | 100 mg | Single vial, 100 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
+| GHK-Cu Research Material | 50 mg, Single vial, 50 mg | R360-GHKCU-50MG-VIAL | 50 mg | Single vial, 50 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Glutathione Research Material | 1500 mg, Single vial, 1500 mg | R360-GLUTATHIONE-1500MG-VIAL | 1500 mg | Single vial, 1500 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
+| Glutathione Research Material | 500 mg, Single vial, 500 mg | R360-GLUTATHIONE-500MG-VIAL | 500 mg | Single vial, 500 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Glutathione Research Material | 600 mg, Single vial, 600 mg | R360-GLUTATHIONE-600MG-VIAL | 600 mg | Single vial, 600 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | HCG Research Material | 5000 IU, Single vial, 5000 IU | R360-HCG-5000IU-VIAL | 5000 IU | Single vial, 5000 IU | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
+| Hexarelin | 10 mg, Single vial, 10 mg | R360-HEXARELIN-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | IGF-1 LR3 Research Material | 0.1 mg, Single vial, 0.1 mg | R360-IGF1LR3-0P1MG-VIAL | 0.1 mg | Single vial, 0.1 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | IGF-1 LR3 Research Material | 1 mg, Single vial, 1 mg | R360-IGF1LR3-1MG-VIAL | 1 mg | Single vial, 1 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Ipamorelin Research Material | 10 mg, Single vial, 10 mg | R360-IPAMORELIN-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
@@ -126,12 +132,14 @@ Receive an allocatable lot for this exact SKU, then re-review.
 | Melanotan II Research Material | 10 mg, Single vial, 10 mg | R360-MELANOTAN2-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | MOTS-C Research Material | 40 mg, Single vial, 40 mg | R360-MOTSC-40MG-VIAL | 40 mg | Single vial, 40 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | NAD+ Research Material | 1000 mg, Single vial, 1000 mg | R360-NAD-1000MG-VIAL | 1000 mg | Single vial, 1000 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
+| Oxytocin | 5 mg, Single vial, 5 mg | R360-OXYTOCIN-5MG-VIAL | 5 mg | Single vial, 5 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | PT-141 Research Material | 10 mg, Single vial, 10 mg | R360-PT141-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Selank Research Material | 10 mg, Single vial, 10 mg | R360-SELANK-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Semax + Selank Research Blend | 10 mg, Single vial, 10 mg | R360-SEMAX_SELANK-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Semax Research Material | 10 mg, Single vial, 10 mg | R360-SEMAX-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Semax Research Material | 30 mg, Single vial, 30 mg | R360-SEMAX-30MG-VIAL | 30 mg | Single vial, 30 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Sermorelin Research Material | 10 mg, Single vial, 10 mg | R360-SERMORELIN-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
+| Sermorelin Research Material | 5 mg, Single vial, 5 mg | R360-SERMORELIN-5MG-VIAL | 5 mg | Single vial, 5 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | SS-31 Research Material | 50 mg, Single vial, 50 mg | R360-SS31-50MG-VIAL | 50 mg | Single vial, 50 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | TB-500 Research Material | 10 mg, Single vial, 10 mg | R360-TB500-10MG-VIAL | 10 mg | Single vial, 10 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |
 | Tesamorelin + Ipamorelin Research Blend | 15 mg, Single vial, 15 mg | R360-TESAMORELIN_IPAMORELIN-15MG-VIAL | 15 mg | Single vial, 15 mg | None resolved | mitch | Manual, shipped by the supplier partner | unavailable | none set | PRICE_NOT_APPROVED, QUANTITY_LIMIT_MISSING, DOCUMENTATION_NOT_SATISFIED, OFFER_STATE_NOT_PURCHASABLE | FULFILLMENT_UNAVAILABLE |

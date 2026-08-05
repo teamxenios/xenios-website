@@ -214,7 +214,7 @@ describe("catalog display projection: safety", () => {
     const peptideDetails = displayCatalog("full")
       .filter((card) => card.lane === "peptide")
       .map((card) => displayProductDetail("peptide", card.slug, "full"));
-    expect(peptideDetails.length).toBe(42);
+    expect(peptideDetails.length).toBe(45);
     for (const detail of peptideDetails) {
       const numbers = everyNumber(onTheWire(detail));
       expect(numbers, detail?.slug).toEqual([detail?.variantCount]);
@@ -277,15 +277,15 @@ describe("catalog display projection: tier exclusion", () => {
 describe("catalog display projection: truthful modes and amounts", () => {
   it("counts the displayable catalog exactly", () => {
     const full = displayCatalog("full");
-    expect(full).toHaveLength(63);
-    expect(allDisplayableCards()).toHaveLength(63);
+    expect(full).toHaveLength(66);
+    expect(allDisplayableCards()).toHaveLength(66);
     // 45 peptide products less the 3 held, plus 20 supplements, plus Quantum.
-    expect(full.filter((card) => card.lane === "peptide")).toHaveLength(42);
+    expect(full.filter((card) => card.lane === "peptide")).toHaveLength(45);
     expect(full.filter((card) => card.lane === "supplement")).toHaveLength(
       SUPPLEMENT_CATALOG.length,
     );
     expect(full.filter((card) => card.lane === "quantum")).toHaveLength(1);
-    expect(PEPTIDE_CATALOG).toHaveLength(45);
+    expect(PEPTIDE_CATALOG).toHaveLength(48);
   });
 
   it("keeps every mode on the closed enum and gives every one words", () => {
@@ -375,7 +375,7 @@ describe("catalog display projection: breadth", () => {
     expect(full.length).toBeGreaterThan(standard.length);
     const standardKeys = new Set(standard.map((card) => `${card.lane}:${card.slug}`));
     const extra = full.filter((card) => !standardKeys.has(`${card.lane}:${card.slug}`));
-    expect(extra).toHaveLength(33);
+    expect(extra).toHaveLength(36);
     for (const card of extra) {
       // The grant widened the listing and nothing else: every extra record
       // arrives at a mode that denies purchase, with no amount.
