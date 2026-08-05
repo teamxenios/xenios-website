@@ -1003,7 +1003,11 @@ describe("migration DAG validator", () => {
     expect(issues.map((issue) => issue.code)).toContain(
       "MIGRATION_CHECKSUM_MISMATCH",
     );
-  });
+    // Spawns git once per pinned migration, so it grows with the chain and
+    // breaches the 5s default under a full-repo parallel run. Same headroom
+    // the other git-spawning control-plane tests carry: a timeout, not a
+    // performance assertion.
+  }, 30_000);
 
   it("fails closed when a pinned migration source is unavailable", () => {
     const dag = JSON.parse(
