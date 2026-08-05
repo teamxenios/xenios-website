@@ -1,0 +1,118 @@
+npm warn config production Use `--omit=dev` instead.
+==============================================================================
+DRY RUN. NOTHING WAS WRITTEN. No database connection, no network call.
+==============================================================================
+
+SECTION 1. FOUNDER RELEASE ROWS THAT WOULD BE CREATED: 21
+------------------------------------------------------------------------------
+#   releaseId                               productId variantId                     price     qty  status   
+1   rel-first-r360-aod9604-5mg-vial         PEX-012   R360-AOD9604-5MG-VIAL         $56.00    3    approved 
+2   rel-first-r360-bpc157-5mg-vial          PEX-001   R360-BPC157-5MG-VIAL          $33.50    3    approved 
+3   rel-first-r360-bpc157-10mg-vial         PEX-001   R360-BPC157-10MG-VIAL         $47.50    3    approved 
+4   rel-first-r360-dsip-10mg-vial           PEX-007   R360-DSIP-10MG-VIAL           $70.00    3    approved 
+5   rel-first-r360-ghkcu-50mg-vial          PEX-003   R360-GHKCU-50MG-VIAL          $22.50    3    approved 
+6   rel-first-r360-ghkcu-100mg-vial         PEX-003   R360-GHKCU-100MG-VIAL         $42.00    3    approved 
+7   rel-first-r360-hexarelin-10mg-vial      PEX-029   R360-HEXARELIN-10MG-VIAL      $84.00    3    approved 
+8   rel-first-r360-ipamorelin-10mg-vial     PEX-009   R360-IPAMORELIN-10MG-VIAL     $47.50    3    approved 
+9   rel-first-r360-kisspeptin10-10mg-vial   PEX-018   R360-KISSPEPTIN10-10MG-VIAL   $70.00    3    approved 
+10  rel-first-r360-kpv-10mg-vial            PEX-004   R360-KPV-10MG-VIAL            $50.50    3    approved 
+11  rel-first-r360-glutathione-500mg-vial   PEX-015   R360-GLUTATHIONE-500MG-VIAL   $44.75    3    approved 
+12  rel-first-r360-motsc-10mg-vial          PEP-010   R360-MOTSC-10MG-VIAL          $44.75    3    approved 
+13  rel-first-r360-nad-500mg-vial           PEP-009   R360-NAD-500MG-VIAL           $70.00    3    approved 
+14  rel-first-r360-nad-1000mg-vial          PEP-009   R360-NAD-1000MG-VIAL          $100.75   3    approved 
+15  rel-first-r360-oxytocin-5mg-vial        PEX-030   R360-OXYTOCIN-5MG-VIAL        $44.75    3    approved 
+16  rel-first-r360-pt141-10mg-vial          PEP-006   R360-PT141-10MG-VIAL          $39.25    3    approved 
+17  rel-first-r360-selank-10mg-vial         PEX-006   R360-SELANK-10MG-VIAL         $53.25    3    approved 
+18  rel-first-r360-semax-10mg-vial          PEX-005   R360-SEMAX-10MG-VIAL          $53.25    3    approved 
+19  rel-first-r360-sermorelin-5mg-vial      PEX-023   R360-SERMORELIN-5MG-VIAL      $50.50    3    approved 
+20  rel-first-r360-tesamorelin-10mg-vial    PEP-007   R360-TESAMORELIN-10MG-VIAL    $106.50   3    approved 
+21  rel-first-r360-thymosinalpha1-10mg-vial PEX-008   R360-THYMOSINALPHA1-10MG-VIAL $106.50   3    approved 
+
+Common fields on every release row:
+  actor      : Samuel Boadu
+  reason     : Founder first-release pricing decision, war room 2026-08-04. The price is the founder's; availability stays confirmation-gated and a price clears no blocker.
+  currency   : USD
+  expiresAt  : null
+  recordedAt : 2026-08-04T22:00:00.000Z
+  waivedBlockers: ["PRICE_NOT_APPROVED","QUANTITY_LIMIT_MISSING","DOCUMENTATION_NOT_SATISFIED","OFFER_STATE_NOT_PURCHASABLE"]
+
+SECTION 2. UNITS DELIBERATELY GIVEN NO RELEASE: 1
+------------------------------------------------------------------------------
+  {"name":"Cagrilintide","strength":"10 mg","reason":"FOUNDER COMMERCIAL RELEASE NOT YET APPROVED","recordedBy":"Samuel Boadu","recordedAt":"2026-08-05T00:00:00.000Z"}
+
+SECTION 3. SUPPLIER CONFIRMATION ROWS THAT WOULD BE CREATED: 22
+------------------------------------------------------------------------------
+1   R360-AOD9604-5MG-VIAL                           expires=2026-09-03T23:30:00.000Z
+2   R360-BPC157-5MG-VIAL                            expires=2026-09-03T23:30:00.000Z
+3   R360-BPC157-10MG-VIAL                           expires=2026-09-03T23:30:00.000Z
+4   R360-CAGRILINTIDE-10MG-VIAL                     expires=2026-09-03T23:30:00.000Z
+5   R360-DSIP-10MG-VIAL                             expires=2026-09-03T23:30:00.000Z
+6   R360-GHKCU-50MG-VIAL                            expires=2026-09-03T23:30:00.000Z
+7   R360-GHKCU-100MG-VIAL                           expires=2026-09-03T23:30:00.000Z
+8   R360-HEXARELIN-10MG-VIAL                        expires=2026-09-03T23:30:00.000Z
+9   R360-IPAMORELIN-10MG-VIAL                       expires=2026-09-03T23:30:00.000Z
+10  R360-KISSPEPTIN10-10MG-VIAL                     expires=2026-09-03T23:30:00.000Z
+11  R360-KPV-10MG-VIAL                              expires=2026-09-03T23:30:00.000Z
+12  R360-GLUTATHIONE-500MG-VIAL                     expires=2026-09-03T23:30:00.000Z
+13  R360-MOTSC-10MG-VIAL                            expires=2026-09-03T23:30:00.000Z
+14  R360-NAD-500MG-VIAL                             expires=2026-09-03T23:30:00.000Z
+15  R360-NAD-1000MG-VIAL                            expires=2026-09-03T23:30:00.000Z
+16  R360-OXYTOCIN-5MG-VIAL                          expires=2026-09-03T23:30:00.000Z
+17  R360-PT141-10MG-VIAL                            expires=2026-09-03T23:30:00.000Z
+18  R360-SELANK-10MG-VIAL                           expires=2026-09-03T23:30:00.000Z
+19  R360-SEMAX-10MG-VIAL                            expires=2026-09-03T23:30:00.000Z
+20  R360-SERMORELIN-5MG-VIAL                        expires=2026-09-03T23:30:00.000Z
+21  R360-TESAMORELIN-10MG-VIAL                      expires=2026-09-03T23:30:00.000Z
+22  R360-THYMOSINALPHA1-10MG-VIAL                   expires=2026-09-03T23:30:00.000Z
+
+Full field set of the first confirmation row, verbatim:
+  {
+    "confirmationId": "supconf-rawpeptides-r360-aod9604-5mg-vial",
+    "supplierOrg": "Raw Peptides",
+    "supplierContact": "Samuel Boadu, 737-418-6381 (relationship owner)",
+    "productId": "PEX-012",
+    "variantId": "R360-AOD9604-5MG-VIAL",
+    "sku": "R360-AOD9604-5MG-VIAL",
+    "supplierSku": "R360-AOD9604-5MG-VIAL",
+    "strength": "5 mg",
+    "presentation": "Single vial, 5 mg",
+    "maxQuantity": 50,
+    "fulfillmentLocation": "Houston, Texas",
+    "fulfillmentMethod": "cold_chain_courier",
+    "targetHandoffHours": 72,
+    "shippingRequirements": "Cold chain maintained end to end; insulated packaging with cold packs.",
+    "coldChainState": "required_and_available",
+    "documentationState": "supplier_states_2_year_shelf_life_from_receipt; COA per lot pending",
+    "confirmedAt": "2026-08-04T23:30:00.000Z",
+    "expiresAt": "2026-09-03T23:30:00.000Z",
+    "confirmedBy": "Samuel Boadu",
+    "evidenceRef": "relay:bug-hunter/samuel-2026-08-04-supply-confirmation",
+    "status": "active",
+    "withdrawnAt": null,
+    "withdrawnBy": null
+  }
+
+SECTION 4. UNRESOLVED (would NOT be created): 0
+------------------------------------------------------------------------------
+  none
+
+SECTION 5. RESULTING PROJECTION
+------------------------------------------------------------------------------
+  products        : 19   (expected 19)
+  visible units   : 22   (expected 22)
+  purchasable     : 18   (expected 18)
+  held            : 4   (expected 4)
+
+  Held units after both actions:
+    R360-CAGRILINTIDE-10MG-VIAL      TEMPORARILY_HELD     hold=NO_FOUNDER_RELEASE
+    R360-MOTSC-10MG-VIAL             TEMPORARILY_HELD     hold=NONWAIVABLE_BLOCKER  [strength dispute]
+    R360-NAD-500MG-VIAL              TEMPORARILY_HELD     hold=NONWAIVABLE_BLOCKER  [strength dispute]
+    R360-TESAMORELIN-10MG-VIAL       TEMPORARILY_HELD     hold=NONWAIVABLE_BLOCKER  [strength dispute]
+
+  NAD+ 1000 mg    : AVAILABLE  $100.75  (expected AVAILABLE $100.75)
+
+  VERDICT: PASS, matches the accepted opening set
+
+==============================================================================
+END OF DRY RUN. Nothing was written.
+==============================================================================
