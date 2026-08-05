@@ -1,0 +1,65 @@
+Dry-run manifest for scripts/initialize-product-control.ts
+
+Generated offline. The PLAN below is derived from the founder-locked
+canonical catalogue and is production independent, so it is byte-identical
+to what the production dry run prints. The only production-dependent step
+is the pre-state read, which classifies Product Control as clean, partial or
+already initialized and refuses to write on partial.
+
+Cagrilintide's $140.00 below is the founder's recorded input amount. It
+receives no founder release and no price row, so no customer ever sees an
+amount for it.
+
+==============================================================================
+PRODUCT CONTROL INITIALIZATION - DRY RUN
+actor  : Samuel Boadu (founder)
+at     : 2026-08-05T00:00:00.000Z
+reason : Private Early Access opening set. Product Control had never been populated in production, and the release and supply records were keyed from the founder-locked document because no product existed to key them to.
+source : scripts/initialize-product-control.ts over canonicalReviewProducts()
+==============================================================================
+ 1. PEP-006  PT-141 Research Material  in_stock              approved                          1 variant
+      R360-PT141-10MG-VIAL           10 mg     $39.25   
+ 2. PEP-007  Tesamorelin Research Materialin_stock              approved                          1 variant
+      R360-TESAMORELIN-10MG-VIAL     10 mg     $106.50  [held by dispute]
+ 3. PEP-009  NAD+ Research Material    in_stock              approved                          2 variants
+      R360-NAD-500MG-VIAL            500 mg    $70.00   [held by dispute]
+      R360-NAD-1000MG-VIAL           1000 mg   $100.75  
+ 4. PEP-010  MOTS-C Research Material  in_stock              approved                          1 variant
+      R360-MOTSC-10MG-VIAL           10 mg     $44.75   [held by dispute]
+ 5. PEX-001  BPC-157 Research Material in_stock              approved                          2 variants
+      R360-BPC157-5MG-VIAL           5 mg      $33.50   
+      R360-BPC157-10MG-VIAL          10 mg     $47.50   
+ 6. PEX-003  GHK-Cu Research Material  in_stock              approved                          2 variants
+      R360-GHKCU-50MG-VIAL           50 mg     $22.50   
+      R360-GHKCU-100MG-VIAL          100 mg    $42.00   
+ 7. PEX-004  KPV Research Material     in_stock              approved                          1 variant
+      R360-KPV-10MG-VIAL             10 mg     $50.50   
+ 8. PEX-005  Semax Research Material   in_stock              approved                          1 variant
+      R360-SEMAX-10MG-VIAL           10 mg     $53.25   
+ 9. PEX-006  Selank Research Material  in_stock              approved                          1 variant
+      R360-SELANK-10MG-VIAL          10 mg     $53.25   
+10. PEX-007  DSIP Research Material    in_stock              approved                          1 variant
+      R360-DSIP-10MG-VIAL            10 mg     $70.00   
+11. PEX-008  Thymosin Alpha-1 Research Materialin_stock              approved                          1 variant
+      R360-THYMOSINALPHA1-10MG-VIAL  10 mg     $106.50  
+12. PEX-009  Ipamorelin Research Materialin_stock              approved                          1 variant
+      R360-IPAMORELIN-10MG-VIAL      10 mg     $47.50   
+13. PEX-012  AOD-9604 Research Materialin_stock              approved                          1 variant
+      R360-AOD9604-5MG-VIAL          5 mg      $56.00   
+14. PEX-015  Glutathione Research Materialin_stock              approved                          1 variant
+      R360-GLUTATHIONE-500MG-VIAL    500 mg    $44.75   
+15. PEX-018  Kisspeptin-10 Research Materialin_stock              approved                          1 variant
+      R360-KISSPEPTIN10-10MG-VIAL    10 mg     $70.00   
+16. PEX-023  Sermorelin Research Materialin_stock              approved                          1 variant
+      R360-SERMORELIN-5MG-VIAL       5 mg      $50.50   
+17. PEX-028  Cagrilintide              documentation_review  blocked_pending_written_approval  1 variant  [no founder release]
+      R360-CAGRILINTIDE-10MG-VIAL    10 mg     $140.00  [held, NO_FOUNDER_RELEASE]
+18. PEX-029  Hexarelin                 in_stock              approved                          1 variant
+      R360-HEXARELIN-10MG-VIAL       10 mg     $84.00   
+19. PEX-030  Oxytocin                  in_stock              approved                          1 variant
+      R360-OXYTOCIN-5MG-VIAL         5 mg      $44.75   
+
+products: 19   variants: 22   price rows: 0 (see assertNoPriceRowIsSellable)
+
+DRY RUN. 19 products and 22 variants WOULD be created, then 22 confirmations and 21 releases WOULD be recorded against the ids production issues. Nothing was written.
+Re-run with --execute to write.
