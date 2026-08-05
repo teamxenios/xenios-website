@@ -99,6 +99,13 @@ describe("D006 confidential clinical roster is absent from every public surface"
           `deleting this guard.`,
       ).toEqual([]);
     },
+    // Reads every public-surface file once per surname, so it grows with the
+    // repo and breaches the 5s default under a full parallel run while
+    // passing in isolation. Same headroom the other file-scanning guards
+    // carry: a timeout, not a performance assertion. A privacy guard that
+    // fails only under load teaches people to re-run it, which is how a real
+    // leak eventually gets waved through.
+    30_000,
   );
 
   it("the About page team list carries no clinical title", () => {
