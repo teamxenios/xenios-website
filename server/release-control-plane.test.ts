@@ -762,7 +762,10 @@ describe("migration DAG validator", () => {
           }),
       }),
     ).toEqual([]);
-  });
+    // One git cat-file per DAG node; at 16 nodes this exceeds the 5 s default
+    // under full-suite parallelism on a loaded machine (measures ~3.4 s
+    // isolated). Same treatment as the production-state snapshot test below.
+  }, 30_000);
 
   it("requires every managed ledger migration exactly once in the DAG", () => {
     const dag = JSON.parse(
