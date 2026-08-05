@@ -1,0 +1,4 @@
+[early-access] Early Access is running on in-memory repositories (no Supabase configuration). This is acceptable for tests and local development only: nothing survives a restart.
+[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+C:\xenios-wt\fable-ea-final-integration\dist\index.cjs:160
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:233:7)

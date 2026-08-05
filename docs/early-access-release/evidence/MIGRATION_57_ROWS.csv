@@ -1,0 +1,9 @@
+sku,catalog_key,internal_product_code,supplier_master_strength,founder_locked_strength,dispute_reason,registry_state,permitted
+R360-BPC157-5MG-VIAL,R360-BPC157-5MG-VIAL,PEX-001,null,5 mg,null,registered,permitted
+R360-GHKCU-50MG-VIAL,R360-GHKCU-50MG-VIAL,PEX-003,null,50 mg,null,registered,permitted
+R360-DSIP-10MG-VIAL,R360-DSIP-10MG-VIAL,PEX-007,null,10 mg,null,registered,permitted
+R360-GLUTATHIONE-500MG-VIAL,R360-GLUTATHIONE-500MG-VIAL,PEX-015,null,500 mg,null,registered,permitted
+R360-SERMORELIN-5MG-VIAL,R360-SERMORELIN-5MG-VIAL,PEX-023,null,5 mg,null,registered,permitted
+R360-CAGRILINTIDE-10MG-VIAL,R360-CAGRILINTIDE-10MG-VIAL,PEX-028,null,10 mg,null,registered,permitted
+R360-HEXARELIN-10MG-VIAL,R360-HEXARELIN-10MG-VIAL,PEX-029,null,10 mg,null,registered,permitted
+R360-OXYTOCIN-5MG-VIAL,R360-OXYTOCIN-5MG-VIAL,PEX-030,null,5 mg,null,registered,permitted

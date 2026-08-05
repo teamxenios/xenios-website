@@ -1,0 +1,25 @@
+repo: /c/xenios-wt/fable-ea-final-integration
+branch: claude/f5-ea-22-catalog
+HEAD: 4938ab5bfc752b47113ee530dc55be9f9ff27d69
+upstream: origin/claude/f5-ea-22-catalog
+dirty-files: 1
+--- full SHAs ---
+f566de3 = f566de3ea89171d8c0a07e647de18d7842eaf14c
+4938ab5 = 4938ab5bfc752b47113ee530dc55be9f9ff27d69
+a9c84bb = a9c84bb0af2e1829df19ec1f99cff074b9f02c2a
+origin/claude/f5-flow = a9c84bb0af2e1829df19ec1f99cff074b9f02c2a
+--- ancestry ---
+OptionB ancestor of combined: YES
+combined ancestor of FLOW: YES
+merge-base(combined,FLOW): 4938ab5bfc752b47113ee530dc55be9f9ff27d69
+--- FLOW commit ---
+title: A founder-held row has no price and must still render
+author: claude-s0a
+date: Wed Aug 5 10:05:02 2026 -0500
+--- FLOW changed files ---
+client/src/research/early-access/EarlyAccessProductCard.test.tsx
+client/src/research/early-access/EarlyAccessProductCard.tsx
+client/src/research/early-access/earlyAccessCatalogView.test.ts
+client/src/research/early-access/earlyAccessCatalogView.ts
+--- forbidden-path scan ---
+0

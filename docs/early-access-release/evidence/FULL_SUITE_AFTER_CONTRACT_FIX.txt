@@ -1,0 +1,11 @@
+npm warn config production Use `--omit=dev` instead.
+
+ RUN  v4.1.10 C:/xenios-wt/fable-ea-final-integration
+
+
+ Test Files  392 passed | 2 skipped (394)
+      Tests  7033 passed | 27 skipped (7060)
+   Start at  13:17:08
+   Duration  305.57s (transform 107.60s, setup 0ms, import 437.60s, tests 191.41s, environment 1037.19s)
+
+ITE_EXIT=0

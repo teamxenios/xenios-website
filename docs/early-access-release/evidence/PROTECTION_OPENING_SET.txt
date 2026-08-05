@@ -1,0 +1,141 @@
+core-site protection gate
+  manifest baseline : 766f19fce3b67cd9b940ea66fe075281c2d8bdf8
+  comparing         : origin/main..HEAD
+  changed files     : 231
+  allowed (research/care) : 107
+  infrastructure          : 8
+  protected file hashes   : 21 verified
+
+TEST FILES TOUCHED (permitted: a test cannot change what a visitor sees.
+Review must still confirm each one was STRENGTHENED, not weakened. Lowering
+an existing safety or regression gate to make a build pass is forbidden):
+  - client/src/pages/About.roster-privacy.test.ts
+  - client/src/research/adapters/earlyAccessCatalog.contract.test.ts
+  - client/src/research/adapters/earlyAccessCatalog.test.ts
+  - client/src/research/adapters/earlyAccessOrder.test.ts
+  - client/src/research/early-access/EarlyAccessCatalogGrid.test.tsx
+  - client/src/research/early-access/EarlyAccessCatalogSection.test.tsx
+  - client/src/research/early-access/EarlyAccessCustomerForm.test.tsx
+  - client/src/research/early-access/EarlyAccessInvoicePanel.test.tsx
+  - client/src/research/early-access/EarlyAccessOrderJourney.test.tsx
+  - client/src/research/early-access/EarlyAccessOrderSummary.test.tsx
+  - client/src/research/early-access/EarlyAccessProductCard.test.tsx
+  - client/src/research/early-access/EarlyAccessQuantitySelector.test.tsx
+  - client/src/research/early-access/EarlyAccessReferralField.test.tsx
+  - client/src/research/early-access/EarlyAccessStepper.test.tsx
+  - client/src/research/early-access/EarlyAccessUnlockForm.test.tsx
+  - client/src/research/early-access/catalog-contract.test.tsx
+  - client/src/research/early-access/earlyAccessCatalogView.test.ts
+  - client/src/research/pages/Gateway.catalog-guard.test.tsx
+  - client/src/research/pages/adminx/EarlyAccessReleases.test.tsx
+  - server/release-control-plane.test.ts
+  - server/research/catalog-display/projection.test.ts
+  - server/research/catalog-display/routes.test.ts
+  - server/research/early-access-wall.test.ts
+  - server/research/early-access/catalog/declared-facts-source.test.ts
+  - server/research/early-access/catalog/early-access-catalog.test.ts
+  - server/research/early-access/catalog/eligibility.test.ts
+  - server/research/early-access/catalog/product-control-source.test.ts
+  - server/research/early-access/commerce/commission-event.test.ts
+  - server/research/early-access/commerce/early-access-invoice.test.ts
+  - server/research/early-access/commerce/early-access-order.test.ts
+  - server/research/early-access/commerce/input-guards.test.ts
+  - server/research/early-access/commerce/invoice-service.test.ts
+  - server/research/early-access/commerce/money-correctness.test.ts
+  - server/research/early-access/commerce/order-money.test.ts
+  - server/research/early-access/commerce/order-service.test.ts
+  - server/research/early-access/commerce/payment-proof.test.ts
+  - server/research/early-access/commerce/payment-reconciliation.test.ts
+  - server/research/early-access/commerce/payment-verification.test.ts
+  - server/research/early-access/commerce/proof-service.test.ts
+  - server/research/early-access/commerce/release-service.test.ts
+  - server/research/early-access/commerce/reservation-store.test.ts
+  - server/research/early-access/commerce/reservation.test.ts
+  - server/research/early-access/commerce/supplier-release.test.ts
+  - server/research/early-access/commerce/verification-service.test.ts
+  - server/research/early-access/durable-restart.pg.test.ts
+  - server/research/early-access/durable-session.test.ts
+  - server/research/early-access/durable-unlock-route.test.ts
+  - server/research/early-access/early-access-journey.test.ts
+  - server/research/early-access/early-access-milestone.test.ts
+  - server/research/early-access/founder-release-mount.test.ts
+  - server/research/early-access/identity/early-access-customer.test.ts
+  - server/research/early-access/identity/identity-verification.test.ts
+  - server/research/early-access/ops/manual-action-record.test.ts
+  - server/research/early-access/ops/supplier-confirmation.test.ts
+  - server/research/early-access/persistence/commerce-ports.test.ts
+  - server/research/early-access/persistence/commerce-store.test.ts
+  - server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts
+  - server/research/early-access/persistence/identity.test.ts
+  - server/research/early-access/persistence/ops-stores.test.ts
+  - server/research/early-access/persistence/production-deps.test.ts
+  - server/research/early-access/persistence/proof-storage.test.ts
+  - server/research/early-access/persistence/records.test.ts
+  - server/research/early-access/persistence/reservation-store.test.ts
+  - server/research/early-access/preview-harness.guard.test.ts
+  - server/research/early-access/private-access-config.test.ts
+  - server/research/early-access/private-access-cookie-session.test.ts
+  - server/research/early-access/private-access-nonce-store.test.ts
+  - server/research/early-access/private-access-password.test.ts
+  - server/research/early-access/private-access-routes.test.ts
+  - server/research/early-access/private-access-session-repository.test.ts
+  - server/research/early-access/private-access-ttl.test.ts
+  - server/research/early-access/register-identity-wiring.test.ts
+  - server/research/early-access/release/availability-and-holds.test.ts
+  - server/research/early-access/release/first-release-review.test.ts
+  - server/research/early-access/release/founder-first-release-live-api.test.ts
+  - server/research/early-access/release/founder-release.test.ts
+  - server/research/early-access/release/founder-review-route.test.ts
+  - server/research/early-access/release/release-routes.test.ts
+  - server/research/early-access/release/storefront-view.test.ts
+  - server/research/early-access/routes/admin-routes.test.ts
+  - server/research/early-access/routes/binding-provenance.test.ts
+  - server/research/early-access/routes/launch-attacks.test.ts
+  - server/research/early-access/routes/milestone-order-execution.test.ts
+  - server/research/early-access/routes/ops-doors.test.ts
+  - server/research/early-access/routes/order-money-guard.test.ts
+  - server/research/early-access/routes/order-routes.test.ts
+  - server/research/early-access/routes/overpayment-attack.test.ts
+  - server/research/early-access/routes/overpayment-door.test.ts
+  - server/research/early-access/routes/refund-ceiling-attack.test.ts
+  - server/research/early-access/routes/store.test.ts
+  - server/research/products-diagnostics/variant-canonical-record.test.ts
+  - server/research/products-diagnostics/variant-strength-write-gate-sql.test.ts
+  - shared/research/catalog/peptide-catalog.test.ts
+
+SEAM FILES TOUCHED (permitted, but each needs an exclusive lease, the
+minimum diff, a focused regression test, and QA confirmation of no
+unrelated change before this branch is approved):
+  - server/index.ts
+  - server/research/index.ts
+
+FAIL: changed files outside the allowed Research/Care write zones.
+The main website outside /research and /care must not be modified.
+  - browser-artifacts/a532132d3671a06f566fe6baba106bd0ea8fba11/preproduction/desktop/DESKTOP_PROOF.md
+  - browser-artifacts/a532132d3671a06f566fe6baba106bd0ea8fba11/preproduction/mobile/MOBILE_PROOF.md
+  - evidence/BROWSER_BLOCKED.txt
+  - evidence/BUILD.txt
+  - evidence/BUILD_AFTER_CONTRACT_FIX.txt
+  - evidence/CATALOGUE_CONTRACT_DEFECT.md
+  - evidence/CHANGED_FILES.txt
+  - evidence/CUSTOMER_PRICE_AUTHORITY_ANALYSIS.md
+  - evidence/CUSTOMER_PRICE_AUTHORITY_REPEAT_MATRIX.csv
+  - evidence/FULL_SUITE_AFTER_CONTRACT_FIX.txt
+  - evidence/FULL_SUITE_RUN_1.txt
+  - evidence/FULL_SUITE_RUN_2.txt
+  - evidence/GIT_LINEAGE.txt
+  - evidence/MIGRATION_47_OBJECT_PROOF.txt
+  - evidence/MIGRATION_57_AUDIT.md
+  - evidence/MIGRATION_57_ROWS.csv
+  - evidence/PREVIEW_CATALOG.json
+  - evidence/PROTECTED_FILE_DIFF.txt
+  - evidence/PROTECTION_AFTER_CONTRACT_FIX.txt
+  - evidence/TYPECHECK.txt
+  - evidence/TYPECHECK_AFTER_CONTRACT_FIX.txt
+
+RESULT: FAIL
+
+What to do: see docs/phase2/CORE_SITE_PROTECTION.md. Either move the change
+into client/src/research, client/src/care, server/research, server/care, or
+shared/research, or request an exclusive seam lease if the change genuinely
+needs one of the permitted seam files. Do not widen the manifest to pass.

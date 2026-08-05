@@ -1,0 +1,7 @@
+path: supabase/migrations/20260801120000_research_variant_strength_write_gate.sql
+blob at f566de3: 30e3550db2c37e64fb16a348076fd40fcec77f65
+blob at 4938ab5: 30e3550db2c37e64fb16a348076fd40fcec77f65
+blob at a9c84bb: 30e3550db2c37e64fb16a348076fd40fcec77f65
+content sha256 at final: 6cd11e07eb764d0f803db4baa308ae397c23aacb8ff5d29306c8797be60b4818
+ledger pin:              6cd11e07eb764d0f803db4baa308ae397c23aacb8ff5d29306c8797be60b4818
+ALL IDENTICAL: YES

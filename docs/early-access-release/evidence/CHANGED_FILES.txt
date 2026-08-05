@@ -1,0 +1,4 @@
+client/src/research/early-access/EarlyAccessProductCard.test.tsx
+client/src/research/early-access/EarlyAccessProductCard.tsx
+client/src/research/early-access/earlyAccessCatalogView.test.ts
+client/src/research/early-access/earlyAccessCatalogView.ts
