@@ -3,7 +3,7 @@ import type {
   SupplierConfirmationStore,
 } from "../ops/supplier-confirmation";
 import type { UnitHoldRecord } from "../ops/unit-holds";
-import type { UnitHoldReader } from "../ops/unit-holds";
+import type { UnitHoldReader, UnitHoldRegistry as UnitHoldRegistryPort } from "../ops/unit-holds";
 import type { EarlyAccessHoldBlocker } from "../catalog/eligibility";
 import {
   EarlyAccessPersistenceError,
@@ -170,5 +170,106 @@ export class SupabaseUnitHoldRegistry implements UnitHoldReader {
           Object.freeze(expectObject(HOLD_RPC.forUnit, entry)) as unknown as UnitHoldRecord,
       ),
     );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Deployment compatibility: the hold READ, when migration 54 is not applied
+// ---------------------------------------------------------------------------
+
+/**
+ * The durable hold registry, with ONE read made survivable on a deployment
+ * where the hold RPC does not exist yet.
+ *
+ * WHY THIS EXISTS
+ *
+ * `activeHoldsForUnit` is called once per unit during every catalogue
+ * projection. If `research_early_access_active_hold_kinds_for_unit` is absent
+ * (migration 54 not applied), that call throws, the throw escapes the
+ * projection, and the catalogue route's own catch turns the whole page into
+ * 503 unavailable. A missing prohibition registry would therefore take down
+ * the catalogue rather than merely leave it unfiltered, which is the wrong
+ * failure: the release ledger, the strength disputes and the supplier
+ * confirmations are all still perfectly able to hold a unit.
+ *
+ * WHAT IT DOES NOT DO
+ *
+ * It does not fabricate a hold, and it does not remove one. An absent registry
+ * resolves to "this registry contributes no blockers", which is the truthful
+ * answer when there are no rows to read. Every OTHER reason a unit is held is
+ * untouched: a founder release is still required, a strength dispute still
+ * blocks, an unconfirmed supply still blocks. This softens exactly one input
+ * and leaves the rest of the floor intact.
+ *
+ * It also degrades ONLY the read. `record` and `withdraw` still throw, because
+ * an operator recording a prohibition must never be told it worked when the
+ * table could not take it.
+ *
+ * AN HONEST LIMIT. `runEarlyAccessCall` collapses every driver failure into
+ * one opaque error and discards the cause on purpose, because a driver error
+ * can carry a connection string. So this class cannot distinguish "the
+ * function is not there" from "the read failed for another reason", and it
+ * treats both alike. That is acceptable only because the warning below makes
+ * the degradation loud: a genuine fault surfaces as the same line an operator
+ * is already watching for, rather than as silence.
+ *
+ * WHEN MIGRATION 54 IS APPLIED this class is a pass-through with a latch that
+ * never trips, so it can stay wired permanently rather than being removed in a
+ * later hurry.
+ */
+export class MigrationTolerantUnitHoldRegistry implements UnitHoldRegistryPort {
+  /** One warning per process, not one per unit per request. */
+  private warned = false;
+
+  constructor(
+    private readonly inner: SupabaseUnitHoldRegistry,
+    private readonly warn: (message: string) => void = (message) => console.warn(message),
+  ) {}
+
+  async activeHoldsForUnit(
+    productId: string,
+    variantId: string,
+    evaluatedAt: string,
+  ): Promise<readonly EarlyAccessHoldBlocker[]> {
+    try {
+      return await this.inner.activeHoldsForUnit(productId, variantId, evaluatedAt);
+    } catch (cause) {
+      if (!(cause instanceof EarlyAccessPersistenceError)) throw cause;
+      if (!this.warned) {
+        this.warned = true;
+        // Names the RPC and the migration, and nothing else. No product, no
+        // customer, no session, no connection detail: an operator needs the
+        // one fact that identifies the gap, and a log line is the wrong place
+        // for anything more.
+        this.warn(
+          "[early-access] the durable unit-hold registry is unavailable " +
+            `(${HOLD_RPC.activeKindsForUnit} is missing, migration 54 is not applied). ` +
+            "The catalogue is serving WITHOUT durable unit holds. Founder releases, " +
+            "strength disputes and supplier confirmations still hold units normally. " +
+            "Apply migration 54 to restore recorded prohibitions.",
+        );
+      }
+      return Object.freeze([]);
+    }
+  }
+
+  /** Unchanged, and deliberately still throwing. */
+  async record(hold: UnitHoldRecord): Promise<boolean> {
+    return this.inner.record(hold);
+  }
+
+  async withdraw(holdId: string, by: string, at: string): Promise<boolean> {
+    return this.inner.withdraw(holdId, by, at);
+  }
+
+  async byId(holdId: string): Promise<UnitHoldRecord | null> {
+    return this.inner.byId(holdId);
+  }
+
+  async holdsForUnit(
+    productId: string,
+    variantId: string,
+  ): Promise<readonly UnitHoldRecord[]> {
+    return this.inner.holdsForUnit(productId, variantId);
   }
 }

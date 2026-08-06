@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { buildEarlyAccessPersistence } from "./production-deps";
 import {
+  MigrationTolerantUnitHoldRegistry,
   SupabaseSupplierConfirmationStore,
-  SupabaseUnitHoldRegistry,
 } from "./ops-stores";
 import { InMemorySupplierConfirmationStore } from "../ops/supplier-confirmation";
 import { InMemoryUnitHoldRegistry } from "../ops/unit-holds";
@@ -111,7 +111,13 @@ describe("the production composition supplies BOTH projection-time stores", () =
       build.options.holds,
       "production never supplied holds, so a recorded prohibition was invisible to the projection",
     ).toBeDefined();
-    expect(build.options.holds).toBeInstanceOf(SupabaseUnitHoldRegistry);
+    // The DURABLE registry, behind the migration-tolerant read wrapper. The
+    // wrapper is required because production proved the hold RPC is absent
+    // (migration 54 not applied) and a throwing projection 503s the whole
+    // catalogue; hold-rpc-compatibility.test.ts owns that behaviour. What
+    // matters here is that it is not the in-memory fallback that caused the
+    // outage this file exists to prevent.
+    expect(build.options.holds).toBeInstanceOf(MigrationTolerantUnitHoldRegistry);
     expect(build.options.holds).not.toBeInstanceOf(InMemoryUnitHoldRegistry);
   });
 

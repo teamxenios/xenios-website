@@ -36,6 +36,7 @@ import {
 } from "./refusing";
 import { SupabaseEarlyAccessReservationStore } from "./reservation-store";
 import {
+  MigrationTolerantUnitHoldRegistry,
   SupabaseSupplierConfirmationStore,
   SupabaseUnitHoldRegistry,
 } from "./ops-stores";
@@ -245,8 +246,14 @@ export function buildEarlyAccessPersistence(
     // regression test beside this file builds the options through THIS
     // function and asserts both keys are present and durable, so removing
     // either one is a failing test rather than a dark catalogue.
+    // The hold registry is wrapped, because production proved the RPC it
+    // reads does not exist yet: migration 54 is not applied, and a projection
+    // that throws once per unit turns the whole catalogue into 503. The
+    // wrapper degrades that ONE read to "no durable holds" and warns once;
+    // every other reason a unit is held is untouched, and recording a hold
+    // still throws. When 54 lands it becomes a pass-through.
     supplierConfirmations: buildEarlyAccessSupplierConfirmationStore(run),
-    holds: buildEarlyAccessUnitHoldRegistry(run),
+    holds: new MigrationTolerantUnitHoldRegistry(buildEarlyAccessUnitHoldRegistry(run)),
   };
 
   const required = readRequiredAgreements(env, warnings);
