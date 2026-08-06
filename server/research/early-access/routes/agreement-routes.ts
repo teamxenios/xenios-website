@@ -1,0 +1,186 @@
+/**
+ * Private Early Access: recording that a customer accepted the required
+ * agreement.
+ *
+ * WHY THIS FILE EXISTS
+ *
+ * The order path refuses with AGREEMENT_REQUIRED until every configured
+ * (kind, version) pair is on file for the customer (order-routes.ts). The
+ * acceptance TABLE and the write RPC have existed since migration
+ * 20260804120000, but no application code has ever called that RPC, so nothing
+ * could put a pair on file and the gate refused everyone forever. This is the
+ * missing half, and it is deliberately the smallest thing that closes it: one
+ * route, one recorder, no new vocabulary.
+ *
+ * WHAT IT WILL NOT DO
+ *
+ * It accepts ONLY the pairs the deployment configured, compared exactly. A
+ * request naming any other kind or version is refused rather than recorded,
+ * because a record for `terms/v2` when the deployment requires `terms/v1`
+ * would be an acceptance of something nobody was shown, and an append-only
+ * table cannot take it back.
+ *
+ * It does not create, price, reserve, or touch an order. Acceptance and
+ * purchase are separate acts, and a route that did both would make "I agree"
+ * indistinguishable from "buy it" in the audit trail.
+ *
+ * It cannot open the gate on its own. The gate reads the same table
+ * independently (SupabaseEarlyAccessAgreementGate), so a bug here can fail to
+ * record an acceptance, which refuses a sale, but it can never fabricate one.
+ */
+
+import type { EarlyAccessIdentityDirectory } from "./ports";
+
+/** One (kind, version) pair, exactly as the deployment configured it. */
+export type EarlyAccessRequiredAgreementPair = Readonly<{
+  kind: string;
+  version: string;
+}>;
+
+/**
+ * The evidence recorded alongside an acceptance.
+ *
+ * Every field is something the SERVER observed. Nothing here is read from the
+ * request body, because a browser-supplied claim about when or how someone
+ * agreed is not evidence of anything.
+ */
+export type EarlyAccessAcceptanceEvidence = Readonly<{
+  channel: "portal";
+  requestIp: string | null;
+  requestId: string | null;
+}>;
+
+export interface EarlyAccessAgreementRecorder {
+  record(input: {
+    readonly customerRef: string;
+    readonly kind: string;
+    readonly version: string;
+    readonly acceptedAt: string;
+    readonly evidence: EarlyAccessAcceptanceEvidence;
+  }): Promise<boolean>;
+}
+
+/** Records nothing, and says so. An unwired deployment sells nothing. */
+export class NoEarlyAccessAgreementRecorder implements EarlyAccessAgreementRecorder {
+  async record(): Promise<boolean> {
+    return false;
+  }
+}
+
+export const EARLY_ACCESS_ACCEPT_REFUSALS = [
+  "IDENTITY_REQUIRED",
+  "REQUEST_INVALID",
+  "AGREEMENT_NOT_REQUIRED",
+  "NOT_RECORDED",
+] as const;
+
+export type EarlyAccessAcceptRefusal = (typeof EARLY_ACCESS_ACCEPT_REFUSALS)[number];
+
+const STATUS: Record<EarlyAccessAcceptRefusal, number> = {
+  IDENTITY_REQUIRED: 403,
+  REQUEST_INVALID: 400,
+  AGREEMENT_NOT_REQUIRED: 400,
+  NOT_RECORDED: 502,
+};
+
+export interface EarlyAccessAcceptResponsePort {
+  status(code: number): EarlyAccessAcceptResponsePort;
+  json(body: unknown): unknown;
+}
+
+export type EarlyAccessAcceptRequest = Readonly<{
+  cookieHeader: unknown;
+  body: unknown;
+  /** Server-observed, from the trusted proxy chain. Never from the body. */
+  requestIp?: string | null;
+  requestId?: string | null;
+}>;
+
+export type EarlyAccessAcceptDependencies = Readonly<{
+  identity: EarlyAccessIdentityDirectory;
+  recorder: EarlyAccessAgreementRecorder;
+  /** The configured pairs. Empty means this deployment requires nothing yet. */
+  required: readonly EarlyAccessRequiredAgreementPair[];
+  now: () => number;
+}>;
+
+function refuse(
+  response: EarlyAccessAcceptResponsePort,
+  code: EarlyAccessAcceptRefusal,
+): void {
+  response.status(STATUS[code]).json({ ok: false, code });
+}
+
+function readString(value: unknown): string | null {
+  return typeof value === "string" && value.trim().length > 0 ? value : null;
+}
+
+/**
+ * POST the acceptance of one required agreement.
+ *
+ * The customer comes from the session the identity directory resolved, never
+ * from the body: a customer reference a caller can name is a customer
+ * reference a caller can forge, and this route writes a record that an order
+ * later relies on.
+ */
+export function createEarlyAccessAgreementAcceptRoute(
+  deps: EarlyAccessAcceptDependencies,
+) {
+  return async function acceptAgreement(
+    request: EarlyAccessAcceptRequest,
+    response: EarlyAccessAcceptResponsePort,
+  ): Promise<void> {
+    const body = request.body;
+    if (typeof body !== "object" || body === null) {
+      refuse(response, "REQUEST_INVALID");
+      return;
+    }
+    const kind = readString((body as Record<string, unknown>).kind);
+    const version = readString((body as Record<string, unknown>).version);
+    if (kind === null || version === null) {
+      refuse(response, "REQUEST_INVALID");
+      return;
+    }
+
+    // Exact match against the configured set, before identity is even
+    // resolved. An arbitrary pair is refused rather than recorded, so the
+    // append-only table can only ever hold pairs this deployment asked for.
+    const matches = deps.required.some(
+      (pair) => pair.kind === kind && pair.version === version,
+    );
+    if (!matches) {
+      refuse(response, "AGREEMENT_NOT_REQUIRED");
+      return;
+    }
+
+    const customer = await deps.identity.resolve({
+      cookieHeader: request.cookieHeader,
+    });
+    if (customer === null || readString(customer.customerRef) === null) {
+      refuse(response, "IDENTITY_REQUIRED");
+      return;
+    }
+
+    const acceptedAt = new Date(deps.now()).toISOString();
+    // The RPC upserts on (customer_ref, kind, version), which the table's own
+    // unique constraint enforces, so a second acceptance of the same pair is
+    // the same row. Idempotency is the database's, not this handler's memory.
+    const recorded = await deps.recorder.record({
+      customerRef: customer.customerRef,
+      kind,
+      version,
+      acceptedAt,
+      evidence: Object.freeze({
+        channel: "portal" as const,
+        requestIp: request.requestIp ?? null,
+        requestId: request.requestId ?? null,
+      }),
+    });
+    if (!recorded) {
+      refuse(response, "NOT_RECORDED");
+      return;
+    }
+
+    response.status(200).json({ ok: true, kind, version, acceptedAt });
+  };
+}

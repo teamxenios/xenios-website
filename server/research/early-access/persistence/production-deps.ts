@@ -8,6 +8,7 @@ import type { EarlyAccessRegistrationOptions } from "../register";
 import { SupabaseEarlyAccessCommerceStore } from "./commerce-store";
 import {
   SupabaseEarlyAccessAgreementGate,
+  SupabaseEarlyAccessAgreementRecorder,
   SupabaseEarlyAccessReferralResolver,
   SupabaseEarlyAccessShippingPolicy,
   SupabaseEarlyAccessSupplierDirectory,
@@ -226,6 +227,10 @@ export function buildEarlyAccessPersistence(
   const required = readRequiredAgreements(env, warnings);
   if (required.length > 0) {
     options.agreements = new SupabaseEarlyAccessAgreementGate({ query: run, required });
+    // The write half. Without it the gate above can only ever answer false,
+    // because nothing else in the process can put an acceptance on file.
+    options.agreementRecorder = new SupabaseEarlyAccessAgreementRecorder(run);
+    options.requiredAgreements = required;
   } else {
     warnings.push(
       "RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS is not set; the agreement gate stays fail-closed " +

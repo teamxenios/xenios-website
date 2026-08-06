@@ -26,6 +26,7 @@ import {
 
 const RPC = {
   agreementsAccepted: "research_early_access_agreements_accepted",
+  recordAgreement: "research_early_access_record_agreement",
   supplierForUnit: "research_early_access_supplier_for_unit",
   shippingServes: "research_early_access_shipping_serves",
   referralForCustomer: "research_early_access_referral_for_customer",
@@ -59,6 +60,43 @@ export class SupabaseEarlyAccessAgreementGate implements EarlyAccessAgreementGat
     const raw = await runEarlyAccessCall(this.query, {
       fn: RPC.agreementsAccepted,
       args: { p_customer_ref: customerRef, p_required: this.required },
+    });
+    return raw === true;
+  }
+}
+
+/**
+ * Records one acceptance through the RPC migration 20260804120000 already
+ * created.
+ *
+ * It is a separate class from the gate on purpose. The gate reads and the
+ * recorder writes, through two different functions, so a fault in the write
+ * path can only ever fail to record an acceptance (which refuses a sale). It
+ * cannot make the gate answer true for an acceptance that was never made.
+ */
+export class SupabaseEarlyAccessAgreementRecorder {
+  private readonly query: EarlyAccessPersistenceQuery;
+
+  constructor(query: EarlyAccessPersistenceQuery) {
+    this.query = query;
+  }
+
+  async record(input: {
+    readonly customerRef: string;
+    readonly kind: string;
+    readonly version: string;
+    readonly acceptedAt: string;
+    readonly evidence: Readonly<Record<string, unknown>>;
+  }): Promise<boolean> {
+    const raw = await runEarlyAccessCall(this.query, {
+      fn: RPC.recordAgreement,
+      args: {
+        p_customer_ref: input.customerRef,
+        p_kind: input.kind,
+        p_version: input.version,
+        p_accepted_at: input.acceptedAt,
+        p_evidence: input.evidence,
+      },
     });
     return raw === true;
   }

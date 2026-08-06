@@ -88,6 +88,12 @@ import {
   type EarlyAccessCustomerRepository,
 } from "./identity/early-access-customer";
 import {
+  createEarlyAccessAgreementAcceptRoute,
+  NoEarlyAccessAgreementRecorder,
+  type EarlyAccessAgreementRecorder,
+  type EarlyAccessRequiredAgreementPair,
+} from "./routes/agreement-routes";
+import {
   EarlyAccessCustomerDirectory,
   InMemoryConsumedTokenStore,
   InMemorySessionBindingStore,
@@ -118,6 +124,8 @@ export const EARLY_ACCESS_SESSION_PATH = "/api/research/early-access/session";
 export const EARLY_ACCESS_LOGOUT_PATH = "/api/research/early-access/logout";
 export const EARLY_ACCESS_CATALOG_PATH = "/api/research/early-access/catalog";
 export const EARLY_ACCESS_ORDERS_PATH = "/api/research/early-access/orders";
+export const EARLY_ACCESS_AGREEMENT_ACCEPT_PATH =
+  "/api/research/early-access/agreements/accept";
 export const EARLY_ACCESS_ORDER_PATH = "/api/research/early-access/orders/:orderNumber";
 export const EARLY_ACCESS_ORDER_INVOICE_PATH =
   "/api/research/early-access/orders/:orderNumber/invoice";
@@ -130,6 +138,7 @@ export const EARLY_ACCESS_API_PATHS = Object.freeze([
   EARLY_ACCESS_LOGOUT_PATH,
   EARLY_ACCESS_CATALOG_PATH,
   EARLY_ACCESS_ORDERS_PATH,
+  EARLY_ACCESS_AGREEMENT_ACCEPT_PATH,
   EARLY_ACCESS_ORDER_PATH,
   EARLY_ACCESS_ORDER_INVOICE_PATH,
   EARLY_ACCESS_ORDER_PROOF_PATH,
@@ -273,6 +282,18 @@ export interface EarlyAccessRegistrationOptions {
    */
   readonly consumed?: ConsumedTokenStore;
   readonly agreements?: EarlyAccessAgreementGate;
+  /**
+   * Writes an acceptance. Separate from the gate above, which only reads, so
+   * the write path cannot manufacture the answer the read path gives.
+   */
+  readonly agreementRecorder?: EarlyAccessAgreementRecorder;
+  /**
+   * The exact (kind, version) pairs this deployment requires. The accept route
+   * refuses anything else, so the append-only table can only hold pairs a
+   * customer was actually shown. Empty means nothing is required yet, and the
+   * order gate stays fail-closed exactly as before.
+   */
+  readonly requiredAgreements?: readonly EarlyAccessRequiredAgreementPair[];
   readonly suppliers?: EarlyAccessSupplierDirectory;
   readonly shipping?: EarlyAccessShippingPolicy;
   readonly referrals?: EarlyAccessReferralResolver;
@@ -492,6 +513,33 @@ export function registerPrivateEarlyAccessApi(
   const readOrder = createEarlyAccessOrderLookupRoute(commerce);
   const readInvoice = createEarlyAccessInvoiceRoute(commerce);
   const submitProof = createEarlyAccessPaymentProofRoute(commerce);
+
+  // Acceptance, mounted BEFORE orders in this file only for readability; Express
+  // matches on the exact path, and the two never overlap.
+  const acceptAgreement = createEarlyAccessAgreementAcceptRoute({
+    identity,
+    recorder: options.agreementRecorder ?? new NoEarlyAccessAgreementRecorder(),
+    required: options.requiredAgreements ?? [],
+    now,
+  });
+
+  app.post(EARLY_ACCESS_AGREEMENT_ACCEPT_PATH, (req: Request, res: Response) => {
+    void acceptAgreement(
+      {
+        cookieHeader: req.headers.cookie,
+        body: req.body,
+        // Server-observed. Express derives req.ip from the trusted proxy chain,
+        // and the request id is whatever the platform stamped; neither is read
+        // from the body, where a caller could write anything.
+        requestIp: typeof req.ip === "string" ? req.ip : null,
+        requestId:
+          typeof req.headers["x-request-id"] === "string"
+            ? req.headers["x-request-id"]
+            : null,
+      },
+      res,
+    );
+  });
 
   app.post(EARLY_ACCESS_ORDERS_PATH, (req: Request, res: Response) => {
     void placeOrder({ cookieHeader: req.headers.cookie, body: req.body }, res);

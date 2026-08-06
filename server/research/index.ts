@@ -296,6 +296,13 @@ export function registerResearchApi(app: Express) {
     // wall reaches a refusal, never a binding.
     "/early-access/verification/request",
     "/early-access/verify",
+    // Recording that a customer accepted the required agreement. It owns a
+    // STRONGER gate downstream: the durable Early Access session resolves the
+    // customer, and the handler refuses any (kind, version) this deployment did
+    // not configure. Reaching it through the wall reaches a refusal, never an
+    // acceptance. Without this entry the wall answers first and no customer can
+    // ever agree, which reads as a broken checkout rather than a closed one.
+    "/early-access/agreements/accept",
   ]);
   // The order routes carry an order number, so they cannot be a Set entry. They
   // are ANCHORED against the exact generated shape instead of a bare prefix:

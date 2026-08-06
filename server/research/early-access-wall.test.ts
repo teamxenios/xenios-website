@@ -93,6 +93,10 @@ describe("the research wall lets Private Early Access reach its own gate", () =>
     // bound to the token minted for the presenting session.
     ["POST", "/api/research/early-access/verification/request"],
     ["POST", "/api/research/early-access/verify"],
+    // Agreement acceptance. Session-gated, and it refuses any (kind, version)
+    // the deployment did not configure. Walled here would mean no customer can
+    // ever agree, so checkout would refuse everyone forever and look broken.
+    ["POST", "/api/research/early-access/agreements/accept"],
     ["GET", `/api/research/early-access/orders/${ORDER_NUMBER}`],
     ["GET", `/api/research/early-access/orders/${ORDER_NUMBER}/invoice`],
     ["POST", `/api/research/early-access/orders/${ORDER_NUMBER}/payment-proof`],
