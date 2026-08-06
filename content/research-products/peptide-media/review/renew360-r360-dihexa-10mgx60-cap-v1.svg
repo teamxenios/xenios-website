@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"
+  role="img" aria-label="XENIOS  /  RENEW 360 | Dihexa Research Capsules | 10 mg | Capsule bottle | R360-DIHEXA-10MGX60-CAP | REVIEW ASSET  •  NOT APPROVED FOR PUBLICATION" data-source-type="xenios_generated_render"
+  data-provenance="generated_product_render" data-visual-state="review_pending">
+  <metadata>{&quot;variantId&quot;:&quot;R360-DIHEXA-10MGX60-CAP&quot;,&quot;sku&quot;:&quot;R360-DIHEXA-10MGX60-CAP&quot;,&quot;strength&quot;:&quot;10 mg&quot;,&quot;sourceWorkbookSha256&quot;:&quot;df317a28374c9e194f3379a2b276c8533016dc84aa906af9d48b49db46bf53d5&quot;,&quot;sourceType&quot;:&quot;xenios_generated_render&quot;,&quot;provenanceTag&quot;:&quot;generated_product_render&quot;,&quot;publicStatus&quot;:&quot;HELD&quot;}</metadata>
+  <style>
+    .brand{font:700 17px Arial,sans-serif;letter-spacing:1.2px;fill:#fff;text-anchor:middle}
+    .name{font:700 24px Arial,sans-serif;fill:#0a0a0a;text-anchor:middle}
+    .strength{font:700 36px Arial,sans-serif;fill:#0a0a0a;text-anchor:middle}
+    .meta{font:600 15px Arial,sans-serif;fill:#26313a;text-anchor:middle;letter-spacing:.4px}
+    .sku{font:600 12px Arial,sans-serif;fill:#26313a;text-anchor:middle;letter-spacing:.1px}
+    .hold{font:700 12px Arial,sans-serif;fill:#8a2f21;text-anchor:middle;letter-spacing:.7px}
+  </style>
+  <image href="../templates/neutral-capsule-bottle-base.png" x="0" y="0" width="1024" height="1024"/>
+  <rect x="315" y="405" width="394" height="285" rx="14" fill="#fff" stroke="#c8cfd6" stroke-width="3"/>
+  <rect x="315" y="405" width="394" height="52" rx="14" fill="#0b1b2b"/>
+  <rect x="315" y="443" width="394" height="14" fill="#0b1b2b"/>
+  <text x="512" y="439" class="brand">XENIOS  /  RENEW 360</text>
+  <text x="512" y="485" class="name">Dihexa Research Capsules</text>
+  <text x="512" y="562" class="strength">10 mg</text>
+  <text x="512" y="590" class="meta">Capsule bottle</text>
+  <text x="512" y="615" class="sku">R360-DIHEXA-10MGX60-CAP</text>
+  <line x1="342" y1="629" x2="682" y2="629" stroke="#c8cfd6"/>
+  <text x="512" y="649" class="hold">REVIEW ASSET  •  NOT APPROVED FOR PUBLICATION</text>
+</svg>
