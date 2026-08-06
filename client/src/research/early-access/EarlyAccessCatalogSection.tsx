@@ -33,9 +33,19 @@ export interface EarlyAccessCatalogSectionProps {
 
 type State = { status: "loading" } | { status: "loaded"; load: EarlyAccessCatalogLoad };
 
+/**
+ * Hoisted so the default has ONE identity for the life of the module.
+ *
+ * Written inline as a default parameter it was a new function on every render,
+ * which changed the effect's dependency every time the effect set state: the
+ * catalogue re-fetched itself forever, hammering the endpoint from every
+ * customer's browser. A stable reference makes the effect run once.
+ */
+const loadFromServer = () => loadEarlyAccessCatalog();
+
 export function EarlyAccessCatalogSection({
   fulfillmentTargetCopy,
-  load = () => loadEarlyAccessCatalog(),
+  load = loadFromServer,
   onSelect = () => {},
   testId = "early-access-catalog-section",
 }: EarlyAccessCatalogSectionProps) {

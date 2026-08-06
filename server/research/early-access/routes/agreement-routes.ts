@@ -29,7 +29,7 @@
  * record an acceptance, which refuses a sale, but it can never fabricate one.
  */
 
-import type { EarlyAccessIdentityDirectory } from "./ports";
+import type { EarlyAccessAgreementGate, EarlyAccessIdentityDirectory } from "./ports";
 
 /** One (kind, version) pair, exactly as the deployment configured it. */
 export type EarlyAccessRequiredAgreementPair = Readonly<{
@@ -215,6 +215,74 @@ export function createEarlyAccessAgreementAcceptRoute(
       version,
       acceptedAt,
       alreadyAccepted: outcome === "already_on_file",
+    });
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Reading back whether THIS session's customer has already agreed
+// ---------------------------------------------------------------------------
+
+export type EarlyAccessAgreementStatusDependencies = Readonly<{
+  identity: EarlyAccessIdentityDirectory;
+  /**
+   * The SAME gate the order route consults. Deliberately the same port and not
+   * a second query: if this read and the order gate could disagree, the screen
+   * would tell a customer they are agreed while checkout refused them, or the
+   * reverse. One source means the answer shown is the answer enforced.
+   */
+  agreements: EarlyAccessAgreementGate;
+  /** The configured pairs, echoed so the browser renders what is required. */
+  required: readonly EarlyAccessRequiredAgreementPair[];
+}>;
+
+export type EarlyAccessAgreementStatusRequest = Readonly<{ cookieHeader: unknown }>;
+
+/**
+ * GET the current session customer's agreement standing.
+ *
+ * WHY THIS EXISTS
+ *
+ * Acceptance must survive a refresh, and the browser must not be the one who
+ * remembers it. localStorage would let anyone who can type in a console open
+ * their own checkout, so the only honest answer comes from the server that
+ * enforces the gate.
+ *
+ * WHAT IT WILL NOT DO
+ *
+ * It reports on ONE customer: the one the session cookie resolved. It takes no
+ * customer parameter of any kind, so there is no shape of request that asks
+ * about somebody else, and it therefore cannot become an oracle for whether a
+ * named person has agreed to anything.
+ *
+ * It also cannot make a sale possible. The order route asks the gate again for
+ * itself. A wrong answer here can only show the wrong screen; it can never
+ * place an order.
+ */
+export function createEarlyAccessAgreementStatusRoute(
+  deps: EarlyAccessAgreementStatusDependencies,
+) {
+  return async function readAgreementStatus(
+    request: EarlyAccessAgreementStatusRequest,
+    response: EarlyAccessAcceptResponsePort,
+  ): Promise<void> {
+    const customer = await deps.identity.resolve({
+      cookieHeader: request.cookieHeader,
+    });
+    if (customer === null || readString(customer.customerRef) === null) {
+      refuse(response, "IDENTITY_REQUIRED");
+      return;
+    }
+
+    // The gate answers false when the deployment requires nothing, so an
+    // unconfigured deployment reads as "not accepted" rather than as "nothing
+    // to accept". That matches what checkout will do, which is the point.
+    const accepted = await deps.agreements.accepted(customer.customerRef);
+
+    response.status(200).json({
+      ok: true,
+      required: deps.required.map((pair) => ({ kind: pair.kind, version: pair.version })),
+      accepted,
     });
   };
 }

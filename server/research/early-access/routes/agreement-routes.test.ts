@@ -3,10 +3,11 @@ import { describe, expect, it } from "vitest";
 import {
   NoEarlyAccessAgreementRecorder,
   createEarlyAccessAgreementAcceptRoute,
+  createEarlyAccessAgreementStatusRoute,
   type EarlyAccessAcceptResponsePort,
   type EarlyAccessAgreementRecorder,
 } from "./agreement-routes";
-import { NoEarlyAccessAgreements } from "./ports";
+import { NoEarlyAccessAgreements, type EarlyAccessAgreementGate } from "./ports";
 
 /**
  * The acceptance route.
@@ -284,6 +285,106 @@ describe("one customer cannot sign for another", () => {
     expect(store.rows).toHaveLength(1);
     expect(store.rows[0].customerRef).toBe(CUSTOMER_REF);
     expect(store.rows.some((row) => row.customerRef.includes("bbbb"))).toBe(false);
+  });
+});
+
+describe("reading this session's own agreement standing", () => {
+  /** A gate that records every customerRef it was ever asked about. */
+  function gate(answer: boolean): EarlyAccessAgreementGate & { asked: string[] } {
+    const asked: string[] = [];
+    return {
+      asked,
+      async accepted(customerRef: string) {
+        asked.push(customerRef);
+        return answer;
+      },
+    };
+  }
+
+  function status(
+    overrides: Partial<Parameters<typeof createEarlyAccessAgreementStatusRoute>[0]> = {},
+  ) {
+    return createEarlyAccessAgreementStatusRoute({
+      identity: identity(CUSTOMER_REF) as never,
+      agreements: gate(false),
+      required: REQUIRED,
+      ...overrides,
+    });
+  }
+
+  it("reports not-accepted, and names what is required", async () => {
+    const read = status({ agreements: gate(false) });
+    const { port, seen } = response();
+
+    await read({ cookieHeader: "ea=x" }, port);
+
+    expect(seen.code).toBe(200);
+    expect(seen.body).toEqual({
+      ok: true,
+      required: [{ kind: "early_access_terms", version: "v1" }],
+      accepted: false,
+    });
+  });
+
+  it("reports accepted once the gate says so, which is how a refresh keeps it", async () => {
+    const read = status({ agreements: gate(true) });
+    const { port, seen } = response();
+
+    await read({ cookieHeader: "ea=x" }, port);
+
+    expect(seen.code).toBe(200);
+    expect((seen.body as { accepted: boolean }).accepted).toBe(true);
+  });
+
+  it("asks about the SESSION customer and nobody else", async () => {
+    // The route takes no customer parameter, so this is the only ref it can
+    // possibly reach the gate with. That is what keeps it from becoming an
+    // oracle for whether a named person agreed to anything.
+    const asking = gate(true);
+    const read = status({ agreements: asking });
+    const { port } = response();
+
+    await read({ cookieHeader: "ea=x" }, port);
+
+    expect(asking.asked).toEqual([CUSTOMER_REF]);
+  });
+
+  it("refuses without a resolved session, and never consults the gate", async () => {
+    const asking = gate(true);
+    const read = status({ identity: identity(null) as never, agreements: asking });
+    const { port, seen } = response();
+
+    await read({ cookieHeader: undefined }, port);
+
+    expect(seen.code).toBe(403);
+    expect(seen.body).toEqual({ ok: false, code: "IDENTITY_REQUIRED" });
+    expect(asking.asked).toEqual([]);
+  });
+
+  it("reads the SAME gate the order route reads, so the screen cannot disagree with checkout", async () => {
+    // The default gate refuses everyone. A status route with its own optimistic
+    // source could show an unlocked checkout that the order path then refuses;
+    // sharing the port makes that mismatch unrepresentable.
+    const shared = new NoEarlyAccessAgreements();
+    const read = status({ agreements: shared });
+    const { port, seen } = response();
+
+    await read({ cookieHeader: "ea=x" }, port);
+
+    expect((seen.body as { accepted: boolean }).accepted).toBe(false);
+    expect(await shared.accepted()).toBe(false);
+  });
+
+  it("reports not-accepted when the deployment requires nothing", async () => {
+    // The gate answers false for an empty requirement set, and this read
+    // repeats that rather than inventing "nothing to accept". Checkout would
+    // refuse such a customer, so the screen must not tell them otherwise.
+    const read = status({ required: [], agreements: new NoEarlyAccessAgreements() });
+    const { port, seen } = response();
+
+    await read({ cookieHeader: "ea=x" }, port);
+
+    expect(seen.body).toEqual({ ok: true, required: [], accepted: false });
   });
 });
 

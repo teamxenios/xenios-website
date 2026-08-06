@@ -89,6 +89,7 @@ import {
 } from "./identity/early-access-customer";
 import {
   createEarlyAccessAgreementAcceptRoute,
+  createEarlyAccessAgreementStatusRoute,
   NoEarlyAccessAgreementRecorder,
   type EarlyAccessAgreementRecorder,
   type EarlyAccessRequiredAgreementPair,
@@ -126,6 +127,8 @@ export const EARLY_ACCESS_CATALOG_PATH = "/api/research/early-access/catalog";
 export const EARLY_ACCESS_ORDERS_PATH = "/api/research/early-access/orders";
 export const EARLY_ACCESS_AGREEMENT_ACCEPT_PATH =
   "/api/research/early-access/agreements/accept";
+/** This session customer's own agreement standing. Takes no parameter at all. */
+export const EARLY_ACCESS_AGREEMENT_STATUS_PATH = "/api/research/early-access/agreements";
 export const EARLY_ACCESS_ORDER_PATH = "/api/research/early-access/orders/:orderNumber";
 export const EARLY_ACCESS_ORDER_INVOICE_PATH =
   "/api/research/early-access/orders/:orderNumber/invoice";
@@ -139,6 +142,7 @@ export const EARLY_ACCESS_API_PATHS = Object.freeze([
   EARLY_ACCESS_CATALOG_PATH,
   EARLY_ACCESS_ORDERS_PATH,
   EARLY_ACCESS_AGREEMENT_ACCEPT_PATH,
+  EARLY_ACCESS_AGREEMENT_STATUS_PATH,
   EARLY_ACCESS_ORDER_PATH,
   EARLY_ACCESS_ORDER_INVOICE_PATH,
   EARLY_ACCESS_ORDER_PROOF_PATH,
@@ -516,11 +520,20 @@ export function registerPrivateEarlyAccessApi(
 
   // Acceptance, mounted BEFORE orders in this file only for readability; Express
   // matches on the exact path, and the two never overlap.
+  const requiredAgreements = options.requiredAgreements ?? [];
   const acceptAgreement = createEarlyAccessAgreementAcceptRoute({
     identity,
     recorder: options.agreementRecorder ?? new NoEarlyAccessAgreementRecorder(),
-    required: options.requiredAgreements ?? [],
+    required: requiredAgreements,
     now,
+  });
+  // The read half. It is given `commerce.agreements`, the very object the order
+  // route asks, so the screen and the checkout can never disagree about whether
+  // this customer has agreed.
+  const readAgreementStatus = createEarlyAccessAgreementStatusRoute({
+    identity,
+    agreements: commerce.agreements,
+    required: requiredAgreements,
   });
 
   app.post(EARLY_ACCESS_AGREEMENT_ACCEPT_PATH, (req: Request, res: Response) => {
@@ -540,6 +553,12 @@ export function registerPrivateEarlyAccessApi(
       },
       res,
     );
+  });
+
+  // No parameter is read from the request beyond the session cookie, so there is
+  // no way to ask this route about anybody but the caller.
+  app.get(EARLY_ACCESS_AGREEMENT_STATUS_PATH, (req: Request, res: Response) => {
+    void readAgreementStatus({ cookieHeader: req.headers.cookie }, res);
   });
 
   app.post(EARLY_ACCESS_ORDERS_PATH, (req: Request, res: Response) => {

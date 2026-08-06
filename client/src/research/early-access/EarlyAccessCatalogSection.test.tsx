@@ -161,3 +161,36 @@ describe("early access catalogue section", () => {
     expect(onSelect.mock.calls[0][0]).toMatchObject({ productId: "prod-1" });
   });
 });
+
+describe("it reads the catalogue once", () => {
+  it("does not re-fetch itself forever when it uses its own default loader", async () => {
+    // Regression. The default loader used to be written inline as a default
+    // parameter, so it was a NEW function on every render. The mount effect
+    // depends on it, and the effect sets state, so every load triggered another
+    // load: an unbounded fetch loop from every customer's browser. The default
+    // is now module-level and therefore stable.
+    const fetches: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        fetches.push(String(input));
+        return {
+          ok: true,
+          status: 200,
+          headers: { get: () => "application/json" },
+          json: async () => ({ ok: true, products: [], received: 0, dropped: 0 }),
+        } as unknown as Response;
+      }),
+    );
+
+    render(<EarlyAccessCatalogSection fulfillmentTargetCopy={FULFILLMENT} />);
+    for (let i = 0; i < 8; i += 1) {
+      await act(async () => {
+        await Promise.resolve();
+      });
+    }
+
+    expect(fetches).toHaveLength(1);
+    vi.unstubAllGlobals();
+  });
+});

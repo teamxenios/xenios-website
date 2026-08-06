@@ -285,6 +285,13 @@ export function registerResearchApi(app: Express) {
   const EARLY_ACCESS_OPEN_READ_PATHS = new Set([
     "/early-access/session",
     "/early-access/catalog",
+    // This session customer's OWN agreement standing, so a refresh does not
+    // lose an acceptance and the browser is never the one remembering it. It
+    // owns a STRONGER gate downstream: the durable Early Access session
+    // resolves the customer, and the route reads no parameter of any kind, so
+    // it cannot be asked about anyone else. Reaching it through the wall
+    // without a session reaches a refusal, never a status.
+    "/early-access/agreements",
   ]);
   const EARLY_ACCESS_OPEN_WRITE_PATHS = new Set([
     "/early-access/unlock",

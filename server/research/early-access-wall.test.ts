@@ -97,6 +97,10 @@ describe("the research wall lets Private Early Access reach its own gate", () =>
     // the deployment did not configure. Walled here would mean no customer can
     // ever agree, so checkout would refuse everyone forever and look broken.
     ["POST", "/api/research/early-access/agreements/accept"],
+    // The acceptance read-back. Session-gated, takes no customer parameter, and
+    // reports on the caller alone. Walled here would mean a refresh loses the
+    // acceptance, which would push the browser into remembering it instead.
+    ["GET", "/api/research/early-access/agreements"],
     ["GET", `/api/research/early-access/orders/${ORDER_NUMBER}`],
     ["GET", `/api/research/early-access/orders/${ORDER_NUMBER}/invoice`],
     ["POST", `/api/research/early-access/orders/${ORDER_NUMBER}/payment-proof`],

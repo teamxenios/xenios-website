@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
 
 import { EarlyAccessUnlockForm } from "./EarlyAccessUnlockForm";
 import { EarlyAccessStepper } from "./EarlyAccessStepper";
 import { EarlyAccessCatalogSection } from "./EarlyAccessCatalogSection";
+import { EarlyAccessAgreementSection } from "./EarlyAccessAgreementSection";
 import { EARLY_ACCESS_FULFILLMENT_TARGET_COPY } from "./fulfillment-copy";
 
 // The mounted Private Early Access route.
@@ -31,6 +32,11 @@ export const EARLY_ACCESS_STEPS = [
   "Status",
 ] as const;
 
+/** "Identity and Agreements", where a customer sits until they have agreed. */
+export const EARLY_ACCESS_AGREEMENT_STEP = 2;
+/** "Research Catalog", reached only once the SERVER confirms the acceptance. */
+export const EARLY_ACCESS_CATALOG_STEP = 3;
+
 type GateState =
   | { kind: "checking" }
   | { kind: "unavailable" }
@@ -48,6 +54,11 @@ async function readJson(response: Response): Promise<Record<string, unknown> | n
 
 export default function EarlyAccessRoute() {
   const [state, setState] = useState<GateState>({ kind: "checking" });
+  // Whether the SERVER says this customer has agreed. It starts false on every
+  // load and is only ever set from a server answer, so a refresh re-asks rather
+  // than trusting anything the browser kept.
+  const [agreed, setAgreed] = useState(false);
+  const catalogRef = useRef<HTMLDivElement | null>(null);
 
   const readSession = useCallback(async () => {
     try {
@@ -127,6 +138,9 @@ export default function EarlyAccessRoute() {
         // Logout is idempotent and the cookie is cleared server-side; a network
         // failure still returns the customer to the password screen.
       }
+      // The next customer to unlock on this browser starts from the server's
+      // answer about themselves, never from the last person's.
+      setAgreed(false);
       setState({ kind: "locked", error: null, busy: false });
     })();
   }, []);
@@ -185,7 +199,10 @@ export default function EarlyAccessRoute() {
             <h1 className="display-s max-w-[26ch]">Welcome to Xenios Research Early Access</h1>
 
             <div className="mt-8">
-              <EarlyAccessStepper steps={EARLY_ACCESS_STEPS} activeIndex={0} />
+              <EarlyAccessStepper
+                steps={EARLY_ACCESS_STEPS}
+                activeIndex={agreed ? EARLY_ACCESS_CATALOG_STEP : EARLY_ACCESS_AGREEMENT_STEP}
+              />
             </div>
 
             <div className="mt-8 grid gap-4" data-testid="early-access-welcome">
@@ -206,12 +223,23 @@ export default function EarlyAccessRoute() {
             </div>
 
             {/*
+              The required agreement, above the catalogue. Browsing is not
+              gated: a customer may read the whole shelf before agreeing to
+              anything, and the catalogue is unchanged by what follows. What IS
+              gated is the continuation into ordering, because the order route
+              refuses with AGREEMENT_REQUIRED until this is on file.
+            */}
+            <div className="mt-8" data-testid="early-access-agreement-mount">
+              <EarlyAccessAgreementSection onAccepted={setAgreed} />
+            </div>
+
+            {/*
               The live catalogue. It reads the mounted endpoint and renders
               exactly what the server returns: no fixture rows, no padding to a
               target count, and the dropped-row count surfaced rather than
               absorbed. Whatever the server says today is what a customer sees.
             */}
-            <div className="mt-8" data-testid="early-access-catalog-mount">
+            <div className="mt-8" data-testid="early-access-catalog-mount" ref={catalogRef} tabIndex={-1}>
               <EarlyAccessCatalogSection
                 fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
               />
@@ -219,10 +247,49 @@ export default function EarlyAccessRoute() {
 
             <div className="card mt-8" data-testid="early-access-next-steps">
               <p className="mono-label text-ink-mute">What happens next</p>
-              <p className="body-s text-ink-2 mt-2 max-w-[62ch]">
-                Ordering, payment review and fulfillment are being connected and will appear here
-                as each one comes online. Nothing has been ordered or charged.
-              </p>
+              {agreed ? (
+                <p
+                  className="body-s text-ink-2 mt-2 max-w-[62ch]"
+                  data-testid="early-access-continue-available"
+                >
+                  Your agreement is on file. Contact and shipping details, payment review and
+                  fulfillment are being connected and will appear here as each one comes online.
+                  Nothing has been ordered or charged.
+                </p>
+              ) : (
+                <p
+                  className="body-s text-ink-2 mt-2 max-w-[62ch]"
+                  data-testid="early-access-continue-blocked"
+                >
+                  Accept the Research Use Policy above before continuing to an order. Nothing has
+                  been ordered or charged.
+                </p>
+              )}
+              <div className="mt-4">
+                {/*
+                  The order continuation. It is genuinely unavailable until the
+                  SERVER confirms the acceptance, rather than merely styled that
+                  way: the order route refuses with AGREEMENT_REQUIRED until the
+                  row is on file, and an enabled control that cannot work is
+                  worse than one that is not yet offered.
+
+                  It does one real thing, which is to put the customer where
+                  they choose a unit. It deliberately does not pretend to carry
+                  them further than the mounted journey actually goes.
+                */}
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  disabled={!agreed}
+                  onClick={() => {
+                    catalogRef.current?.focus();
+                    catalogRef.current?.scrollIntoView({ block: "start" });
+                  }}
+                  data-testid="early-access-continue"
+                >
+                  Continue to the research catalogue
+                </button>
+              </div>
             </div>
 
             <div className="mt-8">
