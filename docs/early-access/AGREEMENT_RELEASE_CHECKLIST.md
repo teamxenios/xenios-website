@@ -4,7 +4,13 @@ Read-only artifact. This lane does not deploy. Every step below is written for
 the operator who does, and each one names what proves it worked.
 
 Server repair reviewed and **ACCEPTED** at `4cac93c288ef1ee6a2f6e3931991240dc8fa6e93`.
-UI successor not yet received.
+UI reviewed and **ACCEPTED** at `7955f22890e6dc7652d73a2fe9f83624aec06d03`.
+
+**Post-state SQL:** run the two verified evidence files, not this lane's
+retracted one. `docs/early-access-release/evidence/AGREEMENT_POST_STATE.sql`
+for the agreement and money proof, and `PRODUCT_CONTROL_POST_STATE.sql` for the
+catalogue. Run `AGREEMENT_POST_STATE.sql` check 11 **before** the smoke as well
+as after: it is a total count, so an after-only run proves nothing.
 
 ---
 
@@ -43,7 +49,7 @@ Order matters: each step's meaning depends on the previous one.
 | S2 | Accept `early_access_terms` / `v1` | **200**, `alreadyAccepted: false` |
 | S3 | Accept the same pair again | **200**, `alreadyAccepted: true` |
 | S4 | Order with `expectedUnitPriceCents` wrong by **one cent** | **409 PRICE_CHANGED** |
-| S5 | Run `AGREEMENT_PRODUCTION_POST_STATE.sql` | one acceptance row; no order; no money row; no supplier release |
+| S5 | Run `evidence/AGREEMENT_POST_STATE.sql` (and its check 11 before the smoke too) | one acceptance row; no order; no money row; no supplier release |
 | S6 | Cagrilintide | visible, **no price**, no purchase control |
 | S7 | NAD+ 1000 mg | **AVAILABLE at $100.75** |
 
