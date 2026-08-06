@@ -123,10 +123,12 @@ describe("reading whether this customer has agreed", () => {
   });
 
   it("reports a lapsed session as locked rather than as not-agreed", async () => {
+    // IDENTITY_REQUIRED used to be in this list, and that was the defect: it is
+    // a signed-in customer with no approved account, not a lapsed session. It
+    // is asserted separately below.
     for (const result of [
       { kind: "unauthorized" } as ApiResult<never>,
       { kind: "forbidden" } as ApiResult<never>,
-      { kind: "denied", code: "IDENTITY_REQUIRED" } as ApiResult<never>,
     ]) {
       const state = await loadEarlyAccessAgreementState(async () => result as never);
       expect(state).toEqual({ kind: "locked" });
@@ -205,11 +207,12 @@ describe("recording the acceptance", () => {
   });
 
   it("reports a lapsed session as locked", async () => {
-    const result = await acceptEarlyAccessAgreement(async () => ({
-      kind: "denied",
-      code: "IDENTITY_REQUIRED",
-    }) as never);
-    expect(result).toEqual({ kind: "locked" });
+    // Same correction as the read path: IDENTITY_REQUIRED is unverified, and a
+    // genuinely absent session is what 401/403-without-a-code means.
+    for (const denial of [{ kind: "unauthorized" }, { kind: "forbidden" }] as const) {
+      const result = await acceptEarlyAccessAgreement(async () => denial as never);
+      expect(result).toEqual({ kind: "locked" });
+    }
   });
 });
 
@@ -223,5 +226,38 @@ describe("the configured pair", () => {
       version: "v1",
     });
     expect(Object.isFrozen(EARLY_ACCESS_REQUIRED_AGREEMENT)).toBe(true);
+  });
+});
+
+describe("a signed-in customer with no approved account is NOT a lapsed session", () => {
+  it("reports IDENTITY_REQUIRED as unverified, not locked", async () => {
+    // The production failure. Samuel unlocked successfully (200, a real scrypt
+    // verification, cookie accepted, GET /session 200), and the agreement read
+    // still answered 403 IDENTITY_REQUIRED because the session was not bound to
+    // an approved Early Access customer. Mapping that to "locked" put "your
+    // private session has ended" in front of a customer who was signed in, and
+    // the only action it offered was to unlock again, which succeeds and
+    // changes nothing.
+    const state = await loadEarlyAccessAgreementState(async () => ({
+      kind: "denied",
+      code: "IDENTITY_REQUIRED",
+    }) as never);
+    expect(state).toEqual({ kind: "unverified" });
+  });
+
+  it("still reports a genuinely lapsed session as locked", async () => {
+    // The distinction has to cut both ways, or the fix just moves the lie.
+    for (const result of [{ kind: "unauthorized" }, { kind: "forbidden" }] as const) {
+      const state = await loadEarlyAccessAgreementState(async () => result as never);
+      expect(state).toEqual({ kind: "locked" });
+    }
+  });
+
+  it("reports an unverified acceptance attempt as unverified, and records nothing", async () => {
+    const result = await acceptEarlyAccessAgreement(async () => ({
+      kind: "denied",
+      code: "IDENTITY_REQUIRED",
+    }) as never);
+    expect(result).toEqual({ kind: "unverified" });
   });
 });

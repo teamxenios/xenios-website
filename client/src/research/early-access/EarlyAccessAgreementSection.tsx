@@ -4,10 +4,15 @@ import {
   acceptEarlyAccessAgreement,
   loadEarlyAccessAgreementState,
   loadResearchUsePolicy,
+  redeemEarlyAccessVerification,
+  requestEarlyAccessVerification,
   type EarlyAccessAcceptResult,
   type EarlyAccessAgreementState,
+  type EarlyAccessVerificationRequestResult,
+  type EarlyAccessVerifyResult,
   type ResearchPolicyLoad,
 } from "../adapters/earlyAccessAgreement";
+import { EarlyAccessVerificationPanel } from "./EarlyAccessVerificationPanel";
 
 /**
  * The Private Early Access agreement screen.
@@ -39,6 +44,15 @@ export interface EarlyAccessAgreementSectionProps {
   accept?: () => Promise<EarlyAccessAcceptResult>;
   /** Told once, whenever the server confirms this customer is agreed. */
   onAccepted?: (accepted: boolean) => void;
+  /**
+   * Told whenever this screen settles, so the surrounding journey can describe
+   * the SAME situation. Without it the page can say "accept the policy above"
+   * while the policy step is telling the customer they are not verified yet.
+   */
+  onBlocked?: (reason: "unverified" | "locked" | null) => void;
+  /** Injected for tests. The existing, already-mounted verification doors. */
+  requestVerification?: (email: string) => Promise<EarlyAccessVerificationRequestResult>;
+  redeemVerification?: (token: string) => Promise<EarlyAccessVerifyResult>;
   testId?: string;
 }
 
@@ -48,6 +62,8 @@ type Phase =
   | { status: "submitting" }
   | { status: "accepted"; alreadyAccepted: boolean }
   | { status: "locked" }
+  /** Signed in, but not yet verified as an approved Early Access customer. */
+  | { status: "unverified" }
   | { status: "fault"; message: string };
 
 const ASSENT = "I have read and agree to the Research Use Policy.";
@@ -62,12 +78,17 @@ const ASSENT = "I have read and agree to the Research Use Policy.";
 const loadPolicyFromServer = () => loadResearchUsePolicy();
 const loadStateFromServer = () => loadEarlyAccessAgreementState();
 const acceptOnServer = () => acceptEarlyAccessAgreement();
+const requestVerificationOnServer = (email: string) => requestEarlyAccessVerification(email);
+const redeemVerificationOnServer = (token: string) => redeemEarlyAccessVerification(token);
 
 export function EarlyAccessAgreementSection({
   loadPolicy = loadPolicyFromServer,
   loadState = loadStateFromServer,
   accept = acceptOnServer,
   onAccepted = () => {},
+  onBlocked = () => {},
+  requestVerification = requestVerificationOnServer,
+  redeemVerification = redeemVerificationOnServer,
   testId = "early-access-agreement",
 }: EarlyAccessAgreementSectionProps) {
   const headingId = useId();
@@ -77,6 +98,14 @@ export function EarlyAccessAgreementSection({
   // Unchecked, always, on every mount. An agreement screen that arrives already
   // ticked has collected nothing.
   const [checked, setChecked] = useState(false);
+
+  const [reloadKey, setReloadKey] = useState(0);
+  const reload = useCallback(() => {
+    // A successful verification changes what the SERVER will say about this
+    // session, so the answer is re-read rather than assumed.
+    setPhase({ status: "loading" });
+    setReloadKey((key) => key + 1);
+  }, []);
 
   useEffect(() => {
     let live = true;
@@ -89,11 +118,18 @@ export function EarlyAccessAgreementSection({
         // Already on file, from a previous visit or before a refresh. The
         // server said so; nothing here remembered it.
         setPhase({ status: "accepted", alreadyAccepted: true });
+        onBlocked(null);
         onAccepted(true);
         return;
       }
       if (stateResult.kind === "locked") {
         setPhase({ status: "locked" });
+        onBlocked("locked");
+        return;
+      }
+      if (stateResult.kind === "unverified") {
+        setPhase({ status: "unverified" });
+        onBlocked("unverified");
         return;
       }
       if (stateResult.kind === "error") {
@@ -109,7 +145,7 @@ export function EarlyAccessAgreementSection({
     // deliberately not a dependency: a parent re-creating it must not re-run a
     // network read.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadPolicy, loadState]);
+  }, [loadPolicy, loadState, reloadKey]);
 
   const submit = useCallback(() => {
     setPhase({ status: "submitting" });
@@ -124,6 +160,12 @@ export function EarlyAccessAgreementSection({
       }
       if (result.kind === "locked") {
         setPhase({ status: "locked" });
+        onBlocked("locked");
+        return;
+      }
+      if (result.kind === "unverified") {
+        setPhase({ status: "unverified" });
+        onBlocked("unverified");
         return;
       }
       // Fail closed. Nothing is recorded, so nothing is unlocked.
@@ -135,7 +177,7 @@ export function EarlyAccessAgreementSection({
             : result.message,
       });
     });
-  }, [accept, onAccepted]);
+  }, [accept, onAccepted, onBlocked]);
 
   const accepted = phase.status === "accepted";
   const busy = phase.status === "submitting";
@@ -157,6 +199,36 @@ export function EarlyAccessAgreementSection({
           Your private session has ended. Unlock again to review and accept the Research Use
           Policy. Nothing has been ordered or charged.
         </p>
+      </section>
+    );
+  }
+
+  if (phase.status === "unverified") {
+    // NOT "your session has ended". The session is live; what is missing is an
+    // approved Early Access customer bound to it, so the server has nobody to
+    // record an acceptance for. Saying the session ended sends the customer to
+    // unlock again, which succeeds and changes nothing: a loop with no exit.
+    return (
+      <section data-testid={testId} data-state="unverified">
+        <p className="body-s text-ink-2 max-w-[62ch]" data-testid={`${testId}-unverified`}>
+          Your private access session is active. Complete identity verification before reviewing
+          prices, accepting the Research Use Policy, or placing an order. Nothing has been ordered
+          or charged.
+        </p>
+        {/*
+          The EXISTING verification doors, finally reachable. Requesting always
+          answers the same way, so this screen cannot be used to discover who is
+          an Early Access customer, and redeeming binds only the session the
+          token was minted against.
+        */}
+        <div className="mt-5">
+          <EarlyAccessVerificationPanel
+            onRequest={requestVerification}
+            onRedeem={redeemVerification}
+            onVerified={reload}
+            testId={`${testId}-verification`}
+          />
+        </div>
       </section>
     );
   }

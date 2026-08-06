@@ -58,6 +58,9 @@ export default function EarlyAccessRoute() {
   // load and is only ever set from a server answer, so a refresh re-asks rather
   // than trusting anything the browser kept.
   const [agreed, setAgreed] = useState(false);
+  // Why ordering is closed, when it is not simply "has not agreed yet". The
+  // journey must describe the SAME situation the agreement step is describing.
+  const [blocked, setBlocked] = useState<"unverified" | "locked" | null>(null);
   const catalogRef = useRef<HTMLDivElement | null>(null);
 
   const readSession = useCallback(async () => {
@@ -141,6 +144,7 @@ export default function EarlyAccessRoute() {
       // The next customer to unlock on this browser starts from the server's
       // answer about themselves, never from the last person's.
       setAgreed(false);
+      setBlocked(null);
       setState({ kind: "locked", error: null, busy: false });
     })();
   }, []);
@@ -201,7 +205,7 @@ export default function EarlyAccessRoute() {
             <div className="mt-8">
               <EarlyAccessStepper
                 steps={EARLY_ACCESS_STEPS}
-                activeIndex={agreed ? EARLY_ACCESS_CATALOG_STEP : EARLY_ACCESS_AGREEMENT_STEP}
+                activeIndex={agreed && blocked === null ? EARLY_ACCESS_CATALOG_STEP : EARLY_ACCESS_AGREEMENT_STEP}
               />
             </div>
 
@@ -230,7 +234,7 @@ export default function EarlyAccessRoute() {
               refuses with AGREEMENT_REQUIRED until this is on file.
             */}
             <div className="mt-8" data-testid="early-access-agreement-mount">
-              <EarlyAccessAgreementSection onAccepted={setAgreed} />
+              <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
             </div>
 
             {/*
@@ -255,6 +259,23 @@ export default function EarlyAccessRoute() {
                   Your agreement is on file. Contact and shipping details, payment review and
                   fulfillment are being connected and will appear here as each one comes online.
                   Nothing has been ordered or charged.
+                </p>
+              ) : blocked === "unverified" ? (
+                <p
+                  className="body-s text-ink-2 mt-2 max-w-[62ch]"
+                  data-testid="early-access-continue-unverified"
+                >
+                  Ordering opens once this session is verified against an approved Early Access
+                  account. Accepting the policy is not the step that is missing. Nothing has been
+                  ordered or charged.
+                </p>
+              ) : blocked === "locked" ? (
+                <p
+                  className="body-s text-ink-2 mt-2 max-w-[62ch]"
+                  data-testid="early-access-continue-locked"
+                >
+                  Your private session has ended. Unlock again to continue. Nothing has been
+                  ordered or charged.
                 </p>
               ) : (
                 <p

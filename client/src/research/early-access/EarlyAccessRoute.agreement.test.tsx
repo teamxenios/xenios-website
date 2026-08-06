@@ -35,7 +35,7 @@ const POLICIES = {
   privacy: { title: "Privacy Policy", updated: "July 2026", sections: [] },
 };
 
-type Answers = { accepted: boolean };
+type Answers = { accepted: boolean; identity?: boolean };
 
 function jsonResponse(body: unknown, status = 200): Response {
   return {
@@ -68,6 +68,9 @@ function stubFetch(answers: Answers) {
       return jsonResponse({ policies: POLICIES });
     }
     if (path.endsWith("/early-access/agreements")) {
+      if (answers.identity === false) {
+        return jsonResponse({ ok: false, code: "IDENTITY_REQUIRED" }, 403);
+      }
       return jsonResponse({ ok: true, required: [{ kind: "early_access_terms", version: "v1" }], accepted: answers.accepted });
     }
     // The catalogue answers for itself elsewhere; this route test only asserts
@@ -182,5 +185,41 @@ describe("the order continuation is gated on the server's answer", () => {
     expect(host.textContent).toContain("I have read and agree to the Research Use Policy.");
     expect(host.textContent).not.toContain("Terms of Service");
     expect(host.textContent).not.toContain("Privacy Policy");
+  });
+});
+
+describe("signed in, but the session is not bound to an approved customer", () => {
+  it("does not tell the customer their session ended, and does not blame the policy", async () => {
+    // The exact production page. The session was valid (unlock 200, session
+    // 200) and the agreement read answered 403 IDENTITY_REQUIRED, and the page
+    // simultaneously showed the whole catalogue, "your private session has
+    // ended", and a next-step that blamed the unaccepted policy. Three
+    // statements, two of them false.
+    stubFetch({ accepted: false, identity: false });
+    const host = await mountRoute();
+
+    expect(host.textContent).not.toContain("Your private session has ended");
+    expect(host.querySelector('[data-testid="early-access-agreement-unverified"]')).not.toBeNull();
+    // The journey says the same thing the agreement step says.
+    expect(host.querySelector('[data-testid="early-access-continue-unverified"]')).not.toBeNull();
+    expect(host.querySelector('[data-testid="early-access-continue-blocked"]')).toBeNull();
+  });
+
+  it("keeps ordering closed and offers nothing to tick", async () => {
+    stubFetch({ accepted: false, identity: false });
+    const host = await mountRoute();
+
+    expect(continueButton(host).disabled).toBe(true);
+    expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-submit"]')).toBeNull();
+  });
+
+  it("still lets the customer browse the catalogue", async () => {
+    // Browsing is not what identity gates. The catalogue mount stays, and the
+    // units it shows are whatever the server sends for an unidentified caller.
+    stubFetch({ accepted: false, identity: false });
+    const host = await mountRoute();
+
+    expect(host.querySelector('[data-testid="early-access-catalog-mount"]')).not.toBeNull();
   });
 });

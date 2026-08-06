@@ -79,6 +79,7 @@ type Options = {
   state?: EarlyAccessAgreementState;
   accept?: () => Promise<EarlyAccessAcceptResult>;
   onAccepted?: (accepted: boolean) => void;
+  onBlocked?: (reason: "unverified" | "locked" | null) => void;
 };
 
 async function mount(options: Options = {}): Promise<HTMLElement> {
@@ -88,6 +89,7 @@ async function mount(options: Options = {}): Promise<HTMLElement> {
       loadState={async () => options.state ?? { kind: "required" }}
       accept={options.accept ?? (async () => ({ kind: "accepted", alreadyAccepted: false }))}
       onAccepted={options.onAccepted}
+      onBlocked={options.onBlocked}
     />,
   );
   await settle();
@@ -400,5 +402,50 @@ describe("it reads the policy and the standing once", () => {
     expect(fetches).toHaveLength(2);
     expect(new Set(fetches).size).toBe(2);
     vi.unstubAllGlobals();
+  });
+});
+
+describe("signed in, but not verified against an approved account", () => {
+  it("does not claim the session ended, and offers no checkbox", async () => {
+    const host = await mount({ state: { kind: "unverified" } });
+
+    const panel = host.querySelector('[data-testid="early-access-agreement-unverified"]');
+    expect(panel).not.toBeNull();
+    expect(panel?.textContent).toContain("Complete identity verification");
+    expect(panel?.textContent).toContain("Your private access session is active");
+    // The false message that shipped to production.
+    expect(host.textContent).not.toContain("Your private session has ended");
+    // Fail closed: nothing to tick, nothing to submit, nothing recorded.
+    expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-submit"]')).toBeNull();
+    expect(section(host).getAttribute("data-state")).toBe("unverified");
+    // The way OUT is offered, not just the diagnosis. A screen that names the
+    // problem and gives no action is the dead end production actually shipped.
+    expect(host.querySelector('[data-testid="early-access-agreement-verification-request"]')).not.toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-verification-redeem"]')).not.toBeNull();
+  });
+
+  it("tells the surrounding journey why, so the page cannot contradict itself", async () => {
+    const seen: Array<string | null> = [];
+    await mount({ state: { kind: "unverified" }, onBlocked: (reason) => seen.push(reason) });
+    expect(seen).toEqual(["unverified"]);
+  });
+
+  it("reports an unverified acceptance attempt without unlocking anything", async () => {
+    const accepted: boolean[] = [];
+    const seen: Array<string | null> = [];
+    const host = await mount({
+      accept: async () => ({ kind: "unverified" }),
+      onAccepted: (value) => accepted.push(value),
+      onBlocked: (reason) => seen.push(reason),
+    });
+
+    tick(host);
+    press(submit(host));
+    await settle();
+
+    expect(accepted).toEqual([]);
+    expect(seen).toEqual(["unverified"]);
+    expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).toBeNull();
   });
 });

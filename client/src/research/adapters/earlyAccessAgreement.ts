@@ -143,6 +143,18 @@ export type EarlyAccessAgreementState =
   | { kind: "required" }
   /** The private session lapsed. Not the same as "has not agreed". */
   | { kind: "locked" }
+  /**
+   * The session is fine, but it is not bound to an approved Early Access
+   * customer, so the server has nobody to record an acceptance FOR.
+   *
+   * This is a different fact from a lapsed session and must not be reported as
+   * one. Telling a signed-in customer their session ended sends them to unlock
+   * again, which succeeds, changes nothing, and leaves them in a loop; the real
+   * next step is verifying their identity. Production said exactly this
+   * (`IDENTITY_REQUIRED` on a live session) and the screen claimed the session
+   * had ended.
+   */
+  | { kind: "unverified" }
   | { kind: "error"; message: string };
 
 /**
@@ -161,9 +173,12 @@ export async function loadEarlyAccessAgreementState(
 
   if (result.kind === "unauthorized" || result.kind === "forbidden") return { kind: "locked" };
   if (result.kind === "denied") {
-    // IDENTITY_REQUIRED arrives here: the session did not resolve a customer.
+    // IDENTITY_REQUIRED means the session resolved NO CUSTOMER. The session
+    // itself is fine, so this is reported as unverified rather than lapsed;
+    // conflating the two is what put a false "your session has ended" in front
+    // of a customer who was signed in.
     return result.code === "IDENTITY_REQUIRED"
-      ? { kind: "locked" }
+      ? { kind: "unverified" }
       : { kind: "error", message: result.message ?? result.code };
   }
   if (result.kind === "unavailable") {
@@ -183,6 +198,8 @@ export async function loadEarlyAccessAgreementState(
 export type EarlyAccessAcceptResult =
   | { kind: "accepted"; alreadyAccepted: boolean }
   | { kind: "locked" }
+  /** Signed in, but no approved customer to record the acceptance for. */
+  | { kind: "unverified" }
   | { kind: "refused"; code: string }
   | { kind: "error"; message: string };
 
@@ -209,7 +226,8 @@ export async function acceptEarlyAccessAgreement(
 
   if (result.kind === "unauthorized" || result.kind === "forbidden") return { kind: "locked" };
   if (result.kind === "denied") {
-    if (result.code === "IDENTITY_REQUIRED") return { kind: "locked" };
+    // Same distinction as the read: no customer is not a lapsed session.
+    if (result.code === "IDENTITY_REQUIRED") return { kind: "unverified" };
     // NOT_RECORDED is the server telling us the write genuinely failed. It is
     // reported as itself so the screen can say "not recorded, try again"
     // instead of quietly leaving the customer thinking they agreed.
@@ -221,4 +239,79 @@ export async function acceptEarlyAccessAgreement(
   if (result.kind === "error") return { kind: "error", message: result.message };
 
   return { kind: "accepted", alreadyAccepted: (result.data ?? {}).alreadyAccepted === true };
+}
+
+// ---------------------------------------------------------------------------
+// Identity verification: binding this session to an approved customer
+// ---------------------------------------------------------------------------
+
+export const EARLY_ACCESS_VERIFICATION_REQUEST_PATH =
+  "/api/research/early-access/verification/request";
+export const EARLY_ACCESS_VERIFY_PATH = "/api/research/early-access/verify";
+
+/**
+ * Ask for a verification link.
+ *
+ * The server answers 202 whether or not the email names an approved customer,
+ * deliberately, so this endpoint cannot be used to discover who is an Early
+ * Access customer. This adapter reports that single outcome and does not try to
+ * infer more from it: any "we could not find you" message here would rebuild
+ * the oracle the server refuses to be.
+ */
+export type EarlyAccessVerificationRequestResult =
+  | { kind: "requested" }
+  | { kind: "locked" }
+  | { kind: "error"; message: string };
+
+export async function requestEarlyAccessVerification(
+  email: string,
+  post: <T>(path: string, body: unknown) => Promise<ApiResult<T>> = (path, body) =>
+    apiPost(path, body),
+): Promise<EarlyAccessVerificationRequestResult> {
+  const result = await post<Record<string, unknown>>(EARLY_ACCESS_VERIFICATION_REQUEST_PATH, {
+    email,
+  });
+  if (result.kind === "unauthorized" || result.kind === "forbidden") return { kind: "locked" };
+  if (result.kind === "denied") {
+    return result.code === "SESSION_REQUIRED"
+      ? { kind: "locked" }
+      : { kind: "error", message: result.message ?? result.code };
+  }
+  if (result.kind === "unavailable") {
+    return { kind: "error", message: "The verification service is not available." };
+  }
+  if (result.kind === "error") return { kind: "error", message: result.message };
+  return { kind: "requested" };
+}
+
+export type EarlyAccessVerifyResult =
+  | { kind: "verified" }
+  /** The token was not accepted. Never says why: it is single-use and bound. */
+  | { kind: "refused" }
+  | { kind: "locked" }
+  | { kind: "error"; message: string };
+
+/**
+ * Redeem a verification link.
+ *
+ * The token is minted against the customer AND this session, and is single use.
+ * The browser carries it across and nothing else: it names no customer, no
+ * email and no session of its own, so a token pasted into the wrong session
+ * binds nobody.
+ */
+export async function redeemEarlyAccessVerification(
+  token: string,
+  post: <T>(path: string, body: unknown) => Promise<ApiResult<T>> = (path, body) =>
+    apiPost(path, body),
+): Promise<EarlyAccessVerifyResult> {
+  const result = await post<Record<string, unknown>>(EARLY_ACCESS_VERIFY_PATH, { token });
+  if (result.kind === "unauthorized" || result.kind === "forbidden") return { kind: "locked" };
+  if (result.kind === "denied") {
+    return result.code === "SESSION_REQUIRED" ? { kind: "locked" } : { kind: "refused" };
+  }
+  if (result.kind === "unavailable") {
+    return { kind: "error", message: "The verification service is not available." };
+  }
+  if (result.kind === "error") return { kind: "error", message: result.message };
+  return { kind: "verified" };
 }
