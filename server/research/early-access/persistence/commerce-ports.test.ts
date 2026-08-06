@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   SupabaseEarlyAccessAgreementGate,
+  SupabaseEarlyAccessAgreementRecorder,
   SupabaseEarlyAccessReferralResolver,
   SupabaseEarlyAccessShippingPolicy,
   SupabaseEarlyAccessSupplierDirectory,
@@ -18,6 +19,62 @@ const destination: SupplierShipmentRecipient = {
   postalCode: "77002",
   country: "US",
 };
+
+describe("SupabaseEarlyAccessAgreementRecorder", () => {
+  const input = {
+    customerRef: "eac_00000000000000000000000000000001",
+    kind: "early_access_terms",
+    version: "v1",
+    acceptedAt: "2026-08-05T20:00:00.000Z",
+    evidence: { channel: "portal", requestIp: "203.0.113.9", requestId: null },
+  };
+
+  it("drives the REAL RPC contract: true then false, recorded then already on file", async () => {
+    // The production function inserts and returns true, then catches
+    // unique_violation on the repeat and returns false. Both answers are driven
+    // here, in that order, because a stub that only ever returned true could not
+    // have caught the defect this test exists to prevent.
+    const answers = [true, false];
+    const calls: EarlyAccessPersistenceCall[] = [];
+    const recorder = new SupabaseEarlyAccessAgreementRecorder(async (call) => {
+      calls.push(call);
+      return answers.shift();
+    });
+
+    expect(await recorder.record(input)).toBe("recorded");
+    expect(await recorder.record(input)).toBe("already_on_file");
+    expect(calls).toHaveLength(2);
+    expect(calls[0].fn).toBe("research_early_access_record_agreement");
+    expect(calls[0].args).toEqual({
+      p_customer_ref: input.customerRef,
+      p_kind: "early_access_terms",
+      p_version: "v1",
+      p_accepted_at: "2026-08-05T20:00:00.000Z",
+      p_evidence: input.evidence,
+    });
+    // Byte-identical arguments both times, so the second call can only differ
+    // in what the DATABASE says about it.
+    expect(calls[1]).toEqual(calls[0]);
+  });
+
+  it("reports a genuine failure, which is a throw and not a false", async () => {
+    // A fault is not a duplicate. The RPC signals "already there" by returning
+    // false; anything genuinely broken raises out of the executor.
+    const recorder = new SupabaseEarlyAccessAgreementRecorder(async () => {
+      throw new Error("connection reset");
+    });
+
+    // The executor wraps the cause, so the message is its own; what matters is
+    // that it REJECTS rather than resolving to a value a caller could mistake
+    // for "already on file".
+    await expect(recorder.record(input)).rejects.toThrow(/persistence call failed/);
+  });
+
+  it("treats an unusable answer as failure rather than as an acceptance", async () => {
+    const recorder = new SupabaseEarlyAccessAgreementRecorder(async () => null);
+    expect(await recorder.record(input)).toBe("failed");
+  });
+});
 
 describe("SupabaseEarlyAccessAgreementGate", () => {
   it("with an EMPTY required list it accepts nobody and never calls the database", async () => {

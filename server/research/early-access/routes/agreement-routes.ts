@@ -40,9 +40,16 @@ export type EarlyAccessRequiredAgreementPair = Readonly<{
 /**
  * The evidence recorded alongside an acceptance.
  *
- * Every field is something the SERVER observed. Nothing here is read from the
- * request body, because a browser-supplied claim about when or how someone
- * agreed is not evidence of anything.
+ * `channel` is a constant and `requestIp` is what Express derived from the
+ * trusted proxy chain, so both are the server's own. `requestId` is NOT: it is
+ * the `x-request-id` header, which is caller-provided request metadata that a
+ * client can set to anything. It is recorded for correlation with platform
+ * logs, never as proof of anything, and nothing reads it back to make a
+ * decision. Keeping it is safe because it is bounded and carries no secret;
+ * calling it server-observed would not be true.
+ *
+ * Nothing here is read from the request BODY, which is the claim that matters:
+ * a browser-supplied assertion about who agreed, or when, is not evidence.
  */
 export type EarlyAccessAcceptanceEvidence = Readonly<{
   channel: "portal";
@@ -104,8 +111,9 @@ export interface EarlyAccessAcceptResponsePort {
 export type EarlyAccessAcceptRequest = Readonly<{
   cookieHeader: unknown;
   body: unknown;
-  /** Server-observed, from the trusted proxy chain. Never from the body. */
+  /** The server's own, from the trusted proxy chain. Never from the body. */
   requestIp?: string | null;
+  /** Caller-provided correlation metadata. Recorded, never trusted. */
   requestId?: string | null;
 }>;
 
@@ -175,9 +183,11 @@ export function createEarlyAccessAgreementAcceptRoute(
     }
 
     const acceptedAt = new Date(deps.now()).toISOString();
-    // The RPC upserts on (customer_ref, kind, version), which the table's own
-    // unique constraint enforces, so a second acceptance of the same pair is
-    // the same row. Idempotency is the database's, not this handler's memory.
+    // The RPC does NOT upsert. It inserts, and catches `unique_violation` to
+    // report that the row was already there. So a second acceptance writes
+    // nothing and the FIRST acceptedAt stands, which is the correct record: the
+    // customer agreed when they first agreed. Idempotency is the table's unique
+    // constraint, not this handler's memory, so a restart cannot change it.
     const outcome = await deps.recorder.record({
       customerRef: customer.customerRef,
       kind,

@@ -45,10 +45,15 @@ function recorder(
     rows,
     async record(input) {
       if (mode === "broken") return "failed";
-      rows.push({ ...input, evidence: { ...input.evidence } });
       const key = `${input.customerRef}|${input.kind}|${input.version}`;
-      if (seen.has(key)) return "already_on_file";
+      if (seen.has(key)) {
+        // The table's unique constraint refuses the row and the RPC catches it,
+        // so NOTHING is appended. Modelling that is the whole point: a stub
+        // that stored both rows could not fail the one-row assertion below.
+        return "already_on_file";
+      }
       seen.add(key);
+      rows.push({ ...input, evidence: { ...input.evidence } });
       return "recorded";
     },
   };
@@ -162,10 +167,12 @@ describe("what it will record", () => {
     expect(second.seen.code).toBe(200);
     expect((first.seen.body as { alreadyAccepted: boolean }).alreadyAccepted).toBe(false);
     expect((second.seen.body as { alreadyAccepted: boolean }).alreadyAccepted).toBe(true);
-    // Both calls carry identical arguments, so the RPC's own
-    // (customer_ref, kind, version) uniqueness makes them one row. The handler
-    // keeps no memory of its own, which is why a restart cannot change this.
-    expect(store.rows[0]).toEqual(store.rows[1]);
+    // Exactly ONE acceptance row exists after two identical requests. The
+    // handler keeps no memory of its own, which is why a restart cannot change
+    // this: the uniqueness is the table's.
+    expect(store.rows).toHaveLength(1);
+    expect(store.rows[0].kind).toBe("early_access_terms");
+    expect(store.rows[0].version).toBe("v1");
   });
 });
 

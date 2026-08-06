@@ -528,9 +528,10 @@ export function registerPrivateEarlyAccessApi(
       {
         cookieHeader: req.headers.cookie,
         body: req.body,
-        // Server-observed. Express derives req.ip from the trusted proxy chain,
-        // and the request id is whatever the platform stamped; neither is read
-        // from the body, where a caller could write anything.
+        // req.ip is the server's own, derived from the trusted proxy chain.
+        // x-request-id is caller-provided metadata kept only for log
+        // correlation; it is bounded, carries no secret, and no decision reads
+        // it. Neither comes from the body, which is what actually matters here.
         requestIp: typeof req.ip === "string" ? req.ip : null,
         requestId:
           typeof req.headers["x-request-id"] === "string"
