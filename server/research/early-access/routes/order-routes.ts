@@ -404,18 +404,21 @@ async function ownedPlacement(
   if (placement === null) return null;
   if (placement.customerRef !== customer.customerRef) return null;
   // THE HARD RULE. Under a shared password, typing an email is an
-  // unauthenticated claim to be someone: it is enough to place a NEW order,
-  // where the purchaser only ever sees what they themselves just entered and
-  // bought, and it is NEVER enough to read something that existed before
-  // this session. Otherwise one guessed address would surrender a stranger's
-  // order history, invoices, shipping address and tracking, and every
-  // ownership check above would still pass, because the BINDING itself was
-  // the forgery.
+  // unauthenticated claim to be someone, so it is NEVER enough to read
+  // something that existed before this session. Otherwise one guessed address
+  // would surrender a stranger's order history, invoices, shipping address
+  // and tracking, and every ownership check above would still pass, because
+  // the BINDING itself was the forgery.
   //
   // A session bound by the signed verification link may read everything it
-  // owns. A session bound by email entry may read only what it created here.
-  // An absent provenance is treated as the weak one: a missing answer must
-  // never read as a verified one.
+  // owns. An absent provenance is treated as the weak one: a missing answer
+  // must never read as a verified one.
+  //
+  // The email-entry branch below is now UNREACHABLE in practice, and is kept
+  // deliberately. Placement requires "verified_link", so an email-entry
+  // session can never have created the order `createdHere` asks about, and
+  // this reads as a second closed door rather than the first. Deleting it
+  // would make the read path depend on the placement path staying strict.
   if (customer.boundBy === "verified_link") return placement;
   if (deps.readSessionId === undefined || deps.sessionOrders === undefined) return null;
   const sessionId = deps.readSessionId(options.cookieHeader);

@@ -129,8 +129,12 @@ export async function buildPreviewApp() {
   app.use(researchPageGate);
   registerResearchApi(app);
   // Bind every preview session to the approved customer, so the browser
-  // reaches the catalogue without an email door that this harness does not
-  // mount. The binding is the WEAK provenance, exactly as a typed email is.
+  // reaches the catalogue without the verification door this harness does not
+  // mount. The binding is the STRONG provenance, because since the
+  // verified-link gate that is the only one that yields prices and purchase
+  // controls, and a preview that showed a priceless shelf would be a preview
+  // of the wrong screen. `refuseInProduction()` above is what keeps that from
+  // ever being a real deployment's behaviour.
   const readSessionId = createEarlyAccessSessionIdReader({
     config,
     repository: new InMemoryPrivateAccessSessionRepository(),

@@ -65,8 +65,10 @@ function recorder(
  *
  * The provenance defaults to "verified_link" because that is what an
  * identified customer is: since the verified-link gate, an "email_entry"
- * binding accepts nothing. The email-entry and absent-provenance cases are
- * exercised explicitly at the bottom of this file.
+ * binding accepts nothing. The email-entry, absent and unknown cases are
+ * exercised against the MOUNTED routes in
+ * `routes/verified-link-gate.test.ts`, not in this file, which covers the
+ * handler's own contract with a stubbed directory.
  */
 function identity(
   customerRef: string | null,

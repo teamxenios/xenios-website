@@ -211,8 +211,11 @@ export class InMemoryConsumedTokenStore implements ConsumedTokenStore {
  *
  * "email_entry": the purchaser typed an email at checkout. Under the shared
  *   password that is an unauthenticated claim: anyone holding the password
- *   can type anyone's address. It is enough to place a NEW order, because the
- *   purchaser only ever sees what they just entered and just bought.
+ *   can type anyone's address. It authorizes NOTHING. It used to be enough to
+ *   place a new order, on the reasoning that a purchaser only ever sees what
+ *   they just typed and just bought; that reasoning covered the purchaser and
+ *   not the person whose address was typed, who would receive a real shipment,
+ *   invoice and commission in their name.
  * "verified_link": the purchaser redeemed a signed verification token minted
  *   for THIS session. That is an authenticated claim.
  *

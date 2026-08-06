@@ -27,7 +27,9 @@ const MISSING_ORDER = "XEA-7F3K9QW2TM4BXYZ1";
  * itself is the forgery.
  *
  * The rule is therefore a field, not a judgement:
- *   - email entry may PLACE an order and read back only what it created;
+ *   - email entry authorizes NOTHING: not a price, not an acceptance, and
+ *     not an order (it once authorized placement; the founder's verified-link
+ *     decision withdrew that);
  *   - reading anything that existed BEFORE this session requires the signed
  *     verification link, always;
  *   - an absent provenance counts as the weak one, so a store that cannot

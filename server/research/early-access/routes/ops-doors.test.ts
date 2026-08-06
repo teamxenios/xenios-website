@@ -5,6 +5,11 @@ import type { NextFunction, Request, Response } from "express";
 
 import { registerPrivateEarlyAccessApi } from "../register";
 import {
+  InMemoryEarlyAccessCustomerRepository,
+  createEarlyAccessCustomer,
+  transitionEarlyAccessCustomer,
+} from "../identity/early-access-customer";
+import {
   createEarlyAccessSessionIdReader,
   type PrivateAccessRouteDependencies,
 } from "../private-access-routes";
@@ -57,6 +62,67 @@ async function harness() {
     randomToken: () => "unused",
   } as PrivateAccessRouteDependencies);
   return { app, readSessionId };
+}
+
+const ROSTER_EMAIL = "roster@example.invalid";
+
+/**
+ * The same app, plus ONE customer on the roster in a chosen status.
+ *
+ * The admin door creates and approves in a single act, so it cannot produce
+ * an INVITED, SUSPENDED or REVOKED customer. The roster is therefore seeded
+ * directly, which is also how a real deployment reaches those states: through
+ * a transition recorded against an existing customer.
+ */
+async function harnessWithRoster(
+  status: "INVITED" | "APPROVED" | "SUSPENDED" | "REVOKED",
+) {
+  const customers = new InMemoryEarlyAccessCustomerRepository();
+  const created = createEarlyAccessCustomer({
+    id: "cus_roster",
+    email: ROSTER_EMAIL,
+    legalName: "Roster Customer",
+    phone: "+1 555 0144",
+    now: "2026-08-04T12:00:00.000Z",
+  });
+  if (!created.ok) throw new Error("roster fixture invalid");
+
+  let record = created.value;
+  // INVITED is the created state, so it needs no transition. Every other
+  // status is reached the way the domain reaches it, through APPROVED.
+  for (const to of status === "INVITED" ? [] : (["APPROVED", status] as const)) {
+    if (to === "APPROVED" && record.status === "APPROVED") continue;
+    const moved = transitionEarlyAccessCustomer({
+      customer: record,
+      to,
+      by: "Samuel Boadu",
+      reason: `Roster fixture: ${to}`,
+      now: "2026-08-04T12:30:00.000Z",
+    });
+    if (!moved.ok) throw new Error(`roster transition to ${to} refused`);
+    record = moved.value;
+  }
+  expect(record.status).toBe(status);
+  await customers.insert(record);
+
+  const app = express();
+  app.use(express.json());
+  const unit = cleanUnit();
+  registerPrivateEarlyAccessApi(app, {
+    config: EARLY_ACCESS_TEST_CONFIG,
+    catalog: catalogOf([unit]),
+    releases: await approvedLedgerFor(unit),
+    customers,
+    requireAdmin: testAdminGuard,
+    agreements: new StubAgreementGate(true),
+    suppliers: new StubSupplierDirectory(SUPPLIER_ASSIGNMENT),
+    shipping: new StubShippingPolicy(true),
+    referrals: new StubReferralResolver(null),
+    orderNumber: sequentialOrderNumbers(),
+    proofId: sequentialProofIds(),
+    now: () => NOW_MS,
+  } as never);
+  return { app, customers };
 }
 
 async function openSession(app: express.Express): Promise<string> {
@@ -174,6 +240,72 @@ describe("the manual operations doors, end to end through the real registration"
       "/api/admin/research/early-access/verification-requests",
     );
     expect(queue.body.requests).toHaveLength(0);
+  });
+
+  it("mints NOTHING for an email that names a customer who is not APPROVED", async () => {
+    // THE UNCOVERED BRANCH. The request route checks two things about the
+    // email it was given: that it names a customer at all, and that the
+    // customer is APPROVED. Only the first had a test, because the existing
+    // one uses an address nobody holds, so the handler short-circuits before
+    // the status is ever read. Deleting the approval check therefore minted a
+    // real, session-bound verification token for a REVOKED or SUSPENDED
+    // customer and the whole suite stayed green.
+    //
+    // A revoked customer is somebody whose access was deliberately withdrawn.
+    // Minting them a link is the one mistake that hands access back.
+    for (const status of ["INVITED", "SUSPENDED", "REVOKED"] as const) {
+      const { app } = await harnessWithRoster(status);
+      const cookie = await openSession(app);
+
+      const requested = await request(app)
+        .post("/api/research/early-access/verification/request")
+        .set("Cookie", cookie)
+        .send({ email: ROSTER_EMAIL });
+      expect(requested.status).toBe(202);
+
+      const queue = await request(app).get(
+        "/api/admin/research/early-access/verification-requests",
+      );
+      expect(queue.body.requests, `a ${status} customer was sent a link`).toHaveLength(0);
+    }
+  });
+
+  it("answers a non-approved email BYTE-IDENTICALLY to an unknown one", async () => {
+    // The non-enumeration property, stated as a comparison rather than as two
+    // separate 202s. If the two answers ever diverge, the endpoint becomes a
+    // way to ask which addresses are on the roster and in what state.
+    const { app } = await harnessWithRoster("REVOKED");
+    const cookie = await openSession(app);
+
+    const known = await request(app)
+      .post("/api/research/early-access/verification/request")
+      .set("Cookie", cookie)
+      .send({ email: ROSTER_EMAIL });
+    const unknown = await request(app)
+      .post("/api/research/early-access/verification/request")
+      .set("Cookie", cookie)
+      .send({ email: "nobody@example.invalid" });
+
+    expect(known.status).toBe(unknown.status);
+    expect(known.body).toEqual(unknown.body);
+  });
+
+  it("mints for the SAME email once the customer is APPROVED", async () => {
+    // The control. Without it every assertion above would also pass against a
+    // route that had simply stopped minting for anybody.
+    const { app } = await harnessWithRoster("APPROVED");
+    const cookie = await openSession(app);
+
+    const requested = await request(app)
+      .post("/api/research/early-access/verification/request")
+      .set("Cookie", cookie)
+      .send({ email: ROSTER_EMAIL });
+    expect(requested.status).toBe(202);
+
+    const queue = await request(app).get(
+      "/api/admin/research/early-access/verification-requests",
+    );
+    expect(queue.body.requests).toHaveLength(1);
   });
 
   it("records a supplier confirmation and a hold through the admin doors, actor from the guard", async () => {

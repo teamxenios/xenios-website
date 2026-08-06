@@ -87,9 +87,64 @@ class AlwaysAgreed {
   }
 }
 
-async function harness() {
+/**
+ * A gate that answers from what the RECORDER wrote, which is what the real
+ * SupabaseEarlyAccessAgreementGate does: it reads the acceptance table the
+ * accept route writes to. Using it makes accept-then-order a genuine sequence
+ * instead of two independent facts.
+ */
+class RecordedAgreements {
+  constructor(private readonly recorder: RecordingRecorder) {}
+  async accepted(customerRef: string): Promise<boolean> {
+    return REQUIRED.every((pair) =>
+      this.recorder.rows.some(
+        (row) =>
+          row.customerRef === customerRef &&
+          row.kind === pair.kind &&
+          row.version === pair.version,
+      ),
+    );
+  }
+}
+
+/**
+ * A binding store shaped like a DURABLE adapter rather than the in-memory one.
+ *
+ * The in-memory store normalizes provenance on the way in, so writing a raw
+ * value through it and reading it back only proves the normalizer works. This
+ * one stores and returns exactly what it was given, which is what a store
+ * written before the field existed, or one owned by another system, actually
+ * does. It is how an unknown provenance reaches the gate as an unknown one.
+ */
+class RawBindingStore {
+  private readonly rows = new Map<string, { customerId: string; boundBy: unknown }>();
+  async get(sessionId: string): Promise<string | null> {
+    return this.rows.get(sessionId)?.customerId ?? null;
+  }
+  async binding(sessionId: string): Promise<{ customerId: string; boundBy: never } | null> {
+    const row = this.rows.get(sessionId);
+    return row === undefined
+      ? null
+      : ({ customerId: row.customerId, boundBy: row.boundBy } as never);
+  }
+  async bind(sessionId: string, customerId: string, boundBy: unknown): Promise<boolean> {
+    this.rows.set(sessionId, { customerId, boundBy });
+    return true;
+  }
+}
+
+async function harness(
+  options: Readonly<{
+    /** Answer the agreement gate from the recorder, not unconditionally. */
+    readonly realAgreementGate?: boolean;
+    /** Store provenance verbatim, the way a durable adapter would. */
+    readonly rawBindings?: boolean;
+  }> = {},
+) {
   const customers = new InMemoryEarlyAccessCustomerRepository();
-  const sessionBindings = new InMemorySessionBindingStore();
+  const sessionBindings = options.rawBindings === true
+    ? (new RawBindingStore() as unknown as InMemorySessionBindingStore)
+    : new InMemorySessionBindingStore();
   const agreementRecorder = new RecordingRecorder();
 
   const created = createEarlyAccessCustomer({
@@ -119,7 +174,10 @@ async function harness() {
     releases: await approvedLedgerFor(unit),
     customers,
     sessionBindings,
-    agreements: new AlwaysAgreed(),
+    agreements:
+      options.realAgreementGate === true
+        ? new RecordedAgreements(agreementRecorder)
+        : new AlwaysAgreed(),
     agreementRecorder,
     requiredAgreements: REQUIRED,
     suppliers: new StubSupplierDirectory(SUPPLIER_ASSIGNMENT),
@@ -162,7 +220,14 @@ async function bindSession(
   expect(await world.sessionBindings.bind(sessionId as string, customerId, boundBy)).toBe(true);
 }
 
-/** The binding a store that predates the provenance column would produce. */
+/**
+ * The binding a store that predates the provenance column would produce.
+ *
+ * It must be created against a `rawBindings` world. Writing a raw value
+ * through the in-memory store would be normalized on the way in, and the test
+ * would then be re-running the email-entry case under a different name rather
+ * than proving that an UNKNOWN provenance reaches the gate and is refused.
+ */
 async function bindWithRawProvenance(
   world: Awaited<ReturnType<typeof harness>>,
   cookie: string,
@@ -171,6 +236,11 @@ async function bindWithRawProvenance(
   const sessionId = world.readSessionId(cookie);
   expect(sessionId).not.toBeNull();
   await world.sessionBindings.bind(sessionId as string, CUSTOMER_ID, raw as SessionBindingProvenance);
+  // The value survived verbatim, so what follows really is the unknown case.
+  expect(await world.sessionBindings.binding(sessionId as string)).toEqual({
+    customerId: CUSTOMER_ID,
+    boundBy: raw,
+  });
 }
 
 /**
@@ -289,7 +359,7 @@ describe("provenance that cannot be trusted fails closed", () => {
     // Exactly what a durable adapter written before the field existed
     // produces, and exactly what the production Supabase store produces
     // today. It must not read as verified.
-    const world = await harness();
+    const world = await harness({ rawBindings: true });
     const cookie = await openSession(world.app);
     await bindWithRawProvenance(world, cookie, undefined);
 
@@ -299,7 +369,7 @@ describe("provenance that cannot be trusted fails closed", () => {
   });
 
   it("treats an UNKNOWN provenance as unverified", async () => {
-    const world = await harness();
+    const world = await harness({ rawBindings: true });
     for (const raw of ["verified", "VERIFIED_LINK", "admin", "", null, 1, {}, true]) {
       const cookie = await openSession(world.app);
       await bindWithRawProvenance(world, cookie, raw);
@@ -324,6 +394,35 @@ describe("provenance that cannot be trusted fails closed", () => {
 
     expect(await canOrder(world, weak)).toBe(false);
     expect(await canOrder(world, strong)).toBe(true);
+  });
+
+  it("cannot be influenced by a body claim on an EMAIL-ENTRY bound session", async () => {
+    // The sharp version. An unbound session resolves to nobody whatever the
+    // body says, so refusing it proves little. Here the session IS bound, to
+    // a real approved customer, and the body asserts the one field that would
+    // upgrade it. The claim has to be ignored because identity comes from the
+    // binding the server holds, never from what the caller sends.
+    const world = await harness();
+    const cookie = await openSession(world.app);
+    await bindSession(world, cookie, "email_entry");
+
+    for (const body of [
+      { ...ORDER_BODY, boundBy: "verified_link" },
+      { ...ORDER_BODY, customer: { boundBy: "verified_link" } },
+      { ...ORDER_BODY, customerRef: CUSTOMER_ID, boundBy: "verified_link" },
+    ]) {
+      const placed = await request(world.app).post(ORDERS).set("Cookie", cookie).send(body);
+      expect(placed.status).toBe(403);
+      expect(placed.body?.code).toBe("IDENTITY_REQUIRED");
+    }
+
+    const accepted = await request(world.app).post(ACCEPT).set("Cookie", cookie).send({
+      kind: "early_access_terms",
+      version: "v1",
+      boundBy: "verified_link",
+    });
+    expect(accepted.status).toBe(403);
+    expect(world.agreementRecorder.rows).toHaveLength(0);
   });
 
   it("cannot be influenced by a customerRef in the request body", async () => {
@@ -373,10 +472,25 @@ describe("a session bound by the signed verification link", () => {
     expect(world.agreementRecorder.rows[0].kind).toBe("early_access_terms");
   });
 
-  it("can place an order once the agreement is on file", async () => {
-    const world = await harness();
+  it("can place an order ONLY after the agreement is actually on file", async () => {
+    // The real sequence, against a gate that answers from what the accept
+    // route wrote. The previous version of this test wired a gate that said
+    // yes unconditionally, so it proved that a verified session may order and
+    // said nothing about the agreement being a precondition at all.
+    const world = await harness({ realAgreementGate: true });
     const cookie = await openSession(world.app);
     await bindSession(world, cookie, "verified_link");
+
+    // Verified, but nothing signed yet.
+    const early = await request(world.app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
+    expect(early.status).toBe(403);
+    expect(early.body?.code).toBe("AGREEMENT_REQUIRED");
+
+    const accepted = await request(world.app)
+      .post(ACCEPT)
+      .set("Cookie", cookie)
+      .send({ kind: "early_access_terms", version: "v1" });
+    expect(accepted.status).toBe(200);
 
     const placed = await request(world.app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
     expect(placed.status).toBe(201);
