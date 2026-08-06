@@ -124,3 +124,23 @@ agreement route · admin Product Control.
   wrong-price attempt.
 - Terms or Privacy presented as accepted legal text.
 - New console errors, or internal blocker vocabulary on a customer surface.
+
+---
+
+## B5a. Double-accept, added after a release-blocking defect
+
+This step exists because a real defect survived unit review: the second
+acceptance returned **502** while a stub-backed test asserted 200. A browser
+double-click would have caught it in seconds.
+
+| # | step | expected |
+|---|---|---|
+| B5a-1 | Accept, then immediately accept again (double-click the control) | **no error surface**; the customer sees success both times |
+| B5a-2 | Accept, reload, accept again | same |
+| B5a-3 | Network tab, second call | **200**, outcome distinguishable from the first (`ALREADY_RECORDED`) |
+| B5a-4 | After both | **exactly one** acceptance row, confirmed by the production SQL |
+| B5a-5 | Continuation | unlocked after the first success and still unlocked after the second |
+
+**A 502 anywhere in B5a is a CHANGES_REQUIRED**, not a cosmetic issue: it tells a
+customer their acceptance failed when it succeeded, and they will reasonably
+believe they have not agreed.

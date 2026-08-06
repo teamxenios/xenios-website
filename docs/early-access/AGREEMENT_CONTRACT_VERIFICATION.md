@@ -230,3 +230,54 @@ On a successor SHA from FABLE-RM: inspect that exact SHA, review every changed
 file, run only the focused agreement and order-gate tests, return **ACCEPT** or
 **CHANGES_REQUIRED** with reproductions. **This lane does not edit the
 candidate.** A reviewer who repairs what they review has reviewed nothing.
+
+---
+
+# ADDENDUM: the accepted repair contract
+
+Defect accepted as release-blocking. The repaired server slice must satisfy all
+of the following, and the review will check each one against the exact SHA.
+
+| condition | required response |
+|---|---|
+| first acceptance | **200 `RECORDED`** |
+| duplicate identical acceptance | **200 `ALREADY_RECORDED`** |
+| genuine persistence failure | **502** |
+
+Plus, unchanged from the current slice and re-verified rather than assumed:
+
+- exactly one acceptance row per `(customer_ref, kind, version)`
+- **no migration change** — the RPC and table are already correct; the defect is
+  entirely in how the caller reads a `false`
+- session identity preserved: `customerRef` only from the resolved session
+- server-authored `acceptedAt`
+- server-authored `evidence`
+- order gate ordering unchanged: session -> shape -> identity -> agreement
+
+## Why "no migration change" is the right call
+
+The RPC's `false` on `unique_violation` is a **correct and useful** answer: it
+distinguishes "inserted" from "already there" without raising. The defect is that
+one boolean was carrying three outcomes and the caller collapsed two of them into
+failure. Repair belongs in the recorder and the route, not the database. Any
+successor that alters the migration to "fix" this should be questioned: it would
+change a working append-only guarantee to paper over a caller bug.
+
+## What the idempotency test must now do
+
+The current test cannot fail, because its stub returns `true` on every call. The
+repaired test must exercise **the real false-on-duplicate contract**: a recorder
+that answers `true` then `false`, asserting **200 both times** with distinct
+outcome codes, and a separate recorder that signals genuine failure asserting
+**502**. If the repaired test still passes with a stub that always returns
+`true`, the defect is not fixed, only hidden.
+
+## Comment corrections required
+
+- `agreement-routes.ts` — remove or correct *"The RPC upserts on (customer_ref,
+  kind, version)"*. It does not upsert.
+- `agreement-routes.test.ts` — the row-uniqueness comment is true about the row
+  and silent about the return value, which is what the handler branches on.
+- `register.ts` — *"neither is read from the body, where a caller could write
+  anything"* is narrow: `x-request-id` is a caller-writable header. Either bound
+  the value or state the limit accurately.
