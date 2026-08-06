@@ -188,4 +188,80 @@ describe("member catalog experience", () => {
     expect(html).not.toContain("overflow-x:scroll");
     expect(html).toContain('aria-live="polite"');
   });
+
+  it("loads signed media eagerly, collapses a failure, and recovers on a refreshed href", () => {
+    // Signed hrefs expire five minutes after the catalog fetch that minted
+    // them, and the catalog is fetched once per visit. Deferring the request
+    // (loading="lazy") past that window produced the browser's broken-image
+    // icon on approved products, while public media never expires and may
+    // stay lazy.
+    const signed: MemberCatalog = {
+      ...catalog,
+      items: catalog.items.map((item) =>
+        item.media === null
+          ? item
+          : {
+              ...item,
+              media: {
+                ...item.media,
+                policy: "xenios_signed_storage_v1" as const,
+                expiresAt: "2026-07-26T22:05:00.000Z",
+              },
+            },
+      ),
+    };
+    const view = (() => {
+      host = document.createElement("div");
+      document.body.append(host);
+      root = createRoot(host);
+      act(() => root!.render(<MemberCatalogExperience catalog={signed} />));
+      return host;
+    })();
+
+    const image = view.querySelector<HTMLImageElement>(
+      '[data-testid="member-catalog-card-product-a"] img',
+    )!;
+    expect(image).not.toBeNull();
+    expect(image.getAttribute("loading")).toBe("eager");
+
+    act(() => {
+      image.dispatchEvent(new Event("error"));
+    });
+    // The failed image is gone entirely; the card still presents its facts,
+    // exactly like a product that never had media.
+    const card = view.querySelector('[data-testid="member-catalog-card-product-a"]')!;
+    expect(card.querySelector("img")).toBeNull();
+    expect(card.textContent).toContain("Alpha Research");
+    expect(card.textContent).toContain("$149.00");
+
+    const refreshed: MemberCatalog = {
+      ...signed,
+      items: signed.items.map((item) =>
+        item.media === null
+          ? item
+          : {
+              ...item,
+              media: {
+                ...item.media,
+                href: `${item.media.href}?token=refreshed`,
+              },
+            },
+      ),
+    };
+    act(() => root!.render(<MemberCatalogExperience catalog={refreshed} />));
+    const refreshedImage = view.querySelector<HTMLImageElement>(
+      '[data-testid="member-catalog-card-product-a"] img',
+    )!;
+    expect(refreshedImage).not.toBeNull();
+    expect(refreshedImage.getAttribute("src")).toContain("token=refreshed");
+    expect(refreshedImage.getAttribute("loading")).toBe("eager");
+  });
+
+  it("keeps lazy loading for public media, which never expires", () => {
+    const view = mount();
+    const image = view.querySelector<HTMLImageElement>(
+      '[data-testid="member-catalog-card-product-a"] img',
+    )!;
+    expect(image.getAttribute("loading")).toBe("lazy");
+  });
 });
