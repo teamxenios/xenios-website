@@ -87,7 +87,11 @@ export class SupabaseEarlyAccessAgreementRecorder {
     readonly version: string;
     readonly acceptedAt: string;
     readonly evidence: Readonly<Record<string, unknown>>;
-  }): Promise<boolean> {
+  }): Promise<"recorded" | "already_on_file" | "failed"> {
+    // The RPC returns true when it inserted and false when it caught
+    // `unique_violation`, which means the acceptance was ALREADY on file. Both
+    // are good outcomes. A genuine fault throws out of runEarlyAccessCall and
+    // is the only thing that reports failure.
     const raw = await runEarlyAccessCall(this.query, {
       fn: RPC.recordAgreement,
       args: {
@@ -98,7 +102,9 @@ export class SupabaseEarlyAccessAgreementRecorder {
         p_evidence: input.evidence,
       },
     });
-    return raw === true;
+    if (raw === true) return "recorded";
+    if (raw === false) return "already_on_file";
+    return "failed";
   }
 }
 

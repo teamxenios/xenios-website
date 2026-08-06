@@ -29,13 +29,27 @@ type Recorded = {
   evidence: Record<string, unknown>;
 };
 
-function recorder(answer = true): EarlyAccessAgreementRecorder & { rows: Recorded[] } {
+/**
+ * A recorder shaped like the real RPC: the FIRST write of a pair reports
+ * `recorded`, every repeat reports `already_on_file`, and a fault reports
+ * `failed`. The RPC catches unique_violation and returns false for a duplicate,
+ * so a recorder that answered `failed` on the second call would be modelling a
+ * bug rather than the database.
+ */
+function recorder(
+  mode: "real" | "broken" = "real",
+): EarlyAccessAgreementRecorder & { rows: Recorded[] } {
   const rows: Recorded[] = [];
+  const seen = new Set<string>();
   return {
     rows,
     async record(input) {
+      if (mode === "broken") return "failed";
       rows.push({ ...input, evidence: { ...input.evidence } });
-      return answer;
+      const key = `${input.customerRef}|${input.kind}|${input.version}`;
+      if (seen.has(key)) return "already_on_file";
+      seen.add(key);
+      return "recorded";
     },
   };
 }
@@ -90,6 +104,7 @@ describe("what it will record", () => {
       kind: "early_access_terms",
       version: "v1",
       acceptedAt: "2026-08-05T20:00:00.000Z",
+      alreadyAccepted: false,
     });
     expect(store.rows).toHaveLength(1);
     expect(store.rows[0].customerRef).toBe(CUSTOMER_REF);
@@ -140,8 +155,13 @@ describe("what it will record", () => {
     await accept({ cookieHeader: "ea=x", body }, first.port);
     await accept({ cookieHeader: "ea=x", body }, second.port);
 
+    // The second call must NOT read as a failure. The RPC reports a duplicate
+    // by returning false, and mapping that to an error would tell an accepted
+    // customer they are not accepted.
     expect(first.seen.code).toBe(200);
     expect(second.seen.code).toBe(200);
+    expect((first.seen.body as { alreadyAccepted: boolean }).alreadyAccepted).toBe(false);
+    expect((second.seen.body as { alreadyAccepted: boolean }).alreadyAccepted).toBe(true);
     // Both calls carry identical arguments, so the RPC's own
     // (customer_ref, kind, version) uniqueness makes them one row. The handler
     // keeps no memory of its own, which is why a restart cannot change this.
@@ -207,7 +227,7 @@ describe("what it will refuse", () => {
   });
 
   it("reports a failed write rather than claiming an acceptance", async () => {
-    const accept = route({ recorder: recorder(false) });
+    const accept = route({ recorder: recorder("broken") });
     const { port, seen } = response();
 
     await accept(
@@ -229,6 +249,34 @@ describe("what it will refuse", () => {
     );
 
     expect(seen.code).toBe(502);
+  });
+});
+
+describe("one customer cannot sign for another", () => {
+  it("records against the SESSION customer, whatever the body claims", async () => {
+    // The verification lane's cross-customer case. It is structurally
+    // impossible rather than merely checked: the customerRef the recorder
+    // receives comes from identity.resolve, and the body is never consulted for
+    // it, so customer A accepting can only ever write A's row.
+    const store = recorder();
+    const accept = route({ recorder: store });
+    const { port } = response();
+
+    await accept(
+      {
+        cookieHeader: "ea=a",
+        body: {
+          kind: "early_access_terms",
+          version: "v1",
+          customerRef: "eac_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        },
+      },
+      port,
+    );
+
+    expect(store.rows).toHaveLength(1);
+    expect(store.rows[0].customerRef).toBe(CUSTOMER_REF);
+    expect(store.rows.some((row) => row.customerRef.includes("bbbb"))).toBe(false);
   });
 });
 

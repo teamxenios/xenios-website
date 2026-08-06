@@ -50,6 +50,19 @@ export type EarlyAccessAcceptanceEvidence = Readonly<{
   requestId: string | null;
 }>;
 
+/**
+ * What a write attempt meant.
+ *
+ * The RPC returns `true` when it inserted and `false` when the row was already
+ * there, because it catches `unique_violation` and reports it. Those are two
+ * different facts with the SAME good outcome: the acceptance is on file. A real
+ * failure throws instead, and only that is an error. Collapsing "already on
+ * file" into failure is the bug this type exists to make impossible: a customer
+ * who double-clicks, or who accepts again after a refresh, is accepted, and
+ * telling them otherwise would be false.
+ */
+export type EarlyAccessRecordOutcome = "recorded" | "already_on_file" | "failed";
+
 export interface EarlyAccessAgreementRecorder {
   record(input: {
     readonly customerRef: string;
@@ -57,13 +70,13 @@ export interface EarlyAccessAgreementRecorder {
     readonly version: string;
     readonly acceptedAt: string;
     readonly evidence: EarlyAccessAcceptanceEvidence;
-  }): Promise<boolean>;
+  }): Promise<EarlyAccessRecordOutcome>;
 }
 
 /** Records nothing, and says so. An unwired deployment sells nothing. */
 export class NoEarlyAccessAgreementRecorder implements EarlyAccessAgreementRecorder {
-  async record(): Promise<boolean> {
-    return false;
+  async record(): Promise<EarlyAccessRecordOutcome> {
+    return "failed";
   }
 }
 
@@ -165,7 +178,7 @@ export function createEarlyAccessAgreementAcceptRoute(
     // The RPC upserts on (customer_ref, kind, version), which the table's own
     // unique constraint enforces, so a second acceptance of the same pair is
     // the same row. Idempotency is the database's, not this handler's memory.
-    const recorded = await deps.recorder.record({
+    const outcome = await deps.recorder.record({
       customerRef: customer.customerRef,
       kind,
       version,
@@ -176,11 +189,22 @@ export function createEarlyAccessAgreementAcceptRoute(
         requestId: request.requestId ?? null,
       }),
     });
-    if (!recorded) {
+    if (outcome === "failed") {
       refuse(response, "NOT_RECORDED");
       return;
     }
 
-    response.status(200).json({ ok: true, kind, version, acceptedAt });
+    // `already_on_file` is a success. The customer's acceptance is recorded,
+    // which is the only thing the order gate will ask about, and the FIRST
+    // acceptedAt stands rather than being overwritten by this call. Reporting
+    // it distinctly lets the client show "already accepted" without a second
+    // request, and keeps a double-click from looking like a fault.
+    response.status(200).json({
+      ok: true,
+      kind,
+      version,
+      acceptedAt,
+      alreadyAccepted: outcome === "already_on_file",
+    });
   };
 }
