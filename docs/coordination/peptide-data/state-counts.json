@@ -1,0 +1,58 @@
+{
+  "blockerCounts": {
+    "care_pathway_only": 2,
+    "checkout_source_no": 86,
+    "coa_pending": 54,
+    "coa_supplier_confirmation_pending": 32,
+    "cold_chain_review_pending": 86,
+    "component_order_confirmation_unresolved": 1,
+    "documentation_coa_lot_identity_pending": 44,
+    "documentation_coa_lot_identity_strength_pending": 10,
+    "endotoxin_status_unverified": 86,
+    "exact_product_image_pending": 86,
+    "expiration_unconfirmed": 86,
+    "fulfillment_unconfirmed": 86,
+    "identity_documentation_pending": 12,
+    "identity_strength_documentation_pending": 4,
+    "identity_test_unverified": 86,
+    "inventory_unconfirmed": 86,
+    "lot_missing": 86,
+    "planned_price_missing": 10,
+    "presentation_supplier_confirmation_pending": 39,
+    "price_approval_pending": 76,
+    "purity_test_unverified": 86,
+    "research_offer_unavailable": 18,
+    "shipping_requirements_pending": 86,
+    "sterility_status_unverified": 86,
+    "strength_confirmation_unresolved": 10,
+    "supplier_fill_required": 86,
+    "supplier_product_control_documents_pending": 20,
+    "supplier_product_control_review_pending": 32,
+    "unresolved_dispute_confirmation": 86
+  },
+  "checkoutEligibleRows": 0,
+  "metadata": {
+    "datasetSha256": "61ce0fdaa1a2417b5478aed879202a80c1c5c41e4c2d4cc2cc5e5d5ac9bd5944",
+    "rowCount": 86,
+    "schemaVersion": "xenios.peptide-product-control-candidate.v1",
+    "sourceSheet": "04 Peptides & Research",
+    "sourceWorkbookSha256": "df317a28374c9e194f3379a2b276c8533016dc84aa906af9d48b49db46bf53d5"
+  },
+  "plannedPriceRows": 76,
+  "priceMissingRows": 10,
+  "productCount": 61,
+  "rejectedRowCount": 0,
+  "truthStateCounts": {
+    "care_only": 2,
+    "held": 1,
+    "pending_documentation": 15,
+    "request_access": 52,
+    "unavailable": 16
+  },
+  "variantCount": 86,
+  "websiteActionCounts": {
+    "HELD_PENDING_GATES": 16,
+    "REQUEST_ACCESS": 52,
+    "UNAVAILABLE": 18
+  }
+}
