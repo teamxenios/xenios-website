@@ -57,7 +57,6 @@ function card(overrides: Partial<EarlyAccessCardProduct> = {}, quantity: 1 | 2 |
       quantity={quantity}
       onQuantityChange={() => {}}
       onSelect={() => {}}
-      fulfillmentTargetCopy={FULFILLMENT}
     />,
   );
 }
@@ -96,10 +95,13 @@ describe("early access product card", () => {
     }
   });
 
-  it("renders the fulfillment target exactly as supplied, never a paraphrase", () => {
+  it("does NOT repeat the fulfillment sentence, which now appears once per catalogue", () => {
+    // It used to render on every card, so a 22-product shelf said it 22 times.
+    // The sentence is unchanged and still server-supplied; it moved up to the
+    // catalogue section. The card asserting its ABSENCE is what keeps it from
+    // silently coming back.
     const el = card();
-    expect(el.textContent).toContain(FULFILLMENT);
-    // It is a target. The card must not turn it into a promise.
+    expect(el.textContent).not.toContain(FULFILLMENT);
     const text = (el.textContent ?? "").toLowerCase();
     expect(text).not.toContain("guarantee");
     expect(text).not.toContain("will arrive");
@@ -168,7 +170,6 @@ describe("early access product card", () => {
         quantity={1}
         onQuantityChange={onQuantityChange}
         onSelect={onSelect}
-        fulfillmentTargetCopy={FULFILLMENT}
       />,
     );
 
@@ -201,14 +202,21 @@ describe("early access product card", () => {
     ).toBeGreaterThan(0);
   });
 
-  it("shows one placeholder and no product photography", () => {
+  it("shows no product photography, and no longer reserves a square for it", () => {
     // No image is safer than a wrong one: a vial photograph at the wrong
-    // strength misrepresents the product.
+    // strength misrepresents the product. That rule is unchanged and is the
+    // half of this test that matters.
     const el = card();
     expect(el.querySelectorAll("img")).toHaveLength(0);
-    const media = el.querySelector("[data-testid='early-access-product-card-media']");
-    expect(media).not.toBeNull();
-    expect(media?.getAttribute("aria-hidden")).toBe("true");
+    expect(el.querySelectorAll("picture")).toHaveLength(0);
+    expect(el.querySelectorAll("svg")).toHaveLength(0);
+    // The empty aspect-square placeholder is gone. It displayed nothing and was
+    // the largest single contributor to card height, which is what pushed a
+    // 22-product catalogue past the fold. Asserting its ABSENCE keeps a
+    // decorative box from creeping back in.
+    expect(
+      el.querySelector("[data-testid='early-access-product-card-media']"),
+    ).toBeNull();
   });
 });
 
@@ -231,7 +239,6 @@ describe("a founder-held row, which is how Cagrilintide arrives", () => {
         quantity={null}
         onQuantityChange={() => {}}
         onSelect={() => {}}
-        fulfillmentTargetCopy={FULFILLMENT}
       />,
     );
   }

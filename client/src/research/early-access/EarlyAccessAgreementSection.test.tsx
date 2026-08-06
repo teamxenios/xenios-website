@@ -449,3 +449,44 @@ describe("signed in, but not verified against an approved account", () => {
     expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).toBeNull();
   });
 });
+
+describe("once accepted, the policy collapses instead of burying the catalogue", () => {
+  it("does not render the policy expanded by default", async () => {
+    // Before acceptance the policy IS the page. After it, the page is the
+    // catalogue, and re-rendering the whole document every visit pushed the
+    // products below the fold for a customer who had already agreed.
+    const host = await mount({ state: { kind: "accepted" } });
+    const disclosure = host.querySelector(
+      "[data-testid='early-access-agreement-disclosure']",
+    ) as HTMLDetailsElement | null;
+    expect(disclosure).not.toBeNull();
+    expect(disclosure?.open).toBe(false);
+  });
+
+  it("still offers the exact policy through View policy, word for word", async () => {
+    // Collapsed is not the same as gone. A customer who agreed to something
+    // must still be able to read precisely what they agreed to.
+    const host = await mount({ state: { kind: "accepted" } });
+    expect(
+      host.querySelector("[data-testid='early-access-agreement-view-policy']")?.textContent,
+    ).toContain("View policy");
+
+    const policy = host.querySelector("[data-testid='early-access-agreement-policy']");
+    expect(policy).not.toBeNull();
+    // Same section count as the served document, not a summary of it.
+    expect(policy?.getAttribute("data-sections")).toBe(String(POLICY.policy.sections.length));
+    for (const section of POLICY.policy.sections) {
+      for (const paragraph of section.paragraphs) {
+        expect(policy?.textContent).toContain(paragraph);
+      }
+    }
+  });
+
+  it("still shows the whole policy expanded BEFORE acceptance", async () => {
+    const host = await mount({ state: { kind: "required" } });
+    expect(
+      host.querySelector("[data-testid='early-access-agreement-disclosure']"),
+    ).toBeNull();
+    expect(host.querySelector("[data-testid='early-access-agreement-policy']")).not.toBeNull();
+  });
+});

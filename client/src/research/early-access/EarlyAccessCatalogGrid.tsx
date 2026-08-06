@@ -28,8 +28,8 @@ export interface EarlyAccessCatalogGridProps {
   quantities: Readonly<Record<string, EarlyAccessQuantity>>;
   onQuantityChange(variantId: string, quantity: EarlyAccessQuantity): void;
   onSelect(product: EarlyAccessCardProduct): void;
-  /** Required, no default. See EarlyAccessProductCard for why. */
-  fulfillmentTargetCopy: string;
+  /** Variant ids currently in the selection. */
+  selectedVariantIds?: ReadonlySet<string>;
   testId?: string;
 }
 
@@ -39,7 +39,7 @@ export function EarlyAccessCatalogGrid({
   quantities,
   onQuantityChange,
   onSelect,
-  fulfillmentTargetCopy,
+  selectedVariantIds,
   testId = "early-access-catalog",
 }: EarlyAccessCatalogGridProps) {
   if (products.length === 0) {
@@ -60,7 +60,7 @@ export function EarlyAccessCatalogGrid({
     <section
       data-testid={testId}
       data-row-count={products.length}
-      className="grid min-w-0 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     >
       {products.map((product) => (
         <EarlyAccessProductCard
@@ -70,7 +70,7 @@ export function EarlyAccessCatalogGrid({
           quantity={quantities[product.variantId] ?? null}
           onQuantityChange={(quantity) => onQuantityChange(product.variantId, quantity)}
           onSelect={() => onSelect(product)}
-          fulfillmentTargetCopy={fulfillmentTargetCopy}
+          selected={selectedVariantIds?.has(product.variantId) ?? false}
         />
       ))}
 

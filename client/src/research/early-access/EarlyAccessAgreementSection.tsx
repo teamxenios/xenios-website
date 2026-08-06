@@ -248,33 +248,19 @@ export function EarlyAccessAgreementSection({
 
   const document = policy.policy;
 
-  return (
-    <section
-      aria-labelledby={headingId}
-      className="card min-w-0"
-      data-testid={testId}
-      data-state={accepted ? "accepted" : "ready"}
+  /*
+    The served document, rendered in full and IDENTICALLY in both states. Once
+    accepted it moves inside a disclosure rather than being shortened: a
+    customer who has agreed to something must still be able to read exactly
+    what they agreed to, word for word. Nothing here is rewritten, truncated or
+    summarised, and the same testids resolve open or closed.
+  */
+  const policyBody = (
+    <div
+      className="mt-5 grid gap-5 max-w-[62ch] min-w-0"
+      data-testid={`${testId}-policy`}
+      data-sections={document.sections.length}
     >
-      <p className="mono-label text-ink-mute">Required before ordering</p>
-      <h2 id={headingId} className="body-l font-700 mt-2 text-balance">
-        {document.title}
-      </h2>
-      {document.updated !== "" && (
-        <p className="body-s text-ink-mute mt-1" data-testid={`${testId}-updated`}>
-          Updated {document.updated}
-        </p>
-      )}
-
-      {/*
-        The served document, rendered in full. It is scrollable on a small
-        screen rather than truncated: a policy a customer cannot reach the end
-        of is a policy they were not shown.
-      */}
-      <div
-        className="mt-5 grid gap-5 max-w-[62ch] min-w-0"
-        data-testid={`${testId}-policy`}
-        data-sections={document.sections.length}
-      >
         {document.sections.map((section, index) => (
           <div key={`${section.heading}-${index}`} className="min-w-0">
             {section.heading !== "" && (
@@ -306,13 +292,54 @@ export function EarlyAccessAgreementSection({
             )}
           </div>
         ))}
-      </div>
+    </div>
+  );
+
+  return (
+    <section
+      aria-labelledby={headingId}
+      className="card min-w-0 p-4"
+      data-testid={testId}
+      data-state={accepted ? "accepted" : "ready"}
+    >
+      {accepted ? (
+        /*
+          COLLAPSED. Before acceptance the policy is the page; after it, the
+          page is the catalogue. Re-rendering the whole document on every visit
+          buried the products under a wall of text the customer had already
+          agreed to, so it becomes a line and a disclosure. The agreement is
+          still on file, still stated, and still readable in full.
+        */
+        <details data-testid={`${testId}-disclosure`}>
+          <summary className="body-s cursor-pointer" data-testid={`${testId}-view-policy`}>
+            <span aria-hidden="true">✓</span> {document.title} accepted
+            <span className="text-ink-mute"> · View policy</span>
+          </summary>
+          <h2 id={headingId} className="sr-only">
+            {document.title}
+          </h2>
+          {policyBody}
+        </details>
+      ) : (
+        <>
+          <p className="mono-label text-ink-mute">Required before ordering</p>
+          <h2 id={headingId} className="body-l font-700 mt-2 text-balance">
+            {document.title}
+          </h2>
+          {document.updated !== "" && (
+            <p className="body-s text-ink-mute mt-1" data-testid={`${testId}-updated`}>
+              Updated {document.updated}
+            </p>
+          )}
+          {policyBody}
+        </>
+      )}
 
       {accepted ? (
         <p
           aria-live="polite"
           role="status"
-          className="body-s text-ink-2 mt-6"
+          className="body-s text-ink-2 mt-3"
           data-testid={`${testId}-accepted`}
         >
           You have accepted the Research Use Policy. You can continue to the research catalogue.

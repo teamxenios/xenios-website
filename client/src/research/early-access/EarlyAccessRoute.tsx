@@ -62,6 +62,7 @@ export default function EarlyAccessRoute() {
   // journey must describe the SAME situation the agreement step is describing.
   const [blocked, setBlocked] = useState<"unverified" | "locked" | null>(null);
   const catalogRef = useRef<HTMLDivElement | null>(null);
+  const nextStepsRef = useRef<HTMLDivElement | null>(null);
 
   const readSession = useCallback(async () => {
     try {
@@ -197,33 +198,24 @@ export default function EarlyAccessRoute() {
       )}
 
       {state.kind === "authenticated" && (
-        <section className="container-x" style={{ paddingTop: 72, paddingBottom: 96 }}>
-          <div className="max-w-[720px] min-w-0">
-            <p className="mono-cap text-pulse mb-5">Private Early Access</p>
-            <h1 className="display-s max-w-[26ch]">Welcome to Xenios Research Early Access</h1>
+        <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
+          <div className="max-w-[1280px] min-w-0">
+            {/*
+              A compact masthead. The three-paragraph welcome that used to sit
+              here explained the programme to someone who had already unlocked,
+              read it once, and was now trying to buy. It pushed the catalogue
+              below the fold on every visit, so it is gone rather than
+              shortened: the place to explain the programme is before the
+              password, not after it.
+            */}
+            <p className="mono-cap text-pulse mb-2">Private Early Access</p>
+            <h1 className="display-s max-w-[26ch]">Research Catalogue</h1>
 
-            <div className="mt-8">
+            <div className="mt-4">
               <EarlyAccessStepper
                 steps={EARLY_ACCESS_STEPS}
                 activeIndex={agreed && blocked === null ? EARLY_ACCESS_CATALOG_STEP : EARLY_ACCESS_AGREEMENT_STEP}
               />
-            </div>
-
-            <div className="mt-8 grid gap-4" data-testid="early-access-welcome">
-              <p className="body-m text-ink-2 max-w-[62ch]">
-                You are entering the private first release of Xenios Research.
-              </p>
-              <p className="body-s text-ink-2 max-w-[62ch]">
-                Our complete member platform is being built in parallel into a deeper, more
-                personalized experience. While that experience comes online, Early Access gives
-                approved members a streamlined path to review the current research catalog, complete
-                required verification, place an order, and receive direct support from payment review
-                through fulfillment.
-              </p>
-              <p className="body-s text-ink-2 max-w-[62ch]">
-                This private release is intentionally simple, secure, and concierge-led. We look
-                forward to welcoming you into the full Xenios Research experience as it expands.
-              </p>
             </div>
 
             {/*
@@ -233,7 +225,7 @@ export default function EarlyAccessRoute() {
               gated is the continuation into ordering, because the order route
               refuses with AGREEMENT_REQUIRED until this is on file.
             */}
-            <div className="mt-8" data-testid="early-access-agreement-mount">
+            <div className="mt-5" data-testid="early-access-agreement-mount">
               <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
             </div>
 
@@ -243,13 +235,22 @@ export default function EarlyAccessRoute() {
               target count, and the dropped-row count surfaced rather than
               absorbed. Whatever the server says today is what a customer sees.
             */}
-            <div className="mt-8" data-testid="early-access-catalog-mount" ref={catalogRef} tabIndex={-1}>
+            <div className="mt-5" data-testid="early-access-catalog-mount" ref={catalogRef} tabIndex={-1}>
               <EarlyAccessCatalogSection
                 fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
+                onReview={() => {
+                  nextStepsRef.current?.focus();
+                  nextStepsRef.current?.scrollIntoView({ block: "start" });
+                }}
               />
             </div>
 
-            <div className="card mt-8" data-testid="early-access-next-steps">
+            <div
+              className="card mt-5"
+              data-testid="early-access-next-steps"
+              ref={nextStepsRef}
+              tabIndex={-1}
+            >
               <p className="mono-label text-ink-mute">What happens next</p>
               {agreed ? (
                 <p

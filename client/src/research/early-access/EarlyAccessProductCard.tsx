@@ -57,17 +57,8 @@ export interface EarlyAccessProductCardProps {
   quantity: EarlyAccessQuantity | null;
   onQuantityChange(quantity: EarlyAccessQuantity): void;
   onSelect(): void;
-  /**
-   * The fulfillment target sentence, REQUIRED and with no default on purpose.
-   *
-   * The canonical string lives server-side in ops/manual-action-record.ts and
-   * there is no shared module the browser can import it from yet. A default here
-   * would be a second copy that drifts, and a shortened variant of that sentence
-   * already exists in that module's own test file. Passing it in makes a wrong
-   * sentence a visible decision at the call site rather than a constant nobody
-   * re-reads.
-   */
-  fulfillmentTargetCopy: string;
+  /** True when this unit is in the customer's current selection. */
+  selected?: boolean;
   testId?: string;
 }
 
@@ -96,7 +87,7 @@ export function EarlyAccessProductCard({
   quantity,
   onQuantityChange,
   onSelect,
-  fulfillmentTargetCopy,
+  selected = false,
   testId = "early-access-product-card",
 }: EarlyAccessProductCardProps) {
   const sellable = product.availability !== "TEMPORARILY_HELD";
@@ -105,24 +96,45 @@ export function EarlyAccessProductCard({
     <article
       data-testid={testId}
       data-availability={product.availability}
-      className="grid min-w-0 gap-3"
+      data-selected={selected ? "true" : "false"}
+      className="card grid min-w-0 content-start gap-1.5 p-4"
     >
       {/*
-        One consistent placeholder for every product. No product photography is
-        shown at all, rather than an image that might be the wrong strength or
-        the wrong vial. A wrong image on a research product is worse than none.
+        NO media block. The square placeholder that used to sit here was the
+        single largest contributor to card height, and it showed nothing: no
+        product photography is used at all, because a wrong image on a research
+        product is worse than none. Removing it is the compression; the policy
+        it encoded is unchanged.
       */}
-      <div data-testid={`${testId}-media`} aria-hidden="true" className="aspect-square w-full" />
+      <h3 data-testid={`${testId}-name`} className="body-m font-medium leading-snug">
+        {product.name}
+      </h3>
+      <p data-testid={`${testId}-strength`} className="mono-label text-ink-mute">
+        {product.strength}
+      </p>
 
-      <h3 data-testid={`${testId}-name`}>{product.name}</h3>
-      <p data-testid={`${testId}-strength`}>{product.strength}</p>
-      <p data-testid={`${testId}-description`}>{product.description}</p>
+      {/*
+        Server-supplied, rendered as given, and OMITTED when the server sent
+        nothing. An empty description is left empty rather than filled with an
+        authored sentence: the client states no product fact the server did not.
+      */}
+      {product.description ? (
+        <p
+          data-testid={`${testId}-description`}
+          className="body-xs text-ink-mute line-clamp-2"
+          title={product.description}
+        >
+          {product.description}
+        </p>
+      ) : null}
 
       {product.unitPriceCents === null ? (
         // No price, and no placeholder that could be mistaken for one.
-        <p data-testid={`${testId}-no-price`}>Not available to order</p>
+        <p data-testid={`${testId}-no-price`} className="body-s text-ink-mute mt-1">
+          Not available to order
+        </p>
       ) : (
-        <p data-testid={`${testId}-unit-price`}>
+        <p data-testid={`${testId}-unit-price`} className="body-s mt-1 font-medium">
           {formatUnitPrice(product.unitPriceCents, product.currency)} per unit
         </p>
       )}
@@ -145,33 +157,34 @@ export function EarlyAccessProductCard({
       ) : null}
 
       {/*
-        Names the offer. States no total, because the total is the server's to
-        compute and to state on the order review. Absent on a held row: an
-        invitation to order three units of something nobody may order is an
-        offer we cannot honour.
+        The bundle offer and the fulfillment sentence used to repeat on all 22
+        cards. Both now appear ONCE at catalogue level. Neither was per-product
+        information, so 22 copies added height without adding meaning.
       */}
-      {sellable ? (
-        <p data-testid={`${testId}-savings`}>
-          Order three units as the Research Bundle and save 20% on the bundle.
-        </p>
-      ) : null}
-
-      <p data-testid={`${testId}-availability`}>{AVAILABILITY_COPY[product.availability]}</p>
+      <p
+        data-testid={`${testId}-availability`}
+        className={`body-xs mt-0.5 ${sellable ? "text-ink-mute" : "text-pulse"}`}
+      >
+        {AVAILABILITY_COPY[product.availability]}
+      </p>
 
       {product.availability === "AVAILABILITY_CONFIRMATION_REQUIRED" ? (
-        <p data-testid={`${testId}-availability-detail`}>
+        <p data-testid={`${testId}-availability-detail`} className="body-xs text-ink-mute">
           Our team confirms availability with the supplier before any payment
           instructions are shown.
         </p>
       ) : null}
 
       {sellable ? (
-        <button type="button" data-testid={`${testId}-action`} onClick={onSelect}>
-          {ACTION_COPY[product.availability]}
+        <button
+          type="button"
+          data-testid={`${testId}-action`}
+          onClick={onSelect}
+          className={`btn mt-2 w-full ${selected ? "btn-secondary" : "btn-primary"}`}
+        >
+          {selected ? "Remove" : ACTION_COPY[product.availability]}
         </button>
       ) : null}
-
-      <p data-testid={`${testId}-fulfillment`}>{fulfillmentTargetCopy}</p>
     </article>
   );
 }

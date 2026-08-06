@@ -87,7 +87,6 @@ function grid(rows: EarlyAccessCatalogRowView[], onSelect = vi.fn()) {
       quantities={{}}
       onQuantityChange={() => {}}
       onSelect={onSelect}
-      fulfillmentTargetCopy={FULFILLMENT}
     />,
   );
   return { el, products, dropped, onSelect };

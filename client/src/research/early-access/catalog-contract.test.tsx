@@ -118,7 +118,6 @@ function renderGrid(products: Parameters<typeof EarlyAccessCatalogGrid>[0]["prod
         quantities={{}}
         onQuantityChange={() => {}}
         onSelect={() => {}}
-        fulfillmentTargetCopy={FULFILLMENT}
       />,
     );
   });
