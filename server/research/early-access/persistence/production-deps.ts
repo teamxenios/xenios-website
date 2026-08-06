@@ -36,6 +36,7 @@ import {
 } from "./refusing";
 import { SupabaseEarlyAccessReservationStore } from "./reservation-store";
 import {
+  MigrationTolerantUnitHoldRegistry,
   SupabaseSupplierConfirmationStore,
   SupabaseUnitHoldRegistry,
 } from "./ops-stores";
@@ -222,6 +223,37 @@ export function buildEarlyAccessPersistence(
     suppliers: new SupabaseEarlyAccessSupplierDirectory({ query: run, now: () => Date.now() }),
     shipping: new SupabaseEarlyAccessShippingPolicy(run),
     referrals: new SupabaseEarlyAccessReferralResolver(run),
+    // THE TWO STORES THE PROJECTION READS, AND THE OMISSION THAT HELD THE
+    // WHOLE CATALOGUE.
+    //
+    // These are not commerce ports like the ones above: they are read at
+    // PROJECTION time, by `ProductControlDeclaredFactsReader`, to answer
+    // "has a named human confirmed supply for this exact unit" and "is this
+    // unit under a prohibition". They were the only two options production
+    // never supplied, so `register.ts` took its fallbacks and the live
+    // process asked an EMPTY in-memory store about supply that the database
+    // had recorded 44 times.
+    //
+    // The result was the entire opening set held: an unconfirmed unit carries
+    // a non-waivable supply blocker, so `decideEarlyAccessRelease` refused
+    // before it ever looked at a release, and the customer saw 22 visible, 0
+    // purchasable, 22 held with no price on anything. The releases, the
+    // confirmations, the identity and the agreement were all correct the
+    // whole time; nothing in the process could see two of them.
+    //
+    // Same shape as the founderHeldUnits omission: a seam that exists, is
+    // fully tested, and that the composition root silently never fills. The
+    // regression test beside this file builds the options through THIS
+    // function and asserts both keys are present and durable, so removing
+    // either one is a failing test rather than a dark catalogue.
+    // The hold registry is wrapped, because production proved the RPC it
+    // reads does not exist yet: migration 54 is not applied, and a projection
+    // that throws once per unit turns the whole catalogue into 503. The
+    // wrapper degrades that ONE read to "no durable holds" and warns once;
+    // every other reason a unit is held is untouched, and recording a hold
+    // still throws. When 54 lands it becomes a pass-through.
+    supplierConfirmations: buildEarlyAccessSupplierConfirmationStore(run),
+    holds: new MigrationTolerantUnitHoldRegistry(buildEarlyAccessUnitHoldRegistry(run)),
   };
 
   const required = readRequiredAgreements(env, warnings);
