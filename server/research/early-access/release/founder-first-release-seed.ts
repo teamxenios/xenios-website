@@ -273,6 +273,40 @@ export function resolveFounderFirstReleaseUnits(
   });
 }
 
+/**
+ * The founder-held units, resolved against a live projection.
+ *
+ * WHY THIS EXISTS SEPARATELY FROM THE SEED
+ *
+ * The seed learns which units are held while it is writing releases, and it
+ * runs once, offline. The STOREFRONT needs the same answer on every request,
+ * because under `scope: "released_units"` a held unit survives only when it is
+ * named: it has no release by design, so nothing else keeps it visible. Before
+ * this existed the answer was available only as a return value of a script the
+ * server never runs, which is why production dropped Cagrilintide.
+ *
+ * It is NOT a second source of truth. It reads the same
+ * FOUNDER_COMMERCIAL_HOLDS list and resolves it through the same
+ * `resolveFounderFirstReleaseUnits` matcher the seeds use, so the storefront
+ * and the ledger can never disagree about which unit a name means. Nothing is
+ * restated here: no product id, no variant id, no SKU, no strength, no price.
+ *
+ * A hold that matches no row in the projection yields nothing, which is the
+ * safe direction: it can only fail to keep a row visible, never invent one.
+ */
+export function resolveFounderHeldUnits(
+  rows: readonly EarlyAccessCatalogRow[],
+): readonly Readonly<{ productId: string; variantId: string; sku: string }>[] {
+  const units: Readonly<{ productId: string; variantId: string; sku: string }>[] = [];
+  for (const { input, row } of resolveFounderFirstReleaseUnits(rows).resolved) {
+    if (heldByFounder(input) === null) continue;
+    units.push(
+      Object.freeze({ productId: row.productId, variantId: row.variantId, sku: row.sku }),
+    );
+  }
+  return Object.freeze(units);
+}
+
 export const FOUNDER_FIRST_RELEASE_ID_PREFIX = "rel-first-";
 
 export async function seedFounderFirstRelease(input: {

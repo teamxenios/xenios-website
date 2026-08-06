@@ -13,6 +13,7 @@ import {
   reviewEarlyAccessCatalog,
   type FirstReleaseReview,
 } from "./first-release-review";
+import { resolveFounderHeldUnits } from "./founder-first-release-seed";
 import { buildEarlyAccessStorefront } from "./storefront-view";
 
 // The two routes the bridge needs: what a signed-in customer may see, and how a
@@ -139,13 +140,26 @@ export function createEarlyAccessCatalogRoute(deps: EarlyAccessReleaseRouteDepen
       // The customer sees the units a founder has EVER released, in any
       // status: expired and stale releases stay visible and truthfully held,
       // while units no founder ever put in front of customers are absent.
+      // The founder-held units are DERIVED from the authoritative hold list
+      // against this projection, not supplied by whoever wired the server.
+      //
+      // They used to arrive only as an injected option, and production never
+      // passed one: the composition root had no projection to resolve them
+      // against, so the only caller that ever supplied them was a seeding
+      // script the server does not run. Under "released_units" a held unit has
+      // no release by design, so nothing else kept it visible, and the live
+      // catalogue silently dropped Cagrilintide (21/18/3 instead of 22/18/4).
+      //
+      // Deriving here makes that omission unrepeatable: there is no wiring left
+      // to forget. An explicit list still wins, so existing callers and tests
+      // that name their own units are unchanged.
+      const founderHeldUnits =
+        deps.founderHeldUnits ?? resolveFounderHeldUnits(projection.rows);
       const storefront = buildEarlyAccessStorefront({
         projection,
         releases,
         scope: "released_units",
-        ...(deps.founderHeldUnits === undefined
-          ? {}
-          : { founderHeldUnits: deps.founderHeldUnits }),
+        founderHeldUnits,
       });
 
       send(response, 200, {

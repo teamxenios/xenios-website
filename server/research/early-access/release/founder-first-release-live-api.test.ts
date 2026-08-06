@@ -178,11 +178,39 @@ describe("GET /api/research/early-access/catalog, mounted and live", () => {
     expect(answered.body.ok).toBe(true);
 
     const units = answered.body.units as ReadonlyArray<Record<string, unknown>>;
-    // The customer sees exactly the units the founder released: 14 today,
-    // and 22 the day the 8 gaps gain founder-locked identities.
-    expect(units).toHaveLength(harnessed.outcome.seeded.length);
+    // The customer sees every unit the founder RELEASED, plus every unit the
+    // founder deliberately HELD. The held one has no release by design, so the
+    // catalogue names it explicitly to keep it visible and unsellable; if it
+    // were dropped instead, a customer could not tell it apart from a product
+    // that does not exist. This used to assert seeded.length alone, which was
+    // the shape of the production defect: 21 rows with Cagrilintide missing.
+    expect(units).toHaveLength(
+      harnessed.outcome.seeded.length + harnessed.outcome.founderHeldUnits.length,
+    );
     const pairs = new Set(units.map((unit) => `${unit.canonicalName}|${unit.strength}`));
     expect(pairs.size).toBe(units.length);
+
+    // The founder-held unit is present, carries no amount and no release.
+    const heldSkus = new Set(harnessed.outcome.founderHeldUnits.map((unit) => unit.sku));
+    expect(heldSkus.size).toBeGreaterThan(0);
+    for (const sku of heldSkus) {
+      const held = units.find((unit) => unit.sku === sku);
+      expect(held, `founder-held ${sku} is absent from the served catalogue`).toBeDefined();
+      // Availability is the SUPPLY axis and varies with what this harness has
+      // confirmed; the founder hold is a separate axis and does not. So the
+      // invariants asserted here are the ones the hold itself guarantees: never
+      // sellable, no amount, no release to sell under.
+      expect(held?.availability).not.toBe("AVAILABLE");
+      expect(held?.purchasable).toBe(false);
+      // The exact hold STRING depends on supply too: with no confirmation
+      // recorded, the non-waivable supply blocker is reported first. What never
+      // varies is that a hold exists and no release backs it. The
+      // NO_FOUNDER_RELEASE reason is asserted in opening-set.mounted-route,
+      // where supply is confirmed, which is the production-shaped condition.
+      expect(held?.hold).not.toBeNull();
+      expect(held?.priceCents).toBeNull();
+      expect(held?.releaseId).toBeNull();
+    }
 
     // Price mismatches = 0: every row that shows an amount shows the
     // founder's amount for that exact unit.
@@ -191,6 +219,9 @@ describe("GET /api/research/early-access/catalog, mounted and live", () => {
     );
     let priced = 0;
     for (const unit of units) {
+      // A founder-held unit has no seeded release, so it has no seeded price
+      // either. It is checked above; here it is skipped rather than demanded.
+      if (heldSkus.has(unit.sku as string)) continue;
       const expected = bySku.get(unit.sku as string);
       expect(expected).toBeDefined();
       if (unit.priceCents !== null) {
@@ -219,7 +250,10 @@ describe("GET /api/research/early-access/catalog, mounted and live", () => {
       byState.AVAILABILITY_CONFIRMATION_REQUIRED + byState.TEMPORARILY_HELD,
     ).toBe(units.length);
     for (const unit of units) {
-      if (unit.availability === "TEMPORARILY_HELD") {
+      // A founder-held unit shows no amount whatever its supply state says.
+      if (heldSkus.has(unit.sku as string)) {
+        expect(unit.priceCents).toBeNull();
+      } else if (unit.availability === "TEMPORARILY_HELD") {
         expect(unit.priceCents).toBeNull();
       } else {
         expect(unit.priceCents).not.toBeNull();
