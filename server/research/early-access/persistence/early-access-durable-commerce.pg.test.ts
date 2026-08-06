@@ -436,8 +436,8 @@ run("Early Access durable persistence against real PostgreSQL", () => {
 
     const bindings = new SupabaseSessionBindingStore(query);
     const sessionId = "d".repeat(64);
-    expect(await bindings.bind(sessionId, "cust-1")).toBe(true);
-    expect(await bindings.bind(sessionId, "cust-1")).toBe(false);
+    expect(await bindings.bind(sessionId, "cust-1", "email_entry")).toBe(true);
+    expect(await bindings.bind(sessionId, "cust-1", "email_entry")).toBe(false);
     expect(await bindings.get(sessionId)).toBe("cust-1");
     expect(await bindings.get("e".repeat(64))).toBeNull();
   });

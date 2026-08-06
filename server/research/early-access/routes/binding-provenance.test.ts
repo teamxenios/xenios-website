@@ -74,22 +74,23 @@ async function preExistingOrder(shared: Awaited<ReturnType<typeof harness>>): Pr
 }
 
 describe("a session bound by typing an email", () => {
-  it("places an order and reads back the one it just placed", async () => {
+  it("cannot place an order at all, because typing an email is not identity", async () => {
+    // THE FOUNDER'S DECISION, and a deliberate reversal of what this test used
+    // to assert. It previously proved that an email-entry session could place
+    // an order and read back what it had just bought, on the reasoning that a
+    // purchaser only ever sees what they themselves typed. That reasoning
+    // holds only for the purchaser; it says nothing for the person whose
+    // address was typed, who gets a real shipment, a real invoice and a real
+    // commission attached to their name by someone who merely knew the shared
+    // password. Ordering now requires the signed verification link.
     const shared = await harness(EMAIL_ENTRY);
     const cookie = await openSession(shared.app);
 
     const placed = await request(shared.app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
-    expect(placed.status).toBe(201);
-    const orderNumber = placed.body.order.orderNumber as string;
-
-    // The first-ever purchaser is completely unaffected by the rule: they
-    // see what they just bought, and its invoice.
-    expect((await request(shared.app).get(`${ORDERS}/${orderNumber}`).set("Cookie", cookie)).status)
-      .toBe(200);
-    expect(
-      (await request(shared.app).get(`${ORDERS}/${orderNumber}/invoice`).set("Cookie", cookie))
-        .status,
-    ).toBe(200);
+    expect(placed.status).toBe(403);
+    expect(placed.body?.code).toBe("IDENTITY_REQUIRED");
+    // Nothing was written on the way to the refusal.
+    expect(await shared.store.placementByIdempotencyKey(ORDER_BODY.idempotencyKey)).toBeNull();
   });
 
   it("cannot read an order that existed before it, and answers exactly like a missing one", async () => {
@@ -167,18 +168,18 @@ describe("an unknown provenance", () => {
 });
 
 describe("the order records how its session was bound", () => {
-  it("stamps email_entry on an order placed by a typed-email session", async () => {
+  it("never stamps email_entry, because no such order can be created", async () => {
+    // The stamp still exists and is still written (the verified case below
+    // proves it), but there is no longer a path that produces an email-entry
+    // row. This asserts the ABSENCE rather than deleting the old test, so a
+    // regression that reopens email-entry ordering fails here as well as at
+    // the placement test above.
     const shared = await harness(EMAIL_ENTRY);
     const cookie = await openSession(shared.app);
     const placed = await request(shared.app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
-    expect(placed.status).toBe(201);
-    const stored = await shared.store.placementByOrderNumber(
-      placed.body.order.orderNumber as string,
-    );
-    // The day history ships, a row placed by someone who typed another
-    // person's email can be excluded or flagged. Without the stamp those
-    // rows would already be indistinguishable by then.
-    expect(stored?.bindingProvenance).toBe("email_entry");
+    expect(placed.status).toBe(403);
+    expect(placed.body?.order).toBeUndefined();
+    expect(await shared.store.placementByIdempotencyKey(ORDER_BODY.idempotencyKey)).toBeNull();
   });
 
   it("stamps verified_link when the session proved the claim", async () => {

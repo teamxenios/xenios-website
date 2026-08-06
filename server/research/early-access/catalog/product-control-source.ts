@@ -61,6 +61,7 @@ import {
 } from "../../catalog/product-control-reader";
 import { buildProductionVariantInventoryFactsReader } from "../../catalog/member-catalog-service";
 import type { MemberRow } from "../../member-auth";
+import type { EarlyAccessAudienceCustomer } from "../routes/ports";
 import {
   EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE,
   ProductControlDeclaredFactsReader,
@@ -110,8 +111,15 @@ export interface EarlyAccessCatalogContext {
    * password-only session, an unapproved customer, and a signed-in member who
    * never became an Early Access customer all arrive here as null, which
    * blocks. Never from the body.
+   *
+   * It carries `boundBy` because the audience decision depends on it: only a
+   * "verified_link" binding authorizes PRIVATE_EARLY_ACCESS. The provenance
+   * used to be dropped on the way here, which meant an email-entry session
+   * was authorized exactly like a verified one. Widening the type is what
+   * makes forgetting it again a typecheck failure rather than a silent
+   * downgrade of the gate.
    */
-  readonly earlyAccessCustomer?: { readonly customerRef: string } | null;
+  readonly earlyAccessCustomer?: EarlyAccessAudienceCustomer | null;
 }
 
 export interface EarlyAccessCatalogSource {

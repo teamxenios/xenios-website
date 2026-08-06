@@ -45,7 +45,7 @@ import type {
   EarlyAccessSupplierDirectory,
   SessionOrderLog,
 } from "./ports";
-import { readShippingDestination } from "./ports";
+import { isVerifiedEarlyAccessCustomer, readShippingDestination } from "./ports";
 import type { EarlyAccessCommerceStore, EarlyAccessPlacement } from "./store";
 
 /**
@@ -483,8 +483,17 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
       // this request, so the order path projects under the identical
       // PRIVATE_EARLY_ACCESS audience the storefront showed this customer,
       // never an anonymous or body-supplied one.
+      // The PROVENANCE travels with the reference. Without it the audience
+      // source sees an unverified caller and holds every unit, so a verified
+      // customer would be refused PRODUCT_HELD on a unit they were just shown
+      // a price for. The identity step above has already proved this is
+      // "verified_link"; carrying it is what makes the order path project the
+      // IDENTICAL audience the storefront projected for the same person.
       const projection = await deps.catalog.load(new Date(nowMs), {
-        earlyAccessCustomer: { customerRef: customer.customerRef },
+        earlyAccessCustomer: {
+          customerRef: customer.customerRef,
+          boundBy: customer.boundBy,
+        },
       });
       const matches = projection.rows.filter(
         (row) => row.productId === body.productId && row.variantId === body.variantId,
@@ -756,8 +765,28 @@ async function resolveCallerForPlacement(
     return null;
   }
 
+  // Identity, and identity now means VERIFIED identity.
+  //
+  // The old rule let an email-entry binding place an order, on the reasoning
+  // that a purchaser only ever sees what they themselves typed and bought.
+  // The founder's decision overrides that: the password is shared, so a typed
+  // email names a customer without proving anyone is them, and an order
+  // placed that way attaches a real shipment, a real invoice and a real
+  // commission to a person who never asked for any of it.
+  //
+  // It refuses with IDENTITY_REQUIRED rather than a new code, because that is
+  // what has actually happened: this session has not established who it is.
+  // The check sits HERE, at the identity step, so the canonical ordering is
+  // unchanged: session, then request shape, then identity, then agreement.
+  // Leaving it to the audience gate downstream would have refused the same
+  // caller with PRODUCT_HELD, which is a true statement about nothing and
+  // would have sent a verified customer hunting a catalogue problem.
   const customer = await deps.identity.resolve({ cookieHeader: request?.cookieHeader });
-  if (customer === null || !isSafeIdentifier(customer.customerRef)) {
+  if (
+    customer === null ||
+    !isSafeIdentifier(customer.customerRef) ||
+    !isVerifiedEarlyAccessCustomer(customer)
+  ) {
     refuse(response, "IDENTITY_REQUIRED");
     return null;
   }

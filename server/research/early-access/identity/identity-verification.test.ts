@@ -189,7 +189,7 @@ describe("verification token redemption", () => {
 
   it("refuses a session already bound to a different customer", async () => {
     const w = await world();
-    await w.bindings.bind("sess_shared", "cus_bob");
+    await w.bindings.bind("sess_shared", "cus_bob", "email_entry");
     const result = await redeemVerificationToken({
       token: tokenFor(w.alice, "sess_shared"),
       sessionId: "sess_shared", secret: SECRET, nowMs: NOW + 1_000,
@@ -252,7 +252,7 @@ describe("the identity directory", () => {
 
   it("resolves only a session that was bound through a door", async () => {
     const w = await world();
-    await w.bindings.bind("sess_alice", "cus_alice");
+    await w.bindings.bind("sess_alice", "cus_alice", "email_entry");
     const resolved = await directoryFor(w, "sess_alice").resolve({ cookieHeader: "x" });
     expect(resolved).not.toBeNull();
     expect(resolved?.customerRef).toBe(customerRefFor(w.alice));
@@ -273,7 +273,7 @@ describe("the identity directory", () => {
 
   it("stops resolving once a customer is revoked", async () => {
     const w = await world();
-    await w.bindings.bind("sess_alice", "cus_alice");
+    await w.bindings.bind("sess_alice", "cus_alice", "email_entry");
     const revoked = transitionEarlyAccessCustomer({
       customer: w.alice, to: "REVOKED", by: "Samuel Boadu",
       reason: "Access withdrawn", now: NOW_ISO,
@@ -285,7 +285,7 @@ describe("the identity directory", () => {
 
   it("never exposes an email as the order-facing reference", async () => {
     const w = await world();
-    await w.bindings.bind("sess_alice", "cus_alice");
+    await w.bindings.bind("sess_alice", "cus_alice", "email_entry");
     const resolved = await directoryFor(w, "sess_alice").resolve({ cookieHeader: "x" });
     expect(resolved?.customerRef).not.toContain("alice@example.invalid");
     expect(resolved?.customerRef.startsWith("eac_")).toBe(true);

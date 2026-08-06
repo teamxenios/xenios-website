@@ -99,7 +99,15 @@ function response() {
  * `founderHeldUnits` key, because the composition root has no projection at
  * boot to resolve one against and never supplied it.
  */
-async function servedCatalogue(): Promise<Body> {
+/** The customer the world is BUILT under: verified, so seeding sees real rows. */
+const VERIFIED_CALLER = Object.freeze({
+  customerRef: "cus_mounted_route",
+  boundBy: "verified_link" as const,
+});
+
+type Caller = { readonly customerRef: string; readonly boundBy?: unknown } | null;
+
+async function servedCatalogue(caller: Caller = VERIFIED_CALLER): Promise<Body> {
   const confirmations = new InMemorySupplierConfirmationStore();
   const source = new ProductControlCatalogSource({
     catalog: { readCatalog: async () => canonicalReviewProducts() },
@@ -111,7 +119,10 @@ async function servedCatalogue(): Promise<Body> {
   } as never);
 
   const at = new Date("2026-08-05T00:00:00.000Z");
-  const context = { earlyAccessCustomer: { customerRef: "cus_mounted_route" } };
+  // The world is prepared under a VERIFIED customer, because that is who the
+  // supply confirmations and founder releases were recorded for. The CALLER
+  // below is a separate question: the same shelf, read by whoever is asking.
+  const context = { earlyAccessCustomer: VERIFIED_CALLER };
 
   const before = await source.load(at, context);
   await seedRawPeptidesConfirmations({ rows: before.rows as never, store: confirmations });
@@ -127,7 +138,7 @@ async function servedCatalogue(): Promise<Body> {
   } as never);
 
   const { port, state } = response();
-  await route({ cookieHeader: "ea=1", earlyAccessCustomer: context.earlyAccessCustomer }, port as never);
+  await route({ cookieHeader: "ea=1", earlyAccessCustomer: caller }, port as never);
   expect(state.status).toBe(200);
   return state.body;
 }
@@ -235,5 +246,95 @@ describe("the mounted catalogue route, wired the way production wires it", () =>
     expect(body.purchasableCount).toBe(EXPECTED_PURCHASABLE);
     expect(unit?.releaseId).toBeNull();
     expect(unit?.hold).toBe("NO_FOUNDER_RELEASE");
+  });
+});
+
+/**
+ * THE VERIFIED-LINK GATE, at the layer that decides it.
+ *
+ * Everything above is what a VERIFIED customer sees. The audience source is
+ * the one place that turns a resolved customer into the PRIVATE_EARLY_ACCESS
+ * authorization every price and purchase control hangs off, so this is where
+ * the founder's rule is either enforced or not: a session bound by typing an
+ * email under the SHARED password is not an identified customer, and neither
+ * is one whose provenance is missing or unrecognised.
+ *
+ * These run against the same real projection, the same 22 canonical units and
+ * the same recorded founder releases as the tests above. Nothing is stubbed
+ * out to make them pass; the ONLY difference between them and the 22/18/4
+ * tests is the provenance on the caller.
+ */
+describe("who the catalogue will price", () => {
+  /** Every way a unit can carry money or a way to buy it. */
+  function commercialFields(body: Body) {
+    return {
+      priced: body.units.filter((unit) => unit.priceCents !== null),
+      purchasable: body.units.filter((unit) => unit.purchasable),
+      released: body.units.filter((unit) => unit.releaseId !== null),
+    };
+  }
+
+  const UNIDENTIFIED: readonly [string, Caller][] = [
+    // A password-only session. The directory resolved nobody.
+    ["a password-only session", null],
+    // A typed email under the shared password: a real customer reference,
+    // and no proof that the person typing is that customer.
+    ["an email-entry binding", { customerRef: "cus_mounted_route", boundBy: "email_entry" }],
+    // What a durable store written before the provenance column produces.
+    ["an absent provenance", { customerRef: "cus_mounted_route" }],
+    // Anything outside the vocabulary, including near-misses.
+    ["an unknown provenance", { customerRef: "cus_mounted_route", boundBy: "verified" }],
+    ["a wrong-case provenance", { customerRef: "cus_mounted_route", boundBy: "VERIFIED_LINK" }],
+    ["a non-string provenance", { customerRef: "cus_mounted_route", boundBy: true }],
+    // A reference with nothing behind it is not an identity either.
+    ["a blank customer reference", { customerRef: "   ", boundBy: "verified_link" }],
+  ];
+
+  for (const [label, caller] of UNIDENTIFIED) {
+    it(`shows ${label} the shelf, and not one price on it`, async () => {
+      const body = await servedCatalogue(caller);
+      const { priced, purchasable, released } = commercialFields(body);
+
+      // Still the whole shelf. Withholding the catalogue would be a different
+      // product decision; what is withheld is the commercial half of it.
+      expect(body.units).toHaveLength(EXPECTED_VISIBLE);
+      expect(priced).toHaveLength(0);
+      expect(purchasable).toHaveLength(0);
+      expect(released).toHaveLength(0);
+      expect(body.purchasableCount).toBe(0);
+      expect(body.heldCount).toBe(EXPECTED_VISIBLE);
+      // Not merely absent from the fields this test reads: the founder's
+      // approved amount must not appear anywhere in the served payload.
+      expect(JSON.stringify(body)).not.toContain(String(NAD_1000_PRICE_CENTS));
+    });
+  }
+
+  it("shows a verified customer the same shelf, priced", async () => {
+    // The control. Without it every assertion above would also pass against a
+    // gate that had simply broken the catalogue for everybody.
+    const body = await servedCatalogue(VERIFIED_CALLER);
+    const { priced, purchasable } = commercialFields(body);
+
+    expect(body.units).toHaveLength(EXPECTED_VISIBLE);
+    expect(purchasable).toHaveLength(EXPECTED_PURCHASABLE);
+    expect(priced.length).toBeGreaterThanOrEqual(EXPECTED_PURCHASABLE);
+    expect(JSON.stringify(body)).toContain(String(NAD_1000_PRICE_CENTS));
+  });
+
+  it("holds Cagrilintide for an unverified caller too, and for the founder's reason", async () => {
+    // The unverified refusal must not overwrite the truthful hold: a unit the
+    // founder never released is held because of that, not because of who is
+    // looking. If this ever reported a release, the gate would be masking the
+    // release ledger rather than sitting beside it.
+    const body = await servedCatalogue({
+      customerRef: "cus_mounted_route",
+      boundBy: "email_entry",
+    });
+    const unit = body.units.find((candidate) => candidate.productId === FOUNDER_HELD.productId);
+
+    expect(unit).toBeDefined();
+    expect(unit?.releaseId).toBeNull();
+    expect(unit?.priceCents).toBeNull();
+    expect(unit?.purchasable).toBe(false);
   });
 });

@@ -117,9 +117,9 @@ describe("SupabaseSessionBindingStore", () => {
         },
       }),
     );
-    expect(await store.bind("s".repeat(64), "cust-1")).toBe(true);
+    expect(await store.bind("s".repeat(64), "cust-1", "email_entry")).toBe(true);
     // Already bound, EVEN to the same customer: false, exactly like the port.
-    expect(await store.bind("s".repeat(64), "cust-1")).toBe(false);
+    expect(await store.bind("s".repeat(64), "cust-1", "email_entry")).toBe(false);
   });
 
   it("get answers the bound customer id or null", async () => {
@@ -131,5 +131,50 @@ describe("SupabaseSessionBindingStore", () => {
     );
     expect(await store.get("known")).toBe("cust-1");
     expect(await store.get("unknown")).toBeNull();
+  });
+
+  it("REFUSES to record a verified binding it has no column for", async () => {
+    // The durable table is (session_id, customer_id). It has no provenance
+    // column, so a verified binding written here would read back as
+    // "email_entry" on the very next request, and the customer would redeem a
+    // valid link, be told they were verified, and find the catalogue still
+    // priceless with nothing to act on.
+    //
+    // Refusing loudly is the same rule this package applies to every other
+    // missing durable capability: do not sell, and do not pretend. It also
+    // makes the missing migration impossible to miss in production.
+    let called = 0;
+    const store = new SupabaseSessionBindingStore(
+      query({
+        research_early_access_bind_session: () => {
+          called += 1;
+          return true;
+        },
+      }),
+    );
+
+    await expect(store.bind("s".repeat(64), "cust-1", "verified_link")).rejects.toThrow(
+      /bound_by/,
+    );
+    // Nothing was written on the way to the refusal.
+    expect(called).toBe(0);
+  });
+
+  it("reports every row it CAN hold as the weak provenance", async () => {
+    // Not a guess: `bind` above refuses anything else, so every row this table
+    // can contain is an email-entry binding. Stating it here rather than
+    // relying on the directory's fallback keeps the fail-closed answer visible
+    // at the store that produces it.
+    const store = new SupabaseSessionBindingStore(
+      query({
+        research_early_access_session_binding: (call) =>
+          call.args.p_session_id === "known" ? "cust-1" : null,
+      }),
+    );
+    expect(await store.binding("known")).toEqual({
+      customerId: "cust-1",
+      boundBy: "email_entry",
+    });
+    expect(await store.binding("unknown")).toBeNull();
   });
 });

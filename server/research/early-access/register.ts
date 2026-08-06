@@ -470,9 +470,21 @@ export function registerPrivateEarlyAccessApi(
       resolveMember(req),
       identity.resolve({ cookieHeader: req.headers.cookie }),
     ])
-      .then(([member, earlyAccessCustomer]) =>
+      .then(([member, resolved]) =>
         catalogRoute(
-          { cookieHeader: req.headers.cookie, member, earlyAccessCustomer },
+          {
+            cookieHeader: req.headers.cookie,
+            member,
+            // Narrowed to the two fields the audience decision reads, and the
+            // PROVENANCE is one of them. The display name is deliberately left
+            // behind: a catalog projection has no use for a customer's name,
+            // and the fewer fields cross this seam the less there is to leak
+            // into a row a browser eventually sees.
+            earlyAccessCustomer:
+              resolved === null
+                ? null
+                : { customerRef: resolved.customerRef, boundBy: resolved.boundBy },
+          },
           res as never,
         ),
       )

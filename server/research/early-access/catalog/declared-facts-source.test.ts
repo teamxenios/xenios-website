@@ -425,7 +425,8 @@ describe("a unit with every real fact in place", () => {
     });
     const facts = await factsFor(
       READY_INVENTORY,
-      { earlyAccessCustomer: { customerRef: "cus-ea-0001" } },
+      // Verified, because only a verified binding authorizes the audience.
+      { earlyAccessCustomer: { customerRef: "cus-ea-0001", boundBy: "verified_link" } },
       corroborated,
       EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE,
     );

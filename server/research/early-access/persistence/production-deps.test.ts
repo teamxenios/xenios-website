@@ -264,7 +264,7 @@ describe("the refusing stores hold nothing and refuse loudly", () => {
     await expect(bindings.get("s")).rejects.toBeInstanceOf(
       EarlyAccessPersistenceUnavailableError,
     );
-    await expect(bindings.bind("s", "c")).rejects.toBeInstanceOf(
+    await expect(bindings.bind("s", "c", "email_entry")).rejects.toBeInstanceOf(
       EarlyAccessPersistenceUnavailableError,
     );
   });

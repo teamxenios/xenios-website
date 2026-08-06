@@ -220,10 +220,30 @@ export class InMemoryConsumedTokenStore implements ConsumedTokenStore {
  * invoices, tracking, saved shipping, profile) requires "verified_link",
  * always. Not "on a new device", not "after a long gap": always. Without
  * this field the rule would be a judgement call; with it, it is a check.
+ *
+ * SINCE THE VERIFIED-LINK GATE, the same field decides far more than reads.
+ * The founder's rule is that the shared password grants PORTAL ACCESS ONLY:
+ * prices, purchase controls, agreement acceptance, order placement and the
+ * PRIVATE_EARLY_ACCESS audience all require "verified_link". "email_entry"
+ * is a typed claim under a password anyone in the invite list holds, so it
+ * now identifies nobody for any of those purposes.
  */
 export const SESSION_BINDING_PROVENANCES = ["email_entry", "verified_link"] as const;
 
 export type SessionBindingProvenance = (typeof SESSION_BINDING_PROVENANCES)[number];
+
+/**
+ * Read a provenance from a value that may have come from anywhere.
+ *
+ * ONLY the exact string "verified_link" is the strong provenance. Everything
+ * else, including undefined, null, a typo, a durable row written before the
+ * column existed, and a value from a store this repository does not own,
+ * resolves to the WEAK provenance. That is the fail-closed direction stated
+ * as one function, so no caller has to remember to write the check.
+ */
+export function asSessionBindingProvenance(value: unknown): SessionBindingProvenance {
+  return value === "verified_link" ? "verified_link" : "email_entry";
+}
 
 export type SessionBinding = Readonly<{
   customerId: string;
@@ -239,13 +259,20 @@ export interface SessionBindingStore {
    */
   binding?(sessionId: string): Promise<SessionBinding | null>;
   /**
-   * Defaults to "email_entry", the weaker provenance, so a caller that
-   * forgets to state how it bound cannot accidentally mint a verified one.
+   * Provenance is REQUIRED, and deliberately has no default.
+   *
+   * It used to default to "email_entry". That was safe in the direction it
+   * was written for (a forgetful caller could not mint a verified session),
+   * and unsafe in the direction that matters now: it let a call site bind a
+   * session without ever stating how, so the question "which doors record a
+   * verified identity" was answered by reading every caller rather than by
+   * the compiler. Making the parameter required turns that audit into a
+   * typecheck, which is why removing the default is itself part of the gate.
    */
   bind(
     sessionId: string,
     customerId: string,
-    boundBy?: SessionBindingProvenance,
+    boundBy: SessionBindingProvenance,
   ): Promise<boolean>;
 }
 
@@ -268,19 +295,23 @@ export class InMemorySessionBindingStore implements SessionBindingStore {
   async bind(
     sessionId: string,
     customerId: string,
-    boundBy: SessionBindingProvenance = "email_entry",
+    boundBy: SessionBindingProvenance,
   ): Promise<boolean> {
+    // Normalized rather than trusted, so a caller reaching this store from
+    // untyped JavaScript cannot write a provenance the vocabulary does not
+    // contain, and cannot write a verified one by accident.
+    const provenance = asSessionBindingProvenance(boundBy);
     const existing = this.bindings.get(sessionId);
     if (existing !== undefined) {
       const upgrading =
         existing.customerId === customerId &&
         existing.boundBy === "email_entry" &&
-        boundBy === "verified_link";
+        provenance === "verified_link";
       if (!upgrading) return false;
-      this.bindings.set(sessionId, { customerId, boundBy });
+      this.bindings.set(sessionId, { customerId, boundBy: provenance });
       return true;
     }
-    this.bindings.set(sessionId, { customerId, boundBy });
+    this.bindings.set(sessionId, { customerId, boundBy: provenance });
     return true;
   }
 }
@@ -408,7 +439,11 @@ export class EarlyAccessCustomerDirectory implements EarlyAccessIdentityDirector
     return Object.freeze({
       customerRef: customerRefFor(customer),
       displayName: customer.legalName,
-      boundBy: binding.boundBy,
+      // Normalized at the ONE place a provenance enters the application from
+      // a store. A durable row written before the column existed, a null, and
+      // a value outside the vocabulary all become the weak provenance here,
+      // so nothing downstream has to defend against an unknown one.
+      boundBy: asSessionBindingProvenance(binding.boundBy),
     });
   }
 }

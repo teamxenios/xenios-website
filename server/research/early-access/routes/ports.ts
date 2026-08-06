@@ -42,9 +42,59 @@ export type EarlyAccessCustomer = Readonly<{
   /**
    * How this session was bound. Absent means unknown, which is treated as
    * the WEAK provenance everywhere, because a missing answer must never read
-   * as a verified one. Placing a new order needs only a binding; reading
-   * anything that existed before this session needs "verified_link".
+   * as a verified one.
+   *
+   * THE RULE, since the verified-link gate: only "verified_link" identifies a
+   * customer. Prices, purchase controls, agreement acceptance, order
+   * placement and the PRIVATE_EARLY_ACCESS audience all require it. An
+   * "email_entry" binding is an email typed under a SHARED password, which
+   * anyone holding that password can type about anyone, so it authorizes
+   * none of those. The one thing it still does is let a session read back an
+   * order it created here itself, which is a fact about this session rather
+   * than a claim about who the customer is.
    */
+  readonly boundBy?: "email_entry" | "verified_link";
+}>;
+
+/**
+ * THE authorization predicate. One function, consulted by every surface that
+ * treats a caller as an identified customer.
+ *
+ * It is deliberately a single exported function rather than four inline
+ * comparisons. Four comparisons is four places to forget, and the surfaces
+ * that must agree (the catalogue audience, the agreement read, the agreement
+ * write, and the order path) sit in four different files. A disposable
+ * mutation of THIS function should break all of them at once, which is what
+ * makes the guarantee checkable.
+ *
+ * Everything that is not an exact "verified_link" on a customer with a real
+ * reference is unidentified: no binding, an email-entry binding, an absent
+ * provenance, an unknown provenance, and a customerRef with nothing behind
+ * it. There is no argument that makes it answer true by accident.
+ */
+export function isVerifiedEarlyAccessCustomer(
+  // Structural on purpose, so the catalogue's narrow audience customer and the
+  // order path's full `EarlyAccessCustomer` are checked by the SAME function
+  // rather than by two that could drift.
+  customer: Readonly<{ customerRef?: unknown; boundBy?: unknown }> | null | undefined,
+): boolean {
+  if (customer === null || customer === undefined) return false;
+  if (typeof customer.customerRef !== "string" || customer.customerRef.trim().length === 0) {
+    return false;
+  }
+  return customer.boundBy === "verified_link";
+}
+
+/**
+ * What the catalogue audience is allowed to know about the caller.
+ *
+ * Narrower than `EarlyAccessCustomer` (no display name: a projection has no
+ * business carrying one), and provenance is carried rather than dropped,
+ * because the audience decision now depends on it. This is the shape the
+ * catalogue context must retain end to end.
+ */
+export type EarlyAccessAudienceCustomer = Readonly<{
+  customerRef: string;
   readonly boundBy?: "email_entry" | "verified_link";
 }>;
 

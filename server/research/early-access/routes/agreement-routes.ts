@@ -29,7 +29,11 @@
  * record an acceptance, which refuses a sale, but it can never fabricate one.
  */
 
-import type { EarlyAccessAgreementGate, EarlyAccessIdentityDirectory } from "./ports";
+import {
+  isVerifiedEarlyAccessCustomer,
+  type EarlyAccessAgreementGate,
+  type EarlyAccessIdentityDirectory,
+} from "./ports";
 
 /** One (kind, version) pair, exactly as the deployment configured it. */
 export type EarlyAccessRequiredAgreementPair = Readonly<{
@@ -174,10 +178,21 @@ export function createEarlyAccessAgreementAcceptRoute(
       return;
     }
 
+    // VERIFIED IDENTITY, not merely a binding. An acceptance row names a
+    // person and is append-only: the order path later reads it as proof that
+    // THIS customer agreed, and nothing can take it back. A session bound by
+    // a typed email under the shared password has not proved it is that
+    // person, so recording their acceptance would put a permanent, legally
+    // meaningful row on a stranger's file. It refuses with the same code an
+    // unidentified session gets, because from here they are the same thing.
     const customer = await deps.identity.resolve({
       cookieHeader: request.cookieHeader,
     });
-    if (customer === null || readString(customer.customerRef) === null) {
+    if (
+      customer === null ||
+      readString(customer.customerRef) === null ||
+      !isVerifiedEarlyAccessCustomer(customer)
+    ) {
       refuse(response, "IDENTITY_REQUIRED");
       return;
     }
@@ -266,10 +281,18 @@ export function createEarlyAccessAgreementStatusRoute(
     request: EarlyAccessAgreementStatusRequest,
     response: EarlyAccessAcceptResponsePort,
   ): Promise<void> {
+    // The SAME verified-identity requirement the write half applies. If the
+    // read were the looser of the two, an email-entry session would be shown
+    // an agreement screen it can never complete, and the screen would report
+    // a stranger's acceptance state as its own. One rule, both halves.
     const customer = await deps.identity.resolve({
       cookieHeader: request.cookieHeader,
     });
-    if (customer === null || readString(customer.customerRef) === null) {
+    if (
+      customer === null ||
+      readString(customer.customerRef) === null ||
+      !isVerifiedEarlyAccessCustomer(customer)
+    ) {
       refuse(response, "IDENTITY_REQUIRED");
       return;
     }

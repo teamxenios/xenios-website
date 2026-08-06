@@ -53,7 +53,11 @@ async function openingSet() {
   } as never);
 
   const at = new Date("2026-08-05T00:00:00.000Z");
-  const context = { earlyAccessCustomer: { customerRef: "cus_opening_set" } };
+  // A VERIFIED customer. The opening set is what an identified customer sees,
+  // and since the verified-link gate only "verified_link" is identified.
+  const context = {
+    earlyAccessCustomer: { customerRef: "cus_opening_set", boundBy: "verified_link" as const },
+  };
 
   // The production preparation order: confirm supply, re-project against the
   // confirmed world, then release.

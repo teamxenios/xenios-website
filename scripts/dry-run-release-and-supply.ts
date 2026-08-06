@@ -54,7 +54,7 @@ async function main(): Promise<void> {
   } as never);
 
   const at = new Date("2026-08-05T00:00:00.000Z");
-  const context = { earlyAccessCustomer: { customerRef: "cus_dry_run" } };
+  const context = { earlyAccessCustomer: { customerRef: "cus_dry_run", boundBy: "verified_link" } };
 
   const before = await source.load(at, context);
   await seedRawPeptidesConfirmations({ rows: before.rows as never, store: confirmations });

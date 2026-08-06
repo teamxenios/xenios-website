@@ -89,7 +89,7 @@ export async function buildPreviewApp() {
   } as never);
 
   const now = Date.now();
-  const context = { earlyAccessCustomer: { customerRef: PREVIEW_CUSTOMER_ID } };
+  const context = { earlyAccessCustomer: { customerRef: PREVIEW_CUSTOMER_ID, boundBy: "verified_link" } };
 
   // Same order the founder seed runs in production preparation: confirm
   // supply, re-project, then release against the confirmed world.
@@ -139,7 +139,13 @@ export async function buildPreviewApp() {
   } as never);
   app.use((req, _res, next) => {
     const sessionId = readSessionId(req.headers.cookie);
-    if (sessionId !== null) void sessionBindings.bind(sessionId, PREVIEW_CUSTOMER_ID);
+    // VERIFIED, stated explicitly. The preview exists to show the identified
+    // customer's screen, and since the verified-link gate only that provenance
+    // yields prices and purchase controls. It binds nobody real: this is a
+    // local harness with a synthetic customer and no durable store.
+    if (sessionId !== null) {
+      void sessionBindings.bind(sessionId, PREVIEW_CUSTOMER_ID, "verified_link");
+    }
     next();
   });
 

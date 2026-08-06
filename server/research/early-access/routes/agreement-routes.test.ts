@@ -60,10 +60,21 @@ function recorder(
   };
 }
 
-function identity(customerRef: string | null) {
+/**
+ * The session's customer, and HOW that session was bound.
+ *
+ * The provenance defaults to "verified_link" because that is what an
+ * identified customer is: since the verified-link gate, an "email_entry"
+ * binding accepts nothing. The email-entry and absent-provenance cases are
+ * exercised explicitly at the bottom of this file.
+ */
+function identity(
+  customerRef: string | null,
+  boundBy: "email_entry" | "verified_link" | undefined = "verified_link",
+) {
   return {
     async resolve() {
-      return customerRef === null ? null : ({ customerRef } as never);
+      return customerRef === null ? null : ({ customerRef, boundBy } as never);
     },
   };
 }

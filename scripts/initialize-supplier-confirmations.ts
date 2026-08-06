@@ -115,7 +115,7 @@ export async function deriveConfirmations(): Promise<readonly ConfirmationRow[]>
   } as never);
 
   const rows = await source.load(new Date("2026-08-05T00:00:00.000Z"), {
-    earlyAccessCustomer: { customerRef: "cus_initialization" },
+    earlyAccessCustomer: { customerRef: "cus_initialization", boundBy: "verified_link" },
   });
   await seedRawPeptidesConfirmations({ rows: rows.rows as never, store: capturing });
   return Object.freeze(recorded);

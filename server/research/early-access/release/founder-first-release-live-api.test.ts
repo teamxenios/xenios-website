@@ -74,7 +74,7 @@ async function harness() {
   // Seed under the SAME audience the customer will be served with, so every
   // release fingerprint is one the customer projection reproduces.
   const seedProjection = await source.load(new Date(NOW_MS), {
-    earlyAccessCustomer: { customerRef: "cus_live22" },
+    earlyAccessCustomer: { customerRef: "cus_live22", boundBy: "verified_link" as const },
   });
   const ledger = new InMemoryEarlyAccessReleaseLedger();
   const outcome = await seedFounderFirstRelease({
@@ -139,7 +139,7 @@ async function boundSession(harnessed: Awaited<ReturnType<typeof harness>>) {
   const cookie = cookies.map((entry) => entry.split(";")[0]).join("; ");
   const sessionId = harnessed.readSessionId(cookie);
   expect(sessionId).not.toBeNull();
-  expect(await harnessed.sessionBindings.bind(sessionId as string, "cus_live22")).toBe(true);
+  expect(await harnessed.sessionBindings.bind(sessionId as string, "cus_live22", "verified_link")).toBe(true);
   return cookie;
 }
 
@@ -326,7 +326,9 @@ describe("with Raw Peptides supply confirmed: the finish line", () => {
       }),
     } as never);
 
-    const context = { earlyAccessCustomer: { customerRef: "cus_live22" } };
+    const context = {
+    earlyAccessCustomer: { customerRef: "cus_live22", boundBy: "verified_link" as const },
+  };
     // 1. Record the founder's supply confirmations (identity-only resolution).
     const before = await source.load(new Date(LIVE_NOW_MS), context);
     const supply = await seedRawPeptidesConfirmations({
@@ -403,7 +405,7 @@ describe("with Raw Peptides supply confirmed: the finish line", () => {
     const cookies = Array.isArray(raw) ? raw : raw === undefined ? [] : [raw];
     const cookie = cookies.map((entry) => entry.split(";")[0]).join("; ");
     const sessionId = harnessed.readSessionId(cookie);
-    expect(await harnessed.sessionBindings.bind(sessionId as string, "cus_live22")).toBe(true);
+    expect(await harnessed.sessionBindings.bind(sessionId as string, "cus_live22", "verified_link")).toBe(true);
 
     const answered = await request(harnessed.app).get(CATALOG_PATH).set("Cookie", cookie);
     expect(answered.status).toBe(200);

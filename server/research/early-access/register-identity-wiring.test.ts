@@ -116,7 +116,11 @@ describe("register.ts default identity wiring", () => {
     // The verification door's write, keyed by the canonical hashed session id.
     const sessionId = readSessionId(cookie);
     expect(sessionId).not.toBeNull();
-    expect(await sessionBindings.bind(sessionId as string, "cus_wiring")).toBe(true);
+    // The verification door binds with the SIGNED provenance, which is the
+    // only one that identifies a customer for ordering.
+    expect(
+      await sessionBindings.bind(sessionId as string, "cus_wiring", "verified_link"),
+    ).toBe(true);
 
     const placed = await request(app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
     expect(placed.status).toBe(201);
@@ -150,7 +154,9 @@ describe("register.ts default identity wiring", () => {
     expect(sessionId).not.toBeNull();
     // Bound, but the customer never reached APPROVED, so the directory
     // resolves nobody and the roster's status stays authoritative.
-    expect(await sessionBindings.bind(sessionId as string, "cus_suspended")).toBe(true);
+    expect(
+      await sessionBindings.bind(sessionId as string, "cus_suspended", "verified_link"),
+    ).toBe(true);
 
     const placed = await request(app).post(ORDERS).set("Cookie", cookie).send(ORDER_BODY);
     expect(placed.status).toBe(403);

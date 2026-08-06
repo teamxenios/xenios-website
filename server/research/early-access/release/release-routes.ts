@@ -1,4 +1,5 @@
 import type { MemberRow } from "../../member-auth";
+import type { EarlyAccessAudienceCustomer } from "../routes/ports";
 import type { EarlyAccessCatalogProjection } from "../catalog/early-access-catalog";
 import { earlyAccessRowKey } from "../catalog/early-access-catalog";
 import type { EarlyAccessSessionCheck } from "../private-access-routes";
@@ -36,10 +37,11 @@ export interface EarlyAccessCatalogContext {
   /**
    * The APPROVED Early Access customer the identity directory resolved for
    * this session, or null. The one authorization that yields the
-   * PRIVATE_EARLY_ACCESS audience. Mirrors the canonical context in
+   * PRIVATE_EARLY_ACCESS audience, and only when `boundBy` is
+   * "verified_link". Mirrors the canonical context in
    * catalog/product-control-source.ts; keep the two in step.
    */
-  readonly earlyAccessCustomer?: { readonly customerRef: string } | null;
+  readonly earlyAccessCustomer?: EarlyAccessAudienceCustomer | null;
 }
 
 export interface EarlyAccessCatalogSource {
@@ -105,7 +107,7 @@ export function createEarlyAccessCatalogRoute(deps: EarlyAccessReleaseRouteDepen
     request: {
       cookieHeader?: unknown;
       member?: MemberRow | null;
-      earlyAccessCustomer?: { readonly customerRef: string } | null;
+      earlyAccessCustomer?: EarlyAccessAudienceCustomer | null;
     },
     response: ResponsePort,
   ): Promise<void> => {
@@ -129,12 +131,23 @@ export function createEarlyAccessCatalogRoute(deps: EarlyAccessReleaseRouteDepen
 
       // What the server already established about THIS request's caller. The
       // approved Early Access customer is the one thing that can authorize
-      // the PRIVATE_EARLY_ACCESS audience; the member row rides along for
+      // the PRIVATE_EARLY_ACCESS audience, and only when they arrive bound by
+      // the signed verification link; the member row rides along for
       // provenance-parity reads and authorizes nothing here. Neither ever
       // comes from the body.
+      //
+      // The customer is rebuilt field by field rather than forwarded whole.
+      // Forwarding whole is what let the provenance survive by accident while
+      // the TYPE said it had been dropped, and a fact that reaches an
+      // authorization decision by accident is a fact that leaves the same
+      // way. Naming both fields makes the audience's input explicit.
+      const caller = request?.earlyAccessCustomer ?? null;
       const projection = await deps.catalog.load(new Date(now), {
         member: request?.member ?? null,
-        earlyAccessCustomer: request?.earlyAccessCustomer ?? null,
+        earlyAccessCustomer:
+          caller === null
+            ? null
+            : { customerRef: caller.customerRef, boundBy: caller.boundBy },
       });
       const releases = await deps.ledger.all();
       // The customer sees the units a founder has EVER released, in any

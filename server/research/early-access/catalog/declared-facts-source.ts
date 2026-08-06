@@ -54,6 +54,7 @@ import type {
   CartAudienceEligibility,
   CartInventoryEligibility,
 } from "@shared/research/cart-product-selection";
+import { isVerifiedEarlyAccessCustomer } from "../routes/ports";
 import { supplierConfirmedFulfillmentFact } from "../ops/supplier-confirmation";
 import type { UnitHoldReader } from "../ops/unit-holds";
 import type { EarlyAccessHoldBlocker } from "./eligibility";
@@ -135,6 +136,17 @@ export const MEMBER_ROW_AUDIENCE_SOURCE: EarlyAccessAudienceSource = {
  *     can never silently substitute for Early Access approval),
  *   - anything the browser claims about who it is (context is server-built).
  *
+ * AND, since the verified-link gate, a customer bound only by EMAIL ENTRY.
+ * That binding is an address typed under a password every invited person
+ * holds, so it names a customer without proving anyone is them. Authorizing
+ * the PRIVATE_EARLY_ACCESS audience from it would put this customer's prices
+ * and purchase controls in front of whoever typed their address. The
+ * projection therefore has no audience, every unit reports
+ * AUDIENCE_NOT_PERMITTED, and nothing carries a price.
+ *
+ * THIS IS THE CATALOGUE GATE. Deleting the verified check below is the
+ * disposable mutation the email-entry isolation tests exist to catch.
+ *
  * The provenance names the exact customer, so a projection is attributable to
  * the person it was authorized for.
  */
@@ -142,6 +154,7 @@ export const EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE: EarlyAccessAudienceSource = 
   authorize(context, evaluatedAt) {
     const customer = context.earlyAccessCustomer ?? null;
     if (customer === null) return null;
+    if (!isVerifiedEarlyAccessCustomer(customer)) return null;
     const reference = customer.customerRef?.trim() ?? "";
     if (reference.length === 0) return null;
     return {

@@ -210,7 +210,7 @@ export async function canonicalProjection(): Promise<EarlyAccessCatalogProjectio
     }),
   } as never);
   return source.load(new Date(INITIALIZER_AT), {
-    earlyAccessCustomer: { customerRef: "cus_initialization" },
+    earlyAccessCustomer: { customerRef: "cus_initialization", boundBy: "verified_link" },
   });
 }
 
@@ -622,7 +622,7 @@ export async function rekeyToProductionIds(input: {
   readonly now?: Date;
 }): Promise<RekeyOutcome> {
   const now = input.now ?? new Date(INITIALIZER_AT);
-  const context = { earlyAccessCustomer: { customerRef: "cus_initialization" } };
+  const context = { earlyAccessCustomer: { customerRef: "cus_initialization", boundBy: "verified_link" } };
 
   // The UUID-keyed records must be absent or complete, never half present. A
   // partial set here is how a unit ends up released twice or confirmed once.

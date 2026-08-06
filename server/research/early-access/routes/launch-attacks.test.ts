@@ -48,28 +48,37 @@ async function openSession(app: Parameters<typeof request>[0]): Promise<string> 
 /**
  * TONIGHT'S ACTUAL CUSTOMER, which is the whole point of this suite.
  *
- * The shared fixture customer is `verified_link`, and a verified session
- * legitimately reads every order its customer owns. But under the order-first
- * model NOBODY is verified: every purchaser types an email and is bound
- * `email_entry`. Testing against the verified fixture would assert a rule that
- * does not apply to a single real customer tonight, and would pass while the
- * live configuration leaked.
+ * This used to be an `email_entry` customer, on the premise that under the
+ * order-first model nobody is verified: every purchaser types an email and
+ * that is that. The founder's decision reverses the premise. The shared
+ * password now grants portal access ONLY, and a purchaser reaches an order by
+ * redeeming a signed verification link, so tonight's real customer is
+ * `verified_link` and testing against an email-entry one would assert a rule
+ * that no longer applies to anybody.
+ *
+ * That makes the attacks below STRONGER, not weaker. The password-only
+ * intruder is now refused before an order lookup happens at all, and the
+ * customerRef comparison that was previously defence in depth is now the
+ * load-bearing check, exactly as the note in the second test predicted.
  */
-const EMAIL_ENTRY_CUSTOMER = Object.freeze({
+const TONIGHT_CUSTOMER = Object.freeze({
   customerRef: "cust-tonight-0001",
   displayName: "Tonight Buyer",
-  boundBy: "email_entry" as const,
+  boundBy: "verified_link" as const,
 });
+
+/** The intruder: the shared password, and no verified identity behind it. */
+const PASSWORD_ONLY = null;
 
 async function harness() {
   const unit = cleanUnit({ unitPriceCents: PRICE });
   const built = makeEarlyAccessApp({
     catalog: catalogOf([unit]),
     releases: await approvedLedgerFor(unit, { approvedPriceCents: PRICE }),
-    // Every session resolves to the SAME customer, exactly as tonight: one
-    // shared password, one email typed, no verification. So the only thing
-    // separating two purchasers is which session created which order.
-    identity: new StubIdentityDirectory().always(EMAIL_ENTRY_CUSTOMER),
+    // Every session resolves to the SAME verified customer, so the thing
+    // separating two callers is who they proved they are, not which cookie
+    // they hold.
+    identity: new StubIdentityDirectory().always(TONIGHT_CUSTOMER),
   } as never);
   return { ...built, unit };
 }
@@ -88,38 +97,13 @@ async function placeOrder(
 }
 
 describe("ATTACK: one customer reading another customer's order", () => {
-  it("a second session cannot read the first session's order", async () => {
-    const { app } = await harness();
-    const victim = await placeOrder(app);
-    expect(victim.orderNumber).not.toBe("");
-
-    // A different browser, same shared password. Under the order-first model
-    // this is the whole attack: knowing the password is not knowing whose
-    // order this is.
-    const attacker = await openSession(app);
-    expect(attacker).not.toBe("");
-
-    const read = await request(app)
-      .get(`${ORDERS}/${victim.orderNumber}`)
-      .set("Cookie", attacker);
-    expect(read.status).toBe(404);
-    // The refusal must be indistinguishable from an order that does not exist,
-    // or the endpoint becomes a way to test which order numbers are real.
-    expect(read.body?.code).toBe("ORDER_NOT_FOUND");
-  });
-
-  it("a DIFFERENT customer cannot read it either", async () => {
-    // HONEST NOTE, established by mutation rather than assumed: under tonight's
-    // configuration this passes because of the SESSION check, not the customerRef
-    // check. Removing the customerRef comparison does not fail this suite,
-    // because `createdHere` already refuses a session that did not create the
-    // order. The ownership comparison is defence in depth today and becomes
-    // load-bearing the day verified_link ships, since that path returns the
-    // placement before any session check runs. Kept because it pins the
-    // behaviour a customer experiences, and because it will catch the
-    // regression that matters once verification is live.
+  it("a password-only session cannot read a verified customer's order", async () => {
+    // THE attack, restated for the verified-link rule. A different browser
+    // holding the same shared password unlocks the portal and gets no
+    // identity, so it is refused before an order is ever looked up. Knowing
+    // the password is not knowing who you are.
     const unit = cleanUnit({ unitPriceCents: PRICE });
-    const identity = new StubIdentityDirectory().always(EMAIL_ENTRY_CUSTOMER);
+    const identity = new StubIdentityDirectory().always(TONIGHT_CUSTOMER);
     const { app } = makeEarlyAccessApp({
       catalog: catalogOf([unit]),
       releases: await approvedLedgerFor(unit, { approvedPriceCents: PRICE }),
@@ -129,15 +113,65 @@ describe("ATTACK: one customer reading another customer's order", () => {
     const victim = await placeOrder(app);
     expect(victim.orderNumber).not.toBe("");
 
-    // A genuinely different purchaser, on their own session.
+    const attacker = await openSession(app);
+    expect(attacker).not.toBe("");
+    identity.always(PASSWORD_ONLY);
+
+    const read = await request(app)
+      .get(`${ORDERS}/${victim.orderNumber}`)
+      .set("Cookie", attacker);
+    expect(read.status).toBe(403);
+    expect(read.body?.code).toBe("IDENTITY_REQUIRED");
+    // Nothing about the order leaks on the way out: not its existence, not
+    // its owner, not its total.
+    expect(JSON.stringify(read.body)).not.toContain(victim.orderNumber);
+  });
+
+  it("the same verified customer reads their own order from a second browser", async () => {
+    // The control above is worthless if it also blocks the real customer
+    // signing in again elsewhere. A verified session reads what its customer
+    // owns, which is the returning-purchaser rule, and it is a different fact
+    // from the session-scoped one below.
+    const { app } = await harness();
+    const mine = await placeOrder(app);
+    const second = await openSession(app);
+
+    const read = await request(app).get(`${ORDERS}/${mine.orderNumber}`).set("Cookie", second);
+    expect(read.status).toBe(200);
+    expect(read.body?.order?.orderNumber).toBe(mine.orderNumber);
+  });
+
+  it("a DIFFERENT verified customer cannot read it either", async () => {
+    // HONEST NOTE, updated. This test used to pass because of the SESSION
+    // check rather than the customerRef comparison: under email-entry
+    // ordering, `createdHere` already refused a session that did not create
+    // the order, so removing the ownership comparison did not fail anything.
+    // The earlier note said that comparison becomes load-bearing the day
+    // verified_link ships. That day is this commit: a verified session
+    // reaches the ownership comparison BEFORE any session-scoped check, so
+    // this is now the only thing standing between two verified customers.
+    const unit = cleanUnit({ unitPriceCents: PRICE });
+    const identity = new StubIdentityDirectory().always(TONIGHT_CUSTOMER);
+    const { app } = makeEarlyAccessApp({
+      catalog: catalogOf([unit]),
+      releases: await approvedLedgerFor(unit, { approvedPriceCents: PRICE }),
+      identity,
+    } as never);
+
+    const victim = await placeOrder(app);
+    expect(victim.orderNumber).not.toBe("");
+
+    // A genuinely different purchaser, verified in their own right.
     const other = await openSession(app);
     identity.always({
       customerRef: "cust-tonight-0002",
       displayName: "Another Buyer",
-      boundBy: "email_entry",
+      boundBy: "verified_link",
     } as never);
 
     const read = await request(app).get(`${ORDERS}/${victim.orderNumber}`).set("Cookie", other);
+    // Indistinguishable from an order that does not exist, so the endpoint
+    // cannot be used to test which order numbers are real.
     expect(read.status).toBe(404);
     expect(read.body?.code).toBe("ORDER_NOT_FOUND");
   });
