@@ -5,15 +5,22 @@ import {
 import type { EarlyAccessQuantity } from "./EarlyAccessQuantitySelector";
 
 /**
- * The Private Early Access catalogue.
+ * The Private Early Access catalogue grid.
  *
- * Renders every approved row, including the ones nobody can buy today. A held
- * product is shown and labelled rather than hidden, because a customer who
+ * Renders every row it is given, including the ones nobody can buy today. A
+ * held product is shown and labelled rather than hidden, because a customer who
  * cannot find a product they were told about assumes the site is broken, while a
  * customer who sees it marked unavailable has been told the truth.
  *
  * The grid computes no money and makes no availability decision. Both arrive
- * already decided, from the server row through one mapping seam.
+ * already decided, from the server row through one mapping seam. Compactness
+ * lives here as column count only: four cards per row on a wide desktop, three
+ * on a narrow one, two on a tablet, one on a phone.
+ *
+ * The fulfillment target sentence is deliberately NOT a prop here any more. It
+ * is rendered once at catalogue level by the section, because a sentence about
+ * the catalogue repeated on every one of twenty-two cards was most of the wall
+ * this redesign removes.
  */
 
 export interface EarlyAccessCatalogGridProps {
@@ -26,20 +33,24 @@ export interface EarlyAccessCatalogGridProps {
   dropped?: number;
   /** Chosen quantity per variant id. Absent means nothing chosen yet. */
   quantities: Readonly<Record<string, EarlyAccessQuantity>>;
+  /** Variant ids currently in the customer's selection. */
+  selectedIds?: ReadonlySet<string>;
   onQuantityChange(variantId: string, quantity: EarlyAccessQuantity): void;
   onSelect(product: EarlyAccessCardProduct): void;
-  /** Required, no default. See EarlyAccessProductCard for why. */
-  fulfillmentTargetCopy: string;
+  onRemove?(product: EarlyAccessCardProduct): void;
   testId?: string;
 }
+
+const EMPTY_SELECTION: ReadonlySet<string> = new Set();
 
 export function EarlyAccessCatalogGrid({
   products,
   dropped = 0,
   quantities,
+  selectedIds = EMPTY_SELECTION,
   onQuantityChange,
   onSelect,
-  fulfillmentTargetCopy,
+  onRemove = () => {},
   testId = "early-access-catalog",
 }: EarlyAccessCatalogGridProps) {
   if (products.length === 0) {
@@ -60,7 +71,7 @@ export function EarlyAccessCatalogGrid({
     <section
       data-testid={testId}
       data-row-count={products.length}
-      className="grid min-w-0 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     >
       {products.map((product) => (
         <EarlyAccessProductCard
@@ -68,9 +79,10 @@ export function EarlyAccessCatalogGrid({
           testId={`${testId}-card-${product.variantId}`}
           product={product}
           quantity={quantities[product.variantId] ?? null}
+          selected={selectedIds.has(product.variantId)}
           onQuantityChange={(quantity) => onQuantityChange(product.variantId, quantity)}
           onSelect={() => onSelect(product)}
-          fulfillmentTargetCopy={fulfillmentTargetCopy}
+          onRemove={() => onRemove(product)}
         />
       ))}
 

@@ -10,7 +10,7 @@ import {
   type EarlyAccessCardProduct,
 } from "./EarlyAccessProductCard";
 
-/** The canonical sentence, passed in exactly as the server states it. */
+/** The canonical fulfillment sentence. It must NOT appear on a card any more. */
 const FULFILLMENT =
   "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
 
@@ -50,16 +50,24 @@ function product(overrides: Partial<EarlyAccessCardProduct> = {}): EarlyAccessCa
   };
 }
 
-function card(overrides: Partial<EarlyAccessCardProduct> = {}, quantity: 1 | 2 | 3 = 1) {
+function card(
+  overrides: Partial<EarlyAccessCardProduct> = {},
+  quantity: 1 | 2 | 3 = 1,
+  extra: Partial<Parameters<typeof EarlyAccessProductCard>[0]> = {},
+) {
   return render(
     <EarlyAccessProductCard
       product={product(overrides)}
       quantity={quantity}
       onQuantityChange={() => {}}
       onSelect={() => {}}
-      fulfillmentTargetCopy={FULFILLMENT}
+      {...extra}
     />,
   );
+}
+
+function action(el: HTMLElement): HTMLButtonElement | null {
+  return el.querySelector<HTMLButtonElement>("[data-testid='early-access-product-card-action']");
 }
 
 describe("early access product card", () => {
@@ -70,7 +78,8 @@ describe("early access product card", () => {
     const el = card({}, 3);
     const text = el.textContent ?? "";
 
-    expect(text).toContain("$56.00 per unit");
+    expect(text).toContain("$56.00");
+    expect(text).toContain("per unit");
 
     // 5,600 x 3 = 16,800, less 20% = 13,440. None of it may appear.
     expect(text).not.toContain("168.00");
@@ -96,70 +105,55 @@ describe("early access product card", () => {
     }
   });
 
-  it("renders the fulfillment target exactly as supplied, never a paraphrase", () => {
+  it("no longer repeats the fulfillment sentence per card", () => {
+    // The sentence is real and canonical, and it is rendered ONCE at catalogue
+    // level by the section. Twenty-two repetitions of it were most of the wall
+    // the compact redesign removes.
     const el = card();
-    expect(el.textContent).toContain(FULFILLMENT);
-    // It is a target. The card must not turn it into a promise.
-    const text = (el.textContent ?? "").toLowerCase();
-    expect(text).not.toContain("guarantee");
-    expect(text).not.toContain("will arrive");
-    expect(text).not.toContain("delivered by");
+    expect(el.textContent).not.toContain(FULFILLMENT);
+    expect(el.textContent).not.toContain("Current fulfillment target");
   });
 
-  it("names the bundle offer on the quantity option itself", () => {
-    const el = card();
-    expect(el.textContent).toContain("3-Unit Research Bundle — 20% savings");
+  it("names the bundle offer when three units are chosen, without computing anything", () => {
+    const el = card({}, 3);
+    expect(el.textContent).toContain("Research Bundle, 20% savings");
+    // The offer's NAME, never a figure derived from it.
+    expect(el.textContent).not.toContain("134.40");
+
+    const single = card({}, 1);
+    expect(single.textContent).not.toContain("Research Bundle");
   });
 
   it.each([
-    ["AVAILABLE", "Available to order", "Select", false],
+    ["AVAILABLE", "Available to order", "Add", false],
     [
       "AVAILABILITY_CONFIRMATION_REQUIRED",
       "Availability confirmed by our team before payment",
       "Request availability",
       false,
     ],
-    ["TEMPORARILY_HELD", "Temporarily unavailable", "Unavailable", true],
+    ["TEMPORARILY_HELD", "Temporarily unavailable", "", true],
   ] as ReadonlyArray<[EarlyAccessAvailabilityState, string, string, boolean]>)(
     "renders %s as visible, with its own copy and action",
-    (availability, copy, action, heldWithNoControls) => {
+    (availability, copy, actionLabel, heldWithNoControls) => {
       const el = card({ availability });
       // Visible in every state. A row is never hidden because inventory
       // automation is missing; the customer is told the truth instead.
       expect(el.querySelector("[data-testid='early-access-product-card']")).not.toBeNull();
       expect(el.textContent).toContain(copy);
-      const button = el.querySelector<HTMLButtonElement>(
-        "[data-testid='early-access-product-card-action']",
-      );
+      const button = action(el);
       if (heldWithNoControls) {
         // A held row carries NO action control. Absent rather than disabled,
         // so the accessibility tree offers nothing to reach for.
         expect(button).toBeNull();
       } else {
-        expect(button?.textContent).toBe(action);
+        expect(button?.textContent).toBe(actionLabel);
         expect(button?.disabled).toBe(false);
       }
     },
   );
 
-  it("tells a confirmation-required customer before they choose, not after", () => {
-    // The whole point of surfacing this state: they learn payment is gated on a
-    // human confirmation while they are still deciding.
-    const el = card({ availability: "AVAILABILITY_CONFIRMATION_REQUIRED" });
-    expect(
-      el.querySelector("[data-testid='early-access-product-card-availability-detail']"),
-    ).not.toBeNull();
-    expect(el.textContent).toContain("before any payment instructions are shown");
-  });
-
-  it("does not offer that detail when the product is simply available", () => {
-    const el = card({ availability: "AVAILABLE" });
-    expect(
-      el.querySelector("[data-testid='early-access-product-card-availability-detail']"),
-    ).toBeNull();
-  });
-
-  it("reports a quantity choice without acting on it", () => {
+  it("reports a quantity step without acting on it", () => {
     const onQuantityChange = vi.fn();
     const onSelect = vi.fn();
     const el = render(
@@ -168,19 +162,102 @@ describe("early access product card", () => {
         quantity={1}
         onQuantityChange={onQuantityChange}
         onSelect={onSelect}
-        fulfillmentTargetCopy={FULFILLMENT}
       />,
     );
 
-    const three = el.querySelector<HTMLInputElement>("input[value='3']");
-    expect(three).not.toBeNull();
+    const increase = el.querySelector<HTMLButtonElement>(
+      "[data-testid='early-access-product-card-quantity-increase']",
+    );
+    expect(increase).not.toBeNull();
     act(() => {
-      three?.click();
+      increase?.click();
     });
 
-    expect(onQuantityChange).toHaveBeenCalledWith(3);
+    expect(onQuantityChange).toHaveBeenCalledWith(2);
     // Choosing a quantity is not ordering. The card never submits.
     expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("cannot step the quantity below the minimum or above the maximum", () => {
+    const onQuantityChange = vi.fn();
+    const atMin = render(
+      <EarlyAccessProductCard
+        product={product()}
+        quantity={1}
+        onQuantityChange={onQuantityChange}
+        onSelect={() => {}}
+      />,
+    );
+    const decrease = atMin.querySelector<HTMLButtonElement>(
+      "[data-testid='early-access-product-card-quantity-decrease']",
+    );
+    expect(decrease?.disabled).toBe(true);
+    act(() => {
+      decrease?.click();
+    });
+    expect(onQuantityChange).not.toHaveBeenCalled();
+
+    const atMax = render(
+      <EarlyAccessProductCard
+        product={product()}
+        quantity={3}
+        onQuantityChange={onQuantityChange}
+        onSelect={() => {}}
+      />,
+    );
+    const increase = atMax.querySelector<HTMLButtonElement>(
+      "[data-testid='early-access-product-card-quantity-increase']",
+    );
+    expect(increase?.disabled).toBe(true);
+    act(() => {
+      increase?.click();
+    });
+    expect(onQuantityChange).not.toHaveBeenCalled();
+  });
+
+  it("adds at the chosen quantity and removes when already selected", () => {
+    const onSelect = vi.fn();
+    const onRemove = vi.fn();
+
+    const unselected = render(
+      <EarlyAccessProductCard
+        product={product()}
+        quantity={2}
+        onQuantityChange={() => {}}
+        onSelect={onSelect}
+        onRemove={onRemove}
+        selected={false}
+      />,
+    );
+    act(() => {
+      action(unselected)?.click();
+    });
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onRemove).not.toHaveBeenCalled();
+
+    const selected = render(
+      <EarlyAccessProductCard
+        product={product()}
+        quantity={2}
+        onQuantityChange={() => {}}
+        onSelect={onSelect}
+        onRemove={onRemove}
+        selected
+      />,
+    );
+    // While selected there is no second Add to double-submit; the one action
+    // is Remove, and the state is announced.
+    expect(action(selected)).toBeNull();
+    expect(selected.textContent).toContain("Added to your order.");
+    const remove = selected.querySelector<HTMLButtonElement>(
+      "[data-testid='early-access-product-card-remove']",
+    );
+    expect(remove).not.toBeNull();
+    act(() => {
+      remove?.click();
+    });
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledTimes(1);
   });
 
   it("renders NO quantity control on a held product", () => {
@@ -188,7 +265,8 @@ describe("early access product card", () => {
     // accessibility tree, still announces itself, and can be re-enabled from
     // devtools. Absence is the only state that cannot be misread.
     const el = card({ availability: "TEMPORARILY_HELD" });
-    expect(el.querySelectorAll("input[type='radio']")).toHaveLength(0);
+    expect(el.querySelectorAll("button")).toHaveLength(0);
+    expect(el.querySelectorAll("input")).toHaveLength(0);
     expect(el.querySelector("[data-testid='early-access-product-card-quantity']")).toBeNull();
   });
 
@@ -196,19 +274,43 @@ describe("early access product card", () => {
     // Guards the guard: a change that removed the control everywhere would
     // pass the assertion above while breaking the whole catalogue.
     const el = card({ availability: "AVAILABLE" });
-    expect(
-      el.querySelectorAll("input[type='radio']").length,
-    ).toBeGreaterThan(0);
+    expect(el.querySelector("[data-testid='early-access-product-card-quantity']")).not.toBeNull();
   });
 
-  it("shows one placeholder and no product photography", () => {
-    // No image is safer than a wrong one: a vial photograph at the wrong
-    // strength misrepresents the product.
+  it("renders no photography and no empty media placeholder either", () => {
+    // No image is safer than a wrong one, and the old aspect-square placeholder
+    // was a card-sized blank that made 22 cards read as 22 screens.
     const el = card();
     expect(el.querySelectorAll("img")).toHaveLength(0);
-    const media = el.querySelector("[data-testid='early-access-product-card-media']");
-    expect(media).not.toBeNull();
-    expect(media?.getAttribute("aria-hidden")).toBe("true");
+    expect(el.querySelector("[data-testid='early-access-product-card-media']")).toBeNull();
+    expect(el.querySelector("[class*='aspect-square']")).toBeNull();
+  });
+});
+
+describe("the description is the server's, or it is nothing", () => {
+  it("renders a server-supplied description verbatim", () => {
+    const el = card({ description: "Product information for this item is still being confirmed." });
+    expect(
+      el.querySelector("[data-testid='early-access-product-card-description']")?.textContent,
+    ).toBe("Product information for this item is still being confirmed.");
+  });
+
+  it("renders nothing in the description's place when the server sent none", () => {
+    // No inferred blurb, no research claim, no copy derived from the product's
+    // name. The absence of information renders as absence.
+    const el = card({ description: "" });
+    expect(el.querySelector("[data-testid='early-access-product-card-description']")).toBeNull();
+    expect(el.textContent).not.toContain("Research focus");
+  });
+
+  it("does not infer a description from the product name", () => {
+    const el = card({ name: "BPC-157", description: "" });
+    // The name appears exactly where the name belongs and nowhere else as
+    // prose: one heading, plus the accessible labels on the controls.
+    const paragraphs = Array.from(el.querySelectorAll("p")).map((p) => p.textContent ?? "");
+    for (const text of paragraphs) {
+      expect(text, `paragraph invented copy about the product: "${text}"`).not.toContain("BPC-157");
+    }
   });
 });
 
@@ -231,7 +333,6 @@ describe("a founder-held row, which is how Cagrilintide arrives", () => {
         quantity={null}
         onQuantityChange={() => {}}
         onSelect={() => {}}
-        fulfillmentTargetCopy={FULFILLMENT}
       />,
     );
   }
@@ -251,6 +352,7 @@ describe("a founder-held row, which is how Cagrilintide arrives", () => {
     expect(el.querySelector("[data-testid='early-access-product-card-unit-price']")).toBeNull();
     expect(el.textContent).not.toContain("$");
     expect(el.textContent).not.toContain("per unit");
+    expect(el.textContent).toContain("Temporarily unavailable");
     expect(el.textContent).toContain("Not available to order");
   });
 
@@ -264,9 +366,7 @@ describe("a founder-held row, which is how Cagrilintide arrives", () => {
     ).toBeNull();
     expect(el.querySelectorAll("button")).toHaveLength(0);
     expect(el.querySelectorAll("input")).toHaveLength(0);
-    expect(
-      el.querySelector("[data-testid='early-access-product-card-savings']"),
-    ).toBeNull();
+    expect(el.textContent).not.toContain("Research Bundle");
   });
 
   it("leaks no internal blocker text to the customer", () => {

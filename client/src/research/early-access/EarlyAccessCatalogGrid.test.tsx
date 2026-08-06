@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { EarlyAccessCatalogGrid } from "./EarlyAccessCatalogGrid";
 import { toCardProducts, type EarlyAccessCatalogRowView } from "./earlyAccessCatalogView";
 
+/** The canonical fulfillment sentence. It must NOT appear inside the grid. */
 const FULFILLMENT =
   "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
 
@@ -87,7 +88,6 @@ function grid(rows: EarlyAccessCatalogRowView[], onSelect = vi.fn()) {
       quantities={{}}
       onQuantityChange={() => {}}
       onSelect={onSelect}
-      fulfillmentTargetCopy={FULFILLMENT}
     />,
   );
   return { el, products, dropped, onSelect };
@@ -114,6 +114,18 @@ describe("early access catalogue grid", () => {
     }
   });
 
+  it("lays the shelf out compactly: four across at desktop width, then three, two, one", () => {
+    const { el } = grid(approvedRows());
+    const className =
+      el.querySelector("[data-testid='early-access-catalog']")?.className ?? "";
+    expect(className).toContain("sm:grid-cols-2");
+    expect(className).toContain("lg:grid-cols-3");
+    expect(className).toContain("xl:grid-cols-4");
+    // Compact gaps, and nothing that can force sideways scrolling.
+    expect(className).toContain("gap-4");
+    expect(className).toContain("min-w-0");
+  });
+
   it("marks the held rows held and leaves the rest orderable", () => {
     const { el } = grid(approvedRows());
     const held = el.querySelectorAll("[data-availability='TEMPORARILY_HELD']");
@@ -132,17 +144,31 @@ describe("early access catalogue grid", () => {
     expect(heldCard?.querySelectorAll("input")).toHaveLength(0);
 
     const availableCard = el.querySelector("[data-availability='AVAILABLE']");
-    expect(availableCard?.querySelector("button")?.disabled).toBe(false);
+    const action = availableCard?.querySelector<HTMLButtonElement>("[data-testid$='-action']");
+    expect(action).not.toBeNull();
+    expect(action?.disabled).toBe(false);
   });
 
   it("shows the single unit price and never a computed bundle total", () => {
     const { el } = grid(approvedRows());
     const text = el.textContent ?? "";
-    expect(text).toContain("$56.00 per unit");
-    expect(text).toContain("$140.00 per unit");
-    // 14,000 x 3 = 42,000, less 20% = 33,600. Neither may appear.
-    expect(text).not.toContain("420.00");
-    expect(text).not.toContain("336.00");
+    expect(text).toContain("$56.00");
+    expect(text).toContain("$106.50");
+    expect(text).toContain("per unit");
+    // Cagrilintide is held. Its recorded price must NOT appear beside a unit
+    // nobody may buy, even though the row carries one.
+    expect(text).not.toContain("$140.00");
+    // 5,600 x 3 = 16,800, less 20% = 13,440. Neither may appear.
+    expect(text).not.toContain("168.00");
+    expect(text).not.toContain("134.40");
+  });
+
+  it("repeats no fulfillment sentence inside the shelf", () => {
+    // The canonical sentence renders ONCE at catalogue level, above the grid.
+    // Its old home was every card, which is the wall this redesign removes.
+    const { el } = grid(approvedRows());
+    expect(el.textContent).not.toContain(FULFILLMENT);
+    expect(el.textContent).not.toContain("Current fulfillment target");
   });
 
   it("surfaces dropped rows rather than quietly shortening the catalogue", () => {
@@ -170,13 +196,39 @@ describe("early access catalogue grid", () => {
     const onSelect = vi.fn();
     const { el } = grid(approvedRows(), onSelect);
     const first = el.querySelector<HTMLButtonElement>(
-      "[data-availability='AVAILABLE'] button",
+      "[data-availability='AVAILABLE'] [data-testid$='-action']",
     );
     act(() => {
       first?.click();
     });
     expect(onSelect).toHaveBeenCalledTimes(1);
     expect(onSelect.mock.calls[0][0]).toMatchObject({ name: "AOD-9604", unitPriceCents: 5_600 });
+  });
+
+  it("marks a selected row and offers Remove instead of a second Add", () => {
+    const onRemove = vi.fn();
+    const { products } = { products: toCardProducts(approvedRows()).products };
+    const el = render(
+      <EarlyAccessCatalogGrid
+        products={products}
+        dropped={0}
+        quantities={{}}
+        selectedIds={new Set(["var-0"])}
+        onQuantityChange={() => {}}
+        onSelect={() => {}}
+        onRemove={onRemove}
+      />,
+    );
+    const selected = el.querySelector("[data-testid='early-access-catalog-card-var-0']");
+    expect(selected?.getAttribute("data-selected")).toBe("true");
+    expect(selected?.querySelector("[data-testid$='-action']")).toBeNull();
+    const remove = selected?.querySelector<HTMLButtonElement>("[data-testid$='-remove']");
+    expect(remove).not.toBeNull();
+    act(() => {
+      remove?.click();
+    });
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRemove.mock.calls[0][0]).toMatchObject({ variantId: "var-0" });
   });
 
   it("leaks no supplier, cost, margin, inventory or dispute wording anywhere", () => {

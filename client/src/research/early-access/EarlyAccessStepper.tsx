@@ -31,10 +31,17 @@ export function EarlyAccessStepper({
 
   return (
     <div className="min-w-0" data-testid={testId}>
+      {/*
+        One compact horizontal row, wrapping on narrow screens. The eight step
+        labels used to stack vertically and pushed the catalogue below the fold
+        before a customer saw a single product. The DOM and the announcements
+        are unchanged: an ordered list, one aria-current step, position stated
+        in words, never by weight or color alone.
+      */}
       <ol
         aria-label="Early access steps"
         aria-describedby={statusId}
-        className="grid min-w-0 gap-2"
+        className="flex min-w-0 flex-wrap items-baseline gap-x-4 gap-y-1"
       >
         {steps.map((label, index) => {
           const isCurrent = index === current;
@@ -42,12 +49,10 @@ export function EarlyAccessStepper({
             <li
               key={`${index}-${label}`}
               aria-current={isCurrent ? "step" : undefined}
-              className="flex min-w-0 flex-wrap items-baseline gap-2"
+              className="flex min-w-0 items-baseline gap-1"
               data-testid={`${testId}-step-${index}`}
             >
               <span className="mono-label text-ink-mute tabular">{index + 1}</span>
-              {/* Position is never signaled by color alone: the active step is
-                  bold AND says so in words. */}
               <span
                 className={`body-s min-w-0 break-words ${isCurrent ? "font-700" : "text-ink-2"}`}
               >
@@ -62,7 +67,7 @@ export function EarlyAccessStepper({
         id={statusId}
         role="status"
         aria-live="polite"
-        className="body-s text-ink-mute mt-3"
+        className="body-s text-ink-mute mt-2"
       >
         {current === null
           ? `${steps.length} steps in this flow.`

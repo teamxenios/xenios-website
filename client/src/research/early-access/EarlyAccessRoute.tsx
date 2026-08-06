@@ -62,6 +62,7 @@ export default function EarlyAccessRoute() {
   // journey must describe the SAME situation the agreement step is describing.
   const [blocked, setBlocked] = useState<"unverified" | "locked" | null>(null);
   const catalogRef = useRef<HTMLDivElement | null>(null);
+  const nextStepsRef = useRef<HTMLDivElement | null>(null);
 
   const readSession = useCallback(async () => {
     try {
@@ -197,59 +198,84 @@ export default function EarlyAccessRoute() {
       )}
 
       {state.kind === "authenticated" && (
-        <section className="container-x" style={{ paddingTop: 72, paddingBottom: 96 }}>
-          <div className="max-w-[720px] min-w-0">
-            <p className="mono-cap text-pulse mb-5">Private Early Access</p>
-            <h1 className="display-s max-w-[26ch]">Welcome to Xenios Research Early Access</h1>
+        <section className="container-x" style={{ paddingTop: 56, paddingBottom: 96 }}>
+          <div className="min-w-0">
+            {/*
+              A compact header: name, access level, and the journey in one
+              breath. The stepper's own status line states "Step 4 of 8" in
+              words, so the header does not repeat it.
+            */}
+            <p className="mono-cap text-pulse mb-4">Private Early Access</p>
+            <h1 className="display-s max-w-[26ch]">Xenios Research</h1>
 
-            <div className="mt-8">
+            <div className="mt-6">
               <EarlyAccessStepper
                 steps={EARLY_ACCESS_STEPS}
                 activeIndex={agreed && blocked === null ? EARLY_ACCESS_CATALOG_STEP : EARLY_ACCESS_AGREEMENT_STEP}
               />
             </div>
 
-            <div className="mt-8 grid gap-4" data-testid="early-access-welcome">
-              <p className="body-m text-ink-2 max-w-[62ch]">
-                You are entering the private first release of Xenios Research.
-              </p>
-              <p className="body-s text-ink-2 max-w-[62ch]">
-                Our complete member platform is being built in parallel into a deeper, more
-                personalized experience. While that experience comes online, Early Access gives
-                approved members a streamlined path to review the current research catalog, complete
-                required verification, place an order, and receive direct support from payment review
-                through fulfillment.
-              </p>
-              <p className="body-s text-ink-2 max-w-[62ch]">
-                This private release is intentionally simple, secure, and concierge-led. We look
-                forward to welcoming you into the full Xenios Research experience as it expands.
-              </p>
-            </div>
+            {/*
+              The welcome introduction is for arriving, not for shopping. Once
+              the server confirms the agreement and the customer is on the
+              catalogue step, it is not repeated above the shelf; the catalogue
+              opens where the welcome stood.
+            */}
+            {!(agreed && blocked === null) && (
+              <div className="mt-6 grid gap-4" data-testid="early-access-welcome">
+                <p className="body-m text-ink-2 max-w-[62ch]">
+                  You are entering the private first release of Xenios Research.
+                </p>
+                <p className="body-s text-ink-2 max-w-[62ch]">
+                  Our complete member platform is being built in parallel into a deeper, more
+                  personalized experience. While that experience comes online, Early Access gives
+                  approved members a streamlined path to review the current research catalog, complete
+                  required verification, place an order, and receive direct support from payment review
+                  through fulfillment.
+                </p>
+                <p className="body-s text-ink-2 max-w-[62ch]">
+                  This private release is intentionally simple, secure, and concierge-led. We look
+                  forward to welcoming you into the full Xenios Research experience as it expands.
+                </p>
+              </div>
+            )}
 
             {/*
               The required agreement, above the catalogue. Browsing is not
               gated: a customer may read the whole shelf before agreeing to
               anything, and the catalogue is unchanged by what follows. What IS
               gated is the continuation into ordering, because the order route
-              refuses with AGREEMENT_REQUIRED until this is on file.
+              refuses with AGREEMENT_REQUIRED until this is on file. Once the
+              acceptance is on file the section collapses to a single line with
+              the policy one disclosure away.
             */}
-            <div className="mt-8" data-testid="early-access-agreement-mount">
+            <div className="mt-6 max-w-[720px]" data-testid="early-access-agreement-mount">
               <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
             </div>
 
             {/*
-              The live catalogue. It reads the mounted endpoint and renders
-              exactly what the server returns: no fixture rows, no padding to a
-              target count, and the dropped-row count surfaced rather than
-              absorbed. Whatever the server says today is what a customer sees.
+              The live catalogue, full width so the shelf can sit three and four
+              cards across. It reads the mounted endpoint and renders exactly
+              what the server returns: no fixture rows, no padding to a target
+              count, and the dropped-row count surfaced rather than absorbed.
+              Whatever the server says today is what a customer sees.
             */}
-            <div className="mt-8" data-testid="early-access-catalog-mount" ref={catalogRef} tabIndex={-1}>
+            <div className="mt-6" data-testid="early-access-catalog-mount" ref={catalogRef} tabIndex={-1}>
               <EarlyAccessCatalogSection
                 fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
+                onReview={() => {
+                  nextStepsRef.current?.focus();
+                  nextStepsRef.current?.scrollIntoView({ block: "start" });
+                }}
               />
             </div>
 
-            <div className="card mt-8" data-testid="early-access-next-steps">
+            <div
+              className="card mt-8 max-w-[720px]"
+              data-testid="early-access-next-steps"
+              ref={nextStepsRef}
+              tabIndex={-1}
+            >
               <p className="mono-label text-ink-mute">What happens next</p>
               {agreed ? (
                 <p

@@ -93,11 +93,17 @@ export function EarlyAccessAgreementSection({
 }: EarlyAccessAgreementSectionProps) {
   const headingId = useId();
   const checkboxId = useId();
+  const policyPanelId = useId();
   const [policy, setPolicy] = useState<ResearchPolicyLoad | null>(null);
   const [phase, setPhase] = useState<Phase>({ status: "loading" });
   // Unchecked, always, on every mount. An agreement screen that arrives already
   // ticked has collected nothing.
   const [checked, setChecked] = useState(false);
+  // Whether an ALREADY-ACCEPTED customer has the policy open for re-reading.
+  // Display state only: it gates nothing and records nothing. Closed on every
+  // mount, so an accepted customer gets the one-line confirmation, not the
+  // full document again.
+  const [policyOpen, setPolicyOpen] = useState(false);
 
   const [reloadKey, setReloadKey] = useState(0);
   const reload = useCallback(() => {
@@ -248,12 +254,111 @@ export function EarlyAccessAgreementSection({
 
   const document = policy.policy;
 
+  /*
+    The served document, rendered in full, exactly as published. This block is
+    the SAME whether it appears open (before acceptance) or behind the View
+    policy disclosure (after acceptance): the words never change, only whether
+    they are unfolded by default.
+  */
+  const policyBody = (
+    <div
+      className="mt-5 grid gap-5 max-w-[62ch] min-w-0"
+      data-testid={`${testId}-policy`}
+      data-sections={document.sections.length}
+    >
+      {document.sections.map((section, index) => (
+        <div key={`${section.heading}-${index}`} className="min-w-0">
+          {section.heading !== "" && (
+            <h3 className="body-s font-700" data-testid={`${testId}-heading`}>
+              {section.heading}
+            </h3>
+          )}
+          {section.paragraphs.map((paragraph, paragraphIndex) => (
+            <p
+              key={paragraphIndex}
+              className="body-s text-ink-2 mt-2"
+              data-testid={`${testId}-paragraph`}
+            >
+              {paragraph}
+            </p>
+          ))}
+          {section.bullets.length > 0 && (
+            <ul className="mt-2 grid gap-1 list-disc pl-5">
+              {section.bullets.map((bullet, bulletIndex) => (
+                <li
+                  key={bulletIndex}
+                  className="body-s text-ink-2"
+                  data-testid={`${testId}-bullet`}
+                >
+                  {bullet}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
+  if (accepted) {
+    /*
+      The compact accepted state. The full document is NOT unfolded by default:
+      an accepted customer scanning for the catalogue does not re-read the
+      policy on every visit. It stays one click away, unabridged, behind a real
+      disclosure button, because an agreement a customer can no longer reach is
+      an agreement they cannot re-read. Nothing about the acceptance itself is
+      decided here; the server already said this customer is agreed.
+    */
+    return (
+      <section
+        aria-labelledby={headingId}
+        className="card min-w-0"
+        data-testid={testId}
+        data-state="accepted"
+      >
+        <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
+          <p
+            aria-live="polite"
+            role="status"
+            className="body-s text-ink-2 min-w-0"
+            id={headingId}
+            data-testid={`${testId}-accepted`}
+          >
+            <span aria-hidden="true">✓ </span>
+            Research Use Policy accepted.
+          </p>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            aria-expanded={policyOpen}
+            aria-controls={policyPanelId}
+            onClick={() => setPolicyOpen((open) => !open)}
+            data-testid={`${testId}-view-policy`}
+          >
+            {policyOpen ? "Hide policy" : "View policy"}
+          </button>
+        </div>
+        {policyOpen && (
+          <div id={policyPanelId} className="min-w-0" data-testid={`${testId}-policy-panel`}>
+            <h2 className="body-l font-700 mt-4 text-balance">{document.title}</h2>
+            {document.updated !== "" && (
+              <p className="body-s text-ink-mute mt-1" data-testid={`${testId}-updated`}>
+                Updated {document.updated}
+              </p>
+            )}
+            {policyBody}
+          </div>
+        )}
+      </section>
+    );
+  }
+
   return (
     <section
       aria-labelledby={headingId}
       className="card min-w-0"
       data-testid={testId}
-      data-state={accepted ? "accepted" : "ready"}
+      data-state="ready"
     >
       <p className="mono-label text-ink-mute">Required before ordering</p>
       <h2 id={headingId} className="body-l font-700 mt-2 text-balance">
@@ -265,60 +370,9 @@ export function EarlyAccessAgreementSection({
         </p>
       )}
 
-      {/*
-        The served document, rendered in full. It is scrollable on a small
-        screen rather than truncated: a policy a customer cannot reach the end
-        of is a policy they were not shown.
-      */}
-      <div
-        className="mt-5 grid gap-5 max-w-[62ch] min-w-0"
-        data-testid={`${testId}-policy`}
-        data-sections={document.sections.length}
-      >
-        {document.sections.map((section, index) => (
-          <div key={`${section.heading}-${index}`} className="min-w-0">
-            {section.heading !== "" && (
-              <h3 className="body-s font-700" data-testid={`${testId}-heading`}>
-                {section.heading}
-              </h3>
-            )}
-            {section.paragraphs.map((paragraph, paragraphIndex) => (
-              <p
-                key={paragraphIndex}
-                className="body-s text-ink-2 mt-2"
-                data-testid={`${testId}-paragraph`}
-              >
-                {paragraph}
-              </p>
-            ))}
-            {section.bullets.length > 0 && (
-              <ul className="mt-2 grid gap-1 list-disc pl-5">
-                {section.bullets.map((bullet, bulletIndex) => (
-                  <li
-                    key={bulletIndex}
-                    className="body-s text-ink-2"
-                    data-testid={`${testId}-bullet`}
-                  >
-                    {bullet}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
-      </div>
+      {policyBody}
 
-      {accepted ? (
-        <p
-          aria-live="polite"
-          role="status"
-          className="body-s text-ink-2 mt-6"
-          data-testid={`${testId}-accepted`}
-        >
-          You have accepted the Research Use Policy. You can continue to the research catalogue.
-        </p>
-      ) : (
-        <div className="mt-6 grid gap-4 min-w-0">
+      <div className="mt-6 grid gap-4 min-w-0">
           {/*
             One box, for one policy. Marketing preferences are deliberately not
             here: a single tick must mean exactly one thing, or it is not
@@ -363,7 +417,6 @@ export function EarlyAccessAgreementSection({
             </p>
           )}
         </div>
-      )}
     </section>
   );
 }

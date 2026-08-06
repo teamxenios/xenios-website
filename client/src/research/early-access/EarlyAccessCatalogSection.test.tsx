@@ -155,7 +155,7 @@ describe("early access catalogue section", () => {
       onSelect,
     );
     act(() => {
-      el.querySelector<HTMLButtonElement>("article button")?.click();
+      el.querySelector<HTMLButtonElement>("article [data-testid$='-action']")?.click();
     });
     expect(onSelect).toHaveBeenCalledTimes(1);
     expect(onSelect.mock.calls[0][0]).toMatchObject({ productId: "prod-1" });

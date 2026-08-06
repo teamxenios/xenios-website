@@ -36,8 +36,6 @@ import type { ApiResult } from "../lib/api";
 
 const CATALOG_PATH = "/api/research/early-access/catalog";
 const UNLOCK_PATH = "/api/research/early-access/unlock";
-const FULFILLMENT =
-  "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
 
 /**
  * The real app.
@@ -118,7 +116,6 @@ function renderGrid(products: Parameters<typeof EarlyAccessCatalogGrid>[0]["prod
         quantities={{}}
         onQuantityChange={() => {}}
         onSelect={() => {}}
-        fulfillmentTargetCopy={FULFILLMENT}
       />,
     );
   });
@@ -249,15 +246,22 @@ describe("catalogue contract: real route, real adapter, real grid", () => {
       expect(card, `no card rendered for ${product.variantId}`).not.toBeNull();
       expect(card?.getAttribute("data-availability")).toBe(product.availability);
 
-      const button = card?.querySelector("button");
       if (product.availability === "TEMPORARILY_HELD") {
-        expect(button?.disabled, `${product.name} is held but actionable`).toBe(true);
+        // A held row carries NO purchase surface at all: absent, not disabled,
+        // so the accessibility tree offers nothing to reach for.
+        expect(
+          card?.querySelectorAll("button").length,
+          `${product.name} is held but actionable`,
+        ).toBe(0);
       } else {
         // Available and confirmation-required rows are both visible and
         // selectable; the payment gate lives further down the flow, not here.
-        expect(button?.disabled, `${product.name} is ${product.availability} but disabled`).toBe(
-          false,
-        );
+        const action = card?.querySelector<HTMLButtonElement>("[data-testid$='-action']");
+        expect(action, `${product.name} is ${product.availability} with no action`).not.toBeNull();
+        expect(
+          action?.disabled,
+          `${product.name} is ${product.availability} but disabled`,
+        ).toBe(false);
       }
     }
   });
