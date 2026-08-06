@@ -144,3 +144,39 @@ double-click would have caught it in seconds.
 **A 502 anywhere in B5a is a CHANGES_REQUIRED**, not a cosmetic issue: it tells a
 customer their acceptance failed when it succeeded, and they will reasonably
 believe they have not agreed.
+
+---
+
+## H. Mobile matrix, run at 375 px and 320 px
+
+The agreement screen is the one place a long legal document, a checkbox and a
+continue control compete for a small viewport. That is where it breaks.
+
+| # | check | fail condition |
+|---|---|---|
+| H1 | Policy scrolls within its own region, page does not scroll sideways | horizontal scroll at 320 |
+| H2 | All four sections and all five bullets reachable | any section clipped or unreachable |
+| H3 | Checkbox and its label are both tappable, target at least 44 px | label not tappable, or target under 44 px |
+| H4 | Continue control visible without hunting; not hidden under a sticky bar | control obscured at 320 |
+| H5 | Checkbox state survives on-screen-keyboard open/close | state resets |
+| H6 | Double-tap on accept | one request or two harmless ones; **never an error surface** |
+| H7 | Rotate portrait to landscape mid-flow | acceptance state preserved |
+| H8 | Reload after acceptance | still accepted, server-authoritative |
+
+## I. Keyboard and accessibility matrix
+
+| # | check | fail condition |
+|---|---|---|
+| I1 | Tab reaches the checkbox and the continue control in reading order | either unreachable, or order surprises |
+| I2 | Space toggles the checkbox; Enter does not submit an unchecked form | space does nothing |
+| I3 | Visible focus ring on both controls, not colour-only | focus invisible against the background |
+| I4 | Checkbox has a programmatic label tied to it | label not associated; screen reader announces an unlabelled checkbox |
+| I5 | **Checkbox is NOT checked on load**, and is not checked by any script | pre-checked consent |
+| I6 | Continue is disabled, or refuses, while unchecked | continuation possible unchecked |
+| I7 | Refusal text is associated with the control that caused it | error announced without context |
+| I8 | Errors are announced, not signalled by colour alone | colour-only error |
+| I9 | The policy region is reachable and scrollable by keyboard | keyboard-trapped or unreachable |
+| I10 | Zoom to 200% | content lost or overlapping |
+
+**I5 is not a preference.** A pre-checked consent box is not consent, and it is
+the one accessibility finding here that is also a legal one.
