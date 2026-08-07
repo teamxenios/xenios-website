@@ -370,7 +370,7 @@
     {
       "id": "research_early_access_cart_checkout",
       "path": "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql",
-      "sourceSha": "83e483ebb9c3d7153fc6944fa6c3e27f1d966fc3",
+      "sourceSha": "f718a6f6b0154d9d4afd1a5f5f65c16595a0944f",
       "dependsOn": [
         "research_early_access_commerce_persistence"
       ],
@@ -390,7 +390,7 @@
     {
       "id": "research_affiliate_access_and_portal_v2",
       "path": "supabase/migrations/20260807200000_research_affiliate_access_and_portal_v2.sql",
-      "sourceSha": "83e483ebb9c3d7153fc6944fa6c3e27f1d966fc3",
+      "sourceSha": "f718a6f6b0154d9d4afd1a5f5f65c16595a0944f",
       "dependsOn": [
         "research_affiliate_professional_operations"
       ],

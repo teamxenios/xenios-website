@@ -65,30 +65,47 @@ function scheduleVersion(input: Readonly<Record<string, string | number>>): stri
 export const AFFILIATE_DRAFT_COMMISSION_SCHEDULE: AffiliateCommissionScheduleSnapshot =
   Object.freeze({
     scheduleId: AFFILIATE_DRAFT_SCHEDULE_ID,
-    scheduleVersion: scheduleVersion({
-      scheduleId: AFFILIATE_DRAFT_SCHEDULE_ID,
-      firstOrderRateBps: AFFILIATE_FIRST_ORDER_RATE_BPS,
-      repeatOrderRateBps: AFFILIATE_REPEAT_ORDER_RATE_BPS,
-      attributionWindowDays: AFFILIATE_ATTRIBUTION_WINDOW_DAYS,
-      holdDays: AFFILIATE_COMMISSION_HOLD_DAYS,
-      minimumPayoutCents: AFFILIATE_MINIMUM_PAYOUT_CENTS,
-    }),
-    state: "draft",
+    version: 1,
     firstOrderRateBps: AFFILIATE_FIRST_ORDER_RATE_BPS,
     repeatOrderRateBps: AFFILIATE_REPEAT_ORDER_RATE_BPS,
     attributionWindowDays: AFFILIATE_ATTRIBUTION_WINDOW_DAYS,
     holdDays: AFFILIATE_COMMISSION_HOLD_DAYS,
     minimumPayoutCents: AFFILIATE_MINIMUM_PAYOUT_CENTS,
-  } as AffiliateCommissionScheduleSnapshot);
+    recurringTermMonths: null,
+    currency: "USD",
+  });
 
 /**
- * Whether a schedule may actually produce money.
+ * The fingerprint of the schedule's own content.
  *
- * One function, so "is this schedule live" is answered the same way
- * everywhere rather than by each caller reading the field and deciding.
+ * Separate from the snapshot because the shared type is the shape the rest of
+ * the system stores; this is the value a stored commission is bound to, so a
+ * rate edited later can be told apart from the rate that actually applied.
  */
+export const AFFILIATE_DRAFT_SCHEDULE_VERSION_HASH = scheduleVersion({
+  scheduleId: AFFILIATE_DRAFT_SCHEDULE_ID,
+  version: AFFILIATE_DRAFT_COMMISSION_SCHEDULE.version,
+  firstOrderRateBps: AFFILIATE_FIRST_ORDER_RATE_BPS,
+  repeatOrderRateBps: AFFILIATE_REPEAT_ORDER_RATE_BPS,
+  attributionWindowDays: AFFILIATE_ATTRIBUTION_WINDOW_DAYS,
+  holdDays: AFFILIATE_COMMISSION_HOLD_DAYS,
+  minimumPayoutCents: AFFILIATE_MINIMUM_PAYOUT_CENTS,
+});
+
+/**
+ * THE APPROVAL STATE LIVES OUTSIDE THE SNAPSHOT, DELIBERATELY.
+ *
+ * The shared snapshot type carries rates, not governance. Whether a schedule
+ * may actually pay anyone is a separate fact, and it is `false` here: this
+ * successor contains no loader that returns an approved schedule, and
+ * `calculateAffiliateCommission` is only ever handed `scheduleActive` from a
+ * caller that must decide it. Turning this on is a founder decision with a
+ * signature, not an edit to a constant.
+ */
+export const AFFILIATE_DRAFT_SCHEDULE_STATE = "draft" as const;
+
 export function affiliateScheduleIsActive(
-  schedule: Pick<AffiliateCommissionScheduleSnapshot, "state">,
+  state: string = AFFILIATE_DRAFT_SCHEDULE_STATE,
 ): boolean {
-  return schedule.state === "active";
+  return state === "active";
 }

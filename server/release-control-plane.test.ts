@@ -77,6 +77,12 @@ const EA_BUCKET_PRIVACY_SOURCE_SHA = "44145cb66b56340de219fa9f826d3196a4193403";
 const EA_BUCKET_PRIVACY_PATH =
   "supabase/migrations/20260804150000_research_early_access_proof_bucket_privacy.sql";
 const EA_STRENGTH_MIRROR_SOURCE_SHA = "5bee236b996d839f71e148a416efeaa22c366810";
+/** The cart and affiliate schema, introduced together in one commit. */
+const CART_AFFILIATE_SOURCE_SHA = "f718a6f6b0154d9d4afd1a5f5f65c16595a0944f";
+const CART_CHECKOUT_PATH =
+  "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql";
+const AFFILIATE_V2_PATH =
+  "supabase/migrations/20260807200000_research_affiliate_access_and_portal_v2.sql";
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -757,6 +763,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(EA_BUCKET_PRIVACY_SOURCE_SHA);
           } else if (path === EA_STRENGTH_MIRROR_PATH) {
             expect(sourceSha).toBe(EA_STRENGTH_MIRROR_SOURCE_SHA);
+          } else if (path === CART_CHECKOUT_PATH || path === AFFILIATE_V2_PATH) {
+            expect(sourceSha).toBe(CART_AFFILIATE_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }

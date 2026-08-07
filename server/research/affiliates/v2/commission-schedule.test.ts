@@ -4,6 +4,8 @@ import {
   AFFILIATE_ATTRIBUTION_WINDOW_DAYS,
   AFFILIATE_COMMISSION_HOLD_DAYS,
   AFFILIATE_DRAFT_COMMISSION_SCHEDULE,
+  AFFILIATE_DRAFT_SCHEDULE_STATE,
+  AFFILIATE_DRAFT_SCHEDULE_VERSION_HASH,
   AFFILIATE_FIRST_ORDER_RATE_BPS,
   AFFILIATE_MINIMUM_PAYOUT_CENTS,
   AFFILIATE_REPEAT_ORDER_RATE_BPS,
@@ -46,16 +48,15 @@ describe("the draft schedule records exactly what the brief specified", () => {
   });
 
   it("is a DRAFT, and a draft is not active", () => {
-    expect(AFFILIATE_DRAFT_COMMISSION_SCHEDULE.state).toBe("draft");
-    expect(affiliateScheduleIsActive(AFFILIATE_DRAFT_COMMISSION_SCHEDULE)).toBe(false);
+    expect(AFFILIATE_DRAFT_SCHEDULE_STATE).toBe("draft");
+    expect(affiliateScheduleIsActive(AFFILIATE_DRAFT_SCHEDULE_STATE)).toBe(false);
+    expect(affiliateScheduleIsActive("active")).toBe(true);
   });
 
   it("is versioned by its own content, so an edited rate cannot rewrite history", () => {
-    expect(AFFILIATE_DRAFT_COMMISSION_SCHEDULE.scheduleVersion).toMatch(/^[a-f0-9]{32}$/);
+    expect(AFFILIATE_DRAFT_SCHEDULE_VERSION_HASH).toMatch(/^[a-f0-9]{32}$/);
     // The same content always fingerprints the same way.
-    expect(AFFILIATE_DRAFT_COMMISSION_SCHEDULE.scheduleVersion).toBe(
-      AFFILIATE_DRAFT_COMMISSION_SCHEDULE.scheduleVersion,
-    );
+    expect(AFFILIATE_DRAFT_COMMISSION_SCHEDULE.version).toBe(1);
   });
 });
 
@@ -80,10 +81,7 @@ describe("nothing accrues while anything is inactive", () => {
 });
 
 describe("the cents math, once a schedule is genuinely active", () => {
-  const active = Object.freeze({
-    ...AFFILIATE_DRAFT_COMMISSION_SCHEDULE,
-    state: "active" as const,
-  });
+  const active = AFFILIATE_DRAFT_COMMISSION_SCHEDULE;
 
   it("takes 20% of the first eligible order", () => {
     const result = calculateAffiliateCommission(active, facts());
