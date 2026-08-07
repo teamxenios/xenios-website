@@ -32,12 +32,25 @@ references `public.research_affiliate_partners`.
 
 ## The rollback
 
-**1. Leave every flag false. This is the rollback.**
+**1. No affiliate route exists. THAT is the rollback.**
 
-`AFFILIATE_SYSTEM_ENABLED`, `AFFILIATE_PORTAL_ENABLED`,
-`AFFILIATE_CODES_ENABLED` and `AFFILIATE_CODE_UNLOCKS_EARLY_ACCESS` all ship
-`false`, and no route in this successor reads these tables. The schema is
-inert until a named human turns a flag on.
+Corrected 2026-08-07. This section previously read "leave every flag false,
+this is the rollback", which described a protection that did not exist. At the
+time it was written, `AFFILIATE_SYSTEM_ENABLED`, `AFFILIATE_PORTAL_ENABLED`,
+`AFFILIATE_CODES_ENABLED` and `AFFILIATE_CODE_UNLOCKS_EARLY_ACCESS` appeared
+in `.env.example` and NOWHERE ELSE. Nothing parsed them. Setting one to `true`
+would have changed no behaviour, and leaving it `false` prevented nothing.
+
+The schema is inert for the reason that was true all along: **no route in this
+successor reads these tables.** That is a real and sufficient protection, and
+it is the one to rely on.
+
+The flags now have parsers and a hierarchy in
+`server/research/affiliates/v2/feature-flags.ts`, so the sentence is on its
+way to being true rather than merely reassuring. It is not true yet, because
+there is still no mounted surface for a flag to gate.
+`unenforced-flags.test.ts` fails the build if an affiliate route is added
+without consulting a gate, which is what will keep this note accurate.
 
 **2. The commission schedule cannot pay anyone regardless.**
 

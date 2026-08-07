@@ -1,4 +1,30 @@
-// xenios research: feature flags.
+// xenios research: feature flag DECLARATIONS.
+//
+// READ THIS BEFORE TRUSTING ANYTHING IN THIS FILE.
+//
+// This is an inventory of intended capabilities. It is NOT a source of truth
+// about what is switched on, and nothing in the running system consumes it:
+// `readResearchFlags` and `flagFromEnv` have zero callers across client,
+// server and shared source. Setting any variable named below changes no
+// behaviour, because no composition root reads it.
+//
+// That was not obvious, and it mattered. A rollback note once said "leave
+// every flag false, this is the rollback" about affiliate switches that
+// nothing parsed. The affiliate system was genuinely inert, but because no
+// affiliate route was mounted, not because a flag held it shut. Anyone who
+// later mounted a route and trusted the flag would have shipped an ungated
+// surface believing it was off.
+//
+// WHERE ENFORCEMENT ACTUALLY LIVES: beside the capability, at the composition
+// root that mounts it. The two worked examples are
+// `server/research/early-access/cart/feature-flag.ts` (consumed in
+// `early-access/register.ts`) and `server/research/affiliates/v2/feature-flags.ts`.
+// Each pairs a named env constant with an exact-string parser and a real
+// mount consumer, and each is covered by tests that hit the real route.
+//
+// Adding a name here is a declaration of intent and enforces nothing. To
+// actually gate something, add the parser next to the capability and a test
+// that proves the route is unmounted when the flag is absent.
 //
 // Every flag defaults to FALSE. A capability becomes available because Samuel
 // turned it on after the required approval exists, never because code shipped.
