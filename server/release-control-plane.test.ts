@@ -1393,12 +1393,19 @@ describe("route uniqueness validator", () => {
   it("covers every current Express API call site and finite registration", () => {
     const result = scanExpressRouteResult(ROOT);
     expect(result.issues).toEqual([]);
-    // 331/340 as of the repair successor. The two additions over the frozen
-    // UX base, each deliberate and admin-guarded:
+    // 334/343 as of the cart successor. Five additions over the frozen UX
+    // base, each deliberate:
     //   POST /api/admin/research/payments/:orderNumber/external-proof
     //   GET  /api/admin/research/payments/:orderNumber
-    expect(result.callSites).toBe(331);
-    expect(result.routes).toHaveLength(340);
+    //   POST /api/research/early-access/cart/quote
+    //   POST /api/research/early-access/cart/checkout
+    //   GET  /api/research/early-access/cart/:cartCheckoutNumber
+    // The three cart doors are registered only when
+    // RESEARCH_EARLY_ACCESS_CART_ENABLED is exactly "true"; the scanner is a
+    // SOURCE scan, so it counts the call sites either way, which is the
+    // honest number to pin.
+    expect(result.callSites).toBe(334);
+    expect(result.routes).toHaveLength(343);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

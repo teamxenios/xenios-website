@@ -14,6 +14,7 @@ import {
   clearPendingAttempt,
   readLastOrderNumber,
 } from "./pendingOrderStore";
+import { clearBrowserCart } from "./cart/cartStore";
 import { EARLY_ACCESS_FULFILLMENT_TARGET_COPY } from "./fulfillment-copy";
 
 // The mounted Private Early Access route.
@@ -172,6 +173,10 @@ export default function EarlyAccessRoute() {
       // continuity credential on logout for the same reason.)
       clearLastOrderNumber();
       clearPendingAttempt();
+      // The cart is intent the PREVIOUS customer expressed. On a shared
+      // machine the next person to unlock must start with an empty one, not
+      // inherit somebody else's basket.
+      clearBrowserCart();
       setAgreed(false);
       setBlocked(null);
       setSelection(null);

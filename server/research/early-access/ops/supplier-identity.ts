@@ -57,7 +57,12 @@ export function earlyAccessSupplierIdentifier(organisationName: unknown): string
   // Already an identifier: a deployment that starts recording real supplier
   // ids keeps them verbatim rather than having them re-slugged.
   const trimmed: string = organisationName.trim();
-  if (isSafeIdentifier(trimmed)) return trimmed;
+  // `isSafeIdentifier` is a type predicate over `unknown`, so calling it on a
+  // value already known to be a string narrows the FALSE branch to `never`.
+  // Asking the question without the narrowing keeps the rest of the function
+  // able to read its own variable.
+  const alreadyAnIdentifier: boolean = isSafeIdentifier(trimmed);
+  if (alreadyAnIdentifier) return trimmed;
 
   const slug = trimmed
     .toLowerCase()
