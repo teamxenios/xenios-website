@@ -366,6 +366,46 @@
         "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
         "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17 with the write-gate substrate: real eight-row insert, gate-decision parity before and after, recorded disputes still block, existing identities unchanged; absent-registry no-op proven on the bare-database pass"
       }
+    },
+    {
+      "id": "research_early_access_cart_checkout",
+      "path": "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql",
+      "sourceSha": "83e483ebb9c3d7153fc6944fa6c3e27f1d966fc3",
+      "dependsOn": [
+        "research_early_access_commerce_persistence"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "8bf36cedb3cfe523f77c2853a5ea259859c7d067825b846dc8602ba9dbcdbe3b"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_additive_schema_and_unset_feature_flag",
+        "procedure": "supabase/production/research-early-access-cart-checkout-rollback-notes.md",
+        "evidence": "Disposable PostgreSQL 16 apply-twice after the base production schema and every preceding migration; six cart tables and the commit RPC present after both passes."
+      }
+    },
+    {
+      "id": "research_affiliate_access_and_portal_v2",
+      "path": "supabase/migrations/20260807200000_research_affiliate_access_and_portal_v2.sql",
+      "sourceSha": "83e483ebb9c3d7153fc6944fa6c3e27f1d966fc3",
+      "dependsOn": [
+        "research_affiliate_professional_operations"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "061c2c59317ef9f6e915f06a8333289225c3b16d23b34f41331aacb82710ad4a"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_additive_schema_and_leave_flags_false",
+        "procedure": "supabase/production/research-affiliate-access-and-portal-v2-rollback-notes.md",
+        "evidence": "Disposable PostgreSQL 16 apply-twice after its research_affiliate_professional_operations dependency; twenty added tables present with no collision against the six pre-existing affiliate tables."
+      }
     }
   ],
   "invariants": [
