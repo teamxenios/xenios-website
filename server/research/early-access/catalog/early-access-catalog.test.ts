@@ -423,13 +423,29 @@ describe("projectEarlyAccessCatalog", () => {
       }
     });
 
-    it("never emits a blank description", () => {
+    it("never emits a blank description, and composes from the record before withholding", () => {
+      // The property this test has always protected is that a surface never
+      // renders an empty panel. What changed is what fills the gap when
+      // Product Control holds nothing: the canonical descriptor now stands
+      // between the missing copy and the withheld sentence, because 22 cards
+      // reading "still being confirmed" is not a catalogue. The withheld
+      // sentence remains the answer when even the record cannot be read.
       for (const shortDescription of [null, "", "   "]) {
-        expect(
-          earlyAccessDescription(
-            product({ content: { ...product().content, shortDescription } }),
-          ),
-        ).toBe(EARLY_ACCESS_WITHHELD_DESCRIPTION);
+        const described = earlyAccessDescription(
+          product({ content: { ...product().content, shortDescription } }),
+        );
+        expect(described.trim().length).toBeGreaterThan(0);
+        expect(described).not.toBe(EARLY_ACCESS_WITHHELD_DESCRIPTION);
+        expect(described).toContain("Research use only");
+
+        const nameless = earlyAccessDescription(
+          product({
+            displayName: "",
+            canonicalName: "",
+            content: { ...product().content, shortDescription },
+          }),
+        );
+        expect(nameless).toBe(EARLY_ACCESS_WITHHELD_DESCRIPTION);
       }
     });
 

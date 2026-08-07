@@ -108,9 +108,17 @@ describe("early access product card", () => {
     expect(text).not.toContain("delivered by");
   });
 
-  it("names the bundle offer on the quantity option itself", () => {
+  it("names the bundle offer in one readable full-width line, not inside a narrow option", () => {
+    // It used to be the LABEL of the third option, which put a nine-word
+    // phrase in a one-third-width column of a card in a multi-column grid and
+    // wrapped it one character per line on a real desktop. The offer is a
+    // fact about the round, not about option three, so it is stated once
+    // underneath with the whole card to wrap in. Still no money computed:
+    // "20% savings" is the offer's name.
     const el = card();
-    expect(el.textContent).toContain("3-Unit Research Bundle — 20% savings");
+    expect(el.textContent).toContain("3 units is the Research Bundle, 20% savings");
+    expect(el.textContent).not.toContain("3-Unit Research Bundle");
+    expect(el.textContent).not.toMatch(/\$\s*\d+\.\d{2}\s*(saved|off|discount)/i);
   });
 
   it.each([

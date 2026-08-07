@@ -53,7 +53,7 @@ describe("EarlyAccessQuantitySelector", () => {
     );
     const fieldset = view.host.querySelector("fieldset");
     expect(fieldset).not.toBeNull();
-    expect(fieldset?.querySelector("legend")?.textContent).toBe("Choose how many units");
+    expect(fieldset?.querySelector("legend")?.textContent).toBe("How many units");
     expect(fieldset?.getAttribute("aria-describedby")).toBe(
       fieldset?.querySelector("p")?.id,
     );
@@ -63,17 +63,66 @@ describe("EarlyAccessQuantitySelector", () => {
     expect(new Set(inputs.map((input) => input.name)).size).toBe(1);
     expect(new Set(inputs.map((input) => input.id)).size).toBe(inputs.length);
     expect(inputs.every((input) => !input.checked)).toBe(true);
+    // The chip SHOWS the number and ANNOUNCES the full phrase, so a sighted
+    // customer reads a chip and a screen-reader user hears "2 research units".
     expect(inputs.map((input) => input.labels?.[0]?.textContent?.trim())).toEqual([
-      "1 research unit",
-      "2 research units",
-      // Three units is the Research Bundle and the offer is named on the option,
-      // so the customer reads it while choosing rather than after. "20% savings"
-      // is the offer's name; this component still computes no money.
-      "3-Unit Research Bundle — 20% savings",
+      "11 research unit",
+      "22 research units",
+      "33 research units",
     ]);
     for (const input of inputs) {
       expect(view.host.querySelector(`label[for="${input.id}"]`), input.value).not.toBeNull();
     }
+
+    // The bundle offer is stated ONCE, full width, in its own line rather than
+    // inside a one-third-width option. "20% savings" is the offer's name; this
+    // component still computes no money.
+    const note = fieldset?.querySelector("p");
+    expect(note?.textContent).toContain("3 units is the Research Bundle, 20% savings");
+    expect(note?.textContent).not.toMatch(/\$\s*\d/);
+  });
+
+  it("gives the options NO nested multi-column grid, which is what collapsed the text", () => {
+    // THE PRODUCTION DEFECT, pinned. `sm:grid-cols-3` asks how wide the
+    // VIEWPORT is, never how wide the CARD is, so on a 1440px desktop three
+    // columns were forced inside a ~300px card and every option wrapped one
+    // character per line. The options are a wrapping flex row now, and no
+    // viewport-breakpoint column rule may return to this control.
+    // Comments stripped first: the file DESCRIBES the defect it fixed, and a
+    // scan that cannot tell prose from code would forbid explaining it.
+    const source = readFileSync(path.join(HERE, "EarlyAccessQuantitySelector.tsx"), "utf8")
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/\/\/.*$/gm, "");
+    expect(source).not.toMatch(/grid-cols-\d/);
+    expect(source).not.toMatch(/(sm|md|lg|xl|2xl):grid-cols/);
+
+    const view = render(<EarlyAccessQuantitySelector value={null} onChange={() => {}} />);
+    const options = view.host.querySelector('[data-testid$="-options"]');
+    expect(options?.className).toContain("flex");
+    expect(options?.className).toContain("flex-wrap");
+    expect(options?.className).not.toContain("grid-cols");
+
+    // Every chip keeps a real tap target, so the narrow-card layout is not
+    // bought back by making the controls too small to press.
+    for (const quantity of [1, 2, 3]) {
+      const chip = view.host.querySelector<HTMLElement>(
+        `[data-testid$="-option-${quantity}"]`,
+      );
+      expect(Number.parseInt(String(chip?.style.minWidth), 10)).toBeGreaterThanOrEqual(44);
+      expect(Number.parseInt(String(chip?.style.minHeight), 10)).toBeGreaterThanOrEqual(40);
+    }
+  });
+
+  it("colors itself from :root tokens, because this route never mounts .research-app", () => {
+    // The shared `ra-*` classes resolve their colors from `--ra-*` variables
+    // declared on `.research-app`. /research/early-access does not mount
+    // inside that wrapper, so those borders come out invalid and invisible.
+    // These chips use tokens declared on :root instead.
+    const source = readFileSync(path.join(HERE, "EarlyAccessQuantitySelector.tsx"), "utf8");
+    expect(source).not.toContain("ra-select-card");
+    expect(source).not.toContain("var(--ra-");
+    expect(source).toContain("var(--pulse)");
+    expect(source).toContain("var(--rule)");
   });
 
   it("reports a number, not the DOM string, and stays controlled", () => {
@@ -99,8 +148,11 @@ describe("EarlyAccessQuantitySelector", () => {
       "3",
     ]);
     expect(
-      view.host.querySelector('[data-testid$="-option-3"]')?.className,
-    ).toContain("ra-select-card-on");
+      view.host.querySelector('[data-testid$="-option-3"]')?.getAttribute("data-selected"),
+    ).toBe("true");
+    expect(
+      view.host.querySelector('[data-testid$="-option-1"]')?.getAttribute("data-selected"),
+    ).toBe("false");
   });
 
   it("selects nothing for a quantity this round does not offer", () => {
@@ -156,15 +208,10 @@ describe("EarlyAccessQuantitySelector", () => {
     );
   });
 
-  it("reuses the payment selector's visual language with no hard-coded color", () => {
+  it("hard-codes no color and creates no side effect", () => {
     const source = readFileSync(path.join(HERE, "EarlyAccessQuantitySelector.tsx"), "utf8");
-    expect(source).toContain("ra-select-card");
-    expect(source).toContain("ra-select-card-on");
     expect(source).toContain("var(--pulse)");
-    expect(source).toContain("grid-cols-1");
-    expect(source).toContain("sm:grid-cols-3");
     expect(source).toContain("min-w-0");
-    expect(source).toContain("break-words");
     expect(source).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i);
     expect(source).not.toMatch(
       /fetch\s*\(|XMLHttpRequest|sendBeacon|localStorage|sessionStorage|window\.location|setTimeout/i,

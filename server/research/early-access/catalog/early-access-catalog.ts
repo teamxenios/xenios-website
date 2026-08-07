@@ -63,6 +63,7 @@ import {
   type EarlyAccessProductRecord,
   type EarlyAccessVariantFacts,
 } from "./eligibility";
+import { earlyAccessProductDescriptor } from "./early-access-product-descriptor";
 
 export class EarlyAccessCatalogError extends Error {}
 
@@ -202,17 +203,36 @@ export function carriesForbiddenDescriptionTerm(candidate: string): boolean {
 }
 
 /**
- * The description a row may carry: Product Control's short description when it
- * is present and safe, and the withheld sentence otherwise. There is no path
- * that returns a blank, so a surface never renders an empty panel that reads as
- * missing data rather than withheld data.
+ * The description a row may carry, in three steps of descending authority.
+ *
+ *   1. Product Control's short description, when a named human has written
+ *      one and it is safe to show. Nothing outranks a person.
+ *   2. The canonical descriptor, composed from the product record itself:
+ *      the canonical name, the classification, this exact unit's strength and
+ *      presentation, and the alternative names already on file. It authors no
+ *      research narrative; it restates what Product Control already holds.
+ *      See early-access-product-descriptor.ts for why that is the boundary.
+ *   3. The withheld sentence, when even the record cannot be read.
+ *
+ * The forbidden-term screen runs over EVERY candidate, including the composed
+ * one, so a descriptor that somehow turned into an instruction is withheld
+ * rather than shipped. There is no path that returns a blank, so a surface
+ * never renders an empty panel that reads as missing data rather than
+ * withheld data.
  */
-export function earlyAccessDescription(product: AdminProductDetail): string {
-  const candidate = product.content.shortDescription?.trim() ?? "";
-  if (!candidate) return EARLY_ACCESS_WITHHELD_DESCRIPTION;
-  return carriesForbiddenDescriptionTerm(candidate)
-    ? EARLY_ACCESS_WITHHELD_DESCRIPTION
-    : candidate;
+export function earlyAccessDescription(
+  product: AdminProductDetail,
+  variant: AdminProductVariant | null = null,
+): string {
+  const authored = product.content.shortDescription?.trim() ?? "";
+  if (authored) {
+    return carriesForbiddenDescriptionTerm(authored)
+      ? EARLY_ACCESS_WITHHELD_DESCRIPTION
+      : authored;
+  }
+  const composed = earlyAccessProductDescriptor(product, variant).trim();
+  if (composed && !carriesForbiddenDescriptionTerm(composed)) return composed;
+  return EARLY_ACCESS_WITHHELD_DESCRIPTION;
 }
 
 // ---------------------------------------------------------------------------
@@ -341,7 +361,7 @@ function projectRow(
       ? "available"
       : "unavailable",
     offerState,
-    description: earlyAccessDescription(product),
+    description: earlyAccessDescription(product, variant),
     imageState: earlyAccessImageState(facts, variant),
     quantityLimit:
       quantityLimit !== null &&

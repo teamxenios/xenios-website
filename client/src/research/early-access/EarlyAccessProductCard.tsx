@@ -114,15 +114,17 @@ export function EarlyAccessProductCard({
       </p>
 
       {/*
-        Server-supplied, rendered as given, and OMITTED when the server sent
-        nothing. An empty description is left empty rather than filled with an
-        authored sentence: the client states no product fact the server did not.
+        Server-supplied, rendered as given, IN FULL, and OMITTED when the
+        server sent nothing. The client states no product fact the server did
+        not, and it also hides none: this text was clamped to two lines, which
+        cut the Research Use Only sentence off the bottom of every card. A
+        positioning statement the customer cannot see is not positioning, and
+        a description worth serving is worth showing.
       */}
       {product.description ? (
         <p
           data-testid={`${testId}-description`}
-          className="body-xs text-ink-mute line-clamp-2"
-          title={product.description}
+          className="body-xs text-ink-mute min-w-0 break-words"
         >
           {product.description}
         </p>

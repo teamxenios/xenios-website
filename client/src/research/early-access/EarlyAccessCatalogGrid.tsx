@@ -56,11 +56,18 @@ export function EarlyAccessCatalogGrid({
     );
   }
 
+  // THREE ACROSS AT THE WIDEST, NOT FOUR. A fourth column bought one more card
+  // per row and cost every card about a quarter of its width, which is what
+  // left the quantity control and the product description fighting for roughly
+  // 85px each. Readability of the card a customer is actually deciding from
+  // outranks how many cards fit on a row: at 1440px three columns give each
+  // card room for a real description, a price, a quantity choice and a
+  // full-width action, and at 1024px two columns do the same.
   return (
     <section
       data-testid={testId}
       data-row-count={products.length}
-      className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3"
     >
       {products.map((product) => (
         <EarlyAccessProductCard
