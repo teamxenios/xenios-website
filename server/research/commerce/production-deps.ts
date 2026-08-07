@@ -17,7 +17,23 @@ import type { InventoryLot } from "../inventory/lots";
 import { products as legacyProducts } from "../products-data";
 import { adaptLegacyCatalog } from "../catalog/legacy-adapter";
 import { createCatalogService, type CatalogService } from "../catalog/catalog-service";
-import { createCartService, type CartService } from "./cart";
+import { createCartService, MAX_LINE_QUANTITY, type CartService } from "./cart";
+import {
+  createProductControlMoneyAuthority,
+  createUnavailableMoneyAuthority,
+  PRICE_AUTHORITY_FLAG,
+  priceAuthorityEnabled,
+  type MoneyPriceAuthority,
+} from "./price-authority";
+import { createCatalogVariantLookupBySku } from "../catalog/variant-sku-lookup";
+import {
+  createProductionProductControlReader,
+  type ProductCatalogReader,
+} from "../catalog/product-control-reader";
+import {
+  CatalogPricingProductSource,
+  createAuthoritativePriceResolver,
+} from "../pricing/authoritative-price-resolver";
 import {
   createCheckoutService,
   createInventoryReservationSeam,
@@ -216,6 +232,18 @@ export interface CommerceWiring {
    * precise capability denial rather than guessing.
    */
   resolveFulfillmentProvider(env: NodeJS.ProcessEnv): FulfillmentProvider;
+  /**
+   * THE MONEY PRICE AUTHORITY. Returns undefined when the join is off, which
+   * is the default and which leaves the cart pricing from
+   * CatalogProduct.facts.priceCents exactly as it does today. The default
+   * resolver reads RESEARCH_PRICE_AUTHORITY_ENABLED and builds the Product
+   * Control authority only when it is the literal string "true".
+   *
+   * This is an injectable resolver rather than a direct construction so both
+   * flag states are provable under test without mutating process state, the
+   * same pattern `resolvePaymentProvider` already uses.
+   */
+  resolveMoneyPriceAuthority(env: NodeJS.ProcessEnv): MoneyPriceAuthority | undefined;
   /** Renewal-gate seams (subscriptions.evaluateRenewal only; not on the HTTP path). */
   isMembershipActive(memberId: string): Promise<boolean>;
   hasEffectiveAgreement(memberId: string, agreementKey: string): Promise<boolean>;
@@ -270,8 +298,98 @@ async function memberHasAcceptedCurrentAgreement(memberId: string, agreementKey:
   }
 }
 
+/**
+ * A reader that knows no products. Every SKU asked about refuses `sku_unknown`,
+ * which blocks the line: it invents no price and it reaches no network.
+ */
+const EMPTY_MONEY_CATALOG_READER: ProductCatalogReader = {
+  readCatalog: async () => [],
+};
+
+/**
+ * True when this process is a test runner, whether the caller injected an env
+ * or not. The injected `env` objects in this package are deliberately partial
+ * (see production-wiring.test.ts's LIVE_ENV, which carries SUPABASE_* and no
+ * NODE_ENV), so the AMBIENT runner env has to be consulted as well. Reading
+ * `process.env.NODE_ENV === "test"` here follows the existing repo convention
+ * for selecting a deterministic provider (research/identity-provider.ts:481,
+ * research/media-provider.ts:499, research/telegram-provider.ts:600).
+ */
+function inTestRunner(env: NodeJS.ProcessEnv): boolean {
+  return (
+    env.NODE_ENV === "test" ||
+    process.env.NODE_ENV === "test" ||
+    process.env.VITEST === "true"
+  );
+}
+
+/**
+ * The Product Control reader the MONEY authority reads through.
+ *
+ * The live reader is Supabase backed, and it is EAGER: constructing it runs
+ * `new SupabaseProductAdminRepository()`, whose default `db` parameter calls
+ * `getSupabaseAdmin()` at construction time. That client is built from
+ * AMBIENT process.env (server/supabase.ts:14-15, not this injected `env`) and
+ * it fires a fire-and-forget `auth.admin.listUsers` privilege probe
+ * (server/supabase.ts:34-49), which is a real outbound call.
+ *
+ * Under a test runner that would be the suite dialling out, so the test
+ * environment gets the empty reader instead. The direction of that substitute
+ * is deliberate: an empty catalog refuses every SKU, so a suite that turns the
+ * flag on fails CLOSED rather than either inventing a price or making a
+ * network call. Production is unaffected and still reads the one live reader,
+ * constructed ONCE and shared by the variant lookup and the price source.
+ */
+function resolveMoneyCatalogReader(
+  env: NodeJS.ProcessEnv,
+): ProductCatalogReader {
+  if (inTestRunner(env)) return EMPTY_MONEY_CATALOG_READER;
+  return createProductionProductControlReader();
+}
+
+/**
+ * The default money-authority resolver.
+ *
+ * OFF (the default, and anything other than the literal "true") returns
+ * undefined, so the cart is constructed with no `priceAuthority` and prices
+ * exactly as it does today. There is no partially-joined state.
+ *
+ * ON builds the Product Control authority over the same drift-checked reader
+ * the read-only pricing API already uses (`createProductionProductControlReader`,
+ * via `resolveMoneyCatalogReader`), plus the SKU-to-variant lookup in
+ * `catalog/variant-sku-lookup.ts`. It writes no resolver of its own;
+ * `resolveSkuPrice` inside the seam is the one authority.
+ *
+ * The audience is fixed to `member` because the transacting cart is only ever
+ * reached behind the member session wall. It is a SERVER fact, never anything
+ * the browser sent, and `sourceVersion` names the rule that granted it so the
+ * decision is attributable.
+ *
+ * Exported so a test can drive construction directly and prove it performs no
+ * outbound call.
+ */
+export function resolveMoneyPriceAuthority(
+  env: NodeJS.ProcessEnv,
+): MoneyPriceAuthority | undefined {
+  if (!priceAuthorityEnabled(env)) return undefined;
+  const reader = resolveMoneyCatalogReader(env);
+  return createProductControlMoneyAuthority({
+    variants: createCatalogVariantLookupBySku(reader),
+    priceResolver: createAuthoritativePriceResolver(
+      new CatalogPricingProductSource(reader),
+    ),
+    audience: {
+      audience: "member",
+      sourceVersion: "research_member_session_v1",
+    },
+    currency: "USD",
+    maxQuantity: MAX_LINE_QUANTITY,
+  });
+}
+
 function defaultWiring(): CommerceWiring {
   return {
+    resolveMoneyPriceAuthority,
     resolveCartStore,
     resolveOrderRepository,
     resolveClaimRepository,
@@ -893,6 +1011,54 @@ function liveDependencies(
   const catalogBySku = new Map<string, CatalogProduct>(products.map((p) => [p.sku, p]));
 
   /**
+   * THE PRICE JOIN, resolved once per build. `undefined` is the default and
+   * means the cart prices from the supplier fact exactly as it does today; a
+   * value means Product Control decides the money for cart, checkout, and the
+   * order snapshot, because checkout recomputes from the revalidated cart and
+   * the order is written from that recomputation.
+   *
+   * A resolver that THROWS is decided by the flag, and it is decided the
+   * fail-CLOSED way when the flag is on.
+   *
+   * The tempting handling, and the one that was here, is to read a
+   * construction failure as OFF. That is the worst available state on the
+   * money path: the operator set the flag, reads the system as priced by
+   * Product Control, and the legacy `facts.priceCents` runtime quietly decides
+   * the charge instead. A flag that reports ON while behaving OFF is worse
+   * than the flag being off, because nobody is looking.
+   *
+   * So with the flag ON a construction failure installs the fail-closed
+   * authority: every line refuses `authority_unavailable`, nothing is
+   * purchasable, no authorization is created, and no order settles. With the
+   * flag OFF the resolver was never asked to build anything, so the legacy
+   * path is not a fallback, it is the configured behavior.
+   */
+  let moneyPriceAuthority: MoneyPriceAuthority | undefined;
+  try {
+    moneyPriceAuthority = wiring.resolveMoneyPriceAuthority(env);
+  } catch (error) {
+    if (priceAuthorityEnabled(env)) {
+      // Loud, and credential safe. The error MESSAGE is deliberately not
+      // logged: a construction failure in this chain can carry a connection
+      // string or a key fragment, and this line is read by whatever ships the
+      // process logs. The error's class name is enough to tell an operator
+      // where to look, and the state is not silent either way, because every
+      // price now refuses.
+      console.error(
+        "[research-commerce] PRICE AUTHORITY UNAVAILABLE: " +
+          `${PRICE_AUTHORITY_FLAG} is on and the Product Control money ` +
+          "authority could not be constructed. FAILING CLOSED: every line " +
+          "refuses authority_unavailable and nothing can be purchased. There " +
+          "is no fallback to the supplier-fact price. Error class: " +
+          (error instanceof Error ? error.name : typeof error),
+      );
+      moneyPriceAuthority = createUnavailableMoneyAuthority();
+    } else {
+      moneyPriceAuthority = undefined;
+    }
+  }
+
+  /**
    * A per-request cart composition. The cart service evaluates against a
    * snapshot of lots and store credit, so both are loaded fresh for the SKUs
    * involved (the stored cart's lines, plus the line being added) and the
@@ -915,6 +1081,9 @@ function liveDependencies(
       commerceEnabled: true,
       quantumCommerceEnabled: quantumEnabled,
       requiredAgreementKeys: [...CHECKOUT_REQUIRED_AGREEMENT_KEYS],
+      // Omitted entirely when the join is off, so the deps object is the same
+      // shape it has always been on the default path.
+      ...(moneyPriceAuthority ? { priceAuthority: moneyPriceAuthority } : {}),
     });
   }
 
