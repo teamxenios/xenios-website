@@ -23,6 +23,8 @@ export type EarlyAccessOrderView = Readonly<{
   money: Readonly<{ currency: string; unitPriceCents: number; subtotalCents: number;
     discountCents: number; discountLabel: string | null; payableTotalCents: number }>;
   invoice: Readonly<{ invoiceNumber: string; paymentReference: string; issuedAt: string }>;
+  /** Echoed only on the purchaser's own order view; null on rows placed before contact existed. */
+  contact: EarlyAccessContact | null;
   shipTo: EarlyAccessShipTo;
 }>;
 

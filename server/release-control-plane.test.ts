@@ -1393,11 +1393,12 @@ describe("route uniqueness validator", () => {
   it("covers every current Express API call site and finite registration", () => {
     const result = scanExpressRouteResult(ROOT);
     expect(result.issues).toEqual([]);
-    // 330/339 as of the code-session checkout candidate: the one addition is
-    // the guarded admin external-proof door,
-    // POST /api/admin/research/payments/:orderNumber/external-proof.
-    expect(result.callSites).toBe(330);
-    expect(result.routes).toHaveLength(339);
+    // 331/340 as of the repair successor. The two additions over the frozen
+    // UX base, each deliberate and admin-guarded:
+    //   POST /api/admin/research/payments/:orderNumber/external-proof
+    //   GET  /api/admin/research/payments/:orderNumber
+    expect(result.callSites).toBe(331);
+    expect(result.routes).toHaveLength(340);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

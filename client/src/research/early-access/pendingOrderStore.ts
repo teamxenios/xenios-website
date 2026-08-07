@@ -33,7 +33,69 @@ export type PendingOrderAttempt = Readonly<{
   productId: string;
   variantId: string;
   quantity: number;
+  /**
+   * A digest of the COMPLETE intended attempt (product, variant, quantity,
+   * contact, every shipping field), so an interrupted attempt can be told
+   * apart from an EDITED one without keeping any contact or address text in
+   * browser storage. NOT a secret and NOT authorization: the server compares
+   * the real fields on every replay and refuses a changed intent regardless.
+   * This exists so the UI never SILENTLY resubmits an old attempt as though
+   * the customer's edits were part of it.
+   */
+  fingerprint: string;
 }>;
+
+/** The fields whose change makes an attempt a DIFFERENT intended order. */
+export type OrderIntent = Readonly<{
+  productId: string;
+  variantId: string;
+  quantity: number;
+  email: string;
+  phone: string;
+  recipientName: string;
+  line1: string;
+  line2: string | null;
+  city: string;
+  region: string;
+  postalCode: string;
+  country: string;
+}>;
+
+/**
+ * Deterministic, dependency-free digest of an intent (two FNV-1a streams over
+ * a canonical field string). Normalized exactly like the server's replay
+ * comparison: email case-folded, phone reduced to digits, absent line2 equal
+ * to empty, everything trimmed. Collisions are harmless: the server still
+ * compares the real fields and conflicts on any true difference.
+ */
+export function intentFingerprint(intent: OrderIntent): string {
+  const canonical = [
+    intent.productId,
+    intent.variantId,
+    String(intent.quantity),
+    intent.email.trim().toLowerCase(),
+    intent.phone.replace(/[^\d]/g, ""),
+    intent.recipientName.trim(),
+    intent.line1.trim(),
+    (intent.line2 ?? "").trim(),
+    intent.city.trim(),
+    intent.region.trim(),
+    intent.postalCode.trim(),
+    intent.country.trim(),
+    // Joined on a control character no validated field can contain, so two
+    // different field splits can never produce one canonical string.
+  ].join("\u001f");
+  let first = 0x811c9dc5;
+  let second = 0xcbf29ce4;
+  for (let index = 0; index < canonical.length; index += 1) {
+    const code = canonical.charCodeAt(index);
+    first = Math.imul(first ^ code, 0x01000193) >>> 0;
+    second = Math.imul(second ^ code, 0x01000197) >>> 0;
+  }
+  return (
+    first.toString(16).padStart(8, "0") + second.toString(16).padStart(8, "0")
+  );
+}
 
 function storage(): Storage | null {
   try {
@@ -46,6 +108,7 @@ function storage(): Storage | null {
 }
 
 const KEY_SHAPE = /^xea_[a-f0-9]{32}$/;
+const FINGERPRINT_SHAPE = /^[a-f0-9]{16}$/;
 
 export function isPendingOrderAttempt(value: unknown): value is PendingOrderAttempt {
   if (typeof value !== "object" || value === null) return false;
@@ -60,7 +123,9 @@ export function isPendingOrderAttempt(value: unknown): value is PendingOrderAtte
     typeof record.quantity === "number" &&
     Number.isInteger(record.quantity) &&
     record.quantity >= 1 &&
-    record.quantity <= 3
+    record.quantity <= 3 &&
+    typeof record.fingerprint === "string" &&
+    FINGERPRINT_SHAPE.test(record.fingerprint)
   );
 }
 

@@ -9,7 +9,11 @@ import {
   EarlyAccessOrderRecoveryCard,
 } from "./EarlyAccessCheckoutJourney";
 import { EarlyAccessAgreementSection } from "./EarlyAccessAgreementSection";
-import { readLastOrderNumber } from "./pendingOrderStore";
+import {
+  clearLastOrderNumber,
+  clearPendingAttempt,
+  readLastOrderNumber,
+} from "./pendingOrderStore";
 import { EARLY_ACCESS_FULFILLMENT_TARGET_COPY } from "./fulfillment-copy";
 
 // The mounted Private Early Access route.
@@ -161,7 +165,13 @@ export default function EarlyAccessRoute() {
         // failure still returns the customer to the password screen.
       }
       // The next customer to unlock on this browser starts from the server's
-      // answer about themselves, never from the last person's.
+      // answer about themselves, never from the last person's. That includes
+      // the browser's own recovery hints: a signed-out machine remembers no
+      // order number and no unfinished attempt, so nothing of the previous
+      // purchaser is shown to whoever unlocks next. (The server clears the
+      // continuity credential on logout for the same reason.)
+      clearLastOrderNumber();
+      clearPendingAttempt();
       setAgreed(false);
       setBlocked(null);
       setSelection(null);

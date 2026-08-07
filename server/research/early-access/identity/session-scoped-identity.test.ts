@@ -37,6 +37,40 @@ describe("session-scoped Early Access identity", () => {
     expect(customer?.customerRef).toMatch(/^eac_[a-f0-9]{32}$/);
   });
 
+  it("carries the continuity reference as an alias when a stronger identity wins", async () => {
+    const secret = "unit-test-secret";
+    const { mintEarlyAccessContinuityCookie, readEarlyAccessContinuityToken, earlyAccessCustomerRefForContinuity } =
+      await import("./session-scoped-identity");
+    const minted = mintEarlyAccessContinuityCookie(secret);
+    const cookieHeader = minted.setCookie.split(";")[0];
+    const token = readEarlyAccessContinuityToken(cookieHeader, secret);
+    expect(token).toMatch(/^[a-f0-9]{64}$/);
+    const continuityRef = earlyAccessCustomerRefForContinuity(token as string);
+
+    const verified = {
+      customerRef: `eac_${"9".repeat(32)}`,
+      displayName: "Verified",
+      boundBy: "verified_link" as const,
+    };
+    const directory = new SessionScopedEarlyAccessIdentityDirectory({
+      resolveSession: async () => ({ authenticated: true }),
+      readSessionId: () => "a".repeat(64),
+      primary: { resolve: async () => verified },
+      continuitySecret: secret,
+    });
+    const resolved = await directory.resolve({ cookieHeader });
+    // The verified identity stays primary; the continuity reference rides as
+    // a server-derived alias so earlier orders remain readable.
+    expect(resolved?.customerRef).toBe(verified.customerRef);
+    expect(resolved?.aliasRefs).toEqual([continuityRef]);
+
+    // A forged credential contributes NOTHING: no alias, no identity.
+    const forgedHeader = `xenios_ea_customer=v1.${"a".repeat(64)}.${"b".repeat(64)}`;
+    expect(readEarlyAccessContinuityToken(forgedHeader, secret)).toBeNull();
+    const forgedResolved = await directory.resolve({ cookieHeader: forgedHeader });
+    expect(forgedResolved?.aliasRefs).toBeUndefined();
+  });
+
   it("refuses to derive from a session id outside the accepted length bounds", () => {
     expect(earlyAccessCustomerRefForSession("short")).toBeNull();
     expect(earlyAccessCustomerRefForSession("a".repeat(15))).toBeNull();

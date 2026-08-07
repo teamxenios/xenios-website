@@ -13,10 +13,12 @@ import {
 } from "../adapters/earlyAccessCheckout";
 import {
   clearPendingAttempt,
+  intentFingerprint,
   newIdempotencyKey,
   readPendingAttempt,
   rememberLastOrderNumber,
   rememberPendingAttempt,
+  type OrderIntent,
 } from "./pendingOrderStore";
 
 /**
@@ -194,6 +196,19 @@ export function EarlyAccessCheckoutJourney({
   // mid-flight. It is created lazily at the first confirmation.
   const attemptKeyRef = useRef<string | null>(null);
   const inFlightRef = useRef(false);
+  // The contact and address of the FIRST submission, kept only in memory, so
+  // an interrupted attempt whose details were since edited can be restored
+  // exactly rather than silently resubmitted with different words under the
+  // same key.
+  const originalIntentRef = useRef<Readonly<{
+    contact: EarlyAccessContact;
+    shipTo: EarlyAccessShipTo;
+  }> | null>(null);
+  // Set when the customer's current details no longer match the unfinished
+  // attempt's fingerprint. Confirming is blocked until they choose: restore
+  // the original details, or discard the old attempt and place the edited
+  // order under a fresh key.
+  const [intentChanged, setIntentChanged] = useState<"restorable" | "unrestorable" | null>(null);
 
   const product = selection.product;
   const instructions = useMemo(() => instructionLines(invoice?.instructions), [invoice]);
@@ -221,6 +236,21 @@ export function EarlyAccessCheckoutJourney({
     setPhase("review");
   };
 
+  const intentNow = (): OrderIntent => ({
+    productId: product.productId,
+    variantId: product.variantId,
+    quantity: selection.quantity,
+    email: contact.email,
+    phone: contact.phone,
+    recipientName: shipTo.recipientName,
+    line1: shipTo.line1,
+    line2: shipTo.line2,
+    city: shipTo.city,
+    region: shipTo.region,
+    postalCode: shipTo.postalCode,
+    country: shipTo.country,
+  });
+
   const confirm = async () => {
     if (inFlightRef.current) return;
     if (product.unitPriceCents === null) {
@@ -229,30 +259,54 @@ export function EarlyAccessCheckoutJourney({
     }
     if (strandedAttempt !== null) return;
 
-    // Reuse the key of a matching pending attempt (a refresh mid-attempt),
+    const fingerprint = intentFingerprint(intentNow());
+    const pending = readPendingAttempt();
+    const pendingMatchesUnit =
+      pending !== null &&
+      pending.productId === product.productId &&
+      pending.variantId === product.variantId &&
+      pending.quantity === selection.quantity;
+
+    // An unfinished attempt exists for THIS unit but the details have been
+    // edited since. Submitting now would either silently replay the old
+    // order (the parcel-to-the-old-address failure) or conflict server-side;
+    // both are worse than asking. The customer chooses: restore the original
+    // details, or discard the old attempt and place the edited order fresh.
+    if (pendingMatchesUnit && pending.fingerprint !== fingerprint) {
+      setIntentChanged(originalIntentRef.current === null ? "unrestorable" : "restorable");
+      return;
+    }
+
+    // Reuse the key of the matching pending attempt (a refresh mid-attempt),
     // else mint one cryptographically. Never Math.random, never per-click.
     if (attemptKeyRef.current === null) {
-      const pending = readPendingAttempt();
-      const matches =
-        pending !== null &&
-        pending.productId === product.productId &&
-        pending.variantId === product.variantId &&
-        pending.quantity === selection.quantity;
-      attemptKeyRef.current = matches ? pending.idempotencyKey : newIdempotencyKey();
+      attemptKeyRef.current =
+        pendingMatchesUnit && pending.fingerprint === fingerprint
+          ? pending.idempotencyKey
+          : newIdempotencyKey();
     }
     const idempotencyKey = attemptKeyRef.current;
 
     inFlightRef.current = true;
     setError(null);
     setRetryable(false);
+    setIntentChanged(null);
     setPhase("submitting");
+    if (originalIntentRef.current === null) {
+      originalIntentRef.current = Object.freeze({
+        contact: { ...contact },
+        shipTo: { ...shipTo },
+      });
+    }
     // Remembered BEFORE the request leaves, so an interrupted attempt is
-    // never forgotten while its outcome is unknown.
+    // never forgotten while its outcome is unknown. The fingerprint is a
+    // digest only: no contact or address text enters browser storage.
     rememberPendingAttempt({
       idempotencyKey,
       productId: product.productId,
       variantId: product.variantId,
       quantity: selection.quantity,
+      fingerprint,
     });
 
     const placed = await placeEarlyAccessOrder({
@@ -319,6 +373,26 @@ export function EarlyAccessCheckoutJourney({
     const loadedStatus = await loadEarlyAccessOrderStatus(placed.value.orderNumber);
     if (loadedStatus.ok) setStatus(loadedStatus.value);
     setPhase("payment");
+  };
+
+  const restoreOriginal = () => {
+    const original = originalIntentRef.current;
+    if (original === null) return;
+    setContact({ ...original.contact });
+    setShipTo({ ...original.shipTo });
+    setIntentChanged(null);
+    setError(null);
+  };
+
+  const discardOriginal = () => {
+    clearPendingAttempt();
+    attemptKeyRef.current = null;
+    originalIntentRef.current = null;
+    setIntentChanged(null);
+    setError(null);
+    // A discarded attempt is over; what follows is a NEW order, confirmed
+    // fresh, never presented as a retry of something else.
+    setRetryable(false);
   };
 
   const refresh = async () => {
@@ -390,7 +464,33 @@ export function EarlyAccessCheckoutJourney({
             <dt className="text-ink-mute">Payment state</dt>
             <dd data-testid={`${testId}-payment-state`}>{status?.payment.state ?? order.paymentState}</dd>
           </div>
+          <div>
+            {/*
+              The address THIS ORDER will actually use, read back from the
+              server's own record, so a replayed attempt whose edits were
+              refused can never leave the customer believing a correction
+              was applied.
+            */}
+            <dt className="text-ink-mute">Ships to</dt>
+            <dd className="break-words" data-testid={`${testId}-ships-to`}>
+              {order.shipTo.recipientName}, {order.shipTo.line1}
+              {order.shipTo.line2 ? `, ${order.shipTo.line2}` : ""}, {order.shipTo.city},{" "}
+              {order.shipTo.region} {order.shipTo.postalCode}, {order.shipTo.country}
+            </dd>
+          </div>
+          {order.contact ? (
+            <div>
+              <dt className="text-ink-mute">Order contact</dt>
+              <dd className="break-words" data-testid={`${testId}-order-contact`}>
+                {order.contact.email} · {order.contact.phone}
+              </dd>
+            </div>
+          ) : null}
         </dl>
+        <p className="mt-2 body-s text-ink-mute max-w-[62ch]">
+          If anything above is not what you intended, contact support with your order number
+          before paying. Nothing ships until a named team member verifies payment.
+        </p>
         {instructions.length > 0 ? (
           <div className="mt-4" data-testid={`${testId}-instructions`}>
             <h3 className="body-m font-700">Manual payment instructions</h3>
@@ -457,20 +557,99 @@ export function EarlyAccessCheckoutJourney({
             </dd>
           </div>
           <div>
-            <dt className="text-ink-mute">Contact</dt>
-            <dd className="break-words" data-testid={`${testId}-review-contact`}>
-              {contact.email} · {contact.phone}
+            <dt className="text-ink-mute">Email</dt>
+            <dd className="break-words" data-testid={`${testId}-review-email`}>
+              {contact.email}
             </dd>
           </div>
           <div>
-            <dt className="text-ink-mute">Ship to</dt>
-            <dd className="break-words" data-testid={`${testId}-review-shipping`}>
-              {shipTo.recipientName}, {shipTo.line1}
-              {shipTo.line2 ? `, ${shipTo.line2}` : ""}, {shipTo.city}, {shipTo.region}{" "}
-              {shipTo.postalCode}, {shipTo.country}
+            <dt className="text-ink-mute">Phone</dt>
+            <dd className="break-words" data-testid={`${testId}-review-phone`}>
+              {contact.phone}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">Recipient</dt>
+            <dd className="break-words" data-testid={`${testId}-review-recipient`}>
+              {shipTo.recipientName}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">Street</dt>
+            <dd className="break-words" data-testid={`${testId}-review-line1`}>
+              {shipTo.line1}
+            </dd>
+          </div>
+          {shipTo.line2 !== null && shipTo.line2 !== "" && (
+            <div>
+              <dt className="text-ink-mute">Line 2</dt>
+              <dd className="break-words" data-testid={`${testId}-review-line2`}>
+                {shipTo.line2}
+              </dd>
+            </div>
+          )}
+          <div>
+            <dt className="text-ink-mute">City</dt>
+            <dd className="break-words" data-testid={`${testId}-review-city`}>
+              {shipTo.city}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">State / region</dt>
+            <dd className="break-words" data-testid={`${testId}-review-region`}>
+              {shipTo.region}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">Postal code</dt>
+            <dd className="break-words" data-testid={`${testId}-review-postal`}>
+              {shipTo.postalCode}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">Country</dt>
+            <dd className="break-words" data-testid={`${testId}-review-country`}>
+              {shipTo.country}
             </dd>
           </div>
         </dl>
+
+        {intentChanged !== null && (
+          <div className="mt-4 card min-w-0" role="alert" data-testid={`${testId}-intent-changed`}>
+            <p className="body-s text-ink-2 max-w-[62ch]">
+              An earlier attempt for this product did not finish, and the details you are
+              confirming now are different from the ones it carried. Nothing has been submitted:
+              choose whether to keep the original attempt or replace it, so an order can never
+              ship with details you believe you changed.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {intentChanged === "restorable" && (
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={restoreOriginal}
+                  data-testid={`${testId}-restore-original`}
+                >
+                  Restore the original details
+                </button>
+              )}
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={discardOriginal}
+                data-testid={`${testId}-discard-original`}
+              >
+                Discard the old attempt and place this edited order
+              </button>
+            </div>
+            {intentChanged === "unrestorable" && (
+              <p className="mt-2 body-s text-ink-mute max-w-[62ch]">
+                To resume the original attempt instead, re-enter exactly the details you used
+                before.
+              </p>
+            )}
+          </div>
+        )}
 
         <p className="mt-3 body-s text-ink-mute max-w-[62ch]" data-testid={`${testId}-review-money-note`}>
           Bundle savings and the final payable amount are computed and confirmed by Xenios when the

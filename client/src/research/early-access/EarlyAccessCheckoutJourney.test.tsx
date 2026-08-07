@@ -8,9 +8,28 @@ import { EarlyAccessCheckoutJourney } from "./EarlyAccessCheckoutJourney";
 import type { EarlyAccessCatalogSelection } from "./EarlyAccessCatalogSection";
 import {
   PENDING_ORDER_STORAGE_KEY,
+  intentFingerprint,
   readLastOrderNumber,
   readPendingAttempt,
 } from "./pendingOrderStore";
+
+/** The exact intent fillValidDetails() types, for seeding matching attempts. */
+function filledIntentFingerprint(): string {
+  return intentFingerprint({
+    productId: "prod-1",
+    variantId: "var-1",
+    quantity: 2,
+    email: "buyer@example.com",
+    phone: "+1 512 555 0100",
+    recipientName: "Alpha Buyer",
+    line1: "1 Test Street",
+    line2: null,
+    city: "Houston",
+    region: "TX",
+    postalCode: "77002",
+    country: "US",
+  });
+}
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -311,6 +330,7 @@ describe("uncertain outcomes retry under the SAME key", () => {
         productId: SELECTION.product.productId,
         variantId: SELECTION.product.variantId,
         quantity: SELECTION.quantity,
+        fingerprint: filledIntentFingerprint(),
       }),
     );
     const { calls } = stubOrders(() => jsonResponse({ ...ORDER_RESPONSE, replayed: true }, 200));
@@ -332,6 +352,7 @@ describe("uncertain outcomes retry under the SAME key", () => {
         productId: "prod-other",
         variantId: "var-other",
         quantity: 1,
+        fingerprint: "a".repeat(16),
       }),
     );
     const { calls } = stubOrders(() => jsonResponse(ORDER_RESPONSE));
@@ -351,6 +372,99 @@ describe("uncertain outcomes retry under the SAME key", () => {
     press(host, "early-access-checkout-confirm");
     await settle();
     expect(calls).toHaveLength(1);
+  });
+});
+
+describe("an edited intent never silently reuses the old attempt", () => {
+  it("blocks the confirm, then RESTORE resubmits the original details under the original key", async () => {
+    let failFirst = true;
+    const { calls } = stubOrders(() => {
+      if (failFirst) {
+        failFirst = false;
+        throw new Error("connection reset");
+      }
+      return jsonResponse({ ...ORDER_RESPONSE, replayed: true }, 200);
+    });
+    const host = mountJourney();
+    fillValidDetails(host);
+    press(host, "early-access-checkout-to-review");
+    press(host, "early-access-checkout-confirm");
+    await settle();
+    expect(calls).toHaveLength(1);
+
+    // The customer edits the street after the uncertain failure, then tries
+    // to retry. Nothing may be submitted until they choose.
+    press(host, "early-access-checkout-edit-details");
+    setInput(host, "early-access-checkout-ship-line1", "2 Corrected Street");
+    press(host, "early-access-checkout-to-review");
+    press(host, "early-access-checkout-retry");
+    await settle();
+    expect(calls).toHaveLength(1);
+    expect(host.querySelector("[data-testid='early-access-checkout-intent-changed']")).not.toBeNull();
+
+    // RESTORE puts the original street back on screen; the customer confirms
+    // what they can SEE, and the same key replays the same order.
+    press(host, "early-access-checkout-restore-original");
+    expect(
+      host.querySelector<HTMLElement>("[data-testid='early-access-checkout-review-line1']")?.textContent,
+    ).toBe("1 Test Street");
+    press(host, "early-access-checkout-retry");
+    await settle();
+
+    expect(calls).toHaveLength(2);
+    expect(calls[1].body.idempotencyKey).toBe(calls[0].body.idempotencyKey);
+    expect((calls[1].body.shipTo as Record<string, unknown>).line1).toBe("1 Test Street");
+  });
+
+  it("DISCARD places the edited order under a brand-new key", async () => {
+    let failFirst = true;
+    const { calls } = stubOrders(() => {
+      if (failFirst) {
+        failFirst = false;
+        throw new Error("connection reset");
+      }
+      return jsonResponse(ORDER_RESPONSE);
+    });
+    const host = mountJourney();
+    fillValidDetails(host);
+    press(host, "early-access-checkout-to-review");
+    press(host, "early-access-checkout-confirm");
+    await settle();
+    expect(calls).toHaveLength(1);
+
+    press(host, "early-access-checkout-edit-details");
+    setInput(host, "early-access-checkout-ship-line1", "2 Corrected Street");
+    press(host, "early-access-checkout-to-review");
+    press(host, "early-access-checkout-retry");
+    await settle();
+    expect(calls).toHaveLength(1);
+
+    press(host, "early-access-checkout-discard-original");
+    press(host, "early-access-checkout-confirm");
+    await settle();
+
+    expect(calls).toHaveLength(2);
+    expect(calls[1].body.idempotencyKey).not.toBe(calls[0].body.idempotencyKey);
+    expect(calls[1].body.idempotencyKey).toMatch(/^xea_[a-f0-9]{32}$/);
+    expect((calls[1].body.shipTo as Record<string, unknown>).line1).toBe("2 Corrected Street");
+  });
+
+  it("shows the order's OWN shipping address and contact on the payment screen", async () => {
+    stubOrders(() => jsonResponse(ORDER_RESPONSE));
+    const host = mountJourney();
+    fillValidDetails(host);
+    press(host, "early-access-checkout-to-review");
+    press(host, "early-access-checkout-confirm");
+    await settle();
+
+    const shipsTo = host.querySelector("[data-testid='early-access-checkout-ships-to']");
+    expect(shipsTo?.textContent).toContain("Alpha Buyer");
+    expect(shipsTo?.textContent).toContain("1 Test Street");
+    expect(shipsTo?.textContent).toContain("Houston");
+    expect(shipsTo?.textContent).toContain("77002");
+    expect(
+      host.querySelector("[data-testid='early-access-checkout-order-contact']")?.textContent,
+    ).toContain("buyer@example.com");
   });
 });
 

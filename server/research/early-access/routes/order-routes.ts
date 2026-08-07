@@ -409,7 +409,18 @@ async function ownedPlacement(
   if (!isEarlyAccessOrderNumber(orderNumber)) return null;
   const placement = await deps.store.placementByOrderNumber(orderNumber);
   if (placement === null) return null;
-  if (placement.customerRef !== customer.customerRef) return null;
+  // Ownership: the customer's own reference, or one of the server-derived
+  // aliases their identity carries (a verified identity keeps its earlier
+  // continuity reference so verification never orphans an order). Every
+  // alias came from a credential the identity directory verified itself;
+  // nothing here compares anything a browser typed.
+  const owns =
+    placement.customerRef === customer.customerRef ||
+    (customer.aliasRefs?.some(
+      (ref) => isSafeIdentifier(ref) && ref === placement.customerRef,
+    ) ??
+      false);
+  if (!owns) return null;
   // THE HARD RULE. Under a shared password, typing an email is an
   // unauthenticated claim to be someone: it is enough to place a NEW order,
   // where the purchaser only ever sees what they themselves just entered and
@@ -478,7 +489,7 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
       // behind it has since been revoked. What was sold stays sold.
       const prior = await deps.store.placementByIdempotencyKey(body.idempotencyKey as string);
       if (prior !== null) {
-        if (!replays(prior, customer, body, quantity)) {
+        if (!replays(prior, customer, body, contact, shipTo, quantity)) {
           fail(response, 409, "IDEMPOTENCY_CONFLICT");
           return;
         }
@@ -656,7 +667,7 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
         // The key was claimed between the read above and this write. The
         // incumbent is the order that exists, so it answers.
         const incumbent = committed.placement;
-        if (!replays(incumbent, customer, body, quantity)) {
+        if (!replays(incumbent, customer, body, contact, shipTo, quantity)) {
           fail(response, 409, "IDEMPOTENCY_CONFLICT");
           return;
         }
@@ -818,17 +829,73 @@ async function resolveCallerForPlacement(
  * they did not ask for. The customer comparison is the one that matters most: a
  * key guessed or copied from someone else must never return their order.
  */
+/**
+ * Normalization for the replay fingerprint, applied identically to the
+ * stored side and the incoming side so equal intents cannot read as
+ * different: whitespace trimmed everywhere, email case-folded, phone reduced
+ * to its digits, an absent line2 equal to an empty one. Deliberately nothing
+ * looser: "St" does not equal "Street", because guessing at postal
+ * equivalence is how a conflict the customer needed to see gets absorbed.
+ */
+function sameText(stored: unknown, incoming: unknown): boolean {
+  return (
+    typeof stored === "string" && typeof incoming === "string" && stored.trim() === incoming.trim()
+  );
+}
+function sameEmail(stored: unknown, incoming: unknown): boolean {
+  return (
+    typeof stored === "string" &&
+    typeof incoming === "string" &&
+    stored.trim().toLowerCase() === incoming.trim().toLowerCase()
+  );
+}
+function samePhone(stored: unknown, incoming: unknown): boolean {
+  return (
+    typeof stored === "string" &&
+    typeof incoming === "string" &&
+    stored.replace(/[^\d]/g, "") === incoming.replace(/[^\d]/g, "")
+  );
+}
+function sameLine2(stored: unknown, incoming: unknown): boolean {
+  const fold = (value: unknown): string | null =>
+    value === null || value === undefined ? "" : typeof value === "string" ? value.trim() : null;
+  const left = fold(stored);
+  const right = fold(incoming);
+  return left !== null && left === right;
+}
+
 function replays(
   stored: EarlyAccessPlacement,
   customer: EarlyAccessCustomer,
   body: PlacementCaller["body"],
+  contact: EarlyAccessOrderContact,
+  shipTo: PlacementCaller["shipTo"],
   quantity: number,
 ): boolean {
+  // An idempotency key names ONE complete intended order. The comparison
+  // therefore covers every field that changes the commercial or fulfillment
+  // intent, not merely what is being bought: a retry that carries a corrected
+  // address or a corrected phone number is a DIFFERENT intent, and silently
+  // answering it with the old order would ship a parcel to an address the
+  // customer believes they fixed. A stored row predating the contact field
+  // compares as different on purpose: refusing is the safe direction.
+  const line = stored.order.order.line;
   return (
     stored.customerRef === customer.customerRef &&
-    stored.order.order.line.productId === body.productId &&
-    stored.order.order.line.variantId === body.variantId &&
-    stored.order.order.line.quantity === quantity
+    line.productId === body.productId &&
+    line.variantId === body.variantId &&
+    line.quantity === quantity &&
+    stored.order.money.currency === body.expectedCurrency &&
+    line.unitPriceCents === body.expectedUnitPriceCents &&
+    sameEmail(stored.contact?.email, contact.email) &&
+    samePhone(stored.contact?.phone, contact.phone) &&
+    sameText(stored.shipTo.recipientName, shipTo.recipientName) &&
+    sameText(stored.shipTo.line1, shipTo.line1) &&
+    sameLine2(stored.shipTo.line2, shipTo.line2) &&
+    sameText(stored.shipTo.city, shipTo.city) &&
+    sameText(stored.shipTo.region, shipTo.region) &&
+    sameText(stored.shipTo.postalCode, shipTo.postalCode) &&
+    sameText(stored.shipTo.country, shipTo.country)
   );
 }
 
@@ -1095,13 +1162,18 @@ export function createEarlyAccessPaymentProofRoute(deps: EarlyAccessOrderRouteDe
         },
       });
 
-      // 202, and a body that cannot be mistaken for a receipt. The customer has
-      // told us they sent money; nobody has confirmed that it arrived. Every
-      // field that would exist if it had is present and explicitly null.
+      // 202, and a body that can be mistaken for NEITHER a receipt NOR an
+      // upload. What this route accepted is a DESCRIPTION of a proof the
+      // customer holds: its name, type, size and digest. No bytes passed
+      // through this process and none were stored, and saying otherwise
+      // would leave the customer believing evidence exists on our side that
+      // does not. Every field a settled payment would carry is present and
+      // explicitly null.
       send(response, 202, {
         ok: true,
         orderNumber: placement.orderNumber,
-        received: true,
+        recorded: true,
+        storedOnPlatform: false,
         payment: {
           state: "under_review",
           paid: false,
@@ -1112,9 +1184,10 @@ export function createEarlyAccessPaymentProofRoute(deps: EarlyAccessOrderRouteDe
         supplierOrder: null,
         commission: null,
         message:
-          "We have received your payment proof. A member of the team confirms every payment " +
-          "by hand after it arrives. This is not a receipt, and your order is not paid until " +
-          "that confirmation reaches you.",
+          "We have recorded the details of your payment confirmation. The confirmation itself " +
+          "stays with you: send it through your Xenios support contact so a named team member " +
+          "can verify it against these details. This is not a receipt, no file was uploaded " +
+          "here, and your order is not paid until that verification reaches you.",
       });
     } catch {
       unavailable(response);

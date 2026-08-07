@@ -48,6 +48,15 @@ export type EarlyAccessCustomer = Readonly<{
    * anything that existed before this session needs "verified_link".
    */
   readonly boundBy?: "email_entry" | "verified_link" | "session_code";
+  /**
+   * OTHER ownership references this same purchaser's records may carry,
+   * derived SERVER-SIDE ONLY (today: the continuity-credential reference a
+   * verified identity keeps so verification never orphans earlier orders).
+   * Never populated from a request body, header, or URL: an identity
+   * directory is the only writer, and it derives every entry from a
+   * credential it verified itself.
+   */
+  readonly aliasRefs?: readonly string[];
 }>;
 
 /**

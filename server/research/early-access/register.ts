@@ -40,6 +40,7 @@ import {
 import {
   createEarlyAccessConfirmPaymentRoute,
   createEarlyAccessExternalProofRoute,
+  createEarlyAccessPaymentOrderReadRoute,
   createEarlyAccessPaymentQueueRoute,
   createEarlyAccessSupplierAcknowledgementRoute,
   createEarlyAccessSupplierNotificationRoute,
@@ -159,6 +160,13 @@ export const EARLY_ACCESS_API_PATHS = Object.freeze([
  * the weaker one ends up answering first.
  */
 export const EARLY_ACCESS_ADMIN_PAYMENTS_PATH = "/api/admin/research/payments";
+/**
+ * The per-order operator read, any payment state. Where an operator acting on
+ * ONE order (including awaiting_payment, which the review queue deliberately
+ * omits) finds everything the queue would show them, contact included.
+ */
+export const EARLY_ACCESS_ADMIN_PAYMENT_ORDER_PATH =
+  "/api/admin/research/payments/:orderNumber";
 export const EARLY_ACCESS_ADMIN_PAYMENT_CONFIRM_PATH =
   "/api/admin/research/payments/:orderNumber/confirm";
 export const EARLY_ACCESS_ADMIN_SUPPLIER_ORDER_PATH =
@@ -188,6 +196,7 @@ export const EARLY_ACCESS_ADMIN_EXTERNAL_PROOF_PATH =
 
 export const EARLY_ACCESS_ADMIN_API_PATHS = Object.freeze([
   EARLY_ACCESS_ADMIN_PAYMENTS_PATH,
+  EARLY_ACCESS_ADMIN_PAYMENT_ORDER_PATH,
   EARLY_ACCESS_ADMIN_PAYMENT_CONFIRM_PATH,
   EARLY_ACCESS_ADMIN_EXTERNAL_PROOF_PATH,
   EARLY_ACCESS_ADMIN_SUPPLIER_ORDER_PATH,
@@ -402,6 +411,10 @@ export function registerPrivateEarlyAccessApi(
     repository,
     now,
     randomToken,
+    // The customer-continuity credential exists only in the session-identity
+    // pilot. Signed with the same deployment secret as the session cookie,
+    // so a rotated secret invalidates both together.
+    continuitySecret: options.sessionIdentity === true ? effectiveConfig.sessionSecret : null,
     mintSession: durable
       ? ({ ownerId, now: issuedAt, ttlSeconds }) =>
           mintDurableSession({ repository, ownerId, now: issuedAt, ttlSeconds, randomToken })
@@ -413,7 +426,10 @@ export function registerPrivateEarlyAccessApi(
   const logout = createLogoutRoute(deps);
 
   app.post(EARLY_ACCESS_UNLOCK_PATH, (req: Request, res: Response) => {
-    void unlock({ body: req.body, clientKey: clientKeyFor(req) }, res);
+    void unlock(
+      { body: req.body, clientKey: clientKeyFor(req), cookieHeader: req.headers?.cookie },
+      res,
+    );
   });
 
   app.get(EARLY_ACCESS_SESSION_PATH, (req: Request, res: Response) => {
@@ -469,6 +485,7 @@ export function registerPrivateEarlyAccessApi(
           resolveSession,
           readSessionId,
           primary: boundIdentity,
+          continuitySecret: effectiveConfig.sessionSecret,
         })
       : boundIdentity);
 
@@ -708,6 +725,11 @@ function registerEarlyAccessAdminApi(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
     );
+  });
+
+  const paymentOrder = createEarlyAccessPaymentOrderReadRoute(deps);
+  app.get(EARLY_ACCESS_ADMIN_PAYMENT_ORDER_PATH, guard, (req: Request, res: Response) => {
+    void paymentOrder({ adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber }, res);
   });
 
   app.get(EARLY_ACCESS_ADMIN_SUPPLIER_ORDER_PATH, guard, (req: Request, res: Response) => {

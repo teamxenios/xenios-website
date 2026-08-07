@@ -3,6 +3,11 @@ import {
   decodePrivateAccessCookie,
   encodePrivateAccessCookie,
 } from "./private-access-cookie-session";
+import {
+  clearEarlyAccessContinuityCookie,
+  mintEarlyAccessContinuityCookie,
+  readEarlyAccessContinuityToken,
+} from "./identity/session-scoped-identity";
 import type { EarlyAccessConfig } from "./private-access-config";
 import { verifyPrivateAccessPassword } from "./private-access-password";
 import {
@@ -46,7 +51,7 @@ import {
 
 /** Structural response port. An Express `Response` satisfies it as written. */
 export interface PrivateAccessResponsePort {
-  setHeader(name: string, value: string): unknown;
+  setHeader(name: string, value: string | readonly string[]): unknown;
   status(code: number): unknown;
   json(body: unknown): unknown;
 }
@@ -62,6 +67,13 @@ export interface PrivateAccessResponsePort {
 export interface PrivateAccessUnlockRequest {
   readonly body: unknown;
   readonly clientKey: unknown;
+  /**
+   * The raw Cookie header, used for exactly one read: whether a valid
+   * continuity credential already exists, so a re-unlock keeps the same
+   * customer instead of minting a new one. Never used to authenticate the
+   * unlock itself.
+   */
+  readonly cookieHeader?: unknown;
 }
 
 export interface PrivateAccessSessionRequest {
@@ -123,6 +135,14 @@ export interface PrivateAccessRouteDependencies {
   /** Injected so the rate-limit switch is testable without touching process.env. */
   readonly env?: NodeJS.ProcessEnv;
   readonly cookies?: PrivateAccessCookiePort;
+  /**
+   * When set, unlock issues the long-lived customer CONTINUITY cookie beside
+   * the session cookie (only if the browser does not already carry a valid
+   * one), and logout clears it. Null or absent means the session-identity
+   * pilot is off and no continuity credential exists. See
+   * identity/session-scoped-identity.ts for what the credential is and is not.
+   */
+  readonly continuitySecret?: string | null;
   readonly verifyPassword?: (presented: unknown, storedHash: unknown) => boolean;
   /**
    * The deployment-scoped owner every Private Early Access session belongs to.
@@ -603,7 +623,22 @@ export function createUnlockRoute(deps: PrivateAccessRouteDependencies): Private
       }
 
       limiter.reset(clientKey);
-      response.setHeader("Set-Cookie", issued.setCookie);
+      // The CONTINUITY cookie rides beside the session cookie, minted once
+      // per browser: a later unlock that already carries a valid credential
+      // keeps it, which is exactly what lets a purchaser renew their session
+      // without becoming a different customer. An invalid or forged one is
+      // replaced rather than honored.
+      const setCookies: string[] = [issued.setCookie];
+      if (typeof deps.continuitySecret === "string" && deps.continuitySecret.length > 0) {
+        const existing = readEarlyAccessContinuityToken(
+          request?.cookieHeader,
+          deps.continuitySecret,
+        );
+        if (existing === null) {
+          setCookies.push(mintEarlyAccessContinuityCookie(deps.continuitySecret).setCookie);
+        }
+      }
+      response.setHeader("Set-Cookie", setCookies.length === 1 ? issued.setCookie : setCookies);
       // The token appears in the Set-Cookie header, which is its purpose, and
       // nowhere in the body. The hash, the password, and the configured hash
       // are absent from both.
@@ -784,7 +819,16 @@ export function createLogoutRoute(deps: PrivateAccessRouteDependencies): Private
     try {
       applyPrivateHeaders(response);
       try {
-        response.setHeader("Set-Cookie", cookies.clear());
+        // Sign-out severs BOTH credentials: the session that grants entry and
+        // the continuity credential that names the customer. On a shared
+        // machine the next person to unlock must start as somebody new, not
+        // inherit the last purchaser's orders.
+        response.setHeader(
+          "Set-Cookie",
+          typeof deps.continuitySecret === "string" && deps.continuitySecret.length > 0
+            ? [cookies.clear(), clearEarlyAccessContinuityCookie()]
+            : cookies.clear(),
+        );
       } catch {
         // A broken port must not prevent the revocation below.
       }

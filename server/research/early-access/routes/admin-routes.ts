@@ -150,6 +150,50 @@ async function recordAudit(
  * payment arrived, and a queue is the widest-angle view of the order book that
  * exists.
  */
+/**
+ * One order, as the operator's screen shows it. Shared by the review queue
+ * and the per-order read so the two can never disagree about what an
+ * operator is allowed to see. An explicit allowlist: contact is here because
+ * reaching the purchaser is operations' job; shipping is NOT, because the
+ * supplier packet is the only surface that needs an address.
+ */
+async function paymentOrderView(
+  deps: EarlyAccessAdminRouteDependencies,
+  placement: EarlyAccessPlacement,
+): Promise<Record<string, unknown>> {
+  const proofs = await deps.store.proofs(placement.orderNumber);
+  const current = proofs.length === 0 ? null : proofs[proofs.length - 1];
+  return {
+    orderNumber: placement.orderNumber,
+    placedAt: placement.placedAt,
+    paymentState: placement.paymentState,
+    payableTotalCents: placement.order.money.payableTotalCents,
+    currency: placement.order.money.currency,
+    sku: placement.order.order.line.sku,
+    quantity: placement.order.order.line.quantity,
+    // How to reach THIS purchaser, for the operator working the order. This
+    // is the whole reason contact is collected: a session-code customer has
+    // no roster row, so without this line the pilot needs raw SQL to say
+    // anything to a buyer. Behind the same admin guard as the money itself;
+    // never on a customer surface, never in the supplier packet.
+    contact: placement.contact === undefined ? null : { ...placement.contact },
+    paymentReference: placement.invoice.paymentReference,
+    proofCount: proofs.length,
+    currentProof:
+      current === undefined || current === null
+        ? null
+        : {
+            reviewedProofRef: current.record.storageRef,
+            filename: current.record.filename,
+            contentType: current.record.contentType,
+            byteSize: current.record.byteSize,
+            sha256: current.sha256,
+            method: current.record.method,
+            submittedAt: current.record.uploadedAt,
+          },
+  };
+}
+
 export function createEarlyAccessPaymentQueueRoute(deps: EarlyAccessAdminRouteDependencies) {
   return async (request: { adminEmail?: unknown }, response: ResponsePort): Promise<void> => {
     try {
@@ -159,39 +203,52 @@ export function createEarlyAccessPaymentQueueRoute(deps: EarlyAccessAdminRouteDe
 
       const waiting = await deps.store.awaitingReview();
       const items = await Promise.all(
-        waiting.map(async (placement) => {
-          const proofs = await deps.store.proofs(placement.orderNumber);
-          const current = proofs.length === 0 ? null : proofs[proofs.length - 1];
-          return {
-            orderNumber: placement.orderNumber,
-            placedAt: placement.placedAt,
-            paymentState: placement.paymentState,
-            payableTotalCents: placement.order.money.payableTotalCents,
-            currency: placement.order.money.currency,
-            sku: placement.order.order.line.sku,
-            quantity: placement.order.order.line.quantity,
-            paymentReference: placement.invoice.paymentReference,
-            proofCount: proofs.length,
-            currentProof:
-              current === undefined || current === null
-                ? null
-                : {
-                    // The reference the admin must ECHO back on confirm, which is
-                    // what proves they decided against the proof that is current
-                    // rather than one the customer already replaced.
-                    reviewedProofRef: current.record.storageRef,
-                    filename: current.record.filename,
-                    contentType: current.record.contentType,
-                    byteSize: current.record.byteSize,
-                    sha256: current.sha256,
-                    method: current.record.method,
-                    submittedAt: current.record.uploadedAt,
-                  },
-          };
-        }),
+        waiting.map((placement) => paymentOrderView(deps, placement)),
       );
 
       send(response, 200, { ok: true, items });
+    } catch {
+      unavailable(response);
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
+// GET one payment order, any state
+// ---------------------------------------------------------------------------
+
+/**
+ * The per-order operator read: where an operator lands when acting on ONE
+ * order, in any payment state, including awaiting_payment orders the review
+ * queue deliberately does not list. The operator arrives holding an order
+ * number (from the purchaser's support message, or from the queue), and this
+ * answers with the same allowlisted view the queue shows, contact included,
+ * so reaching the purchaser never requires SQL. A cross-check: an unknown
+ * order answers 404 exactly like a real one the caller may not name, because
+ * even for admins an order lookup must not become an enumeration oracle
+ * outside the guard.
+ */
+export function createEarlyAccessPaymentOrderReadRoute(deps: EarlyAccessAdminRouteDependencies) {
+  return async (
+    request: { adminEmail?: unknown; orderNumber?: unknown },
+    response: ResponsePort,
+  ): Promise<void> => {
+    try {
+      applyPrivateHeaders(response);
+      const caller = await resolveAdmin(deps, request?.adminEmail, response);
+      if (!caller.ok) return;
+
+      if (!isEarlyAccessOrderNumber(request?.orderNumber)) {
+        fail(response, 404, "ORDER_NOT_FOUND");
+        return;
+      }
+      const placement = await deps.store.placementByOrderNumber(request.orderNumber as string);
+      if (placement === null) {
+        fail(response, 404, "ORDER_NOT_FOUND");
+        return;
+      }
+
+      send(response, 200, { ok: true, order: await paymentOrderView(deps, placement) });
     } catch {
       unavailable(response);
     }
@@ -1038,7 +1095,7 @@ export function createEarlyAccessExternalProofRoute(deps: EarlyAccessAdminRouteD
       if (!caller.ok) return;
       const now = stampOf(caller.nowMs);
 
-      if (deps.proofStorage === undefined || deps.proofId === undefined) {
+      if (deps.proofId === undefined) {
         fail(response, 503, "UNAVAILABLE");
         return;
       }
@@ -1096,17 +1153,14 @@ export function createEarlyAccessExternalProofRoute(deps: EarlyAccessAdminRouteD
       }
 
       const existing = await deps.store.proofs(orderNumber);
-      const objectKey = `${orderNumber}/${proofId}`;
-      const storageRef = await deps.proofStorage.reserve({
-        objectKey,
-        contentType: body.contentType as string,
-        byteSize: body.byteSize,
-        sha256: body.sha256,
-      });
-      if (storageRef === null) {
-        fail(response, 503, "STORAGE_UNAVAILABLE");
-        return;
-      }
+      // METADATA-ONLY, MODELED AS METADATA-ONLY. The artifact lives off
+      // platform, so no storage object is reserved: a reservation would be a
+      // standing claim that bytes exist at a key nothing will ever write,
+      // and the read signer would then mint preview links to an empty
+      // object. The evidence reference below is an opaque name for the
+      // off-platform evidence record; the digest beside it is what makes
+      // the evidence verifiable against the artifact wherever it is held.
+      const storageRef = `eaext.${proofId}`;
 
       const prior =
         existing.length === 0

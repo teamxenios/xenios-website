@@ -62,19 +62,31 @@ const EXTERNAL_PROOF = Object.freeze({
   receivedVia: "Email from the purchaser to support@xeniostechnology.com",
 });
 
+/** Counts reservations, so a metadata-only path can PROVE it reserved nothing. */
+class CountingProofStorage {
+  public reservations = 0;
+  async reserve(): Promise<string> {
+    this.reservations += 1;
+    return `eaproof.counted.${this.reservations}`;
+  }
+}
+
 type Ready = Readonly<{
   app: Express;
   store: InMemoryEarlyAccessCommerceStore;
+  proofStorage: CountingProofStorage;
   cookie: string;
   orderNumber: string;
 }>;
 
 async function readyOrder(): Promise<Ready> {
   const unit = cleanUnit();
+  const proofStorage = new CountingProofStorage();
   const { app, store } = makeEarlyAccessApp({
     catalog: catalogOf([unit]),
     releases: await approvedLedgerFor(unit),
     admins: ADMINS,
+    proofStorage,
   });
   const unlocked = await request(app)
     .post("/api/research/early-access/unlock")
@@ -85,12 +97,88 @@ async function readyOrder(): Promise<Ready> {
 
   const placed = await request(app).post(ORDERS).set("Cookie", cookie).send({ ...ORDER_BODY });
   expect(placed.status).toBe(201);
-  return Object.freeze({ app, store, cookie, orderNumber: placed.body.order.orderNumber as string });
+  return Object.freeze({
+    app,
+    store,
+    proofStorage,
+    cookie,
+    orderNumber: placed.body.order.orderNumber as string,
+  });
 }
 
 function externalProofPath(orderNumber: string): string {
   return `${PAYMENTS}/${orderNumber}/external-proof`;
 }
+
+describe("operations can reach the purchaser from the normal admin surface", () => {
+  const CONTACT = { email: "customer.alpha@example.com", phone: "+1 512 555 0100" };
+
+  it("shows the exact submitted contact on the per-order read while the order still awaits payment", async () => {
+    const { app, cookie, orderNumber } = await readyOrder();
+
+    // The operator holds an order number (from the purchaser's support
+    // message) and lands on the one order they are working: exact contact,
+    // no SQL, no Supabase console, no jsonb spelunking, in ANY payment
+    // state including awaiting_payment, which the review queue omits.
+    const read = await request(app)
+      .get(`${PAYMENTS}/${orderNumber}`)
+      .set("x-test-admin", FOUNDER);
+    expect(read.status).toBe(200);
+    expect(read.body.order.paymentState).toBe("awaiting_payment");
+    expect(read.body.order.contact).toEqual(CONTACT);
+
+    // And nothing beside it that does not belong on an operator's screen: no
+    // session credential, no shipping dump, no raw placement record.
+    const serialized = JSON.stringify(read.body);
+    for (const cookiePair of cookie.split("; ")) {
+      const credential = cookiePair.split("=")[1];
+      if (credential && credential.length >= 8) {
+        expect(serialized, "operator read leaked a session credential").not.toContain(credential);
+      }
+    }
+    expect(read.body.order.shipTo).toBeUndefined();
+    expect(read.body.order.record).toBeUndefined();
+  });
+
+  it("gives contact to nobody who is not a named admin, and answers unknown orders as not found", async () => {
+    const { app, orderNumber } = await readyOrder();
+
+    const unauthenticated = await request(app).get(`${PAYMENTS}/${orderNumber}`);
+    expect(unauthenticated.status).toBe(401);
+
+    const unknownAdmin = await request(app)
+      .get(`${PAYMENTS}/${orderNumber}`)
+      .set("x-test-admin", "stranger@example.com");
+    expect(unknownAdmin.status).toBe(403);
+    expect(JSON.stringify(unknownAdmin.body)).not.toContain(CONTACT.email);
+
+    const missing = await request(app)
+      .get(`${PAYMENTS}/XEA-0000000000009999`)
+      .set("x-test-admin", FOUNDER);
+    expect(missing.status).toBe(404);
+  });
+
+  it("keeps the contact identical through the proof workflow, on the queue item and the per-order read", async () => {
+    const { app, orderNumber } = await readyOrder();
+
+    await request(app)
+      .post(externalProofPath(orderNumber))
+      .set("x-test-admin", FOUNDER)
+      .send({ ...EXTERNAL_PROOF });
+
+    const queue = await request(app).get(PAYMENTS).set("x-test-admin", FOUNDER);
+    const item = (queue.body.items as Array<Record<string, any>>).find(
+      (candidate) => candidate.orderNumber === orderNumber,
+    );
+    expect(item?.paymentState).toBe("under_review");
+    expect(item?.contact).toEqual(CONTACT);
+
+    const read = await request(app)
+      .get(`${PAYMENTS}/${orderNumber}`)
+      .set("x-test-admin", FOUNDER);
+    expect(read.body.order.contact).toEqual(CONTACT);
+  });
+});
 
 describe("recording an externally received proof", () => {
   it("refuses a caller the guard did not verify, and an admin the directory does not know", async () => {
@@ -109,22 +197,62 @@ describe("recording an externally received proof", () => {
     expect(unknown.body.code).toBe("ACTOR_NOT_PERMITTED");
   });
 
-  it("records metadata under the admin's identity, says bytes are NOT on platform, and marks nothing paid", async () => {
-    const { app, store, cookie, orderNumber } = await readyOrder();
+  it("pins the EXACT response contract: metadata recorded, nothing stored, nothing paid, ever", async () => {
+    const { app, store, proofStorage, cookie, orderNumber } = await readyOrder();
 
     const recorded = await request(app)
       .post(externalProofPath(orderNumber))
       .set("x-test-admin", FOUNDER)
       .send({ ...EXTERNAL_PROOF });
     expect(recorded.status).toBe(202);
+
+    // THE FULL SHAPE, exactly. A key added to this response is a contract
+    // change and must arrive through this assertion.
+    expect(Object.keys(recorded.body).sort()).toEqual([
+      "commission",
+      "message",
+      "ok",
+      "orderNumber",
+      "payment",
+      "proof",
+      "receipt",
+      "recorded",
+      "storedOnPlatform",
+      "supplierOrder",
+    ]);
+    expect(recorded.body.ok).toBe(true);
+    expect(recorded.body.orderNumber).toBe(orderNumber);
     expect(recorded.body.recorded).toBe(true);
-    // THE HONESTY LINE. This response can never read as an upload.
+    // THE HONESTY LINE. This response can never read as an upload...
     expect(recorded.body.storedOnPlatform).toBe(false);
+    // ...and never as a payment. Exact object equality: a `paid: true` added
+    // anywhere in the payment block fails here; one added anywhere ELSE in
+    // the body fails the key list above and the serialized pin below.
     expect(recorded.body.payment).toEqual({ state: "under_review", paid: false, verified: false });
     expect(recorded.body.receipt).toBeNull();
     expect(recorded.body.supplierOrder).toBeNull();
+    expect(recorded.body.commission).toBeNull();
+    const serialized = JSON.stringify(recorded.body);
+    expect(serialized).not.toContain('"paid":true');
+    expect(serialized).not.toContain('"verified":true');
+    expect(serialized).not.toContain('"received":true');
+    expect(serialized.toLowerCase()).not.toContain("fulfilled");
+    expect(serialized.toLowerCase()).not.toContain("supplier released");
+
     // Attributed to the named admin who vouched, never to the customer.
     expect(recorded.body.proof.uploadedBy).toBe("admin:founder.aaaa1111");
+
+    // METADATA-ONLY MEANS METADATA-ONLY: no storage object was reserved for
+    // an artifact that lives off platform, so there is nothing a preview
+    // signer could ever be pointed at. The evidence reference carries the
+    // external namespace instead.
+    expect(proofStorage.reservations).toBe(0);
+    const queue = await request(app).get(PAYMENTS).set("x-test-admin", FOUNDER);
+    const item = (queue.body.items as Array<Record<string, any>>).find(
+      (candidate) => candidate.orderNumber === orderNumber,
+    );
+    expect(item?.currentProof?.reviewedProofRef).toMatch(/^eaext\./);
+    expect(JSON.stringify(item?.currentProof)).not.toMatch(/https?:/);
 
     // Nothing settled: the store has no settlement and the customer's own
     // status still says the order is not paid.
@@ -132,6 +260,33 @@ describe("recording an externally received proof", () => {
     const status = await request(app).get(`${ORDERS}/${orderNumber}`).set("Cookie", cookie);
     expect(status.status).toBe(200);
     expect(status.body.payment.paid).toBe(false);
+  });
+
+  it("pins the CUSTOMER proof response contract: it never claims a file was received or stored", async () => {
+    const { app, cookie, orderNumber } = await readyOrder();
+
+    const submitted = await request(app)
+      .post(`${ORDERS}/${orderNumber}/payment-proof`)
+      .set("Cookie", cookie)
+      .send({
+        filename: "my-transfer.png",
+        contentType: "image/png",
+        byteSize: 120_000,
+        sha256: "d".repeat(64),
+        method: "zelle",
+      });
+    expect(submitted.status).toBe(202);
+    expect(submitted.body.recorded).toBe(true);
+    expect(submitted.body.storedOnPlatform).toBe(false);
+    // The old lie, pinned out of existence: no `received` key at all.
+    expect("received" in submitted.body).toBe(false);
+    expect(submitted.body.payment).toEqual({ state: "under_review", paid: false, verified: false });
+    expect(submitted.body.receipt).toBeNull();
+    const serialized = JSON.stringify(submitted.body);
+    expect(serialized).not.toContain('"paid":true');
+    expect(serialized).not.toContain('"received":true');
+    expect(serialized.toLowerCase()).not.toContain("we have received your payment proof");
+    expect(submitted.body.message).toContain("no file was uploaded here");
   });
 
   it("requires the provenance note, a valid digest, and a listed format", async () => {
