@@ -7,6 +7,7 @@ import type {
   EarlyAccessSupplierAssignment,
   EarlyAccessSupplierDirectory,
 } from "../routes/ports";
+import { earlyAccessSupplierIdentifier } from "../ops/supplier-identity";
 import {
   expectObject,
   runEarlyAccessCall,
@@ -145,8 +146,19 @@ export class SupabaseEarlyAccessSupplierDirectory implements EarlyAccessSupplier
     if (typeof parsed.supplierId !== "string" || typeof parsed.supplierSku !== "string") {
       return null;
     }
+    // THE ONE TRANSLATION THIS BOUNDARY OWES THE PORT. The RPC answers
+    // `'supplierId', supplier_org`, and supplier_org is a free-text
+    // organisation NAME: every recorded confirmation carries "Raw Peptides",
+    // which the order route's isSafeIdentifier guard rejects because the
+    // pattern has no space. The row is real, the route is real, and the sale
+    // was refused anyway. Translating the name into its identifier form here
+    // keeps the guard intact and fails closed when no valid identifier can be
+    // derived. See ops/supplier-identity.ts for why this is a translation
+    // rather than a repair, and what the schema-level fix is.
+    const supplierId = earlyAccessSupplierIdentifier(parsed.supplierId);
+    if (supplierId === null) return null;
     return Object.freeze({
-      supplierId: parsed.supplierId,
+      supplierId,
       supplierSku: parsed.supplierSku,
     });
   }

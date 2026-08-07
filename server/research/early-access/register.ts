@@ -104,6 +104,20 @@ import {
   type SessionBindingStore,
 } from "./identity/identity-verification";
 import { SessionScopedEarlyAccessIdentityDirectory } from "./identity/session-scoped-identity";
+import { earlyAccessCartEnabled } from "./cart/feature-flag";
+import {
+  createEarlyAccessCartCheckoutRoute,
+  createEarlyAccessCartQuoteRoute,
+  createEarlyAccessCartReadRoute,
+} from "./cart/routes";
+import { InMemoryEarlyAccessCartStore } from "./cart/store";
+import {
+  DirectoryCartSuppliers,
+  FounderReleaseCartPricing,
+  GateCartAgreements,
+  PolicyCartShipping,
+  StorefrontCartCatalog,
+} from "./cart/adapters";
 import {
   InMemorySupplierConfirmationStore,
   type SupplierConfirmationStore,
@@ -137,6 +151,24 @@ export const EARLY_ACCESS_ORDER_INVOICE_PATH =
   "/api/research/early-access/orders/:orderNumber/invoice";
 export const EARLY_ACCESS_ORDER_PROOF_PATH =
   "/api/research/early-access/orders/:orderNumber/payment-proof";
+
+/**
+ * The multi-product cart, mounted only when RESEARCH_EARLY_ACCESS_CART_ENABLED
+ * is exactly "true". Quote decides nothing durable; checkout writes the parent,
+ * every child line and the invoice in one commit; the read is scoped to the
+ * purchaser and answers 404 for anyone else's cart exactly as the single-order
+ * lookup does.
+ */
+export const EARLY_ACCESS_CART_QUOTE_PATH = "/api/research/early-access/cart/quote";
+export const EARLY_ACCESS_CART_CHECKOUT_PATH = "/api/research/early-access/cart/checkout";
+export const EARLY_ACCESS_CART_READ_PATH =
+  "/api/research/early-access/cart/:cartCheckoutNumber";
+
+export const EARLY_ACCESS_CART_API_PATHS = Object.freeze([
+  EARLY_ACCESS_CART_QUOTE_PATH,
+  EARLY_ACCESS_CART_CHECKOUT_PATH,
+  EARLY_ACCESS_CART_READ_PATH,
+] as const);
 
 export const EARLY_ACCESS_API_PATHS = Object.freeze([
   EARLY_ACCESS_UNLOCK_PATH,
@@ -280,6 +312,13 @@ export interface EarlyAccessRegistrationOptions {
    * signed session and no email or body-supplied identity is trusted.
    */
   readonly sessionIdentity?: boolean;
+  /**
+   * Injected for tests, so the cart mount can be exercised without touching
+   * process.env. Production reads the real environment.
+   */
+  readonly env?: NodeJS.ProcessEnv;
+  /** Injected for tests. Defaults to the in-memory cart store. */
+  readonly cartStore?: InMemoryEarlyAccessCartStore;
   /**
    * SUPPLIER_CONFIRMED_ON_DEMAND records and unit holds. Both feed the
    * catalog projection at every read AND the manual admin doors that record
@@ -608,6 +647,67 @@ export function registerPrivateEarlyAccessApi(
   app.get(EARLY_ACCESS_ORDER_PATH, (req: Request, res: Response) => {
     void readOrder({ cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber }, res);
   });
+
+  // THE MULTI-PRODUCT CART, off unless a named human switched it on.
+  //
+  // It reuses the identity, catalogue, release, promotion, supplier, shipping
+  // and agreement seams the single-product path uses (see cart/adapters.ts),
+  // so the two paths cannot disagree about what may be sold or at what price.
+  // The browser never loops over the single-product door to buy several
+  // things: it quotes once and checks out once.
+  if (earlyAccessCartEnabled(options.env ?? process.env)) {
+    const cartStore = options.cartStore ?? new InMemoryEarlyAccessCartStore();
+    const cartIdentity = {
+      async resolve(cookieHeader: unknown) {
+        const customer = await identity.resolve({ cookieHeader });
+        if (customer === null) return null;
+        return Object.freeze({
+          customerRef: customer.customerRef,
+          aliases: customer.aliasRefs ?? [],
+        });
+      },
+    };
+    const cartCatalog = new StorefrontCartCatalog({ catalog, releases });
+    const cartPricing = new FounderReleaseCartPricing({ catalog, releases });
+    const quoteCart = createEarlyAccessCartQuoteRoute({
+      identity: cartIdentity,
+      catalog: cartCatalog,
+      releases: cartPricing,
+      suppliers: new DirectoryCartSuppliers(commerce.suppliers),
+      shipping: new PolicyCartShipping(commerce.shipping),
+      agreements: new GateCartAgreements(commerce.agreements),
+      quotes: cartStore,
+      now,
+    });
+    const checkoutCart = createEarlyAccessCartCheckoutRoute({
+      identity: cartIdentity,
+      quotes: cartStore,
+      checkouts: cartStore,
+      audit: {
+        async record(event) {
+          await audit.record(event as never);
+        },
+      },
+      now,
+    });
+    const readCart = createEarlyAccessCartReadRoute({
+      identity: cartIdentity,
+      checkouts: cartStore,
+    });
+
+    app.post(EARLY_ACCESS_CART_QUOTE_PATH, (req: Request, res: Response) => {
+      void quoteCart({ cookieHeader: req.headers?.cookie, body: req.body }, res as never);
+    });
+    app.post(EARLY_ACCESS_CART_CHECKOUT_PATH, (req: Request, res: Response) => {
+      void checkoutCart({ cookieHeader: req.headers?.cookie, body: req.body }, res as never);
+    });
+    app.get(EARLY_ACCESS_CART_READ_PATH, (req: Request, res: Response) => {
+      void readCart(
+        { cookieHeader: req.headers?.cookie, cartCheckoutNumber: req.params.cartCheckoutNumber },
+        res as never,
+      );
+    });
+  }
 
   app.get(EARLY_ACCESS_ORDER_INVOICE_PATH, (req: Request, res: Response) => {
     void readInvoice(
