@@ -121,6 +121,17 @@ describe("the code-session identity, through the real registration", () => {
     // only on the purchaser's own view.
     expect(stored?.contact).toEqual(ORDER_CONTACT);
     expect(placed.body.order.contact).toEqual(ORDER_CONTACT);
+    // The record stays OPAQUE about how the customer authenticated: no part
+    // of the raw session credential is stored anywhere on the placement, and
+    // the contact email never becomes an identity.
+    const serialized = JSON.stringify(stored);
+    for (const cookiePair of cookieA.split("; ")) {
+      const credential = cookiePair.split("=")[1];
+      if (credential && credential.length >= 8) {
+        expect(serialized, "placement leaked the session credential").not.toContain(credential);
+      }
+    }
+    expect(stored?.customerRef).not.toContain(ORDER_CONTACT.email);
 
     // Session B derives a DIFFERENT identity: same order under B's cookie is
     // not readable, and the refusal is indistinguishable from "no such order".
