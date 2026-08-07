@@ -149,7 +149,10 @@ function refuse(
  * correct reaction is the same in both cases (go back and look again). The
  * distinction is an operator's, and it stays in the release ledger.
  */
-function holdFailure(hold: EarlyAccessReleaseHold): EarlyAccessOrderFailure {
+function holdFailure(
+  hold: EarlyAccessReleaseHold,
+  row: EarlyAccessCatalogRow,
+): EarlyAccessOrderFailure {
   switch (hold) {
     case "NO_FOUNDER_RELEASE":
       return "RELEASE_REQUIRED";
@@ -160,9 +163,19 @@ function holdFailure(hold: EarlyAccessReleaseHold): EarlyAccessOrderFailure {
     case "RELEASE_EXPIRED":
       return "RELEASE_STALE";
     case "NONWAIVABLE_BLOCKER":
-      return "PRODUCT_HELD";
     case "BLOCKERS_NOT_WAIVED":
-      return "PRODUCT_HELD";
+      // A unit held because no real supplier route exists is reported as
+      // exactly that, not as a generic hold.
+      //
+      // Since the catalogue started answering the supplier question from the
+      // same directory the checkout uses (ops/supplier-availability.ts), an
+      // unroutable unit reaches this point already carrying the non-waivable
+      // SUPPLIER_NOT_ASSIGNED blocker, so the release bridge refuses it before
+      // the supplier check below is ever reached. Without this the specific
+      // refusal would have silently degraded into PRODUCT_HELD.
+      return row.blockers.includes("SUPPLIER_NOT_ASSIGNED")
+        ? "SUPPLIER_UNAVAILABLE"
+        : "PRODUCT_HELD";
   }
 }
 
@@ -522,7 +535,7 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
       const releases = await deps.releases.all();
       const decision = decideEarlyAccessRelease({ row, releases, now: nowMs });
       if (!decision.released) {
-        refuse(response, holdFailure(decision.hold));
+        refuse(response, holdFailure(decision.hold, row));
         return;
       }
 

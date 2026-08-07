@@ -122,6 +122,7 @@ import {
   InMemorySupplierConfirmationStore,
   type SupplierConfirmationStore,
 } from "./ops/supplier-confirmation";
+import { SupplierConsistentCatalogSource } from "./ops/supplier-availability";
 import {
   InMemoryUnitHoldRegistry,
   type UnitHoldRegistry,
@@ -491,16 +492,46 @@ export function registerPrivateEarlyAccessApi(
   const consumed = options.consumed ?? new InMemoryConsumedTokenStore();
   const verificationQueue =
     options.verificationQueue ?? new InMemoryPendingVerificationQueue();
+  // THE ONE SUPPLIER AUTHORITY, resolved here rather than beside the commerce
+  // routes, because the CATALOGUE has to consult the same one. Composed before
+  // the catalog for exactly that reason.
+  const suppliers = options.suppliers ?? new NoEarlyAccessSuppliers();
   // The catalog default is a REFUSAL, not an empty catalog. An unwired
   // deployment answers a truthful 503 instead of 200-with-no-units, which a
   // customer cannot tell apart from "we sell nothing".
-  const catalog =
+  const projectedCatalog =
     options.catalog ??
     createEarlyAccessCatalogSourceForDeployment(configured, undefined, {
       supplierConfirmations,
       holds,
     });
+  // SUPPLIER TRUTH, APPLIED ONCE, FOR EVERY DOOR.
+  //
+  // The catalogue used to answer "can this ship" from
+  // `fulfillmentOwnerForLane(product.lane)` while the checkout asked the
+  // supplier directory. Two sources, and the lane function returns an owner
+  // for every research_material product, so the shelf offered units the order
+  // door then refused. This decorator re-decides `purchasable` against the
+  // SAME directory the order route, the cart quote and the cart checkout use,
+  // and it can only ever withdraw a row, never add one.
+  //
+  // Applied when a supplier authority is actually mounted. `NoEarlyAccessSuppliers`
+  // is the "nothing wired" default of a local composition, and a deployment
+  // with no supplier authority at all has no better answer to consult, so the
+  // projection stands on its own there. Production always mounts the directory
+  // (persistence/production-deps.ts), so production is always consistent.
   const releases = options.releases ?? new InMemoryEarlyAccessReleaseLedger();
+  const catalog =
+    options.suppliers === undefined
+      ? projectedCatalog
+      : new SupplierConsistentCatalogSource({
+          source: projectedCatalog,
+          suppliers,
+          // Bounds the lookups to the units actually on the shelf. Never
+          // widens what may be sold: a scoped row still has to survive the
+          // release bridge.
+          releases,
+        });
   // THE customer identity, resolved through the real directory rather than a
   // hardwired nobody. The reader yields the same hashed session id the session
   // repository stores, and the roster and bindings are the injectable stores
@@ -582,7 +613,9 @@ export function registerPrivateEarlyAccessApi(
     readSessionId,
     sessionOrders,
     agreements: options.agreements ?? new NoEarlyAccessAgreements(),
-    suppliers: options.suppliers ?? new NoEarlyAccessSuppliers(),
+    // The same instance the catalogue was decided against, so the shelf and
+    // the order door cannot answer the supplier question differently.
+    suppliers,
     shipping: options.shipping ?? new NoEarlyAccessShipping(),
     referrals: options.referrals ?? new NoEarlyAccessReferrals(),
     proofStorage: options.proofStorage ?? new SyntheticEarlyAccessProofStorage(),
