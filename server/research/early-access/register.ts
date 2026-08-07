@@ -39,6 +39,7 @@ import {
 } from "./durable-session";
 import {
   createEarlyAccessConfirmPaymentRoute,
+  createEarlyAccessExternalProofRoute,
   createEarlyAccessPaymentQueueRoute,
   createEarlyAccessSupplierAcknowledgementRoute,
   createEarlyAccessSupplierNotificationRoute,
@@ -101,6 +102,7 @@ import {
   type ConsumedTokenStore,
   type SessionBindingStore,
 } from "./identity/identity-verification";
+import { SessionScopedEarlyAccessIdentityDirectory } from "./identity/session-scoped-identity";
 import {
   InMemorySupplierConfirmationStore,
   type SupplierConfirmationStore,
@@ -176,10 +178,18 @@ export const EARLY_ACCESS_ADMIN_OVERPAYMENT_PATH =
   "/api/admin/research/payments/:orderNumber/overpayment-exception";
 export const EARLY_ACCESS_ADMIN_REFUND_PATH =
   "/api/admin/research/payments/:orderNumber/refund";
+/**
+ * The concierge pilot's proof door: a NAMED admin records the metadata and
+ * digest of a payment proof received off platform, so the settlement gate's
+ * proof requirement can be met without a fake customer uploader.
+ */
+export const EARLY_ACCESS_ADMIN_EXTERNAL_PROOF_PATH =
+  "/api/admin/research/payments/:orderNumber/external-proof";
 
 export const EARLY_ACCESS_ADMIN_API_PATHS = Object.freeze([
   EARLY_ACCESS_ADMIN_PAYMENTS_PATH,
   EARLY_ACCESS_ADMIN_PAYMENT_CONFIRM_PATH,
+  EARLY_ACCESS_ADMIN_EXTERNAL_PROOF_PATH,
   EARLY_ACCESS_ADMIN_SUPPLIER_ORDER_PATH,
   EARLY_ACCESS_ADMIN_SUPPLIER_NOTIFICATION_PATH,
   EARLY_ACCESS_ADMIN_SUPPLIER_ACKNOWLEDGEMENT_PATH,
@@ -255,6 +265,12 @@ export interface EarlyAccessRegistrationOptions {
    */
   readonly customers?: EarlyAccessCustomerRepository;
   readonly sessionBindings?: SessionBindingStore;
+  /**
+   * When true, the shared access code creates an isolated identity for each
+   * valid browser session. The customerRef is derived server-side from the
+   * signed session and no email or body-supplied identity is trusted.
+   */
+  readonly sessionIdentity?: boolean;
   /**
    * SUPPLIER_CONFIRMED_ON_DEMAND records and unit holds. Both feed the
    * catalog projection at every read AND the manual admin doors that record
@@ -440,13 +456,21 @@ export function registerPrivateEarlyAccessApi(
   // customer this directory resolves.
   const customers = options.customers ?? new InMemoryEarlyAccessCustomerRepository();
   const sessionBindings = options.sessionBindings ?? new InMemorySessionBindingStore();
+  const readSessionId = createEarlyAccessSessionIdReader(deps);
+  const boundIdentity = new EarlyAccessCustomerDirectory({
+    readSessionId,
+    bindings: sessionBindings,
+    customers,
+  });
   const identity =
     options.identity ??
-    new EarlyAccessCustomerDirectory({
-      readSessionId: createEarlyAccessSessionIdReader(deps),
-      bindings: sessionBindings,
-      customers,
-    });
+    (options.sessionIdentity === true
+      ? new SessionScopedEarlyAccessIdentityDirectory({
+          resolveSession,
+          readSessionId,
+          primary: boundIdentity,
+        })
+      : boundIdentity);
 
   const routeDependencies = {
     resolveSession,
@@ -490,7 +514,6 @@ export function registerPrivateEarlyAccessApi(
   // against another picture of the world.
   const store = options.store ?? new InMemoryEarlyAccessCommerceStore();
   const audit = options.audit ?? new InMemoryEarlyAccessAuditSink();
-  const readSessionId = createEarlyAccessSessionIdReader(deps);
   const sessionOrders = options.sessionOrders ?? new InMemorySessionOrderLog();
   const commerce: EarlyAccessOrderRouteDependencies = {
     resolveSession,
@@ -611,6 +634,11 @@ export function registerPrivateEarlyAccessApi(
     admins: options.admins ?? new ConfiguredEarlyAccessAdminDirectory(),
     audit,
     now,
+    // The concierge external-proof door reserves against the SAME private
+    // bucket and mints ids from the SAME generator as the customer proof
+    // route, so one proof chain has one vocabulary.
+    proofStorage: commerce.proofStorage,
+    proofId: commerce.proofId,
     guard: adminGuard,
   });
 
@@ -669,6 +697,14 @@ function registerEarlyAccessAdminApi(
 
   app.post(EARLY_ACCESS_ADMIN_PAYMENT_CONFIRM_PATH, guard, (req: Request, res: Response) => {
     void confirm(
+      { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
+      res,
+    );
+  });
+
+  const externalProof = createEarlyAccessExternalProofRoute(deps);
+  app.post(EARLY_ACCESS_ADMIN_EXTERNAL_PROOF_PATH, guard, (req: Request, res: Response) => {
+    void externalProof(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
     );

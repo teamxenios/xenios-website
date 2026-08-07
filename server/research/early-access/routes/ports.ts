@@ -42,10 +42,12 @@ export type EarlyAccessCustomer = Readonly<{
   /**
    * How this session was bound. Absent means unknown, which is treated as
    * the WEAK provenance everywhere, because a missing answer must never read
-   * as a verified one. Placing a new order needs only a binding; reading
+   * as a verified one. `session_code` is an isolated identity derived from one
+   * signed browser session; it may read only records carrying that same opaque
+   * customerRef. Placing a new order needs only a binding; reading
    * anything that existed before this session needs "verified_link".
    */
-  readonly boundBy?: "email_entry" | "verified_link";
+  readonly boundBy?: "email_entry" | "verified_link" | "session_code";
 }>;
 
 /**
@@ -348,4 +350,62 @@ export function readShippingDestination(value: unknown): SupplierShipmentRecipie
     postalCode: read.postalCode,
     country: read.country,
   });
+}
+
+// ---------------------------------------------------------------------------
+// Order contact
+// ---------------------------------------------------------------------------
+
+/**
+ * How operations reaches the purchaser about THIS order.
+ *
+ * A session-code customer has no roster row behind their opaque customerRef,
+ * so without this the team could take money and have no way to say anything
+ * about the order. Contact is DATA CARRIED ON THE ORDER and never
+ * authorization: nothing typed here changes who the customer is, what they may
+ * read, or what they may buy. It is deliberately a SIBLING of `shipTo` on the
+ * placement, never a member of it, because the supplier-release packet
+ * validates the recipient with a closed key set and an extra key there would
+ * refuse the release at payment-confirmation time.
+ */
+export type EarlyAccessOrderContact = Readonly<{
+  email: string;
+  phone: string;
+}>;
+
+const CONTACT_KEYS = ["email", "phone"] as const;
+const CONTACT_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/**
+ * Read the order contact from a request body, with the same structural
+ * discipline as the shipping destination: plain object, data descriptors
+ * only, exactly the known keys read, everything else ignored.
+ */
+export function readOrderContact(value: unknown): EarlyAccessOrderContact | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return null;
+  const prototype = Object.getPrototypeOf(value);
+  if (prototype !== Object.prototype && prototype !== null) return null;
+
+  const descriptors = Object.getOwnPropertyDescriptors(value) as Record<
+    string,
+    PropertyDescriptor | undefined
+  >;
+  const read: Record<string, unknown> = {};
+  for (const key of CONTACT_KEYS) {
+    const descriptor = descriptors[key];
+    if (descriptor === undefined) return null;
+    if (!("value" in descriptor) || descriptor.enumerable !== true) return null;
+    read[key] = descriptor.value;
+  }
+
+  if (!isBoundedText(read.email, 254)) return null;
+  const email = (read.email as string).trim();
+  if (!CONTACT_EMAIL.test(email)) return null;
+
+  if (!isBoundedText(read.phone, 32)) return null;
+  const phone = (read.phone as string).trim();
+  const phoneDigits = phone.replace(/[^\d]/g, "");
+  if (phoneDigits.length < 7 || phoneDigits.length > 15) return null;
+
+  return Object.freeze({ email, phone });
 }

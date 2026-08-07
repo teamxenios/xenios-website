@@ -45,7 +45,11 @@ import type {
   EarlyAccessSupplierDirectory,
   SessionOrderLog,
 } from "./ports";
-import { readShippingDestination } from "./ports";
+import {
+  readOrderContact,
+  readShippingDestination,
+  type EarlyAccessOrderContact,
+} from "./ports";
 import type { EarlyAccessCommerceStore, EarlyAccessPlacement } from "./store";
 
 /**
@@ -311,6 +315,9 @@ function orderView(placement: EarlyAccessPlacement): Record<string, unknown> {
       paymentReference: placement.invoice.paymentReference,
       issuedAt: placement.invoice.issuedAt,
     },
+    // The purchaser's own contact, echoed only on their own order view, which
+    // ownedPlacement has already scoped to the identity that placed it.
+    contact: placement.contact === undefined ? null : { ...placement.contact },
     shipTo: { ...placement.shipTo },
   };
 }
@@ -416,7 +423,9 @@ async function ownedPlacement(
   // owns. A session bound by email entry may read only what it created here.
   // An absent provenance is treated as the weak one: a missing answer must
   // never read as a verified one.
-  if (customer.boundBy === "verified_link") return placement;
+  if (customer.boundBy === "verified_link" || customer.boundBy === "session_code") {
+    return placement;
+  }
   if (deps.readSessionId === undefined || deps.sessionOrders === undefined) return null;
   const sessionId = deps.readSessionId(options.cookieHeader);
   if (sessionId === null) return null;
@@ -447,6 +456,7 @@ const ORDER_BODY_KEYS = [
   "quantity",
   "expectedUnitPriceCents",
   "expectedCurrency",
+  "contact",
   "shipTo",
 ] as const;
 
@@ -460,7 +470,7 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
 
       const caller = await resolveCallerForPlacement(deps, request, response);
       if (caller === null) return;
-      const { customer, nowMs, body, shipTo, quantity } = caller;
+      const { customer, nowMs, body, contact, shipTo, quantity } = caller;
       const now = stampOf(nowMs);
 
       // A replay is answered before the catalog and the ledger are consulted, so a
@@ -619,6 +629,11 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
         idempotencyKey: body.idempotencyKey,
         order: record,
         invoice: issued.value.invoice,
+        // Contact rides the canonical placement record as a SIBLING of the
+        // shipping recipient, never inside it: the supplier-release packet
+        // validates the recipient against a closed key set, and an extra key
+        // there would refuse the release at payment-confirmation time.
+        contact,
         shipTo,
         supplier,
         attribution,
@@ -689,6 +704,7 @@ type PlacementCaller = Readonly<{
     expectedUnitPriceCents: number;
     expectedCurrency: string;
   }>;
+  contact: EarlyAccessOrderContact;
   shipTo: ReturnType<typeof readShippingDestination> & object;
   quantity: number;
 }>;
@@ -755,6 +771,16 @@ async function resolveCallerForPlacement(
     fail(response, 400, "REQUEST_INVALID", { field: "shipTo" });
     return null;
   }
+  // Contact is REQUIRED at placement. A session-code purchaser has no roster
+  // row behind their opaque customerRef, and an order the team cannot say
+  // anything about is an order that should not have been taken. Contact is
+  // data on the order, never authorization: identity was already resolved
+  // from the session credential above and nothing typed here can change it.
+  const contact = readOrderContact(body.contact);
+  if (contact === null) {
+    fail(response, 400, "REQUEST_INVALID", { field: "contact" });
+    return null;
+  }
 
   const customer = await deps.identity.resolve({ cookieHeader: request?.cookieHeader });
   if (customer === null || !isSafeIdentifier(customer.customerRef)) {
@@ -777,6 +803,7 @@ async function resolveCallerForPlacement(
       expectedUnitPriceCents: body.expectedUnitPriceCents,
       expectedCurrency: body.expectedCurrency,
     }),
+    contact,
     shipTo,
     quantity: body.quantity,
   });

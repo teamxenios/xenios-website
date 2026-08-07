@@ -20,6 +20,10 @@ import {
   SupabaseSessionBindingStore,
 } from "./identity";
 import {
+  EARLY_ACCESS_SESSION_IDENTITY_ENV,
+  earlyAccessSessionIdentityEnabled,
+} from "../identity/session-scoped-identity";
+import {
   SupabaseEarlyAccessAuditSink,
   SupabaseEarlyAccessReleaseLedger,
 } from "./records";
@@ -173,11 +177,13 @@ export function buildEarlyAccessPersistence(
   const decision = decideEarlyAccessPersistence(environment);
 
   if (decision.mode === "memory") {
+    // Local development honors the SAME switch with the SAME semantics, so
+    // what an operator rehearses locally is what production does.
     return Object.freeze({
       mode: decision.mode,
       warnings: decision.warnings,
       reason: null,
-      options: {},
+      options: { sessionIdentity: earlyAccessSessionIdentityEnabled(env) },
     });
   }
 
@@ -202,6 +208,15 @@ export function buildEarlyAccessPersistence(
 
   const run = query ?? createEarlyAccessSupabaseQuery();
   const warnings = [...decision.warnings];
+  // The deployment's session-identity stance is stated in the logs on every
+  // boot, deliberately and without any secret: whether the shared launch code
+  // mints per-session checkout identities is exactly the kind of fact an
+  // operator should never have to infer from behavior.
+  warnings.push(
+    earlyAccessSessionIdentityEnabled(env)
+      ? `Session-scoped identity is ENABLED (${EARLY_ACCESS_SESSION_IDENTITY_ENV}="true"): each valid private session checks out under its own opaque customer reference.`
+      : `Session-scoped identity is DISABLED (${EARLY_ACCESS_SESSION_IDENTITY_ENV} is not exactly "true"): the pre-existing verified-link identity path is in charge.`,
+  );
 
   const options: {
     -readonly [K in keyof EarlyAccessRegistrationOptions]?: EarlyAccessRegistrationOptions[K];
@@ -213,6 +228,12 @@ export function buildEarlyAccessPersistence(
     audit: new SupabaseEarlyAccessAuditSink(run),
     customers: new SupabaseEarlyAccessCustomerRepository(run),
     sessionBindings: new SupabaseSessionBindingStore(run),
+    // The launch code is the access credential. When the kill switch is
+    // deliberately set, each valid durable session gets its own opaque
+    // identity and email verification becomes an optional recovery path, not
+    // a checkout prerequisite. Anything but the exact string "true" keeps the
+    // pre-existing verified-link path in charge.
+    sessionIdentity: earlyAccessSessionIdentityEnabled(env),
     consumed: new SupabaseConsumedTokenStore(run),
     releases: new SupabaseEarlyAccessReleaseLedger(run),
     proofStorage: new SupabaseEarlyAccessProofStorage({

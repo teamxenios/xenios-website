@@ -106,10 +106,15 @@ describe("decideEarlyAccessPersistence: the production adapter rule", () => {
 });
 
 describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
-  it("memory mode passes NO overrides, so register keeps its in-memory defaults", () => {
+  it("memory mode passes exactly ONE override: the session-identity kill switch, disabled by default", () => {
+    // Local development keeps register.ts's in-memory store defaults. The one
+    // deliberate exception is the session-identity switch, passed through with
+    // production semantics so a local rehearsal rehearses the truth. With no
+    // environment set it is explicitly false, which IS the register default.
     const build = buildEarlyAccessPersistence({} as NodeJS.ProcessEnv);
     expect(build.mode).toBe("memory");
-    expect(Object.keys(build.options)).toEqual([]);
+    expect(Object.keys(build.options)).toEqual(["sessionIdentity"]);
+    expect(build.options.sessionIdentity).toBe(false);
   });
 
   it("refused mode mounts the refusing stores and deliberately NO session repository", () => {

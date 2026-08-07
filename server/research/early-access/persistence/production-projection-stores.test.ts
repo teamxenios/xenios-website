@@ -198,13 +198,16 @@ describe("the wired stores actually reach the database", () => {
 });
 
 describe("the modes that must NOT reach for a database", () => {
-  it("memory mode still passes no overrides at all", () => {
+  it("memory mode still passes no STORE overrides at all", () => {
     // Local development keeps register.ts's in-memory defaults, which is
     // correct there: an empty confirmation store in a dev process holds every
-    // unit, and holding is the safe direction.
+    // unit, and holding is the safe direction. The session-identity kill
+    // switch is the one non-store override, carried with production
+    // semantics and explicitly false when the environment does not set it.
     const build = buildEarlyAccessPersistence({} as NodeJS.ProcessEnv);
     expect(build.mode).toBe("memory");
-    expect(Object.keys(build.options)).toEqual([]);
+    expect(Object.keys(build.options)).toEqual(["sessionIdentity"]);
+    expect(build.options.sessionIdentity).toBe(false);
   });
 
   it("refused mode mounts no projection store, because it must not project at all", () => {

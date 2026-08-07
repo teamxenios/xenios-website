@@ -295,6 +295,16 @@ export function makeEarlyAccessApp(
   return Object.freeze({ app, store, identity });
 }
 
+/**
+ * How operations reaches the fixture purchaser. Contact became REQUIRED at
+ * placement when the session-code pilot landed: a code-only customer has no
+ * roster row, so the order itself must carry a way to reach them.
+ */
+export const ORDER_CONTACT = Object.freeze({
+  email: "customer.alpha@example.com",
+  phone: "+1 512 555 0100",
+});
+
 export const ORDER_BODY = Object.freeze({
   idempotencyKey: "ea-route-order-key-0001",
   productId: "prod-clean",
@@ -302,5 +312,6 @@ export const ORDER_BODY = Object.freeze({
   quantity: 3,
   expectedUnitPriceCents: UNIT_PRICE_CENTS,
   expectedCurrency: "USD",
+  contact: ORDER_CONTACT,
   shipTo: SHIP_TO,
 });

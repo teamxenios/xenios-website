@@ -3,8 +3,13 @@ import SeoHead from "@/components/SeoHead";
 
 import { EarlyAccessUnlockForm } from "./EarlyAccessUnlockForm";
 import { EarlyAccessStepper } from "./EarlyAccessStepper";
-import { EarlyAccessCatalogSection } from "./EarlyAccessCatalogSection";
+import { EarlyAccessCatalogSection, type EarlyAccessCatalogSelection } from "./EarlyAccessCatalogSection";
+import {
+  EarlyAccessCheckoutJourney,
+  EarlyAccessOrderRecoveryCard,
+} from "./EarlyAccessCheckoutJourney";
 import { EarlyAccessAgreementSection } from "./EarlyAccessAgreementSection";
+import { readLastOrderNumber } from "./pendingOrderStore";
 import { EARLY_ACCESS_FULFILLMENT_TARGET_COPY } from "./fulfillment-copy";
 
 // The mounted Private Early Access route.
@@ -23,19 +28,19 @@ const LOGOUT_PATH = "/api/research/early-access/logout";
 
 export const EARLY_ACCESS_STEPS = [
   "Welcome",
-  "Contact and Shipping",
   "Identity and Agreements",
   "Research Catalog",
-  "Review and Referral",
+  "Contact and Shipping",
+  "Review Order",
   "Payment",
   "Payment Confirmation",
   "Status",
 ] as const;
 
 /** "Identity and Agreements", where a customer sits until they have agreed. */
-export const EARLY_ACCESS_AGREEMENT_STEP = 2;
+export const EARLY_ACCESS_AGREEMENT_STEP = 1;
 /** "Research Catalog", reached only once the SERVER confirms the acceptance. */
-export const EARLY_ACCESS_CATALOG_STEP = 3;
+export const EARLY_ACCESS_CATALOG_STEP = 2;
 
 type GateState =
   | { kind: "checking" }
@@ -61,6 +66,19 @@ export default function EarlyAccessRoute() {
   // Why ordering is closed, when it is not simply "has not agreed yet". The
   // journey must describe the SAME situation the agreement step is describing.
   const [blocked, setBlocked] = useState<"unverified" | "locked" | null>(null);
+  const [selection, setSelection] = useState<EarlyAccessCatalogSelection | null>(null);
+  const [checkoutPhase, setCheckoutPhase] = useState<
+    "details" | "review" | "submitting" | "payment" | "status"
+  >("details");
+  // The server said the confirmed price is gone. The catalogue below has been
+  // remounted (a fresh server read), and the customer is told why they are
+  // back on it. Cleared the moment they carry a new selection forward.
+  const [priceChanged, setPriceChanged] = useState(false);
+  // The order number this browser session remembers, read once on mount, so a
+  // refresh or render failure after a successful placement does not strand
+  // the customer. Reading it grants nothing: the status endpoint re-authorizes
+  // against the session's derived identity on every call.
+  const [rememberedOrder] = useState<string | null>(() => readLastOrderNumber());
   const catalogRef = useRef<HTMLDivElement | null>(null);
   const nextStepsRef = useRef<HTMLDivElement | null>(null);
 
@@ -146,6 +164,8 @@ export default function EarlyAccessRoute() {
       // answer about themselves, never from the last person's.
       setAgreed(false);
       setBlocked(null);
+      setSelection(null);
+      setCheckoutPhase("details");
       setState({ kind: "locked", error: null, busy: false });
     })();
   }, []);
@@ -209,12 +229,24 @@ export default function EarlyAccessRoute() {
               password, not after it.
             */}
             <p className="mono-cap text-pulse mb-2">Private Early Access</p>
-            <h1 className="display-s max-w-[26ch]">Research Catalogue</h1>
+            <h1 className="display-s max-w-[26ch]">{selection === null ? "Research Catalogue" : "Complete your order"}</h1>
 
             <div className="mt-4">
               <EarlyAccessStepper
                 steps={EARLY_ACCESS_STEPS}
-                activeIndex={agreed && blocked === null ? EARLY_ACCESS_CATALOG_STEP : EARLY_ACCESS_AGREEMENT_STEP}
+                activeIndex={
+                  !agreed || blocked !== null
+                    ? EARLY_ACCESS_AGREEMENT_STEP
+                    : selection === null
+                      ? EARLY_ACCESS_CATALOG_STEP
+                      : checkoutPhase === "details"
+                        ? 1
+                        : checkoutPhase === "payment"
+                          ? 5
+                          : checkoutPhase === "status"
+                            ? 7
+                            : 4
+                }
               />
             </div>
 
@@ -229,90 +261,61 @@ export default function EarlyAccessRoute() {
               <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
             </div>
 
-            {/*
-              The live catalogue. It reads the mounted endpoint and renders
-              exactly what the server returns: no fixture rows, no padding to a
-              target count, and the dropped-row count surfaced rather than
-              absorbed. Whatever the server says today is what a customer sees.
-            */}
-            <div className="mt-5" data-testid="early-access-catalog-mount" ref={catalogRef} tabIndex={-1}>
-              <EarlyAccessCatalogSection
-                fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
-                onReview={() => {
-                  nextStepsRef.current?.focus();
-                  nextStepsRef.current?.scrollIntoView({ block: "start" });
-                }}
-              />
-            </div>
-
-            <div
-              className="card mt-5"
-              data-testid="early-access-next-steps"
-              ref={nextStepsRef}
-              tabIndex={-1}
-            >
-              <p className="mono-label text-ink-mute">What happens next</p>
-              {agreed ? (
-                <p
-                  className="body-s text-ink-2 mt-2 max-w-[62ch]"
-                  data-testid="early-access-continue-available"
-                >
-                  Your agreement is on file. Contact and shipping details, payment review and
-                  fulfillment are being connected and will appear here as each one comes online.
-                  Nothing has been ordered or charged.
-                </p>
-              ) : blocked === "unverified" ? (
-                <p
-                  className="body-s text-ink-2 mt-2 max-w-[62ch]"
-                  data-testid="early-access-continue-unverified"
-                >
-                  Ordering opens once this session is verified against an approved Early Access
-                  account. Accepting the policy is not the step that is missing. Nothing has been
-                  ordered or charged.
-                </p>
-              ) : blocked === "locked" ? (
-                <p
-                  className="body-s text-ink-2 mt-2 max-w-[62ch]"
-                  data-testid="early-access-continue-locked"
-                >
-                  Your private session has ended. Unlock again to continue. Nothing has been
-                  ordered or charged.
-                </p>
-              ) : (
-                <p
-                  className="body-s text-ink-2 mt-2 max-w-[62ch]"
-                  data-testid="early-access-continue-blocked"
-                >
-                  Accept the Research Use Policy above before continuing to an order. Nothing has
-                  been ordered or charged.
-                </p>
-              )}
-              <div className="mt-4">
-                {/*
-                  The order continuation. It is genuinely unavailable until the
-                  SERVER confirms the acceptance, rather than merely styled that
-                  way: the order route refuses with AGREEMENT_REQUIRED until the
-                  row is on file, and an enabled control that cannot work is
-                  worse than one that is not yet offered.
-
-                  It does one real thing, which is to put the customer where
-                  they choose a unit. It deliberately does not pretend to carry
-                  them further than the mounted journey actually goes.
-                */}
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  disabled={!agreed}
-                  onClick={() => {
-                    catalogRef.current?.focus();
-                    catalogRef.current?.scrollIntoView({ block: "start" });
-                  }}
-                  data-testid="early-access-continue"
-                >
-                  Continue to the research catalogue
-                </button>
+            {!agreed ? (
+              <div className="mt-5 body-s text-ink-2 max-w-[62ch]" data-testid="early-access-first-time-guide">
+                The access code opens this private catalogue. Review the Research Use Policy before checkout; then choose one released product, enter a US shipping address, and create a server-confirmed invoice. Creating an order does not charge you.
               </div>
-            </div>
+            ) : null}
+
+            {selection === null ? (
+              <div className="mt-5" data-testid="early-access-catalog-mount" tabIndex={-1}>
+                {priceChanged && (
+                  <p
+                    role="alert"
+                    className="body-s text-pulse mb-4 max-w-[62ch]"
+                    data-testid="early-access-price-changed"
+                  >
+                    The price of the product you were ordering changed before the order was
+                    created, so nothing was ordered or charged. The catalogue below shows the
+                    current server prices; please review and confirm again.
+                  </p>
+                )}
+                {rememberedOrder !== null && (
+                  <div className="mb-4">
+                    <EarlyAccessOrderRecoveryCard orderNumber={rememberedOrder} />
+                  </div>
+                )}
+                <EarlyAccessCatalogSection
+                  fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
+                  reviewEnabled={agreed && blocked === null}
+                  onReview={(nextSelection) => {
+                    if (!agreed || blocked !== null) return;
+                    setPriceChanged(false);
+                    setSelection(nextSelection);
+                    setCheckoutPhase("details");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="mt-5" data-testid="early-access-checkout-mount">
+                <EarlyAccessCheckoutJourney
+                  selection={selection}
+                  onBack={() => {
+                    setSelection(null);
+                    setCheckoutPhase("details");
+                  }}
+                  onPriceChanged={() => {
+                    // The catalogue remounts below, which is a FRESH server
+                    // read; the notice above it says why the customer is back.
+                    setSelection(null);
+                    setCheckoutPhase("details");
+                    setPriceChanged(true);
+                  }}
+                  onPhaseChange={setCheckoutPhase}
+                />
+              </div>
+            )}
 
             <div className="mt-8">
               <button

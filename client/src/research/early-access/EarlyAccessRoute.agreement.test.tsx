@@ -9,10 +9,11 @@ import EarlyAccessRoute from "./EarlyAccessRoute";
  * The mounted Private Early Access route, at the point where the agreement
  * meets the order journey.
  *
- * The property under test is the one that matters commercially: the order
- * continuation is not offered until the SERVER says this customer has agreed,
- * and browsing the catalogue is not gated behind that. A customer may read the
- * whole shelf; they may not proceed to an order the server would refuse.
+ * The property under test is the one that matters commercially: the checkout
+ * continuation (the selection bar's Review order) is not usable until the
+ * SERVER says this customer has agreed, and browsing the catalogue is not
+ * gated behind that. A customer may read the whole shelf; they may not
+ * proceed to an order the server would refuse.
  */
 
 let container: HTMLElement | null = null;
@@ -35,6 +36,32 @@ const POLICIES = {
   privacy: { title: "Privacy Policy", updated: "July 2026", sections: [] },
 };
 
+/** Two live units, so a product can actually be selected in these tests. */
+const UNITS = [
+  {
+    productId: "prod-1",
+    variantId: "var-1",
+    displayName: "Unit One",
+    strength: "10 mg",
+    priceCents: 5_600,
+    currency: "USD",
+    description: "",
+    availability: "AVAILABLE",
+    purchasable: true,
+  },
+  {
+    productId: "prod-2",
+    variantId: "var-2",
+    displayName: "Unit Two",
+    strength: "5 mg",
+    priceCents: null,
+    currency: "USD",
+    description: "",
+    availability: "TEMPORARILY_HELD",
+    purchasable: false,
+  },
+];
+
 type Answers = { accepted: boolean; identity?: boolean };
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -54,8 +81,6 @@ function stubFetch(answers: Answers) {
     if (init?.method === "POST") {
       posted.push({ path, body: init.body === undefined ? null : JSON.parse(String(init.body)) });
       if (path.endsWith("/agreements/accept")) {
-        // Whatever this test's server says. The first is a fresh acceptance;
-        // a repeat would answer alreadyAccepted true, and both are 200.
         answers.accepted = true;
         return jsonResponse({ ok: true, kind: "early_access_terms", version: "v1", alreadyAccepted: false });
       }
@@ -73,9 +98,10 @@ function stubFetch(answers: Answers) {
       }
       return jsonResponse({ ok: true, required: [{ kind: "early_access_terms", version: "v1" }], accepted: answers.accepted });
     }
-    // The catalogue answers for itself elsewhere; this route test only asserts
-    // that its mount is present and untouched by the agreement.
-    return jsonResponse({ ok: true, products: [], received: 0, dropped: 0 });
+    if (path.endsWith("/early-access/catalog")) {
+      return jsonResponse({ ok: true, units: UNITS });
+    }
+    return jsonResponse({ ok: true });
   });
   vi.stubGlobal("fetch", stub);
   return { posted };
@@ -85,6 +111,7 @@ beforeEach(() => {
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
+  window.sessionStorage.clear();
 });
 
 afterEach(() => {
@@ -95,10 +122,10 @@ afterEach(() => {
   container = null;
   root = null;
   vi.unstubAllGlobals();
+  window.sessionStorage.clear();
 });
 
 async function settle(): Promise<void> {
-  // Session, then policy and agreement standing, then the catalogue.
   for (let i = 0; i < 10; i += 1) {
     await act(async () => {
       await Promise.resolve();
@@ -115,23 +142,39 @@ async function mountRoute(): Promise<HTMLElement> {
   return container;
 }
 
-function continueButton(host: HTMLElement): HTMLButtonElement {
-  const found = host.querySelector<HTMLButtonElement>('[data-testid="early-access-continue"]');
-  if (found === null) throw new Error("no continuation rendered");
+/** Select the one available unit, so the selection bar exists to inspect. */
+function selectFirstUnit(host: HTMLElement): void {
+  const action = host.querySelector<HTMLButtonElement>(
+    "[data-testid='early-access-catalog-card-var-1-action']",
+  );
+  if (action === null) throw new Error("no selectable card rendered");
+  act(() => {
+    action.click();
+  });
+}
+
+function reviewButton(host: HTMLElement): HTMLButtonElement {
+  const found = host.querySelector<HTMLButtonElement>(
+    "[data-testid='early-access-catalog-section-selection-review']",
+  );
+  if (found === null) throw new Error("no selection bar rendered");
   return found;
 }
 
-describe("the order continuation is gated on the server's answer", () => {
-  it("is unavailable before the customer has agreed", async () => {
+describe("the checkout continuation is gated on the server's answer", () => {
+  it("is unusable before the customer has agreed, and says why", async () => {
     stubFetch({ accepted: false });
     const host = await mountRoute();
 
-    expect(continueButton(host).disabled).toBe(true);
-    expect(host.querySelector('[data-testid="early-access-continue-blocked"]')).not.toBeNull();
-    expect(host.querySelector('[data-testid="early-access-continue-available"]')).toBeNull();
+    selectFirstUnit(host);
+    const review = reviewButton(host);
+    expect(review.disabled).toBe(true);
+    expect(review.textContent).toContain("Accept policy to continue");
+    // No checkout surface exists yet.
+    expect(host.querySelector("[data-testid='early-access-checkout-mount']")).toBeNull();
   });
 
-  it("becomes available once the acceptance is recorded, and posts only the pair", async () => {
+  it("becomes usable once the acceptance is recorded, posts only the pair, and opens checkout", async () => {
     const { posted } = stubFetch({ accepted: false });
     const host = await mountRoute();
 
@@ -149,32 +192,48 @@ describe("the order continuation is gated on the server's answer", () => {
     });
     await settle();
 
-    expect(continueButton(host).disabled).toBe(false);
-    expect(host.querySelector('[data-testid="early-access-continue-available"]')).not.toBeNull();
     const acceptCall = posted.find((call) => call.path.endsWith("/agreements/accept"));
     expect(acceptCall?.body).toEqual({ kind: "early_access_terms", version: "v1" });
+
+    selectFirstUnit(host);
+    const review = reviewButton(host);
+    expect(review.disabled).toBe(false);
+    expect(review.textContent).toContain("Review order");
+    act(() => {
+      review.click();
+    });
+    await settle();
+
+    // The checkout journey mounts, on its details step; nothing was ordered.
+    expect(host.querySelector("[data-testid='early-access-checkout-mount']")).not.toBeNull();
+    expect(
+      host.querySelector("[data-testid='early-access-checkout']")?.getAttribute("data-phase"),
+    ).toBe("details");
   });
 
-  it("is available on a fresh load when the server already has the acceptance", async () => {
+  it("is usable on a fresh load when the server already has the acceptance", async () => {
     // This is what a refresh looks like: a brand-new mount, told by the server
     // that the row is on file. Nothing was carried across in the browser.
     stubFetch({ accepted: true });
     const host = await mountRoute();
 
-    expect(continueButton(host).disabled).toBe(false);
     expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
+
+    selectFirstUnit(host);
+    expect(reviewButton(host).disabled).toBe(false);
   });
 
   it("does not gate browsing the catalogue behind the agreement", async () => {
-    // The catalogue mounts either way. The agreement stands in front of
-    // ORDERING, not in front of looking, and its presence must not change what
-    // the catalogue shows.
     stubFetch({ accepted: false });
     const host = await mountRoute();
 
     expect(host.querySelector('[data-testid="early-access-catalog-mount"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-mount"]')).not.toBeNull();
+    // Both units render, the held one without any purchase surface.
+    expect(host.querySelectorAll("article")).toHaveLength(2);
+    const held = host.querySelector("[data-testid='early-access-catalog-card-var-2']");
+    expect(held?.querySelectorAll("button")).toHaveLength(0);
   });
 
   it("shows the research-use policy, not a draft document", async () => {
@@ -190,36 +249,28 @@ describe("the order continuation is gated on the server's answer", () => {
 
 describe("signed in, but the session is not bound to an approved customer", () => {
   it("does not tell the customer their session ended, and does not blame the policy", async () => {
-    // The exact production page. The session was valid (unlock 200, session
-    // 200) and the agreement read answered 403 IDENTITY_REQUIRED, and the page
-    // simultaneously showed the whole catalogue, "your private session has
-    // ended", and a next-step that blamed the unaccepted policy. Three
-    // statements, two of them false.
     stubFetch({ accepted: false, identity: false });
     const host = await mountRoute();
 
     expect(host.textContent).not.toContain("Your private session has ended");
     expect(host.querySelector('[data-testid="early-access-agreement-unverified"]')).not.toBeNull();
-    // The journey says the same thing the agreement step says.
-    expect(host.querySelector('[data-testid="early-access-continue-unverified"]')).not.toBeNull();
-    expect(host.querySelector('[data-testid="early-access-continue-blocked"]')).toBeNull();
   });
 
   it("keeps ordering closed and offers nothing to tick", async () => {
     stubFetch({ accepted: false, identity: false });
     const host = await mountRoute();
 
-    expect(continueButton(host).disabled).toBe(true);
     expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-submit"]')).toBeNull();
+    selectFirstUnit(host);
+    expect(reviewButton(host).disabled).toBe(true);
   });
 
   it("still lets the customer browse the catalogue", async () => {
-    // Browsing is not what identity gates. The catalogue mount stays, and the
-    // units it shows are whatever the server sends for an unidentified caller.
     stubFetch({ accepted: false, identity: false });
     const host = await mountRoute();
 
     expect(host.querySelector('[data-testid="early-access-catalog-mount"]')).not.toBeNull();
+    expect(host.querySelectorAll("article")).toHaveLength(2);
   });
 });

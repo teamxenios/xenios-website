@@ -41,7 +41,7 @@ import {
 } from "./founder-first-release-seed";
 import { seedRawPeptidesConfirmations } from "./founder-supply-seed";
 import { InMemorySupplierConfirmationStore } from "../ops/supplier-confirmation";
-import { SHIP_TO } from "../routes/route-fixtures";
+import { ORDER_CONTACT, SHIP_TO } from "../routes/route-fixtures";
 
 const CATALOG_PATH = "/api/research/early-access/catalog";
 const ORDERS_PATH = "/api/research/early-access/orders";
@@ -450,6 +450,7 @@ describe("with Raw Peptides supply confirmed: the finish line", () => {
         quantity: 3,
         expectedUnitPriceCents: 3_925,
         expectedCurrency: "USD",
+        contact: ORDER_CONTACT,
         shipTo: SHIP_TO,
       });
     expect(placed.status).toBe(201);

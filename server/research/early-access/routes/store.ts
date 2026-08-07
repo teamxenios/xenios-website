@@ -77,6 +77,15 @@ export type EarlyAccessPlacement = Readonly<{
   invoice: EarlyAccessReleaseInvoice;
   /** Held here rather than in the release ledger, which deliberately keeps no address. */
   shipTo: SupplierShipmentRecipient;
+  /**
+   * How operations reaches THIS order's purchaser. A sibling of `shipTo` on
+   * purpose: the supplier-release packet validates the recipient with a
+   * closed key set, so contact nested inside `shipTo` would refuse the
+   * release at payment-confirmation time. Optional because rows placed before
+   * this field existed carry none; absent means "reach the customer through
+   * the concierge channel that took the order".
+   */
+  contact?: Readonly<{ email: string; phone: string }>;
   supplier: EarlyAccessSupplierAssignment;
   attribution: EarlyAccessReferralAttribution | null;
   paymentState: EarlyAccessPaymentState;
@@ -97,7 +106,7 @@ export type EarlyAccessPlacement = Readonly<{
    *
    * Absent means unknown, which every reader must treat as the WEAK value.
    */
-  bindingProvenance?: "email_entry" | "verified_link";
+  bindingProvenance?: "email_entry" | "verified_link" | "session_code";
 }>;
 
 /**

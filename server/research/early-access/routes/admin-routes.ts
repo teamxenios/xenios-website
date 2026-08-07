@@ -12,12 +12,20 @@ import {
   describeTrackingUpdate,
 } from "../commerce/release-service";
 import { decideManualPayment } from "../commerce/verification-service";
+import { describeProofAttachment } from "../commerce/proof-service";
+import type { EarlyAccessProofRecord } from "../commerce/proof-service";
 import { applyPrivateHeaders, fail, project, readInstant, send, stampOf, type ResponsePort } from "./http";
 import { isEarlyAccessOrderNumber } from "./order-number";
+import {
+  earlyAccessProofFormatAgrees,
+  EARLY_ACCESS_PROOF_UPLOAD_MAX_BYTES,
+  EARLY_ACCESS_PROOF_UPLOAD_TYPES,
+} from "./order-routes";
 import type {
   EarlyAccessAdminActor,
   EarlyAccessAdminDirectory,
   EarlyAccessAuditSink,
+  EarlyAccessProofStorage,
 } from "./ports";
 import type {
   EarlyAccessCommerceStore,
@@ -52,6 +60,13 @@ export interface EarlyAccessAdminRouteDependencies {
   readonly audit: EarlyAccessAuditSink;
   /** Epoch milliseconds. */
   readonly now: () => number;
+  /**
+   * For the external-proof door only. Optional so existing constructions keep
+   * compiling; the door answers UNAVAILABLE rather than guessing when either
+   * is absent.
+   */
+  readonly proofStorage?: EarlyAccessProofStorage;
+  readonly proofId?: () => string;
 }
 
 type AdminCaller =
@@ -975,3 +990,205 @@ export function createEarlyAccessSupplierShippedRoute(deps: EarlyAccessAdminRout
     }
   };
 }
+
+// ---------------------------------------------------------------------------
+// POST /api/admin/research/payments/:orderNumber/external-proof
+// ---------------------------------------------------------------------------
+
+const EXTERNAL_PROOF_BODY_KEYS = [
+  "filename",
+  "contentType",
+  "byteSize",
+  "sha256",
+  "method",
+  "receivedVia",
+] as const;
+
+const EXTERNAL_PROOF_SHA256 = /^[a-f0-9]{64}$/;
+
+/**
+ * Record a payment proof the team received OFF PLATFORM, so the payment can be
+ * confirmed without pretending a customer upload happened.
+ *
+ * WHY THIS DOOR EXISTS. The supervised pilot's proof path is concierge: the
+ * customer sends their payment confirmation through the approved support
+ * channel, because no self-service byte-upload path exists in this system and
+ * a fake uploader that only records metadata while claiming "file received"
+ * is exactly the dishonesty the release rules forbid. But the settlement gate
+ * is (correctly) hard: `decideManualPayment` refuses to confirm any payment
+ * whose order has no current proof row. This route is the smallest truthful
+ * bridge between the two: a NAMED admin, behind the same guard that accepts
+ * money, records the metadata and digest of the artifact they actually
+ * received, where they received it, and under their own identity.
+ *
+ * WHAT IT NEVER CLAIMS. It does not claim bytes reached platform storage, and
+ * its response says so in words. The digest is computed by the admin from the
+ * real file, so the evidence is verifiable against the artifact wherever it
+ * is held. It does not mark anything paid: the payment moves to under_review
+ * and only the confirmation door can settle it.
+ */
+export function createEarlyAccessExternalProofRoute(deps: EarlyAccessAdminRouteDependencies) {
+  return async (
+    request: { adminEmail?: unknown; orderNumber?: unknown; body?: unknown },
+    response: ResponsePort,
+  ): Promise<void> => {
+    try {
+      applyPrivateHeaders(response);
+      const caller = await resolveAdmin(deps, request?.adminEmail, response);
+      if (!caller.ok) return;
+      const now = stampOf(caller.nowMs);
+
+      if (deps.proofStorage === undefined || deps.proofId === undefined) {
+        fail(response, 503, "UNAVAILABLE");
+        return;
+      }
+
+      if (!isEarlyAccessOrderNumber(request?.orderNumber)) {
+        fail(response, 404, "ORDER_NOT_FOUND");
+        return;
+      }
+      const orderNumber = request.orderNumber as string;
+      const placement = await deps.store.placementByOrderNumber(orderNumber);
+      if (placement === null) {
+        fail(response, 404, "ORDER_NOT_FOUND");
+        return;
+      }
+
+      const body = project(request?.body, EXTERNAL_PROOF_BODY_KEYS);
+      if (body === null) {
+        fail(response, 400, "REQUEST_INVALID");
+        return;
+      }
+      if (!earlyAccessProofFormatAgrees(body.contentType, body.filename)) {
+        fail(response, 415, "CONTENT_TYPE_UNSUPPORTED", {
+          accepted: Object.keys(EARLY_ACCESS_PROOF_UPLOAD_TYPES),
+        });
+        return;
+      }
+      if (
+        typeof body.byteSize !== "number" ||
+        !Number.isSafeInteger(body.byteSize) ||
+        body.byteSize < 1 ||
+        body.byteSize > EARLY_ACCESS_PROOF_UPLOAD_MAX_BYTES
+      ) {
+        fail(response, 413, "BYTE_SIZE_INVALID", { maxBytes: EARLY_ACCESS_PROOF_UPLOAD_MAX_BYTES });
+        return;
+      }
+      if (typeof body.sha256 !== "string" || !EXTERNAL_PROOF_SHA256.test(body.sha256)) {
+        fail(response, 400, "CHECKSUM_INVALID");
+        return;
+      }
+      if (!isEarlyAccessPaymentOptionCode(body.method)) {
+        fail(response, 400, "METHOD_UNSUPPORTED");
+        return;
+      }
+      // Where the artifact actually arrived, in the admin's words. Required,
+      // because "external proof" with no provenance is a bare assertion.
+      if (!isBoundedText(body.receivedVia, 200) || (body.receivedVia as string).trim().length < 5) {
+        fail(response, 400, "REQUEST_INVALID", { field: "receivedVia" });
+        return;
+      }
+
+      const proofId = deps.proofId();
+      if (!isSafeIdentifier(proofId)) {
+        fail(response, 503, "UNAVAILABLE");
+        return;
+      }
+
+      const existing = await deps.store.proofs(orderNumber);
+      const objectKey = `${orderNumber}/${proofId}`;
+      const storageRef = await deps.proofStorage.reserve({
+        objectKey,
+        contentType: body.contentType as string,
+        byteSize: body.byteSize,
+        sha256: body.sha256,
+      });
+      if (storageRef === null) {
+        fail(response, 503, "STORAGE_UNAVAILABLE");
+        return;
+      }
+
+      const prior =
+        existing.length === 0
+          ? null
+          : (existing[existing.length - 1] as { record: EarlyAccessProofRecord });
+      const described = describeProofAttachment({
+        order: placement.order.order,
+        proofs: existing.map((intake) => intake.record),
+        proofId,
+        storageRef,
+        filename: body.filename,
+        contentType: body.contentType,
+        byteSize: body.byteSize,
+        method: body.method,
+        // The named human who received and recorded the artifact, never the
+        // customer: this row must be attributable to the admin who vouched.
+        uploadedBy: `admin:${caller.actor.actorId}`,
+        uploadedAt: now,
+        supersedesProofId: prior === null ? null : prior.record.proofId,
+      });
+      if (!described.ok) {
+        fail(response, 409, "PROOF_CHAIN_MOVED", { reason: described.code });
+        return;
+      }
+
+      const committed = await deps.store.commitProof({
+        orderNumber,
+        record: described.value.record,
+        sha256: body.sha256,
+        receivedAt: now,
+      });
+      if (!committed.committed) {
+        fail(response, 409, "PROOF_CHAIN_MOVED");
+        return;
+      }
+
+      await deps.audit.record({
+        event: "early_access.payment_proof.recorded_external",
+        orderNumber,
+        actor: caller.actor.actorId,
+        at: now,
+        detail: {
+          contentType: described.value.record.contentType,
+          byteSize: described.value.record.byteSize,
+          sha256: body.sha256,
+          receivedVia: (body.receivedVia as string).trim(),
+          supersededProofId: described.value.supersededProofId,
+        },
+      });
+
+      // 202, and a body that cannot be mistaken for either a receipt OR an
+      // upload. Metadata about an off-platform artifact was recorded by a
+      // named admin; nothing was paid, nothing was stored on platform.
+      send(response, 202, {
+        ok: true,
+        orderNumber,
+        recorded: true,
+        storedOnPlatform: false,
+        payment: {
+          state: "under_review",
+          paid: false,
+          verified: false,
+        },
+        proof: {
+          proofId: described.value.record.proofId,
+          contentType: described.value.record.contentType,
+          byteSize: described.value.record.byteSize,
+          method: described.value.record.method,
+          uploadedBy: described.value.record.uploadedBy,
+          uploadedAt: described.value.record.uploadedAt,
+        },
+        receipt: null,
+        supplierOrder: null,
+        commission: null,
+        message:
+          "External payment proof metadata recorded by a named admin. The artifact itself was " +
+          "received through the approved concierge channel and is NOT stored on this platform. " +
+          "Payment remains unconfirmed until the confirmation door settles it.",
+      });
+    } catch {
+      unavailable(response);
+    }
+  };
+}
+
