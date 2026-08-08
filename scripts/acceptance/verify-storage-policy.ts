@@ -202,12 +202,64 @@ type FileScope = {
   interfaces: Map<string, readonly ts.TypeElement[]>;
   /** Identifier -> its declared type, for parameters and annotated variables. */
   valueTypes: Map<string, ts.TypeNode>;
+  /**
+   * Types this auditor INFERRED for a binding the source does not annotate,
+   * currently the element parameter of a `.map(...)` callback. Checked before
+   * lexical resolution, because lexical resolution would find the unannotated
+   * parameter and learn nothing from it.
+   */
+  overrides: Map<string, ts.TypeNode>;
 };
 
-function withValueType(scope: FileScope, name: string, type: ts.TypeNode): FileScope {
-  const valueTypes = new Map(scope.valueTypes);
-  valueTypes.set(name, type);
-  return { ...scope, valueTypes };
+function withOverride(scope: FileScope, name: string, type: ts.TypeNode): FileScope {
+  const overrides = new Map(scope.overrides);
+  overrides.set(name, type);
+  return { ...scope, overrides };
+}
+
+/**
+ * Resolve an identifier the way the language does: from the use site outward,
+ * nearest declaration wins.
+ *
+ * A flat file-wide map of name to initializer is WRONG, and was wrong here in
+ * a way that mattered. `cartStore.ts` declares `const cart` twice, once in the
+ * function that writes the basket and once in the function that clears it. The
+ * flat map kept whichever came last, so the auditor analysed the EMPTY cart and
+ * would have passed a write that put contact details in the real one. The
+ * mutation suite caught exactly that, which is what a mutation suite is for.
+ */
+function lexicalBinding(
+  name: string,
+  from: ts.Node | undefined,
+): Readonly<{ initializer?: ts.Expression; type?: ts.TypeNode }> | null {
+  let node: ts.Node | undefined = from;
+  while (node) {
+    if (ts.isSourceFile(node) || ts.isBlock(node) || ts.isModuleBlock(node) || ts.isCaseClause(node)) {
+      for (const statement of node.statements) {
+        if (!ts.isVariableStatement(statement)) continue;
+        for (const declaration of statement.declarationList.declarations) {
+          if (ts.isIdentifier(declaration.name) && declaration.name.text === name) {
+            return Object.freeze({ initializer: declaration.initializer, type: declaration.type });
+          }
+        }
+      }
+    }
+    if (
+      ts.isFunctionDeclaration(node) ||
+      ts.isFunctionExpression(node) ||
+      ts.isArrowFunction(node) ||
+      ts.isMethodDeclaration(node) ||
+      ts.isConstructorDeclaration(node)
+    ) {
+      for (const parameter of node.parameters) {
+        if (ts.isIdentifier(parameter.name) && parameter.name.text === name) {
+          return Object.freeze({ initializer: parameter.initializer, type: parameter.type });
+        }
+      }
+    }
+    node = node.parent;
+  }
+  return null;
 }
 
 /**
@@ -295,6 +347,7 @@ function buildScope(sourceFile: ts.SourceFile): FileScope {
     typeAliases: new Map(),
     interfaces: new Map(),
     valueTypes: new Map(),
+    overrides: new Map(),
   };
 
   // Collect every binding first, everywhere (not only at module level), so a
@@ -356,12 +409,14 @@ function buildScope(sourceFile: ts.SourceFile): FileScope {
 
 /** A statically provable string, or null. */
 function staticString(node: ts.Expression | undefined, scope: FileScope, depth = 0): string | null {
-  if (!node || depth > 6) return null;
+  if (!node || depth > 24) return null;
   const expression = unwrap(node);
   if (ts.isStringLiteral(expression) || ts.isNoSubstitutionTemplateLiteral(expression)) {
     return expression.text;
   }
   if (ts.isIdentifier(expression)) {
+    const local = lexicalBinding(expression.text, expression);
+    if (local?.initializer) return staticString(local.initializer, scope, depth + 1);
     const bound = scope.bindings.get(expression.text);
     return bound ? staticString(bound, scope, depth + 1) : null;
   }
@@ -390,7 +445,7 @@ const SCALAR_TYPE_KINDS = new Set<ts.SyntaxKind>([
  */
 function shapeFromType(node: ts.TypeNode | undefined, scope: FileScope, depth = 0): PayloadShape {
   if (!node) return Object.freeze({ kind: "unprovable" as const, why: "no declared type" });
-  if (depth > 8) return Object.freeze({ kind: "unprovable" as const, why: "type resolution too deep" });
+  if (depth > 24) return Object.freeze({ kind: "unprovable" as const, why: "type resolution too deep" });
 
   if (ts.isParenthesizedTypeNode(node)) return shapeFromType(node.type, scope, depth + 1);
   if (SCALAR_TYPE_KINDS.has(node.kind)) return Object.freeze({ kind: "scalar" as const });
@@ -559,7 +614,8 @@ function objectFields(node: ts.ObjectLiteralExpression, scope: FileScope, depth:
       const nested = value
         ? payloadShape(value, scope, depth + 1)
         : shapeFromType(
-            scope.valueTypes.get((property.name as ts.Identifier).text),
+            scope.overrides.get((property.name as ts.Identifier).text) ??
+              lexicalBinding((property.name as ts.Identifier).text, property)?.type,
             scope,
             depth + 1,
           );
@@ -582,7 +638,7 @@ function objectFields(node: ts.ObjectLiteralExpression, scope: FileScope, depth:
  * assumed safe.
  */
 export function payloadShape(node: ts.Expression, scope: FileScope, depth = 0): PayloadShape {
-  if (depth > 8) return Object.freeze({ kind: "unprovable" as const, why: "resolution too deep" });
+  if (depth > 24) return Object.freeze({ kind: "unprovable" as const, why: "resolution too deep" });
   const expression = unwrap(node);
 
   if (ts.isStringLiteral(expression) || ts.isNoSubstitutionTemplateLiteral(expression)) {
@@ -614,13 +670,15 @@ export function payloadShape(node: ts.Expression, scope: FileScope, depth = 0): 
   }
 
   if (ts.isIdentifier(expression)) {
-    const bound = scope.bindings.get(expression.text);
-    if (bound) return payloadShape(bound, scope, depth + 1);
+    const injected = scope.overrides.get(expression.text);
+    if (injected) return shapeFromType(injected, scope, depth + 1);
+    // Nearest declaration wins, resolved from THIS use site outward.
+    const local = lexicalBinding(expression.text, expression);
+    if (local?.initializer) return payloadShape(local.initializer, scope, depth + 1);
     // A typed parameter is the normal way a store function receives its
     // record, so fall back to the DECLARED type. That is a proof, not a
     // guess: the compiler refuses any caller whose argument does not match it.
-    const declared = scope.valueTypes.get(expression.text);
-    if (declared) return shapeFromType(declared, scope, depth + 1);
+    if (local?.type) return shapeFromType(local.type, scope, depth + 1);
     return Object.freeze({
       kind: "unprovable" as const,
       why: `the value comes from '${expression.text}', which this file neither defines nor types`,
@@ -659,7 +717,7 @@ export function payloadShape(node: ts.Expression, scope: FileScope, depth = 0): 
           ts.isIdentifier(source) ? elementType(scope.valueTypes.get(source.text)) : undefined;
         const parameter = mapper.parameters[0];
         if (element && parameter && ts.isIdentifier(parameter.name)) {
-          inner = withValueType(scope, parameter.name.text, element);
+          inner = withOverride(scope, parameter.name.text, element);
         }
         const body = mapper.body;
         const returns = ts.isBlock(body) ? returnedExpressions(body) : [body];
