@@ -125,7 +125,7 @@ as $$
   select record
     from public.research_early_access_cart_checkouts
    where idempotency_key_hash = encode(
-     public.digest(
+     extensions.digest(
        convert_to('xenios:ea-cart-idempotency:v1|' || p_idempotency_key, 'utf8'),
        'sha256'
      ),
@@ -165,7 +165,7 @@ begin
   end if;
 
   v_key_hash := encode(
-    public.digest(
+    extensions.digest(
       convert_to('xenios:ea-cart-idempotency:v1|' || p_idempotency_key, 'utf8'),
       'sha256'
     ),
@@ -298,7 +298,7 @@ begin
     v_checkout.checkout_number,
     'checkout_created',
     encode(
-      public.digest(
+      extensions.digest(
         convert_to('xenios:ea-cart-actor:v1|' || v_checkout.customer_ref, 'utf8'),
         'sha256'
       ),
@@ -392,7 +392,7 @@ begin
     v_checkout.checkout_number,
     'proof_recorded',
     encode(
-      public.digest(
+      extensions.digest(
         convert_to('xenios:ea-cart-admin:v1|' || (p_proof->>'recordedBy'), 'utf8'),
         'sha256'
       ),
@@ -627,7 +627,7 @@ begin
     v_checkout.checkout_number,
     'payment_verified',
     encode(
-      public.digest(
+      extensions.digest(
         convert_to('xenios:ea-cart-admin:v1|' || p_actor_id, 'utf8'),
         'sha256'
       ),
