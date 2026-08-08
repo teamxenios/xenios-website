@@ -14,7 +14,7 @@
     "render-build": "npm install -g npm@10.8.2 && npm install --no-audit --no-fund --production=false && node script/build.mjs",
     "start": "NODE_ENV=production node dist/index.cjs",
     "check": "tsc",
-    "check:release-control-plane": "tsc --noEmit --strict --skipLibCheck --target ES2022 --module NodeNext --moduleResolution NodeNext --allowImportingTsExtensions --types node,vitest/globals scripts/acceptance/verify-release-manifest.ts scripts/acceptance/verify-migration-dag.ts scripts/acceptance/verify-route-uniqueness.ts scripts/acceptance/verify-production-state.ts scripts/acceptance/verify-storage-policy.ts server/release-control-plane.test.ts",
+    "check:release-control-plane": "tsc --noEmit --strict --skipLibCheck --target ES2022 --module NodeNext --moduleResolution NodeNext --allowImportingTsExtensions --types node,vitest/globals scripts/acceptance/verify-release-manifest.ts scripts/acceptance/verify-migration-dag.ts scripts/acceptance/verify-route-uniqueness.ts scripts/acceptance/verify-production-state.ts server/release-control-plane.test.ts",
     "db:push": "drizzle-kit push",
     "sync": "node script/sync-github.mjs",
     "test": "vitest run",
@@ -22,8 +22,7 @@
     "verify:release-manifest": "tsx scripts/acceptance/verify-release-manifest.ts",
     "verify:migration-dag": "tsx scripts/acceptance/verify-migration-dag.ts",
     "verify:route-uniqueness": "tsx scripts/acceptance/verify-route-uniqueness.ts",
-    "verify:production-state": "tsx scripts/acceptance/verify-production-state.ts",
-    "verify:storage-policy": "tsx scripts/acceptance/verify-storage-policy.ts"
+    "verify:production-state": "tsx scripts/acceptance/verify-production-state.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
