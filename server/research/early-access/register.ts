@@ -751,7 +751,55 @@ export function registerPrivateEarlyAccessApi(
   // so the two paths cannot disagree about what may be sold or at what price.
   // The browser never loops over the single-product door to buy several
   // things: it quotes once and checks out once.
-  if (earlyAccessCartEnabled(options.env ?? process.env)) {
+  const cartEnabled = earlyAccessCartEnabled(options.env ?? process.env);
+  const cartIdentity = {
+    async resolve(cookieHeader: unknown) {
+      const customer = await identity.resolve({ cookieHeader });
+      if (customer === null) return null;
+      return Object.freeze({
+        customerRef: customer.customerRef,
+        aliases: customer.aliasRefs ?? [],
+      });
+    },
+  };
+
+  // THE CAPABILITY PROBE, REGISTERED EXACTLY ONCE, WHATEVER THE FLAG SAYS.
+  //
+  // The browser asks this before it renders anything, and falls back to the
+  // existing single-product journey on a 404 while deliberately refusing to
+  // fall back on anything else, so a MISCONFIGURED cart cannot hide behind the
+  // old flow. That contract assumed an unmounted API path answers 404. In this
+  // deployment it does not: serveStatic ends with a catch-all that sends
+  // index.html for any unmatched path, `/api/...` included, so leaving this
+  // route off returned 200 with an HTML page. The browser read a 200 whose
+  // body was not the capability object, called it misconfigured, and showed an
+  // error card. The flag is false by default and false in production, so that
+  // was the DEFAULT state: every Early Access customer seeing an error and no
+  // way to order.
+  //
+  // ONE registration rather than one per branch. Two `app.get` calls on the
+  // same path are a duplicate route even when the branches are mutually
+  // exclusive, and the route-uniqueness gate is right to refuse them: a reader
+  // cannot tell by inspection which one Express will answer with.
+  //
+  // Registered before `/cart/:cartCheckoutNumber` for the usual reason:
+  // "capability" is a literal segment and the parameter route would swallow it.
+  const cartCapability = createEarlyAccessCartCapabilityRoute(cartIdentity);
+  app.get(EARLY_ACCESS_CART_CAPABILITY_PATH, (req: Request, res: Response) => {
+    if (!cartEnabled) {
+      res.setHeader("Cache-Control", "no-store, private, max-age=0");
+      res.status(404).json({ ok: false, code: "CART_DISABLED" });
+      return;
+    }
+    void cartCapability({ cookieHeader: req.headers?.cookie }, res as never).catch(() => {
+      if (!res.headersSent) {
+        res.setHeader("Cache-Control", "no-store, private, max-age=0");
+        res.status(503).json({ ok: false, code: "UNAVAILABLE" });
+      }
+    });
+  });
+
+  if (cartEnabled) {
     // F4. Not `?? new InMemoryEarlyAccessCartStore()`. A default reached by
     // omission would let a production deployment boot with the cart on and a
     // checkout store in RAM, and lose paid orders on the next restart.
@@ -760,16 +808,6 @@ export function registerPrivateEarlyAccessApi(
       unsafeMemoryStore: options.cartStore,
       env: options.env ?? process.env,
     });
-    const cartIdentity = {
-      async resolve(cookieHeader: unknown) {
-        const customer = await identity.resolve({ cookieHeader });
-        if (customer === null) return null;
-        return Object.freeze({
-          customerRef: customer.customerRef,
-          aliases: customer.aliasRefs ?? [],
-        });
-      },
-    };
     const cartCatalog = new StorefrontCartCatalog({ catalog, releases });
     const cartPricing = new FounderReleaseCartPricing({ catalog, releases });
     const quoteCart = createEarlyAccessCartQuoteRoute({
@@ -797,7 +835,6 @@ export function registerPrivateEarlyAccessApi(
       identity: cartIdentity,
       checkouts: cartStore,
     });
-    const cartCapability = createEarlyAccessCartCapabilityRoute(cartIdentity);
     const cartStatus = createEarlyAccessCartStatusRoute({
       identity: cartIdentity,
       checkouts: cartStore,
@@ -837,11 +874,10 @@ export function registerPrivateEarlyAccessApi(
         });
       };
 
-    // LITERAL BEFORE PARAMETER. `/cart/capability` and `/cart/quote` are real
-    // segments; `/cart/:cartCheckoutNumber` would otherwise match them first
-    // and answer a capability probe as a malformed checkout number, which the
-    // browser reads as "cart broken" rather than "cart off".
-    app.get(EARLY_ACCESS_CART_CAPABILITY_PATH, cartDoor(cartCapability));
+    // LITERAL BEFORE PARAMETER. `/cart/quote` is a real segment;
+    // `/cart/:cartCheckoutNumber` would otherwise match it first and answer a
+    // quote as a malformed checkout number. The capability probe is registered
+    // above, once, for both flag states.
     app.post(EARLY_ACCESS_CART_QUOTE_PATH, cartDoor(quoteCart));
     app.post(EARLY_ACCESS_CART_CHECKOUT_PATH, cartDoor(checkoutCart));
     // Status before the bare read, same literal-before-parameter reason: the
@@ -894,37 +930,6 @@ export function registerPrivateEarlyAccessApi(
         },
         res as never,
       );
-    });
-  } else {
-    // THE CART IS OFF, AND THE BROWSER HAS TO BE ABLE TO LEARN THAT.
-    //
-    // This route exists ONLY when the cart is disabled, and it is the reason
-    // the disabled state works at all.
-    //
-    // The client probes the capability path and falls back to the existing
-    // single-product journey on a 404, deliberately refusing to fall back on
-    // anything else, so a MISCONFIGURED cart cannot hide behind the old flow.
-    // That contract assumed an unmounted API path answers 404. In this
-    // deployment it does not. `serveStatic` ends with a catch-all that sends
-    // index.html for any unmatched path, `/api/...` included, so an unmounted
-    // cart route returns 200 with an HTML page. The browser reads a 200 whose
-    // body is not the capability object, classifies it as misconfigured, and
-    // renders the error card.
-    //
-    // Net effect without this route: turning the cart OFF, which is the
-    // DEFAULT and the current production setting, would have shown every
-    // Early Access customer an error card and no way to order at all. Found in
-    // a real browser against the real bundle; the unit tests missed it because
-    // a stubbed fetch answers 404 exactly as the contract wishes the server
-    // did.
-    //
-    // So the server states it plainly instead of leaving a hole for the SPA
-    // fallback to fill. A JSON 404 is the truthful answer to "is the cart
-    // available": it is not, and this is a real answer from the API rather
-    // than an HTML page that happens to have a 200 on it.
-    app.get(EARLY_ACCESS_CART_CAPABILITY_PATH, (_req: Request, res: Response) => {
-      res.setHeader("Cache-Control", "no-store, private, max-age=0");
-      res.status(404).json({ ok: false, code: "CART_DISABLED" });
     });
   }
 
