@@ -406,6 +406,26 @@
         "procedure": "supabase/production/research-affiliate-access-and-portal-v2-rollback-notes.md",
         "evidence": "Disposable PostgreSQL 16 apply-twice after its research_affiliate_professional_operations dependency; twenty added tables present with no collision against the six pre-existing affiliate tables."
       }
+    },
+    {
+      "id": "research_early_access_cart_completion",
+      "path": "supabase/migrations/20260808100000_research_early_access_cart_completion.sql",
+      "sourceSha": "df36c17091fbb570db269b446fe2e7746738fbe6",
+      "dependsOn": [
+        "research_early_access_cart_checkout"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "5777518b5f269908212024d8a3b97c9e41b83bbc76d2e60c4589d40099737bb8"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": false,
+      "rollback": {
+        "strategy": "retain_additive_schema_and_unset_feature_flag",
+        "procedure": "supabase/production/research-early-access-cart-completion-rollback-notes.md",
+        "evidence": "PENDING: disposable PostgreSQL 16 apply-twice in both the full-DAG shape and the production-shaped schema with migration 54 absent."
+      }
     }
   ],
   "invariants": [
