@@ -101,6 +101,14 @@ function stubFetch(answers: Answers) {
     if (path.endsWith("/early-access/catalog")) {
       return jsonResponse({ ok: true, units: UNITS });
     }
+    // The multi-product cart is OFF in these cases. The route unmounts the
+    // capability route entirely while the flag is false, so 404 is the
+    // truthful disabled answer and the single-product surface below is what
+    // the customer gets. Answering 200 here would read as a MISCONFIGURED
+    // cart, which deliberately does not fall back.
+    if (path.endsWith("/early-access/cart/capability")) {
+      return jsonResponse({ ok: false, code: "NOT_FOUND" }, 404);
+    }
     return jsonResponse({ ok: true });
   });
   vi.stubGlobal("fetch", stub);

@@ -51,16 +51,26 @@ export function EarlyAccessCartMount({
 
   if (state.kind === "disabled") return <>{fallback}</>;
   if (state.kind === "loading") {
-    return <p className="body-s text-ink-mute" role="status">Preparing your cart.</p>;
+    return (
+      <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
+        <p className="body-s text-ink-mute" role="status" data-testid="early-access-cart-loading">Preparing your cart.</p>
+      </section>
+    );
   }
   if (state.kind === "locked") {
-    return <p className="body-s text-pulse" role="alert">Your private session ended. Unlock Early Access again.</p>;
+    return (
+      <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
+        <p className="body-s text-pulse" role="alert" data-testid="early-access-cart-locked">Your private session ended. Unlock Early Access again.</p>
+      </section>
+    );
   }
   if (state.kind === "error") {
     return (
-      <section className="card p-5" role="alert">
-        <h2 className="body-m font-700">The multi-product cart is unavailable.</h2>
-        <p className="body-s mt-2">No cart order was created. The existing Early Access ordering flow remains available only when the server explicitly reports the cart disabled, not when the cart is misconfigured.</p>
+      <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
+        <div className="card p-5 max-w-[62ch]" role="alert" data-testid="early-access-cart-error">
+          <h2 className="body-m font-700">The multi-product cart is unavailable.</h2>
+          <p className="body-s mt-2">No cart order was created. The existing Early Access ordering flow remains available only when the server explicitly reports the cart disabled, not when the cart is misconfigured.</p>
+        </div>
       </section>
     );
   }

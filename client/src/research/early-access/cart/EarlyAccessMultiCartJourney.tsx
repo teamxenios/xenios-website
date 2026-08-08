@@ -9,6 +9,7 @@ import type {
   EarlyAccessCartStatus,
 } from "@shared/research/early-access-cart";
 import type { EarlyAccessCardProduct } from "../EarlyAccessProductCard";
+import { EarlyAccessAgreementSection } from "../EarlyAccessAgreementSection";
 import {
   confirmEarlyAccessCart,
   loadEarlyAccessCartCheckout,
@@ -116,6 +117,13 @@ export function EarlyAccessMultiCartJourney({
   const [quote, setQuote] = useState<EarlyAccessCartQuote | null>(null);
   const [checkout, setCheckout] = useState<EarlyAccessCartCheckout | null>(null);
   const [status, setStatus] = useState<EarlyAccessCartStatus | null>(null);
+  // Whether the SERVER says this customer has accepted the Research Use Policy.
+  // The cart quote refuses with AGREEMENT_REQUIRED until it has, so the
+  // agreement has to be reachable from inside this journey; otherwise a
+  // customer who has not agreed is told the policy is required and given
+  // nothing anywhere to accept it.
+  const [agreed, setAgreed] = useState(false);
+  const [blocked, setBlocked] = useState<"unverified" | "locked" | null>(null);
   const [lineIssues, setLineIssues] = useState<readonly EarlyAccessCartLineRefusal[]>([]);
   const [problems, setProblems] = useState<readonly string[]>([]);
   const [busy, setBusy] = useState(false);
@@ -182,6 +190,9 @@ export function EarlyAccessMultiCartJourney({
     )),
     [products, cart],
   );
+
+  /** Ordering continues only once the server has the acceptance on file. */
+  const canOrder = agreed && blocked === null;
 
   const put = (item: BrowserCartItem) => setCart(putBrowserCartItem(item));
   const remove = (productId: string, variantId: string) =>
@@ -325,6 +336,12 @@ export function EarlyAccessMultiCartJourney({
       ) : null}
 
       {step === "catalog" ? (
+        <div data-testid="early-access-cart-agreement-mount">
+          <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
+        </div>
+      ) : null}
+
+      {step === "catalog" ? (
         <EarlyAccessCartCatalogue
           products={products}
           cart={cart}
@@ -341,7 +358,17 @@ export function EarlyAccessMultiCartJourney({
           onUpdate={put}
           onRemove={(item) => remove(item.productId, item.variantId)}
           onContinueShopping={() => navigate("catalog")}
-          onContinue={() => navigate("details")}
+          onContinue={() => {
+            // The quote route refuses without the acceptance, so refuse here
+            // too and send the customer to the step that carries it, rather
+            // than letting them fill in shipping for a cart that cannot quote.
+            if (!canOrder) {
+              navigate("catalog");
+              setError("The Research Use Policy must be accepted before this cart can continue. It is at the top of the catalogue.");
+              return;
+            }
+            navigate("details");
+          }}
         />
       ) : null}
 

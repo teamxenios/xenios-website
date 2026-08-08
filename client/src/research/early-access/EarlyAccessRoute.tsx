@@ -15,6 +15,7 @@ import {
   readLastOrderNumber,
 } from "./pendingOrderStore";
 import { clearBrowserCart } from "./cart/cartStore";
+import { EarlyAccessCartMount } from "./cart/EarlyAccessCartMount";
 import { EARLY_ACCESS_FULFILLMENT_TARGET_COPY } from "./fulfillment-copy";
 
 // The mounted Private Early Access route.
@@ -233,6 +234,9 @@ export default function EarlyAccessRoute() {
       )}
 
       {state.kind === "authenticated" && (
+        <EarlyAccessCartMount
+          onExitEarlyAccess={signOut}
+          fallback={
         <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
           <div className="max-w-[1280px] min-w-0">
             {/*
@@ -344,6 +348,8 @@ export default function EarlyAccessRoute() {
             </div>
           </div>
         </section>
+          }
+        />
       )}
     </>
   );

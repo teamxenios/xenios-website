@@ -83,6 +83,16 @@ const CART_CHECKOUT_PATH =
   "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql";
 const AFFILIATE_V2_PATH =
   "supabase/migrations/20260807200000_research_affiliate_access_and_portal_v2.sql";
+/**
+ * The cart completion schema (proofs, receipts, child releases, supplier
+ * outbox, settlement RPCs). It is a LOCAL branch migration that has not been
+ * deployed, so its source commit is this branch's, not PRODUCTION_SHA. Listed
+ * for the same reason the cart and affiliate paths above are: an undeployed
+ * migration cannot be readable at the production commit.
+ */
+const CART_COMPLETION_SOURCE_SHA = "df36c17091fbb570db269b446fe2e7746738fbe6";
+const CART_COMPLETION_PATH =
+  "supabase/migrations/20260808100000_research_early_access_cart_completion.sql";
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -765,6 +775,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(EA_STRENGTH_MIRROR_SOURCE_SHA);
           } else if (path === CART_CHECKOUT_PATH || path === AFFILIATE_V2_PATH) {
             expect(sourceSha).toBe(CART_AFFILIATE_SOURCE_SHA);
+          } else if (path === CART_COMPLETION_PATH) {
+            expect(sourceSha).toBe(CART_COMPLETION_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
