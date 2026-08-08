@@ -115,6 +115,8 @@ import {
   createEarlyAccessCartQuoteRoute,
   createEarlyAccessCartReadRoute,
   createEarlyAccessCartStatusRoute,
+  type CartRequest,
+  type CartResponsePort,
 } from "./cart/routes";
 import {
   createEarlyAccessCartConfirmPaymentAdminRoute,
@@ -802,34 +804,51 @@ export function registerPrivateEarlyAccessApi(
       settlements: cartStore,
     });
 
+    // WHEN THE DURABLE STORE CANNOT ANSWER, SAY SO. DO NOT HANG.
+    //
+    // Every cart handler below persists through the durable RPC, and an RPC
+    // that is missing, unreachable or malformed throws. A bare `void handler()`
+    // turns that throw into an unhandled rejection with no response written,
+    // so the browser sees a request that never ends: the worst possible answer
+    // during a checkout, because the customer cannot tell an order that failed
+    // from one that succeeded.
+    //
+    // 503 with no detail is the truthful answer. It is also the SAFE one: it
+    // is a refusal, so nothing here can be mistaken for a placed order, and it
+    // never degrades to an in-process store (see cart/store-composition.ts).
+    // The error itself is deliberately not echoed; the persistence layer's
+    // opaque error already exists because a driver error carries connection
+    // strings and argument values.
+    const cartDoor =
+      (handler: (input: CartRequest, response: CartResponsePort) => Promise<void>) =>
+      (req: Request, res: Response): void => {
+        void handler(
+          {
+            cookieHeader: req.headers?.cookie,
+            body: req.body,
+            cartCheckoutNumber: req.params?.cartCheckoutNumber,
+          },
+          res as never,
+        ).catch(() => {
+          if (!res.headersSent) {
+            res.setHeader("Cache-Control", "no-store, private, max-age=0");
+            res.status(503).json({ ok: false, code: "UNAVAILABLE" });
+          }
+        });
+      };
+
     // LITERAL BEFORE PARAMETER. `/cart/capability` and `/cart/quote` are real
     // segments; `/cart/:cartCheckoutNumber` would otherwise match them first
     // and answer a capability probe as a malformed checkout number, which the
     // browser reads as "cart broken" rather than "cart off".
-    app.get(EARLY_ACCESS_CART_CAPABILITY_PATH, (req: Request, res: Response) => {
-      void cartCapability({ cookieHeader: req.headers?.cookie }, res as never);
-    });
-    app.post(EARLY_ACCESS_CART_QUOTE_PATH, (req: Request, res: Response) => {
-      void quoteCart({ cookieHeader: req.headers?.cookie, body: req.body }, res as never);
-    });
-    app.post(EARLY_ACCESS_CART_CHECKOUT_PATH, (req: Request, res: Response) => {
-      void checkoutCart({ cookieHeader: req.headers?.cookie, body: req.body }, res as never);
-    });
+    app.get(EARLY_ACCESS_CART_CAPABILITY_PATH, cartDoor(cartCapability));
+    app.post(EARLY_ACCESS_CART_QUOTE_PATH, cartDoor(quoteCart));
+    app.post(EARLY_ACCESS_CART_CHECKOUT_PATH, cartDoor(checkoutCart));
     // Status before the bare read, same literal-before-parameter reason: the
     // trailing `/status` segment is part of a longer path, so it is safe, but
     // registering it first keeps the two together and the ordering obvious.
-    app.get(EARLY_ACCESS_CART_STATUS_PATH, (req: Request, res: Response) => {
-      void cartStatus(
-        { cookieHeader: req.headers?.cookie, cartCheckoutNumber: req.params.cartCheckoutNumber },
-        res as never,
-      );
-    });
-    app.get(EARLY_ACCESS_CART_READ_PATH, (req: Request, res: Response) => {
-      void readCart(
-        { cookieHeader: req.headers?.cookie, cartCheckoutNumber: req.params.cartCheckoutNumber },
-        res as never,
-      );
-    });
+    app.get(EARLY_ACCESS_CART_STATUS_PATH, cartDoor(cartStatus));
+    app.get(EARLY_ACCESS_CART_READ_PATH, cartDoor(readCart));
 
     // THE NAMED-ADMIN DOORS, behind the SAME Supabase admin guard every other
     // operator route uses, and deliberately NOT under /api/research: the

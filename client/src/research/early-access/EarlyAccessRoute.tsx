@@ -15,6 +15,7 @@ import {
   readLastOrderNumber,
 } from "./pendingOrderStore";
 import { clearBrowserCart } from "./cart/cartStore";
+import { clearCartRecovery } from "./cart/cartAttemptStore";
 import { EarlyAccessCartMount } from "./cart/EarlyAccessCartMount";
 import { EARLY_ACCESS_FULFILLMENT_TARGET_COPY } from "./fulfillment-copy";
 
@@ -178,6 +179,12 @@ export default function EarlyAccessRoute() {
       // machine the next person to unlock must start with an empty one, not
       // inherit somebody else's basket.
       clearBrowserCart();
+      // And the cart's OWN two recovery pointers: the in-flight attempt key
+      // and the last cart checkout number. Clearing the basket while leaving
+      // these behind would hand the next person a pointer at the previous
+      // purchaser's checkout. The server would still refuse to show it, but a
+      // signed-out browser should not be holding the pointer at all.
+      clearCartRecovery();
       setAgreed(false);
       setBlocked(null);
       setSelection(null);

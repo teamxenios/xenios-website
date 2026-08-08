@@ -5,6 +5,7 @@ import {
   type PrivateAccessSessionDatabaseCall,
 } from "../private-access-session-repository";
 import type { EarlyAccessRegistrationOptions } from "../register";
+import { buildEarlyAccessDurableCartStore } from "../cart/production-store";
 import { SupabaseEarlyAccessCommerceStore } from "./commerce-store";
 import {
   SupabaseEarlyAccessAgreementGate,
@@ -275,6 +276,22 @@ export function buildEarlyAccessPersistence(
     // still throws. When 54 lands it becomes a pass-through.
     supplierConfirmations: buildEarlyAccessSupplierConfirmationStore(run),
     holds: new MigrationTolerantUnitHoldRegistry(buildEarlyAccessUnitHoldRegistry(run)),
+    // THE DURABLE CART STORE, and the other half of F4.
+    //
+    // F4 made the SAFETY half true: production plus the cart flag plus no
+    // durable store refuses to boot instead of holding a paid checkout in
+    // RAM. That is only half a system. Without this line the refusal was the
+    // ONLY reachable outcome, because nothing in the composition root ever
+    // supplied `cartCheckoutStore`, so turning the flag on in production
+    // could never have produced a working cart, only a crash.
+    //
+    // Supplying it here is exactly what `buildEarlyAccessDurableCartStore`
+    // documents: the cart persists through the reviewed
+    // research_early_access_commit_cart_checkout RPC on the SAME query seam
+    // every other durable repository above uses. It is built in durable mode
+    // ONLY; refused and memory mode return before reaching this object, so
+    // production still cannot arrive at process memory by omission.
+    cartCheckoutStore: buildEarlyAccessDurableCartStore(run),
   };
 
   const required = readRequiredAgreements(env, warnings);

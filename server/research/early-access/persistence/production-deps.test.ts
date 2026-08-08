@@ -18,6 +18,7 @@ import { SupabaseEarlyAccessCustomerRepository } from "./identity";
 import { SupabaseEarlyAccessReleaseLedger } from "./records";
 import { SupabaseEarlyAccessProofStorage } from "./proof-storage";
 import { SupabasePrivateAccessSessionRepository } from "../private-access-session-repository";
+import { SupabaseEarlyAccessCartStore } from "../cart/supabase-store";
 
 const OWNER = "3f2f4bde-6f0f-4a11-9a3e-8c7d5b2a1e90";
 
@@ -154,6 +155,40 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
     expect(build.options.audit).toBeDefined();
     expect(build.options.sessionBindings).toBeDefined();
     expect(build.options.consumed).toBeInstanceOf(SupabaseConsumedTokenStore);
+  });
+
+  // The other half of F4. The refusal proves production cannot fall back to
+  // RAM; this proves production can actually mount a cart at all. Without the
+  // durable store in these options, turning the flag on in production could
+  // only ever throw, so the "cart enabled" branch was unreachable in the one
+  // environment it exists for.
+  it("durable mode supplies the DURABLE cart store, so a production cart is possible without memory", () => {
+    const build = buildEarlyAccessPersistence(
+      {
+        SUPABASE_URL: "https://example.supabase.co",
+        SUPABASE_SERVICE_ROLE_KEY: "sb_secret_test",
+        RESEARCH_EARLY_ACCESS_OWNER_ID: OWNER,
+      } as NodeJS.ProcessEnv,
+      async () => null,
+    );
+    expect(build.mode).toBe("durable");
+    expect(build.options.cartCheckoutStore).toBeInstanceOf(SupabaseEarlyAccessCartStore);
+  });
+
+  it("refused and memory modes supply NO cart store, so neither can reach a durable or a RAM cart by omission", () => {
+    const refused = buildEarlyAccessPersistence(
+      {
+        NODE_ENV: "production",
+        RESEARCH_EARLY_ACCESS_ENABLED: "true",
+      } as NodeJS.ProcessEnv,
+      async () => null,
+    );
+    expect(refused.mode).toBe("refused");
+    expect(refused.options.cartCheckoutStore).toBeUndefined();
+
+    const memory = buildEarlyAccessPersistence({} as NodeJS.ProcessEnv, async () => null);
+    expect(memory.mode).toBe("memory");
+    expect(memory.options.cartCheckoutStore).toBeUndefined();
   });
 
   it("durable mode keeps the fail-closed agreement placeholder until the required list is stated", () => {

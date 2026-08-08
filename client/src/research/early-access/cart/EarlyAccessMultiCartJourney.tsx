@@ -32,6 +32,17 @@ import { EarlyAccessCartPanel } from "./EarlyAccessCartPanel";
 import { EarlyAccessCartPayment, EarlyAccessCartStatusView } from "./EarlyAccessCartPayment";
 import { EarlyAccessCartReview } from "./EarlyAccessCartReview";
 import { EarlyAccessProgress } from "./EarlyAccessProgress";
+// The two recovery pointers live in their own module so SIGN-OUT can reach
+// them. While they were private constants here, logout cleared the cart but
+// left the previous purchaser's attempt key and checkout number behind.
+import {
+  clearCartAttemptKey,
+  newCartAttemptKey,
+  readCartAttemptKey,
+  readLastCartCheckoutNumber,
+  rememberCartAttemptKey,
+  rememberLastCartCheckoutNumber,
+} from "./cartAttemptStore";
 import {
   listenEarlyAccessHistory,
   pushEarlyAccessStep,
@@ -39,47 +50,6 @@ import {
   replaceEarlyAccessStep,
   type EarlyAccessCheckoutStep,
 } from "./history";
-
-const ATTEMPT_KEY = "xenios.research.earlyAccess.cartAttempt.v2";
-const LAST_CHECKOUT_KEY = "xenios.research.earlyAccess.lastCartCheckout.v1";
-
-function newAttemptKey(): string {
-  const bytes = new Uint8Array(18);
-  crypto.getRandomValues(bytes);
-  return `xeac_${Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("")}`;
-}
-
-function sessionGet(key: string): string | null {
-  try {
-    return sessionStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-function sessionSet(key: string, value: string): void {
-  try {
-    sessionStorage.setItem(key, value);
-  } catch {
-    // Recovery hint only. Server idempotency remains authoritative.
-  }
-}
-function sessionRemove(key: string): void {
-  try {
-    sessionStorage.removeItem(key);
-  } catch {
-    // Best effort only.
-  }
-}
-
-function readAttempt(): string | null {
-  const value = sessionGet(ATTEMPT_KEY);
-  return value && /^xeac_[A-Za-z0-9_-]{16,120}$/.test(value) ? value : null;
-}
-
-function readLastCheckout(): string | null {
-  const value = sessionGet(LAST_CHECKOUT_KEY);
-  return value && /^XEC-[A-Z0-9]{16,40}$/.test(value) ? value : null;
-}
 
 function titleFor(step: EarlyAccessCheckoutStep): string {
   switch (step) {
@@ -130,9 +100,9 @@ export function EarlyAccessMultiCartJourney({
   const [statusLoading, setStatusLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const attemptRef = useRef<string | null>(readAttempt());
+  const attemptRef = useRef<string | null>(readCartAttemptKey());
   const submitInFlight = useRef(false);
-  const lastCheckoutRef = useRef<string | null>(readLastCheckout());
+  const lastCheckoutRef = useRef<string | null>(readLastCartCheckoutNumber());
   const quoteRef = useRef<EarlyAccessCartQuote | null>(null);
   const checkoutRef = useRef<EarlyAccessCartCheckout | null>(null);
 
@@ -254,8 +224,8 @@ export function EarlyAccessMultiCartJourney({
     setBusy(true);
     setError(null);
     if (attemptRef.current === null) {
-      attemptRef.current = newAttemptKey();
-      sessionSet(ATTEMPT_KEY, attemptRef.current);
+      attemptRef.current = newCartAttemptKey();
+      rememberCartAttemptKey(attemptRef.current);
     }
     const result = await confirmEarlyAccessCart({
       quoteId: activeQuote.quoteId,
@@ -271,7 +241,7 @@ export function EarlyAccessMultiCartJourney({
         return;
       }
       if (result.code === "QUOTE_EXPIRED" || result.code === "QUOTE_CHANGED") {
-        sessionRemove(ATTEMPT_KEY);
+        clearCartAttemptKey();
         attemptRef.current = null;
         setQuote(null);
         quoteRef.current = null;
@@ -287,14 +257,14 @@ export function EarlyAccessMultiCartJourney({
       return;
     }
 
-    sessionRemove(ATTEMPT_KEY);
+    clearCartAttemptKey();
     attemptRef.current = null;
     clearBrowserCart();
     setCart(readBrowserCart());
     setCheckout(result.checkout);
     checkoutRef.current = result.checkout;
     lastCheckoutRef.current = result.checkout.cartCheckoutNumber;
-    sessionSet(LAST_CHECKOUT_KEY, result.checkout.cartCheckoutNumber);
+    rememberLastCartCheckoutNumber(result.checkout.cartCheckoutNumber);
     navigate("payment");
   };
 
