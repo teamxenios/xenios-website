@@ -1,5 +1,9 @@
 import { InMemoryEarlyAccessCartStore } from "./store";
-import type { EarlyAccessCartCheckoutStore, EarlyAccessCartQuoteStore } from "./ports";
+import type {
+  EarlyAccessCartCheckoutStore,
+  EarlyAccessCartQuoteStore,
+  EarlyAccessCartSettlementStore,
+} from "./ports";
 
 /**
  * F4: THE CART MAY NOT SILENTLY REMEMBER A CHECKOUT IN RAM.
@@ -24,7 +28,12 @@ export class EarlyAccessCartStoreUnavailable extends Error {
   }
 }
 
-export type CartStorePorts = EarlyAccessCartQuoteStore & EarlyAccessCartCheckoutStore;
+// Settlement joins the same port set: the status route and the named-admin
+// settlement routes read through the SAME store the checkout committed to,
+// so a settled parent and the status a customer is shown cannot disagree.
+export type CartStorePorts = EarlyAccessCartQuoteStore &
+  EarlyAccessCartCheckoutStore &
+  EarlyAccessCartSettlementStore;
 
 /**
  * True when this process is a production deployment.

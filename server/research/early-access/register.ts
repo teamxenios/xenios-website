@@ -110,10 +110,16 @@ import {
   type CartStorePorts,
 } from "./cart/store-composition";
 import {
+  createEarlyAccessCartCapabilityRoute,
   createEarlyAccessCartCheckoutRoute,
   createEarlyAccessCartQuoteRoute,
   createEarlyAccessCartReadRoute,
+  createEarlyAccessCartStatusRoute,
 } from "./cart/routes";
+import {
+  createEarlyAccessCartConfirmPaymentAdminRoute,
+  createEarlyAccessCartExternalProofAdminRoute,
+} from "./cart/admin-routes";
 import { InMemoryEarlyAccessCartStore } from "./cart/store";
 import {
   DirectoryCartSuppliers,
@@ -164,15 +170,38 @@ export const EARLY_ACCESS_ORDER_PROOF_PATH =
  * purchaser and answers 404 for anyone else's cart exactly as the single-order
  * lookup does.
  */
+/**
+ * The browser's one question before it renders anything: is the cart on?
+ *
+ * 404 (route absent) is the disabled answer and is what lets the accepted
+ * single-product journey remain the fallback. It is a LITERAL segment, so it
+ * must be registered before `:cartCheckoutNumber` or the parameter route
+ * swallows it and "capability" is read as a checkout number.
+ */
+export const EARLY_ACCESS_CART_CAPABILITY_PATH =
+  "/api/research/early-access/cart/capability";
 export const EARLY_ACCESS_CART_QUOTE_PATH = "/api/research/early-access/cart/quote";
 export const EARLY_ACCESS_CART_CHECKOUT_PATH = "/api/research/early-access/cart/checkout";
 export const EARLY_ACCESS_CART_READ_PATH =
   "/api/research/early-access/cart/:cartCheckoutNumber";
+/** Payment state, child lines and fulfillment, at a customer-safe level. */
+export const EARLY_ACCESS_CART_STATUS_PATH =
+  "/api/research/early-access/cart/:cartCheckoutNumber/status";
+
+/** Named-admin only, behind the existing Supabase admin guard. */
+export const EARLY_ACCESS_ADMIN_CART_PROOF_PATH =
+  "/api/admin/research/cart/:cartCheckoutNumber/external-proof";
+export const EARLY_ACCESS_ADMIN_CART_CONFIRM_PATH =
+  "/api/admin/research/cart/:cartCheckoutNumber/confirm-payment";
 
 export const EARLY_ACCESS_CART_API_PATHS = Object.freeze([
+  EARLY_ACCESS_CART_CAPABILITY_PATH,
   EARLY_ACCESS_CART_QUOTE_PATH,
   EARLY_ACCESS_CART_CHECKOUT_PATH,
   EARLY_ACCESS_CART_READ_PATH,
+  EARLY_ACCESS_CART_STATUS_PATH,
+  EARLY_ACCESS_ADMIN_CART_PROOF_PATH,
+  EARLY_ACCESS_ADMIN_CART_CONFIRM_PATH,
 ] as const);
 
 export const EARLY_ACCESS_API_PATHS = Object.freeze([
@@ -694,6 +723,25 @@ export function registerPrivateEarlyAccessApi(
     void readOrder({ cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber }, res);
   });
 
+  // THE admin guard, resolved once and shared by both admin surfaces. Two
+  // resolution sites would let the operator routes and the founder release end
+  // up behind different gates.
+  const adminGuard: RequestHandler = options.requireAdmin ?? requireSupabaseAdmin;
+  // Hoisted above the cart block on purpose. `const` is in the temporal dead
+  // zone until its initializer runs, so mounting the named-admin cart doors
+  // from inside that block while this still sat below it would have thrown a
+  // ReferenceError at registration the moment the flag went true. Still ONE
+  // resolution site.
+  // The acting admin, taken from what the GUARD put on the request. Never
+  // from a body or a header: an audit trail recording the name the caller
+  // typed is not an audit trail. A missing or blank identity yields null, and
+  // the routes answer 401 rather than settling money for 'someone'.
+  const adminActorOf = (req: Request): Readonly<{ id: string }> | null => {
+    const email = (req as unknown as { adminEmail?: unknown }).adminEmail;
+    if (typeof email !== "string" || email.trim() === "") return null;
+    return Object.freeze({ id: email.trim() });
+  };
+
   // THE MULTI-PRODUCT CART, off unless a named human switched it on.
   //
   // It reuses the identity, catalogue, release, promotion, supplier, shipping
@@ -747,16 +795,84 @@ export function registerPrivateEarlyAccessApi(
       identity: cartIdentity,
       checkouts: cartStore,
     });
+    const cartCapability = createEarlyAccessCartCapabilityRoute(cartIdentity);
+    const cartStatus = createEarlyAccessCartStatusRoute({
+      identity: cartIdentity,
+      checkouts: cartStore,
+      settlements: cartStore,
+    });
 
+    // LITERAL BEFORE PARAMETER. `/cart/capability` and `/cart/quote` are real
+    // segments; `/cart/:cartCheckoutNumber` would otherwise match them first
+    // and answer a capability probe as a malformed checkout number, which the
+    // browser reads as "cart broken" rather than "cart off".
+    app.get(EARLY_ACCESS_CART_CAPABILITY_PATH, (req: Request, res: Response) => {
+      void cartCapability({ cookieHeader: req.headers?.cookie }, res as never);
+    });
     app.post(EARLY_ACCESS_CART_QUOTE_PATH, (req: Request, res: Response) => {
       void quoteCart({ cookieHeader: req.headers?.cookie, body: req.body }, res as never);
     });
     app.post(EARLY_ACCESS_CART_CHECKOUT_PATH, (req: Request, res: Response) => {
       void checkoutCart({ cookieHeader: req.headers?.cookie, body: req.body }, res as never);
     });
+    // Status before the bare read, same literal-before-parameter reason: the
+    // trailing `/status` segment is part of a longer path, so it is safe, but
+    // registering it first keeps the two together and the ordering obvious.
+    app.get(EARLY_ACCESS_CART_STATUS_PATH, (req: Request, res: Response) => {
+      void cartStatus(
+        { cookieHeader: req.headers?.cookie, cartCheckoutNumber: req.params.cartCheckoutNumber },
+        res as never,
+      );
+    });
     app.get(EARLY_ACCESS_CART_READ_PATH, (req: Request, res: Response) => {
       void readCart(
         { cookieHeader: req.headers?.cookie, cartCheckoutNumber: req.params.cartCheckoutNumber },
+        res as never,
+      );
+    });
+
+    // THE NAMED-ADMIN DOORS, behind the SAME Supabase admin guard every other
+    // operator route uses, and deliberately NOT under /api/research: the
+    // research wall decides who may reach a customer surface, and settling a
+    // cart is not one.
+    //
+    // The acting admin comes from what the guard put on the request, never
+    // from a body or a header. An audit trail that records the name the caller
+    // typed is not an audit trail.
+    const cartSettlementDeps = {
+      checkouts: cartStore,
+      settlements: cartStore,
+      audit: {
+        async record(event: unknown) {
+          await audit.record(event as never);
+        },
+      },
+    };
+    const recordCartProof = createEarlyAccessCartExternalProofAdminRoute({
+      ...cartSettlementDeps,
+      now,
+    });
+    const confirmCartPayment = createEarlyAccessCartConfirmPaymentAdminRoute({
+      ...cartSettlementDeps,
+      now,
+    });
+    app.post(EARLY_ACCESS_ADMIN_CART_PROOF_PATH, adminGuard, (req: Request, res: Response) => {
+      void recordCartProof(
+        {
+          actor: adminActorOf(req),
+          cartCheckoutNumber: req.params.cartCheckoutNumber,
+          body: req.body,
+        },
+        res as never,
+      );
+    });
+    app.post(EARLY_ACCESS_ADMIN_CART_CONFIRM_PATH, adminGuard, (req: Request, res: Response) => {
+      void confirmCartPayment(
+        {
+          actor: adminActorOf(req),
+          cartCheckoutNumber: req.params.cartCheckoutNumber,
+          body: req.body,
+        },
         res as never,
       );
     });
@@ -776,10 +892,6 @@ export function registerPrivateEarlyAccessApi(
     );
   });
 
-  // THE admin guard, resolved once and shared by both admin surfaces. Two
-  // resolution sites would let the operator routes and the founder release end
-  // up behind different gates.
-  const adminGuard: RequestHandler = options.requireAdmin ?? requireSupabaseAdmin;
 
   // The manual operations doors: customer verification binding, and the admin
   // records (approve customer, supplier confirmation, unit hold) that the

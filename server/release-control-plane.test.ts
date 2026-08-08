@@ -1401,19 +1401,31 @@ describe("route uniqueness validator", () => {
   it("covers every current Express API call site and finite registration", () => {
     const result = scanExpressRouteResult(ROOT);
     expect(result.issues).toEqual([]);
-    // 334/343 as of the cart successor. Five additions over the frozen UX
-    // base, each deliberate:
+    // 338/347 as of the Early Access completion successor. Nine additions over
+    // the frozen UX base, each deliberate:
     //   POST /api/admin/research/payments/:orderNumber/external-proof
     //   GET  /api/admin/research/payments/:orderNumber
     //   POST /api/research/early-access/cart/quote
     //   POST /api/research/early-access/cart/checkout
     //   GET  /api/research/early-access/cart/:cartCheckoutNumber
-    // The three cart doors are registered only when
+    // and, with the completion package:
+    //   GET  /api/research/early-access/cart/capability
+    //   GET  /api/research/early-access/cart/:cartCheckoutNumber/status
+    //   POST /api/admin/research/cart/:cartCheckoutNumber/external-proof
+    //   POST /api/admin/research/cart/:cartCheckoutNumber/confirm-payment
+    //
+    // The capability door is what lets the browser tell "cart off" (404) apart
+    // from "cart broken", so the accepted single-product journey stays the
+    // fallback rather than being replaced by an error state. The two admin
+    // doors sit behind the SAME Supabase admin guard as every other operator
+    // route and deliberately outside /api/research.
+    //
+    // All cart doors are registered only when
     // RESEARCH_EARLY_ACCESS_CART_ENABLED is exactly "true"; the scanner is a
     // SOURCE scan, so it counts the call sites either way, which is the
     // honest number to pin.
-    expect(result.callSites).toBe(334);
-    expect(result.routes).toHaveLength(343);
+    expect(result.callSites).toBe(338);
+    expect(result.routes).toHaveLength(347);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });
