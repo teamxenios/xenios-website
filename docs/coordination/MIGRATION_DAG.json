@@ -420,11 +420,11 @@
       },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
-      "applyTwiceVerified": false,
+      "applyTwiceVerified": true,
       "rollback": {
         "strategy": "retain_additive_schema_and_unset_feature_flag",
         "procedure": "supabase/production/research-early-access-cart-completion-rollback-notes.md",
-        "evidence": "PENDING: disposable PostgreSQL 16 apply-twice in both the full-DAG shape and the production-shaped schema with migration 54 absent."
+        "evidence": "Disposable PostgreSQL 16.14 apply-twice in BOTH shapes, recorded in supabase/production/research-early-access-cart-completion-apply-twice-evidence.md. Shape A (full chain, migration 54 present) and Shape B (production shaped, migration 54 and 55 absent, proven absent before the run) each applied the 58+60 candidate pair twice at psql exit 0, then passed the same 45-assertion behavioural suite: atomic commit, one parent, all children, one invoice, one payment reference, idempotency replay refused without partial writes, a FORCED mid-transaction failure leaving zero rows anywhere, proof metadata that does not mark paid, one settlement with one receipt and every child released across mixed suppliers, a retry that duplicates nothing, and zero commission or referral rows. Both shapes end with 10 cart tables at forced RLS, zero anon/authenticated/service_role direct table access, and 11 RPCs executable by service_role only. Migration 59 deliberately absent from both."
       }
     }
   ],
