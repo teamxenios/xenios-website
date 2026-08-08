@@ -1,22 +1,27 @@
 /**
  * Xenios Research Early Access multi-product cart contract.
  *
- * The browser may choose product/variant identifiers and quantities. It does not
- * decide prices, discounts, supplier routing, shipping, payment totals, or release
- * state. Every monetary value below is a server answer in integer cents.
+ * BROWSER AUTHORITY
+ * -----------------
+ * The browser may select product/variant identifiers and quantities and may
+ * echo the unit price it was shown. It never decides availability, supplier
+ * routing, discounts, shipping, tax, aggregate totals, settlement, receipts,
+ * or supplier release. Every monetary value below is an integer-cents server
+ * answer.
  */
 
 export const EARLY_ACCESS_CART_MIN_QUANTITY = 1 as const;
 export const EARLY_ACCESS_CART_MAX_QUANTITY = 3 as const;
 export const EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS = 25 as const;
+export const EARLY_ACCESS_CART_CURRENCY = "USD" as const;
 
-export type EarlyAccessCartCurrency = "USD";
+export type EarlyAccessCartCurrency = typeof EARLY_ACCESS_CART_CURRENCY;
 
 export type EarlyAccessCartItemInput = Readonly<{
   productId: string;
   variantId: string;
   quantity: number;
-  /** Echo only. The server refuses a stale price; it never trusts this as price authority. */
+  /** Echo only. The server refuses a stale price and never trusts this as authority. */
   expectedUnitPriceCents: number;
   expectedCurrency: EarlyAccessCartCurrency;
 }>;
@@ -83,9 +88,9 @@ export type EarlyAccessCartLineRefusal = Readonly<{
   currency?: EarlyAccessCartCurrency;
 }>;
 
+/** Public quote. Customer identity, contact and shipping stay in the private quote record. */
 export type EarlyAccessCartQuote = Readonly<{
   quoteId: string;
-  customerRef: string;
   currency: EarlyAccessCartCurrency;
   lines: readonly EarlyAccessCartLineQuote[];
   subtotalCents: number;
@@ -93,6 +98,7 @@ export type EarlyAccessCartQuote = Readonly<{
   shippingCents: number;
   taxCents: number;
   payableTotalCents: number;
+  /** Binds customer, every line, contact and destination without echoing them. */
   intentHash: string;
   quotedAt: string;
   expiresAt: string;
@@ -100,12 +106,15 @@ export type EarlyAccessCartQuote = Readonly<{
 
 export type EarlyAccessCartQuoteResult =
   | Readonly<{ ok: true; quote: EarlyAccessCartQuote }>
-  | Readonly<{ ok: false; code: "CART_INVALID" | "AGREEMENT_REQUIRED" | "LINE_REFUSED"; lines?: readonly EarlyAccessCartLineRefusal[] }>;
+  | Readonly<{
+      ok: false;
+      code: "CART_INVALID" | "AGREEMENT_REQUIRED" | "LINE_REFUSED" | "UNAVAILABLE";
+      lines?: readonly EarlyAccessCartLineRefusal[];
+    }>;
 
 export type EarlyAccessCartCheckoutRequest = Readonly<{
   quoteId: string;
   idempotencyKey: string;
-  /** Hash of the complete quote/contact/shipping intent returned by the server. */
   expectedIntentHash: string;
 }>;
 
@@ -147,7 +156,25 @@ export type EarlyAccessCartInvoice = Readonly<{
   status: "awaiting_payment";
 }>;
 
+export type EarlyAccessCartPaymentState =
+  | "awaiting_payment"
+  | "under_review"
+  | "payment_verified"
+  | "payment_rejected";
+
+/** Customer-visible checkout. No customerRef, idempotency key or private attribution. */
 export type EarlyAccessCartCheckout = Readonly<{
+  cartCheckoutNumber: string;
+  contact: EarlyAccessCartContact;
+  shipTo: EarlyAccessCartShipping;
+  children: readonly EarlyAccessCartChildOrder[];
+  invoice: EarlyAccessCartInvoice;
+  paymentState: EarlyAccessCartPaymentState;
+  placedAt: string;
+}>;
+
+/** Server-only durable record. Never serialize this object directly to a customer. */
+export type EarlyAccessCartCheckoutRecord = Readonly<{
   cartCheckoutNumber: string;
   customerRef: string;
   contact: EarlyAccessCartContact;
@@ -157,8 +184,18 @@ export type EarlyAccessCartCheckout = Readonly<{
   quoteId: string;
   children: readonly EarlyAccessCartChildOrder[];
   invoice: EarlyAccessCartInvoice;
-  paymentState: "awaiting_payment" | "under_review" | "payment_verified" | "payment_rejected";
+  paymentState: EarlyAccessCartPaymentState;
   placedAt: string;
+  attribution: null | Readonly<{
+    affiliateId: string;
+    codeId: string | null;
+    campaignId: string | null;
+    method: "explicit_code" | "referral_session" | "assisted";
+    attributedAt: string;
+    expiresAt: string;
+    scheduleId: string | null;
+    scheduleVersion: number | null;
+  }>;
 }>;
 
 export type EarlyAccessCartCheckoutResult =
@@ -174,18 +211,71 @@ export type EarlyAccessCartCheckoutResult =
         | "UNAVAILABLE";
     }>;
 
+/** Metadata for proof received outside the Xenios website. No file-storage claim. */
+export type EarlyAccessCartExternalProof = Readonly<{
+  evidenceRef: string;
+  cartCheckoutNumber: string;
+  sha256: string;
+  filename: string;
+  contentType: string;
+  byteSize: number;
+  provenanceNote: string;
+  recordedAt: string;
+  recordedBy: string;
+  storedOnPlatform: false;
+}>;
+
+export type EarlyAccessCartReceipt = Readonly<{
+  receiptId: string;
+  cartCheckoutNumber: string;
+  invoiceNumber: string;
+  paymentReference: string;
+  verifiedAmountCents: number;
+  currency: EarlyAccessCartCurrency;
+  issuedAt: string;
+}>;
+
+export type EarlyAccessCartChildRelease = Readonly<{
+  releaseId: string;
+  cartCheckoutNumber: string;
+  orderNumber: string;
+  supplierId: string;
+  supplierSku: string;
+  quantity: number;
+  releasedAt: string;
+  shippedAt: string | null;
+  tracking: readonly string[];
+}>;
+
+export type EarlyAccessCartSettlement = Readonly<{
+  cartCheckoutNumber: string;
+  externalTransactionId: string;
+  reviewedEvidenceRef: string;
+  verifiedAmountCents: number;
+  verifiedCurrency: EarlyAccessCartCurrency;
+  settledAt: string;
+  settledBy: string;
+  receipt: EarlyAccessCartReceipt;
+  childReleases: readonly EarlyAccessCartChildRelease[];
+}>;
+
 export type EarlyAccessCartStatus = Readonly<{
   checkout: EarlyAccessCartCheckout;
-  payment: Readonly<{ state: EarlyAccessCartCheckout["paymentState"]; paid: boolean }>;
-  receipt: null | Readonly<{ receiptId: string; issuedAt: string }>;
+  payment: Readonly<{
+    state: EarlyAccessCartPaymentState;
+    paid: boolean;
+    externalProofCount: number;
+  }>;
+  receipt: EarlyAccessCartReceipt | null;
   fulfilment: Readonly<{
     released: boolean;
-    childOrders: readonly Readonly<{
-      orderNumber: string;
-      supplierId: string;
-      released: boolean;
-      shippedAt: string | null;
-      tracking: readonly string[];
-    }>[];
+    childOrders: readonly EarlyAccessCartChildRelease[];
   }>;
+}>;
+
+export type EarlyAccessCartCapability = Readonly<{
+  enabled: true;
+  maxDistinctItems: typeof EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS;
+  maxQuantityPerItem: typeof EARLY_ACCESS_CART_MAX_QUANTITY;
+  paymentMode: "manual_concierge";
 }>;

@@ -1,10 +1,14 @@
 import type {
-  EarlyAccessCartCheckout,
+  EarlyAccessCartCheckoutRecord,
   EarlyAccessCartContact,
+  EarlyAccessCartExternalProof,
   EarlyAccessCartItemInput,
   EarlyAccessCartLineFailure,
   EarlyAccessCartQuote,
+  EarlyAccessCartReceipt,
+  EarlyAccessCartSettlement,
   EarlyAccessCartShipping,
+  EarlyAccessCartStatus,
 } from "@shared/research/early-access-cart";
 
 export type CartCustomer = Readonly<{
@@ -71,8 +75,14 @@ export interface EarlyAccessCartAuditPort {
   record(event: Readonly<{ event: string; actor: string; at: string; detail: Record<string, unknown> }>): Promise<void>;
 }
 
+export interface EarlyAccessCartAttributionPort {
+  snapshot(customerRef: string, nowMs: number): Promise<EarlyAccessCartCheckoutRecord["attribution"]>;
+}
+
 export type EarlyAccessCartQuoteRecord = Readonly<{
   publicQuote: EarlyAccessCartQuote;
+  customerRef: string;
+  quoteHash: string;
   /** Private fields never returned by the quote endpoint. */
   contact: EarlyAccessCartContact;
   shipTo: EarlyAccessCartShipping;
@@ -85,15 +95,53 @@ export interface EarlyAccessCartQuoteStore {
 }
 
 export type CartCommitResult =
-  | Readonly<{ committed: true; checkout: EarlyAccessCartCheckout }>
+  | Readonly<{ committed: true; checkout: EarlyAccessCartCheckoutRecord }>
   | Readonly<{
       committed: false;
       reason: "idempotency_key_taken" | "checkout_number_taken" | "child_order_number_taken";
-      checkout: EarlyAccessCartCheckout | null;
+      checkout: EarlyAccessCartCheckoutRecord | null;
     }>;
 
 export interface EarlyAccessCartCheckoutStore {
-  byIdempotencyKey(key: string): Promise<EarlyAccessCartCheckout | null>;
-  byCheckoutNumber(checkoutNumber: string): Promise<EarlyAccessCartCheckout | null>;
-  commit(checkout: EarlyAccessCartCheckout): Promise<CartCommitResult>;
+  byIdempotencyKey(key: string): Promise<EarlyAccessCartCheckoutRecord | null>;
+  byCheckoutNumber(checkoutNumber: string): Promise<EarlyAccessCartCheckoutRecord | null>;
+  commit(checkout: EarlyAccessCartCheckoutRecord): Promise<CartCommitResult>;
+}
+
+export type CartExternalProofCommit =
+  | Readonly<{ committed: true; proof: EarlyAccessCartExternalProof }>
+  | Readonly<{ committed: false; reason: "checkout_unknown" | "evidence_ref_taken"; proof: EarlyAccessCartExternalProof | null }>;
+
+export type CartSettlementCommit =
+  | Readonly<{ committed: true; settlement: EarlyAccessCartSettlement }>
+  | Readonly<{ committed: false; reason: "already_settled"; settlement: EarlyAccessCartSettlement }>
+  | Readonly<{
+      committed: false;
+      reason: "transaction_id_used" | "checkout_unknown" | "evidence_missing" | "amount_mismatch";
+      settlement: null;
+    }>;
+
+export interface EarlyAccessCartSettlementStore {
+  recordExternalProof(proof: EarlyAccessCartExternalProof): Promise<CartExternalProofCommit>;
+  externalProofs(checkoutNumber: string): Promise<readonly EarlyAccessCartExternalProof[]>;
+  settlement(checkoutNumber: string): Promise<EarlyAccessCartSettlement | null>;
+  commitSettlement(input: Readonly<{
+    checkout: EarlyAccessCartCheckoutRecord;
+    evidenceRef: string;
+    externalTransactionId: string;
+    verifiedAmountCents: number;
+    verifiedCurrency: "USD";
+    actorId: string;
+    at: string;
+  }>): Promise<CartSettlementCommit>;
+  status(checkoutNumber: string): Promise<EarlyAccessCartStatus | null>;
+}
+
+export type EarlyAccessCartStorePorts =
+  & EarlyAccessCartQuoteStore
+  & EarlyAccessCartCheckoutStore
+  & EarlyAccessCartSettlementStore;
+
+export interface EarlyAccessCartReceiptOutboxPort {
+  write(receipt: EarlyAccessCartReceipt): Promise<void>;
 }

@@ -1,5 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import type {
+  EarlyAccessCartCheckout,
+  EarlyAccessCartCheckoutRecord,
   EarlyAccessCartContact,
   EarlyAccessCartItemInput,
   EarlyAccessCartQuote,
@@ -16,7 +18,8 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const IDEMPOTENCY = /^xeac_[A-Za-z0-9_-]{16,120}$/;
 const QUOTE_ID = /^xeaq_[A-Za-z0-9_-]{16,120}$/;
 const CART_NUMBER = /^XEC-[A-Z0-9]{16,40}$/;
-const ORDER_NUMBER = /^XEA-[A-Z0-9-]{8,64}$/;
+const ORDER_NUMBER = /^XEA-CART-[A-Z0-9-]{8,80}$/;
+const EVIDENCE_REF = /^eaext\.[A-Za-z0-9_-]{16,120}$/;
 
 function normalizedText(value: string): string {
   return value.trim().replace(/\s+/g, " ");
@@ -41,21 +44,36 @@ export function normalizeCartShipping(input: EarlyAccessCartShipping): EarlyAcce
     country: input.country,
   };
   if (
-    value.recipientName.length < 2 || value.line1.length < 3 || value.city.length < 2 ||
-    value.region.length < 2 || value.postalCode.length < 3 || value.country !== "US"
+    value.recipientName.length < 2 ||
+    value.line1.length < 3 ||
+    value.city.length < 2 ||
+    value.region.length < 2 ||
+    value.postalCode.length < 3 ||
+    value.country !== "US"
   ) return null;
   return Object.freeze(value);
 }
 
-export function normalizeCartItems(input: readonly EarlyAccessCartItemInput[]): readonly EarlyAccessCartItemInput[] | null {
+export function normalizeCartItems(
+  input: readonly EarlyAccessCartItemInput[],
+): readonly EarlyAccessCartItemInput[] | null {
   if (input.length < 1 || input.length > EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS) return null;
   const seen = new Set<string>();
   const output: EarlyAccessCartItemInput[] = [];
   for (const item of input) {
     if (!SAFE_ID.test(item.productId) || !SAFE_ID.test(item.variantId)) return null;
-    if (!Number.isInteger(item.quantity) || item.quantity < EARLY_ACCESS_CART_MIN_QUANTITY || item.quantity > EARLY_ACCESS_CART_MAX_QUANTITY) return null;
-    if (!Number.isSafeInteger(item.expectedUnitPriceCents) || item.expectedUnitPriceCents <= 0) return null;
+    if (
+      !Number.isInteger(item.quantity) ||
+      item.quantity < EARLY_ACCESS_CART_MIN_QUANTITY ||
+      item.quantity > EARLY_ACCESS_CART_MAX_QUANTITY
+    ) return null;
+    if (!Number.isSafeInteger(item.expectedUnitPriceCents) || item.expectedUnitPriceCents <= 0) {
+      return null;
+    }
     if (item.expectedCurrency !== "USD") return null;
+    // The source contains the escape sequence rather than a raw NUL byte. At
+    // runtime this is an unambiguous delimiter because safe identifiers cannot
+    // contain it; in source it remains grep- and diff-visible.
     const key = `${item.productId}\u0000${item.variantId}`;
     if (seen.has(key)) return null;
     seen.add(key);
@@ -76,7 +94,10 @@ function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
   if (typeof value === "object") {
     const object = value as Record<string, unknown>;
-    return `{${Object.keys(object).sort().map((key) => `${JSON.stringify(key)}:${canonical(object[key])}`).join(",")}}`;
+    return `{${Object.keys(object)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${canonical(object[key])}`)
+      .join(",")}}`;
   }
   throw new Error("unsupported cart canonical value");
 }
@@ -96,21 +117,38 @@ export function earlyAccessCartIntentHash(input: Readonly<{
 export function quoteHash(quote: EarlyAccessCartQuote): string {
   return createHash("sha256")
     .update("xenios:early-access:cart-quote:v1|", "utf8")
-    .update(canonical({
-      quoteId: quote.quoteId,
-      customerRef: quote.customerRef,
-      currency: quote.currency,
-      lines: quote.lines,
-      subtotalCents: quote.subtotalCents,
-      discountCents: quote.discountCents,
-      shippingCents: quote.shippingCents,
-      taxCents: quote.taxCents,
-      payableTotalCents: quote.payableTotalCents,
-      intentHash: quote.intentHash,
-      quotedAt: quote.quotedAt,
-      expiresAt: quote.expiresAt,
-    }), "utf8")
+    .update(
+      canonical({
+        quoteId: quote.quoteId,
+        currency: quote.currency,
+        lines: quote.lines,
+        subtotalCents: quote.subtotalCents,
+        discountCents: quote.discountCents,
+        shippingCents: quote.shippingCents,
+        taxCents: quote.taxCents,
+        payableTotalCents: quote.payableTotalCents,
+        intentHash: quote.intentHash,
+        quotedAt: quote.quotedAt,
+        expiresAt: quote.expiresAt,
+      }),
+      "utf8",
+    )
     .digest("hex");
+}
+
+export function checkoutView(record: EarlyAccessCartCheckoutRecord): EarlyAccessCartCheckout {
+  return Object.freeze({
+    cartCheckoutNumber: record.cartCheckoutNumber,
+    contact: Object.freeze({ ...record.contact }),
+    shipTo: Object.freeze({ ...record.shipTo }),
+    children: Object.freeze(record.children.map((child) => Object.freeze({ ...child }))),
+    invoice: Object.freeze({
+      ...record.invoice,
+      lines: Object.freeze(record.invoice.lines.map((line) => Object.freeze({ ...line }))),
+    }),
+    paymentState: record.paymentState,
+    placedAt: record.placedAt,
+  });
 }
 
 export function newCartQuoteId(): string {
@@ -133,6 +171,18 @@ export function cartPaymentReference(checkoutNumber: string): string {
   return `XEACART-${checkoutNumber.replace(/^XEC-/, "")}`;
 }
 
+export function newCartEvidenceRef(): string {
+  return `eaext.${randomBytes(18).toString("base64url")}`;
+}
+
+export function cartReceiptId(checkoutNumber: string): string {
+  return `xea-cart-receipt:${checkoutNumber}`;
+}
+
+export function cartChildReleaseId(orderNumber: string): string {
+  return `xea-cart-release:${orderNumber}`;
+}
+
 export function isCartIdempotencyKey(value: unknown): value is string {
   return typeof value === "string" && IDEMPOTENCY.test(value);
 }
@@ -144,4 +194,7 @@ export function isCartCheckoutNumber(value: unknown): value is string {
 }
 export function isChildOrderNumber(value: unknown): value is string {
   return typeof value === "string" && ORDER_NUMBER.test(value);
+}
+export function isExternalEvidenceRef(value: unknown): value is string {
+  return typeof value === "string" && EVIDENCE_REF.test(value);
 }
