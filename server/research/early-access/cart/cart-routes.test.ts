@@ -36,7 +36,15 @@ const UNLOCK = "/api/research/early-access/unlock";
 const QUOTE = "/api/research/early-access/cart/quote";
 const CHECKOUT = "/api/research/early-access/cart/checkout";
 
-const CART_ON = { [EARLY_ACCESS_CART_ENV]: "true" } as NodeJS.ProcessEnv;
+// NODE_ENV is stated, not inherited. Since F4 the composition refuses an
+// ephemeral cart store anywhere it cannot prove it is not production, and an
+// env object that says nothing about itself counts as production. Declaring it
+// here is the point of the rule rather than a workaround for it: a synthetic
+// environment now has to say what it is before it may improvise a store.
+const CART_ON = {
+  NODE_ENV: "test",
+  [EARLY_ACCESS_CART_ENV]: "true",
+} as NodeJS.ProcessEnv;
 
 async function cartApp(
   env: NodeJS.ProcessEnv,

@@ -106,6 +106,10 @@ import {
 import { SessionScopedEarlyAccessIdentityDirectory } from "./identity/session-scoped-identity";
 import { earlyAccessCartEnabled } from "./cart/feature-flag";
 import {
+  resolveEarlyAccessCartStore,
+  type CartStorePorts,
+} from "./cart/store-composition";
+import {
   createEarlyAccessCartCheckoutRoute,
   createEarlyAccessCartQuoteRoute,
   createEarlyAccessCartReadRoute,
@@ -319,7 +323,16 @@ export interface EarlyAccessRegistrationOptions {
    */
   readonly env?: NodeJS.ProcessEnv;
   /** Injected for tests. Defaults to the in-memory cart store. */
+  /**
+   * An EPHEMERAL cart store, for tests and local development only.
+   * Refused in production: see cart/store-composition.ts (F4).
+   */
   readonly cartStore?: InMemoryEarlyAccessCartStore;
+  /**
+   * The DURABLE cart store a production deployment must supply when the cart
+   * flag is on. Persists through research_early_access_commit_cart_checkout.
+   */
+  readonly cartCheckoutStore?: CartStorePorts;
   /**
    * SUPPLIER_CONFIRMED_ON_DEMAND records and unit holds. Both feed the
    * catalog projection at every read AND the manual admin doors that record
@@ -689,7 +702,14 @@ export function registerPrivateEarlyAccessApi(
   // The browser never loops over the single-product door to buy several
   // things: it quotes once and checks out once.
   if (earlyAccessCartEnabled(options.env ?? process.env)) {
-    const cartStore = options.cartStore ?? new InMemoryEarlyAccessCartStore();
+    // F4. Not `?? new InMemoryEarlyAccessCartStore()`. A default reached by
+    // omission would let a production deployment boot with the cart on and a
+    // checkout store in RAM, and lose paid orders on the next restart.
+    const cartStore = resolveEarlyAccessCartStore({
+      durable: options.cartCheckoutStore,
+      unsafeMemoryStore: options.cartStore,
+      env: options.env ?? process.env,
+    });
     const cartIdentity = {
       async resolve(cookieHeader: unknown) {
         const customer = await identity.resolve({ cookieHeader });
