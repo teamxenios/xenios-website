@@ -212,7 +212,7 @@ async function releasedUnitKeys(
 
 /** One unit, as a comparable key. */
 function unitKey(unit: { readonly productId: string; readonly variantId: string }): string {
-  return `${unit.productId} ${unit.variantId}`;
+  return `${unit.productId}\u0000${unit.variantId}`;
 }
 
 /** The existing non-waivable blocker that says no real supplier route exists. */

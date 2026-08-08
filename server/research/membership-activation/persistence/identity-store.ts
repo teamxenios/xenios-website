@@ -258,7 +258,7 @@ export function createInMemoryIdentityStore(): IdentityStore {
   const reviews = new Map<string, IdentityVerificationRecord>();
   const audit: IdentityAuditEvent[] = [];
 
-  const key = (tenantId: string, id: string) => `${tenantId} ${id}`;
+  const key = (tenantId: string, id: string) => `${tenantId}\u0000${id}`;
 
   return {
     async saveCase(record) {
