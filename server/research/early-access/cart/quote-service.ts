@@ -108,7 +108,7 @@ export async function quoteEarlyAccessCart(
       continue;
     }
 
-    const release = await deps.releases.decide({ unit, quantity: item.quantity, nowMs });
+    const release = await deps.releases.decide({ unit, quantity: item.quantity, nowMs, customer });
     if (!release.released) {
       refusals.push(lineRefusal(item, release.code));
       continue;

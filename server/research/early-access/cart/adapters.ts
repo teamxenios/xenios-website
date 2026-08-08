@@ -124,9 +124,27 @@ export class FounderReleaseCartPricing implements EarlyAccessCartReleasePort {
   ) {}
 
   async decide(
-    input: Readonly<{ unit: CartCatalogUnit; quantity: number; nowMs: number }>,
+    input: Readonly<{ unit: CartCatalogUnit; quantity: number; nowMs: number; customer: CartCustomer }>,
   ): Promise<CartReleaseDecision> {
-    const projection = await this.deps.catalog.load(new Date(input.nowMs), {});
+    // THE CUSTOMER'S OWN AUDIENCE, not an anonymous one.
+    //
+    // This used to load the projection with `{}`. On a hand-made fixture
+    // catalogue that is invisible, because the fixture answers the same way to
+    // everyone. On the REAL Product Control projection the audience is derived
+    // from the caller, and an empty context authorizes no audience at all, so
+    // every unit came back AUDIENCE_NOT_PERMITTED and every cart line was
+    // refused PRODUCT_HELD.
+    //
+    // The effect on a customer: the catalogue offered 18 purchasable units and
+    // the cart refused every one of them as held, which reads as being lied to
+    // by the same server that had just made the offer. Found in a real browser
+    // against the real catalogue, then pinned by cart-shelf-agreement.test.ts.
+    //
+    // Same context the storefront and the catalogue route project under, so
+    // price and availability are decided for the person actually buying.
+    const projection = await this.deps.catalog.load(new Date(input.nowMs), {
+      earlyAccessCustomer: { customerRef: input.customer.customerRef },
+    });
     const matches = projection.rows.filter(
       (row) =>
         row.productId === input.unit.productId && row.variantId === input.unit.variantId,

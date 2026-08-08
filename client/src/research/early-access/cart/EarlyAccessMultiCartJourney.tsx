@@ -44,6 +44,7 @@ import {
   rememberLastCartCheckoutNumber,
 } from "./cartAttemptStore";
 import {
+  EARLY_ACCESS_CHECKOUT_STEPS,
   listenEarlyAccessHistory,
   pushEarlyAccessStep,
   readEarlyAccessHistoryState,
@@ -110,20 +111,52 @@ export function EarlyAccessMultiCartJourney({
   useEffect(() => { checkoutRef.current = checkout; }, [checkout]);
 
   const safeStep = useCallback((requested: EarlyAccessCheckoutStep): EarlyAccessCheckoutStep => {
-    if (requested === "review" && quoteRef.current === null) return "details";
-    if ((requested === "payment" || requested === "status") && checkoutRef.current === null) {
-      return quoteRef.current === null ? "cart" : "review";
+    // Resolved to a FIXPOINT, not in one hop. Each rule sends an impossible
+    // step to the nearest step that could hold it, and that step can itself be
+    // impossible: asking for `status` with no checkout used to land on `cart`
+    // and stop there, even with an empty basket, so the customer arrived at a
+    // cart that had nothing in it and no way forward. Re-running until the
+    // answer stops changing walks all the way back to a step that is actually
+    // reachable. The rules only ever move backwards, so this terminates.
+    let current = requested;
+    for (let pass = 0; pass < EARLY_ACCESS_CHECKOUT_STEPS.length; pass += 1) {
+      let next = current;
+      if (current === "review" && quoteRef.current === null) next = "details";
+      else if ((current === "payment" || current === "status") && checkoutRef.current === null) {
+        next = quoteRef.current === null ? "cart" : "review";
+      } else if (
+        (current === "cart" || current === "details") &&
+        readBrowserCart().items.length === 0
+      ) {
+        next = "catalog";
+      }
+      if (next === current) return current;
+      current = next;
     }
-    if ((requested === "cart" || requested === "details") && readBrowserCart().items.length === 0) {
-      return "catalog";
-    }
-    return requested;
+    return "catalog";
   }, []);
 
   useEffect(() => {
-    if (readEarlyAccessHistoryState(window.history.state) === null) {
+    const restored = readEarlyAccessHistoryState(window.history.state);
+    if (restored === null) {
       replaceEarlyAccessStep("catalog");
       setStep("catalog");
+    } else {
+      // THE RESTORED STEP GOES THROUGH THE SAME GUARD AS A NAVIGATED ONE.
+      //
+      // The initial state read the history entry directly, so a reload or a
+      // re-entry carrying a stale entry landed on that step whatever the data
+      // said. Observed in a browser: signing out and unlocking again restored
+      // `status` with no checkout to show, because the guard that refuses
+      // exactly that only ran on popstate and on navigate, never on mount.
+      //
+      // Replace rather than push, so correcting an impossible entry does not
+      // add a history step the customer then has to go back through.
+      const safe = safeStep(restored.step);
+      if (safe !== restored.step) {
+        replaceEarlyAccessStep(safe);
+        setStep(safe);
+      }
     }
     return listenEarlyAccessHistory((requested) => {
       setError(null);

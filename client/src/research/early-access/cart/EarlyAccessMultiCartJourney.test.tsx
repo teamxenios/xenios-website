@@ -133,13 +133,13 @@ function text(): string {
 }
 
 function buttons(label: string): HTMLButtonElement[] {
-  return [...container.querySelectorAll("button")].filter(
+  return Array.from(container.querySelectorAll("button")).filter(
     (button) => (button.textContent ?? "").trim() === label,
   ) as HTMLButtonElement[];
 }
 
 function cardFor(name: string): HTMLElement {
-  const article = [...container.querySelectorAll("article")].find((element) =>
+  const article = Array.from(container.querySelectorAll("article")).find((element) =>
     (element.textContent ?? "").includes(name),
   );
   if (!article) throw new Error(`no card rendered for ${name}`);
@@ -155,7 +155,7 @@ async function click(element: Element): Promise<void> {
 
 async function addToCart(name: string): Promise<void> {
   const card = cardFor(name);
-  const add = [...card.querySelectorAll("button")].find(
+  const add = Array.from(card.querySelectorAll("button")).find(
     (button) => (button.textContent ?? "").trim() === "Add to cart",
   );
   if (!add) throw new Error(`no Add to cart control on ${name}`);
@@ -214,7 +214,7 @@ describe("the cart holds several different products", () => {
       search.dispatchEvent(new Event("input", { bubbles: true }));
     });
     await settle();
-    const heldFilter = [...container.querySelectorAll("button")].find((button) =>
+    const heldFilter = Array.from(container.querySelectorAll("button")).find((button) =>
       (button.textContent ?? "").startsWith("Held"),
     )!;
     await click(heldFilter);
@@ -228,7 +228,7 @@ describe("the cart holds several different products", () => {
     const card = cardFor("Gamma Research Material");
     expect(card.textContent).toContain("Temporarily unavailable");
     expect(
-      [...card.querySelectorAll("button")].map((button) => (button.textContent ?? "").trim()),
+      Array.from(card.querySelectorAll("button")).map((button) => (button.textContent ?? "").trim()),
     ).not.toContain("Add to cart");
     // And nothing about it is priced, so it cannot read as an offer.
     expect(card.textContent).toContain("Not available to order");
@@ -364,6 +364,45 @@ describe("Back and Forward move, and never buy", () => {
     // step whose data does not exist rather than showing an empty one.
     expect(text()).not.toContain("Use the payment reference");
     expect(posted.filter((entry) => entry.path.includes("/cart/checkout"))).toEqual([]);
+  });
+
+  // Found in a browser: signing out and unlocking again restored the `status`
+  // step from a stale history entry, with no checkout to show. The guard that
+  // refuses exactly that ran on popstate and on navigate, never on MOUNT.
+  it("a stale history entry does not survive a remount: an impossible step is corrected on arrival", async () => {
+    stubFetch();
+    for (const step of ["status", "payment", "review", "details", "cart"]) {
+      window.sessionStorage.clear();
+      window.history.replaceState({ earlyAccess: true, step }, "", "/research/early-access");
+      await act(async () => {
+        root.unmount();
+      });
+      root = createRoot(container);
+      await mountJourney();
+
+      // Every one of those steps needs a quote, a checkout or a basket, and
+      // this browser has none, so the only honest place to land is the shelf.
+      expect(text()).toContain("Research Catalogue");
+      expect(window.history.state).toEqual({ earlyAccess: true, step: "catalog" });
+      expect(posted.filter((entry) => entry.path.includes("/cart/"))).toEqual([]);
+    }
+  });
+
+  it("a reachable history entry is preserved on mount, so recovery still works", async () => {
+    stubFetch();
+    window.sessionStorage.setItem(
+      CART_KEY,
+      JSON.stringify({ version: 1, items: [{ productId: "prod-1", variantId: "var-1", quantity: 1 }] }),
+    );
+    window.history.replaceState({ earlyAccess: true, step: "cart" }, "", "/research/early-access");
+    await act(async () => {
+      root.unmount();
+    });
+    root = createRoot(container);
+    await mountJourney();
+    // The basket exists, so `cart` is a step this browser can actually be on.
+    expect(window.history.state).toEqual({ earlyAccess: true, step: "cart" });
+    expect(text()).toContain("Your cart");
   });
 
   it("a foreign or malformed history state falls back to the catalogue rather than throwing", async () => {

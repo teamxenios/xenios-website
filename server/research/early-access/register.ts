@@ -895,6 +895,37 @@ export function registerPrivateEarlyAccessApi(
         res as never,
       );
     });
+  } else {
+    // THE CART IS OFF, AND THE BROWSER HAS TO BE ABLE TO LEARN THAT.
+    //
+    // This route exists ONLY when the cart is disabled, and it is the reason
+    // the disabled state works at all.
+    //
+    // The client probes the capability path and falls back to the existing
+    // single-product journey on a 404, deliberately refusing to fall back on
+    // anything else, so a MISCONFIGURED cart cannot hide behind the old flow.
+    // That contract assumed an unmounted API path answers 404. In this
+    // deployment it does not. `serveStatic` ends with a catch-all that sends
+    // index.html for any unmatched path, `/api/...` included, so an unmounted
+    // cart route returns 200 with an HTML page. The browser reads a 200 whose
+    // body is not the capability object, classifies it as misconfigured, and
+    // renders the error card.
+    //
+    // Net effect without this route: turning the cart OFF, which is the
+    // DEFAULT and the current production setting, would have shown every
+    // Early Access customer an error card and no way to order at all. Found in
+    // a real browser against the real bundle; the unit tests missed it because
+    // a stubbed fetch answers 404 exactly as the contract wishes the server
+    // did.
+    //
+    // So the server states it plainly instead of leaving a hole for the SPA
+    // fallback to fill. A JSON 404 is the truthful answer to "is the cart
+    // available": it is not, and this is a real answer from the API rather
+    // than an HTML page that happens to have a 200 on it.
+    app.get(EARLY_ACCESS_CART_CAPABILITY_PATH, (_req: Request, res: Response) => {
+      res.setHeader("Cache-Control", "no-store, private, max-age=0");
+      res.status(404).json({ ok: false, code: "CART_DISABLED" });
+    });
   }
 
   app.get(EARLY_ACCESS_ORDER_INVOICE_PATH, (req: Request, res: Response) => {

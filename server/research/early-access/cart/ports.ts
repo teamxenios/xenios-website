@@ -54,7 +54,14 @@ export interface EarlyAccessCartCatalogPort {
 }
 
 export interface EarlyAccessCartReleasePort {
-  decide(input: Readonly<{ unit: CartCatalogUnit; quantity: number; nowMs: number }>): Promise<CartReleaseDecision>;
+  /**
+   * `customer` is required, and is the reason this signature changed. The
+   * release decision reads the SAME projection the shelf does, and that
+   * projection derives its audience from the caller, so deciding without one
+   * refuses everything. Making it a parameter rather than an optional means a
+   * future implementation cannot forget it and silently hold the whole cart.
+   */
+  decide(input: Readonly<{ unit: CartCatalogUnit; quantity: number; nowMs: number; customer: CartCustomer }>): Promise<CartReleaseDecision>;
 }
 
 export interface EarlyAccessCartSupplierPort {

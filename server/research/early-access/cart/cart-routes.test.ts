@@ -35,6 +35,7 @@ import {
 const UNLOCK = "/api/research/early-access/unlock";
 const QUOTE = "/api/research/early-access/cart/quote";
 const CHECKOUT = "/api/research/early-access/cart/checkout";
+const CAPABILITY = "/api/research/early-access/cart/capability";
 
 // NODE_ENV is stated, not inherited. Since F4 the composition refuses an
 // ephemeral cart store anywhere it cannot prove it is not production, and an
@@ -122,6 +123,52 @@ describe("the cart flag is exact-string and fails closed", () => {
     // handler: a disabled feature leaves no surface to probe.
     expect((await request(app).post(QUOTE).set("Cookie", cookie).send(quoteBody())).status).toBe(404);
     expect((await request(app).post(CHECKOUT).set("Cookie", cookie).send({})).status).toBe(404);
+  });
+
+  // THE ONE ROUTE THAT EXISTS ONLY WHILE THE CART IS OFF, and the reason the
+  // OFF state works at all.
+  //
+  // The browser falls back to the single-product journey on a 404 from the
+  // capability probe and refuses to fall back on anything else, so a
+  // misconfigured cart cannot hide behind the old flow. That contract assumed
+  // an unmounted API path answers 404, and in this deployment it does not:
+  // serveStatic's catch-all sends index.html for any unmatched path, so an
+  // unmounted cart route returns 200 with HTML. Without an explicit answer
+  // here, turning the cart off (the default, and current production) showed
+  // every customer an error card and no way to order.
+  //
+  // Caught in a real browser, not here, because a stubbed fetch answers 404
+  // exactly as the contract wishes the server did.
+  it("answers the capability probe with a real JSON 404 when the cart is off", async () => {
+    const { app } = await cartApp({} as NodeJS.ProcessEnv);
+    const cookie = await unlock(app);
+    const response = await request(app).get(CAPABILITY).set("Cookie", cookie);
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ ok: false, code: "CART_DISABLED" });
+    // JSON, not an HTML page with a status on it.
+    expect(response.headers["content-type"]).toMatch(/application\/json/);
+    expect(response.headers["cache-control"]).toContain("no-store");
+  });
+
+  it("answers the capability probe with the capability itself when the cart is ON", async () => {
+    const { app } = await cartApp(CART_ON);
+    const cookie = await unlock(app);
+    const response = await request(app).get(CAPABILITY).set("Cookie", cookie);
+    expect(response.status).toBe(200);
+    expect(response.body.ok).toBe(true);
+    expect(response.body.capability.enabled).toBe(true);
+    // The two answers are distinguishable, which is the whole point: the
+    // browser decides between the cart and the single-product journey on them.
+    expect(response.body.capability.maxDistinctItems).toBeGreaterThan(0);
+  });
+
+  it("the disabled capability route does not leak a session: it is still gated", async () => {
+    const { app } = await cartApp({} as NodeJS.ProcessEnv);
+    // Unauthenticated. The disabled answer carries no customer data either
+    // way, and stays the same shape, so it discloses nothing about who asked.
+    const response = await request(app).get(CAPABILITY);
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ ok: false, code: "CART_DISABLED" });
   });
 });
 
