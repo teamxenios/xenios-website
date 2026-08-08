@@ -90,7 +90,7 @@ const AFFILIATE_V2_PATH =
  * for the same reason the cart and affiliate paths above are: an undeployed
  * migration cannot be readable at the production commit.
  */
-const CART_COMPLETION_SOURCE_SHA = "df36c17091fbb570db269b446fe2e7746738fbe6";
+const CART_COMPLETION_SOURCE_SHA = "2b9d789ba705f79977a0130fc909b87aba8b6e5c";
 const CART_COMPLETION_PATH =
   "supabase/migrations/20260808100000_research_early_access_cart_completion.sql";
 const EA_STRENGTH_MIRROR_PATH =

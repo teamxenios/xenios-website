@@ -7,7 +7,7 @@ looks additive. It was set because both database shapes below actually ran.
 | Field | Value |
 | --- | --- |
 | Migration | `supabase/migrations/20260808100000_research_early_access_cart_completion.sql` |
-| Checksum (sha256) | `5777518b5f269908212024d8a3b97c9e41b83bbc76d2e60c4589d40099737bb8` |
+| Checksum (sha256) | `5e0b745ae3d8ff0844e55ba0714fd5f2bb5f446e7523594af8bfce7e1395bf22` |
 | Companion, migration 58 | `supabase/migrations/20260807193000_research_early_access_cart_checkout.sql`, sha256 `8bf36cedb3cfe523f77c2853a5ea259859c7d067825b846dc8602ba9dbcdbe3b` |
 | Engine | PostgreSQL 16.14 (`postgres:16-alpine`), container `xenios-early-access-pg16` |
 | Databases | `ea_shape_a` and `ea_shape_b`, both created disposable for this run |
@@ -204,3 +204,71 @@ reports the exit code of `tail`, which is how a failing suite can look green.
 The script is written for a FRESH database and is deliberately not idempotent:
 rerunning it against an already-exercised database fails on the first quote,
 because that quote already exists. Drop and recreate the database between runs.
+
+## Correction, 2026-08-08: the shapes above did not reproduce managed Supabase
+
+Everything above remains true of the containers it was run in, and it was not
+enough. Migration 60 failed on its FIRST production apply:
+
+```
+ERROR: function public.digest(bytea, unknown) does not exist (SQLSTATE 42883)
+At statement: 10
+```
+
+Managed Supabase installs pgcrypto into a dedicated `extensions` schema. Shape A
+and Shape B provisioned it with a bare `create extension if not exists
+pgcrypto`, which installs into `public`. So `public.digest` resolved in every
+container run and has never existed in production. The 45 behavioural
+assertions passed against an environment the product does not run in.
+
+The transaction rolled back completely: four completion tables absent, no
+routines created, migration 60 not recorded in `schema_migrations`, migration 58
+intact, site healthy, cart flag still false.
+
+### The asymmetry that made migration 58 worse than migration 60
+
+Migration 60's `cart_checkout_for_key` is `language sql`, and Postgres validates
+a SQL body at CREATE time, so it failed loudly and immediately.
+
+Migration 58's calls sit inside a plpgsql body, which is NOT resolved at
+creation. It applied cleanly, is recorded as applied, and its
+`commit_cart_checkout` would have raised 42883 on the first real customer
+checkout. A migration reported as successful left an unrunnable function in
+production. Only the disabled cart flag prevented an incident.
+
+### The fix, and why migration 58 was not edited
+
+Migration 58 is already applied. Its file is the historical record of what
+production ran, and Supabase's tooling compares migration TIMESTAMPS rather than
+content, so an edited 58 would have made Git disagree with the database while
+`migration list` still called them aligned. It stays byte-identical at
+`8bf36cedb3cfe523f77c2853a5ea259859c7d067825b846dc8602ba9dbcdbe3b`.
+
+Migration 60 has never applied, so it is legitimately correctable, and it
+already `CREATE OR REPLACE`s `commit_cart_checkout`. Correcting 60 therefore
+repairs the live migration-58 defect as it applies. No migration 61 exists,
+because none is needed. The change is five identifiers,
+`public.digest` to `extensions.digest`, and nothing else.
+
+### The shape that would have caught it
+
+`scripts/verify-early-access-cart-managed-supabase.sh` provisions pgcrypto where
+Supabase actually puts it and REFUSES TO RUN until it has proved
+`extensions.digest` exists and `public.digest` does not, because a pass in the
+wrong environment is precisely what shipped this defect. It then:
+
+- applies migration 58 unchanged and asserts its function carries the historical
+  `public.digest`, which is the state production is in today
+- applies corrected migration 60
+- applies both a second time
+- asserts `commit_cart_checkout` now resolves `extensions.digest` and no longer
+  `public.digest`, read back from `pg_get_functiondef`
+- asserts no `%cart%` routine anywhere still references `public.digest`
+- runs the full 45-assertion behavioural suite, so the digest calls EXECUTE
+  rather than merely compile
+
+PASS on PostgreSQL 16 and 17.
+
+`scripts/acceptance/verify-pgcrypto-qualification.ts` is the standing guard
+across all SQL, with the two known historical files pinned by path, occurrence
+count and checksum rather than exempted wholesale.

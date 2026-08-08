@@ -410,13 +410,13 @@
     {
       "id": "research_early_access_cart_completion",
       "path": "supabase/migrations/20260808100000_research_early_access_cart_completion.sql",
-      "sourceSha": "df36c17091fbb570db269b446fe2e7746738fbe6",
+      "sourceSha": "2b9d789ba705f79977a0130fc909b87aba8b6e5c",
       "dependsOn": [
         "research_early_access_cart_checkout"
       ],
       "checksum": {
         "algorithm": "sha256",
-        "value": "5777518b5f269908212024d8a3b97c9e41b83bbc76d2e60c4589d40099737bb8"
+        "value": "5e0b745ae3d8ff0844e55ba0714fd5f2bb5f446e7523594af8bfce7e1395bf22"
       },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
@@ -424,7 +424,7 @@
       "rollback": {
         "strategy": "retain_additive_schema_and_unset_feature_flag",
         "procedure": "supabase/production/research-early-access-cart-completion-rollback-notes.md",
-        "evidence": "Disposable PostgreSQL 16.14 apply-twice in BOTH shapes, recorded in supabase/production/research-early-access-cart-completion-apply-twice-evidence.md. Shape A (full chain, migration 54 present) and Shape B (production shaped, migration 54 and 55 absent, proven absent before the run) each applied the 58+60 candidate pair twice at psql exit 0, then passed the same 45-assertion behavioural suite: atomic commit, one parent, all children, one invoice, one payment reference, idempotency replay refused without partial writes, a FORCED mid-transaction failure leaving zero rows anywhere, proof metadata that does not mark paid, one settlement with one receipt and every child released across mixed suppliers, a retry that duplicates nothing, and zero commission or referral rows. Both shapes end with 10 cart tables at forced RLS, zero anon/authenticated/service_role direct table access, and 11 RPCs executable by service_role only. Migration 59 deliberately absent from both."
+        "evidence": "Corrected for managed Supabase (pgcrypto lives in the extensions schema; the original public.digest form failed its first production apply with SQLSTATE 42883 and rolled back). Re-proved by scripts/verify-early-access-cart-managed-supabase.sh on PostgreSQL 16 and 17 with pgcrypto installed into extensions, which also proves corrected 60 replaces migration 58's defective commit_cart_checkout. Disposable PostgreSQL 16.14 apply-twice in BOTH shapes, recorded in supabase/production/research-early-access-cart-completion-apply-twice-evidence.md. Shape A (full chain, migration 54 present) and Shape B (production shaped, migration 54 and 55 absent, proven absent before the run) each applied the 58+60 candidate pair twice at psql exit 0, then passed the same 45-assertion behavioural suite: atomic commit, one parent, all children, one invoice, one payment reference, idempotency replay refused without partial writes, a FORCED mid-transaction failure leaving zero rows anywhere, proof metadata that does not mark paid, one settlement with one receipt and every child released across mixed suppliers, a retry that duplicates nothing, and zero commission or referral rows. Both shapes end with 10 cart tables at forced RLS, zero anon/authenticated/service_role direct table access, and 11 RPCs executable by service_role only. Migration 59 deliberately absent from both."
       }
     }
   ],
