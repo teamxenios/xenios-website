@@ -8,7 +8,11 @@ import {
   EARLY_ACCESS_CART_MAX_QUANTITY,
 } from "@shared/research/early-access-cart";
 import { checkoutEarlyAccessCart, type EarlyAccessCartCheckoutDeps } from "./checkout-service";
-import { checkoutView, isCartCheckoutNumber } from "./model";
+import { isCartCheckoutNumber } from "./model";
+import {
+  customerCheckoutView,
+  projectEarlyAccessCustomerCartStatus,
+} from "./customer-status";
 import type {
   CartCustomer,
   EarlyAccessCartCheckoutStore,
@@ -151,7 +155,14 @@ export function createEarlyAccessCartCheckoutRoute(
           : result.code === "UNAVAILABLE"
             ? 503
             : 400;
-    response.status(status).json(result);
+    response.status(status).json(
+      result.ok
+        ? Object.freeze({
+            ...result,
+            checkout: customerCheckoutView(result.checkout),
+          })
+        : result,
+    );
   };
 }
 
@@ -180,7 +191,7 @@ export function createEarlyAccessCartReadRoute(
       response.status(404).json({ ok: false, code: "NOT_FOUND" });
       return;
     }
-    response.status(200).json({ ok: true, checkout: checkoutView(checkout) });
+    response.status(200).json({ ok: true, checkout: customerCheckoutView(checkout) });
   };
 }
 
@@ -189,6 +200,7 @@ export function createEarlyAccessCartStatusRoute(
     identity: EarlyAccessCartIdentityPort;
     checkouts: EarlyAccessCartCheckoutStore;
     settlements: EarlyAccessCartSettlementStore;
+    now?: () => number;
   }>,
 ) {
   return async (request: CartRequest, response: CartResponsePort): Promise<void> => {
@@ -215,6 +227,11 @@ export function createEarlyAccessCartStatusRoute(
       response.status(404).json({ ok: false, code: "NOT_FOUND" });
       return;
     }
-    response.status(200).json({ ok: true, status });
+    const nowMs = deps.now?.() ?? Date.now();
+    const nowIso = new Date(Number.isFinite(nowMs) ? nowMs : 0).toISOString();
+    response.status(200).json({
+      ok: true,
+      status: projectEarlyAccessCustomerCartStatus(status, nowIso),
+    });
   };
 }

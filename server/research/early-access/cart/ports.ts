@@ -126,12 +126,30 @@ export type CartExternalProofCommit =
   | Readonly<{ committed: true; proof: EarlyAccessCartExternalProof }>
   | Readonly<{ committed: false; reason: "checkout_unknown" | "evidence_ref_taken"; proof: EarlyAccessCartExternalProof | null }>;
 
+export type EarlyAccessHardenedCartSettlement = EarlyAccessCartSettlement & Readonly<{
+  /** Database-authoritative money time returned by the M62 settlement RPC. */
+  paymentVerifiedAt?: string;
+  /** Exactly paymentVerifiedAt + 72 hours, computed in the same transaction. */
+  shipByAt?: string;
+}>;
+
 export type CartSettlementCommit =
-  | Readonly<{ committed: true; settlement: EarlyAccessCartSettlement }>
-  | Readonly<{ committed: false; reason: "already_settled"; settlement: EarlyAccessCartSettlement }>
+  | Readonly<{ committed: true; settlement: EarlyAccessHardenedCartSettlement }>
+  | Readonly<{ committed: false; reason: "already_settled"; settlement: EarlyAccessHardenedCartSettlement }>
   | Readonly<{
       committed: false;
-      reason: "transaction_id_used" | "checkout_unknown" | "evidence_missing" | "amount_mismatch";
+      reason:
+        | "transaction_id_used"
+        | "checkout_unknown"
+        | "evidence_missing"
+        | "amount_mismatch"
+        | "agreements_not_current"
+        | "submission_missing"
+        | "submission_unreconciled"
+        | "checkout_superseded"
+        | "admin_confirmation_missing"
+        | "transaction_id_duplicate_canonical"
+        | "input_invalid";
       settlement: null;
     }>;
 
@@ -146,6 +164,8 @@ export interface EarlyAccessCartSettlementStore {
     verifiedAmountCents: number;
     verifiedCurrency: "USD";
     actorId: string;
+    confirmedFundsReceived: true;
+    confirmedAmountAndReference: true;
     at: string;
   }>): Promise<CartSettlementCommit>;
   status(checkoutNumber: string): Promise<EarlyAccessCartStatus | null>;

@@ -29,6 +29,7 @@ const RPC = Object.freeze({
   proofs: "research_early_access_cart_external_proofs",
   settlement: "research_early_access_cart_settlement",
   commitSettlement: "research_early_access_commit_cart_settlement",
+  settlementHardening: "research_early_access_cart_settlement_hardening",
   status: "research_early_access_cart_status",
 });
 
@@ -45,6 +46,13 @@ const SETTLEMENT_REASONS = [
   "checkout_unknown",
   "evidence_missing",
   "amount_mismatch",
+  "agreements_not_current",
+  "submission_missing",
+  "submission_unreconciled",
+  "checkout_superseded",
+  "admin_confirmation_missing",
+  "transaction_id_duplicate_canonical",
+  "input_invalid",
 ] as const;
 
 function isOneOf<T extends readonly string[]>(value: unknown, set: T): value is T[number] {
@@ -208,6 +216,8 @@ export class SupabaseEarlyAccessCartStore implements EarlyAccessCartStorePorts {
     verifiedAmountCents: number;
     verifiedCurrency: "USD";
     actorId: string;
+    confirmedFundsReceived: true;
+    confirmedAmountAndReference: true;
     at: string;
   }): Promise<CartSettlementCommit> {
     const raw = expectObject(
@@ -221,6 +231,8 @@ export class SupabaseEarlyAccessCartStore implements EarlyAccessCartStorePorts {
           p_verified_amount_cents: input.verifiedAmountCents,
           p_verified_currency: input.verifiedCurrency,
           p_actor_id: input.actorId,
+          p_confirmed_funds_received: input.confirmedFundsReceived,
+          p_confirmed_amount_and_reference: input.confirmedAmountAndReference,
           p_at: input.at,
         },
       }),
@@ -245,10 +257,11 @@ export class SupabaseEarlyAccessCartStore implements EarlyAccessCartStorePorts {
         // state is an error, not a success with a missing field.
         throw new EarlyAccessPersistenceError(RPC.commitSettlement);
       }
+      const hardening = await this.settlementHardening(input.checkout.cartCheckoutNumber);
       return Object.freeze({
         committed: false as const,
         reason: "already_settled" as const,
-        settlement: Object.freeze(settlement) as unknown as EarlyAccessCartSettlement,
+        settlement: Object.freeze({ ...settlement, ...(hardening ?? {}) }) as unknown as EarlyAccessCartSettlement,
       });
     }
     // Every remaining reason genuinely carries no settlement, which is what
@@ -265,6 +278,34 @@ export class SupabaseEarlyAccessCartStore implements EarlyAccessCartStorePorts {
         args: { p_checkout_number: checkoutNumber },
       }),
     );
-    return raw === null ? null : (Object.freeze(raw) as unknown as EarlyAccessCartStatus);
+    if (raw === null) return null;
+    const hardening = await this.settlementHardening(checkoutNumber);
+    if (hardening === null) {
+      return Object.freeze(raw) as unknown as EarlyAccessCartStatus;
+    }
+    const payment = nullableObject(RPC.status, raw.payment) ?? {};
+    const fulfilment = nullableObject(RPC.status, raw.fulfilment) ?? {};
+    return Object.freeze({
+      ...raw,
+      payment: Object.freeze({
+        ...payment,
+        paymentVerifiedAt: hardening.paymentVerifiedAt,
+      }),
+      fulfilment: Object.freeze({
+        ...fulfilment,
+        paymentVerifiedAt: hardening.paymentVerifiedAt,
+        shipByAt: hardening.shipByAt,
+      }),
+    }) as unknown as EarlyAccessCartStatus;
+  }
+
+  private async settlementHardening(checkoutNumber: string): Promise<Record<string, unknown> | null> {
+    return nullableObject(
+      RPC.settlementHardening,
+      await runEarlyAccessCall(this.query, {
+        fn: RPC.settlementHardening,
+        args: { p_checkout_number: checkoutNumber },
+      }),
+    );
   }
 }

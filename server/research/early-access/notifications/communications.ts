@@ -221,6 +221,7 @@ export function renderEarlyAccessOutboxEmail(
         str(payload, "verifiedAmountDisplay") ? `Amount verified: ${str(payload, "verifiedAmountDisplay")}` : "",
         str(payload, "invoiceNumber") ? `Invoice: ${str(payload, "invoiceNumber")}` : "",
         str(payload, "receiptNumber") ? `Receipt: ${str(payload, "receiptNumber")}` : "",
+        "Expected to ship within 72 hours after payment verification.",
         statusUrl ? `Your order page:\n${statusUrl}` : "",
         SIGNOFF,
       ]
@@ -233,6 +234,7 @@ export function renderEarlyAccessOutboxEmail(
       const text = [
         `Hello ${name},`,
         `Your Early Access order ${checkout} is being prepared.`,
+        "Expected to ship within 72 hours after payment verification.",
         lines ? `Items:\n${lines}` : "",
         str(payload, "releaseReference") ? `Reference: ${str(payload, "releaseReference")}` : "",
         statusUrl ? `Your order page:\n${statusUrl}` : "",

@@ -22,15 +22,60 @@ describe("cart settlement", () => {
   it("requires proof, exact money, and settles every child exactly once", async () => {
     const store = new InMemoryEarlyAccessCartStore();
     await store.commit(checkout);
-    expect((await settleEarlyAccessCart({ checkouts: store, settlements: store }, { cartCheckoutNumber: checkout.cartCheckoutNumber, evidenceRef: "eaext.1234567890123456", externalTransactionId: "txn-1", verifiedAmountCents: 1000, verifiedCurrency: "USD", actorId: "admin@example.com", at: "2026-08-08T00:01:00.000Z" })).committed).toBe(false);
+    await expect(settleEarlyAccessCart({ checkouts: store, settlements: store }, {
+      cartCheckoutNumber: checkout.cartCheckoutNumber,
+      externalTransactionId: "txn-1",
+      confirmedFundsReceived: true,
+      confirmedAmountAndReference: false,
+      actorId: "admin@example.com",
+      at: "2026-08-08T00:01:00.000Z",
+    })).resolves.toMatchObject({ committed: false, reason: "admin_confirmation_missing" });
+    expect((await settleEarlyAccessCart({ checkouts: store, settlements: store }, { cartCheckoutNumber: checkout.cartCheckoutNumber, externalTransactionId: "txn-1", confirmedFundsReceived: true, confirmedAmountAndReference: true, actorId: "admin@example.com", at: "2026-08-08T00:01:00.000Z" })).committed).toBe(false);
     const proof = await recordEarlyAccessCartExternalProof({ checkouts: store, settlements: store }, { cartCheckoutNumber: checkout.cartCheckoutNumber, sha256: "b".repeat(64), filename: "proof.png", contentType: "image/png", byteSize: 100, provenanceNote: "Received by the named operator off platform", actorId: "admin@example.com", at: "2026-08-08T00:01:00.000Z" });
     expect(proof.committed).toBe(true);
     if (!proof.committed) return;
-    const settled = await settleEarlyAccessCart({ checkouts: store, settlements: store }, { cartCheckoutNumber: checkout.cartCheckoutNumber, evidenceRef: proof.proof.evidenceRef, externalTransactionId: "txn-1", verifiedAmountCents: 1000, verifiedCurrency: "USD", actorId: "admin@example.com", at: "2026-08-08T00:02:00.000Z" });
+    const settled = await settleEarlyAccessCart({ checkouts: store, settlements: store }, { cartCheckoutNumber: checkout.cartCheckoutNumber, externalTransactionId: "txn-1", confirmedFundsReceived: true, confirmedAmountAndReference: true, actorId: "admin@example.com", at: "2026-08-08T00:02:00.000Z" });
     expect(settled.committed).toBe(true);
     if (!settled.committed) return;
     expect(settled.settlement.childReleases).toHaveLength(1);
-    const replay = await settleEarlyAccessCart({ checkouts: store, settlements: store }, { cartCheckoutNumber: checkout.cartCheckoutNumber, evidenceRef: proof.proof.evidenceRef, externalTransactionId: "txn-1", verifiedAmountCents: 1000, verifiedCurrency: "USD", actorId: "admin@example.com", at: "2026-08-08T00:03:00.000Z" });
+    expect(settled.settlement.paymentVerifiedAt).toBe("2026-08-08T00:02:00.000Z");
+    expect(settled.settlement.shipByAt).toBe("2026-08-11T00:02:00.000Z");
+    const replay = await settleEarlyAccessCart({ checkouts: store, settlements: store }, { cartCheckoutNumber: checkout.cartCheckoutNumber, externalTransactionId: "txn-1", confirmedFundsReceived: true, confirmedAmountAndReference: true, actorId: "admin@example.com", at: "2026-08-08T00:03:00.000Z" });
     expect(replay).toMatchObject({ committed: false, reason: "already_settled" });
+  });
+
+  it("bridges an accepted transient submission to legacy proof metadata in the same action", async () => {
+    const store = new InMemoryEarlyAccessCartStore();
+    await store.commit(checkout);
+    const settled = await settleEarlyAccessCart({
+      checkouts: store,
+      settlements: store,
+      submissionEvidence: {
+        async acceptedForCheckout() {
+          return {
+            submissionId: "eas_1234567890123456",
+            sha256: "c".repeat(64),
+            filename: "payment-proof.pdf",
+            contentType: "application/pdf",
+            byteSize: 2048,
+          };
+        },
+      },
+    }, {
+      cartCheckoutNumber: checkout.cartCheckoutNumber,
+      externalTransactionId: "provider-txn-bridge-1",
+      confirmedFundsReceived: true,
+      confirmedAmountAndReference: true,
+      actorId: "admin@example.com",
+      at: "2026-08-08T00:02:00.000Z",
+    });
+    expect(settled.committed).toBe(true);
+    expect(await store.externalProofs(checkout.cartCheckoutNumber)).toMatchObject([
+      {
+        filename: "payment-proof.pdf",
+        storedOnPlatform: false,
+        recordedBy: "admin@example.com",
+      },
+    ]);
   });
 });

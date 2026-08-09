@@ -137,6 +137,7 @@ async function realApp(): Promise<{
   app: Express;
   suppliers: ControlledSupplierDirectory;
   ledger: InMemoryEarlyAccessReleaseLedger;
+  cartStore: InMemoryEarlyAccessCartStore;
 }> {
   const confirmations = new InMemorySupplierConfirmationStore();
   const source = new ProductControlCatalogSource({
@@ -162,13 +163,14 @@ async function realApp(): Promise<{
   // than a claim in a comment.
   const suppliers = new ControlledSupplierDirectory();
 
+  const cartStore = new InMemoryEarlyAccessCartStore();
   const app = express();
   app.use(express.json());
   registerPrivateEarlyAccessApi(app, {
     config: EARLY_ACCESS_TEST_CONFIG,
     sessionIdentity: true,
     env: CART_ON,
-    cartStore: new InMemoryEarlyAccessCartStore(),
+    cartStore,
     catalog: source,
     releases: ledger,
     supplierConfirmations: confirmations,
@@ -178,7 +180,7 @@ async function realApp(): Promise<{
     referrals: new StubReferralResolver(null),
     suppliers,
   });
-  return { app, suppliers, ledger };
+  return { app, suppliers, ledger, cartStore };
 }
 
 async function unlock(app: Express): Promise<string> {
@@ -358,7 +360,7 @@ describe("A and C: losing the supplier route withdraws the unit from every door"
 
 describe("B: catalogue, quote and checkout consult the SAME authority", () => {
   it("the catalogue asks the mounted directory, and so does the quote", async () => {
-    const { app, suppliers } = await realApp();
+    const { app, suppliers, cartStore } = await realApp();
     const cookie = await unlock(app);
 
     suppliers.resetCalls();
@@ -382,11 +384,14 @@ describe("B: catalogue, quote and checkout consult the SAME authority", () => {
     });
     expect(placed.status).toBe(201);
     expect(placed.body.checkout.children).toHaveLength(1);
-    expect(placed.body.checkout.children[0].supplierId).toBe("supplier-apex");
-    expect(placed.body.checkout.children[0].supplierSku).toBe(`APEX-${unit.productId}`);
+    expect(placed.body.checkout.children[0].supplierId).toBeUndefined();
+    expect(placed.body.checkout.children[0].supplierSku).toBeUndefined();
+    const committed = await cartStore.byCheckoutNumber(placed.body.checkout.cartCheckoutNumber);
+    expect(committed?.children[0].supplierId).toBe("supplier-apex");
+    expect(committed?.children[0].supplierSku).toBe(`APEX-${unit.productId}`);
     // Never blank, and never invented to make the release group succeed.
-    expect(placed.body.checkout.children[0].supplierId).not.toBe("");
-    expect(placed.body.checkout.children[0].supplierSku).not.toBe("");
+    expect(committed?.children[0].supplierId).not.toBe("");
+    expect(committed?.children[0].supplierSku).not.toBe("");
   });
 });
 
