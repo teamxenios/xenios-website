@@ -93,6 +93,10 @@ const AFFILIATE_V2_PATH =
 const CART_COMPLETION_SOURCE_SHA = "2b9d789ba705f79977a0130fc909b87aba8b6e5c";
 const CART_COMPLETION_PATH =
   "supabase/migrations/20260808100000_research_early_access_cart_completion.sql";
+const CART_DUPLICATE_GUARD_SOURCE_SHA =
+  "4031cace41eba98f283e63b8ed3a14f555f6d79a";
+const CART_DUPLICATE_GUARD_PATH =
+  "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql";
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -777,6 +781,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(CART_AFFILIATE_SOURCE_SHA);
           } else if (path === CART_COMPLETION_PATH) {
             expect(sourceSha).toBe(CART_COMPLETION_SOURCE_SHA);
+          } else if (path === CART_DUPLICATE_GUARD_PATH) {
+            expect(sourceSha).toBe(CART_DUPLICATE_GUARD_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
