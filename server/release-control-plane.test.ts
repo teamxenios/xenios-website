@@ -97,7 +97,7 @@ const CART_DUPLICATE_GUARD_SOURCE_SHA =
   "4031cace41eba98f283e63b8ed3a14f555f6d79a";
 const CART_DUPLICATE_GUARD_PATH =
   "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql";
-const EA_HARDENING_SOURCE_SHA = "fc053c31c9139119ccd108eea200f411bb4084ad";
+const EA_HARDENING_SOURCE_SHA = "f259a1b672cba1fab56d06b190b6102d0fd5aae8";
 const EA_HARDENING_PATH =
   "supabase/migrations/20260809130000_research_early_access_hardening.sql";
 const EA_STRENGTH_MIRROR_PATH =
