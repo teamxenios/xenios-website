@@ -36,13 +36,14 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 M58="supabase/migrations/20260807193000_research_early_access_cart_checkout.sql"
 M60="supabase/migrations/20260808100000_research_early_access_cart_completion.sql"
 M61="supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql"
+M62="supabase/migrations/20260809130000_research_early_access_hardening.sql"
 PREREQ=(
   "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql"
   "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql"
   "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql"
   "supabase/migrations/20260804123000_research_early_access_reservation_holds.sql"
 )
-for f in "${PREREQ[@]}" "$M58" "$M60" "$M61"; do
+for f in "${PREREQ[@]}" "$M58" "$M60" "$M61" "$M62"; do
   [ -f "$REPO_ROOT/$f" ] || { echo "missing $f"; exit 1; }
 done
 
@@ -136,6 +137,38 @@ echo "== behavioural suite, so the digest calls actually EXECUTE =="
 psql_run cartshape < "$REPO_ROOT/supabase/production/research-early-access-cart-completion-verification.sql" \
   || { echo "FAILED behavioural suite"; exit 1; }
 echo "   ok (the invariant does not break the ordinary cart flow)"
+
+echo "== applying migration 62, durable hardening =="
+psql_run cartshape < "$REPO_ROOT/$M62" || { echo "FAILED migration 62"; exit 1; }
+psql_run cartshape < "$REPO_ROOT/$M62" || { echo "FAILED migration 62 second apply"; exit 1; }
+echo "   ok (applied twice)"
+
+OLD_SETTLEMENT=$(psql_q cartshape "select has_function_privilege('service_role','public.research_early_access_commit_cart_settlement_m60_core(text,text,text,bigint,text,text,timestamptz)','execute');")
+NEW_SETTLEMENT=$(psql_q cartshape "select has_function_privilege('service_role','public.research_early_access_commit_cart_settlement(text,text,text,bigint,text,text,boolean,boolean,timestamptz)','execute');")
+echo "   private M60 core callable by service_role : $OLD_SETTLEMENT (must be f)"
+echo "   hardened settlement callable by service_role: $NEW_SETTLEMENT (must be t)"
+[ "$OLD_SETTLEMENT" = "f" ] && [ "$NEW_SETTLEMENT" = "t" ] || { echo "FAILED: settlement privilege boundary"; exit 1; }
+
+echo "== M62 durable invariant suite =="
+psql_run cartshape < "$REPO_ROOT/supabase/verification/research-early-access-hardening.verify.sql" \
+  || { echo "FAILED M62 durable invariant suite"; exit 1; }
+echo "   ok"
+
+echo "== M62 six-way settlement concurrency =="
+for N in $(seq 1 6); do
+  psql_q cartshape "select public.research_early_access_commit_cart_settlement(
+    'XEC-M62CONCURRENT00000000','WIRE-M62-CONCURRENT','eaext.M62ConcurrentEvid01',
+    12000,'USD','admin@example.com',true,true,'2000-01-01T00:00:00Z');" \
+    > "/tmp/${NAME}-m62-settle-${N}.out" &
+done
+wait
+M62_SETTLEMENTS=$(psql_q cartshape "select count(*) from public.research_early_access_cart_settlements s join public.research_early_access_cart_checkouts c on c.id=s.cart_checkout_id where c.checkout_number='XEC-M62CONCURRENT00000000';")
+M62_RECEIPTS=$(psql_q cartshape "select count(*) from public.research_early_access_cart_receipts r join public.research_early_access_cart_checkouts c on c.id=r.cart_checkout_id where c.checkout_number='XEC-M62CONCURRENT00000000';")
+M62_RELEASES=$(psql_q cartshape "select count(*) from public.research_early_access_cart_child_releases r join public.research_early_access_cart_checkouts c on c.id=r.cart_checkout_id where c.checkout_number='XEC-M62CONCURRENT00000000';")
+M62_HARDENING=$(psql_q cartshape "select count(*) from public.research_early_access_cart_settlement_hardening h join public.research_early_access_cart_checkouts c on c.id=h.cart_checkout_id where c.checkout_number='XEC-M62CONCURRENT00000000';")
+echo "   settlements=$M62_SETTLEMENTS receipts=$M62_RECEIPTS releases=$M62_RELEASES hardening=$M62_HARDENING (all must be 1)"
+[ "$M62_SETTLEMENTS" = "1" ] && [ "$M62_RECEIPTS" = "1" ] && [ "$M62_RELEASES" = "1" ] && [ "$M62_HARDENING" = "1" ] \
+  || { echo "FAILED: six-way settlement did not converge exactly once"; exit 1; }
 
 echo "== ONE ACTIVE CHECKOUT PER QUOTE, enforced by the database =="
 IDX=$(psql_q cartshape "select count(*) from pg_indexes where indexname='research_ea_cart_checkout_active_quote_uidx';")
@@ -265,6 +298,25 @@ echo "   audit event: $EVT (must be 1, and exactly 1 after applying twice)"
 [ "$ROWS" = "2" ] || { echo "FAILED: history was destroyed"; exit 1; }
 [ "$EVT" = "1" ] || { echo "FAILED: the audit event is missing or duplicated"; exit 1; }
 
+echo "== M62 founder compatibility binds the exact retained checkout only =="
+psql_run cartdup < "$REPO_ROOT/$M62" || { echo "FAILED M62 over the real founder fixture"; exit 1; }
+FOUNDER_BIND=$(psql_q cartdup "select public.research_early_access_record_legal_binding(jsonb_build_object(
+  'customerRef','eac_d80e62ad2039e515b943d4d7cb6c2e32',
+  'memberId','44444444-4444-4444-4444-444444444444',
+  'establishedBy','admin_attested','verifiedAt','2026-08-09T12:10:00Z',
+  'attestedBy','founder:samuel-boadu','aliasRefs',jsonb_build_array()
+))->>'recorded';")
+FAKE_BIND=$(psql_q cartdup "select public.research_early_access_record_legal_binding(jsonb_build_object(
+  'customerRef','eac_99999999999999999999999999999999',
+  'memberId','55555555-5555-5555-5555-555555555555',
+  'establishedBy','admin_attested','verifiedAt','2026-08-09T12:10:00Z',
+  'attestedBy','founder:samuel-boadu','aliasRefs',jsonb_build_array()
+))->>'reason';")
+echo "   exact founder binding recorded : $FOUNDER_BIND (must be true)"
+echo "   generic admin attestation      : $FAKE_BIND (must be admin_attestation_not_allowed)"
+[ "$FOUNDER_BIND" = "true" ] && [ "$FAKE_BIND" = "admin_attestation_not_allowed" ] \
+  || { echo "FAILED: founder compatibility scope widened or refused the founder"; exit 1; }
+
 # Fail-closed: the same migration must ABORT rather than guess when the world
 # does not match what it was designed against.
 docker exec "$NAME" psql -U postgres -v ON_ERROR_STOP=1 -q -c "create database cartdrift;" || exit 1
@@ -306,5 +358,46 @@ DRIFT=$(psql_q cartdrift "select coalesce(disposition,'active') from public.rese
 echo "   a PAID duplicate aborts the migration instead of being superseded : $DRIFT (must be 'active')"
 [ "$DRIFT" = "active" ] || { echo "FAILED: a paid duplicate was dispositioned anyway"; exit 1; }
 
+echo "== M62 canonical-identity drift aborts atomically instead of guessing =="
+docker exec "$NAME" psql -U postgres -v ON_ERROR_STOP=1 -q -c "create database m62drift;" || exit 1
+psql_run m62drift <<'SQL' || exit 1
+do $$ begin
+  if not exists (select 1 from pg_roles where rolname='anon') then create role anon nologin noinherit; end if;
+  if not exists (select 1 from pg_roles where rolname='authenticated') then create role authenticated nologin noinherit; end if;
+  if not exists (select 1 from pg_roles where rolname='service_role') then create role service_role nologin noinherit bypassrls; end if;
+end $$;
+create schema if not exists extensions;
+create extension if not exists pgcrypto with schema extensions;
+SQL
+for f in "${PREREQ[@]}"; do psql_run m62drift < "$REPO_ROOT/$f" || exit 1; done
+psql_run m62drift < "$REPO_ROOT/$M58" || exit 1
+psql_run m62drift < "$REPO_ROOT/$M60" || exit 1
+psql_run m62drift < "$REPO_ROOT/$M61" || exit 1
+ins_quote m62drift 'xeaq_m62drift00000000001' 'eac_77777777777777777777777777777777' || exit 1
+ins_quote m62drift 'xeaq_m62drift00000000002' 'eac_88888888888888888888888888888888' || exit 1
+ins_checkout m62drift 'XEC-M62DRIFTAAAAAAAAAAAAAA' "$(printf '7%.0s' $(seq 64))" 'xeaq_m62drift00000000001' || exit 1
+ins_checkout m62drift 'XEC-M62DRIFTBBBBBBBBBBBBBB' "$(printf '8%.0s' $(seq 64))" 'xeaq_m62drift00000000002' || exit 1
+psql_run m62drift <<'SQL' || exit 1
+insert into public.research_early_access_cart_settlements(
+  cart_checkout_id,external_transaction_id,reviewed_evidence_ref,verified_amount_cents,
+  verified_currency,actor_id,record,settled_at
+)
+select id,'Ab C','eaext.drift0000000000001',100,'USD','drift:test','{}',clock_timestamp()
+  from public.research_early_access_cart_checkouts where checkout_number='XEC-M62DRIFTAAAAAAAAAAAAAA';
+insert into public.research_early_access_cart_settlements(
+  cart_checkout_id,external_transaction_id,reviewed_evidence_ref,verified_amount_cents,
+  verified_currency,actor_id,record,settled_at
+)
+select id,'  ab   c  ','eaext.drift0000000000002',100,'USD','drift:test','{}',clock_timestamp()
+  from public.research_early_access_cart_checkouts where checkout_number='XEC-M62DRIFTBBBBBBBBBBBBBB';
+SQL
+if psql_run m62drift < "$REPO_ROOT/$M62" >/dev/null 2>&1; then
+  echo "FAILED: M62 guessed through a pre-existing canonical transaction collision"
+  exit 1
+fi
+M62_ROLLBACK=$(psql_q m62drift "select to_regclass('public.research_early_access_legal_bindings') is null and to_regprocedure('public.research_early_access_commit_cart_settlement(text,text,text,bigint,text,text,timestamptz)') is not null;")
+echo "   failed apply left no M62 tables and preserved M60 RPC: $M62_ROLLBACK (must be t)"
+[ "$M62_ROLLBACK" = "t" ] || { echo "FAILED: M62 drift apply was not atomic"; exit 1; }
+
 echo
-echo "MANAGED SUPABASE SHAPE: PASS (postgres ${MAJOR}, pgcrypto in extensions, duplicate guard enforced)"
+echo "MANAGED SUPABASE SHAPE: PASS (postgres ${MAJOR}, pgcrypto in extensions, M62 durable hardening enforced)"
