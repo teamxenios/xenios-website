@@ -154,6 +154,22 @@ psql_run cartshape < "$REPO_ROOT/supabase/verification/research-early-access-har
   || { echo "FAILED M62 durable invariant suite"; exit 1; }
 echo "   ok"
 
+echo "== M62 six-way atomic proof claim =="
+for N in $(seq 1 6); do
+  psql_q cartshape "select public.research_early_access_begin_proof_submission(jsonb_build_object(
+    'submissionId','eaps_claimrace_submission_0001','cartCheckoutNumber','XEC-M62CLAIMRACE000000000',
+    'customerRef','eac_dddddddddddddddddddddddddddddddd','memberId','44444444-4444-4444-4444-444444444444',
+    'method',jsonb_build_object('code','ach_wire','methodName','ACH / bank transfer / bank wire','registryVersion','registry-v2','presentedAt','2026-08-09T12:13:00Z'),
+    'filename','claim-race.pdf','contentType','application/pdf','byteSize',1024,'proofSha256',repeat('a',64),'packageVersion',repeat('b',24)
+  ),'eask_claimrace_submission_0001');" > "/tmp/${NAME}-m62-claim-${N}.out" &
+done
+wait
+M62_CLAIMED=$(grep -h -o '"claimed": true' /tmp/${NAME}-m62-claim-*.out | wc -l | tr -d ' ')
+M62_SUBMISSIONS=$(psql_q cartshape "select count(*) from public.research_early_access_proof_submissions s join public.research_early_access_cart_checkouts c on c.id=s.cart_checkout_id where c.checkout_number='XEC-M62CLAIMRACE000000000';")
+echo "   claimed=$M62_CLAIMED submissions=$M62_SUBMISSIONS (both must be 1)"
+[ "$M62_CLAIMED" = "1" ] && [ "$M62_SUBMISSIONS" = "1" ] \
+  || { echo "FAILED: six-way proof claim did not converge to one sender"; exit 1; }
+
 echo "== M62 six-way settlement concurrency =="
 for N in $(seq 1 6); do
   psql_q cartshape "select public.research_early_access_commit_cart_settlement(

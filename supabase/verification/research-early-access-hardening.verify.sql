@@ -82,6 +82,14 @@ select pg_temp.want(
       and (data_type='bytea' or column_name ~ '(object|path|base64|bytes|body|payload)')),
   'proof submissions have no bytes, base64, object path or payload column');
 select pg_temp.want(
+  (select count(*)=5 from information_schema.columns
+    where table_schema='public' and table_name='research_early_access_proof_submissions'
+      and column_name in ('customer_ref','updated_at','attempts','reconciled_at','internal_email_acceptance')),
+  'proof submissions persist the complete operational store state');
+select pg_temp.want(
+  to_regclass('public.research_ea_proof_submission_reconciliation_idx') is not null,
+  'stale and unreconciled submissions have a durable sweep index');
+select pg_temp.want(
   not exists(
     select 1
     from pg_catalog.pg_proc as p
@@ -125,7 +133,8 @@ select pg_temp.want(
 
 select pg_temp.want(
   (public.research_early_access_begin_proof_submission(jsonb_build_object(
-    'submissionId','eas_primary_submission_0001','cartCheckoutNumber',:'checkout_primary',
+    'submissionId','eaps_primary_submission_0001','cartCheckoutNumber',:'checkout_primary',
+    'customerRef','eac_'||repeat('a',32),
     'memberId','11111111-1111-1111-1111-111111111111',
     'method',jsonb_build_object('code','wire_transfer','methodName','Wire transfer','registryVersion','registry-v1','presentedAt','2026-08-09T10:03:00Z'),
     'filename','payment.pdf','contentType','application/pdf','byteSize',1024,'proofSha256',repeat('c',64),'packageVersion',repeat('a',24)
@@ -134,6 +143,7 @@ select pg_temp.want(
 select pg_temp.want(
   (public.research_early_access_begin_proof_submission(jsonb_build_object(
     'submissionId','eas_other_submission_0000001','cartCheckoutNumber',:'checkout_primary',
+    'customerRef','eac_'||repeat('a',32),
     'memberId','11111111-1111-1111-1111-111111111111',
     'method',jsonb_build_object('code','wire_transfer','methodName','Wire transfer','registryVersion','registry-v1','presentedAt','2026-08-09T10:03:00Z'),
     'filename','other.pdf','contentType','application/pdf','byteSize',1024,'proofSha256',repeat('d',64),'packageVersion',repeat('a',24)
@@ -148,8 +158,13 @@ select pg_temp.want(
   'customer submission projection contains only customer-safe keys');
 select pg_temp.want(
   public.research_early_access_submission_admin_view(:'checkout_primary') ?&
-    array['submissionKey','internalRecipient','providerMessageId','lastError','proofSha256','memberId'],
+    array['submissionKey','internalRecipient','providerMessageId','lastError','proofSha256','memberId',
+      'customerRef','packageVersion','updatedAt','attempts','reconciledAt'],
   'admin submission projection is a separate operational view');
+select pg_temp.want(
+  (public.research_early_access_submission_admin_view('eaps_primary_submission_0001')->>'submissionId')
+    ='eaps_primary_submission_0001',
+  'admin submission projection supports the store byId lookup');
 
 select pg_temp.want(
   (public.research_early_access_commit_cart_settlement(
@@ -157,14 +172,18 @@ select pg_temp.want(
   )->>'reason')='submission_missing','pending submission cannot settle');
 
 select public.research_early_access_confirm_submission_email(
-  'eas_primary_submission_0001','eask_primary_submission_0001','unknown',null,'provider accepted; confirm write unknown');
+  'eaps_primary_submission_0001','eask_primary_submission_0001','unknown',null,'provider accepted; confirm write unknown');
 select pg_temp.want(
   (public.research_early_access_commit_cart_settlement(
     :'checkout_primary','WIRE-M62-001','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',true,true,'2000-01-01T00:00:00Z'
   )->>'reason')='submission_unreconciled','unknown provider acceptance cannot settle');
 
 select public.research_early_access_confirm_submission_email(
-  'eas_primary_submission_0001','eask_primary_submission_0001','accepted','provider-message-m62-1',null);
+  'eaps_primary_submission_0001','eask_primary_submission_0001','accepted','provider-message-m62-1',null);
+select pg_temp.want(
+  (public.research_early_access_submission_admin_view('eaps_primary_submission_0001')->>'attempts')::integer=2
+  and (public.research_early_access_submission_admin_view('eaps_primary_submission_0001')->>'internalEmailAcceptance')='accepted',
+  'acceptance vocabulary remains distinct and durable attempts are counted');
 select pg_temp.want(
   (public.research_early_access_commit_cart_settlement(
     :'checkout_primary','WIRE-M62-001','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',false,true,'2000-01-01T00:00:00Z'
@@ -229,6 +248,7 @@ select public.research_early_access_register_agreement_package(jsonb_build_objec
 select pg_temp.want(
   (public.research_early_access_begin_proof_submission(jsonb_build_object(
     'submissionId','eas_secondary_submission_01','cartCheckoutNumber',:'checkout_secondary',
+    'customerRef','eac_'||repeat('b',32),
     'memberId','22222222-2222-2222-2222-222222222222',
     'method',jsonb_build_object('code','wire_transfer','methodName','Wire transfer','registryVersion','registry-v2','presentedAt','2026-08-09T11:03:00Z'),
     'filename','second.pdf','contentType','application/pdf','byteSize',2048,'proofSha256',repeat('e',64),'packageVersion',repeat('a',24)
@@ -247,6 +267,7 @@ select pg_temp.want((select count(*)=2 and count(supersedes_attestation_id)=1
 
 select public.research_early_access_begin_proof_submission(jsonb_build_object(
   'submissionId','eas_secondary_submission_01','cartCheckoutNumber',:'checkout_secondary',
+  'customerRef','eac_'||repeat('b',32),
   'memberId','22222222-2222-2222-2222-222222222222',
   'method',jsonb_build_object('code','wire_transfer','methodName','Wire transfer','registryVersion','registry-v2','presentedAt','2026-08-09T11:06:00Z'),
   'filename','second.pdf','contentType','application/pdf','byteSize',2048,'proofSha256',repeat('e',64),'packageVersion',repeat('b',24)
@@ -304,6 +325,7 @@ select public.research_early_access_record_agreement_attestation(jsonb_build_obj
   'signedAt',jsonb_build_object('manual_payment_bridge_terms','2026-08-09T12:01:00Z','arbitration_agreement','2026-08-09T12:02:00Z')),'legal:test');
 select public.research_early_access_begin_proof_submission(jsonb_build_object(
   'submissionId','eas_concurrent_submission_01','cartCheckoutNumber',:'checkout_concurrent',
+  'customerRef','eac_'||repeat('c',32),
   'memberId','33333333-3333-3333-3333-333333333333',
   'method',jsonb_build_object('code','wire_transfer','methodName','Wire transfer','registryVersion','registry-v2','presentedAt','2026-08-09T12:03:00Z'),
   'filename','concurrent.pdf','contentType','application/pdf','byteSize',4096,'proofSha256',repeat('f',64),'packageVersion',repeat('b',24)
@@ -314,5 +336,15 @@ select public.research_early_access_record_cart_external_proof(jsonb_build_objec
   'cartCheckoutNumber',:'checkout_concurrent','evidenceRef','eaext.M62ConcurrentEvid01','sha256',repeat('f',64),
   'filename','concurrent.pdf','contentType','application/pdf','byteSize',4096,'provenanceNote','received by disposable harness',
   'recordedBy','admin@example.com','recordedAt','2026-08-09T12:04:00Z'));
+
+-- Ready a separate checkout for the shell-level six-way atomic claim probe.
+select pg_temp.seed_checkout('CLAIMRACE','eac_'||repeat('d',32),10000) as checkout_claimrace \gset
+select public.research_early_access_record_legal_binding(jsonb_build_object(
+  'customerRef','eac_'||repeat('d',32),'memberId','44444444-4444-4444-4444-444444444444',
+  'establishedBy','verified_link','verifiedAt','2026-08-09T12:10:00Z','attestedBy',null,'aliasRefs',jsonb_build_array()));
+select public.research_early_access_record_agreement_attestation(jsonb_build_object(
+  'attestationId','eaa_claimrace_attestation_01','cartCheckoutNumber',:'checkout_claimrace',
+  'memberId','44444444-4444-4444-4444-444444444444','packageId','ea-package','packageVersion',repeat('b',24),
+  'signedAt',jsonb_build_object('manual_payment_bridge_terms','2026-08-09T12:11:00Z','arbitration_agreement','2026-08-09T12:12:00Z')),'legal:test');
 
 \echo 'ALL M62 HARDENING ASSERTIONS PASSED'

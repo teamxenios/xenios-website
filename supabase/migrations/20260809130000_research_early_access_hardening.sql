@@ -87,9 +87,10 @@ create index if not exists research_ea_attestation_checkout_idx
 
 create table if not exists public.research_early_access_proof_submissions (
   id uuid primary key default gen_random_uuid(),
-  submission_id text not null unique check (submission_id ~ '^eas_[A-Za-z0-9_-]{16,120}$'),
+  submission_id text not null unique check (submission_id ~ '^ea(ps|s)_[A-Za-z0-9_-]{16,120}$'),
   submission_key text not null unique check (submission_key ~ '^eask_[A-Za-z0-9_-]{16,120}$'),
   cart_checkout_id uuid not null unique references public.research_early_access_cart_checkouts(id) on delete restrict,
+  customer_ref text not null check (customer_ref ~ '^eac_[a-f0-9]{32}$'),
   member_id uuid not null,
   method_code text not null check (length(btrim(method_code)) between 2 and 80),
   method_name text not null check (length(btrim(method_name)) between 2 and 160),
@@ -107,6 +108,8 @@ create table if not exists public.research_early_access_proof_submissions (
   provider_message_id text,
   last_error text,
   accepted_at timestamptz,
+  attempts integer not null default 0 check (attempts >= 0),
+  reconciled_at timestamptz,
   created_at timestamptz not null default pg_catalog.clock_timestamp(),
   updated_at timestamptz not null default pg_catalog.clock_timestamp(),
   constraint research_ea_submission_email_state_check check (
@@ -116,6 +119,10 @@ create table if not exists public.research_early_access_proof_submissions (
     or (internal_email_acceptance = 'failed' and accepted_at is null and length(btrim(last_error)) between 1 and 1000)
   )
 );
+
+create index if not exists research_ea_proof_submission_reconciliation_idx
+  on public.research_early_access_proof_submissions(updated_at)
+  where internal_email_acceptance in ('not_attempted','unknown') and reconciled_at is null;
 
 create table if not exists public.research_early_access_cart_transaction_ids (
   id uuid primary key default gen_random_uuid(),
@@ -438,6 +445,42 @@ returns jsonb language sql stable security definer set search_path = pg_catalog 
     and not exists(select 1 from public.research_early_access_agreement_attestations n where n.supersedes_attestation_id=a.attestation_id)
 $$;
 
+-- One named-field projection for the durable ProofSubmissionStore row. This is
+-- private implementation machinery for the four reviewed submission RPCs.
+create or replace function public.research_early_access_proof_submission_record(p_submission_id text)
+returns jsonb language sql stable security definer set search_path = pg_catalog as $$
+  select jsonb_build_object(
+    'submissionId',s.submission_id,
+    'cartCheckoutNumber',c.checkout_number,
+    'customerRef',s.customer_ref,
+    'memberId',s.member_id::text,
+    'method',jsonb_build_object(
+      'code',s.method_code,
+      'methodName',s.method_name,
+      'registryVersion',s.registry_version,
+      'presentedAt',s.presented_at
+    ),
+    'filename',s.filename,
+    'contentType',s.content_type,
+    'byteSize',s.byte_size,
+    'proofSha256',s.proof_sha256,
+    'packageVersion',s.package_version,
+    'createdAt',s.created_at,
+    'internalEmailAcceptance',s.internal_email_acceptance,
+    'providerMessageId',s.provider_message_id,
+    'lastError',s.last_error,
+    'updatedAt',s.updated_at,
+    'attempts',s.attempts,
+    'reconciledAt',s.reconciled_at
+  )
+  from public.research_early_access_proof_submissions s
+  join public.research_early_access_cart_checkouts c on c.id=s.cart_checkout_id
+  where s.submission_id=p_submission_id
+$$;
+
+revoke all on function public.research_early_access_proof_submission_record(text)
+  from public,anon,authenticated,service_role;
+
 create or replace function public.research_early_access_begin_proof_submission(p_submission jsonb, p_submission_key text)
 returns jsonb language plpgsql security definer set search_path = pg_catalog as $$
 declare
@@ -445,20 +488,28 @@ declare
   v_attestation public.research_early_access_agreement_attestations%rowtype;
   v_package public.research_early_access_agreement_packages%rowtype;
   v_existing public.research_early_access_proof_submissions%rowtype;
+  v_candidate_id uuid := gen_random_uuid();
+  v_claimed boolean;
 begin
   if p_submission is null or jsonb_typeof(p_submission)<>'object'
-     or (p_submission->>'submissionId') !~ '^eas_[A-Za-z0-9_-]{16,120}$'
-     or p_submission_key !~ '^eask_[A-Za-z0-9_-]{16,120}$'
+     or (p_submission->>'submissionId') !~ '^ea(ps|s)_[A-Za-z0-9_-]{16,120}$'
+     or p_submission_key is null or p_submission_key !~ '^eask_[A-Za-z0-9_-]{16,120}$'
+     or (p_submission->>'customerRef') !~ '^eac_[a-f0-9]{32}$'
      or (p_submission->>'proofSha256') !~ '^[a-f0-9]{64}$'
      or (p_submission->>'byteSize') !~ '^[0-9]+$'
      or (p_submission->'method'->>'code') is null
-     or (p_submission->'method'->>'registryVersion') is null then
+     or (p_submission->'method'->>'methodName') is null
+     or (p_submission->'method'->>'registryVersion') is null
+     or (p_submission->'method'->>'presentedAt') is null then
     raise exception 'invalid proof submission metadata' using errcode='22023';
   end if;
   select * into v_checkout from public.research_early_access_cart_checkouts
    where checkout_number=p_submission->>'cartCheckoutNumber' for update;
   if not found then return jsonb_build_object('recorded',false,'reason','checkout_unknown'); end if;
   if v_checkout.disposition is not null then return jsonb_build_object('recorded',false,'reason','checkout_superseded'); end if;
+  if v_checkout.customer_ref<>(p_submission->>'customerRef') then
+    return jsonb_build_object('recorded',false,'reason','binding_owner_mismatch');
+  end if;
   select p.* into v_package from public.research_early_access_agreement_packages p
    where not exists(select 1 from public.research_early_access_agreement_packages n where n.supersedes_package_version=p.package_version);
   select a.* into v_attestation from public.research_early_access_agreement_attestations a
@@ -472,33 +523,36 @@ begin
   if v_attestation.member_id::text<>(p_submission->>'memberId') then
     return jsonb_build_object('recorded',false,'reason','binding_owner_mismatch');
   end if;
-  select * into v_existing from public.research_early_access_proof_submissions where cart_checkout_id=v_checkout.id;
-  if found then
-    if v_existing.submission_key<>p_submission_key then
-      return jsonb_build_object('recorded',false,'reason','submission_exists','submissionId',v_existing.submission_id);
-    end if;
-    if v_existing.internal_email_acceptance='failed' then
-      update public.research_early_access_proof_submissions set
-        method_code=p_submission->'method'->>'code',method_name=p_submission->'method'->>'methodName',
-        registry_version=p_submission->'method'->>'registryVersion',presented_at=(p_submission->'method'->>'presentedAt')::timestamptz,
-        filename=p_submission->>'filename',content_type=p_submission->>'contentType',byte_size=(p_submission->>'byteSize')::bigint,
-        proof_sha256=p_submission->>'proofSha256',package_version=p_submission->>'packageVersion',
-        internal_email_acceptance='not_attempted',provider_message_id=null,last_error=null,accepted_at=null,
-        updated_at=pg_catalog.clock_timestamp()
-      where id=v_existing.id;
-    end if;
-    return jsonb_build_object('recorded',false,'replayed',true,'submissionId',v_existing.submission_id);
-  end if;
-  insert into public.research_early_access_proof_submissions(
-    submission_id,submission_key,cart_checkout_id,member_id,method_code,method_name,
+
+  -- The claim itself is one INSERT ... ON CONFLICT statement. There is no
+  -- submission SELECT followed by INSERT, so two application instances cannot
+  -- both believe they created the send lease.
+  insert into public.research_early_access_proof_submissions as durable(
+    id,submission_id,submission_key,cart_checkout_id,customer_ref,member_id,method_code,method_name,
     registry_version,presented_at,filename,content_type,byte_size,proof_sha256,package_version
   ) values (
-    p_submission->>'submissionId',p_submission_key,v_checkout.id,(p_submission->>'memberId')::uuid,
+    v_candidate_id,p_submission->>'submissionId',p_submission_key,v_checkout.id,v_checkout.customer_ref,
+    (p_submission->>'memberId')::uuid,
     p_submission->'method'->>'code',p_submission->'method'->>'methodName',p_submission->'method'->>'registryVersion',
     (p_submission->'method'->>'presentedAt')::timestamptz,p_submission->>'filename',p_submission->>'contentType',
     (p_submission->>'byteSize')::bigint,p_submission->>'proofSha256',p_submission->>'packageVersion'
+  )
+  on conflict (cart_checkout_id) do update
+    set id=durable.id
+  returning * into v_existing;
+
+  v_claimed := v_existing.id=v_candidate_id;
+  if v_existing.submission_key<>p_submission_key then
+    return jsonb_build_object(
+      'recorded',false,'replayed',false,'claimed',false,
+      'reason','submission_exists','submissionId',v_existing.submission_id
+    );
+  end if;
+  return jsonb_build_object(
+    'recorded',v_claimed,'replayed',not v_claimed,'claimed',v_claimed,
+    'submissionId',v_existing.submission_id,
+    'row',public.research_early_access_proof_submission_record(v_existing.submission_id)
   );
-  return jsonb_build_object('recorded',true,'replayed',false,'submissionId',p_submission->>'submissionId');
 end;
 $$;
 
@@ -515,9 +569,15 @@ begin
   end if;
   if v_row.internal_email_acceptance='accepted' then
     if p_acceptance='accepted' and v_row.provider_message_id is not distinct from p_provider_message_id then
-      return jsonb_build_object('updated',false,'replayed',true);
+      return jsonb_build_object(
+        'updated',false,'replayed',true,
+        'row',public.research_early_access_proof_submission_record(v_row.submission_id)
+      );
     end if;
-    return jsonb_build_object('updated',false,'reason','submission_already_accepted');
+    return jsonb_build_object(
+      'updated',false,'replayed',false,'reason','submission_already_accepted',
+      'row',public.research_early_access_proof_submission_record(v_row.submission_id)
+    );
   end if;
   if p_acceptance='accepted' and length(btrim(p_provider_message_id)) not between 1 and 300 then
     raise exception 'accepted email requires provider message id' using errcode='22023';
@@ -530,9 +590,14 @@ begin
     provider_message_id=case when p_acceptance='accepted' then p_provider_message_id else null end,
     last_error=case when p_acceptance='accepted' then null else p_last_error end,
     accepted_at=case when p_acceptance='accepted' then pg_catalog.clock_timestamp() else null end,
+    attempts=attempts+1,
     updated_at=pg_catalog.clock_timestamp()
-   where id=v_row.id;
-  return jsonb_build_object('updated',true,'replayed',false);
+   where id=v_row.id
+   returning * into v_row;
+  return jsonb_build_object(
+    'updated',true,'replayed',false,
+    'row',public.research_early_access_proof_submission_record(v_row.submission_id)
+  );
 end;
 $$;
 
@@ -556,17 +621,13 @@ $$;
 
 create or replace function public.research_early_access_submission_admin_view(p_checkout_number text)
 returns jsonb language sql stable security definer set search_path = pg_catalog as $$
-  select jsonb_build_object(
-    'submissionId',s.submission_id,'cartCheckoutNumber',c.checkout_number,'memberId',s.member_id::text,
-    'method',jsonb_build_object('code',s.method_code,'methodName',s.method_name,'registryVersion',s.registry_version,'presentedAt',s.presented_at),
-    'filename',s.filename,'contentType',s.content_type,'byteSize',s.byte_size,'proofSha256',s.proof_sha256,
+  select public.research_early_access_proof_submission_record(s.submission_id) || jsonb_build_object(
     'submissionKey',s.submission_key,'internalRecipient',s.internal_recipient,
-    'internalEmailAcceptance',s.internal_email_acceptance,'providerMessageId',s.provider_message_id,
-    'lastError',s.last_error,'reconciliationRequired',(s.internal_email_acceptance='unknown'),'createdAt',s.created_at
+    'reconciliationRequired',(s.internal_email_acceptance='unknown' and s.reconciled_at is null)
   )
   from public.research_early_access_proof_submissions s
   join public.research_early_access_cart_checkouts c on c.id=s.cart_checkout_id
-  where c.checkout_number=p_checkout_number
+  where c.checkout_number=p_checkout_number or s.submission_id=p_checkout_number
 $$;
 
 -- Keep the exact M60 implementation as a private core. This is not a second
@@ -762,6 +823,7 @@ begin
     'public.research_early_access_current_agreement_package()',
     'public.research_early_access_record_agreement_attestation(jsonb,text)',
     'public.research_early_access_active_agreement_attestation(text)',
+    'public.research_early_access_proof_submission_record(text)',
     'public.research_early_access_begin_proof_submission(jsonb,text)',
     'public.research_early_access_confirm_submission_email(text,text,text,text,text)',
     'public.research_early_access_submission_customer_view(text)',
