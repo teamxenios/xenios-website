@@ -278,11 +278,25 @@ end;
 $$;
 
 create or replace function public.research_early_access_legal_binding_for_customer(p_customer_ref text)
-returns jsonb language sql stable security definer set search_path = pg_catalog as $$
-  select jsonb_build_object(
+returns jsonb language plpgsql stable security definer set search_path = pg_catalog as $$
+declare
+  v_bindings jsonb[];
+begin
+  select array_agg(jsonb_build_object(
     'customerRef',customer_ref,'memberId',member_id::text,'establishedBy',established_by,
     'verifiedAt',verified_at,'attestedBy',attested_by,'aliasRefs',to_jsonb(alias_refs)
-  ) from public.research_early_access_legal_bindings where customer_ref = p_customer_ref
+  )) into v_bindings
+  from public.research_early_access_legal_bindings
+  where customer_ref = p_customer_ref or p_customer_ref = any(alias_refs);
+
+  if coalesce(cardinality(v_bindings),0) = 0 then
+    return null;
+  end if;
+  if cardinality(v_bindings) > 1 then
+    raise exception 'ambiguous legal binding for customer handle' using errcode = '21000';
+  end if;
+  return v_bindings[1];
+end;
 $$;
 
 create or replace function public.research_early_access_register_agreement_package(p_package jsonb, p_actor_id text)

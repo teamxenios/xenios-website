@@ -113,6 +113,49 @@ select pg_temp.want(
     'establishedBy','verified_link','verifiedAt','2026-08-09T10:00:00Z','attestedBy',null,'aliasRefs',jsonb_build_array()
   ))->>'recorded')='true','verified legal binding is durable');
 
+select pg_temp.seed_checkout('ALIASOWN','eac_'||repeat('f',32),16000) as checkout_alias_owned \gset
+select pg_temp.want(
+  (public.research_early_access_record_legal_binding(jsonb_build_object(
+    'customerRef','eac_'||repeat('e',32),'memberId','55555555-5555-5555-5555-555555555555',
+    'establishedBy','verified_link','verifiedAt','2026-08-09T10:00:00Z','attestedBy',null,
+    'aliasRefs',jsonb_build_array('eac_'||repeat('f',32))
+  ))->>'recorded')='true','one verified binding preserves its alias handle');
+select pg_temp.want(
+  (public.research_early_access_legal_binding_for_customer('eac_'||repeat('e',32))->>'customerRef')
+    = 'eac_'||repeat('e',32),
+  'the primary handle resolves its authoritative binding');
+select pg_temp.want(
+  public.research_early_access_legal_binding_for_customer('eac_'||repeat('f',32))
+    = public.research_early_access_legal_binding_for_customer('eac_'||repeat('e',32)),
+  'the alias handle resolves the same authoritative binding');
+select pg_temp.want(
+  (public.research_early_access_legal_binding_for_customer(
+    public.research_early_access_cart_checkout_for_number(:'checkout_alias_owned')->>'customerRef'
+  )->>'memberId') = '55555555-5555-5555-5555-555555555555',
+  'an alias-owned checkout resolves ownership through the authoritative binding');
+
+select public.research_early_access_record_legal_binding(jsonb_build_object(
+  'customerRef','eac_'||repeat('6',32),'memberId','66666666-6666-6666-6666-666666666666',
+  'establishedBy','verified_link','verifiedAt','2026-08-09T10:00:00Z','attestedBy',null,
+  'aliasRefs',jsonb_build_array('eac_'||repeat('8',32))));
+select public.research_early_access_record_legal_binding(jsonb_build_object(
+  'customerRef','eac_'||repeat('7',32),'memberId','77777777-7777-7777-7777-777777777777',
+  'establishedBy','verified_link','verifiedAt','2026-08-09T10:00:00Z','attestedBy',null,
+  'aliasRefs',jsonb_build_array('eac_'||repeat('8',32))));
+do $$
+declare
+  v_refused boolean := false;
+  v_result jsonb;
+begin
+  begin
+    v_result := public.research_early_access_legal_binding_for_customer('eac_'||repeat('8',32));
+  exception when sqlstate '21000' then
+    v_refused := true;
+  end;
+  perform pg_temp.want(v_refused and v_result is null,
+    'a handle matching multiple bindings refuses without returning an arbitrary row');
+end $$;
+
 select pg_temp.want(
   (public.research_early_access_register_agreement_package(jsonb_build_object(
     'packageId','ea-package','packageVersion',repeat('a',24),'supersedesPackageVersion',null,
