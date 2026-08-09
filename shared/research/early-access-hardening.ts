@@ -441,3 +441,65 @@ export const CATALOG_FORBIDDEN_PUBLIC_KEYS = Object.freeze([
   "internalNotes",
   "marginCents",
 ] as const);
+
+// ---------------------------------------------------------------------------
+// 7. The cart's own customer projection, which leaks supplier identity today.
+// ---------------------------------------------------------------------------
+
+/**
+ * A DEFECT THAT EXISTS AT THE ACCEPTED BASE, not an accelerator hazard.
+ *
+ * `EarlyAccessCartChildOrder` and `EarlyAccessCartChildRelease` both carry
+ * `supplierId` and `supplierSku`, and both reach the customer. The read route
+ * returns `checkoutView(checkout)`, whose projection strips `customerRef`,
+ * `idempotencyKey`, `intentHash` and `quoteId` but passes `children` through
+ * untouched. The status route returns the store's result verbatim, and the
+ * status RPC builds `fulfilment.childOrders` from child-release records with
+ * both supplier fields inside.
+ *
+ * The asymmetry is the tell: the read route bothers to project and the status
+ * route does not, and the projection that does exist was written to hide
+ * OWNERSHIP fields rather than SUPPLIER fields. The concept was understood and
+ * applied one field-class too narrowly.
+ *
+ * So the two projections the risk register asks for are required at base,
+ * independent of anything M62 does.
+ */
+export const EARLY_ACCESS_CART_FORBIDDEN_CUSTOMER_KEYS = Object.freeze([
+  "supplierId",
+  "supplierSku",
+  "customerRef",
+  "idempotencyKey",
+  "intentHash",
+  "quoteId",
+  "attribution",
+] as const);
+
+/**
+ * True when a cart payload bound for a customer carries no supplier identity
+ * and no ownership handle, at any depth.
+ *
+ * Separate from `customerPayloadIsClean` because the two lists answer different
+ * questions and merging them would let a submission fix silently satisfy a
+ * cart assertion, or the reverse.
+ */
+export function cartCustomerPayloadIsClean(value: unknown): boolean {
+  const forbidden = new Set<string>(EARLY_ACCESS_CART_FORBIDDEN_CUSTOMER_KEYS);
+  const seen = new Set<unknown>();
+
+  const walk = (node: unknown): boolean => {
+    if (node === null || typeof node !== "object") return true;
+    if (seen.has(node)) return true;
+    seen.add(node);
+
+    if (Array.isArray(node)) return node.every(walk);
+
+    for (const key of Object.keys(node)) {
+      if (forbidden.has(key)) return false;
+      if (!walk((node as Record<string, unknown>)[key])) return false;
+    }
+    return true;
+  };
+
+  return walk(value);
+}

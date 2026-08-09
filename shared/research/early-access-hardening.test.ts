@@ -6,6 +6,7 @@ import {
   EARLY_ACCESS_ORDER_STAGES,
   EARLY_ACCESS_SHIP_BY_HOURS,
   canAddToCart,
+  cartCustomerPayloadIsClean,
   customerPayloadIsClean,
   earlyAccessIsOverdue,
   earlyAccessShipByAt,
@@ -76,6 +77,66 @@ describe("customer payload cleanliness", () => {
     const cyclic: Record<string, unknown> = { state: "in_progress" };
     cyclic.self = cyclic;
     expect(customerPayloadIsClean(cyclic)).toBe(true);
+  });
+});
+
+describe("the cart customer projection refuses supplier identity", () => {
+  // This reproduces the shape the status route returns at the accepted base,
+  // where fulfilment.childOrders are child-release records with supplier
+  // fields inside. It is a real leak today, not an accelerator hazard.
+  const statusShapedLikeToday = {
+    checkout: {
+      cartCheckoutNumber: "XEC-063A962A0053A65324F21E7F",
+      children: [
+        { orderNumber: "XEA-1", quantity: 1, supplierId: "sup_7", supplierSku: "S-119" },
+      ],
+    },
+    fulfilment: {
+      released: true,
+      childOrders: [
+        { orderNumber: "XEA-1", supplierId: "sup_7", supplierSku: "S-119", tracking: [] },
+      ],
+    },
+  };
+
+  it("refuses the status payload as it is shaped today", () => {
+    expect(cartCustomerPayloadIsClean(statusShapedLikeToday)).toBe(false);
+  });
+
+  it("refuses supplier identity nested in a child release array", () => {
+    expect(
+      cartCustomerPayloadIsClean({
+        fulfilment: { childOrders: [{ orderNumber: "XEA-1", supplierSku: "S-119" }] },
+      }),
+    ).toBe(false);
+  });
+
+  it("refuses an ownership handle the read route already knew to strip", () => {
+    expect(cartCustomerPayloadIsClean({ checkout: { customerRef: "eac_abc" } })).toBe(false);
+    expect(cartCustomerPayloadIsClean({ checkout: { intentHash: "deadbeef" } })).toBe(false);
+  });
+
+  it("accepts a projection carrying only what a customer may see", () => {
+    expect(
+      cartCustomerPayloadIsClean({
+        checkout: {
+          cartCheckoutNumber: "XEC-063A962A0053A65324F21E7F",
+          children: [{ orderNumber: "XEA-1", quantity: 1, payableCents: 18_000 }],
+        },
+        fulfilment: {
+          released: true,
+          childOrders: [{ orderNumber: "XEA-1", shippedAt: null, tracking: [] }],
+        },
+      }),
+    ).toBe(true);
+  });
+
+  it("keeps the two forbidden-key lists independent", () => {
+    // A supplier field is not a submission leak, and a provider id is not a
+    // supplier leak. Merging the lists would let one fix satisfy the other's
+    // assertion.
+    expect(customerPayloadIsClean({ supplierId: "sup_7" })).toBe(true);
+    expect(cartCustomerPayloadIsClean({ providerMessageId: "abc" })).toBe(true);
   });
 });
 

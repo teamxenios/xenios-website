@@ -89,6 +89,18 @@ Note for the legal lane: an OpenSign completion never creates a
 recomputed per call, so any code reading signature timestamps must handle both
 sources.
 
+### The cart already leaks supplier identity to customers
+
+This one is a defect at the accepted base, not an accelerator hazard.
+`EarlyAccessCartChildOrder` and `EarlyAccessCartChildRelease` both carry
+`supplierId` and `supplierSku`, and both reach the customer: the read route's
+`checkoutView` strips ownership fields and passes `children` through untouched,
+and the status route returns the store's result verbatim.
+
+`EARLY_ACCESS_CART_FORBIDDEN_CUSTOMER_KEYS` and `cartCustomerPayloadIsClean`
+name and test the rule. It is kept separate from the submission list, because
+merging them would let a fix for one silently satisfy the other's assertion.
+
 ### Customer and admin submission projections are different types
 
 `EarlyAccessSubmissionCustomerView` carries only what the customer supplied or
@@ -164,6 +176,57 @@ every other field is set to look convincing.
 
 `priceDisplay: null` means pricing pending, which is the honest answer for a
 planning row whose supplier quote is outstanding. It is not the same as free.
+
+## One unresolved question that decides whether the cart is reachable
+
+The research gateway wall mounts on `/api/research` before the Early Access API
+registers, and it default-denies anyone without the research gateway cookie.
+Its exemption lists name session, catalog, agreements, unlock, logout, orders
+and verification. They name no cart path. So an Early Access customer who
+unlocks with the Early Access password and posts a cart quote is refused,
+unless they also hold the research gateway password.
+
+No composed test covers it: the cart route tests register the Early Access API
+alone, and the one test that mounts both enumerates exempt paths without a cart
+path among them.
+
+The question is binary and belongs to Samuel. If pilot customers hold both
+passwords, this is a deployment precondition and should be written down as one.
+If not, the exemption list needs method-exact cart entries, and that file is a
+protection seam only the orchestrator may edit. No lane routes around this.
+
+## Standing facts from the forensics pass
+
+**The repository ledger is not evidence of production state, in either
+direction.** `MIGRATION_DAG.json` marks migrations 58, 60 and 61
+`appliedToProduction: false`, while migration 61's own header narrates two real
+production checkouts by number, which cannot exist unless 58 and 60 ran.
+`CURRENT_PRODUCTION_STATE.json` predates the cart entirely. Refreshing both is
+part of the orchestrator's release-control commit.
+
+**Do not drop and recreate the cart event-type constraint.** Migration 61
+replaced it wholesale, its vocabulary is exactly the eight values in
+`EARLY_ACCESS_CART_EVENT_TYPES_AT_M61`, and migration 61 then writes a real
+`checkout_superseded` row. A constraint regenerated from a pre-61 mental model
+applies cleanly on an empty container and fails at apply time on production.
+Widen additively, and seed a `checkout_superseded` row in the PG16 and PG17
+harness so the container has the production shape.
+
+**Route cardinality is pinned at 348 registrations across 339 call sites** in a
+release-control file only the orchestrator may edit. A lane that adds a route
+breaks a gate it may not fix. That is intentional: report the count and the
+paths in the handoff, leave the gate red, and say so. A lane that edits the pin
+to go green has defeated the mechanism.
+
+**Three proof concepts already exist**, listed in `EARLY_ACCESS_PROOF_CONCEPTS`:
+admin-recorded off-platform evidence, the single-product customer bucket
+upload, and the new transient email-only submission. They are not
+interchangeable, and a fourth should be a deliberate decision.
+
+**Migration 61's remediation is order-sensitive.** It refuses to run unless
+both checkouts are still `awaiting_payment`, and recording a proof advances a
+checkout to `under_review`. If 61 is not yet applied, it must be applied before
+any proof is recorded against the founder checkout.
 
 ## Two prerequisites no lane can code around
 

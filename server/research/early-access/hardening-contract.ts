@@ -208,6 +208,14 @@ export interface EarlyAccessAgreementAuthority {
  * Not once at signing. At every point where the answer could have changed
  * between then and a consequence: quoting, checking out, submitting proof and
  * settling. Naming the four here means a lane cannot quietly check three.
+ *
+ * THIS IS A CHANGE, NOT A PRESERVATION, and it must be built and tested as one.
+ * Today exactly one of the four checks exists: `quoteEarlyAccessCart` calls the
+ * agreement gate. `checkout-service.ts` contains no agreement reference at all,
+ * proof submission does not exist yet, and the settlement RPC performs no
+ * agreement check. So the package is verified when a quote is minted and never
+ * again, which means a customer can quote under one package and settle under
+ * another. Three of these four checkpoints are new code.
  */
 export const EARLY_ACCESS_AGREEMENT_CHECKPOINTS = Object.freeze([
   "quote",
@@ -500,3 +508,118 @@ export const EARLY_ACCESS_FOUNDER_COMPATIBILITY_IS_REQUIRED = true as const;
  * itself writing a fixture to stand in for one of these has left the contract.
  */
 export const EARLY_ACCESS_LEGAL_PACKAGE_REGISTRATION_IS_EXTERNAL = true as const;
+
+// ---------------------------------------------------------------------------
+// 8. Standing facts from the forensics pass that every lane needs.
+// ---------------------------------------------------------------------------
+
+/**
+ * UNRESOLVED, AND IT DECIDES WHETHER THE CART IS REACHABLE AT ALL.
+ *
+ * The research gateway wall is mounted on `/api/research` before the Early
+ * Access API is registered, and it default-denies anyone without the research
+ * gateway cookie. Its exemption lists name the session, catalog, agreements,
+ * unlock, logout, orders and verification paths. They name no cart path. The
+ * single `"/cart"` entry in that file is an exact-match member-platform path,
+ * not `/early-access/cart/...`.
+ *
+ * So an Early Access customer who unlocks with the Early Access password and
+ * then posts a cart quote is refused by the wall, unless they also hold the
+ * research gateway password. No composed test covers this: the cart route
+ * tests register the Early Access API alone, and the one test that mounts both
+ * enumerates the exempt paths without listing a cart path.
+ *
+ * The question is binary and belongs to Samuel: are pilot customers given the
+ * research gateway password as well? If yes, this is a deployment precondition
+ * and should be written down as one. If no, the exemption list needs
+ * method-exact cart entries, and that file is a protection seam only the
+ * orchestrator may edit.
+ *
+ * No lane should route around this. Session 8 in particular is building a
+ * journey whose reachability depends on the answer.
+ */
+export const EARLY_ACCESS_CART_WALL_EXEMPTION_IS_UNRESOLVED = true as const;
+
+/**
+ * FOR THE DATABASE LANE: do not drop and recreate the cart event constraint.
+ *
+ * Migration 61 replaced it wholesale and the current vocabulary is exactly
+ * eight values, the eighth being `checkout_superseded`. Migration 61 then
+ * writes a real `checkout_superseded` row for the disposed duplicate.
+ *
+ * `ALTER TABLE ... ADD CONSTRAINT ... CHECK` validates existing rows. So a
+ * constraint regenerated from a pre-61 mental model applies cleanly on a fresh
+ * container that has no such row, and fails at apply time on production, which
+ * does. Every gate would pass and the migration would still be unshippable.
+ *
+ * Widen additively, or put hardening events in a separate table. If the
+ * constraint must be replaced, the replacement must be a strict superset of the
+ * eight, and the PG16 and PG17 harness must seed a `checkout_superseded` row so
+ * the container reproduces the production shape rather than the empty one.
+ */
+export const EARLY_ACCESS_CART_EVENT_TYPES_AT_M61 = Object.freeze([
+  "quote_created",
+  "checkout_created",
+  "proof_recorded",
+  "payment_verified",
+  "child_release_created",
+  "shipment_updated",
+  "payment_rejected",
+  "checkout_superseded",
+] as const);
+
+/**
+ * THE THREE PROOF CONCEPTS THAT ALREADY EXIST, named so a fourth is deliberate.
+ *
+ * 1. `admin_recorded_external` — a named admin records the metadata and digest
+ *    of proof received off platform. Nothing is stored on the platform. This is
+ *    what the cart settlement's `evidence_missing` refusal refers to.
+ * 2. `customer_bucket_upload` — the single-product order flow's customer proof
+ *    door, backed by a private storage bucket.
+ * 3. `transient_email_only` — the new cart submission. Bytes exist inside one
+ *    request and one provider send, and are never durable.
+ *
+ * They are not interchangeable and their evidence has different provenance. A
+ * settlement that accepts one must say which.
+ */
+export const EARLY_ACCESS_PROOF_CONCEPTS = Object.freeze([
+  "admin_recorded_external",
+  "customer_bucket_upload",
+  "transient_email_only",
+] as const);
+
+export type EarlyAccessProofConcept = (typeof EARLY_ACCESS_PROOF_CONCEPTS)[number];
+
+/**
+ * THE REPOSITORY LEDGER IS NOT EVIDENCE OF PRODUCTION STATE, IN EITHER
+ * DIRECTION.
+ *
+ * `docs/coordination/MIGRATION_DAG.json` marks every Early Access migration,
+ * including 58, 60 and 61, as `appliedToProduction: false` with a pending
+ * managed id, and `CURRENT_PRODUCTION_STATE.json` was generated before the cart
+ * existed at all. Meanwhile migration 61's own header narrates two real
+ * production checkouts by number, which cannot exist unless 58 and 60 ran.
+ *
+ * The likely reading is that the migrations were applied and the ledger was
+ * never updated. Nobody has read the managed ledger to confirm it. Until
+ * somebody does, no lane may treat either artifact as a source of truth about
+ * production, and refreshing them is part of the orchestrator's release-control
+ * commit rather than any lane's work.
+ */
+export const EARLY_ACCESS_MIGRATION_LEDGER_IS_STALE = true as const;
+
+/**
+ * ROUTE CARDINALITY IS PINNED AT EXACTLY 348 REGISTRATIONS ACROSS 339 CALL
+ * SITES, asserted in `server/release-control-plane.test.ts`, which is a
+ * release-control file only the orchestrator may edit.
+ *
+ * So a lane that adds a route breaks a gate it is forbidden to fix. That is
+ * intentional. Report the exact count and the exact paths in the handoff, leave
+ * the gate red in the lane branch, and say so plainly. The orchestrator folds
+ * every lane's additions into one release-control commit at the end of fusion.
+ * A lane that edits the pin to go green has defeated the mechanism.
+ */
+export const EARLY_ACCESS_ROUTE_PIN_AT_BASE = Object.freeze({
+  registrations: 348,
+  callSites: 339,
+} as const);
