@@ -1442,8 +1442,18 @@ describe("route uniqueness validator", () => {
     // RESEARCH_EARLY_ACCESS_CART_ENABLED is exactly "true"; the scanner is a
     // SOURCE scan, so it counts the call sites either way, which is the
     // honest number to pin.
-    expect(result.callSites).toBe(338);
-    expect(result.routes).toHaveLength(347);
+    // 339/348 with the payment lane integrated. The single addition:
+    //   GET  /api/research/early-access/cart/:cartCheckoutNumber/payment-instructions
+    //
+    // Where the money actually goes. Registered inside the cart-enabled branch
+    // like every other cart door, under /api/research so the research wall
+    // answers an unauthenticated caller first, and GET-only because reading
+    // payment instructions is not an action: nothing on that path can settle,
+    // release or mark an order paid. Ownership is re-checked in the handler and
+    // a checkout belonging to someone else gets the same 404 an unknown one
+    // does, so the door discloses nothing by existing.
+    expect(result.callSites).toBe(339);
+    expect(result.routes).toHaveLength(348);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

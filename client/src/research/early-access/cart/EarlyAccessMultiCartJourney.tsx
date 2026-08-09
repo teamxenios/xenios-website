@@ -30,6 +30,13 @@ import { EarlyAccessCartDetails, cartContactProblems, cartShippingProblems } fro
 import { EarlyAccessCartLineIssues } from "./EarlyAccessCartLineIssues";
 import { EarlyAccessCartPanel } from "./EarlyAccessCartPanel";
 import { EarlyAccessCartPayment, EarlyAccessCartStatusView } from "./EarlyAccessCartPayment";
+import {
+  loadEarlyAccessPaymentInstructions,
+} from "@/research/adapters/earlyAccessPaymentInstructions";
+import {
+  unresolvedEarlyAccessPaymentInstructions,
+  type EarlyAccessPaymentInstructionsPresentation,
+} from "@shared/research/early-access-payment-instructions";
 import { EarlyAccessCartReview } from "./EarlyAccessCartReview";
 import { EarlyAccessProgress } from "./EarlyAccessProgress";
 // The two recovery pointers live in their own module so SIGN-OUT can reach
@@ -100,6 +107,10 @@ export function EarlyAccessMultiCartJourney({
   const [busy, setBusy] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [paymentInstructions, setPaymentInstructions] =
+    useState<EarlyAccessPaymentInstructionsPresentation>(
+      unresolvedEarlyAccessPaymentInstructions(),
+    );
   const [error, setError] = useState<string | null>(null);
   const attemptRef = useRef<string | null>(readCartAttemptKey());
   const submitInFlight = useRef(false);
@@ -170,6 +181,31 @@ export function EarlyAccessMultiCartJourney({
       window.scrollTo({ top: 0, behavior: "auto" });
     });
   }, [safeStep]);
+
+  // WHERE TO SEND THE MONEY, FETCHED ONLY ONCE THERE IS AN ORDER TO PAY.
+  //
+  // Read-only and strictly downstream of a completed placement. It never
+  // confirms, never touches the attempt key, never clears the checkout, and
+  // cannot create a second order: the only thing it does with a failure is
+  // leave the presentation unresolved, which the panel renders as "payment
+  // details are being confirmed". The adapter already turns a network error, a
+  // 401, a 404, a 503 and a malformed body into exactly that state, so there is
+  // no error branch here to get wrong.
+  //
+  // Keyed by the checkout number rather than by `checkout`, so a status refresh
+  // that returns an equal-but-new object does not refetch.
+  const paymentCheckoutNumber = checkout?.cartCheckoutNumber ?? null;
+  useEffect(() => {
+    if (step !== "payment" || paymentCheckoutNumber === null) return;
+    let live = true;
+    void (async () => {
+      const presentation = await loadEarlyAccessPaymentInstructions(paymentCheckoutNumber);
+      if (live) setPaymentInstructions(presentation);
+    })();
+    return () => {
+      live = false;
+    };
+  }, [step, paymentCheckoutNumber]);
 
   useEffect(() => {
     const checkoutNumber = lastCheckoutRef.current;
@@ -422,6 +458,7 @@ export function EarlyAccessMultiCartJourney({
       {step === "payment" && checkout ? (
         <EarlyAccessCartPayment
           checkout={checkout}
+          paymentInstructions={paymentInstructions}
           copied={copied}
           onCopy={() => {
             void navigator.clipboard?.writeText(checkout.invoice.paymentReference);

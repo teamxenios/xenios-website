@@ -1,3 +1,8 @@
+import {
+  NO_CART_NOTIFICATIONS,
+  notifyQuietly,
+  type EarlyAccessCartNotifier,
+} from "./notifications-port";
 import type {
   EarlyAccessCartCheckoutRecord,
   EarlyAccessCartCheckoutRequest,
@@ -39,6 +44,12 @@ export type EarlyAccessCartCheckoutDeps = Readonly<{
   now: () => number;
   checkoutNumber?: () => string;
   childOrderNumber?: (index: number) => string;
+  /**
+   * Customer email. Fired AFTER the commit transaction has returned, and
+   * wrapped so it can never fail the order. Absent means this deployment sends
+   * no mail, which is the default and is why every existing test is unchanged.
+   */
+  notify?: EarlyAccessCartNotifier;
 }>;
 
 function ownsRef(customer: CartCustomer, ref: string): boolean {
@@ -203,6 +214,21 @@ export async function checkoutEarlyAccessCart(
   } catch {
     // Checkout is already durable. Retry must read/replay it, not create another.
   }
+
+  // ORDER-CREATED MAIL, OUTSIDE THE TRANSACTION AND AFTER IT SUCCEEDED.
+  //
+  // Only on a genuine creation. The replay paths above return before reaching
+  // here, so the six-simultaneous-confirm case enqueues ONE notification for
+  // the one order that was actually created, not six. The outbox is keyed by
+  // the durable checkout number as a second guard, never by the browser's
+  // idempotency key, which is per-attempt and would have produced one email per
+  // attempt: exactly the duplicate this release exists to end.
+  await notifyQuietly(() =>
+    (deps.notify ?? NO_CART_NOTIFICATIONS).checkoutCreated({
+      checkout,
+      replayed: false,
+    }),
+  );
 
   return Object.freeze({
     ok: true as const,

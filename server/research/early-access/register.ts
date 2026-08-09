@@ -124,6 +124,18 @@ import {
 } from "./cart/admin-routes";
 import { InMemoryEarlyAccessCartStore } from "./cart/store";
 import {
+  EARLY_ACCESS_CART_PAYMENT_INSTRUCTIONS_PATH,
+  createEarlyAccessCartPaymentInstructionsRoute,
+} from "./cart/payment-instructions-route";
+import { createEnvPaymentInstructionsConfigSource } from "./commerce/payment-instructions-config";
+import {
+  createConfiguredPaymentMethodRegistry,
+  createEnvPaymentMethodRegistrySource,
+  createSystemPaymentClock,
+} from "./commerce/payment-method-registry";
+import { createEarlyAccessOutboxNotifier } from "./cart/outbox-notifier";
+
+import {
   DirectoryCartSuppliers,
   FounderReleaseCartPricing,
   GateCartAgreements,
@@ -820,6 +832,16 @@ export function registerPrivateEarlyAccessApi(
       quotes: cartStore,
       now,
     });
+    // ONE notifier for both customer moments, built from the SAME protected
+    // configuration and registry the payment route reads, so the amount in the
+    // email and the amount on the page cannot come from different places.
+    const cartNotifier = createEarlyAccessOutboxNotifier({
+      config: createEnvPaymentInstructionsConfigSource(options.env ?? process.env),
+      methodRegistry: createConfiguredPaymentMethodRegistry(
+        createEnvPaymentMethodRegistrySource(options.env ?? process.env),
+      ),
+      clock: createSystemPaymentClock(),
+    });
     const checkoutCart = createEarlyAccessCartCheckoutRoute({
       identity: cartIdentity,
       quotes: cartStore,
@@ -830,6 +852,7 @@ export function registerPrivateEarlyAccessApi(
         },
       },
       now,
+      notify: cartNotifier,
     });
     const readCart = createEarlyAccessCartReadRoute({
       identity: cartIdentity,
@@ -886,6 +909,34 @@ export function registerPrivateEarlyAccessApi(
     app.get(EARLY_ACCESS_CART_STATUS_PATH, cartDoor(cartStatus));
     app.get(EARLY_ACCESS_CART_READ_PATH, cartDoor(readCart));
 
+    // WHERE THE MONEY ACTUALLY GOES, AND ONLY HERE.
+    //
+    // Inside `if (cartEnabled)`, so the door does not exist while the cart is
+    // off. Under /api/research, so the research wall answers an unauthenticated
+    // caller before the handler runs, and the handler then resolves the
+    // customer from the session cookie and refuses a checkout that is not
+    // theirs with the SAME 404 an unknown checkout gets.
+    //
+    // Two independent server-side sources decide what a customer sees: the
+    // configuration says where money would go, the protected registry says
+    // which methods a named human approved, verified and enabled. Neither is
+    // reachable from the request. GET only: reading payment instructions is not
+    // an action, and nothing on this path can settle, release or mark paid.
+    app.get(
+      EARLY_ACCESS_CART_PAYMENT_INSTRUCTIONS_PATH,
+      cartDoor(
+        createEarlyAccessCartPaymentInstructionsRoute({
+          identity: cartIdentity,
+          checkouts: cartStore,
+          config: createEnvPaymentInstructionsConfigSource(options.env ?? process.env),
+          methodRegistry: createConfiguredPaymentMethodRegistry(
+            createEnvPaymentMethodRegistrySource(options.env ?? process.env),
+          ),
+          clock: createSystemPaymentClock(),
+        }),
+      ),
+    );
+
     // THE NAMED-ADMIN DOORS, behind the SAME Supabase admin guard every other
     // operator route uses, and deliberately NOT under /api/research: the
     // research wall decides who may reach a customer surface, and settling a
@@ -910,6 +961,8 @@ export function registerPrivateEarlyAccessApi(
     const confirmCartPayment = createEarlyAccessCartConfirmPaymentAdminRoute({
       ...cartSettlementDeps,
       now,
+      notify: cartNotifier,
+      checkouts: cartStore,
     });
     app.post(EARLY_ACCESS_ADMIN_CART_PROOF_PATH, adminGuard, (req: Request, res: Response) => {
       void recordCartProof(

@@ -6,6 +6,12 @@ import {
   type EarlyAccessCartSettlementDeps,
 } from "./settlement";
 import type { CartResponsePort } from "./routes";
+import {
+  NO_CART_NOTIFICATIONS,
+  notifyQuietly,
+  type EarlyAccessCartNotifier,
+} from "./notifications-port";
+import type { EarlyAccessCartCheckoutStore } from "./ports";
 
 export type CartAdminRequest = Readonly<{
   cartCheckoutNumber?: unknown;
@@ -95,7 +101,19 @@ export function createEarlyAccessCartExternalProofAdminRoute(
  * receipt and every child supplier release exactly once.
  */
 export function createEarlyAccessCartConfirmPaymentAdminRoute(
-  deps: EarlyAccessCartSettlementDeps & Readonly<{ now: () => number }>,
+  deps: EarlyAccessCartSettlementDeps &
+    Readonly<{
+      now: () => number;
+      /**
+       * Customer mail, fired only on a REAL settlement. The `already_settled`
+       * branch below deliberately does not notify: a retry is the same business
+       * fact, and the outbox would ignore the duplicate key anyway, but not
+       * calling at all makes that intent legible rather than incidental.
+       */
+      notify?: EarlyAccessCartNotifier;
+      /** Reads the checkout the settlement belongs to, for the recipient. */
+      checkouts?: EarlyAccessCartCheckoutStore;
+    }>,
 ) {
   return async (request: CartAdminRequest, response: CartResponsePort): Promise<void> => {
     privateHeaders(response);
@@ -127,6 +145,19 @@ export function createEarlyAccessCartConfirmPaymentAdminRoute(
     });
 
     if (result.committed) {
+      // OUTSIDE THE TRANSACTION. The settlement RPC has already committed the
+      // settlement, the receipt and every child release atomically; this is a
+      // read plus an outbox insert, wrapped so a mail failure cannot undo a
+      // payment an operator just verified.
+      const settled = result.settlement;
+      await notifyQuietly(async () => {
+        const checkout = await deps.checkouts?.byCheckoutNumber(settled.cartCheckoutNumber);
+        if (!checkout) return;
+        await (deps.notify ?? NO_CART_NOTIFICATIONS).settled({
+          settlement: settled,
+          checkout,
+        });
+      });
       response.status(200).json({
         ok: true,
         replayed: false,

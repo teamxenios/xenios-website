@@ -4,10 +4,22 @@ import type {
 } from "@shared/research/early-access-cart";
 import { EarlyAccessPaymentInstructions } from "../EarlyAccessPaymentInstructions";
 
-function money(cents: number, currency: string): string {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(cents / 100);
-}
-
+/**
+ * THERE IS EXACTLY ONE AMOUNT ON THIS SCREEN, AND THE SERVER SAYS WHAT IT IS.
+ *
+ * This component used to compute its own "Amount due" from
+ * `checkout.invoice.payableTotalCents` with a local `Intl.NumberFormat` and a
+ * `/ 100`. Alongside the server's `amountDueDisplay` in the instructions panel
+ * that made two amounts on one page, derived two different ways, and a customer
+ * paying a manual transfer has no way to tell which one is authoritative if
+ * they ever disagree. Rounding, currency and formatting are not the browser's
+ * decision when the number is what someone is about to send money against.
+ *
+ * So the local row is gone and there is no money helper left to drift. While
+ * the instructions are unresolved the panel says details are being confirmed,
+ * which is the honest answer, rather than falling back to a second figure the
+ * browser worked out on its own.
+ */
 export function EarlyAccessCartPayment({
   checkout,
   copied,
@@ -43,7 +55,6 @@ export function EarlyAccessCartPayment({
           <dt>Cart checkout</dt><dd className="font-700">{checkout.cartCheckoutNumber}</dd>
           <dt>Invoice</dt><dd className="font-700">{checkout.invoice.invoiceNumber}</dd>
           <dt>Products</dt><dd>{checkout.children.length}</dd>
-          <dt>Amount due</dt><dd className="font-700">{money(checkout.invoice.payableTotalCents, checkout.invoice.currency)}</dd>
           <dt>Payment state</dt><dd>{checkout.paymentState}</dd>
         </dl>
       </section>
