@@ -2,6 +2,7 @@ import type {
   EarlyAccessCartCheckout,
   EarlyAccessCartStatus,
 } from "@shared/research/early-access-cart";
+import { EarlyAccessPaymentInstructions } from "../EarlyAccessPaymentInstructions";
 
 function money(cents: number, currency: string): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(cents / 100);
@@ -12,11 +13,20 @@ export function EarlyAccessCartPayment({
   copied,
   onCopy,
   onStatus,
+  paymentInstructions,
 }: Readonly<{
   checkout: EarlyAccessCartCheckout;
   copied: boolean;
   onCopy(): void;
   onStatus(): void;
+  /**
+   * Untrusted server projection of where to send this payment, decoded by the
+   * shared strict parser inside the panel. Omitted means not yet fetched, and
+   * the panel then says details are being confirmed rather than guessing. This
+   * prop is optional on purpose, so the screen is unchanged until the journey
+   * supplies it.
+   */
+  paymentInstructions?: unknown;
 }>) {
   return (
     <section className="grid gap-5" aria-labelledby="cart-payment-heading">
@@ -46,6 +56,8 @@ export function EarlyAccessCartPayment({
         </button>
         <p className="body-s mt-4">{checkout.invoice.instructions}</p>
       </section>
+
+      <EarlyAccessPaymentInstructions presentation={paymentInstructions} />
 
       <section className="card p-5">
         <h3 className="body-m font-700">Payment confirmation</h3>
