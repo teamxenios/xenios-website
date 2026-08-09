@@ -3,6 +3,7 @@ import type {
   EarlyAccessCartSettlement,
 } from "@shared/research/early-access-cart";
 import { createHash } from "node:crypto";
+import { canonicalTransactionId } from "../hardening-contract";
 import {
   isCartCheckoutNumber,
   newCartEvidenceRef,
@@ -162,6 +163,22 @@ export async function settleEarlyAccessCart(
     });
   }
 
+  // ONE PAYMENT, ONE IDENTITY.
+  //
+  // Computed before any durable work, so an id with too little substance to BE
+  // an identity is refused rather than canonicalized into something that could
+  // collide with an unrelated payment. Uniqueness downstream is decided on this
+  // value, never on the raw string: `TX-Canonical-002`, `tx canonical 002` and
+  // `TX CANONICAL 002` are one payment, not three.
+  const canonicalTxn = canonicalTransactionId(input.externalTransactionId);
+  if (canonicalTxn === null) {
+    return Object.freeze({
+      committed: false as const,
+      reason: "input_invalid" as const,
+      settlement: null,
+    });
+  }
+
   const proofs = await deps.settlements.externalProofs(input.cartCheckoutNumber);
   let proof = [...proofs].sort((left, right) =>
     right.recordedAt.localeCompare(left.recordedAt) ||
@@ -206,6 +223,12 @@ export async function settleEarlyAccessCart(
     checkout,
     evidenceRef: proof.evidenceRef,
     externalTransactionId: input.externalTransactionId.trim(),
+    // The raw id above is what the operator typed and is kept for
+    // reconciliation against a bank statement. This is the identity uniqueness
+    // is decided on, so two spellings of one payment cannot settle two
+    // checkouts. Computed here, at the one service every settlement door goes
+    // through, rather than left to each store to remember.
+    canonicalTransactionId: canonicalTxn,
     verifiedAmountCents: checkout.invoice.payableTotalCents,
     verifiedCurrency: checkout.invoice.currency,
     actorId: input.actorId,

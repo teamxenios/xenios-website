@@ -153,7 +153,18 @@ export class InMemoryEarlyAccessCartStore
         settlement: prior,
       });
     }
+    // `canonicalTransactionId` returns null for an id with too little substance
+    // to BE an identity, rather than canonicalizing it into something that could
+    // collide with an unrelated payment. Refuse it here: settling on an
+    // identifier we cannot uniquely key would defeat the whole guard.
     const canonicalId = canonicalTransactionId(input.externalTransactionId);
+    if (canonicalId === null) {
+      return Object.freeze({
+        committed: false as const,
+        reason: "input_invalid" as const,
+        settlement: null,
+      });
+    }
     if (this.transactionIds.has(canonicalId)) {
       return Object.freeze({
         committed: false as const,

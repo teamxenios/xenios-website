@@ -128,14 +128,16 @@ describe("a cosmetic variant cannot settle a second checkout", () => {
     );
     expect(proof.committed).toBe(true);
 
+    // Both named-admin confirmations are required by the hardened settlement
+    // service, so they are supplied here. What these tests vary is only the
+    // spelling of the transaction id.
     return settleEarlyAccessCart(
       { checkouts: store, settlements: store },
       {
         cartCheckoutNumber: checkoutNumber,
-        evidenceRef: `eaext.${checkoutNumber}0000000000000000`,
         externalTransactionId: transactionId,
-        verifiedAmountCents: 25_000,
-        verifiedCurrency: "USD",
+        confirmedFundsReceived: true,
+        confirmedAmountAndReference: true,
         actorId: "admin:samuel",
         at: "2026-08-09T02:00:00.000Z",
       },
@@ -150,11 +152,16 @@ describe("a cosmetic variant cannot settle a second checkout", () => {
     expect(first.committed).toBe(true);
   });
 
-  it.each(COSMETIC_VARIANTS)("refuses %s as transaction_id_used", async (variant) => {
+  // The refusal is `transaction_id_duplicate_canonical`, not the legacy
+  // `transaction_id_used`. The distinction is worth keeping: the legacy code
+  // means the exact string was reused, while this one means a DIFFERENT
+  // spelling resolved to the same payment, which is the case that used to slip
+  // through and the one an operator most needs named precisely.
+  it.each(COSMETIC_VARIANTS)("refuses %s as a canonical duplicate", async (variant) => {
     const second = await settle(TWO, variant);
     expect(second.committed).toBe(false);
     if (second.committed === false) {
-      expect(second.reason).toBe("transaction_id_used");
+      expect(second.reason).toBe("transaction_id_duplicate_canonical");
     }
   });
 

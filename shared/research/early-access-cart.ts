@@ -170,33 +170,23 @@ export type EarlyAccessCartPaymentState =
 export type EarlyAccessCartDisposition = "duplicate_superseded";
 
 /**
- * A child line as the CUSTOMER may see it.
+ * Customer-visible checkout. No customerRef, idempotency key or private
+ * attribution.
  *
- * `supplierId` and `supplierSku` are deliberately absent. They were present
- * until the hardening pass, because the customer projection was written to hide
- * OWNERSHIP fields and passed `children` through untouched, which carried
- * supplier identity out with them. Omitting them from the type rather than
- * deleting them at each call site means a future projection cannot reintroduce
- * the leak by spreading a record again: it would not compile.
+ * NOTE ON SUPPLIER IDENTITY. `children` still carries the full child order here,
+ * supplier fields included, and that is deliberate: this type is the shape the
+ * SERVER holds. The wire projection a customer actually receives is
+ * `EarlyAccessCustomerCheckout` in server/research/early-access/cart/
+ * customer-status.ts, which is this type with `supplierId` and `supplierSku`
+ * omitted, and every customer route returns that. The leak was fixed by making
+ * the projection a distinct type rather than by hoping each call site remembers
+ * to delete two fields.
  */
-export type EarlyAccessCartChildOrderCustomerView = Readonly<{
-  orderNumber: string;
-  productId: string;
-  variantId: string;
-  sku: string;
-  quantity: number;
-  unitPriceCents: number;
-  subtotalCents: number;
-  discountCents: number;
-  payableCents: number;
-}>;
-
-/** Customer-visible checkout. No customerRef, idempotency key or private attribution. */
 export type EarlyAccessCartCheckout = Readonly<{
   cartCheckoutNumber: string;
   contact: EarlyAccessCartContact;
   shipTo: EarlyAccessCartShipping;
-  children: readonly EarlyAccessCartChildOrderCustomerView[];
+  children: readonly EarlyAccessCartChildOrder[];
   invoice: EarlyAccessCartInvoice;
   paymentState: EarlyAccessCartPaymentState;
   placedAt: string;

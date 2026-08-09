@@ -6,7 +6,6 @@ import type {
   EarlyAccessCartItemInput,
   EarlyAccessCartQuote,
   EarlyAccessCartShipping,
-  EarlyAccessCartStatus,
 } from "@shared/research/early-access-cart";
 import {
   EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS,
@@ -142,28 +141,16 @@ export function checkoutView(record: EarlyAccessCartCheckoutRecord): EarlyAccess
     cartCheckoutNumber: record.cartCheckoutNumber,
     contact: Object.freeze({ ...record.contact }),
     shipTo: Object.freeze({ ...record.shipTo }),
-    // BUILT FROM NAMED FIELDS, NOT SPREAD.
+    // NOT the customer projection. This strips the OWNERSHIP fields
+    // (customerRef, idempotencyKey, intentHash, quoteId) and keeps the child
+    // orders whole, supplier identity included, because callers inside the
+    // server legitimately need them.
     //
-    // A spread here is exactly what leaked supplierId and supplierSku to the
-    // customer: this projection was written to strip ownership fields, and
-    // `children` went through it untouched. Naming the fields means a future
-    // field added to the durable child record is invisible to the customer
-    // until somebody deliberately adds it here.
-    children: Object.freeze(
-      record.children.map((child) =>
-        Object.freeze({
-          orderNumber: child.orderNumber,
-          productId: child.productId,
-          variantId: child.variantId,
-          sku: child.sku,
-          quantity: child.quantity,
-          unitPriceCents: child.unitPriceCents,
-          subtotalCents: child.subtotalCents,
-          discountCents: child.discountCents,
-          payableCents: child.payableCents,
-        }),
-      ),
-    ),
+    // The wire shape a customer receives is `customerCheckoutView` in
+    // customer-status.ts, which omits supplierId and supplierSku as a distinct
+    // TYPE. That is the single mechanism for the customer boundary; duplicating
+    // it here would mean two places to keep in agreement and one to forget.
+    children: Object.freeze(record.children.map((child) => Object.freeze({ ...child }))),
     invoice: Object.freeze({
       ...record.invoice,
       lines: Object.freeze(record.invoice.lines.map((line) => Object.freeze({ ...line }))),
@@ -171,53 +158,6 @@ export function checkoutView(record: EarlyAccessCartCheckoutRecord): EarlyAccess
     paymentState: record.paymentState,
     placedAt: record.placedAt,
   });
-}
-
-/**
- * The customer-safe projection of a cart status.
- *
- * Built from named fields for the same reason `checkoutView` is: the durable
- * status carries supplier identity on every child release, and a spread or a
- * verbatim forward carries it straight out to the purchaser. A field added to
- * the durable shape stays invisible here until somebody adds it deliberately.
- */
-export function customerCartStatusView(status: EarlyAccessCartStatus): EarlyAccessCartStatus {
-  return Object.freeze({
-    checkout: checkoutView(status.checkout as unknown as EarlyAccessCartCheckoutRecord),
-    payment: Object.freeze({
-      state: status.payment.state,
-      paid: status.payment.paid,
-      externalProofCount: status.payment.externalProofCount,
-    }),
-    receipt:
-      status.receipt === null
-        ? null
-        : Object.freeze({
-            receiptId: status.receipt.receiptId,
-            cartCheckoutNumber: status.receipt.cartCheckoutNumber,
-            invoiceNumber: status.receipt.invoiceNumber,
-            paymentReference: status.receipt.paymentReference,
-            verifiedAmountCents: status.receipt.verifiedAmountCents,
-            currency: status.receipt.currency,
-            issuedAt: status.receipt.issuedAt,
-          }),
-    fulfilment: Object.freeze({
-      released: status.fulfilment.released,
-      childOrders: Object.freeze(
-        status.fulfilment.childOrders.map((release) =>
-          Object.freeze({
-            releaseId: release.releaseId,
-            cartCheckoutNumber: release.cartCheckoutNumber,
-            orderNumber: release.orderNumber,
-            quantity: release.quantity,
-            releasedAt: release.releasedAt,
-            shippedAt: release.shippedAt,
-            tracking: Object.freeze([...release.tracking]),
-          }),
-        ),
-      ),
-    }),
-  }) as unknown as EarlyAccessCartStatus;
 }
 
 export function newCartQuoteId(): string {
