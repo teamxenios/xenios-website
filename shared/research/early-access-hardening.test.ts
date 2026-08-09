@@ -111,6 +111,21 @@ describe("the cart customer projection refuses supplier identity", () => {
     ).toBe(false);
   });
 
+  it("refuses supplier economics and the supplier operations pipeline", () => {
+    for (const leak of [
+      { supplierCostCents: 4_200 },
+      { wholesaleCents: 4_200 },
+      { marginCents: 1_000 },
+      { supplierOutboxState: "packing" },
+      { supplierAcknowledgement: { at: "2026-08-09T00:00:00.000Z" } },
+      { supplierName: "Apex" },
+      { internalNote: "chase the lot" },
+      { actorId: "admin:samuel" },
+    ]) {
+      expect(cartCustomerPayloadIsClean({ fulfilment: { childOrders: [leak] } })).toBe(false);
+    }
+  });
+
   it("refuses an ownership handle the read route already knew to strip", () => {
     expect(cartCustomerPayloadIsClean({ checkout: { customerRef: "eac_abc" } })).toBe(false);
     expect(cartCustomerPayloadIsClean({ checkout: { intentHash: "deadbeef" } })).toBe(false);

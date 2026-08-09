@@ -466,13 +466,36 @@ export const CATALOG_FORBIDDEN_PUBLIC_KEYS = Object.freeze([
  * independent of anything M62 does.
  */
 export const EARLY_ACCESS_CART_FORBIDDEN_CUSTOMER_KEYS = Object.freeze([
+  // Supplier identity. Who fulfils an order is commercially sensitive and is
+  // none of the purchaser's business.
   "supplierId",
   "supplierSku",
+  "supplierName",
+  "supplierOrderNumber",
+  // Supplier economics. What xenios pays is never what the customer is shown.
+  "supplierCostCents",
+  "wholesaleCents",
+  "marginCents",
+  // The supplier operations pipeline. Its state vocabulary (pending,
+  // acknowledged, packing, shipped, cancelled) is an internal workflow, not a
+  // customer-facing one, and leaking it invites questions the customer-facing
+  // fulfilment projection is the correct answer to.
+  "supplierOutbox",
+  "supplierOutboxState",
+  "supplierNotification",
+  "supplierAcknowledgement",
+  // Ownership handles. The read route already knew to strip these; the status
+  // route did not, which is how the supplier fields survived alongside them.
   "customerRef",
   "idempotencyKey",
   "intentHash",
   "quoteId",
   "attribution",
+  // Internal operational metadata.
+  "internalNote",
+  "internalNotes",
+  "actorId",
+  "auditEvent",
 ] as const);
 
 /**

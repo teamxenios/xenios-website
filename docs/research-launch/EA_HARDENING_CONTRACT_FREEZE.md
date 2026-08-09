@@ -177,23 +177,50 @@ every other field is set to look convincing.
 `priceDisplay: null` means pricing pending, which is the honest answer for a
 planning row whose supplier quote is outstanding. It is not the same as free.
 
-## One unresolved question that decides whether the cart is reachable
+## The wall and the Early Access session (decided)
 
-The research gateway wall mounts on `/api/research` before the Early Access API
-registers, and it default-denies anyone without the research gateway cookie.
-Its exemption lists name session, catalog, agreements, unlock, logout, orders
-and verification. They name no cart path. So an Early Access customer who
-unlocks with the Early Access password and posts a cart quote is refused,
-unless they also hold the research gateway password.
+**A Private Early Access session is sufficient for the intended Early Access
+cart routes. A customer who has unlocked Early Access is never asked for the
+research gateway password as well.**
 
-No composed test covers it: the cart route tests register the Early Access API
-alone, and the one test that mounts both enumerates exempt paths without a cart
-path among them.
+The problem was proven, not inferred. The research gateway wall mounts on
+`/api/research` before the Early Access API registers and default-denies anyone
+without the research gateway cookie; its admission sets name no cart path. A
+probe composed exactly as `server/index.ts` composes the app confirmed all five
+existing cart routes answer 401 with the wall's own `"Access required."` while
+an exempt control path answers 200.
 
-The question is binary and belongs to Samuel. If pilot customers hold both
-passwords, this is a deployment precondition and should be written down as one.
-If not, the exemption list needs method-exact cart entries, and that file is a
-protection seam only the orchestrator may edit. No lane routes around this.
+The fix is narrow and belongs to the orchestrator's composition seam, because
+`server/research/index.ts` is a protection seam file. Exactly seven doors are
+admitted, method-exact and path-exact, following the pattern the verification
+and agreement doors already use:
+
+| Method | Path (as the wall sees it) | Kind |
+|---|---|---|
+| GET | `/early-access/cart/capability` | literal |
+| POST | `/early-access/cart/quote` | literal |
+| POST | `/early-access/cart/checkout` | literal |
+| GET | `/early-access/cart/<XEC>` | anchored |
+| GET | `/early-access/cart/<XEC>/status` | anchored |
+| GET | `/early-access/cart/<XEC>/payment-instructions` | anchored |
+| POST | `/early-access/cart/<XEC>/payment-proof` | anchored |
+
+`<XEC>` is the exact grammar `XEC-[A-Z0-9]{16,40}`, mirroring `CART_NUMBER` in
+`cart/model.ts`. A prefix match would be wrong: it would admit every future path
+anyone adds under `/early-access/cart/`, including ones written before their
+ownership check exists.
+
+**Admission through the wall is not authorization.** Every admitted door still
+carries all three obligations in
+`EARLY_ACCESS_ADMITTED_DOOR_OBLIGATIONS`: resolve the customer from the durable
+Early Access session, refuse a checkout that is not theirs, and refuse as 404
+rather than 403 so the door cannot become an existence oracle. One customer
+reaching another's cart stays impossible, and that is why this is done door by
+door rather than by prefix.
+
+No unrelated `/research` route becomes reachable. The admin doors are unaffected:
+they live under `/api/admin/research/...`, outside this wall, behind
+`requireSupabaseAdmin`.
 
 ## Standing facts from the forensics pass
 
