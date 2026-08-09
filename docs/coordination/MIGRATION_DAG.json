@@ -450,13 +450,13 @@
     {
       "id": "research_early_access_hardening",
       "path": "supabase/migrations/20260809130000_research_early_access_hardening.sql",
-      "sourceSha": "73f5109f0a4060bbb76fdcf00b8d22e01b54158e",
+      "sourceSha": "fc053c31c9139119ccd108eea200f411bb4084ad",
       "dependsOn": [
         "research_early_access_cart_duplicate_guard"
       ],
       "checksum": {
         "algorithm": "sha256",
-        "value": "a5584714665137c4d5247bcb1201c23be2a901b20b5ac4d48c7e837e975f46b5"
+        "value": "7e41f21433bf45ee83d738ccd43b6b558b4f7f20e27e071d4785a1e8218794ad"
       },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
