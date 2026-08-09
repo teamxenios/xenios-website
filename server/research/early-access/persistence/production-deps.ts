@@ -39,6 +39,7 @@ import {
   RefusingEarlyAccessCustomerRepository,
   RefusingSessionBindingStore,
 } from "./refusing";
+import { buildEarlyAccessProofDependencies } from "../proof/production-deps";
 import { SupabaseEarlyAccessReservationStore } from "./reservation-store";
 import {
   MigrationTolerantUnitHoldRegistry,
@@ -292,6 +293,22 @@ export function buildEarlyAccessPersistence(
     // ONLY; refused and memory mode return before reaching this object, so
     // production still cannot arrive at process memory by omission.
     cartCheckoutStore: buildEarlyAccessDurableCartStore(run),
+    // THE CUSTOMER PAYMENT-PROOF DOOR'S DURABLE DEPENDENCIES.
+    //
+    // Built ONLY here, in the durable branch, for the same reason the cart
+    // store is: refused and memory mode both return before this object exists,
+    // so there is no path from a deployment that cannot persist to a door that
+    // accepts a customer's proof. Registration mounts the door only when this
+    // key is present, so an unsupplied dependency is an absent route rather
+    // than a route that fails at the first upload.
+    //
+    // `checkouts` is deliberately not among them: the mount passes the SAME
+    // resolved cart store the quote, checkout and status routes use.
+    proofDependencies: buildEarlyAccessProofDependencies({
+      query: run,
+      env,
+      warnings,
+    }),
   };
 
   const required = readRequiredAgreements(env, warnings);

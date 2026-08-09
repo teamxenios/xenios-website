@@ -72,6 +72,12 @@ import { buildFoundingActivationDependencies } from "./research/membership-activ
 import {
   createPrivateEarlyAccessPaymentOptionsContainmentMiddleware,
 } from "./research/early-access/private-access-route";
+import {
+  createProofBodyErrorHandler,
+  isProofUploadPath,
+} from "./research/early-access/proof/route";
+import { EARLY_ACCESS_PROOF_CONTENT_TYPES } from "./research/early-access/commerce/payment-proof";
+import { TRANSIENT_PROOF_MAX_BYTES } from "./research/early-access/proof/transient-proof";
 import { requireActiveMember, requireMember, type MemberRow } from "./research/member-auth";
 import { requireSupabaseAdmin } from "./routes";
 import { promoteHeldRewards } from "./research/referrals";
@@ -145,6 +151,44 @@ registerLegacyResearchOrderContainment(app);
 // a later separately reviewed unit must supply those before any 200 is possible.
 app.use(createPrivateEarlyAccessPaymentOptionsContainmentMiddleware());
 
+// THE EARLY ACCESS PAYMENT-PROOF RAW UPLOAD SEAM, and nothing else.
+//
+// The proof door takes a file, not JSON, so it needs the raw bytes and a larger
+// ceiling than the site's 2mb JSON limit. Both are scoped as narrowly as this
+// server can express:
+//
+//   - the predicate is `isProofUploadPath`, the door's OWN anchored regex over
+//     the exact `/api/research/early-access/cart/<number>/payment-proof` shape,
+//     so no other path, and no path below it, enters this parser;
+//   - only POST, because the parser exists for an upload and nothing else on
+//     that path is one;
+//   - only the four reviewed proof content types, so any other type falls
+//     through unparsed and the door answers its own 415;
+//   - 8 MB, the limit the door already enforces on the decoded bytes, applied
+//     here so an oversized upload is refused by the transport rather than after
+//     it has been held in memory.
+//
+// It is a predicate middleware rather than `app.use(path, ...)` on purpose. A
+// mounted path is a PREFIX match, which would have admitted every future path
+// under `.../payment-proof/`, and it is not `app.post(...)` because that would
+// be a second registration of a path the Early Access API already registers.
+//
+// The global JSON limit below is UNCHANGED at 2mb, and no `req.rawBody` is
+// retained for this path: the raw parser sets `req.body` and the door hands
+// those bytes straight to validation and the attachment. Nothing is written
+// down.
+const earlyAccessProofRawBody = express.raw({
+  type: [...EARLY_ACCESS_PROOF_CONTENT_TYPES],
+  limit: TRANSIENT_PROOF_MAX_BYTES,
+});
+app.use((req, res, next) => {
+  if (req.method !== "POST" || !isProofUploadPath(req.path)) {
+    next();
+    return;
+  }
+  earlyAccessProofRawBody(req, res, next);
+});
+
 app.use(
   express.json({
     // Explicit limit. A native drawn-signature is a small trimmed-canvas PNG
@@ -158,6 +202,16 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+
+// The body-error boundary for the proof path only.
+//
+// Registered after the body parsers so it catches a failure from either of
+// them, and scoped by the same anchored predicate so it cannot change the error
+// behaviour of any other route. Without it an oversized or aborted upload
+// surfaces as the framework's HTML error page and an upload client receives
+// HTML where it expected JSON. It never logs or echoes the error: a body parser
+// error object holds a reference to the request, and the request holds the file.
+app.use(createProofBodyErrorHandler(isProofUploadPath));
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {

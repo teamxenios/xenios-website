@@ -127,6 +127,15 @@ import {
   EARLY_ACCESS_CART_PAYMENT_INSTRUCTIONS_PATH,
   createEarlyAccessCartPaymentInstructionsRoute,
 } from "./cart/payment-instructions-route";
+import {
+  EARLY_ACCESS_CART_PAYMENT_PROOF_PATH,
+  createEarlyAccessCartPaymentProofRoute,
+} from "./proof/route";
+import {
+  createProofSubmissionService,
+  type ProofSubmissionDeps,
+} from "./proof/submission-service";
+import { isCartCheckoutNumber } from "./cart/model";
 import { createEnvPaymentInstructionsConfigSource } from "./commerce/payment-instructions-config";
 import {
   createConfiguredPaymentMethodRegistry,
@@ -214,9 +223,22 @@ export const EARLY_ACCESS_CART_API_PATHS = Object.freeze([
   EARLY_ACCESS_CART_CHECKOUT_PATH,
   EARLY_ACCESS_CART_READ_PATH,
   EARLY_ACCESS_CART_STATUS_PATH,
+  EARLY_ACCESS_CART_PAYMENT_PROOF_PATH,
   EARLY_ACCESS_ADMIN_CART_PROOF_PATH,
   EARLY_ACCESS_ADMIN_CART_CONFIRM_PATH,
 ] as const);
+
+/**
+ * The two facts the raw upload cannot carry inside its own body.
+ *
+ * The body is the file. The filename and the payment method the customer chose
+ * therefore arrive as headers, which keeps them out of the byte stream (so a
+ * crafted file cannot claim its own name) and keeps the transport limit
+ * enforceable before anything is parsed. Exported so a client and a test name
+ * the same header rather than each writing its own literal.
+ */
+export const EARLY_ACCESS_PROOF_FILENAME_HEADER = "x-xenios-proof-filename";
+export const EARLY_ACCESS_PROOF_METHOD_HEADER = "x-xenios-proof-method";
 
 export const EARLY_ACCESS_API_PATHS = Object.freeze([
   EARLY_ACCESS_UNLOCK_PATH,
@@ -321,6 +343,48 @@ function clientKeyFor(request: Request): string {
   return ip ?? "private-early-access:unknown-client";
 }
 
+/**
+ * One header value, or undefined.
+ *
+ * A repeated header arrives as an array. It is refused rather than joined or
+ * first-wins-ed, because two different filenames or two different payment
+ * methods in one request is a request that does not know what it is asking for,
+ * and the door's own validation should see the absence rather than a choice
+ * this function made.
+ */
+function headerValue(request: Request, name: string): string | undefined {
+  const raw = request.headers?.[name];
+  return typeof raw === "string" ? raw : undefined;
+}
+
+/**
+ * The declared content type, normalized but never widened.
+ *
+ * Parameters are dropped and the type is lowercased, which is what RFC 9110
+ * says the type means. The door still compares the result against the closed
+ * four-entry allowlist, so normalizing admits nothing new: it only stops a
+ * correct upload being refused because a client appended a charset.
+ */
+function proofContentType(request: Request): string | undefined {
+  const raw = headerValue(request, "content-type");
+  if (raw === undefined) return undefined;
+  return raw.split(";")[0].trim().toLowerCase();
+}
+
+/**
+ * What the transport SAID the length was, before the body was read.
+ *
+ * Advisory only. The real enforcement is the parser's own limit and the door's
+ * check on the actual bytes; this exists so an oversized upload can be refused
+ * without the bytes being held at all.
+ */
+function declaredLength(request: Request): number | undefined {
+  const raw = headerValue(request, "content-length");
+  if (raw === undefined) return undefined;
+  const parsed = Number.parseInt(raw, 10);
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : undefined;
+}
+
 export interface EarlyAccessRegistrationOptions {
   readonly config?: EarlyAccessConfig;
   readonly repository?: PrivateAccessSessionRepository;
@@ -376,6 +440,19 @@ export interface EarlyAccessRegistrationOptions {
    * flag is on. Persists through research_early_access_commit_cart_checkout.
    */
   readonly cartCheckoutStore?: CartStorePorts;
+  /**
+   * The DURABLE dependencies of the customer payment-proof door, minus the two
+   * this registration owns: `checkouts` is the resolved cart store above, and
+   * `now` is this registration's clock, so the proof path can never read a
+   * different cart or a different clock from the rest of the cart.
+   *
+   * Absent means the door is NOT MOUNTED. There is no in-memory default, for
+   * the same reason `cartCheckoutStore` has none: a customer told their proof
+   * was accepted, whose submission then vanished on the next restart, is worse
+   * off than a customer who could not upload at all. Supplied only by the
+   * durable branch of persistence/production-deps.ts.
+   */
+  readonly proofDependencies?: Omit<ProofSubmissionDeps, "checkouts" | "now">;
   /**
    * SUPPLIER_CONFIRMED_ON_DEMAND records and unit holds. Both feed the
    * catalog projection at every read AND the manual admin doors that record
@@ -936,6 +1013,59 @@ export function registerPrivateEarlyAccessApi(
         }),
       ),
     );
+
+    // THE CUSTOMER PAYMENT-PROOF DOOR, and the last step of the journey.
+    //
+    // Mounted only when the DURABLE dependencies were supplied, so a memory or
+    // refused deployment has no door rather than a door over a store that
+    // forgets. Inside the cart flag, under /api/research (the wall admits this
+    // exact path, method-exact, over the XEC- grammar), and registered after the
+    // literal cart paths for the same reason every other parameterized cart
+    // route is.
+    //
+    // The handler does no deciding. It reads the raw body Express parsed for
+    // this path only, the two headers the body cannot carry, and the customer
+    // the session resolves; ownership, the legal binding, the agreement
+    // checkpoint, the method and the bytes are all decided inside the service.
+    // NOTHING here settles a payment, releases a supplier or issues a receipt:
+    // the service holds no port that could.
+    if (options.proofDependencies !== undefined) {
+      const proofDoor = createEarlyAccessCartPaymentProofRoute({
+        identity: cartIdentity,
+        submit: createProofSubmissionService({
+          ...options.proofDependencies,
+          // THE cart store, not a second one, so "is this order still awaiting
+          // payment" has one answer across quote, checkout, status and proof.
+          checkouts: cartStore,
+          now,
+        }),
+        // The same guard every other cart door applies to a checkout number,
+        // injected rather than restated so there is one grammar.
+        isCheckoutNumber: isCartCheckoutNumber,
+      });
+      app.post(EARLY_ACCESS_CART_PAYMENT_PROOF_PATH, (req: Request, res: Response) => {
+        void proofDoor(
+          {
+            cookieHeader: req.headers?.cookie,
+            cartCheckoutNumber: req.params?.cartCheckoutNumber,
+            // A Buffer IS a Uint8Array, and this is the body express.raw parsed
+            // for this path alone. An unaccepted content type never reaches the
+            // parser, so this stays undefined and the door answers 415.
+            bytes: req.body,
+            contentType: proofContentType(req),
+            filename: headerValue(req, EARLY_ACCESS_PROOF_FILENAME_HEADER),
+            method: headerValue(req, EARLY_ACCESS_PROOF_METHOD_HEADER),
+            declaredContentLength: declaredLength(req),
+          },
+          res as never,
+        ).catch(() => {
+          if (!res.headersSent) {
+            res.setHeader("Cache-Control", "no-store, private, max-age=0");
+            res.status(503).json({ ok: false, code: "UNAVAILABLE" });
+          }
+        });
+      });
+    }
 
     // THE NAMED-ADMIN DOORS, behind the SAME Supabase admin guard every other
     // operator route uses, and deliberately NOT under /api/research: the

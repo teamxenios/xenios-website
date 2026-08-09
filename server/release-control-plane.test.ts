@@ -1457,8 +1457,24 @@ describe("route uniqueness validator", () => {
     // release or mark an order paid. Ownership is re-checked in the handler and
     // a checkout belonging to someone else gets the same 404 an unknown one
     // does, so the door discloses nothing by existing.
-    expect(result.callSites).toBe(339);
-    expect(result.routes).toHaveLength(348);
+    //
+    // 340/349 with the customer payment-proof door mounted. The single
+    // addition, MEASURED rather than assumed:
+    //   POST /api/research/early-access/cart/:cartCheckoutNumber/payment-proof
+    //
+    // The last step of the customer journey. Registered inside the same
+    // cart-enabled branch, and additionally only when the DURABLE proof
+    // dependencies were supplied, so a deployment that cannot persist a
+    // submission has no door rather than one that forgets. The scanner is a
+    // SOURCE scan, so it counts this call site whatever the flag and the
+    // dependencies say at runtime, which is again the honest number to pin.
+    //
+    // The raw-body seam this door needs in server/index.ts is a predicate
+    // middleware, not `app.use(path, ...)` and not a second `app.post`, so it
+    // adds no registration here and cannot: a second registration of this path
+    // would fail the uniqueness check below.
+    expect(result.callSites).toBe(340);
+    expect(result.routes).toHaveLength(349);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

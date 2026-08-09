@@ -19,6 +19,8 @@ import { SupabaseEarlyAccessReleaseLedger } from "./records";
 import { SupabaseEarlyAccessProofStorage } from "./proof-storage";
 import { SupabasePrivateAccessSessionRepository } from "../private-access-session-repository";
 import { SupabaseEarlyAccessCartStore } from "../cart/supabase-store";
+import { SupabaseProofSubmissionStore } from "../proof/supabase-submission-store";
+import { SupabaseEarlyAccessLegalBindingDirectory } from "../legal/supabase-legal-binding-directory";
 
 const OWNER = "3f2f4bde-6f0f-4a11-9a3e-8c7d5b2a1e90";
 
@@ -189,6 +191,44 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
     const memory = buildEarlyAccessPersistence({} as NodeJS.ProcessEnv, async () => null);
     expect(memory.mode).toBe("memory");
     expect(memory.options.cartCheckoutStore).toBeUndefined();
+  });
+
+  // The same shape as the cart store rule, applied to the customer's last step.
+  // Registration mounts the payment-proof door ONLY when these are present, so
+  // an absent key is an absent route rather than a route over a store that
+  // forgets a submission on the next restart.
+  it("durable mode supplies the DURABLE proof dependencies, and nothing else does", async () => {
+    const durable = buildEarlyAccessPersistence(
+      {
+        SUPABASE_URL: "https://example.supabase.co",
+        SUPABASE_SERVICE_ROLE_KEY: "sb_secret_test",
+        RESEARCH_EARLY_ACCESS_OWNER_ID: OWNER,
+      } as NodeJS.ProcessEnv,
+      async () => null,
+    );
+    expect(durable.mode).toBe("durable");
+    const proof = durable.options.proofDependencies;
+    expect(proof).toBeDefined();
+    expect(proof?.submissions).toBeInstanceOf(SupabaseProofSubmissionStore);
+    expect(proof?.bindings).toBeInstanceOf(SupabaseEarlyAccessLegalBindingDirectory);
+    // No package is designated, so the agreement checkpoint refuses. That is
+    // the target state until a named human designates and publishes one, and
+    // it is asserted here so nobody "fixes" it by loosening the gate.
+    await expect(proof?.agreements.standingFor(OWNER)).resolves.toMatchObject({
+      satisfied: false,
+    });
+
+    const refused = buildEarlyAccessPersistence(
+      {
+        NODE_ENV: "production",
+        RESEARCH_EARLY_ACCESS_ENABLED: "true",
+      } as NodeJS.ProcessEnv,
+      async () => null,
+    );
+    expect(refused.options.proofDependencies).toBeUndefined();
+
+    const memory = buildEarlyAccessPersistence({} as NodeJS.ProcessEnv, async () => null);
+    expect(memory.options.proofDependencies).toBeUndefined();
   });
 
   it("durable mode keeps the fail-closed agreement placeholder until the required list is stated", () => {
