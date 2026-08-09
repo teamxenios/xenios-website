@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { defaultDeps, type MemberPlatformDeps } from "./member-platform-deps";
 import { registerAdminCapabilityApi } from "./capabilities";
 import { registerOverviewApi } from "./overview";
+import { registerMemberAccountApi } from "./member-account";
 import { registerAgreementsApi } from "./agreements";
 import { registerProfileApi } from "./profile";
 import { registerAssessmentApi } from "./assessment";
@@ -32,6 +33,7 @@ import { registerProductRequestApi } from "./product-requests";
 export function registerMemberPlatformApi(app: Express, deps: MemberPlatformDeps = defaultDeps()) {
   registerAdminCapabilityApi(app, () => deps.clock.now());
   registerOverviewApi(app, deps);
+  registerMemberAccountApi(app, deps);
   registerAgreementsApi(app, deps);
   registerProfileApi(app, deps);
   registerAssessmentApi(app, deps);
