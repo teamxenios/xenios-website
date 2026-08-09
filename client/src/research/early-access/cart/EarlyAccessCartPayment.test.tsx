@@ -82,6 +82,7 @@ describe("EarlyAccessCartPayment", () => {
         checkout={CHECKOUT}
         copied={false}
         onCopy={() => undefined}
+        onSubmitOrder={() => undefined}
         onStatus={() => undefined}
       />,
     );
@@ -98,6 +99,7 @@ describe("EarlyAccessCartPayment", () => {
         checkout={CHECKOUT}
         copied={false}
         onCopy={() => undefined}
+        onSubmitOrder={() => undefined}
         onStatus={() => undefined}
         paymentInstructions={PRESENTATION}
       />,
@@ -118,14 +120,47 @@ describe("EarlyAccessCartPayment", () => {
         checkout={CHECKOUT}
         copied={false}
         onCopy={() => undefined}
+        onSubmitOrder={() => undefined}
         onStatus={() => undefined}
         paymentInstructions={PRESENTATION}
       />,
     );
-    expect(container.textContent).toContain("awaiting_payment");
+    // The exact server state, pinned. It moved from customer-facing text to a
+    // data attribute so a person is not shown database vocabulary, and the
+    // assertion got STRICTER in the move: it now checks the precise value on
+    // the precise element rather than searching the whole screen for a
+    // substring that any other node could have satisfied.
+    expect(
+      container
+        .querySelector('[data-testid="early-access-payment-state"]')
+        ?.getAttribute("data-payment-state"),
+    ).toBe("awaiting_payment");
     const text = container.textContent?.toLowerCase() ?? "";
+    // The same fact, in words a customer can act on.
+    expect(text).toContain("not confirmed by xenios yet");
     expect(text).not.toContain("payment received");
     expect(text).not.toContain("payment verified");
+    // Raw state vocabulary must not reach the customer as readable text.
+    expect(container.textContent).not.toContain("awaiting_payment");
     expect(container.querySelector("form")).toBeNull();
+  });
+
+  it("says the checkout is reserved and NOT yet submitted for review", () => {
+    const container = render(
+      <EarlyAccessCartPayment
+        checkout={CHECKOUT}
+        copied={false}
+        onCopy={() => undefined}
+        onSubmitOrder={() => undefined}
+        onStatus={() => undefined}
+        paymentInstructions={PRESENTATION}
+      />,
+    );
+    const text = container.textContent ?? "";
+    expect(text).toContain("Checkout reserved");
+    expect(text).toContain("has not been submitted for payment review yet");
+    // The two milestones must never be conflated on this screen.
+    expect(text).not.toContain("Order submitted");
+    expect(text.toLowerCase()).not.toContain("order placed");
   });
 });

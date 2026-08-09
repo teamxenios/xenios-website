@@ -1,9 +1,31 @@
+/**
+ * The customer's route through Early Access, in order.
+ *
+ * `agreements` and `submit` are separate steps rather than panels bolted onto
+ * their neighbours, and both earn the place:
+ *
+ *  - `agreements` was previously a card at the top of the catalogue. That put
+ *    the one thing the server refuses a quote without on the same screen as
+ *    every product, where it read as an interstitial to scroll past. It is a
+ *    required step, so it is a step.
+ *
+ *  - `submit` separates "an invoice exists" from "a named human has been asked
+ *    to check for my money". Those are different facts, the customer owes an
+ *    action between them, and collapsing them into the payment screen is what
+ *    makes people believe an order is further along than it is.
+ *
+ * Adding to this list is safe. The journey's guard resolves an unreachable step
+ * to a reachable one by re-running until the answer stops changing, and it is
+ * bounded by this length, so a longer list simply gives it more room.
+ */
 export const EARLY_ACCESS_CHECKOUT_STEPS = [
   "catalog",
   "cart",
   "details",
+  "agreements",
   "review",
   "payment",
+  "submit",
   "status",
 ] as const;
 export type EarlyAccessCheckoutStep = (typeof EARLY_ACCESS_CHECKOUT_STEPS)[number];
