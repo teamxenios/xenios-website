@@ -24,6 +24,7 @@ import {
 } from "./membership-activation/emails";
 import { runAgreementPackageReconciler } from "./agreement-package-reconciliation";
 import { renderProductDiagnosticOutboxEmail } from "./products-diagnostics/communications";
+import { renderEarlyAccessOutboxEmail } from "./early-access/notifications/communications";
 
 // ---------------------------------------------------------------------------
 // Durable notification outbox (Mega 1 sections 3-4). Every notification is a
@@ -315,6 +316,20 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
             to: job.recipient,
             subject: productDiagnostic.subject,
             text: productDiagnostic.text,
+            idempotencyKey: String(job.event_key),
+          });
+        }
+        // Early Access customer mail shares this ONE durable path too. The
+        // renderer refuses a payload carrying receiving material, so a
+        // hand-inserted row cannot put a payment destination in a customer
+        // inbox: the destinations live behind the authenticated Early Access
+        // page and the email carries only a reference and a link to it.
+        const earlyAccess = renderEarlyAccessOutboxEmail(job.template_key, payload);
+        if (earlyAccess) {
+          return await sendFoundingEmail({
+            to: job.recipient,
+            subject: earlyAccess.subject,
+            text: earlyAccess.text,
             idempotencyKey: String(job.event_key),
           });
         }
