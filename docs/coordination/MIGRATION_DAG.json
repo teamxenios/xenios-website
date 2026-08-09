@@ -426,6 +426,26 @@
         "procedure": "supabase/production/research-early-access-cart-completion-rollback-notes.md",
         "evidence": "Corrected for managed Supabase (pgcrypto lives in the extensions schema; the original public.digest form failed its first production apply with SQLSTATE 42883 and rolled back). Re-proved by scripts/verify-early-access-cart-managed-supabase.sh on PostgreSQL 16 and 17 with pgcrypto installed into extensions, which also proves corrected 60 replaces migration 58's defective commit_cart_checkout. Disposable PostgreSQL 16.14 apply-twice in BOTH shapes, recorded in supabase/production/research-early-access-cart-completion-apply-twice-evidence.md. Shape A (full chain, migration 54 present) and Shape B (production shaped, migration 54 and 55 absent, proven absent before the run) each applied the 58+60 candidate pair twice at psql exit 0, then passed the same 45-assertion behavioural suite: atomic commit, one parent, all children, one invoice, one payment reference, idempotency replay refused without partial writes, a FORCED mid-transaction failure leaving zero rows anywhere, proof metadata that does not mark paid, one settlement with one receipt and every child released across mixed suppliers, a retry that duplicates nothing, and zero commission or referral rows. Both shapes end with 10 cart tables at forced RLS, zero anon/authenticated/service_role direct table access, and 11 RPCs executable by service_role only. Migration 59 deliberately absent from both."
       }
+    },
+    {
+      "id": "research_early_access_cart_duplicate_guard",
+      "path": "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql",
+      "sourceSha": "4031cace41eba98f283e63b8ed3a14f555f6d79a",
+      "dependsOn": [
+        "research_early_access_cart_completion"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "a15ed8163b618a1de56d779c8b16e1ced31621ccf07d7435a2aa4838e4f3ead2"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_additive_schema_and_drop_the_invariant_index",
+        "procedure": "supabase/production/research-early-access-cart-duplicate-guard-rollback-notes.md",
+        "evidence": "Applied twice on the managed-Supabase shape (pgcrypto in extensions) on PostgreSQL 16 and 17. The 45-assertion behavioural suite still passes with the invariant in place; a second active checkout for one quote is refused; all five money and release tables and the payment state refuse a superseded checkout; the seeded production duplicate pair is dispositioned with both rows retained and exactly one audit event across two applies; a PAID duplicate aborts the migration instead of being superseded."
+      }
     }
   ],
   "invariants": [
