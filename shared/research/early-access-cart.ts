@@ -169,12 +169,34 @@ export type EarlyAccessCartPaymentState =
  */
 export type EarlyAccessCartDisposition = "duplicate_superseded";
 
+/**
+ * A child line as the CUSTOMER may see it.
+ *
+ * `supplierId` and `supplierSku` are deliberately absent. They were present
+ * until the hardening pass, because the customer projection was written to hide
+ * OWNERSHIP fields and passed `children` through untouched, which carried
+ * supplier identity out with them. Omitting them from the type rather than
+ * deleting them at each call site means a future projection cannot reintroduce
+ * the leak by spreading a record again: it would not compile.
+ */
+export type EarlyAccessCartChildOrderCustomerView = Readonly<{
+  orderNumber: string;
+  productId: string;
+  variantId: string;
+  sku: string;
+  quantity: number;
+  unitPriceCents: number;
+  subtotalCents: number;
+  discountCents: number;
+  payableCents: number;
+}>;
+
 /** Customer-visible checkout. No customerRef, idempotency key or private attribution. */
 export type EarlyAccessCartCheckout = Readonly<{
   cartCheckoutNumber: string;
   contact: EarlyAccessCartContact;
   shipTo: EarlyAccessCartShipping;
-  children: readonly EarlyAccessCartChildOrder[];
+  children: readonly EarlyAccessCartChildOrderCustomerView[];
   invoice: EarlyAccessCartInvoice;
   paymentState: EarlyAccessCartPaymentState;
   placedAt: string;

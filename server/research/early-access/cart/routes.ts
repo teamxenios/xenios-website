@@ -8,7 +8,7 @@ import {
   EARLY_ACCESS_CART_MAX_QUANTITY,
 } from "@shared/research/early-access-cart";
 import { checkoutEarlyAccessCart, type EarlyAccessCartCheckoutDeps } from "./checkout-service";
-import { checkoutView, isCartCheckoutNumber } from "./model";
+import { checkoutView, customerCartStatusView, isCartCheckoutNumber } from "./model";
 import type {
   CartCustomer,
   EarlyAccessCartCheckoutStore,
@@ -215,6 +215,12 @@ export function createEarlyAccessCartStatusRoute(
       response.status(404).json({ ok: false, code: "NOT_FOUND" });
       return;
     }
-    response.status(200).json({ ok: true, status });
+    // PROJECT, DO NOT FORWARD.
+    //
+    // This route used to return the store's answer verbatim, and the durable
+    // answer carries supplier identity on every child release. The read route
+    // beside it projected and this one did not, which is precisely how the
+    // leak survived: one door was hardened and its twin was not.
+    response.status(200).json({ ok: true, status: customerCartStatusView(status) });
   };
 }
