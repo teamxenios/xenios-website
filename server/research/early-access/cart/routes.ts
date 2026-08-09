@@ -11,6 +11,7 @@ import { checkoutEarlyAccessCart, type EarlyAccessCartCheckoutDeps } from "./che
 import { isCartCheckoutNumber } from "./model";
 import {
   customerCheckoutView,
+  customerQuoteView,
   projectEarlyAccessCustomerCartStatus,
 } from "./customer-status";
 import type {
@@ -124,7 +125,15 @@ export function createEarlyAccessCartQuoteRoute(
                 ? 503
                 : 400,
       )
-      .json(result);
+      // The internal quote keeps its supplier route, because the stored quote
+      // is what the checkout reads to build each child order. Only the wire is
+      // projected, exactly as the checkout response is. A refusal carries only
+      // a code and the per-line failure vocabulary, so it is returned as is.
+      .json(
+        result.ok
+          ? Object.freeze({ ...result, quote: customerQuoteView(result.quote) })
+          : result,
+      );
   };
 }
 

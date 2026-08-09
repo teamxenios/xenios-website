@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { EarlyAccessCartCheckoutRecord } from "@shared/research/early-access-cart";
 import { parseEarlyAccessPaymentInstructionsPresentation } from "@shared/research/early-access-payment-instructions";
+import { cartCustomerPayloadIsClean } from "@shared/research/early-access-hardening";
 import type {
   ManualOrderPaymentMethod,
   ManualPaymentClockPort,
@@ -319,5 +320,16 @@ describe("createEarlyAccessCartPaymentInstructionsRoute", () => {
     ]) {
       expect(serialized).not.toContain(forbidden);
     }
+  });
+
+  // The shared deep predicate, applied to the RESOLVED presentation rather than
+  // to a hand-written key list, so this surface is held to the same standard as
+  // the quote, checkout and status projections and cannot drift from them.
+  it("carries no forbidden customer key at any depth", async () => {
+    const { route } = harness();
+    const { response, sent } = recorder();
+    await route({ cartCheckoutNumber: CART_NUMBER }, response);
+    expect(sent.status).toBe(200);
+    expect(cartCustomerPayloadIsClean(sent.body)).toBe(true);
   });
 });

@@ -1,9 +1,12 @@
 import type {
   EarlyAccessCartCheckout,
   EarlyAccessCartCheckoutRecord,
+  EarlyAccessCartLineQuote,
+  EarlyAccessCartQuote,
   EarlyAccessCartStatus,
 } from "@shared/research/early-access-cart";
 import {
+  EARLY_ACCESS_CART_FORBIDDEN_CUSTOMER_KEYS,
   cartCustomerPayloadIsClean,
   earlyAccessIsOverdue,
   isEarlyAccessOrderStage,
@@ -95,6 +98,110 @@ export function customerCheckoutView(
   if (!cartCustomerPayloadIsClean(projected)) {
     throw new Error("early access customer checkout projection contains forbidden fields");
   }
+  return projected;
+}
+
+// ---------------------------------------------------------------------------
+// The quote, projected for the customer
+// ---------------------------------------------------------------------------
+
+/**
+ * THE QUOTE IS THE FIRST SURFACE A CUSTOMER TOUCHES, AND IT WAS THE LAST ONE
+ * STILL DISCLOSING SUPPLIER IDENTITY.
+ *
+ * `quoteEarlyAccessCart` resolves a supplier route per line and must keep it:
+ * the stored quote is what `checkout-service.ts` reads to build each child
+ * order, so removing the fields from the quote itself would break fulfilment.
+ * The disclosure was never in the calculation, it was in returning the internal
+ * result straight down the wire. So the fix is here, at the wire, exactly where
+ * `customerCheckoutView` already sits for the checkout.
+ *
+ * BUILT, NOT FILTERED, for the same reason as the checkout view: a deny list
+ * has to be updated every time the line grows a field, and the update that gets
+ * forgotten is the leak. A new field on `EarlyAccessCartLineQuote` is invisible
+ * to the customer until somebody deliberately names it here.
+ */
+type CustomerQuoteLine = Omit<EarlyAccessCartLineQuote, "supplierId" | "supplierSku">;
+
+export type EarlyAccessCustomerQuote = Omit<EarlyAccessCartQuote, "lines"> &
+  Readonly<{ lines: readonly CustomerQuoteLine[] }>;
+
+/**
+ * The two forbidden-list keys the QUOTE surface must still carry, and why.
+ *
+ * `EARLY_ACCESS_CART_FORBIDDEN_CUSTOMER_KEYS` lists `quoteId` and `intentHash`
+ * because on a CHECKOUT or STATUS response they are ownership handles that
+ * disclose an internal binding. On the QUOTE response they are the opposite:
+ * they are the contract token the client is REQUIRED to echo back, since
+ * `EarlyAccessCartCheckoutRequest` is exactly `{quoteId, idempotencyKey,
+ * expectedIntentHash}`. Strip them and no customer can ever check out.
+ *
+ * They are named here, as a closed two-entry list, rather than by loosening the
+ * shared predicate, so the exception applies to this one surface and a reader
+ * can see the whole of it in one place. `intentHash` binds the customer, every
+ * line, the contact and the destination WITHOUT echoing any of them, so
+ * returning it discloses nothing about anyone.
+ */
+export const EARLY_ACCESS_CUSTOMER_QUOTE_CONTRACT_TOKENS = Object.freeze([
+  "quoteId",
+  "intentHash",
+] as const);
+
+export function customerQuoteView(quote: EarlyAccessCartQuote): EarlyAccessCustomerQuote {
+  const projected: EarlyAccessCustomerQuote = Object.freeze({
+    quoteId: quote.quoteId,
+    currency: quote.currency,
+    lines: Object.freeze(
+      quote.lines.map((line) =>
+        Object.freeze({
+          productId: line.productId,
+          variantId: line.variantId,
+          displayName: line.displayName,
+          strength: line.strength,
+          sku: line.sku,
+          quantity: line.quantity,
+          currency: line.currency,
+          unitPriceCents: line.unitPriceCents,
+          subtotalCents: line.subtotalCents,
+          discountCents: line.discountCents,
+          payableCents: line.payableCents,
+          promotionId: line.promotionId,
+          promotionVersion: line.promotionVersion,
+          promotionLabel: line.promotionLabel,
+        }),
+      ),
+    ),
+    subtotalCents: quote.subtotalCents,
+    discountCents: quote.discountCents,
+    shippingCents: quote.shippingCents,
+    taxCents: quote.taxCents,
+    payableTotalCents: quote.payableTotalCents,
+    intentHash: quote.intentHash,
+    quotedAt: quote.quotedAt,
+    expiresAt: quote.expiresAt,
+  });
+
+  // The lines carry no contract token, so the SHARED deep predicate applies to
+  // them unchanged. This is the check that actually catches a supplier field,
+  // including one nested inside a future sub-object.
+  if (!cartCustomerPayloadIsClean(projected.lines)) {
+    throw new Error("early access customer quote lines contain forbidden fields");
+  }
+
+  // And at the top level, nothing forbidden survives except the two contract
+  // tokens named above. Computed from the shared list rather than restated, so
+  // a key added to the contract is enforced here without an edit.
+  const leaked = Object.keys(projected).filter(
+    (key) =>
+      (EARLY_ACCESS_CART_FORBIDDEN_CUSTOMER_KEYS as readonly string[]).includes(key) &&
+      !(EARLY_ACCESS_CUSTOMER_QUOTE_CONTRACT_TOKENS as readonly string[]).includes(key),
+  );
+  if (leaked.length > 0) {
+    throw new Error(
+      `early access customer quote projection contains forbidden fields: ${leaked.join(", ")}`,
+    );
+  }
+
   return projected;
 }
 

@@ -242,9 +242,16 @@ describe("G: a genuinely routed unit is sold, and the same unit can be quoted", 
     const quoted = await quoteOne(app, cookie, unit);
     expect(quoted.status).toBe(200);
     expect(quoted.body.quote.lines).toHaveLength(1);
-    // The route the quote committed to is the one the directory answered.
-    expect(quoted.body.quote.lines[0].supplierId).toBe("supplier-apex");
-    expect(quoted.body.quote.lines[0].supplierSku).toBe(`APEX-${unit.productId}`);
+    // CORRECTED. This previously asserted that the CUSTOMER response carried
+    // supplierId and supplierSku, which pinned a P0 privacy defect in place: who
+    // fulfils an order is commercially sensitive and is none of the purchaser's
+    // business (EARLY_ACCESS_CART_FORBIDDEN_CUSTOMER_KEYS). The property that
+    // actually matters here is that the quote CONSULTED the supplier authority,
+    // which the directory's own call counter proves without disclosing anything,
+    // and the internal result still carries the route (proved directly in the
+    // service-level suite below, and by the committed checkout in D).
+    expect(quoted.body.quote.lines[0].supplierId).toBeUndefined();
+    expect(quoted.body.quote.lines[0].supplierSku).toBeUndefined();
     expect(suppliers.asked(unit.productId, unit.variantId)).toBeGreaterThan(0);
   });
 
