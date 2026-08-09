@@ -56,6 +56,19 @@ export class InMemoryEarlyAccessCartStore
         checkout: priorKey,
       });
     }
+    // Mirrors the partial unique index in migration 61. The in-memory store is
+    // what most tests run against, so if it stayed permissive the suite would
+    // keep proving a behaviour production no longer has.
+    const activeForQuote = Array.from(this.byNumber.values()).find(
+      (existing) => existing.quoteId === checkout.quoteId && existing.disposition == null,
+    );
+    if (activeForQuote !== undefined) {
+      return Object.freeze({
+        committed: false as const,
+        reason: "quote_has_active_checkout" as const,
+        checkout: activeForQuote,
+      });
+    }
     const priorNumber = this.byNumber.get(checkout.cartCheckoutNumber);
     if (priorNumber) {
       return Object.freeze({

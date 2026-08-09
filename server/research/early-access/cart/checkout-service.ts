@@ -175,7 +175,15 @@ export async function checkoutEarlyAccessCart(
       code:
         committed.reason === "idempotency_key_taken"
           ? ("IDEMPOTENCY_CONFLICT" as const)
-          : ("UNAVAILABLE" as const),
+          : // The quote is already spent by an active checkout that this caller
+            // cannot replay. Reaching here means ownership was already proven
+            // above, so the only remaining disagreement is the intent, and
+            // QUOTE_CHANGED is what the client already knows how to recover
+            // from: it re-quotes rather than retrying a placement that can
+            // never succeed. Never UNAVAILABLE, which invites a retry loop.
+            committed.reason === "quote_has_active_checkout"
+            ? ("QUOTE_CHANGED" as const)
+            : ("UNAVAILABLE" as const),
     });
   }
 

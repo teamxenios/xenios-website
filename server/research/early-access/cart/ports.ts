@@ -105,7 +105,14 @@ export type CartCommitResult =
   | Readonly<{ committed: true; checkout: EarlyAccessCartCheckoutRecord }>
   | Readonly<{
       committed: false;
-      reason: "idempotency_key_taken" | "checkout_number_taken" | "child_order_number_taken";
+      reason:
+        | "idempotency_key_taken"
+        // The quote already has an ACTIVE (not superseded) checkout. A fresh
+        // idempotency key does not buy the same cart twice: `checkout` carries
+        // the existing order so the caller can replay it.
+        | "quote_has_active_checkout"
+        | "checkout_number_taken"
+        | "child_order_number_taken";
       checkout: EarlyAccessCartCheckoutRecord | null;
     }>;
 

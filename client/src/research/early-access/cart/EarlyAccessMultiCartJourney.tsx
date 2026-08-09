@@ -121,7 +121,13 @@ export function EarlyAccessMultiCartJourney({
     let current = requested;
     for (let pass = 0; pass < EARLY_ACCESS_CHECKOUT_STEPS.length; pass += 1) {
       let next = current;
-      if (current === "review" && quoteRef.current === null) next = "details";
+      // Once a checkout exists, `review` is behind the customer, not ahead of
+      // them. Back and Forward used to walk right back onto the confirm button
+      // for a placement that had already succeeded. Sending them forward to the
+      // order they actually placed is both safer and truer than the fallback
+      // below, which would have marched them back to an empty catalog.
+      if (current === "review" && checkoutRef.current !== null) next = "payment";
+      else if (current === "review" && quoteRef.current === null) next = "details";
       else if ((current === "payment" || current === "status") && checkoutRef.current === null) {
         next = quoteRef.current === null ? "cart" : "review";
       } else if (
@@ -252,6 +258,14 @@ export function EarlyAccessMultiCartJourney({
 
   const confirm = async () => {
     const activeQuote = quoteRef.current;
+    // A PLACED CHECKOUT ENDS THIS JOURNEY'S ABILITY TO PLACE. This guard, not a
+    // disabled button, is what stops the duplicate. The real incident placed two
+    // orders sixty seconds apart from one quote: the success path cleared the
+    // attempt key and left the quote live, so the next confirm fell into the
+    // "no key yet" branch below, minted a fresh one, and the server correctly
+    // treated a new key as a new order. A disabled button is a render-time hint
+    // that none of the paths that caused this consult.
+    if (checkoutRef.current !== null) return;
     if (activeQuote === null || submitInFlight.current) return;
     submitInFlight.current = true;
     setBusy(true);
@@ -292,6 +306,12 @@ export function EarlyAccessMultiCartJourney({
 
     clearCartAttemptKey();
     attemptRef.current = null;
+    // THE QUOTE IS SPENT. Clearing the attempt key without clearing the quote is
+    // exactly the state that produced two orders: a live quote plus no key is
+    // an invitation to mint a new one. They are cleared together because they
+    // mean one thing together, "this placement is finished".
+    setQuote(null);
+    quoteRef.current = null;
     clearBrowserCart();
     setCart(readBrowserCart());
     setCheckout(result.checkout);

@@ -34,3 +34,6 @@ npm-debug.log*
 # Editor / OS
 .vscode
 .idea
+
+# Supabase CLI scratch (link state, pooler url). Never committed.
+supabase/.temp/

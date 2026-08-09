@@ -162,6 +162,13 @@ export type EarlyAccessCartPaymentState =
   | "payment_verified"
   | "payment_rejected";
 
+/**
+ * Why a checkout is no longer active. Only one value today, and the type is a
+ * union so a future disposition has to be named rather than smuggled in as a
+ * bare string.
+ */
+export type EarlyAccessCartDisposition = "duplicate_superseded";
+
 /** Customer-visible checkout. No customerRef, idempotency key or private attribution. */
 export type EarlyAccessCartCheckout = Readonly<{
   cartCheckoutNumber: string;
@@ -186,6 +193,14 @@ export type EarlyAccessCartCheckoutRecord = Readonly<{
   invoice: EarlyAccessCartInvoice;
   paymentState: EarlyAccessCartPaymentState;
   placedAt: string;
+  /**
+   * NULL or absent means active. A superseded checkout keeps its whole row and
+   * stays readable, and every money and release path refuses it (migration 61,
+   * enforced by trigger rather than by each caller remembering to check).
+   */
+  disposition?: EarlyAccessCartDisposition | null;
+  /** The checkout that superseded this one. Set together with `disposition`. */
+  supersededBy?: string | null;
   attribution: null | Readonly<{
     affiliateId: string;
     codeId: string | null;
