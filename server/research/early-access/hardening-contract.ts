@@ -461,10 +461,81 @@ export type EarlyAccessAdminSettlementAttestation = Readonly<{
   attestedAt: string;
 }>;
 
-/** Trim, collapse inner whitespace, uppercase. Stable and provider-agnostic. */
-export function canonicalTransactionId(value: string): string {
-  return value.trim().replace(/\s+/g, " ").toUpperCase();
+/**
+ * THE CANONICAL EXTERNAL TRANSACTION IDENTITY. One payment, one identity.
+ *
+ * THE DEFECT THIS CLOSES, reproduced on both the in-memory store and the SQL
+ * RPC. Both compared the raw string, so `TX-Canonical-002` correctly refused a
+ * whitespace-padded copy of itself (the service trims) while every one of these
+ * settled a SECOND checkout as though it were a different payment:
+ *
+ *   tx-canonical-002      differs only in case
+ *   TX-CANONICAL-002      differs only in case
+ *   TX Canonical 002      differs only in separator
+ *
+ * That is a money defect, not a cosmetic one: the same real-world payment can
+ * be recorded against two orders and release two sets of suppliers.
+ *
+ * THE RULE. Strip every character that is not a letter or a digit, then
+ * uppercase. `TX-Canonical-002`, `tx canonical 002`, `TX_CANONICAL_002` and
+ * `TX Canonical 002` all become `TXCANONICAL002`.
+ *
+ * WHY STRIPPING SEPARATORS IS SAFE HERE, AND THE ASYMMETRY THAT DECIDES IT.
+ * Every payment rail this system supports is MANUAL: Zelle, Venmo, Cash App,
+ * PayPal, Apple Cash, an ACH or wire reference, or an operator note. The
+ * identifier reaches us because a human read it off one screen and typed it
+ * into another, so separators are transcription noise rather than data.
+ *
+ * The two possible errors are not symmetric. Collapsing two genuinely distinct
+ * provider ids refuses a settlement, which is visible immediately and a named
+ * human resolves it. Failing to collapse two spellings of ONE id settles the
+ * same payment twice, which is invisible until reconciliation and has already
+ * released suppliers by then. Given manual rails, the collision risk is
+ * negligible and the miss risk is real, so this fails closed toward refusing.
+ *
+ * THE FLOOR. An id that strips to fewer than four alphanumeric characters is
+ * refused rather than canonicalized, because at that length distinct payments
+ * genuinely could collide. `null` means "not a usable transaction identity",
+ * and the caller must refuse rather than substitute anything.
+ *
+ * If a future rail has ids where punctuation is load-bearing, this becomes
+ * per-method canonicalization keyed off the snapshotted method. It is one
+ * function on purpose so that change has exactly one site.
+ */
+export const CANONICAL_TRANSACTION_ID_MIN_LENGTH = 4;
+
+export function canonicalTransactionId(value: string): string | null {
+  if (typeof value !== "string") return null;
+  const stripped = value.replace(/[^0-9A-Za-z]+/g, "").toUpperCase();
+  return stripped.length >= CANONICAL_TRANSACTION_ID_MIN_LENGTH ? stripped : null;
 }
+
+/**
+ * Two raw identifiers naming the same payment.
+ *
+ * Returns false when either side has no usable canonical form, so an unusable
+ * id never matches anything, including another unusable id.
+ */
+export function sameTransactionIdentity(left: string, right: string): boolean {
+  const a = canonicalTransactionId(left);
+  const b = canonicalTransactionId(right);
+  return a !== null && b !== null && a === b;
+}
+
+/**
+ * FOR THE DATABASE LANE. The durable side of this invariant.
+ *
+ * The settlements table must carry the canonical form in its own column, and
+ * uniqueness must be enforced on THAT column rather than on the raw one. The
+ * RPC's existing `transaction_id_used` check must compare canonical to
+ * canonical. The raw value is still stored, because an operator reconciling
+ * against a bank statement needs to see exactly what was typed.
+ *
+ * Enforcing this only in the service would leave the invariant one direct RPC
+ * call away from being bypassed, so the unique index is the real guard and the
+ * service check is the fast, friendly one.
+ */
+export const EARLY_ACCESS_SETTLEMENT_NEEDS_CANONICAL_TXN_COLUMN = true as const;
 
 // ---------------------------------------------------------------------------
 // 6. The founder checkout that predates all of this.

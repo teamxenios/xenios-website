@@ -135,6 +135,7 @@ export class InMemoryEarlyAccessCartStore
     checkout: EarlyAccessCartCheckoutRecord;
     evidenceRef: string;
     externalTransactionId: string;
+    canonicalTransactionId: string;
     verifiedAmountCents: number;
     verifiedCurrency: "USD";
     actorId: string;
@@ -148,7 +149,10 @@ export class InMemoryEarlyAccessCartStore
         settlement: prior,
       });
     }
-    if (this.transactionIds.has(input.externalTransactionId)) {
+    // Uniqueness is decided on the CANONICAL identity, never the raw string.
+    // Keying this set on the raw value is what let one payment settle several
+    // checkouts under different spellings.
+    if (this.transactionIds.has(input.canonicalTransactionId)) {
       return Object.freeze({
         committed: false as const,
         reason: "transaction_id_used" as const,
@@ -214,7 +218,7 @@ export class InMemoryEarlyAccessCartStore
       ),
     });
     this.settlements.set(input.checkout.cartCheckoutNumber, settlement);
-    this.transactionIds.add(input.externalTransactionId);
+    this.transactionIds.add(input.canonicalTransactionId);
     this.byNumber.set(
       input.checkout.cartCheckoutNumber,
       Object.freeze({ ...input.checkout, paymentState: "payment_verified" as const }),

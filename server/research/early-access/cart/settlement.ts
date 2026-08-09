@@ -2,6 +2,7 @@ import type {
   EarlyAccessCartExternalProof,
   EarlyAccessCartSettlement,
 } from "@shared/research/early-access-cart";
+import { canonicalTransactionId } from "../hardening-contract";
 import {
   isCartCheckoutNumber,
   isExternalEvidenceRef,
@@ -135,6 +136,23 @@ export async function settleEarlyAccessCart(
     });
   }
 
+  // ONE PAYMENT, ONE IDENTITY.
+  //
+  // The raw id is kept for the record, because an operator reconciling against
+  // a bank statement needs to see exactly what was typed. Uniqueness is decided
+  // on the canonical form, so `TX-Canonical-002`, `tx canonical 002` and
+  // `TX CANONICAL 002` are one payment rather than three. An id with too little
+  // substance to be an identity is refused here rather than canonicalized into
+  // something that could collide with an unrelated payment.
+  const canonicalTxn = canonicalTransactionId(input.externalTransactionId);
+  if (canonicalTxn === null) {
+    return Object.freeze({
+      committed: false as const,
+      reason: "input_invalid" as const,
+      settlement: null,
+    });
+  }
+
   const proofs = await deps.settlements.externalProofs(input.cartCheckoutNumber);
   if (!proofs.some((proof) => proof.evidenceRef === input.evidenceRef)) {
     return Object.freeze({
@@ -158,6 +176,7 @@ export async function settleEarlyAccessCart(
     checkout,
     evidenceRef: input.evidenceRef,
     externalTransactionId: input.externalTransactionId.trim(),
+    canonicalTransactionId: canonicalTxn,
     verifiedAmountCents: input.verifiedAmountCents,
     verifiedCurrency: input.verifiedCurrency,
     actorId: input.actorId,

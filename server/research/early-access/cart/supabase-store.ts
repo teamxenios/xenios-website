@@ -201,10 +201,27 @@ export class SupabaseEarlyAccessCartStore implements EarlyAccessCartStorePorts {
     return raw === null ? null : (Object.freeze(raw) as unknown as EarlyAccessCartSettlement);
   }
 
+  /**
+   * KNOWN GAP, NAMED RATHER THAN PAPERED OVER.
+   *
+   * `canonicalTransactionId` is accepted here and is NOT yet passed to the RPC,
+   * because the deployed function's signature has no parameter for it and its
+   * duplicate check still compares `external_transaction_id` raw to raw. Adding
+   * the parameter, the column and the unique index on it is migration 62's
+   * work, recorded as `EARLY_ACCESS_SETTLEMENT_NEEDS_CANONICAL_TXN_COLUMN`.
+   *
+   * Until that lands, canonical uniqueness holds at the service boundary and in
+   * the in-memory store but NOT in the database, so a caller reaching the RPC
+   * directly could still settle two spellings of one payment. Passing the
+   * canonical value in place of the raw one would close it today at the cost of
+   * destroying the operator's reconciliation view, which is the wrong trade.
+   * This is a gap to close, not a gap to hide.
+   */
   async commitSettlement(input: {
     checkout: EarlyAccessCartCheckoutRecord;
     evidenceRef: string;
     externalTransactionId: string;
+    canonicalTransactionId: string;
     verifiedAmountCents: number;
     verifiedCurrency: "USD";
     actorId: string;

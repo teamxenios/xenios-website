@@ -139,10 +139,20 @@ export interface EarlyAccessCartSettlementStore {
   recordExternalProof(proof: EarlyAccessCartExternalProof): Promise<CartExternalProofCommit>;
   externalProofs(checkoutNumber: string): Promise<readonly EarlyAccessCartExternalProof[]>;
   settlement(checkoutNumber: string): Promise<EarlyAccessCartSettlement | null>;
+  /**
+   * Commit a settlement.
+   *
+   * `externalTransactionId` is what the operator typed and is stored verbatim
+   * for reconciliation. `canonicalTransactionId` is the identity: uniqueness is
+   * decided on it, so two spellings of one payment cannot settle two checkouts.
+   * An implementation that enforces uniqueness on the raw value is wrong, and
+   * that was the defect this field exists to close.
+   */
   commitSettlement(input: Readonly<{
     checkout: EarlyAccessCartCheckoutRecord;
     evidenceRef: string;
     externalTransactionId: string;
+    canonicalTransactionId: string;
     verifiedAmountCents: number;
     verifiedCurrency: "USD";
     actorId: string;
