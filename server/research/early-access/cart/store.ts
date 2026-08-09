@@ -5,10 +5,13 @@ import type {
   EarlyAccessCartStatus,
 } from "@shared/research/early-access-cart";
 import { checkoutView } from "./model";
+import { canonicalTransactionId } from "../hardening-contract";
+import { earlyAccessShipByAt } from "@shared/research/early-access-hardening";
 import type {
   CartCommitResult,
   CartExternalProofCommit,
   CartSettlementCommit,
+  EarlyAccessHardenedCartSettlement,
   EarlyAccessCartCheckoutStore,
   EarlyAccessCartQuoteRecord,
   EarlyAccessCartQuoteStore,
@@ -28,7 +31,7 @@ export class InMemoryEarlyAccessCartStore
   private readonly childOrderNumbers = new Set<string>();
   private readonly proofByRef = new Map<string, EarlyAccessCartExternalProof>();
   private readonly proofRefsByCheckout = new Map<string, string[]>();
-  private readonly settlements = new Map<string, EarlyAccessCartSettlement>();
+  private readonly settlements = new Map<string, EarlyAccessHardenedCartSettlement>();
   private readonly transactionIds = new Set<string>();
 
   async put(record: EarlyAccessCartQuoteRecord): Promise<void> {
@@ -135,10 +138,11 @@ export class InMemoryEarlyAccessCartStore
     checkout: EarlyAccessCartCheckoutRecord;
     evidenceRef: string;
     externalTransactionId: string;
-    canonicalTransactionId: string;
     verifiedAmountCents: number;
     verifiedCurrency: "USD";
     actorId: string;
+    confirmedFundsReceived: true;
+    confirmedAmountAndReference: true;
     at: string;
   }): Promise<CartSettlementCommit> {
     const prior = this.settlements.get(input.checkout.cartCheckoutNumber);
@@ -149,13 +153,11 @@ export class InMemoryEarlyAccessCartStore
         settlement: prior,
       });
     }
-    // Uniqueness is decided on the CANONICAL identity, never the raw string.
-    // Keying this set on the raw value is what let one payment settle several
-    // checkouts under different spellings.
-    if (this.transactionIds.has(input.canonicalTransactionId)) {
+    const canonicalId = canonicalTransactionId(input.externalTransactionId);
+    if (this.transactionIds.has(canonicalId)) {
       return Object.freeze({
         committed: false as const,
-        reason: "transaction_id_used" as const,
+        reason: "transaction_id_duplicate_canonical" as const,
         settlement: null,
       });
     }
@@ -184,7 +186,28 @@ export class InMemoryEarlyAccessCartStore
         settlement: null,
       });
     }
-    const settlement: EarlyAccessCartSettlement = Object.freeze({
+    const shipByAt = earlyAccessShipByAt(input.at);
+    if (shipByAt === null) {
+      return Object.freeze({ committed: false as const, reason: "input_invalid" as const, settlement: null });
+    }
+    if (!input.confirmedFundsReceived || !input.confirmedAmountAndReference) {
+      return Object.freeze({
+        committed: false as const,
+        reason: "admin_confirmation_missing" as const,
+        settlement: null,
+      });
+    }
+    if (input.checkout.disposition != null) {
+      return Object.freeze({
+        committed: false as const,
+        reason: "checkout_superseded" as const,
+        settlement: null,
+      });
+    }
+    const settlement: EarlyAccessCartSettlement & Readonly<{
+      paymentVerifiedAt: string;
+      shipByAt: string;
+    }> = Object.freeze({
       cartCheckoutNumber: input.checkout.cartCheckoutNumber,
       externalTransactionId: input.externalTransactionId,
       reviewedEvidenceRef: input.evidenceRef,
@@ -192,6 +215,8 @@ export class InMemoryEarlyAccessCartStore
       verifiedCurrency: input.verifiedCurrency,
       settledAt: input.at,
       settledBy: input.actorId,
+      paymentVerifiedAt: input.at,
+      shipByAt,
       receipt: Object.freeze({
         receiptId: `xea-cart-receipt:${input.checkout.cartCheckoutNumber}`,
         cartCheckoutNumber: input.checkout.cartCheckoutNumber,
@@ -218,7 +243,7 @@ export class InMemoryEarlyAccessCartStore
       ),
     });
     this.settlements.set(input.checkout.cartCheckoutNumber, settlement);
-    this.transactionIds.add(input.canonicalTransactionId);
+    this.transactionIds.add(canonicalId);
     this.byNumber.set(
       input.checkout.cartCheckoutNumber,
       Object.freeze({ ...input.checkout, paymentState: "payment_verified" as const }),
@@ -237,11 +262,14 @@ export class InMemoryEarlyAccessCartStore
         state: record.paymentState,
         paid: settlement !== null,
         externalProofCount: proofCount,
+        paymentVerifiedAt: settlement?.paymentVerifiedAt ?? null,
       }),
       receipt: settlement?.receipt ?? null,
       fulfilment: Object.freeze({
         released: settlement !== null,
         childOrders: settlement?.childReleases ?? Object.freeze([]),
+        paymentVerifiedAt: settlement?.paymentVerifiedAt ?? null,
+        shipByAt: settlement?.shipByAt ?? null,
       }),
     });
   }

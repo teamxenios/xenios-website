@@ -2,10 +2,9 @@ import type {
   EarlyAccessCartExternalProof,
   EarlyAccessCartSettlement,
 } from "@shared/research/early-access-cart";
-import { canonicalTransactionId } from "../hardening-contract";
+import { createHash } from "node:crypto";
 import {
   isCartCheckoutNumber,
-  isExternalEvidenceRef,
   newCartEvidenceRef,
 } from "./model";
 import type {
@@ -34,10 +33,9 @@ export type EarlyAccessCartProofInput = Readonly<{
 
 export type EarlyAccessCartSettlementInput = Readonly<{
   cartCheckoutNumber: string;
-  evidenceRef: string;
   externalTransactionId: string;
-  verifiedAmountCents: number;
-  verifiedCurrency: "USD";
+  confirmedFundsReceived: boolean;
+  confirmedAmountAndReference: boolean;
   actorId: string;
   at: string;
 }>;
@@ -46,7 +44,25 @@ export type EarlyAccessCartSettlementDeps = Readonly<{
   checkouts: EarlyAccessCartCheckoutStore;
   settlements: EarlyAccessCartSettlementStore;
   evidenceRef?: () => string;
+  /** Bridges Session 5's accepted transient submission to M60's metadata proof row. */
+  submissionEvidence?: EarlyAccessAcceptedSubmissionEvidencePort;
 }>;
+
+export type EarlyAccessAcceptedSubmissionEvidence = Readonly<{
+  submissionId: string;
+  sha256: string;
+  filename: string;
+  contentType: string;
+  byteSize: number;
+}>;
+
+export interface EarlyAccessAcceptedSubmissionEvidencePort {
+  acceptedForCheckout(checkoutNumber: string): Promise<EarlyAccessAcceptedSubmissionEvidence | null>;
+}
+
+function submissionEvidenceRef(submissionId: string): string {
+  return `eaext.${createHash("sha256").update("xenios:ea-submission-evidence:v1|").update(submissionId).digest("hex")}`;
+}
 
 function validInstant(value: string): boolean {
   const parsed = Date.parse(value);
@@ -112,17 +128,20 @@ export async function settleEarlyAccessCart(
 > {
   if (
     !isCartCheckoutNumber(input.cartCheckoutNumber) ||
-    !isExternalEvidenceRef(input.evidenceRef) ||
     !SAFE_TRANSACTION.test(input.externalTransactionId.trim()) ||
-    !Number.isSafeInteger(input.verifiedAmountCents) ||
-    input.verifiedAmountCents <= 0 ||
-    input.verifiedCurrency !== "USD" ||
     !SAFE_ACTOR.test(input.actorId) ||
     !validInstant(input.at)
   ) {
     return Object.freeze({
       committed: false as const,
       reason: "input_invalid" as const,
+      settlement: null,
+    });
+  }
+  if (!input.confirmedFundsReceived || !input.confirmedAmountAndReference) {
+    return Object.freeze({
+      committed: false as const,
+      reason: "admin_confirmation_missing" as const,
       settlement: null,
     });
   }
@@ -135,51 +154,63 @@ export async function settleEarlyAccessCart(
       settlement: null,
     });
   }
-
-  // ONE PAYMENT, ONE IDENTITY.
-  //
-  // The raw id is kept for the record, because an operator reconciling against
-  // a bank statement needs to see exactly what was typed. Uniqueness is decided
-  // on the canonical form, so `TX-Canonical-002`, `tx canonical 002` and
-  // `TX CANONICAL 002` are one payment rather than three. An id with too little
-  // substance to be an identity is refused here rather than canonicalized into
-  // something that could collide with an unrelated payment.
-  const canonicalTxn = canonicalTransactionId(input.externalTransactionId);
-  if (canonicalTxn === null) {
+  if (checkout.disposition != null) {
     return Object.freeze({
       committed: false as const,
-      reason: "input_invalid" as const,
+      reason: "checkout_superseded" as const,
       settlement: null,
     });
   }
 
   const proofs = await deps.settlements.externalProofs(input.cartCheckoutNumber);
-  if (!proofs.some((proof) => proof.evidenceRef === input.evidenceRef)) {
+  let proof = [...proofs].sort((left, right) =>
+    right.recordedAt.localeCompare(left.recordedAt) ||
+    right.evidenceRef.localeCompare(left.evidenceRef)
+  )[0];
+  if (!proof && deps.submissionEvidence) {
+    const submission = await deps.submissionEvidence.acceptedForCheckout(
+      input.cartCheckoutNumber,
+    );
+    if (submission) {
+      const candidate: EarlyAccessCartExternalProof = Object.freeze({
+        evidenceRef: submissionEvidenceRef(submission.submissionId),
+        cartCheckoutNumber: input.cartCheckoutNumber,
+        sha256: submission.sha256,
+        filename: submission.filename,
+        contentType: submission.contentType,
+        byteSize: submission.byteSize,
+        provenanceNote: `Accepted transient proof submission ${submission.submissionId}`,
+        recordedAt: input.at,
+        recordedBy: input.actorId,
+        storedOnPlatform: false,
+      });
+      const bridged = await deps.settlements.recordExternalProof(candidate);
+      if (bridged.committed) {
+        proof = bridged.proof;
+      } else if (
+        bridged.reason === "evidence_ref_taken" &&
+        bridged.proof?.cartCheckoutNumber === input.cartCheckoutNumber
+      ) {
+        proof = bridged.proof;
+      }
+    }
+  }
+  if (!proof) {
     return Object.freeze({
       committed: false as const,
       reason: "evidence_missing" as const,
       settlement: null,
     });
   }
-  if (
-    input.verifiedAmountCents !== checkout.invoice.payableTotalCents ||
-    input.verifiedCurrency !== checkout.invoice.currency
-  ) {
-    return Object.freeze({
-      committed: false as const,
-      reason: "amount_mismatch" as const,
-      settlement: null,
-    });
-  }
-
   return deps.settlements.commitSettlement({
     checkout,
-    evidenceRef: input.evidenceRef,
+    evidenceRef: proof.evidenceRef,
     externalTransactionId: input.externalTransactionId.trim(),
-    canonicalTransactionId: canonicalTxn,
-    verifiedAmountCents: input.verifiedAmountCents,
-    verifiedCurrency: input.verifiedCurrency,
+    verifiedAmountCents: checkout.invoice.payableTotalCents,
+    verifiedCurrency: checkout.invoice.currency,
     actorId: input.actorId,
+    confirmedFundsReceived: true,
+    confirmedAmountAndReference: true,
     at: input.at,
   });
 }

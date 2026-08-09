@@ -1,4 +1,3 @@
-import type { EarlyAccessCartCurrency } from "@shared/research/early-access-cart";
 import { isCartCheckoutNumber } from "./model";
 import {
   recordEarlyAccessCartExternalProof,
@@ -130,16 +129,13 @@ export function createEarlyAccessCartConfirmPaymentAdminRoute(
       response.status(400).json({ ok: false, code: "REQUEST_INVALID" });
       return;
     }
-    const currency: EarlyAccessCartCurrency | "" = body.verifiedCurrency === "USD" ? "USD" : "";
     const nowMs = deps.now();
     const result = await settleEarlyAccessCart(deps, {
       cartCheckoutNumber: request.cartCheckoutNumber,
-      evidenceRef: typeof body.evidenceRef === "string" ? body.evidenceRef : "",
       externalTransactionId:
         typeof body.externalTransactionId === "string" ? body.externalTransactionId : "",
-      verifiedAmountCents:
-        typeof body.verifiedAmountCents === "number" ? body.verifiedAmountCents : Number.NaN,
-      verifiedCurrency: currency as "USD",
+      confirmedFundsReceived: body.confirmedFundsReceived === true,
+      confirmedAmountAndReference: body.confirmedAmountAndReference === true,
       actorId: request.actor.id,
       at: Number.isFinite(nowMs) ? new Date(nowMs).toISOString() : "",
     });
@@ -164,6 +160,11 @@ export function createEarlyAccessCartConfirmPaymentAdminRoute(
         paid: true,
         receiptIssued: true,
         supplierReleased: true,
+        processingStatus: "processing",
+        shipmentStatus: "not_shipped",
+        overdue: false,
+        paymentVerifiedAt: result.settlement.paymentVerifiedAt ?? result.settlement.settledAt,
+        shipByAt: result.settlement.shipByAt ?? null,
         settlement: result.settlement,
       });
       return;
@@ -175,6 +176,11 @@ export function createEarlyAccessCartConfirmPaymentAdminRoute(
         paid: true,
         receiptIssued: true,
         supplierReleased: true,
+        processingStatus: "processing",
+        shipmentStatus: "not_shipped",
+        overdue: false,
+        paymentVerifiedAt: result.settlement.paymentVerifiedAt ?? result.settlement.settledAt,
+        shipByAt: result.settlement.shipByAt ?? null,
         settlement: result.settlement,
       });
       return;
@@ -182,7 +188,13 @@ export function createEarlyAccessCartConfirmPaymentAdminRoute(
     const status =
       result.reason === "checkout_unknown"
         ? 404
-        : result.reason === "transaction_id_used" || result.reason === "amount_mismatch"
+        : result.reason === "transaction_id_used" ||
+            result.reason === "transaction_id_duplicate_canonical" ||
+            result.reason === "amount_mismatch" ||
+            result.reason === "checkout_superseded" ||
+            result.reason === "agreements_not_current" ||
+            result.reason === "submission_missing" ||
+            result.reason === "submission_unreconciled"
           ? 409
           : 400;
     response.status(status).json({

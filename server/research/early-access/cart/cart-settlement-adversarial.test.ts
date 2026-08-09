@@ -291,10 +291,9 @@ describe("one named confirmation, one settlement, one receipt, every child relea
     const evidenceRef = recorded.body.proof.evidenceRef;
 
     const confirm = {
-      evidenceRef,
       externalTransactionId: "WIRE-MIXED-001",
-      verifiedAmountCents: payableTotalCents,
-      verifiedCurrency: "USD",
+      confirmedFundsReceived: true,
+      confirmedAmountAndReference: true,
     };
     const settled = await supertest(app).post(`${ADMIN}/${number}/confirm-payment`).send(confirm);
     expect(settled.status).toBe(200);
@@ -344,10 +343,9 @@ describe("one named confirmation, one settlement, one receipt, every child relea
     );
     const recorded = await supertest(app).post(`${ADMIN}/${number}/external-proof`).send(proofBody());
     const confirm = {
-      evidenceRef: recorded.body.proof.evidenceRef,
       externalTransactionId: "WIRE-RETRY-001",
-      verifiedAmountCents: payableTotalCents,
-      verifiedCurrency: "USD",
+      confirmedFundsReceived: true,
+      confirmedAmountAndReference: true,
     };
 
     const first = await supertest(app).post(`${ADMIN}/${number}/confirm-payment`).send(confirm);
@@ -369,7 +367,7 @@ describe("one named confirmation, one settlement, one receipt, every child relea
     expect(new Set(releaseIds).size).toBe(releaseIds.length);
   });
 
-  it("refuses an amount that is not the invoiced total, and releases nothing", async () => {
+  it("ignores a client-supplied amount and settles only the durable invoice total", async () => {
     const { app } = await cartApp();
     const cookie = await unlock(app);
     const { number, payableTotalCents } = await placeCheckout(app, cookie, "xeac_set00000000000000006");
@@ -380,13 +378,15 @@ describe("one named confirmation, one settlement, one receipt, every child relea
       externalTransactionId: "WIRE-SHORT-001",
       verifiedAmountCents: payableTotalCents - 1,
       verifiedCurrency: "USD",
+      confirmedFundsReceived: true,
+      confirmedAmountAndReference: true,
     });
-    expect(short.status).toBe(409);
-    expect(short.body.paid).toBe(false);
-    expect(short.body.supplierReleased).toBe(false);
+    expect(short.status).toBe(200);
+    expect(short.body.paid).toBe(true);
+    expect(short.body.settlement.verifiedAmountCents).toBe(payableTotalCents);
 
     const status = await supertest(app).get(`${CART}/${number}/status`).set("Cookie", cookie);
-    expect(status.body.status.fulfilment.released).toBe(false);
+    expect(status.body.status.fulfilment.released).toBe(true);
   });
 
   it("refuses a settlement whose evidence was never recorded", async () => {
@@ -398,6 +398,8 @@ describe("one named confirmation, one settlement, one receipt, every child relea
       externalTransactionId: "WIRE-NOEV-001",
       verifiedAmountCents: payableTotalCents,
       verifiedCurrency: "USD",
+      confirmedFundsReceived: true,
+      confirmedAmountAndReference: true,
     });
     expect(settled.status).toBe(400);
     expect(settled.body.code).toBe("evidence_missing");
@@ -421,6 +423,8 @@ describe("an unreadable existing settlement is a failure, never a fabricated suc
         verifiedAmountCents: 1,
         verifiedCurrency: "USD",
         actorId: ADMIN_EMAIL,
+        confirmedFundsReceived: true,
+        confirmedAmountAndReference: true,
         at: "2026-08-07T18:00:00.000Z",
       }),
     ).rejects.toThrow();
@@ -441,6 +445,8 @@ describe("an unreadable existing settlement is a failure, never a fabricated suc
       verifiedAmountCents: 1,
       verifiedCurrency: "USD",
       actorId: ADMIN_EMAIL,
+      confirmedFundsReceived: true,
+      confirmedAmountAndReference: true,
       at: "2026-08-07T18:00:00.000Z",
     });
     expect(result).toMatchObject({ committed: false, reason: "already_settled" });
@@ -464,6 +470,8 @@ describe("F2: the cart settlement path emits ZERO affiliate commission events", 
       externalTransactionId: "WIRE-F2-001",
       verifiedAmountCents: payableTotalCents,
       verifiedCurrency: "USD",
+      confirmedFundsReceived: true,
+      confirmedAmountAndReference: true,
     });
     expect(settled.status).toBe(200);
     expect(settled.body.paid).toBe(true);

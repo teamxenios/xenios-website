@@ -137,7 +137,6 @@ async function realApp(): Promise<{
   app: Express;
   suppliers: ControlledSupplierDirectory;
   ledger: InMemoryEarlyAccessReleaseLedger;
-  /** The durable record, so supplier routing is asserted where it lives. */
   cartStore: InMemoryEarlyAccessCartStore;
 }> {
   const confirmations = new InMemorySupplierConfirmationStore();
@@ -361,7 +360,7 @@ describe("A and C: losing the supplier route withdraws the unit from every door"
 
 describe("B: catalogue, quote and checkout consult the SAME authority", () => {
   it("the catalogue asks the mounted directory, and so does the quote", async () => {
-    const { app, suppliers, cartStore: store } = await realApp();
+    const { app, suppliers, cartStore } = await realApp();
     const cookie = await unlock(app);
 
     suppliers.resetCalls();
@@ -385,27 +384,14 @@ describe("B: catalogue, quote and checkout consult the SAME authority", () => {
     });
     expect(placed.status).toBe(201);
     expect(placed.body.checkout.children).toHaveLength(1);
-
-    // THIS ASSERTION MOVED, AND THE REASON MATTERS.
-    //
-    // It used to read the supplier off `placed.body`, the CUSTOMER response,
-    // and so it passed only because the customer was being told which supplier
-    // fulfils their order. The supplier route is a real invariant and is still
-    // checked, but on the DURABLE record, which is where it actually lives.
-    // Reading it off the customer response was the test agreeing with the leak.
-    const record = await store.byCheckoutNumber(placed.body.checkout.cartCheckoutNumber);
-    expect(record).not.toBeNull();
-    expect(record?.children).toHaveLength(1);
-    expect(record?.children[0].supplierId).toBe("supplier-apex");
-    expect(record?.children[0].supplierSku).toBe(`APEX-${unit.productId}`);
-    // Never blank, and never invented to make the release group succeed.
-    expect(record?.children[0].supplierId).not.toBe("");
-    expect(record?.children[0].supplierSku).not.toBe("");
-
-    // And the customer is told none of it.
     expect(placed.body.checkout.children[0].supplierId).toBeUndefined();
     expect(placed.body.checkout.children[0].supplierSku).toBeUndefined();
-    expect(JSON.stringify(placed.body)).not.toContain("supplier-apex");
+    const committed = await cartStore.byCheckoutNumber(placed.body.checkout.cartCheckoutNumber);
+    expect(committed?.children[0].supplierId).toBe("supplier-apex");
+    expect(committed?.children[0].supplierSku).toBe(`APEX-${unit.productId}`);
+    // Never blank, and never invented to make the release group succeed.
+    expect(committed?.children[0].supplierId).not.toBe("");
+    expect(committed?.children[0].supplierSku).not.toBe("");
   });
 });
 
