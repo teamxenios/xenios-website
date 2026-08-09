@@ -514,31 +514,94 @@ export const EARLY_ACCESS_LEGAL_PACKAGE_REGISTRATION_IS_EXTERNAL = true as const
 // ---------------------------------------------------------------------------
 
 /**
- * UNRESOLVED, AND IT DECIDES WHETHER THE CART IS REACHABLE AT ALL.
+ * RESOLVED BY FOUNDER DECISION. A Private Early Access session is sufficient
+ * for the intended Early Access customer cart routes. No second password.
  *
- * The research gateway wall is mounted on `/api/research` before the Early
- * Access API is registered, and it default-denies anyone without the research
- * gateway cookie. Its exemption lists name the session, catalog, agreements,
- * unlock, logout, orders and verification paths. They name no cart path. The
- * single `"/cart"` entry in that file is an exact-match member-platform path,
- * not `/early-access/cart/...`.
+ * THE PROBLEM, PROVEN RATHER THAN INFERRED. The research gateway wall mounts on
+ * `/api/research` before the Early Access API registers and default-denies
+ * anyone without the research gateway cookie. Its admission sets name session,
+ * catalog, agreements, unlock, logout, orders and verification, and no cart
+ * path; the single `"/cart"` entry in that file is an exact-match
+ * member-platform path. An executed probe, composed exactly as `server/index.ts`
+ * composes the app, confirmed all five existing cart routes answer 401 with the
+ * wall's own `"Access required."` while an exempt control path answers 200.
  *
- * So an Early Access customer who unlocks with the Early Access password and
- * then posts a cart quote is refused by the wall, unless they also hold the
- * research gateway password. No composed test covers this: the cart route
- * tests register the Early Access API alone, and the one test that mounts both
- * enumerates the exempt paths without listing a cart path.
+ * THE DECISION. Private Early Access authentication is the intended customer
+ * gate. A customer who has unlocked Early Access must not be asked for the
+ * research gateway password as well. The wall is NOT broadly weakened to
+ * achieve that, and no unrelated `/research` route becomes reachable.
  *
- * The question is binary and belongs to Samuel: are pilot customers given the
- * research gateway password as well? If yes, this is a deployment precondition
- * and should be written down as one. If no, the exemption list needs
- * method-exact cart entries, and that file is a protection seam only the
- * orchestrator may edit.
+ * THE SHAPE OF THE FIX, and it is narrow on purpose. Exactly the seven doors
+ * below are admitted, method-exact and path-exact, following the pattern the
+ * verification and agreement doors already use: the wall stops answering for
+ * them, and each one then enforces its OWN stronger gate. Admission through the
+ * wall is not authorization. Every admitted door still resolves the customer
+ * from the durable Early Access session and still refuses a checkout that is
+ * not theirs with the same 404 an unknown checkout gets. One customer reaching
+ * another customer's cart or order remains impossible, and that property is the
+ * point of doing this narrowly rather than by prefix.
  *
- * No lane should route around this. Session 8 in particular is building a
- * journey whose reachability depends on the answer.
+ * A PREFIX MATCH WOULD BE WRONG. `/early-access/cart/` as a prefix would admit
+ * every future path anyone adds under it, including ones written before their
+ * ownership check exists. The parameterized entries are anchored regexes over
+ * the exact checkout-number grammar, so a malformed or probing segment does not
+ * match and is refused by the wall as before.
+ *
+ * THE ADMIN DOORS ARE NOT AFFECTED. They live under `/api/admin/research/...`,
+ * outside this wall, behind `requireSupabaseAdmin`. Nothing here touches them.
  */
-export const EARLY_ACCESS_CART_WALL_EXEMPTION_IS_UNRESOLVED = true as const;
+export const EARLY_ACCESS_WALL_ADMITS_CART_ON_EA_SESSION = true as const;
+
+/**
+ * The checkout-number grammar, mirroring `CART_NUMBER` in `cart/model.ts`. Any
+ * anchored admission regex must use exactly this and nothing looser.
+ */
+export const EARLY_ACCESS_CART_NUMBER_SEGMENT = "XEC-[A-Z0-9]{16,40}" as const;
+
+/**
+ * The complete admission list. Paths are as the WALL sees them, relative to the
+ * `/api/research` mount, which is why they read `/early-access/...` rather than
+ * `/api/research/early-access/...`.
+ *
+ * Seven doors, no more. Adding an eighth is an orchestrator decision with its
+ * own ownership check, not a lane's.
+ */
+export const EARLY_ACCESS_WALL_ADMITTED_CART_DOORS = Object.freeze([
+  // Literal paths. The capability probe is what the browser calls before it
+  // renders anything, so walling it makes the cart look absent rather than off.
+  Object.freeze({ method: "GET", kind: "literal", path: "/early-access/cart/capability" }),
+  Object.freeze({ method: "POST", kind: "literal", path: "/early-access/cart/quote" }),
+  Object.freeze({ method: "POST", kind: "literal", path: "/early-access/cart/checkout" }),
+  // Parameterized reads, anchored on the checkout-number grammar.
+  Object.freeze({ method: "GET", kind: "anchored", path: "/early-access/cart/<XEC>" }),
+  Object.freeze({ method: "GET", kind: "anchored", path: "/early-access/cart/<XEC>/status" }),
+  Object.freeze({
+    method: "GET",
+    kind: "anchored",
+    path: "/early-access/cart/<XEC>/payment-instructions",
+  }),
+  // The proof upload door. Without its own entry it reads as broken rather
+  // than closed, which is the worst possible answer during a checkout.
+  Object.freeze({
+    method: "POST",
+    kind: "anchored",
+    path: "/early-access/cart/<XEC>/payment-proof",
+  }),
+] as const);
+
+/**
+ * Admission through the wall is not authorization, and every admitted door
+ * must still prove all three of these for itself. Named so a reviewer can
+ * check each door against a list rather than a memory.
+ */
+export const EARLY_ACCESS_ADMITTED_DOOR_OBLIGATIONS = Object.freeze([
+  /** Resolve the customer from the durable Early Access session cookie. */
+  "resolve_customer_from_session",
+  /** Refuse a checkout belonging to anyone else, indistinguishably from unknown. */
+  "enforce_checkout_ownership",
+  /** Answer 404, never 403, so the door cannot become an existence oracle. */
+  "refuse_as_not_found",
+] as const);
 
 /**
  * FOR THE DATABASE LANE: do not drop and recreate the cart event constraint.
@@ -592,7 +655,7 @@ export type EarlyAccessProofConcept = (typeof EARLY_ACCESS_PROOF_CONCEPTS)[numbe
 
 /**
  * THE REPOSITORY LEDGER IS NOT EVIDENCE OF PRODUCTION STATE, IN EITHER
- * DIRECTION.
+ * DIRECTION. FROZEN AS A RULE, not as an observation.
  *
  * `docs/coordination/MIGRATION_DAG.json` marks every Early Access migration,
  * including 58, 60 and 61, as `appliedToProduction: false` with a pending
@@ -600,13 +663,23 @@ export type EarlyAccessProofConcept = (typeof EARLY_ACCESS_PROOF_CONCEPTS)[numbe
  * existed at all. Meanwhile migration 61's own header narrates two real
  * production checkouts by number, which cannot exist unless 58 and 60 ran.
  *
- * The likely reading is that the migrations were applied and the ledger was
- * never updated. Nobody has read the managed ledger to confirm it. Until
- * somebody does, no lane may treat either artifact as a source of truth about
- * production, and refreshing them is part of the orchestrator's release-control
- * commit rather than any lane's work.
+ * The four rules that follow from that, and they bind every lane:
+ *
+ * 1. Repository release-control metadata is NOT authoritative production
+ *    evidence until it has been reconciled against a read-only read of live
+ *    production. `appliedToProduction: false` here does not mean absent, and a
+ *    true value would not mean present either.
+ * 2. DO NOT change an `appliedToProduction` value on the strength of an
+ *    inference. Only a read-only production read may move one, and the read is
+ *    cited when it does.
+ * 3. DO NOT undo or contradict known production migration 61 state. Its
+ *    duplicate-guard index, its supersession triggers and its
+ *    `checkout_superseded` row are live facts to build on, not proposals.
+ * 4. The final release runbook performs read-only production verification
+ *    BEFORE any migration or deploy decision. No candidate is judged shippable
+ *    against the repository's own ledger alone.
  */
-export const EARLY_ACCESS_MIGRATION_LEDGER_IS_STALE = true as const;
+export const EARLY_ACCESS_LEDGER_IS_NOT_PRODUCTION_EVIDENCE = true as const;
 
 /**
  * ROUTE CARDINALITY IS PINNED AT EXACTLY 348 REGISTRATIONS ACROSS 339 CALL
@@ -623,3 +696,111 @@ export const EARLY_ACCESS_ROUTE_PIN_AT_BASE = Object.freeze({
   registrations: 348,
   callSites: 339,
 } as const);
+
+// ---------------------------------------------------------------------------
+// 9. Six more findings frozen as rules.
+// ---------------------------------------------------------------------------
+
+/**
+ * THE 72-HOUR SLA IS NEW FUNCTIONALITY, NOT PRESERVATION.
+ *
+ * No `shipByAt`, no `paymentVerifiedAt` and no Early Access fulfilment clock
+ * exists in code or schema at the base. The settlement records `settled_at` and
+ * nothing else. The 72-hour commitment appears only as prose in an operations
+ * note and a migration comment. `server/research/sla.ts` is the MEMBER PLATFORM
+ * sweep, covering assessment deadlines and plan reviews, and it is deliberately
+ * not attached to any timer.
+ *
+ * So this is built, not preserved, and it needs its own tests rather than an
+ * assumption that something already enforces it. Two things to reuse rather
+ * than reinvent: the sweep's claim-before-emit pattern with a unique
+ * (kind, subject, phase) key, and one of the four real production timers in
+ * `server/index.ts`. A monitor attached to none of them is library code.
+ */
+export const EARLY_ACCESS_SLA_IS_NEW_FUNCTIONALITY = true as const;
+
+/**
+ * THE PROOF EMAIL CANNOT RIDE THE DURABLE OUTBOX, AND THAT IS NOT NEGOTIABLE.
+ *
+ * No email in this repository sends an attachment and the outbox has no
+ * attachment path. Enqueue is a row insert by design. Putting proof bytes in an
+ * outbox row so a retry can resend them is precisely what "transient" forbids,
+ * so the proof email is a direct provider send and forfeits the outbox's retry,
+ * dedup and reclaim.
+ *
+ * What replaces them, and all three are required together: persist the
+ * submission IDENTITY durably before the send, derive a deterministic provider
+ * idempotency key from that identity, and model the ambiguous outcome
+ * explicitly rather than collapsing it.
+ */
+export const EARLY_ACCESS_PROOF_EMAIL_BYPASSES_OUTBOX = true as const;
+
+/**
+ * THE CUSTOMER IS CURRENTLY TOLD THEY HAVE AN ORDER BEFORE THEY HAVE SUBMITTED
+ * ANYTHING.
+ *
+ * `ea_checkout_created` fires at checkout confirm and reads "We have your Early
+ * Access order". At that moment no proof exists and the payment state is
+ * `awaiting_payment`. If the proof submission is the real operational
+ * submission, that email contradicts it in the customer's inbox.
+ *
+ * The wording and the timing must distinguish CHECKOUT RESERVED from ORDER
+ * SUBMITTED FOR PAYMENT REVIEW, which is what `EARLY_ACCESS_ORDER_STAGES`
+ * exists to express. The existing `checkout_created` database event and email
+ * key stay stable, so the founder checkout never needs reissuing.
+ */
+export const EARLY_ACCESS_RESERVED_IS_NOT_SUBMITTED = true as const;
+
+/**
+ * THE AGREEMENT GATE IS CHECKED IN ONE PLACE TODAY, NOT FOUR.
+ *
+ * The quote calls it. The checkout service does not reference agreements at
+ * all, proof submission does not exist yet, and the settlement RPC performs no
+ * agreement check. So a customer can quote under one package and settle under
+ * another.
+ *
+ * The three additions go at DURABLE boundaries, not in a route handler where a
+ * second caller can bypass them. Defence in depth means the check exists at the
+ * commit boundary even when the route above it already checked.
+ */
+export const EARLY_ACCESS_AGREEMENT_CHECKS_TO_ADD = Object.freeze([
+  "checkout",
+  "proof_submission",
+  "settlement",
+] as const);
+
+/**
+ * NO SECOND SETTLEMENT DOOR. Extend the existing route, service and RPC.
+ *
+ * Stated twice in this file on purpose, because it is the single easiest rule
+ * to break by accident: a new route that calls the settlement port directly
+ * looks correct in isolation and silently skips the notifier that tells the
+ * customer and the suppliers. The existing door commits atomically and then
+ * notifies outside the transaction, and deliberately does not notify on the
+ * `already_settled` replay branch.
+ *
+ * Note there is a SECOND, SEPARATE door for the single-product order flow at
+ * `/api/admin/research/payments/:orderNumber/confirm`. Two product flows, one
+ * door each. Do not conflate them, and do not let a new cart route become a
+ * third.
+ */
+export const EARLY_ACCESS_SINGLE_ORDER_SETTLEMENT_ROUTE =
+  "/api/admin/research/payments/:orderNumber/confirm" as const;
+
+/**
+ * THE CATALOG SEPARATION ALREADY EXISTS. PRESERVE IT, DO NOT REBUILD IT.
+ *
+ * `server/research/early-access/release/storefront-view.ts` already carries the
+ * two orthogonal fields: a unit state of purchasable, request_access,
+ * coming_soon or held, crossed with an availability state, with `purchasable`
+ * stated explicitly so no client derives it and a price set only when the unit
+ * is purchasable. A unit is purchasable only if Product Control cleared it or a
+ * valid founder release covers it, and the quote service refuses any line that
+ * is not.
+ *
+ * The roadmap joins to that projection on `(productId, variantId)` and mints
+ * nothing: not a purchasable flag, not a price. A roadmap display state must
+ * never grant purchase authority, which `canAddToCart` enforces structurally by
+ * never reading the roadmap stage at all.
+ */
+export const EARLY_ACCESS_CATALOG_AUTHORITY_IS_STOREFRONT_VIEW = true as const;
