@@ -374,7 +374,7 @@ DRIFT=$(psql_q cartdrift "select coalesce(disposition,'active') from public.rese
 echo "   a PAID duplicate aborts the migration instead of being superseded : $DRIFT (must be 'active')"
 [ "$DRIFT" = "active" ] || { echo "FAILED: a paid duplicate was dispositioned anyway"; exit 1; }
 
-echo "== M62 canonical-identity drift aborts atomically instead of guessing =="
+echo "== M62 historical punctuation collision aborts atomically instead of guessing =="
 docker exec "$NAME" psql -U postgres -v ON_ERROR_STOP=1 -q -c "create database m62drift;" || exit 1
 psql_run m62drift <<'SQL' || exit 1
 do $$ begin
@@ -398,21 +398,26 @@ insert into public.research_early_access_cart_settlements(
   cart_checkout_id,external_transaction_id,reviewed_evidence_ref,verified_amount_cents,
   verified_currency,actor_id,record,settled_at
 )
-select id,'Ab C','eaext.drift0000000000001',100,'USD','drift:test','{}',clock_timestamp()
+select id,'TX-123','eaext.drift0000000000001',100,'USD','drift:test','{}',clock_timestamp()
   from public.research_early_access_cart_checkouts where checkout_number='XEC-M62DRIFTAAAAAAAAAAAAAA';
 insert into public.research_early_access_cart_settlements(
   cart_checkout_id,external_transaction_id,reviewed_evidence_ref,verified_amount_cents,
   verified_currency,actor_id,record,settled_at
 )
-select id,'  ab   c  ','eaext.drift0000000000002',100,'USD','drift:test','{}',clock_timestamp()
+select id,'TX 123','eaext.drift0000000000002',100,'USD','drift:test','{}',clock_timestamp()
   from public.research_early_access_cart_checkouts where checkout_number='XEC-M62DRIFTBBBBBBBBBBBBBB';
 SQL
 if psql_run m62drift < "$REPO_ROOT/$M62" >/dev/null 2>&1; then
   echo "FAILED: M62 guessed through a pre-existing canonical transaction collision"
   exit 1
 fi
-M62_ROLLBACK=$(psql_q m62drift "select to_regclass('public.research_early_access_legal_bindings') is null and to_regprocedure('public.research_early_access_commit_cart_settlement(text,text,text,bigint,text,text,timestamptz)') is not null;")
-echo "   failed apply left no M62 tables and preserved M60 RPC: $M62_ROLLBACK (must be t)"
+M62_ROLLBACK=$(psql_q m62drift "select
+  to_regclass('public.research_early_access_legal_bindings') is null
+  and to_regclass('public.research_early_access_cart_transaction_ids') is null
+  and to_regprocedure('public.research_early_access_commit_cart_settlement(text,text,text,bigint,text,text,timestamptz)') is not null
+  and (select count(*)=2 and count(*) filter (where external_transaction_id in ('TX-123','TX 123'))=2
+       from public.research_early_access_cart_settlements);")
+echo "   failed apply kept both punctuation variants unchanged, left no M62 tables, and preserved M60 RPC: $M62_ROLLBACK (must be t)"
 [ "$M62_ROLLBACK" = "t" ] || { echo "FAILED: M62 drift apply was not atomic"; exit 1; }
 
 echo

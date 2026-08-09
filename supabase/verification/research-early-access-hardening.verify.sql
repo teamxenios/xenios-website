@@ -103,7 +103,7 @@ select pg_temp.seed_checkout('PRIMARY','eac_'||repeat('a',32),25000) as checkout
 
 select pg_temp.want(
   (public.research_early_access_commit_cart_settlement(
-    :'checkout_primary','WIRE-M62-001','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',true,true,'2000-01-01T00:00:00Z'
+    :'checkout_primary','TX-Canonical-002','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',true,true,'2000-01-01T00:00:00Z'
   )->>'reason')='agreements_not_current',
   'settlement fails closed while no current package exists');
 
@@ -168,14 +168,14 @@ select pg_temp.want(
 
 select pg_temp.want(
   (public.research_early_access_commit_cart_settlement(
-    :'checkout_primary','WIRE-M62-001','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',true,true,'2000-01-01T00:00:00Z'
+    :'checkout_primary','TX-Canonical-002','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',true,true,'2000-01-01T00:00:00Z'
   )->>'reason')='submission_missing','pending submission cannot settle');
 
 select public.research_early_access_confirm_submission_email(
   'eaps_primary_submission_0001','eask_primary_submission_0001','unknown',null,'provider accepted; confirm write unknown');
 select pg_temp.want(
   (public.research_early_access_commit_cart_settlement(
-    :'checkout_primary','WIRE-M62-001','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',true,true,'2000-01-01T00:00:00Z'
+    :'checkout_primary','TX-Canonical-002','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',true,true,'2000-01-01T00:00:00Z'
   )->>'reason')='submission_unreconciled','unknown provider acceptance cannot settle');
 
 select public.research_early_access_confirm_submission_email(
@@ -186,7 +186,7 @@ select pg_temp.want(
   'acceptance vocabulary remains distinct and durable attempts are counted');
 select pg_temp.want(
   (public.research_early_access_commit_cart_settlement(
-    :'checkout_primary','WIRE-M62-001','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',false,true,'2000-01-01T00:00:00Z'
+    :'checkout_primary','TX-Canonical-002','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',false,true,'2000-01-01T00:00:00Z'
   )->>'reason')='admin_confirmation_missing','both named-admin confirmations are required');
 
 select public.research_early_access_record_cart_external_proof(jsonb_build_object(
@@ -201,7 +201,7 @@ select pg_temp.want(
 
 select pg_temp.want(
   (public.research_early_access_commit_cart_settlement(
-    :'checkout_primary','WIRE-M62-001','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',true,true,'2000-01-01T00:00:00Z'
+    :'checkout_primary','TX-Canonical-002','eaext.M62PrimaryEvidence01',25000,'USD','admin@example.com',true,true,'2000-01-01T00:00:00Z'
   )->>'committed')='true','the hardened wrapper commits through the exact M60 core');
 select pg_temp.want((select count(*)=1 from public.research_early_access_cart_settlements c
   join public.research_early_access_cart_checkouts o on o.id=c.cart_checkout_id where o.checkout_number=:'checkout_primary'),
@@ -278,11 +278,99 @@ select public.research_early_access_record_cart_external_proof(jsonb_build_objec
   'cartCheckoutNumber',:'checkout_secondary','evidenceRef','eaext.M62SecondaryEvidence1','sha256',repeat('e',64),
   'filename','second.pdf','contentType','application/pdf','byteSize',2048,'provenanceNote','received by disposable harness',
   'recordedBy','admin@example.com','recordedAt','2026-08-09T11:07:00Z'));
+
+create or replace function pg_temp.ready_transaction_duplicate(
+  p_suffix text,p_customer text,p_member uuid,p_amount bigint
+) returns text language plpgsql as $$
+declare
+  v_checkout text;
+  v_lower text:=lower(p_suffix);
+  v_attestation text:='eaa_txcanonical_'||v_lower;
+  v_submission text:='eas_txcanonical_'||v_lower;
+  v_key text:='eask_txcanonical_'||v_lower;
+  v_evidence text:='eaext.M62Canonical'||p_suffix;
+begin
+  v_checkout:=pg_temp.seed_checkout(p_suffix,p_customer,p_amount);
+  perform public.research_early_access_record_legal_binding(jsonb_build_object(
+    'customerRef',p_customer,'memberId',p_member::text,'establishedBy','verified_link',
+    'verifiedAt','2026-08-09T11:10:00Z','attestedBy',null,'aliasRefs',jsonb_build_array()));
+  perform public.research_early_access_record_agreement_attestation(jsonb_build_object(
+    'attestationId',v_attestation,'cartCheckoutNumber',v_checkout,'memberId',p_member::text,
+    'packageId','ea-package','packageVersion',repeat('b',24),
+    'signedAt',jsonb_build_object(
+      'manual_payment_bridge_terms','2026-08-09T11:11:00Z',
+      'arbitration_agreement','2026-08-09T11:12:00Z')),'legal:test');
+  perform public.research_early_access_begin_proof_submission(jsonb_build_object(
+    'submissionId',v_submission,'cartCheckoutNumber',v_checkout,'customerRef',p_customer,
+    'memberId',p_member::text,
+    'method',jsonb_build_object('code','wire_transfer','methodName','Wire transfer',
+      'registryVersion','registry-v2','presentedAt','2026-08-09T11:13:00Z'),
+    'filename','duplicate.pdf','contentType','application/pdf','byteSize',1024,
+    'proofSha256',repeat('9',64),'packageVersion',repeat('b',24)),v_key);
+  perform public.research_early_access_confirm_submission_email(
+    v_submission,v_key,'accepted','provider-'||v_lower,null);
+  perform public.research_early_access_record_cart_external_proof(jsonb_build_object(
+    'cartCheckoutNumber',v_checkout,'evidenceRef',v_evidence,'sha256',repeat('9',64),
+    'filename','duplicate.pdf','contentType','application/pdf','byteSize',1024,
+    'provenanceNote','canonical duplicate fixture','recordedBy','admin@example.com',
+    'recordedAt','2026-08-09T11:14:00Z'));
+  return v_checkout;
+end $$;
+
+select pg_temp.ready_transaction_duplicate(
+  'DUPUPPER','eac_'||repeat('c',32),'33333333-3333-3333-3333-333333333333',14000
+) as checkout_dupupper \gset
+select pg_temp.ready_transaction_duplicate(
+  'DUPSPACE','eac_'||repeat('d',32),'44444444-4444-4444-4444-444444444444',15000
+) as checkout_dupspace \gset
+
+select pg_temp.want(
+  upper(regexp_replace('TX-Canonical-002','[^0-9A-Za-z]+','','g'))='TXCANONICAL002'
+  and upper(regexp_replace('tx-canonical-002','[^0-9A-Za-z]+','','g'))='TXCANONICAL002'
+  and upper(regexp_replace('TX-CANONICAL-002','[^0-9A-Za-z]+','','g'))='TXCANONICAL002'
+  and upper(regexp_replace('TX Canonical 002','[^0-9A-Za-z]+','','g'))='TXCANONICAL002',
+  'all four frozen-contract spellings canonicalize to TXCANONICAL002');
+select pg_temp.want(
+  (select t.canonical_transaction_id='TXCANONICAL002'
+   from public.research_early_access_cart_transaction_ids t
+   join public.research_early_access_cart_checkouts c on c.id=t.cart_checkout_id
+   where c.checkout_number=:'checkout_primary'),
+  'the original settlement stores TXCANONICAL002');
 select pg_temp.want(
   (public.research_early_access_commit_cart_settlement(
-    :'checkout_secondary','  wire-m62-001  ','eaext.M62SecondaryEvidence1',18000,'USD','admin@example.com',true,true,clock_timestamp()
+    :'checkout_secondary','tx-canonical-002','eaext.M62SecondaryEvidence1',18000,'USD','admin@example.com',true,true,clock_timestamp()
   )->>'reason')='transaction_id_duplicate_canonical',
-  'case and whitespace variants cannot reuse one canonical transaction id');
+  'lowercase punctuation variant cannot reuse one canonical transaction id');
+select pg_temp.want(
+  (public.research_early_access_commit_cart_settlement(
+    :'checkout_dupupper','TX-CANONICAL-002','eaext.M62CanonicalDUPUPPER',14000,'USD','admin@example.com',true,true,clock_timestamp()
+  )->>'reason')='transaction_id_duplicate_canonical',
+  'uppercase punctuation variant cannot reuse one canonical transaction id');
+select pg_temp.want(
+  (public.research_early_access_commit_cart_settlement(
+    :'checkout_dupspace','TX Canonical 002','eaext.M62CanonicalDUPSPACE',15000,'USD','admin@example.com',true,true,clock_timestamp()
+  )->>'reason')='transaction_id_duplicate_canonical',
+  'space separator variant cannot reuse one canonical transaction id');
+select pg_temp.want(
+  (select count(*)=0 from public.research_early_access_cart_settlements s
+   join public.research_early_access_cart_checkouts c on c.id=s.cart_checkout_id
+   where c.checkout_number in (:'checkout_secondary',:'checkout_dupupper',:'checkout_dupspace')),
+  'duplicate variants create zero second settlements');
+select pg_temp.want(
+  (select count(*)=0 from public.research_early_access_cart_receipts r
+   join public.research_early_access_cart_checkouts c on c.id=r.cart_checkout_id
+   where c.checkout_number in (:'checkout_secondary',:'checkout_dupupper',:'checkout_dupspace')),
+  'duplicate variants create zero second receipts');
+select pg_temp.want(
+  (select count(*)=0 from public.research_early_access_cart_child_releases r
+   join public.research_early_access_cart_checkouts c on c.id=r.cart_checkout_id
+   where c.checkout_number in (:'checkout_secondary',:'checkout_dupupper',:'checkout_dupspace')),
+  'duplicate variants create zero supplier releases');
+select pg_temp.want(
+  (select count(*)=0 from public.research_early_access_cart_supplier_outbox o
+   join public.research_early_access_cart_checkouts c on c.id=o.cart_checkout_id
+   where c.checkout_number in (:'checkout_secondary',:'checkout_dupupper',:'checkout_dupspace')),
+  'duplicate variants create zero supplier outbox rows');
 select pg_temp.want(
   (public.research_early_access_commit_cart_settlement(
     :'checkout_secondary','WIRE-M62-002','eaext.M62SecondaryEvidence1',18000,'USD','admin@example.com',true,true,clock_timestamp()

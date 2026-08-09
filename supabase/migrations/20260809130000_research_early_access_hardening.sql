@@ -129,7 +129,7 @@ create table if not exists public.research_early_access_cart_transaction_ids (
   cart_settlement_id uuid not null unique references public.research_early_access_cart_settlements(id) on delete restrict,
   cart_checkout_id uuid not null unique references public.research_early_access_cart_checkouts(id) on delete restrict,
   external_transaction_id text not null check (length(btrim(external_transaction_id)) between 3 and 200),
-  canonical_transaction_id text not null unique check (length(btrim(canonical_transaction_id)) between 3 and 200),
+  canonical_transaction_id text not null unique check (length(btrim(canonical_transaction_id)) between 4 and 200),
   recorded_at timestamptz not null default pg_catalog.clock_timestamp()
 );
 
@@ -140,7 +140,7 @@ insert into public.research_early_access_cart_transaction_ids(
   canonical_transaction_id, recorded_at
 )
 select s.id, s.cart_checkout_id, s.external_transaction_id,
-       upper(regexp_replace(btrim(s.external_transaction_id), '\s+', ' ', 'g')),
+       upper(regexp_replace(s.external_transaction_id, '[^0-9A-Za-z]+', '', 'g')),
        s.settled_at
   from public.research_early_access_cart_settlements s
 on conflict (cart_settlement_id) do nothing;
@@ -689,8 +689,8 @@ begin
      or p_confirmed_amount_and_reference is distinct from true then
     return jsonb_build_object('committed',false,'reason','admin_confirmation_missing','settlement',null);
   end if;
-  v_canonical:=upper(regexp_replace(btrim(p_external_transaction_id),'\s+',' ','g'));
-  if v_canonical is null or length(v_canonical) not between 3 and 200 then
+  v_canonical:=upper(regexp_replace(p_external_transaction_id,'[^0-9A-Za-z]+','','g'));
+  if v_canonical is null or length(v_canonical) not between 4 and 200 then
     return jsonb_build_object('committed',false,'reason','input_invalid','settlement',null);
   end if;
   if exists(select 1 from public.research_early_access_cart_transaction_ids where canonical_transaction_id=v_canonical) then
