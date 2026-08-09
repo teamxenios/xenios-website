@@ -292,11 +292,22 @@ export function registerResearchApi(app: Express) {
     // it cannot be asked about anyone else. Reaching it through the wall
     // without a session reaches a refusal, never a status.
     "/early-access/agreements",
+    // The cart capability probe. The browser calls it before rendering
+    // anything, so walling it makes the cart look ABSENT rather than off, which
+    // is the one answer that cannot be recovered from in the UI. It reads no
+    // parameter and reports only whether the cart is enabled.
+    "/early-access/cart/capability",
   ]);
   const EARLY_ACCESS_OPEN_WRITE_PATHS = new Set([
     "/early-access/unlock",
     "/early-access/logout",
     "/early-access/orders",
+    // Quote and checkout. Both own a STRONGER gate downstream: the durable
+    // Early Access session resolves the customer, the quote is bound to that
+    // customer, and checkout refuses a quote that is not theirs. Reaching them
+    // through the wall reaches a refusal, never another customer's cart.
+    "/early-access/cart/quote",
+    "/early-access/cart/checkout",
     // The verification doors. Each owns a STRONGER downstream gate: both
     // require the durable Early Access session, and redemption additionally
     // requires the token minted for THIS session. Reaching them through the
@@ -327,6 +338,39 @@ export function registerResearchApi(app: Express) {
   );
   const EARLY_ACCESS_ORDER_WRITE = new RegExp(
     `^/early-access/orders/(?:${ORDER_NUMBER_SEGMENT})/payment-proof$`,
+  );
+
+  // THE CART DOORS, ADMITTED ON THE EARLY ACCESS SESSION ALONE.
+  //
+  // Founder decision: a customer who has unlocked Private Early Access must not
+  // be asked for the research gateway password as well. Early Access
+  // authentication is the intended customer gate.
+  //
+  // Before this, every cart route was answered by this wall with 401 "Access
+  // required." An executed probe confirmed it on all five existing routes while
+  // an exempt control path answered 200, so the cart was unreachable by exactly
+  // the people it exists for. It was never noticed because the cart route tests
+  // register the Early Access API alone, without this wall in front of it.
+  //
+  // Admitted door by door, never by prefix. A prefix would admit every future
+  // path added under this namespace, including one written before its ownership
+  // check exists. The parameterized entries are anchored on the exact generated
+  // checkout-number shape, so a lookalike segment stays walled.
+  //
+  // ADMISSION IS NOT AUTHORIZATION. Every door below still resolves the
+  // customer from the durable Early Access session and still answers 404, not
+  // 403, for a checkout belonging to someone else, so it cannot become an
+  // existence oracle. Getting through this wall reaches a refusal, never
+  // another customer's cart.
+  //
+  // The admin cart doors are NOT here and must never be: they live under
+  // /api/admin/research and answer to requireSupabaseAdmin, outside this wall.
+  const CART_NUMBER_SEGMENT = "XEC-[A-Z0-9]{16,40}";
+  const EARLY_ACCESS_CART_READ = new RegExp(
+    `^/early-access/cart/(?:${CART_NUMBER_SEGMENT})(?:/status|/payment-instructions)?$`,
+  );
+  const EARLY_ACCESS_CART_WRITE = new RegExp(
+    `^/early-access/cart/(?:${CART_NUMBER_SEGMENT})/payment-proof$`,
   );
 
   // These exact read routes own their stronger downstream member guard and
@@ -524,9 +568,12 @@ export function registerResearchApi(app: Express) {
     if (
       ((req.method === "GET" || req.method === "HEAD") &&
         (EARLY_ACCESS_OPEN_READ_PATHS.has(req.path) ||
-          EARLY_ACCESS_ORDER_READ.test(req.path))) ||
+          EARLY_ACCESS_ORDER_READ.test(req.path) ||
+          EARLY_ACCESS_CART_READ.test(req.path))) ||
       (req.method === "POST" &&
-        (EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path) || EARLY_ACCESS_ORDER_WRITE.test(req.path)))
+        (EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path) ||
+          EARLY_ACCESS_ORDER_WRITE.test(req.path) ||
+          EARLY_ACCESS_CART_WRITE.test(req.path)))
     ) {
       return next();
     }

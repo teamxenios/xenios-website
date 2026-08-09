@@ -79,6 +79,9 @@ function makeApp() {
 /** A well-formed order number, in the generated alphabet. */
 const ORDER_NUMBER = "XEA-7F3K9QW2TM4BXYZ1";
 
+/** A well-formed cart checkout number, in the generated shape XEC-<hex>. */
+const CART_NUMBER = "XEC-063A962A0053A65324F21E7F";
+
 describe("the research wall lets Private Early Access reach its own gate", () => {
   it.each([
     ["GET", "/api/research/early-access/session"],
@@ -104,6 +107,18 @@ describe("the research wall lets Private Early Access reach its own gate", () =>
     ["GET", `/api/research/early-access/orders/${ORDER_NUMBER}`],
     ["GET", `/api/research/early-access/orders/${ORDER_NUMBER}/invoice`],
     ["POST", `/api/research/early-access/orders/${ORDER_NUMBER}/payment-proof`],
+    // THE CART DOORS. A customer who unlocked Private Early Access must not be
+    // asked for the research gateway password as well, so each of these reaches
+    // its own handler and is refused there on its own terms. Every one owns a
+    // stronger gate: the durable session resolves the customer, and a checkout
+    // that is not theirs answers 404 exactly as an unknown one does.
+    ["GET", "/api/research/early-access/cart/capability"],
+    ["POST", "/api/research/early-access/cart/quote"],
+    ["POST", "/api/research/early-access/cart/checkout"],
+    ["GET", `/api/research/early-access/cart/${CART_NUMBER}`],
+    ["GET", `/api/research/early-access/cart/${CART_NUMBER}/status`],
+    ["GET", `/api/research/early-access/cart/${CART_NUMBER}/payment-instructions`],
+    ["POST", `/api/research/early-access/cart/${CART_NUMBER}/payment-proof`],
   ])("%s %s is answered by its own handler, not by the wall", async (method, path) => {
     const app = makeApp();
     const res =
@@ -159,6 +174,53 @@ describe("the exemption opened nothing else", () => {
   ])("%s is still walled", async (path) => {
     const res = await request(makeApp()).get(path);
     expect(res.status).toBe(401);
+    expect(res.body?.message).toBe(WALLED);
+  });
+
+  // The cart doors are admitted door by door and anchored on the generated
+  // checkout-number shape, deliberately NOT by a /early-access/cart/ prefix.
+  // A prefix would admit anything a future change adds under that namespace,
+  // including a route written before its ownership check exists. These are the
+  // near-misses that must keep failing the match.
+  it.each([
+    // Not a checkout number.
+    "/api/research/early-access/cart/not-a-number",
+    "/api/research/early-access/cart/XEC-short",
+    "/api/research/early-access/cart/xec-063a962a0053a65324f21e7f",
+    // A real number with a leaf nobody admitted.
+    "/api/research/early-access/cart/XEC-063A962A0053A65324F21E7F/admin",
+    "/api/research/early-access/cart/XEC-063A962A0053A65324F21E7F/status/extra",
+    // Traversal-shaped and lookalike segments.
+    "/api/research/early-access/cart/XEC-063A962A0053A65324F21E7F/../orders",
+    "/api/research/early-access/carts/capability",
+    "/api/research/early-access/cart/capability/extra",
+  ])("%s is NOT admitted by the cart exemption", async (path) => {
+    const res = await request(makeApp()).get(path);
+    expect(res.status).toBe(401);
+    expect(res.body?.message).toBe(WALLED);
+  });
+
+  it("the cart write exemption does not admit a read method, or the reverse", async () => {
+    const app = makeApp();
+    // payment-proof is POST-only in the admission list.
+    const wrongMethodRead = await request(app).get(
+      `/api/research/early-access/cart/${CART_NUMBER}/payment-proof`,
+    );
+    expect(wrongMethodRead.body?.message).toBe(WALLED);
+    // status is GET-only.
+    const wrongMethodWrite = await request(app)
+      .post(`/api/research/early-access/cart/${CART_NUMBER}/status`)
+      .send({});
+    expect(wrongMethodWrite.body?.message).toBe(WALLED);
+  });
+
+  it("no admin cart door is admitted by this wall's cart exemption", async () => {
+    // The admin doors live outside /api/research entirely, behind the Supabase
+    // admin guard. If one ever appeared under this namespace, the exemption
+    // must not be what lets it through.
+    const res = await request(makeApp()).post(
+      `/api/research/early-access/cart/${CART_NUMBER}/confirm-payment`,
+    );
     expect(res.body?.message).toBe(WALLED);
   });
 
