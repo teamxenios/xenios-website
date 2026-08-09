@@ -97,6 +97,9 @@ const CART_DUPLICATE_GUARD_SOURCE_SHA =
   "4031cace41eba98f283e63b8ed3a14f555f6d79a";
 const CART_DUPLICATE_GUARD_PATH =
   "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql";
+const EA_HARDENING_SOURCE_SHA = "73f5109f0a4060bbb76fdcf00b8d22e01b54158e";
+const EA_HARDENING_PATH =
+  "supabase/migrations/20260809130000_research_early_access_hardening.sql";
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -783,6 +786,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(CART_COMPLETION_SOURCE_SHA);
           } else if (path === CART_DUPLICATE_GUARD_PATH) {
             expect(sourceSha).toBe(CART_DUPLICATE_GUARD_SOURCE_SHA);
+          } else if (path === EA_HARDENING_PATH) {
+            expect(sourceSha).toBe(EA_HARDENING_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }

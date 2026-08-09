@@ -446,6 +446,27 @@
         "procedure": "supabase/production/research-early-access-cart-duplicate-guard-rollback-notes.md",
         "evidence": "Applied twice on the managed-Supabase shape (pgcrypto in extensions) on PostgreSQL 16 and 17. The 45-assertion behavioural suite still passes with the invariant in place; a second active checkout for one quote is refused; all five money and release tables and the payment state refuse a superseded checkout; the seeded production duplicate pair is dispositioned with both rows retained and exactly one audit event across two applies; a PAID duplicate aborts the migration instead of being superseded."
       }
+    },
+    {
+      "id": "research_early_access_hardening",
+      "path": "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+      "sourceSha": "73f5109f0a4060bbb76fdcf00b8d22e01b54158e",
+      "dependsOn": [
+        "research_early_access_cart_duplicate_guard"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "a5584714665137c4d5247bcb1201c23be2a901b20b5ac4d48c7e837e975f46b5"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "forward_fix_only_retain_evidence_tables",
+        "procedure": "supabase/verification/research-early-access-hardening.verify.sql",
+        "evidence": "Applied twice on the managed-Supabase shape (pgcrypto in extensions, public.digest absent, Supabase roles and default privileges present) on PostgreSQL 16 and 17 with identical migration and verification bytes. M58 and M60 execute unchanged, M61 applies twice, and the durable invariant suite, the exact founder fixture, six-way settlement concurrency, paid-duplicate refusal and atomic canonical-drift refusal all pass. Each run yields exactly one settlement, one receipt, one expected child release set and one hardening row. NOT A DROP-AND-RESTORE ROLLBACK: this migration privatizes the old seven-argument service settlement door and creates durable evidence tables, so any rollback needs explicit review. Do not drop evidence tables and do not restore the unhardened service door ad hoc. The atomic-drift fixture proves a failed apply leaves no partial M62 table or function state and preserves the M60 core."
+      },
+      "notes": "Additive hardening: seven forced-RLS tables for legal bindings, versioned agreement packages, append-only attestations, metadata-only proof submissions, canonical transaction identities, settlement hardening facts and append-only fulfilment corrections. The exact M60 settlement implementation is retained as a private core behind one hardened nine-argument service_role wrapper. appliedToProduction stays false and managedMigrationId stays PENDING until a read-only production read confirms otherwise; see EARLY_ACCESS_LEDGER_IS_NOT_PRODUCTION_EVIDENCE in the hardening contract."
     }
   ],
   "invariants": [
