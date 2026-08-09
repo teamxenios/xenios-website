@@ -102,6 +102,7 @@ function payment(instructions?: unknown): HTMLElement {
       paymentInstructions={instructions}
       copied={false}
       onCopy={() => {}}
+      onSubmitOrder={() => {}}
       onStatus={() => {}}
     />,
     );
