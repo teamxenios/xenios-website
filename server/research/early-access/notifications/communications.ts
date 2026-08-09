@@ -26,7 +26,18 @@
 import { assertEmailPayloadSafe } from "../../membership-activation/emails";
 
 export const EARLY_ACCESS_EMAIL_EVENTS = [
+  /**
+   * Checkout RESERVED. Units are held and an invoice exists. Nothing has been
+   * paid and nothing has been submitted. The customer still has to pay and then
+   * upload their confirmation.
+   */
   "ea_checkout_created",
+  /**
+   * Order SUBMITTED FOR PAYMENT REVIEW. The customer's payment confirmation
+   * reached us and a named operator now has to verify the transfer arrived.
+   * This is not payment verification and it never implies one.
+   */
+  "ea_submitted_for_review",
   "ea_payment_verified",
   "ea_order_released",
   "ea_tracking_posted",
@@ -107,6 +118,16 @@ const ALLOWED_KEYS: Readonly<Record<EarlyAccessEmailEvent, readonly string[]>> =
     "amountDueDisplay",
     "paymentReference",
     "methodLabels",
+    "statusUrl",
+  ],
+  // No proof metadata here on purpose. Not the filename, not the digest, not
+  // the provider message id, not the internal recipient. This email confirms
+  // that a submission arrived; it is not a receipt for the file.
+  ea_submitted_for_review: [
+    "customerName",
+    "cartCheckoutNumber",
+    "invoiceNumber",
+    "paymentReference",
     "statusUrl",
   ],
   ea_payment_verified: [
@@ -192,6 +213,18 @@ export function renderEarlyAccessOutboxEmail(
     : "Sign in to your Xenios Research order page to view the available payment methods and payment details.";
 
   switch (templateKey as EarlyAccessEmailEvent) {
+    // RESERVED IS NOT SUBMITTED, AND THIS EMAIL USED TO SAY OTHERWISE.
+    //
+    // It read "We have your Early Access order" and was subjected "Your Early
+    // Access order", and it fires at checkout confirm, when no payment has been
+    // made and no proof has been sent. The customer was being told their order
+    // was with us before they had done the two things that actually submit it.
+    // Once proof submission became the real operational submission, that email
+    // contradicted the journey in the customer's own inbox.
+    //
+    // The event key and the template key are DELIBERATELY unchanged, so the
+    // existing founder checkout keeps its notification identity and needs no
+    // reissuing. Only the words the customer reads have moved.
     case "ea_checkout_created": {
       const labels = Array.isArray(payload.methodLabels)
         ? (payload.methodLabels as unknown[]).filter((l): l is string => typeof l === "string")
@@ -199,20 +232,40 @@ export function renderEarlyAccessOutboxEmail(
       const lines = renderLines(payload.lines);
       const text = [
         `Hello ${name},`,
-        `We have your Early Access order ${checkout}.`,
-        lines ? `What you requested:\n${lines}` : "",
+        `Your Early Access checkout ${checkout} is reserved. It is not submitted yet, and nothing has been charged.`,
+        lines ? `What you reserved:\n${lines}` : "",
         str(payload, "invoiceNumber") ? `Invoice: ${str(payload, "invoiceNumber")}` : "",
         str(payload, "amountDueDisplay") ? `Amount due: ${str(payload, "amountDueDisplay")}` : "",
         str(payload, "paymentReference") ? `Payment reference: ${str(payload, "paymentReference")}` : "",
         labels.length > 0 ? `Available payment methods: ${labels.join(", ")}` : "",
         "Use your payment reference when completing payment.",
+        "Two steps remain. Complete the payment yourself using one of the methods above, then upload your payment confirmation on your order page. Your order is submitted for review only once that upload succeeds, and we will email you when it does.",
         signIn,
-        "Nothing has been charged automatically.",
         SIGNOFF,
       ]
         .filter((part) => part.length > 0)
         .join("\n\n");
-      return { subject: `Your Early Access order ${checkout}`, text };
+      return { subject: `Your Early Access checkout ${checkout} is reserved`, text };
+    }
+    // The acknowledgement that the customer's proof actually arrived. This is
+    // the email the old one was pretending to be.
+    //
+    // It says accepted for review and nothing stronger. A named operator still
+    // has to confirm the transfer arrived, and the upload did not confirm it.
+    case "ea_submitted_for_review": {
+      const text = [
+        `Hello ${name},`,
+        `Your Early Access order ${checkout} is submitted for payment review.`,
+        "We have your payment confirmation and the order is with a named member of the Xenios team.",
+        str(payload, "invoiceNumber") ? `Invoice: ${str(payload, "invoiceNumber")}` : "",
+        str(payload, "paymentReference") ? `Payment reference: ${str(payload, "paymentReference")}` : "",
+        "Your payment is not verified yet. Uploading the confirmation does not verify it, and no supplier has been released. We will email you again when a named operator has confirmed the transfer arrived.",
+        signIn,
+        SIGNOFF,
+      ]
+        .filter((part) => part.length > 0)
+        .join("\n\n");
+      return { subject: `Early Access order ${checkout} submitted for review`, text };
     }
     case "ea_payment_verified": {
       const text = [
