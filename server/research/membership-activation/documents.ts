@@ -29,7 +29,16 @@ export function sha256Hex(value: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// The sixteen document categories of the founding membership activation spec.
+// The twenty document categories: the sixteen of the founding membership
+// activation spec, plus the four the final counsel-approved legal package
+// needs in order to be SIGNABLE at all (M63).
+//
+// The first sixteen are unchanged, in their original order, with their
+// original semantics. The four appended categories carry the package
+// documents that previously mapped to no category and therefore had no
+// signing path: XR-LEGAL-12, XR-LEGAL-13, XR-LEGAL-14 and XR-LEGAL-15.
+// Appending rather than inserting keeps every existing category's identity
+// and ordering untouched.
 // ---------------------------------------------------------------------------
 
 export const DOCUMENT_CATEGORIES = [
@@ -49,6 +58,12 @@ export const DOCUMENT_CATEGORIES = [
   "identity_age_verification_consent",
   "sensitive_health_data_consent",
   "referral_store_credit_terms",
+  // M63: the four final-package documents that had no category, and so no
+  // published version and no signature path, until now.
+  "website_terms_of_use",
+  "product_purchase_terms",
+  "shipping_claims_replacement_policy",
+  "payment_evidence_upload_consent",
 ] as const;
 
 export type DocumentCategory = (typeof DOCUMENT_CATEGORIES)[number];
@@ -77,7 +92,13 @@ export type DocumentRequirement = "required" | "optional";
 export interface DocumentCategoryDefinition {
   category: DocumentCategory;
   title: string;
-  /** Default requirement for versions of this category (a version may narrow it). */
+  /**
+   * Default requirement for versions of this category (a version may narrow
+   * it). This is the ACTIVATION-flow axis: whether a member must satisfy this
+   * category to finish activation. A document required in a LATER stage
+   * (product checkout, payment evidence upload) carries its requirement in the
+   * package manifest, not here, and is `optional` on this axis.
+   */
   defaultRequirement: DocumentRequirement;
   /** The activation step where a required category must be satisfied. */
   activationStep: ActivationStep | null;
@@ -117,7 +138,7 @@ function categoryDefinition(
 }
 
 /**
- * The typed registry of the sixteen categories. Where the existing agreements
+ * The typed registry of the twenty categories. Where the existing agreements
  * engine already registers a key for the same paper, that key is carried here
  * so the systems extend each other instead of duplicating.
  */
@@ -170,6 +191,48 @@ export const DOCUMENT_CATEGORY_REGISTRY: readonly DocumentCategoryDefinition[] =
     requirement: "optional",
     step: null,
     agreementKey: "XR-MEM-026",
+  }),
+  // -------------------------------------------------------------------------
+  // M63: the four final-package documents that had no registry category.
+  //
+  // Two axes are deliberately kept apart here, because conflating them is what
+  // would turn a signability fix into an activation-flow change:
+  //
+  //   * the PACKAGE requirement (required in the document's own stage) lives in
+  //     the manifest, MEMBER_FACING_IMPORT_PLAN, and stays `required` for all
+  //     four. That is what the Early Access package gate enforces.
+  //   * `defaultRequirement` HERE is the ACTIVATION-flow requirement: whether a
+  //     member must satisfy this category to finish ACTIVATION. Only the one
+  //     document counsel staged at `activation` carries that.
+  //
+  // The three later-stage documents therefore take the shape the registry
+  // already uses for a category outside the activation required set
+  // (referral_store_credit_terms): no activation step, optional for activation.
+  // Nothing about their package requirement is loosened by that.
+  // -------------------------------------------------------------------------
+
+  // XR-LEGAL-12, staged `activation` and required by the package, signing
+  // position 13. It has no dedicated activation step in ACTIVATION_STEPS and no
+  // agreements-engine key, so it takes the registry's default step for an
+  // activation-stage document, `activation_agreements`, exactly as the other
+  // step-less activation categories do (privacy_notice, the disclaimer, the
+  // assumption-of-risk and identity consents). It is not one of the package's
+  // two separate-conspicuous-acceptance documents (08 and 17).
+  categoryDefinition(17, "website_terms_of_use", "Website Terms of Use"),
+  // XR-LEGAL-13, staged `product_checkout`.
+  categoryDefinition(18, "product_purchase_terms", "Product Purchase Terms", {
+    requirement: "optional",
+    step: null,
+  }),
+  // XR-LEGAL-14, staged `product_checkout`.
+  categoryDefinition(19, "shipping_claims_replacement_policy", "Shipping, Claims and Replacement Policy", {
+    requirement: "optional",
+    step: null,
+  }),
+  // XR-LEGAL-15, staged `payment_evidence_upload`.
+  categoryDefinition(20, "payment_evidence_upload_consent", "Payment Evidence Upload Consent", {
+    requirement: "optional",
+    step: null,
   }),
 ];
 

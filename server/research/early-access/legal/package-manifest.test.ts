@@ -46,16 +46,45 @@ describe("Early Access package derivation", () => {
     expect(checkout.every((entry) => entry.requirement === "required")).toBe(true);
   });
 
-  it("classifies the product checkout documents as having no signing path", () => {
-    // This is the structural blocker for an Early Access purchase: the two
-    // documents the purchase itself requires map to no category, so the
-    // signature engine has nowhere to record them.
+  it("classifies every required document as signable, and names its category (M63)", () => {
+    // This WAS the structural blocker for an Early Access purchase: the
+    // documents the purchase itself requires mapped to no category, so the
+    // signature engine had nowhere to record them. M63 gave all four a real
+    // category, so each now has a signing path.
+    const mapping = new Map(
+      fullCandidatePackage().map((entry) => [
+        entry.documentId,
+        entry.classification.kind === "signable" ? entry.classification.category : null,
+      ]),
+    );
+    expect(mapping.get("XR-LEGAL-12")).toBe("website_terms_of_use");
+    expect(mapping.get("XR-LEGAL-13")).toBe("product_purchase_terms");
+    expect(mapping.get("XR-LEGAL-14")).toBe("shipping_claims_replacement_policy");
+    expect(mapping.get("XR-LEGAL-15")).toBe("payment_evidence_upload_consent");
+
     for (const entry of deriveCandidatePackage(["product_checkout"])) {
-      expect(entry.classification.kind).toBe("not_signable");
+      expect(entry.classification.kind).toBe("signable");
     }
     const consent = deriveCandidatePackage(["payment_evidence_upload"]);
     expect(consent.map((entry) => entry.documentId)).toEqual(["XR-LEGAL-15"]);
-    expect(consent[0].classification.kind).toBe("not_signable");
+    expect(consent[0].classification.kind).toBe("signable");
+
+    // Not one REQUIRED document anywhere in the package is left unsignable.
+    const unsignableRequired = fullCandidatePackage()
+      .filter((entry) => entry.requirement === "required")
+      .filter((entry) => entry.classification.kind !== "signable")
+      .map((entry) => entry.documentId);
+    expect(unsignableRequired).toEqual([]);
+  });
+
+  it("keeps the not-signable classification alive for the one document that has no category", () => {
+    // The mechanism is not deleted, only emptied of required documents. The
+    // optional cookie and tracking notice is still an additional document, so
+    // a designation naming it still reports honestly.
+    const cookie = deriveCandidatePackage(["cookie_notice"]);
+    expect(cookie.map((entry) => entry.documentId)).toEqual(["XR-LEGAL-16"]);
+    expect(cookie[0].requirement).toBe("optional");
+    expect(cookie[0].classification.kind).toBe("not_signable");
   });
 
   it("carries the separate acknowledgment flag from the category registry", () => {
@@ -169,12 +198,25 @@ describe("Early Access package designation", () => {
     expect(result.designatedBy).toBe("Samuel Boadu");
   });
 
-  it("reports that a checkout designation contains documents nothing can sign", () => {
+  it("resolves a checkout designation with every document signable (M63)", () => {
     const ids = deriveCandidatePackage(["activation", "product_checkout"])
       .filter((entry) => entry.requirement === "required")
       .map((entry) => entry.documentId);
     const result = resolveDesignatedPackage(
       activationDesignation({ stages: ["activation", "product_checkout"], documentIds: ids }),
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error("unreachable");
+    expect(result.containsUnsignableDocuments).toBe(false);
+    expect(result.entries.map((entry) => entry.documentId)).toContain("XR-LEGAL-13");
+    expect(result.entries.map((entry) => entry.documentId)).toContain("XR-LEGAL-14");
+  });
+
+  it("still reports an unsignable document when one is designated", () => {
+    // The flag is not dead code: designating the optional cookie notice, which
+    // has no category, still resolves and still says so.
+    const result = resolveDesignatedPackage(
+      activationDesignation({ stages: ["cookie_notice"], documentIds: ["XR-LEGAL-16"] }),
     );
     expect(result.ok).toBe(true);
     if (!result.ok) throw new Error("unreachable");

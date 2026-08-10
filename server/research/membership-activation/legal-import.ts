@@ -3,6 +3,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import {
   DocumentLifecycle,
+  categoryDefinitionFor,
   sha256Hex,
   type DocumentCategory,
   type DocumentRequirement,
@@ -37,13 +38,18 @@ import {
 //
 // Mapping notes (the registry is read-only to this module):
 //   - The package ships 17 member-facing documents; the registry
-//     (documents.ts) defines 16 fixed categories with no extension point
+//     (documents.ts) defines 20 fixed categories with no extension point
 //     (DocumentCategory is a closed union and the store keys by category).
-//     Twelve package documents map onto registry categories; the remaining
-//     five (website terms, product purchase terms, shipping policy, payment
-//     evidence upload consent, cookie notice) have no registry category and
-//     are registered here as ADDITIONAL documents: typed, hash-verified
-//     records derived deterministically from the package on every run.
+//     Sixteen package documents map onto registry categories. M63 added the
+//     four categories that the four REQUIRED unmapped documents needed
+//     (website terms of use, product purchase terms, shipping and claims,
+//     payment evidence upload consent), because without a category they had
+//     no published version and no signature path, so no package containing
+//     them could ever be completed and no package omitting them was accepted.
+//     Only the OPTIONAL cookie and tracking notice (XR-LEGAL-16) remains an
+//     ADDITIONAL document: a typed, hash-verified record derived
+//     deterministically from the package on every run. Being optional, it
+//     blocks no completion and forces no omission refusal.
 //   - Document 17 (release, waiver, covenant not to sue, limitation of
 //     liability and indemnification) is registered under the
 //     membership_covenant category, the closest category the registry
@@ -286,7 +292,7 @@ export const MEMBER_FACING_IMPORT_PLAN: readonly MemberFacingImportEntry[] = [
     requirement: "required",
     separateConspicuousAcceptance: false,
     sourceSha256: "80b9ba55f6e864448779ed41987e981e385aa47eec09776393380acbb04dc8f1",
-    target: ADDITIONAL,
+    target: category("website_terms_of_use"),
     reacceptanceRule: null,
   },
   {
@@ -298,7 +304,7 @@ export const MEMBER_FACING_IMPORT_PLAN: readonly MemberFacingImportEntry[] = [
     requirement: "required",
     separateConspicuousAcceptance: false,
     sourceSha256: "06e5fcc80c7c3c5ac2541f61b607a99a2f37fa7eb1f979e7760b4a7423b57f2c",
-    target: ADDITIONAL,
+    target: category("payment_evidence_upload_consent"),
     reacceptanceRule: "before any evidence upload",
   },
   {
@@ -310,7 +316,7 @@ export const MEMBER_FACING_IMPORT_PLAN: readonly MemberFacingImportEntry[] = [
     requirement: "required",
     separateConspicuousAcceptance: false,
     sourceSha256: "3888a8a1165d7b191b7be69a913a0d9882b60e7817b394e7d6a462b88631ce7c",
-    target: ADDITIONAL,
+    target: category("product_purchase_terms"),
     reacceptanceRule: PRODUCT_REACCEPTANCE,
   },
   {
@@ -322,7 +328,7 @@ export const MEMBER_FACING_IMPORT_PLAN: readonly MemberFacingImportEntry[] = [
     requirement: "required",
     separateConspicuousAcceptance: false,
     sourceSha256: "4e5add6645c4d1e882857c8c692a0b2bd3444e242851ed14dc1e0d49358ad836",
-    target: ADDITIONAL,
+    target: category("shipping_claims_replacement_policy"),
     reacceptanceRule: PRODUCT_REACCEPTANCE,
   },
   {
@@ -380,6 +386,20 @@ function assertPlanShape(plan: readonly MemberFacingImportEntry[]): void {
     .map((e) => (e.target as { kind: "category"; category: DocumentCategory }).category);
   if (new Set(categories).size !== categories.length) {
     throw new Error("Legal import plan maps two documents to one registry category.");
+  }
+  // M63 invariant: a REQUIRED package document with no registry category has no
+  // published version and no signature path, so no package containing it can be
+  // completed and no package omitting it is accepted. That is exactly the
+  // structural deadlock M63 removed; this assertion stops it coming back.
+  const requiredWithoutCategory = plan
+    .filter((e) => e.requirement === "required" && e.target.kind !== "category")
+    .map((e) => e.documentId)
+    .sort();
+  if (requiredWithoutCategory.length > 0) {
+    throw new Error(
+      "Every REQUIRED package document must map to a registry category, else it can " +
+        `never be signed: ${requiredWithoutCategory.join(", ")}.`,
+    );
   }
   const separate = plan.filter((e) => e.separateConspicuousAcceptance).map((e) => e.documentId).sort();
   if (separate.length !== 2 || separate[0] !== "XR-LEGAL-08" || separate[1] !== "XR-LEGAL-17") {
@@ -492,10 +512,11 @@ export function parseProvenance(notes: string | null): ImportProvenance | null {
 }
 
 // ---------------------------------------------------------------------------
-// Additional documents: the five package documents the 16-category registry
-// cannot hold (it has no extension point). Derived deterministically from the
-// verified package files on every run, so re-runs are idempotent by
-// construction and the records can never drift from the imported text.
+// Additional documents: the package documents the category registry does not
+// hold (it has no extension point). After M63 that is the optional cookie and
+// tracking notice alone. Derived deterministically from the verified package
+// files on every run, so re-runs are idempotent by construction and the
+// records can never drift from the imported text.
 // ---------------------------------------------------------------------------
 
 export interface AdditionalDocumentRecord {
@@ -537,6 +558,32 @@ export interface LegalImportResult {
   additional: AdditionalDocumentRecord[];
   /** Documents excluded for internal package conflicts. None in package v1.0. */
   excluded: Array<{ sourceFile: string; reason: string }>;
+}
+
+/**
+ * The requirement a REGISTERED VERSION carries, which is the ACTIVATION-flow
+ * axis, not the package axis.
+ *
+ * `entry.requirement` is the package's requirement IN THE ENTRY'S OWN STAGE. It
+ * stays authoritative for the Early Access package gate, which reads the
+ * manifest directly and never consults this field, and it is recorded verbatim
+ * in the version's provenance notes either way.
+ *
+ * A document counsel staged at `product_checkout` or `payment_evidence_upload`
+ * is required THERE. It is not part of what a member must satisfy to finish
+ * ACTIVATION, and the activation gate keys off the published version's
+ * requirement. So a later-stage document is registered against its category's
+ * own activation-flow default (optional), which is the same shape the registry
+ * already uses for a category outside the activation required set. Without
+ * this, publishing the package would silently move checkout paper into the
+ * activation gate. Nothing about the package requirement is loosened.
+ */
+function activationRequirementFor(
+  entry: MemberFacingImportEntry,
+  categoryName: DocumentCategory,
+): DocumentRequirement {
+  if (entry.stage === "activation") return entry.requirement;
+  return categoryDefinitionFor(categoryName).defaultRequirement;
 }
 
 function resolvePackageDir(options: LegalImportOptions): string {
@@ -627,7 +674,7 @@ export async function registerLegalPackage(
       semver: LEGAL_PACKAGE_SEMVER,
       jurisdiction: LEGAL_PACKAGE_JURISDICTION,
       content: contents.get(entry.sourceFile) as string,
-      requirement: entry.requirement,
+      requirement: activationRequirementFor(entry, decision.categoryName),
       notes: JSON.stringify(buildProvenance(entry)),
     });
     await lifecycle.transition(draft.id, "under_legal_review");

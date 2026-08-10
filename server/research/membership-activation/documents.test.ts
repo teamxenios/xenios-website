@@ -68,11 +68,82 @@ async function publishNew(
 // ---------------------------------------------------------------------------
 
 describe("document category registry", () => {
-  it("registers exactly the sixteen categories of the spec, uniquely", () => {
-    expect(DOCUMENT_CATEGORIES).toHaveLength(16);
-    expect(new Set(DOCUMENT_CATEGORIES).size).toBe(16);
-    expect(DOCUMENT_CATEGORY_REGISTRY).toHaveLength(16);
-    expect(new Set(DOCUMENT_CATEGORY_REGISTRY.map((d) => d.category)).size).toBe(16);
+  it("registers exactly the twenty categories, uniquely", () => {
+    expect(DOCUMENT_CATEGORIES).toHaveLength(20);
+    expect(new Set(DOCUMENT_CATEGORIES).size).toBe(20);
+    expect(DOCUMENT_CATEGORY_REGISTRY).toHaveLength(20);
+    expect(new Set(DOCUMENT_CATEGORY_REGISTRY.map((d) => d.category)).size).toBe(20);
+  });
+
+  it("leaves the original sixteen categories untouched, in their original order", () => {
+    // M63 APPENDED four categories. It renamed nothing, removed nothing and
+    // reordered nothing, so historical signatures keep their meaning.
+    expect(DOCUMENT_CATEGORIES.slice(0, 16)).toEqual([
+      "electronic_record_consent",
+      "founding_membership_agreement",
+      "activation_terms",
+      "recurring_membership_authorization",
+      "immediate_cancellation_acknowledgment",
+      "membership_covenant",
+      "confidentiality_covenant",
+      "privacy_notice",
+      "research_education_disclaimer",
+      "assumption_of_risk_acknowledgment",
+      "no_guarantee_acknowledgment",
+      "arbitration_agreement",
+      "manual_payment_bridge_terms",
+      "identity_age_verification_consent",
+      "sensitive_health_data_consent",
+      "referral_store_credit_terms",
+    ]);
+    expect(DOCUMENT_CATEGORIES.slice(16)).toEqual([
+      "website_terms_of_use",
+      "product_purchase_terms",
+      "shipping_claims_replacement_policy",
+      "payment_evidence_upload_consent",
+    ]);
+    expect(DOCUMENT_CATEGORY_REGISTRY.slice(0, 16).map((d) => d.category)).toEqual(
+      DOCUMENT_CATEGORIES.slice(0, 16),
+    );
+    // The original definitions keep their exact metadata.
+    expect(categoryDefinitionFor("referral_store_credit_terms")).toEqual({
+      category: "referral_store_credit_terms",
+      title: "Referral and Store Credit Terms",
+      defaultRequirement: "optional",
+      activationStep: null,
+      requiresSeparateAcknowledgment: false,
+      agreementKey: "XR-MEM-026",
+      ordering: 16,
+    });
+  });
+
+  it("gives the four M63 categories the metadata their package stage calls for", () => {
+    // Website Terms of Use is staged `activation` by the package, has no
+    // dedicated activation step and no agreements-engine key, so it takes the
+    // registry default for an activation-stage document.
+    expect(categoryDefinitionFor("website_terms_of_use")).toEqual({
+      category: "website_terms_of_use",
+      title: "Website Terms of Use",
+      defaultRequirement: "required",
+      activationStep: "activation_agreements",
+      requiresSeparateAcknowledgment: false,
+      agreementKey: null,
+      ordering: 17,
+    });
+    // The three later-stage documents belong to no activation step. They are
+    // required in their OWN stage (the manifest says so, and the Early Access
+    // package gate enforces it); they are not required to finish activation.
+    for (const category of [
+      "product_purchase_terms",
+      "shipping_claims_replacement_policy",
+      "payment_evidence_upload_consent",
+    ] as const) {
+      const definition = categoryDefinitionFor(category);
+      expect(definition.activationStep).toBeNull();
+      expect(definition.defaultRequirement).toBe("optional");
+      expect(definition.requiresSeparateAcknowledgment).toBe(false);
+      expect(definition.agreementKey).toBeNull();
+    }
   });
 
   it("flags exactly arbitration and the covenant slot (the package's release document) for separate acknowledgment", () => {
@@ -105,11 +176,22 @@ describe("document category registry", () => {
     }
   });
 
-  it("marks the referral terms optional and everything else required", () => {
+  it("marks exactly the non-activation categories optional and everything else required", () => {
+    // `defaultRequirement` is the ACTIVATION-flow axis. Optional here means
+    // "not required to finish activation", not "not required by the package".
+    const optional = new Set<string>([
+      "referral_store_credit_terms",
+      "product_purchase_terms",
+      "shipping_claims_replacement_policy",
+      "payment_evidence_upload_consent",
+    ]);
     for (const entry of DOCUMENT_CATEGORY_REGISTRY) {
-      expect(entry.defaultRequirement).toBe(
-        entry.category === "referral_store_credit_terms" ? "optional" : "required",
-      );
+      expect(entry.defaultRequirement).toBe(optional.has(entry.category) ? "optional" : "required");
+      // Every category the activation flow can require must name the step it
+      // is required at, so a required category can never float free.
+      if (entry.defaultRequirement === "required") {
+        expect(entry.activationStep).not.toBeNull();
+      }
     }
   });
 });
@@ -122,7 +204,7 @@ describe("seedPlaceholderDrafts", () => {
   it("creates one clearly marked placeholder draft per category", async () => {
     const { store, lifecycle } = build();
     const created = await seedPlaceholderDrafts(lifecycle, store);
-    expect(created).toHaveLength(16);
+    expect(created).toHaveLength(20);
     for (const record of created) {
       expect(record.status).toBe("draft");
       expect(record.counselReview).toBe("not_reviewed");
@@ -138,7 +220,7 @@ describe("seedPlaceholderDrafts", () => {
     await seedPlaceholderDrafts(lifecycle, store);
     const second = await seedPlaceholderDrafts(lifecycle, store);
     expect(second).toHaveLength(0);
-    expect(await store.listVersions()).toHaveLength(16);
+    expect(await store.listVersions()).toHaveLength(20);
   });
 
   it("placeholder content invents no legal conclusions and names the replacement rule", () => {

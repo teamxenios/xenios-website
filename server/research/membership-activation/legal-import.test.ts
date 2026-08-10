@@ -172,10 +172,11 @@ describe("hash verification", () => {
 // ---------------------------------------------------------------------------
 
 describe("registerLegalPackage", () => {
-  it("registers the twelve category documents at approved_for_publication, not published", async () => {
+  it("registers the sixteen category documents at approved_for_publication, not published", async () => {
     const { result } = await register();
     expect(result.registered).toHaveLength(CATEGORY_ENTRIES.length);
-    expect(result.registered).toHaveLength(12);
+    // Twelve before M63, plus the four required documents M63 made signable.
+    expect(result.registered).toHaveLength(16);
     for (const record of result.registered) {
       expect(record.status).toBe("approved_for_publication");
       expect(record.publishedAt).toBeNull();
@@ -254,9 +255,9 @@ describe("registerLegalPackage", () => {
   it("leaves previously seeded placeholder drafts standing as drafts beside the real versions", async () => {
     const { store, lifecycle } = build();
     const placeholders = await seedPlaceholderDrafts(lifecycle, store);
-    expect(placeholders).toHaveLength(16);
+    expect(placeholders).toHaveLength(20);
     const result = await registerLegalPackage(lifecycle, store, { packageDir: PACKAGE_DIR });
-    expect(result.registered).toHaveLength(12);
+    expect(result.registered).toHaveLength(16);
     for (const placeholder of placeholders) {
       const still = await store.getVersion(placeholder.id);
       expect(still?.status).toBe("draft");
@@ -343,15 +344,17 @@ describe("resulting registry", () => {
       expect(imported, categoryName).toBeDefined();
       expect(imported?.status).toBe("approved_for_publication");
     }
+    // M63: no REQUIRED document is an additional record any more. A required
+    // document with no category can hold no published version and bind no
+    // signature, so it could never be satisfied. The four that were in that
+    // state now have categories and are registered above.
     const requiredAdditional = ADDITIONAL_ENTRIES.filter((e) => e.requirement === "required");
-    expect(requiredAdditional).toHaveLength(4);
-    for (const entry of requiredAdditional) {
-      const record = result.additional.find((r) => r.sourceFile === entry.sourceFile);
-      expect(record?.status).toBe("approved_for_publication");
-      expect(record?.requirement).toBe("required");
-    }
-    // The cookie notice is the package's single optional document.
+    expect(requiredAdditional).toHaveLength(0);
+    // The cookie notice is the package's single optional document, and the
+    // only remaining additional record. Optional, so it blocks nothing.
+    expect(ADDITIONAL_ENTRIES.map((e) => e.documentId)).toEqual(["XR-LEGAL-16"]);
     const cookie = result.additional.find((r) => r.documentId === "XR-LEGAL-16");
     expect(cookie?.requirement).toBe("optional");
+    expect(result.additional).toHaveLength(1);
   });
 });

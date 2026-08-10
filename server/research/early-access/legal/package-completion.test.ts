@@ -320,7 +320,7 @@ describe("recomputePackageCompletion", () => {
     expect(result.nextToSign?.documentId).toBe("XR-LEGAL-01");
   });
 
-  it("fails closed on a package containing documents nothing can sign", async () => {
+  it("emits no document_not_signable blocker for the activation and checkout package (M63)", async () => {
     const ids = deriveCandidatePackage(["activation", "product_checkout"])
       .filter((entry) => entry.requirement === "required")
       .map((entry) => entry.documentId);
@@ -333,32 +333,35 @@ describe("recomputePackageCompletion", () => {
       approvalReference: "Counsel approval letter 2026-07-22",
     });
     if (!resolved.ok) throw new Error("unreachable");
+    expect(resolved.containsUnsignableDocuments).toBe(false);
     const result = await recomputePackageCompletion({
       resolved,
       memberId: MEMBER,
       ...readers({ versions: {}, signatures: fullySigned() }),
     });
-    expect(result.complete).toBe(false);
-    const unsignable = result.blocking.filter((b) => b.reason === "document_not_signable");
-    // The two product checkout documents, plus the website terms that the
-    // activation stage already carries in the same unsignable shape.
-    expect(unsignable.map((b) => b.documentId).sort()).toEqual([
-      "XR-LEGAL-12",
+    // The four documents M63 unblocked no longer report as unsignable. What is
+    // left blocking is ordinary and closable: the checkout documents are simply
+    // not signed yet by this member.
+    expect(result.blocking.filter((b) => b.reason === "document_not_signable")).toEqual([]);
+    expect(result.blocking.map((b) => b.documentId).sort()).toEqual([
       "XR-LEGAL-13",
       "XR-LEGAL-14",
     ]);
+    expect(result.blocking.every((b) => b.reason === "not_signed")).toBe(true);
   });
 
-  it("cannot complete even the activation package as counsel staged it", async () => {
-    // The finding this lane exists to surface, pinned as a test so it cannot be
-    // lost. XR-LEGAL-12 (Website Terms of Use) is a REQUIRED activation
-    // document that maps to no DocumentCategory, so it is never persisted as a
-    // signable version and no member can ever satisfy it. A designation that
-    // omits it is refused as incomplete; a designation that includes it cannot
-    // complete. Until the registry gains a category for it, the honest answer
-    // is that the package is unsatisfiable, and this fails closed rather than
-    // reporting a customer as nearly finished.
-    const resolved = activationPackage();
+  it("still fails closed on a designated document that has no category at all", async () => {
+    // The fail-closed path is intact, not deleted. The optional cookie and
+    // tracking notice is the one package document with no category, and a
+    // designation naming it still refuses rather than reporting progress.
+    const resolved = resolveDesignatedPackage({
+      packageSemver: LEGAL_PACKAGE_SEMVER,
+      stages: ["cookie_notice"],
+      documentIds: ["XR-LEGAL-16"],
+      designatedBy: "Samuel Boadu",
+      designatedAt: "2026-08-09T00:00:00.000Z",
+      approvalReference: "Counsel approval letter 2026-07-22",
+    });
     if (!resolved.ok) throw new Error("unreachable");
     expect(resolved.containsUnsignableDocuments).toBe(true);
     const result = await recomputePackageCompletion({
@@ -368,8 +371,28 @@ describe("recomputePackageCompletion", () => {
     });
     expect(result.complete).toBe(false);
     expect(result.blocking).toEqual([
-      { documentId: "XR-LEGAL-12", category: null, reason: "document_not_signable" },
+      { documentId: "XR-LEGAL-16", category: null, reason: "document_not_signable" },
     ]);
+  });
+
+  it("completes the activation package exactly as counsel staged it (M63)", async () => {
+    // The finding this lane existed to surface, now inverted and pinned so the
+    // fix cannot be silently lost. XR-LEGAL-12 (Website Terms of Use) is a
+    // REQUIRED activation document that mapped to no DocumentCategory, so no
+    // member could ever satisfy it: a designation omitting it was refused as
+    // incomplete, and a designation including it could not complete. With the
+    // category in place, the package counsel staged is satisfiable.
+    const resolved = activationPackage();
+    if (!resolved.ok) throw new Error("unreachable");
+    expect(resolved.containsUnsignableDocuments).toBe(false);
+    expect(resolved.entries.map((entry) => entry.documentId)).toContain("XR-LEGAL-12");
+    const result = await recomputePackageCompletion({
+      resolved,
+      memberId: MEMBER,
+      ...readers({ versions: {}, signatures: fullySigned() }),
+    });
+    expect(result.blocking).toEqual([]);
+    expect(result.complete).toBe(true);
   });
 
   it("throws rather than reporting progress on a refused designation", async () => {
