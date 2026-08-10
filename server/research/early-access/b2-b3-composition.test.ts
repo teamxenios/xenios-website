@@ -399,6 +399,7 @@ const SWEEP_PATH = "/api/admin/research/cart/shipping-sla/sweep";
 
 async function mount(
   extra: Record<string, unknown>,
+  cartEnabled = true,
 ): Promise<{ app: express.Express; routes: MountedRoute[] }> {
   const { registerPrivateEarlyAccessApi } = await import("./register");
   const { EARLY_ACCESS_TEST_CONFIG } = await import("./routes/route-fixtures");
@@ -411,7 +412,7 @@ async function mount(
     // mount nothing and every assertion below would pass vacuously.
     env: {
       NODE_ENV: "test",
-      RESEARCH_EARLY_ACCESS_CART_ENABLED: "true",
+      RESEARCH_EARLY_ACCESS_CART_ENABLED: cartEnabled ? "true" : "false",
     } as NodeJS.ProcessEnv,
     cartStore: new InMemoryEarlyAccessCartStore(),
     requireAdmin: (req, _res, next) => {
@@ -482,6 +483,39 @@ describe("the registration mounts each door only when its durable port exists", 
       expect(seen.has(key), key).toBe(false);
       seen.add(key);
     }
+  });
+
+  it("the SLA monitor and the shipment door stay mounted when the CART IS OFF", async () => {
+    // Closing the storefront must not stop us honouring a 72-hour commitment
+    // already made, and must not leave an operator unable to record a shipment
+    // for an order already paid for. Every OTHER cart door is correctly gone.
+    const { routes } = await mount(
+      {
+        cartPaymentReview: reviewAuthorityFor(acceptedSubmission()),
+        fulfilmentEvents: new SupabaseEarlyAccessShipmentEventStore(async () => ({
+          recorded: true,
+          eventId: "11111111-2222-4333-8444-555555555555",
+        })),
+        shippingSla: {
+          store: new SupabaseEarlyAccessShippingSlaStore(async () => []),
+          alerts: { async enqueue() { return true; } },
+        },
+      },
+      false,
+    );
+    expect(routes).toContainEqual({ method: "POST", path: SWEEP_PATH });
+    expect(routes).toContainEqual({ method: "POST", path: FULFILMENT_PATH });
+    // The settlement door, the review and the customer cart doors are all gone.
+    expect(routes.map((route) => route.path)).not.toContain(REVIEW_PATH);
+    expect(routes.map((route) => route.path)).not.toContain(
+      "/api/research/early-access/cart/quote",
+    );
+  });
+
+  it("with the cart OFF and no durable ports, neither new door exists", async () => {
+    const { routes } = await mount({}, false);
+    expect(routes.map((route) => route.path)).not.toContain(SWEEP_PATH);
+    expect(routes.map((route) => route.path)).not.toContain(FULFILMENT_PATH);
   });
 
   it("the sweep door answers counters and cannot be reached without the admin guard's actor", async () => {

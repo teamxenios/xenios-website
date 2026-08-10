@@ -962,6 +962,62 @@ export function registerPrivateEarlyAccessApi(
     });
   });
 
+  // A COMMITMENT ALREADY MADE IS SUPERVISED WHETHER OR NOT THE CART IS OPEN.
+  //
+  // Every other cart door lives inside `if (cartEnabled)`, because the flag
+  // decides whether a CUSTOMER may transact. These two are deliberately
+  // outside it, because they are about orders that already exist:
+  //
+  //   - the 72-hour SLA monitor, which alerts a human when a settled order
+  //     passes its durable ship-by with no shipment recorded;
+  //   - the named-admin shipment door, which records that the order shipped.
+  //
+  // Turning the cart off closes the storefront. It must not also stop us
+  // honouring the 72-hour commitments we already made, and it must not leave
+  // an operator unable to record a shipment for an order already paid for.
+  // Both are mounted only when the DURABLE ports exist, so a memory or refused
+  // deployment still has neither, and neither reads the cart store: they speak
+  // to M64's read-only work list and M62's fulfilment RPC directly.
+  //
+  // The literal `shipping-sla` path is registered FIRST, before every
+  // parameterized admin cart route below, for the usual reason.
+  if (options.shippingSla) {
+    const slaWorker = startEarlyAccessShippingSlaWorker(options.shippingSla);
+    const sweepShippingSla = createEarlyAccessShippingSlaSweepAdminRoute({ worker: slaWorker });
+    app.post(
+      EARLY_ACCESS_ADMIN_CART_SHIPPING_SLA_PATH,
+      adminGuard,
+      (req: Request, res: Response) => {
+        void sweepShippingSla({ actor: adminActorOf(req) }, res as never);
+      },
+    );
+  }
+
+  if (options.fulfilmentEvents) {
+    const recordFulfilmentEvent = createEarlyAccessCartFulfilmentEventAdminRoute({
+      events: options.fulfilmentEvents,
+    });
+    app.post(
+      EARLY_ACCESS_ADMIN_CART_FULFILMENT_PATH,
+      adminGuard,
+      (req: Request, res: Response) => {
+        void recordFulfilmentEvent(
+          {
+            actor: adminActorOf(req),
+            cartCheckoutNumber: req.params.cartCheckoutNumber,
+            body: req.body,
+          },
+          res as never,
+        ).catch(() => {
+          if (!res.headersSent) {
+            res.setHeader("Cache-Control", "no-store, private, max-age=0");
+            res.status(503).json({ ok: false, code: "UNAVAILABLE" });
+          }
+        });
+      },
+    );
+  }
+
   if (cartEnabled) {
     // F4. Not `?? new InMemoryEarlyAccessCartStore()`. A default reached by
     // omission would let a production deployment boot with the cart on and a
@@ -1185,24 +1241,6 @@ export function registerPrivateEarlyAccessApi(
       checkouts: cartStore,
     });
 
-    // THE MANUAL SLA DRAIN, registered FIRST because `shipping-sla` is a
-    // literal segment that `:cartCheckoutNumber` below would otherwise match.
-    // Same reason, same shape, as the customer cart's literal-before-parameter
-    // ordering. Mounted only when the durable ports exist.
-    if (options.shippingSla) {
-      const slaWorker = startEarlyAccessShippingSlaWorker(options.shippingSla);
-      const sweepShippingSla = createEarlyAccessShippingSlaSweepAdminRoute({
-        worker: slaWorker,
-      });
-      app.post(
-        EARLY_ACCESS_ADMIN_CART_SHIPPING_SLA_PATH,
-        adminGuard,
-        (req: Request, res: Response) => {
-          void sweepShippingSla({ actor: adminActorOf(req) }, res as never);
-        },
-      );
-    }
-
     app.post(EARLY_ACCESS_ADMIN_CART_PROOF_PATH, adminGuard, (req: Request, res: Response) => {
       void recordCartProof(
         {
@@ -1255,32 +1293,6 @@ export function registerPrivateEarlyAccessApi(
       });
     }
 
-    // THE NAMED-ADMIN SHIPMENT DOOR. Every write goes through M62's fulfilment
-    // RPC; there is no second mutation path and no direct table write.
-    if (options.fulfilmentEvents) {
-      const recordFulfilmentEvent = createEarlyAccessCartFulfilmentEventAdminRoute({
-        events: options.fulfilmentEvents,
-      });
-      app.post(
-        EARLY_ACCESS_ADMIN_CART_FULFILMENT_PATH,
-        adminGuard,
-        (req: Request, res: Response) => {
-          void recordFulfilmentEvent(
-            {
-              actor: adminActorOf(req),
-              cartCheckoutNumber: req.params.cartCheckoutNumber,
-              body: req.body,
-            },
-            res as never,
-          ).catch(() => {
-            if (!res.headersSent) {
-              res.setHeader("Cache-Control", "no-store, private, max-age=0");
-              res.status(503).json({ ok: false, code: "UNAVAILABLE" });
-            }
-          });
-        },
-      );
-    }
   }
 
   app.get(EARLY_ACCESS_ORDER_INVOICE_PATH, (req: Request, res: Response) => {
