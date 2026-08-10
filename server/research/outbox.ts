@@ -53,7 +53,27 @@ type EnqueueInput = {
 
 // Insert-or-ignore on the unique event_key: retried requests cannot duplicate a job.
 export async function enqueueNotification(input: EnqueueInput): Promise<boolean> {
-  if (!supabaseConfigured()) return false;
+  return (await enqueueNotificationOnce(input)) !== "unavailable";
+}
+
+/**
+ * The same insert, with the three outcomes told apart.
+ *
+ * `enqueueNotification` answers "is this notification on file", which is what
+ * every mail caller wants: a duplicate is a success, because the row is there.
+ * A sweep that must not double-count needs the stricter question "did THIS call
+ * create the row", and collapsing `inserted` and `already_queued` into one
+ * boolean cannot answer it.
+ *
+ * The unique index on `event_key` is what makes this honest: it is the claim
+ * and the enqueue at once, so there is no window in which two sweeps both
+ * believe they are first. `23505` is the unique-violation SQLSTATE; the message
+ * text is checked too, because PostgREST does not always surface the code.
+ */
+export type EnqueueOutcome = "inserted" | "already_queued" | "unavailable";
+
+export async function enqueueNotificationOnce(input: EnqueueInput): Promise<EnqueueOutcome> {
+  if (!supabaseConfigured()) return "unavailable";
   const { error } = await getSupabaseAdmin().from(OUTBOX).insert({
     event_key: input.eventKey,
     event_type: input.eventType,
@@ -63,11 +83,14 @@ export async function enqueueNotification(input: EnqueueInput): Promise<boolean>
     payload: input.payload ?? {},
   });
   if (error) {
-    if (String(error.message ?? "").toLowerCase().includes("duplicate")) return true; // already queued
+    const code = String((error as { code?: unknown }).code ?? "");
+    if (code === "23505" || String(error.message ?? "").toLowerCase().includes("duplicate")) {
+      return "already_queued";
+    }
     console.error("[outbox] enqueue failed:", error.message);
-    return false;
+    return "unavailable";
   }
-  return true;
+  return "inserted";
 }
 
 // ---------------------------------------------------------------------------

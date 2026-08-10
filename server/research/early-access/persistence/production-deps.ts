@@ -40,6 +40,10 @@ import {
   RefusingSessionBindingStore,
 } from "./refusing";
 import { buildEarlyAccessProofDependencies } from "../proof/production-deps";
+import { SupabaseEarlyAccessAdminPaymentReviewStore } from "../cart/supabase-admin-payment-review";
+import { SupabaseEarlyAccessShippingSlaStore } from "../cart/supabase-shipping-sla";
+import { SupabaseEarlyAccessShipmentEventStore } from "../cart/supabase-shipment-events";
+import { createEarlyAccessShippingAlertSink } from "../cart/shipping-sla-alerts";
 import { SupabaseEarlyAccessReservationStore } from "./reservation-store";
 import {
   MigrationTolerantUnitHoldRegistry,
@@ -309,6 +313,38 @@ export function buildEarlyAccessPersistence(
       env,
       warnings,
     }),
+    // THE PAYMENT-REVIEW AUTHORITY, ONE OBJECT FOR THREE PORTS.
+    //
+    // `SupabaseEarlyAccessAdminPaymentReviewStore` implements the admin
+    // submission projection, the agreement-standing projection AND the
+    // accepted-submission evidence port over the same M62 routines. Built ONCE
+    // here so the review a named admin reads and the evidence the settlement
+    // bridges are the same source of truth, rather than two objects that could
+    // answer differently about the same order.
+    //
+    // Its absence was B2: the customer proof door was mounted, the settlement
+    // service could bridge an accepted submission, and nothing in production
+    // ever connected them, so a customer who uploaded correctly could not be
+    // settled through the canonical door at all.
+    cartPaymentReview: new SupabaseEarlyAccessAdminPaymentReviewStore(run),
+    // THE 72-HOUR SHIPPING SLA MONITOR'S TWO PORTS.
+    //
+    // `store` is M64's read-only work list, the routine that exists precisely
+    // because M62 revokes every one of its tables from service_role and grants
+    // no list-shaped reader. `alerts` is the ONE notification outbox, so an
+    // overdue order becomes a durable, deduplicated row a human is shown.
+    //
+    // Durable branch only. Refused and memory mode return before this object
+    // exists, so no deployment that cannot persist starts a monitor, and no
+    // test starts a timer.
+    shippingSla: Object.freeze({
+      store: new SupabaseEarlyAccessShippingSlaStore(run),
+      alerts: createEarlyAccessShippingAlertSink(),
+    }),
+    // The named-admin shipment door's writer, over M62's fulfilment RPC. The
+    // application has no other way to record a shipment fact, and could not
+    // have one: the events table is revoked from service_role.
+    fulfilmentEvents: new SupabaseEarlyAccessShipmentEventStore(run),
   };
 
   const required = readRequiredAgreements(env, warnings);

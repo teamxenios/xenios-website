@@ -1479,8 +1479,41 @@ describe("route uniqueness validator", () => {
     // middleware, not `app.use(path, ...)` and not a second `app.post`, so it
     // adds no registration here and cannot: a second registration of this path
     // would fail the uniqueness check below.
-    expect(result.callSites).toBe(340);
-    expect(result.routes).toHaveLength(349);
+    //
+    // 343/352 with the B2 and B3 compositions mounted. THREE additions, each
+    // MEASURED rather than assumed, and each explained here because a route
+    // count that moves without a reason in this file is the thing this pin
+    // exists to catch:
+    //
+    //   GET  /api/admin/research/cart/:cartCheckoutNumber/confirm-payment
+    //
+    // B2's read-only payment review, on the SAME path as the one settlement
+    // action rather than a second path of its own. GET decides nothing: it
+    // reports the checkout, the settlement, the customer's submission
+    // projection, the agreement standing and every blocker. Mounted only when
+    // the durable review authority exists.
+    //
+    //   POST /api/admin/research/cart/:cartCheckoutNumber/fulfilment-event
+    //
+    // B3's named-admin shipment door. Every write goes through M62's
+    // `research_early_access_record_cart_fulfilment_event`; there is no second
+    // fulfilment mutation path and there could not be one, because the events
+    // table is revoked from service_role.
+    //
+    //   POST /api/admin/research/cart/shipping-sla/sweep
+    //
+    // B3's manual drain for the 72-hour monitor, mirroring the notification
+    // outbox's own `/api/admin/research/outbox/run`. A LITERAL path registered
+    // before the parameterized cart admin routes, so `:cartCheckoutNumber`
+    // cannot swallow `shipping-sla`. It runs the sweep and answers counters
+    // only; it settles nothing and names no order.
+    //
+    // All three sit under /api/admin behind the SAME Supabase admin guard as
+    // every other operator route, deliberately NOT under /api/research: the
+    // research wall decides who may reach a CUSTOMER surface, and none of
+    // these is one.
+    expect(result.callSites).toBe(343);
+    expect(result.routes).toHaveLength(352);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

@@ -41,6 +41,20 @@ export const EARLY_ACCESS_EMAIL_EVENTS = [
   "ea_payment_verified",
   "ea_order_released",
   "ea_tracking_posted",
+  /**
+   * THE ONE INTERNAL EVENT IN THIS FAMILY, and it is deliberately last.
+   *
+   * Every event above is addressed to a customer. This one is addressed to the
+   * named operators: a settled order has passed its 72-hour shipping
+   * commitment and nobody has recorded a shipment. It exists because an SLA a
+   * human never hears about is not an SLA.
+   *
+   * It carries THREE fields and no more (the checkout number and the two
+   * instants) because it goes to an inbox, and the customer's name, address,
+   * amount, reference, proof and supplier are all things an operations alert
+   * does not need in order to say "this one is late, go and look".
+   */
+  "ea_shipping_overdue_internal",
 ] as const;
 
 export type EarlyAccessEmailEvent = (typeof EARLY_ACCESS_EMAIL_EVENTS)[number];
@@ -146,6 +160,10 @@ const ALLOWED_KEYS: Readonly<Record<EarlyAccessEmailEvent, readonly string[]>> =
     "trackingReference",
     "statusUrl",
   ],
+  // No customerName, no statusUrl, no amount, no reference, no supplier. An
+  // operations alert names the order and the two instants; everything else is
+  // behind the admin login where it belongs.
+  ea_shipping_overdue_internal: ["cartCheckoutNumber", "shipByAt", "overdueAt"],
 });
 
 /**
@@ -309,6 +327,26 @@ export function renderEarlyAccessOutboxEmail(
         .filter((part) => part.length > 0)
         .join("\n\n");
       return { subject: `Your order ${checkout} has shipped`, text };
+    }
+    // INTERNAL. Addressed to the named operators, never to a customer.
+    //
+    // It deliberately does not greet anybody, does not link the customer's
+    // order page, and states what it is: a durable deadline has passed with no
+    // shipment recorded. It asserts nothing about why, because the sweep that
+    // raised it read two timestamps and a stage and knows nothing else.
+    case "ea_shipping_overdue_internal": {
+      const shipBy = str(payload, "shipByAt");
+      const overdueAt = str(payload, "overdueAt");
+      const text = [
+        `Early Access order ${checkout} has passed its 72-hour shipping commitment with no shipment recorded.`,
+        shipBy ? `Ship-by (UTC): ${shipBy}` : "",
+        overdueAt ? `Detected overdue at (UTC): ${overdueAt}` : "",
+        "This is an operations alert. Nothing has been settled, refunded, shipped or sent to the customer by it. Open the order in Early Access admin to see the current state and decide what to do.",
+        SIGNOFF,
+      ]
+        .filter((part) => part.length > 0)
+        .join("\n\n");
+      return { subject: `OVERDUE: Early Access order ${checkout} is past its ship-by`, text };
     }
   }
 }

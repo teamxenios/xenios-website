@@ -122,6 +122,21 @@ import {
   createEarlyAccessCartConfirmPaymentAdminRoute,
   createEarlyAccessCartExternalProofAdminRoute,
 } from "./cart/admin-routes";
+import {
+  createEarlyAccessCartPaymentReviewAdminRoute,
+  type EarlyAccessAdminAgreementReviewPort,
+  type EarlyAccessAdminSubmissionReviewPort,
+} from "./cart/admin-payment-review";
+import type { EarlyAccessAcceptedSubmissionEvidencePort } from "./cart/settlement";
+import {
+  createEarlyAccessCartFulfilmentEventAdminRoute,
+  type EarlyAccessFulfilmentEventWriter,
+} from "./cart/fulfilment-routes";
+import {
+  createEarlyAccessShippingSlaSweepAdminRoute,
+  startEarlyAccessShippingSlaWorker,
+  type EarlyAccessShippingSlaDeps,
+} from "./cart/shipping-sla-composition";
 import { InMemoryEarlyAccessCartStore } from "./cart/store";
 import {
   EARLY_ACCESS_CART_PAYMENT_INSTRUCTIONS_PATH,
@@ -214,8 +229,25 @@ export const EARLY_ACCESS_CART_STATUS_PATH =
 /** Named-admin only, behind the existing Supabase admin guard. */
 export const EARLY_ACCESS_ADMIN_CART_PROOF_PATH =
   "/api/admin/research/cart/:cartCheckoutNumber/external-proof";
+/**
+ * ONE path, two methods, and deliberately not two paths. GET is the read-only
+ * review a named admin sees BEFORE approving; POST is the one settlement
+ * action. Putting them on the same path is what stops a reviewer having to
+ * check whether the screen and the button agree about which order they mean.
+ */
 export const EARLY_ACCESS_ADMIN_CART_CONFIRM_PATH =
   "/api/admin/research/cart/:cartCheckoutNumber/confirm-payment";
+/** Named-admin shipment facts and corrections, through the M62 RPC only. */
+export const EARLY_ACCESS_ADMIN_CART_FULFILMENT_PATH =
+  "/api/admin/research/cart/:cartCheckoutNumber/fulfilment-event";
+/**
+ * The manual drain for the 72-hour monitor, mirroring the notification
+ * outbox's own `/api/admin/research/outbox/run`. A literal path, registered
+ * BEFORE the parameterized cart admin routes so `:cartCheckoutNumber` cannot
+ * swallow `shipping-sla`.
+ */
+export const EARLY_ACCESS_ADMIN_CART_SHIPPING_SLA_PATH =
+  "/api/admin/research/cart/shipping-sla/sweep";
 
 export const EARLY_ACCESS_CART_API_PATHS = Object.freeze([
   EARLY_ACCESS_CART_CAPABILITY_PATH,
@@ -226,6 +258,8 @@ export const EARLY_ACCESS_CART_API_PATHS = Object.freeze([
   EARLY_ACCESS_CART_PAYMENT_PROOF_PATH,
   EARLY_ACCESS_ADMIN_CART_PROOF_PATH,
   EARLY_ACCESS_ADMIN_CART_CONFIRM_PATH,
+  EARLY_ACCESS_ADMIN_CART_FULFILMENT_PATH,
+  EARLY_ACCESS_ADMIN_CART_SHIPPING_SLA_PATH,
 ] as const);
 
 /**
@@ -453,6 +487,46 @@ export interface EarlyAccessRegistrationOptions {
    * durable branch of persistence/production-deps.ts.
    */
   readonly proofDependencies?: Omit<ProofSubmissionDeps, "checkouts" | "now">;
+  /**
+   * THE DURABLE PAYMENT-REVIEW AUTHORITY, and the bridge B2 was missing.
+   *
+   * ONE object satisfying all three ports, because it IS one object:
+   * `SupabaseEarlyAccessAdminPaymentReviewStore` implements the admin
+   * submission projection, the agreement-standing projection AND the accepted
+   * submission evidence port over the same M62 routines. Supplying it here does
+   * two things at once, and both must be the same source of truth or the
+   * screen an operator reads and the evidence the settlement uses could
+   * disagree:
+   *
+   *   - the read-only review the named admin sees before approving;
+   *   - the accepted-submission evidence `settleEarlyAccessCart` bridges into
+   *     an M60 metadata proof row, so a customer who uploaded through the
+   *     CUSTOMER proof door can actually be settled.
+   *
+   * Absent means the review door is not mounted and the settlement door keeps
+   * its pre-existing behaviour exactly: it settles only against an external
+   * proof a named operator recorded, and refuses `evidence_missing` otherwise.
+   * Supplied only by the durable branch of persistence/production-deps.ts.
+   */
+  readonly cartPaymentReview?: EarlyAccessAdminSubmissionReviewPort &
+    EarlyAccessAdminAgreementReviewPort &
+    EarlyAccessAcceptedSubmissionEvidencePort;
+  /**
+   * THE DURABLE 72-HOUR SHIPPING SLA PORTS.
+   *
+   * `store` is M64's read-only work list; `alerts` is the one notification
+   * outbox. Present means the monitor runs on an interval and the named-admin
+   * manual drain is mounted. Absent means neither exists, which is what every
+   * test and every non-durable deployment gets: no timer, no sweep.
+   */
+  readonly shippingSla?: EarlyAccessShippingSlaDeps;
+  /**
+   * The durable fulfilment-event writer, over M62's
+   * `research_early_access_record_cart_fulfilment_event`. Present means the
+   * named-admin shipment door is mounted. There is no in-memory alternative:
+   * shipment facts a restart forgets are worse than a door that is not there.
+   */
+  readonly fulfilmentEvents?: EarlyAccessFulfilmentEventWriter;
   /**
    * SUPPLIER_CONFIRMED_ON_DEMAND records and unit holds. Both feed the
    * catalog projection at every read AND the manual admin doors that record
@@ -1083,6 +1157,22 @@ export function registerPrivateEarlyAccessApi(
           await audit.record(event as never);
         },
       },
+      // THE BRIDGE THAT WAS MISSING (B2).
+      //
+      // Without it, a customer who uploaded through the CUSTOMER proof door had
+      // a durable, accepted submission row and NO external-proof row, so
+      // `settleEarlyAccessCart` refused `evidence_missing` and the canonical
+      // settlement door could never be used for the journey the product
+      // actually ships. The bridge does not weaken anything: the port only
+      // yields evidence for a submission whose internal email was ACCEPTED and
+      // which needs no reconciliation, and the database refuses the settlement
+      // outright without such a row regardless of what this process believes.
+      //
+      // Spread from options rather than set to `undefined`, so a deployment
+      // that supplies no review authority keeps the previous behaviour exactly.
+      ...(options.cartPaymentReview
+        ? { submissionEvidence: options.cartPaymentReview }
+        : {}),
     };
     const recordCartProof = createEarlyAccessCartExternalProofAdminRoute({
       ...cartSettlementDeps,
@@ -1094,6 +1184,25 @@ export function registerPrivateEarlyAccessApi(
       notify: cartNotifier,
       checkouts: cartStore,
     });
+
+    // THE MANUAL SLA DRAIN, registered FIRST because `shipping-sla` is a
+    // literal segment that `:cartCheckoutNumber` below would otherwise match.
+    // Same reason, same shape, as the customer cart's literal-before-parameter
+    // ordering. Mounted only when the durable ports exist.
+    if (options.shippingSla) {
+      const slaWorker = startEarlyAccessShippingSlaWorker(options.shippingSla);
+      const sweepShippingSla = createEarlyAccessShippingSlaSweepAdminRoute({
+        worker: slaWorker,
+      });
+      app.post(
+        EARLY_ACCESS_ADMIN_CART_SHIPPING_SLA_PATH,
+        adminGuard,
+        (req: Request, res: Response) => {
+          void sweepShippingSla({ actor: adminActorOf(req) }, res as never);
+        },
+      );
+    }
+
     app.post(EARLY_ACCESS_ADMIN_CART_PROOF_PATH, adminGuard, (req: Request, res: Response) => {
       void recordCartProof(
         {
@@ -1114,6 +1223,64 @@ export function registerPrivateEarlyAccessApi(
         res as never,
       );
     });
+
+    // THE READ-ONLY REVIEW, on the SAME path as the settlement action.
+    //
+    // GET decides nothing and settles nothing: it reads the checkout, the
+    // settlement, the submission projection and the agreement standing, and
+    // reports the blockers. It is mounted only when the durable review
+    // authority exists, so a deployment without it has no half-answering door.
+    // ONE registration, deliberately, not one per branch: two `app.get` calls
+    // on one path is a duplicate route even when the branches are exclusive.
+    if (options.cartPaymentReview) {
+      const reviewCartPayment = createEarlyAccessCartPaymentReviewAdminRoute({
+        checkouts: cartStore,
+        settlements: cartStore,
+        submissions: options.cartPaymentReview,
+        agreements: options.cartPaymentReview,
+      });
+      app.get(EARLY_ACCESS_ADMIN_CART_CONFIRM_PATH, adminGuard, (req: Request, res: Response) => {
+        void reviewCartPayment(
+          {
+            actor: adminActorOf(req),
+            cartCheckoutNumber: req.params.cartCheckoutNumber,
+          },
+          res as never,
+        ).catch(() => {
+          if (!res.headersSent) {
+            res.setHeader("Cache-Control", "no-store, private, max-age=0");
+            res.status(503).json({ ok: false, code: "UNAVAILABLE" });
+          }
+        });
+      });
+    }
+
+    // THE NAMED-ADMIN SHIPMENT DOOR. Every write goes through M62's fulfilment
+    // RPC; there is no second mutation path and no direct table write.
+    if (options.fulfilmentEvents) {
+      const recordFulfilmentEvent = createEarlyAccessCartFulfilmentEventAdminRoute({
+        events: options.fulfilmentEvents,
+      });
+      app.post(
+        EARLY_ACCESS_ADMIN_CART_FULFILMENT_PATH,
+        adminGuard,
+        (req: Request, res: Response) => {
+          void recordFulfilmentEvent(
+            {
+              actor: adminActorOf(req),
+              cartCheckoutNumber: req.params.cartCheckoutNumber,
+              body: req.body,
+            },
+            res as never,
+          ).catch(() => {
+            if (!res.headersSent) {
+              res.setHeader("Cache-Control", "no-store, private, max-age=0");
+              res.status(503).json({ ok: false, code: "UNAVAILABLE" });
+            }
+          });
+        },
+      );
+    }
   }
 
   app.get(EARLY_ACCESS_ORDER_INVOICE_PATH, (req: Request, res: Response) => {
