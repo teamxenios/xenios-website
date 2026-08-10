@@ -100,6 +100,10 @@ const CART_DUPLICATE_GUARD_PATH =
 const EA_HARDENING_SOURCE_SHA = "f259a1b672cba1fab56d06b190b6102d0fd5aae8";
 const EA_HARDENING_PATH =
   "supabase/migrations/20260809130000_research_early_access_hardening.sql";
+// M63: the legal document category widening, pinned to its own reviewed source.
+const FM_CATEGORY_EXPANSION_SOURCE_SHA = "b1762be49307b71768428e3c7886dfc5517d7635";
+const FM_CATEGORY_EXPANSION_PATH =
+  "supabase/migrations/20260810120000_research_fm_document_category_expansion.sql";
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -788,6 +792,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(CART_DUPLICATE_GUARD_SOURCE_SHA);
           } else if (path === EA_HARDENING_PATH) {
             expect(sourceSha).toBe(EA_HARDENING_SOURCE_SHA);
+          } else if (path === FM_CATEGORY_EXPANSION_PATH) {
+            expect(sourceSha).toBe(FM_CATEGORY_EXPANSION_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
