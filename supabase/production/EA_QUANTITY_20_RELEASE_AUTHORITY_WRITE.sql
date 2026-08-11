@@ -73,8 +73,98 @@ declare
   v_candidates integer;
   v_approved   integer;
   v_appended   integer;
+  v_table      text;
+  v_ok         integer;
 begin
-  -- The units this write is for: current record is approved and not yet at 20.
+  -- =========================================================================
+  -- O-1 PREFLIGHT: M65 MUST ALREADY BE INSTALLED. FAIL CLOSED.
+  -- =========================================================================
+  --
+  -- Ordering is not left to a runbook. Raising the founder ceiling to twenty on
+  -- a database whose CHECK constraints still cap a durable quantity at three
+  -- produces the worst possible failure: the customer is quoted for twenty, and
+  -- the database refuses at the last moment, after they have been told a price.
+  --
+  -- So this proves the constraint state FIRST, from pg_constraint rather than
+  -- from a migration ledger, and aborts before a single release row is
+  -- appended. A ledger row says a migration was recorded; pg_constraint says
+  -- what the database will actually accept, and only the second one is the
+  -- thing that refuses a checkout.
+  --
+  -- Four independent proofs, all of which must hold on BOTH tables:
+  --   1/2. a canonical band exists that accepts 1..20;
+  --   3.   no 1..3 band survives anywhere on the table;
+  --   4.   the subtotal identity is still present and is a DISTINCT constraint,
+  --        so a migration that widened by mangling that constraint instead of
+  --        the band is caught rather than trusted.
+  foreach v_table in array array[
+    'research_early_access_cart_items',
+    'research_early_access_cart_child_releases'
+  ] loop
+    if to_regclass('public.' || v_table) is null then
+      raise exception
+        'EA-QTY20 refused: public.% is absent; this is not the Early Access schema', v_table
+        using errcode = '55000';
+    end if;
+
+    -- 1/2. The band accepts 1..20.
+    select count(*) into v_ok
+    from pg_constraint con
+    join pg_class rel on rel.oid = con.conrelid
+    join pg_namespace nsp on nsp.oid = rel.relnamespace
+    where nsp.nspname = 'public'
+      and rel.relname = v_table
+      and con.contype = 'c'
+      and pg_get_constraintdef(con.oid) ~ 'quantity >= 1'
+      and pg_get_constraintdef(con.oid) ~ 'quantity <= 20';
+    if v_ok < 1 then
+      raise exception
+        'EA-QTY20 refused: public.% has no 1..20 quantity band; M65 is NOT installed. '
+        'Apply M65 before raising the founder release ceiling.', v_table
+        using errcode = '55000';
+    end if;
+
+    -- 3. No 1..3 band survives.
+    select count(*) into v_ok
+    from pg_constraint con
+    join pg_class rel on rel.oid = con.conrelid
+    join pg_namespace nsp on nsp.oid = rel.relnamespace
+    where nsp.nspname = 'public'
+      and rel.relname = v_table
+      and con.contype = 'c'
+      and pg_get_constraintdef(con.oid) ~ 'quantity <= 3';
+    if v_ok <> 0 then
+      raise exception
+        'EA-QTY20 refused: public.% still carries a 1..3 quantity band; the database '
+        'would reject a checkout this write makes sellable.', v_table
+        using errcode = '55000';
+    end if;
+  end loop;
+
+  -- 4. The subtotal identity is present and is NOT the band constraint.
+  select count(*) into v_ok
+  from pg_constraint con
+  join pg_class rel on rel.oid = con.conrelid
+  join pg_namespace nsp on nsp.oid = rel.relnamespace
+  where nsp.nspname = 'public'
+    and rel.relname = 'research_early_access_cart_items'
+    and con.contype = 'c'
+    and pg_get_constraintdef(con.oid) ~ 'subtotal_cents'
+    and pg_get_constraintdef(con.oid) ~ 'unit_price_cents'
+    and pg_get_constraintdef(con.oid) ~ 'quantity'
+    and pg_get_constraintdef(con.oid) !~ 'quantity <= 20';
+  if v_ok < 1 then
+    raise exception
+      'EA-QTY20 refused: the subtotal = unit_price_cents * quantity identity is absent '
+      'or was merged into the band; the money invariant is not intact'
+      using errcode = '55000';
+  end if;
+
+  raise notice 'EA-QTY20 preflight: M65 is installed on both tables and the subtotal identity is intact';
+
+  -- =========================================================================
+  -- The units this write is for: current record is approved and BELOW 20.
+  -- =========================================================================
   create temporary table ea_qty20_targets on commit drop as
   with latest as (
     select distinct on (product_id, variant_id)
@@ -89,7 +179,13 @@ begin
     record     as prior
   from latest
   where status = 'approved'
-    and coalesce((record ->> 'approvedQuantityLimit')::integer, 0) <> 20;
+    -- STRICTLY LESS THAN. This write only ever WIDENS. A unit whose founder has
+    -- already approved more than twenty is not a target: `<> 20` would have
+    -- selected it and rewritten it DOWN, and narrowing an approved release is a
+    -- different act from the one authorized here. Against today's ledger the
+    -- two predicates select the same rows, which is exactly why the difference
+    -- has to be stated rather than discovered.
+    and coalesce((record ->> 'approvedQuantityLimit')::integer, 0) < 20;
 
   select count(*) into v_candidates from ea_qty20_targets;
 

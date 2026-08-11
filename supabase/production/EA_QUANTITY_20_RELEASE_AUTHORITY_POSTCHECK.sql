@@ -8,7 +8,8 @@
 --
 -- It answers four questions, in the order they matter:
 --
---   1. does every approved unit now resolve to a ceiling of twenty;
+--   1. does every approved unit now resolve to a ceiling of AT LEAST twenty,
+--      with anything already above twenty preserved rather than rewritten;
 --   2. did the write change anything it was not allowed to change (price,
 --      currency, product version, waivers, expiry);
 --   3. did it invent a unit, resurrect a revoked one, or delete history;
@@ -20,9 +21,17 @@ declare
   v_approved   integer;
   v_at20       integer;
   v_rows       integer;
+  v_above20    integer;
 begin
   -- -------------------------------------------------------------------------
-  -- 1. EVERY APPROVED UNIT IS AT TWENTY.
+  -- 1. NO APPROVED UNIT IS BELOW TWENTY.
+  --
+  --    Deliberately NOT "every approved unit equals twenty". This write only
+  --    widens, so a unit whose founder had already approved MORE than twenty is
+  --    left exactly as it was, and that is a correct outcome rather than a
+  --    failure. Asserting equality here would turn the no-downgrade rule into a
+  --    postcheck that demands the downgrade the write refuses to perform.
+  --
   --    Read exactly as decideEarlyAccessRelease reads it: the LAST record per
   --    unit, ordered by (recorded_at, release_id).
   -- -------------------------------------------------------------------------
@@ -35,18 +44,23 @@ begin
   select
     count(*) filter (where status = 'approved'),
     count(*) filter (where status = 'approved'
-      and (record ->> 'approvedQuantityLimit')::integer = 20)
-  into v_approved, v_at20
+      and (record ->> 'approvedQuantityLimit')::integer >= 20),
+    count(*) filter (where status = 'approved'
+      and (record ->> 'approvedQuantityLimit')::integer > 20)
+  into v_approved, v_at20, v_above20
   from latest;
 
   if v_approved = 0 then
     raise exception 'FAIL no approved units found; the ledger is not in the expected state';
   end if;
   if v_approved <> v_at20 then
-    raise exception 'FAIL % of % approved units are NOT at a ceiling of 20',
+    raise exception 'FAIL % of % approved units are BELOW a ceiling of 20',
       v_approved - v_at20, v_approved;
   end if;
-  raise notice 'PASS all % approved unit(s) resolve to approvedQuantityLimit = 20', v_approved;
+  raise notice 'PASS all % approved unit(s) resolve to a ceiling of at least 20', v_approved;
+  if v_above20 > 0 then
+    raise notice 'PASS % approved unit(s) were already ABOVE 20 and were left unchanged', v_above20;
+  end if;
 
   -- -------------------------------------------------------------------------
   -- 2. NOTHING ELSE MOVED.
@@ -92,6 +106,40 @@ begin
       'FAIL % appended release(s) changed a price, currency, product version, waiver or expiry', v_bad;
   end if;
   raise notice 'PASS every appended release carried price, currency, productVersion, waivers and expiry forward unchanged';
+
+  -- -------------------------------------------------------------------------
+  -- 2b. NO DOWNGRADE. The direct statement of the O-2 rule: an appended release
+  --     may never carry a LOWER ceiling than the record it superseded.
+  --     Assertion 1 proves the floor; this proves the direction of travel, and
+  --     the two together are what make "widen only" observable rather than
+  --     inferred from a predicate nobody re-reads.
+  -- -------------------------------------------------------------------------
+  with ranked as (
+    select
+      product_id, variant_id, release_id, record,
+      row_number() over (
+        partition by product_id, variant_id
+        order by recorded_at desc, release_id desc
+      ) as rn
+    from public.research_early_access_releases
+  )
+  select count(*)
+  into v_bad
+  from ranked cur
+  join ranked prev
+    on prev.product_id = cur.product_id
+   and prev.variant_id = cur.variant_id
+   and prev.rn = 2
+  where cur.rn = 1
+    and cur.release_id like 'rel_ea_qty20_%'
+    and (cur.record ->> 'approvedQuantityLimit')::integer
+        < (prev.record ->> 'approvedQuantityLimit')::integer;
+
+  if v_bad <> 0 then
+    raise exception
+      'FAIL % appended release(s) LOWERED an approved quantity ceiling; this write may only widen', v_bad;
+  end if;
+  raise notice 'PASS no appended release lowered an approved quantity ceiling';
 
   -- -------------------------------------------------------------------------
   -- 3. NO UNIT INVENTED, NO REVOCATION UNDONE, NO HISTORY DELETED.

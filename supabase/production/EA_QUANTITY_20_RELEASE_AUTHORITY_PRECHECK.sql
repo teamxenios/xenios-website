@@ -51,8 +51,17 @@ from latest
 order by product_id, variant_id;
 
 \echo ''
-\echo '=== 3. THE WRITE SET: units whose CURRENT release is approved and capped below 20 ==='
+\echo '=== 3. THE WRITE SET: units whose CURRENT release is approved and capped BELOW 20 ==='
 \echo '    (this is exactly the set EA_QUANTITY_20_RELEASE_AUTHORITY_WRITE.sql will append for)'
+-- STRICTLY LESS THAN, never "not equal to".
+--
+-- This decision only widens. A unit whose founder has already approved MORE
+-- than twenty is left exactly as it is: `<> 20` would have selected it and
+-- rewritten it DOWN to twenty, which is a narrowing, and narrowing an approved
+-- release is a different act from the one the founder authorized. The two
+-- predicates are indistinguishable against today's ledger, where every approved
+-- unit sits at three, which is precisely why the difference has to be written
+-- down rather than left to the data to reveal later.
 with latest as (
   select distinct on (product_id, variant_id)
     product_id, variant_id, release_id, status, recorded_at, record
@@ -67,7 +76,7 @@ select
   20                                             as intended_limit
 from latest
 where status = 'approved'
-  and coalesce((record ->> 'approvedQuantityLimit')::integer, 0) <> 20
+  and coalesce((record ->> 'approvedQuantityLimit')::integer, 0) < 20
 order by product_id, variant_id;
 
 \echo ''
@@ -83,8 +92,11 @@ select
   count(*) filter (where status = 'revoked')                                              as revoked_units,
   count(*) filter (where status = 'approved'
     and (record ->> 'approvedQuantityLimit')::integer = 20)                               as approved_units_at_20,
+  -- Already above the founder's number. NOT a target: these are left untouched.
   count(*) filter (where status = 'approved'
-    and coalesce((record ->> 'approvedQuantityLimit')::integer, 0) <> 20)                 as approved_units_to_widen
+    and (record ->> 'approvedQuantityLimit')::integer > 20)                               as approved_units_above_20,
+  count(*) filter (where status = 'approved'
+    and coalesce((record ->> 'approvedQuantityLimit')::integer, 0) < 20)                  as approved_units_to_widen
 from latest;
 
 \echo ''
