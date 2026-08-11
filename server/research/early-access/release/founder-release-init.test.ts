@@ -12,6 +12,7 @@ import {
   run,
   type ReleaseRow,
 } from "../../../../scripts/initialize-founder-releases";
+import { FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT } from "./founder-first-release-seed";
 
 /**
  * The one-time founder-release initialization exists because the governed admin
@@ -95,7 +96,10 @@ describe("the derived releases", () => {
       expect(row.currency).toBe("USD");
       expect(Number.isSafeInteger(row.approvedPriceCents)).toBe(true);
       expect(row.approvedPriceCents as number).toBeGreaterThan(0);
-      expect(row.approvedQuantityLimit).toBe(3);
+      // The founder-approved ceiling, read from the shipped constant rather
+      // than restated, so this test cannot disagree with what the seeder writes.
+      expect(row.approvedQuantityLimit).toBe(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT);
+      expect(row.approvedQuantityLimit).toBe(20);
       expect(row.actor).toBeTruthy();
       expect(row.reason).toBeTruthy();
       expect(row.recordedAt).toBeTruthy();

@@ -36,8 +36,29 @@ export const FOUNDER_FIRST_RELEASE_REASON =
   "the founder's; availability stays confirmation-gated and a price clears " +
   "no blocker.";
 
-/** Every unit ships at most three units per order (the bundle maximum). */
-export const FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT = 3;
+/**
+ * The founder-approved per-order ceiling for every released unit.
+ *
+ * This was 3, the bundle maximum, and it is now the round's whole band. The
+ * founder's quantity decision of 2026-08-11 is that every currently purchasable
+ * exact variant may be bought at one through twenty, current Early Access
+ * included.
+ *
+ * WHY THIS CONSTANT IS NOT THE WHOLE FIX. It governs what a SEEDING run writes.
+ * The releases that decide today's live sales are durable rows in
+ * public.research_early_access_releases, and that ledger is append-only, so
+ * this constant does not reach back and change them. Raising the ceiling on the
+ * already-released units is a separate, controlled append against production,
+ * prepared but NOT executed at:
+ *
+ *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_PRECHECK.sql
+ *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_WRITE.sql
+ *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_POSTCHECK.sql
+ *
+ * Bounded by MAX_QUANTITY_LIMIT (100) in founder-release.ts, which already
+ * admits 20 and is deliberately not changed.
+ */
+export const FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT = 20;
 
 export type FounderFirstReleaseInput = Readonly<{
   /** The founder's own name for the product, verbatim from the decision. */

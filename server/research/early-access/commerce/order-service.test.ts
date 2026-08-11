@@ -6,6 +6,7 @@ import {
   validateEarlyAccessRelease,
   type EarlyAccessRelease,
 } from "../release/founder-release";
+import { FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT } from "../release/founder-first-release-seed";
 import {
   CLIENT_SUPPLIED_TOTAL_KEYS,
   EARLY_ACCESS_MAX_UNIT_PRICE_CENTS,
@@ -294,6 +295,42 @@ describe("quantity", () => {
     }
   });
 
+  it("sells the whole band once the release carries the founder-approved ceiling", async () => {
+    // THE FOUNDER DECISION OF 2026-08-11, end to end. With the release at the
+    // approved ceiling of twenty, every quantity in the band places a real
+    // order, and twenty-one is still refused.
+    //
+    // `FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT` is what the seeder writes, so this
+    // reads the shipped constant rather than a number typed into a test.
+    const wide = row({ quantityLimit: null });
+    const approved = [
+      release({
+        productVersion: earlyAccessReleaseVersion(wide),
+        approvedQuantityLimit: FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT,
+      }),
+    ];
+    for (const quantity of [1, 2, 3, 4, 6, 10, 19, 20]) {
+      const result = await place({
+        request: request({ quantity }),
+        rows: [wide],
+        releases: approved,
+      });
+      expect(result.ok, `quantity ${quantity} should place`).toBe(true);
+      if (!result.ok) continue;
+      expect(result.value.record.order.line.quantity).toBe(quantity);
+      // Money stays the server's, at every quantity in the band.
+      expect(result.value.record.order.line.lineTotalCents).toBe(RELEASE_PRICE_CENTS * quantity);
+    }
+    // Twenty-one is outside the BAND, so it is a malformed quantity rather than
+    // a limit problem, and it never reaches the release ceiling at all.
+    const over = await place({
+      request: request({ quantity: 21 }),
+      rows: [wide],
+      releases: approved,
+    });
+    expect(over).toEqual({ ok: false, code: "quantity_out_of_range" });
+  });
+
   it("keeps a widened band from bypassing the release's approved ceiling", async () => {
     // The whole point of the widening: twenty is a legal QUANTITY, not a
     // licence to sell more units than the founder released. Four is inside the
@@ -418,6 +455,60 @@ describe("bundle arithmetic is exact to the cent", () => {
 
     expect(earlyAccessBundleTier(21)).toBeNull();
     expect(earlyAccessBundleTier(0)).toBeNull();
+  });
+
+  it("prices the whole band exactly, with the only approved discount at three", async () => {
+    // THE PRICING TABLE, PINNED. Written out per quantity rather than computed,
+    // so a change to the promotion arithmetic has to change these numbers by
+    // hand and cannot slip through as "the formula still agrees with itself".
+    //
+    // unit = 19_900 cents. Only quantity 3 carries a discount (2000bp = 20%).
+    const expected: readonly (readonly [number, number, number])[] = [
+      // [quantity, subtotalCents, payableTotalCents]
+      [1, 19_900, 19_900],
+      [2, 39_800, 39_800],
+      [3, 59_700, 47_760], // the ONE approved discount: 20% off 59_700 = 11_940
+      [4, 79_600, 79_600],
+      [6, 119_400, 119_400],
+      [10, 199_000, 199_000],
+      [20, 398_000, 398_000],
+    ];
+
+    const wide = row({ quantityLimit: null });
+    const approved = [
+      release({
+        productVersion: earlyAccessReleaseVersion(wide),
+        approvedQuantityLimit: FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT,
+      }),
+    ];
+
+    for (const [quantity, subtotalCents, payableTotalCents] of expected) {
+      const result = await place({
+        request: request({ quantity }),
+        rows: [wide],
+        releases: approved,
+      });
+      expect(result.ok, `quantity ${quantity}`).toBe(true);
+      if (!result.ok) continue;
+      const money = result.value.record.money;
+      expect(money.subtotalCents, `subtotal at ${quantity}`).toBe(subtotalCents);
+      expect(money.payableTotalCents, `payable at ${quantity}`).toBe(payableTotalCents);
+      expect(money.discountCents, `discount at ${quantity}`).toBe(
+        subtotalCents - payableTotalCents,
+      );
+    }
+
+    // THE SPLIT-ORDER CONSEQUENCE, STATED RATHER THAN HIDDEN.
+    //
+    // Two orders of three cost less than one order of six, because the approved
+    // discount attaches to a quantity and not to a volume. That is a real
+    // economic fact of the CURRENT approved pricing, it is recorded as a
+    // NONBLOCKING future pricing-policy decision, and it does not reduce the
+    // founder-approved purchase cap of twenty. This assertion exists so the
+    // consequence is measured in the suite rather than argued about later.
+    const twoOrdersOfThree = 47_760 * 2; // 95_520
+    const oneOrderOfSix = 119_400;
+    expect(twoOrdersOfThree).toBeLessThan(oneOrderOfSix);
   });
 });
 

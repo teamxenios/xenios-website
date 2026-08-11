@@ -30,6 +30,11 @@ import {
   EARLY_ACCESS_MIN_QUANTITY,
   isEarlyAccessQuantity,
 } from "@shared/research/early-access-quantity";
+import {
+  EARLY_ACCESS_PROMOTIONS,
+  earlyAccessPromotionDiscountCents,
+  earlyAccessPromotionFor,
+} from "../commerce/promotion";
 import { checkoutEarlyAccessCart } from "./checkout-service";
 import { quoteEarlyAccessCart } from "./quote-service";
 import { customerCheckoutView, projectEarlyAccessCustomerCartStatus } from "./customer-status";
@@ -161,6 +166,76 @@ describe("the band itself", () => {
     // otherwise.
     for (const refused of ["1", "20", "", " ", true, false, null, undefined, [], [20], {}, 20n]) {
       expect(isEarlyAccessQuantity(refused), `${String(refused)} should be refused`).toBe(false);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe("the pre-existing promotion authority is byte-identical", () => {
+  /**
+   * The three fingerprints as they were at the accepted base
+   * `d4cf8d10599ca183df06a4f1968775888a4150c8`, computed from that commit's own
+   * rule literals.
+   *
+   * These are not decoration. `earlyAccessPromotionVersion` hashes the rule's
+   * CONTENT, and every historical order stores the fingerprint it was sold
+   * under and is validated against it on read. If widening the band had altered
+   * one character of an authored rule, its fingerprint would move and real
+   * orders would stop validating. Pinning the literals means that failure is a
+   * red test rather than a customer-visible one.
+   */
+  const BASE_PROMOTION_VERSIONS: Readonly<Record<string, string>> = Object.freeze({
+    "early-access-single": "7c8cf4f605cb6af0c230018ccdf2ecb82793e9ace563506c70561862ce770d6e",
+    "early-access-pair": "40e89985a3ccade33ccb6dcd28bfac3e3fbe0da1bd29f6389f843b7742e2959f",
+    "early-access-bundle-3": "11d6be483e32819a4dfff57aeed775da512e61a9f6d7a3ffbb5b7a303de8f590",
+  });
+
+  it("keeps all three authored rules at their original fingerprints", () => {
+    for (const [promotionId, expected] of Object.entries(BASE_PROMOTION_VERSIONS)) {
+      const rule = EARLY_ACCESS_PROMOTIONS.find((p) => p.promotionId === promotionId);
+      expect(rule, `${promotionId} must still exist`).toBeDefined();
+      expect(rule!.promotionVersion, `${promotionId} fingerprint`).toBe(expected);
+    }
+  });
+
+  it("introduces no unauthorized discount anywhere in the widened band", () => {
+    // Quantity 3 at 2000 basis points is the ONLY discount that exists. Every
+    // other quantity in the band carries zero, including the seventeen the
+    // widening added.
+    const discounted = EARLY_ACCESS_PROMOTIONS.filter((p) => p.discountBasisPoints !== 0);
+    expect(discounted).toHaveLength(1);
+    expect(discounted[0]!.promotionId).toBe("early-access-bundle-3");
+    expect(discounted[0]!.eligibleQuantity).toBe(3);
+    expect(discounted[0]!.discountBasisPoints).toBe(2_000);
+
+    // And the table covers the whole band exactly, so no quantity the round
+    // accepts is left unpriced and none outside it is priced.
+    expect(EARLY_ACCESS_PROMOTIONS.map((p) => p.eligibleQuantity)).toEqual(
+      Array.from({ length: EARLY_ACCESS_MAX_QUANTITY }, (_unused, i) => i + 1),
+    );
+    expect(earlyAccessPromotionFor(EARLY_ACCESS_MAX_QUANTITY + 1)).toBeNull();
+  });
+
+  it("prices each quantity exactly, with no volume curve", () => {
+    // Written out rather than computed: a discount that appeared at, say, ten
+    // would have to be typed in here to pass.
+    const unit = 10_000;
+    const expected: readonly (readonly [number, number])[] = [
+      [1, 0],
+      [2, 0],
+      [3, 6_000], // 20% of 30_000, the one approved discount
+      [4, 0],
+      [6, 0],
+      [10, 0],
+      [20, 0],
+    ];
+    for (const [quantity, discountCents] of expected) {
+      const promotion = earlyAccessPromotionFor(quantity);
+      expect(promotion, `quantity ${quantity} must resolve`).not.toBeNull();
+      expect(
+        earlyAccessPromotionDiscountCents(unit * quantity, promotion!.discountBasisPoints),
+        `discount at ${quantity}`,
+      ).toBe(discountCents);
     }
   });
 });
