@@ -118,6 +118,11 @@ export type MasterOfferingAction =
       href: string;
     }
   | {
+      kind: "join_waitlist";
+      label: "Join Waitlist";
+      href: string;
+    }
+  | {
       kind: "explore_care";
       label: "Explore Care";
       href: string;
@@ -179,6 +184,43 @@ export interface MasterOfferingCatalogPage {
   total: number;
   totalPages: number;
   products: readonly MasterOfferingCardView[];
+}
+
+export type MasterOfferingCatalogAudience = "member" | "admin";
+
+export type MasterOfferingCatalogLaunchScope =
+  | "founder_admin"
+  | "all_members";
+
+export interface MasterOfferingCatalogListResponse {
+  ok: true;
+  audience: MasterOfferingCatalogAudience;
+  launchScope: MasterOfferingCatalogLaunchScope;
+  catalog: MasterOfferingCatalogPage;
+}
+
+export interface MasterOfferingCatalogDetailResponse {
+  ok: true;
+  audience: MasterOfferingCatalogAudience;
+  launchScope: MasterOfferingCatalogLaunchScope;
+  product: MasterOfferingDetailView;
+}
+
+export const MASTER_OFFERING_CATALOG_ERROR_CODES = [
+  "master_offerings_disabled",
+  "master_offerings_auth_required",
+  "master_offerings_launch_restricted",
+  "master_offerings_invalid_request",
+  "master_offerings_not_found",
+  "master_offerings_unavailable",
+] as const;
+
+export type MasterOfferingCatalogErrorCode =
+  (typeof MASTER_OFFERING_CATALOG_ERROR_CODES)[number];
+
+export interface MasterOfferingCatalogErrorResponse {
+  ok: false;
+  code: MasterOfferingCatalogErrorCode;
 }
 
 export function isMasterOfferingFamily(

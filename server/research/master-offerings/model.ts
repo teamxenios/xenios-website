@@ -143,3 +143,15 @@ export type MasterOfferingCommerceResolver = (
   offering: NormalizedMasterOffering,
   variant: NormalizedMasterOfferingVariant,
 ) => MasterOfferingCommerceResolution;
+
+/**
+ * Production Product Control reads are asynchronous. The service accepts this
+ * wider seam, resolves every exact variant first, and only then invokes the
+ * synchronous customer projection with an immutable resolution map.
+ */
+export type AsyncMasterOfferingCommerceResolver = (
+  offering: NormalizedMasterOffering,
+  variant: NormalizedMasterOfferingVariant,
+) =>
+  | Promise<MasterOfferingCommerceResolution>
+  | MasterOfferingCommerceResolution;

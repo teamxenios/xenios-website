@@ -80,7 +80,7 @@ describe("master offering action authority", () => {
       request_access: "request_access",
       approval_required: "apply",
       temporarily_unavailable: "notify_me",
-      coming_soon: "notify_me",
+      coming_soon: "join_waitlist",
       care_pathway: "explore_care",
       planned: "get_updates",
       unavailable: "none",

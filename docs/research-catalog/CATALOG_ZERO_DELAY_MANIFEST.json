@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "foundationSha": "87001760237323a7cf3399aaffd49bbf484b9633",
+  "rebaseTarget": "WAITING_FOR_FINAL_EARLY_ACCESS_SHA",
+  "routesMounted": false,
+  "earlyAccessModified": false,
+  "productionMutated": false,
+  "productControlBindingsCreated": 0,
+  "reconciliationsApplied": 0,
+  "preparedRoutes": {
+    "list": "/api/research/catalog-display/v2/catalog",
+    "detail": "/api/research/catalog-display/v2/products/:family/:slug"
+  },
+  "flags": {
+    "displayFirst": "RESEARCH_MASTER_OFFERINGS_ENABLED",
+    "founderAdminOnly": "RESEARCH_MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY",
+    "existingFullCatalogAllowlist": "RESEARCH_FULL_CATALOG_MEMBERS"
+  },
+  "quantity": {
+    "hardwired": false,
+    "acceptedPolicyRequired": true,
+    "planningRequestSelector": false
+  },
+  "reconciliationRecommendations": {
+    "merge": 26,
+    "hold": 3,
+    "humanReview": 2,
+    "applied": 0
+  },
+  "controlTotals": {
+    "sourceRows": 1236,
+    "memberSafeOfferings": 1121,
+    "memberSafeVariants": 1181,
+    "adminOnlyHolds": 11,
+    "availableNowVariants": 18,
+    "overlaps": 31
+  },
+  "validation": {
+    "isolatedTypeScript": "pass",
+    "focusedTestFiles": 11,
+    "focusedTests": 46,
+    "existingRegressionTestFiles": 11,
+    "existingRegressionTests": 154,
+    "repositoryTypecheck": "pass",
+    "repositoryBuild": "pass",
+    "fullRepositoryTestFilesPassed": 504,
+    "fullRepositoryTestsPassed": 8291,
+    "routeCensus": "pass"
+  }
+}

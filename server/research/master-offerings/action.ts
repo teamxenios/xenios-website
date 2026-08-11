@@ -21,6 +21,10 @@ export interface MasterOfferingActionTargets {
     offering: NormalizedMasterOffering,
     variant: NormalizedMasterOfferingVariant,
   ) => string;
+  joinWaitlist: (
+    offering: NormalizedMasterOffering,
+    variant: NormalizedMasterOfferingVariant,
+  ) => string;
   exploreCare: (
     offering: NormalizedMasterOffering,
     variant: NormalizedMasterOfferingVariant,
@@ -35,6 +39,7 @@ export const defaultMasterOfferingActionTargets: MasterOfferingActionTargets = {
   requestAccess: (offering) => productRequestHref("products", offering.displayName),
   apply: (offering) => productRequestHref("products", offering.displayName),
   notifyMe: (offering) => productRequestHref("products", offering.displayName),
+  joinWaitlist: (offering) => productRequestHref("products", offering.displayName),
   exploreCare: () => "/research/member/metabolic-care",
   getUpdates: (offering) => productRequestHref("products", offering.displayName),
 };
@@ -125,11 +130,16 @@ export function resolveMasterOfferingAction(
       };
     case "available_this_week":
     case "temporarily_unavailable":
-    case "coming_soon":
       return {
         kind: "notify_me",
         label: "Notify Me",
         href: targets.notifyMe(offering, variant),
+      };
+    case "coming_soon":
+      return {
+        kind: "join_waitlist",
+        label: "Join Waitlist",
+        href: targets.joinWaitlist(offering, variant),
       };
     case "care_pathway":
       return {

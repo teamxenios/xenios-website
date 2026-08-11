@@ -5,6 +5,7 @@ import type {
 } from "@shared/research/master-offerings/contract";
 import { projectMasterOfferingDetail } from "./customer-projection";
 import type {
+  AsyncMasterOfferingCommerceResolver,
   MasterOfferingCommerceResolver,
   NormalizedMasterOffering,
 } from "./model";
@@ -19,7 +20,7 @@ export interface MasterOfferingCatalogReader {
 export class MasterOfferingCatalogService {
   constructor(
     private readonly reader: MasterOfferingCatalogReader,
-    private readonly commerce: MasterOfferingCommerceResolver,
+    private readonly commerce: AsyncMasterOfferingCommerceResolver,
   ) {}
 
   async list(
@@ -37,7 +38,18 @@ export class MasterOfferingCatalogService {
       (product) => product.visibility === "member" && product.slug === normalized,
     );
     if (matches.length !== 1) return null;
-    return projectMasterOfferingDetail(matches[0], this.commerce);
+    const offering = matches[0];
+    const resolved = new Map(
+      await Promise.all(
+        offering.variants.map(async (variant) => [
+          variant.id,
+          await this.commerce(offering, variant),
+        ] as const),
+      ),
+    );
+    const commerce: MasterOfferingCommerceResolver = (_product, variant) =>
+      resolved.get(variant.id) ?? { binding: null, selection: null };
+    return projectMasterOfferingDetail(offering, commerce);
   }
 }
 
