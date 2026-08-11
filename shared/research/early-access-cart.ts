@@ -10,9 +10,33 @@
  * answer.
  */
 
-export const EARLY_ACCESS_CART_MIN_QUANTITY = 1 as const;
-export const EARLY_ACCESS_CART_MAX_QUANTITY = 3 as const;
+/**
+ * The cart's quantity band IS the round's quantity band. These two names are
+ * kept because every existing importer uses them, but they are no longer
+ * independent numbers: both resolve to the single policy in
+ * `early-access-quantity.ts`, so the cart and the single-order lane cannot
+ * drift apart.
+ */
+export {
+  EARLY_ACCESS_MAX_QUANTITY as EARLY_ACCESS_CART_MAX_QUANTITY,
+  EARLY_ACCESS_MIN_QUANTITY as EARLY_ACCESS_CART_MIN_QUANTITY,
+} from "./early-access-quantity";
+import { EARLY_ACCESS_MAX_QUANTITY } from "./early-access-quantity";
+
 export const EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS = 25 as const;
+
+/**
+ * The largest number of RAW lines a browser may submit before canonicalization.
+ *
+ * Not a business rule, a work bound. Duplicate lines for one variant are merged
+ * rather than refused, so the raw list can legitimately be longer than the
+ * distinct-item cap. The largest submission that could still canonicalize to a
+ * legal cart is every distinct item arriving as single-unit lines, which is
+ * `25 x 20`. Anything past that cannot become a valid cart no matter how it
+ * merges, so it is refused before any work is done on it.
+ */
+export const EARLY_ACCESS_CART_MAX_SUBMITTED_LINES =
+  EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS * EARLY_ACCESS_MAX_QUANTITY;
 export const EARLY_ACCESS_CART_CURRENCY = "USD" as const;
 
 export type EarlyAccessCartCurrency = typeof EARLY_ACCESS_CART_CURRENCY;
@@ -303,6 +327,6 @@ export type EarlyAccessCartStatus = Readonly<{
 export type EarlyAccessCartCapability = Readonly<{
   enabled: true;
   maxDistinctItems: typeof EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS;
-  maxQuantityPerItem: typeof EARLY_ACCESS_CART_MAX_QUANTITY;
+  maxQuantityPerItem: typeof EARLY_ACCESS_MAX_QUANTITY;
   paymentMode: "manual_concierge";
 }>;

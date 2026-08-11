@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   CLIENT_SUPPLIED_TOTAL_KEYS,
   EARLY_ACCESS_MAX_ORDER_TOTAL_CENTS,
+  EARLY_ACCESS_MAX_QUANTITY,
   EARLY_ACCESS_MAX_UNIT_PRICE_CENTS,
   createEarlyAccessOrder,
   readEarlyAccessOrder,
@@ -71,8 +72,20 @@ describe("early access order quantity", () => {
     }
   });
 
-  it("refuses a quantity outside one through three", () => {
-    for (const quantity of [0, -1, 4, 10, 1.5, "2", null, undefined, Number.NaN, Number.POSITIVE_INFINITY]) {
+  it("refuses a quantity outside one through twenty", () => {
+    for (const quantity of [
+      0,
+      -1,
+      21,
+      100,
+      1.5,
+      "2",
+      null,
+      undefined,
+      Number.NaN,
+      Number.POSITIVE_INFINITY,
+      Number.MAX_SAFE_INTEGER,
+    ]) {
       const result = create({ quantity });
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.code).toBe("quantity_out_of_range");
@@ -99,7 +112,12 @@ describe("early access order price and currency", () => {
   });
 
   it("accepts the maximum unit price and keeps the total inside the bound", () => {
-    const order = createdOrder({ unitPriceCents: EARLY_ACCESS_MAX_UNIT_PRICE_CENTS, quantity: 3 });
+    // The bound is the maximum unit price times the maximum QUANTITY, so the
+    // order that reaches it exactly is the one at the top of the band.
+    const order = createdOrder({
+      unitPriceCents: EARLY_ACCESS_MAX_UNIT_PRICE_CENTS,
+      quantity: EARLY_ACCESS_MAX_QUANTITY,
+    });
     expect(order.orderTotalCents).toBe(EARLY_ACCESS_MAX_ORDER_TOTAL_CENTS);
   });
 

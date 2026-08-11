@@ -52,8 +52,19 @@ import {
   type EarlyAccessPromotionSnapshot,
 } from "./promotion";
 
-export const EARLY_ACCESS_MIN_QUANTITY = 1;
-export const EARLY_ACCESS_MAX_QUANTITY = 3;
+/**
+ * The quantity band, re-exported from the one policy module so the single-order
+ * lane and the cart lane cannot state different ceilings. See
+ * `shared/research/early-access-quantity.ts`.
+ */
+export {
+  EARLY_ACCESS_MAX_QUANTITY,
+  EARLY_ACCESS_MIN_QUANTITY,
+} from "@shared/research/early-access-quantity";
+import {
+  EARLY_ACCESS_MAX_QUANTITY,
+  EARLY_ACCESS_MIN_QUANTITY,
+} from "@shared/research/early-access-quantity";
 
 /** Re-exported so existing importers keep one name for the currency vocabulary. */
 export { EARLY_ACCESS_CURRENCIES, type EarlyAccessCurrency };

@@ -26,6 +26,7 @@
  */
 
 import { createHash } from "node:crypto";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 
 /** The only rule shape this table can express today. */
 export const EARLY_ACCESS_PROMOTION_RULES = ["bundle_quantity_percentage"] as const;
@@ -78,30 +79,75 @@ function versioned(rule: EarlyAccessPromotionRule): EarlyAccessPromotion {
  * fact this module is not entitled to invent. One and two are still listed, as zero
  * discount rules, so a quantity outside the table is a refusal rather than a silent
  * fall through to no promotion.
+ *
+ * WHY FOUR THROUGH TWENTY CARRY NO DISCOUNT
+ * -----------------------------------------
+ * The round now accepts up to twenty units per variant. That widened the QUANTITY
+ * band; it decided nothing about price. The only discount any founder release
+ * approved is the twenty percent at exactly three units below, so that is the only
+ * discount in this table, and four through twenty are listed at zero basis points
+ * for the same reason one and two are: a quantity the table does not name is refused
+ * outright, and refusing every quantity above three would have made the widened band
+ * unreachable.
+ *
+ * This does mean six units cost more than two separate three-unit orders. That is a
+ * pricing question, and it is deliberately left open rather than closed by this
+ * module: writing a volume curve here would be inventing an approved price. If the
+ * founder approves one later it is added here, as new rules, and every historical
+ * order stays bound to the version it was sold under.
+ *
+ * The three authored rules below are byte-for-byte what they have always been. Their
+ * `promotionVersion` hashes are the fingerprints existing orders are validated
+ * against, so editing any field of them would invalidate real records.
  */
-export const EARLY_ACCESS_PROMOTIONS: readonly EarlyAccessPromotion[] = Object.freeze([
-  versioned({
+const AUTHORED_PROMOTIONS: readonly EarlyAccessPromotionRule[] = Object.freeze([
+  {
     promotionId: "early-access-single",
     rule: "bundle_quantity_percentage",
     eligibleQuantity: 1,
     discountBasisPoints: 0,
     label: "1 Unit",
-  }),
-  versioned({
+  },
+  {
     promotionId: "early-access-pair",
     rule: "bundle_quantity_percentage",
     eligibleQuantity: 2,
     discountBasisPoints: 0,
     label: "2 Units",
-  }),
-  versioned({
+  },
+  {
     promotionId: "early-access-bundle-3",
     rule: "bundle_quantity_percentage",
     eligibleQuantity: 3,
     discountBasisPoints: 2_000,
     label: "3-Unit Bundle",
-  }),
+  },
 ]);
+
+/**
+ * The undiscounted remainder of the band, stated once rather than copied out
+ * seventeen times. Every field is derived from the quantity alone and the discount
+ * is fixed at zero, so this loop cannot express a price decision even by accident.
+ */
+const UNDISCOUNTED_PROMOTIONS: readonly EarlyAccessPromotionRule[] = Object.freeze(
+  Array.from(
+    { length: EARLY_ACCESS_MAX_QUANTITY - AUTHORED_PROMOTIONS.length },
+    (_unused, offset): EarlyAccessPromotionRule => {
+      const eligibleQuantity = AUTHORED_PROMOTIONS.length + offset + 1;
+      return {
+        promotionId: `early-access-units-${eligibleQuantity}`,
+        rule: "bundle_quantity_percentage",
+        eligibleQuantity,
+        discountBasisPoints: 0,
+        label: `${eligibleQuantity} Units`,
+      };
+    },
+  ),
+);
+
+export const EARLY_ACCESS_PROMOTIONS: readonly EarlyAccessPromotion[] = Object.freeze(
+  [...AUTHORED_PROMOTIONS, ...UNDISCOUNTED_PROMOTIONS].map(versioned),
+);
 
 /**
  * Resolve the promotion for a quantity.

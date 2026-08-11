@@ -7,7 +7,8 @@ import { createRoot, type Root } from "react-dom/client";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  EARLY_ACCESS_QUANTITIES,
+  EARLY_ACCESS_QUANTITY_MAX,
+  EARLY_ACCESS_QUANTITY_MIN,
   EarlyAccessQuantitySelector,
   isEarlyAccessQuantity,
   type EarlyAccessQuantity,
@@ -42,52 +43,70 @@ function render(node: ReactElement) {
   };
 }
 
-function radios(container: HTMLElement): HTMLInputElement[] {
-  return Array.from(container.querySelectorAll<HTMLInputElement>('input[type="radio"]'));
+function field(container: HTMLElement): HTMLInputElement {
+  const input = container.querySelector<HTMLInputElement>('input[type="number"]');
+  if (input === null) throw new Error("no quantity input rendered");
+  return input;
+}
+
+function step(container: HTMLElement, direction: "increment" | "decrement"): HTMLButtonElement {
+  const button = container.querySelector<HTMLButtonElement>(`[data-testid$="-${direction}"]`);
+  if (button === null) throw new Error(`no ${direction} control rendered`);
+  return button;
+}
+
+/** Type into the field and commit, which is what a real blur does. */
+function type(container: HTMLElement, text: string): void {
+  const input = field(container);
+  act(() => {
+    const setter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value",
+    )?.set;
+    setter?.call(input, text);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  // React's onBlur is delivered from the native FOCUSOUT event, which bubbles.
+  // A dispatched "blur" does not bubble and never reaches the handler.
+  act(() => {
+    input.dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
+  });
 }
 
 describe("EarlyAccessQuantitySelector", () => {
-  it("renders one labeled radiogroup with the three offered quantities", () => {
-    const view = render(
-      <EarlyAccessQuantitySelector value={null} onChange={() => {}} />,
-    );
+  it("renders one labeled stepper over the round's whole band", () => {
+    const view = render(<EarlyAccessQuantitySelector value={null} onChange={() => {}} />);
     const fieldset = view.host.querySelector("fieldset");
     expect(fieldset).not.toBeNull();
     expect(fieldset?.querySelector("legend")?.textContent).toBe("How many units");
-    expect(fieldset?.getAttribute("aria-describedby")).toBe(
-      fieldset?.querySelector("p")?.id,
-    );
+    expect(fieldset?.getAttribute("aria-describedby")).toBe(fieldset?.querySelector("p")?.id);
 
-    const inputs = radios(view.host);
-    expect(inputs.map((input) => input.value)).toEqual(["1", "2", "3"]);
-    expect(new Set(inputs.map((input) => input.name)).size).toBe(1);
-    expect(new Set(inputs.map((input) => input.id)).size).toBe(inputs.length);
-    expect(inputs.every((input) => !input.checked)).toBe(true);
-    // The chip SHOWS the number and ANNOUNCES the full phrase, so a sighted
-    // customer reads a chip and a screen-reader user hears "2 research units".
-    expect(inputs.map((input) => input.labels?.[0]?.textContent?.trim())).toEqual([
-      "11 research unit",
-      "22 research units",
-      "33 research units",
-    ]);
-    for (const input of inputs) {
-      expect(view.host.querySelector(`label[for="${input.id}"]`), input.value).not.toBeNull();
-    }
+    const input = field(view.host);
+    expect(input.getAttribute("min")).toBe(String(EARLY_ACCESS_QUANTITY_MIN));
+    expect(input.getAttribute("max")).toBe(String(EARLY_ACCESS_QUANTITY_MAX));
+    expect(input.getAttribute("step")).toBe("1");
+    expect(input.getAttribute("inputmode")).toBe("numeric");
+    expect(input.getAttribute("aria-label")).toBe("Number of research units");
+    // Nothing chosen yet reads as empty rather than as a quantity nobody picked.
+    expect(input.value).toBe("");
 
-    // The bundle offer is stated ONCE, full width, in its own line rather than
-    // inside a one-third-width option. "20% savings" is the offer's name; this
-    // component still computes no money.
+    // Both steppers name what they do, and point at the field they change.
+    expect(step(view.host, "decrement").getAttribute("aria-label")).toBe("One fewer unit");
+    expect(step(view.host, "increment").getAttribute("aria-label")).toBe("One more unit");
+    expect(step(view.host, "increment").getAttribute("aria-controls")).toBe(input.id);
+
     const note = fieldset?.querySelector("p");
     expect(note?.textContent).toContain("3 units is the Research Bundle, 20% savings");
+    expect(note?.textContent).toContain(`Limit ${EARLY_ACCESS_QUANTITY_MAX} per product`);
     expect(note?.textContent).not.toMatch(/\$\s*\d/);
   });
 
-  it("gives the options NO nested multi-column grid, which is what collapsed the text", () => {
-    // THE PRODUCTION DEFECT, pinned. `sm:grid-cols-3` asks how wide the
+  it("gives the control NO multi-column grid, which is what collapsed the text", () => {
+    // THE PRODUCTION DEFECT, still pinned. `sm:grid-cols-3` asks how wide the
     // VIEWPORT is, never how wide the CARD is, so on a 1440px desktop three
     // columns were forced inside a ~300px card and every option wrapped one
-    // character per line. The options are a wrapping flex row now, and no
-    // viewport-breakpoint column rule may return to this control.
+    // character per line. A stepper is a fixed-size control at every width,
+    // which is why twenty quantities did not bring the wall of chips back.
     // Comments stripped first: the file DESCRIBES the defect it fixed, and a
     // scan that cannot tell prose from code would forbid explaining it.
     const source = readFileSync(path.join(HERE, "EarlyAccessQuantitySelector.tsx"), "utf8")
@@ -97,27 +116,22 @@ describe("EarlyAccessQuantitySelector", () => {
     expect(source).not.toMatch(/(sm|md|lg|xl|2xl):grid-cols/);
 
     const view = render(<EarlyAccessQuantitySelector value={null} onChange={() => {}} />);
-    const options = view.host.querySelector('[data-testid$="-options"]');
-    expect(options?.className).toContain("flex");
-    expect(options?.className).toContain("flex-wrap");
-    expect(options?.className).not.toContain("grid-cols");
+    const stepper = view.host.querySelector('[data-testid$="-stepper"]');
+    expect(stepper?.className).toContain("flex");
+    expect(stepper?.className).not.toContain("grid-cols");
 
-    // Every chip keeps a real tap target, so the narrow-card layout is not
-    // bought back by making the controls too small to press.
-    for (const quantity of [1, 2, 3]) {
-      const chip = view.host.querySelector<HTMLElement>(
-        `[data-testid$="-option-${quantity}"]`,
-      );
-      expect(Number.parseInt(String(chip?.style.minWidth), 10)).toBeGreaterThanOrEqual(44);
-      expect(Number.parseInt(String(chip?.style.minHeight), 10)).toBeGreaterThanOrEqual(40);
+    // Every control keeps a real tap target on a phone.
+    for (const direction of ["decrement", "increment"] as const) {
+      const button = step(view.host, direction);
+      expect(Number.parseInt(String(button.style.minWidth), 10)).toBeGreaterThanOrEqual(44);
+      expect(Number.parseInt(String(button.style.minHeight), 10)).toBeGreaterThanOrEqual(44);
     }
+    expect(Number.parseInt(String(field(view.host).style.minHeight), 10)).toBeGreaterThanOrEqual(
+      44,
+    );
   });
 
   it("colors itself from :root tokens, because this route never mounts .research-app", () => {
-    // The shared `ra-*` classes resolve their colors from `--ra-*` variables
-    // declared on `.research-app`. /research/early-access does not mount
-    // inside that wrapper, so those borders come out invalid and invisible.
-    // These chips use tokens declared on :root instead.
     const source = readFileSync(path.join(HERE, "EarlyAccessQuantitySelector.tsx"), "utf8");
     expect(source).not.toContain("ra-select-card");
     expect(source).not.toContain("var(--ra-");
@@ -140,49 +154,119 @@ describe("EarlyAccessQuantitySelector", () => {
       );
     }
     const view = render(<Harness />);
-    act(() => radios(view.host)[2].click());
+    act(() => step(view.host, "increment").click());
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenCalledWith(3);
+    expect(onChange).toHaveBeenCalledWith(2);
     expect(typeof onChange.mock.calls[0][0]).toBe("number");
-    expect(radios(view.host).filter((input) => input.checked).map((input) => input.value)).toEqual([
-      "3",
-    ]);
-    expect(
-      view.host.querySelector('[data-testid$="-option-3"]')?.getAttribute("data-selected"),
-    ).toBe("true");
-    expect(
-      view.host.querySelector('[data-testid$="-option-1"]')?.getAttribute("data-selected"),
-    ).toBe("false");
+    expect(field(view.host).value).toBe("2");
+
+    type(view.host, "17");
+    expect(onChange).toHaveBeenLastCalledWith(17);
+    expect(typeof onChange.mock.calls.at(-1)![0]).toBe("number");
+    expect(field(view.host).value).toBe("17");
   });
 
-  it("selects nothing for a quantity this round does not offer", () => {
-    const view = render(
-      <EarlyAccessQuantitySelector value={null} onChange={() => {}} />,
-    );
-    for (const value of [0, 4, 99, -1, 2.5, "2", null, undefined, Number.NaN]) {
+  it("cannot be pushed past the band by the plus control or by typing", () => {
+    const onChange = vi.fn();
+    function Harness() {
+      const [value, setValue] = useState<EarlyAccessQuantity | null>(EARLY_ACCESS_QUANTITY_MAX);
+      return (
+        <EarlyAccessQuantitySelector
+          value={value}
+          onChange={(quantity) => {
+            onChange(quantity);
+            setValue(quantity);
+          }}
+        />
+      );
+    }
+    const view = render(<Harness />);
+    // At the ceiling the plus control is disabled, so it cannot report 21.
+    expect(step(view.host, "increment").disabled).toBe(true);
+    act(() => step(view.host, "increment").click());
+    expect(onChange).not.toHaveBeenCalled();
+
+    // A typed value past the ceiling is clamped, never reported as typed.
+    type(view.host, "21");
+    expect(onChange).toHaveBeenLastCalledWith(EARLY_ACCESS_QUANTITY_MAX);
+    type(view.host, "9999");
+    expect(onChange).toHaveBeenLastCalledWith(EARLY_ACCESS_QUANTITY_MAX);
+    for (const call of onChange.mock.calls) {
+      expect(call[0]).toBeLessThanOrEqual(EARLY_ACCESS_QUANTITY_MAX);
+    }
+  });
+
+  it("cannot be pushed below one by the minus control or by typing", () => {
+    const onChange = vi.fn();
+    function Harness() {
+      const [value, setValue] = useState<EarlyAccessQuantity | null>(EARLY_ACCESS_QUANTITY_MIN);
+      return (
+        <EarlyAccessQuantitySelector
+          value={value}
+          onChange={(quantity) => {
+            onChange(quantity);
+            setValue(quantity);
+          }}
+        />
+      );
+    }
+    const view = render(<Harness />);
+    expect(step(view.host, "decrement").disabled).toBe(true);
+    act(() => step(view.host, "decrement").click());
+    expect(onChange).not.toHaveBeenCalled();
+
+    for (const attempt of ["0", "-4", "-1"]) {
+      type(view.host, attempt);
+      expect(onChange).toHaveBeenLastCalledWith(EARLY_ACCESS_QUANTITY_MIN);
+    }
+    // A decimal truncates toward a whole number and is never reported as one.
+    type(view.host, "2.9");
+    expect(onChange).toHaveBeenLastCalledWith(2);
+    for (const call of onChange.mock.calls) {
+      expect(Number.isInteger(call[0])).toBe(true);
+      expect(call[0]).toBeGreaterThanOrEqual(EARLY_ACCESS_QUANTITY_MIN);
+    }
+  });
+
+  it("shows nothing for a quantity this round does not offer", () => {
+    const view = render(<EarlyAccessQuantitySelector value={null} onChange={() => {}} />);
+    for (const value of [0, 21, 99, -1, 2.5, "2", null, undefined, Number.NaN]) {
       view.rerender(
         <EarlyAccessQuantitySelector
           value={value as unknown as EarlyAccessQuantity | null}
           onChange={() => {}}
         />,
       );
-      expect(radios(view.host)).toHaveLength(3);
-      expect(radios(view.host).some((input) => input.checked)).toBe(false);
+      expect(field(view.host).value).toBe("");
     }
-    expect(EARLY_ACCESS_QUANTITIES).toEqual([1, 2, 3]);
+    expect(EARLY_ACCESS_QUANTITY_MIN).toBe(1);
+    expect(EARLY_ACCESS_QUANTITY_MAX).toBe(20);
     expect(isEarlyAccessQuantity(2)).toBe(true);
+    expect(isEarlyAccessQuantity(20)).toBe(true);
     expect(isEarlyAccessQuantity("2")).toBe(false);
-    expect(isEarlyAccessQuantity(4)).toBe(false);
+    expect(isEarlyAccessQuantity(21)).toBe(false);
+    expect(isEarlyAccessQuantity(0)).toBe(false);
   });
 
-  it("disables every choice without calling the handler or dropping the selection", () => {
+  it("an emptied field returns to the last good value rather than reporting one", () => {
+    const onChange = vi.fn();
+    const view = render(<EarlyAccessQuantitySelector value={5} onChange={onChange} />);
+    expect(field(view.host).value).toBe("5");
+    type(view.host, "");
+    expect(onChange).not.toHaveBeenCalled();
+    expect(field(view.host).value).toBe("5");
+  });
+
+  it("disables every control without calling the handler or dropping the selection", () => {
     const onChange = vi.fn();
     const view = render(
       <EarlyAccessQuantitySelector value={2} onChange={onChange} disabled />,
     );
-    expect(radios(view.host).every((input) => input.disabled)).toBe(true);
-    expect(radios(view.host).find((input) => input.value === "2")?.checked).toBe(true);
-    act(() => radios(view.host)[0].click());
+    expect(field(view.host).disabled).toBe(true);
+    expect(step(view.host, "increment").disabled).toBe(true);
+    expect(step(view.host, "decrement").disabled).toBe(true);
+    expect(field(view.host).value).toBe("2");
+    act(() => step(view.host, "increment").click());
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -191,17 +275,20 @@ describe("EarlyAccessQuantitySelector", () => {
     vi.stubGlobal("fetch", fetchSpy);
     const storageSet = vi.spyOn(Storage.prototype, "setItem");
     const historyPush = vi.spyOn(window.history, "pushState");
-    const view = render(
-      <EarlyAccessQuantitySelector value={1} onChange={() => {}} />,
-    );
-    act(() => radios(view.host)[1].click());
+    const view = render(<EarlyAccessQuantitySelector value={1} onChange={() => {}} />);
+    act(() => step(view.host, "increment").click());
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(storageSet).not.toHaveBeenCalled();
     expect(historyPush).not.toHaveBeenCalled();
     expect(view.host.querySelector("form")).toBeNull();
-    expect(view.host.querySelector("button")).toBeNull();
     expect(view.host.querySelector("a")).toBeNull();
     expect(view.host.querySelector("[href]")).toBeNull();
+    // A stepper needs buttons, unlike the radio chips this replaced. What must
+    // still hold is that no button can SUBMIT anything: every one is
+    // type="button", so none of them is a submit control by default.
+    const buttons = Array.from(view.host.querySelectorAll("button"));
+    expect(buttons).toHaveLength(2);
+    expect(buttons.every((button) => button.getAttribute("type") === "button")).toBe(true);
     expect(view.host.textContent).not.toMatch(/\$\s*\d/);
     expect(view.host.textContent).not.toMatch(
       /account number|routing number|recipient|handle|qr code/i,
@@ -216,5 +303,14 @@ describe("EarlyAccessQuantitySelector", () => {
     expect(source).not.toMatch(
       /fetch\s*\(|XMLHttpRequest|sendBeacon|localStorage|sessionStorage|window\.location|setTimeout/i,
     );
+  });
+
+  it("states the band from the shared policy rather than restating numbers", () => {
+    // The whole point of this candidate: one place decides the ceiling. A
+    // literal 20 in this file would be the third copy of a number that has
+    // already drifted once.
+    const source = readFileSync(path.join(HERE, "EarlyAccessQuantitySelector.tsx"), "utf8");
+    expect(source).toContain("@shared/research/early-access-quantity");
+    expect(source).not.toMatch(/=\s*20\b/);
   });
 });

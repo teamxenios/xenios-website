@@ -181,13 +181,16 @@ describe("early access product card", () => {
       />,
     );
 
-    const three = el.querySelector<HTMLInputElement>("input[value='3']");
-    expect(three).not.toBeNull();
+    // The stepper reports the new quantity, and reports it as a number.
+    const increment = el.querySelector<HTMLButtonElement>(
+      "[data-testid$='-quantity-increment']",
+    );
+    expect(increment).not.toBeNull();
     act(() => {
-      three?.click();
+      increment?.click();
     });
 
-    expect(onQuantityChange).toHaveBeenCalledWith(3);
+    expect(onQuantityChange).toHaveBeenCalledWith(2);
     // Choosing a quantity is not ordering. The card never submits.
     expect(onSelect).not.toHaveBeenCalled();
   });
@@ -197,7 +200,7 @@ describe("early access product card", () => {
     // accessibility tree, still announces itself, and can be re-enabled from
     // devtools. Absence is the only state that cannot be misread.
     const el = card({ availability: "TEMPORARILY_HELD" });
-    expect(el.querySelectorAll("input[type='radio']")).toHaveLength(0);
+    expect(el.querySelectorAll("input[type='number']")).toHaveLength(0);
     expect(el.querySelector("[data-testid='early-access-product-card-quantity']")).toBeNull();
   });
 
@@ -205,9 +208,11 @@ describe("early access product card", () => {
     // Guards the guard: a change that removed the control everywhere would
     // pass the assertion above while breaking the whole catalogue.
     const el = card({ availability: "AVAILABLE" });
-    expect(
-      el.querySelectorAll("input[type='radio']").length,
-    ).toBeGreaterThan(0);
+    const input = el.querySelector<HTMLInputElement>("input[type='number']");
+    expect(input).not.toBeNull();
+    // And it offers the round's whole band, not a narrower one.
+    expect(input?.getAttribute("min")).toBe("1");
+    expect(input?.getAttribute("max")).toBe("20");
   });
 
   it("shows no product photography, and no longer reserves a square for it", () => {

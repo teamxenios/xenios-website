@@ -9,9 +9,9 @@ import type {
 } from "@shared/research/early-access-cart";
 import {
   EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS,
-  EARLY_ACCESS_CART_MAX_QUANTITY,
-  EARLY_ACCESS_CART_MIN_QUANTITY,
+  EARLY_ACCESS_CART_MAX_SUBMITTED_LINES,
 } from "@shared/research/early-access-cart";
+import { isEarlyAccessQuantity } from "@shared/research/early-access-quantity";
 
 const SAFE_ID = /^[A-Za-z0-9:_./-]{2,200}$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -54,19 +54,46 @@ export function normalizeCartShipping(input: EarlyAccessCartShipping): EarlyAcce
   return Object.freeze(value);
 }
 
+/**
+ * Reduce a submitted cart to its canonical form: one line per exact
+ * product/variant, quantities summed, everything else proven consistent.
+ *
+ * WHY DUPLICATES MERGE RATHER THAN REFUSE
+ * ---------------------------------------
+ * This function used to refuse the whole cart the moment one identity appeared
+ * twice. That was safe but wrong about intent: a browser that adds the same
+ * variant from two places, or retries an add, has not asked for anything
+ * illegal, it has asked for the sum. So the same variant at ten units and again
+ * at ten units is one canonical line of twenty, and the same variant at ten and
+ * again at eleven is refused, because twenty-one is past the cap. The cap is
+ * applied to the AGGREGATE, which is the only reading under which duplicate
+ * lines cannot be used to walk past it.
+ *
+ * WHY THE PRICE ECHO MUST AGREE ACROSS DUPLICATES
+ * -----------------------------------------------
+ * Merging two lines means merging two price echoes into one, and there is no
+ * honest way to choose between them when they differ. A cart that calls one
+ * variant 1000 cents on one line and 100 cents on the next is not a cart to
+ * reconcile, it is a probe, so it is refused whole. The server still never
+ * trusts the surviving echo: the quote re-resolves the price and answers
+ * PRICE_CHANGED if it is stale.
+ *
+ * The result is sorted by identity, so two submissions differing only in line
+ * order canonicalize to the same list, hash to the same intent, and produce the
+ * same child orders in the same sequence.
+ */
 export function normalizeCartItems(
   input: readonly EarlyAccessCartItemInput[],
 ): readonly EarlyAccessCartItemInput[] | null {
-  if (input.length < 1 || input.length > EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS) return null;
-  const seen = new Set<string>();
-  const output: EarlyAccessCartItemInput[] = [];
+  if (input.length < 1 || input.length > EARLY_ACCESS_CART_MAX_SUBMITTED_LINES) return null;
+  const merged = new Map<string, EarlyAccessCartItemInput>();
   for (const item of input) {
     if (!SAFE_ID.test(item.productId) || !SAFE_ID.test(item.variantId)) return null;
-    if (
-      !Number.isInteger(item.quantity) ||
-      item.quantity < EARLY_ACCESS_CART_MIN_QUANTITY ||
-      item.quantity > EARLY_ACCESS_CART_MAX_QUANTITY
-    ) return null;
+    // Each SUBMITTED line must itself be a legal quantity, so a single line of
+    // 21 is refused here and never reaches the aggregate check. "One huge line"
+    // and "many small lines" are then governed by the same rule rather than by
+    // two that could drift apart.
+    if (!isEarlyAccessQuantity(item.quantity)) return null;
     if (!Number.isSafeInteger(item.expectedUnitPriceCents) || item.expectedUnitPriceCents <= 0) {
       return null;
     }
@@ -75,10 +102,28 @@ export function normalizeCartItems(
     // runtime this is an unambiguous delimiter because safe identifiers cannot
     // contain it; in source it remains grep- and diff-visible.
     const key = `${item.productId}\u0000${item.variantId}`;
-    if (seen.has(key)) return null;
-    seen.add(key);
-    output.push(Object.freeze({ ...item }));
+    const prior = merged.get(key);
+    if (prior === undefined) {
+      merged.set(key, Object.freeze({ ...item }));
+      continue;
+    }
+    if (
+      prior.expectedUnitPriceCents !== item.expectedUnitPriceCents ||
+      prior.expectedCurrency !== item.expectedCurrency
+    ) {
+      return null;
+    }
+    // The aggregate, not the addend, is what the cap governs.
+    const aggregate = prior.quantity + item.quantity;
+    if (!isEarlyAccessQuantity(aggregate)) return null;
+    merged.set(key, Object.freeze({ ...prior, quantity: aggregate }));
   }
+
+  // Applied to the CANONICAL count. Duplicates of one variant are one item, so
+  // a cart is measured by how many distinct things it actually holds.
+  if (merged.size > EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS) return null;
+
+  const output = Array.from(merged.values());
   output.sort((a, b) => `${a.productId}:${a.variantId}`.localeCompare(`${b.productId}:${b.variantId}`));
   return Object.freeze(output);
 }

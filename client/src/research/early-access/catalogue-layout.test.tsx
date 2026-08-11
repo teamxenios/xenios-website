@@ -131,24 +131,32 @@ describe("the catalogue gives each card usable width", () => {
 });
 
 describe("the quantity control fits the card it lives in", () => {
-  it("renders three chips in a wrapping row with real tap targets", () => {
+  it("renders one fixed-size stepper with real tap targets", () => {
+    // The control is a stepper rather than a row of chips because the round
+    // now offers twenty quantities and twenty chips would reintroduce, by a
+    // different route, the height-and-wrapping failure the chips were built to
+    // fix. What must still hold is the rule that caused it: no nested column
+    // grid inside a narrow card, ever again.
     const el = grid();
     const card = el.querySelector("[data-testid='early-access-catalog-card-var-0']");
-    const options = card?.querySelector("[data-testid$='-quantity-options']");
-    expect(options?.className).toContain("flex");
-    expect(options?.className).toContain("flex-wrap");
-    // No nested column grid inside a narrow card, ever again.
-    expect(options?.className).not.toContain("grid-cols");
+    const stepper = card?.querySelector("[data-testid$='-quantity-stepper']");
+    expect(stepper?.className).toContain("flex");
+    expect(stepper?.className).not.toContain("grid-cols");
 
-    const chips = Array.from(
-      card?.querySelectorAll<HTMLElement>("[data-testid*='-quantity-option-']") ?? [],
+    const controls = Array.from(
+      card?.querySelectorAll<HTMLElement>(
+        "[data-testid$='-quantity-decrement'],[data-testid$='-quantity-increment']",
+      ) ?? [],
     );
-    expect(chips).toHaveLength(3);
-    expect(chips.map((chip) => chip.querySelector("input")?.value)).toEqual(["1", "2", "3"]);
-    for (const chip of chips) {
-      expect(Number.parseInt(chip.style.minWidth, 10)).toBeGreaterThanOrEqual(44);
-      expect(Number.parseInt(chip.style.minHeight, 10)).toBeGreaterThanOrEqual(40);
+    expect(controls).toHaveLength(2);
+    for (const control of controls) {
+      expect(Number.parseInt(control.style.minWidth, 10)).toBeGreaterThanOrEqual(44);
+      expect(Number.parseInt(control.style.minHeight, 10)).toBeGreaterThanOrEqual(44);
     }
+
+    const input = card?.querySelector<HTMLInputElement>("[data-testid$='-quantity-input']");
+    expect(input?.getAttribute("max")).toBe("20");
+    expect(Number.parseInt(String(input?.style.minHeight), 10)).toBeGreaterThanOrEqual(44);
   });
 
   it("states the bundle offer once, full width, as a sentence", () => {

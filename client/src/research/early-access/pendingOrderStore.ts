@@ -25,6 +25,8 @@
  * session the same way the identity does.
  */
 
+import { isEarlyAccessQuantity } from "@shared/research/early-access-quantity";
+
 export const PENDING_ORDER_STORAGE_KEY = "xenios.earlyAccess.pendingOrder.v1";
 export const LAST_ORDER_STORAGE_KEY = "xenios.earlyAccess.lastOrder.v1";
 
@@ -120,10 +122,10 @@ export function isPendingOrderAttempt(value: unknown): value is PendingOrderAtte
     record.productId.length > 0 &&
     typeof record.variantId === "string" &&
     record.variantId.length > 0 &&
-    typeof record.quantity === "number" &&
-    Number.isInteger(record.quantity) &&
-    record.quantity >= 1 &&
-    record.quantity <= 3 &&
+    // The round's band, read from the one policy rather than restated. This
+    // used to be a literal 1 and 3, which is exactly the kind of copy that
+    // silently keeps refusing a quantity the server has started accepting.
+    isEarlyAccessQuantity(record.quantity) &&
     typeof record.fingerprint === "string" &&
     FINGERPRINT_SHAPE.test(record.fingerprint)
   );

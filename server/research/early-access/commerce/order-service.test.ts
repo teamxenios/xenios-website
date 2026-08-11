@@ -280,15 +280,43 @@ describe("catalog resolution", () => {
 });
 
 describe("quantity", () => {
-  it("accepts the three tiers and refuses anything outside them", async () => {
+  it("accepts the band and refuses anything outside it", async () => {
+    // The fixture release approves three units, so three is what this fixture
+    // can actually buy. The BAND is one through twenty; the release ceiling is
+    // a separate, stricter authority, asserted in its own test below.
     for (const quantity of [1, 2, 3]) {
       const result = await place({ request: request({ quantity }) });
       expect(result.ok).toBe(true);
     }
-    for (const quantity of [0, 4, -1, 2.5, "2", null]) {
+    for (const quantity of [0, 21, -1, 2.5, "2", null, Number.NaN, 1e21]) {
       const result = await place({ request: request({ quantity }) });
       expect(result).toEqual({ ok: false, code: "quantity_out_of_range" });
     }
+  });
+
+  it("keeps a widened band from bypassing the release's approved ceiling", async () => {
+    // The whole point of the widening: twenty is a legal QUANTITY, not a
+    // licence to sell more units than the founder released. Four is inside the
+    // band and still refused here, and it is refused as a LIMIT problem rather
+    // than as a malformed quantity, so the two authorities stay distinguishable
+    // in a log.
+    const result = await place({ request: request({ quantity: 4 }) });
+    expect(result).toEqual({ ok: false, code: "quantity_limit_exceeded" });
+
+    // Raise the release ceiling and the same quantity is accepted, which proves
+    // the refusal came from the ceiling and not from the band.
+    const generous = row({ quantityLimit: null });
+    const permitted = await place({
+      request: request({ quantity: 20 }),
+      rows: [generous],
+      releases: [
+        release({
+          productVersion: earlyAccessReleaseVersion(generous),
+          approvedQuantityLimit: 20,
+        }),
+      ],
+    });
+    expect(permitted.ok).toBe(true);
   });
 
   it("refuses a quantity above the row's own limit", async () => {
@@ -366,12 +394,30 @@ describe("bundle arithmetic is exact to the cent", () => {
     expect(first).toEqual(second);
   });
 
-  it("exposes exactly three tiers and one discount", () => {
-    expect(EARLY_ACCESS_BUNDLE_TIERS.map((tier) => tier.eligibleQuantity)).toEqual([1, 2, 3]);
-    expect(
-      EARLY_ACCESS_BUNDLE_TIERS.filter((tier) => tier.discountBasisPoints > 0),
-    ).toHaveLength(1);
-    expect(earlyAccessBundleTier(4)).toBeNull();
+  it("covers the whole band and still exposes exactly one discount", () => {
+    // Every quantity the round accepts must resolve to a rule, or the widened
+    // band would be unreachable: a quantity the table does not name is refused
+    // outright rather than falling through to no promotion.
+    expect(EARLY_ACCESS_BUNDLE_TIERS.map((tier) => tier.eligibleQuantity)).toEqual(
+      Array.from({ length: 20 }, (_unused, index) => index + 1),
+    );
+
+    // THE FINANCIAL BOUNDARY. Widening the quantity band decided nothing about
+    // price. Twenty percent at exactly three units is still the only discount
+    // that exists, and four through twenty carry zero, because no other
+    // discount has been approved and this table may not invent one.
+    const discounted = EARLY_ACCESS_BUNDLE_TIERS.filter(
+      (tier) => tier.discountBasisPoints > 0,
+    );
+    expect(discounted).toHaveLength(1);
+    expect(discounted[0]!.eligibleQuantity).toBe(3);
+    expect(discounted[0]!.discountBasisPoints).toBe(2_000);
+    for (const tier of EARLY_ACCESS_BUNDLE_TIERS.filter((t) => t.eligibleQuantity > 3)) {
+      expect(tier.discountBasisPoints).toBe(0);
+    }
+
+    expect(earlyAccessBundleTier(21)).toBeNull();
+    expect(earlyAccessBundleTier(0)).toBeNull();
   });
 });
 

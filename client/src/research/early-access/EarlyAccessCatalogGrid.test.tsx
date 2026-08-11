@@ -130,8 +130,14 @@ describe("early access catalogue grid", () => {
     expect(heldCard?.querySelectorAll("button")).toHaveLength(0);
     expect(heldCard?.querySelectorAll("input")).toHaveLength(0);
 
+    // The ACTION button specifically. A sellable card also renders the two
+    // quantity steppers, and the minus control is legitimately disabled at one
+    // unit, so "the first button in the card" no longer names the thing this
+    // assertion is about.
     const availableCard = el.querySelector("[data-availability='AVAILABLE']");
-    expect(availableCard?.querySelector("button")?.disabled).toBe(false);
+    expect(
+      availableCard?.querySelector<HTMLButtonElement>("[data-testid$='-action']")?.disabled,
+    ).toBe(false);
   });
 
   it("shows the single unit price and never a computed bundle total", () => {
@@ -169,7 +175,7 @@ describe("early access catalogue grid", () => {
     const onSelect = vi.fn();
     const { el } = grid(approvedRows(), onSelect);
     const first = el.querySelector<HTMLButtonElement>(
-      "[data-availability='AVAILABLE'] button",
+      "[data-availability='AVAILABLE'] [data-testid$='-action']",
     );
     act(() => {
       first?.click();
