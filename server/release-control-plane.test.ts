@@ -110,6 +110,15 @@ const CART_SHIPPING_COMMITMENTS_SOURCE_SHA =
   "e6770852a28fc7badc4ba02f0b3632b07ae0ece8";
 const CART_SHIPPING_COMMITMENTS_PATH =
   "supabase/migrations/20260810130000_research_early_access_cart_shipping_commitments.sql";
+// M65: the one-through-twenty quantity band, pinned to the commit that
+// introduced it together with the application half it exists to serve. Neither
+// is meaningful alone: the widened constraint with a server that still refuses
+// four is inert, and the widened server without it is a checkout the database
+// rejects after the customer has been quoted.
+const CART_QUANTITY_BAND_SOURCE_SHA =
+  "6e26fd9d757d99a03f9d1821254857126ecf1f55";
+const CART_QUANTITY_BAND_PATH =
+  "supabase/migrations/20260811120000_research_early_access_cart_quantity_band.sql";
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -802,6 +811,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(FM_CATEGORY_EXPANSION_SOURCE_SHA);
           } else if (path === CART_SHIPPING_COMMITMENTS_PATH) {
             expect(sourceSha).toBe(CART_SHIPPING_COMMITMENTS_SOURCE_SHA);
+          } else if (path === CART_QUANTITY_BAND_PATH) {
+            expect(sourceSha).toBe(CART_QUANTITY_BAND_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
