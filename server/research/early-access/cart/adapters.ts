@@ -165,6 +165,24 @@ export class FounderReleaseCartPricing implements EarlyAccessCartReleasePort {
       return Object.freeze({ released: false as const, code: holdToLineFailure(decision.hold) });
     }
 
+    // THE FOUNDER RELEASE IS A QUANTITY AUTHORITY, NOT ONLY A PRICE SOURCE.
+    //
+    // Product Control deliberately projects `quantityLimit: null` today. The
+    // quote service therefore cannot enforce the founder's durable ceiling
+    // from the catalogue unit alone. This comparison keeps the effective cap
+    // at the strictest of all three authorities:
+    //
+    //   global band (normalizeCartItems)
+    //   Product Control, when declared (quote-service)
+    //   founder release (here)
+    //
+    // It is especially important during a staged widening: an application
+    // candidate may understand 50 while the accepted production release still
+    // authorizes only 20. In that state 21 must remain refused.
+    if (input.quantity > decision.approvedQuantityLimit) {
+      return Object.freeze({ released: false as const, code: "QUANTITY_INVALID" as const });
+    }
+
     const promotion = earlyAccessPromotionFor(input.quantity, EARLY_ACCESS_PROMOTIONS);
     if (promotion === null) {
       // The round offers no rule for this quantity, which is a quantity

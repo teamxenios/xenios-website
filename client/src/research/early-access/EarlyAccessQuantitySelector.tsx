@@ -12,8 +12,8 @@ export const EARLY_ACCESS_QUANTITY_MAX = EARLY_ACCESS_MAX_QUANTITY;
 /**
  * A quantity this round accepts.
  *
- * This was a union of the three literals the round used to offer. At twenty it
- * is a plain number with a guard, because a twenty-member literal union buys
+ * This was a union of the three literals the round used to offer. At a broad
+ * band it is a plain number with a guard, because a large literal union buys
  * nothing the runtime check does not already give and forces a cast at every
  * call site that computes a quantity rather than picking one.
  */
@@ -43,13 +43,13 @@ export interface EarlyAccessQuantitySelectorProps {
  * roughly 300px wide, wrapping one character per line. Chips fixed that by
  * making the number itself the control.
  *
- * Twenty chips would reintroduce the same failure by a different route: a
- * twenty-item wrap flow is taller than the card it sits in and turns a product
+ * Fifty chips would reintroduce the same failure by a different route: a
+ * fifty-item wrap flow is taller than the card it sits in and turns a product
  * grid into a wall of digits. A stepper is a fixed-size control at every width,
  * which is the property the card actually needs, and it is the standard way to
  * express a wide numeric range on a phone.
  *
- * THE MAX HERE IS A COURTESY, NOT A CHECK. `max={20}` on an input stops a
+ * THE MAX HERE IS A COURTESY, NOT A CHECK. The input's max attribute stops a
  * pointer, and the clamp below stops a keyboard, but neither is authority.
  * Every quantity is re-read on the server against the same policy before it can
  * reach a quote, an order or a supplier release.
@@ -79,7 +79,7 @@ export function EarlyAccessQuantitySelector({
 
   function commit(candidate: number): void {
     // Clamped rather than refused, because a stepper's job is to stay inside
-    // its own band. A typed 21 becomes 20 here AND is refused by the server if
+    // its own band. A typed 51 becomes 50 here AND is refused by the server if
     // it ever arrives by another route.
     const clamped = Math.min(
       EARLY_ACCESS_QUANTITY_MAX,

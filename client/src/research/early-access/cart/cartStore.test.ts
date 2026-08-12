@@ -19,6 +19,21 @@ describe("Early Access browser cart", () => {
       { productId: "PEX-001", variantId: "VAR-1", quantity: 2 },
     ]);
   });
+  it("stores fifty and purges a forged fifty-one without coercion", () => {
+    putBrowserCartItem({ productId: "PEX-001", variantId: "VAR-1", quantity: 50 });
+    expect(readBrowserCart().items).toEqual([
+      { productId: "PEX-001", variantId: "VAR-1", quantity: 50 },
+    ]);
+    sessionStorage.setItem(
+      "xenios.research.earlyAccess.cart.v1",
+      JSON.stringify({
+        version: 1,
+        items: [{ productId: "PEX-001", variantId: "VAR-1", quantity: 51 }],
+      }),
+    );
+    expect(readBrowserCart().items).toEqual([]);
+    expect(sessionStorage.getItem("xenios.research.earlyAccess.cart.v1")).toBeNull();
+  });
   it("removes and clears", () => {
     putBrowserCartItem({ productId: "PEX-001", variantId: "VAR-1", quantity: 1 });
     expect(removeBrowserCartItem("PEX-001", "VAR-1").items).toEqual([]);

@@ -32,7 +32,7 @@ export const EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS = 25 as const;
  * rather than refused, so the raw list can legitimately be longer than the
  * distinct-item cap. The largest submission that could still canonicalize to a
  * legal cart is every distinct item arriving as single-unit lines, which is
- * `25 x 20`. Anything past that cannot become a valid cart no matter how it
+ * `distinct-item cap x the shared policy ceiling`. Anything past that cannot become a valid cart no matter how it
  * merges, so it is refused before any work is done on it.
  */
 export const EARLY_ACCESS_CART_MAX_SUBMITTED_LINES =

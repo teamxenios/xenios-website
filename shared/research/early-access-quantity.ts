@@ -25,7 +25,7 @@
  * `readQuantity` accepts a `number` that is already a whole number in range and
  * refuses everything else. It does NOT coerce. A decimal is not floored, a
  * numeric string is not parsed, `true` is not 1, and an empty string is not 0.
- * That is the point: coercion is how "21" arrives as 21 through one door and as
+ * That is the point: coercion is how "51" arrives as 51 through one door and as
  * NaN through another, and how a `1e21` becomes a quantity no downstream
  * integer arithmetic can hold. Anything that is not already exactly an integer
  * inside the band is refused, so every accepted quantity is safe to multiply.
@@ -40,9 +40,11 @@ export const EARLY_ACCESS_MIN_QUANTITY = 1;
  * PER EXACT VARIANT, not per cart. Two different variants may each carry the
  * maximum. The same variant may not reach past it by arriving on more than one
  * cart line, which is what `canonicalizeQuantities` in the cart model exists to
- * prevent.
+ * prevent. This candidate widens only this application policy; production
+ * remains governed by its durable 1..20 release rows until the separately
+ * reviewed M66 and release-authority chain are explicitly approved and run.
  */
-export const EARLY_ACCESS_MAX_QUANTITY = 20;
+export const EARLY_ACCESS_MAX_QUANTITY = 50;
 
 /**
  * A whole number inside the band, with no coercion of any kind.
