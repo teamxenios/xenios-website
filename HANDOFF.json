@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "name": "Xenios Orders Payments and Fulfillment",
+  "pack": "04",
+  "effort": "high",
+  "status": "READY_FOR_REVIEW_UNMOUNTED",
+  "base": {
+    "requestedSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
+    "strategy": "RECREATED_FROM_EXACT_BASE",
+    "verified": true
+  },
+  "branch": "codex/pack04-orders-payments-fulfillment-20260812",
+  "outputSha": {
+    "source": "git rev-parse HEAD after the handoff commit",
+    "value": null,
+    "note": "A commit cannot contain its own SHA. The exact output SHA is returned beside this file."
+  },
+  "scope": [
+    "buyer request",
+    "admin approval",
+    "invoice",
+    "opaque payment instructions",
+    "private payment evidence metadata",
+    "committed payment verification",
+    "named settlement projection",
+    "supplier handoff queue and explicit release",
+    "fulfillment",
+    "append-only tracking",
+    "customer-safe order timeline",
+    "business organization ownership",
+    "personal buyer ownership",
+    "durable idempotency contract",
+    "append-only audit contract",
+    "Trust Dial gating"
+  ],
+  "hardInvariants": [
+    "A new workflow can only begin in request_pending with no approval.",
+    "Invoice issuance requires a named admin approval.",
+    "Payment evidence must match the order invoice and is not payment verification.",
+    "Settlement requires committed verification evidence matching the invoice amount and currency.",
+    "Supplier handoff requires both approval and committed settlement.",
+    "A queued supplier handoff cannot begin fulfillment until a separate named release exists.",
+    "Fulfillment requires approval, settlement, and supplier release at both domain and storage layers.",
+    "Shipped requires append-only tracking; delivered requires shipped evidence.",
+    "Personal and business customer reads are ownership-scoped; business reads also require active organization authority.",
+    "Customer timelines omit proof object references, supplier payloads, external transactions, settlements, and internal audit details.",
+    "Consequential queue/ask actions require a Trust Dial approval reference; never refuses the action.",
+    "Identical idempotency retries replay; changed payloads under the same scoped key conflict and are audited."
+  ],
+  "artifacts": [
+    {
+      "path": "server/research/commerce/order-payment-fulfillment.ts",
+      "purpose": "Unmounted reference workflow extending existing manual-payment commit evidence into approval, settlement, supplier release, fulfillment, tracking, ownership, timeline, idempotency, and audit."
+    },
+    {
+      "path": "server/research/commerce/order-payment-fulfillment.test.ts",
+      "purpose": "Seven end-to-end and adversarial domain tests."
+    },
+    {
+      "path": "supabase/research-order-payment-fulfillment-pack04.sql",
+      "purpose": "Unrun storage draft with forced RLS, personal/business ownership, customer-scoped timeline RPC, immutable evidence, and non-bypassable workflow gates."
+    },
+    {
+      "path": "server/research/commerce/order-payment-fulfillment-storage.test.ts",
+      "purpose": "Six static storage-contract tests protecting RLS, ownership, approval, settlement, fulfillment, append-only evidence, and safe timeline projection."
+    },
+    {
+      "path": "HANDOFF.json",
+      "purpose": "Pack 04 handoff, verification record, and next-gate contract."
+    }
+  ],
+  "verification": [
+    {
+      "command": "npm test -- --run server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts",
+      "result": "PASS",
+      "details": "2 files, 13 tests passed"
+    },
+    {
+      "command": "npm run check",
+      "result": "PASS",
+      "details": "Repository-wide TypeScript check passed"
+    },
+    {
+      "command": "npm run check:release-control-plane",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run verify:migration-dag",
+      "result": "PASS",
+      "details": "26 canonical migration nodes verified; Pack 04 draft is intentionally not presented as a managed migration"
+    },
+    {
+      "command": "npm run verify:route-uniqueness",
+      "result": "PASS",
+      "details": "352 registrations across 343 call sites; Pack 04 mounted no route"
+    },
+    {
+      "command": "npx tsx scripts/acceptance/verify-pgcrypto-qualification.ts",
+      "result": "PASS",
+      "details": "130 SQL files scanned; no new public-qualified pgcrypto calls"
+    },
+    {
+      "command": "npm run build",
+      "result": "PASS",
+      "details": "Client and server production compilation completed; nothing deployed"
+    },
+    {
+      "command": "npm test",
+      "result": "PASS_WITH_TIMEOUT_EXCEPTIONS_RECHECKED",
+      "details": "493 files passed, 2 skipped; 8295 tests passed, 27 skipped; four 5-second timeout-only failures. Three affected files passed in an isolated rerun. The remaining pgcrypto scanner passed through its direct CLI without Vitest's 5-second wrapper. No Pack 04 assertion failed."
+    }
+  ],
+  "notPerformed": [
+    "No route or UI mount",
+    "No deployment",
+    "No Supabase migration apply",
+    "No database mutation",
+    "No external payment, supplier, fulfillment, tracking, notification, or customer action",
+    "No evals/run_evals.py run because this repository does not contain that harness"
+  ],
+  "requiredNextGate": [
+    "Assign a reviewed managed migration identity to the Pack 04 SQL draft.",
+    "Run disposable managed-Supabase-shaped apply-twice, behavioral, concurrency, RLS, and rollback verification.",
+    "Only then copy the exact reviewed SQL bytes into supabase/migrations and add the migration ledger/DAG node.",
+    "Build a persistence adapter that commits workflow projection, command receipt, timeline event, audit entry, and optional evidence/settlement/fulfillment facts in one database transaction.",
+    "Independently review and approve any future route or worker mount."
+  ]
+}
