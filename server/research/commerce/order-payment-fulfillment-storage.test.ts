@@ -105,8 +105,14 @@ describe("Pack 04 storage contract", () => {
 
   it("returns only a customer-safe timeline projection", () => {
     const projection = sql.slice(sql.indexOf("create or replace function public.research_customer_order_timeline"));
+    expect(sql).toContain("research_order_timeline_customer_detail_keys");
+    expect(sql).toContain("when 'buyer_request_created' then detail - array['lineCount']");
+    expect(sql).toContain("when 'payment_verified' then detail - array['amountCents', 'currency']");
+    expect(sql).toContain("when 'tracking_added' then detail - array['carrier', 'trackingNumber']");
     expect(projection).toContain("'trackingNumber', t.tracking_number");
     expect(projection).toContain("where e.order_id = p_order_id and e.customer_visible");
+    expect(projection).toContain("pg_catalog.jsonb_strip_nulls");
+    expect(projection).not.toContain("'detail', e.detail");
     expect(projection).not.toContain("external_transaction_ref");
     expect(projection).not.toContain("private_object_ref");
     expect(projection).not.toContain("supplier_id");

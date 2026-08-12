@@ -287,7 +287,19 @@ create table if not exists public.research_order_timeline_events (
   actor_id text not null check (length(actor_id) between 3 and 128),
   actor_role text not null check (actor_role in ('buyer', 'admin', 'finance', 'supplier')),
   detail jsonb not null default '{}'::jsonb check (pg_catalog.jsonb_typeof(detail) = 'object'),
-  constraint research_order_timeline_sequence unique (order_id, sequence)
+  constraint research_order_timeline_sequence unique (order_id, sequence),
+  constraint research_order_timeline_customer_detail_keys check (
+    not customer_visible
+    or case kind
+      when 'buyer_request_created' then detail - array['lineCount'] = '{}'::jsonb
+      when 'request_rejected' then detail - array['reason'] = '{}'::jsonb
+      when 'invoice_issued' then detail - array['invoiceRef', 'amountCents', 'currency'] = '{}'::jsonb
+      when 'payment_verified' then detail - array['amountCents', 'currency'] = '{}'::jsonb
+      when 'tracking_added' then detail - array['carrier', 'trackingNumber'] = '{}'::jsonb
+      when 'order_cancelled' then detail - array['reason'] = '{}'::jsonb
+      else detail = '{}'::jsonb
+    end
+  )
 );
 
 create table if not exists public.research_order_audit_events (
@@ -689,7 +701,37 @@ begin
       select pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
         'kind', e.kind,
         'occurredAt', e.occurred_at,
-        'detail', e.detail
+        'detail', case e.kind
+          when 'buyer_request_created' then pg_catalog.jsonb_strip_nulls(
+            pg_catalog.jsonb_build_object('lineCount', e.detail -> 'lineCount')
+          )
+          when 'request_rejected' then pg_catalog.jsonb_strip_nulls(
+            pg_catalog.jsonb_build_object('reason', e.detail -> 'reason')
+          )
+          when 'invoice_issued' then pg_catalog.jsonb_strip_nulls(
+            pg_catalog.jsonb_build_object(
+              'invoiceRef', e.detail -> 'invoiceRef',
+              'amountCents', e.detail -> 'amountCents',
+              'currency', e.detail -> 'currency'
+            )
+          )
+          when 'payment_verified' then pg_catalog.jsonb_strip_nulls(
+            pg_catalog.jsonb_build_object(
+              'amountCents', e.detail -> 'amountCents',
+              'currency', e.detail -> 'currency'
+            )
+          )
+          when 'tracking_added' then pg_catalog.jsonb_strip_nulls(
+            pg_catalog.jsonb_build_object(
+              'carrier', e.detail -> 'carrier',
+              'trackingNumber', e.detail -> 'trackingNumber'
+            )
+          )
+          when 'order_cancelled' then pg_catalog.jsonb_strip_nulls(
+            pg_catalog.jsonb_build_object('reason', e.detail -> 'reason')
+          )
+          else '{}'::jsonb
+        end
       ) order by e.sequence)
       from public.research_order_timeline_events e
       where e.order_id = p_order_id and e.customer_visible
