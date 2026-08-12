@@ -5,7 +5,8 @@
   "effort": "high",
   "status": "CANDIDATE_BUILT_NOT_RELEASED",
   "baseSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
-  "candidateSourceSha": "afe9b82336ede44c6a667342c85b04c5a3e0ed18",
+  "coreAndMigrationSourceSha": "afe9b82336ede44c6a667342c85b04c5a3e0ed18",
+  "applicationCandidateSha": "e065a514d32cbb70b6875b2b2fb955d86866b235",
   "controlPlaneSha": "108a983475f902ec0326b4835dcf3fea2c0c5471",
   "branch": "codex/xenios-quantity-1-50-candidate",
   "productionAuthority": {
@@ -89,6 +90,7 @@
   "validation": {
     "passed": [
       "377 focused assertions across client, server, aggregation, duplicate/idempotency, money, settlement attacks, Product Control, storefront composition, release authority, and static M66/release SQL contracts",
+      "broad non-control-plane suite: 495 test files passed, 2 environment-guarded files skipped; 8258 tests passed, 26 environment-guarded tests skipped",
       "TypeScript no-emit typecheck",
       "production client/server build",
       "git diff whitespace check",
@@ -114,7 +116,7 @@
     {
       "order": 1,
       "action": "Freeze and review the candidate bytes",
-      "command": "git diff ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0..afe9b82336ede44c6a667342c85b04c5a3e0ed18 -- && git show --stat --oneline afe9b82336ede44c6a667342c85b04c5a3e0ed18",
+      "command": "git diff ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0..e065a514d32cbb70b6875b2b2fb955d86866b235 -- && git show --stat --oneline afe9b82336ede44c6a667342c85b04c5a3e0ed18 && git show --stat --oneline e065a514d32cbb70b6875b2b2fb955d86866b235",
       "stopUnless": "The reviewed source and artifact SHA-256 values match this handoff."
     },
     {
@@ -150,7 +152,7 @@
     {
       "order": 7,
       "action": "Deploy the reviewed application candidate while durable authority is still 20",
-      "command": "Build and deploy application source exactly at afe9b82336ede44c6a667342c85b04c5a3e0ed18 using the approved deployment system.",
+      "command": "Build and deploy application source exactly at e065a514d32cbb70b6875b2b2fb955d86866b235 using the approved deployment system.",
       "stopUnless": "A production smoke test accepts 20 and refuses 21 and 50; Product Control null cannot bypass release authority."
     },
     {
