@@ -1,0 +1,50 @@
+# Pack 02: client accounts and B2B identity overlay
+
+Status: isolated implementation on `ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0`. Routes, pages, SQL, grants, and RLS are not mounted or applied.
+
+## Reused authorities
+
+- Credentials, email verification, password changes, and sessions: existing Supabase Auth.
+- Personal member identity and profile: existing `research_members` and `/api/research/profile` surfaces.
+- Personal order history: existing `research_orders` API and tables.
+- Guest/Early Access identity: existing durable `research_early_access_customers` and opaque `customerRef`.
+- Early Access orders, invoices, and tracking: existing `research_early_access_placements`, cart checkout, invoice, and fulfillment tables.
+
+The organization layer grants an existing Supabase Auth UID roles in an organization. It does not issue credentials. A `customerRef` binding assigns the existing customer/order scope to either one personal member or one organization; it does not copy or recreate orders.
+
+## Unmounted API overlay
+
+- `GET /api/research/account/context`
+- `POST /api/research/account/claims/request`
+- `POST /api/research/account/claims/confirm`
+- `POST /api/research/account/security/password-change-complete`
+- `POST /api/research/account/organization-invitations/accept`
+- `GET /api/research/account/organizations/:organizationId/dashboard`
+- `PATCH /api/research/account/organizations/:organizationId/profile`
+- `POST /api/research/account/organizations/:organizationId/users/invitations`
+- `POST /api/research/account/organizations/:organizationId/orders/request-again`
+
+Every route requires a server-verified Supabase JWT and confirmed email. Organization data additionally requires an active organization membership and appropriate role. The initial-password flag returns HTTP 428 until the existing Supabase password has been changed and the production dependency proves the change occurred after the flag was set.
+
+## Claim rule
+
+Claiming earlier history requires all of the following:
+
+1. A non-recovery Supabase session with confirmed email.
+2. An existing customer record for the opaque `customerRef`.
+3. Exact normalized email match between Supabase Auth and the existing customer record.
+4. An authorized target: the user's personal member row or an organization where the user is owner, admin, or buyer.
+5. A one-time, expiring challenge delivered to the verified email.
+6. An atomic challenge-consume plus unique customer-to-subject binding.
+
+The raw challenge token is never stored; only its SHA-256 domain-separated hash is persisted. `customerRef` alone never establishes ownership.
+
+## B2B behavior
+
+Organization roles support owners, admins, business buyers, and billing viewers. Owners/admins can update business/billing/shipping profile fields and invite future users. Buyers can view organization-owned orders, invoices, and tracking and create an idempotent request-again intent. That intent references the existing order snapshot and is not an order, payment, or automatic reorder.
+
+The Roman Digital seed contains the organization and normalized invitation email only. Its organization-user binding cannot exist until Samuel supplies the manually-created, email-verified Supabase Auth UID and runs the reviewed binding operation in `pack02-roman-digital-binding.md`.
+
+## Integration work intentionally deferred
+
+The final-base integration owner must implement the `AccountIdentityDeps` production adapter against the candidate tables and existing order projections, connect challenge/invitation email delivery to the durable outbox, mount the registration function and pages, and add the candidate SQL to the reviewed migration DAG. None of those actions are safe on this sibling base.
