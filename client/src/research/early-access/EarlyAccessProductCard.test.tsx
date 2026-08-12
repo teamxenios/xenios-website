@@ -212,7 +212,7 @@ describe("early access product card", () => {
     expect(input).not.toBeNull();
     // And it offers the round's whole band, not a narrower one.
     expect(input?.getAttribute("min")).toBe("1");
-    expect(input?.getAttribute("max")).toBe("20");
+    expect(input?.getAttribute("max")).toBe("50");
   });
 
   it("shows no product photography, and no longer reserves a square for it", () => {
