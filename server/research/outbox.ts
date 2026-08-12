@@ -25,6 +25,7 @@ import {
 import { runAgreementPackageReconciler } from "./agreement-package-reconciliation";
 import { renderProductDiagnosticOutboxEmail } from "./products-diagnostics/communications";
 import { renderEarlyAccessOutboxEmail } from "./early-access/notifications/communications";
+import { renderBuyerCommerceOutboxEmail } from "./buyer-commerce/communications";
 
 // ---------------------------------------------------------------------------
 // Durable notification outbox (Mega 1 sections 3-4). Every notification is a
@@ -339,6 +340,15 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
             to: job.recipient,
             subject: productDiagnostic.subject,
             text: productDiagnostic.text,
+            idempotencyKey: String(job.event_key),
+          });
+        }
+        const buyerCommerce = renderBuyerCommerceOutboxEmail(job.template_key, payload);
+        if (buyerCommerce) {
+          return await sendFoundingEmail({
+            to: job.recipient,
+            subject: buyerCommerce.subject,
+            text: buyerCommerce.text,
             idempotencyKey: String(job.event_key),
           });
         }
