@@ -119,6 +119,13 @@ const CART_QUANTITY_BAND_SOURCE_SHA =
   "6e26fd9d757d99a03f9d1821254857126ecf1f55";
 const CART_QUANTITY_BAND_PATH =
   "supabase/migrations/20260811120000_research_early_access_cart_quantity_band.sql";
+// M66: candidate-only one-through-fifty database band. The source is pinned,
+// but applyTwiceVerified deliberately stays false until the separately gated
+// PG16/PG17 rehearsal is authorized and run.
+const CART_QUANTITY_BAND_50_SOURCE_SHA =
+  "afe9b82336ede44c6a667342c85b04c5a3e0ed18";
+const CART_QUANTITY_BAND_50_PATH =
+  "supabase/migrations/20260812120000_research_early_access_cart_quantity_band_50.sql";
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -813,6 +820,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(CART_SHIPPING_COMMITMENTS_SOURCE_SHA);
           } else if (path === CART_QUANTITY_BAND_PATH) {
             expect(sourceSha).toBe(CART_QUANTITY_BAND_SOURCE_SHA);
+          } else if (path === CART_QUANTITY_BAND_50_PATH) {
+            expect(sourceSha).toBe(CART_QUANTITY_BAND_50_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
