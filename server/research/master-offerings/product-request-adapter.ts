@@ -12,6 +12,7 @@ import type {
 } from "./model";
 
 export const MASTER_OFFERING_DEMAND_INTENTS = [
+  "early_access_purchase",
   "request_access",
   "notify_me",
   "join_waitlist",
@@ -43,6 +44,8 @@ export function demandIntentForAction(
   action: MasterOfferingAction,
 ): MasterOfferingDemandIntent | null {
   switch (action.kind) {
+    case "request_early_access_purchase":
+      return "early_access_purchase";
     case "request_access":
     case "notify_me":
     case "join_waitlist":
@@ -86,16 +89,23 @@ export function toExistingMasterOfferingProductRequest(
   const form: Website3ProductRequestForm = {
     productName: input.offering.displayName,
     category: CATEGORY_BY_FAMILY[input.offering.family],
-    description: `Catalog ${input.intent.replace(/_/g, " ")} interest for ${input.offering.displayName}.`,
+    description:
+      input.intent === "early_access_purchase"
+        ? `Manual Early Access purchase request for ${input.offering.displayName}.`
+        : `Catalog ${input.intent.replace(/_/g, " ")} interest for ${input.offering.displayName}.`,
     brand: input.offering.brand,
     desiredFormat: input.variant.label,
     desiredSize: null,
     quantity: null,
     frequency: null,
     timing:
-      input.intent === "request_access" || input.intent === "apply"
-        ? "researching"
-        : "future_interest",
+      // A manual Early Access purchase is a buyer asking to buy now. It is
+      // still a request, not an order: no quantity, no price, no commitment.
+      input.intent === "early_access_purchase"
+        ? "asap"
+        : input.intent === "request_access" || input.intent === "apply"
+          ? "researching"
+          : "future_interest",
     notes: input.notes?.trim() || null,
     contactConsent: input.contactConsent,
     attributionSource: "products",

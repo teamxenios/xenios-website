@@ -12,6 +12,20 @@ export const MASTER_OFFERINGS_ENABLED_ENV_VAR =
 export const MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY_ENV_VAR =
   "RESEARCH_MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY";
 
+/**
+ * Manual Early Access purchase requests. Fail closed: the CTA appears only on
+ * an exact `true`, because it is buyer-facing copy that promises a human will
+ * pick the request up.
+ */
+export const MASTER_OFFERINGS_MANUAL_PURCHASE_ENV_VAR =
+  "RESEARCH_MASTER_OFFERINGS_MANUAL_PURCHASE_REQUESTS";
+
+export function masterOfferingsManualPurchaseRequests(
+  env: VisibilityEnv = process.env,
+): boolean {
+  return env[MASTER_OFFERINGS_MANUAL_PURCHASE_ENV_VAR] === "true";
+}
+
 export function masterOfferingsEnabled(
   env: VisibilityEnv = process.env,
 ): boolean {

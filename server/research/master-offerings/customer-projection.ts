@@ -5,7 +5,23 @@ import {
   type MasterOfferingDetailView,
   type MasterOfferingVariantView,
 } from "@shared/research/master-offerings/contract";
-import { resolveMasterOfferingAction } from "./action";
+import {
+  MASTER_OFFERING_PRICE_ON_REQUEST,
+  type MasterOfferingPriceView,
+} from "@shared/research/master-offerings/pricing-contract";
+import {
+  DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
+  defaultMasterOfferingActionTargets,
+  resolveMasterOfferingAction,
+  type MasterOfferingActionCapabilities,
+} from "./action";
+import {
+  NO_MASTER_OFFERING_PRICES,
+  priceForVariant,
+  projectMasterOfferingVariantSummaries,
+  summarizeOfferingPrices,
+  type MasterOfferingPriceMap,
+} from "./price-projection";
 import type {
   MasterOfferingCommerceResolver,
   NormalizedMasterOffering,
@@ -28,22 +44,28 @@ export function projectMasterOfferingVariant(
   offering: NormalizedMasterOffering,
   variant: NormalizedMasterOfferingVariant,
   commerce: MasterOfferingCommerceResolver = noMasterOfferingCommerce,
+  price: MasterOfferingPriceView = MASTER_OFFERING_PRICE_ON_REQUEST,
+  capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): MasterOfferingVariantView {
   return {
     id: variant.id,
     label: variant.label,
     displayState: variant.displayState,
     displayLabel: MASTER_OFFERING_DISPLAY_LABELS[variant.displayState],
+    price,
     action: resolveMasterOfferingAction(
       offering,
       variant,
       commerce(offering, variant),
+      defaultMasterOfferingActionTargets,
+      capabilities,
     ),
   };
 }
 
 export function projectMasterOfferingCard(
   offering: NormalizedMasterOffering,
+  prices: MasterOfferingPriceMap = NO_MASTER_OFFERING_PRICES,
 ): MasterOfferingCardView {
   if (offering.visibility !== "member") {
     throw new Error(`Refused to project admin-only offering ${offering.id}`);
@@ -63,12 +85,16 @@ export function projectMasterOfferingCard(
     stateExplanation: offering.stateExplanation,
     copyState: offering.copyState,
     variantCount: offering.variants.length,
+    variants: projectMasterOfferingVariantSummaries(offering, prices),
+    priceSummary: summarizeOfferingPrices(offering, prices),
   };
 }
 
 export function projectMasterOfferingDetail(
   offering: NormalizedMasterOffering,
   commerce: MasterOfferingCommerceResolver = noMasterOfferingCommerce,
+  prices: MasterOfferingPriceMap = NO_MASTER_OFFERING_PRICES,
+  capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): MasterOfferingDetailView {
   const disclosures = [MASTER_OFFERING_CATALOG_DISCLOSURE];
   if (
@@ -79,10 +105,16 @@ export function projectMasterOfferingDetail(
     disclosures.unshift(MASTER_OFFERING_RESEARCH_DISCLOSURE);
   }
   return {
-    ...projectMasterOfferingCard(offering),
+    ...projectMasterOfferingCard(offering, prices),
     overview: null,
     variants: offering.variants.map((variant) =>
-      projectMasterOfferingVariant(offering, variant, commerce),
+      projectMasterOfferingVariant(
+        offering,
+        variant,
+        commerce,
+        priceForVariant(prices, variant),
+        capabilities,
+      ),
     ),
     disclosures,
   };
@@ -90,6 +122,9 @@ export function projectMasterOfferingDetail(
 
 export function projectMasterOfferingList(
   offerings: readonly NormalizedMasterOffering[],
+  prices: MasterOfferingPriceMap = NO_MASTER_OFFERING_PRICES,
 ): readonly MasterOfferingCardView[] {
-  return offerings.map(projectMasterOfferingCard);
+  return offerings.map((offering) =>
+    projectMasterOfferingCard(offering, prices),
+  );
 }

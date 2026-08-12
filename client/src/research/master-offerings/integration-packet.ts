@@ -1,3 +1,8 @@
+import {
+  isMasterOfferingDisplayState,
+  isMasterOfferingFamily,
+} from "@shared/research/master-offerings/contract";
+import type { MasterOfferingPriceListFormat } from "@shared/research/master-offerings/pricing-contract";
 import type {
   MasterOfferingAction,
   MasterOfferingCatalogQuery,
@@ -25,6 +30,65 @@ export function masterOfferingDetailUrl(
   slug: string,
 ): string {
   return `${API_BASE}/products/${encodeURIComponent(family)}/${encodeURIComponent(slug)}`;
+}
+
+/**
+ * The download URL for the buyer price list. It carries the same closed filters
+ * as the catalog and no paging, because a price list is the whole match set or
+ * an explicit refusal, never a page of one.
+ */
+export function masterOfferingPriceListUrl(
+  query: MasterOfferingCatalogQuery = {},
+  format: MasterOfferingPriceListFormat = "csv",
+): string {
+  const params = new URLSearchParams();
+  if (query.q?.trim()) params.set("q", query.q.trim());
+  if (query.families?.length) params.set("families", query.families.join(","));
+  if (query.states?.length) params.set("states", query.states.join(","));
+  params.set("format", format);
+  return `${API_BASE}/price-list?${params.toString()}`;
+}
+
+/**
+ * Read catalog state out of a browser query string, dropping anything the
+ * closed vocabulary does not recognize. A hand-edited URL narrows or clears a
+ * filter; it can never widen audience, breadth, or commerce.
+ */
+export function parseCatalogQueryFromSearch(
+  search: string,
+): MasterOfferingCatalogQuery {
+  const params = new URLSearchParams(search);
+  const families = (params.get("families") ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(isMasterOfferingFamily);
+  const states = (params.get("states") ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(isMasterOfferingDisplayState);
+  const page = Number(params.get("page"));
+  const q = (params.get("q") ?? "").trim().slice(0, 160);
+  return {
+    ...(q ? { q } : {}),
+    ...(families.length ? { families } : {}),
+    ...(states.length ? { states } : {}),
+    ...(Number.isSafeInteger(page) && page > 0 ? { page } : {}),
+  };
+}
+
+/** Serialize catalog state back into a browser query string. */
+export function catalogQueryToSearch(
+  query: MasterOfferingCatalogQuery,
+): string {
+  const params = new URLSearchParams();
+  if (query.q?.trim()) params.set("q", query.q.trim());
+  if (query.families?.length) params.set("families", query.families.join(","));
+  if (query.states?.length) params.set("states", query.states.join(","));
+  if (query.page !== undefined && query.page > 1) {
+    params.set("page", String(query.page));
+  }
+  const serialized = params.toString();
+  return serialized ? `?${serialized}` : "";
 }
 
 export function memberOfferingDetailHref(slug: string): string {

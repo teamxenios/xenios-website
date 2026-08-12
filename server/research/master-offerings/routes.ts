@@ -10,7 +10,15 @@ import {
   type MasterOfferingDisplayState,
   type MasterOfferingFamily,
 } from "@shared/research/master-offerings/contract";
+import {
+  isMasterOfferingPriceListFormat,
+  type MasterOfferingPriceListFormat,
+} from "@shared/research/master-offerings/pricing-contract";
 import type { VisibilityEnv } from "../catalog-display/visibility";
+import {
+  masterOfferingPriceListFilename,
+  toMasterOfferingPriceListCsv,
+} from "./price-list-export";
 import type { MasterOfferingCatalogService } from "./service";
 import {
   masterOfferingsEnabled,
@@ -34,12 +42,15 @@ export interface MasterOfferingCatalogApiDependencies {
     viewer: MasterOfferingCatalogViewer,
   ): Promise<MasterOfferingCatalogService> | MasterOfferingCatalogService;
   env?: VisibilityEnv;
+  /** Injectable clock so an export timestamp is testable and deterministic. */
+  now?(): string;
 }
 
 export interface MasterOfferingCatalogApiHandlers {
   privateHeaders(req: Request, res: Response, next: NextFunction): void;
   list(req: Request, res: Response): Promise<void>;
   detail(req: Request, res: Response): Promise<void>;
+  priceList(req: Request, res: Response): Promise<void>;
   options(req: Request, res: Response): void;
   error(
     err: unknown,
@@ -55,6 +66,8 @@ export const MASTER_OFFERING_CATALOG_LIST_ROUTE =
   `${MASTER_OFFERING_CATALOG_BASE_PATH}/catalog`;
 export const MASTER_OFFERING_CATALOG_DETAIL_ROUTE =
   `${MASTER_OFFERING_CATALOG_BASE_PATH}/products/:family/:slug`;
+export const MASTER_OFFERING_CATALOG_PRICE_LIST_ROUTE =
+  `${MASTER_OFFERING_CATALOG_BASE_PATH}/price-list`;
 
 const RESPONSES = {
   disabled: { ok: false, code: "master_offerings_disabled" },
@@ -63,10 +76,18 @@ const RESPONSES = {
   invalid: { ok: false, code: "master_offerings_invalid_request" },
   notFound: { ok: false, code: "master_offerings_not_found" },
   unavailable: { ok: false, code: "master_offerings_unavailable" },
+  tooLarge: { ok: false, code: "master_offerings_export_too_large" },
 } as const satisfies Record<string, MasterOfferingCatalogErrorResponse>;
 
 const SAFE_SLUG = /^[a-z0-9][a-z0-9-]{0,191}$/;
 const QUERY_KEYS = new Set(["q", "families", "states", "page", "pageSize"]);
+/** The export takes the same closed filters plus a closed output format. */
+const PRICE_LIST_QUERY_KEYS = new Set([
+  "q",
+  "families",
+  "states",
+  "format",
+]);
 
 function setPrivateHeaders(
   res: Response,
@@ -140,6 +161,28 @@ export function parseMasterOfferingCatalogQuery(
     ...(page > 0 ? { page } : {}),
     ...(pageSize > 0 ? { pageSize } : {}),
   };
+}
+
+export function parseMasterOfferingPriceListQuery(
+  req: Pick<Request, "query">,
+):
+  | { query: MasterOfferingCatalogQuery; format: MasterOfferingPriceListFormat }
+  | null {
+  if (Object.keys(req.query).some((key) => !PRICE_LIST_QUERY_KEYS.has(key))) {
+    return null;
+  }
+  const rawFormat = req.query.format === undefined ? "csv" : one(req.query.format);
+  if (rawFormat === null || !isMasterOfferingPriceListFormat(rawFormat)) {
+    return null;
+  }
+  // Paging keys are rejected above; reuse the catalog parser for the filters so
+  // the export and the catalog can never disagree about what a filter means.
+  const { format: _ignored, ...filters } = req.query as Record<string, unknown>;
+  const query = parseMasterOfferingCatalogQuery({ query: filters } as Pick<
+    Request,
+    "query"
+  >);
+  return query === null ? null : { query, format: rawFormat };
 }
 
 export function createMasterOfferingCatalogApiHandlers(
@@ -237,6 +280,56 @@ export function createMasterOfferingCatalogApiHandlers(
     }
   };
 
+  const priceListHandler = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
+    try {
+      if (!masterOfferingsEnabled(env)) {
+        res.status(503).json(RESPONSES.disabled);
+        return;
+      }
+      const parsed = parseMasterOfferingPriceListQuery(req);
+      if (parsed === null) {
+        res.status(400).json(RESPONSES.invalid);
+        return;
+      }
+      const viewer = await open(req, res);
+      if (viewer === null) return;
+      const service = await dependencies.serviceForViewer(viewer);
+      const generatedAt = dependencies.now
+        ? dependencies.now()
+        : new Date().toISOString();
+      const result = await service.priceList({
+        query: parsed.query,
+        audience: viewer.audience,
+        generatedAt,
+      });
+      if (!result.ok) {
+        res.status(413).json(RESPONSES.tooLarge);
+        return;
+      }
+      // A download, not a page. The private headers middleware already marked
+      // it no-store and noindex.
+      res.set(
+        "Content-Disposition",
+        `attachment; filename="${masterOfferingPriceListFilename(
+          generatedAt,
+          parsed.format,
+        )}"`,
+      );
+      if (parsed.format === "json") {
+        res.json(result.document);
+        return;
+      }
+      res
+        .type("text/csv; charset=utf-8")
+        .send(toMasterOfferingPriceListCsv(result.document));
+    } catch {
+      res.status(503).json(RESPONSES.unavailable);
+    }
+  };
+
   const options = (_req: Request, res: Response): void => {
     if (!masterOfferingsEnabled(env)) {
       res.status(503).json(RESPONSES.disabled);
@@ -265,6 +358,7 @@ export function createMasterOfferingCatalogApiHandlers(
     privateHeaders,
     list: listHandler,
     detail: detailHandler,
+    priceList: priceListHandler,
     options,
     error,
   };

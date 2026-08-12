@@ -33,7 +33,30 @@ export interface MasterOfferingActionTargets {
     offering: NormalizedMasterOffering,
     variant: NormalizedMasterOfferingVariant,
   ) => string;
+  earlyAccessPurchase: (
+    offering: NormalizedMasterOffering,
+    variant: NormalizedMasterOfferingVariant,
+  ) => string;
 }
+
+/**
+ * Behaviour a composition root may switch on. Every capability defaults to off,
+ * so the resolver's default mapping is exactly the one the catalog foundation
+ * shipped with and a new surface has to opt in deliberately.
+ */
+export interface MasterOfferingActionCapabilities {
+  /**
+   * Offer the manual Early Access purchase request on a member-safe variant
+   * that is available now but has no direct purchase authority. It routes to
+   * the existing product-request domain; it creates no cart, order, payment, or
+   * quantity commitment, and it cannot appear where Product Control already
+   * authorized `Add to Cart`.
+   */
+  manualEarlyAccessPurchase?: boolean;
+}
+
+export const DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES: MasterOfferingActionCapabilities =
+  { manualEarlyAccessPurchase: false };
 
 export const defaultMasterOfferingActionTargets: MasterOfferingActionTargets = {
   requestAccess: (offering) => productRequestHref("products", offering.displayName),
@@ -42,6 +65,8 @@ export const defaultMasterOfferingActionTargets: MasterOfferingActionTargets = {
   joinWaitlist: (offering) => productRequestHref("products", offering.displayName),
   exploreCare: () => "/research/member/metabolic-care",
   getUpdates: (offering) => productRequestHref("products", offering.displayName),
+  earlyAccessPurchase: (offering) =>
+    productRequestHref("products", offering.displayName),
 };
 
 function nonBlank(value: unknown): value is string {
@@ -94,6 +119,7 @@ export function resolveMasterOfferingAction(
   variant: NormalizedMasterOfferingVariant,
   commerce: MasterOfferingCommerceResolution,
   targets: MasterOfferingActionTargets = defaultMasterOfferingActionTargets,
+  capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): MasterOfferingAction {
   const selection = commerce.selection;
   if (
@@ -111,6 +137,23 @@ export function resolveMasterOfferingAction(
         currency: selection.price.currency,
       },
       evaluatedAt: selection.evaluatedAt,
+    };
+  }
+
+  // Available now, member safe, and no direct purchase authority: this is the
+  // manual Early Access purchase case. It is reached only after the exact
+  // CartProductSelection check above has already declined, so it can never
+  // shadow or weaken a real Add to Cart.
+  if (
+    capabilities.manualEarlyAccessPurchase === true &&
+    offering.visibility === "member" &&
+    variant.visibility === "member" &&
+    variant.displayState === "available_now"
+  ) {
+    return {
+      kind: "request_early_access_purchase",
+      label: "Request Early Access Purchase",
+      href: targets.earlyAccessPurchase(offering, variant),
     };
   }
 

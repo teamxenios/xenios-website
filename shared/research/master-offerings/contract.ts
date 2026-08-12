@@ -11,6 +11,11 @@
  * emit it only after an exact Product Control CartProductSelection has resolved.
  */
 
+import type {
+  MasterOfferingPriceSummary,
+  MasterOfferingPriceView,
+} from "./pricing-contract";
+
 export const MASTER_OFFERING_FAMILIES = [
   "research_vials",
   "blends",
@@ -108,6 +113,17 @@ export type MasterOfferingAction =
       href: string;
     }
   | {
+      /**
+       * Manual Early Access purchase. The buyer-facing path for a member-safe
+       * variant that has no direct purchase authority: the buyer asks for the
+       * purchase and a named human completes it. It creates no cart, no order,
+       * no payment, and no quantity commitment.
+       */
+      kind: "request_early_access_purchase";
+      label: "Request Early Access Purchase";
+      href: string;
+    }
+  | {
       kind: "apply";
       label: "Apply";
       href: string;
@@ -138,11 +154,20 @@ export type MasterOfferingAction =
       href: null;
     };
 
-export interface MasterOfferingVariantView {
+/**
+ * One selectable strength, size, or format, with its truthful state and its
+ * approved price. A summary carries no action, so it is safe on a list card.
+ */
+export interface MasterOfferingVariantSummary {
   id: string;
   label: string;
   displayState: MasterOfferingDisplayState;
   displayLabel: string;
+  price: MasterOfferingPriceView;
+}
+
+export interface MasterOfferingVariantView
+  extends MasterOfferingVariantSummary {
   action: MasterOfferingAction;
 }
 
@@ -161,6 +186,14 @@ export interface MasterOfferingCardView {
   stateExplanation: string;
   copyState: MasterOfferingCopyState;
   variantCount: number;
+  /**
+   * The strengths and formats a buyer can see while browsing, each with its own
+   * state and approved price. Deliberately action free: a card states facts,
+   * and only the detail surface resolves a purchase action for one exact
+   * variant.
+   */
+  variants: readonly MasterOfferingVariantSummary[];
+  priceSummary: MasterOfferingPriceSummary;
 }
 
 export interface MasterOfferingDetailView extends MasterOfferingCardView {
@@ -213,6 +246,7 @@ export const MASTER_OFFERING_CATALOG_ERROR_CODES = [
   "master_offerings_invalid_request",
   "master_offerings_not_found",
   "master_offerings_unavailable",
+  "master_offerings_export_too_large",
 ] as const;
 
 export type MasterOfferingCatalogErrorCode =

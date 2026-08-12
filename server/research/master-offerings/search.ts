@@ -6,6 +6,10 @@ import type {
 } from "@shared/research/master-offerings/contract";
 import { projectMasterOfferingCard } from "./customer-projection";
 import type { NormalizedMasterOffering } from "./model";
+import {
+  NO_MASTER_OFFERING_PRICES,
+  type MasterOfferingPriceMap,
+} from "./price-projection";
 import { normalizeOfferingText } from "./normalize";
 
 const DEFAULT_PAGE_SIZE = 24;
@@ -85,17 +89,33 @@ function includesState(
   return !states || states.length === 0 || states.includes(product.displayState);
 }
 
-export function queryMasterOfferings(
+/**
+ * The paged match set, still in normalized server form.
+ *
+ * The service needs this shape because prices are resolved per variant against
+ * Product Control, and only the selected page should be priced. Pricing every
+ * match would ask the authority about the whole catalog to render 24 cards.
+ */
+export interface MasterOfferingSelection {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  offerings: readonly NormalizedMasterOffering[];
+}
+
+/**
+ * Every member-safe offering that matches, in display order, with no paging.
+ *
+ * The export lane needs the whole match set, and the completeness gate needs to
+ * assert that paging never drops a member-safe offering. Both read this, so the
+ * paged and unpaged views can never diverge in their filtering.
+ */
+export function matchMasterOfferings(
   products: readonly NormalizedMasterOffering[],
   query: MasterOfferingCatalogQuery = {},
-): MasterOfferingCatalogPage {
-  const page = positiveInteger(query.page, 1);
-  const pageSize = Math.min(
-    positiveInteger(query.pageSize, DEFAULT_PAGE_SIZE),
-    MAX_PAGE_SIZE,
-  );
-
-  const matches = products
+): readonly NormalizedMasterOffering[] {
+  return products
     .filter((product) => product.visibility === "member")
     .filter((product) => includesFamily(product, query.families))
     .filter((product) => includesState(product, query.states))
@@ -108,19 +128,47 @@ export function queryMasterOfferings(
       return `${left.product.displayName}|${left.product.slug}`.localeCompare(
         `${right.product.displayName}|${right.product.slug}`,
       );
-    });
+    })
+    .map(({ product }) => product);
+}
 
+export function selectMasterOfferings(
+  products: readonly NormalizedMasterOffering[],
+  query: MasterOfferingCatalogQuery = {},
+): MasterOfferingSelection {
+  const page = positiveInteger(query.page, 1);
+  const pageSize = Math.min(
+    positiveInteger(query.pageSize, DEFAULT_PAGE_SIZE),
+    MAX_PAGE_SIZE,
+  );
+
+  const matches = matchMasterOfferings(products, query);
   const total = matches.length;
   const totalPages = total === 0 ? 0 : Math.ceil(total / pageSize);
   const start = (page - 1) * pageSize;
   const selected = start >= total ? [] : matches.slice(start, start + pageSize);
 
+  return { page, pageSize, total, totalPages, offerings: selected };
+}
+
+/**
+ * Project one page of member-safe cards. Prices default to on request, so a
+ * caller that composes no price authority still gets a truthful page.
+ */
+export function queryMasterOfferings(
+  products: readonly NormalizedMasterOffering[],
+  query: MasterOfferingCatalogQuery = {},
+  prices: MasterOfferingPriceMap = NO_MASTER_OFFERING_PRICES,
+): MasterOfferingCatalogPage {
+  const selection = selectMasterOfferings(products, query);
   return {
     ok: true,
-    page,
-    pageSize,
-    total,
-    totalPages,
-    products: selected.map(({ product }) => projectMasterOfferingCard(product)),
+    page: selection.page,
+    pageSize: selection.pageSize,
+    total: selection.total,
+    totalPages: selection.totalPages,
+    products: selection.offerings.map((offering) =>
+      projectMasterOfferingCard(offering, prices),
+    ),
   };
 }
