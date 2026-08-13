@@ -155,4 +155,40 @@ describe("Pack 04 storage contract", () => {
     expect(executionPacket.requiredBehavioralMatrix.join(" ")).toContain("Quantity 0");
     expect(executionPacket.requiredBehavioralMatrix.join(" ")).toContain("quantity 51");
   });
+
+  it("locks every existing Pack 04 table before rollback counts or drops", () => {
+    const preflightStart = rollback.indexOf("do $pack04_rollback_preflight$");
+    const preflightEnd = rollback.indexOf("$pack04_rollback_preflight$;", preflightStart);
+    const preflight = rollback.slice(preflightStart, preflightEnd);
+    const loopPattern = /foreach v_table in array v_tables loop/g;
+    const loops = [...preflight.matchAll(loopPattern)];
+
+    expect(preflightStart).toBeGreaterThanOrEqual(0);
+    expect(preflightEnd).toBeGreaterThan(preflightStart);
+    expect(loops).toHaveLength(2);
+
+    const lockLoopStart = loops[0]?.index ?? -1;
+    const lockLoopEnd = preflight.indexOf("end loop;", lockLoopStart);
+    const countLoopStart = loops[1]?.index ?? -1;
+    const countLoopEnd = preflight.indexOf("end loop;", countLoopStart);
+    const lockLoop = preflight.slice(lockLoopStart, lockLoopEnd);
+    const countLoop = preflight.slice(countLoopStart, countLoopEnd);
+
+    expect(lockLoop).toContain("lock table public.%I in access exclusive mode");
+    expect(lockLoop).not.toContain("select count(*)");
+    expect(countLoop).toContain("select count(*) from public.%I");
+    expect(countLoop).not.toContain("lock table");
+    expect(lockLoopEnd).toBeLessThan(countLoopStart);
+    expect(countLoopEnd).toBeLessThan(rollback.indexOf("drop function"));
+
+    const tableListStart = preflight.indexOf("v_tables constant text[] := array[");
+    const tableListEnd = preflight.indexOf("];", tableListStart);
+    const tableList = preflight.slice(tableListStart, tableListEnd);
+    let previousTableIndex = -1;
+    for (const table of PRIVATE_TABLES) {
+      const tableIndex = tableList.indexOf(`'${table}'`);
+      expect(tableIndex).toBeGreaterThan(previousTableIndex);
+      previousTableIndex = tableIndex;
+    }
+  });
 });

@@ -3,7 +3,7 @@
   "name": "Xenios Orders Payments and Fulfillment",
   "pack": "04",
   "effort": "high",
-  "status": "READY_FOR_REVIEW_UNMOUNTED_WITH_DISPOSABLE_DB_PACKET",
+  "status": "READY_FOR_INDEPENDENT_QA_UNMOUNTED_ROLLBACK_RACE_REPAIRED",
   "base": {
     "requestedSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
     "strategy": "RECREATED_FROM_EXACT_BASE",
@@ -61,6 +61,8 @@
     "A reorder draft carries only source version, owner, SKU and quantity, and requires current catalog, Product Control and pricing validation before any new action.",
     "Reorder preparation never copies invoice, payment, settlement, supplier, fulfillment, tracking, or approval authority.",
     "The read-only database postcheck opens a read-only transaction and always rolls back.",
+    "The rollback draft acquires fixed-order ACCESS EXCLUSIVE locks on every existing Pack 04 table before any count or drop.",
+    "Rollback locks are retained through the transaction, so concurrent inserts cannot commit between the empty-state check and table removal; lock contention fails closed.",
     "The rollback draft is empty-state-only, refuses any Pack 04 row, uses no CASCADE, and does not remove shared extensions or objects."
   ],
   "artifacts": [
@@ -86,7 +88,7 @@
     },
     {
       "path": "server/research/commerce/order-payment-fulfillment-storage.test.ts",
-      "purpose": "Eight static storage-contract tests protecting RLS, ownership, quantity 1-through-50, approval, settlement, fulfillment, append-only evidence, safe timeline, and bounded history projections."
+      "purpose": "Ten static storage-contract tests protecting RLS, ownership, quantity 1-through-50, approval, settlement, fulfillment, append-only evidence, safe projections, and rollback lock-before-count/drop ordering."
     },
     {
       "path": "HANDOFF.json",
@@ -110,19 +112,19 @@
     },
     {
       "path": "supabase/research-order-payment-fulfillment-pack04-rollback.sql",
-      "purpose": "Human-reviewed rollback draft that refuses non-empty Pack 04 state and uses no CASCADE."
+      "purpose": "Human-reviewed rollback draft that locks every existing Pack 04 table before empty-state inspection, refuses non-empty state, and uses no CASCADE."
     }
   ],
   "verification": [
     {
       "command": "npm test -- --run server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts server/research/commerce/order-payment-fulfillment-persistence.test.ts",
       "result": "PASS",
-      "details": "3 files, 29 tests passed"
+      "details": "3 files, 30 tests passed"
     },
     {
       "command": "npm test -- --run server/research/commerce/manual-order-payments.test.ts server/research/early-access/commerce/verification-service.test.ts server/research/early-access/commerce/release-service.test.ts server/research/early-access/cart/cart-settlement-adversarial.test.ts server/research/early-access/cart/duplicate-order.test.ts server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts server/research/commerce/order-payment-fulfillment-persistence.test.ts",
       "result": "PASS",
-      "details": "8 commerce/payment/settlement adversarial files, 147 tests passed including the database-packet safety contract"
+      "details": "8 commerce/payment/settlement adversarial files, 148 tests passed including lock-before-count/drop rollback coverage"
     },
     {
       "command": "npm run check",
@@ -165,6 +167,7 @@
     "No Supabase migration apply",
     "No database mutation",
     "No external payment, supplier, fulfillment, tracking, notification, or customer action",
+    "No rollback SQL execution; the concurrency repair was verified statically only",
     "No disposable or production database connection; the local Docker client has no available daemon",
     "No evals/run_evals.py run because this repository does not contain that harness"
   ],
@@ -200,6 +203,20 @@
       "requiredCanonicalRepair": "Product Control/release owner must append or prepare the superseding authority safely; Founder Binding must not be replayed."
     }
   ],
+  "independentQaResolution": {
+    "rejectedSha": "ff81317058a4276a228326c674f16175679da36c",
+    "finding": "The rollback counted rows under ACCESS SHARE, allowing a concurrent INSERT to commit before DROP acquired ACCESS EXCLUSIVE.",
+    "resolution": "Acquire all existing Pack 04 table locks in fixed order IN ACCESS EXCLUSIVE MODE before the first count and retain them through every drop.",
+    "verification": "Static adversarial coverage proves the canonical table list, lock loop, count loop, and drop phase occur in that order; SQL remains unexecuted."
+  },
+  "finalBaseRecreation": {
+    "required": true,
+    "omitMetadataFiles": [
+      "HANDOFF.json",
+      "PACK04_HEARTBEAT.json",
+      "PACK04_OVERNIGHT_SUMMARY.json"
+    ]
+  },
   "requiredNextGate": [
     "Integrate the external quantity-owner repairs above on the canonical successor base without copying Pack 04 into those owned systems.",
     "Assign a reviewed managed migration identity to the Pack 04 SQL draft.",

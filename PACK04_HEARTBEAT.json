@@ -5,10 +5,10 @@
   "branch": "codex/pack04-orders-payments-fulfillment-20260812",
   "requiredBase": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
   "rebaseOrRecreateRequired": true,
-  "lastCommittedHead": "60553c65bfeb24339cb71534c27e39214d5fe90d",
-  "state": "READY_FOR_REVIEW_AT_HUMAN_GATED_DB_BOUNDARY",
-  "milestone": "DISPOSABLE_DB_EXECUTION_PACKET_VERIFIED_NOT_RUN",
-  "updatedAt": "2026-08-13T06:38:55.9054477Z",
+  "lastCommittedHead": "ff81317058a4276a228326c674f16175679da36c",
+  "state": "READY_FOR_INDEPENDENT_QA_AT_HUMAN_GATED_DB_BOUNDARY",
+  "milestone": "ROLLBACK_CONCURRENT_INSERT_RACE_REPAIRED_STATICALLY_NOT_RUN",
+  "updatedAt": "2026-08-13T07:24:11.2468912Z",
   "completed": [
     "Unmounted Pack 04 domain workflow and storage draft committed",
     "Atomic snapshot/CAS persistence port implemented",
@@ -31,13 +31,17 @@
     "Hash-pinned disposable apply-twice commands prepared",
     "Read-only rollback-always database postcheck prepared",
     "Empty-state-only no-CASCADE rollback draft prepared",
-    "Database packet safety contract passes static verification"
+    "Database packet safety contract passes static verification",
+    "Independent QA rejection at ff81317058a4276a228326c674f16175679da36c addressed",
+    "All existing Pack 04 tables are locked in fixed order IN ACCESS EXCLUSIVE MODE before rollback counts or drops",
+    "Rollback lock contention fails closed and locks remain transaction-scoped through drops",
+    "Static adversarial coverage proves lock-before-count-before-drop ordering"
   ],
   "currentVerification": {
-    "focusedTests": "PASS: 3 files, 29 tests",
+    "focusedTests": "PASS: 3 files, 30 tests",
     "typecheck": "PASS: repository-wide npm run check",
     "build": "PASS: client and server production compilation; nothing deployed",
-    "adversarialChecks": "PASS: 8 files, 147 tests including database-packet safety",
+    "adversarialChecks": "PASS: 8 files, 148 tests including rollback concurrency-race regression coverage",
     "releaseChecks": "PASS: release control plane, 26-node migration DAG, 352 route registrations, 132-file pgcrypto qualification"
   },
   "prohibitionsObserved": [
@@ -49,6 +53,12 @@
     "No Legal write",
     "No migration apply",
     "No route or worker mount",
-    "No shared ownership ledger edit"
+    "No shared ownership ledger edit",
+    "No database connection or rollback execution"
+  ],
+  "finalBaseRecreationOmit": [
+    "HANDOFF.json",
+    "PACK04_HEARTBEAT.json",
+    "PACK04_OVERNIGHT_SUMMARY.json"
   ]
 }

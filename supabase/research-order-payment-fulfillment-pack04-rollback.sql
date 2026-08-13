@@ -12,8 +12,7 @@ do $pack04_rollback_preflight$
 declare
   v_table text;
   v_rows bigint;
-begin
-  foreach v_table in array array[
+  v_tables constant text[] := array[
     'research_order_business_organizations',
     'research_order_organization_buyers',
     'research_order_workflows',
@@ -27,7 +26,21 @@ begin
     'research_order_command_receipts',
     'research_order_timeline_events',
     'research_order_audit_events'
-  ] loop
+  ];
+begin
+  -- The locks are acquired in one fixed order and held through every count and
+  -- drop. Concurrent inserts therefore block before the empty-state decision;
+  -- lock_timeout makes contention fail closed instead of weakening rollback.
+  foreach v_table in array v_tables loop
+    if pg_catalog.to_regclass('public.' || v_table) is not null then
+      execute pg_catalog.format(
+        'lock table public.%I in access exclusive mode',
+        v_table
+      );
+    end if;
+  end loop;
+
+  foreach v_table in array v_tables loop
     if pg_catalog.to_regclass('public.' || v_table) is not null then
       execute pg_catalog.format('select count(*) from public.%I', v_table) into v_rows;
       if v_rows <> 0 then

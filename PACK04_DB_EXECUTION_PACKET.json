@@ -45,6 +45,6 @@
     "Business history requires the bound buyer and active organization authority.",
     "Customer projections omit proof object, transaction, supplier, settlement, and audit details."
   ],
-  "rollbackPolicy": "The supplied rollback draft is empty-state-only, uses no CASCADE, and refuses if any Pack 04 table has rows. Any non-empty rollback requires a separate founder/release decision and data-preservation plan.",
+  "rollbackPolicy": "The supplied rollback draft acquires fixed-order ACCESS EXCLUSIVE locks on every existing Pack 04 table before any count or drop, is empty-state-only, uses no CASCADE, and refuses if any Pack 04 table has rows. Lock contention and any non-empty rollback fail closed; a non-empty rollback requires a separate founder/release decision and data-preservation plan.",
   "productionMutationAuthorized": false
 }
