@@ -251,6 +251,47 @@ describe("buyer commerce bridge", () => {
     ).rejects.toBeInstanceOf(BuyerRequestConflictError);
   });
 
+  it("rejects a key reused by a different durable buyer identity without leaking the first receipt", async () => {
+    const h = harness([variant("v1")]);
+    h.dependencies.identity = {
+      upsert: vi.fn(async (identity) => ({
+        customerRef: identity.email === "mallory@example.com"
+          ? "eac_otherbuyer0000000000000000001"
+          : "eac_durablebuyer000000000000000001",
+      })),
+    };
+    const first = await submitBuyerRequest(h.dependencies, payload());
+    const stolen = payload();
+    stolen.identity = { ...stolen.identity, email: "mallory@example.com" };
+
+    await expect(submitBuyerRequest(h.dependencies, stolen))
+      .rejects.toBeInstanceOf(BuyerRequestConflictError);
+    expect(h.requests.record?.requestRef).toBe(first.requestRef);
+    expect(h.requests.record?.customerRef).toBe(first.customerRef);
+    expect(h.audit.all()).toHaveLength(1);
+    expect(h.notify).toHaveBeenCalledOnce();
+  });
+
+  it("commits only one of two concurrent conflicting intents sharing a key", async () => {
+    const h = harness([variant("v1")]);
+    const outcomes = await Promise.allSettled([
+      submitBuyerRequest(
+        h.dependencies,
+        payload([{ offeringId: "product-v1", variantId: "v1", requestedQuantity: 1 }]),
+      ),
+      submitBuyerRequest(
+        h.dependencies,
+        payload([{ offeringId: "product-v1", variantId: "v1", requestedQuantity: 2 }]),
+      ),
+    ]);
+
+    expect(outcomes.filter((outcome) => outcome.status === "fulfilled")).toHaveLength(1);
+    const refused = outcomes.find((outcome) => outcome.status === "rejected");
+    expect(refused).toMatchObject({ status: "rejected", reason: expect.any(BuyerRequestConflictError) });
+    expect(h.audit.all()).toHaveLength(1);
+    expect(h.notify).toHaveBeenCalledOnce();
+  });
+
   it("rejects quantity 51 and duplicate exact-variant lines before any write", async () => {
     const h = harness([variant("v1")]);
     await expect(
