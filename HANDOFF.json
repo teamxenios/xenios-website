@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "taskId": "PACK-02-KRIS-ACCOUNT-RELEASE-PACKET",
-  "status": "ROMAN_B2B2C_BUYER_BRIDGE_CANDIDATE_READY",
+  "status": "ROMAN_B2B2C_SPONSORED_CLAIM_CANDIDATE_READY",
   "owner": "Pack02 account identity; Agentic OS is the only final integrator",
   "branch": "codex/pack02-client-accounts-b2b-20260812",
   "worktree": "C:\\xenios-wt\\pack02-client-accounts",
   "baseSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
   "previousPack02Sha": "1597f224a648e2e856e5651ecdc7cdb00f0746f5",
-  "outputSha": "99cbdddc71e558dd00586c4fc9b0b4001d3d416a",
+  "outputSha": "cbc9d360cffa0505c9567ce98d36a227c0c51273",
   "deploymentGateResolutionArtifact": "PACK02_DEPLOYMENT_GATE_RESOLVED.json",
   "ancestry": {
     "mergeBase": "1597f224a648e2e856e5651ecdc7cdb00f0746f5",
@@ -17,6 +17,7 @@
     "authoritativePack02Head": "ca943a66b9ce6b6f8f03b9cf302a5aacea9b4fd2"
   },
   "changedFiles": [
+    "docs/pack02-roman-b2b-sponsored-claim-runbook.md",
     "docs/pack02-kris-account-activation-runbook.md",
     "docs/pack02-kris-identity-audit.md",
     "docs/pack02-quantity-1-50-dependency.md",
@@ -24,13 +25,20 @@
     "server/research/account-identity/buyer-activation-supabase.ts",
     "server/research/account-identity/buyer-activation.test.ts",
     "server/research/account-identity/buyer-activation.ts",
+    "server/research/account-identity/b2b-sponsored-claim.ts",
+    "server/research/account-identity/b2b-sponsored-claim.test.ts",
+    "server/research/account-identity/b2b-sponsored-claim-supabase.ts",
+    "server/research/account-identity/b2b-sponsored-claim-supabase.test.ts",
+    "server/research/account-identity/b2b-sponsored-claim-sql.test.ts",
     "server/research/account-identity/pack02-boundaries.test.ts",
     "supabase/pack02-candidates/20260813_research_buyer_account_activation.sql",
+    "supabase/pack02-candidates/20260813_research_b2b_sponsored_claim.sql",
     "supabase/pack02-candidates/inspect_kris_identity_read_only.sql"
   ],
   "krisIdentity": {
-    "status": "UNKNOWN_NOT_GUESSED",
-    "authoritativeProductionLookupExecuted": false,
+    "status": "NO_AUTHORITATIVE_KRIS_IDENTITY",
+    "canonicalEmail": "info@romanhealthcollective.com",
+    "authoritativeProductionLookupExecuted": true,
     "readOnlyLookupReady": true,
     "lookupArtifact": "supabase/pack02-candidates/inspect_kris_identity_read_only.sql",
     "existingUserPathReady": true,
@@ -60,6 +68,7 @@
     "dualRoleLandingPreferenceTableCreated": false,
     "dualRoleLandingDesign": "derive only from existing server-verified Pack02/member-auth roles and explicit route intent; Agentic OS owns integration",
     "romanHealthMarketplaceBridgeCandidate": true,
+    "sponsoredB2BClaimCandidate": "purpose-scoped internal sponsorship reusing canonical account_claim and research_members lineage; no public essays/attestations fabricated",
     "bridgeAuthorizationKey": "canonical active research_members.id; never email",
     "pricingProfile": "KRIS_VOLUME_PARTNER bound to business relationship",
     "existingResearchOrganizationsCollision": "CONFIRMED: existing partner/reporting shape; old Pack02 organization SQL remains unapplied",
@@ -96,6 +105,13 @@
     "PASS on runtime proof head 2171dce: route uniqueness, 364 static API registrations across 355 call sites; 2245293 changes documentation only",
     "PASS: git diff --cached --check before commit",
     "PASS: independent Pack02 QA after correction, focused 25/25",
+    "PASS 2026-08-13: sponsored B2B claim + bridge + canonical membership claim focused QA, 7 files and 96 tests",
+    "PASS 2026-08-13: targeted TypeScript compile for sponsored claim service and Supabase adapter",
+    "PASS 2026-08-13: git diff --cached --check before commit a622131",
+    "PASS 2026-08-13 hardening: sponsored claim/bridge/membership/outbox focused QA, 9 files and 130 tests",
+    "PASS 2026-08-13 hardening: full TypeScript noEmit",
+    "PASS 2026-08-13 hardening: production build",
+    "PASS independent re-QA on successor cbc9d36: normalized identity race, durable outbox queue, truthful sponsored access basis/email, and exact confirmed Auth activation blockers closed; 116/116 reviewer tests",
     "NOT RUN: candidate SQL apply/rehearsal; no isolated Supabase/Postgres fixture was used"
   ],
   "production": {
@@ -108,6 +124,10 @@
     "rlsOrGrantsChanged": false
   },
   "exactAgenticOsHandoff": [
+    "Consume hardened sponsored-claim successor cbc9d360cffa0505c9567ce98d36a227c0c51273 after bridge code successor 99cbdddc71e558dd00586c4fc9b0b4001d3d416a. It adds an unmounted, unapplied internal B2B sponsorship path, atomic durable B2B claim outbox queue, truthful sponsored access semantics, and explicitly blocks generic membership billing activation for that source.",
+    "Do not send a claim until the founder supplies Kris's exact last name, country, applicant_type, and pricing authority supplies the KRIS_VOLUME_PARTNER integer version/effective timestamp. Never use placeholders.",
+    "After DB-owner isolated rehearsal, compose createSupabaseSponsoredB2BClaimDeps with an actor-scoped existing internal-admin client, canonical service client, and the existing account_claim outbox delivery. The preparation RPC repeats the exact-email absence check under an advisory lock.",
+    "Kris uses the existing canonical account_claim UI and chooses his own password. The canonical claim creates Supabase Auth plus a pending research_members row; an authenticated internal admin must then call research_activate_sponsored_b2b_buyer to atomically activate the member, Roman roles, and KRIS_VOLUME_PARTNER entitlement.",
     "Consume Pack02 code successor 99cbdddc71e558dd00586c4fc9b0b4001d3d416a plus the later HANDOFF/heartbeat documentation commits after ca943a66. It adds an unmounted Roman Health Marketplace B2B bridge candidate and concrete Supabase adapter, then locks time/grant/actor authority after independent QA; it does not change production routes.",
     "Do not apply 20260812_research_account_organizations.sql: public.research_organizations already has an incompatible partner/reporting shape. Use 20260813_research_b2b_buyer_bridge.sql only after DB-owner isolated apply-twice, schema-fingerprint, SECURITY DEFINER, RLS/grant, and rollback review.",
     "After Kris completes canonical claim and has an exact active research_members.id, an authenticated existing super_admin/operations_admin may activate Roman Health Marketplace through research_activate_b2b_buyer_bridge. The RPC derives approver from auth.uid(); pass organization_owner role, KRIS_VOLUME_PARTNER profile version/effective date, and no email authority.",
@@ -125,12 +145,13 @@
     "Deploy/apply only under Agentic OS authority after remaining production-wide gates; this lane authorizes none of those actions."
   ],
   "blockers": [
-    "Kris has no authoritative Auth/application/member identity yet; required application facts and personal attestations must be supplied without fabrication.",
-    "Roman Health Marketplace legal entity/billing/shipping/tax facts plus named pricing approver, profile version/effective date, and catalog scope are still human-gated.",
+    "Founder-confirmed email has no authoritative Auth/application/member identity; exact last name, country, and applicant_type are required by canonical application lineage and must be supplied without fabrication.",
+    "KRIS_VOLUME_PARTNER integer profile version and entitlement effective timestamp remain pricing-authority inputs; legal entity/billing/shipping/tax facts do not block claim delivery.",
+    "Sponsored claim and B2B bridge candidate SQL remain unapplied/unmounted and require isolated DB/security/apply-twice/rollback plus end-to-end claim/outbox/activation rehearsal before claim delivery.",
     "B2B bridge candidate SQL is unapplied and requires isolated DB/security rehearsal before any runtime wiring.",
     "Candidate SQL requires isolated apply-twice rehearsal and independent security review before promotion.",
     "Agentic OS must install the resolved replacement artifact on exact fusion head 224529381e602641e481d51f7e1ad90ba7a20375 before treating the stale marker as retired."
   ],
   "rebaseOrRecreateRequired": false,
-  "updatedAt": "2026-08-13T12:05:27-05:00"
+  "updatedAt": "2026-08-13T18:35:00-05:00"
 }

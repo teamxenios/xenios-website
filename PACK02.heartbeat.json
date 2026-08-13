@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
   "taskId": "PACK-02-KRIS-ACCOUNT-RELEASE-PACKET",
-  "state": "ROMAN_B2B2C_BUYER_BRIDGE_CANDIDATE_READY",
+  "state": "ROMAN_B2B2C_SPONSORED_CLAIM_CANDIDATE_READY",
   "branch": "codex/pack02-client-accounts-b2b-20260812",
-  "headSha": "99cbdddc71e558dd00586c4fc9b0b4001d3d416a",
-  "milestone": "Non-colliding Roman Health Marketplace B2B bridge candidate hardened after independent QA: canonical member-keyed authorization, business-scoped KRIS_VOLUME_PARTNER entitlement, DB-owned ownership time, auth.uid activation actor, SELECT-only service-role tables, immutable canonical research_orders ownership, concrete Supabase adapter, 67 focused tests, typecheck and production build PASS. Candidate SQL remains unapplied and routes unmounted.",
+  "headSha": "cbc9d360cffa0505c9567ce98d36a227c0c51273",
+  "milestone": "Hardened purpose-scoped Roman Health Marketplace sponsored B2B claim candidate: normalized-email collision guards and post-prepare proof; application+sponsorship+dedicated no-fee account_claim outbox queue atomically durable; sponsored access basis with no fake billing verification; exact confirmed Auth recheck; atomic member/Roman roles/KRIS_VOLUME_PARTNER activation; 130 focused tests, full typecheck, production build, and independent re-QA PASS. Candidate SQL remains unapplied and runtime remains unmounted.",
   "humanGates": [
-    "Kris application facts and personal attestations, then canonical account claim",
-    "Roman business legal/billing/shipping/tax facts and named pricing approval",
-    "Isolated B2B bridge candidate SQL apply-twice/security rehearsal",
+    "Kris exact last name, country, and applicant_type; no public essays or attestations",
+    "Authoritative KRIS_VOLUME_PARTNER integer version and effective timestamp",
+    "Isolated B2B bridge plus sponsored-claim candidate SQL apply-twice/security/rollback rehearsal",
     "Agentic OS atomic stale-marker replacement and deployment-wide gates"
   ],
   "productionMutated": false,
   "deployed": false,
   "mounted": false,
   "rebaseOrRecreateRequired": false,
-  "updatedAt": "2026-08-13T12:05:27-05:00"
+  "updatedAt": "2026-08-13T18:35:00-05:00"
 }
