@@ -23,6 +23,7 @@ function order(overrides: Partial<OrderRecord> = {}): OrderRecord {
       totalCents: 21095,
     },
     providerReference: null,
+    checkoutIdempotencyKey: null,
     lastIdempotencyKey: null,
     reviewTriggers: [],
     createdAt: NOW.toISOString(),
