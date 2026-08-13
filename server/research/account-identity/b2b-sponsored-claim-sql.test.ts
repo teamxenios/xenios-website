@@ -17,7 +17,8 @@ describe("sponsored B2B claim candidate", () => {
 
   it("records truthful sponsorship provenance without applicant attestations", () => {
     expect(sql).toContain("'b2b_buyer_sponsored_claim'");
-    expect(sql).toMatch(/false,p_applicant_type/i);
+    expect(sql).toMatch(/false,'professional'/i);
+    expect(sql).toContain("p_region text");
     expect(sql).toMatch(/'\[\]'::jsonb,null,null,false/i);
     expect(sql).toContain("public applicant attestations were not collected or asserted");
   });

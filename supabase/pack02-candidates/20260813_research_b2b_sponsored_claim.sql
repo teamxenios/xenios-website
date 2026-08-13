@@ -186,7 +186,7 @@ create or replace function public.research_prepare_sponsored_b2b_claim(
   p_first_name text,
   p_last_name text,
   p_country text,
-  p_applicant_type text,
+  p_region text,
   p_business_key text,
   p_business_display_name text,
   p_roles text[],
@@ -229,7 +229,7 @@ begin
      or length(btrim(p_first_name)) not between 1 and 80
      or length(btrim(p_last_name)) not between 1 and 80
      or length(btrim(p_country)) not between 2 and 80
-     or p_applicant_type not in ('individual','professional')
+     or length(btrim(p_region)) not between 1 and 80
      or p_business_key !~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'
      or length(btrim(p_business_display_name)) not between 1 and 160
      or cardinality(p_roles)<>2
@@ -248,12 +248,12 @@ begin
   end if;
 
   insert into public.research_applications(
-    email,first_name,last_name,country,age_confirmed,applicant_type,
+    email,first_name,last_name,country,region,age_confirmed,applicant_type,
     organization,interests,goals_text,fit_text,marketing_consent,status,
     approval_expires_at,submitted_at,reviewed_at,reviewed_by,source_page
   ) values (
-    p_normalized_email,btrim(p_first_name),btrim(p_last_name),btrim(p_country),
-    false,p_applicant_type,btrim(p_business_display_name),'[]'::jsonb,null,null,false,
+    p_normalized_email,btrim(p_first_name),btrim(p_last_name),btrim(p_country),btrim(p_region),
+    false,'professional',btrim(p_business_display_name),'[]'::jsonb,null,null,false,
     'approved_sponsored_b2b',v_now+interval '72 hours',v_now,v_now,v_actor::text,
     'b2b_buyer_sponsored_claim'
   ) returning id into v_application_id;

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "status": "FOUNDER_CONFIRMED_UNEXECUTED",
+  "request": {
+    "path": "new_sponsored_claim",
+    "email": "info@romanhealthcollective.com",
+    "firstName": "Kristopher",
+    "lastName": "Lopez",
+    "country": "USA",
+    "stateOrRegion": "Texas",
+    "businessKey": "roman-health",
+    "businessDisplayName": "Roman Health",
+    "roles": [
+      "organization_owner",
+      "business_buyer"
+    ]
+  },
+  "relationshipType": "b2b2c_marketplace_partner",
+  "pricingAuthority": {
+    "profileKey": "KRIS_VOLUME_PARTNER",
+    "deriveFromAcceptedCatalog": true,
+    "acceptedCatalogSourceSha": "e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4",
+    "requiredCounts": {
+      "items": 420,
+      "priced": 418,
+      "pricePending": 2
+    }
+  },
+  "passwordAcceptedOrStored": false,
+  "productionExecuted": false
+}

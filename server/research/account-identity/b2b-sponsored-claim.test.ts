@@ -13,16 +13,20 @@ const SPONSORSHIP_ID = "20000000-0000-4000-8000-000000000002";
 const input = {
   path: "new_sponsored_claim",
   email: ` ${EMAIL.toUpperCase()} `,
-  firstName: "Kris",
-  lastName: "Founder supplied",
-  country: "Founder supplied",
-  applicantType: "professional",
-  businessKey: "roman-health-marketplace",
-  businessDisplayName: "Roman Health Marketplace",
+  firstName: "Kristopher",
+  lastName: "Lopez",
+  country: "USA",
+  stateOrRegion: "Texas",
+  businessKey: "roman-health",
+  businessDisplayName: "Roman Health",
   roles: ["organization_owner", "business_buyer"],
+} as const;
+
+const pricing = {
   profileKey: "KRIS_VOLUME_PARTNER",
   profileVersion: 1,
-  profileEffectiveAt: "2026-08-13T12:00:00.000Z",
+  profileEffectiveAt: "2026-08-13T21:47:34.813Z",
+  sourceSha: "e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4",
 } as const;
 
 const empty: ExactIdentitySnapshot = {
@@ -44,8 +48,8 @@ function claim(state: SponsoredB2BClaim["state"]): SponsoredB2BClaim {
     businessDisplayName: input.businessDisplayName,
     state,
     profileKey: "KRIS_VOLUME_PARTNER",
-    profileVersion: 1,
-    profileEffectiveAt: input.profileEffectiveAt,
+    profileVersion: pricing.profileVersion,
+    profileEffectiveAt: pricing.profileEffectiveAt,
   };
 }
 
@@ -54,6 +58,7 @@ function deps(overrides: Partial<SponsoredB2BClaimDeps> = {}): SponsoredB2BClaim
     inspectExactEmail: vi.fn()
       .mockResolvedValueOnce(empty)
       .mockResolvedValue(afterPrepare),
+    resolvePricingAuthority: vi.fn(async () => pricing),
     prepareSponsoredClaim: vi.fn(async () => claim("claim_queued")),
     kickNotificationOutbox: vi.fn(async () => {}),
     ...overrides,
@@ -69,14 +74,16 @@ describe("prepareSponsoredB2BClaim", () => {
       sponsorshipId: SPONSORSHIP_ID,
       applicationId: APPLICATION_ID,
       normalizedEmail: EMAIL,
-      businessKey: "roman-health-marketplace",
+      businessKey: "roman-health",
     });
     expect(subject.inspectExactEmail).toHaveBeenCalledTimes(2);
     expect(subject.prepareSponsoredClaim).toHaveBeenCalledWith(expect.objectContaining({
       email: EMAIL,
-      businessDisplayName: "Roman Health Marketplace",
+      businessDisplayName: "Roman Health",
       roles: ["organization_owner", "business_buyer"],
       profileKey: "KRIS_VOLUME_PARTNER",
+      profileVersion: 1,
+      sourceSha: pricing.sourceSha,
     }));
     expect(subject.kickNotificationOutbox).toHaveBeenCalledOnce();
   });
@@ -94,6 +101,13 @@ describe("prepareSponsoredB2BClaim", () => {
     });
     await expect(prepareSponsoredB2BClaim(subject, input))
       .resolves.toEqual({ ok: false, code: "IDENTITY_APPEARED_STOP" });
+    expect(subject.prepareSponsoredClaim).not.toHaveBeenCalled();
+  });
+
+  it("fails closed rather than guessing unavailable pricing authority", async () => {
+    const subject = deps({ resolvePricingAuthority: vi.fn(async () => { throw new Error("missing"); }) });
+    await expect(prepareSponsoredB2BClaim(subject, input))
+      .resolves.toEqual({ ok: false, code: "PRICING_AUTHORITY_UNAVAILABLE" });
     expect(subject.prepareSponsoredClaim).not.toHaveBeenCalled();
   });
 

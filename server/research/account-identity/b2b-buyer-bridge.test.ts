@@ -19,8 +19,8 @@ function relationship(
 ): B2BBuyerRelationshipRecord {
   return {
     relationshipId: RELATIONSHIP_ID,
-    businessKey: "roman-health-marketplace",
-    businessDisplayName: "Roman Health Marketplace",
+    businessKey: "roman-health",
+    businessDisplayName: "Roman Health",
     memberId: MEMBER_ID,
     state: "active",
     roles: ["organization_owner"],
@@ -65,8 +65,8 @@ describe("Pack02 temporary B2B buyer bridge", () => {
         authUserId: AUTH_USER_ID,
         memberId: MEMBER_ID,
         relationshipId: RELATIONSHIP_ID,
-        businessKey: "roman-health-marketplace",
-        businessDisplayName: "Roman Health Marketplace",
+        businessKey: "roman-health",
+        businessDisplayName: "Roman Health",
         roles: ["organization_owner"],
         pricing: {
           entitlementId: ENTITLEMENT_ID,
@@ -84,7 +84,7 @@ describe("Pack02 temporary B2B buyer bridge", () => {
     const request = {
       body: {
         email: "info@romanhealthcollective.com",
-        businessKey: "roman-health-marketplace",
+        businessKey: "roman-health",
         profile: KRIS_VOLUME_PARTNER_PROFILE,
       },
     };

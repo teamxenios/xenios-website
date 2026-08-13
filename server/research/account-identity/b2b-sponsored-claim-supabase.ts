@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   SponsoredB2BClaim,
   SponsoredB2BClaimDeps,
+  SponsoredB2BPricingAuthority,
 } from "./b2b-sponsored-claim";
 
 type Row = Record<string, unknown>;
@@ -50,8 +51,10 @@ export function createSupabaseSponsoredB2BClaimDeps(
   admin: SupabaseClient,
   actor: SupabaseClient,
   kickNotificationOutbox: () => Promise<void>,
+  resolvePricingAuthority: (profileKey: "KRIS_VOLUME_PARTNER") => Promise<SponsoredB2BPricingAuthority>,
 ): SponsoredB2BClaimDeps {
   return {
+    resolvePricingAuthority,
     async inspectExactEmail(normalizedEmail) {
       const authUserIds: string[] = [];
       for (let page = 1; page <= 50; page += 1) {
@@ -87,7 +90,7 @@ export function createSupabaseSponsoredB2BClaimDeps(
         p_first_name: input.firstName,
         p_last_name: input.lastName,
         p_country: input.country,
-        p_applicant_type: input.applicantType,
+        p_region: input.stateOrRegion,
         p_business_key: input.businessKey,
         p_business_display_name: input.businessDisplayName,
         p_roles: input.roles,

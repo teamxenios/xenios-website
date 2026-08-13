@@ -46,8 +46,8 @@ function fakeAdmin() {
     }],
     research_b2b_buyer_relationships: [{
       id: RELATIONSHIP_ID,
-      business_key: "roman-health-marketplace",
-      business_display_name: "Roman Health Marketplace",
+      business_key: "roman-health",
+      business_display_name: "Roman Health",
       state: "active",
       migrated_organization_id: null,
     }],
@@ -99,7 +99,7 @@ describe("Supabase B2B buyer bridge adapter", () => {
     expect(rows[0]).toMatchObject({
       relationshipId: RELATIONSHIP_ID,
       memberId: MEMBER_ID,
-      businessKey: "roman-health-marketplace",
+      businessKey: "roman-health",
       roles: ["organization_owner"],
     });
     expect(JSON.stringify(rows)).not.toContain("changed-address@example.com");

@@ -20,7 +20,7 @@ describe("createSupabaseSponsoredB2BClaimDeps", () => {
       auth: { admin: { listUsers: vi.fn(async () => ({ data: { users: [] }, error: null })) } },
       from: vi.fn((name: string) => query(tables[name] ?? [])),
     };
-    const deps = createSupabaseSponsoredB2BClaimDeps(admin, {} as any, vi.fn());
+    const deps = createSupabaseSponsoredB2BClaimDeps(admin, {} as any, vi.fn(), vi.fn());
     await expect(deps.inspectExactEmail("info@romanhealthcollective.com")).resolves.toEqual({
       authUserIds: [], applicationIds: [], memberIds: [], sponsorshipIds: [],
     });
@@ -34,30 +34,31 @@ describe("createSupabaseSponsoredB2BClaimDeps", () => {
       sponsorship_id: "20000000-0000-4000-8000-000000000002",
       application_id: "10000000-0000-4000-8000-000000000001",
       normalized_email: "info@romanhealthcollective.com",
-      business_key: "roman-health-marketplace",
-      business_display_name: "Roman Health Marketplace",
+      business_key: "roman-health",
+      business_display_name: "Roman Health",
       state: "claim_queued",
       profile_key: "KRIS_VOLUME_PARTNER",
       profile_version: 1,
-      profile_effective_at: "2026-08-13T12:00:00.000Z",
+      profile_effective_at: "2026-08-13T21:47:34.813Z",
     };
     const actor: any = { rpc: vi.fn(async () => ({ data: [row], error: null })) };
     const admin: any = { rpc: vi.fn() };
-    const deps = createSupabaseSponsoredB2BClaimDeps(admin, actor, vi.fn());
+    const deps = createSupabaseSponsoredB2BClaimDeps(admin, actor, vi.fn(), vi.fn());
 
     await expect(deps.prepareSponsoredClaim({
       path: "new_sponsored_claim",
       email: "info@romanhealthcollective.com",
-      firstName: "Kris",
-      lastName: "Exact",
-      country: "Exact",
-      applicantType: "professional",
-      businessKey: "roman-health-marketplace",
-      businessDisplayName: "Roman Health Marketplace",
+      firstName: "Kristopher",
+      lastName: "Lopez",
+      country: "USA",
+      stateOrRegion: "Texas",
+      businessKey: "roman-health",
+      businessDisplayName: "Roman Health",
       roles: ["organization_owner", "business_buyer"],
       profileKey: "KRIS_VOLUME_PARTNER",
       profileVersion: 1,
-      profileEffectiveAt: "2026-08-13T12:00:00.000Z",
+      profileEffectiveAt: "2026-08-13T21:47:34.813Z",
+      sourceSha: "e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4",
     })).resolves.toMatchObject({ state: "claim_queued" });
     expect(actor.rpc).toHaveBeenCalledWith("research_prepare_sponsored_b2b_claim", expect.any(Object));
     expect(admin.rpc).not.toHaveBeenCalled();
@@ -65,7 +66,7 @@ describe("createSupabaseSponsoredB2BClaimDeps", () => {
 
   it("delegates only a credential-free best-effort outbox wakeup", async () => {
     const kick = vi.fn(async () => {});
-    const deps = createSupabaseSponsoredB2BClaimDeps({} as any, {} as any, kick);
+    const deps = createSupabaseSponsoredB2BClaimDeps({} as any, {} as any, kick, vi.fn());
     await deps.kickNotificationOutbox();
     expect(kick).toHaveBeenCalledWith();
   });

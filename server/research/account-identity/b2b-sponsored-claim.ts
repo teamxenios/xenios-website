@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const B2B_SPONSORED_CLAIM_SOURCE = "b2b_buyer_sponsored_claim" as const;
-export const ROMAN_HEALTH_MARKETPLACE_KEY = "roman-health-marketplace" as const;
+export const ROMAN_HEALTH_BUYER_KEY = "roman-health" as const;
 
 const ExactIdentitySnapshotSchema = z.object({
   authUserIds: z.array(z.string().uuid()).max(2),
@@ -25,27 +25,34 @@ const SponsoredClaimSchema = z.object({
 export type ExactIdentitySnapshot = z.infer<typeof ExactIdentitySnapshotSchema>;
 export type SponsoredB2BClaim = z.infer<typeof SponsoredClaimSchema>;
 
+const PricingAuthoritySchema = z.object({
+  profileKey: z.literal("KRIS_VOLUME_PARTNER"),
+  profileVersion: z.number().int().positive(),
+  profileEffectiveAt: z.string().datetime({ offset: true }),
+  sourceSha: z.string().regex(/^[a-f0-9]{40}$/),
+}).strict();
+export type SponsoredB2BPricingAuthority = z.infer<typeof PricingAuthoritySchema>;
+
 const BaseInputSchema = z.object({
   path: z.literal("new_sponsored_claim"),
   email: z.string().trim().email().max(254).transform((value) => value.toLowerCase()),
   firstName: z.string().trim().min(1).max(80),
   lastName: z.string().trim().min(1).max(80),
   country: z.string().trim().min(2).max(80),
-  applicantType: z.enum(["individual", "professional"]),
+  stateOrRegion: z.string().trim().min(1).max(80),
   businessKey: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(120),
   businessDisplayName: z.string().trim().min(1).max(160),
   roles: z.tuple([z.literal("organization_owner"), z.literal("business_buyer")]),
-  profileKey: z.literal("KRIS_VOLUME_PARTNER"),
-  profileVersion: z.number().int().positive(),
-  profileEffectiveAt: z.string().datetime({ offset: true }),
 }).strict();
 
 export const SponsoredB2BClaimInputSchema = BaseInputSchema;
 export type SponsoredB2BClaimInput = z.input<typeof SponsoredB2BClaimInputSchema>;
+export type PreparedSponsoredB2BClaimInput = z.output<typeof SponsoredB2BClaimInputSchema> & SponsoredB2BPricingAuthority;
 
 export interface SponsoredB2BClaimDeps {
   inspectExactEmail(normalizedEmail: string): Promise<ExactIdentitySnapshot>;
-  prepareSponsoredClaim(input: z.output<typeof SponsoredB2BClaimInputSchema>): Promise<SponsoredB2BClaim>;
+  resolvePricingAuthority(profileKey: "KRIS_VOLUME_PARTNER"): Promise<SponsoredB2BPricingAuthority>;
+  prepareSponsoredClaim(input: PreparedSponsoredB2BClaimInput): Promise<SponsoredB2BClaim>;
   /** Best-effort wakeup only. The preparation RPC already owns durable queueing. */
   kickNotificationOutbox(): Promise<void>;
 }
@@ -65,6 +72,7 @@ export type PrepareSponsoredB2BClaimResult =
         | "INVALID_INPUT"
         | "AMBIGUOUS_STOP"
         | "IDENTITY_APPEARED_STOP"
+        | "PRICING_AUTHORITY_UNAVAILABLE"
         | "PREPARATION_FAILED"
         | "PREPARATION_RESULT_INVALID"
         | "POST_PREPARE_IDENTITY_CONFLICT";
@@ -89,6 +97,7 @@ function snapshotIsAmbiguous(value: ExactIdentitySnapshot): boolean {
 function exactClaim(
   raw: unknown,
   input: z.output<typeof SponsoredB2BClaimInputSchema>,
+  pricing: SponsoredB2BPricingAuthority,
   expectedState: SponsoredB2BClaim["state"],
 ): SponsoredB2BClaim | null {
   const parsed = SponsoredClaimSchema.safeParse(raw);
@@ -97,9 +106,9 @@ function exactClaim(
   return row.normalizedEmail.toLowerCase() === input.email
     && row.businessKey === input.businessKey
     && row.businessDisplayName === input.businessDisplayName
-    && row.profileKey === input.profileKey
-    && row.profileVersion === input.profileVersion
-    && row.profileEffectiveAt === input.profileEffectiveAt
+    && row.profileKey === pricing.profileKey
+    && row.profileVersion === pricing.profileVersion
+    && row.profileEffectiveAt === pricing.profileEffectiveAt
     && row.state === expectedState
     ? row
     : null;
@@ -132,9 +141,19 @@ export async function prepareSponsoredB2BClaim(
     return { ok: false, code: "IDENTITY_APPEARED_STOP" };
   }
 
+  const rawPricing = await deps.resolvePricingAuthority("KRIS_VOLUME_PARTNER").catch(() => null);
+  const pricing = PricingAuthoritySchema.safeParse(rawPricing);
+  if (!pricing.success) return { ok: false, code: "PRICING_AUTHORITY_UNAVAILABLE" };
+  const preparationInput: PreparedSponsoredB2BClaimInput = { ...input, ...pricing.data };
+
   let prepared: SponsoredB2BClaim | null = null;
   try {
-    prepared = exactClaim(await deps.prepareSponsoredClaim(input), input, "claim_queued");
+    prepared = exactClaim(
+      await deps.prepareSponsoredClaim(preparationInput),
+      input,
+      pricing.data,
+      "claim_queued",
+    );
   } catch {
     return { ok: false, code: "PREPARATION_FAILED" };
   }
