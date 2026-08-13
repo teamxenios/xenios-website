@@ -37,4 +37,21 @@ describe("account identity routes", () => {
     expect(response.headers["cache-control"]).toBe("private, no-store");
     expect(response.headers.vary).toContain("Authorization");
   });
+
+  it("fails closed with a redacted JSON error when an integration dependency throws", async () => {
+    const subject = deps();
+    vi.mocked(subject.resolveAuthenticatedUser).mockRejectedValue(new Error("provider secret diagnostic"));
+    const app = express();
+    app.use(express.json());
+    registerAccountIdentityApi(app, subject);
+    const response = await request(app).get("/api/research/account/context").set("Authorization", "Bearer test");
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({
+      ok: false,
+      code: "SERVICE_UNAVAILABLE",
+      message: "The account service is temporarily unavailable.",
+    });
+    expect(JSON.stringify(response.body)).not.toContain("provider secret diagnostic");
+    expect(response.headers["cache-control"]).toBe("private, no-store");
+  });
 });

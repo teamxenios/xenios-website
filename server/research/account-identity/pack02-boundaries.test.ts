@@ -17,9 +17,21 @@ describe("Pack 02 isolation and single-system boundaries", () => {
     expect(sql).toContain("PACK 02 CANDIDATE ONLY");
     expect(sql).toContain("references auth.users(id)");
     expect(sql).toContain("research_early_access_*");
+    expect(sql).toContain("order_id uuid primary key references public.research_orders(id)");
+    expect(sql).not.toMatch(/create table if not exists public\.research_organization_orders\b/i);
     expect(sql).not.toMatch(/\bpassword\s+(text|varchar|bytea)/i);
     expect(sql).not.toMatch(/\bpassword_hash\b/i);
     expect(sql).not.toMatch(/\bcredential_hash\b/i);
+  });
+
+  it("keeps organization order ownership as metadata over the canonical order system", () => {
+    const sql = read("supabase/pack02-candidates/20260812_research_account_organizations.sql");
+    expect(sql).toContain("research_organization_order_ownership");
+    expect(sql).toContain("ownership_basis in ('organization_checkout','verified_customer_claim')");
+    expect(sql).toContain("order ownership evidence does not match organization");
+    expect(sql).toContain("order ownership actor is not an active organization user");
+    expect(sql).toContain("organization order ownership is immutable");
+    expect(sql).not.toMatch(/\b(subtotal_cents|captured_amount_cents|payment_reference)\b/);
   });
 
   it("seeds Roman Digital without inventing a Supabase Auth UID", () => {

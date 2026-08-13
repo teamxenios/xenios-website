@@ -10,7 +10,8 @@ begin
      and table_name in (
        'research_organizations','research_organization_users','research_organization_invitations',
        'research_account_claim_challenges','research_customer_account_bindings',
-       'research_account_binding_events','research_organization_request_again'
+       'research_organization_order_ownership','research_account_binding_events',
+       'research_organization_request_again'
      )
      and lower(column_name) like '%password%';
   if v_count <> 3 then
@@ -49,6 +50,27 @@ begin
      group by customer_ref having count(*) > 1
   ) then
     raise exception 'a customerRef has more than one account owner';
+  end if;
+
+  if exists (
+    select o.order_id
+      from public.research_organization_order_ownership o
+      left join public.research_orders canonical on canonical.id=o.order_id
+     where canonical.id is null
+  ) then
+    raise exception 'organization ownership references a non-canonical order';
+  end if;
+
+  if exists (
+    select o.order_id
+      from public.research_organization_order_ownership o
+      left join public.research_organization_users u on u.id=o.placed_by_organization_user_id
+      left join public.research_customer_account_bindings b on b.id=o.established_from_customer_binding_id
+     where (o.ownership_basis='organization_checkout' and (u.id is null or u.organization_id<>o.organization_id))
+        or (o.ownership_basis='verified_customer_claim' and
+            (b.id is null or b.subject_type<>'organization' or b.organization_id<>o.organization_id))
+  ) then
+    raise exception 'organization order ownership evidence does not match its organization';
   end if;
 end;
 $$;

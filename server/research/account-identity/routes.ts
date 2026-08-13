@@ -50,40 +50,54 @@ function routeParam(value: string | string[]): string {
   return Array.isArray(value) ? value[0] ?? "" : value;
 }
 
+async function run<T>(res: Response, operation: () => Promise<AccountApiResult<T>>) {
+  try {
+    return send(res, await operation());
+  } catch {
+    // Do not reflect provider/database diagnostics, JWTs, challenge URLs, or
+    // profile data. The mounted composition root may add a redacted logger.
+    return send(res, {
+      ok: false,
+      code: "SERVICE_UNAVAILABLE",
+      message: "The account service is temporarily unavailable.",
+    });
+  }
+}
+
 export function registerAccountIdentityApi(app: Express, deps: AccountIdentityDeps): void {
   app.get("/api/research/account/context", privateAccountHeaders, async (req, res) => {
-    send(res, await getAccountContext(deps, req));
+    await run(res, () => getAccountContext(deps, req));
   });
 
   app.post("/api/research/account/claims/request", privateAccountHeaders, async (req, res) => {
-    send(res, await requestCustomerHistoryClaim(deps, req, req.body));
+    await run(res, () => requestCustomerHistoryClaim(deps, req, req.body));
   });
 
   app.post("/api/research/account/claims/confirm", privateAccountHeaders, async (req, res) => {
-    send(res, await confirmCustomerHistoryClaim(deps, req, req.body));
+    await run(res, () => confirmCustomerHistoryClaim(deps, req, req.body));
   });
 
   app.post("/api/research/account/security/password-change-complete", privateAccountHeaders, async (req, res) => {
-    send(res, await acknowledgePasswordChange(deps, req));
+    await run(res, () => acknowledgePasswordChange(deps, req));
   });
 
   app.post("/api/research/account/organization-invitations/accept", privateAccountHeaders, async (req, res) => {
-    send(res, await acceptOrganizationInvitation(deps, req, req.body));
+    await run(res, () => acceptOrganizationInvitation(deps, req, req.body));
   });
 
   app.get("/api/research/account/organizations/:organizationId/dashboard", privateAccountHeaders, async (req, res) => {
-    send(res, await getBusinessDashboard(deps, req, routeParam(req.params.organizationId)));
+    await run(res, () => getBusinessDashboard(deps, req, routeParam(req.params.organizationId)));
   });
 
   app.patch("/api/research/account/organizations/:organizationId/profile", privateAccountHeaders, async (req, res) => {
-    send(res, await patchBusinessProfile(deps, req, routeParam(req.params.organizationId), req.body));
+    await run(res, () => patchBusinessProfile(deps, req, routeParam(req.params.organizationId), req.body));
   });
 
   app.post("/api/research/account/organizations/:organizationId/users/invitations", privateAccountHeaders, async (req, res) => {
-    send(res, await inviteOrganizationUser(deps, req, { ...req.body, organizationId: routeParam(req.params.organizationId) }));
+    await run(res, () => inviteOrganizationUser(deps, req, { ...req.body, organizationId: routeParam(req.params.organizationId) }));
   });
 
   app.post("/api/research/account/organizations/:organizationId/orders/request-again", privateAccountHeaders, async (req, res) => {
-    send(res, await requestOrderAgain(deps, req, { ...req.body, organizationId: routeParam(req.params.organizationId) }));
+    await run(res, () => requestOrderAgain(deps, req, { ...req.body, organizationId: routeParam(req.params.organizationId) }));
   });
 }

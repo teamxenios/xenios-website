@@ -12,6 +12,8 @@ Status: isolated implementation on `ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0`. R
 
 The organization layer grants an existing Supabase Auth UID roles in an organization. It does not issue credentials. A `customerRef` binding assigns the existing customer/order scope to either one personal member or one organization; it does not copy or recreate orders.
 
+Canonical commerce orders can carry one additive `research_organization_order_ownership` row keyed by the existing `research_orders.id`. It contains authorization provenance only—never totals, lines, payment state, invoices, or fulfillment state. Existing Early Access history is projected through the verified `customerRef` binding.
+
 ## Unmounted API overlay
 
 - `GET /api/research/account/context`
@@ -47,4 +49,4 @@ The Roman Digital seed contains the organization and normalized invitation email
 
 ## Integration work intentionally deferred
 
-The final-base integration owner must implement the `AccountIdentityDeps` production adapter against the candidate tables and existing order projections, connect challenge/invitation email delivery to the durable outbox, mount the registration function and pages, and add the candidate SQL to the reviewed migration DAG. None of those actions are safe on this sibling base.
+This lane now includes a tested, unmounted production dependency boundary for verified JWT resolution, hash-only challenge persistence, delivery handoff, and fail-closed password-change evidence. The final-base integration owner must implement its storage methods against the reviewed candidate tables and existing order projections, connect challenge/invitation delivery to a reviewed encrypted/immediate provider path, mount the registration function and pages, and add the candidate SQL to the reviewed migration DAG. None of those integration actions are safe on this sibling base.

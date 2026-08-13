@@ -60,6 +60,8 @@ const data: OrganizationDashboardDto = {
 
 describe("organization buyer dashboard", () => {
   it("shows business, billing/shipping, team, order, invoice, tracking, and request-again surfaces", async () => {
+    const reactEnvironment = globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean };
+    reactEnvironment.IS_REACT_ACT_ENVIRONMENT = true;
     const memory = memoryLocation({ path: "/research/account/organizations/e26bc7de-86df-4e70-8e82-964e3671d71c", static: true });
     const container = document.createElement("div");
     const root = createRoot(container);
@@ -79,5 +81,6 @@ describe("organization buyer dashboard", () => {
       "Add a user",
     ]) expect(html).toContain(expected);
     await act(async () => root.unmount());
+    delete reactEnvironment.IS_REACT_ACT_ENVIRONMENT;
   });
 });

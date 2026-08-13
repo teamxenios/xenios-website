@@ -124,6 +124,64 @@ create index if not exists research_customer_account_bindings_member_idx
 create index if not exists research_customer_account_bindings_org_idx
   on public.research_customer_account_bindings(organization_id) where organization_id is not null;
 
+-- Additive ownership for canonical commerce orders. The order, lines,
+-- invoices, payments, and fulfillment remain in their existing tables; this
+-- row is authorization metadata only. Historical Early Access ownership is
+-- resolved through the customerRef binding above instead of copying orders.
+create table if not exists public.research_organization_order_ownership (
+  order_id uuid primary key references public.research_orders(id) on delete restrict,
+  organization_id uuid not null references public.research_organizations(id),
+  placed_by_organization_user_id uuid references public.research_organization_users(id),
+  established_from_customer_binding_id uuid references public.research_customer_account_bindings(id),
+  ownership_basis text not null check (ownership_basis in ('organization_checkout','verified_customer_claim')),
+  established_by_auth_user_id uuid not null references auth.users(id),
+  established_at timestamptz not null default clock_timestamp(),
+  constraint research_organization_order_ownership_evidence check (
+    (ownership_basis='organization_checkout' and placed_by_organization_user_id is not null
+      and established_from_customer_binding_id is null)
+    or (ownership_basis='verified_customer_claim' and established_from_customer_binding_id is not null
+      and placed_by_organization_user_id is null)
+  )
+);
+create index if not exists research_organization_order_ownership_org_idx
+  on public.research_organization_order_ownership(organization_id, established_at desc);
+
+create or replace function public.research_organization_order_ownership_validate()
+returns trigger language plpgsql set search_path='' as $$
+declare v_evidence_organization_id uuid;
+declare v_actor_is_member boolean;
+begin
+  if tg_op in ('UPDATE','DELETE') then
+    raise exception 'organization order ownership is immutable' using errcode='55000';
+  end if;
+  if new.ownership_basis='organization_checkout' then
+    select organization_id into v_evidence_organization_id
+      from public.research_organization_users
+     where id=new.placed_by_organization_user_id and state='active';
+  else
+    select organization_id into v_evidence_organization_id
+      from public.research_customer_account_bindings
+     where id=new.established_from_customer_binding_id and subject_type='organization';
+  end if;
+  if v_evidence_organization_id is null or v_evidence_organization_id<>new.organization_id then
+    raise exception 'order ownership evidence does not match organization' using errcode='23514';
+  end if;
+  select exists(
+    select 1 from public.research_organization_users
+     where organization_id=new.organization_id and auth_user_id=new.established_by_auth_user_id and state='active'
+  ) into v_actor_is_member;
+  if not v_actor_is_member then
+    raise exception 'order ownership actor is not an active organization user' using errcode='42501';
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists research_organization_order_ownership_validate
+  on public.research_organization_order_ownership;
+create trigger research_organization_order_ownership_validate
+before insert or update or delete on public.research_organization_order_ownership
+for each row execute function public.research_organization_order_ownership_validate();
+
 create table if not exists public.research_account_binding_events (
   id bigint generated always as identity primary key,
   event_type text not null,
@@ -352,6 +410,7 @@ alter table public.research_organization_users enable row level security;
 alter table public.research_organization_invitations enable row level security;
 alter table public.research_account_claim_challenges enable row level security;
 alter table public.research_customer_account_bindings enable row level security;
+alter table public.research_organization_order_ownership enable row level security;
 alter table public.research_account_binding_events enable row level security;
 alter table public.research_organization_request_again enable row level security;
 
