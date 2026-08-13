@@ -1,12 +1,17 @@
+import fs from "node:fs";
+import path from "node:path";
 import express, { type Express } from "express";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { FULL_CATALOG_VISIBILITY_ENV_VAR } from "../catalog-display/visibility";
 import { noMasterOfferingCommerce } from "./customer-projection";
 import {
+  MASTER_OFFERING_CATALOG_ERROR_BASE_PATH,
   MASTER_OFFERING_CATALOG_ROUTES,
-  mountMasterOfferingCatalog,
+  masterOfferingCatalogErrorHandler,
+  masterOfferingCatalogRouteTable,
 } from "./mount";
+import type { MasterOfferingCatalogApiDependencies } from "./routes";
 import {
   InMemoryMasterOfferingCatalogReader,
   MasterOfferingCatalogService,
@@ -28,9 +33,10 @@ function service(): MasterOfferingCatalogService {
   );
 }
 
-function mounted(env: Record<string, string | undefined> = {}): Express {
-  const app = express();
-  mountMasterOfferingCatalog(app, {
+function dependencies(
+  env: Record<string, string | undefined> = {},
+): MasterOfferingCatalogApiDependencies {
+  return {
     authorizeViewer: () => ({ audience: "member" as const, email: FOUNDER }),
     serviceForViewer: service,
     now: () => "2026-08-13T00:00:00.000Z",
@@ -40,24 +46,66 @@ function mounted(env: Record<string, string | undefined> = {}): Express {
       [FULL_CATALOG_VISIBILITY_ENV_VAR]: FOUNDER,
       ...env,
     },
-  });
+  };
+}
+
+/** Exactly what the composition root is being asked to write. */
+function mounted(env: Record<string, string | undefined> = {}): Express {
+  const app = express();
+  const deps = dependencies(env);
+  for (const route of masterOfferingCatalogRouteTable(deps)) {
+    app[route.method](route.path, ...route.handlers);
+  }
+  app.use(
+    MASTER_OFFERING_CATALOG_ERROR_BASE_PATH,
+    masterOfferingCatalogErrorHandler(deps),
+  );
   return app;
 }
 
-describe("the mount helper", () => {
-  it("registers exactly the three prepared GET routes", () => {
-    expect(MASTER_OFFERING_CATALOG_ROUTES).toEqual([
+describe("the route table", () => {
+  it("describes exactly three GET routes and their OPTIONS", () => {
+    const table = masterOfferingCatalogRouteTable(dependencies());
+    expect(table.filter((route) => route.method === "get").map((r) => r.path)).toEqual([
       "/api/research/catalog-display/v2/catalog",
       "/api/research/catalog-display/v2/products/:family/:slug",
       "/api/research/catalog-display/v2/price-list",
     ]);
-    const app = express();
-    const result = mountMasterOfferingCatalog(app, {
-      authorizeViewer: () => null,
-      serviceForViewer: service,
-    });
-    expect(result.routes).toEqual([...MASTER_OFFERING_CATALOG_ROUTES]);
-    expect(result.basePath).toBe("/api/research/catalog-display/v2");
+    expect(
+      table.filter((route) => route.method === "options").map((r) => r.path),
+    ).toEqual([...MASTER_OFFERING_CATALOG_ROUTES]);
+    for (const route of table) {
+      expect(route.handlers.length).toBe(2);
+    }
+  });
+
+  it("registers no Express route of its own", () => {
+    // The repository pins the number of static Express registration call sites
+    // in server/release-control-plane.test.ts. A prepared lane that wrote
+    // app.get here would move that pinned count while still being unmounted,
+    // and the pin belongs to another lane. So this file describes; the
+    // composition root registers, and the census moves when the catalog really
+    // becomes reachable.
+    // Comments are stripped first: the file documents the two lines the
+    // composition root should write, and scanning raw text would fail on the
+    // very example that explains the rule.
+    const source = fs
+      .readFileSync(
+        path.join(process.cwd(), "server", "research", "master-offerings", "mount.ts"),
+        "utf8",
+      )
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/^\s*\/\/.*$/gm, "");
+    for (const call of [
+      "app.get(",
+      "app.post(",
+      "app.options(",
+      "app.use(",
+      "router.get(",
+      "router.use(",
+    ]) {
+      expect(source).not.toContain(call);
+    }
   });
 
   it("serves all three routes with the private headers in place", async () => {
@@ -67,9 +115,7 @@ describe("the mount helper", () => {
       request(app).get(
         "/api/research/catalog-display/v2/products/research_vials/research-vials-bpc-157",
       ),
-      request(app).get(
-        "/api/research/catalog-display/v2/price-list?format=json",
-      ),
+      request(app).get("/api/research/catalog-display/v2/price-list?format=json"),
     ]);
     for (const response of responses) {
       expect(response.status).toBe(200);
@@ -96,8 +142,7 @@ describe("the mount helper", () => {
       "/api/research/catalog-display/v2/price-list",
     ]) {
       for (const method of ["post", "put", "patch", "delete"] as const) {
-        const response = await request(app)[method](route);
-        expect(response.status).toBe(404);
+        expect((await request(app)[method](route)).status).toBe(404);
       }
     }
   });
@@ -107,8 +152,6 @@ describe("the mount helper", () => {
       "/api/research/catalog-display/v2/products/research_vials/research-vials-bpc-157",
     );
     expect(response.status).toBe(200);
-    // A fully mounted catalog still sells nothing until Product Control binds
-    // an exact variant. Mounting is reachability, not authority.
     expect(response.text).not.toContain("add_to_cart");
     expect(response.text).not.toContain("Add to Cart");
     expect(response.body.product.variants[0].price.state).toBe("on_request");
@@ -123,19 +166,10 @@ describe("the mount helper", () => {
   });
 
   it("keeps the error handler scoped to its own path", async () => {
-    const app = express();
-    mountMasterOfferingCatalog(app, {
-      authorizeViewer: () => ({ audience: "member" as const, email: FOUNDER }),
-      serviceForViewer: service,
-      env: {
-        [MASTER_OFFERINGS_ENABLED_ENV_VAR]: "true",
-        [FULL_CATALOG_VISIBILITY_ENV_VAR]: FOUNDER,
-      },
-    });
+    const app = mounted();
     app.get("/api/other/thing", () => {
       throw new Error("someone else's failure");
     });
-    // A global error handler here would have swallowed this and answered 503.
     const response = await request(app).get("/api/other/thing");
     expect(response.status).toBe(500);
     expect(response.body.code).toBeUndefined();

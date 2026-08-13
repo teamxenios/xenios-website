@@ -1,4 +1,4 @@
-import type { IRouter } from "express";
+import type { ErrorRequestHandler, RequestHandler } from "express";
 import {
   MASTER_OFFERING_CATALOG_BASE_PATH,
   MASTER_OFFERING_CATALOG_DETAIL_ROUTE,
@@ -9,22 +9,40 @@ import {
 } from "./routes";
 
 /**
- * The whole mount, in one call.
+ * The catalog's route table, as data.
  *
- * This exists so the composition root's diff is two lines rather than forty,
- * and so the route list, the middleware order, the OPTIONS handlers and the
- * path-scoped error handler cannot be got subtly wrong by being retyped.
+ * WHY THIS IS A TABLE AND NOT A `mount(app)` FUNCTION
+ * ---------------------------------------------------
+ * The first version of this file called `app.get(...)` directly, which is the
+ * obvious convenience. It was wrong, and the repository's own route census
+ * caught it: `server/release-control-plane.test.ts` pins the exact number of
+ * static Express registration call sites in the worktree, and four literal
+ * registrations here moved that count whether or not anything ever called the
+ * function.
  *
- * It does NOT mount anything by itself. Nothing in this repository imports it,
- * and `catalog-boundaries.test.ts` fails if anything starts to. Calling it is a
- * decision the one owner of the composition root makes, and that call is the
- * moment the catalog becomes reachable.
+ * That pin is a protected release-control hub owned by another lane, and the
+ * integration collision audit has already faulted a lane for editing it.
+ * Writing the registrations here and then bumping the pinned number would be
+ * the same violation, and hiding the calls from the static scan to keep the
+ * number steady would be worse: it would defeat a census whose whole job is to
+ * know what this application serves.
  *
- * Every route is GET only, private, and noindex. The display flag, the viewer
- * check and the launch scope are all enforced inside the handlers, so mounting
- * grants reachability and nothing else. It creates no commerce authority: the
- * catalog can be fully mounted and still sell nothing until Product Control
- * binds an exact variant.
+ * So the boundary is this. **This lane describes its routes. The composition
+ * root registers them**, and the census moves at exactly the moment the catalog
+ * genuinely becomes reachable, which is what it is there to measure.
+ *
+ * The composition root's side is still two lines:
+ *
+ *     for (const route of masterOfferingCatalogRouteTable(deps)) {
+ *       app[route.method](route.path, ...route.handlers);
+ *     }
+ *     app.use(MASTER_OFFERING_CATALOG_BASE_PATH, masterOfferingCatalogErrorHandler(deps));
+ *
+ * Every route is GET or OPTIONS, private, and noindex. The display flag, the
+ * viewer check and the launch scope are enforced inside the handlers, so
+ * mounting grants reachability and nothing else. It creates no commerce
+ * authority: the catalog can be fully mounted and still sell nothing until
+ * Product Control binds an exact variant.
  */
 
 export const MASTER_OFFERING_CATALOG_ROUTES = [
@@ -33,47 +51,57 @@ export const MASTER_OFFERING_CATALOG_ROUTES = [
   MASTER_OFFERING_CATALOG_PRICE_LIST_ROUTE,
 ] as const;
 
-export interface MountedMasterOfferingCatalog {
-  /** Exactly the paths that were registered, for the route census. */
-  routes: readonly string[];
-  basePath: string;
+export interface MasterOfferingCatalogRoute {
+  method: "get" | "options";
+  path: string;
+  /** Middleware first, terminal handler last, in registration order. */
+  handlers: readonly RequestHandler[];
 }
 
-export function mountMasterOfferingCatalog(
-  // IRouter, not Express: an Express application also has a settings getter
-  // called `get`, and the union makes overload resolution pick the wrong one.
-  // Every Express app satisfies IRouter, so nothing is lost by narrowing.
-  app: IRouter,
+/**
+ * Every route this lane needs, in the order it must be registered.
+ *
+ * Read-only by construction: the union of methods admits nothing that writes.
+ */
+export function masterOfferingCatalogRouteTable(
   dependencies: MasterOfferingCatalogApiDependencies,
-): MountedMasterOfferingCatalog {
+): readonly MasterOfferingCatalogRoute[] {
   const handlers = createMasterOfferingCatalogApiHandlers(dependencies);
-
-  app.get(
-    MASTER_OFFERING_CATALOG_LIST_ROUTE,
-    handlers.privateHeaders,
-    handlers.list,
-  );
-  app.get(
-    MASTER_OFFERING_CATALOG_DETAIL_ROUTE,
-    handlers.privateHeaders,
-    handlers.detail,
-  );
-  app.get(
-    MASTER_OFFERING_CATALOG_PRICE_LIST_ROUTE,
-    handlers.privateHeaders,
-    handlers.priceList,
-  );
-
-  for (const route of MASTER_OFFERING_CATALOG_ROUTES) {
-    app.options(route, handlers.privateHeaders, handlers.options);
-  }
-
-  // Path scoped on purpose. A global error handler here would swallow failures
-  // from every other route in the application.
-  app.use(MASTER_OFFERING_CATALOG_BASE_PATH, handlers.error);
-
-  return {
-    routes: [...MASTER_OFFERING_CATALOG_ROUTES],
-    basePath: MASTER_OFFERING_CATALOG_BASE_PATH,
-  };
+  return [
+    {
+      method: "get",
+      path: MASTER_OFFERING_CATALOG_LIST_ROUTE,
+      handlers: [handlers.privateHeaders, handlers.list],
+    },
+    {
+      method: "get",
+      path: MASTER_OFFERING_CATALOG_DETAIL_ROUTE,
+      handlers: [handlers.privateHeaders, handlers.detail],
+    },
+    {
+      method: "get",
+      path: MASTER_OFFERING_CATALOG_PRICE_LIST_ROUTE,
+      handlers: [handlers.privateHeaders, handlers.priceList],
+    },
+    ...MASTER_OFFERING_CATALOG_ROUTES.map(
+      (path): MasterOfferingCatalogRoute => ({
+        method: "options",
+        path,
+        handlers: [handlers.privateHeaders, handlers.options],
+      }),
+    ),
+  ];
 }
+
+/**
+ * The path-scoped error handler. Scoped on purpose: a global one here would
+ * swallow failures from every other route in the application.
+ */
+export function masterOfferingCatalogErrorHandler(
+  dependencies: MasterOfferingCatalogApiDependencies,
+): ErrorRequestHandler {
+  return createMasterOfferingCatalogApiHandlers(dependencies).error;
+}
+
+export const MASTER_OFFERING_CATALOG_ERROR_BASE_PATH =
+  MASTER_OFFERING_CATALOG_BASE_PATH;

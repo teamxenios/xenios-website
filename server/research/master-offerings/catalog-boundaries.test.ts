@@ -307,88 +307,83 @@ describe("adversarial: query hardening", () => {
   });
 });
 
+/**
+ * One walk, cached for the file.
+ *
+ * Two independent walks over client, server and shared read several thousand
+ * files twice, which took 32 seconds under full-suite parallel load and blew
+ * the timeout. The scan is the same both times, so it is done once.
+ */
+let SOURCE_FILES: ReadonlyArray<{ rel: string; source: string }> | null = null;
+
+function sourceFiles(): ReadonlyArray<{ rel: string; source: string }> {
+  if (SOURCE_FILES !== null) return SOURCE_FILES;
+  const collected: Array<{ rel: string; source: string }> = [];
+  const walk = (directory: string): void => {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const full = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        if (entry.name === "node_modules" || entry.name === "dist") continue;
+        walk(full);
+        continue;
+      }
+      if (!/\.(ts|tsx)$/.test(entry.name)) continue;
+      collected.push({
+        rel: path.relative(process.cwd(), full).split(path.sep).join("/"),
+        source: fs.readFileSync(full, "utf8"),
+      });
+    }
+  };
+  for (const root of ["client/src", "server", "shared"]) {
+    walk(path.join(process.cwd(), root));
+  }
+  SOURCE_FILES = collected;
+  return collected;
+}
+
 describe("boundaries: the ingestion model stays on the server", () => {
   it("is not imported by any client file", () => {
-    const clientRoot = path.join(process.cwd(), "client", "src");
-    const offenders: string[] = [];
-    let scanned = 0;
-    const walk = (directory: string): void => {
-      for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-        const full = path.join(directory, entry.name);
-        if (entry.isDirectory()) {
-          walk(full);
-          continue;
-        }
-        if (!/\.(ts|tsx)$/.test(entry.name)) continue;
-        scanned += 1;
-        const source = fs.readFileSync(full, "utf8");
-        if (
-          /from\s+["'][^"']*master-offerings\/(model|normalize|reconciliation|service|routes|price-authority|price-list-export)["']/.test(
-            source,
+    const files = sourceFiles().filter((file) => file.rel.startsWith("client/src/"));
+    const offenders = files
+      .filter(
+        (file) =>
+          /from\s+["'][^"']*master-offerings\/(model|normalize|reconciliation|service|routes|price-authority|price-list-export|dataset-reader|composition|mount)["']/.test(
+            file.source,
           ) ||
-          /from\s+["'][^"']*server\/research\/master-offerings/.test(source)
-        ) {
-          offenders.push(path.relative(clientRoot, full));
-        }
-      }
-    };
-    walk(clientRoot);
+          /from\s+["'][^"']*server\/research\/master-offerings/.test(file.source),
+      )
+      .map((file) => file.rel);
     // A scan that walked nothing would pass vacuously and quietly stop being a
     // boundary at all.
-    expect(scanned).toBeGreaterThan(100);
+    expect(files.length).toBeGreaterThan(100);
     expect(offenders).toEqual([]);
   });
 
   it("is imported by nothing outside the lane, so it cannot ship yet", () => {
-    // Verified against a real production build at 0c911fc: neither
-    // dist/public/assets nor dist/index.cjs contained any catalog string. This
-    // is the fast static proxy for that, and it is the tripwire: the moment a
-    // router or a composition root imports the lane, this fails and forces the
-    // mounting conversation instead of letting the surface ship by accident.
-    const roots = [
-      path.join(process.cwd(), "client", "src"),
-      path.join(process.cwd(), "server"),
-      path.join(process.cwd(), "shared"),
-    ];
+    // Verified against a real production build: neither dist/public/assets nor
+    // dist/index.cjs contained any catalog string. This is the fast static
+    // proxy for that, and it is the tripwire: the moment a router or a
+    // composition root imports the lane, this fails and forces the mounting
+    // conversation instead of letting the surface ship by accident.
     const lane =
-      /master-offerings\/(FullCatalogPage|MasterOfferingCard|MasterOfferingCatalogControls|MasterOfferingDetail|catalogApi|integration-packet|routes|service|price-authority|price-list-export)/;
-    // Compared against a slash-normalized relative path, not the raw one. A
-    // regex over a Windows path silently matches nothing, which would turn
-    // this tripwire off without failing.
-    const relative = (full: string) =>
-      path.relative(process.cwd(), full).split(path.sep).join("/");
+      /master-offerings\/(FullCatalogPage|MasterOfferingCard|MasterOfferingCatalogControls|MasterOfferingDetail|MasterOfferingCatalogSurface|MasterOfferingDetailSurface|catalogApi|catalog-cart-handoff|integration-packet|routes|service|price-authority|price-list-export|dataset-reader|composition|mount)/;
     const owned = /(^|\/)master-offerings\//;
+    const outside = sourceFiles().filter((file) => !owned.test(file.rel));
+    const laneFiles = sourceFiles().length - outside.length;
     const offenders: string[] = [];
-    let scanned = 0;
-    let laneFilesSkipped = 0;
-    const walk = (directory: string): void => {
-      for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-        const full = path.join(directory, entry.name);
-        if (entry.isDirectory()) {
-          walk(full);
-          continue;
-        }
-        if (!/\.(ts|tsx)$/.test(entry.name)) continue;
-        const rel = relative(full);
-        if (owned.test(rel)) {
-          laneFilesSkipped += 1;
-          continue;
-        }
-        scanned += 1;
-        const source = fs.readFileSync(full, "utf8");
-        const statements = source.match(/^[ 	]*(?:import|export)[ 	].*$/gm) ?? [];
-        for (const statement of statements) {
-          if (lane.test(statement)) {
-            offenders.push(`${rel}: ${statement.trim()}`);
-          }
+    for (const file of outside) {
+      const statements =
+        file.source.match(/^[ 	]*(?:import|export)[ 	].*$/gm) ?? [];
+      for (const statement of statements) {
+        if (lane.test(statement)) {
+          offenders.push(`${file.rel}: ${statement.trim()}`);
         }
       }
-    };
-    for (const root of roots) walk(root);
+    }
     // Prove the scan is live: it walked the repository and it recognized the
     // lane's own files rather than matching nothing at all.
-    expect(scanned).toBeGreaterThan(500);
-    expect(laneFilesSkipped).toBeGreaterThanOrEqual(20);
+    expect(outside.length).toBeGreaterThan(500);
+    expect(laneFiles).toBeGreaterThanOrEqual(20);
     expect(offenders).toEqual([]);
   });
 

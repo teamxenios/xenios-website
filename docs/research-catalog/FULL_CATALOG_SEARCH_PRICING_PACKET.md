@@ -41,7 +41,7 @@ foundation had not built:
 | Handoff into the existing cart | `catalog-cart-handoff.ts` |
 | Named-member breadth grant | `named-member-breadth.test.ts` |
 | Typechecked wiring factory | `composition.ts` |
-| One-call mount for the composition root | `mount.ts` |
+| Route table for the composition root | `mount.ts` |
 | Adversarial search input | `search-adversarial.test.ts` |
 | Structural accessibility audit | `accessibility.test.tsx` |
 
@@ -459,9 +459,19 @@ from here.
    file is deliberately not committed.
 2. **Point the server at it** with `XENIOS_MASTER_OFFERINGS_DATASET`, and decide whether
    the file ships with the build or is mounted alongside it.
-3. **Mount the three prepared handlers once** with `mountMasterOfferingCatalog(app, deps)`,
-   which registers the three GETs, their OPTIONS and the path-scoped error handler in one
-   call so none of it can be retyped wrongly.
+3. **Mount the three prepared handlers once**, iterating the route table so nothing is
+   retyped wrongly:
+   ```ts
+   for (const route of masterOfferingCatalogRouteTable(deps)) {
+     app[route.method](route.path, ...route.handlers);
+   }
+   app.use(MASTER_OFFERING_CATALOG_ERROR_BASE_PATH, masterOfferingCatalogErrorHandler(deps));
+   ```
+   The registrations belong in the composition root rather than in this lane, and that is
+   load bearing: `server/release-control-plane.test.ts` pins the number of static Express
+   registration call sites, so a prepared lane that wrote `app.get` would move that pinned
+   count while still being unmounted. The census should move when the catalog genuinely
+   becomes reachable, which is here.
 4. **Add Kris to `RESEARCH_FULL_CATALOG_MEMBERS`**, or set
    `RESEARCH_MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY=false` once founder smoke has passed.
    Either way `RESEARCH_MASTER_OFFERINGS_ENABLED=true` is required first.
