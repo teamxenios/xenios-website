@@ -32,13 +32,21 @@ import {
   warmMasterOfferingSearch,
 } from "./search";
 import { offering, variant } from "./test-fixtures";
+import { MASTER_OFFERINGS_COMMITTED_DATASET_PATH } from "./dataset-location";
 
-const DATASET_PATH =
-  process.env.XENIOS_MASTER_OFFERINGS_DATASET ??
+// The same resolution the server uses, so this suite exercises the dataset the
+// deployment would actually serve. It was written against the gitignored
+// .local build, which meant it skipped on any machine that had not run the
+// pipeline. The committed artifact removed that condition, and the .local path
+// stays last so a local rebuild can still be pointed at deliberately.
+const DATASET_PATH = [
+  process.env.XENIOS_MASTER_OFFERINGS_DATASET,
+  path.resolve(process.cwd(), MASTER_OFFERINGS_COMMITTED_DATASET_PATH),
   path.resolve(
     process.cwd(),
     ".local/research/master-offerings/generated/member-safe-master-offerings.generated.json",
-  );
+  ),
+].find((candidate) => typeof candidate === "string" && fs.existsSync(candidate)) ?? "";
 
 /** The counts the frozen catalog foundation verified independently. */
 const MEMBER_OFFERINGS = 1121;

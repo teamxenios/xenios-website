@@ -342,6 +342,13 @@ function sourceFiles(): ReadonlyArray<{ rel: string; source: string }> {
 }
 
 describe("boundaries: the ingestion model stays on the server", () => {
+    // The two boundary assertions above and below walk 1,378 files and about
+    // 5.5 MB synchronously. Under vitest's default five second budget they
+    // pass alone in roughly two seconds and time out under parallel load,
+    // which three separate lanes hit independently. A boundary test that
+    // times out reports a problem it never actually checked for, which is
+    // worse than a red assertion because it looks like one. The budget is
+    // raised so the scan finishes; not one expectation is relaxed.
   it("is not imported by any client file", () => {
     const files = sourceFiles().filter((file) => file.rel.startsWith("client/src/"));
     const offenders = files
@@ -357,7 +364,7 @@ describe("boundaries: the ingestion model stays on the server", () => {
     // boundary at all.
     expect(files.length).toBeGreaterThan(100);
     expect(offenders).toEqual([]);
-  });
+  }, 60_000);
 
   it("is imported by nothing outside the lane, so it cannot ship yet", () => {
     // Verified against a real production build: neither dist/public/assets nor
@@ -385,7 +392,7 @@ describe("boundaries: the ingestion model stays on the server", () => {
     expect(outside.length).toBeGreaterThan(500);
     expect(laneFiles).toBeGreaterThanOrEqual(20);
     expect(offenders).toEqual([]);
-  });
+  }, 60_000);
 
   it("keeps the raw dataset out of the browser contract", () => {
     const raw = fs.readFileSync(

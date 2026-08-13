@@ -3,6 +3,10 @@
 // real browser at a real width, with the real stylesheet, without a member
 // session or a running API. Delete it freely.
 import { createRoot } from "react-dom/client";
+import {
+  DEFAULT_MASTER_OFFERING_SORT,
+  EMPTY_MASTER_OFFERING_FACETS,
+} from "@shared/research/master-offerings/contract";
 import type {
   MasterOfferingCardView,
   MasterOfferingCatalogListResponse,
@@ -110,6 +114,11 @@ async function fetchCatalog(
         pageSize,
         total: matched.length,
         totalPages: Math.max(1, Math.ceil(matched.length / pageSize)),
+        // The sort lane made both of these required on the page contract after
+        // this harness was written. Echoing the default and empty facets keeps
+        // the harness honest: it is a fixture server, not a facet engine.
+        sort: DEFAULT_MASTER_OFFERING_SORT,
+        facets: EMPTY_MASTER_OFFERING_FACETS,
         products: matched.slice(start, start + pageSize),
       },
     },
