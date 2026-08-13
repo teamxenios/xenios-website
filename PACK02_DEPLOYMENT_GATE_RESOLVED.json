@@ -44,6 +44,7 @@
     "declaredExactlyOnce": [
       "/research/sign-in",
       "/research/reset-password",
+      "/research/member",
       "/research/member/products",
       "/research/member/cart",
       "/research/member/checkout",
