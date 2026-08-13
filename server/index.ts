@@ -20,6 +20,7 @@ import { registerMemberCapabilityApi } from "./research/capabilities";
 import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
 import { registerMemberCatalogApi } from "./research/catalog/member-catalog-routes";
+import { registerProductionAccountIdentityApi } from "./research/account-identity/production-mount";
 import {
   buildMemberCatalogProductionService,
   memberAudienceSourceVersion,
@@ -258,6 +259,7 @@ app.use((req, res, next) => {
 // the SPA catch-all so the gate always runs first.
 app.use(researchPageGate);
 registerResearchApi(app);
+registerProductionAccountIdentityApi(app);
 /**
  * The active member behind a request, or null, without writing a response.
  *

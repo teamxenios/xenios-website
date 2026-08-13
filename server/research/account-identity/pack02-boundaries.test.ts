@@ -6,8 +6,10 @@ const root = process.cwd();
 const read = (path: string) => readFileSync(resolve(root, path), "utf8");
 
 describe("Pack 02 isolation and single-system boundaries", () => {
-  it("does not mount the candidate routes or UI", () => {
-    expect(read("server/index.ts")).not.toContain("registerAccountIdentityApi");
+  it("mounts the reviewed production adapter exactly once without mounting candidate UI", () => {
+    const index = read("server/index.ts");
+    expect(index.match(/registerProductionAccountIdentityApi\(app\);/g)).toHaveLength(1);
+    expect(index).not.toContain("registerAccountIdentityApi(app");
     expect(read("client/src/research/section.tsx")).not.toContain("OrganizationDashboard");
     expect(read("client/src/research/section.tsx")).not.toContain("AccountSignIn");
   });
