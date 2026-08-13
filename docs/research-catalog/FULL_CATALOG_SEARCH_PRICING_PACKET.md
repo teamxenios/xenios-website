@@ -41,6 +41,7 @@ foundation had not built:
 | Handoff into the existing cart | `catalog-cart-handoff.ts` |
 | Named-member breadth grant | `named-member-breadth.test.ts` |
 | Typechecked wiring factory | `composition.ts` |
+| Route table for the composition root | `mount.ts` |
 | Adversarial search input | `search-adversarial.test.ts` |
 | Structural accessibility audit | `accessibility.test.tsx` |
 
@@ -159,10 +160,15 @@ loads through the same reader the server uses, counts both itself, and fails if 
 own header disagrees with its body. Exercised against a foundation-shaped dataset of
 exactly 1,121 and 1,181: `PASS`, with the family and availability breakdown printed.
 
-**The real dataset is not in this repository.** The foundation deliberately left the
-generated payload under the ignored `.local` boundary pending registry reconciliation, so
-the count above is verified against the documented shape, not against live data. Producing
-the runtime dataset is the first integration requirement below.
+**The dataset has now been produced and verified from the authoritative workbook.** It was
+located on this machine by SHA-256 rather than by filename, exported, built, and loaded
+through the production reader: 1,236 source rows to 1,121 member-safe offerings, 1,181
+variants and 11 admin-only holds, matching the foundation exactly. Full breakdown, real
+performance numbers and the reproduction commands are in
+`CATALOG_DATASET_VERIFICATION.md` beside this file.
+
+The generated payload stays under the ignored `.local` boundary and is not committed.
+Point the server at it with `XENIOS_MASTER_OFFERINGS_DATASET`.
 
 ## Speed at catalog scale
 
@@ -447,14 +453,25 @@ from here.
 
 ## Integration requirements, in order
 
-1. **Produce the runtime dataset.** Run `scripts/research/build-master-offerings.ts`
-   against the private intake, then verify it with
-   `verify-master-offerings-dataset.ts`. Without this there is nothing to show, however
-   the surface is mounted. This is the blocker for "Kris sees the catalog".
+1. **Produce the runtime dataset.** Done and verified on this machine; see
+   `CATALOG_DATASET_VERIFICATION.md` for the workbook hash, the recomputed counts and the
+   three commands. Re-run it wherever the server will actually run, because the generated
+   file is deliberately not committed.
 2. **Point the server at it** with `XENIOS_MASTER_OFFERINGS_DATASET`, and decide whether
    the file ships with the build or is mounted alongside it.
-3. **Mount the three prepared handlers once**, per the composition section above, with a
-   request-scoped service.
+3. **Mount the three prepared handlers once**, iterating the route table so nothing is
+   retyped wrongly:
+   ```ts
+   for (const route of masterOfferingCatalogRouteTable(deps)) {
+     app[route.method](route.path, ...route.handlers);
+   }
+   app.use(MASTER_OFFERING_CATALOG_ERROR_BASE_PATH, masterOfferingCatalogErrorHandler(deps));
+   ```
+   The registrations belong in the composition root rather than in this lane, and that is
+   load bearing: `server/release-control-plane.test.ts` pins the number of static Express
+   registration call sites, so a prepared lane that wrote `app.get` would move that pinned
+   count while still being unmounted. The census should move when the catalog genuinely
+   becomes reachable, which is here.
 4. **Add Kris to `RESEARCH_FULL_CATALOG_MEMBERS`**, or set
    `RESEARCH_MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY=false` once founder smoke has passed.
    Either way `RESEARCH_MASTER_OFFERINGS_ENABLED=true` is required first.

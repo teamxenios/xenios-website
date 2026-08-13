@@ -120,19 +120,10 @@ describe("every member-safe offering is viewable", () => {
     expect(total).toBe(MEMBER_OFFERINGS);
   });
 
-  it("keeps repeated search cheap at full catalog scale", async () => {
-    const catalog = service();
-    // The unmemoized normalizer cost roughly 40ms per query against 1,121
-    // offerings, so a hundred queries took about four seconds. Memoized it is
-    // roughly 6ms, so about six hundred milliseconds. Two seconds sits cleanly
-    // between the two: comfortable headroom for a slow machine, and still a
-    // real failure if the per-offering haystack memo is ever removed.
-    const started = Date.now();
-    for (let index = 0; index < 100; index += 1) {
-      await catalog.list({ q: `offering ${String(index).padStart(4, "0")}` });
-    }
-    expect(Date.now() - started).toBeLessThan(2000);
-  });
+  // The search memo is asserted deterministically in search-memo.test.ts by
+  // counting normalizer calls. A wall-clock budget here failed at 2041ms
+  // against a 2000ms limit under full-suite load, which is a test that trains
+  // people to rerun rather than one that catches a regression.
 
   it("refuses an export larger than the ceiling instead of truncating it", async () => {
     const result = await service().priceList({
