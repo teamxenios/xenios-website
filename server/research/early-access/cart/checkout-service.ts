@@ -174,7 +174,21 @@ export async function checkoutEarlyAccessCart(
 
   const committed = await deps.checkouts.commit(checkout);
   if (!committed.committed) {
-    if (committed.checkout !== null && replayMatches(committed.checkout, customer, request)) {
+    // A second quote for one intent replays the order the customer already
+    // has. `replayMatches` deliberately requires the same quoteId, which is
+    // right for every other reason and wrong for this one: here the quote
+    // differs by construction. Ownership and intent are still both proven
+    // before anything is returned, so this cannot hand over another
+    // customer's order.
+    const intentReplay =
+      committed.reason === "intent_has_active_checkout" &&
+      committed.checkout !== null &&
+      ownsRef(customer, committed.checkout.customerRef) &&
+      committed.checkout.intentHash === request.expectedIntentHash;
+    if (
+      committed.checkout !== null &&
+      (replayMatches(committed.checkout, customer, request) || intentReplay)
+    ) {
       return Object.freeze({
         ok: true as const,
         replayed: true,

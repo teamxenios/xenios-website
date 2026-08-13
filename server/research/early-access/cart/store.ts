@@ -50,6 +50,12 @@ export class InMemoryEarlyAccessCartStore
     return this.byNumber.get(checkoutNumber) ?? null;
   }
 
+  /** Every committed checkout, for tests that must assert on durable truth
+   * rather than on a response body. Read only; order is insertion order. */
+  allCheckouts(): readonly EarlyAccessCartCheckoutRecord[] {
+    return Object.freeze(Array.from(this.byNumber.values()));
+  }
+
   async commit(checkout: EarlyAccessCartCheckoutRecord): Promise<CartCommitResult> {
     const priorKey = this.byKey.get(checkout.idempotencyKey);
     if (priorKey) {
@@ -70,6 +76,39 @@ export class InMemoryEarlyAccessCartStore
         committed: false as const,
         reason: "quote_has_active_checkout" as const,
         checkout: activeForQuote,
+      });
+    }
+    // ONE CUSTOMER INTENT IS ONE ORDER, EVEN ACROSS TWO QUOTES.
+    //
+    // Migration 61 made a quote unrepeatable. It did not make an INTENT
+    // unrepeatable, and re-quoting an unchanged cart is the ordinary way a
+    // customer reaches that gap: `intentHash` is derived from the customer,
+    // contact, destination and lines, deliberately not from the quote id, so
+    // two quotes for one cart carry one intent under two ids and miss both
+    // existing guards.
+    //
+    // Scoped to customerRef as well as intentHash. The hash already binds the
+    // customer, but relying on that alone would make this guard depend on a
+    // derivation living in another module.
+    // Scoped to an UNRESOLVED intent, not to the intent forever. A checkout
+    // still awaiting payment is an open obligation, and a second one for the
+    // same cart is the duplicate this guard exists to stop. Once that first
+    // order is paid, the customer buying the same cart again is an ordinary
+    // repeat purchase and must be allowed: keying on the intent alone would
+    // have made a returning customer unable to reorder anything they had ever
+    // bought before.
+    const activeForIntent = Array.from(this.byNumber.values()).find(
+      (existing) =>
+        existing.customerRef === checkout.customerRef &&
+        existing.intentHash === checkout.intentHash &&
+        existing.disposition == null &&
+        existing.paymentState === "awaiting_payment",
+    );
+    if (activeForIntent !== undefined) {
+      return Object.freeze({
+        committed: false as const,
+        reason: "intent_has_active_checkout" as const,
+        checkout: activeForIntent,
       });
     }
     const priorNumber = this.byNumber.get(checkout.cartCheckoutNumber);

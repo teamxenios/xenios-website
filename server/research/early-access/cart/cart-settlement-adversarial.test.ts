@@ -587,10 +587,23 @@ describe("a checkout that cannot commit leaves NOTHING behind", () => {
     );
     expect(burn.ok).toBe(true);
 
+    // A DIFFERENT intent, deliberately. The unresolved-intent guard added in
+    // cart/store.ts replays an unpaid checkout for the same cart, so re-using
+    // quoteRequest() here would return the burn order and this test would
+    // stop exercising the thing it exists for: that a commit failing on its
+    // THIRD child leaves no parent, children or invoice behind. A different
+    // quantity is a different purchase, so the guard correctly stands aside
+    // and the child-number collision is reached exactly as before.
+    const secondRequest = quoteRequest();
     const second = await quoteEarlyAccessCart(
       quoteDeps(store, "xeaq_atomic00000000000002"),
       customer,
-      quoteRequest(),
+      {
+        ...secondRequest,
+        items: secondRequest.items.map((item, index) =>
+          index === 0 ? { ...item, quantity: 2 } : item,
+        ),
+      },
     );
     expect(second.ok).toBe(true);
     if (!second.ok) return;
