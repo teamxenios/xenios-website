@@ -247,6 +247,64 @@ describe("Tebra patient idempotency", () => {
   });
 });
 
+describe("Tebra concurrency", () => {
+  it("two concurrent syncs of one record create it once", async () => {
+    // Without serialization both calls look up, both see nothing, and both
+    // create. That is the duplicate chart the external id exists to prevent.
+    let resolveFind: ((value: null) => void) | null = null;
+    const find = vi.fn(
+      () =>
+        new Promise<null>((resolve) => {
+          if (!resolveFind) resolveFind = resolve;
+          else resolve(null);
+        }),
+    );
+    const harness = gateway({ client: client({ findPatientByExternalId: find }) });
+
+    const first = harness.gateway.syncPatient(PATIENT);
+    const second = harness.gateway.syncPatient(PATIENT);
+    await vi.waitFor(() => expect(find).toHaveBeenCalledTimes(1));
+    resolveFind?.(null);
+
+    await expect(first).resolves.toMatchObject({ ok: true });
+    await expect(second).resolves.toMatchObject({ ok: true });
+    expect(harness.client.createPatient).toHaveBeenCalledTimes(1);
+    expect(harness.client.updatePatient).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not serialize unrelated records against each other", async () => {
+    const otherId = "99999999-9999-4999-8999-999999999999";
+    const other = {
+      ...PATIENT,
+      localPatientId: otherId,
+      externalId: tebraExternalId("patient", otherId),
+    };
+    const harness = gateway({
+      client: client({
+        createPatient: vi.fn(async () => remote("tebra-patient-1", null)),
+      }),
+    });
+
+    const results = await Promise.all([
+      harness.gateway.syncPatient(PATIENT),
+      harness.gateway.syncPatient(other),
+    ]);
+    expect(results.every((r) => r.ok)).toBe(true);
+    expect(harness.client.createPatient).toHaveBeenCalledTimes(2);
+  });
+
+  it("a failed sync does not wedge the next one for that record", async () => {
+    const create = vi
+      .fn<[], Promise<TebraRemoteRecord>>()
+      .mockRejectedValueOnce(new Error("tebra_conflict"))
+      .mockResolvedValue(remote("tebra-patient-1", PATIENT_EXTERNAL_ID));
+    const harness = gateway({ client: client({ createPatient: create }) });
+
+    await expect(harness.gateway.syncPatient(PATIENT)).resolves.toMatchObject({ ok: false });
+    await expect(harness.gateway.syncPatient(PATIENT)).resolves.toMatchObject({ ok: true });
+  });
+});
+
 describe("Tebra appointment linkage", () => {
   it("refuses an appointment whose patient is not linked yet", async () => {
     const harness = gateway({});

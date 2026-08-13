@@ -125,6 +125,14 @@ sequence starts with that lookup.
 A link row is a routing decision, so every read is re-checked against the derived key.
 A stored row that does not check out is treated as absent, not as authoritative.
 
+The external id makes a repeat safe only once the first attempt has resolved. Two
+concurrent syncs of the same record would both look it up, both see nothing, and both
+create. The gateway therefore serializes by external id, so the second call performs
+its lookup after the first finished and adopts instead of creating. That covers one
+process; across processes the poller is held apart by the durable lease, and the
+practice system's own uniqueness on the external id is the backstop once the technical
+guide confirms it.
+
 ## Privacy
 
 - `TebraPatientProjection` is the only structure carrying identifying detail, and it

@@ -78,6 +78,37 @@ export function createTebraGateway(deps: TebraGatewayDependencies): TebraGateway
   const now = deps.now ?? (() => new Date());
   const policy = deps.retryPolicy ?? DEFAULT_TEBRA_RETRY_POLICY;
 
+  /**
+   * One record at a time, per key.
+   *
+   * The external id makes a repeat safe, but only when the repeat happens after
+   * the first attempt resolved. Two concurrent syncs of the same record would
+   * both look it up, both see nothing, and both create, which is the duplicate
+   * chart the whole design exists to prevent. Serializing by key means the
+   * second call performs its lookup after the first has finished and therefore
+   * adopts instead of creating.
+   *
+   * This covers one process. Across processes the poller is held apart by the
+   * durable lease, and the practice system's own uniqueness on the external id
+   * is the backstop once the technical guide confirms it.
+   */
+  const inFlight = new Map<string, Promise<unknown>>();
+
+  function serialize<T>(key: string, operation: () => Promise<T>): Promise<T> {
+    const previous = inFlight.get(key) ?? Promise.resolve();
+    const result = previous.then(operation, operation);
+    // Kept only while queued behind, so the map cannot grow without bound.
+    const settled = result.then(
+      () => undefined,
+      () => undefined,
+    );
+    inFlight.set(key, settled);
+    void settled.then(() => {
+      if (inFlight.get(key) === settled) inFlight.delete(key);
+    });
+    return result;
+  }
+
   async function record(event: string, detail: TebraAuditDetail): Promise<void> {
     assertTebraDetailIsSafe(detail as unknown as Record<string, unknown>);
     await deps.audit(event, detail);
@@ -218,14 +249,16 @@ export function createTebraGateway(deps: TebraGatewayDependencies): TebraGateway
       }
       const patient = parsed.data;
 
-      return link({
-        entity: "patient",
-        localId: patient.localPatientId,
-        externalId: patient.externalId,
-        find: () => deps.client.findPatientByExternalId(patient.externalId),
-        create: () => deps.client.createPatient(patient),
-        update: (tebraId) => deps.client.updatePatient(tebraId, patient),
-      });
+      return serialize(patient.externalId, () =>
+        link({
+          entity: "patient",
+          localId: patient.localPatientId,
+          externalId: patient.externalId,
+          find: () => deps.client.findPatientByExternalId(patient.externalId),
+          create: () => deps.client.createPatient(patient),
+          update: (tebraId) => deps.client.updatePatient(tebraId, patient),
+        }),
+      );
     },
 
     async syncAppointment(raw) {
@@ -251,14 +284,16 @@ export function createTebraGateway(deps: TebraGatewayDependencies): TebraGateway
       }
       if (!patientLink) return failure("tebra_not_linked");
 
-      return link({
-        entity: "appointment",
-        localId: appointment.localAppointmentId,
-        externalId: appointment.externalId,
-        find: () => deps.client.findAppointmentByExternalId(appointment.externalId),
-        create: () => deps.client.createAppointment(appointment),
-        update: (tebraId) => deps.client.updateAppointment(tebraId, appointment),
-      });
+      return serialize(appointment.externalId, () =>
+        link({
+          entity: "appointment",
+          localId: appointment.localAppointmentId,
+          externalId: appointment.externalId,
+          find: () => deps.client.findAppointmentByExternalId(appointment.externalId),
+          create: () => deps.client.createAppointment(appointment),
+          update: (tebraId) => deps.client.updateAppointment(tebraId, appointment),
+        }),
+      );
     },
   };
 }
