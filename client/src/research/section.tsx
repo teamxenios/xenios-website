@@ -68,6 +68,17 @@ const MemberFullCatalog = lazy(
 const MemberFullCatalogProduct = lazy(
   () => import("./master-offerings/FullCatalogProductRoute"),
 );
+// The Kris Launch A partner catalog. Code split like every other deep member
+// page. Reachability is all this grants: the server is the authority for the
+// flag, the viewer and the launch scope, and it fails closed, so an
+// unconfigured deployment renders the surface's "not available right now"
+// state rather than a catalog.
+const MemberKrisCatalog = lazy(
+  () => import("./kris-launch-a/KrisCatalogRoute"),
+);
+const MemberKrisCatalogProduct = lazy(
+  () => import("./kris-launch-a/KrisProductRoute"),
+);
 const MemberSupplements = lazy(() =>
   import("./pages/member/Website3Surfaces").then((module) => ({
     default: module.MemberSupplements,
@@ -282,6 +293,8 @@ export default function ResearchSection() {
           <Route path="/research/member/products/:slug">{() => <L member component={MemberProductPage} />}</Route>
           <Route path="/research/member/catalog/:family/:slug">{() => <L member component={MemberFullCatalogProduct} />}</Route>
           <Route path="/research/member/catalog">{() => <L member component={MemberFullCatalog} />}</Route>
+          <Route path="/research/member/kris-catalog/:family/:slug">{() => <L member component={MemberKrisCatalogProduct} />}</Route>
+          <Route path="/research/member/kris-catalog">{() => <L member component={MemberKrisCatalog} />}</Route>
           <Route path="/research/member/supplements">{() => <L member component={MemberSupplements} />}</Route>
           <Route path="/research/member/metabolic-care">{() => <L member component={MemberMetabolicCare} />}</Route>
           <Route path="/research/member/diagnostics">{() => <L member component={MemberDiagnostics} />}</Route>

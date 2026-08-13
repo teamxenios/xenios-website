@@ -36,6 +36,13 @@ export const MEMBER_ROUTES = {
   // is /products/:family/:slug, so a link without it cannot restore the
   // product it points at.
   fullCatalogProduct: "/research/member/catalog/:family/:slug",
+  // The Kris Launch A partner catalog. Browse, login and price: it sells
+  // nothing, and its browser contract has no add-to-cart member at all.
+  krisCatalog: "/research/member/kris-catalog",
+  // One Launch A item. The family segment is not decoration: the detail API
+  // is by family and slug, so a link without it cannot restore the item it
+  // points at.
+  krisCatalogProduct: "/research/member/kris-catalog/:family/:slug",
   supplements: "/research/member/supplements",
   metabolicCare: "/research/member/metabolic-care",
   diagnostics: "/research/member/diagnostics",
