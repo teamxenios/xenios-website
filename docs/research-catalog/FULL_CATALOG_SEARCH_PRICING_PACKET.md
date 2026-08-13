@@ -271,6 +271,45 @@ Acceptance evidence pinned by tests:
 - the detail surface renders exactly one server-provided CTA, and no quantity control
   without a matching accepted exact-variant capability.
 
+## QA runbook
+
+For an independent reviewer, in this worktree, with no mounting and no deployment:
+
+```bash
+npx tsc --noEmit
+npx vitest run server/research/master-offerings client/src/research/master-offerings --testTimeout=30000
+node script/build.mjs
+```
+
+Expect `PASS`, `22 files / 143 tests`, and a clean build. The thirty-second timeout is a
+host allowance, not a lane requirement; the default five seconds is unreliable on this
+Windows machine for unrelated filesystem-scan tests.
+
+Then confirm the lane still does not ship:
+
+```bash
+grep -rl "catalog-display/v2" dist/public/assets dist/index.cjs
+```
+
+Expect no match. A match means something now imports the catalog, and the mounting
+question is open.
+
+The adversarial pass is `server/research/master-offerings/catalog-boundaries.test.ts`. To
+confirm its tripwire is live rather than vacuous, add a file anywhere under `client/src`
+that imports `./master-offerings/FullCatalogPage`, rerun that one file, and expect a
+failure naming your probe. Delete the probe afterwards.
+
+### What cannot be verified here
+
+The responsive and accessibility matrix in `ZERO_DELAY_FAST_FOLLOW_PACKET.md` section 11
+(390, 768, 1024, 1440 and 1920 widths, 200 percent zoom, reduced motion, real keyboard
+traversal) needs a rendered route. These components are deliberately routed nowhere, so
+that matrix runs after the composition-root owner mounts the surface, not before. The
+structural half of it is covered by unit tests today: one `h1`, labelled controls, list
+semantics, state in words as well as tone, a polite live result count, focus moved to the
+results heading on an explicit page change, 44px minimum targets, and accessible names
+that carry the product and the variant.
+
 ## Rollback
 
 `RESEARCH_MASTER_OFFERINGS_ENABLED=false` removes the whole surface, including the
