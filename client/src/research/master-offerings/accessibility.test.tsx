@@ -221,9 +221,19 @@ describe("accessibility, structural", () => {
     const { host, unmount } = render(
       <FullCatalogPage query={{}} page={PAGE} onQueryChange={() => {}} />,
     );
-    const live = host.querySelectorAll("[aria-live]");
-    expect(live).toHaveLength(1);
-    expect(live[0].getAttribute("aria-live")).toBe("polite");
+    // Every live region on this page is polite. Assertive would interrupt a
+    // screen reader on each keystroke, which is the thing being guarded
+    // against; the number of polite regions is not itself the rule.
+    const live = Array.from(host.querySelectorAll("[aria-live]"));
+    expect(live.length).toBeGreaterThan(0);
+    for (const region of live) {
+      expect(region.getAttribute("aria-live")).toBe("polite");
+    }
+    expect(
+      host
+        .querySelector('[data-testid="mo-result-count"]')
+        ?.getAttribute("aria-live"),
+    ).toBe("polite");
     unmount();
   });
 

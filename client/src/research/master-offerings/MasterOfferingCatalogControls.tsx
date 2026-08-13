@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   MASTER_OFFERING_DISPLAY_LABELS,
   MASTER_OFFERING_FAMILIES,
@@ -8,10 +9,13 @@ import {
   type MasterOfferingDisplayState,
   type MasterOfferingFamily,
 } from "@shared/research/master-offerings/contract";
+import type { MasterOfferingPriceListFormat } from "@shared/research/master-offerings/pricing-contract";
 import {
-  MASTER_OFFERING_FILTER_STATES,
-  masterOfferingPriceListUrl,
-} from "./integration-packet";
+  MASTER_OFFERING_PRICE_LIST_FAILURE_COPY,
+  fetchMasterOfferingPriceList,
+  saveMasterOfferingPriceList,
+} from "./catalogApi";
+import { MASTER_OFFERING_FILTER_STATES } from "./integration-packet";
 
 const ALL = "all";
 
@@ -31,8 +35,8 @@ export function MasterOfferingCatalogControls({
   const state = query.states?.[0] ?? ALL;
 
   return (
-    <div className="card grid gap-4 md:grid-cols-3">
-      <label className="grid gap-2" htmlFor="mo-catalog-search">
+    <div className="card grid min-w-0 gap-4 md:grid-cols-3">
+      <label className="grid min-w-0 gap-2" htmlFor="mo-catalog-search">
         <span className="form-label">Search the catalog</span>
         <input
           id="mo-catalog-search"
@@ -45,13 +49,19 @@ export function MasterOfferingCatalogControls({
             const q = event.target.value;
             // A new search starts at page one. Keeping the old page would show
             // an empty page and read as "no results".
-            const { page: _page, ...rest } = query;
+            //
+            // `q` is dropped too, and that is the whole point: without it,
+            // emptying the box handed back the query it came from, so the old
+            // search stayed in the URL and in the results and the member could
+            // not clear it. The family and availability selects already drop
+            // their own key this way.
+            const { page: _page, q: _q, ...rest } = query;
             onChange(q.trim() ? { ...rest, q } : rest);
           }}
         />
       </label>
 
-      <label className="grid gap-2" htmlFor="mo-catalog-family">
+      <label className="grid min-w-0 gap-2" htmlFor="mo-catalog-family">
         <span className="form-label">Family</span>
         <select
           id="mo-catalog-family"
@@ -76,7 +86,7 @@ export function MasterOfferingCatalogControls({
         </select>
       </label>
 
-      <label className="grid gap-2" htmlFor="mo-catalog-state">
+      <label className="grid min-w-0 gap-2" htmlFor="mo-catalog-state">
         <span className="form-label">Availability</span>
         <select
           id="mo-catalog-state"
@@ -105,35 +115,74 @@ export function MasterOfferingCatalogControls({
 }
 
 /**
- * The price-list download. It is a plain link to the export route, so it needs
- * no client-side assembly of catalog data and cannot compose a file out of
- * anything the server did not already authorize.
+ * The price-list download.
+ *
+ * It fetches the export with the member's bearer token and hands the bytes to
+ * the browser, because a link download cannot carry that header and the export
+ * route has no cookie fallback. The file is still composed entirely by the
+ * server: nothing here assembles catalog data, and a response that is not the
+ * format that was asked for is refused rather than saved.
  */
 export function MasterOfferingPriceListDownload({
   query,
+  memberToken = null,
+  fetchPriceList = fetchMasterOfferingPriceList,
+  savePriceList = saveMasterOfferingPriceList,
 }: {
   query: MasterOfferingCatalogQuery;
+  memberToken?: string | null;
+  fetchPriceList?: typeof fetchMasterOfferingPriceList;
+  savePriceList?: typeof saveMasterOfferingPriceList;
 }) {
+  const [busy, setBusy] = useState<MasterOfferingPriceListFormat | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function download(format: MasterOfferingPriceListFormat) {
+    if (busy !== null) return;
+    setBusy(format);
+    setMessage(null);
+    const result = await fetchPriceList(memberToken, query, format);
+    setBusy(null);
+    if (!result.ok) {
+      setMessage(MASTER_OFFERING_PRICE_LIST_FAILURE_COPY[result.failure]);
+      return;
+    }
+    savePriceList(result.blob, result.filename);
+    setMessage("Your price list download has started.");
+  }
+
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <a
-        className="btn btn-secondary min-h-[44px]"
-        href={masterOfferingPriceListUrl(query, "csv")}
-        data-testid="mo-download-csv"
-        download
+    <div className="grid gap-2">
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          className="btn btn-secondary min-h-[44px]"
+          data-testid="mo-download-csv"
+          disabled={busy !== null}
+          onClick={() => void download("csv")}
+        >
+          {busy === "csv" ? "Preparing CSV" : "Download price list, CSV"}
+        </button>
+        <button
+          type="button"
+          className="btn btn-secondary min-h-[44px]"
+          data-testid="mo-download-json"
+          disabled={busy !== null}
+          onClick={() => void download("json")}
+        >
+          {busy === "json" ? "Preparing JSON" : "Download price list, JSON"}
+        </button>
+        <p className="body-s text-ink-mute min-w-0 break-words">
+          The download matches the filters above and lists approved prices only.
+        </p>
+      </div>
+      <p
+        className="body-s text-ink-mute min-w-0 break-words"
+        role="status"
+        aria-live="polite"
+        data-testid="mo-download-status"
       >
-        Download price list, CSV
-      </a>
-      <a
-        className="btn btn-secondary min-h-[44px]"
-        href={masterOfferingPriceListUrl(query, "json")}
-        data-testid="mo-download-json"
-        download
-      >
-        Download price list, JSON
-      </a>
-      <p className="body-s text-ink-mute">
-        The download matches the filters above and lists approved prices only.
+        {message ?? ""}
       </p>
     </div>
   );

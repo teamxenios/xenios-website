@@ -38,7 +38,7 @@ const EMPTY_PAGE: MasterOfferingCatalogPage = {
 function CatalogSkeleton({ count = 6 }: { count?: number }) {
   return (
     <ul
-      className="grid gap-4 mt-4 md:grid-cols-2 xl:grid-cols-3"
+      className="grid min-w-0 gap-4 mt-4 md:grid-cols-2 xl:grid-cols-3"
       aria-hidden="true"
       data-testid="mo-skeleton"
     >
@@ -103,8 +103,8 @@ export function MasterOfferingCatalogSurface({
     const copy = MASTER_OFFERING_STATE_COPY[state];
     const recoverable = state === "error" || state === "unavailable";
     return (
-      <main className="grid gap-6">
-        <header className="grid gap-2">
+      <main className="grid min-w-0 gap-6">
+        <header className="grid min-w-0 gap-2">
           <p className="mono-label text-ink-mute">Xenios Research</p>
           <h1 className="display-s">Full catalog</h1>
         </header>
@@ -135,6 +135,7 @@ export function MasterOfferingCatalogSurface({
         page={page}
         onQueryChange={setQuery}
         loading={state === "loading"}
+        memberToken={memberToken}
       />
       {state === "loading" && page.total === 0 && <CatalogSkeleton />}
     </>

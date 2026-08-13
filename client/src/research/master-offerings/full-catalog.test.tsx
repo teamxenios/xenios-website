@@ -160,7 +160,11 @@ describe("full catalog page", () => {
     );
     expect(host.textContent).not.toContain("Add to Cart");
     expect(host.textContent).not.toContain("$0.00");
-    expect(host.querySelectorAll("button")).toHaveLength(0);
+    // Scoped to the card. The page chrome around it has controls of its own
+    // (paging, the price-list download); a card has no action at all, because
+    // an exact variant action is resolved by the server on the detail surface.
+    const card1 = host.querySelector('[data-testid="mo-card"]');
+    expect(card1?.querySelectorAll("button")).toHaveLength(0);
     expect(
       host.querySelector('[data-testid="mo-card-price"]')?.textContent,
     ).toBe("Price on request");
@@ -187,15 +191,21 @@ describe("full catalog page", () => {
     const { host, unmount } = render(
       <FullCatalogPage query={query} page={page()} onQueryChange={() => {}} />,
     );
-    const csv = host.querySelector('[data-testid="mo-download-csv"]');
-    expect(csv?.getAttribute("href")).toBe(
+    // The export URL still carries the filters and no paging.
+    expect(masterOfferingPriceListUrl(query, "csv")).toBe(
       "/api/research/catalog-display/v2/price-list?q=bpc&families=research_vials&format=csv",
     );
-    expect(
-      host
-        .querySelector('[data-testid="mo-download-json"]')
-        ?.getAttribute("href"),
-    ).toContain("format=json");
+    expect(masterOfferingPriceListUrl(query, "json")).toContain("format=json");
+
+    // But the control is a button, not a link. A link download is a browser
+    // navigation, and a navigation cannot carry the bearer token the export
+    // route requires, so an anchor here would save the refusal body as a file.
+    for (const testId of ["mo-download-csv", "mo-download-json"]) {
+      const control = host.querySelector(`[data-testid="${testId}"]`);
+      expect(control?.tagName).toBe("BUTTON");
+      expect(control?.getAttribute("href")).toBeNull();
+      expect(control?.hasAttribute("download")).toBe(false);
+    }
     unmount();
   });
 

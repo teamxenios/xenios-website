@@ -63,11 +63,14 @@ export function FullCatalogPage({
   page,
   onQueryChange,
   loading = false,
+  memberToken = null,
 }: {
   query: MasterOfferingCatalogQuery;
   page: MasterOfferingCatalogPage;
   onQueryChange: (next: MasterOfferingCatalogQuery) => void;
   loading?: boolean;
+  /** Passed straight to the price-list download, which authenticates. */
+  memberToken?: string | null;
 }) {
   const resultsHeading = useRef<HTMLHeadingElement>(null);
   const currentPage = page.page;
@@ -86,11 +89,11 @@ export function FullCatalogPage({
   const showing = page.products.length;
 
   return (
-    <main className="grid gap-6">
-      <header className="grid gap-2">
+    <main className="grid min-w-0 gap-6">
+      <header className="grid min-w-0 gap-2">
         <p className="mono-label text-ink-mute">Xenios Research</p>
         <h1 className="display-s">Full catalog</h1>
-        <p className="body-s text-ink-2 max-w-[70ch]">
+        <p className="body-s text-ink-2 max-w-[70ch] min-w-0 break-words">
           Every offering we can show you, with its truthful availability and its
           approved price. Where a price is not yet approved it says so. Anything
           without direct checkout can still be requested, and a person picks it
@@ -102,10 +105,10 @@ export function FullCatalogPage({
       </header>
 
       <MasterOfferingCatalogControls query={query} onChange={onQueryChange} />
-      <MasterOfferingPriceListDownload query={query} />
+      <MasterOfferingPriceListDownload query={query} memberToken={memberToken} />
 
-      <section aria-labelledby="mo-catalog-results">
-        <div className="flex flex-wrap items-end justify-between gap-3">
+      <section aria-labelledby="mo-catalog-results" className="min-w-0">
+        <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
           <h2
             id="mo-catalog-results"
             className="body-l font-700"
@@ -136,7 +139,7 @@ export function FullCatalogPage({
             />
           </div>
         ) : (
-          <ul className="grid gap-4 mt-4 md:grid-cols-2 xl:grid-cols-3">
+          <ul className="grid min-w-0 gap-4 mt-4 md:grid-cols-2 xl:grid-cols-3">
             {page.products.map((product) => (
               <MasterOfferingCard key={product.id} product={product} />
             ))}

@@ -56,6 +56,18 @@ const MemberTracker = lazy(() => import("./pages/member/Tracker"));
 const Goals = lazy(() => import("./pages/member/Goals"));
 const GoalDetail = lazy(() => import("./pages/member/GoalDetail"));
 const MemberProducts = lazy(() => import("./pages/member/Products"));
+// The full member-safe catalog (master offerings v2). Code split like every
+// other deep member page, so the catalog chunk is only fetched by a member who
+// actually opens it. Reachability is all this grants: the display flag, the
+// viewer check and the founder launch scope are enforced by the server, which
+// fails closed, so an unenabled deployment renders the surface's "not
+// available yet" state rather than a catalog.
+const MemberFullCatalog = lazy(
+  () => import("./master-offerings/FullCatalogRoute"),
+);
+const MemberFullCatalogProduct = lazy(
+  () => import("./master-offerings/FullCatalogProductRoute"),
+);
 const MemberSupplements = lazy(() =>
   import("./pages/member/Website3Surfaces").then((module) => ({
     default: module.MemberSupplements,
@@ -268,6 +280,8 @@ export default function ResearchSection() {
           <Route path="/research/member/goals/:slug">{() => <L member component={GoalDetail} />}</Route>
           <Route path="/research/member/products">{() => <L member component={MemberProducts} />}</Route>
           <Route path="/research/member/products/:slug">{() => <L member component={MemberProductPage} />}</Route>
+          <Route path="/research/member/catalog/:family/:slug">{() => <L member component={MemberFullCatalogProduct} />}</Route>
+          <Route path="/research/member/catalog">{() => <L member component={MemberFullCatalog} />}</Route>
           <Route path="/research/member/supplements">{() => <L member component={MemberSupplements} />}</Route>
           <Route path="/research/member/metabolic-care">{() => <L member component={MemberMetabolicCare} />}</Route>
           <Route path="/research/member/diagnostics">{() => <L member component={MemberDiagnostics} />}</Route>

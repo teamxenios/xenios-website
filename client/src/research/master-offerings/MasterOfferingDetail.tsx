@@ -79,9 +79,9 @@ export function MasterOfferingVariantAction({
         chosen < control.minimum ||
         chosen > control.maximum);
     return (
-      <div className="grid gap-3" data-testid="mo-variant-action">
+      <div className="grid min-w-0 gap-3" data-testid="mo-variant-action">
         {control.visible && (
-          <label className="grid gap-2 max-w-[12rem]" htmlFor={quantityId}>
+          <label className="grid min-w-0 gap-2 max-w-[12rem]" htmlFor={quantityId}>
             <span className="form-label">
               Quantity, {productName}, {variant.label}
             </span>
@@ -181,30 +181,38 @@ export function MasterOfferingDetail({
   const capability = selected && capabilityFor ? capabilityFor(selected) : null;
 
   return (
-    <main className="grid gap-6">
-      <header className="grid gap-2">
+    <main className="grid min-w-0 gap-6">
+      <header className="grid min-w-0 gap-2">
         <p className="mono-label text-ink-mute">{product.familyLabel}</p>
-        <h1 className="display-s">{product.displayName}</h1>
-        <div className="flex flex-wrap items-center gap-3">
+        <h1 className="display-s min-w-0 break-words">{product.displayName}</h1>
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
           <ResearchStatusBadge label={product.displayLabel} />
-          <p className="body-s text-ink-2">{product.stateExplanation}</p>
+          <p className="body-s text-ink-2 min-w-0 break-words">
+            {product.stateExplanation}
+          </p>
         </div>
         {product.overview && (
-          <p className="body-s text-ink-2 max-w-[70ch]">{product.overview}</p>
+          <p className="body-s text-ink-2 max-w-[70ch] min-w-0 break-words">
+            {product.overview}
+          </p>
         )}
       </header>
 
       {variants.length > 0 && selected && (
-        <section aria-labelledby="mo-detail-variants" className="grid gap-4">
+        <section aria-labelledby="mo-detail-variants" className="grid min-w-0 gap-4">
           <h2 id="mo-detail-variants" className="body-l font-700">
             Choose a variant
           </h2>
 
           <fieldset
-            className="grid gap-2"
+            className="grid min-w-0 gap-2 border-0 p-0"
             data-testid="mo-variant-selector"
           >
-            <legend className="form-label">
+            {/* A legend does not shrink the way a block does: it is sized by
+                its own content, so a long product name here dragged the whole
+                page wider than the phone. max-w-full plus a break is what
+                stops one product name from making the page scroll sideways. */}
+            <legend className="form-label max-w-full min-w-0 break-words">
               Variants of {product.displayName}
             </legend>
             {variants.map((variant) => {
@@ -212,10 +220,10 @@ export function MasterOfferingDetail({
               return (
                 <label
                   key={variant.id}
-                  className="card flex flex-wrap items-center justify-between gap-3 min-h-[44px] body-s"
+                  className="card flex min-w-0 flex-wrap items-center justify-between gap-3 min-h-[44px] body-s"
                   htmlFor={inputId}
                 >
-                  <span className="flex items-center gap-3">
+                  <span className="flex min-w-0 items-center gap-3">
                     <input
                       id={inputId}
                       type="radio"
@@ -225,10 +233,15 @@ export function MasterOfferingDetail({
                       aria-label={`${variant.label}, ${product.displayName}, ${variant.displayLabel}`}
                       onChange={() => setSelectedId(variant.id)}
                     />
-                    <span className="font-700">{variant.label}</span>
+                    <span className="font-700 min-w-0 break-words">{variant.label}</span>
                   </span>
-                  <span className="text-ink-mute">{variant.displayLabel}</span>
-                  <span className="tabular" data-testid="mo-detail-variant-price">
+                  <span className="text-ink-mute min-w-0 break-words">
+                    {variant.displayLabel}
+                  </span>
+                  <span
+                    className="tabular min-w-0 break-words"
+                    data-testid="mo-detail-variant-price"
+                  >
                     {priceLabel(variant)}
                   </span>
                 </label>
@@ -236,10 +249,12 @@ export function MasterOfferingDetail({
             })}
           </fieldset>
 
-          <div className="card grid gap-3" data-testid="mo-selected-variant">
-            <div className="flex flex-wrap items-baseline justify-between gap-3">
-              <p className="body-l font-700">{selected.label}</p>
-              <p className="tabular" data-testid="mo-selected-price">
+          <div className="card grid min-w-0 gap-3" data-testid="mo-selected-variant">
+            <div className="flex min-w-0 flex-wrap items-baseline justify-between gap-3">
+              <p className="body-l font-700 min-w-0 break-words">
+                {selected.label}
+              </p>
+              <p className="tabular min-w-0 break-words" data-testid="mo-selected-price">
                 {priceLabel(selected)}
               </p>
             </div>
@@ -255,13 +270,15 @@ export function MasterOfferingDetail({
         </section>
       )}
 
-      <section aria-labelledby="mo-detail-disclosures" className="grid gap-2">
+      <section aria-labelledby="mo-detail-disclosures" className="grid min-w-0 gap-2">
         <h2 id="mo-detail-disclosures" className="body-l font-700">
           What this listing does and does not mean
         </h2>
-        <ul className="grid gap-2 body-s text-ink-2">
+        <ul className="grid min-w-0 gap-2 body-s text-ink-2">
           {product.disclosures.map((disclosure) => (
-            <li key={disclosure}>{disclosure}</li>
+            <li key={disclosure} className="min-w-0 break-words">
+              {disclosure}
+            </li>
           ))}
         </ul>
         <ResearchSecureNotice>
