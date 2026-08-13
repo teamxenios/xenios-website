@@ -29,6 +29,8 @@ export const MEMBER_ROUTES = {
   goal: "/research/member/goals/:slug",
   products: "/research/member/products",
   product: "/research/member/products/:slug",
+  fullCatalog: "/research/member/catalog",
+  fullCatalogDetail: "/research/member/catalog/:family/:slug",
   supplements: "/research/member/supplements",
   metabolicCare: "/research/member/metabolic-care",
   diagnostics: "/research/member/diagnostics",

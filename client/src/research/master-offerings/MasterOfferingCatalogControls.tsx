@@ -10,8 +10,12 @@ import {
 } from "@shared/research/master-offerings/contract";
 import {
   MASTER_OFFERING_FILTER_STATES,
-  masterOfferingPriceListUrl,
 } from "./integration-packet";
+import {
+  downloadMasterOfferingPriceList,
+  type MasterOfferingPriceListDownloadResult,
+} from "./catalogApi";
+import type { MasterOfferingPriceListFormat } from "@shared/research/master-offerings/pricing-contract";
 
 const ALL = "all";
 
@@ -105,36 +109,68 @@ export function MasterOfferingCatalogControls({
 }
 
 /**
- * The price-list download. It is a plain link to the export route, so it needs
- * no client-side assembly of catalog data and cannot compose a file out of
- * anything the server did not already authorize.
+ * The price-list download. The browser fetches the server-authored file with
+ * the canonical member token; it never assembles catalog data client-side.
  */
 export function MasterOfferingPriceListDownload({
   query,
+  memberToken,
+  download = downloadMasterOfferingPriceList,
 }: {
   query: MasterOfferingCatalogQuery;
+  memberToken: string | null;
+  download?: (
+    token: string | null,
+    query: MasterOfferingCatalogQuery,
+    format: MasterOfferingPriceListFormat,
+  ) => Promise<MasterOfferingPriceListDownloadResult>;
 }) {
+  const [busy, setBusy] = useState<MasterOfferingPriceListFormat | null>(null);
+  const [failure, setFailure] = useState(false);
+
+  // The member route normally has a token. During session hydration or after
+  // sign-out, hiding the export is safer and more honest than presenting a
+  // control that cannot authenticate its request.
+  if (!memberToken) return null;
+
+  async function start(format: MasterOfferingPriceListFormat) {
+    if (busy !== null) return;
+    setBusy(format);
+    setFailure(false);
+    const result = await download(memberToken, query, format);
+    setFailure(!result.ok);
+    setBusy(null);
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <a
+      <button
+        type="button"
         className="btn btn-secondary min-h-[44px]"
-        href={masterOfferingPriceListUrl(query, "csv")}
         data-testid="mo-download-csv"
-        download
+        disabled={busy !== null}
+        onClick={() => void start("csv")}
       >
-        Download price list, CSV
-      </a>
-      <a
+        {busy === "csv" ? "Preparing CSV" : "Download price list, CSV"}
+      </button>
+      <button
+        type="button"
         className="btn btn-secondary min-h-[44px]"
-        href={masterOfferingPriceListUrl(query, "json")}
         data-testid="mo-download-json"
-        download
+        disabled={busy !== null}
+        onClick={() => void start("json")}
       >
-        Download price list, JSON
-      </a>
+        {busy === "json" ? "Preparing JSON" : "Download price list, JSON"}
+      </button>
       <p className="body-s text-ink-mute">
         The download matches the filters above and lists approved prices only.
       </p>
+      {failure && (
+        <p className="body-s text-ink-mute" role="alert" data-testid="mo-download-error">
+          The price list could not be downloaded. Please try again.
+        </p>
+      )}
     </div>
   );
 }
+import { useState } from "react";

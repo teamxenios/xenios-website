@@ -62,11 +62,13 @@ export function FullCatalogPage({
   query,
   page,
   onQueryChange,
+  memberToken = null,
   loading = false,
 }: {
   query: MasterOfferingCatalogQuery;
   page: MasterOfferingCatalogPage;
   onQueryChange: (next: MasterOfferingCatalogQuery) => void;
+  memberToken?: string | null;
   loading?: boolean;
 }) {
   const resultsHeading = useRef<HTMLHeadingElement>(null);
@@ -102,7 +104,7 @@ export function FullCatalogPage({
       </header>
 
       <MasterOfferingCatalogControls query={query} onChange={onQueryChange} />
-      <MasterOfferingPriceListDownload query={query} />
+      <MasterOfferingPriceListDownload query={query} memberToken={memberToken} />
 
       <section aria-labelledby="mo-catalog-results">
         <div className="flex flex-wrap items-end justify-between gap-3">

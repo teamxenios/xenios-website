@@ -134,6 +134,7 @@ export function MasterOfferingCatalogSurface({
         query={query}
         page={page}
         onQueryChange={setQuery}
+        memberToken={memberToken}
         loading={state === "loading"}
       />
       {state === "loading" && page.total === 0 && <CatalogSkeleton />}

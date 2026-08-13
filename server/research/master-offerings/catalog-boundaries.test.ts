@@ -315,6 +315,7 @@ describe("adversarial: query hardening", () => {
  * the timeout. The scan is the same both times, so it is done once.
  */
 let SOURCE_FILES: ReadonlyArray<{ rel: string; source: string }> | null = null;
+const SOURCE_SCAN_TIMEOUT_MS = 60_000;
 
 function sourceFiles(): ReadonlyArray<{ rel: string; source: string }> {
   if (SOURCE_FILES !== null) return SOURCE_FILES;
@@ -341,43 +342,67 @@ function sourceFiles(): ReadonlyArray<{ rel: string; source: string }> {
   return collected;
 }
 
+/** Exact composition roots and modules approved for the Launch A mount. */
+const MOUNTED_BY: ReadonlyMap<string, readonly string[]> = new Map([
+  [
+    "client/src/research/section.tsx",
+    ["FullCatalogRoute", "MasterOfferingDetailRoute"],
+  ],
+  ["server/index.ts", ["routes", "composition", "mount"]],
+]);
+
+/** Static, multiline, side-effect and code-split module references. */
+function moduleReferences(source: string): readonly string[] {
+  return [
+    ...(source.match(
+      /(?:^|\n)[ \t]*(?:import|export)[\s\S]*?from\s+["'][^"']+["']/g,
+    ) ?? []),
+    ...(source.match(/(?:^|\n)[ \t]*import\s+["'][^"']+["']/g) ?? []),
+    ...(source.match(/import\(\s*["'][^"']+["']\s*\)/g) ?? []),
+  ];
+}
+
+function clearedToMount(rel: string, reference: string): boolean {
+  const modules = MOUNTED_BY.get(rel);
+  if (modules === undefined) return false;
+  const specifier = reference.match(
+    /["']([^"']*master-offerings\/[^"']+)["']/,
+  );
+  if (specifier === null) return false;
+  return modules.includes(specifier[1].split("master-offerings/")[1]);
+}
+
 describe("boundaries: the ingestion model stays on the server", () => {
   it("is not imported by any client file", () => {
     const files = sourceFiles().filter((file) => file.rel.startsWith("client/src/"));
+    const forbidden =
+      /["'][^"']*master-offerings\/(model|normalize|reconciliation|service|routes|price-authority|price-list-export|dataset-reader|composition|mount)["']/;
+    const serverLane = /["'][^"']*server\/research\/master-offerings[^"']*["']/;
     const offenders = files
-      .filter(
-        (file) =>
-          /from\s+["'][^"']*master-offerings\/(model|normalize|reconciliation|service|routes|price-authority|price-list-export|dataset-reader|composition|mount)["']/.test(
-            file.source,
-          ) ||
-          /from\s+["'][^"']*server\/research\/master-offerings/.test(file.source),
+      .filter((file) =>
+        moduleReferences(file.source).some(
+          (reference) => forbidden.test(reference) || serverLane.test(reference),
+        ),
       )
       .map((file) => file.rel);
     // A scan that walked nothing would pass vacuously and quietly stop being a
     // boundary at all.
     expect(files.length).toBeGreaterThan(100);
     expect(offenders).toEqual([]);
-  });
+  }, SOURCE_SCAN_TIMEOUT_MS);
 
-  it("is imported by nothing outside the lane, so it cannot ship yet", () => {
-    // Verified against a real production build: neither dist/public/assets nor
-    // dist/index.cjs contained any catalog string. This is the fast static
-    // proxy for that, and it is the tripwire: the moment a router or a
-    // composition root imports the lane, this fails and forces the mounting
-    // conversation instead of letting the surface ship by accident.
-    const lane =
-      /master-offerings\/(FullCatalogPage|MasterOfferingCard|MasterOfferingCatalogControls|MasterOfferingDetail|MasterOfferingCatalogSurface|MasterOfferingDetailSurface|catalogApi|catalog-cart-handoff|integration-packet|routes|service|price-authority|price-list-export|dataset-reader|composition|mount)/;
+  it("is imported outside the lane only by approved composition roots", () => {
+    // Match every lane module, including future files. Dynamic imports are
+    // included because the research router code-splits every deep page.
+    const lane = /["'][^"']*master-offerings\/[^"']+["']/;
     const owned = /(^|\/)master-offerings\//;
     const outside = sourceFiles().filter((file) => !owned.test(file.rel));
     const laneFiles = sourceFiles().length - outside.length;
     const offenders: string[] = [];
     for (const file of outside) {
-      const statements =
-        file.source.match(/^[ 	]*(?:import|export)[ 	].*$/gm) ?? [];
-      for (const statement of statements) {
-        if (lane.test(statement)) {
-          offenders.push(`${file.rel}: ${statement.trim()}`);
-        }
+      for (const reference of moduleReferences(file.source)) {
+        if (!lane.test(reference) || clearedToMount(file.rel, reference)) continue;
+        offenders.push(`${file.rel}: ${reference.trim().replace(/\s+/g, " ")}`);
       }
     }
     // Prove the scan is live: it walked the repository and it recognized the
@@ -385,7 +410,42 @@ describe("boundaries: the ingestion model stays on the server", () => {
     expect(outside.length).toBeGreaterThan(500);
     expect(laneFiles).toBeGreaterThanOrEqual(20);
     expect(offenders).toEqual([]);
-  });
+
+    for (const allowed of ["FullCatalogRoute", "MasterOfferingDetailRoute"]) {
+      expect(
+        clearedToMount(
+          "client/src/research/section.tsx",
+          `import("./master-offerings/${allowed}")`,
+        ),
+      ).toBe(true);
+    }
+    for (const allowed of ["routes", "composition", "mount"]) {
+      expect(
+        clearedToMount(
+          "server/index.ts",
+          `from "./research/master-offerings/${allowed}"`,
+        ),
+      ).toBe(true);
+    }
+    for (const [rel, reference] of [
+      [
+        "client/src/research/section.tsx",
+        'import("./master-offerings/MasterOfferingCatalogSurface")',
+      ],
+      [
+        "client/src/App.tsx",
+        'import("./research/master-offerings/FullCatalogRoute")',
+      ],
+      ["server/index.ts", 'from "./research/master-offerings/service"'],
+      ["server/research/index.ts", 'from "./master-offerings/routes"'],
+      [
+        "client/src/research/section.tsx",
+        'import("./master-offerings/catalogApi")',
+      ],
+    ] as const) {
+      expect(clearedToMount(rel, reference)).toBe(false);
+    }
+  }, SOURCE_SCAN_TIMEOUT_MS);
 
   it("keeps the raw dataset out of the browser contract", () => {
     const raw = fs.readFileSync(

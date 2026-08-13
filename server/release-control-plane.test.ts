@@ -1541,7 +1541,13 @@ describe("route uniqueness validator", () => {
     // research wall decides who may reach a CUSTOMER surface, and none of
     // these is one.
     //
-    // 355/364 after the F-013 Early Access fusion. TWELVE additions, ZERO
+    // 359/370 after mounting the full master-offerings catalog v2 on the
+    // F-013 Early Access fusion. SIX route descriptors across FOUR visible
+    // registration call sites were added to the prior 355/364 pin. The three
+    // GET registrations are literal; the three OPTIONS descriptors share one
+    // finite literal app.options call site so the static scanner sees every
+    // reachable door without overstating the number of registration sites.
+    // Before this mount, the fusion contained TWELVE additions, ZERO
     // removals, every one MEASURED with `scanGitTreeRouteResult` at the fusion
     // base against the fused head, never by reading diffs.
     //
@@ -1578,16 +1584,22 @@ describe("route uniqueness validator", () => {
     //   GET   /api/admin/research/crm-supplier-operations
     //   POST  /api/admin/research/crm-supplier-operations/actions
     //
-    // The catalog lane added ZERO. `registerMemberCatalogApi` was already
-    // mounted at the fusion base, so the member catalog is reachable in the
-    // fused tree without the catalog lane having registered anything. Two
-    // reports disagreed about whether the catalog was "mounted"; both were
-    // right, about different subjects.
+    // Full master-offerings catalog v2, SIX read-only descriptors:
+    //   GET     /api/research/catalog-display/v2/catalog
+    //   OPTIONS /api/research/catalog-display/v2/catalog
+    //   GET     /api/research/catalog-display/v2/products/:family/:slug
+    //   OPTIONS /api/research/catalog-display/v2/products/:family/:slug
+    //   GET     /api/research/catalog-display/v2/price-list
+    //   OPTIONS /api/research/catalog-display/v2/price-list
+    //
+    // The earlier catalog lane added ZERO because `registerMemberCatalogApi`
+    // was already mounted at the fusion base. This explicit v2 composition is
+    // separate and is the measured source of the four/six increase above.
     //
     // Pack04 added ZERO route call sites: its work is storage, persistence and
     // the customer order history projection, none of which is a new door.
-    expect(result.callSites).toBe(355);
-    expect(result.routes).toHaveLength(364);
+    expect(result.callSites).toBe(359);
+    expect(result.routes).toHaveLength(370);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

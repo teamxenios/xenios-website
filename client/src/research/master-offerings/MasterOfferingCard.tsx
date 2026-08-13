@@ -72,7 +72,7 @@ export function MasterOfferingCard({
             <h3 id={headingId} className="body-l font-700 mt-1">
               <a
                 className="underline-offset-4 hover:underline"
-                href={memberOfferingDetailHref(product.slug)}
+                href={memberOfferingDetailHref(product.family, product.slug)}
               >
                 {product.displayName}
               </a>

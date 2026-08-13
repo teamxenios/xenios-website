@@ -459,6 +459,15 @@ export function registerResearchApi(app: Express) {
     "/telegram", // questions.ts: requireActiveMember
     "/tracker", // tracker.ts: requireActiveMember
   ]);
+  const MASTER_CATALOG_MEMBER_READ_PATHS = new Set([
+    // master-offerings/routes.ts: authorizeViewer resolves the canonical
+    // bearer-backed member/admin viewer before returning any catalog data.
+    // These are literal leaves; the product detail shape is anchored below.
+    "/catalog-display/v2/catalog",
+    "/catalog-display/v2/price-list",
+  ]);
+  const MASTER_CATALOG_MEMBER_DETAIL =
+    /^\/catalog-display\/v2\/products\/[^/]+\/[^/]+$/;
   const MEMBER_SESSION_WRITE_PATHS = new Set([
     "/agreements", // agreements.ts: requireMember (signing precedes activation)
     // agreements.ts:349, requireResearchSubject. A fully literal path: the
@@ -500,6 +509,8 @@ export function registerResearchApi(app: Express) {
   const memberSessionRoute = (method: string, path: string): boolean => {
     if (method === "GET" || method === "HEAD") {
       if (MEMBER_SESSION_READ_PATHS.has(path)) return true;
+      if (MASTER_CATALOG_MEMBER_READ_PATHS.has(path)) return true;
+      if (MASTER_CATALOG_MEMBER_DETAIL.test(path)) return true;
       // Product detail is an Express one-segment route; reject literal or
       // encoded separators so the bypass cannot grow into a namespace prefix.
       if (isCanonicalProductPath(path)) return true;

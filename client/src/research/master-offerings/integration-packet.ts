@@ -91,8 +91,11 @@ export function catalogQueryToSearch(
   return serialized ? `?${serialized}` : "";
 }
 
-export function memberOfferingDetailHref(slug: string): string {
-  return `/research/member/products/${encodeURIComponent(slug)}`;
+export function memberOfferingDetailHref(
+  family: MasterOfferingFamily,
+  slug: string,
+): string {
+  return `/research/member/catalog/${encodeURIComponent(family)}/${encodeURIComponent(slug)}`;
 }
 
 /**

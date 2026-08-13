@@ -56,6 +56,12 @@ const MemberTracker = lazy(() => import("./pages/member/Tracker"));
 const Goals = lazy(() => import("./pages/member/Goals"));
 const GoalDetail = lazy(() => import("./pages/member/GoalDetail"));
 const MemberProducts = lazy(() => import("./pages/member/Products"));
+const MemberFullCatalog = lazy(
+  () => import("./master-offerings/FullCatalogRoute"),
+);
+const MemberFullCatalogDetail = lazy(
+  () => import("./master-offerings/MasterOfferingDetailRoute"),
+);
 const MemberSupplements = lazy(() =>
   import("./pages/member/Website3Surfaces").then((module) => ({
     default: module.MemberSupplements,
@@ -268,6 +274,8 @@ export default function ResearchSection() {
           <Route path="/research/member/goals/:slug">{() => <L member component={GoalDetail} />}</Route>
           <Route path="/research/member/products">{() => <L member component={MemberProducts} />}</Route>
           <Route path="/research/member/products/:slug">{() => <L member component={MemberProductPage} />}</Route>
+          <Route path="/research/member/catalog/:family/:slug">{() => <L member component={MemberFullCatalogDetail} />}</Route>
+          <Route path="/research/member/catalog">{() => <L member component={MemberFullCatalog} />}</Route>
           <Route path="/research/member/supplements">{() => <L member component={MemberSupplements} />}</Route>
           <Route path="/research/member/metabolic-care">{() => <L member component={MemberMetabolicCare} />}</Route>
           <Route path="/research/member/diagnostics">{() => <L member component={MemberDiagnostics} />}</Route>

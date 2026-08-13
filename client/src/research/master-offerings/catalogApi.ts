@@ -5,10 +5,12 @@ import type {
   MasterOfferingCatalogQuery,
   MasterOfferingFamily,
 } from "@shared/research/master-offerings/contract";
+import type { MasterOfferingPriceListFormat } from "@shared/research/master-offerings/pricing-contract";
 import { apiGet, type ApiResult } from "../lib/api";
 import {
   masterOfferingCatalogUrl,
   masterOfferingDetailUrl,
+  masterOfferingPriceListUrl,
 } from "./integration-packet";
 
 /**
@@ -35,6 +37,61 @@ export function getMasterOfferingDetail(
   slug: string,
 ): Promise<ApiResult<MasterOfferingCatalogDetailResponse>> {
   return apiGet(masterOfferingDetailUrl(family, slug), token);
+}
+
+export type MasterOfferingPriceListDownloadResult =
+  | { ok: true; filename: string }
+  | { ok: false; reason: "auth_required" | "unavailable" };
+
+/**
+ * Download a private price list with the same member bearer token as the list
+ * and detail reads. A plain anchor cannot attach that credential, so the
+ * response is fetched as a blob and only then handed to the browser.
+ *
+ * A 200 HTML app shell is refused as unavailable. That is the response an
+ * unmounted API path can otherwise return through the SPA fallback, and it
+ * must never be saved with a misleading .csv or .json extension.
+ */
+export async function downloadMasterOfferingPriceList(
+  token: string | null,
+  query: MasterOfferingCatalogQuery,
+  format: MasterOfferingPriceListFormat,
+  fetcher: typeof fetch = fetch,
+): Promise<MasterOfferingPriceListDownloadResult> {
+  if (!token) return { ok: false, reason: "auth_required" };
+
+  try {
+    const response = await fetcher(masterOfferingPriceListUrl(query, format), {
+      method: "GET",
+      credentials: "same-origin",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
+    const expectedType =
+      format === "csv"
+        ? contentType.includes("text/csv")
+        : contentType.includes("application/json");
+    if (!response.ok || !expectedType) {
+      return { ok: false, reason: "unavailable" };
+    }
+
+    const blobUrl = URL.createObjectURL(await response.blob());
+    const filename = `xenios-research-price-list.${format}`;
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = blobUrl;
+      anchor.download = filename;
+      anchor.hidden = true;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+    } finally {
+      URL.revokeObjectURL(blobUrl);
+    }
+    return { ok: true, filename };
+  } catch {
+    return { ok: false, reason: "unavailable" };
+  }
 }
 
 /**

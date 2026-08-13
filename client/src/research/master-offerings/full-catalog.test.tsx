@@ -182,20 +182,41 @@ describe("full catalog page", () => {
     unmount();
   });
 
-  it("offers a filtered price list download in both formats", () => {
+  it("offers authenticated button downloads without a credential-less href", () => {
     const query = { q: "bpc", families: ["research_vials"] as const };
     const { host, unmount } = render(
-      <FullCatalogPage query={query} page={page()} onQueryChange={() => {}} />,
+      <FullCatalogPage
+        query={query}
+        page={page()}
+        onQueryChange={() => {}}
+        memberToken="member-secret"
+      />,
     );
     const csv = host.querySelector('[data-testid="mo-download-csv"]');
-    expect(csv?.getAttribute("href")).toBe(
-      "/api/research/catalog-display/v2/price-list?q=bpc&families=research_vials&format=csv",
+    const json = host.querySelector('[data-testid="mo-download-json"]');
+    expect(csv?.tagName).toBe("BUTTON");
+    expect(json?.tagName).toBe("BUTTON");
+    expect(csv?.hasAttribute("href")).toBe(false);
+    expect(json?.hasAttribute("href")).toBe(false);
+    unmount();
+  });
+
+  it("links a card to its family-aware v2 detail route", () => {
+    const { host, unmount } = render(
+      <FullCatalogPage query={{}} page={page()} onQueryChange={() => {}} />,
     );
-    expect(
-      host
-        .querySelector('[data-testid="mo-download-json"]')
-        ?.getAttribute("href"),
-    ).toContain("format=json");
+    expect(host.querySelector("h3 a")?.getAttribute("href")).toBe(
+      "/research/member/catalog/research_vials/research-vials-bpc-157",
+    );
+    unmount();
+  });
+
+  it("hides price-list export when the member token is absent", () => {
+    const { host, unmount } = render(
+      <FullCatalogPage query={{}} page={page()} onQueryChange={() => {}} />,
+    );
+    expect(host.querySelector('[data-testid="mo-download-csv"]')).toBeNull();
+    expect(host.querySelector('[data-testid="mo-download-json"]')).toBeNull();
     unmount();
   });
 

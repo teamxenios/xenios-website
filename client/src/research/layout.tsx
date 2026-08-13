@@ -24,6 +24,7 @@ import { useResearch } from "./core";
 // surface. Their routes stay registered and stable.
 const MEMBER_NAV = [
   { label: "Home", href: "/research/member" },
+  { label: "Catalog", href: "/research/member/catalog" },
   { label: "Products", href: "/research/member/products" },
   { label: "Requests", href: "/research/member/product-requests" },
   { label: "Guides", href: "/research/member/guides" },
@@ -32,6 +33,12 @@ const MEMBER_NAV = [
   { label: "Membership", href: "/research/member/membership" },
   { label: "Profile", href: "/research/member/profile" },
 ];
+
+export function isMemberNavActive(location: string, href: string): boolean {
+  return location === href ||
+    (href === "/research/member/catalog" &&
+      location.startsWith("/research/member/catalog/"));
+}
 
 // Routes that belong to the member area (member chrome + RequireMember in
 // section.tsx). Everything else pre-member gets the minimal chrome.
@@ -193,7 +200,7 @@ function MemberChrome({ children }: { children: ReactNode }) {
             </Link>
             <nav className="hidden lg:flex items-center gap-5 overflow-x-auto" aria-label="Member navigation">
               {MEMBER_NAV.map((item) => {
-                const active = location === item.href;
+                const active = isMemberNavActive(location, item.href);
                 return (
                   <Link
                     key={item.href}
@@ -218,7 +225,7 @@ function MemberChrome({ children }: { children: ReactNode }) {
           </div>
           <nav className="lg:hidden flex items-center gap-4 overflow-x-auto pb-3 -mt-1" aria-label="Member navigation (mobile)">
             {MEMBER_NAV.map((item) => (
-              <Link key={item.href} href={item.href} className={`text-[13px] whitespace-nowrap ${location === item.href ? "text-ink font-700" : "text-ink-2"}`}>
+              <Link key={item.href} href={item.href} className={`text-[13px] whitespace-nowrap ${isMemberNavActive(location, item.href) ? "text-ink font-700" : "text-ink-2"}`}>
                 {item.label}
               </Link>
             ))}

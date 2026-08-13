@@ -1,7 +1,9 @@
+// @vitest-environment jsdom
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { MASTER_OFFERING_CATALOG_ERROR_CODES } from "@shared/research/master-offerings/contract";
 import {
   MASTER_OFFERING_STATE_COPY,
+  downloadMasterOfferingPriceList,
   getMasterOfferingCatalog,
   getMasterOfferingDetail,
   toMasterOfferingSurfaceState,
@@ -59,6 +61,83 @@ describe("catalog read adapter", () => {
     const result = await getMasterOfferingCatalog(null);
     expect(result.kind).toBe("unavailable");
     expect(toMasterOfferingSurfaceState(result)).toBe("unavailable");
+  });
+});
+
+describe("private price-list adapter", () => {
+  it("fetches the server-authored blob with the member bearer token", async () => {
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {});
+    const createObjectURL = vi.fn(() => "blob:private-price-list");
+    const revokeObjectURL = vi.fn();
+    Object.defineProperty(URL, "createObjectURL", {
+      configurable: true,
+      value: createObjectURL,
+    });
+    Object.defineProperty(URL, "revokeObjectURL", {
+      configurable: true,
+      value: revokeObjectURL,
+    });
+    const fetchMock = vi.fn(async () =>
+      new Response("offering,price\r\nBPC-157,$99.00\r\n", {
+        status: 200,
+        headers: { "content-type": "text/csv; charset=utf-8" },
+      }),
+    );
+
+    const result = await downloadMasterOfferingPriceList(
+      "member-secret",
+      { q: "bpc", families: ["research_vials"] },
+      "csv",
+      fetchMock as unknown as typeof fetch,
+    );
+
+    expect(result).toEqual({
+      ok: true,
+      filename: "xenios-research-price-list.csv",
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/research/catalog-display/v2/price-list?q=bpc&families=research_vials&format=csv",
+      {
+        method: "GET",
+        credentials: "same-origin",
+        headers: { Authorization: "Bearer member-secret" },
+      },
+    );
+    expect(click).toHaveBeenCalledTimes(1);
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    expect(revokeObjectURL).toHaveBeenCalledWith("blob:private-price-list");
+  });
+
+  it("does not make an export request without a member token", async () => {
+    const fetchMock = vi.fn();
+    expect(
+      await downloadMasterOfferingPriceList(
+        null,
+        {},
+        "json",
+        fetchMock as unknown as typeof fetch,
+      ),
+    ).toEqual({ ok: false, reason: "auth_required" });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("refuses an HTML SPA fallback instead of saving it as a price list", async () => {
+    const fetchMock = vi.fn(async () =>
+      new Response("<!doctype html>", {
+        status: 200,
+        headers: { "content-type": "text/html" },
+      }),
+    );
+    expect(
+      await downloadMasterOfferingPriceList(
+        "member-secret",
+        {},
+        "csv",
+        fetchMock as unknown as typeof fetch,
+      ),
+    ).toEqual({ ok: false, reason: "unavailable" });
   });
 });
 

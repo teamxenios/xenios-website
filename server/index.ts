@@ -25,6 +25,18 @@ import {
   memberAudienceSourceVersion,
 } from "./research/catalog/member-catalog-service";
 import { createProductionProductControlReader } from "./research/catalog/product-control-reader";
+import { createMasterOfferingCatalogDependencies } from "./research/master-offerings/composition";
+import {
+  MASTER_OFFERING_CATALOG_ERROR_BASE_PATH,
+  MASTER_OFFERING_CATALOG_ROUTES,
+} from "./research/master-offerings/mount";
+import {
+  createMasterOfferingCatalogApiHandlers,
+  MASTER_OFFERING_CATALOG_DETAIL_ROUTE,
+  MASTER_OFFERING_CATALOG_LIST_ROUTE,
+  MASTER_OFFERING_CATALOG_PRICE_LIST_ROUTE,
+  type MasterOfferingCatalogViewer,
+} from "./research/master-offerings/routes";
 import {
   CatalogPricingProductSource,
   createAuthoritativePriceResolver,
@@ -369,6 +381,109 @@ registerMemberCatalogApi(
   app,
   buildMemberCatalogProductionService(),
   requireActiveMember,
+);
+
+// Full master offerings catalog v2: three GET reads and their OPTIONS, all
+// read-only. The lane ships a route TABLE and deliberately registers nothing of
+// its own, so the static route census in server/release-control-plane.test.ts
+// moves at exactly the moment this catalog becomes reachable. This is that
+// moment, and the census is bumped in the same change.
+//
+// The registrations are written as LITERAL app.get / app.options calls on
+// statically resolvable path constants. That is load-bearing, not style: the
+// census scanner in scripts/acceptance/verify-route-uniqueness.ts matches
+// property-access call sites (`app.get(...)`) only, so the `app[route.method]`
+// element-access loop that mount.ts sketches would mount six real doors the
+// census could not see. Hiding doors from the census is the one thing that pin
+// exists to prevent.
+//
+// Mounting grants reachability and nothing else. Every handler re-checks the
+// display flag, the authenticated viewer and the launch scope, and this
+// deployment has no reviewed identity binding store, so every variant answers
+// "on_request" and this surface cannot produce an Add to Cart at all.
+const masterOfferingViewerMembers = new WeakMap<
+  MasterOfferingCatalogViewer,
+  MemberRow
+>();
+const masterOfferingCatalogDependencies = createMasterOfferingCatalogDependencies(
+  {
+    // No reviewed identity binding store exists in this tree. "No binding" is
+    // the truthful answer, not a placeholder: without one the price authority
+    // answers on_request and the Product Control adapter never reaches a
+    // selection. Commerce arrives when a reviewed binding reader is wired
+    // here, and not one line before.
+    bindings: { readBinding: () => null },
+    // Product Control remains the only purchase and price authority. This
+    // refuses rather than inventing a selection, and with no binding above the
+    // adapter never calls it.
+    selections: { select: () => ({ ok: false, code: "product_missing" }) },
+    // The same canonical Product Control catalog the pricing core reads.
+    pricingSource: new CatalogPricingProductSource(
+      createProductionProductControlReader(),
+    ),
+    // Resolved from the authenticated session, per request, through the SAME
+    // exported fingerprint the member catalog and pricing use. A second
+    // derivation written here would drift the first time either side gained a
+    // field. An unmapped viewer yields no identity, so it shows no price
+    // rather than falling back to an unauthenticated one.
+    identityFor: (viewer) => {
+      const member = masterOfferingViewerMembers.get(viewer);
+      if (!member) return null;
+      return {
+        audience: "member",
+        sourceVersion: memberAudienceSourceVersion(member),
+        evaluatedAt: new Date().toISOString(),
+        currency: "USD",
+      };
+    },
+  },
+  // Canonical member authentication: the same silent active-member guard run
+  // that Private Early Access and pricing use, so all three resolve the same
+  // member and cannot disagree about who is asking. Launch scope is enforced
+  // after this, inside the handlers.
+  async (req: Request): Promise<MasterOfferingCatalogViewer | null> => {
+    const member = await resolveActiveMemberSilently(req);
+    if (!member || typeof member.email !== "string" || member.email.trim() === "") {
+      return null;
+    }
+    const viewer: MasterOfferingCatalogViewer = {
+      audience: "member",
+      email: member.email,
+    };
+    masterOfferingViewerMembers.set(viewer, member);
+    return viewer;
+  },
+);
+const masterOfferingCatalogHandlers = createMasterOfferingCatalogApiHandlers(
+  masterOfferingCatalogDependencies,
+);
+app.get(
+  MASTER_OFFERING_CATALOG_LIST_ROUTE,
+  masterOfferingCatalogHandlers.privateHeaders,
+  masterOfferingCatalogHandlers.list,
+);
+app.get(
+  MASTER_OFFERING_CATALOG_DETAIL_ROUTE,
+  masterOfferingCatalogHandlers.privateHeaders,
+  masterOfferingCatalogHandlers.detail,
+);
+app.get(
+  MASTER_OFFERING_CATALOG_PRICE_LIST_ROUTE,
+  masterOfferingCatalogHandlers.privateHeaders,
+  masterOfferingCatalogHandlers.priceList,
+);
+for (const masterOfferingCatalogRoute of MASTER_OFFERING_CATALOG_ROUTES) {
+  app.options(
+    masterOfferingCatalogRoute,
+    masterOfferingCatalogHandlers.privateHeaders,
+    masterOfferingCatalogHandlers.options,
+  );
+}
+// Path-scoped on purpose. A global error handler here would swallow failures
+// from every other route in the application.
+app.use(
+  MASTER_OFFERING_CATALOG_ERROR_BASE_PATH,
+  masterOfferingCatalogHandlers.error,
 );
 
 // Pricing reads (the frozen pricing core behind its smallest adapter). Wiring

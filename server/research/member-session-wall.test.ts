@@ -58,6 +58,11 @@ const MEDIA_ID = "3f1c2d4e-5a6b-4c8d-9e0f-1a2b3c4d5e6f";
 const QUESTION_ID = "8c7b6a59-4d3e-4f2a-8b1c-0d9e8f7a6b5c";
 const GUIDE_SLUG = "thymosin-alpha-1-kpv-ll-37";
 const BEARER = "Bearer member-jwt-without-review-cookie";
+const MASTER_CATALOG_GUARDED_ROUTES = [
+  "/api/research/catalog-display/v2/catalog",
+  "/api/research/catalog-display/v2/price-list",
+  "/api/research/catalog-display/v2/products/:family/:slug",
+] as const;
 
 const KEYS = [
   "RESEARCH_PUBLIC",
@@ -77,6 +82,14 @@ function makeWalledApi(
   // Production registration order (server/index.ts): the wall first, then the
   // member platform, then the commerce lane with its injected guards.
   registerResearchApi(app);
+  // The master catalog is mounted later by the protected composition root. Its
+  // canonical authorizeViewer seam verifies the bearer and refuses a caller
+  // without a member/admin viewer. These terminal test guards let us distinguish
+  // that downstream refusal from the earlier shared-password wall without
+  // mounting or changing the Catalog lane.
+  for (const path of MASTER_CATALOG_GUARDED_ROUTES) {
+    app.get(path, denyAsDownstreamGuard);
+  }
   registerMemberPlatformApi(app);
   const commerceGuards: CommerceGuards = {
     requireActiveMember: (req: Request, res: Response) => denyAsDownstreamGuard(req, res),
@@ -145,6 +158,12 @@ const ADMITTED = [
   ["get", "/api/research/tracker"],
   ["get", "/api/research/store-credit"],
   ["head", "/api/research/store-credit"],
+  ["get", "/api/research/catalog-display/v2/catalog"],
+  ["head", "/api/research/catalog-display/v2/catalog"],
+  ["get", "/api/research/catalog-display/v2/price-list"],
+  ["head", "/api/research/catalog-display/v2/price-list"],
+  ["get", "/api/research/catalog-display/v2/products/research_vials/research-vials-bpc-157"],
+  ["head", "/api/research/catalog-display/v2/products/research_vials/research-vials-bpc-157"],
   ["post", "/api/research/agreements"],
   ["post", "/api/research/agreements/XR-MEM-012/withdraw"],
   ["post", "/api/research/assessment/responses"],
@@ -378,6 +397,16 @@ describe("SEN-0023 member-session wall bypass", () => {
     ["get", "/api/research/applications"],
     ["post", "/api/research/applications"],
     ["get", "/api/research/catalog-display/catalog"],
+    ["post", "/api/research/catalog-display/v2/catalog"],
+    ["put", "/api/research/catalog-display/v2/price-list"],
+    ["get", "/api/research/catalog-display/v2/catalog/extra"],
+    ["get", "/api/research/catalog-display/v2/catalogs"],
+    ["get", "/api/research/catalog-display/v2/price-list/extra"],
+    ["get", "/api/research/catalog-display/v2/products"],
+    ["get", "/api/research/catalog-display/v2/products/research_vials"],
+    ["get", "/api/research/catalog-display/v2/products/research_vials/research-vials-bpc-157/extra"],
+    ["post", "/api/research/catalog-display/v2/products/research_vials/research-vials-bpc-157"],
+    ["get", "/api/research/catalog-display/v20/catalog"],
     ["get", "/api/research/no-such-surface"],
     ["get", "/api/research/plans/xenios90"],
     ["get", "/api/research/partner/me"],
