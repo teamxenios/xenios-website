@@ -237,6 +237,37 @@ references. Combined with the lane registering no route, adding no migration, an
 leaving the repository route inventory unchanged, nothing here can block or affect the
 Early Access launch.
 
+## Recreating this lane on a new base
+
+Every lane owes a rebase onto `FINAL_EA_FAST_FOLLOW_BASE`. This one is cheap to move,
+by construction: it is entirely net-new files and modifies nothing that already existed,
+so `git diff --name-only <base> <head>` lists only `shared/care/tebra*`,
+`server/care/tebra-*` and this document. Recreation is cherry-picking the lane's commits
+or copying those files onto the new base. There is no merge to resolve because there is
+no shared file to conflict on.
+
+The real recreation risk is not the files, it is the four upstream modules this lane
+imports: `@shared/care/contracts`, `@shared/care/appointments`, `./access`, and
+`./tebra-scheduling` (tests only). A change there that breaks a type is easy to see on
+rebase. A change that does NOT break a type but alters meaning is the dangerous one, and
+`server/care/tebra-base-contract.test.ts` pins exactly those:
+
+- **Who may administer.** The admin surfaces are gated on `care:administer`. If a later
+  base grants that permission to another role, this lane's admin surface widens with no
+  edit to any file here and no type error anywhere.
+- **The capability vocabulary.** The gate is enumerated from `CARE_CAPABILITY_STATES`
+  rather than hard coded, so a state ADDED upstream is proven to fail closed the moment
+  it appears. A new state treated as permission to run would be a silent fail-open on
+  the one gate an operator reaches for in an incident.
+- **The appointment status vocabulary**, in both directions, so a status added upstream
+  cannot silently become an invalid payload on its way to the practice system.
+- **Care record identifiers staying opaque**, since external ids are derived from them.
+- **The failure vocabulary** the scheduling bridge degrades into, so the concierge
+  fallback keeps its meaning.
+
+After a rebase, run `npx vitest run tebra` first. If those seven pass, the base still
+provides what this lane assumed.
+
 ## Tebra account setup, in order
 
 1. A Tebra system administrator submits the integration or API request.
