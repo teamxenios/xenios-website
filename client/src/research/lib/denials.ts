@@ -164,21 +164,6 @@ const DENIAL_COPY: Record<CommerceDenialCode, Copy> = {
     body: "The subscription is not in a state that allows this action. Refresh and try again.",
     tone: "error",
   },
-  // Both of these arrive from the atomic subscription work: the server now
-  // rejects a stale version and refuses a reused retry key. Neither had
-  // member-facing copy, so a member hitting them saw the generic fallback and
-  // no reason to refresh, which is the one thing that actually resolves the
-  // first case.
-  subscription_stale_version: {
-    title: "This subscription changed while you were looking at it.",
-    body: "Someone else updated it, or an earlier change of yours went through. Refresh to see the current state, then make the change again.",
-    tone: "error",
-  },
-  idempotency_conflict: {
-    title: "That request was already used for something else.",
-    body: "A retry was sent with different details than the original. Nothing was applied twice. Refresh and submit the change again.",
-    tone: "error",
-  },
   subscription_stale_version: {
     title: "This subscription changed.",
     body: "Reload the latest subscription and try the change again. No duplicate change was applied.",
