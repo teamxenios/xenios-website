@@ -156,7 +156,11 @@ describe("the quantity control fits the card it lives in", () => {
     }
 
     const input = card?.querySelector<HTMLInputElement>("[data-testid$='-quantity-input']");
-    expect(input?.getAttribute("max")).toBe("50");
+    // The stepper now reflects the SERVER-PROJECTED product ceiling, not the
+    // global band. Product Control declared 20 for this fixture, so 20 is the
+    // honest maximum to offer. Offering 50 and refusing on submit would be a
+    // worse experience and would put an authority the server owns into the DOM.
+    expect(input?.getAttribute("max")).toBe("20");
     expect(Number.parseInt(String(input?.style.minHeight), 10)).toBeGreaterThanOrEqual(44);
   });
 

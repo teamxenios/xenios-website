@@ -93,10 +93,15 @@ export function EarlyAccessProductCard({
   testId = "early-access-product-card",
 }: EarlyAccessProductCardProps) {
   const sellable = product.availability !== "TEMPORARILY_HELD";
-  const needsManualReview =
+  // F-013: quantity alone never produces a review state. A per-product ceiling
+  // is a surviving NON-quantity restriction (Product Control and founder
+  // release authority), so exceeding it is an ordinary refusal that names the
+  // real limit rather than a queue the buyer gets dropped into.
+  const exceedsProductLimit =
     sellable &&
     quantity !== null &&
-    (product.quantityLimit === null || quantity > product.quantityLimit);
+    product.quantityLimit !== null &&
+    quantity > product.quantityLimit;
 
   return (
     <article
@@ -160,6 +165,7 @@ export function EarlyAccessProductCard({
         <EarlyAccessQuantitySelector
           value={quantity}
           onChange={onQuantityChange}
+          {...(product.quantityLimit !== null ? { maxQuantity: product.quantityLimit } : {})}
           testId={`${testId}-quantity`}
         />
       ) : null}
@@ -192,8 +198,8 @@ export function EarlyAccessProductCard({
         >
           {selected
             ? "Remove"
-            : needsManualReview
-              ? "Request manual review"
+            : exceedsProductLimit
+              ? `Limit ${product.quantityLimit} per order`
               : ACTION_COPY[product.availability]}
         </button>
       ) : null}

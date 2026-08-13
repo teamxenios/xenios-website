@@ -120,9 +120,10 @@ export type EarlyAccessReleaseStatus = (typeof EARLY_ACCESS_RELEASE_STATUSES)[nu
 const MIN_REASON_LENGTH = 12;
 const MAX_REASON_LENGTH = 2_000;
 const MAX_PRICE_CENTS = 100_000_000;
-// Pre-M66 release records must be writable under the same durable 1..20 band
-// that the cart and current database accept. Manual 21..50 requests never
-// become founder-release rows.
+// F-013: release records are writable across the whole normal band, 1..50.
+// This resolves through the single shared constant rather than restating a
+// number, so the release ceiling cannot drift from the cart and order ceiling.
+// The DATABASE band must be widened by M66 before a row above 20 is durable.
 const MAX_QUANTITY_LIMIT = DIRECT_EARLY_ACCESS_MAX_QUANTITY;
 const SUPPORTED_CURRENCIES = Object.freeze(["USD"] as const);
 const ACTOR_PATTERN = /^[A-Za-z0-9][A-Za-z0-9 _.@:-]{2,127}$/;

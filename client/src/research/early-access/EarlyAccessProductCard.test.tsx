@@ -213,10 +213,14 @@ describe("early access product card", () => {
     expect(input).not.toBeNull();
     // And it offers the round's whole band, not a narrower one.
     expect(input?.getAttribute("min")).toBe("1");
-    expect(input?.getAttribute("max")).toBe("50");
+    // The stepper now reflects the SERVER-PROJECTED product ceiling, not the
+    // global band. Product Control declared 20 for this fixture, so 20 is the
+    // honest maximum to offer. Offering 50 and refusing on submit would be a
+    // worse experience and would put an authority the server owns into the DOM.
+    expect(input?.getAttribute("max")).toBe("20");
   });
 
-  it("routes a quantity above the server-projected direct ceiling to manual review", () => {
+  it("names a server-projected product ceiling instead of queueing the buyer", () => {
     const onQuantityChange = vi.fn();
     const el = render(
       <EarlyAccessProductCard
@@ -227,9 +231,9 @@ describe("early access product card", () => {
       />,
     );
     const input = el.querySelector<HTMLInputElement>("input[type='number']");
-    expect(input?.max).toBe("50");
-    expect(el.textContent).toContain("Direct checkout supports up to 20 units");
-    expect(el.textContent).toContain("Request manual review");
+    expect(input?.max).toBe("20");
+    expect(el.textContent).toContain("This line supports up to 20 units");
+    expect(el.textContent).not.toMatch(/manual review/i);
     expect(onQuantityChange).not.toHaveBeenCalled();
   });
 

@@ -118,7 +118,7 @@ export function EarlyAccessCartCatalogue({
             const held = product.availability === "TEMPORARILY_HELD" || product.unitPriceCents === null;
             const quantity = item?.quantity ?? draftQuantities[key] ?? 1;
             const route = routeEarlyAccessQuantity(quantity, product.quantityLimit);
-            const needsManualReview = route?.kind === "manual_review";
+            const exceedsProductLimit = route?.kind === "exceeds_product_limit";
             return (
               <article key={key} className="card grid min-w-0 content-start gap-2 p-4">
                 <h2 className="body-m font-700 leading-snug">{product.name}</h2>
@@ -155,12 +155,6 @@ export function EarlyAccessCartCatalogue({
                       onClick={() => {
                         if (item !== null) {
                           onRemove(item.productId, item.variantId);
-                        } else if (route?.kind === "manual_review") {
-                          onRequestManualReview({
-                            productId: product.productId,
-                            variantId: product.variantId,
-                            requestedQuantity: route.quantity,
-                          });
                         } else if (route?.kind === "direct_cart") {
                           onPut({
                             productId: product.productId,
@@ -172,8 +166,8 @@ export function EarlyAccessCartCatalogue({
                     >
                       {item
                         ? "Remove from cart"
-                        : needsManualReview
-                          ? "Request manual review"
+                        : exceedsProductLimit
+                          ? `Limit ${route.limit} per order`
                           : "Add to cart"}
                     </button>
                   </>

@@ -89,7 +89,7 @@ describe("row projection", () => {
     expect(product?.quantityLimit).toBe(20);
   });
 
-  it.each([undefined, null, 0, 21, 2.5, "20"])(
+  it.each([undefined, null, 0, 51, 2.5, "20"])(
     "drops a sellable row with malformed quantity authority %s",
     (quantityLimit) => {
       expect(toCardProduct(row({ quantityLimit }))).toBeNull();

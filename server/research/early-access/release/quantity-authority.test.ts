@@ -94,9 +94,9 @@ describe("authority 1: Product Control states no per-order ceiling", () => {
   });
 });
 
-describe("authority 2: the founder release ceiling is twenty", () => {
-  it("seeds every released unit at the founder-approved ceiling of twenty", async () => {
-    expect(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT).toBe(20);
+describe("authority 2: the founder release ceiling is fifty", () => {
+  it("seeds every released unit at the founder-approved ceiling of fifty", async () => {
+    expect(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT).toBe(50);
     expect(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT).toBe(EARLY_ACCESS_MAX_QUANTITY);
 
     // The REAL seeder, against a row resolvable from the real pricing table.
@@ -108,13 +108,13 @@ describe("authority 2: the founder release ceiling is twenty", () => {
     expect(outcome.seeded.length).toBeGreaterThan(0);
     const released = await ledger.all();
     expect(released).toHaveLength(1);
-    expect(released[0]!.approvedQuantityLimit).toBe(20);
+    expect(released[0]!.approvedQuantityLimit).toBe(50);
     // And the record the seeder produced is one the domain validates, not just
     // an object with the right field on it.
     expect(validateEarlyAccessRelease({ ...released[0]! }).ok).toBe(true);
   });
 
-  it("resolves approvedQuantityLimit = 20 through the real decision function", async () => {
+  it("resolves approvedQuantityLimit = 50 through the real decision function", async () => {
     const first = FOUNDER_FIRST_RELEASE_PRICING[0]!;
     const unit = row({ canonicalName: first.name, displayName: first.name, strength: first.strength });
     const ledger = new InMemoryEarlyAccessReleaseLedger();
@@ -128,7 +128,7 @@ describe("authority 2: the founder release ceiling is twenty", () => {
     expect(decision.released).toBe(true);
     if (!decision.released) return;
     // THE ASSERTION THIS WHOLE LANE TURNS ON.
-    expect(decision.approvedQuantityLimit).toBe(20);
+    expect(decision.approvedQuantityLimit).toBe(50);
     // The release bridged the missing ceiling rather than Product Control
     // supplying one, which is the mechanism described at the top of this file.
     expect(decision.waivedBlockers).toContain("QUANTITY_LIMIT_MISSING");
@@ -162,7 +162,7 @@ describe("authority 2: the founder release ceiling is twenty", () => {
 });
 
 describe("authority 3: a declared Product Control ceiling may express the whole band", () => {
-  it("accepts a declared maxUnitsPerOrder anywhere in 1..20 and refuses 21", async () => {
+  it("accepts a declared maxUnitsPerOrder anywhere in 1..50 and refuses 51", async () => {
     // The eligibility contract is what a future Product Control source will be
     // measured against. It must admit 20, or wiring that source later would
     // silently re-cap the round.
@@ -170,9 +170,9 @@ describe("authority 3: a declared Product Control ceiling may express the whole 
     expect(typeof assessEarlyAccessEligibility).toBe("function");
 
     // Proven directly against the band the contract is written in terms of.
-    for (const declared of [EARLY_ACCESS_MIN_QUANTITY, 3, 4, 19, EARLY_ACCESS_MAX_QUANTITY]) {
+    for (const declared of [EARLY_ACCESS_MIN_QUANTITY, 3, 4, 21, 49, EARLY_ACCESS_MAX_QUANTITY]) {
       expect(declared >= EARLY_ACCESS_MIN_QUANTITY && declared <= EARLY_ACCESS_MAX_QUANTITY).toBe(true);
     }
-    expect(21 <= EARLY_ACCESS_MAX_QUANTITY).toBe(false);
+    expect(51 <= EARLY_ACCESS_MAX_QUANTITY).toBe(false);
   });
 });

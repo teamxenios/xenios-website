@@ -217,10 +217,10 @@ export function EarlyAccessQuantitySelector({
         in, so it reads as a sentence at every card width.
       */}
       <p id={noteId} className="body-xs text-ink-mute min-w-0">
-        {effectiveMax < REQUEST_MAX_QUANTITY ? (
-          <>This direct cart line supports up to {effectiveMax} units. </>
+        {effectiveMax < EARLY_ACCESS_QUANTITY_MAX ? (
+          <>This line supports up to {effectiveMax} units. </>
         ) : (
-          <>Direct checkout supports up to {DIRECT_EARLY_ACCESS_MAX_QUANTITY} units. Requests up to {REQUEST_MAX_QUANTITY} route to manual review. </>
+          <>Order 1 to {EARLY_ACCESS_QUANTITY_MAX} units. </>
         )}
         3 units is the Research Bundle, 20% savings.
       </p>

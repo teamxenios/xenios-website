@@ -21,8 +21,11 @@ const PRODUCT: EarlyAccessCardProduct = {
   currency: "USD",
   description: "Lyophilised vial for research use.",
   availability: "AVAILABLE",
-  quantityLimit: 20,
+  quantityLimit: 50,
 };
+
+/** The same product, but with a genuine Product Control ceiling below the band. */
+const LIMITED: EarlyAccessCardProduct = { ...PRODUCT, quantityLimit: 12 };
 
 let root: Root | null = null;
 let host: HTMLDivElement | null = null;
@@ -37,6 +40,7 @@ afterEach(() => {
 function renderCatalogue(
   onPut: (item: BrowserCartItem) => void,
   onManual: (request: EarlyAccessManualQuantityRequest) => void,
+  product: EarlyAccessCardProduct = PRODUCT,
 ) {
   host = document.createElement("div");
   document.body.appendChild(host);
@@ -44,7 +48,7 @@ function renderCatalogue(
   act(() => {
     root?.render(
       <EarlyAccessCartCatalogue
-        products={[PRODUCT]}
+        products={[product]}
         cart={{ version: 1, items: [] }}
         onPut={onPut}
         onRemove={() => {}}
@@ -72,13 +76,13 @@ function typeQuantity(container: HTMLElement, value: string): void {
 
 function action(container: HTMLElement): HTMLButtonElement {
   const button = Array.from(container.querySelectorAll("button")).find((candidate) =>
-    /add to cart|request manual review/i.test(candidate.textContent ?? ""),
+    /add to cart|limit \d+ per order/i.test(candidate.textContent ?? ""),
   );
   if (button === undefined) throw new Error("catalogue action missing");
   return button;
 }
 
-describe("F-012 cart catalogue routing", () => {
+describe("F-013 cart catalogue routing, 1 through 50", () => {
   it("adds 20 to the direct cart when all server authority permits it", () => {
     const onPut = vi.fn();
     const onManual = vi.fn();
@@ -94,32 +98,70 @@ describe("F-012 cart catalogue routing", () => {
     expect(onManual).not.toHaveBeenCalled();
   });
 
-  it("routes 21 to manual review and never calls the direct-cart insert", () => {
+  it("adds 21 to the direct cart, indistinguishably from 20", () => {
+    // The founder's requirement in one test: 21 must look exactly as ordinary
+    // as 20. Under F-012 this same interaction produced a different BUTTON, a
+    // different handler and a different destination. Now the only difference
+    // between the two cases is the number.
     const onPut = vi.fn();
     const onManual = vi.fn();
     const view = renderCatalogue(onPut, onManual);
     typeQuantity(view, "21");
-    expect(action(view).textContent).toContain("Request manual review");
+    expect(action(view).textContent).toContain("Add to cart");
     act(() => action(view).click());
-    expect(onManual).toHaveBeenCalledWith({
+    expect(onPut).toHaveBeenCalledWith({
       productId: "PEX-001",
       variantId: "VAR-BPC5",
-      requestedQuantity: 21,
+      quantity: 21,
     });
-    expect(onPut).not.toHaveBeenCalled();
+    expect(onManual).not.toHaveBeenCalled();
   });
 
-  it("accepts a request for 50 only on the manual branch", () => {
+  it("adds 50 to the direct cart", () => {
     const onPut = vi.fn();
     const onManual = vi.fn();
     const view = renderCatalogue(onPut, onManual);
     typeQuantity(view, "50");
+    expect(action(view).textContent).toContain("Add to cart");
     act(() => action(view).click());
-    expect(onManual).toHaveBeenCalledWith({
+    expect(onPut).toHaveBeenCalledWith({
       productId: "PEX-001",
       variantId: "VAR-BPC5",
-      requestedQuantity: 50,
+      quantity: 50,
     });
+    expect(onManual).not.toHaveBeenCalled();
+  });
+
+  it("never routes any quantity in the band to a manual review branch", () => {
+    // The negative control at the UI layer. It fails if anyone reintroduces a
+    // quantity-based review affordance anywhere inside 1..50.
+    for (const quantity of ["1", "20", "21", "35", "49", "50"]) {
+      const onPut = vi.fn();
+      const onManual = vi.fn();
+      const view = renderCatalogue(onPut, onManual);
+      typeQuantity(view, quantity);
+      expect(view.textContent ?? "").not.toMatch(/manual review/i);
+      act(() => action(view).click());
+      expect(onManual, `quantity ${quantity} must not route to review`).not.toHaveBeenCalled();
+      expect(onPut).toHaveBeenCalledTimes(1);
+      act(() => root?.unmount());
+      host?.remove();
+      root = null;
+      host = null;
+    }
+  });
+
+  it("refuses past a real Product Control ceiling by NAMING it, not by queueing", () => {
+    // A per-product ceiling is a surviving non-quantity restriction. The buyer
+    // is told the real limit instead of being dropped into a review queue, and
+    // the direct-cart insert is never called.
+    const onPut = vi.fn();
+    const onManual = vi.fn();
+    const view = renderCatalogue(onPut, onManual, LIMITED);
+    typeQuantity(view, "30");
+    expect(action(view).textContent).toContain("Limit 12 per order");
+    act(() => action(view).click());
     expect(onPut).not.toHaveBeenCalled();
+    expect(onManual).not.toHaveBeenCalled();
   });
 });

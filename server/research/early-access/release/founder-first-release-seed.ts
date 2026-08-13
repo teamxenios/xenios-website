@@ -58,7 +58,7 @@ export const FOUNDER_FIRST_RELEASE_REASON =
  * Bounded by MAX_QUANTITY_LIMIT (100) in founder-release.ts, which already
  * admits 20 and is deliberately not changed.
  */
-export const FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT = 20;
+export const FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT = 50;
 
 export type FounderFirstReleaseInput = Readonly<{
   /** The founder's own name for the product, verbatim from the decision. */

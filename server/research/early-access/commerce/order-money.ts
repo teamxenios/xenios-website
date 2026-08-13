@@ -56,8 +56,21 @@ export type EarlyAccessCurrency = (typeof EARLY_ACCESS_CURRENCIES)[number];
  * The ceiling for any single money field in this domain, equal to the maximum unit
  * price times the maximum quantity. A test asserts it stays equal to
  * `EARLY_ACCESS_MAX_ORDER_TOTAL_CENTS`, so widening one without the other is caught.
+ *
+ * F-013 RAISED THIS, AND THAT IS A MONEY DECISION, NOT A QUANTITY ONE.
+ * The normal band went from 1..20 to 1..50, and because this ceiling is defined
+ * as max unit price (500_000) times max quantity, it moved from 10_000_000 to
+ * 25_000_000. In plain terms the largest arithmetically possible single order
+ * went from $100,000 to $250,000.
+ *
+ * The invariant was preserved deliberately rather than pinned at the old value.
+ * Holding it at 10_000_000 would have quietly reintroduced a quantity cap
+ * through the money door: a 50 unit order of an expensive line would fail on
+ * "money" grounds that were really the old quantity ceiling wearing a disguise,
+ * which is exactly the shape F-013 abolished. The paired test caught the
+ * divergence the moment the band moved, which is what it was written for.
  */
-export const EARLY_ACCESS_MAX_MONEY_CENTS = 10_000_000;
+export const EARLY_ACCESS_MAX_MONEY_CENTS = 25_000_000;
 
 declare const PAYABLE_TOTAL_BRAND: unique symbol;
 
