@@ -4,6 +4,7 @@ import { EarlyAccessCatalogGrid } from "./EarlyAccessCatalogGrid";
 import type { EarlyAccessCardProduct } from "./EarlyAccessProductCard";
 import type { EarlyAccessQuantity } from "./EarlyAccessQuantitySelector";
 import { EarlyAccessSelectionBar } from "./EarlyAccessSelectionBar";
+import { routeEarlyAccessQuantity } from "@shared/research/early-access-quantity";
 import {
   loadEarlyAccessCatalog,
   type EarlyAccessCatalogLoad,
@@ -19,6 +20,7 @@ export interface EarlyAccessCatalogSectionProps {
   load?: () => Promise<EarlyAccessCatalogLoad>;
   onSelect?(product: EarlyAccessCardProduct): void;
   onReview?(selection: EarlyAccessCatalogSelection): void;
+  onManualReview?(selection: EarlyAccessCatalogSelection): void;
   reviewEnabled?: boolean;
   testId?: string;
 }
@@ -39,6 +41,7 @@ export function EarlyAccessCatalogSection({
   load = loadFromServer,
   onSelect = () => {},
   onReview = () => {},
+  onManualReview = () => {},
   reviewEnabled = true,
   testId = "early-access-catalog-section",
 }: EarlyAccessCatalogSectionProps) {
@@ -100,6 +103,9 @@ export function EarlyAccessCatalogSection({
     onSelect(product);
   };
   const selectedQuantity = selectedProduct === null ? 0 : (quantities[selectedProduct.variantId] ?? 1);
+  const selectedRoute = selectedProduct === null
+    ? null
+    : routeEarlyAccessQuantity(selectedQuantity, selectedProduct.quantityLimit);
 
   return (
     <section data-testid={testId} data-state="ok" data-received={result.received}>
@@ -121,7 +127,8 @@ export function EarlyAccessCatalogSection({
       </div>
       <p className="body-s text-ink-mute mt-3" data-testid={`${testId}-fulfillment`}>{fulfillmentTargetCopy}</p>
       <p className="body-s text-ink-mute mt-1" data-testid={`${testId}-single-product`}>
-        Each checkout creates one product order. Choose a quantity from 1 to 3; quantity 3 receives the server-confirmed Research Bundle pricing.
+        Direct checkout supports up to 20 units. Requests from 21 to 50 go to manual review
+        and never enter the current cart. Quantity 3 receives the server-confirmed Research Bundle pricing.
       </p>
       <div className="mt-4">
         {products.length > 0 && visible.length === 0 ? (
@@ -135,10 +142,13 @@ export function EarlyAccessCatalogSection({
       </div>
       <EarlyAccessSelectionBar selectedCount={selectedProduct === null ? 0 : 1}
         unitCount={selectedQuantity}
+        actionLabel={selectedRoute?.kind === "manual_review" ? "Request manual review" : "Review order"}
         reviewEnabled={reviewEnabled}
         onReview={() => {
           if (selectedProduct !== null) {
-            onReview({ product: selectedProduct, quantity: (quantities[selectedProduct.variantId] ?? 1) });
+            const next = { product: selectedProduct, quantity: selectedQuantity };
+            if (selectedRoute?.kind === "direct_cart") onReview(next);
+            else if (selectedRoute?.kind === "manual_review") onManualReview(next);
           }
         }} testId={`${testId}-selection`} />
     </section>

@@ -25,6 +25,7 @@ export interface EarlyAccessSelectionBarProps {
   unitCount: number;
   onReview(): void;
   reviewEnabled?: boolean;
+  actionLabel?: string;
   testId?: string;
 }
 
@@ -33,6 +34,7 @@ export function EarlyAccessSelectionBar({
   unitCount,
   onReview,
   reviewEnabled = true,
+  actionLabel = "Review order",
   testId = "early-access-selection-bar",
 }: EarlyAccessSelectionBarProps) {
   // Nothing selected renders nothing at all. An empty bar with a dead button
@@ -65,7 +67,7 @@ export function EarlyAccessSelectionBar({
         data-testid={`${testId}-review`}
         className="btn btn-primary"
       >
-        {reviewEnabled ? "Review order" : "Accept policy to continue"}
+        {reviewEnabled ? actionLabel : "Accept policy to continue"}
       </button>
     </aside>
   );

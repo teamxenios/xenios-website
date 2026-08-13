@@ -63,9 +63,9 @@ export function normalizeCartShipping(input: EarlyAccessCartShipping): EarlyAcce
  * This function used to refuse the whole cart the moment one identity appeared
  * twice. That was safe but wrong about intent: a browser that adds the same
  * variant from two places, or retries an add, has not asked for anything
- * illegal, it has asked for the sum. So the same variant at twenty-five units
- * twice is one canonical line of fifty, and the same variant at twenty-five and
- * again at twenty-six is refused, because fifty-one is past the cap. The cap is
+ * illegal, it has asked for the sum. So the same variant at ten units and again
+ * at ten units is one canonical line of twenty, and the same variant at ten and
+ * again at eleven is refused, because twenty-one is past the cap. The cap is
  * applied to the AGGREGATE, which is the only reading under which duplicate
  * lines cannot be used to walk past it.
  *
@@ -90,7 +90,7 @@ export function normalizeCartItems(
   for (const item of input) {
     if (!SAFE_ID.test(item.productId) || !SAFE_ID.test(item.variantId)) return null;
     // Each SUBMITTED line must itself be a legal quantity, so a single line of
-    // 51 is refused here and never reaches the aggregate check. "One huge line"
+    // 21 is refused here and never reaches the aggregate check. "One huge line"
     // and "many small lines" are then governed by the same rule rather than by
     // two that could drift apart.
     if (!isEarlyAccessQuantity(item.quantity)) return null;

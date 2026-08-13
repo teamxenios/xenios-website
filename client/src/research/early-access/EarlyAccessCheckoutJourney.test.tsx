@@ -52,7 +52,7 @@ const SELECTION: EarlyAccessCatalogSelection = Object.freeze({
     currency: "USD",
     description: "",
     availability: "AVAILABLE" as const,
-    quantityLimit: 50,
+    quantityLimit: 20,
   }),
   quantity: 2,
 });

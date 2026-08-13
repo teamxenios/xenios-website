@@ -11,11 +11,11 @@
  */
 
 /**
- * The cart's quantity band IS the round's quantity band. These two names are
+ * The cart's quantity band IS the DIRECT-commerce band. These two names are
  * kept because every existing importer uses them, but they are no longer
  * independent numbers: both resolve to the single policy in
  * `early-access-quantity.ts`, so the cart and the single-order lane cannot
- * drift apart.
+ * drift apart. The separate manual-request ceiling never appears here.
  */
 export {
   EARLY_ACCESS_MAX_QUANTITY as EARLY_ACCESS_CART_MAX_QUANTITY,
@@ -32,7 +32,7 @@ export const EARLY_ACCESS_CART_MAX_DISTINCT_ITEMS = 25 as const;
  * rather than refused, so the raw list can legitimately be longer than the
  * distinct-item cap. The largest submission that could still canonicalize to a
  * legal cart is every distinct item arriving as single-unit lines, which is
- * `distinct-item cap x the shared policy ceiling`. Anything past that cannot become a valid cart no matter how it
+ * `25 x 20`. Anything past that cannot become a valid cart no matter how it
  * merges, so it is refused before any work is done on it.
  */
 export const EARLY_ACCESS_CART_MAX_SUBMITTED_LINES =

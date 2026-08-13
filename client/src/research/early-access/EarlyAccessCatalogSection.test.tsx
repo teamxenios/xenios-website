@@ -43,7 +43,7 @@ function product(index: number, availability: EarlyAccessCardProduct["availabili
     currency: "USD",
     description: "Lyophilised vial for research use.",
     availability,
-    quantityLimit: availability === "TEMPORARILY_HELD" ? null : 50,
+    quantityLimit: availability === "TEMPORARILY_HELD" ? null : 20,
   };
 }
 

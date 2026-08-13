@@ -74,6 +74,7 @@ export default function EarlyAccessRoute() {
   // journey must describe the SAME situation the agreement step is describing.
   const [blocked, setBlocked] = useState<"unverified" | "locked" | null>(null);
   const [selection, setSelection] = useState<EarlyAccessCatalogSelection | null>(null);
+  const [manualRequest, setManualRequest] = useState<EarlyAccessCatalogSelection | null>(null);
   const [checkoutPhase, setCheckoutPhase] = useState<
     "details" | "review" | "submitting" | "payment" | "status"
   >("details");
@@ -188,6 +189,7 @@ export default function EarlyAccessRoute() {
       setAgreed(false);
       setBlocked(null);
       setSelection(null);
+      setManualRequest(null);
       setCheckoutPhase("details");
       setState({ kind: "locked", error: null, busy: false });
     })();
@@ -306,6 +308,16 @@ export default function EarlyAccessRoute() {
                     current server prices; please review and confirm again.
                   </p>
                 )}
+                {manualRequest !== null && (
+                  <p
+                    role="status"
+                    className="body-s text-ink-2 mb-4 max-w-[62ch]"
+                    data-testid="early-access-manual-quantity-route"
+                  >
+                    Your request for {manualRequest.quantity} units of {manualRequest.product.name}
+                    requires manual review. Nothing was added to the direct cart, ordered, or charged.
+                  </p>
+                )}
                 {rememberedOrder !== null && (
                   <div className="mb-4">
                     <EarlyAccessOrderRecoveryCard orderNumber={rememberedOrder} />
@@ -317,8 +329,16 @@ export default function EarlyAccessRoute() {
                   onReview={(nextSelection) => {
                     if (!agreed || blocked !== null) return;
                     setPriceChanged(false);
+                    setManualRequest(null);
                     setSelection(nextSelection);
                     setCheckoutPhase("details");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  onManualReview={(nextRequest) => {
+                    if (!agreed || blocked !== null) return;
+                    setPriceChanged(false);
+                    setSelection(null);
+                    setManualRequest(nextRequest);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                 />

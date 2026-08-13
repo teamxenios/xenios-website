@@ -6,6 +6,13 @@ import {
 } from "../EarlyAccessQuantitySelector";
 import type { BrowserCart, BrowserCartItem } from "./cartStore";
 import { browserCartUnitCount } from "./cartStore";
+import { routeEarlyAccessQuantity } from "@shared/research/early-access-quantity";
+
+export type EarlyAccessManualQuantityRequest = Readonly<{
+  productId: string;
+  variantId: string;
+  requestedQuantity: number;
+}>;
 
 function money(cents: number, currency: string): string {
   return new Intl.NumberFormat("en-US", {
@@ -24,12 +31,14 @@ export function EarlyAccessCartCatalogue({
   onPut,
   onRemove,
   onOpenCart,
+  onRequestManualReview,
 }: Readonly<{
   products: readonly EarlyAccessCardProduct[];
   cart: BrowserCart;
   onPut(item: BrowserCartItem): void;
   onRemove(productId: string, variantId: string): void;
   onOpenCart(): void;
+  onRequestManualReview(request: EarlyAccessManualQuantityRequest): void;
 }>) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "available" | "held">("all");
@@ -108,6 +117,8 @@ export function EarlyAccessCartCatalogue({
             const item = cartByKey.get(key) ?? null;
             const held = product.availability === "TEMPORARILY_HELD" || product.unitPriceCents === null;
             const quantity = item?.quantity ?? draftQuantities[key] ?? 1;
+            const route = routeEarlyAccessQuantity(quantity, product.quantityLimit);
+            const needsManualReview = route?.kind === "manual_review";
             return (
               <article key={key} className="card grid min-w-0 content-start gap-2 p-4">
                 <h2 className="body-m font-700 leading-snug">{product.name}</h2>
@@ -127,7 +138,9 @@ export function EarlyAccessCartCatalogue({
                   <>
                     <EarlyAccessQuantitySelector
                       value={quantity as EarlyAccessQuantity}
-                      maxQuantity={product.quantityLimit ?? 1}
+                      {...(item !== null && product.quantityLimit !== null
+                        ? { maxQuantity: product.quantityLimit }
+                        : {})}
                       onChange={(next) => {
                         setDraftQuantities((current) => ({ ...current, [key]: next }));
                         if (item !== null) {
@@ -142,16 +155,26 @@ export function EarlyAccessCartCatalogue({
                       onClick={() => {
                         if (item !== null) {
                           onRemove(item.productId, item.variantId);
-                        } else {
+                        } else if (route?.kind === "manual_review") {
+                          onRequestManualReview({
+                            productId: product.productId,
+                            variantId: product.variantId,
+                            requestedQuantity: route.quantity,
+                          });
+                        } else if (route?.kind === "direct_cart") {
                           onPut({
                             productId: product.productId,
                             variantId: product.variantId,
-                            quantity,
+                            quantity: route.quantity,
                           });
                         }
                       }}
                     >
-                      {item ? "Remove from cart" : "Add to cart"}
+                      {item
+                        ? "Remove from cart"
+                        : needsManualReview
+                          ? "Request manual review"
+                          : "Add to cart"}
                     </button>
                   </>
                 )}

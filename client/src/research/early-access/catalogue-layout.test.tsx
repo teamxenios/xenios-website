@@ -46,7 +46,7 @@ function row(index: number, held = false): EarlyAccessCatalogRowView {
     description: "A concise factual research description for this compound.",
     availability: held ? "TEMPORARILY_HELD" : "AVAILABLE",
     purchasable: !held,
-    quantityLimit: held ? null : 50,
+    quantityLimit: held ? null : 20,
   };
 }
 

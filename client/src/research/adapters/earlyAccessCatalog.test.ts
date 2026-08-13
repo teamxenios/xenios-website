@@ -19,6 +19,7 @@ function row(overrides: Record<string, unknown> = {}) {
     description: "Lyophilised vial for research use.",
     availability: "AVAILABLE",
     purchasable: true,
+    quantityLimit: 20,
     ...overrides,
   };
 }

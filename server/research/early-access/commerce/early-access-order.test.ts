@@ -72,11 +72,11 @@ describe("early access order quantity", () => {
     }
   });
 
-  it("refuses a quantity outside one through fifty", () => {
+  it("refuses a quantity outside one through twenty", () => {
     for (const quantity of [
       0,
       -1,
-      51,
+      21,
       100,
       1.5,
       "2",

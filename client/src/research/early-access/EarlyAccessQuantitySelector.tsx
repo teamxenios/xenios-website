@@ -1,13 +1,14 @@
 import { useId, useState } from "react";
 import {
-  EARLY_ACCESS_MAX_QUANTITY,
+  DIRECT_EARLY_ACCESS_MAX_QUANTITY,
+  REQUEST_MAX_QUANTITY,
   EARLY_ACCESS_MIN_QUANTITY,
-  isEarlyAccessQuantity,
+  isEarlyAccessRequestQuantity,
 } from "@shared/research/early-access-quantity";
 
 /** The band this round offers, from the one policy. Never restated here. */
 export const EARLY_ACCESS_QUANTITY_MIN = EARLY_ACCESS_MIN_QUANTITY;
-export const EARLY_ACCESS_QUANTITY_MAX = EARLY_ACCESS_MAX_QUANTITY;
+export const EARLY_ACCESS_QUANTITY_MAX = REQUEST_MAX_QUANTITY;
 
 /**
  * A quantity this round accepts.
@@ -19,7 +20,7 @@ export const EARLY_ACCESS_QUANTITY_MAX = EARLY_ACCESS_MAX_QUANTITY;
  */
 export type EarlyAccessQuantity = number;
 
-export { isEarlyAccessQuantity };
+export { isEarlyAccessRequestQuantity };
 
 export interface EarlyAccessQuantitySelectorProps {
   /** The caller's current choice. Anything outside the band shows as empty. */
@@ -51,10 +52,10 @@ export interface EarlyAccessQuantitySelectorProps {
  * which is the property the card actually needs, and it is the standard way to
  * express a wide numeric range on a phone.
  *
- * THE MAX HERE IS A COURTESY, NOT A CHECK. The input's max attribute stops a
- * pointer, and the clamp below stops a keyboard, but neither is authority.
- * Every quantity is re-read on the server against the same policy before it can
- * reach a quote, an order or a supplier release.
+ * THE MAX HERE IS A COURTESY, NOT A CHECK. Quantities above the direct-cart
+ * ceiling are requests and route to manual review; they are never inserted
+ * into the current cart. Every direct quantity is re-read on the server before
+ * it can reach a quote, an order or a supplier release.
  *
  * It prices nothing. The line total is whatever the server returns on the order
  * review; this control does not multiply anything by anything.
@@ -69,13 +70,13 @@ export function EarlyAccessQuantitySelector({
   const baseId = useId();
   const noteId = `${baseId}-note`;
   const inputId = `${baseId}-quantity`;
-  const effectiveMax = isEarlyAccessQuantity(maxQuantity)
+  const effectiveMax = isEarlyAccessRequestQuantity(maxQuantity)
     ? maxQuantity
     : EARLY_ACCESS_QUANTITY_MIN;
 
   // A value the round does not offer selects nothing rather than being rounded
   // into the nearest legal quantity.
-  const selected = isEarlyAccessQuantity(value) && value <= effectiveMax ? value : null;
+  const selected = isEarlyAccessRequestQuantity(value) && value <= effectiveMax ? value : null;
 
   // What the person is typing, which is allowed to be transiently empty or
   // out of band while they type. It is never what gets reported: `commit`
@@ -91,7 +92,7 @@ export function EarlyAccessQuantitySelector({
       effectiveMax,
       Math.max(EARLY_ACCESS_QUANTITY_MIN, Math.trunc(candidate)),
     );
-    if (!isEarlyAccessQuantity(clamped)) return;
+    if (!isEarlyAccessRequestQuantity(clamped)) return;
     setDraft(null);
     onChange(clamped);
   }
@@ -216,8 +217,12 @@ export function EarlyAccessQuantitySelector({
         in, so it reads as a sentence at every card width.
       */}
       <p id={noteId} className="body-xs text-ink-mute min-w-0">
-        3 units is the Research Bundle, 20% savings. Limit {effectiveMax} per
-        product.
+        {effectiveMax < REQUEST_MAX_QUANTITY ? (
+          <>This direct cart line supports up to {effectiveMax} units. </>
+        ) : (
+          <>Direct checkout supports up to {DIRECT_EARLY_ACCESS_MAX_QUANTITY} units. Requests up to {REQUEST_MAX_QUANTITY} route to manual review. </>
+        )}
+        3 units is the Research Bundle, 20% savings.
       </p>
     </fieldset>
   );

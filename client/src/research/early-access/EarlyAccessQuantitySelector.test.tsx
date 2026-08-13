@@ -10,7 +10,7 @@ import {
   EARLY_ACCESS_QUANTITY_MAX,
   EARLY_ACCESS_QUANTITY_MIN,
   EarlyAccessQuantitySelector,
-  isEarlyAccessQuantity,
+  isEarlyAccessRequestQuantity,
   type EarlyAccessQuantity,
 } from "./EarlyAccessQuantitySelector";
 
@@ -97,7 +97,8 @@ describe("EarlyAccessQuantitySelector", () => {
 
     const note = fieldset?.querySelector("p");
     expect(note?.textContent).toContain("3 units is the Research Bundle, 20% savings");
-    expect(note?.textContent).toContain(`Limit ${EARLY_ACCESS_QUANTITY_MAX} per product`);
+    expect(note?.textContent).toContain("Direct checkout supports up to 20 units");
+    expect(note?.textContent).toContain(`Requests up to ${EARLY_ACCESS_QUANTITY_MAX} route to manual review`);
     expect(note?.textContent).not.toMatch(/\$\s*\d/);
   });
 
@@ -218,7 +219,7 @@ describe("EarlyAccessQuantitySelector", () => {
     expect(onChange).toHaveBeenLastCalledWith(20);
     type(view.host, "50");
     expect(onChange).toHaveBeenLastCalledWith(20);
-    expect(view.host.textContent).toContain("Limit 20 per product");
+    expect(view.host.textContent).toContain("This direct cart line supports up to 20 units");
   });
 
   it("shows no selection when an old cart value exceeds a newly narrower ceiling", () => {
@@ -273,11 +274,11 @@ describe("EarlyAccessQuantitySelector", () => {
     }
     expect(EARLY_ACCESS_QUANTITY_MIN).toBe(1);
     expect(EARLY_ACCESS_QUANTITY_MAX).toBe(50);
-    expect(isEarlyAccessQuantity(2)).toBe(true);
-    expect(isEarlyAccessQuantity(50)).toBe(true);
-    expect(isEarlyAccessQuantity("2")).toBe(false);
-    expect(isEarlyAccessQuantity(51)).toBe(false);
-    expect(isEarlyAccessQuantity(0)).toBe(false);
+    expect(isEarlyAccessRequestQuantity(2)).toBe(true);
+    expect(isEarlyAccessRequestQuantity(50)).toBe(true);
+    expect(isEarlyAccessRequestQuantity("2")).toBe(false);
+    expect(isEarlyAccessRequestQuantity(51)).toBe(false);
+    expect(isEarlyAccessRequestQuantity(0)).toBe(false);
   });
 
   it("an emptied field returns to the last good value rather than reporting one", () => {

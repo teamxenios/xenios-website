@@ -19,16 +19,23 @@ describe("Early Access browser cart", () => {
       { productId: "PEX-001", variantId: "VAR-1", quantity: 2 },
     ]);
   });
-  it("stores fifty and purges a forged fifty-one without coercion", () => {
-    putBrowserCartItem({ productId: "PEX-001", variantId: "VAR-1", quantity: 50 });
+  it("accepts 20 directly and refuses 21 without changing the cart", () => {
+    putBrowserCartItem({ productId: "PEX-001", variantId: "VAR-1", quantity: 20 });
     expect(readBrowserCart().items).toEqual([
-      { productId: "PEX-001", variantId: "VAR-1", quantity: 50 },
+      { productId: "PEX-001", variantId: "VAR-1", quantity: 20 },
     ]);
+
+    putBrowserCartItem({ productId: "PEX-002", variantId: "VAR-2", quantity: 21 });
+    expect(readBrowserCart().items).toEqual([
+      { productId: "PEX-001", variantId: "VAR-1", quantity: 20 },
+    ]);
+  });
+  it("purges a forged pre-M66 cart containing 21 units", () => {
     sessionStorage.setItem(
       "xenios.research.earlyAccess.cart.v1",
       JSON.stringify({
         version: 1,
-        items: [{ productId: "PEX-001", variantId: "VAR-1", quantity: 51 }],
+        items: [{ productId: "PEX-001", variantId: "VAR-1", quantity: 21 }],
       }),
     );
     expect(readBrowserCart().items).toEqual([]);

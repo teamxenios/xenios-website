@@ -35,7 +35,7 @@ function unit(
     currency: "USD",
     description: "Product information for this item is still being confirmed.",
     availability: "AVAILABLE",
-    quantityLimit: 50,
+    quantityLimit: 20,
     ...overrides,
   };
 }

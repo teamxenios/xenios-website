@@ -85,19 +85,19 @@ describe("the storefront the customer sees behind the gate", () => {
   });
 
   it("projects the strict intersection of Product Control and founder authority", () => {
-    const productControlNarrower = row({ quantityLimit: 49 });
-    const founderNarrower = row({ variantId: "var-2", sku: "A-2", quantityLimit: 50 });
+    const productControlNarrower = row({ quantityLimit: 19 });
+    const founderNarrower = row({ variantId: "var-2", sku: "A-2", quantityLimit: 20 });
     const store = buildEarlyAccessStorefront({
       projection: projection([productControlNarrower, founderNarrower]),
       releases: [
-        releaseFor(productControlNarrower, { approvedQuantityLimit: 50 }),
+        releaseFor(productControlNarrower, { approvedQuantityLimit: 20 }),
         releaseFor(founderNarrower, {
           releaseId: "rel-0002",
-          approvedQuantityLimit: 49,
+          approvedQuantityLimit: 19,
         }),
       ],
     });
-    expect(store.units.map((unit) => unit.quantityLimit)).toEqual([49, 49]);
+    expect(store.units.map((unit) => unit.quantityLimit)).toEqual([19, 19]);
   });
 
   it("Product Control's verdict is still reported on a released unit", () => {

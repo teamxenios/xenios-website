@@ -34,6 +34,7 @@ const PRODUCTS: readonly EarlyAccessCardProduct[] = [
     description: "Alpha description",
     availability: "AVAILABLE",
     purchasable: true,
+    quantityLimit: 20,
   },
 ] as unknown as readonly EarlyAccessCardProduct[];
 

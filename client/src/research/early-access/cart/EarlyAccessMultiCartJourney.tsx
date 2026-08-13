@@ -25,7 +25,10 @@ import {
   type BrowserCart,
   type BrowserCartItem,
 } from "./cartStore";
-import { EarlyAccessCartCatalogue } from "./EarlyAccessCartCatalogue";
+import {
+  EarlyAccessCartCatalogue,
+  type EarlyAccessManualQuantityRequest,
+} from "./EarlyAccessCartCatalogue";
 import { EarlyAccessCartDetails, cartContactProblems, cartShippingProblems } from "./EarlyAccessCartDetails";
 import { EarlyAccessCartLineIssues } from "./EarlyAccessCartLineIssues";
 import { EarlyAccessCartPanel } from "./EarlyAccessCartPanel";
@@ -137,6 +140,8 @@ export function EarlyAccessMultiCartJourney({
       unresolvedEarlyAccessPaymentInstructions(),
     );
   const [error, setError] = useState<string | null>(null);
+  const [manualRequest, setManualRequest] =
+    useState<EarlyAccessManualQuantityRequest | null>(null);
   const attemptRef = useRef<string | null>(readCartAttemptKey());
   const submitInFlight = useRef(false);
   const lastCheckoutRef = useRef<string | null>(readLastCartCheckoutNumber());
@@ -486,6 +491,16 @@ export function EarlyAccessMultiCartJourney({
 
       <EarlyAccessProgress step={step} onBack={step === "catalog" ? undefined : back} />
       {error ? <p role="alert" className="body-s text-pulse">{error}</p> : null}
+      {manualRequest !== null ? (
+        <p
+          role="status"
+          className="body-s text-ink-2"
+          data-testid="early-access-manual-quantity-route"
+        >
+          {manualRequest.requestedQuantity} units requires manual review. Nothing was added
+          to the direct cart or sent to checkout.
+        </p>
+      ) : null}
       {lineIssues.length > 0 && step === "catalog" ? (
         <EarlyAccessCartLineIssues
           issues={lineIssues}
@@ -513,6 +528,10 @@ export function EarlyAccessMultiCartJourney({
           cart={cart}
           onPut={put}
           onRemove={remove}
+          onRequestManualReview={(request) => {
+            setManualRequest(request);
+            setError(null);
+          }}
           onOpenCart={() => navigate("cart")}
         />
       ) : null}

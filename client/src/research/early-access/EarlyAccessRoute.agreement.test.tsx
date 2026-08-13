@@ -48,6 +48,7 @@ const UNITS = [
     description: "",
     availability: "AVAILABLE",
     purchasable: true,
+    quantityLimit: 20,
   },
   {
     productId: "prod-2",
@@ -59,6 +60,7 @@ const UNITS = [
     description: "",
     availability: "TEMPORARILY_HELD",
     purchasable: false,
+    quantityLimit: null,
   },
 ];
 

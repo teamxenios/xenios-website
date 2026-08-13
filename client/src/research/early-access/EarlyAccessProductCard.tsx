@@ -93,6 +93,10 @@ export function EarlyAccessProductCard({
   testId = "early-access-product-card",
 }: EarlyAccessProductCardProps) {
   const sellable = product.availability !== "TEMPORARILY_HELD";
+  const needsManualReview =
+    sellable &&
+    quantity !== null &&
+    (product.quantityLimit === null || quantity > product.quantityLimit);
 
   return (
     <article
@@ -156,7 +160,6 @@ export function EarlyAccessProductCard({
         <EarlyAccessQuantitySelector
           value={quantity}
           onChange={onQuantityChange}
-          maxQuantity={product.quantityLimit ?? 1}
           testId={`${testId}-quantity`}
         />
       ) : null}
@@ -187,7 +190,11 @@ export function EarlyAccessProductCard({
           onClick={onSelect}
           className={`btn mt-2 w-full ${selected ? "btn-secondary" : "btn-primary"}`}
         >
-          {selected ? "Remove" : ACTION_COPY[product.availability]}
+          {selected
+            ? "Remove"
+            : needsManualReview
+              ? "Request manual review"
+              : ACTION_COPY[product.availability]}
         </button>
       ) : null}
     </article>

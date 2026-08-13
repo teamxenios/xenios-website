@@ -39,6 +39,7 @@ const PRODUCTS: readonly EarlyAccessCardProduct[] = [
     description: "Alpha description",
     availability: "AVAILABLE",
     purchasable: true,
+    quantityLimit: 20,
   },
   {
     productId: "prod-2",
@@ -50,6 +51,7 @@ const PRODUCTS: readonly EarlyAccessCardProduct[] = [
     description: "Beta description",
     availability: "AVAILABLE",
     purchasable: true,
+    quantityLimit: 20,
   },
   {
     productId: "prod-3",
@@ -61,6 +63,7 @@ const PRODUCTS: readonly EarlyAccessCardProduct[] = [
     description: "Gamma description",
     availability: "TEMPORARILY_HELD",
     purchasable: false,
+    quantityLimit: null,
   },
 ] as unknown as readonly EarlyAccessCardProduct[];
 

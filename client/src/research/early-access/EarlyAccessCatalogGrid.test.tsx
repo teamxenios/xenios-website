@@ -52,7 +52,7 @@ function approvedRows(): EarlyAccessCatalogRowView[] {
       description: "Lyophilised vial for research use.",
       availability: held ? "TEMPORARILY_HELD" : "AVAILABLE",
       purchasable: !held,
-      quantityLimit: held ? null : 50,
+      quantityLimit: held ? null : 20,
     };
   });
 }

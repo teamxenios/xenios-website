@@ -57,7 +57,7 @@ export type EarlyAccessCurrency = (typeof EARLY_ACCESS_CURRENCIES)[number];
  * price times the maximum quantity. A test asserts it stays equal to
  * `EARLY_ACCESS_MAX_ORDER_TOTAL_CENTS`, so widening one without the other is caught.
  */
-export const EARLY_ACCESS_MAX_MONEY_CENTS = 25_000_000;
+export const EARLY_ACCESS_MAX_MONEY_CENTS = 10_000_000;
 
 declare const PAYABLE_TOTAL_BRAND: unique symbol;
 

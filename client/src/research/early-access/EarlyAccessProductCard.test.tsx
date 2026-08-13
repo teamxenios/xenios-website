@@ -46,7 +46,7 @@ function product(overrides: Partial<EarlyAccessCardProduct> = {}): EarlyAccessCa
     currency: "USD",
     description: "Lyophilised vial for research use.",
     availability: "AVAILABLE",
-    quantityLimit: 50,
+    quantityLimit: 20,
     ...overrides,
   };
 }
@@ -216,22 +216,20 @@ describe("early access product card", () => {
     expect(input?.getAttribute("max")).toBe("50");
   });
 
-  it("shows and enforces the exact server-projected release ceiling", () => {
+  it("routes a quantity above the server-projected direct ceiling to manual review", () => {
     const onQuantityChange = vi.fn();
     const el = render(
       <EarlyAccessProductCard
         product={product({ quantityLimit: 20 })}
-        quantity={20}
+        quantity={21}
         onQuantityChange={onQuantityChange}
         onSelect={() => {}}
       />,
     );
     const input = el.querySelector<HTMLInputElement>("input[type='number']");
-    const increment = el.querySelector<HTMLButtonElement>("[data-testid$='-quantity-increment']");
-    expect(input?.max).toBe("20");
-    expect(el.textContent).toContain("Limit 20 per product");
-    expect(increment?.disabled).toBe(true);
-    act(() => increment?.click());
+    expect(input?.max).toBe("50");
+    expect(el.textContent).toContain("Direct checkout supports up to 20 units");
+    expect(el.textContent).toContain("Request manual review");
     expect(onQuantityChange).not.toHaveBeenCalled();
   });
 
