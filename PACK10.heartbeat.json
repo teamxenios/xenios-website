@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "sessionId": "PACK10-QUANTITY-1-50-CANDIDATE",
+  "state": "HUMAN_GATED",
+  "integrationState": "REBASE_OR_RECREATE_REQUIRED",
+  "updatedAt": "2026-08-13T01:18:25.2124213Z",
+  "summary": "F-012 fixed at 24f8c60: direct cart/order/release authority remains 1..20, manual request intake accepts 1..50, 21..50 routes manual without direct-cart insertion, and 51 is refused. Focused, adversarial, broad non-control-plane, typecheck, and build gates pass.",
+  "next": "Wait for FINAL_EA_FAST_FOLLOW_BASE, then recreate/rebase this candidate and rerun the exact HANDOFF release-chain verification. M66 execution and every production/deployment action remain separately human-gated.",
+  "baseSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
+  "resumeSha": "c251c3fef33596971db39477001b8cb833f04cc8",
+  "outputSha": "24f8c60fb41c8b367f76b5e2b38b2a33f6b756cd",
+  "progressPercent": 100,
+  "validation": {
+    "focused": "293 passed",
+    "adversarial": "218 passed",
+    "broadNonControlPlane": "8280 passed, 26 environment-gated skipped",
+    "typecheck": "passed",
+    "build": "passed"
+  },
+  "blockers": [
+    "FINAL_EA_FAST_FOLLOW_BASE does not exist; integration remains REBASE_OR_RECREATE_REQUIRED.",
+    "M66 PG16/PG17 apply-twice execution requires explicit authorization and was not run.",
+    "Production migration, release-authority write, deployment, cart enablement, RLS/grant changes, and Legal writes remain prohibited and human-gated."
+  ]
+}
