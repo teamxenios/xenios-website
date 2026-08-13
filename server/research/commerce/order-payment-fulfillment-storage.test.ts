@@ -62,6 +62,18 @@ describe("Pack 04 storage contract", () => {
     expect(sql).toContain("invalid workflow transition % -> %");
   });
 
+  it("enforces normal order quantities from 1 through 50 without a quantity review split", () => {
+    expect(sql).toContain("research_order_pack04_valid_line_quantities");
+    expect(sql).toContain("not between 1 and 50");
+    expect(sql).toContain("research_order_workflow_quantity_band");
+    expect(sql).toContain("aggregate #> '{request,lines}'");
+    expect(sql).toContain("research_order_invoice_quantity_band");
+    expect(sql).toContain("record -> 'lines'");
+    expect(sql).toContain("Quantity 21..50 remains in the same path as 1..20");
+    expect(sql).toContain("invoice quantities must exactly match the approved buyer request");
+    expect(sql).not.toMatch(/quantity\s*(?:<=|>|between)\s*20/i);
+  });
+
   it("stores idempotency, append-only evidence, tracking and an internal audit trail", () => {
     expect(sql).toContain("primary key (owner_scope, idempotency_key)");
     expect(sql).toContain("constraint research_order_payment_evidence_proof_unique unique (proof_sha256)");

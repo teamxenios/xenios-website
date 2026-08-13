@@ -28,6 +28,39 @@ begin
 end
 $pack04_preflight$;
 
+-- Founder quantity authority, 2026-08-13: every normal order line is 1..50.
+-- Quantity 21..50 remains in the same path as 1..20; this validator creates no
+-- quantity-based review state and does not weaken any independent eligibility,
+-- approval, payment, supplier-release, or fulfillment gate.
+create or replace function public.research_order_pack04_valid_line_quantities(p_lines jsonb)
+returns boolean
+language sql
+immutable
+parallel safe
+set search_path = pg_catalog
+as $function$
+  select case
+    when pg_catalog.jsonb_typeof(p_lines) is distinct from 'array' then false
+    when pg_catalog.jsonb_array_length(p_lines) not between 1 and 100 then false
+    else not exists (
+      select 1
+      from pg_catalog.jsonb_array_elements(p_lines) as item(line)
+      where case
+        when pg_catalog.jsonb_typeof(line) is distinct from 'object' then true
+        when pg_catalog.jsonb_typeof(line -> 'sku') is distinct from 'string' then true
+        when pg_catalog.length(pg_catalog.btrim(line ->> 'sku')) not between 3 and 128 then true
+        when pg_catalog.jsonb_typeof(line -> 'quantity') is distinct from 'number' then true
+        else (line ->> 'quantity')::numeric <> pg_catalog.trunc((line ->> 'quantity')::numeric)
+          or (line ->> 'quantity')::numeric not between 1 and 50
+      end
+    )
+    and (
+      select pg_catalog.count(*) = pg_catalog.count(distinct line ->> 'sku')
+      from pg_catalog.jsonb_array_elements(p_lines) as identity_item(line)
+    )
+  end
+$function$;
+
 -- -------------------------------------------------------------------------
 -- Ownership. Business ownership is first-class and bound to an authorized
 -- buyer row. Personal ownership binds directly to one Research member.
@@ -80,6 +113,9 @@ create table if not exists public.research_order_workflows (
     or (approved_at is not null and length(approved_by) between 3 and 128)
   ),
   constraint research_order_workflow_time_order check (updated_at >= created_at),
+  constraint research_order_workflow_quantity_band check (
+    public.research_order_pack04_valid_line_quantities(aggregate #> '{request,lines}')
+  ),
   constraint research_order_workflow_aggregate_agrees check (
     aggregate ->> 'orderId' = order_id
     and aggregate ->> 'stage' = stage
@@ -121,6 +157,9 @@ create table if not exists public.research_order_invoices (
   due_at timestamptz not null,
   issued_by text not null check (length(issued_by) between 3 and 128),
   record jsonb not null check (pg_catalog.jsonb_typeof(record) = 'object'),
+  constraint research_order_invoice_quantity_band check (
+    public.research_order_pack04_valid_line_quantities(record -> 'lines')
+  ),
   constraint research_order_invoice_window check (due_at > issued_at)
 );
 
@@ -303,6 +342,25 @@ begin
     if v_order.approved_at is null or v_order.stage <> 'approved'
        or new.issued_at < v_order.approved_at then
       raise exception 'Pack 04 invoice requires named admin approval' using errcode = '55000';
+    end if;
+    if not public.research_order_pack04_valid_line_quantities(new.record -> 'lines') then
+      raise exception 'Pack 04 invoice line quantities must be unique whole units from 1 through 50'
+        using errcode = '22023';
+    end if;
+    if exists (
+      select 1
+      from (
+        select line ->> 'sku' as sku, (line ->> 'quantity')::integer as quantity
+        from pg_catalog.jsonb_array_elements(v_order.aggregate #> '{request,lines}') as requested(line)
+      ) as requested
+      full join (
+        select line ->> 'sku' as sku, (line ->> 'quantity')::integer as quantity
+        from pg_catalog.jsonb_array_elements(new.record -> 'lines') as invoiced(line)
+      ) as invoiced using (sku)
+      where requested.quantity is distinct from invoiced.quantity
+    ) then
+      raise exception 'Pack 04 invoice quantities must exactly match the approved buyer request'
+        using errcode = '55000';
     end if;
   elsif tg_table_name = 'research_order_payment_evidence' then
     select * into v_invoice from public.research_order_invoices where order_id = new.order_id;
@@ -673,6 +731,10 @@ $pack04_rls$;
 
 revoke all on function public.research_customer_order_timeline(text) from public, anon;
 grant execute on function public.research_customer_order_timeline(text) to authenticated;
+revoke all on function public.research_order_pack04_valid_line_quantities(jsonb)
+  from public, anon, authenticated;
+grant execute on function public.research_order_pack04_valid_line_quantities(jsonb)
+  to service_role;
 
 -- The reference adapter is not mounted in Pack 04. These grants let a future
 -- reviewed service_role transaction compose the exact writes; all hard gates

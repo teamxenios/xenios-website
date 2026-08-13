@@ -11,7 +11,11 @@ import {
   PersistentOrderWorkflowService,
   type OrderWorkflowAtomicStore,
 } from "./order-payment-fulfillment-persistence";
-import type { OrderActor, OrderCommand } from "./order-payment-fulfillment";
+import {
+  InMemoryOrderWorkflowEngine,
+  type OrderActor,
+  type OrderCommand,
+} from "./order-payment-fulfillment";
 
 const ORDER = "order_pack04_persistence_0001";
 const BUYER_ID = "buyer_pack04_persistence_0001";
@@ -158,19 +162,20 @@ describe("Pack 04 atomic persistence adapter", () => {
   it("survives service restart and replays from minimized scoped receipts", async () => {
     const store = new InMemoryOrderWorkflowAtomicStore();
     const firstService = new PersistentOrderWorkflowService(store);
-    const first = await firstService.execute(buyer, key("restart"), request());
+    const first = await firstService.execute(buyer, key("restart"), request(50));
     expect(first).toMatchObject({ ok: true, replayed: false });
 
     const restartedService = new PersistentOrderWorkflowService(store);
     expect((await restartedService.execute(admin, key("restart-approve"), {
       kind: "approve_request", orderId: ORDER, occurredAt: at(1),
     })).ok).toBe(true);
-    const replay = await restartedService.execute(buyer, key("restart"), request());
+    const replay = await restartedService.execute(buyer, key("restart"), request(50));
     expect(replay).toMatchObject({ ok: true, replayed: true, order: { stage: "approved" } });
 
     const state = await store.load();
     expect(state.revision).toBe(3);
     expect(state.snapshot.orders).toHaveLength(1);
+    expect(state.snapshot.orders[0]?.request.lines[0]?.quantity).toBe(50);
     expect(state.snapshot.receipts).toHaveLength(2);
     expect(state.snapshot.receipts.find((receipt) => receipt.key === key("restart")))
       .toMatchObject({ orderId: ORDER, resultVersion: 1 });
@@ -345,6 +350,68 @@ describe("Pack 04 atomic persistence adapter", () => {
     const service = new PersistentOrderWorkflowService(malformed);
     await expect(service.execute(buyer, key("corrupt"), request()))
       .rejects.toBeInstanceOf(OrderWorkflowPersistenceCorruptionError);
+    await expect(service.getForActor(buyer, ORDER))
+      .rejects.toBeInstanceOf(OrderWorkflowPersistenceCorruptionError);
+  });
+
+  it("fails closed when durable state contains a quantity above 50", async () => {
+    const engine = new InMemoryOrderWorkflowEngine();
+    expect(engine.execute(buyer, key("durable-50"), request(50)).ok).toBe(true);
+    const valid = engine.snapshot();
+    const order = valid.orders[0]!;
+    const malformedQuantityStore: OrderWorkflowAtomicStore = {
+      load: async () => ({
+        revision: 1,
+        snapshot: {
+          ...valid,
+          orders: [{
+            ...order,
+            request: {
+              ...order.request,
+              lines: [{ ...order.request.lines[0]!, quantity: 51 }],
+            },
+          }],
+        },
+      }),
+      commit: async () => { throw new Error("commit must not run"); },
+    };
+    const service = new PersistentOrderWorkflowService(malformedQuantityStore);
+    await expect(service.getForActor(buyer, ORDER))
+      .rejects.toBeInstanceOf(OrderWorkflowPersistenceCorruptionError);
+    await expect(service.execute(buyer, key("durable-corrupt"), request(50)))
+      .rejects.toBeInstanceOf(OrderWorkflowPersistenceCorruptionError);
+  });
+
+  it("fails closed when a durable invoice changes the requested quantity", async () => {
+    const engine = new InMemoryOrderWorkflowEngine();
+    expect(engine.execute(buyer, key("invoice-request"), request(2)).ok).toBe(true);
+    expect(engine.execute(admin, key("invoice-approval"), {
+      kind: "approve_request", orderId: ORDER, occurredAt: at(1),
+    }).ok).toBe(true);
+    expect(engine.execute(finance, key("invoice-valid"), {
+      kind: "issue_invoice", orderId: ORDER, invoice: invoice(), occurredAt: at(2),
+    }).ok).toBe(true);
+    const valid = engine.snapshot();
+    const order = valid.orders[0]!;
+    const originalInvoice = order.invoice!;
+    const mismatchedStore: OrderWorkflowAtomicStore = {
+      load: async () => ({
+        revision: 3,
+        snapshot: {
+          ...valid,
+          orders: [{
+            ...order,
+            invoice: {
+              ...originalInvoice,
+              lines: [{ ...originalInvoice.lines[0]!, quantity: 3, lineTotalCents: 7500 }],
+              amountCents: 7500,
+            },
+          }],
+        },
+      }),
+      commit: async () => { throw new Error("commit must not run"); },
+    };
+    const service = new PersistentOrderWorkflowService(mismatchedStore);
     await expect(service.getForActor(buyer, ORDER))
       .rejects.toBeInstanceOf(OrderWorkflowPersistenceCorruptionError);
   });

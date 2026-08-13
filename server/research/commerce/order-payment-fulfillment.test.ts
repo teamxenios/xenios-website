@@ -6,6 +6,8 @@ import type {
 } from "./manual-order-payments";
 import {
   InMemoryOrderWorkflowEngine,
+  PACK04_ORDER_QUANTITY_MAX,
+  PACK04_ORDER_QUANTITY_MIN,
   type BusinessOrderOwner,
   type OrderActor,
   type OrderCommand,
@@ -280,6 +282,80 @@ describe("Pack 04 order/payment/fulfillment workflow", () => {
     expect(engine.customerTimeline({ actorId: "buyer_other_0001", role: "buyer", organizationIds: [ORG_ID] }, ORDER))
       .toBeNull();
     expect(engine.customerTimeline(businessBuyer, ORDER)?.ownerKind).toBe("business");
+  });
+
+  it("treats every normal quantity from 1 through 50 identically and never adds a quantity review threshold", () => {
+    expect(PACK04_ORDER_QUANTITY_MIN).toBe(1);
+    expect(PACK04_ORDER_QUANTITY_MAX).toBe(50);
+    const engine = new InMemoryOrderWorkflowEngine();
+
+    for (const quantity of [1, 20, 21, 50]) {
+      const orderId = `order_pack04_quantity_${quantity}`;
+      const command = request();
+      const result = engine.execute(buyer, `pack04:quantity:${quantity}:00000001`, {
+        ...command,
+        orderId,
+        request: {
+          ...command.request,
+          requestRef: `buyer_request_pack04_quantity_${quantity}`,
+          lines: [{ sku: "SKU-PACK04-01", quantity }],
+        },
+      });
+      expect(result).toMatchObject({
+        ok: true,
+        replayed: false,
+        order: { stage: "request_pending", approvedAt: null, approvedBy: null },
+      });
+    }
+
+    for (const [label, quantity] of [["zero", 0], ["fraction", 1.5], ["above", 51]] as const) {
+      const orderId = `order_pack04_quantity_${label}`;
+      const command = request();
+      expect(engine.execute(buyer, `pack04:quantity:${label}:00000001`, {
+        ...command,
+        orderId,
+        request: {
+          ...command.request,
+          requestRef: `buyer_request_pack04_quantity_${label}`,
+          lines: [{ sku: "SKU-PACK04-01", quantity }],
+        },
+      })).toMatchObject({ ok: false, code: "validation_failed" });
+      expect(engine.getForActor(buyer, orderId)).toBeNull();
+    }
+  });
+
+  it("refuses an invoice outside 1 through 50 or with a changed requested quantity after approval", () => {
+    const engine = new InMemoryOrderWorkflowEngine();
+    const command = request();
+    expect(run(engine, buyer, "request-50", {
+      ...command,
+      request: { ...command.request, lines: [{ sku: "SKU-PACK04-01", quantity: 50 }] },
+    }).ok).toBe(true);
+    expect(run(engine, admin, "approve-50", {
+      kind: "approve_request", orderId: ORDER, occurredAt: at(1),
+    }).ok).toBe(true);
+    const overLimitInvoice = invoice();
+    expect(run(engine, finance, "invoice-51", {
+      kind: "issue_invoice",
+      orderId: ORDER,
+      invoice: {
+        ...overLimitInvoice,
+        lines: [{ ...overLimitInvoice.lines[0]!, quantity: 51, lineTotalCents: 127500 }],
+        amountCents: 127500,
+      },
+      occurredAt: at(2),
+    })).toMatchObject({ ok: false, code: "validation_failed" });
+    expect(run(engine, finance, "invoice-quantity-changed", {
+      kind: "issue_invoice",
+      orderId: ORDER,
+      invoice: {
+        ...overLimitInvoice,
+        lines: [{ ...overLimitInvoice.lines[0]!, quantity: 49, lineTotalCents: 122500 }],
+        amountCents: 122500,
+      },
+      occurredAt: at(2),
+    })).toMatchObject({ ok: false, code: "validation_failed" });
+    expect(engine.getForActor(buyer, ORDER)?.stage).toBe("approved");
   });
 
   it("cannot invoice, verify, hand off or fulfill an unapproved buyer request", () => {

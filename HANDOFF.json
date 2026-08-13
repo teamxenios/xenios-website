@@ -3,7 +3,7 @@
   "name": "Xenios Orders Payments and Fulfillment",
   "pack": "04",
   "effort": "high",
-  "status": "READY_FOR_REVIEW_UNMOUNTED_PERSISTENCE_ADAPTER_COMPLETE",
+  "status": "READY_FOR_REVIEW_UNMOUNTED_QUANTITY_1_TO_50_COMPLETE",
   "base": {
     "requestedSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
     "strategy": "RECREATED_FROM_EXACT_BASE",
@@ -33,7 +33,8 @@
     "append-only audit contract",
     "Trust Dial gating",
     "atomic compare-and-swap persistence seam",
-    "restart-safe workflow hydration and fail-closed snapshot validation"
+    "restart-safe workflow hydration and fail-closed snapshot validation",
+    "founder-authorized normal order quantities from 1 through 50"
   ],
   "hardInvariants": [
     "A new workflow can only begin in request_pending with no approval.",
@@ -50,7 +51,9 @@
     "Identical idempotency retries replay; changed payloads under the same scoped key conflict and are audited.",
     "Order projection, receipt, timeline, audit, and optional workflow facts form one atomic commit bundle.",
     "Receipt scope and key identities are structurally unambiguous even when either contains colons.",
-    "Malformed, duplicate, stale, or internally inconsistent durable snapshots fail closed before reads or commands."
+    "Malformed, duplicate, stale, or internally inconsistent durable snapshots fail closed before reads or commands.",
+    "Every request and invoice line quantity is a unique whole-number SKU quantity from 1 through 50; quantity alone creates no review split in that band.",
+    "An invoice cannot change the per-SKU quantities in the approved buyer request."
   ],
   "artifacts": [
     {
@@ -59,7 +62,7 @@
     },
     {
       "path": "server/research/commerce/order-payment-fulfillment.test.ts",
-      "purpose": "Eight end-to-end and adversarial domain tests, including ambiguous receipt-key collision coverage."
+      "purpose": "Ten end-to-end and adversarial domain tests, including receipt-key collision and founder quantity 1-through-50 coverage."
     },
     {
       "path": "server/research/commerce/order-payment-fulfillment-persistence.ts",
@@ -67,7 +70,7 @@
     },
     {
       "path": "server/research/commerce/order-payment-fulfillment-persistence.test.ts",
-      "purpose": "Seven restart, concurrency, atomicity, normalization, refusal-audit, retry-exhaustion, and corruption tests."
+      "purpose": "Nine restart, concurrency, atomicity, normalization, refusal-audit, retry-exhaustion, quantity-integrity, and corruption tests."
     },
     {
       "path": "supabase/research-order-payment-fulfillment-pack04.sql",
@@ -75,7 +78,7 @@
     },
     {
       "path": "server/research/commerce/order-payment-fulfillment-storage.test.ts",
-      "purpose": "Six static storage-contract tests protecting RLS, ownership, approval, settlement, fulfillment, append-only evidence, and safe timeline projection."
+      "purpose": "Seven static storage-contract tests protecting RLS, ownership, quantity 1-through-50, approval, settlement, fulfillment, append-only evidence, and safe timeline projection."
     },
     {
       "path": "HANDOFF.json",
@@ -90,12 +93,12 @@
     {
       "command": "npm test -- --run server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts server/research/commerce/order-payment-fulfillment-persistence.test.ts",
       "result": "PASS",
-      "details": "3 files, 21 tests passed"
+      "details": "3 files, 26 tests passed"
     },
     {
       "command": "npm test -- --run server/research/commerce/manual-order-payments.test.ts server/research/early-access/commerce/verification-service.test.ts server/research/early-access/commerce/release-service.test.ts server/research/early-access/cart/cart-settlement-adversarial.test.ts server/research/early-access/cart/duplicate-order.test.ts server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts server/research/commerce/order-payment-fulfillment-persistence.test.ts",
       "result": "PASS",
-      "details": "8 commerce/payment/settlement adversarial files, 139 tests passed after the receipt-key collision regression"
+      "details": "8 commerce/payment/settlement adversarial files, 144 tests passed after quantity and invoice-integrity regressions"
     },
     {
       "command": "npm run check",
@@ -140,7 +143,40 @@
     "No external payment, supplier, fulfillment, tracking, notification, or customer action",
     "No evals/run_evals.py run because this repository does not contain that harness"
   ],
+  "founderStateObserved": {
+    "quantityDecision": "Normal order quantity is 1 through 50; quantity alone never triggers review within that band.",
+    "founderBinding": "COMPLETE; not recreated or replayed.",
+    "legalCriticalPath": "Owned elsewhere; Pack 04 performed no Legal write."
+  },
+  "externalQuantityOwnerHandoff": [
+    {
+      "path": "shared/research/early-access-quantity.ts:45",
+      "staleRule": "EARLY_ACCESS_MAX_QUANTITY is 20",
+      "requiredCanonicalRepair": "Shared quantity authority owner must supersede it with 50 and update all server/UI consumers and tests atomically."
+    },
+    {
+      "path": "shared/research/commerce.ts:241",
+      "staleRule": "maxUnitQuantity above a default threshold of 10 adds unusual_quantity review",
+      "requiredCanonicalRepair": "Shared Buyer Commerce owner must ensure quantity alone cannot add a review trigger for 1 through 50 while preserving total-value and fraud rules."
+    },
+    {
+      "path": "server/research/commerce/cart.ts:143",
+      "staleRule": "MAX_LINE_QUANTITY is 1000",
+      "requiredCanonicalRepair": "Buyer Commerce owner must align canonical cart normalization to 50."
+    },
+    {
+      "path": "supabase/migrations/20260811120000_research_early_access_cart_quantity_band.sql:136",
+      "staleRule": "Durable Early Access cart and child-release checks cap quantity at 20",
+      "requiredCanonicalRepair": "Database/release owner must create a new reversible reviewed successor migration to 50; never rewrite or auto-apply the historical M65 migration."
+    },
+    {
+      "path": "server/research/early-access/release/founder-first-release-seed.ts:61",
+      "staleRule": "FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT is 20",
+      "requiredCanonicalRepair": "Product Control/release owner must append or prepare the superseding authority safely; Founder Binding must not be replayed."
+    }
+  ],
   "requiredNextGate": [
+    "Integrate the external quantity-owner repairs above on the canonical successor base without copying Pack 04 into those owned systems.",
     "Assign a reviewed managed migration identity to the Pack 04 SQL draft.",
     "Run disposable managed-Supabase-shaped apply-twice, behavioral, concurrency, RLS, and rollback verification.",
     "Only then copy the exact reviewed SQL bytes into supabase/migrations and add the migration ledger/DAG node.",

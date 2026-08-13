@@ -11,6 +11,9 @@
 
 import {
   InMemoryOrderWorkflowEngine,
+  PACK04_ORDER_QUANTITY_MAX,
+  PACK04_ORDER_QUANTITY_MIN,
+  type BuyerRequestLine,
   type CustomerOrderTimeline,
   type OrderActor,
   type OrderAuditEntry,
@@ -101,6 +104,32 @@ function receiptIdentity(receipt: OrderWorkflowIdempotencyReceipt): string {
   return `${receipt.scope}\u0000${receipt.key}`;
 }
 
+function validPersistedQuantityLines(value: unknown): value is readonly BuyerRequestLine[] {
+  if (!Array.isArray(value) || value.length < 1 || value.length > 100) return false;
+  const skus = new Set<string>();
+  for (const candidate of value) {
+    if (!candidate || typeof candidate !== "object") return false;
+    const line = candidate as Partial<BuyerRequestLine>;
+    if (typeof line.sku !== "string" || skus.has(line.sku)
+      || !Number.isSafeInteger(line.quantity)
+      || (line.quantity ?? 0) < PACK04_ORDER_QUANTITY_MIN
+      || (line.quantity ?? 0) > PACK04_ORDER_QUANTITY_MAX) {
+      return false;
+    }
+    skus.add(line.sku);
+  }
+  return true;
+}
+
+function persistedQuantitiesMatch(
+  requested: readonly BuyerRequestLine[],
+  invoiced: readonly BuyerRequestLine[],
+): boolean {
+  if (requested.length !== invoiced.length) return false;
+  const requestedBySku = new Map(requested.map((line) => [line.sku, line.quantity] as const));
+  return invoiced.every((line) => requestedBySku.get(line.sku) === line.quantity);
+}
+
 function assertLoadedState(value: OrderWorkflowLoadedState): void {
   if (!Number.isSafeInteger(value.revision) || value.revision < 0
     || !value.snapshot || !Array.isArray(value.snapshot.orders)
@@ -116,6 +145,11 @@ function assertLoadedState(value: OrderWorkflowLoadedState): void {
       || !Number.isSafeInteger(order.version) || order.version < 1
       || !Array.isArray(order.events) || !Array.isArray(order.paymentEvidence)
       || !Array.isArray(order.tracking) || !Number.isFinite(created) || !Number.isFinite(updated)
+      || !validPersistedQuantityLines(order.request?.lines)
+      || (order.invoice !== null && (
+        !validPersistedQuantityLines(order.invoice?.lines)
+        || !persistedQuantitiesMatch(order.request.lines, order.invoice.lines)
+      ))
       || updated < created) {
       throw new OrderWorkflowPersistenceCorruptionError();
     }

@@ -246,6 +246,8 @@ const SAFE_ID = /^[A-Za-z0-9][A-Za-z0-9:._-]{2,127}$/;
 const IDEMPOTENCY_KEY = /^[A-Za-z0-9][A-Za-z0-9:._-]{15,127}$/;
 const SHA256 = /^[a-f0-9]{64}$/;
 const CONTENT_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
+export const PACK04_ORDER_QUANTITY_MIN = 1;
+export const PACK04_ORDER_QUANTITY_MAX = 50;
 const CONSEQUENTIAL = new Set<OrderCommand["kind"]>([
   "approve_request",
   "reject_request",
@@ -324,12 +326,33 @@ function validateOwner(owner: OrderOwner): boolean {
   return safeId(owner.buyerId) && (owner.kind === "personal" || safeId(owner.organizationId));
 }
 
+function validOrderQuantity(quantity: unknown): quantity is number {
+  return typeof quantity === "number"
+    && Number.isSafeInteger(quantity)
+    && quantity >= PACK04_ORDER_QUANTITY_MIN
+    && quantity <= PACK04_ORDER_QUANTITY_MAX;
+}
+
+function validOrderLines(lines: readonly BuyerRequestLine[]): boolean {
+  return lines.length > 0
+    && lines.length <= 100
+    && lines.every((line) => safeId(line.sku) && validOrderQuantity(line.quantity))
+    && new Set(lines.map((line) => line.sku)).size === lines.length;
+}
+
+function invoiceMatchesRequestedQuantities(
+  invoiceLines: ManualOrderInvoice["lines"],
+  requestLines: readonly BuyerRequestLine[],
+): boolean {
+  if (invoiceLines.length !== requestLines.length) return false;
+  const requested = new Map(requestLines.map((line) => [line.sku, line.quantity] as const));
+  return invoiceLines.every((line) => requested.get(line.sku) === line.quantity);
+}
+
 function validateRequest(request: BuyerOrderRequest): boolean {
   return safeId(request.requestRef)
     && Array.isArray(request.lines)
-    && request.lines.length > 0
-    && request.lines.length <= 100
-    && request.lines.every((line) => safeId(line.sku) && Number.isSafeInteger(line.quantity) && line.quantity > 0)
+    && validOrderLines(request.lines)
     && (request.note === undefined || nonBlank(request.note, 1000));
 }
 
@@ -341,6 +364,9 @@ function validateInvoice(invoice: ManualOrderInvoice, order: OrderWorkflow): boo
     && invoice.currency === "USD"
     && Number.isSafeInteger(invoice.amountCents)
     && invoice.amountCents > 0
+    && Array.isArray(invoice.lines)
+    && validOrderLines(invoice.lines)
+    && invoiceMatchesRequestedQuantities(invoice.lines, order.request.lines)
     && safeId(invoice.invoiceId)
     && nonBlank(invoice.invoiceRef, 128)
     && nonBlank(invoice.paymentMemo, 128)
