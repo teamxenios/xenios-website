@@ -1,5 +1,6 @@
 export * from "./action";
 export * from "./approved-reconciliation-adapter";
+export * from "./composition";
 export * from "./customer-projection";
 export * from "./dataset-reader";
 export * from "./model";

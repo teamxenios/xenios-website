@@ -40,6 +40,9 @@ foundation had not built:
 | Exact-variant detail container | `MasterOfferingDetailSurface.tsx` |
 | Handoff into the existing cart | `catalog-cart-handoff.ts` |
 | Named-member breadth grant | `named-member-breadth.test.ts` |
+| Typechecked wiring factory | `composition.ts` |
+| Adversarial search input | `search-adversarial.test.ts` |
+| Structural accessibility audit | `accessibility.test.tsx` |
 
 ## The pricing boundary
 
@@ -277,46 +280,50 @@ presentational, perform no fetch, hold no token, and are routed nowhere.
 
 ## Composition, for the integration manager
 
-Once the lane is rebased onto `FINAL_EA_FAST_FOLLOW_BASE`, one owner mounts:
+The wiring is a typechecked factory rather than a paragraph, because prose drifts from
+signatures silently and this does not compile when it drifts.
 
 ```ts
-const handlers = createMasterOfferingCatalogApiHandlers({
-  authorizeViewer,          // from the authenticated session, never the request body
-  serviceForViewer,         // request scoped, see below
-  now: () => new Date().toISOString(),
-});
+const dependencies = createMasterOfferingCatalogDependencies(
+  {
+    bindings,        // read-only exact-variant join, no mutation method
+    selections,      // the existing Product Control selector
+    pricingSource,   // new CatalogPricingProductSource(productCatalogReader)
+    identityFor,     // per request, from the authenticated session only
+  },
+  authorizeViewer,   // yours: only you know how this deployment authenticates
+);
+const handlers = createMasterOfferingCatalogApiHandlers(dependencies);
+
 app.get(MASTER_OFFERING_CATALOG_LIST_ROUTE, handlers.privateHeaders, handlers.list);
 app.get(MASTER_OFFERING_CATALOG_DETAIL_ROUTE, handlers.privateHeaders, handlers.detail);
 app.get(MASTER_OFFERING_CATALOG_PRICE_LIST_ROUTE, handlers.privateHeaders, handlers.priceList);
 ```
 
-`serviceForViewer` builds a **request-scoped** service, because the price authority memoizes
-per variant for the life of one instance:
+`authorizeViewer` stays with you deliberately. Inventing an answer inside this lane would
+be a second authentication system.
 
-```ts
-new MasterOfferingCatalogService(
-  reader,
-  createMasterOfferingProductControlResolver({ bindings, selections, context }),
-  createMasterOfferingPriceAuthority({
-    bindings,                                    // the same read-only binding reader
-    prices: createAuthoritativeApprovedPriceReader(
-      createAuthoritativePriceResolver(new CatalogPricingProductSource(catalogReader)),
-      () => ({ authenticatedAudience, currency: "USD" }),
-    ),
-  }),
-  { manualEarlyAccessPurchase: masterOfferingsManualPurchaseRequests() },
-);
-```
+`identityFor` must return facts derived from the authenticated session: the member tier or
+account role, never a body, query, header, or cookie value. Its `evaluatedAt` becomes the
+single instant for the whole request, so a displayed price and a purchase verdict can
+never describe two different moments. A null identity, or a malformed one, shows no price
+and no cart rather than falling back to an unauthenticated answer.
 
-`authenticatedAudience` must come from `authorizeAudienceFromServerIdentity` with facts
-derived from the authenticated session. The browser never chooses it. The pricing instant
-is taken from that same fact, so a stale authorization cannot price a later moment.
+The factory builds a **new service per request**. The price authority memoizes per variant
+for the life of one instance, which is what makes a page of twenty-four cards affordable
+and what would serve yesterday's prices if the instance outlived the request.
+`composition.test.ts` pins this by asserting the authority is re-read on a second request.
+
+That test file is also the end-to-end proof: a real binding, the real authoritative price
+resolver and the real Product Control adapter produce a `$99.00` card whose action is
+still `Request Access` because the selector declined, and produce `Add to Cart` only when
+it authorizes.
 
 ## Verification
 
 ```text
 TypeScript, repository tsc              PASS
-Vitest, the whole lane (25 files)       PASS, 174 tests
+Vitest, the whole lane (31 files)       PASS, 231 tests
 Vitest, whole repository                PASS, 512 files, 8,361 tests, 27 skipped
 Production build, node script/build.mjs PASS
 ```
