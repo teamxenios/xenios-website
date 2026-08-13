@@ -59,8 +59,9 @@ Do not mount Pack 02 candidate routes, apply SQL, invite a user, attach an ident
 or claim production checkout Q50 until the fused candidate is independently
 accepted. Those operator actions stay gated.
 
-The RECREATION half of that gate is discharged: Pack 02 is fused with the
-authoritative Q50, Buyer Commerce, Catalog and Pack 04 heads onto `ba9fa0ae` at
-candidate `2171dce`, so `REBASE_OR_RECREATE_REQUIRED` no longer applies. It is
-replaced here rather than deleted, because the operator restrictions above are a
-different gate and remain fully in force.
+The recreation half of that gate is discharged: Pack 02 source
+`ca943a66b9ce6b6f8f03b9cf302a5aacea9b4fd2` is ancestral to actual fusion base
+`3ec17ef4e42b8f49643b0168dfd762d982999513`, together with authoritative Q50,
+Buyer Commerce, Catalog, and canonical Pack 04 order/payment/fulfillment seams.
+`PACK02_DEPLOYMENT_GATE_RESOLVED.json` replaces the old guard with exact evidence.
+The operator restrictions above are separate gates and remain fully in force.

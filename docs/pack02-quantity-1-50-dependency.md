@@ -13,14 +13,15 @@ Pack 02 does not own cart, checkout, pricing, release, or order creation. It pro
 - never converts a request-again intent directly into an order, charge, reservation, or release;
 - keeps organization ownership checks ahead of every dashboard and reorder operation.
 
-## Canonical successor inputs found on disk
+## Canonical authority composed in fusion
 
-Pack 02 does not take ownership of these other-lane changes. Final-base fusion must consume and reverify both exact successors instead of reimplementing their authority here:
+Pack 02 does not take ownership of these other-lane changes. The actual fusion base named in `PACK02_DEPLOYMENT_GATE_RESOLVED.json` already contains and reverifies the shared authority instead of reimplementing it here:
 
-- `5e9ac687d95841529d75deb2d1d580d91380aebd` (`codex-pack10-quantity50`) is the current F013 canonical quantity candidate. It sets the Early Access durable/runtime maximum to 50, rejects 51, and removes quantity-only review from 1 through 50. It remains unapplied.
-- `0a8b38e62bdf58c9d6646a7cb830309fd2fe6d68` (`qa-f013-assembled-20260813`) is the assembled Buyer Commerce F013 delta. It changes the Buyer Commerce line limit to 50, removes `unusual_quantity` as a review reason, and includes the accepted buyer/request integration candidate.
+- `5e9ac687d95841529d75deb2d1d580d91380aebd` is ancestral and supplies the canonical Q50 authority. It sets the Early Access durable/runtime maximum to 50, rejects 51, and removes quantity-only review from 1 through 50. Its database candidate remains unapplied.
+- Buyer Commerce `6f4c7517e762c484458d0ef9d935e518ff1398ee` is ancestral and composes the canonical cart, checkout, and `research_orders` boundaries.
+- `b459c6edc242bba522441979808c49378a209395` is ancestral and removes the remaining hidden quantity caps from checkout, cart UI, payment verification, and supplier release without bypassing non-quantity restrictions.
 
-The assembled successor still requires final-base reconciliation of every persistent-cart, subscription, checkout, order, release, Product Control, and database boundary. Pack 02 must not claim Q50 checkout readiness from its account projection alone.
+Focused fusion verification covers persistent-cart, subscription, checkout, order, payment, release, Product Control, and Pack 02 projection boundaries. Pack 02 still does not claim authority over those systems from its account projection alone.
 
 ## Superseded local candidates
 
@@ -34,4 +35,4 @@ Final fusion must preserve the existing canonical architecture while changing th
 
 ## Legal state consumed by Pack 02
 
-Founder Binding is complete and its postcheck passed. Pack 02 must never recreate or replay Founder Binding. The remaining legal chain is four native signatures, agreement attestation, proof door, deploy/production smoke, and then `FINAL_EA_FAST_FOLLOW_BASE`. Tebra is a fast-follow dependency and is not a blocker for the Research Early Access commercial launch.
+Founder Binding is complete and its postcheck passed. Pack 02 must never recreate or replay Founder Binding. Legal acceptance and deployment-wide release gates remain external to Pack 02 and are not replaced by this composition resolution. The previously named `FINAL_EA_FAST_FOLLOW_BASE` ref did not exist at resolution time and is not used as Pack 02's recreation target; Pack 02 neither creates nor requires a fake tag. Tebra remains a fast-follow dependency rather than a Pack 02 account-composition blocker.

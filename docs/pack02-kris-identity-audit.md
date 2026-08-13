@@ -27,17 +27,16 @@ No canonical account-alias table exists in the inspected base. Pack 02's verifie
 
 The unmounted Pack 02 account home composes the existing member catalog, cart, product-request, order-history, security, and password-recovery routes only when the authenticated subject also has an active personal member account. An organization membership alone does not unlock personal catalog or history. Roman Digital's dashboard remains limited to Roman Digital-owned orders, requests, invoices, payments, shipments, and tracking.
 
-Recreation status, resolved. The rebase-or-recreate requirement existed because
-the Pack 02 lane was built on a base that predated the other lanes. That has now
-materially happened: Pack 02 `ca943a6` (adopted on its own lane's authority, with
-`1597f22` a clean ancestor) is fused with the authoritative Q50, Buyer Commerce
-`6f4c751`, Catalog `e858e893` and the six Pack 04 functional paths onto the common
-base `ba9fa0ae`, at fusion candidate `2171dce`. There is no rebase or recreation left
-to perform.
+Recreation status is resolved. The requirement existed because the Pack 02 lane
+was built on a base that predated the other lanes. Pack 02
+`ca943a66b9ce6b6f8f03b9cf302a5aacea9b4fd2` (with `1597f22` as an ancestor) is now
+ancestral to actual fusion base `3ec17ef4e42b8f49643b0168dfd762d982999513`,
+together with Q50 `5e9ac687`, Buyer Commerce `6f4c751`, Catalog `e858e893`, the
+hidden-cap fix `b459c6e`, and the canonical Pack 04 order/payment/fulfillment seams.
+`PACK02_DEPLOYMENT_GATE_RESOLVED.json` records the exact ancestry, seam, route, and
+verification evidence. There is no Pack 02 application recreation left to perform.
 
-What remains is NOT a recreation gate and should not be recorded as one. The tag
-`FINAL_EA_FAST_FOLLOW_BASE` still does not exist; it is cut ON this fused SHA as a
-release step, so treating its absence as a blocker on the fusion inverts the
-dependency. Independent acceptance of the fused candidate is also still
-outstanding. Those two gates are named in the release sequence and are tracked
-there.
+What remains is not a recreation gate: candidate SQL still requires isolated review,
+Kris still requires an authorized read-only production identity decision, and Agentic
+OS retains deployment-wide acceptance authority. The nonexistent
+`FINAL_EA_FAST_FOLLOW_BASE` ref is neither invented nor required by Pack 02.

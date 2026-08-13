@@ -37,4 +37,4 @@ The binding candidate updates the existing Roman Digital profile email, revokes 
 
 ## Promotion gates
 
-Recreate or rebase on `FINAL_EA_FAST_FOLLOW_BASE`, promote both SQL candidates through the reviewed migration DAG, rehearse applying them twice in an isolated database containing the exact Auth fixture, run both verification scripts, review service-role grants and RLS, and independently inspect the immutable binding events. Production application and route mounting remain outside this lane.
+The Pack 02 composition/recreation gate is discharged by `PACK02_DEPLOYMENT_GATE_RESOLVED.json` against actual fusion base `3ec17ef4e42b8f49643b0168dfd762d982999513`; no fictional or future tag is a prerequisite for this candidate. The separate database promotion gate remains: promote both SQL candidates through the reviewed migration DAG, rehearse applying them twice in an isolated database containing the exact Auth fixture, run both verification scripts, review service-role grants and RLS, and independently inspect the immutable binding events. Production application and route mounting remain outside this lane.
