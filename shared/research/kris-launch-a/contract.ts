@@ -17,8 +17,13 @@
  * also carries no `Suggested Sell Price`: that is the master catalog's own
  * number and it is NOT what Kris pays.
  *
- * Launch A sells nothing. There is no add-to-cart action in this union at all,
- * so no surface built on it can render one by accident.
+ * Launch A DOES sell, but only some rows. The earlier version of this contract
+ * had no purchase member at all, which was the right answer while the goal was
+ * browse-only and the wrong one now. The safety property it provided is
+ * replaced by a stronger, per-row one: KrisPurchaseMode, decided on the server,
+ * exactly one per product, reached only by falling through every refusal. An
+ * unrecognized channel is refused rather than defaulted, so a new channel in a
+ * future workbook cannot arrive purchasable.
  */
 
 export const KRIS_CHANNELS = [
@@ -107,6 +112,41 @@ export interface KrisAccessPolicy {
   purchasable: false;
 }
 
+/**
+ * What a buyer may do with a row. Exactly one per product, decided on the
+ * server, never inferred by the browser.
+ *
+ * `direct_eligible` is the only purchasable member and it is deliberately last
+ * in the derivation, so a row reaches it only by falling through every refusal.
+ * An unrecognized channel is refused rather than defaulted.
+ *
+ * This is a SEPARATE axis from KrisAccessPolicy. The two disagree on the two
+ * price-pending rows, which is the point: mode says what a buyer may do, access
+ * says what the product is. BAM15 is price_pending AND research use only.
+ */
+export const KRIS_PURCHASE_MODES = [
+  "direct_eligible",
+  "provider_workflow",
+  "classification_pending",
+  "price_pending",
+] as const;
+
+export type KrisPurchaseMode = (typeof KRIS_PURCHASE_MODES)[number];
+
+export const KRIS_PURCHASE_MODE_LABELS: Readonly<Record<KrisPurchaseMode, string>> = {
+  direct_eligible: "Add to cart",
+  provider_workflow: "Start provider workflow",
+  classification_pending: "Pending activation",
+  price_pending: "Price pending",
+};
+
+export function isKrisPurchaseMode(value: unknown): value is KrisPurchaseMode {
+  return (
+    typeof value === "string" &&
+    (KRIS_PURCHASE_MODES as readonly string[]).includes(value)
+  );
+}
+
 export interface KrisCatalogItemView {
   id: string;
   slug: string;
@@ -122,6 +162,13 @@ export interface KrisCatalogItemView {
   dosageForm: string | null;
   price: KrisPriceView;
   access: KrisAccessPolicy;
+  /**
+   * Server-decided. The browser renders the control this names and must never
+   * upgrade a row to purchasable on its own.
+   */
+  purchaseMode: KrisPurchaseMode;
+  /** True only for `direct_eligible`. Written out so no caller re-derives it. */
+  canAddToCart: boolean;
   /**
    * The note supplied on the row, shown as given.
    *
