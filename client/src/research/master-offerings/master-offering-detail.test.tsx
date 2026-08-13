@@ -94,9 +94,9 @@ const CAPABILITY: AcceptedExactVariantQuantityCapability = {
   productId: "pc_product_1",
   variantId: "pc_variant_1",
   minimum: 1,
-  maximum: 20,
-  aggregateMaximum: 20,
-  sourceVersion: "quantity-20",
+  maximum: 50,
+  aggregateMaximum: 50,
+  sourceVersion: "quantity-50",
 };
 
 const ADD_TO_CART = {
@@ -204,7 +204,7 @@ describe("master offering detail", () => {
       '[data-testid="mo-quantity"]',
     );
     expect(quantity?.getAttribute("min")).toBe("1");
-    expect(quantity?.getAttribute("max")).toBe("20");
+    expect(quantity?.getAttribute("max")).toBe("50");
     expect(quantity?.value).toBe("1");
     matched.unmount();
   });

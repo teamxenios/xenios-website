@@ -19,6 +19,13 @@ import {
  * nothing. It renders one action for one selected variant, and it renders a
  * quantity control only when the server said `add_to_cart` and an accepted
  * exact-variant quantity capability matches that exact identity.
+ *
+ * QUANTITY IS NOT A ROUTE. Under the founder quantity decision the normal band
+ * is 1 through 50 with no review threshold inside it, and this lane could not
+ * create one even if it wanted to: quantity is not an input to action
+ * resolution anywhere in the catalog. The action is already decided before a
+ * quantity exists, and the band comes from the injected capability rather than
+ * from any constant here.
  */
 
 export function priceLabel(variant: MasterOfferingVariantView): string {
@@ -62,6 +69,15 @@ export function MasterOfferingVariantAction({
   if (action.kind === "add_to_cart") {
     const chosen = quantity ?? (control.visible ? control.minimum : 1);
     const quantityId = `mo-quantity-${variant.id}`;
+    // Refuse, never clamp. Silently rewriting 51 to 50 would tell the buyer
+    // they asked for something they did not. The server re-reads the quantity
+    // and remains the authority; this only stops an obviously out-of-band
+    // submit from making a pointless round trip.
+    const outOfBand =
+      control.visible &&
+      (!Number.isSafeInteger(chosen) ||
+        chosen < control.minimum ||
+        chosen > control.maximum);
     return (
       <div className="grid gap-3" data-testid="mo-variant-action">
         {control.visible && (
@@ -79,19 +95,34 @@ export function MasterOfferingVariantAction({
               step={1}
               value={chosen}
               data-testid="mo-quantity"
+              aria-invalid={outOfBand || undefined}
+              aria-describedby={outOfBand ? `${quantityId}-band` : undefined}
               onChange={(event) => {
                 const next = Number(event.target.value);
                 if (Number.isSafeInteger(next)) onQuantityChange?.(next);
               }}
             />
+            {outOfBand && (
+              <span
+                id={`${quantityId}-band`}
+                className="body-s text-ink-mute"
+                data-testid="mo-quantity-band-note"
+              >
+                Choose between {control.minimum} and {control.maximum}.
+              </span>
+            )}
           </label>
         )}
         <button
           type="button"
           className="btn btn-primary min-h-[44px]"
           data-testid="mo-cta"
+          disabled={outOfBand}
           aria-label={actionName(productName, variant.label, action.label)}
-          onClick={() => onAddToCart?.(action, chosen)}
+          onClick={() => {
+            if (outOfBand) return;
+            onAddToCart?.(action, chosen);
+          }}
         >
           {action.label}
         </button>

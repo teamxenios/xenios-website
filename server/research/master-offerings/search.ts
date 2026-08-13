@@ -28,8 +28,21 @@ function normalizedTokens(value: string): string[] {
     .filter(Boolean);
 }
 
+/**
+ * The normalized haystack for one offering, computed once per offering object.
+ *
+ * Without this, a single search normalizes the full text of all 1,121 offerings
+ * on every keystroke, which measured at roughly 40ms per query against the real
+ * catalog size. A WeakMap keyed on the offering object needs no invalidation:
+ * the dataset reader hands out the same objects until the file changes, and a
+ * regenerated dataset produces new objects that simply miss the cache.
+ */
+const HAYSTACKS = new WeakMap<NormalizedMasterOffering, string>();
+
 function searchableText(product: NormalizedMasterOffering): string {
-  return normalizeOfferingText(
+  const cached = HAYSTACKS.get(product);
+  if (cached !== undefined) return cached;
+  const computed = normalizeOfferingText(
     [
       product.displayName,
       product.canonicalName,
@@ -41,6 +54,8 @@ function searchableText(product: NormalizedMasterOffering): string {
       ...product.variants.map((variant) => variant.label),
     ].join(" "),
   );
+  HAYSTACKS.set(product, computed);
+  return computed;
 }
 
 /**
@@ -52,7 +67,17 @@ export function scoreMasterOffering(
   product: NormalizedMasterOffering,
   query: string,
 ): number | null {
-  const normalizedQuery = normalizeOfferingText(query);
+  return scoreAgainstNormalizedQuery(product, normalizeOfferingText(query));
+}
+
+/**
+ * The hot path. The query is normalized once by the caller rather than once per
+ * offering, which is the other half of the search cost at catalog scale.
+ */
+function scoreAgainstNormalizedQuery(
+  product: NormalizedMasterOffering,
+  normalizedQuery: string,
+): number | null {
   if (normalizedQuery === "") return 0;
   const tokens = normalizedTokens(normalizedQuery);
   const haystack = searchableText(product);
@@ -115,12 +140,13 @@ export function matchMasterOfferings(
   products: readonly NormalizedMasterOffering[],
   query: MasterOfferingCatalogQuery = {},
 ): readonly NormalizedMasterOffering[] {
+  const normalizedQuery = normalizeOfferingText(query.q ?? "");
   return products
     .filter((product) => product.visibility === "member")
     .filter((product) => includesFamily(product, query.families))
     .filter((product) => includesState(product, query.states))
     .flatMap((product) => {
-      const score = scoreMasterOffering(product, query.q ?? "");
+      const score = scoreAgainstNormalizedQuery(product, normalizedQuery);
       return score === null ? [] : [{ product, score }];
     })
     .sort((left, right) => {

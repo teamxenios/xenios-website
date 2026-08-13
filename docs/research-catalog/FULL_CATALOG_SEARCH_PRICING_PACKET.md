@@ -32,6 +32,11 @@ foundation had not built:
 | Read adapter and surface states | `catalogApi.ts` |
 | All member-safe offerings viewable | `catalog-completeness.test.ts` |
 | Adversarial and privacy gates | `catalog-boundaries.test.ts` |
+| Production catalog reader | `dataset-reader.ts` |
+| Authoritative count verification | `scripts/research/verify-master-offerings-dataset.ts` |
+| URL state, deep links, back and forward | `useCatalogQueryState.ts` |
+| Loading, error recovery, retry | `MasterOfferingCatalogSurface.tsx` |
+| Quantity 1 through 50 | `quantity-band.test.tsx`, and the register beside this file |
 
 ## The pricing boundary
 
@@ -115,6 +120,77 @@ RESEARCH_MASTER_OFFERINGS_MANUAL_PURCHASE_REQUESTS=true
 
 Fail closed on anything other than an exact `true`. It is buyer-facing copy that promises
 a person will pick the request up, so switching it on is a decision, not a default.
+
+## The catalog has to come from somewhere
+
+Until now the only `MasterOfferingCatalogReader` was the in-memory one used by tests. A
+fully mounted catalog would have served zero offerings, which is the single thing between
+"the code is complete" and "Kris can see the catalog".
+
+`dataset-reader.ts` reads the member-safe file that
+`scripts/research/build-master-offerings.ts` generates. It refuses rather than degrades:
+absent, unreadable, wrong schema, ambiguous, or privacy failing all raise
+`MasterOfferingDatasetUnavailable`, the route answers `503`, and the browser says "not
+available yet". It never returns an empty catalog on failure, because zero offerings is
+indistinguishable from "Xenios sells nothing".
+
+It re-checks the builder's own privacy ban list on read. The file is produced by a
+separate process, possibly on a different day, and a reader that trusts its input is how a
+supplier name reaches a browser. It also refuses a duplicate id or slug rather than
+picking one, and it counts the offerings itself instead of trusting the file's header.
+
+Configure with `XENIOS_MASTER_OFFERINGS_DATASET`. Unset means no reader, which the
+composition root should surface as unavailable rather than empty.
+
+### Verifying the authoritative count
+
+```bash
+npx tsx scripts/research/verify-master-offerings-dataset.ts <generated.json> [offerings] [variants]
+```
+
+It defaults to the foundation's independently verified 1,121 offerings and 1,181 variants,
+loads through the same reader the server uses, counts both itself, and fails if the file's
+own header disagrees with its body. Exercised against a foundation-shaped dataset of
+exactly 1,121 and 1,181: `PASS`, with the family and availability breakdown printed.
+
+**The real dataset is not in this repository.** The foundation deliberately left the
+generated payload under the ignored `.local` boundary pending registry reconciliation, so
+the count above is verified against the documented shape, not against live data. Producing
+the runtime dataset is the first integration requirement below.
+
+## Speed at catalog scale
+
+Measured against a real 1,121 offering and 1,181 variant dataset through the production
+reader, average of twenty runs:
+
+```text
+first page                          0.95 ms
+page 40 of 47                       0.85 ms
+search, hit                         5.97 ms   (was 39.64 ms)
+search, miss                        4.91 ms   (was 17.61 ms)
+family filter                       0.58 ms
+detail by slug                      0.24 ms
+full price list export, 1181 rows  15.51 ms
+```
+
+Search was the one slow path. Every query re-normalized the full text of all 1,121
+offerings. The haystack is now memoized per offering object in a `WeakMap`, which needs no
+invalidation because a regenerated dataset produces new objects. A regression guard in
+`catalog-completeness.test.ts` runs a hundred searches over the full catalog and fails
+above two seconds, which the unmemoized version would exceed by about double.
+
+Twenty-four cards render per page. The full catalog never enters the first DOM.
+
+## Quantity: 1 through 50
+
+The founder decision is 1 through 50 with no review threshold inside it. This lane owns no
+quantity constant and never did, so it follows the injected authority to 50 with no code
+change, and it could not create a threshold even by accident: quantity is not an input to
+action resolution anywhere in the catalog.
+
+Out of band is refused, never clamped. See
+`QUANTITY_1_50_STALE_CONSTRAINT_REGISTER.md` beside this file for the exact stale
+constraints elsewhere in the system, with their owners. This lane changed none of them.
 
 ## The detail surface
 
@@ -237,7 +313,7 @@ is taken from that same fact, so a stale authorization cannot price a later mome
 
 ```text
 TypeScript, repository tsc              PASS
-Vitest, the whole lane (22 files)       PASS, 142 tests
+Vitest, the whole lane (25 files)       PASS, 174 tests
 Vitest, whole repository                PASS, 512 files, 8,361 tests, 27 skipped
 Production build, node script/build.mjs PASS
 ```
@@ -316,6 +392,28 @@ that carry the product and the variant.
 export. The manual purchase CTA rolls back on its own flag without touching the catalog.
 This pack adds no migration, no table, no Product Control binding, and no data, so there
 is nothing to roll back below the flag.
+
+## Integration requirements, in order
+
+1. **Produce the runtime dataset.** Run `scripts/research/build-master-offerings.ts`
+   against the private intake, then verify it with
+   `verify-master-offerings-dataset.ts`. Without this there is nothing to show, however
+   the surface is mounted. This is the blocker for "Kris sees the catalog".
+2. **Point the server at it** with `XENIOS_MASTER_OFFERINGS_DATASET`, and decide whether
+   the file ships with the build or is mounted alongside it.
+3. **Mount the three prepared handlers once**, per the composition section above, with a
+   request-scoped service.
+4. **Add Kris to `RESEARCH_FULL_CATALOG_MEMBERS`**, or set
+   `RESEARCH_MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY=false` once founder smoke has passed.
+   Either way `RESEARCH_MASTER_OFFERINGS_ENABLED=true` is required first.
+5. **Create Product Control bindings** for the exact variants that should show a price and
+   a cart. Until then every row correctly reads `Price on request` and offers a request
+   path, which is a truthful launch state rather than a broken one.
+6. **Decide the manual purchase CTA.** Business priority 7 wants a useful order path
+   rather than a dead product card, and that is exactly what
+   `RESEARCH_MASTER_OFFERINGS_MANUAL_PURCHASE_REQUESTS=true` provides.
+7. **Feed the quantity capability** from the accepted quantity authority at the 1 to 50
+   band, after the register's repair order has been followed.
 
 ## Known gaps for the integration manager
 
