@@ -47,12 +47,15 @@ export class ProductControlBuyerCatalog implements BuyerCatalogPort {
         const releaseDecision = row === null
           ? null
           : decideEarlyAccessRelease({ row, releases, now: input.at.getTime() });
-        // A founder release adds authority; it never erases Product Control's
-        // narrower unit cap. Every applicable authority must be present and the
-        // most restrictive one wins.
+        // A founder release supplies direct authority. A numeric Product
+        // Control unit limit narrows it; null means no Product Control cap was
+        // declared, not that the release disappears. The accepted global band
+        // is applied below in both cases.
         const authorityLimit = unit.basis === "founder_release"
-          ? releaseDecision?.released === true && unit.quantityLimit !== null
-            ? Math.min(releaseDecision.approvedQuantityLimit, unit.quantityLimit)
+          ? releaseDecision?.released === true
+            ? unit.quantityLimit === null
+              ? releaseDecision.approvedQuantityLimit
+              : Math.min(releaseDecision.approvedQuantityLimit, unit.quantityLimit)
             : null
           : unit.quantityLimit;
         const acceptedLimit = authorityLimit === null

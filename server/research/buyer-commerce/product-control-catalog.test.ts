@@ -167,47 +167,81 @@ describe("Product Control buyer catalog adapter", () => {
     expect(variants.every((variant) => variant.directQuantityLimit === null)).toBe(true);
   });
 
-  it("uses the most restrictive Product Control, founder-release, and global direct limit", async () => {
-    const limited = row("limited");
-    limited.purchasable = false;
-    limited.quantityLimit = 5;
-    limited.blockers = ["DOCUMENTATION_NOT_SATISFIED"];
+  it("distinguishes a missing Product Control cap from missing release authority", async () => {
+    const releaseNoCap = row("release-no-cap");
+    releaseNoCap.purchasable = false;
+    releaseNoCap.quantityLimit = null;
+    releaseNoCap.blockers = ["DOCUMENTATION_NOT_SATISFIED"];
+    const releaseNarrowCap = row("release-narrow-cap");
+    releaseNarrowCap.purchasable = false;
+    releaseNarrowCap.quantityLimit = 5;
+    releaseNarrowCap.blockers = ["DOCUMENTATION_NOT_SATISFIED"];
+    const noReleaseNoCap = row("no-release-no-cap");
+    noReleaseNoCap.purchasable = false;
+    noReleaseNoCap.quantityLimit = null;
+    noReleaseNoCap.blockers = ["DOCUMENTATION_NOT_SATISFIED"];
+    const noReleaseNumericCap = row("no-release-numeric-cap");
+    noReleaseNumericCap.purchasable = false;
+    noReleaseNumericCap.quantityLimit = 5;
+    noReleaseNumericCap.blockers = ["DOCUMENTATION_NOT_SATISFIED"];
+
     const releases = new InMemoryEarlyAccessReleaseLedger();
-    const appended = await releases.append({
-      releaseId: "rel-limited-001",
-      productId: limited.productId,
-      variantId: limited.variantId,
-      productVersion: earlyAccessReleaseVersion(limited),
-      status: "approved",
-      approvedPriceCents: 5_000,
-      currency: "USD",
-      waivedBlockers: [...limited.blockers],
-      approvedQuantityLimit: 20,
-      expiresAt: null,
-      actor: "Samuel Boadu",
-      reason: "Founder release for regression coverage.",
-      recordedAt: NOW.toISOString(),
-    });
-    expect(appended.ok).toBe(true);
+    for (const [index, released] of [releaseNoCap, releaseNarrowCap].entries()) {
+      const appended = await releases.append({
+        releaseId: `rel-limit-matrix-00${index + 1}`,
+        productId: released.productId,
+        variantId: released.variantId,
+        productVersion: earlyAccessReleaseVersion(released),
+        status: "approved",
+        approvedPriceCents: 5_000,
+        currency: "USD",
+        waivedBlockers: [...released.blockers],
+        approvedQuantityLimit: 20,
+        expiresAt: null,
+        actor: "Samuel Boadu",
+        reason: "Founder release for quantity authority regression coverage.",
+        recordedAt: NOW.toISOString(),
+      });
+      expect(appended.ok).toBe(true);
+    }
+    const rows = [releaseNoCap, releaseNarrowCap, noReleaseNoCap, noReleaseNumericCap];
     const projection: EarlyAccessCatalogProjection = {
       evaluatedAt: NOW.toISOString(),
-      rows: [limited],
+      rows,
       productsWithoutVariants: [],
     };
     const adapter = new ProductControlBuyerCatalog({
-      productControl: { readCatalog: async () => [product("limited", "research_material")] },
+      productControl: {
+        readCatalog: async () => rows.map((entry) => product(entry.productId, "research_material")),
+      },
       earlyAccess: { load: async () => projection },
       releases,
     });
 
-    const [projected] = await adapter.variants({
+    const projected = await adapter.variants({
       customerRef: "eac_0123456789abcdef0123456789abcdef",
       at: NOW,
     });
-    expect(projected).toMatchObject({
+    const byOffering = new Map(projected.map((variant) => [variant.offeringId, variant]));
+    expect(byOffering.get("release-no-cap")).toMatchObject({
+      directPurchaseAuthorized: true,
+      directQuantityLimit: 20,
+      directAuthorityBasis: "founder_release",
+    });
+    expect(byOffering.get("release-narrow-cap")).toMatchObject({
       directPurchaseAuthorized: true,
       directQuantityLimit: 5,
       directAuthorityBasis: "founder_release",
+    });
+    expect(byOffering.get("no-release-no-cap")).toMatchObject({
+      directPurchaseAuthorized: false,
+      directQuantityLimit: null,
+      directAuthorityBasis: null,
+    });
+    expect(byOffering.get("no-release-numeric-cap")).toMatchObject({
+      directPurchaseAuthorized: false,
+      directQuantityLimit: null,
+      directAuthorityBasis: null,
     });
   });
 });
