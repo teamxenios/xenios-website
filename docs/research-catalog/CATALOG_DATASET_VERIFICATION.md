@@ -138,12 +138,66 @@ fixed:
   haystacks are warmed when the dataset loads, so that cost no longer lands on whichever
   member types first.
 
+## Privacy audit against the private intake
+
+The member-safe payload was cross-checked field by field against the private intake it was
+built from. Three things looked like leaks and only one was.
+
+**Not a leak: the word "supplier" in six product descriptions.** It appears as an ordinary
+English word in member-facing copy for white-label services, for example "Exact MOQ may be
+higher by supplier and packaging". No identity, no SKU, no cost. Redacting it would damage
+real copy for no gain.
+
+**Not a leak: the brand "Superpower" on diagnostics products.** The workbook lists it as
+both the brand and the supplier for those rows. A brand is customer-facing by design, the
+contract has a `brand` field, and a member ordering an Advanced blood panel needs to know
+whose it is. The builder's confidential-provider scan, which is the authority on which
+providers may not be named, passed it.
+
+**A real leak, now closed: 20 variant labels were internal source SKUs.** The workbook's
+"Variant / Format" column carries the reseller's own SKU for twenty NutriDyn rows
+("R190", "R305-GFSK", "R123L") and a bare dash for three more, and the normalizer passed
+them straight through to the label a member reads. A supplier SKU is explicitly on the
+never-expose list, and "R190" tells a buyer nothing either.
+
+The dataset reader now refuses to present a label with no lowercase letter and no
+whitespace, which is what an internal code looks like and what a descriptive label never
+is. Measured against the real catalog the rule selects exactly those twenty and nothing
+else: every genuine label ("5 mg vial", "60 vegetarian capsules", "Per product family")
+has both. Each of the twenty is a single-variant product, so the variant is the product
+and the label becomes the product's own name, which is truthful and invents nothing. If
+several variants of one product were ever unlabelled, the reader refuses the dataset
+rather than name two things the same.
+
+After the fix: 1,181 variants still load, and zero internal codes remain.
+
+The underlying data defect is upstream, in the workbook column and the foundation's
+normalizer. This is a display-layer defence, the same reasoning as the reader re-checking
+the builder's ban list, and the source rows are worth correcting at the foundation.
+
+Also confirmed absent from the member-safe payload: every source note, every wholesale
+cost, every planning price, every margin and markup value, the canonical key, and the
+sheet row.
+
 ## What is directly purchasable today
 
-**Zero.** Direct purchase requires an exact Product Control binding plus a resolved
-`CartProductSelection`, and `commerceBindingCreated` is false: no binding exists for any
-of the 1,181 variants. Every row therefore reads `Price on request` and offers a request
-path.
+**Zero, measured rather than assumed.** The real pipeline was run over all 1,181 variants
+with the production adapters. Every variant resolved to a request-shaped action and every
+price resolved to `on_request`:
+
+```text
+get_updates      982      on_request   1181
+request_access   104      add_to_cart     0
+explore_care      78
+apply             13
+notify_me          4
+add_to_cart        0
+```
+
+Direct purchase requires an exact Product Control binding plus a resolved
+`CartProductSelection`, and `commerceBindingCreated` is false: no binding exists for any of
+the 1,181 variants. The 78 `explore_care` variants keep their real Care pathway, which no
+quantity, capability or repetition can convert into a checkout.
 
 That is a truthful launch state, not a broken one, and it will change the moment Product
 Control binds and approves exact variants. No code change is needed for prices and carts

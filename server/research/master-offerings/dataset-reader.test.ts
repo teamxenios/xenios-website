@@ -168,6 +168,71 @@ describe("generated dataset loading", () => {
     ).toThrow(/no member-safe variant/);
   });
 
+  it("never shows an internal source SKU as a variant label", () => {
+    // Twenty of the real catalog's 1,181 variants arrive labelled with the
+    // reseller's own SKU, because the workbook's Variant / Format column
+    // contains it. A supplier SKU is on the never-expose list, and "R190"
+    // tells a buyer nothing either.
+    for (const opaque of ["R190", "R305-GFSK", "R123L", "-", "   ", "R817E"]) {
+      const loaded = loadMasterOfferingDataset(
+        dataset({
+          products: [
+            generatedOffering({
+              displayName: "Collagen Renew",
+              variants: [
+                { id: "mov_a", label: opaque, displayState: "available_now" },
+              ],
+            }),
+          ],
+        }),
+      );
+      // One variant means the variant is the product. Truthful, and it invents
+      // nothing.
+      expect(loaded.products[0].variants[0].label).toBe("Collagen Renew");
+    }
+  });
+
+  it("keeps every descriptive label exactly as written", () => {
+    for (const real of [
+      "5 mg vial",
+      "60 vegetarian capsules",
+      "Per product family",
+      "100 mg, 60 vegetarian capsules",
+      "Exact MOQ may be higher by supplier and packaging",
+      "10 ml",
+    ]) {
+      const loaded = loadMasterOfferingDataset(
+        dataset({
+          products: [
+            generatedOffering({
+              variants: [{ id: "mov_a", label: real, displayState: "available_now" }],
+            }),
+          ],
+        }),
+      );
+      expect(loaded.products[0].variants[0].label).toBe(real);
+    }
+  });
+
+  it("refuses rather than guess when several variants are unlabelled", () => {
+    // Two variants both named after the product cannot be told apart, and
+    // there is nothing truthful to call them.
+    expect(() =>
+      loadMasterOfferingDataset(
+        dataset({
+          products: [
+            generatedOffering({
+              variants: [
+                { id: "mov_a", label: "R190", displayState: "available_now" },
+                { id: "mov_b", label: "R191", displayState: "available_now" },
+              ],
+            }),
+          ],
+        }),
+      ),
+    ).toThrow(/unlabelled variant among several/);
+  });
+
   it("refuses a duplicate id or slug instead of silently picking one", () => {
     expect(() =>
       loadMasterOfferingDataset(

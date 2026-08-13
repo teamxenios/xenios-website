@@ -140,28 +140,68 @@ function findBannedKey(value: unknown, banned: ReadonlySet<string>): string | nu
   return null;
 }
 
+/**
+ * A variant label that carries no meaning for a member.
+ *
+ * The workbook's "Variant / Format" column is sometimes the reseller's own SKU
+ * ("R190", "R305-GFSK") or a bare dash. Twenty of the 1,181 member-safe
+ * variants arrive that way. Both are wrong to show: an internal source SKU is
+ * explicitly on the never-expose list, and a buyer reading "R190" learns
+ * nothing.
+ *
+ * The shape rule is no lowercase letter and no whitespace, which is what an
+ * internal code looks like and what a descriptive label never does. Measured
+ * against the real catalog it selects exactly those twenty and nothing else:
+ * every genuine label ("5 mg vial", "60 vegetarian capsules", "Per product
+ * family") has both.
+ */
+function isOpaqueVariantLabel(label: string): boolean {
+  const trimmed = label.trim();
+  if (trimmed === "") return true;
+  return !/[a-z]/.test(trimmed) && !/\s/.test(trimmed);
+}
+
 function readVariant(
   value: unknown,
   offeringId: string,
+  offeringName: string,
+  variantCount: number,
 ): NormalizedMasterOfferingVariant {
   if (!isRecord(value)) {
     throw new MasterOfferingDatasetUnavailable(
       `offering ${offeringId} has a malformed variant`,
     );
   }
-  if (!nonBlank(value.id) || !nonBlank(value.label)) {
+  if (!nonBlank(value.id) || typeof value.label !== "string") {
     throw new MasterOfferingDatasetUnavailable(
       `offering ${offeringId} has a variant with no id or label`,
     );
   }
+  // A blank label is handled below with the other meaningless labels rather
+  // than refused here, so that a dash and an empty string reach the same
+  // truthful outcome instead of two different ones.
   if (!isMasterOfferingDisplayState(value.displayState)) {
     throw new MasterOfferingDatasetUnavailable(
       `variant ${value.id} has an unknown display state`,
     );
   }
+  let label = value.label;
+  if (isOpaqueVariantLabel(label)) {
+    if (variantCount !== 1) {
+      // Two variants of the same product both labelled with internal codes
+      // cannot be told apart, and there is nothing truthful to call them.
+      // Refuse rather than invent a name or leave a source SKU on screen.
+      throw new MasterOfferingDatasetUnavailable(
+        `offering ${offeringId} has an unlabelled variant among several`,
+      );
+    }
+    // One variant means the variant is the product. Saying so is truthful and
+    // invents nothing.
+    label = offeringName;
+  }
   return {
     id: value.id,
-    label: value.label,
+    label,
     displayState: value.displayState,
     visibility: "member",
     sourceReferences: [],
@@ -228,7 +268,14 @@ function readOffering(value: unknown): NormalizedMasterOffering {
       : "",
     copyState: readCopyState(value.copyState),
     visibility: "member",
-    variants: rawVariants.map((variant) => readVariant(variant, value.id as string)),
+    variants: rawVariants.map((variant) =>
+      readVariant(
+        variant,
+        value.id as string,
+        value.displayName as string,
+        rawVariants.length,
+      ),
+    ),
     sourceReferences: [],
   };
 }
