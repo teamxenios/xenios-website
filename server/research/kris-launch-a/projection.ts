@@ -28,12 +28,14 @@ import {
   type KrisPriceView,
 } from "@shared/research/kris-launch-a/contract";
 import { KRIS_CATALOG_DISCLOSURES, krisAccessPolicy } from "./access-policy";
+import { krisModePermitsCart, krisPurchaseMode } from "./purchase-mode";
 import type { KrisProductRecord } from "./dataset-reader";
 
 export function projectKrisItem(
   product: KrisProductRecord,
   price: KrisPriceView,
 ): KrisCatalogItemView {
+  const mode = krisPurchaseMode({ channel: product.channel, price });
   return {
     id: product.id,
     slug: product.slug,
@@ -52,6 +54,11 @@ export function projectKrisItem(
     price,
     // Every item, unconditionally, including the two with no price.
     access: krisAccessPolicy(product.channel),
+    // Decided here and nowhere else. A second derivation on the client would
+    // be a second policy, and the two would disagree the first time either
+    // changed.
+    purchaseMode: mode,
+    canAddToCart: krisModePermitsCart(mode),
     suppliedNote: product.suppliedNote,
   };
 }
