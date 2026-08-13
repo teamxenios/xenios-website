@@ -15,6 +15,8 @@ Status: ready as an unapplied, dependent Pack 02 candidate. This lane did not de
 
 The existing Supabase Auth record is the only credential authority. The candidate refuses to proceed unless that exact UID exists, has a confirmed email, and its normalized email exactly matches the canonical address. It never accepts, reads, returns, logs, stores, or creates a password.
 
+The supplied identity is authoritative for the Roman Digital organization binding only. No available evidence identifies that Auth user as Kris, so this lane does not infer or record that association.
+
 ## Candidate artifacts
 
 Apply only after the Pack 02 schema candidate in an isolated review database:
@@ -31,6 +33,7 @@ The binding candidate updates the existing Roman Digital profile email, revokes 
 - Request-again records remain organization-scoped intents and never create or copy an order.
 - Dashboard authorization resolves the active organization membership before reading any order, invoice, payment, tracking, or request projection.
 - A personal member row does not authorize organization history, and an unrelated organization membership cannot authorize Roman Digital history.
+- Quantities 1 through 50 are ordinary. Pack 02 accepts and displays 21 and 50, rejects a superseded quantity-only manual-review projection, and preserves real non-quantity review reasons.
 
 ## Promotion gates
 

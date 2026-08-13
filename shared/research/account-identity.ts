@@ -113,6 +113,7 @@ export type AccountPaymentDto = {
 export type AccountOrderLineDto = {
   sku: string;
   displayName: string;
+  /** Canonical order quantity. Normal founder-approved range is 1..50. */
   quantity: number;
   lineTotalCents: number | null;
 };
@@ -126,6 +127,8 @@ export type AccountOrderDto = {
   sourceOrderId: string;
   orderNumber: string;
   state: string;
+  /** Canonical review evidence; quantity alone is never valid from 1 through 50. */
+  reviewTriggers: string[];
   placedAt: string;
   totalCents: number;
   currency: string;

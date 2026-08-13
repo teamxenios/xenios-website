@@ -14,6 +14,10 @@ The organization layer grants an existing Supabase Auth UID roles in an organiza
 
 Canonical commerce orders can carry one additive `research_organization_order_ownership` row keyed by the existing `research_orders.id`. It contains authorization provenance only—never totals, lines, payment state, invoices, or fulfillment state. Existing Early Access history is projected through the verified `customerRef` binding.
 
+Normal order quantity is 1 through 50. Pack 02 displays 21 and 50 as ordinary canonical quantities and refuses a quantity-only `manual_review` projection inside that range while preserving genuine non-quantity review rules. The upstream dependency and superseded local Q50 candidates are recorded in `pack02-quantity-1-50-dependency.md`.
+
+The unmounted account home now composes the existing member catalog, cart, product-request, order-history, profile, security, and password-recovery surfaces. It does not copy their data or create alternative APIs. Those links appear only when the verified Supabase subject has a canonical personal member row; an organization membership alone never unlocks personal commerce or history. Local-device sign-out uses the existing Supabase client with explicit local scope.
+
 ## Unmounted API overlay
 
 - `GET /api/research/account/context`
@@ -46,6 +50,8 @@ The raw challenge token is never stored; only its SHA-256 domain-separated hash 
 Organization roles support owners, admins, business buyers, and billing viewers. Owners/admins can update business/billing/shipping profile fields and invite future users. Buyers can view organization-owned orders, invoices, and tracking and create an idempotent request-again intent. That intent references the existing order snapshot and is not an order, payment, or automatic reorder.
 
 The dependent Roman Digital candidate uses the supplied existing Supabase Auth UID `20ec822d-8123-4088-ac05-9c8f4b2da784` and canonical email `info@romanhealthcollective.com`. It supersedes the old `k@romandigital.io` placeholder, requires the existing Auth row to be email-verified, binds owner/buyer roles, retains the password-change-required gate, and writes immutable audit evidence. It creates no Auth user and remains unapplied; see `pack02-roman-digital-binding.md`.
+
+Kris's authoritative identity was not discoverable from the local worktree. The only name match is a synthetic unit-test fixture, and nothing proves the Roman Digital UID is Kris. Pack 02 therefore makes no guessed association. A read-only Supabase operator audit and the exact secure resolution path are prepared in `pack02-kris-identity-audit.md`.
 
 ## Integration work intentionally deferred
 

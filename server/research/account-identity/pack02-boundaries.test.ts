@@ -43,4 +43,31 @@ describe("Pack 02 isolation and single-system boundaries", () => {
     expect(sql).toContain("'info@romanhealthcollective.com'");
     expect(sql).not.toContain("'k@romandigital.io'");
   });
+
+  it("records the founder quantity 1 through 50 decision without creating a Pack 02 cart or order authority", () => {
+    const service = read("server/research/account-identity/service.ts");
+    const contract = read("shared/research/account-identity.ts");
+    const dependency = read("docs/pack02-quantity-1-50-dependency.md");
+    expect(service).toContain("NORMAL_ORDER_QUANTITY_MAX = 50");
+    expect(service).toContain("superseded_quantity_only_review");
+    expect(contract).toContain("Normal founder-approved range is 1..50");
+    expect(dependency).toContain("Quantity alone never requires manual review");
+    expect(dependency).toContain("098e26df757e6a94d3ea1f9c1ece2035f61443d2");
+    expect(dependency).toContain("7977aaa2074d6b51089d6803b9f12d521c83ba59");
+    expect(service).not.toMatch(/createCart|createCheckout|insertOrder/);
+  });
+
+  it("keeps the Kris lookup an explicit read-only audit and rejects the synthetic fixture as identity evidence", () => {
+    const audit = read("supabase/pack02-candidates/inspect_kris_identity_read_only.sql");
+    const notes = read("docs/pack02-kris-identity-audit.md");
+    expect(audit).toContain("set transaction read only");
+    expect(audit).toContain("from auth.users");
+    expect(audit).toContain("from public.research_members");
+    expect(audit).toContain("from public.research_applications");
+    expect(audit).toContain("from public.research_early_access_customers");
+    expect(audit).not.toMatch(/\b(insert|update|delete|create user|invite_user)\b/i);
+    expect(notes).toContain("authoritative identity not found in the available local evidence");
+    expect(notes).toContain("synthetic `Kris Lopez` unit-test fixture");
+    expect(notes).toContain("nothing in the supplied evidence proves that user is Kris");
+  });
 });

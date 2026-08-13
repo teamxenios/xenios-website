@@ -133,6 +133,21 @@ function hasAnyRole(access: OrganizationAccessRecord, allowed: readonly Organiza
   return access.roles.some((role) => allowed.includes(role));
 }
 
+const NORMAL_ORDER_QUANTITY_MIN = 1;
+const NORMAL_ORDER_QUANTITY_MAX = 50;
+const SUPERSEDED_QUANTITY_REVIEW_TRIGGER = "unusual_quantity";
+
+function isQuantityOnlyReviewInsideNormalBand(order: AccountOrderDto): boolean {
+  if (order.state !== "manual_review" || order.reviewTriggers.length === 0) return false;
+  const everyLineInsideNormalBand = order.lines.length > 0 && order.lines.every(
+    (line) => Number.isSafeInteger(line.quantity)
+      && line.quantity >= NORMAL_ORDER_QUANTITY_MIN
+      && line.quantity <= NORMAL_ORDER_QUANTITY_MAX,
+  );
+  return everyLineInsideNormalBand
+    && order.reviewTriggers.every((trigger) => trigger === SUPERSEDED_QUANTITY_REVIEW_TRIGGER);
+}
+
 async function authorizedOrganization(
   deps: AccountIdentityDeps,
   user: VerifiedAccountUser,
@@ -300,11 +315,16 @@ export async function getBusinessDashboard(
   const dashboard = await deps.getOrganizationDashboard(organizationId);
   const foreignOrder = dashboard.orders.some((order) => order.ownership.organizationId !== organizationId);
   const foreignRequest = dashboard.requests.some((entry) => entry.organizationId !== organizationId);
-  if (foreignOrder || foreignRequest) {
+  const supersededQuantityReview = dashboard.orders.some(isQuantityOnlyReviewInsideNormalBand);
+  if (foreignOrder || foreignRequest || supersededQuantityReview) {
     await deps.emitAudit("research.organization.projection_refused", {
       organizationId,
       actorUserId: auth.value.userId,
-      reason: foreignOrder ? "foreign_order" : "foreign_request",
+      reason: foreignOrder
+        ? "foreign_order"
+        : foreignRequest
+          ? "foreign_request"
+          : "superseded_quantity_only_review",
     });
     return failure("SERVICE_UNAVAILABLE", "The organization history projection could not be verified.");
   }

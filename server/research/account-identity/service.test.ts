@@ -89,6 +89,7 @@ function deps(): AccountIdentityDeps {
       sourceOrderId: "placement-1",
       orderNumber: "XEA-1",
       state: "delivered",
+      reviewTriggers: [],
       placedAt: "2026-08-01T00:00:00.000Z",
       totalCents: 10000,
       currency: "usd",
@@ -235,6 +236,7 @@ describe("Pack 02 account identity service", () => {
         sourceOrderId: "foreign-order",
         orderNumber: "FOREIGN",
         state: "delivered",
+        reviewTriggers: [],
         placedAt: "2026-08-01T00:00:00.000Z",
         totalCents: 100,
         currency: "usd",
@@ -275,6 +277,76 @@ describe("Pack 02 account identity service", () => {
     expect(subject.emitAudit).toHaveBeenCalledWith("research.organization.projection_refused", expect.objectContaining({
       reason: "foreign_request",
     }));
+  });
+
+  it("accepts normal quantities 21 and 50 without quantity-only review", async () => {
+    const normalOrder = await subject.findOrderForOrganization({
+      organizationId: ORG_ID,
+      source: "early_access_placement",
+      sourceOrderId: "placement-1",
+    });
+    vi.mocked(subject.getOrganizationDashboard).mockResolvedValue({
+      ...dashboard(),
+      orders: [{
+        ...normalOrder!,
+        state: "processing",
+        reviewTriggers: [],
+        lines: [
+          { sku: "Q21", displayName: "Normal quantity 21", quantity: 21, lineTotalCents: 21_000 },
+          { sku: "Q50", displayName: "Normal quantity 50", quantity: 50, lineTotalCents: 50_000 },
+        ],
+      }],
+    });
+    const result = await getBusinessDashboard(subject, {}, ORG_ID);
+    expect(result).toMatchObject({
+      ok: true,
+      value: { orders: [{ state: "processing", reviewTriggers: [], lines: [{ quantity: 21 }, { quantity: 50 }] }] },
+    });
+  });
+
+  it("refuses and audits a superseded quantity-only manual review inside 1 through 50", async () => {
+    const normalOrder = await subject.findOrderForOrganization({
+      organizationId: ORG_ID,
+      source: "early_access_placement",
+      sourceOrderId: "placement-1",
+    });
+    vi.mocked(subject.getOrganizationDashboard).mockResolvedValue({
+      ...dashboard(),
+      orders: [{
+        ...normalOrder!,
+        state: "manual_review",
+        reviewTriggers: ["unusual_quantity"],
+        lines: [{ sku: "Q50", displayName: "Normal quantity 50", quantity: 50, lineTotalCents: 50_000 }],
+      }],
+    });
+    expect(await getBusinessDashboard(subject, {}, ORG_ID)).toMatchObject({
+      ok: false,
+      code: "SERVICE_UNAVAILABLE",
+    });
+    expect(subject.emitAudit).toHaveBeenCalledWith("research.organization.projection_refused", expect.objectContaining({
+      reason: "superseded_quantity_only_review",
+    }));
+  });
+
+  it("preserves real non-quantity review rules", async () => {
+    const normalOrder = await subject.findOrderForOrganization({
+      organizationId: ORG_ID,
+      source: "early_access_placement",
+      sourceOrderId: "placement-1",
+    });
+    vi.mocked(subject.getOrganizationDashboard).mockResolvedValue({
+      ...dashboard(),
+      orders: [{
+        ...normalOrder!,
+        state: "manual_review",
+        reviewTriggers: ["fraud_rule"],
+        lines: [{ sku: "Q50", displayName: "Normal quantity 50", quantity: 50, lineTotalCents: 50_000 }],
+      }],
+    });
+    expect(await getBusinessDashboard(subject, {}, ORG_ID)).toMatchObject({
+      ok: true,
+      value: { orders: [{ state: "manual_review", reviewTriggers: ["fraud_rule"] }] },
+    });
   });
 
   it("refuses a reorder when the store returns an order owned by another organization", async () => {
