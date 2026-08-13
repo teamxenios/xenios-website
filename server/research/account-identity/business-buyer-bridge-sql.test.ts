@@ -20,12 +20,16 @@ describe("business buyer bridge SQL packet", () => {
     expect(sql).toContain("KRIS_VOLUME_PARTNER");
     expect(sql).toContain("research_finalize_business_buyer_claim");
     expect(sql).toContain("pg_advisory_xact_lock");
+    expect(sql).toContain("'Roman Health'");
+    expect(sql).not.toContain("Roman Health Marketplace");
   });
 
   it("exposes only a scoped authenticated context and keeps tables private", () => {
     expect(sql).toContain("research_current_business_buyer_context");
     expect(sql).toContain("o.auth_user_id = auth.uid()");
     expect(sql.match(/force row level security/g)?.length).toBe(4);
-    expect(sql).toContain("grant execute on function public.research_current_business_buyer_context()\n  to authenticated, service_role");
+    expect(sql).toMatch(
+      /grant execute on function public\.research_current_business_buyer_context\(\)\s+to authenticated, service_role/,
+    );
   });
 });

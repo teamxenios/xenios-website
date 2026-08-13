@@ -6,12 +6,19 @@ Fast Path C: a temporary, collision-free B2B bridge. It reuses Supabase Auth and
 
 ## Fixed Identity
 
+- Operator legal name: `Kristopher Lopez`
 - Operator login: `info@romanhealthcollective.com`
-- Buyer: `Roman Health Marketplace`
+- Buyer legal/entity name: `Roman Health`
+- Country: `USA`
+- State: `Texas`
+- Relationship: Xenios B2B2C business buyer
 - Buyer id: `8f942c0e-370b-4b7b-98ce-a0b931193f08`
 - Roles: `buyer_owner`, `buyer_operator`
 - Price profile: `KRIS_VOLUME_PARTNER`
 - Orders: owned through Roman's unique Early Access `customer_ref`
+
+These are the founder-confirmed launch facts. A business address and personal
+application narrative are not inputs to this bridge and must not be invented.
 
 ## Claim Flow
 
@@ -33,6 +40,10 @@ password or a personal application id.
 - Run the migration and verification in a disposable Supabase/Postgres environment before production.
 - Wire the authenticated buyer-context RPC into the Kris catalog and Early Access account composition.
 - Send the Supabase invite only after the migration is accepted and the canonical site redirect is configured.
+
+No additional founder onboarding fact is currently required. The remaining
+claim gates are engineering/production facts: the accepted bridge migration,
+exactly one canonical Roman Early Access customer scope, and the final redirect.
 
 ## Migration Path
 

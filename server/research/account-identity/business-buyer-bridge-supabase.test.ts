@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { ROMAN_BUYER_ID, ROMAN_OPERATOR_EMAIL } from "./business-buyer-bridge";
+import { ROMAN_BUYER_ID, ROMAN_BUYER_SLUG, ROMAN_OPERATOR_EMAIL } from "./business-buyer-bridge";
 import { createSupabaseBusinessBuyerActivationDeps } from "./business-buyer-bridge-supabase";
 
 describe("Supabase business buyer activation adapter", () => {
@@ -13,7 +13,7 @@ describe("Supabase business buyer activation adapter", () => {
     const inviteUserByEmail = vi.fn(async () => ({ data: { user: authUser }, error: null }));
     const rpc = vi.fn(async () => ({ data: [{
       buyer_id: ROMAN_BUYER_ID,
-      buyer_slug: "roman-health-marketplace",
+      buyer_slug: ROMAN_BUYER_SLUG,
       customer_ref: `eac_${"a".repeat(32)}`,
       price_profile: "KRIS_VOLUME_PARTNER",
       roles: ["buyer_owner", "buyer_operator"],

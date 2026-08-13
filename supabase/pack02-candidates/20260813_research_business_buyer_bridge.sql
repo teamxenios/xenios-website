@@ -61,9 +61,9 @@ for each row execute function public.research_business_buyer_events_immutable();
 insert into public.research_business_buyers(id, slug, legal_name, display_name, status)
 values (
   '8f942c0e-370b-4b7b-98ce-a0b931193f08',
-  'roman-health-marketplace',
-  'Roman Health Marketplace',
-  'Roman Health Marketplace',
+  'roman-health',
+  'Roman Health',
+  'Roman Health',
   'active'
 )
 on conflict (id) do update set

@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  ROMAN_BUYER_COUNTRY,
   ROMAN_BUYER_ID,
+  ROMAN_BUYER_NAME,
+  ROMAN_BUYER_SLUG,
+  ROMAN_BUYER_STATE,
+  ROMAN_OPERATOR_LEGAL_NAME,
   ROMAN_OPERATOR_EMAIL,
   activateRomanBusinessBuyer,
   type BusinessBuyerActivationDeps,
@@ -9,7 +14,7 @@ import {
 const authUserId = "20ec822d-8123-4088-ac05-9c8f4b2da784";
 const context = {
   buyerId: ROMAN_BUYER_ID,
-  buyerSlug: "roman-health-marketplace",
+  buyerSlug: ROMAN_BUYER_SLUG,
   customerRef: `eac_${"a".repeat(32)}`,
   priceProfile: "KRIS_VOLUME_PARTNER" as const,
   roles: ["buyer_owner", "buyer_operator"] as const,
@@ -24,6 +29,22 @@ function deps(auth: unknown | null): BusinessBuyerActivationDeps {
 }
 
 describe("Roman business buyer activation", () => {
+  it("pins only the founder-confirmed launch identity facts", () => {
+    expect({
+      operator: ROMAN_OPERATOR_LEGAL_NAME,
+      email: ROMAN_OPERATOR_EMAIL,
+      buyer: ROMAN_BUYER_NAME,
+      country: ROMAN_BUYER_COUNTRY,
+      state: ROMAN_BUYER_STATE,
+    }).toEqual({
+      operator: "Kristopher Lopez",
+      email: "info@romanhealthcollective.com",
+      buyer: "Roman Health",
+      country: "USA",
+      state: "Texas",
+    });
+  });
+
   it("uses Supabase secure invite without creating a password or application", async () => {
     const subject = deps(null);
     await expect(activateRomanBusinessBuyer(subject, {

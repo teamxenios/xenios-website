@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 export const ROMAN_BUYER_ID = "8f942c0e-370b-4b7b-98ce-a0b931193f08";
-export const ROMAN_BUYER_NAME = "Roman Health Marketplace";
+export const ROMAN_BUYER_NAME = "Roman Health";
+export const ROMAN_BUYER_SLUG = "roman-health";
+export const ROMAN_BUYER_COUNTRY = "USA";
+export const ROMAN_BUYER_STATE = "Texas";
+export const ROMAN_OPERATOR_LEGAL_NAME = "Kristopher Lopez";
 export const ROMAN_OPERATOR_EMAIL = "info@romanhealthcollective.com";
 
 const AuthIdentitySchema = z.object({
