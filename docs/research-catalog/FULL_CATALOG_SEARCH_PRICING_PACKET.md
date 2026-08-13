@@ -28,7 +28,10 @@ foundation had not built:
 | Download and export price list | `price-list-export.ts`, `routes.ts` price-list handler |
 | Manual Early Access purchase CTA | `action.ts`, `product-request-adapter.ts`, `visibility-policy.ts` |
 | Full catalog client surface | `client/src/research/master-offerings/` |
+| Exact-variant detail surface and CTA | `MasterOfferingDetail.tsx` |
+| Read adapter and surface states | `catalogApi.ts` |
 | All member-safe offerings viewable | `catalog-completeness.test.ts` |
+| Adversarial and privacy gates | `catalog-boundaries.test.ts` |
 
 ## The pricing boundary
 
@@ -113,6 +116,61 @@ RESEARCH_MASTER_OFFERINGS_MANUAL_PURCHASE_REQUESTS=true
 Fail closed on anything other than an exact `true`. It is buyer-facing copy that promises
 a person will pick the request up, so switching it on is a decision, not a default.
 
+## The detail surface
+
+`MasterOfferingDetail.tsx` is where an exact variant is chosen and where the one
+server-resolved action renders. It decides nothing: the action kind, its label, its href,
+and the amount inside `add_to_cart` all come from the server, and the component renders
+exactly one CTA for the selected variant.
+
+The quantity control appears only when the server said `add_to_cart` **and** an accepted
+exact-variant quantity capability matches that exact product and variant identity. There
+are still no quantity constants anywhere in this lane. Changing the selected variant
+clears the quantity, because carrying it across would apply one variant's limit to
+another.
+
+The variant radio group and every CTA carry accessible names that include the product and
+the variant, so a CTA is never a bare verb to a screen reader.
+
+## Read adapter and surface states
+
+`catalogApi.ts` wraps the repository's `apiGet` and maps the closed error taxonomy onto a
+surface state. `restricted` is deliberately separate from `unauthorized`: a signed-in
+member outside the founder launch scope is not signed out, and telling them to sign in
+again would be a lie.
+
+Because the routes are unmounted, they currently fall through to the SPA catch-all and
+answer `200` with the app shell. `apiGet` normalizes that to `unavailable`, so a surface
+wired to this adapter today renders a pending state rather than an empty catalog that
+would read as "we sell nothing". A test pins that.
+
+## Adversarial and QA gates
+
+`catalog-boundaries.test.ts` holds the checks an attacker or a careless integration would
+find first:
+
+- **Not an enumeration oracle.** Missing, admin-only held, wrong-family, and
+  held-plus-wrong-family identities all return one byte-identical `404` body. A restricted
+  viewer is refused with `403` before any existence signal, and a real slug and a fake one
+  are indistinguishable to them. Traversal and wildcard slugs are rejected without echoing
+  input.
+- **No private field crosses HTTP.** A fixture with every private field populated is
+  served through list, detail, CSV, and JSON, and the raw response text is scanned for the
+  supplier name, source SKU, source group, canonical key, and the private key names.
+- **Product Control identity only inside `add_to_cart`.** A planning variant's action
+  carries no `productId`, and the list carries none at all even when a variant is fully
+  purchasable.
+- **Private headers on errors too**, not only on success.
+- **Query hardening.** Repeated scalars, array-form keys, `__proto__` and `constructor`
+  shapes, zero and negative pages, exponent notation, and an over-length `q` are all
+  refused. A browser cannot widen audience, breadth, or launch scope.
+- **The lane is imported by nothing outside itself.** This is the tripwire: the moment a
+  router or composition root imports the catalog, it fails and forces the mounting
+  conversation. It was mutation-checked by adding a probe import, confirming it fires and
+  names the offending file and line.
+- Both filesystem scans assert they actually walked the repository, so neither can start
+  passing vacuously.
+
 ## Environment flags
 
 | Flag | Effect | Default |
@@ -179,10 +237,21 @@ is taken from that same fact, so a stale authorization cannot price a later mome
 
 ```text
 TypeScript, repository tsc              PASS
-Vitest, master offerings (17 files)     PASS, 103 tests
-Vitest, client master offerings         PASS,  13 tests
+Vitest, the whole lane (22 files)       PASS, 142 tests
 Vitest, whole repository                PASS, 512 files, 8,361 tests, 27 skipped
+Production build, node script/build.mjs PASS
 ```
+
+Independent pre-freeze QA (CODEX_MISSION_CONTROL, `PREFREEZE_QA_20260812`) ran this lane
+at `0c911fc` and recorded `PASS: 19 files, 116 tests` and `PASS: typecheck and local
+production build`. The integration collision audit recorded no unexpected collision, no
+composition-root touch, and no ownership correction for this lane. The counts above are
+the later, larger figures after the detail surface, the adapter, and the adversarial
+gates were added.
+
+**The lane does not ship.** Verified against a real production build: neither
+`dist/public/assets` nor `dist/index.cjs` contains any string from this catalog. It is
+unmounted in fact, not only by intention.
 
 The whole-repository run needs `--testTimeout=30000` on this Windows host. At the default
 five seconds, three unrelated files time out under parallel load; the two captured were
@@ -198,7 +267,9 @@ Acceptance evidence pinned by tests:
 - no admin-only hold reaches a page, a filter, a detail, or an export;
 - a catalog row can never create a price, and a price can never create a purchase;
 - a card never renders an action, an `Add to Cart`, or a `$0.00`;
-- the export refuses rather than truncating, and carries no private field.
+- the export refuses rather than truncating, and carries no private field;
+- the detail surface renders exactly one server-provided CTA, and no quantity control
+  without a matching accepted exact-variant capability.
 
 ## Rollback
 
