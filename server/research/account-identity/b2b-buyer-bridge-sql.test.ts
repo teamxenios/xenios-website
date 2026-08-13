@@ -29,6 +29,7 @@ describe("Pack02 B2B buyer bridge candidate", () => {
     expect(sql).toContain("profile_key='KRIS_VOLUME_PARTNER'");
     expect(sql).toContain("research_b2b_entitlement_one_active_profile_idx");
     expect(sql).not.toMatch(/email_at_binding|normalized_email|p_email|contact_email/i);
+    expect(sql).toContain("research_b2b_entitlement_facts_immutable");
   });
 
   it("supports tenant-scoped operators and rejects non-buyer roles", () => {
@@ -44,6 +45,8 @@ describe("Pack02 B2B buyer bridge candidate", () => {
     expect(sql).toContain("pg_advisory_xact_lock");
     expect(sql).toContain("return 'replayed'");
     expect(sql).toContain("return 'conflict'");
+    expect(sql).toContain("v_established_at timestamptz := clock_timestamp()");
+    expect(sql).not.toContain("p_established_at");
   });
 
   it("forbids payment activity before the durable business claim", () => {
@@ -57,6 +60,9 @@ describe("Pack02 B2B buyer bridge candidate", () => {
     expect(sql).toContain("CANDIDATE ONLY. DO NOT APPLY");
     expect(sql).toContain("enable row level security");
     expect(sql).toContain("from public, anon, authenticated");
-    expect(sql).toContain("to service_role");
+    expect(sql).toContain("grant select on public.research_b2b_buyer_relationships to service_role");
+    expect(sql).not.toMatch(/grant\s+(?:insert|update|delete|select,insert|select,insert,update)[^;]+to\s+service_role/i);
+    expect(sql).toContain("v_actor_auth_user_id uuid := auth.uid()");
+    expect(sql).toContain("to authenticated");
   });
 });

@@ -39,6 +39,7 @@ function relationship(
 
 function deps(patch: Partial<B2BBuyerBridgeDeps> = {}): B2BBuyerBridgeDeps {
   return {
+    now: () => AT,
     resolveAuthenticatedMember: vi.fn(async () => ({
       authUserId: AUTH_USER_ID,
       memberId: MEMBER_ID,
@@ -57,7 +58,7 @@ function deps(patch: Partial<B2BBuyerBridgeDeps> = {}): B2BBuyerBridgeDeps {
 
 describe("Pack02 temporary B2B buyer bridge", () => {
   it("authorizes the exact member-bound Roman relationship and price profile", async () => {
-    const result = await resolveB2BBuyerContext(deps(), {}, AT);
+    const result = await resolveB2BBuyerContext(deps(), {});
     expect(result).toEqual({
       state: "authorized",
       context: {
@@ -87,7 +88,7 @@ describe("Pack02 temporary B2B buyer bridge", () => {
         profile: KRIS_VOLUME_PARTNER_PROFILE,
       },
     };
-    await resolveB2BBuyerContext(bridge, request, AT);
+    await resolveB2BBuyerContext(bridge, request);
     expect(bridge.listRelationshipsForMember).toHaveBeenCalledWith(MEMBER_ID);
     expect(bridge.listRelationshipsForMember).not.toHaveBeenCalledWith(
       expect.stringContaining("romanhealthcollective"),
@@ -97,7 +98,7 @@ describe("Pack02 temporary B2B buyer bridge", () => {
   it("refuses anonymous, unverified, and inactive members", async () => {
     await expect(resolveB2BBuyerContext(deps({
       resolveAuthenticatedMember: vi.fn(async () => null),
-    }), {}, AT)).resolves.toEqual({ state: "denied", reason: "auth_required" });
+    }), {})).resolves.toEqual({ state: "denied", reason: "auth_required" });
 
     await expect(resolveB2BBuyerContext(deps({
       resolveAuthenticatedMember: vi.fn(async () => ({
@@ -106,7 +107,7 @@ describe("Pack02 temporary B2B buyer bridge", () => {
         emailVerified: false,
         memberStatus: "active",
       })),
-    }), {}, AT)).resolves.toEqual({
+    }), {})).resolves.toEqual({
       state: "denied",
       reason: "email_verification_required",
     });
@@ -118,7 +119,7 @@ describe("Pack02 temporary B2B buyer bridge", () => {
         emailVerified: true,
         memberStatus: "paused",
       })),
-    }), {}, AT)).resolves.toEqual({ state: "denied", reason: "member_inactive" });
+    }), {})).resolves.toEqual({ state: "denied", reason: "member_inactive" });
   });
 
   it("fails closed for another member or multiple active relationships", async () => {
@@ -126,20 +127,20 @@ describe("Pack02 temporary B2B buyer bridge", () => {
       listRelationshipsForMember: vi.fn(async () => [relationship({
         memberId: "99999999-9999-4999-8999-999999999999",
       })]),
-    }), {}, AT)).resolves.toEqual({ state: "denied", reason: "relationship_inactive" });
+    }), {})).resolves.toEqual({ state: "denied", reason: "relationship_inactive" });
 
     await expect(resolveB2BBuyerContext(deps({
       listRelationshipsForMember: vi.fn(async () => [
         relationship(),
         relationship({ relationshipId: "66666666-6666-4666-8666-666666666666" }),
       ]),
-    }), {}, AT)).resolves.toEqual({ state: "denied", reason: "relationship_ambiguous" });
+    }), {})).resolves.toEqual({ state: "denied", reason: "relationship_ambiguous" });
   });
 
   it("refuses non-buyers and migrated or suspended relationships", async () => {
     await expect(resolveB2BBuyerContext(deps({
       listRelationshipsForMember: vi.fn(async () => [relationship({ roles: ["billing_viewer"] })]),
-    }), {}, AT)).resolves.toEqual({ state: "denied", reason: "buyer_role_required" });
+    }), {})).resolves.toEqual({ state: "denied", reason: "buyer_role_required" });
 
     for (const row of [
       relationship({ state: "suspended" }),
@@ -150,7 +151,7 @@ describe("Pack02 temporary B2B buyer bridge", () => {
     ]) {
       await expect(resolveB2BBuyerContext(deps({
         listRelationshipsForMember: vi.fn(async () => [row]),
-      }), {}, AT)).resolves.toEqual({ state: "denied", reason: "relationship_inactive" });
+      }), {})).resolves.toEqual({ state: "denied", reason: "relationship_inactive" });
     }
   });
 
@@ -165,7 +166,7 @@ describe("Pack02 temporary B2B buyer bridge", () => {
       row.entitlements = [{ ...row.entitlements[0], ...entitlementPatch }];
       await expect(resolveB2BBuyerContext(deps({
         listRelationshipsForMember: vi.fn(async () => [row]),
-      }), {}, AT)).resolves.toEqual({ state: "denied", reason: "entitlement_not_active" });
+      }), {})).resolves.toEqual({ state: "denied", reason: "entitlement_not_active" });
     }
 
     const duplicate = relationship();
@@ -175,15 +176,12 @@ describe("Pack02 temporary B2B buyer bridge", () => {
     ];
     await expect(resolveB2BBuyerContext(deps({
       listRelationshipsForMember: vi.fn(async () => [duplicate]),
-    }), {}, AT)).resolves.toEqual({ state: "denied", reason: "entitlement_ambiguous" });
+    }), {})).resolves.toEqual({ state: "denied", reason: "entitlement_ambiguous" });
   });
 
   it("claims ownership only for the exact canonical member order", async () => {
     const bridge = deps();
-    const result = await claimB2BOrderOwnership(bridge, {}, {
-      orderId: ORDER_ID,
-      establishedAt: AT,
-    });
+    const result = await claimB2BOrderOwnership(bridge, {}, { orderId: ORDER_ID });
     expect(result.state).toBe("linked");
     expect(bridge.findCanonicalOrderForMember).toHaveBeenCalledWith({
       orderId: ORDER_ID,
@@ -196,7 +194,6 @@ describe("Pack02 temporary B2B buyer bridge", () => {
       entitlementId: ENTITLEMENT_ID,
       pricingProfileKey: KRIS_VOLUME_PARTNER_PROFILE,
       pricingProfileVersion: 1,
-      establishedAt: AT,
     });
   });
 
@@ -206,14 +203,14 @@ describe("Pack02 temporary B2B buyer bridge", () => {
         orderId: ORDER_ID,
         memberId: "99999999-9999-4999-8999-999999999999",
       })),
-    }), {}, { orderId: ORDER_ID, establishedAt: AT })).resolves.toEqual({
+    }), {}, { orderId: ORDER_ID })).resolves.toEqual({
       state: "denied",
       reason: "order_not_found",
     });
 
     await expect(claimB2BOrderOwnership(deps({
       commitOrderOwnership: vi.fn(async () => "conflict"),
-    }), {}, { orderId: ORDER_ID, establishedAt: AT })).resolves.toEqual({
+    }), {}, { orderId: ORDER_ID })).resolves.toEqual({
       state: "denied",
       reason: "ownership_conflict",
     });
@@ -222,7 +219,7 @@ describe("Pack02 temporary B2B buyer bridge", () => {
   it("treats an exact replay as success without creating a second order", async () => {
     const result = await claimB2BOrderOwnership(deps({
       commitOrderOwnership: vi.fn(async () => "replayed"),
-    }), {}, { orderId: ORDER_ID, establishedAt: AT });
+    }), {}, { orderId: ORDER_ID });
     expect(result.state).toBe("replayed");
   });
 });

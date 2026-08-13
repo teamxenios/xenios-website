@@ -55,8 +55,10 @@ async function required<T>(query: PromiseLike<{ data: T | null; error: any }>, l
 export function createSupabaseB2BBuyerBridgeDeps(
   admin: SupabaseClient,
   auth: AccountAuthVerifier,
+  now: () => Date = () => new Date(),
 ): B2BBuyerBridgeDeps {
   return {
+    now: () => now().toISOString(),
     async resolveAuthenticatedMember(request) {
       const token = strictBearer(request);
       if (token === null || isRecoveryPurposeSession(token)) return null;
@@ -194,7 +196,6 @@ export function createSupabaseB2BBuyerBridgeDeps(
         p_entitlement_id: input.entitlementId,
         p_profile_key: input.pricingProfileKey,
         p_profile_version: input.pricingProfileVersion,
-        p_established_at: input.establishedAt,
       }), "B2B order ownership claim failed");
       if (data !== "linked" && data !== "replayed" && data !== "conflict") {
         throw new Error("B2B order ownership RPC returned an invalid result.");

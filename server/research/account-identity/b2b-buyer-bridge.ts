@@ -77,6 +77,8 @@ export type ResolveB2BBuyerResult =
   | { state: "denied"; reason: B2BBuyerDenialReason };
 
 export interface B2BBuyerBridgeDeps {
+  /** Server-owned authorization clock. Never derived from request input. */
+  now(): string;
   resolveAuthenticatedMember(request: unknown): Promise<AuthenticatedMemberIdentity | null>;
   listRelationshipsForMember(memberId: string): Promise<B2BBuyerRelationshipRecord[]>;
   findCanonicalOrderForMember(input: {
@@ -90,7 +92,6 @@ export interface B2BBuyerBridgeDeps {
     entitlementId: string;
     pricingProfileKey: typeof KRIS_VOLUME_PARTNER_PROFILE;
     pricingProfileVersion: number;
-    establishedAt: string;
   }): Promise<"linked" | "replayed" | "conflict">;
 }
 
@@ -131,8 +132,8 @@ function hasBuyerRole(roles: readonly B2BBuyerRole[]): boolean {
 export async function resolveB2BBuyerContext(
   deps: B2BBuyerBridgeDeps,
   request: unknown,
-  evaluatedAt: string,
 ): Promise<ResolveB2BBuyerResult> {
+  const evaluatedAt = deps.now();
   const at = parseInstant(evaluatedAt);
   if (at === null) return { state: "denied", reason: "invalid_instant" };
 
@@ -209,9 +210,9 @@ export type ClaimB2BOrderOwnershipResult =
 export async function claimB2BOrderOwnership(
   deps: B2BBuyerBridgeDeps,
   request: unknown,
-  input: { orderId: string; establishedAt: string },
+  input: { orderId: string },
 ): Promise<ClaimB2BOrderOwnershipResult> {
-  const context = await resolveB2BBuyerContext(deps, request, input.establishedAt);
+  const context = await resolveB2BBuyerContext(deps, request);
   if (context.state === "denied") return context;
 
   const order = await deps.findCanonicalOrderForMember({
@@ -233,7 +234,6 @@ export async function claimB2BOrderOwnership(
     entitlementId: context.context.pricing.entitlementId,
     pricingProfileKey: context.context.pricing.profileKey,
     pricingProfileVersion: context.context.pricing.profileVersion,
-    establishedAt: input.establishedAt,
   });
   if (result === "conflict") {
     return { state: "denied", reason: "ownership_conflict" };

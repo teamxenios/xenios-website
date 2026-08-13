@@ -177,6 +177,74 @@ create table if not exists public.research_b2b_buyer_events (
 create index if not exists research_b2b_buyer_events_relationship_idx
   on public.research_b2b_buyer_events(relationship_id, occurred_at desc);
 
+create or replace function public.research_b2b_binding_facts_immutable()
+returns trigger
+language plpgsql
+set search_path=''
+as $$
+begin
+  if tg_op='DELETE' then
+    raise exception 'B2B binding facts cannot be deleted' using errcode='55000';
+  end if;
+  if tg_table_name='research_b2b_buyer_relationships' and (
+    new.id is distinct from old.id
+    or new.business_key is distinct from old.business_key
+    or new.business_display_name is distinct from old.business_display_name
+    or new.business_legal_name is distinct from old.business_legal_name
+    or new.relationship_type is distinct from old.relationship_type
+    or new.approved_by_auth_user_id is distinct from old.approved_by_auth_user_id
+    or new.approved_at is distinct from old.approved_at
+    or new.created_at is distinct from old.created_at
+  ) then
+    raise exception 'B2B relationship identity/approval facts are immutable' using errcode='55000';
+  end if;
+  if tg_table_name='research_b2b_buyer_operators' and (
+    new.id is distinct from old.id
+    or new.relationship_id is distinct from old.relationship_id
+    or new.member_id is distinct from old.member_id
+    or new.roles is distinct from old.roles
+    or new.binding_method is distinct from old.binding_method
+    or new.bound_by_auth_user_id is distinct from old.bound_by_auth_user_id
+    or new.bound_at is distinct from old.bound_at
+    or new.created_at is distinct from old.created_at
+  ) then
+    raise exception 'B2B operator binding facts are immutable' using errcode='55000';
+  end if;
+  if tg_table_name='research_b2b_buyer_entitlements' and (
+    new.id is distinct from old.id
+    or new.relationship_id is distinct from old.relationship_id
+    or new.profile_key is distinct from old.profile_key
+    or new.version is distinct from old.version
+    or new.effective_at is distinct from old.effective_at
+    or new.expires_at is distinct from old.expires_at
+    or new.approved_by_auth_user_id is distinct from old.approved_by_auth_user_id
+    or new.approved_at is distinct from old.approved_at
+    or new.created_at is distinct from old.created_at
+  ) then
+    raise exception 'B2B entitlement economic/approval facts are immutable' using errcode='55000';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists research_b2b_relationship_facts_immutable
+  on public.research_b2b_buyer_relationships;
+create trigger research_b2b_relationship_facts_immutable
+before update or delete on public.research_b2b_buyer_relationships
+for each row execute function public.research_b2b_binding_facts_immutable();
+
+drop trigger if exists research_b2b_operator_facts_immutable
+  on public.research_b2b_buyer_operators;
+create trigger research_b2b_operator_facts_immutable
+before update or delete on public.research_b2b_buyer_operators
+for each row execute function public.research_b2b_binding_facts_immutable();
+
+drop trigger if exists research_b2b_entitlement_facts_immutable
+  on public.research_b2b_buyer_entitlements;
+create trigger research_b2b_entitlement_facts_immutable
+before update or delete on public.research_b2b_buyer_entitlements
+for each row execute function public.research_b2b_binding_facts_immutable();
+
 create or replace function public.research_b2b_history_immutable()
 returns trigger
 language plpgsql
@@ -275,8 +343,7 @@ create or replace function public.research_activate_b2b_buyer_bridge(
   p_business_display_name text,
   p_roles text[],
   p_profile_version integer,
-  p_effective_at timestamptz,
-  p_approved_by_auth_user_id uuid
+  p_effective_at timestamptz
 )
 returns table(relationship_id uuid, operator_id uuid, entitlement_id uuid)
 language plpgsql
@@ -288,8 +355,13 @@ declare
   v_relationship_id uuid;
   v_operator_id uuid;
   v_entitlement_id uuid;
+  -- Exact invoking Supabase Auth principal. Never accepted as an argument.
+  v_actor_auth_user_id uuid := auth.uid();
   v_actor_authorized boolean := false;
 begin
+  if v_actor_auth_user_id is null then
+    raise exception 'authenticated activation actor is required' using errcode='42501';
+  end if;
   if to_regclass('public.research_prelaunch_role_assignments') is null then
     raise exception 'internal role authority is unavailable' using errcode='55000';
   end if;
@@ -301,7 +373,7 @@ begin
          and revoked_at is null
          and (expires_at is null or expires_at>clock_timestamp())
     )
-  $q$ into v_actor_authorized using p_approved_by_auth_user_id;
+  $q$ into v_actor_authorized using v_actor_auth_user_id;
   if not v_actor_authorized then
     raise exception 'actor lacks B2B activation authority' using errcode='42501';
   end if;
@@ -330,7 +402,7 @@ begin
     approved_by_auth_user_id,approved_at
   ) values (
     p_business_key,p_business_display_name,'b2b2c_marketplace_partner','active',
-    p_approved_by_auth_user_id,clock_timestamp()
+    v_actor_auth_user_id,clock_timestamp()
   )
   on conflict (business_key) do nothing
   returning id into v_relationship_id;
@@ -351,7 +423,7 @@ begin
     insert into public.research_b2b_buyer_events(
       event_type,relationship_id,member_id,actor_auth_user_id,detail
     ) values (
-      'relationship_activated',v_relationship_id,p_member_id,p_approved_by_auth_user_id,
+      'relationship_activated',v_relationship_id,p_member_id,v_actor_auth_user_id,
       jsonb_build_object('businessKey',p_business_key,'relationshipType','b2b2c_marketplace_partner')
     );
   end if;
@@ -361,7 +433,7 @@ begin
     bound_by_auth_user_id,bound_at
   ) values (
     v_relationship_id,p_member_id,p_roles,'active','operator_verified_member',
-    p_approved_by_auth_user_id,clock_timestamp()
+    v_actor_auth_user_id,clock_timestamp()
   )
   on conflict (relationship_id,member_id) do nothing
   returning id into v_operator_id;
@@ -379,7 +451,7 @@ begin
     insert into public.research_b2b_buyer_events(
       event_type,relationship_id,member_id,actor_auth_user_id,detail
     ) values (
-      'operator_bound',v_relationship_id,p_member_id,p_approved_by_auth_user_id,
+      'operator_bound',v_relationship_id,p_member_id,v_actor_auth_user_id,
       jsonb_build_object('operatorId',v_operator_id,'roles',p_roles)
     );
   end if;
@@ -389,7 +461,7 @@ begin
     approved_by_auth_user_id,approved_at
   ) values (
     v_relationship_id,'KRIS_VOLUME_PARTNER',p_profile_version,'active',p_effective_at,
-    p_approved_by_auth_user_id,clock_timestamp()
+    v_actor_auth_user_id,clock_timestamp()
   )
   on conflict (relationship_id,profile_key,version) do nothing
   returning id into v_entitlement_id;
@@ -410,7 +482,7 @@ begin
     insert into public.research_b2b_buyer_events(
       event_type,relationship_id,member_id,actor_auth_user_id,detail
     ) values (
-      'entitlement_activated',v_relationship_id,p_member_id,p_approved_by_auth_user_id,
+      'entitlement_activated',v_relationship_id,p_member_id,v_actor_auth_user_id,
       jsonb_build_object('entitlementId',v_entitlement_id,'profileKey','KRIS_VOLUME_PARTNER',
                          'profileVersion',p_profile_version,'effectiveAt',p_effective_at)
     );
@@ -426,8 +498,7 @@ create or replace function public.research_claim_b2b_order_ownership(
   p_member_id uuid,
   p_entitlement_id uuid,
   p_profile_key text,
-  p_profile_version integer,
-  p_established_at timestamptz
+  p_profile_version integer
 )
 returns text
 language plpgsql
@@ -437,6 +508,9 @@ as $$
 declare
   v_existing public.research_b2b_order_ownership%rowtype;
   v_operator_id uuid;
+  -- Database-owned: callers cannot backdate into an expired entitlement
+  -- window or predate a future entitlement.
+  v_established_at timestamptz := clock_timestamp();
 begin
   perform pg_advisory_xact_lock(hashtextextended('b2b-order:' || p_order_id::text, 0));
 
@@ -467,7 +541,7 @@ begin
     pricing_profile_key,pricing_profile_version,established_at
   ) values (
     p_order_id,p_relationship_id,v_operator_id,p_member_id,p_entitlement_id,
-    p_profile_key,p_profile_version,p_established_at
+    p_profile_key,p_profile_version,v_established_at
   );
 
   insert into public.research_b2b_buyer_events(
@@ -490,29 +564,34 @@ alter table public.research_b2b_buyer_entitlements enable row level security;
 alter table public.research_b2b_order_ownership enable row level security;
 alter table public.research_b2b_buyer_events enable row level security;
 
-revoke all on public.research_b2b_buyer_relationships from anon, authenticated;
-revoke all on public.research_b2b_buyer_operators from anon, authenticated;
-revoke all on public.research_b2b_buyer_entitlements from anon, authenticated;
-revoke all on public.research_b2b_order_ownership from anon, authenticated;
-revoke all on public.research_b2b_buyer_events from anon, authenticated;
+revoke all on public.research_b2b_buyer_relationships from public, anon, authenticated, service_role;
+revoke all on public.research_b2b_buyer_operators from public, anon, authenticated, service_role;
+revoke all on public.research_b2b_buyer_entitlements from public, anon, authenticated, service_role;
+revoke all on public.research_b2b_order_ownership from public, anon, authenticated, service_role;
+revoke all on public.research_b2b_buyer_events from public, anon, authenticated, service_role;
 revoke all on function public.research_activate_b2b_buyer_bridge(
-  uuid,uuid,text,text,text[],integer,timestamptz,uuid
-) from public, anon, authenticated;
+  uuid,uuid,text,text,text[],integer,timestamptz
+) from public, anon, authenticated, service_role;
 revoke all on function public.research_claim_b2b_order_ownership(
-  uuid,uuid,uuid,uuid,text,integer,timestamptz
-) from public, anon, authenticated;
+  uuid,uuid,uuid,uuid,text,integer
+) from public, anon, authenticated, service_role;
 
-grant select,insert,update on public.research_b2b_buyer_relationships to service_role;
-grant select,insert,update on public.research_b2b_buyer_operators to service_role;
-grant select,insert,update on public.research_b2b_buyer_entitlements to service_role;
-grant select,insert on public.research_b2b_order_ownership to service_role;
-grant select,insert on public.research_b2b_buyer_events to service_role;
-grant usage,select on sequence public.research_b2b_buyer_events_id_seq to service_role;
+-- The service role may project account state but cannot bypass either audited
+-- write RPC with direct table writes.
+grant select on public.research_b2b_buyer_relationships to service_role;
+grant select on public.research_b2b_buyer_operators to service_role;
+grant select on public.research_b2b_buyer_entitlements to service_role;
+grant select on public.research_b2b_order_ownership to service_role;
+grant select on public.research_b2b_buyer_events to service_role;
+
+-- Activation executes in the exact internal admin's authenticated Supabase
+-- session. auth.uid() is the immutable audit actor and the function independently
+-- verifies an active super_admin/operations_admin assignment.
 grant execute on function public.research_activate_b2b_buyer_bridge(
-  uuid,uuid,text,text,text[],integer,timestamptz,uuid
-) to service_role;
+  uuid,uuid,text,text,text[],integer,timestamptz
+) to authenticated;
 grant execute on function public.research_claim_b2b_order_ownership(
-  uuid,uuid,uuid,uuid,text,integer,timestamptz
+  uuid,uuid,uuid,uuid,text,integer
 ) to service_role;
 
 commit;

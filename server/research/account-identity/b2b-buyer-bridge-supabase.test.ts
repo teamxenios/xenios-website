@@ -150,7 +150,6 @@ describe("Supabase B2B buyer bridge adapter", () => {
       entitlementId: ENTITLEMENT_ID,
       pricingProfileKey: "KRIS_VOLUME_PARTNER",
       pricingProfileVersion: 1,
-      establishedAt: "2026-08-13T20:00:00.000Z",
     })).resolves.toBe("linked");
     expect(rpc).toHaveBeenCalledWith("research_claim_b2b_order_ownership", {
       p_order_id: ORDER_ID,
@@ -159,7 +158,6 @@ describe("Supabase B2B buyer bridge adapter", () => {
       p_entitlement_id: ENTITLEMENT_ID,
       p_profile_key: "KRIS_VOLUME_PARTNER",
       p_profile_version: 1,
-      p_established_at: "2026-08-13T20:00:00.000Z",
     });
   });
 
@@ -173,7 +171,6 @@ describe("Supabase B2B buyer bridge adapter", () => {
       entitlementId: ENTITLEMENT_ID,
       pricingProfileKey: "ordinary_member" as "KRIS_VOLUME_PARTNER",
       pricingProfileVersion: 1,
-      establishedAt: "2026-08-13T20:00:00.000Z",
     })).resolves.toBe("conflict");
     expect(rpc).not.toHaveBeenCalled();
   });
