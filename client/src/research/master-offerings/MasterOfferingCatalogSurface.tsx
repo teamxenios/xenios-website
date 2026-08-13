@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  DEFAULT_MASTER_OFFERING_SORT,
+  EMPTY_MASTER_OFFERING_FACETS,
+} from "@shared/research/master-offerings/contract";
 import type {
   MasterOfferingCatalogPage,
   MasterOfferingCatalogQuery,
@@ -31,7 +35,9 @@ const EMPTY_PAGE: MasterOfferingCatalogPage = {
   pageSize: 24,
   total: 0,
   totalPages: 0,
+  sort: DEFAULT_MASTER_OFFERING_SORT,
   products: [],
+  facets: EMPTY_MASTER_OFFERING_FACETS,
 };
 
 /** A skeleton the same shape as a card, so the page does not jump on arrival. */

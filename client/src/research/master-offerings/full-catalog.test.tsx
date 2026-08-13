@@ -2,6 +2,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { act } from "react";
 import { createRoot } from "react-dom/client";
+import {
+  DEFAULT_MASTER_OFFERING_SORT,
+  EMPTY_MASTER_OFFERING_FACETS,
+} from "@shared/research/master-offerings/contract";
 import type {
   MasterOfferingCardView,
   MasterOfferingCatalogPage,
@@ -87,7 +91,9 @@ function page(
     pageSize: 24,
     total: 1,
     totalPages: 1,
+    sort: DEFAULT_MASTER_OFFERING_SORT,
     products: [card()],
+    facets: EMPTY_MASTER_OFFERING_FACETS,
     ...overrides,
   };
 }

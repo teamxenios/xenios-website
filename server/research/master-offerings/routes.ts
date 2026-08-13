@@ -1,7 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import {
+  MASTER_OFFERING_MAX_CATEGORY_FILTERS,
+  isMasterOfferingCategorySlug,
   isMasterOfferingDisplayState,
   isMasterOfferingFamily,
+  isMasterOfferingSort,
   type MasterOfferingCatalogErrorResponse,
   type MasterOfferingCatalogListResponse,
   type MasterOfferingCatalogDetailResponse,
@@ -9,6 +12,7 @@ import {
   type MasterOfferingCatalogAudience,
   type MasterOfferingDisplayState,
   type MasterOfferingFamily,
+  type MasterOfferingSort,
 } from "@shared/research/master-offerings/contract";
 import {
   isMasterOfferingPriceListFormat,
@@ -80,12 +84,34 @@ const RESPONSES = {
 } as const satisfies Record<string, MasterOfferingCatalogErrorResponse>;
 
 const SAFE_SLUG = /^[a-z0-9][a-z0-9-]{0,191}$/;
-const QUERY_KEYS = new Set(["q", "families", "states", "page", "pageSize"]);
-/** The export takes the same closed filters plus a closed output format. */
+/**
+ * The closed key allowlist. A key that is not on it is a 400, which is what
+ * makes an unrecognized parameter a refusal rather than a silently ignored
+ * instruction. Every new capability joins this set explicitly.
+ */
+const QUERY_KEYS = new Set([
+  "q",
+  "families",
+  "states",
+  "categories",
+  "sort",
+  "page",
+  "pageSize",
+]);
+/**
+ * The export takes the same closed filters plus a closed output format.
+ *
+ * `sort` is deliberately not among them. A price list is an artifact people
+ * save and diff, so two exports of the same filter must have the same row
+ * order; a display preference has no business changing a document's shape.
+ * Paging is excluded for the same reason it always was: the export is the whole
+ * match set or an explicit refusal.
+ */
 const PRICE_LIST_QUERY_KEYS = new Set([
   "q",
   "families",
   "states",
+  "categories",
   "format",
 ]);
 
@@ -136,6 +162,8 @@ export function parseMasterOfferingCatalogQuery(
   const q = req.query.q === undefined ? "" : one(req.query.q);
   const families = list(req.query.families);
   const states = list(req.query.states);
+  const categories = list(req.query.categories);
+  const sort = req.query.sort === undefined ? "" : one(req.query.sort);
   const page = positiveInteger(req.query.page, Number.MAX_SAFE_INTEGER);
   const pageSize = positiveInteger(req.query.pageSize, 100);
   if (
@@ -143,10 +171,19 @@ export function parseMasterOfferingCatalogQuery(
     q.length > 160 ||
     families === null ||
     states === null ||
+    categories === null ||
+    sort === null ||
     page === null ||
     pageSize === null ||
     !families.every(isMasterOfferingFamily) ||
-    !states.every(isMasterOfferingDisplayState)
+    !states.every(isMasterOfferingDisplayState) ||
+    // A closed vocabulary is self limiting, so families and states need no
+    // count cap. The category vocabulary is data owned and only shape checked,
+    // so it gets an explicit ceiling: without one a caller could post an
+    // unbounded list of well formed tokens and make the server hold it.
+    categories.length > MASTER_OFFERING_MAX_CATEGORY_FILTERS ||
+    !categories.every(isMasterOfferingCategorySlug) ||
+    (sort !== "" && !isMasterOfferingSort(sort))
   ) {
     return null;
   }
@@ -158,6 +195,8 @@ export function parseMasterOfferingCatalogQuery(
     ...(states.length
       ? { states: states as MasterOfferingDisplayState[] }
       : {}),
+    ...(categories.length ? { categories } : {}),
+    ...(sort ? { sort: sort as MasterOfferingSort } : {}),
     ...(page > 0 ? { page } : {}),
     ...(pageSize > 0 ? { pageSize } : {}),
   };

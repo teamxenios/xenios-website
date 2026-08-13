@@ -65,7 +65,15 @@ const KNOWN_ACCESS_STATES = new Set<string>([
   "Coming soon",
 ]);
 
-const DISPLAY_STATE_RANK: Readonly<Record<MasterOfferingDisplayState, number>> = {
+/**
+ * Strongest displayable state first. This is the one ordering of truthfulness
+ * the catalog has: it picks a product's headline state from its variants, and
+ * the availability sort orders the catalog by the same rank, so a member sees
+ * the same notion of "closest to available" in both places.
+ */
+export const MASTER_OFFERING_DISPLAY_STATE_RANK: Readonly<
+  Record<MasterOfferingDisplayState, number>
+> = {
   available_now: 0,
   available_this_week: 1,
   approval_required: 2,
@@ -133,7 +141,11 @@ function stripResearchFraming(value: string): string {
     .trim();
 }
 
-function slugify(value: string): string {
+/**
+ * The repository's one slug rule. Exported so a category slug and an offering
+ * slug can never be produced by two different functions that drift apart.
+ */
+export function slugify(value: string): string {
   const slug = value
     .normalize("NFKD")
     .replace(/\+/g, " plus ")
@@ -324,7 +336,10 @@ function strongestDisplayState(
 ): MasterOfferingDisplayState {
   if (states.length === 0) return "unavailable";
   return states.reduce((best, state) =>
-    DISPLAY_STATE_RANK[state] < DISPLAY_STATE_RANK[best] ? state : best,
+    MASTER_OFFERING_DISPLAY_STATE_RANK[state] <
+    MASTER_OFFERING_DISPLAY_STATE_RANK[best]
+      ? state
+      : best,
   );
 }
 
