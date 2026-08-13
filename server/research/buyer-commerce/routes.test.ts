@@ -1,14 +1,14 @@
 import express from "express";
 import request from "supertest";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import type { BuyerOrderRequestRecord } from "@shared/research/buyer-commerce";
 import { InMemoryEarlyAccessAuditSink } from "../early-access/routes/ports";
 import { createBuyerCommerceRouter } from "./routes";
 
-function app() {
+function app(options: Parameters<typeof createBuyerCommerceRouter>[1] = {}) {
   const server = express();
-  server.use(express.json());
+  server.use(express.json({ limit: "1mb" }));
   server.use(
     createBuyerCommerceRouter({
       identity: { upsert: async () => ({ customerRef: "eac_0123456789abcdef0123456789abcdef" }) },
@@ -37,7 +37,7 @@ function app() {
       notifications: { notify: async () => ({ customerQueued: true, operationsQueued: true }) },
       clock: () => new Date("2026-08-12T19:00:00.000Z"),
       newRequestRef: () => "XBR-00000000000000000001",
-    }),
+    }, options),
   );
   return server;
 }
@@ -75,5 +75,29 @@ describe("unmounted buyer commerce route factory", () => {
       .send({ ...valid, lines: [{ ...valid.lines[0], requestedQuantity: 51 }] });
     expect(response.status).toBe(400);
     expect(response.body.error).toBe("invalid_request");
+  });
+
+  it("rate-limits unauthenticated intake with a hashed network key", async () => {
+    const limiter = vi.fn(async () => false);
+    const response = await request(app({ rateLimit: limiter, ip: () => "203.0.113.8" }))
+      .post("/api/research/buyer/order-requests")
+      .send(valid);
+    expect(response.status).toBe(429);
+    expect(response.headers["retry-after"]).toBe("600");
+    expect(limiter).toHaveBeenCalledOnce();
+    const [key, seconds, hits] = limiter.mock.calls[0]!;
+    expect(key).toMatch(/^buyer-request:[a-f0-9]{64}$/);
+    expect(key).not.toContain("203.0.113.8");
+    expect([seconds, hits]).toEqual([600, 5]);
+  });
+
+  it("rejects oversized declared bodies before rate-limit or domain work", async () => {
+    const limiter = vi.fn(async () => true);
+    const response = await request(app({ rateLimit: limiter }))
+      .post("/api/research/buyer/order-requests")
+      .send({ ...valid, notes: "x".repeat(256 * 1024) });
+    expect(response.status).toBe(413);
+    expect(response.body.error).toBe("request_too_large");
+    expect(limiter).not.toHaveBeenCalled();
   });
 });

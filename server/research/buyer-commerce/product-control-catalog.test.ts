@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import type { AdminProductDetail } from "@shared/research/product-admin";
 import type { EarlyAccessCatalogProjection, EarlyAccessCatalogRow } from "../early-access/catalog/early-access-catalog";
-import { InMemoryEarlyAccessReleaseLedger } from "../early-access/release/founder-release";
+import {
+  earlyAccessReleaseVersion,
+  InMemoryEarlyAccessReleaseLedger,
+} from "../early-access/release/founder-release";
 import { ProductControlBuyerCatalog } from "./product-control-catalog";
 
 const NOW = new Date("2026-08-12T19:00:00.000Z");
@@ -127,6 +130,84 @@ describe("Product Control buyer catalog adapter", () => {
       directPurchaseAuthorized: false,
       directQuantityLimit: null,
       directAuthorityBasis: null,
+    });
+  });
+
+  it("fails direct authority closed when Product Control identity or its projection is ambiguous", async () => {
+    const ambiguousVariant = product("duplicate-variant", "research_material");
+    ambiguousVariant.variants.push({ ...ambiguousVariant.variants[0]! });
+    const duplicateProduct = product("duplicate-product", "research_material");
+    const projection: EarlyAccessCatalogProjection = {
+      evaluatedAt: NOW.toISOString(),
+      rows: [
+        row("duplicate-variant"),
+        row("duplicate-product"),
+        row("duplicate-product"),
+      ],
+      productsWithoutVariants: [],
+    };
+    const adapter = new ProductControlBuyerCatalog({
+      productControl: {
+        readCatalog: async () => [
+          ambiguousVariant,
+          duplicateProduct,
+          { ...duplicateProduct },
+        ],
+      },
+      earlyAccess: { load: async () => projection },
+      releases: new InMemoryEarlyAccessReleaseLedger(),
+    });
+
+    const variants = await adapter.variants({
+      customerRef: "eac_0123456789abcdef0123456789abcdef",
+      at: NOW,
+    });
+    expect(variants).not.toHaveLength(0);
+    expect(variants.every((variant) => variant.directPurchaseAuthorized === false)).toBe(true);
+    expect(variants.every((variant) => variant.directQuantityLimit === null)).toBe(true);
+  });
+
+  it("uses the most restrictive Product Control, founder-release, and global direct limit", async () => {
+    const limited = row("limited");
+    limited.purchasable = false;
+    limited.quantityLimit = 5;
+    limited.blockers = ["DOCUMENTATION_NOT_SATISFIED"];
+    const releases = new InMemoryEarlyAccessReleaseLedger();
+    const appended = await releases.append({
+      releaseId: "rel-limited-001",
+      productId: limited.productId,
+      variantId: limited.variantId,
+      productVersion: earlyAccessReleaseVersion(limited),
+      status: "approved",
+      approvedPriceCents: 5_000,
+      currency: "USD",
+      waivedBlockers: [...limited.blockers],
+      approvedQuantityLimit: 20,
+      expiresAt: null,
+      actor: "Samuel Boadu",
+      reason: "Founder release for regression coverage.",
+      recordedAt: NOW.toISOString(),
+    });
+    expect(appended.ok).toBe(true);
+    const projection: EarlyAccessCatalogProjection = {
+      evaluatedAt: NOW.toISOString(),
+      rows: [limited],
+      productsWithoutVariants: [],
+    };
+    const adapter = new ProductControlBuyerCatalog({
+      productControl: { readCatalog: async () => [product("limited", "research_material")] },
+      earlyAccess: { load: async () => projection },
+      releases,
+    });
+
+    const [projected] = await adapter.variants({
+      customerRef: "eac_0123456789abcdef0123456789abcdef",
+      at: NOW,
+    });
+    expect(projected).toMatchObject({
+      directPurchaseAuthorized: true,
+      directQuantityLimit: 5,
+      directAuthorityBasis: "founder_release",
     });
   });
 });

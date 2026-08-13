@@ -1,20 +1,40 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 
 import type {
   BuyerCatalogVariant,
   BuyerOrderRequestInput,
 } from "@shared/research/buyer-commerce";
 import { parseBuyerBulkOrder } from "./bulk-parser";
-import { useBuyerDraft } from "./useBuyerDraft";
+import { buyerVariantKey, useBuyerDraft } from "./useBuyerDraft";
 
 function money(cents: number, currency: string): string {
   return (cents / 100).toLocaleString(undefined, { style: "currency", currency });
 }
 
-function newIdempotencyKey(): string {
-  const id = globalThis.crypto?.randomUUID?.() ??
-    `${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}`;
-  return `xbr_${id.replace(/[^A-Za-z0-9_-]/g, "")}`;
+export function newBuyerIdempotencyKey(): string {
+  const randomUUID = globalThis.crypto?.randomUUID?.();
+  if (randomUUID) return `xbr_${randomUUID.replace(/-/g, "")}`;
+  const bytes = new Uint8Array(16);
+  if (!globalThis.crypto?.getRandomValues) {
+    throw new Error("Secure browser randomness is unavailable.");
+  }
+  globalThis.crypto.getRandomValues(bytes);
+  return `xbr_${Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("")}`;
+}
+
+export interface BuyerSubmissionAttempt {
+  intent: string;
+  idempotencyKey: string;
+}
+
+export function buyerSubmissionAttempt(
+  current: BuyerSubmissionAttempt | null,
+  intent: string,
+  makeIdempotencyKey: () => string,
+): BuyerSubmissionAttempt {
+  return current?.intent === intent
+    ? current
+    : { intent, idempotencyKey: makeIdempotencyKey() };
 }
 
 export interface BuyerCommerceBridgeProps {
@@ -27,7 +47,7 @@ export interface BuyerCommerceBridgeProps {
 export function BuyerCommerceBridge({
   variants,
   onSubmit,
-  makeIdempotencyKey = newIdempotencyKey,
+  makeIdempotencyKey = newBuyerIdempotencyKey,
 }: BuyerCommerceBridgeProps) {
   const draft = useBuyerDraft();
   const [query, setQuery] = useState("");
@@ -36,6 +56,7 @@ export function BuyerCommerceBridge({
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [busy, setBusy] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const attempt = useRef<{ intent: string; idempotencyKey: string } | null>(null);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -93,7 +114,7 @@ export function BuyerCommerceBridge({
     const form = new FormData(event.currentTarget);
     const value = (name: string) => String(form.get(name) ?? "").trim();
     try {
-      await onSubmit({
+      const requestIntent = {
         identity: {
           firstName: value("firstName"),
           lastName: value("lastName"),
@@ -116,9 +137,12 @@ export function BuyerCommerceBridge({
         })),
         ...(value("notes") ? { notes: value("notes") } : {}),
         requestedInvoice: true,
-        source: "buyer_quick_order",
-        idempotencyKey: makeIdempotencyKey(),
-      });
+        source: "buyer_quick_order" as const,
+      };
+      const intent = JSON.stringify(requestIntent);
+      attempt.current = buyerSubmissionAttempt(attempt.current, intent, makeIdempotencyKey);
+      await onSubmit({ ...requestIntent, idempotencyKey: attempt.current.idempotencyKey });
+      attempt.current = null;
     } catch {
       setSubmitError(
         "The request could not be submitted. Try again or email research@xeniostechnology.com.",
@@ -172,9 +196,10 @@ export function BuyerCommerceBridge({
 
           <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {filtered.map((variant) => {
-              const quantity = quantities[variant.variantId] ?? 1;
+              const exactKey = buyerVariantKey(variant);
+              const quantity = quantities[exactKey] ?? 1;
               return (
-                <article key={variant.variantId} className="card p-5">
+                <article key={exactKey} className="card p-5">
                   <p className="mono-cap text-ink-mute">{variant.category} · {variant.sku}</p>
                   <h3 className="mt-2 text-xl font-semibold">{variant.productName}</h3>
                   <p className="text-ink-mute">
@@ -197,7 +222,7 @@ export function BuyerCommerceBridge({
                       onChange={(event) =>
                         setQuantities((current) => ({
                           ...current,
-                          [variant.variantId]: Number(event.target.value),
+                          [exactKey]: Number(event.target.value),
                         }))
                       }
                     />
@@ -236,7 +261,7 @@ export function BuyerCommerceBridge({
           </div>
           <div className="mt-4 space-y-3">
             {draft.lines.map((line) => (
-              <div key={line.variantId} className="flex flex-wrap items-center justify-between gap-3 border-t pt-3">
+              <div key={buyerVariantKey(line)} className="flex flex-wrap items-center justify-between gap-3 border-t pt-3">
                 <div><strong>{line.label}</strong><p className="text-sm text-ink-mute">{line.sku}</p></div>
                 <div className="flex items-center gap-2">
                   <input
@@ -248,7 +273,7 @@ export function BuyerCommerceBridge({
                     value={line.quantity}
                     onChange={(event) => draft.upsert({ ...line, quantity: Number(event.target.value) })}
                   />
-                  <button type="button" className="btn btn-secondary" onClick={() => draft.remove(line.variantId)}>
+                  <button type="button" className="btn btn-secondary" onClick={() => draft.remove(line)}>
                     Remove
                   </button>
                 </div>

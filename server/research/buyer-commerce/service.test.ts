@@ -135,6 +135,20 @@ describe("buyer commerce bridge", () => {
     expect(h.requests.record?.resolvedLines).toHaveLength(5);
   });
 
+  it("routes quantity above a narrower exact-variant limit to manual review while accepting the request", async () => {
+    const h = harness([variant("v1", { directQuantityLimit: 5 })]);
+    const receipt = await submitBuyerRequest(
+      h.dependencies,
+      payload([{ offeringId: "product-v1", variantId: "v1", requestedQuantity: 6 }]),
+    );
+    expect(receipt.lines[0]).toMatchObject({
+      requestedQuantity: 6,
+      directQuantityLimit: 5,
+      disposition: "manual_early_access_request",
+      reason: "QUANTITY_REQUIRES_MANUAL_REVIEW",
+    });
+  });
+
   it("routes care through Care and refuses an unknown or mismatched exact variant", async () => {
     const h = harness([variant("care", { carePathway: true })]);
     const receipt = await submitBuyerRequest(
@@ -162,6 +176,20 @@ describe("buyer commerce bridge", () => {
     expect(serialized).not.toContain("ada@example.com");
     expect(serialized).not.toContain("Research Way");
     expect(h.notify).toHaveBeenCalledOnce();
+  });
+
+  it("returns the durable receipt when audit or notification projection is unavailable", async () => {
+    const h = harness([variant("v1")]);
+    h.dependencies.audit = { record: vi.fn(async () => { throw new Error("audit unavailable"); }) };
+    h.dependencies.notifications = {
+      notify: vi.fn(async () => { throw new Error("outbox unavailable"); }),
+    };
+
+    await expect(submitBuyerRequest(h.dependencies, payload())).resolves.toMatchObject({
+      requestRef: "XBR-00000000000000000001",
+      replayed: false,
+    });
+    expect(h.requests.record).not.toBeNull();
   });
 
   it("replays the durable request without duplicating audit or notifications", async () => {
@@ -201,6 +229,25 @@ describe("buyer commerce bridge", () => {
         ]),
       ),
     ).rejects.toThrow();
+    expect(h.requests.record).toBeNull();
+  });
+
+  it("refuses accessors, polluted prototypes, and sparse line arrays without invoking them", async () => {
+    const h = harness([variant("v1")]);
+    const getter = vi.fn(() => payload().identity);
+    const hostile = payload() as unknown as Record<string, unknown>;
+    Object.defineProperty(hostile, "identity", { enumerable: true, get: getter });
+    await expect(submitBuyerRequest(h.dependencies, hostile)).rejects.toThrow();
+    expect(getter).not.toHaveBeenCalled();
+
+    await expect(
+      submitBuyerRequest(h.dependencies, Object.assign(Object.create({ polluted: true }), payload())),
+    ).rejects.toThrow();
+
+    const sparse = payload();
+    sparse.lines = new Array(2) as BuyerOrderRequestInput["lines"];
+    sparse.lines[0] = { offeringId: "product-v1", variantId: "v1", requestedQuantity: 1 };
+    await expect(submitBuyerRequest(h.dependencies, sparse)).rejects.toThrow();
     expect(h.requests.record).toBeNull();
   });
 });

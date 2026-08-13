@@ -17,6 +17,12 @@ describe("buyer draft", () => {
     expect(replaced).toEqual([{ ...line, quantity: 50 }]);
   });
 
+  it("does not merge identical variant ids belonging to different offerings", () => {
+    const first = upsertBuyerDraftLine([], line);
+    const second = upsertBuyerDraftLine(first, { ...line, offeringId: "p2", sku: "SKU-2" });
+    expect(second).toHaveLength(2);
+  });
+
   it("clamps browser-only convenience state without changing server authority", () => {
     expect(upsertBuyerDraftLine([], { ...line, quantity: 51 })[0]?.quantity).toBe(50);
     expect(upsertBuyerDraftLine([], { ...line, quantity: 0 })[0]?.quantity).toBe(1);

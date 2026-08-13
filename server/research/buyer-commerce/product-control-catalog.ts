@@ -32,7 +32,11 @@ export class ProductControlBuyerCatalog implements BuyerCatalogPort {
     for (const product of products) {
       productsById.set(product.id, productsById.has(product.id) ? null : product);
     }
-    const rows = new Map(projection.rows.map((row) => [`${row.productId}\u0000${row.variantId}`, row]));
+    const rows = new Map<string, (typeof projection.rows)[number] | null>();
+    for (const row of projection.rows) {
+      const key = `${row.productId}\u0000${row.variantId}`;
+      rows.set(key, rows.has(key) ? null : row);
+    }
 
     return Object.freeze(
       storefront.units.map((unit) => {
@@ -43,9 +47,12 @@ export class ProductControlBuyerCatalog implements BuyerCatalogPort {
         const releaseDecision = row === null
           ? null
           : decideEarlyAccessRelease({ row, releases, now: input.at.getTime() });
+        // A founder release adds authority; it never erases Product Control's
+        // narrower unit cap. Every applicable authority must be present and the
+        // most restrictive one wins.
         const authorityLimit = unit.basis === "founder_release"
-          ? releaseDecision?.released === true
-            ? releaseDecision.approvedQuantityLimit
+          ? releaseDecision?.released === true && unit.quantityLimit !== null
+            ? Math.min(releaseDecision.approvedQuantityLimit, unit.quantityLimit)
             : null
           : unit.quantityLimit;
         const acceptedLimit = authorityLimit === null
@@ -53,6 +60,9 @@ export class ProductControlBuyerCatalog implements BuyerCatalogPort {
           : Math.min(authorityLimit, EARLY_ACCESS_MAX_QUANTITY);
         const carePathway = product?.lane === "future_clinical";
         const direct =
+          product !== null &&
+          exactVariant !== null &&
+          row !== null &&
           !carePathway &&
           unit.purchasable &&
           acceptedLimit !== null &&

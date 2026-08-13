@@ -11,6 +11,7 @@ import {
   type ResolvedBuyerLine,
 } from "@shared/research/buyer-commerce";
 import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
+import { readPlainRecord } from "../early-access/commerce/input-guards";
 import type { EarlyAccessAuditSink } from "../early-access/routes/ports";
 
 export interface BuyerIdentityPort {
@@ -47,6 +48,114 @@ export class BuyerRequestConflictError extends Error {
   constructor() {
     super("The idempotency key is already bound to a different buyer request.");
   }
+}
+
+function readEnvelope(
+  input: unknown,
+  requiredKeys: readonly string[],
+  optionalKeys: readonly string[] = [],
+): Record<string, unknown> | null {
+  try {
+    if (typeof input !== "object" || input === null || Array.isArray(input)) return null;
+    const prototype = Object.getPrototypeOf(input);
+    if (prototype !== Object.prototype && prototype !== null) return null;
+    const allowed = [...requiredKeys, ...optionalKeys];
+    const keys = Reflect.ownKeys(input);
+    if (
+      keys.some((key) => typeof key !== "string" || !allowed.includes(key)) ||
+      requiredKeys.some((key) => !keys.includes(key))
+    ) {
+      return null;
+    }
+    const descriptors = Object.getOwnPropertyDescriptors(input) as Record<
+      string,
+      PropertyDescriptor | undefined
+    >;
+    const detached: Record<string, unknown> = Object.create(null) as Record<string, unknown>;
+    for (const key of allowed) {
+      const descriptor = descriptors[key];
+      if (descriptor === undefined) continue;
+      if (!("value" in descriptor) || descriptor.enumerable !== true) return null;
+      detached[key] = descriptor.value;
+    }
+    return detached;
+  } catch {
+    return null;
+  }
+}
+
+function readLines(input: unknown, maxLength: number): readonly unknown[] | null {
+  try {
+    if (!Array.isArray(input) || Object.getPrototypeOf(input) !== Array.prototype) return null;
+    const descriptors = Object.getOwnPropertyDescriptors(input) as Record<
+      string,
+      PropertyDescriptor | undefined
+    >;
+    const length = descriptors.length?.value;
+    if (!Number.isSafeInteger(length) || length < 0 || length > maxLength) return null;
+    if (Reflect.ownKeys(input).length !== length + 1) return null;
+    const detached: unknown[] = [];
+    for (let index = 0; index < length; index += 1) {
+      const descriptor = descriptors[String(index)];
+      if (!descriptor || !("value" in descriptor) || descriptor.enumerable !== true) return null;
+      detached.push(descriptor.value);
+    }
+    return detached;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Detach an untrusted request without invoking accessors or accepting exotic
+ * prototypes. Express JSON normally produces plain data, but the service is a
+ * reusable boundary and must remain fail-closed when called directly.
+ */
+export function parseBuyerOrderRequest(raw: unknown): BuyerOrderRequestInput {
+  // The envelope readers are intentionally shallow. Calling structuredClone
+  // before nested descriptors are checked can execute a hostile nested getter.
+  const request = readEnvelope(
+    raw,
+    ["identity", "shipping", "lines", "idempotencyKey"],
+    ["billing", "notes", "requestedInvoice", "source"],
+  );
+  if (request === null) return BuyerOrderRequestSchema.parse(null);
+
+  const identity = readPlainRecord(
+    request.identity,
+    ["firstName", "lastName", "email"],
+    ["phone", "company"],
+  );
+  const shipping = readPlainRecord(
+    request.shipping,
+    ["line1", "city", "region", "postalCode"],
+    ["line2", "country"],
+  );
+  const billing = request.billing === undefined
+    ? undefined
+    : readPlainRecord(
+        request.billing,
+        ["line1", "city", "region", "postalCode"],
+        ["line2", "country"],
+      );
+  const lines = readLines(request.lines, 250);
+  if (identity === null || shipping === null || billing === null || lines === null) {
+    return BuyerOrderRequestSchema.parse(null);
+  }
+  const detachedLines = lines.map((line) =>
+    readPlainRecord(line, ["offeringId", "variantId", "requestedQuantity"]),
+  );
+  if (detachedLines.some((line) => line === null)) {
+    return BuyerOrderRequestSchema.parse(null);
+  }
+
+  return BuyerOrderRequestSchema.parse({
+    ...request,
+    identity,
+    shipping,
+    ...(billing === undefined ? {} : { billing }),
+    lines: detachedLines,
+  });
 }
 
 function requestRef(): string {
@@ -149,8 +258,9 @@ export async function submitBuyerRequest(
   raw: unknown,
 ): Promise<BuyerRequestReceipt> {
   // `parse`, rather than coercion: quantities and every nested object must
-  // already have the contract's exact shape.
-  const payload = BuyerOrderRequestSchema.parse(raw);
+  // already have the contract's exact shape. The detached reader additionally
+  // refuses accessors, proxies, prototype pollution, and sparse arrays.
+  const payload = parseBuyerOrderRequest(raw);
   const now = (dependencies.clock ?? (() => new Date()))();
   if (!Number.isFinite(now.getTime())) {
     throw new Error("Buyer commerce clock returned an invalid instant.");
@@ -179,19 +289,26 @@ export async function submitBuyerRequest(
 
   const counts = (disposition: ResolvedBuyerLine["disposition"]) =>
     resolvedLines.filter((line) => line.disposition === disposition).length;
-  await dependencies.audit.record({
-    event: "research.buyer_request.created",
-    orderNumber: candidate.requestRef,
-    actor: candidate.customerRef,
-    at: createdAt,
-    detail: {
-      lineCount: resolvedLines.length,
-      directEligible: counts("direct_cart_eligible"),
-      manualReview: counts("manual_early_access_request"),
-      carePathway: counts("care_pathway"),
-      unavailable: counts("unavailable"),
-    },
-  });
-  await dependencies.notifications.notify(candidate);
+  // The request is already durable. Existing Early Access routes deliberately
+  // keep audit/outbox projection failures from changing the customer's answer;
+  // returning a 500 here would invite a new idempotency key and a duplicate.
+  // Both projections are attempted independently so one outage cannot suppress
+  // the other.
+  await Promise.allSettled([
+    dependencies.audit.record({
+      event: "research.buyer_request.created",
+      orderNumber: candidate.requestRef,
+      actor: candidate.customerRef,
+      at: createdAt,
+      detail: {
+        lineCount: resolvedLines.length,
+        directEligible: counts("direct_cart_eligible"),
+        manualReview: counts("manual_early_access_request"),
+        carePathway: counts("care_pathway"),
+        unavailable: counts("unavailable"),
+      },
+    }),
+    dependencies.notifications.notify(candidate),
+  ]);
   return receipt(candidate, false);
 }
