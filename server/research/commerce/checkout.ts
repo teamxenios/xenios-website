@@ -1,7 +1,7 @@
 // xenios research: checkout validation and submission.
 //
 // One decision, assembled from every gate: cart, eligibility, agreements, address,
-// serviceable state, shipping, payment, and large-order review.
+// serviceable state, shipping, payment, and non-quantity order review.
 //
 // Two rules shape the whole file.
 //
@@ -109,7 +109,7 @@ export interface CheckoutDeps {
   /** Agreement versions currently required at checkout. */
   acceptedAgreementKeys: string[];
   packageWeightGrams?: number;
-  /** Per-SKU sane individual quantity, passed through to large-order review. */
+  /** @deprecated Compatibility input; normal quantities 1..50 never trigger review. */
   unusualQuantityThreshold?: number;
   /** Fraud signal owned elsewhere. Absent means no signal, never means cleared. */
   isFraudFlagged?: (memberId: string) => boolean;

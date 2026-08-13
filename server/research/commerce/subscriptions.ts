@@ -47,8 +47,8 @@ import type { PaymentProvider } from "../providers/payment";
 // Records
 // ---------------------------------------------------------------------------
 
-/** Matches the database bound (migration 23) and the cart's per-line ceiling. */
-export const MAX_SUBSCRIPTION_QUANTITY = 1000;
+/** Application-level F-013 ceiling; every wider persistence constraint stays defense in depth. */
+export const MAX_SUBSCRIPTION_QUANTITY = 50;
 
 /**
  * The stored subscription. Wider than the wire DTO on purpose: the payment
@@ -204,8 +204,13 @@ const MEMBER_ACTIONS: ReadonlySet<SubscriptionActionRequest["action"]> = new Set
   SubscriptionActionRequest["action"]
 >(["pause", "resume", "skip", "reschedule", "cancel"]);
 
-function isValidQuantity(quantity: number): boolean {
-  return Number.isInteger(quantity) && quantity > 0 && quantity <= MAX_SUBSCRIPTION_QUANTITY;
+export function isValidSubscriptionQuantity(quantity: unknown): quantity is number {
+  return (
+    typeof quantity === "number" &&
+    Number.isSafeInteger(quantity) &&
+    quantity > 0 &&
+    quantity <= MAX_SUBSCRIPTION_QUANTITY
+  );
 }
 
 function isFrequency(value: unknown): value is SubscriptionFrequencyDays {
@@ -281,8 +286,13 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
   }
 
   /** Ownership is the gate. Another member's subscription does not exist here. */
-  async function getOwned(memberId: string, subscriptionId: string): Promise<SubscriptionRecord | null> {
+  async function readSubscription(subscriptionId: string): Promise<SubscriptionRecord | null> {
     const record = await deps.repository.get(subscriptionId);
+    return record && isValidSubscriptionQuantity(record.quantity) ? record : null;
+  }
+
+  async function getOwned(memberId: string, subscriptionId: string): Promise<SubscriptionRecord | null> {
+    const record = await readSubscription(subscriptionId);
     if (!record) return null;
     if (record.memberId !== memberId) return null;
     return record;
@@ -308,7 +318,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     if (!deps.commerceEnabled) {
       return denial("commerce_disabled", "Product commerce is not enabled.");
     }
-    if (!isValidQuantity(input.quantity)) {
+    if (!isValidSubscriptionQuantity(input.quantity)) {
       return denial(
         "quantity_invalid",
         `Quantity must be a whole number between 1 and ${MAX_SUBSCRIPTION_QUANTITY}.`,
@@ -348,7 +358,10 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
 
   async function listForMember(memberId: string): Promise<SubscriptionDto[]> {
     return (await deps.repository.listByMember(memberId))
-      .filter((record) => record.memberId === memberId)
+      .filter(
+        (record) =>
+          record.memberId === memberId && isValidSubscriptionQuantity(record.quantity),
+      )
       .map(toDto);
   }
 
@@ -371,7 +384,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     if (req.frequencyDays !== undefined && !isFrequency(req.frequencyDays)) {
       return denial("subscription_action_invalid", "Frequency must be 30, 60, or 90 days.");
     }
-    if (req.quantity !== undefined && !isValidQuantity(req.quantity)) {
+    if (req.quantity !== undefined && !isValidSubscriptionQuantity(req.quantity)) {
       return denial(
         "quantity_invalid",
         `Quantity must be a whole number between 1 and ${MAX_SUBSCRIPTION_QUANTITY}.`,
@@ -444,7 +457,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     asOf: Date,
     paymentProviderReference?: string,
   ): Promise<SubscriptionMutation> {
-    const record = await deps.repository.get(subscriptionId);
+    const record = await readSubscription(subscriptionId);
     if (!record) {
       return denial("subscription_not_found", `No subscription ${subscriptionId}.`);
     }
@@ -468,7 +481,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     actor: Actor,
     asOf: Date,
   ): Promise<SubscriptionMutation> {
-    const record = await deps.repository.get(subscriptionId);
+    const record = await readSubscription(subscriptionId);
     if (!record) {
       return denial("subscription_not_found", `No subscription ${subscriptionId}.`);
     }
@@ -482,7 +495,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     actor: Actor,
     asOf: Date,
   ): Promise<SubscriptionMutation> {
-    const record = await deps.repository.get(subscriptionId);
+    const record = await readSubscription(subscriptionId);
     if (!record) {
       return denial("subscription_not_found", `No subscription ${subscriptionId}.`);
     }
@@ -526,7 +539,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
   }
 
   async function evaluateRenewal(subscriptionId: string, asOf: Date): Promise<RenewalDecision> {
-    const record = await deps.repository.get(subscriptionId);
+    const record = await readSubscription(subscriptionId);
     if (!record) {
       return {
         ok: false,
@@ -627,18 +640,26 @@ export function createInMemorySubscriptionRepository(
 ): SubscriptionRepository {
   const rows = new Map<string, SubscriptionRecord>();
   const events: SubscriptionStateEvent[] = [];
-  seed.forEach((record) => rows.set(record.subscriptionId, cloneRecord(record)));
+  seed.forEach((record) => {
+    if (isValidSubscriptionQuantity(record.quantity)) {
+      rows.set(record.subscriptionId, cloneRecord(record));
+    }
+  });
   return {
     async get(subscriptionId) {
       const found = rows.get(subscriptionId);
-      return found ? cloneRecord(found) : null;
+      return found && isValidSubscriptionQuantity(found.quantity) ? cloneRecord(found) : null;
     },
     async save(record) {
+      if (!isValidSubscriptionQuantity(record.quantity)) return;
       rows.set(record.subscriptionId, cloneRecord(record));
     },
     async listByMember(memberId) {
       return Array.from(rows.values())
-        .filter((record) => record.memberId === memberId)
+        .filter(
+          (record) =>
+            record.memberId === memberId && isValidSubscriptionQuantity(record.quantity),
+        )
         .map(cloneRecord);
     },
     async appendEvent(event) {

@@ -229,8 +229,8 @@ const SUBTOTAL_2X = 10000; // 2 x 5000 cents
 const SHIPPING = 1295; // TestShippingProvider standard rate
 const ORDER_TOTAL = SUBTOTAL_2X + SHIPPING;
 
-// The large-order fixture: quantity 21 trips BOTH review triggers (unit
-// quantity above 10, and 21 x 5000 + shipping above the 100000-cent threshold).
+// The large-order fixture: quantity 21 is ordinary by quantity. This fixture
+// still enters review because its order value exceeds the independent threshold.
 const LARGE_QUANTITY = 21;
 const LARGE_TOTAL = LARGE_QUANTITY * 5000 + SHIPPING;
 
@@ -767,7 +767,7 @@ describe("the large-order journey to fulfillment", () => {
     const ctx = await buildAcceptanceContext();
     await addEligibleLine(ctx, MEMBER_A, LARGE_QUANTITY);
 
-    // 1. Checkout over HTTP: the review triggers hold the order. The test
+    // 1. Checkout over HTTP: the value trigger holds the order. The test
     // provider supports deferred capture, so an AUTHORIZATION exists but no
     // money has been captured while Samuel has not decided.
     const placed = await asMember(ctx, MEMBER_A)
@@ -784,7 +784,7 @@ describe("the large-order journey to fulfillment", () => {
     expect(held?.authorizedAmountCents).toBe(LARGE_TOTAL);
     expect(held?.capturedAmountCents).toBeUndefined();
     expect(held?.reviewTriggers).toContain("total_exceeds_threshold");
-    expect(held?.reviewTriggers).toContain("unusual_quantity");
+    expect(held?.reviewTriggers).not.toContain("unusual_quantity");
     expect(ctx.payment.captureSuccesses).toBe(0);
 
     // The wired reservation seam held the stock for the review window: the

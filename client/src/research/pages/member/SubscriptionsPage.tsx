@@ -159,7 +159,7 @@ function SubscriptionCard({
     e.preventDefault();
     if (controlsLocked) return;
     const quantity = Number(quantityDraft);
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 20) return;
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 50) return;
     onQuantity(quantity);
   };
 

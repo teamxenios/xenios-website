@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { CatalogProduct, ProvenancedFact } from "@shared/research/catalog";
 import type { ProviderResult } from "@shared/research/capability";
 import type { SubscriptionActionRequest } from "@shared/research/commerce-api";
@@ -8,6 +8,8 @@ import {
   createSubscriptionService,
   MAX_SUBSCRIPTION_QUANTITY,
   type CreateSubscriptionInput,
+  type SubscriptionRecord,
+  type SubscriptionRepository,
   type SubscriptionServiceDeps,
 } from "./subscriptions";
 
@@ -130,6 +132,25 @@ function createInput(overrides: Partial<CreateSubscriptionInput> = {}): CreateSu
   };
 }
 
+function persistedRecord(quantity: number): SubscriptionRecord {
+  return {
+    subscriptionId: "persisted-subscription",
+    memberId: MEMBER,
+    sku: "P001",
+    quantity,
+    frequencyDays: 30,
+    state: "active",
+    nextRenewalAt: "2026-08-19T00:00:00.000Z",
+    nextShipmentAt: "2026-08-19T00:00:00.000Z",
+    paymentProviderReference: "pm_ref_1",
+    priceVersion: "2026-07",
+    shippingAddressRef: "addr_1",
+    createdAt: NOW.toISOString(),
+    updatedAt: NOW.toISOString(),
+    cancelledAt: null,
+  };
+}
+
 /** Creates and activates a subscription, returning its id. */
 async function activeSubscription(d: SubscriptionServiceDeps): Promise<string> {
   const service = createSubscriptionService(d);
@@ -196,6 +217,18 @@ describe("create", () => {
     expect(result).toMatchObject({ ok: false, code: "commerce_disabled" });
   });
 
+  it("accepts 1, 20, 21, 49, and 50 as ordinary subscription quantities", async () => {
+    const d = deps();
+    const service = createSubscriptionService(d);
+    for (const quantity of [1, 20, 21, 49, MAX_SUBSCRIPTION_QUANTITY]) {
+      const result = await service.create(MEMBER, createInput({ quantity }), NOW);
+      expect(result.ok).toBe(true);
+      if (!result.ok) continue;
+      expect(result.subscription.quantity).toBe(quantity);
+      expect((await d.repository.get(result.subscription.subscriptionId))?.quantity).toBe(quantity);
+    }
+  });
+
   it("refuses a non-integer, zero, or over-ceiling quantity", async () => {
     const service = createSubscriptionService(deps());
     for (const quantity of [0, -1, 1.5, MAX_SUBSCRIPTION_QUANTITY + 1]) {
@@ -227,6 +260,48 @@ describe("create", () => {
 // ---------------------------------------------------------------------------
 
 describe("ownership", () => {
+  it("quarantines invalid persisted quantities from list, mutation, and renewal", async () => {
+    for (const quantity of [
+      MAX_SUBSCRIPTION_QUANTITY + 1,
+      1.5,
+      0,
+      -1,
+      Number.NaN,
+      "2" as unknown as number,
+    ]) {
+      const invalid = persistedRecord(quantity);
+      const save = vi.fn<SubscriptionRepository["save"]>(async () => {});
+      const appendEvent = vi.fn<SubscriptionRepository["appendEvent"]>(async () => {});
+      const membership = vi.fn(async () => true);
+      const agreement = vi.fn(async () => true);
+      const payment = { retrieveStatus: vi.fn(usablePayment().retrieveStatus) };
+      const repository: SubscriptionRepository = {
+        get: async () => ({ ...invalid }),
+        save,
+        listByMember: async () => [{ ...invalid }],
+        appendEvent,
+        listEvents: async () => [],
+      };
+      const service = createSubscriptionService(deps({
+        repository,
+        isMembershipActive: membership,
+        hasEffectiveAgreement: agreement,
+        payment,
+      }));
+
+      expect(await service.listForMember(MEMBER)).toEqual([]);
+      expect(await service.apply(MEMBER, invalid.subscriptionId, { action: "pause" }, NOW))
+        .toMatchObject({ ok: false, code: "subscription_not_found" });
+      expect(await service.evaluateRenewal(invalid.subscriptionId, new Date(invalid.nextRenewalAt!)))
+        .toMatchObject({ ok: false, refusals: ["subscription_not_found"] });
+      expect(save).not.toHaveBeenCalled();
+      expect(appendEvent).not.toHaveBeenCalled();
+      expect(membership).not.toHaveBeenCalled();
+      expect(agreement).not.toHaveBeenCalled();
+      expect(payment.retrieveStatus).not.toHaveBeenCalled();
+    }
+  });
+
   it("answers subscription_not_found for another member's subscription", async () => {
     const d = deps();
     const id = await activeSubscription(d);
@@ -416,12 +491,12 @@ describe("member actions", () => {
     const skipped = await service.apply(
       MEMBER,
       id,
-      { action: "skip", quantity: 3, frequencyDays: 60 },
+      { action: "skip", quantity: MAX_SUBSCRIPTION_QUANTITY, frequencyDays: 60 },
       NOW,
     );
     expect(skipped.ok).toBe(true);
     if (!skipped.ok) return;
-    expect(skipped.subscription.quantity).toBe(3);
+    expect(skipped.subscription.quantity).toBe(MAX_SUBSCRIPTION_QUANTITY);
     expect(skipped.subscription.frequencyDays).toBe(60);
     // The push uses the NEW frequency: +30d schedule plus 60 days.
     expect(skipped.subscription.nextChargeAt).toBe("2026-10-18T00:00:00.000Z");
@@ -432,8 +507,10 @@ describe("member actions", () => {
     const id = await activeSubscription(d);
     const service = createSubscriptionService(d);
 
-    const badQuantity = await service.apply(MEMBER, id, { action: "skip", quantity: 0 }, NOW);
-    expect(badQuantity).toMatchObject({ ok: false, code: "quantity_invalid" });
+    for (const quantity of [0, MAX_SUBSCRIPTION_QUANTITY + 1]) {
+      const badQuantity = await service.apply(MEMBER, id, { action: "skip", quantity }, NOW);
+      expect(badQuantity).toMatchObject({ ok: false, code: "quantity_invalid" });
+    }
 
     const badFrequency = await service.apply(
       MEMBER,
