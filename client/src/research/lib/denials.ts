@@ -164,6 +164,16 @@ const DENIAL_COPY: Record<CommerceDenialCode, Copy> = {
     body: "The subscription is not in a state that allows this action. Refresh and try again.",
     tone: "error",
   },
+  subscription_stale_version: {
+    title: "This subscription changed.",
+    body: "Reload the latest subscription and try the change again. No duplicate change was applied.",
+    tone: "notice",
+  },
+  idempotency_conflict: {
+    title: "This retry no longer matches.",
+    body: "Reload and try again with the current subscription. The earlier request was not duplicated.",
+    tone: "error",
+  },
 
   // Guides.
   guide_not_found: {

@@ -20,13 +20,9 @@
 // falls back to the in-memory double whenever Supabase is not configured rather
 // than half-persisting.
 //
-// Schema gaps worth naming (the domain SubscriptionRecord is wider than the
-// current table). These are dropped on write and hydrated as defaults on read,
-// never invented:
-//   - research_product_subscriptions has no price_version or shipping_address_ref
-//     column, so priceVersion round-trips as "" and shippingAddressRef as null.
-//     Adding those columns is a follow-up before the fields can survive
-//     persistence.
+// The adjacent migration candidate closes the former version/price/address and
+// atomic-command gaps. It is deliberately not applied here: runtime activation
+// remains gated on migration/release ownership and independent database QA.
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
@@ -43,6 +39,12 @@ import {
   type SubscriptionRepository,
   type SubscriptionStateEvent,
 } from "../subscriptions";
+import {
+  isValidSubscriptionTransitionCommand,
+  type CommittedSubscriptionEvent,
+  type SubscriptionTransitionCommitResult,
+  type VersionedSubscriptionSnapshot,
+} from "./subscription-transition-contract";
 import { getSupabaseAdmin, supabaseConfigured } from "../../../supabase";
 
 // ---------------------------------------------------------------------------
@@ -74,6 +76,9 @@ export interface SubscriptionRow {
   created_at: string;
   updated_at: string;
   cancelled_at: string | null;
+  version: number;
+  price_version: string;
+  shipping_address_ref: string | null;
 }
 
 /** An insertable research_subscription_events row. Append only: there is no
@@ -87,6 +92,10 @@ export interface SubscriptionEventRow {
   actor_id: string | null;
   effective_at: string | null;
   occurred_at: string;
+  resulting_version?: number | null;
+  idempotency_key_hash?: string | null;
+  intent_hash?: string | null;
+  result_snapshot?: unknown;
 }
 
 // ---------------------------------------------------------------------------
@@ -136,6 +145,8 @@ export function rowToSubscription(row: SubscriptionRow): SubscriptionRecord | nu
   if (!SUBSCRIPTION_STATES.has(row.state)) return null;
   if (!isFrequency(row.frequency_days)) return null;
   if (!isValidSubscriptionQuantity(row.quantity)) return null;
+  if (!Number.isSafeInteger(row.version) || row.version < 1) return null;
+  if (typeof row.price_version !== "string") return null;
   return {
     subscriptionId: row.id,
     memberId: row.member_id,
@@ -146,13 +157,12 @@ export function rowToSubscription(row: SubscriptionRow): SubscriptionRecord | nu
     nextRenewalAt: row.next_charge_at ?? null,
     nextShipmentAt: row.next_shipment_at ?? null,
     paymentProviderReference: row.payment_reference ?? null,
-    // Schema gap: no price_version or shipping_address_ref column in migration
-    // 23, so these hydrate as defaults rather than being invented.
-    priceVersion: "",
-    shippingAddressRef: null,
+    priceVersion: row.price_version,
+    shippingAddressRef: row.shipping_address_ref ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     cancelledAt: row.cancelled_at ?? null,
+    version: row.version,
   };
 }
 
@@ -172,6 +182,9 @@ export function subscriptionToRow(record: SubscriptionRecord): SubscriptionRow {
     created_at: record.createdAt,
     updated_at: record.updatedAt,
     cancelled_at: record.cancelledAt,
+    version: record.version,
+    price_version: record.priceVersion,
+    shipping_address_ref: record.shippingAddressRef,
   };
 }
 
@@ -223,11 +236,132 @@ export const createInMemorySubscriptionStore = createInMemorySubscriptionReposit
 
 const SUBSCRIPTIONS = "research_product_subscriptions";
 const EVENTS = "research_subscription_events";
+const COMMIT_TRANSITION_RPC = "research_subscription_commit_transition";
+const REPLAY_TRANSITION_RPC = "research_subscription_transition_replay";
+
+function committedResult(
+  value: unknown,
+  command: Parameters<SubscriptionRepository["commitTransition"]>[0],
+): SubscriptionTransitionCommitResult {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { ok: false, code: "dependency_unavailable" };
+  }
+  const result = value as Record<string, unknown>;
+  if (result.ok !== true) {
+    const code = result.code;
+    if (
+      code === "invalid_input" ||
+      code === "subscription_not_found" ||
+      code === "stale_version" ||
+      code === "idempotency_conflict"
+    ) {
+      return { ok: false, code };
+    }
+    return { ok: false, code: "dependency_unavailable" };
+  }
+  const snapshot = result.snapshot as VersionedSubscriptionSnapshot | undefined;
+  const event = result.event as CommittedSubscriptionEvent | undefined;
+  const expected = command.next;
+  if (
+    !snapshot ||
+    !event ||
+    snapshot.subscriptionId !== command.subscriptionId ||
+    snapshot.memberId !== command.memberId ||
+    snapshot.version !== command.expectedVersion + 1 ||
+    !isValidSubscriptionQuantity(snapshot.quantity) ||
+    snapshot.sku !== expected.sku ||
+    snapshot.state !== expected.state ||
+    snapshot.quantity !== expected.quantity ||
+    snapshot.frequencyDays !== expected.frequencyDays ||
+    snapshot.nextRenewalAt !== expected.nextRenewalAt ||
+    snapshot.nextShipmentAt !== expected.nextShipmentAt ||
+    snapshot.paymentProviderReference !== expected.paymentProviderReference ||
+    snapshot.priceVersion !== expected.priceVersion ||
+    snapshot.shippingAddressRef !== expected.shippingAddressRef ||
+    snapshot.createdAt !== expected.createdAt ||
+    snapshot.updatedAt !== expected.updatedAt ||
+    snapshot.cancelledAt !== expected.cancelledAt ||
+    event.subscriptionId !== command.subscriptionId ||
+    event.resultingVersion !== snapshot.version ||
+    event.intentHash !== command.intentHash ||
+    event.idempotencyKey !== command.idempotencyKey ||
+    event.action !== command.action ||
+    event.fromState !== command.fromState ||
+    event.toState !== command.toState ||
+    event.actorType !== command.actorType ||
+    event.actorId !== command.actorId ||
+    event.effectiveAt !== command.effectiveAt ||
+    event.occurredAt !== snapshot.updatedAt
+  ) {
+    return { ok: false, code: "dependency_unavailable" };
+  }
+  return {
+    ok: true,
+    replayed: result.replayed === true,
+    snapshot: { ...snapshot },
+    event: { ...event },
+  };
+}
 
 export function createSupabaseSubscriptionStore(
   client: SupabaseClient = getSupabaseAdmin(),
 ): AsyncSubscriptionStore {
   return {
+    async replayTransition(input) {
+      const response = await client.rpc(REPLAY_TRANSITION_RPC, {
+        p_subscription_id: input.subscriptionId,
+        p_member_id: input.memberId,
+        p_idempotency_key: input.idempotencyKey,
+        p_intent_hash: input.intentHash,
+      });
+      if (response.error) return { ok: false, code: "dependency_unavailable" };
+      if (response.data === null) return null;
+      if (!response.data || typeof response.data !== "object" || Array.isArray(response.data)) {
+        return { ok: false, code: "dependency_unavailable" };
+      }
+      const result = response.data as Record<string, unknown>;
+      if (result.ok !== true) {
+        return result.code === "idempotency_conflict"
+          ? { ok: false, code: "idempotency_conflict" }
+          : { ok: false, code: "dependency_unavailable" };
+      }
+      const snapshot = result.snapshot as VersionedSubscriptionSnapshot | undefined;
+      const event = result.event as CommittedSubscriptionEvent | undefined;
+      if (
+        !snapshot ||
+        !event ||
+        snapshot.subscriptionId !== input.subscriptionId ||
+        snapshot.memberId !== input.memberId ||
+        event.subscriptionId !== input.subscriptionId ||
+        event.intentHash !== input.intentHash ||
+        event.idempotencyKey !== input.idempotencyKey ||
+        !isValidSubscriptionQuantity(snapshot.quantity)
+      ) {
+        return { ok: false, code: "dependency_unavailable" };
+      }
+      return { ok: true, replayed: true, snapshot: { ...snapshot }, event: { ...event } };
+    },
+    async commitTransition(command) {
+      if (!isValidSubscriptionTransitionCommand(command)) {
+        return { ok: false, code: "invalid_input" };
+      }
+      const response = await client.rpc(COMMIT_TRANSITION_RPC, {
+        p_subscription_id: command.subscriptionId,
+        p_member_id: command.memberId,
+        p_expected_version: command.expectedVersion,
+        p_idempotency_key: command.idempotencyKey,
+        p_intent_hash: command.intentHash,
+        p_action: command.action,
+        p_actor_type: command.actorType,
+        p_actor_id: command.actorId,
+        p_from_state: command.fromState,
+        p_to_state: command.toState,
+        p_effective_at: command.effectiveAt,
+        p_next_snapshot: command.next,
+      });
+      if (response.error) return { ok: false, code: "dependency_unavailable" };
+      return committedResult(response.data, command);
+    },
     async get(subscriptionId) {
       const res = await client.from(SUBSCRIPTIONS).select("*").eq("id", subscriptionId).maybeSingle();
       if (res.error) throw new Error(`subscription load failed: ${res.error.message}`);

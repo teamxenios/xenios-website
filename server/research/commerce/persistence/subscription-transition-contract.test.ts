@@ -15,17 +15,48 @@ const OWNER = "member-1";
 const SUBSCRIPTION = "subscription-1";
 const NOW = "2026-08-13T07:00:00.000Z";
 
+function snapshot(overrides: Partial<VersionedSubscriptionSnapshot> = {}): VersionedSubscriptionSnapshot {
+  return {
+    subscriptionId: SUBSCRIPTION,
+    memberId: OWNER,
+    version: 1,
+    sku: "P001",
+    state: "active",
+    quantity: 2,
+    frequencyDays: 30,
+    nextRenewalAt: "2026-09-13T07:00:00.000Z",
+    nextShipmentAt: "2026-09-13T07:00:00.000Z",
+    paymentProviderReference: "pm_1",
+    priceVersion: "2026-08",
+    shippingAddressRef: "address_1",
+    createdAt: "2026-08-01T07:00:00.000Z",
+    updatedAt: NOW,
+    cancelledAt: null,
+    ...overrides,
+  };
+}
+
 function pauseCommand(overrides: Partial<SubscriptionTransitionCommand> = {}) {
+  const expectedVersion = overrides.expectedVersion ?? 1;
+  const next = snapshot({
+    ...(overrides.next ?? {}),
+    subscriptionId: overrides.subscriptionId ?? SUBSCRIPTION,
+    memberId: overrides.memberId ?? OWNER,
+    version: expectedVersion + 1,
+    state: (overrides.toState ?? "paused") as SubscriptionState,
+    quantity: overrides.next?.quantity ?? 50,
+  });
   const intent = {
     subscriptionId: overrides.subscriptionId ?? SUBSCRIPTION,
     memberId: overrides.memberId ?? OWNER,
-    expectedVersion: overrides.expectedVersion ?? 1,
+    expectedVersion,
     action: "pause" as const,
     actorType: "member" as const,
+    actorId: null,
     fromState: (overrides.fromState ?? "active") as SubscriptionState,
     toState: (overrides.toState ?? "paused") as SubscriptionState,
-    quantity: overrides.quantity ?? 50,
     effectiveAt: null,
+    next,
   };
   const command = subscriptionTransitionCommand(
     intent,
@@ -44,14 +75,21 @@ class ContractReference implements AtomicSubscriptionTransitionPort {
   snapshot: VersionedSubscriptionSnapshot;
   failNext = false;
 
-  constructor(snapshot: VersionedSubscriptionSnapshot = {
-    subscriptionId: SUBSCRIPTION,
-    memberId: OWNER,
-    version: 1,
-    state: "active",
-    quantity: 2,
-  }) {
-    this.snapshot = { ...snapshot };
+  constructor(snapshotValue: VersionedSubscriptionSnapshot = snapshot()) {
+    this.snapshot = { ...snapshotValue };
+  }
+
+  async replayTransition(input: {
+    subscriptionId: string;
+    memberId: string;
+    idempotencyKey: string;
+    intentHash: string;
+  }): Promise<SubscriptionTransitionCommitResult | null> {
+    const scope = `${input.memberId}\u0000${input.subscriptionId}\u0000${input.idempotencyKey}`;
+    const prior = this.commands.get(scope);
+    if (!prior) return null;
+    if (prior.intentHash !== input.intentHash) return { ok: false, code: "idempotency_conflict" };
+    return prior.result.ok ? { ...prior.result, replayed: true } : prior.result;
   }
 
   async commitTransition(
@@ -86,12 +124,7 @@ class ContractReference implements AtomicSubscriptionTransitionPort {
       return { ok: false, code: "dependency_unavailable" };
     }
 
-    const snapshot: VersionedSubscriptionSnapshot = {
-      ...this.snapshot,
-      version: this.snapshot.version + 1,
-      state: command.toState,
-      quantity: command.quantity,
-    };
+    const snapshot: VersionedSubscriptionSnapshot = { ...command.next };
     const event: CommittedSubscriptionEvent = {
       subscriptionId: command.subscriptionId,
       resultingVersion: snapshot.version,
@@ -101,6 +134,7 @@ class ContractReference implements AtomicSubscriptionTransitionPort {
       fromState: command.fromState,
       toState: command.toState,
       actorType: command.actorType,
+      actorId: command.actorId,
       effectiveAt: command.effectiveAt,
       occurredAt: NOW,
     };
@@ -154,7 +188,7 @@ describe("atomic subscription transition contract packet", () => {
       .toEqual({ ok: false, code: "invalid_input" });
 
     const changedIntent = subscriptionTransitionCommand(
-      { ...first, quantity: 49 },
+      { ...first, next: { ...first.next, quantity: 49 } },
       first.idempotencyKey,
     );
     expect(await port.commitTransition(changedIntent))
@@ -193,7 +227,7 @@ describe("atomic subscription transition contract packet", () => {
     for (const quantity of [1, 20, 21, 49, 50]) {
       const port = new ContractReference();
       const result = await port.commitTransition(pauseCommand({
-        quantity,
+        next: { ...snapshot(), quantity },
         idempotencyKey: `pause-quantity-${quantity}-key`,
       }));
       expect(result).toMatchObject({ ok: true, snapshot: { quantity } });
@@ -202,7 +236,7 @@ describe("atomic subscription transition contract packet", () => {
 
     const refused = new ContractReference();
     expect(await refused.commitTransition(pauseCommand({
-      quantity: 51,
+      next: { ...snapshot(), quantity: 51 },
       idempotencyKey: "pause-quantity-51-key",
     }))).toEqual({ ok: false, code: "invalid_input" });
     expect(refused.events).toHaveLength(0);

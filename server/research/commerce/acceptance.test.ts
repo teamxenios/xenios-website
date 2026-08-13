@@ -185,6 +185,7 @@ function activeSubscription(overrides: Partial<SubscriptionRecord> = {}): Subscr
     createdAt: AS_OF.toISOString(),
     updatedAt: AS_OF.toISOString(),
     cancelledAt: null,
+    version: 1,
     ...overrides,
   };
 }
@@ -1438,6 +1439,7 @@ describe("subscription actions over HTTP", () => {
       subscriptionId: "sub_acceptance_1",
       sku: ELIGIBLE_SKU,
       state: "active",
+      version: 1,
     });
     // Operator data never crosses the wire.
     expect(JSON.stringify(listed.body)).not.toContain("priceVersion");
