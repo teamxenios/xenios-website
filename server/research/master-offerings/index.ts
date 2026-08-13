@@ -4,6 +4,7 @@ export * from "./composition";
 export * from "./customer-projection";
 export * from "./dataset-reader";
 export * from "./model";
+export * from "./mount";
 export * from "./normalize";
 export * from "./price-authority";
 export * from "./price-list-export";
