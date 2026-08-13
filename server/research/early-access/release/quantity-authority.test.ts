@@ -93,10 +93,13 @@ describe("authority 1: Product Control states no per-order ceiling", () => {
   });
 });
 
-describe("authority 2: historical and successor founder release ceilings", () => {
-  it("preserves the historical first-release seed at twenty", async () => {
-    expect(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT).toBe(20);
-    expect(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT).toBeLessThan(EARLY_ACCESS_MAX_QUANTITY);
+describe("authority 2: the founder release ceiling is the normal band", () => {
+  it("seeds at the founder-approved ceiling of fifty", async () => {
+    // The STRONG assertion, restored. `toBeLessThan` would pass at 20, at 49,
+    // and at any other silent cap; only exact equality with the band pins the
+    // seed to the founder decision.
+    expect(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT).toBe(50);
+    expect(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT).toBe(EARLY_ACCESS_MAX_QUANTITY);
 
     // The REAL seeder, against a row resolvable from the real pricing table.
     const first = FOUNDER_FIRST_RELEASE_PRICING[0]!;
@@ -107,13 +110,13 @@ describe("authority 2: historical and successor founder release ceilings", () =>
     expect(outcome.seeded.length).toBeGreaterThan(0);
     const released = await ledger.all();
     expect(released).toHaveLength(1);
-    expect(released[0]!.approvedQuantityLimit).toBe(20);
+    expect(released[0]!.approvedQuantityLimit).toBe(50);
     // And the record the seeder produced is one the domain validates, not just
     // an object with the right field on it.
     expect(validateEarlyAccessRelease({ ...released[0]! }).ok).toBe(true);
   });
 
-  it("resolves approvedQuantityLimit = 20 through the real decision function", async () => {
+  it("resolves approvedQuantityLimit = 50 through the real decision function", async () => {
     const first = FOUNDER_FIRST_RELEASE_PRICING[0]!;
     const unit = row({ canonicalName: first.name, displayName: first.name, strength: first.strength });
     const ledger = new InMemoryEarlyAccessReleaseLedger();
@@ -127,7 +130,7 @@ describe("authority 2: historical and successor founder release ceilings", () =>
     expect(decision.released).toBe(true);
     if (!decision.released) return;
     // THE ASSERTION THIS WHOLE LANE TURNS ON.
-    expect(decision.approvedQuantityLimit).toBe(20);
+    expect(decision.approvedQuantityLimit).toBe(50);
     // The release bridged the missing ceiling rather than Product Control
     // supplying one, which is the mechanism described at the top of this file.
     expect(decision.waivedBlockers).toContain("QUANTITY_LIMIT_MISSING");

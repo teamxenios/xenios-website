@@ -55,10 +55,23 @@ export const FOUNDER_FIRST_RELEASE_REASON =
  *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_WRITE.sql
  *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_POSTCHECK.sql
  *
- * Bounded by MAX_QUANTITY_LIMIT (100) in founder-release.ts, which already
- * admits 20 and is deliberately not changed.
+ * FOUNDER DECISION F-013. This is 50, the normal-order ceiling, not 20.
+ *
+ * It was briefly held at 20 on the reasoning that the seed records history and
+ * production already holds 42 rows at that value. The founder ruled otherwise,
+ * and the ruling is right: this constant does not describe the past, it decides
+ * what a FUTURE seed writes. Left at 20 it would silently recreate the old cap
+ * in any freshly seeded environment, which is the one place the superseded
+ * architecture could still come back after every other trace of it was removed.
+ *
+ * It changes nothing about the existing 42 production rows. That ledger is
+ * append-only, so raising those is a separate founder-run append, not a
+ * consequence of editing this line.
+ *
+ * Bounded by MAX_QUANTITY_LIMIT in founder-release.ts, which resolves through
+ * DIRECT_EARLY_ACCESS_MAX_QUANTITY to this same band.
  */
-export const FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT = 20;
+export const FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT = 50;
 
 export type FounderFirstReleaseInput = Readonly<{
   /** The founder's own name for the product, verbatim from the decision. */
