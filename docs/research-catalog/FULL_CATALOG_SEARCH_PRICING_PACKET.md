@@ -37,6 +37,9 @@ foundation had not built:
 | URL state, deep links, back and forward | `useCatalogQueryState.ts` |
 | Loading, error recovery, retry | `MasterOfferingCatalogSurface.tsx` |
 | Quantity 1 through 50 | `quantity-band.test.tsx`, and the register beside this file |
+| Exact-variant detail container | `MasterOfferingDetailSurface.tsx` |
+| Handoff into the existing cart | `catalog-cart-handoff.ts` |
+| Named-member breadth grant | `named-member-breadth.test.ts` |
 
 ## The pricing boundary
 
@@ -392,6 +395,48 @@ that carry the product and the variant.
 export. The manual purchase CTA rolls back on its own flag without touching the catalog.
 This pack adds no migration, no table, no Product Control binding, and no data, so there
 is nothing to roll back below the flag.
+
+## The handoff into the existing cart
+
+`catalog-cart-handoff.ts` is not a cart. It builds no line, holds no total,
+persists nothing, and knows no pricing rule. It takes the `add_to_cart` action the
+server already resolved, checks the quantity against the injected accepted capability,
+and hands an exact-variant request to whatever the composition root injects as the real
+cart. Product id, variant id, amount and evaluation instant all come from the action, so
+a catalog row cannot reach the cart on its own.
+
+Three properties are worth stating because they are the ones that bite in production:
+
+- **A double click is one add.** The idempotency key is derived from the exact identity,
+  the quantity and the price instant, and an in-flight set keyed on it serializes repeats.
+  It is keyed per request rather than a single boolean, so adding a different variant
+  while one add is in flight is still allowed. The lock releases even when the cart
+  throws, because a stuck lock would leave the button dead for the session.
+- **`evaluatedAt` is part of the key.** Adding the same variant again after the price was
+  re-evaluated is a new intent, not a duplicate of the old one.
+- **A Care pathway stays a Care pathway.** No quantity, capability, or repetition can turn
+  a non-purchase action into a checkout; the handoff refuses every action kind except
+  `add_to_cart` before anything else happens.
+
+The detail container surfaces a refusal in plain words and never shows the cart's own
+code to a member.
+
+## Kris and the named-member breadth grant
+
+Kris's canonical identity belongs to the Pack 02 account lane, which recorded his
+organization's canonical email and his existing Supabase Auth UID in its own human-gated
+binding runbook. **This lane does not restate either, and no test here contains them.**
+Duplicating an identity across lanes is how two systems start disagreeing about who
+someone is.
+
+What this lane owns is the mechanism, and it is proven: an allowlisted address on
+`RESEARCH_FULL_CATALOG_MEMBERS` sees the full member-safe breadth, a near miss does not,
+an unset or misspelled variable grants nobody, and the grant selects which records are
+listed without touching price, action, or purchase verdict.
+
+For Kris to see the catalog, `RESEARCH_FULL_CATALOG_MEMBERS` must contain the exact
+canonical email from the Pack 02 lane's accepted artifact. Take the value from there, not
+from here.
 
 ## Integration requirements, in order
 
