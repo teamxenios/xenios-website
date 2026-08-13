@@ -44,6 +44,8 @@ New in this lane:
 | `server/care/tebra-admin.ts` | Status and manual sync for a Care administrator |
 | `server/care/tebra-routes.ts` | The two admin handlers, not registered |
 | `server/care/tebra-scheduling-bridge.ts` | Fills the existing scheduling transport seam |
+| `server/care/tebra-connector.ts` | Assembles all of the above in one call |
+| `server/care/tebra-link-store-supabase.ts` | The durable gateway, once the migration is applied |
 
 ## Why exact SOAP operations are absent
 
@@ -286,6 +288,26 @@ provides what this lane assumed.
 9. Enable Care and the Tebra integration through their independent switches, in that
    order.
 10. Run privacy, audit, reconciliation, and rollback drills before public activation.
+
+## Assembling it
+
+`createTebraConnector` builds the whole thing in one call, so the integration lane does
+not wire nine pieces by hand. The inputs that matter most are REQUIRED rather than
+defaulted, because the dangerous ones are the easiest to omit:
+
+- `loadCareCapability`, since an omitted capability check is a fail-open gate, and it is
+  the gate an operator reaches for in an incident.
+- `links`, since the in-memory store is correct but process-local, and a lease that does
+  not coordinate across processes silently permits two pollers. That should be a
+  deliberate choice, not a default someone inherits.
+- `audit`, since Care does not accept an unlogged action.
+
+The practice client is the one input that does default, to the client that refuses every
+call, so an incomplete deployment degrades to the concierge fallback rather than making
+an unreviewed provider call.
+
+Assembly starts nothing and registers nothing. The scheduler and the route handlers are
+returned for the composition root to use deliberately.
 
 ## Integration steps this lane did not take
 
