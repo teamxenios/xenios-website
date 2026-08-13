@@ -148,6 +148,7 @@ function persistedRecord(quantity: number): SubscriptionRecord {
     createdAt: NOW.toISOString(),
     updatedAt: NOW.toISOString(),
     cancelledAt: null,
+    version: 1,
   };
 }
 
@@ -276,6 +277,8 @@ describe("ownership", () => {
       const agreement = vi.fn(async () => true);
       const payment = { retrieveStatus: vi.fn(usablePayment().retrieveStatus) };
       const repository: SubscriptionRepository = {
+        replayTransition: async () => null,
+        commitTransition: async () => ({ ok: false, code: "invalid_input" }),
         get: async () => ({ ...invalid }),
         save,
         listByMember: async () => [{ ...invalid }],
@@ -590,6 +593,85 @@ describe("state events", () => {
     await service.apply(OTHER, id, { action: "cancel" }, NOW); // wrong owner
 
     expect(await d.repository.listEvents(id)).toHaveLength(before);
+  });
+
+  it("atomically replays concurrent and sequential identical member commands once", async () => {
+    const d = deps();
+    const id = await activeSubscription(d);
+    const service = createSubscriptionService(d);
+    const command: SubscriptionActionRequest = {
+      action: "pause",
+      expectedVersion: 2,
+      idempotencyKey: "subscription-pause-command-0001",
+    };
+
+    const [first, second] = await Promise.all([
+      service.apply(MEMBER, id, command, NOW),
+      service.apply(MEMBER, id, command, NOW),
+    ]);
+    expect(first).toMatchObject({ ok: true, subscription: { state: "paused", version: 3 } });
+    expect(second).toEqual(first);
+    expect(await service.apply(MEMBER, id, command, NOW)).toEqual(first);
+    expect((await d.repository.listEvents(id)).map((entry) => entry.action))
+      .toEqual(["activate", "pause"]);
+  });
+
+  it("distinguishes a stale command from same-key payload mismatch", async () => {
+    const d = deps();
+    const id = await activeSubscription(d);
+    const service = createSubscriptionService(d);
+    const key = "subscription-pause-command-0002";
+    expect(await service.apply(MEMBER, id, {
+      action: "pause",
+      quantity: 20,
+      expectedVersion: 2,
+      idempotencyKey: key,
+    }, NOW)).toMatchObject({ ok: true, subscription: { quantity: 20, version: 3 } });
+
+    expect(await service.apply(MEMBER, id, {
+      action: "pause",
+      quantity: 21,
+      expectedVersion: 2,
+      idempotencyKey: key,
+    }, NOW)).toMatchObject({ ok: false, code: "idempotency_conflict" });
+    expect(await service.apply(MEMBER, id, {
+      action: "pause",
+      quantity: 20,
+      expectedVersion: 2,
+      idempotencyKey: "subscription-pause-command-0003",
+    }, NOW)).toMatchObject({ ok: false, code: "subscription_stale_version" });
+    expect((await d.repository.listEvents(id)).map((entry) => entry.action))
+      .toEqual(["activate", "pause"]);
+  });
+
+  it("leaves state and history untouched when the atomic commit fails", async () => {
+    const inner = createInMemorySubscriptionRepository();
+    let fail = false;
+    const repository: SubscriptionRepository = {
+      ...inner,
+      async commitTransition(command) {
+        if (fail) {
+          fail = false;
+          return { ok: false, code: "dependency_unavailable" };
+        }
+        return inner.commitTransition(command);
+      },
+    };
+    const d = deps({ repository });
+    const id = await activeSubscription(d);
+    const service = createSubscriptionService(d);
+    fail = true;
+    const command: SubscriptionActionRequest = {
+      action: "pause",
+      expectedVersion: 2,
+      idempotencyKey: "subscription-pause-command-0004",
+    };
+    expect(await service.apply(MEMBER, id, command, NOW))
+      .toMatchObject({ ok: false, code: "subscription_action_invalid" });
+    expect(await repository.get(id)).toMatchObject({ state: "active", version: 2 });
+    expect((await repository.listEvents(id)).map((entry) => entry.action)).toEqual(["activate"]);
+    expect(await service.apply(MEMBER, id, command, NOW))
+      .toMatchObject({ ok: true, subscription: { state: "paused", version: 3 } });
   });
 });
 

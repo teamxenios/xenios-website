@@ -65,6 +65,8 @@ export type CommerceDenialCode =
   | "order_state_invalid"
   | "subscription_not_found"
   | "subscription_action_invalid"
+  | "subscription_stale_version"
+  | "idempotency_conflict"
   | "guide_not_found"
   | "guide_not_published"
   | "partner_not_found"
@@ -243,6 +245,8 @@ export type OrderDetailResponse = Api<{ order: OrderDetailDto }>;
 
 export interface SubscriptionDto {
   subscriptionId: string;
+  /** Optimistic concurrency version observed by the member. */
+  version: number;
   sku: string;
   displayName: string;
   state: SubscriptionState;
@@ -256,6 +260,10 @@ export type SubscriptionsResponse = Api<{ subscriptions: SubscriptionDto[] }>;
 
 export interface SubscriptionActionRequest {
   action: "pause" | "resume" | "skip" | "reschedule" | "cancel";
+  /** Reused across retries/double-clicks; scoped to this subscription and member. */
+  idempotencyKey?: string;
+  /** Version from the last SubscriptionDto the member observed. */
+  expectedVersion?: number;
   frequencyDays?: SubscriptionFrequencyDays;
   quantity?: number;
   rescheduleTo?: string;

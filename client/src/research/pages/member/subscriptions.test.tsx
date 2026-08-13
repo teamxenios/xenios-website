@@ -106,6 +106,7 @@ function byTestId<T extends HTMLElement>(view: HTMLElement, id: string): T {
 
 const activeSubscription: SubscriptionDto = {
   subscriptionId: "sub-1",
+  version: 1,
   sku: "XN-01",
   displayName: "Recovery Stack",
   state: "active",
@@ -120,6 +121,7 @@ const activeSubscription: SubscriptionDto = {
 
 const pausedSubscription: SubscriptionDto = {
   subscriptionId: "sub-2",
+  version: 3,
   sku: "XN-02",
   displayName: "Baseline Panel Kit",
   state: "paused",
@@ -197,7 +199,9 @@ describe("Subscriptions page", () => {
     const posts = calls.filter((c) => c.url === "/api/research/subscriptions/sub-1");
     expect(posts).toHaveLength(1);
     expect(posts[0].init?.method).toBe("POST");
-    expect(JSON.parse(String(posts[0].init?.body))).toEqual({ action: "pause" });
+    const body = JSON.parse(String(posts[0].init?.body)) as Record<string, unknown>;
+    expect(body).toMatchObject({ action: "pause", expectedVersion: 1 });
+    expect(body.idempotencyKey).toMatch(/^subscription:[0-9a-f-]{36}$/);
 
     // The member is told plainly what happened.
     expect(view.textContent).toContain("Subscription paused. Resume it any time.");
@@ -322,7 +326,18 @@ describe("Subscriptions page", () => {
       .filter((c) => c.url === "/api/research/subscriptions/sub-1")
       .map((c) => JSON.parse(String(c.init?.body)) as Record<string, unknown>);
     expect(bodies).toHaveLength(2);
-    expect(bodies[0]).toEqual({ action: "reschedule", rescheduleTo: "2026-09-01" });
-    expect(bodies[1]).toEqual({ action: "reschedule", frequencyDays: 60 });
+    expect(bodies[0]).toMatchObject({
+      action: "reschedule",
+      rescheduleTo: "2026-09-01",
+      expectedVersion: 1,
+    });
+    expect(bodies[1]).toMatchObject({
+      action: "reschedule",
+      frequencyDays: 60,
+      expectedVersion: 1,
+    });
+    expect(bodies[0].idempotencyKey).toMatch(/^subscription:[0-9a-f-]{36}$/);
+    expect(bodies[1].idempotencyKey).toMatch(/^subscription:[0-9a-f-]{36}$/);
+    expect(bodies[0].idempotencyKey).not.toBe(bodies[1].idempotencyKey);
   });
 });

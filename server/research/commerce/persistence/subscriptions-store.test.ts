@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   MAX_SUBSCRIPTION_QUANTITY,
@@ -15,6 +15,7 @@ import {
   type SubscriptionEventRow,
   type SubscriptionRow,
 } from "./subscriptions-store";
+import { subscriptionTransitionCommand } from "./subscription-transition-contract";
 
 const NOW = "2026-07-20T00:00:00.000Z";
 
@@ -34,6 +35,7 @@ function record(overrides: Partial<SubscriptionRecord> = {}): SubscriptionRecord
     createdAt: NOW,
     updatedAt: NOW,
     cancelledAt: null,
+    version: 1,
     ...overrides,
   };
 }
@@ -260,15 +262,14 @@ describe("createSupabaseSubscriptionStore (fake client)", () => {
     expect(await store.get(rec.subscriptionId)).toEqual(rec);
   });
 
-  it("documents the schema gap: priceVersion and shippingAddressRef do not survive", async () => {
+  it("round-trips priceVersion and shippingAddressRef through canonical columns", async () => {
     const { client } = fakeSupabase();
     const store = createSupabaseSubscriptionStore(client);
     const rec = record({ priceVersion: "2026-07", shippingAddressRef: "addr_1" });
     await store.save(rec);
     const loaded = await store.get(rec.subscriptionId);
-    // Migration 23 has no columns for these; they hydrate as defaults, never invented.
-    expect(loaded!.priceVersion).toBe("");
-    expect(loaded!.shippingAddressRef).toBeNull();
+    expect(loaded!.priceVersion).toBe("2026-07");
+    expect(loaded!.shippingAddressRef).toBe("addr_1");
   });
 
   it("updates the header in place on a second save (upsert, not duplicate)", async () => {
@@ -337,5 +338,110 @@ describe("createSupabaseSubscriptionStore (fake client)", () => {
     const eventOps = ops.filter((o) => o.table === "research_subscription_events");
     expect(eventOps.every((o) => o.op === "insert" || o.op === "select")).toBe(true);
     expect(eventOps.some((o) => o.op === "insert")).toBe(true);
+  });
+
+  it("delegates the complete compare-and-set command to the canonical atomic RPC", async () => {
+    const current = record();
+    const next = record({ state: "paused", version: 2, updatedAt: "2026-07-21T00:00:00.000Z" });
+    const command = subscriptionTransitionCommand({
+      subscriptionId: current.subscriptionId,
+      memberId: current.memberId,
+      expectedVersion: 1,
+      action: "pause",
+      actorType: "member",
+      actorId: current.memberId,
+      fromState: "active",
+      toState: "paused",
+      effectiveAt: null,
+      next,
+    }, "subscription-pause-command-atomic-0001");
+    const committed = {
+      ok: true,
+      replayed: false,
+      snapshot: next,
+      event: {
+        subscriptionId: current.subscriptionId,
+        resultingVersion: 2,
+        idempotencyKey: command.idempotencyKey,
+        intentHash: command.intentHash,
+        action: "pause",
+        fromState: "active",
+        toState: "paused",
+        actorType: "member",
+        actorId: current.memberId,
+        effectiveAt: null,
+        occurredAt: next.updatedAt,
+      },
+    };
+    const rpc = vi.fn(async () => ({ data: committed, error: null }));
+    const store = createSupabaseSubscriptionStore({ rpc } as unknown as SupabaseClient);
+
+    await expect(store.commitTransition(command)).resolves.toEqual(committed);
+    expect(rpc).toHaveBeenCalledOnce();
+    expect(rpc).toHaveBeenCalledWith("research_subscription_commit_transition", {
+      p_subscription_id: command.subscriptionId,
+      p_member_id: command.memberId,
+      p_expected_version: 1,
+      p_idempotency_key: command.idempotencyKey,
+      p_intent_hash: command.intentHash,
+      p_action: "pause",
+      p_actor_type: "member",
+      p_actor_id: current.memberId,
+      p_from_state: "active",
+      p_to_state: "paused",
+      p_effective_at: null,
+      p_next_snapshot: next,
+    });
+  });
+
+  it("fails closed on an RPC failure or malformed committed snapshot", async () => {
+    const current = record();
+    const next = record({ state: "paused", version: 2 });
+    const command = subscriptionTransitionCommand({
+      subscriptionId: current.subscriptionId,
+      memberId: current.memberId,
+      expectedVersion: 1,
+      action: "pause",
+      actorType: "member",
+      actorId: current.memberId,
+      fromState: "active",
+      toState: "paused",
+      effectiveAt: null,
+      next,
+    }, "subscription-pause-command-atomic-0002");
+    const failed = createSupabaseSubscriptionStore({
+      rpc: vi.fn(async () => ({ data: null, error: { message: "unavailable" } })),
+    } as unknown as SupabaseClient);
+    await expect(failed.commitTransition(command)).resolves.toEqual({
+      ok: false,
+      code: "dependency_unavailable",
+    });
+
+    const malformed = createSupabaseSubscriptionStore({
+      rpc: vi.fn(async () => ({
+        data: {
+          ok: true,
+          snapshot: { ...next, sku: "WRONG" },
+          event: {
+            subscriptionId: command.subscriptionId,
+            resultingVersion: 2,
+            idempotencyKey: command.idempotencyKey,
+            intentHash: command.intentHash,
+            action: "pause",
+            fromState: "active",
+            toState: "paused",
+            actorType: "member",
+            actorId: current.memberId,
+            effectiveAt: null,
+            occurredAt: next.updatedAt,
+          },
+        },
+        error: null,
+      })),
+    } as unknown as SupabaseClient);
+    await expect(malformed.commitTransition(command)).resolves.toEqual({
+      ok: false,
+      code: "dependency_unavailable",
+    });
   });
 });

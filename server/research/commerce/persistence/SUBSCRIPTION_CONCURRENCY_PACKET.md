@@ -1,25 +1,25 @@
 # Subscription concurrency hardening packet
 
-Status: `HUMAN_GATED` and `REBASE_OR_RECREATE_REQUIRED`.
+Status: `IMPLEMENTED_CANDIDATE`, `NOT_APPLIED`, and `REBASE_OR_RECREATE_REQUIRED`.
 
-This packet intentionally contains no SQL and is not wired into the runtime.
-The current durable repository cannot honestly implement the adjacent
-`AtomicSubscriptionTransitionPort` contract:
+The canonical service and Supabase repository now consume the adjacent
+`AtomicSubscriptionTransitionPort`. The migration candidate is
+`supabase/migrations/20260813080000_research_subscription_atomic_transitions.sql`.
+It has not been executed against any database and must remain inactive until
+migration/release ownership and independent database QA accept it.
 
-- `research_product_subscriptions` has no version column;
-- `research_subscription_events` has no resulting version, idempotency key, or
-  intent hash;
-- `SubscriptionActionRequest` has no `expectedVersion` or `idempotencyKey`;
-- the Supabase repository upserts the header and inserts the event in separate
-  calls, so failure between them is not atomic;
-- the generic idempotency table cannot make those independent writes share its
-  transaction.
+- the DTO carries the observed subscription `version`;
+- member actions carry `expectedVersion` and a cryptographically strong
+  `idempotencyKey`;
+- one server-only database function owns row locking, compare-and-set, header
+  mutation, event append, result persistence, and exact replay;
+- the service no longer composes a state transition from separate durable
+  `save` and `appendEvent` calls.
 
-## Required owner-authorized durable primitive
+## Candidate durable primitive
 
-The migration/integration owner must supply one server-only database function
-(proposed name: `research_subscription_commit_transition`) that performs all of
-the following in one transaction:
+The candidate function `research_subscription_commit_transition` performs the
+following in one transaction:
 
 1. Resolve the subscription under the authenticated member scope without
    revealing foreign ownership.
@@ -34,23 +34,23 @@ the following in one transaction:
 7. Roll back header, event, and command reservation together on any failure so
    the same command remains retryable.
 
-Required schema ownership includes a header version and durable command/event
-identity. Exact DDL, grants, RLS, function security, and rollout verification
-belong to the migration/release owners and are deliberately absent here.
+The companion `research_subscription_transition_replay` supports exact
+post-success replay without mutating state. Both functions are revoked from
+browser roles and granted only to `service_role`. Rollout verification and any
+application of the migration still belong to migration/release owners.
 
-## API and integration dependencies
+## API behavior
 
-The API owner must version the action contract so each mutation carries a
-cryptographically strong `idempotencyKey` and the DTO version the member last
-observed as `expectedVersion`. A key alone prevents an identical duplicate but
-does not resolve two different commands racing on the same state; a version
-alone stops the second write but cannot replay an uncertain successful result.
-Both are required.
+Each browser mutation carries both values. The contract keeps them optional at
+the shared type boundary for established internal callers, but the service
+requires both-or-neither and the member UI always supplies both. Legacy internal
+commands receive a deterministic semantic key and the version just read. A key
+alone cannot resolve conflicting concurrency; a version alone cannot replay an
+uncertain successful response.
 
-Only after the database primitive exists may the canonical subscription service
-replace `save` plus `appendEvent` with `commitTransition`. Do not add an
-in-process mutex, reuse the generic idempotency store around two writes, or label
-two sequential Supabase calls atomic.
+No in-process mutex or generic idempotency wrapper is used. The in-memory
+repository is an executable semantic harness; durable atomicity comes only from
+the database transaction function.
 
 ## Required acceptance evidence
 
@@ -65,6 +65,6 @@ The executable contract test covers:
 - ownership isolation;
 - quantities 1, 20, 21, 49, and 50 accepted and 51 refused.
 
-The eventual durable adapter must rerun these cases against the real database
-function, plus grants/RLS verification and multi-client concurrency tests,
-before the service or route may be wired.
+The durable adapter and migration have static/mocked coverage. Real-database
+multi-client concurrency, rollback, grant, and RLS verification remain a human
+gate before migration application or route activation.
