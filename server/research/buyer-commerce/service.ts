@@ -241,6 +241,13 @@ function canonical(value: unknown): string {
 }
 
 function receipt(record: BuyerOrderRequestRecord, replayed: boolean): BuyerRequestReceipt {
+  const directCount = record.resolvedLines.filter(
+    (line) => line.disposition === "direct_cart_eligible",
+  ).length;
+  const directNextStep =
+    "Direct-eligible lines may continue through the existing cart, where current price, stock, agreements, shipping, and Product Control authority are checked again.";
+  const followUp =
+    "Xenios Research will follow up on lines that use the order-request or Care pathway.";
   return Object.freeze({
     requestRef: record.requestRef,
     customerRef: record.customerRef,
@@ -248,8 +255,11 @@ function receipt(record: BuyerOrderRequestRecord, replayed: boolean): BuyerReque
     replayed,
     lines: Object.freeze([...record.resolvedLines]),
     createdAt: record.createdAt,
-    nextStep:
-      "Xenios Research will confirm availability, final pricing, payment, and fulfillment. Keep this request reference to claim the order history to an account later.",
+    nextStep: [
+      directCount > 0 ? directNextStep : followUp,
+      directCount > 0 && directCount < record.resolvedLines.length ? followUp : "",
+      "Keep this request reference to claim the order history to an account later.",
+    ].filter(Boolean).join(" "),
   });
 }
 

@@ -3,9 +3,12 @@ import { useMemo, useRef, useState, type FormEvent } from "react";
 import type {
   BuyerCatalogVariant,
   BuyerOrderRequestInput,
+  BuyerRequestReceipt,
 } from "@shared/research/buyer-commerce";
 import { parseBuyerBulkOrder } from "./bulk-parser";
 import { buyerVariantKey, useBuyerDraft } from "./useBuyerDraft";
+
+export const BUYER_CATALOG_PAGE_SIZE = 24;
 
 function money(cents: number, currency: string): string {
   return (cents / 100).toLocaleString(undefined, { style: "currency", currency });
@@ -39,7 +42,9 @@ export function buyerSubmissionAttempt(
 
 export interface BuyerCommerceBridgeProps {
   variants: readonly BuyerCatalogVariant[];
-  onSubmit(request: BuyerOrderRequestInput): Promise<void> | void;
+  onSubmit(
+    request: BuyerOrderRequestInput,
+  ): Promise<BuyerRequestReceipt | void> | BuyerRequestReceipt | void;
   makeIdempotencyKey?: () => string;
 }
 
@@ -51,24 +56,43 @@ export function BuyerCommerceBridge({
 }: BuyerCommerceBridgeProps) {
   const draft = useBuyerDraft();
   const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("");
+  const [page, setPage] = useState(0);
   const [bulk, setBulk] = useState("");
   const [bulkErrors, setBulkErrors] = useState<string[]>([]);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [busy, setBusy] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [submitSuccess, setSubmitSuccess] = useState("");
   const attempt = useRef<{ intent: string; idempotencyKey: string } | null>(null);
 
+  const categories = useMemo(
+    () => Array.from(new Set(variants.map((variant) => variant.category))).sort((left, right) =>
+      left.localeCompare(right),
+    ),
+    [variants],
+  );
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    if (!needle) return variants;
-    return variants.filter((variant) =>
-      [variant.productName, variant.strengthLabel, variant.presentation, variant.category, variant.sku]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-        .includes(needle),
-    );
-  }, [query, variants]);
+    return variants.filter((variant) => {
+      if (category && variant.category !== category) return false;
+      if (!needle) return true;
+      return [variant.productName, variant.strengthLabel, variant.presentation, variant.category, variant.sku]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase()
+          .includes(needle);
+    });
+  }, [category, query, variants]);
+  const pageCount = Math.max(1, Math.ceil(filtered.length / BUYER_CATALOG_PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount - 1);
+  const visibleVariants = useMemo(
+    () => filtered.slice(
+      currentPage * BUYER_CATALOG_PAGE_SIZE,
+      (currentPage + 1) * BUYER_CATALOG_PAGE_SIZE,
+    ),
+    [currentPage, filtered],
+  );
 
   function addVariant(variant: BuyerCatalogVariant, quantity: number) {
     draft.upsert({
@@ -111,6 +135,7 @@ export function BuyerCommerceBridge({
     if (draft.lines.length === 0) return;
     setBusy(true);
     setSubmitError("");
+    setSubmitSuccess("");
     const form = new FormData(event.currentTarget);
     const value = (name: string) => String(form.get(name) ?? "").trim();
     try {
@@ -141,8 +166,16 @@ export function BuyerCommerceBridge({
       };
       const intent = JSON.stringify(requestIntent);
       attempt.current = buyerSubmissionAttempt(attempt.current, intent, makeIdempotencyKey);
-      await onSubmit({ ...requestIntent, idempotencyKey: attempt.current.idempotencyKey });
+      const result = await onSubmit({
+        ...requestIntent,
+        idempotencyKey: attempt.current.idempotencyKey,
+      });
       attempt.current = null;
+      setSubmitSuccess(
+        result
+          ? `Buyer request ${result.requestRef} received. ${result.nextStep}`
+          : "Buyer request received.",
+      );
     } catch {
       setSubmitError(
         "The request could not be submitted. Try again or email research@xeniostechnology.com.",
@@ -167,13 +200,30 @@ export function BuyerCommerceBridge({
       <form onSubmit={submit} className="space-y-8">
         <section aria-labelledby="buyer-catalog-heading">
           <h2 id="buyer-catalog-heading" className="text-2xl font-semibold">Choose products</h2>
-          <input
-            aria-label="Search catalog"
-            className="input mt-4 w-full"
-            placeholder="Search product, strength, presentation, category, or SKU"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
+          <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(12rem,18rem)]">
+            <input
+              aria-label="Search catalog"
+              className="input w-full"
+              placeholder="Search product, strength, presentation, category, or SKU"
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setPage(0);
+              }}
+            />
+            <select
+              aria-label="Filter catalog by category"
+              className="input w-full"
+              value={category}
+              onChange={(event) => {
+                setCategory(event.target.value);
+                setPage(0);
+              }}
+            >
+              <option value="">All categories</option>
+              {categories.map((entry) => <option key={entry} value={entry}>{entry}</option>)}
+            </select>
+          </div>
 
           <div className="card mt-4 p-5">
             <label htmlFor="buyer-bulk-order" className="font-semibold">Paste a bulk list</label>
@@ -194,8 +244,36 @@ export function BuyerCommerceBridge({
             )}
           </div>
 
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm text-ink-mute">
+            <p aria-live="polite">
+              {filtered.length === 0
+                ? "No exact variants match this search."
+                : `${filtered.length} exact variants · page ${currentPage + 1} of ${pageCount}`}
+            </p>
+            {pageCount > 1 && (
+              <div className="flex gap-2" aria-label="Catalog pages">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  disabled={currentPage === 0}
+                  onClick={() => setPage((value) => Math.max(0, value - 1))}
+                >
+                  Previous products
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  disabled={currentPage >= pageCount - 1}
+                  onClick={() => setPage((value) => Math.min(pageCount - 1, value + 1))}
+                >
+                  Next products
+                </button>
+              </div>
+            )}
+          </div>
+
           <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((variant) => {
+            {visibleVariants.map((variant) => {
               const exactKey = buyerVariantKey(variant);
               const quantity = quantities[exactKey] ?? 1;
               return (
@@ -237,7 +315,7 @@ export function BuyerCommerceBridge({
                   <p className="mt-2 text-xs text-ink-mute">
                     {variant.carePathway
                       ? "This exact variant routes to the existing Care pathway."
-                      : variant.directPurchaseAuthorized
+                      : variant.directPurchaseAuthorized && variant.directQuantityLimit !== null
                         ? `Direct checkout currently covers up to ${variant.directQuantityLimit} for this exact variant; other orderable configurations use the existing order-request path.`
                         : "This exact variant uses the existing order-request path."}
                   </p>
@@ -304,6 +382,7 @@ export function BuyerCommerceBridge({
         </section>
 
         {submitError && <p className="text-red-700" role="alert">{submitError}</p>}
+        {submitSuccess && <p className="text-green-800" role="status">{submitSuccess}</p>}
         <button className="btn btn-primary" type="submit" disabled={busy || draft.lines.length === 0}>
           {busy ? "Submitting…" : "Submit buyer request"}
         </button>

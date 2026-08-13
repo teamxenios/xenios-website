@@ -196,7 +196,7 @@ describe("Product Control buyer catalog adapter", () => {
         approvedPriceCents: 5_000,
         currency: "USD",
         waivedBlockers: [...released.blockers],
-        approvedQuantityLimit: 20,
+        approvedQuantityLimit: 50,
         expiresAt: null,
         actor: "Samuel Boadu",
         reason: "Founder release for quantity authority regression coverage.",
@@ -225,7 +225,7 @@ describe("Product Control buyer catalog adapter", () => {
     const byOffering = new Map(projected.map((variant) => [variant.offeringId, variant]));
     expect(byOffering.get("release-no-cap")).toMatchObject({
       directPurchaseAuthorized: true,
-      directQuantityLimit: 20,
+      directQuantityLimit: 50,
       directAuthorityBasis: "founder_release",
     });
     expect(byOffering.get("release-narrow-cap")).toMatchObject({
@@ -242,6 +242,52 @@ describe("Product Control buyer catalog adapter", () => {
       directPurchaseAuthorized: false,
       directQuantityLimit: null,
       directAuthorityBasis: null,
+    });
+  });
+
+  it("does not inflate an explicitly narrower founder release to the global quantity band", async () => {
+    const limitedRelease = row("limited-release");
+    limitedRelease.purchasable = false;
+    limitedRelease.quantityLimit = null;
+    limitedRelease.blockers = ["DOCUMENTATION_NOT_SATISFIED"];
+    const releases = new InMemoryEarlyAccessReleaseLedger();
+    expect(await releases.append({
+      releaseId: "rel-explicit-limit-020",
+      productId: limitedRelease.productId,
+      variantId: limitedRelease.variantId,
+      productVersion: earlyAccessReleaseVersion(limitedRelease),
+      status: "approved",
+      approvedPriceCents: 5_000,
+      currency: "USD",
+      waivedBlockers: [...limitedRelease.blockers],
+      approvedQuantityLimit: 20,
+      expiresAt: null,
+      actor: "Samuel Boadu",
+      reason: "Explicit narrower authority remains a fail-closed ceiling.",
+      recordedAt: NOW.toISOString(),
+    })).toMatchObject({ ok: true });
+    const adapter = new ProductControlBuyerCatalog({
+      productControl: {
+        readCatalog: async () => [product("limited-release", "research_material")],
+      },
+      earlyAccess: {
+        load: async () => ({
+          evaluatedAt: NOW.toISOString(),
+          rows: [limitedRelease],
+          productsWithoutVariants: [],
+        }),
+      },
+      releases,
+    });
+
+    const [projected] = await adapter.variants({
+      customerRef: "eac_0123456789abcdef0123456789abcdef",
+      at: NOW,
+    });
+    expect(projected).toMatchObject({
+      directPurchaseAuthorized: true,
+      directQuantityLimit: 20,
+      directAuthorityBasis: "founder_release",
     });
   });
 });

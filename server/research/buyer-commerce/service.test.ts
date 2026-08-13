@@ -133,6 +133,8 @@ describe("buyer commerce bridge", () => {
     expect(receipt.customerRef).toBe("eac_durablebuyer000000000000000001");
     expect(h.requests.record?.customerRef).toBe(receipt.customerRef);
     expect(h.requests.record?.resolvedLines).toHaveLength(6);
+    expect(receipt.nextStep).toContain("existing cart");
+    expect(receipt.nextStep).toContain("order-request or Care pathway");
   });
 
   it("uses an order request above explicit exact-variant authority without quantity-review semantics", async () => {
@@ -147,6 +149,8 @@ describe("buyer commerce bridge", () => {
       disposition: "order_request",
       reason: "DIRECT_AUTHORITY_UNAVAILABLE",
     });
+    expect(receipt.nextStep).not.toContain("existing cart");
+    expect(receipt.nextStep).toContain("follow up");
   });
 
   it("routes care through Care and refuses an unknown or mismatched exact variant", async () => {
@@ -197,6 +201,19 @@ describe("buyer commerce bridge", () => {
     const first = await submitBuyerRequest(h.dependencies, payload());
     const replay = await submitBuyerRequest(h.dependencies, payload());
     expect(replay).toMatchObject({ requestRef: first.requestRef, replayed: true });
+    expect(h.audit.all()).toHaveLength(1);
+    expect(h.notify).toHaveBeenCalledOnce();
+  });
+
+  it("collapses concurrent double submission to one durable request and one side-effect projection", async () => {
+    const h = harness([variant("v1")]);
+    const [left, right] = await Promise.all([
+      submitBuyerRequest(h.dependencies, payload()),
+      submitBuyerRequest(h.dependencies, payload()),
+    ]);
+
+    expect([left.replayed, right.replayed].sort()).toEqual([false, true]);
+    expect(left.requestRef).toBe(right.requestRef);
     expect(h.audit.all()).toHaveLength(1);
     expect(h.notify).toHaveBeenCalledOnce();
   });
