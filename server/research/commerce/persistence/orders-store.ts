@@ -160,6 +160,42 @@ export interface OrderStateEventInsert {
   idempotency_key: string | null;
 }
 
+export const CHECKOUT_INTENT_MARKER = "checkout_intent_sha256:";
+const SHA256 = /^[a-f0-9]{64}$/;
+
+export function isCheckoutIntentMetadata(value: string): boolean {
+  return value.startsWith(CHECKOUT_INTENT_MARKER);
+}
+
+function decodeReviewTriggers(values: readonly string[] | null): {
+  reviewTriggers: string[];
+  checkoutIntentHash: string | null;
+} {
+  const reviewTriggers: string[] = [];
+  const hashes: string[] = [];
+  for (const value of values ?? []) {
+    if (!isCheckoutIntentMetadata(value)) {
+      reviewTriggers.push(value);
+      continue;
+    }
+    const hash = value.slice(CHECKOUT_INTENT_MARKER.length);
+    if (!SHA256.test(hash)) throw new Error("order carries a malformed checkout intent hash");
+    hashes.push(hash);
+  }
+  if (hashes.length > 1) throw new Error("order carries ambiguous checkout intent hashes");
+  return { reviewTriggers, checkoutIntentHash: hashes[0] ?? null };
+}
+
+function encodeReviewTriggers(order: OrderRecord): string[] {
+  const hash = order.checkoutIntentHash ?? null;
+  if (hash !== null && !SHA256.test(hash)) {
+    throw new Error(`order ${order.orderId} carries a malformed checkout intent hash`);
+  }
+  return hash === null
+    ? [...order.reviewTriggers]
+    : [...order.reviewTriggers, `${CHECKOUT_INTENT_MARKER}${hash}`];
+}
+
 // ---------------------------------------------------------------------------
 // Pure row mapping (fully unit-tested in isolation).
 // ---------------------------------------------------------------------------
@@ -253,6 +289,7 @@ export function headerRowToOrder(
   if (!(ORDER_STATES as readonly string[]).includes(row.state)) {
     throw new Error(`order ${row.id} carries an unknown state: ${row.state}`);
   }
+  const decodedReview = decodeReviewTriggers(row.review_triggers);
   const record: OrderRecord = {
     orderId: row.id,
     memberId: row.member_id,
@@ -266,8 +303,9 @@ export function headerRowToOrder(
     },
     providerReference: row.payment_reference ?? null,
     checkoutIdempotencyKey: row.checkout_idempotency_key ?? null,
+    checkoutIntentHash: decodedReview.checkoutIntentHash,
     lastIdempotencyKey: row.last_idempotency_key ?? null,
-    reviewTriggers: row.review_triggers ?? [],
+    reviewTriggers: decodedReview.reviewTriggers,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -313,7 +351,7 @@ export function orderToHeaderRow(order: OrderRecord): OrderHeaderInsert {
     payment_reference: order.providerReference,
     checkout_idempotency_key: order.checkoutIdempotencyKey,
     last_idempotency_key: order.lastIdempotencyKey,
-    review_triggers: order.reviewTriggers,
+    review_triggers: encodeReviewTriggers(order),
     approved_by: order.approvedBy ?? null,
     approved_at: order.approvedAt ?? null,
     cancellation_reason: order.cancellationReason ?? null,
@@ -368,6 +406,14 @@ export function createInMemoryOrderStore(seed: readonly OrderRecord[] = []): Asy
       return found ? cloneOrder(found) : null;
     },
     async save(order) {
+      const prior = rows.get(order.orderId);
+      if (
+        prior !== undefined &&
+        (prior.checkoutIdempotencyKey !== order.checkoutIdempotencyKey ||
+          (prior.checkoutIntentHash ?? null) !== (order.checkoutIntentHash ?? null))
+      ) {
+        throw new Error(`order ${order.orderId} checkout identity is immutable`);
+      }
       rows.set(order.orderId, cloneOrder(order));
     },
     async listByMember(memberId) {
@@ -439,19 +485,27 @@ export function createSupabaseOrderStore(
       // from -> to transition. A save that does not change state records nothing.
       const prior = await client
         .from(ORDERS)
-        .select("state, checkout_idempotency_key")
+        .select("state, checkout_idempotency_key, review_triggers")
         .eq("id", order.orderId)
         .maybeSingle();
       if (prior.error) throw new Error(`order state read failed: ${prior.error.message}`);
       const priorRow = prior.data as
-        | { state: string; checkout_idempotency_key: string | null }
+        | {
+            state: string;
+            checkout_idempotency_key: string | null;
+            review_triggers: string[] | null;
+          }
         | null;
       const priorState = priorRow?.state ?? null;
+      const priorIntent = priorRow === null
+        ? null
+        : decodeReviewTriggers(priorRow.review_triggers).checkoutIntentHash;
       if (
         priorRow !== null &&
-        priorRow.checkout_idempotency_key !== order.checkoutIdempotencyKey
+        (priorRow.checkout_idempotency_key !== order.checkoutIdempotencyKey ||
+          priorIntent !== (order.checkoutIntentHash ?? null))
       ) {
-        throw new Error(`order ${order.orderId} checkout idempotency key is immutable`);
+        throw new Error(`order ${order.orderId} checkout identity is immutable`);
       }
 
       const up = await client.from(ORDERS).upsert(orderToHeaderRow(order), { onConflict: "id" });

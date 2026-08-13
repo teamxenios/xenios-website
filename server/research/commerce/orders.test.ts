@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { DisabledPaymentProvider, TestPaymentProvider } from "../providers/payment";
 import {
   createOrderService,
+  findOrderForCheckoutReplay,
   type OrderRecord,
   type OrderRepository,
   type OrderServiceDeps,
@@ -31,6 +32,37 @@ function order(overrides: Partial<OrderRecord> = {}): OrderRecord {
     ...overrides,
   };
 }
+
+describe("checkout replay lookup", () => {
+  it("matches the immutable checkout key and ignores a later mutable transition key", async () => {
+    const repo = repository([
+      order({
+        checkoutIdempotencyKey: "checkout_original",
+        lastIdempotencyKey: "admin_transition",
+      }),
+    ]);
+
+    expect(await findOrderForCheckoutReplay(repo, "mem_1", "checkout_original"))
+      .toMatchObject({ state: "found", order: { orderId: "ord_1" } });
+    expect(await findOrderForCheckoutReplay(repo, "mem_1", "admin_transition"))
+      .toEqual({ state: "not_found" });
+  });
+
+  it("uses the mutable-key fallback only for a legacy null checkout key", async () => {
+    const repo = repository([order({ checkoutIdempotencyKey: null, lastIdempotencyKey: "legacy" })]);
+    expect(await findOrderForCheckoutReplay(repo, "mem_1", "legacy"))
+      .toMatchObject({ state: "found", order: { orderId: "ord_1" } });
+  });
+
+  it("refuses ambiguous checkout-key candidates", async () => {
+    const repo = repository([
+      order({ orderId: "ord_1", checkoutIdempotencyKey: "duplicate" }),
+      order({ orderId: "ord_2", checkoutIdempotencyKey: "duplicate" }),
+    ]);
+    expect(await findOrderForCheckoutReplay(repo, "mem_1", "duplicate"))
+      .toEqual({ state: "ambiguous" });
+  });
+});
 
 /** In-memory repository. Counts saves so a denial that writes anything is caught. */
 function repository(seed: OrderRecord[] = []): OrderRepository & { saves: number } {

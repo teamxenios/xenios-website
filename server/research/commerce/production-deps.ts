@@ -19,6 +19,7 @@ import { adaptLegacyCatalog } from "../catalog/legacy-adapter";
 import { createCatalogService, type CatalogService } from "../catalog/catalog-service";
 import { createCartService, type CartService } from "./cart";
 import {
+  canonicalCheckoutIntentHash,
   createCheckoutService,
   createInventoryReservationSeam,
   DEFAULT_PACKAGE_WEIGHT_GRAMS,
@@ -27,6 +28,7 @@ import {
 } from "./checkout";
 import {
   createOrderService,
+  findOrderForCheckoutReplay,
   type OrderRecord,
   type OrderRepository,
   type OrderResult,
@@ -750,6 +752,7 @@ function checkoutOrderToRecord(order: CheckoutOrder, asOf: Date): OrderRecord {
     providerReference: order.paymentReference,
     ...(order.paymentReference !== null ? { authorizedAmountCents: order.totalCents } : {}),
     checkoutIdempotencyKey: order.idempotencyKey,
+    checkoutIntentHash: order.intentHash,
     lastIdempotencyKey: order.idempotencyKey,
     reviewTriggers: [...order.reviewTriggers],
     createdAt: order.placedAt,
@@ -1171,19 +1174,38 @@ function liveDependencies(
     },
     checkout: {
       submit: async (memberId, req, asOf) => {
-        // THE CROSS-INSTANCE REPLAY GATE. The service's idempotency map lives
-        // in process memory, so after a restart (or on a second instance over
-        // the same database) a replayed key would re-run settlement projection
-        // and save over a durable record an admin or provider may have
-        // advanced since. The durable order projection is therefore consulted
-        // FIRST: a key that already projected an order for THIS member answers
-        // with that order's current truth, runs no service, touches no
-        // provider, and saves nothing. (A key the member reused across two
-        // different operations resolves to the order it is already bound to,
-        // never to a second charge, which is the safe direction.)
+        // THE CROSS-INSTANCE REPLAY GATE. A replay is identified only by the
+        // immutable checkout key (with a legacy last-key fallback solely while
+        // that immutable field is null), and its revalidated cart/request must
+        // still hash to the intent the durable order owns. Ambiguity, a missing
+        // hash on a non-legacy row, or a changed intent refuses closed. Thus a
+        // restart cannot turn a transition key into checkout authority, silently
+        // accept changed money/address terms, or overwrite an advanced order.
         if (typeof req?.idempotencyKey === "string" && req.idempotencyKey.length > 0) {
-          const settled = await orderRepository.findByIdempotencyKey(memberId, req.idempotencyKey);
-          if (settled) {
+          const replayCart = await (await cartServiceFor(memberId, asOf)).revalidate(memberId, asOf);
+          const incomingIntentHash = canonicalCheckoutIntentHash(memberId, req, replayCart);
+          const replay = await findOrderForCheckoutReplay(
+            orderRepository,
+            memberId,
+            req.idempotencyKey,
+          );
+          if (replay.state === "ambiguous") {
+            return {
+              ok: false as const,
+              code: "idempotency_conflict" as const,
+              codes: ["idempotency_conflict" as const],
+            };
+          }
+          if (replay.state === "found") {
+            const settled = replay.order;
+            const isLegacy = settled.checkoutIdempotencyKey === null;
+            if (!isLegacy && settled.checkoutIntentHash !== incomingIntentHash) {
+              return {
+                ok: false as const,
+                code: "idempotency_conflict" as const,
+                codes: ["idempotency_conflict" as const],
+              };
+            }
             return { ok: true as const, order: orderRecordToMemberConfirmation(settled) };
           }
         }

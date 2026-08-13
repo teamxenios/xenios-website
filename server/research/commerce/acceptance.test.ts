@@ -25,7 +25,7 @@
 // the inventory reservation seam (CommerceWiring.resolveReservationStore),
 // admin order approve/capture/cancel and the fulfillment status webhook are
 // real routes, and a settled checkout idempotency key is answered from the
-// durable order projection (findByIdempotencyKey) on a SECOND app instance,
+// durable order projection on a SECOND app instance,
 // so a restart replay can no longer re-run settlement projection over an
 // advanced record.
 //
@@ -55,15 +55,11 @@
 //     that lane's own suites (server/research/membership.test.ts,
 //     server/research/member-platform.test.ts) and is deliberately excluded
 //     here rather than half-mounted.
-//   - residual, recorded: an admin capture writes its own key into the
-//     record's last_idempotency_key, so a checkout-key replay AFTER an admin
-//     capture relies on the durable store's separate checkout_idempotency_key
-//     column (the in-memory twin models only the one key). On that narrow
-//     path the replay could re-run the service; order ids are now globally
-//     unique (checkout.ts mints uuids), so the worst case is a duplicate
-//     UNCAPTURED row, never an overwrite of the advanced record and never a
-//     second charge (the provider deduplicates the authorization key and
-//     refuses a double capture).
+//   - checkout replay identity is exact in both durable and in-memory stores:
+//     the immutable checkout key is distinct from later transition keys, a
+//     canonical server-derived intent hash must still match after a restart,
+//     legacy mutable-key fallback applies only to rows whose immutable key is
+//     null, and ambiguous candidates refuse closed.
 
 import { describe, expect, it } from "vitest";
 import request from "supertest";

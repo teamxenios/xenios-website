@@ -37,6 +37,7 @@ function order(overrides: Partial<OrderRecord> = {}): OrderRecord {
     },
     providerReference: null,
     checkoutIdempotencyKey: null,
+    checkoutIntentHash: null,
     lastIdempotencyKey: null,
     reviewTriggers: [],
     createdAt: NOW,
@@ -130,6 +131,37 @@ describe("header row mapping round-trip", () => {
     expect(header.checkout_idempotency_key).toBe("checkout_key_original");
     expect(header.last_idempotency_key).toBe("webhook_key_later");
     expect(headerRowToOrder(header, orderToLineRows(rec.orderId, rec))).toEqual(rec);
+  });
+
+  it("persists the checkout intent in reserved internal metadata without leaking it as a review trigger", () => {
+    const hash = "a".repeat(64);
+    const rec = order({ checkoutIntentHash: hash, reviewTriggers: ["total_exceeds_threshold"] });
+    const header = orderToHeaderRow(rec);
+    expect(header.review_triggers).toEqual([
+      "total_exceeds_threshold",
+      `checkout_intent_sha256:${hash}`,
+    ]);
+    const back = headerRowToOrder(header, orderToLineRows(rec.orderId, rec));
+    expect(back.checkoutIntentHash).toBe(hash);
+    expect(back.reviewTriggers).toEqual(["total_exceeds_threshold"]);
+  });
+
+  it("refuses malformed or ambiguous persisted checkout intent metadata", () => {
+    const base = orderToHeaderRow(order());
+    expect(() => headerRowToOrder(
+      { ...base, review_triggers: ["checkout_intent_sha256:not-a-hash"] },
+      [],
+    )).toThrow(/malformed checkout intent hash/);
+    expect(() => headerRowToOrder(
+      {
+        ...base,
+        review_triggers: [
+          `checkout_intent_sha256:${"a".repeat(64)}`,
+          `checkout_intent_sha256:${"b".repeat(64)}`,
+        ],
+      },
+      [],
+    )).toThrow(/ambiguous checkout intent hashes/);
   });
 
   it("carries the authorized and captured amounts when present", () => {
@@ -264,6 +296,22 @@ describe("createInMemoryOrderStore", () => {
     }));
     expect((await store.findByIdempotencyKey("mem_1", "checkout_key_original"))?.orderId).toBe("ord_1");
     expect((await store.findByIdempotencyKey("mem_1", "webhook_key_later"))?.orderId).toBe("ord_1");
+  });
+
+  it("refuses replacement of either immutable checkout identity field", async () => {
+    const store = createInMemoryOrderStore();
+    await store.save(order({
+      checkoutIdempotencyKey: "checkout_original",
+      checkoutIntentHash: "a".repeat(64),
+    }));
+    await expect(store.save(order({
+      checkoutIdempotencyKey: "checkout_replacement",
+      checkoutIntentHash: "a".repeat(64),
+    }))).rejects.toThrow(/checkout identity is immutable/);
+    await expect(store.save(order({
+      checkoutIdempotencyKey: "checkout_original",
+      checkoutIntentHash: "b".repeat(64),
+    }))).rejects.toThrow(/checkout identity is immutable/);
   });
 
   it("lists all orders across members for the admin queue", async () => {
@@ -551,6 +599,19 @@ describe("createSupabaseOrderStore (fake client)", () => {
     expect((await store.findByIdempotencyKey("mem_1", "checkout_key"))!.orderId).toBe("ord_c");
   });
 
+  it("round-trips and keeps the checkout intent hash immutable", async () => {
+    const { client, orders } = fakeSupabase();
+    const store = createSupabaseOrderStore(client);
+    const hash = "a".repeat(64);
+    await store.save(order({ checkoutIdempotencyKey: "checkout_key", checkoutIntentHash: hash }));
+    expect((await store.get("ord_1"))!.checkoutIntentHash).toBe(hash);
+    expect(orders.get("ord_1")?.review_triggers).toContain(`checkout_intent_sha256:${hash}`);
+    await expect(store.save(order({
+      checkoutIdempotencyKey: "checkout_key",
+      checkoutIntentHash: "b".repeat(64),
+    }))).rejects.toThrow(/checkout identity is immutable/);
+  });
+
   it("refuses to replace the original checkout key on a later save", async () => {
     const { client, orders } = fakeSupabase();
     const store = createSupabaseOrderStore(client);
@@ -560,7 +621,7 @@ describe("createSupabaseOrderStore (fake client)", () => {
       state: "processing",
       checkoutIdempotencyKey: "checkout_key_replacement",
       lastIdempotencyKey: "admin_transition_key",
-    }))).rejects.toThrow(/checkout idempotency key is immutable/);
+    }))).rejects.toThrow(/checkout identity is immutable/);
 
     expect(orders.get("ord_1")?.checkout_idempotency_key).toBe("checkout_key_original");
   });

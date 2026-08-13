@@ -14,7 +14,7 @@
 // Nothing here marks an order paid on its own: every advance goes through
 // `transitionOrder`, which requires a provider reference for a paid state.
 
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import type { CartDto, CheckoutRequest, CommerceDenialCode } from "@shared/research/commerce-api";
 import {
   evaluateLargeOrderReview,
@@ -163,6 +163,8 @@ export interface CheckoutOrder {
   captured: boolean;
   reviewTriggers: LargeOrderTrigger[];
   idempotencyKey: string;
+  /** Server-derived identity of the cart and checkout request this key owns. */
+  intentHash: string;
   /** The inventory holds backing this order. Empty when no seam is wired. */
   reservationIds: string[];
 }
@@ -235,6 +237,69 @@ interface Evaluation {
   quote: ShippingQuote | null;
 }
 
+function checkoutDigest(value: unknown): string {
+  return createHash("sha256").update(JSON.stringify(value), "utf8").digest("hex");
+}
+
+function normalizedCheckoutRequest(memberId: string, req: CheckoutRequest): readonly unknown[] {
+  const address = req.shippingAddress;
+  return [
+    memberId,
+    [
+      address.line1.trim(),
+      address.line2?.trim() ?? "",
+      address.city.trim(),
+      address.state.trim().toUpperCase(),
+      address.postalCode.trim(),
+      address.country,
+    ],
+    req.shippingService,
+    req.applyStoreCreditCents ?? 0,
+    [...new Set(req.acceptedAgreementKeys)].sort(),
+    req.researchAttestation === true,
+  ];
+}
+
+/**
+ * Canonical server-side checkout intent. Prices and quantities come from the
+ * revalidated cart, never from request money. The payment-method token is
+ * deliberately absent: replacing an expired provider token does not create a
+ * different order, while changing an address, cart, credit, agreement set, or
+ * shipping service does.
+ */
+export function canonicalCheckoutIntentHash(
+  memberId: string,
+  req: CheckoutRequest,
+  cart: CartDto,
+): string {
+  const lines = [...cart.lines]
+    .map((line) => [
+      line.sku,
+      line.quantity,
+      line.purchaseMode,
+      line.subscriptionFrequencyDays ?? null,
+      line.unitPriceCents,
+      line.lineTotalCents,
+    ] as const)
+    .sort(([left], [right]) => left.localeCompare(right));
+  const shipments = [...cart.shipmentGroups]
+    .map((group) => [group.owner, [...group.skus].sort()] as const)
+    .sort(([left], [right]) => left.localeCompare(right));
+  return checkoutDigest([
+    ...normalizedCheckoutRequest(memberId, req),
+    lines,
+    shipments,
+    cart.subtotalCents,
+    cart.shippingCents,
+    cart.storeCreditAppliedCents,
+    cart.estimatedTotalCents,
+  ]);
+}
+
+function checkoutRequestFingerprint(memberId: string, req: CheckoutRequest): string {
+  return checkoutDigest(normalizedCheckoutRequest(memberId, req));
+}
+
 export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
   const orders = new Map<string, CheckoutOrder>();
   /** Idempotency is scoped per member so two members cannot collide on one key. */
@@ -248,7 +313,10 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
    * An in-flight entry is claimed before any await, so the second submission joins
    * the first instead of racing it.
    */
-  const inFlight = new Map<string, Promise<CheckoutOutcome>>();
+  const inFlight = new Map<
+    string,
+    { requestFingerprint: string; outcome: Promise<CheckoutOutcome> }
+  >();
 
   /**
    * Probes the payment provider without side effects. A provider that cannot take a
@@ -346,15 +414,24 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     asOf: Date,
   ): Promise<CheckoutOutcome> {
     const idempotencyScope = `${memberId}:${req.idempotencyKey}`;
+    const requestFingerprint = checkoutRequestFingerprint(memberId, req);
 
     const existingId = byIdempotencyKey.get(idempotencyScope);
     if (existingId) {
-      return { ok: true, order: orders.get(existingId)!, idempotent: true };
+      const existing = orders.get(existingId)!;
+      const cart = await deps.cart.revalidate(memberId, asOf);
+      const intentHash = canonicalCheckoutIntentHash(memberId, req, cart);
+      return existing.intentHash === intentHash
+        ? { ok: true, order: existing, idempotent: true }
+        : { ok: false, denials: ["idempotency_conflict"] };
     }
 
     const running = inFlight.get(idempotencyScope);
     if (running) {
-      const outcome = await running;
+      if (running.requestFingerprint !== requestFingerprint) {
+        return { ok: false, denials: ["idempotency_conflict"] };
+      }
+      const outcome = await running.outcome;
       // A duplicate never creates a second order, so it reports the first one.
       return outcome.ok ? { ...outcome, idempotent: true } : outcome;
     }
@@ -362,7 +439,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     // Claimed synchronously. `performSubmit` runs up to its own first await before
     // this line, and no other submission can interleave until then.
     const run = performSubmit(memberId, req, asOf, idempotencyScope);
-    inFlight.set(idempotencyScope, run);
+    inFlight.set(idempotencyScope, { requestFingerprint, outcome: run });
     try {
       return await run;
     } finally {
@@ -383,6 +460,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     if (!denials.empty || quote === null) {
       return { ok: false, denials: denials.list };
     }
+    const intentHash = canonicalCheckoutIntentHash(memberId, req, cart);
 
     /**
      * The inventory hold, taken only after every gate has passed and BEFORE any
@@ -461,6 +539,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       captured: false,
       reviewTriggers: [],
       idempotencyKey: req.idempotencyKey,
+      intentHash,
       reservationIds,
     };
 

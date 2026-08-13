@@ -81,6 +81,11 @@ export interface OrderRecord {
    * later webhook/admin transitions replace `lastIdempotencyKey`.
    */
   checkoutIdempotencyKey: string | null;
+  /**
+   * Server-derived checkout intent bound to the immutable checkout key. Null
+   * identifies a legacy row created before intent binding existed.
+   */
+  checkoutIntentHash?: string | null;
   lastIdempotencyKey: string | null;
   reviewTriggers: string[];
   createdAt: string;
@@ -106,6 +111,32 @@ export interface OrderRepository {
   findByIdempotencyKey(memberId: string, key: string): Promise<OrderRecord | null>;
   /** Admin-only cross-member listing. The review queue has no single member. */
   listAll(): Promise<OrderRecord[]>;
+}
+
+export type CheckoutOrderLookup =
+  | { state: "not_found" }
+  | { state: "found"; order: OrderRecord }
+  | { state: "ambiguous" };
+
+/**
+ * Checkout replay lookup is intentionally narrower than transition replay.
+ * New rows match only the immutable checkout key. A legacy row may fall back
+ * to its mutable last key only while its immutable key is null. More than one
+ * candidate is corruption and is refused instead of selecting by row order.
+ */
+export async function findOrderForCheckoutReplay(
+  repository: Pick<OrderRepository, "listByMember">,
+  memberId: string,
+  key: string,
+): Promise<CheckoutOrderLookup> {
+  const matches = (await repository.listByMember(memberId)).filter(
+    (order) =>
+      order.checkoutIdempotencyKey === key ||
+      (order.checkoutIdempotencyKey === null && order.lastIdempotencyKey === key),
+  );
+  if (matches.length === 0) return { state: "not_found" };
+  if (matches.length !== 1) return { state: "ambiguous" };
+  return { state: "found", order: matches[0] };
 }
 
 export interface OrderServiceDeps {

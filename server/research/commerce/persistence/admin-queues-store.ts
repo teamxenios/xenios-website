@@ -76,6 +76,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdmin, supabaseConfigured } from "../../../supabase";
+import { isCheckoutIntentMetadata } from "./orders-store";
 
 export const COMMERCE_QUEUE_KINDS = [
   "large_order_review",
@@ -231,7 +232,9 @@ export function deriveLargeOrderReview(rows: readonly OrderReviewSourceRow[]): C
           orderId: row.id,
           grossValueCents: grossCents,
           storeCreditAppliedCents: row.store_credit_applied_cents,
-          reviewTriggers: [...(row.review_triggers ?? [])],
+          reviewTriggers: (row.review_triggers ?? []).filter(
+            (trigger) => !isCheckoutIntentMetadata(trigger),
+          ),
         },
       };
     });

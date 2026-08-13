@@ -575,6 +575,51 @@ describe("idempotency", () => {
     expect(authorize).toHaveBeenCalledTimes(1);
   });
 
+  it("refuses the same key when the checkout address changes", async () => {
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+    const service = createCheckoutService(deps({ payment }));
+
+    const first = await service.submit("mem_1", request(), NOW);
+    const changed = await service.submit(
+      "mem_1",
+      request({
+        shippingAddress: {
+          line1: "200 Other St",
+          city: "Houston",
+          state: "TX",
+          postalCode: "77002",
+          country: "US",
+        },
+      }),
+      NOW,
+    );
+
+    expect(first.ok).toBe(true);
+    expect(changed).toEqual({ ok: false, denials: ["idempotency_conflict"] });
+    expect(authorize).toHaveBeenCalledTimes(1);
+  });
+
+  it("refuses the same key when the revalidated cart changes", async () => {
+    let currentCart = cart();
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+    const service = createCheckoutService(deps({
+      payment,
+      cart: { revalidate: async () => currentCart },
+    }));
+
+    expect((await service.submit("mem_1", request(), NOW)).ok).toBe(true);
+    currentCart = cart({
+      lines: [{ ...cart().lines[0], quantity: 3, lineTotalCents: 29700 }],
+      subtotalCents: 29700,
+      estimatedTotalCents: 30995,
+    });
+    expect(await service.submit("mem_1", request(), NOW))
+      .toEqual({ ok: false, denials: ["idempotency_conflict"] });
+    expect(authorize).toHaveBeenCalledTimes(1);
+  });
+
   it("scopes the key per member so two members cannot collide", async () => {
     const service = createCheckoutService(deps());
     const first = await service.submit("mem_1", request(), NOW);
@@ -615,6 +660,21 @@ describe("idempotency", () => {
     if (first.ok && second.ok) {
       expect(second.order.orderId).toBe(first.order.orderId);
     }
+    expect(authorize).toHaveBeenCalledTimes(1);
+  });
+
+  it("refuses a concurrent reuse of one key with different request intent", async () => {
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+    const service = createCheckoutService(deps({ payment }));
+
+    const [first, conflict] = await Promise.all([
+      service.submit("mem_1", request(), NOW),
+      service.submit("mem_1", request({ shippingService: "temperature_controlled" }), NOW),
+    ]);
+
+    expect(first.ok).toBe(true);
+    expect(conflict).toEqual({ ok: false, denials: ["idempotency_conflict"] });
     expect(authorize).toHaveBeenCalledTimes(1);
   });
 

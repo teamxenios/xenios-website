@@ -189,7 +189,7 @@ describe("deriveLargeOrderReview", () => {
         subtotal_cents: 48000,
         shipping_cents: 2500,
         store_credit_applied_cents: 3000,
-        review_triggers: ["value_threshold"],
+        review_triggers: ["value_threshold", `checkout_intent_sha256:${"a".repeat(64)}`],
         created_at: T0,
       },
       {
@@ -206,6 +206,7 @@ describe("deriveLargeOrderReview", () => {
     expect(items).toHaveLength(1);
     // Gross value, not the credit-reduced total: credit cannot shrink review.
     expect(items[0].detail).toMatchObject({ orderId: "o1", grossValueCents: 50500, storeCreditAppliedCents: 3000 });
+    expect(items[0].detail).toMatchObject({ reviewTriggers: ["value_threshold"] });
   });
 });
 

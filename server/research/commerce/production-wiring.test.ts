@@ -536,6 +536,7 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
     expect(stored!.providerReference).toMatch(/^test_auth_/);
     expect(stored!.capturedAmountCents).toBe(stored!.totals.totalCents);
     expect(stored!.checkoutIdempotencyKey).toBe("wire-key-1");
+    expect(stored!.checkoutIntentHash).toMatch(/^[a-f0-9]{64}$/);
 
     // Idempotent replay: same key, same order, no second charge, and the
     // stored record is not overwritten by the replay.
@@ -870,6 +871,55 @@ describe("state 3: cross-instance checkout replay", () => {
     expect(stored.capturedAmountCents).toBe(stored.totals.totalCents);
     expect(stored.checkoutIdempotencyKey).toBe("wire-restart-1");
     expect(stored.updatedAt).toBe(advanced.updatedAt);
+  });
+
+  it("refuses a restarted same-key request when its canonical intent changed", async () => {
+    const setup = await liveSetup();
+    await placeOrder(setup.deps, "mem_intent", "wire-intent-1");
+    const authorize = vi.spyOn(setup.payment, "createAuthorization");
+    const deps2 = buildCommerceDependencies(NOW, LIVE_ENV, setup.wiring);
+
+    const conflict = await deps2.checkout.submit(
+      "mem_intent",
+      checkoutRequest({
+        idempotencyKey: "wire-intent-1",
+        shippingAddress: {
+          line1: "2 Changed St",
+          city: "Austin",
+          state: "TX",
+          postalCode: "78701",
+          country: "US",
+        },
+      }),
+      AS_OF,
+    );
+
+    expect(conflict).toEqual({
+      ok: false,
+      code: "idempotency_conflict",
+      codes: ["idempotency_conflict"],
+    });
+    expect(authorize).not.toHaveBeenCalled();
+    expect(await setup.orderRepository.listAll()).toHaveLength(1);
+  });
+
+  it("does not treat a non-legacy mutable transition key as checkout replay authority", async () => {
+    const setup = await liveSetup();
+    const placed = await placeOrder(setup.deps, "mem_scope", "checkout-owned-key");
+    const stored = (await setup.orderRepository.get(placed.orderId))!;
+    await setup.orderRepository.save({ ...stored, lastIdempotencyKey: "later-transition-key" });
+
+    const deps2 = buildCommerceDependencies(NOW, LIVE_ENV, setup.wiring);
+    const fresh = await deps2.checkout.submit(
+      "mem_scope",
+      checkoutRequest({ idempotencyKey: "later-transition-key" }),
+      AS_OF,
+    );
+
+    expect(fresh.ok).toBe(true);
+    if (!fresh.ok) return;
+    expect(fresh.order.orderId).not.toBe(placed.orderId);
+    expect(await setup.orderRepository.listAll()).toHaveLength(2);
   });
 });
 
