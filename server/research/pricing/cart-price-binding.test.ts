@@ -208,7 +208,7 @@ describe("bindCartPrice", () => {
   });
 
   it("rejects every malformed quantity without consulting any reader", async () => {
-    for (const quantity of [0, -1, -1000, 1.5, NaN, Infinity, -Infinity, 1e21, 1001]) {
+    for (const quantity of [0, -1, -1000, 1.5, NaN, Infinity, -Infinity, 1e21, 51]) {
       const { deps, calls } = makeDeps();
       const result = await bindCartPrice(bindInput({ quantity }), deps);
       expect(result).toEqual({ state: "rejected", reason: "quantity_invalid" });
@@ -231,8 +231,8 @@ describe("bindCartPrice", () => {
         quantityPolicy: { maxQuantity: 3 },
       }),
     ).resolves.toEqual({ state: "rejected", reason: "quantity_invalid" });
-    expect(DEFAULT_QUANTITY_POLICY.maxQuantity).toBe(1000);
-    for (const maxQuantity of [0, -5, 2.5, NaN, Infinity]) {
+    expect(DEFAULT_QUANTITY_POLICY.maxQuantity).toBe(50);
+    for (const maxQuantity of [0, -5, 2.5, 51, NaN, Infinity]) {
       await expect(
         bindCartPrice(bindInput({ quantity: 1 }), {
           ...makeDeps().deps,

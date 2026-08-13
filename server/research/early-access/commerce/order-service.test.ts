@@ -306,7 +306,7 @@ describe("quantity", () => {
         approvedQuantityLimit: EARLY_ACCESS_MAX_QUANTITY,
       }),
     ];
-    for (const quantity of [1, 2, 3, 20, 21, 49, 50]) {
+    for (const quantity of [1, 2, 3, 20, 21, 25, 49, 50]) {
       const result = await place({
         request: request({ quantity }),
         rows: [wide],

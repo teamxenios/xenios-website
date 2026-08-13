@@ -325,4 +325,42 @@ describe("Subscriptions page", () => {
     expect(bodies[0]).toEqual({ action: "reschedule", rescheduleTo: "2026-09-01" });
     expect(bodies[1]).toEqual({ action: "reschedule", frequencyDays: 60 });
   });
+
+  it("uses the founder 1..50 band for subscription quantity controls", async () => {
+    const calls = stubFetch([
+      OK_LIST,
+      {
+        method: "POST",
+        path: "/api/research/subscriptions/sub-1",
+        status: 200,
+        body: { ok: true, subscription: { ...activeSubscription, quantity: 50 } },
+      },
+    ]);
+    const view = await renderPage(<SubscriptionsPage />);
+    const input = byTestId<HTMLInputElement>(view, "sub-quantity-sub-1");
+    expect(input.max).toBe("50");
+
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!;
+      setter.call(input, "50");
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "sub-quantity-submit-sub-1").click();
+    });
+    await act(async () => {});
+
+    const posts = calls.filter((call) => call.url === "/api/research/subscriptions/sub-1");
+    expect(posts).toHaveLength(1);
+    expect(JSON.parse(String(posts[0].init?.body))).toEqual({ action: "reschedule", quantity: 50 });
+
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!;
+      setter.call(input, "51");
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      byTestId<HTMLButtonElement>(view, "sub-quantity-submit-sub-1").click();
+    });
+    await act(async () => {});
+    expect(calls.filter((call) => call.url === "/api/research/subscriptions/sub-1")).toHaveLength(1);
+  });
 });

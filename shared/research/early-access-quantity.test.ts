@@ -30,6 +30,7 @@ describe("founder normal-order quantity authority", () => {
     expect(routeEarlyAccessQuantity(1)).toEqual({ kind: "direct_cart", quantity: 1 });
     expect(routeEarlyAccessQuantity(20)).toEqual({ kind: "direct_cart", quantity: 20 });
     expect(routeEarlyAccessQuantity(21)).toEqual({ kind: "direct_cart", quantity: 21 });
+    expect(routeEarlyAccessQuantity(25)).toEqual({ kind: "direct_cart", quantity: 25 });
     expect(routeEarlyAccessQuantity(49)).toEqual({ kind: "direct_cart", quantity: 49 });
     expect(routeEarlyAccessQuantity(50)).toEqual({ kind: "direct_cart", quantity: 50 });
     expect(routeEarlyAccessQuantity(51)).toBeNull();

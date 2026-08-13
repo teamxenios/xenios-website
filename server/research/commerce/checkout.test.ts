@@ -359,7 +359,7 @@ describe("large-order review", () => {
     expect(authorize).not.toHaveBeenCalled();
   });
 
-  it("holds an unusual quantity even below the money threshold", async () => {
+  it("does not hold a normal quantity below the money threshold", async () => {
     const service = createCheckoutService(
       deps({
         cart: {
@@ -386,8 +386,8 @@ describe("large-order review", () => {
     const outcome = await service.submit("mem_1", request(), NOW);
     expect(outcome.ok).toBe(true);
     if (outcome.ok) {
-      expect(outcome.order.state).toBe("manual_review");
-      expect(outcome.order.reviewTriggers).toContain("unusual_quantity");
+      expect(outcome.order.state).not.toBe("manual_review");
+      expect(outcome.order.reviewTriggers).not.toContain("unusual_quantity");
     }
   });
 

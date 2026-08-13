@@ -198,8 +198,8 @@ describe("persistent cart repository", () => {
     });
   });
 
-  it("rejects quantity overflow and mismatched selection identities locally", async () => {
-    const rpc = vi.fn();
+  it("accepts Q50 and rejects Q51 before persistence", async () => {
+    const rpc = vi.fn(async () => ({ data: cart, error: null }));
     const repo = createPersistentCartRepository({ rpc });
     const base = {
       expectedCartVersion: null,
@@ -210,8 +210,26 @@ describe("persistent cart repository", () => {
     };
     await expect(repo.putMemberItem(member, {
       ...base,
-      quantity: 1001,
+      quantity: 50,
+    })).resolves.toMatchObject({ ok: true });
+    expect(rpc).toHaveBeenCalledTimes(1);
+    await expect(repo.putMemberItem(member, {
+      ...base,
+      quantity: 51,
     })).resolves.toEqual({ ok: false, code: "invalid_input" });
+    expect(rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects mismatched selection identities locally", async () => {
+    const rpc = vi.fn();
+    const repo = createPersistentCartRepository({ rpc });
+    const base = {
+      expectedCartVersion: null,
+      expectedItemVersion: null,
+      selection,
+      idempotencyKey: "quantity-key-123456",
+      expiresAt: cart.expiresAt,
+    };
     await expect(repo.putMemberItem(member, {
       ...base,
       quantity: 1,

@@ -219,14 +219,14 @@ export function canTransitionOrder(from: OrderState, to: OrderState, actor: Acto
 // Large-order review
 // ---------------------------------------------------------------------------
 
-/** Founder decision: review above $1,000, or on unusual quantity, or on a fraud rule. */
+/** Founder decision: review may follow value or fraud policy, never quantity 1..50. */
 export const LARGE_ORDER_THRESHOLD_CENTS = 100_000;
 
 export interface LargeOrderInput {
   totalCents: number;
   maxUnitQuantity: number;
   fraudFlagged: boolean;
-  /** Per-SKU sane individual quantity. Configurable, not hardcoded per product here. */
+  /** @deprecated Retained for wire compatibility; quantity no longer triggers review. */
   unusualQuantityThreshold?: number;
 }
 
@@ -238,7 +238,6 @@ export function evaluateLargeOrderReview(input: LargeOrderInput): {
 } {
   const triggers: LargeOrderTrigger[] = [];
   if (input.totalCents > LARGE_ORDER_THRESHOLD_CENTS) triggers.push("total_exceeds_threshold");
-  if (input.maxUnitQuantity > (input.unusualQuantityThreshold ?? 10)) triggers.push("unusual_quantity");
   if (input.fraudFlagged) triggers.push("fraud_rule");
   return { requiresReview: triggers.length > 0, triggers };
 }

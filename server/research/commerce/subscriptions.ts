@@ -40,6 +40,7 @@ import type {
   SubscriptionActionRequest,
   SubscriptionDto,
 } from "@shared/research/commerce-api";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 import { allocateFefo, type InventoryLot, type LotEvaluation } from "../inventory/lots";
 import type { PaymentProvider } from "../providers/payment";
 
@@ -47,8 +48,8 @@ import type { PaymentProvider } from "../providers/payment";
 // Records
 // ---------------------------------------------------------------------------
 
-/** Matches the database bound (migration 23) and the cart's per-line ceiling. */
-export const MAX_SUBSCRIPTION_QUANTITY = 1000;
+/** Founder normal-order ceiling, shared with cart, checkout, and order creation. */
+export const MAX_SUBSCRIPTION_QUANTITY = EARLY_ACCESS_MAX_QUANTITY;
 
 /**
  * The stored subscription. Wider than the wire DTO on purpose: the payment

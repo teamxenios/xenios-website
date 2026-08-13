@@ -1,6 +1,7 @@
 import type { CartProductSelection } from "./cart-product-selection";
+import { EARLY_ACCESS_MAX_QUANTITY } from "./early-access-quantity";
 
-export const PERSISTENT_CART_QUANTITY_MAX = 1000;
+export const PERSISTENT_CART_QUANTITY_MAX = EARLY_ACCESS_MAX_QUANTITY;
 export const PERSISTENT_CART_FAILURE_CODES = [
   "invalid_input",
   "unauthorized",

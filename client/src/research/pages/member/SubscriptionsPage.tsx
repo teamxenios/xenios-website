@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "wouter";
 import type { SubscriptionActionRequest, SubscriptionDto } from "@shared/research/commerce-api";
 import { SUBSCRIPTION_FREQUENCIES, type SubscriptionFrequencyDays } from "@shared/research/commerce";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 import { useResearch } from "../../core";
 import { listSubscriptions, subscriptionAction } from "../../adapters/commerce";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
@@ -159,7 +160,7 @@ function SubscriptionCard({
     e.preventDefault();
     if (controlsLocked) return;
     const quantity = Number(quantityDraft);
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 20) return;
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > EARLY_ACCESS_MAX_QUANTITY) return;
     onQuantity(quantity);
   };
 
@@ -231,7 +232,7 @@ function SubscriptionCard({
                   className="input-field"
                   type="number"
                   min={1}
-                  max={20}
+                  max={EARLY_ACCESS_MAX_QUANTITY}
                   step={1}
                   value={quantityDraft}
                   disabled={controlsLocked}
