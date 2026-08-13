@@ -91,16 +91,35 @@ export interface PricingProductSource {
 }
 
 /**
+ * A pricing source that can also hand over the whole publishable catalog in one
+ * read.
+ *
+ * Declaring this capability is what lets a caller that prices many variants read
+ * Product Control once for the request instead of once per variant. It adds no
+ * authority: the catalog handed over is the same drift-checked catalog the
+ * single-product read already filters, and every downstream check still runs.
+ * See `createRequestScopedPricingProductSource` in
+ * `./request-scoped-product-source`.
+ */
+export interface BulkPricingProductSource extends PricingProductSource {
+  readCatalogForPricing(): Promise<readonly AdminProductDetail[]>;
+}
+
+/**
  * Adapter from the existing drift-checked catalog reader to the pricing
  * read surface. Fails closed when the product id is absent or duplicated.
  */
-export class CatalogPricingProductSource implements PricingProductSource {
+export class CatalogPricingProductSource implements BulkPricingProductSource {
   constructor(private readonly reader: ProductCatalogReader) {}
+
+  async readCatalogForPricing(): Promise<readonly AdminProductDetail[]> {
+    return this.reader.readCatalog();
+  }
 
   async readProductForPricing(
     productId: string,
   ): Promise<AdminProductDetail | null> {
-    const catalog = await this.reader.readCatalog();
+    const catalog = await this.readCatalogForPricing();
     const matches = catalog.filter((product) => product.id === productId);
     return matches.length === 1 ? matches[0] : null;
   }
