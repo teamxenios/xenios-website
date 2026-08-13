@@ -11,6 +11,7 @@ const HARNESS = "scripts/verify-m66-quantity-band-50.sh";
 const AUTH_PRE = "supabase/production/EA_QUANTITY_50_RELEASE_CANDIDATE_PRECHECK.sql";
 const AUTH_WRITE = "supabase/production/EA_QUANTITY_50_RELEASE_CANDIDATE_WRITE.sql";
 const AUTH_POST = "supabase/production/EA_QUANTITY_50_RELEASE_CANDIDATE_POSTCHECK.sql";
+const AUTH_RECOVERY = "supabase/production/EA_QUANTITY_50_RELEASE_CANDIDATE_RECOVERY.md";
 const AUTH_REHEARSAL = "scripts/rehearse-ea-quantity-50-release-candidate.sh";
 
 function source(path: string): string {
@@ -94,6 +95,7 @@ describe("M66 quantity 1-50 candidate source", () => {
     const write = source(AUTH_WRITE);
     const post = source(AUTH_POST);
     const rehearsal = source(AUTH_REHEARSAL);
+    const recovery = source(AUTH_RECOVERY);
     const executablePre = pre.replace(/--.*$/gm, "");
     const executableWrite = write.replace(/--.*$/gm, "");
     const executablePost = post.replace(/--.*$/gm, "");
@@ -137,5 +139,9 @@ describe("M66 quantity 1-50 candidate source", () => {
     expect(rehearsal).toContain("FAIL second write");
     expect(rehearsal).toContain("stray 1..49 band");
     expect(rehearsal).toContain("unexpected approved limit 19");
+    expect(recovery).toContain("no destructive rollback");
+    expect(recovery).toContain("append zero rows");
+    expect(recovery).toContain("Do not deploy or enable");
+    expect(recovery).not.toMatch(/\b(update|delete)\s+public\.research_early_access_releases\b/i);
   });
 });

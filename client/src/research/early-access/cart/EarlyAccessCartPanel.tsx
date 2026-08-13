@@ -1,4 +1,5 @@
 import type { BrowserCart, BrowserCartItem } from "./cartStore";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 
 export type CartDisplayProduct = Readonly<{
   productId: string;
@@ -8,6 +9,8 @@ export type CartDisplayProduct = Readonly<{
   unitPriceCents: number | null;
   currency: string;
   availability: string;
+  /** Server-projected intersection of global, Product Control, and release authority. */
+  quantityLimit: number | null;
 }>;
 
 function money(cents: number, currency: string): string {
@@ -41,7 +44,14 @@ export function EarlyAccessCartPanel({
         <div className="card p-5"><p>Your cart is empty.</p><button type="button" className="btn btn-primary mt-4" onClick={onContinueShopping}>Browse products</button></div>
       ) : (
         <div className="grid gap-3">
-          {rows.map(({ item, product }) => (
+          {rows.map(({ item, product }) => {
+            const maximum =
+              Number.isInteger(product?.quantityLimit) &&
+              (product?.quantityLimit ?? 0) >= 1 &&
+              (product?.quantityLimit ?? 0) <= EARLY_ACCESS_MAX_QUANTITY
+                ? product!.quantityLimit!
+                : EARLY_ACCESS_MAX_QUANTITY;
+            return (
             <article key={`${item.productId}:${item.variantId}`} className="card grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center">
               <div className="min-w-0">
                 <h3 className="body-m font-700">{product?.name ?? item.productId}</h3>
@@ -54,12 +64,14 @@ export function EarlyAccessCartPanel({
                 <label className="sr-only" htmlFor={`cart-qty-${item.variantId}`}>Quantity for {product?.name ?? item.variantId}</label>
                 <select id={`cart-qty-${item.variantId}`} className="input-field w-24" value={item.quantity}
                   onChange={(event) => onUpdate({ ...item, quantity: Number(event.target.value) })}>
-                  {[1, 2, 3].map((quantity) => <option key={quantity} value={quantity}>{quantity}</option>)}
+                  {Array.from({ length: maximum }, (_unused, index) => index + 1)
+                    .map((quantity) => <option key={quantity} value={quantity}>{quantity}</option>)}
                 </select>
                 <button type="button" className="btn btn-secondary" onClick={() => onRemove(item)}>Remove</button>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       )}
       <div className="flex flex-wrap justify-between gap-3 border-t border-[var(--rule)] pt-4">

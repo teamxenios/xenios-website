@@ -496,6 +496,18 @@ describe("refusals, in the customer's terms", () => {
     expect(host.querySelector("[data-testid='early-access-checkout-retry']")).toBeNull();
   });
 
+  it("describes the canonical Q50 boundary without overriding lower Product Control limits", async () => {
+    stubOrders(() => jsonResponse({ ok: false, code: "QUANTITY_EXCEEDED" }, 409));
+    const host = mountJourney();
+    fillValidDetails(host);
+    press(host, "early-access-checkout-to-review");
+    press(host, "early-access-checkout-confirm");
+    await settle();
+
+    expect(host.textContent).toContain("permitted quantity from 1 to 50");
+    expect(host.textContent).toContain("lower Product Control limit");
+  });
+
   it("treats an idempotency conflict as surrendered to support, never as a retry", async () => {
     stubOrders(() => jsonResponse({ ok: false, code: "IDEMPOTENCY_CONFLICT" }, 409));
     const host = mountJourney();

@@ -20,6 +20,7 @@ import {
   rememberPendingAttempt,
   type OrderIntent,
 } from "./pendingOrderStore";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 
 /**
  * The one-product checkout for the supervised Early Access pilot.
@@ -123,7 +124,8 @@ const REFUSAL_COPY: Record<string, string> = {
     "The product release changed while you were reviewing. Return to the catalogue and start from the current listing.",
   RELEASE_REVOKED:
     "This product's release was withdrawn before your order was created. Nothing was ordered or charged.",
-  QUANTITY_EXCEEDED: "That quantity is not available. Choose a quantity from 1 to 3.",
+  QUANTITY_EXCEEDED:
+    `That quantity is not available. Choose a permitted quantity from 1 to ${EARLY_ACCESS_MAX_QUANTITY}; this product may have a lower Product Control limit.`,
   SUPPLIER_UNAVAILABLE:
     "The supplier route is temporarily unavailable. Nothing was ordered or charged. Please try again later.",
   SHIPPING_UNAVAILABLE:

@@ -17,7 +17,6 @@
 
 import {
   accepted,
-  isBoundedInteger,
   isBoundedText,
   isSafeIdentifier,
   readPlainRecord,
@@ -28,6 +27,7 @@ import {
   readEarlyAccessVerifiedOrder,
   supplierReleaseIntentIdFor,
 } from "./payment-verification";
+import { isDirectEarlyAccessQuantity } from "@shared/research/early-access-quantity";
 
 export type SupplierReleaseFailureCode =
   | "verified_order_invalid"
@@ -131,7 +131,7 @@ export function buildSupplierReleasePacket(
   }
   const recipient = readRecipient(record.recipient);
   if (!recipient) return refused("recipient_invalid");
-  if (!isBoundedInteger(verified.quantity, 1, 3)) return refused("verified_order_invalid");
+  if (!isDirectEarlyAccessQuantity(verified.quantity)) return refused("verified_order_invalid");
 
   return accepted(
     Object.freeze({
