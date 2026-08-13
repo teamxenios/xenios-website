@@ -4,6 +4,7 @@ import type {
   TebraSyncOutcome,
   TebraSyncSummary,
 } from "@shared/care/tebra";
+import { careCapabilityAllowsTebra, type LoadCareCapability } from "./tebra-capability";
 import type { TebraPracticeClient, TebraRemotePage } from "./tebra-client";
 import type { TebraConfiguration } from "./tebra-config";
 import type { TebraLinkStore } from "./tebra-link-store";
@@ -23,6 +24,12 @@ export interface TebraSyncDependencies {
   config: TebraConfiguration;
   client: TebraPracticeClient;
   links: TebraLinkStore;
+  /**
+   * Required. The poller is the path most likely to keep running after an
+   * operator has pulled Care back, because nobody is watching it the way they
+   * watch a request. It reads the same stored capability the Care routes read.
+   */
+  loadCareCapability: LoadCareCapability;
   owner: string;
   audit?: (event: string, detail: Record<string, unknown>) => Promise<void>;
   now?: () => Date;
@@ -88,6 +95,12 @@ export async function runTebraSyncCycle(
     return { entity, skipped: true, reason: "not_ready" };
   }
 
+  // Checked before the lease is taken. A run that is not allowed to happen
+  // should not also block the next one by holding the lease.
+  if (!(await careCapabilityAllowsTebra(deps.loadCareCapability))) {
+    return { entity, skipped: true, reason: "care_disabled" };
+  }
+
   const startedAt = now();
   const leaseKey = tebraSyncLeaseKey(entity);
   // The lease outlives one interval so a slow run is not overtaken by the next
@@ -128,9 +141,23 @@ export async function runTebraSyncCycle(
         break;
       }
 
+      // A client is an injected adapter, so its output is checked rather than
+      // trusted. A malformed page is a failure, not a silent empty pass.
+      if (!Array.isArray(page.records)) {
+        failed += 1;
+        await emit(deps, "care.tebra.sync_failed", {
+          entity,
+          code: "tebra_unavailable",
+          pages,
+          scanned,
+        });
+        break;
+      }
+
       pages += 1;
       scanned += page.records.length;
 
+      let pageDurable = true;
       for (const remote of page.records) {
         // A remote record with no external id, or one Xenios has never linked,
         // belongs to the practice and is not ours to touch. It is counted so
@@ -144,11 +171,38 @@ export async function runTebraSyncCycle(
           unlinked += 1;
           continue;
         }
-        await links.saveLink({ ...existing, lastSeenAt: now().toISOString() });
-        reconciled += 1;
+        try {
+          // Rebuilt field by field rather than spread from the store, so an
+          // unexpected column on a stored row cannot be written back out.
+          await links.saveLink({
+            entity: existing.entity,
+            localId: existing.localId,
+            externalId: existing.externalId,
+            tebraId: existing.tebraId,
+            linkedAt: existing.linkedAt,
+            lastSeenAt: now().toISOString(),
+          });
+          reconciled += 1;
+        } catch {
+          // The cursor must never move past a record whose write did not land,
+          // or that record is silently lost for good.
+          failed += 1;
+          pageDurable = false;
+          break;
+        }
       }
 
-      const token = page.hasMore ? (page.nextCursor.continuationToken ?? null) : null;
+      if (!pageDurable) {
+        await emit(deps, "care.tebra.sync_failed", {
+          entity,
+          code: "tebra_unavailable",
+          pages,
+          scanned,
+        });
+        break;
+      }
+
+      const token = page.hasMore ? (page.nextCursor?.continuationToken ?? null) : null;
       cursor = { ...cursor, continuationToken: token };
       await links.saveCursor(cursor);
       cursorAdvanced = true;

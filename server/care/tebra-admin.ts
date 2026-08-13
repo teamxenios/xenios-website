@@ -4,6 +4,7 @@ import {
   type TebraSyncEntity,
   type TebraSyncOutcome,
 } from "@shared/care/tebra";
+import { careCapabilityAllowsTebra, type LoadCareCapability } from "./tebra-capability";
 import { UnconfiguredTebraPracticeClient, type TebraPracticeClient } from "./tebra-client";
 import { describeTebraConfiguration, type TebraConfiguration } from "./tebra-config";
 import type { TebraLinkStore } from "./tebra-link-store";
@@ -27,6 +28,7 @@ export interface TebraAdminDependencies {
   config: TebraConfiguration;
   client: TebraPracticeClient;
   links: TebraLinkStore;
+  loadCareCapability: LoadCareCapability;
   owner: string;
   audit?: (event: string, detail: Record<string, unknown>) => Promise<void>;
   now?: () => Date;
@@ -55,6 +57,7 @@ export function createTebraAdminService(deps: TebraAdminDependencies): TebraAdmi
       return describeTebraConfiguration({
         config: deps.config,
         transportBound: isBoundTebraClient(deps.client),
+        careEnabled: await careCapabilityAllowsTebra(deps.loadCareCapability),
         cursors,
         now,
       });
@@ -73,6 +76,7 @@ export function createTebraAdminService(deps: TebraAdminDependencies): TebraAdmi
             config: deps.config,
             client: deps.client,
             links: deps.links,
+            loadCareCapability: deps.loadCareCapability,
             owner: deps.owner,
             audit: deps.audit,
             now,

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { tebraExternalId } from "@shared/care/tebra";
+import type { CareCapabilityState, CareCapabilityStatus } from "@shared/care/contracts";
 import { UnconfiguredTebraPracticeClient, type TebraPracticeClient } from "./tebra-client";
 import type { ReadyTebraConfiguration } from "./tebra-config";
 import { createTebraAdminService, isBoundTebraClient } from "./tebra-admin";
@@ -45,7 +46,20 @@ function boundClient(): TebraPracticeClient {
   } as unknown as TebraPracticeClient;
 }
 
-function admin(client: TebraPracticeClient = boundClient()) {
+function careCapability(state: CareCapabilityState = "enabled") {
+  return async (): Promise<CareCapabilityStatus> => ({
+    rail: "care",
+    state,
+    enabled: state === "enabled",
+    publicMessage: "Care is available in supported locations.",
+    checkedAt: "2026-08-12T12:00:00.000Z",
+  });
+}
+
+function admin(
+  client: TebraPracticeClient = boundClient(),
+  loadCareCapability = careCapability(),
+) {
   const links = createMemoryTebraLinkStore();
   return {
     links,
@@ -54,6 +68,7 @@ function admin(client: TebraPracticeClient = boundClient()) {
       config: READY,
       client,
       links,
+      loadCareCapability,
       owner: "worker-a",
       now: () => NOW,
     }),
@@ -165,6 +180,7 @@ describe("Manual sync", () => {
       config: { state: "unconfigured" },
       client,
       links: createMemoryTebraLinkStore(),
+      loadCareCapability: careCapability(),
       owner: "worker-a",
       now: () => NOW,
     });

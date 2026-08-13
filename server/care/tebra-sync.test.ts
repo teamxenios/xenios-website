@@ -7,6 +7,7 @@ import {
 } from "@shared/care/tebra";
 import type { TebraPracticeClient, TebraRemotePage } from "./tebra-client";
 import type { ReadyTebraConfiguration } from "./tebra-config";
+import type { CareCapabilityState, CareCapabilityStatus } from "@shared/care/contracts";
 import { createMemoryTebraLinkStore, type TebraLinkStore } from "./tebra-link-store";
 import { runTebraSyncCycle, tebraSyncLeaseKey } from "./tebra-sync";
 
@@ -65,18 +66,30 @@ async function linkPatient(links: TebraLinkStore, tebraId = "tebra-patient-1") {
   });
 }
 
+function careCapability(state: CareCapabilityState = "enabled") {
+  return async (): Promise<CareCapabilityStatus> => ({
+    rail: "care",
+    state,
+    enabled: state === "enabled",
+    publicMessage: "Care is available in supported locations.",
+    checkedAt: "2026-08-12T12:00:00.000Z",
+  });
+}
+
 function run(input: {
   client: TebraPracticeClient;
   links: TebraLinkStore;
   owner?: string;
   audit?: ReturnType<typeof vi.fn>;
   config?: ReadyTebraConfiguration | { state: "unconfigured" };
+  loadCareCapability?: () => Promise<CareCapabilityStatus>;
 }) {
   return runTebraSyncCycle({
     entity: "patient",
     config: (input.config ?? READY) as ReadyTebraConfiguration,
     client: input.client,
     links: input.links,
+    loadCareCapability: input.loadCareCapability ?? careCapability(),
     owner: input.owner ?? "worker-a",
     audit: input.audit,
     now: () => NOW,

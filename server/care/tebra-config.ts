@@ -156,6 +156,7 @@ export function isReadyTebraConfiguration(
 export function describeTebraConfiguration(input: {
   config: TebraConfiguration;
   transportBound: boolean;
+  careEnabled: boolean;
   cursors: TebraIntegrationStatus["cursors"];
   now?: () => Date;
 }): TebraIntegrationStatus {
@@ -163,8 +164,11 @@ export function describeTebraConfiguration(input: {
   return {
     integration: "tebra",
     state: config.state,
-    ready: config.state === "ready" && input.transportBound,
+    // Every gate must agree. Reporting ready on configuration alone would tell
+    // an operator the integration is live while the Care capability holds it.
+    ready: config.state === "ready" && input.transportBound && input.careEnabled,
     transportBound: input.transportBound,
+    careEnabled: input.careEnabled,
     pollIntervalMinutes: config.state === "ready" ? config.pollIntervalMinutes : null,
     cursors: input.cursors,
     checkedAt: (input.now ?? (() => new Date()))().toISOString(),

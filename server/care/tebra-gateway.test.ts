@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { tebraExternalId, type TebraRemoteRecord } from "@shared/care/tebra";
+import type { CareCapabilityState, CareCapabilityStatus } from "@shared/care/contracts";
 import type { TebraPracticeClient } from "./tebra-client";
 import type { ReadyTebraConfiguration, TebraConfiguration } from "./tebra-config";
 import { createTebraGateway } from "./tebra-gateway";
@@ -62,11 +63,22 @@ function client(overrides: Partial<TebraPracticeClient> = {}): TebraPracticeClie
   } as TebraPracticeClient;
 }
 
+export function careCapability(state: CareCapabilityState = "enabled") {
+  return async (): Promise<CareCapabilityStatus> => ({
+    rail: "care",
+    state,
+    enabled: state === "enabled",
+    publicMessage: "Care is available in supported locations.",
+    checkedAt: "2026-08-12T12:00:00.000Z",
+  });
+}
+
 function gateway(input: {
   client?: TebraPracticeClient;
   links?: TebraLinkStore;
   config?: TebraConfiguration;
   audit?: ReturnType<typeof vi.fn>;
+  loadCareCapability?: () => Promise<CareCapabilityStatus>;
 }) {
   const audit = input.audit ?? vi.fn(async () => undefined);
   const links = input.links ?? createMemoryTebraLinkStore();
@@ -79,6 +91,7 @@ function gateway(input: {
       config: input.config ?? READY,
       client: practice,
       links,
+      loadCareCapability: input.loadCareCapability ?? careCapability(),
       audit,
       sleep: async () => undefined,
       now: () => new Date("2026-08-12T12:00:00.000Z"),
@@ -112,6 +125,71 @@ describe("Tebra gateway readiness", () => {
       });
       expect(harness.client.createPatient).not.toHaveBeenCalled();
     }
+  });
+
+  it("refuses when the stored Care capability is not exactly enabled", async () => {
+    // G10-1. The environment switches are on in READY, so this proves the
+    // stored capability is a real second gate rather than decoration.
+    for (const state of [
+      "disabled",
+      "pending_qa",
+      "pending_clinicians",
+      "pending_credentials",
+    ] as const) {
+      const harness = gateway({ loadCareCapability: careCapability(state) });
+      await expect(harness.gateway.syncPatient(PATIENT)).resolves.toEqual({
+        ok: false,
+        code: "care_disabled",
+        retryable: false,
+      });
+      expect(harness.client.findPatientByExternalId).not.toHaveBeenCalled();
+      expect(harness.client.createPatient).not.toHaveBeenCalled();
+    }
+  });
+
+  it("refuses an appointment when the stored Care capability is held", async () => {
+    const harness = gateway({ loadCareCapability: careCapability("pending_qa") });
+    await linkPatient(harness.links);
+
+    await expect(harness.gateway.syncAppointment(APPOINTMENT)).resolves.toEqual({
+      ok: false,
+      code: "care_disabled",
+      retryable: false,
+    });
+    expect(harness.client.createAppointment).not.toHaveBeenCalled();
+  });
+
+  it("refuses when the capability lookup itself fails", async () => {
+    const harness = gateway({
+      loadCareCapability: async () => {
+        throw new Error("care_capability_lookup_failed");
+      },
+    });
+
+    await expect(harness.gateway.syncPatient(PATIENT)).resolves.toEqual({
+      ok: false,
+      code: "care_disabled",
+      retryable: false,
+    });
+    expect(harness.client.createPatient).not.toHaveBeenCalled();
+  });
+
+  it("refuses a capability that claims another rail", async () => {
+    const harness = gateway({
+      loadCareCapability: async () =>
+        ({
+          rail: "research",
+          state: "enabled",
+          enabled: true,
+          publicMessage: "",
+          checkedAt: "2026-08-12T12:00:00.000Z",
+        }) as unknown as CareCapabilityStatus,
+    });
+
+    await expect(harness.gateway.syncPatient(PATIENT)).resolves.toMatchObject({
+      ok: false,
+      code: "care_disabled",
+    });
   });
 
   it("refuses a payload that fails the shared contract without calling out", async () => {

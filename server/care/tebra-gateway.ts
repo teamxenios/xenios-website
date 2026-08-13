@@ -7,6 +7,7 @@ import {
   type TebraRemoteRecord,
   type TebraSyncEntity,
 } from "@shared/care/tebra";
+import { careCapabilityAllowsTebra, type LoadCareCapability } from "./tebra-capability";
 import type { TebraPracticeClient } from "./tebra-client";
 import type { TebraConfiguration } from "./tebra-config";
 import type { TebraEntityLink, TebraLinkStore } from "./tebra-link-store";
@@ -35,6 +36,13 @@ export interface TebraGatewayDependencies {
   config: TebraConfiguration;
   client: TebraPracticeClient;
   links: TebraLinkStore;
+  /**
+   * Required, not optional. An optional capability check is a fail-open
+   * default: forgetting to pass it would silently remove the Care gate. Callers
+   * must supply it and decide, and the composition root should pass the same
+   * loader the Care routes use.
+   */
+  loadCareCapability: LoadCareCapability;
   audit: (event: string, detail: TebraAuditDetail) => Promise<void>;
   retryPolicy?: TebraRetryPolicy;
   sleep?: (ms: number) => Promise<void>;
@@ -205,6 +213,9 @@ export function createTebraGateway(deps: TebraGatewayDependencies): TebraGateway
       if (deps.config.state !== "ready") return failure(notReady(deps.config));
       const parsed = TebraPatientProjectionSchema.safeParse(raw);
       if (!parsed.success) return failure("tebra_invalid_payload");
+      if (!(await careCapabilityAllowsTebra(deps.loadCareCapability))) {
+        return failure("care_disabled");
+      }
       const patient = parsed.data;
 
       return link({
@@ -221,6 +232,9 @@ export function createTebraGateway(deps: TebraGatewayDependencies): TebraGateway
       if (deps.config.state !== "ready") return failure(notReady(deps.config));
       const parsed = TebraAppointmentProjectionSchema.safeParse(raw);
       if (!parsed.success) return failure("tebra_invalid_payload");
+      if (!(await careCapabilityAllowsTebra(deps.loadCareCapability))) {
+        return failure("care_disabled");
+      }
       const appointment = parsed.data;
 
       // An appointment cannot be placed before its patient exists upstream.

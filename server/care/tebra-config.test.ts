@@ -101,6 +101,7 @@ describe("Tebra status description", () => {
     const status = describeTebraConfiguration({
       config,
       transportBound: true,
+      careEnabled: true,
       cursors: [],
       now: () => new Date("2026-08-12T12:00:00Z"),
     });
@@ -123,6 +124,7 @@ describe("Tebra status description", () => {
     const status = describeTebraConfiguration({
       config: parseTebraConfiguration(CREDENTIALS),
       transportBound: false,
+      careEnabled: true,
       cursors: [],
     });
     expect(status.state).toBe("ready");

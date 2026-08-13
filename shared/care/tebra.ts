@@ -176,7 +176,7 @@ export interface TebraSyncSummary {
 export interface TebraSyncSkipped {
   entity: TebraSyncEntity;
   skipped: true;
-  reason: "lease_held" | "not_ready";
+  reason: "lease_held" | "not_ready" | "care_disabled";
 }
 
 export type TebraSyncOutcome = TebraSyncSummary | TebraSyncSkipped;
@@ -186,7 +186,11 @@ export function isTebraSyncSkipped(outcome: TebraSyncOutcome): outcome is TebraS
 }
 
 export const TEBRA_FAILURE_CODES = [
+  // Care itself is held: either the two runtime approvals are off (tebra_disabled)
+  // or the stored Care capability is not exactly enabled (care_disabled). Both
+  // are refusals by the Care rail rather than by the integration.
   "tebra_disabled",
+  "care_disabled",
   "tebra_unconfigured",
   "tebra_invalid_configuration",
   "tebra_unavailable",
@@ -204,8 +208,11 @@ export type TebraOperationResult<T> =
 export interface TebraIntegrationStatus {
   integration: "tebra";
   state: "disabled" | "unconfigured" | "invalid" | "ready";
+  /** True only when configuration, transport, and the stored Care capability all allow a run. */
   ready: boolean;
   transportBound: boolean;
+  /** The stored Care capability, so an operator can see which gate is holding. */
+  careEnabled: boolean;
   pollIntervalMinutes: number | null;
   cursors: readonly {
     entity: TebraSyncEntity;
