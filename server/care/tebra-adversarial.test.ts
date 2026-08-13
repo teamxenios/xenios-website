@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { tebraExternalId, type TebraRemoteRecord } from "@shared/care/tebra";
@@ -21,28 +21,42 @@ const APPOINTMENT_ID = "22222222-2222-4222-8222-222222222222";
 const PATIENT_EXTERNAL_ID = tebraExternalId("patient", PATIENT_ID);
 const NOW = new Date("2026-08-12T12:00:00.000Z");
 
-/** Every non-test source file this lane owns. */
-const LANE_SOURCES = [
-  "shared/care/tebra.ts",
-  "server/care/tebra-capability.ts",
-  "server/care/tebra-config.ts",
-  "server/care/tebra-client.ts",
-  "server/care/tebra-link-store.ts",
-  "server/care/tebra-redaction.ts",
-  "server/care/tebra-retry.ts",
-  "server/care/tebra-gateway.ts",
-  "server/care/tebra-sync.ts",
-  "server/care/tebra-admin.ts",
-  "server/care/tebra-routes.ts",
-  "server/care/tebra-scheduling-bridge.ts",
-];
+/**
+ * Every non-test source file this lane owns, discovered from disk rather than
+ * listed. A hard-coded list silently stops covering the lane the moment a file
+ * is added, which is exactly what happened: three files existed before this was
+ * noticed, and the scans below had quietly stopped seeing them.
+ */
+const NOT_OURS = new Set(["tebra-scheduling.ts"]);
+
+function laneSourceFiles(): string[] {
+  const found: string[] = [];
+  for (const dir of ["shared/care", "server/care"]) {
+    for (const name of readdirSync(join(REPO_ROOT, dir))) {
+      if (!name.startsWith("tebra") || !name.endsWith(".ts")) continue;
+      if (name.endsWith(".test.ts") || NOT_OURS.has(name)) continue;
+      found.push(`${dir}/${name}`);
+    }
+  }
+  return found.sort();
+}
 
 function laneSource(): { file: string; text: string }[] {
-  return LANE_SOURCES.map((file) => ({
+  return laneSourceFiles().map((file) => ({
     file,
     text: readFileSync(join(REPO_ROOT, file), "utf8"),
   }));
 }
+
+describe("Lane scan coverage", () => {
+  it("discovers every owned source, and never the file this lane does not own", () => {
+    const files = laneSourceFiles();
+    expect(files.length).toBeGreaterThanOrEqual(14);
+    expect(files).toContain("shared/care/tebra.ts");
+    // server/care/tebra-scheduling.ts belongs to the Care security lane.
+    expect(files.some((file) => file.endsWith("/tebra-scheduling.ts"))).toBe(false);
+  });
+});
 
 const READY: ReadyTebraConfiguration = {
   state: "ready",
