@@ -13,6 +13,14 @@
  * service per request. The price authority memoizes per variant for the life of
  * one instance, which is what makes a page of twenty-four cards affordable, and
  * which would serve yesterday's prices if the instance outlived the request.
+ *
+ * Two more per-request memos hang off that same lifetime, for the same reason.
+ * The Product Control catalog behind approved pricing is read once per request
+ * rather than once per variant, and the read-only binding join answers each
+ * variant once rather than once per authority that asks. Both are built here,
+ * inside `serviceForViewer`, so neither can outlive the request and quote a
+ * price or a binding that has since changed. See
+ * `docs/research/CATALOG_PRICING_PERFORMANCE.md`.
  */
 
 import type { CartPurchaseAudience } from "@shared/research/cart-product-selection";
@@ -22,6 +30,7 @@ import {
   createAuthoritativePriceResolver,
   type PricingProductSource,
 } from "../pricing/authoritative-price-resolver";
+import { createRequestScopedPricingProductSource } from "../pricing/request-scoped-product-source";
 import type { VisibilityEnv } from "../catalog-display/visibility";
 import {
   createMasterOfferingCatalogReaderFromEnv,
@@ -32,6 +41,7 @@ import {
   createAuthoritativeApprovedPriceReader,
   createMasterOfferingPriceAuthority,
 } from "./price-authority";
+import { createRequestScopedBindingReader } from "./request-scoped-bindings";
 import {
   createMasterOfferingProductControlResolver,
   type MasterOfferingCommerceBindingReader,
@@ -127,8 +137,12 @@ export function createMasterOfferingCatalogDependencies(
         return identity;
       };
 
+      // One binding answer per variant for the whole request, shared by the
+      // price authority and the purchase resolver below.
+      const bindings = createRequestScopedBindingReader(input.bindings);
+
       const commerce = createMasterOfferingProductControlResolver({
-        bindings: input.bindings,
+        bindings,
         selections: input.selections,
         context: async () => {
           const resolved = await resolveIdentity();
@@ -143,9 +157,12 @@ export function createMasterOfferingCatalogDependencies(
       });
 
       const prices = createMasterOfferingPriceAuthority({
-        bindings: input.bindings,
+        bindings,
         prices: createAuthoritativeApprovedPriceReader(
-          createAuthoritativePriceResolver(input.pricingSource),
+          // One Product Control read for the request, not one per variant.
+          createAuthoritativePriceResolver(
+            createRequestScopedPricingProductSource(input.pricingSource),
+          ),
           async () => {
             const resolved = await resolveIdentity();
             if (resolved === null) return null;
