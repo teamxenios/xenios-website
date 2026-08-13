@@ -29,22 +29,21 @@ describe("createSupabaseSponsoredB2BClaimDeps", () => {
     expect(admin.from).toHaveBeenCalledWith("research_b2b_sponsored_claims");
   });
 
-  it("uses the actor-scoped RPC for preparation and the service RPC only for delivery acknowledgement", async () => {
+  it("uses only the actor-scoped RPC for atomic application, sponsorship, and outbox preparation", async () => {
     const row = {
       sponsorship_id: "20000000-0000-4000-8000-000000000002",
       application_id: "10000000-0000-4000-8000-000000000001",
       normalized_email: "info@romanhealthcollective.com",
       business_key: "roman-health-marketplace",
       business_display_name: "Roman Health Marketplace",
-      state: "claim_prepared",
+      state: "claim_queued",
       profile_key: "KRIS_VOLUME_PARTNER",
       profile_version: 1,
       profile_effective_at: "2026-08-13T12:00:00.000Z",
     };
     const actor: any = { rpc: vi.fn(async () => ({ data: [row], error: null })) };
-    const admin: any = { rpc: vi.fn(async () => ({ data: [{ ...row, state: "claim_sent" }], error: null })) };
-    const deliver = vi.fn(async () => true);
-    const deps = createSupabaseSponsoredB2BClaimDeps(admin, actor, deliver);
+    const admin: any = { rpc: vi.fn() };
+    const deps = createSupabaseSponsoredB2BClaimDeps(admin, actor, vi.fn());
 
     await expect(deps.prepareSponsoredClaim({
       path: "new_sponsored_claim",
@@ -59,25 +58,15 @@ describe("createSupabaseSponsoredB2BClaimDeps", () => {
       profileKey: "KRIS_VOLUME_PARTNER",
       profileVersion: 1,
       profileEffectiveAt: "2026-08-13T12:00:00.000Z",
-    })).resolves.toMatchObject({ state: "claim_prepared" });
+    })).resolves.toMatchObject({ state: "claim_queued" });
     expect(actor.rpc).toHaveBeenCalledWith("research_prepare_sponsored_b2b_claim", expect.any(Object));
     expect(admin.rpc).not.toHaveBeenCalled();
-
-    await expect(deps.markClaimSent({
-      sponsorshipId: row.sponsorship_id,
-      applicationId: row.application_id,
-    })).resolves.toMatchObject({ state: "claim_sent" });
-    expect(admin.rpc).toHaveBeenCalledWith("research_mark_sponsored_b2b_claim_sent", expect.any(Object));
   });
 
-  it("delegates claim delivery without accepting password material", async () => {
-    const deliver = vi.fn(async () => true);
-    const deps = createSupabaseSponsoredB2BClaimDeps({} as any, {} as any, deliver);
-    await expect(deps.sendExistingAccountClaim({
-      applicationId: "10000000-0000-4000-8000-000000000001",
-      normalizedEmail: "info@romanhealthcollective.com",
-      firstName: "Kris",
-    })).resolves.toBe(true);
-    expect(deliver).toHaveBeenCalledWith(expect.not.objectContaining({ password: expect.anything() }));
+  it("delegates only a credential-free best-effort outbox wakeup", async () => {
+    const kick = vi.fn(async () => {});
+    const deps = createSupabaseSponsoredB2BClaimDeps({} as any, {} as any, kick);
+    await deps.kickNotificationOutbox();
+    expect(kick).toHaveBeenCalledWith();
   });
 });

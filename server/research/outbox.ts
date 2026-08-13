@@ -6,6 +6,7 @@ import {
   sendAccountClaimSuccess,
   sendAdminTestEmail,
   sendApplicationApproved,
+  sendB2BBuyerClaim,
   sendApplicationDeclined,
   sendApplicationReceived,
   sendEmailFailureAlert,
@@ -259,6 +260,15 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
           email: job.recipient,
           firstName,
           token,
+          approvalExpiresAt: payload.approvalExpiresAt ? new Date(String(payload.approvalExpiresAt)) : new Date(),
+        });
+        break;
+      case "b2b_buyer_claim":
+        result = await sendB2BBuyerClaim({
+          email: job.recipient,
+          firstName,
+          token,
+          businessDisplayName: String(payload.businessDisplayName ?? "business buyer"),
           approvalExpiresAt: payload.approvalExpiresAt ? new Date(String(payload.approvalExpiresAt)) : new Date(),
         });
         break;

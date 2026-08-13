@@ -52,7 +52,8 @@ export async function authorizeCatalogDisplayViewer(
     // enforced, a billing_state other than active closes member content.
     if (process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED === "true") {
       const billing = String((member as Record<string, unknown>).billing_state ?? "");
-      if (billing && billing !== "active") return null;
+      const sponsoredB2B = String((member as Record<string, unknown>).access_basis ?? "") === "sponsored_b2b";
+      if (billing && billing !== "active" && !sponsoredB2B) return null;
     }
     return { audience: "member", email: member.email };
   } catch {

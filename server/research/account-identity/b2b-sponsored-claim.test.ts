@@ -28,6 +28,12 @@ const input = {
 const empty: ExactIdentitySnapshot = {
   authUserIds: [], applicationIds: [], memberIds: [], sponsorshipIds: [],
 };
+const afterPrepare: ExactIdentitySnapshot = {
+  authUserIds: [],
+  applicationIds: [APPLICATION_ID],
+  memberIds: [],
+  sponsorshipIds: [SPONSORSHIP_ID],
+};
 
 function claim(state: SponsoredB2BClaim["state"]): SponsoredB2BClaim {
   return {
@@ -45,37 +51,34 @@ function claim(state: SponsoredB2BClaim["state"]): SponsoredB2BClaim {
 
 function deps(overrides: Partial<SponsoredB2BClaimDeps> = {}): SponsoredB2BClaimDeps {
   return {
-    inspectExactEmail: vi.fn(async () => empty),
-    prepareSponsoredClaim: vi.fn(async () => claim("claim_prepared")),
-    sendExistingAccountClaim: vi.fn(async () => true),
-    markClaimSent: vi.fn(async () => claim("claim_sent")),
+    inspectExactEmail: vi.fn()
+      .mockResolvedValueOnce(empty)
+      .mockResolvedValue(afterPrepare),
+    prepareSponsoredClaim: vi.fn(async () => claim("claim_queued")),
+    kickNotificationOutbox: vi.fn(async () => {}),
     ...overrides,
   };
 }
 
 describe("prepareSponsoredB2BClaim", () => {
-  it("reuses the canonical claim delivery only after an exact empty identity preflight", async () => {
+  it("returns queued only after exact pre- and post-preparation identity evidence", async () => {
     const subject = deps();
     await expect(prepareSponsoredB2BClaim(subject, input)).resolves.toEqual({
       ok: true,
-      state: "claim_sent",
+      state: "claim_queued",
       sponsorshipId: SPONSORSHIP_ID,
       applicationId: APPLICATION_ID,
       normalizedEmail: EMAIL,
       businessKey: "roman-health-marketplace",
     });
-    expect(subject.inspectExactEmail).toHaveBeenCalledWith(EMAIL);
+    expect(subject.inspectExactEmail).toHaveBeenCalledTimes(2);
     expect(subject.prepareSponsoredClaim).toHaveBeenCalledWith(expect.objectContaining({
       email: EMAIL,
       businessDisplayName: "Roman Health Marketplace",
       roles: ["organization_owner", "business_buyer"],
       profileKey: "KRIS_VOLUME_PARTNER",
     }));
-    expect(subject.sendExistingAccountClaim).toHaveBeenCalledWith({
-      applicationId: APPLICATION_ID,
-      normalizedEmail: EMAIL,
-      firstName: "Kris",
-    });
+    expect(subject.kickNotificationOutbox).toHaveBeenCalledOnce();
   });
 
   it("strictly refuses password material", async () => {
@@ -87,10 +90,7 @@ describe("prepareSponsoredB2BClaim", () => {
 
   it("fails closed if any identity appears since the read-only grid", async () => {
     const subject = deps({
-      inspectExactEmail: vi.fn(async () => ({
-        ...empty,
-        applicationIds: [APPLICATION_ID],
-      })),
+      inspectExactEmail: vi.fn(async () => ({ ...empty, applicationIds: [APPLICATION_ID] })),
     });
     await expect(prepareSponsoredB2BClaim(subject, input))
       .resolves.toEqual({ ok: false, code: "IDENTITY_APPEARED_STOP" });
@@ -111,36 +111,41 @@ describe("prepareSponsoredB2BClaim", () => {
       .resolves.toEqual({ ok: false, code: "AMBIGUOUS_STOP" });
   });
 
-  it("keeps prepared evidence and reports delivery failure without pretending the claim was sent", async () => {
-    const subject = deps({ sendExistingAccountClaim: vi.fn(async () => false) });
+  it("fails closed if an Auth identity appears after durable preparation", async () => {
+    const subject = deps({
+      inspectExactEmail: vi.fn()
+        .mockResolvedValueOnce(empty)
+        .mockResolvedValueOnce({
+          ...afterPrepare,
+          authUserIds: ["30000000-0000-4000-8000-000000000003"],
+        }),
+    });
     await expect(prepareSponsoredB2BClaim(subject, input)).resolves.toEqual({
       ok: false,
-      code: "CLAIM_DELIVERY_FAILED",
+      code: "POST_PREPARE_IDENTITY_CONFLICT",
       sponsorshipId: SPONSORSHIP_ID,
       applicationId: APPLICATION_ID,
     });
-    expect(subject.markClaimSent).not.toHaveBeenCalled();
+    expect(subject.kickNotificationOutbox).not.toHaveBeenCalled();
   });
 
   it("rejects a mismatched preparation projection", async () => {
     const subject = deps({
       prepareSponsoredClaim: vi.fn(async () => ({
-        ...claim("claim_prepared"),
+        ...claim("claim_queued"),
         businessKey: "different-buyer",
       })),
     });
     await expect(prepareSponsoredB2BClaim(subject, input))
       .resolves.toEqual({ ok: false, code: "PREPARATION_RESULT_INVALID" });
-    expect(subject.sendExistingAccountClaim).not.toHaveBeenCalled();
+    expect(subject.kickNotificationOutbox).not.toHaveBeenCalled();
   });
 
-  it("does not report success when the post-delivery state cannot be proved", async () => {
-    const subject = deps({ markClaimSent: vi.fn(async () => claim("claim_prepared")) });
-    await expect(prepareSponsoredB2BClaim(subject, input)).resolves.toEqual({
-      ok: false,
-      code: "CLAIM_STATE_UNCERTAIN",
-      sponsorshipId: SPONSORSHIP_ID,
-      applicationId: APPLICATION_ID,
+  it("remains truthfully queued when an immediate outbox wakeup fails", async () => {
+    const subject = deps({ kickNotificationOutbox: vi.fn(async () => { throw new Error("later"); }) });
+    await expect(prepareSponsoredB2BClaim(subject, input)).resolves.toMatchObject({
+      ok: true,
+      state: "claim_queued",
     });
   });
 });

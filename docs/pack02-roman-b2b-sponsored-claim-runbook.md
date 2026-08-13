@@ -39,26 +39,30 @@ workflow without blocking identity proof.
    `20260813_research_b2b_sponsored_claim.sql`, twice in an isolated PostgreSQL
    environment and prove rollback, grants, RLS, triggers, and RPC behavior.
 3. Compose `createSupabaseSponsoredB2BClaimDeps` with:
-   - the canonical Supabase service client for bounded identity reads and the
-     delivery-acknowledgement RPC;
+   - the canonical Supabase service client for bounded identity reads;
    - an actor-scoped Supabase client carrying the authenticated existing
      `super_admin` or `operations_admin` JWT;
-   - the existing purpose-scoped `account_claim` notification/outbox delivery.
+   - a best-effort wakeup of the existing notification outbox (the RPC already
+     owns durable queueing).
 4. Call `prepareSponsoredB2BClaim` with the locked facts and the five exact
    human/pricing inputs above. The input schema is strict and rejects password
    material.
-5. The database creates one approved B2B-sponsored application plus immutable
+5. The database creates one `approved_sponsored_b2b` application plus immutable
    sponsorship/audit evidence. It records `age_confirmed=false`, empty
    interests, null essays, and explicitly states that public applicant
-   attestations were not collected or asserted.
-6. Existing `account_claim` delivery sends the expiring claim link. Kris chooses
-   his own password through the already-mounted canonical claim screen.
+   attestations were not collected or asserted. The same transaction inserts
+   one idempotent `b2b_buyer_claim` outbox row; no send/ack gap exists.
+6. The dedicated B2B template mints the same purpose-scoped `account_claim` at
+   send time, asks for no personal membership payment, and sends the expiring
+   link. Kris chooses his own password through the already-mounted canonical
+   claim screen.
 7. The canonical claim endpoint creates the one Supabase Auth user and one
    `research_members` binding, initially `pending_activation`.
 8. An authenticated existing internal admin calls
    `research_activate_sponsored_b2b_buyer`. In one database transaction it:
    - proves the exact application/member/Auth/email sponsorship;
-   - activates the canonical member;
+   - activates the canonical member with `access_basis=sponsored_b2b` and keeps
+     `billing_state=not_started` rather than fabricating payment verification;
    - creates or replays Roman's temporary buyer relationship;
    - binds Kris's two roles;
    - binds the exact `KRIS_VOLUME_PARTNER` version/effective time;

@@ -121,7 +121,8 @@ export function readStatusToken(token: string): string | null {
 // application is claimable, its links must be claim-capable so the approved
 // applicant can recover a lost approval email through resend-link.
 export function tokenPurposeFor(status: ApplicationStatus): TokenPurpose {
-  return status === "approved_pending_payment" || status === "payment_pending" || status === "active"
+  return status === "approved_pending_payment" || status === "approved_sponsored_b2b"
+    || status === "payment_pending" || status === "active"
     ? "account_claim"
     : "status";
 }

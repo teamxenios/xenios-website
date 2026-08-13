@@ -42,18 +42,14 @@ function sponsoredClaim(raw: unknown): SponsoredB2BClaim {
  *
  * `actor` must carry the authenticated internal admin JWT so both preparation
  * and later activation derive the exact approver from auth.uid(). `admin` is
- * used only for bounded read-only inspection and the delivery-acknowledgement
- * RPC. `deliverAccountClaim` must reuse the existing account_claim
- * notification/outbox seam; it never receives a password.
+ * used only for bounded read-only inspection. The preparation RPC atomically
+ * creates the durable account_claim outbox row. `kickNotificationOutbox` is a
+ * best-effort wakeup and carries no credential or password material.
  */
 export function createSupabaseSponsoredB2BClaimDeps(
   admin: SupabaseClient,
   actor: SupabaseClient,
-  deliverAccountClaim: (input: {
-    applicationId: string;
-    normalizedEmail: string;
-    firstName: string;
-  }) => Promise<boolean>,
+  kickNotificationOutbox: () => Promise<void>,
 ): SponsoredB2BClaimDeps {
   return {
     async inspectExactEmail(normalizedEmail) {
@@ -101,14 +97,6 @@ export function createSupabaseSponsoredB2BClaimDeps(
       return sponsoredClaim(data);
     },
 
-    sendExistingAccountClaim: deliverAccountClaim,
-
-    async markClaimSent(input) {
-      const data = await required<unknown>((admin as any).rpc("research_mark_sponsored_b2b_claim_sent", {
-        p_sponsorship_id: input.sponsorshipId,
-        p_application_id: input.applicationId,
-      }), "Sponsored B2B claim delivery acknowledgement failed");
-      return sponsoredClaim(data);
-    },
+    kickNotificationOutbox,
   };
 }
