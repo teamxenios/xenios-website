@@ -41,7 +41,7 @@ const REFUSAL_COPY: Readonly<
 
 function DetailSkeleton() {
   return (
-    <div className="grid gap-4" aria-hidden="true" data-testid="mo-detail-skeleton">
+    <div className="grid min-w-0 gap-4" aria-hidden="true" data-testid="mo-detail-skeleton">
       <div className="h-3 w-32 rounded bg-[var(--surface-2,#e5e5e5)]" />
       <div className="h-8 w-2/3 rounded bg-[var(--surface-2,#e5e5e5)]" />
       <div className="h-3 w-full rounded bg-[var(--surface-2,#e5e5e5)]" />
@@ -138,7 +138,7 @@ export function MasterOfferingDetailSurface({
 
   if (state === "loading") {
     return (
-      <main className="grid gap-6">
+      <main className="grid min-w-0 gap-6">
         <p className="sr-only" role="status" aria-live="polite">
           Loading the product
         </p>
@@ -151,7 +151,7 @@ export function MasterOfferingDetailSurface({
     const copy = MASTER_OFFERING_STATE_COPY[state === "ok" ? "unavailable" : state];
     const recoverable = state === "error" || state === "unavailable";
     return (
-      <main className="grid gap-6">
+      <main className="grid min-w-0 gap-6">
         <ResearchEmptyState
           title={copy.title}
           body={copy.body}
@@ -181,7 +181,7 @@ export function MasterOfferingDetailSurface({
       />
       {refusal !== null && (
         <p
-          className="body-s text-ink-mute"
+          className="body-s text-ink-mute min-w-0 break-words"
           role="status"
           aria-live="polite"
           data-testid="mo-add-refusal"

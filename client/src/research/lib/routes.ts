@@ -29,6 +29,13 @@ export const MEMBER_ROUTES = {
   goal: "/research/member/goals/:slug",
   products: "/research/member/products",
   product: "/research/member/products/:slug",
+  // The full member-safe catalog (master offerings v2). Separate from
+  // `products`, which is the v1 member catalog and stays exactly as it is.
+  fullCatalog: "/research/member/catalog",
+  // One v2 offering. The family segment is not decoration: the v2 detail API
+  // is /products/:family/:slug, so a link without it cannot restore the
+  // product it points at.
+  fullCatalogProduct: "/research/member/catalog/:family/:slug",
   supplements: "/research/member/supplements",
   metabolicCare: "/research/member/metabolic-care",
   diagnostics: "/research/member/diagnostics",

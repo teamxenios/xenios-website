@@ -16,6 +16,23 @@ import type {
 
 const API_BASE = "/api/research/catalog-display/v2";
 
+/**
+ * The routed page the full catalog lives at. It is the client path, not the
+ * API path, and it is declared here so the card, the route manifest, and the
+ * tests all read the same string.
+ */
+export const FULL_CATALOG_PATH = "/research/member/catalog";
+
+/**
+ * The largest page size the catalog API accepts. The server refuses anything
+ * larger with an invalid-request refusal rather than clamping it, so a
+ * hand-edited link carrying a bigger number is dropped here instead of being
+ * turned into a 400 the member would read as a broken catalog. The server
+ * stays the authority; this only keeps the browser from asking for something
+ * it has already been told is not a request.
+ */
+export const MASTER_OFFERING_MAX_PAGE_SIZE = 100;
+
 export function masterOfferingCatalogUrl(
   query: MasterOfferingCatalogQuery = {},
 ): string {
@@ -84,6 +101,7 @@ export function parseCatalogQueryFromSearch(
     .slice(0, MASTER_OFFERING_MAX_CATEGORY_FILTERS);
   const sort = params.get("sort");
   const page = Number(params.get("page"));
+  const pageSize = Number(params.get("pageSize"));
   const q = (params.get("q") ?? "").trim().slice(0, 160);
   return {
     ...(q ? { q } : {}),
@@ -92,6 +110,11 @@ export function parseCatalogQueryFromSearch(
     ...(categories.length ? { categories } : {}),
     ...(isMasterOfferingSort(sort) ? { sort } : {}),
     ...(Number.isSafeInteger(page) && page > 0 ? { page } : {}),
+    ...(Number.isSafeInteger(pageSize) &&
+    pageSize > 0 &&
+    pageSize <= MASTER_OFFERING_MAX_PAGE_SIZE
+      ? { pageSize }
+      : {}),
   };
 }
 
@@ -110,12 +133,52 @@ export function catalogQueryToSearch(
   if (query.page !== undefined && query.page > 1) {
     params.set("page", String(query.page));
   }
+  // Page size is written only when it is a usable, server-acceptable size. The
+  // default is the server's, so an absent pageSize is the honest way to say
+  // "whatever the catalog decides", and writing it out would freeze today's
+  // default into every shared link.
+  if (
+    query.pageSize !== undefined &&
+    Number.isSafeInteger(query.pageSize) &&
+    query.pageSize > 0 &&
+    query.pageSize <= MASTER_OFFERING_MAX_PAGE_SIZE
+  ) {
+    params.set("pageSize", String(query.pageSize));
+  }
   const serialized = params.toString();
   return serialized ? `?${serialized}` : "";
 }
 
+/**
+ * The v1 member product page. Kept exactly as it was because the v1 member
+ * catalog still links this way. It cannot serve a v2 offering: v2 slugs are
+ * family-prefixed (`research-vials-bpc-157`) and are keyed in a different
+ * store, so `ProductPage` re-checks the slug and falls quietly to
+ * `unavailable`. Use `fullCatalogProductHref` for a v2 offering.
+ */
 export function memberOfferingDetailHref(slug: string): string {
   return `/research/member/products/${encodeURIComponent(slug)}`;
+}
+
+/** The routed page for the full catalog list. */
+export function fullCatalogHref(
+  query: MasterOfferingCatalogQuery = {},
+): string {
+  return `${FULL_CATALOG_PATH}${catalogQueryToSearch(query)}`;
+}
+
+/**
+ * The routed page for one v2 offering.
+ *
+ * Both segments are load bearing. The v2 detail API is
+ * `/products/:family/:slug`, and the detail surface needs both, so a link that
+ * carried only the slug could not restore the view it points at.
+ */
+export function fullCatalogProductHref(
+  family: MasterOfferingFamily,
+  slug: string,
+): string {
+  return `${FULL_CATALOG_PATH}/${encodeURIComponent(family)}/${encodeURIComponent(slug)}`;
 }
 
 /**
