@@ -3,7 +3,7 @@
   "taskId": "PACK-02-KRIS-ACCOUNT-RELEASE-PACKET",
   "state": "ROMAN_B2B2C_BUYER_BRIDGE_CANDIDATE_READY",
   "branch": "codex/pack02-client-accounts-b2b-20260812",
-  "headSha": "3f00b562939da970217d842002b74848abbfc1cb",
+  "headSha": "99cbdddc71e558dd00586c4fc9b0b4001d3d416a",
   "milestone": "Non-colliding Roman Health Marketplace B2B bridge candidate hardened after independent QA: canonical member-keyed authorization, business-scoped KRIS_VOLUME_PARTNER entitlement, DB-owned ownership time, auth.uid activation actor, SELECT-only service-role tables, immutable canonical research_orders ownership, concrete Supabase adapter, 67 focused tests, typecheck and production build PASS. Candidate SQL remains unapplied and routes unmounted.",
   "humanGates": [
     "Kris application facts and personal attestations, then canonical account claim",
