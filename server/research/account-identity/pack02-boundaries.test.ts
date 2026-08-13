@@ -53,7 +53,8 @@ describe("Pack 02 isolation and single-system boundaries", () => {
     expect(contract).toContain("Normal founder-approved range is 1..50");
     expect(dependency).toContain("Quantity alone never requires manual review");
     expect(dependency).toContain("5e9ac687d95841529d75deb2d1d580d91380aebd");
-    expect(dependency).toContain("0a8b38e62bdf58c9d6646a7cb830309fd2fe6d68");
+    expect(dependency).toContain("6f4c7517e762c484458d0ef9d935e518ff1398ee");
+    expect(dependency).toContain("b459c6edc242bba522441979808c49378a209395");
     expect(service).not.toMatch(/createCart|createCheckout|insertOrder/);
   });
 

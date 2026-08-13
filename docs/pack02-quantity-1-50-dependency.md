@@ -31,7 +31,7 @@ Do not integrate these outputs as quantity authority without recreating them und
 - `7977aaa2074d6b51089d6803b9f12d521c83ba59` (`codex/pack09-q50-evidence-20260812`) explicitly records the same 20-direct/21–50-manual model.
 - `supabase/migrations/20260811120000_research_early_access_cart_quantity_band.sql` is the older 1-through-20 durable band and cannot represent the new final policy by itself.
 
-Final fusion must preserve the existing canonical architecture while changing the single shared quantity authority, Product Control effective limit, cart/order/checkout/release validation, durable database candidate, and review evaluator together. It must prove 1, 20, 21, 49, and 50 are accepted subject to real non-quantity rules; 51 is refused; and neither 21 nor 50 receives a quantity-only review trigger. No production SQL or deployment is authorized by this document.
+The actual fusion base preserves the existing canonical architecture while composing the single shared quantity authority, Product Control effective limit, cart/order/checkout/release validation, durable database candidate, and review evaluator together. Focused tests prove 1, 20, 21, 49, and 50 are accepted subject to real non-quantity rules; 51 is refused; and neither 21 nor 50 receives a quantity-only review trigger. No production SQL or deployment is authorized by this document.
 
 ## Legal state consumed by Pack 02
 
