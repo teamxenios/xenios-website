@@ -28,6 +28,7 @@ import {
   isMasterOfferingFamily,
   type MasterOfferingCopyState,
 } from "@shared/research/master-offerings/contract";
+import { warmMasterOfferingSearch } from "./search";
 import type {
   MasterOfferingCatalogReader,
 } from "./service";
@@ -373,6 +374,9 @@ export class GeneratedMasterOfferingCatalogReader
       throw new MasterOfferingDatasetUnavailable("dataset is not valid JSON");
     }
     const loaded = loadMasterOfferingDataset(parsed);
+    // Pay the search normalization cost here, once per dataset, rather than on
+    // whichever member happens to type the first query.
+    warmMasterOfferingSearch(loaded.products);
     this.cached = { mtimeMs, loaded };
     return loaded;
   }
