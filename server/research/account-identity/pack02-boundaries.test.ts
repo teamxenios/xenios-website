@@ -52,15 +52,15 @@ describe("Pack 02 isolation and single-system boundaries", () => {
     expect(service).toContain("superseded_quantity_only_review");
     expect(contract).toContain("Normal founder-approved range is 1..50");
     expect(dependency).toContain("Quantity alone never requires manual review");
-    expect(dependency).toContain("098e26df757e6a94d3ea1f9c1ece2035f61443d2");
-    expect(dependency).toContain("7977aaa2074d6b51089d6803b9f12d521c83ba59");
+    expect(dependency).toContain("5e9ac687d95841529d75deb2d1d580d91380aebd");
+    expect(dependency).toContain("0a8b38e62bdf58c9d6646a7cb830309fd2fe6d68");
     expect(service).not.toMatch(/createCart|createCheckout|insertOrder/);
   });
 
   it("keeps the Kris lookup an explicit read-only audit and rejects the synthetic fixture as identity evidence", () => {
     const audit = read("supabase/pack02-candidates/inspect_kris_identity_read_only.sql");
     const notes = read("docs/pack02-kris-identity-audit.md");
-    expect(audit).toContain("set transaction read only");
+    expect(audit).toContain("begin isolation level repeatable read read only");
     expect(audit).toContain("from auth.users");
     expect(audit).toContain("from public.research_members");
     expect(audit).toContain("from public.research_applications");
@@ -69,5 +69,49 @@ describe("Pack 02 isolation and single-system boundaries", () => {
     expect(notes).toContain("authoritative identity not found in the available local evidence");
     expect(notes).toContain("synthetic `Kris Lopez` unit-test fixture");
     expect(notes).toContain("nothing in the supplied evidence proves that user is Kris");
+  });
+
+  it("prepares exact existing-UID and secure-invite activation without a second auth path", () => {
+    const activation = read("server/research/account-identity/buyer-activation.ts");
+    const adapter = read("server/research/account-identity/buyer-activation-supabase.ts");
+    const sql = read("supabase/pack02-candidates/20260813_research_buyer_account_activation.sql");
+    expect(activation).toContain('path: z.literal("existing_auth")');
+    expect(activation).toContain('path: z.literal("new_secure_invite")');
+    expect(activation).toContain("findAuthUserById");
+    expect(activation).toContain("inviteAuthUser");
+    expect(activation).toContain('/research/reset-password');
+    expect(activation).not.toMatch(/\bpassword\s*:/i);
+    expect(activation).not.toMatch(/createAuth|signUp|createUser/);
+    expect(adapter).toContain("admin.auth.admin.inviteUserByEmail");
+    expect(adapter).toContain("anon.auth.resetPasswordForEmail");
+    expect(adapter).toContain('type: "invite"');
+    expect(adapter).toContain("pendingInviteDelivery.deliver");
+    expect(adapter).toContain('admin as any).rpc("research_bind_active_buyer_account"');
+    expect(sql).toContain("insert into public.research_members");
+    expect(sql).toContain("insert into public.research_account_binding_events");
+    expect(sql).toContain("'existing_invite_resent'");
+    expect(sql).not.toMatch(/insert\s+into\s+auth\.users/i);
+    expect(sql).not.toMatch(/insert\s+into\s+public\.research_orders/i);
+  });
+
+  it("pins the existing mounted member journey and its active-member boundary", () => {
+    const section = read("client/src/research/section.tsx");
+    const catalogRoutes = read("server/research/catalog/member-catalog-routes.ts");
+    const memberAuth = read("server/research/member-auth.ts");
+    for (const route of [
+      "/research/sign-in",
+      "/research/reset-password",
+      "/research/member/products",
+      "/research/member/cart",
+      "/research/member/checkout",
+      "/research/member/orders",
+      "/research/member/orders/:id",
+    ]) {
+      expect(section).toContain(route);
+    }
+    expect(catalogRoutes).toContain('"/api/research/member/products"');
+    expect(catalogRoutes).toContain("requireActiveMember");
+    expect(memberAuth).toContain("getSupabaseAnon().auth.getUser(jwt)");
+    expect(memberAuth).toContain('if (status === "active")');
   });
 });

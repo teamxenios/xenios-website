@@ -16,12 +16,12 @@ No canonical account-alias table exists in the inspected base. Pack 02's verifie
 
 ## Safe resolution path
 
-`supabase/pack02-candidates/inspect_kris_identity_read_only.sql` is the prepared, read-only operator artifact. An authorized operator can run it against the authoritative Supabase project and review exact matches across Auth metadata, member rows, applications, and Early Access records. It deliberately does not create a user, invite, password, binding, or order.
+`supabase/pack02-candidates/inspect_kris_identity_read_only.sql` is the prepared, read-only operator artifact. An authorized operator can run it against the authoritative Supabase project and review exact matches across Auth metadata, member rows, applications, and Early Access records. It deliberately does not create a user, invite, password, binding, or order. The exact operator decision and tested activation composition are documented in `docs/pack02-kris-account-activation-runbook.md` and implemented, unmounted, in `server/research/account-identity/buyer-activation.ts`.
 
-1. If exactly one existing identity is proven, reuse its exact Supabase Auth UID and verified canonical email through Pack 02.
-2. If no existing identity is proven after the authoritative query, use the existing secure member claim or Pack 02 organization invitation/activation flow with a founder-confirmed email.
+1. If exactly one existing identity is proven, use the `existing_auth` path with its exact Supabase Auth UID, confirmed canonical email, and active canonical application.
+2. If no Auth identity exists after the authoritative query, use the `new_secure_invite` path only with a founder-confirmed email and active canonical application. It rechecks absence and calls the sole Supabase secure-invitation boundary.
 3. If multiple candidates are returned, stop for human identity disambiguation. Never guess from a name, organization, or email fragment.
-4. Never request, generate, log, or store a plaintext password.
+4. Never use the legacy caller-credential claim endpoint for this operator activation, and never request, generate, log, or store a plaintext password.
 
 ## Buyer readiness independent of identity lookup
 
