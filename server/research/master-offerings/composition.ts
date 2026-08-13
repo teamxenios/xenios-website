@@ -28,6 +28,7 @@ import {
   MasterOfferingDatasetUnavailable,
   type DatasetFileSystem,
 } from "./dataset-reader";
+import type { DatasetLocationProbe } from "./dataset-location";
 import {
   createAuthoritativeApprovedPriceReader,
   createMasterOfferingPriceAuthority,
@@ -75,6 +76,14 @@ export interface MasterOfferingCompositionInput {
   catalogReader?: MasterOfferingCatalogReader;
   env?: VisibilityEnv;
   files?: DatasetFileSystem;
+  /**
+   * How the committed-artifact lookup decides a path exists, and from where.
+   * Supplied only by tests: a test that must prove "no dataset anywhere" cannot
+   * do it against the real filesystem, because the repository now ships a
+   * committed artifact and the real answer there is that one exists.
+   */
+  datasetProbe?: DatasetLocationProbe;
+  cwd?: string;
   now?(): string;
 }
 
@@ -102,6 +111,8 @@ export function createMasterOfferingCatalogDependencies(
     createMasterOfferingCatalogReaderFromEnv(
       env as NodeJS.ProcessEnv,
       input.files,
+      input.datasetProbe,
+      input.cwd,
     );
 
   const capabilities = {

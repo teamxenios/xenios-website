@@ -29,6 +29,12 @@ import {
   type MasterOfferingCopyState,
 } from "@shared/research/master-offerings/contract";
 import { warmMasterOfferingSearch } from "./search";
+import {
+  MASTER_OFFERINGS_DATASET_ENV_VAR,
+  resolveMasterOfferingDatasetLocation,
+  type DatasetLocationProbe,
+  type MasterOfferingDatasetLocation,
+} from "./dataset-location";
 import type {
   MasterOfferingCatalogReader,
 } from "./service";
@@ -37,8 +43,9 @@ import type {
   NormalizedMasterOfferingVariant,
 } from "./model";
 
-export const MASTER_OFFERINGS_DATASET_ENV_VAR =
-  "XENIOS_MASTER_OFFERINGS_DATASET";
+// Re-exported because this module was the constant's home before the location
+// rules grew their own file, and several callers still import it from here.
+export { MASTER_OFFERINGS_DATASET_ENV_VAR };
 
 export class MasterOfferingDatasetUnavailable extends Error {
   constructor(readonly reason: string) {
@@ -113,6 +120,34 @@ export interface MasterOfferingDatasetSummary {
 export interface LoadedMasterOfferingDataset {
   products: readonly NormalizedMasterOffering[];
   summary: MasterOfferingDatasetSummary;
+  /**
+   * Member-visible offerings by slug, built once per load.
+   *
+   * The detail route used to scan all 1,121 offerings on every request to find
+   * one. The scan was correct and it refused an ambiguous slug by counting
+   * matches, so this index has to keep that property rather than take the first
+   * hit: a slug that somehow resolved twice must resolve to nothing. The loader
+   * already refuses a dataset with duplicate slugs, so a collision here means
+   * the two guards disagree, and the safe reading of that is no product.
+   */
+  bySlug: ReadonlyMap<string, NormalizedMasterOffering>;
+}
+
+function indexBySlug(
+  products: readonly NormalizedMasterOffering[],
+): ReadonlyMap<string, NormalizedMasterOffering> {
+  const index = new Map<string, NormalizedMasterOffering>();
+  const collided = new Set<string>();
+  for (const product of products) {
+    if (product.visibility !== "member") continue;
+    if (index.has(product.slug)) {
+      collided.add(product.slug);
+      continue;
+    }
+    index.set(product.slug, product);
+  }
+  for (const slug of Array.from(collided)) index.delete(slug);
+  return index;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -356,6 +391,7 @@ export function loadMasterOfferingDataset(
 
   return {
     products,
+    bySlug: indexBySlug(products),
     summary: {
       generatedAt: nonBlank(raw.generatedAt) ? raw.generatedAt : "",
       sourceWorkbookSha256: nonBlank(raw.sourceWorkbookSha256)
@@ -435,18 +471,57 @@ export class GeneratedMasterOfferingCatalogReader
   readCatalog(): readonly NormalizedMasterOffering[] {
     return this.load().products;
   }
+
+  /**
+   * One member-visible offering, by slug, without walking the catalog.
+   *
+   * The load is already cached per dataset mtime, so the previous cost was not
+   * re-parsing, it was a linear scan of 1,121 offerings per detail request. The
+   * index removes the scan and keeps the refusal: an unknown or ambiguous slug
+   * is null, exactly as the scan's match count made it.
+   */
+  readBySlug(slug: string): NormalizedMasterOffering | null {
+    return this.load().bySlug.get(slug) ?? null;
+  }
 }
 
+const nodeLocationProbe: DatasetLocationProbe = {
+  exists: (filePath) => fs.existsSync(filePath),
+};
+
 /**
- * Build the reader from the environment, or return null when no dataset is
- * configured. A null is the honest answer for "not set up yet"; the composition
- * root turns it into an unavailable surface rather than an empty one.
+ * Build the reader for this deployment.
+ *
+ * The environment variable is an override, not the only configuration. With
+ * nothing set, this finds the COMMITTED artifact, which is what makes the
+ * catalog work in a plain git clone with no operator setup and no path from
+ * anybody's laptop. See dataset-location.ts for the resolution order and why
+ * the working directory is the anchor.
+ *
+ * Null still means "no dataset anywhere", and the composition root still turns
+ * that into an unavailable surface rather than an empty one. "We cannot reach
+ * the catalog" and "there is nothing to sell" remain different answers.
  */
 export function createMasterOfferingCatalogReaderFromEnv(
   env: NodeJS.ProcessEnv = process.env,
   files: DatasetFileSystem = nodeFileSystem,
+  probe: DatasetLocationProbe = nodeLocationProbe,
+  cwd: string = process.cwd(),
 ): GeneratedMasterOfferingCatalogReader | null {
-  const configured = env[MASTER_OFFERINGS_DATASET_ENV_VAR];
-  if (typeof configured !== "string" || configured.trim() === "") return null;
-  return new GeneratedMasterOfferingCatalogReader(configured.trim(), files);
+  const location = resolveMasterOfferingDatasetLocation({ env, cwd, probe });
+  if (location === null) return null;
+  return new GeneratedMasterOfferingCatalogReader(location.filePath, files);
+}
+
+/**
+ * The same resolution, reported rather than used. A deployment that answers 503
+ * should be able to say which rule ran and which path it chose, without the
+ * operator reading this file to work it out.
+ */
+export function describeMasterOfferingDatasetLocation(
+  env: NodeJS.ProcessEnv = process.env,
+  probe: DatasetLocationProbe = nodeLocationProbe,
+  cwd: string = process.cwd(),
+): MasterOfferingDatasetLocation | null {
+  return resolveMasterOfferingDatasetLocation({ env, cwd, probe });
 }

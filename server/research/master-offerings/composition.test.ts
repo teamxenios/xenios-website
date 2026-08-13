@@ -241,7 +241,16 @@ describe("composition", () => {
 
   it("answers unavailable, never empty, when no dataset is configured", async () => {
     const response = await request(
-      app({ catalogReader: undefined }, { XENIOS_MASTER_OFFERINGS_DATASET: undefined }),
+      app(
+        {
+          catalogReader: undefined,
+          // Genuinely nothing anywhere. The repository ships a committed
+          // artifact now, so probing the real filesystem would find one and
+          // this test would stop testing what it says it tests.
+          datasetProbe: { exists: () => false },
+        },
+        { XENIOS_MASTER_OFFERINGS_DATASET: undefined },
+      ),
     ).get(MASTER_OFFERING_CATALOG_LIST_ROUTE);
     expect(response.status).toBe(503);
     expect(response.body).toEqual({

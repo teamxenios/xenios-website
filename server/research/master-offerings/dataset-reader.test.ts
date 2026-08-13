@@ -1,12 +1,15 @@
+import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import {
   GeneratedMasterOfferingCatalogReader,
   MASTER_OFFERINGS_DATASET_ENV_VAR,
+  describeMasterOfferingDatasetLocation,
   MasterOfferingDatasetUnavailable,
   createMasterOfferingCatalogReaderFromEnv,
   loadMasterOfferingDataset,
   type DatasetFileSystem,
 } from "./dataset-reader";
+import { MASTER_OFFERINGS_COMMITTED_DATASET_PATH } from "./dataset-location";
 import { noMasterOfferingCommerce } from "./customer-projection";
 import { MasterOfferingCatalogService } from "./service";
 
@@ -303,19 +306,53 @@ describe("the reader on disk", () => {
     );
   });
 
-  it("is absent rather than empty when the environment configures nothing", () => {
-    expect(createMasterOfferingCatalogReaderFromEnv({})).toBeNull();
+  const absent = { exists: () => false };
+  const present = { exists: () => true };
+
+  it("is absent rather than empty when there is no dataset anywhere", () => {
+    // Probed as absent deliberately. The repository ships a committed artifact,
+    // so against the real filesystem the honest answer is that one exists, and
+    // this assertion would be testing the worktree rather than the rule.
     expect(
-      createMasterOfferingCatalogReaderFromEnv({
-        [MASTER_OFFERINGS_DATASET_ENV_VAR]: "  ",
-      }),
+      createMasterOfferingCatalogReaderFromEnv({}, undefined, absent),
+    ).toBeNull();
+    expect(
+      createMasterOfferingCatalogReaderFromEnv(
+        { [MASTER_OFFERINGS_DATASET_ENV_VAR]: "  " },
+        undefined,
+        absent,
+      ),
     ).toBeNull();
     expect(
       createMasterOfferingCatalogReaderFromEnv(
         { [MASTER_OFFERINGS_DATASET_ENV_VAR]: "catalog.json" },
         files(JSON.stringify(dataset())),
+        absent,
       ),
     ).toBeInstanceOf(GeneratedMasterOfferingCatalogReader);
+  });
+
+  it("finds the committed artifact with no environment variable set", () => {
+    // The point of the committed artifact: a plain git clone serves the catalog
+    // with no operator setup and no path from anybody's machine.
+    const location = describeMasterOfferingDatasetLocation({}, present, "/srv/app");
+    expect(location?.source).toBe("committed_artifact");
+    expect(location?.filePath).toBe(
+      path.resolve("/srv/app", MASTER_OFFERINGS_COMMITTED_DATASET_PATH),
+    );
+  });
+
+  it("lets an operator override the committed artifact, and does not fall back on a typo", () => {
+    // A named path that does not exist must fail against THAT path. Falling
+    // back to the committed artifact would serve a different dataset while the
+    // operator believed their override was live.
+    const location = describeMasterOfferingDatasetLocation(
+      { [MASTER_OFFERINGS_DATASET_ENV_VAR]: "/etc/secrets/catalog.json" },
+      absent,
+      "/srv/app",
+    );
+    expect(location?.source).toBe("environment_override");
+    expect(location?.filePath).toBe(path.resolve("/etc/secrets/catalog.json"));
   });
 
   it("serves a real catalog through the service, priced on request", async () => {
