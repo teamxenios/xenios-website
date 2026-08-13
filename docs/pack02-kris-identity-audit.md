@@ -27,4 +27,17 @@ No canonical account-alias table exists in the inspected base. Pack 02's verifie
 
 The unmounted Pack 02 account home composes the existing member catalog, cart, product-request, order-history, security, and password-recovery routes only when the authenticated subject also has an active personal member account. An organization membership alone does not unlock personal catalog or history. Roman Digital's dashboard remains limited to Roman Digital-owned orders, requests, invoices, payments, shipments, and tracking.
 
-This artifact remains `REBASE_OR_RECREATE_REQUIRED` until `FINAL_EA_FAST_FOLLOW_BASE` exists.
+Recreation status, resolved. The rebase-or-recreate requirement existed because
+the Pack 02 lane was built on a base that predated the other lanes. That has now
+materially happened: Pack 02 `ca943a6` (adopted on its own lane's authority, with
+`1597f22` a clean ancestor) is fused with the authoritative Q50, Buyer Commerce
+`6f4c751`, Catalog `e858e893` and the six Pack 04 functional paths onto the common
+base `ba9fa0ae`, at fusion candidate `2171dce`. There is no rebase or recreation left
+to perform.
+
+What remains is NOT a recreation gate and should not be recorded as one. The tag
+`FINAL_EA_FAST_FOLLOW_BASE` still does not exist; it is cut ON this fused SHA as a
+release step, so treating its absence as a blocker on the fusion inverts the
+dependency. Independent acceptance of the fused candidate is also still
+outstanding. Those two gates are named in the release sequence and are tracked
+there.

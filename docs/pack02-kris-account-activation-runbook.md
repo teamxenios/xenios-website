@@ -55,4 +55,12 @@ Pack 02 displays quantities 1 through 50 and rejects quantity-only manual-review
 
 Before execution, Agentic OS must promote and rehearse `supabase/pack02-candidates/20260813_research_buyer_account_activation.sql` after its Pack02 event-table dependency, then instantiate `createSupabaseBuyerActivationDeps(getSupabaseAdmin(), getSupabaseAnon(), reviewedPendingInviteDelivery)` inside an authorized administrative operator boundary. Exact audited values are supplied to `activateBuyerAccount`; no password field is accepted by its strict schema.
 
-Do not mount Pack 02 candidate routes, apply SQL, invite a user, attach an identity, or claim production checkout Q50 until the final canonical base is fused and independently tested. `REBASE_OR_RECREATE_REQUIRED` remains in force.
+Do not mount Pack 02 candidate routes, apply SQL, invite a user, attach an identity,
+or claim production checkout Q50 until the fused candidate is independently
+accepted. Those operator actions stay gated.
+
+The RECREATION half of that gate is discharged: Pack 02 is fused with the
+authoritative Q50, Buyer Commerce, Catalog and Pack 04 heads onto `ba9fa0ae` at
+candidate `2171dce`, so `REBASE_OR_RECREATE_REQUIRED` no longer applies. It is
+replaced here rather than deleted, because the operator restrictions above are a
+different gate and remain fully in force.
