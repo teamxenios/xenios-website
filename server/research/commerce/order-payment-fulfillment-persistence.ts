@@ -14,6 +14,8 @@ import {
   PACK04_ORDER_QUANTITY_MAX,
   PACK04_ORDER_QUANTITY_MIN,
   type BuyerRequestLine,
+  type CustomerOrderHistoryPage,
+  type CustomerOrderHistoryQuery,
   type CustomerOrderTimeline,
   type OrderActor,
   type OrderAuditEntry,
@@ -297,6 +299,15 @@ export class PersistentOrderWorkflowService {
     const loaded = await this.store.load();
     assertLoadedState(loaded);
     return new InMemoryOrderWorkflowEngine(loaded.snapshot).customerTimeline(actor, orderId);
+  }
+
+  async customerOrderHistory(
+    actor: OrderActor,
+    query: CustomerOrderHistoryQuery = {},
+  ): Promise<CustomerOrderHistoryPage> {
+    const loaded = await this.store.load();
+    assertLoadedState(loaded);
+    return new InMemoryOrderWorkflowEngine(loaded.snapshot).customerOrderHistory(actor, query);
   }
 }
 

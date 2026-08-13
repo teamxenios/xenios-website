@@ -5,10 +5,10 @@
   "branch": "codex/pack04-orders-payments-fulfillment-20260812",
   "requiredBase": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
   "rebaseOrRecreateRequired": true,
-  "lastCommittedHead": "6a1a65da64d3fe34edb0d7a1bb9574825cc7a0cf",
+  "lastCommittedHead": "92ec1ee0a350f51467b73c6affcea447903195c4",
   "state": "READY_FOR_REVIEW_AT_HUMAN_GATED_DB_BOUNDARY",
-  "milestone": "FOUNDER_QUANTITY_1_TO_50_VERIFIED_UNMOUNTED",
-  "updatedAt": "2026-08-13T05:35:17.6158772Z",
+  "milestone": "ACCOUNT_ORDER_HISTORY_VERIFIED_UNMOUNTED",
+  "updatedAt": "2026-08-13T06:27:01.8788809Z",
   "completed": [
     "Unmounted Pack 04 domain workflow and storage draft committed",
     "Atomic snapshot/CAS persistence port implemented",
@@ -21,13 +21,16 @@
     "Normal quantities 1, 20, 21, and 50 use the same Pack 04 request path",
     "Zero, fractional, and quantity 51 requests fail closed",
     "Invoice quantities are 1 through 50 and must exactly match the buyer request",
-    "Durable request and invoice quantity corruption fails closed"
+    "Durable request and invoice quantity corruption fails closed",
+    "Customer account order history is ownership scoped and keyset paginated",
+    "History projects customer-safe price, payment, fulfillment and latest tracking state",
+    "Cross-buyer and cross-organization history isolation is covered"
   ],
   "currentVerification": {
-    "focusedTests": "PASS: 3 files, 26 tests",
+    "focusedTests": "PASS: 3 files, 28 tests",
     "typecheck": "PASS: repository-wide npm run check",
     "build": "PASS: client and server production compilation; nothing deployed",
-    "adversarialChecks": "PASS: 8 files, 144 tests including quantity and invoice-integrity regressions",
+    "adversarialChecks": "PASS: 8 files, 146 tests including account-history regressions",
     "releaseChecks": "PASS: release control plane, 26-node migration DAG, 352 route registrations, 130-file pgcrypto qualification"
   },
   "prohibitionsObserved": [

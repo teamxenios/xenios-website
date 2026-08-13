@@ -3,7 +3,7 @@
   "name": "Xenios Orders Payments and Fulfillment",
   "pack": "04",
   "effort": "high",
-  "status": "READY_FOR_REVIEW_UNMOUNTED_QUANTITY_1_TO_50_COMPLETE",
+  "status": "READY_FOR_REVIEW_UNMOUNTED_ACCOUNT_HISTORY_COMPLETE",
   "base": {
     "requestedSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
     "strategy": "RECREATED_FROM_EXACT_BASE",
@@ -34,7 +34,8 @@
     "Trust Dial gating",
     "atomic compare-and-swap persistence seam",
     "restart-safe workflow hydration and fail-closed snapshot validation",
-    "founder-authorized normal order quantities from 1 through 50"
+    "founder-authorized normal order quantities from 1 through 50",
+    "ownership-scoped keyset-paginated customer order history"
   ],
   "hardInvariants": [
     "A new workflow can only begin in request_pending with no approval.",
@@ -53,7 +54,9 @@
     "Receipt scope and key identities are structurally unambiguous even when either contains colons.",
     "Malformed, duplicate, stale, or internally inconsistent durable snapshots fail closed before reads or commands.",
     "Every request and invoice line quantity is a unique whole-number SKU quantity from 1 through 50; quantity alone creates no review split in that band.",
-    "An invoice cannot change the per-SKU quantities in the approved buyer request."
+    "An invoice cannot change the per-SKU quantities in the approved buyer request.",
+    "Customer order history is bounded to 1 through 100 items per page and ordered by stable updatedAt/orderId keyset pagination.",
+    "Customer history exposes customer-safe price, payment, fulfillment and latest-tracking status without proof, transaction, supplier, or audit data."
   ],
   "artifacts": [
     {
@@ -62,7 +65,7 @@
     },
     {
       "path": "server/research/commerce/order-payment-fulfillment.test.ts",
-      "purpose": "Ten end-to-end and adversarial domain tests, including receipt-key collision and founder quantity 1-through-50 coverage."
+      "purpose": "Eleven end-to-end and adversarial domain tests, including receipt-key collision, quantity 1-through-50, account-history pagination, and ownership isolation coverage."
     },
     {
       "path": "server/research/commerce/order-payment-fulfillment-persistence.ts",
@@ -78,7 +81,7 @@
     },
     {
       "path": "server/research/commerce/order-payment-fulfillment-storage.test.ts",
-      "purpose": "Seven static storage-contract tests protecting RLS, ownership, quantity 1-through-50, approval, settlement, fulfillment, append-only evidence, and safe timeline projection."
+      "purpose": "Eight static storage-contract tests protecting RLS, ownership, quantity 1-through-50, approval, settlement, fulfillment, append-only evidence, safe timeline, and bounded history projections."
     },
     {
       "path": "HANDOFF.json",
@@ -87,18 +90,22 @@
     {
       "path": "PACK04_HEARTBEAT.json",
       "purpose": "Lane-local milestone and safety heartbeat without editing another lane's coordination files."
+    },
+    {
+      "path": "PACK04_OVERNIGHT_SUMMARY.json",
+      "purpose": "Concise morning execution record, impact summary, blockers, and exact next actions."
     }
   ],
   "verification": [
     {
       "command": "npm test -- --run server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts server/research/commerce/order-payment-fulfillment-persistence.test.ts",
       "result": "PASS",
-      "details": "3 files, 26 tests passed"
+      "details": "3 files, 28 tests passed"
     },
     {
       "command": "npm test -- --run server/research/commerce/manual-order-payments.test.ts server/research/early-access/commerce/verification-service.test.ts server/research/early-access/commerce/release-service.test.ts server/research/early-access/cart/cart-settlement-adversarial.test.ts server/research/early-access/cart/duplicate-order.test.ts server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts server/research/commerce/order-payment-fulfillment-persistence.test.ts",
       "result": "PASS",
-      "details": "8 commerce/payment/settlement adversarial files, 144 tests passed after quantity and invoice-integrity regressions"
+      "details": "8 commerce/payment/settlement adversarial files, 146 tests passed after customer-history regressions"
     },
     {
       "command": "npm run check",

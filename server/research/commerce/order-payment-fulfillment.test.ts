@@ -260,6 +260,26 @@ describe("Pack 04 order/payment/fulfillment workflow", () => {
     expect(serialized).not.toContain("commit_pack04_0001");
     expect(serialized).not.toContain("supplier_pack04_0001");
     expect(serialized).not.toContain("private/manual-payment-proofs");
+
+    const history = engine.customerOrderHistory(buyer);
+    expect(history).toMatchObject({
+      nextCursor: null,
+      orders: [{
+        orderId: ORDER,
+        requestRef: "buyer_request_pack04_0001",
+        stage: "delivered",
+        paymentStatus: "verified",
+        fulfillmentStatus: "delivered",
+        amountCents: 5000,
+        latestTracking: {
+          carrier: "UPS",
+          trackingNumber: "1Z999AA10123456784",
+          recordedAt: at(9),
+        },
+      }],
+    });
+    expect(JSON.stringify(history)).not.toContain("external_transaction_pack04_0001");
+    expect(JSON.stringify(history)).not.toContain("private/manual-payment-proofs");
   });
 
   it("binds business orders to both the organization and its authenticated buyer", () => {
@@ -282,6 +302,63 @@ describe("Pack 04 order/payment/fulfillment workflow", () => {
     expect(engine.customerTimeline({ actorId: "buyer_other_0001", role: "buyer", organizationIds: [ORG_ID] }, ORDER))
       .toBeNull();
     expect(engine.customerTimeline(businessBuyer, ORDER)?.ownerKind).toBe("business");
+  });
+
+  it("paginates customer order history stably while isolating buyers and organizations", () => {
+    const engine = new InMemoryOrderWorkflowEngine();
+    const create = (
+      actor: OrderActor,
+      orderId: string,
+      owner: BusinessOrderOwner | { kind: "personal"; buyerId: string },
+      second: number,
+    ) => engine.execute(actor, `pack04:history:${orderId}`, {
+      kind: "create_request",
+      orderId,
+      owner,
+      request: {
+        requestRef: `request_${orderId}`,
+        lines: [{ sku: "SKU-PACK04-HISTORY", quantity: 50 }],
+      },
+      occurredAt: at(second),
+    });
+    const personal = { kind: "personal" as const, buyerId: BUYER_ID };
+    const business: BusinessOrderOwner = {
+      kind: "business", buyerId: BUYER_ID, organizationId: ORG_ID,
+    };
+    const otherBuyer: OrderActor = { actorId: "buyer_pack04_other", role: "buyer" };
+
+    expect(create(buyer, "order_history_personal_01", personal, 20).ok).toBe(true);
+    expect(create(businessBuyer, "order_history_business_01", business, 21).ok).toBe(true);
+    expect(create(buyer, "order_history_personal_02", personal, 22).ok).toBe(true);
+    expect(create(otherBuyer, "order_history_other_01", {
+      kind: "personal", buyerId: otherBuyer.actorId,
+    }, 23).ok).toBe(true);
+
+    const first = engine.customerOrderHistory(businessBuyer, { limit: 2 });
+    expect(first.orders.map((order) => order.orderId)).toEqual([
+      "order_history_personal_02", "order_history_business_01",
+    ]);
+    expect(first.orders.every((order) => order.lines[0]?.quantity === 50)).toBe(true);
+    expect(first.nextCursor).toEqual({
+      updatedAt: at(21), orderId: "order_history_business_01",
+    });
+    const second = engine.customerOrderHistory(businessBuyer, {
+      limit: 2,
+      before: first.nextCursor,
+    });
+    expect(second.orders.map((order) => order.orderId)).toEqual(["order_history_personal_01"]);
+    expect(second.nextCursor).toBeNull();
+
+    const noBusinessAuthority: OrderActor = { actorId: BUYER_ID, role: "buyer", organizationIds: [] };
+    expect(engine.customerOrderHistory(noBusinessAuthority).orders.map((order) => order.orderId))
+      .toEqual(["order_history_personal_02", "order_history_personal_01"]);
+    expect(engine.customerOrderHistory(otherBuyer).orders.map((order) => order.orderId))
+      .toEqual(["order_history_other_01"]);
+    expect(engine.customerOrderHistory(admin).orders).toEqual([]);
+    expect(() => engine.customerOrderHistory(buyer, { limit: 101 })).toThrow(TypeError);
+    expect(() => engine.customerOrderHistory(buyer, {
+      before: { updatedAt: "not-a-time", orderId: "order_history_personal_01" },
+    })).toThrow(TypeError);
   });
 
   it("treats every normal quantity from 1 through 50 identically and never adds a quantity review threshold", () => {

@@ -228,6 +228,54 @@ export type CustomerOrderTimeline = Readonly<{
   }>[];
 }>;
 
+export type CustomerOrderPaymentStatus =
+  | "not_invoiced"
+  | "awaiting_payment"
+  | "evidence_submitted"
+  | "verified";
+
+export type CustomerOrderFulfillmentStatus =
+  | "not_released"
+  | "released"
+  | "fulfilling"
+  | "shipped"
+  | "delivered";
+
+export type CustomerOrderHistoryCursor = Readonly<{
+  updatedAt: string;
+  orderId: string;
+}>;
+
+export type CustomerOrderHistoryQuery = Readonly<{
+  limit?: number;
+  before?: CustomerOrderHistoryCursor | null;
+}>;
+
+export type CustomerOrderHistoryItem = Readonly<{
+  orderId: string;
+  requestRef: string;
+  stage: OrderWorkflowStage;
+  ownerKind: OrderOwner["kind"];
+  lines: readonly BuyerRequestLine[];
+  invoiceRef: string | null;
+  amountCents: number | null;
+  currency: "USD" | null;
+  paymentStatus: CustomerOrderPaymentStatus;
+  fulfillmentStatus: CustomerOrderFulfillmentStatus;
+  latestTracking: Readonly<{
+    carrier: string;
+    trackingNumber: string;
+    recordedAt: string;
+  }> | null;
+  createdAt: string;
+  updatedAt: string;
+}>;
+
+export type CustomerOrderHistoryPage = Readonly<{
+  orders: readonly CustomerOrderHistoryItem[];
+  nextCursor: CustomerOrderHistoryCursor | null;
+}>;
+
 export type OrderWorkflowIdempotencyReceipt = Readonly<{
   scope: string;
   key: string;
@@ -468,6 +516,42 @@ function isTerminal(stage: OrderWorkflowStage): boolean {
   return stage === "request_rejected" || stage === "cancelled" || stage === "delivered";
 }
 
+function customerPaymentStatus(order: OrderWorkflow): CustomerOrderPaymentStatus {
+  if (order.verification) return "verified";
+  if (order.paymentEvidence.length > 0) return "evidence_submitted";
+  if (order.invoice) return "awaiting_payment";
+  return "not_invoiced";
+}
+
+function customerFulfillmentStatus(order: OrderWorkflow): CustomerOrderFulfillmentStatus {
+  if (order.stage === "delivered") return "delivered";
+  if (order.stage === "shipped") return "shipped";
+  if (order.stage === "fulfilling") return "fulfilling";
+  if (order.supplierHandoff?.releasedAt) return "released";
+  return "not_released";
+}
+
+function historyItem(order: OrderWorkflow): CustomerOrderHistoryItem {
+  const tracking = order.tracking.at(-1);
+  return frozen({
+    orderId: order.orderId,
+    requestRef: order.request.requestRef,
+    stage: order.stage,
+    ownerKind: order.owner.kind,
+    lines: order.request.lines.map((line) => ({ ...line })),
+    invoiceRef: order.invoice?.invoiceRef ?? null,
+    amountCents: order.invoice?.amountCents ?? null,
+    currency: order.invoice?.currency ?? null,
+    paymentStatus: customerPaymentStatus(order),
+    fulfillmentStatus: customerFulfillmentStatus(order),
+    latestTracking: tracking
+      ? { carrier: tracking.carrier, trackingNumber: tracking.trackingNumber, recordedAt: tracking.recordedAt }
+      : null,
+    createdAt: order.createdAt,
+    updatedAt: order.updatedAt,
+  });
+}
+
 export class InMemoryOrderWorkflowEngine {
   private readonly orders = new Map<string, OrderWorkflow>();
   private readonly receipts = new Map<string, OrderWorkflowIdempotencyReceipt>();
@@ -546,6 +630,33 @@ export class InMemoryOrderWorkflowEngine {
       events: order.events
         .filter((item) => item.customerVisible)
         .map(({ kind, occurredAt, detail }) => ({ kind, occurredAt, detail })),
+    });
+  }
+
+  customerOrderHistory(
+    actor: OrderActor,
+    query: CustomerOrderHistoryQuery = {},
+  ): CustomerOrderHistoryPage {
+    const limit = query.limit ?? 25;
+    const before = query.before ?? null;
+    if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100
+      || (before !== null && (!timestamp(before.updatedAt) || !safeId(before.orderId)))) {
+      throw new TypeError("Pack 04 order history query is invalid.");
+    }
+    const eligible = Array.from(this.orders.values())
+      .filter((order) => actorCanOwn(actor, order.owner))
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || b.orderId.localeCompare(a.orderId))
+      .filter((order) => !before
+        || order.updatedAt < before.updatedAt
+        || (order.updatedAt === before.updatedAt && order.orderId < before.orderId));
+    const window = eligible.slice(0, limit + 1);
+    const page = window.slice(0, limit);
+    const last = page.at(-1);
+    return frozen({
+      orders: page.map(historyItem),
+      nextCursor: window.length > limit && last
+        ? { updatedAt: last.updatedAt, orderId: last.orderId }
+        : null,
     });
   }
 

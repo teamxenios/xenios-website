@@ -698,6 +698,137 @@ begin
 end
 $function$;
 
+create or replace function public.research_customer_order_history(
+  p_limit integer default 25,
+  p_before_updated_at timestamptz default null,
+  p_before_order_id text default null
+)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = pg_catalog, public, auth
+as $function$
+declare
+  v_member_id uuid;
+begin
+  if p_limit not between 1 and 100
+     or ((p_before_updated_at is null) <> (p_before_order_id is null))
+     or (p_before_order_id is not null
+       and p_before_order_id !~ '^[A-Za-z0-9][A-Za-z0-9:._-]{2,127}$') then
+    raise exception 'Pack 04 customer order history query is invalid' using errcode = '22023';
+  end if;
+
+  select id into v_member_id
+  from public.research_members
+  where auth_user_id = auth.uid();
+  if v_member_id is null then
+    return pg_catalog.jsonb_build_object('orders', '[]'::jsonb, 'nextCursor', null);
+  end if;
+
+  return (
+    with eligible as materialized (
+      select
+        w.order_id,
+        w.request_ref,
+        w.stage,
+        w.ownership_kind,
+        w.aggregate #> '{request,lines}' as lines,
+        i.invoice_ref,
+        i.amount_cents,
+        i.currency,
+        case
+          when exists (
+            select 1 from public.research_order_payment_verifications v
+            where v.order_id = w.order_id
+          ) then 'verified'
+          when exists (
+            select 1 from public.research_order_payment_evidence e
+            where e.order_id = w.order_id
+          ) then 'evidence_submitted'
+          when i.invoice_ref is not null then 'awaiting_payment'
+          else 'not_invoiced'
+        end as payment_status,
+        case
+          when w.stage = 'delivered' then 'delivered'
+          when w.stage = 'shipped' then 'shipped'
+          when w.stage = 'fulfilling' then 'fulfilling'
+          when exists (
+            select 1 from public.research_order_supplier_releases r
+            where r.order_id = w.order_id
+          ) then 'released'
+          else 'not_released'
+        end as fulfillment_status,
+        (
+          select pg_catalog.jsonb_build_object(
+            'carrier', t.carrier,
+            'trackingNumber', t.tracking_number,
+            'recordedAt', t.recorded_at
+          )
+          from public.research_order_tracking_events t
+          where t.order_id = w.order_id
+          order by t.sequence desc
+          limit 1
+        ) as latest_tracking,
+        w.created_at,
+        w.updated_at
+      from public.research_order_workflows w
+      left join public.research_order_invoices i on i.order_id = w.order_id
+      where w.buyer_member_id = v_member_id
+        and (
+          w.ownership_kind = 'personal'
+          or exists (
+            select 1 from public.research_order_organization_buyers b
+            where b.organization_id = w.organization_id
+              and b.member_id = v_member_id
+              and b.active_from <= pg_catalog.clock_timestamp()
+              and (b.active_until is null or b.active_until > pg_catalog.clock_timestamp())
+          )
+        )
+        and (
+          p_before_updated_at is null
+          or w.updated_at < p_before_updated_at
+          or (w.updated_at = p_before_updated_at and w.order_id < p_before_order_id)
+        )
+      order by w.updated_at desc, w.order_id desc
+      limit p_limit + 1
+    ), page as (
+      select * from eligible
+      order by updated_at desc, order_id desc
+      limit p_limit
+    ), last_row as (
+      select updated_at, order_id from page
+      order by updated_at, order_id
+      limit 1
+    )
+    select pg_catalog.jsonb_build_object(
+      'orders', coalesce((
+        select pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+          'orderId', order_id,
+          'requestRef', request_ref,
+          'stage', stage,
+          'ownerKind', ownership_kind,
+          'lines', lines,
+          'invoiceRef', invoice_ref,
+          'amountCents', amount_cents,
+          'currency', currency,
+          'paymentStatus', payment_status,
+          'fulfillmentStatus', fulfillment_status,
+          'latestTracking', latest_tracking,
+          'createdAt', created_at,
+          'updatedAt', updated_at
+        ) order by updated_at desc, order_id desc)
+        from page
+      ), '[]'::jsonb),
+      'nextCursor', case when (select pg_catalog.count(*) from eligible) > p_limit then (
+        select pg_catalog.jsonb_build_object('updatedAt', updated_at, 'orderId', order_id)
+        from last_row
+      ) else null end
+    )
+  );
+end
+$function$;
+
 -- -------------------------------------------------------------------------
 -- Access. No raw browser table access. service_role is the future unmounted
 -- adapter token; authenticated receives only the ownership-scoped reader.
@@ -731,6 +862,10 @@ $pack04_rls$;
 
 revoke all on function public.research_customer_order_timeline(text) from public, anon;
 grant execute on function public.research_customer_order_timeline(text) to authenticated;
+revoke all on function public.research_customer_order_history(integer, timestamptz, text)
+  from public, anon;
+grant execute on function public.research_customer_order_history(integer, timestamptz, text)
+  to authenticated;
 revoke all on function public.research_order_pack04_valid_line_quantities(jsonb)
   from public, anon, authenticated;
 grant execute on function public.research_order_pack04_valid_line_quantities(jsonb)

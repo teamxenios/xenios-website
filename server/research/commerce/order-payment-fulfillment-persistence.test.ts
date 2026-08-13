@@ -189,6 +189,16 @@ describe("Pack 04 atomic persistence adapter", () => {
       commandReceipt: null,
       timelineEvents: [],
     });
+    expect(await restartedService.customerOrderHistory(buyer)).toMatchObject({
+      nextCursor: null,
+      orders: [{
+        orderId: ORDER,
+        requestRef: "request_pack04_persistence_0001",
+        lines: [{ sku: "SKU-PACK04-PERSIST", quantity: 50 }],
+        paymentStatus: "not_invoiced",
+        fulfillmentStatus: "not_released",
+      }],
+    });
   });
 
   it("serializes concurrent identical requests into one acceptance and one replay", async () => {

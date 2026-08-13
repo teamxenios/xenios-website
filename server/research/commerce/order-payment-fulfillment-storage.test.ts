@@ -94,4 +94,27 @@ describe("Pack 04 storage contract", () => {
     expect(projection).not.toContain("supplier_id");
     expect(projection).not.toContain("payload_sha256");
   });
+
+  it("provides bounded keyset order history with payment, fulfillment and tracking status", () => {
+    const history = sql.slice(
+      sql.indexOf("create or replace function public.research_customer_order_history"),
+      sql.indexOf("-- Access. No raw browser table access"),
+    );
+    expect(history).toContain("p_limit not between 1 and 100");
+    expect(history).toContain("w.updated_at < p_before_updated_at");
+    expect(history).toContain("w.updated_at = p_before_updated_at and w.order_id < p_before_order_id");
+    expect(history).toContain("w.buyer_member_id = v_member_id");
+    expect(history).toContain("b.organization_id = w.organization_id");
+    expect(history).toContain("'paymentStatus', payment_status");
+    expect(history).toContain("'fulfillmentStatus', fulfillment_status");
+    expect(history).toContain("'latestTracking', latest_tracking");
+    expect(history).toContain("limit p_limit + 1");
+    expect(history).not.toContain("external_transaction_ref");
+    expect(history).not.toContain("private_object_ref");
+    expect(history).not.toContain("supplier_id");
+    expect(history).not.toContain("payload_sha256");
+    expect(sql).toContain(
+      "grant execute on function public.research_customer_order_history(integer, timestamptz, text)",
+    );
+  });
 });
