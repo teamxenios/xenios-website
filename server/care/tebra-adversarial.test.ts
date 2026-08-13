@@ -474,6 +474,34 @@ describe("G11-1 every audit event carries opaque fields only", () => {
   });
 });
 
+describe("Fast-follow isolation: Tebra cannot block the Early Access launch", () => {
+  it("imports nothing from the commerce, cart, checkout, or catalog domains", () => {
+    // Tebra is a fast follow. It must not become a dependency of the Early
+    // Access commercial path, and the cheapest way to guarantee that is to
+    // forbid the import edge outright rather than to keep checking by eye.
+    const forbidden =
+      /from\s+["'][^"']*(research\/commerce|research\/early-access|commerce-api|early-access-cart|early-access-quantity|\/cart\/|checkout)[^"']*["']/;
+    const offenders: string[] = [];
+    for (const { file, text } of laneSource()) {
+      if (forbidden.test(text)) offenders.push(file);
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it("carries no quantity, pricing, or order vocabulary at all", () => {
+    // The connector moves patients and appointments. A quantity or a price
+    // appearing here would mean the lane had grown into the commerce path,
+    // where the founder quantity band of 1 through 50 lives.
+    const commerceish =
+      /\b(quantity|maxUnitsPerOrder|unitPriceCents|subtotalCents|cartLine|checkout|orderTotal)\b/i;
+    const offenders: string[] = [];
+    for (const { file, text } of laneSource()) {
+      if (commerceish.test(text)) offenders.push(file);
+    }
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe("G11-2 redaction is an allow list", () => {
   it("drops an unexpected field the practice client attaches to a record", async () => {
     const hostile = {

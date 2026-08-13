@@ -223,6 +223,20 @@ returning owner;
 The lease is held when a row comes back and its owner is the requesting owner. All
 three tables are service-role only, with no anonymous or authenticated policy.
 
+## Fast follow, and why that is enforced rather than asserted
+
+Tebra is a fast follow. It must not become a dependency of the Early Access
+commercial path, so the lane forbids the import edge instead of checking by eye. Two
+probes in `server/care/tebra-adversarial.test.ts` assert that no lane file imports from
+the commerce, cart, checkout, early-access or catalog domains, and that no lane file
+carries quantity, pricing or order vocabulary at all.
+
+The connector moves patients and appointments. The founder quantity band of one through
+fifty lives in the commerce path and does not reach here: the lane holds zero quantity
+references. Combined with the lane registering no route, adding no migration, and
+leaving the repository route inventory unchanged, nothing here can block or affect the
+Early Access launch.
+
 ## Tebra account setup, in order
 
 1. A Tebra system administrator submits the integration or API request.
