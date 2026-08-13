@@ -153,6 +153,28 @@ describe("buyer commerce bridge", () => {
     expect(receipt.nextStep).toContain("follow up");
   });
 
+  it("fails direct commerce closed on missing price, missing basis, or malformed exact limits", async () => {
+    const h = harness([
+      variant("no-price", { displayPriceCents: undefined }),
+      variant("no-basis", { directAuthorityBasis: null }),
+      variant("fractional-limit", { directQuantityLimit: 1.5 }),
+    ]);
+    const receipt = await submitBuyerRequest(
+      h.dependencies,
+      payload([
+        { offeringId: "product-no-price", variantId: "no-price", requestedQuantity: 1 },
+        { offeringId: "product-no-basis", variantId: "no-basis", requestedQuantity: 1 },
+        { offeringId: "product-fractional-limit", variantId: "fractional-limit", requestedQuantity: 1 },
+      ]),
+    );
+
+    expect(receipt.lines.map((line) => [line.disposition, line.reason])).toEqual([
+      ["order_request", "PRICE_AUTHORITY_UNAVAILABLE"],
+      ["order_request", "PRODUCT_CONTROL_REVIEW_REQUIRED"],
+      ["order_request", "PRODUCT_CONTROL_REVIEW_REQUIRED"],
+    ]);
+  });
+
   it("routes care through Care and refuses an unknown or mismatched exact variant", async () => {
     const h = harness([variant("care", { carePathway: true })]);
     const receipt = await submitBuyerRequest(

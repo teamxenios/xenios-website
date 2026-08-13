@@ -205,11 +205,19 @@ function resolveLine(
   // variant. The global normal-order band is 1..50; a narrower explicit limit
   // fails closed into the existing order-request path and is not classified as
   // a quantity-based review rule.
-  const exactLimit = variant.directQuantityLimit ?? 0;
-  const acceptedLimit = Math.min(exactLimit, BUYER_REQUEST_MAX_QUANTITY);
+  const exactLimit = variant.directQuantityLimit;
+  const acceptedLimit =
+    exactLimit !== null && Number.isSafeInteger(exactLimit) && exactLimit >= 1
+      ? Math.min(exactLimit, BUYER_REQUEST_MAX_QUANTITY)
+      : 0;
+  const priced =
+    Number.isSafeInteger(variant.displayPriceCents ?? Number.NaN) &&
+    (variant.displayPriceCents ?? 0) > 0;
+  const coherentAuthority = variant.directAuthorityBasis !== null && acceptedLimit >= 1;
   const direct =
     variant.directPurchaseAuthorized &&
-    acceptedLimit >= 1 &&
+    coherentAuthority &&
+    priced &&
     line.requestedQuantity <= acceptedLimit;
 
   return Object.freeze({
@@ -221,7 +229,9 @@ function resolveLine(
       ? {}
       : {
           reason:
-            !variant.directPurchaseAuthorized || acceptedLimit < 1
+            !priced
+              ? ("PRICE_AUTHORITY_UNAVAILABLE" as const)
+              : !variant.directPurchaseAuthorized || !coherentAuthority
               ? ("PRODUCT_CONTROL_REVIEW_REQUIRED" as const)
               : line.requestedQuantity > acceptedLimit
               ? ("DIRECT_AUTHORITY_UNAVAILABLE" as const)

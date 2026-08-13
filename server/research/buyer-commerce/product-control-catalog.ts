@@ -71,8 +71,10 @@ export class ProductControlBuyerCatalog implements BuyerCatalogPort {
           !carePathway &&
           unit.purchasable &&
           acceptedLimit !== null &&
+          Number.isSafeInteger(acceptedLimit) &&
           acceptedLimit >= 1 &&
-          typeof unit.priceCents === "number";
+          Number.isSafeInteger(unit.priceCents ?? Number.NaN) &&
+          (unit.priceCents ?? 0) > 0;
 
         return Object.freeze({
           offeringId: unit.productId,

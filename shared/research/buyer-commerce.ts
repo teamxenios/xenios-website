@@ -119,6 +119,7 @@ export interface ResolvedBuyerLine extends BuyerLineInput {
     | "VARIANT_NOT_FOUND"
     | "CARE_PATHWAY_REQUIRED"
     | "DIRECT_AUTHORITY_UNAVAILABLE"
+    | "PRICE_AUTHORITY_UNAVAILABLE"
     | "PRODUCT_CONTROL_REVIEW_REQUIRED";
 }
 

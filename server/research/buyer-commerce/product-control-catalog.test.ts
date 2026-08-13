@@ -167,6 +167,36 @@ describe("Product Control buyer catalog adapter", () => {
     expect(variants.every((variant) => variant.directQuantityLimit === null)).toBe(true);
   });
 
+  it("does not project malformed Product Control price or quantity authority as direct-purchasable", async () => {
+    const missingPrice = row("missing-price");
+    missingPrice.priceCents = null;
+    const zeroPrice = row("zero-price");
+    zeroPrice.priceCents = 0;
+    const fractionalLimit = row("fractional-limit");
+    fractionalLimit.quantityLimit = 1.5;
+    const rows = [missingPrice, zeroPrice, fractionalLimit];
+    const adapter = new ProductControlBuyerCatalog({
+      productControl: {
+        readCatalog: async () => rows.map((entry) => product(entry.productId, "research_material")),
+      },
+      earlyAccess: {
+        load: async () => ({
+          evaluatedAt: NOW.toISOString(),
+          rows,
+          productsWithoutVariants: [],
+        }),
+      },
+      releases: new InMemoryEarlyAccessReleaseLedger(),
+    });
+
+    const variants = await adapter.variants({
+      customerRef: "eac_0123456789abcdef0123456789abcdef",
+      at: NOW,
+    });
+    expect(variants).toHaveLength(3);
+    expect(variants.every((variant) => variant.directPurchaseAuthorized === false)).toBe(true);
+  });
+
   it("distinguishes a missing Product Control cap from missing release authority", async () => {
     const releaseNoCap = row("release-no-cap");
     releaseNoCap.purchasable = false;
