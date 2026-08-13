@@ -36,6 +36,7 @@ function order(overrides: Partial<OrderRecord> = {}): OrderRecord {
       totalCents: 21095,
     },
     providerReference: null,
+    checkoutIdempotencyKey: null,
     lastIdempotencyKey: null,
     reviewTriggers: [],
     createdAt: NOW,
@@ -116,15 +117,24 @@ describe("header row mapping round-trip", () => {
   it("maps a record to a header row and back with no amounts", () => {
     const rec = order();
     const headerInsert = orderToHeaderRow(rec);
-    // The read row is the insert row plus DB-defaulted columns; the checkout key
-    // is a column the domain does not carry, so it reads back null.
-    const headerRow: OrderHeaderRow = { ...headerInsert, checkout_idempotency_key: null };
+    const headerRow: OrderHeaderRow = { ...headerInsert };
     expect(headerRowToOrder(headerRow, orderToLineRows(rec.orderId, rec))).toEqual(rec);
+  });
+
+  it("round-trips the immutable checkout key separately from later transition keys", () => {
+    const rec = order({
+      checkoutIdempotencyKey: "checkout_key_original",
+      lastIdempotencyKey: "webhook_key_later",
+    });
+    const header = orderToHeaderRow(rec);
+    expect(header.checkout_idempotency_key).toBe("checkout_key_original");
+    expect(header.last_idempotency_key).toBe("webhook_key_later");
+    expect(headerRowToOrder(header, orderToLineRows(rec.orderId, rec))).toEqual(rec);
   });
 
   it("carries the authorized and captured amounts when present", () => {
     const rec = order({ authorizedAmountCents: 21095, capturedAmountCents: 21095, providerReference: "auth_1" });
-    const headerRow: OrderHeaderRow = { ...orderToHeaderRow(rec), checkout_idempotency_key: null };
+    const headerRow: OrderHeaderRow = { ...orderToHeaderRow(rec) };
     const back = headerRowToOrder(headerRow, orderToLineRows(rec.orderId, rec));
     expect(back.authorizedAmountCents).toBe(21095);
     expect(back.capturedAmountCents).toBe(21095);
@@ -132,7 +142,7 @@ describe("header row mapping round-trip", () => {
   });
 
   it("omits the optional keys when the columns are null", () => {
-    const headerRow: OrderHeaderRow = { ...orderToHeaderRow(order()), checkout_idempotency_key: null };
+    const headerRow: OrderHeaderRow = { ...orderToHeaderRow(order()) };
     const back = headerRowToOrder(headerRow, []);
     expect("authorizedAmountCents" in back).toBe(false);
     expect("capturedAmountCents" in back).toBe(false);
@@ -153,14 +163,13 @@ describe("header row mapping round-trip", () => {
       // back as false, never be swallowed into an absent key.
       authorizationReleaseFailed: false,
     });
-    const headerRow: OrderHeaderRow = { ...orderToHeaderRow(rec), checkout_idempotency_key: null };
+    const headerRow: OrderHeaderRow = { ...orderToHeaderRow(rec) };
     expect(headerRowToOrder(headerRow, orderToLineRows(rec.orderId, rec))).toEqual(rec);
   });
 
   it("throws on a state the state machine does not define rather than casting through", () => {
     const headerRow: OrderHeaderRow = {
       ...orderToHeaderRow(order()),
-      checkout_idempotency_key: null,
       state: "quantum_superposition",
     };
     expect(() => headerRowToOrder(headerRow, [])).toThrow(/unknown state/);
@@ -247,6 +256,16 @@ describe("createInMemoryOrderStore", () => {
     expect(await store.findByIdempotencyKey("mem_1", "key_missing")).toBeNull();
   });
 
+  it("keeps checkout replay working after a later transition replaces the last key", async () => {
+    const store = createInMemoryOrderStore();
+    await store.save(order({
+      checkoutIdempotencyKey: "checkout_key_original",
+      lastIdempotencyKey: "webhook_key_later",
+    }));
+    expect((await store.findByIdempotencyKey("mem_1", "checkout_key_original"))?.orderId).toBe("ord_1");
+    expect((await store.findByIdempotencyKey("mem_1", "webhook_key_later"))?.orderId).toBe("ord_1");
+  });
+
   it("lists all orders across members for the admin queue", async () => {
     const store = createInMemoryOrderStore([
       order({ orderId: "ord_1", memberId: "mem_1" }),
@@ -265,8 +284,7 @@ describe("createInMemoryOrderStore", () => {
  * order store makes across four tables. Orders, lines, and shipments are backed
  * by plain maps so a save then load round-trips; state events are an append-only
  * array so the ledger behavior can be asserted directly. The maps are exposed
- * for seeding rows the domain cannot write (a checkout_idempotency_key set by
- * checkout).
+ * for focused persistence assertions.
  */
 function fakeSupabase(): {
   client: SupabaseClient;
@@ -520,15 +538,31 @@ describe("createSupabaseOrderStore (fake client)", () => {
     expect(await store.findByIdempotencyKey("mem_1", "nope")).toBeNull();
   });
 
-  it("finds by the checkout idempotency key column set by checkout", async () => {
+  it("writes and finds the immutable checkout idempotency key", async () => {
     const { client, orders } = fakeSupabase();
     const store = createSupabaseOrderStore(client);
-    // Simulate a row the checkout flow created with a checkout key this store did not write.
-    orders.set("ord_c", {
-      ...orderToHeaderRow(order({ orderId: "ord_c", memberId: "mem_1" })),
-      checkout_idempotency_key: "checkout_key",
-    } as OrderHeaderRow);
+    await store.save(order({
+      orderId: "ord_c",
+      memberId: "mem_1",
+      checkoutIdempotencyKey: "checkout_key",
+      lastIdempotencyKey: "webhook_key",
+    }));
+    expect(orders.get("ord_c")?.checkout_idempotency_key).toBe("checkout_key");
     expect((await store.findByIdempotencyKey("mem_1", "checkout_key"))!.orderId).toBe("ord_c");
+  });
+
+  it("refuses to replace the original checkout key on a later save", async () => {
+    const { client, orders } = fakeSupabase();
+    const store = createSupabaseOrderStore(client);
+    await store.save(order({ checkoutIdempotencyKey: "checkout_key_original" }));
+
+    await expect(store.save(order({
+      state: "processing",
+      checkoutIdempotencyKey: "checkout_key_replacement",
+      lastIdempotencyKey: "admin_transition_key",
+    }))).rejects.toThrow(/checkout idempotency key is immutable/);
+
+    expect(orders.get("ord_1")?.checkout_idempotency_key).toBe("checkout_key_original");
   });
 
   it("appends a state event on each transition and never on an unchanged save", async () => {

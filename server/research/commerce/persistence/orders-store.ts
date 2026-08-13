@@ -93,8 +93,8 @@ export interface OrderHeaderRow {
 }
 
 /** An insertable research_orders row. Narrower than the read row on purpose: it
- * carries only what the domain OrderRecord can supply, leaving DB-defaulted and
- * checkout-owned columns untouched. */
+ * carries only what the domain OrderRecord can supply and leaves DB-defaulted
+ * columns untouched. */
 export interface OrderHeaderInsert {
   id: string;
   member_id: string;
@@ -106,6 +106,7 @@ export interface OrderHeaderInsert {
   authorized_amount_cents: number | null;
   captured_amount_cents: number | null;
   payment_reference: string | null;
+  checkout_idempotency_key: string | null;
   last_idempotency_key: string | null;
   review_triggers: string[];
   approved_by: string | null;
@@ -264,6 +265,7 @@ export function headerRowToOrder(
       totalCents: row.total_cents,
     },
     providerReference: row.payment_reference ?? null,
+    checkoutIdempotencyKey: row.checkout_idempotency_key ?? null,
     lastIdempotencyKey: row.last_idempotency_key ?? null,
     reviewTriggers: row.review_triggers ?? [],
     createdAt: row.created_at,
@@ -293,10 +295,10 @@ export function headerRowToOrder(
   return record;
 }
 
-/** Map the domain OrderRecord to an insertable header row. Checkout-owned
- * (checkout_idempotency_key) and DB-defaulted (refunded_cents, placed_at)
- * columns are left untouched rather than fabricated here. An absent optional
- * field writes null; a null column reads back as the absent key. */
+/** Map the domain OrderRecord to an insertable header row. The immutable
+ * checkout key is written explicitly and independently of the mutable
+ * last-applied transition key. DB-defaulted columns (refunded_cents,
+ * placed_at) remain untouched. */
 export function orderToHeaderRow(order: OrderRecord): OrderHeaderInsert {
   return {
     id: order.orderId,
@@ -309,6 +311,7 @@ export function orderToHeaderRow(order: OrderRecord): OrderHeaderInsert {
     authorized_amount_cents: order.authorizedAmountCents ?? null,
     captured_amount_cents: order.capturedAmountCents ?? null,
     payment_reference: order.providerReference,
+    checkout_idempotency_key: order.checkoutIdempotencyKey,
     last_idempotency_key: order.lastIdempotencyKey,
     review_triggers: order.reviewTriggers,
     approved_by: order.approvedBy ?? null,
@@ -371,7 +374,11 @@ export function createInMemoryOrderStore(seed: readonly OrderRecord[] = []): Asy
       return all().filter((order) => order.memberId === memberId);
     },
     async findByIdempotencyKey(memberId, key) {
-      const hit = all().find((order) => order.memberId === memberId && order.lastIdempotencyKey === key);
+      const hit = all().find(
+        (order) =>
+          order.memberId === memberId &&
+          (order.checkoutIdempotencyKey === key || order.lastIdempotencyKey === key),
+      );
       return hit ?? null;
     },
     async listAll() {
@@ -430,9 +437,22 @@ export function createSupabaseOrderStore(
     async save(order) {
       // The prior state is read first so the append-only trail records the real
       // from -> to transition. A save that does not change state records nothing.
-      const prior = await client.from(ORDERS).select("state").eq("id", order.orderId).maybeSingle();
+      const prior = await client
+        .from(ORDERS)
+        .select("state, checkout_idempotency_key")
+        .eq("id", order.orderId)
+        .maybeSingle();
       if (prior.error) throw new Error(`order state read failed: ${prior.error.message}`);
-      const priorState = prior.data ? (prior.data as { state: string }).state : null;
+      const priorRow = prior.data as
+        | { state: string; checkout_idempotency_key: string | null }
+        | null;
+      const priorState = priorRow?.state ?? null;
+      if (
+        priorRow !== null &&
+        priorRow.checkout_idempotency_key !== order.checkoutIdempotencyKey
+      ) {
+        throw new Error(`order ${order.orderId} checkout idempotency key is immutable`);
+      }
 
       const up = await client.from(ORDERS).upsert(orderToHeaderRow(order), { onConflict: "id" });
       if (up.error) throw new Error(`order upsert failed: ${up.error.message}`);
