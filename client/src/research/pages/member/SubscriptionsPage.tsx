@@ -405,7 +405,17 @@ export default function SubscriptionsPage() {
   const run = useCallback(
     async (subscriptionId: string, request: SubscriptionActionRequest, successText: string): Promise<boolean> => {
       setOutcome({ phase: "busy", subscriptionId });
-      const result = await subscriptionAction(memberToken, subscriptionId, request);
+      // The retry key is minted PER ATTEMPT, here rather than at each call
+      // site, so no action path can forget it and two actions can never share
+      // one. Paired with expectedVersion it is the client half of the server's
+      // optimistic concurrency: the version says which state the member was
+      // looking at, the key says which attempt this is. The server had both
+      // checks before this page sent either, so a double-click was landing as
+      // two writes and a stale edit could overwrite a newer one.
+      const result = await subscriptionAction(memberToken, subscriptionId, {
+        ...request,
+        idempotencyKey: `subscription:${crypto.randomUUID()}`,
+      });
       switch (result.kind) {
         case "ok":
           setOutcome({ phase: "done", subscriptionId, text: successText });
@@ -434,7 +444,11 @@ export default function SubscriptionsPage() {
     if (!confirm) return;
     const { subscription, action } = confirm;
     setConfirm(null);
-    await run(subscription.subscriptionId, { action }, CONFIRM_SUCCESS[action]);
+    await run(
+      subscription.subscriptionId,
+      { action, expectedVersion: subscription.version },
+      CONFIRM_SUCCESS[action],
+    );
   };
 
   const runReschedule = async (e: FormEvent) => {
@@ -442,7 +456,7 @@ export default function SubscriptionsPage() {
     if (!rescheduleTarget || !rescheduleDate) return;
     const done = await run(
       rescheduleTarget.subscriptionId,
-      { action: "reschedule", rescheduleTo: rescheduleDate },
+      { action: "reschedule", rescheduleTo: rescheduleDate, expectedVersion: rescheduleTarget.version },
       "The next shipment is rescheduled.",
     );
     if (done) {
@@ -534,12 +548,16 @@ export default function SubscriptionsPage() {
                   onFrequency={(frequencyDays) =>
                     void run(
                       subscription.subscriptionId,
-                      { action: "reschedule", frequencyDays },
+                      { action: "reschedule", frequencyDays, expectedVersion: subscription.version },
                       "Delivery frequency updated.",
                     )
                   }
                   onQuantity={(quantity) =>
-                    void run(subscription.subscriptionId, { action: "reschedule", quantity }, "Quantity updated.")
+                    void run(
+                      subscription.subscriptionId,
+                      { action: "reschedule", quantity, expectedVersion: subscription.version },
+                      "Quantity updated.",
+                    )
                   }
                 />
               ))

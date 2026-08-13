@@ -41,6 +41,8 @@ const EXPECTED_CODES = [
   "order_state_invalid",
   "subscription_not_found",
   "subscription_action_invalid",
+  "subscription_stale_version",
+  "idempotency_conflict",
   "guide_not_found",
   "guide_not_published",
   "partner_not_found",

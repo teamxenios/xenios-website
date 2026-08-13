@@ -367,7 +367,7 @@ describe("Subscriptions page", () => {
 
     const posts = calls.filter((call) => call.url === "/api/research/subscriptions/sub-1");
     expect(posts).toHaveLength(1);
-    expect(JSON.parse(String(posts[0].init?.body))).toEqual({ action: "reschedule", quantity: 50 });
+    expect(JSON.parse(String(posts[0].init?.body))).toMatchObject({ action: "reschedule", quantity: 50, expectedVersion: 1 });
 
     await act(async () => {
       const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!;
