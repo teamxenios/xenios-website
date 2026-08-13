@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "artifactType": "PACK02_DEPLOYMENT_COMPOSITION_GATE_RESOLUTION",
+  "status": "RESOLVED",
+  "sourcePack02Sha": "ca943a66b9ce6b6f8f03b9cf302a5aacea9b4fd2",
+  "olderPack02Sha": "1597f224a648e2e856e5651ecdc7cdb00f0746f5",
+  "olderIsDirectParentOfSource": true,
+  "actualFusionBaseSha": "3ec17ef4e42b8f49643b0168dfd762d982999513",
+  "actualFusionRefAtResolution": "refs/heads/claude/ea-fusion-v2",
+  "pack02FusionMergeSha": "d86f285ddf7a9d4d63f5cda3a47672daf2854b9d",
+  "prePack02FusionParentSha": "cdba771809f18c3861c9ff017c5fd94081dac029",
+  "resultingPack02SuccessorSha": "RECORDED_BY_FOLLOWUP_ATTESTATION",
+  "supersededGuard": "REBASE_OR_RECREATE_REQUIRED",
+  "nonexistentRefNotRequired": "FINAL_EA_FAST_FOLLOW_BASE",
+  "resolution": "The authoritative Pack02 source is already composed into the real fusion lineage with the canonical Buyer, Catalog, Q50 and Pack04 order/payment/fulfillment seams. The stale guard is replaced by this evidence artifact; it is not silently deleted.",
+  "ancestry": {
+    "sourceIsAncestorOfActualFusionBase": true,
+    "buyer6f4c751IsAncestor": true,
+    "catalogE858e89IsAncestor": true,
+    "canonicalQ50FiveE9IsAncestor": true,
+    "finalHiddenQ50CapFixB459IsAncestor": true,
+    "pack02RuntimeDriftFromSource": false
+  },
+  "seams": {
+    "supabaseAuth": "Canonical. Member requests are verified with getSupabaseAnon().auth.getUser(jwt); Pack02 creates no second session or credential authority.",
+    "researchMembers": "Canonical personal-member identity. Buyer activation binds exact Auth/application evidence to research_members through an unmounted administrative candidate.",
+    "accountIdentity": "Pack02 projections compose the existing mounted member journey; Pack02 candidate routes remain unmounted and do not duplicate the runtime account surface.",
+    "organizations": "organization_owner and business_buyer authorization remains tenant-scoped; organization order ownership is immutable metadata over canonical research_orders.",
+    "buyer": "Buyer head 6f4c7517e762c484458d0ef9d935e518ff1398ee is ancestral and uses the canonical catalog/cart/order boundaries.",
+    "catalog": "Catalog head e858e893e8d877622129a0a2c9b339c2e7a9a697 is ancestral; member catalog remains protected by requireActiveMember and Product Control eligibility.",
+    "cart": "Canonical member and persistent-cart stores are preserved; Pack02 creates no cart store.",
+    "checkout": "Canonical checkout is preserved with legal, Product Control, fraud, value, inventory, payment and eligibility restrictions independent of quantity.",
+    "orders": "research_orders remains canonical; Pack02 creates no parallel order store.",
+    "payments": "Canonical payment state and verification paths are preserved.",
+    "fulfillment": "Canonical fulfillment and supplier-release paths are preserved.",
+    "tracking": "Canonical shipment carrier/tracking projections are preserved.",
+    "quantity": "One shared authority accepts normal integer quantities 1 through 50; quantity 51 is refused, not diverted; quantity alone never triggers review in 1 through 50."
+  },
+  "routes": {
+    "staticExpressRegistrations": 364,
+    "staticExpressCallSites": 355,
+    "routeUniqueness": "PASS",
+    "declaredExactlyOnce": [
+      "/research/sign-in",
+      "/research/reset-password",
+      "/research/member/products",
+      "/research/member/cart",
+      "/research/member/checkout",
+      "/research/member/orders",
+      "/research/member/orders/:id"
+    ],
+    "pack02CandidateAccountRoutesMounted": false
+  },
+  "verification": {
+    "focusedQa": "PASS: 34 files, 631 tests on exact actualFusionBaseSha",
+    "typecheck": "PASS: TypeScript noEmit on exact actualFusionBaseSha",
+    "routeCheck": "PASS: 364 static Express registrations across 355 call sites",
+    "wholeRepositorySuiteRun": false,
+    "dockerStarted": false
+  },
+  "kris": {
+    "status": "UNKNOWN_NOT_GUESSED",
+    "productionIdentityLookupExecuted": false,
+    "inviteOrActivationExecuted": false,
+    "readOnlyInspectionArtifact": "supabase/pack02-candidates/inspect_kris_identity_read_only.sql"
+  },
+  "remainingSeparateGates": [
+    "Candidate Pack02 SQL requires isolated apply-twice and SECURITY DEFINER/RLS/grant review before any application.",
+    "Kris identity requires authorized production read-only inspection before any exact attach or secure invite decision.",
+    "Agentic OS retains final deployment-wide acceptance authority."
+  ],
+  "productionMutated": false,
+  "candidateSqlExecuted": false,
+  "inviteExecuted": false,
+  "deployed": false,
+  "resolvedAt": "2026-08-13T12:12:00-05:00"
+}
