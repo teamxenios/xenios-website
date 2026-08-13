@@ -33,6 +33,7 @@ import {
   isEarlyAccessPaymentOptionCode,
   type EarlyAccessPaymentOptionCode,
 } from "@shared/research/early-access-payment-options";
+import { isDirectEarlyAccessQuantity } from "@shared/research/early-access-quantity";
 import {
   accepted,
   isCanonicalTimestamp,
@@ -343,13 +344,7 @@ export function readEarlyAccessVerifiedOrder(value: unknown): EarlyAccessVerifie
   ) {
     return null;
   }
-  if (
-    typeof record.quantity !== "number" ||
-    !Number.isSafeInteger(record.quantity) ||
-    record.quantity < 1
-  ) {
-    return null;
-  }
+  if (!isDirectEarlyAccessQuantity(record.quantity)) return null;
   if (record.currency !== "USD") return null;
   if (
     typeof record.orderTotalCents !== "number" ||

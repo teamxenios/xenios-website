@@ -92,6 +92,45 @@ describe("supplier release packet", () => {
     expect(build().ok && (build() as { value: { quantity: number } }).value.quantity).toBe(2);
   });
 
+  it.each([1, 20, 21, 49, 50])("releases normal Q%i from a valid verified order", (quantity) => {
+    const created = createEarlyAccessOrder({
+      orderId: `ord_ea_q${quantity}_release`,
+      customerRef: `cus_q${quantity}`,
+      productId: `prd_q${quantity}`,
+      variantId: `var_q${quantity}`,
+      sku: `XEA-Q${quantity}`,
+      quantity,
+      unitPriceCents: 100,
+      unitPriceVersion: "prdver-q50",
+      currency: "USD",
+      referralCode: null,
+      now: CREATED_AT,
+    });
+    expect(created.ok).toBe(true);
+    if (!created.ok) return;
+    const decided = verifyManualPayment({
+      order: { ...created.value, status: "payment_under_review" },
+      actor: { id: "adm_q50", role: "founder_admin" },
+      decision: "approve",
+      idempotencyKey: `verify-ord-ea-q${quantity}-release`,
+      now: DECIDED_AT,
+      appliedVerifications: [],
+      verifiedAmountCents: quantity * 100,
+      verifiedCurrency: "USD",
+      method: "zelle",
+    });
+    expect(decided.ok).toBe(true);
+    if (!decided.ok || !decided.value.verifiedOrder) return;
+    const packet = buildSupplierReleasePacket(decided.value.verifiedOrder, RELEASE);
+    expect(packet.ok && packet.value.quantity).toBe(quantity);
+  });
+
+  it("refuses a forged Q51 supplier release", () => {
+    const verified = verifiedOrder();
+    expect(buildSupplierReleasePacket({ ...verified, quantity: 51 }, RELEASE))
+      .toEqual({ ok: false, code: "verified_order_invalid" });
+  });
+
   it("exposes exactly the reviewed key set and nothing else", () => {
     const result = build();
     expect(result.ok).toBe(true);

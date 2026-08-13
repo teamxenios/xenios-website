@@ -511,4 +511,41 @@ describe("readEarlyAccessVerifiedOrder", () => {
     ).toBeNull();
     expect(readEarlyAccessVerifiedOrder({ ...value.verifiedOrder, actorRole: "member" })).toBeNull();
   });
+
+  it.each([1, 20, 21, 49, 50])("accepts normal Q%i verified-order projections", (quantity) => {
+    const created = createEarlyAccessOrder({
+      orderId: `ord_ea_q${quantity}`,
+      customerRef: `cus_q${quantity}`,
+      productId: `prd_q${quantity}`,
+      variantId: `var_q${quantity}`,
+      sku: `XEA-Q${quantity}`,
+      quantity,
+      unitPriceCents: 100,
+      unitPriceVersion: "prdver-q50",
+      currency: "USD",
+      referralCode: null,
+      now: CREATED_AT,
+    });
+    expect(created.ok).toBe(true);
+    if (!created.ok) return;
+    const verified = verifyManualPayment({
+      order: { ...created.value, status: "payment_under_review" },
+      actor: FOUNDER,
+      decision: "approve",
+      idempotencyKey: `verify-ord-ea-q${quantity}-a`,
+      now: DECIDED_AT,
+      appliedVerifications: [],
+      verifiedAmountCents: quantity * 100,
+      verifiedCurrency: "USD",
+      method: "zelle",
+    });
+    expect(verified.ok).toBe(true);
+    if (!verified.ok || !verified.value.verifiedOrder) return;
+    expect(readEarlyAccessVerifiedOrder(verified.value.verifiedOrder)?.quantity).toBe(quantity);
+  });
+
+  it("refuses a forged Q51 verified-order projection", () => {
+    const value = applied();
+    expect(readEarlyAccessVerifiedOrder({ ...value.verifiedOrder, quantity: 51 })).toBeNull();
+  });
 });
