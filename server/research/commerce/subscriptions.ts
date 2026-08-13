@@ -47,8 +47,8 @@ import type { PaymentProvider } from "../providers/payment";
 // Records
 // ---------------------------------------------------------------------------
 
-/** Matches the database bound (migration 23) and the cart's per-line ceiling. */
-export const MAX_SUBSCRIPTION_QUANTITY = 1000;
+/** Application-level F-013 ceiling; every wider persistence constraint stays defense in depth. */
+export const MAX_SUBSCRIPTION_QUANTITY = 50;
 
 /**
  * The stored subscription. Wider than the wire DTO on purpose: the payment

@@ -196,6 +196,18 @@ describe("create", () => {
     expect(result).toMatchObject({ ok: false, code: "commerce_disabled" });
   });
 
+  it("accepts 1, 20, 21, 49, and 50 as ordinary subscription quantities", async () => {
+    const d = deps();
+    const service = createSubscriptionService(d);
+    for (const quantity of [1, 20, 21, 49, MAX_SUBSCRIPTION_QUANTITY]) {
+      const result = await service.create(MEMBER, createInput({ quantity }), NOW);
+      expect(result.ok).toBe(true);
+      if (!result.ok) continue;
+      expect(result.subscription.quantity).toBe(quantity);
+      expect((await d.repository.get(result.subscription.subscriptionId))?.quantity).toBe(quantity);
+    }
+  });
+
   it("refuses a non-integer, zero, or over-ceiling quantity", async () => {
     const service = createSubscriptionService(deps());
     for (const quantity of [0, -1, 1.5, MAX_SUBSCRIPTION_QUANTITY + 1]) {
@@ -416,12 +428,12 @@ describe("member actions", () => {
     const skipped = await service.apply(
       MEMBER,
       id,
-      { action: "skip", quantity: 3, frequencyDays: 60 },
+      { action: "skip", quantity: MAX_SUBSCRIPTION_QUANTITY, frequencyDays: 60 },
       NOW,
     );
     expect(skipped.ok).toBe(true);
     if (!skipped.ok) return;
-    expect(skipped.subscription.quantity).toBe(3);
+    expect(skipped.subscription.quantity).toBe(MAX_SUBSCRIPTION_QUANTITY);
     expect(skipped.subscription.frequencyDays).toBe(60);
     // The push uses the NEW frequency: +30d schedule plus 60 days.
     expect(skipped.subscription.nextChargeAt).toBe("2026-10-18T00:00:00.000Z");
@@ -432,8 +444,10 @@ describe("member actions", () => {
     const id = await activeSubscription(d);
     const service = createSubscriptionService(d);
 
-    const badQuantity = await service.apply(MEMBER, id, { action: "skip", quantity: 0 }, NOW);
-    expect(badQuantity).toMatchObject({ ok: false, code: "quantity_invalid" });
+    for (const quantity of [0, MAX_SUBSCRIPTION_QUANTITY + 1]) {
+      const badQuantity = await service.apply(MEMBER, id, { action: "skip", quantity }, NOW);
+      expect(badQuantity).toMatchObject({ ok: false, code: "quantity_invalid" });
+    }
 
     const badFrequency = await service.apply(
       MEMBER,
