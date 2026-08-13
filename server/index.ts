@@ -386,9 +386,19 @@ registerMemberCatalogApi(
 const krisCatalogDependencies = buildKrisCatalogProductionDependencies(
   resolveActiveMemberSilently,
 );
-for (const route of krisCatalogRouteTable(krisCatalogDependencies)) {
-  app[route.method](route.path, ...route.handlers);
-}
+const [
+  krisCatalogListRoute,
+  krisCatalogDetailRoute,
+  krisCatalogListOptionsRoute,
+  krisCatalogDetailOptionsRoute,
+] = krisCatalogRouteTable(krisCatalogDependencies);
+// Keep these four registrations explicit: the release scanner must see every
+// reachable door, while their paths and handler order still come from the one
+// authoritative descriptor table.
+app.get("/api/research/kris-launch-a/v1/catalog", ...krisCatalogListRoute.handlers);
+app.get("/api/research/kris-launch-a/v1/products/:slug", ...krisCatalogDetailRoute.handlers);
+app.options("/api/research/kris-launch-a/v1/catalog", ...krisCatalogListOptionsRoute.handlers);
+app.options("/api/research/kris-launch-a/v1/products/:slug", ...krisCatalogDetailOptionsRoute.handlers);
 app.use(
   KRIS_CATALOG_ERROR_BASE_PATH,
   krisCatalogErrorHandler(krisCatalogDependencies),
