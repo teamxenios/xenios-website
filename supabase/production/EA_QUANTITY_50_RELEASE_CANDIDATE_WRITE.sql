@@ -58,6 +58,10 @@ declare
   v_actual text;
   v_table text;
   v_count integer;
+  v_approved integer;
+  v_at_20 integer;
+  v_at_50 integer;
+  v_unexpected integer;
   v_candidates integer;
   v_appended integer;
   v_recorded_at timestamptz;
@@ -145,6 +149,32 @@ begin
       using errcode = '55000';
   end if;
 
+  -- This packet is exact 20 -> 50 only. First apply requires every current
+  -- approved release at 20; replay requires every one at 50. Any other or
+  -- mixed state is a new decision surface and fails closed.
+  with latest as (
+    select distinct on (product_id, variant_id)
+      product_id, variant_id, status, record
+    from public.research_early_access_releases
+    order by product_id, variant_id, recorded_at desc, release_id desc
+  )
+  select
+    count(*) filter (where status = 'approved'),
+    count(*) filter (where status = 'approved'
+      and (record ->> 'approvedQuantityLimit')::integer = 20),
+    count(*) filter (where status = 'approved'
+      and (record ->> 'approvedQuantityLimit')::integer = 50),
+    count(*) filter (where status = 'approved'
+      and coalesce((record ->> 'approvedQuantityLimit')::integer, -1) not in (20, 50))
+  into v_approved, v_at_20, v_at_50, v_unexpected
+  from latest;
+  if v_approved = 0 or v_unexpected <> 0
+     or (v_at_20 <> 0 and v_at_50 <> 0)
+     or (v_approved <> v_at_20 and v_approved <> v_at_50) then
+    raise exception 'EA-QTY50 refused: expected exact all-20 predecessor or exact all-50 replay; approved %, at20 %, at50 %, unexpected %',
+      v_approved, v_at_20, v_at_50, v_unexpected using errcode = '55000';
+  end if;
+
   create temporary table ea_qty50_targets on commit drop as
   with latest as (
     select distinct on (product_id, variant_id)
@@ -156,7 +186,7 @@ begin
          recorded_at as prior_recorded_at, record as prior
   from latest
   where status = 'approved'
-    and coalesce((record ->> 'approvedQuantityLimit')::integer, 0) < 50;
+    and (record ->> 'approvedQuantityLimit')::integer = 20;
 
   select count(*), md5(coalesce(string_agg(
     product_id || '|' || variant_id || '|' || prior_release_id,
@@ -169,7 +199,7 @@ begin
   end if;
 
   if v_candidates = 0 then
-    raise notice 'EA-QTY50: no current approved release is below 50; zero rows appended';
+    raise notice 'EA-QTY50: exact all-50 replay; zero rows appended';
     return;
   end if;
 

@@ -116,6 +116,10 @@ describe("M66 quantity 1-50 candidate source", () => {
       expect(write).toContain(`:{?${required}}`);
     }
     expect(write).toContain("lock table public.research_early_access_releases");
+    expect(pre).toContain("neither exact 20 nor exact 50");
+    expect(pre).toContain("mixed predecessor state");
+    expect(write).toContain("expected exact all-20 predecessor or exact all-50 replay");
+    expect(write).toContain("approvedQuantityLimit')::integer = 20");
     expect(write).toContain("starts_with(release_id, 'rel_ea_qty50_')");
     expect(write).toContain("jsonb_build_array(product_id, variant_id)");
     expect(executableWrite).toMatch(/insert into public\.research_early_access_releases/i);
@@ -124,6 +128,7 @@ describe("M66 quantity 1-50 candidate source", () => {
     expect(post).toContain("begin transaction read only");
     expect(post).toContain("byte-identical to precheck");
     expect(post).toContain("founder checkout subtree");
+    expect(post).toContain("current approved units are exact 50");
     expect(executablePost).not.toMatch(/\b(insert|update|delete|merge|truncate|alter|create|drop|grant|revoke)\b/i);
 
     expect(rehearsal).toContain("XENIOS_ALLOW_M66_DISPOSABLE_APPLY");
@@ -131,5 +136,6 @@ describe("M66 quantity 1-50 candidate source", () => {
     expect(rehearsal).toContain("FAIL first write");
     expect(rehearsal).toContain("FAIL second write");
     expect(rehearsal).toContain("stray 1..49 band");
+    expect(rehearsal).toContain("unexpected approved limit 19");
   });
 });

@@ -102,6 +102,54 @@ begin
 end;
 $precheck$;
 
+-- Exact predecessor state: every currently approved unit is either still at
+-- the accepted release-20 authority (first apply), or every one is already at
+-- 50 (idempotent replay). A mixed state or any other number is unexpected and
+-- must be resolved by a new reviewed packet, never guessed through this one.
+do $release_state$
+declare
+  v_approved integer;
+  v_at_20 integer;
+  v_at_50 integer;
+  v_unexpected integer;
+begin
+  with latest as (
+    select distinct on (product_id, variant_id)
+      product_id, variant_id, status, record
+    from public.research_early_access_releases
+    order by product_id, variant_id, recorded_at desc, release_id desc
+  )
+  select
+    count(*) filter (where status = 'approved'),
+    count(*) filter (where status = 'approved'
+      and (record ->> 'approvedQuantityLimit')::integer = 20),
+    count(*) filter (where status = 'approved'
+      and (record ->> 'approvedQuantityLimit')::integer = 50),
+    count(*) filter (where status = 'approved'
+      and coalesce((record ->> 'approvedQuantityLimit')::integer, -1) not in (20, 50))
+  into v_approved, v_at_20, v_at_50, v_unexpected
+  from latest;
+
+  if v_approved = 0 then
+    raise exception 'EA-QTY50 precheck: no current approved releases' using errcode = '55000';
+  end if;
+  if v_unexpected <> 0 then
+    raise exception 'EA-QTY50 precheck: % approved release(s) are neither exact 20 nor exact 50',
+      v_unexpected using errcode = '55000';
+  end if;
+  if v_at_20 <> 0 and v_at_50 <> 0 then
+    raise exception 'EA-QTY50 precheck: mixed predecessor state (% at 20, % at 50)',
+      v_at_20, v_at_50 using errcode = '55000';
+  end if;
+  if v_approved <> v_at_20 and v_approved <> v_at_50 then
+    raise exception 'EA-QTY50 precheck: approved release state is incomplete or malformed'
+      using errcode = '55000';
+  end if;
+  raise notice 'EA-QTY50 exact release state: % approved, % at 20, % at 50',
+    v_approved, v_at_20, v_at_50;
+end;
+$release_state$;
+
 \echo '=== Current release authority and exact proposed write set ==='
 with latest as (
   select distinct on (product_id, variant_id)
@@ -131,7 +179,7 @@ with latest as (
 targets as (
   select * from latest
   where status = 'approved'
-    and coalesce((record ->> 'approvedQuantityLimit')::integer, 0) < 50
+    and (record ->> 'approvedQuantityLimit')::integer = 20
 ),
 historical as (
   select * from public.research_early_access_releases

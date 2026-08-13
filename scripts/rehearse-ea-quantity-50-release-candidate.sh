@@ -67,16 +67,6 @@ insert into public.research_early_access_releases
  'productVersion','ver-a','status','approved','approvedPriceCents',3350,'currency','USD',
  'waivedBlockers',jsonb_build_array('QUANTITY_LIMIT_MISSING'),'approvedQuantityLimit',20,
  'expiresAt',null,'actor','Samuel Boadu','reason','accepted quantity twenty fixture','recordedAt','2026-08-11T12:00:00.000Z')),
-('rel-b50','prod-b','var-b','approved','2026-08-11T12:00:00Z',jsonb_build_object(
- 'releaseId','rel-b50','portal','private_early_access','productId','prod-b','variantId','var-b',
- 'productVersion','ver-b','status','approved','approvedPriceCents',5000,'currency','USD',
- 'waivedBlockers',jsonb_build_array(),'approvedQuantityLimit',50,
- 'expiresAt',null,'actor','Named Human','reason','already fifty fixture','recordedAt','2026-08-11T12:00:00.000Z')),
-('rel-c75','prod-c','var-c','approved','2026-08-11T12:00:00Z',jsonb_build_object(
- 'releaseId','rel-c75','portal','private_early_access','productId','prod-c','variantId','var-c',
- 'productVersion','ver-c','status','approved','approvedPriceCents',7000,'currency','USD',
- 'waivedBlockers',jsonb_build_array(),'approvedQuantityLimit',75,
- 'expiresAt',null,'actor','Named Human','reason','already above candidate fixture','recordedAt','2026-08-11T12:00:00.000Z')),
 ('rel-d20','prod-d','var-d','approved','2026-08-11T12:00:00Z',jsonb_build_object(
  'releaseId','rel-d20','portal','private_early_access','productId','prod-d','variantId','var-d',
  'productVersion','ver-d','status','approved','approvedPriceCents',9000,'currency','USD',
@@ -98,8 +88,8 @@ values ('XEC-E1703CC63BBE89E6839E24C1','eac_'||repeat('a',32),repeat('c',64),rep
 SQL
 
 history_hash() { psql_q "select md5(coalesce(string_agg(release_id||'|'||product_id||'|'||variant_id||'|'||status||'|'||recorded_at::text||'|'||record::text,E'\\n' order by release_id),'')) from public.research_early_access_releases where not starts_with(release_id,'rel_ea_qty50_')"; }
-target_count() { psql_q "with latest as (select distinct on(product_id,variant_id) product_id,variant_id,release_id,status,record from public.research_early_access_releases order by product_id,variant_id,recorded_at desc,release_id desc) select count(*) from latest where status='approved' and coalesce((record->>'approvedQuantityLimit')::integer,0)<50"; }
-target_hash() { psql_q "with latest as (select distinct on(product_id,variant_id) product_id,variant_id,release_id,status,record from public.research_early_access_releases order by product_id,variant_id,recorded_at desc,release_id desc) select md5(coalesce(string_agg(product_id||'|'||variant_id||'|'||release_id,E'\\n' order by product_id,variant_id),'')) from latest where status='approved' and coalesce((record->>'approvedQuantityLimit')::integer,0)<50"; }
+target_count() { psql_q "with latest as (select distinct on(product_id,variant_id) product_id,variant_id,release_id,status,record from public.research_early_access_releases order by product_id,variant_id,recorded_at desc,release_id desc) select count(*) from latest where status='approved' and (record->>'approvedQuantityLimit')::integer=20"; }
+target_hash() { psql_q "with latest as (select distinct on(product_id,variant_id) product_id,variant_id,release_id,status,record from public.research_early_access_releases order by product_id,variant_id,recorded_at desc,release_id desc) select md5(coalesce(string_agg(product_id||'|'||variant_id||'|'||release_id,E'\\n' order by product_id,variant_id),'')) from latest where status='approved' and (record->>'approvedQuantityLimit')::integer=20"; }
 founder_hash() { psql_q "select md5(jsonb_build_object('checkout',(select to_jsonb(c) from public.research_early_access_cart_checkouts c where c.checkout_number='XEC-E1703CC63BBE89E6839E24C1'),'items',coalesce((select jsonb_agg(to_jsonb(i) order by i.line_index) from public.research_early_access_cart_items i join public.research_early_access_cart_checkouts c on c.id=i.cart_checkout_id where c.checkout_number='XEC-E1703CC63BBE89E6839E24C1'),'[]'::jsonb),'invoice',(select to_jsonb(v) from public.research_early_access_cart_invoices v join public.research_early_access_cart_checkouts c on c.id=v.cart_checkout_id where c.checkout_number='XEC-E1703CC63BBE89E6839E24C1'))::text)"; }
 run_write() {
   psql_file "$WRITE" \
@@ -121,6 +111,35 @@ set +e; run_write "$TCOUNT" "$TARGETS" "$HIST" "$FOUNDER" >/tmp/qty50-m66-absent
 [ "$(psql_q 'select count(*) from public.research_early_access_releases')" = "$BASE_ROWS" ] || exit 1
 
 psql_file "$M66" >/dev/null || exit 1
+
+# An unexpected current approved limit (19) must fail closed. Neutralize it by
+# appending a later revoked row; history stays append-only and is then bound by
+# the valid precheck hashes.
+psql_run <<'SQL'
+insert into public.research_early_access_releases
+  (release_id,product_id,variant_id,status,recorded_at,record) values
+('rel-x19','prod-x','var-x','approved','2026-08-11T14:00:00Z',jsonb_build_object(
+ 'releaseId','rel-x19','portal','private_early_access','productId','prod-x','variantId','var-x',
+ 'productVersion','ver-x','status','approved','approvedPriceCents',1000,'currency','USD',
+ 'waivedBlockers',jsonb_build_array(),'approvedQuantityLimit',19,
+ 'expiresAt',null,'actor','QA Human','reason','unexpected predecessor fixture','recordedAt','2026-08-11T14:00:00.000Z'));
+SQL
+UNEXPECTED_ROWS="$(psql_q 'select count(*) from public.research_early_access_releases')"
+set +e; psql_file "$PRE" >/tmp/qty50-unexpected19.txt 2>&1; RC=$?; set -e
+[ "$RC" -ne 0 ] || { echo "FAIL precheck passed with unexpected approved limit 19"; exit 1; }
+[ "$(psql_q 'select count(*) from public.research_early_access_releases')" = "$UNEXPECTED_ROWS" ] || exit 1
+psql_run <<'SQL'
+insert into public.research_early_access_releases
+  (release_id,product_id,variant_id,status,recorded_at,record) values
+('rel-x-revoked','prod-x','var-x','revoked','2026-08-11T15:00:00Z',jsonb_build_object(
+ 'releaseId','rel-x-revoked','portal','private_early_access','productId','prod-x','variantId','var-x',
+ 'productVersion','ver-x','status','revoked','approvedPriceCents',0,'currency','',
+ 'waivedBlockers',jsonb_build_array(),'approvedQuantityLimit',0,
+ 'expiresAt',null,'actor','QA Human','reason','neutralize unexpected predecessor fixture','recordedAt','2026-08-11T15:00:00.000Z'));
+SQL
+HIST="$(history_hash)"; TCOUNT="$(target_count)"; TARGETS="$(target_hash)"; FOUNDER="$(founder_hash)"
+[ "$TCOUNT" = "1" ] || { echo "FAIL expected one exact 20->50 target after neutralization, got $TCOUNT"; exit 1; }
+BASE_ROWS="$(psql_q 'select count(*) from public.research_early_access_releases')"
 psql_file "$PRE" >/tmp/qty50-precheck.txt 2>&1 || { echo "FAIL precheck"; exit 1; }
 [ "$(psql_q 'select count(*) from public.research_early_access_releases')" = "$BASE_ROWS" ] || { echo "FAIL precheck wrote"; exit 1; }
 
@@ -141,8 +160,6 @@ FIRST_ROWS="$(psql_q 'select count(*) from public.research_early_access_releases
 psql_file "$POST" -v "expected_historical_release_md5=$HIST" -v "expected_founder_checkout_md5=$FOUNDER" >/tmp/qty50-post.txt 2>&1 || { echo "FAIL postcheck"; exit 1; }
 
 [ "$(psql_q "select record->>'approvedQuantityLimit' from public.research_early_access_releases where product_id='prod-a' order by recorded_at desc,release_id desc limit 1")" = "50" ] || exit 1
-[ "$(psql_q "select count(*) from public.research_early_access_releases where product_id='prod-b'")" = "1" ] || exit 1
-[ "$(psql_q "select record->>'approvedQuantityLimit' from public.research_early_access_releases where product_id='prod-c' order by recorded_at desc,release_id desc limit 1")" = "75" ] || exit 1
 [ "$(psql_q "select status from public.research_early_access_releases where product_id='prod-d' order by recorded_at desc,release_id desc limit 1")" = "revoked" ] || exit 1
 
 # Second apply: independently checked exit 0 and exact zero-row delta.
