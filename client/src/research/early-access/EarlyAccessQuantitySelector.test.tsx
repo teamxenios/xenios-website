@@ -181,13 +181,13 @@ describe("EarlyAccessQuantitySelector", () => {
       );
     }
     const view = render(<Harness />);
-    // At the ceiling the plus control is disabled, so it cannot report 21.
+    // At the ceiling the plus control is disabled, so it cannot report 51.
     expect(step(view.host, "increment").disabled).toBe(true);
     act(() => step(view.host, "increment").click());
     expect(onChange).not.toHaveBeenCalled();
 
     // A typed value past the ceiling is clamped, never reported as typed.
-    type(view.host, "21");
+    type(view.host, "51");
     expect(onChange).toHaveBeenLastCalledWith(EARLY_ACCESS_QUANTITY_MAX);
     type(view.host, "9999");
     expect(onChange).toHaveBeenLastCalledWith(EARLY_ACCESS_QUANTITY_MAX);
@@ -230,7 +230,7 @@ describe("EarlyAccessQuantitySelector", () => {
 
   it("shows nothing for a quantity this round does not offer", () => {
     const view = render(<EarlyAccessQuantitySelector value={null} onChange={() => {}} />);
-    for (const value of [0, 21, 99, -1, 2.5, "2", null, undefined, Number.NaN]) {
+    for (const value of [0, 51, 99, -1, 2.5, "2", null, undefined, Number.NaN]) {
       view.rerender(
         <EarlyAccessQuantitySelector
           value={value as unknown as EarlyAccessQuantity | null}
@@ -240,11 +240,11 @@ describe("EarlyAccessQuantitySelector", () => {
       expect(field(view.host).value).toBe("");
     }
     expect(EARLY_ACCESS_QUANTITY_MIN).toBe(1);
-    expect(EARLY_ACCESS_QUANTITY_MAX).toBe(20);
+    expect(EARLY_ACCESS_QUANTITY_MAX).toBe(50);
     expect(isEarlyAccessQuantity(2)).toBe(true);
     expect(isEarlyAccessQuantity(20)).toBe(true);
     expect(isEarlyAccessQuantity("2")).toBe(false);
-    expect(isEarlyAccessQuantity(21)).toBe(false);
+    expect(isEarlyAccessQuantity(51)).toBe(false);
     expect(isEarlyAccessQuantity(0)).toBe(false);
   });
 

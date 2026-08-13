@@ -1,3 +1,4 @@
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 /**
  * The Early Access order money snapshot. Server only, pure, side effect free.
  *
@@ -57,7 +58,11 @@ export type EarlyAccessCurrency = (typeof EARLY_ACCESS_CURRENCIES)[number];
  * price times the maximum quantity. A test asserts it stays equal to
  * `EARLY_ACCESS_MAX_ORDER_TOTAL_CENTS`, so widening one without the other is caught.
  */
-export const EARLY_ACCESS_MAX_MONEY_CENTS = 10_000_000;
+// 500_000 is EARLY_ACCESS_MAX_UNIT_PRICE_CENTS. It is restated rather than
+// imported because early-access-order.ts imports THIS module, and closing that
+// cycle leaves the constant undefined at module init. The drift guard is the
+// test asserting this stays equal to EARLY_ACCESS_MAX_ORDER_TOTAL_CENTS.
+export const EARLY_ACCESS_MAX_MONEY_CENTS = 500_000 * EARLY_ACCESS_MAX_QUANTITY;
 
 declare const PAYABLE_TOTAL_BRAND: unique symbol;
 

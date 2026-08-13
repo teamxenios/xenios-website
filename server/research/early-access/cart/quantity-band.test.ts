@@ -133,11 +133,11 @@ function deps(nowMs = Date.parse("2026-08-11T18:00:00.000Z")) {
 
 // ---------------------------------------------------------------------------
 describe("the band itself", () => {
-  it("accepts one and twenty and refuses everything outside", () => {
+  it("accepts one and fifty and refuses everything outside", () => {
     expect(EARLY_ACCESS_MIN_QUANTITY).toBe(1);
-    expect(EARLY_ACCESS_MAX_QUANTITY).toBe(20);
+    expect(EARLY_ACCESS_MAX_QUANTITY).toBe(50);
 
-    for (const accepted of [1, 2, 3, 19, 20]) {
+    for (const accepted of [1, 2, 3, 19, 20, 49, 50]) {
       expect(isEarlyAccessQuantity(accepted), `${accepted} should be accepted`).toBe(true);
     }
     // Zero, negative, past the ceiling, decimal, NaN, both infinities, and
@@ -146,7 +146,7 @@ describe("the band itself", () => {
       0,
       -1,
       -20,
-      21,
+      51,
       100,
       1.5,
       19.999,
@@ -253,25 +253,25 @@ describe("cart canonicalization, per exact variant", () => {
   });
 
   it("refuses an aggregate past the cap even though each line is legal", () => {
-    // 10 and 11 are each a perfectly good quantity. Their SUM is not.
-    expect(normalizeCartItems([item(BPC, 10, BPC_PRICE), item(BPC, 11, BPC_PRICE)])).toBeNull();
+    // 25 and 26 are each a perfectly good quantity. Their SUM is not.
+    expect(normalizeCartItems([item(BPC, 25, BPC_PRICE), item(BPC, 26, BPC_PRICE)])).toBeNull();
     // And no split gets there either.
     expect(
       normalizeCartItems([
-        item(BPC, 7, BPC_PRICE),
-        item(BPC, 7, BPC_PRICE),
-        item(BPC, 7, BPC_PRICE),
+        item(BPC, 17, BPC_PRICE),
+        item(BPC, 17, BPC_PRICE),
+        item(BPC, 17, BPC_PRICE),
       ]),
     ).toBeNull();
-    // Twenty single-unit lines is exactly the cap and is allowed.
+    // Fifty single-unit lines is exactly the cap and is allowed.
     const twenty = normalizeCartItems(
-      Array.from({ length: 20 }, () => item(BPC, 1, BPC_PRICE)),
+      Array.from({ length: 50 }, () => item(BPC, 1, BPC_PRICE)),
     );
     expect(twenty).toHaveLength(1);
-    expect(twenty![0]!.quantity).toBe(20);
+    expect(twenty![0]!.quantity).toBe(50);
     // Twenty-one is not.
     expect(
-      normalizeCartItems(Array.from({ length: 21 }, () => item(BPC, 1, BPC_PRICE))),
+      normalizeCartItems(Array.from({ length: 51 }, () => item(BPC, 1, BPC_PRICE))),
     ).toBeNull();
   });
 
@@ -288,7 +288,7 @@ describe("cart canonicalization, per exact variant", () => {
   });
 
   it("refuses a single line outside the band before any merging happens", () => {
-    for (const bad of [0, 21, -1, 2.5, "3", null, undefined, Number.NaN]) {
+    for (const bad of [0, 51, -1, 2.5, "3", null, undefined, Number.NaN]) {
       expect(normalizeCartItems([item(BPC, bad, BPC_PRICE)]), `${String(bad)}`).toBeNull();
     }
   });
@@ -310,7 +310,7 @@ describe("cart canonicalization, per exact variant", () => {
 });
 
 // ---------------------------------------------------------------------------
-describe("the quote, at twenty", () => {
+describe("the quote, at fifty", () => {
   it("computes the line and cart totals from the SERVER price times the quantity", async () => {
     const { quote } = deps();
     const result = await quoteEarlyAccessCart(quote, CUSTOMER, requestOf([item(BPC, 20, BPC_PRICE)]));
@@ -363,7 +363,7 @@ describe("the quote, at twenty", () => {
     const result = await quoteEarlyAccessCart(
       quote,
       CUSTOMER,
-      requestOf([item(BPC, 10, BPC_PRICE), item(BPC, 11, BPC_PRICE)]),
+      requestOf([item(BPC, 25, BPC_PRICE), item(BPC, 26, BPC_PRICE)]),
     );
     expect(result).toMatchObject({ ok: false, code: "CART_INVALID" });
     expect(await store.get("xeaq_12345678901234567890")).toBeNull();

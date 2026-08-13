@@ -784,7 +784,8 @@ describe("the large-order journey to fulfillment", () => {
     expect(held?.authorizedAmountCents).toBe(LARGE_TOTAL);
     expect(held?.capturedAmountCents).toBeUndefined();
     expect(held?.reviewTriggers).toContain("total_exceeds_threshold");
-    expect(held?.reviewTriggers).toContain("unusual_quantity");
+    // Founder 2026-08-13: quantity alone never reviews. The VALUE rule still does.
+    expect(held?.reviewTriggers).not.toContain("unusual_quantity");
     expect(ctx.payment.captureSuccesses).toBe(0);
 
     // The wired reservation seam held the stock for the review window: the

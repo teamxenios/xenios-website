@@ -99,7 +99,7 @@ describe("the derived releases", () => {
       // The founder-approved ceiling, read from the shipped constant rather
       // than restated, so this test cannot disagree with what the seeder writes.
       expect(row.approvedQuantityLimit).toBe(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT);
-      expect(row.approvedQuantityLimit).toBe(20);
+      expect(row.approvedQuantityLimit).toBe(50);
       expect(row.actor).toBeTruthy();
       expect(row.reason).toBeTruthy();
       expect(row.recordedAt).toBeTruthy();

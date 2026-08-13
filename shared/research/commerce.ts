@@ -1,3 +1,5 @@
+import { EARLY_ACCESS_MAX_QUANTITY } from "./early-access-quantity";
+
 // xenios research: commerce domain contract.
 //
 // Order and subscription lifecycles are expressed as explicit state machines with
@@ -219,14 +221,42 @@ export function canTransitionOrder(from: OrderState, to: OrderState, actor: Acto
 // Large-order review
 // ---------------------------------------------------------------------------
 
-/** Founder decision: review above $1,000, or on unusual quantity, or on a fraud rule. */
+/**
+ * Founder decision: review above $1,000, or on a fraud rule.
+ *
+ * QUANTITY ALONE NEVER TRIGGERS REVIEW (founder decision, 2026-08-13).
+ * Normal order quantity is 1 through 50 and there is no quantity based review
+ * threshold inside that band. The `unusual_quantity` trigger is retained for a
+ * caller that supplies an explicit per SKU threshold, because some individual
+ * product genuinely may have a sane per order ceiling below the band. What it
+ * must never be again is a BLANKET rule that turns an ordinary quantity into a
+ * held order.
+ *
+ * The previous default was 10, and no production composition ever supplied
+ * `unusualQuantityThreshold`, so every order of 11 or more units was silently
+ * routed to manual_review. That is the exact behaviour this decision removes.
+ *
+ * The default is now bound to EARLY_ACCESS_MAX_QUANTITY rather than restated as
+ * a second literal. Any quantity that reaches an order has already passed the
+ * band check, so a default equal to the band maximum can never fire on its own.
+ * If the band moves again, this rule follows it and cannot silently drift back
+ * into holding ordinary orders.
+ *
+ * The value rule below and the fraud rule are NOT quantity rules and are
+ * deliberately unchanged. A large cart at quantity 50 will often exceed $1,000
+ * and will still be reviewed, on VALUE, which is correct.
+ */
 export const LARGE_ORDER_THRESHOLD_CENTS = 100_000;
 
 export interface LargeOrderInput {
   totalCents: number;
   maxUnitQuantity: number;
   fraudFlagged: boolean;
-  /** Per-SKU sane individual quantity. Configurable, not hardcoded per product here. */
+  /**
+   * Per SKU sane individual quantity, for a product that genuinely needs one.
+   * Configurable, never a blanket band rule. When omitted the default is the
+   * purchasable band maximum, so quantity alone cannot trigger review.
+   */
   unusualQuantityThreshold?: number;
 }
 
@@ -238,7 +268,9 @@ export function evaluateLargeOrderReview(input: LargeOrderInput): {
 } {
   const triggers: LargeOrderTrigger[] = [];
   if (input.totalCents > LARGE_ORDER_THRESHOLD_CENTS) triggers.push("total_exceeds_threshold");
-  if (input.maxUnitQuantity > (input.unusualQuantityThreshold ?? 10)) triggers.push("unusual_quantity");
+  if (input.maxUnitQuantity > (input.unusualQuantityThreshold ?? EARLY_ACCESS_MAX_QUANTITY)) {
+    triggers.push("unusual_quantity");
+  }
   if (input.fraudFlagged) triggers.push("fraud_rule");
   return { requiresReview: triggers.length > 0, triggers };
 }

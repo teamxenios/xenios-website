@@ -51,14 +51,17 @@ export const FOUNDER_FIRST_RELEASE_REASON =
  * already-released units is a separate, controlled append against production,
  * prepared but NOT executed at:
  *
- *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_PRECHECK.sql
- *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_WRITE.sql
- *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_POSTCHECK.sql
+ *   supabase/production/EA_QUANTITY_50_RELEASE_AUTHORITY_PRECHECK.sql
+ *   supabase/production/EA_QUANTITY_50_RELEASE_AUTHORITY_WRITE.sql
+ *   supabase/production/EA_QUANTITY_50_RELEASE_AUTHORITY_POSTCHECK.sql
+ *
+ * The 1..50 band is the founder decision of 2026-08-13. The earlier
+ * EA_QUANTITY_20_* append set is superseded and must not be run.
  *
  * Bounded by MAX_QUANTITY_LIMIT (100) in founder-release.ts, which already
- * admits 20 and is deliberately not changed.
+ * admits 50 and is deliberately not changed.
  */
-export const FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT = 20;
+export const FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT = 50;
 
 export type FounderFirstReleaseInput = Readonly<{
   /** The founder's own name for the product, verbatim from the decision. */

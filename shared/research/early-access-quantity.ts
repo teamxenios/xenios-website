@@ -42,7 +42,7 @@ export const EARLY_ACCESS_MIN_QUANTITY = 1;
  * cart line, which is what `canonicalizeQuantities` in the cart model exists to
  * prevent.
  */
-export const EARLY_ACCESS_MAX_QUANTITY = 20;
+export const EARLY_ACCESS_MAX_QUANTITY = 50;
 
 /**
  * A whole number inside the band, with no coercion of any kind.

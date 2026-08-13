@@ -155,7 +155,7 @@ describe("the quantity control fits the card it lives in", () => {
     }
 
     const input = card?.querySelector<HTMLInputElement>("[data-testid$='-quantity-input']");
-    expect(input?.getAttribute("max")).toBe("20");
+    expect(input?.getAttribute("max")).toBe("50");
     expect(Number.parseInt(String(input?.style.minHeight), 10)).toBeGreaterThanOrEqual(44);
   });
 

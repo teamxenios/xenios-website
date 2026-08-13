@@ -289,7 +289,7 @@ describe("quantity", () => {
       const result = await place({ request: request({ quantity }) });
       expect(result.ok).toBe(true);
     }
-    for (const quantity of [0, 21, -1, 2.5, "2", null, Number.NaN, 1e21]) {
+    for (const quantity of [0, 51, -1, 2.5, "2", null, Number.NaN, 1e21]) {
       const result = await place({ request: request({ quantity }) });
       expect(result).toEqual({ ok: false, code: "quantity_out_of_range" });
     }
@@ -324,7 +324,7 @@ describe("quantity", () => {
     // Twenty-one is outside the BAND, so it is a malformed quantity rather than
     // a limit problem, and it never reaches the release ceiling at all.
     const over = await place({
-      request: request({ quantity: 21 }),
+      request: request({ quantity: 51 }),
       rows: [wide],
       releases: approved,
     });
@@ -436,7 +436,7 @@ describe("bundle arithmetic is exact to the cent", () => {
     // band would be unreachable: a quantity the table does not name is refused
     // outright rather than falling through to no promotion.
     expect(EARLY_ACCESS_BUNDLE_TIERS.map((tier) => tier.eligibleQuantity)).toEqual(
-      Array.from({ length: 20 }, (_unused, index) => index + 1),
+      Array.from({ length: 50 }, (_unused, index) => index + 1),
     );
 
     // THE FINANCIAL BOUNDARY. Widening the quantity band decided nothing about
@@ -453,7 +453,7 @@ describe("bundle arithmetic is exact to the cent", () => {
       expect(tier.discountBasisPoints).toBe(0);
     }
 
-    expect(earlyAccessBundleTier(21)).toBeNull();
+    expect(earlyAccessBundleTier(51)).toBeNull();
     expect(earlyAccessBundleTier(0)).toBeNull();
   });
 

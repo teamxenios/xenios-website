@@ -541,7 +541,7 @@ describe("assessEarlyAccessEligibility", () => {
       // 21 rather than 4: the round's band is now one through twenty, so a
       // declared limit of 4 is a legal Product Control decision and only a
       // limit outside the band is a blocker.
-      for (const maxUnitsPerOrder of [0, 21, 1.5, -1]) {
+      for (const maxUnitsPerOrder of [0, 51, 1.5, -1]) {
         expect(
           blockersFor(
             satisfied({
