@@ -36,6 +36,7 @@ import {
   type PriceResolution,
   type PriceResolutionFailureReason,
 } from "@shared/research/pricing";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 import { parseProductControlTimestamp } from "../catalog/product-control-reader";
 import type {
   ResolveApprovedResearchPriceInput,
@@ -84,19 +85,22 @@ export interface PriceLineageReaders {
 }
 
 /**
- * Injectable ceiling for a single cart line. The default mirrors
- * MAX_LINE_QUANTITY in server/research/commerce/cart.ts (1000): far above any
- * real order, far below where integer-cents arithmetic stops being exact.
- * The duplication is deliberate; that module is outside this lane's lease.
+ * Injectable ceiling for a single cart line. The default resolves through the
+ * shared founder normal-order authority; callers may only narrow it.
  */
 export interface QuantityPolicy {
   maxQuantity: number;
 }
 
-export const DEFAULT_QUANTITY_POLICY: QuantityPolicy = { maxQuantity: 1000 };
+export const DEFAULT_QUANTITY_POLICY: QuantityPolicy = {
+  maxQuantity: EARLY_ACCESS_MAX_QUANTITY,
+};
 
 function isUsableQuantityPolicy(policy: QuantityPolicy): boolean {
-  return isSafeQuantity(policy.maxQuantity);
+  return (
+    isSafeQuantity(policy.maxQuantity) &&
+    policy.maxQuantity <= EARLY_ACCESS_MAX_QUANTITY
+  );
 }
 
 // ---------------------------------------------------------------------------

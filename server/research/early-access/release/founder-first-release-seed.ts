@@ -40,9 +40,9 @@ export const FOUNDER_FIRST_RELEASE_REASON =
  * The founder-approved per-order ceiling for every released unit.
  *
  * This was 3, the bundle maximum, and it is now the round's whole band. The
- * founder's quantity decision of 2026-08-11 is that every currently purchasable
- * exact variant may be bought at one through twenty, current Early Access
- * included.
+ * founder's superseding quantity decision of 2026-08-13 is that every eligible
+ * exact variant may be bought at one through fifty, current Early Access
+ * included. Quantity alone does not create review inside that band.
  *
  * WHY THIS CONSTANT IS NOT THE WHOLE FIX. It governs what a SEEDING run writes.
  * The releases that decide today's live sales are durable rows in
@@ -51,14 +51,14 @@ export const FOUNDER_FIRST_RELEASE_REASON =
  * already-released units is a separate, controlled append against production,
  * prepared but NOT executed at:
  *
- *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_PRECHECK.sql
- *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_WRITE.sql
- *   supabase/production/EA_QUANTITY_20_RELEASE_AUTHORITY_POSTCHECK.sql
+ *   supabase/production/EA_QUANTITY_50_RELEASE_CANDIDATE_PRECHECK.sql
+ *   supabase/production/EA_QUANTITY_50_RELEASE_CANDIDATE_WRITE.sql
+ *   supabase/production/EA_QUANTITY_50_RELEASE_CANDIDATE_POSTCHECK.sql
  *
- * Bounded by MAX_QUANTITY_LIMIT (100) in founder-release.ts, which already
- * admits 20 and is deliberately not changed.
+ * Existing durable quantity-20 releases are immutable history. The controlled
+ * packet appends quantity-50 successors; it never rewrites or deletes them.
  */
-export const FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT = 20;
+export const FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT = 50;
 
 export type FounderFirstReleaseInput = Readonly<{
   /** The founder's own name for the product, verbatim from the decision. */

@@ -238,6 +238,14 @@ describe("create", () => {
     }
   });
 
+  it("accepts Q50 when stock and every non-quantity gate authorize it", async () => {
+    const service = createSubscriptionService(deps({
+      lots: [lot({ quantityAvailable: 50 })],
+    }));
+    const result = await service.create(MEMBER, createInput({ quantity: 50 }), NOW);
+    expect(result).toMatchObject({ ok: true, subscription: { quantity: 50 } });
+  });
+
   it("refuses a frequency outside 30, 60, 90", async () => {
     const service = createSubscriptionService(deps());
     const result = await service.create(

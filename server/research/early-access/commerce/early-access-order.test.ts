@@ -65,7 +65,7 @@ describe("early access order totals", () => {
 
 describe("early access order quantity", () => {
   it("accepts the normal-order boundaries through fifty", () => {
-    for (const quantity of [1, 2, 3, 20, 21, 49, 50]) {
+    for (const quantity of [1, 2, 3, 20, 21, 25, 49, 50]) {
       const order = createdOrder({ quantity });
       expect(order.line.quantity).toBe(quantity);
       expect(order.orderTotalCents).toBe(12_450 * quantity);

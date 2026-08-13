@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "wouter";
 import type { SubscriptionActionRequest, SubscriptionDto } from "@shared/research/commerce-api";
 import { SUBSCRIPTION_FREQUENCIES, type SubscriptionFrequencyDays } from "@shared/research/commerce";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 import { useResearch } from "../../core";
 import { listSubscriptions, subscriptionAction } from "../../adapters/commerce";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
@@ -159,7 +160,7 @@ function SubscriptionCard({
     e.preventDefault();
     if (controlsLocked) return;
     const quantity = Number(quantityDraft);
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 50) return;
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > EARLY_ACCESS_MAX_QUANTITY) return;
     onQuantity(quantity);
   };
 
@@ -231,7 +232,7 @@ function SubscriptionCard({
                   className="input-field"
                   type="number"
                   min={1}
-                  max={20}
+                  max={EARLY_ACCESS_MAX_QUANTITY}
                   step={1}
                   value={quantityDraft}
                   disabled={controlsLocked}
@@ -356,7 +357,6 @@ export default function SubscriptionsPage() {
   const [confirm, setConfirm] = useState<ConfirmTarget>(null);
   const [rescheduleTarget, setRescheduleTarget] = useState<SubscriptionDto | null>(null);
   const [rescheduleDate, setRescheduleDate] = useState("");
-  const commandKeys = useRef(new Map<string, string>());
 
   const load = useCallback(async () => {
     setState({ phase: "loading" });
@@ -404,38 +404,8 @@ export default function SubscriptionsPage() {
   // SubscriptionActionRequest and routes on the result kind, never on text.
   const run = useCallback(
     async (subscriptionId: string, request: SubscriptionActionRequest, successText: string): Promise<boolean> => {
-      const current = state.phase === "ok"
-        ? state.subscriptions.find((subscription) => subscription.subscriptionId === subscriptionId)
-        : undefined;
-      if (!current) {
-        setOutcome({ phase: "error", subscriptionId, message: "Reload the subscription before changing it." });
-        return false;
-      }
-      const semanticKey = JSON.stringify([
-        subscriptionId,
-        current.version,
-        request.action,
-        request.frequencyDays ?? null,
-        request.quantity ?? null,
-        request.rescheduleTo ?? null,
-      ]);
-      let idempotencyKey = commandKeys.current.get(semanticKey);
-      if (!idempotencyKey) {
-        const uuid = globalThis.crypto?.randomUUID?.();
-        if (!uuid) {
-          setOutcome({ phase: "error", subscriptionId, message: "Secure retry protection is unavailable." });
-          return false;
-        }
-        idempotencyKey = `subscription:${uuid}`;
-        commandKeys.current.set(semanticKey, idempotencyKey);
-      }
-      const command: SubscriptionActionRequest = {
-        ...request,
-        expectedVersion: current.version,
-        idempotencyKey,
-      };
       setOutcome({ phase: "busy", subscriptionId });
-      const result = await subscriptionAction(memberToken, subscriptionId, command);
+      const result = await subscriptionAction(memberToken, subscriptionId, request);
       switch (result.kind) {
         case "ok":
           setOutcome({ phase: "done", subscriptionId, text: successText });
@@ -457,7 +427,7 @@ export default function SubscriptionsPage() {
           return false;
       }
     },
-    [memberToken, load, state],
+    [memberToken, load],
   );
 
   const runConfirm = async () => {

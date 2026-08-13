@@ -40,25 +40,16 @@ import type {
   SubscriptionActionRequest,
   SubscriptionDto,
 } from "@shared/research/commerce-api";
-import {
-  PERSISTENT_CART_QUANTITY_MAX,
-} from "@shared/research/persistent-cart";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 import { allocateFefo, type InventoryLot, type LotEvaluation } from "../inventory/lots";
 import type { PaymentProvider } from "../providers/payment";
-import {
-  isValidSubscriptionTransitionCommand,
-  subscriptionTransitionCommand,
-  type AtomicSubscriptionTransitionPort,
-  type SubscriptionTransitionIntent,
-  type VersionedSubscriptionSnapshot,
-} from "./persistence/subscription-transition-contract";
 
 // ---------------------------------------------------------------------------
 // Records
 // ---------------------------------------------------------------------------
 
-/** Application-level F-013 ceiling; every wider persistence constraint stays defense in depth. */
-export const MAX_SUBSCRIPTION_QUANTITY = PERSISTENT_CART_QUANTITY_MAX;
+/** Founder normal-order ceiling, shared with cart, checkout, and order creation. */
+export const MAX_SUBSCRIPTION_QUANTITY = EARLY_ACCESS_MAX_QUANTITY;
 
 /**
  * The stored subscription. Wider than the wire DTO on purpose: the payment
@@ -66,7 +57,26 @@ export const MAX_SUBSCRIPTION_QUANTITY = PERSISTENT_CART_QUANTITY_MAX;
  * data that must never be serialized to a member by a route that spreads this
  * object. Serialization goes through `toDto` by explicit construction.
  */
-export interface SubscriptionRecord extends VersionedSubscriptionSnapshot {}
+export interface SubscriptionRecord {
+  subscriptionId: string;
+  memberId: string;
+  sku: string;
+  quantity: number;
+  frequencyDays: SubscriptionFrequencyDays;
+  state: SubscriptionState;
+  /** ISO instant of the next renewal charge. Null unless a schedule exists. */
+  nextRenewalAt: string | null;
+  nextShipmentAt: string | null;
+  /** The provider's stored payment method reference. Never card data. */
+  paymentProviderReference: string | null;
+  /** Which published price the member agreed to, so a price change is explicit. */
+  priceVersion: string;
+  /** Opaque reference to a stored shipping address. Never the address itself. */
+  shippingAddressRef: string | null;
+  createdAt: string;
+  updatedAt: string;
+  cancelledAt: string | null;
+}
 
 /**
  * One appended row per applied state change. History, never current state:
@@ -84,7 +94,7 @@ export interface SubscriptionStateEvent {
   occurredAt: string;
 }
 
-export interface SubscriptionRepository extends AtomicSubscriptionTransitionPort {
+export interface SubscriptionRepository {
   get(subscriptionId: string): Promise<SubscriptionRecord | null>;
   save(record: SubscriptionRecord): Promise<void>;
   listByMember(memberId: string): Promise<SubscriptionRecord[]>;
@@ -195,13 +205,8 @@ const MEMBER_ACTIONS: ReadonlySet<SubscriptionActionRequest["action"]> = new Set
   SubscriptionActionRequest["action"]
 >(["pause", "resume", "skip", "reschedule", "cancel"]);
 
-export function isValidSubscriptionQuantity(quantity: unknown): quantity is number {
-  return (
-    typeof quantity === "number" &&
-    Number.isSafeInteger(quantity) &&
-    quantity >= 1 &&
-    quantity <= PERSISTENT_CART_QUANTITY_MAX
-  );
+function isValidQuantity(quantity: number): boolean {
+  return Number.isInteger(quantity) && quantity > 0 && quantity <= MAX_SUBSCRIPTION_QUANTITY;
 }
 
 function isFrequency(value: unknown): value is SubscriptionFrequencyDays {
@@ -228,7 +233,6 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     // reference never reach a member through this function.
     return {
       subscriptionId: record.subscriptionId,
-      version: record.version,
       sku: record.sku,
       displayName: deps.catalog.get(record.sku)?.displayName ?? record.sku,
       state: record.state,
@@ -251,74 +255,35 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     asOf: Date,
     changes: Partial<SubscriptionRecord> = {},
     effectiveAt: string | null = null,
-    concurrency: Readonly<{ idempotencyKey?: string; expectedVersion?: number }> = {},
   ): Promise<SubscriptionMutation> {
     const result = applySubscriptionAction(record.state, action, actor);
     if (!result.ok) {
       return denial("subscription_action_invalid", result.message);
     }
 
-    const expectedVersion = concurrency.expectedVersion ?? record.version;
-    if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 1) {
-      return denial("subscription_stale_version", "The subscription version is invalid or stale.");
-    }
-    if (expectedVersion !== record.version) {
-      return denial("subscription_stale_version", "The subscription changed; reload it before trying again.");
-    }
     const next: SubscriptionRecord = {
       ...record,
       ...changes,
-      version: expectedVersion + 1,
       state: result.state,
       updatedAt: asOf.toISOString(),
     };
-    const intent: SubscriptionTransitionIntent = {
+    await deps.repository.save(next);
+    await deps.repository.appendEvent({
       subscriptionId: record.subscriptionId,
-      memberId: record.memberId,
-      expectedVersion,
       action,
-      actorType: actor,
-      actorId: null,
       fromState: record.state,
       toState: result.state,
+      actorType: actor,
+      actorId: null,
       effectiveAt,
-      next,
-    };
-    const generated = subscriptionTransitionCommand(intent, `subscription:${"0".repeat(64)}`);
-    const idempotencyKey = concurrency.idempotencyKey ?? `subscription:${generated.intentHash}`;
-    const command = subscriptionTransitionCommand(intent, idempotencyKey);
-    if (!isValidSubscriptionTransitionCommand(command)) {
-      return denial("subscription_action_invalid", "The subscription transition command is invalid.");
-    }
-    const committed = await deps.repository.commitTransition(command);
-    if (!committed.ok) {
-      if (committed.code === "stale_version") {
-        return denial("subscription_stale_version", "The subscription changed; reload it before trying again.");
-      }
-      if (committed.code === "idempotency_conflict") {
-        return denial("idempotency_conflict", "The retry key is already bound to another subscription change.");
-      }
-      if (committed.code === "subscription_not_found") {
-        return denial("subscription_not_found", `No subscription ${record.subscriptionId}.`);
-      }
-      return denial("subscription_action_invalid", "The subscription change could not be committed safely.");
-    }
-    return { ok: true, subscription: toDto(committed.snapshot) };
+      occurredAt: asOf.toISOString(),
+    });
+    return { ok: true, subscription: toDto(next) };
   }
 
   /** Ownership is the gate. Another member's subscription does not exist here. */
-  async function readSubscription(subscriptionId: string): Promise<SubscriptionRecord | null> {
-    const record = await deps.repository.get(subscriptionId);
-    return record &&
-      isValidSubscriptionQuantity(record.quantity) &&
-      Number.isSafeInteger(record.version) &&
-      record.version >= 1
-      ? record
-      : null;
-  }
-
   async function getOwned(memberId: string, subscriptionId: string): Promise<SubscriptionRecord | null> {
-    const record = await readSubscription(subscriptionId);
+    const record = await deps.repository.get(subscriptionId);
     if (!record) return null;
     if (record.memberId !== memberId) return null;
     return record;
@@ -344,7 +309,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     if (!deps.commerceEnabled) {
       return denial("commerce_disabled", "Product commerce is not enabled.");
     }
-    if (!isValidSubscriptionQuantity(input.quantity)) {
+    if (!isValidQuantity(input.quantity)) {
       return denial(
         "quantity_invalid",
         `Quantity must be a whole number between 1 and ${MAX_SUBSCRIPTION_QUANTITY}.`,
@@ -377,7 +342,6 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
       createdAt: asOf.toISOString(),
       updatedAt: asOf.toISOString(),
       cancelledAt: null,
-      version: 1,
     };
     await deps.repository.save(record);
     return { ok: true, subscription: toDto(record) };
@@ -385,10 +349,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
 
   async function listForMember(memberId: string): Promise<SubscriptionDto[]> {
     return (await deps.repository.listByMember(memberId))
-      .filter(
-        (record) =>
-          record.memberId === memberId && isValidSubscriptionQuantity(record.quantity),
-      )
+      .filter((record) => record.memberId === memberId)
       .map(toDto);
   }
 
@@ -411,16 +372,10 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     if (req.frequencyDays !== undefined && !isFrequency(req.frequencyDays)) {
       return denial("subscription_action_invalid", "Frequency must be 30, 60, or 90 days.");
     }
-    if (req.quantity !== undefined && !isValidSubscriptionQuantity(req.quantity)) {
+    if (req.quantity !== undefined && !isValidQuantity(req.quantity)) {
       return denial(
         "quantity_invalid",
         `Quantity must be a whole number between 1 and ${MAX_SUBSCRIPTION_QUANTITY}.`,
-      );
-    }
-    if ((req.idempotencyKey === undefined) !== (req.expectedVersion === undefined)) {
-      return denial(
-        "subscription_action_invalid",
-        "A subscription retry requires both its idempotency key and observed version.",
       );
     }
 
@@ -481,48 +436,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
         break;
     }
 
-    if (
-      req.idempotencyKey !== undefined &&
-      req.expectedVersion !== undefined &&
-      record.version > req.expectedVersion
-    ) {
-      const replayIntent: SubscriptionTransitionIntent = {
-        subscriptionId,
-        memberId,
-        expectedVersion: req.expectedVersion,
-        action: req.action,
-        actorType: "member",
-        actorId: null,
-        fromState: record.state,
-        toState: record.state,
-        effectiveAt,
-        next: {
-          ...record,
-          ...changes,
-          version: req.expectedVersion + 1,
-        },
-      };
-      const intentHash = subscriptionTransitionCommand(
-        replayIntent,
-        req.idempotencyKey,
-      ).intentHash;
-      const replay = await deps.repository.replayTransition({
-        subscriptionId,
-        memberId,
-        idempotencyKey: req.idempotencyKey,
-        intentHash,
-      });
-      if (replay?.ok) return { ok: true, subscription: toDto(replay.snapshot) };
-      if (replay?.code === "idempotency_conflict") {
-        return denial("idempotency_conflict", "The retry key is bound to another subscription change.");
-      }
-      return denial("subscription_stale_version", "The subscription changed; reload it before trying again.");
-    }
-
-    return transition(record, req.action, "member", asOf, changes, effectiveAt, {
-      idempotencyKey: req.idempotencyKey,
-      expectedVersion: req.expectedVersion,
-    });
+    return transition(record, req.action, "member", asOf, changes, effectiveAt);
   }
 
   async function activate(
@@ -531,7 +445,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     asOf: Date,
     paymentProviderReference?: string,
   ): Promise<SubscriptionMutation> {
-    const record = await readSubscription(subscriptionId);
+    const record = await deps.repository.get(subscriptionId);
     if (!record) {
       return denial("subscription_not_found", `No subscription ${subscriptionId}.`);
     }
@@ -555,7 +469,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     actor: Actor,
     asOf: Date,
   ): Promise<SubscriptionMutation> {
-    const record = await readSubscription(subscriptionId);
+    const record = await deps.repository.get(subscriptionId);
     if (!record) {
       return denial("subscription_not_found", `No subscription ${subscriptionId}.`);
     }
@@ -569,7 +483,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     actor: Actor,
     asOf: Date,
   ): Promise<SubscriptionMutation> {
-    const record = await readSubscription(subscriptionId);
+    const record = await deps.repository.get(subscriptionId);
     if (!record) {
       return denial("subscription_not_found", `No subscription ${subscriptionId}.`);
     }
@@ -613,7 +527,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
   }
 
   async function evaluateRenewal(subscriptionId: string, asOf: Date): Promise<RenewalDecision> {
-    const record = await readSubscription(subscriptionId);
+    const record = await deps.repository.get(subscriptionId);
     if (!record) {
       return {
         ok: false,
@@ -714,103 +628,18 @@ export function createInMemorySubscriptionRepository(
 ): SubscriptionRepository {
   const rows = new Map<string, SubscriptionRecord>();
   const events: SubscriptionStateEvent[] = [];
-  const commands = new Map<string, {
-    intentHash: string;
-    snapshot: SubscriptionRecord;
-    event: import("./persistence/subscription-transition-contract").CommittedSubscriptionEvent;
-  }>();
-  seed.forEach((record) => {
-    if (isValidSubscriptionQuantity(record.quantity)) {
-      rows.set(record.subscriptionId, cloneRecord(record));
-    }
-  });
+  seed.forEach((record) => rows.set(record.subscriptionId, cloneRecord(record)));
   return {
-    async replayTransition(input) {
-      const scope = `${input.memberId}\u0000${input.subscriptionId}\u0000${input.idempotencyKey}`;
-      const prior = commands.get(scope);
-      if (!prior) return null;
-      if (prior.intentHash !== input.intentHash) {
-        return { ok: false, code: "idempotency_conflict" };
-      }
-      return {
-        ok: true,
-        replayed: true,
-        snapshot: cloneRecord(prior.snapshot),
-        event: { ...prior.event },
-      };
-    },
-    async commitTransition(command) {
-      if (!isValidSubscriptionTransitionCommand(command)) {
-        return { ok: false, code: "invalid_input" };
-      }
-      const current = rows.get(command.subscriptionId);
-      if (!current || current.memberId !== command.memberId) {
-        return { ok: false, code: "subscription_not_found" };
-      }
-      const scope = `${command.memberId}\u0000${command.subscriptionId}\u0000${command.idempotencyKey}`;
-      const prior = commands.get(scope);
-      if (prior) {
-        if (prior.intentHash !== command.intentHash) {
-          return { ok: false, code: "idempotency_conflict" };
-        }
-        return {
-          ok: true,
-          replayed: true,
-          snapshot: cloneRecord(prior.snapshot),
-          event: { ...prior.event },
-        };
-      }
-      if (current.version !== command.expectedVersion || current.state !== command.fromState) {
-        return { ok: false, code: "stale_version" };
-      }
-
-      const snapshot = cloneRecord(command.next);
-      const event = {
-        subscriptionId: command.subscriptionId,
-        resultingVersion: snapshot.version,
-        idempotencyKey: command.idempotencyKey,
-        intentHash: command.intentHash,
-        action: command.action,
-        fromState: command.fromState,
-        toState: command.toState,
-        actorType: command.actorType,
-        actorId: command.actorId,
-        effectiveAt: command.effectiveAt,
-        occurredAt: snapshot.updatedAt,
-      };
-      rows.set(command.subscriptionId, snapshot);
-      events.push({
-        subscriptionId: event.subscriptionId,
-        action: event.action,
-        fromState: event.fromState,
-        toState: event.toState,
-        actorType: event.actorType,
-        actorId: event.actorId,
-        effectiveAt: event.effectiveAt,
-        occurredAt: event.occurredAt,
-      });
-      commands.set(scope, { intentHash: command.intentHash, snapshot, event });
-      return {
-        ok: true,
-        replayed: false,
-        snapshot: cloneRecord(snapshot),
-        event: { ...event },
-      };
-    },
     async get(subscriptionId) {
       const found = rows.get(subscriptionId);
-      return found && isValidSubscriptionQuantity(found.quantity) ? cloneRecord(found) : null;
+      return found ? cloneRecord(found) : null;
     },
     async save(record) {
-      if (!isValidSubscriptionQuantity(record.quantity)) return;
       rows.set(record.subscriptionId, cloneRecord(record));
     },
     async listByMember(memberId) {
       return Array.from(rows.values())
-        .filter(
-          (record) =>
-            record.memberId === memberId && isValidSubscriptionQuantity(record.quantity),
-        )
+        .filter((record) => record.memberId === memberId)
         .map(cloneRecord);
     },
     async appendEvent(event) {

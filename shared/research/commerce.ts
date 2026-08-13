@@ -219,7 +219,7 @@ export function canTransitionOrder(from: OrderState, to: OrderState, actor: Acto
 // Large-order review
 // ---------------------------------------------------------------------------
 
-/** Review may still follow value or fraud policy; quantity 1..50 is ordinary. */
+/** Founder decision: review may follow value or fraud policy, never quantity 1..50. */
 export const LARGE_ORDER_THRESHOLD_CENTS = 100_000;
 
 export interface LargeOrderInput {
@@ -238,8 +238,6 @@ export function evaluateLargeOrderReview(input: LargeOrderInput): {
 } {
   const triggers: LargeOrderTrigger[] = [];
   if (input.totalCents > LARGE_ORDER_THRESHOLD_CENTS) triggers.push("total_exceeds_threshold");
-  // Founder authority supersedes the former quantity-review rule. The cart
-  // owns the strict 1..50 band; no accepted quantity is unusual by quantity alone.
   if (input.fraudFlagged) triggers.push("fraud_rule");
   return { requiresReview: triggers.length > 0, triggers };
 }

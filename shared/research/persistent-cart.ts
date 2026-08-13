@@ -1,7 +1,7 @@
 import type { CartProductSelection } from "./cart-product-selection";
+import { EARLY_ACCESS_MAX_QUANTITY } from "./early-access-quantity";
 
-/** Application-level F-013 ceiling; persistence may remain wider but cannot be reached here. */
-export const PERSISTENT_CART_QUANTITY_MAX = 50;
+export const PERSISTENT_CART_QUANTITY_MAX = EARLY_ACCESS_MAX_QUANTITY;
 export const PERSISTENT_CART_FAILURE_CODES = [
   "invalid_input",
   "unauthorized",

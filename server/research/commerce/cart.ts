@@ -34,6 +34,7 @@ import type {
   CartLineDto,
   CommerceDenialCode,
 } from "@shared/research/commerce-api";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 import {
   allocateFefo,
   splitByFulfillmentOwner,
@@ -139,9 +140,9 @@ function highestPriority(reasons: readonly CommerceDenialCode[]): CommerceDenial
  * depend on another gate standing in front of it.
  *
  * Founder normal-order authority is one through fifty. Product Control,
- * eligibility, stock, and the other real gates still apply independently.
+ * eligibility, stock, and the other gates still apply independently.
  */
-export const MAX_LINE_QUANTITY = 50;
+export const MAX_LINE_QUANTITY = EARLY_ACCESS_MAX_QUANTITY;
 
 function isValidQuantity(quantity: number): boolean {
   return Number.isInteger(quantity) && quantity > 0 && quantity <= MAX_LINE_QUANTITY;

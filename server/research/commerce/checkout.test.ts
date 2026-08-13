@@ -359,7 +359,7 @@ describe("large-order review", () => {
     expect(authorize).not.toHaveBeenCalled();
   });
 
-  it("treats quantity 50 as ordinary when no value or fraud rule applies", async () => {
+  it("does not hold a normal quantity below the money threshold", async () => {
     const service = createCheckoutService(
       deps({
         cart: {
@@ -369,15 +369,15 @@ describe("large-order review", () => {
                 {
                   sku: "P001",
                   displayName: "Product One",
-                  quantity: 50,
+                  quantity: 40,
                   purchaseMode: "one_time",
                   unitPriceCents: 100,
-                  lineTotalCents: 5000,
+                  lineTotalCents: 4000,
                   blockedReason: null,
                 },
               ],
-              subtotalCents: 5000,
-              estimatedTotalCents: 6295,
+              subtotalCents: 4000,
+              estimatedTotalCents: 5295,
             }),
         },
       }),

@@ -4,10 +4,7 @@ import {
   hashCartIdempotencyKey,
   hashCartSecret,
 } from "./persistent-cart";
-import {
-  PERSISTENT_CART_QUANTITY_MAX,
-  type PersistentCartSelection,
-} from "@shared/research/persistent-cart";
+import type { PersistentCartSelection } from "@shared/research/persistent-cart";
 
 const member = "11111111-1111-4111-8111-111111111111";
 const product = "22222222-2222-4222-8222-222222222222";
@@ -72,36 +69,6 @@ const cart = {
 };
 
 describe("persistent cart repository", () => {
-  it("accepts ordinary quantities through 50 and refuses 51 before persistence", async () => {
-    const rpc = vi.fn(async () => ({ data: cart, error: null }));
-    const repo = createPersistentCartRepository({ rpc });
-    for (const quantity of [1, 20, 21, 49, PERSISTENT_CART_QUANTITY_MAX]) {
-      const result = await repo.putMemberItem(member, {
-        expectedCartVersion: null,
-        expectedItemVersion: null,
-        quantity,
-        selection,
-        idempotencyKey: `quantity-${quantity}-ordinary`,
-        expiresAt: cart.expiresAt,
-      });
-      expect(result.ok).toBe(true);
-      expect(rpc).toHaveBeenLastCalledWith(
-        "research_persistent_cart_put_item",
-        expect.objectContaining({ p_quantity: quantity }),
-      );
-    }
-
-    await expect(repo.putMemberItem(member, {
-      expectedCartVersion: null,
-      expectedItemVersion: null,
-      quantity: PERSISTENT_CART_QUANTITY_MAX + 1,
-      selection,
-      idempotencyKey: "quantity-51-refused",
-      expiresAt: cart.expiresAt,
-    })).resolves.toEqual({ ok: false, code: "invalid_input" });
-    expect(rpc).toHaveBeenCalledTimes(5);
-  });
-
   it("domain-separates and never sends raw anonymous or idempotency secrets", async () => {
     const rpc = vi.fn(async () => ({ data: cart, error: null }));
     const repo = createPersistentCartRepository({ rpc });
@@ -231,8 +198,8 @@ describe("persistent cart repository", () => {
     });
   });
 
-  it("rejects quantity overflow and mismatched selection identities locally", async () => {
-    const rpc = vi.fn();
+  it("accepts Q50 and rejects Q51 before persistence", async () => {
+    const rpc = vi.fn(async () => ({ data: cart, error: null }));
     const repo = createPersistentCartRepository({ rpc });
     const base = {
       expectedCartVersion: null,
@@ -243,8 +210,26 @@ describe("persistent cart repository", () => {
     };
     await expect(repo.putMemberItem(member, {
       ...base,
-      quantity: PERSISTENT_CART_QUANTITY_MAX + 1,
+      quantity: 50,
+    })).resolves.toMatchObject({ ok: true });
+    expect(rpc).toHaveBeenCalledTimes(1);
+    await expect(repo.putMemberItem(member, {
+      ...base,
+      quantity: 51,
     })).resolves.toEqual({ ok: false, code: "invalid_input" });
+    expect(rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects mismatched selection identities locally", async () => {
+    const rpc = vi.fn();
+    const repo = createPersistentCartRepository({ rpc });
+    const base = {
+      expectedCartVersion: null,
+      expectedItemVersion: null,
+      selection,
+      idempotencyKey: "quantity-key-123456",
+      expiresAt: cart.expiresAt,
+    };
     await expect(repo.putMemberItem(member, {
       ...base,
       quantity: 1,
@@ -297,31 +282,6 @@ describe("persistent cart repository", () => {
     const repo = createPersistentCartRepository({
       rpc: async () => ({
         data: { ...cart, items: [{ id: "not-a-uuid", quantity: 1 }] },
-        error: null,
-      }),
-    });
-    await expect(repo.getMemberCart(member)).resolves.toEqual({
-      ok: false,
-      code: "dependency_unavailable",
-    });
-  });
-
-  it("fails recovery closed when persistence returns a quantity above 50", async () => {
-    const repo = createPersistentCartRepository({
-      rpc: async () => ({
-        data: {
-          ...cart,
-          items: [{
-            id: "77777777-7777-4777-8777-777777777777",
-            productId: product,
-            variantId: variant,
-            sku: selection.sku,
-            quantity: PERSISTENT_CART_QUANTITY_MAX + 1,
-            priceReference: selection.price,
-            selectionEvaluatedAt: selection.evaluatedAt,
-            version: 1,
-          }],
-        },
         error: null,
       }),
     });

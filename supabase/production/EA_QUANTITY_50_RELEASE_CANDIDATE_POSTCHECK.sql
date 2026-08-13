@@ -21,7 +21,7 @@ declare
   v_actual text;
   v_bad integer;
   v_approved integer;
-  v_at_least_50 integer;
+  v_at_50 integer;
 begin
   with latest as (
     select distinct on (product_id, variant_id)
@@ -32,14 +32,14 @@ begin
   select
     count(*) filter (where status = 'approved'),
     count(*) filter (where status = 'approved'
-      and (record ->> 'approvedQuantityLimit')::integer >= 50)
-  into v_approved, v_at_least_50
+      and (record ->> 'approvedQuantityLimit')::integer = 50)
+  into v_approved, v_at_50
   from latest;
-  if v_approved = 0 or v_approved <> v_at_least_50 then
-    raise exception 'FAIL % of % approved units remain below 50',
-      v_approved - v_at_least_50, v_approved;
+  if v_approved = 0 or v_approved <> v_at_50 then
+    raise exception 'FAIL % of % approved units are not exact 50',
+      v_approved - v_at_50, v_approved;
   end if;
-  raise notice 'PASS all % current approved units are at least 50', v_approved;
+  raise notice 'PASS all % current approved units are exact 50', v_approved;
 
   select count(*) into v_bad
   from public.research_early_access_releases cur

@@ -204,10 +204,23 @@ describe("large-order review", () => {
     ).toContain("total_exceeds_threshold");
   });
 
-  it("does not trigger on quantity 50 and still triggers on fraud independently", () => {
+  it("never reviews a normal quantity, including through the legacy threshold parameter", () => {
+    for (const maxUnitQuantity of [1, 20, 21, 25, 49, 50]) {
+      expect(
+        evaluateLargeOrderReview({ totalCents: 100, maxUnitQuantity, fraudFlagged: false }),
+      ).toEqual({ requiresReview: false, triggers: [] });
+    }
     expect(
-      evaluateLargeOrderReview({ totalCents: 100, maxUnitQuantity: 50, fraudFlagged: false }).triggers,
-    ).not.toContain("unusual_quantity");
+      evaluateLargeOrderReview({
+        totalCents: 100,
+        maxUnitQuantity: 21,
+        fraudFlagged: false,
+        unusualQuantityThreshold: 20,
+      }),
+    ).toEqual({ requiresReview: false, triggers: [] });
+  });
+
+  it("triggers on a fraud rule independently", () => {
     expect(
       evaluateLargeOrderReview({ totalCents: 100, maxUnitQuantity: 1, fraudFlagged: true }).triggers,
     ).toContain("fraud_rule");
