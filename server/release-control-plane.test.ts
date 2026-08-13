@@ -1541,17 +1541,25 @@ describe("route uniqueness validator", () => {
     // research wall decides who may reach a CUSTOMER surface, and none of
     // these is one.
     //
-    // 357/366 after the F-013 Early Access fusion. FOURTEEN additions, ZERO
-    // removals, every one MEASURED by diffing `scanGitTreeRouteResult` at the
-    // fusion base against the fused head rather than by reading diffs. That
-    // distinction mattered: a hand scan of the merge diff found only twelve and
-    // silently missed the two auth routes below, because they register through
-    // a path the regex did not model. A count pinned from a hand scan would
-    // have been wrong by exactly the amount nobody would notice.
+    // 355/364 after the F-013 Early Access fusion. TWELVE additions, ZERO
+    // removals, every one MEASURED with `scanGitTreeRouteResult` at the fusion
+    // base against the fused head, never by reading diffs.
     //
-    // Pack02 accounts and organizations, ELEVEN:
-    //   GET   /api/research/auth/landing
-    //   POST  /api/research/auth/experience
+    // AN EARLIER PIN HERE SAID 357/366 AND WAS WRONG, which is worth recording
+    // because of how it was wrong. Two extra call sites came from
+    // server/research/authenticated-landing.ts, a file that exists in NO lane
+    // head and in no base. It was swept into the tree by a `git add -A` during
+    // integration, after a `git stash -u` round trip left it in the worktree.
+    // It was never anyone's feature. The pin was then raised to accommodate it,
+    // and the two routes were mis-attributed to Pack02 in this very comment.
+    //
+    // That is the failure mode this guard exists for, arriving from the one
+    // direction nobody watches: not an unintended route slipped in by a lane,
+    // but by the integrator, and then legitimised by the integrator widening
+    // the guard. Rebuilding the fusion without Pack04 branch ancestry dropped
+    // the stray file, and the honest count fell by exactly two.
+    //
+    // Pack02 accounts and organizations, NINE:
     //   GET   /api/research/account/context
     //   POST  /api/research/account/claims/request
     //   POST  /api/research/account/claims/confirm
@@ -1578,8 +1586,8 @@ describe("route uniqueness validator", () => {
     //
     // Pack04 added ZERO route call sites: its work is storage, persistence and
     // the customer order history projection, none of which is a new door.
-    expect(result.callSites).toBe(357);
-    expect(result.routes).toHaveLength(366);
+    expect(result.callSites).toBe(355);
+    expect(result.routes).toHaveLength(364);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });
