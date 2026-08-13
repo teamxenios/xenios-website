@@ -10,6 +10,21 @@ import { buyerVariantKey, useBuyerDraft } from "./useBuyerDraft";
 
 export const BUYER_CATALOG_PAGE_SIZE = 24;
 
+export function buyerDirectMaximum(variant: BuyerCatalogVariant): number | null {
+  const limit = variant.directQuantityLimit;
+  const price = variant.displayPriceCents;
+  return variant.directPurchaseAuthorized &&
+    variant.directAuthorityBasis !== null &&
+    limit !== null &&
+    Number.isSafeInteger(limit) &&
+    limit >= 1 &&
+    price !== undefined &&
+    Number.isSafeInteger(price) &&
+    price > 0
+    ? limit
+    : null;
+}
+
 function money(cents: number, currency: string): string {
   return (cents / 100).toLocaleString(undefined, { style: "currency", currency });
 }
@@ -276,6 +291,7 @@ export function BuyerCommerceBridge({
             {visibleVariants.map((variant) => {
               const exactKey = buyerVariantKey(variant);
               const quantity = quantities[exactKey] ?? 1;
+              const directMaximum = buyerDirectMaximum(variant);
               return (
                 <article key={exactKey} className="card p-5">
                   <p className="mono-cap text-ink-mute">{variant.category} · {variant.sku}</p>
@@ -315,8 +331,8 @@ export function BuyerCommerceBridge({
                   <p className="mt-2 text-xs text-ink-mute">
                     {variant.carePathway
                       ? "This exact variant routes to the existing Care pathway."
-                      : variant.directPurchaseAuthorized && variant.directQuantityLimit !== null
-                        ? `Direct checkout currently covers up to ${variant.directQuantityLimit} for this exact variant; other orderable configurations use the existing order-request path.`
+                      : directMaximum !== null
+                        ? `Direct checkout currently covers up to ${directMaximum} for this exact variant; other orderable configurations use the existing order-request path.`
                         : "This exact variant uses the existing order-request path."}
                   </p>
                 </article>

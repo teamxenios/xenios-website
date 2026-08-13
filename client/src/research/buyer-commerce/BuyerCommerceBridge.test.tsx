@@ -24,6 +24,7 @@ function variant(
     slug: `product-${id}`,
     productName: `Product ${id}`,
     category,
+    displayPriceCents: 4_500,
     currency: "USD",
     displayState: "AVAILABLE",
     directPurchaseAuthorized: true,
@@ -202,5 +203,25 @@ describe("buyer commerce submission attempts", () => {
     });
     expect(host.textContent).toContain("590 exact variants · page 1 of 25");
     expect(host.querySelectorAll("article")).toHaveLength(24);
+  });
+
+  it("does not advertise malformed direct authority from the display projection", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    const root = createRoot(host);
+    roots.push(root);
+    const malformed = [
+      variant("NULL", null),
+      { ...variant("FRACTIONAL", 1.5), displayPriceCents: 4_500 },
+      { ...variant("NO-PRICE", 5), displayPriceCents: undefined },
+      { ...variant("ZERO-PRICE", 5), displayPriceCents: 0 },
+      { ...variant("NO-BASIS", 5), directAuthorityBasis: null },
+    ];
+    act(() => root.render(
+      <BuyerCommerceBridge variants={malformed} onSubmit={() => {}} />,
+    ));
+
+    expect(host.textContent).not.toContain("Direct checkout currently covers up to");
+    expect(host.textContent?.match(/existing order-request path/g)).toHaveLength(5);
   });
 });
