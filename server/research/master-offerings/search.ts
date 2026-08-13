@@ -37,12 +37,28 @@ function normalizedTokens(value: string): string[] {
  * the dataset reader hands out the same objects until the file changes, and a
  * regenerated dataset produces new objects that simply miss the cache.
  */
-const HAYSTACKS = new WeakMap<NormalizedMasterOffering, string>();
+interface OfferingHaystack {
+  /** Normalized, space separated. */
+  text: string;
+  /**
+   * The same text with the spaces removed.
+   *
+   * Research names are alphanumeric codes, and a buyer types them the way they
+   * remember them: BPC-157, BPC 157, or bpc157. The first two normalize to the
+   * same two tokens, but the third normalizes to one token that is not a
+   * substring of "bpc 157", so it matched nothing at all. Comparing a
+   * space-stripped token against a space-stripped haystack closes that, and it
+   * costs one extra string per offering because both forms are memoized.
+   */
+  compact: string;
+}
 
-function searchableText(product: NormalizedMasterOffering): string {
+const HAYSTACKS = new WeakMap<NormalizedMasterOffering, OfferingHaystack>();
+
+function searchableText(product: NormalizedMasterOffering): OfferingHaystack {
   const cached = HAYSTACKS.get(product);
   if (cached !== undefined) return cached;
-  const computed = normalizeOfferingText(
+  const text = normalizeOfferingText(
     [
       product.displayName,
       product.canonicalName,
@@ -54,6 +70,10 @@ function searchableText(product: NormalizedMasterOffering): string {
       ...product.variants.map((variant) => variant.label),
     ].join(" "),
   );
+  const computed: OfferingHaystack = {
+    text,
+    compact: text.replace(/ /g, ""),
+  };
   HAYSTACKS.set(product, computed);
   return computed;
 }
@@ -81,9 +101,13 @@ function scoreAgainstNormalizedQuery(
   if (normalizedQuery === "") return 0;
   const tokens = normalizedTokens(normalizedQuery);
   const haystack = searchableText(product);
-  if (!tokens.every((token) => haystack.includes(token))) return null;
+  const matchesToken = (token: string): boolean =>
+    haystack.text.includes(token) || haystack.compact.includes(token);
+  if (!tokens.every(matchesToken)) return null;
 
   const name = normalizeOfferingText(product.displayName);
+  // A separator-free spelling of the exact name is still an exact-name match.
+  if (name.replace(/ /g, "") === normalizedQuery.replace(/ /g, "")) return 1_000;
   if (name === normalizedQuery) return 1_000;
   if (name.startsWith(normalizedQuery)) return 800;
   if (name.includes(normalizedQuery)) return 650;
