@@ -228,11 +228,18 @@ export type CustomerOrderTimeline = Readonly<{
   }>[];
 }>;
 
-type IdempotencyReceipt = Readonly<{
+export type OrderWorkflowIdempotencyReceipt = Readonly<{
   scope: string;
   key: string;
   fingerprint: string;
-  order: OrderWorkflow;
+  orderId: string;
+  resultVersion: number;
+}>;
+
+export type OrderWorkflowEngineSnapshot = Readonly<{
+  orders: readonly OrderWorkflow[];
+  receipts: readonly OrderWorkflowIdempotencyReceipt[];
+  auditTrail: readonly OrderAuditEntry[];
 }>;
 
 const SAFE_ID = /^[A-Za-z0-9][A-Za-z0-9:._-]{2,127}$/;
@@ -291,6 +298,12 @@ function ownerScope(owner: OrderOwner): string {
   return owner.kind === "personal"
     ? `personal:${owner.buyerId}`
     : `business:${owner.organizationId}:${owner.buyerId}`;
+}
+
+function receiptMapKey(scope: string, idempotencyKey: string): string {
+  // Neither component can contain NUL under the public input validators. Using
+  // it as a structural delimiter prevents ambiguous `scope:key` collisions.
+  return `${scope}\u0000${idempotencyKey}`;
 }
 
 function actorCanOwn(actor: OrderActor, owner: OrderOwner): boolean {
@@ -431,8 +444,17 @@ function isTerminal(stage: OrderWorkflowStage): boolean {
 
 export class InMemoryOrderWorkflowEngine {
   private readonly orders = new Map<string, OrderWorkflow>();
-  private readonly receipts = new Map<string, IdempotencyReceipt>();
+  private readonly receipts = new Map<string, OrderWorkflowIdempotencyReceipt>();
   private readonly auditTrail: OrderAuditEntry[] = [];
+
+  constructor(snapshot?: OrderWorkflowEngineSnapshot) {
+    if (!snapshot) return;
+    for (const order of snapshot.orders) this.orders.set(order.orderId, frozen(order));
+    for (const receipt of snapshot.receipts) {
+      this.receipts.set(receiptMapKey(receipt.scope, receipt.key), frozen(receipt));
+    }
+    this.auditTrail.push(...snapshot.auditTrail.map((entry) => frozen(entry)));
+  }
 
   execute(actor: OrderActor, idempotencyKey: string, command: OrderCommand): OrderWorkflowResult {
     const fingerprint = digest({ actor, command });
@@ -442,16 +464,19 @@ export class InMemoryOrderWorkflowEngine {
       : current
         ? ownerScope(current.owner)
         : `actor:${actor.actorId}`;
-    const receiptKey = `${scope}:${idempotencyKey}`;
+    const receiptKey = receiptMapKey(scope, idempotencyKey);
     const prior = this.receipts.get(receiptKey);
 
     if (prior) {
       const conflict = prior.fingerprint !== fingerprint;
-      const audit = this.audit(actor, idempotencyKey, command, fingerprint, conflict ? "refused" : "replayed",
-        conflict ? "idempotency_conflict" : null);
-      return conflict
+      const replayOrder = this.orders.get(prior.orderId);
+      const receiptInvalid = !replayOrder || replayOrder.version < prior.resultVersion;
+      const audit = this.audit(actor, idempotencyKey, command, fingerprint,
+        conflict || receiptInvalid ? "refused" : "replayed",
+        conflict || receiptInvalid ? "idempotency_conflict" : null);
+      return conflict || receiptInvalid
         ? { ok: false, code: "idempotency_conflict", audit }
-        : { ok: true, order: prior.order, replayed: true, audit };
+        : { ok: true, order: replayOrder, replayed: true, audit };
     }
 
     const basicFailure = this.validateEnvelope(actor, idempotencyKey, command);
@@ -461,7 +486,13 @@ export class InMemoryOrderWorkflowEngine {
     if (!applied.ok) return this.refuse(actor, idempotencyKey, command, fingerprint, applied.code);
 
     this.orders.set(applied.order.orderId, applied.order);
-    this.receipts.set(receiptKey, frozen({ scope, key: idempotencyKey, fingerprint, order: applied.order }));
+    this.receipts.set(receiptKey, frozen({
+      scope,
+      key: idempotencyKey,
+      fingerprint,
+      orderId: applied.order.orderId,
+      resultVersion: applied.order.version,
+    }));
     const audit = this.audit(actor, idempotencyKey, command, fingerprint, "accepted", null);
     return frozen({ ok: true, order: applied.order, replayed: false, audit });
   }
@@ -494,6 +525,20 @@ export class InMemoryOrderWorkflowEngine {
 
   audits(): readonly OrderAuditEntry[] {
     return frozen([...this.auditTrail]);
+  }
+
+  /**
+   * Whole immutable reference state for an atomic persistence adapter.
+   * Production adapters persist the normalized write bundle, but this snapshot
+   * lets the unmounted reference adapter prove restart and concurrency behavior.
+   */
+  snapshot(): OrderWorkflowEngineSnapshot {
+    return frozen({
+      orders: Array.from(this.orders.values()).sort((a, b) => a.orderId.localeCompare(b.orderId)),
+      receipts: Array.from(this.receipts.values()).sort((a, b) =>
+        `${a.scope}:${a.key}`.localeCompare(`${b.scope}:${b.key}`)),
+      auditTrail: [...this.auditTrail],
+    });
   }
 
   private validateEnvelope(

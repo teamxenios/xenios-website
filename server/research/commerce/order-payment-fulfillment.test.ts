@@ -358,6 +358,26 @@ describe("Pack 04 order/payment/fulfillment workflow", () => {
     ]);
   });
 
+  it("keeps colon-bearing scopes and idempotency keys structurally distinct", () => {
+    const engine = new InMemoryOrderWorkflowEngine();
+    const segmentedBuyer: OrderActor = { actorId: "buyer_pack04:segment", role: "buyer" };
+    const plainBuyer: OrderActor = { actorId: "buyer_pack04", role: "buyer" };
+    const first = request({ kind: "personal", buyerId: segmentedBuyer.actorId });
+    const second = request({ kind: "personal", buyerId: plainBuyer.actorId });
+
+    expect(engine.execute(segmentedBuyer, "shared_key_0000001", {
+      ...first,
+      orderId: "order_scope_collision_0001",
+      request: { ...first.request, requestRef: "request_scope_collision_0001" },
+    })).toMatchObject({ ok: true, replayed: false });
+    expect(engine.execute(plainBuyer, "segment:shared_key_0000001", {
+      ...second,
+      orderId: "order_scope_collision_0002",
+      request: { ...second.request, requestRef: "request_scope_collision_0002" },
+    })).toMatchObject({ ok: true, replayed: false });
+    expect(engine.audits()).toHaveLength(2);
+  });
+
   it("enforces the Trust Dial and supplier-scoped authority", () => {
     const engine = new InMemoryOrderWorkflowEngine();
     expect(run(engine, buyer, "request", request()).ok).toBe(true);

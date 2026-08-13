@@ -3,7 +3,7 @@
   "name": "Xenios Orders Payments and Fulfillment",
   "pack": "04",
   "effort": "high",
-  "status": "READY_FOR_REVIEW_UNMOUNTED",
+  "status": "READY_FOR_REVIEW_UNMOUNTED_PERSISTENCE_ADAPTER_COMPLETE",
   "base": {
     "requestedSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
     "strategy": "RECREATED_FROM_EXACT_BASE",
@@ -31,7 +31,9 @@
     "personal buyer ownership",
     "durable idempotency contract",
     "append-only audit contract",
-    "Trust Dial gating"
+    "Trust Dial gating",
+    "atomic compare-and-swap persistence seam",
+    "restart-safe workflow hydration and fail-closed snapshot validation"
   ],
   "hardInvariants": [
     "A new workflow can only begin in request_pending with no approval.",
@@ -45,7 +47,10 @@
     "Personal and business customer reads are ownership-scoped; business reads also require active organization authority.",
     "Customer timelines omit proof object references, supplier payloads, external transactions, settlements, and internal audit details.",
     "Consequential queue/ask actions require a Trust Dial approval reference; never refuses the action.",
-    "Identical idempotency retries replay; changed payloads under the same scoped key conflict and are audited."
+    "Identical idempotency retries replay; changed payloads under the same scoped key conflict and are audited.",
+    "Order projection, receipt, timeline, audit, and optional workflow facts form one atomic commit bundle.",
+    "Receipt scope and key identities are structurally unambiguous even when either contains colons.",
+    "Malformed, duplicate, stale, or internally inconsistent durable snapshots fail closed before reads or commands."
   ],
   "artifacts": [
     {
@@ -54,7 +59,15 @@
     },
     {
       "path": "server/research/commerce/order-payment-fulfillment.test.ts",
-      "purpose": "Seven end-to-end and adversarial domain tests."
+      "purpose": "Eight end-to-end and adversarial domain tests, including ambiguous receipt-key collision coverage."
+    },
+    {
+      "path": "server/research/commerce/order-payment-fulfillment-persistence.ts",
+      "purpose": "Unmounted atomic persistence port, normalized transaction bundle, restart hydration, bounded CAS retry, and fail-closed durable-state validation."
+    },
+    {
+      "path": "server/research/commerce/order-payment-fulfillment-persistence.test.ts",
+      "purpose": "Seven restart, concurrency, atomicity, normalization, refusal-audit, retry-exhaustion, and corruption tests."
     },
     {
       "path": "supabase/research-order-payment-fulfillment-pack04.sql",
@@ -67,13 +80,22 @@
     {
       "path": "HANDOFF.json",
       "purpose": "Pack 04 handoff, verification record, and next-gate contract."
+    },
+    {
+      "path": "PACK04_HEARTBEAT.json",
+      "purpose": "Lane-local milestone and safety heartbeat without editing another lane's coordination files."
     }
   ],
   "verification": [
     {
-      "command": "npm test -- --run server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts",
+      "command": "npm test -- --run server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts server/research/commerce/order-payment-fulfillment-persistence.test.ts",
       "result": "PASS",
-      "details": "2 files, 13 tests passed"
+      "details": "3 files, 21 tests passed"
+    },
+    {
+      "command": "npm test -- --run server/research/commerce/manual-order-payments.test.ts server/research/early-access/commerce/verification-service.test.ts server/research/early-access/commerce/release-service.test.ts server/research/early-access/cart/cart-settlement-adversarial.test.ts server/research/early-access/cart/duplicate-order.test.ts server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts server/research/commerce/order-payment-fulfillment-persistence.test.ts",
+      "result": "PASS",
+      "details": "8 commerce/payment/settlement adversarial files, 139 tests passed after the receipt-key collision regression"
     },
     {
       "command": "npm run check",
@@ -122,7 +144,7 @@
     "Assign a reviewed managed migration identity to the Pack 04 SQL draft.",
     "Run disposable managed-Supabase-shaped apply-twice, behavioral, concurrency, RLS, and rollback verification.",
     "Only then copy the exact reviewed SQL bytes into supabase/migrations and add the migration ledger/DAG node.",
-    "Build a persistence adapter that commits workflow projection, command receipt, timeline event, audit entry, and optional evidence/settlement/fulfillment facts in one database transaction.",
+    "Implement the reviewed Supabase transaction/RPC adapter only after the migration identity and disposable apply-twice gate are complete; preserve the verified atomic port contract.",
     "Independently review and approve any future route or worker mount."
   ]
 }
