@@ -99,7 +99,7 @@ function row(id: string): EarlyAccessCatalogRow {
 }
 
 describe("Product Control buyer catalog adapter", () => {
-  it("projects exact variants and clamps direct authority to the accepted 1-20 release band", async () => {
+  it("projects exact variants through the accepted 1-50 normal-order band", async () => {
     const products = [product("direct", "research_material"), product("care", "future_clinical")];
     const projection: EarlyAccessCatalogProjection = {
       evaluatedAt: NOW.toISOString(),
@@ -121,7 +121,7 @@ describe("Product Control buyer catalog adapter", () => {
       variantId: "direct-variant",
       category: "peptide",
       directPurchaseAuthorized: true,
-      directQuantityLimit: 20,
+      directQuantityLimit: 50,
       directAuthorityBasis: "product_control",
       carePathway: false,
     });

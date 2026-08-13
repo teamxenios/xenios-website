@@ -32,7 +32,7 @@ function variant(
     currency: "USD",
     displayState: "AVAILABLE",
     directPurchaseAuthorized: true,
-    directQuantityLimit: 20,
+    directQuantityLimit: 50,
     directAuthorityBasis: "product_control",
     carePathway: false,
     ...overrides,
@@ -94,13 +94,14 @@ function harness(variants: readonly BuyerCatalogVariant[]) {
 }
 
 describe("buyer commerce bridge", () => {
-  it("accepts 1-50 requested units while keeping 21-50 out of direct commerce", async () => {
+  it("routes 1, 20, 21, 49, and 50 identically through direct commerce", async () => {
     const variants = [
       variant("v1"),
       variant("v2"),
       variant("v3"),
-      variant("v4", { directQuantityLimit: 50 }),
-      variant("v5", {
+      variant("v4"),
+      variant("v5"),
+      variant("v6", {
         directPurchaseAuthorized: false,
         directQuantityLimit: null,
         directAuthorityBasis: null,
@@ -113,29 +114,28 @@ describe("buyer commerce bridge", () => {
         { offeringId: "product-v1", variantId: "v1", requestedQuantity: 1 },
         { offeringId: "product-v2", variantId: "v2", requestedQuantity: 20 },
         { offeringId: "product-v3", variantId: "v3", requestedQuantity: 21 },
-        { offeringId: "product-v4", variantId: "v4", requestedQuantity: 50 },
-        { offeringId: "product-v5", variantId: "v5", requestedQuantity: 1 },
+        { offeringId: "product-v4", variantId: "v4", requestedQuantity: 49 },
+        { offeringId: "product-v5", variantId: "v5", requestedQuantity: 50 },
+        { offeringId: "product-v6", variantId: "v6", requestedQuantity: 1 },
       ]),
     );
 
     expect(receipt.lines.map((line) => line.disposition)).toEqual([
       "direct_cart_eligible",
       "direct_cart_eligible",
-      "manual_early_access_request",
-      "manual_early_access_request",
-      "manual_early_access_request",
+      "direct_cart_eligible",
+      "direct_cart_eligible",
+      "direct_cart_eligible",
+      "order_request",
     ]);
-    expect(receipt.lines.slice(2).map((line) => line.reason)).toEqual([
-      "QUANTITY_REQUIRES_MANUAL_REVIEW",
-      "QUANTITY_REQUIRES_MANUAL_REVIEW",
-      "PRODUCT_CONTROL_REVIEW_REQUIRED",
-    ]);
+    expect(receipt.lines.slice(0, 5).every((line) => line.reason === undefined)).toBe(true);
+    expect(receipt.lines[5]?.reason).toBe("PRODUCT_CONTROL_REVIEW_REQUIRED");
     expect(receipt.customerRef).toBe("eac_durablebuyer000000000000000001");
     expect(h.requests.record?.customerRef).toBe(receipt.customerRef);
-    expect(h.requests.record?.resolvedLines).toHaveLength(5);
+    expect(h.requests.record?.resolvedLines).toHaveLength(6);
   });
 
-  it("routes quantity above a narrower exact-variant limit to manual review while accepting the request", async () => {
+  it("uses an order request above explicit exact-variant authority without quantity-review semantics", async () => {
     const h = harness([variant("v1", { directQuantityLimit: 5 })]);
     const receipt = await submitBuyerRequest(
       h.dependencies,
@@ -144,8 +144,8 @@ describe("buyer commerce bridge", () => {
     expect(receipt.lines[0]).toMatchObject({
       requestedQuantity: 6,
       directQuantityLimit: 5,
-      disposition: "manual_early_access_request",
-      reason: "QUANTITY_REQUIRES_MANUAL_REVIEW",
+      disposition: "order_request",
+      reason: "DIRECT_AUTHORITY_UNAVAILABLE",
     });
   });
 

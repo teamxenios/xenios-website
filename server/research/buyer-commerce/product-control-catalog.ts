@@ -1,5 +1,7 @@
-import type { BuyerCatalogVariant } from "@shared/research/buyer-commerce";
-import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
+import {
+  BUYER_REQUEST_MAX_QUANTITY,
+  type BuyerCatalogVariant,
+} from "@shared/research/buyer-commerce";
 import type { ProductCatalogReader } from "../catalog/product-control-reader";
 import type { EarlyAccessCatalogSource } from "../early-access/catalog/product-control-source";
 import { decideEarlyAccessRelease, type EarlyAccessReleaseLedger } from "../early-access/release/founder-release";
@@ -60,7 +62,7 @@ export class ProductControlBuyerCatalog implements BuyerCatalogPort {
           : unit.quantityLimit;
         const acceptedLimit = authorityLimit === null
           ? null
-          : Math.min(authorityLimit, EARLY_ACCESS_MAX_QUANTITY);
+          : Math.min(authorityLimit, BUYER_REQUEST_MAX_QUANTITY);
         const carePathway = product?.lane === "future_clinical";
         const direct =
           product !== null &&

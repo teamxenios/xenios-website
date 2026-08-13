@@ -159,8 +159,8 @@ export function BuyerCommerceBridge({
         <h1 className="display-s">Buyer quick order</h1>
         <p className="mt-3 max-w-3xl text-ink-mute">
           Request one vial, a small order, or bulk quantities across multiple exact variants.
-          Requests may include 1–50 units per exact variant. Quantities above current direct
-          authority go to manual Early Access review.
+          Normal order quantities are 1–50 units per exact variant. Quantity alone does not
+          trigger review; server-authorized products continue through the existing cart.
         </p>
       </header>
 
@@ -207,7 +207,7 @@ export function BuyerCommerceBridge({
                   </p>
                   <p className="mt-4">
                     {variant.displayPriceCents === undefined
-                      ? "Price confirmed on review"
+                      ? "Price confirmed before ordering"
                       : money(variant.displayPriceCents, variant.currency)}
                   </p>
                   <p className="mt-1 text-sm text-ink-mute">{variant.displayState}</p>
@@ -238,8 +238,8 @@ export function BuyerCommerceBridge({
                     {variant.carePathway
                       ? "This exact variant routes to the existing Care pathway."
                       : variant.directPurchaseAuthorized
-                        ? `Direct authority currently covers up to ${variant.directQuantityLimit} for this exact variant; larger quantities receive manual review.`
-                        : "This exact variant receives manual Product Control review."}
+                        ? `Direct checkout currently covers up to ${variant.directQuantityLimit} for this exact variant; other orderable configurations use the existing order-request path.`
+                        : "This exact variant uses the existing order-request path."}
                   </p>
                 </article>
               );

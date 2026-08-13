@@ -103,7 +103,7 @@ export interface BuyerCatalogVariant {
 
 export type BuyerCommerceDisposition =
   | "direct_cart_eligible"
-  | "manual_early_access_request"
+  | "order_request"
   | "care_pathway"
   | "unavailable";
 
@@ -118,7 +118,7 @@ export interface ResolvedBuyerLine extends BuyerLineInput {
   reason?:
     | "VARIANT_NOT_FOUND"
     | "CARE_PATHWAY_REQUIRED"
-    | "QUANTITY_REQUIRES_MANUAL_REVIEW"
+    | "DIRECT_AUTHORITY_UNAVAILABLE"
     | "PRODUCT_CONTROL_REVIEW_REQUIRED";
 }
 
@@ -142,7 +142,7 @@ export type BuyerRequestCommit =
 export interface BuyerRequestReceipt {
   requestRef: string;
   customerRef: string;
-  status: "submitted_for_review";
+  status: "request_received";
   replayed: boolean;
   lines: readonly ResolvedBuyerLine[];
   createdAt: string;

@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 
 import {
   BuyerOrderRequestSchema,
+  BUYER_REQUEST_MAX_QUANTITY,
   type BuyerCatalogVariant,
   type BuyerIdentity,
   type BuyerOrderRequestInput,
@@ -10,7 +11,6 @@ import {
   type BuyerRequestReceipt,
   type ResolvedBuyerLine,
 } from "@shared/research/buyer-commerce";
-import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 import { readPlainRecord } from "../early-access/commerce/input-guards";
 import type { EarlyAccessAuditSink } from "../early-access/routes/ports";
 
@@ -201,12 +201,12 @@ function resolveLine(
     });
   }
 
-  // Two independent gates. Product Control must authorize THIS exact variant,
-  // and the quantity must stay inside both its exact limit and the accepted
-  // release-wide authority. At this base the latter is 20, so 21-50 can only
-  // become direct after the separate Q50 lane changes accepted authority.
+  // Product Control and durable release authority must authorize THIS exact
+  // variant. The global normal-order band is 1..50; a narrower explicit limit
+  // fails closed into the existing order-request path and is not classified as
+  // a quantity-based review rule.
   const exactLimit = variant.directQuantityLimit ?? 0;
-  const acceptedLimit = Math.min(exactLimit, EARLY_ACCESS_MAX_QUANTITY);
+  const acceptedLimit = Math.min(exactLimit, BUYER_REQUEST_MAX_QUANTITY);
   const direct =
     variant.directPurchaseAuthorized &&
     acceptedLimit >= 1 &&
@@ -216,7 +216,7 @@ function resolveLine(
     ...base,
     disposition: direct
       ? ("direct_cart_eligible" as const)
-      : ("manual_early_access_request" as const),
+      : ("order_request" as const),
     ...(direct
       ? {}
       : {
@@ -224,7 +224,7 @@ function resolveLine(
             !variant.directPurchaseAuthorized || acceptedLimit < 1
               ? ("PRODUCT_CONTROL_REVIEW_REQUIRED" as const)
               : line.requestedQuantity > acceptedLimit
-              ? ("QUANTITY_REQUIRES_MANUAL_REVIEW" as const)
+              ? ("DIRECT_AUTHORITY_UNAVAILABLE" as const)
               : ("PRODUCT_CONTROL_REVIEW_REQUIRED" as const),
         }),
   });
@@ -244,7 +244,7 @@ function receipt(record: BuyerOrderRequestRecord, replayed: boolean): BuyerReque
   return Object.freeze({
     requestRef: record.requestRef,
     customerRef: record.customerRef,
-    status: "submitted_for_review" as const,
+    status: "request_received" as const,
     replayed,
     lines: Object.freeze([...record.resolvedLines]),
     createdAt: record.createdAt,
@@ -303,7 +303,7 @@ export async function submitBuyerRequest(
       detail: {
         lineCount: resolvedLines.length,
         directEligible: counts("direct_cart_eligible"),
-        manualReview: counts("manual_early_access_request"),
+        orderRequest: counts("order_request"),
         carePathway: counts("care_pathway"),
         unavailable: counts("unavailable"),
       },

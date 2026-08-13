@@ -64,7 +64,7 @@ describe("unmounted buyer commerce route factory", () => {
     expect(response.headers["cache-control"]).toBe("no-store");
     expect(response.body).toMatchObject({
       requestRef: "XBR-00000000000000000001",
-      status: "submitted_for_review",
+      status: "request_received",
       replayed: false,
     });
   });

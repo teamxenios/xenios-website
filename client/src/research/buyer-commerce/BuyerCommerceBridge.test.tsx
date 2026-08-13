@@ -12,7 +12,7 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-function variant(id: string, directQuantityLimit = 20): BuyerCatalogVariant {
+function variant(id: string, directQuantityLimit = 50): BuyerCatalogVariant {
   return {
     offeringId: `p-${id}`,
     variantId: `v-${id}`,
@@ -51,7 +51,7 @@ describe("buyer commerce submission attempts", () => {
     expect(makeKey).toHaveBeenCalledTimes(2);
   });
 
-  it("supports no-account multi-variant requests including manual-review quantities", async () => {
+  it("supports no-account multi-variant requests with ordinary quantity 21", async () => {
     const host = document.createElement("div");
     document.body.appendChild(host);
     const root = createRoot(host);
@@ -66,7 +66,7 @@ describe("buyer commerce submission attempts", () => {
     ));
     expect(host.textContent).toContain("No account required");
     expect(host.textContent).toContain("claim later");
-    expect(host.textContent).toContain("Direct authority currently covers up to 5");
+    expect(host.textContent).toContain("Direct checkout currently covers up to 5");
 
     const addButtons = Array.from(host.querySelectorAll("button"))
       .filter((button) => button.textContent === "Add to request");

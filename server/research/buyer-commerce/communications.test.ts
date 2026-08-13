@@ -22,7 +22,7 @@ describe("buyer commerce shared-outbox renderer", () => {
     const payload = safeBuyerCommercePayload("buyer_request_operations", {
       requestRef: "XBR-1",
       lineCount: 3,
-      manualReviewCount: 2,
+      orderRequestCount: 2,
       carePathwayCount: 0,
       customerEmail: "ada@example.com",
       shippingAddress: "secret",
@@ -30,7 +30,7 @@ describe("buyer commerce shared-outbox renderer", () => {
     expect(payload).toEqual({
       requestRef: "XBR-1",
       lineCount: 3,
-      manualReviewCount: 2,
+      orderRequestCount: 2,
       carePathwayCount: 0,
     });
   });

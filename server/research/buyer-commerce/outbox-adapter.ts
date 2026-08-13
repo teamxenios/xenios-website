@@ -11,8 +11,8 @@ export class BuyerCommerceOutboxAdapter implements BuyerNotificationPort {
     customerQueued: boolean;
     operationsQueued: boolean;
   }>> {
-    const manualReviewCount = record.resolvedLines.filter(
-      (line) => line.disposition === "manual_early_access_request",
+    const orderRequestCount = record.resolvedLines.filter(
+      (line) => line.disposition === "order_request",
     ).length;
     const carePathwayCount = record.resolvedLines.filter(
       (line) => line.disposition === "care_pathway",
@@ -42,7 +42,7 @@ export class BuyerCommerceOutboxAdapter implements BuyerNotificationPort {
         payload: safeBuyerCommercePayload("buyer_request_operations", {
           requestRef: record.requestRef,
           lineCount: record.resolvedLines.length,
-          manualReviewCount,
+          orderRequestCount,
           carePathwayCount,
         }),
       }),

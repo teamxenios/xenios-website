@@ -8,7 +8,7 @@ export type BuyerCommerceEmailEvent = (typeof BUYER_COMMERCE_EMAIL_EVENTS)[numbe
 
 const ALLOWED_KEYS: Readonly<Record<BuyerCommerceEmailEvent, readonly string[]>> = Object.freeze({
   buyer_request_received: ["customerName", "requestRef", "lines"],
-  buyer_request_operations: ["requestRef", "lineCount", "manualReviewCount", "carePathwayCount"],
+  buyer_request_operations: ["requestRef", "lineCount", "orderRequestCount", "carePathwayCount"],
 });
 
 export function safeBuyerCommercePayload(
@@ -67,11 +67,11 @@ export function renderBuyerCommerceOutboxEmail(
   }
 
   return {
-    subject: `Buyer request ${requestRef} needs review`,
+    subject: `Buyer request ${requestRef} received`,
     text: [
       `Buyer request ${requestRef} is durable and ready in the existing order/request operations queue.`,
       `Lines: ${String(payload.lineCount ?? 0)}`,
-      `Manual Early Access review: ${String(payload.manualReviewCount ?? 0)}`,
+      `Order-request lines: ${String(payload.orderRequestCount ?? 0)}`,
       `Care pathway: ${String(payload.carePathwayCount ?? 0)}`,
       "Open the authenticated admin surface for customer, address, and line detail. This email intentionally carries no customer contact or shipping data.",
       signoff,
