@@ -111,6 +111,7 @@ export type CartCommitResult =
         // idempotency key does not buy the same cart twice: `checkout` carries
         // the existing order so the caller can replay it.
         | "quote_has_active_checkout"
+        | "intent_has_active_checkout"
         | "checkout_number_taken"
         | "child_order_number_taken";
       checkout: EarlyAccessCartCheckoutRecord | null;

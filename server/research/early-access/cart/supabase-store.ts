@@ -36,6 +36,7 @@ const RPC = Object.freeze({
 const CHECKOUT_REASONS = [
   "idempotency_key_taken",
   "quote_has_active_checkout",
+  "intent_has_active_checkout",
   "checkout_number_taken",
   "child_order_number_taken",
 ] as const;
