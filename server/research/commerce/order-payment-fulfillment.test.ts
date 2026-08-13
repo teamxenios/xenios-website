@@ -280,6 +280,25 @@ describe("Pack 04 order/payment/fulfillment workflow", () => {
     });
     expect(JSON.stringify(history)).not.toContain("external_transaction_pack04_0001");
     expect(JSON.stringify(history)).not.toContain("private/manual-payment-proofs");
+
+    const reorder = engine.customerReorderDraft(buyer, ORDER);
+    expect(reorder).toEqual({
+      sourceOrderId: ORDER,
+      sourceVersion: 11,
+      sourceUpdatedAt: at(11),
+      owner: { kind: "personal", buyerId: BUYER_ID },
+      lines: [{ sku: "SKU-PACK04-01", quantity: 2 }],
+      requiresCurrentCatalogValidation: true,
+      requiresCurrentProductControlValidation: true,
+      requiresCurrentPricing: true,
+      createsBuyerRequestOnly: true,
+    });
+    const serializedReorder = JSON.stringify(reorder);
+    expect(serializedReorder).not.toContain("5000");
+    expect(serializedReorder).not.toContain("invoice_pack04_0001");
+    expect(serializedReorder).not.toContain("external_transaction_pack04_0001");
+    expect(serializedReorder).not.toContain("supplier_pack04_0001");
+    expect(serializedReorder).not.toContain("1Z999AA10123456784");
   });
 
   it("binds business orders to both the organization and its authenticated buyer", () => {
@@ -355,6 +374,13 @@ describe("Pack 04 order/payment/fulfillment workflow", () => {
     expect(engine.customerOrderHistory(otherBuyer).orders.map((order) => order.orderId))
       .toEqual(["order_history_other_01"]);
     expect(engine.customerOrderHistory(admin).orders).toEqual([]);
+    expect(engine.customerReorderDraft(noBusinessAuthority, "order_history_business_01")).toBeNull();
+    expect(engine.customerReorderDraft(otherBuyer, "order_history_personal_02")).toBeNull();
+    expect(engine.customerReorderDraft(businessBuyer, "order_history_business_01")).toMatchObject({
+      owner: { kind: "business", organizationId: ORG_ID, buyerId: BUYER_ID },
+      lines: [{ sku: "SKU-PACK04-HISTORY", quantity: 50 }],
+      requiresCurrentProductControlValidation: true,
+    });
     expect(() => engine.customerOrderHistory(buyer, { limit: 101 })).toThrow(TypeError);
     expect(() => engine.customerOrderHistory(buyer, {
       before: { updatedAt: "not-a-time", orderId: "order_history_personal_01" },
@@ -366,7 +392,7 @@ describe("Pack 04 order/payment/fulfillment workflow", () => {
     expect(PACK04_ORDER_QUANTITY_MAX).toBe(50);
     const engine = new InMemoryOrderWorkflowEngine();
 
-    for (const quantity of [1, 20, 21, 50]) {
+    for (const quantity of [1, 20, 21, 49, 50]) {
       const orderId = `order_pack04_quantity_${quantity}`;
       const command = request();
       const result = engine.execute(buyer, `pack04:quantity:${quantity}:00000001`, {

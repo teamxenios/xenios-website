@@ -199,6 +199,17 @@ describe("Pack 04 atomic persistence adapter", () => {
         fulfillmentStatus: "not_released",
       }],
     });
+    expect(await restartedService.customerReorderDraft(buyer, ORDER)).toEqual({
+      sourceOrderId: ORDER,
+      sourceVersion: 2,
+      sourceUpdatedAt: at(1),
+      owner: { kind: "personal", buyerId: BUYER_ID },
+      lines: [{ sku: "SKU-PACK04-PERSIST", quantity: 50 }],
+      requiresCurrentCatalogValidation: true,
+      requiresCurrentProductControlValidation: true,
+      requiresCurrentPricing: true,
+      createsBuyerRequestOnly: true,
+    });
   });
 
   it("serializes concurrent identical requests into one acceptance and one replay", async () => {

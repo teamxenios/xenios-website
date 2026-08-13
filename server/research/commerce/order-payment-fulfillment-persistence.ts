@@ -17,6 +17,7 @@ import {
   type CustomerOrderHistoryPage,
   type CustomerOrderHistoryQuery,
   type CustomerOrderTimeline,
+  type CustomerReorderDraft,
   type OrderActor,
   type OrderAuditEntry,
   type OrderCommand,
@@ -308,6 +309,15 @@ export class PersistentOrderWorkflowService {
     const loaded = await this.store.load();
     assertLoadedState(loaded);
     return new InMemoryOrderWorkflowEngine(loaded.snapshot).customerOrderHistory(actor, query);
+  }
+
+  async customerReorderDraft(
+    actor: OrderActor,
+    sourceOrderId: string,
+  ): Promise<CustomerReorderDraft | null> {
+    const loaded = await this.store.load();
+    assertLoadedState(loaded);
+    return new InMemoryOrderWorkflowEngine(loaded.snapshot).customerReorderDraft(actor, sourceOrderId);
   }
 }
 

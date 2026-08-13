@@ -10,6 +10,10 @@
   "commitsCreated": [
     {
       "message": "Add Pack 04 customer order history",
+      "sha": "4903a64efff91503f66b4f668a0ddf53c22b7a35"
+    },
+    {
+      "message": "Add Pack 04 safe reorder draft",
       "sha": "Return from git rev-parse HEAD after commit"
     }
   ],
@@ -19,15 +23,19 @@
     "Personal buyer and active business-organization ownership isolation",
     "Customer-facing invoice price, payment status, fulfillment status, quantities, and latest tracking projection",
     "Restart-safe order-history read through the existing atomic persistence seam",
-    "Unrun storage-draft RPC that derives identity only from auth.uid()"
+    "Unrun storage-draft RPC that derives identity only from auth.uid()",
+    "Ownership-scoped reorder draft that requires fresh catalog, Product Control, and pricing validation",
+    "Reorder draft excludes stale invoice, payment, settlement, supplier, tracking, fulfillment, and approval authority"
   ],
   "bugsFound": [
     "Pack 04 exposed a secure single-order timeline but lacked a bounded account-history projection.",
-    "The first persistence-history assertion used an obsolete fixture label."
+    "The first persistence-history assertion used an obsolete fixture label.",
+    "Account history had no safe reorder preparation contract and consumers could otherwise be tempted to reuse stale commerce authority."
   ],
   "bugsFixed": [
     "Added the canonical unmounted history projection without a second order or account system.",
-    "Corrected the fixture label and reran the focused suite."
+    "Corrected the fixture label and reran the focused suite.",
+    "Added a minimal reorder draft with explicit revalidation flags and cross-owner refusal coverage."
   ],
   "testsRun": [
     "Repository TypeScript check",
@@ -57,5 +65,5 @@
     "Provide or authorize the disposable database gate; do not apply the draft to production.",
     "Route the external stale quantity constraints listed in HANDOFF.json to their canonical shared, Buyer Commerce, Product Control, and database owners."
   ],
-  "nextMilestone": "Prepare an ownership-preserving reorder request contract over history that creates a fresh buyer request only and never bypasses current catalog, Product Control, pricing, approval, payment, or fulfillment gates."
+  "nextMilestone": "Prepare the disposable database behavioral verification and rollback packet for the unrun Pack 04 storage draft without applying production SQL."
 }

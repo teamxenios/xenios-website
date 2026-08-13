@@ -3,7 +3,7 @@
   "name": "Xenios Orders Payments and Fulfillment",
   "pack": "04",
   "effort": "high",
-  "status": "READY_FOR_REVIEW_UNMOUNTED_ACCOUNT_HISTORY_COMPLETE",
+  "status": "READY_FOR_REVIEW_UNMOUNTED_HISTORY_AND_REORDER_DRAFT_COMPLETE",
   "base": {
     "requestedSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
     "strategy": "RECREATED_FROM_EXACT_BASE",
@@ -35,7 +35,8 @@
     "atomic compare-and-swap persistence seam",
     "restart-safe workflow hydration and fail-closed snapshot validation",
     "founder-authorized normal order quantities from 1 through 50",
-    "ownership-scoped keyset-paginated customer order history"
+    "ownership-scoped keyset-paginated customer order history",
+    "customer-safe reorder draft preparation"
   ],
   "hardInvariants": [
     "A new workflow can only begin in request_pending with no approval.",
@@ -56,7 +57,9 @@
     "Every request and invoice line quantity is a unique whole-number SKU quantity from 1 through 50; quantity alone creates no review split in that band.",
     "An invoice cannot change the per-SKU quantities in the approved buyer request.",
     "Customer order history is bounded to 1 through 100 items per page and ordered by stable updatedAt/orderId keyset pagination.",
-    "Customer history exposes customer-safe price, payment, fulfillment and latest-tracking status without proof, transaction, supplier, or audit data."
+    "Customer history exposes customer-safe price, payment, fulfillment and latest-tracking status without proof, transaction, supplier, or audit data.",
+    "A reorder draft carries only source version, owner, SKU and quantity, and requires current catalog, Product Control and pricing validation before any new action.",
+    "Reorder preparation never copies invoice, payment, settlement, supplier, fulfillment, tracking, or approval authority."
   ],
   "artifacts": [
     {

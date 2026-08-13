@@ -276,6 +276,18 @@ export type CustomerOrderHistoryPage = Readonly<{
   nextCursor: CustomerOrderHistoryCursor | null;
 }>;
 
+export type CustomerReorderDraft = Readonly<{
+  sourceOrderId: string;
+  sourceVersion: number;
+  sourceUpdatedAt: string;
+  owner: OrderOwner;
+  lines: readonly BuyerRequestLine[];
+  requiresCurrentCatalogValidation: true;
+  requiresCurrentProductControlValidation: true;
+  requiresCurrentPricing: true;
+  createsBuyerRequestOnly: true;
+}>;
+
 export type OrderWorkflowIdempotencyReceipt = Readonly<{
   scope: string;
   key: string;
@@ -657,6 +669,22 @@ export class InMemoryOrderWorkflowEngine {
       nextCursor: window.length > limit && last
         ? { updatedAt: last.updatedAt, orderId: last.orderId }
         : null,
+    });
+  }
+
+  customerReorderDraft(actor: OrderActor, sourceOrderId: string): CustomerReorderDraft | null {
+    const source = this.orders.get(sourceOrderId);
+    if (!source || !actorCanOwn(actor, source.owner)) return null;
+    return frozen({
+      sourceOrderId,
+      sourceVersion: source.version,
+      sourceUpdatedAt: source.updatedAt,
+      owner: { ...source.owner },
+      lines: source.request.lines.map((line) => ({ ...line })),
+      requiresCurrentCatalogValidation: true,
+      requiresCurrentProductControlValidation: true,
+      requiresCurrentPricing: true,
+      createsBuyerRequestOnly: true,
     });
   }
 

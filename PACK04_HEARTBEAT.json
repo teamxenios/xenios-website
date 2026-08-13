@@ -5,10 +5,10 @@
   "branch": "codex/pack04-orders-payments-fulfillment-20260812",
   "requiredBase": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
   "rebaseOrRecreateRequired": true,
-  "lastCommittedHead": "92ec1ee0a350f51467b73c6affcea447903195c4",
+  "lastCommittedHead": "4903a64efff91503f66b4f668a0ddf53c22b7a35",
   "state": "READY_FOR_REVIEW_AT_HUMAN_GATED_DB_BOUNDARY",
-  "milestone": "ACCOUNT_ORDER_HISTORY_VERIFIED_UNMOUNTED",
-  "updatedAt": "2026-08-13T06:27:01.8788809Z",
+  "milestone": "CUSTOMER_REORDER_DRAFT_VERIFIED_UNMOUNTED",
+  "updatedAt": "2026-08-13T06:33:44.3503739Z",
   "completed": [
     "Unmounted Pack 04 domain workflow and storage draft committed",
     "Atomic snapshot/CAS persistence port implemented",
@@ -24,7 +24,10 @@
     "Durable request and invoice quantity corruption fails closed",
     "Customer account order history is ownership scoped and keyset paginated",
     "History projects customer-safe price, payment, fulfillment and latest tracking state",
-    "Cross-buyer and cross-organization history isolation is covered"
+    "Cross-buyer and cross-organization history isolation is covered",
+    "Reorder drafts require current catalog, Product Control and pricing validation",
+    "Reorder drafts exclude stale invoice, payment, supplier, fulfillment and tracking authority",
+    "Quantity 49 is covered alongside 1, 20, 21, 50, and 51 refusal"
   ],
   "currentVerification": {
     "focusedTests": "PASS: 3 files, 28 tests",
