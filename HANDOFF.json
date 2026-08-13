@@ -3,7 +3,7 @@
   "name": "Xenios Orders Payments and Fulfillment",
   "pack": "04",
   "effort": "high",
-  "status": "READY_FOR_REVIEW_UNMOUNTED_HISTORY_AND_REORDER_DRAFT_COMPLETE",
+  "status": "READY_FOR_REVIEW_UNMOUNTED_WITH_DISPOSABLE_DB_PACKET",
   "base": {
     "requestedSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
     "strategy": "RECREATED_FROM_EXACT_BASE",
@@ -59,7 +59,9 @@
     "Customer order history is bounded to 1 through 100 items per page and ordered by stable updatedAt/orderId keyset pagination.",
     "Customer history exposes customer-safe price, payment, fulfillment and latest-tracking status without proof, transaction, supplier, or audit data.",
     "A reorder draft carries only source version, owner, SKU and quantity, and requires current catalog, Product Control and pricing validation before any new action.",
-    "Reorder preparation never copies invoice, payment, settlement, supplier, fulfillment, tracking, or approval authority."
+    "Reorder preparation never copies invoice, payment, settlement, supplier, fulfillment, tracking, or approval authority.",
+    "The read-only database postcheck opens a read-only transaction and always rolls back.",
+    "The rollback draft is empty-state-only, refuses any Pack 04 row, uses no CASCADE, and does not remove shared extensions or objects."
   ],
   "artifacts": [
     {
@@ -97,18 +99,30 @@
     {
       "path": "PACK04_OVERNIGHT_SUMMARY.json",
       "purpose": "Concise morning execution record, impact summary, blockers, and exact next actions."
+    },
+    {
+      "path": "PACK04_DB_EXECUTION_PACKET.json",
+      "purpose": "Hash-pinned disposable apply-twice sequence, required behavioral matrix, exact commands, and rollback policy."
+    },
+    {
+      "path": "supabase/research-order-payment-fulfillment-pack04-postcheck.sql",
+      "purpose": "Read-only, rollback-always structural, RLS, safe-projection, and founder-quantity postcheck."
+    },
+    {
+      "path": "supabase/research-order-payment-fulfillment-pack04-rollback.sql",
+      "purpose": "Human-reviewed rollback draft that refuses non-empty Pack 04 state and uses no CASCADE."
     }
   ],
   "verification": [
     {
       "command": "npm test -- --run server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts server/research/commerce/order-payment-fulfillment-persistence.test.ts",
       "result": "PASS",
-      "details": "3 files, 28 tests passed"
+      "details": "3 files, 29 tests passed"
     },
     {
       "command": "npm test -- --run server/research/commerce/manual-order-payments.test.ts server/research/early-access/commerce/verification-service.test.ts server/research/early-access/commerce/release-service.test.ts server/research/early-access/cart/cart-settlement-adversarial.test.ts server/research/early-access/cart/duplicate-order.test.ts server/research/commerce/order-payment-fulfillment.test.ts server/research/commerce/order-payment-fulfillment-storage.test.ts server/research/commerce/order-payment-fulfillment-persistence.test.ts",
       "result": "PASS",
-      "details": "8 commerce/payment/settlement adversarial files, 146 tests passed after customer-history regressions"
+      "details": "8 commerce/payment/settlement adversarial files, 147 tests passed including the database-packet safety contract"
     },
     {
       "command": "npm run check",
@@ -132,7 +146,7 @@
     {
       "command": "npx tsx scripts/acceptance/verify-pgcrypto-qualification.ts",
       "result": "PASS",
-      "details": "130 SQL files scanned; no new public-qualified pgcrypto calls"
+      "details": "132 SQL files scanned; no new public-qualified pgcrypto calls"
     },
     {
       "command": "npm run build",
@@ -151,6 +165,7 @@
     "No Supabase migration apply",
     "No database mutation",
     "No external payment, supplier, fulfillment, tracking, notification, or customer action",
+    "No disposable or production database connection; the local Docker client has no available daemon",
     "No evals/run_evals.py run because this repository does not contain that harness"
   ],
   "founderStateObserved": {
@@ -188,7 +203,7 @@
   "requiredNextGate": [
     "Integrate the external quantity-owner repairs above on the canonical successor base without copying Pack 04 into those owned systems.",
     "Assign a reviewed managed migration identity to the Pack 04 SQL draft.",
-    "Run disposable managed-Supabase-shaped apply-twice, behavioral, concurrency, RLS, and rollback verification.",
+    "Run the hash-pinned PACK04_DB_EXECUTION_PACKET.json against a disposable managed-Supabase-shaped database, including apply-twice, behavioral, concurrency, RLS, and rollback verification.",
     "Only then copy the exact reviewed SQL bytes into supabase/migrations and add the migration ledger/DAG node.",
     "Implement the reviewed Supabase transaction/RPC adapter only after the migration identity and disposable apply-twice gate are complete; preserve the verified atomic port contract.",
     "Independently review and approve any future route or worker mount."

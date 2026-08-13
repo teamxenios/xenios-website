@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -6,6 +7,23 @@ const sql = readFileSync(
   resolve(process.cwd(), "supabase/research-order-payment-fulfillment-pack04.sql"),
   "utf8",
 );
+const postcheck = readFileSync(
+  resolve(process.cwd(), "supabase/research-order-payment-fulfillment-pack04-postcheck.sql"),
+  "utf8",
+);
+const rollback = readFileSync(
+  resolve(process.cwd(), "supabase/research-order-payment-fulfillment-pack04-rollback.sql"),
+  "utf8",
+);
+const executionPacket = JSON.parse(readFileSync(
+  resolve(process.cwd(), "PACK04_DB_EXECUTION_PACKET.json"),
+  "utf8",
+)) as {
+  status: string;
+  draftSha256: string;
+  productionMutationAuthorized: boolean;
+  requiredBehavioralMatrix: string[];
+};
 
 const PRIVATE_TABLES = [
   "research_order_business_organizations",
@@ -116,5 +134,25 @@ describe("Pack 04 storage contract", () => {
     expect(sql).toContain(
       "grant execute on function public.research_customer_order_history(integer, timestamptz, text)",
     );
+  });
+
+  it("ships a hash-pinned disposable postcheck and guarded empty-state rollback packet", () => {
+    const actualHash = createHash("sha256").update(sql).digest("hex");
+    expect(executionPacket.status).toBe("PREPARED_NOT_RUN");
+    expect(executionPacket.productionMutationAuthorized).toBe(false);
+    expect(executionPacket.draftSha256).toBe(actualHash);
+    for (const quantity of [1, 20, 21, 49, 50, 51]) {
+      expect(postcheck).toContain(`quantity\":${quantity}`);
+    }
+    expect(postcheck).toContain("begin transaction read only;");
+    expect(postcheck.trimEnd().endsWith("rollback;")).toBe(true);
+    expect(postcheck).not.toMatch(/\b(insert|update|delete|truncate|alter|drop|grant|revoke)\b/i);
+    expect(rollback).toContain("DRAFT, NOT RUN");
+    expect(rollback).toContain("rollback refused: public.% contains % row(s)");
+    expect(rollback).not.toMatch(/drop\s+(?:table|function)[^;]*\bcascade\b/i);
+    expect(rollback).not.toMatch(/drop\s+extension/i);
+    expect(rollback).not.toMatch(/\b(delete|truncate)\b/i);
+    expect(executionPacket.requiredBehavioralMatrix.join(" ")).toContain("Quantity 0");
+    expect(executionPacket.requiredBehavioralMatrix.join(" ")).toContain("quantity 51");
   });
 });
