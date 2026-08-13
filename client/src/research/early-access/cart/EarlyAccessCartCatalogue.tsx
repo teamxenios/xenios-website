@@ -127,6 +127,7 @@ export function EarlyAccessCartCatalogue({
                   <>
                     <EarlyAccessQuantitySelector
                       value={quantity as EarlyAccessQuantity}
+                      maxQuantity={product.quantityLimit ?? 1}
                       onChange={(next) => {
                         setDraftQuantities((current) => ({ ...current, [key]: next }));
                         if (item !== null) {

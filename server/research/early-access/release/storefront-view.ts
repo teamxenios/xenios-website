@@ -1,4 +1,5 @@
 import type { EarlyAccessBlocker } from "../catalog/eligibility";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 import type {
   EarlyAccessCatalogProjection,
   EarlyAccessCatalogRow,
@@ -189,7 +190,6 @@ function toUnit(
     presentation: row.presentation,
     description: row.description,
     imageState: row.imageState,
-    quantityLimit: row.quantityLimit,
     productControlBlockers: Object.freeze([...row.blockers]),
   };
 
@@ -198,6 +198,10 @@ function toUnit(
   if (row.purchasable) {
     return Object.freeze({
       ...base,
+      quantityLimit: Math.min(
+        row.quantityLimit ?? EARLY_ACCESS_MAX_QUANTITY,
+        EARLY_ACCESS_MAX_QUANTITY,
+      ),
       state: "purchasable" as const,
       priceCents: row.priceCents,
       currency: row.currency,
@@ -219,6 +223,15 @@ function toUnit(
   if (decision.released) {
     return Object.freeze({
       ...base,
+      // The storefront is part of the authority boundary. Product Control's
+      // raw limit is often null, but a founder release always carries a real
+      // ceiling. Project the effective intersection so the browser never
+      // advertises 50 while the durable release still authorizes only 20.
+      quantityLimit: Math.min(
+        row.quantityLimit ?? EARLY_ACCESS_MAX_QUANTITY,
+        decision.approvedQuantityLimit,
+        EARLY_ACCESS_MAX_QUANTITY,
+      ),
       state: "purchasable" as const,
       // The price comes from the release, because Product Control has none for
       // these units. It is server authoritative in both cases.
@@ -246,6 +259,9 @@ function toUnit(
       : null;
   return Object.freeze({
     ...base,
+    // Held rows render no quantity control, so this remains Product Control's
+    // raw fact rather than inventing purchase authority for an unsellable row.
+    quantityLimit: row.quantityLimit,
     state: stateForHeldUnit(row),
     priceCents: quotable === null ? null : quotable.priceCents,
     currency: quotable === null ? "" : quotable.currency,

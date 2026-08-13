@@ -243,23 +243,29 @@ describe("the amount owed, in exact cents", () => {
     },
   );
 
-  it("never rounds a discount up, across the whole supported price range", () => {
-    for (let unit = 1; unit <= 500_000; unit += 997) {
-      for (const promotion of EARLY_ACCESS_PROMOTIONS) {
-        const subtotal = unit * promotion.eligibleQuantity;
-        const discount = earlyAccessPromotionDiscountCents(
-          subtotal,
-          promotion.discountBasisPoints,
-        );
-        expect(Number.isSafeInteger(discount)).toBe(true);
-        expect(discount * 10_000).toBeLessThanOrEqual(subtotal * promotion.discountBasisPoints);
-        expect((discount + 1) * 10_000).toBeGreaterThan(
-          subtotal * promotion.discountBasisPoints,
-        );
-        expect(subtotal - discount).toBeGreaterThan(0);
+  it(
+    "never rounds a discount up, across the whole supported price range",
+    () => {
+      for (let unit = 1; unit <= 500_000; unit += 997) {
+        for (const promotion of EARLY_ACCESS_PROMOTIONS) {
+          const subtotal = unit * promotion.eligibleQuantity;
+          const discount = earlyAccessPromotionDiscountCents(
+            subtotal,
+            promotion.discountBasisPoints,
+          );
+          expect(Number.isSafeInteger(discount)).toBe(true);
+          expect(discount * 10_000).toBeLessThanOrEqual(subtotal * promotion.discountBasisPoints);
+          expect((discount + 1) * 10_000).toBeGreaterThan(
+            subtotal * promotion.discountBasisPoints,
+          );
+          expect(subtotal - discount).toBeGreaterThan(0);
+        }
       }
-    }
-  });
+    },
+    // The candidate expands the promotion table from 20 to 50 quantities, so
+    // this exhaustive cent/property loop now performs 2.5x the assertions.
+    15_000,
+  );
 });
 
 // ---------------------------------------------------------------------------

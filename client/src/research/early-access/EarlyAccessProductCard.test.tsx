@@ -46,6 +46,7 @@ function product(overrides: Partial<EarlyAccessCardProduct> = {}): EarlyAccessCa
     currency: "USD",
     description: "Lyophilised vial for research use.",
     availability: "AVAILABLE",
+    quantityLimit: 50,
     ...overrides,
   };
 }
@@ -215,6 +216,25 @@ describe("early access product card", () => {
     expect(input?.getAttribute("max")).toBe("50");
   });
 
+  it("shows and enforces the exact server-projected release ceiling", () => {
+    const onQuantityChange = vi.fn();
+    const el = render(
+      <EarlyAccessProductCard
+        product={product({ quantityLimit: 20 })}
+        quantity={20}
+        onQuantityChange={onQuantityChange}
+        onSelect={() => {}}
+      />,
+    );
+    const input = el.querySelector<HTMLInputElement>("input[type='number']");
+    const increment = el.querySelector<HTMLButtonElement>("[data-testid$='-quantity-increment']");
+    expect(input?.max).toBe("20");
+    expect(el.textContent).toContain("Limit 20 per product");
+    expect(increment?.disabled).toBe(true);
+    act(() => increment?.click());
+    expect(onQuantityChange).not.toHaveBeenCalled();
+  });
+
   it("shows no product photography, and no longer reserves a square for it", () => {
     // No image is safer than a wrong one: a vial photograph at the wrong
     // strength misrepresents the product. That rule is unchanged and is the
@@ -243,6 +263,7 @@ describe("a founder-held row, which is how Cagrilintide arrives", () => {
     currency: "USD",
     description: "Lyophilised vial for research use.",
     availability: "TEMPORARILY_HELD",
+    quantityLimit: null,
   } as const;
 
   function heldCard() {

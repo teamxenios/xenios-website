@@ -50,6 +50,8 @@ export type EarlyAccessCardProduct = Readonly<{
   /** Short approved description. Never a supplier note. */
   description: string;
   availability: EarlyAccessAvailabilityState;
+  /** Server-projected effective Product Control / release / global ceiling. */
+  quantityLimit: EarlyAccessQuantity | null;
 }>;
 
 export interface EarlyAccessProductCardProps {
@@ -154,6 +156,7 @@ export function EarlyAccessProductCard({
         <EarlyAccessQuantitySelector
           value={quantity}
           onChange={onQuantityChange}
+          maxQuantity={product.quantityLimit ?? 1}
           testId={`${testId}-quantity`}
         />
       ) : null}

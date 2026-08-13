@@ -2,6 +2,7 @@ import type {
   EarlyAccessAvailabilityState,
   EarlyAccessCardProduct,
 } from "./EarlyAccessProductCard";
+import { isEarlyAccessQuantity } from "@shared/research/early-access-quantity";
 
 /**
  * Reads the availability the SERVER decided for one catalogue row.
@@ -34,6 +35,7 @@ export type EarlyAccessCatalogRowView = Readonly<{
   description?: unknown;
   availability?: unknown;
   purchasable?: unknown;
+  quantityLimit?: unknown;
 }>;
 
 function isNonEmptyString(value: unknown): value is string {
@@ -69,6 +71,14 @@ export function toCardProduct(row: EarlyAccessCatalogRowView): EarlyAccessCardPr
   if (!isNonEmptyString(row.displayName)) return null;
   if (!isNonEmptyString(row.strength)) return null;
   const availability = availabilityStateOf(row);
+  const quantityLimit = isEarlyAccessQuantity(row.quantityLimit)
+    ? row.quantityLimit
+    : null;
+
+  // A sellable row without an exact server-projected ceiling is not a complete
+  // offer. Dropping it is fail-closed: the browser must not replace missing
+  // release authority with the global candidate maximum.
+  if (availability !== "TEMPORARILY_HELD" && quantityLimit === null) return null;
 
   // A held row carries NO price on purpose: the server sends priceCents null so
   // no amount sits beside a unit nobody may buy. Dropping it would hide the row
@@ -94,6 +104,7 @@ export function toCardProduct(row: EarlyAccessCatalogRowView): EarlyAccessCardPr
     currency: isNonEmptyString(row.currency) ? row.currency : "USD",
     description: isNonEmptyString(row.description) ? row.description : "",
     availability,
+    quantityLimit,
   };
 }
 

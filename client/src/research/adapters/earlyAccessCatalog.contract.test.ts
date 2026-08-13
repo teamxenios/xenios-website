@@ -107,6 +107,16 @@ describe("the browser reads what the server actually sends", () => {
     const [product] = result.products;
     expect(product.availability).toBe("AVAILABLE");
     expect(product.unitPriceCents).toBe(4750);
+    expect(product.quantityLimit).toBe(3);
+  });
+
+  it("keeps the server's effective release ceiling as the client stepper ceiling", async () => {
+    const result = await loadEarlyAccessCatalog(
+      serverAnswers(storefront([{ ...BASE_UNIT, quantityLimit: 20 }])),
+    );
+    expect(result.kind).toBe("ok");
+    if (result.kind !== "ok") return;
+    expect(result.products[0]?.quantityLimit).toBe(20);
   });
 
   it("renders a founder-held unit as held, with no price", async () => {

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { EarlyAccessCatalogProjection, EarlyAccessCatalogRow } from "../catalog/early-access-catalog";
 import { earlyAccessReleaseVersion, validateEarlyAccessRelease, type EarlyAccessRelease } from "./founder-release";
 import { buildEarlyAccessStorefront } from "./storefront-view";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 
 const HELD = ["PRICE_NOT_APPROVED", "DOCUMENTATION_NOT_SATISFIED"] as const;
 
@@ -71,6 +72,32 @@ describe("the storefront the customer sees behind the gate", () => {
     expect(only?.currency).toBe("USD");
     expect(only?.basis).toBe("founder_release");
     expect(only?.releaseId).toBe("rel-0001");
+    expect(only?.quantityLimit).toBe(3);
+  });
+
+  it("projects the founder release ceiling when Product Control has no quantity fact", () => {
+    const unit = row({ quantityLimit: null });
+    const store = buildEarlyAccessStorefront({
+      projection: projection([unit]),
+      releases: [releaseFor(unit, { approvedQuantityLimit: 20 })],
+    });
+    expect(store.units[0]?.quantityLimit).toBe(20);
+  });
+
+  it("projects the strict intersection of Product Control and founder authority", () => {
+    const productControlNarrower = row({ quantityLimit: 49 });
+    const founderNarrower = row({ variantId: "var-2", sku: "A-2", quantityLimit: 50 });
+    const store = buildEarlyAccessStorefront({
+      projection: projection([productControlNarrower, founderNarrower]),
+      releases: [
+        releaseFor(productControlNarrower, { approvedQuantityLimit: 50 }),
+        releaseFor(founderNarrower, {
+          releaseId: "rel-0002",
+          approvedQuantityLimit: 49,
+        }),
+      ],
+    });
+    expect(store.units.map((unit) => unit.quantityLimit)).toEqual([49, 49]);
   });
 
   it("Product Control's verdict is still reported on a released unit", () => {
@@ -83,13 +110,14 @@ describe("the storefront the customer sees behind the gate", () => {
   });
 
   it("a unit Product Control cleared needs no release at all", () => {
-    const clear = row({ purchasable: true, blockers: [], priceCents: 19_900, currency: "USD" });
+    const clear = row({ purchasable: true, blockers: [], priceCents: 19_900, currency: "USD", quantityLimit: null });
     const store = buildEarlyAccessStorefront({ projection: projection([clear]), releases: [] });
     expect(store.units[0]?.state).toBe("purchasable");
     expect(store.units[0]?.basis).toBe("product_control");
     expect(store.units[0]?.priceCents).toBe(19_900);
     // Removing the bridge later must not disturb this row.
     expect(store.units[0]?.releaseId).toBeNull();
+    expect(store.units[0]?.quantityLimit).toBe(EARLY_ACCESS_MAX_QUANTITY);
   });
 
   it("an unreleased unit is held and shows NO amount", () => {

@@ -196,6 +196,38 @@ describe("EarlyAccessQuantitySelector", () => {
     }
   });
 
+  it("cannot be pushed past a narrower server-projected ceiling", () => {
+    const onChange = vi.fn();
+    function Harness() {
+      const [value, setValue] = useState<EarlyAccessQuantity | null>(20);
+      return (
+        <EarlyAccessQuantitySelector
+          value={value}
+          maxQuantity={20}
+          onChange={(quantity) => {
+            onChange(quantity);
+            setValue(quantity);
+          }}
+        />
+      );
+    }
+    const view = render(<Harness />);
+    expect(field(view.host).max).toBe("20");
+    expect(step(view.host, "increment").disabled).toBe(true);
+    type(view.host, "21");
+    expect(onChange).toHaveBeenLastCalledWith(20);
+    type(view.host, "50");
+    expect(onChange).toHaveBeenLastCalledWith(20);
+    expect(view.host.textContent).toContain("Limit 20 per product");
+  });
+
+  it("shows no selection when an old cart value exceeds a newly narrower ceiling", () => {
+    const view = render(
+      <EarlyAccessQuantitySelector value={50} maxQuantity={20} onChange={() => {}} />,
+    );
+    expect(field(view.host).value).toBe("");
+  });
+
   it("cannot be pushed below one by the minus control or by typing", () => {
     const onChange = vi.fn();
     function Harness() {

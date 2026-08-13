@@ -25,6 +25,8 @@ export interface EarlyAccessQuantitySelectorProps {
   /** The caller's current choice. Anything outside the band shows as empty. */
   value: EarlyAccessQuantity | null;
   onChange: (quantity: EarlyAccessQuantity) => void;
+  /** A narrower server-projected authority ceiling for this exact unit. */
+  maxQuantity?: EarlyAccessQuantity;
   disabled?: boolean;
   testId?: string;
 }
@@ -60,16 +62,20 @@ export interface EarlyAccessQuantitySelectorProps {
 export function EarlyAccessQuantitySelector({
   value,
   onChange,
+  maxQuantity = EARLY_ACCESS_QUANTITY_MAX,
   disabled = false,
   testId = "early-access-quantity-selector",
 }: EarlyAccessQuantitySelectorProps) {
   const baseId = useId();
   const noteId = `${baseId}-note`;
   const inputId = `${baseId}-quantity`;
+  const effectiveMax = isEarlyAccessQuantity(maxQuantity)
+    ? maxQuantity
+    : EARLY_ACCESS_QUANTITY_MIN;
 
   // A value the round does not offer selects nothing rather than being rounded
   // into the nearest legal quantity.
-  const selected = isEarlyAccessQuantity(value) ? value : null;
+  const selected = isEarlyAccessQuantity(value) && value <= effectiveMax ? value : null;
 
   // What the person is typing, which is allowed to be transiently empty or
   // out of band while they type. It is never what gets reported: `commit`
@@ -82,7 +88,7 @@ export function EarlyAccessQuantitySelector({
     // its own band. A typed 51 becomes 50 here AND is refused by the server if
     // it ever arrives by another route.
     const clamped = Math.min(
-      EARLY_ACCESS_QUANTITY_MAX,
+      effectiveMax,
       Math.max(EARLY_ACCESS_QUANTITY_MIN, Math.trunc(candidate)),
     );
     if (!isEarlyAccessQuantity(clamped)) return;
@@ -92,7 +98,7 @@ export function EarlyAccessQuantitySelector({
 
   const current = selected ?? EARLY_ACCESS_QUANTITY_MIN;
   const atMin = current <= EARLY_ACCESS_QUANTITY_MIN;
-  const atMax = current >= EARLY_ACCESS_QUANTITY_MAX;
+  const atMax = current >= effectiveMax;
 
   const stepStyle = (blocked: boolean) => ({
     minWidth: 44,
@@ -144,7 +150,7 @@ export function EarlyAccessQuantitySelector({
           type="number"
           inputMode="numeric"
           min={EARLY_ACCESS_QUANTITY_MIN}
-          max={EARLY_ACCESS_QUANTITY_MAX}
+          max={effectiveMax}
           step={1}
           value={shown}
           disabled={disabled}
@@ -210,7 +216,7 @@ export function EarlyAccessQuantitySelector({
         in, so it reads as a sentence at every card width.
       */}
       <p id={noteId} className="body-xs text-ink-mute min-w-0">
-        3 units is the Research Bundle, 20% savings. Limit {EARLY_ACCESS_QUANTITY_MAX} per
+        3 units is the Research Bundle, 20% savings. Limit {effectiveMax} per
         product.
       </p>
     </fieldset>
