@@ -38,6 +38,7 @@ import {
 } from "@shared/research/commerce";
 import {
   createInMemorySubscriptionRepository,
+  isValidSubscriptionQuantity,
   type SubscriptionRecord,
   type SubscriptionRepository,
   type SubscriptionStateEvent,
@@ -134,6 +135,7 @@ function isFrequency(value: number): value is SubscriptionFrequencyDays {
 export function rowToSubscription(row: SubscriptionRow): SubscriptionRecord | null {
   if (!SUBSCRIPTION_STATES.has(row.state)) return null;
   if (!isFrequency(row.frequency_days)) return null;
+  if (!isValidSubscriptionQuantity(row.quantity)) return null;
   return {
     subscriptionId: row.id,
     memberId: row.member_id,

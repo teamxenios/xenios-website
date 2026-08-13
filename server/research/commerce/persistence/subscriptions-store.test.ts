@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { SubscriptionRecord, SubscriptionStateEvent } from "../subscriptions";
+import {
+  MAX_SUBSCRIPTION_QUANTITY,
+  type SubscriptionRecord,
+  type SubscriptionStateEvent,
+} from "../subscriptions";
 import {
   createInMemorySubscriptionStore,
   createSupabaseSubscriptionStore,
@@ -78,6 +82,21 @@ describe("subscription row mapping", () => {
     const row: SubscriptionRow = { ...subscriptionToRow(record()), state: "hibernating" };
     expect(rowToSubscription(row)).toBeNull();
   });
+
+  it("drops persisted quantities above 50 or malformed at the row mapper", () => {
+    for (const quantity of [
+      MAX_SUBSCRIPTION_QUANTITY + 1,
+      1.5,
+      0,
+      -1,
+      Number.NaN,
+      "2" as unknown as number,
+    ]) {
+      const row: SubscriptionRow = { ...subscriptionToRow(record()), quantity };
+      expect(rowToSubscription(row)).toBeNull();
+    }
+    expect(rowToSubscription(subscriptionToRow(record({ quantity: 50 })))).not.toBeNull();
+  });
 });
 
 describe("event row mapping", () => {
@@ -113,6 +132,26 @@ describe("createInMemorySubscriptionStore", () => {
     const mine = await store.listByMember("member-1");
     expect(mine).toHaveLength(1);
     expect(mine[0].subscriptionId).toBe("s1");
+  });
+
+  it("quarantines invalid seed and save quantities in the in-memory recovery double", async () => {
+    for (const quantity of [
+      MAX_SUBSCRIPTION_QUANTITY + 1,
+      1.5,
+      0,
+      -1,
+      Number.NaN,
+      "2" as unknown as number,
+    ]) {
+      const seeded = createInMemorySubscriptionStore([record({ quantity })]);
+      expect(await seeded.get(record().subscriptionId)).toBeNull();
+      expect(await seeded.listByMember("member-1")).toEqual([]);
+
+      const saved = createInMemorySubscriptionStore();
+      await saved.save(record({ quantity }));
+      expect(await saved.get(record().subscriptionId)).toBeNull();
+      expect(await saved.listByMember("member-1")).toEqual([]);
+    }
   });
 
   it("appends events and lists them per subscription", async () => {
@@ -267,6 +306,17 @@ describe("createSupabaseSubscriptionStore (fake client)", () => {
     expect(await store.get("s2")).toBeNull();
     const listed = await store.listByMember("member-1");
     expect(listed.map((r) => r.subscriptionId)).toEqual(["s1"]);
+  });
+
+  it("quarantines persisted quantity 51 from durable get and list recovery", async () => {
+    const { client, subscriptions } = fakeSupabase();
+    const store = createSupabaseSubscriptionStore(client);
+    const invalid = subscriptionToRow(record({ subscriptionId: "quantity-51" }));
+    invalid.quantity = MAX_SUBSCRIPTION_QUANTITY + 1;
+    subscriptions.set(invalid.id, invalid);
+
+    expect(await store.get(invalid.id)).toBeNull();
+    expect(await store.listByMember(invalid.member_id)).toEqual([]);
   });
 
   it("appends events, lists them in occurrence order, and never updates or deletes", async () => {

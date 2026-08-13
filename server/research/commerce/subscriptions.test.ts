@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { CatalogProduct, ProvenancedFact } from "@shared/research/catalog";
 import type { ProviderResult } from "@shared/research/capability";
 import type { SubscriptionActionRequest } from "@shared/research/commerce-api";
@@ -8,6 +8,8 @@ import {
   createSubscriptionService,
   MAX_SUBSCRIPTION_QUANTITY,
   type CreateSubscriptionInput,
+  type SubscriptionRecord,
+  type SubscriptionRepository,
   type SubscriptionServiceDeps,
 } from "./subscriptions";
 
@@ -130,6 +132,25 @@ function createInput(overrides: Partial<CreateSubscriptionInput> = {}): CreateSu
   };
 }
 
+function persistedRecord(quantity: number): SubscriptionRecord {
+  return {
+    subscriptionId: "persisted-subscription",
+    memberId: MEMBER,
+    sku: "P001",
+    quantity,
+    frequencyDays: 30,
+    state: "active",
+    nextRenewalAt: "2026-08-19T00:00:00.000Z",
+    nextShipmentAt: "2026-08-19T00:00:00.000Z",
+    paymentProviderReference: "pm_ref_1",
+    priceVersion: "2026-07",
+    shippingAddressRef: "addr_1",
+    createdAt: NOW.toISOString(),
+    updatedAt: NOW.toISOString(),
+    cancelledAt: null,
+  };
+}
+
 /** Creates and activates a subscription, returning its id. */
 async function activeSubscription(d: SubscriptionServiceDeps): Promise<string> {
   const service = createSubscriptionService(d);
@@ -239,6 +260,48 @@ describe("create", () => {
 // ---------------------------------------------------------------------------
 
 describe("ownership", () => {
+  it("quarantines invalid persisted quantities from list, mutation, and renewal", async () => {
+    for (const quantity of [
+      MAX_SUBSCRIPTION_QUANTITY + 1,
+      1.5,
+      0,
+      -1,
+      Number.NaN,
+      "2" as unknown as number,
+    ]) {
+      const invalid = persistedRecord(quantity);
+      const save = vi.fn<SubscriptionRepository["save"]>(async () => {});
+      const appendEvent = vi.fn<SubscriptionRepository["appendEvent"]>(async () => {});
+      const membership = vi.fn(async () => true);
+      const agreement = vi.fn(async () => true);
+      const payment = { retrieveStatus: vi.fn(usablePayment().retrieveStatus) };
+      const repository: SubscriptionRepository = {
+        get: async () => ({ ...invalid }),
+        save,
+        listByMember: async () => [{ ...invalid }],
+        appendEvent,
+        listEvents: async () => [],
+      };
+      const service = createSubscriptionService(deps({
+        repository,
+        isMembershipActive: membership,
+        hasEffectiveAgreement: agreement,
+        payment,
+      }));
+
+      expect(await service.listForMember(MEMBER)).toEqual([]);
+      expect(await service.apply(MEMBER, invalid.subscriptionId, { action: "pause" }, NOW))
+        .toMatchObject({ ok: false, code: "subscription_not_found" });
+      expect(await service.evaluateRenewal(invalid.subscriptionId, new Date(invalid.nextRenewalAt!)))
+        .toMatchObject({ ok: false, refusals: ["subscription_not_found"] });
+      expect(save).not.toHaveBeenCalled();
+      expect(appendEvent).not.toHaveBeenCalled();
+      expect(membership).not.toHaveBeenCalled();
+      expect(agreement).not.toHaveBeenCalled();
+      expect(payment.retrieveStatus).not.toHaveBeenCalled();
+    }
+  });
+
   it("answers subscription_not_found for another member's subscription", async () => {
     const d = deps();
     const id = await activeSubscription(d);
