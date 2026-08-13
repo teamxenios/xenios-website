@@ -121,9 +121,11 @@ export class MasterOfferingCatalogService {
         pageSize: selection.pageSize,
         total: selection.total,
         totalPages: selection.totalPages,
+        sort: selection.sort,
         products: selection.offerings.map((offering) =>
           projectMasterOfferingCard(offering, prices),
         ),
+        facets: selection.facets,
       },
     };
   }

@@ -95,6 +95,80 @@ export type MasterOfferingCopyState =
   (typeof MASTER_OFFERING_COPY_STATES)[number];
 
 /**
+ * The closed sort vocabulary.
+ *
+ * Deliberately a closed set of intents, not a column name. A free-text sort key
+ * would let a caller name a field the surface never meant to order by, and it
+ * would tie the wire contract to the shape of the server model. These four are
+ * intents the catalog can honor truthfully today.
+ *
+ * `newest` is deliberately absent. Nothing in the member-safe dataset carries a
+ * per offering timestamp, and the source sheet row is a banned key in the
+ * generated file, so there is no honest recency signal to sort by. Adding the
+ * member before the data exists would ship a control that silently returns some
+ * other order.
+ */
+export const MASTER_OFFERING_SORTS = [
+  "relevance",
+  "name_asc",
+  "name_desc",
+  "availability",
+] as const;
+
+export type MasterOfferingSort = (typeof MASTER_OFFERING_SORTS)[number];
+
+export const MASTER_OFFERING_SORT_LABELS: Readonly<
+  Record<MasterOfferingSort, string>
+> = {
+  relevance: "Best match",
+  name_asc: "Name A to Z",
+  name_desc: "Name Z to A",
+  availability: "Availability",
+};
+
+/**
+ * The default.
+ *
+ * `relevance` ranks by the search scorer when there is a query. When there is
+ * no query every score is equal, so it collapses exactly onto the tie breaker,
+ * which is the ordering the catalog already shipped. That is the reason it is
+ * the default: introducing a sort control must not silently reorder the catalog
+ * for every caller that never asked for one.
+ */
+export const DEFAULT_MASTER_OFFERING_SORT: MasterOfferingSort = "relevance";
+
+/**
+ * A category filter token.
+ *
+ * The wire value is a slug derived from the workbook category, not the raw
+ * category string. Two reasons, both from the real data. A real category is
+ * "AI, Tracking & Education", which contains the comma the list parser splits
+ * on, so the raw string cannot survive the existing multi value encoding. And
+ * the raw strings are workbook labels rather than approved member facing copy
+ * ("Competitor Expansion Candidate" is one of them), so freezing them into this
+ * customer importable contract would enshrine copy nobody approved.
+ *
+ * The guard is a shape guard rather than a membership guard, and that is the
+ * deliberate difference from `isMasterOfferingFamily`. Families are a contract
+ * owned vocabulary. Categories are data owned: they come from a workbook that
+ * changes without a contract release. A hardcoded list would make the server
+ * reject a filter chip the server itself had just rendered. Instead the shape
+ * is closed and bounded, and the list response carries the authoritative
+ * vocabulary, so a caller never has to guess.
+ */
+export const MASTER_OFFERING_CATEGORY_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,63}$/;
+
+/** The most category tokens one request may carry. */
+export const MASTER_OFFERING_MAX_CATEGORY_FILTERS = 24;
+
+export function isMasterOfferingCategorySlug(value: unknown): boolean {
+  return (
+    typeof value === "string" &&
+    MASTER_OFFERING_CATEGORY_SLUG_PATTERN.test(value)
+  );
+}
+
+/**
  * The browser receives an already resolved action. It never receives the private
  * binding that connected a planning variant to Product Control.
  */
@@ -206,9 +280,54 @@ export interface MasterOfferingCatalogQuery {
   q?: string;
   families?: readonly MasterOfferingFamily[];
   states?: readonly MasterOfferingDisplayState[];
+  /**
+   * Category slugs, as published by the category facet. An unrecognized but
+   * well formed slug matches nothing rather than failing the request, because
+   * the vocabulary is data owned and can legitimately change under a client.
+   */
+  categories?: readonly string[];
+  /** Omitted means `DEFAULT_MASTER_OFFERING_SORT`. */
+  sort?: MasterOfferingSort;
   page?: number;
   pageSize?: number;
 }
+
+/**
+ * One filter value and how many offerings the current query would leave if that
+ * value were selected. Standard facet semantics: a facet's counts ignore that
+ * facet's own selection, so selecting one family still shows what the others
+ * hold. Every other active filter is applied.
+ */
+export interface MasterOfferingFacetBucket<TValue extends string = string> {
+  value: TValue;
+  label: string;
+  count: number;
+}
+
+/**
+ * Counts for the current query, one group per filter.
+ *
+ * The closed vocabularies list every member, including the zero counts, so a
+ * filter row does not reshuffle as a member types. The category group lists
+ * every category present in the member safe catalog, which also makes the
+ * response the authoritative source of the category vocabulary.
+ *
+ * Nothing outside the member safe catalog is ever counted. An admin held
+ * offering is not in the dataset, and the counter filters on visibility again
+ * regardless, so a hold can never be inferred from a total.
+ */
+export interface MasterOfferingCatalogFacets {
+  families: readonly MasterOfferingFacetBucket<MasterOfferingFamily>[];
+  states: readonly MasterOfferingFacetBucket<MasterOfferingDisplayState>[];
+  categories: readonly MasterOfferingFacetBucket[];
+}
+
+/** For a caller that must construct an empty page, such as a loading state. */
+export const EMPTY_MASTER_OFFERING_FACETS: MasterOfferingCatalogFacets = {
+  families: [],
+  states: [],
+  categories: [],
+};
 
 export interface MasterOfferingCatalogPage {
   ok: true;
@@ -216,7 +335,10 @@ export interface MasterOfferingCatalogPage {
   pageSize: number;
   total: number;
   totalPages: number;
+  /** The sort actually applied, echoed so a caller never has to assume it. */
+  sort: MasterOfferingSort;
   products: readonly MasterOfferingCardView[];
+  facets: MasterOfferingCatalogFacets;
 }
 
 export type MasterOfferingCatalogAudience = "member" | "admin";
@@ -263,6 +385,15 @@ export function isMasterOfferingFamily(
   return (
     typeof value === "string" &&
     (MASTER_OFFERING_FAMILIES as readonly string[]).includes(value)
+  );
+}
+
+export function isMasterOfferingSort(
+  value: unknown,
+): value is MasterOfferingSort {
+  return (
+    typeof value === "string" &&
+    (MASTER_OFFERING_SORTS as readonly string[]).includes(value)
   );
 }
 

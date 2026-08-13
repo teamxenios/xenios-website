@@ -1,6 +1,9 @@
 import {
+  MASTER_OFFERING_MAX_CATEGORY_FILTERS,
+  isMasterOfferingCategorySlug,
   isMasterOfferingDisplayState,
   isMasterOfferingFamily,
+  isMasterOfferingSort,
 } from "@shared/research/master-offerings/contract";
 import type { MasterOfferingPriceListFormat } from "@shared/research/master-offerings/pricing-contract";
 import type {
@@ -8,6 +11,7 @@ import type {
   MasterOfferingCatalogQuery,
   MasterOfferingDisplayState,
   MasterOfferingFamily,
+  MasterOfferingSort,
 } from "@shared/research/master-offerings/contract";
 
 const API_BASE = "/api/research/catalog-display/v2";
@@ -19,6 +23,10 @@ export function masterOfferingCatalogUrl(
   if (query.q?.trim()) params.set("q", query.q.trim());
   if (query.families?.length) params.set("families", query.families.join(","));
   if (query.states?.length) params.set("states", query.states.join(","));
+  if (query.categories?.length) {
+    params.set("categories", query.categories.join(","));
+  }
+  if (query.sort !== undefined) params.set("sort", query.sort);
   if (query.page !== undefined) params.set("page", String(query.page));
   if (query.pageSize !== undefined) params.set("pageSize", String(query.pageSize));
   const suffix = params.toString();
@@ -45,6 +53,9 @@ export function masterOfferingPriceListUrl(
   if (query.q?.trim()) params.set("q", query.q.trim());
   if (query.families?.length) params.set("families", query.families.join(","));
   if (query.states?.length) params.set("states", query.states.join(","));
+  if (query.categories?.length) {
+    params.set("categories", query.categories.join(","));
+  }
   params.set("format", format);
   return `${API_BASE}/price-list?${params.toString()}`;
 }
@@ -66,12 +77,20 @@ export function parseCatalogQueryFromSearch(
     .split(",")
     .map((value) => value.trim())
     .filter(isMasterOfferingDisplayState);
+  const categories = (params.get("categories") ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(isMasterOfferingCategorySlug)
+    .slice(0, MASTER_OFFERING_MAX_CATEGORY_FILTERS);
+  const sort = params.get("sort");
   const page = Number(params.get("page"));
   const q = (params.get("q") ?? "").trim().slice(0, 160);
   return {
     ...(q ? { q } : {}),
     ...(families.length ? { families } : {}),
     ...(states.length ? { states } : {}),
+    ...(categories.length ? { categories } : {}),
+    ...(isMasterOfferingSort(sort) ? { sort } : {}),
     ...(Number.isSafeInteger(page) && page > 0 ? { page } : {}),
   };
 }
@@ -84,6 +103,10 @@ export function catalogQueryToSearch(
   if (query.q?.trim()) params.set("q", query.q.trim());
   if (query.families?.length) params.set("families", query.families.join(","));
   if (query.states?.length) params.set("states", query.states.join(","));
+  if (query.categories?.length) {
+    params.set("categories", query.categories.join(","));
+  }
+  if (query.sort !== undefined) params.set("sort", query.sort);
   if (query.page !== undefined && query.page > 1) {
     params.set("page", String(query.page));
   }

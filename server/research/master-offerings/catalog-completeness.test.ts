@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { MASTER_OFFERING_FAMILIES } from "@shared/research/master-offerings/contract";
+import {
+  MASTER_OFFERING_FAMILIES,
+  MASTER_OFFERING_SORTS,
+} from "@shared/research/master-offerings/contract";
 import { noMasterOfferingCommerce } from "./customer-projection";
 import type { NormalizedMasterOffering } from "./model";
 import { matchMasterOfferings } from "./search";
@@ -109,6 +112,43 @@ describe("every member-safe offering is viewable", () => {
     expect(ids).not.toContain("mo_hold_");
     const held = await catalog.detail("hold-0");
     expect(held).toBeNull();
+  });
+
+  it("returns every member-safe offering exactly once under every sort", async () => {
+    // The same proof as above, once per sort. An unstable comparator is a
+    // paging bug: two pages that repeat an offering or skip one. This runs
+    // without the generated dataset, so the property is covered at catalog
+    // scale on every machine; real-catalog-sort-facets.test.ts repeats it
+    // against the actual workbook output where names genuinely collide.
+    const catalog = service();
+    const pageSize = 50;
+    for (const sort of MASTER_OFFERING_SORTS) {
+      const seen = new Set<string>();
+      let duplicates = 0;
+      const pages = Math.ceil(MEMBER_OFFERINGS / pageSize);
+      for (let page = 1; page <= pages; page += 1) {
+        const current = await catalog.list({ sort, page, pageSize });
+        expect(current.sort).toBe(sort);
+        for (const card of current.products) {
+          if (seen.has(card.id)) duplicates += 1;
+          seen.add(card.id);
+        }
+      }
+      expect(duplicates).toBe(0);
+      expect(seen.size).toBe(MEMBER_OFFERINGS);
+    }
+  });
+
+  it("counts every member-safe offering in the facets and no hold", async () => {
+    const page = await service().list({});
+    const total = (buckets: readonly { count: number }[]): number =>
+      buckets.reduce((running, bucket) => running + bucket.count, 0);
+    expect(total(page.facets.families)).toBe(MEMBER_OFFERINGS);
+    expect(total(page.facets.states)).toBe(MEMBER_OFFERINGS);
+    expect(total(page.facets.categories)).toBe(MEMBER_OFFERINGS);
+    // The eleven holds are in the catalog this service reads and in none of
+    // its counts.
+    expect(CATALOG).toHaveLength(MEMBER_OFFERINGS + ADMIN_HOLDS);
   });
 
   it("keeps every family reachable through the family filter", async () => {
