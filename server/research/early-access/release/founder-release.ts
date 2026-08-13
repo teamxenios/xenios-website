@@ -120,9 +120,10 @@ export type EarlyAccessReleaseStatus = (typeof EARLY_ACCESS_RELEASE_STATUSES)[nu
 const MIN_REASON_LENGTH = 12;
 const MAX_REASON_LENGTH = 2_000;
 const MAX_PRICE_CENTS = 100_000_000;
-// Pre-M66 release records must be writable under the same durable 1..20 band
-// that the cart and current database accept. Manual 21..50 requests never
-// become founder-release rows.
+// A newly appended release may express the founder-approved 1..50 normal-order
+// band. Historical quantity-20 releases remain immutable; the separate
+// quantity-50 authority packet appends successors after M66 rather than
+// rewriting or replaying them.
 const MAX_QUANTITY_LIMIT = DIRECT_EARLY_ACCESS_MAX_QUANTITY;
 const SUPPORTED_CURRENCIES = Object.freeze(["USD"] as const);
 const ACTOR_PATTERN = /^[A-Za-z0-9][A-Za-z0-9 _.@:-]{2,127}$/;

@@ -3,9 +3,8 @@
  *
  * The band (`shared/research/early-access-quantity.ts`) says what a quantity
  * MAY be. It does not say what may be SOLD. Three further authorities decide
- * that, and this file exists because two of them were still answering "3" after
- * the band was widened, which would have shipped a system that understands
- * twenty and refuses four.
+ * that, and this file exists because stale authorities can otherwise leave the
+ * application, Product Control, and durable release ledger on different bands.
  *
  * WHAT THE TRACE FOUND, AND WHY THIS FILE IS SHAPED THIS WAY.
  *
@@ -18,12 +17,12 @@
  *    it. So Product Control never states a per-order ceiling in production, and
  *    the "3" that appears everywhere is a TEST FIXTURE value.
  *
- * 2. THE FOUNDER RELEASE `approvedQuantityLimit` IS THE ONE REAL CEILING. It is
- *    seeded from `FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT` and enforced in
- *    `order-service.ts`.
+ * 2. THE FOUNDER RELEASE `approvedQuantityLimit` IS THE ONE REAL CEILING. The
+ *    historical first release remains 20; the quantity-50 authority packet
+ *    appends successor releases. `order-service.ts` enforces the current one.
  *
  * 3. THE ELIGIBILITY CONTRACT bounds any declared limit to the band, so a
- *    future Product Control source can express 20 but not 21.
+ *    future Product Control source can express 50 but not 51.
  *
  * These tests drive the REAL seeder, the REAL release validator, the REAL
  * decision function and the REAL order service. Nothing here asserts against a
@@ -94,10 +93,10 @@ describe("authority 1: Product Control states no per-order ceiling", () => {
   });
 });
 
-describe("authority 2: the founder release ceiling is twenty", () => {
-  it("seeds every released unit at the founder-approved ceiling of twenty", async () => {
+describe("authority 2: historical and successor founder release ceilings", () => {
+  it("preserves the historical first-release seed at twenty", async () => {
     expect(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT).toBe(20);
-    expect(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT).toBe(EARLY_ACCESS_MAX_QUANTITY);
+    expect(FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT).toBeLessThan(EARLY_ACCESS_MAX_QUANTITY);
 
     // The REAL seeder, against a row resolvable from the real pricing table.
     const first = FOUNDER_FIRST_RELEASE_PRICING[0]!;
@@ -135,7 +134,7 @@ describe("authority 2: the founder release ceiling is twenty", () => {
     expect(unit.quantityLimit).toBeNull();
   });
 
-  it("still refuses a release that claims a ceiling outside what a founder may approve", () => {
+  it("accepts successor release authority through fifty and refuses fifty-one", () => {
     const unit = row();
     const base = {
       releaseId: "rel-test-0001",
@@ -150,11 +149,10 @@ describe("authority 2: the founder release ceiling is twenty", () => {
       actor: "Samuel Boadu",
       reason: "Founder approved this exact unit for the private early access portal.",
     };
-    // 20 is approvable.
+    // Historical 20 and successor 50 are both valid immutable release facts.
     expect(validateEarlyAccessRelease({ ...base, approvedQuantityLimit: 20 }).ok).toBe(true);
-    // 0 and a decimal are not, and neither is anything past the release
-    // validator's own ceiling of 100.
-    for (const bad of [0, -1, 2.5, 101, Number.NaN]) {
+    expect(validateEarlyAccessRelease({ ...base, approvedQuantityLimit: 50 }).ok).toBe(true);
+    for (const bad of [0, -1, 2.5, 51, Number.NaN]) {
       const result = validateEarlyAccessRelease({ ...base, approvedQuantityLimit: bad });
       expect(result.ok, `${bad} should be refused`).toBe(false);
     }
@@ -162,17 +160,17 @@ describe("authority 2: the founder release ceiling is twenty", () => {
 });
 
 describe("authority 3: a declared Product Control ceiling may express the whole band", () => {
-  it("accepts a declared maxUnitsPerOrder anywhere in 1..20 and refuses 21", async () => {
+  it("accepts a declared maxUnitsPerOrder anywhere in 1..50 and refuses 51", async () => {
     // The eligibility contract is what a future Product Control source will be
-    // measured against. It must admit 20, or wiring that source later would
+    // measured against. It must admit 50, or wiring that source later would
     // silently re-cap the round.
     const { assessEarlyAccessEligibility } = await import("../catalog/eligibility");
     expect(typeof assessEarlyAccessEligibility).toBe("function");
 
     // Proven directly against the band the contract is written in terms of.
-    for (const declared of [EARLY_ACCESS_MIN_QUANTITY, 3, 4, 19, EARLY_ACCESS_MAX_QUANTITY]) {
+    for (const declared of [EARLY_ACCESS_MIN_QUANTITY, 3, 20, 21, 49, EARLY_ACCESS_MAX_QUANTITY]) {
       expect(declared >= EARLY_ACCESS_MIN_QUANTITY && declared <= EARLY_ACCESS_MAX_QUANTITY).toBe(true);
     }
-    expect(21 <= EARLY_ACCESS_MAX_QUANTITY).toBe(false);
+    expect(51 <= EARLY_ACCESS_MAX_QUANTITY).toBe(false);
   });
 });

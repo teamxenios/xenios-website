@@ -1,7 +1,7 @@
 /**
  * THE QUANTITY BAND, END TO END.
  *
- * One file holding the whole mandate for the one-through-twenty widening, so a
+ * One file holding the whole mandate for the one-through-fifty widening, so a
  * later change that narrows the band, or that lets duplicate lines walk past
  * it, fails here rather than in production.
  *
@@ -9,14 +9,13 @@
  * hurt if they broke:
  *
  *   1. The cap is PER EXACT VARIANT and is applied to the AGGREGATE. Duplicate
- *      cart lines merge into one canonical line, so twenty is twenty however
- *      the browser spells it, and twenty-one is refused however it is split.
+ *      cart lines merge into one canonical line, so fifty is fifty however
+ *      the browser spells it, and fifty-one is refused however it is split.
  *   2. The server is the authority. The browser's max attribute, its line
  *      count, and its price echo are all input, and none of them decides.
- *   3. Quantity flows through unchanged. One line of twenty stays ONE line of
- *      twenty in the quote, the checkout, the invoice, the settlement, the
- *      receipt, the child release and every projection. Twenty units never
- *      become twenty orders, twenty releases or twenty emails.
+ *   3. Quantity flows through unchanged. One line of fifty stays ONE line of
+ *      fifty in the quote, checkout, invoice, settlement, receipt, child
+ *      release and every projection. Fifty units never become fifty orders.
  */
 
 import { describe, expect, it } from "vitest";
@@ -50,13 +49,13 @@ const BPC_PRICE = 3350;
 const NAD_PRICE = 10075;
 
 /**
- * The catalogue this suite buys from. `quantityLimit: 20` is Product Control
+ * The catalogue this suite buys from. `quantityLimit: 50` is Product Control
  * declaring the whole band available for these two units; the narrower case
  * (a limit BELOW the band) has its own test rather than being the default.
  */
 const units: CartCatalogUnit[] = [
-  { ...BPC, displayName: "BPC-157 Research Material", strength: "5 mg", sku: "R360-BPC157-5MG-VIAL", purchasable: true, availability: "AVAILABLE", priceCents: BPC_PRICE, currency: "USD", quantityLimit: 20, supplierReady: true },
-  { ...NAD, displayName: "NAD+ Research Material", strength: "1000 mg", sku: "R360-NAD-1000MG-VIAL", purchasable: true, availability: "AVAILABLE", priceCents: NAD_PRICE, currency: "USD", quantityLimit: 20, supplierReady: true },
+  { ...BPC, displayName: "BPC-157 Research Material", strength: "5 mg", sku: "R360-BPC157-5MG-VIAL", purchasable: true, availability: "AVAILABLE", priceCents: BPC_PRICE, currency: "USD", quantityLimit: 50, supplierReady: true },
+  { ...NAD, displayName: "NAD+ Research Material", strength: "1000 mg", sku: "R360-NAD-1000MG-VIAL", purchasable: true, availability: "AVAILABLE", priceCents: NAD_PRICE, currency: "USD", quantityLimit: 50, supplierReady: true },
   { productId: "PEX-050", variantId: "VAR-SCARCE", displayName: "Scarce", strength: "2 mg", sku: "SCARCE", purchasable: true, availability: "AVAILABLE", priceCents: 5000, currency: "USD", quantityLimit: 2, supplierReady: true },
 ];
 
@@ -133,11 +132,11 @@ function deps(nowMs = Date.parse("2026-08-11T18:00:00.000Z")) {
 
 // ---------------------------------------------------------------------------
 describe("the band itself", () => {
-  it("accepts one and twenty and refuses everything outside", () => {
+  it("accepts the founder boundaries through fifty and refuses everything outside", () => {
     expect(EARLY_ACCESS_MIN_QUANTITY).toBe(1);
-    expect(EARLY_ACCESS_MAX_QUANTITY).toBe(20);
+    expect(EARLY_ACCESS_MAX_QUANTITY).toBe(50);
 
-    for (const accepted of [1, 2, 3, 19, 20]) {
+    for (const accepted of [1, 2, 3, 20, 21, 49, 50]) {
       expect(isEarlyAccessQuantity(accepted), `${accepted} should be accepted`).toBe(true);
     }
     // Zero, negative, past the ceiling, decimal, NaN, both infinities, and
@@ -145,8 +144,8 @@ describe("the band itself", () => {
     for (const refused of [
       0,
       -1,
-      -20,
-      21,
+      -50,
+      51,
       100,
       1.5,
       19.999,
@@ -161,10 +160,10 @@ describe("the band itself", () => {
   });
 
   it("coerces nothing: a quantity must already BE a number", () => {
-    // The whole class of bug this guard exists for. "20" is not 20, true is not
+    // The whole class of bug this guard exists for. "50" is not 50, true is not
     // 1, and an empty string is not 0, however willing JavaScript is to pretend
     // otherwise.
-    for (const refused of ["1", "20", "", " ", true, false, null, undefined, [], [20], {}, 20n]) {
+    for (const refused of ["1", "50", "", " ", true, false, null, undefined, [], [50], {}, 50n]) {
       expect(isEarlyAccessQuantity(refused), `${String(refused)} should be refused`).toBe(false);
     }
   });
@@ -200,7 +199,7 @@ describe("the pre-existing promotion authority is byte-identical", () => {
 
   it("introduces no unauthorized discount anywhere in the widened band", () => {
     // Quantity 3 at 2000 basis points is the ONLY discount that exists. Every
-    // other quantity in the band carries zero, including the seventeen the
+    // other quantity in the band carries zero, including the forty-seven the
     // widening added.
     const discounted = EARLY_ACCESS_PROMOTIONS.filter((p) => p.discountBasisPoints !== 0);
     expect(discounted).toHaveLength(1);
@@ -228,6 +227,9 @@ describe("the pre-existing promotion authority is byte-identical", () => {
       [6, 0],
       [10, 0],
       [20, 0],
+      [21, 0],
+      [49, 0],
+      [50, 0],
     ];
     for (const [quantity, discountCents] of expected) {
       const promotion = earlyAccessPromotionFor(quantity);
@@ -244,41 +246,41 @@ describe("the pre-existing promotion authority is byte-identical", () => {
 describe("cart canonicalization, per exact variant", () => {
   it("merges duplicate lines of one variant into a canonical aggregate", () => {
     const canonical = normalizeCartItems([
-      item(BPC, 10, BPC_PRICE),
-      item(BPC, 10, BPC_PRICE),
+      item(BPC, 25, BPC_PRICE),
+      item(BPC, 25, BPC_PRICE),
     ]);
     expect(canonical).not.toBeNull();
     expect(canonical).toHaveLength(1);
-    expect(canonical![0]!.quantity).toBe(20);
+    expect(canonical![0]!.quantity).toBe(50);
   });
 
   it("refuses an aggregate past the cap even though each line is legal", () => {
-    // 10 and 11 are each a perfectly good quantity. Their SUM is not.
-    expect(normalizeCartItems([item(BPC, 10, BPC_PRICE), item(BPC, 11, BPC_PRICE)])).toBeNull();
+    // 25 and 26 are each good quantities. Their SUM is not.
+    expect(normalizeCartItems([item(BPC, 25, BPC_PRICE), item(BPC, 26, BPC_PRICE)])).toBeNull();
     // And no split gets there either.
     expect(
       normalizeCartItems([
-        item(BPC, 7, BPC_PRICE),
-        item(BPC, 7, BPC_PRICE),
-        item(BPC, 7, BPC_PRICE),
+        item(BPC, 17, BPC_PRICE),
+        item(BPC, 17, BPC_PRICE),
+        item(BPC, 17, BPC_PRICE),
       ]),
     ).toBeNull();
-    // Twenty single-unit lines is exactly the cap and is allowed.
-    const twenty = normalizeCartItems(
-      Array.from({ length: 20 }, () => item(BPC, 1, BPC_PRICE)),
+    // Fifty single-unit lines is exactly the cap and is allowed.
+    const fifty = normalizeCartItems(
+      Array.from({ length: 50 }, () => item(BPC, 1, BPC_PRICE)),
     );
-    expect(twenty).toHaveLength(1);
-    expect(twenty![0]!.quantity).toBe(20);
-    // Twenty-one is not.
+    expect(fifty).toHaveLength(1);
+    expect(fifty![0]!.quantity).toBe(50);
+    // Fifty-one is not.
     expect(
-      normalizeCartItems(Array.from({ length: 21 }, () => item(BPC, 1, BPC_PRICE))),
+      normalizeCartItems(Array.from({ length: 51 }, () => item(BPC, 1, BPC_PRICE))),
     ).toBeNull();
   });
 
   it("keeps distinct variants distinct, each with its own cap", () => {
-    const canonical = normalizeCartItems([item(BPC, 20, BPC_PRICE), item(NAD, 20, NAD_PRICE)]);
+    const canonical = normalizeCartItems([item(BPC, 50, BPC_PRICE), item(NAD, 50, NAD_PRICE)]);
     expect(canonical).toHaveLength(2);
-    expect(canonical!.map((line) => line.quantity)).toEqual([20, 20]);
+    expect(canonical!.map((line) => line.quantity)).toEqual([50, 50]);
   });
 
   it("refuses duplicate lines that disagree about the price they were shown", () => {
@@ -288,7 +290,7 @@ describe("cart canonicalization, per exact variant", () => {
   });
 
   it("refuses a single line outside the band before any merging happens", () => {
-    for (const bad of [0, 21, -1, 2.5, "3", null, undefined, Number.NaN]) {
+    for (const bad of [0, 51, -1, 2.5, "3", null, undefined, Number.NaN]) {
       expect(normalizeCartItems([item(BPC, bad, BPC_PRICE)]), `${String(bad)}`).toBeNull();
     }
   });
@@ -310,17 +312,17 @@ describe("cart canonicalization, per exact variant", () => {
 });
 
 // ---------------------------------------------------------------------------
-describe("the quote, at twenty", () => {
+describe("the quote, at fifty", () => {
   it("computes the line and cart totals from the SERVER price times the quantity", async () => {
     const { quote } = deps();
-    const result = await quoteEarlyAccessCart(quote, CUSTOMER, requestOf([item(BPC, 20, BPC_PRICE)]));
+    const result = await quoteEarlyAccessCart(quote, CUSTOMER, requestOf([item(BPC, 50, BPC_PRICE)]));
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.quote.lines).toHaveLength(1);
-    expect(result.quote.lines[0]!.quantity).toBe(20);
-    expect(result.quote.lines[0]!.subtotalCents).toBe(BPC_PRICE * 20);
-    expect(result.quote.lines[0]!.payableCents).toBe(BPC_PRICE * 20);
-    expect(result.quote.subtotalCents).toBe(BPC_PRICE * 20);
+    expect(result.quote.lines[0]!.quantity).toBe(50);
+    expect(result.quote.lines[0]!.subtotalCents).toBe(BPC_PRICE * 50);
+    expect(result.quote.lines[0]!.payableCents).toBe(BPC_PRICE * 50);
+    expect(result.quote.subtotalCents).toBe(BPC_PRICE * 50);
     expect(result.quote.payableTotalCents).toBe(
       result.quote.subtotalCents -
         result.quote.discountCents +
@@ -335,7 +337,7 @@ describe("the quote, at twenty", () => {
     const result = await quoteEarlyAccessCart(
       quote,
       CUSTOMER,
-      requestOf([item(BPC, 20, 1)]),
+      requestOf([item(BPC, 50, 1)]),
     );
     expect(result).toMatchObject({ ok: false, code: "LINE_REFUSED" });
     if (result.ok) return;
@@ -347,15 +349,15 @@ describe("the quote, at twenty", () => {
     const result = await quoteEarlyAccessCart(
       quote,
       CUSTOMER,
-      requestOf([item(BPC, 10, BPC_PRICE), item(BPC, 10, BPC_PRICE)]),
+      requestOf([item(BPC, 25, BPC_PRICE), item(BPC, 25, BPC_PRICE)]),
     );
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     // ONE line, not two. This is what stops duplicate browser lines becoming
     // duplicate supplier child orders.
     expect(result.quote.lines).toHaveLength(1);
-    expect(result.quote.lines[0]!.quantity).toBe(20);
-    expect(result.quote.subtotalCents).toBe(BPC_PRICE * 20);
+    expect(result.quote.lines[0]!.quantity).toBe(50);
+    expect(result.quote.subtotalCents).toBe(BPC_PRICE * 50);
   });
 
   it("refuses a duplicate pair whose aggregate is past the cap", async () => {
@@ -363,34 +365,34 @@ describe("the quote, at twenty", () => {
     const result = await quoteEarlyAccessCart(
       quote,
       CUSTOMER,
-      requestOf([item(BPC, 10, BPC_PRICE), item(BPC, 11, BPC_PRICE)]),
+      requestOf([item(BPC, 25, BPC_PRICE), item(BPC, 26, BPC_PRICE)]),
     );
     expect(result).toMatchObject({ ok: false, code: "CART_INVALID" });
     expect(await store.get("xeaq_12345678901234567890")).toBeNull();
   });
 
-  it("lets two different variants each carry twenty", async () => {
+  it("lets two different variants each carry fifty", async () => {
     const { quote } = deps();
     const result = await quoteEarlyAccessCart(
       quote,
       CUSTOMER,
-      requestOf([item(BPC, 20, BPC_PRICE), item(NAD, 20, NAD_PRICE)]),
+      requestOf([item(BPC, 50, BPC_PRICE), item(NAD, 50, NAD_PRICE)]),
     );
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.quote.lines.map((line) => line.quantity)).toEqual([20, 20]);
-    expect(result.quote.subtotalCents).toBe(BPC_PRICE * 20 + NAD_PRICE * 20);
+    expect(result.quote.lines.map((line) => line.quantity)).toEqual([50, 50]);
+    expect(result.quote.subtotalCents).toBe(BPC_PRICE * 50 + NAD_PRICE * 50);
   });
 
   it("does not let the widened band bypass Product Control", async () => {
-    // The scarce unit declares a limit of 2. Twenty is inside the ROUND's band
+    // The scarce unit declares a limit of 2. Fifty is inside the ROUND's band
     // and still refused, truthfully, as a quantity problem. It is never
     // silently lowered to 2 and never substituted for another variant.
     const { quote, store } = deps();
     const result = await quoteEarlyAccessCart(
       quote,
       CUSTOMER,
-      requestOf([item({ productId: "PEX-050", variantId: "VAR-SCARCE" }, 20, 5000)]),
+      requestOf([item({ productId: "PEX-050", variantId: "VAR-SCARCE" }, 50, 5000)]),
     );
     expect(result).toMatchObject({ ok: false, code: "LINE_REFUSED" });
     if (result.ok) return;
@@ -399,17 +401,17 @@ describe("the quote, at twenty", () => {
   });
 
   it("changes the intent identity when the quantity changes", async () => {
-    const twenty = await quoteEarlyAccessCart(deps().quote, CUSTOMER, requestOf([item(BPC, 20, BPC_PRICE)]));
-    const nineteen = await quoteEarlyAccessCart(deps().quote, CUSTOMER, requestOf([item(BPC, 19, BPC_PRICE)]));
-    expect(twenty.ok && nineteen.ok).toBe(true);
-    if (!twenty.ok || !nineteen.ok) return;
-    expect(twenty.quote.intentHash).not.toBe(nineteen.quote.intentHash);
+    const fifty = await quoteEarlyAccessCart(deps().quote, CUSTOMER, requestOf([item(BPC, 50, BPC_PRICE)]));
+    const fortyNine = await quoteEarlyAccessCart(deps().quote, CUSTOMER, requestOf([item(BPC, 49, BPC_PRICE)]));
+    expect(fifty.ok && fortyNine.ok).toBe(true);
+    if (!fifty.ok || !fortyNine.ok) return;
+    expect(fifty.quote.intentHash).not.toBe(fortyNine.quote.intentHash);
   });
 });
 
 // ---------------------------------------------------------------------------
-describe("checkout, invoice and replay at twenty", () => {
-  async function placed(items: readonly EarlyAccessCartItemInput[] = [item(BPC, 20, BPC_PRICE)]) {
+describe("checkout, invoice and replay at fifty", () => {
+  async function placed(items: readonly EarlyAccessCartItemInput[] = [item(BPC, 50, BPC_PRICE)]) {
     const d = deps();
     const quoted = await quoteEarlyAccessCart(d.quote, CUSTOMER, requestOf(items));
     if (!quoted.ok) throw new Error("fixture quote refused");
@@ -421,15 +423,15 @@ describe("checkout, invoice and replay at twenty", () => {
     return { d, quoted, result };
   }
 
-  it("carries twenty into ONE child order and ONE invoice line", async () => {
+  it("carries fifty into ONE child order and ONE invoice line", async () => {
     const { quoted, result } = await placed();
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    // Twenty units are not twenty orders.
+    // Fifty units are not fifty orders.
     expect(result.checkout.children).toHaveLength(1);
-    expect(result.checkout.children[0]!.quantity).toBe(20);
+    expect(result.checkout.children[0]!.quantity).toBe(50);
     expect(result.checkout.invoice.lines).toHaveLength(1);
-    expect(result.checkout.invoice.lines[0]!.quantity).toBe(20);
+    expect(result.checkout.invoice.lines[0]!.quantity).toBe(50);
     // The invoice total IS the quote total. One amount, one payment reference.
     expect(result.checkout.invoice.payableTotalCents).toBe(quoted.quote.payableTotalCents);
     expect(result.checkout.invoice.paymentReference).toBe("XEACART-0123456789ABCDEF");
@@ -445,7 +447,7 @@ describe("checkout, invoice and replay at twenty", () => {
     });
     expect(replay).toMatchObject({ ok: true, replayed: true });
     if (!replay.ok) return;
-    expect(replay.checkout.children.map((child) => child.quantity)).toEqual([20]);
+    expect(replay.checkout.children.map((child) => child.quantity)).toEqual([50]);
     expect(replay.checkout.invoice.payableTotalCents).toBe(quoted.quote.payableTotalCents);
     // One checkout, not two.
     expect(replay.checkout.cartCheckoutNumber).toBe("XEC-0123456789ABCDEF");
@@ -453,7 +455,7 @@ describe("checkout, invoice and replay at twenty", () => {
 
   it("creates ONE checkout under concurrent confirms of the same intent", async () => {
     const d = deps();
-    const quoted = await quoteEarlyAccessCart(d.quote, CUSTOMER, requestOf([item(BPC, 20, BPC_PRICE)]));
+    const quoted = await quoteEarlyAccessCart(d.quote, CUSTOMER, requestOf([item(BPC, 50, BPC_PRICE)]));
     if (!quoted.ok) throw new Error("fixture quote refused");
     const attempt = () =>
       checkoutEarlyAccessCart(d.checkout, CUSTOMER, {
@@ -466,19 +468,19 @@ describe("checkout, invoice and replay at twenty", () => {
     expect(created).toHaveLength(1);
     for (const result of results) {
       expect(result.ok).toBe(true);
-      if (result.ok) expect(result.checkout.children[0]!.quantity).toBe(20);
+      if (result.ok) expect(result.checkout.children[0]!.quantity).toBe(50);
     }
   });
 
   it("refuses a checkout whose intent no longer matches the changed quantity", async () => {
     const d = deps();
-    const twenty = await quoteEarlyAccessCart(d.quote, CUSTOMER, requestOf([item(BPC, 20, BPC_PRICE)]));
-    const nineteen = await quoteEarlyAccessCart(d.quote, CUSTOMER, requestOf([item(BPC, 19, BPC_PRICE)]));
-    if (!twenty.ok || !nineteen.ok) throw new Error("fixture quote refused");
+    const fifty = await quoteEarlyAccessCart(d.quote, CUSTOMER, requestOf([item(BPC, 50, BPC_PRICE)]));
+    const fortyNine = await quoteEarlyAccessCart(d.quote, CUSTOMER, requestOf([item(BPC, 49, BPC_PRICE)]));
+    if (!fifty.ok || !fortyNine.ok) throw new Error("fixture quote refused");
     const result = await checkoutEarlyAccessCart(d.checkout, CUSTOMER, {
-      quoteId: nineteen.quote.quoteId,
+      quoteId: fortyNine.quote.quoteId,
       idempotencyKey: "xeac_1234567890123456",
-      expectedIntentHash: twenty.quote.intentHash,
+      expectedIntentHash: fifty.quote.intentHash,
     });
     expect(result).toMatchObject({ ok: false, code: "QUOTE_CHANGED" });
   });
@@ -488,7 +490,7 @@ describe("checkout, invoice and replay at twenty", () => {
     if (!result.ok) return;
     const view = customerCheckoutView(result.checkout);
     expect(view.children).toHaveLength(1);
-    expect(view.children[0]!.quantity).toBe(20);
+    expect(view.children[0]!.quantity).toBe(50);
     // The projection is the boundary: quantity crosses it, supplier identity
     // does not.
     expect(JSON.stringify(view)).not.toContain("supplier-renew360");
@@ -498,7 +500,7 @@ describe("checkout, invoice and replay at twenty", () => {
 });
 
 // ---------------------------------------------------------------------------
-describe("settlement and release at twenty", () => {
+describe("settlement and release at fifty", () => {
   function record(quantity: number): EarlyAccessCartCheckoutRecord {
     const subtotal = BPC_PRICE * quantity;
     return {
@@ -554,9 +556,9 @@ describe("settlement and release at twenty", () => {
     } satisfies EarlyAccessCartCheckoutRecord;
   }
 
-  async function settledAtTwenty() {
+  async function settledAtFifty() {
     const store = new InMemoryEarlyAccessCartStore();
-    const checkout = record(20);
+    const checkout = record(50);
     await store.commit(checkout);
     const deps = { checkouts: store, settlements: store };
     const proof = await recordEarlyAccessCartExternalProof(deps, {
@@ -581,21 +583,21 @@ describe("settlement and release at twenty", () => {
     return { store, checkout, deps, settled };
   }
 
-  it("settles once, receipts once, and releases ONE child order of twenty", async () => {
-    const { checkout, settled } = await settledAtTwenty();
+  it("settles once, receipts once, and releases ONE child order of fifty", async () => {
+    const { checkout, settled } = await settledAtFifty();
     expect(settled.committed).toBe(true);
     if (!settled.committed) return;
-    // Twenty units are one release, not twenty.
+    // Fifty units are one release, not fifty.
     expect(settled.settlement.childReleases).toHaveLength(1);
-    expect(settled.settlement.childReleases[0]!.quantity).toBe(20);
+    expect(settled.settlement.childReleases[0]!.quantity).toBe(50);
     expect(settled.settlement.childReleases[0]!.orderNumber).toBe("XEA-CART-01234567-01");
     // One receipt, for the one amount the invoice stated.
     expect(settled.settlement.receipt.verifiedAmountCents).toBe(checkout.invoice.payableTotalCents);
-    expect(settled.settlement.verifiedAmountCents).toBe(BPC_PRICE * 20);
+    expect(settled.settlement.verifiedAmountCents).toBe(BPC_PRICE * 50);
   });
 
   it("settles only once however many times it is asked", async () => {
-    const { checkout, deps, settled } = await settledAtTwenty();
+    const { checkout, deps, settled } = await settledAtFifty();
     expect(settled.committed).toBe(true);
     const again = await settleEarlyAccessCart(deps, {
       cartCheckoutNumber: checkout.cartCheckoutNumber,
@@ -613,7 +615,7 @@ describe("settlement and release at twenty", () => {
     // number, a transaction id, two confirmations and an actor. There is no
     // quantity field and no amount field, so an operator cannot state either:
     // the amount is read from the durable invoice.
-    const { checkout, settled } = await settledAtTwenty();
+    const { checkout, settled } = await settledAtFifty();
     if (!settled.committed) return;
     expect(settled.settlement.verifiedAmountCents).toBe(checkout.invoice.payableTotalCents);
     expect(settled.settlement.childReleases[0]!.quantity).toBe(
@@ -625,7 +627,7 @@ describe("settlement and release at twenty", () => {
     // Same argument, same shape. Proof metadata is a hash, a filename, a
     // content type, a byte size and a provenance note. No quantity, no money.
     const store = new InMemoryEarlyAccessCartStore();
-    const checkout = record(20);
+    const checkout = record(50);
     await store.commit(checkout);
     const deps = { checkouts: store, settlements: store };
     await recordEarlyAccessCartExternalProof(deps, {
@@ -639,13 +641,13 @@ describe("settlement and release at twenty", () => {
       at: "2026-08-11T00:01:00.000Z",
     });
     const after = await store.byCheckoutNumber(checkout.cartCheckoutNumber);
-    expect(after?.children[0]!.quantity).toBe(20);
-    expect(after?.invoice.lines[0]!.quantity).toBe(20);
-    expect(after?.invoice.payableTotalCents).toBe(BPC_PRICE * 20);
+    expect(after?.children[0]!.quantity).toBe(50);
+    expect(after?.invoice.lines[0]!.quantity).toBe(50);
+    expect(after?.invoice.payableTotalCents).toBe(BPC_PRICE * 50);
   });
 
-  it("shows the customer one fulfilment line of twenty, with no supplier identity", async () => {
-    const { store, checkout, settled } = await settledAtTwenty();
+  it("shows the customer one fulfilment line of fifty, with no supplier identity", async () => {
+    const { store, checkout, settled } = await settledAtFifty();
     expect(settled.committed).toBe(true);
     // The real durable status, projected by the real projection, rather than a
     // shape this test invented. A hand-built status would prove the projection
@@ -654,7 +656,7 @@ describe("settlement and release at twenty", () => {
     expect(durable).not.toBeNull();
     const status = projectEarlyAccessCustomerCartStatus(durable!, "2026-08-11T00:05:00.000Z");
     expect(status.fulfilment.childOrders).toHaveLength(1);
-    expect(status.fulfilment.childOrders[0]!.quantity).toBe(20);
+    expect(status.fulfilment.childOrders[0]!.quantity).toBe(50);
     // The server-side status DOES carry supplier identity; the projection is
     // what removes it. Both halves are asserted so the test cannot pass merely
     // because the fixture never had a supplier.

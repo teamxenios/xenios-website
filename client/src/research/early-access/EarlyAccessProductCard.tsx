@@ -93,7 +93,7 @@ export function EarlyAccessProductCard({
   testId = "early-access-product-card",
 }: EarlyAccessProductCardProps) {
   const sellable = product.availability !== "TEMPORARILY_HELD";
-  const needsManualReview =
+  const needsOrderRequest =
     sellable &&
     quantity !== null &&
     (product.quantityLimit === null || quantity > product.quantityLimit);
@@ -192,8 +192,8 @@ export function EarlyAccessProductCard({
         >
           {selected
             ? "Remove"
-            : needsManualReview
-              ? "Request manual review"
+            : needsOrderRequest
+              ? "Request this order"
               : ACTION_COPY[product.availability]}
         </button>
       ) : null}

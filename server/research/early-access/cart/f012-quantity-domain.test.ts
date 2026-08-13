@@ -28,16 +28,17 @@ function releaseAt(quantity: number) {
   });
 }
 
-describe("F-012 pre-M66 application/database agreement", () => {
-  it("permits direct authority at 20 and refuses a release authority of 21", () => {
+describe("founder quantity-50 application and prepared-database agreement", () => {
+  it("permits normal-order release authority through 50 and refuses 51", () => {
     expect(EARLY_ACCESS_CART_MAX_QUANTITY).toBe(DIRECT_EARLY_ACCESS_MAX_QUANTITY);
-    expect(EARLY_ACCESS_CART_MAX_QUANTITY).toBe(20);
+    expect(EARLY_ACCESS_CART_MAX_QUANTITY).toBe(50);
     expect(REQUEST_MAX_QUANTITY).toBe(50);
-    expect(releaseAt(20).ok).toBe(true);
-    expect(releaseAt(21)).toEqual({ ok: false, code: "QUANTITY_LIMIT_INVALID" });
+    expect(releaseAt(21).ok).toBe(true);
+    expect(releaseAt(50).ok).toBe(true);
+    expect(releaseAt(51)).toEqual({ ok: false, code: "QUANTITY_LIMIT_INVALID" });
   });
 
-  it("pins the accepted durable M65 band to the same direct maximum", () => {
+  it("pins the old accepted durable M65 predecessor without treating it as current policy", () => {
     const m65 = readFileSync(
       path.resolve("supabase/migrations/20260811120000_research_early_access_cart_quantity_band.sql"),
       "utf8",

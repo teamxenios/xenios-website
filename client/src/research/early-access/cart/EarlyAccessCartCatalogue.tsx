@@ -8,7 +8,7 @@ import type { BrowserCart, BrowserCartItem } from "./cartStore";
 import { browserCartUnitCount } from "./cartStore";
 import { routeEarlyAccessQuantity } from "@shared/research/early-access-quantity";
 
-export type EarlyAccessManualQuantityRequest = Readonly<{
+export type EarlyAccessOrderRequest = Readonly<{
   productId: string;
   variantId: string;
   requestedQuantity: number;
@@ -31,14 +31,14 @@ export function EarlyAccessCartCatalogue({
   onPut,
   onRemove,
   onOpenCart,
-  onRequestManualReview,
+  onRequestOrder,
 }: Readonly<{
   products: readonly EarlyAccessCardProduct[];
   cart: BrowserCart;
   onPut(item: BrowserCartItem): void;
   onRemove(productId: string, variantId: string): void;
   onOpenCart(): void;
-  onRequestManualReview(request: EarlyAccessManualQuantityRequest): void;
+  onRequestOrder(request: EarlyAccessOrderRequest): void;
 }>) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "available" | "held">("all");
@@ -118,7 +118,7 @@ export function EarlyAccessCartCatalogue({
             const held = product.availability === "TEMPORARILY_HELD" || product.unitPriceCents === null;
             const quantity = item?.quantity ?? draftQuantities[key] ?? 1;
             const route = routeEarlyAccessQuantity(quantity, product.quantityLimit);
-            const needsManualReview = route?.kind === "manual_review";
+            const needsOrderRequest = route?.kind === "order_request";
             return (
               <article key={key} className="card grid min-w-0 content-start gap-2 p-4">
                 <h2 className="body-m font-700 leading-snug">{product.name}</h2>
@@ -155,8 +155,8 @@ export function EarlyAccessCartCatalogue({
                       onClick={() => {
                         if (item !== null) {
                           onRemove(item.productId, item.variantId);
-                        } else if (route?.kind === "manual_review") {
-                          onRequestManualReview({
+                        } else if (route?.kind === "order_request") {
+                          onRequestOrder({
                             productId: product.productId,
                             variantId: product.variantId,
                             requestedQuantity: route.quantity,
@@ -172,8 +172,8 @@ export function EarlyAccessCartCatalogue({
                     >
                       {item
                         ? "Remove from cart"
-                        : needsManualReview
-                          ? "Request manual review"
+                        : needsOrderRequest
+                          ? "Request this order"
                           : "Add to cart"}
                     </button>
                   </>

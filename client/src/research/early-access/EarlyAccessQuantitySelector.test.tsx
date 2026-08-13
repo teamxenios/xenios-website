@@ -97,8 +97,8 @@ describe("EarlyAccessQuantitySelector", () => {
 
     const note = fieldset?.querySelector("p");
     expect(note?.textContent).toContain("3 units is the Research Bundle, 20% savings");
-    expect(note?.textContent).toContain("Direct checkout supports up to 20 units");
-    expect(note?.textContent).toContain(`Requests up to ${EARLY_ACCESS_QUANTITY_MAX} route to manual review`);
+    expect(note?.textContent).toContain(`Normal order quantities are 1 through ${EARLY_ACCESS_QUANTITY_MAX} units`);
+    expect(note?.textContent).not.toMatch(/manual review/i);
     expect(note?.textContent).not.toMatch(/\$\s*\d/);
   });
 
@@ -219,7 +219,7 @@ describe("EarlyAccessQuantitySelector", () => {
     expect(onChange).toHaveBeenLastCalledWith(20);
     type(view.host, "50");
     expect(onChange).toHaveBeenLastCalledWith(20);
-    expect(view.host.textContent).toContain("This direct cart line supports up to 20 units");
+    expect(view.host.textContent).toContain("This product is currently released for direct checkout up to 20 units");
   });
 
   it("shows no selection when an old cart value exceeds a newly narrower ceiling", () => {

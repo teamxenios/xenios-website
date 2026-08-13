@@ -26,7 +26,7 @@ function row(overrides: EarlyAccessCatalogRowView = {}): EarlyAccessCatalogRowVi
     description: "Lyophilised vial for research use.",
     availability: "AVAILABLE",
     purchasable: true,
-    quantityLimit: 20,
+    quantityLimit: 50,
     ...overrides,
   };
 }
@@ -86,10 +86,10 @@ describe("row projection", () => {
     expect(product?.strength).toBe("5 mg");
     expect(product?.unitPriceCents).toBe(5_600);
     expect(product?.availability).toBe("AVAILABLE");
-    expect(product?.quantityLimit).toBe(20);
+    expect(product?.quantityLimit).toBe(50);
   });
 
-  it.each([undefined, null, 0, 21, 2.5, "20"])(
+  it.each([undefined, null, 0, 51, 2.5, "50"])(
     "drops a sellable row with malformed quantity authority %s",
     (quantityLimit) => {
       expect(toCardProduct(row({ quantityLimit }))).toBeNull();
@@ -99,6 +99,7 @@ describe("row projection", () => {
   it("preserves a narrower server-projected authority ceiling", () => {
     expect(toCardProduct(row({ quantityLimit: 19 }))?.quantityLimit).toBe(19);
     expect(toCardProduct(row({ quantityLimit: 20 }))?.quantityLimit).toBe(20);
+    expect(toCardProduct(row({ quantityLimit: 50 }))?.quantityLimit).toBe(50);
   });
 
   it.each([
@@ -159,7 +160,7 @@ describe("founder-held rows carry no price and must still render", () => {
     expect(product).not.toBeNull();
     expect(product?.availability).toBe("TEMPORARILY_HELD");
     expect(product?.unitPriceCents).toBeNull();
-    expect(product?.quantityLimit).toBe(20);
+    expect(product?.quantityLimit).toBe(50);
   });
 
   it("still drops a sellable row with no usable price", () => {

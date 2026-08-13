@@ -80,12 +80,12 @@ function versioned(rule: EarlyAccessPromotionRule): EarlyAccessPromotion {
  * discount rules, so a quantity outside the table is a refusal rather than a silent
  * fall through to no promotion.
  *
- * WHY FOUR THROUGH TWENTY CARRY NO DISCOUNT
- * -----------------------------------------
- * Direct commerce accepts up to twenty units per variant. That widened the QUANTITY
+ * WHY FOUR THROUGH FIFTY CARRY NO DISCOUNT
+ * ----------------------------------------
+ * Normal commerce accepts up to fifty units per variant. That widened the QUANTITY
  * band; it decided nothing about price. The only discount any founder release
  * approved is the twenty percent at exactly three units below, so that is the only
- * discount in this table, and four through twenty are listed at zero basis points
+ * discount in this table, and four through fifty are listed at zero basis points
  * for the same reason one and two are: a quantity the table does not name is refused
  * outright, and refusing every quantity above three would have made the widened band
  * unreachable.

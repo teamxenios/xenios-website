@@ -52,9 +52,7 @@ export interface EarlyAccessQuantitySelectorProps {
  * which is the property the card actually needs, and it is the standard way to
  * express a wide numeric range on a phone.
  *
- * THE MAX HERE IS A COURTESY, NOT A CHECK. Quantities above the direct-cart
- * ceiling are requests and route to manual review; they are never inserted
- * into the current cart. Every direct quantity is re-read on the server before
+ * THE MAX HERE IS A COURTESY, NOT A CHECK. Every quantity is re-read on the server before
  * it can reach a quote, an order or a supplier release.
  *
  * It prices nothing. The line total is whatever the server returns on the order
@@ -218,9 +216,9 @@ export function EarlyAccessQuantitySelector({
       */}
       <p id={noteId} className="body-xs text-ink-mute min-w-0">
         {effectiveMax < REQUEST_MAX_QUANTITY ? (
-          <>This direct cart line supports up to {effectiveMax} units. </>
+          <>This product is currently released for direct checkout up to {effectiveMax} units. </>
         ) : (
-          <>Direct checkout supports up to {DIRECT_EARLY_ACCESS_MAX_QUANTITY} units. Requests up to {REQUEST_MAX_QUANTITY} route to manual review. </>
+          <>Normal order quantities are {EARLY_ACCESS_MIN_QUANTITY} through {DIRECT_EARLY_ACCESS_MAX_QUANTITY} units. </>
         )}
         3 units is the Research Bundle, 20% savings.
       </p>

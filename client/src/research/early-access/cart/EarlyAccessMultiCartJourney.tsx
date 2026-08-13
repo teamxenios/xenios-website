@@ -27,7 +27,7 @@ import {
 } from "./cartStore";
 import {
   EarlyAccessCartCatalogue,
-  type EarlyAccessManualQuantityRequest,
+  type EarlyAccessOrderRequest,
 } from "./EarlyAccessCartCatalogue";
 import { EarlyAccessCartDetails, cartContactProblems, cartShippingProblems } from "./EarlyAccessCartDetails";
 import { EarlyAccessCartLineIssues } from "./EarlyAccessCartLineIssues";
@@ -140,8 +140,8 @@ export function EarlyAccessMultiCartJourney({
       unresolvedEarlyAccessPaymentInstructions(),
     );
   const [error, setError] = useState<string | null>(null);
-  const [manualRequest, setManualRequest] =
-    useState<EarlyAccessManualQuantityRequest | null>(null);
+  const [orderRequest, setOrderRequest] =
+    useState<EarlyAccessOrderRequest | null>(null);
   const attemptRef = useRef<string | null>(readCartAttemptKey());
   const submitInFlight = useRef(false);
   const lastCheckoutRef = useRef<string | null>(readLastCartCheckoutNumber());
@@ -491,14 +491,14 @@ export function EarlyAccessMultiCartJourney({
 
       <EarlyAccessProgress step={step} onBack={step === "catalog" ? undefined : back} />
       {error ? <p role="alert" className="body-s text-pulse">{error}</p> : null}
-      {manualRequest !== null ? (
+      {orderRequest !== null ? (
         <p
           role="status"
           className="body-s text-ink-2"
-          data-testid="early-access-manual-quantity-route"
+          data-testid="early-access-order-request-route"
         >
-          {manualRequest.requestedQuantity} units requires manual review. Nothing was added
-          to the direct cart or sent to checkout.
+          {orderRequest.requestedQuantity} units is not yet released for direct checkout.
+          Nothing was added to the cart or sent to checkout.
         </p>
       ) : null}
       {lineIssues.length > 0 && step === "catalog" ? (
@@ -528,8 +528,8 @@ export function EarlyAccessMultiCartJourney({
           cart={cart}
           onPut={put}
           onRemove={remove}
-          onRequestManualReview={(request) => {
-            setManualRequest(request);
+          onRequestOrder={(request) => {
+            setOrderRequest(request);
             setError(null);
           }}
           onOpenCart={() => navigate("cart")}

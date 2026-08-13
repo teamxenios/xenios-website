@@ -64,19 +64,19 @@ describe("early access order totals", () => {
 });
 
 describe("early access order quantity", () => {
-  it("accepts only one, two, or three units", () => {
-    for (const quantity of [1, 2, 3]) {
+  it("accepts the normal-order boundaries through fifty", () => {
+    for (const quantity of [1, 2, 3, 20, 21, 49, 50]) {
       const order = createdOrder({ quantity });
       expect(order.line.quantity).toBe(quantity);
       expect(order.orderTotalCents).toBe(12_450 * quantity);
     }
   });
 
-  it("refuses a quantity outside one through twenty", () => {
+  it("refuses a quantity outside one through fifty", () => {
     for (const quantity of [
       0,
       -1,
-      21,
+      51,
       100,
       1.5,
       "2",

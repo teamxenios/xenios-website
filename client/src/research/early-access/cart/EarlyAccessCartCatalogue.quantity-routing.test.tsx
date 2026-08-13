@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { EarlyAccessCardProduct } from "../EarlyAccessProductCard";
 import {
   EarlyAccessCartCatalogue,
-  type EarlyAccessManualQuantityRequest,
+  type EarlyAccessOrderRequest,
 } from "./EarlyAccessCartCatalogue";
 import type { BrowserCartItem } from "./cartStore";
 
@@ -21,7 +21,7 @@ const PRODUCT: EarlyAccessCardProduct = {
   currency: "USD",
   description: "Lyophilised vial for research use.",
   availability: "AVAILABLE",
-  quantityLimit: 20,
+  quantityLimit: 50,
 };
 
 let root: Root | null = null;
@@ -36,7 +36,7 @@ afterEach(() => {
 
 function renderCatalogue(
   onPut: (item: BrowserCartItem) => void,
-  onManual: (request: EarlyAccessManualQuantityRequest) => void,
+  onRequest: (request: EarlyAccessOrderRequest) => void,
 ) {
   host = document.createElement("div");
   document.body.appendChild(host);
@@ -49,7 +49,7 @@ function renderCatalogue(
         onPut={onPut}
         onRemove={() => {}}
         onOpenCart={() => {}}
-        onRequestManualReview={onManual}
+        onRequestOrder={onRequest}
       />,
     );
   });
@@ -72,7 +72,7 @@ function typeQuantity(container: HTMLElement, value: string): void {
 
 function action(container: HTMLElement): HTMLButtonElement {
   const button = Array.from(container.querySelectorAll("button")).find((candidate) =>
-    /add to cart|request manual review/i.test(candidate.textContent ?? ""),
+    /add to cart|request this order/i.test(candidate.textContent ?? ""),
   );
   if (button === undefined) throw new Error("catalogue action missing");
   return button;
@@ -81,8 +81,8 @@ function action(container: HTMLElement): HTMLButtonElement {
 describe("F-012 cart catalogue routing", () => {
   it("adds 20 to the direct cart when all server authority permits it", () => {
     const onPut = vi.fn();
-    const onManual = vi.fn();
-    const view = renderCatalogue(onPut, onManual);
+    const onRequest = vi.fn();
+    const view = renderCatalogue(onPut, onRequest);
     typeQuantity(view, "20");
     expect(action(view).textContent).toContain("Add to cart");
     act(() => action(view).click());
@@ -91,35 +91,53 @@ describe("F-012 cart catalogue routing", () => {
       variantId: "VAR-BPC5",
       quantity: 20,
     });
-    expect(onManual).not.toHaveBeenCalled();
+    expect(onRequest).not.toHaveBeenCalled();
   });
 
-  it("routes 21 to manual review and never calls the direct-cart insert", () => {
+  it("routes 21 to the direct cart under the founder 1..50 authority", () => {
     const onPut = vi.fn();
-    const onManual = vi.fn();
-    const view = renderCatalogue(onPut, onManual);
+    const onRequest = vi.fn();
+    const view = renderCatalogue(onPut, onRequest);
     typeQuantity(view, "21");
-    expect(action(view).textContent).toContain("Request manual review");
+    expect(action(view).textContent).toContain("Add to cart");
     act(() => action(view).click());
-    expect(onManual).toHaveBeenCalledWith({
+    expect(onPut).toHaveBeenCalledWith({
       productId: "PEX-001",
       variantId: "VAR-BPC5",
-      requestedQuantity: 21,
+      quantity: 21,
     });
-    expect(onPut).not.toHaveBeenCalled();
+    expect(onRequest).not.toHaveBeenCalled();
   });
 
-  it("accepts a request for 50 only on the manual branch", () => {
+  it("adds 50 to the direct cart under matching product authority", () => {
     const onPut = vi.fn();
-    const onManual = vi.fn();
-    const view = renderCatalogue(onPut, onManual);
+    const onRequest = vi.fn();
+    const view = renderCatalogue(onPut, onRequest);
     typeQuantity(view, "50");
     act(() => action(view).click());
-    expect(onManual).toHaveBeenCalledWith({
+    expect(onPut).toHaveBeenCalledWith({
       productId: "PEX-001",
       variantId: "VAR-BPC5",
-      requestedQuantity: 50,
+      quantity: 50,
     });
+    expect(onRequest).not.toHaveBeenCalled();
+  });
+
+  it("uses the order-request path for an explicit lower release ceiling", () => {
+    const onPut = vi.fn();
+    const onRequest = vi.fn();
+    const limited = { ...PRODUCT, quantityLimit: 20 };
+    host = document.createElement("div");
+    document.body.appendChild(host);
+    root = createRoot(host);
+    act(() => root?.render(
+      <EarlyAccessCartCatalogue products={[limited]} cart={{ version: 1, items: [] }}
+        onPut={onPut} onRemove={() => {}} onOpenCart={() => {}} onRequestOrder={onRequest} />,
+    ));
+    typeQuantity(host, "21");
+    expect(action(host).textContent).toContain("Request this order");
+    act(() => action(host!).click());
+    expect(onRequest).toHaveBeenCalledWith({ productId: "PEX-001", variantId: "VAR-BPC5", requestedQuantity: 21 });
     expect(onPut).not.toHaveBeenCalled();
   });
 });

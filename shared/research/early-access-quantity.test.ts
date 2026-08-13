@@ -9,34 +9,36 @@ import {
   routeEarlyAccessQuantity,
 } from "./early-access-quantity";
 
-describe("F-012 split quantity authority", () => {
-  it("keeps every compatibility direct-cart name at 20", () => {
-    expect(DIRECT_EARLY_ACCESS_MAX_QUANTITY).toBe(20);
+describe("founder normal-order quantity authority", () => {
+  it("keeps every compatibility name on the one 1..50 normal-order band", () => {
+    expect(DIRECT_EARLY_ACCESS_MAX_QUANTITY).toBe(50);
     expect(EARLY_ACCESS_MAX_QUANTITY).toBe(DIRECT_EARLY_ACCESS_MAX_QUANTITY);
-    expect(EARLY_ACCESS_MAX_QUANTITY).not.toBe(REQUEST_MAX_QUANTITY);
+    expect(EARLY_ACCESS_MAX_QUANTITY).toBe(REQUEST_MAX_QUANTITY);
     expect(isDirectEarlyAccessQuantity(20)).toBe(true);
-    expect(isDirectEarlyAccessQuantity(21)).toBe(false);
-    expect(isDirectEarlyAccessQuantity(50)).toBe(false);
+    expect(isDirectEarlyAccessQuantity(21)).toBe(true);
+    expect(isDirectEarlyAccessQuantity(50)).toBe(true);
   });
 
-  it("accepts manual requests through 50 and refuses 51 without coercion", () => {
+  it("accepts normal orders through 50 and refuses 51 without coercion", () => {
     expect(REQUEST_MAX_QUANTITY).toBe(50);
     expect(isEarlyAccessRequestQuantity(50)).toBe(true);
     expect(isEarlyAccessRequestQuantity(51)).toBe(false);
     expect(isEarlyAccessRequestQuantity("50")).toBe(false);
   });
 
-  it("routes 20 direct, 21 and 50 manual, and 51 nowhere", () => {
+  it("routes every valid default quantity direct and 51 nowhere", () => {
+    expect(routeEarlyAccessQuantity(1)).toEqual({ kind: "direct_cart", quantity: 1 });
     expect(routeEarlyAccessQuantity(20)).toEqual({ kind: "direct_cart", quantity: 20 });
-    expect(routeEarlyAccessQuantity(21)).toEqual({ kind: "manual_review", quantity: 21 });
-    expect(routeEarlyAccessQuantity(50)).toEqual({ kind: "manual_review", quantity: 50 });
+    expect(routeEarlyAccessQuantity(21)).toEqual({ kind: "direct_cart", quantity: 21 });
+    expect(routeEarlyAccessQuantity(49)).toEqual({ kind: "direct_cart", quantity: 49 });
+    expect(routeEarlyAccessQuantity(50)).toEqual({ kind: "direct_cart", quantity: 50 });
     expect(routeEarlyAccessQuantity(51)).toBeNull();
   });
 
-  it("uses the strict effective direct authority and fails closed on a bad ceiling", () => {
-    expect(routeEarlyAccessQuantity(20, 19)).toEqual({ kind: "manual_review", quantity: 20 });
+  it("uses explicit lower authority without classifying the quantity for review", () => {
+    expect(routeEarlyAccessQuantity(20, 19)).toEqual({ kind: "order_request", quantity: 20, directLimit: 19 });
     expect(routeEarlyAccessQuantity(19, 19)).toEqual({ kind: "direct_cart", quantity: 19 });
-    expect(routeEarlyAccessQuantity(1, 50)).toEqual({ kind: "manual_review", quantity: 1 });
-    expect(routeEarlyAccessQuantity(1, null)).toEqual({ kind: "manual_review", quantity: 1 });
+    expect(routeEarlyAccessQuantity(1, 50)).toEqual({ kind: "direct_cart", quantity: 1 });
+    expect(routeEarlyAccessQuantity(1, null)).toEqual({ kind: "order_request", quantity: 1, directLimit: null });
   });
 });

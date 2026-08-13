@@ -544,13 +544,13 @@
       },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
-      "applyTwiceVerified": false,
+      "applyTwiceVerified": true,
       "rollback": {
         "strategy": "withdraw_the_quantity_50_application_before_any_database_narrowing_and_keep_the_database_broad_if_any_durable_row_or_current_release_authority_exceeds_20",
         "procedure": "supabase/production/research-early-access-cart-quantity-band-50-rollback-notes.md",
-        "evidence": "DESIGN ONLY. M66 was not applied to PostgreSQL 16, PostgreSQL 17, production, or any other database while building this candidate. The gated PG16/PG17 harness and verification SQL are checked in, their shell syntax and static adversarial contract are verified, and the acceptance gate intentionally remains red until an authorized apply-twice rehearsal records real database evidence."
+        "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16.14 and 17.10 using scripts/verify-m66-quantity-band-50.sh. Both runs required the exact named M65 1..20 predecessor on both targeted tables, rejected stray or noncanonical bands, preserved the quantity-20 fixture byte-identically and left all unrelated check constraints unchanged. After each apply, the behavioural verifier proved exact named 1..50 bands on cart items and child releases, quantity 50 accepted, quantity 51 and zero refused, the subtotal = unit_price_cents * quantity identity intact, and a forged subtotal at quantity 50 refused. The separate quantity-50 release-authority rehearsal also passed precheck/write/postcheck and idempotent replay on both engines with exact first-write row delta, zero second-write delta, and unchanged historical-release and founder-checkout snapshots. Production was not connected to or mutated."
       },
-      "notes": "M66 candidate design. Widens only the two canonical M65 quantity bands from 1..20 to 1..50, preserves the subtotal money identity and every unrelated constraint, writes no row, grants nothing, and refuses an absent, duplicate, renamed, stray, or noncanonical predecessor band. It is pinned to the first candidate source commit and is explicitly unapplied. The application still enforces the durable founder release ceiling independently, so current accepted production authority remains 1..20 until the separate append-only quantity-50 release-authority chain is approved and executed."
+      "notes": "M66 release candidate. Widens only the two canonical M65 quantity bands from 1..20 to 1..50, preserves the subtotal money identity and every unrelated constraint, writes no row, grants nothing, and refuses an absent, duplicate, renamed, stray, or noncanonical predecessor band. It is pinned to the first candidate source commit and remains explicitly unapplied to production. Founder policy and candidate application authority are now 1..50 with no quantity-only review threshold, while Product Control and founder release remain independent fail-closed ceilings. Current production remains at its observed 1..20 authority until the exact M66 and separate append-only quantity-50 release-authority chain are approved and executed before application deployment."
     }
   ],
   "invariants": [

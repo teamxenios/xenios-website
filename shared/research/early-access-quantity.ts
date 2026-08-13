@@ -1,5 +1,5 @@
 /**
- * The Early Access quantity policy. One place, one pair of numbers.
+ * The Early Access quantity policy. One place, one normal-order band.
  *
  * WHY THIS FILE EXISTS
  * --------------------
@@ -35,29 +35,23 @@
 export const EARLY_ACCESS_MIN_QUANTITY = 1;
 
 /**
- * The most units one exact variant may carry through DIRECT commerce today.
+ * The most units one exact variant may carry through normal commerce.
  *
  * PER EXACT VARIANT, not per cart. Two different variants may each carry the
  * maximum. The same variant may not reach past it by arriving on more than one
  * cart line, which is what `canonicalizeQuantities` in the cart model exists to
- * prevent. This number must stay aligned with the accepted durable database
- * band until M66 is explicitly applied in its separate future release chain.
+ * prevent. Production must not mount this code until the separately reviewed
+ * M66/release chain widens the durable band to the same authority.
  */
-export const DIRECT_EARLY_ACCESS_MAX_QUANTITY = 20;
+export const EARLY_ACCESS_MAX_QUANTITY = 50;
 
 /**
- * The largest quantity a buyer may ASK the manual Early Access desk to review.
- * A request is not a cart line, quote, order, invoice, reservation, or supplier
- * release. Quantities 21..50 therefore never inherit direct-commerce authority.
+ * Compatibility name retained for consumers that used the former request band.
+ * The founder decision superseded that split: this is the same normal-order
+ * ceiling, not a second manual-review domain.
  */
-export const REQUEST_MAX_QUANTITY = 50;
-
-/**
- * Compatibility name for the existing DIRECT commerce domain. It is kept so
- * old cart/order callers remain fail-closed; it must never alias the request
- * ceiling.
- */
-export const EARLY_ACCESS_MAX_QUANTITY = DIRECT_EARLY_ACCESS_MAX_QUANTITY;
+export const DIRECT_EARLY_ACCESS_MAX_QUANTITY = EARLY_ACCESS_MAX_QUANTITY;
+export const REQUEST_MAX_QUANTITY = EARLY_ACCESS_MAX_QUANTITY;
 
 /**
  * A whole number inside the band, with no coercion of any kind.
@@ -79,28 +73,23 @@ export function isDirectEarlyAccessQuantity(value: unknown): value is number {
 /** Existing callers are all direct-cart/order callers. */
 export const isEarlyAccessQuantity = isDirectEarlyAccessQuantity;
 
-/** A manual-request quantity; never sufficient authority for direct commerce. */
+/** Compatibility guard for the former request band; now the normal-order band. */
 export function isEarlyAccessRequestQuantity(value: unknown): value is number {
-  return (
-    typeof value === "number" &&
-    Number.isSafeInteger(value) &&
-    value >= EARLY_ACCESS_MIN_QUANTITY &&
-    value <= REQUEST_MAX_QUANTITY
-  );
+  return isDirectEarlyAccessQuantity(value);
 }
 
 export type EarlyAccessQuantityRoute =
   | Readonly<{ kind: "direct_cart"; quantity: number }>
-  | Readonly<{ kind: "manual_review"; quantity: number }>;
+  | Readonly<{ kind: "order_request"; quantity: number; directLimit: number | null }>;
 
 /**
  * Route an expressed buyer quantity without coercion.
  *
  * `effectiveDirectLimit` is the already server-projected intersection of the
  * global direct band, Product Control, and founder release authority. An
- * invalid limit opens nothing: every otherwise valid request goes to manual
- * review. The manual branch is a routing result only and must not be inserted
- * into the current cart schema.
+ * invalid limit opens nothing. A valid normal-order quantity beyond that
+ * explicit authority may use the existing order-request path, but it is never
+ * classified for review merely because it exceeds a quantity threshold.
  */
 export function routeEarlyAccessQuantity(
   value: unknown,
@@ -113,7 +102,13 @@ export function routeEarlyAccessQuantity(
   ) {
     return Object.freeze({ kind: "direct_cart" as const, quantity: value });
   }
-  return Object.freeze({ kind: "manual_review" as const, quantity: value });
+  return Object.freeze({
+    kind: "order_request" as const,
+    quantity: value,
+    directLimit: isDirectEarlyAccessQuantity(effectiveDirectLimit)
+      ? effectiveDirectLimit
+      : null,
+  });
 }
 
 /**
@@ -132,9 +127,9 @@ export function readEarlyAccessQuantity(value: unknown): number | null {
  * Whether an aggregate across several lines of the SAME variant is allowed.
  *
  * Separate from `isEarlyAccessQuantity` because the inputs are already known
- * good and it is their sum that is in question: ten plus ten is a legal pair of
- * lines and a legal total, ten plus eleven is a legal pair of lines and an
- * illegal total.
+ * good and it is their sum that is in question: twenty-five plus twenty-five is
+ * a legal pair of lines and a legal total, while twenty-five plus twenty-six is
+ * a legal pair of lines and an illegal aggregate total.
  */
 export function isEarlyAccessAggregateQuantity(total: number): boolean {
   return isDirectEarlyAccessQuantity(total);

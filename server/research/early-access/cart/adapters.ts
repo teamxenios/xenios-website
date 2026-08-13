@@ -178,7 +178,8 @@ export class FounderReleaseCartPricing implements EarlyAccessCartReleasePort {
     //
     // It is especially important before M66: the direct application and the
     // accepted production release both stop at 20. A separate request intake
-    // may route 21..50 to manual review, but none of those values reaches here.
+    // may route a quantity beyond explicit durable authority to an order
+    // request, but none of those values reaches here.
     if (input.quantity > decision.approvedQuantityLimit) {
       return Object.freeze({ released: false as const, code: "QUANTITY_INVALID" as const });
     }

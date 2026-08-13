@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 
 import type { EarlyAccessCatalogRow } from "../catalog/early-access-catalog";
 import {
@@ -6,7 +7,6 @@ import {
   validateEarlyAccessRelease,
   type EarlyAccessRelease,
 } from "../release/founder-release";
-import { FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT } from "../release/founder-first-release-seed";
 import {
   CLIENT_SUPPLIED_TOTAL_KEYS,
   EARLY_ACCESS_MAX_UNIT_PRICE_CENTS,
@@ -283,33 +283,30 @@ describe("catalog resolution", () => {
 describe("quantity", () => {
   it("accepts the band and refuses anything outside it", async () => {
     // The fixture release approves three units, so three is what this fixture
-    // can actually buy. The BAND is one through twenty; the release ceiling is
+    // can actually buy. The BAND is one through fifty; the release ceiling is
     // a separate, stricter authority, asserted in its own test below.
     for (const quantity of [1, 2, 3]) {
       const result = await place({ request: request({ quantity }) });
       expect(result.ok).toBe(true);
     }
-    for (const quantity of [0, 21, -1, 2.5, "2", null, Number.NaN, 1e21]) {
+    for (const quantity of [0, 51, -1, 2.5, "2", null, Number.NaN, 1e21]) {
       const result = await place({ request: request({ quantity }) });
       expect(result).toEqual({ ok: false, code: "quantity_out_of_range" });
     }
   });
 
   it("sells the whole band once the release carries the founder-approved ceiling", async () => {
-    // THE FOUNDER DECISION OF 2026-08-11, end to end. With the release at the
-    // approved ceiling of twenty, every quantity in the band places a real
-    // order, and twenty-one is still refused.
-    //
-    // `FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT` is what the seeder writes, so this
-    // reads the shipped constant rather than a number typed into a test.
+    // The successor founder policy, end to end. With the current release at
+    // fifty, every boundary in the normal band places a real order and
+    // fifty-one is refused.
     const wide = row({ quantityLimit: null });
     const approved = [
       release({
         productVersion: earlyAccessReleaseVersion(wide),
-        approvedQuantityLimit: FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT,
+        approvedQuantityLimit: EARLY_ACCESS_MAX_QUANTITY,
       }),
     ];
-    for (const quantity of [1, 2, 3, 4, 6, 10, 19, 20]) {
+    for (const quantity of [1, 2, 3, 20, 21, 49, 50]) {
       const result = await place({
         request: request({ quantity }),
         rows: [wide],
@@ -321,10 +318,10 @@ describe("quantity", () => {
       // Money stays the server's, at every quantity in the band.
       expect(result.value.record.order.line.lineTotalCents).toBe(RELEASE_PRICE_CENTS * quantity);
     }
-    // Twenty-one is outside the BAND, so it is a malformed quantity rather than
+    // Fifty-one is outside the BAND, so it is a malformed quantity rather than
     // a limit problem, and it never reaches the release ceiling at all.
     const over = await place({
-      request: request({ quantity: 21 }),
+      request: request({ quantity: 51 }),
       rows: [wide],
       releases: approved,
     });
@@ -332,7 +329,7 @@ describe("quantity", () => {
   });
 
   it("keeps a widened band from bypassing the release's approved ceiling", async () => {
-    // The whole point of the widening: twenty is a legal QUANTITY, not a
+    // The whole point of the widening: fifty is a legal QUANTITY, not a
     // licence to sell more units than the founder released. Four is inside the
     // band and still refused here, and it is refused as a LIMIT problem rather
     // than as a malformed quantity, so the two authorities stay distinguishable
@@ -344,12 +341,12 @@ describe("quantity", () => {
     // the refusal came from the ceiling and not from the band.
     const generous = row({ quantityLimit: null });
     const permitted = await place({
-      request: request({ quantity: 20 }),
+      request: request({ quantity: 50 }),
       rows: [generous],
       releases: [
         release({
           productVersion: earlyAccessReleaseVersion(generous),
-          approvedQuantityLimit: 20,
+          approvedQuantityLimit: 50,
         }),
       ],
     });
@@ -423,7 +420,7 @@ describe("bundle arithmetic is exact to the cent", () => {
         expect(subtotal - discount).toBeGreaterThan(0);
       }
     }
-  });
+  }, 30_000);
 
   it("is deterministic for the same request", async () => {
     const first = await placed();
@@ -436,12 +433,12 @@ describe("bundle arithmetic is exact to the cent", () => {
     // band would be unreachable: a quantity the table does not name is refused
     // outright rather than falling through to no promotion.
     expect(EARLY_ACCESS_BUNDLE_TIERS.map((tier) => tier.eligibleQuantity)).toEqual(
-      Array.from({ length: 20 }, (_unused, index) => index + 1),
+      Array.from({ length: 50 }, (_unused, index) => index + 1),
     );
 
     // THE FINANCIAL BOUNDARY. Widening the quantity band decided nothing about
     // price. Twenty percent at exactly three units is still the only discount
-    // that exists, and four through twenty carry zero, because no other
+    // that exists, and four through fifty carry zero, because no other
     // discount has been approved and this table may not invent one.
     const discounted = EARLY_ACCESS_BUNDLE_TIERS.filter(
       (tier) => tier.discountBasisPoints > 0,
@@ -453,7 +450,7 @@ describe("bundle arithmetic is exact to the cent", () => {
       expect(tier.discountBasisPoints).toBe(0);
     }
 
-    expect(earlyAccessBundleTier(21)).toBeNull();
+    expect(earlyAccessBundleTier(51)).toBeNull();
     expect(earlyAccessBundleTier(0)).toBeNull();
   });
 
@@ -472,13 +469,16 @@ describe("bundle arithmetic is exact to the cent", () => {
       [6, 119_400, 119_400],
       [10, 199_000, 199_000],
       [20, 398_000, 398_000],
+      [21, 417_900, 417_900],
+      [49, 975_100, 975_100],
+      [50, 995_000, 995_000],
     ];
 
     const wide = row({ quantityLimit: null });
     const approved = [
       release({
         productVersion: earlyAccessReleaseVersion(wide),
-        approvedQuantityLimit: FOUNDER_FIRST_RELEASE_QUANTITY_LIMIT,
+        approvedQuantityLimit: EARLY_ACCESS_MAX_QUANTITY,
       }),
     ];
 
@@ -504,7 +504,7 @@ describe("bundle arithmetic is exact to the cent", () => {
     // discount attaches to a quantity and not to a volume. That is a real
     // economic fact of the CURRENT approved pricing, it is recorded as a
     // NONBLOCKING future pricing-policy decision, and it does not reduce the
-    // founder-approved purchase cap of twenty. This assertion exists so the
+    // founder-approved purchase cap of fifty. This assertion exists so the
     // consequence is measured in the suite rather than argued about later.
     const twoOrdersOfThree = 47_760 * 2; // 95_520
     const oneOrderOfSix = 119_400;

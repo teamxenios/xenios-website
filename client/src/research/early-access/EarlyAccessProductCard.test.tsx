@@ -216,7 +216,7 @@ describe("early access product card", () => {
     expect(input?.getAttribute("max")).toBe("50");
   });
 
-  it("routes a quantity above the server-projected direct ceiling to manual review", () => {
+  it("offers an order request above explicit product authority without quantity review copy", () => {
     const onQuantityChange = vi.fn();
     const el = render(
       <EarlyAccessProductCard
@@ -228,8 +228,9 @@ describe("early access product card", () => {
     );
     const input = el.querySelector<HTMLInputElement>("input[type='number']");
     expect(input?.max).toBe("50");
-    expect(el.textContent).toContain("Direct checkout supports up to 20 units");
-    expect(el.textContent).toContain("Request manual review");
+    expect(el.textContent).toContain("Normal order quantities are 1 through 50 units");
+    expect(el.textContent).toContain("Request this order");
+    expect(el.textContent).not.toMatch(/manual review/i);
     expect(onQuantityChange).not.toHaveBeenCalled();
   });
 

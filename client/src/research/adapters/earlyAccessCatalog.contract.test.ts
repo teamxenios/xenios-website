@@ -112,11 +112,11 @@ describe("the browser reads what the server actually sends", () => {
 
   it("keeps the server's effective release ceiling as the client stepper ceiling", async () => {
     const result = await loadEarlyAccessCatalog(
-      serverAnswers(storefront([{ ...BASE_UNIT, quantityLimit: 20 }])),
+      serverAnswers(storefront([{ ...BASE_UNIT, quantityLimit: 50 }])),
     );
     expect(result.kind).toBe("ok");
     if (result.kind !== "ok") return;
-    expect(result.products[0]?.quantityLimit).toBe(20);
+    expect(result.products[0]?.quantityLimit).toBe(50);
   });
 
   it("renders a founder-held unit as held, with no price", async () => {
