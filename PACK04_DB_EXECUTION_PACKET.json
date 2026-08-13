@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "status": "PREPARED_NOT_RUN",
+  "sourceHead": "60553c65bfeb24339cb71534c27e39214d5fe90d",
+  "draftSql": "supabase/research-order-payment-fulfillment-pack04.sql",
+  "draftSha256": "f54516fa954da9c164932ac4917540d6ac7ae7ec9c4c142cc5dc9d76e8d79a4a",
+  "readOnlyPostcheck": "supabase/research-order-payment-fulfillment-pack04-postcheck.sql",
+  "guardedRollback": "supabase/research-order-payment-fulfillment-pack04-rollback.sql",
+  "environment": "Disposable managed-Supabase-shaped PostgreSQL only",
+  "requiredPreconditions": [
+    "Release owner assigns a reviewed managed migration identity.",
+    "Database contains the canonical public.research_members dependency.",
+    "pgcrypto is available in the extensions schema.",
+    "Connection is proven disposable and is not a production, staging, or shared development database.",
+    "psql ON_ERROR_STOP is enabled."
+  ],
+  "applyTwiceSequence": [
+    "Verify the draft SHA-256 exactly matches draftSha256.",
+    "Apply draftSql once with psql ON_ERROR_STOP=1.",
+    "Run readOnlyPostcheck and require the PASS notice.",
+    "Apply the identical draftSql bytes a second time with psql ON_ERROR_STOP=1.",
+    "Run readOnlyPostcheck again and require the PASS notice.",
+    "Run the separate behavioral, concurrency, RLS, and ownership fixture suite inside rollback-only transactions.",
+    "Record PostgreSQL version, Supabase shape, stdout, stderr, and exact SQL hashes in the migration evidence."
+  ],
+  "commandsPowerShell": [
+    "$env:PACK04_DISPOSABLE_DB_URL = '<DISPOSABLE_DATABASE_URL_FROM_RELEASE_OWNER>'",
+    "if ($env:PACK04_DISPOSABLE_DB_URL -notmatch '^postgres(?:ql)?://') { throw 'Disposable PostgreSQL URL is required' }",
+    "if ((Get-FileHash -Algorithm SHA256 -LiteralPath 'supabase/research-order-payment-fulfillment-pack04.sql').Hash.ToLowerInvariant() -ne 'f54516fa954da9c164932ac4917540d6ac7ae7ec9c4c142cc5dc9d76e8d79a4a') { throw 'Pack 04 draft hash mismatch' }",
+    "psql $env:PACK04_DISPOSABLE_DB_URL -X -v ON_ERROR_STOP=1 -f supabase/research-order-payment-fulfillment-pack04.sql",
+    "psql $env:PACK04_DISPOSABLE_DB_URL -X -v ON_ERROR_STOP=1 -f supabase/research-order-payment-fulfillment-pack04-postcheck.sql",
+    "psql $env:PACK04_DISPOSABLE_DB_URL -X -v ON_ERROR_STOP=1 -f supabase/research-order-payment-fulfillment-pack04.sql",
+    "psql $env:PACK04_DISPOSABLE_DB_URL -X -v ON_ERROR_STOP=1 -f supabase/research-order-payment-fulfillment-pack04-postcheck.sql"
+  ],
+  "guardedRollbackCommandPowerShell": "psql $env:PACK04_DISPOSABLE_DB_URL -X -v ON_ERROR_STOP=1 -f supabase/research-order-payment-fulfillment-pack04-rollback.sql",
+  "requiredBehavioralMatrix": [
+    "Request and invoice quantities 1, 20, 21, 49, and 50 succeed.",
+    "Quantity 0, fractional quantity, duplicate SKU lines, and quantity 51 fail closed.",
+    "Unapproved requests cannot be invoiced, handed to suppliers, or fulfilled.",
+    "Payment evidence alone cannot create settlement or supplier release.",
+    "Supplier queue does not permit fulfillment until a distinct named release exists.",
+    "Identical concurrent idempotency commands create one receipt and one workflow mutation.",
+    "Changed payload under the same scoped idempotency key conflicts.",
+    "Personal buyers cannot read another buyer's timeline or history.",
+    "Business history requires the bound buyer and active organization authority.",
+    "Customer projections omit proof object, transaction, supplier, settlement, and audit details."
+  ],
+  "rollbackPolicy": "The supplied rollback draft acquires fixed-order ACCESS EXCLUSIVE locks on every existing Pack 04 table before any count or drop, is empty-state-only, uses no CASCADE, and refuses if any Pack 04 table has rows. Lock contention and any non-empty rollback fail closed; a non-empty rollback requires a separate founder/release decision and data-preservation plan.",
+  "productionMutationAuthorized": false
+}

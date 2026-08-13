@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "sessionRole": "Codex 4 - Xenios Orders Payments and Fulfillment, Pack 04",
+  "startingSha": "92ec1ee0a350f51467b73c6affcea447903195c4",
+  "endingSha": {
+    "source": "git rev-parse HEAD after the final overnight handoff commit",
+    "value": null,
+    "note": "The exact SHA cannot be embedded in the commit that creates itself."
+  },
+  "commitsCreated": [
+    {
+      "message": "Add Pack 04 customer order history",
+      "sha": "4903a64efff91503f66b4f668a0ddf53c22b7a35"
+    },
+    {
+      "message": "Add Pack 04 safe reorder draft",
+      "sha": "60553c65bfeb24339cb71534c27e39214d5fe90d"
+    },
+    {
+      "message": "Prepare Pack 04 disposable database packet",
+      "sha": "Return from git rev-parse HEAD after commit"
+    }
+  ],
+  "featuresCompleted": [
+    "Customer-safe order history over the existing Pack 04 workflow state",
+    "Stable updatedAt/orderId keyset pagination with a bounded 1-to-100 page size",
+    "Personal buyer and active business-organization ownership isolation",
+    "Customer-facing invoice price, payment status, fulfillment status, quantities, and latest tracking projection",
+    "Restart-safe order-history read through the existing atomic persistence seam",
+    "Unrun storage-draft RPC that derives identity only from auth.uid()",
+    "Ownership-scoped reorder draft that requires fresh catalog, Product Control, and pricing validation",
+    "Reorder draft excludes stale invoice, payment, settlement, supplier, tracking, fulfillment, and approval authority",
+    "Hash-pinned disposable database apply-twice execution packet",
+    "Read-only rollback-always postcheck for schema, forced RLS, safe history, and quantity authority",
+    "Guarded empty-state-only rollback draft with no CASCADE and no shared extension removal"
+  ],
+  "bugsFound": [
+    "Pack 04 exposed a secure single-order timeline but lacked a bounded account-history projection.",
+    "The first persistence-history assertion used an obsolete fixture label.",
+    "Account history had no safe reorder preparation contract and consumers could otherwise be tempted to reuse stale commerce authority.",
+    "The database gate lacked exact commands, pinned bytes, a read-only postcheck, and a bounded rollback artifact."
+  ],
+  "bugsFixed": [
+    "Added the canonical unmounted history projection without a second order or account system.",
+    "Corrected the fixture label and reran the focused suite.",
+    "Added a minimal reorder draft with explicit revalidation flags and cross-owner refusal coverage.",
+    "Prepared and statically verified the disposable database execution, postcheck, and rollback packet without connecting to a database."
+  ],
+  "testsRun": [
+    "Repository TypeScript check",
+    "3 Pack 04 files / 29 focused tests",
+    "8 commerce, payment, settlement, and Pack 04 files / 147 tests",
+    "Release control plane check",
+    "26-node migration DAG verification",
+    "352-registration route uniqueness verification",
+    "132-file pgcrypto qualification",
+    "Client and server production build"
+  ],
+  "testResults": "PASS",
+  "quantity50Status": "PASS in request, invoice, durable snapshot, history projection, and unrun storage draft; quantity 51 fails closed.",
+  "krisImpact": "The account-history contract Kris needs is prepared and ownership scoped. No Kris email, UID, password, or identity was guessed or written; no route is mounted.",
+  "catalogImpact": "No catalog authority or presentation files changed. History preserves member-safe SKU and quantity data and authoritative invoice totals only.",
+  "accountImpact": "Adds the bounded order-history read required by the canonical account experience while reusing existing buyer and organization ownership.",
+  "legalImpact": "None. Founder Binding was not recreated or replayed and no Legal file or signature state changed.",
+  "productionMutated": "NO",
+  "trueHumanBlockers": [
+    "A release owner must assign the reviewed managed migration identity.",
+    "A disposable managed-Supabase-shaped database is required for apply-twice, concurrency, RLS, rollback, and behavioral verification; no local Docker daemon is available.",
+    "FINAL_EA_FAST_FOLLOW_BASE does not yet exist, so REBASE_OR_RECREATE_REQUIRED remains."
+  ],
+  "exactMorningActionsForSamuel": [
+    "Do not replay Founder Binding.",
+    "Review this branch and HANDOFF.json, then assign the Pack 04 migration identity if accepted.",
+    "Provide or authorize the disposable database gate; do not apply the draft to production.",
+    "Route the external stale quantity constraints listed in HANDOFF.json to their canonical shared, Buyer Commerce, Product Control, and database owners."
+  ],
+  "nextMilestone": "Release-owner review, migration identity assignment, and execution of the prepared packet on a disposable managed-Supabase-shaped database; no production action is authorized."
+}
