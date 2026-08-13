@@ -79,6 +79,12 @@ import {
 import { EARLY_ACCESS_PROOF_CONTENT_TYPES } from "./research/early-access/commerce/payment-proof";
 import { TRANSIENT_PROOF_MAX_BYTES } from "./research/early-access/proof/transient-proof";
 import { requireActiveMember, requireMember, type MemberRow } from "./research/member-auth";
+import {
+  KRIS_CATALOG_ERROR_BASE_PATH,
+  buildKrisCatalogProductionDependencies,
+  krisCatalogErrorHandler,
+  krisCatalogRouteTable,
+} from "./research/kris-launch-a";
 import { requireSupabaseAdmin } from "./routes";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
@@ -369,6 +375,23 @@ registerMemberCatalogApi(
   app,
   buildMemberCatalogProductionService(),
   requireActiveMember,
+);
+
+// Launch A is a private, read-only partner catalog. The route table contributes
+// only GET and OPTIONS descriptors; canonical member authentication resolves
+// the viewer server-side, and the profile entitlement then narrows that member
+// to KRIS_VOLUME_PARTNER. The indexed artifact source is shared while the
+// service is request-scoped. Missing data fails closed as 503, and this surface
+// has no purchase route or commerce adapter.
+const krisCatalogDependencies = buildKrisCatalogProductionDependencies(
+  resolveActiveMemberSilently,
+);
+for (const route of krisCatalogRouteTable(krisCatalogDependencies)) {
+  app[route.method](route.path, ...route.handlers);
+}
+app.use(
+  KRIS_CATALOG_ERROR_BASE_PATH,
+  krisCatalogErrorHandler(krisCatalogDependencies),
 );
 
 // Pricing reads (the frozen pricing core behind its smallest adapter). Wiring

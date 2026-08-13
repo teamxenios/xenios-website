@@ -497,9 +497,16 @@ export function registerResearchApi(app: Express) {
     const product = /^\/products\/([^/]+)$/.exec(path);
     return product !== null && product[1].length <= 120 && CANONICAL_MEMBER_SLUG.test(product[1]);
   };
+  const isKrisLaunchAReadPath = (path: string): boolean =>
+    path === "/kris-launch-a/v1/catalog" ||
+    /^\/kris-launch-a\/v1\/products\/[a-z0-9][a-z0-9-]{0,191}$/.test(path);
   const memberSessionRoute = (method: string, path: string): boolean => {
     if (method === "GET" || method === "HEAD") {
       if (MEMBER_SESSION_READ_PATHS.has(path)) return true;
+      // Launch A remains an exact, bearer-only admission. The two anchored
+      // shapes reach their own canonical active-member resolver; no namespace
+      // prefix is opened and no write method is admitted.
+      if (isKrisLaunchAReadPath(path)) return true;
       // Product detail is an Express one-segment route; reject literal or
       // encoded separators so the bypass cannot grow into a namespace prefix.
       if (isCanonicalProductPath(path)) return true;

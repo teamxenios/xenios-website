@@ -77,6 +77,11 @@ function makeWalledApi(
   // Production registration order (server/index.ts): the wall first, then the
   // member platform, then the commerce lane with its injected guards.
   registerResearchApi(app);
+  // Launch A resolves the canonical active member inside its request-scoped
+  // production dependency. These sentinels represent that downstream resolver
+  // so this suite can prove the gateway admits only the exact read shapes.
+  app.get("/api/research/kris-launch-a/v1/catalog", denyAsDownstreamGuard);
+  app.get("/api/research/kris-launch-a/v1/products/:slug", denyAsDownstreamGuard);
   registerMemberPlatformApi(app);
   const commerceGuards: CommerceGuards = {
     requireActiveMember: (req: Request, res: Response) => denyAsDownstreamGuard(req, res),
@@ -133,6 +138,10 @@ const ADMITTED = [
   ["head", "/api/research/products"],
   ["get", "/api/research/products/member-product"],
   ["head", "/api/research/products/member-product"],
+  ["get", "/api/research/kris-launch-a/v1/catalog"],
+  ["head", "/api/research/kris-launch-a/v1/catalog"],
+  ["get", "/api/research/kris-launch-a/v1/products/bam15-500-mcg"],
+  ["head", "/api/research/kris-launch-a/v1/products/bam15-500-mcg"],
   ["get", "/api/research/goals"],
   ["head", "/api/research/goals"],
   ["get", "/api/research/guides"],
@@ -251,6 +260,13 @@ describe("SEN-0023 member-session wall bypass", () => {
     ["post", "/api/research/profile"],
     ["post", "/api/research/guides"],
     ["post", "/api/research/products"],
+    ["post", "/api/research/kris-launch-a/v1/catalog"],
+    ["post", "/api/research/kris-launch-a/v1/products/bam15-500-mcg"],
+    ["get", "/api/research/kris-launch-a/v1/catalog/extra"],
+    ["get", "/api/research/kris-launch-a/v1/products/BAM15"],
+    ["get", "/api/research/kris-launch-a/v1/products/bam15_500_mcg"],
+    ["get", "/api/research/kris-launch-a/v1/products/bam15-500-mcg/extra"],
+    ["get", `/api/research/kris-launch-a/v1/products/${"a".repeat(193)}`],
     ["put", "/api/research/goals"],
     // Sibling literals one character away from an admitted exact path.
     ["get", "/api/research/blueprints"],
