@@ -66,7 +66,25 @@ function type(selector: string, value: string) {
 async function renderSignIn(
   establishMemberSession: (token: string) => Promise<MemberInfo | null>,
   search = "",
+  landingDestination: "/admin" | "/research/member" | "/research/activate" = "/research/member",
 ) {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      headers: new Headers({ "content-type": "application/json" }),
+      json: async () => ({
+        ok: true,
+        destination: landingDestination,
+        defaultExperience: landingDestination === "/admin" ? "admin" : "member",
+        selectedExperience: landingDestination === "/admin" ? "admin" : "member",
+        availableExperiences:
+          landingDestination === "/admin" ? ["admin"] : ["member"],
+        primaryAdminRole: landingDestination === "/admin" ? "super_admin" : null,
+      }),
+    })),
+  );
   window.history.replaceState(null, "", `/research/sign-in${search}`);
   container = document.createElement("div");
   document.body.appendChild(container);
@@ -97,6 +115,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.unstubAllGlobals();
   if (root) act(() => root!.unmount());
   container?.remove();
   root = null;
@@ -110,7 +129,7 @@ describe("member sign-in", () => {
       resolveMember = resolve;
     });
     const establish = vi.fn(() => pending);
-    await renderSignIn(establish, "?returnTo=/research/activate");
+    await renderSignIn(establish, "?returnTo=/research/activate", "/research/activate");
     submit();
     await flush(1);
 
@@ -135,6 +154,25 @@ describe("member sign-in", () => {
     submit();
     await flush();
     expect(window.location.pathname).toBe("/research/member");
+  });
+
+  it("routes a durable administrator to admin without requiring a member row", async () => {
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish, "", "/admin");
+    submit();
+    await flush();
+
+    expect(window.location.pathname).toBe("/admin");
+    expect(establish).not.toHaveBeenCalled();
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/research/auth/landing",
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: "Bearer password-session-token",
+        }),
+      }),
+    );
   });
 
   it("retains and verifies a newer refreshed token when the submitted token becomes stale", async () => {
@@ -173,7 +211,11 @@ describe("member sign-in", () => {
       status: "pending_activation",
       applicationStatus: "approved",
     }));
-    await renderSignIn(establish, "?returnTo=https%3A%2F%2Fevil.example");
+    await renderSignIn(
+      establish,
+      "?returnTo=https%3A%2F%2Fevil.example",
+      "/research/activate",
+    );
     submit();
     await flush();
     expect(window.location.pathname).toBe("/research/activate");

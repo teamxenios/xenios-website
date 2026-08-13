@@ -5,6 +5,7 @@ import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
 import { memberDestination, safeResearchReturnTo } from "../lib/member-routing";
+import { resolveAuthenticatedLanding } from "../adapters/authenticatedLanding";
 
 // Member sign-in (V3 sections 4.3 and 13). Auth is Supabase (same provider as
 // the rest of the site); membership itself is verified SERVER-side on every
@@ -38,30 +39,48 @@ export default function SignIn() {
         return;
       }
       const submittedToken = data.session.access_token;
-      let verifiedMember = await establishMemberSession(submittedToken);
+      let currentToken = submittedToken;
+      let landing = await resolveAuthenticatedLanding(currentToken);
+      if (landing.kind !== "ok") {
+        const refreshedToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
+        if (refreshedToken && refreshedToken !== submittedToken) {
+          currentToken = refreshedToken;
+          landing = await resolveAuthenticatedLanding(currentToken);
+        }
+      }
+      if (landing.kind !== "ok") {
+        if (landing.kind === "unavailable" || landing.kind === "error") {
+          setError("Sign-in verification is temporarily unavailable. Please try again.");
+          return;
+        }
+        await supabase.auth.signOut({ scope: "local" });
+        setError("No authorized Xenios experience is attached to this account.");
+        return;
+      }
+      if (landing.data.selectedExperience === "admin") {
+        navigate(landing.data.destination);
+        return;
+      }
+
+      let verifiedMember = await establishMemberSession(currentToken);
       if (!verifiedMember) {
-        // TOKEN_REFRESHED may supersede the exact token returned by
-        // signInWithPassword while its verification is in flight. Verify and
-        // retain that newer provider session; never let the stale request sign
-        // it out.
-        const currentToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
-        if (currentToken && currentToken !== submittedToken) {
+        // TOKEN_REFRESHED may supersede the token that the server just
+        // resolved. Retain and verify that newer provider session.
+        const refreshedToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
+        if (refreshedToken && refreshedToken !== currentToken) {
+          currentToken = refreshedToken;
           verifiedMember = await establishMemberSession(currentToken);
-          if (!verifiedMember) {
-            setError("Your session changed while signing in. Please try again.");
-            return;
-          }
         }
       }
       if (verifiedMember) {
         const returnTo = safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
         navigate(memberDestination(verifiedMember, returnTo));
       } else {
-        const currentToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
-        if (!currentToken || currentToken === submittedToken) {
+        const providerToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
+        if (!providerToken || providerToken === submittedToken) {
           await supabase.auth.signOut({ scope: "local" });
         }
-        setError("No research membership is attached to this account.");
+        setError("The Research membership session could not be verified.");
       }
     } catch {
       setError("Sign-in failed. Please try again.");

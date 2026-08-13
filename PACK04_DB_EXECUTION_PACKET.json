@@ -3,7 +3,7 @@
   "status": "PREPARED_NOT_RUN",
   "sourceHead": "60553c65bfeb24339cb71534c27e39214d5fe90d",
   "draftSql": "supabase/research-order-payment-fulfillment-pack04.sql",
-  "draftSha256": "f54516fa954da9c164932ac4917540d6ac7ae7ec9c4c142cc5dc9d76e8d79a4a",
+  "draftSha256": "18c3f1dea0f5547eec3bc1a936fb7c6f6a3ac497e5f6a9cefe6617feadcc86d8",
   "readOnlyPostcheck": "supabase/research-order-payment-fulfillment-pack04-postcheck.sql",
   "guardedRollback": "supabase/research-order-payment-fulfillment-pack04-rollback.sql",
   "environment": "Disposable managed-Supabase-shaped PostgreSQL only",
@@ -46,5 +46,6 @@
     "Customer projections omit proof object, transaction, supplier, settlement, and audit details."
   ],
   "rollbackPolicy": "The supplied rollback draft acquires fixed-order ACCESS EXCLUSIVE locks on every existing Pack 04 table before any count or drop, is empty-state-only, uses no CASCADE, and refuses if any Pack 04 table has rows. Lock contention and any non-empty rollback fail closed; a non-empty rollback requires a separate founder/release decision and data-preservation plan.",
-  "productionMutationAuthorized": false
+  "productionMutationAuthorized": false,
+  "draftSha256Note": "Re-pinned 2026-08-13 during EA fusion. The pinned SQL legitimately changed: the Pack04 fork was resolved by taking b5ec2bf as the main line and cherry-picking 9c941c5, whose only commit constrains customer-visible order timeline details. That commit edits this exact .sql, so the declaration had to follow the reviewed content. The guard did its job by refusing until it did."
 }
