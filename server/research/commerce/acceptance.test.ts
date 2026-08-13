@@ -217,6 +217,7 @@ function seedableOrder(overrides: Partial<OrderRecord> = {}): OrderRecord {
     ],
     totals: { subtotalCents: 5000, shippingCents: 1295, storeCreditAppliedCents: 0, totalCents: 6295 },
     providerReference: null,
+    checkoutIdempotencyKey: null,
     lastIdempotencyKey: null,
     reviewTriggers: [],
     createdAt: AS_OF.toISOString(),

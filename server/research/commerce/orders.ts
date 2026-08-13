@@ -75,6 +75,12 @@ export interface OrderRecord {
    * placed cannot take more than the member agreed to.
    */
   authorizedAmountCents?: number;
+  /**
+   * The customer-supplied key that created this order. It is immutable for the
+   * lifetime of the order and remains the checkout replay identity even after
+   * later webhook/admin transitions replace `lastIdempotencyKey`.
+   */
+  checkoutIdempotencyKey: string | null;
   lastIdempotencyKey: string | null;
   reviewTriggers: string[];
   createdAt: string;

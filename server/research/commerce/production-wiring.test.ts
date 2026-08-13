@@ -535,6 +535,7 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
     expect(stored).not.toBeNull();
     expect(stored!.providerReference).toMatch(/^test_auth_/);
     expect(stored!.capturedAmountCents).toBe(stored!.totals.totalCents);
+    expect(stored!.checkoutIdempotencyKey).toBe("wire-key-1");
 
     // Idempotent replay: same key, same order, no second charge, and the
     // stored record is not overwritten by the replay.
@@ -694,6 +695,7 @@ describe("state 3: payment webhook", () => {
       lines: [{ sku: "P901", displayName: "Wiring Product", quantity: 1, lineTotalCents: 5000 }],
       totals: { subtotalCents: 5000, shippingCents: 1295, storeCreditAppliedCents: 0, totalCents: 6295 },
       providerReference: "test_auth_wh",
+      checkoutIdempotencyKey: null,
       lastIdempotencyKey: null,
       reviewTriggers: [],
       createdAt: AS_OF.toISOString(),
@@ -845,6 +847,7 @@ describe("state 3: cross-instance checkout replay", () => {
     expect((await orders.beginProcessing(order.orderId, "system", AS_OF)).ok).toBe(true);
     const advanced = (await setup.orderRepository.get(order.orderId))!;
     expect(advanced.state).toBe("processing");
+    expect(advanced.checkoutIdempotencyKey).toBe("wire-restart-1");
 
     // A SECOND buildCommerceDependencies over the SAME wiring: fresh
     // in-process service state, exactly what a process restart leaves behind.
@@ -865,6 +868,7 @@ describe("state 3: cross-instance checkout replay", () => {
     const stored = (await setup.orderRepository.get(order.orderId))!;
     expect(stored.state).toBe("processing");
     expect(stored.capturedAmountCents).toBe(stored.totals.totalCents);
+    expect(stored.checkoutIdempotencyKey).toBe("wire-restart-1");
     expect(stored.updatedAt).toBe(advanced.updatedAt);
   });
 });

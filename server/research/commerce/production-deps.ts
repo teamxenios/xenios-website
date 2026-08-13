@@ -749,6 +749,7 @@ function checkoutOrderToRecord(order: CheckoutOrder, asOf: Date): OrderRecord {
     },
     providerReference: order.paymentReference,
     ...(order.paymentReference !== null ? { authorizedAmountCents: order.totalCents } : {}),
+    checkoutIdempotencyKey: order.idempotencyKey,
     lastIdempotencyKey: order.idempotencyKey,
     reviewTriggers: [...order.reviewTriggers],
     createdAt: order.placedAt,
