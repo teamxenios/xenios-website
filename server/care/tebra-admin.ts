@@ -8,15 +8,16 @@ import { careCapabilityAllowsTebra, type LoadCareCapability } from "./tebra-capa
 import { UnconfiguredTebraPracticeClient, type TebraPracticeClient } from "./tebra-client";
 import { describeTebraConfiguration, type TebraConfiguration } from "./tebra-config";
 import type { TebraLinkStore } from "./tebra-link-store";
-import { runTebraSyncCycle } from "./tebra-sync";
+import { runTebraSyncCycle, tebraSyncOwner } from "./tebra-sync";
 
 /**
  * What a Care administrator can see and trigger.
  *
  * Status answers whether the integration is configured and how far the cursors
- * have reached. Manual sync runs the same cycle the scheduler would, under the
- * same lease, so an operator pressing the button cannot collide with a
- * scheduled pass or bypass any of its checks.
+ * have reached. Manual sync runs the same cycle the scheduler would, taking the
+ * same lease under a distinct owner, so an operator pressing the button is
+ * refused while a scheduled pass is running rather than doubling it, and cannot
+ * bypass any of the cycle's checks.
  */
 
 export interface TebraAdminService {
@@ -77,7 +78,9 @@ export function createTebraAdminService(deps: TebraAdminDependencies): TebraAdmi
             client: deps.client,
             links: deps.links,
             loadCareCapability: deps.loadCareCapability,
-            owner: deps.owner,
+            // A manual pass is a distinct lease holder, so it is refused
+            // while a scheduled pass is running rather than doubling it.
+            owner: tebraSyncOwner(deps.owner, "manual"),
             audit: deps.audit,
             now,
           }),

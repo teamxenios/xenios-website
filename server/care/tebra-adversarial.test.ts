@@ -344,6 +344,40 @@ describe("G10-5 polling is idempotent and single flight", () => {
     await expect(links.loadCursor("patient")).resolves.toBeNull();
   });
 
+  it("refuses a manual pass while a scheduled pass holds the lease", async () => {
+    // The scheduled and manual triggers must be distinct lease holders. Sharing
+    // one owner string would let the lease admit both, because same-owner
+    // re-entry is how a long run renews its own lease.
+    const { createTebraAdminService } = await import("./tebra-admin");
+    const { tebraSyncOwner } = await import("./tebra-sync");
+    const links = createMemoryTebraLinkStore();
+    const practice = { listPatientsModified: vi.fn() } as unknown as TebraPracticeClient;
+
+    await links.acquireLease({
+      leaseKey: "care:tebra:sync:patient",
+      owner: tebraSyncOwner("worker-a", "scheduled"),
+      expiresAt: "2026-08-12T12:09:00.000Z",
+      now: NOW.toISOString(),
+    });
+
+    const service = createTebraAdminService({
+      config: READY,
+      client: practice,
+      links,
+      loadCareCapability: careEnabled,
+      owner: "worker-a",
+      now: () => NOW,
+    });
+
+    const result = await service.sync("patient");
+    expect(result.outcomes[0]).toEqual({
+      entity: "patient",
+      skipped: true,
+      reason: "lease_held",
+    });
+    expect(practice.listPatientsModified).not.toHaveBeenCalled();
+  });
+
   it("does not poll at all while the stored Care capability is held", async () => {
     const links = createMemoryTebraLinkStore();
     const practice = {

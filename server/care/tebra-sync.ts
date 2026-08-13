@@ -40,6 +40,17 @@ export function tebraSyncLeaseKey(entity: TebraSyncEntity): string {
 }
 
 /**
+ * A lease admits the same owner twice so a long run can renew its own lease.
+ * That is correct for renewal and wrong for separation: a manual pass and a
+ * scheduled pass sharing one owner string would both be admitted, in the same
+ * process or across two. Each trigger therefore takes a distinct owner, and the
+ * durable lease does the real work of keeping them apart.
+ */
+export function tebraSyncOwner(instance: string, trigger: "scheduled" | "manual"): string {
+  return `${instance}:${trigger}`;
+}
+
+/**
  * A window always reaches slightly further back than the last one ended.
  * Practice systems stamp last-modified at a coarse resolution, so a window that
  * begins exactly where the previous one closed can drop a record that changed

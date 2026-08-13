@@ -16,6 +16,11 @@ replaced. In particular:
 
 - Authorization uses `requireCarePermission` from `server/care/access.ts`. No second
   authorization path exists.
+- The stored Care capability gates every path, not only the routes. See below.
+- The appointment status vocabulary is `CARE_APPOINTMENT_STATUSES` from
+  `shared/care/appointments.ts`, not a parallel list. A hand-written enum here missed
+  `checked_in`, which would have refused a real checked-in appointment as an invalid
+  payload.
 - The scheduling decision, including the concierge fallback, stays in
   `server/care/tebra-scheduling.ts`. That file is unchanged. The connector only
   supplies the transport it already asks for, through
@@ -27,12 +32,15 @@ New in this lane:
 | --- | --- |
 | `shared/care/tebra.ts` | External id derivation, projection contracts, cursors, result and status types |
 | `server/care/tebra-config.ts` | Fail-closed configuration and the secret-free status description |
+| `server/care/tebra-capability.ts` | The stored Care capability check every path shares |
 | `server/care/tebra-client.ts` | The practice client seam and its refusing default |
 | `server/care/tebra-link-store.ts` | External id mappings, cursors, and the run lease |
 | `server/care/tebra-redaction.ts` | The single chokepoint for codes, audit details, and error bodies |
 | `server/care/tebra-retry.ts` | Bounded, deterministic retry for retryable failures only |
 | `server/care/tebra-gateway.ts` | Idempotent patient and appointment synchronization |
 | `server/care/tebra-sync.ts` | Incremental polling with cursors and leasing |
+| `server/care/tebra-scheduler.ts` | The periodic driver, inert until started |
+| `server/care/tebra-projection.ts` | Builds the outbound projection from a real Care appointment |
 | `server/care/tebra-admin.ts` | Status and manual sync for a Care administrator |
 | `server/care/tebra-routes.ts` | The two admin handlers, not registered |
 | `server/care/tebra-scheduling-bridge.ts` | Fills the existing scheduling transport seam |
@@ -62,6 +70,41 @@ fails loudly at boot instead of quietly polling at the wrong rate.
 Each window reaches `CARE_TEBRA_CURSOR_OVERLAP_SECONDS` further back than the previous
 one closed, because practice systems stamp last-modified at a coarse resolution and a
 window that starts exactly where the last one ended can drop a boundary change.
+
+## Two gates, not one
+
+`CARE_ENABLED` and `CARE_ENABLE_APPROVED` are the two runtime approvals. They are not
+the whole gate. Care also carries a stored capability row, and `production-deps.ts`
+already downgrades that row to `pending_qa` unless it is enabled, approved by a named
+person, and both switches are on.
+
+Pulling that row back in the database is the first thing an operator reaches for in an
+incident, and it does not touch the environment. A connector that consulted only the
+environment would keep synchronizing straight through it, which is why
+`loadCareCapability` is a **required** dependency of the gateway, the sync cycle, the
+scheduler, and the admin service. Optional would have been a fail-open default:
+forgetting the argument would silently remove the gate.
+
+The check is strict and fails closed. The capability must report rail `care`, state
+exactly `enabled`, and `enabled: true`; a lookup that throws is treated as Care being
+unavailable. The admin status reports `careEnabled` on its own, so an operator can see
+which gate is holding rather than guessing.
+
+## Two triggers, one lease
+
+A lease admits the same owner twice, because that is how a long run renews its own
+lease. That makes a shared owner string the wrong way to separate two triggers: a
+manual pass and a scheduled pass would both be admitted, in one process or across two.
+
+So each trigger takes a distinct owner through `tebraSyncOwner(instance, trigger)`.
+The scheduled driver holds `<instance>:scheduled`, the admin route holds
+`<instance>:manual`, and the durable lease refuses the second one. The scheduler also
+keeps a cheap in-process flag so a redundant pass never reaches the store.
+
+`tebra-scheduler.ts` deliberately does not use `setInterval`. That queues the next tick
+regardless of whether the previous one finished, so a slow practice API produces runs
+that pile up. It reschedules only once a pass has settled, and `start()` returns false
+rather than scheduling a loop that configuration could never let run.
 
 ## Idempotency
 
@@ -214,12 +257,24 @@ These belong to the lane that owns the composition root, and each is deliberate:
 4. Inject `createTebraSchedulingTransport` into `createTebraSchedulingAdapter` in the
    composition root, so scheduling and sync share one link and one audit trail. The
    adapter keeps returning the concierge fallback until that happens.
-5. Schedule `runTebraSyncCycle` on the configured interval, patients before
-   appointments.
+5. Start the driver with `createTebraSyncScheduler({ ... }).start()`, passing the same
+   `loadCareCapability` the Care routes use and a stable instance id as `owner`. Do not
+   schedule `runTebraSyncCycle` by hand, and do not reach for `setInterval`.
 6. Point `audit` at the Care audit sink.
+7. Build outbound appointment projections with `buildTebraAppointmentProjection`. The
+   patient projection belongs to the lane that owns the patient record: Care carries no
+   shared demographic type, so a builder here would have to invent one, which is the
+   same mistake as inventing a SOAP operation. Build it against
+   `TebraPatientProjectionSchema` in `shared/care/tebra.ts`.
 
 ## Verification
 
 ```bash
-npx vitest run shared/care/tebra.test.ts "server/care/tebra-*.test.ts"
+npx vitest run tebra
 ```
+
+That runs the connector suites plus the three pre-existing Tebra suites. The
+adversarial probes in `server/care/tebra-adversarial.test.ts` cover gates G10-2 through
+G10-5 and G11-1, G11-2, G11-5 from the defensive QA pack, including a source scan
+proving no lane file names a URL, a WSDL, a SOAP envelope, a vendor host, or a guessed
+operation, and that no lane file imports a transport library.

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CARE_APPOINTMENT_STATUSES } from "./appointments";
 
 /**
  * Xenios Care to Tebra integration contracts.
@@ -122,7 +123,12 @@ export const TebraAppointmentProjectionSchema = z
     externalId: TebraExternalIdSchema,
     startsAt: TebraInstantSchema,
     endsAt: TebraInstantSchema,
-    status: z.enum(["requested", "scheduled", "cancelled", "completed", "no_show"]),
+    // Mirrors the existing Care vocabulary exactly rather than maintaining a
+    // parallel list that can drift. A hand-written enum here missed checked_in,
+    // which would have rejected a real checked-in appointment as an invalid
+    // payload. Translating Care status to whatever Tebra calls it belongs in
+    // the practice client, once the technical guide says what that is.
+    status: z.enum(CARE_APPOINTMENT_STATUSES),
     modifiedAt: TebraInstantSchema,
   })
   .strict()
