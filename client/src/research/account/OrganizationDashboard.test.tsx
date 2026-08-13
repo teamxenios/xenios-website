@@ -27,7 +27,7 @@ const data: OrganizationDashboardDto = {
   profile: {
     legalName: "Roman Digital",
     displayName: "Roman Digital",
-    purchasingEmail: "k@romandigital.io",
+    purchasingEmail: "info@romanhealthcollective.com",
     billingEmail: "billing@romandigital.io",
     phone: null,
     taxIdLast4: null,
@@ -37,12 +37,13 @@ const data: OrganizationDashboardDto = {
   },
   users: [{
     membershipId: "member-1",
-    email: "k@romandigital.io",
+    email: "info@romanhealthcollective.com",
     roles: ["organization_owner", "business_buyer"],
     state: "active",
     boundAt: "2026-08-12T12:00:00.000Z",
   }],
   orders: [{
+    ownership: { organizationId: "e26bc7de-86df-4e70-8e82-964e3671d71c", basis: "verified_customer_claim" },
     source: "early_access_placement",
     sourceOrderId: "placement-1",
     orderNumber: "XEA-0001",
@@ -52,8 +53,18 @@ const data: OrganizationDashboardDto = {
     currency: "usd",
     lines: [{ sku: "ROMAN-1", displayName: "Roman Digital research order", quantity: 2, lineTotalCents: 12500 }],
     invoice: { invoiceNumber: "XEI-0001", status: "paid", issuedAt: "2026-08-01T12:00:00.000Z", totalCents: 12500, currency: "usd" },
+    payments: [{ status: "settled", amountCents: 12500, currency: "usd", recordedAt: "2026-08-01T12:01:00.000Z", referenceLabel: "Payment recorded" }],
     tracking: [{ carrier: "UPS", trackingNumber: "1Z999", status: "delivered", updatedAt: "2026-08-04T12:00:00.000Z" }],
     canRequestAgain: true,
+  }],
+  requests: [{
+    requestId: "request-1",
+    organizationId: "e26bc7de-86df-4e70-8e82-964e3671d71c",
+    source: "early_access_placement",
+    sourceOrderId: "placement-1",
+    state: "reviewing",
+    requestedAt: "2026-08-10T12:00:00.000Z",
+    note: "Same quantities",
   }],
   openRequestAgainCount: 0,
 };
@@ -74,10 +85,14 @@ describe("organization buyer dashboard", () => {
       "Orders and invoices",
       "XEA-0001",
       "XEI-0001",
+      "Payments",
+      "Payment recorded",
       "1Z999",
       "Request again",
+      "Requests and reorders",
+      "Same quantities",
       "Organization users",
-      "k@romandigital.io",
+      "info@romanhealthcollective.com",
       "Add a user",
     ]) expect(html).toContain(expected);
     await act(async () => root.unmount());

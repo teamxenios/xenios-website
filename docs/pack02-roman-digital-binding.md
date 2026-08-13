@@ -1,30 +1,37 @@
-# Roman Digital initial organization binding
+# Roman Digital existing-auth organization binding
 
-This is an integration runbook, not an executed change. The Pack 02 worker did not deploy SQL, create a Supabase user, set a password, or mount account routes.
+Status: ready as an unapplied, dependent Pack 02 candidate. This lane did not deploy SQL, create or modify a Supabase Auth user, set or request a password, mount account routes, or bind production data.
 
-## Fixed organization facts
+## Authoritative identity
 
+- Pack 02 base output: `85d3536e489d55041c84ff274181e379c7526732`
 - Organization: `Roman Digital`
 - Organization id: `e26bc7de-86df-4e70-8e82-964e3671d71c`
-- Login email: `k@romandigital.io` (normalized from `K@romandigital.io`)
+- Existing Supabase Auth UID: `20ec822d-8123-4088-ac05-9c8f4b2da784`
+- Canonical login email: `info@romanhealthcollective.com`
+- Superseded email: `k@romandigital.io`
 - Roles: `organization_owner`, `business_buyer`
 - Initial credential policy: `password_change_required = true`
 
-## Human-gated binding
+The existing Supabase Auth record is the only credential authority. The candidate refuses to proceed unless that exact UID exists, has a confirmed email, and its normalized email exactly matches the canonical address. It never accepts, reads, returns, logs, stores, or creates a password.
 
-After Samuel manually creates the user in the existing Supabase Auth project and the email is verified, obtain the Auth UID. In a reviewed, non-production rehearsal first, invoke the candidate service-role function with that UID:
+## Candidate artifacts
 
-```sql
-select public.research_bind_verified_organization_user(
-  'e26bc7de-86df-4e70-8e82-964e3671d71c'::uuid,
-  '<SAMUEL_PROVIDED_SUPABASE_AUTH_UID>'::uuid,
-  'k@romandigital.io',
-  array['organization_owner','business_buyer']::text[],
-  'Samuel Boadu',
-  true
-);
-```
+Apply only after the Pack 02 schema candidate in an isolated review database:
 
-The function refuses an absent Auth UID, an unverified email, an email mismatch, unknown roles, or an inactive organization. It writes an append-only `organization_user_bound` event. It never accepts, reads, returns, logs, or stores a password.
+1. `supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql`
+2. `supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql`
 
-Before production consideration, recreate/rebase on the verified final base, promote the SQL through the migration DAG, review the explicit service-role grant and RLS posture, run the candidate twice in an isolated database, run `verify_research_account_organizations.sql`, and independently review the resulting binding event.
+The binding candidate updates the existing Roman Digital profile email, revokes the obsolete placeholder/invitations, invokes the audited Pack 02 binding function with the exact existing UID, retains the password-change-required gate, and appends an idempotent `organization_identity_superseded` audit event.
+
+## Order and history isolation
+
+- Canonical commerce orders remain in `research_orders`; organization ownership is immutable metadata keyed by `research_orders.id`.
+- Early Access history becomes organization-visible only through the existing verified `customerRef` claim/binding rule.
+- Request-again records remain organization-scoped intents and never create or copy an order.
+- Dashboard authorization resolves the active organization membership before reading any order, invoice, payment, tracking, or request projection.
+- A personal member row does not authorize organization history, and an unrelated organization membership cannot authorize Roman Digital history.
+
+## Promotion gates
+
+Recreate or rebase on `FINAL_EA_FAST_FOLLOW_BASE`, promote both SQL candidates through the reviewed migration DAG, rehearse applying them twice in an isolated database containing the exact Auth fixture, run both verification scripts, review service-role grants and RLS, and independently inspect the immutable binding events. Production application and route mounting remain outside this lane.

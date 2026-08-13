@@ -32,7 +32,8 @@ begin
     select 1 from public.research_organizations
      where id='e26bc7de-86df-4e70-8e82-964e3671d71c'
        and slug='roman-digital' and display_name='Roman Digital'
-       and purchasing_email='k@romandigital.io'
+       and purchasing_email='info@romanhealthcollective.com'
+       and billing_email='info@romanhealthcollective.com'
   ) then
     raise exception 'Roman Digital seed is missing or drifted';
   end if;

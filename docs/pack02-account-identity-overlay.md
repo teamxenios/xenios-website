@@ -45,7 +45,7 @@ The raw challenge token is never stored; only its SHA-256 domain-separated hash 
 
 Organization roles support owners, admins, business buyers, and billing viewers. Owners/admins can update business/billing/shipping profile fields and invite future users. Buyers can view organization-owned orders, invoices, and tracking and create an idempotent request-again intent. That intent references the existing order snapshot and is not an order, payment, or automatic reorder.
 
-The Roman Digital seed contains the organization and normalized invitation email only. Its organization-user binding cannot exist until Samuel supplies the manually-created, email-verified Supabase Auth UID and runs the reviewed binding operation in `pack02-roman-digital-binding.md`.
+The dependent Roman Digital candidate uses the supplied existing Supabase Auth UID `20ec822d-8123-4088-ac05-9c8f4b2da784` and canonical email `info@romanhealthcollective.com`. It supersedes the old `k@romandigital.io` placeholder, requires the existing Auth row to be email-verified, binds owner/buyer roles, retains the password-change-required gate, and writes immutable audit evidence. It creates no Auth user and remains unapplied; see `pack02-roman-digital-binding.md`.
 
 ## Integration work intentionally deferred
 

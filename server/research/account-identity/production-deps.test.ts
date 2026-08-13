@@ -13,7 +13,7 @@ function store(): AccountIdentityStore {
     getOrganizationAccess: vi.fn(async () => null),
     findCustomerByRef: vi.fn(async () => null),
     inspectCustomerClaimChallenge: vi.fn(async () => null),
-    getOrganizationDashboard: vi.fn(async () => ({ profile: {} as never, users: [], orders: [], openRequestAgainCount: 0 })),
+    getOrganizationDashboard: vi.fn(async () => ({ profile: {} as never, users: [], orders: [], requests: [], openRequestAgainCount: 0 })),
     updateOrganizationProfile: vi.fn(async () => ({} as never)),
     inspectOrganizationInvitation: vi.fn(async () => null),
     findOrderForOrganization: vi.fn(async () => null),
@@ -30,7 +30,7 @@ function store(): AccountIdentityStore {
 function setup(overrides: Partial<ProductionAccountIdentityOptions> = {}) {
   const accountStore = store();
   const options: ProductionAccountIdentityOptions = {
-    auth: { verifyAccessToken: vi.fn(async () => ({ userId: "auth-1", email: "K@romandigital.io", emailConfirmedAt: "2026-08-12T10:00:00Z" })) },
+    auth: { verifyAccessToken: vi.fn(async () => ({ userId: "auth-1", email: "Info@RomanHealthCollective.com", emailConfirmedAt: "2026-08-12T10:00:00Z" })) },
     store: accountStore,
     notifications: { deliver: vi.fn(async () => true) },
     passwordEvidence: { changedAfter: vi.fn(async () => "2026-08-12T12:01:00Z") },
@@ -45,13 +45,13 @@ function setup(overrides: Partial<ProductionAccountIdentityOptions> = {}) {
 describe("Pack 02 production dependency boundary", () => {
   it("adapts the existing Supabase getUser verifier without creating another auth system", async () => {
     const getUser = vi.fn(async () => ({
-      data: { user: { id: "auth-1", email: "k@romandigital.io", email_confirmed_at: "2026-08-12T10:00:00Z" } },
+      data: { user: { id: "auth-1", email: "info@romanhealthcollective.com", email_confirmed_at: "2026-08-12T10:00:00Z" } },
       error: null,
     }));
     const verifier = createSupabaseAccountAuthVerifier({ auth: { getUser } });
     expect(await verifier.verifyAccessToken("provider-signed-jwt")).toEqual({
       userId: "auth-1",
-      email: "k@romandigital.io",
+      email: "info@romanhealthcollective.com",
       emailConfirmedAt: "2026-08-12T10:00:00Z",
     });
     expect(getUser).toHaveBeenCalledWith("provider-signed-jwt");
@@ -66,7 +66,7 @@ describe("Pack 02 production dependency boundary", () => {
     const { deps, options } = setup();
     expect(await deps.resolveAuthenticatedUser({ headers: { authorization: "Bearer signed.jwt.value" } })).toMatchObject({
       userId: "auth-1",
-      email: "K@romandigital.io",
+      email: "Info@RomanHealthCollective.com",
       emailVerified: true,
     });
     expect(options.auth.verifyAccessToken).toHaveBeenCalledWith("signed.jwt.value");
@@ -91,7 +91,7 @@ describe("Pack 02 production dependency boundary", () => {
     const { deps, store, options } = setup();
     const result = await deps.issueCustomerClaimChallenge({
       userId: "auth-1",
-      email: "k@romandigital.io",
+      email: "info@romanhealthcollective.com",
       customerRef: `eac_${"a".repeat(32)}`,
       subject: { subjectType: "organization", organizationId: ORG_ID },
     });
@@ -123,7 +123,7 @@ describe("Pack 02 production dependency boundary", () => {
       claimId: CLAIM_ID,
       challengeToken: "raw-customer-token-that-must-not-cross",
       userId: "auth-1",
-      email: "k@romandigital.io",
+      email: "info@romanhealthcollective.com",
       subject: { subjectType: "organization", organizationId: ORG_ID },
     });
     const committed = vi.mocked(store.commitCustomerClaimHash).mock.calls[0][0];
@@ -134,7 +134,7 @@ describe("Pack 02 production dependency boundary", () => {
       invitationId: CLAIM_ID,
       invitationToken: "raw-invitation-token-that-must-not-cross",
       userId: "auth-1",
-      email: "k@romandigital.io",
+      email: "info@romanhealthcollective.com",
     });
     const invitation = vi.mocked(store.commitOrganizationInvitationHash).mock.calls[0][0];
     expect(invitation.tokenHash).toMatch(/^[a-f0-9]{64}$/);

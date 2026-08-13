@@ -298,6 +298,16 @@ export async function getBusinessDashboard(
     return failure("PASSWORD_CHANGE_REQUIRED", "Change the initial password before opening the organization dashboard.");
   }
   const dashboard = await deps.getOrganizationDashboard(organizationId);
+  const foreignOrder = dashboard.orders.some((order) => order.ownership.organizationId !== organizationId);
+  const foreignRequest = dashboard.requests.some((entry) => entry.organizationId !== organizationId);
+  if (foreignOrder || foreignRequest) {
+    await deps.emitAudit("research.organization.projection_refused", {
+      organizationId,
+      actorUserId: auth.value.userId,
+      reason: foreignOrder ? "foreign_order" : "foreign_request",
+    });
+    return failure("SERVICE_UNAVAILABLE", "The organization history projection could not be verified.");
+  }
   return { ok: true, value: { ...dashboard, organization: access.value.organization } };
 }
 
@@ -444,7 +454,9 @@ export async function requestOrderAgain(
     return failure("PASSWORD_CHANGE_REQUIRED", "Change the initial password before requesting another order.");
   }
   const order = await deps.findOrderForOrganization(parsed.data);
-  if (!order || !order.canRequestAgain) return failure("ORDER_NOT_FOUND", "That order cannot be requested again.");
+  if (!order || order.ownership.organizationId !== parsed.data.organizationId || !order.canRequestAgain) {
+    return failure("ORDER_NOT_FOUND", "That order cannot be requested again.");
+  }
   const created = await deps.createRequestAgain({
     organizationId: parsed.data.organizationId,
     order,

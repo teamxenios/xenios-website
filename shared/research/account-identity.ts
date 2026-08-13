@@ -102,6 +102,14 @@ export type AccountTrackingDto = {
   updatedAt: string | null;
 };
 
+export type AccountPaymentDto = {
+  status: string;
+  amountCents: number;
+  currency: string;
+  recordedAt: string;
+  referenceLabel: string | null;
+};
+
 export type AccountOrderLineDto = {
   sku: string;
   displayName: string;
@@ -110,6 +118,10 @@ export type AccountOrderLineDto = {
 };
 
 export type AccountOrderDto = {
+  ownership: {
+    organizationId: string;
+    basis: "organization_checkout" | "verified_customer_claim";
+  };
   source: AccountOrderSource;
   sourceOrderId: string;
   orderNumber: string;
@@ -119,8 +131,19 @@ export type AccountOrderDto = {
   currency: string;
   lines: AccountOrderLineDto[];
   invoice: AccountInvoiceDto | null;
+  payments: AccountPaymentDto[];
   tracking: AccountTrackingDto[];
   canRequestAgain: boolean;
+};
+
+export type AccountRequestAgainDto = {
+  requestId: string;
+  organizationId: string;
+  source: AccountOrderSource;
+  sourceOrderId: string;
+  state: "requested" | "reviewing" | "converted" | "closed";
+  requestedAt: string;
+  note: string | null;
 };
 
 export type OrganizationDashboardDto = {
@@ -128,6 +151,7 @@ export type OrganizationDashboardDto = {
   profile: BusinessProfile;
   users: OrganizationUserDto[];
   orders: AccountOrderDto[];
+  requests: AccountRequestAgainDto[];
   openRequestAgainCount: number;
 };
 

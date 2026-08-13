@@ -45,10 +45,14 @@ function OrderCard({ organizationId, order }: { organizationId: string; order: A
       <div className="mt-4 grid gap-2">
         {order.lines.map((line) => <div key={`${line.sku}:${line.quantity}`} className="body-s flex justify-between gap-3"><span>{line.displayName}</span><span className="tabular">Qty {line.quantity}</span></div>)}
       </div>
-      <div className="mt-4 grid md:grid-cols-2 gap-4">
+      <div className="mt-4 grid md:grid-cols-3 gap-4">
         <section>
           <h4 className="mono-label text-ink-mute">Invoice</h4>
           {order.invoice ? <p className="body-s text-ink-2 mt-1">{order.invoice.invoiceNumber} · {order.invoice.status} · {money(order.invoice.totalCents, order.invoice.currency)}</p> : <p className="body-s text-ink-mute mt-1">No invoice available.</p>}
+        </section>
+        <section>
+          <h4 className="mono-label text-ink-mute">Payments</h4>
+          {order.payments.length ? order.payments.map((payment, index) => <p key={`${payment.recordedAt}:${index}`} className="body-s text-ink-2 mt-1">{payment.referenceLabel ?? "Payment"} · {payment.status} · {money(payment.amountCents, payment.currency)}</p>) : <p className="body-s text-ink-mute mt-1">No payment record available.</p>}
         </section>
         <section>
           <h4 className="mono-label text-ink-mute">Tracking</h4>
@@ -110,6 +114,11 @@ export function OrganizationDashboardView({ data, onProfileSaved }: { data: Orga
       <section aria-labelledby="business-orders">
         <div className="flex flex-wrap justify-between gap-3"><div><h2 id="business-orders" className="body-l font-700">Orders and invoices</h2><p className="body-s text-ink-2 mt-1">Existing order records owned by {data.organization.displayName}, including claimed history.</p></div><Link href="/research/account/claim-history" className="btn btn-ghost">Claim prior history</Link></div>
         <div className="grid gap-4 mt-4">{data.orders.length ? data.orders.map((order) => <OrderCard key={`${order.source}:${order.sourceOrderId}`} organizationId={data.organization.id} order={order} />) : <div className="card"><p className="body-s text-ink-mute">No organization orders are linked yet.</p></div>}</div>
+      </section>
+
+      <section aria-labelledby="business-requests">
+        <div className="flex flex-wrap justify-between gap-3"><div><h2 id="business-requests" className="body-l font-700">Requests and reorders</h2><p className="body-s text-ink-2 mt-1">Request-again history for {data.organization.displayName}. These are review intents, not duplicate orders.</p></div><span className="mono-label text-ink-mute">{data.openRequestAgainCount} open</span></div>
+        <div className="grid gap-3 mt-4">{data.requests.length ? data.requests.map((request) => <article className="card" key={request.requestId}><div className="flex flex-wrap justify-between gap-3"><div><p className="mono-label text-ink-mute">{request.source} · {request.sourceOrderId}</p><p className="body-s font-700 mt-1">{request.state}</p></div><p className="body-s text-ink-2">Requested {new Date(request.requestedAt).toLocaleDateString()}</p></div>{request.note && <p className="body-s text-ink-2 mt-3">{request.note}</p>}</article>) : <div className="card"><p className="body-s text-ink-mute">No request-again history yet.</p></div>}</div>
       </section>
 
       <section aria-labelledby="business-users">

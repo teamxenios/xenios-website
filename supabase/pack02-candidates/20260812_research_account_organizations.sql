@@ -201,15 +201,44 @@ create table if not exists public.research_organization_request_again (
   organization_id uuid not null references public.research_organizations(id),
   requested_by_auth_user_id uuid not null references auth.users(id),
   source_system text not null check (source_system in ('research_order','early_access_placement','early_access_cart_checkout')),
-  source_order_id text not null,
+  source_order_id text not null check (length(trim(source_order_id)) between 1 and 160),
   source_snapshot jsonb not null,
-  note text,
+  note text check (note is null or length(note)<=1000),
   state text not null default 'requested' check (state in ('requested','reviewing','converted','closed')),
   created_at timestamptz not null default clock_timestamp(),
   updated_at timestamptz not null default clock_timestamp(),
   constraint research_organization_request_again_once
-    unique (organization_id, requested_by_auth_user_id, source_system, source_order_id)
+    unique (organization_id, source_system, source_order_id)
 );
+
+create or replace function public.research_organization_request_again_validate()
+returns trigger language plpgsql set search_path='' as $$
+begin
+  if not exists (
+    select 1 from public.research_organization_users
+     where organization_id=new.organization_id
+       and auth_user_id=new.requested_by_auth_user_id
+       and state='active'
+       and roles && array['organization_owner','organization_admin','business_buyer']::text[]
+  ) then
+    raise exception 'request-again actor lacks organization buyer access' using errcode='42501';
+  end if;
+  if new.source_system='research_order' and not exists (
+    select 1 from public.research_organization_order_ownership
+     where organization_id=new.organization_id and order_id=new.source_order_id::uuid
+  ) then
+    raise exception 'canonical order is not owned by request organization' using errcode='42501';
+  end if;
+  return new;
+exception when invalid_text_representation then
+  raise exception 'canonical research order id must be a UUID' using errcode='22023';
+end;
+$$;
+drop trigger if exists research_organization_request_again_validate
+  on public.research_organization_request_again;
+create trigger research_organization_request_again_validate
+before insert on public.research_organization_request_again
+for each row execute function public.research_organization_request_again_validate();
 
 -- The binding ledger is append-only. Corrections are new events; historical
 -- evidence cannot be silently edited or removed.
@@ -414,19 +443,12 @@ alter table public.research_organization_order_ownership enable row level securi
 alter table public.research_account_binding_events enable row level security;
 alter table public.research_organization_request_again enable row level security;
 
--- First business account. The login is an invitation only; there is no auth
--- UID until Samuel manually creates the Supabase user and no password anywhere.
+-- First business account profile. Authentication and its exact UID binding
+-- are supplied by the dependent Roman Digital candidate; no password exists
+-- anywhere in this schema.
 insert into public.research_organizations(
   id,slug,legal_name,display_name,purchasing_email,billing_email
 ) values (
   'e26bc7de-86df-4e70-8e82-964e3671d71c','roman-digital','Roman Digital','Roman Digital',
-  'k@romandigital.io','k@romandigital.io'
+  'info@romanhealthcollective.com','info@romanhealthcollective.com'
 ) on conflict (slug) do nothing;
-
-insert into public.research_organization_invitations(
-  id,organization_id,normalized_email,roles,token_hash,state,invited_by_label,expires_at
-) values (
-  '713c5ad9-8ca3-4ee5-b7fe-1293920562b2','e26bc7de-86df-4e70-8e82-964e3671d71c',
-  'k@romandigital.io',array['organization_owner','business_buyer']::text[],null,'accepted',
-  'Samuel Boadu — pending manual Supabase Auth UID',null
-) on conflict (id) do nothing;

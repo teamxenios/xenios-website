@@ -32,14 +32,15 @@ describe("Pack 02 isolation and single-system boundaries", () => {
     expect(sql).toContain("order ownership actor is not an active organization user");
     expect(sql).toContain("organization order ownership is immutable");
     expect(sql).not.toMatch(/\b(subtotal_cents|captured_amount_cents|payment_reference)\b/);
+    expect(sql).toContain("unique (organization_id, source_system, source_order_id)");
+    expect(sql).toContain("canonical order is not owned by request organization");
+    expect(sql).toContain("request-again actor lacks organization buyer access");
   });
 
-  it("seeds Roman Digital without inventing a Supabase Auth UID", () => {
+  it("seeds the Roman Digital profile with the superseding canonical email", () => {
     const sql = read("supabase/pack02-candidates/20260812_research_account_organizations.sql");
     expect(sql).toContain("'roman-digital','Roman Digital','Roman Digital'");
-    expect(sql).toContain("'k@romandigital.io'");
-    expect(sql).toContain("array['organization_owner','business_buyer']");
-    expect(sql).toContain("pending manual Supabase Auth UID");
-    expect(sql).not.toContain("K@romandigital.io");
+    expect(sql).toContain("'info@romanhealthcollective.com'");
+    expect(sql).not.toContain("'k@romandigital.io'");
   });
 });
