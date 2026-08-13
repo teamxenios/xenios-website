@@ -1540,8 +1540,46 @@ describe("route uniqueness validator", () => {
     // every other operator route, deliberately NOT under /api/research: the
     // research wall decides who may reach a CUSTOMER surface, and none of
     // these is one.
-    expect(result.callSites).toBe(343);
-    expect(result.routes).toHaveLength(352);
+    //
+    // 357/366 after the F-013 Early Access fusion. FOURTEEN additions, ZERO
+    // removals, every one MEASURED by diffing `scanGitTreeRouteResult` at the
+    // fusion base against the fused head rather than by reading diffs. That
+    // distinction mattered: a hand scan of the merge diff found only twelve and
+    // silently missed the two auth routes below, because they register through
+    // a path the regex did not model. A count pinned from a hand scan would
+    // have been wrong by exactly the amount nobody would notice.
+    //
+    // Pack02 accounts and organizations, ELEVEN:
+    //   GET   /api/research/auth/landing
+    //   POST  /api/research/auth/experience
+    //   GET   /api/research/account/context
+    //   POST  /api/research/account/claims/request
+    //   POST  /api/research/account/claims/confirm
+    //   POST  /api/research/account/security/password-change-complete
+    //   POST  /api/research/account/organization-invitations/accept
+    //   GET   /api/research/account/organizations/:organizationId/dashboard
+    //   PATCH /api/research/account/organizations/:organizationId/profile
+    //   POST  /api/research/account/organizations/:organizationId/users/invitations
+    //   POST  /api/research/account/organizations/:organizationId/orders/request-again
+    //
+    // Buyer Commerce, ONE:
+    //   POST  /api/research/buyer/order-requests
+    //
+    // Pack05 admin CRM and supplier operations, TWO, both under /api/admin
+    // behind the same Supabase admin guard as every other operator route:
+    //   GET   /api/admin/research/crm-supplier-operations
+    //   POST  /api/admin/research/crm-supplier-operations/actions
+    //
+    // The catalog lane added ZERO. `registerMemberCatalogApi` was already
+    // mounted at the fusion base, so the member catalog is reachable in the
+    // fused tree without the catalog lane having registered anything. Two
+    // reports disagreed about whether the catalog was "mounted"; both were
+    // right, about different subjects.
+    //
+    // Pack04 added ZERO route call sites: its work is storage, persistence and
+    // the customer order history projection, none of which is a new door.
+    expect(result.callSites).toBe(357);
+    expect(result.routes).toHaveLength(366);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });
