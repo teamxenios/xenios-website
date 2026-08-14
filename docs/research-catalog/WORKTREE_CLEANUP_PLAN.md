@@ -32,5 +32,5 @@ with `Remove-Item -LiteralPath` in the same PowerShell session. Do not use a
 glob, recursive removal, or a computed directory target. Re-run `git status`
 and confirm the external copies still match the recorded digests.
 
-`shared/CATALOG_FOUNDATION_HANDOFF.md` is tracked Catalog Foundation evidence
+`docs/research-catalog/CATALOG_FOUNDATION_HANDOFF.md` is tracked Catalog Foundation evidence
 and is not part of this cleanup.

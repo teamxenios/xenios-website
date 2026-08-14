@@ -101,7 +101,7 @@ server/research/master-offerings/service.ts
 server/research/master-offerings/test-fixtures.ts
 shared/research/master-offerings/contract.ts
 shared/research/master-offerings/index.ts
-shared/CATALOG_FOUNDATION_HANDOFF.md
+docs/research-catalog/CATALOG_FOUNDATION_HANDOFF.md
 ```
 
 `PATCH/README.md` was not copied because it maps to the accepted repository-root
