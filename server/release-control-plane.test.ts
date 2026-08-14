@@ -1596,11 +1596,13 @@ describe("route uniqueness validator", () => {
     // Pack04 added ZERO route call sites: its work is storage, persistence and
     // the customer order history projection, none of which is a new door.
     //
-    // The pack02 account-identity production mount added FOUR call sites and
-    // FOUR registrations (355/364 -> 359/368), MEASURED by the route scanner
-    // and matching the accepted Buy Now client handoff's own census. The M67
-    // order-history merge added ZERO: legacy orders ride the existing member
-    // orders service.
+    // The 355/364 -> 359/368 move is MEASURED by the route scanner and
+    // matches the accepted Buy Now client handoff's census. The four new call
+    // sites are the Kris Launch A catalog registrations (the explicit route
+    // table in server/index.ts); the pack02 account-identity mount registers
+    // through its own registrar and adds ZERO scanner call sites, as does the
+    // M67 order-history merge (legacy orders ride the existing member orders
+    // service).
     expect(result.callSites).toBe(359);
     expect(result.routes).toHaveLength(368);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
