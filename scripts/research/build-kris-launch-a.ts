@@ -27,6 +27,8 @@ import {
   KRIS_CHANNEL_LABELS,
   KRIS_FAMILY_LABELS,
 } from "../../shared/research/kris-launch-a/contract.ts";
+import { loadKrisDataset } from "../../server/research/kris-launch-a/dataset-reader.ts";
+import { reconcileKrisArtifacts } from "../../server/research/kris-launch-a/reconcile.ts";
 
 const DEFAULT_OUTPUT = path.join(
   "server",
@@ -271,8 +273,40 @@ if (leaks.length > 0) {
   fail(`privacy scan failed with ${leaks.length} finding(s): ${leaks.slice(0, 5).join(" | ")}`);
 }
 
-fs.mkdirSync(path.dirname(path.resolve(outputPath)), { recursive: true });
-fs.writeFileSync(path.resolve(outputPath), JSON.stringify(artifact, null, 2) + "\n", "utf8");
+// Reconcile against the artifact being replaced, BEFORE it is overwritten.
+// Loading both sides through the reader also subjects the freshly built
+// artifact to the reader's full refusal surface, on top of the scans above.
+// A row becoming purchasable is the one change a rebuild must never carry
+// silently: it stops the build unless the operator states the approval as a
+// flag, which makes the approval an auditable part of the command itself.
+const resolvedOutput = path.resolve(outputPath);
+let reconciliation: Record<string, unknown> | null = null;
+if (fs.existsSync(resolvedOutput)) {
+  const previous = loadKrisDataset(JSON.parse(fs.readFileSync(resolvedOutput, "utf8")));
+  const successor = loadKrisDataset(artifact);
+  const report = reconcileKrisArtifacts(previous, successor);
+  reconciliation = {
+    identical: report.identical,
+    added: report.added,
+    retired: report.retired,
+    changedCount: report.changed.length,
+    priceMovementCount: report.priceMovements.length,
+    modeTransitions: report.modeTransitions.map(
+      (transition) => `${transition.id}: ${transition.from} -> ${transition.to}`,
+    ),
+    purchaseOpeningIds: report.purchaseOpeningIds,
+  };
+  if (!report.opensNoPurchasePath && !process.argv.includes("--allow-purchase-opening")) {
+    fail(
+      `refusing to build: ${report.purchaseOpeningIds.length} row(s) would become purchasable ` +
+        `(${report.purchaseOpeningIds.join(", ")}). Review the change as what it is and re-run ` +
+        `with --allow-purchase-opening only after explicit approval.`,
+    );
+  }
+}
+
+fs.mkdirSync(path.dirname(resolvedOutput), { recursive: true });
+fs.writeFileSync(resolvedOutput, JSON.stringify(artifact, null, 2) + "\n", "utf8");
 
 console.log(
   JSON.stringify({
@@ -285,6 +319,7 @@ console.log(
     privacyLeaks: 0,
     supplierNamesChecked: supplierNames.length,
     nonBlockingIssues: normalized.issues.length,
-    output: path.resolve(outputPath),
+    reconciliation,
+    output: resolvedOutput,
   }),
 );
