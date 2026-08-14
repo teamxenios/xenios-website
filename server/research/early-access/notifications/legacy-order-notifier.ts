@@ -28,6 +28,7 @@ import type { EarlyAccessPlacement } from "../routes/store";
 import type { EarlyAccessSettlement } from "../routes/store";
 import {
   projectEarlyAccessCheckoutCreated,
+  projectEarlyAccessPaymentRejected,
   projectEarlyAccessPaymentVerified,
   projectEarlyAccessSubmittedForReview,
 } from "./outbox-adapter";
@@ -37,6 +38,7 @@ export interface LegacyOrderProjections {
   readonly placed: typeof projectEarlyAccessCheckoutCreated;
   readonly submitted: typeof projectEarlyAccessSubmittedForReview;
   readonly verified: typeof projectEarlyAccessPaymentVerified;
+  readonly rejected: typeof projectEarlyAccessPaymentRejected;
 }
 
 export interface EarlyAccessLegacyOrderNotifier {
@@ -46,6 +48,8 @@ export interface EarlyAccessLegacyOrderNotifier {
   proofSubmitted(placement: EarlyAccessPlacement, proofId: string): void;
   /** After a settlement is durably committed by a named admin. */
   paymentVerified(placement: EarlyAccessPlacement, settlement: EarlyAccessSettlement): void;
+  /** After a rejection decision is durably recorded by a named admin. */
+  paymentRejected(placement: EarlyAccessPlacement, reviewedProofId: string): void;
 }
 
 /** The default: no notifier configured, no behaviour at all. */
@@ -53,6 +57,7 @@ export const NO_LEGACY_ORDER_NOTIFIER: EarlyAccessLegacyOrderNotifier = Object.f
   orderPlaced: () => {},
   proofSubmitted: () => {},
   paymentVerified: () => {},
+  paymentRejected: () => {},
 });
 
 /** "$24.64 USD" from integer cents; never invents a price of its own. */
@@ -80,6 +85,7 @@ export function createOutboxLegacyOrderNotifier(options: {
     placed: projectEarlyAccessCheckoutCreated,
     submitted: projectEarlyAccessSubmittedForReview,
     verified: projectEarlyAccessPaymentVerified,
+    rejected: projectEarlyAccessPaymentRejected,
   };
   const statusUrl = options.siteUrl
     ? `${options.siteUrl.replace(/\/+$/, "")}/research/early-access`
@@ -151,6 +157,19 @@ export function createOutboxLegacyOrderNotifier(options: {
           placement.order.order.currency,
         ),
         receiptNumber: settlement.receipt.receiptId,
+        ...(statusUrl === undefined ? {} : { statusUrl }),
+      }));
+    },
+
+    paymentRejected(placement, reviewedProofId) {
+      const email = contactEmail(placement);
+      if (email === null) return;
+      settle(`payment-rejected ${placement.orderNumber}`, projections.rejected({
+        reviewedProofId,
+        orderNumber: placement.orderNumber,
+        recipientEmail: email,
+        invoiceNumber: placement.invoice.invoiceNumber,
+        paymentReference: placement.invoice.paymentReference,
         ...(statusUrl === undefined ? {} : { statusUrl }),
       }));
     },

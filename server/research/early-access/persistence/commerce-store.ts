@@ -8,6 +8,7 @@ import type {
   EarlyAccessSettlement,
   PlacementCommit,
   ProofCommit,
+  RejectionCommit,
   SettlementCommit,
 } from "../routes/store";
 import type { EarlyAccessVerificationEntry } from "../commerce/verification-service";
@@ -43,6 +44,7 @@ import {
 const RPC = {
   commitPlacement: "research_early_access_commit_placement",
   commitProof: "research_early_access_commit_proof",
+  commitRejection: "research_early_access_commit_rejection",
   commitSettlement: "research_early_access_commit_settlement",
   commitDispatchEvent: "research_early_access_commit_dispatch_event",
   commitTracking: "research_early_access_commit_tracking",
@@ -61,6 +63,7 @@ const RPC = {
 const PLACEMENT_REASONS = ["idempotency_key_taken", "order_number_taken"] as const;
 const PROOF_REASONS = ["chain_moved", "proof_id_taken", "order_unknown"] as const;
 const SETTLEMENT_REASONS = ["already_settled", "transaction_id_used", "order_unknown"] as const;
+const REJECTION_REASONS = ["already_settled", "order_unknown"] as const;
 const DISPATCH_REASONS = [
   "order_unknown",
   "not_settled",
@@ -265,6 +268,24 @@ export class SupabaseEarlyAccessCommerceStore implements EarlyAccessCommerceStor
     return Object.freeze(
       raw.filter((entry): entry is string => typeof entry === "string"),
     );
+  }
+
+  async commitRejection(entry: EarlyAccessVerificationEntry): Promise<RejectionCommit> {
+    const raw = expectObject(
+      RPC.commitRejection,
+      await runEarlyAccessCall(this.query, {
+        fn: RPC.commitRejection,
+        args: { p_rejection: entry },
+      }),
+    );
+    if (raw.committed === true) {
+      return Object.freeze({ committed: true as const, replayed: raw.replayed === true });
+    }
+    const reason = raw.reason;
+    if (!isOneOf(reason, REJECTION_REASONS)) {
+      throw new EarlyAccessPersistenceError(RPC.commitRejection);
+    }
+    return Object.freeze({ committed: false as const, reason });
   }
 
   async commitSettlement(settlement: EarlyAccessSettlement): Promise<SettlementCommit> {
