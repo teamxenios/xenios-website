@@ -107,7 +107,7 @@ export function KrisDetailSurface({
     );
   }
 
-  return <KrisDetail item={item} />;
+  return <KrisDetail item={item} onAuthorityChanged={() => void load()} />;
 }
 
 export default KrisDetailSurface;

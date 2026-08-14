@@ -25,17 +25,52 @@ import {
   KRIS_FAMILY_LABELS,
   type KrisCatalogDetailView,
   type KrisCatalogItemView,
+  type KrisLegacyOrderSelection,
   type KrisPriceView,
 } from "@shared/research/kris-launch-a/contract";
 import { KRIS_CATALOG_DISCLOSURES, krisAccessPolicy } from "./access-policy";
-import { krisModePermitsCart, krisPurchaseMode } from "./purchase-mode";
+import { krisModePermitsLegacyOrder, krisPurchaseMode } from "./purchase-mode";
+import { isCanonicalTimestamp, isSafeIdentifier } from "../early-access/commerce/input-guards";
 import type { KrisProductRecord } from "./dataset-reader";
+
+export type KrisLegacyOrderResolver = (
+  product: KrisProductRecord,
+  price: KrisPriceView,
+) => KrisLegacyOrderSelection | null;
+
+function safeLegacyOrder(
+  mode: ReturnType<typeof krisPurchaseMode>,
+  price: KrisPriceView,
+  resolved: KrisLegacyOrderSelection | null,
+): KrisLegacyOrderSelection | null {
+  if (!krisModePermitsLegacyOrder(mode) || price.state !== "priced" || resolved === null) {
+    return null;
+  }
+  if (
+    !isSafeIdentifier(resolved.productId) ||
+    !isSafeIdentifier(resolved.variantId) ||
+    resolved.unitPriceCents !== price.amountCents ||
+    resolved.currency !== price.currency ||
+    !Number.isSafeInteger(resolved.quantityLimit) ||
+    resolved.quantityLimit < 1 ||
+    resolved.quantityLimit > 50 ||
+    !isCanonicalTimestamp(resolved.evaluatedAt)
+  ) {
+    return null;
+  }
+  return Object.freeze({ ...resolved });
+}
 
 export function projectKrisItem(
   product: KrisProductRecord,
   price: KrisPriceView,
+  resolveLegacyOrder?: KrisLegacyOrderResolver,
 ): KrisCatalogItemView {
   const mode = krisPurchaseMode({ channel: product.channel, price });
+  const legacyOrder =
+    krisModePermitsLegacyOrder(mode) && resolveLegacyOrder !== undefined
+      ? safeLegacyOrder(mode, price, resolveLegacyOrder(product, price))
+      : null;
   return {
     id: product.id,
     slug: product.slug,
@@ -58,7 +93,8 @@ export function projectKrisItem(
     // be a second policy, and the two would disagree the first time either
     // changed.
     purchaseMode: mode,
-    canAddToCart: krisModePermitsCart(mode),
+    legacyOrder,
+    canBuyNow: legacyOrder !== null,
     suppliedNote: product.suppliedNote,
   };
 }
@@ -66,9 +102,10 @@ export function projectKrisItem(
 export function projectKrisDetail(
   product: KrisProductRecord,
   price: KrisPriceView,
+  resolveLegacyOrder?: KrisLegacyOrderResolver,
 ): KrisCatalogDetailView {
   return {
-    ...projectKrisItem(product, price),
+    ...projectKrisItem(product, price, resolveLegacyOrder),
     // Read on every detail view: signing in reaches a catalog, not a permission
     // to buy, and the copy says so rather than leaving it to be inferred.
     disclosures: KRIS_CATALOG_DISCLOSURES,

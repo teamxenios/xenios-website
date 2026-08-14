@@ -264,6 +264,9 @@ describe("details, then a TRUE review, then one explicit confirmation", () => {
     expect(readLastOrderNumber()).toBe("XEA-0000000000000042");
     expect(readPendingAttempt()).toBeNull();
     expect(host.textContent).toContain("Nothing is marked paid automatically");
+    expect(host.querySelector("[data-testid='early-access-checkout-proof-entry']")).not.toBeNull();
+    expect(host.querySelector("[data-testid='early-access-checkout-proof-method']")).not.toBeNull();
+    expect(host.querySelector("[data-testid='early-access-checkout-proof']")).not.toBeNull();
   });
 
   it("cannot double-click its way into two orders", async () => {

@@ -3,6 +3,7 @@ import type { KrisCatalogDetailView } from "@shared/research/kris-launch-a/contr
 import { KrisAccessBadge, KrisAccessNotices } from "./KrisAccess";
 import { KrisPrice } from "./KrisPrice";
 import { krisCatalogHref } from "./integration-packet";
+import { KrisLegacyBuyNow } from "./KrisLegacyBuyNow";
 
 /**
  * One Launch A item.
@@ -11,13 +12,16 @@ import { krisCatalogHref } from "./integration-packet";
  * access policy for the channel, the note as supplied, the price or its honest
  * absence, and the disclosures.
  *
- * THERE IS NO PURCHASE CONTROL ON THIS PAGE, and there is no way to add one
- * without changing the contract: `KrisAccessPolicy.purchasable` is typed as the
- * literal `false`, and the item union has no action member at all. Signing in
- * reaches a catalog, not a permission to buy, and the disclosures say that in
- * words rather than leaving it to be inferred.
+ * Purchase presentation follows the server mode. Buy Now additionally requires
+ * the exact Product Control handoff; the browser never derives one.
  */
-export function KrisDetail({ item }: { item: KrisCatalogDetailView }) {
+export function KrisDetail({
+  item,
+  onAuthorityChanged,
+}: {
+  item: KrisCatalogDetailView;
+  onAuthorityChanged?: () => void;
+}) {
   const rows: Array<{ label: string; value: string }> = [
     { label: "Specification", value: item.specification },
     { label: "Family", value: item.familyLabel },
@@ -78,6 +82,8 @@ export function KrisDetail({ item }: { item: KrisCatalogDetailView }) {
           headingLevel="h3"
         />
       </section>
+
+      <KrisLegacyBuyNow item={item} onAuthorityChanged={onAuthorityChanged} />
 
       <section className="min-w-0" aria-labelledby="kris-detail-attributes">
         <h2 id="kris-detail-attributes" className="body-l font-700">
