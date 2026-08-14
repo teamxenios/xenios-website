@@ -14,6 +14,7 @@ import {
   EARLY_ACCESS_MIN_QUANTITY,
 } from "../commerce/early-access-order";
 import { carriesAnyKey, isOneOf, isSafeIdentifier } from "../commerce/input-guards";
+import { resolveBuyerSheet, type BuyerScopedPricing } from "../commerce/buyer-scoped-pricing";
 import {
   createEarlyAccessOrder,
   isEarlyAccessIdempotencyKey,
@@ -200,6 +201,15 @@ export interface EarlyAccessOrderRouteDependencies {
   readonly referrals: EarlyAccessReferralResolver;
   readonly proofStorage: EarlyAccessProofStorage;
   readonly audit: EarlyAccessAuditSink;
+  /**
+   * Buyer-scoped pricing, when the deployment enables it. Absent means every
+   * customer pays the founder release ledger price, which is exactly the
+   * behaviour this door has always had. When present, an entitled customer's
+   * authorized amount replaces the ledger AMOUNT in the price check and in
+   * the money the service writes; the release decision itself still gates
+   * whether the unit can be sold at all.
+   */
+  readonly buyerScopedPrices?: BuyerScopedPricing;
   /** Epoch milliseconds. */
   readonly now: () => number;
   readonly orderNumber: () => string;
@@ -539,16 +549,32 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
         return;
       }
 
+      // THE BUYER-SCOPED PRICE, when this deployment carries the seam. It is
+      // resolved through the same provider the catalog handoff prices from,
+      // for the same server-resolved customer, and any failure inside it
+      // simply restores the ledger price. It substitutes the AMOUNT only:
+      // the release decision above already said whether this unit may be
+      // sold at all.
+      const buyerSheet = await resolveBuyerSheet(
+        deps.buyerScopedPrices,
+        customer.customerRef,
+        nowMs,
+      );
+      const scopedPrice =
+        buyerSheet === null ? null : buyerSheet.priceFor(row.productId, row.variantId);
+      const authorizedUnitPriceCents = scopedPrice?.amountCents ?? decision.priceCents;
+      const authorizedCurrency = scopedPrice?.currency ?? decision.currency;
+
       // THE PRICE. The customer echoes what they were shown; the server compares
       // it against what it resolved. A moved price re-renders the unit instead of
       // charging an amount nobody agreed to.
       if (
-        decision.priceCents !== body.expectedUnitPriceCents ||
-        decision.currency !== body.expectedCurrency
+        authorizedUnitPriceCents !== body.expectedUnitPriceCents ||
+        authorizedCurrency !== body.expectedCurrency
       ) {
         refuse(response, "PRICE_CHANGED", {
-          unitPriceCents: decision.priceCents,
-          currency: decision.currency,
+          unitPriceCents: authorizedUnitPriceCents,
+          currency: authorizedCurrency,
         });
         return;
       }
@@ -605,6 +631,7 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
         orders: new StagingOrderRepository(deps.store),
         rows: projection.rows,
         releases: [...releases],
+        buyerScopedPrice: scopedPrice,
         request: {
           idempotencyKey: body.idempotencyKey,
           orderId: orderNumber,

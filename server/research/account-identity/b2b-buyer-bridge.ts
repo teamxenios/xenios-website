@@ -122,33 +122,28 @@ function hasBuyerRole(roles: readonly B2BBuyerRole[]): boolean {
   return roles.includes("organization_owner") || roles.includes("business_buyer");
 }
 
+type BuyerSelection =
+  | {
+      state: "selected";
+      relationship: B2BBuyerRelationshipRecord;
+      entitlement: B2BBuyerEntitlementRecord;
+    }
+  | { state: "denied"; reason: B2BBuyerDenialReason };
+
 /**
- * Resolve the one business buyer context authorized for this request.
- *
- * The browser supplies neither a business id nor a pricing profile. Both come
- * from the exact authenticated member binding. Zero or multiple active rows
- * fail closed, as do duplicate active entitlements.
+ * The ONE selection rule for "which relationship and entitlement may price
+ * this member". Both the Bearer-authenticated context resolver and the
+ * member-keyed pricing resolver go through here, so the two doors cannot
+ * drift apart on what counts as an authorized buyer: zero or multiple active
+ * relationships fail closed, as do duplicate active entitlements.
  */
-export async function resolveB2BBuyerContext(
-  deps: B2BBuyerBridgeDeps,
-  request: unknown,
-): Promise<ResolveB2BBuyerResult> {
-  const evaluatedAt = deps.now();
-  const at = parseInstant(evaluatedAt);
-  if (at === null) return { state: "denied", reason: "invalid_instant" };
-
-  const member = await deps.resolveAuthenticatedMember(request);
-  if (member === null) return { state: "denied", reason: "auth_required" };
-  if (!member.emailVerified) {
-    return { state: "denied", reason: "email_verification_required" };
-  }
-  if (member.memberStatus !== "active") {
-    return { state: "denied", reason: "member_inactive" };
-  }
-
-  const relationships = await deps.listRelationshipsForMember(member.memberId);
+function selectActiveBuyerRelationship(
+  relationships: readonly B2BBuyerRelationshipRecord[],
+  memberId: string,
+  at: number,
+): BuyerSelection {
   const active = relationships.filter((relationship) =>
-    relationship.memberId === member.memberId
+    relationship.memberId === memberId
     && relationship.state === "active"
     && relationship.migratedOrganizationId === null
   );
@@ -177,7 +172,39 @@ export async function resolveB2BBuyerContext(
     return { state: "denied", reason: "entitlement_ambiguous" };
   }
 
-  const entitlement = entitlements[0];
+  return { state: "selected", relationship, entitlement: entitlements[0] };
+}
+
+/**
+ * Resolve the one business buyer context authorized for this request.
+ *
+ * The browser supplies neither a business id nor a pricing profile. Both come
+ * from the exact authenticated member binding. Zero or multiple active rows
+ * fail closed, as do duplicate active entitlements.
+ */
+export async function resolveB2BBuyerContext(
+  deps: B2BBuyerBridgeDeps,
+  request: unknown,
+): Promise<ResolveB2BBuyerResult> {
+  const evaluatedAt = deps.now();
+  const at = parseInstant(evaluatedAt);
+  if (at === null) return { state: "denied", reason: "invalid_instant" };
+
+  const member = await deps.resolveAuthenticatedMember(request);
+  if (member === null) return { state: "denied", reason: "auth_required" };
+  if (!member.emailVerified) {
+    return { state: "denied", reason: "email_verification_required" };
+  }
+  if (member.memberStatus !== "active") {
+    return { state: "denied", reason: "member_inactive" };
+  }
+
+  const relationships = await deps.listRelationshipsForMember(member.memberId);
+  const selection = selectActiveBuyerRelationship(relationships, member.memberId, at);
+  if (selection.state === "denied") {
+    return { state: "denied", reason: selection.reason };
+  }
+  const { relationship, entitlement } = selection;
   return {
     state: "authorized",
     context: {
@@ -194,6 +221,51 @@ export async function resolveB2BBuyerContext(
         evaluatedAt,
       },
     },
+  };
+}
+
+export type B2BBuyerPricingForMember = {
+  entitlementId: string;
+  profileKey: typeof KRIS_VOLUME_PARTNER_PROFILE;
+  profileVersion: number;
+  profileEffectiveAt: string;
+  relationshipId: string;
+  businessKey: string;
+};
+
+/**
+ * Resolve the pricing entitlement for a member whose identity arrived through
+ * a DURABLE server-side binding rather than a Bearer token: the Early Access
+ * order door authenticates its customer by session, resolves the member
+ * through the M62 legal binding directory, and then asks this exact question.
+ *
+ * Same selection rule as `resolveB2BBuyerContext` (one active relationship,
+ * one active entitlement, buyer role required, everything else fails closed).
+ * This function authorizes PRICING ONLY. It does not re-check member status
+ * or email verification (those live with the Bearer resolver); suspending a
+ * buyer suspends the relationship or the entitlement, and either closes this
+ * door. It never throws for a denial; null means "no buyer-scoped pricing",
+ * and the caller must fall back to the shared ledger price, never to a guess.
+ */
+export async function resolveB2BBuyerPricingForMember(
+  deps: Pick<B2BBuyerBridgeDeps, "now" | "listRelationshipsForMember">,
+  memberId: string,
+): Promise<B2BBuyerPricingForMember | null> {
+  if (typeof memberId !== "string" || memberId.trim() === "") return null;
+  const at = parseInstant(deps.now());
+  if (at === null) return null;
+
+  const relationships = await deps.listRelationshipsForMember(memberId);
+  const selection = selectActiveBuyerRelationship(relationships, memberId, at);
+  if (selection.state === "denied") return null;
+
+  return {
+    entitlementId: selection.entitlement.entitlementId,
+    profileKey: KRIS_VOLUME_PARTNER_PROFILE,
+    profileVersion: selection.entitlement.version,
+    profileEffectiveAt: selection.entitlement.effectiveAt,
+    relationshipId: selection.relationship.relationshipId,
+    businessKey: selection.relationship.businessKey,
   };
 }
 

@@ -269,6 +269,14 @@ export interface EarlyAccessOrderServiceInput {
   readonly rows: readonly EarlyAccessCatalogRow[];
   /** Every founder release on record, including revocations. */
   readonly releases: readonly EarlyAccessRelease[];
+  /**
+   * The buyer-scoped authorized unit price for THIS customer and THIS unit,
+   * resolved by the route through the buyer-scoped pricing seam, or absent.
+   * It substitutes the AMOUNT only. The release decision, its holds, its
+   * quantity authority, and its product fingerprint all still govern: a unit
+   * the ledger has not released cannot be sold at any price, scoped or not.
+   */
+  readonly buyerScopedPrice?: { amountCents: number; currency: string } | null;
   readonly orders: EarlyAccessOrderRepository;
   /**
    * The promotion table that applies to NEW orders. Defaults to the canonical one, and
@@ -488,6 +496,23 @@ export async function createEarlyAccessOrder(
     return refused("release_currency_invalid");
   }
 
+  // THE BUYER-SCOPED PRICE, when the route resolved one. It passes the same
+  // guards the release price passed, and it substitutes the amount alone: the
+  // gates above already proved the RELEASE is sellable, and nothing after this
+  // point re-reads the ledger price, so the money below is written from one
+  // value decided in one place.
+  const scoped = input.buyerScopedPrice ?? null;
+  if (scoped !== null) {
+    if (!isPositiveCents(scoped.amountCents, EARLY_ACCESS_MAX_UNIT_PRICE_CENTS)) {
+      return refused("release_price_invalid");
+    }
+    if (!isOneOf(scoped.currency, EARLY_ACCESS_CURRENCIES)) {
+      return refused("release_currency_invalid");
+    }
+  }
+  const authorizedUnitPriceCents = scoped === null ? decision.priceCents : scoped.amountCents;
+  const authorizedCurrency = scoped === null ? decision.currency : scoped.currency;
+
   // A per unit cap recorded by Product Control is a supply fact, so it binds even
   // though the founder waived the blockers that made the unit unsellable.
   if (row.quantityLimit !== null && request.quantity > row.quantityLimit) {
@@ -511,11 +536,13 @@ export async function createEarlyAccessOrder(
       // unit they are billed for.
       sku: row.sku,
       quantity: request.quantity,
-      unitPriceCents: decision.priceCents,
+      unitPriceCents: authorizedUnitPriceCents,
       // The founder release's product fingerprint IS the version of the approved price,
       // so a historical order can state what it was priced under after the ledger is gone.
+      // A buyer-scoped amount rides under the SAME fingerprint: the released product is
+      // identical, and the entitlement row is the durable record of why the amount differs.
       unitPriceVersion: decision.productVersion,
-      currency: decision.currency,
+      currency: authorizedCurrency,
       now: request.now,
       referralCode: request.referralCode,
     },

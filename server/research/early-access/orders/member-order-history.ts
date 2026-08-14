@@ -112,7 +112,11 @@ const PAYMENT_STATE_TO_ORDER_STATE: Readonly<Record<string, OrderState>> = Objec
 });
 
 export type EarlyAccessOrderHistoryDependencies = Readonly<{
-  bindings: Pick<EarlyAccessLegalBindingDirectory, "customerRefsFor">;
+  // Both directions of the ONE M62 directory instance: order history reads
+  // member -> handles; the buyer-scoped pricing composition reads the forward
+  // handle -> binding through the same object, so the two can never answer
+  // from different records.
+  bindings: Pick<EarlyAccessLegalBindingDirectory, "customerRefsFor" | "forCustomer">;
   store: Pick<EarlyAccessCommerceStore, "placementsForCustomers">;
 }>;
 

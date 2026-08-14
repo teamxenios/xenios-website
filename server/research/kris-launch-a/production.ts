@@ -9,6 +9,7 @@ import {
 import type { KrisCatalogApiDependencies, KrisCatalogViewer } from "./routes";
 import { KrisCatalogService } from "./service";
 import type { KrisLegacyOrderResolver } from "./projection";
+import type { BuyerScopedPricing } from "../early-access/commerce/buyer-scoped-pricing";
 import {
   buildKrisLegacyOrderResolver,
   loadKrisLegacyBindings,
@@ -47,6 +48,12 @@ export function buildKrisCatalogProductionDependencies(
       catalog: KrisDoorCatalogSource;
       releases: KrisDoorReleaseLedger;
       customers: KrisMemberCustomerDirectory;
+      /**
+       * The buyer-scoped pricing seam the order door consults, so the shelf
+       * offers exactly what the door will authorize. Absent means ledger
+       * prices, which safeLegacyOrder then compares as before.
+       */
+      buyerScopedPrices?: BuyerScopedPricing;
     };
   } = {},
 ): KrisCatalogApiDependencies {
