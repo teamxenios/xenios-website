@@ -121,7 +121,8 @@ export function readStatusToken(token: string): string | null {
 // application is claimable, its links must be claim-capable so the approved
 // applicant can recover a lost approval email through resend-link.
 export function tokenPurposeFor(status: ApplicationStatus): TokenPurpose {
-  return status === "approved_pending_payment" || status === "payment_pending" || status === "active"
+  return status === "approved_pending_payment" || status === "approved_sponsored_b2b"
+    || status === "payment_pending" || status === "active"
     ? "account_claim"
     : "status";
 }
@@ -646,6 +647,15 @@ export function registerMembershipApi(app: Express) {
         if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Not configured" });
         const row = await getApplication(String(req.params.id));
         if (!row) return res.status(404).json({ ok: false, message: "Not found" });
+        if (
+          row.source_page === "b2b_buyer_sponsored_claim"
+          && to === "payment_pending"
+        ) {
+          return res.status(409).json({
+            ok: false,
+            message: "Sponsored B2B buyers must use the atomic business-buyer activation path.",
+          });
+        }
         const adminEmail = (req as any).adminEmail as string | undefined;
         const internalNote = typeof req.body?.internalNote === "string" ? req.body.internalNote.slice(0, 2000) : null;
         const memberVisibleNote =
@@ -744,6 +754,12 @@ export function registerMembershipApi(app: Express) {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Not configured" });
       const row = await getApplication(String(req.params.id));
       if (!row) return res.status(404).json({ ok: false, message: "Not found" });
+      if (row.source_page === "b2b_buyer_sponsored_claim") {
+        return res.status(409).json({
+          ok: false,
+          message: "Sponsored B2B buyers must use the atomic business-buyer activation path.",
+        });
+      }
 
       // The applicant must have claimed their account: activation binds to a member.
       const { data: member } = await getSupabaseAdmin()

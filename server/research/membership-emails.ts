@@ -86,6 +86,32 @@ xenios`,
   );
 }
 
+export async function sendB2BBuyerClaim(input: {
+  email: string;
+  firstName: string;
+  token: string;
+  businessDisplayName: string;
+  approvalExpiresAt: Date;
+}) {
+  const date = input.approvalExpiresAt.toLocaleDateString("en-US", {
+    year: "numeric", month: "long", day: "numeric",
+  });
+  return send(
+    input.email,
+    `Set up your ${input.businessDisplayName} Xenios account`,
+    `Hi ${input.firstName},
+
+You have been approved as an operator for the ${input.businessDisplayName} business buyer account.
+
+Choose your own password and create your Xenios sign-in:
+${statusUrl(input.token)}
+
+This link expires on ${date}. This invitation does not request a personal membership payment. Product eligibility and channel restrictions still apply.
+
+xenios`,
+  );
+}
+
 export async function sendApplicationDeclined(input: { email: string; firstName: string }) {
   return send(
     input.email,

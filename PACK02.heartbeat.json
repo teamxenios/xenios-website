@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "taskId": "PACK-02-KRIS-ACCOUNT-RELEASE-PACKET",
+  "state": "ROMAN_B2B2C_SPONSORED_CLAIM_EXPIRY_HARDENED",
+  "branch": "codex/roman-claim-db-gate-20260813",
+  "headSha": "77854523bed69d9bb5420bd1c46bae8418b7e65d",
+  "milestone": "Sponsored activation now locks the claim, captures database-authoritative time, refuses exact/after expiry before every mutation, and permits only exact read-only replay of a valid activation completed before expiry. Focused QA 24/24. Candidate SQL remains unapplied and unmounted.",
+  "humanGates": [
+    "Isolated B2B bridge plus sponsored-claim candidate SQL apply-twice/security/rollback rehearsal",
+    "Agentic OS atomic stale-marker replacement and deployment-wide gates"
+  ],
+  "productionMutated": false,
+  "deployed": false,
+  "mounted": false,
+  "rebaseOrRecreateRequired": true,
+  "updatedAt": "2026-08-13T21:01:00-05:00"
+}

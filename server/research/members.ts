@@ -29,7 +29,9 @@ const IDENTITIES = "referral_identities";
 const ATTRIBUTIONS = "referral_attributions";
 const REWARDS = "referral_rewards";
 
-const CLAIMABLE_STATUSES = new Set(["approved_pending_payment", "payment_pending", "active"]);
+const CLAIMABLE_STATUSES = new Set([
+  "approved_pending_payment", "approved_sponsored_b2b", "payment_pending", "active",
+]);
 
 const SITE = process.env.SITE_URL || "https://xeniostechnology.com";
 
@@ -102,7 +104,8 @@ export function registerMemberApi(app: Express) {
         return res.status(409).json({ ok: false, message: "Your account opens after approval. Check your application status." });
       }
       const approvalExpiresAt = (application as any).approval_expires_at as string | null;
-      if ((application as any).status === "approved_pending_payment" && approvalExpiresAt && Date.parse(approvalExpiresAt) < Date.now()) {
+      if (["approved_pending_payment", "approved_sponsored_b2b"].includes((application as any).status)
+          && approvalExpiresAt && Date.parse(approvalExpiresAt) < Date.now()) {
         return res.status(409).json({ ok: false, message: "This approval has expired. Contact research support to reopen it." });
       }
 
@@ -110,6 +113,13 @@ export function registerMemberApi(app: Express) {
       const memberStatus = (application as any).status === "active" ? "active" : "pending_activation";
       const existing = await getMemberByEmail(email);
       if (existing) return res.status(409).json({ ok: false, message: "This account is already set up. Sign in instead." });
+      const sponsoredB2B = (application as any).source_page === "b2b_buyer_sponsored_claim";
+      if (sponsoredB2B && await findAuthUserByEmail(email)) {
+        return res.status(409).json({
+          ok: false,
+          message: "This sponsored invitation conflicts with an existing sign-in. Contact research support.",
+        });
+      }
 
       const insertMemberRow = async (authUserId: string) => {
         const base = {
@@ -156,6 +166,12 @@ export function registerMemberApi(app: Express) {
         const already = String(authError?.message ?? "").toLowerCase().includes("already");
         if (!already) {
           return res.status(500).json({ ok: false, message: "The account could not be created. Please try again." });
+        }
+        if (sponsoredB2B) {
+          return res.status(409).json({
+            ok: false,
+            message: "This sponsored invitation conflicts with an existing sign-in. Contact research support.",
+          });
         }
         // An auth user exists but no member row does: a previous claim died
         // between the two writes (the "bricked account" failure). The claim
