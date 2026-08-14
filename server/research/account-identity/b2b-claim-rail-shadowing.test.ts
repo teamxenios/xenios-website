@@ -28,7 +28,22 @@ const claimSql = fs.readFileSync(claimPath, "utf8");
 interface ShadowingDefect {
   functionName: string;
   name: string;
+  site: "where_comparison" | "conflict_inference";
   excerpt: string;
+}
+
+function neutralizeSqlComments(sql: string): string {
+  return sql
+    .replace(/\/\*[\s\S]*?\*\//g, (comment) => comment.replace(/[^\r\n]/g, " "))
+    .replace(/--[^\r\n]*/g, (comment) => " ".repeat(comment.length));
+}
+
+function simpleIdentifier(raw: string): string | null {
+  const trimmed = raw.trim();
+  const quoted = trimmed.match(/^"([a-z_][a-z0-9_]*)"$/);
+  if (quoted) return quoted[1] as string;
+  const unquoted = trimmed.match(/^([a-z_][a-z0-9_]*)$/i);
+  return unquoted ? (unquoted[1] as string).toLowerCase() : null;
 }
 
 /**
@@ -36,8 +51,11 @@ interface ShadowingDefect {
  * names that live in PL/pgSQL scope: OUT columns from `returns table(...)`,
  * declared variables, and parameters. Then flag any UNQUALIFIED use of one
  * of those names on the left side of a comparison inside a WHERE-ish
- * context. A dotted reference (alias.name) is qualified and safe; a
- * function whose scope does not contain the name cannot be ambiguous.
+ * context. It also flags an ON CONFLICT inference column that overlaps an
+ * OUT name unless that exact function starts with `#variable_conflict
+ * use_column`; conflict inference columns cannot be table-qualified. A
+ * dotted reference (alias.name) is qualified and safe; a function whose
+ * scope does not contain the name cannot be ambiguous.
  */
 function findShadowingDefects(sql: string): ShadowingDefect[] {
   const defects: ShadowingDefect[] = [];
@@ -50,10 +68,14 @@ function findShadowingDefects(sql: string): ShadowingDefect[] {
     const body = match[5] as string;
 
     const scopeNames = new Set<string>();
+    const outNames = new Set<string>();
     if (returnsTableColumns) {
       for (const column of returnsTableColumns.split(",")) {
-        const name = column.trim().split(/\s+/)[0];
-        if (name) scopeNames.add(name.toLowerCase());
+        const name = simpleIdentifier(column.trim().split(/\s+/)[0] ?? "");
+        if (name) {
+          outNames.add(name);
+          scopeNames.add(name);
+        }
       }
     }
     for (const parameter of paramsRaw.split(",")) {
@@ -64,6 +86,36 @@ function findShadowingDefects(sql: string): ShadowingDefect[] {
     for (const line of declareSection.split("\n")) {
       const declared = line.trim().match(/^(\w+)\s+[\w.%]+/);
       if (declared) scopeNames.add((declared[1] as string).toLowerCase());
+    }
+
+    const bodyWithoutComments = neutralizeSqlComments(body);
+    const usesColumnResolution =
+      /^\s*#variable_conflict[ \t]+use_column[ \t]*(?:--[^\r\n]*)?(?:\r?\n|$)/i.test(
+        body,
+      );
+    if (!usesColumnResolution) {
+      // This deliberately accepts only a simple quoted/unquoted identifier
+      // list. Expression indexes, opclasses, and collations require a real SQL
+      // parser; none occur in either claim rail. ON CONFLICT ON CONSTRAINT is
+      // naturally excluded because it has no inference-column list.
+      const conflictPattern =
+        /\bon\s+conflict\s*\(\s*((?:"[a-z_][a-z0-9_]*"|[a-z_][a-z0-9_]*)(?:\s*,\s*(?:"[a-z_][a-z0-9_]*"|[a-z_][a-z0-9_]*))*)\s*\)\s*do\b/gi;
+      for (const use of bodyWithoutComments.matchAll(conflictPattern)) {
+        for (const rawName of (use[1] as string).split(",")) {
+          const name = simpleIdentifier(rawName);
+          if (name === null || !outNames.has(name)) continue;
+          const at = use.index ?? 0;
+          defects.push({
+            functionName,
+            name,
+            site: "conflict_inference",
+            excerpt: body
+              .slice(Math.max(0, at - 20), at + (use[0] as string).length + 40)
+              .replace(/\s+/g, " ")
+              .trim(),
+          });
+        }
+      }
     }
 
     // Unqualified `name =` right after where/and/or. `(?<![.\w])` refuses
@@ -79,6 +131,7 @@ function findShadowingDefects(sql: string): ShadowingDefect[] {
       defects.push({
         functionName,
         name,
+        site: "where_comparison",
         excerpt: body.slice(Math.max(0, at - 20), at + 60).replace(/\s+/g, " ").trim(),
       });
     }
@@ -88,6 +141,12 @@ function findShadowingDefects(sql: string): ShadowingDefect[] {
 
 describe("B2B claim rail: variable shadowing repair (50b18f6)", () => {
   it("carries the three exact repaired forms", () => {
+    expect(
+      bridgeSql.match(/^#variable_conflict[ \t]+use_column[ \t]*\r?$/gm),
+    ).toHaveLength(1);
+    expect(bridgeSql).toMatch(
+      /create or replace function public\.research_activate_b2b_buyer_bridge\([\s\S]*?set search_path=''\s*as \$\$\r?\n#variable_conflict use_column\r?\ndeclare/,
+    );
     expect(bridgeSql).toContain(
       "where o.relationship_id=v_relationship_id and o.member_id=p_member_id",
     );
@@ -134,6 +193,107 @@ describe("B2B claim rail: variable shadowing repair (50b18f6)", () => {
 
     const claimDefects = findShadowingDefects(brokenClaim);
     expect(claimDefects.map((defect) => defect.name)).toContain("normalized_email");
+  });
+
+  it("NEGATIVE CONTROL: catches both pre-repair ON CONFLICT/OUT-name collisions", () => {
+    const preRepairBridge = bridgeSql
+      .replace(/\r\n/g, "\n")
+      .replace("\n#variable_conflict use_column\ndeclare", "\ndeclare");
+    const conflicts = findShadowingDefects(preRepairBridge).filter(
+      (defect) => defect.site === "conflict_inference",
+    );
+
+    expect(
+      conflicts.map(({ functionName, name }) => ({ functionName, name })),
+    ).toEqual([
+      { functionName: "research_activate_b2b_buyer_bridge", name: "relationship_id" },
+      { functionName: "research_activate_b2b_buyer_bridge", name: "relationship_id" },
+    ]);
+    expect(conflicts[0]?.excerpt).toContain("on conflict (relationship_id,member_id)");
+    expect(conflicts[1]?.excerpt).toContain(
+      "on conflict (relationship_id,profile_key,version)",
+    );
+  });
+
+  it("requires an active use_column directive at the start of the same function", () => {
+    const preRepairBridge = bridgeSql
+      .replace(/\r\n/g, "\n")
+      .replace("\n#variable_conflict use_column\ndeclare", "\ndeclare");
+    const targetStart = "as $$\ndeclare\n  v_member public.research_members%rowtype;";
+    const variants = [
+      preRepairBridge.replace(
+        targetStart,
+        () =>
+          "as $$\n-- #variable_conflict use_column\ndeclare\n  v_member public.research_members%rowtype;",
+      ),
+      preRepairBridge.replace(
+        targetStart,
+        () =>
+          "as $$\n/* #variable_conflict use_column */\ndeclare\n  v_member public.research_members%rowtype;",
+      ),
+      preRepairBridge.replace(
+        targetStart,
+        () =>
+          "as $$\n#variable_conflict use_variable\ndeclare\n  v_member public.research_members%rowtype;",
+      ),
+      preRepairBridge.replace(
+        targetStart,
+        () =>
+          "as $$\ndeclare\n#variable_conflict use_column\n  v_member public.research_members%rowtype;",
+      ),
+      `
+create or replace function public.repaired_sibling()
+returns table(relationship_id uuid)
+language plpgsql as $$
+#variable_conflict use_column
+begin
+  return;
+end;
+$$;
+${preRepairBridge}`,
+    ];
+
+    const inspected = variants.map((variant) => findShadowingDefects(variant));
+    const conflictCounts = inspected.map(
+      (defects) =>
+        defects.filter(
+          (defect) =>
+            defect.functionName === "research_activate_b2b_buyer_bridge" &&
+            defect.site === "conflict_inference",
+        ).length,
+    );
+    expect(conflictCounts).toEqual([2, 2, 2, 2, 2]);
+  });
+
+  it("handles multiline quoted inference names without treating constraints or comments as columns", () => {
+    const synthetic = `
+create or replace function public.conflict_shape(p_relationship_id uuid)
+returns table(relationship_id uuid)
+language plpgsql as $$
+declare
+  v_relationship_id uuid;
+begin
+  insert into public.example(member_id, relationship_id) values (1, 2)
+  ON
+  CONFLICT (
+    member_id,
+    "relationship_id"
+  ) DO NOTHING;
+  insert into public.example(member_id) values (1)
+  on conflict on constraint relationship_id do nothing;
+  -- on conflict (relationship_id) do nothing;
+  /* on conflict (relationship_id) do nothing; */
+  return;
+end;
+$$;`;
+
+    expect(findShadowingDefects(synthetic)).toMatchObject([
+      {
+        functionName: "conflict_shape",
+        name: "relationship_id",
+        site: "conflict_inference",
+      },
+    ]);
   });
 
   it("keeps the rail's attack invariants: strict expiry, advisory locks, single-use claim states", () => {

@@ -351,6 +351,7 @@ language plpgsql
 security definer
 set search_path=''
 as $$
+#variable_conflict use_column
 declare
   v_member public.research_members%rowtype;
   v_relationship_id uuid;
