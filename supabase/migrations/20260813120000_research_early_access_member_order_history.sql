@@ -233,38 +233,49 @@ declare
   v_prosecdef boolean;
   v_role text;
   v_table text;
-  v_spec text[];
-  v_specs text[][] := array[
-    array['research_early_access_legal_bindings_for_member', 'pg_catalog.uuid'],
-    array['research_early_access_placements_for_customers', 'pg_catalog.text[]']
+  -- Two PARALLEL 1-D arrays rather than one 2-D array.
+  --
+  -- A 2-D array here is a trap: slicing one row out of it stays two
+  -- dimensional, so the first subscript reads NULL rather than the routine
+  -- name, every lookup matches nothing, and the post-condition raises "was not
+  -- created" about a routine that was in fact created perfectly well. The
+  -- failure looks like a broken migration rather than a broken assertion,
+  -- which is the worst way for a check to be wrong: it sends the reader
+  -- hunting the routines instead of the check. Caught in rehearsal on
+  -- PostgreSQL 16.
+  v_names text[] := array[
+    'research_early_access_legal_bindings_for_member',
+    'research_early_access_placements_for_customers'
   ];
+  v_argtypes text[] := array['pg_catalog.uuid', 'pg_catalog.text[]'];
+  v_name text;
   v_index integer;
 begin
-  for v_index in 1 .. array_length(v_specs, 1) loop
-    v_spec := v_specs[v_index:v_index][1:2];
+  for v_index in 1 .. array_length(v_names, 1) loop
+    v_name := v_names[v_index];
 
     select p.oid, p.provolatile, p.prosecdef
     into v_oid, v_provolatile, v_prosecdef
     from pg_proc p
     join pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public'
-      and p.proname = v_spec[1]
+      and p.proname = v_name
       -- Matched on the argument TYPE, not on the rendered signature:
       -- pg_get_function_identity_arguments includes the parameter NAME, so a
       -- string comparison would silently miss.
       and p.pronargs = 1
-      and p.proargtypes[0] = v_spec[2]::regtype;
+      and p.proargtypes[0] = v_argtypes[v_index]::regtype;
 
     if v_oid is null then
-      raise exception 'M67 post-condition: % was not created', v_spec[1]
+      raise exception 'M67 post-condition: % was not created', v_name
         using errcode = '55000';
     end if;
     if v_provolatile <> 's' then
       raise exception 'M67 post-condition: % must be STABLE, found volatility %',
-        v_spec[1], v_provolatile using errcode = '55000';
+        v_name, v_provolatile using errcode = '55000';
     end if;
     if not v_prosecdef then
-      raise exception 'M67 post-condition: % must be SECURITY DEFINER', v_spec[1]
+      raise exception 'M67 post-condition: % must be SECURITY DEFINER', v_name
         using errcode = '55000';
     end if;
 
@@ -277,21 +288,21 @@ begin
         and acl.grantee = 0
         and acl.privilege_type = 'EXECUTE'
     ) then
-      raise exception 'M67 post-condition: PUBLIC may execute %', v_spec[1]
+      raise exception 'M67 post-condition: PUBLIC may execute %', v_name
         using errcode = '55000';
     end if;
 
     foreach v_role in array array['anon', 'authenticated'] loop
       if exists (select 1 from pg_roles where rolname = v_role)
          and has_function_privilege(v_role, v_oid, 'EXECUTE') then
-        raise exception 'M67 post-condition: % may execute %', v_role, v_spec[1]
+        raise exception 'M67 post-condition: % may execute %', v_role, v_name
           using errcode = '55000';
       end if;
     end loop;
 
     if exists (select 1 from pg_roles where rolname = 'service_role')
        and not has_function_privilege('service_role', v_oid, 'EXECUTE') then
-      raise exception 'M67 post-condition: service_role cannot execute %', v_spec[1]
+      raise exception 'M67 post-condition: service_role cannot execute %', v_name
         using errcode = '55000';
     end if;
   end loop;
