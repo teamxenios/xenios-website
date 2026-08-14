@@ -1,8 +1,13 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link, useParams } from "wouter";
 import type { ClaimDto, ClaimReason, OrderDetailDto } from "@shared/research/commerce-api";
+import type { EarlyAccessMemberOrderView } from "@shared/research/early-access-member-history";
 import { useResearch } from "../../core";
 import { getOrder, listClaims, submitClaim } from "../../adapters/commerce";
+import {
+  getEarlyAccessMemberOrder,
+  isEarlyAccessMemberOrderNumber,
+} from "../../adapters/early-access-member-history";
 import { denialPresentation } from "../../lib/denials";
 import { ACCESS_ROUTES, MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
@@ -13,6 +18,7 @@ import {
   ResearchRouteBoundary,
   ResearchSecureNotice,
   ResearchStatusBadge,
+  type BadgeTone,
 } from "../../ui/kit";
 import {
   CLAIM_REASON_LABELS,
@@ -41,7 +47,8 @@ import {
 
 type PageState =
   | { phase: "loading" }
-  | { phase: "ok"; order: OrderDetailDto }
+  | { phase: "ok"; source: "canonical"; order: OrderDetailDto }
+  | { phase: "ok"; source: "early_access"; order: EarlyAccessMemberOrderView }
   | { phase: "denied"; code: string; message?: string }
   | { phase: "unavailable" }
   | { phase: "unauthorized" }
@@ -56,6 +63,29 @@ type ClaimSubmitState =
   | { phase: "error"; message: string };
 
 const CLAIM_REASONS = Object.keys(CLAIM_REASON_LABELS) as ClaimReason[];
+
+function earlyAccessStatus(order: EarlyAccessMemberOrderView): { label: string; tone: BadgeTone } {
+  if (order.paymentState === "payment_rejected") return { label: "Payment needs attention", tone: "warning" };
+  if (order.paymentState !== "payment_verified" && order.fulfillmentState !== "not_released") {
+    return { label: "Order status needs attention", tone: "warning" };
+  }
+  if (order.paymentState === "awaiting_payment") return { label: "Awaiting payment", tone: "pending" };
+  if (order.paymentState === "under_review") return { label: "Payment proof under review", tone: "info" };
+  switch (order.fulfillmentState) {
+    case "fulfilled":
+      return { label: "Shipped", tone: "success" };
+    case "packing":
+      return { label: "Packing", tone: "info" };
+    case "supplier_released":
+      return { label: "Preparing fulfillment", tone: "info" };
+    case "not_released":
+      return { label: "Payment confirmed", tone: "info" };
+  }
+}
+
+function formatLegacyMoney(cents: number, currency: string): string {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(cents / 100);
+}
 
 // ---------------------------------------------------------------------------
 // Claims: report an issue with this order, and see what was already reported.
@@ -273,10 +303,31 @@ export default function OrderDetail() {
       return;
     }
     setState({ phase: "loading" });
+    if (isEarlyAccessMemberOrderNumber(orderId)) {
+      const result = await getEarlyAccessMemberOrder(memberToken, orderId);
+      switch (result.kind) {
+        case "ok":
+          setState({ phase: "ok", source: "early_access", order: result.data.order });
+          return;
+        case "denied":
+          setState({ phase: "denied", code: result.code, message: result.message });
+          return;
+        case "unauthorized":
+          setState({ phase: "unauthorized" });
+          return;
+        case "forbidden":
+        case "unavailable":
+          setState({ phase: "unavailable" });
+          return;
+        case "error":
+          setState({ phase: "error", message: result.message });
+          return;
+      }
+    }
     const result = await getOrder(memberToken, orderId);
     switch (result.kind) {
       case "ok":
-        setState({ phase: "ok", order: result.data.order });
+        setState({ phase: "ok", source: "canonical", order: result.data.order });
         void loadClaims();
         return;
       case "denied":
@@ -299,8 +350,11 @@ export default function OrderDetail() {
     void load();
   }, [load]);
 
-  const order = state.phase === "ok" ? state.order : null;
-  const stateMeta = order ? orderStateMeta(order.state) : null;
+  const canonicalOrder = state.phase === "ok" && state.source === "canonical" ? state.order : null;
+  const earlyAccessOrder = state.phase === "ok" && state.source === "early_access" ? state.order : null;
+  const shownOrderId = canonicalOrder?.orderId ?? earlyAccessOrder?.orderNumber ?? null;
+  const shownPlacedAt = canonicalOrder?.placedAt ?? earlyAccessOrder?.placedAt ?? null;
+  const stateMeta = canonicalOrder ? orderStateMeta(canonicalOrder.state) : null;
   const reviewCopy = denialPresentation("large_order_review_required");
 
   const lineColumns = [
@@ -335,8 +389,8 @@ export default function OrderDetail() {
   return (
     <ResearchMemberShell
       eyebrow="Member · Orders"
-      title={order ? `Order ${order.orderId}` : "Order"}
-      lead={order ? `Placed ${formatDate(order.placedAt) ?? order.placedAt}.` : undefined}
+      title={shownOrderId ? `Order ${shownOrderId}` : "Order"}
+      lead={shownPlacedAt ? `Placed ${formatDate(shownPlacedAt) ?? shownPlacedAt}.` : undefined}
       actions={
         <Link href={MEMBER_ROUTES.orders} className="btn btn-ghost">
           All orders
@@ -359,8 +413,93 @@ export default function OrderDetail() {
               </Link>
             </div>
           </div>
+        ) : earlyAccessOrder ? (
+          <div className="grid gap-6" data-testid="ra-early-access-order-detail">
+            <div className="flex items-center gap-3">
+              <span className="mono-label text-ink-mute">Order status</span>
+              <ResearchStatusBadge
+                label={earlyAccessStatus(earlyAccessOrder).label}
+                tone={earlyAccessStatus(earlyAccessOrder).tone}
+              />
+            </div>
+
+            <section aria-label="Items in this order">
+              <h2 className="body-m font-700">Items</h2>
+              <div className="card mt-3">
+                <dl className="grid gap-2">
+                  {earlyAccessOrder.lines.map((line) => (
+                    <div key={line.sku} className="flex items-center justify-between gap-4">
+                      <dt className="body-s font-700">{line.sku} · Qty {line.quantity}</dt>
+                      <dd className="body-s tabular">
+                        {formatLegacyMoney(earlyAccessOrder.totalCents, earlyAccessOrder.currency)}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </section>
+
+            <section aria-label="Fulfillment for this order">
+              <h2 className="body-m font-700">Fulfillment</h2>
+              <div className="grid gap-3 mt-3">
+                {earlyAccessOrder.tracking.length > 0 ? (
+                  earlyAccessOrder.tracking.map((tracking) => (
+                    <div key={`${tracking.recordedAt}-${tracking.trackingNumber}`} className="card">
+                      <p className="body-s">
+                        <span className="mono-label text-ink-mute">Tracking</span>{" "}
+                        <span className="tabular">{tracking.carrier} · {tracking.trackingNumber}</span>
+                      </p>
+                      <p className="body-s text-ink-mute mt-1">
+                        Recorded {formatDate(tracking.recordedAt) ?? tracking.recordedAt}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <ResearchEmptyState
+                    title="No tracking yet."
+                    body="Tracking appears here once the order is on its way."
+                  />
+                )}
+              </div>
+            </section>
+
+            <section aria-label="Order totals">
+              <h2 className="body-m font-700">Totals</h2>
+              <div className="card mt-3" style={{ maxWidth: 420 }}>
+                <div className="flex items-center justify-between gap-4">
+                  <span className="body-s text-ink-2">Order total</span>
+                  <span className="body-s tabular font-700">
+                    {formatLegacyMoney(earlyAccessOrder.totalCents, earlyAccessOrder.currency)}
+                  </span>
+                </div>
+              </div>
+            </section>
+
+            <section aria-label="Support for this order" className="card">
+              <h2 className="body-m font-700">Need help with this order?</h2>
+              <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
+                A person answers. Include your order id and we will pick it up from there.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <a
+                  className="btn btn-secondary"
+                  href={`mailto:research@xeniostechnology.com?subject=${encodeURIComponent(`Order ${earlyAccessOrder.orderNumber}`)}`}
+                >
+                  Email support
+                </a>
+                <Link href={ACCESS_ROUTES.support} className="btn btn-ghost">
+                  Support options
+                </Link>
+              </div>
+            </section>
+
+            <ResearchSecureNotice>
+              This history comes from the durable Early Access order record. Private supplier, cost, margin, and
+              payment-evidence fields are never included.
+            </ResearchSecureNotice>
+          </div>
         ) : (
-          order && (
+          canonicalOrder && (
             <div className="grid gap-6">
               {stateMeta && (
                 <div className="flex items-center gap-3">
@@ -371,7 +510,7 @@ export default function OrderDetail() {
 
               {/* The large-order review banner: canonical calm copy, a
                   notice (role status), never an error. */}
-              {order.reviewReason !== null && (
+              {canonicalOrder.reviewReason !== null && (
                 <section role="status" aria-live="polite" className="card" data-testid="ra-review-banner">
                   <div className="flex items-center gap-3">
                     <ResearchStatusBadge label="Pending review" tone="info" />
@@ -384,11 +523,11 @@ export default function OrderDetail() {
               <section aria-label="Items in this order">
                 <h2 className="body-m font-700">Items</h2>
                 <div className="mt-3">
-                  {order.lines.length > 0 ? (
+                  {canonicalOrder.lines.length > 0 ? (
                     <ResearchDataTable
-                      caption={`Items in order ${order.orderId}`}
+                      caption={`Items in order ${canonicalOrder.orderId}`}
                       columns={lineColumns}
-                      rows={order.lines}
+                      rows={canonicalOrder.lines}
                       rowKey={(line) => line.sku}
                     />
                   ) : (
@@ -404,13 +543,13 @@ export default function OrderDetail() {
                   they all belong to this one order, and shipping is charged once for the whole order.
                 </p>
                 <div className="grid gap-4 mt-3">
-                  {order.shipments.length > 0 ? (
-                    order.shipments.map((shipment, i) => (
-                      <section key={i} className="card" aria-label={`Shipment ${i + 1} of ${order.shipments.length}`}>
+                  {canonicalOrder.shipments.length > 0 ? (
+                    canonicalOrder.shipments.map((shipment, i) => (
+                      <section key={i} className="card" aria-label={`Shipment ${i + 1} of ${canonicalOrder.shipments.length}`}>
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div>
                             <p className="mono-label text-ink-mute">
-                              Shipment {i + 1} of {order.shipments.length} · Fulfilled by {SHIPMENT_OWNER_LABELS[shipment.owner]}
+                              Shipment {i + 1} of {canonicalOrder.shipments.length} · Fulfilled by {SHIPMENT_OWNER_LABELS[shipment.owner]}
                             </p>
                             <p className="body-s text-ink-2 mt-2">
                               {shipment.trackingNumber ? (
@@ -448,27 +587,27 @@ export default function OrderDetail() {
                     <div className="flex items-center justify-between gap-4 mt-1">
                       <dt className="body-s text-ink-2">Shipping (once per order)</dt>
                       <dd className="body-s tabular" data-testid="ra-shipping-total">
-                        {formatCents(order.shippingCents)}
+                        {formatCents(canonicalOrder.shippingCents)}
                       </dd>
                     </div>
-                    {order.storeCreditAppliedCents > 0 && (
+                    {canonicalOrder.storeCreditAppliedCents > 0 && (
                       <div className="flex items-center justify-between gap-4 mt-1">
                         <dt className="body-s text-ink-2">Store credit applied</dt>
                         <dd className="body-s tabular" data-testid="ra-store-credit-applied">
-                          -{formatCents(order.storeCreditAppliedCents)}
+                          -{formatCents(canonicalOrder.storeCreditAppliedCents)}
                         </dd>
                       </div>
                     )}
                     <div className="flex items-center justify-between gap-4 mt-1">
                       <dt className="body-s text-ink-2">Total</dt>
-                      <dd className="body-s tabular font-700">{formatCents(order.totalCents)}</dd>
+                      <dd className="body-s tabular font-700">{formatCents(canonicalOrder.totalCents)}</dd>
                     </div>
                   </dl>
                 </div>
               </section>
 
               <ClaimsSection
-                order={order}
+                order={canonicalOrder}
                 token={memberToken}
                 claims={claims}
                 claimsKnown={claimsKnown}
@@ -483,7 +622,7 @@ export default function OrderDetail() {
                 <div className="mt-4 flex flex-wrap gap-3">
                   <a
                     className="btn btn-secondary"
-                    href={`mailto:research@xeniostechnology.com?subject=${encodeURIComponent(`Order ${order.orderId}`)}`}
+                    href={`mailto:research@xeniostechnology.com?subject=${encodeURIComponent(`Order ${canonicalOrder.orderId}`)}`}
                   >
                     Email support
                   </a>

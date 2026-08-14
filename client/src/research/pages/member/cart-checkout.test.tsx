@@ -13,6 +13,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import type { ReactNode } from "react";
+import { Route, Router } from "wouter";
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -21,6 +22,8 @@ import { __resetCapabilitiesCache } from "../../lib/capabilities";
 import Cart from "./Cart";
 import Checkout from "./Checkout";
 import Orders from "./Orders";
+import OrderDetail from "./OrderDetail";
+import { MEMBER_ROUTES } from "../../lib/routes";
 import type { CartDto, StoreCreditDto } from "@shared/research/commerce-api";
 
 let root: Root | null = null;
@@ -107,6 +110,15 @@ async function renderPage(node: ReactNode): Promise<HTMLDivElement> {
   // One more flush so the load effect's fetch promises settle into state.
   await act(async () => {});
   return container!;
+}
+
+function orderDetailAt(orderId: string): ReactNode {
+  window.history.replaceState(null, "", MEMBER_ROUTES.order.replace(":id", orderId));
+  return (
+    <Router>
+      <Route path={MEMBER_ROUTES.order} component={OrderDetail} />
+    </Router>
+  );
 }
 
 function setValue(el: HTMLInputElement | HTMLSelectElement, value: string) {
@@ -603,9 +615,24 @@ const placedOrder = {
   shipments: [],
 };
 
+const legacyOrder = {
+  source: "early_access_placement",
+  orderNumber: "XEA-0000000000000001",
+  placedAt: "2026-08-13T12:00:00Z",
+  lines: [{ sku: "ROMAN-SAFE-UNIT", quantity: 1, lineTotalCents: 12500 }],
+  totalCents: 12000,
+  currency: "USD",
+  paymentState: "under_review",
+  fulfillmentState: "not_released",
+  tracking: [],
+};
+
 describe("Orders page", () => {
   it("shows the designed empty state when commerce is enabled and there are no orders", async () => {
-    stubFetch([{ method: "GET", path: "/api/research/orders", status: 200, body: { ok: true, orders: [] } }]);
+    stubFetch([
+      { method: "GET", path: "/api/research/orders", status: 200, body: { ok: true, orders: [] } },
+      { method: "GET", path: "/api/research/early-access/member-orders", status: 200, body: { ok: true, orders: [] } },
+    ]);
     const view = await renderPage(<Orders />);
     expect(view.textContent).toContain("No orders yet.");
     expect(view.querySelector('[data-testid="ra-capability-product_commerce"]')).toBeNull();
@@ -615,6 +642,7 @@ describe("Orders page", () => {
     stubFetch([
       CAPABILITIES_OFF,
       { method: "GET", path: "/api/research/orders", status: 200, body: { ok: true, orders: [] } },
+      { method: "GET", path: "/api/research/early-access/member-orders", status: 200, body: { ok: true, orders: [] } },
     ]);
     const view = await renderPage(<Orders />);
     // "When you place your first order" would promise an action the member
@@ -628,12 +656,52 @@ describe("Orders page", () => {
     stubFetch([
       CAPABILITIES_OFF,
       { method: "GET", path: "/api/research/orders", status: 200, body: { ok: true, orders: [placedOrder] } },
+      { method: "GET", path: "/api/research/early-access/member-orders", status: 200, body: { ok: true, orders: [] } },
     ]);
     const view = await renderPage(<Orders />);
     // An order placed before commerce switched off is still the member's
     // record; the capability never hides real history.
     expect(view.textContent).toContain("ord-1");
     expect(view.querySelector('[data-testid="ra-capability-product_commerce"]')).toBeNull();
+  });
+
+  it("merges durable Early Access orders without treating payment review as large-order review", async () => {
+    stubFetch([
+      { method: "GET", path: "/api/research/orders", status: 200, body: { ok: true, orders: [placedOrder] } },
+      {
+        method: "GET",
+        path: "/api/research/early-access/member-orders",
+        status: 200,
+        body: { ok: true, orders: [legacyOrder] },
+      },
+    ]);
+    const view = await renderPage(<Orders />);
+    expect(view.textContent).toContain("XEA-0000000000000001");
+    expect(view.textContent).toContain("Payment proof under review");
+    expect(view.textContent).toContain("$120.00");
+    expect(view.querySelector('[data-testid="ra-orders-review-note"]')).toBeNull();
+  });
+
+  it("loads XEA detail from durable member history and exposes no canonical claim or supplier surface", async () => {
+    const calls = stubFetch([
+      {
+        method: "GET",
+        path: "/api/research/early-access/member-orders/XEA-0000000000000001",
+        status: 200,
+        body: { ok: true, order: legacyOrder },
+      },
+    ]);
+    const view = await renderPage(orderDetailAt(legacyOrder.orderNumber));
+    expect(view.querySelector('[data-testid="ra-early-access-order-detail"]')).toBeTruthy();
+    expect(view.textContent).toContain("ROMAN-SAFE-UNIT · Qty 1");
+    expect(view.textContent).toContain("Payment proof under review");
+    expect(view.textContent).toContain("$120.00");
+    expect(view.textContent).not.toContain("Report an issue");
+    expect(view.textContent).not.toContain("Fulfilled by");
+    expect(view.querySelector('[data-testid="ra-review-banner"]')).toBeNull();
+    expect(calls.map((call) => call.url)).toEqual([
+      "/api/research/early-access/member-orders/XEA-0000000000000001",
+    ]);
   });
 });
 
