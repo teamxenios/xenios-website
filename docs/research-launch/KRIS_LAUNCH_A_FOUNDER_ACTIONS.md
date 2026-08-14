@@ -171,7 +171,17 @@ schema; `public.digest` does not exist. The ref shape matches the checked
 constraint `^eac_[a-f0-9]{32}$` and the app's own derivation
 `sha256('early-access-customer-v1:' + id)` truncated to 32 hex.)
 
-## 6. THE PRICING DECISION (the one true business decision left)
+## 6. THE PRICING DECISION — DECIDED 2026-08-14: appends SUPERSEDED
+
+> The founder's autonomous build directive (2026-08-14) decided this section:
+> the 21 proposed appends target the SHARED release ledger and must NOT be
+> applied as a Roman-only pricing solution. Buyer/profile-scoped price
+> authority is being built (top-right lane) and must be proven before any Buy
+> Now opens. `kris-price-appends.proposed.json` is retained ONLY as the
+> authoritative KRIS price values for the coming price-book ingestion; do not
+> execute it against the ledger. The analysis below is kept for the record.
+
+### The superseded analysis (historical)
 
 Roman must buy at KRIS_VOLUME_PARTNER prices, but the legacy order door and the
 Early Access storefront carry ONE global price per unit: the founder release
