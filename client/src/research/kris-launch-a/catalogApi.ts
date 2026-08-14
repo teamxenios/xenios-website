@@ -7,31 +7,43 @@ import type {
 } from "@shared/research/kris-launch-a/contract";
 import { apiGet, type ApiResult } from "../lib/api";
 import { krisCatalogUrl, krisDetailUrl } from "./integration-packet";
+import { pinKrisItemView, pinKrisPage } from "./purchase-mode-pin";
 
 /**
  * The read adapter for Launch A.
  *
- * The routes are being built in a sibling lane and are not mounted yet. An
- * unmounted path falls through to the SPA catch-all and answers the app shell
- * as HTML with 200, which `apiGet` already normalizes to `unavailable`, so a
- * surface wired to this adapter today renders its designed "not available yet"
- * state rather than an error or, worse, an empty catalog that reads as "we
- * have nothing".
+ * The mounted v1 routes answer here, and every ok result is passed through
+ * the purchase-mode pin before a surface sees it, so a drifted envelope can
+ * never render an action its own channel and price refuse. If a deployment
+ * ever regresses to an unmounted path, that path falls through to the SPA
+ * catch-all and answers the app shell as HTML with 200, which `apiGet`
+ * already normalizes to `unavailable`, so this surface renders its designed
+ * "not available yet" state rather than an error or, worse, an empty catalog
+ * that reads as "we have nothing".
  */
 
-export function getKrisCatalog(
+export async function getKrisCatalog(
   token: string | null,
   query: KrisCatalogQuery = {},
 ): Promise<ApiResult<KrisCatalogPage>> {
-  return apiGet(krisCatalogUrl(query), token);
+  const result = await apiGet<KrisCatalogPage>(krisCatalogUrl(query), token);
+  return result.kind === "ok"
+    ? { kind: "ok", data: pinKrisPage(result.data) }
+    : result;
 }
 
-export function getKrisDetail(
+export async function getKrisDetail(
   token: string | null,
   family: KrisFamily,
   slug: string,
 ): Promise<ApiResult<KrisCatalogDetailView>> {
-  return apiGet(krisDetailUrl(family, slug), token);
+  const result = await apiGet<KrisCatalogDetailView>(
+    krisDetailUrl(family, slug),
+    token,
+  );
+  return result.kind === "ok"
+    ? { kind: "ok", data: pinKrisItemView(result.data) }
+    : result;
 }
 
 /**
