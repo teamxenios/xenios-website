@@ -44,5 +44,10 @@ instructions -> payment proof -> named-admin confirmation -> supplier release.
 - route uniqueness: 368 registrations / 359 call sites / 0 duplicates
 - production mutation: none
 
-The exact agreement kind/version remains external configuration and was not
-invented or changed here.
+The agreement gate is closed with the founder-confirmed launch value:
+
+`RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS=[{"kind":"early_access_terms","version":"v1"}]`
+
+This successor does not set or change that environment value. Apply it only
+after the final release SHA is frozen, tagged `KRIS_LAUNCH_A`, and selected as
+the Render deployment source.
