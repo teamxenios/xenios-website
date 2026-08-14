@@ -59,11 +59,12 @@ export function EarlyAccessProofUpload({
 
   return (
     <section data-testid={testId} className="grid min-w-0 gap-3">
-      <h3>Upload proof of payment</h3>
+      <h3>Record proof of payment</h3>
 
       <p data-testid={`${testId}-not-payment`}>
-        Uploading proof does not pay your order. It tells us to look for your transfer. Your order
-        stays unpaid until a member of our team confirms the money arrived.
+        Recording proof does not pay your order. Xenios records this file's details and checksum;
+        the file itself stays on your device, so keep it and send it through your Xenios support
+        contact. Your order stays unpaid until a member of our team confirms the money arrived.
       </p>
 
       <input
@@ -93,7 +94,7 @@ export function EarlyAccessProofUpload({
           if (chosen !== null) void onSubmit(chosen);
         }}
       >
-        {submitting ? "Sending proof" : "Send proof"}
+        {submitting ? "Recording proof" : "Record proof details"}
       </button>
 
       <p data-testid={`${testId}-order`}>Order {orderNumber}</p>

@@ -57,6 +57,14 @@ function makeWalledApi() {
   return app;
 }
 
+function makeGatewayProbe() {
+  const app = express();
+  app.use(express.json());
+  registerResearchApi(app);
+  app.use((_req, res) => res.status(418).json({ ok: false, message: "downstream" }));
+  return app;
+}
+
 function expectPrivateHeaders(response: { headers: Record<string, string | undefined> }) {
   expect(response.headers["cache-control"]).toBe("no-store");
   expect(response.headers.pragma).toBe("no-cache");
@@ -177,6 +185,34 @@ afterEach(() => {
 });
 
 describe("fresh-browser account-access wall", () => {
+  it.each([
+    ["get", "/api/research/account/context"],
+    ["post", "/api/research/account/claims/request"],
+    ["post", "/api/research/account/claims/confirm"],
+    ["post", "/api/research/account/security/password-change-complete"],
+    ["post", "/api/research/account/organization-invitations/accept"],
+    ["get", "/api/research/account/organizations/00000000-0000-4000-8000-000000000001/dashboard"],
+    ["patch", "/api/research/account/organizations/00000000-0000-4000-8000-000000000001/profile"],
+    ["post", "/api/research/account/organizations/00000000-0000-4000-8000-000000000001/users/invitations"],
+    ["post", "/api/research/account/organizations/00000000-0000-4000-8000-000000000001/orders/request-again"],
+  ] as const)("admits the exact Pack02 %s %s route to its downstream auth boundary", async (method, path) => {
+    const app = makeGatewayProbe();
+    const response = await (request(app) as any)[method](path).send({});
+    expect(response.status).toBe(418);
+  });
+
+  it.each([
+    ["post", "/api/research/account/context"],
+    ["get", "/api/research/account/claims/request"],
+    ["get", "/api/research/account/organizations/not-a-uuid/dashboard"],
+    ["get", "/api/research/account/organizations/00000000-0000-4000-8000-000000000001/orders/request-again"],
+    ["get", "/api/research/account/context/lookalike"],
+  ] as const)("keeps the Pack02 lookalike %s %s behind the legacy wall", async (method, path) => {
+    const response = await (request(makeWalledApi()) as any)[method](path).send({});
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe("Access required.");
+  });
+
   it.each([
     ["post", "/api/research/member/forgot-password"],
     ["post", "/api/research/member/claim"],

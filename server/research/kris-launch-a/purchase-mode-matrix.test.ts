@@ -9,7 +9,7 @@ import {
   type KrisPurchaseMode,
 } from "@shared/research/kris-launch-a/contract";
 import { krisAccessPolicy } from "./access-policy";
-import { krisModePermitsCart, krisPurchaseMode } from "./purchase-mode";
+import { krisModePermitsLegacyOrder, krisPurchaseMode } from "./purchase-mode";
 
 const ARTIFACT = path.resolve(
   process.cwd(),
@@ -82,7 +82,7 @@ describe("the 420 row purchase mode matrix", () => {
 
   it("makes only direct_eligible purchasable, and that is 143 of 420", () => {
     const all = rows();
-    const purchasable = all.filter((row) => krisModePermitsCart(row.mode));
+    const purchasable = all.filter((row) => krisModePermitsLegacyOrder(row.mode));
     expect(purchasable).toHaveLength(EXPECTED.direct_eligible);
     for (const row of purchasable) {
       expect(row.mode).toBe("direct_eligible");
@@ -92,7 +92,7 @@ describe("the 420 row purchase mode matrix", () => {
     }
     for (const row of all) {
       if (row.mode === "direct_eligible") continue;
-      expect(krisModePermitsCart(row.mode)).toBe(false);
+      expect(krisModePermitsLegacyOrder(row.mode)).toBe(false);
     }
   });
 
@@ -100,7 +100,7 @@ describe("the 420 row purchase mode matrix", () => {
     const clinical = rows().filter((row) => row.product.channel === "clinical_provider_only");
     expect(clinical).toHaveLength(244);
     for (const row of clinical) {
-      expect(krisModePermitsCart(row.mode)).toBe(false);
+      expect(krisModePermitsLegacyOrder(row.mode)).toBe(false);
       expect(["provider_workflow", "price_pending"]).toContain(row.mode);
     }
   });
@@ -127,7 +127,7 @@ describe("the 420 row purchase mode matrix", () => {
     ]);
 
     for (const row of pending) {
-      expect(krisModePermitsCart(row.mode)).toBe(false);
+      expect(krisModePermitsLegacyOrder(row.mode)).toBe(false);
       expect(row.product.suppliedNote).toBe("Price pending.");
       expect(row.price.state).toBe("pending");
     }
@@ -162,7 +162,7 @@ describe("the derivation refuses rather than defaults", () => {
       price: priced,
     });
     expect(mode).toBe("classification_pending");
-    expect(krisModePermitsCart(mode)).toBe(false);
+    expect(krisModePermitsLegacyOrder(mode)).toBe(false);
   });
 
   it("puts price ahead of channel, so an unpriced direct row is still refused", () => {
@@ -171,7 +171,7 @@ describe("the derivation refuses rather than defaults", () => {
       price: { state: "pending", display: "Price pending" },
     });
     expect(mode).toBe("price_pending");
-    expect(krisModePermitsCart(mode)).toBe(false);
+    expect(krisModePermitsLegacyOrder(mode)).toBe(false);
   });
 
   it("permits exactly three channels to reach direct_eligible", () => {

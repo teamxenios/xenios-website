@@ -91,7 +91,6 @@ import {
   type EarlyAccessOrderHistoryDependencies,
   type MemberOrdersService,
 } from "../early-access/orders/member-order-history";
-import { buildEarlyAccessOrderHistory } from "../early-access/persistence/production-deps";
 
 // ---------------------------------------------------------------------------
 // Production commerce dependencies (integration lane): the three-state composition.
@@ -291,16 +290,8 @@ async function memberHasAcceptedCurrentAgreement(memberId: string, agreementKey:
   }
 }
 
-export function defaultWiring(): CommerceWiring {
+function defaultWiring(): CommerceWiring {
   return {
-    // THE WIRE THAT WAS MISSING. The decorator, its directory, and its store
-    // all existed and were fully tested, but this field stayed undefined in
-    // every real deployment because only tests ever supplied it, so
-    // GET /api/research/orders served the undecorated base service and no
-    // member ever saw an Early Access order. Durable mode only: the factory
-    // returns null anywhere Early Access persistence is not durable, which
-    // keeps ABSENT MEANS UNCHANGED true for every other deployment shape.
-    earlyAccessOrderHistory: buildEarlyAccessOrderHistory() ?? undefined,
     resolveCartStore,
     resolveOrderRepository,
     resolveClaimRepository,

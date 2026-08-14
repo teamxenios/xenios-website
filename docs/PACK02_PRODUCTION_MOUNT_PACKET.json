@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "artifactType": "PACK02_PRODUCTION_ACCOUNT_IDENTITY_MOUNT_PACKET",
+  "status": "MOUNT_PACKET_READY_PRODUCTION_ENABLEMENT_GATED",
+  "sourcePack02Sha": "5f4832c28e5bd21212600b00727935e60eb0c975",
+  "branch": "codex/pack02-deployment-gate-resolved-20260813",
+  "exactImport": "import { registerProductionAccountIdentityApi } from \"./research/account-identity/production-mount\";",
+  "exactDependencies": "buildProductionAccountIdentityDependencies({ admin: getSupabaseAdmin(), anon: getSupabaseAnon(), notifications: immediateAccountNotificationDelivery, passwordEvidence: unavailablePasswordEvidence, siteUrl: process.env.SITE_URL ?? \"https://xeniostechnology.com\" })",
+  "exactRegistration": "registerProductionAccountIdentityApi(app);",
+  "registrationOrder": "Immediately after registerResearchApi(app), before the remaining member/catalog/commerce routes and before static/SPA fallback.",
+  "internalRegistrar": "registerProductionAccountIdentityApi calls registerAccountIdentityApi exactly once with createProductionAccountIdentityDeps over the canonical Supabase verifier and Supabase store.",
+  "routesAdded": [
+    "GET /api/research/account/context",
+    "POST /api/research/account/claims/request",
+    "POST /api/research/account/claims/confirm",
+    "POST /api/research/account/security/password-change-complete",
+    "POST /api/research/account/organization-invitations/accept",
+    "GET /api/research/account/organizations/:organizationId/dashboard",
+    "PATCH /api/research/account/organizations/:organizationId/profile",
+    "POST /api/research/account/organizations/:organizationId/users/invitations",
+    "POST /api/research/account/organizations/:organizationId/orders/request-again"
+  ],
+  "routeCountDelta": 9,
+  "gatewayAdmission": "Only the exact nine method/path shapes pass the earlier legacy research wall. Organization IDs must be canonical UUIDs. Wrong methods and lookalikes remain walled. The gateway grants no identity or role; the downstream Pack02 verifier remains authoritative.",
+  "authBoundary": {
+    "authority": "Supabase Auth",
+    "token": "One strict Authorization: Bearer token",
+    "verification": "getSupabaseAnon().auth.getUser(token)",
+    "recoveryPurposeSession": "denied",
+    "verifiedEmail": "required",
+    "personalIdentity": "research_members by exact auth_user_id; research_applications reused for application profile data",
+    "organizationAuthorization": "active research_organization_users membership plus route-specific organization role",
+    "legacyReviewCookie": "not an account authorization mechanism"
+  },
+  "canonicalComposition": {
+    "organizations": "Pack02 organization authorization/profile metadata only",
+    "buyer": "6f4c7517e762c484458d0ef9d935e518ff1398ee compatible; no Buyer service duplicated",
+    "catalog": "e858e893e8d877622129a0a2c9b339c2e7a9a697 compatible; no catalog route added",
+    "cart": "existing canonical member/persistent cart reused; no Pack02 cart store",
+    "checkout": "existing canonical checkout reused; no Pack02 checkout handler",
+    "orders": "research_orders, research_order_lines, and research_order_shipments are read as canonical history; organization ownership is metadata only",
+    "duplicateSystems": false
+  },
+  "failureBehavior": {
+    "missingOrInvalidAuth": "401 AUTH_REQUIRED",
+    "unverifiedEmail": "403 EMAIL_VERIFICATION_REQUIRED",
+    "noAttachedAccount": "403 ACCOUNT_NOT_FOUND",
+    "crossOrganizationOrInactiveMembership": "403 ORGANIZATION_ACCESS_DENIED",
+    "missingRole": "403 ORGANIZATION_ROLE_REQUIRED",
+    "initialPasswordEvidenceUnavailable": "428 PASSWORD_CHANGE_REQUIRED; auth.users.updated_at is never treated as password proof",
+    "databaseProviderOrSchemaFailure": "503 SERVICE_UNAVAILABLE with redacted body",
+    "headers": "Cache-Control private, no-store; Pragma no-cache; Vary Authorization, Cookie",
+    "startupConfiguration": "Missing required Supabase server configuration throws during composition instead of falling back to memory or another identity system"
+  },
+  "notificationBoundary": "Immediate existing Resend provider delivery only. The action URL is never logged or persisted; a non-secret claim/invitation UUID supplies provider idempotency. The existing durable outbox is not used because it cannot safely persist raw Pack02 action tokens.",
+  "deploymentPrerequisitesNotExecuted": [
+    "Review, promote, and apply the Pack02 organization/claim schema and RPC candidate through the authorized database lane. Until then account context fails closed because organization access is part of the context projection.",
+    "Provide canonical password-specific changed-after evidence before initial password requirements can be cleared. Supabase auth.users.updated_at is not sufficient.",
+    "Rehearse the promoted schema and store queries in an isolated database before production enablement."
+  ],
+  "kris": "UNKNOWN_NOT_GUESSED",
+  "candidateSqlExecuted": false,
+  "inviteExecuted": false,
+  "productionMutated": false,
+  "deployed": false
+}

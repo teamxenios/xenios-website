@@ -551,6 +551,28 @@
         "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16.14 and 17.10 using scripts/verify-m66-quantity-band-50.sh. Both runs required the exact named M65 1..20 predecessor on both targeted tables, rejected stray or noncanonical bands, preserved the quantity-20 fixture byte-identically and left all unrelated check constraints unchanged. After each apply, the behavioural verifier proved exact named 1..50 bands on cart items and child releases, quantity 50 accepted, quantity 51 and zero refused, the subtotal = unit_price_cents * quantity identity intact, and a forged subtotal at quantity 50 refused. The separate quantity-50 release-authority rehearsal also passed precheck/write/postcheck and idempotent replay on both engines with exact first-write row delta, zero second-write delta, and unchanged historical-release and founder-checkout snapshots. Production was not connected to or mutated."
       },
       "notes": "M66 release candidate. Widens only the two canonical M65 quantity bands from 1..20 to 1..50, preserves the subtotal money identity and every unrelated constraint, writes no row, grants nothing, and refuses an absent, duplicate, renamed, stray, or noncanonical predecessor band. It is pinned to the first candidate source commit and remains explicitly unapplied to production. Founder policy and candidate application authority are now 1..50 with no quantity-only review threshold, while Product Control and founder release remain independent fail-closed ceilings. Current production remains at its observed 1..20 authority until the exact M66 and separate append-only quantity-50 release-authority chain are approved and executed before application deployment."
+    },
+    {
+      "id": "research_early_access_member_order_history",
+      "path": "supabase/migrations/20260813120000_research_early_access_member_order_history.sql",
+      "sourceSha": "9624ba26aab056d4982da1d098f6c1c554b195da",
+      "dependsOn": [
+        "research_early_access_hardening",
+        "research_early_access_commerce_persistence"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "2a92b84f635d9a5171d09db83717c0a11f075f36dfc5816ff0d06dee90afac2f"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "drop_the_two_read_only_routines_which_restores_the_prior_behaviour_exactly_because_nothing_here_writes_anything",
+        "procedure": "supabase/production/research-early-access-member-order-history-rollback-notes.md",
+        "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16 and 17 via scripts/verify-m67-member-order-history.sh on 2026-08-13. Each engine first proved the preflight fails closed on a bare database with no routine left behind, then applied M67 twice over the accepted M62 bindings + commerce placements shape with a two-member fixture, with the 12-assertion behavioural suite green after each pass: member handles resolve primary plus alias sorted and de-duplicated, an unknown member and an unknown handle each return empty rather than broader, an empty and a null handle array each return empty rather than every order, placements return deterministically ordered records, both routines are STABLE and SECURITY DEFINER, anon and authenticated cannot execute, service_role can, and service_role still has no direct SELECT on either table. The apply created no relation and wrote no row. Self-sabotage: a granted service_role table SELECT makes the re-apply ABORT on its own post-condition; a stray anon EXECUTE on a routine is healed by re-apply with the healed state proven. Production was not connected to or mutated."
+      },
+      "notes": "M67 release candidate. Adds exactly two stable security-definer read routines (research_early_access_legal_bindings_for_member, research_early_access_placements_for_customers) behind the same boundary every other Early Access read uses: EXECUTE for service_role alone, nothing for public, anon or authenticated, and no table grant anywhere. Fail-closed preflight refuses an absent or differently shaped M62 bindings table or commerce placements table; the in-transaction post-condition proves both routines exist with the exact argument types, are STABLE and SECURITY DEFINER, that PUBLIC, anon and authenticated cannot execute them, that service_role can, and that service_role still has no direct SELECT on either underlying table. Explicitly unapplied to production; application is a separate protected founder action."
     }
   ],
   "invariants": [

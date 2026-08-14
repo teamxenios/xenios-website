@@ -126,6 +126,13 @@ const CART_QUANTITY_BAND_50_SOURCE_SHA =
   "afe9b82336ede44c6a667342c85b04c5a3e0ed18";
 const CART_QUANTITY_BAND_50_PATH =
   "supabase/migrations/20260812120000_research_early_access_cart_quantity_band_50.sql";
+// M67: the member order-history read (placementsForCustomers + the
+// customer-refs-for-member routine). Candidate-only, explicitly unapplied to
+// production; pinned to the harness-corrected source commit.
+const MEMBER_ORDER_HISTORY_SOURCE_SHA =
+  "9624ba26aab056d4982da1d098f6c1c554b195da";
+const MEMBER_ORDER_HISTORY_PATH =
+  "supabase/migrations/20260813120000_research_early_access_member_order_history.sql";
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -822,6 +829,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(CART_QUANTITY_BAND_SOURCE_SHA);
           } else if (path === CART_QUANTITY_BAND_50_PATH) {
             expect(sourceSha).toBe(CART_QUANTITY_BAND_50_SOURCE_SHA);
+          } else if (path === MEMBER_ORDER_HISTORY_PATH) {
+            expect(sourceSha).toBe(MEMBER_ORDER_HISTORY_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
@@ -1586,8 +1595,14 @@ describe("route uniqueness validator", () => {
     //
     // Pack04 added ZERO route call sites: its work is storage, persistence and
     // the customer order history projection, none of which is a new door.
-    expect(result.callSites).toBe(355);
-    expect(result.routes).toHaveLength(364);
+    //
+    // The pack02 account-identity production mount added FOUR call sites and
+    // FOUR registrations (355/364 -> 359/368), MEASURED by the route scanner
+    // and matching the accepted Buy Now client handoff's own census. The M67
+    // order-history merge added ZERO: legacy orders ride the existing member
+    // orders service.
+    expect(result.callSites).toBe(359);
+    expect(result.routes).toHaveLength(368);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

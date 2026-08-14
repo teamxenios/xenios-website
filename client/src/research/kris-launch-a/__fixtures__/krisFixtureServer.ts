@@ -19,10 +19,7 @@ import {
   KRIS_CATALOG_DISCLOSURES,
   krisAccessPolicy,
 } from "../../../../../server/research/kris-launch-a/access-policy";
-import {
-  krisModePermitsCart,
-  krisPurchaseMode,
-} from "../../../../../server/research/kris-launch-a/purchase-mode";
+import { krisPurchaseMode } from "../../../../../server/research/kris-launch-a/purchase-mode";
 import type { ApiResult } from "../../lib/api";
 
 /**
@@ -115,12 +112,10 @@ export function krisFixtureItems(): KrisCatalogItemView[] {
       channel: product.channel,
       price: overlay[product.id] ?? KRIS_PRICE_PENDING,
     }),
-    canAddToCart: krisModePermitsCart(
-      krisPurchaseMode({
-        channel: product.channel,
-        price: overlay[product.id] ?? KRIS_PRICE_PENDING,
-      }),
-    ),
+    // The member-safe artifact carries no Product Control identity. Tests that
+    // exercise Buy Now attach an exact server selection explicitly.
+    legacyOrder: null,
+    canBuyNow: false,
     suppliedNote: product.suppliedNote,
   }));
 }

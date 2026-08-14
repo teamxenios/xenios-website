@@ -168,6 +168,13 @@ export type EarlyAccessPersistenceBuild = Readonly<{
   warnings: readonly string[];
   reason: string | null;
   options: Partial<EarlyAccessRegistrationOptions>;
+  /**
+   * The member-to-legacy-order join, present ONLY in the durable branch: the
+   * M62 legal binding directory beside the same commerce store the order
+   * routes write. One bundle feeds both the merged member order history and
+   * the Kris Buy Now handoff, so ownership resolves one way everywhere.
+   */
+  orderHistory?: EarlyAccessOrderHistoryDependencies;
 }>;
 
 /**
@@ -375,6 +382,10 @@ export function buildEarlyAccessPersistence(
     warnings: Object.freeze(warnings),
     reason: null,
     options,
+    orderHistory: Object.freeze({
+      bindings: new SupabaseEarlyAccessLegalBindingDirectory(run),
+      store: options.store as SupabaseEarlyAccessCommerceStore,
+    }),
   });
 }
 
@@ -438,34 +449,6 @@ export function buildEarlyAccessUnitHoldRegistry(
   query?: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
 ): SupabaseUnitHoldRegistry {
   return new SupabaseUnitHoldRegistry(query ?? createEarlyAccessSupabaseQuery());
-}
-
-/**
- * The member order-history read pair (M67): the legal binding directory that
- * answers `customerRefsFor(memberId)` and the commerce store that answers
- * `placementsForCustomers(refs)`. The commerce composition root
- * (server/research/commerce/production-deps.ts, defaultWiring) calls this to
- * decorate GET /api/research/orders with a member's own Early Access orders.
- *
- * Durable mode only. Anything except a durable persistence decision returns
- * null, so a deployment without durable Early Access persistence keeps the
- * undecorated orders service, which is the previous behaviour exactly, rather
- * than a history read that can only fail.
- */
-export function buildEarlyAccessOrderHistory(
-  env: NodeJS.ProcessEnv = process.env,
-  query?: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
-): EarlyAccessOrderHistoryDependencies | null {
-  const decision = decideEarlyAccessPersistence(readEarlyAccessPersistenceEnvironment(env));
-  if (decision.mode !== "durable") return null;
-  const run = query ?? createEarlyAccessSupabaseQuery();
-  return Object.freeze({
-    bindings: new SupabaseEarlyAccessLegalBindingDirectory(run),
-    store: new SupabaseEarlyAccessCommerceStore({
-      query: run,
-      reservationTtlMinutes: readReservationTtlMinutes(env),
-    }),
-  });
 }
 
 function createEarlyAccessSupabaseQuery(): (

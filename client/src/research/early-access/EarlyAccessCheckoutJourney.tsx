@@ -5,12 +5,14 @@ import {
   loadEarlyAccessInvoice,
   loadEarlyAccessOrderStatus,
   placeEarlyAccessOrder,
+  submitEarlyAccessPaymentProof,
   type EarlyAccessContact,
   type EarlyAccessInvoiceView,
   type EarlyAccessOrderStatusView,
   type EarlyAccessOrderView,
   type EarlyAccessShipTo,
 } from "../adapters/earlyAccessCheckout";
+import { EarlyAccessProofUpload } from "./EarlyAccessProofUpload";
 import {
   clearPendingAttempt,
   intentFingerprint,
@@ -21,6 +23,12 @@ import {
   type OrderIntent,
 } from "./pendingOrderStore";
 import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
+import {
+  EARLY_ACCESS_PAYMENT_OPTION_CODES,
+  earlyAccessPaymentOptionLabel,
+  isEarlyAccessPaymentOptionCode,
+  type EarlyAccessPaymentOptionCode,
+} from "@shared/research/early-access-payment-options";
 
 /**
  * The one-product checkout for the supervised Early Access pilot.
@@ -171,6 +179,9 @@ export function EarlyAccessCheckoutJourney({
   const [invoice, setInvoice] = useState<EarlyAccessInvoiceView | null>(null);
   const [status, setStatus] = useState<EarlyAccessOrderStatusView | null>(null);
   const [copied, setCopied] = useState(false);
+  const [proofMethod, setProofMethod] = useState<EarlyAccessPaymentOptionCode | "">("");
+  const [proofSubmitting, setProofSubmitting] = useState(false);
+  const [proofMessage, setProofMessage] = useState<string | null>(null);
   const [contact, setContact] = useState<EarlyAccessContact>({ email: "", phone: "" });
   const [shipTo, setShipTo] = useState<EarlyAccessShipTo>({
     recipientName: "",
@@ -420,12 +431,43 @@ export function EarlyAccessCheckoutJourney({
     }
   };
 
+  const submitProof = async (file: File) => {
+    if (order === null || proofSubmitting) return;
+    if (!isEarlyAccessPaymentOptionCode(proofMethod)) {
+      setError("Choose the manual payment method you used before recording proof details.");
+      return;
+    }
+    setProofSubmitting(true);
+    setProofMessage(null);
+    setError(null);
+    const submitted = await submitEarlyAccessPaymentProof({
+      orderNumber: order.orderNumber,
+      file,
+      method: proofMethod,
+    });
+    setProofSubmitting(false);
+    if (!submitted.ok) {
+      setError(
+        submitted.code === "CONNECTION_FAILED"
+          ? "We could not reach the proof service. Nothing was marked paid; keep the file and try again."
+          : "The proof details were not accepted. Check the file and payment method, then try again.",
+      );
+      return;
+    }
+    setProofMessage(submitted.value.message);
+    const loaded = await loadEarlyAccessOrderStatus(order.orderNumber);
+    if (loaded.ok) setStatus(loaded.value);
+    setPhase("status");
+  };
+
   /* ---------------------------------------------------------------- payment */
 
   if (order !== null) {
     const payable = invoice?.payableTotalCents ?? order.money.payableTotalCents;
     const currency = invoice?.currency ?? order.money.currency;
     const reference = invoice?.paymentReference ?? order.invoice.paymentReference;
+    const proofUnderReview = proofMessage !== null || status?.payment.state === "under_review";
+    const paymentConfirmed = status?.payment.paid === true;
     return (
       <section className="card min-w-0" data-testid={testId} data-phase={phase}>
         <p className="mono-label text-pulse">Order created</p>
@@ -507,6 +549,45 @@ export function EarlyAccessCheckoutJourney({
             Use the payment reference above. Xenios support will provide or confirm the available
             manual payment method for this pilot order.
           </p>
+        )}
+        {paymentConfirmed ? (
+          <p className="mt-4 body-s text-ink-2" role="status" data-testid={`${testId}-payment-confirmed`}>
+            Xenios has confirmed payment for this order.
+          </p>
+        ) : proofUnderReview ? (
+          <p className="mt-4 body-s text-ink-2" role="status" data-testid={`${testId}-proof-under-review`}>
+            {proofMessage ?? "Your payment confirmation is under review."} Your order is not paid
+            until a named Xenios team member confirms the money arrived.
+          </p>
+        ) : (
+          <div className="mt-5 grid gap-3" data-testid={`${testId}-proof-entry`}>
+            <label className="grid gap-1 body-s">
+              <span>Manual payment method used</span>
+              <select
+                className="input-field"
+                value={proofMethod}
+                disabled={proofSubmitting}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  setProofMethod(isEarlyAccessPaymentOptionCode(next) ? next : "");
+                }}
+                data-testid={`${testId}-proof-method`}
+              >
+                <option value="">Choose the method you used</option>
+                {EARLY_ACCESS_PAYMENT_OPTION_CODES.map((code) => (
+                  <option key={code} value={code}>
+                    {earlyAccessPaymentOptionLabel(code)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <EarlyAccessProofUpload
+              orderNumber={order.orderNumber}
+              submitting={proofSubmitting}
+              onSubmit={submitProof}
+              testId={`${testId}-proof`}
+            />
+          </div>
         )}
         <p className="mt-4 body-s text-ink-mute max-w-[62ch]">
           Nothing is marked paid automatically. A named Xenios team member verifies receipt before

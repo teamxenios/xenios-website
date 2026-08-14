@@ -13,6 +13,7 @@ const STATUS_COPY: Record<string, { title: string; body: string }> = {
   under_review: { title: "Under review", body: "Your application is being reviewed individually. You will hear from us by email." },
   more_information_requested: { title: "One more step", body: "We need a little more information to finish the review. Check your email for the details, or reply to the request directly." },
   approved_pending_payment: { title: "Approved", body: "Your application has been approved. Membership activation opens the in-depth onboarding." },
+  approved_sponsored_b2b: { title: "Business access approved", body: "Your sponsored business-buyer access is ready for account setup." },
   payment_pending: { title: "Activation in progress", body: "Your activation is being confirmed." },
   active: { title: "Active", body: "Your membership is active. Welcome to xenios research." },
   paused: { title: "Paused", body: "Your membership is paused. Contact support to resume." },
@@ -227,7 +228,7 @@ export default function ApplyStatus() {
                   <p className="body-s text-ink-2">{view.memberVisibleNote}</p>
                 </div>
               )}
-              {view.status === "approved_pending_payment" && (
+              {(view.status === "approved_pending_payment" || view.status === "approved_sponsored_b2b") && (
                 <div className="mt-8">
                   <ClaimAccount />
                   {view.approvalExpiresAt && (

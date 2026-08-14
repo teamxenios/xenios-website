@@ -1,0 +1,111 @@
+{
+  "$comment": "Reviewed Kris -> Product Control associations for the legacy Buy Now handoff. Identity ONLY: krisId is the Kris artifact row, productId/variantId is the exact canonical unit. Prices, currencies and quantity ceilings are never recorded here; they resolve live from the founder release ledger, and any disagreement with the Kris price closes Buy Now for that row. An empty list means no row offers Buy Now. Additions are founder-reviewed data changes, committed here or supplied post-freeze via XENIOS_KRIS_LEGACY_BINDINGS.",
+  "schemaVersion": 1,
+  "bindings": [
+    {
+      "krisId": "kli_ab4498834d24d715da48",
+      "productId": "82fc4ded-ab60-46a1-9a5f-ccd9deb7aaa4",
+      "variantId": "02c84407-cc6f-480f-82dc-a77de334f2a0"
+    },
+    {
+      "krisId": "kli_958d66e98f74c7185006",
+      "productId": "36feeb53-ac32-48f0-8d70-f4a78d9d6c05",
+      "variantId": "bb5b7ac5-3861-4074-90cf-bfba0da28a09"
+    },
+    {
+      "krisId": "kli_4c023bb65525fb80f3d4",
+      "productId": "36feeb53-ac32-48f0-8d70-f4a78d9d6c05",
+      "variantId": "a47e6ed6-21b5-457e-92fe-63088ff008ce"
+    },
+    {
+      "krisId": "kli_17420f2b24b2f383b296",
+      "productId": "cabf40e2-e2f0-4af3-b9b9-9e9a209d4de6",
+      "variantId": "56c72416-dab6-4ec0-a417-267d3af53e9c"
+    },
+    {
+      "krisId": "kli_057c67b0d2a3bd2c6478",
+      "productId": "55552bd3-1390-4741-a6f2-0d5fe808de59",
+      "variantId": "0e456fd4-371b-427d-a529-6482ca6b35b3"
+    },
+    {
+      "krisId": "kli_e3ae221ea0d2d904ccc9",
+      "productId": "55552bd3-1390-4741-a6f2-0d5fe808de59",
+      "variantId": "390ef93f-f215-4cdf-9b7b-c537af94d4ff"
+    },
+    {
+      "krisId": "kli_427ba0466b4a33c5cc01",
+      "productId": "873dfc2e-2141-4eef-ac39-5b2c029f83f9",
+      "variantId": "5282a958-a390-4436-b8b0-bcf862ac744d"
+    },
+    {
+      "krisId": "kli_626e175e791dffed5802",
+      "productId": "56547ff3-01c0-40fc-93e7-4730fa3c6322",
+      "variantId": "040560a6-f7e0-42e1-a8db-723212f1c3f0"
+    },
+    {
+      "krisId": "kli_c825f6f6cab7f0c23253",
+      "productId": "6db119f8-c761-4db3-bfd3-271bdb92e93b",
+      "variantId": "7e134db7-29f2-4efc-acc3-3025cb0bac99"
+    },
+    {
+      "krisId": "kli_886a1eba08a64d0eb911",
+      "productId": "cbe82e4c-c9ad-490d-9efd-fde271252894",
+      "variantId": "6de7b7d4-71b7-4aad-ac9b-f2bfc9023fc7"
+    },
+    {
+      "krisId": "kli_cf73a1b6c3d11ee09fcd",
+      "productId": "b3074c79-d04c-4272-8d98-c535a97f2362",
+      "variantId": "b9cba238-f1e4-45f2-ae8b-4071f2d0f942"
+    },
+    {
+      "krisId": "kli_9989e5ddded50fd37801",
+      "productId": "b4435d54-abef-497c-a403-5ba861c8ab1f",
+      "variantId": "4302123c-4f29-4259-ace4-15da51f48673"
+    },
+    {
+      "krisId": "kli_0b417667b78502a4062b",
+      "productId": "2b257d42-85b7-4b03-ab2a-d70b8f1c042c",
+      "variantId": "9ed65dee-1f44-43ae-835c-39762777f2bf"
+    },
+    {
+      "krisId": "kli_f99d8776e3c70b443e09",
+      "productId": "2b257d42-85b7-4b03-ab2a-d70b8f1c042c",
+      "variantId": "8dbf690a-5f7e-4fa8-8694-ac2722dcad3a"
+    },
+    {
+      "krisId": "kli_a9d13a009f11c2ce3862",
+      "productId": "d8bd78ae-aaec-4010-a937-7cfee12d5f31",
+      "variantId": "23738e39-81d3-41e4-978f-b78a64108280"
+    },
+    {
+      "krisId": "kli_86f7616e88e0068b05c7",
+      "productId": "ce89e5ed-928a-4da5-a9b0-ff2cc34bbd37",
+      "variantId": "3f5ba79d-f7a6-40dd-88e4-1f77aef9d410"
+    },
+    {
+      "krisId": "kli_20d1c60349ddb2b4a5a8",
+      "productId": "a1e7018e-b79f-49c2-9d14-4ec40d9de38b",
+      "variantId": "aff993e5-f889-4924-839b-0de24695355a"
+    },
+    {
+      "krisId": "kli_f24f91a96f455dad53e9",
+      "productId": "1b3888d0-2cdb-4368-9358-11c0bd6d45f2",
+      "variantId": "d049baa8-8b3b-405b-9d82-f84c84b0b95a"
+    },
+    {
+      "krisId": "kli_96faa747d5c544a641d0",
+      "productId": "1500d7fc-06e9-444d-b402-4ba4646e4fb1",
+      "variantId": "c024aed7-edda-4be8-a590-c2a26023ea18"
+    },
+    {
+      "krisId": "kli_fca7223f639aa816fbb3",
+      "productId": "b137ae1f-429b-4b45-a6a6-12f157f75741",
+      "variantId": "5fc05223-ab56-4a18-9857-936d36b26599"
+    },
+    {
+      "krisId": "kli_bbab38facc1d95fd2adf",
+      "productId": "c3733751-73e1-405d-9c2d-f8782f3dcfa4",
+      "variantId": "8488aa25-92a4-4fa2-bf53-cd12cafce5a0"
+    }
+  ]
+}

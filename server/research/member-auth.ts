@@ -147,7 +147,8 @@ export async function requireActiveMember(req: Request, res: Response, next: Nex
     const status = String(member?.status ?? "");
     if (status === "active") {
       const billing = String((member as any)?.billing_state ?? "");
-      if (billingEnabled() && billing && billing !== "active") {
+      const sponsoredB2B = String((member as any)?.access_basis ?? "") === "sponsored_b2b";
+      if (billingEnabled() && billing && billing !== "active" && !sponsoredB2B) {
         return res.status(403).json({
           ok: false,
           code: `billing_${billing}`,

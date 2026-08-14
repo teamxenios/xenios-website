@@ -535,6 +535,29 @@ export function registerResearchApi(app: Express) {
     return false;
   };
 
+  // Pack02 account identity owns a stronger downstream boundary: every exact
+  // route resolves the Bearer credential through Supabase Auth and then scopes
+  // account and organization reads in its service/store. Admit only the nine
+  // registered method/path shapes here so the legacy review-password wall does
+  // not shadow that canonical verifier. Lookalikes and future sibling routes
+  // remain walled until explicitly reviewed.
+  const accountIdentityRoute = (method: string, path: string): boolean => {
+    if ((method === "GET" || method === "HEAD") && path === "/account/context") return true;
+    if (method === "POST" && new Set([
+      "/account/claims/request",
+      "/account/claims/confirm",
+      "/account/security/password-change-complete",
+      "/account/organization-invitations/accept",
+    ]).has(path)) return true;
+
+    const organizationRoute = /^\/account\/organizations\/([^/]+)\/(dashboard|profile|users\/invitations|orders\/request-again)$/.exec(path);
+    if (organizationRoute === null || !canonicalUuid(organizationRoute[1])) return false;
+    const leaf = organizationRoute[2];
+    return ((method === "GET" || method === "HEAD") && leaf === "dashboard")
+      || (method === "PATCH" && leaf === "profile")
+      || (method === "POST" && (leaf === "users/invitations" || leaf === "orders/request-again"));
+  };
+
   app.use("/api/research", (req, res, next) => {
     // Path-exact GET/HEAD boundaries only: /member/catalog is the alias door
     // onto the same legacy array (guards.ts), while /member/me is the private
@@ -563,6 +586,7 @@ export function registerResearchApi(app: Express) {
       setResearchPrivateHeaders(res);
     }
     if (publicMode()) return next();
+    if (accountIdentityRoute(req.method, req.path)) return next();
     if (
       ((req.method === "GET" || req.method === "HEAD") &&
         OPEN_PUBLIC_READ_PATHS.has(req.path)) ||
