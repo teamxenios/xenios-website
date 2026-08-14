@@ -18,6 +18,10 @@ import {
  */
 export const KRIS_API_BASE = "/api/research/kris-launch-a/v1";
 
+/** Exact mounted read paths; exported so route drift is a compile-time break. */
+export const KRIS_CATALOG_API_PATH = `${KRIS_API_BASE}/catalog`;
+export const KRIS_PRODUCT_API_PREFIX = `${KRIS_API_BASE}/products`;
+
 /** The routed page the Launch A catalog lives at (a client path, not an API path). */
 export const KRIS_CATALOG_PATH = "/research/member/kris-catalog";
 
@@ -50,7 +54,7 @@ export function krisCatalogUrl(query: KrisCatalogQuery = {}): string {
   if (query.page !== undefined) params.set("page", String(query.page));
   if (query.pageSize !== undefined) params.set("pageSize", String(query.pageSize));
   const suffix = params.toString();
-  return `${KRIS_API_BASE}/catalog${suffix ? `?${suffix}` : ""}`;
+  return `${KRIS_CATALOG_API_PATH}${suffix ? `?${suffix}` : ""}`;
 }
 
 /**
@@ -60,7 +64,7 @@ export function krisCatalogUrl(query: KrisCatalogQuery = {}): string {
  * `krisItemHref`; it is deliberately not sent as authority to the server.
  */
 export function krisDetailUrl(_family: KrisFamily, slug: string): string {
-  return `${KRIS_API_BASE}/products/${encodeURIComponent(slug)}`;
+  return `${KRIS_PRODUCT_API_PREFIX}/${encodeURIComponent(slug)}`;
 }
 
 /**

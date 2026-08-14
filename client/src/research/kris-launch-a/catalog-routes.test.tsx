@@ -10,7 +10,9 @@ import { KrisCatalogSurface } from "./KrisCatalogSurface";
 import KrisProductRoute from "./KrisProductRoute";
 import {
   KRIS_API_BASE,
+  KRIS_CATALOG_API_PATH,
   KRIS_CATALOG_PATH,
+  KRIS_PRODUCT_API_PREFIX,
   krisCatalogHref,
   krisCatalogUrl,
   krisDetailUrl,
@@ -20,6 +22,10 @@ import {
   krisFixtureFetchCatalog,
   krisFixtureFetchDetail,
 } from "./__fixtures__/krisFixtureServer";
+
+function withoutComments(source: string): string {
+  return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+}
 
 /**
  * The deep link, end to end.
@@ -76,9 +82,31 @@ describe("the API paths, which all come from one constant", () => {
   )
     .split(/\r?\n/)
     .join("\n");
+  const serverIndex = withoutComments(
+    readFileSync(
+      resolve(__dirname, "..", "..", "..", "..", "server", "index.ts"),
+      "utf8",
+    ),
+  );
+  const researchIndex = withoutComments(
+    readFileSync(
+      resolve(
+        __dirname,
+        "..",
+        "..",
+        "..",
+        "..",
+        "server",
+        "research",
+        "index.ts",
+      ),
+      "utf8",
+    ),
+  );
 
   it("builds every request from KRIS_API_BASE", () => {
     expect(krisCatalogUrl()).toBe(KRIS_API_BASE + "/catalog");
+    expect(krisCatalogUrl()).toBe(KRIS_CATALOG_API_PATH);
     expect(krisCatalogUrl({ q: "bpc", page: 2, pageSize: 48 })).toBe(
       KRIS_API_BASE + "/catalog?q=bpc&page=2&pageSize=48",
     );
@@ -87,15 +115,40 @@ describe("the API paths, which all come from one constant", () => {
     );
     expect(krisCatalogUrl().startsWith(KRIS_API_BASE)).toBe(true);
     expect(krisDetailUrl("supplements", "x").startsWith(KRIS_API_BASE)).toBe(true);
+    expect(krisDetailUrl("supplements", "x")).toBe(
+      KRIS_PRODUCT_API_PREFIX + "/x",
+    );
   });
 
-  it("matches the mounted server base and detail shape", () => {
+  it("pins server constants, production registrations, and wall admission", () => {
     expect(KRIS_API_BASE).toBe("/api/research/kris-launch-a/v1");
+    expect(KRIS_CATALOG_API_PATH).toBe(
+      "/api/research/kris-launch-a/v1/catalog",
+    );
+    expect(KRIS_PRODUCT_API_PREFIX).toBe(
+      "/api/research/kris-launch-a/v1/products",
+    );
     expect(serverRoutes).toContain(
       'export const KRIS_CATALOG_BASE_PATH = "/api/research/kris-launch-a/v1";',
     );
     expect(serverRoutes).toContain(
+      "export const KRIS_CATALOG_LIST_ROUTE = `${KRIS_CATALOG_BASE_PATH}/catalog`;",
+    );
+    expect(serverRoutes).toContain(
       "export const KRIS_CATALOG_DETAIL_ROUTE = `${KRIS_CATALOG_BASE_PATH}/products/:slug`;",
+    );
+    expect(serverIndex).toContain(
+      'app.get("/api/research/kris-launch-a/v1/catalog", ...krisCatalogListRoute.handlers);',
+    );
+    expect(serverIndex).toContain(
+      'app.get("/api/research/kris-launch-a/v1/products/:slug", ...krisCatalogDetailRoute.handlers);',
+    );
+    expect(researchIndex).toContain('path === "/kris-launch-a/v1/catalog" ||');
+    expect(researchIndex).toContain(
+      "/^\\/kris-launch-a\\/v1\\/products\\/[a-z0-9][a-z0-9-]{0,191}$/.test(path)",
+    );
+    expect(researchIndex).toContain(
+      "if (isKrisLaunchAReadPath(path)) return true;",
     );
   });
 
@@ -153,12 +206,15 @@ describe("the routed pages", () => {
   });
 });
 
-async function routeAt(href: string) {
+async function routeAt(
+  href: string,
+  fetchDetail: typeof krisFixtureFetchDetail = krisFixtureFetchDetail,
+) {
   window.history.replaceState(null, "", href);
   const mounted = render(
     <Router>
       <Route path={MEMBER_ROUTES.krisCatalogProduct}>
-        {() => <KrisProductRoute fetchDetail={krisFixtureFetchDetail as never} />}
+        {() => <KrisProductRoute fetchDetail={fetchDetail as never} />}
       </Route>
     </Router>,
   );
@@ -246,12 +302,16 @@ describe("a card link, followed and then reloaded", () => {
     unmount();
   });
 
-  it("answers a slug that is not in the catalog with the honest copy", async () => {
+  it("renders the mounted not-found result as missing, without a retry", async () => {
     const { host, unmount } = await routeAt(
       krisItemHref("supplements", "not-a-real-item"),
+      async () => ({
+        kind: "denied" as const,
+        code: "kris_catalog_not_found",
+      }),
     );
-    expect(host.textContent).toContain("This catalog is not available right now.");
-    expect(host.querySelector('[data-testid="kris-detail-retry"]')).not.toBeNull();
+    expect(host.textContent).toContain("That item is not in this catalog.");
+    expect(host.querySelector('[data-testid="kris-detail-retry"]')).toBeNull();
     unmount();
   });
 
