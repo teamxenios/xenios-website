@@ -28,6 +28,7 @@ import {
   KRIS_FAMILY_LABELS,
 } from "../../shared/research/kris-launch-a/contract.ts";
 import { loadKrisDataset } from "../../server/research/kris-launch-a/dataset-reader.ts";
+import { parseBuilderArgs } from "./builder-args.ts";
 import { reconcileKrisArtifacts } from "../../server/research/kris-launch-a/reconcile.ts";
 
 const DEFAULT_OUTPUT = path.join(
@@ -45,9 +46,15 @@ function fail(message: string): never {
   process.exit(1);
 }
 
-const intakePath = process.argv[2];
-if (!intakePath) fail("usage: build-kris-launch-a.ts <private-intake.json> [output]");
-const outputPath = process.argv[3] ?? DEFAULT_OUTPUT;
+// Parsed rather than indexed: a flag in the third position used to BECOME the
+// output path, which never existed, which skipped the reconciliation gate.
+let parsedArgs;
+try {
+  parsedArgs = parseBuilderArgs(process.argv.slice(2), DEFAULT_OUTPUT);
+} catch (error) {
+  fail(error instanceof Error ? error.message : "could not parse arguments");
+}
+const { intakePath, outputPath, allowPurchaseOpening } = parsedArgs;
 
 const intake = JSON.parse(fs.readFileSync(intakePath, "utf8")) as {
   sources: {
@@ -280,10 +287,16 @@ if (leaks.length > 0) {
 // silently: it stops the build unless the operator states the approval as a
 // flag, which makes the approval an auditable part of the command itself.
 const resolvedOutput = path.resolve(outputPath);
+// UNCONDITIONAL. The freshly built artifact passes the reader's full refusal
+// surface (banned keys, private-content phrases, declared invariants) before
+// anything is written, whether or not there is a previous artifact to compare
+// it against. This used to sit inside the branch below, so a first build, or
+// any build whose output path did not exist, wrote an artifact the reader had
+// never seen.
+const successor = loadKrisDataset(artifact);
 let reconciliation: Record<string, unknown> | null = null;
 if (fs.existsSync(resolvedOutput)) {
   const previous = loadKrisDataset(JSON.parse(fs.readFileSync(resolvedOutput, "utf8")));
-  const successor = loadKrisDataset(artifact);
   const report = reconcileKrisArtifacts(previous, successor);
   reconciliation = {
     identical: report.identical,
@@ -296,7 +309,7 @@ if (fs.existsSync(resolvedOutput)) {
     ),
     purchaseOpeningIds: report.purchaseOpeningIds,
   };
-  if (!report.opensNoPurchasePath && !process.argv.includes("--allow-purchase-opening")) {
+  if (!report.opensNoPurchasePath && !allowPurchaseOpening) {
     fail(
       `refusing to build: ${report.purchaseOpeningIds.length} row(s) would become purchasable ` +
         `(${report.purchaseOpeningIds.join(", ")}). Review the change as what it is and re-run ` +
