@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "taskId": "PACK-02-KRIS-ACCOUNT-RELEASE-PACKET",
-  "status": "ROMAN_B2B2C_SPONSORED_CLAIM_CANDIDATE_READY",
+  "status": "ROMAN_B2B2C_SPONSORED_CLAIM_EXPIRY_HARDENED",
   "owner": "Pack02 account identity; Agentic OS is the only final integrator",
-  "branch": "codex/pack02-client-accounts-b2b-20260812",
-  "worktree": "C:\\xenios-wt\\pack02-client-accounts",
+  "branch": "codex/roman-claim-db-gate-20260813",
+  "worktree": "C:\\xenios-wt\\roman-claim-db-gate",
   "baseSha": "ba9fa0ae6a59059ea4ae8b53e709cd7bd26d07f0",
   "previousPack02Sha": "1597f224a648e2e856e5651ecdc7cdb00f0746f5",
-  "outputSha": "cbc9d360cffa0505c9567ce98d36a227c0c51273",
+  "outputSha": "77854523bed69d9bb5420bd1c46bae8418b7e65d",
   "deploymentGateResolutionArtifact": "PACK02_DEPLOYMENT_GATE_RESOLVED.json",
   "ancestry": {
     "mergeBase": "1597f224a648e2e856e5651ecdc7cdb00f0746f5",
@@ -112,6 +112,8 @@
     "PASS 2026-08-13 hardening: full TypeScript noEmit",
     "PASS 2026-08-13 hardening: production build",
     "PASS independent re-QA on successor cbc9d36: normalized identity race, durable outbox queue, truthful sponsored access basis/email, and exact confirmed Auth activation blockers closed; 116/116 reviewer tests",
+    "PASS 2026-08-13 expiry successor 7785452: focused sponsored claim SQL/service/adapter QA, 3 files and 24 tests",
+    "PASS 2026-08-13 expiry successor 7785452: database-authoritative post-lock expiry guard precedes all activation mutation; exact/after expiry refuse; valid completed replay is read-only and exact",
     "NOT RUN: candidate SQL apply/rehearsal; no isolated Supabase/Postgres fixture was used"
   ],
   "production": {
@@ -124,6 +126,7 @@
     "rlsOrGrantsChanged": false
   },
   "exactAgenticOsHandoff": [
+    "Consume expiry-hardened sponsored-claim successor 77854523bed69d9bb5420bd1c46bae8418b7e65d over corrected Roman Health source 0c5b8e162665bc1d2c534d78de60ab43813b5363. It captures clock_timestamp only after the sponsorship row lock, refuses exact/after expiry before every mutation, and permits only an exact read-only replay of a valid activation completed strictly before expiry.",
     "Consume hardened sponsored-claim successor cbc9d360cffa0505c9567ce98d36a227c0c51273 after bridge code successor 99cbdddc71e558dd00586c4fc9b0b4001d3d416a. It adds an unmounted, unapplied internal B2B sponsorship path, atomic durable B2B claim outbox queue, truthful sponsored access semantics, and explicitly blocks generic membership billing activation for that source.",
     "Do not send a claim until the founder supplies Kris's exact last name, country, applicant_type, and pricing authority supplies the KRIS_VOLUME_PARTNER integer version/effective timestamp. Never use placeholders.",
     "After DB-owner isolated rehearsal, compose createSupabaseSponsoredB2BClaimDeps with an actor-scoped existing internal-admin client, canonical service client, and the existing account_claim outbox delivery. The preparation RPC repeats the exact-email absence check under an advisory lock.",
@@ -145,13 +148,12 @@
     "Deploy/apply only under Agentic OS authority after remaining production-wide gates; this lane authorizes none of those actions."
   ],
   "blockers": [
-    "Founder-confirmed email has no authoritative Auth/application/member identity; exact last name, country, and applicant_type are required by canonical application lineage and must be supplied without fabrication.",
-    "KRIS_VOLUME_PARTNER integer profile version and entitlement effective timestamp remain pricing-authority inputs; legal entity/billing/shipping/tax facts do not block claim delivery.",
+    "Founder facts are complete: Kristopher Lopez, info@romanhealthcollective.com, Roman Health, USA, Texas. Sponsored applicant_type and KRIS_VOLUME_PARTNER authority are derived by the corrected runtime, never guessed by an operator.",
     "Sponsored claim and B2B bridge candidate SQL remain unapplied/unmounted and require isolated DB/security/apply-twice/rollback plus end-to-end claim/outbox/activation rehearsal before claim delivery.",
     "B2B bridge candidate SQL is unapplied and requires isolated DB/security rehearsal before any runtime wiring.",
     "Candidate SQL requires isolated apply-twice rehearsal and independent security review before promotion.",
     "Agentic OS must install the resolved replacement artifact on exact fusion head 224529381e602641e481d51f7e1ad90ba7a20375 before treating the stale marker as retired."
   ],
-  "rebaseOrRecreateRequired": false,
-  "updatedAt": "2026-08-13T18:35:00-05:00"
+  "rebaseOrRecreateRequired": true,
+  "updatedAt": "2026-08-13T21:01:00-05:00"
 }
