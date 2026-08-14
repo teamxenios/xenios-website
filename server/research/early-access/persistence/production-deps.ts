@@ -40,6 +40,8 @@ import {
   RefusingSessionBindingStore,
 } from "./refusing";
 import { buildEarlyAccessProofDependencies } from "../proof/production-deps";
+import { SupabaseEarlyAccessLegalBindingDirectory } from "../legal/supabase-legal-binding-directory";
+import type { EarlyAccessOrderHistoryDependencies } from "../orders/member-order-history";
 import { SupabaseEarlyAccessAdminPaymentReviewStore } from "../cart/supabase-admin-payment-review";
 import { SupabaseEarlyAccessShippingSlaStore } from "../cart/supabase-shipping-sla";
 import { SupabaseEarlyAccessShipmentEventStore } from "../cart/supabase-shipment-events";
@@ -436,6 +438,34 @@ export function buildEarlyAccessUnitHoldRegistry(
   query?: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
 ): SupabaseUnitHoldRegistry {
   return new SupabaseUnitHoldRegistry(query ?? createEarlyAccessSupabaseQuery());
+}
+
+/**
+ * The member order-history read pair (M67): the legal binding directory that
+ * answers `customerRefsFor(memberId)` and the commerce store that answers
+ * `placementsForCustomers(refs)`. The commerce composition root
+ * (server/research/commerce/production-deps.ts, defaultWiring) calls this to
+ * decorate GET /api/research/orders with a member's own Early Access orders.
+ *
+ * Durable mode only. Anything except a durable persistence decision returns
+ * null, so a deployment without durable Early Access persistence keeps the
+ * undecorated orders service, which is the previous behaviour exactly, rather
+ * than a history read that can only fail.
+ */
+export function buildEarlyAccessOrderHistory(
+  env: NodeJS.ProcessEnv = process.env,
+  query?: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
+): EarlyAccessOrderHistoryDependencies | null {
+  const decision = decideEarlyAccessPersistence(readEarlyAccessPersistenceEnvironment(env));
+  if (decision.mode !== "durable") return null;
+  const run = query ?? createEarlyAccessSupabaseQuery();
+  return Object.freeze({
+    bindings: new SupabaseEarlyAccessLegalBindingDirectory(run),
+    store: new SupabaseEarlyAccessCommerceStore({
+      query: run,
+      reservationTtlMinutes: readReservationTtlMinutes(env),
+    }),
+  });
 }
 
 function createEarlyAccessSupabaseQuery(): (
