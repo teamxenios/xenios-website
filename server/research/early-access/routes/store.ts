@@ -225,6 +225,10 @@ export type SettlementCommit =
   | Readonly<{ committed: false; reason: "transaction_id_used"; settlement: null }>
   | Readonly<{ committed: false; reason: "order_unknown"; settlement: null }>;
 
+export type RejectionCommit =
+  | Readonly<{ committed: true; replayed: boolean }>
+  | Readonly<{ committed: false; reason: "order_unknown" | "already_settled" }>;
+
 export type RefundAppend =
   | Readonly<{ appended: true }>
   | Readonly<{ appended: false; reason: "sequence_moved" | "refund_id_taken" }>;
@@ -270,6 +274,18 @@ export interface EarlyAccessCommerceStore {
   commitProof(intake: EarlyAccessProofIntake): Promise<ProofCommit>;
 
   verifications(orderNumber: string): Promise<readonly EarlyAccessVerificationEntry[]>;
+  /**
+   * Record a named-admin REJECTION decision durably: the verification entry
+   * appends to the trail and the placement moves to payment_rejected. Never
+   * past a settlement: a settled order refuses. Replay (same idempotency
+   * key) reports committed with replayed=true rather than a second effect.
+   *
+   * OPTIONAL for the same reason as settledTransactionRefs: the durable
+   * adapter needs its own SQL function (staged as a candidate migration). A
+   * store that cannot record a rejection leaves the reject door answering
+   * UNAVAILABLE, which is safer than a rejection that exists only in memory.
+   */
+  commitRejection?(entry: EarlyAccessVerificationEntry): Promise<RejectionCommit>;
   settlement(orderNumber: string): Promise<EarlyAccessSettlement | null>;
 
   /**
@@ -339,6 +355,7 @@ export class InMemoryEarlyAccessCommerceStore implements EarlyAccessCommerceStor
   private readonly placementsByKey = new Map<string, string>();
   private readonly proofsByOrder = new Map<string, readonly EarlyAccessProofIntake[]>();
   private readonly settlements = new Map<string, EarlyAccessSettlement>();
+  private readonly rejectionsByOrder = new Map<string, readonly EarlyAccessVerificationEntry[]>();
   private readonly exceptions = new Map<string, unknown>();
   private readonly refundTrail = new Map<string, unknown[]>();
   private readonly transactionIds = new Map<string, string>();
@@ -425,8 +442,10 @@ export class InMemoryEarlyAccessCommerceStore implements EarlyAccessCommerceStor
     }
     this.proofsByOrder.set(intake.orderNumber, Object.freeze([...chain, intake]));
     // A proof moves the order to review and NEVER past it. There is no branch
-    // here that can reach payment_verified.
-    if (placement.paymentState === "awaiting_payment") {
+    // here that can reach payment_verified. A REJECTED order re-enters review
+    // the same way: a fresh submission is exactly the action a rejection asks
+    // for, and leaving the state at payment_rejected would strand the order.
+    if (placement.paymentState === "awaiting_payment" || placement.paymentState === "payment_rejected") {
       this.placements.set(
         intake.orderNumber,
         Object.freeze({ ...placement, paymentState: "under_review" as const }),
@@ -436,8 +455,31 @@ export class InMemoryEarlyAccessCommerceStore implements EarlyAccessCommerceStor
   }
 
   async verifications(orderNumber: string): Promise<readonly EarlyAccessVerificationEntry[]> {
+    const rejections = this.rejectionsByOrder.get(orderNumber) ?? [];
     const settled = this.settlements.get(orderNumber);
-    return settled === undefined ? Object.freeze([]) : Object.freeze([settled.verification]);
+    return Object.freeze(
+      settled === undefined ? [...rejections] : [...rejections, settled.verification],
+    );
+  }
+
+  async commitRejection(entry: EarlyAccessVerificationEntry): Promise<RejectionCommit> {
+    const placement = this.placements.get(entry.orderId);
+    if (placement === undefined) {
+      return Object.freeze({ committed: false as const, reason: "order_unknown" as const });
+    }
+    if (this.settlements.has(entry.orderId)) {
+      return Object.freeze({ committed: false as const, reason: "already_settled" as const });
+    }
+    const trail = this.rejectionsByOrder.get(entry.orderId) ?? [];
+    if (trail.some((prior) => prior.idempotencyKey === entry.idempotencyKey)) {
+      return Object.freeze({ committed: true as const, replayed: true });
+    }
+    this.rejectionsByOrder.set(entry.orderId, Object.freeze([...trail, entry]));
+    this.placements.set(
+      entry.orderId,
+      Object.freeze({ ...placement, paymentState: "payment_rejected" as const }),
+    );
+    return Object.freeze({ committed: true as const, replayed: false });
   }
 
   async settlement(orderNumber: string): Promise<EarlyAccessSettlement | null> {

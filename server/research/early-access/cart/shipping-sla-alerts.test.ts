@@ -80,11 +80,15 @@ describe("the internal overdue template", () => {
     expect(EARLY_ACCESS_EMAIL_EVENTS[EARLY_ACCESS_EMAIL_EVENTS.length - 1]).toBe(
       "ea_shipping_overdue_internal",
     );
-    // The four customer events keep their original order and identity.
-    expect(EARLY_ACCESS_EMAIL_EVENTS.slice(0, 5)).toEqual([
+    // The customer events keep their relative order and identity. The list is
+    // consumed by name only (type source + membership check), so an insertion
+    // is safe; ea_payment_rejected joined beside ea_payment_verified when the
+    // review gained its second verb, and the original five kept their order.
+    expect(EARLY_ACCESS_EMAIL_EVENTS.slice(0, 6)).toEqual([
       "ea_checkout_created",
       "ea_submitted_for_review",
       "ea_payment_verified",
+      "ea_payment_rejected",
       "ea_order_released",
       "ea_tracking_posted",
     ]);

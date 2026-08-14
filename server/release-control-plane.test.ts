@@ -1611,8 +1611,12 @@ describe("route uniqueness validator", () => {
     // through its own registrar and adds ZERO scanner call sites, as does the
     // M67 order-history merge (legacy orders ride the existing member orders
     // service).
-    expect(result.callSites).toBe(359);
-    expect(result.routes).toHaveLength(368);
+    //
+    // The payment-rejection door (top-right, 2026-08-14) added ONE:
+    //   POST /api/admin/research/payments/:orderNumber/reject
+    // behind the same Supabase admin guard as the confirm door beside it.
+    expect(result.callSites).toBe(360);
+    expect(result.routes).toHaveLength(369);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });
