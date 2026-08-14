@@ -1135,6 +1135,10 @@ export function registerPrivateEarlyAccessApi(
         createEarlyAccessCartPaymentInstructionsRoute({
           identity: cartIdentity,
           checkouts: cartStore,
+          // The same durable object owns checkout and settlement truth. This
+          // closes instructions as soon as the atomic settlement exists,
+          // even if an older checkout projection still says awaiting_payment.
+          settlements: cartStore,
           config: createEnvPaymentInstructionsConfigSource(options.env ?? process.env),
           methodRegistry: createConfiguredPaymentMethodRegistry(
             createEnvPaymentMethodRegistrySource(options.env ?? process.env),

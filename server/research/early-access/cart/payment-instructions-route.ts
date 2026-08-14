@@ -39,6 +39,7 @@ import type {
   CartResponsePort,
   EarlyAccessCartIdentityPort,
 } from "./routes";
+import type { EarlyAccessCartSettlementStore } from "./ports";
 
 /**
  * Registered AFTER the literal cart paths and alongside `:cartCheckoutNumber`,
@@ -51,6 +52,12 @@ export const EARLY_ACCESS_CART_PAYMENT_INSTRUCTIONS_PATH =
 export interface EarlyAccessCartPaymentInstructionsDeps {
   readonly identity: EarlyAccessCartIdentityPort;
   readonly checkouts: EarlyAccessCartCheckoutStore;
+  /**
+   * The same durable store used by the settlement door. A checkout row alone
+   * is not sufficient payment authority: a committed settlement can already
+   * exist while an older checkout projection still says awaiting_payment.
+   */
+  readonly settlements: Pick<EarlyAccessCartSettlementStore, "settlement">;
   readonly config: EarlyAccessPaymentInstructionsConfigSource;
   readonly methodRegistry: ManualPaymentMethodRegistryPort;
   readonly clock: ManualPaymentClockPort;
@@ -93,6 +100,24 @@ export function createEarlyAccessCartPaymentInstructionsRoute(
       );
     if (!owned || checkout === null) {
       response.status(404).json({ ok: false, code: "NOT_FOUND" });
+      return;
+    }
+
+    // A durable checkout must exist before any payable details are shown, but
+    // it is not enough by itself. Settlement is written atomically with the
+    // receipt and child releases, and that durable fact closes the payment
+    // door even if a stale checkout projection still reads awaiting_payment.
+    // Superseded and non-awaiting checkouts are closed for the same reason:
+    // no customer should be invited to send money against an inactive order.
+    const settlement = await deps.settlements.settlement(
+      checkout.cartCheckoutNumber,
+    );
+    if (
+      settlement !== null ||
+      checkout.disposition != null ||
+      checkout.paymentState !== "awaiting_payment"
+    ) {
+      response.status(409).json({ ok: false, code: "PAYMENT_CLOSED" });
       return;
     }
 

@@ -12,7 +12,10 @@ import {
   createEarlyAccessCartPaymentInstructionsRoute,
   EARLY_ACCESS_CART_PAYMENT_INSTRUCTIONS_PATH,
 } from "./payment-instructions-route";
-import type { EarlyAccessCartCheckoutStore } from "./ports";
+import type {
+  EarlyAccessCartCheckoutStore,
+  EarlyAccessCartSettlementStore,
+} from "./ports";
 import type { EarlyAccessCartIdentityPort } from "./routes";
 
 const CART_NUMBER = "XEC-ABCDEFGH12345678";
@@ -119,7 +122,9 @@ function recorder() {
 function harness(
   overrides: Partial<{
     customerRef: string | null;
+    aliases: readonly string[];
     record: EarlyAccessCartCheckoutRecord | null;
+    settlement: Awaited<ReturnType<EarlyAccessCartSettlementStore["settlement"]>>;
     enabledMethods: readonly ManualOrderPaymentMethod[];
     config: unknown;
     configThrows: boolean;
@@ -134,7 +139,10 @@ function harness(
     resolve: vi.fn(async () =>
       overrides.customerRef === null
         ? null
-        : { customerRef: overrides.customerRef ?? "cust_owner" },
+        : {
+            customerRef: overrides.customerRef ?? "cust_owner",
+            aliases: overrides.aliases ?? [],
+          },
     ),
   };
   const checkouts = {
@@ -144,6 +152,9 @@ function harness(
     ),
     commit,
   } as unknown as EarlyAccessCartCheckoutStore;
+  const settlements = {
+    settlement: vi.fn(async () => overrides.settlement ?? null),
+  };
   const config: EarlyAccessPaymentInstructionsConfigSource = {
     read: vi.fn(() => {
       if (overrides.configThrows === true) {
@@ -167,12 +178,16 @@ function harness(
     route: createEarlyAccessCartPaymentInstructionsRoute({
       identity,
       checkouts,
+      settlements,
       config,
       methodRegistry,
       clock,
     }),
     commit,
     checkouts,
+    settlements,
+    config,
+    methodRegistry,
   };
 }
 
@@ -213,6 +228,58 @@ describe("createEarlyAccessCartPaymentInstructionsRoute", () => {
     expect(second.sent.status).toBe(404);
     expect(second.sent.body).toEqual(first.sent.body);
   });
+
+  it("preserves an owned customerRef alias without exposing the identity seam", async () => {
+    const { route } = harness({
+      customerRef: "roman_member_ref",
+      aliases: ["cust_owner"],
+    });
+    const { response, sent } = recorder();
+    await route({ cartCheckoutNumber: CART_NUMBER }, response);
+
+    expect(sent.status).toBe(200);
+    expect(JSON.stringify(sent.body)).not.toContain("roman_member_ref");
+    expect(JSON.stringify(sent.body)).not.toContain("cust_owner");
+  });
+
+  it("closes payable instructions when durable settlement already exists", async () => {
+    const { route, settlements, config, methodRegistry } = harness({
+      settlement: { cartCheckoutNumber: CART_NUMBER } as never,
+    });
+
+    for (let replay = 0; replay < 2; replay += 1) {
+      const { response, sent } = recorder();
+      await route({ cartCheckoutNumber: CART_NUMBER }, response);
+      expect(sent.status).toBe(409);
+      expect(sent.body).toEqual({ ok: false, code: "PAYMENT_CLOSED" });
+      expect(JSON.stringify(sent.body)).not.toContain(CONFIGURED_DESTINATION);
+      expect(JSON.stringify(sent.body)).not.toContain(REFERENCE);
+    }
+
+    expect(settlements.settlement).toHaveBeenCalledTimes(2);
+    expect(config.read).not.toHaveBeenCalled();
+    expect(methodRegistry.resolveEnabledMethod).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["under_review", null],
+    ["payment_verified", null],
+    ["payment_rejected", null],
+    ["awaiting_payment", "duplicate_superseded"],
+  ] as const)(
+    "closes instructions for payment state %s and disposition %s",
+    async (paymentState, disposition) => {
+      const { route, config } = harness({
+        record: checkoutRecord({ paymentState, disposition }),
+      });
+      const { response, sent } = recorder();
+      await route({ cartCheckoutNumber: CART_NUMBER }, response);
+
+      expect(sent.status).toBe(409);
+      expect(sent.body).toEqual({ ok: false, code: "PAYMENT_CLOSED" });
+      expect(config.read).not.toHaveBeenCalled();
+    },
+  );
 
   it("refuses a checkout number that is not the canonical shape", async () => {
     const { route, checkouts } = harness();
@@ -280,13 +347,14 @@ describe("createEarlyAccessCartPaymentInstructionsRoute", () => {
   });
 
   it("reads only: it never settles, releases, or writes anything", async () => {
-    const { route, commit, checkouts } = harness();
+    const { route, commit, checkouts, settlements } = harness();
     const { response, sent } = recorder();
     await route({ cartCheckoutNumber: CART_NUMBER }, response);
 
     expect(sent.status).toBe(200);
     expect(commit).not.toHaveBeenCalled();
     expect(checkouts.byCheckoutNumber).toHaveBeenCalledTimes(1);
+    expect(settlements.settlement).toHaveBeenCalledTimes(1);
 
     const serialized = JSON.stringify(sent.body).toLowerCase();
     for (const forbidden of [
