@@ -18,6 +18,7 @@ describe("founder-confirmed Roman Health activation input", () => {
       stateOrRegion: "Texas",
       businessKey: "roman-health",
       businessDisplayName: "Roman Health",
+      businessLegalName: "Roman Health",
       roles: ["organization_owner", "business_buyer"],
     });
     expect(packet.passwordAcceptedOrStored).toBe(false);
