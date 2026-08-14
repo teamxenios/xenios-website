@@ -15,6 +15,7 @@ import {
 } from "../commerce/early-access-order";
 import { carriesAnyKey, isOneOf, isSafeIdentifier } from "../commerce/input-guards";
 import { resolveBuyerSheet, type BuyerScopedPricing } from "../commerce/buyer-scoped-pricing";
+import type { EarlyAccessLegacyOrderNotifier } from "../notifications/legacy-order-notifier";
 import {
   createEarlyAccessOrder,
   isEarlyAccessIdempotencyKey,
@@ -210,6 +211,13 @@ export interface EarlyAccessOrderRouteDependencies {
    * whether the unit can be sold at all.
    */
   readonly buyerScopedPrices?: BuyerScopedPricing;
+  /**
+   * Order-lifecycle mail, when the deployment carries it. Absent means no
+   * mail, which is this door's only historical behaviour. The notifier is
+   * fire-and-forget BY CONTRACT: it must swallow its own failures, because
+   * mail may never refuse money.
+   */
+  readonly notifications?: EarlyAccessLegacyOrderNotifier;
   /** Epoch milliseconds. */
   readonly now: () => number;
   readonly orderNumber: () => string;
@@ -738,6 +746,13 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
         }
       }
 
+      // THE ORDER-RECEIVED MAIL. Fire-and-forget by contract: the notifier
+      // swallows its own failures, so a mail outage can never turn a placed
+      // order into an error. Called only on the non-replay path; a replayed
+      // placement answered above never re-mails (and the outbox event key
+      // would collapse it anyway).
+      deps.notifications?.orderPlaced(placement);
+
       send(response, 201, { ok: true, replayed: false, order: orderView(placement) });
     } catch {
       unavailable(response);
@@ -1201,6 +1216,11 @@ export function createEarlyAccessPaymentProofRoute(deps: EarlyAccessOrderRouteDe
           supersededProofId: described.value.supersededProofId,
         },
       });
+
+      // THE SUBMISSION-RECEIVED MAIL, keyed by the durable proof id: a NEW
+      // proof confirms again, a retried upload of the same proof cannot
+      // double-mail. Fire-and-forget by contract; no proof metadata rides.
+      deps.notifications?.proofSubmitted(placement, proofId);
 
       // 202, and a body that can be mistaken for NEITHER a receipt NOR an
       // upload. What this route accepted is a DESCRIPTION of a proof the

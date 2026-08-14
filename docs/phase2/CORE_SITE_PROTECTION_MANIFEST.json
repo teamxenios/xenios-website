@@ -706,11 +706,23 @@
       "prior behaviour. No existing branch reordered, no guard weakened, no flag",
       "changed, Care untouched. Covered by buyer-scoped-pricing.test.ts,",
       "buyer-scoped-order-service.test.ts, kris-buyer-price-sheet.test.ts,",
-      "buyer-scoped-resolver.test.ts."
+      "buyer-scoped-resolver.test.ts.",
+      "",
+      "2026-08-14, LEGACY ORDER LIFECYCLE MAIL (top-right, fable/roman-platform-commerce): server/index.ts",
+      "old sha256:150b7c48a7570e4bbd0b3d49eeef5000b8130f9f4efa91f785b2aa2d6c770b0a,",
+      "new sha256:d949205c1de0a8e83fcb38e42fa20dde0219e5fb0e98b80e188cb1f4c01e948d.",
+      "PURELY ADDITIVE: one import (createOutboxLegacyOrderNotifier) and one",
+      "composition block that builds the fire-and-forget legacy order notifier",
+      "over the ONE durable notification outbox and passes it to",
+      "registerPrivateEarlyAccessApi as orderNotifications. The outbox refuses",
+      "gracefully when unconfigured and the notifier swallows its own failures,",
+      "so no order, proof, or settlement path can fail on mail. No existing",
+      "branch reordered, no guard weakened, no flag changed, Care untouched.",
+      "Covered by legacy-order-notifier.test.ts."
     ],
     "files": {
       "client/src/App.tsx": "sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c",
-      "server/index.ts": "sha256:150b7c48a7570e4bbd0b3d49eeef5000b8130f9f4efa91f785b2aa2d6c770b0a",
+      "server/index.ts": "sha256:d949205c1de0a8e83fcb38e42fa20dde0219e5fb0e98b80e188cb1f4c01e948d",
       "server/research/index.ts": "sha256:93c6b62dd0f1e305b8eef03211c778d6539e1adc211f79e212745e6b0c42d26f",
       "server/care/index.ts": "sha256:fea8c5ad5124dacf07350818e891396ee9f234983a93be65540911c1eafd81db",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"

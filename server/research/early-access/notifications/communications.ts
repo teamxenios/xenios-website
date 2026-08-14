@@ -79,6 +79,12 @@ export const earlyAccessEventKey = Object.freeze({
   paymentVerified: (settlementIdentity: string) => `ea:payment-verified:${settlementIdentity}`,
   released: (releaseId: string) => `ea:release:${releaseId}`,
   tracking: (trackingEventId: string) => `ea:tracking:${trackingEventId}`,
+  /**
+   * Keyed by the durable proof identity, not the order: a resubmission after
+   * a rejection is a NEW submission and deserves its own confirmation, while
+   * a retried upload of the SAME proof stays one email.
+   */
+  submittedForReview: (proofId: string) => `ea:submitted-for-review:${proofId}`,
 });
 
 // ---------------------------------------------------------------------------
