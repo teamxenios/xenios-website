@@ -42,6 +42,13 @@ export interface KrisActivationQueues {
   pricing: readonly KrisActivationQueueEntry[];
 }
 
+/**
+ * Pinned collation: the queue order must not drift with the host's default
+ * locale or ICU build, because operations reads these queues as a stable
+ * worklist. "en" is a deliberate pin, not a default.
+ */
+const QUEUE_COLLATOR = new Intl.Collator("en");
+
 const CLASSIFICATION_COMPLETES =
   "Confirm classification, form and documentation, then re-channel the row in the next artifact; the reconciler flags the change if it opens a purchase path.";
 const PRICING_COMPLETES =
@@ -75,8 +82,8 @@ export function krisActivationQueues(
 
   const byFamilyThenName = (a: KrisActivationQueueEntry, b: KrisActivationQueueEntry) =>
     a.family === b.family
-      ? a.displayName.localeCompare(b.displayName)
-      : a.family.localeCompare(b.family);
+      ? QUEUE_COLLATOR.compare(a.displayName, b.displayName)
+      : QUEUE_COLLATOR.compare(a.family, b.family);
 
   classification.sort(byFamilyThenName);
   pricing.sort(byFamilyThenName);

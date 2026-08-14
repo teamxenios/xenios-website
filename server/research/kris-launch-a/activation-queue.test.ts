@@ -33,26 +33,53 @@ describe("the activation queues over the real artifact", () => {
     expect(queuedIds.size).toBe(34);
   });
 
-  it("orders each queue by family then name, stably", () => {
-    // The oracle asserts the pairwise relation rather than re-sorting with a
-    // second comparator: a default code-point sort disagrees with the
-    // implementation's locale ordering on case (HGH vs Hexarelin), and an
-    // oracle that reimplements the code proves nothing anyway.
+  it("orders each queue by family then name under the pinned en collation", () => {
+    // The comparator is pinned to Intl.Collator("en") in the implementation.
+    // The pairwise oracle uses the SAME pinned collator explicitly — not the
+    // host-default localeCompare — so a host-locale/ICU drift cannot move the
+    // implementation and the oracle together.
+    const collator = new Intl.Collator("en");
     const queues = krisActivationQueues(DATASET);
     for (const queue of [queues.classification, queues.pricing]) {
       for (let i = 1; i < queue.length; i += 1) {
         const prev = queue[i - 1];
         const next = queue[i];
-        const familyOrder = prev.family.localeCompare(next.family);
+        const familyOrder = collator.compare(prev.family, next.family);
         expect(familyOrder, `${prev.family} before ${next.family}`).toBeLessThanOrEqual(0);
         if (familyOrder === 0) {
           expect(
-            prev.displayName.localeCompare(next.displayName),
+            collator.compare(prev.displayName, next.displayName),
             `${prev.displayName} before ${next.displayName}`,
           ).toBeLessThanOrEqual(0);
         }
       }
     }
+  });
+
+  it("matches the golden ordering pinned from the real artifact", () => {
+    // Belt to the pairwise braces: the exact sequence operations sees today,
+    // as literals. If ANY comparator change reorders the worklist — even one
+    // that still satisfies the pairwise relation under some collator — this
+    // snapshot names the row that moved.
+    const queues = krisActivationQueues(DATASET);
+    expect(queues.pricing.map((entry) => entry.slug)).toEqual([
+      "research-capsules-bam15-bam15-500-mcg",
+      "shipping-and-fulfillment-syringes-and-alcohol-swabs",
+    ]);
+    expect(queues.classification.slice(0, 5).map((entry) => entry.slug)).toEqual([
+      "research-capsules-colostrum-colostrum-100mg-x-90-capsules",
+      "research-capsules-tesofensine-tesofensine-500mcg-capsules-x100",
+      "research-capsules-tesofensine-tesofensine-500mcg-capsules-x30",
+      "research-peptides-and-materials-bdnf-bdnf-brain-derived-neurotrophic-factor-10mg",
+      "research-peptides-and-materials-bpc-157-bpc-157-20mg",
+    ]);
+    // The case-sensitivity witness QA named: under the pinned en collation
+    // Hexarelin sorts before HGH (case-insensitive base letters), where a raw
+    // code-point sort would put HGH first. Pin the adjacent pair exactly.
+    const names = queues.classification.map((entry) => entry.displayName);
+    const hexarelin = names.findIndex((name) => name.startsWith("Hexarelin"));
+    expect(hexarelin).toBeGreaterThan(-1);
+    expect(names[hexarelin + 1]).toMatch(/^HGH/);
   });
 
   it("tells the truth about what completes an entry, without inventing facts", () => {
