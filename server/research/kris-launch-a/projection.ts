@@ -29,6 +29,7 @@ import {
   type KrisPriceView,
 } from "@shared/research/kris-launch-a/contract";
 import { KRIS_CATALOG_DISCLOSURES, krisAccessPolicy } from "./access-policy";
+import { krisPathwayView } from "./pathway";
 import { krisModePermitsLegacyOrder, krisPurchaseMode } from "./purchase-mode";
 import { isCanonicalTimestamp, isSafeIdentifier } from "../early-access/commerce/input-guards";
 import type { KrisProductRecord } from "./dataset-reader";
@@ -95,6 +96,10 @@ export function projectKrisItem(
     purchaseMode: mode,
     legacyOrder,
     canBuyNow: legacyOrder !== null,
+    // Null exactly when the mode is direct_eligible. Descriptive only: the
+    // pathway carries no identity or price and no order code reads it, so it
+    // cannot become a second purchase door.
+    pathway: krisPathwayView(mode, product.channel, product),
     suppliedNote: product.suppliedNote,
   };
 }
