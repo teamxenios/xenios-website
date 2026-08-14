@@ -99,7 +99,7 @@ describe("authorizeCatalogDisplayViewer", () => {
     process.env.ADMIN_EMAIL = " Samuel@XeniosTechnology.com ";
     state.authUser = { id: "auth-1", email: "samuel@xeniostechnology.com" };
     const viewer = await authorizeCatalogDisplayViewer(reqWith(`Bearer ${PASSWORD_JWT}`));
-    expect(viewer).toEqual({ audience: "admin", email: "samuel@xeniostechnology.com" });
+    expect(viewer).toEqual({ audience: "admin", email: "samuel@xeniostechnology.com", memberStatus: null });
   });
 
   it("member audience for an ACTIVE member resolved by auth user id", async () => {
@@ -108,7 +108,7 @@ describe("authorizeCatalogDisplayViewer", () => {
       { auth_user_id: "auth-9", email: "member@example.com", status: "active" },
     ];
     const viewer = await authorizeCatalogDisplayViewer(reqWith(`Bearer ${PASSWORD_JWT}`));
-    expect(viewer).toEqual({ audience: "member", email: "member@example.com" });
+    expect(viewer).toEqual({ audience: "member", email: "member@example.com", memberStatus: "active" });
   });
 
   it("member audience via the legacy email fallback", async () => {
@@ -117,7 +117,7 @@ describe("authorizeCatalogDisplayViewer", () => {
       { auth_user_id: "other", email: "member@example.com", status: "active" },
     ];
     const viewer = await authorizeCatalogDisplayViewer(reqWith(`Bearer ${PASSWORD_JWT}`));
-    expect(viewer).toEqual({ audience: "member", email: "member@example.com" });
+    expect(viewer).toEqual({ audience: "member", email: "member@example.com", memberStatus: "active" });
   });
 
   it("null for pending_activation, past_due, closed, and missing members", async () => {
@@ -140,6 +140,7 @@ describe("authorizeCatalogDisplayViewer", () => {
     expect(await authorizeCatalogDisplayViewer(reqWith(`Bearer ${PASSWORD_JWT}`))).toEqual({
       audience: "member",
       email: "member@example.com",
+      memberStatus: "active",
     });
     process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED = "true";
     expect(await authorizeCatalogDisplayViewer(reqWith(`Bearer ${PASSWORD_JWT}`))).toBeNull();
