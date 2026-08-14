@@ -1,0 +1,5 @@
+{
+  "$comment": "Reviewed Kris -> Product Control associations for the legacy Buy Now handoff. Identity ONLY: krisId is the Kris artifact row, productId/variantId is the exact canonical unit. Prices, currencies and quantity ceilings are never recorded here; they resolve live from the founder release ledger, and any disagreement with the Kris price closes Buy Now for that row. An empty list means no row offers Buy Now. Additions are founder-reviewed data changes, committed here or supplied post-freeze via XENIOS_KRIS_LEGACY_BINDINGS.",
+  "schemaVersion": 1,
+  "bindings": []
+}

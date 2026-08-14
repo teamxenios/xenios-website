@@ -437,6 +437,18 @@ export interface EarlyAccessRegistrationOptions {
   readonly catalog?: EarlyAccessCatalogSource;
   readonly releases?: EarlyAccessReleaseLedger;
 
+  /**
+   * Observe the EXACT catalog source and release ledger the order door will
+   * consult, after registration composes them. The Kris Buy Now handoff reads
+   * through these same objects so the shelf and the door can never price a
+   * unit from two different sources. Called once, synchronously; observation
+   * only, never a second registration.
+   */
+  readonly onDoorSources?: (sources: {
+    readonly catalog: EarlyAccessCatalogSource;
+    readonly releases: EarlyAccessReleaseLedger;
+  }) => void;
+
   // The commerce seams. Every default that touches money, identity, or shipment
   // fails closed, for the same reason the catalog defaults to a refusal: an
   // unwired deployment should refuse with a truthful reason rather than sell on
@@ -765,6 +777,8 @@ export function registerPrivateEarlyAccessApi(
           continuitySecret: effectiveConfig.sessionSecret,
         })
       : boundIdentity);
+
+  options.onDoorSources?.({ catalog, releases });
 
   const routeDependencies = {
     resolveSession,

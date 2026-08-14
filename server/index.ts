@@ -21,6 +21,10 @@ import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
 import { registerMemberCatalogApi } from "./research/catalog/member-catalog-routes";
 import { registerProductionAccountIdentityApi } from "./research/account-identity/production-mount";
+import type {
+  KrisDoorCatalogSource,
+  KrisDoorReleaseLedger,
+} from "./research/kris-launch-a/legacy-order-production";
 import {
   buildMemberCatalogProductionService,
   memberAudienceSourceVersion,
@@ -319,10 +323,20 @@ if (earlyAccessPersistence.reason !== null) {
   // eslint-disable-next-line no-console
   console.error(`[early-access] ${earlyAccessPersistence.reason}`);
 }
+// The order door's composed catalog and release ledger, observed at
+// registration so the Kris Buy Now handoff prices from the door's own
+// sources. Null until registration runs; Buy Now stays closed without it.
+let earlyAccessDoorSources: {
+  catalog: KrisDoorCatalogSource;
+  releases: KrisDoorReleaseLedger;
+} | null = null;
 registerPrivateEarlyAccessApi(app, {
   ...earlyAccessPersistence.options,
   resolveMember: resolveActiveMemberSilently,
   requireAdmin: requireSupabaseAdmin,
+  onDoorSources: (sources) => {
+    earlyAccessDoorSources = sources;
+  },
 });
 app.use(carePageGate);
 const careAccess = buildCareProductionDependencies();
@@ -385,8 +399,22 @@ registerMemberCatalogApi(
 // to KRIS_VOLUME_PARTNER. The indexed artifact source is shared while the
 // service is request-scoped. Missing data fails closed as 503, and this surface
 // has no purchase route or commerce adapter.
+// Buy Now opens only when the door's own sources and the member-to-customer
+// directory both exist; anything less keeps the catalog read-only, which is
+// the truthful state for a deployment that could not place the order either.
+const earlyAccessMemberOrderHistory = earlyAccessPersistence.options.memberOrderHistory;
+const krisDoorSources = earlyAccessDoorSources;
 const krisCatalogDependencies = buildKrisCatalogProductionDependencies(
   resolveActiveMemberSilently,
+  krisDoorSources !== null && earlyAccessMemberOrderHistory !== undefined
+    ? {
+        legacyOrders: {
+          catalog: krisDoorSources.catalog,
+          releases: krisDoorSources.releases,
+          customers: earlyAccessMemberOrderHistory,
+        },
+      }
+    : {},
 );
 const [
   krisCatalogListRoute,

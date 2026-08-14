@@ -6,9 +6,16 @@ import {
   createKrisCatalogSourceFromEnv,
   type KrisCatalogSource,
 } from "./dataset-reader";
-import type { KrisCatalogApiDependencies } from "./routes";
+import type { KrisCatalogApiDependencies, KrisCatalogViewer } from "./routes";
 import { KrisCatalogService } from "./service";
 import type { KrisLegacyOrderResolver } from "./projection";
+import {
+  buildKrisLegacyOrderResolver,
+  loadKrisLegacyBindings,
+  type KrisDoorCatalogSource,
+  type KrisDoorReleaseLedger,
+  type KrisMemberCustomerDirectory,
+} from "./legacy-order-production";
 
 export type ResolveKrisActiveMember = (
   req: Request,
@@ -30,6 +37,17 @@ export function buildKrisCatalogProductionDependencies(
     source?: KrisCatalogSource | null;
     /** Exact Product Control selections only. Omitted means every Buy Now fails closed. */
     resolveLegacyOrder?: KrisLegacyOrderResolver;
+    /**
+     * The order door's own sources, when this deployment can offer Buy Now.
+     * Reviewed bindings resolve against these per request; omitted (or any
+     * disagreement downstream) means every Buy Now fails closed, while the
+     * catalog itself still serves.
+     */
+    legacyOrders?: {
+      catalog: KrisDoorCatalogSource;
+      releases: KrisDoorReleaseLedger;
+      customers: KrisMemberCustomerDirectory;
+    };
   } = {},
 ): KrisCatalogApiDependencies {
   if (typeof resolveActiveMember !== "function") {
@@ -41,6 +59,9 @@ export function buildKrisCatalogProductionDependencies(
     options.source === undefined
       ? createKrisCatalogSourceFromEnv(env)
       : options.source;
+  // Loaded once at composition; per-request work stays reads-only.
+  const bindings =
+    options.legacyOrders === undefined ? [] : loadKrisLegacyBindings(env);
 
   return {
     env,
@@ -52,11 +73,19 @@ export function buildKrisCatalogProductionDependencies(
       if (email === "" || memberId === "") return null;
       return { audience: "member", email, memberId };
     },
-    serviceForProfile: (profile: KrisPriceProfile) => {
+    serviceForProfile: (profile: KrisPriceProfile, viewer: KrisCatalogViewer) => {
+      // Synchronous on purpose: an unreadable artifact must throw NOW, so the
+      // caller's 503 never depends on how far an async build got.
       if (source === null) {
         throw new KrisDatasetUnavailable("Launch A catalog artifact is unavailable");
       }
-      return new KrisCatalogService(source, profile, options.resolveLegacyOrder);
+      const legacyOrders = options.legacyOrders;
+      if (options.resolveLegacyOrder !== undefined || legacyOrders === undefined) {
+        return new KrisCatalogService(source, profile, options.resolveLegacyOrder);
+      }
+      return buildKrisLegacyOrderResolver({ ...legacyOrders, bindings }, viewer).then(
+        (resolveLegacyOrder) => new KrisCatalogService(source, profile, resolveLegacyOrder),
+      );
     },
   };
 }
