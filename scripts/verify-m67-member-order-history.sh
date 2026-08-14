@@ -177,30 +177,40 @@ select 'B5 unknown handle|' ||
   = 'B5 unknown handle|[]';
 
 -- 9. The routines are STABLE, so neither can write.
-select 'C1 volatility|' || string_agg(p.provolatile::text, ',' order by p.proname)
-  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-  where n.nspname = 'public'
-    and p.proname in ('research_early_access_legal_bindings_for_member',
-                      'research_early_access_placements_for_customers')
+--
+-- Each of assertions 9 through 11 wraps its aggregate in a scalar subquery,
+-- the same shape assertion 8 uses. Writing them as a bare aggregate with a
+-- trailing comparison parses the "= 'label|expected'" into the WHERE clause,
+-- which is a boolean type error at runtime: the suite then dies at assertion
+-- 9 instead of reporting, which is exactly the "check that could not run"
+-- failure mode this harness exists to refuse.
+select 'C1 volatility|' ||
+  (select string_agg(p.provolatile::text, ',' order by p.proname)
+     from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname in ('research_early_access_legal_bindings_for_member',
+                        'research_early_access_placements_for_customers'))
   = 'C1 volatility|s,s';
 
 -- 10. Neither anon nor authenticated may execute either routine.
-select 'C2 public roles|' || count(*)::text
-  from pg_proc p join pg_namespace n on n.oid = p.pronamespace,
-       lateral unnest(array['anon','authenticated']) as r(role)
-  where n.nspname = 'public'
-    and p.proname in ('research_early_access_legal_bindings_for_member',
-                      'research_early_access_placements_for_customers')
-    and has_function_privilege(r.role, p.oid, 'EXECUTE')
+select 'C2 public roles|' ||
+  (select count(*)::text
+     from pg_proc p join pg_namespace n on n.oid = p.pronamespace,
+          lateral unnest(array['anon','authenticated']) as r(role)
+    where n.nspname = 'public'
+      and p.proname in ('research_early_access_legal_bindings_for_member',
+                        'research_early_access_placements_for_customers')
+      and has_function_privilege(r.role, p.oid, 'EXECUTE'))
   = 'C2 public roles|0';
 
 -- 11. service_role may execute both.
-select 'C3 service_role|' || count(*)::text
-  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-  where n.nspname = 'public'
-    and p.proname in ('research_early_access_legal_bindings_for_member',
-                      'research_early_access_placements_for_customers')
-    and has_function_privilege('service_role', p.oid, 'EXECUTE')
+select 'C3 service_role|' ||
+  (select count(*)::text
+     from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname in ('research_early_access_legal_bindings_for_member',
+                        'research_early_access_placements_for_customers')
+      and has_function_privilege('service_role', p.oid, 'EXECUTE'))
   = 'C3 service_role|2';
 
 -- 12. THE BOUNDARY. service_role still has no direct SELECT on either table.
@@ -301,17 +311,26 @@ for image in "${IMAGES[@]}"; do
     "revoke select on public.research_early_access_placements from service_role" >/dev/null
   echo "  post-condition catches a broken revoke boundary"
 
+  # A stray EXECUTE grant on one of M67's OWN routines is different from the
+  # table breach above: the migration's revoke section re-asserts the function
+  # boundary on every apply, so the correct behaviour is to HEAL the grant and
+  # commit, with the post-condition then proving the healed end state. Requiring
+  # an abort here would demand the migration refuse a breach it exists to
+  # remove. So the assertion is: re-apply succeeds, and afterwards anon cannot
+  # execute either routine.
   docker exec "$name" psql -U postgres -d rehearse -q -c \
     "grant execute on function public.research_early_access_placements_for_customers(text[]) to anon" >/dev/null
-  set +e
-  broken="$(run_sql rehearse < "${REPO_ROOT}/${MIGRATION}" 2>&1)"
-  broken_rc=$?
-  set -e
-  [ "$broken_rc" -ne 0 ] \
-    || fail "${image}: M67 committed while anon could execute a routine"
-  echo "$broken" | grep -q "anon may execute" \
-    || fail "${image}: anon grant refused for the wrong reason: ${broken}"
-  echo "  post-condition catches an execute grant reaching a public role"
+  run_sql rehearse < "${REPO_ROOT}/${MIGRATION}" >/dev/null \
+    || fail "${image}: M67 failed to re-apply over a stray anon execute grant it should heal"
+  healed="$(docker exec "$name" psql -U postgres -d rehearse -tAc \
+    "select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname = 'public'
+        and p.proname in ('research_early_access_legal_bindings_for_member',
+                          'research_early_access_placements_for_customers')
+        and has_function_privilege('anon', p.oid, 'EXECUTE')")"
+  [ "$healed" = "0" ] \
+    || fail "${image}: a stray anon execute grant survived a re-apply (${healed} routine(s))"
+  echo "  a stray anon execute grant on a routine is healed by re-apply"
 
   docker rm -f "$name" >/dev/null 2>&1 || true
   trap - EXIT

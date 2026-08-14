@@ -566,11 +566,11 @@
       },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
-      "applyTwiceVerified": false,
+      "applyTwiceVerified": true,
       "rollback": {
         "strategy": "drop_the_two_read_only_routines_which_restores_the_prior_behaviour_exactly_because_nothing_here_writes_anything",
         "procedure": "supabase/production/research-early-access-member-order-history-rollback-notes.md",
-        "evidence": "PENDING_REHEARSAL"
+        "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16 and 17 via scripts/verify-m67-member-order-history.sh on 2026-08-13. Each engine first proved the preflight fails closed on a bare database with no routine left behind, then applied M67 twice over the accepted M62 bindings + commerce placements shape with a two-member fixture, with the 12-assertion behavioural suite green after each pass: member handles resolve primary plus alias sorted and de-duplicated, an unknown member and an unknown handle each return empty rather than broader, an empty and a null handle array each return empty rather than every order, placements return deterministically ordered records, both routines are STABLE and SECURITY DEFINER, anon and authenticated cannot execute, service_role can, and service_role still has no direct SELECT on either table. The apply created no relation and wrote no row. Self-sabotage: a granted service_role table SELECT makes the re-apply ABORT on its own post-condition; a stray anon EXECUTE on a routine is healed by re-apply with the healed state proven. Production was not connected to or mutated."
       },
       "notes": "M67 release candidate. Adds exactly two stable security-definer read routines (research_early_access_legal_bindings_for_member, research_early_access_placements_for_customers) behind the same boundary every other Early Access read uses: EXECUTE for service_role alone, nothing for public, anon or authenticated, and no table grant anywhere. Fail-closed preflight refuses an absent or differently shaped M62 bindings table or commerce placements table; the in-transaction post-condition proves both routines exist with the exact argument types, are STABLE and SECURITY DEFINER, that PUBLIC, anon and authenticated cannot execute them, that service_role can, and that service_role still has no direct SELECT on either underlying table. Explicitly unapplied to production; application is a separate protected founder action."
     }
