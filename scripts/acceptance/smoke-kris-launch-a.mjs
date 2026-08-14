@@ -48,6 +48,9 @@
  *   SMOKE_SESSION_COOKIE   a signed-in Kristopher session, enabling the
  *                          authenticated tier (catalog counts, purchase mode
  *                          matrix, private field scan, agreement config)
+ *   SMOKE_COOKIE_ORIGIN    REQUIRED whenever the cookie is set: must exactly
+ *                          equal --origin or the cookie is refused (host
+ *                          pinning; a session credential never crosses hosts)
  *   RENDER_API_KEY         enables the deployed commit check
  *   RENDER_SERVICE_ID      the service whose live deploy is compared
  */
@@ -599,7 +602,27 @@ async function main() {
     process.exit(1);
   }
   const origin = args.origin.replace(/\/+$/, "");
-  const cookie = process.env.SMOKE_SESSION_COOKIE ?? null;
+  let cookie = process.env.SMOKE_SESSION_COOKIE ?? null;
+
+  // HOST PINNING. A real member session cookie is a credential; sending it to
+  // whatever --origin happened to be typed is how a credential crosses hosts.
+  // The cookie therefore only travels when SMOKE_COOKIE_ORIGIN is set and
+  // EXACTLY equals the target origin. Any mismatch keeps the anonymous tier
+  // (which sends nothing) and downgrades the session tier to UNVERIFIED with
+  // the reason, rather than trusting the operator's shell history. Fail
+  // closed: absent pin means no cookie, never "probably fine".
+  let cookieRefusal = null;
+  if (cookie) {
+    const pin = (process.env.SMOKE_COOKIE_ORIGIN ?? "").replace(/\/+$/, "");
+    if (pin === "") {
+      cookieRefusal =
+        "SMOKE_SESSION_COOKIE is set but SMOKE_COOKIE_ORIGIN is not; refusing to send a session cookie to an unpinned origin";
+      cookie = null;
+    } else if (pin !== origin) {
+      cookieRefusal = `SMOKE_COOKIE_ORIGIN pins ${pin}, but --origin is ${origin}; refusing to send the session cookie cross-host`;
+      cookie = null;
+    }
+  }
 
   console.log("KRIS LAUNCH A POST DEPLOY SMOKE");
   console.log(`origin      ${origin}`);
@@ -614,8 +637,10 @@ async function main() {
   if (cookie) {
     await runSession(origin, cookie);
   } else {
+    const reason =
+      cookieRefusal ?? "SMOKE_SESSION_COOKIE is not set, so the signed-in tier did not run";
     for (const check of SESSION_CHECKS) {
-      record(check, UNVERIFIED, "SMOKE_SESSION_COOKIE is not set, so the signed-in tier did not run");
+      record(check, UNVERIFIED, reason);
     }
   }
 
