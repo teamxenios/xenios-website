@@ -114,6 +114,42 @@ export const KRIS_DATASET_BANNED_KEYS: readonly string[] = [
   "checkoutUrl",
 ];
 
+/**
+ * Private operational phrases that must never appear INSIDE a member-facing
+ * string. The banned-key scan catches a private FIELD arriving in the file;
+ * this catches private CONTENT arriving through a legitimate field, which is
+ * how a regenerated workbook would actually leak (an operator pasting
+ * "Selected supplier: ..." into the notes column). Multi-word phrases only,
+ * so no product name or specification can trip it by accident.
+ */
+const PRIVATE_CONTENT_PHRASES: readonly RegExp[] = [
+  /selected supplier/i,
+  /supplier name/i,
+  /supplier order/i,
+  /buy cost/i,
+  /gross margin/i,
+  /gross profit/i,
+  /sourcing rationale/i,
+  /internal note/i,
+  /suggested sell/i,
+];
+
+/**
+ * Refuses private content in a member-reaching string. The refusal names the
+ * product and the field but deliberately not the text: this error is thrown
+ * at load time and may be logged, and echoing the content would move the leak
+ * into the logs instead of stopping it.
+ */
+function refusePrivateContent(productId: string, field: string, text: string): void {
+  for (const phrase of PRIVATE_CONTENT_PHRASES) {
+    if (phrase.test(text)) {
+      throw new KrisDatasetUnavailable(
+        `product ${productId} carries private operational content in ${field}`,
+      );
+    }
+  }
+}
+
 /** Every invariant the builder asserted must still read exactly false. */
 const REQUIRED_FALSE_INVARIANTS: readonly string[] = [
   "containsSupplierIdentity",
@@ -231,6 +267,19 @@ function readProduct(value: unknown): KrisProductRecord {
     typeof value.moq === "number" && Number.isSafeInteger(value.moq) && value.moq > 0
       ? value.moq
       : null;
+  // Every string a member can see is scanned before it is accepted. The scan
+  // sits here, at load, so a hot-swapped artifact fails before any projection
+  // serves a single row from it.
+  for (const [field, text] of [
+    ["displayName", value.displayName],
+    ["specification", typeof value.specification === "string" ? value.specification : ""],
+    ["format", typeof value.format === "string" ? value.format : ""],
+    ["packBasis", typeof value.packBasis === "string" ? value.packBasis : ""],
+    ["dosageForm", typeof value.dosageForm === "string" ? value.dosageForm : ""],
+    ["suppliedNote", typeof value.suppliedNote === "string" ? value.suppliedNote : ""],
+  ] as const) {
+    refusePrivateContent(value.id, field, text);
+  }
   return {
     id: value.id,
     slug: value.slug,
@@ -293,12 +342,16 @@ function readPrice(
       `price for ${productId} displays an amount it does not carry`,
     );
   }
+  const basis = nonBlank(entry.basis) ? entry.basis : fallbackBasis;
+  // The basis string reaches the member beside the price, so it is scanned
+  // like every other member-facing string.
+  refusePrivateContent(productId, "price basis", basis);
   return {
     state: "priced",
     amountCents,
     currency,
     display,
-    basis: nonBlank(entry.basis) ? entry.basis : fallbackBasis,
+    basis,
   };
 }
 
