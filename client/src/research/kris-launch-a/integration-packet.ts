@@ -10,18 +10,13 @@ import {
 /**
  * Every URL this surface builds, in one file.
  *
- * THE SERVER ROUTES ARE BEING BUILT IN A SIBLING LANE. Nothing here can call
- * them yet, so the whole client is built and tested against a fixture that
- * answers the committed contract. The one thing that has to change when that
- * lane lands is `KRIS_API_BASE`: it is the only place an API path is composed,
- * so pointing at the real base is a one constant edit and the two builders
- * below carry it into every request.
- *
- * If the sibling lane picks a different base, change this string and nothing
- * else. `kris-api-base.test.ts` holds every URL to it, so a drifting base
- * fails a test rather than silently returning the SPA shell.
+ * The mounted server contract lives in `server/research/kris-launch-a/routes.ts`.
+ * Keep the version in this one constant: the catalog builder and the detail
+ * builder below both derive their URL from it, and the route-parity test reads
+ * the server source so a future drift fails before the browser quietly receives
+ * the SPA shell.
  */
-export const KRIS_API_BASE = "/api/research/kris-launch-a";
+export const KRIS_API_BASE = "/api/research/kris-launch-a/v1";
 
 /** The routed page the Launch A catalog lives at (a client path, not an API path). */
 export const KRIS_CATALOG_PATH = "/research/member/kris-catalog";
@@ -59,11 +54,13 @@ export function krisCatalogUrl(query: KrisCatalogQuery = {}): string {
 }
 
 /**
- * BOTH SEGMENTS ARE THE ADDRESS. The detail route is family and slug, so a
- * link carrying only a slug could not restore the item it points at.
+ * The browser route carries family and slug for navigation and validation, but
+ * the mounted API addresses a detail by its globally unique slug. Keep the
+ * family parameter in this boundary so callers use the same typed handoff as
+ * `krisItemHref`; it is deliberately not sent as authority to the server.
  */
-export function krisDetailUrl(family: KrisFamily, slug: string): string {
-  return `${KRIS_API_BASE}/items/${encodeURIComponent(family)}/${encodeURIComponent(slug)}`;
+export function krisDetailUrl(_family: KrisFamily, slug: string): string {
+  return `${KRIS_API_BASE}/products/${encodeURIComponent(slug)}`;
 }
 
 /**

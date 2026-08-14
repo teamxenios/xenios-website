@@ -60,24 +60,48 @@ async function settle() {
 }
 
 describe("the API paths, which all come from one constant", () => {
+  const serverRoutes = readFileSync(
+    resolve(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "..",
+      "server",
+      "research",
+      "kris-launch-a",
+      "routes.ts",
+    ),
+    "utf8",
+  )
+    .split(/\r?\n/)
+    .join("\n");
+
   it("builds every request from KRIS_API_BASE", () => {
-    // The sibling lane owns the real base. When it lands, this constant changes
-    // and nothing else does, so this test is what catches a drift between the
-    // two rather than a browser quietly receiving the SPA shell.
     expect(krisCatalogUrl()).toBe(KRIS_API_BASE + "/catalog");
     expect(krisCatalogUrl({ q: "bpc", page: 2, pageSize: 48 })).toBe(
       KRIS_API_BASE + "/catalog?q=bpc&page=2&pageSize=48",
     );
     expect(krisDetailUrl("research_capsules", "research-capsules-bam15-bam15-500-mcg")).toBe(
-      KRIS_API_BASE + "/items/research_capsules/research-capsules-bam15-bam15-500-mcg",
+      KRIS_API_BASE + "/products/research-capsules-bam15-bam15-500-mcg",
     );
     expect(krisCatalogUrl().startsWith(KRIS_API_BASE)).toBe(true);
     expect(krisDetailUrl("supplements", "x").startsWith(KRIS_API_BASE)).toBe(true);
   });
 
-  it("encodes both segments, so an odd slug cannot escape the path", () => {
+  it("matches the mounted server base and detail shape", () => {
+    expect(KRIS_API_BASE).toBe("/api/research/kris-launch-a/v1");
+    expect(serverRoutes).toContain(
+      'export const KRIS_CATALOG_BASE_PATH = "/api/research/kris-launch-a/v1";',
+    );
+    expect(serverRoutes).toContain(
+      "export const KRIS_CATALOG_DETAIL_ROUTE = `${KRIS_CATALOG_BASE_PATH}/products/:slug`;",
+    );
+  });
+
+  it("encodes the API slug and both browser-route segments", () => {
     expect(krisDetailUrl("supplements", "a b/../admin")).toBe(
-      KRIS_API_BASE + "/items/supplements/a%20b%2F..%2Fadmin",
+      KRIS_API_BASE + "/products/a%20b%2F..%2Fadmin",
     );
     expect(krisItemHref("supplements", "a b/../admin")).toBe(
       KRIS_CATALOG_PATH + "/supplements/a%20b%2F..%2Fadmin",

@@ -4,7 +4,9 @@ import type {
   KrisCatalogPage,
   KrisCatalogQuery,
   KrisFamily,
+  KrisPriceProfile,
 } from "@shared/research/kris-launch-a/contract";
+import { KRIS_PRICE_PROFILES } from "@shared/research/kris-launch-a/contract";
 import { apiGet, type ApiResult } from "../lib/api";
 import { krisCatalogUrl, krisDetailUrl } from "./integration-packet";
 
@@ -26,12 +28,41 @@ export function getKrisCatalog(
   return apiGet(krisCatalogUrl(query), token);
 }
 
-export function getKrisDetail(
+interface KrisCatalogDetailResponse {
+  ok: true;
+  profile: KrisPriceProfile;
+  product: KrisCatalogDetailView;
+}
+
+function isKrisCatalogDetailResponse(
+  value: unknown,
+): value is KrisCatalogDetailResponse {
+  if (value === null || typeof value !== "object") return false;
+  const candidate = value as Partial<KrisCatalogDetailResponse>;
+  const product = candidate.product as Partial<KrisCatalogDetailView> | undefined;
+  return (
+    candidate.ok === true &&
+    typeof candidate.profile === "string" &&
+    (KRIS_PRICE_PROFILES as readonly string[]).includes(candidate.profile) &&
+    product !== null &&
+    typeof product === "object" &&
+    typeof product.id === "string" &&
+    product.id.trim().length > 0 &&
+    typeof product.slug === "string" &&
+    product.slug.trim().length > 0 &&
+    Array.isArray(product.disclosures)
+  );
+}
+
+export async function getKrisDetail(
   token: string | null,
   family: KrisFamily,
   slug: string,
 ): Promise<ApiResult<KrisCatalogDetailView>> {
-  return apiGet(krisDetailUrl(family, slug), token);
+  const result = await apiGet<unknown>(krisDetailUrl(family, slug), token);
+  if (result.kind !== "ok") return result;
+  if (!isKrisCatalogDetailResponse(result.data)) return { kind: "unavailable" };
+  return { kind: "ok", data: result.data.product };
 }
 
 /**
