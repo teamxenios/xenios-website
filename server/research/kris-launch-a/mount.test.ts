@@ -401,19 +401,39 @@ describe("failures answer honestly", () => {
   });
 });
 
-describe("nothing here sells", () => {
-  it("emits no purchase action on any response", async () => {
+describe("only direct_eligible sells", () => {
+  it("marks a row purchasable only when its mode says so", async () => {
+    // This assertion used to read "emits no purchase action on any response",
+    // which was correct while Launch A was browse-only and is now the wrong
+    // requirement. It is rewritten rather than deleted: the per-mode rule is
+    // what stands between a clinical row and a purchase control, so the file
+    // must keep asserting something here.
     const app = mounted();
-    for (const url of [LIST, `${LIST}?pageSize=100`, DETAIL]) {
+    for (const url of [LIST, `${LIST}?pageSize=100`]) {
       const response = await request(app).get(url);
-      for (const forbidden of [
-        "add_to_cart",
-        "addToCart",
-        "Add to Cart",
-        "checkout",
-        "buy now",
-      ]) {
-        expect(response.text.toLowerCase()).not.toContain(forbidden.toLowerCase());
+      expect(response.status).toBe(200);
+      for (const item of response.body.items ?? []) {
+        expect(item.purchaseMode).toBeDefined();
+        // canAddToCart is true for exactly one mode and never disagrees with it.
+        expect(item.canAddToCart).toBe(item.purchaseMode === "direct_eligible");
+        if (item.purchaseMode !== "direct_eligible") {
+          expect(item.canAddToCart).toBe(false);
+        }
+        // A purchasable row always carries a real price. The $0 guard.
+        if (item.canAddToCart) expect(item.price.state).toBe("priced");
+      }
+    }
+  });
+
+  it("never marks a clinical or pending row purchasable", async () => {
+    const response = await request(mounted()).get(`${LIST}?pageSize=100`);
+    for (const item of response.body.items ?? []) {
+      if (
+        item.channel === "clinical_provider_only" ||
+        item.channel === "classification_pending" ||
+        item.price.state !== "priced"
+      ) {
+        expect(item.canAddToCart, `${item.slug} became purchasable`).toBe(false);
       }
     }
   });
