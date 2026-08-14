@@ -255,7 +255,7 @@ function normalizedCheckoutRequest(memberId: string, req: CheckoutRequest): read
     ],
     req.shippingService,
     req.applyStoreCreditCents ?? 0,
-    [...new Set(req.acceptedAgreementKeys)].sort(),
+    Array.from(new Set(req.acceptedAgreementKeys)).sort(),
     req.researchAttestation === true,
   ];
 }

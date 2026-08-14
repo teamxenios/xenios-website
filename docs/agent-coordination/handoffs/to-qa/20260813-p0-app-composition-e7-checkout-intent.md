@@ -84,9 +84,13 @@ Result: `2 files passed; 62 tests passed`. Quantity 1 through 50 remains ordinar
 The strict post-commit self-audit reran all eight files in one invocation against
 exact code commit `4d96331587a0b6b9f08751b069eb0af2d518e0ca`: `8 files passed;
 264 tests passed`. The changed-intent restart test proves the payment provider is
-not called on the durable conflict path. No narrow standalone TypeScript project
-exists for these files; a repository-wide typecheck would violate the focused-only
-instruction, so no full typecheck was run.
+not called on the durable conflict path.
+
+A later independent integration check found that this repository's compiler target
+does not allow spread iteration over `Set`. The mechanical `Array.from(new Set(...))`
+successor preserves the normalized agreement-set semantics. After that correction,
+the checkout and production-wiring suites passed `110/110`, and `npm run check`
+passed against the clean successor tree.
 
 `git diff --check` passed. The worktree was clean after the corrective commit.
 
