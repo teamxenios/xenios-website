@@ -200,6 +200,7 @@ export async function buildKrisLegacyOrderResolver(
   // recovery uses. No customer means the order door could not serve this
   // member either, so nothing is offered. Multiple refs project identically
   // for audience purposes; the first in the directory's stable order is used.
+  if (viewer.memberId === null || viewer.memberId === "") return undefined;
   let refs: readonly string[];
   try {
     refs = await deps.customers.customerRefsFor(viewer.memberId);

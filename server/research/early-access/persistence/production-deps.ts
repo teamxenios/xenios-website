@@ -51,6 +51,8 @@ import {
   SupabaseUnitHoldRegistry,
 } from "./ops-stores";
 import type { EarlyAccessPersistenceCall } from "./executor";
+import { SupabaseEarlyAccessLegalBindingDirectory } from "../legal/supabase-legal-binding-directory";
+import type { EarlyAccessOrderHistoryDependencies } from "../orders/member-order-history";
 
 /**
  * The Early Access persistence composition root.
@@ -166,6 +168,13 @@ export type EarlyAccessPersistenceBuild = Readonly<{
   warnings: readonly string[];
   reason: string | null;
   options: Partial<EarlyAccessRegistrationOptions>;
+  /**
+   * The member-to-legacy-order join, present ONLY in the durable branch: the
+   * M62 legal binding directory beside the same commerce store the order
+   * routes write. One bundle feeds both the merged member order history and
+   * the Kris Buy Now handoff, so ownership resolves one way everywhere.
+   */
+  orderHistory?: EarlyAccessOrderHistoryDependencies;
 }>;
 
 /**
@@ -373,6 +382,10 @@ export function buildEarlyAccessPersistence(
     warnings: Object.freeze(warnings),
     reason: null,
     options,
+    orderHistory: Object.freeze({
+      bindings: new SupabaseEarlyAccessLegalBindingDirectory(run),
+      store: options.store as SupabaseEarlyAccessCommerceStore,
+    }),
   });
 }
 

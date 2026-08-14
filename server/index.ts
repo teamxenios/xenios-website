@@ -326,16 +326,15 @@ if (earlyAccessPersistence.reason !== null) {
 // The order door's composed catalog and release ledger, observed at
 // registration so the Kris Buy Now handoff prices from the door's own
 // sources. Null until registration runs; Buy Now stays closed without it.
-let earlyAccessDoorSources: {
-  catalog: KrisDoorCatalogSource;
-  releases: KrisDoorReleaseLedger;
-} | null = null;
+const earlyAccessDoorSources: {
+  current: { catalog: KrisDoorCatalogSource; releases: KrisDoorReleaseLedger } | null;
+} = { current: null };
 registerPrivateEarlyAccessApi(app, {
   ...earlyAccessPersistence.options,
   resolveMember: resolveActiveMemberSilently,
   requireAdmin: requireSupabaseAdmin,
   onDoorSources: (sources) => {
-    earlyAccessDoorSources = sources;
+    earlyAccessDoorSources.current = sources;
   },
 });
 app.use(carePageGate);
@@ -359,7 +358,16 @@ registerMemberAccessApi(app);
 // This is the one-line wiring the member-platform lane deliberately left for
 // the integration session (it never edits this file itself).
 const website3Dependencies = buildWebsite3ProductionDependencies();
-const commerceDependencies = buildCommerceDependencies();
+// The Early Access half of a member's order history rides the ONE existing
+// member orders service (GET /api/research/orders). Wired only when the
+// durable Early Access persistence exists; absent means unchanged behaviour.
+const commerceDependencies = buildCommerceDependencies(
+  undefined,
+  undefined,
+  earlyAccessPersistence.orderHistory === undefined
+    ? undefined
+    : { earlyAccessOrderHistory: earlyAccessPersistence.orderHistory },
+);
 registerMemberPlatformApi(app, {
   ...defaultMemberPlatformDeps(),
   getTrainerSafeBiomarkerSummary: async (memberId) => {
@@ -402,16 +410,15 @@ registerMemberCatalogApi(
 // Buy Now opens only when the door's own sources and the member-to-customer
 // directory both exist; anything less keeps the catalog read-only, which is
 // the truthful state for a deployment that could not place the order either.
-const earlyAccessMemberOrderHistory = earlyAccessPersistence.options.memberOrderHistory;
-const krisDoorSources = earlyAccessDoorSources;
+const krisDoorSources = earlyAccessDoorSources.current;
 const krisCatalogDependencies = buildKrisCatalogProductionDependencies(
   resolveActiveMemberSilently,
-  krisDoorSources !== null && earlyAccessMemberOrderHistory !== undefined
+  krisDoorSources !== null && earlyAccessPersistence.orderHistory !== undefined
     ? {
         legacyOrders: {
           catalog: krisDoorSources.catalog,
           releases: krisDoorSources.releases,
-          customers: earlyAccessMemberOrderHistory,
+          customers: earlyAccessPersistence.orderHistory.bindings,
         },
       }
     : {},
