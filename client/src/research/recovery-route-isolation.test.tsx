@@ -109,6 +109,21 @@ describe("recovery route chrome isolation", () => {
   });
 
   it.each([
+    "/research/access-state",
+    "/research/access-state/",
+    "/Research/Access-State",
+    "/research/%61ccess-state",
+  ])("mounts the member access-state screens in isolated account chrome, never behind the shared gate, at %s", (path) => {
+    // Their audience is exactly the visitor who is NOT an authenticated
+    // member (recovery-purpose sessions, lapsed billing, inactive
+    // membership) - a password wall here would dead-end the screens for the
+    // people they explain things to.
+    const view = renderAt(path);
+    expect(view.querySelector('[data-testid="recovery-content"]')).toBeTruthy();
+    expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
+  });
+
+  it.each([
     "/research/apply/status",
     "/research/application/status",
     "/research/application-status",

@@ -6,7 +6,7 @@
 // canonical strings.
 
 import { describe, expect, it } from "vitest";
-import { denialPresentation, failureText, KNOWN_DENIAL_CODES } from "./denials";
+import { denialPresentation, failureText, isBillingDenialCode, KNOWN_DENIAL_CODES } from "./denials";
 
 // House style bans the em dash everywhere, so it is referenced by escape here
 // rather than typed literally into the file it polices.
@@ -177,5 +177,36 @@ describe("unknown codes", () => {
     });
     expect(p.title).not.toContain("some_future_code_v9");
     expect(p.body).not.toContain("some_future_code_v9");
+  });
+});
+
+describe("the dynamic billing_* family", () => {
+  // The server's active-member guard emits `billing_${state}` for ANY
+  // non-active billing state (server/research/member-auth.ts), so codes
+  // beyond billing_past_due are expected, not unknown. They must read as
+  // billing needing attention, never as the generic fallback.
+  it.each(["billing_paused", "billing_delinquent", "billing_suspended"])(
+    "presents %s as billing needing attention, without claiming a payment is late",
+    (code) => {
+      const p = denialPresentation(code);
+      expect(p.title).toBe("Billing needs attention.");
+      expect(p.tone).toBe("error");
+      expect(p.body).toContain("Contact support");
+      expect(p.body).not.toContain("past due");
+      expect(p.title).not.toContain(code);
+      expect(p.body).not.toContain(code);
+    },
+  );
+
+  it("keeps billing_past_due on its own dedicated copy", () => {
+    expect(denialPresentation("billing_past_due").body).toContain("past due");
+  });
+
+  it("classifies the family by exact grammar, so lookalikes still fall back", () => {
+    expect(isBillingDenialCode("billing_paused")).toBe(true);
+    expect(isBillingDenialCode("billing_")).toBe(false);
+    expect(isBillingDenialCode("rebilling_paused")).toBe(false);
+    expect(isBillingDenialCode("billing-PAUSED")).toBe(false);
+    expect(denialPresentation("rebilling_paused").title).toBe("This is not available right now.");
   });
 });

@@ -96,3 +96,38 @@ describe("wiring", () => {
     expect(offline).toContain("nothing private is stored");
   });
 });
+
+describe("lifecycle UX (update banner + install education)", () => {
+  const lifecycle = readFileSync(
+    resolve(__dirname, "PwaLifecycle.tsx"),
+    "utf8",
+  );
+
+  it("is mounted beside App so no app surface is modified", () => {
+    expect(mainSource).toContain('from "./pwa/PwaLifecycle"');
+    expect(mainSource).toContain("<PwaLifecycle />");
+  });
+
+  it("listens for the update event and applies via the register module", () => {
+    expect(lifecycle).toContain('"xenios:pwa-update-available"');
+    expect(lifecycle).toContain("applyPwaUpdate(updateRegistration)");
+  });
+
+  it("captures beforeinstallprompt and only prompts on an explicit tap", () => {
+    expect(lifecycle).toContain('"beforeinstallprompt"');
+    expect(lifecycle).toContain("event.preventDefault()");
+    expect(lifecycle).toContain("installPrompt.prompt()");
+  });
+
+  it("educates iOS Safari outside standalone mode with A2HS wording", () => {
+    expect(lifecycle).toContain("Add to Home Screen");
+    expect(lifecycle).toContain("isStandalone()");
+    expect(lifecycle).toContain("isIosSafari()");
+  });
+
+  it("stores only a dismissal flag, in sessionStorage, never an identifier", () => {
+    expect(lifecycle).toContain("sessionStorage");
+    expect(lifecycle).not.toContain("localStorage");
+    expect(lifecycle).toMatch(/DISMISS_KEY = "xenios-pwa-hint-dismissed"/);
+  });
+});

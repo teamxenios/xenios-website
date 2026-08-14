@@ -85,9 +85,17 @@ describe("member persona states (RequireMember)", () => {
     expect(view.textContent).toContain("private member content");
   });
 
-  it.each(["paused", "past_due", "closed"])(
-    "allows a %s subject to reach only the privacy-rights surface",
-    (status) => {
+  // Ordinary member content redirects each non-active status to ITS screen,
+  // mirroring the server guard's classification (member-auth.ts): past_due is
+  // a billing state, paused/closed are inactive membership. The privacy-rights
+  // surface stays reachable for all of them so consent can be withdrawn.
+  it.each([
+    ["paused", "membership_inactive"],
+    ["past_due", "billing_past_due"],
+    ["closed", "membership_inactive"],
+  ])(
+    "allows a %s subject to reach only the privacy-rights surface, and routes ordinary content to the %s screen",
+    (status, expectedCode) => {
       const privacy = renderGate(
         fixtureContext({ firstName: "Sam", status, applicationStatus: null }),
         "/research/member/privacy",
@@ -104,7 +112,8 @@ describe("member persona states (RequireMember)", () => {
         fixtureContext({ firstName: "Sam", status, applicationStatus: null }),
         "/research/member",
       );
-      expect(window.location.pathname).toBe("/research/activate");
+      expect(window.location.pathname).toBe("/research/access-state");
+      expect(new URLSearchParams(window.location.search).get("code")).toBe(expectedCode);
       expect(ordinary.querySelector('[data-testid="member-content"]')).toBeNull();
     },
   );

@@ -3,6 +3,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import type { CatalogResponse } from "@shared/research/types";
 import {
+  isResearchAccessStatePath,
   isResearchActivatePath,
   isResearchAdminPath,
   isResearchApplicationStatusPath,
@@ -188,6 +189,7 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   if (
     isResearchResetPasswordPath(req.path) ||
     isResearchActivatePath(req.path) ||
+    isResearchAccessStatePath(req.path) ||
     isResearchApplicationStatusPath(req.path)
   ) {
     res.setHeader("Cache-Control", "no-store");
