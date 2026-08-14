@@ -177,6 +177,37 @@ export async function projectEarlyAccessSubmittedForReview(input: {
 }
 
 /**
+ * PAYMENT REJECTED / NEEDS ATTENTION. At most one per reviewed proof, so a
+ * rejection of a NEWER submission mails again while a replayed rejection of
+ * the same proof cannot. Deliberately carries no reason text and no operator
+ * identity: those are internal records, and the actionable detail lives on
+ * the authenticated page.
+ */
+export async function projectEarlyAccessPaymentRejected(input: {
+  reviewedProofId: string;
+  orderNumber: string;
+  recipientEmail: string;
+  customerName?: string;
+  invoiceNumber?: string;
+  paymentReference?: string;
+  statusUrl?: string;
+}): Promise<boolean> {
+  return enqueueNotification({
+    eventKey: earlyAccessEventKey.paymentRejected(input.reviewedProofId),
+    eventType: "ea_payment_rejected",
+    templateKey: earlyAccessTemplateKey("ea_payment_rejected"),
+    recipient: input.recipientEmail,
+    payload: safeEarlyAccessPayload("ea_payment_rejected", {
+      customerName: input.customerName,
+      cartCheckoutNumber: input.orderNumber,
+      invoiceNumber: input.invoiceNumber,
+      paymentReference: input.paymentReference,
+      statusUrl: input.statusUrl ?? earlyAccessStatusUrl(),
+    }),
+  });
+}
+
+/**
  * TRACKING. At most one per durable tracking-event identity.
  *
  * SEAM, NOT YET CONNECTED. Early Access has no durable customer-facing
