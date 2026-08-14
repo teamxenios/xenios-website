@@ -162,6 +162,14 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
       "/", // Wordmark's link back to the site root
       "/research/apply",
       "/research/sign-in",
+      // Recovery and status lookup reveal no account data without their
+      // canonical provider or signed-status proof.
+      "/research/reset-password",
+      "/research/application-status",
+      // Partner discovery stays on the public program and application pages.
+      // The Gateway never links to the dashboard or infers partner authority.
+      "/research/partners",
+      "/research/partners/apply",
       "/research/privacy",
       "/research/terms",
       "/research/support",
@@ -173,6 +181,9 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
       // a session-bound email verification. It is an entry point to a lock,
       // which the catalog policy permits; a catalog CTA it is not.
       "/research/early-access",
+      // A quiet internal entry link grants nothing. The admin family performs
+      // its own server authorization and exposes no public catalog data.
+      "/admin/research",
     ]);
 
     const view = await renderGateway();

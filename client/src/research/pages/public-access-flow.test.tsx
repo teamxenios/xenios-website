@@ -57,7 +57,7 @@ function assertSinglePageHeading(view: HTMLElement) {
 }
 
 function assertKeyboardReachableActions(view: HTMLElement) {
-  const actions = Array.from(view.querySelectorAll<HTMLElement>("a, button"));
+  const actions = Array.from(view.querySelectorAll<HTMLElement>("a, button, summary"));
   expect(actions.length).toBeGreaterThan(0);
   for (const action of actions) {
     expect(action.getAttribute("tabindex")).not.toBe("-1");
@@ -67,16 +67,33 @@ function assertKeyboardReachableActions(view: HTMLElement) {
 }
 
 describe("Research public application flow", () => {
-  it("keeps the gateway focused on Apply and Member Login with canonical public links", async () => {
+  it("presents a restrained access hub with canonical, non-catalog paths", async () => {
     const view = await render(<Gateway />);
     assertSinglePageHeading(view);
 
     const hrefs = links(view);
     expect(hrefs).toContain("/research/apply");
     expect(hrefs).toContain("/research/sign-in");
+    expect(hrefs).toContain("/research/reset-password");
+    expect(hrefs).toContain("/research/application-status");
+    expect(hrefs).toContain("/research/partners");
+    expect(hrefs).toContain("/research/partners/apply");
+    expect(hrefs).toContain("/research/early-access");
+    expect(hrefs).toContain("/admin/research");
     expect(hrefs).toContain("/research/privacy");
     expect(hrefs).toContain("/research/terms");
     expect(hrefs).toContain("/research/support");
+    expect(view.textContent).toContain("One Xenios account is reused across approved access");
+    expect(view.textContent).toContain("Member / customer");
+    expect(view.textContent).toContain("Affiliate / partner");
+    expect(view.textContent).toContain("Organization / professional");
+    expect(view.textContent).toContain("Supplier / fulfillment");
+    expect(view.textContent).toContain("Private access");
+
+    const disclosure = view.querySelector<HTMLDetailsElement>('[data-testid="gateway-other-access"]');
+    expect(disclosure).not.toBeNull();
+    expect(disclosure?.open).toBe(false);
+    expect(view.querySelectorAll(".btn")).toHaveLength(2);
     expect(hrefs.some((href) => /catalog|products|shop|supplements/i.test(href))).toBe(false);
     assertKeyboardReachableActions(view);
   });
@@ -119,6 +136,8 @@ describe("Research public application flow", () => {
       assertSinglePageHeading(gateway);
       expect(gateway.querySelector('[data-testid="link-gateway-apply"]')).not.toBeNull();
       expect(gateway.querySelector('[data-testid="link-gateway-signin"]')).not.toBeNull();
+      expect(gateway.querySelector('[data-testid="link-gateway-early-access"]')).not.toBeNull();
+      expect(gateway.querySelector<HTMLDetailsElement>('[data-testid="gateway-other-access"]')?.open).toBe(false);
       assertKeyboardReachableActions(gateway);
       const gatewayActions = Array.from(gateway.querySelectorAll<HTMLElement>(".btn"));
       expect(
