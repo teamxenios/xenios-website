@@ -18,6 +18,7 @@ const SponsoredClaimSchema = z.object({
   normalizedEmail: z.string().trim().email().max(254),
   businessKey: z.string().min(1),
   businessDisplayName: z.string().min(1),
+  businessLegalName: z.string().min(1),
   state: z.enum(["claim_queued", "activated", "revoked", "expired"]),
   profileKey: z.literal("KRIS_VOLUME_PARTNER"),
   profileVersion: z.number().int().positive(),
@@ -45,6 +46,7 @@ const BaseInputSchema = z.object({
   stateOrRegion: z.string().trim().min(1).max(80),
   businessKey: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(120),
   businessDisplayName: z.string().trim().min(1).max(160),
+  businessLegalName: z.string().trim().min(1).max(200),
   roles: z.tuple([z.literal("organization_owner"), z.literal("business_buyer")]),
 }).strict();
 
@@ -109,6 +111,7 @@ function exactClaim(
   return row.normalizedEmail.toLowerCase() === input.email
     && row.businessKey === input.businessKey
     && row.businessDisplayName === input.businessDisplayName
+    && row.businessLegalName === input.businessLegalName
     && row.profileKey === pricing.profileKey
     && row.profileVersion === pricing.profileVersion
     && row.profileEffectiveAt === pricing.profileEffectiveAt

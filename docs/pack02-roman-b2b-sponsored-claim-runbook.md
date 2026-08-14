@@ -26,10 +26,11 @@ effective time are derived from the accepted catalog artifact, not typed by an
 operator: schema version 1 and generatedAt from catalog source
 `e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4` after enforcing 420/418/2.
 
-No legal entity name, tax identifier, billing address, shipping address,
-password, or public application essay is required to send the claim. Those
-business profile facts can be collected through the later reviewed profile
-workflow without blocking identity proof.
+The founder-confirmed legal entity name is recorded as immutable sponsorship
+and relationship evidence. No tax identifier, billing address, shipping
+address, password, or public application essay is required to send the claim.
+Those remaining business profile facts can be collected through the later
+reviewed profile workflow without blocking identity proof.
 
 ## Fast path C
 

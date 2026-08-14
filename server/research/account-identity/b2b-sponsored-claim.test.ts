@@ -19,6 +19,7 @@ const input = {
   stateOrRegion: "Texas",
   businessKey: "roman-health",
   businessDisplayName: "Roman Health",
+  businessLegalName: "Roman Health",
   roles: ["organization_owner", "business_buyer"],
 } as const;
 
@@ -46,6 +47,7 @@ function claim(state: SponsoredB2BClaim["state"]): SponsoredB2BClaim {
     normalizedEmail: EMAIL,
     businessKey: input.businessKey,
     businessDisplayName: input.businessDisplayName,
+    businessLegalName: input.businessLegalName,
     state,
     profileKey: "KRIS_VOLUME_PARTNER",
     profileVersion: pricing.profileVersion,
@@ -81,6 +83,7 @@ describe("prepareSponsoredB2BClaim", () => {
     expect(subject.prepareSponsoredClaim).toHaveBeenCalledWith(expect.objectContaining({
       email: EMAIL,
       businessDisplayName: "Roman Health",
+      businessLegalName: "Roman Health",
       roles: ["organization_owner", "business_buyer"],
       profileKey: "KRIS_VOLUME_PARTNER",
       profileVersion: 1,

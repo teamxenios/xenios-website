@@ -28,7 +28,7 @@ begin
     raise exception 'canonical research notification outbox is required';
   end if;
   if to_regclass('public.research_b2b_buyer_relationships') is null
-     or to_regprocedure('public.research_activate_b2b_buyer_bridge(uuid,uuid,text,text,text[],integer,timestamp with time zone)') is null then
+     or to_regprocedure('public.research_activate_b2b_buyer_bridge(uuid,uuid,text,text,text,text[],integer,timestamp with time zone)') is null then
     raise exception 'reviewed temporary B2B buyer bridge must be applied first';
   end if;
   if not exists (
@@ -81,6 +81,8 @@ create table if not exists public.research_b2b_sponsored_claims (
     check (business_key ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'),
   business_display_name text not null
     check (length(btrim(business_display_name)) between 1 and 160),
+  business_legal_name text not null
+    check (length(btrim(business_legal_name)) between 1 and 200),
   roles text[] not null,
   profile_key text not null check (profile_key='KRIS_VOLUME_PARTNER'),
   profile_version integer not null check (profile_version>0),
@@ -144,6 +146,7 @@ begin
      or new.normalized_email is distinct from old.normalized_email
      or new.business_key is distinct from old.business_key
      or new.business_display_name is distinct from old.business_display_name
+     or new.business_legal_name is distinct from old.business_legal_name
      or new.roles is distinct from old.roles
      or new.profile_key is distinct from old.profile_key
      or new.profile_version is distinct from old.profile_version
@@ -192,6 +195,7 @@ create or replace function public.research_prepare_sponsored_b2b_claim(
   p_region text,
   p_business_key text,
   p_business_display_name text,
+  p_business_legal_name text,
   p_roles text[],
   p_profile_version integer,
   p_profile_effective_at timestamptz,
@@ -199,7 +203,7 @@ create or replace function public.research_prepare_sponsored_b2b_claim(
 )
 returns table(
   sponsorship_id uuid,application_id uuid,normalized_email text,
-  business_key text,business_display_name text,state text,
+  business_key text,business_display_name text,business_legal_name text,state text,
   profile_key text,profile_version integer,profile_effective_at timestamptz,
   profile_source_sha text
 )
@@ -237,6 +241,7 @@ begin
      or length(btrim(p_region)) not between 1 and 80
      or p_business_key !~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'
      or length(btrim(p_business_display_name)) not between 1 and 160
+     or length(btrim(p_business_legal_name)) not between 1 and 200
      or cardinality(p_roles)<>2
      or not (p_roles @> array['organization_owner','business_buyer']::text[])
      or not (p_roles <@ array['organization_owner','business_buyer']::text[])
@@ -274,12 +279,13 @@ begin
 
   v_outbox_event_key:='b2b-sponsored-claim:'||v_application_id::text;
   insert into public.research_b2b_sponsored_claims(
-    application_id,normalized_email,business_key,business_display_name,roles,
+    application_id,normalized_email,business_key,business_display_name,business_legal_name,roles,
     profile_key,profile_version,profile_effective_at,profile_source_sha,
     prepared_by_auth_user_id,
     prepared_at,claim_expires_at,claim_outbox_event_key,claim_queued_at
   ) values (
-    v_application_id,p_normalized_email,p_business_key,btrim(p_business_display_name),p_roles,
+    v_application_id,p_normalized_email,p_business_key,btrim(p_business_display_name),
+    btrim(p_business_legal_name),p_roles,
     'KRIS_VOLUME_PARTNER',p_profile_version,p_profile_effective_at,p_profile_source_sha,v_actor,
     v_now,v_now+interval '72 hours',v_outbox_event_key,v_now
   ) returning id into v_sponsorship_id;
@@ -305,7 +311,7 @@ begin
   );
 
   return query select v_sponsorship_id,v_application_id,p_normalized_email,
-    p_business_key,btrim(p_business_display_name),'claim_queued'::text,
+    p_business_key,btrim(p_business_display_name),btrim(p_business_legal_name),'claim_queued'::text,
     'KRIS_VOLUME_PARTNER'::text,p_profile_version,p_profile_effective_at,p_profile_source_sha;
 end;
 $$;
@@ -371,7 +377,7 @@ begin
     into v_relationship_id,v_operator_id,v_entitlement_id
     from public.research_activate_b2b_buyer_bridge(
       v_member.id,v_member.auth_user_id,v_claim.business_key,v_claim.business_display_name,
-      v_claim.roles,v_claim.profile_version,v_claim.profile_effective_at
+      v_claim.business_legal_name,v_claim.roles,v_claim.profile_version,v_claim.profile_effective_at
     ) x;
 
   update public.research_applications
@@ -409,12 +415,12 @@ grant select on public.research_b2b_sponsored_claims to service_role;
 grant select on public.research_b2b_sponsored_claim_events to service_role;
 
 revoke all on function public.research_prepare_sponsored_b2b_claim(
-  text,text,text,text,text,text,text,text[],integer,timestamptz,text
+  text,text,text,text,text,text,text,text,text[],integer,timestamptz,text
 ) from public,anon,authenticated,service_role;
 revoke all on function public.research_activate_sponsored_b2b_buyer(uuid,uuid,uuid)
   from public,anon,authenticated,service_role;
 grant execute on function public.research_prepare_sponsored_b2b_claim(
-  text,text,text,text,text,text,text,text[],integer,timestamptz,text
+  text,text,text,text,text,text,text,text,text[],integer,timestamptz,text
 ) to authenticated;
 grant execute on function public.research_activate_sponsored_b2b_buyer(uuid,uuid,uuid)
   to authenticated;

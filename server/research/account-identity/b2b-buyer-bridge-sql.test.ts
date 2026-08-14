@@ -32,6 +32,12 @@ describe("Pack02 B2B buyer bridge candidate", () => {
     expect(sql).toContain("research_b2b_entitlement_facts_immutable");
   });
 
+  it("records the founder-confirmed legal entity before making it immutable", () => {
+    expect(sql).toContain("p_business_legal_name text");
+    expect(sql).toContain("business_key,business_display_name,business_legal_name");
+    expect(sql).toContain("and business_legal_name=p_business_legal_name");
+  });
+
   it("supports tenant-scoped operators and rejects non-buyer roles", () => {
     expect(sql).toContain("unique (relationship_id, member_id)");
     expect(sql).toContain("research_b2b_operator_one_active_relationship_idx");

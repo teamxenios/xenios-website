@@ -341,6 +341,7 @@ create or replace function public.research_activate_b2b_buyer_bridge(
   p_expected_auth_user_id uuid,
   p_business_key text,
   p_business_display_name text,
+  p_business_legal_name text,
   p_roles text[],
   p_profile_version integer,
   p_effective_at timestamptz
@@ -385,7 +386,8 @@ begin
   end if;
   if btrim(p_business_key)<>p_business_key
      or p_business_key !~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'
-     or length(btrim(p_business_display_name)) not between 1 and 160 then
+     or length(btrim(p_business_display_name)) not between 1 and 160
+     or length(btrim(p_business_legal_name)) not between 1 and 200 then
     raise exception 'business identity is invalid' using errcode='22023';
   end if;
   if cardinality(p_roles)<1
@@ -398,10 +400,11 @@ begin
   perform pg_advisory_xact_lock(hashtextextended('b2b:' || p_business_key, 0));
 
   insert into public.research_b2b_buyer_relationships(
-    business_key,business_display_name,relationship_type,state,
+    business_key,business_display_name,business_legal_name,relationship_type,state,
     approved_by_auth_user_id,approved_at
   ) values (
-    p_business_key,p_business_display_name,'b2b2c_marketplace_partner','active',
+    p_business_key,p_business_display_name,p_business_legal_name,
+    'b2b2c_marketplace_partner','active',
     v_actor_auth_user_id,clock_timestamp()
   )
   on conflict (business_key) do nothing
@@ -412,6 +415,7 @@ begin
       from public.research_b2b_buyer_relationships
      where business_key=p_business_key
        and business_display_name=p_business_display_name
+       and business_legal_name=p_business_legal_name
        and relationship_type='b2b2c_marketplace_partner'
        and state='active'
        and migrated_organization_id is null
@@ -570,7 +574,7 @@ revoke all on public.research_b2b_buyer_entitlements from public, anon, authenti
 revoke all on public.research_b2b_order_ownership from public, anon, authenticated, service_role;
 revoke all on public.research_b2b_buyer_events from public, anon, authenticated, service_role;
 revoke all on function public.research_activate_b2b_buyer_bridge(
-  uuid,uuid,text,text,text[],integer,timestamptz
+  uuid,uuid,text,text,text,text[],integer,timestamptz
 ) from public, anon, authenticated, service_role;
 revoke all on function public.research_claim_b2b_order_ownership(
   uuid,uuid,uuid,uuid,text,integer
@@ -588,7 +592,7 @@ grant select on public.research_b2b_buyer_events to service_role;
 -- session. auth.uid() is the immutable audit actor and the function independently
 -- verifies an active super_admin/operations_admin assignment.
 grant execute on function public.research_activate_b2b_buyer_bridge(
-  uuid,uuid,text,text,text[],integer,timestamptz
+  uuid,uuid,text,text,text,text[],integer,timestamptz
 ) to authenticated;
 grant execute on function public.research_claim_b2b_order_ownership(
   uuid,uuid,uuid,uuid,text,integer

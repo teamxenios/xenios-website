@@ -54,6 +54,12 @@ describe("sponsored B2B claim candidate", () => {
     expect(sql).toContain("e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4");
   });
 
+  it("preserves the founder-confirmed buyer legal name through activation", () => {
+    expect(sql).toContain("business_legal_name text not null");
+    expect(sql).toContain("p_business_legal_name text");
+    expect(sql).toContain("v_claim.business_legal_name");
+  });
+
   it("queues a truthful purpose-scoped claim atomically and independently verifies Auth at activation", () => {
     expect(sql).toContain("public.research_notification_outbox");
     expect(sql).toContain("'b2b_buyer_claim'");

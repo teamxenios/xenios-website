@@ -55,6 +55,7 @@ describe("createSupabaseSponsoredB2BClaimDeps", () => {
       stateOrRegion: "Texas",
       businessKey: "roman-health",
       businessDisplayName: "Roman Health",
+      businessLegalName: "Roman Health",
       roles: ["organization_owner", "business_buyer"],
       profileKey: "KRIS_VOLUME_PARTNER",
       profileVersion: 1,
