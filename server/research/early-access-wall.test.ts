@@ -84,6 +84,27 @@ const CART_NUMBER = "XEC-063A962A0053A65324F21E7F";
 
 describe("the research wall lets Private Early Access reach its own gate", () => {
   it.each([
+    "/api/research/early-access/member-orders",
+    `/api/research/early-access/member-orders/${ORDER_NUMBER}`,
+  ])("%s reaches its canonical-member guard, not the shared wall", async (path) => {
+    const app = express();
+    app.use(express.json());
+    registerResearchApi(app);
+    registerPrivateEarlyAccessApi(app, {
+      resolveMember: async () => null,
+      memberOrderHistory: {
+        customerRefsFor: async () => [],
+        listForMember: async () => [],
+        getForMember: async () => null,
+      },
+    });
+    const res = await request(app).get(path);
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ ok: false, code: "member_auth_required" });
+    expect(res.body?.message).not.toBe(WALLED);
+  });
+
+  it.each([
     ["GET", "/api/research/early-access/session"],
     ["GET", "/api/research/early-access/catalog"],
     ["POST", "/api/research/early-access/unlock"],
@@ -274,6 +295,15 @@ describe("the exemption opened nothing else", () => {
       const res = await request(app).get(path);
       expect(res.body?.message).toBe(WALLED);
     }
+  });
+
+  it.each([
+    "/api/research/early-access/member-orders/not-an-order",
+    `/api/research/early-access/member-orders/${ORDER_NUMBER}/extra`,
+  ])("%s is not admitted by the member-history exemption", async (path) => {
+    const res = await request(makeApp()).get(path);
+    expect(res.status).toBe(401);
+    expect(res.body?.message).toBe(WALLED);
   });
 
   it("a lookalike order write path is walled", async () => {
