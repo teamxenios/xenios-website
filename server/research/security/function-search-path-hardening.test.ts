@@ -18,8 +18,11 @@ import { describe, expect, it } from "vitest";
  *    never a parameter.
  */
 
+// The applied truth lives in the managed directory (b91d30d mirror of the
+// production apply); the pack02 candidate this suite was written against was
+// deliberately not adopted alongside it.
 const MIGRATION = fs.readFileSync(
-  path.resolve("supabase/pack02-candidates/20260814_research_function_search_path_hardening.sql"),
+  path.resolve("supabase/migrations/20260814061500_research_function_search_path_hardening.sql"),
   "utf8",
 );
 const claimSql = fs.readFileSync(
@@ -108,15 +111,20 @@ describe("function search_path hardening candidate (advisor: function_search_pat
         "research_fm_esign_touch_updated_at()",
         "research_ledger_is_append_only()",
         "research_reject_product_request_event_mutation()",
-        "research_rate_limit_hit(text,integer,integer)",
+        "research_rate_limit_hit(text, integer, integer)",
       ].sort(),
     );
   });
 
-  it("fails closed before and proves the pin after, and never touches bodies or grants", () => {
-    expect(MIGRATION).toContain("refusing to guess");
-    expect(MIGRATION).toContain("is still mutable");
-    expect(MIGRATION).toContain("is wired to no trigger");
+  it("proves the pin after, and never touches bodies or grants", () => {
+    // The APPLIED managed migration carries no prose preflight: a named
+    // function that does not exist makes its ALTER FUNCTION fail the
+    // transaction outright, and the in-transaction post-condition then proves
+    // every pin from pg_proc, so fail-closed holds structurally. (The QA
+    // candidate's preflight prose was not adopted; this suite pins the file
+    // production actually ran, twice.)
+    expect(MIGRATION).toContain("post-condition failed");
+    expect(MIGRATION).toContain("proconfig");
     expect(MIGRATION).not.toMatch(/create or replace function/i);
     expect(MIGRATION).not.toMatch(/\bgrant\b/i);
     expect(MIGRATION).not.toMatch(/\brevoke\b/i);
