@@ -70,7 +70,7 @@ Two levels of proof.
 surface with the real stylesheet at a real width. Sequence, all measured live:
 
 ```text
-1. open   /catalog-harness.html?q=BPC157&families=research_vials&states=available_now&pageSize=2
+1. open   /src/research/master-offerings/__harness__/catalog-harness.html?q=BPC157&families=research_vials&states=available_now&pageSize=2
    ->  search box "BPC157", family "research_vials", availability "available_now"
    ->  card href /research/member/catalog/research_vials/research-vials-bpc-157-1
 2. clear the search box, then click Next page
@@ -241,7 +241,7 @@ engine and cannot check widths.
 
 ## 6. Reproducing the browser evidence
 
-`client/catalog-harness.html` plus
+`client/src/research/master-offerings/__harness__/catalog-harness.html` plus
 `client/src/research/master-offerings/__harness__/harness.tsx` render the real
 surface with the real stylesheet, with the catalog fetch injected, so no member
 session or running API is needed. It is dev only: `vite build` builds
@@ -249,7 +249,7 @@ session or running API is needed. It is dev only: `vite build` builds
 
 ```bash
 npx vite dev --port 5174
-# then open http://localhost:5174/catalog-harness.html   (add #detail for the product page)
+# then open http://localhost:5174/src/research/master-offerings/__harness__/catalog-harness.html   (add #detail for the product page)
 ```
 
 Measure overflow in the console:
