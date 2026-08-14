@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import type { OrderSummaryDto } from "@shared/research/commerce-api";
+import type { EarlyAccessMemberOrderView } from "@shared/research/early-access-member-history";
 import { useResearch } from "../../core";
 import { listOrders } from "../../adapters/commerce";
+import { listEarlyAccessMemberOrders } from "../../adapters/early-access-member-history";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { denialPresentation } from "../../lib/denials";
 import { MEMBER_ROUTES } from "../../lib/routes";
@@ -16,6 +18,7 @@ import {
   ResearchRouteBoundary,
   ResearchSecureNotice,
   ResearchStatusBadge,
+  type BadgeTone,
 } from "../../ui/kit";
 import { SHIPMENT_OWNER_LABELS, formatCents, formatDate, orderStateMeta } from "./commerce-presentation";
 
@@ -31,7 +34,7 @@ import { SHIPMENT_OWNER_LABELS, formatCents, formatDate, orderStateMeta } from "
 
 type PageState =
   | { phase: "loading" }
-  | { phase: "ok"; orders: OrderSummaryDto[] }
+  | { phase: "ok"; orders: MemberOrderRow[] }
   | { phase: "denied"; code: string; message?: string }
   | { phase: "unavailable" }
   | { phase: "unauthorized" }
@@ -41,7 +44,17 @@ function orderHref(orderId: string): string {
   return MEMBER_ROUTES.order.replace(":id", encodeURIComponent(orderId));
 }
 
-function shipmentsSummary(order: OrderSummaryDto): string {
+interface MemberOrderRow {
+  source: "canonical" | "early_access";
+  orderId: string;
+  placedAt: string;
+  total: string;
+  status: { label: string; tone: BadgeTone };
+  fulfillment: string;
+  largeOrderReview: boolean;
+}
+
+function canonicalShipmentsSummary(order: OrderSummaryDto): string {
   if (order.shipments.length === 0) return "No shipments yet";
   return order.shipments
     .map((s) => {
@@ -52,6 +65,76 @@ function shipmentsSummary(order: OrderSummaryDto): string {
     .join(" · ");
 }
 
+function legacyStatus(order: EarlyAccessMemberOrderView): { label: string; tone: BadgeTone } {
+  if (order.paymentState === "payment_rejected") return { label: "Payment needs attention", tone: "warning" };
+  if (order.paymentState !== "payment_verified" && order.fulfillmentState !== "not_released") {
+    return { label: "Order status needs attention", tone: "warning" };
+  }
+  if (order.paymentState === "awaiting_payment") return { label: "Awaiting payment", tone: "pending" };
+  if (order.paymentState === "under_review") return { label: "Payment proof under review", tone: "info" };
+  switch (order.fulfillmentState) {
+    case "fulfilled":
+      return { label: "Shipped", tone: "success" };
+    case "packing":
+      return { label: "Packing", tone: "info" };
+    case "supplier_released":
+      return { label: "Preparing fulfillment", tone: "info" };
+    case "not_released":
+      return { label: "Payment confirmed", tone: "info" };
+  }
+}
+
+function legacyFulfillment(order: EarlyAccessMemberOrderView): string {
+  const latest = order.tracking.at(-1);
+  if (latest) return `${latest.carrier}, tracking ${latest.trackingNumber}`;
+  switch (order.fulfillmentState) {
+    case "fulfilled":
+      return "Shipped; tracking pending";
+    case "packing":
+      return "Packing";
+    case "supplier_released":
+      return "Preparing fulfillment";
+    case "not_released":
+      return "No shipment yet";
+  }
+}
+
+function formatLegacyMoney(cents: number, currency: string): string {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(cents / 100);
+}
+
+function mergeOrderHistory(
+  canonical: readonly OrderSummaryDto[],
+  legacy: readonly EarlyAccessMemberOrderView[],
+): MemberOrderRow[] {
+  const rows: MemberOrderRow[] = canonical.map((order) => ({
+    source: "canonical",
+    orderId: order.orderId,
+    placedAt: order.placedAt,
+    total: formatCents(order.totalCents),
+    status: orderStateMeta(order.state),
+    fulfillment: canonicalShipmentsSummary(order),
+    largeOrderReview: order.state === "manual_review",
+  }));
+  for (const order of legacy) {
+    if (rows.some((row) => row.orderId === order.orderNumber)) continue;
+    rows.push({
+      source: "early_access",
+      orderId: order.orderNumber,
+      placedAt: order.placedAt,
+      total: formatLegacyMoney(order.totalCents, order.currency),
+      status: legacyStatus(order),
+      fulfillment: legacyFulfillment(order),
+      // Legacy payment-proof review is not the canonical quantity/value review.
+      largeOrderReview: false,
+    });
+  }
+  return rows.sort((left, right) => {
+    const byTime = Date.parse(right.placedAt) - Date.parse(left.placedAt);
+    return byTime || right.orderId.localeCompare(left.orderId);
+  });
+}
+
 export default function Orders() {
   const { memberToken } = useResearch();
   const [state, setState] = useState<PageState>({ phase: "loading" });
@@ -59,11 +142,21 @@ export default function Orders() {
 
   const load = useCallback(async () => {
     setState({ phase: "loading" });
-    const result = await listOrders(memberToken);
+    const [canonicalResult, legacyResult] = await Promise.all([
+      listOrders(memberToken),
+      listEarlyAccessMemberOrders(memberToken),
+    ]);
+    if (canonicalResult.kind === "ok" && legacyResult.kind === "ok") {
+      setState({
+        phase: "ok",
+        orders: mergeOrderHistory(canonicalResult.data.orders, legacyResult.data.orders),
+      });
+      return;
+    }
+    // A partial history is misleading. If either authoritative source fails,
+    // fail the whole read instead of silently hiding durable orders.
+    const result = canonicalResult.kind !== "ok" ? canonicalResult : legacyResult;
     switch (result.kind) {
-      case "ok":
-        setState({ phase: "ok", orders: result.data.orders });
-        return;
       case "denied":
         setState({ phase: "denied", code: result.code, message: result.message });
         return;
@@ -76,6 +169,8 @@ export default function Orders() {
         return;
       case "error":
         setState({ phase: "error", message: result.message });
+        return;
+      case "ok":
         return;
     }
   }, [memberToken]);
@@ -99,14 +194,14 @@ export default function Orders() {
   const commerceStatus = capabilityStatusOrPending(capabilities, "product_commerce");
 
   const orders = state.phase === "ok" ? state.orders : [];
-  const hasPendingReview = useMemo(() => orders.some((o) => o.state === "manual_review"), [orders]);
+  const hasPendingReview = useMemo(() => orders.some((order) => order.largeOrderReview), [orders]);
   const reviewCopy = denialPresentation("large_order_review_required");
 
   const columns = [
     {
       key: "order",
       header: "Order",
-      render: (order: OrderSummaryDto) => (
+      render: (order: MemberOrderRow) => (
         <Link href={orderHref(order.orderId)} className="body-s font-700" aria-label={`View order ${order.orderId}`}>
           {order.orderId}
         </Link>
@@ -115,25 +210,24 @@ export default function Orders() {
     {
       key: "placed",
       header: "Placed",
-      render: (order: OrderSummaryDto) => <span className="tabular">{formatDate(order.placedAt) ?? order.placedAt}</span>,
+      render: (order: MemberOrderRow) => <span className="tabular">{formatDate(order.placedAt) ?? order.placedAt}</span>,
     },
     {
       key: "state",
       header: "Status",
-      render: (order: OrderSummaryDto) => {
-        const meta = orderStateMeta(order.state);
-        return <ResearchStatusBadge label={meta.label} tone={meta.tone} />;
+      render: (order: MemberOrderRow) => {
+        return <ResearchStatusBadge label={order.status.label} tone={order.status.tone} />;
       },
     },
     {
       key: "shipments",
       header: "Shipments",
-      render: (order: OrderSummaryDto) => <span className="text-ink-2">{shipmentsSummary(order)}</span>,
+      render: (order: MemberOrderRow) => <span className="text-ink-2">{order.fulfillment}</span>,
     },
     {
       key: "total",
       header: "Total",
-      render: (order: OrderSummaryDto) => <span className="tabular">{formatCents(order.totalCents)}</span>,
+      render: (order: MemberOrderRow) => <span className="tabular">{order.total}</span>,
     },
   ];
 
