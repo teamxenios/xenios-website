@@ -19,6 +19,10 @@ import {
   KRIS_CATALOG_DISCLOSURES,
   krisAccessPolicy,
 } from "../../../../../server/research/kris-launch-a/access-policy";
+import {
+  krisModePermitsCart,
+  krisPurchaseMode,
+} from "../../../../../server/research/kris-launch-a/purchase-mode";
 import type { ApiResult } from "../../lib/api";
 
 /**
@@ -104,6 +108,19 @@ export function krisFixtureItems(): KrisCatalogItemView[] {
     dosageForm: product.dosageForm,
     price: overlay[product.id] ?? KRIS_PRICE_PENDING,
     access: krisAccessPolicy(product.channel),
+    // The fixture derives the mode with the SAME function the server uses, so
+    // a client test can never pass against a purchase rule the server does not
+    // actually apply.
+    purchaseMode: krisPurchaseMode({
+      channel: product.channel,
+      price: overlay[product.id] ?? KRIS_PRICE_PENDING,
+    }),
+    canAddToCart: krisModePermitsCart(
+      krisPurchaseMode({
+        channel: product.channel,
+        price: overlay[product.id] ?? KRIS_PRICE_PENDING,
+      }),
+    ),
     suppliedNote: product.suppliedNote,
   }));
 }
