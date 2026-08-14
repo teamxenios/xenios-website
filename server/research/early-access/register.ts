@@ -65,6 +65,7 @@ import {
 } from "./routes/order-routes";
 import type { BuyerScopedPricing } from "./commerce/buyer-scoped-pricing";
 import type { EarlyAccessLegacyOrderNotifier } from "./notifications/legacy-order-notifier";
+import { MemberBridgedEarlyAccessIdentity } from "./identity/member-bridged-identity";
 import { generateEarlyAccessOrderNumber } from "./routes/order-number";
 import {
   ConfiguredEarlyAccessAdminDirectory,
@@ -787,7 +788,7 @@ export function registerPrivateEarlyAccessApi(
     bindings: sessionBindings,
     customers,
   });
-  const identity =
+  const composedIdentity =
     options.identity ??
     (options.sessionIdentity === true
       ? new SessionScopedEarlyAccessIdentityDirectory({
@@ -797,6 +798,16 @@ export function registerPrivateEarlyAccessApi(
           continuitySecret: effectiveConfig.sessionSecret,
         })
       : boundIdentity);
+  // The member bridge sits BESIDE whatever identity the deployment composed:
+  // the base answers first and unchanged, and only a request that resolved a
+  // verified member AND resolved no identity may be answered from the ONE
+  // claim-rail customer repository. The session wall in the routes is not
+  // touched, and RESEARCH_EARLY_ACCESS_SESSION_IDENTITY_ENABLED keeps its
+  // fail-closed meaning.
+  const identity = new MemberBridgedEarlyAccessIdentity({
+    base: composedIdentity,
+    customers,
+  });
 
   options.onDoorSources?.({ catalog, releases });
 
@@ -924,12 +935,33 @@ export function registerPrivateEarlyAccessApi(
     void readAgreementStatus({ cookieHeader: req.headers.cookie }, res);
   });
 
+  // The canonical member riding this request, projected for the identity
+  // bridge: the row's own id, auth user id, and email, or null. Server
+  // resolution only; a request cannot supply this.
+  const memberForBridge = async (req: Request) => {
+    const row = await resolveMember(req).catch(() => null);
+    if (row === null) return null;
+    const memberId = typeof row.id === "string" ? row.id : "";
+    const userId = typeof row.auth_user_id === "string" ? row.auth_user_id : "";
+    const email = typeof row.email === "string" ? row.email : "";
+    return memberId !== "" && userId !== "" && email !== ""
+      ? { memberId, userId, email }
+      : null;
+  };
+
   app.post(EARLY_ACCESS_ORDERS_PATH, (req: Request, res: Response) => {
-    void placeOrder({ cookieHeader: req.headers.cookie, body: req.body }, res);
+    void memberForBridge(req).then((member) =>
+      placeOrder({ cookieHeader: req.headers.cookie, body: req.body, member }, res),
+    );
   });
 
   app.get(EARLY_ACCESS_ORDER_PATH, (req: Request, res: Response) => {
-    void readOrder({ cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber }, res);
+    void memberForBridge(req).then((member) =>
+      readOrder(
+        { cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber, member },
+        res,
+      ),
+    );
   });
 
   // THE admin guard, resolved once and shared by both admin surfaces. Two
@@ -1340,16 +1372,20 @@ export function registerPrivateEarlyAccessApi(
   }
 
   app.get(EARLY_ACCESS_ORDER_INVOICE_PATH, (req: Request, res: Response) => {
-    void readInvoice(
-      { cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber },
-      res,
+    void memberForBridge(req).then((member) =>
+      readInvoice(
+        { cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber, member },
+        res,
+      ),
     );
   });
 
   app.post(EARLY_ACCESS_ORDER_PROOF_PATH, (req: Request, res: Response) => {
-    void submitProof(
-      { cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber, body: req.body },
-      res,
+    void memberForBridge(req).then((member) =>
+      submitProof(
+        { cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber, body: req.body, member },
+        res,
+      ),
     );
   });
 

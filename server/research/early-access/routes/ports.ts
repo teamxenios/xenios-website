@@ -86,8 +86,21 @@ export class InMemorySessionOrderLog implements SessionOrderLog {
   }
 }
 
+/**
+ * A canonical member as the registration layer resolved them: the JWT was
+ * verified by member-auth, and every field is the member ROW's, never a
+ * browser claim. Optional everywhere: an absent member changes nothing.
+ */
+export type EarlyAccessResolvedMember = Readonly<{
+  memberId: string;
+  userId: string;
+  email: string;
+}>;
+
 export interface EarlyAccessIdentityDirectory {
-  resolve(input: Readonly<{ cookieHeader: unknown }>): Promise<EarlyAccessCustomer | null>;
+  resolve(
+    input: Readonly<{ cookieHeader: unknown; member?: EarlyAccessResolvedMember | null }>,
+  ): Promise<EarlyAccessCustomer | null>;
 }
 
 /** Nobody. An unwired deployment cannot identify a buyer, so it sells nothing. */

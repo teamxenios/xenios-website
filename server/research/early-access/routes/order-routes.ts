@@ -16,6 +16,7 @@ import {
 import { carriesAnyKey, isOneOf, isSafeIdentifier } from "../commerce/input-guards";
 import { resolveBuyerSheet, type BuyerScopedPricing } from "../commerce/buyer-scoped-pricing";
 import type { EarlyAccessLegacyOrderNotifier } from "../notifications/legacy-order-notifier";
+import type { EarlyAccessResolvedMember } from "./ports";
 import {
   createEarlyAccessOrder,
   isEarlyAccessIdempotencyKey,
@@ -398,10 +399,36 @@ type Caller =
  * nothing at all, including whether an identity exists. The customer is resolved
  * second and is the thing every later authorization compares against.
  */
+/**
+ * The registration-resolved member riding a route request, or null. Strict
+ * structural read: anything short of the full server-resolved shape is
+ * treated as absent, so a forged partial object cannot reach the identity
+ * directory.
+ */
+function memberOf(request: { member?: unknown } | undefined): EarlyAccessResolvedMember | null {
+  const member = (request?.member ?? null) as
+    | { memberId?: unknown; userId?: unknown; email?: unknown }
+    | null;
+  if (member === null) return null;
+  if (
+    typeof member.memberId !== "string" ||
+    typeof member.userId !== "string" ||
+    typeof member.email !== "string"
+  ) {
+    return null;
+  }
+  return Object.freeze({
+    memberId: member.memberId,
+    userId: member.userId,
+    email: member.email,
+  });
+}
+
 async function resolveCaller(
   deps: EarlyAccessOrderRouteDependencies,
   cookieHeader: unknown,
   response: ResponsePort,
+  member: EarlyAccessResolvedMember | null = null,
 ): Promise<Caller> {
   const session = await deps.resolveSession(cookieHeader);
   if (!session.authenticated) {
@@ -415,7 +442,7 @@ async function resolveCaller(
     return Object.freeze({ ok: false as const });
   }
 
-  const customer = await deps.identity.resolve({ cookieHeader });
+  const customer = await deps.identity.resolve({ cookieHeader, member });
   if (customer === null || !isSafeIdentifier(customer.customerRef)) {
     refuse(response, "IDENTITY_REQUIRED");
     return Object.freeze({ ok: false as const });
@@ -504,7 +531,7 @@ const ORDER_BODY_KEYS = [
 
 export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRouteDependencies) {
   return async (
-    request: { cookieHeader?: unknown; body?: unknown },
+    request: { cookieHeader?: unknown; body?: unknown; member?: unknown },
     response: ResponsePort,
   ): Promise<void> => {
     try {
@@ -786,7 +813,7 @@ type PlacementCaller = Readonly<{
  */
 async function resolveCallerForPlacement(
   deps: EarlyAccessOrderRouteDependencies,
-  request: { cookieHeader?: unknown; body?: unknown },
+  request: { cookieHeader?: unknown; body?: unknown; member?: unknown },
   response: ResponsePort,
 ): Promise<PlacementCaller | null> {
   const session = await deps.resolveSession(request?.cookieHeader);
@@ -848,7 +875,7 @@ async function resolveCallerForPlacement(
     return null;
   }
 
-  const customer = await deps.identity.resolve({ cookieHeader: request?.cookieHeader });
+  const customer = await deps.identity.resolve({ cookieHeader: request?.cookieHeader, member: memberOf(request) });
   if (customer === null || !isSafeIdentifier(customer.customerRef)) {
     refuse(response, "IDENTITY_REQUIRED");
     return null;
@@ -960,12 +987,12 @@ function replays(
 
 export function createEarlyAccessOrderLookupRoute(deps: EarlyAccessOrderRouteDependencies) {
   return async (
-    request: { cookieHeader?: unknown; orderNumber?: unknown },
+    request: { cookieHeader?: unknown; orderNumber?: unknown; member?: unknown },
     response: ResponsePort,
   ): Promise<void> => {
     try {
       applyPrivateHeaders(response);
-      const caller = await resolveCaller(deps, request?.cookieHeader, response);
+      const caller = await resolveCaller(deps, request?.cookieHeader, response, memberOf(request));
       if (!caller.ok) return;
 
       const placement = await ownedPlacement(deps, request?.orderNumber, caller.customer, {
@@ -1025,12 +1052,12 @@ export function createEarlyAccessOrderLookupRoute(deps: EarlyAccessOrderRouteDep
 
 export function createEarlyAccessInvoiceRoute(deps: EarlyAccessOrderRouteDependencies) {
   return async (
-    request: { cookieHeader?: unknown; orderNumber?: unknown },
+    request: { cookieHeader?: unknown; orderNumber?: unknown; member?: unknown },
     response: ResponsePort,
   ): Promise<void> => {
     try {
       applyPrivateHeaders(response);
-      const caller = await resolveCaller(deps, request?.cookieHeader, response);
+      const caller = await resolveCaller(deps, request?.cookieHeader, response, memberOf(request));
       if (!caller.ok) return;
 
       const placement = await ownedPlacement(deps, request?.orderNumber, caller.customer, {
@@ -1096,7 +1123,7 @@ export function earlyAccessProofFormatAgrees(contentType: unknown, filename: unk
 
 export function createEarlyAccessPaymentProofRoute(deps: EarlyAccessOrderRouteDependencies) {
   return async (
-    request: { cookieHeader?: unknown; orderNumber?: unknown; body?: unknown },
+    request: { cookieHeader?: unknown; orderNumber?: unknown; body?: unknown; member?: unknown },
     response: ResponsePort,
   ): Promise<void> => {
     try {
@@ -1111,7 +1138,7 @@ export function createEarlyAccessPaymentProofRoute(deps: EarlyAccessOrderRouteDe
         return;
       }
 
-      const caller = await resolveCaller(deps, request?.cookieHeader, response);
+      const caller = await resolveCaller(deps, request?.cookieHeader, response, memberOf(request));
       if (!caller.ok) return;
       const now = stampOf(caller.nowMs);
 
