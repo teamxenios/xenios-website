@@ -34,9 +34,25 @@ describe("the activation queues over the real artifact", () => {
   });
 
   it("orders each queue by family then name, stably", () => {
+    // The oracle asserts the pairwise relation rather than re-sorting with a
+    // second comparator: a default code-point sort disagrees with the
+    // implementation's locale ordering on case (HGH vs Hexarelin), and an
+    // oracle that reimplements the code proves nothing anyway.
     const queues = krisActivationQueues(DATASET);
-    const keys = queues.classification.map((e) => `${e.family}|${e.displayName}`);
-    expect(keys).toEqual([...keys].sort());
+    for (const queue of [queues.classification, queues.pricing]) {
+      for (let i = 1; i < queue.length; i += 1) {
+        const prev = queue[i - 1];
+        const next = queue[i];
+        const familyOrder = prev.family.localeCompare(next.family);
+        expect(familyOrder, `${prev.family} before ${next.family}`).toBeLessThanOrEqual(0);
+        if (familyOrder === 0) {
+          expect(
+            prev.displayName.localeCompare(next.displayName),
+            `${prev.displayName} before ${next.displayName}`,
+          ).toBeLessThanOrEqual(0);
+        }
+      }
+    }
   });
 
   it("tells the truth about what completes an entry, without inventing facts", () => {
