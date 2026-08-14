@@ -214,14 +214,15 @@
         "algorithm": "sha256",
         "value": "3ac2f40f9627d8952db3a181a2ae0174565bda1fe469e3bfc5661a02108c5e28"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "SQL-EDITOR (founder-run, 2026-08 EA launch series)",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "retain_and_disable_forward_repair",
         "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
         "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: apply twice, data written between applies survives, and the full behavioral suite through the real adapters (exactly-once settlement under concurrency, RLS denial, append-only money, restart survival)"
-      }
+      },
+      "notes": " BOOKKEEPING RECONCILED TO PRODUCTION TRUTH 2026-08-14 by the lead: customers/session_bindings/consumed_tokens tables live in production with rows (fingerprint read 2026-08-14: customers=1, bindings=1, consumed=1); the EA storefront has authenticated against them since 2026-08-06."
     },
     {
       "id": "research_early_access_commerce_persistence",
@@ -234,14 +235,15 @@
         "algorithm": "sha256",
         "value": "8a84bd82845e726702cdc001bdfce661ced7f74132c68a1338d5a476bd9ec9c6"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "SQL-EDITOR (founder-run, 2026-08 EA launch series)",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "retain_and_disable_forward_repair",
         "procedure": "supabase/production/research-early-access-persistence-rollback-notes.md",
         "evidence": "scripts/verify-early-access-commerce-migration.sh on stock PostgreSQL 16 and 17: apply twice, data written between applies survives, and the full behavioral suite through the real adapters (exactly-once settlement under concurrency, RLS denial, append-only money, restart survival)"
-      }
+      },
+      "notes": " BOOKKEEPING RECONCILED TO PRODUCTION TRUTH 2026-08-14 by the lead: placements/order_lines/money_snapshots/invoices/reservations/releases/audit tables live with rows (placements=1, invoices=1, releases=84, audit=45 at the 2026-08-14 fingerprint read); production has placed and served real orders through them."
     },
     {
       "id": "research_early_access_supplier_operations",
@@ -378,14 +380,15 @@
         "algorithm": "sha256",
         "value": "8bf36cedb3cfe523f77c2853a5ea259859c7d067825b846dc8602ba9dbcdbe3b"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "20260807193000 research_early_access_cart_checkout",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "retain_additive_schema_and_unset_feature_flag",
         "procedure": "supabase/production/research-early-access-cart-checkout-rollback-notes.md",
         "evidence": "Disposable PostgreSQL 16 apply-twice after the base production schema and every preceding migration; six cart tables and the commit RPC present after both passes."
-      }
+      },
+      "notes": " BOOKKEEPING RECONCILED TO PRODUCTION TRUTH 2026-08-14 by the lead: cart_quotes=3, cart_checkouts=3, cart_items=6, cart_invoices=3 live in production at the 2026-08-14 fingerprint read; managed migration history carries the id."
     },
     {
       "id": "research_affiliate_access_and_portal_v2",
@@ -418,14 +421,15 @@
         "algorithm": "sha256",
         "value": "5e0b745ae3d8ff0844e55ba0714fd5f2bb5f446e7523594af8bfce7e1395bf22"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "20260808100000 research_early_access_cart_completion",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "retain_additive_schema_and_unset_feature_flag",
         "procedure": "supabase/production/research-early-access-cart-completion-rollback-notes.md",
         "evidence": "Corrected for managed Supabase (pgcrypto lives in the extensions schema; the original public.digest form failed its first production apply with SQLSTATE 42883 and rolled back). Re-proved by scripts/verify-early-access-cart-managed-supabase.sh on PostgreSQL 16 and 17 with pgcrypto installed into extensions, which also proves corrected 60 replaces migration 58's defective commit_cart_checkout. Disposable PostgreSQL 16.14 apply-twice in BOTH shapes, recorded in supabase/production/research-early-access-cart-completion-apply-twice-evidence.md. Shape A (full chain, migration 54 present) and Shape B (production shaped, migration 54 and 55 absent, proven absent before the run) each applied the 58+60 candidate pair twice at psql exit 0, then passed the same 45-assertion behavioural suite: atomic commit, one parent, all children, one invoice, one payment reference, idempotency replay refused without partial writes, a FORCED mid-transaction failure leaving zero rows anywhere, proof metadata that does not mark paid, one settlement with one receipt and every child released across mixed suppliers, a retry that duplicates nothing, and zero commission or referral rows. Both shapes end with 10 cart tables at forced RLS, zero anon/authenticated/service_role direct table access, and 11 RPCs executable by service_role only. Migration 59 deliberately absent from both."
-      }
+      },
+      "notes": " BOOKKEEPING RECONCILED TO PRODUCTION TRUTH 2026-08-14 by the lead: managed migration history carries the id; completion/settlement objects live (cart_settlements/cart_receipts tables present, settlement RPCs verified during the M62-M65 release cycle)."
     },
     {
       "id": "research_early_access_cart_duplicate_guard",
@@ -438,14 +442,15 @@
         "algorithm": "sha256",
         "value": "a15ed8163b618a1de56d779c8b16e1ced31621ccf07d7435a2aa4838e4f3ead2"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "20260809120000 research_early_access_cart_duplicate_guard",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "retain_additive_schema_and_drop_the_invariant_index",
         "procedure": "supabase/production/research-early-access-cart-duplicate-guard-rollback-notes.md",
         "evidence": "Applied twice on the managed-Supabase shape (pgcrypto in extensions) on PostgreSQL 16 and 17. The 45-assertion behavioural suite still passes with the invariant in place; a second active checkout for one quote is refused; all five money and release tables and the payment state refuse a superseded checkout; the seeded production duplicate pair is dispositioned with both rows retained and exactly one audit event across two applies; a PAID duplicate aborts the migration instead of being superseded."
-      }
+      },
+      "notes": " BOOKKEEPING RECONCILED TO PRODUCTION TRUTH 2026-08-14 by the lead: managed migration history carries the id; guard live through the 2026-08-09 fusion release."
     },
     {
       "id": "research_early_access_hardening",
@@ -458,15 +463,15 @@
         "algorithm": "sha256",
         "value": "c68ccc679bd04dc2ff6aeb460100ee3e9ec470a58a094274821c5b3f1697a7c1"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "SQL-EDITOR (founder-run, M62 release, 2026-08-10)",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "forward_fix_only_retain_evidence_tables",
         "procedure": "supabase/verification/research-early-access-hardening.verify.sql",
         "evidence": "Applied twice on the managed-Supabase shape (pgcrypto in extensions, public.digest absent, Supabase roles and default privileges present) on PostgreSQL 16 and 17 with identical migration and verification bytes. M58 and M60 execute unchanged, M61 applies twice, and the durable invariant suite, the exact founder fixture, six-way settlement concurrency, paid-duplicate refusal and atomic canonical-drift refusal all pass. Each run yields exactly one settlement, one receipt, one expected child release set and one hardening row. NOT A DROP-AND-RESTORE ROLLBACK: this migration privatizes the old seven-argument service settlement door and creates durable evidence tables, so any rollback needs explicit review. Do not drop evidence tables and do not restore the unhardened service door ad hoc. The atomic-drift fixture proves a failed apply leaves no partial M62 table or function state and preserves the M60 core."
       },
-      "notes": "Additive hardening: seven forced-RLS tables for legal bindings, versioned agreement packages, append-only attestations, metadata-only proof submissions, canonical transaction identities, settlement hardening facts and append-only fulfilment corrections. The exact M60 settlement implementation is retained as a private core behind one hardened nine-argument service_role wrapper. appliedToProduction stays false and managedMigrationId stays PENDING until a read-only production read confirms otherwise; see EARLY_ACCESS_LEDGER_IS_NOT_PRODUCTION_EVIDENCE in the hardening contract."
+      "notes": "Additive hardening: seven forced-RLS tables for legal bindings, versioned agreement packages, append-only attestations, metadata-only proof submissions, canonical transaction identities, settlement hardening facts and append-only fulfilment corrections. The exact M60 settlement implementation is retained as a private core behind one hardened nine-argument service_role wrapper. appliedToProduction stays false and managedMigrationId stays PENDING until a read-only production read confirms otherwise; see EARLY_ACCESS_LEDGER_IS_NOT_PRODUCTION_EVIDENCE in the hardening contract. BOOKKEEPING RECONCILED TO PRODUCTION TRUTH 2026-08-14 by the lead: legal_bindings=1, agreement_packages=1, agreement_attestations=1 live at the 2026-08-14 fingerprint read; the M62 proof door has been OPEN since 2026-08-10 and M67 (which requires these tables) applied cleanly against them."
     },
     {
       "id": "research_fm_document_category_expansion",
@@ -564,15 +569,34 @@
         "algorithm": "sha256",
         "value": "2a92b84f635d9a5171d09db83717c0a11f075f36dfc5816ff0d06dee90afac2f"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "20260814040633 research_early_access_member_order_history",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "drop_the_two_read_only_routines_which_restores_the_prior_behaviour_exactly_because_nothing_here_writes_anything",
         "procedure": "supabase/production/research-early-access-member-order-history-rollback-notes.md",
         "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16 and 17 via scripts/verify-m67-member-order-history.sh on 2026-08-13. Each engine first proved the preflight fails closed on a bare database with no routine left behind, then applied M67 twice over the accepted M62 bindings + commerce placements shape with a two-member fixture, with the 12-assertion behavioural suite green after each pass: member handles resolve primary plus alias sorted and de-duplicated, an unknown member and an unknown handle each return empty rather than broader, an empty and a null handle array each return empty rather than every order, placements return deterministically ordered records, both routines are STABLE and SECURITY DEFINER, anon and authenticated cannot execute, service_role can, and service_role still has no direct SELECT on either table. The apply created no relation and wrote no row. Self-sabotage: a granted service_role table SELECT makes the re-apply ABORT on its own post-condition; a stray anon EXECUTE on a routine is healed by re-apply with the healed state proven. Production was not connected to or mutated."
       },
-      "notes": "M67 release candidate. Adds exactly two stable security-definer read routines (research_early_access_legal_bindings_for_member, research_early_access_placements_for_customers) behind the same boundary every other Early Access read uses: EXECUTE for service_role alone, nothing for public, anon or authenticated, and no table grant anywhere. Fail-closed preflight refuses an absent or differently shaped M62 bindings table or commerce placements table; the in-transaction post-condition proves both routines exist with the exact argument types, are STABLE and SECURITY DEFINER, that PUBLIC, anon and authenticated cannot execute them, that service_role can, and that service_role still has no direct SELECT on either underlying table. Explicitly unapplied to production; application is a separate protected founder action."
+      "notes": "M67 release candidate. Adds exactly two stable security-definer read routines (research_early_access_legal_bindings_for_member, research_early_access_placements_for_customers) behind the same boundary every other Early Access read uses: EXECUTE for service_role alone, nothing for public, anon or authenticated, and no table grant anywhere. Fail-closed preflight refuses an absent or differently shaped M62 bindings table or commerce placements table; the in-transaction post-condition proves both routines exist with the exact argument types, are STABLE and SECURITY DEFINER, that PUBLIC, anon and authenticated cannot execute them, that service_role can, and that service_role still has no direct SELECT on either underlying table. Explicitly unapplied to production; application is a separate protected founder action. APPLIED TO PRODUCTION 2026-08-14 via Supabase MCP (managed id 20260814040633); both routines verified live by the lead's read-only fingerprint the same morning."
+    },
+    {
+      "id": "research_function_search_path_hardening",
+      "path": "supabase/migrations/20260814061500_research_function_search_path_hardening.sql",
+      "sourceSha": "b91d30de9db8033e53ccfe46ddb3e01e5e88fd42",
+      "dependsOn": [],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "7954e9dbeaf14549e1bc9bd3fe47d75550dd5fa9018157315f1ef11d0d90b973"
+      },
+      "appliedToProduction": true,
+      "managedMigrationId": "20260814060630 research_function_search_path_hardening",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "alter_function_reset_search_path_per_function_configuration_only",
+        "procedure": "supabase/production/research-function-search-path-hardening-rollback-notes.md",
+        "evidence": "First applied 2026-08-14 via Supabase MCP (managed id 20260814060630) after three independent adversarial body reviews; SECOND apply run against production 2026-08-14 ~06:20Z by the lead, exited clean, twelve-function post-condition proved the pinned end state both times (configuration-idempotent ALTERs)."
+      },
+      "notes": "Advisor remediation (function_search_path_mutable WARN x12): pins search_path='' on the eleven trigger guards plus research_rate_limit_hit. Remediates search-path injection risk on SECURITY DEFINER/trigger execution paths."
     }
   ],
   "invariants": [

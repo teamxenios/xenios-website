@@ -133,6 +133,12 @@ const MEMBER_ORDER_HISTORY_SOURCE_SHA =
   "9624ba26aab056d4982da1d098f6c1c554b195da";
 const MEMBER_ORDER_HISTORY_PATH =
   "supabase/migrations/20260813120000_research_early_access_member_order_history.sql";
+// Search-path hardening: applied to production 2026-08-14 (managed id
+// 20260814060630); pinned to the commit that added the managed mirror.
+const SEARCH_PATH_HARDENING_SOURCE_SHA =
+  "b91d30de9db8033e53ccfe46ddb3e01e5e88fd42";
+const SEARCH_PATH_HARDENING_PATH =
+  "supabase/migrations/20260814061500_research_function_search_path_hardening.sql";
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -831,6 +837,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(CART_QUANTITY_BAND_50_SOURCE_SHA);
           } else if (path === MEMBER_ORDER_HISTORY_PATH) {
             expect(sourceSha).toBe(MEMBER_ORDER_HISTORY_SOURCE_SHA);
+          } else if (path === SEARCH_PATH_HARDENING_PATH) {
+            expect(sourceSha).toBe(SEARCH_PATH_HARDENING_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
