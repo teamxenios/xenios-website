@@ -61,23 +61,25 @@ async function settle() {
 
 describe("the API paths, which all come from one constant", () => {
   it("builds every request from KRIS_API_BASE", () => {
-    // The sibling lane owns the real base. When it lands, this constant changes
-    // and nothing else does, so this test is what catches a drift between the
-    // two rather than a browser quietly receiving the SPA shell.
+    // The mounted base is the only one the research wall admits for this
+    // surface, so it is pinned as a literal: a drifted base would send every
+    // request to a path the wall refuses, and the member would read a broken
+    // catalog.
+    expect(KRIS_API_BASE).toBe("/api/research/kris-launch-a/v1");
     expect(krisCatalogUrl()).toBe(KRIS_API_BASE + "/catalog");
     expect(krisCatalogUrl({ q: "bpc", page: 2, pageSize: 48 })).toBe(
       KRIS_API_BASE + "/catalog?q=bpc&page=2&pageSize=48",
     );
     expect(krisDetailUrl("research_capsules", "research-capsules-bam15-bam15-500-mcg")).toBe(
-      KRIS_API_BASE + "/items/research_capsules/research-capsules-bam15-bam15-500-mcg",
+      KRIS_API_BASE + "/products/research-capsules-bam15-bam15-500-mcg",
     );
     expect(krisCatalogUrl().startsWith(KRIS_API_BASE)).toBe(true);
     expect(krisDetailUrl("supplements", "x").startsWith(KRIS_API_BASE)).toBe(true);
   });
 
-  it("encodes both segments, so an odd slug cannot escape the path", () => {
+  it("encodes every path segment, so an odd slug cannot escape the path", () => {
     expect(krisDetailUrl("supplements", "a b/../admin")).toBe(
-      KRIS_API_BASE + "/items/supplements/a%20b%2F..%2Fadmin",
+      KRIS_API_BASE + "/products/a%20b%2F..%2Fadmin",
     );
     expect(krisItemHref("supplements", "a b/../admin")).toBe(
       KRIS_CATALOG_PATH + "/supplements/a%20b%2F..%2Fadmin",

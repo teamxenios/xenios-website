@@ -10,18 +10,14 @@ import {
 /**
  * Every URL this surface builds, in one file.
  *
- * THE SERVER ROUTES ARE BEING BUILT IN A SIBLING LANE. Nothing here can call
- * them yet, so the whole client is built and tested against a fixture that
- * answers the committed contract. The one thing that has to change when that
- * lane lands is `KRIS_API_BASE`: it is the only place an API path is composed,
- * so pointing at the real base is a one constant edit and the two builders
- * below carry it into every request.
- *
- * If the sibling lane picks a different base, change this string and nothing
- * else. `kris-api-base.test.ts` holds every URL to it, so a drifting base
- * fails a test rather than silently returning the SPA shell.
+ * THE SERVER ROUTES ARE MOUNTED. The sibling lane landed its route table at
+ * /api/research/kris-launch-a/v1 (GET /catalog and GET /products/:slug, the
+ * only two paths the research wall admits for this surface), and this base is
+ * the one constant edit that packet always promised: every request below
+ * carries it, and `catalog-routes.test.tsx` holds every URL to it, so a
+ * drifting base fails a test rather than silently returning the SPA shell.
  */
-export const KRIS_API_BASE = "/api/research/kris-launch-a";
+export const KRIS_API_BASE = "/api/research/kris-launch-a/v1";
 
 /** The routed page the Launch A catalog lives at (a client path, not an API path). */
 export const KRIS_CATALOG_PATH = "/research/member/kris-catalog";
@@ -59,11 +55,17 @@ export function krisCatalogUrl(query: KrisCatalogQuery = {}): string {
 }
 
 /**
- * BOTH SEGMENTS ARE THE ADDRESS. The detail route is family and slug, so a
- * link carrying only a slug could not restore the item it points at.
+ * The mounted detail route addresses an item by slug alone: every slug in the
+ * artifact is unique and the dataset reader refuses a duplicate, so the slug
+ * is a complete address. The family still matters to the BROWSER (the routed
+ * page path keeps both segments so a deep link restores its place in the
+ * catalog), which is why this builder keeps its two-argument shape: hrefs and
+ * callers are unchanged, and only the API path composed here loses the
+ * family segment.
  */
 export function krisDetailUrl(family: KrisFamily, slug: string): string {
-  return `${KRIS_API_BASE}/items/${encodeURIComponent(family)}/${encodeURIComponent(slug)}`;
+  void family;
+  return `${KRIS_API_BASE}/products/${encodeURIComponent(slug)}`;
 }
 
 /**
