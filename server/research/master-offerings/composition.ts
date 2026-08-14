@@ -46,9 +46,16 @@ import { createRequestScopedBindingReader } from "./request-scoped-bindings";
 import {
   createMasterOfferingProductControlResolver,
   type MasterOfferingCommerceBindingReader,
-  type ProductControlSelectionAuthority,
 } from "./product-control-adapter";
-import type { MasterOfferingCatalogApiDependencies, MasterOfferingCatalogViewer } from "./routes";
+import {
+  createProductControlCartSelectionAuthority,
+  type ProductControlCartSelectionDependencies,
+} from "./product-control-selection-authority";
+import type { VariantInventoryFactsReader } from "../catalog/member-catalog-service";
+import type {
+  MasterOfferingCatalogApiDependencies,
+  MasterOfferingCatalogViewer,
+} from "./routes";
 import {
   MasterOfferingCatalogService,
   type MasterOfferingCatalogReader,
@@ -74,14 +81,19 @@ export interface MasterOfferingRequestIdentity {
 export interface MasterOfferingCompositionInput {
   /** Read-only exact-variant join. It has no mutation method by design. */
   bindings: MasterOfferingCommerceBindingReader;
-  /** The existing Product Control selector. This lane does not reimplement it. */
-  selections: ProductControlSelectionAuthority;
   /** The existing catalog reader behind approved pricing. */
   pricingSource: PricingProductSource;
+  /** Existing governance repository used by the canonical cart selector. */
+  requiredInputs: ProductControlCartSelectionDependencies["requiredInputs"];
+  /** Existing lot/inventory authority used by the canonical cart selector. */
+  inventory: VariantInventoryFactsReader;
   /** Resolved from the authenticated session, per request. */
   identityFor(
     viewer: MasterOfferingCatalogViewer,
-  ): Promise<MasterOfferingRequestIdentity | null> | MasterOfferingRequestIdentity | null;
+  ):
+    | Promise<MasterOfferingRequestIdentity | null>
+    | MasterOfferingRequestIdentity
+    | null;
   /** Supplied only by tests; production reads the dataset path from env. */
   catalogReader?: MasterOfferingCatalogReader;
   env?: VisibilityEnv;
@@ -137,14 +149,23 @@ export function createMasterOfferingCatalogDependencies(
       if (reader === null) {
         // No dataset configured. Throwing here reaches the route's catch and
         // becomes an honest 503, never an empty catalog.
-        throw new MasterOfferingDatasetUnavailable("no dataset path configured");
+        throw new MasterOfferingDatasetUnavailable(
+          "no dataset path configured",
+        );
       }
 
       // Resolved once per request and shared by both authorities, so a price
       // and a purchase verdict can never describe two different instants.
-      let identity: MasterOfferingRequestIdentity | null | undefined;
-      const resolveIdentity = async () => {
-        if (identity === undefined) identity = await input.identityFor(viewer);
+      let identity: Promise<MasterOfferingRequestIdentity | null> | null = null;
+      const resolveIdentity = () => {
+        if (identity === null) {
+          // Store the promise before awaiting it. Price and selection are
+          // resolved concurrently by the catalog service; memoizing only the
+          // eventual value would let both invoke identityFor and observe
+          // different authorization instants.
+          identity = Promise.resolve().then(() => input.identityFor(viewer));
+          identity.catch(() => undefined);
+        }
         return identity;
       };
 
@@ -152,9 +173,33 @@ export function createMasterOfferingCatalogDependencies(
       // price authority and the purchase resolver below.
       const bindings = createRequestScopedBindingReader(input.bindings);
 
+      // One Product Control snapshot for both price display and purchase
+      // selection. A page may ask both authorities about the same variant; a
+      // later request receives a fresh snapshot and fresh governance facts.
+      const pricingSource = createRequestScopedPricingProductSource(
+        input.pricingSource,
+      );
+
+      const selections = createProductControlCartSelectionAuthority({
+        products: pricingSource,
+        requiredInputs: input.requiredInputs,
+        inventory: input.inventory,
+        audienceEligibility: async () => {
+          const resolved = await resolveIdentity();
+          return resolved === null
+            ? null
+            : {
+                audience: resolved.audience,
+                state: "authorized",
+                sourceVersion: resolved.sourceVersion,
+                evaluatedAt: resolved.evaluatedAt,
+              };
+        },
+      });
+
       const commerce = createMasterOfferingProductControlResolver({
         bindings,
-        selections: input.selections,
+        selections,
         context: async () => {
           const resolved = await resolveIdentity();
           return resolved === null
@@ -171,9 +216,7 @@ export function createMasterOfferingCatalogDependencies(
         bindings,
         prices: createAuthoritativeApprovedPriceReader(
           // One Product Control read for the request, not one per variant.
-          createAuthoritativePriceResolver(
-            createRequestScopedPricingProductSource(input.pricingSource),
-          ),
+          createAuthoritativePriceResolver(pricingSource),
           async () => {
             const resolved = await resolveIdentity();
             if (resolved === null) return null;

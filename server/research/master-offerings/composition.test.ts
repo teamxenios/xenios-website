@@ -1,7 +1,14 @@
 import express, { type Express } from "express";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
-import type { AdminProductDetail } from "@shared/research/product-admin";
+import {
+  PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS,
+  type AdminProductDetail,
+} from "@shared/research/product-admin";
+import type {
+  DomainReadiness,
+  RequiredInput,
+} from "@shared/research/required-inputs";
 import { FULL_CATALOG_VISIBILITY_ENV_VAR } from "../catalog-display/visibility";
 import {
   createMasterOfferingCatalogDependencies,
@@ -39,17 +46,57 @@ const BINDING = {
 function pricedProduct(): AdminProductDetail {
   return {
     id: "pc_product_1",
+    productCode: "PC-PRODUCT-1",
+    slug: "pc-product-1",
+    displayName: "BPC-157",
+    canonicalName: "BPC-157",
+    aliases: [],
+    lane: "research_material",
+    category: "Research",
+    classification: "Research material",
     status: "published",
     visibility: "public",
     active: true,
+    availability: "in_stock",
+    commerceApproval: "approved",
+    qualityDocumentState: "approved",
+    variantCount: 1,
+    approvedVariantCount: 1,
+    missingInputCount: 0,
+    updatedAt: EVALUATED_AT,
+    publishedAt: EVALUATED_AT,
+    content: {
+      shortDescription: "Reviewed summary.",
+      longDescription: null,
+      overview: null,
+      specifications: null,
+      researchInformation: null,
+      storageInformation: null,
+      handlingInformation: null,
+      shippingInformation: null,
+      returnInformation: null,
+      disclaimers: null,
+      citations: [],
+      reviewDate: null,
+    },
     variants: [
       {
         id: "pc_variant_1",
         productId: "pc_product_1",
+        label: "5 mg vial",
         status: "approved",
         active: true,
         memberEligible: true,
         sku: "XEN-BPC-5",
+        catalogNumber: null,
+        strength: "5 mg",
+        size: null,
+        format: "vial",
+        presentation: null,
+        shippingClass: "standard",
+        sortOrder: 0,
+        createdAt: EVALUATED_AT,
+        updatedAt: EVALUATED_AT,
       },
     ],
     prices: [
@@ -65,13 +112,131 @@ function pricedProduct(): AdminProductDetail {
         status: "active",
         approvalNote: null,
         version: 1,
-        createdBy: "ops",
-        approvedBy: "founder",
+        createdBy: "private-ops-user",
+        approvedBy: "private-founder-user",
         createdAt: "2026-08-01T00:00:00.000Z",
         updatedAt: "2026-08-01T00:00:00.000Z",
       },
     ],
-  } as unknown as AdminProductDetail;
+    media: [
+      {
+        id: "media_1",
+        productId: "pc_product_1",
+        kind: "primary_image",
+        state: "approved",
+        storageKey: "private/bpc.webp",
+        filename: "bpc.webp",
+        contentType: "image/webp",
+        sizeBytes: 100,
+        altText: "BPC-157 vial",
+        sortOrder: 0,
+        approvedBy: "reviewer",
+        createdAt: EVALUATED_AT,
+        updatedAt: EVALUATED_AT,
+      },
+    ],
+    history: [],
+  };
+}
+
+function pricedProductWithTwoVariants(): AdminProductDetail {
+  const value = pricedProduct();
+  const secondVariant = {
+    ...value.variants[0],
+    id: "pc_variant_2",
+    sku: "XEN-BPC-10",
+    label: "10 mg vial",
+    strength: "10 mg",
+  };
+  return {
+    ...value,
+    variantCount: 2,
+    approvedVariantCount: 2,
+    variants: [...value.variants, secondVariant],
+    prices: [
+      ...value.prices,
+      {
+        ...value.prices[0],
+        id: "price_2",
+        variantId: "pc_variant_2",
+        amountCents: 17900,
+      },
+    ],
+  };
+}
+
+function requiredInputs(): RequiredInput[] {
+  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
+    id: `input-${index}`,
+    key: binding.key,
+    domain: binding.domain,
+    label: "Verified input",
+    description: "Verified input",
+    whyRequired: "Required by canonical readiness.",
+    recordType: binding.recordType,
+    recordId: "pc_product_1",
+    fieldPath: "field",
+    currentState: "verified",
+    blockingLevel: "blocks_display",
+    responsibleRole: "product_admin",
+    verificationMethod: "review",
+    evidenceRequired: [],
+    entryMode: "direct",
+    valueSensitivity: "ordinary",
+    enteredValue: "verified",
+    externalReferenceName: null,
+    enteredBy: "admin",
+    enteredAt: EVALUATED_AT,
+    verifiedBy: "reviewer",
+    verifiedAt: EVALUATED_AT,
+    rejectionReason: null,
+    publicLaunchImpact: "Blocks release.",
+    nextAction: "Review.",
+    adminEntryHref: "/internal",
+    version: index + 1,
+    auditHistory: [],
+  }));
+}
+
+function domainReadiness(domain: string): DomainReadiness {
+  return {
+    domain,
+    launchStatus: "public_enabled",
+    softwareComplete: true,
+    realInputsRequired: false,
+    publicEnabled: true,
+    manifestApproved: true,
+    expectedInputCount: 2,
+    actualInputCount: 2,
+    blockingInputCount: 0,
+    blockingKeys: [],
+    version: 3,
+  };
+}
+
+function readiness(): DomainReadiness[] {
+  return [domainReadiness("product_content"), domainReadiness("products")];
+}
+
+function inventoryFacts(state: "eligible" | "unavailable" = "unavailable") {
+  return {
+    inventory: {
+      productId: "pc_product_1",
+      variantId: "pc_variant_1",
+      state,
+      reason: state === "eligible" ? null : "not_currently_available",
+      sourceVersion: "inventory-v1",
+      evaluatedAt: EVALUATED_AT,
+    },
+    lotCoa: {
+      productId: "pc_product_1",
+      variantId: "pc_variant_1",
+      state:
+        state === "eligible" ? ("verified" as const) : ("required" as const),
+      sourceVersion: "lot-coa-v1",
+      evaluatedAt: EVALUATED_AT,
+    },
+  };
 }
 
 function input(
@@ -79,8 +244,14 @@ function input(
 ): MasterOfferingCompositionInput {
   return {
     bindings: { readBinding: () => BINDING },
-    selections: { select: async () => ({ ok: false, code: "price_missing" }) },
     pricingSource: { readProductForPricing: async () => pricedProduct() },
+    requiredInputs: {
+      list: async () => requiredInputs(),
+      readinessAll: async () => readiness(),
+    },
+    inventory: {
+      readVariantInventoryFacts: async () => inventoryFacts(),
+    },
     identityFor: () => ({
       audience: "member",
       sourceVersion: "audience-v1",
@@ -152,49 +323,28 @@ describe("composition", () => {
   it("shows Add to Cart only when Product Control actually authorizes it", async () => {
     const response = await request(
       app({
-        selections: {
-          select: async () => ({
-            ok: true,
-            selection: {
-              productId: "pc_product_1",
-              variantId: "pc_variant_1",
-              sku: "XEN-BPC-5",
-              audience: "member",
-              audienceEligibility: {
-                audience: "member",
-                state: "authorized",
-                sourceVersion: "audience-v1",
-                evaluatedAt: EVALUATED_AT,
-              },
-              price: {
-                id: "price_1",
-                amountCents: 9900,
-                currency: "USD",
-                effectiveAt: "2026-08-01T00:00:00.000Z",
-                expiresAt: null,
-                version: 1,
-              },
-              media: { id: "m", kind: "primary_image", altText: "vial" },
-              canonicalReadiness: {
-                ready: true,
-                verifiedInputCount: 1,
-                inputVersions: [],
-                domainVersions: [],
-              },
-              inventoryEligibility: {
-                productId: "pc_product_1",
-                variantId: "pc_variant_1",
-                state: "eligible",
-                sourceVersion: "inv-1",
-                evaluatedAt: EVALUATED_AT,
-              },
-              evaluatedAt: EVALUATED_AT,
-            },
-          }),
-        } as never,
+        inventory: {
+          readVariantInventoryFacts: async () => inventoryFacts("eligible"),
+        },
       }),
     ).get(DETAIL_PATH);
-    expect(response.body.product.variants[0].action.kind).toBe("add_to_cart");
+    const entry = response.body.product.variants[0];
+    expect(entry.action.kind).toBe("add_to_cart");
+    expect(entry.action.amount).toEqual({
+      amountCents: entry.price.amountCents,
+      currency: entry.price.currency,
+    });
+    const serialized = JSON.stringify(response.body);
+    for (const privateValue of [
+      "private/bpc.webp",
+      "bpc.webp",
+      "private-ops-user",
+      "private-founder-user",
+      "inventory-v1",
+      "lot-coa-v1",
+    ]) {
+      expect(serialized).not.toContain(privateValue);
+    }
   });
 
   it("builds a fresh service per request so a price memo cannot go stale", async () => {
@@ -205,15 +355,118 @@ describe("composition", () => {
     await request(application).get(DETAIL_PATH);
     // A process-lifetime service would have answered the second request from
     // the first request's memo and never re-read the authority.
-    expect(readProductForPricing.mock.calls.length).toBeGreaterThan(afterFirst);
+    expect(afterFirst).toBe(1);
+    expect(readProductForPricing).toHaveBeenCalledTimes(2);
   });
 
   it("reads the price and the selection at one instant", async () => {
-    const select = vi.fn(async () => ({ ok: false as const, code: "price_missing" as const }));
-    await request(app({ selections: { select } })).get(DETAIL_PATH);
-    expect(select).toHaveBeenCalledWith(
-      expect.objectContaining({ evaluatedAt: EVALUATED_AT, currency: "USD" }),
+    const readVariantInventoryFacts = vi.fn(async () =>
+      inventoryFacts("eligible"),
     );
+    const identityFor = vi.fn(async () => ({
+      audience: "member" as const,
+      sourceVersion: "audience-v1",
+      evaluatedAt: EVALUATED_AT,
+      currency: "USD",
+    }));
+    await request(
+      app({ inventory: { readVariantInventoryFacts }, identityFor }),
+    ).get(DETAIL_PATH);
+    expect(identityFor).toHaveBeenCalledTimes(1);
+    expect(readVariantInventoryFacts).toHaveBeenCalledWith(
+      expect.objectContaining({ evaluatedAt: EVALUATED_AT }),
+    );
+  });
+
+  it("memoizes one pending identity decision across concurrent variants", async () => {
+    let releaseIdentity!: (
+      value: Awaited<ReturnType<MasterOfferingCompositionInput["identityFor"]>>,
+    ) => void;
+    const pendingIdentity = new Promise<
+      Awaited<ReturnType<MasterOfferingCompositionInput["identityFor"]>>
+    >((resolve) => {
+      releaseIdentity = resolve;
+    });
+    const identityFor = vi.fn(() => pendingIdentity);
+    const multiOffering = offering({
+      variants: [
+        variant({ id: "mov_a", label: "5 mg vial" }),
+        variant({ id: "mov_b", label: "10 mg vial" }),
+      ],
+    });
+    const responsePromise = request(
+      app({
+        catalogReader: new InMemoryMasterOfferingCatalogReader([multiOffering]),
+        bindings: {
+          readBinding: ({ offeringVariantId }) => ({
+            offeringVariantId,
+            productId: "pc_product_1",
+            variantId:
+              offeringVariantId === "mov_a" ? "pc_variant_1" : "pc_variant_2",
+          }),
+        },
+        pricingSource: {
+          readProductForPricing: async () => pricedProductWithTwoVariants(),
+        },
+        inventory: {
+          readVariantInventoryFacts: async ({
+            productId,
+            variant,
+            evaluatedAt,
+          }) => ({
+            inventory: {
+              productId,
+              variantId: variant.id,
+              state: "eligible",
+              reason: null,
+              sourceVersion: `inventory-${variant.id}`,
+              evaluatedAt,
+            },
+            lotCoa: {
+              productId,
+              variantId: variant.id,
+              state: "verified",
+              sourceVersion: `lot-coa-${variant.id}`,
+              evaluatedAt,
+            },
+          }),
+        },
+        identityFor,
+      }),
+    )
+      .get(DETAIL_PATH)
+      .then((response) => response);
+
+    await vi.waitFor(() => expect(identityFor).toHaveBeenCalledTimes(1));
+    releaseIdentity({
+      audience: "member",
+      sourceVersion: "audience-v1",
+      evaluatedAt: EVALUATED_AT,
+      currency: "USD",
+    });
+    const response = await responsePromise;
+    expect(response.status).toBe(200);
+    expect(response.body.product.variants).toHaveLength(2);
+    expect(
+      response.body.product.variants.every(
+        (entry: { action: { kind: string } }) =>
+          entry.action.kind === "add_to_cart",
+      ),
+    ).toBe(true);
+    expect(identityFor).toHaveBeenCalledTimes(1);
+  });
+
+  it("memoizes a synchronous identity failure and fails closed", async () => {
+    const identityFor = vi.fn(() => {
+      throw new Error("identity-unavailable");
+    });
+    const response = await request(app({ identityFor })).get(DETAIL_PATH);
+    expect(response.status).toBe(200);
+    expect(response.body.product.variants[0]).toMatchObject({
+      price: { state: "on_request" },
+      action: { kind: "request_access" },
+    });
+    expect(identityFor).toHaveBeenCalledTimes(1);
   });
 
   it("shows no price when the session supplies no identity", async () => {
@@ -222,7 +475,9 @@ describe("composition", () => {
     );
     expect(response.status).toBe(200);
     expect(response.body.product.variants[0].price.state).toBe("on_request");
-    expect(response.body.product.variants[0].action.kind).toBe("request_access");
+    expect(response.body.product.variants[0].action.kind).toBe(
+      "request_access",
+    );
   });
 
   it("shows no price when the authorization fact is malformed", async () => {
