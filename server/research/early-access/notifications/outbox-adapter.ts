@@ -145,6 +145,38 @@ export async function projectEarlyAccessReleased(input: {
 }
 
 /**
+ * SUBMITTED FOR PAYMENT REVIEW. At most one per durable proof identity, so a
+ * resubmission (a new proof) confirms again while a retried upload of the
+ * same proof cannot double-mail. No proof metadata rides along: the template
+ * confirms that a submission arrived, it is not a receipt for the file.
+ */
+export async function projectEarlyAccessSubmittedForReview(input: {
+  proofId: string;
+  orderNumber: string;
+  recipientEmail: string;
+  customerName?: string;
+  invoiceNumber?: string;
+  paymentReference?: string;
+  statusUrl?: string;
+}): Promise<boolean> {
+  return enqueueNotification({
+    eventKey: earlyAccessEventKey.submittedForReview(input.proofId),
+    eventType: "ea_submitted_for_review",
+    templateKey: earlyAccessTemplateKey("ea_submitted_for_review"),
+    recipient: input.recipientEmail,
+    payload: safeEarlyAccessPayload("ea_submitted_for_review", {
+      customerName: input.customerName,
+      // The template's field name predates the legacy wiring; the value is
+      // whichever durable commerce number the customer knows the order by.
+      cartCheckoutNumber: input.orderNumber,
+      invoiceNumber: input.invoiceNumber,
+      paymentReference: input.paymentReference,
+      statusUrl: input.statusUrl ?? earlyAccessStatusUrl(),
+    }),
+  });
+}
+
+/**
  * TRACKING. At most one per durable tracking-event identity.
  *
  * SEAM, NOT YET CONNECTED. Early Access has no durable customer-facing

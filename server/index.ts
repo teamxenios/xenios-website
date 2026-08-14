@@ -22,6 +22,7 @@ import { buildCommerceDependencies } from "./research/commerce/production-deps";
 import { registerMemberCatalogApi } from "./research/catalog/member-catalog-routes";
 import { registerProductionAccountIdentityApi } from "./research/account-identity/production-mount";
 import { buildKrisBuyerScopedPricingFromEnv } from "./research/account-identity/kris-buyer-price-sheet-production";
+import { createOutboxLegacyOrderNotifier } from "./research/early-access/notifications/legacy-order-notifier";
 import type {
   KrisDoorCatalogSource,
   KrisDoorReleaseLedger,
@@ -343,11 +344,19 @@ const buyerScopedPrices =
     : buildKrisBuyerScopedPricingFromEnv({
         memberDirectory: earlyAccessPersistence.orderHistory.bindings,
       });
+// Order-lifecycle mail for the legacy single-order flow, over the ONE durable
+// notification outbox. The notifier is fire-and-forget by contract and the
+// outbox itself refuses gracefully when unconfigured, so this wiring is safe
+// everywhere and mails only where the outbox actually runs.
+const legacyOrderNotifications = createOutboxLegacyOrderNotifier({
+  ...(process.env.SITE_URL ? { siteUrl: process.env.SITE_URL } : {}),
+});
 registerPrivateEarlyAccessApi(app, {
   ...earlyAccessPersistence.options,
   resolveMember: resolveActiveMemberSilently,
   requireAdmin: requireSupabaseAdmin,
   ...(buyerScopedPrices === undefined ? {} : { buyerScopedPrices }),
+  orderNotifications: legacyOrderNotifications,
   onDoorSources: (sources) => {
     earlyAccessDoorSources.current = sources;
   },
