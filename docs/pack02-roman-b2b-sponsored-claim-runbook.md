@@ -60,6 +60,9 @@ reviewed profile workflow without blocking identity proof.
    `research_members` binding, initially `pending_activation`.
 8. An authenticated existing internal admin calls
    `research_activate_sponsored_b2b_buyer`. In one database transaction it:
+   - locks the sponsorship row and captures database-authoritative time after
+     the lock; exact-expiry and later activation attempts are refused before
+     any member, buyer, entitlement, audit, or outbox mutation;
    - proves the exact application/member/Auth/email sponsorship;
    - activates the canonical member with `access_basis=sponsored_b2b` and keeps
      `billing_state=not_started` rather than fabricating payment verification;
@@ -68,6 +71,9 @@ reviewed profile workflow without blocking identity proof.
    - binds the exact `KRIS_VOLUME_PARTNER` version/effective time;
    - marks the sponsored application and sponsorship active;
    - appends audit evidence.
+   An exact replay is read-only and succeeds only when the stored activation
+   completed strictly before expiry and the same active member, Roman buyer,
+   operator roles, and pricing entitlement still match.
 9. Checkout must call `research_claim_b2b_order_ownership` on the canonical
    draft order before any payment-provider authorization or capture.
 
@@ -93,6 +99,7 @@ the bridge `migrated`. History is retained; no bridge evidence is deleted.
 - Either candidate migration fails isolated rehearsal or security review.
 - Claim delivery acceptance is uncertain.
 - Claimed member/Auth/application/email evidence is inconsistent.
+- The locked claim is at or past its database-authoritative expiry.
 - Checkout cannot prove Roman ownership commits before payment I/O.
 
 Production mutation performed by this packet: **NO**.

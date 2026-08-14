@@ -331,6 +331,7 @@ declare
   v_entitlement_id uuid;
   v_auth_email text;
   v_auth_confirmed_at timestamptz;
+  v_activation_now timestamptz;
 begin
   if v_actor is null then
     raise exception 'authenticated activation actor required' using errcode='42501';
@@ -349,9 +350,68 @@ begin
 
   select * into v_claim from public.research_b2b_sponsored_claims
    where id=p_sponsorship_id for update;
-  if not found or v_claim.state<>'claim_queued' then
+  if not found then
     raise exception 'sponsored B2B claim is not activatable' using errcode='42501';
   end if;
+
+  -- Replays are read-only and are accepted only for the exact, previously
+  -- completed activation. An activation at or after expiry is not valid and
+  -- can never be revived by replay.
+  if v_claim.state='activated' then
+    if v_claim.activated_member_id is distinct from p_member_id
+       or v_claim.activated_at is null
+       or v_claim.activated_at>=v_claim.claim_expires_at then
+      raise exception 'sponsored B2B activation replay does not match a valid completed claim'
+        using errcode='42501';
+    end if;
+    select r.id,o.id,e.id
+      into v_relationship_id,v_operator_id,v_entitlement_id
+      from public.research_members m
+      join public.research_applications a
+        on a.id=m.application_id and a.id=v_claim.application_id and a.status='active'
+      join auth.users u
+        on u.id=m.auth_user_id
+       and lower(btrim(u.email))=v_claim.normalized_email
+       and u.email_confirmed_at is not null
+      join public.research_b2b_buyer_operators o
+        on o.member_id=m.id and o.roles=v_claim.roles and o.state='active'
+      join public.research_b2b_buyer_relationships r
+        on r.id=o.relationship_id
+       and r.business_key=v_claim.business_key
+       and r.business_display_name=v_claim.business_display_name
+       and r.business_legal_name=v_claim.business_legal_name
+       and r.relationship_type='b2b2c_marketplace_partner'
+       and r.state='active' and r.migrated_organization_id is null
+      join public.research_b2b_buyer_entitlements e
+        on e.relationship_id=r.id
+       and e.profile_key=v_claim.profile_key
+       and e.version=v_claim.profile_version
+       and e.effective_at=v_claim.profile_effective_at
+       and e.state='active'
+     where m.id=p_member_id
+       and m.auth_user_id=p_expected_auth_user_id
+       and lower(btrim(m.email))=v_claim.normalized_email
+       and m.status='active';
+    if not found then
+      raise exception 'exact completed sponsored B2B activation replay was not proved'
+        using errcode='42501';
+    end if;
+    return query select v_relationship_id,v_operator_id,v_entitlement_id;
+    return;
+  end if;
+
+  if v_claim.state<>'claim_queued' then
+    raise exception 'sponsored B2B claim is not activatable' using errcode='42501';
+  end if;
+
+  -- Capture database-authoritative time only after the claim row lock is held.
+  -- Exact expiry is refused. This guard precedes every member, application,
+  -- relationship, entitlement, audit, and outbox mutation.
+  v_activation_now:=clock_timestamp();
+  if v_activation_now>=v_claim.claim_expires_at then
+    raise exception 'sponsored B2B claim has expired' using errcode='22023';
+  end if;
+
   select * into v_member from public.research_members
    where id=p_member_id for update;
   if not found or v_member.application_id<>v_claim.application_id
@@ -370,7 +430,7 @@ begin
   -- no active-member window exists without the business binding/entitlement.
   update public.research_members
      set status='active',billing_state='not_started',access_basis='sponsored_b2b',
-         activated_at=clock_timestamp(),updated_at=clock_timestamp()
+         activated_at=v_activation_now,updated_at=v_activation_now
    where id=v_member.id and status='pending_activation';
 
   select x.relationship_id,x.operator_id,x.entitlement_id
@@ -381,7 +441,7 @@ begin
     ) x;
 
   update public.research_applications
-     set status='active',updated_at=clock_timestamp()
+     set status='active',updated_at=v_activation_now
    where id=v_claim.application_id and status='approved_sponsored_b2b';
   if not found then
     raise exception 'sponsored application status changed concurrently' using errcode='40001';
@@ -394,7 +454,7 @@ begin
     'B2B operator membership activated atomically with business relationship and pricing entitlement.'
   );
   update public.research_b2b_sponsored_claims
-     set state='activated',activated_member_id=v_member.id,activated_at=clock_timestamp()
+     set state='activated',activated_member_id=v_member.id,activated_at=v_activation_now
    where id=v_claim.id;
   insert into public.research_b2b_sponsored_claim_events(
     sponsorship_id,event_type,actor_auth_user_id,detail
