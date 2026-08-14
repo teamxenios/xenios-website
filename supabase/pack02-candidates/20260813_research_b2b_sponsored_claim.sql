@@ -254,7 +254,7 @@ begin
   if exists(select 1 from auth.users where lower(email)=p_normalized_email)
      or exists(select 1 from public.research_applications where lower(email)=p_normalized_email)
      or exists(select 1 from public.research_members where lower(email)=p_normalized_email)
-     or exists(select 1 from public.research_b2b_sponsored_claims where normalized_email=p_normalized_email) then
+     or exists(select 1 from public.research_b2b_sponsored_claims sc where sc.normalized_email=p_normalized_email) then
     raise exception 'authoritative identity/application appeared; stop' using errcode='23505';
   end if;
 

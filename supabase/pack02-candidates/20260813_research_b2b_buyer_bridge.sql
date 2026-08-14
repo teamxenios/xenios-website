@@ -443,10 +443,10 @@ begin
   returning id into v_operator_id;
 
   if v_operator_id is null then
-    select id into v_operator_id
-      from public.research_b2b_buyer_operators
-     where relationship_id=v_relationship_id and member_id=p_member_id
-       and roles=p_roles and state='active'
+    select o.id into v_operator_id
+      from public.research_b2b_buyer_operators o
+     where o.relationship_id=v_relationship_id and o.member_id=p_member_id
+       and o.roles=p_roles and o.state='active'
      for update;
     if not found then
       raise exception 'member already has a conflicting business binding' using errcode='23505';
@@ -471,13 +471,13 @@ begin
   returning id into v_entitlement_id;
 
   if v_entitlement_id is null then
-    select id into v_entitlement_id
-      from public.research_b2b_buyer_entitlements
-     where relationship_id=v_relationship_id
-       and profile_key='KRIS_VOLUME_PARTNER'
-       and version=p_profile_version
-       and state='active'
-       and effective_at=p_effective_at
+    select e.id into v_entitlement_id
+      from public.research_b2b_buyer_entitlements e
+     where e.relationship_id=v_relationship_id
+       and e.profile_key='KRIS_VOLUME_PARTNER'
+       and e.version=p_profile_version
+       and e.state='active'
+       and e.effective_at=p_effective_at
      for update;
     if not found then
       raise exception 'pricing profile version conflicts with existing entitlement' using errcode='23505';
