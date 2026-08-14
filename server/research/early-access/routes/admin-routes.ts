@@ -12,6 +12,7 @@ import {
   describeTrackingUpdate,
 } from "../commerce/release-service";
 import { decideManualPayment } from "../commerce/verification-service";
+import type { EarlyAccessVerificationEntry } from "../commerce/verification-service";
 import { describeProofAttachment } from "../commerce/proof-service";
 import type { EarlyAccessProofRecord } from "../commerce/proof-service";
 import type { EarlyAccessLegacyOrderNotifier } from "../notifications/legacy-order-notifier";
@@ -444,7 +445,13 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
       // exists only where a real approval row does.
       const release = describeSupplierRelease({
         verifiedOrder,
-        decisions: [entry],
+        // The FULL decision trail plus the new approval. Before rejections
+        // existed this was always exactly [entry] (nothing could precede a
+        // settlement's verification), so this is byte-identical for every
+        // historical order; with a recorded rejection the approval's trail
+        // sequence is 2+, and the release derivation validates the whole
+        // 1..N trail it authorizes from.
+        decisions: [...decisions, entry],
         supplier: {
           supplierId: placement.supplier.supplierId,
           supplierSku: placement.supplier.supplierSku,
@@ -553,6 +560,173 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
       unavailable(response);
     }
   };
+}
+
+const REJECT_BODY_KEYS = [
+  "idempotencyKey",
+  "reviewedProofRef",
+  "verifiedAmountCents",
+  "verifiedCurrency",
+  "method",
+  "reason",
+] as const;
+
+/**
+ * The rejection half of the payment review. Everything the confirm door
+ * validates, this door validates the same way, and the DOMAIN decides: the
+ * reviewed reference must be the CURRENT proof, a settled order refuses, and
+ * a replayed idempotency key answers the recorded decision rather than
+ * deciding twice. What differs is the effect: no settlement, no supplier
+ * release, no receipt - the placement moves to payment_rejected, the entry
+ * appends to the trail, and the customer is asked (by mail and on the page)
+ * for a fresh submission. Rejecting is reversible by resubmission; that is
+ * exactly why it may exist as a door at all.
+ */
+export function createEarlyAccessRejectPaymentRoute(deps: EarlyAccessAdminRouteDependencies) {
+  return async (
+    request: { adminEmail?: unknown; orderNumber?: unknown; body?: unknown },
+    response: ResponsePort,
+  ): Promise<void> => {
+    try {
+      applyPrivateHeaders(response);
+      const caller = await resolveAdmin(deps, request?.adminEmail, response);
+      if (!caller.ok) return;
+      const now = stampOf(caller.nowMs);
+
+      if (!isEarlyAccessOrderNumber(request?.orderNumber)) {
+        fail(response, 404, "ORDER_NOT_FOUND");
+        return;
+      }
+      const orderNumber = request.orderNumber as string;
+      const placement = await deps.store.placementByOrderNumber(orderNumber);
+      if (placement === null) {
+        fail(response, 404, "ORDER_NOT_FOUND");
+        return;
+      }
+      // A store that cannot record a rejection durably does not get to record
+      // one at all: an in-memory rejection over a durable order would vanish
+      // on restart with the customer already told to resubmit.
+      if (deps.store.commitRejection === undefined) {
+        fail(response, 503, "UNAVAILABLE");
+        return;
+      }
+
+      const body = project(request?.body, REJECT_BODY_KEYS);
+      if (body === null) {
+        fail(response, 400, "REQUEST_INVALID");
+        return;
+      }
+      if (body.method !== null && body.method !== undefined && !isEarlyAccessPaymentOptionCode(body.method)) {
+        fail(response, 400, "METHOD_UNSUPPORTED");
+        return;
+      }
+      if (!isBoundedText(body.reason, 500) || (body.reason as string).trim().length < 8) {
+        fail(response, 400, "REASON_INSUFFICIENT");
+        return;
+      }
+      if (
+        !Number.isSafeInteger(body.verifiedAmountCents) ||
+        (body.verifiedAmountCents as number) <= 0
+      ) {
+        fail(response, 400, "REQUEST_INVALID", { field: "verifiedAmountCents" });
+        return;
+      }
+      if (typeof body.verifiedCurrency !== "string" || body.verifiedCurrency.length === 0) {
+        fail(response, 400, "REQUEST_INVALID", { field: "verifiedCurrency" });
+        return;
+      }
+
+      const settled = await deps.store.settlement(orderNumber);
+      if (settled !== null) {
+        // Money already arrived and was verified. Rejecting after that is not
+        // a review outcome, it is a refund conversation, which has its own
+        // door and its own evidence.
+        fail(response, 409, "VERIFICATION_INCONSISTENT");
+        return;
+      }
+
+      const [proofs, decisions] = await Promise.all([
+        deps.store.proofs(orderNumber),
+        deps.store.verifications(orderNumber),
+      ]);
+
+      const decided = decideManualPayment({
+        order: placement.order.order,
+        proofs: proofs.map((intake) => intake.record),
+        decisions: [...decisions],
+        actor: { id: caller.actor.actorId, role: caller.actor.role },
+        decision: "reject",
+        reason: body.reason,
+        reviewedProofRef: body.reviewedProofRef,
+        // What the admin observed on the submitted confirmation, exactly as
+        // the confirm door reads it. A rejection may freely name a variance;
+        // the domain only refuses APPROVING over one.
+        amountVerifiedCents: body.verifiedAmountCents as number,
+        currency: body.verifiedCurrency as string,
+        idempotencyKey: body.idempotencyKey,
+        now,
+        ...(body.method === undefined || body.method === null ? {} : { method: body.method }),
+      });
+      if (!decided.ok) {
+        confirmRefusal(response, decided.code);
+        return;
+      }
+
+      if (decided.value.append === null) {
+        // A replay. The recorded decision answers; nothing is decided twice.
+        const prior = decided.value.entry;
+        send(response, 200, {
+          ok: true,
+          applied: false,
+          decision: prior === null ? null : rejectionView(prior),
+        });
+        return;
+      }
+      const entry = decided.value.append;
+
+      const committed = await deps.store.commitRejection(entry);
+      if (!committed.committed) {
+        if (committed.reason === "already_settled") {
+          fail(response, 409, "VERIFICATION_INCONSISTENT");
+          return;
+        }
+        fail(response, 404, "ORDER_NOT_FOUND");
+        return;
+      }
+
+      await recordAudit(deps, {
+        event: "early_access.payment.rejected",
+        orderNumber,
+        actor: caller.actor.actorId,
+        at: now,
+        detail: {
+          role: caller.actor.role,
+          reviewedProofId: entry.reviewedProofId,
+          reason: body.reason,
+          replayed: committed.replayed,
+        },
+      });
+
+      // THE NEEDS-ATTENTION MAIL, after the decision is durable. Keyed by the
+      // reviewed proof inside the notifier, so a replayed commit cannot mail
+      // twice even if this line is reached twice.
+      deps.notifications?.paymentRejected(placement, entry.reviewedProofId);
+
+      send(response, 201, { ok: true, applied: true, decision: rejectionView(entry) });
+    } catch {
+      unavailable(response);
+    }
+  };
+}
+
+/** The operator-facing shape of one recorded rejection. Trail facts only. */
+function rejectionView(entry: EarlyAccessVerificationEntry) {
+  return Object.freeze({
+    decision: entry.decision,
+    decidedAt: entry.decidedAt,
+    reviewedProofId: entry.reviewedProofId,
+    actorRole: entry.actorRole,
+  });
 }
 
 /** Surface a verification refusal with the action the operator must take. */

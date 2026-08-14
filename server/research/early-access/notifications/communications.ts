@@ -39,6 +39,14 @@ export const EARLY_ACCESS_EMAIL_EVENTS = [
    */
   "ea_submitted_for_review",
   "ea_payment_verified",
+  /**
+   * Payment REJECTED, needs attention. A named operator reviewed the
+   * submitted confirmation and could not verify the transfer. The email
+   * deliberately carries NO rejection reason text: the operator's notes are
+   * an internal record, and the actionable detail lives behind the login
+   * where the customer resubmits. Nothing about the order is cancelled.
+   */
+  "ea_payment_rejected",
   "ea_order_released",
   "ea_tracking_posted",
   /**
@@ -85,6 +93,12 @@ export const earlyAccessEventKey = Object.freeze({
    * a retried upload of the SAME proof stays one email.
    */
   submittedForReview: (proofId: string) => `ea:submitted-for-review:${proofId}`,
+  /**
+   * Keyed by the reviewed proof: one rejection mail per reviewed proof, and
+   * a later rejection of a NEWER proof mails again, because it is a new
+   * decision about a new submission.
+   */
+  paymentRejected: (reviewedProofId: string) => `ea:payment-rejected:${reviewedProofId}`,
 });
 
 // ---------------------------------------------------------------------------
@@ -156,6 +170,15 @@ const ALLOWED_KEYS: Readonly<Record<EarlyAccessEmailEvent, readonly string[]>> =
     "invoiceNumber",
     "verifiedAmountDisplay",
     "receiptNumber",
+    "statusUrl",
+  ],
+  // No reason text on purpose: operator notes are internal, and the
+  // actionable detail (what to resubmit) lives behind the login.
+  ea_payment_rejected: [
+    "customerName",
+    "cartCheckoutNumber",
+    "invoiceNumber",
+    "paymentReference",
     "statusUrl",
   ],
   ea_order_released: ["customerName", "cartCheckoutNumber", "releaseReference", "lines", "statusUrl"],
@@ -305,6 +328,25 @@ export function renderEarlyAccessOutboxEmail(
         .filter((part) => part.length > 0)
         .join("\n\n");
       return { subject: `Payment received for ${checkout}`, text };
+    }
+    // Needs attention, not cancelled. The operator could not verify the
+    // transfer against the submitted confirmation; the order still stands and
+    // the fix is a fresh submission on the authenticated page. No reason text
+    // and no operator identity leave the platform.
+    case "ea_payment_rejected": {
+      const text = [
+        `Hello ${name},`,
+        `Your payment confirmation for Early Access order ${checkout} needs attention.`,
+        "A named member of the Xenios team reviewed your submitted confirmation and could not verify the transfer from it. Your order is still reserved and nothing has been cancelled.",
+        str(payload, "invoiceNumber") ? `Invoice: ${str(payload, "invoiceNumber")}` : "",
+        str(payload, "paymentReference") ? `Payment reference: ${str(payload, "paymentReference")}` : "",
+        "Please sign in to your order page to see what is needed and submit a new payment confirmation. Your payment reference stays the same.",
+        signIn,
+        SIGNOFF,
+      ]
+        .filter((part) => part.length > 0)
+        .join("\n\n");
+      return { subject: `Action needed on Early Access order ${checkout}`, text };
     }
     case "ea_order_released": {
       const lines = renderLines(payload.lines);
