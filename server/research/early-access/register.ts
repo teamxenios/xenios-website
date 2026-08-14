@@ -39,6 +39,7 @@ import {
 } from "./durable-session";
 import {
   createEarlyAccessConfirmPaymentRoute,
+  createEarlyAccessRejectPaymentRoute,
   createEarlyAccessExternalProofRoute,
   createEarlyAccessPaymentOrderReadRoute,
   createEarlyAccessPaymentQueueRoute,
@@ -307,6 +308,8 @@ export const EARLY_ACCESS_ADMIN_PAYMENT_ORDER_PATH =
   "/api/admin/research/payments/:orderNumber";
 export const EARLY_ACCESS_ADMIN_PAYMENT_CONFIRM_PATH =
   "/api/admin/research/payments/:orderNumber/confirm";
+export const EARLY_ACCESS_ADMIN_PAYMENT_REJECT_PATH =
+  "/api/admin/research/payments/:orderNumber/reject";
 export const EARLY_ACCESS_ADMIN_SUPPLIER_ORDER_PATH =
   "/api/admin/research/supplier-orders/:orderNumber";
 export const EARLY_ACCESS_ADMIN_SUPPLIER_NOTIFICATION_PATH =
@@ -1426,6 +1429,7 @@ function registerEarlyAccessAdminApi(
 
   const queue = createEarlyAccessPaymentQueueRoute(deps);
   const confirm = createEarlyAccessConfirmPaymentRoute(deps);
+  const rejectPayment = createEarlyAccessRejectPaymentRoute(deps);
   const readSupplierOrder = createEarlyAccessSupplierOrderReadRoute(deps);
   const ensureSupplierOrder = createEarlyAccessSupplierOrderEnsureRoute(deps);
   const notification = createEarlyAccessSupplierNotificationRoute(deps);
@@ -1440,6 +1444,16 @@ function registerEarlyAccessAdminApi(
 
   app.post(EARLY_ACCESS_ADMIN_PAYMENT_CONFIRM_PATH, guard, (req: Request, res: Response) => {
     void confirm(
+      { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
+      res,
+    );
+  });
+
+  // The rejection half of the same review, behind the same guard: needs a
+  // named admin, the CURRENT proof, and a durable store; asks the customer
+  // for a fresh submission rather than deciding anything about the money.
+  app.post(EARLY_ACCESS_ADMIN_PAYMENT_REJECT_PATH, guard, (req: Request, res: Response) => {
+    void rejectPayment(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
     );
