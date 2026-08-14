@@ -3,9 +3,11 @@ import App from "./App";
 import "./index.css";
 import { initAttribution } from "./lib/attribution";
 import { initTracking, installResearchDocumentBoundary } from "./lib/tracking";
+import { registerXeniosPwa } from "./pwa/register";
 
 installResearchDocumentBoundary();
 initAttribution();
 void initTracking();
+registerXeniosPwa();
 
 createRoot(document.getElementById("root")!).render(<App />);
