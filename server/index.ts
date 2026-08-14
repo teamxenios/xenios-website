@@ -21,6 +21,8 @@ import { registerCommerceApi } from "./research/commerce/routes";
 import { buildCommerceDependencies } from "./research/commerce/production-deps";
 import { registerMemberCatalogApi } from "./research/catalog/member-catalog-routes";
 import { registerProductionAccountIdentityApi } from "./research/account-identity/production-mount";
+import { buildKrisBuyerScopedPricingFromEnv } from "./research/account-identity/kris-buyer-price-sheet-production";
+import { createOutboxLegacyOrderNotifier } from "./research/early-access/notifications/legacy-order-notifier";
 import type {
   KrisDoorCatalogSource,
   KrisDoorReleaseLedger,
@@ -329,10 +331,32 @@ if (earlyAccessPersistence.reason !== null) {
 const earlyAccessDoorSources: {
   current: { catalog: KrisDoorCatalogSource; releases: KrisDoorReleaseLedger } | null;
 } = { current: null };
+// Buyer-scoped pricing (XENIOS_BUYER_SCOPED_PRICING = the exact profile name;
+// absent by default, so every deployment without the flag is byte-identical).
+// Composed only when the durable persistence exists, because the provider
+// resolves customers through the SAME M62 binding directory order recovery
+// reads; without it there is no entitled buyer to price. The one provider
+// instance serves BOTH the order door and the Kris Buy Now shelf below, so
+// the offered price and the authorized price cannot come from two reads.
+const buyerScopedPrices =
+  earlyAccessPersistence.orderHistory === undefined
+    ? undefined
+    : buildKrisBuyerScopedPricingFromEnv({
+        memberDirectory: earlyAccessPersistence.orderHistory.bindings,
+      });
+// Order-lifecycle mail for the legacy single-order flow, over the ONE durable
+// notification outbox. The notifier is fire-and-forget by contract and the
+// outbox itself refuses gracefully when unconfigured, so this wiring is safe
+// everywhere and mails only where the outbox actually runs.
+const legacyOrderNotifications = createOutboxLegacyOrderNotifier({
+  ...(process.env.SITE_URL ? { siteUrl: process.env.SITE_URL } : {}),
+});
 registerPrivateEarlyAccessApi(app, {
   ...earlyAccessPersistence.options,
   resolveMember: resolveActiveMemberSilently,
   requireAdmin: requireSupabaseAdmin,
+  ...(buyerScopedPrices === undefined ? {} : { buyerScopedPrices }),
+  orderNotifications: legacyOrderNotifications,
   onDoorSources: (sources) => {
     earlyAccessDoorSources.current = sources;
   },
@@ -419,6 +443,7 @@ const krisCatalogDependencies = buildKrisCatalogProductionDependencies(
           catalog: krisDoorSources.catalog,
           releases: krisDoorSources.releases,
           customers: earlyAccessPersistence.orderHistory.bindings,
+          ...(buyerScopedPrices === undefined ? {} : { buyerScopedPrices }),
         },
       }
     : {},

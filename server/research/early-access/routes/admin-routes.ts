@@ -14,6 +14,7 @@ import {
 import { decideManualPayment } from "../commerce/verification-service";
 import { describeProofAttachment } from "../commerce/proof-service";
 import type { EarlyAccessProofRecord } from "../commerce/proof-service";
+import type { EarlyAccessLegacyOrderNotifier } from "../notifications/legacy-order-notifier";
 import { applyPrivateHeaders, fail, project, readInstant, send, stampOf, type ResponsePort } from "./http";
 import { isEarlyAccessOrderNumber } from "./order-number";
 import {
@@ -67,6 +68,12 @@ export interface EarlyAccessAdminRouteDependencies {
    */
   readonly proofStorage?: EarlyAccessProofStorage;
   readonly proofId?: () => string;
+  /**
+   * Order-lifecycle mail. Optional so existing constructions keep compiling;
+   * fire-and-forget by contract, so a mail outage can never turn a committed
+   * settlement into an error.
+   */
+  readonly notifications?: EarlyAccessLegacyOrderNotifier;
 }
 
 type AdminCaller =
@@ -535,6 +542,11 @@ export function createEarlyAccessConfirmPaymentRoute(deps: EarlyAccessAdminRoute
           commissionRefusal,
         },
       });
+
+      // THE PAYMENT-CONFIRMED MAIL, after the settlement is durable and keyed
+      // by the order number (a legacy order settles at most once). The
+      // already-settled replay branches above never reach this line.
+      deps.notifications?.paymentVerified(placement, settlement);
 
       send(response, 201, { ok: true, applied: true, settlement: settlementView(settlement) });
     } catch {

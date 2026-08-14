@@ -62,6 +62,8 @@ import {
   createEarlyAccessPaymentProofRoute,
   type EarlyAccessOrderRouteDependencies,
 } from "./routes/order-routes";
+import type { BuyerScopedPricing } from "./commerce/buyer-scoped-pricing";
+import type { EarlyAccessLegacyOrderNotifier } from "./notifications/legacy-order-notifier";
 import { generateEarlyAccessOrderNumber } from "./routes/order-number";
 import {
   ConfiguredEarlyAccessAdminDirectory,
@@ -590,6 +592,21 @@ export interface EarlyAccessRegistrationOptions {
   readonly orderNumber?: () => string;
   readonly proofId?: () => string;
   /**
+   * Buyer-scoped pricing for the order door. Absent means every customer pays
+   * the founder release ledger price (the door's only historical behaviour).
+   * Provided, an entitled customer's authorized amount substitutes the ledger
+   * AMOUNT at the price check and in the written money; the release decision
+   * still solely governs whether a unit may be sold.
+   */
+  readonly buyerScopedPrices?: BuyerScopedPricing;
+  /**
+   * Order-lifecycle mail for the legacy single-order flow (placed, proof
+   * submitted, payment confirmed), over the durable notification outbox.
+   * Absent means no mail. The notifier must be fire-and-forget: mail never
+   * refuses money.
+   */
+  readonly orderNotifications?: EarlyAccessLegacyOrderNotifier;
+  /**
    * Who may accept money, resolved from the address the admin guard verified.
    * Defaults to the configured ADMIN_EMAIL as founder, which is not a widening:
    * the guard has already refused every other address.
@@ -844,6 +861,16 @@ export function registerPrivateEarlyAccessApi(
     now,
     orderNumber: options.orderNumber ?? (() => generateEarlyAccessOrderNumber()),
     proofId: options.proofId ?? (() => `eaproofid.${randomBytes(16).toString("hex")}`),
+    // Buyer-scoped pricing rides in only when the composition provides it.
+    // Undefined keeps the door ledger-priced for everyone, unchanged.
+    ...(options.buyerScopedPrices === undefined
+      ? {}
+      : { buyerScopedPrices: options.buyerScopedPrices }),
+    // Order-lifecycle mail rides the same way: absent means no mail, which is
+    // the door's only historical behaviour.
+    ...(options.orderNotifications === undefined
+      ? {}
+      : { notifications: options.orderNotifications }),
   };
 
   const placeOrder = createEarlyAccessOrderPlacementRoute(commerce);
@@ -1352,6 +1379,9 @@ export function registerPrivateEarlyAccessApi(
     // route, so one proof chain has one vocabulary.
     proofStorage: commerce.proofStorage,
     proofId: commerce.proofId,
+    // The SAME notifier instance the customer door carries, so the lifecycle
+    // mail family is one object end to end.
+    ...(commerce.notifications === undefined ? {} : { notifications: commerce.notifications }),
     guard: adminGuard,
   });
 

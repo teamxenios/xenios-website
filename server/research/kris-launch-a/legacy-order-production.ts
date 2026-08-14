@@ -38,6 +38,10 @@ import type { KrisLegacyOrderSelection } from "@shared/research/kris-launch-a/co
 import { decideEarlyAccessRelease, type EarlyAccessRelease } from "../early-access/release/founder-release";
 import type { EarlyAccessCatalogRow } from "../early-access/catalog/early-access-catalog";
 import { isSafeIdentifier } from "../early-access/commerce/input-guards";
+import {
+  resolveBuyerSheet,
+  type BuyerScopedPricing,
+} from "../early-access/commerce/buyer-scoped-pricing";
 import type { KrisLegacyOrderResolver } from "./projection";
 import type { KrisCatalogViewer } from "./routes";
 
@@ -181,6 +185,15 @@ export interface KrisLegacyOrderResolutionDeps {
   readonly releases: KrisDoorReleaseLedger;
   readonly customers: KrisMemberCustomerDirectory;
   readonly bindings: readonly KrisLegacyBindingRecord[];
+  /**
+   * The SAME buyer-scoped pricing seam the order door consults. When present
+   * and the viewer's customer resolves an entitled sheet, the offered price
+   * is the buyer's authorized amount rather than the ledger amount, so the
+   * shelf and the door cannot disagree. Absent or failing, the ledger price
+   * is offered, and `safeLegacyOrder` closes Buy Now on any mismatch with
+   * the rendered partner price exactly as before.
+   */
+  readonly buyerScopedPrices?: BuyerScopedPricing;
   readonly now?: () => number;
 }
 
@@ -212,6 +225,12 @@ export async function buildKrisLegacyOrderResolver(
 
   const nowMs = (deps.now ?? Date.now)();
   const at = new Date(nowMs);
+
+  // The buyer-scoped sheet for THIS customer, from the same seam the order
+  // door consults. null (absent, unentitled, or failed) keeps every offer at
+  // the ledger price, which safeLegacyOrder then compares against the
+  // rendered partner price exactly as before this seam existed.
+  const buyerSheet = await resolveBuyerSheet(deps.buyerScopedPrices, customerRef, nowMs);
   let rows: readonly EarlyAccessCatalogRow[];
   let releases: readonly EarlyAccessRelease[];
   try {
@@ -247,13 +266,15 @@ export async function buildKrisLegacyOrderResolver(
     ].filter((value): value is number => Number.isSafeInteger(value) && value >= EARLY_ACCESS_MIN_QUANTITY);
     if (ceilings.length === 0) continue;
     const quantityLimit = Math.min(...ceilings);
+    const scoped =
+      buyerSheet === null ? null : buyerSheet.priceFor(binding.productId, binding.variantId);
     selectionByKrisId.set(
       binding.krisId,
       Object.freeze({
         productId: binding.productId,
         variantId: binding.variantId,
-        unitPriceCents: decision.priceCents,
-        currency: decision.currency,
+        unitPriceCents: scoped?.amountCents ?? decision.priceCents,
+        currency: scoped?.currency ?? decision.currency,
         quantityLimit,
         evaluatedAt,
       }),

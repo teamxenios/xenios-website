@@ -23,7 +23,6 @@
       "Values are prefixed 'sha256:'."
     ]
   },
-
   "protectedRoutes": {
     "$comment": [
       "Every client route registered in client/src/App.tsx that is NOT under /research",
@@ -33,62 +32,259 @@
       "protected behavior is its target, not its markup."
     ],
     "pages": [
-      { "path": "/", "component": "pages/Home", "kind": "page" },
-      { "path": "/product", "component": "pages/Product", "kind": "page" },
-      { "path": "/how-it-works", "component": "pages/HowItWorks", "kind": "page" },
-      { "path": "/for-coaches", "component": "pages/ForCoaches", "kind": "page" },
-      { "path": "/for-clients", "component": "pages/ForClients", "kind": "page" },
-      { "path": "/storefront", "component": "pages/Storefront", "kind": "page" },
-      { "path": "/network", "component": "pages/Network", "kind": "page" },
-      { "path": "/ecosystem", "component": "pages/Ecosystem", "kind": "page" },
-      { "path": "/for-practitioners", "component": "pages/ForPractitioners", "kind": "page" },
-      { "path": "/for/:slug", "component": "pages/IcpPage", "kind": "page", "slugSource": "client/src/lib/content.ts#ICP_BY_SLUG" },
-      { "path": "/manifesto", "component": "pages/Manifesto", "kind": "page" },
-      { "path": "/about", "component": "pages/About", "kind": "page" },
-      { "path": "/careers", "component": "pages/Careers", "kind": "page" },
-      { "path": "/careers/:slug", "component": "pages/Careers#CareersRole", "kind": "page", "slugSource": "client/src/lib/careers.ts#CAREERS_ROLES" },
-      { "path": "/waitlist", "component": "pages/Waitlist", "kind": "page" },
-      { "path": "/contact", "component": "pages/Contact", "kind": "page" },
-      { "path": "/security", "component": "pages/Security", "kind": "page" },
-      { "path": "/compliance", "component": "pages/Compliance", "kind": "page" },
-      { "path": "/investors", "component": "pages/Investors", "kind": "page" },
-      { "path": "/press", "component": "pages/Press", "kind": "page" },
-      { "path": "/privacy", "component": "pages/Privacy", "kind": "page" },
-      { "path": "/terms", "component": "pages/Terms", "kind": "page" },
-      { "path": "/disclosures", "component": "pages/Disclosures", "kind": "page" },
-      { "path": "/early-interest", "component": "pages/EarlyInterest", "kind": "page" },
-      { "path": "/book", "component": "pages/Book", "kind": "page" },
-      { "path": "/concepts", "component": "pages/Concepts", "kind": "page" },
-      { "path": "/mvps", "component": "pages/MvpLab", "kind": "page", "family": "mvp-lab" },
-      { "path": "/admin", "component": "pages/Admin", "kind": "page", "note": "non-research admin dashboard, lazy chunk; /admin/research* is Research-owned and excluded" },
-      { "path": "*", "component": "pages/not-found", "kind": "catch-all" }
+      {
+        "path": "/",
+        "component": "pages/Home",
+        "kind": "page"
+      },
+      {
+        "path": "/product",
+        "component": "pages/Product",
+        "kind": "page"
+      },
+      {
+        "path": "/how-it-works",
+        "component": "pages/HowItWorks",
+        "kind": "page"
+      },
+      {
+        "path": "/for-coaches",
+        "component": "pages/ForCoaches",
+        "kind": "page"
+      },
+      {
+        "path": "/for-clients",
+        "component": "pages/ForClients",
+        "kind": "page"
+      },
+      {
+        "path": "/storefront",
+        "component": "pages/Storefront",
+        "kind": "page"
+      },
+      {
+        "path": "/network",
+        "component": "pages/Network",
+        "kind": "page"
+      },
+      {
+        "path": "/ecosystem",
+        "component": "pages/Ecosystem",
+        "kind": "page"
+      },
+      {
+        "path": "/for-practitioners",
+        "component": "pages/ForPractitioners",
+        "kind": "page"
+      },
+      {
+        "path": "/for/:slug",
+        "component": "pages/IcpPage",
+        "kind": "page",
+        "slugSource": "client/src/lib/content.ts#ICP_BY_SLUG"
+      },
+      {
+        "path": "/manifesto",
+        "component": "pages/Manifesto",
+        "kind": "page"
+      },
+      {
+        "path": "/about",
+        "component": "pages/About",
+        "kind": "page"
+      },
+      {
+        "path": "/careers",
+        "component": "pages/Careers",
+        "kind": "page"
+      },
+      {
+        "path": "/careers/:slug",
+        "component": "pages/Careers#CareersRole",
+        "kind": "page",
+        "slugSource": "client/src/lib/careers.ts#CAREERS_ROLES"
+      },
+      {
+        "path": "/waitlist",
+        "component": "pages/Waitlist",
+        "kind": "page"
+      },
+      {
+        "path": "/contact",
+        "component": "pages/Contact",
+        "kind": "page"
+      },
+      {
+        "path": "/security",
+        "component": "pages/Security",
+        "kind": "page"
+      },
+      {
+        "path": "/compliance",
+        "component": "pages/Compliance",
+        "kind": "page"
+      },
+      {
+        "path": "/investors",
+        "component": "pages/Investors",
+        "kind": "page"
+      },
+      {
+        "path": "/press",
+        "component": "pages/Press",
+        "kind": "page"
+      },
+      {
+        "path": "/privacy",
+        "component": "pages/Privacy",
+        "kind": "page"
+      },
+      {
+        "path": "/terms",
+        "component": "pages/Terms",
+        "kind": "page"
+      },
+      {
+        "path": "/disclosures",
+        "component": "pages/Disclosures",
+        "kind": "page"
+      },
+      {
+        "path": "/early-interest",
+        "component": "pages/EarlyInterest",
+        "kind": "page"
+      },
+      {
+        "path": "/book",
+        "component": "pages/Book",
+        "kind": "page"
+      },
+      {
+        "path": "/concepts",
+        "component": "pages/Concepts",
+        "kind": "page"
+      },
+      {
+        "path": "/mvps",
+        "component": "pages/MvpLab",
+        "kind": "page",
+        "family": "mvp-lab"
+      },
+      {
+        "path": "/admin",
+        "component": "pages/Admin",
+        "kind": "page",
+        "note": "non-research admin dashboard, lazy chunk; /admin/research* is Research-owned and excluded"
+      },
+      {
+        "path": "*",
+        "component": "pages/not-found",
+        "kind": "catch-all"
+      }
     ],
     "redirects": [
-      { "path": "/careers/innovative-product-builder", "to": "/careers/founding-senior-ai-software-engineer", "kind": "redirect" },
-      { "path": "/argos", "to": "/mvps", "kind": "redirect", "family": "argos" },
-      { "path": "/telemedicine", "to": "/product", "kind": "redirect", "note": "retired route" },
-      { "path": "/agents", "to": "/product", "kind": "redirect", "note": "retired route" },
-      { "path": "/developers", "to": "/ecosystem", "kind": "redirect", "note": "retired route" },
-      { "path": "/enterprise", "to": "/contact", "kind": "redirect", "note": "retired route" },
-      { "path": "/ontology", "to": "/product", "kind": "redirect", "note": "retired route" },
-      { "path": "/partners", "to": "/ecosystem", "kind": "redirect", "note": "retired route" },
-      { "path": "/faq", "to": "/product", "kind": "redirect", "note": "retired route" }
+      {
+        "path": "/careers/innovative-product-builder",
+        "to": "/careers/founding-senior-ai-software-engineer",
+        "kind": "redirect"
+      },
+      {
+        "path": "/argos",
+        "to": "/mvps",
+        "kind": "redirect",
+        "family": "argos"
+      },
+      {
+        "path": "/telemedicine",
+        "to": "/product",
+        "kind": "redirect",
+        "note": "retired route"
+      },
+      {
+        "path": "/agents",
+        "to": "/product",
+        "kind": "redirect",
+        "note": "retired route"
+      },
+      {
+        "path": "/developers",
+        "to": "/ecosystem",
+        "kind": "redirect",
+        "note": "retired route"
+      },
+      {
+        "path": "/enterprise",
+        "to": "/contact",
+        "kind": "redirect",
+        "note": "retired route"
+      },
+      {
+        "path": "/ontology",
+        "to": "/product",
+        "kind": "redirect",
+        "note": "retired route"
+      },
+      {
+        "path": "/partners",
+        "to": "/ecosystem",
+        "kind": "redirect",
+        "note": "retired route"
+      },
+      {
+        "path": "/faq",
+        "to": "/product",
+        "kind": "redirect",
+        "note": "retired route"
+      }
     ],
     "externalRedirects": [
-      { "path": "/kairos", "to": "https://kairos.xeniostechnology.com", "kind": "external-redirect", "family": "kairos" }
+      {
+        "path": "/kairos",
+        "to": "https://kairos.xeniostechnology.com",
+        "kind": "external-redirect",
+        "family": "kairos"
+      }
     ],
-    "productFamilyRoutesPresent": ["/mvps", "/argos", "/kairos"],
+    "productFamilyRoutesPresent": [
+      "/mvps",
+      "/argos",
+      "/kairos"
+    ],
     "productFamilyRoutesAbsent": {
       "$comment": "Verified absent from client/src/App.tsx, client/src/lib/nav.ts and client/public/sitemap.xml at baselineSha. Listed so a later reviewer does not assume the manifest forgot them.",
-      "names": ["Atlas", "Athena", "Agora", "Infinity", "Most Fit Barber"]
+      "names": [
+        "Atlas",
+        "Athena",
+        "Agora",
+        "Infinity",
+        "Most Fit Barber"
+      ]
     },
     "icpSlugs": [
-      "strength-coaches", "personal-trainers", "sports-performance", "functional-medicine",
-      "longevity-clinics", "concierge-medicine", "performance-labs", "recovery-studios",
-      "virtual-coaching", "preventive-care", "nutrition-companies", "supplement-brands",
-      "athlete-brands", "corporate-wellness", "healthcare-systems", "military",
-      "biohacking-clinics", "physical-therapists", "chiropractors", "hormone-clinics",
-      "wellness-clinics", "self-insured-employers", "elite-athletes", "creators",
+      "strength-coaches",
+      "personal-trainers",
+      "sports-performance",
+      "functional-medicine",
+      "longevity-clinics",
+      "concierge-medicine",
+      "performance-labs",
+      "recovery-studios",
+      "virtual-coaching",
+      "preventive-care",
+      "nutrition-companies",
+      "supplement-brands",
+      "athlete-brands",
+      "corporate-wellness",
+      "healthcare-systems",
+      "military",
+      "biohacking-clinics",
+      "physical-therapists",
+      "chiropractors",
+      "hormone-clinics",
+      "wellness-clinics",
+      "self-insured-employers",
+      "elite-athletes",
+      "creators",
       "sports-agencies"
     ],
     "careersSlugs": [
@@ -97,7 +293,6 @@
       "founding-coach-cohort"
     ]
   },
-
   "protectedPaths": {
     "$comment": [
       "Glob patterns for files that must not change. Evaluated as: a changed path is a",
@@ -145,7 +340,6 @@
       ]
     }
   },
-
   "allowedWriteZones": {
     "$comment": [
       "The Research and Care surfaces as they ACTUALLY exist in this repository at",
@@ -184,10 +378,14 @@
     ],
     "notPresent": {
       "$comment": "Directives sometimes name these; they do not exist at baselineSha. Creating one is a new-surface decision, not a routine Research/Care write, so it is deliberately NOT pre-approved here.",
-      "paths": ["client/src/pages/Research/", "client/src/pages/Care/", "server/api/research/", "server/api/care/"]
+      "paths": [
+        "client/src/pages/Research/",
+        "client/src/pages/Care/",
+        "server/api/research/",
+        "server/api/care/"
+      ]
     }
   },
-
   "infrastructureZones": {
     "$comment": [
       "DELIBERATE DECISION, see docs/phase2/CORE_SITE_PROTECTION.md.",
@@ -206,7 +404,6 @@
     ],
     "exactFiles": []
   },
-
   "reportedZones": {
     "$comment": [
       "DELIBERATE DECISION, see docs/phase2/CORE_SITE_PROTECTION.md.",
@@ -226,9 +423,13 @@
       "tsconfig.json excludes **/*.test.ts from `npm run check`), and it is admitted by",
       "the same rule as every other test rather than by a special case for itself."
     ],
-    "testFileSuffixes": [".test.ts", ".test.tsx", ".test.mjs", ".test.js"]
+    "testFileSuffixes": [
+      ".test.ts",
+      ".test.tsx",
+      ".test.mjs",
+      ".test.js"
+    ]
   },
-
   "permittedSeamFiles": {
     "$comment": [
       "The ONLY protected files a Research or Care candidate may touch, and only for a",
@@ -273,7 +474,6 @@
       }
     ]
   },
-
   "fileHashes": {
     "$comment": [
       "HARD TRIPWIRE. Curated highest-risk protected files: the global shell, global CSS,",
@@ -282,12 +482,24 @@
       "an unconditional FAIL, because none of these can be part of a legitimate",
       "Research or Care seam. Not the whole tree, by design: this is a tripwire for an",
       "accidental edit, not a lockfile.",
-      "Seam files are NOT hashed here; their baselines live in seamBaselineHashes."
+      "Seam files are NOT hashed here; their baselines live in seamBaselineHashes.",
+      "",
+      "2026-08-14, ROMAN_RELEASE_0_2 (PWA shell), reviewed by the lead: client/index.html",
+      "old sha256:67b9d426ed7cbb3478dd2c62bb7761bd80d62fccfde9ac96e382fee7ff68e0a6,",
+      "new sha256:28f96f887a153c6c2a945a7bd2c6861cb18d7c1e4677ac04978cac2cceed8ca5.",
+      "Three additive apple-mobile-web-app meta tags for iOS Add to Home Screen; nothing",
+      "removed or reordered. client/src/main.tsx",
+      "old sha256:66385e594f6b0dbf33c91acfdf463c3a69c11c6d3f1157a3e3363791ea5fc2fe,",
+      "new sha256:079332fa4ad708c2941f008187e67985bdd218b4dff22c049ce562e703b8fd5c.",
+      "One import plus one registerXeniosPwa() call; registration is production-only and",
+      "fail-closed (client/src/pwa/register.ts), and the worker (client/public/sw.js)",
+      "structurally never touches /api, non-GET, cross-origin, or JSON responses.",
+      "Covered by client/src/pwa/pwa.test.ts (11 tests)."
     ],
     "files": {
-      "client/index.html": "sha256:67b9d426ed7cbb3478dd2c62bb7761bd80d62fccfde9ac96e382fee7ff68e0a6",
+      "client/index.html": "sha256:28f96f887a153c6c2a945a7bd2c6861cb18d7c1e4677ac04978cac2cceed8ca5",
       "client/src/index.css": "sha256:1e751af8960e46d66448a04c61348945ca568b4b2f3e6348c8be09bec913ed3d",
-      "client/src/main.tsx": "sha256:66385e594f6b0dbf33c91acfdf463c3a69c11c6d3f1157a3e3363791ea5fc2fe",
+      "client/src/main.tsx": "sha256:079332fa4ad708c2941f008187e67985bdd218b4dff22c049ce562e703b8fd5c",
       "client/src/components/Navbar.tsx": "sha256:65f461df9c0413bbacc941ebffd75145177497fe5cf6267aae52cf4b005cf003",
       "client/src/components/Footer.tsx": "sha256:7c51c77b06c0f1ebfe9b3dbfe5ca2040d81b0dca9d386501a161fb14d4e0404c",
       "client/src/components/PageShell.tsx": "sha256:467a2ff5936b943d53609dc543a0b13a83b7e85781b830832fde02678e1bbbef",
@@ -308,7 +520,6 @@
       "vite.config.ts": "sha256:e5f8e5e64bc85bb5ed788c4412beb8b6c82b5807ce98c0e1e6dd505acb059f8e"
     }
   },
-
   "seamBaselineHashes": {
     "$comment": [
       "Baselines for the permitted seam files. A mismatch here is NOT a hard fail, because",
@@ -492,17 +703,43 @@
       "service and needs no research-wall change.) Covered by",
       "server/research/early-access-wall.test.ts and",
       "server/research/account-access-wall.test.ts. No guard weakened, no flag",
-      "changed, Care untouched."
+      "changed, Care untouched.",
+      "",
+      "2026-08-14, BUYER-SCOPED PRICING (top-right, fable/roman-platform-commerce): server/index.ts",
+      "old sha256:192e531eb695dfd08d4eb2aad55885072c822b0ef171f6b678b4a38e5c06b016,",
+      "new sha256:150b7c48a7570e4bbd0b3d49eeef5000b8130f9f4efa91f785b2aa2d6c770b0a.",
+      "PURELY ADDITIVE, verified with git diff 94bb0a5..HEAD: one import",
+      "(buildKrisBuyerScopedPricingFromEnv) and one flag-gated composition block that",
+      "builds the ONE buyer-scoped pricing provider from the existing M62 binding",
+      "directory (earlyAccessPersistence.orderHistory.bindings) and passes the SAME",
+      "instance to registerPrivateEarlyAccessApi (order door) and the Kris",
+      "legacyOrders block (Buy Now shelf). XENIOS_BUYER_SCOPED_PRICING absent (the",
+      "default) composes undefined and every code path is byte-identical to the",
+      "prior behaviour. No existing branch reordered, no guard weakened, no flag",
+      "changed, Care untouched. Covered by buyer-scoped-pricing.test.ts,",
+      "buyer-scoped-order-service.test.ts, kris-buyer-price-sheet.test.ts,",
+      "buyer-scoped-resolver.test.ts.",
+      "",
+      "2026-08-14, LEGACY ORDER LIFECYCLE MAIL (top-right, fable/roman-platform-commerce): server/index.ts",
+      "old sha256:150b7c48a7570e4bbd0b3d49eeef5000b8130f9f4efa91f785b2aa2d6c770b0a,",
+      "new sha256:d949205c1de0a8e83fcb38e42fa20dde0219e5fb0e98b80e188cb1f4c01e948d.",
+      "PURELY ADDITIVE: one import (createOutboxLegacyOrderNotifier) and one",
+      "composition block that builds the fire-and-forget legacy order notifier",
+      "over the ONE durable notification outbox and passes it to",
+      "registerPrivateEarlyAccessApi as orderNotifications. The outbox refuses",
+      "gracefully when unconfigured and the notifier swallows its own failures,",
+      "so no order, proof, or settlement path can fail on mail. No existing",
+      "branch reordered, no guard weakened, no flag changed, Care untouched.",
+      "Covered by legacy-order-notifier.test.ts."
     ],
     "files": {
       "client/src/App.tsx": "sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c",
-      "server/index.ts": "sha256:192e531eb695dfd08d4eb2aad55885072c822b0ef171f6b678b4a38e5c06b016",
+      "server/index.ts": "sha256:d949205c1de0a8e83fcb38e42fa20dde0219e5fb0e98b80e188cb1f4c01e948d",
       "server/research/index.ts": "sha256:93c6b62dd0f1e305b8eef03211c778d6539e1adc211f79e212745e6b0c42d26f",
       "server/care/index.ts": "sha256:fea8c5ad5124dacf07350818e891396ee9f234983a93be65540911c1eafd81db",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"
     }
   },
-
   "routeManifestSources": {
     "$comment": "Where protectedRoutes was read from. server/core-site-protection.test.ts cross-checks the manifest against these files so it cannot rot.",
     "router": "client/src/App.tsx",

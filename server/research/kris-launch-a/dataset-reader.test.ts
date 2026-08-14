@@ -278,3 +278,75 @@ describe("where the dataset comes from", () => {
     expect(source?.products().length).toBe(420);
   });
 });
+
+describe("private content inside a legitimate member-facing string", () => {
+  // The banned-key scan catches a private FIELD arriving in the artifact.
+  // These prove the reader also refuses private CONTENT arriving through a
+  // field members are meant to see, which is how a regenerated workbook would
+  // actually leak: an operator pasting sourcing detail into the notes column.
+  // The false-positive control is the test above this block: the real
+  // 420-row artifact must keep loading with the scan in place.
+
+  function poisoned(mutate: (product: Record<string, unknown>) => void): unknown {
+    const raw = rawArtifact() as { products: Array<Record<string, unknown>> };
+    mutate(raw.products[0]);
+    return raw;
+  }
+
+  it("refuses an operator note that carries supplier and cost detail", () => {
+    const reason = refusal(
+      poisoned((p) => {
+        p.suppliedNote = "Selected supplier: Apex Labs. Buy cost $12.40/unit.";
+      }),
+    );
+    expect(reason).toContain("private operational content");
+    expect(reason).toContain("suppliedNote");
+  });
+
+  it("refuses a poisoned display name", () => {
+    const reason = refusal(
+      poisoned((p) => {
+        p.displayName = "Alpha 10 mg (gross margin 62%)";
+      }),
+    );
+    expect(reason).toContain("private operational content");
+    expect(reason).toContain("displayName");
+  });
+
+  it("refuses a poisoned specification", () => {
+    const reason = refusal(
+      poisoned((p) => {
+        p.specification = "10 mg, sourcing rationale attached";
+      }),
+    );
+    expect(reason).toContain("private operational content");
+    expect(reason).toContain("specification");
+  });
+
+  it("refuses a poisoned price basis", () => {
+    const raw = rawArtifact() as {
+      products: Array<Record<string, unknown>>;
+      priceOverlays: Record<string, Record<string, Record<string, unknown>>>;
+    };
+    const overlay = raw.priceOverlays.KRIS_VOLUME_PARTNER;
+    const pricedId = Object.keys(overlay).find(
+      (id) => overlay[id].state === "priced",
+    ) as string;
+    overlay[pricedId].basis = "per vial (buy cost basis)";
+    const reason = refusal(raw);
+    expect(reason).toContain("private operational content");
+    expect(reason).toContain("price basis");
+  });
+
+  it("names the field but never echoes the private text", () => {
+    const reason = refusal(
+      poisoned((p) => {
+        p.suppliedNote = "Selected supplier: Apex Labs.";
+      }),
+    );
+    // The refusal is thrown at load time and may be logged; carrying the
+    // content would move the leak into the logs instead of stopping it.
+    expect(reason).not.toContain("Apex");
+    expect(reason).not.toContain("Selected supplier");
+  });
+});

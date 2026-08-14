@@ -141,6 +141,25 @@ export const KRIS_PURCHASE_MODE_LABELS: Readonly<Record<KrisPurchaseMode, string
 };
 
 /**
+ * The truthful next step for a row a buyer cannot buy.
+ *
+ * Exists ONLY for the three non-direct modes. A direct row never carries one,
+ * so this view can never interact with the purchase door: it has no price, no
+ * identity, no order entry, and nothing here is read by any order route.
+ *
+ * `request` is a concierge-request descriptor, not a route. The client renders
+ * it against the contact channel that already exists; no new server door is
+ * opened by this contract, and the subject is composed from member-safe fields
+ * that already appear on the same view.
+ */
+export interface KrisPathwayView {
+  kind: Exclude<KrisPurchaseMode, "direct_eligible">;
+  headline: string;
+  explanation: string;
+  request: { label: string; subject: string };
+}
+
+/**
  * Browser-safe entry into the existing one-product Early Access order flow.
  *
  * The catalog row cannot manufacture these identities. A server composition
@@ -188,6 +207,12 @@ export interface KrisCatalogItemView {
   legacyOrder: KrisLegacyOrderSelection | null;
   /** True only when the mode and the exact legacy-order handoff both permit Buy Now. */
   canBuyNow: boolean;
+  /**
+   * Server-decided next step for the three non-direct modes; null exactly when
+   * the mode is direct_eligible. Optional in the type so existing view
+   * constructions stay valid, but the server projection always populates it.
+   */
+  pathway?: KrisPathwayView | null;
   /**
    * The note supplied on the row, shown as given.
    *

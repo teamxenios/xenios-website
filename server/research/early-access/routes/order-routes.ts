@@ -14,6 +14,8 @@ import {
   EARLY_ACCESS_MIN_QUANTITY,
 } from "../commerce/early-access-order";
 import { carriesAnyKey, isOneOf, isSafeIdentifier } from "../commerce/input-guards";
+import { resolveBuyerSheet, type BuyerScopedPricing } from "../commerce/buyer-scoped-pricing";
+import type { EarlyAccessLegacyOrderNotifier } from "../notifications/legacy-order-notifier";
 import {
   createEarlyAccessOrder,
   isEarlyAccessIdempotencyKey,
@@ -200,6 +202,22 @@ export interface EarlyAccessOrderRouteDependencies {
   readonly referrals: EarlyAccessReferralResolver;
   readonly proofStorage: EarlyAccessProofStorage;
   readonly audit: EarlyAccessAuditSink;
+  /**
+   * Buyer-scoped pricing, when the deployment enables it. Absent means every
+   * customer pays the founder release ledger price, which is exactly the
+   * behaviour this door has always had. When present, an entitled customer's
+   * authorized amount replaces the ledger AMOUNT in the price check and in
+   * the money the service writes; the release decision itself still gates
+   * whether the unit can be sold at all.
+   */
+  readonly buyerScopedPrices?: BuyerScopedPricing;
+  /**
+   * Order-lifecycle mail, when the deployment carries it. Absent means no
+   * mail, which is this door's only historical behaviour. The notifier is
+   * fire-and-forget BY CONTRACT: it must swallow its own failures, because
+   * mail may never refuse money.
+   */
+  readonly notifications?: EarlyAccessLegacyOrderNotifier;
   /** Epoch milliseconds. */
   readonly now: () => number;
   readonly orderNumber: () => string;
@@ -539,16 +557,32 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
         return;
       }
 
+      // THE BUYER-SCOPED PRICE, when this deployment carries the seam. It is
+      // resolved through the same provider the catalog handoff prices from,
+      // for the same server-resolved customer, and any failure inside it
+      // simply restores the ledger price. It substitutes the AMOUNT only:
+      // the release decision above already said whether this unit may be
+      // sold at all.
+      const buyerSheet = await resolveBuyerSheet(
+        deps.buyerScopedPrices,
+        customer.customerRef,
+        nowMs,
+      );
+      const scopedPrice =
+        buyerSheet === null ? null : buyerSheet.priceFor(row.productId, row.variantId);
+      const authorizedUnitPriceCents = scopedPrice?.amountCents ?? decision.priceCents;
+      const authorizedCurrency = scopedPrice?.currency ?? decision.currency;
+
       // THE PRICE. The customer echoes what they were shown; the server compares
       // it against what it resolved. A moved price re-renders the unit instead of
       // charging an amount nobody agreed to.
       if (
-        decision.priceCents !== body.expectedUnitPriceCents ||
-        decision.currency !== body.expectedCurrency
+        authorizedUnitPriceCents !== body.expectedUnitPriceCents ||
+        authorizedCurrency !== body.expectedCurrency
       ) {
         refuse(response, "PRICE_CHANGED", {
-          unitPriceCents: decision.priceCents,
-          currency: decision.currency,
+          unitPriceCents: authorizedUnitPriceCents,
+          currency: authorizedCurrency,
         });
         return;
       }
@@ -605,6 +639,7 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
         orders: new StagingOrderRepository(deps.store),
         rows: projection.rows,
         releases: [...releases],
+        buyerScopedPrice: scopedPrice,
         request: {
           idempotencyKey: body.idempotencyKey,
           orderId: orderNumber,
@@ -710,6 +745,13 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
           await deps.sessionOrders.record(sessionId, placement.orderNumber);
         }
       }
+
+      // THE ORDER-RECEIVED MAIL. Fire-and-forget by contract: the notifier
+      // swallows its own failures, so a mail outage can never turn a placed
+      // order into an error. Called only on the non-replay path; a replayed
+      // placement answered above never re-mails (and the outbox event key
+      // would collapse it anyway).
+      deps.notifications?.orderPlaced(placement);
 
       send(response, 201, { ok: true, replayed: false, order: orderView(placement) });
     } catch {
@@ -1174,6 +1216,11 @@ export function createEarlyAccessPaymentProofRoute(deps: EarlyAccessOrderRouteDe
           supersededProofId: described.value.supersededProofId,
         },
       });
+
+      // THE SUBMISSION-RECEIVED MAIL, keyed by the durable proof id: a NEW
+      // proof confirms again, a retried upload of the same proof cannot
+      // double-mail. Fire-and-forget by contract; no proof metadata rides.
+      deps.notifications?.proofSubmitted(placement, proofId);
 
       // 202, and a body that can be mistaken for NEITHER a receipt NOR an
       // upload. What this route accepted is a DESCRIPTION of a proof the
