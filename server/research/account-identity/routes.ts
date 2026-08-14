@@ -13,8 +13,9 @@ import {
   requestOrderAgain,
 } from "./service";
 
-// Intentionally unmounted. Pack 09's integration owner must register this
-// beside the existing /api/research/member routes after final-base recreation.
+// Mounted only by production-mount.ts at the server composition root. The
+// registrar remains dependency-injected so tests and non-production consumers
+// cannot silently construct a second auth or persistence boundary.
 
 const STATUS: Record<AccountApiErrorCode, number> = {
   AUTH_REQUIRED: 401,
