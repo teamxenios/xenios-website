@@ -176,31 +176,37 @@ select 'B5 unknown handle|' ||
      array['eac_dddddddddddddddddddddddddddddddd'])::text)
   = 'B5 unknown handle|[]';
 
--- 9. The routines are STABLE, so neither can write.
-select 'C1 volatility|' || string_agg(p.provolatile::text, ',' order by p.proname)
-  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-  where n.nspname = 'public'
-    and p.proname in ('research_early_access_legal_bindings_for_member',
-                      'research_early_access_placements_for_customers')
+-- 9. The routines are STABLE, so neither can write. The aggregate sits in a
+--    subquery so the trailing equality compares the WHOLE labelled string;
+--    written inline, the `=` binds inside the WHERE clause and the statement
+--    errors on a text-to-boolean cast instead of asserting anything.
+select ('C1 volatility|' ||
+  (select string_agg(p.provolatile::text, ',' order by p.proname)
+     from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = 'public'
+       and p.proname in ('research_early_access_legal_bindings_for_member',
+                         'research_early_access_placements_for_customers')))
   = 'C1 volatility|s,s';
 
 -- 10. Neither anon nor authenticated may execute either routine.
-select 'C2 public roles|' || count(*)::text
-  from pg_proc p join pg_namespace n on n.oid = p.pronamespace,
-       lateral unnest(array['anon','authenticated']) as r(role)
-  where n.nspname = 'public'
-    and p.proname in ('research_early_access_legal_bindings_for_member',
-                      'research_early_access_placements_for_customers')
-    and has_function_privilege(r.role, p.oid, 'EXECUTE')
+select ('C2 public roles|' ||
+  (select count(*)::text
+     from pg_proc p join pg_namespace n on n.oid = p.pronamespace,
+          lateral unnest(array['anon','authenticated']) as r(role)
+     where n.nspname = 'public'
+       and p.proname in ('research_early_access_legal_bindings_for_member',
+                         'research_early_access_placements_for_customers')
+       and has_function_privilege(r.role, p.oid, 'EXECUTE')))
   = 'C2 public roles|0';
 
 -- 11. service_role may execute both.
-select 'C3 service_role|' || count(*)::text
-  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-  where n.nspname = 'public'
-    and p.proname in ('research_early_access_legal_bindings_for_member',
-                      'research_early_access_placements_for_customers')
-    and has_function_privilege('service_role', p.oid, 'EXECUTE')
+select ('C3 service_role|' ||
+  (select count(*)::text
+     from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = 'public'
+       and p.proname in ('research_early_access_legal_bindings_for_member',
+                         'research_early_access_placements_for_customers')
+       and has_function_privilege('service_role', p.oid, 'EXECUTE')))
   = 'C3 service_role|2';
 
 -- 12. THE BOUNDARY. service_role still has no direct SELECT on either table.
@@ -263,7 +269,19 @@ for image in "${IMAGES[@]}"; do
       || fail "${image}: M67 apply pass ${pass} failed"
     echo "  apply pass ${pass}: psql exit 0"
 
+    # The psql exit code is captured explicitly. Relying on errexit through a
+    # command-substitution assignment let a mid-suite SQL error kill the
+    # script without reaching any fail() line, and on this host that death
+    # reported exit 0: a harness that stops after pass 1 and still looks
+    # green. The ONLY success signal is the final REHEARSAL PASS banner.
+    set +e
     results="$(printf '%s\n' "$BEHAVIOUR" | run_sql rehearse 2>&1)"
+    suite_rc=$?
+    set -e
+    if [ "$suite_rc" -ne 0 ]; then
+      echo "$results" >&2
+      fail "${image}: behavioural suite errored (psql exit ${suite_rc}) after pass ${pass}"
+    fi
     if echo "$results" | grep -qv '^t$'; then
       echo "$results" >&2
       fail "${image}: behavioural suite failed after pass ${pass}"
@@ -301,17 +319,25 @@ for image in "${IMAGES[@]}"; do
     "revoke select on public.research_early_access_placements from service_role" >/dev/null
   echo "  post-condition catches a broken revoke boundary"
 
+  # A hostile execute grant on the routine itself is NOT refused: the
+  # migration states its routine ACLs declaratively (revoke from public,
+  # anon and authenticated, then grant service_role), so a re-apply RESTORES
+  # the declared boundary and then verifies it. Refusal is reserved for state
+  # the migration does not own, like the table grant above. What this control
+  # proves, with the pre-state asserted so it can never pass vacuously: the
+  # grant really took, the re-apply really succeeded, and the grant is really
+  # gone afterwards.
   docker exec "$name" psql -U postgres -d rehearse -q -c \
     "grant execute on function public.research_early_access_placements_for_customers(text[]) to anon" >/dev/null
-  set +e
-  broken="$(run_sql rehearse < "${REPO_ROOT}/${MIGRATION}" 2>&1)"
-  broken_rc=$?
-  set -e
-  [ "$broken_rc" -ne 0 ] \
-    || fail "${image}: M67 committed while anon could execute a routine"
-  echo "$broken" | grep -q "anon may execute" \
-    || fail "${image}: anon grant refused for the wrong reason: ${broken}"
-  echo "  post-condition catches an execute grant reaching a public role"
+  pre="$(docker exec "$name" psql -U postgres -d rehearse -tAc \
+    "select has_function_privilege('anon','public.research_early_access_placements_for_customers(text[])','EXECUTE')")"
+  [ "$pre" = "t" ] || fail "${image}: the hostile anon grant did not take; the control would be vacuous"
+  run_sql rehearse < "${REPO_ROOT}/${MIGRATION}" >/dev/null \
+    || fail "${image}: re-apply over a hostile anon grant must succeed by restoring the boundary"
+  post="$(docker exec "$name" psql -U postgres -d rehearse -tAc \
+    "select has_function_privilege('anon','public.research_early_access_placements_for_customers(text[])','EXECUTE')")"
+  [ "$post" = "f" ] || fail "${image}: the hostile anon grant survived a re-apply"
+  echo "  re-apply restores a hostile execute grant to the declared boundary"
 
   docker rm -f "$name" >/dev/null 2>&1 || true
   trap - EXIT
