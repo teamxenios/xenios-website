@@ -3,6 +3,7 @@ import type { KrisCatalogDetailView } from "@shared/research/kris-launch-a/contr
 import { EarlyAccessCheckoutJourney } from "../early-access/EarlyAccessCheckoutJourney";
 import type { EarlyAccessCatalogSelection } from "../early-access/EarlyAccessCatalogSection";
 import { EarlyAccessQuantitySelector } from "../early-access/EarlyAccessQuantitySelector";
+import { KrisPathwayRequest } from "./KrisPathwayRequest";
 
 /**
  * Convert only a server-approved exact Product Control handoff. The generated
@@ -71,9 +72,13 @@ export function KrisLegacyBuyNow({
     return (
       <section className="card grid min-w-0 gap-3" data-testid="kris-purchase-provider">
         <h2 className="body-l font-700">Provider workflow required</h2>
-        <p className="body-s text-ink-2">This item is never available through direct Buy Now.</p>
-        <a className="btn btn-primary w-fit" href="/research/member/metabolic-care">
-          Start Provider Workflow
+        <p className="body-s text-ink-2">
+          This item is never available through direct Buy Now. Request the provider pathway
+          and the team coordinates the required steps for this exact item.
+        </p>
+        <KrisPathwayRequest item={item} />
+        <a className="body-s underline text-ink-2 w-fit" href="/research/member/metabolic-care">
+          Browse the provider care pathways
         </a>
       </section>
     );
@@ -81,18 +86,26 @@ export function KrisLegacyBuyNow({
 
   if (item.purchaseMode === "price_pending") {
     return (
-      <section className="card grid min-w-0 gap-2" data-testid="kris-purchase-price-pending">
+      <section className="card grid min-w-0 gap-3" data-testid="kris-purchase-price-pending">
         <h2 className="body-l font-700">Price Pending</h2>
-        <p className="body-s text-ink-2">No order can start until an approved price is available.</p>
+        <p className="body-s text-ink-2">
+          No order can start until an approved price is available. Request the price and the
+          team follows up on this exact item.
+        </p>
+        <KrisPathwayRequest item={item} />
       </section>
     );
   }
 
   if (item.purchaseMode === "classification_pending") {
     return (
-      <section className="card grid min-w-0 gap-2" data-testid="kris-purchase-pending">
+      <section className="card grid min-w-0 gap-3" data-testid="kris-purchase-pending">
         <h2 className="body-l font-700">Pending Activation</h2>
-        <p className="body-s text-ink-2">This item is visible, but direct purchase is not active.</p>
+        <p className="body-s text-ink-2">
+          This item is visible, but direct purchase is not active. Register interest and the
+          team notifies you when this exact item activates.
+        </p>
+        <KrisPathwayRequest item={item} />
       </section>
     );
   }

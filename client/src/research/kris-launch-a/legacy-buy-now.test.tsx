@@ -1,9 +1,15 @@
 // @vitest-environment jsdom
 import { act } from "react";
 import { createRoot } from "react-dom/client";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { KrisCatalogDetailView } from "@shared/research/kris-launch-a/contract";
 import { KrisLegacyBuyNow, toKrisLegacyOrderSelection } from "./KrisLegacyBuyNow";
+
+// The non-direct branches now render the pathway request, which reads the
+// member token the same way the routed pages do.
+vi.mock("../core", () => ({
+  useResearch: () => ({ memberToken: "member-token" }),
+}));
 import { krisFixtureDetail, krisFixtureItems } from "./__fixtures__/krisFixtureServer";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -83,10 +89,10 @@ describe("Kris legacy single-order entry", () => {
   });
 
   it.each([
-    ["provider_workflow", "Start Provider Workflow"],
-    ["classification_pending", "Pending Activation"],
-    ["price_pending", "Price Pending"],
-  ] as const)("never renders Buy Now for %s", (mode, copy) => {
+    ["provider_workflow", "Provider workflow required", "Request provider pathway"],
+    ["classification_pending", "Pending Activation", "Register interest"],
+    ["price_pending", "Price Pending", "Request price"],
+  ] as const)("never renders Buy Now for %s", (mode, copy, requestLabel) => {
     const source =
       mode === "price_pending"
         ? krisFixtureItems().find((row) => row.purchaseMode === mode)
@@ -96,6 +102,10 @@ describe("Kris legacy single-order entry", () => {
     if (!detail) throw new Error(`${mode} detail missing`);
     const { host, unmount } = render(<KrisLegacyBuyNow item={detail} />);
     expect(host.textContent).toContain(copy);
+    // Every non-direct mode now carries a working request; none carries Buy Now.
+    expect(
+      host.querySelector('[data-testid="kris-pathway-submit"]')?.textContent,
+    ).toBe(requestLabel);
     expect(host.querySelector('[data-testid="kris-buy-now"]')).toBeNull();
     unmount();
   });
