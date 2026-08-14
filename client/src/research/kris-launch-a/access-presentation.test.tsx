@@ -1,7 +1,15 @@
 // @vitest-environment jsdom
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { act } from "react";
 import { createRoot } from "react-dom/client";
+
+// Non-direct detail pages render the pathway request, which reads the member
+// token the way the routed pages do. The purchase-control sweep still runs
+// over the result: a request action carries no purchase verb, and the sweep
+// proving that is exactly the point of this file.
+vi.mock("../core", () => ({
+  useResearch: () => ({ memberToken: "member-token" }),
+}));
 import { KRIS_CHANNELS } from "@shared/research/kris-launch-a/contract";
 import type { KrisChannel } from "@shared/research/kris-launch-a/contract";
 import { KrisCatalogCard } from "./KrisCatalogCard";
