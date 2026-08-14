@@ -246,6 +246,24 @@ export interface EarlyAccessCommerceStore {
   /** The order and its invoice land together, or neither lands. */
   commitPlacement(placement: EarlyAccessPlacement): Promise<PlacementCommit>;
   awaitingReview(): Promise<readonly EarlyAccessPlacement[]>;
+  /**
+   * Every placement whose `customerRef` is one of these handles, oldest first.
+   *
+   * The ONE read that makes a member's order history possible. Until it
+   * existed the store could find an order by its number or by an idempotency
+   * key, so a customer who no longer held the number, because they signed in
+   * on another device or cleared the session, could prove exactly who they
+   * were and still be shown nothing.
+   *
+   * IT TAKES HANDLES, NOT A MEMBER. Resolving a member to their handles is the
+   * legal binding directory's job and stays there, so this store gains no
+   * notion of accounts and cannot become a second place where ownership is
+   * decided. An empty or oversized handle list returns an empty result rather
+   * than everything.
+   */
+  placementsForCustomers(
+    customerRefs: readonly string[],
+  ): Promise<readonly EarlyAccessPlacement[]>;
 
   proofs(orderNumber: string): Promise<readonly EarlyAccessProofIntake[]>;
   /** The proof and the payment state move together. Neither implies payment. */
@@ -333,6 +351,26 @@ export class InMemoryEarlyAccessCommerceStore implements EarlyAccessCommerceStor
 
   async placementByOrderNumber(orderNumber: string): Promise<EarlyAccessPlacement | null> {
     return this.placements.get(orderNumber) ?? null;
+  }
+
+  async placementsForCustomers(
+    customerRefs: readonly string[],
+  ): Promise<readonly EarlyAccessPlacement[]> {
+    if (!Array.isArray(customerRefs) || customerRefs.length === 0) {
+      return Object.freeze([]);
+    }
+    const wanted = new Set(customerRefs.filter((ref) => typeof ref === "string" && ref !== ""));
+    if (wanted.size === 0) return Object.freeze([]);
+    return Object.freeze(
+      Array.from(this.placements.values())
+        .filter((placement) => wanted.has(placement.customerRef))
+        // Oldest first, order number breaking ties, so the list is stable.
+        .sort((a, b) =>
+          a.placedAt === b.placedAt
+            ? a.orderNumber.localeCompare(b.orderNumber)
+            : a.placedAt.localeCompare(b.placedAt),
+        ),
+    );
   }
 
   async commitPlacement(placement: EarlyAccessPlacement): Promise<PlacementCommit> {

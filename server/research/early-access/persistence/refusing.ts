@@ -81,6 +81,15 @@ export class RefusingEarlyAccessCommerceStore implements EarlyAccessCommerceStor
   async awaitingReview(): Promise<readonly EarlyAccessPlacement[]> {
     return refuse("awaitingReview");
   }
+  async placementsForCustomers(
+    _customerRefs: readonly string[],
+  ): Promise<readonly EarlyAccessPlacement[]> {
+    // Refuses rather than returning []. An unwired deployment must say it
+    // cannot answer, because an empty order history is indistinguishable from
+    // "you have no orders" and that is the wrong thing to tell a customer who
+    // just paid.
+    return refuse("placementsForCustomers");
+  }
   async proofs(_orderNumber: string): Promise<readonly EarlyAccessProofIntake[]> {
     return refuse("proofs");
   }

@@ -86,6 +86,11 @@ import {
   createContentGuideSource,
   relatedProductSkusByGuideSlug,
 } from "../evidence/content-guides";
+import {
+  withEarlyAccessOrderHistory,
+  type EarlyAccessOrderHistoryDependencies,
+  type MemberOrdersService,
+} from "../early-access/orders/member-order-history";
 
 // ---------------------------------------------------------------------------
 // Production commerce dependencies (integration lane): the three-state composition.
@@ -187,6 +192,21 @@ function serviceableStatesFrom(env: NodeJS.ProcessEnv): string[] {
 export interface CommerceWiring {
   /** Catalog records to serve. Default: the provenance-adapted legacy catalog. */
   catalogProducts?: CatalogProduct[];
+  /**
+   * The Early Access side of a member's order history, when this deployment
+   * has one.
+   *
+   * A member's Early Access orders and their member-commerce orders are the
+   * same question asked of two stores, and the browser already asks it once at
+   * GET /api/research/orders. Supplying this merges the Early Access answer
+   * into that ONE service rather than adding a second endpoint, a second page
+   * and eventually a second answer to "what did I buy".
+   *
+   * ABSENT MEANS UNCHANGED. Without it the orders service behaves exactly as
+   * it did before, so a deployment that has no Early Access persistence is not
+   * silently given a half-built history.
+   */
+  earlyAccessOrderHistory?: EarlyAccessOrderHistoryDependencies;
   resolveCartStore(): AsyncCartStore;
   resolveOrderRepository(): OrderRepository;
   resolveClaimRepository(): ClaimRepository;
@@ -954,6 +974,24 @@ function liveDependencies(
     commerceEnabled: true,
   });
 
+  // THE MEMBER'S OWN ORDERS, FROM EVERY STORE THEY BOUGHT FROM.
+  //
+  // Early Access orders are keyed on an opaque customerRef and member-commerce
+  // orders on a memberId, so before this a customer who bought through Early
+  // Access and then signed in saw an order history that was missing the order
+  // they had actually placed. The durable M62 legal binding already joins the
+  // two; the decorator resolves the member to their own handles and merges.
+  //
+  // Undecorated when the Early Access side is not wired, which is the previous
+  // behaviour exactly. It is never given a partial answer: if the Early Access
+  // read fails, the whole list fails, because half a history is
+  // indistinguishable from a complete one and would tell a customer who just
+  // paid that they had bought nothing.
+  const memberOrders: MemberOrdersService =
+    wiring.earlyAccessOrderHistory === undefined
+      ? orderService
+      : withEarlyAccessOrderHistory(orderService, wiring.earlyAccessOrderHistory);
+
   const refundService: RefundService = createRefundService({
     claims: claimRepository,
     orders: claimOrderRepository,
@@ -1204,10 +1242,13 @@ function liveDependencies(
         return { ok: true as const, order: toMemberOrderConfirmation(outcome.order) };
       },
     },
-    orders: {
-      listForMember: (memberId) => orderService.listForMember(memberId),
-      getForMember: (memberId, orderId) => orderService.getForMember(memberId, orderId),
-    },
+    // The member's orders, from both stores when Early Access is wired.
+    //
+    // The decoration is applied here rather than inside the route, so the
+    // route keeps exactly one orders dependency and cannot end up asking two
+    // sources in two places. With no Early Access wiring this is the bare
+    // service, byte for byte the previous behaviour.
+    orders: memberOrders,
     subscriptions: {
       listForMember: (memberId) => subscriptionService.listForMember(memberId),
       apply: (memberId, subscriptionId, req, asOf) =>

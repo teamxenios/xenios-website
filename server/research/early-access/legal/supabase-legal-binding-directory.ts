@@ -54,6 +54,18 @@ import {
 
 const RPC = Object.freeze({
   bindingForCustomer: "research_early_access_legal_binding_for_customer",
+  /**
+   * The inverse read, added by M67.
+   *
+   * It exists because M62 revokes every one of its tables from `service_role`
+   * as well as from the public roles, and of the routines it grants, the only
+   * bindings reader is keyed by a single `customerRef`. There was therefore no
+   * statement in this deployment that could answer "which handles are this
+   * member's", index or no index. M67 adds exactly one read-only routine for
+   * it and grants no table anything, which is the same shape M64 took when the
+   * shipping monitor needed a list read for the same reason.
+   */
+  bindingsForMember: "research_early_access_legal_bindings_for_member",
   recordBinding: "research_early_access_record_legal_binding",
   checkoutByNumber: "research_early_access_cart_checkout_for_number",
 });
@@ -69,6 +81,9 @@ const RPC = Object.freeze({
 export const FOUNDER_ATTESTATION_CHECKOUT_NUMBER = "XEC-E1703CC63BBE89E6839E24C1";
 
 const EAC_HANDLE = /^eac_[a-f0-9]{32}$/;
+
+/** One frozen empty list, so no caller can be handed a mutable array. */
+const EMPTY_REFS: readonly string[] = Object.freeze([]);
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -223,6 +238,51 @@ export class SupabaseEarlyAccessLegalBindingDirectory
     if (!resolution.ok) return false;
 
     return resolution.binding.memberId === memberId;
+  }
+
+  /**
+   * Every handle this member is bound to, primary and aliases, sorted.
+   *
+   * FAIL CLOSED AT EVERY STEP. A malformed member id never reaches the
+   * database. A row whose shape is not exactly what M62 stores is DROPPED
+   * rather than repaired, because a repaired handle here would attach one
+   * person's orders to another person's account. A routine that is absent,
+   * unreadable or throwing yields an EMPTY list, never a partial one and never
+   * a wider one.
+   *
+   * THIS METHOD DOES NOT DECIDE WHAT MAY BE SHOWN. It answers identity only.
+   * The caller still applies its own ownership rule to every record it finds,
+   * so a mistake here cannot silently become an authorization.
+   */
+  async customerRefsFor(memberId: string): Promise<readonly string[]> {
+    if (typeof memberId !== "string" || !UUID.test(memberId)) return EMPTY_REFS;
+
+    let raw: unknown;
+    try {
+      raw = await runEarlyAccessCall(this.query, {
+        fn: RPC.bindingsForMember,
+        args: { p_member_id: memberId },
+      });
+    } catch (error) {
+      // An unwired deployment (the routine not yet applied) must show a member
+      // NOTHING rather than fall through to some broader read. A persistence
+      // error is re-thrown so the caller can answer "unavailable" instead of
+      // rendering an empty history that looks like "you have no orders".
+      if (error instanceof EarlyAccessPersistenceError) throw error;
+      return EMPTY_REFS;
+    }
+
+    if (!Array.isArray(raw)) return EMPTY_REFS;
+
+    const refs = new Set<string>();
+    for (const entry of raw) {
+      if (typeof entry !== "string") continue;
+      if (!EAC_HANDLE.test(entry)) continue;
+      refs.add(entry);
+    }
+    // Sorted so two calls against an unchanged database return an identical
+    // list, which is what makes the order history above it deterministic.
+    return Object.freeze(Array.from(refs).sort());
   }
 
   /** The `customerRef` recorded on the checkout, or null when unreadable. */
