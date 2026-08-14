@@ -15,7 +15,7 @@ afterEach(() => {
   host = null;
 });
 
-async function follow(status: "active" | "pending_activation") {
+async function follow(status: "active" | "pending_activation" | "past_due" | "paused" | "closed") {
   window.history.replaceState({}, "", "/research/member/welcome");
   host = document.createElement("div");
   document.body.appendChild(host);
@@ -44,5 +44,20 @@ describe("legacy member welcome routing", () => {
   it("sends pending members to activation", async () => {
     await follow("pending_activation");
     expect(window.location.pathname).toBe("/research/activate");
+  });
+
+  // The legacy emailed link uses the SAME status classification as sign-in
+  // and the member-area gate: past_due goes to the billing screen and
+  // paused/closed to the inactive-membership screen, never to activation.
+  it("sends past_due members to the billing screen", async () => {
+    await follow("past_due");
+    expect(window.location.pathname).toBe("/research/access-state");
+    expect(new URLSearchParams(window.location.search).get("code")).toBe("billing_past_due");
+  });
+
+  it.each(["paused", "closed"] as const)("sends %s members to the inactive-membership screen", async (status) => {
+    await follow(status);
+    expect(window.location.pathname).toBe("/research/access-state");
+    expect(new URLSearchParams(window.location.search).get("code")).toBe("membership_inactive");
   });
 });

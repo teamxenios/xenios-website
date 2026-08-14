@@ -49,6 +49,16 @@ export function isResearchActivatePath(pathname: string): boolean {
   return p === "/research/activate" || p === "/research/activate/";
 }
 
+export function isResearchAccessStatePath(pathname: string): boolean {
+  // The distinct screens for server-issued member-access denial codes
+  // (billing, inactive membership, recovery-purpose session). Their audience
+  // is exactly the visitor who is NOT an authenticated member — often in a
+  // fresh browser mid password-recovery — so the page must render in the
+  // isolated account chrome, never behind the shared review password.
+  const p = normalize(pathname);
+  return p === "/research/access-state" || p === "/research/access-state/";
+}
+
 export function isResearchApplicationStatusPath(pathname: string): boolean {
   // All three registered status aliases can carry a signed status or
   // account-claim token. Keep them in the same isolated account-access chrome.

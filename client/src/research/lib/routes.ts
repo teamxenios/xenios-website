@@ -13,6 +13,10 @@ export const ACCESS_ROUTES = {
   privacy: "/research/privacy",
   terms: "/research/terms",
   activate: "/research/activate",
+  // The distinct screens for server-issued member-access denial codes
+  // (billing, inactive membership, recovery-purpose session). The code rides
+  // in ?code=; activation_required routes to `activate` instead.
+  accessState: "/research/access-state",
   earlyAccess: "/research/early-access",
 } as const;
 

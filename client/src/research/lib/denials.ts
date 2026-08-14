@@ -218,6 +218,22 @@ const FALLBACK: Copy = {
   tone: "error",
 };
 
+// The server's active-member guard emits `billing_${state}` dynamically for
+// any non-active billing state (server/research/member-auth.ts), so codes
+// beyond billing_past_due are legitimate and expected. They all mean the same
+// thing to a member: billing needs attention. Without this family mapping they
+// would fall to the generic FALLBACK and lose that meaning.
+const BILLING_FAMILY: Copy = {
+  title: "Billing needs attention.",
+  body: "Your membership billing needs attention before this area reopens. Contact support and a person will resolve it with you.",
+  tone: "error",
+};
+
+/** True for any code in the server's dynamic billing_* denial family. */
+export function isBillingDenialCode(code: string): boolean {
+  return /^billing_[a-z0-9_]+$/.test(code);
+}
+
 /** Every code this module has copy for (exactly the frozen union). */
 export const KNOWN_DENIAL_CODES = Object.keys(DENIAL_COPY) as CommerceDenialCode[];
 
@@ -227,7 +243,9 @@ export const KNOWN_DENIAL_CODES = Object.keys(DENIAL_COPY) as CommerceDenialCode
  * copy is ours, per code, so wording stays calm and consistent.
  */
 export function denialPresentation(code: string, _message?: string): DenialPresentation {
-  const copy = (DENIAL_COPY as Record<string, Copy>)[code] ?? FALLBACK;
+  const copy =
+    (DENIAL_COPY as Record<string, Copy>)[code] ??
+    (isBillingDenialCode(code) ? BILLING_FAMILY : FALLBACK);
   return { title: copy.title, body: copy.body, tone: copy.tone };
 }
 

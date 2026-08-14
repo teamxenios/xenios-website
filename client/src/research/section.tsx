@@ -9,6 +9,7 @@ import SignIn from "./pages/SignIn";
 import ResetPassword from "./pages/ResetPassword";
 import PolicyPage from "./pages/PolicyPage";
 import { RequireMember } from "./pages/MemberArea";
+import { memberDestination } from "./lib/member-routing";
 import { ResearchLoadingState } from "./ui/kit";
 
 // xenios research: the section router (Supreme build). Canonical route flow:
@@ -25,6 +26,7 @@ import { ResearchLoadingState } from "./ui/kit";
 const Support = lazy(() => import("./pages/Support"));
 const LegalPage = lazy(() => import("./pages/LegalPage"));
 const ActivationPage = lazy(() => import("./pages/ActivationPage"));
+const MemberAccessState = lazy(() => import("./pages/MemberAccessState"));
 const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
 // The dynamic import itself sits behind the DEV flag, not just the route: a
 // top-level lazy() emits the gallery chunk even when the route is compiled
@@ -37,7 +39,11 @@ export function LegacyMemberWelcome() {
   const { member, memberChecking } = useResearch();
   if (memberChecking) return <ResearchLoadingState label="Checking your membership" />;
   if (!member) return <Redirect to="/research/sign-in" />;
-  return <Redirect to={member.status === "active" ? "/research/member" : "/research/activate"} />;
+  // One classification for every entry point: the same status routing the
+  // sign-in form and the member-area gate use (activation, billing, or
+  // inactive membership), so an old emailed link never lands a past_due or
+  // paused member on the wrong screen.
+  return <Redirect to={memberDestination(member)} />;
 }
 
 // Member deep area
@@ -259,6 +265,7 @@ export default function ResearchSection() {
           <Route path="/research/sign-in" component={SignIn} />
           <Route path="/research/reset-password" component={ResetPassword} />
           <Route path="/research/activate">{() => <L component={ActivationPage} />}</Route>
+          <Route path="/research/access-state">{() => <L component={MemberAccessState} />}</Route>
           <Route path="/research/member/welcome" component={LegacyMemberWelcome} />
           <Route path="/research/support">{() => <L component={Support} />}</Route>
           <Route path="/research/privacy">{() => <L component={LegalPage} props={{ kind: "privacy" }} />}</Route>

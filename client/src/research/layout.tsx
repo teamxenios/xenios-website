@@ -2,6 +2,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import Wordmark from "@/components/Wordmark";
 import {
+  isResearchAccessStatePath,
   isResearchActivatePath,
   isResearchApplicationStatusPath,
   isResearchResetPasswordPath,
@@ -299,6 +300,7 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
     isResearchResetPasswordPath(location) ||
     isResearchSignInPath(location) ||
     isResearchActivatePath(location) ||
+    isResearchAccessStatePath(location) ||
     isResearchApplicationStatusPath(location)
   ) {
     return <RecoveryChrome>{children}</RecoveryChrome>;

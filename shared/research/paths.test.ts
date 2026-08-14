@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  isResearchAccessStatePath,
   isResearchActivatePath,
   isResearchAdminPath,
   isResearchApplicationStatusPath,
@@ -77,6 +78,22 @@ describe("isResearchActivatePath", () => {
     expect(isResearchActivatePath("/research/activate/extra")).toBe(false);
     expect(isResearchActivatePath("/research/application-status")).toBe(false);
     expect(isResearchActivatePath("/research/%ZZ")).toBe(false);
+  });
+});
+
+describe("isResearchAccessStatePath", () => {
+  it("matches plain, case, encoded, and trailing-slash access-state routes", () => {
+    expect(isResearchAccessStatePath("/research/access-state")).toBe(true);
+    expect(isResearchAccessStatePath("/Research/Access-State")).toBe(true);
+    expect(isResearchAccessStatePath("/research/%61ccess-state")).toBe(true);
+    expect(isResearchAccessStatePath("/research/access-state/")).toBe(true);
+  });
+
+  it("fails closed for neighboring and malformed routes", () => {
+    expect(isResearchAccessStatePath("/research/access-state/extra")).toBe(false);
+    expect(isResearchAccessStatePath("/research/access")).toBe(false);
+    expect(isResearchAccessStatePath("/research/activate")).toBe(false);
+    expect(isResearchAccessStatePath("/research/%ZZ")).toBe(false);
   });
 });
 

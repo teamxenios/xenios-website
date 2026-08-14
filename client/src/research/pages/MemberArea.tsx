@@ -3,7 +3,7 @@ import { Link, Redirect, useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { PageIntro } from "../components";
 import { useResearch } from "./../core";
-import { safeResearchReturnTo } from "../lib/member-routing";
+import { memberDestination, safeResearchReturnTo } from "../lib/member-routing";
 
 // The private member area (canonical architecture): everything here requires
 // the member's own sign-in, verified server-side on every API call. The
@@ -35,9 +35,11 @@ export function RequireMember({ children }: { children: ReactNode }) {
   if (member.status !== "active") {
     // A verified former or paused member keeps access only to the privacy
     // rights surface so consent can be withdrawn. All ordinary member
-    // content remains behind active status.
+    // content remains behind active status. The redirect target is the
+    // status's own screen (activation, billing, or inactive membership),
+    // mirroring the server guard's classification.
     if (location === "/research/member/privacy") return <>{children}</>;
-    return <Redirect to="/research/activate" />;
+    return <Redirect to={memberDestination(member)} />;
   }
   return <>{children}</>;
 }

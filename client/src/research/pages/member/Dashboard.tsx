@@ -6,7 +6,7 @@ import { ResearchRouteBoundary, ResearchStatusBadge, capabilityStatusOrPending }
 import { getMemberOverview } from "../../adapters/member";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { devFixture } from "../../lib/fixtures";
-import { MEMBER_ROUTES } from "../../lib/routes";
+import { ACCESS_ROUTES, MEMBER_ROUTES } from "../../lib/routes";
 import type { MemberOverview as ServerMemberOverview } from "@shared/research/member-platform";
 
 // ---------------------------------------------------------------------------
@@ -163,6 +163,9 @@ const AREA_GROUPS: Array<{ heading: string; links: Array<{ href: string; label: 
     heading: "Products and orders",
     links: [
       { href: MEMBER_ROUTES.products, label: "Products" },
+      // The Early Access catalog/cart surface. Navigation only: that surface
+      // runs its own server-side session gate and decides its own access.
+      { href: ACCESS_ROUTES.earlyAccess, label: "Early Access" },
       { href: MEMBER_ROUTES.orders, label: "Orders" },
       { href: MEMBER_ROUTES.subscriptions, label: "Subscriptions" },
       { href: MEMBER_ROUTES.guides, label: "Guides" },
