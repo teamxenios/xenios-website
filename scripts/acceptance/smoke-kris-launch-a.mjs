@@ -80,7 +80,7 @@ const SESSION_CHECKS = [
   "catalog.profile_is_kris_volume_partner",
   "catalog.price_split_is_418_and_2",
   "catalog.purchase_mode_matrix",
-  "catalog.can_add_to_cart_agrees_with_mode",
+  "catalog.buy_now_agrees_with_mode_and_price",
   "catalog.no_private_fields",
   "agreements.required_is_configured",
 ];
@@ -451,24 +451,50 @@ async function runSession(origin, cookie) {
       );
     }
 
-    // The server writes canAddToCart out so that no caller re-derives it. If
-    // the two ever disagree, a client trusting either one is rendering a BUY
-    // NOW button the other half of the system does not authorize.
-    const disagreeing = items.filter(
-      (item) => item.canAddToCart !== (item.purchaseMode === "direct_eligible"),
-    );
-    if (disagreeing.length === 0) {
+    // The server writes canBuyNow out so that no caller re-derives it. Buy Now
+    // is an implication, not an equality: a row may offer it only when it is
+    // direct_eligible AND carries an exact legacy-order selection whose price
+    // and currency agree with the price rendered beside it; a direct_eligible
+    // row without a reviewed binding (or with a price the founder release does
+    // not currently authorize) stays closed. SMOKE_EXPECT_BUY_NOW, when set,
+    // pins the exact open count for a deployment whose founder pricing appends
+    // are live; unset, the implication alone is asserted and the count is
+    // reported.
+    const offending = items.filter((item) => {
+      if (item.canBuyNow !== true) return item.legacyOrder != null;
+      return (
+        item.purchaseMode !== "direct_eligible" ||
+        item.legacyOrder == null ||
+        item.price?.state !== "priced" ||
+        item.legacyOrder.unitPriceCents !== item.price.amountCents ||
+        item.legacyOrder.currency !== item.price.currency
+      );
+    });
+    const openCount = items.filter((item) => item.canBuyNow === true).length;
+    const expectedOpenRaw = process.env.SMOKE_EXPECT_BUY_NOW;
+    const expectedOpen =
+      typeof expectedOpenRaw === "string" && /^\d+$/.test(expectedOpenRaw.trim())
+        ? Number(expectedOpenRaw.trim())
+        : null;
+    if (offending.length > 0) {
       record(
-        "catalog.can_add_to_cart_agrees_with_mode",
-        PASS,
-        `${items.length} items, canAddToCart is true exactly for direct_eligible`,
+        "catalog.buy_now_agrees_with_mode_and_price",
+        FAIL,
+        `${offending.length} items break the Buy Now implication, first is ${offending[0].slug} ` +
+          `(mode ${offending[0].purchaseMode}, canBuyNow ${offending[0].canBuyNow})`,
+      );
+    } else if (expectedOpen !== null && openCount !== expectedOpen) {
+      record(
+        "catalog.buy_now_agrees_with_mode_and_price",
+        FAIL,
+        `implication holds but ${openCount} rows offer Buy Now, SMOKE_EXPECT_BUY_NOW pins ${expectedOpen}`,
       );
     } else {
       record(
-        "catalog.can_add_to_cart_agrees_with_mode",
-        FAIL,
-        `${disagreeing.length} items disagree, first is ${disagreeing[0].slug} ` +
-          `(mode ${disagreeing[0].purchaseMode}, canAddToCart ${disagreeing[0].canAddToCart})`,
+        "catalog.buy_now_agrees_with_mode_and_price",
+        PASS,
+        `${items.length} items, ${openCount} offer Buy Now, every one direct_eligible at the agreed price` +
+          (expectedOpen === null ? " (no pinned count)" : `, matching the pinned ${expectedOpen}`),
       );
     }
 
