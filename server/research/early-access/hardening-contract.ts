@@ -103,6 +103,31 @@ export interface EarlyAccessLegalBindingDirectory {
    * Another customer or member can never satisfy someone else's order.
    */
   ownsCheckout(memberId: string, cartCheckoutNumber: string): Promise<boolean>;
+  /**
+   * Every Early Access customer handle this member is durably bound to, primary
+   * and aliases, in a deterministic order.
+   *
+   * THE INVERSE OF `forCustomer`, AND THE REASON IT EXISTS.
+   *
+   * `forCustomer` answers "who is this handle", and `ownsCheckout` answers "is
+   * this one checkout theirs". Neither can answer "what is mine", so a member
+   * who signs in on a new device, or after clearing the continuity cookie, can
+   * prove who they are and still see nothing they bought. The durable binding
+   * already holds the join; this method is the only direction of it that was
+   * never exposed.
+   *
+   * IT RETURNS A LIST, NOT A HANDLE. A member accumulates handles over time
+   * (one per customer record, not one per human), so a single answer would
+   * silently truncate an order history rather than fail visibly.
+   *
+   * IT IS AN IDENTITY ANSWER, NOT AN AUTHORIZATION. It says which handles are
+   * this member's. It says nothing about which orders may be shown, which is
+   * the caller's rule and stays the caller's rule.
+   *
+   * An unknown, malformed or unbound member resolves to an EMPTY list. There is
+   * no path here on which not knowing becomes everyone.
+   */
+  customerRefsFor(memberId: string): Promise<readonly string[]>;
 }
 
 // ---------------------------------------------------------------------------
