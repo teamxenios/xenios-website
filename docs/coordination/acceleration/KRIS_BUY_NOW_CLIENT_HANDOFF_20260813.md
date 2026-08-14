@@ -36,9 +36,16 @@ quantity, agreements, supplier readiness, and shipping before it creates an
 order. The established downstream path remains order -> invoice/payment
 instructions -> payment proof -> named-admin confirmation -> supplier release.
 
+The legacy payment screen now records the selected proof file's metadata and
+browser-computed SHA-256 through the existing single-order proof door. File
+bytes do not enter the JSON request. The customer must explicitly choose the
+manual method used; no method is defaulted. A successful 202 remains visibly
+`under_review`, never paid, and triggers a fresh server status read.
+
 ## Validation
 
-- focused Buy Now, matrix, catalog, price/privacy and legacy-order tests: 173 pass
+- focused Buy Now, matrix, catalog, price/privacy and legacy-order tests: 175 pass
+- latest payment-proof/client journey run: 30 pass
 - TypeScript: pass
 - production build: pass
 - route uniqueness: 368 registrations / 359 call sites / 0 duplicates

@@ -1,3 +1,5 @@
+import type { EarlyAccessPaymentOptionCode } from "@shared/research/early-access-payment-options";
+
 export const EARLY_ACCESS_ORDERS_PATH = "/api/research/early-access/orders";
 
 export type EarlyAccessShipTo = Readonly<{
@@ -38,6 +40,18 @@ export type EarlyAccessInvoiceView = Readonly<{
 export type EarlyAccessOrderStatusView = Readonly<{
   order: EarlyAccessOrderView; payment: Readonly<{ state: string; paid: boolean }>;
   receipt: unknown; fulfilment: Readonly<{ released: boolean; tracking: readonly unknown[]; shippedAt: string | null }>;
+}>;
+
+export type EarlyAccessProofSubmissionView = Readonly<{
+  orderNumber: string;
+  payment: Readonly<{ state: "under_review"; paid: false; verified: false }>;
+  message: string;
+}>;
+
+export type SubmitEarlyAccessProofInput = Readonly<{
+  orderNumber: string;
+  file: Pick<File, "name" | "type" | "size" | "arrayBuffer">;
+  method: EarlyAccessPaymentOptionCode;
 }>;
 
 export type PlaceEarlyAccessOrderInput = Readonly<{
@@ -103,4 +117,67 @@ export async function loadEarlyAccessOrderStatus(
     if (!response.ok || body?.ok !== true || typeof body.order !== "object" || body.order === null) return refusal(response, body);
     return { ok: true, value: body as unknown as EarlyAccessOrderStatusView };
   } catch { return { ok: false, status: 0, code: "CONNECTION_FAILED", detail: null }; }
+}
+
+function hex(bytes: ArrayBuffer): string {
+  return Array.from(new Uint8Array(bytes), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Records the browser-selected proof's metadata and checksum through the
+ * existing legacy single-order proof door. The file bytes never enter the
+ * JSON request; the server response remains explicitly unpaid/under review.
+ */
+export async function submitEarlyAccessPaymentProof(
+  input: SubmitEarlyAccessProofInput,
+  request: typeof fetch = fetch,
+  digest: (bytes: ArrayBuffer) => Promise<ArrayBuffer> = async (bytes) =>
+    globalThis.crypto.subtle.digest("SHA-256", bytes),
+): Promise<CheckoutResult<EarlyAccessProofSubmissionView>> {
+  try {
+    const bytes = await input.file.arrayBuffer();
+    const sha256 = hex(await digest(bytes));
+    const response = await request(
+      `${EARLY_ACCESS_ORDERS_PATH}/${encodeURIComponent(input.orderNumber)}/payment-proof`,
+      {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          filename: input.file.name,
+          contentType: input.file.type,
+          byteSize: input.file.size,
+          sha256,
+          method: input.method,
+        }),
+      },
+    );
+    const body = await json(response);
+    const payment = body?.payment;
+    if (
+      response.status !== 202 ||
+      body?.ok !== true ||
+      typeof payment !== "object" ||
+      payment === null ||
+      (payment as Record<string, unknown>).state !== "under_review" ||
+      (payment as Record<string, unknown>).paid !== false ||
+      (payment as Record<string, unknown>).verified !== false
+    ) {
+      return refusal(response, body);
+    }
+    return {
+      ok: true,
+      value: {
+        orderNumber: input.orderNumber,
+        payment: { state: "under_review", paid: false, verified: false },
+        message:
+          typeof body.message === "string"
+            ? body.message
+            : "Your payment confirmation details are under review. Your order is not paid yet.",
+      },
+    };
+  } catch {
+    return { ok: false, status: 0, code: "CONNECTION_FAILED", detail: null };
+  }
 }
