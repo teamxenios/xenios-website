@@ -104,7 +104,7 @@ import {
   excludedRegulatoryHoldCount,
   heldProductNotices,
 } from "./projection";
-import { resolveVisibilityBreadth, type VisibilityEnv } from "./visibility";
+import { resolveViewerVisibilityBreadth, type VisibilityEnv } from "./visibility";
 
 /**
  * The server derived facts for one authenticated request.
@@ -116,6 +116,12 @@ import { resolveVisibilityBreadth, type VisibilityEnv } from "./visibility";
 export interface CatalogDisplayViewer {
   audience: CatalogDisplayAudience;
   email: string;
+  /**
+   * The membership status the authorizer VERIFIED, when it verified one.
+   * Optional so alternate authorizers stay valid; the breadth policy treats
+   * absence as not-active and falls back to the named-email allowlist.
+   */
+  memberStatus?: string | null;
 }
 
 /**
@@ -260,9 +266,11 @@ export function registerCatalogDisplayApi(
       res.status(401).json(CATALOG_DISPLAY_AUTH_REQUIRED_RESPONSE);
       return null;
     }
-    // The breadth is decided here, from the allowlist, against the server
-    // verified email. Nothing the browser sent participates.
-    return { viewer, breadth: resolveVisibilityBreadth(viewer.email, env) };
+    // The breadth is decided here, server side, from the viewer the
+    // authorizer verified: admin and active-member viewers see the full
+    // displayable range, everyone else falls through to the named-email
+    // allowlist. Nothing the browser sent participates.
+    return { viewer, breadth: resolveViewerVisibilityBreadth(viewer, env) };
   };
 
   app.get(CATALOG_DISPLAY_LIST_ROUTE, privateHeaders, async (req, res) => {

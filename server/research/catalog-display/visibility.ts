@@ -98,13 +98,57 @@ export function hasFullCatalogVisibility(
 }
 
 /**
- * The breadth for one viewer. This is the only function the routes call, and
- * it is total: every input resolves to one of the two closed values, and
- * anything unrecognized resolves to `standard`.
+ * The breadth for one identity via the allowlist alone. Total: every input
+ * resolves to one of the two closed values, and anything unrecognized
+ * resolves to `standard`.
  */
 export function resolveVisibilityBreadth(
   email: unknown,
   env: VisibilityEnv = process.env,
 ): CatalogVisibilityBreadth {
   return hasFullCatalogVisibility(email, env) ? "full" : "standard";
+}
+
+/**
+ * The viewer facts the breadth policy reads. `memberStatus` is optional so an
+ * authorizer that has not been taught to supply it keeps exactly the old
+ * allowlist behaviour; absence is never treated as active.
+ */
+export interface VisibilityViewer {
+  email: unknown;
+  audience?: string;
+  memberStatus?: string | null;
+}
+
+/**
+ * The breadth for one authenticated viewer, as POLICY rather than a per-email
+ * allowlist.
+ *
+ * The founder scope decision this encodes: every legitimate offering is
+ * visible to every member in good standing, each behind its honest pathway.
+ * Breadth widens WHICH RECORDS ARE LISTED and nothing else; the offer
+ * readiness state machine never reads this file, so a wider view can never
+ * become a wider purchase.
+ *
+ *   - an admin viewer sees the full displayable range;
+ *   - a member whose verified status is exactly "active" sees the full
+ *     displayable range (the production authorizer only admits active
+ *     members, and it states the status it verified rather than this module
+ *     inferring it);
+ *   - everyone else falls through to the named-email allowlist, which stays
+ *     ADDITIVE during the transition: removing it here could revoke a named
+ *     operator grant mid-flight, and retiring it is a deliberate later
+ *     release, not a side effect of this policy.
+ *
+ * `applicantType` (individual versus professional) is deliberately NOT a
+ * breadth input: the two differ in pathways and pricing, not in what they may
+ * see, and a fake differentiation here would be a policy nobody decided.
+ */
+export function resolveViewerVisibilityBreadth(
+  viewer: VisibilityViewer,
+  env: VisibilityEnv = process.env,
+): CatalogVisibilityBreadth {
+  if (viewer.audience === "admin") return "full";
+  if (viewer.memberStatus === "active") return "full";
+  return resolveVisibilityBreadth(viewer.email, env);
 }

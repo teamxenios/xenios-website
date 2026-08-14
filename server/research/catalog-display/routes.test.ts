@@ -359,13 +359,28 @@ describe("the admin audience", () => {
     }
   });
 
-  it("does not gain breadth from being an admin", async () => {
+  it("grants an admin viewer full breadth under the viewer policy", async () => {
     const { app } = buildApp({
       authorizeViewer: () => ({ audience: "admin", email: "ops@xeniostechnology.com" }),
       env,
     });
     const res = await request(app).get(LIST_URL);
-    // Breadth is the allowlist's decision, not the audience's.
+    // POLICY CHANGE, deliberate: breadth was once the allowlist's decision
+    // alone, and this test pinned that an admin gained nothing from the
+    // audience. Under the founder scope decision, admins and active members
+    // see the full displayable range. What this widens is LISTING only: the
+    // held-tier products stay excluded at any breadth (pinned by the
+    // neighbouring tests), and offer modes never read breadth at all.
+    expect(res.body.breadth).toBe("full");
+  });
+
+  it("a viewer with no verified status and no allowlist entry stays standard", async () => {
+    const { app } = buildApp({
+      authorizeViewer: () => ({ audience: "member", email: "someone@example.com" }),
+      env,
+    });
+    const res = await request(app).get(LIST_URL);
+    // Absence of a verified status is never a grant.
     expect(res.body.breadth).toBe("standard");
     expect(res.body.products).toHaveLength(30);
   });

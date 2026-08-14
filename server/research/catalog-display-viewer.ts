@@ -43,7 +43,7 @@ export async function authorizeCatalogDisplayViewer(
     if (isRecoveryPurposeSession(jwt)) return null;
     const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
     if (adminEmail && email.toLowerCase().trim() === adminEmail) {
-      return { audience: "admin", email };
+      return { audience: "admin", email, memberStatus: null };
     }
     const member =
       (await getMemberByAuthUserId(data.user.id)) ?? (await getMemberByEmail(email));
@@ -55,7 +55,9 @@ export async function authorizeCatalogDisplayViewer(
       const sponsoredB2B = String((member as Record<string, unknown>).access_basis ?? "") === "sponsored_b2b";
       if (billing && billing !== "active" && !sponsoredB2B) return null;
     }
-    return { audience: "member", email: member.email };
+    // The status is stated because THIS function verified it two checks up;
+    // the breadth policy reads the verified fact rather than re-deriving it.
+    return { audience: "member", email: member.email, memberStatus: "active" };
   } catch {
     // Fail closed: an unexpected resolution failure is an unauthenticated
     // viewer, never an escalation and never a 500.

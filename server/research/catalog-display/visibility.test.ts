@@ -11,6 +11,7 @@ import {
   fullCatalogVisibilityAllowlist,
   hasFullCatalogVisibility,
   normalizeMemberIdentity,
+  resolveViewerVisibilityBreadth,
   resolveVisibilityBreadth,
 } from "./visibility";
 
@@ -90,5 +91,57 @@ describe("full catalog visibility allowlist", () => {
     expect(normalizeMemberIdentity("  Mixed.Case@Example.COM  ")).toBe("mixed.case@example.com");
     expect(normalizeMemberIdentity(undefined)).toBe("");
     expect(normalizeMemberIdentity(123)).toBe("");
+  });
+});
+
+describe("the viewer breadth policy", () => {
+  const MEMBER = "member@example.com";
+
+  it("grants full breadth to a verified active member with no allowlist at all", () => {
+    const breadth = resolveViewerVisibilityBreadth(
+      { email: MEMBER, audience: "member", memberStatus: "active" },
+      env(),
+    );
+    expect(breadth).toBe("full");
+  });
+
+  it("grants full breadth to an admin viewer", () => {
+    expect(
+      resolveViewerVisibilityBreadth({ email: SAMUEL, audience: "admin", memberStatus: null }, env()),
+    ).toBe("full");
+  });
+
+  it("treats an ABSENT status as not active, never as a grant", () => {
+    expect(
+      resolveViewerVisibilityBreadth({ email: MEMBER, audience: "member" }, env()),
+    ).toBe("standard");
+    for (const status of [null, "", "past_due", "paused", "cancelled", "closed", "ACTIVE "]) {
+      expect(
+        resolveViewerVisibilityBreadth(
+          { email: MEMBER, audience: "member", memberStatus: status },
+          env(),
+        ),
+        JSON.stringify(status),
+      ).toBe("standard");
+    }
+  });
+
+  it("keeps the named-email allowlist additive for a non-active viewer", () => {
+    const breadth = resolveViewerVisibilityBreadth(
+      { email: SAMUEL, audience: "member", memberStatus: null },
+      env(SAMUEL),
+    );
+    expect(breadth).toBe("full");
+  });
+
+  it("never widens on browser-controllable audience strings", () => {
+    // The audience reaching this function comes from the authorizer, but the
+    // policy still refuses anything that is not the exact admin literal.
+    for (const audience of ["Admin", "ADMIN", " admin", "administrator", "member "]) {
+      expect(
+        resolveViewerVisibilityBreadth({ email: MEMBER, audience, memberStatus: null }, env()),
+        audience,
+      ).toBe("standard");
+    }
   });
 });
