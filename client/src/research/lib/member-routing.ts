@@ -44,6 +44,33 @@ export function safeResearchReturnTo(value: string | null | undefined): string |
   }
 }
 
+const ACCESS_STATE_ROOT = "/research/access-state";
+
+/**
+ * The distinct screen for a server-issued member denial code. activation
+ * already has its own canonical screen; every other coded refusal renders on
+ * the access-state page, which keys one distinct screen per code. The code is
+ * carried in the query string as transport only: it always originated
+ * server-side, and the page grants nothing (it renders explanations, so a
+ * hand-typed code can reveal or unlock nothing).
+ */
+export function denialDestination(code: string): string {
+  if (code === "activation_required") return ACTIVATION_ROOT;
+  return `${ACCESS_STATE_ROOT}?code=${encodeURIComponent(code)}`;
+}
+
+/**
+ * Route a server-verified member by their server-reported status, following
+ * the STATUS half of the server guard's classification
+ * (server/research/member-auth.ts requireActiveMember): pending_activation ->
+ * activation flow, past_due -> the billing screen, anything else non-active ->
+ * the inactive-membership screen. The status field is the server's own answer
+ * from /api/research/member/me; the client maps it to a screen and decides
+ * nothing. The guard's SECOND half (billing_state enforcement for
+ * status-active members, emitted as dynamic billing_* codes by member-content
+ * APIs) is not visible on /member/me and surfaces in place instead, via
+ * ResearchDenialNotice with the billing-family copy in lib/denials.ts.
+ */
 export function memberDestination(member: MemberInfo, requestedReturnTo?: string | null): string {
   const safeReturnTo = safeResearchReturnTo(requestedReturnTo);
   if (member.status === "active") {
@@ -51,5 +78,7 @@ export function memberDestination(member: MemberInfo, requestedReturnTo?: string
       ? safeReturnTo
       : MEMBER_ROOT;
   }
-  return ACTIVATION_ROOT;
+  if (member.status === "pending_activation") return ACTIVATION_ROOT;
+  if (member.status === "past_due") return denialDestination("billing_past_due");
+  return denialDestination("membership_inactive");
 }

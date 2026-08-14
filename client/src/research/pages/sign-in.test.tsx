@@ -36,7 +36,10 @@ import SignIn from "./SignIn";
 let root: Root | null = null;
 let container: HTMLDivElement | null = null;
 
-function context(establishMemberSession: (token: string) => Promise<MemberInfo | null>): ResearchContextValue {
+function context(
+  establishMemberSession: (token: string) => Promise<MemberInfo | null>,
+  peekMemberDenial: () => { code: string; message?: string } | null = () => null,
+): ResearchContextValue {
   return {
     gate: "locked",
     member: null,
@@ -45,6 +48,7 @@ function context(establishMemberSession: (token: string) => Promise<MemberInfo |
     memberSessionStatus: "signed_out",
     recovery: "none",
     establishMemberSession,
+    peekMemberDenial,
   } as ResearchContextValue;
 }
 
@@ -66,6 +70,7 @@ function type(selector: string, value: string) {
 async function renderSignIn(
   establishMemberSession: (token: string) => Promise<MemberInfo | null>,
   search = "",
+  peekMemberDenial?: () => { code: string; message?: string } | null,
 ) {
   window.history.replaceState(null, "", `/research/sign-in${search}`);
   container = document.createElement("div");
@@ -73,7 +78,7 @@ async function renderSignIn(
   root = createRoot(container);
   await act(async () => {
     root!.render(
-      <ResearchContext.Provider value={context(establishMemberSession)}>
+      <ResearchContext.Provider value={context(establishMemberSession, peekMemberDenial)}>
         <SignIn />
       </ResearchContext.Provider>,
     );
@@ -178,6 +183,43 @@ describe("member sign-in", () => {
     await flush();
     expect(window.location.pathname).toBe("/research/activate");
     expect(window.location.host).not.toBe("evil.example");
+  });
+
+  it("routes a coded server refusal to its distinct screen without signing the session out", async () => {
+    // The provider records the guard's machine-readable code (e.g. a
+    // recovery-purpose session refused by /member/me); sign-in routes on it.
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish, "", () => ({ code: "recovery_session" }));
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/access-state");
+    expect(new URLSearchParams(window.location.search).get("code")).toBe("recovery_session");
+    // The session survives: its remedy (finishing the reset) still needs it.
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it("routes a past_due member to the billing screen after verification", async () => {
+    const establish = vi.fn(async () => ({
+      firstName: "Avery",
+      status: "past_due",
+      applicationStatus: null,
+    }));
+    await renderSignIn(establish);
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/access-state");
+    expect(new URLSearchParams(window.location.search).get("code")).toBe("billing_past_due");
+  });
+
+  it("keeps the uncoded no-membership refusal inline and signs the local session out", async () => {
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish, "", () => null);
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(container!.querySelector('[data-testid="text-signin-error"]')?.textContent)
+      .toContain("No research membership is attached to this account.");
+    expect(supa.auth.signOut).toHaveBeenCalled();
   });
 
   it("explains that approval links are one-time account-claim links", async () => {

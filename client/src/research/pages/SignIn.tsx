@@ -4,7 +4,7 @@ import SeoHead from "@/components/SeoHead";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
-import { memberDestination, safeResearchReturnTo } from "../lib/member-routing";
+import { denialDestination, memberDestination, safeResearchReturnTo } from "../lib/member-routing";
 
 // Member sign-in (V3 sections 4.3 and 13). Auth is Supabase (same provider as
 // the rest of the site); membership itself is verified SERVER-side on every
@@ -14,7 +14,7 @@ import { memberDestination, safeResearchReturnTo } from "../lib/member-routing";
 // activation flow only (canonical access architecture).
 
 export default function SignIn() {
-  const { establishMemberSession } = useResearch();
+  const { establishMemberSession, peekMemberDenial } = useResearch();
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -57,6 +57,16 @@ export default function SignIn() {
         const returnTo = safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
         navigate(memberDestination(verifiedMember, returnTo));
       } else {
+        // The server guard may have refused with a machine-readable code
+        // (e.g. recovery_session). Route it to its distinct screen; the
+        // Supabase session is left as-is because the screen's remedy (finish
+        // the reset, settle billing) still needs it. Only the uncoded
+        // no-membership refusal signs out locally and stays inline.
+        const denial = peekMemberDenial();
+        if (denial?.code) {
+          navigate(denialDestination(denial.code));
+          return;
+        }
         const currentToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
         if (!currentToken || currentToken === submittedToken) {
           await supabase.auth.signOut({ scope: "local" });

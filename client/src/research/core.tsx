@@ -126,6 +126,13 @@ export type MemberInfo = {
 export type RecoveryState = "none" | "pending" | "link_error";
 export type MemberSessionStatus = "checking" | "authenticated" | "signed_out" | "verification_failed";
 
+// A machine-readable refusal from the server-side member verification
+// (/api/research/member/me): the guard's `code` (recovery_session, and any
+// future coded refusal) exactly as the server sent it. The client routes on
+// this code and never re-derives it; the message rides along for logging only
+// and is never rendered (lib/denials.ts owns all member-facing copy).
+export type MemberDenial = { code: string; message?: string };
+
 type ResearchContextValue = {
   gate: GateStatus;
   member: MemberInfo | null;
@@ -134,6 +141,8 @@ type ResearchContextValue = {
   memberSessionStatus: MemberSessionStatus;
   recovery: RecoveryState;
   clearRecovery: () => void;
+  memberDenial: MemberDenial | null;
+  peekMemberDenial: () => MemberDenial | null;
   establishMemberSession: (accessToken: string) => Promise<MemberInfo | null>;
   refreshMember: () => Promise<void>;
   signOutMember: () => Promise<void>;
@@ -171,6 +180,8 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   const memberChecking = memberSessionStatus === "checking";
   const memberRef = useRef<MemberInfo | null>(null);
   const memberTokenRef = useRef<string | null>(null);
+  const [memberDenial, setMemberDenial] = useState<MemberDenial | null>(null);
+  const memberDenialRef = useRef<MemberDenial | null>(null);
   const verificationGenerationRef = useRef(0);
   const authEventGenerationRef = useRef(0);
   const catalogGenerationRef = useRef(0);
@@ -200,6 +211,15 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     setRecovery("none");
   }, []);
 
+  // The denial from the LATEST verification attempt, kept in both a ref (for
+  // same-tick reads inside submit handlers, where React state would be stale)
+  // and state (for renders). Set only by verification outcomes.
+  const noteMemberDenial = useCallback((denial: MemberDenial | null) => {
+    memberDenialRef.current = denial;
+    setMemberDenial(denial);
+  }, []);
+  const peekMemberDenial = useCallback(() => memberDenialRef.current, []);
+
   const clearMemberState = useCallback((status: Exclude<MemberSessionStatus, "checking" | "authenticated">) => {
     verificationGenerationRef.current += 1;
     catalogGenerationRef.current += 1;
@@ -226,6 +246,11 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     if (existing?.token === accessToken) return existing.promise;
 
     const generation = ++verificationGenerationRef.current;
+    // A fresh attempt owns the denial slot from here on: clearing at attempt
+    // start means a denial recorded by an EARLIER attempt can never be read
+    // as this attempt's outcome (the attempt's own result sets it below, and
+    // a superseded attempt leaves it null rather than stale).
+    noteMemberDenial(null);
     setMemberSessionStatus("checking");
     const promise = (async (): Promise<MemberInfo | null> => {
       try {
@@ -241,6 +266,7 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
           catalogGenerationRef.current += 1;
           memberRef.current = verifiedMember;
           memberTokenRef.current = accessToken;
+          noteMemberDenial(null);
           setMember(verifiedMember);
           setMemberToken(accessToken);
           setMemberSessionStatus("authenticated");
@@ -248,10 +274,23 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
           setCatalog(null);
           return verifiedMember;
         }
+        // Preserve the server guard's machine-readable refusal (e.g.
+        // recovery_session) so callers can route to the matching screen. A
+        // 401 or an uncoded 403 stays a plain verification failure.
+        const deniedCode =
+          res.status === 403 && body && body.ok === false && typeof body.code === "string"
+            ? (body.code as string)
+            : null;
+        noteMemberDenial(
+          deniedCode
+            ? { code: deniedCode, message: typeof body.message === "string" ? body.message : undefined }
+            : null,
+        );
         clearMemberState("verification_failed");
         return null;
       } catch {
         if (generation === verificationGenerationRef.current) {
+          noteMemberDenial(null);
           clearMemberState("verification_failed");
         }
         return null;
@@ -264,7 +303,7 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
       }
     });
     return promise;
-  }, [clearMemberState]);
+  }, [clearMemberState, noteMemberDenial]);
 
   const refreshMember = useCallback(async () => {
     if (recoveryRef.current === "pending") {
@@ -506,6 +545,8 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     memberSessionStatus,
     recovery,
     clearRecovery,
+    memberDenial,
+    peekMemberDenial,
     establishMemberSession,
     refreshMember,
     signOutMember,

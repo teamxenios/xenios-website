@@ -80,7 +80,7 @@ const dismissStyle: React.CSSProperties = {
   padding: "0.25rem",
 };
 
-export function PwaLifecycle(): JSX.Element | null {
+export function PwaLifecycle(): React.JSX.Element | null {
   const [updateRegistration, setUpdateRegistration] =
     useState<ServiceWorkerRegistration | null>(null);
   const [installPrompt, setInstallPrompt] =

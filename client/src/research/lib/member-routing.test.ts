@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { memberDestination, safeResearchReturnTo } from "./member-routing";
+import { denialDestination, memberDestination, safeResearchReturnTo } from "./member-routing";
 
 const active = { firstName: "Avery", status: "active", applicationStatus: "active" };
 const pending = { firstName: "Avery", status: "pending_activation", applicationStatus: "approved" };
+const pastDue = { firstName: "Avery", status: "past_due", applicationStatus: null };
+const paused = { firstName: "Avery", status: "paused", applicationStatus: null };
 
 describe("safeResearchReturnTo", () => {
   it.each([
@@ -42,5 +44,38 @@ describe("memberDestination", () => {
 
   it("never lets a non-active member bypass activation", () => {
     expect(memberDestination(pending, "/research/member/security")).toBe("/research/activate");
+  });
+
+  // The non-active statuses mirror the server guard's classification
+  // (server/research/member-auth.ts requireActiveMember): pending_activation
+  // is the activation flow, past_due is the billing screen, anything else
+  // non-active is the inactive-membership screen. returnTo never overrides
+  // any of them.
+  it("routes a past_due member to the billing screen, never into member content", () => {
+    expect(memberDestination(pastDue)).toBe("/research/access-state?code=billing_past_due");
+    expect(memberDestination(pastDue, "/research/member/security"))
+      .toBe("/research/access-state?code=billing_past_due");
+  });
+
+  it("routes any other non-active member to the inactive-membership screen", () => {
+    expect(memberDestination(paused)).toBe("/research/access-state?code=membership_inactive");
+    expect(memberDestination({ ...paused, status: "closed" }))
+      .toBe("/research/access-state?code=membership_inactive");
+  });
+});
+
+describe("denialDestination", () => {
+  it("sends activation_required to the canonical activation flow, not a duplicate screen", () => {
+    expect(denialDestination("activation_required")).toBe("/research/activate");
+  });
+
+  it("sends every other coded refusal to its access-state screen with the code as transport", () => {
+    expect(denialDestination("recovery_session")).toBe("/research/access-state?code=recovery_session");
+    expect(denialDestination("billing_past_due")).toBe("/research/access-state?code=billing_past_due");
+    expect(denialDestination("membership_inactive")).toBe("/research/access-state?code=membership_inactive");
+  });
+
+  it("URL-encodes the code so a hostile code cannot break out of the query string", () => {
+    expect(denialDestination("a&b=c")).toBe("/research/access-state?code=a%26b%3Dc");
   });
 });
