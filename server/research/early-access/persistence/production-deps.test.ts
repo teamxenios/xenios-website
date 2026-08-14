@@ -21,7 +21,6 @@ import { SupabasePrivateAccessSessionRepository } from "../private-access-sessio
 import { SupabaseEarlyAccessCartStore } from "../cart/supabase-store";
 import { SupabaseProofSubmissionStore } from "../proof/supabase-submission-store";
 import { SupabaseEarlyAccessLegalBindingDirectory } from "../legal/supabase-legal-binding-directory";
-import { SupabaseEarlyAccessMemberOrderHistory } from "../member-order-history";
 
 const OWNER = "3f2f4bde-6f0f-4a11-9a3e-8c7d5b2a1e90";
 
@@ -148,9 +147,6 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
     );
     expect(build.mode).toBe("durable");
     expect(build.options.store).toBeInstanceOf(SupabaseEarlyAccessCommerceStore);
-    expect(build.options.memberOrderHistory).toBeInstanceOf(
-      SupabaseEarlyAccessMemberOrderHistory,
-    );
     expect(build.options.customers).toBeInstanceOf(SupabaseEarlyAccessCustomerRepository);
     expect(build.options.releases).toBeInstanceOf(SupabaseEarlyAccessReleaseLedger);
     expect(build.options.proofStorage).toBeInstanceOf(SupabaseEarlyAccessProofStorage);

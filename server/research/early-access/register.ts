@@ -179,10 +179,6 @@ import {
   InMemoryPendingVerificationQueue,
   registerEarlyAccessOpsRoutes,
 } from "./routes/ops-routes";
-import {
-  registerEarlyAccessMemberOrderHistoryRoutes,
-  type EarlyAccessMemberOrderHistory,
-} from "./member-order-history";
 
 // Registration seam for the Private Early Access gate.
 //
@@ -609,12 +605,6 @@ export interface EarlyAccessRegistrationOptions {
    * else; absent, every unit blocks on AUDIENCE_NOT_PERMITTED.
    */
   readonly resolveMember?: (request: Request) => Promise<MemberRow | null>;
-  /**
-   * Read-only Roman/member recovery for durable legacy single-order history.
-   * The reader owns the member -> M62 customer refs -> placement scope. There
-   * is no in-memory fallback and no browser-supplied customer handle.
-   */
-  readonly memberOrderHistory?: EarlyAccessMemberOrderHistory;
   /** The authenticated admin identity, read from the request the guard passed. */
   readonly adminActor?: (request: Request) => string | null;
 }
@@ -793,12 +783,6 @@ export function registerPrivateEarlyAccessApi(
   };
   const catalogRoute = createEarlyAccessCatalogRoute(routeDependencies);
   const resolveMember = options.resolveMember ?? (async () => null);
-  if (options.memberOrderHistory !== undefined) {
-    registerEarlyAccessMemberOrderHistoryRoutes(app, {
-      resolveMember,
-      history: options.memberOrderHistory,
-    });
-  }
   app.get(EARLY_ACCESS_CATALOG_PATH, (req: Request, res: Response) => {
     void Promise.all([
       resolveMember(req),

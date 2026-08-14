@@ -51,7 +51,6 @@ import {
   SupabaseUnitHoldRegistry,
 } from "./ops-stores";
 import type { EarlyAccessPersistenceCall } from "./executor";
-import { SupabaseEarlyAccessMemberOrderHistory } from "../member-order-history";
 
 /**
  * The Early Access persistence composition root.
@@ -232,7 +231,6 @@ export function buildEarlyAccessPersistence(
       query: run,
       reservationTtlMinutes: readReservationTtlMinutes(env),
     }),
-    memberOrderHistory: new SupabaseEarlyAccessMemberOrderHistory(run),
     audit: new SupabaseEarlyAccessAuditSink(run),
     customers: new SupabaseEarlyAccessCustomerRepository(run),
     sessionBindings: new SupabaseSessionBindingStore(run),

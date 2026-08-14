@@ -339,14 +339,6 @@ export function registerResearchApi(app: Express) {
   const EARLY_ACCESS_ORDER_WRITE = new RegExp(
     `^/early-access/orders/(?:${ORDER_NUMBER_SEGMENT})/payment-proof$`,
   );
-  // Canonical-member recovery for legacy single orders. Unlike the customer
-  // order doors above, these two reads are NOT admitted on an Early Access
-  // cookie: the downstream handler requires the canonical member JWT, derives
-  // memberId server-side, then scopes through M62. Exact and anchored so no
-  // neighbouring future route inherits the exemption.
-  const EARLY_ACCESS_MEMBER_ORDER_READ = new RegExp(
-    `^/early-access/member-orders(?:/(?:${ORDER_NUMBER_SEGMENT}))?$`,
-  );
 
   // THE CART DOORS, ADMITTED ON THE EARLY ACCESS SESSION ALONE.
   //
@@ -397,7 +389,6 @@ export function registerResearchApi(app: Express) {
   ]);
   const downstreamMemberGuardedRead = (path: string): boolean =>
     DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(path) ||
-    EARLY_ACCESS_MEMBER_ORDER_READ.test(path) ||
     path === "/member/products" ||
     path.startsWith("/member/products/") ||
     path.startsWith("/pricing/");
