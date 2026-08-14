@@ -1,5 +1,14 @@
 # Roman Buyer Activation Handoff
 
+> **SUPERSEDED at the KRIS_LAUNCH_A freeze.** The activation path of record is
+> the pack02 sponsored B2B claim
+> (`docs/pack02-roman-b2b-sponsored-claim-runbook.md`, apply set in
+> `docs/research-launch/KRIS_LAUNCH_A_RELEASE_EVIDENCE.md`). Do NOT promote
+> `supabase/pack02-candidates/20260813_research_business_buyer_bridge.sql`;
+> this lane's modules remain in-tree, unmounted, as the migration seam for a
+> later organization model. The founder-confirmed identity facts below remain
+> accurate.
+
 ## Decision
 
 Fast Path C: a temporary, collision-free B2B bridge. It reuses Supabase Auth and Early Access customer/order scope, and creates no personal membership application. It does not execute the older Pack02 `research_organizations` candidate.

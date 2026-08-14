@@ -1,9 +1,13 @@
 # KRIS_LAUNCH_A release evidence
 
 The single release record for the Roman Health Early Access launch
-(claude/kris-commerce-release). The frozen release is THE COMMIT THAT CARRIES
-THIS FILE, tagged `KRIS_LAUNCH_A`. Assembled by the sole release integrator on
-2026-08-13 evening.
+(claude/kris-commerce-release). The frozen release is
+`322a1636063a6a95f66ea11e15664651a94d5ac3`, tagged `KRIS_LAUNCH_A` (annotated
+tag dereferences to exactly that commit), deployed live as Render deploy
+`dep-d9v89npt0dsc73cgvo8g` on 2026-08-14T03:01Z with the deployed commit
+verified equal to the frozen SHA through the Render API. Assembled by the
+release integrators on 2026-08-13 evening; this file's post-freeze revision
+records the gate and smoke results and changes no runtime behaviour.
 
 ## Deployment target (verified live via the Render API, read-only)
 
@@ -101,17 +105,51 @@ Until step 3 lands, member order-history reads refuse (503 fail-closed); until s
 completes and a reviewed Buy Now binding row exists, no Buy Now renders. Both are the
 designed fail-closed states, not defects.
 
-## First Buy Now binding (founder-reviewed data change, no code change)
+## Reviewed Buy Now bindings (founder-reviewed data, frozen with this release)
 
-Verified association for the first row: `kli_ab4498834d24d715da48` (AOD-9604 5 mg,
-KRIS_VOLUME_PARTNER $24.64 per vial, box of 10) -> `PEX-012` / `R360-AOD9604-5MG-VIAL`
-(shared/research/catalog/peptide-catalog.ts carries the 5 mg size; the release's own tests
-pin this association). Add it to kris-legacy-bindings.json (or XENIOS_KRIS_LEGACY_BINDINGS)
-once the founder release ledger prices that unit for the Roman relationship; on any price
-disagreement Buy Now stays hidden by design.
+`server/research/kris-launch-a/data/kris-legacy-bindings.json` carries 21 reviewed
+associations, every one a `ruo_research` (direct-eligible) Kris row bound to a production
+Product Control product/variant UUID pair. Validated at freeze: all 21 krisIds exist in the
+420-item artifact, no duplicate on either side, loader accepts the file. The bindings are
+IDENTITY ONLY. Whether any row actually renders BUY NOW is decided per request by the order
+door's own catalog projection, founder release ledger and M62 binding directory: the unit
+must be released, the ledger price must equal the KRIS_VOLUME_PARTNER price exactly, and the
+member must hold a bound Early Access customer. Any disagreement hides the control; the door
+revalidates everything again at placement. `XENIOS_KRIS_LEGACY_BINDINGS` remains the
+post-freeze channel for founder-approved additions without a code change.
 
-## Gate results at the frozen commit
+## Gate results at the frozen commit (run by the release owner, 2026-08-13 late evening)
 
-Recorded in the final release report delivered with this freeze (typecheck, focused suites,
-route uniqueness, migration DAG 28 nodes, core-site protection, production build), plus the
-post-deploy smoke output against the deployed SHA.
+- TypeScript: `npx tsc` clean (exit 0), and `npm run check:release-control-plane` clean.
+- Full suite: 605 files passed (4 skipped), 9225 tests passed (43 skipped), 0 failures,
+  run against the frozen tree. (An earlier run recorded 2 failures caused by commits
+  landing mid-run; the quiescent rerun is clean.)
+- Focused release surfaces at this tree: kris-launch-a server 149 tests / 10 files (incl.
+  10 new legacy-order-production tests), client research suites 794 tests / 61 files
+  (Buy Now, rewritten access-presentation, checkout journey, proof upload), core-site
+  protection 32/32 (seam baselines updated with reviewed diff notes, negative controls
+  intact), release control plane 35 passed 1 skipped (M67 + 359/368 census pins).
+- Route uniqueness: 368 static registrations / 359 call sites / 0 duplicates (measured).
+- Migration DAG: 28 nodes accepted, canonical checksums verified; managed-migrations delta
+  since 67a99b0 is exactly M67; MIGRATIONS.md ledger row 67 present.
+- Production build: PASS (client 24.9s, server bundle dist/index.cjs 1.3mb).
+- Buy Now bindings: 21 records validated (loader-accepted, all present in the 420 artifact,
+  all ruo_research, no duplicate on either side).
+- Ancestry: 541b1049 (live production) is an ancestor of this commit (fast-forward deploy);
+  499d77c is absent; no masterOfferingCatalog mount; working tree clean at freeze.
+
+## Post-deploy smoke (production origin, 2026-08-14T03:0xZ, read-only)
+
+`node scripts/acceptance/smoke-kris-launch-a.mjs --origin https://xenios-website.onrender.com`
+against the live deploy of the frozen SHA: **PASS 7, FAIL 0, UNVERIFIED 8** of 15 declared
+(all 15 recorded). Anonymous tier fully green: health up; SPA catch-all probe; the Kris
+catalog list and detail both refused anonymously (the list by the wall's bearer-only
+admission, the detail by the door) with zero price/data leakage on the raw bytes; the
+pre-existing cart grants nothing anonymously (SESSION_REQUIRED; two check expectations were
+corrected post-freeze to state exactly what this deployment proves, see the script's
+comments). The 8 UNVERIFIED: deployed-commit equality was established OUT OF BAND through
+the Render API (deploy dep-d9v89npt0dsc73cgvo8g, commit == frozen SHA, status live), and the
+7 signed-in-tier checks (420/418/2 counts, KRIS_VOLUME_PARTNER profile, 143/243/32/2 matrix,
+Buy Now implication, private-field scan, agreement config) require Kristopher's claimed
+session, which cannot exist until the founder-run database apply set and claim complete.
+Re-run the smoke with SMOKE_SESSION_COOKIE after the claim to close them.

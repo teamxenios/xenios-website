@@ -222,8 +222,24 @@ async function runAnonymous(origin, expectSha) {
   } else {
     const refusedCodes = ["kris_catalog_auth_required", "kris_catalog_forbidden", "kris_catalog_disabled"];
     const code = anon.json?.code;
+    // The research wall's own refusal is admitted as a refusal too: the Kris
+    // paths are a bearer-only admission through the wall, so a caller with no
+    // Authorization header is refused by the wall BEFORE the door and never
+    // learns the door's shape. Both answers are fail-closed JSON 401s; what
+    // this check exists to catch is data, an SPA page, or an enabled answer.
+    const wallRefusal =
+      anon.status === 401 &&
+      anon.json?.ok === false &&
+      typeof anon.json?.message === "string" &&
+      /access required/i.test(anon.json.message);
     if (anon.json?.ok === false && refusedCodes.includes(code)) {
       record("catalog.anonymous_refused", PASS, `${anon.status} ${code}`);
+    } else if (wallRefusal) {
+      record(
+        "catalog.anonymous_refused",
+        PASS,
+        `401 wall refusal ("Access required."), bearer-only admission refused before the door`,
+      );
     } else if (anon.json?.ok === true) {
       record(
         "catalog.anonymous_refused",
@@ -278,6 +294,16 @@ async function runAnonymous(origin, expectSha) {
     record("cart.disabled", UNVERIFIED, `no response: ${cart.error}`);
   } else if (cart.json?.ok === false && cart.json.code === "CART_DISABLED") {
     record("cart.disabled", PASS, "404 CART_DISABLED, the flag is off and the door says so");
+  } else if (cart.json?.ok === false && cart.json.code === "SESSION_REQUIRED") {
+    // The cart pre-dates Launch A in this production and is session-gated by
+    // its own M62-protected doors. What Launch A must prove is narrower than
+    // "the flag is off": the cart grants NOTHING anonymously, and the Roman
+    // flow does not route through it. SESSION_REQUIRED proves the former.
+    record(
+      "cart.disabled",
+      PASS,
+      "401 SESSION_REQUIRED: the pre-existing cart is session-gated and grants nothing anonymously",
+    );
   } else if (cart.json?.ok === true) {
     record("cart.disabled", FAIL, "the cart capability route answered as ENABLED");
   } else if (catchAllSwallowsApi && looksLikeHtml(cart)) {

@@ -1,0 +1,422 @@
+[
+  {
+    "releaseId": "rel_kris_a_r360_aod9604_5mg_vial",
+    "portal": "private_early_access",
+    "productId": "82fc4ded-ab60-46a1-9a5f-ccd9deb7aaa4",
+    "variantId": "02c84407-cc6f-480f-82dc-a77de334f2a0",
+    "status": "approved",
+    "approvedPriceCents": 2464,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "3d1530c30f777d7c211cce81ee0c0298fcacbfb6961749a3dc504225f8d6fff4",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_bpc157_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "36feeb53-ac32-48f0-8d70-f4a78d9d6c05",
+    "variantId": "bb5b7ac5-3861-4074-90cf-bfba0da28a09",
+    "status": "approved",
+    "approvedPriceCents": 2090,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "add4292a9eb64fe9b98c3ba2248e1ea7c040598fade226bd8ec919f22ceb097f",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_bpc157_5mg_vial",
+    "portal": "private_early_access",
+    "productId": "36feeb53-ac32-48f0-8d70-f4a78d9d6c05",
+    "variantId": "a47e6ed6-21b5-457e-92fe-63088ff008ce",
+    "status": "approved",
+    "approvedPriceCents": 1474,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "64bbd5af37b3e3d3ed5fd71c197500cc7f678ab7973478f5c1b37e0c15cb6ba3",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_dsip_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "cabf40e2-e2f0-4af3-b9b9-9e9a209d4de6",
+    "variantId": "56c72416-dab6-4ec0-a417-267d3af53e9c",
+    "status": "approved",
+    "approvedPriceCents": 3080,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "6c154ff613eb862883bd9fc9650d5e96b63fc195f22b0e23a06efb52714dc1f5",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_ghkcu_100mg_vial",
+    "portal": "private_early_access",
+    "productId": "55552bd3-1390-4741-a6f2-0d5fe808de59",
+    "variantId": "0e456fd4-371b-427d-a529-6482ca6b35b3",
+    "status": "approved",
+    "approvedPriceCents": 1848,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "e70e6903a782fbacc07047083582f28d309ed29454424596dd19c2d26670bd22",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_ghkcu_50mg_vial",
+    "portal": "private_early_access",
+    "productId": "55552bd3-1390-4741-a6f2-0d5fe808de59",
+    "variantId": "390ef93f-f215-4cdf-9b7b-c537af94d4ff",
+    "status": "approved",
+    "approvedPriceCents": 990,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "0462d9e8bf73bab330cca2b8e63abd4c6155fb444340972cab2814c1ed0cb818",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_glutathione_500mg_vial",
+    "portal": "private_early_access",
+    "productId": "873dfc2e-2141-4eef-ac39-5b2c029f83f9",
+    "variantId": "5282a958-a390-4436-b8b0-bcf862ac744d",
+    "status": "approved",
+    "approvedPriceCents": 1969,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "a4ff6d327d0931fe2011dfe024fd2c156d4b7b4cf0ed9712a1d8d089a949990e",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_hexarelin_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "56547ff3-01c0-40fc-93e7-4730fa3c6322",
+    "variantId": "040560a6-f7e0-42e1-a8db-723212f1c3f0",
+    "status": "approved",
+    "approvedPriceCents": 3696,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "649df622210879588b0064fd0dd5c912946e1102ca38a1bf9aa13dfb32b5fb3b",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_ipamorelin_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "6db119f8-c761-4db3-bfd3-271bdb92e93b",
+    "variantId": "7e134db7-29f2-4efc-acc3-3025cb0bac99",
+    "status": "approved",
+    "approvedPriceCents": 2090,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "37a108c7b33e38ba00a130dfe431b5d34d39d543782b6691e5291cfeeb31ec40",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_kisspeptin10_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "cbe82e4c-c9ad-490d-9efd-fde271252894",
+    "variantId": "6de7b7d4-71b7-4aad-ac9b-f2bfc9023fc7",
+    "status": "approved",
+    "approvedPriceCents": 3080,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "170da456cabc8aa4aa811b2d5178a025489600d3334704ede86c8956c597bbcc",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_kpv_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "b3074c79-d04c-4272-8d98-c535a97f2362",
+    "variantId": "b9cba238-f1e4-45f2-ae8b-4071f2d0f942",
+    "status": "approved",
+    "approvedPriceCents": 2222,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "fa3e0160fae2ff10ca60a57ba108be9ebcd237b06bc35384688a5124a881fd27",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_motsc_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "b4435d54-abef-497c-a403-5ba861c8ab1f",
+    "variantId": "4302123c-4f29-4259-ace4-15da51f48673",
+    "status": "approved",
+    "approvedPriceCents": 1969,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "6b547e22386ee7df119cf31b1457512b9ddb38dc8cdc6a1dcaed1ac947b22f0c",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_nad_1000mg_vial",
+    "portal": "private_early_access",
+    "productId": "2b257d42-85b7-4b03-ab2a-d70b8f1c042c",
+    "variantId": "9ed65dee-1f44-43ae-835c-39762777f2bf",
+    "status": "approved",
+    "approvedPriceCents": 4433,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "c1b0e577b0d0b1e2126d6772ebf9d44123817b5bedf5444df2ab27719569b9fc",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_nad_500mg_vial",
+    "portal": "private_early_access",
+    "productId": "2b257d42-85b7-4b03-ab2a-d70b8f1c042c",
+    "variantId": "8dbf690a-5f7e-4fa8-8694-ac2722dcad3a",
+    "status": "approved",
+    "approvedPriceCents": 3080,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "3acc3b7d95521488034a7ee8ce3e7bd7f2e1d5e4eb68f53eeb9fb8139fdb50c6",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_oxytocin_5mg_vial",
+    "portal": "private_early_access",
+    "productId": "d8bd78ae-aaec-4010-a937-7cfee12d5f31",
+    "variantId": "23738e39-81d3-41e4-978f-b78a64108280",
+    "status": "approved",
+    "approvedPriceCents": 1969,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "8c2fa4f10c565a2ca82a65e5beac51fd0966720b0e7f823a29a1108270f4e08a",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_pt141_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "ce89e5ed-928a-4da5-a9b0-ff2cc34bbd37",
+    "variantId": "3f5ba79d-f7a6-40dd-88e4-1f77aef9d410",
+    "status": "approved",
+    "approvedPriceCents": 1727,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "62a19289bf5d14782179150926a832d2dba172ac1e07a1e85be6790d4f4d631b",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_selank_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "a1e7018e-b79f-49c2-9d14-4ec40d9de38b",
+    "variantId": "aff993e5-f889-4924-839b-0de24695355a",
+    "status": "approved",
+    "approvedPriceCents": 2343,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "6aadac48e7ed6c5e982e50760ba4021425970a48959cce7e83087436f3d752a1",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_semax_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "1b3888d0-2cdb-4368-9358-11c0bd6d45f2",
+    "variantId": "d049baa8-8b3b-405b-9d82-f84c84b0b95a",
+    "status": "approved",
+    "approvedPriceCents": 2343,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "a5a45344bda0629d47538095a8e24a99d708fa0b7558b041dfa57452d1ba33c9",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_sermorelin_5mg_vial",
+    "portal": "private_early_access",
+    "productId": "1500d7fc-06e9-444d-b402-4ba4646e4fb1",
+    "variantId": "c024aed7-edda-4be8-a590-c2a26023ea18",
+    "status": "approved",
+    "approvedPriceCents": 2222,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "e0696c5fa056aa5845e3cd5b9f37265ac93b5bf19e46ab2dceda06472ad4c418",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_tesamorelin_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "b137ae1f-429b-4b45-a6a6-12f157f75741",
+    "variantId": "5fc05223-ab56-4a18-9857-936d36b26599",
+    "status": "approved",
+    "approvedPriceCents": 4686,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "7da7824845a596a7cd84d67b8099879788b1b25821624882cf4a3dbc99db31e8",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  },
+  {
+    "releaseId": "rel_kris_a_r360_thymosinalpha1_10mg_vial",
+    "portal": "private_early_access",
+    "productId": "c3733751-73e1-405d-9c2d-f8782f3dcfa4",
+    "variantId": "8488aa25-92a4-4fa2-bf53-cd12cafce5a0",
+    "status": "approved",
+    "approvedPriceCents": 4686,
+    "currency": "USD",
+    "approvedQuantityLimit": 20,
+    "productVersion": "daab1ba6c6ade23b47dbe4a4c35478d113bdf2d9b947351404d748610ad3211c",
+    "waivedBlockers": [
+      "PRICE_NOT_APPROVED",
+      "QUANTITY_LIMIT_MISSING",
+      "DOCUMENTATION_NOT_SATISFIED",
+      "OFFER_STATE_NOT_PURCHASABLE"
+    ],
+    "expiresAt": null,
+    "actor": "Samuel Boadu",
+    "reason": "Roman Health Launch A: KRIS_VOLUME_PARTNER price for the released unit, quantity authority unchanged at 20. Supersedes the retail price for this unit at the door."
+  }
+]
