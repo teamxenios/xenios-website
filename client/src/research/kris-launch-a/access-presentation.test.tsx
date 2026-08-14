@@ -133,8 +133,9 @@ describe("every one of the 420 items", () => {
   });
 
   it("renders Buy Now for one real direct row only after an exact server handoff", () => {
-    const direct = items.find((item) => item.purchaseMode === "direct_eligible");
+    const direct = items.find((item) => item.id === "kli_ab4498834d24d715da48");
     expect(direct).toBeTruthy();
+    expect(direct?.purchaseMode).toBe("direct_eligible");
     expect(direct?.price.state).toBe("priced");
     if (!direct || direct.price.state !== "priced") return;
     const detail = krisFixtureDetail(direct.family, direct.slug);
@@ -144,11 +145,11 @@ describe("every one of the 420 items", () => {
       ...detail,
       canBuyNow: true,
       legacyOrder: {
-        productId: `pc-${direct.id}`,
-        variantId: `pcv-${direct.id}`,
+        productId: "PEX-012",
+        variantId: "R360-AOD9604-5MG-VIAL",
         unitPriceCents: direct.price.amountCents,
         currency: direct.price.currency,
-        quantityLimit: 20,
+        quantityLimit: 50,
         evaluatedAt: "2026-08-13T23:30:00.000Z",
       },
     };

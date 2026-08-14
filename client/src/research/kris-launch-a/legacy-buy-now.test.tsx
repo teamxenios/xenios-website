@@ -9,19 +9,25 @@ import { krisFixtureDetail, krisFixtureItems } from "./__fixtures__/krisFixtureS
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 function direct(): KrisCatalogDetailView {
-  const item = krisFixtureItems().find((row) => row.purchaseMode === "direct_eligible");
+  // The committed Launch A row and the canonical Product Control fixture are
+  // both real repository identities. Never mint pc-/pcv- stand-ins here: a
+  // test that passes with invented commerce identity can hide a release bug.
+  const item = krisFixtureItems().find(
+    (row) => row.id === "kli_ab4498834d24d715da48",
+  );
   if (!item || item.price.state !== "priced") throw new Error("real direct row missing");
+  if (item.purchaseMode !== "direct_eligible") throw new Error("real direct row is not eligible");
   const detail = krisFixtureDetail(item.family, item.slug);
   if (!detail) throw new Error("real direct detail missing");
   return {
     ...detail,
     canBuyNow: true,
     legacyOrder: {
-      productId: `pc-${item.id}`,
-      variantId: `pcv-${item.id}`,
+      productId: "PEX-012",
+      variantId: "R360-AOD9604-5MG-VIAL",
       unitPriceCents: item.price.amountCents,
       currency: item.price.currency,
-      quantityLimit: 20,
+      quantityLimit: 50,
       evaluatedAt: "2026-08-13T23:30:00.000Z",
     },
   };
@@ -44,29 +50,29 @@ function render(ui: React.ReactElement) {
 describe("Kris legacy single-order entry", () => {
   it("preserves exact Product Control identity, partner price and effective quantity", () => {
     const item = direct();
-    const selected = toKrisLegacyOrderSelection(item, 20);
+    const selected = toKrisLegacyOrderSelection(item, 50);
     expect(selected).toEqual({
       product: {
-        productId: item.legacyOrder?.productId,
-        variantId: item.legacyOrder?.variantId,
+        productId: "PEX-012",
+        variantId: "R360-AOD9604-5MG-VIAL",
         name: item.displayName,
         strength: item.specification,
         unitPriceCents: item.price.state === "priced" ? item.price.amountCents : null,
         currency: item.price.state === "priced" ? item.price.currency : "",
         description: item.suppliedNote,
         availability: "AVAILABLE",
-        quantityLimit: 20,
+        quantityLimit: 50,
       },
-      quantity: 20,
+      quantity: 50,
     });
-    expect(toKrisLegacyOrderSelection(item, 21)).toBeNull();
+    expect(toKrisLegacyOrderSelection(item, 51)).toBeNull();
   });
 
   it("renders Buy Now and enters the existing one-product journey", () => {
     const item = direct();
     const { host, unmount } = render(<KrisLegacyBuyNow item={item} />);
     const quantity = host.querySelector('[data-testid="kris-buy-now-quantity"] input');
-    expect(quantity?.getAttribute("max")).toBe("20");
+    expect(quantity?.getAttribute("max")).toBe("50");
     const button = host.querySelector('[data-testid="kris-buy-now"]') as HTMLButtonElement;
     expect(button.textContent).toBe("Buy Now");
     act(() => button.click());
