@@ -20,6 +20,9 @@ import {
   newCartChildOrderNumber,
 } from "./model";
 import type {
+  CartCatalogUnit,
+  EarlyAccessCartCatalogPort,
+  EarlyAccessCartReleasePort,
   CartCustomer,
   EarlyAccessCartAttributionPort,
   EarlyAccessCartAuditPort,
@@ -37,6 +40,22 @@ const NO_ATTRIBUTION: EarlyAccessCartAttributionPort = Object.freeze({
 });
 
 export type EarlyAccessCartCheckoutDeps = Readonly<{
+  /**
+   * The catalogue and release authority, re-read at COMMIT.
+   *
+   * Required, not optional. A quote is a price held open for a while, and
+   * between issuing one and committing it a founder can revoke a release,
+   * Product Control can hold a unit, an approved price can move and a quantity
+   * ceiling can narrow. Before this these ports were absent entirely, so the
+   * checkout could not have re-read any of it even in principle.
+   *
+   * Optional would have been the worse choice: a deployment that forgot to
+   * pass them would silently commit at stale terms and look completely healthy,
+   * which is the same "default reached by omission" failure the cart store
+   * comment in register.ts warns about.
+   */
+  catalog: EarlyAccessCartCatalogPort;
+  releases: EarlyAccessCartReleasePort;
   quotes: EarlyAccessCartQuoteStore;
   checkouts: EarlyAccessCartCheckoutStore;
   audit: EarlyAccessCartAuditPort;
@@ -107,6 +126,42 @@ export async function checkoutEarlyAccessCart(
   }
   if (quote.intentHash !== request.expectedIntentHash) {
     return Object.freeze({ ok: false as const, code: "QUOTE_CHANGED" as const });
+  }
+
+  // RE-READ THE WORLD. Expiry alone only proves the quote is young, not that
+  // its terms still hold. Every line is resolved again against the live
+  // catalogue and release authority, and any disagreement refuses rather than
+  // repricing: silently charging a different number than the one the customer
+  // agreed to would be worse than asking them to re-quote. QUOTE_CHANGED is
+  // reused deliberately because the client already knows how to recover from
+  // it, and the recovery is exactly right here.
+  const liveUnits = await deps.catalog.units(nowMs, customer);
+  for (const line of quote.lines) {
+    const unit = liveUnits.find(
+      (candidate: CartCatalogUnit) =>
+        candidate.productId === line.productId && candidate.variantId === line.variantId,
+    );
+    if (
+      unit === undefined ||
+      !unit.purchasable ||
+      unit.availability === "TEMPORARILY_HELD" ||
+      (unit.quantityLimit !== null && line.quantity > unit.quantityLimit)
+    ) {
+      return Object.freeze({ ok: false as const, code: "QUOTE_CHANGED" as const });
+    }
+    const release = await deps.releases.decide({
+      unit,
+      quantity: line.quantity,
+      nowMs,
+      customer,
+    });
+    if (
+      !release.released ||
+      release.priceCents !== line.unitPriceCents ||
+      release.currency !== line.currency
+    ) {
+      return Object.freeze({ ok: false as const, code: "QUOTE_CHANGED" as const });
+    }
   }
 
   const checkoutNumber = (deps.checkoutNumber ?? newCartCheckoutNumber)();

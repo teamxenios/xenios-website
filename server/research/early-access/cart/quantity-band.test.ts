@@ -119,6 +119,17 @@ function deps(nowMs = Date.parse("2026-08-11T18:00:00.000Z")) {
       quoteId: () => "xeaq_12345678901234567890",
     },
     checkout: {
+      // Commit-time revalidation re-reads the same catalogue and release
+      // authority the quote used.
+      catalog: { units: async () => units },
+      releases: {
+        decide: async ({ unit }: { unit: CartCatalogUnit }) => ({
+          released: true as const,
+          priceCents: unit.priceCents!,
+          currency: "USD" as const,
+          promotion: { promotionId: null, version: null, label: null, discountCents: 0 },
+        }),
+      },
       quotes: store,
       checkouts: store,
       audit: { record: async () => {} },

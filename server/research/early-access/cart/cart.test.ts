@@ -26,18 +26,23 @@ function request(): EarlyAccessCartQuoteRequest {
 
 function deps() {
   const store = new InMemoryEarlyAccessCartStore();
-  return {
-    store,
-    quote: {
-      catalog: { units: async () => units },
-      releases: {
+  // Shared by the quote AND the checkout: commit-time revalidation re-reads the
+  // same authority, so a test whose two halves disagreed would be testing the
+  // fixture rather than the code.
+  const catalog = { units: async () => units };
+  const releases = {
         decide: async ({ unit, quantity }: { unit: CartCatalogUnit; quantity: number }) => ({
           released: true as const,
           priceCents: unit.priceCents!,
           currency: "USD" as const,
           promotion: { promotionId: quantity === 3 ? "bundle" : null, version: quantity === 3 ? "v1" : null, label: quantity === 3 ? "Research Bundle" : null, discountCents: quantity === 3 ? Math.floor(unit.priceCents! * quantity * 0.2) : 0 },
         }),
-      },
+  };
+  return {
+    store,
+    quote: {
+      catalog,
+      releases,
       suppliers: { forUnit: async (productId: string) => ({ supplierId: "supplier-renew360", supplierSku: `sku-${productId}` }) },
       shipping: { serves: async () => true, quote: async () => ({ currency: "USD" as const, shippingCents: 0 }) },
       agreements: { accepted: async () => true },
@@ -46,6 +51,8 @@ function deps() {
       quoteId: () => "xeaq_12345678901234567890",
     },
     checkout: {
+      catalog,
+      releases,
       quotes: store,
       checkouts: store,
       audit: { record: async () => {} },

@@ -1051,6 +1051,11 @@ export function registerPrivateEarlyAccessApi(
     });
     const checkoutCart = createEarlyAccessCartCheckoutRoute({
       identity: cartIdentity,
+      // Re-read at COMMIT, not trusted from the quote. Same catalogue and
+      // release authority the quote route uses, so the two cannot disagree
+      // about what is sellable or at what price.
+      catalog: cartCatalog,
+      releases: cartPricing,
       quotes: cartStore,
       checkouts: cartStore,
       audit: {
