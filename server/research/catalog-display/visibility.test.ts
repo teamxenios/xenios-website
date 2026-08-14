@@ -127,20 +127,23 @@ describe("the viewer breadth policy", () => {
   });
 
   it("keeps the named-email allowlist additive for a non-active viewer", () => {
-    const breadth = resolveViewerVisibilityBreadth(
-      { email: SAMUEL, audience: "member", memberStatus: null },
-      env(SAMUEL),
-    );
-    expect(breadth).toBe("full");
+    for (const memberStatus of [undefined, null, "closed", "past_due"]) {
+      const breadth = resolveViewerVisibilityBreadth(
+        { email: SAMUEL, audience: "member", memberStatus },
+        env(SAMUEL),
+      );
+      expect(breadth, JSON.stringify(memberStatus)).toBe("full");
+    }
   });
 
-  it("never widens on browser-controllable audience strings", () => {
+  it("never widens an active status without the exact member audience", () => {
     // The audience reaching this function comes from the authorizer, but the
-    // policy still refuses anything that is not the exact admin literal.
-    for (const audience of ["Admin", "ADMIN", " admin", "administrator", "member "]) {
+    // policy binds an active status to the exact member audience even when
+    // the helper is called directly by a future server-side composition.
+    for (const audience of [undefined, "", "Admin", "ADMIN", " admin", "administrator", "member "]) {
       expect(
-        resolveViewerVisibilityBreadth({ email: MEMBER, audience, memberStatus: null }, env()),
-        audience,
+        resolveViewerVisibilityBreadth({ email: MEMBER, audience, memberStatus: "active" }, env()),
+        JSON.stringify(audience),
       ).toBe("standard");
     }
   });

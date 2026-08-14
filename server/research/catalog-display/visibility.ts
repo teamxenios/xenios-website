@@ -112,7 +112,8 @@ export function resolveVisibilityBreadth(
 /**
  * The viewer facts the breadth policy reads. `memberStatus` is optional so an
  * authorizer that has not been taught to supply it keeps exactly the old
- * allowlist behaviour; absence is never treated as active.
+ * allowlist behaviour; absence is never treated as active. The status is a
+ * grant only when it is bound to the exact member audience.
  */
 export interface VisibilityViewer {
   email: unknown;
@@ -149,6 +150,6 @@ export function resolveViewerVisibilityBreadth(
   env: VisibilityEnv = process.env,
 ): CatalogVisibilityBreadth {
   if (viewer.audience === "admin") return "full";
-  if (viewer.memberStatus === "active") return "full";
+  if (viewer.audience === "member" && viewer.memberStatus === "active") return "full";
   return resolveVisibilityBreadth(viewer.email, env);
 }
