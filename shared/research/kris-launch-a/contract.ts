@@ -134,11 +134,28 @@ export const KRIS_PURCHASE_MODES = [
 export type KrisPurchaseMode = (typeof KRIS_PURCHASE_MODES)[number];
 
 export const KRIS_PURCHASE_MODE_LABELS: Readonly<Record<KrisPurchaseMode, string>> = {
-  direct_eligible: "Add to cart",
+  direct_eligible: "Buy now",
   provider_workflow: "Start provider workflow",
   classification_pending: "Pending activation",
   price_pending: "Price pending",
 };
+
+/**
+ * Browser-safe entry into the existing one-product Early Access order flow.
+ *
+ * The catalog row cannot manufacture these identities. A server composition
+ * may attach this only after resolving an exact, current Product Control unit.
+ * The order route still re-reads Product Control, price, release, quantity,
+ * supplier, agreements and shipping before creating anything durable.
+ */
+export interface KrisLegacyOrderSelection {
+  productId: string;
+  variantId: string;
+  unitPriceCents: number;
+  currency: string;
+  quantityLimit: number;
+  evaluatedAt: string;
+}
 
 export function isKrisPurchaseMode(value: unknown): value is KrisPurchaseMode {
   return (
@@ -167,8 +184,10 @@ export interface KrisCatalogItemView {
    * upgrade a row to purchasable on its own.
    */
   purchaseMode: KrisPurchaseMode;
-  /** True only for `direct_eligible`. Written out so no caller re-derives it. */
-  canAddToCart: boolean;
+  /** Exact server-resolved order entry. Null means no Buy Now, even for a direct-capable channel. */
+  legacyOrder: KrisLegacyOrderSelection | null;
+  /** True only when the mode and the exact legacy-order handoff both permit Buy Now. */
+  canBuyNow: boolean;
   /**
    * The note supplied on the row, shown as given.
    *

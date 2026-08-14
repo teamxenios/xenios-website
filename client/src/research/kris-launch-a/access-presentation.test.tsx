@@ -17,8 +17,8 @@ import {
  *
  * This file renders every item in the artifact, which is exactly what the
  * catalog page must never do. That is the point: the page ships a page, and
- * this test is the sweep that proves no row anywhere in the catalog can produce
- * a purchase control, lose its channel notices, or show a fake price.
+ * this test is the sweep that proves only a server-bound direct row can produce
+ * Buy Now, while no row loses its channel notices or shows a fake price.
  */
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT =
@@ -113,7 +113,7 @@ describe("every one of the 420 items", () => {
     }
   });
 
-  it("renders no purchase control, on any item, priced or pending", () => {
+  it("renders no purchase control from purchaseMode alone without an exact Product Control handoff", () => {
     const { host, unmount } = render(
       <ul>
         {items.map((item) => (
@@ -129,6 +129,32 @@ describe("every one of the 420 items", () => {
     expect(host.innerHTML).not.toMatch(/testid="[^"]*cart[^"]*"/i);
     // Every policy says so in the data as well as in the rendering.
     expect(items.every((item) => item.access.purchasable === false)).toBe(true);
+    unmount();
+  });
+
+  it("renders Buy Now for one real direct row only after an exact server handoff", () => {
+    const direct = items.find((item) => item.purchaseMode === "direct_eligible");
+    expect(direct).toBeTruthy();
+    expect(direct?.price.state).toBe("priced");
+    if (!direct || direct.price.state !== "priced") return;
+    const detail = krisFixtureDetail(direct.family, direct.slug);
+    expect(detail).not.toBeNull();
+    if (!detail) return;
+    const bound = {
+      ...detail,
+      canBuyNow: true,
+      legacyOrder: {
+        productId: `pc-${direct.id}`,
+        variantId: `pcv-${direct.id}`,
+        unitPriceCents: direct.price.amountCents,
+        currency: direct.price.currency,
+        quantityLimit: 20,
+        evaluatedAt: "2026-08-13T23:30:00.000Z",
+      },
+    };
+    const { host, unmount } = render(<KrisDetail item={bound} />);
+    expect(purchaseControls(host)).toHaveLength(1);
+    expect(host.querySelector('[data-testid="kris-buy-now"]')?.textContent).toBe("Buy Now");
     unmount();
   });
 

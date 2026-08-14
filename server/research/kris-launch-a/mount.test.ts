@@ -414,13 +414,10 @@ describe("only direct_eligible sells", () => {
       expect(response.status).toBe(200);
       for (const item of response.body.items ?? []) {
         expect(item.purchaseMode).toBeDefined();
-        // canAddToCart is true for exactly one mode and never disagrees with it.
-        expect(item.canAddToCart).toBe(item.purchaseMode === "direct_eligible");
-        if (item.purchaseMode !== "direct_eligible") {
-          expect(item.canAddToCart).toBe(false);
-        }
-        // A purchasable row always carries a real price. The $0 guard.
-        if (item.canAddToCart) expect(item.price.state).toBe("priced");
+        // A mode is channel capability. Buy Now additionally requires an exact
+        // Product Control handoff, which this browse-only mount does not inject.
+        expect(item.canBuyNow).toBe(false);
+        expect(item.legacyOrder).toBeNull();
       }
     }
   });
@@ -433,7 +430,8 @@ describe("only direct_eligible sells", () => {
         item.channel === "classification_pending" ||
         item.price.state !== "priced"
       ) {
-        expect(item.canAddToCart, `${item.slug} became purchasable`).toBe(false);
+        expect(item.canBuyNow, `${item.slug} became purchasable`).toBe(false);
+        expect(item.legacyOrder).toBeNull();
       }
     }
   });

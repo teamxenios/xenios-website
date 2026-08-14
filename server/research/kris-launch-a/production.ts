@@ -8,6 +8,7 @@ import {
 } from "./dataset-reader";
 import type { KrisCatalogApiDependencies } from "./routes";
 import { KrisCatalogService } from "./service";
+import type { KrisLegacyOrderResolver } from "./projection";
 
 export type ResolveKrisActiveMember = (
   req: Request,
@@ -27,6 +28,8 @@ export function buildKrisCatalogProductionDependencies(
   options: {
     env?: NodeJS.ProcessEnv;
     source?: KrisCatalogSource | null;
+    /** Exact Product Control selections only. Omitted means every Buy Now fails closed. */
+    resolveLegacyOrder?: KrisLegacyOrderResolver;
   } = {},
 ): KrisCatalogApiDependencies {
   if (typeof resolveActiveMember !== "function") {
@@ -53,7 +56,7 @@ export function buildKrisCatalogProductionDependencies(
       if (source === null) {
         throw new KrisDatasetUnavailable("Launch A catalog artifact is unavailable");
       }
-      return new KrisCatalogService(source, profile);
+      return new KrisCatalogService(source, profile, options.resolveLegacyOrder);
     },
   };
 }
