@@ -153,3 +153,21 @@ the Render API (deploy dep-d9v89npt0dsc73cgvo8g, commit == frozen SHA, status li
 Buy Now implication, private-field scan, agreement config) require Kristopher's claimed
 session, which cannot exist until the founder-run database apply set and claim complete.
 Re-run the smoke with SMOKE_SESSION_COOKIE after the claim to close them.
+
+## Post-deploy smoke against the live origin (2026-08-14T03:0xZ, read-only)
+
+Deploy `dep-d9v89npt0dsc73cgvo8g` verified live with deployed commit equal to the frozen
+SHA. First smoke run (pre-shape-fix): 6 PASS, 7 session-tier UNVERIFIED (no Kris session
+exists before activation, by design), 2 shape-strict FAILs that were production REFUSING
+anonymously with the research wall's 401 ("Access required.") and the pre-existing cart's
+401 SESSION_REQUIRED rather than the door-shape refusals the script expected. Both checks
+were taught those exact fail-closed shapes (still failing on data, SPA HTML, or an enabled
+answer) in the post-freeze tooling revision; the anonymous tier passes 8/8 with them. The
+session tier plus SMOKE_EXPECT_BUY_NOW=21 runs after founder activation
+(docs/research-launch/KRIS_LAUNCH_A_FOUNDER_ACTIONS.md, step 7).
+
+Production env verified by read (values, not dashboard presence):
+RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS byte-equal to the required pair,
+RESEARCH_EARLY_ACCESS_ENABLED=true, RESEARCH_EARLY_ACCESS_CART_ENABLED=true (pre-existing;
+the Roman flow does not route through the cart). No environment value was changed by this
+release.
