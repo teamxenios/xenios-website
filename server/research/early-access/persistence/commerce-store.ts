@@ -50,6 +50,7 @@ const RPC = {
   placementByKey: "research_early_access_placement_by_key",
   placement: "research_early_access_placement",
   awaitingReview: "research_early_access_awaiting_review",
+  placementsForCustomers: "research_early_access_placements_for_customers",
   settledTransactionRefs: "research_early_access_settled_transaction_refs",
   proofs: "research_early_access_proofs",
   settlement: "research_early_access_settlement",
@@ -138,6 +139,41 @@ export class SupabaseEarlyAccessCommerceStore implements EarlyAccessCommerceStor
         expectObject(RPC.commitPlacement, raw.placement),
       ) as EarlyAccessPlacement,
     });
+  }
+
+  /**
+   * The member order-history read, added by M67.
+   *
+   * Like every other read here it goes through a routine rather than the
+   * table: the commerce persistence migration revokes its tables from
+   * `service_role` too, so a direct select is not merely discouraged, it is
+   * not permitted. The routine filters on the handles this call supplies and
+   * the ownership rule is applied AGAIN above it, so a widened routine could
+   * not by itself widen what a member sees.
+   */
+  async placementsForCustomers(
+    customerRefs: readonly string[],
+  ): Promise<readonly EarlyAccessPlacement[]> {
+    if (!Array.isArray(customerRefs) || customerRefs.length === 0) {
+      return Object.freeze([]);
+    }
+    const refs = customerRefs.filter((ref) => typeof ref === "string" && ref !== "");
+    if (refs.length === 0) return Object.freeze([]);
+    const raw = expectArray(
+      RPC.placementsForCustomers,
+      await runEarlyAccessCall(this.query, {
+        fn: RPC.placementsForCustomers,
+        args: { p_customer_refs: refs },
+      }),
+    );
+    return Object.freeze(
+      raw.map(
+        (entry) =>
+          Object.freeze(
+            expectObject(RPC.placementsForCustomers, entry),
+          ) as EarlyAccessPlacement,
+      ),
+    );
   }
 
   async awaitingReview(): Promise<readonly EarlyAccessPlacement[]> {

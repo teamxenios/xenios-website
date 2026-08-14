@@ -191,6 +191,30 @@ export class LegalBindingDirectory implements EarlyAccessLegalBindingDirectory {
   async ownsCheckout(memberId: string, cartCheckoutNumber: string): Promise<boolean> {
     return this.checkoutOwnership(memberId, cartCheckoutNumber);
   }
+
+  /**
+   * Every handle this member is bound to, from the lane's own store.
+   *
+   * The store already answers `findByMemberId`, and a binding already carries
+   * `coveredRefs` (primary plus the server-derived aliases), so this direction
+   * needed no new state, only exposing. A superseded binding resolves to
+   * nothing: a member whose binding was replaced holds the handles of the
+   * CURRENT binding, not of every binding they ever had.
+   */
+  async customerRefsFor(memberId: string): Promise<readonly string[]> {
+    if (typeof memberId !== "string" || memberId.trim() === "") return Object.freeze([]);
+    const binding = await this.store.findByMemberId(memberId);
+    if (binding === null) return Object.freeze([]);
+    // Defence in depth: the store was asked for THIS member, and the answer is
+    // checked to actually be this member's before any handle is handed back.
+    if (binding.memberId !== memberId) return Object.freeze([]);
+    if (binding.supersededAt !== undefined && binding.supersededAt !== null) {
+      return Object.freeze([]);
+    }
+    const refs = new Set<string>(binding.coveredRefs);
+    refs.add(binding.customerRef);
+    return Object.freeze(Array.from(refs).sort());
+  }
 }
 
 function establishedByFor(
