@@ -40,6 +40,7 @@ describe("createSupabaseSponsoredB2BClaimDeps", () => {
       profile_key: "KRIS_VOLUME_PARTNER",
       profile_version: 1,
       profile_effective_at: "2026-08-13T21:47:34.813Z",
+      profile_source_sha: "e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4",
     };
     const actor: any = { rpc: vi.fn(async () => ({ data: [row], error: null })) };
     const admin: any = { rpc: vi.fn() };
@@ -61,6 +62,9 @@ describe("createSupabaseSponsoredB2BClaimDeps", () => {
       sourceSha: "e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4",
     })).resolves.toMatchObject({ state: "claim_queued" });
     expect(actor.rpc).toHaveBeenCalledWith("research_prepare_sponsored_b2b_claim", expect.any(Object));
+    expect(actor.rpc).toHaveBeenCalledWith("research_prepare_sponsored_b2b_claim", expect.objectContaining({
+      p_profile_source_sha: "e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4",
+    }));
     expect(admin.rpc).not.toHaveBeenCalled();
   });
 

@@ -50,6 +50,7 @@ function claim(state: SponsoredB2BClaim["state"]): SponsoredB2BClaim {
     profileKey: "KRIS_VOLUME_PARTNER",
     profileVersion: pricing.profileVersion,
     profileEffectiveAt: pricing.profileEffectiveAt,
+    sourceSha: pricing.sourceSha,
   };
 }
 

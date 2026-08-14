@@ -50,6 +50,8 @@ describe("sponsored B2B claim candidate", () => {
     expect(sql).toContain("profile_key='KRIS_VOLUME_PARTNER'");
     expect(sql).toContain("array['organization_owner','business_buyer']");
     expect(sql).toContain("profile_version integer not null check (profile_version>0)");
+    expect(sql).toContain("profile_source_sha text not null");
+    expect(sql).toContain("e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4");
   });
 
   it("queues a truthful purpose-scoped claim atomically and independently verifies Auth at activation", () => {

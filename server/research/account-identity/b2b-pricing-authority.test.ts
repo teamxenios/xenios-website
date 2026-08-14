@@ -11,7 +11,10 @@ function artifact() {
     priceProfiles: ["KRIS_VOLUME_PARTNER"],
     priceOverlays: {
       KRIS_VOLUME_PARTNER: Object.fromEntries(
-        Array.from({ length: 420 }, (_, index) => [`item-${index}`, { state: "priced" }]),
+        Array.from({ length: 420 }, (_, index) => [
+          `item-${index}`,
+          { state: index < 418 ? "priced" : "pending" },
+        ]),
       ),
     },
   };
@@ -32,6 +35,15 @@ describe("resolveKrisVolumePartnerPricingAuthority", () => {
     [{ ...artifact(), counts: { items: 419, priced: 418, pricePending: 1 } }, SHA],
     [{ ...artifact(), priceProfiles: ["DEFAULT"] }, SHA],
     [{ ...artifact(), priceOverlays: { KRIS_VOLUME_PARTNER: {} } }, SHA],
+    [{
+      ...artifact(),
+      priceOverlays: {
+        KRIS_VOLUME_PARTNER: Object.fromEntries(
+          Array.from({ length: 420 }, (_, index) => [`item-${index}`, { state: "priced" }]),
+        ),
+      },
+    }, SHA],
+    [artifact(), "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
     [artifact(), "not-a-sha"],
   ])("fails closed for a non-authoritative artifact", (raw, sha) => {
     expect(resolveKrisVolumePartnerPricingAuthority(raw, sha)).toBeNull();

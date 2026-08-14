@@ -85,6 +85,8 @@ create table if not exists public.research_b2b_sponsored_claims (
   profile_key text not null check (profile_key='KRIS_VOLUME_PARTNER'),
   profile_version integer not null check (profile_version>0),
   profile_effective_at timestamptz not null,
+  profile_source_sha text not null
+    check (profile_source_sha='e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4'),
   state text not null default 'claim_queued'
     check (state in ('claim_queued','activated','revoked','expired')),
   prepared_by_auth_user_id uuid not null references auth.users(id) on delete restrict,
@@ -146,6 +148,7 @@ begin
      or new.profile_key is distinct from old.profile_key
      or new.profile_version is distinct from old.profile_version
      or new.profile_effective_at is distinct from old.profile_effective_at
+     or new.profile_source_sha is distinct from old.profile_source_sha
      or new.prepared_by_auth_user_id is distinct from old.prepared_by_auth_user_id
      or new.prepared_at is distinct from old.prepared_at
      or new.claim_expires_at is distinct from old.claim_expires_at
@@ -191,12 +194,14 @@ create or replace function public.research_prepare_sponsored_b2b_claim(
   p_business_display_name text,
   p_roles text[],
   p_profile_version integer,
-  p_profile_effective_at timestamptz
+  p_profile_effective_at timestamptz,
+  p_profile_source_sha text
 )
 returns table(
   sponsorship_id uuid,application_id uuid,normalized_email text,
   business_key text,business_display_name text,state text,
-  profile_key text,profile_version integer,profile_effective_at timestamptz
+  profile_key text,profile_version integer,profile_effective_at timestamptz,
+  profile_source_sha text
 )
 language plpgsql security definer set search_path='' as $$
 declare
@@ -235,7 +240,8 @@ begin
      or cardinality(p_roles)<>2
      or not (p_roles @> array['organization_owner','business_buyer']::text[])
      or not (p_roles <@ array['organization_owner','business_buyer']::text[])
-     or p_profile_version<1 then
+     or p_profile_version<1
+     or p_profile_source_sha<>'e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4' then
     raise exception 'sponsored B2B claim input invalid' using errcode='22023';
   end if;
 
@@ -269,11 +275,12 @@ begin
   v_outbox_event_key:='b2b-sponsored-claim:'||v_application_id::text;
   insert into public.research_b2b_sponsored_claims(
     application_id,normalized_email,business_key,business_display_name,roles,
-    profile_key,profile_version,profile_effective_at,prepared_by_auth_user_id,
+    profile_key,profile_version,profile_effective_at,profile_source_sha,
+    prepared_by_auth_user_id,
     prepared_at,claim_expires_at,claim_outbox_event_key,claim_queued_at
   ) values (
     v_application_id,p_normalized_email,p_business_key,btrim(p_business_display_name),p_roles,
-    'KRIS_VOLUME_PARTNER',p_profile_version,p_profile_effective_at,v_actor,
+    'KRIS_VOLUME_PARTNER',p_profile_version,p_profile_effective_at,p_profile_source_sha,v_actor,
     v_now,v_now+interval '72 hours',v_outbox_event_key,v_now
   ) returning id into v_sponsorship_id;
 
@@ -282,7 +289,8 @@ begin
   ) values (
     v_sponsorship_id,'claim_queued',v_actor,
     jsonb_build_object('applicationId',v_application_id,'businessKey',p_business_key,
-      'roles',p_roles,'profileKey','KRIS_VOLUME_PARTNER','profileVersion',p_profile_version)
+      'roles',p_roles,'profileKey','KRIS_VOLUME_PARTNER','profileVersion',p_profile_version,
+      'profileSourceSha',p_profile_source_sha)
   );
 
   insert into public.research_notification_outbox(
@@ -298,7 +306,7 @@ begin
 
   return query select v_sponsorship_id,v_application_id,p_normalized_email,
     p_business_key,btrim(p_business_display_name),'claim_queued'::text,
-    'KRIS_VOLUME_PARTNER'::text,p_profile_version,p_profile_effective_at;
+    'KRIS_VOLUME_PARTNER'::text,p_profile_version,p_profile_effective_at,p_profile_source_sha;
 end;
 $$;
 
@@ -401,12 +409,12 @@ grant select on public.research_b2b_sponsored_claims to service_role;
 grant select on public.research_b2b_sponsored_claim_events to service_role;
 
 revoke all on function public.research_prepare_sponsored_b2b_claim(
-  text,text,text,text,text,text,text,text[],integer,timestamptz
+  text,text,text,text,text,text,text,text[],integer,timestamptz,text
 ) from public,anon,authenticated,service_role;
 revoke all on function public.research_activate_sponsored_b2b_buyer(uuid,uuid,uuid)
   from public,anon,authenticated,service_role;
 grant execute on function public.research_prepare_sponsored_b2b_claim(
-  text,text,text,text,text,text,text,text[],integer,timestamptz
+  text,text,text,text,text,text,text,text[],integer,timestamptz,text
 ) to authenticated;
 grant execute on function public.research_activate_sponsored_b2b_buyer(uuid,uuid,uuid)
   to authenticated;

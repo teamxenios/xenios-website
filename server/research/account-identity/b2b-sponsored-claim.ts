@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export const B2B_SPONSORED_CLAIM_SOURCE = "b2b_buyer_sponsored_claim" as const;
 export const ROMAN_HEALTH_BUYER_KEY = "roman-health" as const;
+export const ACCEPTED_KRIS_VOLUME_PARTNER_CATALOG_SHA =
+  "e7bc0b691ed813b5ce024f0026e8ab5ba64d74f4" as const;
 
 const ExactIdentitySnapshotSchema = z.object({
   authUserIds: z.array(z.string().uuid()).max(2),
@@ -20,6 +22,7 @@ const SponsoredClaimSchema = z.object({
   profileKey: z.literal("KRIS_VOLUME_PARTNER"),
   profileVersion: z.number().int().positive(),
   profileEffectiveAt: z.string().datetime({ offset: true }),
+  sourceSha: z.literal(ACCEPTED_KRIS_VOLUME_PARTNER_CATALOG_SHA),
 }).strict();
 
 export type ExactIdentitySnapshot = z.infer<typeof ExactIdentitySnapshotSchema>;
@@ -29,7 +32,7 @@ const PricingAuthoritySchema = z.object({
   profileKey: z.literal("KRIS_VOLUME_PARTNER"),
   profileVersion: z.number().int().positive(),
   profileEffectiveAt: z.string().datetime({ offset: true }),
-  sourceSha: z.string().regex(/^[a-f0-9]{40}$/),
+  sourceSha: z.literal(ACCEPTED_KRIS_VOLUME_PARTNER_CATALOG_SHA),
 }).strict();
 export type SponsoredB2BPricingAuthority = z.infer<typeof PricingAuthoritySchema>;
 
@@ -109,6 +112,7 @@ function exactClaim(
     && row.profileKey === pricing.profileKey
     && row.profileVersion === pricing.profileVersion
     && row.profileEffectiveAt === pricing.profileEffectiveAt
+    && row.sourceSha === pricing.sourceSha
     && row.state === expectedState
     ? row
     : null;

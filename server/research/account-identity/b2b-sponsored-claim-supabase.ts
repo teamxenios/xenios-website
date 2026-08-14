@@ -35,6 +35,7 @@ function sponsoredClaim(raw: unknown): SponsoredB2BClaim {
     profileKey: String(row.profile_key ?? "") as "KRIS_VOLUME_PARTNER",
     profileVersion: Number(row.profile_version),
     profileEffectiveAt: String(row.profile_effective_at ?? ""),
+    sourceSha: String(row.profile_source_sha ?? "") as SponsoredB2BClaim["sourceSha"],
   };
 }
 
@@ -96,6 +97,7 @@ export function createSupabaseSponsoredB2BClaimDeps(
         p_roles: input.roles,
         p_profile_version: input.profileVersion,
         p_profile_effective_at: input.profileEffectiveAt,
+        p_profile_source_sha: input.sourceSha,
       }), "Sponsored B2B claim preparation failed");
       return sponsoredClaim(data);
     },

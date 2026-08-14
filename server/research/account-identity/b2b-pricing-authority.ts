@@ -1,5 +1,12 @@
 import { z } from "zod";
-import type { SponsoredB2BPricingAuthority } from "./b2b-sponsored-claim";
+import {
+  ACCEPTED_KRIS_VOLUME_PARTNER_CATALOG_SHA,
+  type SponsoredB2BPricingAuthority,
+} from "./b2b-sponsored-claim";
+
+const OverlayEntrySchema = z.object({
+  state: z.enum(["priced", "pending"]),
+}).passthrough();
 
 const CatalogAuthoritySchema = z.object({
   schemaVersion: z.number().int().positive(),
@@ -13,25 +20,31 @@ const CatalogAuthoritySchema = z.object({
     (profiles) => profiles.length === 1 && profiles[0] === "KRIS_VOLUME_PARTNER",
   ),
   priceOverlays: z.object({
-    KRIS_VOLUME_PARTNER: z.record(z.string(), z.unknown()),
+    KRIS_VOLUME_PARTNER: z.record(z.string(), OverlayEntrySchema),
   }).passthrough(),
 }).passthrough();
 
 /**
  * Derive entitlement version/effective time from the accepted catalog artifact
  * rather than operator input. Version is the artifact schema version and the
- * effective instant is its generatedAt. The source commit is retained as
- * immutable audit evidence by the caller/handoff.
+ * effective instant is its generatedAt. Only the explicitly accepted catalog
+ * commit can authorize this entitlement; its SHA is persisted with the claim.
  */
 export function resolveKrisVolumePartnerPricingAuthority(
   rawArtifact: unknown,
   sourceSha: string,
 ): SponsoredB2BPricingAuthority | null {
-  if (!/^[a-f0-9]{40}$/.test(sourceSha)) return null;
+  if (sourceSha !== ACCEPTED_KRIS_VOLUME_PARTNER_CATALOG_SHA) return null;
   const parsed = CatalogAuthoritySchema.safeParse(rawArtifact);
   if (!parsed.success) return null;
-  const overlayCount = Object.keys(parsed.data.priceOverlays.KRIS_VOLUME_PARTNER).length;
-  if (overlayCount !== parsed.data.counts.items) return null;
+  const overlay = Object.values(parsed.data.priceOverlays.KRIS_VOLUME_PARTNER);
+  const priced = overlay.filter((entry) => entry.state === "priced").length;
+  const pending = overlay.filter((entry) => entry.state === "pending").length;
+  if (
+    overlay.length !== parsed.data.counts.items
+    || priced !== parsed.data.counts.priced
+    || pending !== parsed.data.counts.pricePending
+  ) return null;
   return {
     profileKey: "KRIS_VOLUME_PARTNER",
     profileVersion: parsed.data.schemaVersion,
