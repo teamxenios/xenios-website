@@ -170,6 +170,71 @@ describe("the KRIS_VOLUME_PARTNER buyer price sheet", () => {
     expect(await closed.forCustomer(CUSTOMER, Date.parse(NOW))).toBeNull();
   });
 
+  // THE ACCEPTANCE-CONTRACT PERSONAS (lead 2026-08-14 05:47Z): each named
+  // party must provably NOT resolve Roman prices. Every one answers null,
+  // which every caller treats as "the shared ledger price stands", and the
+  // door then refuses a guessed partner amount with PRICE_CHANGED.
+  describe("acceptance-contract personas", () => {
+    it("ANONYMOUS: an unbound handle resolves no sheet", async () => {
+      expect(
+        await provider().forCustomer("eac_" + "f".repeat(32), Date.parse(NOW)),
+      ).toBeNull();
+    });
+
+    it("ORDINARY MEMBER: bound to a member with zero B2B relationships", async () => {
+      const ordinaryMember = "11111111-1111-4111-8111-111111111111";
+      const sheet = await provider({
+        memberForCustomer: async () => ({ memberId: ordinaryMember }),
+        relationships: [],
+      }).forCustomer(CUSTOMER, Date.parse(NOW));
+      expect(sheet).toBeNull();
+    });
+
+    it("SAMUEL-LEGACY EA CUSTOMER: a founder-era handle bound to a member with no buyer relationship", async () => {
+      const samuelMember = "22222222-2222-4222-8222-222222222222";
+      const sheet = await createKrisBuyerScopedPricing({
+        bindings: { memberForCustomer: async () => ({ memberId: samuelMember }) },
+        bridge: {
+          now: () => NOW,
+          // The legacy founder checkout member exists and owns orders, but has
+          // no B2B relationship rows at all.
+          listRelationshipsForMember: async () => [],
+        },
+        krisBindings,
+        artifact,
+        warn: () => {},
+      }).forCustomer("eac_" + "c".repeat(32), Date.parse(NOW));
+      expect(sheet).toBeNull();
+    });
+
+    it("SECOND ORGANIZATION: an active relationship without a KRIS entitlement grant", async () => {
+      const otherMember = "33333333-3333-4333-8333-333333333333";
+      const sheet = await provider({
+        memberForCustomer: async () => ({ memberId: otherMember }),
+        relationships: [
+          {
+            ...relationship({ memberId: otherMember }),
+            relationshipId: "rel_other_org",
+            businessKey: "other-org",
+            businessDisplayName: "Other Org LLC",
+            entitlements: [],
+          },
+        ],
+      }).forCustomer(CUSTOMER, Date.parse(NOW));
+      expect(sheet).toBeNull();
+    });
+
+    it("SECOND ORGANIZATION with a foreign-member relationship cannot ride Roman's member id", async () => {
+      // The relationship rows returned for the member are filtered on the
+      // member id inside the shared selection rule; a row belonging to a
+      // different member prices nothing even if a read returned it.
+      const sheet = await provider({
+        relationships: [relationship({ memberId: "44444444-4444-4444-8444-444444444444" })],
+      }).forCustomer(CUSTOMER, Date.parse(NOW));
+      expect(sheet).toBeNull();
+    });
+  });
+
   it("never prices a price-pending overlay row", async () => {
     const sheet = await provider().forCustomer(CUSTOMER, Date.parse(NOW));
     expect(sheet).not.toBeNull();
