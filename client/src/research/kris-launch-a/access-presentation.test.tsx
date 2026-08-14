@@ -18,7 +18,7 @@ import {
  * This file renders every item in the artifact, which is exactly what the
  * catalog page must never do. That is the point: the page ships a page, and
  * this test is the sweep that proves no row anywhere in the catalog can produce
- * a purchase control, lose its channel notices, or show a fake price.
+ * an unsafe purchase control, lose its channel notices, or show a fake price.
  */
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT =
@@ -113,7 +113,7 @@ describe("every one of the 420 items", () => {
     }
   });
 
-  it("renders no purchase control, on any item, priced or pending", () => {
+  it("renders BUY NOW only for the 143 direct rows", () => {
     const { host, unmount } = render(
       <ul>
         {items.map((item) => (
@@ -122,13 +122,15 @@ describe("every one of the 420 items", () => {
       </ul>,
     );
     expect(host.querySelectorAll('[data-testid="kris-card"]')).toHaveLength(420);
-    expect(purchaseControls(host)).toEqual([]);
-    // The contract has no add-to-cart member at all, so this string could only
-    // appear if someone wrote it by hand.
+    expect(host.querySelectorAll('[data-testid="kris-buy-now"]')).toHaveLength(143);
+    expect(purchaseControls(host)).toHaveLength(143);
     expect(host.innerHTML).not.toMatch(/add[-_ ]?to[-_ ]?cart/i);
     expect(host.innerHTML).not.toMatch(/testid="[^"]*cart[^"]*"/i);
-    // Every policy says so in the data as well as in the rendering.
-    expect(items.every((item) => item.access.purchasable === false)).toBe(true);
+    expect(
+      items.filter((item) => item.canBuyNow).every(
+        (item) => item.purchaseMode === "direct_eligible" && item.price.state === "priced",
+      ),
+    ).toBe(true);
     unmount();
   });
 
@@ -202,7 +204,7 @@ describe("the copy each channel is required to carry", () => {
       );
       // Nothing may claim a prescription, and nothing may offer a purchase.
       expect(text, item.slug).not.toMatch(/prescription is|we prescribe|prescribed for you/i);
-      expect(purchaseControls(host)).toEqual([]);
+      expect(purchaseControls(host)).toHaveLength(item.canBuyNow ? 1 : 0);
       unmount();
     }
   });
@@ -221,7 +223,7 @@ describe("the copy each channel is required to carry", () => {
       expect(text, item.slug).toContain(
         "Subject to availability and documentation.",
       );
-      expect(purchaseControls(host)).toEqual([]);
+      expect(purchaseControls(host)).toHaveLength(item.canBuyNow ? 1 : 0);
       unmount();
     }
   });
@@ -359,7 +361,7 @@ describe("the two price-pending items", () => {
 });
 
 describe("the detail page of a priced clinical item", () => {
-  it("shows the price, its basis, the provider notices and no way to buy", () => {
+  it("shows the price, its basis, the provider notices and no BUY NOW", () => {
     const priced = krisFixtureItems().find(
       (item) =>
         item.channel === "clinical_provider_only" && item.price.state === "priced",
@@ -384,6 +386,7 @@ describe("the detail page of a priced clinical item", () => {
       host.querySelector('[data-testid="kris-supplied-note"]')?.textContent,
     ).toBe(detail.suppliedNote);
     expect(purchaseControls(host)).toEqual([]);
+    expect(text).toContain("Start provider workflow");
     expect(text).not.toMatch(/add to cart/i);
     unmount();
   });

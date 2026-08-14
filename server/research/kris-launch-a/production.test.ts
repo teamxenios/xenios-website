@@ -4,6 +4,7 @@ import type { MemberRow } from "../member-auth";
 import { InMemoryKrisCatalogSource } from "./dataset-reader";
 import { buildKrisCatalogProductionDependencies } from "./production";
 import { krisProduct, pricedAt } from "./test-fixtures";
+import { KRIS_LEGACY_ORDER_BINDINGS_ENV } from "./legacy-order-bindings";
 
 const ACTIVE_MEMBER: MemberRow = {
   id: "11111111-2222-3333-4444-555555555555",
@@ -65,5 +66,35 @@ describe("Kris Launch A production composition", () => {
       memberId: ACTIVE_MEMBER.id,
     });
     expect(service).toBeDefined();
+  });
+
+  it("projects BUY NOW only from a reviewed server-owned legacy unit binding", () => {
+    const product = krisProduct({ id: "kli_reviewed" });
+    const source = new InMemoryKrisCatalogSource(
+      [product],
+      new Map([[product.id, pricedAt(8800)]]),
+    );
+    const dependencies = buildKrisCatalogProductionDependencies(() => ACTIVE_MEMBER, {
+      source,
+      env: {
+        [KRIS_LEGACY_ORDER_BINDINGS_ENV]: JSON.stringify([
+          {
+            krisProductId: product.id,
+            productId: "prod_release_1",
+            variantId: "var_release_1",
+          },
+        ]),
+      },
+    });
+    const service = dependencies.serviceForProfile("KRIS_VOLUME_PARTNER", {
+      audience: "member",
+      email: ACTIVE_MEMBER.email,
+      memberId: ACTIVE_MEMBER.id,
+    });
+    expect(service.detail(product.slug)).toMatchObject({
+      purchaseMode: "direct_eligible",
+      canBuyNow: true,
+      legacyOrder: { productId: "prod_release_1", variantId: "var_release_1" },
+    });
   });
 });

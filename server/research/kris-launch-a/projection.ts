@@ -25,17 +25,20 @@ import {
   KRIS_FAMILY_LABELS,
   type KrisCatalogDetailView,
   type KrisCatalogItemView,
+  type KrisLegacyOrderIdentity,
   type KrisPriceView,
 } from "@shared/research/kris-launch-a/contract";
 import { KRIS_CATALOG_DISCLOSURES, krisAccessPolicy } from "./access-policy";
-import { krisModePermitsCart, krisPurchaseMode } from "./purchase-mode";
+import { krisModePermitsDirectOrder, krisPurchaseMode } from "./purchase-mode";
 import type { KrisProductRecord } from "./dataset-reader";
 
 export function projectKrisItem(
   product: KrisProductRecord,
   price: KrisPriceView,
+  legacyOrder: KrisLegacyOrderIdentity | null = null,
 ): KrisCatalogItemView {
   const mode = krisPurchaseMode({ channel: product.channel, price });
+  const directOrder = krisModePermitsDirectOrder(mode) ? legacyOrder : null;
   return {
     id: product.id,
     slug: product.slug,
@@ -58,7 +61,8 @@ export function projectKrisItem(
     // be a second policy, and the two would disagree the first time either
     // changed.
     purchaseMode: mode,
-    canAddToCart: krisModePermitsCart(mode),
+    legacyOrder: directOrder,
+    canBuyNow: directOrder !== null,
     suppliedNote: product.suppliedNote,
   };
 }
@@ -66,9 +70,10 @@ export function projectKrisItem(
 export function projectKrisDetail(
   product: KrisProductRecord,
   price: KrisPriceView,
+  legacyOrder: KrisLegacyOrderIdentity | null = null,
 ): KrisCatalogDetailView {
   return {
-    ...projectKrisItem(product, price),
+    ...projectKrisItem(product, price, legacyOrder),
     // Read on every detail view: signing in reaches a catalog, not a permission
     // to buy, and the copy says so rather than leaving it to be inferred.
     disclosures: KRIS_CATALOG_DISCLOSURES,

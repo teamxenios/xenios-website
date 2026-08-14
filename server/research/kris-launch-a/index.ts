@@ -2,6 +2,7 @@ export * from "./access-policy";
 export * from "./dataset-location";
 export * from "./dataset-reader";
 export * from "./entitlement";
+export * from "./legacy-order-bindings";
 export * from "./mount";
 export * from "./normalize";
 export * from "./projection";

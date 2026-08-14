@@ -20,7 +20,7 @@ import {
   krisAccessPolicy,
 } from "../../../../../server/research/kris-launch-a/access-policy";
 import {
-  krisModePermitsCart,
+  krisModePermitsDirectOrder,
   krisPurchaseMode,
 } from "../../../../../server/research/kris-launch-a/purchase-mode";
 import type { ApiResult } from "../../lib/api";
@@ -93,7 +93,13 @@ export function krisArtifact(): Artifact {
 export function krisFixtureItems(): KrisCatalogItemView[] {
   const artifact = krisArtifact();
   const overlay = artifact.priceOverlays[KRIS_PRICE_PROFILES[0]] ?? {};
-  return artifact.products.map((product) => ({
+  return artifact.products.map((product) => {
+    const price = overlay[product.id] ?? KRIS_PRICE_PENDING;
+    const purchaseMode = krisPurchaseMode({ channel: product.channel, price });
+    const legacyOrder = krisModePermitsDirectOrder(purchaseMode)
+      ? { productId: `prod_${product.id}`, variantId: `var_${product.id}` }
+      : null;
+    return ({
     id: product.id,
     slug: product.slug,
     displayName: product.displayName,
@@ -106,23 +112,17 @@ export function krisFixtureItems(): KrisCatalogItemView[] {
     packBasis: product.packBasis,
     moq: product.moq,
     dosageForm: product.dosageForm,
-    price: overlay[product.id] ?? KRIS_PRICE_PENDING,
+    price,
     access: krisAccessPolicy(product.channel),
     // The fixture derives the mode with the SAME function the server uses, so
     // a client test can never pass against a purchase rule the server does not
     // actually apply.
-    purchaseMode: krisPurchaseMode({
-      channel: product.channel,
-      price: overlay[product.id] ?? KRIS_PRICE_PENDING,
-    }),
-    canAddToCart: krisModePermitsCart(
-      krisPurchaseMode({
-        channel: product.channel,
-        price: overlay[product.id] ?? KRIS_PRICE_PENDING,
-      }),
-    ),
+    purchaseMode,
+    legacyOrder,
+    canBuyNow: legacyOrder !== null,
     suppliedNote: product.suppliedNote,
-  }));
+  });
+  });
 }
 
 export const KRIS_FIXTURE_DEFAULT_PAGE_SIZE = 24;

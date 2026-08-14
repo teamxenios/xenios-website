@@ -175,7 +175,7 @@ describe("what the doors serve", () => {
 
   it("carries the access policy and the disclosures on a detail view", async () => {
     const response = await request(mounted()).get(DETAIL);
-    expect(response.body.product.access.purchasable).toBe(false);
+    expect(response.body.product.access).not.toHaveProperty("purchasable");
     expect(response.body.product.disclosures.length).toBeGreaterThan(0);
     expect(response.body.product.price.display).toBe("$45.00");
   });
@@ -414,13 +414,10 @@ describe("only direct_eligible sells", () => {
       expect(response.status).toBe(200);
       for (const item of response.body.items ?? []) {
         expect(item.purchaseMode).toBeDefined();
-        // canAddToCart is true for exactly one mode and never disagrees with it.
-        expect(item.canAddToCart).toBe(item.purchaseMode === "direct_eligible");
-        if (item.purchaseMode !== "direct_eligible") {
-          expect(item.canAddToCart).toBe(false);
-        }
-        // A purchasable row always carries a real price. The $0 guard.
-        if (item.canAddToCart) expect(item.price.state).toBe("priced");
+        // This test composition has no reviewed legacy-unit bindings, so even
+        // direct rows remain visible without emitting a commerce identity.
+        expect(item.legacyOrder).toBeNull();
+        expect(item.canBuyNow).toBe(false);
       }
     }
   });
@@ -433,16 +430,16 @@ describe("only direct_eligible sells", () => {
         item.channel === "classification_pending" ||
         item.price.state !== "priced"
       ) {
-        expect(item.canAddToCart, `${item.slug} became purchasable`).toBe(false);
+        expect(item.canBuyNow, `${item.slug} became purchasable`).toBe(false);
       }
     }
   });
 
-  it("says purchasable false on every item it serves", async () => {
+  it("never emits a second purchasability authority inside access policy", async () => {
     const response = await request(mounted()).get(`${LIST}?pageSize=100`);
     expect(response.body.items.length).toBeGreaterThan(0);
     for (const item of response.body.items) {
-      expect(item.access.purchasable).toBe(false);
+      expect(item.access).not.toHaveProperty("purchasable");
     }
   });
 });

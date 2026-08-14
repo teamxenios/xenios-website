@@ -32,6 +32,7 @@ import {
   type KrisProductRecord,
 } from "./dataset-reader";
 import { projectKrisDetail, projectKrisItem } from "./projection";
+import type { ResolveKrisLegacyOrderIdentity } from "./legacy-order-bindings";
 import { selectKrisCatalog, type KrisSelection } from "./search";
 
 /**
@@ -61,6 +62,7 @@ export class KrisCatalogService {
      * default: a viewer with no entitlement never reaches a service at all.
      */
     private readonly profile: KrisPriceProfile = "KRIS_VOLUME_PARTNER",
+    private readonly resolveLegacyOrderIdentity: ResolveKrisLegacyOrderIdentity = () => null,
   ) {}
 
   /**
@@ -98,7 +100,11 @@ export class KrisCatalogService {
       },
     );
     const items: KrisCatalogItemView[] = selection.products.map((product) =>
-      projectKrisItem(product, this.price(product.id)),
+      projectKrisItem(
+        product,
+        this.price(product.id),
+        this.resolveLegacyOrderIdentity(product),
+      ),
     );
     return {
       products: selection.products,
@@ -140,7 +146,11 @@ export class KrisCatalogService {
     if (!SAFE_SLUG.test(normalized)) return null;
     const product = this.source.findBySlug(normalized);
     if (product === null || product.slug !== normalized) return null;
-    return projectKrisDetail(product, this.price(product.id));
+    return projectKrisDetail(
+      product,
+      this.price(product.id),
+      this.resolveLegacyOrderIdentity(product),
+    );
   }
 
   /**
@@ -163,6 +173,10 @@ export class KrisCatalogService {
     if (!SAFE_ID.test(normalized)) return null;
     const product = this.source.findById(normalized);
     if (product === null) return null;
-    return projectKrisDetail(product, this.price(product.id));
+    return projectKrisDetail(
+      product,
+      this.price(product.id),
+      this.resolveLegacyOrderIdentity(product),
+    );
   }
 }

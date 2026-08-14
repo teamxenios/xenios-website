@@ -34,10 +34,10 @@ import type {
  * WHAT direct_eligible DOES AND DOES NOT MEAN
  * -------------------------------------------
  * It means the CHANNEL permits a direct purchase. It is not a promise that this
- * unit can be added right now: Product Control, documentation, availability and
- * quantity authority are resolved at cart time against live state, and the cart
- * refuses on its own terms. A catalog cannot authorize a sale, and this one
- * does not try to. It only says which rows may be offered the attempt.
+ * unit can be ordered right now: Product Control, the active founder release,
+ * documentation, availability and quantity authority are re-read by the
+ * existing legacy placement route. A catalog cannot authorize a sale, and
+ * this one does not try to. It only says which rows may be offered the attempt.
  */
 
 /** The channels that may ever offer a direct purchase. Closed, and short. */
@@ -74,6 +74,6 @@ export function krisPurchaseMode(input: {
 }
 
 /** True for exactly one mode. Written as a function so call sites read plainly. */
-export function krisModePermitsCart(mode: KrisPurchaseMode): boolean {
+export function krisModePermitsDirectOrder(mode: KrisPurchaseMode): boolean {
   return mode === "direct_eligible";
 }

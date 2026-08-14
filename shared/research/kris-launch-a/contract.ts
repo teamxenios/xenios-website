@@ -101,15 +101,14 @@ export const KRIS_PRICE_PENDING: KrisPriceView = {
 /**
  * What a channel permits, and what the buyer must be told.
  *
- * `purchasable` is present and always false. It is written down rather than
- * omitted so that a future change has to edit a field called purchasable in a
- * file called access-policy, instead of quietly gaining an action.
+ * This carries classification copy only. Purchase authority is deliberately
+ * absent: `purchaseMode` plus the server-owned legacy identity are the single
+ * transaction decision, so the browser never has two booleans that disagree.
  */
 export interface KrisAccessPolicy {
   channel: KrisChannel;
   statusLabel: string;
   notices: readonly string[];
-  purchasable: false;
 }
 
 /**
@@ -134,7 +133,7 @@ export const KRIS_PURCHASE_MODES = [
 export type KrisPurchaseMode = (typeof KRIS_PURCHASE_MODES)[number];
 
 export const KRIS_PURCHASE_MODE_LABELS: Readonly<Record<KrisPurchaseMode, string>> = {
-  direct_eligible: "Add to cart",
+  direct_eligible: "Buy now",
   provider_workflow: "Start provider workflow",
   classification_pending: "Pending activation",
   price_pending: "Price pending",
@@ -145,6 +144,12 @@ export function isKrisPurchaseMode(value: unknown): value is KrisPurchaseMode {
     typeof value === "string" &&
     (KRIS_PURCHASE_MODES as readonly string[]).includes(value)
   );
+}
+
+/** Existing legacy Early Access Product Control identity for one bound row. */
+export interface KrisLegacyOrderIdentity {
+  productId: string;
+  variantId: string;
 }
 
 export interface KrisCatalogItemView {
@@ -167,8 +172,10 @@ export interface KrisCatalogItemView {
    * upgrade a row to purchasable on its own.
    */
   purchaseMode: KrisPurchaseMode;
-  /** True only for `direct_eligible`. Written out so no caller re-derives it. */
-  canAddToCart: boolean;
+  /** Null unless production has an exact, reviewed server-owned binding. */
+  legacyOrder: KrisLegacyOrderIdentity | null;
+  /** True only when direct ordering is permitted and the identity is bound. */
+  canBuyNow: boolean;
   /**
    * The note supplied on the row, shown as given.
    *

@@ -112,7 +112,7 @@ describe("access presentation", () => {
     const page = service(new CountingSource([PRICED, PENDING])).list({});
     for (const item of page.items) {
       expect(item.access.channel).toBe(item.channel);
-      expect(item.access.purchasable).toBe(false);
+      expect(item.access).not.toHaveProperty("purchasable");
       expect(item.access.notices.length).toBeGreaterThan(0);
     }
   });

@@ -4,6 +4,11 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import EarlyAccessRoute from "./EarlyAccessRoute";
+import {
+  clearKrisLegacyOrder,
+  queueKrisLegacyOrder,
+} from "../kris-launch-a/legacyOrderHandoff";
+import { krisFixtureItems } from "../kris-launch-a/__fixtures__/krisFixtureServer";
 
 /**
  * The mounted Private Early Access route, at the point where the agreement
@@ -118,6 +123,7 @@ function stubFetch(answers: Answers) {
 }
 
 beforeEach(() => {
+  clearKrisLegacyOrder();
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
@@ -125,6 +131,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  clearKrisLegacyOrder();
   act(() => {
     root?.unmount();
   });
@@ -172,6 +179,20 @@ function reviewButton(host: HTMLElement): HTMLButtonElement {
 }
 
 describe("the checkout continuation is gated on the server's answer", () => {
+  it("consumes a catalog BUY NOW only after the server confirms the agreement", async () => {
+    const direct = krisFixtureItems().find((item) => item.canBuyNow);
+    expect(direct).toBeDefined();
+    if (!direct) return;
+    expect(queueKrisLegacyOrder(direct)).toBe(true);
+    stubFetch({ accepted: true });
+
+    const host = await mountRoute();
+
+    expect(host.querySelector("[data-testid='early-access-checkout-mount']")).not.toBeNull();
+    expect(host.textContent).toContain(direct.displayName);
+    expect(host.textContent).toContain(direct.specification);
+  });
+
   it("is unusable before the customer has agreed, and says why", async () => {
     stubFetch({ accepted: false });
     const host = await mountRoute();

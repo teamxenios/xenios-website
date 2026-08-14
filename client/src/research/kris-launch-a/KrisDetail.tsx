@@ -3,6 +3,7 @@ import type { KrisCatalogDetailView } from "@shared/research/kris-launch-a/contr
 import { KrisAccessBadge, KrisAccessNotices } from "./KrisAccess";
 import { KrisPrice } from "./KrisPrice";
 import { krisCatalogHref } from "./integration-packet";
+import { KrisPurchaseAction } from "./KrisPurchaseAction";
 
 /**
  * One Launch A item.
@@ -11,11 +12,8 @@ import { krisCatalogHref } from "./integration-packet";
  * access policy for the channel, the note as supplied, the price or its honest
  * absence, and the disclosures.
  *
- * THERE IS NO PURCHASE CONTROL ON THIS PAGE, and there is no way to add one
- * without changing the contract: `KrisAccessPolicy.purchasable` is typed as the
- * literal `false`, and the item union has no action member at all. Signing in
- * reaches a catalog, not a permission to buy, and the disclosures say that in
- * words rather than leaving it to be inferred.
+ * BUY NOW remains a server decision: only a direct row carrying an exact
+ * legacy-order identity can enter the existing order journey.
  */
 export function KrisDetail({ item }: { item: KrisCatalogDetailView }) {
   const rows: Array<{ label: string; value: string }> = [
@@ -77,6 +75,10 @@ export function KrisDetail({ item }: { item: KrisCatalogDetailView }) {
           suppliedNote={item.suppliedNote}
           headingLevel="h3"
         />
+      </section>
+
+      <section className="min-w-0" aria-label="Order action">
+        <KrisPurchaseAction item={item} />
       </section>
 
       <section className="min-w-0" aria-labelledby="kris-detail-attributes">

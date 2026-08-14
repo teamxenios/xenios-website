@@ -18,6 +18,10 @@ import { clearBrowserCart } from "./cart/cartStore";
 import { clearCartRecovery } from "./cart/cartAttemptStore";
 import { EarlyAccessCartMount } from "./cart/EarlyAccessCartMount";
 import { EARLY_ACCESS_FULFILLMENT_TARGET_COPY } from "./fulfillment-copy";
+import {
+  clearKrisLegacyOrder,
+  consumeKrisLegacyOrder,
+} from "../kris-launch-a/legacyOrderHandoff";
 
 // The mounted Private Early Access route.
 //
@@ -119,6 +123,27 @@ export default function EarlyAccessRoute() {
     void readSession();
   }, [readSession]);
 
+  // A catalog BUY NOW crosses only after the existing Early Access session and
+  // agreement gates are satisfied. Until then it remains memory-only and the
+  // ordinary unlock/acceptance UI is authoritative.
+  useEffect(() => {
+    if (
+      state.kind !== "authenticated" ||
+      !agreed ||
+      blocked !== null ||
+      selection !== null
+    ) {
+      return;
+    }
+    const next = consumeKrisLegacyOrder();
+    if (next !== null) {
+      setPriceChanged(false);
+      setOrderRequest(null);
+      setSelection(next);
+      setCheckoutPhase("details");
+    }
+  }, [agreed, blocked, selection, state.kind]);
+
   const submitPassword = useCallback(
     (password: string) => {
       setState({ kind: "locked", error: null, busy: true });
@@ -186,6 +211,7 @@ export default function EarlyAccessRoute() {
       // purchaser's checkout. The server would still refuse to show it, but a
       // signed-out browser should not be holding the pointer at all.
       clearCartRecovery();
+      clearKrisLegacyOrder();
       setAgreed(false);
       setBlocked(null);
       setSelection(null);

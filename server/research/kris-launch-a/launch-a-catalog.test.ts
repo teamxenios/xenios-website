@@ -10,7 +10,6 @@ import {
 } from "@shared/research/kris-launch-a/contract";
 import {
   krisAccessPolicy,
-  krisChannelPermitsPurchase,
   KRIS_CATALOG_DISCLOSURES,
 } from "./access-policy";
 import { parseKrisPrice, joinKey, normalizeKrisLaunchA } from "./normalize";
@@ -144,10 +143,9 @@ describe("the Launch A artifact", () => {
 });
 
 describe("access policy", () => {
-  it("permits purchase on no channel at all", () => {
+  it("contains no parallel purchase-authority field", () => {
     for (const channel of KRIS_CHANNELS) {
-      expect(krisChannelPermitsPurchase(channel)).toBe(false);
-      expect(krisAccessPolicy(channel).purchasable).toBe(false);
+      expect(krisAccessPolicy(channel)).not.toHaveProperty("purchasable");
     }
   });
 
@@ -198,7 +196,7 @@ describe("the policy survives a row whose note was replaced by Price pending", (
       expect(product.suppliedNote).toBe("Price pending.");
       const policy = krisAccessPolicy(product.channel as KrisChannel);
       expect(policy.notices.length).toBeGreaterThan(0);
-      expect(policy.purchasable).toBe(false);
+      expect(policy).not.toHaveProperty("purchasable");
     }
     const channels = pending.map((product) => product.channel).sort();
     expect(channels).toEqual(["clinical_provider_only", "ruo_research"]);
@@ -217,7 +215,9 @@ describe("the policy survives a row whose note was replaced by Price pending", (
     expect(clinical.length).toBe(244);
     expect(ruo.length).toBe(121);
     for (const product of [...clinical, ...ruo]) {
-      expect(krisAccessPolicy(product.channel as KrisChannel).purchasable).toBe(false);
+      expect(krisAccessPolicy(product.channel as KrisChannel)).not.toHaveProperty(
+        "purchasable",
+      );
     }
   });
 });

@@ -8,6 +8,7 @@ import {
 } from "./dataset-reader";
 import type { KrisCatalogApiDependencies } from "./routes";
 import { KrisCatalogService } from "./service";
+import { createKrisLegacyOrderIdentityResolver } from "./legacy-order-bindings";
 
 export type ResolveKrisActiveMember = (
   req: Request,
@@ -38,6 +39,7 @@ export function buildKrisCatalogProductionDependencies(
     options.source === undefined
       ? createKrisCatalogSourceFromEnv(env)
       : options.source;
+  const resolveLegacyOrderIdentity = createKrisLegacyOrderIdentityResolver(env);
 
   return {
     env,
@@ -53,7 +55,7 @@ export function buildKrisCatalogProductionDependencies(
       if (source === null) {
         throw new KrisDatasetUnavailable("Launch A catalog artifact is unavailable");
       }
-      return new KrisCatalogService(source, profile);
+      return new KrisCatalogService(source, profile, resolveLegacyOrderIdentity);
     },
   };
 }

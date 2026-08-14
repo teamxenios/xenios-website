@@ -22,9 +22,10 @@ import {
  * The supplied note is still shown, faithfully and in full. It is shown IN
  * ADDITION to these notices, never in place of them.
  *
- * Every policy is `purchasable: false`. Launch A is browse, login and price.
- * Nothing here sells, and the browser contract has no add-to-cart member for a
- * surface to reach for even if it wanted one.
+ * This policy carries classification and safety copy only. Purchase authority
+ * is the separate server purchase-mode plus exact legacy-order binding.
+ * Nothing here sells. A separate exact binding is required before the browser
+ * can enter the existing order journey.
  */
 const POLICIES: Readonly<Record<KrisChannel, Omit<KrisAccessPolicy, "channel">>> = {
   clinical_provider_only: {
@@ -33,7 +34,6 @@ const POLICIES: Readonly<Record<KrisChannel, Omit<KrisAccessPolicy, "channel">>>
       "Provider workflow required.",
       "Subject to applicable state availability and pharmacy requirements.",
     ],
-    purchasable: false,
   },
   ruo_research: {
     statusLabel: "Research use only",
@@ -41,24 +41,20 @@ const POLICIES: Readonly<Record<KrisChannel, Omit<KrisAccessPolicy, "channel">>>
       "Research use only.",
       "Subject to availability and documentation.",
     ],
-    purchasable: false,
   },
   classification_pending: {
     statusLabel: "Classification pending",
     notices: [
       "Classification, form and documentation must be confirmed before activation.",
     ],
-    purchasable: false,
   },
   supplement: {
     statusLabel: "Supplement",
     notices: ["Subject to availability."],
-    purchasable: false,
   },
   nonclinical_topical: {
     statusLabel: "Nonclinical / topical",
     notices: ["Subject to availability."],
-    purchasable: false,
   },
 };
 
@@ -75,10 +71,5 @@ export const KRIS_CATALOG_DISCLOSURES: readonly string[] = [
   "Availability, documentation and applicable provider requirements govern every item.",
   "Signing in gives access to this catalog. It does not authorize a purchase.",
 ];
-
-/** Every channel that must never present a purchase path. That is all of them. */
-export function krisChannelPermitsPurchase(channel: KrisChannel): boolean {
-  return POLICIES[channel].purchasable;
-}
 
 export { KRIS_CHANNEL_LABELS };

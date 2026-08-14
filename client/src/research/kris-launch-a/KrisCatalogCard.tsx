@@ -3,6 +3,7 @@ import type { KrisCatalogItemView } from "@shared/research/kris-launch-a/contrac
 import { KrisAccessBadge, KrisAccessNotices } from "./KrisAccess";
 import { KrisPrice } from "./KrisPrice";
 import { krisItemHref } from "./integration-packet";
+import { KrisPurchaseAction } from "./KrisPurchaseAction";
 
 /**
  * One catalog card.
@@ -11,9 +12,8 @@ import { krisItemHref } from "./integration-packet";
  * carries, the notices that go with it, the note as supplied, and the price or
  * an honest "Price pending".
  *
- * IT CARRIES NO PURCHASE CONTROL, and it cannot: Launch A is browse, login and
- * price, `purchasable` is false on every policy, and the browser contract has
- * no add-to-cart member for this file to reach for.
+ * A server-bound direct row may enter the existing legacy Early Access order
+ * journey. Every other row renders its non-purchase mode and no BUY NOW.
  */
 export function KrisCatalogCard({ item }: { item: KrisCatalogItemView }) {
   const headingId = `kris-card-${item.id}`;
@@ -63,6 +63,7 @@ export function KrisCatalogCard({ item }: { item: KrisCatalogItemView }) {
         </dl>
 
         <KrisAccessNotices access={item.access} suppliedNote={item.suppliedNote} />
+        <KrisPurchaseAction item={item} />
       </article>
     </li>
   );
