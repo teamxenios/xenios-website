@@ -181,3 +181,24 @@ door still refuses anonymous requests (all-members scope means approved
 member sessions, never the public), /research/access-hub serves, health 200.
 Every approved member now sees the 417-priced master catalog from the member
 navigation.
+
+## F7 addendum: the research_organizations name collision (found 2026-08-15)
+
+Preparing the Pack 02 migration surfaced a table-name collision that would
+have made a blind apply silently wrong: production ALREADY HAS
+public.research_organizations, but it is the PARTNER system's table
+(columns id, name, owner_partner_id, state, created_at; referenced by
+server/research/commerce/persistence/partners-store.ts and
+server/research/partners/portal-production.ts; zero rows; the partner API is
+mounted but dark behind NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED). Pack 02's
+candidate defines a DIFFERENT research_organizations (slug, legal_name,
+display_name, purchasing/billing emails, addresses). "create table if not
+exists" would keep the partner shape and the account API would still fail
+column-by-column after a "successful" apply.
+
+Resolution decided (engineering, no founder input needed): the UNSHIPPED
+Pack 02 system renames its table to public.research_account_organizations
+(candidate SQL, production store, parked mount branch, tests) before the
+migration is registered. The live partner table is untouched. The
+founder-gated part of F7 stays what it was: authorize the apply once the
+renamed, certified migration packet is ready.
