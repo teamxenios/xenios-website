@@ -393,7 +393,12 @@ export function registerResearchApi(app: Express) {
     DOWNSTREAM_MEMBER_GUARDED_READ_PATHS.has(path) ||
     path === "/member/products" ||
     path.startsWith("/member/products/") ||
-    path.startsWith("/pricing/");
+    path.startsWith("/pricing/") ||
+    // The master-offerings catalog reads (GET/HEAD only at this gateway
+    // shape) own a stronger downstream guard: display flag, canonical member
+    // auth, and the fail-closed launch scope, with private response headers.
+    // Exactly the documented one-line fix in catalog-display/routes.ts.
+    path.startsWith("/catalog-display/");
   const downstreamMemberGuardedWrite = (path: string): boolean => {
     const xenios30Match = /^\/plans\/xenios30\/([^/]+)\/acknowledge$/.exec(path);
     if (xenios30Match !== null && z.string().uuid().safeParse(xenios30Match[1]).success) {

@@ -366,12 +366,14 @@ describe("boundaries: the ingestion model stays on the server", () => {
     expect(offenders).toEqual([]);
   }, 60_000);
 
-  it("is imported by nothing outside the lane, so it cannot ship yet", () => {
-    // Verified against a real production build: neither dist/public/assets nor
-    // dist/index.cjs contained any catalog string. This is the fast static
-    // proxy for that, and it is the tripwire: the moment a router or a
-    // composition root imports the lane, this fails and forces the mounting
-    // conversation instead of letting the surface ship by accident.
+  it("is imported only by the composition root, which mounted it deliberately", () => {
+    // This began as the tripwire that forced the mounting conversation: the
+    // lane was imported by nothing, so it could not ship by accident. That
+    // conversation happened. Phase 0 of the general platform build mounted
+    // the route table in server/index.ts on founder direction, dark behind
+    // RESEARCH_MASTER_OFFERINGS_ENABLED. The boundary survives with one
+    // exact allowlist: the composition root may import the lane, and nothing
+    // else may, so a second door still fails here by name.
     const lane =
       /master-offerings\/(FullCatalogPage|MasterOfferingCard|MasterOfferingCatalogControls|MasterOfferingDetail|MasterOfferingCatalogSurface|MasterOfferingDetailSurface|catalogApi|catalog-cart-handoff|integration-packet|routes|service|price-authority|price-list-export|dataset-reader|composition|mount)/;
     const owned = /(^|\/)master-offerings\//;
@@ -391,7 +393,16 @@ describe("boundaries: the ingestion model stays on the server", () => {
     // lane's own files rather than matching nothing at all.
     expect(outside.length).toBeGreaterThan(500);
     expect(laneFiles).toBeGreaterThanOrEqual(20);
-    expect(offenders).toEqual([]);
+    // The one permitted importer. Every offender must be the composition
+    // root; any other file importing the lane is a second door and fails.
+    const outsideAllowlist = offenders.filter(
+      (offender) => !offender.startsWith("server/index.ts:"),
+    );
+    expect(outsideAllowlist).toEqual([]);
+    // The scan's lane pattern names the shippable modules; the composition
+    // root imports two of them (mount and composition), which proves the
+    // allowlist is exercised rather than vacuously empty.
+    expect(offenders.length).toBeGreaterThanOrEqual(2);
   }, 60_000);
 
   it("keeps the raw dataset out of the browser contract", () => {

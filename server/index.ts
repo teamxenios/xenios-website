@@ -92,6 +92,15 @@ import {
   krisCatalogErrorHandler,
   krisCatalogRouteTable,
 } from "./research/kris-launch-a";
+import {
+  MASTER_OFFERING_CATALOG_ERROR_BASE_PATH,
+  masterOfferingCatalogErrorHandler,
+  masterOfferingCatalogRouteTable,
+} from "./research/master-offerings/mount";
+import type { MasterOfferingCatalogViewer } from "./research/master-offerings/routes";
+import { createMasterOfferingCatalogDependencies } from "./research/master-offerings/composition";
+import { mayViewMasterOfferings } from "./research/master-offerings/visibility-policy";
+import { masterOfferingNoProductionBindings } from "./research/master-offerings/production-bindings";
 import { requireSupabaseAdmin } from "./routes";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
@@ -499,6 +508,67 @@ registerPricingApi(app, {
   authorizeAudience: authorizePricingAudience,
   enabled: pricingEnabledFromCommerceEnv,
 });
+
+// The general member catalog (master offerings v2): the 420-row canonical
+// selection, display-only. Serving is dark until RESEARCH_MASTER_OFFERINGS_ENABLED
+// is exactly "true", and scope then fails closed to founder/admin until the
+// all-members decision. The composition carries ZERO commerce authority on
+// purpose: production holds no reviewed variant bindings yet, so every row
+// truthfully renders "Price on request", the request identity resolves to
+// null, and the selection authority is unreachable and throws if reached,
+// which the route's catch turns into a refusal, never a purchase. General
+// prices arrive later as Product Control DATA plus the durable binding store,
+// with no route change.
+const authorizeMasterOfferingViewer = async (
+  req: Request,
+): Promise<MasterOfferingCatalogViewer | null> => {
+  const member = await resolveActiveMemberSilently(req);
+  if (!member) return null;
+  const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
+  const email = (member.email || "").toLowerCase().trim();
+  const audience: MasterOfferingCatalogViewer["audience"] =
+    adminEmail !== "" && email === adminEmail ? "admin" : "member";
+  if (!mayViewMasterOfferings({ audience, email })) return null;
+  return { audience, email };
+};
+const masterOfferingCatalogDependencies = createMasterOfferingCatalogDependencies(
+  {
+    bindings: masterOfferingNoProductionBindings,
+    selections: {
+      select() {
+        throw new Error(
+          "master offerings display-only composition has no selection authority",
+        );
+      },
+    },
+    pricingSource: new CatalogPricingProductSource(
+      createProductionProductControlReader(),
+    ),
+    identityFor: () => null,
+  },
+  authorizeMasterOfferingViewer,
+);
+const [
+  masterOfferingListRoute,
+  masterOfferingDetailRoute,
+  masterOfferingPriceListRoute,
+  masterOfferingListOptionsRoute,
+  masterOfferingDetailOptionsRoute,
+  masterOfferingPriceListOptionsRoute,
+] = masterOfferingCatalogRouteTable(masterOfferingCatalogDependencies);
+// Keep these six registrations explicit: the release scanner must see every
+// reachable door, while their paths and handler order still come from the one
+// authoritative descriptor table.
+app.get("/api/research/catalog-display/v2/catalog", ...masterOfferingListRoute.handlers);
+app.get("/api/research/catalog-display/v2/products/:family/:slug", ...masterOfferingDetailRoute.handlers);
+app.get("/api/research/catalog-display/v2/price-list", ...masterOfferingPriceListRoute.handlers);
+app.options("/api/research/catalog-display/v2/catalog", ...masterOfferingListOptionsRoute.handlers);
+app.options("/api/research/catalog-display/v2/products/:family/:slug", ...masterOfferingDetailOptionsRoute.handlers);
+app.options("/api/research/catalog-display/v2/price-list", ...masterOfferingPriceListOptionsRoute.handlers);
+app.use(
+  MASTER_OFFERING_CATALOG_ERROR_BASE_PATH,
+  masterOfferingCatalogErrorHandler(masterOfferingCatalogDependencies),
+);
 
 // Website 3 products and diagnostics. Uses the same active-member/admin guards,
 // canonical catalog readiness, canonical lot/quality tables, private Supabase

@@ -38,6 +38,11 @@ const CATEGORY_BY_FAMILY: Readonly<
   provider_network: "other",
   white_label_and_partners: "other",
   shipping_and_fulfillment: "other",
+  clinical_formulations_503a: "other",
+  research_capsules: "research_vial",
+  research_peptides_materials: "research_vial",
+  research_supplies: "laboratory_supply",
+  topicals_regenerative: "other",
 };
 
 export function demandIntentForAction(

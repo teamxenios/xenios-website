@@ -1615,8 +1615,18 @@ describe("route uniqueness validator", () => {
     // The payment-rejection door (top-right, 2026-08-14) added ONE:
     //   POST /api/admin/research/payments/:orderNumber/reject
     // behind the same Supabase admin guard as the confirm door beside it.
-    expect(result.callSites).toBe(360);
-    expect(result.routes).toHaveLength(369);
+    //
+    // The 360/369 -> 366/375 move is the master-offerings v2 catalog mount
+    // (Phase 0 of the general platform build, 2026-08-14): six explicit
+    // read-only registrations in server/index.ts from the lane's own route
+    // table, GET and OPTIONS for /api/research/catalog-display/v2/catalog,
+    // /products/:family/:slug, and /price-list. Serving stays dark behind
+    // RESEARCH_MASTER_OFFERINGS_ENABLED with a fail-closed founder/admin
+    // launch scope, and the composition carries zero commerce authority
+    // (no bindings, no identity, a throwing selection seam), so the census
+    // records six reachable read doors and no new way to buy anything.
+    expect(result.callSites).toBe(366);
+    expect(result.routes).toHaveLength(375);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });
