@@ -486,13 +486,7 @@ describe("gateway integration (real registerResearchApi)", () => {
     };
   }
 
-  it("the real wall's read bypass admits the adapter in production order", async () => {
-    // This test used to pin the trap: /catalog-display/ was on no bypass
-    // list, so the wall shadowed the adapter and a valid member Bearer never
-    // reached it. The one-line fix this file's header prescribed was applied
-    // when the master-offerings v2 catalog mounted (Phase 0, 2026-08-14),
-    // and the bypass covers every /catalog-display/ read. The pin now holds
-    // the post-edit truth in the REAL production order, wall first.
+  it("today: the wall shadows the adapter, and /catalog does not cover it", async () => {
     await inProductionPosture(async () => {
       const authorizer = bearerBoundAuthorizer(SAMUEL);
       const app = express();
@@ -504,15 +498,9 @@ describe("gateway integration (real registerResearchApi)", () => {
       });
 
       const res = await request(app).get(LIST_URL).set("Authorization", "Bearer member-token");
-      expect(res.status).toBe(200);
-      expect(res.body.breadth).toBe("full");
-      expect(authorizer.state.calls).toBe(1);
-      expectPrivateHeaders(res.headers);
-
-      // The wall still guards every non-bypassed research path.
-      const walled = await request(app).get("/api/research/applications");
-      expect(walled.status).toBe(401);
-      expect(walled.body).toEqual({ ok: false, message: "Access required." });
+      expect(res.status).toBe(401);
+      expect(res.body).toEqual({ ok: false, message: "Access required." });
+      expect(authorizer.state.calls).toBe(0);
     });
   });
 
