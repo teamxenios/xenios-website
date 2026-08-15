@@ -413,6 +413,65 @@ for image in "${IMAGES[@]}"; do
     || fail "${image}: a stray anon execute grant survived a re-apply (${healed} routine(s))"
   echo "  a stray anon execute grant on a routine is healed by re-apply"
 
+  # ---- 5. THE service_role PREDICATE, proven rather than asserted -------
+  # An earlier revision allowed "0 or 8" and claimed that made a future
+  # service_role removal fail at apply time. Independent QA disproved it:
+  # revoking all eight and re-applying returned 0 and committed silently,
+  # because this migration never grants to service_role (the access arrives
+  # from the default ACL at CREATE TABLE time and is never restored). The
+  # predicate is now <> 8. This control is the proof.
+  docker exec "$name" psql -U postgres -d rehearse -q -c \
+    "do \$r\$ declare t text; begin
+       foreach t in array array['research_account_organizations','research_organization_users',
+         'research_organization_invitations','research_account_claim_challenges',
+         'research_customer_account_bindings','research_organization_order_ownership',
+         'research_account_binding_events','research_organization_request_again'] loop
+         execute format('revoke all on table public.%I from service_role', t);
+       end loop; end \$r\$;" >/dev/null
+  pre="$(docker exec "$name" psql -U postgres -d rehearse -tAc \
+    "select count(*) from (values ('research_account_organizations'),('research_organization_users'),
+       ('research_organization_invitations'),('research_account_claim_challenges'),
+       ('research_customer_account_bindings'),('research_organization_order_ownership'),
+       ('research_account_binding_events'),('research_organization_request_again')) as t(n)
+     where has_table_privilege('service_role','public.'||t.n,'SELECT')")"
+  [ "$pre" = "0" ] || fail "${image}: the service_role revoke did not take (${pre} left); the control would be vacuous"
+  set +e
+  gone="$(run_sql rehearse < "${REPO_ROOT}/${MIGRATION}" 2>&1)"
+  gone_rc=$?
+  set -e
+  [ "$gone_rc" -ne 0 ] \
+    || fail "${image}: service_role was revoked from all eight and the re-apply still committed; the predicate is back to the broken 'or none' shape"
+  echo "$gone" | grep -q "the deployed store needs all 8" \
+    || fail "${image}: service_role removal refused for the wrong reason: ${gone}"
+  echo "  revoking service_role from all eight now aborts the apply (was silently accepted)"
+
+  # ---- 6. ATOMICITY, proven on the applier that used to leak ------------
+  # Without the file's own transaction, a post-condition failure under a plain
+  # psql left all eight tables, the sequence, six functions and the seed row
+  # behind after reporting failure. The migration now opens its own
+  # transaction, so a failure leaves nothing even here. Note run_sql uses no
+  # -1 flag: this is deliberately the leaky applier mode.
+  docker exec "$name" psql -U postgres -q -c 'create database atomic' >/dev/null
+  printf '%s\n' "$FIXTURE" | run_sql atomic >/dev/null
+  # Force the post-condition to fail: a foreign shape passes the preflight's
+  # three-column test but breaks the end state the post-condition demands.
+  docker exec "$name" psql -U postgres -d atomic -q -c \
+    "create table public.research_organization_users (wrong_shape int)" >/dev/null
+  set +e
+  run_sql atomic < "${REPO_ROOT}/${MIGRATION}" >/dev/null 2>&1
+  atomic_rc=$?
+  set -e
+  [ "$atomic_rc" -ne 0 ] || fail "${image}: the sabotaged apply unexpectedly succeeded; the atomicity control is vacuous"
+  leaked="$(docker exec "$name" psql -U postgres -d atomic -tAc \
+    "select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace
+      where n.nspname='public' and c.relname in ('research_account_organizations',
+        'research_organization_invitations','research_account_claim_challenges',
+        'research_customer_account_bindings','research_organization_order_ownership',
+        'research_account_binding_events','research_organization_request_again')")"
+  [ "$leaked" = "0" ] \
+    || fail "${image}: a failed apply leaked ${leaked} table(s) on a non-transactional applier; the migration's own transaction is missing or ineffective"
+  echo "  a failed apply leaves nothing behind, even without psql -1"
+
   docker rm -f "$name" >/dev/null 2>&1 || true
   trap - EXIT
   echo "  ${image}: PASS"

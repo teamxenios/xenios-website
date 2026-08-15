@@ -1,3 +1,21 @@
+-- ATOMICITY IS ENFORCED HERE, not assumed of the applier.
+--
+-- This file previously carried no transaction of its own. Independent QA
+-- measured both applier modes: under psql -1 a post-condition failure rolls
+-- everything back, but under a plain psql a failure left ALL EIGHT tables,
+-- the identity sequence, all six functions and the roman-digital seed row
+-- behind, after reporting failure. A half-created account schema is worse
+-- than none: the post-condition that would have caught the problem has
+-- already been skipped, and the next apply starts from a shape nobody
+-- designed.
+--
+-- Whether the managed applier wraps a migration is not something this file
+-- can observe, so it no longer depends on the answer. Everything below runs
+-- in one transaction and the post-condition is the last thing before COMMIT,
+-- so if it raises, nothing is left behind on any applier. No statement here
+-- forbids a transaction block (there is no CREATE INDEX CONCURRENTLY).
+begin;
+
 -- M70 - the Pack 02 account and organization schema, under its own name.
 --
 -- WHY THE NAME public.research_account_organizations (decision D-004).
@@ -645,12 +663,26 @@ begin
   end if;
 
   -- service_role's access is DECLARED, not ignored. The deployed Pack 02 store
-  -- queries these tables directly as service_role, so this migration must not
-  -- revoke it; asserting it here means a future change that quietly removes it
-  -- fails at apply time rather than at the next deploy, when the account API
-  -- would start answering 503. On managed Supabase the grant arrives from the
-  -- default ACL; the assertion is skipped where that role does not exist, so a
-  -- disposable database without it is not failed for the wrong reason.
+  -- queries these eight tables directly as service_role, so this migration must
+  -- not revoke it, and a future change that does must fail here rather than at
+  -- the next deploy, when the account API would start answering 503.
+  --
+  -- The predicate is <> 8, NOT "0 or 8". An earlier revision allowed zero on
+  -- the theory that a database without the Supabase default ACL should not be
+  -- failed for the wrong reason. Independent QA broke that: revoking
+  -- service_role from ALL EIGHT tables and re-applying returned 0 and committed
+  -- silently, because this migration never grants to service_role (the access
+  -- arrives from the default ACL at CREATE TABLE time and is never restored).
+  -- So the "or none" branch waved through exactly the regression the assertion
+  -- was written to catch, and the comment claiming otherwise was false.
+  --
+  -- Requiring all eight also makes the migration honest about its own
+  -- dependency: on a target with no Supabase default ACL, service_role ends
+  -- with nothing, the account API would be dead on arrival, and this now fails
+  -- loudly at apply time instead of shipping a schema no deployed code can
+  -- read. The role-existence guard remains, because a disposable database
+  -- without the role at all is a different situation from one where the grant
+  -- was removed.
   if exists (select 1 from pg_roles where rolname = 'service_role') then
     select count(*) into v_count
       from (values
@@ -664,9 +696,9 @@ begin
         ('research_organization_request_again')
       ) as t(name)
      where has_table_privilege('service_role', 'public.' || t.name, 'SELECT');
-    if v_count <> 0 and v_count <> 8 then
+    if v_count <> 8 then
       raise exception
-        'M70 postcondition: service_role reads % of 8 account tables; the deployed store needs all 8 or none',
+        'M70 postcondition: service_role reads % of 8 account tables; the deployed store needs all 8',
         v_count;
     end if;
   end if;
@@ -680,3 +712,4 @@ begin
 end
 $m70_postcondition$;
 
+commit;
