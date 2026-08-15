@@ -171,3 +171,13 @@ Pack 02 schema to land through the governed migration chain (registration,
 PG16/17 certification, apply); the parked branch then merges and organization
 login goes live with no further design work. The Access Hub's organization and
 supplier cards state the honest interim (contact business support) until then.
+
+0_4 deploy record: tag RESEARCH_PLATFORM_0_4 = b0fe396 (rollback cfc83f4).
+The founder-authorized scope flip (RESEARCH_MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY=false)
+rode the env write, which deployed branch HEAD = exactly the release SHA:
+dep-da07gcdbedkc73a3mka0, live 2026-08-15T14:32:06Z, commit verified in the
+deploy object. Post-deploy: anonymous smoke 7 PASS 0 FAIL, the v2 catalog
+door still refuses anonymous requests (all-members scope means approved
+member sessions, never the public), /research/access-hub serves, health 200.
+Every approved member now sees the 417-priced master catalog from the member
+navigation.
