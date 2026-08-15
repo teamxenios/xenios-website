@@ -299,6 +299,15 @@ export function registerResearchApi(app: Express) {
     // is the one answer that cannot be recovered from in the UI. It reads no
     // parameter and reports only whether the cart is enabled.
     "/early-access/cart/capability",
+    // The assisted-order doors (2026-08-15 founder directive). Both read no
+    // parameter: config reports the feature state and the exact required
+    // agreement versions, catalog is the same member-safe projection the
+    // session-gated catalog serves. Each owns a STRONGER gate downstream: the
+    // handler resolves the durable Early Access session or an active member,
+    // and an unconfigured composition answers a refusal, never data. Walling
+    // them makes the feature look ABSENT instead of closed.
+    "/early-access/assisted-orders/config",
+    "/early-access/assisted-orders/catalog",
   ]);
   const EARLY_ACCESS_OPEN_WRITE_PATHS = new Set([
     "/early-access/unlock",
@@ -323,6 +332,12 @@ export function registerResearchApi(app: Express) {
     // acceptance. Without this entry the wall answers first and no customer can
     // ever agree, which reads as a broken checkout rather than a closed one.
     "/early-access/agreements/accept",
+    // Assisted-order submission. It owns a STRONGER gate downstream: the
+    // handler resolves the durable Early Access session or an active member,
+    // re-reads every product and price authoritatively, and re-checks the
+    // exact required agreement versions. Reaching it through the wall reaches
+    // a refusal, never a stored request.
+    "/early-access/assisted-orders",
   ]);
   // The order routes carry an order number, so they cannot be a Set entry. They
   // are ANCHORED against the exact generated shape instead of a bare prefix:
@@ -373,6 +388,26 @@ export function registerResearchApi(app: Express) {
   );
   const EARLY_ACCESS_CART_WRITE = new RegExp(
     `^/early-access/cart/(?:${CART_NUMBER_SEGMENT})/payment-proof$`,
+  );
+
+  // The assisted-order parameterized doors, anchored on the exact generated
+  // shapes and nothing else: the public reference XRR-<8 digits>-<10 upper hex>
+  // for the customer status read, and the lowercase v4 uuid ids for the two
+  // document writes. A lookalike segment, an extra segment, and a wrong method
+  // all fail the match and stay walled, so a future route under this namespace
+  // is walled by default until it is listed on purpose. Each handler still
+  // owns its own, STRONGER gate: the session or member viewer, then ownership
+  // or the request's own hashed status token, then for documents the exact
+  // identity_requested state. Getting through this wall reaches a refusal,
+  // never another customer's request or document.
+  const ASSISTED_ORDER_REFERENCE_SEGMENT = "XRR-\\d{8}-[0-9A-F]{10}";
+  const ASSISTED_ORDER_UUID_SEGMENT =
+    "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+  const EARLY_ACCESS_ASSISTED_ORDER_READ = new RegExp(
+    `^/early-access/assisted-orders/(?:${ASSISTED_ORDER_REFERENCE_SEGMENT})$`,
+  );
+  const EARLY_ACCESS_ASSISTED_ORDER_WRITE = new RegExp(
+    `^/early-access/assisted-orders/(?:${ASSISTED_ORDER_UUID_SEGMENT})/documents(?:/(?:${ASSISTED_ORDER_UUID_SEGMENT})/complete|/upload-url)$`,
   );
 
   // These exact read routes own their stronger downstream member guard and
@@ -609,11 +644,13 @@ export function registerResearchApi(app: Express) {
       ((req.method === "GET" || req.method === "HEAD") &&
         (EARLY_ACCESS_OPEN_READ_PATHS.has(req.path) ||
           EARLY_ACCESS_ORDER_READ.test(req.path) ||
-          EARLY_ACCESS_CART_READ.test(req.path))) ||
+          EARLY_ACCESS_CART_READ.test(req.path) ||
+          EARLY_ACCESS_ASSISTED_ORDER_READ.test(req.path))) ||
       (req.method === "POST" &&
         (EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path) ||
           EARLY_ACCESS_ORDER_WRITE.test(req.path) ||
-          EARLY_ACCESS_CART_WRITE.test(req.path)))
+          EARLY_ACCESS_CART_WRITE.test(req.path) ||
+          EARLY_ACCESS_ASSISTED_ORDER_WRITE.test(req.path)))
     ) {
       return next();
     }

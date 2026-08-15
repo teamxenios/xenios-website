@@ -26,6 +26,7 @@ import {
 import { runAgreementPackageReconciler } from "./agreement-package-reconciliation";
 import { renderProductDiagnosticOutboxEmail } from "./products-diagnostics/communications";
 import { renderEarlyAccessOutboxEmail } from "./early-access/notifications/communications";
+import { renderAssistedOrderOutboxEmail } from "./assisted-order/communications";
 import { renderBuyerCommerceOutboxEmail } from "./buyer-commerce/communications";
 
 // ---------------------------------------------------------------------------
@@ -373,6 +374,15 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
             to: job.recipient,
             subject: earlyAccess.subject,
             text: earlyAccess.text,
+            idempotencyKey: String(job.event_key),
+          });
+        }
+        const assistedOrder = renderAssistedOrderOutboxEmail(job.template_key, payload);
+        if (assistedOrder) {
+          return await sendFoundingEmail({
+            to: job.recipient,
+            subject: assistedOrder.subject,
+            text: assistedOrder.text,
             idempotencyKey: String(job.event_key),
           });
         }
