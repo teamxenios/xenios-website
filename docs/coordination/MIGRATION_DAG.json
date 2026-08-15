@@ -597,6 +597,25 @@
         "evidence": "First applied 2026-08-14 via Supabase MCP (managed id 20260814060630) after three independent adversarial body reviews; SECOND apply run against production 2026-08-14 ~06:20Z by the lead, exited clean, twelve-function post-condition proved the pinned end state both times (configuration-idempotent ALTERs)."
       },
       "notes": "Advisor remediation (function_search_path_mutable WARN x12): pins search_path='' on the eleven trigger guards plus research_rate_limit_hit. Remediates search-path injection risk on SECURITY DEFINER/trigger execution paths."
+    },
+    {
+      "id": "research_account_organizations_pack02",
+      "path": "supabase/migrations/20260815120000_research_account_organizations_pack02.sql",
+      "sourceSha": "75ea6637acdda07d6ab576df236d6ee5c6790a57",
+      "dependsOn": [],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "eaebfa6e20560837e287a44793aaf53884cdd6089e7bcee23ec31407f99239e5"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "drop_the_eight_additive_account_tables_and_three_service_role_routines_in_dependency_order_while_never_touching_the_partner_research_organizations_table",
+        "procedure": "supabase/production/research-account-organizations-pack02-rollback-notes.md",
+        "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16 and 17 using scripts/verify-m70-account-organizations.sh. Each run first proved the preflight fails closed on a bare database leaving no relation behind, then proved decision D-004 is enforced by putting a PARTNER-SHAPED clone under the account name and requiring the preflight to refuse it. The fixture carries the LIVE partner public.research_organizations with its real five-column shape, two rows, RLS and an authenticated SELECT grant, so the central claim is a comparison and not an assertion about a table nobody looked at: its column list, row contents and grant were byte-identical after both applies. The 11-assertion behavioural suite was green after each pass on both engines, proving the eight account tables exist with row level security, zero anon or authenticated table grants, three SECURITY DEFINER routines executable by service_role alone, and the roman-digital seed present exactly once across two applies. The post-condition was proven non-decorative by granting anon SELECT on an account table and requiring the re-apply to abort, and a stray anon EXECUTE grant on an account routine was healed by re-apply with the healed state proven. Production was not connected to or mutated."
+      },
+      "notes": "M70 release candidate, decision D-004. Renames the unshipped Pack 02 account organizations table to public.research_account_organizations because production already carries public.research_organizations for the PARTNER system; a blind create-if-not-exists would have reported success while leaving the partner shape in place and the mounted account API would have failed column by column. Purely additive: eight tables, their indexes and triggers, three trigger functions, three service_role-only SECURITY DEFINER routines and one roman-digital seed row. Alters no existing object and never reads, writes, alters, grants on or depends on the partner table. Explicitly NOT applied to production. Ledger row 70; row 69 is the quantity-band-100 migration held on fable/q100-dark and not yet on this release line. Known hardening deltas against the newest in-repo pattern, recorded rather than silently changed: RLS is enabled but not FORCED on the eight tables, and the post-condition proves grant absence for anon and authenticated but not for PUBLIC or service_role. Neither is an open hole today because the migration creates no table grant at all, but a later hardening pass should close both."
     }
   ],
   "invariants": [
