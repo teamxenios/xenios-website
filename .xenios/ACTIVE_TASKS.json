@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-15T15:10:00Z",
+  "tasks": [
+    {
+      "id": "F7-PACK02-RENAME",
+      "title": "Rename account organization table and certify migration",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "claude-fable-main",
+      "paths": [
+        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "server/research/account-identity/**",
+        "shared/research/account-identity.ts"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-08-15T16:29:32.799Z"
+    },
+    {
+      "id": "F7-ACCOUNT-MOUNT",
+      "title": "Rebase and integrate parked account UI",
+      "priority": "P0",
+      "state": "blocked",
+      "owner": null,
+      "paths": [
+        "client/src/research/account/**",
+        "client/src/research/section.tsx",
+        "client/src/research/lib/routes.ts",
+        "client/src/research/layout.tsx"
+      ],
+      "dependsOn": [
+        "F7-PACK02-RENAME"
+      ]
+    },
+    {
+      "id": "APP-MEMBERSHIP",
+      "title": "Open canonical membership application",
+      "priority": "P0",
+      "state": "blocked_external",
+      "owner": null,
+      "paths": [
+        "client/src/research/pages/Apply.tsx",
+        "server/research/**application**",
+        "shared/research/**application**"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SUPPLIER-WORKSPACE",
+      "title": "Build minimum-data supplier workspace",
+      "priority": "P1",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "client/src/research/supplier/**",
+        "server/research/supplier/**",
+        "shared/research/supplier/**"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "AFFILIATE-PRODUCTION",
+      "title": "Complete affiliate identity and money lifecycle",
+      "priority": "P1",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "client/src/research/pages/partners/**",
+        "server/research/partners/**",
+        "shared/research/affiliate-system.ts"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "REQUEST-CENTER",
+      "title": "Unify durable requests and admin conversion",
+      "priority": "P1",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "client/src/research/**request**",
+        "server/research/**request**",
+        "shared/research/**request**"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "GENERAL-COMMERCE",
+      "title": "Enable stateful commerce after money-path gates",
+      "priority": "P1",
+      "state": "blocked",
+      "owner": null,
+      "paths": [
+        "server/research/commerce/**",
+        "client/src/research/**cart**",
+        "client/src/research/**checkout**"
+      ],
+      "dependsOn": [
+        "REQUEST-CENTER"
+      ]
+    },
+    {
+      "id": "NOTIFICATION-CENTER",
+      "title": "Complete cross-persona notification center",
+      "priority": "P2",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "server/research/notifications/**",
+        "client/src/research/**notification**",
+        "shared/research/**notification**"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "ANALYTICS",
+      "title": "Build role-scoped analytics",
+      "priority": "P2",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "client/src/research/**analytics**",
+        "server/research/**analytics**",
+        "shared/research/**analytics**"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "GOOGLE-WORKSPACE",
+      "title": "Integrate Gmail, Drive, Sheets, Calendar, Contacts",
+      "priority": "P2",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "server/integrations/google/**",
+        "shared/integrations/google/**"
+      ],
+      "dependsOn": []
+    }
+  ]
+}

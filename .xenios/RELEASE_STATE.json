@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-15T15:10:00Z",
+  "canonicalBranch": "release/early-access-code-session-checkout",
+  "observedHead": "17a8370a5a0cc7bdeab7793df8a9c01ff18ebf2b",
+  "lastDocumentedProductionRelease": {
+    "tag": "RESEARCH_PLATFORM_0_4",
+    "sha": "b0fe396",
+    "rollback": "cfc83f4",
+    "deployId": "dep-da07gcdbedkc73a3mka0",
+    "status": "live"
+  },
+  "nextRelease": {
+    "name": "RESEARCH_PLATFORM_0_5",
+    "scope": [
+      "Pack02 renamed schema",
+      "organization account UI mount"
+    ],
+    "status": "blocked_on_migration_certification"
+  },
+  "productionWriter": null,
+  "invariants": [
+    "one production writer",
+    "immutable release tags",
+    "exact deploy SHA verification",
+    "no fabricated payments",
+    "no fabricated clinical authorization"
+  ]
+}

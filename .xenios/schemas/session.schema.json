@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "id",
+    "tool",
+    "lane",
+    "branch",
+    "state",
+    "heartbeatAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tool": {
+      "enum": [
+        "claude",
+        "codex",
+        "chatgpt",
+        "human",
+        "other"
+      ]
+    },
+    "lane": {
+      "type": "string"
+    },
+    "branch": {
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "active",
+        "paused",
+        "complete",
+        "stale"
+      ]
+    },
+    "heartbeatAt": {
+      "type": "string"
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

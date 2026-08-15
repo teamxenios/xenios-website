@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "leases": [
+    {
+      "id": "84d610f3-9fc3-4472-bfe3-87bb038d2123",
+      "task": "F7-PACK02-RENAME",
+      "session": "claude-fable-main",
+      "paths": [
+        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "server/research/account-identity/**",
+        "shared/research/account-identity.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-15T16:29:32.801Z",
+      "heartbeatAt": "2026-08-15T16:29:32.801Z"
+    }
+  ],
+  "rules": [
+    "one active owner per path prefix",
+    "leases expire without heartbeat",
+    "release owner does not silently edit a specialist lease"
+  ]
+}

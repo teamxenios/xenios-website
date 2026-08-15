@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-15T15:10:00Z",
+  "phases": [
+    {
+      "id": "P0",
+      "name": "General access and catalog",
+      "state": "mostly_live",
+      "items": [
+        "Access Hub",
+        "general member catalog",
+        "member sign-in",
+        "supplier information route"
+      ]
+    },
+    {
+      "id": "P1",
+      "name": "Accounts and organizations",
+      "state": "blocked",
+      "items": [
+        "renamed Pack02 schema",
+        "organization users",
+        "invitations",
+        "account home",
+        "order ownership",
+        "billing and buyer roles"
+      ]
+    },
+    {
+      "id": "P2",
+      "name": "Applications and onboarding",
+      "state": "not_live",
+      "items": [
+        "legal-version-bound application",
+        "review",
+        "claim",
+        "portal routing"
+      ]
+    },
+    {
+      "id": "P3",
+      "name": "Requests and quotes",
+      "state": "partial",
+      "items": [
+        "pricing requests",
+        "product requests",
+        "activation",
+        "quotes",
+        "volume",
+        "admin conversion"
+      ]
+    },
+    {
+      "id": "P4",
+      "name": "General commerce",
+      "state": "dark",
+      "items": [
+        "cart",
+        "checkout",
+        "payment",
+        "orders",
+        "subscriptions",
+        "returns",
+        "claims"
+      ]
+    },
+    {
+      "id": "P5",
+      "name": "Affiliates",
+      "state": "ui_broad_backend_partial",
+      "items": [
+        "identity",
+        "attribution",
+        "commissions",
+        "payouts",
+        "analytics",
+        "compliance"
+      ]
+    },
+    {
+      "id": "P6",
+      "name": "Supplier and fulfillment",
+      "state": "admin_contracts_only",
+      "items": [
+        "assignments",
+        "blind fulfillment",
+        "lot/COA",
+        "tracking",
+        "exceptions",
+        "recalls"
+      ]
+    },
+    {
+      "id": "P7",
+      "name": "Care",
+      "state": "api_foundation",
+      "items": [
+        "eligibility",
+        "intake",
+        "appointments",
+        "provider review",
+        "prescriptions",
+        "pharmacy"
+      ]
+    },
+    {
+      "id": "P8",
+      "name": "Operations and intelligence",
+      "state": "partial",
+      "items": [
+        "admin CRM",
+        "notifications",
+        "analytics",
+        "Google Workspace",
+        "support",
+        "observability"
+      ]
+    },
+    {
+      "id": "P9",
+      "name": "Reliability and automation",
+      "state": "partial",
+      "items": [
+        "CI",
+        "release train",
+        "synthetic smoke",
+        "backup/restore",
+        "disaster recovery"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-15T15:10:00Z",
+  "repository": "teamxenios/xenios-website",
+  "canonicalBranch": "release/early-access-code-session-checkout",
+  "observedHead": "17a8370a5a0cc7bdeab7793df8a9c01ff18ebf2b",
+  "currentRelease": {
+    "tag": "RESEARCH_PLATFORM_0_4",
+    "sha": "b0fe396",
+    "status": "live",
+    "rollback": "cfc83f4",
+    "deployId": "dep-da07gcdbedkc73a3mka0"
+  },
+  "catalog": {
+    "workbookRows": 420,
+    "publishedProducts": 217,
+    "activeVariants": 417,
+    "approvedMemberPrices": 417,
+    "pricePending": 2,
+    "shippingFees": 1,
+    "unknown": 0,
+    "generalMemberRollout": true
+  },
+  "liveSurfaces": [
+    "public_gateway",
+    "access_hub",
+    "member_portal",
+    "general_master_catalog",
+    "partner_portal_routes",
+    "care_apis",
+    "private_early_access",
+    "pwa_shell"
+  ],
+  "parked": [
+    {
+      "id": "F7_PACK02_ACCOUNT_MOUNT",
+      "branch": "fable/pack02-account-mount",
+      "sha": "53e306e4e0a0a07d78c50effa917e2c2fbc05e9b",
+      "reason": "production schema missing and research_organizations name collision"
+    }
+  ],
+  "criticalGaps": [
+    "organization_account_schema",
+    "membership_application_write",
+    "supplier_workspace",
+    "affiliate_production_lifecycle",
+    "durable_requests",
+    "safe_general_commerce",
+    "cross_persona_notifications",
+    "cross_persona_analytics",
+    "google_workspace_integration"
+  ],
+  "productionProjectRef": "yvzeduaxbwgcwllhywff",
+  "notes": [
+    "Kris/Roman is one buyer configuration, not the general architecture.",
+    "Provider-only products remain in Care.",
+    "RUO products remain research-use only."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "sessions": [
+    {
+      "id": "claude-fable-main",
+      "tool": "claude",
+      "lane": "organization-accounts",
+      "branch": "claude/general-platform-continuity",
+      "state": "active",
+      "startedAt": "2026-08-15T16:29:32.703Z",
+      "heartbeatAt": "2026-08-15T16:29:32.703Z",
+      "note": "F7 rename and migration certification"
+    }
+  ]
+}

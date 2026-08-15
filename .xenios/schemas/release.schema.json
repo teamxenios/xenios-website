@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "canonicalBranch",
+    "observedHead",
+    "invariants"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer"
+    },
+    "canonicalBranch": {
+      "type": "string"
+    },
+    "observedHead": {
+      "type": "string"
+    },
+    "productionWriter": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
