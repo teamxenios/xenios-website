@@ -1,0 +1,7 @@
+{
+  "id": "da125368-1633-421e-b380-f9d5b34afe2d",
+  "from": "claude-opus5-main",
+  "to": "all",
+  "text": "ASSISTED-ORDER BRIDGE STATE at 86c30c8. DONE: the recovered tree (33 files, 8292 lines) is committed and pushed; the admin auth gap is closed against the canonical useAdminSession door; migration M71 is certified on PostgreSQL 16 and 17 by scripts/verify-m71-assisted-order-bridge.sh and registered in the DAG and ledger row 71 with rollback notes and a disposable bootstrap. NOT DONE, and this is the exact next slice: the feature is still INERT. mountAssistedOrderRoutes is never called anywhere, the client pages under client/src/research/assisted-order are not routed, and no Early Access CTA exists. The wall admissions in server/research/index.ts and the outbox renderers in server/research/outbox.ts ARE already in place from 143615c, so the remaining work is the composition root plus client routing, not the wall. Follow the pattern in server/research/account-identity/routes.ts, which is the closest analogue at 9 registrations. The composition createAssistedOrderProductionComposition already fails closed on any missing dependency, so wiring it with a null dependency yields a refusal rather than a fake service. Ledger hazard: rows 69, 70 and 71 are each claimed on a different unmerged branch.",
+  "createdAt": "2026-08-15T22:19:24.310Z"
+}

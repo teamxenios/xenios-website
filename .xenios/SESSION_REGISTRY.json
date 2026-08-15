@@ -20,8 +20,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-15T21:55:26.479Z",
-      "heartbeatAt": "2026-08-15T21:55:26.479Z",
-      "note": "Fresh account takeover from claude-fable-main. Recovered and pushed its assisted-order tree at 35b0fbe. Next: F7/M70 certification."
+      "heartbeatAt": "2026-08-15T22:19:24.222Z",
+      "note": "M71 certified PG16+17 and registered at 86c30c8. Next: mount routes + client pages + Early Access CTA."
     }
   ]
 }
