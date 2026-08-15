@@ -50,6 +50,28 @@ begin
 end
 $roles$;
 
+-- ---------------------------------------------------------------------------
+-- THE DEFAULT ACL. This is the difference between a stock postgres container
+-- and the real target, and omitting it is how a migration with no table-level
+-- revoke can certify clean here and then be unable to apply to production.
+--
+-- Managed Supabase carries ALTER DEFAULT PRIVILEGES for postgres and
+-- supabase_admin in schema public granting arwdDxtm on TABLES to anon,
+-- authenticated and service_role. Verified read-only against project
+-- yvzeduaxbwgcwllhywff on 2026-08-15:
+--   {postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,
+--    authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}
+-- and the same shape owned by supabase_admin. Corroborated by the live tables
+-- research_members, research_orders and research_organizations, which all
+-- carry anon=arwdDxtm,authenticated=arwdDxtm.
+--
+-- So on the real target a newly created table does NOT start with no grants.
+-- It starts with ALL granted to all three, before the migration's own
+-- statements run. Any assertion of the form "count of browser grants is zero"
+-- is vacuous without this line and meaningful with it.
+alter default privileges for role postgres in schema public
+  grant all on tables to anon, authenticated, service_role;
+
 -- The Supabase credential authority the preflight requires.
 create schema if not exists auth;
 create table auth.users (
@@ -151,15 +173,39 @@ select 'B2 eight rls|' ||
 
 -- ---- C. THE AUTHORIZATION BOUNDARY -------------------------------------
 
--- 7. No browser-facing role holds ANY privilege on ANY of the eight tables.
+-- 7. No browser-facing principal holds ANY privilege on ANY of the eight
+--    tables. Read from the ACL, not from information_schema.role_table_grants,
+--    because that view reports only grants to roles and cannot see PUBLIC.
+--    With the default ACL in the fixture this assertion is load-bearing: every
+--    one of these tables is created with ALL granted to anon and
+--    authenticated, so it passes only because the migration revoked them.
 select 'C1 no browser grants|' ||
-  (select count(*)::text from information_schema.role_table_grants
-    where table_schema = 'public' and grantee in ('anon','authenticated')
-      and table_name in ('research_account_organizations','research_organization_users',
+  (select count(*)::text
+     from pg_class c join pg_namespace n on n.oid = c.relnamespace
+     cross join lateral aclexplode(coalesce(c.relacl, '{}'::aclitem[])) acl
+     left join pg_roles r on r.oid = acl.grantee
+    where n.nspname = 'public'
+      and c.relname in ('research_account_organizations','research_organization_users',
         'research_organization_invitations','research_account_claim_challenges',
         'research_customer_account_bindings','research_organization_order_ownership',
-        'research_account_binding_events','research_organization_request_again'))
+        'research_account_binding_events','research_organization_request_again')
+      and (acl.grantee = 0 or r.rolname in ('anon','authenticated')))
   = 'C1 no browser grants|0';
+
+-- 7b. And service_role KEEPS its read on all eight. This is the other half of
+--     the same decision: the deployed Pack 02 store queries these tables
+--     directly as service_role, so a revoke that swept it up would apply
+--     cleanly here and break the account API on the next deploy. Asserting it
+--     turns that into an apply-time failure instead of a production incident.
+select 'C1b service_role retained|' ||
+  (select count(*)::text from (values
+     ('research_account_organizations'),('research_organization_users'),
+     ('research_organization_invitations'),('research_account_claim_challenges'),
+     ('research_customer_account_bindings'),('research_organization_order_ownership'),
+     ('research_account_binding_events'),('research_organization_request_again')
+   ) as t(name)
+   where has_table_privilege('service_role', 'public.' || t.name, 'SELECT'))
+  = 'C1b service_role retained|8';
 
 -- 8. The three account routines are SECURITY DEFINER.
 select 'C2 security definer|' ||
@@ -297,8 +343,8 @@ for image in "${IMAGES[@]}"; do
       fail "${image}: behavioural suite failed after pass ${pass}"
     fi
     count="$(echo "$results" | grep -c '^t$')"
-    [ "$count" = "11" ] || fail "${image}: expected 11 assertions, got ${count}"
-    echo "  behavioural suite after pass ${pass}: 11/11"
+    [ "$count" = "12" ] || fail "${image}: expected 12 assertions, got ${count}"
+    echo "  behavioural suite after pass ${pass}: 12/12"
   done
 
   partner_after="$(docker exec "$name" psql -U postgres -d rehearse -tAc \
@@ -319,17 +365,31 @@ for image in "${IMAGES[@]}"; do
   pre="$(docker exec "$name" psql -U postgres -d rehearse -tAc \
     "select has_table_privilege('anon','public.research_organization_users','SELECT')")"
   [ "$pre" = "t" ] || fail "${image}: the stray anon table grant did not take; the control would be vacuous"
-  set +e
-  broken="$(run_sql rehearse < "${REPO_ROOT}/${MIGRATION}" 2>&1)"
-  broken_rc=$?
-  set -e
-  [ "$broken_rc" -ne 0 ] \
-    || fail "${image}: M70 committed while anon held SELECT on an account table; the boundary check is decorative"
-  echo "$broken" | grep -q "the account table grant boundary is broken" \
-    || fail "${image}: boundary breach refused for the wrong reason: ${broken}"
-  docker exec "$name" psql -U postgres -d rehearse -q -c \
-    "revoke select on public.research_organization_users from anon" >/dev/null
-  echo "  post-condition catches a broken table grant boundary"
+  # A stray browser grant is HEALED by re-apply, not refused. The migration's
+  # revoke section re-asserts the boundary on every apply, so requiring an abort
+  # here would demand it refuse a breach it exists to remove. That is the same
+  # shape M67 uses for its function grants.
+  #
+  # This is deliberately NOT the shape the assisted-order bridge uses: that
+  # migration refuses, because a direct grant on customer identity documents is
+  # evidence worth surfacing. Here the tables hold organization membership, the
+  # revoke is unconditional, and healing is the safer default. The two are
+  # different on purpose and each is asserted in its own harness.
+  run_sql rehearse < "${REPO_ROOT}/${MIGRATION}" >/dev/null \
+    || fail "${image}: M70 failed to re-apply over a stray anon table grant it should heal"
+  healed="$(docker exec "$name" psql -U postgres -d rehearse -tAc \
+    "select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
+      cross join lateral aclexplode(coalesce(c.relacl, '{}'::aclitem[])) acl
+      left join pg_roles r on r.oid = acl.grantee
+      where n.nspname='public'
+        and c.relname in ('research_account_organizations','research_organization_users',
+          'research_organization_invitations','research_account_claim_challenges',
+          'research_customer_account_bindings','research_organization_order_ownership',
+          'research_account_binding_events','research_organization_request_again')
+        and (acl.grantee = 0 or r.rolname in ('anon','authenticated'))")"
+  [ "$healed" = "0" ] \
+    || fail "${image}: a stray browser table grant survived a re-apply (${healed} grant(s))"
+  echo "  a stray browser table grant is healed by re-apply, and proven gone"
 
   # A stray EXECUTE grant on one of M70's OWN routines is different from the
   # table breach above: the migration's revoke section re-asserts the function

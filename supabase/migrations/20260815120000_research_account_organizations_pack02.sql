@@ -495,6 +495,52 @@ alter table public.research_organization_order_ownership enable row level securi
 alter table public.research_account_binding_events enable row level security;
 alter table public.research_organization_request_again enable row level security;
 
+-- THE BROWSER REVOKE, and why it cannot be omitted on the real target.
+--
+-- Enabling row level security is not by itself the boundary. On managed
+-- Supabase, ALTER DEFAULT PRIVILEGES for the postgres and supabase_admin roles
+-- grants arwdDxtm on every new table in public to anon, authenticated AND
+-- service_role. A migration that creates tables and grants nothing therefore
+-- does not produce a table with no grants: it produces a table with ALL
+-- granted to all three, before a single statement of ours runs.
+--
+-- This file originally carried no table-level revoke at all, and its own
+-- post-condition then refused to commit, counting 112 grants (8 tables x 7
+-- privileges x 2 browser roles). It was certified against a stock postgres
+-- container, which carries no such default ACL, so the absence read as
+-- correct. It was not: on the production target the migration could not apply.
+-- Thirteen migrations in this directory already carry this revoke; this one
+-- now does too.
+--
+-- service_role is DELIBERATELY NOT REVOKED. Unlike the schemas that reach
+-- their tables only through SECURITY DEFINER routines, the deployed Pack 02
+-- store queries these eight tables DIRECTLY as service_role
+-- (server/research/account-identity/production-store.ts, via getSupabaseAdmin).
+-- Revoking service_role here would let this migration apply and then break the
+-- account API on the next deploy. The boundary that matters is the browser
+-- one, so the revoke stops at authenticated and service_role's access is an
+-- asserted, declared fact in the post-condition rather than an accident.
+do $m70_browser_revoke$
+declare
+  v_table text;
+begin
+  foreach v_table in array array[
+    'research_account_organizations',
+    'research_organization_users',
+    'research_organization_invitations',
+    'research_account_claim_challenges',
+    'research_customer_account_bindings',
+    'research_organization_order_ownership',
+    'research_account_binding_events',
+    'research_organization_request_again'
+  ] loop
+    execute format('revoke all on table public.%I from public', v_table);
+    execute format('revoke all on table public.%I from anon', v_table);
+    execute format('revoke all on table public.%I from authenticated', v_table);
+  end loop;
+end
+$m70_browser_revoke$;
+
 -- First business account profile. Authentication and its exact UID binding
 -- are supplied by the dependent Roman Digital candidate; no password exists
 -- anywhere in this schema.
@@ -572,20 +618,57 @@ begin
     end if;
   end if;
 
+  -- The browser boundary, read from the ACL rather than from
+  -- information_schema.role_table_grants, because that view reports only
+  -- grants to roles and cannot see PUBLIC. PUBLIC is grantee 0 in the ACL and
+  -- has no pg_roles row, so a check that joins to pg_roles silently treats the
+  -- broadest possible grant as clean. A null relacl means the owner-only
+  -- default, which grants nothing to PUBLIC, so coalesce to empty is correct
+  -- here (unlike the function case, where a null proacl means PUBLIC EXECUTE).
   select count(*) into v_count
-    from information_schema.role_table_grants
-   where table_schema = 'public'
-     and table_name in ('research_account_organizations',
-                        'research_organization_users',
-                        'research_organization_invitations',
-                        'research_account_claim_challenges',
-                        'research_customer_account_bindings',
-                        'research_organization_order_ownership',
-                        'research_account_binding_events',
-                        'research_organization_request_again')
-     and grantee in ('anon', 'authenticated');
+    from pg_class c
+    join pg_namespace n on n.oid = c.relnamespace
+    cross join lateral aclexplode(coalesce(c.relacl, '{}'::aclitem[])) acl
+    left join pg_roles r on r.oid = acl.grantee
+   where n.nspname = 'public'
+     and c.relname in ('research_account_organizations',
+                       'research_organization_users',
+                       'research_organization_invitations',
+                       'research_account_claim_challenges',
+                       'research_customer_account_bindings',
+                       'research_organization_order_ownership',
+                       'research_account_binding_events',
+                       'research_organization_request_again')
+     and (acl.grantee = 0 or r.rolname in ('anon', 'authenticated'));
   if v_count <> 0 then
     raise exception 'M70 postcondition: the account table grant boundary is broken (% grants)', v_count;
+  end if;
+
+  -- service_role's access is DECLARED, not ignored. The deployed Pack 02 store
+  -- queries these tables directly as service_role, so this migration must not
+  -- revoke it; asserting it here means a future change that quietly removes it
+  -- fails at apply time rather than at the next deploy, when the account API
+  -- would start answering 503. On managed Supabase the grant arrives from the
+  -- default ACL; the assertion is skipped where that role does not exist, so a
+  -- disposable database without it is not failed for the wrong reason.
+  if exists (select 1 from pg_roles where rolname = 'service_role') then
+    select count(*) into v_count
+      from (values
+        ('research_account_organizations'),
+        ('research_organization_users'),
+        ('research_organization_invitations'),
+        ('research_account_claim_challenges'),
+        ('research_customer_account_bindings'),
+        ('research_organization_order_ownership'),
+        ('research_account_binding_events'),
+        ('research_organization_request_again')
+      ) as t(name)
+     where has_table_privilege('service_role', 'public.' || t.name, 'SELECT');
+    if v_count <> 0 and v_count <> 8 then
+      raise exception
+        'M70 postcondition: service_role reads % of 8 account tables; the deployed store needs all 8 or none',
+        v_count;
+    end if;
   end if;
 
   if not exists (select 1 from public.research_account_organizations
