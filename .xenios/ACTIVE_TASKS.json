@@ -6,7 +6,7 @@
       "id": "F7-PACK02-RENAME",
       "title": "Rename account organization table and certify migration",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "claude-fable-main",
       "paths": [
         "supabase/pack02-candidates/20260812_research_account_organizations.sql",
@@ -14,7 +14,13 @@
         "shared/research/account-identity.ts"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-15T16:29:32.799Z"
+      "claimedAt": "2026-08-15T16:29:32.799Z",
+      "handoff": {
+        "session": "claude-opus5-main",
+        "sha": "f556dc79ab74d3ae87b4c29335e1200ca3fcbabe",
+        "file": ".xenios/handoffs/2026-08-15T22-04-39-878Z-F7-PACK02-RENAME-claude-opus5-main.md",
+        "at": "2026-08-15T22:04:39.881Z"
+      }
     },
     {
       "id": "F7-ACCOUNT-MOUNT",
