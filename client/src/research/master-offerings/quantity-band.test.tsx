@@ -76,6 +76,7 @@ function purchasableVariant(
     displayLabel: "Available Now",
     price: {
       state: "priced",
+      basis: "exact_listed_unit",
       amountCents: 9900,
       currency: "USD",
       display: "$99.00",

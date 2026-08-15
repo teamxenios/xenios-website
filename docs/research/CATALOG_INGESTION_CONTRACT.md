@@ -66,3 +66,31 @@ Mount dark (`RESEARCH_MASTER_OFFERINGS_ENABLED` unset), census moved deliberatel
 wall read-bypass added; then founder/admin-only scope; then named members; then all
 members. The Kris lane, its routes, artifact, entitlement, and wall admissions stay
 byte-identical throughout.
+
+## Price basis and MOQ (the truthfulness audit, decided 2026-08-15)
+
+The workbook carries three columns this contract had not yet ruled on: `Quote
+Basis`, `Pack Qty`, and `MOQ`. All three describe the SUPPLIER QUOTE that
+produced the buy cost, not a customer term, and two of the observed `Quote
+Basis` values embed procurement data outright (a wholesale-unit phrasing and a
+raw original-quote amount). None of the three columns is projected to any
+member surface.
+
+An audit over all 420 rows correlated these columns with the initialized sell
+prices. Result: zero rows price below cost, and zero rows whose Suggested
+Sell Price is itself a pack total or a tier price. Two rows carry volume-
+phrased BUY bases (GRP-0363, GRP-0386); both sell per listed unit at a normal
+markup, so nothing customer-facing was wrong. The founder's authority
+therefore holds uniformly: every approved general price covers the exact
+listed unit.
+
+Decisions:
+
+1. The priced view now states its basis structurally: `basis:
+   "exact_listed_unit"` on every priced `MasterOfferingPriceView`, a basis
+   sentence on the detail page and in the price-list export. A future pack or
+   tier basis is a deliberate contract extension, never a reinterpretation.
+2. Supplier MOQ is NEVER shown to customers, and no customer minimum is
+   invented from it. The general catalog has no founder-defined customer
+   minimum today; if one arrives, it arrives as reviewed data, not as a
+   projection of a procurement column.

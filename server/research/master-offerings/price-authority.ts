@@ -113,6 +113,7 @@ function toPriceView(resolution: PriceResolution): MasterOfferingPriceView {
     amountCents: price.amountCents,
     currency: price.currency,
     display,
+    basis: "exact_listed_unit",
     priceId: price.priceId,
     priceVersion: price.version,
     effectiveAt: price.effectiveAt,

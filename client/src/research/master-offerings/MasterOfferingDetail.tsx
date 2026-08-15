@@ -4,7 +4,10 @@ import type {
   MasterOfferingDetailView,
   MasterOfferingVariantView,
 } from "@shared/research/master-offerings/contract";
-import { MASTER_OFFERING_PRICE_ON_REQUEST_LABEL } from "@shared/research/master-offerings/pricing-contract";
+import {
+  MASTER_OFFERING_PRICE_BASIS_LABEL,
+  MASTER_OFFERING_PRICE_ON_REQUEST_LABEL,
+} from "@shared/research/master-offerings/pricing-contract";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
 import {
   purchaseQuantityControl,
@@ -258,6 +261,14 @@ export function MasterOfferingDetail({
                 {priceLabel(selected)}
               </p>
             </div>
+            {selected.price.state === "priced" && (
+              <p
+                className="body-s text-ink-2 min-w-0 break-words"
+                data-testid="mo-selected-price-basis"
+              >
+                {MASTER_OFFERING_PRICE_BASIS_LABEL}
+              </p>
+            )}
             <MasterOfferingVariantAction
               productName={product.displayName}
               variant={selected}

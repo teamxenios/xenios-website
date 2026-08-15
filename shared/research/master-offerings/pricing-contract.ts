@@ -30,12 +30,24 @@ export type MasterOfferingPriceView =
       amountCents: number;
       currency: SupportedPriceCurrency;
       display: string;
+      /**
+       * What the amount covers. Today every approved general price covers the
+       * exact listed unit (the variant's own specification), which the master
+       * workbook truthfulness audit confirmed for all 417 priced rows. A
+       * future pack or tier basis is a deliberate union extension, never a
+       * silent reinterpretation of this literal.
+       */
+      basis: "exact_listed_unit";
       priceId: string;
       priceVersion: number;
       effectiveAt: string;
       expiresAt: string | null;
     }
   | { state: "on_request" };
+
+/** The buyer-facing sentence for the exact-listed-unit basis. */
+export const MASTER_OFFERING_PRICE_BASIS_LABEL =
+  "Price covers the exact listed unit.";
 
 /** The card-level roll-up across a product's variants. */
 export interface MasterOfferingPriceSummary {
@@ -133,6 +145,8 @@ export interface MasterOfferingPriceListRow {
   priceAmountCents: string;
   priceCurrency: string;
   price: string;
+  /** The basis sentence when priced, empty when on request. */
+  priceBasis: string;
   /** How this exact variant may be bought today, in plain words. */
   purchasePath: string;
 }
@@ -168,6 +182,7 @@ export const MASTER_OFFERING_PRICE_LIST_COLUMNS: ReadonlyArray<{
   { key: "priceState", header: "Price state" },
   { key: "priceAmountCents", header: "Price amount cents" },
   { key: "priceCurrency", header: "Currency" },
+  { key: "priceBasis", header: "Price basis" },
   { key: "purchasePath", header: "How to buy" },
   { key: "offeringSlug", header: "Catalog slug" },
   { key: "offeringId", header: "Offering id" },

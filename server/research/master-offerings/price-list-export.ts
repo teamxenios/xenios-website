@@ -19,6 +19,7 @@ import {
 import {
   MASTER_OFFERING_PRICE_LIST_COLUMNS,
   MASTER_OFFERING_PRICE_LIST_NOTICE,
+  MASTER_OFFERING_PRICE_BASIS_LABEL,
   MASTER_OFFERING_PRICE_ON_REQUEST_LABEL,
   isDisplayablePrice,
   type MasterOfferingPriceListDocument,
@@ -101,6 +102,7 @@ export function buildMasterOfferingPriceList(
         priceAmountCents: priced ? String(price.amountCents) : "",
         priceCurrency: priced ? price.currency : "",
         price: priced ? price.display : MASTER_OFFERING_PRICE_ON_REQUEST_LABEL,
+        priceBasis: priced ? MASTER_OFFERING_PRICE_BASIS_LABEL : "",
         purchasePath: PURCHASE_PATH_BY_ACTION[action.kind] ?? "Request access",
       });
     }

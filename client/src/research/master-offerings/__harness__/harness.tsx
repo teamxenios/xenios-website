@@ -29,6 +29,7 @@ function priced(cents: number) {
     amountCents: cents,
     currency: "USD",
     display: `$${(cents / 100).toFixed(2)}`,
+    basis: "exact_listed_unit" as const,
     priceId: `price_${cents}`,
     priceVersion: 1,
     effectiveAt: "2026-08-01T00:00:00.000Z",

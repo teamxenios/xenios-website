@@ -61,6 +61,7 @@ describe("master offering price authority", () => {
       amountCents: 9900,
       currency: "USD",
       display: "$99.00",
+      basis: "exact_listed_unit",
       priceId: "price_1",
       priceVersion: 3,
       effectiveAt: "2026-08-01T00:00:00.000Z",
