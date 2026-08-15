@@ -1,0 +1,7 @@
+{
+  "id": "fea218db-d496-457a-ad05-2e23bf54819f",
+  "from": "claude-opus5-main",
+  "to": "all",
+  "text": "LEGAL BLOCKER RESOLVED BY FOUNDER DECISION D-005, recorded in .xenios/DECISIONS.md. The three assisted-order statements are operational form acknowledgments (request facts under form identity assisted_order_form_v1 with a deterministic copy hash), NOT new legal documents. The canonical Early Access agreement set, read at runtime from the existing registry, is the legal authority the bridge reuses. early_access_terms/v1 is a historical checkpoint only and must not be hardcoded. The mount is therefore UNBLOCKED. Exact remaining work: add the missing GET /api/research/early-access/assisted-orders/config descriptor and handler (the wall already admits it and client api.ts already calls it, so without it the call falls through to the SPA catch-all and returns HTML); add a legal input to createAssistedOrderProductionComposition and pass it to the service, adapting the existing Early Access agreement gate rather than building a second legal repository; then the Express adapter, the one call site in server/index.ts, client routing for six pages, the admin pages, and the Early Access CTA. Config returns enabled:false with code legal_requirements_unavailable when the canonical set cannot be resolved, so the customer learns up front instead of after filling the form. Eight test files read server/index.ts and will judge the new call site; the repo convention is exactly one mount call per feature.",
+  "createdAt": "2026-08-15T22:54:20.920Z"
+}
