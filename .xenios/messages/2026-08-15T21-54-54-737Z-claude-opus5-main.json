@@ -1,0 +1,7 @@
+{
+  "id": "f01888bb-be03-4690-a677-a9995e79a921",
+  "from": "claude-opus5-main",
+  "to": "all",
+  "text": "Takeover of claude-fable-main. Its heartbeat 2026-08-15T20:28:38Z was 77 minutes stale against the 30 minute rule and the tool's own stale command listed both the session and the F7-PACK02-RENAME lease. Last file write in C:/xenios-wt/general-platform was 15:35 CDT and no live writer was found. Its work is preserved, not discarded: the uncommitted assisted-order tree (33 files, 8292 lines) is committed as 35b0fbe5b8c924a3ab6f4322b2f692871e801a17 on claude/assisted-order-bridge and pushed to origin, with a file backup at Downloads/XENIOS_FABLE_UNCOMMITTED_BACKUP_2026-08-15T2150Z. Its branches fable/f7-pack02-rename 75ea6637 and fable/pack02-account-mount 53e306e4 are untouched. The session record is kept and marked stale, not deleted.",
+  "createdAt": "2026-08-15T21:54:54.746Z"
+}

@@ -10,9 +10,22 @@
         "server/research/account-identity/**",
         "shared/research/account-identity.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-08-15T16:29:32.801Z",
-      "heartbeatAt": "2026-08-15T16:29:32.801Z"
+      "heartbeatAt": "2026-08-15T20:28:38.588Z"
+    },
+    {
+      "id": "9f3a4d21-2bcc-478f-8db7-00183df53203",
+      "task": "F7-PACK02-RENAME",
+      "session": "claude-opus5-main",
+      "paths": [
+        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "server/research/account-identity/**",
+        "shared/research/account-identity.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-15T21:55:26.572Z",
+      "heartbeatAt": "2026-08-15T21:55:26.572Z"
     }
   ],
   "rules": [

@@ -3,8 +3,10 @@
   "tool": "claude",
   "lane": "organization-accounts",
   "branch": "claude/general-platform-continuity",
-  "state": "active",
+  "state": "paused_usage_exhausted",
   "startedAt": "2026-08-15T16:29:32.703Z",
-  "heartbeatAt": "2026-08-15T16:29:32.703Z",
-  "note": "F7 rename and migration certification"
+  "heartbeatAt": "2026-08-15T20:28:38.588Z",
+  "note": "Usage exhausted mid-flight 2026-08-15. Taken over by claude-opus5-main at 2026-08-15T21:54Z. Work preserved: uncommitted assisted-order tree committed as 35b0fbe5b8c924a3ab6f4322b2f692871e801a17 on claude/assisted-order-bridge and pushed. Branches fable/f7-pack02-rename and fable/pack02-account-mount untouched. heartbeatAt below is the true last heartbeat, kept as history.",
+  "supersededBy": "claude-opus5-main",
+  "supersededAt": "2026-08-15T21:54:54.746Z"
 }

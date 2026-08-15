@@ -7,14 +7,15 @@
       "title": "Rename account organization table and certify migration",
       "priority": "P0",
       "state": "claimed",
-      "owner": "claude-fable-main",
+      "owner": "claude-opus5-main",
       "paths": [
         "supabase/pack02-candidates/20260812_research_account_organizations.sql",
         "server/research/account-identity/**",
         "shared/research/account-identity.ts"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-15T16:29:32.799Z"
+      "claimedAt": "2026-08-15T21:55:26.570Z",
+      "releasedAt": "2026-08-15T21:54:57.887Z"
     },
     {
       "id": "F7-ACCOUNT-MOUNT",

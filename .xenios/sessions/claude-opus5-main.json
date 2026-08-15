@@ -1,0 +1,10 @@
+{
+  "id": "claude-opus5-main",
+  "tool": "claude",
+  "lane": "organization-accounts",
+  "branch": "claude/assisted-order-bridge",
+  "state": "active",
+  "startedAt": "2026-08-15T21:55:26.479Z",
+  "heartbeatAt": "2026-08-15T21:55:26.479Z",
+  "note": "Fresh account takeover from claude-fable-main. Recovered and pushed its assisted-order tree at 35b0fbe. Next: F7/M70 certification."
+}
