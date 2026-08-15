@@ -122,3 +122,20 @@ this surface, and the Kris / Roman Health lane is untouched.
 - Turning the surface on for all members is a founder scope decision
   (RESEARCH_FULL_CATALOG_MEMBERS / the all-members flag), separate from this
   release.
+
+## RESEARCH_PLATFORM_0_3 (same day): the truthful price basis
+
+Tag RESEARCH_PLATFORM_0_3 = cfc83f4 (rollback 2badac0). Deploy
+dep-da02g2gu01pc738aro40, commit verified in the deploy object, live at
+2026-08-15T08:50:07Z. Anonymous smoke 7 PASS 0 FAIL after deploy; the v2
+door still refuses anonymously with master_offerings_auth_required.
+
+The workbook truthfulness audit (all 420 rows, run locally over the private
+intake, never projected): zero prices below cost, zero sell prices that are
+pack totals or tier prices, so the per-exact-listed-unit authority holds
+uniformly. The priced view now carries `basis: "exact_listed_unit"`, the
+detail page and price-list export state the basis sentence, and
+docs/research/CATALOG_INGESTION_CONTRACT.md records the decision that
+supplier MOQ and quote basis are procurement data, never member-facing and
+never turned into an invented customer minimum. Battery 9472 passed, 0
+failed at the release SHA.
