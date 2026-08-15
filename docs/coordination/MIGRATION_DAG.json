@@ -597,6 +597,25 @@
         "evidence": "First applied 2026-08-14 via Supabase MCP (managed id 20260814060630) after three independent adversarial body reviews; SECOND apply run against production 2026-08-14 ~06:20Z by the lead, exited clean, twelve-function post-condition proved the pinned end state both times (configuration-idempotent ALTERs)."
       },
       "notes": "Advisor remediation (function_search_path_mutable WARN x12): pins search_path='' on the eleven trigger guards plus research_rate_limit_hit. Remediates search-path injection risk on SECURITY DEFINER/trigger execution paths."
+    },
+    {
+      "id": "research_assisted_order_bridge",
+      "path": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+      "sourceSha": "35b0fbe5b8c924a3ab6f4322b2f692871e801a17",
+      "dependsOn": [],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "da60e8b0f0d66625ff72f687f3386c45edaf27f5fc5f020e9137f7e6d486091a"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "drop_the_five_additive_assisted_order_tables_and_fourteen_routines_in_dependency_order_the_bridge_is_the_only_writer_and_no_existing_object_is_altered",
+        "procedure": "supabase/production/research-assisted-order-bridge-rollback-notes.md",
+        "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16 and 17 using scripts/verify-m71-assisted-order-bridge.sh, bootstrapped by supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql. Each run first proved the preflight fails closed on a database without the Supabase role set (where the revokes would bind to nothing and the boundary would exist only as intent), leaving zero relations behind. The 10-assertion behavioural suite was green after both passes on both engines: five tables with row level security ENABLED AND FORCED, zero direct table grants across all four principals including the PUBLIC pseudo-role read straight from the ACL, zero policies, service_role holding no SELECT on any of the five, eight SECURITY DEFINER RPCs executable by service_role alone, no anon or authenticated EXECUTE on any assisted-order routine, no PUBLIC EXECUTE with acldefault expanded so a null proacl cannot be mistaken for a locked one, six internal helpers reachable by no client role, and the append-only event log proven by a real row whose UPDATE and DELETE were both refused. The deliberate divergence from M67 and M70 was also rehearsed: a direct table grant on the identity-document table is REFUSED by both the preflight and the post-condition and left visibly in place rather than silently healed, because on customer identity data such a grant is evidence that something already went wrong. The suite then proves the migration applies cleanly once the breach is corrected, so the refusal is not a trap. Production was not connected to or mutated."
+      },
+      "notes": "M71 release candidate, the assisted-order intake bridge. Five additive tables (requests, lines, events, access tokens, documents), fourteen routines of which eight are the service_role RPC surface and six are internal helpers reachable by no role, and one append-only trigger on the event log. THE BOUNDARY IS RPC ONLY: forced row level security, zero policies and zero direct table grants mean the security definer routines are the only path to these rows. Alters no existing object and writes no business row. Explicitly NOT applied to production, and NOT yet mounted: as of this entry the route registry is never called and the client pages are not routed, so the schema is inert even if applied. LEDGER RECONCILIATION HAZARD: three branches each claim a ledger row and none is merged. Row 69 is the quantity-band-100 migration on fable/q100-dark, row 70 is the Pack 02 account schema on fable/f7-pack02-rename, and this is row 71 on claude/assisted-order-bridge, so this branch MIGRATIONS.md jumps from 68 to 71. Whoever merges these lines must reconcile the ledger and confirm no two migrations claim one number."
     }
   ],
   "invariants": [
