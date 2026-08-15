@@ -91,18 +91,23 @@ this surface, and the Kris / Roman Health lane is untouched.
 - Kris / Roman Health surfaces: byte-untouched in this release; the Kris
   regression suites are inside the green battery.
 
-## Deploy record
-
-PENDING at commit time; this section is filled by a follow-up commit only
-after the deploy object verifies the exact SHA and the production smoke
-passes. Until that commit exists, this release is NOT deployed.
+## Deploy record (verified 2026-08-15)
 
 - Branch: release/early-access-code-session-checkout.
-- Release SHA: the commit tagged RESEARCH_PLATFORM_0_2. Rollback: 8a33125
-  (ROMAN_RELEASE_0_6).
-- Render deploy: to be recorded (deploy id, verified commit, live timestamp).
-- Production smoke: to be recorded (anonymous tier plus the v2 refusal
-  shape re-probe).
+- Release SHA: 2badac00710641dbf7478a2c81bd4c7bac51c8c1
+  (tag RESEARCH_PLATFORM_0_2). Rollback: 8a33125 (ROMAN_RELEASE_0_6).
+- Render deploy: dep-da022ic9v7es738dfcig on srv-d8s9vej7uimc7384dfcg,
+  trigger api, status live at 2026-08-15T08:21:16Z; the deploy object's
+  commit id equals the release SHA exactly.
+- Production smoke at the live origin: anonymous tier 7 PASS, 0 FAIL
+  (signed-in tier requires a real member session cookie and did not run,
+  reported UNVERIFIED by the harness, never assumed). The v2 catalog door
+  probed anonymously answered 401 {"ok":false,"code":"master_offerings_auth_required"}
+  with no data in the body; /api/health answered 200.
+- Founder-visible price verification requires the founder's own signed-in
+  session (this train never handles credentials). The server-side path is
+  proven by the committed-artifact closed-accounting suite, the composition
+  tests, and the production price rows verified by count and spot checks.
 
 ## Founder actions (standing)
 
