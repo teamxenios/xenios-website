@@ -29,6 +29,14 @@ export const MASTER_OFFERING_FAMILIES = [
   "provider_network",
   "white_label_and_partners",
   "shipping_and_fulfillment",
+  // The master-catalog workbook families, using the exact slugs the Kris
+  // Launch A artifact already carries, so one taxonomy names one thing on
+  // every surface that displays it.
+  "clinical_formulations_503a",
+  "research_capsules",
+  "research_peptides_materials",
+  "research_supplies",
+  "topicals_regenerative",
 ] as const;
 
 export type MasterOfferingFamily =
@@ -49,6 +57,11 @@ export const MASTER_OFFERING_FAMILY_LABELS: Readonly<
   provider_network: "Provider and Performance Network",
   white_label_and_partners: "White Label and Partners",
   shipping_and_fulfillment: "Shipping and Fulfillment",
+  clinical_formulations_503a: "503A Clinical Formulations",
+  research_capsules: "Research Capsules",
+  research_peptides_materials: "Research Peptides and Materials",
+  research_supplies: "Research Supplies",
+  topicals_regenerative: "Topicals and Regenerative",
 };
 
 /**

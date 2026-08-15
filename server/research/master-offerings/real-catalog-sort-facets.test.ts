@@ -48,8 +48,11 @@ const DATASET_PATH = [
   ),
 ].find((candidate) => typeof candidate === "string" && fs.existsSync(candidate)) ?? "";
 
-/** The counts the frozen catalog foundation verified independently. */
-const MEMBER_OFFERINGS = 1121;
+/**
+ * The counts the catalog ingestion contract verified independently against the
+ * MASTER CATALOG workbook: 420 selected rows, each exactly one offering.
+ */
+const MEMBER_OFFERINGS = 420;
 const ADMIN_HOLDS = 11;
 
 const available = fs.existsSync(DATASET_PATH);
@@ -99,7 +102,7 @@ function sum(buckets: readonly { count: number }[]): number {
 withRealCatalog("the real generated catalog", () => {
   const CATALOG = available ? loadCatalog() : [];
 
-  it("is the catalog the foundation verified", () => {
+  it("is the catalog the ingestion contract verified", () => {
     expect(CATALOG).toHaveLength(MEMBER_OFFERINGS);
     expect(matchMasterOfferings(CATALOG)).toHaveLength(MEMBER_OFFERINGS);
   });
@@ -131,8 +134,8 @@ withRealCatalog("the real generated catalog", () => {
 
   it("pages a filtered, searched catalog exactly once under every sort", () => {
     const query: MasterOfferingCatalogQuery = {
-      q: "vitamin",
-      states: ["planned"],
+      q: "capsule",
+      states: ["care_pathway"],
     };
     for (const sort of MASTER_OFFERING_SORTS) {
       const total = matchMasterOfferings(CATALOG, query).length;
@@ -156,15 +159,19 @@ withRealCatalog("the real generated catalog", () => {
   });
 
   it("sorts by availability with the strongest states first", () => {
+    // The display-only launch carries three states, and the shared rank orders
+    // them approval_required, then request_access, then care_pathway. When
+    // Product Control data opens real availability, available_now rows will
+    // take the front and this pin moves with them deliberately.
     const ordered = matchMasterOfferings(CATALOG, { sort: "availability" });
-    expect(ordered[0].displayState).toBe("available_now");
-    expect(ordered[ordered.length - 1].displayState).toBe("planned");
-    const firstPlanned = ordered.findIndex(
-      (product) => product.displayState === "planned",
+    expect(ordered[0].displayState).toBe("approval_required");
+    expect(ordered[ordered.length - 1].displayState).toBe("care_pathway");
+    const firstCare = ordered.findIndex(
+      (product) => product.displayState === "care_pathway",
     );
-    // Every state that outranks planned comes before every planned offering.
+    // Every state that outranks care_pathway comes before every care row.
     expect(
-      ordered.slice(firstPlanned).every((p) => p.displayState === "planned"),
+      ordered.slice(firstCare).every((p) => p.displayState === "care_pathway"),
     ).toBe(true);
   });
 
@@ -201,12 +208,16 @@ withRealCatalog("the real generated catalog", () => {
       expect(isMasterOfferingCategorySlug(bucket.value)).toBe(true);
       expect(bucket.label.trim()).not.toBe("");
     }
-    // The real workbook category that carries the list separator survives the
-    // round trip, which is the reason the wire value is a slug.
-    const commaCategory = facets.categories.find((bucket) =>
-      bucket.label.includes(","),
+    // The real workbook categories that carry separators and a leading digit
+    // survive the round trip, which is the reason the wire value is a slug.
+    const ampersandCategory = facets.categories.find((bucket) =>
+      bucket.label.includes("&"),
     );
-    expect(commaCategory?.value).toBe("ai-tracking-education");
+    expect(ampersandCategory?.value).toBe("research-peptides-materials");
+    const digitCategory = facets.categories.find((bucket) =>
+      bucket.label.startsWith("503A"),
+    );
+    expect(digitCategory?.value).toBe("503a-clinical-formulations");
   });
 
   it("sums every facet to the size of the catalog it describes", () => {

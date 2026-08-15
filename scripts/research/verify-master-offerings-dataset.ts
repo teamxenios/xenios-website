@@ -26,8 +26,8 @@ import {
 } from "../../server/research/master-offerings/dataset-reader";
 
 /** The independently verified foundation result, for reference in the output. */
-const FOUNDATION_OFFERINGS = 1121;
-const FOUNDATION_VARIANTS = 1181;
+const FOUNDATION_OFFERINGS = 420;
+const FOUNDATION_VARIANTS = 420;
 
 function fail(message: string): never {
   process.stderr.write(`FAIL: ${message}\n`);
